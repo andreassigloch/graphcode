@@ -343,6 +343,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-648` | done | Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta | `FUNC-build-round-injection` · `FUNC-generation-step` |
 | `CR-GC-649` | n/a | formatEToCommands nach loop — Voraussetzung fuer den Executor-Preflight auf Format-E | `FUNC-decode` |
 | `CR-GC-650` | n/a | Executor emittiert Format-E statt commands (Faktor 2,4-3,3 Ausgabe) — Rig-Messung zuerst | `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-preflight` · `FUNC-run-executor` |
+| `CR-GC-651` | n/a | Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1 | `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-generation-step` · `FUNC-run-executor` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

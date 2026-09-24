@@ -638,6 +638,10 @@
 | `CR-GC-650` | relation | `FUNC-gate-client` |
 | `CR-GC-650` | relation | `FUNC-preflight` |
 | `CR-GC-650` | relation | `FUNC-run-executor` |
+| `CR-GC-651` | relation | `FUNC-build-round-injection` |
+| `CR-GC-651` | relation | `FUNC-call-model` |
+| `CR-GC-651` | relation | `FUNC-generation-step` |
+| `CR-GC-651` | relation | `FUNC-run-executor` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

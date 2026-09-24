@@ -21,14 +21,11 @@ import { byRank, type ChannelBlock } from './channel-rank.js';
 //
 // Der System-Prompt macht bewusst KEINE Aussage darüber, was die Runden-
 // Instruktion enthält (CR-GC-358). Er ist eine Konstante und kann es nicht
-// wissen: die Kanten-Grammatik landet nur dann in der Instruktion, wenn
-// buildRoundInjection lief (injection=true) — bei injection=false behauptete
-// der frühere Satz „steht BEREITS in der Instruktion, rufe graph_authoring_guide
-// NICHT auf" das Gegenteil dessen, was das Gate-Protokoll („Schritt 1: Guide
-// aufrufen") verlangte, und zwar über einer Instruktion, in der die Grammatik
-// tatsächlich fehlte. Genau EIN Schreiber pro Tatsache: injection=true → der
-// Injektions-Block sagt „bereits eingebettet, Schritt 1 erledigt";
-// injection=false → das Gate-Protokoll sagt „Guide aufrufen". Nie beides.
+// wissen: die Kanten-Grammatik landet nur dann im Rundeninhalt, wenn
+// buildRoundInjection lief (injection=true). Genau EIN Schreiber pro Tatsache —
+// seit CR-GC-651 ist das der Treiber: injection=true → der Grammatik-Block sagt
+// „bereits eingebettet"; injection=false → GUIDE_HINT sagt „Guide aufrufen". Der
+// Auftrag aus graph_generate schweigt im Treiber-Modus dazu.
 // ---------------------------------------------------------------------------
 
 /** Exportiert für den Contracts-Drift-Test (CR-GC-291): jeder ElementType.options-Wert
@@ -73,17 +70,31 @@ export const IDLE_NUDGE =
   'Du hast KEINEN graph_mutate-Call emittiert. Emittiere JETZT den geforderten Batch als EINEN ' +
   'graphcode_graph_mutate-Tool-Call mit {"formatE": "..."} — keine Prosa, keine weitere Analyse.';
 
+/** Der Guide-Hinweis, wenn die Grammatik NICHT eingebettet ist (injection=false, CR-GC-651). */
+export const GUIDE_HINT = 'Rufe vor dem Schreiben graph_authoring_guide für jeden Elementtyp auf (legale Kanten).';
+
 /** Diese Tools ruft der EXECUTOR deterministisch — dem Modell werden sie vorenthalten. */
 export const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_suggest']);
 
-/** Das kuratierte Minimal-Set für den generativen Loop (toolset 'authoring'). */
-export const AUTHORING_TOOLS = new Set([
-  'graph_mutate',
-  'graph_authoring_guide',
-  'graph_get_node',
-  'graph_elements',
-  'graph_readiness',
-]);
+/**
+ * Das kuratierte Minimal-Set für den generativen Loop (toolset 'authoring') — je Werkzeug die
+ * Parameter, die das Modell hier braucht (CR-GC-651). Die Schlüssel SIND das Werkzeugset.
+ *
+ * Gemessen an einer Executor-Runde (2026-09-24): vom Katalog (7.835 Zeichen) trug `graph_mutate`
+ * allein 3.733 an Schema — davon `formatE`-Sprachdoku 1.879, `violations` 1.000, `baseVersion` 380,
+ * `dryRun` 257. Hier probt der Treiber, schreibt ein einziger Schreiber, und die Form steht im
+ * SYSTEM. `graph_readiness` fällt ganz: seine Frage ist „was als Nächstes", und die beantwortet im
+ * Executor der Treiber. Parameterbeschreibungen entfallen (die Form steht einmal im SYSTEM), von
+ * der Werkzeugbeschreibung bleibt der erste Satz — abgeleitet, kein zweiter Text daneben.
+ */
+export const AUTHORING_PARAMS: Readonly<Record<string, { params: readonly string[]; required?: readonly string[] }>> = {
+  // Pflicht, obwohl das Originalschema `formatE` und `commands` beide optional fuehrt (genau eins
+  // von beiden): mit nur einem angebotenen Feld waere sonst ein leerer Aufruf formal gueltig.
+  graph_mutate: { params: ['formatE'], required: ['formatE'] },
+  graph_authoring_guide: { params: ['type'] },
+  graph_get_node: { params: ['uid'] },
+  graph_elements: { params: ['type', 'search', 'limit'] },
+};
 
 // ---------------------------------------------------------------------------
 // Runden-Prompt-Injektion (CR-GC-285): deterministisch berechenbare Lese-
@@ -273,8 +284,8 @@ export async function buildRoundChannels(
       blocks.push({
         channel: 'grammar',
         text:
-          'Kanten-Grammatik der Fokus-Typen (bereits eingebettet — graph_authoring_guide dafür NICHT ' +
-          'erneut aufrufen; Gate-Protokoll Schritt 1 ist damit erledigt):\n' + lines.join('\n'),
+          'Kanten-Grammatik der Fokus-Typen (bereits eingebettet — graph_authoring_guide dafür nicht ' +
+          'aufrufen):\n' + lines.join('\n'),
       });
     }
   }
@@ -405,7 +416,7 @@ export async function buildRoundChannels(
         const beteiligt = [s.elementId, s.edit.source, s.edit.target].map(typVon);
         if (fokus.size > 0 && !beteiligt.some((ty) => fokus.has(ty))) continue;
         const kante = `${s.edit.source} -${s.edit.type}-> ${s.edit.target}`;
-        // CR-GC-647: ein Null-Delta ist keine Aussage — gemessen trugen beide Vorschlaege einer
+        // CR-GC-648: ein Null-Delta ist keine Aussage — gemessen trugen beide Vorschlaege einer
         // Runde `[0.000 ×6]` unter dem Satz „negativ heisst Verbesserung". Nur ein Zug, der
         // etwas bewegt, bekommt seine Zahlen.
         const bewegt =

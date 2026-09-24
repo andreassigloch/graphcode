@@ -27,6 +27,8 @@ import {
   TOOL_RESULT_CHAR_BUDGET,
   jsonCapped,
   SYSTEM,
+  GUIDE_HINT,
+  AUTHORING_PARAMS,
 } from '../src/loop/executor-prompt.js';
 import { extractMutateFromText, extractToolCallFromText } from '../src/loop/executor-parse.js';
 import { ElementType } from '@sigloch/contracts/se';
@@ -332,6 +334,30 @@ describe('executor (CR-GC-278)', () => {
     expect(names.length).toBeLessThanOrEqual(8);
   });
 
+  it('CR-GC-651: authoring bietet je Werkzeug nur die Parameter, die der Executor braucht', () => {
+    const specs = buildToolSpecs(registry, 'authoring');
+    const byName = Object.fromEntries(specs.map((s) => [s.name, s]));
+    // graph_readiness beantwortet „was als Naechstes" — das entscheidet hier der Treiber.
+    expect(byName['graphcode_graph_readiness']).toBeUndefined();
+    // Genau die Tabelle, nicht mehr — die Schluessel SIND das Werkzeugset.
+    expect(specs.filter((s) => s.name.startsWith('graphcode_')).map((s) => s.name.slice(10)).sort()).toEqual(
+      Object.keys(AUTHORING_PARAMS).sort(),
+    );
+    const mutate = byName['graphcode_graph_mutate'].schema as { properties: Record<string, { description?: string }>; required?: string[] };
+    expect(Object.keys(mutate.properties)).toEqual(['formatE']);
+    expect(mutate.required, 'mit nur einem Feld waere ein leerer Aufruf sonst gueltig').toEqual(['formatE']);
+    expect(mutate.properties.formatE.description, 'die Form steht einmal im SYSTEM').toBeUndefined();
+    // Beschreibung = erster Satz; die Empfehlung „Prefer formatE over commands" ist damit weg.
+    expect(byName['graphcode_graph_mutate'].description).toBe('The ONE write path: apply a batch through the Apply-Gate.');
+    const katalog = JSON.stringify(specs).length;
+    expect(katalog, 'vorher 7.835 Zeichen am eigenen Modell').toBeLessThan(2500);
+  });
+
+  it("toolset 'full' bleibt ungeschnitten — das Mess-Set vergleicht gegen den vollen Katalog", () => {
+    const mutate = buildToolSpecs(registry, 'full').find((s) => s.name === 'graphcode_graph_mutate')!;
+    expect(Object.keys((mutate.schema as { properties: object }).properties)).toContain('commands');
+  });
+
   it('[ARGS] text tool-call is executed and its result carries the turn (CR-GC-280)', async () => {
     const textCall: ModelResponse = {
       text: 'Ich prüfe zunächst: graphcode_graph_readiness[ARGS]{}',
@@ -567,7 +593,10 @@ describe('executor (CR-GC-278)', () => {
     expect(instruction).toContain('Gate-Protokoll');
     // GENAU EIN Schreiber pro Tatsache (CR-GC-358): dass der Guide schon vorliegt,
     // sagt der Injektions-Block — der es als einziger WEISS, weil er ihn erzeugt hat.
-    expect(instruction).toContain('Gate-Protokoll Schritt 1 ist damit erledigt');
+    // CR-GC-651: und niemand sonst sagt das Gegenteil — der Auftrag nennt den Guide nicht mehr.
+    expect(instruction).toContain('bereits eingebettet — graph_authoring_guide dafür nicht aufrufen');
+    expect(instruction).not.toContain(GUIDE_HINT);
+    expect(instruction.match(/graph_authoring_guide/g) ?? []).toHaveLength(1);
     // Der System-Prompt (Konstante) darf es NICHT behaupten: bei injection=false liefe
     // die Injektion nicht, die Behauptung wäre falsch und widerspräche dem Protokoll.
     expect(calls[0].system).not.toContain('BEREITS in der Instruktion');
@@ -637,6 +666,8 @@ describe('executor (CR-GC-278)', () => {
     expect(instruction).not.toContain('Element-Index');
     // Die generate-Instruktion selbst bleibt unverändert (nur die Injektion entfällt).
     expect(instruction).toContain('Gate-Protokoll');
+    // CR-GC-651: ohne eingebettete Grammatik sagt der TREIBER, dass der Guide zu holen ist.
+    expect(instruction).toContain(GUIDE_HINT);
   });
 
   it('index budget: an oversized index is deterministically filtered to the focus types (CR-GC-285)', async () => {

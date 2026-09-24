@@ -181,7 +181,7 @@ describe('CR-GC-559: jede Kaltstart-Stufe traegt die Anleitung ihrer einen Entsc
   });
 });
 
-describe('CR-GC-647: ein Null-Delta ist keine Aussage', () => {
+describe('CR-GC-648: ein Null-Delta ist keine Aussage', () => {
   it('die Kante bleibt, die Nullen fallen weg', async () => {
     const out = await buildRoundInjection(
       registry([vorschlag({ delta: [0, 0, 0, -0.0001, 0, 0] })]),
@@ -190,4 +190,19 @@ describe('CR-GC-647: ein Null-Delta ist keine Aussage', () => {
     expect(out).toContain('FUNC-task-execute -allocate-> MOD-sched');
     expect(out).not.toContain('delta [');
   });
+});
+
+describe('CR-GC-651: der injizierte Skill-Ausschnitt passt zum Executor', () => {
+  // Vorher kamen author-req und author-uc ganz: commands-JSON als Beispiel (das SYSTEM verlangt
+  // seit CR-GC-650 Format-E) und Hinweise auf Werkzeuge, die dem Modell vorenthalten sind.
+  for (const [dim, typen] of [['req', ['UC', 'REQ']], ['uc', ['UC']]] as const) {
+    it(`${dim}: Format-E-Beispiel, kein commands-JSON, keine vorenthaltenen Werkzeuge`, async () => {
+      const out = await buildRoundInjection(registry([]), { focusTypes: [...typen], focusDimension: dim });
+      const anleitung = out.slice(out.indexOf('Anleitung fuer diese Runde'));
+      expect(anleitung).toContain('## Nodes');
+      expect(anleitung).not.toContain('"op"');
+      expect(anleitung).not.toContain('graph_generate');
+      expect(anleitung).not.toContain('rules_get_violations');
+    });
+  }
 });
