@@ -1,6 +1,6 @@
 # CR-GC-657: REQ-Beispiele ohne kinds — FUNC satisfy REQ wird illegal (auch das SYSTEM-Beispiel selbst)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-559 (bug)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-559.json (Lane: code)
