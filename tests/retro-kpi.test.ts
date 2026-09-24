@@ -57,3 +57,76 @@ describe('TEST-retro-kpi (CR-GC-212): post-project KPI standard', () => {
     }
   });
 });
+
+/**
+ * CR-GC-639 — KPI 1 aus dem PROTOKOLL, nicht von Hand.
+ *
+ * Bis hierher rechnete `computeKpis` KPI 1 aus Zahlen, die der Agent waehrend der Retro von Hand
+ * zusammentrug — gezaehlt hat niemand. `rig/referenz-change/messen.mjs` zaehlte dann selbst, aber
+ * mit EIGENER Definition (nur Leseaufrufe, ohne Doc-Reads). Zwei Definitionen derselben Kennzahl
+ * sind derselbe Fehler wie zwei Format-E-Leser. Jetzt zaehlt EINE Funktion, nach `docs/KPI.md`:
+ * `graph_*`-Aufrufe ÷ (Grep + Glob + Doc-Read).
+ */
+describe('TEST-retro-kpi: KPI 1 wird aus dem Sitzungsprotokoll gezaehlt (CR-GC-639)', () => {
+  const nutzung = (name: string, input: Record<string, unknown> = {}) => ({
+    message: { role: 'assistant', content: [{ type: 'tool_use', name, input }] },
+  });
+  const nutzer = (text: string) => ({ message: { role: 'user', content: text } });
+
+  const protokoll = [
+    nutzer('vorher, anderes Thema'),
+    nutzung('Bash', { command: 'grep -rn alt src' }),                 // VOR dem Fenster
+    nutzer('bitte CR-GC-900 umsetzen'),                                 // Fensterbeginn
+    nutzung('Bash', { command: 'grep -rn foo src' }),                   // Suche
+    nutzung('mcp__graphcode__graph_impact', { id: 'FUNC-x' }),          // Graph, lesend
+    nutzung('Bash', { command: 'cat docs/graph/graphcode.graph.json' }),// Doc-Read (Ausgabe, nicht Modell)
+    nutzung('Read', { file_path: '/repo/docs/views/rtm.md' }),          // Doc-Read
+    nutzung('Read', { file_path: '/repo/src/surface/read.ts' }),        // KEIN Doc-Read: Quelltext
+    nutzung('Bash', { command: 'npm test 2>&1 | tail' }),               // Volllauf
+    nutzung('Bash', { command: 'npx vitest run tests/a.test.ts' }),     // selektiv
+    nutzung('mcp__graphcode__graph_mutate', { commands: [] }),          // Graph, schreibend
+    nutzung('Grep', { pattern: 'x' }),                                  // Suche (Werkzeug)
+    nutzung('Bash', { command: 'npm run build 2>&1 | grep -E "error" | head' }), // FILTER, keine Suche
+    nutzung('Bash', { command: 'cd /repo && git grep -n foo' }),       // Suche, nach cd &&
+  ];
+
+  it('zaehlt nach der Definition aus docs/KPI.md — und nur im Fenster ab der CR-ID', async () => {
+    const { werkzeugNutzung, fensterFuer } = await import('../scripts/retro-kpi.mjs');
+    const fenster = fensterFuer(protokoll, 'CR-GC-900');
+    expect(fenster.length).toBe(protokoll.length - 2);
+
+    const n = werkzeugNutzung(fenster);
+    expect(n.graphCalls).toBe(2);
+    expect(n.graphReads).toBe(1);          // Schreiben ersetzt kein grep — getrennt ausgewiesen
+    expect(n.grepGlobDocReads).toBe(5);    // grep, cat docs/graph, Read docs/views, Grep, git grep — NICHT `| grep`
+    expect(n.impact).toBe(1);
+    expect(n.mutate).toBe(1);
+    expect(n.volllaeufe).toBe(1);
+    expect(n.selektiv).toBe(1);
+  });
+
+  it('das Fenster ENDET mit dem Abschluss des CR — spaetere Arbeit zaehlt nicht mit', async () => {
+    const { fensterFuer } = await import('../scripts/retro-kpi.mjs');
+    const mitAbschluss = [
+      ...protokoll,
+      nutzung('Bash', { command: 'git mv docs/cr/open/CR-GC-900-x.md docs/cr/done/' }),
+      { message: { role: 'user', content: [{ type: 'tool_result', content: 'R  docs/cr/open/CR-GC-900-x.md -> docs/cr/done/CR-GC-900-x.md' }] } },
+      nutzer('naechster CR'),
+      nutzung('Bash', { command: 'npm test' }),   // gehoert NICHT mehr zu CR-GC-900
+    ];
+    const f = fensterFuer(mitAbschluss, 'CR-GC-900');
+    expect(f.at(-1)).toEqual(mitAbschluss.at(-3));   // endet mit der Zeile, die done/ nennt
+  });
+
+  it('eine CR-ID, die im Protokoll nicht vorkommt, ergibt ein LEERES Fenster, kein ganzes', async () => {
+    const { fensterFuer } = await import('../scripts/retro-kpi.mjs');
+    expect(fensterFuer(protokoll, 'CR-GC-999')).toEqual([]);
+  });
+
+  it('das Ergebnis passt in computeKpis — eine Kennzahl, eine Rechnung', async () => {
+    const { werkzeugNutzung, fensterFuer } = await import('../scripts/retro-kpi.mjs');
+    const n = werkzeugNutzung(fensterFuer(protokoll, 'CR-GC-900'));
+    const k = computeKpis({ ...graphRich, toolUsage: n });
+    expect(k.graphVsGrepRatio).toBe(0.4);  // 2 ÷ 5
+  });
+});

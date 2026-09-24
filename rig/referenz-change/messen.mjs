@@ -12,8 +12,9 @@
  * @author andreas@siglochconsulting
  */
 import { readFileSync } from 'node:fs';
-import { createInterface } from 'node:readline';
-import { createReadStream } from 'node:fs';
+// CR-GC-639: gezaehlt wird NICHT hier. Die eine Zaehlung nach docs/KPI.md steht in retro-kpi.mjs;
+// dieses Skript waehlt nur das Fenster und stellt dar.
+import { werkzeugNutzung, computeKpis } from '../../scripts/retro-kpi.mjs';
 
 const args = process.argv.slice(2);
 const datei = args.find((a) => !a.startsWith('--'));
@@ -26,14 +27,6 @@ if (!datei) {
   console.error('Aufruf: node messen.mjs <sitzung.jsonl> [--ab "<Textstelle>"] [--bis "<Textstelle>"]');
   process.exit(2);
 }
-
-/** Die Werkzeuge, die den Graphen LESEN — Schreiben zaehlt hier nicht als Nutzung. */
-const GRAPH_LESEN = new Set([
-  'graph_context', 'graph_impact', 'graph_expand', 'graph_elements', 'graph_get_node',
-  'graph_get_edges', 'graph_tests', 'graph_metrics', 'graph_readiness', 'graph_suggest',
-  'graph_next_step', 'rules_evaluate', 'rules_get_violations', 'graph_help',
-  'graph_authoring_guide', 'audit_trail', 'audit_stats',
-]);
 
 const zeilen = readFileSync(datei, 'utf8').split('\n');
 const saetze = [];
@@ -64,28 +57,19 @@ if (bis) {
   if (ende < 0) { console.error(`--bis "${bis}" kommt nach --ab nicht vor.`); process.exit(2); }
 }
 
+const fenster = saetze.slice(start, ende);
+const n = werkzeugNutzung(fenster);
+const kpi1 = computeKpis({
+  toolUsage: n, audit: {}, readiness: {}, git: { netLoc: 0 }, plan: {}, binding: {},
+}).graphVsGrepRatio;
+
 const werkzeuge = new Map();
-const befehle = [];
-for (const d of saetze.slice(start, ende)) {
+for (const d of fenster) {
   const c = d.message?.content;
   if (!Array.isArray(c)) continue;
-  for (const b of c) {
-    if (b?.type !== 'tool_use') continue;
-    werkzeuge.set(b.name, (werkzeuge.get(b.name) ?? 0) + 1);
-    if (b.name === 'Bash') befehle.push(b.input?.command ?? '');
-  }
+  for (const b of c) if (b?.type === 'tool_use') werkzeuge.set(b.name, (werkzeuge.get(b.name) ?? 0) + 1);
 }
-
-const zaehle = (re) => befehle.filter((c) => re.test(c)).length;
-const kurz = (n) => n.replace(/^mcp__graphcode__/, '');
-
-const graphLesen = [...werkzeuge].filter(([n]) => GRAPH_LESEN.has(kurz(n))).reduce((s, [, v]) => s + v, 0);
-const graphSchreiben = [...werkzeuge].filter(([n]) => n.startsWith('mcp__graphcode__') && !GRAPH_LESEN.has(kurz(n))).reduce((s, [, v]) => s + v, 0);
-const suchen = zaehle(/\bgrep\b|\bfind \b|\brg /) + (werkzeuge.get('Grep') ?? 0) + (werkzeuge.get('Glob') ?? 0);
-const voll = zaehle(/npm test\b/);
-const selektiv = zaehle(/npx vitest run/);
-const spuren = zaehle(/verify:(model|code)/);
-
+const kurz = (x) => x.replace(/^mcp__graphcode__/, '');
 const gesamt = [...werkzeuge.values()].reduce((a, b) => a + b, 0);
 
 console.log(`Sitzung: ${datei}`);
@@ -95,14 +79,12 @@ console.log('WERKZEUGE');
 for (const [n, v] of [...werkzeuge].sort((a, b) => b[1] - a[1])) console.log(`  ${String(v).padStart(4)}  ${kurz(n)}`);
 console.log(`  ${String(gesamt).padStart(4)}  = gesamt\n`);
 
-console.log('GRAPH GEGEN GREP (se-retro KPI 1)');
-console.log(`  ${String(graphLesen).padStart(4)}  Graph-LESEaufrufe`);
-console.log(`  ${String(graphSchreiben).padStart(4)}  Graph-SCHREIBaufrufe (zaehlen nicht als Nutzung)`);
-console.log(`  ${String(suchen).padStart(4)}  Suchoperationen (grep/find/rg/Grep/Glob)`);
-console.log(`  Verhaeltnis: ${graphLesen === 0 ? 'KEINE Graphfrage gestellt' : (suchen / graphLesen).toFixed(1) + ' Suchen je Graphfrage'}\n`);
+console.log('GRAPH GEGEN GREP — KPI 1 nach docs/KPI.md, gezaehlt in scripts/retro-kpi.mjs');
+console.log(`  ${String(n.graphCalls).padStart(4)}  graph_*-Aufrufe (davon ${n.graphReads} lesend)`);
+console.log(`  ${String(n.grepGlobDocReads).padStart(4)}  Grep + Glob + Doc-Read (grep nach einer Pipe zaehlt nicht)`);
+console.log(`  KPI 1 = ${kpi1}   (Ziel > 1)${n.graphReads === 0 ? '   — KEINE Graphfrage gestellt' : ''}\n`);
 
 console.log('TESTSPUR (CLAUDE.md: die Auswahl fahren, die VOLL-Spur nur als Riegel)');
-console.log(`  ${String(voll).padStart(4)}  Volllaeufe (npm test, je ~5 min)`);
-console.log(`  ${String(selektiv).padStart(4)}  selektive Laeufe (npx vitest run <Dateien>)`);
-console.log(`  ${String(spuren).padStart(4)}  abgeleitete Spuren (verify:model / verify:code)`);
-if (voll > 1) console.log(`  ⚠ ${voll} Volllaeufe = ~${voll * 5} Minuten Wanduhr, die graph_tests haette sparen koennen.`);
+console.log(`  ${String(n.volllaeufe).padStart(4)}  Volllaeufe (npm test, je ~5 min)`);
+console.log(`  ${String(n.selektiv).padStart(4)}  selektive Laeufe (npx vitest run <Dateien>)`);
+if (n.volllaeufe > 1) console.log(`  ⚠ ${n.volllaeufe} Volllaeufe = ~${n.volllaeufe * 5} Minuten Wanduhr.`);

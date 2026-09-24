@@ -1,0 +1,15 @@
+#!/bin/sh
+# post-commit — misst KPI 1 (Graph-vs-Grep) fuer jeden CR, den dieser Commit schliesst (CR-GC-639).
+#
+# Ein CR-Abschluss ist eine Umbenennung docs/cr/open/ → docs/cr/done/ ODER eine neue Datei in
+# docs/cr/done/ (der CR lag nie eingecheckt in open/ — der haeufigere Fall). Nur dann laeuft die Messung,
+# und zwar im Hintergrund: ein post-commit kann nichts blockieren, soll aber auch nichts verzoegern.
+# Ergebnis: eine Zeile je (CR, Sitzung) in .graphcode/cr-messung.jsonl, Protokoll in cr-messung.log.
+repo="$(git rev-parse --show-toplevel)"
+if git show --name-status -M --format= HEAD | grep -qE '^(R[0-9]*	docs/cr/open/|A	docs/cr/done/)'; then
+  mkdir -p "$repo/.graphcode"
+  ( env -u GIT_DIR -u GIT_INDEX_FILE -u GIT_WORK_TREE \
+      node "$repo/scripts/cr-messung.mjs" --commit HEAD --repo "$repo" \
+      >>"$repo/.graphcode/cr-messung.log" 2>&1 & )
+fi
+exit 0

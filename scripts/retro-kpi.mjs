@@ -53,6 +53,112 @@ export function computeKpis(s) {
   };
 }
 
+// ---------------------------------------------------------------------------
+// KPI 1 aus dem Sitzungsprotokoll (CR-GC-639)
+// ---------------------------------------------------------------------------
+//
+// Bis CR-GC-639 zaehlte hier niemand: `computeKpis` bekam `toolUsage` von Hand, waehrend der Retro.
+// `rig/referenz-change/messen.mjs` zaehlte dann selbst — mit EIGENER Definition (nur Lesezugriffe,
+// ohne Doc-Reads). Zwei Definitionen derselben Kennzahl laufen auseinander, ohne dass es jemand
+// merkt. Diese EINE Zaehlung folgt `docs/KPI.md`:
+//
+//   KPI 1 = graph_*-Aufrufe ÷ (Grep + Glob + Doc-Read)
+//
+// „Grep" umfasst auch `grep`/`find`/`rg` in einem Bash-Aufruf — in Claude-Code-Sitzungen laeuft
+// die Suche fast immer ueber Bash, das dedizierte Grep-Werkzeug zaehlte am Referenz-Change 0.
+// „Doc-Read" ist das Lesen der AUSGABEN, die GRAPHCODE.md ausdruecklich verbietet:
+// `docs/graph/`, `docs/views/`, `.graphcode/` — nicht das Lesen von Quelltext.
+
+const IST_GRAPH = (name) => typeof name === 'string' && name.startsWith('mcp__graphcode__');
+const GRAPH_SCHREIBT = new Set(['graph_mutate', 'graph_merge', 'graph_reseed', 'graph_realize', 'graph_export', 'graph_test_ingest']);
+const kurz = (name) => name.replace(/^mcp__graphcode__/, '');
+const AUSGABE_PFAD = /(^|[\s'"/])(docs\/graph\/|docs\/views\/|\.graphcode\/)/;
+/**
+ * Ist dieser Bash-Aufruf eine SUCHE? Nur wenn grep/find/rg am ANFANG einer Pipeline steht.
+ * Ein grep NACH einer Pipe filtert eine Ausgabe (`npm test | grep FAIL`) und fragt nichts ueber
+ * den Code — gemessen waren das 29 von 188 greps in der Sitzung, aus der diese Zaehlung stammt.
+ */
+function istSuche(cmd) {
+  return cmd
+    .split(/&&|\|\||;/)
+    .map((seg) => seg.split('|')[0].trim())
+    .some((kopf) => /^(grep|find|rg|git\s+grep)\s/.test(kopf));
+}
+
+/** Alle tool_use-Bloecke eines Protokollausschnitts, in Reihenfolge. */
+function werkzeugAufrufe(saetze) {
+  const out = [];
+  for (const d of saetze) {
+    const c = d?.message?.content;
+    if (!Array.isArray(c)) continue;
+    for (const b of c) if (b?.type === 'tool_use') out.push(b);
+  }
+  return out;
+}
+
+/**
+ * Der Ausschnitt eines Protokolls, der zu EINEM CR gehoert: ab dem ersten Satz, der die CR-ID
+ * nennt (meist die Ausgabe von `aise dispatch prepare`), bis zu dem Satz, der ihn nach
+ * `docs/cr/done/` verschiebt — oder bis zum Ende, solange er offen ist (der Hook laeuft direkt
+ * nach dem Abschluss, da IST das Ende der Abschluss). Ohne das Ende zaehlte ein frueh
+ * geschlossener CR rueckwirkend alles mit, was die Sitzung danach tat — gemessen an CR-GC-630:
+ * 19 Volllaeufe statt 3.
+ *
+ * Nennt kein Satz die ID, ist das Fenster LEER — nicht das ganze Protokoll: eine Messung ueber
+ * die falsche Arbeit ist schlimmer als keine.
+ */
+export function fensterFuer(saetze, crId) {
+  const texte = saetze.map((d) => JSON.stringify(d));
+  const i = texte.findIndex((t) => t.includes(crId));
+  if (i < 0) return [];
+  const abschluss = texte.findIndex((t, k) => k > i && t.includes(`docs/cr/done/${crId}`));
+  return saetze.slice(i, abschluss < 0 ? saetze.length : abschluss + 1);
+}
+
+/** Werkzeugnutzung im Format von `computeKpis(...).toolUsage`, plus drei ausgewiesene Extras. */
+export function werkzeugNutzung(saetze) {
+  const n = {
+    graphCalls: 0, grepGlobDocReads: 0, mutate: 0, impact: 0, expand: 0, rulesEvaluate: 0,
+    // Extras — nicht Teil von KPI 1, aber das, was man zum Deuten braucht:
+    graphReads: 0,   // Schreiben hat keinen grep-Ersatz; wer nur schreibt, hat nicht GEFRAGT
+    volllaeufe: 0,   // `npm test` — die volle Suite
+    selektiv: 0,     // `npx vitest run <dateien>` — die Auswahl
+  };
+  for (const b of werkzeugAufrufe(saetze)) {
+    const name = b.name ?? '';
+    const input = b.input ?? {};
+    if (IST_GRAPH(name)) {
+      const k = kurz(name);
+      n.graphCalls++;
+      if (!GRAPH_SCHREIBT.has(k)) n.graphReads++;
+      if (k === 'graph_mutate') n.mutate++;
+      if (k === 'graph_impact') n.impact++;
+      if (k === 'graph_expand') n.expand++;
+      if (k === 'rules_evaluate') n.rulesEvaluate++;
+      continue;
+    }
+    if (name === 'Grep' || name === 'Glob') { n.grepGlobDocReads++; continue; }
+    if (name === 'Read' && AUSGABE_PFAD.test(String(input.file_path ?? ''))) { n.grepGlobDocReads++; continue; }
+    if (name === 'Bash') {
+      const cmd = String(input.command ?? '');
+      if (istSuche(cmd) || /\b(cat|sed|head|tail|less)\b[^|]*/.test(cmd) && AUSGABE_PFAD.test(cmd)) n.grepGlobDocReads++;
+      if (/\bnpm test\b/.test(cmd)) n.volllaeufe++;
+      if (/\bnpx vitest run\b/.test(cmd)) n.selektiv++;
+    }
+  }
+  return n;
+}
+
+/** Ein Claude-Code-Protokoll (JSONL) lesen; eine abgeschnittene letzte Zeile wird uebergangen. */
+export function leseProtokoll(pfad) {
+  const saetze = [];
+  for (const z of readFileSync(pfad, 'utf8').split('\n')) {
+    if (!z.trim()) continue;
+    try { saetze.push(JSON.parse(z)); } catch { /* Teilzeile am Ende einer laufenden Sitzung */ }
+  }
+  return saetze;
+}
+
 /** Render the KPI set as a markdown table. */
 export function renderKpiTable(k) {
   const rows = [

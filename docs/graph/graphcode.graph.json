@@ -2080,6 +2080,12 @@
       "description": "docs/cr/open/CR-GC-638-die-graph-lesewerkzeuge-sind-in-claude-c.md"
     },
     {
+      "id": "CR-GC-639",
+      "type": "CR",
+      "name": "KPI 1 Graph-vs-Grep nach jedem CR automatisch messen statt im bezahlten Rig: ein post-commit-Hook erkennt den CR-Abschluss (Umbenennung open nach done), sucht das Claude-Code-Protokoll der Sitzung, schneidet das Fenster ab der ersten Nennung der CR-ID und haengt eine Zeile an .graphcode/cr-messung.jsonl. Kostet nichts, liefert reale Streuung. Dabei retro-kpi.mjs (definiert KPI 1, zaehlt nicht selbst) und rig/referenz-change/messen.mjs (zaehlt, aber mit eigener Definition) auf EINE Zaehlung zusammenfuehren",
+      "description": "docs/cr/open/CR-GC-639-kpi-1-graph-vs-grep-nach-jedem-cr-automa.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20688,5 +20694,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 406
+  "graphVersion": 407
 }

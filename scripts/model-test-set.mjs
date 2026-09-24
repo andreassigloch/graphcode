@@ -128,6 +128,14 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/retro-kpi.test.ts':
+    'CR-GC-639: die Fixture nennt `docs/graph/` und `docs/views/` als PFAD-Zeichenketten in einem\n' +
+    'gestellten Sitzungsprotokoll — genau diese Lesezugriffe muss KPI 1 als Doc-Read erkennen. Die\n' +
+    'SSOT selbst liest der Test nie; eine Modellaenderung kann ihn nicht rot machen.',
+  'tests/cr-messung.test.ts':
+    'CR-GC-639: legt ein TEMP-Repo mit docs/cr/open → done und ein Temp-Protokoll an und faehrt den\n' +
+    'post-commit-Messpfad. Daher der Treffer auf `docs/cr`. graphcodes eigene SSOT liest er nie — eine\n' +
+    'Modellaenderung kann ihn nicht rot machen; eine Aenderung an der Zaehlung sehr wohl.',
   'tests/skill-rule-ids.test.ts':
     'Smeagol (CR-GC-571/602): prueft Skill- und Prompt-TEXTE gegen den Regelkatalog und die\n' +
     'Eigentuemer-Spalte (contracts). Liest weder graphcodes Modell noch dessen SSOT; der Treffer ist\n' +
