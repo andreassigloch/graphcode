@@ -347,10 +347,11 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-652` | done | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung | `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-generation-step` · `FUNC-inventory-channel` |
 | `CR-GC-653` | done | Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen) | `FUNC-build-round-injection` · `FUNC-inventory-channel` · `FUNC-run-executor` |
 | `CR-GC-654` | done | Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch | `FUNC-run-executor` |
-| `CR-GC-655` | n/a | Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req) | `FUNC-build-round-injection` · `FUNC-generation-step` |
+| `CR-GC-655` | done | Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req) | `FUNC-build-round-injection` · `FUNC-generation-step` |
 | `CR-GC-656` | n/a | Executor openai-Zweig: fetch bricht nach 300 s ab (undici headersTimeout) — Thinking-Modelle unbenutzbar | `FUNC-call-model` · `FUNC-read-openai-stream` |
-| `CR-GC-658` | n/a | UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids | `FUNC-generation-step` |
-| `CR-GC-659` | n/a | Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis | `FUNC-preflight` · `REQ-preflight-hygiene` |
+| `CR-GC-657` | done | REQ-Beispiele ohne kinds — FUNC satisfy REQ wird illegal (auch das SYSTEM-Beispiel selbst) | `FUNC-generation-step` · `FUNC-run-executor` |
+| `CR-GC-658` | done | UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids | `FUNC-generation-step` |
+| `CR-GC-659` | done | Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis | `FUNC-preflight` · `REQ-preflight-hygiene` |
 | `CR-GC-660` | n/a | Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt | `FUNC-preflight` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
