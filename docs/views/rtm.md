@@ -139,7 +139,7 @@
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `MOD-surface` | — |
 | `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-collect-status` · `FUNC-health-endpoint` | `MOD-surface` |
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-surface` |
-| `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` | `MOD-loop` |
+| `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` | `MOD-loop` |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
@@ -287,7 +287,7 @@
 | `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-surface` |
-| `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` | `MOD-loop` |
+| `REQ-round-prompt-injection` | `TEST-one-driver-local-and-frontier` | `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` | `MOD-loop` |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` · `FUNC-schema-guard` | `MOD-kernel` |

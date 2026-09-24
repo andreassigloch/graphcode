@@ -201,6 +201,7 @@ Belegt: 105/143 REQ bestanden (73%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-gate-client` → `FUNC-rank-candidates` | `FLOW-gate-outcome` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-gate-client` → `FUNC-run-executor` | `FLOW-gate-outcome` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-generation-step` → `FUNC-build-round-injection` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
+| `FUNC-generation-step` → `FUNC-inventory-channel` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-generation-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-generation-step` → `FUNC-run-executor` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-graph-expand` → `FUNC-read-tools` | `FLOW-expand-subgraph` | `FCHAIN-agent-query` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration | passed |
@@ -225,6 +226,7 @@ Belegt: 105/143 REQ bestanden (73%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-import` → `FUNC-graph-store` | `FLOW-imported-graph` | `FCHAIN-recall` | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` | integration | passed |
 | `FUNC-import-code-verb` → `FUNC-mutate` | `FLOW-mutate-cmd-import-code-verb` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
 | `FUNC-import-doc` → `FUNC-mutate` | `FLOW-mutate-cmd-import-doc` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
+| `FUNC-inventory-channel` → `FUNC-build-round-injection` | `FLOW-channel-inventory` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-list-elements` → `FUNC-gate-client` | `FLOW-element-slice` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-load-config` → `FUNC-take-steering-snapshot` | `FLOW-metric-policy` | `FCHAIN-steering-loop` | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` | integration | passed |
 | `FUNC-module-metrics` → `FUNC-evaluate-rules` | `FLOW-module-metrics` | `FCHAIN-skill-report` | `TEST-skill-reports-measured-values` | conformance | passed |
@@ -275,4 +277,4 @@ Belegt: 105/143 REQ bestanden (73%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-view-intplan` → `FUNC-export-markdown` | `FLOW-query-request-view-intplan` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 | `FUNC-view-rtm` → `FUNC-export-markdown` | `FLOW-query-request-view-rtm` | `FCHAIN-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | conformance, integration, unit | passed |
 
-> 115/115 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 117/117 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 0 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

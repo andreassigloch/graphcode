@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 259 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 260 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 259 CR · 195 done · 0 open.
+Total: 260 CR · 195 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -321,3 +321,4 @@ Total: 259 CR · 195 done · 0 open.
 | `CR-GC-649` | n/a | formatEToCommands nach loop — Voraussetzung fuer den Executor-Preflight auf Format-E |
 | `CR-GC-650` | n/a | Executor emittiert Format-E statt commands (Faktor 2,4-3,3 Ausgabe) — Rig-Messung zuerst |
 | `CR-GC-651` | n/a | Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1 |
+| `CR-GC-652` | n/a | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung |
