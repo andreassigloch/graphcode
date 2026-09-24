@@ -22,7 +22,9 @@ import {
   type DuplicateHit,
   type IndexedElement,
 } from '../kernel/measure/nd-similarity.js';
+import type { Graph } from '@sigloch/graph-api-core';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
+import { formatEToCommands } from './format-e-commands.js';
 
 export type MutateOutcome = Partial<MutateResult> & {
   success: boolean;
@@ -98,7 +100,7 @@ export function bindGateClient(
   // deterministisch, pro Mutate frisch (der Graph ändert sich zwischen Runden).
   // CR-GC-287: derselbe Snapshot trägt den Element-Index (uid/type/name/descr)
   // für den REQ/UC-Duplikat-Hinweis — kein zweiter Tool-Call.
-  const loadGraphSnapshot = async (): Promise<{ known: PreflightKnown; index: IndexedElement[] }> => {
+  const loadGraphSnapshot = async (): Promise<{ known: PreflightKnown; index: IndexedElement[]; bestand: Graph }> => {
     // CR-GC-621: `prosa: true` ist hier PFLICHT, nicht Bequemlichkeit — `duplicateHits` vergleicht
     // Beschreibungen. Mit der gekuerzten Liste saehen alle Knoten gleich aus und die Duplikat-
     // Erkennung waere still blind; der Default der Liste ist Identitaet, dieser Verbraucher ist
@@ -118,6 +120,9 @@ export function bindGateClient(
         kinds: new Map(nodes.map((n) => [n.uid, n.attributes?.kinds])),
       },
       index: nodes.map((n) => ({ uid: n.uid, type: n.type, name: n.name, description: n.description })),
+      // CR-GC-650: der Format-E-Leser braucht vom Bestand nur uid und Typ (Typauflösung,
+      // Implicit-Add-Ablehnung) — derselbe Snapshot, kein zweiter Aufruf.
+      bestand: { nodes: nodes.map((n) => ({ uid: n.uid, type: n.type })), edges: [] } as unknown as Graph,
     };
   };
 
@@ -136,7 +141,19 @@ export function bindGateClient(
     let duplicates: DuplicateHit[] = [];
     try {
       const snap = await loadGraphSnapshot();
-      const pf = preflightBatch(parsed.data, snap.known);
+      // CR-GC-650: der Executor emittiert Format-E. Der Preflight prüft Commands — also erst mit
+      // der EINEN Abbildung übersetzen (dieselbe, die graph_mutate fährt). Ein Parse-Fehler ist
+      // kein Preflight-Urteil: der Text geht unverändert ans Gate, dessen Meldung auditiert ist.
+      const data = parsed.data as { formatE?: string; commands?: unknown[] };
+      let alsCommands: { commands: unknown[] } = data as { commands: unknown[] };
+      if (typeof data.formatE === 'string') {
+        try {
+          alsCommands = { commands: formatEToCommands(snap.bestand, data.formatE).commands };
+        } catch {
+          return { effective: parsed.data, blocked: null, hints: [], duplicates: [] };
+        }
+      }
+      const pf = preflightBatch(alsCommands, snap.known);
       if (pf.action === 'blocked') {
         stats.preflightBlocked += 1;
         for (const v of pf.violations) trace(`    preflight blocked: ${v.ruleId} ${v.message}`);
@@ -150,13 +167,17 @@ export function bindGateClient(
       if (pf.action === 'fixed') {
         stats.preflightFixed += pf.fixes.length;
         for (const line of pf.fixes) trace(`    preflight: ${line}`);
-        effective = pf.input;
+        // Repariert heisst: die reparierten Commands gehen, nicht der Originaltext. Ohne
+        // Reparatur bleibt der Text (unten) — er traegt die Namenswarnung des Gates mit.
+        const rest: Record<string, unknown> = { ...(parsed.data as Record<string, unknown>) };
+        delete rest.formatE;
+        effective = { ...rest, commands: (pf.input as { commands: unknown[] }).commands };
       }
       // CR-GC-287: REQ/UC-Duplikat-HINWEIS (kein Block!) — neue add-nodes gegen
       // den Element-Index; der Batch geht trotzdem ans Gate, das Gate entscheidet.
       // CR-GC-361: EINE Messung, zwei Konsumenten — die Zeilen gehen als Feedback
       // ans Modell, die Treffer als bereinigter Fokus-Delta ins Best-of-N-Ranking.
-      duplicates = duplicateHits(effective, snap.index);
+      duplicates = duplicateHits(pf.action === 'fixed' ? effective : alsCommands, snap.index);
       hints = renderDuplicateHints(duplicates);
       for (const h of hints) trace(`    preflight hint: ${h}`);
     } catch (err) {

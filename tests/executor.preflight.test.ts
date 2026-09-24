@@ -281,6 +281,44 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
     expect(g.nodes.some((n) => n.uid.startsWith('TEST-verify-'))).toBe(false);
   });
 
+  // CR-GC-650: der Executor emittiert Format-E. Bis dahin reichte der Preflight Format-E
+  // ungeprueft durch — Stub, Flip und Duplikat-Hinweis fielen fuer genau die Form weg, die das
+  // Modell jetzt schreibt. Rot auf dem alten Stand: die REQ ohne TEST blockte am Gate (R-01).
+  it('Format-E: REQ ohne TEST → derselbe Stub wie bei commands, Gate applied', async () => {
+    const formatE =
+      '## Nodes\n### REQ\n+ REQ-login-2fa|Das System muss den Login per Zwei-Faktor in unter 5 s bestaetigen. [__name:Login mit 2FA]\n\n' +
+      '## Edges\n+ UC-login -compose-> REQ-login-2fa\n';
+    const { callModel } = scriptedModel([toolCallResponse('c1', { formatE })]);
+    const stats = await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
+
+    expect(stats.mutatesApplied).toBe(1);
+    expect(stats.preflightFixed).toBe(1);
+    const g = harness.getGraph();
+    expect(g.nodes.find((n) => n.uid === 'REQ-login-2fa')?.name).toBe('Login mit 2FA');
+    expect(g.nodes.some((n) => n.uid === 'TEST-verify-login-2fa')).toBe(true);
+  });
+
+  it('Format-E ohne Befund geht als TEXT ans Gate, nicht uebersetzt', async () => {
+    const formatE =
+      '## Nodes\n### UC\n+ UC-export|User exportiert den Stand und erhaelt die Datei. [__name:Export]\n\n' +
+      '## Edges\n+ SYS-app -compose-> UC-export\n';
+    const gesendet: unknown[] = [];
+    const original = registry['graph_mutate'].handler;
+    registry['graph_mutate'] = {
+      ...registry['graph_mutate'],
+      handler: (input: unknown) => {
+        gesendet.push(input);
+        return original(input);
+      },
+    };
+    const { callModel } = scriptedModel([toolCallResponse('c1', { formatE })]);
+    const stats = await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
+
+    expect(stats.mutatesApplied).toBe(1);
+    expect(stats.preflightFixed).toBe(0);
+    expect((gesendet.at(-1) as { formatE?: string }).formatE).toBe(formatE);
+  });
+
   it('add-edge auf unbekannte uid → lokales Feedback mit Kandidaten, kein Gate-Call (AK 3)', async () => {
     const ghostEdge = { commands: [addEdge('ACTOR-user', 'UC-logn', 'io')] };
     const followUp = {

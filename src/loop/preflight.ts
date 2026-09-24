@@ -127,7 +127,8 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
   const pass: PreflightOutcome = { action: 'pass', input: raw, fixes: [], violations: [] };
   if (typeof raw !== 'object' || raw === null) return pass;
   const obj = raw as Record<string, unknown>;
-  // formatE-Batches unverändert durchreichen — deren Decode macht das Tool (CR-GC-276).
+  // Format-E übersetzt der Gate-Zugang VOR diesem Aufruf (CR-GC-650, executor-gate.ts) — hier
+  // kommt es nur an, wenn ein anderer Aufrufer den Text durchreicht: dann unverändert weiter.
   if (typeof obj.formatE === 'string') return pass;
   if (!Array.isArray(obj.commands) || obj.commands.length === 0) return pass;
 

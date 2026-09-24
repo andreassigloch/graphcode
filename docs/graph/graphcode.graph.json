@@ -3724,7 +3724,7 @@
       "id": "FUNC-extract-mutate",
       "type": "FUNC",
       "name": "extractMutateFromText",
-      "description": "Prosa-Recovery: holt ein Kommando-Objekt aus einer Modellantwort, die statt eines Tool-Calls Text geliefert hat. Findet keine Kommandos, gibt sie null zurueck statt zu raten.",
+      "description": "Prosa-Recovery: holt einen graph_mutate-Batch aus einer Modellantwort, die statt eines Tool-Calls Text geliefert hat — zuerst einen Format-E-Block (roh, im Code-Zaun oder als JSON-Feld formatE, CR-GC-650), sonst ein Kommando-Objekt. Findet sie nichts, gibt sie null zurueck statt zu raten.",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor-parse.ts",
@@ -3761,7 +3761,7 @@
       "id": "FUNC-gate-client",
       "type": "FUNC",
       "name": "bindGateClient(registry, stats, trace)",
-      "description": "Gate-Zugang des eingebetteten Executors: liest vor dem Preflight die Elemente und die verify-Kanten ueber graph_elements und graph_get_edges (loadGraphSnapshot), parst den Kandidaten-Batch wie der MCP-Layer, laesst den Preflight pruefen und korrigieren, legt den gesendeten Batch fest (Preflight-Ergebnis, bei der Probe mit dryRun) und ruft graph_mutate ueber die Registry (executor-gate.ts, callGate). Einzige Stelle, an der der Executor einen selbst festgelegten Batch sendet; Ein-Kandidaten-Pfad und Best-of-N teilen sie. Das Ergebnis geht als Gate-Ausgang (FLOW-gate-outcome) an Treiberschleife und Rangfolge; formatGateFeedback macht daraus das Feedback fuer den Repair-Loop. (CR-GC-506, CR-GC-509)",
+      "description": "Gate-Zugang des eingebetteten Executors: liest vor dem Preflight die Elemente und die verify-Kanten ueber graph_elements und graph_get_edges (loadGraphSnapshot), parst den Kandidaten-Batch wie der MCP-Layer, uebersetzt einen Format-E-Batch mit derselben Abbildung wie graph_mutate (formatEToCommands, CR-GC-650), laesst den Preflight pruefen und korrigieren und legt den gesendeten Batch fest: ohne Korrektur den Originaltext, mit Korrektur die korrigierten Kommandos, bei der Probe mit dryRun. Ruft graph_mutate ueber die Registry (executor-gate.ts, callGate). Einzige Stelle, an der der Executor einen selbst festgelegten Batch sendet; Ein-Kandidaten-Pfad und Best-of-N teilen sie. Das Ergebnis geht als Gate-Ausgang (FLOW-gate-outcome) an Treiberschleife und Rangfolge; formatGateFeedback macht daraus das Feedback fuer den Repair-Loop. (CR-GC-506, CR-GC-509, CR-GC-650)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor-gate.ts",
@@ -12665,6 +12665,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-650",
+      "target": "FUNC-extract-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-650",
+      "target": "FUNC-gate-client",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-650",
+      "target": "FUNC-preflight",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-650",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -20949,5 +20969,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 441
+  "graphVersion": 442
 }

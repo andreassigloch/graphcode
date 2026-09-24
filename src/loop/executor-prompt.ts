@@ -39,29 +39,39 @@ Legale Elementtypen (NUR diese ${ElementType.options.length}): ${ElementType.opt
 existiert — auch nicht für Dokumente/Specs (die bleiben Prosa, kein Graph-Knoten).
 
 Jede Nachricht gibt dir EINE präzise Generierungs-Instruktion (inkl. der legalen Kanten). Führe genau sie aus:
-emittiere den geforderten Batch als EINEN graphcode_graph_mutate-Aufruf im commands-Format, dann STOPP.
+emittiere den geforderten Batch als EINEN graphcode_graph_mutate-Aufruf mit {"formatE": "..."}, dann STOPP.
 
-graph_mutate-Form (exakt):
-{"commands":[
-  {"op":"add-node","node":{"uid":"UC-login","type":"UC","name":"Login","description":"...","attributes":{}}},
-  {"op":"add-edge","edge":{"sourceId":"ACTOR-user","targetId":"UC-login","edgeType":"io","attributes":{}}}
-]}
-uid = "<TYP>-<kebab-name>". Nutze GENAU die Kanten aus der Instruktion (z.B. "ACTOR io→UC, SYS compose→UC").
-Lehnt das Gate deinen Batch ab (success:false), korrigiere NUR die beanstandeten Commands anhand der
+Format-E (exakt; Knoten unter "## Nodes" in ihrer "### <TYP>"-Sektion, Kanten unter "## Edges"):
+## Nodes
+### REQ
++ REQ-login-latenz|Das System muss die Anmeldung in unter 2 s abschliessen. [__name:Anmeldung unter 2 s]
+### TEST
++ TEST-login-latenz|Lastlauf misst p95 der Anmeldezeit, Grenze 2 s. [__name:Anmeldelatenz messen]
+
+## Edges
++ UC-login -compose-> REQ-login-latenz
++ TEST-login-latenz -verify-> REQ-login-latenz
+
+"+" legt an, "~ uid|Text" ändert einen Knoten (nur was die Zeile nennt), "- uid" löscht. Mehrere Ziele einer
+Kante: "+ A -verify-> B, C". uid = "<TYP>-<kebab-name>". Nie " -wort-> " in einer Beschreibung.
+Nutze GENAU die Kanten aus der Instruktion und existierende uids aus der Element-Liste.
+Lehnt das Gate deinen Batch ab (success:false), korrigiere NUR die beanstandeten Zeilen anhand der
 violations/fixHints und reiche den VOLLSTÄNDIGEN korrigierten Batch erneut ein.
 list_dir/read_file/grep über ./material nur sparsam, um echte Modul-Namen zu finden — nicht statt Bauen.
 Handeln vor Analysieren: rufe graph_mutate, rate die Instruktion nicht tot.`;
 
+// CR-GC-650: der Executor emittiert Format-E statt `commands` — gemessen 84–94 statt 223–279 Zeichen
+// je geschriebenem Element (CR-GC-627), und lokal bestimmt die Ausgabelaenge die Wall-Zeit. Die Form
+// steht EINMAL im SYSTEM; Suffix und Nachfassen verweisen nur darauf, statt sie zu wiederholen.
 export const EMIT_SUFFIX =
-  '\n\nEmittiere GENAU diesen Schritt als EINEN graph_mutate-Aufruf im commands-Format ' +
-  '({"commands":[{"op":"add-node","node":{"uid","type","name","description","attributes":{}}},' +
-  '{"op":"add-edge","edge":{"sourceId","targetId","edgeType","attributes":{}}}]}).';
+  '\n\nEmittiere GENAU diesen Schritt als EINEN graph_mutate-Aufruf mit {"formatE": "..."} ' +
+  '(## Nodes / ### <TYP> / + uid|Beschreibung [__name:Name], dann ## Edges / + A -kante-> B).';
 
 /** Handlungs-Zwang bei Idle-Turns: Coder-Modelle dithern gern in Prosa (Rig-Befund
  * "6× guide/Runde") — EIN Nachfassen pro Step statt den Schritt still aufzugeben. */
 export const IDLE_NUDGE =
   'Du hast KEINEN graph_mutate-Call emittiert. Emittiere JETZT den geforderten Batch als EINEN ' +
-  'graphcode_graph_mutate-Tool-Call im commands-Format — keine Prosa, keine weitere Analyse.';
+  'graphcode_graph_mutate-Tool-Call mit {"formatE": "..."} — keine Prosa, keine weitere Analyse.';
 
 /** Diese Tools ruft der EXECUTOR deterministisch — dem Modell werden sie vorenthalten. */
 export const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_suggest']);

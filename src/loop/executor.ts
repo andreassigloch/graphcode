@@ -33,7 +33,7 @@ import type { ModelAnswer, ModelToolCall } from './model-answer-contract.js';
 // Best-of-N-Ranking, Prosa-Recovery. Kein Re-Export von hier: wer sie braucht,
 // importiert das jeweilige Modul direkt (keine parallelen Pfade).
 import { EMIT_SUFFIX, IDLE_NUDGE, SYSTEM, buildRoundInjection, jsonCapped } from './executor-prompt.js';
-import { extractMutateFromText, extractToolCallFromText } from './executor-parse.js';
+import { extractMutateFromText, extractToolCallFromText, type RecoveredMutate } from './executor-parse.js';
 import { READ_TOOLS, execReadOrGraphTool, pushToolResults } from './executor-tools.js';
 import { bindGateClient, formatGateFeedback, ruleIdsOf, type MutateOutcome } from './executor-gate.js';
 import { zugvermerk, type Zug } from './zugvermerk.js';
@@ -340,7 +340,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           const canonical = textCall?.name.replace(/^graphcode_/, '');
           if (textCall && canonical === 'graph_mutate') {
             // Mutate als [ARGS]-Text → dieselbe Applied/Rejected-Logik wie unten.
-            recovered = (textCall.input ?? {}) as { commands: unknown[] };
+            recovered = (textCall.input ?? {}) as RecoveredMutate;
           } else if (textCall && canonical && (READ_TOOLS[textCall.name] || registry[canonical])) {
             // Sonstiger Tool-Call als Text: ausführen, Ergebnis in die History —
             // der Turn trägt, statt an die Nudge zu fallen (CR-GC-280).
