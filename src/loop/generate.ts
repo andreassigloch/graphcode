@@ -202,10 +202,27 @@ export const RULE_CLAUSE: Record<
     // CR-GC-566: REQ und TEST gehören in den Fokus, sonst liefert die Injektion die
     // Grammatik nicht, die dieser Text verlangt — und das Modell MUSS danach fragen.
     types: ['UC', 'REQ', 'TEST'],
+    // CR-GC-661: die MENGE steht im Vorbild, nicht nur im Satz. Gemessen gcrun-100..102: mit einem
+    // Ein-REQ-Beispiel schrieb qwen3-coder in 9 von 11 UC-01-Batches genau eine REQ fuer einen UC.
     text: (uids) =>
       `Diese UCs haben keine Anforderungen (${uids.join(', ')}): schlage je UC 3–5 REQ-Kandidaten vor` +
       ' (UC compose→REQ), präzise und prüfbar formuliert. Emittiere jede neue REQ zusammen mit einem' +
-      ' TEST (TEST verify→REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01).',
+      ' TEST (TEST verify→REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01).' +
+      ` Bediene ALLE ${uids.length} UCs in EINEM Batch, je UC mindestens zwei REQs — Vorbild fuer zwei UCs:\n` +
+      '## Nodes\n### REQ\n' +
+      '+ REQ-login-passwort|Das System muss Nutzer per Passwort in unter 2 s anmelden. [__name:Anmeldung per Passwort]\n@kinds ["functional"]\n' +
+      '+ REQ-login-sperre|Das System muss nach 5 Fehlversuchen das Konto 15 min sperren. [__name:Kontosperre]\n@kinds ["functional"]\n' +
+      '+ REQ-export-format|Das System muss den Stand als CSV mit Kopfzeile exportieren. [__name:CSV-Export]\n@kinds ["functional"]\n' +
+      '+ REQ-export-dauer|Das System muss 10.000 Zeilen in unter 5 s exportieren. [__name:Exportdauer]\n@kinds ["non-functional"]\n' +
+      '### TEST\n' +
+      '+ TEST-login-passwort|Anmeldung mit gueltigem Passwort, Zeit gemessen, Grenze 2 s. [__name:Anmeldung pruefen]\n' +
+      '+ TEST-login-sperre|5 Fehlversuche, 6. Versuch muss abgewiesen werden. [__name:Sperre pruefen]\n' +
+      '+ TEST-export-format|Export oeffnen, Kopfzeile und Trennzeichen pruefen. [__name:Format pruefen]\n' +
+      '+ TEST-export-dauer|10.000 Zeilen exportieren, Zeit gemessen, Grenze 5 s. [__name:Dauer messen]\n\n' +
+      '## Edges\n+ UC-login -compose-> REQ-login-passwort, REQ-login-sperre\n' +
+      '+ UC-export -compose-> REQ-export-format, REQ-export-dauer\n' +
+      '+ TEST-login-passwort -verify-> REQ-login-passwort\n+ TEST-login-sperre -verify-> REQ-login-sperre\n' +
+      '+ TEST-export-format -verify-> REQ-export-format\n+ TEST-export-dauer -verify-> REQ-export-dauer',
     skill: { name: 'se:author-req', file: 'author-req.md' },
   },
   // CR-GC-564: der legale Pfad AUSGESCHRIEBEN. ACTOR direkt an UC oder FCHAIN ist die

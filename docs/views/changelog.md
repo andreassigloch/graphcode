@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 268 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 269 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 268 CR · 205 done · 0 open.
+Total: 269 CR · 205 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -330,3 +330,4 @@ Total: 268 CR · 205 done · 0 open.
 | `CR-GC-658` | done | UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids |
 | `CR-GC-659` | done | Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis |
 | `CR-GC-660` | n/a | Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt |
+| `CR-GC-661` | n/a | UC-01: qwen schreibt je Batch 1 REQ fuer 1 UC (9 von 11) — das Beispiel setzt die Menge |
