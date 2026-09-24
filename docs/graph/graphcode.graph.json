@@ -2154,19 +2154,25 @@
       "id": "CR-GC-649",
       "type": "CR",
       "name": "formatEToCommands nach loop — Voraussetzung fuer den Executor-Preflight auf Format-E",
-      "description": "docs/cr/open/CR-GC-649-formatetocommands-in-den-kernel-vorausse.md"
+      "description": "docs/cr/done/CR-GC-649-formatetocommands-in-den-kernel-vorausse.md",
+      "status": "done",
+      "commitRef": "28ef239"
     },
     {
       "id": "CR-GC-650",
       "type": "CR",
       "name": "Executor emittiert Format-E statt commands (Faktor 2,4-3,3 Ausgabe) — Rig-Messung zuerst",
-      "description": "docs/cr/open/CR-GC-650-executor-emittiert-format-e-statt-comman.md"
+      "description": "docs/cr/done/CR-GC-650-executor-emittiert-format-e-statt-comman.md",
+      "status": "done",
+      "commitRef": "6ac00c6"
     },
     {
       "id": "CR-GC-651",
       "type": "CR",
       "name": "Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1",
-      "description": "docs/cr/open/CR-GC-651-executor-prompt-entschlacken-werkzeug-pr.md"
+      "description": "docs/cr/done/CR-GC-651-executor-prompt-entschlacken-werkzeug-pr.md",
+      "status": "done",
+      "commitRef": "3fe69fd"
     },
     {
       "id": "CR-GC-652",
@@ -21084,5 +21090,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 445
+  "graphVersion": 446
 }
