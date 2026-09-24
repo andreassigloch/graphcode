@@ -419,7 +419,17 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
             lastRejection = outcome;
           }
         } else {
-          results.push(await execReadOrGraphTool(registry, workspaceDir, call.name, call.input));
+          const ergebnis = await execReadOrGraphTool(registry, workspaceDir, call.name, call.input);
+          results.push(ergebnis);
+          // CR-GC-652: WAS das Modell nachschlaegt, nicht nur DASS. Die Rig-Messung zeigte ~60
+          // graph_elements je Lauf, gleich wie die Element-Liste geschnitten war — ohne die
+          // Argumente liess sich nicht sagen, ob es sucht, was fehlt, oder prueft, was dasteht.
+          // Groesse und Art der Antwort dazu: eine Nachfrage nach einer leeren oder gekappten
+          // Antwort ist ein anderer Befund als eine nach einer vollstaendigen.
+          const art = ergebnis.startsWith('ERROR') ? ' ERROR' : ergebnis.includes('"truncated":true') ? ' gekappt' : '';
+          trace(
+            `    read ${call.name.replace('graphcode_', '')} ${JSON.stringify(call.input ?? {}).slice(0, 160)} → ${ergebnis.length} Z.${art}`,
+          );
         }
       }
       const attemptedMutate = appliedThisTurn || rejectedThisTurn;
