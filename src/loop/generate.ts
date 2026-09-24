@@ -183,12 +183,17 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
  * trägt also genau eine Regel: die Klausel wird exakt und mit den konkreten
  * uids gerendert oder gar nicht.
  */
-export const RULE_CLAUSE: Record<string, { types: string[]; text: (uids: string[]) => string }> = {
+export const RULE_CLAUSE: Record<
+  string,
+  { types: string[]; text: (uids: string[]) => string; skill: { name: string; file: string } | null }
+> = {
   'R-15': {
     types: ['FCHAIN', 'FUNC'],
     text: (uids) =>
       `Diese Funde sind BESTEHENDE, leere FCHAINs (${uids.join(', ')}): häng an jede davon 3±2 FUNC-Elemente` +
       ' (FCHAIN compose→FUNC), die den Ablauf in Schritte zerlegen.',
+    // CR-GC-655: keine Anleitung — die Klausel beschreibt die Arbeit; der uc-Skill zeigte UC-Anlegen.
+    skill: null,
   },
   // CR-GC-564: Wortlaut aus dem req-Template — dort beschreibt er dieselbe Arbeit korrekt.
   // UC-01 liegt in der uc-Dimension, deren Template ACTOR/FCHAIN/UC verlangt und REQ nicht
@@ -201,6 +206,7 @@ export const RULE_CLAUSE: Record<string, { types: string[]; text: (uids: string[
       `Diese UCs haben keine Anforderungen (${uids.join(', ')}): schlage je UC 3–5 REQ-Kandidaten vor` +
       ' (UC compose→REQ), präzise und prüfbar formuliert. Emittiere jede neue REQ zusammen mit einem' +
       ' TEST (TEST verify→REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01).',
+    skill: { name: 'se:author-req', file: 'author-req.md' },
   },
   // CR-GC-564: der legale Pfad AUSGESCHRIEBEN. ACTOR direkt an UC oder FCHAIN ist die
   // Fehlerart, die Lauf 3 zwei Runden an R-18-Ablehnungen gekostet hat.
@@ -211,6 +217,10 @@ export const RULE_CLAUSE: Record<string, { types: string[]; text: (uids: string[
       ' ACTOR io→FLOW io→FUNC, wobei die FUNC Mitglied einer FCHAIN des UC ist. Lege die fehlenden' +
       ' FLOWs und FUNCs im selben Batch an. ACTOR direkt an UC oder an FCHAIN wird von R-18' +
       ' abgewiesen, in beiden Richtungen.',
+    // CR-GC-655: bewusst KEIN se:author-uc (so empfiehlt es contracts RULE_HELP). Gemessen gcrun-60/62:
+    // mit dem uc-Skill schrieb qwen3-coder dessen Beispiel ab (SYS compose UC, UC compose FCHAIN) und
+    // deklarierte drei Runden lang dieselben UCs neu, teils mit neuer Beschreibung — Fund ungeloest.
+    skill: null,
   },
   // CR-GC-648: RD-01 liegt in der req-Dimension, deren Template „3–5 neue REQs je UC" verlangt —
   // das Gegenteil dessen, was der Fund braucht: die REQ existiert, ihr fehlt der Erfüller. Und
@@ -223,8 +233,21 @@ export const RULE_CLAUSE: Record<string, { types: string[]; text: (uids: string[
       `Diese REQs sind Blaetter ohne Erfueller (${uids.join(', ')}): verbinde jede mit dem Element,` +
       ' das sie erfuellt — FUNC, FCHAIN, MOD oder SYS satisfy→REQ, mit existierenden uids aus der' +
       ' Element-Liste. Lege KEINE neue REQ an.',
+    // CR-GC-655: keine Anleitung — author-req zeigt REQ-Anlegen, die Klausel verbietet genau das.
+    skill: null,
   },
 };
+
+/**
+ * Die Datei zu einem Skillnamen (CR-GC-655) — aus den ZWEI Tabellen, die Skills vergeben:
+ * Dimension und Regel-Klausel. Der Executor spielt den Rumpf ein, den `step.skill` nennt; er
+ * leitet ihn nicht ein zweites Mal aus der Dimension ab. Unbekannt (z. B. ein Task-Skill ausserhalb
+ * von `.claude/commands/se/`) → undefined, dann gibt es keinen Anleitungs-Block.
+ */
+export function skillDatei(name: string): { name: string; file: string } | undefined {
+  const alle = [...Object.values(SKILL_FOR_DIMENSION), ...Object.values(RULE_CLAUSE).map((k) => k.skill)];
+  return alle.find((sk): sk is { name: string; file: string } => !!sk && sk.name === name);
+}
 
 /** Generative Instruktion je Readiness-Dimension — die einzige Handlungsanweisung des
  * Systems, seit die generischen Lese-Zwillinge in `steering.ts` mit CR-GC-562 gefallen sind. */
@@ -331,7 +354,7 @@ export function generationStep(
   steerOptimum: SteerOptimum | null = null,
 ): GenerationStep {
   const snap = takeSteeringSnapshot(graph, policy);
-  const core = stepCore(snap, policy, intent, threshold, defer, selection, profile, task, steerOptimum);
+  const { imperativSkill, ...core } = stepCore(snap, policy, intent, threshold, defer, selection, profile, task, steerOptimum);
   // CR-GC-601: im Task nennt der Schritt den Skill des Tasks, im Kern den der Fokus-Dimension.
   // CR-GC-604: steht im Kern ein Eintrittspunkt im Fokus, ist der Skill der des Tasks — nicht der
   // der Dimension (AF-04/AF-05 liegen in ver/ms, fuer die es keinen Autorier-Skill gibt: `next.skill` war null).
@@ -341,9 +364,13 @@ export function generationStep(
       ? TASK_SKILL[task]
       : eintrittsTask
         ? TASK_SKILL[eintrittsTask]
-        : core.focusDimension
-          ? (SKILL_FOR_DIMENSION[core.focusDimension]?.name ?? null)
-          : null;
+        : // CR-GC-655: im expand entscheidet der Imperativ (Klausel vor Dimension); seed/handoff
+          // haben keinen, dort gilt die Dimension (seed:uc → author-uc usw.).
+          imperativSkill !== undefined
+          ? imperativSkill
+          : core.focusDimension
+            ? (SKILL_FOR_DIMENSION[core.focusDimension]?.name ?? null)
+            : null;
   return { ...core, skill, steer: steerState(snap.violations) };
 }
 
@@ -376,7 +403,7 @@ function stepCore(
   profile: LoadedTargetProfile | null = null,
   task: RuleTask = 'kern',
   steerOptimum: SteerOptimum | null = null,
-): Omit<GenerationStep, 'skill' | 'steer'> {
+): Omit<GenerationStep, 'skill' | 'steer'> & { imperativSkill?: string | null } {
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
   // computeReadiness + Phasen-Gates — geteilt mit dem steeringDelta des dryRun-Verdicts.
@@ -753,11 +780,17 @@ function stepCore(
   // `channel-rank.ts` — einmal, erklärt, und für Text UND Fokus-Typen in DEMSELBEN
   // Aufruf. Vorher standen dafür zwei Ternäre 40 Zeilen auseinander (CR-GC-564 für
   // den Text, CR-GC-566 für die Typen), deren Gleichlauf nur ein Kommentar zusagte.
-  const imperativ = winner<{ text: string; types: string[] }>([
+  // CR-GC-655: derselbe Gewinner entscheidet auch die Anleitung — sonst stuende neben der Klausel der
+  // Skill der Dimension, mit einem Beispiel fuer eine andere Arbeit (ITEM-2026-551).
+  const imperativ = winner<{ text: string; types: string[]; skill: string | null }>([
     {
       channel: 'rule-clause',
       value: klausel
-        ? { text: klausel.text(focusViolations.map((v) => v.element_id)), types: [...klausel.types] }
+        ? {
+            text: klausel.text(focusViolations.map((v) => v.element_id)),
+            types: [...klausel.types],
+            skill: klausel.skill?.name ?? null,
+          }
         : null,
     },
     {
@@ -766,6 +799,7 @@ function stepCore(
         ? {
             text: GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.',
             types: [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])],
+            skill: SKILL_FOR_DIMENSION[focus.dimension]?.name ?? null,
           }
         : null,
     },
@@ -790,5 +824,6 @@ function stepCore(
     focusTypes: imperativ?.value.types ?? [],
     focusElements: [...new Set(focusViolations.map((v) => v.element_id))],
     focusDimension: focus!.dimension as string,
+    imperativSkill: imperativ?.value.skill ?? null,
   };
 }

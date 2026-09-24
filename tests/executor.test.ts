@@ -330,7 +330,7 @@ describe('executor (CR-GC-278)', () => {
     // Die Verbotssaetze waren gemessen wirkungslos und sind wieder draussen (gcrun-50..52).
     expect(SYSTEM).not.toContain('nicht vorab per Stichwort suchen');
     await registry['graph_mutate'].handler(VALID_SEED_BATCH);
-    const out = await buildRoundInjection(registry, { focusTypes: ['UC'], focusDimension: 'uc' });
+    const out = await buildRoundInjection(registry, { focusTypes: ['UC'], skill: 'se:author-uc' });
     expect(out, 'die Liste widerspraeche sonst dem SYSTEM').not.toContain('keine Duplikate anlegen');
   });
 
@@ -710,7 +710,7 @@ describe('executor (CR-GC-278)', () => {
     expect(res.success).toBe(true);
     const out = await buildRoundInjection(registry, {
       focusTypes: ['REQ', 'FUNC', 'FCHAIN', 'MOD', 'SYS'],
-      focusDimension: 'req',
+      skill: 'se:author-req',
       focusElements: ['REQ-sys-latenz', 'REQ-waise'],
     });
     const liste = out.slice(out.indexOf('Element-Liste aus dem Kontext des Funds'));
@@ -789,12 +789,12 @@ describe('executor (CR-GC-278)', () => {
     // Zusicherung an der Seed-Runde, die es so nicht mehr gibt.
     const actorStufe = await buildRoundInjection(registry, {
       focusTypes: ['ACTOR', 'UC'],
-      focusDimension: 'seed:actor',
+      skill: 'se:author-actor',
     });
     expect(actorStufe).toContain('- ACTOR:');
     expect(actorStufe).toContain('io→FLOW');
 
-    const injection = await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], focusDimension: 'ver' });
+    const injection = await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], skill: null });
     // CR-GC-539: auf die Fokus-Typen beschränkt — ab Runde 1, nicht erst bei Zeichenüberlauf.
     expect(injection).toContain('beschraenkt');
     expect(injection).toContain('REQ-kern · REQ · Kernanforderung');
@@ -803,13 +803,13 @@ describe('executor (CR-GC-278)', () => {
     // … und der Index-Block bleibt unter dem Budget (+ Header/Guide-Overhead).
     expect(injection.length).toBeLessThan(INDEX_CHAR_BUDGET + 2000);
     // Deterministisch: gleicher Graph + gleiche Fokus-Typen ⇒ gleiche Injektion.
-    expect(await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], focusDimension: 'ver' })).toBe(injection);
+    expect(await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], skill: null })).toBe(injection);
 
     // CR-GC-622: der Rundenprompt entsteht JEDE Runde neu und holt die Kanten-Grammatik dabei
     // erneut aus `graph_authoring_guide` — dessen zweiter Aufruf je Typ ist seither gekuerzt.
     // Gekuerzt heisst NICHT leer: `outgoing`/`incoming`/`requiredAttrs` bleiben vollstaendig,
     // sonst waere ab Runde 2 genau der Block leer, dessen Vorhandensein dieser Prompt zusichert.
-    const runde3 = await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], focusDimension: 'ver' });
+    const runde3 = await buildRoundInjection(registry, { focusTypes: ['TEST', 'REQ'], skill: null });
     expect(runde3).toContain('- REQ: ausgehend:');
     expect(runde3).toContain('- TEST: ausgehend:');
     expect(runde3).toBe(injection);
@@ -832,7 +832,7 @@ describe('executor (CR-GC-278)', () => {
     const deklariertesLimit = (registry['graph_elements'].inputSchema.parse({}) as { limit: number }).limit;
 
     // (1) OHNE Fokus: hoechstens der deklarierte Default — nicht alle 300+.
-    const ohneFokus = await buildRoundInjection(registry, { focusTypes: [], focusDimension: null });
+    const ohneFokus = await buildRoundInjection(registry, { focusTypes: [], skill: null });
     const ohneZeilen = zeilenDesIndex(ohneFokus);
     expect(ohneZeilen.length).toBeGreaterThan(0);
     expect(ohneZeilen.length, 'der Zod-Default limit wird umgangen').toBeLessThanOrEqual(deklariertesLimit);

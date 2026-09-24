@@ -2197,6 +2197,12 @@
       "description": "docs/cr/open/CR-GC-654-executor-format-e-bestehende-knoten-werd.md"
     },
     {
+      "id": "CR-GC-655",
+      "type": "CR",
+      "name": "Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req)",
+      "description": "docs/cr/open/CR-GC-655-skill-der-runde-folgt-der-dimension-stat.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21121,5 +21127,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 449
+  "graphVersion": 450
 }
