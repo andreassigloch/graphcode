@@ -25,7 +25,7 @@
  */
 import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { TestRefsSchema, RealRefSchema, type TestRef, type RealRef } from '@sigloch/contracts/se';
+import { readTestRefs, readRealRef, type TestRef, type RealRef } from '@sigloch/contracts/se';
 import { renderSrs } from './srs.js';
 import { renderNfr, renderRtm, renderIcd, renderTestConcept, renderTestMatrix, renderIntPlan } from './incose.js';
 import { renderChangelog, renderFmea, renderConOps, renderTrade, renderImplPlan } from './graphcode.js';
@@ -353,11 +353,11 @@ export function renderTestStubs(graph: Graph): TestStub[] {
   for (const node of graph.nodes) {
     if (node.type !== 'TEST') continue;
     if (node.attributes?.concept === true) continue; // concept-only: no run artifact
-    const parsed = TestRefsSchema.safeParse(node.attributes?.testRefs);
-    if (!parsed.success) continue; // unbound TEST → R-19 surfaces it, nothing to scaffold
+    const parsed = readTestRefs(node.attributes);
+    if (parsed.state !== 'bound') continue; // unbound TEST → R-19 surfaces it, nothing to scaffold
     // CR-GC-338: ein Stub JE EINTRAG — sonst bleibt bei einer Abnahme mit Unit- und
     // Visual-Lauf die zweite Datei ein Phantom, und genau das soll hier nicht passieren.
-    for (const ref of parsed.data) {
+    for (const ref of parsed.value) {
       stubs.push({ file: ref.file, content: renderStub(node, ref, verifiesByTest.get(node.uid) ?? []) });
     }
   }
@@ -398,9 +398,9 @@ export function renderSchemaStubs(graph: Graph): SchemaStub[] {
   for (const node of graph.nodes) {
     if (node.type !== 'SCHEMA') continue;
     if (node.attributes?.concept === true || node.attributes?.external === true) continue;
-    const parsed = RealRefSchema.safeParse(node.attributes?.realRef);
-    if (!parsed.success) continue; // unbound SCHEMA → R-26 surfaces it, nothing to scaffold
-    const ref = parsed.data;
+    const parsed = readRealRef(node.attributes);
+    if (parsed.state !== 'bound') continue; // unbound SCHEMA → R-26 surfaces it, nothing to scaffold
+    const ref = parsed.value;
     if (ref.lang !== undefined && !TS_LANGS.has(ref.lang)) continue;
     stubs.push({ file: ref.file, content: renderSchemaStub(node, ref) });
   }

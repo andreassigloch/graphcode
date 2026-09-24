@@ -30,8 +30,8 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname, relative, resolve as resolvePath } from 'node:path';
 import ts from 'typescript';
 import {
-  RealRefSchema,
-  TestRefsSchema,
+  readRealRef,
+  readTestRefs,
   evaluateConformanceRules,
   importCoverage,
   type CodeFacts,
@@ -167,12 +167,12 @@ export function extractCodeFacts(graph: CGraph, repoRoot: string): CodeFacts {
     // CR-228: ONE realization binding for every type — a FUNC's code symbol, a
     // SCHEMA's Zod export and a physical MOD's CAD artefact are all `realRef`
     // now, so the formerly separate codeRef/schemaRef scans collapse into one.
-    const real = RealRefSchema.safeParse(node.attributes?.realRef);
-    if (real.success) referenced.add(real.data.file);
+    const real = readRealRef(node.attributes);
+    if (real.state === 'bound') referenced.add(real.value.file);
     // CR-GC-338: `testRefs` ist eine Liste (CR-SM-231) — JEDE gebundene Datei zaehlt,
     // sonst prueft RC-02 nur die erste und der Rest ist stillschweigend unbelegt.
-    const tests = TestRefsSchema.safeParse(node.attributes?.testRefs);
-    if (tests.success) for (const t of tests.data) referenced.add(t.file);
+    const tests = readTestRefs(node.attributes);
+    if (tests.state === 'bound') for (const t of tests.value) referenced.add(t.file);
   }
   const files: Record<string, FileFacts> = {};
   for (const rel of referenced) {

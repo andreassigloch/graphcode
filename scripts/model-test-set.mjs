@@ -128,6 +128,8 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/attributvertraege.test.ts':
+    'CR-GC-643: prueft das Leseverhalten von Code (graph_tests, Verifikationsbericht, Code-Fakten) auf einem Wegwerf-Store — eine Code-Aenderung bricht es, kein Modell-Zug. Der Modellteil (RC-09 am committeten Modell) steht in conformance.test.ts.',
   'tests/retro-kpi.test.ts':
     'CR-GC-639: die Fixture nennt `docs/graph/` und `docs/views/` als PFAD-Zeichenketten in einem\n' +
     'gestellten Sitzungsprotokoll — genau diese Lesezugriffe muss KPI 1 als Doc-Read erkennen. Die\n' +

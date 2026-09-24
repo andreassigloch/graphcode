@@ -615,6 +615,8 @@
 | `CR-GC-641` | relation | `SCHEMA-format-e` |
 | `CR-GC-642` | relation | `FUNC-decode` |
 | `CR-GC-642` | relation | `SCHEMA-format-e` |
+| `CR-GC-643` | relation | `SCHEMA-real-ref` |
+| `CR-GC-643` | relation | `SCHEMA-test-refs` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
@@ -1803,6 +1805,8 @@
 | `TEST-agent-agnostic` | verify | `REQ-agent-agnostic` |
 | `TEST-applied-suggestion-moves-target` | verify | `REQ-applied-suggestion-moves-target` |
 | `TEST-artifact-coupling` | verify | `REQ-steering-from-metrics` |
+| `TEST-attributvertraege` | verify | `SCHEMA-real-ref` |
+| `TEST-attributvertraege` | verify | `SCHEMA-test-refs` |
 | `TEST-audit-retention` | verify | `REQ-audit-trail` |
 | `TEST-audit-rules-passed` | verify | `REQ-audit-trail` |
 | `TEST-audit-rules-passed` | verify | `REQ-rule-calibration` |

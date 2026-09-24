@@ -22,7 +22,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { RealRefSchema } from '@sigloch/contracts/se';
+import { readRealRef } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;
@@ -82,14 +82,14 @@ function allocationOf(graph: CGraph): Map<string, string> {
 
 /** Traegt irgendeine FUNC eine gueltige Bindung? */
 function hasAnyBinding(graph: CGraph): boolean {
-  return graph.nodes.some((n) => n.type === 'FUNC' && RealRefSchema.safeParse(n.attributes?.realRef).success);
+  return graph.nodes.some((n) => n.type === 'FUNC' && readRealRef(n.attributes).state === 'bound');
 }
 
 /** Die gebundene Datei einer FUNC — `undefined`, wenn sie keine trägt oder der Ref kaputt ist. */
 function boundFile(graph: CGraph, funcId: string): string | undefined {
   const node = graph.nodes.find((n) => n.uid === funcId);
-  const parsed = RealRefSchema.safeParse(node?.attributes?.realRef);
-  return parsed.success ? parsed.data.file : undefined;
+  const read = readRealRef(node?.attributes);
+  return read.state === 'bound' ? read.value.file : undefined;
 }
 
 /**
