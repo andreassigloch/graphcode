@@ -416,7 +416,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FCHAIN-capture` ·
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-artifact-agent` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · io ▶ — · allocate ▶ `MOD-loop`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -424,7 +424,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -432,7 +432,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
 
 ##### 3.1.2.2  `FUNC-mutate` — mutate(commands)
 
@@ -502,7 +502,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-artifact-agent` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · io ▶ — · allocate ▶ `MOD-loop`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -510,7 +510,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -518,7 +518,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
 
 #### 3.1.4  `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation
 
@@ -4650,7 +4650,7 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-artifact-agent` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · io ▶ — · allocate ▶ `MOD-loop`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -4658,7 +4658,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -4666,7 +4666,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
 
 ###### 3.10.2.4.2  `FUNC-emit-trajectory` — materializeTrajectory()
 
@@ -7140,7 +7140,7 @@ allocate ◀ `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-comp
 
 Die Schleife, die den Graphen bewegt: Fokuswahl, Zielprofil, Vorschlaege, Runden-Prompt, Modellaufruf, Kandidaten-Ranking. Ein Client des Gates wie jeder andere — sie schreibt ausschliesslich durch apply(). (CR-GC-446)
 
-allocate ◀ `FUNC-block-antrieb` · `FUNC-block-q-improvement` · `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-graph-suggest` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-target-profile-load` · satisfy ▶ `REQ-gate-only-writes` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable`
+allocate ◀ `FUNC-block-antrieb` · `FUNC-block-q-improvement` · `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-decode` · `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-graph-suggest` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-target-profile-load` · satisfy ▶ `REQ-gate-only-writes` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable`
 
 ### 6.5  `MOD-projections` — projections — Graph nach Artefakt
 
@@ -7152,7 +7152,7 @@ allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-block-dokumen
 
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
-allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-host-sitzung` · `FUNC-block-live-dashboard` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-decode` · `FUNC-emit-update-event` · `FUNC-graph-realize` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-host-sitzung` · `FUNC-block-live-dashboard` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-realize` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
 
 ### 6.7  `MOD-systemtest` — Systemtest-Rig
 

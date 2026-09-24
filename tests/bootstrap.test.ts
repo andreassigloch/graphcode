@@ -17,7 +17,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { bootstrap, TEMPLATE_FORMAT_E } from '../src/surface/bootstrap.js';
-import { formatEToCommands } from '../src/surface/format-e-commands.js';
+import { formatEToCommands } from '../src/loop/format-e-commands.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {

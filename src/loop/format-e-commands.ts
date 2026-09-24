@@ -1,6 +1,10 @@
 /**
  * format-e-commands.ts — der EINE Weg von Format-E-Text zu `MutateCommand[]` (CR-GC-630).
  *
+ * Liegt seit CR-GC-649 in `loop`, nicht mehr in `surface`: der Executor-Preflight braucht dieselbe
+ * Abbildung, und `loop` darf nicht nach oben importieren. `loop` ist die tiefste Schicht, die alle
+ * drei Verbraucher erreichen (graph_mutate, bootstrap, Preflight) — der Kernel braucht sie nicht.
+ *
  * Bis hierher war diese Abbildung eine Closure in `bindWriteTools`. Genau deshalb konnte
  * `bootstrap()` sie nicht rufen und trug bis CR-GC-630 ihren Vorgaenger weiter:
  * `decode() → Graph → add-node/add-edge`. Ein Graph kann „diese Knoten existieren"

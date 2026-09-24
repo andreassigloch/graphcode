@@ -125,7 +125,8 @@ const FAELLE = [
 
   { id: 'K2', cr: '—', art: 'KONTROLLE fremd', kontrolle: true,
     label: 'zwei Funktionen ohne jede Beziehung — Fehlalarm-Probe',
-    a: { repo: GC, ref: 'HEAD', file: 'src/surface/format-e-commands.ts', symbol: 'formatEToCommands' },
+    // Auf den Stand vor CR-GC-649 gepinnt: HEAD wandert, eine Kontrolle darf das nicht.
+    a: { repo: GC, ref: 'b037983', file: 'src/surface/format-e-commands.ts', symbol: 'formatEToCommands' },
     b: { repo: GC, ref: 'HEAD', file: 'src/kernel/measure/test-selection.ts', symbol: 'impactedTests' } },
 ];
 

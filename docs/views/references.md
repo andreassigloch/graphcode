@@ -633,6 +633,7 @@
 | `CR-GC-647` | relation | `SCHEMA-mcp-tool` |
 | `CR-GC-648` | relation | `FUNC-build-round-injection` |
 | `CR-GC-648` | relation | `FUNC-generation-step` |
+| `CR-GC-649` | relation | `FUNC-decode` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
@@ -1393,7 +1394,7 @@
 | `FUNC-create-harness` | allocate | `MOD-surface` |
 | `FUNC-create-harness` | io | `FLOW-harness-handle` |
 | `FUNC-create-harness` | satisfy | `REQ-store-owner-lifecycle` |
-| `FUNC-decode` | allocate | `MOD-surface` |
+| `FUNC-decode` | allocate | `MOD-loop` |
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
 | `FUNC-decode` | satisfy | `REQ-formatE-diff-dialect` |
 | `FUNC-deduce-tests` | allocate | `MOD-projections` |

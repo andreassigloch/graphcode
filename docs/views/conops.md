@@ -341,6 +341,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-646` | done | Gate nimmt kinds als String an - Element-Attribute werden am Schreibweg nicht gegen den Vertrag geprueft | `FUNC-mutate` · `FUNC-take-steering-snapshot` |
 | `CR-GC-647` | done | Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an | `FUNC-run-executor` · `FUNC-serve-stdio` |
 | `CR-GC-648` | done | Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta | `FUNC-build-round-injection` · `FUNC-generation-step` |
+| `CR-GC-649` | n/a | formatEToCommands nach loop — Voraussetzung fuer den Executor-Preflight auf Format-E | `FUNC-decode` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

@@ -28,7 +28,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { knotenAus } from './helpers/format-e.js';
-import { formatEToCommands } from '../src/surface/format-e-commands.js';
+import { formatEToCommands } from '../src/loop/format-e-commands.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { OP_RISK, type HarnessConfig, type MutateCommand } from '@sigloch/contracts/harness';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';

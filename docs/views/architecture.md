@@ -188,7 +188,7 @@
 | `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
 | `FUNC-create-harness` | `MOD-surface` |
-| `FUNC-decode` | `MOD-surface` |
+| `FUNC-decode` | `MOD-loop` |
 | `FUNC-deduce-tests` | `MOD-projections` |
 | `FUNC-emit-trajectory` | `MOD-projections` |
 | `FUNC-emit-update-event` | `MOD-surface` |

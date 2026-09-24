@@ -2151,6 +2151,24 @@
       "commitRef": "58014ac"
     },
     {
+      "id": "CR-GC-649",
+      "type": "CR",
+      "name": "formatEToCommands nach loop — Voraussetzung fuer den Executor-Preflight auf Format-E",
+      "description": "docs/cr/open/CR-GC-649-formatetocommands-in-den-kernel-vorausse.md"
+    },
+    {
+      "id": "CR-GC-650",
+      "type": "CR",
+      "name": "Executor emittiert Format-E statt commands (Faktor 2,4-3,3 Ausgabe) — Rig-Messung zuerst",
+      "description": "docs/cr/open/CR-GC-650-executor-emittiert-format-e-statt-comman.md"
+    },
+    {
+      "id": "CR-GC-651",
+      "type": "CR",
+      "name": "Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1",
+      "description": "docs/cr/open/CR-GC-651-executor-prompt-entschlacken-werkzeug-pr.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3610,7 +3628,7 @@
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
       "realRef": {
-        "file": "src/surface/format-e-commands.ts",
+        "file": "src/loop/format-e-commands.ts",
         "symbol": "formatEToCommands",
         "lang": "ts"
       }
@@ -12642,6 +12660,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-649",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -16586,7 +16609,7 @@
     },
     {
       "source": "FUNC-decode",
-      "target": "MOD-surface",
+      "target": "MOD-loop",
       "type": "allocate"
     },
     {
@@ -20926,5 +20949,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 436
+  "graphVersion": 441
 }
