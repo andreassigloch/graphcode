@@ -1,6 +1,6 @@
 # CR-GC-661: UC-01: qwen schreibt je Batch 1 REQ fuer 1 UC (9 von 11) — das Beispiel setzt die Menge
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-564 (finding)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-564.json (Lane: code)
