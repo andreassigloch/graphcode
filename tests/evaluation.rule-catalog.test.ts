@@ -51,10 +51,11 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
  * und `evaluateAllRules` hat keine CodeFacts. Vorher standen sie überhaupt nicht im
  * Katalog: ein Modell-Zug, der die Bindung an den Code bricht, ging lautlos durch.
  * Jetzt steht die Nicht-Auswertung als Aussage da, statt zu fehlen.
+ * CR-SM-358: RC-08/RC-09 (Vertrag ist Zod, nur modellierte Stellen parsen ihn) aus demselben Grund.
  */
 const NOT_IN_GATE = [
   'BQ-01', 'BQ-02', 'BQ-04', 'BQ-06', 'BQ-07', 'ND-01', 'ND-02',
-  'RC-01', 'RC-02', 'RC-03', 'RC-04', 'RC-05', 'RC-06', 'RC-07',
+  'RC-01', 'RC-02', 'RC-03', 'RC-04', 'RC-05', 'RC-06', 'RC-07', 'RC-08', 'RC-09',
 ];
 
 /**

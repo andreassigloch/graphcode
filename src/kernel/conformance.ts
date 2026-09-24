@@ -52,6 +52,8 @@ function parseFileFacts(source: string, fileName: string): Omit<FileFacts, 'exis
   const testCases = new Set<string>();
   const importedSymbols = new Set<string>(); // exported names imported here (CR-211, RC-04)
   const parsedSymbols = new Set<string>(); // X in X.parse(/X.safeParse( (CR-211, RC-04)
+  const zodConsts = new Set<string>(); // every const whose value is a Zod schema (CR-GC-640)
+  const zodSymbols = new Set<string>(); // … of those, the exported ones — RC-08 (CR-SM-358)
   const add = (n: ts.Node | undefined): void => {
     if (n && ts.isIdentifier(n)) declaredSymbols.add(n.text);
   };
@@ -113,18 +115,51 @@ function parseFileFacts(source: string, fileName: string): Omit<FileFacts, 'exis
     ts.forEachChild(node, visit);
   };
   visit(sf);
+  // Top-level consts in source order: `z.…` is a Zod schema, and so is anything built on a
+  // Zod const declared earlier in this file (`Base.extend(…)`, `Base.pick(…)`).
+  for (const stmt of sf.statements) {
+    if (!ts.isVariableStatement(stmt)) continue;
+    const exported = stmt.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) === true;
+    for (const decl of stmt.declarationList.declarations) {
+      if (!ts.isIdentifier(decl.name) || decl.initializer === undefined) continue;
+      const root = chainRoot(decl.initializer);
+      if (root !== 'z' && !(root !== undefined && zodConsts.has(root))) continue;
+      zodConsts.add(decl.name.text);
+      if (exported) zodSymbols.add(decl.name.text);
+    }
+  }
   return {
     declaredSymbols: [...declaredSymbols],
     testCases: [...testCases],
     importedSymbols: [...importedSymbols],
     parsedSymbols: [...parsedSymbols],
+    zodSymbols: [...zodSymbols],
   };
+}
+
+/** The identifier a call/member chain starts from: `z.object({…}).strict()` → `z`. */
+function chainRoot(expr: ts.Expression): string | undefined {
+  let e: ts.Expression = expr;
+  for (;;) {
+    if (ts.isCallExpression(e) || ts.isPropertyAccessExpression(e) || ts.isParenthesizedExpression(e) ||
+        ts.isAsExpression(e) || ts.isSatisfiesExpression(e) || ts.isNonNullExpression(e)) {
+      e = e.expression;
+      continue;
+    }
+    return ts.isIdentifier(e) ? e.text : undefined;
+  }
 }
 
 /**
  * Extract CodeFacts for every file referenced by a realRef/testRefs in `graph`,
  * resolved against `repoRoot`. Guarantees an entry per referenced file — the
  * RC rules treat an absent key as an extractor gap (loud, not silently green).
+ *
+ * CR-GC-640: additionally EVERY source file under `src/`, and then `fileScope: 'all'`.
+ * RC-09 asks who ELSE parses a contract; the answer lives exactly in the files no binding
+ * points at (bootstrap.ts in CR-GC-627). Without `src/` the scan stays at the referenced
+ * files and says so (`referenced`) — RC-09 then stays silent instead of reporting what it
+ * never looked at.
  */
 export function extractCodeFacts(graph: CGraph, repoRoot: string): CodeFacts {
   const referenced = new Set<string>();
@@ -148,8 +183,17 @@ export function extractCodeFacts(graph: CGraph, repoRoot: string): CodeFacts {
     }
     files[rel] = { exists: true, ...parseFileFacts(readFileSync(abs, 'utf8'), abs) };
   }
+  const srcRoot = join(repoRoot, 'src');
+  const scanned = existsSync(srcRoot);
+  if (scanned) {
+    for (const abs of walkSourceFiles(srcRoot)) {
+      const rel = relative(repoRoot, abs);
+      if (files[rel] === undefined) files[rel] = { exists: true, ...parseFileFacts(readFileSync(abs, 'utf8'), abs) };
+    }
+  }
   return {
     files,
+    fileScope: scanned ? 'all' : 'referenced',
     importEdges: extractImportEdges(repoRoot),
     declaredDependencies: extractDeclaredDependencies(repoRoot),
     crFiles: extractCrFiles(repoRoot),
