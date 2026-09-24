@@ -45,4 +45,26 @@ Opus mit 32.000 Ausgabe-Token ist das erreichbar; bisher nicht beobachtet. Eigen
 - [x] SSE-Zusammensetzung: Text, Denken (beide Feldnamen), zerschnittene Argumente, zwei Aufrufe,
       Zaehlung; Fehler-Stueck; JSON-Antwort; der Zweig sendet `stream:true` + `include_usage`.
 - [x] Bestehende Roundtrip-Tests der drei Backends gruen.
-- [ ] Rig mit qwen3.8-27b (Thinking): kein `fetch failed` mehr.
+- [x] Rig mit qwen3.8-27b (Thinking): kein `fetch failed` mehr — ein Einzelaufruf ueber 300 s belegt.
+
+## Rig-Abnahme (2026-09-25, `results-runde19-q38-thinking.json`, gcrun-110, N=1, Stand 658/659)
+
+qwen3.8-27b (Thinking, Ollama), 12 Runden, Ausgabe-Budget 16.000: nach 90 min am Laufzeitlimit
+beendet, Stand erfasst — 11 Runden, 21 Modellaufrufe (~4,3 min je Aufruf), **0 Abbrueche**
+(vorher: `fetch failed` bei Aufruf 2.2). Beleg fuer einen Einzelaufruf ueber der alten Grenze:
+Runde 10 besteht aus genau einem Aufruf, zwischen der vorigen Mutation (22:48:53) und ihrer eigenen
+(22:54:31) liegen 338 s.
+
+Zum Einordnen, gleicher Stand, gleiche Runden-Obergrenze (qwen3-coder N=3 aus gcrun-100..102):
+
+| je Lauf | qwen3-coder-30b | qwen3.8-27b Thinking |
+|---|---:|---:|
+| Runden erreicht | 12 | 11 (Zeitlimit) |
+| Elemente | 44 | 89 |
+| Gate-Ablehnungen / Preflight-Blocks | 3,0 / ~5 | 0 / 0 |
+| Readiness req / uc / arch / ver | .89 / .85 / .93 / .86 | .77 / .81 / .94 / .85 |
+| Laufzeit | 231 s | 5.400 s |
+
+N=1 — eine Richtung, keine Aussage. Tokens fehlen in der Ergebniszeile: der Lauf wurde per SIGTERM
+beendet, bevor der Statistikblock geschrieben war.
+
