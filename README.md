@@ -43,6 +43,14 @@ npx @sigloch/graphcode remove        # remove all scaffolded artifacts (restlos)
 
 ## Get started
 
+**Prerequisite:** Node ≥ 22. Nothing is installed globally — graphcode lives per repo, as a
+dependency in its `package.json`.
+
+**Fresh clone of a repo that already uses graphcode?** Skip `init` — `.mcp.json` and
+`GRAPHCODE.md` are committed. Run `npm install` and open the agent host: the store `.graphcode/`
+is gitignored, and the host builds it on first start from the committed model
+(`docs/graph/*.graph.json`, seed-on-empty). Then continue at step 3.
+
 **1. Scaffold** (idempotent, self-contained):
 
 ```bash
