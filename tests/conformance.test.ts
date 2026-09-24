@@ -69,11 +69,11 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     // durchgewinkt. RC-04/05 sind Indikatoren und werden separat geprueft (CR-211/212).
     const v = conformanceViolations(harness);
     expect(v.filter((x) => ['RC-01', 'RC-02', 'RC-03'].includes(x.ruleId))).toEqual([]);
-    // CR-GC-640 / CR-SM-358, gemessen 2026-09-24 — eine Ratsche, die nur sinken darf:
-    // RC-08 = 5 Vertraege, die an einen TS-Typ statt an ein Zod-Schema gebunden sind (AuditStats,
-    // GraphDelta, OntologyJson, RejectedTrace, SteeringSnapshot); ITEM-2026-528 baut sie ab.
+    // CR-GC-640 / CR-SM-358: RC-08 war 5 (AuditStats, GraphDelta, OntologyJson, RejectedTrace,
+    // SteeringSnapshot an TS-Typen gebunden). CR-GC-644 hat sie zu Zod-Schemas gemacht — jeder
+    // Vertrag dieses Modells ist zur Laufzeit pruefbar, und das bleibt so.
     // RC-09 = 0: jeder lokal gebundene Zod-Vertrag wird nur in seiner modellierten Datei geparst.
-    expect(v.filter((x) => x.ruleId === 'RC-08').length).toBeLessThanOrEqual(5);
+    expect(v.filter((x) => x.ruleId === 'RC-08')).toEqual([]);
     expect(v.filter((x) => x.ruleId === 'RC-09')).toEqual([]);
     // CR-GC-643: dazu gehoeren die Attributvertraege. Vor der Umstellung auf den Familienleser
     // (CR-SM-360) parsten 6 graphcode-Dateien `TestRefsSchema` und 3 `RealRefSchema` selbst —

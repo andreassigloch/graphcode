@@ -15,31 +15,36 @@
  * @author andreas@siglochconsulting
  */
 import { focusViolations, blockingOf } from './focus-set.js';
-import type { RuleViolation } from '@sigloch/contracts/se';
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
-import type { OntologyGraph, MetricPolicy } from '@sigloch/contracts/se';
+import type { MetricPolicy } from '@sigloch/contracts/se';
+import { OntologyGraph, ReadinessReport, RuleViolation } from '@sigloch/contracts/se';
 import { evaluateAllRules } from '@sigloch/contracts/se';
 import { computeReadiness } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../conformance.js';
-import { computePhaseReadiness, type PhaseGateReadiness } from './readiness.js';
+import { computePhaseReadiness, PhaseGateReadiness } from './readiness.js';
 
-export interface SteeringSnapshot {
+/**
+ * Ein Messpunkt des Steuerraums — ein Zod-Vertrag aus Bausteinen der Familie (CR-GC-644), kein Typ.
+ * `takeSteeringSnapshot` prueft ihn, bevor er das Messwerk verlaesst.
+ */
+export const SteeringSnapshotSchema = z.object({
   /** Der gemappte Ontology-Graph MIT injizierten ND-Matrizen. */
-  og: OntologyGraph;
+  og: OntologyGraph,
   /** Alle Funde des Steering-Katalogs (Full-Katalog-Eval, nicht der Gate-Delta-Katalog). */
-  violations: ReturnType<typeof evaluateAllRules>;
+  violations: z.array(RuleViolation),
   /** Error-Funde — die Gate-Blocker-Zählung des Steering-Raums. */
-  blockingErrors: number;
-  report: ReturnType<typeof computeReadiness>;
+  blockingErrors: z.number(),
+  report: ReadinessReport,
   /**
    * Die Phasen-Gates aus DEMSELBEN Regelstrom (CR-GC-296). Gerechnet hier, im Messwerk,
    * nicht beim Leser: generationStep projizierte sie bis CR-GC-502 selbst aus `violations`.
    */
-  phaseReadiness: PhaseGateReadiness[];
+  phaseReadiness: z.array(PhaseGateReadiness),
   /** CR-GC-598: die Fokusmenge (focus-set.ts) — was die Steuerung zeigt. */
-  focus: RuleViolation[];
-}
+  focus: z.array(RuleViolation),
+});
+export type SteeringSnapshot = z.infer<typeof SteeringSnapshotSchema>;
 
 /**
  * Snapshot des Steering-Zustands eines Graphen — der EINE Messpfad (s. Kopf).
@@ -72,7 +77,7 @@ export function takeSteeringSnapshot(
   // CR-SM-286: die Klammer ist entfallen — kein contracts-Modulzustand mehr.
   const violations = evaluateAllRules(og, policy);
   const focus = focusViolations(og, violations);
-  return {
+  const snapshot: SteeringSnapshot = {
     og,
     violations,
     // CR-GC-598: Fehler der FOKUSMENGE, die am Gate wirklich blocken — nicht jeder Fehler des
@@ -82,6 +87,12 @@ export function takeSteeringSnapshot(
     report: computeReadiness(og, policy),
     phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id }))),
   };
+  // CR-GC-644: die Laufzeitpruefung ist NOCH NICHT eingeschaltet — sie hat zwei echte Vertragsbrueche
+  // im `og` gefunden, die vorher geklaert sein muessen: `status` ausserhalb des Element-Vertrags
+  // (contracts widerspricht sich: CLOSED_STATUS kennt dropped/rejected, das Status-Enum nicht) und
+  // `kinds` als String statt Liste (das Gate prueft den Typ nicht). RC-04 meldet diesen Vertrag
+  // deshalb als „nicht an der Schnittstelle geparst" — benannt, nicht still. Siehe CR-GC-644.
+  return snapshot;
 }
 
 export const SteeringDimensionDelta = z.object({

@@ -12,7 +12,7 @@
 |---|---|---|
 | `SCHEMA-action` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-audit-record` | Konzept (noch kein Zod-Export) | reviewed |
-| `SCHEMA-audit-stats` | src/surface/audit.ts#AuditStats | reviewed |
+| `SCHEMA-audit-stats` | src/surface/audit.ts#AuditStatsSchema | reviewed |
 | `SCHEMA-candidate-probe` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
@@ -24,7 +24,7 @@
 | `SCHEMA-function-criticality` | packages/contracts/src/se/function-criticality.ts#FunctionCriticality | reviewed |
 | `SCHEMA-gate-outcome` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
-| `SCHEMA-graph-delta` | src/kernel/graph-store.ts#GraphDelta | n/a |
+| `SCHEMA-graph-delta` | src/kernel/graph-store.ts#GraphDeltaSchema | n/a |
 | `SCHEMA-harness-handle` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSlice | reviewed |
@@ -44,20 +44,20 @@
 | `SCHEMA-mutate-command` | packages/contracts/src/harness/index.ts#MutateCommandSchema | reviewed |
 | `SCHEMA-mutate-result` | packages/contracts/src/harness/index.ts#MutateResultSchema | reviewed |
 | `SCHEMA-ontology-graph` | packages/contracts/src/se/ontology.ts#OntologyGraph | reviewed |
-| `SCHEMA-ontology-json` | src/kernel/harness-import.ts#OntologyJson | n/a |
+| `SCHEMA-ontology-json` | src/kernel/harness-import.ts#OntologyJsonSchema | n/a |
 | `SCHEMA-phase-readiness` | src/kernel/measure/readiness.ts#PhaseGateReadiness | reviewed |
 | `SCHEMA-preflight-outcome` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-query-params` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
 | `SCHEMA-real-ref` | packages/contracts/src/se/ontology.ts#RealRefSchema | reviewed |
-| `SCHEMA-rejected-trace` | src/kernel/harness-import.ts#RejectedTrace | n/a |
+| `SCHEMA-rejected-trace` | src/kernel/harness-import.ts#RejectedTraceSchema | n/a |
 | `SCHEMA-round-injection` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-rule-violation` | packages/contracts/src/harness/index.ts#RuleViolationSchema | n/a |
 | `SCHEMA-schema-fingerprint` | src/kernel/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
 | `SCHEMA-steering-channel` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
-| `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshot | reviewed |
+| `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshotSchema | reviewed |
 | `SCHEMA-systemtest-artifacts` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-systemtest-order` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-systemtest-row` | Konzept (noch kein Zod-Export) | reviewed |
