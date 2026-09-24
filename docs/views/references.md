@@ -657,6 +657,8 @@
 | `CR-GC-656` | relation | `FUNC-read-openai-stream` |
 | `CR-GC-658` | relation | `FUNC-generation-step` |
 | `CR-GC-659` | relation | `FUNC-preflight` |
+| `CR-GC-659` | relation | `REQ-preflight-hygiene` |
+| `CR-GC-660` | relation | `FUNC-preflight` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
@@ -1585,6 +1587,7 @@
 | `FUNC-plan-code-lane` | satisfy | `REQ-selective-code-lane` |
 | `FUNC-preflight` | allocate | `MOD-loop` |
 | `FUNC-preflight` | io | `FLOW-preflight-outcome` |
+| `FUNC-preflight` | satisfy | `REQ-preflight-hygiene` |
 | `FUNC-rank-candidates` | allocate | `MOD-loop` |
 | `FUNC-rank-candidates` | io | `FLOW-candidate-ranking` |
 | `FUNC-rank-candidates` | satisfy | `REQ-steering-from-metrics` |
@@ -1790,6 +1793,7 @@
 | `REQ-graph-is-ssot` | compose | `REQ-held-back-traces-named` |
 | `REQ-one-gate-per-repo` | compose | `REQ-gate-only-writes` |
 | `REQ-single-kuzu-owner` | compose | `REQ-store-owner-lifecycle` |
+| `REQ-small-model-viable` | compose | `REQ-preflight-hygiene` |
 | `REQ-token-efficiency` | compose | `REQ-benchmark-harness` |
 | `REQ-token-efficiency` | compose | `REQ-precise-context` |
 | `SYS-graphcode` | compose | `MOD-agent-surface` |
@@ -1912,6 +1916,7 @@
 | `TEST-executor-bestofn` | verify | `REQ-one-driver-local-and-frontier` |
 | `TEST-executor-bestofn` | verify | `REQ-target-shifts-ranking` |
 | `TEST-executor-config-contract` | verify | `SCHEMA-executor-config` |
+| `TEST-executor-preflight` | verify | `REQ-preflight-hygiene` |
 | `TEST-executor-preflight` | verify | `REQ-small-model-viable` |
 | `TEST-export-graph-guard` | verify | `REQ-deterministic-serialization` |
 | `TEST-export-graph-guard` | verify | `REQ-export-no-clobber` |

@@ -179,6 +179,41 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
     parsed.push(r.data);
   }
 
+  // --- Kein Ueberschreiben bestehender Knoten (CR-GC-660) ---------------------
+  // `+` auf eine uid, die der Graph schon mit DEMSELBEN Typ fuehrt, ist im Executor fast nie eine
+  // gewollte Aenderung: das Modell deklariert den Knoten neu, um eine Kante daran zu haengen.
+  // Gemessen (gcrun-100..102): 26 von 45 solchen Zeilen ueberschrieben Text oder Namen, teils mit
+  // dem Beispieltext des Vorbilds. Der Knoten existiert, die Kante braucht ihn nicht neu (CR-GC-310);
+  // gewollte Aenderungen gehen mit `~` (update-node) und laufen hier unveraendert durch.
+  const fixes: string[] = [];
+  const ohneNeudeklaration = parsed.filter((c) => {
+    if (c.op !== 'add-node' || known.types.get(c.node.uid) !== c.node.type) return true;
+    fixes.push(`bestehender Knoten ${c.node.uid} nicht ueberschrieben (aendern mit ~)`);
+    return false;
+  });
+  if (ohneNeudeklaration.length === 0) {
+    // Nichts Neues: eine leere Liste waere am Gate ein Formfehler — hier steht, was stattdessen gilt.
+    return {
+      action: 'blocked',
+      input: raw,
+      fixes: [],
+      violations: [
+        {
+          // Keine Katalogregel: der Preflight stellt fest, dass der Batch leer liefe — das ist kein
+          // Befund am Modell, also auch keine Regel-ID aus dem Katalog.
+          ruleId: 'PREFLIGHT-LEER',
+          severity: 'error',
+          message: 'Der Batch deklariert nur Knoten, die es schon gibt — er aendert nichts.',
+          fixHint:
+            'Neue Kanten zwischen bestehenden Knoten ohne Knotenzeile schreiben (## Edges / + A -kante-> B); ' +
+            'einen Text aendern mit ~ uid|neuer Text.',
+        },
+      ],
+    };
+  }
+  parsed.length = 0;
+  parsed.push(...ohneNeudeklaration);
+
   // uid → Typ über Graph ∪ Batch (add-nodes zählen als vorhanden).
   const typeOf = new Map(known.types);
   for (const c of parsed) if (c.op === 'add-node') typeOf.set(c.node.uid, c.node.type);
@@ -192,7 +227,6 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
     return k.length > 0 ? k : undefined;
   };
 
-  const fixes: string[] = [];
   const violations: PreflightViolation[] = [];
 
   // --- R-18: Trace-Paar-Legalität; nur die Gegenrichtung legal → Auto-Flip ---

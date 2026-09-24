@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 267 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 268 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 267 CR · 201 done · 0 open.
+Total: 268 CR · 201 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -329,3 +329,4 @@ Total: 267 CR · 201 done · 0 open.
 | `CR-GC-657` | n/a | REQ-Beispiele ohne kinds — FUNC satisfy REQ wird illegal (auch das SYSTEM-Beispiel selbst) |
 | `CR-GC-658` | n/a | UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids |
 | `CR-GC-659` | n/a | Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis |
+| `CR-GC-660` | n/a | Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt |

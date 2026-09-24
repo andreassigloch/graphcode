@@ -2229,6 +2229,12 @@
       "description": "docs/cr/open/CR-GC-659-preflight-meldung-zu-func-satisfy-req-ne.md"
     },
     {
+      "id": "CR-GC-660",
+      "type": "CR",
+      "name": "Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt",
+      "description": "docs/cr/open/CR-GC-660-executor-auf-bestehende-knoten-ueberschr.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5852,6 +5858,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-preflight-hygiene",
+      "type": "REQ",
+      "name": "Batch-Hygiene vor dem Gate",
+      "description": "Das System muss einen Kandidaten-Batch des Executors vor dem Gate deterministisch pruefen und reparieren, was eindeutig reparierbar ist (R-01-Stub, R-18-Umkehr), jede Blockade mit einem reparierbaren Hinweis begruenden und keinen bestehenden Knoten durch Neu-Deklaration ueberschreiben.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -12887,6 +12902,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-659",
+      "target": "REQ-preflight-hygiene",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-660",
+      "target": "FUNC-preflight",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -17746,6 +17771,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-preflight",
+      "target": "REQ-preflight-hygiene",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-rank-candidates",
       "target": "MOD-loop",
       "type": "allocate"
@@ -18825,6 +18855,11 @@
       "type": "compose"
     },
     {
+      "source": "REQ-small-model-viable",
+      "target": "REQ-preflight-hygiene",
+      "type": "compose"
+    },
+    {
       "source": "REQ-token-efficiency",
       "target": "REQ-benchmark-harness",
       "type": "compose"
@@ -19516,6 +19551,11 @@
     {
       "source": "TEST-executor-config-contract",
       "target": "SCHEMA-executor-config",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-executor-preflight",
+      "target": "REQ-preflight-hygiene",
       "type": "verify"
     },
     {
@@ -21226,5 +21266,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 456
+  "graphVersion": 458
 }

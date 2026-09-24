@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 143 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 144 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -1427,6 +1427,14 @@ Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integr
 Prueft einen Kandidaten-Batch vor dem Gate und vervollstaendigt, was mechanisch entscheidbar ist. Was unklar bleibt, geht unveraendert ans Gate statt geraten zu werden.
 
 io ◀ `FLOW-candidate-batch` · io ▶ `FLOW-preflight-outcome` · allocate ▶ `MOD-loop`
+
+###### `REQ-preflight-hygiene` — Batch-Hygiene vor dem Gate
+
+Das System muss einen Kandidaten-Batch des Executors vor dem Gate deterministisch pruefen und reparieren, was eindeutig reparierbar ist (R-01-Stub, R-18-Umkehr), jede Blockade mit einem reparierbaren Hinweis begruenden und keinen bestehenden Knoten durch Neu-Deklaration ueberschreiben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-executor-preflight` (integration) · satisfy ◀ `FUNC-preflight` · allocate ▶ `MOD-loop`
 
 ##### 3.2.3.8  `FUNC-call-model` — buildCallModel(config)
 
@@ -5762,6 +5770,14 @@ Prueft einen Kandidaten-Batch vor dem Gate und vervollstaendigt, was mechanisch 
 
 io ◀ `FLOW-candidate-batch` · io ▶ `FLOW-preflight-outcome` · allocate ▶ `MOD-loop`
 
+###### `REQ-preflight-hygiene` — Batch-Hygiene vor dem Gate
+
+Das System muss einen Kandidaten-Batch des Executors vor dem Gate deterministisch pruefen und reparieren, was eindeutig reparierbar ist (R-01-Stub, R-18-Umkehr), jede Blockade mit einem reparierbaren Hinweis begruenden und keinen bestehenden Knoten durch Neu-Deklaration ueberschreiben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-executor-preflight` (integration) · satisfy ◀ `FUNC-preflight` · allocate ▶ `MOD-loop`
+
 ###### 3.10.4.2.7  `FUNC-run-executor` — runExecutor
 
 > auch in: `FCHAIN-steering-loop`
@@ -7776,7 +7792,7 @@ verify ▶ `SCHEMA-executor-config` · testRefs: `tests/executor-config-contract
 
 Abnahme der Datei tests/executor.preflight.test.ts: der Preflight vervollstaendigt einen Batch deterministisch aus den Contracts-Importen, bevor das Gate urteilt, und bleibt bei Unsicherheit passiv. Er ist Hygiene, kein zweites Gate; genau daran haengt, dass kleine Modelle die Tuer treffen.
 
-verify ▶ `REQ-small-model-viable` · testRefs: `tests/executor.preflight.test.ts`
+verify ▶ `REQ-preflight-hygiene` · `REQ-small-model-viable` · testRefs: `tests/executor.preflight.test.ts`
 
 ### 8.32  `TEST-export-graph-guard` — Kanonizitaets-Wache des Exports
 
@@ -8392,4 +8408,4 @@ verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/m
 
 ## 9  Traceability summary
 
-143 REQ · 143 verified · 0 without a verifying TEST (R-01).
+144 REQ · 144 verified · 0 without a verifying TEST (R-01).
