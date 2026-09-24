@@ -198,35 +198,40 @@ export function projectAuditEntries(
 // Aggregation (across records) — CR-GC-347
 // -------------------------------------------------------------------------
 
-export interface RuleStat {
-  ruleId: string;
+// CR-GC-644: die Kennzahlen des Audit-Berichts sind ein Zod-Vertrag, kein Typ — `aggregateAuditEntries`
+// prueft seine Ausgabe, bevor sie den Bericht verlaesst.
+export const RuleStatSchema = z.object({
+  ruleId: z.string(),
   /** Records with result 'rejected' that carried this rule as an ERROR — blockades, not findings. */
-  blocked: number;
+  blocked: z.number(),
   /** Occurrences in total, every severity — the finding count, which is a different number. */
-  occurrences: number;
-  bySeverity: { error: number; warning: number; info: number };
+  occurrences: z.number(),
+  bySeverity: z.object({ error: z.number(), warning: z.number(), info: z.number() }),
   /** From `rulesPassed`. `null` means NOT RECORDED, never "passed zero times". */
-  passed: number | null;
+  passed: z.number().nullable(),
   /** `null` whenever the population is incomplete — never optimistically computed. */
-  passRate: number | null;
-}
+  passRate: z.number().nullable(),
+});
+export type RuleStat = z.infer<typeof RuleStatSchema>;
 
-export interface ConsumerStat {
-  consumerId: string;
-  applied: number;
-  rejected: number;
+export const ConsumerStatSchema = z.object({
+  consumerId: z.string(),
+  applied: z.number(),
+  rejected: z.number(),
   /** `null` on a tie — an invented winner is worse than no winner. */
-  topBlockingRule: string | null;
-}
+  topBlockingRule: z.string().nullable(),
+});
+export type ConsumerStat = z.infer<typeof ConsumerStatSchema>;
 
-export interface ModelStat {
-  model: string;
-  applied: number;
-  rejected: number;
-  topBlockingRule: string | null;
-}
+export const ModelStatSchema = z.object({
+  model: z.string(),
+  applied: z.number(),
+  rejected: z.number(),
+  topBlockingRule: z.string().nullable(),
+});
+export type ModelStat = z.infer<typeof ModelStatSchema>;
 
-export interface AuditStats {
+export const AuditStatsSchema = z.object({
   /**
    * What this answer actually covered (CR-GC-349).
    *
@@ -236,20 +241,21 @@ export interface AuditStats {
    * result. Both are `0` on a never-compacted log; that zero is a measurement, not a gap, which
    * is why it is not `null` (contrast `passed`/`passRate` below).
    */
-  window: {
-    since: string | null;
-    until: string | null;
-    entries: number;
-    archives: number;
-    checkpointVersion: number;
-  };
-  totals: { applied: number; rejected: number; partial: number };
-  byRule: RuleStat[];
-  byConsumer: ConsumerStat[];
+  window: z.object({
+    since: z.string().nullable(),
+    until: z.string().nullable(),
+    entries: z.number(),
+    archives: z.number(),
+    checkpointVersion: z.number(),
+  }),
+  totals: z.object({ applied: z.number(), rejected: z.number(), partial: z.number() }),
+  byRule: z.array(RuleStatSchema),
+  byConsumer: z.array(ConsumerStatSchema),
   /** CR-GC-354/355: the dimension CR-GC-284 broke down by and could not read from a record. */
-  byModel: ModelStat[];
-  graphVersion: number;
-}
+  byModel: z.array(ModelStatSchema),
+  graphVersion: z.number(),
+});
+export type AuditStats = z.infer<typeof AuditStatsSchema>;
 
 /**
  * The most-blocking rule for one actor, or `null` on a tie.
@@ -410,7 +416,7 @@ export function aggregateAuditEntries(
     }))
     .sort((a, b) => b.rejected - a.rejected || b.applied - a.applied || a.model.localeCompare(b.model));
 
-  return {
+  return AuditStatsSchema.parse({
     window: {
       since,
       until,
@@ -423,7 +429,7 @@ export function aggregateAuditEntries(
     byConsumer,
     byModel,
     graphVersion,
-  };
+  });
 }
 
 // -------------------------------------------------------------------------

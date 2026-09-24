@@ -2110,6 +2110,12 @@
       "description": "docs/cr/open/CR-GC-643-graphcode-testrefs-realref-ueber-den-fam.md"
     },
     {
+      "id": "CR-GC-644",
+      "type": "CR",
+      "name": "Fuenf lokale Typ-Vertraege werden Zod, Erzeuger parsen ihre Ausgabe",
+      "description": "docs/cr/open/CR-GC-644-fuenf-lokale-typ-vertraege-werden-zod-er.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6256,7 +6262,7 @@
       "status": "reviewed",
       "realRef": {
         "file": "src/surface/audit.ts",
-        "symbol": "AuditStats",
+        "symbol": "AuditStatsSchema",
         "lang": "ts"
       }
     },
@@ -6396,7 +6402,7 @@
       "description": "Was ein vom Gate angenommener Batch im Store aendert: upsert/delete je Knoten und Kante. Schreibreihenfolge Knoten, Kanten, Loeschungen zuletzt. (CR-GC-503)",
       "realRef": {
         "file": "src/kernel/graph-store.ts",
-        "symbol": "GraphDelta",
+        "symbol": "GraphDeltaSchema",
         "lang": "ts"
       }
     },
@@ -6625,7 +6631,7 @@
       "description": "Die materialisierte Graph-Datei docs/graph/<systemId>.graph.json: elements und traces. Eingang von Seed und Reseed. (CR-GC-503)",
       "realRef": {
         "file": "src/kernel/harness-import.ts",
-        "symbol": "OntologyJson",
+        "symbol": "OntologyJsonSchema",
         "lang": "ts"
       }
     },
@@ -6691,7 +6697,7 @@
       "description": "Eine am Seed zurueckgehaltene Kante: source, target, type und der Grund no-pattern. Traeger zwischen Seed-Pruefung, Readiness-Report und Export-Verweigerung. (CR-GC-530)",
       "realRef": {
         "file": "src/kernel/harness-import.ts",
-        "symbol": "RejectedTrace",
+        "symbol": "RejectedTraceSchema",
         "lang": "ts"
       }
     },
@@ -6764,7 +6770,7 @@
       "status": "reviewed",
       "realRef": {
         "file": "src/kernel/measure/steering-snapshot.ts",
-        "symbol": "SteeringSnapshot",
+        "symbol": "SteeringSnapshotSchema",
         "lang": "ts"
       }
     },
@@ -12518,6 +12524,31 @@
     {
       "source": "CR-GC-643",
       "target": "SCHEMA-test-refs",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-644",
+      "target": "SCHEMA-audit-stats",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-644",
+      "target": "SCHEMA-graph-delta",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-644",
+      "target": "SCHEMA-ontology-json",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-644",
+      "target": "SCHEMA-rejected-trace",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-644",
+      "target": "SCHEMA-steering-snapshot",
       "type": "relation"
     },
     {
@@ -20805,5 +20836,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 418
+  "graphVersion": 420
 }

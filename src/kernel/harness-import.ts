@@ -20,6 +20,7 @@
 import { readFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { traceRejection } from '@sigloch/contracts/se';
 import type { ElementType, ReqKind, TraceType } from '@sigloch/contracts/se';
@@ -38,19 +39,26 @@ export function graphSnapshotRel(systemId: string): string {
   return join('docs', 'graph', `${systemId}.graph.json`);
 }
 
-/** Shape of the materialized OntologyGraph in docs/graph/*.graph.json. */
-export interface OntologyJson {
-  elements: Array<{ id: string; type: string; name: string; description?: string; [k: string]: unknown }>;
-  traces: Array<{ source: string; target: string; type: string; [k: string]: unknown }>;
-}
+/**
+ * Shape of the materialized OntologyGraph in docs/graph/*.graph.json — ein Zod-Schema, kein Typ
+ * (CR-GC-644). Die Datei kommt von der Platte und wurde bis hierher per `as` behauptet; jetzt wird
+ * sie geprueft, wo sie das Programm betritt. Elemente und Kanten bleiben LOSE: die flachen
+ * Attribute (testRefs, realRef, kinds, …) haben ihre eigenen Vertraege und Leser.
+ */
+export const OntologyJsonSchema = z.object({
+  elements: z.array(z.looseObject({ id: z.string(), type: z.string(), name: z.string(), description: z.string().optional() })),
+  traces: z.array(z.looseObject({ source: z.string(), target: z.string(), type: z.string() })),
+});
+export type OntologyJson = z.infer<typeof OntologyJsonSchema>;
 
-/** A committed trace the store cannot hold: no TRACE_PATTERN admits its type pair (CR-GC-530). */
-export interface RejectedTrace {
-  source: string;
-  target: string;
-  type: string;
-  reason: 'no-pattern';
-}
+/** A committed trace the store cannot hold: no TRACE_PATTERN admits its type pair (CR-GC-530). Zod seit CR-GC-644. */
+export const RejectedTraceSchema = z.object({
+  source: z.string(),
+  target: z.string(),
+  type: z.string(),
+  reason: z.literal('no-pattern'),
+});
+export type RejectedTrace = z.infer<typeof RejectedTraceSchema>;
 
 export interface ImportResult {
   nodes: number;
@@ -111,9 +119,11 @@ export function ensureSystemNode(nodes: GraphNode[], systemId: string): GraphNod
  */
 export async function importOntologyGraph(
   target: ImportTarget,
-  ontology: OntologyJson,
+  input: unknown,
   opts?: { rejectUnverifiedReqs?: boolean },
 ): Promise<ImportResult> {
+  // CR-GC-644: der Vertrag der SSOT-Datei wird hier geprueft — jeder Bulk-Pfad laeuft hier durch.
+  const ontology = OntologyJsonSchema.parse(input);
   // Single import mapping, shared with scripts/export-graph.mjs (CR-GC-219): flattens the
   // redundant nested `attributes` artifact so the SSOT never carries it.
   // CR-GC-302: the SYS anchor is ensured HERE, on the one choke point every bulk path
@@ -138,7 +148,7 @@ export async function importOntologyGraph(
     const src = nodeByUid.get(e.sourceId);
     const tgt = nodeByUid.get(e.targetId);
     if (!src || !tgt || !noPatternFor(src, tgt, e)) return true; // dangling endpoint → R-08, not this check
-    rejectedTraces.push({ source: e.sourceId, target: e.targetId, type: e.edgeType, reason: 'no-pattern' });
+    rejectedTraces.push(RejectedTraceSchema.parse({ source: e.sourceId, target: e.targetId, type: e.edgeType, reason: 'no-pattern' }));
     return false;
   });
 
@@ -195,7 +205,7 @@ function noPatternFor(src: GraphNode, tgt: GraphNode, e: GraphEdge): boolean {
 export function heldBackTraces(repoRoot: string, systemId: string, live: Graph): RejectedTrace[] {
   const abs = join(repoRoot, graphSnapshotRel(systemId));
   if (!existsSync(abs)) return [];
-  const committed = JSON.parse(readFileSync(abs, 'utf8')) as OntologyJson;
+  const committed = OntologyJsonSchema.parse(JSON.parse(readFileSync(abs, 'utf8')));
   const nodeByUid = new Map(
     committed.elements.map((el) => {
       const n = elementToNode(el as Record<string, unknown>);
@@ -208,7 +218,7 @@ export function heldBackTraces(repoRoot: string, systemId: string, live: Graph):
     const src = nodeByUid.get(e.sourceId);
     const tgt = nodeByUid.get(e.targetId);
     return src && tgt && noPatternFor(src, tgt, e)
-      ? [{ source: e.sourceId, target: e.targetId, type: e.edgeType, reason: 'no-pattern' as const }]
+      ? [RejectedTraceSchema.parse({ source: e.sourceId, target: e.targetId, type: e.edgeType, reason: 'no-pattern' })]
       : [];
   });
 }
@@ -221,7 +231,7 @@ export async function seedFromJsonFile(
 ): Promise<ImportResult> {
   const abs = join(target.repoRoot, relPath);
   const raw = await readFile(abs, 'utf8');
-  return importOntologyGraph(target, JSON.parse(raw) as OntologyJson, opts);
+  return importOntologyGraph(target, JSON.parse(raw), opts);
 }
 
 /**

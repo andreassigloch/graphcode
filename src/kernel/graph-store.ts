@@ -20,19 +20,26 @@
  */
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import type { StorageAdapter, Graph, GraphNode, GraphEdge, OntologyDescriptor } from '@sigloch/graph-api-core';
+import { z } from 'zod/v4';
+import { GraphNodeSchema, GraphEdgeSchema } from '@sigloch/graph-api-core';
+import type { StorageAdapter, Graph, OntologyDescriptor } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { StoreLock } from './store-lock.js';
 import { graphSnapshotRel, applyReseed, type ImportTarget } from './harness-import.js';
 import { schemaFingerprint, readStoredFingerprint, writeStoredFingerprint, resetKuzuStore } from './schema-guard.js';
 
-/** Was ein angenommener Batch im Store aendert. */
-export interface GraphDelta {
-  upsertNodes: GraphNode[];
-  deleteNodes: string[];
-  upsertEdges: GraphEdge[];
-  deleteEdges: Array<{ sourceId: string; targetId: string; edgeType: string }>;
-}
+/**
+ * Was ein angenommener Batch im Store aendert — ein Zod-Schema, kein Typ (CR-GC-644). Knoten und
+ * Kanten tragen die Vertraege der Familie (graph-api-core); `commit` prueft das Delta, bevor es
+ * auf die Platte geht.
+ */
+export const GraphDeltaSchema = z.object({
+  upsertNodes: z.array(GraphNodeSchema),
+  deleteNodes: z.array(z.string()),
+  upsertEdges: z.array(GraphEdgeSchema),
+  deleteEdges: z.array(z.object({ sourceId: z.string(), targetId: z.string(), edgeType: z.string() })),
+});
+export type GraphDelta = z.infer<typeof GraphDeltaSchema>;
 
 export interface GraphStoreOptions {
   readonly storage: StorageAdapter;
@@ -118,6 +125,8 @@ export class GraphStore {
    */
   async commit(candidate: Graph, delta: GraphDelta | null): Promise<void> {
     if (delta) {
+      // CR-GC-644: der Vertrag wird an der Persistenzgrenze geprueft, nicht beim Erzeuger behauptet.
+      GraphDeltaSchema.parse(delta);
       const { storage } = this.opts;
       // Order: nodes before edges (FK), deletes last.
       if (delta.upsertNodes.length) await storage.saveNodes(delta.upsertNodes);

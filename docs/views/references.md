@@ -617,6 +617,11 @@
 | `CR-GC-642` | relation | `SCHEMA-format-e` |
 | `CR-GC-643` | relation | `SCHEMA-real-ref` |
 | `CR-GC-643` | relation | `SCHEMA-test-refs` |
+| `CR-GC-644` | relation | `SCHEMA-audit-stats` |
+| `CR-GC-644` | relation | `SCHEMA-graph-delta` |
+| `CR-GC-644` | relation | `SCHEMA-ontology-json` |
+| `CR-GC-644` | relation | `SCHEMA-rejected-trace` |
+| `CR-GC-644` | relation | `SCHEMA-steering-snapshot` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
