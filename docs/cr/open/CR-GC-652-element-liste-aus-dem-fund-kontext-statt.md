@@ -65,8 +65,26 @@ neuer Knoten `FUNC-fund-kontext`.
       (kein Aufstieg), Waise (`ohneBesitzer`, keine Ersatzliste), Vereinigung, Typfilter (7 Faelle).
 - [x] Echter Store: Fund am SYS bekommt MOD/SYS, keinen UC; Waise → „Kein Besitzer im Modell".
 - [x] Seed ohne Fund: Typ-Pfad unveraendert (bestehende Budget-Tests gruen).
-- [ ] **Rig-Abnahme** `results-runde19-gcrun-652.json` gegen `-nach` (CR-GC-650/651) und `-vor`.
-      Kipp: mehr Lese-Aufrufe des Modells als in `-nach` = die Liste enthaelt das Falsche.
+- [ ] **Rig-Abnahme — NICHT bestanden (2026-09-24).** `results-runde19-gcrun-652.json` gegen
+      `-nach` (CR-GC-650/651), gcrun, sigllm-gcrun, qwen3-coder-30b, N=3:
+
+      | Mittel je Lauf | nachher (650+651) | + CR-GC-652 |
+      |---|---:|---:|
+      | Elemente | 50,7 | 44,0 (51/35/46) |
+      | Gate-Ablehnungen | 3,0 | 3,0 |
+      | Tokens ein / aus | 210k / 9,1k | 174k / 8,2k |
+      | Laufzeit | 186 s | 202 s |
+      | Lese-Aufrufe des Modells | 106 | **127 (+20 %)** |
+      | davon graph_elements / get_node / Guide | 59 / 44 / 3 | 63 / 50 / 5 |
+
+      Nach dem vorher festgelegten Kipp-Kriterium verfehlt: die Liste spart Prompt (−17 % Eingabe),
+      senkt die Nachfragen des Modells aber nicht — `graph_elements` bleibt bei ~60 je Lauf, gleich
+      ob die Liste nach Typ oder nach Kontext geschnitten ist. Die Nachfragen haengen damit offenbar
+      nicht am Inhalt der Liste. WAS das Modell sucht, ist nicht messbar: die Trace protokolliert
+      Werkzeugnamen, keine Argumente. N=3 ist fuer die Elementzahl zu klein.
+
+      **Stand:** Code und Modell sind auf master (vorgespult vor Ende der Messung). Der CR bleibt
+      offen bis zur Entscheidung: Argumente in die Trace, erneut messen — oder zuruecknehmen.
 
 ## Nicht in diesem CR
 
