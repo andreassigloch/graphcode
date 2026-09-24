@@ -93,6 +93,7 @@
 | `FUNC-plan-code-lane` | FUNC | Code-Spur planen |
 | `FUNC-preflight` | FUNC | preflightBatch |
 | `FUNC-rank-candidates` | FUNC | rankCandidates(probes, focus) |
+| `FUNC-read-openai-stream` | FUNC | leseOpenAiAntwort |
 | `FUNC-read-tools` | FUNC | bindReadTools(ctx) |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
 | `FUNC-reseed` | FUNC | reseed(relPath) |
@@ -233,6 +234,7 @@
 | `FUNC-plan-code-lane` | `MOD-projections` |
 | `FUNC-preflight` | `MOD-loop` |
 | `FUNC-rank-candidates` | `MOD-loop` |
+| `FUNC-read-openai-stream` | `MOD-loop` |
 | `FUNC-read-tools` | `MOD-surface` |
 | `FUNC-render-views` | `MOD-agent-surface` |
 | `FUNC-reseed` | `MOD-kernel` |

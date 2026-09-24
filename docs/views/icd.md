@@ -133,7 +133,7 @@
 | `FLOW-mcp-tool-registry` | `FUNC-bind-tools` | `FUNC-serve-stdio` |
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-generation-step` |
 | `FLOW-metric-policy` | `FUNC-load-config` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` |
-| `FLOW-model-answer` | `ACTOR-llm` | `FUNC-call-model` · `FUNC-extract-mutate` · `FUNC-run-executor` |
+| `FLOW-model-answer` | `ACTOR-llm` | `FUNC-call-model` · `FUNC-extract-mutate` · `FUNC-read-openai-stream` · `FUNC-run-executor` |
 | `FLOW-model-request` | `FUNC-run-executor` | `FUNC-call-model` |
 | `FLOW-model-wire-request` | `FUNC-call-model` | `ACTOR-llm` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` |

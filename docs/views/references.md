@@ -650,6 +650,11 @@
 | `CR-GC-653` | relation | `FUNC-build-round-injection` |
 | `CR-GC-653` | relation | `FUNC-inventory-channel` |
 | `CR-GC-653` | relation | `FUNC-run-executor` |
+| `CR-GC-654` | relation | `FUNC-run-executor` |
+| `CR-GC-655` | relation | `FUNC-build-round-injection` |
+| `CR-GC-655` | relation | `FUNC-generation-step` |
+| `CR-GC-656` | relation | `FUNC-call-model` |
+| `CR-GC-656` | relation | `FUNC-read-openai-stream` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
@@ -828,6 +833,7 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-nd-similarity` |
 | `FCHAIN-steering-loop` | compose | `FUNC-preflight` |
 | `FCHAIN-steering-loop` | compose | `FUNC-rank-candidates` |
+| `FCHAIN-steering-loop` | compose | `FUNC-read-openai-stream` |
 | `FCHAIN-steering-loop` | compose | `FUNC-run-executor` |
 | `FCHAIN-steering-loop` | compose | `FUNC-run-verb` |
 | `FCHAIN-steering-loop` | compose | `FUNC-take-steering-snapshot` |
@@ -1021,6 +1027,7 @@
 | `FLOW-metric-policy` | relation | `SCHEMA-metric-policy` |
 | `FLOW-model-answer` | io | `FUNC-call-model` |
 | `FLOW-model-answer` | io | `FUNC-extract-mutate` |
+| `FLOW-model-answer` | io | `FUNC-read-openai-stream` |
 | `FLOW-model-answer` | io | `FUNC-run-executor` |
 | `FLOW-model-answer` | relation | `SCHEMA-model-answer` |
 | `FLOW-model-request` | io | `FUNC-call-model` |
@@ -1579,6 +1586,8 @@
 | `FUNC-rank-candidates` | allocate | `MOD-loop` |
 | `FUNC-rank-candidates` | io | `FLOW-candidate-ranking` |
 | `FUNC-rank-candidates` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-read-openai-stream` | allocate | `MOD-loop` |
+| `FUNC-read-openai-stream` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-read-tools` | allocate | `MOD-surface` |
 | `FUNC-read-tools` | io | `FLOW-formatE-artifact-read-tools` |
 | `FUNC-read-tools` | satisfy | `REQ-progressive-expansion` |
