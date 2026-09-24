@@ -9,7 +9,7 @@ A use case is the ConOps entry point: the **plainest** statement of who does wha
 
 ## The style rule (self-check before you write)
 - **Terse:** the `description` is **≤25 words**, active voice, **Actor–Verb–Object–Outcome**. No implementation detail (no module names, no data shapes, no "via X").
-- **Jargon budget: ≤2 technical terms.** Every term you spend MUST already exist as a `SCHEMA` or `REQ` node (query `graph_elements {type:"SCHEMA"}` / `{type:"REQ"}`). A term with no node is undefined — rephrase in plain words instead. Define a term once; do not repeat it.
+- **Jargon budget: ≤2 technical terms.** Every term you spend MUST already exist as a `SCHEMA` or `REQ` node. A term with no node is undefined — rephrase in plain words instead. Define a term once; do not repeat it.
 - If you cannot say it in ≤25 words with ≤2 grounded terms, the use case is doing too much — split it.
 
 ## Write it through the gate
@@ -27,6 +27,8 @@ Emit ONE `graph_mutate` batch as Format-E — the UC with its `compose` to the `
 
 A UC with no `compose` to a `FCHAIN` raises **`UC-03`** ("no FCHAIN scenario", warning), and **`FC-02`** on top of it while the UC is a leaf. Both are warnings, so the batch still applies; what BLOCKS is `UC-01` (no `compose` to a REQ) and `UC-02` (no ACTOR path).
 <!-- inject:end -->
+
+To check the jargon budget, query `graph_elements {type:"SCHEMA"}` / `{type:"REQ"}` for the terms you intend to use.
 
 (The style rule is also an executable linter, `src/projections/se-author-uc.ts` / `TEST-uc-authoring-style` — style is a **warning**, not a gate error, so a slightly-long UC is flagged, never blocked.)
 

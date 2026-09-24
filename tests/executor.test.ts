@@ -326,6 +326,14 @@ describe('executor (CR-GC-278)', () => {
     expect(SYSTEM).toContain(`NUR diese ${ElementType.options.length}`);
   });
 
+  it('CR-GC-653: SYSTEM sagt, wer Duplikate prueft — und keiner der Kanaele verlangt die Vorab-Suche', async () => {
+    expect(SYSTEM).toContain('Duplikate prüft der Treiber beim Einreichen');
+    expect(SYSTEM).toContain('den SYS nicht nachlesen');
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    const out = await buildRoundInjection(registry, { focusTypes: ['UC'], focusDimension: 'uc' });
+    expect(out, 'die Liste widerspraeche sonst dem SYSTEM').not.toContain('keine Duplikate anlegen');
+  });
+
   it("toolset 'authoring' curates the minimal generative set (base-load lever)", () => {
     const names = buildToolSpecs(registry, 'authoring').map((s) => s.name);
     expect(names).toContain('graphcode_graph_mutate');

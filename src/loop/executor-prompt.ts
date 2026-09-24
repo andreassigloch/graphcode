@@ -53,10 +53,18 @@ Format-E (exakt; Knoten unter "## Nodes" in ihrer "### <TYP>"-Sektion, Kanten un
 "+" legt an, "~ uid|Text" ändert einen Knoten (nur was die Zeile nennt), "- uid" löscht. Mehrere Ziele einer
 Kante: "+ A -verify-> B, C". uid = "<TYP>-<kebab-name>". Nie " -wort-> " in einer Beschreibung.
 Nutze GENAU die Kanten aus der Instruktion und existierende uids aus der Element-Liste.
+Schlage nur nach, was fehlt: Duplikate prüft der Treiber beim Einreichen und meldet Treffer im Feedback —
+nicht vorab per Stichwort suchen. Die Systemintention steht in der Instruktion, den SYS nicht nachlesen;
+was du selbst angelegt hast, kennst du.
 Lehnt das Gate deinen Batch ab (success:false), korrigiere NUR die beanstandeten Zeilen anhand der
 violations/fixHints und reiche den VOLLSTÄNDIGEN korrigierten Batch erneut ein.
 list_dir/read_file/grep über ./material nur sparsam, um echte Modul-Namen zu finden — nicht statt Bauen.
 Handeln vor Analysieren: rufe graph_mutate, rate die Instruktion nicht tot.`;
+
+// CR-GC-653: der Satz „Schlage nur nach, was fehlt" im SYSTEM ist gemessen, nicht geraten — mit
+// Argument-Trace (gcrun-40..42) kamen ~90 von 416 Lese-Aufrufen aus Stichwortsuchen vor dem Anlegen
+// (fast alle leer), 17 aus dem Nachlesen des SYS. Die Duplikat-Pruefung macht der Gate-Zugang ohnehin
+// (duplicateHits, CR-GC-287); sie vorab vom Modell zu verlangen, war die doppelte Arbeit.
 
 // CR-GC-650: der Executor emittiert Format-E statt `commands` — gemessen 84–94 statt 223–279 Zeichen
 // je geschriebenem Element (CR-GC-627), und lokal bestimmt die Ausgabelaenge die Wall-Zeit. Die Form

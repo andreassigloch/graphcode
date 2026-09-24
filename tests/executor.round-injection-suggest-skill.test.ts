@@ -203,6 +203,8 @@ describe('CR-GC-651: der injizierte Skill-Ausschnitt passt zum Executor', () => 
       expect(anleitung).not.toContain('"op"');
       expect(anleitung).not.toContain('graph_generate');
       expect(anleitung).not.toContain('rules_get_violations');
+      // CR-GC-653: 22 von 22 SCHEMA-Abfragen im Rig kamen leer zurueck — ausgeloest von genau diesem Satz.
+      expect(anleitung).not.toContain('{type:"SCHEMA"}');
     });
   }
 });
