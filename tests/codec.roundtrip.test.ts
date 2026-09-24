@@ -18,7 +18,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { FORMAT_E_CODEC } from '../src/surface/format-e-commands.js';
+import { SE_FORMAT_E_CODEC } from '@sigloch/graph-api-core';
 import { knotenAus, kantenAus } from './helpers/format-e.js';
 import { elementToNode } from '../src/kernel/element-node.js';
 
@@ -171,8 +171,8 @@ describe('TEST-roundtrip: Format-E (SSOT fixture)', () => {
     );
     fixture = ontologyJsonToGraph(raw);
 
-    encoded1 = FORMAT_E_CODEC.serialize(fixture, { roundTrip: true });
-    encoded2 = FORMAT_E_CODEC.serialize(fixture, { roundTrip: true });
+    encoded1 = SE_FORMAT_E_CODEC.serialize(fixture, { roundTrip: true });
+    encoded2 = SE_FORMAT_E_CODEC.serialize(fixture, { roundTrip: true });
   });
 
   it('(a) encode is deterministic: two calls are byte-identical', () => {
@@ -245,7 +245,7 @@ describe('TEST-roundtrip: Format-E (SSOT fixture)', () => {
       ],
       edges: [],
     };
-    const text = FORMAT_E_CODEC.serialize(mitStempel, { roundTrip: true });
+    const text = SE_FORMAT_E_CODEC.serialize(mitStempel, { roundTrip: true });
 
     expect(text).toContain('__createdAt:2026-01-01T00:00:00.000Z');
     expect(text).toContain('__updatedAt:2026-02-02T00:00:00.000Z');
@@ -299,7 +299,7 @@ describe('TEST-roundtrip: Format-E (SSOT fixture)', () => {
       ],
       edges: [],
     };
-    const enc = FORMAT_E_CODEC.serialize(g, { roundTrip: true });
+    const enc = SE_FORMAT_E_CODEC.serialize(g, { roundTrip: true });
     expect(enc).not.toContain('[object Object]');
     expect(enc).toContain('"file":"src/x.ts"');
     // Und die Bindung kommt als OBJEKT zurueck, nicht als Text — genau der Defekt von CR-GC-244.

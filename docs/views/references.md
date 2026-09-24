@@ -613,6 +613,8 @@
 | `CR-GC-640` | relation | `FUNC-check-code-conformance` |
 | `CR-GC-641` | relation | `FUNC-decode` |
 | `CR-GC-641` | relation | `SCHEMA-format-e` |
+| `CR-GC-642` | relation | `FUNC-decode` |
+| `CR-GC-642` | relation | `SCHEMA-format-e` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

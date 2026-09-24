@@ -6816,7 +6816,7 @@ schema ◀ `FLOW-fit-advisory`
 
 ### 5.11  `SCHEMA-format-e` — Format-E
 
-Kompaktes Snapshot-/Diff-Format. Der geparste Vertrag ist ein Diff aus Operationen plus Fehlerliste — NICHT ein Knoten-/Kanten-Paar. Tuer seit CR-GC-641: das Zod-Schema FormatEInputSchema ({text, bestand} → Diff, Codec-Fehler als Issues); vorher an den Typ FormatEDiff gebunden und damit fuer RC-09 unsichtbar.
+Kompaktes Snapshot-/Diff-Format, ein Familienvertrag (graph-api-core). Der geparste Vertrag ist ein Diff aus Operationen plus Fehlerliste — NICHT ein Knoten-/Kanten-Paar. Tuer: das Zod-Schema FormatEInputSchema der Familie ({text, bestand} → Diff, Codec-Fehler als Issues; CR-SM-359). Vorher an den Typ FormatEDiff gebunden und damit fuer RC-09 unsichtbar; CR-GC-641 hatte die Tuer kurz in graphcode gebaut.
 
 schema ◀ `FLOW-formatE-artifact-agent` · `FLOW-formatE-artifact-read-tools`
 

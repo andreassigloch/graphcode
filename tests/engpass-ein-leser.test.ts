@@ -36,20 +36,23 @@ const REPO = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: '
 const ENGPAESSE = [
   {
     name: 'Format-E lesen',
-    muster: /FORMAT_E_CODEC\.parse\s*\(|\.inner\.parse\s*\(|new FormatECodec\([^)]*\)\.parse\s*\(/,
+    muster: /FORMAT_E_CODEC\.parse\s*\(|\.inner\.parse\s*\(|new FormatECodec\([^)]*\)\.parse\s*\(|FormatEInputSchema\.(safeParse|parse)\s*\(/,
     erlaubt: ['src/surface/format-e-commands.ts'],
     warum:
       'Format-E-Text wird an GENAU EINER Stelle zu Operationen — `formatEToCommands`, gefahren ' +
-      'von graph_mutate UND bootstrap (CR-GC-630/631/632). Wer daneben selbst parst, legt die ' +
-      'Sprache ein zweites Mal aus.',
+      'von graph_mutate UND bootstrap (CR-GC-630/631/632), ueber die Tuer der Familie ' +
+      '(`FormatEInputSchema`, graph-api-core, CR-SM-359). Wer daneben selbst parst, legt die ' +
+      'Sprache ein zweites Mal aus. Fuer src/ prueft das seit CR-GC-641 auch RC-09 am Modell; ' +
+      'diese Ratsche deckt zusaetzlich tests/ ab.',
   },
   {
     name: 'Format-E-Codec bauen',
     muster: /new FormatECodec\s*\(/,
-    erlaubt: ['src/surface/format-e-commands.ts'],
+    erlaubt: [],
     warum:
-      'Eine Instanz je Prozess (`FORMAT_E_CODEC`). Eine zweite waere kein Fehler, aber eine ' +
-      'zweite Stelle, an der jemand einen anderen Deskriptor unterschiebt (CR-GC-631).',
+      'Die eine SE-Instanz gehoert der Familie (`SE_FORMAT_E_CODEC`, graph-api-core, CR-SM-359). ' +
+      'graphcode baut keinen Codec — eine eigene Instanz waere eine zweite Stelle, an der jemand ' +
+      'einen anderen Deskriptor unterschiebt (CR-GC-631).',
   },
 ];
 
