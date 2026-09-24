@@ -89,3 +89,29 @@ neuer Knoten `FUNC-fund-kontext`.
 ## Nicht in diesem CR
 
 ITEM-2026-551: bei UC-01 liefert der Skill-Kanal `se:author-uc`, die Klausel verlangt REQs.
+
+## Nachmessung mit Argumenten (2026-09-24, `results-runde19-gcrun-652-args.json`, gcrun-40..42)
+
+Seit `1bfa8b6` schreibt der Executor je Lese-Aufruf Werkzeug, Argumente, Antwortgroesse und Art in
+die Trace. Drei Laeufe, 416 Lese-Aufrufe (Elemente 26/51/64, Ablehnungen 1/1/5):
+
+| Was das Modell nachschlaegt | Aufrufe | Antwort |
+|---|---:|---|
+| `graph_elements {type, search:<Begriff>}` — Duplikat-Pruefung vor dem Anlegen | ~90 | fast alle leer |
+| `graph_elements {type}` — Uebersicht je Typ (SYS 27, REQ 27, FCHAIN 22, UC 20, FUNC 11, MOD 8, ACTOR 6) | 121 | gefuellt |
+| `graph_elements {type:"SCHEMA"}` — Jargon-Pruefung, woertlich vom Skill `author-uc` verlangt | 22 | **alle 22 leer** |
+| `graph_get_node` — 52 verschiedene uids, v. a. SYS (17×) und eben selbst angelegte UC/FCHAIN | 127 | gefuellt |
+| `read_file` (Auftrag), `graph_authoring_guide`, `list_dir`, `grep` | 61 | — |
+
+Keine Antwort war ein Fehler oder gekappt. Das Modell fragt also nicht nach, weil eine Antwort
+unbrauchbar war, sondern aus drei Gewohnheiten, die der Prompt selbst erzeugt:
+
+1. **Duplikat-Vorpruefung.** SYSTEM und Liste sagen „keine Duplikate anlegen" — das Modell sucht
+   deshalb vor jedem Anlegen per Stichwort. Dieselbe Pruefung macht der Treiber ohnehin beim
+   Einreichen (`duplicateHits`, CR-GC-287) und meldet sie im Feedback. Moeglicher Zusammenhang mit
+   dieser CR: die Fund-Liste zeigt nur den Kontext, nicht mehr alle REQs — wer den Rest nicht sieht,
+   sucht. Belegbar ist das nicht: die Laeufe davor haben keine Argumente protokolliert.
+2. **Der injizierte Skill `author-uc`** verlangt die SCHEMA-Abfrage fuer die Jargon-Regel — im
+   Greenfield-Korpus gibt es keine SCHEMAs, 22 von 22 leer.
+3. **Wiederlesen** des SYS (die Intention steht schon im Auftrag) und eigener, eben angelegter Knoten.
+
