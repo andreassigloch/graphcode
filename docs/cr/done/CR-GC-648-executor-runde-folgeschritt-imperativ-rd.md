@@ -1,6 +1,6 @@
 # CR-GC-648: Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-543 (bug)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-543.json (Lane: code)
