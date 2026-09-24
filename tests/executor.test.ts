@@ -772,6 +772,31 @@ describe('executor (CR-GC-278)', () => {
 });
 
 // ---------------------------------------------------------------------------
+// CR-GC-650 — der Executor emittiert Format-E; ein Modell ohne Tool-Call schreibt den Block als Text.
+describe('extractMutateFromText: Format-E (CR-GC-650)', () => {
+  const block = '## Nodes\n### UC\n+ UC-a|Ein Nutzer tut etwas. [__name:A]\n\n## Edges\n+ SYS-s -compose-> UC-a\n';
+
+  it('roher Block im Fliesstext', () => {
+    expect(extractMutateFromText('Hier der Batch:\n\n' + block)).toEqual({ formatE: block });
+  });
+
+  it('Block im Code-Zaun — der Zaun gehoert nicht dazu', () => {
+    expect(extractMutateFromText('```\n' + block + '```\nFertig.')).toEqual({ formatE: block });
+  });
+
+  it('JSON mit formatE-Feld', () => {
+    expect(extractMutateFromText(JSON.stringify({ formatE: block }))).toEqual({ formatE: block });
+  });
+
+  it('eine Ueberschrift ohne Operationszeile ist kein Batch', () => {
+    expect(extractMutateFromText('## Nodes\nnoch nichts')).toBeNull();
+  });
+
+  it('commands-JSON wird weiter geborgen — das Gate nimmt beide Formen', () => {
+    expect(extractMutateFromText('{"commands":[{"op":"add-node"}]}')).toEqual({ commands: [{ op: 'add-node' }] });
+  });
+});
+
 // CR-GC-309 — a truncated tool result must still be parseable JSON.
 //
 // Both truncation sites were `JSON.stringify(x).slice(0, 6000)`. A byte slice cuts

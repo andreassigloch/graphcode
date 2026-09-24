@@ -634,6 +634,10 @@
 | `CR-GC-648` | relation | `FUNC-build-round-injection` |
 | `CR-GC-648` | relation | `FUNC-generation-step` |
 | `CR-GC-649` | relation | `FUNC-decode` |
+| `CR-GC-650` | relation | `FUNC-extract-mutate` |
+| `CR-GC-650` | relation | `FUNC-gate-client` |
+| `CR-GC-650` | relation | `FUNC-preflight` |
+| `CR-GC-650` | relation | `FUNC-run-executor` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

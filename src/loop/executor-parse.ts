@@ -8,8 +8,41 @@
  * @author andreas@siglochconsulting
  */
 
-export function extractMutateFromText(text: string): { commands: unknown[] } | null {
-  if (!text || !text.includes('"commands"')) return null;
+/** Was die Text-Bergung liefert: die Eingabe eines graph_mutate-Aufrufs in einer der zwei Formen. */
+export type RecoveredMutate = { commands: unknown[] } | { formatE: string };
+
+/**
+ * Einen graph_mutate-Batch aus Modell-TEXT bergen (kein Tool-Call). Seit CR-GC-650 emittiert der
+ * Executor Format-E; ein Modell, das den Aufruf nicht absetzt, schreibt den Block dann als Text —
+ * roh, in einem Code-Zaun oder als JSON `{"formatE": "..."}`. Die `commands`-Bergung bleibt fuer
+ * Modelle, die trotz Anweisung JSON-Kommandos schreiben: beide Formen nimmt das Gate an.
+ */
+export function extractMutateFromText(text: string): RecoveredMutate | null {
+  if (!text) return null;
+  return extractFormatEFromText(text) ?? extractCommandsFromText(text);
+}
+
+/** Format-E aus Text: JSON-Feld `formatE` oder ein roher Block ab `## Nodes` / `## Edges`. */
+function extractFormatEFromText(text: string): { formatE: string } | null {
+  const feld = /"formatE"\s*:\s*("(?:[^"\\]|\\.)*")/.exec(text);
+  if (feld) {
+    try {
+      const wert = JSON.parse(feld[1]) as unknown;
+      if (typeof wert === 'string' && wert.trim()) return { formatE: wert };
+    } catch {
+      // kein gueltiges JSON-String-Literal — weiter mit dem rohen Block
+    }
+  }
+  const start = /^## (Nodes|Edges)\s*$/m.exec(text);
+  if (!start) return null;
+  let block = text.slice(start.index);
+  const zaun = block.indexOf('```');
+  if (zaun >= 0) block = block.slice(0, zaun);
+  return /^[+~-] /m.test(block) ? { formatE: block.trim() + '\n' } : null;
+}
+
+function extractCommandsFromText(text: string): { commands: unknown[] } | null {
+  if (!text.includes('"commands"')) return null;
   const at = text.indexOf('"commands"');
   let start = text.lastIndexOf('{', at);
   while (start >= 0) {

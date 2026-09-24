@@ -1370,7 +1370,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 > auch in: `FUNC-block-antrieb`
 
-Gate-Zugang des eingebetteten Executors: liest vor dem Preflight die Elemente und die verify-Kanten ueber graph_elements und graph_get_edges (loadGraphSnapshot), parst den Kandidaten-Batch wie der MCP-Layer, laesst den Preflight pruefen und korrigieren, legt den gesendeten Batch fest (Preflight-Ergebnis, bei der Probe mit dryRun) und ruft graph_mutate ueber die Registry (executor-gate.ts, callGate). Einzige Stelle, an der der Executor einen selbst festgelegten Batch sendet; Ein-Kandidaten-Pfad und Best-of-N teilen sie. Das Ergebnis geht als Gate-Ausgang (FLOW-gate-outcome) an Treiberschleife und Rangfolge; formatGateFeedback macht daraus das Feedback fuer den Repair-Loop. (CR-GC-506, CR-GC-509)
+Gate-Zugang des eingebetteten Executors: liest vor dem Preflight die Elemente und die verify-Kanten ueber graph_elements und graph_get_edges (loadGraphSnapshot), parst den Kandidaten-Batch wie der MCP-Layer, uebersetzt einen Format-E-Batch mit derselben Abbildung wie graph_mutate (formatEToCommands, CR-GC-650), laesst den Preflight pruefen und korrigieren und legt den gesendeten Batch fest: ohne Korrektur den Originaltext, mit Korrektur die korrigierten Kommandos, bei der Probe mit dryRun. Ruft graph_mutate ueber die Registry (executor-gate.ts, callGate). Einzige Stelle, an der der Executor einen selbst festgelegten Batch sendet; Ein-Kandidaten-Pfad und Best-of-N teilen sie. Das Ergebnis geht als Gate-Ausgang (FLOW-gate-outcome) an Treiberschleife und Rangfolge; formatGateFeedback macht daraus das Feedback fuer den Repair-Loop. (CR-GC-506, CR-GC-509, CR-GC-650)
 
 io ◀ `FLOW-candidate-batch` · `FLOW-element-slice` · `FLOW-gate-verdict` · `FLOW-preflight-outcome` · io ▶ `FLOW-gate-outcome` · `FLOW-mutate-cmd-gate-client` · allocate ▶ `MOD-loop`
 
@@ -1654,7 +1654,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 > auch in: `FUNC-block-antrieb`
 
-Prosa-Recovery: holt ein Kommando-Objekt aus einer Modellantwort, die statt eines Tool-Calls Text geliefert hat. Findet keine Kommandos, gibt sie null zurueck statt zu raten.
+Prosa-Recovery: holt einen graph_mutate-Batch aus einer Modellantwort, die statt eines Tool-Calls Text geliefert hat — zuerst einen Format-E-Block (roh, im Code-Zaun oder als JSON-Feld formatE, CR-GC-650), sonst ein Kommando-Objekt. Findet sie nichts, gibt sie null zurueck statt zu raten.
 
 io ◀ `FLOW-model-answer` · io ▶ `FLOW-recovered-batch` · allocate ▶ `MOD-loop`
 
@@ -5654,7 +5654,7 @@ Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integr
 
 > auch in: `FCHAIN-steering-loop`
 
-Prosa-Recovery: holt ein Kommando-Objekt aus einer Modellantwort, die statt eines Tool-Calls Text geliefert hat. Findet keine Kommandos, gibt sie null zurueck statt zu raten.
+Prosa-Recovery: holt einen graph_mutate-Batch aus einer Modellantwort, die statt eines Tool-Calls Text geliefert hat — zuerst einen Format-E-Block (roh, im Code-Zaun oder als JSON-Feld formatE, CR-GC-650), sonst ein Kommando-Objekt. Findet sie nichts, gibt sie null zurueck statt zu raten.
 
 io ◀ `FLOW-model-answer` · io ▶ `FLOW-recovered-batch` · allocate ▶ `MOD-loop`
 
@@ -5672,7 +5672,7 @@ Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy �
 
 > auch in: `FCHAIN-steering-loop`
 
-Gate-Zugang des eingebetteten Executors: liest vor dem Preflight die Elemente und die verify-Kanten ueber graph_elements und graph_get_edges (loadGraphSnapshot), parst den Kandidaten-Batch wie der MCP-Layer, laesst den Preflight pruefen und korrigieren, legt den gesendeten Batch fest (Preflight-Ergebnis, bei der Probe mit dryRun) und ruft graph_mutate ueber die Registry (executor-gate.ts, callGate). Einzige Stelle, an der der Executor einen selbst festgelegten Batch sendet; Ein-Kandidaten-Pfad und Best-of-N teilen sie. Das Ergebnis geht als Gate-Ausgang (FLOW-gate-outcome) an Treiberschleife und Rangfolge; formatGateFeedback macht daraus das Feedback fuer den Repair-Loop. (CR-GC-506, CR-GC-509)
+Gate-Zugang des eingebetteten Executors: liest vor dem Preflight die Elemente und die verify-Kanten ueber graph_elements und graph_get_edges (loadGraphSnapshot), parst den Kandidaten-Batch wie der MCP-Layer, uebersetzt einen Format-E-Batch mit derselben Abbildung wie graph_mutate (formatEToCommands, CR-GC-650), laesst den Preflight pruefen und korrigieren und legt den gesendeten Batch fest: ohne Korrektur den Originaltext, mit Korrektur die korrigierten Kommandos, bei der Probe mit dryRun. Ruft graph_mutate ueber die Registry (executor-gate.ts, callGate). Einzige Stelle, an der der Executor einen selbst festgelegten Batch sendet; Ein-Kandidaten-Pfad und Best-of-N teilen sie. Das Ergebnis geht als Gate-Ausgang (FLOW-gate-outcome) an Treiberschleife und Rangfolge; formatGateFeedback macht daraus das Feedback fuer den Repair-Loop. (CR-GC-506, CR-GC-509, CR-GC-650)
 
 io ◀ `FLOW-candidate-batch` · `FLOW-element-slice` · `FLOW-gate-verdict` · `FLOW-preflight-outcome` · io ▶ `FLOW-gate-outcome` · `FLOW-mutate-cmd-gate-client` · allocate ▶ `MOD-loop`
 
