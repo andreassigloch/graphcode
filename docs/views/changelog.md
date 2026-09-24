@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 261 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 261 CR · 198 done · 0 open.
+Total: 261 CR · 200 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -321,5 +321,5 @@ Total: 261 CR · 198 done · 0 open.
 | `CR-GC-649` | done | formatEToCommands nach loop — Voraussetzung fuer den Executor-Preflight auf Format-E |
 | `CR-GC-650` | done | Executor emittiert Format-E statt commands (Faktor 2,4-3,3 Ausgabe) — Rig-Messung zuerst |
 | `CR-GC-651` | done | Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1 |
-| `CR-GC-652` | n/a | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung |
-| `CR-GC-653` | n/a | Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen) |
+| `CR-GC-652` | done | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung |
+| `CR-GC-653` | done | Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen) |
