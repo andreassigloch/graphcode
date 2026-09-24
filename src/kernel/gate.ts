@@ -16,6 +16,7 @@ import type { Graph, OntologyDescriptor, RuleViolation as CoreRuleViolation, Def
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { z } from 'zod';
 import { MutateCommandSchema, type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
+import { OntologyElement } from '@sigloch/contracts/se';
 import type { HookSystem } from './hooks.js';
 import type { GraphStore } from './graph-store.js';
 import { applyCommands, cloneGraph } from './apply-commands.js';
@@ -74,6 +75,25 @@ export class Gate {
           "{op:'delete-edge', edge:{sourceId,targetId,edgeType}} · " +
           "{op:'update-edge', edge:{sourceId,targetId,edgeType}, set:{edgeType?|flip?|attributes?}} · " +
           "{op:'merge-nodes', sourceUid, targetUid}",
+      });
+    });
+    // Step 0b — element contract (CR-GC-646, ITEM-2026-537). `status`, `kinds` and `method`
+    // travel in the free attribute bag, but the rules read them as typed OntologyElement
+    // fields. Unchecked, `[kinds:functional]` landed as a STRING (294 of them in the rig
+    // corpora) and every `kinds.includes(x)` silently became a substring search. Only what
+    // THIS batch writes is judged — a legacy value on an untouched field never freezes a node.
+    parsedCommands.forEach((cmd, i) => {
+      const issues = elementFieldIssues(cmd);
+      if (issues.length === 0) return;
+      schemaViolations.push({
+        ruleId: 'SCHEMA-02',
+        severity: 'error',
+        elementId: cmd.op === 'add-node' || cmd.op === 'update-node' ? cmd.node.uid : undefined,
+        message: `command[${i}] violates the element contract — ${issues.join('; ')}`,
+        fixHint:
+          'status ∈ draft|reviewed|open|done (a dropped CR is done — the reason belongs in its text) · ' +
+          'kinds is a LIST of functional|non-functional|risk|mitigation|precondition|postcondition ' +
+          '(Format-E: @kinds ["functional"]) · method ∈ test|inspection|analysis|demonstration',
       });
     });
     if (schemaViolations.length > 0) {
@@ -264,6 +284,26 @@ function extraKeys(shape: z.ZodRawShape, value: unknown, path: string): string[]
     const field = shape[k];
     if (!field) out.push(at);
     else if (field instanceof z.ZodObject) out.push(...extraKeys(field.shape, v, at));
+  }
+  return out;
+}
+
+/** Attributes the rules read as typed OntologyElement fields — judged by the element contract. */
+const ELEMENT_FIELDS = ['status', 'kinds', 'method'] as const;
+
+/**
+ * Contract breaches in the element fields a node command WRITES. `null` is the attribute
+ * tombstone (attributes merge, never delete) and always passes; so does an absent key.
+ */
+function elementFieldIssues(cmd: MutateCommand): string[] {
+  if (cmd.op !== 'add-node' && cmd.op !== 'update-node') return [];
+  const attrs = cmd.node.attributes ?? {};
+  const out: string[] = [];
+  for (const key of ELEMENT_FIELDS) {
+    const value = attrs[key];
+    if (value === undefined || value === null) continue;
+    const parsed = OntologyElement.shape[key].safeParse(value);
+    if (!parsed.success) out.push(`${cmd.node.uid}.${key} = ${JSON.stringify(value)}: ${parsed.error.issues[0]?.message}`);
   }
   return out;
 }

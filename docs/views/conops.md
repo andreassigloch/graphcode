@@ -225,7 +225,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-243` | done | Lokale OCC (BaseVersionSchema) auf @sigloch/contracts migriert | `FUNC-mutate` · `MOD-surface` |
 | `CR-GC-244` | done | Bundle-Staleness fix: rebundle-Disziplin statt Externalisierung | `MOD-surface` · `REQ-self-contained-dist` |
 | `CR-GC-247` | done | Zentralisiere Trace-Legalitaet in einem Checker | `MOD-projections` · `REQ-structural-rule-shared` |
-| `CR-GC-248` | dropped | DROPPED: generisches Kuzu Element/Trace-Schema | `MOD-kernel` |
+| `CR-GC-248` | done | DROPPED: generisches Kuzu Element/Trace-Schema | `MOD-kernel` |
 | `CR-GC-249` | done | Auto-reseed bei Meta-Modell-Schema-Drift | `MOD-kernel` |
 | `CR-GC-250` | done | Readiness completeness pointer (cardinality-driven) | `FUNC-score-completeness` · `REQ-completeness-actor-bounded` · `REQ-completeness-single-value` · `REQ-interface-schema` · `REQ-readiness-completeness` |
 | `CR-GC-252` | done | Learning-Feed = Projektion aus dem Operations-Log | `FUNC-emit-trajectory` |
@@ -236,7 +236,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-258` | done | Audit-Remainder: Dependency-Fixes + Dead-Code | `FUNC-export-markdown` · `REQ-self-contained-dist` |
 | `CR-GC-259` | done | Creation-Enforcement sichtbar machen (kein stilles OFF) | `FUNC-score-completeness` |
 | `CR-GC-260` | done | Uebergrosse Module aufteilen — BACKLOG | `FUNC-export-markdown` |
-| `CR-GC-261` | dropped | Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad | `FUNC-score-completeness` |
+| `CR-GC-261` | done | Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad | `FUNC-score-completeness` |
 | `CR-GC-262` | done | Registry-Deps statt esbuild-Inlining | `FUNC-harness-cli` |
 | `CR-GC-263` | done | OpenCode als First-Class-Client: opencode.json scaffolden | `FUNC-harness-cli` |
 | `CR-GC-264` | done | Public-Repo-Doc-Hygiene: Belege rein, Entstehungsgeschichte raus | `MOD-projections` |
@@ -338,6 +338,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-640` | n/a | Extraktor liefert zodSymbols und fileScope fuer RC-08/RC-09, Messung am eigenen Modell | `FUNC-check-code-conformance` |
 | `CR-GC-641` | n/a | Format-E bekommt eine Zod-Tuer, SCHEMA-format-e bindet sie | `FUNC-decode` |
 | `CR-GC-642` | n/a | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen | `FUNC-decode` |
+| `CR-GC-646` | done | Gate nimmt kinds als String an - Element-Attribute werden am Schreibweg nicht gegen den Vertrag geprueft | `FUNC-mutate` · `FUNC-take-steering-snapshot` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

@@ -51,7 +51,7 @@ describe('smoke: createHarness production path', () => {
     // where the operations log + learning-feed projection are produced — CR-252).
     const tools = bindToolsToHarness(harness);
     const res = await tools.graph_mutate.handler({
-      commands: [{ op: 'update-node', node: { uid: 'MS-2-coding-vv', attributes: { status: 'in-progress' } } }],
+      commands: [{ op: 'update-node', node: { uid: 'MS-2-coding-vv', attributes: { status: 'reviewed' } } }],
       consumerId: 'smoke',
     });
     expect(res.success).toBe(true);

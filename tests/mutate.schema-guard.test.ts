@@ -20,7 +20,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { AuditEntry } from '@sigloch/graph-api-core';
-import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import type { HarnessConfig, MutateCommand, RuleViolation } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
   mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
@@ -147,5 +147,92 @@ describe('TEST-mutate-schema-guard (CR-GC-239)', () => {
     })) as { mutations: number; graphVersion: number };
     expect(real.mutations).toBe(1);
     expect(real.graphVersion).toBe(2);
+  });
+});
+
+/**
+ * CR-GC-646 (ITEM-2026-537): the element contract at the gate. `status`, `kinds`, `method`
+ * live in the attribute bag but the rules read them as typed OntologyElement fields.
+ * POSITIVKONTROLLE: without Step 0b the first two cases apply with success:true — the
+ * dryRun in the item passed and only R-01 complained.
+ */
+describe('TEST-mutate-schema-guard: element contract (CR-GC-646)', () => {
+  let repoRoot: string;
+  let harness: GraphCodeHarness;
+  let tools: MCPToolRegistry;
+
+  beforeEach(async () => {
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-guard-el-'));
+    harness = makeHarness(repoRoot);
+    await harness.initialize();
+    tools = bindToolsToHarness(harness);
+    await harness.mutate(VALID);
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  const kindsOf = (uid: string) => harness.getGraph().nodes.find((n) => n.uid === uid)?.attributes?.kinds;
+
+  it('Format-E `[kinds:functional]` (a string) BLOCKS as SCHEMA-02 and names field + value', async () => {
+    const res = (await tools.graph_mutate.handler({
+      formatE: '## Nodes\n### REQ\n+ REQ-str|Das System muss X. [kinds:functional]\n',
+      consumerId: 't',
+    })) as { success: boolean; violations: RuleViolation[] };
+    expect(res.success).toBe(false);
+    const v = res.violations.find((x) => x.ruleId === 'SCHEMA-02');
+    expect(v?.severity).toBe('error');
+    // The tool output folds the elementId into `{el}` (evaluation.ts ELEMENT_PLACEHOLDER) and lists it.
+    expect(v?.message).toContain('.kinds = "functional"');
+    expect(JSON.stringify(v)).toContain('REQ-str');
+    expect(v?.fixHint).toContain('@kinds ["functional"]');
+    expect(harness.getGraph().nodes.some((n) => n.uid === 'REQ-str')).toBe(false);
+  });
+
+  it('a status outside the contract (dropped) BLOCKS the whole batch', async () => {
+    const result = await harness.mutate([
+      { op: 'add-node', node: { uid: 'CR-x', type: 'CR', name: 'x', description: '', attributes: { status: 'dropped' } } },
+      { op: 'update-node', node: { uid: 'REQ-ok', attributes: { status: 'approved' } } },
+    ]);
+    expect(result.success).toBe(false);
+    expect(result.tier).toBe('block');
+    const messages = result.violations.filter((x) => x.ruleId === 'SCHEMA-02').map((x) => x.message);
+    expect(messages).toHaveLength(2);
+    expect(messages[0]).toContain('CR-x.status = "dropped"');
+    expect(messages[1]).toContain('REQ-ok.status = "approved"');
+  });
+
+  it('an unknown kind and an unknown method block too — the enum is the contract, not just the shape', async () => {
+    const result = await harness.mutate([
+      { op: 'update-node', node: { uid: 'REQ-ok', attributes: { kinds: ['operational'] } } },
+      { op: 'update-node', node: { uid: 'TEST-ok', attributes: { method: 'review' } } },
+    ]);
+    expect(result.success).toBe(false);
+    expect(result.violations.filter((x) => x.ruleId === 'SCHEMA-02')).toHaveLength(2);
+  });
+
+  it('the canonical Format-E list form applies; null is the tombstone and passes', async () => {
+    const res = (await tools.graph_mutate.handler({
+      formatE: '## Nodes\n### REQ\n~ REQ-ok|ok\n@kinds ["functional"]\n',
+      consumerId: 't',
+    })) as { success: boolean; violations: RuleViolation[] };
+    expect(res.success, JSON.stringify(res.violations)).toBe(true);
+    expect(kindsOf('REQ-ok')).toEqual(['functional']);
+
+    const cleared = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-ok', attributes: { kinds: null } } }]);
+    expect(cleared.success, JSON.stringify(cleared.violations)).toBe(true);
+  });
+
+  it('a legacy value on a field the batch does NOT write never freezes the node', async () => {
+    // Legacy data enters through the import port (a load, not an edit) — exactly how old SSOTs arrive.
+    await harness.importGraph({
+      elements: [{ id: 'REQ-leg', type: 'REQ', name: 'leg', description: '', kinds: 'functional' }],
+      traces: [],
+    });
+    expect(kindsOf('REQ-leg')).toBe('functional');
+    const result = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-leg', description: 'neu' } }]);
+    expect(result.success, JSON.stringify(result.violations)).toBe(true);
   });
 });
