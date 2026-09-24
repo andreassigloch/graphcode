@@ -11,7 +11,7 @@
  */
 
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
-import { formatEToCommands } from '../../src/surface/format-e-commands.js';
+import { formatEToCommands } from '../../src/loop/format-e-commands.js';
 
 /** Kein Bestand: der Text muss jeden Knoten selbst deklarieren (der Normalfall im Test). */
 const LEER: Graph = { nodes: [], edges: [] };

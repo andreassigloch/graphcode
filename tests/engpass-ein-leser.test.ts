@@ -37,7 +37,7 @@ const ENGPAESSE = [
   {
     name: 'Format-E lesen',
     muster: /FORMAT_E_CODEC\.parse\s*\(|\.inner\.parse\s*\(|new FormatECodec\([^)]*\)\.parse\s*\(|FormatEInputSchema\.(safeParse|parse)\s*\(/,
-    erlaubt: ['src/surface/format-e-commands.ts'],
+    erlaubt: ['src/loop/format-e-commands.ts'],
     warum:
       'Format-E-Text wird an GENAU EINER Stelle zu Operationen — `formatEToCommands`, gefahren ' +
       'von graph_mutate UND bootstrap (CR-GC-630/631/632), ueber die Tuer der Familie ' +

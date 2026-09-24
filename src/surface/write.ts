@@ -25,7 +25,7 @@ import { nextStepAfterApply, type NextStep } from '../loop/next-step.js';
 import { focusMemoryOf } from '../loop/stagnation.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
 import type { ToolContext } from './tool-context.js';
-import { formatEToCommands } from './format-e-commands.js';
+import { formatEToCommands } from '../loop/format-e-commands.js';
 
 // -------------------------------------------------------------------------
 // respondsTo (CR-GC-434) — which pre-existing violation a mutation ANSWERED.

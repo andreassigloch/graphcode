@@ -27,7 +27,7 @@ import { z } from 'zod/v4';
 import type { MutateResult } from '@sigloch/contracts/harness';
 import { MutateResultSchema } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from '../kernel/harness.js';
-import { formatEToCommands } from './format-e-commands.js';
+import { formatEToCommands } from '../loop/format-e-commands.js';
 
 /**
  * BootstrapResult (FLOW-bootstrap-result → SCHEMA-mutate-result): the gate
