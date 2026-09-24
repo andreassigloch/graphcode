@@ -11,7 +11,7 @@
  * @author andreas@siglochconsulting
  */
 import { z } from 'zod/v4';
-import type { MCPToolRegistry } from '../kernel/tool-contract.js';
+import { strengesSchema, type MCPToolRegistry } from '../kernel/tool-contract.js';
 import {
   ModelAnswer,
   BackendFailure,
@@ -57,7 +57,8 @@ export function buildToolSpecs(
     .map((n) => ({
       name: 'graphcode_' + n,
       description: (registry[n].description || '').slice(0, 400),
-      schema: toJsonSchema(registry[n].inputSchema as z.ZodType),
+      // Streng wie am MCP-Server (CR-GC-647): die Zusage traegt additionalProperties:false.
+      schema: toJsonSchema(strengesSchema(registry[n]) as z.ZodType),
     }));
   const rd = Object.entries(READ_TOOLS).map(([n, t]) => ({
     name: n,

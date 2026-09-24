@@ -628,6 +628,11 @@
 | `CR-GC-646` | relation | `FUNC-mutate` |
 | `CR-GC-646` | relation | `FUNC-take-steering-snapshot` |
 | `CR-GC-646` | relation | `SCHEMA-steering-snapshot` |
+| `CR-GC-647` | relation | `FUNC-run-executor` |
+| `CR-GC-647` | relation | `FUNC-serve-stdio` |
+| `CR-GC-647` | relation | `SCHEMA-mcp-tool` |
+| `CR-GC-648` | relation | `FUNC-build-round-injection` |
+| `CR-GC-648` | relation | `FUNC-generation-step` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

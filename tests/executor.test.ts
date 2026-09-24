@@ -822,6 +822,17 @@ describe('jsonCapped (CR-GC-309): truncation yields valid JSON, never a cut blob
     expect(parsed.originalChars).toBeGreaterThan(TOOL_RESULT_CHAR_BUDGET);
   });
 
+  it('CR-GC-647: a list is capped to its head, not dropped — the head is an answer, its absence is not', () => {
+    const liste = { total: 500, nodes: Array.from({ length: 500 }, (_, i) => ({ uid: `REQ-${i}`, type: 'REQ', name: 'n'.repeat(40) })) };
+    const out = jsonCapped(liste);
+    expect(out.length).toBeLessThanOrEqual(TOOL_RESULT_CHAR_BUDGET);
+    const parsed = JSON.parse(out) as { nodes: { uid: string }[]; gekappt: Record<string, string>; total: number };
+    expect(parsed.nodes.length).toBeGreaterThan(50);
+    expect(parsed.nodes[0].uid).toBe('REQ-0');
+    expect(parsed.gekappt.nodes).toBe(`${parsed.nodes.length}/500`);
+    expect(parsed.total).toBe(500);
+  });
+
   it('handles a non-object payload without throwing', () => {
     expect(() => JSON.parse(jsonCapped('x'.repeat(20_000)))).not.toThrow();
     expect(JSON.parse(jsonCapped(undefined))).toBeNull();

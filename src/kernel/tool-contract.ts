@@ -32,7 +32,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { z, type ZodType } from 'zod/v4';
+import { z, type ZodObject, type ZodRawShape, type ZodType } from 'zod/v4';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 import type { GraphCodeHarness } from './harness.js';
@@ -63,6 +63,30 @@ export const MCPToolRegistrySchema = z.record(z.string(), MCPToolSchema);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MCPToolRegistry = Record<string, MCPTool<any, any>>;
+
+/**
+ * CR-GC-623 — ein unbekannter Argumentname ist ein Fehler, keine leere Eingabe.
+ *
+ * Ein Zod-Objekt ist per Default nicht `strict`: aus `{id:'graph_metrics'}` wird `{}`, und
+ * `graph_help` beantwortet dann den Zweig "ohne Token" — die kontextuelle Massnahmenliste des
+ * ganzen Projekts statt der Erklaerung EINES Werkzeugs. Gemessen im Lauf `gefuehrt-0`
+ * (2026-09-22): sieben `graph_help` hintereinander, 11.002 Zeichen. Der Agent hat richtig
+ * gefragt, vier Werkzeugbeschreibungen haben ihm den falschen Parameternamen genannt, und die
+ * Grenze hat den Fehlgriff verschluckt.
+ *
+ * Das strenge Schema ist die EINZIGE Stelle dafuer, und es ist die richtige: das SDK parst die
+ * Argumente, BEVOR unser Callback sie sieht — eine eigene Pruefung danach kaeme immer zu spaet
+ * (nachgemessen: sie sah bereits `{}`). Ausserdem traegt die veroeffentlichte JSON-Schema-Zusage
+ * damit `additionalProperties: false`, ein Client kann den Fehlgriff also selbst abfangen.
+ *
+ * Es liegt im Kernel, weil es ZWEI Grenzen hat (CR-GC-647): den MCP-Server und den eingebetteten
+ * Executor, dessen Modell dieselben Werkzeuge in-process aufruft. Dort lief der Aufruf bis
+ * CR-GC-647 roh ueber `handler()` — ohne Defaults und ohne diese Pruefung.
+ */
+export function strengesSchema(tool: MCPTool): ZodType {
+  const schema = tool.inputSchema as unknown as ZodObject<ZodRawShape>;
+  return typeof schema.strict === 'function' ? schema.strict() : (schema as unknown as ZodType);
+}
 
 /** Was eine Tool-Fabrik vom Host braucht — nicht mehr. Die Oberfläche erfüllt ihn (`ToolContext`). */
 export interface ToolPort {

@@ -339,6 +339,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-641` | n/a | Format-E bekommt eine Zod-Tuer, SCHEMA-format-e bindet sie | `FUNC-decode` |
 | `CR-GC-642` | n/a | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen | `FUNC-decode` |
 | `CR-GC-646` | done | Gate nimmt kinds als String an - Element-Attribute werden am Schreibweg nicht gegen den Vertrag geprueft | `FUNC-mutate` · `FUNC-take-steering-snapshot` |
+| `CR-GC-647` | n/a | Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an | `FUNC-run-executor` · `FUNC-serve-stdio` |
+| `CR-GC-648` | n/a | Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta | `FUNC-build-round-injection` · `FUNC-generation-step` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

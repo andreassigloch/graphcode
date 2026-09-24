@@ -108,22 +108,43 @@ export function jsonCapped(value: unknown, budget = TOOL_RESULT_CHAR_BUDGET): st
   const full = JSON.stringify(value) ?? 'null';
   if (full.length <= budget) return full;
   // Skalare Felder der obersten Ebene behalten — dort stehen success/tier/counts,
-  // also genau das, wonach der Treiber verzweigt. Arrays/Objekte fallen weg; ihre
-  // Größe ist der Grund für die Überschreitung.
+  // also genau das, wonach der Treiber verzweigt. Verschachtelte Objekte fallen weg.
   const scalars: Record<string, unknown> = {};
+  const listen: [string, unknown[]][] = [];
   if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
     for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
       if (v === null || typeof v !== 'object') scalars[k] = v;
+      else if (Array.isArray(v)) listen.push([k, v]);
     }
   }
-  return JSON.stringify({
+  const out: Record<string, unknown> = {
     ...scalars,
     truncated: true,
     originalChars: full.length,
     note:
-      `Ergebnis über ${budget} Zeichen und deshalb gekürzt — verschachtelte Felder entfernt. ` +
-      'Gezielt nachfragen (rules_get_violations, graph_impact) statt das volle Ergebnis anzufordern.',
-  });
+      `Ergebnis über ${budget} Zeichen und deshalb gekürzt — Listen auf den Anfang gekappt, ` +
+      'verschachtelte Felder entfernt. Enger fragen (type, search, limit) statt das volle Ergebnis anzufordern.',
+  };
+  // CR-GC-647: Listen auf ihren ANFANG kappen statt sie zu streichen. Vorher fielen alle Arrays
+  // weg — `graph_elements` mit Default-limit (100 REQ, ~18k Zeichen auch ohne Prosa) kam beim
+  // Modell als Antwort ohne einen einzigen Knoten an. Der Anfang einer Liste ist eine Antwort,
+  // ihr Fehlen ist keine.
+  const gekappt: Record<string, string> = {};
+  for (const [k, liste] of listen) {
+    const behalten: unknown[] = [];
+    out[k] = behalten;
+    gekappt[k] = `0/${liste.length}`;
+    out.gekappt = gekappt;
+    let groesse = JSON.stringify(out).length;
+    for (const el of liste) {
+      const zusatz = (JSON.stringify(el) ?? 'null').length + 1;
+      if (groesse + zusatz + 8 > budget) break;
+      behalten.push(el);
+      groesse += zusatz;
+    }
+    gekappt[k] = `${behalten.length}/${liste.length}`;
+  }
+  return JSON.stringify(out);
 }
 
 interface GuideSlice {

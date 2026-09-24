@@ -24,7 +24,7 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { createHarness } from './create-harness.js';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { bindToolsToHarness } from './mcp-tools.js';
-import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
+import { strengesSchema, type MCPTool, type MCPToolRegistry } from '../kernel/tool-contract.js';
 import { registerAutoExport, type AutoExportHandle } from '../projections/auto-export.js';
 import { StoreOwnershipError } from '../kernel/store-lock.js';
 import { SessionLifecycle } from './session-lifecycle.js';
@@ -72,29 +72,6 @@ const SERVER_VERSION = readPackageVersion();
  */
 export function serializeToolResult(result: unknown): string {
   return JSON.stringify(result);
-}
-
-/**
- * CR-GC-623 — ein unbekannter Argumentname ist ein Fehler, keine leere Eingabe.
- *
- * Ein Zod-Objekt ist per Default nicht `strict`: aus `{id:'graph_metrics'}` wird `{}`, und
- * `graph_help` beantwortet dann den Zweig "ohne Token" — die kontextuelle Massnahmenliste des
- * ganzen Projekts statt der Erklaerung EINES Werkzeugs. Gemessen im Lauf `gefuehrt-0`
- * (2026-09-22): sieben `graph_help` hintereinander, 11.002 Zeichen. Der Agent hat richtig
- * gefragt, vier Werkzeugbeschreibungen haben ihm den falschen Parameternamen genannt, und die
- * Grenze hat den Fehlgriff verschluckt.
- *
- * Das strenge Schema ist die EINZIGE Stelle dafuer, und es ist die richtige: das SDK parst die
- * Argumente, BEVOR unser Callback sie sieht — eine eigene Pruefung danach kaeme immer zu spaet
- * (nachgemessen: sie sah bereits `{}`). Ausserdem traegt die veroeffentlichte JSON-Schema-Zusage
- * damit `additionalProperties: false`, ein Client kann den Fehlgriff also selbst abfangen.
- *
- * Nicht betroffen sind die in-process-Aufrufe der Registry (Executor, Skills, Tests): die gehen
- * direkt ueber `handler()` und an dieser Grenze vorbei.
- */
-export function strengesSchema(tool: MCPTool): ZodType {
-  const schema = tool.inputSchema as unknown as ZodObject<ZodRawShape>;
-  return typeof schema.strict === 'function' ? schema.strict() : (schema as unknown as ZodType);
 }
 
 export function bindRegistryToMcpServer(registry: MCPToolRegistry): McpServer {

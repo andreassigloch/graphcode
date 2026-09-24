@@ -2135,6 +2135,18 @@
       "commitRef": "058aadd"
     },
     {
+      "id": "CR-GC-647",
+      "type": "CR",
+      "name": "Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an",
+      "description": "docs/cr/open/CR-GC-647-executor-modell-werkzeugaufrufe-ohne-sch.md"
+    },
+    {
+      "id": "CR-GC-648",
+      "type": "CR",
+      "name": "Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta",
+      "description": "docs/cr/open/CR-GC-648-executor-runde-folgeschritt-imperativ-rd.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -4170,7 +4182,7 @@
       "id": "FUNC-run-executor",
       "type": "FUNC",
       "name": "runExecutor",
-      "description": "Die Treiberschleife selbst: stellt je Turn die Anfrage an den Modell-Draht, liest die Antwort, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Einen vom Modell selbst angeforderten dryRun reicht die Werkzeug-Ausfuehrung unveraendert an die Registry weiter. (CR-GC-506, CR-GC-507)",
+      "description": "Die Treiberschleife selbst: stellt je Turn die Anfrage an den Modell-Draht, liest die Antwort, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Jeden sonstigen Werkzeugaufruf des Modells, auch einen selbst angeforderten dryRun, prueft die Werkzeug-Ausfuehrung gegen dasselbe strenge Eingabeschema wie der MCP-Server, bevor sie ihn an die Registry weiterreicht. (CR-GC-506, CR-GC-507, CR-GC-647)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor.ts",
@@ -12601,6 +12613,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-647",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-647",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-647",
+      "target": "SCHEMA-mcp-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-648",
+      "target": "FUNC-build-round-injection",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-648",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -20885,5 +20922,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 428
+  "graphVersion": 434
 }
