@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 253 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 254 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 253 CR · 189 done · 0 open.
+Total: 254 CR · 193 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -164,7 +164,7 @@ Total: 253 CR · 189 done · 0 open.
 |---|---|---|
 | `CR-GC-244` | done | Bundle-Staleness fix: rebundle-Disziplin statt Externalisierung |
 | `CR-GC-247` | done | Zentralisiere Trace-Legalitaet in einem Checker |
-| `CR-GC-248` | dropped | DROPPED: generisches Kuzu Element/Trace-Schema |
+| `CR-GC-248` | done | DROPPED: generisches Kuzu Element/Trace-Schema |
 | `CR-GC-249` | done | Auto-reseed bei Meta-Modell-Schema-Drift |
 | `CR-GC-250` | done | Readiness completeness pointer (cardinality-driven) |
 | `CR-GC-252` | done | Learning-Feed = Projektion aus dem Operations-Log |
@@ -175,7 +175,7 @@ Total: 253 CR · 189 done · 0 open.
 | `CR-GC-258` | done | Audit-Remainder: Dependency-Fixes + Dead-Code |
 | `CR-GC-259` | done | Creation-Enforcement sichtbar machen (kein stilles OFF) |
 | `CR-GC-260` | done | Uebergrosse Module aufteilen — BACKLOG |
-| `CR-GC-261` | dropped | Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad |
+| `CR-GC-261` | done | Restliche 500-Zeilen-Ueberschreiter: readiness-Config + harness-Query-Pfad |
 | `CR-GC-262` | done | Registry-Deps statt esbuild-Inlining |
 | `CR-GC-263` | done | OpenCode als First-Class-Client: opencode.json scaffolden |
 | `CR-GC-264` | done | Public-Repo-Doc-Hygiene: Belege rein, Entstehungsgeschichte raus |
@@ -314,4 +314,5 @@ Total: 253 CR · 189 done · 0 open.
 | `CR-GC-642` | n/a | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen |
 | `CR-GC-643` | n/a | graphcode: testRefs/realRef ueber den Familienleser, Vertraege als SCHEMA im Modell |
 | `CR-GC-644` | n/a | Fuenf lokale Typ-Vertraege werden Zod, Erzeuger parsen ihre Ausgabe |
-| `CR-GC-645` | n/a | Letzte Bindungen: Familienvertraege auf Schemas, Codec nicht ueber ctx |
+| `CR-GC-645` | done | Letzte Bindungen: Familienvertraege auf Schemas, Codec nicht ueber ctx |
+| `CR-GC-646` | done | Gate nimmt kinds als String an - Element-Attribute werden am Schreibweg nicht gegen den Vertrag geprueft |

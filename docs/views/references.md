@@ -625,6 +625,9 @@
 | `CR-GC-645` | relation | `SCHEMA-impact-slice` |
 | `CR-GC-645` | relation | `SCHEMA-metric-policy` |
 | `CR-GC-645` | relation | `SCHEMA-tool-context` |
+| `CR-GC-646` | relation | `FUNC-mutate` |
+| `CR-GC-646` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-646` | relation | `SCHEMA-steering-snapshot` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

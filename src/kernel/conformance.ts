@@ -34,6 +34,7 @@ import {
   readTestRefs,
   evaluateConformanceRules,
   importCoverage,
+  normalizeReqKinds,
   type CodeFacts,
   type FileFacts,
   type ImportCoverage,
@@ -390,7 +391,11 @@ export function toOntologyGraph(graph: CGraph): OntologyGraph {
       created_at: (n.attributes?.created_at as string) ?? '',
       // Typed OntologyElement columns, lifted out of the bag (see doc comment).
       // Left `undefined` when absent — the schema marks all three optional.
-      kinds: n.attributes?.kinds as OElement['kinds'],
+      // CR-GC-646: NORMALISIERT wie die Familienprojektion (graph-api-core projectToOntologyGraph,
+      // CR-SM-332), nicht gecastet. Der Cast liess einen Alt-String `'functional'` bis zu den Regeln
+      // durch, wo `kinds.includes(x)` still zur Teilstring-Suche wurde. Ein unbekannter Wert
+      // ueberlebt die Normalisierung und faellt an der Snapshot-Pruefung auf — sichtbar, nicht geheilt.
+      kinds: n.attributes?.kinds == null ? undefined : (normalizeReqKinds(n.attributes.kinds) as OElement['kinds']),
       // CR-SM-294: `asil` ist als typisierte Spalte ENTFALLEN — sein einziger Leser war R-03,
       // und ueber 19 Familiengraphen trug kein einziges MOD das Feld. Ein Graph, der es noch
       // traegt, behaelt es im freien `attributes`-Sack unten; es ist nur kein Ontologiefeld mehr.

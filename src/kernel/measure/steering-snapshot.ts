@@ -87,11 +87,11 @@ export function takeSteeringSnapshot(
     report: computeReadiness(og, policy),
     phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id }))),
   };
-  // CR-GC-644: die Laufzeitpruefung ist NOCH NICHT eingeschaltet — sie hat zwei echte Vertragsbrueche
-  // im `og` gefunden, die vorher geklaert sein muessen: `status` ausserhalb des Element-Vertrags
-  // (contracts widerspricht sich: CLOSED_STATUS kennt dropped/rejected, das Status-Enum nicht) und
-  // `kinds` als String statt Liste (das Gate prueft den Typ nicht). RC-04 meldet diesen Vertrag
-  // deshalb als „nicht an der Schnittstelle geparst" — benannt, nicht still. Siehe CR-GC-644.
+  // CR-GC-646: die Pruefung ist eingeschaltet, seit das Gate `status`/`kinds`/`method` am Eintritt
+  // gegen den Element-Vertrag haelt (SCHEMA-02) und contracts nur noch `done` als abgeschlossen
+  // kennt (CR-SM-362). Ein Bruch hier ist Altbestand, der am Gate vorbei kam (Import-Port) — er
+  // wirft mit Pfad, statt als Teilstring-Suche still weiterzurechnen.
+  SteeringSnapshotSchema.parse(snapshot);
   return snapshot;
 }
 
