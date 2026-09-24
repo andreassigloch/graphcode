@@ -1,6 +1,6 @@
 # CR-GC-653: Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-553 (finding)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-553.json (Lane: code)
