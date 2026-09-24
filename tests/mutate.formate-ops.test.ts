@@ -28,6 +28,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { knotenAus } from './helpers/format-e.js';
+import { FormatEInputSchema, formatEToCommands } from '../src/surface/format-e-commands.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { OP_RISK, type HarnessConfig, type MutateCommand } from '@sigloch/contracts/harness';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
@@ -306,5 +307,37 @@ describe('CR-GC-627: Beschreibung, Guide und Code sagen dasselbe', () => {
     // Der Block bleibt, was er war: ein ADDITIVES Beispiel — die `~`/`-`-Zeilen stehen
     // auskommentiert darin, sonst legte der Guide einen Loeschzug als Vorlage vor.
     expect(() => knotenAus(beispiel)).not.toThrow();
+  });
+});
+
+// CR-GC-641: Format-E hat eine Zod-Tuer. Der Vertrag ist zur Laufzeit pruefbar und als Konstante
+// an SCHEMA-format-e gebunden — damit sieht RC-09 jeden zweiten Leser (die Klasse aus CR-GC-627).
+describe('CR-GC-641: die Zod-Tuer des Format-E-Vertrags', () => {
+  const LEER = { nodes: [], edges: [] };
+
+  it('gueltiger Text → der Operations-Diff des Codecs', () => {
+    const r = FormatEInputSchema.safeParse({ text: '## Nodes\n### REQ\n+ REQ-x|Beschreibung [__name:X]\n', bestand: LEER });
+    expect(r.success).toBe(true);
+    expect(r.success && r.data.operations.map((o) => o.type)).toEqual(['add_node']);
+  });
+
+  it('Parse-Fehler werden Zod-Issues — je Codec-Fehler einer, wortgleich', () => {
+    const r = FormatEInputSchema.safeParse({ text: '## Nodes\n### REQ\numbricht ohne Praefix\n', bestand: LEER });
+    expect(r.success).toBe(false);
+    expect(!r.success && r.error.issues[0].message).toContain('Node line without an operator prefix');
+  });
+
+  it('formatEToCommands geht durch die Tuer: dieselbe Meldung wie vorher', () => {
+    expect(() => formatEToCommands(LEER, '## Nodes\n### REQ\numbricht ohne Praefix\n'))
+      .toThrow(/^Format-E parse errors:\n  - Node line without an operator prefix/);
+  });
+
+  it('der Bestand typisiert uids, die der Text nicht deklariert (CR-GC-310) — auch durch die Tuer', () => {
+    const bestand = { nodes: [
+      { uid: 'REQ-a', type: 'REQ', name: 'a', description: '', attributes: {} },
+      { uid: 'TEST-a', type: 'TEST', name: 't', description: '', attributes: {} },
+    ], edges: [] };
+    const r = FormatEInputSchema.safeParse({ text: '## Edges\n+ TEST-a -verify-> REQ-a\n', bestand });
+    expect(r.success).toBe(true);
   });
 });
