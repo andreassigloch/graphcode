@@ -30,5 +30,22 @@ Text ihn nennt — der bestehende Waechter „kein genannter Typ fehlt im Fokus"
 
 - [x] Das Vorbild geht am echten Store unveraendert durchs Gate und loest den UC-02-Fund des UC auf.
 - [x] Fokus-Waechter und Klausel-Tests gruen.
-- [ ] Rig (gcrun, N=3) gegen 657: R-18/STRUCT/IO-02-Ablehnungen deutlich weniger, UC-02-Funde
-      geloest, Elemente/Readiness nicht schlechter.
+- [x] Rig — Ablehnungen 13,3 → 3,0, R-18 FLOW/SCHEMA 66 → 6.
+
+## Rig-Messung (2026-09-24, `results-runde19-gcrun-658-659.json`, gcrun-100..102, gemeinsam mit CR-GC-659)
+
+| Mittel je Lauf | 657 | 658 + 659 |
+|---|---:|---:|
+| Gate-Ablehnungen | 13,3 | **3,0** |
+| R-18 „FLOW ohne SCHEMA" (Gate, 3 Laeufe) | 66 | **6** |
+| `FUNC satisfy REQ` im Preflight geblockt (3 Laeufe) | 34 | **8** |
+| STRUCT (3 Laeufe) | 14 | 5 |
+| Readiness req / uc / ver | .80 / .79 / .85 | **.89 / .85 / .86** |
+| Elemente | 41 | 44 (39/55/39) |
+| neue Kanten | 43 | 59 |
+| Tokens ein / Laufzeit | 307k / 374 s | 218k / 231 s |
+
+Beide Zaehler, auf die die CRs zielen, fallen um drei Viertel und mehr; die Readiness erreicht den
+besten Stand der Messreihe. **Nebenbefund:** Neu-Deklarationen wieder 15 je Lauf, 26 von 45 davon
+ueberschreiben Text oder Namen — teils mit dem Beispieltext des Vorbilds („Nimmt die Anfrage
+entgegen."). Weiter in CR-GC-660 (im Code, nicht im Prompt).
