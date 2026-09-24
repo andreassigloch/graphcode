@@ -13,7 +13,7 @@ import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SKILL_FOR_DIMENSION, type GenerationStep } from './generate.js';
+import { skillDatei, type GenerationStep } from './generate.js';
 import { byRank, type ChannelBlock } from './channel-rank.js';
 import { buildInventoryBlock } from './executor-inventory.js';
 
@@ -203,7 +203,7 @@ const SUGGEST_MAX_ROWS = 8;
 /** Schema-Obergrenze von `graph_suggest.k` — siehe Begruendung an der Aufrufstelle. */
 const SUGGEST_K = 20;
 
-// SKILL_FOR_DIMENSION lebt seit CR-GC-589 in generate.ts — eine Zuordnung fuer beide Treiber.
+// Welcher Skill gilt, entscheidet generate.ts (CR-GC-589/655) — hier wird nur der Rumpf gelesen.
 
 /** Markerpaar, mit dem ein Skill selbst bestimmt, welcher Teil von ihm modelltauglich ist. */
 const INJECT_START = '<!-- inject:start -->';
@@ -252,7 +252,7 @@ function readSkillBody(skill: { name: string; file: string }): string | null {
  */
 export async function buildRoundInjection(
   registry: MCPToolRegistry,
-  step: Pick<GenerationStep, 'focusTypes' | 'focusDimension' | 'focusElements'>,
+  step: Pick<GenerationStep, 'focusTypes' | 'focusElements' | 'skill'>,
 ): Promise<string> {
   return (await buildRoundChannels(registry, step)).map((b) => b.text).join('\n\n');
 }
@@ -267,7 +267,7 @@ export async function buildRoundInjection(
  */
 export async function buildRoundChannels(
   registry: MCPToolRegistry,
-  step: Pick<GenerationStep, 'focusTypes' | 'focusDimension' | 'focusElements'>,
+  step: Pick<GenerationStep, 'focusTypes' | 'focusElements' | 'skill'>,
 ): Promise<ChannelBlock[]> {
   // CR-GC-575: die Bloecke tragen ihren Kanal und werden am Ende nach Rang sortiert —
   // die Reihenfolge des Rundenprompts folgt der Verbindlichkeit, nicht der Reihenfolge,
@@ -376,7 +376,10 @@ export async function buildRoundChannels(
   // HOECHSTENS EINER je Runde: author-uc.md sind ~750 Token. Einer ist bezahlbar,
   // vier waeren der naechste Werkzeugkatalog.
   // -------------------------------------------------------------------------
-  const skill = step.focusDimension ? SKILL_FOR_DIMENSION[step.focusDimension] : undefined;
+  // CR-GC-655: der Skill, den der SCHRITT nennt — dort hat der Gewinner (Klausel vor Dimension)
+  // entschieden. Vorher las der Executor die Dimension selbst und injizierte bei UC-02 author-uc,
+  // dessen Beispiel das Modell statt der Klausel befolgte.
+  const skill = step.skill ? skillDatei(step.skill) : undefined;
   if (skill) {
     const rumpf = readSkillBody(skill);
     if (rumpf) {

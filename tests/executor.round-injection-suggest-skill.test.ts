@@ -46,7 +46,7 @@ describe('CR-GC-556: die Vorschlaege kommen als Inhalt, nicht als Werkzeug', () 
   });
 
   it('die Kante steht im Rundeninhalt, mit delta', async () => {
-    const out = await buildRoundInjection(registry([vorschlag()]), { focusTypes: ['FUNC'], focusDimension: 'arch' });
+    const out = await buildRoundInjection(registry([vorschlag()]), { focusTypes: ['FUNC'], skill: 'se:top-level' });
     expect(out).toContain('FUNC-task-execute -allocate-> MOD-sched');
     expect(out).toContain('R-22 @ FUNC-task-execute');
     expect(out, 'ohne delta ist der Optimizer unsichtbar').toContain('delta [');
@@ -55,13 +55,13 @@ describe('CR-GC-556: die Vorschlaege kommen als Inhalt, nicht als Werkzeug', () 
   it('ein Vorschlag OHNE Kante bleibt draussen — der fixHint steht schon im Rundenprompt', async () => {
     const ohne = { ...vorschlag() };
     delete (ohne as { edit?: unknown }).edit;
-    const out = await buildRoundInjection(registry([ohne]), { focusTypes: ['FUNC'], focusDimension: 'arch' });
+    const out = await buildRoundInjection(registry([ohne]), { focusTypes: ['FUNC'], skill: 'se:top-level' });
     expect(out).not.toContain('R-22 @');
   });
 
   it('nur Fokus-Typen — ein UC-Vorschlag taucht in einer FUNC-Runde nicht auf', async () => {
     const fremd = vorschlag({ elementId: 'UC-login', edit: { source: 'UC-login', target: 'FCHAIN-a', type: 'compose' } });
-    const out = await buildRoundInjection(registry([fremd]), { focusTypes: ['FUNC'], focusDimension: 'arch' });
+    const out = await buildRoundInjection(registry([fremd]), { focusTypes: ['FUNC'], skill: 'se:top-level' });
     expect(out).not.toContain('UC-login -compose->');
   });
 
@@ -78,7 +78,7 @@ describe('CR-GC-556: die Vorschlaege kommen als Inhalt, nicht als Werkzeug', () 
         handler: (i: unknown) => { gesehen.push(i); return { suggestions: [] }; },
       },
     } as unknown as MCPToolRegistry;
-    await buildRoundInjection(reg, { focusTypes: ['FUNC'], focusDimension: 'arch' });
+    await buildRoundInjection(reg, { focusTypes: ['FUNC'], skill: 'se:top-level' });
     expect(gesehen).toHaveLength(1);
     expect((gesehen[0] as { k: number }).k).toBe(20);
   });
@@ -91,7 +91,7 @@ describe('CR-GC-556: die Vorschlaege kommen als Inhalt, nicht als Werkzeug', () 
       ruleId: 'RD-01', elementId: 'REQ-data-security',
       edit: { source: 'FCHAIN-interactive-session', target: 'REQ-data-security', type: 'satisfy' },
     });
-    const out = await buildRoundInjection(registry([s]), { focusTypes: ['ACTOR', 'UC', 'FCHAIN', 'FUNC'], focusDimension: 'arch' });
+    const out = await buildRoundInjection(registry([s]), { focusTypes: ['ACTOR', 'UC', 'FCHAIN', 'FUNC'], skill: 'se:top-level' });
     expect(out).toContain('FCHAIN-interactive-session -satisfy-> REQ-data-security');
   });
 
@@ -99,69 +99,69 @@ describe('CR-GC-556: die Vorschlaege kommen als Inhalt, nicht als Werkzeug', () 
     const kaputt = {
       graph_suggest: { name: 'x', description: '', inputSchema: z.object({}), handler: () => { throw new Error('boom'); } },
     } as unknown as MCPToolRegistry;
-    await expect(buildRoundInjection(kaputt, { focusTypes: ['FUNC'], focusDimension: 'arch' })).resolves.toBeTypeOf('string');
+    await expect(buildRoundInjection(kaputt, { focusTypes: ['FUNC'], skill: 'se:top-level' })).resolves.toBeTypeOf('string');
   });
 });
 
 describe('CR-GC-557: der Skill-Rumpf steht im Rundeninhalt statt seiner Adresse', () => {
   it('in einer uc-Runde kommt die Stilregel samt Jargon-Budget mit', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['UC'], focusDimension: 'uc' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['UC'], skill: 'se:author-uc' });
     expect(out).toContain('se:author-uc');
     expect(out, 'die Stilregel ist der Grund fuer den Block').toContain('25');
     expect(out.toLowerCase(), 'das Jargon-Budget steht nirgends sonst').toContain('jargon');
   });
 
   it('das Frontmatter ist abgeschnitten — es ist Harness-Metadatum, keine Anleitung', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['UC'], focusDimension: 'uc' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['UC'], skill: 'se:author-uc' });
     expect(out).not.toContain('version: 1');
     expect(out).not.toContain('description: Author a UC node');
   });
 
   it('hoechstens EIN Skill je Runde', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['FCHAIN', 'FUNC', 'FLOW', 'REQ'], focusDimension: 'arch' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['FCHAIN', 'FUNC', 'FLOW', 'REQ'], skill: 'se:top-level' });
     expect(out.match(/Anleitung fuer diese Runde/g) ?? []).toHaveLength(1);
   });
 });
 
 describe('CR-GC-558: die Anleitung folgt der Dimension, nicht dem ersten Fokus-Typ', () => {
   it('die Struktur-Runde bekommt se:top-level — vorher lief sie ohne jede Anleitung', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['FCHAIN', 'FUNC', 'FLOW', 'REQ'], focusDimension: 'arch' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['FCHAIN', 'FUNC', 'FLOW', 'REQ'], skill: 'se:top-level' });
     expect(out).toContain('se:top-level');
     expect(out, 'Phase 0 ist der Grund: die Systemgrenze zuerst').toContain('SYS as a blackbox');
   });
 
   it('alloc bekommt dieselbe Anleitung — der Schnitt ist eine Entscheidung, kein Aufraeumen', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['FUNC', 'MOD'], focusDimension: 'alloc' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['FUNC', 'MOD'], skill: 'se:top-level' });
     expect(out).toContain('se:top-level');
   });
 
   it('nicht der erste Fokus-Typ entscheidet: req beginnt mit UC und bekommt trotzdem author-req', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['UC', 'REQ'], focusDimension: 'req' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['UC', 'REQ'], skill: 'se:author-req' });
     expect(out).toContain('se:author-req');
     expect(out, 'die alte typ-gekeyte Wahl haette hier author-uc geliefert').not.toContain('se:author-uc');
   });
 
   it('der Marker schneidet, nicht das Byte-Budget — der Block endet an inject:end', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['FUNC'], focusDimension: 'arch' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['FUNC'], skill: 'se:top-level' });
     expect(out, 'ein blinder Schnitt bei 4.000 Zeichen haette mitten im Satz geendet').not.toContain('… (gekuerzt)');
     expect(out, 'die Marker selbst gehoeren nicht in den Prompt').not.toContain('inject:start');
     expect(out, 'ausserhalb der Marker steht Anleitung fuer den Menschen').not.toContain('Author the story first');
   });
 
   it('eine Dimension ohne Autorier-Skill bekommt keinen Block', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['TEST', 'REQ'], focusDimension: 'ver' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['TEST', 'REQ'], skill: null });
     expect(out).not.toContain('Anleitung fuer diese Runde');
   });
 
   it('ohne Dimension (handoff) gibt es keinen Block', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: [], focusDimension: null });
+    const out = await buildRoundInjection(registry([]), { focusTypes: [], skill: null });
     expect(out).not.toContain('Anleitung fuer diese Runde');
   });
 });
 
 describe('CR-GC-559: jede Kaltstart-Stufe traegt die Anleitung ihrer einen Entscheidung', () => {
   it('seed:actor traegt se:author-actor samt der einen legalen Kante', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['ACTOR', 'UC'], focusDimension: 'seed:actor' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['ACTOR', 'UC'], skill: 'se:author-actor' });
     expect(out).toContain('se:author-actor');
     expect(out, 'die Grammatik ist der Grund fuer den Skill — R-18 hat vier Versuche abgewiesen').toContain(
       'ACTOR -io-> FLOW',
@@ -170,13 +170,13 @@ describe('CR-GC-559: jede Kaltstart-Stufe traegt die Anleitung ihrer einen Entsc
   });
 
   it('seed:sys traegt se:top-level — Phase 0 ist die Blackbox', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['SYS'], focusDimension: 'seed:sys' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['SYS'], skill: 'se:top-level' });
     expect(out).toContain('se:top-level');
     expect(out).toContain('SYS as a blackbox');
   });
 
   it('seed:uc traegt se:author-uc', async () => {
-    const out = await buildRoundInjection(registry([]), { focusTypes: ['SYS', 'UC'], focusDimension: 'seed:uc' });
+    const out = await buildRoundInjection(registry([]), { focusTypes: ['SYS', 'UC'], skill: 'se:author-uc' });
     expect(out).toContain('se:author-uc');
   });
 });
@@ -185,7 +185,7 @@ describe('CR-GC-648: ein Null-Delta ist keine Aussage', () => {
   it('die Kante bleibt, die Nullen fallen weg', async () => {
     const out = await buildRoundInjection(
       registry([vorschlag({ delta: [0, 0, 0, -0.0001, 0, 0] })]),
-      { focusTypes: ['FUNC'], focusDimension: 'arch' },
+      { focusTypes: ['FUNC'], skill: 'se:top-level' },
     );
     expect(out).toContain('FUNC-task-execute -allocate-> MOD-sched');
     expect(out).not.toContain('delta [');
@@ -195,9 +195,9 @@ describe('CR-GC-648: ein Null-Delta ist keine Aussage', () => {
 describe('CR-GC-651: der injizierte Skill-Ausschnitt passt zum Executor', () => {
   // Vorher kamen author-req und author-uc ganz: commands-JSON als Beispiel (das SYSTEM verlangt
   // seit CR-GC-650 Format-E) und Hinweise auf Werkzeuge, die dem Modell vorenthalten sind.
-  for (const [dim, typen] of [['req', ['UC', 'REQ']], ['uc', ['UC']]] as const) {
-    it(`${dim}: Format-E-Beispiel, kein commands-JSON, keine vorenthaltenen Werkzeuge`, async () => {
-      const out = await buildRoundInjection(registry([]), { focusTypes: [...typen], focusDimension: dim });
+  for (const [skill, typen] of [['se:author-req', ['UC', 'REQ']], ['se:author-uc', ['UC']]] as const) {
+    it(`${skill}: Format-E-Beispiel, kein commands-JSON, keine vorenthaltenen Werkzeuge`, async () => {
+      const out = await buildRoundInjection(registry([]), { focusTypes: [...typen], skill });
       const anleitung = out.slice(out.indexOf('Anleitung fuer diese Runde'));
       expect(anleitung).toContain('## Nodes');
       expect(anleitung).not.toContain('"op"');

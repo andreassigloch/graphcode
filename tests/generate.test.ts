@@ -656,10 +656,12 @@ describe('CR-GC-589: der Schritt nennt seine Anleitung — eine Zuordnung fuer b
     expect(SKILL_FOR_DIMENSION['ver']).toBeUndefined(); // keine Anleitung, kein erfundener Eintrag
   });
 
-  it('der Executor hat keine zweite Tabelle mehr', () => {
+  it('der Executor hat keine zweite Tabelle und keine zweite Entscheidung (CR-GC-655)', () => {
     const src = readFileSync(fileURLToPath(new URL('../src/loop/executor-prompt.ts', import.meta.url)), 'utf8');
     expect(src).not.toMatch(/const SKILL_FOR_DIMENSION\s*[:=]/);
-    expect(src).toContain("import { SKILL_FOR_DIMENSION");
+    // Er liest den Skill, den der Schritt nennt — nicht die Dimension.
+    expect(src).not.toContain('SKILL_FOR_DIMENSION[');
+    expect(src).toContain('skillDatei(step.skill)');
   });
 });
 
@@ -1092,5 +1094,51 @@ describe('CR-GC-648: RD-01 verlangt den Erfueller, nicht neue REQs', () => {
     expect(step.prompt).toContain('KEINE neue REQ');
     expect(step.prompt, 'das req-Template steht nicht daneben').not.toContain('REQ-Kandidaten');
     for (const t of ['FUNC', 'FCHAIN', 'MOD', 'SYS']) expect(step.focusTypes).toContain(t);
+  });
+});
+
+describe('CR-GC-655: die Anleitung folgt dem Gewinner, nicht der Dimension', () => {
+  // Gemessen (gcrun-60/62): im UC-02-Fenster stand der uc-Skill author-uc daneben; qwen3-coder schrieb
+  // dessen Beispiel (SYS compose UC, UC compose FCHAIN) drei Runden lang ab, statt den ACTOR-Pfad zu
+  // bauen — und ueberschrieb dabei UC-Beschreibungen.
+  const ohneReq = g(
+    [
+      node('SYS-sig', 'SYS', 'SIG Local', 'Lokale LLM-Kapazitaet im internen Netz.'),
+      node('ACTOR-nutzer', 'ACTOR', 'Nutzer'),
+      node('UC-interactive', 'UC', 'Interactive Session', 'Nutzer fragt das lokale Modell und erhaelt eine Antwort.'),
+      node('UC-scheduled', 'UC', 'Scheduled Tasks', 'Planer startet nachts eine Aufgabe und legt das Ergebnis ab.'),
+    ],
+    [edge('SYS-sig', 'UC-interactive', 'compose'), edge('SYS-sig', 'UC-scheduled', 'compose')],
+  );
+
+  it('UC-01 nennt se:author-req (die Arbeit ist REQ-Autorieren), nicht se:author-uc', () => {
+    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    expect((step.focusKey as string).split(':')[1]).toBe('UC-01');
+    expect(step.skill).toBe('se:author-req');
+  });
+
+  it('UC-02 nennt KEINEN Skill — die Klausel beschreibt den ACTOR-Pfad selbst', () => {
+    const erst = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, [erst.focusKey as string]);
+    expect((step.focusKey as string).split(':')[1]).toBe('UC-02');
+    expect(step.skill).toBeNull();
+  });
+
+  it('jede Klausel entscheidet ihren Skill ausdruecklich (Objekt oder null, nie „nicht gesetzt")', () => {
+    for (const [regel, k] of Object.entries(RULE_CLAUSE)) {
+      expect(k.skill === null || typeof k.skill?.name === 'string', regel).toBe(true);
+    }
+  });
+
+  it('ein Template-Fenster (keine Klausel) behaelt den Skill seiner Dimension', () => {
+    const keys: string[] = [];
+    let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    for (let i = 0; i < 6 && step.focusKey && (step.focusKey.split(':')[1] as string) in RULE_CLAUSE; i++) {
+      keys.push(step.focusKey);
+      step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+    }
+    const regel = (step.focusKey as string).split(':')[1];
+    expect(regel in RULE_CLAUSE, `Fenster ${regel}`).toBe(false);
+    expect(step.skill).toBe(SKILL_FOR_DIMENSION[step.focusDimension as string]?.name ?? null);
   });
 });
