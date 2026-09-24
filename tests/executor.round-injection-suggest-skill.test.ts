@@ -180,3 +180,14 @@ describe('CR-GC-559: jede Kaltstart-Stufe traegt die Anleitung ihrer einen Entsc
     expect(out).toContain('se:author-uc');
   });
 });
+
+describe('CR-GC-647: ein Null-Delta ist keine Aussage', () => {
+  it('die Kante bleibt, die Nullen fallen weg', async () => {
+    const out = await buildRoundInjection(
+      registry([vorschlag({ delta: [0, 0, 0, -0.0001, 0, 0] })]),
+      { focusTypes: ['FUNC'], focusDimension: 'arch' },
+    );
+    expect(out).toContain('FUNC-task-execute -allocate-> MOD-sched');
+    expect(out).not.toContain('delta [');
+  });
+});
