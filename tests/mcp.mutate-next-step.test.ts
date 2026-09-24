@@ -75,7 +75,7 @@ describe('CR-GC-588: next an der angewandten Mutation', () => {
     const host = await tools.graph_generate.handler({});
     expect(host.prompt).toContain('als `next` in der Antwort');
     const driver = await tools.graph_generate.handler({ selection: 'driver' });
-    expect(driver.prompt).toContain('graph_generate erneut aufrufen');
+    expect(driver.prompt, 'CR-GC-647: der Treiber ruft graph_generate, nicht das Modell').not.toContain('graph_generate');
     expect(driver.prompt).not.toContain('`next`');
   });
 });

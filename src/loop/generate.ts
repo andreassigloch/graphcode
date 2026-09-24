@@ -115,8 +115,8 @@ export type GenerationSelection = 'host' | 'driver';
 
 /** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie
  * LLM-Bauchgefühl. EIN Template, zwei Selektions-Varianten (CR-GC-288) — Schritt 1
- * (Guide) und der Folgeschritt (graph_generate) sind geteilt, nur der mittlere
- * Auswahl-Auftrag wechselt.
+ * (Guide) ist geteilt; Auswahl-Auftrag und Folgeschritt wechseln (der Folgeschritt
+ * entfaellt im Treiber-Modus, CR-GC-647).
  *
  * CR-GC-577: die host-Variante verlangt die Probe nur noch bei MEHREREN Alternativen.
  * Gemessen an `runs/opus5-5`: sechs Paare aus Probe und Anwendung DESSELBEN Batches, und
@@ -136,7 +136,6 @@ export type GenerationSelection = 'host' | 'driver';
  * vergleichen, ohne sie zu verursachen — die Grundlage von Best-of-N (CR-GC-288). */
 const PROTOCOL_GUIDE =
   'Gate-Protokoll: (1) vor dem Schreiben graph_authoring_guide für jeden Elementtyp aufrufen (legale Kanten). ';
-const PROTOCOL_NEXT = 'Danach graph_generate erneut aufrufen für den nächsten Schritt.';
 // CR-GC-588: der Host bekommt den naechsten Schritt als `next` an der angewandten Mutation —
 // derselbe Schritt, ein Roundtrip weniger. graph_generate bleibt fuer Einstieg und `defer`.
 const PROTOCOL_NEXT_HOST =
@@ -155,9 +154,10 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
   driver:
     PROTOCOL_GUIDE +
     '(2) Emittiere EINEN vollständigen Batch — keine eigenen Gate-Proben: der Treiber führt ihn ' +
-    'selbst ans Gate (Fokus-Delta, Steuerwert, tier, Element-Ausbeute) und wendet nur an, was dort besteht. ' +
-    '(3) ' +
-    PROTOCOL_NEXT,
+    // CR-GC-647: kein Folgeschritt „graph_generate erneut aufrufen" — im Treiber-Modus ruft der
+    // TREIBER graph_generate, dem Modell ist das Werkzeug vorenthalten. Der Satz war ein zweiter
+    // Imperativ zu einer Sache, die das Modell nicht tun kann.
+    'selbst ans Gate (Fokus-Delta, Steuerwert, tier, Element-Ausbeute) und wendet nur an, was dort besteht.',
 };
 
 /**
@@ -204,6 +204,18 @@ export const RULE_CLAUSE: Record<string, { types: string[]; text: (uids: string[
       ' ACTOR io→FLOW io→FUNC, wobei die FUNC Mitglied einer FCHAIN des UC ist. Lege die fehlenden' +
       ' FLOWs und FUNCs im selben Batch an. ACTOR direkt an UC oder an FCHAIN wird von R-18' +
       ' abgewiesen, in beiden Richtungen.',
+  },
+  // CR-GC-647: RD-01 liegt in der req-Dimension, deren Template „3–5 neue REQs je UC" verlangt —
+  // das Gegenteil dessen, was der Fund braucht: die REQ existiert, ihr fehlt der Erfüller. Und
+  // die Fokus-Typen der Dimension (UC/REQ/TEST) enthielten keinen einzigen Quelltyp: gemessen am
+  // eigenen Modell trug die Element-Liste 6,7k Zeichen REQ-Namen und keine FUNC-uid, an die
+  // das Modell die satisfy-Kante haette haengen koennen.
+  'RD-01': {
+    types: ['REQ', 'FUNC', 'FCHAIN', 'MOD', 'SYS'],
+    text: (uids) =>
+      `Diese REQs sind Blaetter ohne Erfueller (${uids.join(', ')}): verbinde jede mit dem Element,` +
+      ' das sie erfuellt — FUNC, FCHAIN, MOD oder SYS satisfy→REQ, mit existierenden uids aus der' +
+      ' Element-Liste. Lege KEINE neue REQ an.',
   },
 };
 

@@ -395,8 +395,13 @@ export async function buildRoundChannels(
         const beteiligt = [s.elementId, s.edit.source, s.edit.target].map(typVon);
         if (fokus.size > 0 && !beteiligt.some((ty) => fokus.has(ty))) continue;
         const kante = `${s.edit.source} -${s.edit.type}-> ${s.edit.target}`;
-        const d = Array.isArray(s.delta)
-          ? ` · delta [${s.delta.map((x) => (typeof x === 'number' ? x.toFixed(3) : '?')).join(' ')}]`
+        // CR-GC-647: ein Null-Delta ist keine Aussage — gemessen trugen beide Vorschlaege einer
+        // Runde `[0.000 ×6]` unter dem Satz „negativ heisst Verbesserung". Nur ein Zug, der
+        // etwas bewegt, bekommt seine Zahlen.
+        const bewegt =
+          Array.isArray(s.delta) && s.delta.some((x) => typeof x !== 'number' || Math.abs(x) >= 0.0005);
+        const d = bewegt
+          ? ` · delta [${s.delta!.map((x) => (typeof x === 'number' ? x.toFixed(3) : '?')).join(' ')}]`
           : '';
         zeilen.push(`- ${s.ruleId} @ ${s.elementId}: ${kante}${d}`);
         if (zeilen.length >= SUGGEST_MAX_ROWS) break;

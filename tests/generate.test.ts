@@ -707,13 +707,14 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(klausel).toContain('fitAdvisory ist nur Bericht');
   });
 
-  it("'driver' (seed): dryRun-Auftrag raus, Guide-Schritt und Folgeschritt bleiben", () => {
+  it("'driver' (seed): dryRun-Auftrag und Folgeschritt raus, Guide-Schritt bleibt", () => {
     const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'driver');
     expect(step.phase).toBe('seed');
     expect(step.prompt).not.toContain('dryRun');
     expect(step.prompt).toContain('Treiber');
     expect(step.prompt).toContain('graph_authoring_guide'); // Schritt 1 geteilt
-    expect(step.prompt).toContain('graph_generate erneut aufrufen'); // Folgeschritt geteilt
+    // CR-GC-647: den Folgeschritt macht der Treiber — dem Modell ist graph_generate vorenthalten.
+    expect(step.prompt.split('Gate-Protokoll')[1]).not.toContain('graph_generate');
     // Nur das Protokoll wechselt — die generative Instruktion selbst ist identisch.
     const host = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
     expect(step.prompt.split('Gate-Protokoll')[0]).toBe(host.prompt.split('Gate-Protokoll')[0]);
@@ -1056,5 +1057,39 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
       }
     }
     expect(luecken).toEqual([]);
+  });
+});
+
+describe('CR-GC-647: RD-01 verlangt den Erfueller, nicht neue REQs', () => {
+  // Gemessen am eigenen Modell: das RD-01-Fenster bekam das req-Template („3–5 REQ-Kandidaten
+  // je UC") und die Fokus-Typen UC/REQ/TEST — keine einzige FUNC-uid in der Element-Liste, an
+  // die das Modell die satisfy-Kante haette haengen koennen.
+  const ohneErfueller = g(
+    [
+      node('SYS-sig', 'SYS', 'SIG Local', 'Lokale LLM-Kapazitaet im internen Netz.'),
+      node('UC-interactive', 'UC', 'Interactive Session', 'Nutzer fragt das lokale Modell und erhaelt eine Antwort.'),
+      node('REQ-latenz', 'REQ', 'Antwort unter 2 s', 'Das System muss 95 % der Antworten unter 2 s liefern.'),
+      node('TEST-latenz', 'TEST', 'Latenzmessung', 'Lastlauf misst p95 der Antwortzeit, Grenze 2 s.'),
+      node('FUNC-antworten', 'FUNC', 'Antworten', 'Beantwortet eine Anfrage.'),
+    ],
+    [
+      edge('SYS-sig', 'UC-interactive', 'compose'),
+      edge('UC-interactive', 'REQ-latenz', 'compose'),
+      edge('TEST-latenz', 'REQ-latenz', 'verify'),
+    ],
+  );
+
+  it('das RD-01-Fenster nennt satisfy von FUNC/FCHAIN/MOD/SYS und traegt die Quelltypen im Fokus', () => {
+    const keys: string[] = [];
+    let step = generationStep(ohneErfueller, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    for (let i = 0; i < 12 && step.focusKey && !step.focusKey.includes(':RD-01:'); i++) {
+      keys.push(step.focusKey);
+      step = generationStep(ohneErfueller, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+    }
+    expect(step.focusKey, 'RD-01 wird Fokus').toContain(':RD-01:');
+    expect(step.prompt).toContain('satisfy→REQ');
+    expect(step.prompt).toContain('KEINE neue REQ');
+    expect(step.prompt, 'das req-Template steht nicht daneben').not.toContain('REQ-Kandidaten');
+    for (const t of ['FUNC', 'FCHAIN', 'MOD', 'SYS']) expect(step.focusTypes).toContain(t);
   });
 });
