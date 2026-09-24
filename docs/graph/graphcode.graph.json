@@ -12685,6 +12685,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-651",
+      "target": "FUNC-build-round-injection",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-651",
+      "target": "FUNC-call-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-651",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-651",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -20969,5 +20989,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 442
+  "graphVersion": 443
 }

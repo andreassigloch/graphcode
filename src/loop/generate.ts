@@ -114,9 +114,9 @@ export const SKILL_FOR_DIMENSION: Record<string, { name: string; file: string } 
 export type GenerationSelection = 'host' | 'driver';
 
 /** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie
- * LLM-Bauchgefühl. EIN Template, zwei Selektions-Varianten (CR-GC-288) — Schritt 1
- * (Guide) ist geteilt; Auswahl-Auftrag und Folgeschritt wechseln (der Folgeschritt
- * entfaellt im Treiber-Modus, CR-GC-647).
+ * LLM-Bauchgefühl. EIN Template, zwei Selektions-Varianten (CR-GC-288). Im Treiber-Modus
+ * entfallen Guide-Schritt (CR-GC-651) und Folgeschritt (CR-GC-648): beides weiss oder tut dort
+ * der Treiber, nicht das Modell.
  *
  * CR-GC-577: die host-Variante verlangt die Probe nur noch bei MEHREREN Alternativen.
  * Gemessen an `runs/opus5-5`: sechs Paare aus Probe und Anwendung DESSELBEN Batches, und
@@ -151,10 +151,12 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
     '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
     '(4) ' +
     PROTOCOL_NEXT_HOST,
+  // CR-GC-651: kein Schritt (1) im Treiber-Modus. Ob die Grammatik schon im Rundeninhalt steht,
+  // weiss nur der Treiber (Injektion an/aus) — also schreibt ER den Guide-Hinweis, wenn er fehlt.
+  // Vorher stand hier „Guide aufrufen", und die Injektion widerrief es zwei Absaetze spaeter.
   driver:
-    PROTOCOL_GUIDE +
-    '(2) Emittiere EINEN vollständigen Batch — keine eigenen Gate-Proben: der Treiber führt ihn ' +
-    // CR-GC-647: kein Folgeschritt „graph_generate erneut aufrufen" — im Treiber-Modus ruft der
+    'Gate-Protokoll: Emittiere EINEN vollständigen Batch — keine eigenen Gate-Proben: der Treiber führt ihn ' +
+    // CR-GC-648: kein Folgeschritt „graph_generate erneut aufrufen" — im Treiber-Modus ruft der
     // TREIBER graph_generate, dem Modell ist das Werkzeug vorenthalten. Der Satz war ein zweiter
     // Imperativ zu einer Sache, die das Modell nicht tun kann.
     'selbst ans Gate (Fokus-Delta, Steuerwert, tier, Element-Ausbeute) und wendet nur an, was dort besteht.',
@@ -205,7 +207,7 @@ export const RULE_CLAUSE: Record<string, { types: string[]; text: (uids: string[
       ' FLOWs und FUNCs im selben Batch an. ACTOR direkt an UC oder an FCHAIN wird von R-18' +
       ' abgewiesen, in beiden Richtungen.',
   },
-  // CR-GC-647: RD-01 liegt in der req-Dimension, deren Template „3–5 neue REQs je UC" verlangt —
+  // CR-GC-648: RD-01 liegt in der req-Dimension, deren Template „3–5 neue REQs je UC" verlangt —
   // das Gegenteil dessen, was der Fund braucht: die REQ existiert, ihr fehlt der Erfüller. Und
   // die Fokus-Typen der Dimension (UC/REQ/TEST) enthielten keinen einzigen Quelltyp: gemessen am
   // eigenen Modell trug die Element-Liste 6,7k Zeichen REQ-Namen und keine FUNC-uid, an die

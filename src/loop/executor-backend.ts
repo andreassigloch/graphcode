@@ -19,7 +19,7 @@ import {
   OpenAiWireAnswer,
   describeWireIssues,
 } from './model-answer-contract.js';
-import { AUTHORING_TOOLS, WITHHELD_TOOLS } from './executor-prompt.js';
+import { AUTHORING_PARAMS, WITHHELD_TOOLS } from './executor-prompt.js';
 import { READ_TOOLS } from './executor-tools.js';
 import type { CallModel, ExecutorConfig } from './executor.js';
 
@@ -53,19 +53,47 @@ export function buildToolSpecs(
   toolset: ExecutorConfig['toolset'] = 'full',
 ): ToolSpec[] {
   const gc = Object.keys(registry)
-    .filter((n) => !WITHHELD_TOOLS.has(n) && (toolset === 'full' || AUTHORING_TOOLS.has(n)))
-    .map((n) => ({
-      name: 'graphcode_' + n,
-      description: (registry[n].description || '').slice(0, 400),
+    .filter((n) => !WITHHELD_TOOLS.has(n) && (toolset === 'full' || n in AUTHORING_PARAMS))
+    .map((n) => {
       // Streng wie am MCP-Server (CR-GC-647): die Zusage traegt additionalProperties:false.
-      schema: toJsonSchema(strengesSchema(registry[n]) as z.ZodType),
-    }));
+      const schema = toJsonSchema(strengesSchema(registry[n]) as z.ZodType);
+      const description = registry[n].description || '';
+      if (toolset === 'full') return { name: 'graphcode_' + n, description: description.slice(0, 400), schema };
+      return { name: 'graphcode_' + n, description: ersterSatz(description), schema: projiziert(schema, AUTHORING_PARAMS[n]) };
+    });
   const rd = Object.entries(READ_TOOLS).map(([n, t]) => ({
     name: n,
     description: t.desc,
     schema: t.params,
   }));
   return [...gc, ...rd];
+}
+
+/** Der erste Satz einer Werkzeugbeschreibung — im Executor waehlt der Treiber, nicht das Modell (CR-GC-651). */
+function ersterSatz(text: string): string {
+  const ende = text.search(/\.(\s|$)/);
+  return ende >= 0 ? text.slice(0, ende + 1) : text;
+}
+
+/** Nur die erlaubten Parameter, ohne ihre Beschreibungen (CR-GC-651). */
+function projiziert(
+  schema: Record<string, unknown>,
+  auswahl: { params: readonly string[]; required?: readonly string[] },
+): Record<string, unknown> {
+  const props = (schema.properties ?? {}) as Record<string, Record<string, unknown>>;
+  const properties: Record<string, unknown> = {};
+  for (const k of auswahl.params) {
+    if (!props[k]) continue;
+    const ohneText = { ...props[k] };
+    delete ohneText.description;
+    properties[k] = ohneText;
+  }
+  const bisher = Array.isArray(schema.required) ? (schema.required as string[]) : [];
+  const required = [...new Set([...bisher.filter((k) => auswahl.params.includes(k)), ...(auswahl.required ?? [])])];
+  const out: Record<string, unknown> = { ...schema, properties };
+  if (required.length > 0) out.required = required;
+  else delete out.required;
+  return out;
 }
 
 export function toBackendTools(specs: ToolSpec[], backend: ExecutorConfig['backend']): unknown[] {

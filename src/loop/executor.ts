@@ -32,7 +32,7 @@ import type { ModelAnswer, ModelToolCall } from './model-answer-contract.js';
 // Die drei zustandsfreien Executor-Achsen (CR-GC-320) — Prompt/Injektion,
 // Best-of-N-Ranking, Prosa-Recovery. Kein Re-Export von hier: wer sie braucht,
 // importiert das jeweilige Modul direkt (keine parallelen Pfade).
-import { EMIT_SUFFIX, IDLE_NUDGE, SYSTEM, buildRoundInjection, jsonCapped } from './executor-prompt.js';
+import { EMIT_SUFFIX, GUIDE_HINT, IDLE_NUDGE, SYSTEM, buildRoundInjection, jsonCapped } from './executor-prompt.js';
 import { extractMutateFromText, extractToolCallFromText, type RecoveredMutate } from './executor-parse.js';
 import { READ_TOOLS, execReadOrGraphTool, pushToolResults } from './executor-tools.js';
 import { bindGateClient, formatGateFeedback, ruleIdsOf, type MutateOutcome } from './executor-gate.js';
@@ -277,7 +277,10 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     const vermerk = zugvermerk(zuege);
     // CR-GC-285: Guide-Slice + Element-Index deterministisch vorab injizieren —
     // ersetzt die redundanten Lese-Turns am Rundenstart, nicht die Lese-Tools.
-    const injection = config.injection ? await buildRoundInjection(registry, gen) : '';
+    // CR-GC-651: der Guide-Hinweis steht nur, wenn die Grammatik NICHT eingebettet ist — der
+    // Auftrag aus graph_generate sagt im Treiber-Modus nichts dazu, weil nur der Treiber weiss,
+    // ob er sie einbettet. Ein Schreiber je Tatsache (CR-GC-358), und zwar der, der sie kennt.
+    const injection = config.injection ? await buildRoundInjection(registry, gen) : GUIDE_HINT;
     const baseContent =
       gen.prompt + (injection ? '\n\n' + injection : '') + (vermerk ? '\n\n' + vermerk : '') + EMIT_SUFFIX + stagnationHint;
     if (bestOfN) {

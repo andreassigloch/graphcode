@@ -707,13 +707,14 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(klausel).toContain('fitAdvisory ist nur Bericht');
   });
 
-  it("'driver' (seed): dryRun-Auftrag und Folgeschritt raus, Guide-Schritt bleibt", () => {
+  it("'driver' (seed): dryRun-Auftrag, Guide-Schritt und Folgeschritt raus", () => {
     const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'driver');
     expect(step.phase).toBe('seed');
     expect(step.prompt).not.toContain('dryRun');
     expect(step.prompt).toContain('Treiber');
-    expect(step.prompt).toContain('graph_authoring_guide'); // Schritt 1 geteilt
-    // CR-GC-647: den Folgeschritt macht der Treiber — dem Modell ist graph_generate vorenthalten.
+    // CR-GC-651: auch den Guide-Schritt sagt im Treiber-Modus der Treiber, nicht der Auftrag.
+    expect(step.prompt).not.toContain('graph_authoring_guide');
+    // CR-GC-648: den Folgeschritt macht der Treiber — dem Modell ist graph_generate vorenthalten.
     expect(step.prompt.split('Gate-Protokoll')[1]).not.toContain('graph_generate');
     // Nur das Protokoll wechselt — die generative Instruktion selbst ist identisch.
     const host = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
@@ -1060,7 +1061,7 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
   });
 });
 
-describe('CR-GC-647: RD-01 verlangt den Erfueller, nicht neue REQs', () => {
+describe('CR-GC-648: RD-01 verlangt den Erfueller, nicht neue REQs', () => {
   // Gemessen am eigenen Modell: das RD-01-Fenster bekam das req-Template („3–5 REQ-Kandidaten
   // je UC") und die Fokus-Typen UC/REQ/TEST — keine einzige FUNC-uid in der Element-Liste, an
   // die das Modell die satisfy-Kante haette haengen koennen.
