@@ -1,6 +1,6 @@
 # CR-GC-660: Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-563 (bug)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-563.json (Lane: code)
