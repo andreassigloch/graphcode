@@ -10,6 +10,7 @@
  * @author andreas@siglochconsulting
  */
 
+import { z } from 'zod/v4';
 import { FormatECodec, SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { MutateCommand } from '@sigloch/contracts/harness';
@@ -20,6 +21,37 @@ import type { MutateCommand } from '@sigloch/contracts/harness';
  * jemand einen anderen Deskriptor unterschieben koennte.
  */
 export const FORMAT_E_CODEC = new FormatECodec(SE_DESCRIPTOR);
+
+/**
+ * CR-GC-310: Typen bestehender Knoten kommen aus dem geladenen Graphen — dieselbe Quelle, aus der
+ * das Gate ohnehin liest, kein zweiter Index. Damit braucht ein reiner Kanten-Batch keine
+ * `### <TYPE>`-Sektionen mehr. EIN Aufloeser fuer Tuer und Uebersetzer.
+ */
+function typeResolver(bestand: Graph): (uid: string) => string | undefined {
+  const typeIndex = new Map(bestand.nodes.map((n) => [n.uid, n.type]));
+  return (uid) => typeIndex.get(uid);
+}
+
+/**
+ * Die Tuer des Format-E-Vertrags (CR-GC-641): ein Zod-Schema, an das `SCHEMA-format-e` bindet.
+ *
+ * Bis hierher war der Vertrag an den TYP `FormatEDiff` gebunden — zur Laufzeit weg, und damit fuer
+ * keine Regel sichtbar, wer ihn liest. Genau so blieb `bootstrap` bis CR-GC-630 ein zweiter Leser,
+ * ohne dass etwas rot wurde. Als Zod-Konstante zaehlt RC-09 jeden, der sie parst, gegen das Modell.
+ *
+ * Eingabe ist `{ text, bestand }`, nicht nur der Text: der Parser typisiert uids, die der Text nicht
+ * deklariert, aus dem Speicher (CR-GC-310). Jeder Codec-Fehler wird ein Issue, wortgleich.
+ */
+export const FormatEInputSchema = z
+  .object({
+    text: z.string(),
+    bestand: z.custom<Graph>((g) => typeof g === 'object' && g !== null && Array.isArray((g as Graph).nodes)),
+  })
+  .transform(({ text, bestand }, ctx) => {
+    const diff = FORMAT_E_CODEC.parse(text, { resolveType: typeResolver(bestand) });
+    for (const message of diff.errors) ctx.addIssue({ code: 'custom', message });
+    return diff;
+  });
 
 /**
  * Format-E-Block → MutateCommands (CR-GC-276, CR-GC-627, CR-GC-630). Ein Input-Codec, KEIN zweiter Schreibweg.
@@ -50,15 +82,12 @@ export function formatEToCommands(
   bestand: Graph,
   text: string,
 ): { commands: MutateCommand[]; unnamed: string[] } {
-  // CR-GC-310: Typen bestehender Knoten kommen aus dem geladenen Graphen — dieselbe
-  // Quelle, aus der das Gate ohnehin liest, kein zweiter Index. Damit braucht ein
-  // reiner Kanten-Batch keine `### <TYPE>`-Sektionen mehr.
-  const typeIndex = new Map(bestand.nodes.map((n) => [n.uid, n.type]));
-  const resolveType = (uid: string): string | undefined => typeIndex.get(uid);
-  const diff = FORMAT_E_CODEC.parse(text, { resolveType });
-  if (diff.errors.length > 0) {
-    throw new Error(`Format-E parse errors:\n  - ${diff.errors.join('\n  - ')}`);
+  const parsed = FormatEInputSchema.safeParse({ text, bestand });
+  if (!parsed.success) {
+    throw new Error(`Format-E parse errors:\n  - ${parsed.error.issues.map((i) => i.message).join('\n  - ')}`);
   }
+  const diff = parsed.data;
+  const resolveType = typeResolver(bestand);
 
   const unnamed: string[] = [];
   /** Knoten, die DIESER Block anlegt — Endpunkt-Auflösung und Batch-Widerspruch lesen sie. */

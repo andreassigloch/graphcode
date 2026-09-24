@@ -2092,6 +2092,12 @@
       "description": "docs/cr/open/CR-GC-640-extraktor-liefert-zodsymbols-und-filesco.md"
     },
     {
+      "id": "CR-GC-641",
+      "type": "CR",
+      "name": "Format-E bekommt eine Zod-Tuer, SCHEMA-format-e bindet sie",
+      "description": "docs/cr/open/CR-GC-641-format-e-bekommt-eine-zod-tuer-schema-fo.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6328,14 +6334,14 @@
       "id": "SCHEMA-format-e",
       "type": "SCHEMA",
       "name": "Format-E",
-      "description": "Kompaktes Snapshot-/Diff-Format. Der geparste Vertrag ist ein Diff aus Operationen plus Fehlerliste — NICHT ein Knoten-/Kanten-Paar. @sigloch/contracts/se. (Kopie entfernt CR-GC-454)",
+      "description": "Kompaktes Snapshot-/Diff-Format. Der geparste Vertrag ist ein Diff aus Operationen plus Fehlerliste — NICHT ein Knoten-/Kanten-Paar. Tuer seit CR-GC-641: das Zod-Schema FormatEInputSchema ({text, bestand} → Diff, Codec-Fehler als Issues); vorher an den Typ FormatEDiff gebunden und damit fuer RC-09 unsichtbar.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "zodDefinition": null,
-      "external": true,
+      "external": false,
       "realRef": {
-        "file": "packages/graph-api-core/src/types.ts",
-        "symbol": "FormatEDiff",
+        "file": "src/surface/format-e-commands.ts",
+        "symbol": "FormatEInputSchema",
         "lang": "ts"
       }
     },
@@ -12428,6 +12434,16 @@
     {
       "source": "CR-GC-640",
       "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-641",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-641",
+      "target": "SCHEMA-format-e",
       "type": "relation"
     },
     {
@@ -20705,5 +20721,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 409
+  "graphVersion": 412
 }

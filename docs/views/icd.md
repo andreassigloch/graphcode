@@ -20,7 +20,7 @@
 | `SCHEMA-executor-config` | src/loop/executor.ts#ExecutorConfigSchema | reviewed |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
 | `SCHEMA-fit-advisory` | src/kernel/measure/fit-advisory.ts#FitAdvisory | reviewed |
-| `SCHEMA-format-e` | packages/graph-api-core/src/types.ts#FormatEDiff | reviewed |
+| `SCHEMA-format-e` | src/surface/format-e-commands.ts#FormatEInputSchema | reviewed |
 | `SCHEMA-function-criticality` | packages/contracts/src/se/function-criticality.ts#FunctionCriticality | reviewed |
 | `SCHEMA-gate-outcome` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
