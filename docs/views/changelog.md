@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 256 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 256 CR · 193 done · 0 open.
+Total: 256 CR · 195 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -316,5 +316,5 @@ Total: 256 CR · 193 done · 0 open.
 | `CR-GC-644` | n/a | Fuenf lokale Typ-Vertraege werden Zod, Erzeuger parsen ihre Ausgabe |
 | `CR-GC-645` | done | Letzte Bindungen: Familienvertraege auf Schemas, Codec nicht ueber ctx |
 | `CR-GC-646` | done | Gate nimmt kinds als String an - Element-Attribute werden am Schreibweg nicht gegen den Vertrag geprueft |
-| `CR-GC-647` | n/a | Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an |
-| `CR-GC-648` | n/a | Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta |
+| `CR-GC-647` | done | Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an |
+| `CR-GC-648` | done | Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta |

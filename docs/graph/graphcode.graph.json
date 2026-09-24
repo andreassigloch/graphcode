@@ -2138,13 +2138,17 @@
       "id": "CR-GC-647",
       "type": "CR",
       "name": "Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an",
-      "description": "docs/cr/open/CR-GC-647-executor-modell-werkzeugaufrufe-ohne-sch.md"
+      "description": "docs/cr/done/CR-GC-647-executor-modell-werkzeugaufrufe-ohne-sch.md",
+      "status": "done",
+      "commitRef": "c9e873b"
     },
     {
       "id": "CR-GC-648",
       "type": "CR",
       "name": "Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta",
-      "description": "docs/cr/open/CR-GC-648-executor-runde-folgeschritt-imperativ-rd.md"
+      "description": "docs/cr/done/CR-GC-648-executor-runde-folgeschritt-imperativ-rd.md",
+      "status": "done",
+      "commitRef": "58014ac"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -20922,5 +20926,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 434
+  "graphVersion": 436
 }
