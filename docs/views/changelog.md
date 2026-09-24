@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 266 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 267 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 266 CR · 201 done · 0 open.
+Total: 267 CR · 201 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -328,3 +328,4 @@ Total: 266 CR · 201 done · 0 open.
 | `CR-GC-656` | n/a | Executor openai-Zweig: fetch bricht nach 300 s ab (undici headersTimeout) — Thinking-Modelle unbenutzbar |
 | `CR-GC-657` | n/a | REQ-Beispiele ohne kinds — FUNC satisfy REQ wird illegal (auch das SYSTEM-Beispiel selbst) |
 | `CR-GC-658` | n/a | UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids |
+| `CR-GC-659` | n/a | Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis |

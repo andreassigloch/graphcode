@@ -2223,6 +2223,12 @@
       "description": "docs/cr/open/CR-GC-658-uc-02-klausel-beschreibt-den-actor-pfad-.md"
     },
     {
+      "id": "CR-GC-659",
+      "type": "CR",
+      "name": "Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis",
+      "description": "docs/cr/open/CR-GC-659-preflight-meldung-zu-func-satisfy-req-ne.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -12871,6 +12877,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-658",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-659",
+      "target": "FUNC-preflight",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -21210,5 +21226,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 454
+  "graphVersion": 456
 }

@@ -349,6 +349,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-654` | done | Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch | `FUNC-run-executor` |
 | `CR-GC-655` | n/a | Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req) | `FUNC-build-round-injection` · `FUNC-generation-step` |
 | `CR-GC-656` | n/a | Executor openai-Zweig: fetch bricht nach 300 s ab (undici headersTimeout) — Thinking-Modelle unbenutzbar | `FUNC-call-model` · `FUNC-read-openai-stream` |
+| `CR-GC-658` | n/a | UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids | `FUNC-generation-step` |
+| `CR-GC-659` | n/a | Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis | `FUNC-preflight` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
