@@ -1,6 +1,6 @@
 # CR-GC-658: UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-560 (finding)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-560.json (Lane: code)
