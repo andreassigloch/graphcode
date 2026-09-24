@@ -23,7 +23,6 @@ import type { GraphCodeHarness } from '../kernel/harness.js';
 import { ToolContext } from './tool-context-contract.js';
 import type { AuditLog, AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
 import { SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
-import { SE_FORMAT_E_CODEC } from '@sigloch/graph-api-core';
 // CR-GC-314 REQ-A02: the rule-set version comes from the LOADED package, never from
 // config — otherwise the trail records a claim instead of a fact.
 import { RULES_VERSION } from '@sigloch/contracts/se';
@@ -197,9 +196,6 @@ export function createToolContext(
   auditLog: AuditLog = new FileOperationsLog(harness.getStoreDir()),
   opts: { ownerPid?: string | null } = {},
 ): ToolContext {
-  // CR-GC-631: DIE Format-E-Instanz des Prozesses. Bis hierher standen zwei nebeneinander —
-  // diese und die `inner` eines Wrappers, die dasselbe `new FormatECodec(SE_DESCRIPTOR)` war.
-  const codec = SE_FORMAT_E_CODEC;
   // Version continuity (CR-GC-232): resume from the durable log's highest version —
   // never reset to 0 per session (CR-233 builds its OCC on this monotonicity).
   const versioned = auditLog as Partial<Pick<OperationsLog, 'latestVersion'>>;
@@ -554,7 +550,6 @@ export function createToolContext(
   return ToolContext.parse({
     harness,
     auditLog,
-    codec,
     graphVersion: () => _graphVersion,
     staleAnalysisBanner,
     recordAudit,

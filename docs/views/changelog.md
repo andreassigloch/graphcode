@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 252 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 253 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 252 CR · 189 done · 0 open.
+Total: 253 CR · 189 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -314,3 +314,4 @@ Total: 252 CR · 189 done · 0 open.
 | `CR-GC-642` | n/a | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen |
 | `CR-GC-643` | n/a | graphcode: testRefs/realRef ueber den Familienleser, Vertraege als SCHEMA im Modell |
 | `CR-GC-644` | n/a | Fuenf lokale Typ-Vertraege werden Zod, Erzeuger parsen ihre Ausgabe |
+| `CR-GC-645` | n/a | Letzte Bindungen: Familienvertraege auf Schemas, Codec nicht ueber ctx |
