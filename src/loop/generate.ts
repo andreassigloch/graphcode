@@ -211,12 +211,21 @@ export const RULE_CLAUSE: Record<
   // CR-GC-564: der legale Pfad AUSGESCHRIEBEN. ACTOR direkt an UC oder FCHAIN ist die
   // Fehlerart, die Lauf 3 zwei Runden an R-18-Ablehnungen gekostet hat.
   'UC-02': {
-    types: ['ACTOR', 'UC', 'FCHAIN', 'FUNC', 'FLOW'],
+    // CR-GC-658: SCHEMA im Fokus — der Pfad braucht je FLOW einen Vertrag, und das Vorbild nennt ihn.
+    types: ['ACTOR', 'UC', 'FCHAIN', 'FUNC', 'FLOW', 'SCHEMA'],
     text: (uids) =>
       `Diese UCs sind von keinem ACTOR erreichbar (${uids.join(', ')}): der EINZIGE legale Weg ist` +
-      ' ACTOR io→FLOW io→FUNC, wobei die FUNC Mitglied einer FCHAIN des UC ist. Lege die fehlenden' +
-      ' FLOWs und FUNCs im selben Batch an. ACTOR direkt an UC oder an FCHAIN wird von R-18' +
-      ' abgewiesen, in beiden Richtungen.',
+      ' ACTOR io→FLOW io→FUNC, wobei die FUNC Mitglied einer FCHAIN des UC ist. ACTOR direkt an UC' +
+      ' oder an FCHAIN wird von R-18 abgewiesen, in beiden Richtungen. Jeder FLOW braucht genau einen' +
+      ' Vertrag (FLOW relation→SCHEMA) und genau einen Erzeuger. Vorbild — echte uids statt Platzhalter,' +
+      ' alle neuen Knoten deklariert, alles in EINEM Batch:\n' +
+      '## Nodes\n### FLOW\n+ FLOW-anfrage|Anfrage des Nutzers an das System [__name:Anfrage]\n' +
+      '### SCHEMA\n+ SCHEMA-anfrage|Form der Anfrage: Text und Sitzungs-ID [__name:Anfrage-Vertrag]\n' +
+      '### FUNC\n+ FUNC-anfrage-annehmen|Nimmt die Anfrage entgegen. [__name:Anfrage annehmen]\n\n' +
+      '## Edges\n+ ACTOR-nutzer -io-> FLOW-anfrage\n+ FLOW-anfrage -io-> FUNC-anfrage-annehmen\n' +
+      '+ FLOW-anfrage -relation-> SCHEMA-anfrage\n+ FCHAIN-sitzung -compose-> FUNC-anfrage-annehmen',
+    // CR-GC-658: das Vorbild steht in der Klausel, weil sie die Arbeit beschreibt — ohne es scheiterte
+    // qwen3-coder an FLOW ohne SCHEMA (42x R-18) und an Platzhalter-uids (STRUCT), gcrun-70..72.
     // CR-GC-655: bewusst KEIN se:author-uc (so empfiehlt es contracts RULE_HELP). Gemessen gcrun-60/62:
     // mit dem uc-Skill schrieb qwen3-coder dessen Beispiel ab (SYS compose UC, UC compose FCHAIN) und
     // deklarierte drei Runden lang dieselben UCs neu, teils mit neuer Beschreibung — Fund ungeloest.
