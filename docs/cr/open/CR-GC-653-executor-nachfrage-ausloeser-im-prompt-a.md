@@ -50,3 +50,12 @@ des SYS (18) und eigener Knoten.
   sogar (18 → 26) — bei N=3 im Rauschen, aber sicher kein Effekt in die gewollte Richtung.
   „Schlag nicht nach" befolgt qwen3-coder nur teilweise.
 - Elemente, Ablehnungen und Readiness bleiben im Rahmen der Streuung; Tokens und Laufzeit fallen.
+
+## Entscheidung (Auftraggeber, 2026-09-24)
+
+Abnahmekriterium (< 106 Lese-Aufrufe je Lauf) **verfehlt und bewusst behalten** — benannte Ausnahme:
+Ergebnisqualitaet gleich (Elemente, Ablehnungen, Readiness im Rauschen), Tokens ein −10 %, Laufzeit
+−22 % gegenueber dem Stand nach CR-GC-650/651. Behalten: CR-GC-652 ganz; aus CR-GC-653 die entfernten
+Ausloeser (SCHEMA-Abfrage im Executor-Ausschnitt von `author-uc`, „keine Duplikate anlegen" in der
+Liste). Zurueckgenommen: die zwei Verbotssaetze im SYSTEM — gemessen wirkungslos. Der Endstand ohne
+diese Saetze ist nicht eigens im Rig gemessen; er unterscheidet sich von gcrun-50..52 nur um sie.

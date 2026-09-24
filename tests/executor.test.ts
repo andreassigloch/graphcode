@@ -326,9 +326,9 @@ describe('executor (CR-GC-278)', () => {
     expect(SYSTEM).toContain(`NUR diese ${ElementType.options.length}`);
   });
 
-  it('CR-GC-653: SYSTEM sagt, wer Duplikate prueft — und keiner der Kanaele verlangt die Vorab-Suche', async () => {
-    expect(SYSTEM).toContain('Duplikate prüft der Treiber beim Einreichen');
-    expect(SYSTEM).toContain('den SYS nicht nachlesen');
+  it('CR-GC-653: kein Kanal verlangt die Duplikat-Vorab-Suche — Ausloeser entfernt, kein Verbot ergaenzt', async () => {
+    // Die Verbotssaetze waren gemessen wirkungslos und sind wieder draussen (gcrun-50..52).
+    expect(SYSTEM).not.toContain('nicht vorab per Stichwort suchen');
     await registry['graph_mutate'].handler(VALID_SEED_BATCH);
     const out = await buildRoundInjection(registry, { focusTypes: ['UC'], focusDimension: 'uc' });
     expect(out, 'die Liste widerspraeche sonst dem SYSTEM').not.toContain('keine Duplikate anlegen');
