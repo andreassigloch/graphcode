@@ -28,7 +28,7 @@ der Skill folgte noch der Dimension, und der Executor leitete ihn ein zweites Ma
 - Der Executor liest `step.skill` (`skillDatei`), nicht mehr die Dimension — eine Entscheidung
   statt zwei. `focusDimension` faellt aus seiner Schnittstelle.
 - Abweichung von contracts `RULE_HELP['UC-02'] = se:author-uc` bewusst und benannt; Frage an die
-  Familie als ITEM-2026-557 (sigloch-modules).
+  Familie als ITEM-2026-556 (sigloch-modules).
 
 ## Dateien (6)
 
