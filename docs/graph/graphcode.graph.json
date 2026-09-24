@@ -2217,6 +2217,12 @@
       "description": "docs/cr/open/CR-GC-657-req-beispiele-ohne-kinds-func-satisfy-re.md"
     },
     {
+      "id": "CR-GC-658",
+      "type": "CR",
+      "name": "UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids",
+      "description": "docs/cr/open/CR-GC-658-uc-02-klausel-beschreibt-den-actor-pfad-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21204,5 +21210,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 453
+  "graphVersion": 454
 }

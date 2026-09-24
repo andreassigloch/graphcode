@@ -33,5 +33,25 @@ je drei Laeufe): 8 (vor 649) → 15 (650, 654) → 24 (655).
       durchs Gate — rot auf dem alten Beispiel.
 - [x] Der kinds-Patch der RD-01-Klausel macht eine REQ ohne kinds fuer FUNC erfuellbar (am Store).
 - [x] Der injizierte author-req-Ausschnitt traegt `@kinds`.
-- [ ] Rig (gcrun, N=3) gegen gcrun-70..72 (655): `FUNC satisfy REQ`-Blocks deutlich weniger,
-      Ablehnungen nicht mehr, Elemente/Readiness nicht schlechter.
+- [x] Rig — Kernziel erreicht (REQs mit kinds 0/33 → 29/30), Blocks nicht gesunken (Ursache: CR-GC-659).
+
+## Rig-Messung (2026-09-24, `results-runde19-gcrun-657.json`, gcrun-80..82)
+
+| Mittel je Lauf | 655 | 657 |
+|---|---:|---:|
+| neu angelegte REQs mit `kinds` (3 Laeufe) | 0 von 33 | **29 von 30** |
+| Readiness req / uc | .70 / .66 | **.80 / .79** |
+| Elemente | 45 | 41 (42/48/32) |
+| Gate-Ablehnungen | 13,3 | 13,3 |
+| `FUNC satisfy REQ` im Preflight geblockt (3 Laeufe) | 24 | **34** |
+
+**Kernziel erreicht:** das Modell setzt `kinds` — die REQ-Readiness steigt um 10 Punkte, die
+UC-Readiness um 13.
+
+**Nicht erreicht:** die Blocks steigen. Die meisten geblockten REQs existieren im Endstand nicht —
+der ganze Batch ging nie ans Gate. Der Preflight selbst rechnet richtig (eine neue REQ mit `kinds`
+im selben Batch geht durch, nachgeprueft). Die Ursache liegt in seiner Rueckmeldung: „Illegales
+Trace-Paar: FUNC satisfy REQ — auch die Gegenrichtung ist nicht legal", und der fixHint darunter
+listet `satisfy→REQ` als LEGALE Kante von FUNC. Kein Wort zu `kinds` — das Modell kann den Batch so
+nicht reparieren. Weiter in CR-GC-659.
+
