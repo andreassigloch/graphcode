@@ -63,12 +63,18 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     // We actually parsed a real population, symbols included.
     expect(files.length).toBeGreaterThan(20);
     expect(files.filter((f) => f.exists && f.declaredSymbols.length > 0).length).toBeGreaterThan(15);
-    // No phantom/broken binding in the committed graph: zero RC ERRORS
-    // (RC-01/02/03). RC-04/05 are warn-level indicators (schema-usage, cross-module
-    // drift) that may legitimately fire on the real model — they are not "broken
-    // bindings" and are asserted separately (CR-211/212).
-    const rcErrors = conformanceViolations(harness).filter((v) => v.severity === 'error');
-    expect(rcErrors).toEqual([]);
+    // No phantom/broken binding in the committed graph: zero RC-01/02/03. Gefiltert wird nach
+    // REGEL, nicht nach Schwere (CR-GC-640): seit CR-SM-353 sind alle RC-Regeln `warning`, und
+    // der fruehere Filter `severity === 'error'` war damit leer — er haette jede kaputte Bindung
+    // durchgewinkt. RC-04/05 sind Indikatoren und werden separat geprueft (CR-211/212).
+    const v = conformanceViolations(harness);
+    expect(v.filter((x) => ['RC-01', 'RC-02', 'RC-03'].includes(x.ruleId))).toEqual([]);
+    // CR-GC-640 / CR-SM-358, gemessen 2026-09-24 — eine Ratsche, die nur sinken darf:
+    // RC-08 = 5 Vertraege, die an einen TS-Typ statt an ein Zod-Schema gebunden sind (AuditStats,
+    // GraphDelta, OntologyJson, RejectedTrace, SteeringSnapshot); ITEM-2026-528 baut sie ab.
+    // RC-09 = 0: jeder lokal gebundene Zod-Vertrag wird nur in seiner modellierten Datei geparst.
+    expect(v.filter((x) => x.ruleId === 'RC-08').length).toBeLessThanOrEqual(5);
+    expect(v.filter((x) => x.ruleId === 'RC-09')).toEqual([]);
   });
 
   // CR-SM-262: RC-06 haengt VOLLSTAENDIG an diesem Extraktor. Ohne `declaredDependencies` ist
@@ -273,6 +279,79 @@ describe('TEST-schema-conformance: realRef resolves + is parsed at its interface
     const v = conformanceViolations({ getGraph: () => wiredGraph('EventSchema'), getRepoRoot: () => dir });
     expect(v.some((x) => x.ruleId === 'RC-04' && x.elementId === 'SCHEMA-a' && x.severity === 'warning')).toBe(true);
     expect(v.some((x) => x.ruleId === 'RC-03')).toBe(false); // resolution still fine
+  });
+});
+
+// ── CR-GC-640: der Extraktor liefert zodSymbols + fileScope fuer RC-08/RC-09 (CR-SM-358) ──
+// P6 im Kleinen: bootstrap.ts parst den Vertrag selbst, ohne dass eine Bindung auf die Datei
+// zeigt. Nur ein Lauf ueber ALLE Dateien sieht ihn — genau die Luecke, durch die CR-GC-627
+// den zweiten Weg stehen liess.
+describe('TEST-contract-door: zodSymbols, fileScope, RC-08 und RC-09 end-to-end (CR-GC-640)', () => {
+  let dir: string;
+
+  beforeAll(() => {
+    dir = mkdtempSync(join(tmpdir(), 'graphcode-contract-door-'));
+    mkdirSync(join(dir, 'src'), { recursive: true });
+    writeFileSync(
+      join(dir, 'src', 'schema.ts'),
+      [
+        "import { z } from 'zod';",
+        'export const EventSchema = z.object({ id: z.string() });',
+        'export const WideEventSchema = EventSchema.extend({ at: z.string() });',
+        'export type Event = z.infer<typeof EventSchema>;',
+        'export interface Plain { id: string }',
+        'const internalSchema = z.string();',
+        'export function helper() { return internalSchema.parse(1); }',
+        '',
+      ].join('\n'),
+    );
+    writeFileSync(
+      join(dir, 'src', 'handler.ts'),
+      "import { EventSchema } from './schema.js';\nexport function handle(raw: unknown) { return EventSchema.parse(raw); }\n",
+    );
+    writeFileSync(
+      join(dir, 'src', 'bootstrap.ts'),
+      "import { EventSchema } from './schema.js';\nexport function kaltstart(raw: unknown) { return EventSchema.parse(raw); }\n",
+    );
+  });
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  const graph = (symbol: string) => ({
+    nodes: [
+      { uid: 'SCHEMA-a', type: 'SCHEMA', name: 'evt', description: '', attributes: { realRef: { file: 'src/schema.ts', symbol } } },
+      { uid: 'FLOW-x', type: 'FLOW', name: 'flow', description: '', attributes: {} },
+      { uid: 'FUNC-a', type: 'FUNC', name: 'fn', description: '', attributes: { realRef: { file: 'src/handler.ts', symbol: 'handle' } } },
+    ],
+    edges: [
+      { sourceId: 'FUNC-a', targetId: 'FLOW-x', edgeType: 'io', attributes: {} },
+      { sourceId: 'FLOW-x', targetId: 'SCHEMA-a', edgeType: 'relation', attributes: {} },
+    ],
+  });
+
+  it('zodSymbols: exportierte Zod-Konstanten, auch abgeleitete — keine Typen, keine internen', () => {
+    const facts = extractCodeFacts(graph('EventSchema'), dir);
+    expect(facts.files['src/schema.ts'].zodSymbols?.sort()).toEqual(['EventSchema', 'WideEventSchema']);
+  });
+
+  it('fileScope all: auch die Datei, auf die keine Bindung zeigt, steht in den Fakten', () => {
+    const facts = extractCodeFacts(graph('EventSchema'), dir);
+    expect(facts.fileScope).toBe('all');
+    expect(facts.files['src/bootstrap.ts']?.parsedSymbols).toContain('EventSchema');
+  });
+
+  it('RC-09: bootstrap.ts parst den Vertrag, das Modell kennt es nicht als Uebersetzer', () => {
+    const v = conformanceViolations({ getGraph: () => graph('EventSchema'), getRepoRoot: () => dir });
+    const rc09 = v.filter((x) => x.ruleId === 'RC-09');
+    expect(rc09).toHaveLength(1);
+    expect(rc09[0].elementId).toBe('SCHEMA-a');
+    expect(rc09[0].message).toContain('src/bootstrap.ts');
+    expect(rc09[0].message).not.toContain('src/handler.ts');
+  });
+
+  it('RC-08: ein an den Typ gebundenes SCHEMA meldet sich, und nur mit RC-08', () => {
+    const v = conformanceViolations({ getGraph: () => graph('Event'), getRepoRoot: () => dir });
+    expect(v.filter((x) => x.ruleId === 'RC-08').map((x) => x.elementId)).toEqual(['SCHEMA-a']);
+    expect(v.some((x) => x.ruleId === 'RC-04' || x.ruleId === 'RC-09')).toBe(false);
   });
 });
 

@@ -610,6 +610,7 @@
 | `CR-GC-628` | relation | `MOD-surface` |
 | `CR-GC-629` | relation | `FUNC-load-config` |
 | `CR-GC-629` | relation | `MOD-kernel-measure` |
+| `CR-GC-640` | relation | `FUNC-check-code-conformance` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

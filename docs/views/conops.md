@@ -335,6 +335,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-627` | done | graph_mutate laesst nur das Plus-Viertel von Format-E durch: der Umweg ueber die Graph-Rekonstruktion wirft jedes Nicht-Add-Op, obwohl der Parser die vier Praefixe kennt und die Abbildung auf MutateCommand eins zu eins ist — Loeschen und Aendern kosten den dreifach teureren commands-Modus | `FUNC-authoring-guide` · `FUNC-mutate` · `MOD-surface` |
 | `CR-GC-628` | done | graph_get_edges ist der zweitgroesste Antwortgeber, und sein sparsamer Modus ist die teurere Falle: format formatE serialisiert die Endpunkt-Knoten mit voller Prosa und allen Attributen, am Golden 49.431 Zeichen gegen 18.001 als JSON | `FUNC-read-tools` · `MOD-surface` |
 | `CR-GC-629` | done | Die Urteilsschwelle boundaryWidth steht zweimal (contracts-Startwert und graphcode.config.jsonc), ein Knopf treibt zwei Verteilungen (BW-02 am FUNC-Rand, R-04 am MOD-Rand), und niemand misst sie laufend | `FUNC-load-config` · `MOD-kernel-measure` |
+| `CR-GC-640` | n/a | Extraktor liefert zodSymbols und fileScope fuer RC-08/RC-09, Messung am eigenen Modell | `FUNC-check-code-conformance` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

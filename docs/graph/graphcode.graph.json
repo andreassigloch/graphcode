@@ -2086,6 +2086,12 @@
       "description": "docs/cr/open/CR-GC-639-kpi-1-graph-vs-grep-nach-jedem-cr-automa.md"
     },
     {
+      "id": "CR-GC-640",
+      "type": "CR",
+      "name": "Extraktor liefert zodSymbols und fileScope fuer RC-08/RC-09, Messung am eigenen Modell",
+      "description": "docs/cr/open/CR-GC-640-extraktor-liefert-zodsymbols-und-filesco.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -12420,6 +12426,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-640",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -20694,5 +20705,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 407
+  "graphVersion": 409
 }
