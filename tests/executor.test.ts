@@ -21,6 +21,7 @@ import {
   type CallModel,
 } from '../src/loop/executor.js';
 import { buildToolSpecs } from '../src/loop/executor-backend.js';
+import { RULE_CLAUSE } from '../src/loop/generate.js';
 import { INDEX_CHAR_BUDGET } from '../src/loop/executor-inventory.js';
 import {
   buildRoundInjection,
@@ -390,6 +391,31 @@ describe('executor (CR-GC-278)', () => {
       consumerId: 'test',
     })) as { success: boolean; violations?: unknown };
     expect(mit.success, JSON.stringify(mit.violations)).toBe(true);
+  });
+
+  it('CR-GC-658: das Vorbild der UC-02-Klausel geht so durchs Gate und loest den Fund auf', async () => {
+    const vorbau = (await registry['graph_mutate'].handler({
+      formatE:
+        '## Nodes\n### SYS\n+ SYS-app|Eine App. [__name:App]\n### ACTOR\n+ ACTOR-nutzer|Nutzt die App. [__name:Nutzer]\n' +
+        '### UC\n+ UC-sitzung|Nutzer fragt und erhaelt eine Antwort. [__name:Sitzung]\n### FCHAIN\n+ FCHAIN-sitzung|Ablauf [__name:Ablauf]\n\n' +
+        '## Edges\n+ SYS-app -compose-> UC-sitzung\n+ UC-sitzung -compose-> FCHAIN-sitzung\n',
+      consumerId: 'test',
+    })) as { success: boolean; violations?: unknown };
+    expect(vorbau.success, JSON.stringify(vorbau.violations)).toBe(true);
+    // rules_get_violations hat keinen Regel-Filter — die UC-02-Befunde am UC selbst herausziehen.
+    const uc02 = async (): Promise<string> => {
+      const r = (await registry['rules_get_violations'].handler(registry['rules_get_violations'].inputSchema.parse({}))) as {
+        violations: { ruleId: string }[];
+      };
+      return JSON.stringify(r.violations.filter((v) => v.ruleId === 'UC-02'));
+    };
+    expect(await uc02()).toContain('UC-sitzung');
+
+    const text = RULE_CLAUSE['UC-02'].text(['UC-sitzung']);
+    const vorbild = text.slice(text.indexOf('## Nodes')) + '\n';
+    const res = (await registry['graph_mutate'].handler({ formatE: vorbild, consumerId: 'test' })) as { success: boolean; violations?: unknown };
+    expect(res.success, JSON.stringify(res.violations)).toBe(true);
+    expect(await uc02(), 'der Pfad ACTOR→FLOW→FUNC∈FCHAIN des UC loest UC-02').not.toContain('UC-sitzung');
   });
 
   it("toolset 'authoring' curates the minimal generative set (base-load lever)", () => {
