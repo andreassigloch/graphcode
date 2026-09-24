@@ -232,7 +232,9 @@ export const RULE_CLAUSE: Record<
     text: (uids) =>
       `Diese REQs sind Blaetter ohne Erfueller (${uids.join(', ')}): verbinde jede mit dem Element,` +
       ' das sie erfuellt — FUNC, FCHAIN, MOD oder SYS satisfy→REQ, mit existierenden uids aus der' +
-      ' Element-Liste. Lege KEINE neue REQ an.',
+      ' Element-Liste. Lege KEINE neue REQ an. FUNC erfuellt nur REQs mit kinds functional/precondition/' +
+      'postcondition, MOD und SYS nur non-functional/risk/mitigation, FCHAIN jede — fehlen einer REQ die' +
+      ' kinds, setze sie im selben Batch (~ REQ-x|Text, Folgezeile @kinds [...]).',
     // CR-GC-655: keine Anleitung — author-req zeigt REQ-Anlegen, die Klausel verbietet genau das.
     skill: null,
   },

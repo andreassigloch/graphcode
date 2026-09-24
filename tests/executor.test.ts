@@ -352,6 +352,46 @@ describe('executor (CR-GC-278)', () => {
     expect(nurKante.success).toBe(true);
   });
 
+  it('CR-GC-657: das GANZE SYSTEM-Beispiel ist legal — Knoten-Batch und reiner Kanten-Batch gehen durchs Gate', async () => {
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    // Der Erfueller aus dem Kanten-Beispiel muss existieren (FCHAIN des UC, darin die FUNC).
+    const vorbau = (await registry['graph_mutate'].handler({
+      formatE:
+        '## Nodes\n### FCHAIN\n+ FCHAIN-login|Anmeldeablauf [__name:Anmeldeablauf]\n### FUNC\n' +
+        '+ FUNC-login-pruefen|Prueft das Passwort. [__name:Passwort pruefen]\n\n## Edges\n' +
+        '+ UC-login -compose-> FCHAIN-login\n+ FCHAIN-login -compose-> FUNC-login-pruefen\n',
+      consumerId: 'test',
+    })) as { success: boolean };
+    expect(vorbau.success).toBe(true);
+    const ab = SYSTEM.indexOf('\n## Nodes\n') + 1; // die Ueberschriftszeile, nicht die Erwaehnung im Satz davor
+    const knotenBatch = SYSTEM.slice(ab, SYSTEM.indexOf('\n\nJede REQ traegt', ab)) + '\n';
+    expect(knotenBatch).toContain('@kinds ["functional"]');
+    const a = (await registry['graph_mutate'].handler({ formatE: knotenBatch, consumerId: 'test' })) as { success: boolean; violations?: unknown };
+    expect(a.success, JSON.stringify(a.violations)).toBe(true);
+    const kante = SYSTEM.slice(SYSTEM.indexOf('## Edges', SYSTEM.indexOf('Kanten zwischen BESTEHENDEN')));
+    const kantenBatch = kante.slice(0, kante.indexOf('\n\n')) + '\n';
+    const b = (await registry['graph_mutate'].handler({ formatE: kantenBatch, consumerId: 'test' })) as { success: boolean; violations?: unknown };
+    expect(b.success, JSON.stringify(b.violations)).toBe(true);
+  });
+
+  it('CR-GC-657: der kinds-Patch aus der RD-01-Klausel macht eine REQ ohne kinds fuer FUNC erfuellbar', async () => {
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler({
+      formatE:
+        '## Nodes\n### FCHAIN\n+ FCHAIN-login|Ablauf [__name:Ablauf]\n### FUNC\n+ FUNC-p|Prueft. [__name:Pruefen]\n' +
+        '### REQ\n+ REQ-ohne|Das System muss anmelden. [__name:Anmelden]\n### TEST\n+ TEST-ohne|Prueft Anmelden. [__name:T]\n\n' +
+        '## Edges\n+ UC-login -compose-> FCHAIN-login, REQ-ohne\n+ FCHAIN-login -compose-> FUNC-p\n+ TEST-ohne -verify-> REQ-ohne\n',
+      consumerId: 'test',
+    });
+    const ohne = (await registry['graph_mutate'].handler({ formatE: '## Edges\n+ FUNC-p -satisfy-> REQ-ohne\n', consumerId: 'test' })) as { success: boolean };
+    expect(ohne.success, 'ohne kinds ist FUNC satisfy REQ illegal (R-18)').toBe(false);
+    const mit = (await registry['graph_mutate'].handler({
+      formatE: '## Nodes\n### REQ\n~ REQ-ohne|Das System muss anmelden.\n@kinds ["functional"]\n\n## Edges\n+ FUNC-p -satisfy-> REQ-ohne\n',
+      consumerId: 'test',
+    })) as { success: boolean; violations?: unknown };
+    expect(mit.success, JSON.stringify(mit.violations)).toBe(true);
+  });
+
   it("toolset 'authoring' curates the minimal generative set (base-load lever)", () => {
     const names = buildToolSpecs(registry, 'authoring').map((s) => s.name);
     expect(names).toContain('graphcode_graph_mutate');
