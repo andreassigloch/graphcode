@@ -2178,13 +2178,17 @@
       "id": "CR-GC-652",
       "type": "CR",
       "name": "Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung",
-      "description": "docs/cr/open/CR-GC-652-element-liste-aus-dem-fund-kontext-statt.md"
+      "description": "docs/cr/done/CR-GC-652-element-liste-aus-dem-fund-kontext-statt.md",
+      "status": "done",
+      "commitRef": "5635e11"
     },
     {
       "id": "CR-GC-653",
       "type": "CR",
       "name": "Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen)",
-      "description": "docs/cr/open/CR-GC-653-executor-nachfrage-ausloeser-im-prompt-a.md"
+      "description": "docs/cr/done/CR-GC-653-executor-nachfrage-ausloeser-im-prompt-a.md",
+      "status": "done",
+      "commitRef": "a9bace0"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -12777,6 +12781,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-653",
+      "target": "FUNC-build-round-injection",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-653",
+      "target": "FUNC-inventory-channel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-653",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -21096,5 +21115,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 447
+  "graphVersion": 448
 }

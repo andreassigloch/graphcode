@@ -647,6 +647,9 @@
 | `CR-GC-652` | relation | `FUNC-generation-step` |
 | `CR-GC-652` | relation | `FUNC-inventory-channel` |
 | `CR-GC-652` | relation | `SCHEMA-generation-step` |
+| `CR-GC-653` | relation | `FUNC-build-round-injection` |
+| `CR-GC-653` | relation | `FUNC-inventory-channel` |
+| `CR-GC-653` | relation | `FUNC-run-executor` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
