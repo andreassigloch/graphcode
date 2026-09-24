@@ -2251,6 +2251,12 @@
       "description": "docs/cr/open/CR-GC-661-uc-01-qwen-schreibt-je-batch-1-req-fuer-.md"
     },
     {
+      "id": "CR-GC-662",
+      "type": "CR",
+      "name": "Executor anthropic-Zweig: dieselbe 300-s-fetch-Grenze wie CR-GC-656, ungestreamt",
+      "description": "docs/cr/open/CR-GC-662-executor-anthropic-zweig-dieselbe-300-s-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -4240,6 +4246,18 @@
       "realRef": {
         "file": "src/loop/executor-rank.ts",
         "symbol": "rankCandidates",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-read-anthropic-stream",
+      "type": "FUNC",
+      "name": "leseAnthropicAntwort",
+      "description": "Liest die Antwort von /v1/messages gestreamt (SSE) oder am Stueck und setzt Denk-Bloecke samt Signatur, Text, stueckweises Werkzeug-JSON, Stop-Grund und Zaehlung zur Nicht-Streaming-Form zusammen; die Vertragspruefung bleibt danach die eine Stelle. Gestreamt, weil Nodes fetch nach 300 s ohne Antwortkopf abbricht. (CR-GC-662)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/anthropic-stream.ts",
+        "symbol": "leseAnthropicAntwort",
         "lang": "ts"
       }
     },
@@ -8432,6 +8450,12 @@
         },
         {
           "file": "tests/openai-stream.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
+        },
+        {
+          "file": "tests/anthropic-stream.test.ts",
           "tool": "vitest",
           "level": "unit",
           "result": "passed"
@@ -12943,6 +12967,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-662",
+      "target": "FUNC-call-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-662",
+      "target": "FUNC-read-anthropic-stream",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -13921,6 +13955,11 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-rank-candidates",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-read-anthropic-stream",
       "type": "compose"
     },
     {
@@ -14926,6 +14965,11 @@
     {
       "source": "FLOW-model-answer",
       "target": "FUNC-extract-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-model-answer",
+      "target": "FUNC-read-anthropic-stream",
       "type": "io"
     },
     {
@@ -17819,6 +17863,16 @@
     {
       "source": "FUNC-rank-candidates",
       "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-read-anthropic-stream",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-read-anthropic-stream",
+      "target": "REQ-one-driver-local-and-frontier",
       "type": "satisfy"
     },
     {
@@ -21297,5 +21351,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 461
+  "graphVersion": 463
 }

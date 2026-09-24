@@ -22,6 +22,7 @@ import {
 import { AUTHORING_PARAMS, WITHHELD_TOOLS } from './executor-prompt.js';
 import { READ_TOOLS } from './executor-tools.js';
 import { leseOpenAiAntwort } from './openai-stream.js';
+import { leseAnthropicAntwort } from './anthropic-stream.js';
 import type { CallModel, ExecutorConfig } from './executor.js';
 
 // ---------------------------------------------------------------------------
@@ -277,10 +278,12 @@ export function buildCallModel(config: ExecutorConfig): CallModel {
           system,
           tools,
           messages,
+          // CR-GC-662: gestreamt — dieselbe 300-s-Grenze von fetch wie im openai-Zweig (CR-GC-656).
+          stream: true,
         }),
         signal: AbortSignal.timeout(config.callTimeoutMs),
       });
-      const raw: unknown = await r.json();
+      const raw: unknown = await leseAnthropicAntwort(r);
       if (BackendFailure.safeParse(raw).success) {
         throw new Error('backend: ' + JSON.stringify(raw).slice(0, 300));
       }
