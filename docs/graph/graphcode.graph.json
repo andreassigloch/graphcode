@@ -2203,6 +2203,12 @@
       "description": "docs/cr/open/CR-GC-655-skill-der-runde-folgt-der-dimension-stat.md"
     },
     {
+      "id": "CR-GC-656",
+      "type": "CR",
+      "name": "Executor openai-Zweig: fetch bricht nach 300 s ab (undici headersTimeout) — Thinking-Modelle unbenutzbar",
+      "description": "docs/cr/open/CR-GC-656-executor-openai-zweig-fetch-bricht-nach-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21127,5 +21133,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 450
+  "graphVersion": 451
 }
