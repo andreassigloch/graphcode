@@ -50,8 +50,12 @@ Format-E (exakt; Knoten unter "## Nodes" in ihrer "### <TYP>"-Sektion, Kanten un
 + UC-login -compose-> REQ-login-latenz
 + TEST-login-latenz -verify-> REQ-login-latenz
 
-"+" legt an, "~ uid|Text" ändert einen Knoten (nur was die Zeile nennt), "- uid" löscht. Mehrere Ziele einer
-Kante: "+ A -verify-> B, C". uid = "<TYP>-<kebab-name>". Nie " -wort-> " in einer Beschreibung.
+Kanten zwischen BESTEHENDEN Knoten brauchen keine Knotenzeile — ein reiner Kanten-Batch:
+## Edges
++ FUNC-login-pruefen -satisfy-> REQ-login-latenz
+
+"+" legt an (auf eine bestehende uid: ueberschreibt sie), "~ uid|Text" ändert einen Knoten (nur was die
+Zeile nennt), "- uid" löscht. Mehrere Ziele einer Kante: "+ A -verify-> B, C". uid = "<TYP>-<kebab-name>". Nie " -wort-> " in einer Beschreibung.
 Nutze GENAU die Kanten aus der Instruktion und existierende uids aus der Element-Liste.
 Lehnt das Gate deinen Batch ab (success:false), korrigiere NUR die beanstandeten Zeilen anhand der
 violations/fixHints und reiche den VOLLSTÄNDIGEN korrigierten Batch erneut ein.
@@ -62,6 +66,11 @@ Handeln vor Analysieren: rufe graph_mutate, rate die Instruktion nicht tot.`;
 // lokale Modell kaum — Stichwortsuchen 80 → 69, das Nachlesen des SYS stieg sogar (18 → 26). Gewirkt
 // hat nur, den AUSLOESER zu entfernen (die SCHEMA-Abfrage im Skill author-uc: 22 → 3). Deshalb
 // stehen die Saetze nicht mehr im SYSTEM; wer hier ein Verbot ergaenzen will, misst vorher.
+
+// CR-GC-654: der reine Kanten-Batch steht als ZWEITES Formvorbild im SYSTEM. Mit nur dem ersten
+// (Knoten samt Kanten) deklarierte qwen3-coder bestehende Knoten neu, um eine Kante anzuhaengen —
+// gemessen 5 → 16 je Lauf seit CR-GC-650, neue Kanten 58 → 44. Ein Upsert, der Beschreibung und
+// Namen ueberschreiben kann. Vorbild statt Verbot: Verbote wirkten gemessen nicht (CR-GC-653).
 
 // CR-GC-650: der Executor emittiert Format-E statt `commands` — gemessen 84–94 statt 223–279 Zeichen
 // je geschriebenem Element (CR-GC-627), und lokal bestimmt die Ausgabelaenge die Wall-Zeit. Die Form
