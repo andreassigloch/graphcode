@@ -2194,7 +2194,9 @@
       "id": "CR-GC-654",
       "type": "CR",
       "name": "Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch",
-      "description": "docs/cr/open/CR-GC-654-executor-format-e-bestehende-knoten-werd.md"
+      "description": "docs/cr/done/CR-GC-654-executor-format-e-bestehende-knoten-werd.md",
+      "status": "done",
+      "commitRef": "8f25bca"
     },
     {
       "id": "CR-GC-655",
@@ -4198,6 +4200,18 @@
       "realRef": {
         "file": "src/loop/executor-rank.ts",
         "symbol": "rankCandidates",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-read-openai-stream",
+      "type": "FUNC",
+      "name": "leseOpenAiAntwort",
+      "description": "Liest die Antwort von /v1/chat/completions gestreamt (SSE) oder am Stueck und setzt Text, Denken, stueckweise Werkzeug-Argumente und Zaehlung zur selben Drahtform zusammen; die Vertragspruefung bleibt danach die eine Stelle. Gestreamt, weil Nodes fetch nach 300 s ohne Antwortkopf abbricht. (CR-GC-656)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/openai-stream.ts",
+        "symbol": "leseOpenAiAntwort",
         "lang": "ts"
       }
     },
@@ -8363,6 +8377,12 @@
         },
         {
           "file": "tests/fund-kontext.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
+        },
+        {
+          "file": "tests/openai-stream.test.ts",
           "tool": "vitest",
           "level": "unit",
           "result": "passed"
@@ -12814,6 +12834,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-654",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-655",
+      "target": "FUNC-build-round-injection",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-655",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-656",
+      "target": "FUNC-call-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-656",
+      "target": "FUNC-read-openai-stream",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -13792,6 +13837,11 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-rank-candidates",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-read-openai-stream",
       "type": "compose"
     },
     {
@@ -14792,6 +14842,11 @@
     {
       "source": "FLOW-model-answer",
       "target": "FUNC-extract-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-model-answer",
+      "target": "FUNC-read-openai-stream",
       "type": "io"
     },
     {
@@ -17675,6 +17730,16 @@
     {
       "source": "FUNC-rank-candidates",
       "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-read-openai-stream",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-read-openai-stream",
+      "target": "REQ-one-driver-local-and-frontier",
       "type": "satisfy"
     },
     {
@@ -21133,5 +21198,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 451
+  "graphVersion": 452
 }

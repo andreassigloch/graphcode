@@ -78,7 +78,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` ·
 
 - `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-function-criticality` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
-- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-inventory-channel` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load`
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-inventory-channel` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-read-openai-stream` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -346,6 +346,9 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-651` | done | Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1 | `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-generation-step` · `FUNC-run-executor` |
 | `CR-GC-652` | done | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung | `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-generation-step` · `FUNC-inventory-channel` |
 | `CR-GC-653` | done | Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen) | `FUNC-build-round-injection` · `FUNC-inventory-channel` · `FUNC-run-executor` |
+| `CR-GC-654` | done | Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch | `FUNC-run-executor` |
+| `CR-GC-655` | n/a | Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req) | `FUNC-build-round-injection` · `FUNC-generation-step` |
+| `CR-GC-656` | n/a | Executor openai-Zweig: fetch bricht nach 300 s ab (undici headersTimeout) — Thinking-Modelle unbenutzbar | `FUNC-call-model` · `FUNC-read-openai-stream` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

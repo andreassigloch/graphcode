@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 264 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 264 CR · 200 done · 0 open.
+Total: 264 CR · 201 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -323,6 +323,6 @@ Total: 264 CR · 200 done · 0 open.
 | `CR-GC-651` | done | Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1 |
 | `CR-GC-652` | done | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung |
 | `CR-GC-653` | done | Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen) |
-| `CR-GC-654` | n/a | Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch |
+| `CR-GC-654` | done | Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch |
 | `CR-GC-655` | n/a | Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req) |
 | `CR-GC-656` | n/a | Executor openai-Zweig: fetch bricht nach 300 s ab (undici headersTimeout) — Thinking-Modelle unbenutzbar |
