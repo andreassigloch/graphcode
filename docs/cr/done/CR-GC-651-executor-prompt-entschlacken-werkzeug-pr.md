@@ -1,6 +1,6 @@
 # CR-GC-651: Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-548 (finding)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-548.json (Lane: code)
