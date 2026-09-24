@@ -65,7 +65,7 @@ neuer Knoten `FUNC-fund-kontext`.
       (kein Aufstieg), Waise (`ohneBesitzer`, keine Ersatzliste), Vereinigung, Typfilter (7 Faelle).
 - [x] Echter Store: Fund am SYS bekommt MOD/SYS, keinen UC; Waise → „Kein Besitzer im Modell".
 - [x] Seed ohne Fund: Typ-Pfad unveraendert (bestehende Budget-Tests gruen).
-- [ ] **Rig-Abnahme — NICHT bestanden (2026-09-24).** `results-runde19-gcrun-652.json` gegen
+- [x] **Rig-Abnahme — Kriterium verfehlt, als benannte Ausnahme behalten (2026-09-24).** `results-runde19-gcrun-652.json` gegen
       `-nach` (CR-GC-650/651), gcrun, sigllm-gcrun, qwen3-coder-30b, N=3:
 
       | Mittel je Lauf | nachher (650+651) | + CR-GC-652 |
@@ -115,3 +115,11 @@ unbrauchbar war, sondern aus drei Gewohnheiten, die der Prompt selbst erzeugt:
    Greenfield-Korpus gibt es keine SCHEMAs, 22 von 22 leer.
 3. **Wiederlesen** des SYS (die Intention steht schon im Auftrag) und eigener, eben angelegter Knoten.
 
+## Entscheidung (Auftraggeber, 2026-09-24)
+
+Abnahmekriterium (< 106 Lese-Aufrufe je Lauf) **verfehlt und bewusst behalten** — benannte Ausnahme:
+Ergebnisqualitaet gleich (Elemente, Ablehnungen, Readiness im Rauschen), Tokens ein −10 %, Laufzeit
+−22 % gegenueber dem Stand nach CR-GC-650/651. Behalten: CR-GC-652 ganz; aus CR-GC-653 die entfernten
+Ausloeser (SCHEMA-Abfrage im Executor-Ausschnitt von `author-uc`, „keine Duplikate anlegen" in der
+Liste). Zurueckgenommen: die zwei Verbotssaetze im SYSTEM — gemessen wirkungslos. Der Endstand ohne
+diese Saetze ist nicht eigens im Rig gemessen; er unterscheidet sich von gcrun-50..52 nur um sie.
