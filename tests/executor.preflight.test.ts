@@ -195,6 +195,41 @@ describe('preflightBatch (CR-GC-284, pur)', () => {
 // Preflight im Executor — reale Disk-Kuzu-Harness, gescriptetes Modell
 // ---------------------------------------------------------------------------
 
+describe('CR-GC-659: scheitert ein Paar nur an den kinds, sagt die Meldung das', () => {
+  // Gemessen gcrun-80..82: 34 Blocks „Illegales Trace-Paar: FUNC satisfy REQ", der fixHint daneben
+  // listete satisfy→REQ als LEGALE Kante von FUNC — ein Widerspruch, kein Reparaturhinweis.
+  const known = (kinds: Record<string, unknown>): PreflightKnown => ({
+    types: new Map([['FUNC-p', 'FUNC'], ['MOD-m', 'MOD'], ['REQ-nf', 'REQ'], ['REQ-ohne', 'REQ'], ['ACTOR-a', 'ACTOR'], ['UC-u', 'UC']]),
+    verifiedReqs: new Set(['REQ-nf', 'REQ-ohne']),
+    kinds: new Map(Object.entries(kinds)),
+  });
+
+  it('kinds passen nicht: erlaubte und tatsaechliche kinds, dazu der passende Erfueller', () => {
+    const pf = preflightBatch({ commands: [addEdge('FUNC-p', 'REQ-nf', 'satisfy')] }, known({ 'REQ-nf': ['non-functional'] }));
+    expect(pf.action).toBe('blocked');
+    const v = pf.violations[0];
+    expect(v.message).toContain('nur legal, wenn REQ-nf.kinds eines von [functional, precondition, postcondition]');
+    expect(v.message).toContain('REQ-nf hat [non-functional]');
+    expect(v.message, 'kein Widerspruch mehr').not.toContain('Illegales Trace-Paar');
+    expect(v.fixHint).toMatch(/satisfy von .*MOD/);
+    expect(v.fixHint).toContain('FCHAIN');
+    expect(v.fixHint).not.toMatch(/satisfy von [^.]*FUNC/);
+  });
+
+  it('kinds fehlen: sagt es, und nur FCHAIN darf ohne kinds erfuellen', () => {
+    const pf = preflightBatch({ commands: [addEdge('FUNC-p', 'REQ-ohne', 'satisfy')] }, known({}));
+    const v = pf.violations[0];
+    expect(v.message).toContain('REQ-ohne hat KEINE kinds');
+    expect(v.fixHint).toContain('@kinds ["functional"]');
+    expect(v.fixHint).toMatch(/satisfy von FCHAIN\./);
+  });
+
+  it('ist schon das Typpaar illegal, bleibt die bisherige Meldung', () => {
+    const pf = preflightBatch({ commands: [addEdge('ACTOR-a', 'UC-u', 'io')] }, known({}));
+    expect(pf.violations[0].message).toContain('Illegales Trace-Paar: ACTOR io UC');
+  });
+});
+
 describe('executor preflight (CR-GC-284, real harness)', () => {
   let repoRoot: string;
   let harness: Awaited<ReturnType<typeof createHarness>>;

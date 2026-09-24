@@ -85,6 +85,45 @@ function legalEdgesOf(type: string): string {
 }
 
 /**
+ * CR-GC-659: scheitert ein Paar nur am `where`-Praedikat (kinds), nicht am Typpaar, die Meldung, die
+ * das sagt — mit den erlaubten und den tatsaechlichen kinds und beiden Reparaturwegen. Vorher hiess es
+ * „illegal", und der fixHint darunter listete dasselbe Paar als legal: 34 Blocks in drei Rig-Laeufen,
+ * die das Modell so nicht reparieren konnte. Alles aus TRACE_PATTERNS, nie lokal. null, wenn schon
+ * das Typpaar illegal ist — dann gilt die bisherige Meldung.
+ */
+function kindsBefund(
+  sT: string,
+  tT: string,
+  edgeType: string,
+  sourceId: string,
+  targetId: string,
+  kindsOf: (uid: string) => readonly string[] | undefined,
+): { message: string; fixHint: string } | null {
+  const muster = TRACE_PATTERNS.filter((p) => p.source === sT && p.target === tT && p.type === edgeType);
+  const mitWhere = muster.find((p) => p.where);
+  if (!mitWhere?.where) return null;
+  const { on, field, allowed } = mitWhere.where;
+  const uid = on === 'target' ? targetId : sourceId;
+  const hat = kindsOf(uid);
+  const endTyp = on === 'target' ? tT : sT;
+  // Wer dieselbe Kante an diesem Ende mit den VORHANDENEN kinds legal ziehen duerfte.
+  const passend = TRACE_PATTERNS.filter(
+    (p) =>
+      p.type === edgeType &&
+      (on === 'target' ? p.target === endTyp : p.source === endTyp) &&
+      (!p.where || (hat ?? []).some((k) => (p.where!.allowed as readonly string[]).includes(k))),
+  ).map((p) => (on === 'target' ? p.source : p.target));
+  return {
+    message:
+      `${sT} ${edgeType} ${tT} (${sourceId} → ${targetId}) ist nur legal, wenn ${uid}.${field} eines von ` +
+      `[${allowed.join(', ')}] enthaelt — ${uid} hat ${hat?.length ? `[${hat.join(', ')}]` : `KEINE ${field}`}.`,
+    fixHint:
+      `Entweder ${field} an ${uid} setzen (~ ${uid}|Beschreibung, Folgezeile @${field} ["${allowed[0]}"]), ` +
+      `oder den passenden Partner nehmen: ${edgeType} von ${[...new Set(passend)].join(' / ') || '(keinem Typ)'}.`,
+  };
+}
+
+/**
  * Fuzzy-Kandidaten für eine unbekannte uid: Normalisierung (lowercase,
  * alphanumerisch) + Substring-Match bzw. Levenshtein ≤3 — bewusst leichtgewichtig.
  */
@@ -171,14 +210,19 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
       );
       return { ...c, edge: { ...c.edge, sourceId: targetId, targetId: sourceId } };
     }
-    violations.push({
-      ruleId: 'R-18',
-      severity: 'error',
-      message:
-        `Illegales Trace-Paar: ${sT} ${edgeType} ${tT} (${sourceId} → ${targetId}) — ` +
-        'auch die Gegenrichtung ist nicht legal.',
-      fixHint: `Legale Kanten von ${sT}: ${legalEdgesOf(sT)}. Legale Kanten von ${tT}: ${legalEdgesOf(tT)}.`,
-    });
+    const kinds = kindsBefund(sT, tT, edgeType, sourceId, targetId, kindsOf);
+    violations.push(
+      kinds
+        ? { ruleId: 'R-18', severity: 'error', ...kinds }
+        : {
+            ruleId: 'R-18',
+            severity: 'error',
+            message:
+              `Illegales Trace-Paar: ${sT} ${edgeType} ${tT} (${sourceId} → ${targetId}) — ` +
+              'auch die Gegenrichtung ist nicht legal.',
+            fixHint: `Legale Kanten von ${sT}: ${legalEdgesOf(sT)}. Legale Kanten von ${tT}: ${legalEdgesOf(tT)}.`,
+          },
+    );
     return c;
   });
 
