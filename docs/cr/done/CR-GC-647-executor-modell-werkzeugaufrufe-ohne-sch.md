@@ -1,6 +1,6 @@
 # CR-GC-647: Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-541 (bug)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-541.json (Lane: code)
