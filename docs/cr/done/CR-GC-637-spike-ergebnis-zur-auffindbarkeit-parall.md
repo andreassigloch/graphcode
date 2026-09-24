@@ -170,5 +170,54 @@ U6) sind keine Codegestalt: U1 ist die Frage „wo gehoert der Fix hin“, U6 ei
 Graph bei CR-GC-627 blind gewesen waere, spricht nicht gegen „Graph fragen statt greppen“. Es sagt,
 dass die Frage nur so gut ist wie die Nutzungskanten. Anschluss: ITEM-2026-525, Option (a).
 
+### Alle sieben Faelle: fehlte Kontext, oder fehlte Recherche?
+
+Frage des Auftraggebers, geprueft an allen sieben Faellen. Je Fall der Zug, der den zweiten Pfad
+erzeugte, und der Beleg dafuer, ob der erste Pfad **bekannt** war.
+
+| Fall | Zweiter Pfad entsteht | Erster Pfad bekannt? | Beleg | Warum trotzdem zwei | Lebensdauer |
+|---|---|---|---|---|---|
+| P1 | 03-23: ontologie-agnostischer `FormatECodec` in graph-api-core | wahrscheinlich (selbes Repo, 7 Tage alt), **nicht belegt** | Commit 8f1d969; kein Transkript aus dem Maerz | neue Abstraktion gebaut, die alte nicht abgebaut | ~6 Monate |
+| P2 | 06-17: eigener Encoder in `GraphCodeCodec` (CR-GC-103) | **ja** — die Klasse umhuellt ihn | CR-GC-103, Codec-Kopfkommentar | Mangel lag upstream; ein Fix dort kostet einen Release-Zug ueber die Repo-Grenze | 3 Monate |
+| P3 | 09-12: `functionCriticality` neben `chainsOfFunc` (CR-SM-314/313) | **ja** — woertlich abgewogen | Transkript 25acfeb9, 09:29 UTC: „Sauber waere … `chainsByFunc` … das waere die siebte Datei und sprengt die harte Grenze“ | Dateigrenze; **als Item benannt** (ITEM-2026-096) | **4 Tage** |
+| P4 | 06-21: R-18 in der Engine, Paarpruefung im Codec bleibt (CR-GC-205) | **ja** | CR-GC-205: „`codec.validate()` bleibt Backstop … (oder ebenfalls als Regeln heben — pruefen)“ | Aufruf entfernt, Implementierung stehen gelassen; das „pruefen“ bekam kein Item | ~12 Wochen |
+| P5 | 06-20: graphcodes Bridge nur lesend, `POST /mutate` in graph-api-express bleibt (CR-GC-114) | **ja** | CR-GC-114 testet selbst „POST /mutate → 404/405“ an der eigenen Bridge | lokal umgangen, an der Quelle (anderes Repo) nicht geschlossen | 3 Monate |
+| P6 | 07-29 (CR-GC-276) und 09-23 (CR-GC-627) | 276: offen, kein Transkript. 627: **nein** | 627-Transkript: `grep gcCodec`, bootstrap 0 Treffer | falsch gesucht (Name statt Operation), Praemisse aus dem CR-Text uebernommen | 8 Wochen |
+| P7 | 09-23 13:49: Testhelfer parst selbst (CR-GC-631) | **ja, maximal** | Transkript 82b7759d: Helfer importiert `FORMAT_E_CODEC` aus der Datei, die `formatEToCommands` enthaelt — beide vom selben Agenten, zwei Stunden auseinander, in einer Sitzung, deren Auftrag „keine parallelen Pfade“ lautete | Ersatz nach der Form der alten API gebaut (13 `decode`-Stellen, kleinster Diff); der Unterschied im Kopfkommentar als Vorzug gerechtfertigt („ist NICHT ihr Umzug“, „kennt keine Merges“) | 2 Stunden, gefunden erst auf Nachfrage |
+
+**Befund: fehlender Kontext war nicht die Ursache.** In fuenf von sieben Faellen ist belegt, dass
+der erste Pfad bekannt war (P2, P3, P4, P5, P7), bei P1 ist es wahrscheinlich. Nur ein Zug hat den
+ersten Pfad nachweislich nicht gesehen (P6/627), und auch dort lag der Befund einen `git grep`
+entfernt. Mehr Recherche haette hoechstens einen der sieben Faelle verhindert.
+
+**Die gemeinsame Ursache ist eine andere: der Rueckbau lag ausserhalb des Auftrags.** Jeder Agent
+hat seinen CR richtig abgeschlossen, und der alte Pfad lag jedes Mal jenseits einer Grenze dieses
+CR:
+
+| Grenze | Faelle |
+|---|---|
+| Repo-Grenze (Fix upstream kostet einen Release-Zug) | P2, P5 |
+| Dateigrenze des CR | P3 |
+| Umfangsgrenze („der Aufruf, nicht die Implementierung“) | P4 |
+| kleinster Diff an den Aufrufstellen | P7 |
+| neue Abstraktion statt Umbau der alten | P1 |
+
+**Ob der Pfad als Item benannt wurde, entschied die Lebensdauer:** P3 wurde mit einem Item vertagt
+und war in 4 Tagen beseitigt. P2 und P4 stehen nur im Fliesstext eines CR und lebten 3 Monate. Ganz
+unbenannt lebten sie ebenfalls 2 bis 6 Monate. Das ist die globale Regel „verboten ist nicht die
+Differenz, sondern die unbenannte“, gemessen: ein **benannter** paralleler Pfad ist harmlos, ein
+**im Fliesstext erwaehnter** ist so gut wie unbenannt.
+
+**Was daraus folgt:**
+- **Kein Recherche-Skill.** Kein Agent hat mehr Kontext gebraucht, er hatte ihn.
+- **Eine Rueckbau-Pflicht am CR-Abschluss:** Laesst ein CR einen zweiten Pfad bewusst stehen, braucht er
+  eine Item-ID, keinen Satz.
+- **Zwei Stellen koennen das pruefen:**
+  - der Hook aus CR-GC-639 beim Schliessen eines CR (neuer Importeur an einem Engpass ohne Item im CR-Text);
+  - `se-umbau` als Checklistenpunkt.
+- **P7 zeigt, dass Wissen und ausdrueckliche Anweisung zusammen nicht genuegen.** Wer am Diff der
+  Aufrufstellen optimiert, baut den Ersatz in der Form des Alten. Dagegen hilft nur ein mechanischer
+  Zaehler, kein weiterer Satz im Prompt.
+
 Nachvollziehbar mit `git log -S'class GraphCodeCodec'`, `git log -G'\.parse\(' -- src/surface/write.ts`,
-`git grep '\.decode(' 5beb5bb^ -- src` und dem Transkript `b2703759` (Werkzeugfolge ab 10:03 UTC).
+`git grep '\.decode(' 5beb5bb^ -- src` und den Transkripten `b2703759` (P6, ab 10:03 UTC), `25acfeb9` (P3, 09-12 09:29 UTC) und `82b7759d` (P7, 09-23 13:49 UTC).
