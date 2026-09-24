@@ -1,6 +1,6 @@
 # CR-GC-650: Executor emittiert Format-E statt commands (Faktor 2,4-3,3 Ausgabe) — Rig-Messung zuerst
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-542 (idea)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-542.json (Lane: code)
