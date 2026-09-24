@@ -1,6 +1,6 @@
 # CR-GC-652: Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-550 (finding)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-550.json (Lane: code)
