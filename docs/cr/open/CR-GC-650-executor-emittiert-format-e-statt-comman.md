@@ -51,11 +51,30 @@ die Beschreibungen von FUNC-gate-client und FUNC-extract-mutate sind nachgezogen
 - [x] Format-E ohne Befund geht als Text ans Gate, nicht uebersetzt.
 - [x] Text-Bergung: roh, Zaun, JSON, Nicht-Batch, commands (5 Faelle).
 - [x] Executor-Tests gruen (14 Dateien).
-- [ ] **Rig-Abnahme** (gcrun, sigllm-gcrun, N=3) — zusammen mit CR-GC-651 gegen die Vorher-Messung
-      `results-runde19-gcrun-vor.json`. Offen bis zum Nachher-Lauf.
+- [x] **Rig-Abnahme** zusammen mit CR-GC-651 — siehe unten.
 
 ## Bekannt offen bis CR-GC-651
 
 Die injizierten Skill-Rumpfe `author-req`/`author-uc` zeigen noch `commands`-JSON als Beispiel —
 ein Widerspruch zum SYSTEM, den CR-GC-651 mit den inject-Markern schliesst. Beide gehen zusammen
 in den Nachher-Lauf.
+
+## Rig-Abnahme (2026-09-24, gcrun, Korpus sigllm-gcrun, qwen3-coder-30b via Ollama, N=3 je Arm, 12 Runden)
+
+Vorher = Stand `b037983` (vor CR-GC-649), nachher = `3fe69fd` (CR-GC-650 + 651 zusammen), jeweils
+eigener Worktree. `results-runde19-gcrun-vor.json` / `-nach.json`; Aufrufzahlen aus `run-raw.log`.
+
+| Mittel je Lauf | vorher | nachher | Δ |
+|---|---:|---:|---:|
+| Elemente | 49,3 | 50,7 (57/61/34) | ≈, Streuung groß |
+| Gate-Ablehnungen | 5,7 | 3,0 | −47 % |
+| Turns | 53,7 | 42,3 | −21 % |
+| Tokens ein / aus | 445k / 27,0k | 210k / 9,1k | −53 % / −67 % |
+| Laufzeit | 596 s | 186 s | −69 % |
+| Lese-Aufrufe des Modells | 291 | 106 | −64 % |
+| davon graph_elements / Guide / get_node | 227 / 35 / 29 | 59 / 3 / 44 | get_node +52 % |
+
+**Kipp-Kriterium (CR-GC-612) gehalten:** die Summe der Lese-Aufrufe faellt; nur `graph_get_node`
+steigt — nach dem Wegfall der Parameterbeschreibungen fragt das Modell einzelne Knoten oefter nach.
+Die beiden CRs sind im Rig nicht getrennt gemessen; die Aussage gilt fuer beide zusammen. Fuer
+die Elementzahl ist N=3 zu klein (34 bis 61).
