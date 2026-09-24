@@ -661,6 +661,7 @@
 | `CR-GC-659` | relation | `FUNC-preflight` |
 | `CR-GC-659` | relation | `REQ-preflight-hygiene` |
 | `CR-GC-660` | relation | `FUNC-preflight` |
+| `CR-GC-661` | relation | `FUNC-generation-step` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |

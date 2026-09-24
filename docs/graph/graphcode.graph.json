@@ -2210,7 +2210,9 @@
       "id": "CR-GC-656",
       "type": "CR",
       "name": "Executor openai-Zweig: fetch bricht nach 300 s ab (undici headersTimeout) — Thinking-Modelle unbenutzbar",
-      "description": "docs/cr/open/CR-GC-656-executor-openai-zweig-fetch-bricht-nach-.md"
+      "description": "docs/cr/done/CR-GC-656-executor-openai-zweig-fetch-bricht-nach-.md",
+      "status": "done",
+      "commitRef": "aa7f269"
     },
     {
       "id": "CR-GC-657",
@@ -12936,6 +12938,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-661",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -21290,5 +21297,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 460
+  "graphVersion": 461
 }
