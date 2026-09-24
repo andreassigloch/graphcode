@@ -2243,6 +2243,12 @@
       "description": "docs/cr/open/CR-GC-660-executor-auf-bestehende-knoten-ueberschr.md"
     },
     {
+      "id": "CR-GC-661",
+      "type": "CR",
+      "name": "UC-01: qwen schreibt je Batch 1 REQ fuer 1 UC (9 von 11) — das Beispiel setzt die Menge",
+      "description": "docs/cr/open/CR-GC-661-uc-01-qwen-schreibt-je-batch-1-req-fuer-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21284,5 +21290,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 459
+  "graphVersion": 460
 }

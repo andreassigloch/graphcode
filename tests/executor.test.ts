@@ -393,6 +393,23 @@ describe('executor (CR-GC-278)', () => {
     expect(mit.success, JSON.stringify(mit.violations)).toBe(true);
   });
 
+  it('CR-GC-661: das Vorbild der UC-01-Klausel (zwei UCs, je zwei REQs) geht so durchs Gate', async () => {
+    const vorbau = (await registry['graph_mutate'].handler({
+      formatE:
+        '## Nodes\n### SYS\n+ SYS-app|Eine App. [__name:App]\n### UC\n+ UC-login|Nutzer meldet sich an. [__name:Login]\n' +
+        '+ UC-export|Nutzer exportiert den Stand. [__name:Export]\n\n## Edges\n+ SYS-app -compose-> UC-login, UC-export\n',
+      consumerId: 'test',
+    })) as { success: boolean; violations?: unknown };
+    expect(vorbau.success, JSON.stringify(vorbau.violations)).toBe(true);
+    const text = RULE_CLAUSE['UC-01'].text(['UC-login', 'UC-export']);
+    expect(text).toContain('Bediene ALLE 2 UCs in EINEM Batch');
+    const vorbild = text.slice(text.indexOf('## Nodes')) + '\n';
+    const res = (await registry['graph_mutate'].handler({ formatE: vorbild, consumerId: 'test' })) as { success: boolean; violations?: unknown };
+    expect(res.success, JSON.stringify(res.violations)).toBe(true);
+    const req = harness.getGraph().nodes.filter((n) => n.type === 'REQ');
+    expect(req).toHaveLength(4);
+  });
+
   it('CR-GC-658: das Vorbild der UC-02-Klausel geht so durchs Gate und loest den Fund auf', async () => {
     const vorbau = (await registry['graph_mutate'].handler({
       formatE:
