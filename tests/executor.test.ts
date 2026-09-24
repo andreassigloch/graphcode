@@ -334,6 +334,24 @@ describe('executor (CR-GC-278)', () => {
     expect(out, 'die Liste widerspraeche sonst dem SYSTEM').not.toContain('keine Duplikate anlegen');
   });
 
+  it('CR-GC-654: SYSTEM zeigt einen reinen Kanten-Batch, und das Gate nimmt genau diese Form an', async () => {
+    const block = SYSTEM.slice(SYSTEM.indexOf('Kanten zwischen BESTEHENDEN Knoten'));
+    const beispiel = block.slice(block.indexOf('## Edges'), block.indexOf('\n\n', block.indexOf('## Edges')) + 1);
+    expect(beispiel).toMatch(/^## Edges\n\+ \S+ -satisfy-> \S+\n$/);
+    // Die Form ist nicht nur behauptet: zwischen bestehenden Knoten geht sie ohne Knotenzeile durchs Gate.
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    const res = (await registry['graph_mutate'].handler({
+      formatE: '## Nodes\n### REQ\n+ REQ-a|Das System muss X. [__name:A]\n### TEST\n+ TEST-a|Prueft X. [__name:TA]\n\n## Edges\n+ TEST-a -verify-> REQ-a\n',
+      consumerId: 'test',
+    })) as { success: boolean };
+    expect(res.success).toBe(true);
+    const nurKante = (await registry['graph_mutate'].handler({
+      formatE: '## Edges\n+ UC-login -compose-> REQ-a\n',
+      consumerId: 'test',
+    })) as { success: boolean };
+    expect(nurKante.success).toBe(true);
+  });
+
   it("toolset 'authoring' curates the minimal generative set (base-load lever)", () => {
     const names = buildToolSpecs(registry, 'authoring').map((s) => s.name);
     expect(names).toContain('graphcode_graph_mutate');

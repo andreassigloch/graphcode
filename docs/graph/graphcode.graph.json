@@ -2191,6 +2191,12 @@
       "commitRef": "a9bace0"
     },
     {
+      "id": "CR-GC-654",
+      "type": "CR",
+      "name": "Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch",
+      "description": "docs/cr/open/CR-GC-654-executor-format-e-bestehende-knoten-werd.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21115,5 +21121,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 448
+  "graphVersion": 449
 }
