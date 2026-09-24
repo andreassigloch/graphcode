@@ -2211,6 +2211,12 @@
       "description": "docs/cr/open/CR-GC-656-executor-openai-zweig-fetch-bricht-nach-.md"
     },
     {
+      "id": "CR-GC-657",
+      "type": "CR",
+      "name": "REQ-Beispiele ohne kinds — FUNC satisfy REQ wird illegal (auch das SYSTEM-Beispiel selbst)",
+      "description": "docs/cr/open/CR-GC-657-req-beispiele-ohne-kinds-func-satisfy-re.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21198,5 +21204,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 452
+  "graphVersion": 453
 }

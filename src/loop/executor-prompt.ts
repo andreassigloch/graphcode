@@ -42,17 +42,21 @@ emittiere den geforderten Batch als EINEN graphcode_graph_mutate-Aufruf mit {"fo
 Format-E (exakt; Knoten unter "## Nodes" in ihrer "### <TYP>"-Sektion, Kanten unter "## Edges"):
 ## Nodes
 ### REQ
-+ REQ-login-latenz|Das System muss die Anmeldung in unter 2 s abschliessen. [__name:Anmeldung unter 2 s]
++ REQ-login-passwort|Das System muss Nutzer per Passwort in unter 2 s anmelden. [__name:Anmeldung per Passwort]
+@kinds ["functional"]
 ### TEST
-+ TEST-login-latenz|Lastlauf misst p95 der Anmeldezeit, Grenze 2 s. [__name:Anmeldelatenz messen]
++ TEST-login-passwort|Lastlauf misst p95 der Anmeldung, Grenze 2 s. [__name:Anmeldung messen]
 
 ## Edges
-+ UC-login -compose-> REQ-login-latenz
-+ TEST-login-latenz -verify-> REQ-login-latenz
++ UC-login -compose-> REQ-login-passwort
++ TEST-login-passwort -verify-> REQ-login-passwort
+
+Jede REQ traegt @kinds: "functional"/"precondition"/"postcondition" erfuellt eine FUNC, "non-functional"/
+"risk"/"mitigation" ein MOD oder das SYS; eine FCHAIN erfuellt jede. Ohne kinds ist FUNC/MOD/SYS -satisfy-> illegal.
 
 Kanten zwischen BESTEHENDEN Knoten brauchen keine Knotenzeile — ein reiner Kanten-Batch:
 ## Edges
-+ FUNC-login-pruefen -satisfy-> REQ-login-latenz
++ FUNC-login-pruefen -satisfy-> REQ-login-passwort
 
 "+" legt an (auf eine bestehende uid: ueberschreibt sie), "~ uid|Text" ändert einen Knoten (nur was die
 Zeile nennt), "- uid" löscht. Mehrere Ziele einer Kante: "+ A -verify-> B, C". uid = "<TYP>-<kebab-name>". Nie " -wort-> " in einer Beschreibung.
@@ -66,6 +70,11 @@ Handeln vor Analysieren: rufe graph_mutate, rate die Instruktion nicht tot.`;
 // lokale Modell kaum — Stichwortsuchen 80 → 69, das Nachlesen des SYS stieg sogar (18 → 26). Gewirkt
 // hat nur, den AUSLOESER zu entfernen (die SCHEMA-Abfrage im Skill author-uc: 22 → 3). Deshalb
 // stehen die Saetze nicht mehr im SYSTEM; wer hier ein Verbot ergaenzen will, misst vorher.
+
+// CR-GC-657: jede Beispiel-REQ traegt @kinds, und die Beispielkante ist legal. Vorher zeigte das
+// Beispiel eine Latenz-REQ ohne kinds und `FUNC -satisfy->` darauf — ein illegales Paar
+// (contracts: FUNC erfuellt nur functional/pre/post, MOD/SYS nur non-functional/risk/mitigation).
+// Im Rig geblockt: `FUNC satisfy REQ` 8 → 15 → 24 je drei Laeufe, seit das Beispiel da stand.
 
 // CR-GC-654: der reine Kanten-Batch steht als ZWEITES Formvorbild im SYSTEM. Mit nur dem ersten
 // (Knoten samt Kanten) deklarierte qwen3-coder bestehende Knoten neu, um eine Kante anzuhaengen —
