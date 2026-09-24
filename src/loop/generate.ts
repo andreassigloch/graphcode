@@ -66,6 +66,11 @@ export const GenerationStep = z.object({
    * Executor injiziert dafür Guide-Slice + Element-Index in den Runden-Prompt,
    * ohne den Prompt-String parsen zu müssen. */
   focusTypes: z.array(z.string()),
+  /** Die Fund-Knoten des Schritts (CR-GC-652) — dieselben uids, die im `focusKey` stecken, aber als
+   * Feld: der Executor schneidet daraus die Element-Liste (gerichteter Weg zum Besitzer), und wer
+   * die uids braucht, soll sie lesen, nicht aus einem zusammengesetzten Schluessel herausschneiden.
+   * Nur in der expand-Phase gesetzt; seed/handoff/Task-Einstieg haben keinen Fund. */
+  focusElements: z.array(z.string()).optional(),
   /** Fokus-Dimension des Schritts (CR-GC-558): Schluessel in `DIMENSION_FOCUS_TYPES`
    * (`seed` | `uc` | `req` | `arch` | ...), null bei handoff. Steckt zwar auch im
    * `focusKey`-Praefix, aber der ist ein zusammengesetzter Identifikator — wer die
@@ -783,6 +788,7 @@ function stepCore(
     // einer Dimension, waehrend der Text nach anderen Typen verlangt. Seit CR-GC-575 ist das
     // keine zweite Bedingung mehr, sondern derselbe Gewinner.
     focusTypes: imperativ?.value.types ?? [],
+    focusElements: [...new Set(focusViolations.map((v) => v.element_id))],
     focusDimension: focus!.dimension as string,
   };
 }
