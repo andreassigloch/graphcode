@@ -17,7 +17,6 @@
  * @author andreas@siglochconsulting
  */
 import { z } from 'zod/v4';
-import { FormatECodec } from '@sigloch/graph-api-core';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 import type { GraphCodeHarness } from '../kernel/harness.js';
@@ -51,8 +50,6 @@ export const ToolContext = z
       (v) => typeof (v as AuditLog | null)?.record === 'function' && typeof (v as AuditLog | null)?.query === 'function',
       { message: 'auditLog muss record() und query() tragen' },
     ),
-    /** Der EINE Format-E-Codec — Serialisieren fuer die Schnitt-Werkzeuge, Parsen fuers Gate. */
-    codec: z.instanceof(FormatECodec),
     /** Read accessor for the applied-batch counter (never a settable field). */
     graphVersion: member<() => number>('graphVersion'),
     /**

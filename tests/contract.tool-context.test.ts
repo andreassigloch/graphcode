@@ -2,8 +2,9 @@
  * TEST-tool-context-contract (CR-GC-523, ITEM-2026-064) — SCHEMA-tool-context.
  *
  * Der Werkzeug-Kontext ist die Uebergabe `createToolContext` → `bindToolsToHarness`:
- * ein Objektliteral aus vier Traegern (Harness, Audit-Log, zwei Codecs) und dreizehn
- * Funktionen, hinter denen der Sitzungszustand lebt. Der Vertrag ist strikt — ein
+ * ein Objektliteral aus zwei Traegern (Harness, Audit-Log) und den Funktionen, hinter denen
+ * der Sitzungszustand lebt. Einen Codec traegt er nicht mehr: die Format-E-Tuer wird direkt
+ * aus graph-api-core importiert, nicht gereicht (CR-GC-645). Der Vertrag ist strikt — ein
  * unbekannter Schluessel wuerde in jede Registry-Enumeration lecken (mcp.symmetry) —
  * und prueft die Datenanteile hinter den Zugriffen: Graphversion, Sitzungskennung,
  * Besitzer-PID.
@@ -57,7 +58,6 @@ describe('TEST-tool-context-contract: SCHEMA-tool-context ist ein Zod-Vertrag', 
   it('akzeptiert den echten Kontext; die Traeger bleiben dieselben Instanzen', () => {
     const parsed = ToolContext.parse(ctx);
     expect(parsed.harness).toBe(harness);
-    expect(parsed.codec).toBe(ctx.codec);
     expect(parsed.graphVersion()).toBe(0);
     expect(parsed.sessionId()).toMatch(/^sess-/);
     expect(parsed.ownerPid()).toBeNull();
@@ -78,7 +78,7 @@ describe('TEST-tool-context-contract: SCHEMA-tool-context ist ein Zod-Vertrag', 
   });
 
   it('weist ein fehlendes Mitglied ab und nennt es als Pfad', () => {
-    for (const key of ['harness', 'auditLog', 'codec', 'recordAudit', 'serializeToolWrite', 'occReject'] as const) {
+    for (const key of ['harness', 'auditLog', 'recordAudit', 'serializeToolWrite', 'occReject'] as const) {
       const { [key]: _dropped, ...without } = ctx;
       expect(pathsOf(without)).toEqual([key]);
     }
@@ -87,7 +87,6 @@ describe('TEST-tool-context-contract: SCHEMA-tool-context ist ein Zod-Vertrag', 
   it('weist ein falsch typisiertes Mitglied ab und nennt es als Pfad', () => {
     expect(pathsOf({ ...ctx, recordAudit: 'nein' })).toEqual(['recordAudit']);
     expect(pathsOf({ ...ctx, auditLog: { record: 1 } })).toEqual(['auditLog']);
-    expect(pathsOf({ ...ctx, codec: {} })).toEqual(['codec']);
     // Der Griff selbst wird in createHarness geprueft (SCHEMA-harness-handle); hier zaehlt
     // nur, dass ein Objekt vorliegt — der Host-Shim bindet die Vorlage an einen Stand-in.
     expect(pathsOf({ ...ctx, harness: null })).toEqual(['harness']);

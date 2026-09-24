@@ -27,7 +27,7 @@
 | `SCHEMA-graph-delta` | src/kernel/graph-store.ts#GraphDeltaSchema | n/a |
 | `SCHEMA-harness-handle` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
-| `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSlice | reviewed |
+| `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
 | `SCHEMA-learning-advice` | extern definiert (kein realRef) | draft |
 | `SCHEMA-learning-query` | extern definiert (kein realRef) | draft |
@@ -36,7 +36,7 @@
 | `SCHEMA-mcp-tool` | src/kernel/tool-contract.ts#MCPToolSchema | n/a |
 | `SCHEMA-mcp-tool-registry` | src/kernel/tool-contract.ts#MCPToolRegistrySchema | n/a |
 | `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
-| `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicy | n/a |
+| `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicySchema | n/a |
 | `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
 | `SCHEMA-model-answer` | src/loop/model-answer-contract.ts#ModelAnswer | n/a |
 | `SCHEMA-model-request` | Konzept (noch kein Zod-Export) | n/a |

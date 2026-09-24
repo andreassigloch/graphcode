@@ -11,6 +11,9 @@
 
 import { z } from 'zod/v4';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
+// CR-GC-645: die Tuer der Familie direkt, nicht ueber den Kontext gereicht — eine gereichte Tuer
+// sieht keine Ratsche und kein RC-09.
+import { SE_FORMAT_E_CODEC } from '@sigloch/graph-api-core';
 import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { ToolContext } from './tool-context.js';
 
@@ -374,7 +377,7 @@ export function buildContextSlice(
 // -------------------------------------------------------------------------
 
 export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
-  const { harness, codec, graphVersion } = ctx;
+  const { harness, graphVersion } = ctx;
 
   /**
    * CR-GC-363: Freshness-Banner inline — eine `//`-Kopfzeile vor dem Format-E-
@@ -416,7 +419,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
         const edges = harness.getGraph().edges.filter((e) => ids.has(e.sourceId) && ids.has(e.targetId));
         // CR-GC-631: `roundTrip` ist genau das, was der Wrapper hier tat — gemessen bytegleich
         // ueber den eigenen Graphen (883 Knoten, 2.169 Kanten, 395.018 Zeichen).
-        const formatE = codec.serialize({ nodes: sliced, edges }, { roundTrip: true });
+        const formatE = SE_FORMAT_E_CODEC.serialize({ nodes: sliced, edges }, { roundTrip: true });
         return {
           formatE: gekuerzt ? `${KUERZUNGS_LEGENDE}\n${formatE}` : formatE,
           total,
@@ -488,7 +491,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
         const gekuerzt = nodes.some((n) => n.description === AUSSENRING_MARKE);
         // CR-GC-373: Agenten-Sicht wie bei jeder anderen Leseschreibe — Provenienz ist keine
         // Arbeitsanweisung. Damit faellt auch `__name`; wer den Namen braucht, fragt den Knoten.
-        const formatE = codec.serialize({ nodes, edges }, { omitProvenance: true });
+        const formatE = SE_FORMAT_E_CODEC.serialize({ nodes, edges }, { omitProvenance: true });
         return {
           formatE: gekuerzt ? `${KUERZUNGS_LEGENDE}\n${formatE}` : formatE,
           total: edges.length,
@@ -530,7 +533,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
       };
       // CR-GC-373: Agenten-Sicht — der Konsument dieser Scheibe ist der Agent,
       // nicht der Re-Import; Provenienz (Zeitstempel, weight:1) bleibt weg.
-      let formatE = codec.serialize(openGraph, { omitProvenance: true });
+      let formatE = SE_FORMAT_E_CODEC.serialize(openGraph, { omitProvenance: true });
       // Blackbox-Front (§8): Identitaet + Vertragskanten, KEINE Beschreibung —
       // der Schnitt steht im Artefakt, nicht bloss in einer Renderer-Absicht.
       const ring = slice.nodes.filter((n) => n.role === 'blackbox');
@@ -588,7 +591,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
       const legende = gekuerzt.nodes.some((n) => n.description === AUSSENRING_MARKE)
         ? `${KUERZUNGS_LEGENDE}\n`
         : '';
-      const formatE = legende + codec.serialize(gekuerzt, { omitProvenance: true }); // CR-GC-373: Agenten-Sicht
+      const formatE = legende + SE_FORMAT_E_CODEC.serialize(gekuerzt, { omitProvenance: true }); // CR-GC-373: Agenten-Sicht
       return {
         handle: input.handle,
         nodeCount: subgraph.nodes.length,
@@ -628,7 +631,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
       const legende = gekuerzt.nodes.some((n) => n.description === '…') ? `${KUERZUNGS_LEGENDE}\n` : '';
       const formatE =
         legende +
-        withFreshnessBanner(codec.serialize(gekuerzt, { omitProvenance: true })) +
+        withFreshnessBanner(SE_FORMAT_E_CODEC.serialize(gekuerzt, { omitProvenance: true })) +
         (rand ? `\n\n${RAND_UEBERSCHRIFT}\n${rand}` : '');
       return {
         rootId: input.id,

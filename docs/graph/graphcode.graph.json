@@ -2116,6 +2116,12 @@
       "description": "docs/cr/open/CR-GC-644-fuenf-lokale-typ-vertraege-werden-zod-er.md"
     },
     {
+      "id": "CR-GC-645",
+      "type": "CR",
+      "name": "Letzte Bindungen: Familienvertraege auf Schemas, Codec nicht ueber ctx",
+      "description": "docs/cr/open/CR-GC-645-letzte-bindungen-familienvertraege-auf-s.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6433,7 +6439,7 @@
       "external": true,
       "realRef": {
         "file": "packages/graph-api-core/src/impact-slice.ts",
-        "symbol": "ImpactSlice",
+        "symbol": "ImpactSliceSchema",
         "lang": "ts"
       }
     },
@@ -6531,7 +6537,7 @@
       "external": true,
       "realRef": {
         "file": "packages/contracts/src/se/policy.ts",
-        "symbol": "MetricPolicy",
+        "symbol": "MetricPolicySchema",
         "lang": "ts"
       }
     },
@@ -12549,6 +12555,21 @@
     {
       "source": "CR-GC-644",
       "target": "SCHEMA-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-645",
+      "target": "SCHEMA-impact-slice",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-645",
+      "target": "SCHEMA-metric-policy",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-645",
+      "target": "SCHEMA-tool-context",
       "type": "relation"
     },
     {
@@ -20836,5 +20857,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 420
+  "graphVersion": 422
 }

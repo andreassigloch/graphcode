@@ -622,6 +622,9 @@
 | `CR-GC-644` | relation | `SCHEMA-ontology-json` |
 | `CR-GC-644` | relation | `SCHEMA-rejected-trace` |
 | `CR-GC-644` | relation | `SCHEMA-steering-snapshot` |
+| `CR-GC-645` | relation | `SCHEMA-impact-slice` |
+| `CR-GC-645` | relation | `SCHEMA-metric-policy` |
+| `CR-GC-645` | relation | `SCHEMA-tool-context` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
