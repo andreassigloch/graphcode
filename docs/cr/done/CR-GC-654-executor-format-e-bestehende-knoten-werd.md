@@ -1,6 +1,6 @@
 # CR-GC-654: Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-555 (bug)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-555.json (Lane: code)
