@@ -107,3 +107,50 @@ describe('executor-tools (CR-GC-506)', () => {
     ]);
   });
 });
+
+describe('CR-GC-647: Modell-Aufrufe laufen durch dieselbe Schema-Grenze wie der MCP-Server', () => {
+  let repoRoot: string;
+  let harness: Awaited<ReturnType<typeof createHarness>>;
+  let registry: ReturnType<typeof bindToolsToHarness>;
+
+  beforeEach(async () => {
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-executor-schema-'));
+    harness = await createHarness({
+      repoRoot,
+      scope: { workspaceId: 'exec-schema', systemId: 'exec-schema' },
+      consumerType: 'system',
+      preCommitTimeout: 5000,
+    });
+    await harness.initialize();
+    registry = bindToolsToHarness(harness);
+    // Mehr REQs als der deklarierte Default `limit` — ohne Parse kaeme der ganze Satz zurueck.
+    // Jede REQ mit ihrem verify-TEST — eine REQ allein blockt das Gate (R-01).
+    const commands = Array.from({ length: 130 }, (_, i) => [
+      { op: 'add-node', node: { uid: `REQ-r${i}`, type: 'REQ', name: `Anforderung ${i}`, description: 'x'.repeat(200), attributes: {} } },
+      { op: 'add-node', node: { uid: `TEST-r${i}`, type: 'TEST', name: `Pruefung ${i}`, description: 'Prueft die Anforderung.', attributes: {} } },
+      { op: 'add-edge', edge: { sourceId: `TEST-r${i}`, targetId: `REQ-r${i}`, edgeType: 'verify', attributes: {} } },
+    ]).flat();
+    const res = (await registry.graph_mutate.handler({ commands, consumerId: 'test' })) as { success: boolean };
+    expect(res.success).toBe(true);
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  it('graph_elements({type}) bekommt den Default-limit statt des ganzen Graphen', async () => {
+    const out = JSON.parse(await execReadOrGraphTool(registry, repoRoot, 'graphcode_graph_elements', { type: 'REQ' }));
+    // Vorher: ohne Parse kein limit, der ganze Graph, und jsonCapped strich die Liste ganz —
+    // ein Stummel ohne einen einzigen Knoten. Jetzt: Default-limit, Liste auf den Anfang gekappt.
+    expect(out.total).toBe(130);
+    expect(out.nodes.length).toBeGreaterThan(0);
+    expect(out.gekappt.nodes).toBe(`${out.nodes.length}/100`);
+  });
+
+  it('ein unbekannter Argumentname ist ein Fehler mit dem Namen, keine leere Eingabe', async () => {
+    const out = await execReadOrGraphTool(registry, repoRoot, 'graphcode_graph_help', { id: 'graph_metrics' });
+    expect(out).toMatch(/^ERROR: invalid input for graphcode_graph_help/);
+    expect(out).toContain('id');
+  });
+});

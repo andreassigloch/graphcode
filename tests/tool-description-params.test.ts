@@ -21,7 +21,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { strengesSchema } from '../src/surface/mcp-server.js';
+import { strengesSchema } from '../src/kernel/tool-contract.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { ZodObject, ZodRawShape } from 'zod/v4';
 import type { MCPTool } from '../src/kernel/tool-contract.js';

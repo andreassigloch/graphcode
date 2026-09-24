@@ -13,7 +13,7 @@
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
-import type { MCPToolRegistry } from '../kernel/tool-contract.js';
+import { strengesSchema, type MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { ModelToolCall } from './model-answer-contract.js';
 import { jsonCapped } from './executor-prompt.js';
 import type { ExecutorConfig } from './executor.js';
@@ -120,8 +120,15 @@ export async function execReadOrGraphTool(
   if (name.startsWith('graphcode_')) {
     const tool = registry[name.slice('graphcode_'.length)];
     if (!tool) return 'ERROR: unknown tool ' + name;
+    // CR-GC-647: dieselbe Grenze wie der MCP-Server — Defaults setzen, unbekannte Argumente
+    // abweisen. Roh an `handler()` vorbei lief `graph_elements({type})` ohne `limit` ueber den
+    // ganzen Graphen (28.572 Zeichen am eigenen Modell), und `jsonCapped` liess davon einen
+    // Stummel ohne einen einzigen Knoten uebrig. Der Parse-Fehler geht als Text zurueck: er
+    // nennt dem Modell den Parameter, den es gibt.
+    const parsed = strengesSchema(tool).safeParse(input ?? {});
+    if (!parsed.success) return 'ERROR: invalid input for ' + name + ': ' + parsed.error.message;
     try {
-      return jsonCapped(await tool.handler(input ?? {}));
+      return jsonCapped(await tool.handler(parsed.data));
     } catch (err) {
       return 'ERROR: ' + (err instanceof Error ? err.message : String(err));
     }
