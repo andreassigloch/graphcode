@@ -31,7 +31,7 @@
  */
 
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
-import { TestResult, TestRefsSchema } from '@sigloch/contracts/se';
+import { TestResult, readTestRefs } from '@sigloch/contracts/se';
 
 /** Das Ergebnis eines Laufs, wie die Ontologie es kennt. */
 export type TestResultValue = (typeof TestResult.options)[number];
@@ -79,8 +79,8 @@ export function samePath(a: string, b: string): boolean {
 
 /** Alle `testRefs`-Dateien eines Knotens — leer, wenn er keine gültige Bindung trägt. */
 function testRefFiles(node: GraphNode): string[] {
-  const parsed = TestRefsSchema.safeParse(node.attributes?.testRefs);
-  return parsed.success ? parsed.data.map((r) => r.file) : [];
+  const read = readTestRefs(node.attributes);
+  return read.state === 'bound' ? read.value.map((r) => r.file) : [];
 }
 
 /**
@@ -205,9 +205,9 @@ export interface VerificationReport {
  * ist nicht gruen.
  */
 export function resultOf(node: GraphNode): TestResultValue | 'not-run' {
-  const refs = TestRefsSchema.safeParse(node.attributes?.testRefs);
-  if (refs.success) {
-    const results = refs.data.map((r) => r.result);
+  const refs = readTestRefs(node.attributes);
+  if (refs.state === 'bound') {
+    const results = refs.value.map((r) => r.result);
     if (results.some((r) => r === undefined)) return 'not-run';
     if (results.some((r) => r === 'failed')) return 'failed';
     if (results.some((r) => r === 'skipped')) return 'skipped';

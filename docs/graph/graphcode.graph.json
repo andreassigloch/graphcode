@@ -2104,6 +2104,12 @@
       "description": "docs/cr/open/CR-GC-642-graphcode-nutzt-die-format-e-tuer-der-fa.md"
     },
     {
+      "id": "CR-GC-643",
+      "type": "CR",
+      "name": "graphcode: testRefs/realRef ueber den Familienleser, Vertraege als SCHEMA im Modell",
+      "description": "docs/cr/open/CR-GC-643-graphcode-testrefs-realref-ueber-den-fam.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6666,6 +6672,19 @@
       }
     },
     {
+      "id": "SCHEMA-real-ref",
+      "type": "SCHEMA",
+      "name": "realRef (Realisierungsbindung)",
+      "description": "Attributvertrag realRef an FUNC, SCHEMA und MOD: Realisierungsdatei, Symbol, Sprache. Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readRealRef (absent, invalid, bound; CR-SM-360).",
+      "external": true,
+      "status": "reviewed",
+      "realRef": {
+        "file": "packages/contracts/src/se/ontology.ts",
+        "symbol": "RealRefSchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-rejected-trace",
       "type": "SCHEMA",
       "name": "RejectedTrace",
@@ -6797,6 +6816,19 @@
       "realRef": {
         "file": "src/loop/target-profile-contract.ts",
         "symbol": "TargetProfileSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-test-refs",
+      "type": "SCHEMA",
+      "name": "testRefs (Laufdateien eines TEST)",
+      "description": "Attributvertrag testRefs am TEST: Liste der Laufdateien (file, case, tool, level, result). Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readTestRefs (absent, invalid, bound; CR-SM-360).",
+      "external": true,
+      "status": "reviewed",
+      "realRef": {
+        "file": "packages/contracts/src/se/ontology.ts",
+        "symbol": "TestRefsSchema",
         "lang": "ts"
       }
     },
@@ -6953,6 +6985,22 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-attributvertraege",
+      "type": "TEST",
+      "name": "Attributvertraege gelesen ueber den Familienleser",
+      "description": "Vertragstest der Attributvertraege testRefs und realRef auf der Konsumentenseite: gebunden, ungueltig und fehlend haben je ihre eigene Aussage (graph_tests, Verifikationsbericht, Code-Fakten). Dass kein graphcode-Leser den Vertrag selbst parst, prueft RC-09 in TEST-code-conformance.",
+      "status": "done",
+      "testRefs": [
+        {
+          "file": "tests/attributvertraege.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-09-24T12:30:00.000Z"
         }
       ]
     },
@@ -12460,6 +12508,16 @@
     {
       "source": "CR-GC-642",
       "target": "SCHEMA-format-e",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-643",
+      "target": "SCHEMA-real-ref",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-643",
+      "target": "SCHEMA-test-refs",
       "type": "relation"
     },
     {
@@ -18720,6 +18778,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-attributvertraege",
+      "target": "SCHEMA-real-ref",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-attributvertraege",
+      "target": "SCHEMA-test-refs",
+      "type": "verify"
+    },
+    {
       "source": "TEST-audit-retention",
       "target": "REQ-audit-trail",
       "type": "verify"
@@ -20737,5 +20805,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 415
+  "graphVersion": 418
 }

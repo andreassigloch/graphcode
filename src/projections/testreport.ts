@@ -20,7 +20,7 @@
 import { z } from 'zod/v4';
 import { TestResult } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
-import { TestRefsSchema } from '@sigloch/contracts/se';
+import { readTestRefs } from '@sigloch/contracts/se';
 import {
   planIngest,
   parseVitestJson,
@@ -119,8 +119,8 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
         const ranAt = new Date().toISOString();
         const commands: MutateCommand[] = [...byNode].map(([uid, assignments]) => {
           const node = nodes.find((n) => n.uid === uid)!;
-          const parsed = TestRefsSchema.safeParse(node.attributes?.testRefs);
-          const refs = parsed.success ? parsed.data : [];
+          const read = readTestRefs(node.attributes);
+          const refs = read.state === 'bound' ? read.value : [];
           return {
             op: 'update-node' as const,
             node: {

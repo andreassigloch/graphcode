@@ -17,7 +17,7 @@ import { z } from 'zod/v4';
 import type { GraphNode } from '@sigloch/graph-api-core';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import {
-  TestRefsSchema,
+  readTestRefs,
   type TestRef,
   TRACE_PATTERNS,
   PHASE_READINESS_NAME,
@@ -433,21 +433,22 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       const files = new Set<string>();
 
       for (const node of impactedTests) {
-        const raw = node.attributes?.testRefs;
-        if (raw === undefined || raw === null) {
+        // CR-SM-360: der Familienleser unterscheidet „fehlt" von „kaputt" — beides ist hier ein
+        // eigener, benannter Grund, kein stilles Weglassen.
+        const read = readTestRefs(node.attributes);
+        if (read.state === 'absent') {
           const reason = node.attributes?.concept === true ? 'concept-only (no run artifact yet)' : 'no testRefs attribute';
           unresolved.push({ id: node.uid, name: node.name, reason });
           continue;
         }
-        const parsed = TestRefsSchema.safeParse(raw);
-        if (!parsed.success) {
-          unresolved.push({ id: node.uid, name: node.name, reason: `invalid testRefs: ${parsed.error.message}` });
+        if (read.state === 'invalid') {
+          unresolved.push({ id: node.uid, name: node.name, reason: `invalid testRefs: ${read.error}` });
           continue;
         }
         // CR-GC-338: ALLE Dateien der Abnahme in den selektiven Lauf — genau dafuer ist
         // 1:n da (CR-SM-231). Nur die erste zu nehmen liesse den Visual-Lauf ungelaufen.
-        tests.push({ id: node.uid, name: node.name, testRefs: parsed.data });
-        for (const ref of parsed.data) files.add(ref.file);
+        tests.push({ id: node.uid, name: node.name, testRefs: read.value });
+        for (const ref of read.value) files.add(ref.file);
       }
 
       // Minimal selective run: ONLY the affected test files, sorted+deduped.

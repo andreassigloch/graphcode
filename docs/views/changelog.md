@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 250 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 251 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 250 CR · 189 done · 0 open.
+Total: 251 CR · 189 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -312,3 +312,4 @@ Total: 250 CR · 189 done · 0 open.
 | `CR-GC-640` | n/a | Extraktor liefert zodSymbols und fileScope fuer RC-08/RC-09, Messung am eigenen Modell |
 | `CR-GC-641` | n/a | Format-E bekommt eine Zod-Tuer, SCHEMA-format-e bindet sie |
 | `CR-GC-642` | n/a | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen |
+| `CR-GC-643` | n/a | graphcode: testRefs/realRef ueber den Familienleser, Vertraege als SCHEMA im Modell |

@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 58 SCHEMA · 131 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 60 SCHEMA · 131 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -49,6 +49,7 @@
 | `SCHEMA-preflight-outcome` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-query-params` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
+| `SCHEMA-real-ref` | packages/contracts/src/se/ontology.ts#RealRefSchema | reviewed |
 | `SCHEMA-rejected-trace` | src/kernel/harness-import.ts#RejectedTrace | n/a |
 | `SCHEMA-round-injection` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-rule-violation` | packages/contracts/src/harness/index.ts#RuleViolationSchema | n/a |
@@ -63,6 +64,7 @@
 | `SCHEMA-systemtest-turn-profile` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-systemtest-verdict` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
+| `SCHEMA-test-refs` | packages/contracts/src/se/ontology.ts#TestRefsSchema | reviewed |
 | `SCHEMA-test-selection` | src/kernel/measure/test-selection.ts#TestSelectionSchema | n/a |
 | `SCHEMA-tool-context` | src/surface/tool-context-contract.ts#ToolContext | n/a |
 | `SCHEMA-tool-registry` | Konzept (noch kein Zod-Export) | n/a |

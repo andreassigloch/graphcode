@@ -75,6 +75,9 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     // RC-09 = 0: jeder lokal gebundene Zod-Vertrag wird nur in seiner modellierten Datei geparst.
     expect(v.filter((x) => x.ruleId === 'RC-08').length).toBeLessThanOrEqual(5);
     expect(v.filter((x) => x.ruleId === 'RC-09')).toEqual([]);
+    // CR-GC-643: dazu gehoeren die Attributvertraege. Vor der Umstellung auf den Familienleser
+    // (CR-SM-360) parsten 6 graphcode-Dateien `TestRefsSchema` und 3 `RealRefSchema` selbst —
+    // gemessen an diesem Modell (RC-09 = 2), sobald SCHEMA-test-refs / SCHEMA-real-ref darin standen.
   });
 
   // CR-SM-262: RC-06 haengt VOLLSTAENDIG an diesem Extraktor. Ohne `declaredDependencies` ist

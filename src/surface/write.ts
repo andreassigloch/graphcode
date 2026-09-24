@@ -13,7 +13,7 @@ import { z } from 'zod/v4';
 import { isAbsolute, join } from 'node:path';
 import type { MutateCommand, MutateResult, RuleViolation, StaleDelta } from '@sigloch/contracts/harness';
 import { GraphVersionSchema } from '@sigloch/contracts/harness';
-import { TestRefsSchema } from '@sigloch/contracts/se';
+import { readTestRefs } from '@sigloch/contracts/se';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../kernel/merge.js';
 import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
@@ -556,9 +556,10 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           // CR-GC-611: im Batch zaehlt auch, was eine fruehere Bindung DESSELBEN Aufrufs
           // schon anhaengte — sonst frisst die letzte Testzeile ihre Vorgaengerinnen.
           const vorher = commands.find((c) => c.op === 'update-node' && c.node.uid === b.testUid);
-          const ausBatch = vorher && TestRefsSchema.safeParse((vorher as { node: { attributes?: { testRefs?: unknown } } }).node.attributes?.testRefs);
-          const existing = ausBatch && ausBatch.success ? ausBatch : TestRefsSchema.safeParse(test.attributes?.testRefs);
-          const kept = existing && existing.success ? existing.data.filter((r) => r.file !== b.testFile || r.case !== b.testCase) : [];
+          const ausBatch = vorher ? readTestRefs((vorher as { node: { attributes?: Record<string, unknown> } }).node.attributes) : undefined;
+          const existing = ausBatch?.state === 'bound' ? ausBatch : readTestRefs(test.attributes);
+          // Ungueltige Refs werden ersetzt, nicht fortgeschrieben: die neue Bindung ist gueltig.
+          const kept = existing.state === 'bound' ? existing.value.filter((r) => r.file !== b.testFile || r.case !== b.testCase) : [];
           const added = {
             file: b.testFile!,
             tool: b.tool ?? 'vitest',
