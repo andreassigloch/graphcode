@@ -2202,7 +2202,9 @@
       "id": "CR-GC-655",
       "type": "CR",
       "name": "Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req)",
-      "description": "docs/cr/open/CR-GC-655-skill-der-runde-folgt-der-dimension-stat.md"
+      "description": "docs/cr/done/CR-GC-655-skill-der-runde-folgt-der-dimension-stat.md",
+      "status": "done",
+      "commitRef": "6ba5294"
     },
     {
       "id": "CR-GC-656",
@@ -2214,19 +2216,25 @@
       "id": "CR-GC-657",
       "type": "CR",
       "name": "REQ-Beispiele ohne kinds — FUNC satisfy REQ wird illegal (auch das SYSTEM-Beispiel selbst)",
-      "description": "docs/cr/open/CR-GC-657-req-beispiele-ohne-kinds-func-satisfy-re.md"
+      "description": "docs/cr/done/CR-GC-657-req-beispiele-ohne-kinds-func-satisfy-re.md",
+      "status": "done",
+      "commitRef": "f6fcc25"
     },
     {
       "id": "CR-GC-658",
       "type": "CR",
       "name": "UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids",
-      "description": "docs/cr/open/CR-GC-658-uc-02-klausel-beschreibt-den-actor-pfad-.md"
+      "description": "docs/cr/done/CR-GC-658-uc-02-klausel-beschreibt-den-actor-pfad-.md",
+      "status": "done",
+      "commitRef": "7ebd7dd"
     },
     {
       "id": "CR-GC-659",
       "type": "CR",
       "name": "Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis",
-      "description": "docs/cr/open/CR-GC-659-preflight-meldung-zu-func-satisfy-req-ne.md"
+      "description": "docs/cr/done/CR-GC-659-preflight-meldung-zu-func-satisfy-req-ne.md",
+      "status": "done",
+      "commitRef": "e2c0764"
     },
     {
       "id": "CR-GC-660",
@@ -12892,6 +12900,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-657",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-657",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-658",
       "target": "FUNC-generation-step",
       "type": "relation"
@@ -21266,5 +21284,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 458
+  "graphVersion": 459
 }

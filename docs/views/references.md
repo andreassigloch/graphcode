@@ -655,6 +655,8 @@
 | `CR-GC-655` | relation | `FUNC-generation-step` |
 | `CR-GC-656` | relation | `FUNC-call-model` |
 | `CR-GC-656` | relation | `FUNC-read-openai-stream` |
+| `CR-GC-657` | relation | `FUNC-generation-step` |
+| `CR-GC-657` | relation | `FUNC-run-executor` |
 | `CR-GC-658` | relation | `FUNC-generation-step` |
 | `CR-GC-659` | relation | `FUNC-preflight` |
 | `CR-GC-659` | relation | `REQ-preflight-hygiene` |
