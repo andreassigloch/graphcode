@@ -118,6 +118,24 @@ describe('TEST-retro-kpi: KPI 1 wird aus dem Sitzungsprotokoll gezaehlt (CR-GC-6
     expect(f.at(-1)).toEqual(mitAbschluss.at(-3));   // endet mit der Zeile, die done/ nennt
   });
 
+  it('Text in einem Heredoc ist kein Befehl — nur was LAEUFT, zaehlt', async () => {
+    // Gemessen an CR-GC-639 selbst: 8 „Volllaeufe", davon 7 Heredocs, die Dateien schrieben und
+    // `npm test` nur ERWAEHNTEN (Kommentare, Fixtures, der CR-Text). Der echte Lauf stand am Ende
+    // eines davon.
+    const { werkzeugNutzung } = await import('../scripts/retro-kpi.mjs');
+    const b = (command: string) => ({ message: { role: 'assistant', content: [{ type: 'tool_use', name: 'Bash', input: { command } }] } });
+    const n = werkzeugNutzung([
+      b("cat > x.md <<'EOF'\nFuehre npm test aus.\ngrep -rn foo src\nEOF"),       // nur Text
+      b("python3 - <<'PY'\ns = 'npm test'\nPY\nnpm run build && npm test | tail"), // Text + ECHTER Lauf danach
+      b('cd /repo && env -u GIT_DIR npm test 2>&1 | tail -5'),                          // echter Lauf
+      b('echo "npm test und grep -r x"'),                                               // nur Text
+      b('grep -E "Test Files|FAIL" /private/tmp/claude-501/x/tasks/abc.output'),        // Log lesen, nicht Code
+      b('tail -5 /tmp/lauf.log | grep FAIL'),                                           // dito, und nach Pipe
+    ]);
+    expect(n.volllaeufe).toBe(2);
+    expect(n.grepGlobDocReads).toBe(0);
+  });
+
   it('eine CR-ID, die im Protokoll nicht vorkommt, ergibt ein LEERES Fenster, kein ganzes', async () => {
     const { fensterFuer } = await import('../scripts/retro-kpi.mjs');
     expect(fensterFuer(protokoll, 'CR-GC-999')).toEqual([]);

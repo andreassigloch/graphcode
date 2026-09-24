@@ -43,7 +43,7 @@ Zwei Definitionen derselben Kennzahl sind derselbe Fehler wie zwei Format-E-Lese
 
 **`| grep` ist keine Suche.** `npm test | grep FAIL` filtert eine Ausgabe und fragt nichts ueber den
 Code. Gezaehlt wird grep jetzt nur am Anfang einer Pipeline. Folge: der Referenz-Change hat **29**
-Suchen, nicht 45. Die Grundlinie ist an allen fuenf Stellen korrigiert, an denen sie veroeffentlicht
+Suchen, nicht 45 — und nach den zwei Korrekturen unten **27**. Die Grundlinie ist an allen fuenf Stellen korrigiert, an denen sie veroeffentlicht
 war (Skill, Rig-README, Analyse, BOK-CR-068 samt Code-Kommentar), jeweils mit Fussnote statt
 stillem Ueberschreiben.
 
@@ -64,14 +64,36 @@ Rueckwirkend auf die CRs dieser Sitzung gemessen:
 
 | CR | KPI 1 | Graph-Lesen | Suchen | Volllaeufe |
 |---|---:|---:|---:|---:|
-| CR-GC-630 | 0 | 0 | 12 | 1 |
-| CR-GC-631 | 0,16 | 0 | 19 | 3 |
-| CR-GC-632 | 0 | 0 | 4 | 4 |
-| CR-GC-634 | 0 | 0 | 2 | 1 |
-| CR-GC-635 | 0 | 0 | 21 | 2 |
+| CR-GC-630 | 0 | 0 | 10 | 1 |
+| CR-GC-631 | 0,2 | 0 | 15 | 3 |
+| CR-GC-632 | 0 | 0 | 2 | 1 |
+| CR-GC-634 | 0 | 0 | 3 | 1 |
+| CR-GC-635 | 0 | 0 | 20 | 0 |
+| CR-GC-639 | 0 | 0 | 5 | 1 |
 
-**Fuenf von fuenf ohne einen einzigen Graph-Lesezugriff.** CR-635, der Skill, der das aendern soll,
+(Die letzte Zeile hat der post-commit dieses CR selbst geschrieben, beim Abschluss `b91550e`, und
+nach den Korrekturen unten neu gerechnet.)
+
+**Sechs von sechs ohne einen einzigen Graph-Lesezugriff.** CR-635, der Skill, der das aendern soll,
 ist selbst einer davon: er entstand vor seiner eigenen Wirkung.
+
+## Nach dem Abschluss: zwei weitere Zaehlfehler, beide an den eigenen Daten gefunden
+
+Der Hook mass CR-GC-639 beim eigenen Commit mit **8 Volllaeufen**. Gefahren war einer. Die
+Stichprobe ergab: 7 der 8 waren Heredocs, die Dateien schrieben und `npm test` nur ERWAEHNTEN
+(Kommentare, Test-Fixtures, dieser CR-Text). Und von 33 gezaehlten Suchen des Referenz-Changes
+waren 6 greps ueber Log-Dateien in `/tmp`, also kein Befragen des Repos.
+
+Ein Prinzip deckt alle drei Fehler (`| grep`, Heredoc, Log): **gezaehlt wird, was als Befehl gegen
+das Repo LAEUFT, nicht was als Text in einem Befehl steht.** Umgesetzt als `befehlsKoepfe()`:
+Heredoc-Rumpf weg, `echo` weg, zerlegen an `&&`, `||`, `;` und Zeilenumbruch, je Segment der Kopf
+vor der ersten Pipe, und das alles **ausserhalb von Anfuehrungszeichen**. Der erste Teiler hatte
+`grep -E "a|b" datei` am `|` im Muster zerschnitten. Jeder Fall hat einen roten Test.
+
+Die Grundlinie ist dabei zweimal gesunken, 45 → 29 → 27. Die Aussage hat sich nie bewegt:
+**0 Graph-Lesezugriffe.** Bei einer Kennzahl, die ueber Monate verglichen werden soll, zaehlt die
+Zahl aber mit. Deshalb ist sie an allen fuenf Veroeffentlichungsstellen nachgezogen, jede mit
+Fussnote.
 
 ## Grenzen, benannt
 
