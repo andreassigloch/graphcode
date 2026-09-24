@@ -1,6 +1,6 @@
 # CR-GC-656: Executor openai-Zweig: fetch bricht nach 300 s ab (undici headersTimeout) — Thinking-Modelle unbenutzbar
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-557 (bug)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-557.json (Lane: code)
