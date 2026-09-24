@@ -60,6 +60,7 @@
 | `FUNC-extract-mutate` | FUNC | extractMutateFromText |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
 | `FUNC-function-criticality` | FUNC | functionCriticality(graph) |
+| `FUNC-fund-kontext` | FUNC | fundKontext |
 | `FUNC-gate-client` | FUNC | bindGateClient(registry, stats, trace) |
 | `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
 | `FUNC-goal-steerer` | FUNC | Führung |
@@ -80,6 +81,7 @@
 | `FUNC-import-code` | FUNC | Skill se:import-code |
 | `FUNC-import-code-verb` | FUNC | executeImportCode |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
+| `FUNC-inventory-channel` | FUNC | buildInventoryBlock |
 | `FUNC-list-elements` | FUNC | listElements(filter) |
 | `FUNC-load-config` | FUNC | loadGraphcodeConfig |
 | `FUNC-merge-nodes` | FUNC | replayBranchLog(log, sinceVersion) |
@@ -198,6 +200,7 @@
 | `FUNC-extract-mutate` | `MOD-loop` |
 | `FUNC-fit-advisory` | `MOD-kernel-measure` |
 | `FUNC-function-criticality` | `MOD-projections` |
+| `FUNC-fund-kontext` | `MOD-loop` |
 | `FUNC-gate-client` | `MOD-loop` |
 | `FUNC-generation-step` | `MOD-loop` |
 | `FUNC-goal-steerer` | `MOD-loop` |
@@ -218,6 +221,7 @@
 | `FUNC-import-code` | `MOD-agent-surface` |
 | `FUNC-import-code-verb` | `MOD-surface` |
 | `FUNC-import-doc` | `MOD-agent-surface` |
+| `FUNC-inventory-channel` | `MOD-loop` |
 | `FUNC-list-elements` | `MOD-kernel` |
 | `FUNC-load-config` | `MOD-kernel` |
 | `FUNC-merge-nodes` | `MOD-kernel` |

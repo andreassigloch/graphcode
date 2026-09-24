@@ -2169,6 +2169,12 @@
       "description": "docs/cr/open/CR-GC-651-executor-prompt-entschlacken-werkzeug-pr.md"
     },
     {
+      "id": "CR-GC-652",
+      "type": "CR",
+      "name": "Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung",
+      "description": "docs/cr/open/CR-GC-652-element-liste-aus-dem-fund-kontext-statt.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -2461,7 +2467,7 @@
       "id": "FLOW-channel-inventory",
       "type": "FLOW",
       "name": "Kanal: Element-Index",
-      "description": "Rang 4 — was es schon gibt. Der auf die Fokus-Typen beschraenkte Bestand als uid-type-name-Zeilen, damit die Runde keine Duplikate anlegt. Produzent ist die Lese-Oberflaeche, nicht der Kern: die Injektion ruft graph_elements DURCH dessen Schema-Schicht, seit ein roher Handler-Aufruf ohne limit den ganzen Graphen herausgab (CR-GC-539).",
+      "description": "Rang 4 — was es schon gibt. Vorhandene Knoten als uid-type-name-Zeilen, damit die Runde existierende uids referenziert und keine Duplikate anlegt. Mit Fund aus dessen Kontext (Besitzer und Realisierung), ohne Fund nach Fokus-Typ. Produzent ist seit CR-GC-652 der Inventar-Kanal, der die Lese-Oberflaeche durch deren Schema-Schicht ruft (CR-GC-539).",
       "channelRank": "inventory",
       "zeitpunkt": "prompt",
       "treiber": "executor"
@@ -3492,7 +3498,7 @@
       "id": "FUNC-build-round-injection",
       "type": "FUNC",
       "name": "buildRoundInjection",
-      "description": "Baut die Rundeninjektion aus vier benannten Kanaelen: Kanten-Grammatik der Fokus-Typen, Element-Index des Bestands, Anleitung der Fokus-Dimension und ausfuehrbare Vorschlaege. Liefert sie einzeln (buildRoundChannels) und verkettet sie nach Rang (buildRoundInjection) — EIN Erzeuger, zwei Sichten. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst. (Kanaele aufgetrennt CR-GC-573)",
+      "description": "Baut die Rundeninjektion aus vier benannten Kanaelen: Kanten-Grammatik der Fokus-Typen, Element-Liste (FUNC-inventory-channel: aus dem Kontext des Funds, ohne Fund nach Fokus-Typ), Anleitung der Fokus-Dimension und ausfuehrbare Vorschlaege. Liefert sie einzeln (buildRoundChannels) und verkettet sie nach Rang (buildRoundInjection) — EIN Erzeuger, zwei Sichten. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst. (Kanaele aufgetrennt CR-GC-573, Liste CR-GC-652)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor-prompt.ts",
@@ -3758,6 +3764,18 @@
       }
     },
     {
+      "id": "FUNC-fund-kontext",
+      "type": "FUNC",
+      "name": "fundKontext",
+      "description": "Der gerichtete Weg vom Fund zu seinen Kandidaten: ueber compose hinauf bis zum Besitzer (UC oder SYS; ist der Fund selbst einer, nicht weiter), dann hinunter durch den Realisierungsbaum (compose und allocate nur zu FCHAIN, FUNC, MOD, SYS). Gefiltert auf die Fokus-Typen; nennt die Fund-Knoten ohne Besitzer. Rein, ohne Store. (CR-GC-652)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/fund-kontext.ts",
+        "symbol": "fundKontext",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-gate-client",
       "type": "FUNC",
       "name": "bindGateClient(registry, stats, trace)",
@@ -3998,6 +4016,18 @@
       "description": "Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Struktur vor KI, Merge nie Reseed.",
       "realRef": {
         "file": ".claude/commands/se/import-doc.md"
+      }
+    },
+    {
+      "id": "FUNC-inventory-channel",
+      "type": "FUNC",
+      "name": "buildInventoryBlock",
+      "description": "Der Inventar-Kanal der Rundeninjektion: welche vorhandenen Knoten das Modell als uid-Liste mitbekommt. Mit Fund aus dessen Kontext (FUNC-fund-kontext), ohne Fund (seed, Task-Einstieg) nach Fokus-Typ, reihum; beide teilen eine Kappe. Hat ein Fund keinen Besitzer, steht das ausdruecklich da statt einer Ersatzliste. Liest ueber graph_elements und graph_get_edges durch deren Schema-Schicht. (CR-GC-652)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/executor-inventory.ts",
+        "symbol": "buildInventoryBlock",
+        "lang": "ts"
       }
     },
     {
@@ -5935,7 +5965,7 @@
       "id": "REQ-round-prompt-injection",
       "type": "REQ",
       "name": "Der Runden-Prompt traegt Leitfaden und Elementindex",
-      "description": "Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und einen Index der vorhandenen Elemente in den Prompt. Uebersteigt der Index sein Zeichenbudget, wird er deterministisch auf die Fokus-Typen gefiltert statt abgeschnitten. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.",
+      "description": "Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und eine Liste vorhandener Elemente in den Prompt. Nennt der Schritt Funde, kommt die Liste aus deren Kontext: der Weg hinauf zum Besitzer und hinunter durch seine Realisierung; ein Fund ohne Besitzer wird als solcher genannt, nicht durch eine Ersatzliste verdeckt. Ohne Fund gilt der Filter auf die Fokus-Typen. Uebersteigt die Liste ihr Zeichenbudget, wird sie deterministisch gekappt und der Rest als Zahl genannt. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.",
       "status": "done",
       "kinds": [
         "functional"
@@ -8295,8 +8325,13 @@
           "file": "tests/executor.test.ts",
           "tool": "vitest",
           "level": "integration",
-          "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
+          "result": "passed"
+        },
+        {
+          "file": "tests/fund-kontext.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
         }
       ]
     },
@@ -12705,6 +12740,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-652",
+      "target": "FUNC-build-round-injection",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-652",
+      "target": "FUNC-fund-kontext",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-652",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-652",
+      "target": "FUNC-inventory-channel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-652",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -13646,6 +13706,11 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-held-back-traces",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-inventory-channel",
       "type": "compose"
     },
     {
@@ -15222,6 +15287,11 @@
       "target": "FUNC-build-round-injection",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-round-prompt",
+      "target": "FUNC-inventory-channel",
+      "type": "io"
     },
     {
       "source": "FLOW-round-prompt",
@@ -16866,6 +16936,16 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-fund-kontext",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-fund-kontext",
+      "target": "REQ-round-prompt-injection",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-gate-client",
       "target": "MOD-loop",
       "type": "allocate"
@@ -17322,6 +17402,26 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-inventory-channel",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-inventory-channel",
+      "target": "FUNC-fund-kontext",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-inventory-channel",
+      "target": "FLOW-channel-inventory",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-inventory-channel",
+      "target": "REQ-round-prompt-injection",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-list-elements",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -17532,11 +17632,6 @@
       "source": "FUNC-read-tools",
       "target": "MOD-surface",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-read-tools",
-      "target": "FLOW-channel-inventory",
-      "type": "io"
     },
     {
       "source": "FUNC-read-tools",
@@ -20989,5 +21084,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 443
+  "graphVersion": 445
 }

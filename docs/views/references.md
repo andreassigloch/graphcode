@@ -642,6 +642,11 @@
 | `CR-GC-651` | relation | `FUNC-call-model` |
 | `CR-GC-651` | relation | `FUNC-generation-step` |
 | `CR-GC-651` | relation | `FUNC-run-executor` |
+| `CR-GC-652` | relation | `FUNC-build-round-injection` |
+| `CR-GC-652` | relation | `FUNC-fund-kontext` |
+| `CR-GC-652` | relation | `FUNC-generation-step` |
+| `CR-GC-652` | relation | `FUNC-inventory-channel` |
+| `CR-GC-652` | relation | `SCHEMA-generation-step` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
@@ -813,6 +818,7 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-graph-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-graph-suggest` |
 | `FCHAIN-steering-loop` | compose | `FUNC-held-back-traces` |
+| `FCHAIN-steering-loop` | compose | `FUNC-inventory-channel` |
 | `FCHAIN-steering-loop` | compose | `FUNC-list-elements` |
 | `FCHAIN-steering-loop` | compose | `FUNC-load-config` |
 | `FCHAIN-steering-loop` | compose | `FUNC-mutate` |
@@ -1120,6 +1126,7 @@
 | `FLOW-round-injection` | io | `FUNC-run-executor` |
 | `FLOW-round-injection` | relation | `SCHEMA-round-injection` |
 | `FLOW-round-prompt` | io | `FUNC-build-round-injection` |
+| `FLOW-round-prompt` | io | `FUNC-inventory-channel` |
 | `FLOW-round-prompt` | io | `FUNC-rank-candidates` |
 | `FLOW-round-prompt` | io | `FUNC-run-executor` |
 | `FLOW-round-prompt` | relation | `SCHEMA-generation-step` |
@@ -1440,6 +1447,8 @@
 | `FUNC-function-criticality` | allocate | `MOD-projections` |
 | `FUNC-function-criticality` | io | `FLOW-function-criticality` |
 | `FUNC-function-criticality` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-fund-kontext` | allocate | `MOD-loop` |
+| `FUNC-fund-kontext` | satisfy | `REQ-round-prompt-injection` |
 | `FUNC-gate-client` | allocate | `MOD-loop` |
 | `FUNC-gate-client` | io | `FLOW-gate-outcome` |
 | `FUNC-gate-client` | io | `FLOW-mutate-cmd-gate-client` |
@@ -1525,6 +1534,10 @@
 | `FUNC-import-doc` | allocate | `MOD-agent-surface` |
 | `FUNC-import-doc` | io | `FLOW-mutate-cmd-import-doc` |
 | `FUNC-import-doc` | satisfy | `REQ-no-extraction` |
+| `FUNC-inventory-channel` | allocate | `MOD-loop` |
+| `FUNC-inventory-channel` | compose | `FUNC-fund-kontext` |
+| `FUNC-inventory-channel` | io | `FLOW-channel-inventory` |
+| `FUNC-inventory-channel` | satisfy | `REQ-round-prompt-injection` |
 | `FUNC-list-elements` | allocate | `MOD-kernel` |
 | `FUNC-list-elements` | io | `FLOW-element-slice` |
 | `FUNC-list-elements` | satisfy | `REQ-query-precision` |
@@ -1564,7 +1577,6 @@
 | `FUNC-rank-candidates` | io | `FLOW-candidate-ranking` |
 | `FUNC-rank-candidates` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-read-tools` | allocate | `MOD-surface` |
-| `FUNC-read-tools` | io | `FLOW-channel-inventory` |
 | `FUNC-read-tools` | io | `FLOW-formatE-artifact-read-tools` |
 | `FUNC-read-tools` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-read-tools` | satisfy | `REQ-query-precision` |

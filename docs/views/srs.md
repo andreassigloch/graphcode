@@ -588,7 +588,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-channel-inventory` · `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -1478,17 +1478,19 @@ Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` 
 
 > auch in: `FUNC-block-antrieb`
 
-Baut die Rundeninjektion aus vier benannten Kanaelen: Kanten-Grammatik der Fokus-Typen, Element-Index des Bestands, Anleitung der Fokus-Dimension und ausfuehrbare Vorschlaege. Liefert sie einzeln (buildRoundChannels) und verkettet sie nach Rang (buildRoundInjection) — EIN Erzeuger, zwei Sichten. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst. (Kanaele aufgetrennt CR-GC-573)
+Baut die Rundeninjektion aus vier benannten Kanaelen: Kanten-Grammatik der Fokus-Typen, Element-Liste (FUNC-inventory-channel: aus dem Kontext des Funds, ohne Fund nach Fokus-Typ), Anleitung der Fokus-Dimension und ausfuehrbare Vorschlaege. Liefert sie einzeln (buildRoundChannels) und verkettet sie nach Rang (buildRoundInjection) — EIN Erzeuger, zwei Sichten. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst. (Kanaele aufgetrennt CR-GC-573, Liste CR-GC-652)
 
 io ◀ `FLOW-channel-grammar` · `FLOW-channel-guidance` · `FLOW-channel-inventory` · `FLOW-channel-proposal-suggest` · `FLOW-round-prompt` · io ▶ `FLOW-round-injection` · allocate ▶ `MOD-loop`
 
 ###### `REQ-round-prompt-injection` — Der Runden-Prompt traegt Leitfaden und Elementindex
 
-Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und einen Index der vorhandenen Elemente in den Prompt. Uebersteigt der Index sein Zeichenbudget, wird er deterministisch auf die Fokus-Typen gefiltert statt abgeschnitten. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.
+> auch unter: `FUNC-fund-kontext` · `FUNC-inventory-channel`
+
+Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und eine Liste vorhandener Elemente in den Prompt. Nennt der Schritt Funde, kommt die Liste aus deren Kontext: der Weg hinauf zum Besitzer und hinunter durch seine Realisierung; ein Fund ohne Besitzer wird als solcher genannt, nicht durch eine Ersatzliste verdeckt. Ohne Fund gilt der Filter auf die Fokus-Typen. Uebersteigt die Liste ihr Zeichenbudget, wird sie deterministisch gekappt und der Rest als Zahl genannt. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` · allocate ▶ `MOD-loop`
 
 ##### 3.2.3.11  `FUNC-authoring-guide` — graph_authoring_guide(type)
 
@@ -1588,7 +1590,39 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-##### 3.2.3.15  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
+##### 3.2.3.15  `FUNC-inventory-channel` — buildInventoryBlock
+
+Der Inventar-Kanal der Rundeninjektion: welche vorhandenen Knoten das Modell als uid-Liste mitbekommt. Mit Fund aus dessen Kontext (FUNC-fund-kontext), ohne Fund (seed, Task-Einstieg) nach Fokus-Typ, reihum; beide teilen eine Kappe. Hat ein Fund keinen Besitzer, steht das ausdruecklich da statt einer Ersatzliste. Liest ueber graph_elements und graph_get_edges durch deren Schema-Schicht. (CR-GC-652)
+
+io ◀ `FLOW-round-prompt` · io ▶ `FLOW-channel-inventory` · allocate ▶ `MOD-loop`
+
+###### `REQ-round-prompt-injection` — Der Runden-Prompt traegt Leitfaden und Elementindex
+
+> auch unter: `FUNC-build-round-injection` · `FUNC-fund-kontext`
+
+Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und eine Liste vorhandener Elemente in den Prompt. Nennt der Schritt Funde, kommt die Liste aus deren Kontext: der Weg hinauf zum Besitzer und hinunter durch seine Realisierung; ein Fund ohne Besitzer wird als solcher genannt, nicht durch eine Ersatzliste verdeckt. Ohne Fund gilt der Filter auf die Fokus-Typen. Uebersteigt die Liste ihr Zeichenbudget, wird sie deterministisch gekappt und der Rest als Zahl genannt. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` · allocate ▶ `MOD-loop`
+
+###### 3.2.3.15.1  `FUNC-fund-kontext` — fundKontext
+
+Der gerichtete Weg vom Fund zu seinen Kandidaten: ueber compose hinauf bis zum Besitzer (UC oder SYS; ist der Fund selbst einer, nicht weiter), dann hinunter durch den Realisierungsbaum (compose und allocate nur zu FCHAIN, FUNC, MOD, SYS). Gefiltert auf die Fokus-Typen; nennt die Fund-Knoten ohne Besitzer. Rein, ohne Store. (CR-GC-652)
+
+io ◀ — · io ▶ — · allocate ▶ `MOD-loop`
+
+###### `REQ-round-prompt-injection` — Der Runden-Prompt traegt Leitfaden und Elementindex
+
+> auch unter: `FUNC-build-round-injection` · `FUNC-inventory-channel`
+
+Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und eine Liste vorhandener Elemente in den Prompt. Nennt der Schritt Funde, kommt die Liste aus deren Kontext: der Weg hinauf zum Besitzer und hinunter durch seine Realisierung; ein Fund ohne Besitzer wird als solcher genannt, nicht durch eine Ersatzliste verdeckt. Ohne Fund gilt der Filter auf die Fokus-Typen. Uebersteigt die Liste ihr Zeichenbudget, wird sie deterministisch gekappt und der Rest als Zahl genannt. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` · allocate ▶ `MOD-loop`
+
+##### 3.2.3.16  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
 > auch in: `FUNC-block-messwerk`
 
@@ -1606,7 +1640,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-##### 3.2.3.16  `FUNC-compute-readiness` — computeReadiness(graph)
+##### 3.2.3.17  `FUNC-compute-readiness` — computeReadiness(graph)
 
 > auch in: `FCHAIN-skill-report` · `FUNC-block-messwerk`
 
@@ -1632,7 +1666,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-##### 3.2.3.17  `FUNC-graph-readiness` — graph_readiness(detail?)
+##### 3.2.3.18  `FUNC-graph-readiness` — graph_readiness(detail?)
 
 > auch in: `FUNC-block-abfrage`
 
@@ -1650,7 +1684,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-##### 3.2.3.18  `FUNC-extract-mutate` — extractMutateFromText
+##### 3.2.3.19  `FUNC-extract-mutate` — extractMutateFromText
 
 > auch in: `FUNC-block-antrieb`
 
@@ -1668,7 +1702,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-extract-mutate` · `FUNC-gate-client` · allocate ▶ `MOD-loop`
 
-##### 3.2.3.19  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
+##### 3.2.3.20  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
 
 > auch in: `FCHAIN-recall` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
 
@@ -1686,7 +1720,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-##### 3.2.3.20  `FUNC-list-elements` — listElements(filter)
+##### 3.2.3.21  `FUNC-list-elements` — listElements(filter)
 
 > auch in: `FCHAIN-agent-query` · `FCHAIN-doc-export` · `FUNC-block-abfrage`
 
@@ -1704,7 +1738,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-projections` · `MOD-surface`
 
-##### 3.2.3.21  `FUNC-load-config` — loadGraphcodeConfig
+##### 3.2.3.22  `FUNC-load-config` — loadGraphcodeConfig
 
 > auch in: `FUNC-block-ruestzeug`
 
@@ -1720,7 +1754,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-config` (unit) · satisfy ◀ `FUNC-load-config` · allocate ▶ `MOD-kernel`
 
-##### 3.2.3.22  `FUNC-nd-similarity` — duplicateHits
+##### 3.2.3.23  `FUNC-nd-similarity` — duplicateHits
 
 > auch in: `FUNC-block-antrieb`
 
@@ -1736,7 +1770,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-nd-similarity` (unit) · satisfy ◀ `FUNC-nd-similarity` · allocate ▶ `MOD-kernel-measure`
 
-##### 3.2.3.23  `FUNC-run-verb` — executeRun
+##### 3.2.3.24  `FUNC-run-verb` — executeRun
 
 > auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-bedienung`
 
@@ -1754,7 +1788,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-call-model` · `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-loop` · `MOD-surface`
 
-##### 3.2.3.24  `FUNC-target-profile` — Skill se:target-profile
+##### 3.2.3.25  `FUNC-target-profile` — Skill se:target-profile
 
 > auch in: `FCHAIN-skill-authoring` · `FUNC-block-autorieren`
 
@@ -1772,7 +1806,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.2.3.25  `FUNC-target-profile-load` — loadTargetProfile
+##### 3.2.3.26  `FUNC-target-profile-load` — loadTargetProfile
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FUNC-block-q-improvement`
 
@@ -2894,7 +2928,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-channel-inventory` · `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -3222,7 +3256,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-channel-inventory` · `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -3314,7 +3348,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-channel-inventory` · `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -4344,7 +4378,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param
 
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
-io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-channel-inventory` · `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · `FLOW-query-request-view-fmea` · io ▶ `FLOW-formatE-artifact-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -5620,17 +5654,19 @@ io ◀ — · io ▶ — · allocate ▶ `MOD-loop`
 
 > auch in: `FCHAIN-steering-loop`
 
-Baut die Rundeninjektion aus vier benannten Kanaelen: Kanten-Grammatik der Fokus-Typen, Element-Index des Bestands, Anleitung der Fokus-Dimension und ausfuehrbare Vorschlaege. Liefert sie einzeln (buildRoundChannels) und verkettet sie nach Rang (buildRoundInjection) — EIN Erzeuger, zwei Sichten. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst. (Kanaele aufgetrennt CR-GC-573)
+Baut die Rundeninjektion aus vier benannten Kanaelen: Kanten-Grammatik der Fokus-Typen, Element-Liste (FUNC-inventory-channel: aus dem Kontext des Funds, ohne Fund nach Fokus-Typ), Anleitung der Fokus-Dimension und ausfuehrbare Vorschlaege. Liefert sie einzeln (buildRoundChannels) und verkettet sie nach Rang (buildRoundInjection) — EIN Erzeuger, zwei Sichten. Per Konfiguration abschaltbar, damit sich ihr Beitrag isoliert messen laesst. (Kanaele aufgetrennt CR-GC-573, Liste CR-GC-652)
 
 io ◀ `FLOW-channel-grammar` · `FLOW-channel-guidance` · `FLOW-channel-inventory` · `FLOW-channel-proposal-suggest` · `FLOW-round-prompt` · io ▶ `FLOW-round-injection` · allocate ▶ `MOD-loop`
 
 ###### `REQ-round-prompt-injection` — Der Runden-Prompt traegt Leitfaden und Elementindex
 
-Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und einen Index der vorhandenen Elemente in den Prompt. Uebersteigt der Index sein Zeichenbudget, wird er deterministisch auf die Fokus-Typen gefiltert statt abgeschnitten. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.
+> auch unter: `FUNC-fund-kontext` · `FUNC-inventory-channel`
+
+Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und eine Liste vorhandener Elemente in den Prompt. Nennt der Schritt Funde, kommt die Liste aus deren Kontext: der Weg hinauf zum Besitzer und hinunter durch seine Realisierung; ein Fund ohne Besitzer wird als solcher genannt, nicht durch eine Ersatzliste verdeckt. Ohne Fund gilt der Filter auf die Fokus-Typen. Uebersteigt die Liste ihr Zeichenbudget, wird sie deterministisch gekappt und der Rest als Zahl genannt. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` · allocate ▶ `MOD-loop`
 
 ###### 3.10.4.2.2  `FUNC-call-model` — buildCallModel(config)
 
@@ -6064,9 +6100,9 @@ io ◀ `ACTOR-owner` · io ▶ `FUNC-run-executor` · schema ▶ `SCHEMA-steerin
 
 ### 4.17  `FLOW-channel-inventory` — Kanal: Element-Index
 
-Rang 4 — was es schon gibt. Der auf die Fokus-Typen beschraenkte Bestand als uid-type-name-Zeilen, damit die Runde keine Duplikate anlegt. Produzent ist die Lese-Oberflaeche, nicht der Kern: die Injektion ruft graph_elements DURCH dessen Schema-Schicht, seit ein roher Handler-Aufruf ohne limit den ganzen Graphen herausgab (CR-GC-539).
+Rang 4 — was es schon gibt. Vorhandene Knoten als uid-type-name-Zeilen, damit die Runde existierende uids referenziert und keine Duplikate anlegt. Mit Fund aus dessen Kontext (Besitzer und Realisierung), ohne Fund nach Fokus-Typ. Produzent ist seit CR-GC-652 der Inventar-Kanal, der die Lese-Oberflaeche durch deren Schema-Schicht ruft (CR-GC-539).
 
-io ◀ `FUNC-read-tools` · io ▶ `FUNC-build-round-injection` · schema ▶ `SCHEMA-steering-channel`
+io ◀ `FUNC-inventory-channel` · io ▶ `FUNC-build-round-injection` · schema ▶ `SCHEMA-steering-channel`
 
 ### 4.18  `FLOW-channel-next-step` — Kanal: naechster Schritt in der Antwort
 
@@ -6576,7 +6612,7 @@ io ◀ `FUNC-build-round-injection` · io ▶ `FUNC-run-executor` · schema ▶ 
 
 Die vom Runden-Waehler abgeleitete naechste Runde fuer den Executor: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
-io ◀ `FUNC-generation-step` · io ▶ `FUNC-build-round-injection` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
+io ◀ `FUNC-generation-step` · io ▶ `FUNC-build-round-injection` · `FUNC-inventory-channel` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
 
 ### 4.103  `FLOW-rule-findings` — Regelbefunde
 
@@ -7140,7 +7176,7 @@ allocate ◀ `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-comp
 
 Die Schleife, die den Graphen bewegt: Fokuswahl, Zielprofil, Vorschlaege, Runden-Prompt, Modellaufruf, Kandidaten-Ranking. Ein Client des Gates wie jeder andere — sie schreibt ausschliesslich durch apply(). (CR-GC-446)
 
-allocate ◀ `FUNC-block-antrieb` · `FUNC-block-q-improvement` · `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-decode` · `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-graph-suggest` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-target-profile-load` · satisfy ▶ `REQ-gate-only-writes` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable`
+allocate ◀ `FUNC-block-antrieb` · `FUNC-block-q-improvement` · `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-decode` · `FUNC-extract-mutate` · `FUNC-fund-kontext` · `FUNC-gate-client` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-graph-suggest` · `FUNC-inventory-channel` · `FUNC-preflight` · `FUNC-rank-candidates` · `FUNC-run-executor` · `FUNC-target-profile-load` · satisfy ▶ `REQ-gate-only-writes` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable`
 
 ### 6.5  `MOD-projections` — projections — Graph nach Artefakt
 
@@ -8042,7 +8078,7 @@ verify ▶ `REQ-auto-persist-merge` · `REQ-single-write-door` · testRefs: `tes
 
 Die Abnahme der Datei tests/executor.test.ts. Faehrt den eingebetteten Executor gegen beide Backend-Konfigurationen und assertiert identische Loop-Semantik; prueft zusaetzlich, dass der Runden-Prompt Leitfaden und Elementindex traegt und beim Abschalten der Injektion verliert, und dass eine als Text gelieferte Mutation durchs Gate repariert statt still verworfen wird. Der Knoten traegt weiter seine urspruengliche uid, weil R-29 die Datei genau einer Abnahme zuweist.
 
-verify ▶ `REQ-one-driver-local-and-frontier` · `REQ-prose-recovery` · `REQ-round-prompt-injection` · testRefs: `tests/executor.test.ts`
+verify ▶ `REQ-one-driver-local-and-frontier` · `REQ-prose-recovery` · `REQ-round-prompt-injection` · testRefs: `tests/executor.test.ts`, `tests/fund-kontext.test.ts`
 
 ### 8.85  `TEST-operations-log` — Dauerhaftes Betriebslog in graphcode
 

@@ -91,7 +91,7 @@
 | `FLOW-channel-guidance` | `ACTOR-owner` | `FUNC-build-round-injection` |
 | `FLOW-channel-handoff` | `FUNC-generation-step` | `ACTOR-agent` |
 | `FLOW-channel-idle-nudge` | `ACTOR-owner` | `FUNC-run-executor` |
-| `FLOW-channel-inventory` | `FUNC-read-tools` | `FUNC-build-round-injection` |
+| `FLOW-channel-inventory` | `FUNC-inventory-channel` | `FUNC-build-round-injection` |
 | `FLOW-channel-next-step` | `FUNC-generation-step` | `ACTOR-agent` |
 | `FLOW-channel-proposal-suggest` | `FUNC-graph-suggest` | `FUNC-build-round-injection` |
 | `FLOW-channel-rule-clause` | `ACTOR-owner` | `FUNC-generation-step` |
@@ -176,7 +176,7 @@
 | `FLOW-recovered-batch` | `FUNC-extract-mutate` | `FUNC-run-executor` |
 | `FLOW-rendered-views` | `FUNC-render-views` | `ACTOR-owner` |
 | `FLOW-round-injection` | `FUNC-build-round-injection` | `FUNC-run-executor` |
-| `FLOW-round-prompt` | `FUNC-generation-step` | `FUNC-build-round-injection` · `FUNC-rank-candidates` · `FUNC-run-executor` |
+| `FLOW-round-prompt` | `FUNC-generation-step` | `FUNC-build-round-injection` · `FUNC-inventory-channel` · `FUNC-rank-candidates` · `FUNC-run-executor` |
 | `FLOW-rule-findings` | `FUNC-evaluate-rules` | `FUNC-health-endpoint` · `FUNC-mutate` |
 | `FLOW-run-request` | `FUNC-run-verb` | `FUNC-run-executor` |
 | `FLOW-schema-fingerprint` | `FUNC-schema-guard` | `FUNC-graph-store` |
