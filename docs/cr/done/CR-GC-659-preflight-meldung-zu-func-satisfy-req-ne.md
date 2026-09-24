@@ -1,6 +1,6 @@
 # CR-GC-659: Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-24)
 **Typ:** aus Item ITEM-2026-561 (bug)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-561.json (Lane: code)
