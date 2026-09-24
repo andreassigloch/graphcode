@@ -2131,7 +2131,8 @@
       "name": "Gate nimmt kinds als String an - Element-Attribute werden am Schreibweg nicht gegen den Vertrag geprueft",
       "description": "docs/cr/done/CR-GC-646-gate-nimmt-kinds-als-string-an-element-a.md",
       "status": "done",
-      "architectureOnly": null
+      "architectureOnly": null,
+      "commitRef": "058aadd"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -20884,5 +20885,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 427
+  "graphVersion": 428
 }
