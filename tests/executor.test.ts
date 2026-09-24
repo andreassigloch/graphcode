@@ -359,6 +359,33 @@ describe('executor (CR-GC-278)', () => {
     expect(Object.keys((mutate.schema as { properties: object }).properties)).toContain('commands');
   });
 
+  it('CR-GC-652: ein Lese-Aufruf steht MIT Argumenten, Antwortgroesse und Art in der Trace', async () => {
+    const lesen: ModelResponse = {
+      text: '',
+      toolCalls: [
+        { id: 'r1', name: 'graphcode_graph_elements', input: { type: 'UC' } },
+        { id: 'r2', name: 'graphcode_graph_help', input: { id: 'x' } },
+      ],
+      stopReason: 'tool_use',
+      assistantMsg: { role: 'assistant', content: null, tool_calls: [] },
+      usage,
+    };
+    const { callModel } = scriptedModel([lesen, toolCallResponse('c2', VALID_SEED_BATCH)]);
+    const traces: string[] = [];
+    await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      intent: 'Eine Test-App fuer die Lese-Trace.',
+      config: CONFIG,
+      callModel,
+      trace: (l) => traces.push(l),
+    });
+    const zeile = traces.find((l) => l.includes('read graph_elements'));
+    expect(zeile, traces.join('\n')).toMatch(/read graph_elements \{"type":"UC"\} → \d+ Z\.$/);
+    // Der Fehlgriff (unbekannter Parameter, CR-GC-647) ist in der Trace als solcher erkennbar.
+    expect(traces.find((l) => l.includes('read graph_help'))).toMatch(/ERROR$/);
+  });
+
   it('[ARGS] text tool-call is executed and its result carries the turn (CR-GC-280)', async () => {
     const textCall: ModelResponse = {
       text: 'Ich prüfe zunächst: graphcode_graph_readiness[ARGS]{}',
