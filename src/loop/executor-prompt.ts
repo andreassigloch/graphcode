@@ -15,6 +15,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SKILL_FOR_DIMENSION, type GenerationStep } from './generate.js';
 import { byRank, type ChannelBlock } from './channel-rank.js';
+import { buildInventoryBlock } from './executor-inventory.js';
 
 // ---------------------------------------------------------------------------
 // System-Prompt — bewusst ~1 Seite; die Methode kommt aus graph_generate.
@@ -105,9 +106,6 @@ export const AUTHORING_PARAMS: Readonly<Record<string, { params: readonly string
 // Toolset (Detail-Nachfragen); nur der Standard-Rundenstart braucht sie nicht.
 // ---------------------------------------------------------------------------
 
-/** Zeichen-Budget des Element-Index (~2k-Token-Äquivalent). Überschreitung ⇒
- * deterministisch auf Fokus-Typen filtern, danach harte Kappe von vorn. */
-export const INDEX_CHAR_BUDGET = 8000;
 
 /** Zeichen-Budget eines einzelnen Tool-Ergebnisses im Runden-Prompt. */
 export const TOOL_RESULT_CHAR_BUDGET = 6000;
@@ -240,7 +238,7 @@ function readSkillBody(skill: { name: string; file: string }): string | null {
  */
 export async function buildRoundInjection(
   registry: MCPToolRegistry,
-  step: Pick<GenerationStep, 'focusTypes' | 'focusDimension'>,
+  step: Pick<GenerationStep, 'focusTypes' | 'focusDimension' | 'focusElements'>,
 ): Promise<string> {
   return (await buildRoundChannels(registry, step)).map((b) => b.text).join('\n\n');
 }
@@ -255,7 +253,7 @@ export async function buildRoundInjection(
  */
 export async function buildRoundChannels(
   registry: MCPToolRegistry,
-  step: Pick<GenerationStep, 'focusTypes' | 'focusDimension'>,
+  step: Pick<GenerationStep, 'focusTypes' | 'focusDimension' | 'focusElements'>,
 ): Promise<ChannelBlock[]> {
   // CR-GC-575: die Bloecke tragen ihren Kanal und werden am Ende nach Rang sortiert —
   // die Reihenfolge des Rundenprompts folgt der Verbindlichkeit, nicht der Reihenfolge,
@@ -290,96 +288,10 @@ export async function buildRoundChannels(
     }
   }
 
-  const elementsTool = registry['graph_elements'];
-  if (elementsTool) {
-    try {
-      // CR-GC-539: durch DIESELBE Schema-Schicht, die der MCP-Server davorschaltet
-      // (mcp-server.ts). Der rohe `handler({})` lief daran vorbei — `input.limit` war
-      // `undefined`, also gab `nodes.slice(0, undefined)` den GANZEN Graphen heraus (757
-      // Knoten am graphcode-Modell), und gebremst hat das nur der Zeichen-Deckel.
-      //
-      // GEMESSEN ist der Schaden aber ein anderer, als "zu viel" vermuten laesst: der Deckel
-      // kappte ohnehin bei ~100 Zeilen — nur eben bei den ERSTEN 100 uid-sortierten des
-      // ganzen Graphen. Bei Fokus UC/FCHAIN war davon KEIN EINZIGER ein UC oder FCHAIN
-      // (100 von 100 Fremdtypen). Der Agent bekam eine Liste, in der genau das fehlte,
-      // woran er arbeitete — das Gegenteil der need-to-know-Whitebox (Leitlinie Satz 6).
-      const parse = (arg: Record<string, unknown>): unknown => elementsTool.inputSchema.parse(arg);
-      /** Der DEKLARIERTE Default, nicht eine zweite Zahl an dieser Stelle. */
-      const limit = (parse({}) as { limit: number }).limit;
-
-      // Mit Fokus-Typen je Typ abfragen — `type` ist der deklarierte Parameter des Tools.
-      // Nachtraeglich zu filtern waere sinnlos: die ersten `limit` uid-sortierten Knoten des
-      // GANZEN Graphen enthalten von einem Fokus-Typ womoeglich keinen einzigen. So wirkt der
-      // Fokus ab Runde 1 statt erst bei Zeichenueberlauf.
-      const abfragen = focusTypes.length > 0 ? focusTypes.map((type) => ({ type })) : [{}];
-      const jeTyp: { uid: string; type: string; name: string }[][] = [];
-      // `total` ist die Zahl VOR dem Zuschnitt — sonst untertreibt der Rest-Hinweis, sobald
-      // ein Typ mehr als `limit` Knoten hat (der Aufruf selbst liefert dann ja nur `limit`).
-      let gesamt = 0;
-      for (const arg of abfragen) {
-        const res = (await elementsTool.handler(parse(arg))) as {
-          nodes?: { uid: string; type: string; name: string }[];
-          total?: number;
-        };
-        const liste = [...(res.nodes ?? [])].sort((a, b) => a.uid.localeCompare(b.uid));
-        gesamt += res.total ?? liste.length;
-        jeTyp.push(liste);
-      }
-
-      // Reihum, damit die Gesamtkappe keinen Fokus-Typ aushungert: bei zwei Typen mit je
-      // 100 Knoten bekaeme sonst der alphabetisch fruehere alles und der andere nichts.
-      const nodes: { uid: string; type: string; name: string }[] = [];
-      for (let i = 0; nodes.length < limit; i++) {
-        const runde = jeTyp.filter((liste) => i < liste.length);
-        if (runde.length === 0) break;
-        for (const liste of runde) {
-          if (nodes.length >= limit) break;
-          nodes.push(liste[i]);
-        }
-      }
-      nodes.sort((a, b) => a.uid.localeCompare(b.uid));
-
-      if (nodes.length > 0) {
-        const toLine = (n: { uid: string; type: string; name: string }): string =>
-          `${n.uid} · ${n.type} · ${n.name}`;
-        const selected = nodes;
-        let note =
-          focusTypes.length > 0
-            ? `(auf die Fokus-Typen ${focusTypes.join('/')} beschraenkt` +
-              (gesamt > nodes.length ? ` — ${gesamt - nodes.length} weitere davon via graph_elements)` : ')')
-            : gesamt > nodes.length
-              ? `(${gesamt - nodes.length} weitere Elemente via graph_elements)`
-              : '';
-        let lines = selected.map(toLine);
-        // Harte Kappe: deterministisch von vorn (uid-sortiert), Rest als Zähler.
-        let total = 0;
-        let cut = lines.length;
-        for (let i = 0; i < lines.length; i++) {
-          total += lines[i].length + 1;
-          if (total > INDEX_CHAR_BUDGET) {
-            cut = i;
-            break;
-          }
-        }
-        if (cut < lines.length) {
-          note = [note, `… (+${lines.length - cut} weitere — via graph_elements)`]
-            .filter(Boolean)
-            .join(' ');
-          lines = lines.slice(0, cut);
-        }
-        blocks.push({
-          channel: 'inventory',
-          text:
-            'Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT ' +
-            'erneut aufrufen; existierende uids für Kanten referenzieren, keine Duplikate anlegen):\n' +
-            lines.join('\n') +
-            (note ? '\n' + note : ''),
-        });
-      }
-    } catch {
-      // Index optional — Injektion darf den Lauf nie brechen
-    }
-  }
+  // Der Element-Index (CR-GC-285) — seit CR-GC-652 in executor-inventory.ts: mit Fund aus dessen
+  // Kontext (gerichteter Weg zum Besitzer), ohne Fund (Seed) nach Fokus-Typ.
+  const inventar = await buildInventoryBlock(registry, step);
+  if (inventar) blocks.push(inventar);
   // -------------------------------------------------------------------------
   // (c) Die Vorlagen-Empfehlungen (CR-GC-556). ANREICHERUNG, keine zweite Liste:
   // der Rundenprompt nennt die Fokus-Funde samt fixHint bereits. Hier kommt nur

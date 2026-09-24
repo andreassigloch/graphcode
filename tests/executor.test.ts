@@ -21,9 +21,10 @@ import {
   type CallModel,
 } from '../src/loop/executor.js';
 import { buildToolSpecs } from '../src/loop/executor-backend.js';
+import { INDEX_CHAR_BUDGET } from '../src/loop/executor-inventory.js';
 import {
   buildRoundInjection,
-  INDEX_CHAR_BUDGET,
+
   TOOL_RESULT_CHAR_BUDGET,
   jsonCapped,
   SYSTEM,
@@ -624,8 +625,9 @@ describe('executor (CR-GC-278)', () => {
     await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
     const instruction = JSON.stringify(calls[0].messages[0]);
     expect(instruction).toContain('Kanten-Grammatik');
-    expect(instruction).toContain('Element-Index');
-    // Der Graph-Zustand DER FOKUS-TYPEN steht Zeile für Zeile im Prompt.
+    // CR-GC-652: mit Fund kommt die Liste aus seinem Kontext, nicht aus dem Typfilter.
+    expect(instruction).toContain('Element-Liste aus dem Kontext des Funds');
+    expect(instruction).not.toContain('Element-Index');
     expect(instruction).toContain('UC-login · UC · Login');
     // CR-GC-539: was NICHT Fokus-Typ ist, steht nicht im Index. Vorher lief der Aufruf roh
     // am `inputSchema` vorbei und lieferte den ganzen Graphen — auf dem echten Modell 757
@@ -633,11 +635,37 @@ describe('executor (CR-GC-278)', () => {
     // sichtbar: die Kanten-Grammatik darüber nennt „SYS compose→".
     expect(instruction).not.toContain('SYS-app · SYS · Test App');
     // CR-GC-566: der Fokus kommt hier aus der UC-01-KLAUSEL (UC/REQ/TEST), nicht aus der
-    // uc-Dimension — die Anweisung verlangt REQ und TEST, also liefert die Injektion deren
-    // Grammatik und nicht die von ACTOR, über den in dieser Runde nichts zu entscheiden ist.
-    expect(instruction).toContain('Fokus-Typen UC/REQ/TEST');
+    // uc-Dimension — ACTOR steht deshalb weder in der Grammatik noch in der Liste.
     expect(instruction).not.toContain('ACTOR-user · ACTOR · User');
-    expect(instruction).toContain('beschraenkt');
+    // Der Fund ist selbst Besitzer — er hat einen, also kein Waisen-Hinweis.
+    expect(instruction).not.toContain('Kein Besitzer im Modell');
+  });
+
+  it('CR-GC-652: Fund am SYS bekommt den Modulbaum, eine Waise den ausdruecklichen Hinweis — keine Ersatzliste', async () => {
+    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    const res = (await registry['graph_mutate'].handler({
+      formatE:
+        '## Nodes\n### MOD\n+ MOD-kern|Kernmodul [__name:Kern]\n### REQ\n' +
+        '+ REQ-sys-latenz|Das System muss in unter 2 s antworten. [__name:Latenz]\n' +
+        '+ REQ-waise|Das System muss protokollieren. [__name:Protokoll]\n### TEST\n' +
+        '+ TEST-sys-latenz|Lastlauf misst p95, Grenze 2 s. [__name:Latenzmessung]\n' +
+        '+ TEST-waise|Prueft das Protokoll. [__name:Protokollpruefung]\n\n' +
+        '## Edges\n+ SYS-app -compose-> MOD-kern, REQ-sys-latenz\n' +
+        '+ TEST-sys-latenz -verify-> REQ-sys-latenz\n+ TEST-waise -verify-> REQ-waise\n',
+      consumerId: 'test',
+    })) as { success: boolean };
+    expect(res.success).toBe(true);
+    const out = await buildRoundInjection(registry, {
+      focusTypes: ['REQ', 'FUNC', 'FCHAIN', 'MOD', 'SYS'],
+      focusDimension: 'req',
+      focusElements: ['REQ-sys-latenz', 'REQ-waise'],
+    });
+    const liste = out.slice(out.indexOf('Element-Liste aus dem Kontext des Funds'));
+    expect(liste).toContain('MOD-kern · MOD · Kern');
+    expect(liste).toContain('SYS-app · SYS');
+    // Kein Hub-Fan-out: der UC des Systems ist kein Erfueller-Kandidat und steht nicht drin.
+    expect(liste).not.toContain('UC-login');
+    expect(liste).toContain('Kein Besitzer im Modell für: REQ-waise');
   });
 
   it('injection:false (CR-GC-293 Mess-Schalter) suppresses the guide/index injection block entirely', async () => {
