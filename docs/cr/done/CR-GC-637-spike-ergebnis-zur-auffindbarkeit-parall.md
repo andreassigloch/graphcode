@@ -105,3 +105,70 @@ Eingang fuer `tests/engpass-ein-leser.test.ts` — heute stehen zwei darin.
 **Offen, benannt:** P4 zeigt, dass ein Engpass auch ein Datenfeld sein kann. Die Kandidatenliste
 sieht nur Importe. Wer `SE_DESCRIPTOR.edgeTypes` als Tuer fuehren will, muss Feldzugriffe
 mitzaehlen — ITEM-2026-522 nennt es, dieser CR loest es nicht.
+
+---
+
+## Nachtrag 2026-09-24: Wie die Abzweigung entstand (P6/P7)
+
+Frage des Auftraggebers: Format-E war mehrfach als „ein Codec" festgelegt (CR-GC-103, REQ-formatE-parity,
+CR-GC-536). Wer hat den zweiten Weg Text → `MutateCommand` trotzdem gebaut, und warum?
+
+**Antwort vorab:** Die Abzweigung hat niemand beschlossen. Sie entstand in acht Zuegen ueber drei Monate. Jeder
+Zug war fuer sich begruendet, und jeder hat die Ein-Codec-Regel an einer **anderen Stelle** geprueft
+als an der, wo der naechste Pfad entstand. Alle Commits laufen unter der Identitaet des Auftraggebers
+und wurden von Agenten geschrieben (Opus 4.8, Fable 5, Opus 5).
+
+### Zeitleiste
+
+| Datum | CR | Zug | Begruendung im CR | Was dabei abzweigte |
+|---|---|---|---|---|
+| 06-17 | 103 | `GraphCodeCodec` als Huelle um `FormatECodec` | „genau EIN Codec (Parity, L1)“; der Basis-Codec konnte keine Werte mit Komma/Klammer, sortierte nicht, pruefte nicht | ein **eigener Encoder** — der Mangel lag upstream, repariert wurde downstream |
+| 06-18 | 122 | `bootstrap`: Text → `decode()` → Graph → add-Kommandos | Kaltstart durchs Gate | Abbildung Nr. 1, eigene Instanz `new GraphCodeCodec()` — noch kein Paar |
+| 07-29 | 276 | `graph_mutate` bekommt `formatE` | „kein zweiter Schreibweg“ | Abbildung **Nr. 2** in einer Closure in `write.ts`, zeilengleich zu bootstrap nachgebaut. Geprueft war „ein **Gate**“, nicht „ein **Uebersetzer**“ |
+| 07-29 | 268 | Fan-out im eigenen Encoder | CR schreibt selbst: „erbt die Reparatur **nicht**“ | Kosten des Forks erkannt und lokal bezahlt, statt ihn zu loeschen |
+| 08-19 | 367 | host.ts: `new FormatECodec(...)` je Hook-Aufruf | CR erwaehnt den Codec gar nicht | dritte Instanz, beilaeufig — die kanonische hing an `ctx`, der Hook hat keinen |
+| 09-16 | 536 | Encoder-Fork weg, Klasse bleibt „duenne Delegation“ | „Oberflaeche bleibt UNBERUEHRT … die Signaturen ueberleben“; `decode` sei „graphcode-eigen“ | der **Balkon**: Huelle behalten, damit der Umbau klein bleibt |
+| 09-23 | 627 | `write.ts` parst direkt (`+ - ~ M`) | „`decode()` bleibt, was es ist: der Leseweg (Round-Trip, `graph_export`)“ | Behauptung **falsch** (siehe unten); bootstrap bleibt allein auf dem alten Weg — **P6** |
+| 09-23 | 630–632 | ein Weg, Huelle geloescht, Testhelfer umgestellt | „keine parallelen Pfade“ | — |
+
+### Der entscheidende Zug: CR-GC-627
+
+- **Die Praemisse war ungeprueft.** Vor dem Zug hatte `decode()` genau zwei Produktionsaufrufer:
+  `write.ts:317` und `bootstrap.ts:110`. `graph_export` nutzt es nicht. „Leseweg“ hiess also in
+  Wahrheit: der eine Aufrufer, der uebrig bleibt, ist der zweite Schreibweg. Ein
+  `git grep '\.decode('` zeigt das in einer Zeile. Dieselbe falsche Aussage hat der Agent der Analyse-Sitzung
+  `82b7759d` am 2026-09-23 wiederholt: der CR-Text hat den Irrtum weitergegeben.
+- **Die Aufrufer wurden am Namen des Griffs gesucht, nicht an der Operation.** Das Transkript zeigt
+  `grep -rn "gcCodec" src/`. bootstrap hielt eine eigene Instanz, sein Aufruf hiess `codec.decode`,
+  `gcCodec` kommt dort 0-mal vor. Die Suche konnte ihn nicht finden.
+- **Auftragsform:** „setze CR 627-629 um.“ Drei CRs in einer Sitzung, 44 Minuten bis zum Commit,
+  **0 graph-Aufrufe**. Der Umfang nannte 5 Dateien, bootstrap war keine davon.
+- **Der Graph haette es auch nicht gezeigt.** `FUNC-decode` hatte 20 Kanten (CRs, FCHAINs, FLOWs),
+  aber keine von `FUNC-bootstrap`. `graph_impact(FUNC-decode)` waere blind gewesen. Die
+  Nutzungskante fehlte im Modell, und das seit CR-GC-122.
+- **Ein Test hat den Irrtum festgeschrieben:** „decode bleibt Leseweg“ (in CR-GC-632 geloescht).
+
+Die Sitzung, die CR-GC-627 und sein Item (ITEM-2026-504, `source: manuell`) formuliert hat, liegt in
+keinem Transkript vor. Wer den Satz ueber `graph_export` geschrieben hat, laesst sich nicht belegen.
+
+### Ursachen
+
+| | Ursache | Zuege | Mit dem Engpass-Prinzip auffindbar? |
+|---|---|---|---|
+| U1 | **Upstream-Mangel downstream repariert.** Der richtige Ort (graph-api-core) kam erst drei Monate spaeter dran (CR-SM-331/332) | 103, 268 | nein — das ist eine Entscheidung, keine Codegestalt |
+| U2 | **Invariante am falschen Ort formuliert.** „Ein Gate“ geprueft, „ein Uebersetzer“ nicht. REQ-formatE-parity („single codec, no fork“) hatte vier TESTs, keiner zaehlte Instanzen oder Aufrufer | 276 | ja — genau das zaehlt die Ratsche aus CR-GC-634 |
+| U3 | **Die kanonische Instanz war unerreichbar** (in `ctx` oder in einer Closure). Ein neuer Aufrufer ausserhalb baut sich seine eigene | 122, 276, 367 | ja — ein neuer Importeur/Konstrukteur am Engpass |
+| U4 | **Kleiner Umbau als Ziel.** „Signaturen ueberleben“ tauscht einen Weg gegen einen kleineren CR. *Vermutung:* das 10-Dateien-Limit belohnt Huellen | 536 | teilweise — eine Klasse, deren Methoden nur an ein Feld weiterreichen, ist messbar |
+| U5 | **Aufrufer am Namen gesucht, Praemisse aus dem CR-Text uebernommen, drei CRs in einem Auftrag** | 627 | ja, wenn der CR-Abschluss-Hook (CR-GC-639) neue Importeure prueft |
+| U6 | **Modell ohne Nutzungskante** (`FUNC-bootstrap → FUNC-decode` fehlte). Der Graph konnte die Frage nicht beantworten | 122 → 627 | nein — das ist eine Bindungsluecke, keine Codefrage |
+
+### Schluss des Nachtrags
+
+Vier der sechs Ursachen (U2, U3, U5, U4 teilweise) haette eine Ratsche ueber benannte Engpaesse
+gesehen, und zwar **im Moment der Abzweigung**, nicht drei Monate spaeter. Die beiden anderen (U1,
+U6) sind keine Codegestalt: U1 ist die Frage „wo gehoert der Fix hin“, U6 eine Modellluecke. Dass der
+Graph bei CR-GC-627 blind gewesen waere, spricht nicht gegen „Graph fragen statt greppen“. Es sagt,
+dass die Frage nur so gut ist wie die Nutzungskanten. Anschluss: ITEM-2026-525, Option (a).
+
+Nachvollziehbar mit `git log -S'class GraphCodeCodec'`, `git log -G'\.parse\(' -- src/surface/write.ts`,
+`git grep '\.decode(' 5beb5bb^ -- src` und dem Transkript `b2703759` (Werkzeugfolge ab 10:03 UTC).
