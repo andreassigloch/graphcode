@@ -74,16 +74,52 @@ const GRAPH_SCHREIBT = new Set(['graph_mutate', 'graph_merge', 'graph_reseed', '
 const kurz = (name) => name.replace(/^mcp__graphcode__/, '');
 const AUSGABE_PFAD = /(^|[\s'"/])(docs\/graph\/|docs\/views\/|\.graphcode\/)/;
 /**
- * Ist dieser Bash-Aufruf eine SUCHE? Nur wenn grep/find/rg am ANFANG einer Pipeline steht.
- * Ein grep NACH einer Pipe filtert eine Ausgabe (`npm test | grep FAIL`) und fragt nichts ueber
- * den Code — gemessen waren das 29 von 188 greps in der Sitzung, aus der diese Zaehlung stammt.
+ * Die Befehle, die ein Bash-Aufruf wirklich AUSFUEHRT — je Pipeline der Kopf.
+ *
+ * Gezaehlt werden darf nur, was laeuft, nicht was als Text in einem Befehl steht. Zwei gemessene
+ * Fehlzaehlungen haben das erzwungen:
+ *   - `npm test | grep FAIL` — der grep NACH der Pipe filtert eine Ausgabe und fragt nichts ueber den
+ *     Code (29 von 188 greps in der Sitzung, aus der diese Zaehlung stammt).
+ *   - Heredocs, die Dateien schreiben und `npm test` nur ERWAEHNEN — an CR-GC-639 selbst 7 von 8
+ *     gezaehlten „Volllaeufen".
+ * Also: Heredoc-Rumpf weg, `echo`/`printf`-Argumente zaehlen nicht, dann je Segment (`&&`, `||`, `;`,
+ * Zeilenumbruch) der Kopf der Pipeline, ohne vorangestelltes `env -u X` und `VAR=wert`.
  */
-function istSuche(cmd) {
-  return cmd
-    .split(/&&|\|\||;/)
-    .map((seg) => seg.split('|')[0].trim())
-    .some((kopf) => /^(grep|find|rg|git\s+grep)\s/.test(kopf));
+export function befehlsKoepfe(cmd) {
+  const ohneHeredoc = cmd.replace(/<<-?\s*['"]?(\w+)['"]?[^\n]*\n[\s\S]*?\n\1[ \t]*(?=\n|$)/g, '');
+  return pipelineKoepfe(ohneHeredoc)
+    .map((kopf) => kopf.replace(/^env(\s+-u\s+\S+|\s+\w+=\S*)*\s+/, '').replace(/^(\w+=\S*\s+)+/, ''))
+    .filter((kopf) => kopf && !/^(echo|printf)\b/.test(kopf));
 }
+
+/**
+ * Zerlegt an `&&`, `||`, `;`, Zeilenumbruch und nimmt je Segment den Teil vor der ersten Pipe —
+ * aber nur an Trennern AUSSERHALB von Anfuehrungszeichen. Gemessener Anlass: `grep -E "a|b" datei`
+ * wurde an dem `|` im Muster zerschnitten, und der Dateiname dahinter ging verloren.
+ */
+function pipelineKoepfe(cmd) {
+  const koepfe = [];
+  let seg = '', quote = null, inPipe = false;
+  const ende = () => { koepfe.push(seg.trim()); seg = ''; inPipe = false; };
+  for (let i = 0; i < cmd.length; i++) {
+    const c = cmd[i], n = cmd[i + 1];
+    if (quote) { if (c === quote) quote = null; if (!inPipe) seg += c; continue; }
+    if (c === '"' || c === "'") { quote = c; if (!inPipe) seg += c; continue; }
+    if ((c === '&' && n === '&') || (c === '|' && n === '|')) { ende(); i++; continue; }
+    if (c === ';' || c === '\n') { ende(); continue; }
+    if (c === '|') { inPipe = true; continue; }
+    if (!inPipe) seg += c;
+  }
+  ende();
+  return koepfe.filter(Boolean);
+}
+
+/**
+ * Eine SUCHE fragt das Repo. Ein grep ueber die Ausgabedatei eines Testlaufs in /tmp liest ein Log —
+ * das ist keine Frage, die der Graph haette beantworten koennen (am Referenz-Change 6 von 33).
+ */
+const istSuche = (koepfe) =>
+  koepfe.some((k) => /^(grep|find|rg|git\s+grep)\s/.test(k) && !/(^|\s|["'])(\/private)?\/tmp\//.test(k));
 
 /** Alle tool_use-Bloecke eines Protokollausschnitts, in Reihenfolge. */
 function werkzeugAufrufe(saetze) {
@@ -140,10 +176,11 @@ export function werkzeugNutzung(saetze) {
     if (name === 'Grep' || name === 'Glob') { n.grepGlobDocReads++; continue; }
     if (name === 'Read' && AUSGABE_PFAD.test(String(input.file_path ?? ''))) { n.grepGlobDocReads++; continue; }
     if (name === 'Bash') {
-      const cmd = String(input.command ?? '');
-      if (istSuche(cmd) || /\b(cat|sed|head|tail|less)\b[^|]*/.test(cmd) && AUSGABE_PFAD.test(cmd)) n.grepGlobDocReads++;
-      if (/\bnpm test\b/.test(cmd)) n.volllaeufe++;
-      if (/\bnpx vitest run\b/.test(cmd)) n.selektiv++;
+      const koepfe = befehlsKoepfe(String(input.command ?? ''));
+      const liestAusgabe = koepfe.some((k) => /^(cat|sed|head|tail|less)\b/.test(k) && AUSGABE_PFAD.test(k));
+      if (istSuche(koepfe) || liestAusgabe) n.grepGlobDocReads++;
+      if (koepfe.some((k) => /^npm (test|run test)\b/.test(k))) n.volllaeufe++;
+      if (koepfe.some((k) => /^npx vitest run\b/.test(k))) n.selektiv++;
     }
   }
   return n;

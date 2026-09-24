@@ -15,15 +15,16 @@
 | Werkzeugaufrufe | 131, davon **126 Bash** |
 | Graph-**Lese**aufrufe | **0** |
 | Graph-Schreibaufrufe | 3 (ein Modell-Batch, zweimal `dryRun`) |
-| Suchoperationen (Grep + Glob + Doc-Read, KPI 1 nach `docs/KPI.md`) | **29** ¹ |
+| Suchoperationen (Grep + Glob + Doc-Read, KPI 1 nach `docs/KPI.md`) | **27** ¹ |
 | Volllaeufe `npm test` | **3** (~15 min Wanduhr) |
 
-¹ **Korrigiert am 2026-09-24 (CR-GC-639).** Die erste Fassung nannte 45. Sie zaehlte jeden
-`grep` in einem Bash-Aufruf — auch `npm test | grep FAIL`, das eine Ausgabe filtert und nichts
-ueber den Code fragt. Die eine Zaehlung in `scripts/retro-kpi.mjs` zaehlt grep nur am Anfang
-einer Pipeline und dazu Doc-Reads (`docs/graph/`, `docs/views/`, `.graphcode/`), wie `docs/KPI.md`
-es definiert: **29**. Die Aussage bleibt — 0 Graph-Lesezugriffe, KPI 1 = 0,1 —, nur die Zahl war
-zu hoch.
+¹ **Korrigiert am 2026-09-24 (CR-GC-639).** Die erste Fassung nannte 45. Die Zahl ist zweimal
+gesunken, weil drei Zaehlfehler herausgenommen wurden. Gezaehlt hatte sie auch:
+`npm test | grep FAIL` (ein grep NACH einer Pipe filtert eine Ausgabe), Heredocs, die `grep` oder
+`npm test` nur als Text enthielten, und greps ueber Log-Dateien in `/tmp`. Die eine Zaehlung in
+`scripts/retro-kpi.mjs` zaehlt nur, was als Befehl gegen das Repo LAEUFT, dazu Doc-Reads
+(`docs/graph/`, `docs/views/`, `.graphcode/`), wie `docs/KPI.md` es definiert: **27**. Die Aussage
+hat sich dabei nie bewegt: 0 Graph-Lesezugriffe, KPI 1 = 0,11.
 
 
 Das ist dasselbe Bild wie am 2026-08-27 („0 Aufrufe `graph_impact`, 174 Suchoperationen"),

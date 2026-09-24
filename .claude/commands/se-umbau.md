@@ -13,7 +13,7 @@ ein übersehener Impact teuer wird — und die einzige, für die die Hausregel �
 Pfade" überhaupt geschrieben ist.
 
 **Gemessen am Referenz-Change vom 2026-09-23** (`rig/referenz-change/`, CR-GC-630/631): 0
-Graph-Leseaufrufe, 29 Suchoperationen, 3 volle Testläufe à 5 Minuten. Die Gegenprobe sagt, was
+Graph-Leseaufrufe, 27 Suchoperationen, 3 volle Testläufe à 5 Minuten. Die Gegenprobe sagt, was
 die vier Fragen unten geantwortet hätten: **4 Testdateien statt 172**, und die 20 Kanten an den
 zwei Knoten, deren Bindung der Löschzug brach. Gefunden hat sie stattdessen die Testsuite, 300
 Sekunden später.
