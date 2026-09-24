@@ -7,14 +7,46 @@
 
 ---
 
-Gemessen 2026-09-24 mit Argument-Trace (gcrun-40..42, 416 Lese-Aufrufe, keiner Fehler oder gekappt): das Modell fragt aus drei Gewohnheiten nach, die der Prompt erzeugt. (1) ~90 Stichwortsuchen vor dem Anlegen, fast alle leer — Duplikat-Vorpruefung, ausgeloest durch 'keine Duplikate anlegen'; dieselbe Pruefung macht der Treiber beim Einreichen (duplicateHits, CR-GC-287). (2) 22x graph_elements {type:SCHEMA}, 22/22 leer — der injizierte Skill author-uc verlangt die Abfrage woertlich (Jargon-Regel). (3) graph_get_node 127x, SYS 17x — die Intention steht schon im Auftrag; dazu eben selbst angelegte Knoten. Abnahme: Lese-Aufrufe je Lauf unter 106 (Stand nach CR-GC-650/651), Elemente nicht schlechter.
+## Befund
 
----
+Siehe ITEM-2026-553 und die Argument-Messung in CR-GC-652 (gcrun-40..42): das Modell schlaegt aus
+drei Gewohnheiten nach, die der Prompt erzeugt — Duplikat-Vorpruefung per Stichwort (~80),
+`graph_elements {type:"SCHEMA"}` auf Anweisung des Skills `author-uc` (22, alle leer), Nachlesen
+des SYS (18) und eigener Knoten.
 
-## Umfang laut `graph_impact`
+## Umsetzung
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+- SYSTEM: „Schlage nur nach, was fehlt: Duplikate prueft der Treiber beim Einreichen … Die
+  Systemintention steht in der Instruktion, den SYS nicht nachlesen; was du selbst angelegt hast,
+  kennst du."
+- Element-Liste: „keine Duplikate anlegen" entfernt (die Aussage steht jetzt einmal, im SYSTEM).
+- `author-uc`: die SCHEMA/REQ-Abfrage steht ausserhalb des Executor-Ausschnitts — fuer Claude Code
+  bleibt sie im Skill.
 
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+## Dateien (6)
+
+`src/loop/executor-prompt.ts`, `src/loop/executor-inventory.ts`, `.claude/commands/se/author-uc.md`,
+`tests/executor.test.ts`, `tests/executor.round-injection-suggest-skill.test.ts`, diese Datei.
+
+## Rig-Messung (2026-09-24, `results-runde19-gcrun-653.json`, gcrun-50..52, N=3)
+
+| Mittel je Lauf | 650/651 | 652 + Trace | 653 |
+|---|---:|---:|---:|
+| Lese-Aufrufe | 106 | 138 | **120** |
+| davon Stichwortsuche / SCHEMA / get_node SYS | — | 27 / 7 / 6 | 23 / 1 / 9 |
+| `graph_get_node` gesamt | 44 | 42 | 51 |
+| Elemente | 50,7 | 47,0 | 47,7 |
+| Ablehnungen | 3,0 | 2,3 | 3,3 |
+| Readiness req / uc / ver | .68/.66/.85 | .67/.64/.85 | .67/.66/.85 |
+| Tokens ein / aus | 210k / 9,1k | 184k / 9,0k | 189k / 8,3k |
+| Laufzeit | 186 s | 160 s | 146 s |
+
+(„—": die 650/651-Laeufe haben keine Argumente protokolliert.)
+
+**Abnahme verfehlt:** das Kriterium war < 106 Lese-Aufrufe je Lauf; gemessen 120.
+
+- **Gewirkt hat, einen Ausloeser zu entfernen:** SCHEMA-Abfragen 22 → 3.
+- **Kaum gewirkt haben Verbote:** Stichwortsuchen 80 → 69 (−14 %), das Nachlesen des SYS stieg
+  sogar (18 → 26) — bei N=3 im Rauschen, aber sicher kein Effekt in die gewollte Richtung.
+  „Schlag nicht nach" befolgt qwen3-coder nur teilweise.
+- Elemente, Ablehnungen und Readiness bleiben im Rahmen der Streuung; Tokens und Laufzeit fallen.
