@@ -337,6 +337,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-629` | done | Die Urteilsschwelle boundaryWidth steht zweimal (contracts-Startwert und graphcode.config.jsonc), ein Knopf treibt zwei Verteilungen (BW-02 am FUNC-Rand, R-04 am MOD-Rand), und niemand misst sie laufend | `FUNC-load-config` · `MOD-kernel-measure` |
 | `CR-GC-640` | n/a | Extraktor liefert zodSymbols und fileScope fuer RC-08/RC-09, Messung am eigenen Modell | `FUNC-check-code-conformance` |
 | `CR-GC-641` | n/a | Format-E bekommt eine Zod-Tuer, SCHEMA-format-e bindet sie | `FUNC-decode` |
+| `CR-GC-642` | n/a | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen | `FUNC-decode` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

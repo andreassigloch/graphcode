@@ -14,7 +14,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import type { Graph } from '@sigloch/graph-api-core';
-import { FORMAT_E_CODEC } from '../src/surface/format-e-commands.js';
+import { SE_FORMAT_E_CODEC } from '@sigloch/graph-api-core';
 import { knotenAus } from './helpers/format-e.js';
 
 
@@ -59,7 +59,7 @@ describe('TEST-codec-validation: validate()', () => {
       nodes: [{ uid: 'FOO-bar', type: 'FOO', name: 'Bad', attributes: {} }],
       edges: [],
     };
-    const result = FORMAT_E_CODEC.validate(g);
+    const result = SE_FORMAT_E_CODEC.validate(g);
     expect(result.valid).toBe(false);
     expect(result.errors.length).toBeGreaterThan(0);
     expect(result.errors[0]).toContain('FOO');
@@ -79,13 +79,13 @@ describe('TEST-codec-validation: validate()', () => {
         },
       ],
     };
-    const result = FORMAT_E_CODEC.validate(g);
+    const result = SE_FORMAT_E_CODEC.validate(g);
     expect(result).toEqual({ valid: true, errors: [] });
-    expect(FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toContain('REQ-001 -compose-> SYS-test');
+    expect(SE_FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toContain('REQ-001 -compose-> SYS-test');
   });
 
   it('(c) valid graph → valid:true, no errors', () => {
-    const result = FORMAT_E_CODEC.validate(validGraph);
+    const result = SE_FORMAT_E_CODEC.validate(validGraph);
     expect(result.valid).toBe(true);
     expect(result.errors).toHaveLength(0);
   });
@@ -95,7 +95,7 @@ describe('TEST-codec-validation: validate()', () => {
       nodes: [validReqNode, { ...validReqNode, name: 'Collision REQ' }], // two nodes share REQ-001
       edges: [],
     };
-    const result = FORMAT_E_CODEC.validate(g);
+    const result = SE_FORMAT_E_CODEC.validate(g);
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.includes('Duplicate node uid') && e.includes('REQ-001'))).toBe(true);
   });
@@ -107,8 +107,8 @@ describe('TEST-codec-validation: serialize() rejects invalid graphs', () => {
       nodes: [{ uid: 'BOGUS-node', type: 'BOGUS', name: 'Bogus', attributes: {} }],
       edges: [],
     };
-    expect(() => FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toThrow(/validation failed/);
-    expect(() => FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toThrow(/BOGUS/);
+    expect(() => SE_FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toThrow(/validation failed/);
+    expect(() => SE_FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toThrow(/BOGUS/);
   });
 
   // CR-GC-536 / ITEM-2026-183 — der Phantom-Knoten, diesmal an DIESER Oberfläche.
@@ -120,8 +120,8 @@ describe('TEST-codec-validation: serialize() rejects invalid graphs', () => {
       nodes: [{ uid: 'SYS-multi', type: 'SYS', name: 'Multi', description: 'erste Zeile\nzweite Zeile', attributes: {} }],
       edges: [],
     };
-    expect(() => FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toThrow(/Zeilenumbruch/);
-    expect(() => FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toThrow(/SYS-multi/);
+    expect(() => SE_FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toThrow(/Zeilenumbruch/);
+    expect(() => SE_FORMAT_E_CODEC.serialize(g, { roundTrip: true })).toThrow(/SYS-multi/);
   });
 });
 

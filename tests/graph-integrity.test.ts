@@ -14,7 +14,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { FORMAT_E_CODEC } from '../src/surface/format-e-commands.js';
+import { SE_FORMAT_E_CODEC } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
 
 const GRAPH = join(__dirname, '..', 'docs/graph/graphcode.graph.json');
@@ -34,7 +34,7 @@ describe('graph integrity (SSOT safety net)', () => {
   };
 
   it('passes the canonical validator (types, edge pairs, referential integrity)', () => {
-    const { errors } = FORMAT_E_CODEC.validate(graph);
+    const { errors } = SE_FORMAT_E_CODEC.validate(graph);
     if (errors.length) console.error('graph validation errors:\n  - ' + errors.join('\n  - '));
     expect(errors).toEqual([]);
   });

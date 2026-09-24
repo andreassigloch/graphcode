@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 249 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 250 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 249 CR · 189 done · 0 open.
+Total: 250 CR · 189 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -311,3 +311,4 @@ Total: 249 CR · 189 done · 0 open.
 | `CR-GC-639` | n/a | KPI 1 Graph-vs-Grep nach jedem CR automatisch messen statt im bezahlten Rig: ein post-commit-Hook erkennt den CR-Abschluss (Umbenennung open nach done), sucht das Claude-Code-Protokoll der Sitzung, schneidet das Fenster ab der ersten Nennung der CR-ID und haengt eine Zeile an .graphcode/cr-messung.jsonl. Kostet nichts, liefert reale Streuung. Dabei retro-kpi.mjs (definiert KPI 1, zaehlt nicht selbst) und rig/referenz-change/messen.mjs (zaehlt, aber mit eigener Definition) auf EINE Zaehlung zusammenfuehren |
 | `CR-GC-640` | n/a | Extraktor liefert zodSymbols und fileScope fuer RC-08/RC-09, Messung am eigenen Modell |
 | `CR-GC-641` | n/a | Format-E bekommt eine Zod-Tuer, SCHEMA-format-e bindet sie |
+| `CR-GC-642` | n/a | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen |
