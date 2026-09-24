@@ -15,8 +15,16 @@
 | Werkzeugaufrufe | 131, davon **126 Bash** |
 | Graph-**Lese**aufrufe | **0** |
 | Graph-Schreibaufrufe | 3 (ein Modell-Batch, zweimal `dryRun`) |
-| Suchoperationen (grep/find) | **45** |
+| Suchoperationen (Grep + Glob + Doc-Read, KPI 1 nach `docs/KPI.md`) | **29** ¹ |
 | Volllaeufe `npm test` | **3** (~15 min Wanduhr) |
+
+¹ **Korrigiert am 2026-09-24 (CR-GC-639).** Die erste Fassung nannte 45. Sie zaehlte jeden
+`grep` in einem Bash-Aufruf — auch `npm test | grep FAIL`, das eine Ausgabe filtert und nichts
+ueber den Code fragt. Die eine Zaehlung in `scripts/retro-kpi.mjs` zaehlt grep nur am Anfang
+einer Pipeline und dazu Doc-Reads (`docs/graph/`, `docs/views/`, `.graphcode/`), wie `docs/KPI.md`
+es definiert: **29**. Die Aussage bleibt — 0 Graph-Lesezugriffe, KPI 1 = 0,1 —, nur die Zahl war
+zu hoch.
+
 
 Das ist dasselbe Bild wie am 2026-08-27 („0 Aufrufe `graph_impact`, 174 Suchoperationen"),
 dreizehn Monate und rund 250 CRs spaeter. Die Zusage steht seither unveraendert in der
