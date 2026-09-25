@@ -176,7 +176,7 @@ Verification ◀ `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integra
 
 ##### 3.1.1.4  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-live-update` · `FCHAIN-recall` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-live-update` · `FCHAIN-recall` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -2128,7 +2128,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integr
 
 ##### 3.4.2.4  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -2372,7 +2372,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.4.3.6  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-recall` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-recall` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -2598,7 +2598,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.5.1.8  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-recall` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-recall` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -3178,85 +3178,7 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-advisory-roundtrip-latency` (performance) · satisfy ◀ `FCHAIN-advisory-roundtrip` · allocate ▶ —
 
-##### 3.8.1.1  `FUNC-evaluate-rules` — evaluateRules()
-
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
-
-Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
-
-io ◀ `FLOW-graph-state` · `FLOW-metric-policy` · `FLOW-module-metrics` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
-
-###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
-
-evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
-
-##### 3.8.1.2  `FUNC-mutate` — mutate(commands)
-
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
-
-Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
-
-io ◀ `FLOW-fit-advisory` · `FLOW-graph-state` · `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-author-req` · `FLOW-mutate-cmd-author-uc` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-close-violations` · `FLOW-mutate-cmd-gate-client` · `FLOW-mutate-cmd-graph-realize` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-import-doc` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-se-conops` · `FLOW-mutate-cmd-se-fmea` · `FLOW-mutate-cmd-se-generate` · `FLOW-mutate-cmd-se-irr` · `FLOW-mutate-cmd-se-optimize` · `FLOW-mutate-cmd-se-plan` · `FLOW-mutate-cmd-se-top-level` · `FLOW-mutate-cmd-se-trade` · `FLOW-mutate-cmd-test-ingest` · `FLOW-rule-findings` · io ▶ `FLOW-audit-record` · `FLOW-gate-verdict` · `FLOW-graph-delta` · allocate ▶ `MOD-kernel`
-
-###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
-
-MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Gate. (R1)
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
-
-###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
-
-> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
-
-Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-kernel` · `MOD-projections`
-
-###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
-
-Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
-
-##### 3.8.1.3  `FUNC-graph-suggest` — graph_suggest(weights)
-
-> auch in: `FCHAIN-generation-states` · `FCHAIN-steering-loop` · `FUNC-block-optimierung`
-
-Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)
-
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-learning-advice` · `FLOW-target-profile` · io ▶ `FLOW-channel-proposal-suggest` · `FLOW-learning-query` · `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · allocate ▶ `MOD-loop`
-
-###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
-
-> auch unter: `FUNC-take-steering-snapshot`
-
-Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop`
-
-###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
-
-> auch unter: `FUNC-target-profile-load`
-
-Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-target-profile-load` · allocate ▶ `MOD-loop`
-
-##### 3.8.1.4  `FUNC-graph-impact` — graph_impact(id, depth?)
+##### 3.8.1.1  `FUNC-graph-impact` — graph_impact(id, depth?)
 
 > auch in: `FCHAIN-agent-query` · `FCHAIN-impact-testing` · `FCHAIN-interface-escalation` · `FUNC-block-abfrage`
 
@@ -3290,7 +3212,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-kernel`
 
-##### 3.8.1.5  `FUNC-read-tools` — bindReadTools(ctx)
+##### 3.8.1.2  `FUNC-read-tools` — bindReadTools(ctx)
 
 > auch in: `FCHAIN-agent-query` · `FCHAIN-doc-export` · `FCHAIN-interface-escalation` · `FUNC-block-abfrage`
 
@@ -3318,7 +3240,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-projections` · `MOD-surface`
 
-##### 3.8.1.6  `FUNC-target-profile-load` — loadTargetProfile
+##### 3.8.1.3  `FUNC-target-profile-load` — loadTargetProfile
 
 > auch in: `FCHAIN-steering-loop` · `FUNC-block-q-improvement`
 
@@ -3335,6 +3257,120 @@ Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidat
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-target-profile-load` · allocate ▶ `MOD-loop`
+
+##### 3.8.1.4  `FUNC-graph-suggest` — graph_suggest(weights)
+
+> auch in: `FCHAIN-generation-states` · `FCHAIN-steering-loop` · `FUNC-block-optimierung`
+
+Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)
+
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-learning-advice` · `FLOW-target-profile` · io ▶ `FLOW-channel-proposal-suggest` · `FLOW-learning-query` · `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · allocate ▶ `MOD-loop`
+
+###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
+
+> auch unter: `FUNC-take-steering-snapshot`
+
+Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop`
+
+###### `REQ-target-shifts-ranking` — Die Zielrichtung verschiebt das Suggestion-Ranking
+
+> auch unter: `FUNC-target-profile-load`
+
+Ein Vorzeichenwechsel im Zielvektor negiert den Score jedes gemeinsamen Kandidaten und stellt eine andere Suggestion an die Spitze; die Magnitude des Ziels aendert weder Reihenfolge noch Score.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-executor-bestofn` (integration) · `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · `FUNC-target-profile-load` · allocate ▶ `MOD-loop`
+
+##### 3.8.1.5  `FUNC-mutate` — mutate(commands)
+
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
+
+Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
+
+io ◀ `FLOW-fit-advisory` · `FLOW-graph-state` · `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-author-req` · `FLOW-mutate-cmd-author-uc` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-close-violations` · `FLOW-mutate-cmd-gate-client` · `FLOW-mutate-cmd-graph-realize` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-import-doc` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-se-conops` · `FLOW-mutate-cmd-se-fmea` · `FLOW-mutate-cmd-se-generate` · `FLOW-mutate-cmd-se-irr` · `FLOW-mutate-cmd-se-optimize` · `FLOW-mutate-cmd-se-plan` · `FLOW-mutate-cmd-se-top-level` · `FLOW-mutate-cmd-se-trade` · `FLOW-mutate-cmd-test-ingest` · `FLOW-rule-findings` · io ▶ `FLOW-audit-record` · `FLOW-gate-verdict` · `FLOW-graph-delta` · allocate ▶ `MOD-kernel`
+
+###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
+
+MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Gate. (R1)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-graph-snapshot-per-commit` — Kanonischer Graph-Snapshot pro Commit
+
+> auch unter: `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot`
+
+Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-mutate` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
+
+Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+##### 3.8.1.6  `FUNC-graph-store` — GraphStore
+
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-recall` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
+
+Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
+
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · `FLOW-schema-fingerprint` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
+
+> auch unter: `FUNC-auto-export` · `FUNC-merge-nodes`
+
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
+
+Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
+
+priority: must · status: reviewed · kinds: precondition
+
+Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+
+> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+
+priority: must · status: reviewed · kinds: functional
+
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
+##### 3.8.1.7  `FUNC-evaluate-rules` — evaluateRules()
+
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FUNC-block-gate`
+
+Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
+
+io ◀ `FLOW-graph-state` · `FLOW-metric-policy` · `FLOW-module-metrics` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+
+###### `REQ-rule-enforcement` — Regel-Enforcement (V3_RULES)
+
+evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
 
 #### 3.8.2  `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion)
 
@@ -5326,7 +5362,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (i
 
 ###### 3.10.2.7.7  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-recall` · `FCHAIN-snapshot-freshness`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-recall` · `FCHAIN-snapshot-freshness`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 

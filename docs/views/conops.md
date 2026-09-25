@@ -130,7 +130,7 @@ Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokale
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
-- `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-target-profile-load`
+- `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-target-profile-load`
 - `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-list-elements` → `FUNC-read-tools`
 - `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb: `FUNC-evaluate-rules` → `FUNC-mutate`
 
