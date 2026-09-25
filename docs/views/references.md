@@ -667,6 +667,7 @@
 | `CR-GC-663` | relation | `FUNC-run-executor` |
 | `CR-GC-664` | relation | `FUNC-inventory-channel` |
 | `CR-GC-665` | relation | `REQ-responsiveness` |
+| `CR-GC-666` | relation | `FUNC-take-steering-snapshot` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
