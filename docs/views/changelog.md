@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 273 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 274 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 273 CR · 211 done · 0 open.
+Total: 274 CR · 212 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -335,3 +335,4 @@ Total: 273 CR · 211 done · 0 open.
 | `CR-GC-663` | done | Executor: Modell liest das Auftragsmaterial jede Runde neu — der Treiber vergisst gelesenes Material |
 | `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht |
 | `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten |
+| `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich |

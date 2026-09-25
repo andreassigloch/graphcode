@@ -2285,6 +2285,13 @@
       "commitRef": "4a10156"
     },
     {
+      "id": "CR-GC-666",
+      "type": "CR",
+      "name": "graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich",
+      "description": "docs/cr/done/CR-GC-666-graph-mutate-dryrun-wirft-auf-altbestand.md",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -13020,6 +13027,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-666",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -21399,5 +21411,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 469
+  "graphVersion": 471
 }

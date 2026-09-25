@@ -62,6 +62,32 @@ export function takeSteeringSnapshot(
   graph: Graph,
   policy: MetricPolicy,
 ): SteeringSnapshot {
+  // CR-GC-646: die Pruefung ist eingeschaltet, seit das Gate `status`/`kinds`/`method` am Eintritt
+  // gegen den Element-Vertrag haelt (SCHEMA-02) und contracts nur noch `done` als abgeschlossen
+  // kennt (CR-SM-362). Ein Bruch hier ist Altbestand, der am Gate vorbei kam (Import-Port) — er
+  // wirft mit Pfad, statt als Teilstring-Suche still weiterzurechnen.
+  return SteeringSnapshotSchema.parse(buildSnapshot(graph, policy));
+}
+
+/**
+ * Dieselbe Messung ohne Wurf, fuer die PROBE (`graph_mutate` dryRun, ITEM-2026-570): ein Graph mit
+ * Altbestand ausserhalb des Element-Vertrags ist genau der, dessen Migration man probt. Dort ist
+ * der Steuerraum nicht messbar — gesagt mit dem ersten Pfad, nicht verschwiegen und nicht geraten.
+ */
+export function measureSteering(
+  graph: Graph,
+  policy: MetricPolicy,
+): { snapshot: SteeringSnapshot } | { unmeasurable: string } {
+  const parsed = SteeringSnapshotSchema.safeParse(buildSnapshot(graph, policy));
+  if (parsed.success) return { snapshot: parsed.data };
+  const first = parsed.error.issues[0];
+  const at = first?.path.join('.') ?? '';
+  return {
+    unmeasurable: `Steuerraum nicht messbar: der Graph verletzt den Element-Vertrag (${parsed.error.issues.length} Befund(e), erster ${at}: ${first?.message})`,
+  };
+}
+
+function buildSnapshot(graph: Graph, policy: MetricPolicy): SteeringSnapshot {
   // CR-GC-303: DERSELBE Mapper wie der Harness-/Readiness-Pfad. Vorher lief hier
   // `JSON.parse(exportGraphJson(graph))` — das Export-Encoding flacht `attributes`
   // auf Top-Level ab (SSOT-Konvention, CR-216/228), Contracts-Regeln lesen aber
@@ -87,11 +113,6 @@ export function takeSteeringSnapshot(
     report: computeReadiness(og, policy),
     phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id }))),
   };
-  // CR-GC-646: die Pruefung ist eingeschaltet, seit das Gate `status`/`kinds`/`method` am Eintritt
-  // gegen den Element-Vertrag haelt (SCHEMA-02) und contracts nur noch `done` als abgeschlossen
-  // kennt (CR-SM-362). Ein Bruch hier ist Altbestand, der am Gate vorbei kam (Import-Port) — er
-  // wirft mit Pfad, statt als Teilstring-Suche still weiterzurechnen.
-  SteeringSnapshotSchema.parse(snapshot);
   return snapshot;
 }
 

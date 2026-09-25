@@ -16,7 +16,7 @@ import { GraphVersionSchema } from '@sigloch/contracts/harness';
 import { readTestRefs } from '@sigloch/contracts/se';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../kernel/merge.js';
 import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
-import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
+import { computeSteeringDelta, measureSteering, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
 import { stripViolationContext, groupViolationsByRule, type GroupedViolation } from '../kernel/evaluation.js';
 import { fitAdvisoryIsSilent, steerAdvisoryIsSilent, type FitAdvisory, type SteerAdvisory } from '../kernel/measure/fit-advisory.js';
 import { workOrderIsSilent, type WorkOrder } from '../kernel/measure/work-order.js';
@@ -341,7 +341,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_mutate: MCPTool<
     z.infer<typeof GraphMutateInputSchema>,
-    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta; next?: NextStep }
+    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta; steeringUnmeasurable?: string; next?: NextStep }
   > = {
     name: 'graph_mutate',
     description:
@@ -422,7 +422,9 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // bewegt die graphVersion, der Nachher-Zustand ist dort per
         // graph_readiness lesbar; die Doppel-Evaluierung pro echtem Write wäre
         // reine Kostenstelle ohne Konsument (Entscheidung dokumentiert im CR).
-        const steeringBefore = input.dryRun ? takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()) : null;
+        // ITEM-2026-570: gemessen, nicht geprueft — Altbestand macht den Steuerraum unmessbar, die Probe
+        // einer Migration muss trotzdem ein Gate-Verdict liefern.
+        const steeringBefore = input.dryRun ? measureSteering(harness.getGraph(), harness.getMetricPolicy()) : null;
         // respondsTo-Baseline (CR-GC-434) — NUR auf dem Apply-Pfad: der Preview
         // trägt keine Stempel. Eine evaluateRules-Messung vor dem Gate; die
         // Nachher-Seite fällt nur bei success an (bei Rejection ist der Zustand
@@ -437,9 +439,12 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           // GENAU JETZT messen (bei block hat das Gate schon zurückgerollt ⇒
           // Delta 0), dann die Working Copy restaurieren. Pure Messung, kein
           // Einfluss auf tier/success (Muster fitAdvisory/CR-274).
-          const steeringDelta = computeSteeringDelta(steeringBefore!, takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()));
+          const steeringAfter = measureSteering(harness.getGraph(), harness.getMetricPolicy());
           await harness.loadGraph();
-          const preview = { ...result, steeringDelta };
+          const preview =
+            'snapshot' in steeringBefore! && 'snapshot' in steeringAfter
+              ? { ...result, steeringDelta: computeSteeringDelta(steeringBefore.snapshot, steeringAfter.snapshot) }
+              : { ...result, steeringUnmeasurable: 'unmeasurable' in steeringAfter ? steeringAfter.unmeasurable : (steeringBefore as { unmeasurable: string }).unmeasurable };
           // Vorschlag→Verdict auditieren (F2) — der Preview trägt das steeringDelta.
           // Auditiert wird die VOLLE Fassung: der Audit-Trail ist Evidenz, nicht
           // Antwort-Budget. Gekürzt wird erst, was über die Leitung geht.

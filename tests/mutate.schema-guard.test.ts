@@ -235,4 +235,32 @@ describe('TEST-mutate-schema-guard: element contract (CR-GC-646)', () => {
     const result = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-leg', description: 'neu' } }]);
     expect(result.success, JSON.stringify(result.violations)).toBe(true);
   });
+
+  // ITEM-2026-570: die Probe einer Migration auf Altbestand wirft nicht — sie liefert das
+  // Gate-Verdict und sagt, dass der Steuerraum nicht messbar ist.
+  // POSITIVKONTROLLE: mit takeSteeringSnapshot im dryRun-Zweig wirft dieser Fall (ZodError).
+  it('dryRun on legacy data returns the verdict and names the steering space unmeasurable', async () => {
+    await harness.importGraph({
+      elements: [{ id: 'CR-leg', type: 'CR', name: 'leg', description: '', status: 'dropped' }],
+      traces: [],
+    });
+    const res = (await tools.graph_mutate.handler({
+      commands: [{ op: 'update-node', node: { uid: 'CR-leg', attributes: { status: 'done' } } }],
+      consumerId: 't',
+      dryRun: true,
+    })) as { success: boolean; steeringDelta?: unknown; steeringUnmeasurable?: string };
+    expect(res.success).toBe(true);
+    expect(res.steeringDelta).toBeUndefined();
+    expect(res.steeringUnmeasurable).toContain('Element-Vertrag');
+
+    // Nach der Migration ist der Steuerraum wieder messbar.
+    await harness.mutate([{ op: 'update-node', node: { uid: 'CR-leg', attributes: { status: 'done' } } }]);
+    const clean = (await tools.graph_mutate.handler({
+      commands: [{ op: 'update-node', node: { uid: 'REQ-ok', description: 'x' } }],
+      consumerId: 't',
+      dryRun: true,
+    })) as { steeringDelta?: unknown; steeringUnmeasurable?: string };
+    expect(clean.steeringUnmeasurable).toBeUndefined();
+    expect(clean.steeringDelta).toBeDefined();
+  });
 });
