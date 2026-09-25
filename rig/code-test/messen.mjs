@@ -12,7 +12,12 @@
  *   5. Kongruenz    — nur wo ein Modell gefuehrt wurde: RC-Urteil, Bindungsquote am ganzen Modell UND
  *                     an der beauftragten Scheibe (CR-GC-611: die Aufgabe ist ein Modul von sieben,
  *                     die Quote ueber das ganze Modell beantwortet eine andere Frage).
- * Dazu die Effizienz aus usage.json. Schreibt <arbeitsbereich>/messung.json und druckt die Vergleichstabelle.
+ * Dazu die Effizienz aus usage.json und die Turn-Bilanz aus claude-stream.jsonl: welcher Ausloeser
+ * (graphcode-Antwort, Datei-/Code-Arbeit, ToolSearch) wie viele Turns und wie viel Cache-Lesung
+ * verursacht; `deltaZerlegung` schreibt die Mehrkosten eines Arms gegen den freien diesen Posten zu.
+ * Dazu die Bedarfsanalyse je Informationsaufruf (schon da / Graph haette / neu); ein Arm ohne Modell
+ * wird gegen das Golden gelesen — die Frage ist dann, was ein Graph ihm HAETTE liefern koennen.
+ * Schreibt <arbeitsbereich>/messung.json und druckt die Vergleichstabelle.
  *
  * Aufruf (von graphcode/): node rig/code-test/messen.mjs ~/.graphcode-code-test/runs/gefuehrt-0 ~/.graphcode-code-test/runs/frei-0
  *
@@ -24,6 +29,10 @@ import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { spawnSync, execFileSync } from 'node:child_process';
 import { codeVerdict } from '../greenfield-systemtest/metrics.mjs';
+import {
+  leseTurns, lesenJeAusloeser, pruefeGegenResultzeile, bedarfsAnalyse, modellIndex, modellImArbeitsbereich,
+} from '../greenfield-systemtest/turn-analyse.mjs';
+import { GOLDEN } from './run-code.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const GC_ROOT = resolve(HERE, '..', '..');
@@ -153,6 +162,67 @@ async function kongruenz(ws) {
   }
 }
 
+/**
+ * Listenpreise Opus 5 in $ je Million Token, aus der Usage der Code-Test-Laeufe zurueckgerechnet
+ * (treffen frei-0, gefuehrt-0 und gefuehrt-2 auf den Cent). `turnBilanz` prueft sie gegen die
+ * `costUSD` des Laufs und meldet eine Abweichung, statt still mit falschen Preisen zu rechnen.
+ */
+export const PREISE_OPUS5 = { input: 5, output: 25, cacheRead: 0.5, cacheCreate: 6.25 };
+
+const dollar = (tokens, preis) => (tokens * preis) / 1e6;
+
+/** Turn-Bilanz eines Laufs aus claude-stream.jsonl + claude-raw.json; null ohne Strom. */
+export function turnBilanz(ws, preise = PREISE_OPUS5) {
+  const strom = join(ws, 'claude-stream.jsonl');
+  const rohPfad = join(ws, 'claude-raw.json');
+  if (!existsSync(strom) || !existsSync(rohPfad)) return null;
+  const roh = JSON.parse(readFileSync(rohPfad, 'utf8'));
+  const u = roh.usage ?? {};
+  const summen = {
+    input: u.input_tokens ?? 0,
+    output: u.output_tokens ?? 0,
+    cacheRead: u.cache_read_input_tokens ?? 0,
+    cacheCreate: u.cache_creation_input_tokens ?? 0,
+  };
+  const gerechnet = Object.entries(summen).reduce((a, [k, v]) => a + dollar(v, preise[k]), 0);
+  const gemeldet = Object.values(roh.modelUsage ?? {}).reduce((a, m) => a + (m.costUSD ?? 0), 0) || roh.total_cost_usd;
+  return {
+    abgleichStrom: pruefeGegenResultzeile(ws)?.ok ?? false,
+    preiseStimmen: gemeldet ? Math.abs(gerechnet - gemeldet) / gemeldet < 0.02 : false,
+    gerechnetUsd: +gerechnet.toFixed(2),
+    summen,
+    jeAusloeser: lesenJeAusloeser(leseTurns(strom)),
+  };
+}
+
+/**
+ * Mehrkosten von `arm` gegen `basis` (den freien Arm), zerlegt in Posten, die zusammen das Delta
+ * ergeben: Cache-Lesung je Ausloeser-Klasse, Ausgabe, Cache-Schreibung, ungecachte Eingabe.
+ */
+export function deltaZerlegung(basis, arm, preise = PREISE_OPUS5) {
+  const lesen = (b, k) => b.jeAusloeser.find((e) => e.klasse === k) ?? { turns: 0, cacheRead: 0 };
+  const klassen = [...new Set([...basis.jeAusloeser, ...arm.jeAusloeser].map((e) => e.klasse))];
+  const posten = klassen.map((k) => ({
+    posten: `Cache-Lesung, Turns nach ${k}`,
+    turns: `${lesen(basis, k).turns} → ${lesen(arm, k).turns}`,
+    usd: dollar(lesen(arm, k).cacheRead - lesen(basis, k).cacheRead, preise.cacheRead),
+  }));
+  for (const [k, name] of [['output', 'Ausgabe'], ['cacheCreate', 'Cache-Schreibung'], ['input', 'Eingabe ungecacht']]) {
+    posten.push({ posten: name, turns: '', usd: dollar(arm.summen[k] - basis.summen[k], preise[k]) });
+  }
+  const gerundet = posten.map((p) => ({ ...p, usd: +p.usd.toFixed(2) })).sort((a, b) => b.usd - a.usd);
+  return { delta: +(arm.gerechnetUsd - basis.gerechnetUsd).toFixed(2), posten: gerundet };
+}
+
+/** Bedarfsanalyse eines Laufs; ohne eigenes Modell gegen das Golden (Gegenprobe). */
+export function bedarfImLauf(ws) {
+  const strom = join(ws, 'claude-stream.jsonl');
+  if (!existsSync(strom)) return null;
+  const modell = modellIndex(modellImArbeitsbereich(ws) ?? process.env.MODELL ?? GOLDEN);
+  const { modell: pfad, summe } = bedarfsAnalyse(leseTurns(strom), { modell, wurzel: ws });
+  return { modell: pfad, summe };
+}
+
 export async function messe(ws) {
   const dateien = Object.fromEntries(tsDateien(join(ws, 'src')).map((p) => [p, readFileSync(join(ws, 'src', p), 'utf8')]));
   const m = {
@@ -163,6 +233,8 @@ export async function messe(ws) {
     architektur: await architektur(ws),
     kongruenz: await kongruenz(ws),
     effizienz: existsSync(join(ws, 'usage.json')) ? JSON.parse(readFileSync(join(ws, 'usage.json'), 'utf8')) : null,
+    turnBilanz: turnBilanz(ws),
+    bedarf: bedarfImLauf(ws),
   };
   writeFileSync(join(ws, 'messung.json'), JSON.stringify(m, null, 2) + '\n');
   return m;
@@ -184,7 +256,41 @@ export function vergleich(ms) {
     zeile('Kongruenz (RC)', (m) => m.kongruenz?.urteil ?? 'kein Modell'),
     zeile('Bindung Scheibe / ganzes Modell', (m) => m.kongruenz ? `${m.kongruenz.scheibe.gebunden}/${m.kongruenz.scheibe.funcs} (${m.kongruenz.scheibe.pct}%) / ${m.kongruenz.bindung?.pct ?? '—'}%` : 'kein Modell'),
     zeile('Kosten $ / Turns / Sekunden', (m) => m.effizienz ? `${m.effizienz.cost_usd} / ${m.effizienz.turns} / ${m.effizienz.wall_s}` : null),
+    zeile('API-Turns nach graphcode / Datei-Code / ToolSearch', (m) => ['graphcode', 'datei/code', 'ToolSearch']
+      .map((k) => m.turnBilanz.jeAusloeser.find((e) => e.klasse === k)?.turns ?? 0).join(' / ')),
+    zeile('Kontext je Datei-/Code-Turn (Token)', (m) => m.turnBilanz.jeAusloeser.find((e) => e.klasse === 'datei/code')?.kontextJeTurn),
+    zeile('Informationsaufrufe neu / vermeidbar', (m) => {
+      const s = m.bedarf.summe;
+      const vermeidbar = Object.entries(s).filter(([k]) => k !== 'neu').reduce((a, [, v]) => a + v.aufrufe, 0);
+      return `${s.neu?.aufrufe ?? 0} / ${vermeidbar}`;
+    }),
+    zeile('davon schon da / teilweise / buendelbar / ToolSearch / Graph haette', (m) => ['schon-da', 'teilweise-da', 'buendelbar', 'werkzeug-laden', 'graph-haette']
+      .map((k) => m.bedarf.summe[k]?.aufrufe ?? 0).join(' / ')),
+    zeile('Cache-Lesung durch vermeidbare Aufrufe ($)', (m) => (Object.entries(m.bedarf.summe).filter(([k]) => k !== 'neu')
+      .reduce((a, [, v]) => a + v.cacheRead, 0) * PREISE_OPUS5.cacheRead / 1e6).toFixed(2)),
   ].join('\n');
+}
+
+/** Delta-Tabellen: jeder Arm gegen den ersten `frei*`-Arm. Leer, wenn es keinen gibt. */
+export function deltaBericht(ms) {
+  const basis = ms.find((m) => m.arm.startsWith('frei') && m.turnBilanz);
+  if (!basis) return '';
+  const warn = (m) => [
+    m.turnBilanz.abgleichStrom ? null : 'Strom ≠ result-Zeile',
+    m.turnBilanz.preiseStimmen ? null : 'Preise passen nicht zu costUSD',
+  ].filter(Boolean).join(', ');
+  const teile = [];
+  for (const m of ms) {
+    if (m === basis || !m.turnBilanz) continue;
+    const d = deltaZerlegung(basis.turnBilanz, m.turnBilanz);
+    const w = [warn(basis), warn(m)].filter(Boolean).join('; ');
+    teile.push([
+      `\nMehrkosten ${m.arm} gegen ${basis.arm}: ${d.delta} $${w ? `  — NICHT belastbar: ${w}` : ''}`,
+      '| Posten | Turns | $ |', '|---|---|--:|',
+      ...d.posten.map((p) => `| ${p.posten} | ${p.turns} | ${p.usd} |`),
+    ].join('\n'));
+  }
+  return teile.join('\n');
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
@@ -193,4 +299,5 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   const ms = [];
   for (const w of ws) ms.push(await messe(w));
   console.log(vergleich(ms));
+  console.log(deltaBericht(ms));
 }

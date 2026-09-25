@@ -5,7 +5,10 @@
 //
 // Reads results.json + results-opus.json (arms may run separately). @author andreas@siglochconsulting
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { leseTurns, cacheVerursacher, dryRunWirkung } from './turn-analyse.mjs';
+import {
+  leseTurns, cacheVerursacher, dryRunWirkung, bedarfsAnalyse, modellIndex, modellImArbeitsbereich,
+  leseExecutorSpur, bedarfsAnalyseExecutor,
+} from './turn-analyse.mjs';
 import { steuerungsBericht } from './steuerung.mjs';
 import { vergleichBericht } from './trajektorie.mjs';
 import { schattenBericht } from './schatten-suggest.mjs';
@@ -270,6 +273,58 @@ if (mitDeckung.length) {
     .map((r) => ({ label: `${r.arm} #${r.run}`, strom: join(HERE, 'runs', `${r.arm}-${r.run}`, 'claude-stream.jsonl'), elemente: r.elements }))
     .filter((l) => existsSync(l.strom));
   if (laeufe.length) console.log('\n' + steuerungsBericht(laeufe) + '\n');
+}
+
+// Leitlinie T-E9 — Bedarf je Informationsaufruf: was wollte das Modell, hatte es das schon, und
+// haette der Graph es geliefert? Nur wo ein Strom da ist (Claude-Code-Arm).
+{
+  const zeilen = [];
+  for (const r of rows) {
+    if (r.error) continue;
+    const dir = join(HERE, 'runs', `${r.arm}-${r.run}`);
+    const strom = join(dir, 'claude-stream.jsonl');
+    if (!existsSync(strom)) continue;
+    const { summe } = bedarfsAnalyse(leseTurns(strom), { modell: modellIndex(modellImArbeitsbereich(dir)), wurzel: dir });
+    zeilen.push({ r, summe });
+  }
+  if (zeilen.length) {
+    console.log('\n## Bedarf je Informationsaufruf (Leitlinie T-E9)\n');
+    const K = ['neu', 'schon-da', 'teilweise-da', 'buendelbar', 'werkzeug-laden', 'graph-haette'];
+    console.log(`| Lauf | ${K.join(' | ')} | Cache-Lesung vermeidbar |`);
+    console.log(`|---|${K.map(() => '---:').join('|')}|---:|`);
+    for (const { r, summe } of zeilen) {
+      const vermeidbar = Object.entries(summe).filter(([k]) => k !== 'neu').reduce((a, [, v]) => a + v.cacheRead, 0);
+      console.log(`| ${r.arm} #${r.run} | ${K.map((k) => summe[k]?.aufrufe ?? 0).join(' | ')} | ${vermeidbar.toLocaleString('de-DE')} |`);
+    }
+    console.log('\nJe Aufruf mit Grund: `node rig/greenfield-systemtest/turn-analyse.mjs runs/<arm>-<n>`\n');
+  }
+  // Executor-Arm: kein Strom, aber die Spur je Lese-Aufruf. Sein Kontext beginnt jede Runde neu —
+  // `je-runde` sind Lesungen, die schon in einer frueheren Runde standen (Kandidat Rundenprompt).
+  const spuren = [];
+  for (const r of rows) {
+    if (r.error) continue;
+    const dir = join(HERE, 'runs', `${r.arm}-${r.run}`);
+    const spur = join(dir, 'run-raw.log');
+    if (existsSync(join(dir, 'claude-stream.jsonl')) || !existsSync(spur)) continue;
+    const ba = bedarfsAnalyseExecutor(leseExecutorSpur(spur), { modell: modellIndex(modellImArbeitsbereich(dir)) });
+    const ges = ba.urteile.reduce((a, u) => a + u.zeichen, 0);
+    const top = ba.urteile.filter((u) => u.urteil === 'je-runde')
+      .reduce((m, u) => m.set(u.ziel, (m.get(u.ziel) ?? 0) + 1), new Map());
+    const [ziel, n] = [...top].sort((a, b) => b[1] - a[1])[0] ?? ['—', 0];
+    spuren.push({ r, ba, ges, ziel, n });
+  }
+  if (spuren.length) {
+    if (!zeilen.length) console.log('\n## Bedarf je Informationsaufruf (Leitlinie T-E9)\n');
+    const K = ['neu', 'schon-da', 'je-runde', 'buendelbar', 'graph-haette'];
+    console.log('| Executor-Lauf | ' + K.join(' | ') + ' | Zeichen je-runde / gesamt | haeufigste Wiederholung |');
+    console.log(`|---|${K.map(() => '---:').join('|')}|---:|---|`);
+    for (const { r, ba, ges, ziel, n } of spuren) {
+      const jr = ba.summe['je-runde']?.zeichen ?? 0;
+      console.log(`| ${r.arm} #${r.run} | ${K.map((k) => ba.summe[k]?.aufrufe ?? 0).join(' | ')} `
+        + `| ${jr.toLocaleString('de-DE')} / ${ges.toLocaleString('de-DE')} (${ges ? Math.round((jr / ges) * 100) : 0} %) | ${n}× ${ziel.slice(0, 50)} |`);
+    }
+    console.log('');
+  }
 }
 
 // CR-GC-586 — Auto gegen Hand. GOLDEN ist ein Berichtsparameter wie RESULTS_FILE (die Korpus-env
