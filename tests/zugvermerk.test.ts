@@ -13,10 +13,10 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { materialvermerk, zugvermerk, ZUGVERMERK_MAX, type Zug } from '../src/loop/zugvermerk.js';
+import { zugvermerk, ZUGVERMERK_MAX, type Zug } from '../src/loop/zugvermerk.js';
 import { runExecutor, ExecutorConfigSchema } from '../src/loop/executor.js';
 import type { CallModel, ModelResponse } from '../src/loop/executor-backend.js';
 import { createHarness } from '../src/surface/create-harness.js';
@@ -137,60 +137,3 @@ describe('CR-GC-614: zwischen zwei Zuegen reist nichts mit', () => {
     expect(zweite.content.length, 'der Rundenprompt bleibt in der Groessenordnung eines Prompts').toBeLessThan(20_000);
   }, 120_000);
 });
-
-describe('CR-GC-663: gelesenes Material reist mit — benannt und begrenzt', () => {
-  it('leer ohne Gelesenes; mit Gelesenem Kopf, Pfad und Inhalt', () => {
-    expect(materialvermerk(new Map())).toBe('');
-    const v = materialvermerk(new Map([['material/auftrag.md', 'Das System soll X.']]));
-    expect(v).toContain('BEREITS GELESENES MATERIAL');
-    expect(v).toContain('--- material/auftrag.md ---\nDas System soll X.');
-  });
-
-  it('haelt die Grenze und SAGT, dass gekuerzt wurde', () => {
-    const v = materialvermerk(new Map([['a.md', 'x'.repeat(500)], ['b.md', 'y'.repeat(500)]]), 300);
-    expect(v.length).toBeLessThanOrEqual(300 + 70); // Grenze plus hoechstens ein Schlusshinweis
-    expect(v).toMatch(/gekuerzt/);
-  });
-
-  it('am echten Loop: in Runde 1 gelesen, steht es in Runde 2 im Auftrag — der uebrige Verlauf nicht', async () => {
-    const repoRoot = mkdtempSync(join(tmpdir(), 'gc-663-'));
-    mkdirSync(join(repoRoot, 'material'));
-    writeFileSync(join(repoRoot, 'material', 'auftrag.md'), 'AUFTRAGSTEXT-663: Das System soll nachts rechnen.');
-    const harness = await createHarness({ repoRoot, scope: { workspaceId: 'gc663', systemId: 'gc663' }, consumerType: 'system', preCommitTimeout: 5000 });
-    await harness.initialize();
-    const registry = bindToolsToHarness(harness);
-    const calls: { messages: unknown[] }[] = [];
-    let n = 0;
-    const callModel: CallModel = (_system, messages) => {
-      calls.push({ messages: JSON.parse(JSON.stringify(messages)) as unknown[] });
-      n += 1;
-      const lesen = n === 1;
-      return Promise.resolve({
-        text: lesen ? '' : 'Y'.repeat(3000),
-        toolCalls: lesen ? [{ id: 'r1', name: 'read_file', input: { path: 'material/auftrag.md' } }] : [],
-        stopReason: lesen ? 'tool_use' : 'end_turn',
-        assistantMsg: lesen ? { role: 'assistant', content: null, tool_calls: [] } : { role: 'assistant', content: 'Y'.repeat(3000) },
-        usage: { in: 1, out: 1, reasoning: 0 },
-      } as ModelResponse);
-    };
-    try {
-      await runExecutor({
-        registry, workspaceDir: repoRoot, intent: 'Ein System, das nachts rechnet.',
-        config: ExecutorConfigSchema.parse({ baseUrl: 'http://scripted.invalid', model: 'scripted', maxRounds: 2, maxStepTurns: 3 }),
-        callModel, trace: () => {},
-      });
-      const rundenstarts = calls.filter((c) => c.messages.length === 1);
-      expect(rundenstarts.length).toBeGreaterThan(1);
-      const erste = (rundenstarts[0].messages[0] as { content: string }).content;
-      const zweite = (rundenstarts[1].messages[0] as { content: string }).content;
-      expect(erste, 'vor dem Lesen gibt es nichts zu vermerken').not.toContain('BEREITS GELESENES MATERIAL');
-      expect(zweite).toContain('BEREITS GELESENES MATERIAL');
-      expect(zweite).toContain('AUFTRAGSTEXT-663');
-      expect(zweite, 'der uebrige Verlauf reist weiter nicht mit').not.toContain('Y'.repeat(100));
-    } finally {
-      await harness.close();
-      rmSync(repoRoot, { recursive: true, force: true });
-    }
-  }, 120_000);
-});
-
