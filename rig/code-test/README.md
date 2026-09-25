@@ -49,7 +49,14 @@ Obergrenze (60 min) und die Paket-Ausstattung (TypeScript, vitest).
    für beide Arme gleich: MOD/FUNC/FLOW/SCHEMA und der Steuerwert (RD-04, BW-02, R-04, CR-01, MT-02).
    Damit misst derselbe Regelkatalog den Code beider Arme — auch den, der nie ein Modell hatte.
 5. **Kongruenz** — nur `gefuehrt`: RC-Urteil (kongruent / gedriftet / nicht prüfbar) und Bindungsquote.
-6. **Effizienz** — Kosten, Turns, Sekunden.
+6. **Effizienz** — Kosten, Turns, Sekunden, dazu die **Turn-Bilanz** aus `claude-stream.jsonl`: wie viele
+   API-Turns nach einer graphcode-Antwort, nach Datei-/Code-Arbeit oder nach ToolSearch kamen und wie viel
+   Cache-Lesung sie kosteten. Gegen den freien Arm zerlegt `deltaZerlegung` die Mehrkosten in Posten, die
+   zusammen das Delta ergeben. Preise (Opus 5) werden gegen die gemeldete `costUSD` geprüft; weicht der
+   Strom von der result-Zeile ab oder passen die Preise nicht, steht der Bericht als nicht belastbar da.
+7. **Bedarf** — je Informationsaufruf: schon da, teilweise da, bündelbar, ToolSearch, Graph hätte, neu
+   (`bedarfsAnalyse` aus `turn-analyse.mjs`). Der freie Arm wird gegen das Golden gelesen: was hätte
+   ein Graph ihm geliefert? Je Aufruf mit Grund: `node rig/greenfield-systemtest/turn-analyse.mjs <lauf> [modell]`.
 
 Was **nicht** gemessen wird: ob die Architektur „schön“ ist. Die Kennzahlen oben sind der Ersatz;
 die Beurteilung des Schnitts bleibt eine menschliche Durchsicht (Code beider Arme nebeneinander).

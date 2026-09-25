@@ -25,7 +25,7 @@ import { isolateGit, claudeEnv } from '../greenfield-systemtest/run.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const GC_ROOT = resolve(HERE, '..', '..');
-const GOLDEN = join(GC_ROOT, 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
+export const GOLDEN = join(GC_ROOT, 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
 const AUFTRAG = join(GC_ROOT, 'rig', 'sigllm-spezifikation', 'material-prosa', 'auftrag.md');
 /** Ausserhalb des Repos: unter rig/code-test/ saehe der Agent die verdeckte Abnahme und die Referenz im Elternverzeichnis. */
 export const RUNS = process.env.RUNS_DIR ?? join(homedir(), '.graphcode-code-test', 'runs');

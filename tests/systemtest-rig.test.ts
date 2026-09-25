@@ -20,13 +20,16 @@ import { join } from 'node:path';
 import { spawnSync, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration (Messwerkzeug, kein Produkt-API)
-import { leseTurns, pruefeGegenResultzeile, cacheVerursacher, dryRunWirkung } from '../rig/greenfield-systemtest/turn-analyse.mjs';
+import {
+  leseTurns, pruefeGegenResultzeile, cacheVerursacher, lesenJeAusloeser, bedarfsAnalyse, modellIndex,
+  leseExecutorSpur, bedarfsAnalyseExecutor, dryRunWirkung,
+} from '../rig/greenfield-systemtest/turn-analyse.mjs';
 // @ts-expect-error — s.o.
 import { legality, binding, codeVerdict } from '../rig/greenfield-systemtest/metrics.mjs';
 // @ts-expect-error — .mjs ohne Typen, wie die Nachbarn
 import { schattenBilanz, beruehrt, angewandteZuege, schattenBericht } from '../rig/greenfield-systemtest/schatten-suggest.mjs';
 // @ts-expect-error — s.o.
-import { codeKennzahlen, scheibenBindung } from '../rig/code-test/messen.mjs';
+import { codeKennzahlen, scheibenBindung, turnBilanz, deltaZerlegung } from '../rig/code-test/messen.mjs';
 import { ohneCodeBindung } from '../rig/code-test/run-code.mjs';
 
 let dir: string;
@@ -123,6 +126,154 @@ describe('turn-analyse: der Strom misst denselben Lauf wie die Ergebniszeile (CR
       { werkzeug: 'graph_mutate', tokens: 800 },
       { werkzeug: 'graph_elements', tokens: 200 },
     ]);
+  });
+});
+
+describe('turn-bilanz: was ein zusaetzlicher Turn kostet, je Ausloeser (Leitlinie T-E5)', () => {
+  it('schreibt die Cache-Lesung eines Turns der Klasse des vorausgegangenen Werkzeugs zu', () => {
+    // Turn 2 folgt einer graphcode-Antwort, Turn 3 einem Write, Turn 4 beiden zugleich:
+    // Turn 4 wird gleichverteilt, der erste Turn heisst `start`.
+    const pfad = schreibe('stream-ausloeser.jsonl', [
+      assistant('m1', { read: 100 }, [{ type: 'tool_use', id: 't1', name: 'mcp__graphcode__graph_context' }]),
+      toolErgebnis('t1'),
+      assistant('m2', { read: 1000 }, [{ type: 'tool_use', id: 't2', name: 'Write' }]),
+      toolErgebnis('t2'),
+      assistant('m3', { read: 3000 }, [
+        { type: 'tool_use', id: 't3', name: 'Bash' },
+        { type: 'tool_use', id: 't4', name: 'mcp__graphcode__graph_mutate' },
+      ]),
+      toolErgebnis('t3'), toolErgebnis('t4'),
+      assistant('m4', { read: 4000 }),
+    ]);
+    expect(lesenJeAusloeser(leseTurns(pfad))).toEqual([
+      { klasse: 'datei/code', turns: 1.5, cacheRead: 5000, kontextJeTurn: 3333 },
+      { klasse: 'graphcode', turns: 1.5, cacheRead: 3000, kontextJeTurn: 2000 },
+      { klasse: 'start', turns: 1, cacheRead: 100, kontextJeTurn: 100 },
+    ]);
+  });
+
+  it('zerlegt die Mehrkosten so, dass die Posten das Delta ergeben, und prueft die Preise gegen costUSD', () => {
+    const lauf = (name: string, strom: unknown[], usage: Record<string, number>, costUSD: number): string => {
+      const d = join(dir, name);
+      mkdirSync(d, { recursive: true });
+      writeFileSync(join(d, 'claude-stream.jsonl'), strom.map((z) => JSON.stringify(z)).join('\n'));
+      writeFileSync(join(d, 'claude-raw.json'), JSON.stringify({ usage, modelUsage: { 'claude-opus-5': { costUSD } } }));
+      return d;
+    };
+    // frei: zwei Turns, 1 M Lesung. gefuehrt: zusaetzlich ein Turn nach graphcode, 2 M Lesung.
+    const frei = lauf('delta-frei', [
+      assistant('f1', { read: 0 }, [{ type: 'tool_use', id: 'a', name: 'Write' }]), toolErgebnis('a'),
+      assistant('f2', { read: 1_000_000 }),
+    ], { input_tokens: 0, output_tokens: 10_000, cache_read_input_tokens: 1_000_000, cache_creation_input_tokens: 0 }, 0.75);
+    const gefuehrt = lauf('delta-gefuehrt', [
+      assistant('g1', { read: 0 }, [{ type: 'tool_use', id: 'b', name: 'mcp__graphcode__graph_context' }]), toolErgebnis('b'),
+      assistant('g2', { read: 1_000_000 }, [{ type: 'tool_use', id: 'c', name: 'Write' }]), toolErgebnis('c'),
+      assistant('g3', { read: 2_000_000 }),
+    ], { input_tokens: 0, output_tokens: 20_000, cache_read_input_tokens: 3_000_000, cache_creation_input_tokens: 0 }, 99);
+    const b = turnBilanz(frei);
+    const a = turnBilanz(gefuehrt);
+    expect(b.preiseStimmen).toBe(true);   // 1 M × 0,5 + 10k × 25 = 0,75 $
+    expect(a.preiseStimmen).toBe(false);  // 2,00 $ gerechnet gegen gemeldete 99 $ — wird gemeldet, nicht geglaettet
+    const d = deltaZerlegung(b, a);
+    expect(d.delta).toBe(1.25);
+    const usd = (name: string): number => d.posten.find((p: { posten: string }) => p.posten === name).usd;
+    expect(usd('Cache-Lesung, Turns nach graphcode')).toBe(0.5);
+    expect(usd('Cache-Lesung, Turns nach datei/code')).toBe(0.5);
+    expect(usd('Ausgabe')).toBe(0.25);
+    expect(d.posten.reduce((s: number, p: { usd: number }) => s + p.usd, 0)).toBeCloseTo(d.delta, 2);
+  });
+});
+
+describe('bedarfsanalyse: hatte das Modell es schon, oder haette der Graph es geliefert? (Leitlinie T-E9)', () => {
+  const ruf = (id: string, name: string, input: Record<string, unknown>) => ({ type: 'tool_use', id, name, input });
+  const erg = (id: string, text = ''): unknown => ({ type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: id, content: text }] } });
+
+  it('urteilt je Aufruf nach den sechs Regeln und kennt nur, was vor dem Turn zurueckkam', () => {
+    const ws = join(dir, 'bedarf-ws');
+    mkdirSync(join(ws, 'tests'), { recursive: true });
+    writeFileSync(join(ws, 'tests', 'a.test.ts'), '');
+    const graph = join(dir, 'bedarf.graph.json');
+    writeFileSync(graph, JSON.stringify({ elements: [
+      { id: 'FUNC-plan', type: 'FUNC', attributes: { realRef: { file: 'src/plan.ts', symbol: 'planSlots' } } },
+      { id: 'TEST-a', type: 'TEST', attributes: { testRefs: ['tests/a.test.ts'] } },
+    ] }));
+    const R = `${ws}/`;
+    const pfad = schreibe('stream-bedarf.jsonl', [
+      assistant('m1', { read: 100 }, [
+        ruf('r1', 'Read', { file_path: `${R}aufgabe.md` }),
+        ruf('r2', 'Read', { file_path: `${R}aufgabe.md` }),                     // parallel: kein schon-da
+        ruf('g1', 'mcp__graphcode__graph_context', { id: 'FUNC-plan' }),
+      ]),
+      erg('r1'), erg('r2'), erg('g1', 'FUNC-plan satisfies REQ-slot'),
+      assistant('m2', { read: 200 }, [
+        ruf('r3', 'Read', { file_path: `${R}aufgabe.md` }),                     // schon-da
+        ruf('g2', 'mcp__graphcode__graph_get_node', { uid: 'REQ-slot' }),       // teilweise-da
+        ruf('h1', 'mcp__graphcode__graph_help', { token: 'RC-01' }),
+        ruf('w1', 'Write', { file_path: `${R}src/plan.ts` }),
+      ]),
+      erg('r3'), erg('g2'), erg('h1'), erg('w1'),
+      assistant('m3', { read: 300 }, [
+        ruf('h2', 'mcp__graphcode__graph_help', { token: 'RC-02' }),          // buendelbar
+        ruf('r4', 'Read', { file_path: `${R}src/plan.ts` }),                    // selbst geschrieben
+        ruf('s1', 'Grep', { pattern: 'planSlots' }),                           // realRef-Symbol
+        ruf('s2', 'Bash', { command: 'cat docs/graph/x.graph.json' }),          // Modelldatei
+        ruf('t1', 'ToolSearch', { query: 'select:mcp__graphcode__graph_tests' }),
+        ruf('v1', 'Bash', { command: 'npm test' }),                             // gebundene Tests liegen da
+      ]),
+      erg('h2'), erg('r4'), erg('s1'), erg('s2'), erg('t1'), erg('v1'),
+      assistant('m4', { read: 600 }),
+    ]);
+    const { urteile, summe } = bedarfsAnalyse(leseTurns(pfad), { modell: modellIndex(graph), wurzel: ws });
+    const u = (ziel: string): string => urteile.filter((x: { ziel: string }) => x.ziel.includes(ziel)).map((x: { urteil: string }) => x.urteil).join(',');
+    expect(u('datei:aufgabe.md')).toBe('neu,neu,schon-da');
+    expect(u('graph_get_node')).toBe('teilweise-da');
+    expect(u('RC-01')).toBe('neu');
+    expect(u('RC-02')).toBe('buendelbar');
+    expect(u('datei:src/plan.ts')).toBe('schon-da');
+    expect(u('planSlots')).toBe('graph-haette');
+    expect(u('docs/graph')).toBe('graph-haette');
+    expect(u('ToolSearch')).toBe('werkzeug-laden');
+    expect(urteile.find((x: { art: string }) => x.art === 'testlauf-voll').urteil).toBe('graph-haette');
+    // Kosten: Anteil an der Cache-Lesung des ausgeloesten Turns — m4 liest 600, sechs Ergebnisse.
+    expect(urteile.find((x: { ziel: string }) => x.ziel.includes('planSlots')).cacheRead).toBe(100);
+    expect(summe.neu.aufrufe).toBe(4);
+  });
+
+  it('Executor: Kontext je Runde neu — Wiederholung aus frueherer Runde heisst je-runde, nicht schon-da', () => {
+    // Das Format schreibt src/loop/executor.ts (CR-GC-652); die Argumente sind auf 160 Zeichen gekappt.
+    const spur = join(dir, 'run-raw.log');
+    writeFileSync(spur, [
+      '[generate 1] phase=seed done=false',
+      '  1.1: read_file',
+      '    read read_file {"path":"material/auftrag.md"} → 4844 Z.',
+      '  1.2: read_file,graph_elements',
+      '    read read_file {"path":"material/auftrag.md"} → 4844 Z.',
+      '    read graph_elements {"type":"REQ"} → 300 Z.',
+      '  1.3: graph_elements',
+      '    read graph_elements {"type":"UC"} → 120 Z. gekappt',
+      '  1.4: graph_mutate',
+      '[generate 2] phase=expand done=false',
+      '  2.1: read_file,graph_elements',
+      '    read read_file {"path":"material/auftrag.md"} → 4844 Z.',
+      '    read graph_elements {"type":"REQ","search":"ein sehr langes Argument, das die Spur bei 160 Zeichen abschneidet und darum kein gueltiges JSON mehr ist …',
+    ].join('\n').replace(/…$/, '… → 80 Z.'));
+    const aufrufe = leseExecutorSpur(spur);
+    expect(aufrufe.map((a: { werkzeug: string }) => a.werkzeug)).toEqual(
+      ['read_file', 'read_file', 'graph_elements', 'graph_elements', 'graph_mutate', 'read_file', 'graph_elements']);
+    const { urteile, summe, gekappt } = bedarfsAnalyseExecutor(aufrufe);
+    expect(urteile.map((u: { urteil: string }) => u.urteil)).toEqual(['neu', 'schon-da', 'neu', 'buendelbar', 'je-runde', 'neu']);
+    expect(summe['je-runde']).toEqual({ aufrufe: 1, zeichen: 4844 });
+    expect(gekappt).toBe(1);
+  });
+
+  it('ohne Modell ist graph-haette nicht entscheidbar und faellt nie', () => {
+    const pfad = schreibe('stream-bedarf-ohne.jsonl', [
+      assistant('m1', {}, [{ type: 'tool_use', id: 'x', name: 'Grep', input: { pattern: 'FUNC-plan' } }]),
+      erg('x'), assistant('m2', { read: 10 }),
+    ]);
+    const { urteile, modell } = bedarfsAnalyse(leseTurns(pfad));
+    expect(modell).toBeNull();
+    expect(urteile.map((x: { urteil: string }) => x.urteil)).toEqual(['neu']);
   });
 });
 
