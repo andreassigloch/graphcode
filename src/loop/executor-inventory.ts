@@ -21,6 +21,9 @@ import { fundKontext, type KontextKante, type KontextKnoten } from './fund-konte
 /** Zeichen-Budget des Element-Index (~2k-Token-Äquivalent). Überschreitung ⇒ harte Kappe von vorn, angesagt. */
 export const INDEX_CHAR_BUDGET = 8000;
 
+/** Hoechstens so viele UCs in der Uebersicht der Fund-Liste (CR-GC-664). */
+const UC_UEBERSICHT_MAX = 20;
+
 /** Die Kanten, entlang derer der Fund-Kontext laeuft (fund-kontext.ts): hinauf compose, hinunter compose/allocate. */
 const KONTEXT_KANTEN = ['compose', 'allocate'] as const;
 
@@ -77,6 +80,15 @@ async function ausFundKontext(
     ...lines,
   ];
   if (rest > 0) zeilen.push(`… (+${rest} weitere — via graph_elements)`);
+  // CR-GC-664: die UC-Uebersicht, auch wenn der Fund keine UCs im Kontext hat. Gemessen
+  // (gcrun-120..122): in 24 von 36 Runden war die erste Abfrage graph_elements {type:UC} — die
+  // Fund-Liste zeigte UCs nur als Besitzer. Nur uid und Name, gedeckelt: eine Orientierung, kein Index.
+  const ucs = (res.nodes ?? []).filter((n) => n.type === 'UC').sort((a, b) => a.uid.localeCompare(b.uid));
+  if (ucs.length > 0) {
+    const gezeigt = ucs.slice(0, UC_UEBERSICHT_MAX).map((n) => `${n.uid} (${n.name})`);
+    const mehr = ucs.length > UC_UEBERSICHT_MAX ? ` … (+${ucs.length - UC_UEBERSICHT_MAX})` : '';
+    zeilen.push(`UCs im Modell: ${gezeigt.join(', ')}${mehr}`);
+  }
   if (kontext.ohneBesitzer.length > 0) {
     zeilen.push(
       `Kein Besitzer im Modell für: ${kontext.ohneBesitzer.join(', ')} — diese Knoten hängen weder unter ` +

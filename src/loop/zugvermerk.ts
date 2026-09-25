@@ -74,3 +74,42 @@ export function zugvermerk(zuege: readonly Zug[], max = ZUGVERMERK_MAX): string 
   const fuss = rest > 0 ? `\n  … ${rest} ältere Züge hier weggelassen (Grenze ${max} Zeichen).` : '';
   return `${kopf}\n${zeilen.join('\n')}${fuss}`;
 }
+
+/**
+ * Die Obergrenze des Material-Vermerks in Zeichen (CR-GC-663). Ein typischer Auftrag (sigllm-Korpus)
+ * hat ~4.800 Zeichen; mehr als eine Seite Material je Runde waere der naechste Werkzeugkatalog.
+ */
+export const MATERIALVERMERK_MAX = 6_000;
+
+/**
+ * Das bereits gelesene Material fuer die naechste Runde (CR-GC-663).
+ *
+ * Gemessen (gcrun-120..122): qwen3-coder las `material/auftrag.md` in 11–12 von 12 Runden neu, je als
+ * eigener Werkzeugaufruf — die Runde wird frisch aufgebaut, und der Zugvermerk traegt nur Zuege. Was
+ * einmal gelesen ist, reicht der Treiber deshalb mit. In Lesereihenfolge; laeuft der Platz aus, wird
+ * gekuerzt und das gesagt (wie beim Zugvermerk: eine stille Grenze ist ein Kontextleck mit Verzoegerung).
+ */
+export function materialvermerk(gelesen: ReadonlyMap<string, string>, max = MATERIALVERMERK_MAX): string {
+  if (gelesen.size === 0) return '';
+  const kopf = 'BEREITS GELESENES MATERIAL (nicht erneut mit read_file lesen):';
+  const teile: string[] = [kopf];
+  // Kopf, Pfadzeilen und Kuerzungshinweise zaehlen gegen die Grenze — sonst ueberschreitet sie der Vermerk.
+  let rest = max - kopf.length;
+  for (const [pfad, inhalt] of gelesen) {
+    const datei = `--- ${pfad} ---`;
+    const hinweis = `… (gekuerzt, ${inhalt.length} Zeichen — bei Bedarf read_file ${pfad})`;
+    if (rest < datei.length + hinweis.length + 2) {
+      teile.push('… (weiteres Material nicht mitgegeben — bei Bedarf read_file)');
+      break;
+    }
+    rest -= datei.length + 1;
+    if (inhalt.length + 1 <= rest) {
+      teile.push(datei, inhalt);
+      rest -= inhalt.length + 1;
+    } else {
+      teile.push(datei, inhalt.slice(0, rest - hinweis.length - 2) + '\n' + hinweis);
+      rest = 0;
+    }
+  }
+  return teile.join('\n');
+}
