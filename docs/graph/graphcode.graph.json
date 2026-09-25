@@ -2257,6 +2257,18 @@
       "description": "docs/cr/open/CR-GC-662-executor-anthropic-zweig-dieselbe-300-s-.md"
     },
     {
+      "id": "CR-GC-663",
+      "type": "CR",
+      "name": "Executor: Modell liest das Auftragsmaterial jede Runde neu — der Treiber vergisst gelesenes Material",
+      "description": "docs/cr/open/CR-GC-663-executor-modell-liest-das-auftragsmateri.md"
+    },
+    {
+      "id": "CR-GC-664",
+      "type": "CR",
+      "name": "Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht",
+      "description": "docs/cr/open/CR-GC-664-executor-fast-jede-runde-beginnt-mit-gra.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21351,5 +21363,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 463
+  "graphVersion": 465
 }

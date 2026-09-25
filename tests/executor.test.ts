@@ -799,8 +799,10 @@ describe('executor (CR-GC-278)', () => {
     const liste = out.slice(out.indexOf('Element-Liste aus dem Kontext des Funds'));
     expect(liste).toContain('MOD-kern · MOD · Kern');
     expect(liste).toContain('SYS-app · SYS');
-    // Kein Hub-Fan-out: der UC des Systems ist kein Erfueller-Kandidat und steht nicht drin.
-    expect(liste).not.toContain('UC-login');
+    // Kein Hub-Fan-out: der UC des Systems ist kein Erfueller-Kandidat und steht nicht als Zeile drin …
+    expect(liste).not.toContain('UC-login · UC');
+    // … wohl aber in der kompakten UC-Uebersicht (CR-GC-664): uid und Name, keine Zeile je Knoten.
+    expect(liste).toContain('UCs im Modell: UC-login (Login)');
     expect(liste).toContain('Kein Besitzer im Modell für: REQ-waise');
   });
 
