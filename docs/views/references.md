@@ -670,6 +670,7 @@
 | `CR-GC-666` | relation | `FUNC-take-steering-snapshot` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
+| `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-mutate` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-read-tools` |

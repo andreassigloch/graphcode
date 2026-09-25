@@ -13044,6 +13044,11 @@
     },
     {
       "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-graph-suggest",
       "type": "compose"
     },
@@ -21412,5 +21417,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 472
+  "graphVersion": 473
 }
