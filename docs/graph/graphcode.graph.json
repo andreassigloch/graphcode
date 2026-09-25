@@ -2289,7 +2289,8 @@
       "type": "CR",
       "name": "graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich",
       "description": "docs/cr/done/CR-GC-666-graph-mutate-dryrun-wirft-auf-altbestand.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "7152e34"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -21411,5 +21412,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 471
+  "graphVersion": 472
 }
