@@ -1,6 +1,6 @@
 # CR-GC-664: Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht
 
-**Status:** ✅ Done (2026-09-25)
+**Status:** ⛔ Zurueckgenommen nach Messung (2026-09-25)
 **Typ:** aus Item ITEM-2026-567 (finding)
 **Erstellt:** 2026-09-25
 **Item:** bok/items/ITEM-2026-567.json (Lane: code)
