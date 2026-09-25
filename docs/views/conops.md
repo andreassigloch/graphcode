@@ -352,9 +352,11 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-657` | done | REQ-Beispiele ohne kinds — FUNC satisfy REQ wird illegal (auch das SYSTEM-Beispiel selbst) | `FUNC-generation-step` · `FUNC-run-executor` |
 | `CR-GC-658` | done | UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids | `FUNC-generation-step` |
 | `CR-GC-659` | done | Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis | `FUNC-preflight` · `REQ-preflight-hygiene` |
-| `CR-GC-660` | n/a | Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt | `FUNC-preflight` |
-| `CR-GC-661` | n/a | UC-01: qwen schreibt je Batch 1 REQ fuer 1 UC (9 von 11) — das Beispiel setzt die Menge | `FUNC-generation-step` |
+| `CR-GC-660` | done | Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt | `FUNC-preflight` |
+| `CR-GC-661` | done | UC-01: qwen schreibt je Batch 1 REQ fuer 1 UC (9 von 11) — das Beispiel setzt die Menge | `FUNC-generation-step` |
 | `CR-GC-662` | n/a | Executor anthropic-Zweig: dieselbe 300-s-fetch-Grenze wie CR-GC-656, ungestreamt | `FUNC-call-model` · `FUNC-read-anthropic-stream` |
+| `CR-GC-663` | done | Executor: Modell liest das Auftragsmaterial jede Runde neu — der Treiber vergisst gelesenes Material | `FUNC-run-executor` |
+| `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht | `FUNC-inventory-channel` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
