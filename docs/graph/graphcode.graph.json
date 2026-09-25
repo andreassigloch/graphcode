@@ -2280,7 +2280,9 @@
       "id": "CR-GC-665",
       "type": "CR",
       "name": "Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten",
-      "description": "docs/cr/open/CR-GC-665-perf-spike-misst-modellzusammensetzung-s.md"
+      "description": "docs/cr/done/CR-GC-665-perf-spike-misst-modellzusammensetzung-s.md",
+      "status": "done",
+      "commitRef": "4a10156"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -13013,6 +13015,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-665",
+      "target": "REQ-responsiveness",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -21392,5 +21399,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 468
+  "graphVersion": 469
 }

@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 273 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 273 CR · 210 done · 0 open.
+Total: 273 CR · 211 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -334,4 +334,4 @@ Total: 273 CR · 210 done · 0 open.
 | `CR-GC-662` | n/a | Executor anthropic-Zweig: dieselbe 300-s-fetch-Grenze wie CR-GC-656, ungestreamt |
 | `CR-GC-663` | done | Executor: Modell liest das Auftragsmaterial jede Runde neu — der Treiber vergisst gelesenes Material |
 | `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht |
-| `CR-GC-665` | n/a | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten |
+| `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten |
