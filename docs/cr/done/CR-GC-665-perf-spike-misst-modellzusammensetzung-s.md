@@ -1,6 +1,6 @@
 # CR-GC-665: Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-25)
 **Typ:** aus Item ITEM-2026-568 (bug)
 **Erstellt:** 2026-09-25
 **Item:** bok/items/ITEM-2026-568.json (Lane: code)
