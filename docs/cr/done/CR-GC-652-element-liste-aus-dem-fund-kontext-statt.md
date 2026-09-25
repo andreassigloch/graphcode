@@ -123,3 +123,12 @@ Ergebnisqualitaet gleich (Elemente, Ablehnungen, Readiness im Rauschen), Tokens 
 Ausloeser (SCHEMA-Abfrage im Executor-Ausschnitt von `author-uc`, „keine Duplikate anlegen" in der
 Liste). Zurueckgenommen: die zwei Verbotssaetze im SYSTEM — gemessen wirkungslos. Der Endstand ohne
 diese Saetze ist nicht eigens im Rig gemessen; er unterscheidet sich von gcrun-50..52 nur um sie.
+
+## Nachtrag 2026-09-25 — Modell korrigiert
+
+Die verschachtelte Einordnung (`FUNC-inventory-channel compose FUNC-fund-kontext`, Warnungen R-30/
+RD-05/FC-03 bewusst hingenommen) liess `tests/arch.optimization-dry-run.spike.test.ts` reissen: R-30
+schlug `FCHAIN compose FUNC-fund-kontext` vor — ein Zug mit Topologiewirkung ausserhalb der benannten
+Klassen. Die Reissleine hatte recht. Jetzt flach in `FCHAIN-steering-loop`, mit dem tatsaechlichen
+Eingang (`FLOW-round-prompt -io->`, die Fund-uids des Schritts); ℝ⁶-Zug neutral, uebrig nur R-31
+(kein Ausgangsfluss, wie bei den Stream-Lesern). Spike gruen.
