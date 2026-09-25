@@ -36,7 +36,7 @@ import { EMIT_SUFFIX, GUIDE_HINT, IDLE_NUDGE, SYSTEM, buildRoundInjection, jsonC
 import { extractMutateFromText, extractToolCallFromText, type RecoveredMutate } from './executor-parse.js';
 import { READ_TOOLS, execReadOrGraphTool, pushToolResults } from './executor-tools.js';
 import { bindGateClient, formatGateFeedback, ruleIdsOf, type MutateOutcome } from './executor-gate.js';
-import { materialvermerk, zugvermerk, type Zug } from './zugvermerk.js';
+import { zugvermerk, type Zug } from './zugvermerk.js';
 import { runBestOfNStep } from './executor-bestofn.js';
 import { buildCallModel, buildToolSpecs, toBackendTools } from './executor-backend.js';
 
@@ -206,8 +206,6 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   let stagnation = 0;
   /** CR-GC-614: der Weg, nicht der Verlauf — je Runde EIN Eintrag, begrenzt beim Rendern. */
   const zuege: Zug[] = [];
-  /** CR-GC-663: per read_file Gelesenes, pfad → Inhalt — reist in jede folgende Runde mit. */
-  const gelesen = new Map<string, string>();
   // Fund-Rotation (CR-GC-281): focusKeys, an denen sich das Modell festgefahren
   // hat — ab Stagnations-Schwelle 3 deterministisch zurückgestellt; jeder
   // weitere generate-Call trägt sie als defer, graph_generate rotiert weiter.
@@ -276,7 +274,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // Gesprächsverlauf — den baut die Runde ohnehin neu —, er ersetzt sein Fehlen: ohne ihn
     // versucht die naechste Runde denselben Zug noch einmal, und der Stagnations-Hinweis sagte
     // nur "schon wieder", nicht WAS war.
-    const vermerk = [zugvermerk(zuege), materialvermerk(gelesen)].filter(Boolean).join('\n\n');
+    const vermerk = zugvermerk(zuege);
     // CR-GC-285: Guide-Slice + Element-Index deterministisch vorab injizieren —
     // ersetzt die redundanten Lese-Turns am Rundenstart, nicht die Lese-Tools.
     // CR-GC-651: der Guide-Hinweis steht nur, wenn die Grammatik NICHT eingebettet ist — der
@@ -351,7 +349,6 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
             // der Turn trägt, statt an die Nudge zu fallen (CR-GC-280).
             const toolName = READ_TOOLS[textCall.name] ? textCall.name : 'graphcode_' + canonical;
             const result = await execReadOrGraphTool(registry, workspaceDir, toolName, textCall.input);
-            merkeGelesenes(gelesen, toolName, textCall.input, result);
             trace(`    recovered text tool-call ${canonical}`);
             messages.push({ role: 'assistant', content: resp.text });
             messages.push({
@@ -424,7 +421,6 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         } else {
           const ergebnis = await execReadOrGraphTool(registry, workspaceDir, call.name, call.input);
           results.push(ergebnis);
-          merkeGelesenes(gelesen, call.name, call.input, ergebnis);
           // CR-GC-652: WAS das Modell nachschlaegt, nicht nur DASS. Die Rig-Messung zeigte ~60
           // graph_elements je Lauf, gleich wie die Element-Liste geschnitten war — ohne die
           // Argumente liess sich nicht sagen, ob es sucht, was fehlt, oder prueft, was dasteht.
@@ -470,11 +466,4 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     });
   }
   return stats;
-}
-
-/** CR-GC-663: einen erfolgreichen read_file fuer die folgenden Runden festhalten. */
-function merkeGelesenes(gelesen: Map<string, string>, name: string, input: unknown, ergebnis: string): void {
-  const pfad = (input as { path?: unknown } | null)?.path;
-  if (name !== 'read_file' || typeof pfad !== 'string' || ergebnis.startsWith('ERROR')) return;
-  gelesen.set(pfad, ergebnis);
 }
