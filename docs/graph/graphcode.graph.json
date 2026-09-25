@@ -2242,13 +2242,17 @@
       "id": "CR-GC-660",
       "type": "CR",
       "name": "Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt",
-      "description": "docs/cr/open/CR-GC-660-executor-auf-bestehende-knoten-ueberschr.md"
+      "description": "docs/cr/done/CR-GC-660-executor-auf-bestehende-knoten-ueberschr.md",
+      "status": "done",
+      "commitRef": "22b5514"
     },
     {
       "id": "CR-GC-661",
       "type": "CR",
       "name": "UC-01: qwen schreibt je Batch 1 REQ fuer 1 UC (9 von 11) — das Beispiel setzt die Menge",
-      "description": "docs/cr/open/CR-GC-661-uc-01-qwen-schreibt-je-batch-1-req-fuer-.md"
+      "description": "docs/cr/done/CR-GC-661-uc-01-qwen-schreibt-je-batch-1-req-fuer-.md",
+      "status": "done",
+      "commitRef": "cf834b6"
     },
     {
       "id": "CR-GC-662",
@@ -2260,13 +2264,17 @@
       "id": "CR-GC-663",
       "type": "CR",
       "name": "Executor: Modell liest das Auftragsmaterial jede Runde neu — der Treiber vergisst gelesenes Material",
-      "description": "docs/cr/open/CR-GC-663-executor-modell-liest-das-auftragsmateri.md"
+      "description": "docs/cr/done/CR-GC-663-executor-modell-liest-das-auftragsmateri.md",
+      "status": "done",
+      "commitRef": "6162852"
     },
     {
       "id": "CR-GC-664",
       "type": "CR",
       "name": "Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht",
-      "description": "docs/cr/open/CR-GC-664-executor-fast-jede-runde-beginnt-mit-gra.md"
+      "description": "docs/cr/done/CR-GC-664-executor-fast-jede-runde-beginnt-mit-gra.md",
+      "status": "done",
+      "commitRef": "6162852"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -12989,6 +12997,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-663",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-664",
+      "target": "FUNC-inventory-channel",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -21363,5 +21381,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 465
+  "graphVersion": 466
 }

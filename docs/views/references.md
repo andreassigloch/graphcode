@@ -664,6 +664,8 @@
 | `CR-GC-661` | relation | `FUNC-generation-step` |
 | `CR-GC-662` | relation | `FUNC-call-model` |
 | `CR-GC-662` | relation | `FUNC-read-anthropic-stream` |
+| `CR-GC-663` | relation | `FUNC-run-executor` |
+| `CR-GC-664` | relation | `FUNC-inventory-channel` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-suggest` |
