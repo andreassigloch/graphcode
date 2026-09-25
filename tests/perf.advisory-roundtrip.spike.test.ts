@@ -124,7 +124,20 @@ function buildFixedSizeGraph(base: RawGraph, targetNodes: number): RawGraph {
 // Loaded once at collection time so the test titles can name the size that is
 // actually measured instead of a count inherited from an older model state.
 const REAL_GRAPH = loadRealGraph();
-const FIXED_GRAPH = buildFixedSizeGraph(REAL_GRAPH, FIXED_NODES);
+
+/**
+ * CR-GC-665: the base of the ASSERTING measurements is frozen, not the live SSOT. The promise above —
+ * "same input every run, so a regression is the engine's" — held only for the node COUNT: the copies
+ * were cut from the live model, so every model commit changed which elements sat in the cut copy and
+ * which rules fired. Measured: ONE edge-less CR node (CR-GC-657) moved the 500→2000 growth factor from
+ * under 3 to 3.4–3.6, with identical engine code (bisection over 18 model commits). The fixture is the
+ * SSOT at 3fe69fd, the last state the full suite passed on; the live model is still measured in ①,
+ * report-only. Refresh the fixture only together with a deliberate re-baseline of the thresholds.
+ */
+const BASIS_GRAPH: RawGraph = JSON.parse(
+  readFileSync(join(process.cwd(), 'tests/fixtures/perf-basis.graph.json'), 'utf8'),
+);
+const FIXED_GRAPH = buildFixedSizeGraph(BASIS_GRAPH, FIXED_NODES);
 
 async function measureRound(harness: GraphCodeHarness, impactRootId: string) {
   // ① read -- graph_impact's own engine call
@@ -212,7 +225,7 @@ describe('SPIKE-GC-advisory-roundtrip-latency', () => {
     const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
     harness = new GraphCodeHarness(makeConfig(tmp), storage);
     await harness.initialize();
-    await harness.importGraph(buildFixedSizeGraph(REAL_GRAPH, nodes) as any);
+    await harness.importGraph(buildFixedSizeGraph(BASIS_GRAPH, nodes) as any);
     const rounds: Awaited<ReturnType<typeof measureRound>>[] = [];
     for (let i = 0; i < 3; i++) rounds.push(await measureRound(harness, 'FUNC-mutate'));
     const total = report(label, rounds, nodes);
