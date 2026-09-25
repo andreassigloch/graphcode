@@ -1598,7 +1598,23 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-##### 3.2.3.15  `FUNC-inventory-channel` — buildInventoryBlock
+##### 3.2.3.15  `FUNC-fund-kontext` — fundKontext
+
+Der gerichtete Weg vom Fund zu seinen Kandidaten: ueber compose hinauf bis zum Besitzer (UC oder SYS; ist der Fund selbst einer, nicht weiter), dann hinunter durch den Realisierungsbaum (compose und allocate nur zu FCHAIN, FUNC, MOD, SYS). Gefiltert auf die Fokus-Typen; nennt die Fund-Knoten ohne Besitzer. Rein, ohne Store. (CR-GC-652)
+
+io ◀ `FLOW-round-prompt` · io ▶ — · allocate ▶ `MOD-loop`
+
+###### `REQ-round-prompt-injection` — Der Runden-Prompt traegt Leitfaden und Elementindex
+
+> auch unter: `FUNC-build-round-injection` · `FUNC-inventory-channel`
+
+Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und eine Liste vorhandener Elemente in den Prompt. Nennt der Schritt Funde, kommt die Liste aus deren Kontext: der Weg hinauf zum Besitzer und hinunter durch seine Realisierung; ein Fund ohne Besitzer wird als solcher genannt, nicht durch eine Ersatzliste verdeckt. Ohne Fund gilt der Filter auf die Fokus-Typen. Uebersteigt die Liste ihr Zeichenbudget, wird sie deterministisch gekappt und der Rest als Zahl genannt. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` · allocate ▶ `MOD-loop`
+
+##### 3.2.3.16  `FUNC-inventory-channel` — buildInventoryBlock
 
 Der Inventar-Kanal der Rundeninjektion: welche vorhandenen Knoten das Modell als uid-Liste mitbekommt. Mit Fund aus dessen Kontext (FUNC-fund-kontext), ohne Fund (seed, Task-Einstieg) nach Fokus-Typ, reihum; beide teilen eine Kappe. Hat ein Fund keinen Besitzer, steht das ausdruecklich da statt einer Ersatzliste. Liest ueber graph_elements und graph_get_edges durch deren Schema-Schicht. (CR-GC-652)
 
@@ -1614,23 +1630,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` · allocate ▶ `MOD-loop`
 
-###### 3.2.3.15.1  `FUNC-fund-kontext` — fundKontext
-
-Der gerichtete Weg vom Fund zu seinen Kandidaten: ueber compose hinauf bis zum Besitzer (UC oder SYS; ist der Fund selbst einer, nicht weiter), dann hinunter durch den Realisierungsbaum (compose und allocate nur zu FCHAIN, FUNC, MOD, SYS). Gefiltert auf die Fokus-Typen; nennt die Fund-Knoten ohne Besitzer. Rein, ohne Store. (CR-GC-652)
-
-io ◀ — · io ▶ — · allocate ▶ `MOD-loop`
-
-###### `REQ-round-prompt-injection` — Der Runden-Prompt traegt Leitfaden und Elementindex
-
-> auch unter: `FUNC-build-round-injection` · `FUNC-inventory-channel`
-
-Jede Generierungsrunde bekommt den Autorenleitfaden der gesetzten Fokus-Typen und eine Liste vorhandener Elemente in den Prompt. Nennt der Schritt Funde, kommt die Liste aus deren Kontext: der Weg hinauf zum Besitzer und hinunter durch seine Realisierung; ein Fund ohne Besitzer wird als solcher genannt, nicht durch eine Ersatzliste verdeckt. Ohne Fund gilt der Filter auf die Fokus-Typen. Uebersteigt die Liste ihr Zeichenbudget, wird sie deterministisch gekappt und der Rest als Zahl genannt. Die Injektion ist per Konfiguration abschaltbar, damit ihr Beitrag isoliert messbar bleibt.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` · allocate ▶ `MOD-loop`
-
-##### 3.2.3.16  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
+##### 3.2.3.17  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
 > auch in: `FUNC-block-messwerk`
 
@@ -1648,7 +1648,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-##### 3.2.3.17  `FUNC-compute-readiness` — computeReadiness(graph)
+##### 3.2.3.18  `FUNC-compute-readiness` — computeReadiness(graph)
 
 > auch in: `FCHAIN-skill-report` · `FUNC-block-messwerk`
 
@@ -1674,7 +1674,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · satisfy ◀ `FCHAIN-steering-loop` · `FUNC-arch-fitness` · `FUNC-compute-phase-readiness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-module-metrics` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-##### 3.2.3.18  `FUNC-graph-readiness` — graph_readiness(detail?)
+##### 3.2.3.19  `FUNC-graph-readiness` — graph_readiness(detail?)
 
 > auch in: `FUNC-block-abfrage`
 
@@ -1692,7 +1692,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-##### 3.2.3.19  `FUNC-extract-mutate` — extractMutateFromText
+##### 3.2.3.20  `FUNC-extract-mutate` — extractMutateFromText
 
 > auch in: `FUNC-block-antrieb`
 
@@ -1710,7 +1710,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-extract-mutate` · `FUNC-gate-client` · allocate ▶ `MOD-loop`
 
-##### 3.2.3.20  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
+##### 3.2.3.21  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
 
 > auch in: `FCHAIN-recall` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
 
@@ -1728,7 +1728,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-##### 3.2.3.21  `FUNC-list-elements` — listElements(filter)
+##### 3.2.3.22  `FUNC-list-elements` — listElements(filter)
 
 > auch in: `FCHAIN-agent-query` · `FCHAIN-doc-export` · `FUNC-block-abfrage`
 
@@ -1746,7 +1746,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-projections` · `MOD-surface`
 
-##### 3.2.3.22  `FUNC-load-config` — loadGraphcodeConfig
+##### 3.2.3.23  `FUNC-load-config` — loadGraphcodeConfig
 
 > auch in: `FUNC-block-ruestzeug`
 
@@ -1762,7 +1762,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-target-profile` (integration) · `TEST-thresholds-from-config` (unit) · satisfy ◀ `FUNC-load-config` · allocate ▶ `MOD-kernel`
 
-##### 3.2.3.23  `FUNC-nd-similarity` — duplicateHits
+##### 3.2.3.24  `FUNC-nd-similarity` — duplicateHits
 
 > auch in: `FUNC-block-antrieb`
 
@@ -1778,7 +1778,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-nd-similarity` (unit) · satisfy ◀ `FUNC-nd-similarity` · allocate ▶ `MOD-kernel-measure`
 
-##### 3.2.3.24  `FUNC-read-anthropic-stream` — leseAnthropicAntwort
+##### 3.2.3.25  `FUNC-read-anthropic-stream` — leseAnthropicAntwort
 
 Liest die Antwort von /v1/messages gestreamt (SSE) oder am Stueck und setzt Denk-Bloecke samt Signatur, Text, stueckweises Werkzeug-JSON, Stop-Grund und Zaehlung zur Nicht-Streaming-Form zusammen; die Vertragspruefung bleibt danach die eine Stelle. Gestreamt, weil Nodes fetch nach 300 s ohne Antwortkopf abbricht. (CR-GC-662)
 
@@ -1794,7 +1794,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-call-model` · `FUNC-read-anthropic-stream` · `FUNC-read-openai-stream` · `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-loop` · `MOD-surface`
 
-##### 3.2.3.25  `FUNC-read-openai-stream` — leseOpenAiAntwort
+##### 3.2.3.26  `FUNC-read-openai-stream` — leseOpenAiAntwort
 
 Liest die Antwort von /v1/chat/completions gestreamt (SSE) oder am Stueck und setzt Text, Denken, stueckweise Werkzeug-Argumente und Zaehlung zur selben Drahtform zusammen; die Vertragspruefung bleibt danach die eine Stelle. Gestreamt, weil Nodes fetch nach 300 s ohne Antwortkopf abbricht. (CR-GC-656)
 
@@ -1810,7 +1810,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-call-model` · `FUNC-read-anthropic-stream` · `FUNC-read-openai-stream` · `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-loop` · `MOD-surface`
 
-##### 3.2.3.26  `FUNC-run-verb` — executeRun
+##### 3.2.3.27  `FUNC-run-verb` — executeRun
 
 > auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-bedienung`
 
@@ -1828,7 +1828,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-call-model` · `FUNC-read-anthropic-stream` · `FUNC-read-openai-stream` · `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-loop` · `MOD-surface`
 
-##### 3.2.3.27  `FUNC-target-profile` — Skill se:target-profile
+##### 3.2.3.28  `FUNC-target-profile` — Skill se:target-profile
 
 > auch in: `FCHAIN-skill-authoring` · `FUNC-block-autorieren`
 
@@ -1846,7 +1846,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FCHAIN-skill-authoring` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.2.3.28  `FUNC-target-profile-load` — loadTargetProfile
+##### 3.2.3.29  `FUNC-target-profile-load` — loadTargetProfile
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FUNC-block-q-improvement`
 
@@ -6660,7 +6660,7 @@ io ◀ `FUNC-build-round-injection` · io ▶ `FUNC-run-executor` · schema ▶ 
 
 Die vom Runden-Waehler abgeleitete naechste Runde fuer den Executor: Fokus-Dimension, Fokus-Typen, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
-io ◀ `FUNC-generation-step` · io ▶ `FUNC-build-round-injection` · `FUNC-inventory-channel` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
+io ◀ `FUNC-generation-step` · io ▶ `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-inventory-channel` · `FUNC-rank-candidates` · `FUNC-run-executor` · schema ▶ `SCHEMA-generation-step`
 
 ### 4.103  `FLOW-rule-findings` — Regelbefunde
 

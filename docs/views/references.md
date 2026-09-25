@@ -832,6 +832,7 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-steering-delta` |
 | `FCHAIN-steering-loop` | compose | `FUNC-extract-mutate` |
 | `FCHAIN-steering-loop` | compose | `FUNC-fit-advisory` |
+| `FCHAIN-steering-loop` | compose | `FUNC-fund-kontext` |
 | `FCHAIN-steering-loop` | compose | `FUNC-gate-client` |
 | `FCHAIN-steering-loop` | compose | `FUNC-generation-step` |
 | `FCHAIN-steering-loop` | compose | `FUNC-graph-readiness` |
@@ -1149,6 +1150,7 @@
 | `FLOW-round-injection` | io | `FUNC-run-executor` |
 | `FLOW-round-injection` | relation | `SCHEMA-round-injection` |
 | `FLOW-round-prompt` | io | `FUNC-build-round-injection` |
+| `FLOW-round-prompt` | io | `FUNC-fund-kontext` |
 | `FLOW-round-prompt` | io | `FUNC-inventory-channel` |
 | `FLOW-round-prompt` | io | `FUNC-rank-candidates` |
 | `FLOW-round-prompt` | io | `FUNC-run-executor` |
@@ -1558,7 +1560,6 @@
 | `FUNC-import-doc` | io | `FLOW-mutate-cmd-import-doc` |
 | `FUNC-import-doc` | satisfy | `REQ-no-extraction` |
 | `FUNC-inventory-channel` | allocate | `MOD-loop` |
-| `FUNC-inventory-channel` | compose | `FUNC-fund-kontext` |
 | `FUNC-inventory-channel` | io | `FLOW-channel-inventory` |
 | `FUNC-inventory-channel` | satisfy | `REQ-round-prompt-injection` |
 | `FUNC-list-elements` | allocate | `MOD-kernel` |

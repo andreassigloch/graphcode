@@ -13927,6 +13927,11 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-fund-kontext",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-gate-client",
       "type": "compose"
     },
@@ -15549,6 +15554,11 @@
       "target": "FUNC-build-round-injection",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-round-prompt",
+      "target": "FUNC-fund-kontext",
+      "type": "io"
     },
     {
       "source": "FLOW-round-prompt",
@@ -17667,11 +17677,6 @@
       "source": "FUNC-inventory-channel",
       "target": "MOD-loop",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-inventory-channel",
-      "target": "FUNC-fund-kontext",
-      "type": "compose"
     },
     {
       "source": "FUNC-inventory-channel",
@@ -21381,5 +21386,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 466
+  "graphVersion": 467
 }
