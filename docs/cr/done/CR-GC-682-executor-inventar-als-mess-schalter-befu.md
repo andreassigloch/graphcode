@@ -1,6 +1,6 @@
 # CR-GC-682: Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-26)
 **Typ:** aus Item ITEM-2026-599 (idea)
 **Erstellt:** 2026-09-26
 **Item:** bok/items/ITEM-2026-599.json (Lane: code)
