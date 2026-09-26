@@ -93,8 +93,15 @@ export function arbeitsmengeAusAudit(entries: readonly AuditEntry[]): Arbeitsmen
 export interface Umfang {
   /** 'arbeitsmenge' = auf die eigenen Schreibzüge geschnitten · 'ganzes-modell' = kein Schnitt. */
   art: 'arbeitsmenge' | 'ganzes-modell';
-  /** Die uids, auf die geschnitten wurde (leer bei 'ganzes-modell'). */
-  uids: string[];
+  /**
+   * Wie viele uids die Scheibe umfasst (0 bei 'ganzes-modell') — die ZAHL, nicht die Liste.
+   *
+   * CR-GC-689: bis dahin stand hier die uid-Liste selbst. Gemessen am Prosa-Lauf `opus5-17`: ein
+   * Spezifikationslauf schreibt ueberall, die Arbeitsmenge IST das Modell (299 bzw. 339 uids bei
+   * `ausserhalb: 0`), und der Ausweis kostete 8.418 bzw. 9.557 der 12.509 bzw. 12.039 Zeichen der
+   * Antwort. Die Liste sagte dem Agenten nichts Neues — es sind seine eigenen Schreibzuege.
+   */
+  elemente: number;
   /** Wie viele Treffer AUSSERHALB der Scheibe liegen — die Zahl, nicht der Inhalt. */
   ausserhalb: number;
 }
@@ -112,7 +119,7 @@ export function schneide<T>(
   elementVon: (x: T) => string | undefined,
 ): { genommen: T[]; umfang: Umfang } {
   if (arbeitsmenge.uids.length === 0) {
-    return { genommen: [...alle], umfang: { art: 'ganzes-modell', uids: [], ausserhalb: 0 } };
+    return { genommen: [...alle], umfang: { art: 'ganzes-modell', elemente: 0, ausserhalb: 0 } };
   }
   const menge = new Set(arbeitsmenge.uids);
   const genommen = alle.filter((x) => {
@@ -121,7 +128,7 @@ export function schneide<T>(
   });
   return {
     genommen,
-    umfang: { art: 'arbeitsmenge', uids: arbeitsmenge.uids, ausserhalb: alle.length - genommen.length },
+    umfang: { art: 'arbeitsmenge', elemente: arbeitsmenge.uids.length, ausserhalb: alle.length - genommen.length },
   };
 }
 

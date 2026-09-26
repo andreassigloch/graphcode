@@ -194,7 +194,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'The work list: what is broken and how to fix it. Every finding carries its `fixHint` and its ' +
       'candidate targets, so the repair needs no follow-up query. Take it to REPAIR; take ' +
       'rules_evaluate to see what the judgement could not evaluate. Scope (CR-GC-613): answers over ' +
-      'the uids this session WROTE — `umfang` names the slice and counts what lies outside; no write ' +
+      'the uids this session WROTE — `umfang` sizes the slice and counts what lies outside; no write ' +
       'moves yet = whole model. `total` counts only the evaluated rules, so read it with `skipped`.',
     inputSchema: RulesGetViolationsInputSchema,
     async handler(input) {

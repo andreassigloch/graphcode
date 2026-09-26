@@ -173,6 +173,10 @@ export const EXCLUDED = {
     '(`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene SSOT. Eine\n' +
     'Aenderung an graphcodes Modell kann ihn nicht rot machen; eine am Schnitt der Lesewerkzeuge\n' +
     'oder am Format-E-Serialisierer sehr wohl.',
+  'tests/working-set.spezlauf.test.ts':
+    'CR-GC-689: misst den Umfang-Ausweis der Lesewerkzeuge nach einem Zug ueber das GANZE GOLDEN\n' +
+    'EINES RIG-KORPUS (`sigllm-v98`), nie graphcodes eigene SSOT. Eine Aenderung an graphcodes\n' +
+    'Modell kann ihn nicht rot machen; eine am Ausweis (`Umfang`) sehr wohl.',
   'tests/steer-optimum.test.ts':
     'CR-GC-608: liest den sigllm-Golden als Eingabe fuer das Fertig-Kriterium der Steuerregeln — Maschinen-Test, kein Modell-TEST',
   'tests/generate.task.test.ts':

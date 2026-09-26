@@ -164,7 +164,7 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
       'both, so a reviewer read "verified" where the graph only claimed "linked" (72 of 72 REQ on ' +
       'this repo). The summary carries withVerifyTrace / passed / neverRun / failed side by side so ' +
       'the gap is a number, not a footnote. Read-only. SCOPE (CR-GC-613): answers over the uids ' +
-      'this session WROTE (plus the REQ they satisfy); `umfang` names the slice taken and how many ' +
+      'this session WROTE (plus the REQ they satisfy); `umfang` sizes the slice taken and how many ' +
       'rows lie outside it. No write moves yet = whole model.',
     inputSchema: GraphTestReportInputSchema,
     async handler(_input) {

@@ -93,7 +93,7 @@ describe('CR-GC-613: nach einem Schreibzug schneiden die Werkzeuge', () => {
   it('rules_get_violations antwortet ueber die Scheibe und nennt den Rest als ZAHL', async () => {
     const v = await tools.rules_get_violations.handler({ severity: 'warning' });
     expect(v.umfang.art).toBe('arbeitsmenge');
-    expect(v.umfang.uids).toContain(SCHEIBE);
+    expect(v.umfang.elemente).toBeGreaterThan(0);
     // Der Rest faellt nicht weg — er wird zur Zahl.
     expect(v.umfang.ausserhalb).toBeGreaterThan(0);
     // `total` zaehlt die GELIEFERTEN, nie doppelt mit `ausserhalb`.

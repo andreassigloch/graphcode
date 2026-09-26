@@ -70,13 +70,13 @@ describe('CR-GC-613: schneide — der Umfang steht IN der Antwort', () => {
   it('ohne Schreibzug: das ganze Modell, unveraendertes Verhalten', () => {
     const { genommen, umfang } = schneide(funde, { uids: [], zuege: 0 }, von);
     expect(genommen).toEqual(funde);
-    expect(umfang).toEqual({ art: 'ganzes-modell', uids: [], ausserhalb: 0 });
+    expect(umfang).toEqual({ art: 'ganzes-modell', elemente: 0, ausserhalb: 0 });
   });
 
   it('mit Schreibzuegen: nur die Scheibe, und der Rest als ZAHL', () => {
     const { genommen, umfang } = schneide(funde, { uids: ['A'], zuege: 1 }, von);
     expect(genommen).toEqual([{ elementId: 'A' }]);
-    expect(umfang).toEqual({ art: 'arbeitsmenge', uids: ['A'], ausserhalb: 2 });
+    expect(umfang).toEqual({ art: 'arbeitsmenge', elemente: 1, ausserhalb: 2 });
   });
 
   it('ein Treffer ohne Element faellt heraus und wird als ausserhalb gezaehlt, nie stillschweigend mitgenommen', () => {
