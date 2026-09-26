@@ -516,6 +516,8 @@ function authorViaGraphcodeRun(dir, arm) {
     GRAPHCODE_LLM_MAX_ROUNDS: String(arm.maxRounds),
     GRAPHCODE_LLM_CANDIDATES: String(arm.candidates),
     GRAPHCODE_LLM_TIMEOUT_MS: String(CFG.timeoutMs),
+    // CR-GC-682: Zuschnitt des Inventar-Kanals (fund|index|faltung); leer = Default des Executors.
+    ...(process.env.GCRUN_INVENTORY ? { GRAPHCODE_LLM_INVENTORY: process.env.GCRUN_INVENTORY } : {}),
   };
   const t0 = Date.now();
   const r = spawnSync('node', [join(GC_ROOT, 'dist', 'cli.js'), 'run', buildIntent()], {

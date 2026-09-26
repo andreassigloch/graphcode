@@ -102,6 +102,10 @@ export const ExecutorConfigSchema = z.object({
    * Elementzahl/Turn-Profil zu messen (Nachtrag executor-abschlussbericht.md Punkt 3:
    * "Injektion nützt Frontier, hungert Local aus" war mit CR-284 konfundiert). */
   injection: z.boolean().default(true),
+  /** Mess-Schalter (CR-GC-682): Zuschnitt des Inventar-Kanals — `fund` (Befund-Kontext, CR-GC-652),
+   * `index` (jeder Knoten als Identitaetszeile), `faltung` (Compose-Faltung um den Fund + uid-Index).
+   * Nachspiel SPIKE-GC-compose-faltung: der Fund-Kontext verfehlt in 53 % der Mutationen ein Ziel. */
+  inventory: z.enum(['fund', 'index', 'faltung']).default('fund'),
   /** Denk-Budget von Reasoning-Modellen (Qwen3.8: xhigh|medium|low, OpenAI-kompatibel
    * als `reasoning_effort` im Request). Gemessen an qwen3.8-27b@4bit (M4 Pro, 14,8 tok/s):
    * ohne den Schalter denkt das Modell 815 Reasoning-Token pro Call (68 s), mit 'low'
@@ -325,7 +329,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // CR-GC-651: der Guide-Hinweis steht nur, wenn die Grammatik NICHT eingebettet ist — der
     // Auftrag aus graph_generate sagt im Treiber-Modus nichts dazu, weil nur der Treiber weiss,
     // ob er sie einbettet. Ein Schreiber je Tatsache (CR-GC-358), und zwar der, der sie kennt.
-    const injection = config.injection ? await buildRoundInjection(registry, gen) : GUIDE_HINT;
+    const injection = config.injection ? await buildRoundInjection(registry, gen, config.inventory) : GUIDE_HINT;
     const baseContent =
       gen.prompt +
       (injection ? '\n\n' + injection : '') +

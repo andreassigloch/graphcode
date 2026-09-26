@@ -15,7 +15,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { skillDatei, type GenerationStep } from './generate.js';
 import { byRank, type ChannelBlock } from './channel-rank.js';
-import { buildInventoryBlock } from './executor-inventory.js';
+import { buildInventoryBlock, type InventarModus } from './executor-inventory.js';
 import { decision } from './decisions.js';
 
 // ---------------------------------------------------------------------------
@@ -287,8 +287,9 @@ function readSkillBody(skill: { name: string; file: string }): string | null {
 export async function buildRoundInjection(
   registry: MCPToolRegistry,
   step: Pick<GenerationStep, 'focusTypes' | 'focusElements' | 'skill'>,
+  inventar: InventarModus = 'fund',
 ): Promise<string> {
-  return (await buildRoundChannels(registry, step)).map((b) => b.text).join('\n\n');
+  return (await buildRoundChannels(registry, step, inventar)).map((b) => b.text).join('\n\n');
 }
 
 /**
@@ -302,6 +303,7 @@ export async function buildRoundInjection(
 export async function buildRoundChannels(
   registry: MCPToolRegistry,
   step: Pick<GenerationStep, 'focusTypes' | 'focusElements' | 'skill'>,
+  inventarModus: InventarModus = 'fund',
 ): Promise<ChannelBlock[]> {
   // CR-GC-575: die Bloecke tragen ihren Kanal und werden am Ende nach Rang sortiert —
   // die Reihenfolge des Rundenprompts folgt der Verbindlichkeit, nicht der Reihenfolge,
@@ -338,7 +340,7 @@ export async function buildRoundChannels(
 
   // Der Element-Index (CR-GC-285) — seit CR-GC-652 in executor-inventory.ts: mit Fund aus dessen
   // Kontext (gerichteter Weg zum Besitzer), ohne Fund (Seed) nach Fokus-Typ.
-  const inventar = await buildInventoryBlock(registry, step);
+  const inventar = await buildInventoryBlock(registry, step, inventarModus);
   if (inventar) blocks.push(inventar);
   // -------------------------------------------------------------------------
   // (c) Die Vorlagen-Empfehlungen (CR-GC-556). ANREICHERUNG, keine zweite Liste:

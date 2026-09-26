@@ -2383,6 +2383,60 @@
       "description": "docs/cr/open/CR-GC-681-neue-artikelserie-u-ber-konzept-aufbau-u.md"
     },
     {
+      "id": "CR-GC-682",
+      "type": "CR",
+      "name": "Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung",
+      "description": "docs/cr/open/CR-GC-682-executor-inventar-als-mess-schalter-befu.md"
+    },
+    {
+      "id": "CR-GC-683",
+      "type": "CR",
+      "name": "Konformanz-Extraktor sieht nur <repo>/src und relative Imports - im Monorepo sigloch-modules 0 Import-Endpunkte, RC-05 und RC-09 dort blind",
+      "description": "docs/cr/done/CR-GC-683-konformanz-extraktor-sieht-nur-repo-src-.md"
+    },
+    {
+      "id": "CR-GC-684",
+      "type": "CR",
+      "name": "Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst",
+      "description": "docs/cr/open/CR-GC-684-die-vorschlagsform-kann-keine-knoten-anl.md"
+    },
+    {
+      "id": "CR-GC-685",
+      "type": "CR",
+      "name": "MCP-Schreibflaeche auf Format-E reduzieren: graph_realize und commands-Parameter raus, graph_merge-Beschreibung falsch (beschreibt Knoten-Merge statt Branch-Replay)",
+      "description": "docs/cr/open/CR-GC-685-mcp-schreibflaeche-auf-format-e-reduzier.md"
+    },
+    {
+      "id": "CR-GC-686",
+      "type": "CR",
+      "name": "Vorbilder und Werkzeugtexte auf Format-E: Skills, SCHEMA-01-fixHint, graph_merge-Beschreibung",
+      "description": "docs/cr/open/CR-GC-686-vorbilder-und-werkzeugtexte-auf-format-e.md"
+    },
+    {
+      "id": "CR-GC-687",
+      "type": "CR",
+      "name": "intentCoverage nennt Stoppwoerter als fehlende Konzepte: der Rundenprompt fordert Use Cases fuer 'spezifiziere', 'bis', 'liegt' — Tokenisierung des Auftragstextes ohne Wortartfilter",
+      "description": "docs/cr/open/CR-GC-687-intentcoverage-nennt-stoppwoerter-als-fe.md"
+    },
+    {
+      "id": "CR-GC-688",
+      "type": "CR",
+      "name": "seed:actor lieferte 8 Actors aus abgeschnittener Antwort",
+      "description": "docs/cr/open/CR-GC-688-seed-actor-lieferte-8-actors-aus-abgesch.md"
+    },
+    {
+      "id": "CR-GC-689",
+      "type": "CR",
+      "name": "rules_get_violations ist mit 12.274 Zeichen je Aufruf der groesste Einzelposten des Prosa-Laufs opus5-17 (opus5-16 bei gleicher Eingabe: 2.042) — der Arbeitsmengen-Schnitt aus CR-GC-613 beisst nicht, wenn die Sitzung ueberall geschrieben hat, und genau das tut ein Spezifikationslauf",
+      "description": "docs/cr/open/CR-GC-689-rules-get-violations-ist-mit-12-274-zeic.md"
+    },
+    {
+      "id": "CR-GC-690",
+      "type": "CR",
+      "name": "Hausregel 'im headless-Lauf keine Rueckfrage' steht in GRAPHCODE.md, wird aber nicht durchgesetzt: opus5-0 rief AskUserQuestion zu einer selbst als Rauschen gemessenen Entscheidung",
+      "description": "docs/cr/open/CR-GC-690-hausregel-im-headless-lauf-keine-rueckfr.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3796,6 +3850,18 @@
       }
     },
     {
+      "id": "FUNC-compose-faltung",
+      "type": "FUNC",
+      "name": "Compose-Faltung",
+      "description": "Der Graph als Blackbox-Baum um eine Saat: Baum aus compose, Knoten ausserhalb haengen an ihrem Eigner (verify, io, relation, satisfy, allocate); offen sind Saat, Teilbaum und Vorfahren, Box sind die Geschwister auf dem Weg und die Wurzeln, alle uebrigen als nackter uid-Index. Rein, ohne Store. (CR-GC-682)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/faltung.ts",
+        "symbol": "faltung",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-compute-phase-readiness",
       "type": "FUNC",
       "name": "computePhaseReadiness(violations)",
@@ -4242,7 +4308,7 @@
       "id": "FUNC-inventory-channel",
       "type": "FUNC",
       "name": "buildInventoryBlock",
-      "description": "Der Inventar-Kanal der Rundeninjektion: welche vorhandenen Knoten das Modell als uid-Liste mitbekommt. Mit Fund aus dessen Kontext (FUNC-fund-kontext), ohne Fund (seed, Task-Einstieg) nach Fokus-Typ, reihum; beide teilen eine Kappe. Hat ein Fund keinen Besitzer, steht das ausdruecklich da statt einer Ersatzliste. Liest ueber graph_elements und graph_get_edges durch deren Schema-Schicht. (CR-GC-652)",
+      "description": "Der Inventar-Kanal der Rundeninjektion: welche vorhandenen Knoten das Modell mitbekommt. Zuschnitt per Mess-Schalter (CR-GC-682): fund = mit Fund aus dessen Kontext (FUNC-fund-kontext), ohne Fund nach Fokus-Typ, reihum, gekappt; index = jeder Knoten als Identitaetszeile ohne Kappe; faltung = der Graph gefaltet um den Fund (FUNC-compose-faltung), ohne Fund der volle Index. Hat ein Fund keinen Besitzer, steht das ausdruecklich da statt einer Ersatzliste. Liest ueber graph_elements und graph_get_edges durch deren Schema-Schicht. (CR-GC-652, CR-GC-682)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor-inventory.ts",
@@ -5559,6 +5625,16 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-inventory-switch",
+      "type": "REQ",
+      "name": "Inventar-Zuschnitt waehlbar",
+      "description": "Der Zuschnitt der Element-Liste im Rundenprompt ist per Konfiguration waehlbar: Kontext des Funds, voller Identitaetsindex aller Knoten, oder der Graph gefaltet um den Fund mit offenem Ast, zugeklappten Nachbar-Aesten und einem uid-Index des Rests. Der Default bleibt der Kontext des Funds, damit jeder andere Zuschnitt gegen ihn messbar ist.",
+      "status": "done",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -8252,6 +8328,26 @@
       "level": "inspection",
       "tool": "jq/grep",
       "constraint": "every FLOW relation SCHEMA"
+    },
+    {
+      "id": "TEST-inventory-modes",
+      "type": "TEST",
+      "name": "Inventar-Zuschnitte pruefen",
+      "description": "Je Zuschnitt die Element-Liste gegen einen gespeicherten Graphen mit zwei Aesten: Fund-Kontext unveraendert, voller Index nennt den fremden Ast, Faltung zeigt den Ast des Funds mit Wortlaut, den Nachbar-Ast als Box und dessen Inneres als uid; der Schalter wirkt ueber die Konfiguration bis in den Rundenprompt. Dazu die Faltung rein: Baum, Eigner, Zyklus, unbekannte Saat.",
+      "testRefs": [
+        {
+          "file": "tests/executor-inventory.modes.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed"
+        },
+        {
+          "file": "tests/faltung.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
+        }
+      ]
     },
     {
       "id": "TEST-learning-emit",
@@ -13200,6 +13296,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-682",
+      "target": "FUNC-compose-faltung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-682",
+      "target": "FUNC-inventory-channel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-682",
+      "target": "REQ-inventory-switch",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-683",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -14093,6 +14209,11 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-call-model",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-compose-faltung",
       "type": "compose"
     },
     {
@@ -15775,6 +15896,11 @@
     },
     {
       "source": "FLOW-round-prompt",
+      "target": "FUNC-compose-faltung",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-round-prompt",
       "target": "FUNC-fund-kontext",
       "type": "io"
     },
@@ -17143,6 +17269,16 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-compose-faltung",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-compose-faltung",
+      "target": "REQ-inventory-switch",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-compute-phase-readiness",
       "target": "MOD-kernel-measure",
       "type": "allocate"
@@ -17900,6 +18036,11 @@
       "source": "FUNC-inventory-channel",
       "target": "FLOW-channel-inventory",
       "type": "io"
+    },
+    {
+      "source": "FUNC-inventory-channel",
+      "target": "REQ-inventory-switch",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-inventory-channel",
@@ -20223,6 +20364,11 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-inventory-modes",
+      "target": "REQ-inventory-switch",
+      "type": "verify"
+    },
+    {
       "source": "TEST-learning-emit",
       "target": "REQ-post-emit-trajectory",
       "type": "verify"
@@ -21514,6 +21660,11 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-inventory-switch",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-one-driver-local-and-frontier",
       "type": "compose"
     },
@@ -21624,5 +21775,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 492
+  "graphVersion": 504
 }

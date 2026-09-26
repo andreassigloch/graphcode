@@ -5,7 +5,11 @@ Auswertung: `node rig/greenfield-systemtest/faltung.mjs` (Nachspiel, kein LLM, 0
 
 ## Verdikt
 
-**Die Faltung trägt — aber nur mit einem ID-Index der verborgenen Knoten.** Gefaltet wie
+> **Nachtrag nach dem echten Lauf (CR-GC-682):** im Lauf verliert die Faltung gegen den flachen
+> Index mit `type · name` — die nackte uid reicht dem Modell nicht, es schlägt nach. Siehe
+> „Echter Lauf“ unten. Das Folgende ist das Urteil des Nachspiels.
+
+**Im Nachspiel trägt die Faltung — aber nur mit einem ID-Index der verborgenen Knoten.** Gefaltet wie
 vorgeschlagen (Arbeitsast offen, Geschwister als Box, Rest verborgen), braucht jede vierte
 Mutation etwas, das nicht zu sehen war. Fast immer war das nur eine **uid** für eine Kante in
 einen anderen Ast. Hängt man die verborgenen Knoten als reine uid-Liste an, muss nur noch
@@ -61,6 +65,15 @@ Nachspiel misst, **wie breit** gearbeitet wurde, nicht **wer die Faltung braucht
 Frage entscheidet das Kontextfenster: Frontier hat es, das lokale Modell mit 32k nicht
 (CR-SL-091: OpenCode verdichtete bei 32k 113-mal und verlor dabei den offenen Punkt). Die
 Vermutung „nur der Executor“ ist damit plausibel, aber nicht hier belegt.
+
+## Echter Lauf (CR-GC-682)
+
+Das Nachspiel hatte eine Grenze benannt: ob ein Modell mit einer **nackten uid** auskommt. Der
+echte Lauf (qwen3-coder, je 3×, Korpus `sigllm-gcrun`) verneint das: die Faltung brachte die
+wenigsten Elemente (Median 83) bei den meisten Lese-Aufrufen (1 614) — das Modell schlug die uids
+nach. Der **flache Index mit `type · name`** gewann (126 Elemente, 861 Lese-Aufrufe, gegen 112 /
+1 259 beim heutigen Befund-Kontext). Die tragende Einsicht des Spikes ist also der vollständige
+Index, nicht die Faltung — und der Index braucht einen Namen je Zeile.
 
 ## Grenzen
 

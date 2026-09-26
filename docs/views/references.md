@@ -674,6 +674,10 @@
 | `CR-GC-667` | relation | `FUNC-run-executor` |
 | `CR-GC-667` | relation | `FUNC-run-verb` |
 | `CR-GC-667` | relation | `REQ-open-point-asked` |
+| `CR-GC-682` | relation | `FUNC-compose-faltung` |
+| `CR-GC-682` | relation | `FUNC-inventory-channel` |
+| `CR-GC-682` | relation | `REQ-inventory-switch` |
+| `CR-GC-683` | relation | `FUNC-check-code-conformance` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -836,6 +840,7 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-authoring-guide` |
 | `FCHAIN-steering-loop` | compose | `FUNC-build-round-injection` |
 | `FCHAIN-steering-loop` | compose | `FUNC-call-model` |
+| `FCHAIN-steering-loop` | compose | `FUNC-compose-faltung` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-phase-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-steering-delta` |
@@ -1163,6 +1168,7 @@
 | `FLOW-round-injection` | io | `FUNC-run-executor` |
 | `FLOW-round-injection` | relation | `SCHEMA-round-injection` |
 | `FLOW-round-prompt` | io | `FUNC-build-round-injection` |
+| `FLOW-round-prompt` | io | `FUNC-compose-faltung` |
 | `FLOW-round-prompt` | io | `FUNC-fund-kontext` |
 | `FLOW-round-prompt` | io | `FUNC-inventory-channel` |
 | `FLOW-round-prompt` | io | `FUNC-rank-candidates` |
@@ -1434,6 +1440,8 @@
 | `FUNC-collect-status` | allocate | `MOD-surface` |
 | `FUNC-collect-status` | io | `FLOW-install-result-collect-status` |
 | `FUNC-collect-status` | satisfy | `REQ-real-health-check` |
+| `FUNC-compose-faltung` | allocate | `MOD-loop` |
+| `FUNC-compose-faltung` | satisfy | `REQ-inventory-switch` |
 | `FUNC-compute-phase-readiness` | allocate | `MOD-kernel-measure` |
 | `FUNC-compute-phase-readiness` | io | `FLOW-phase-readiness` |
 | `FUNC-compute-phase-readiness` | satisfy | `REQ-steering-from-metrics` |
@@ -1574,6 +1582,7 @@
 | `FUNC-import-doc` | satisfy | `REQ-no-extraction` |
 | `FUNC-inventory-channel` | allocate | `MOD-loop` |
 | `FUNC-inventory-channel` | io | `FLOW-channel-inventory` |
+| `FUNC-inventory-channel` | satisfy | `REQ-inventory-switch` |
 | `FUNC-inventory-channel` | satisfy | `REQ-round-prompt-injection` |
 | `FUNC-list-elements` | allocate | `MOD-kernel` |
 | `FUNC-list-elements` | io | `FLOW-element-slice` |
@@ -2005,6 +2014,7 @@
 | `TEST-interface-escalation` | verify | `REQ-post-interface-escalation` |
 | `TEST-interface-escalation` | verify | `REQ-pre-interface-escalation` |
 | `TEST-interface-schema` | verify | `REQ-interface-schema` |
+| `TEST-inventory-modes` | verify | `REQ-inventory-switch` |
 | `TEST-learning-emit` | verify | `REQ-post-emit-trajectory` |
 | `TEST-learning-emit` | verify | `REQ-pre-emit-trajectory` |
 | `TEST-learning-emit` | verify | `REQ-trajectory-emit` |
@@ -2243,6 +2253,7 @@
 | `UC-reduced-llm` | compose | `REQ-advisory-roundtrip-latency` |
 | `UC-reduced-llm` | compose | `REQ-cache-layering` |
 | `UC-reduced-llm` | compose | `REQ-graph-context-replaces-reading` |
+| `UC-reduced-llm` | compose | `REQ-inventory-switch` |
 | `UC-reduced-llm` | compose | `REQ-one-driver-local-and-frontier` |
 | `UC-reduced-llm` | compose | `REQ-post-agent-query` |
 | `UC-reduced-llm` | compose | `REQ-post-modelfree-gate` |

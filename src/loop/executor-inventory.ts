@@ -17,6 +17,7 @@ import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { ChannelBlock } from './channel-rank.js';
 import type { GenerationStep } from './generate.js';
 import { fundKontext, type KontextKante, type KontextKnoten } from './fund-kontext.js';
+import { faltung, type FaltKante, type FaltKnoten } from './faltung.js';
 
 /** Zeichen-Budget des Element-Index (~2k-Token-Äquivalent). Überschreitung ⇒ harte Kappe von vorn, angesagt. */
 export const INDEX_CHAR_BUDGET = 8000;
@@ -36,14 +37,29 @@ function gekappt(lines: string[]): { lines: string[]; rest: number } {
   return { lines, rest: 0 };
 }
 
+/**
+ * Der Zuschnitt des Inventars — ein Mess-Schalter (CR-GC-682), kein Betriebsmodus:
+ *   - `fund`    — wie oben beschrieben (Default, CR-GC-652).
+ *   - `index`   — jeder Knoten als Identitaetszeile, ohne Kappe. Das Nachspiel zeigte: der Fund-Kontext
+ *                 verfehlt in 53 % der Mutationen einen Knoten, den sie anfasst; der volle Index keinen,
+ *                 bei 24 % der Groesse des vollen Graphen.
+ *   - `faltung` — der Graph gefaltet um den Fund (faltung.ts): Arbeitsast mit Beschreibung offen,
+ *                 Geschwister als Box, der Rest als uid-Index. Ohne Fund gibt es keinen Ast — dann
+ *                 derselbe volle Index.
+ */
+export type InventarModus = 'fund' | 'index' | 'faltung';
+
 export async function buildInventoryBlock(
   registry: MCPToolRegistry,
   step: Pick<GenerationStep, 'focusTypes' | 'focusElements'>,
+  modus: InventarModus = 'fund',
 ): Promise<ChannelBlock | null> {
   const elementsTool = registry['graph_elements'];
   if (!elementsTool) return null;
   try {
     const fund = step.focusElements ?? [];
+    if (modus === 'faltung' && fund.length > 0) return await gefaltet(registry, fund);
+    if (modus !== 'fund') return await vollerIndex(registry);
     return fund.length > 0 ? await ausFundKontext(registry, fund, step.focusTypes ?? []) : await nachTyp(registry, step.focusTypes ?? []);
   } catch {
     // Index optional — Injektion darf den Lauf nie brechen
@@ -85,6 +101,52 @@ async function ausFundKontext(
     );
   }
   return { channel: 'inventory', text: zeilen.join('\n') };
+}
+
+/** Alle Knoten und Kanten, durch die deklarierte Schema-Schicht. */
+async function alles(
+  registry: MCPToolRegistry,
+  prosa: boolean,
+): Promise<{ knoten: FaltKnoten[]; kanten: FaltKante[] }> {
+  const elementsTool = registry['graph_elements'];
+  const res = (await elementsTool.handler(elementsTool.inputSchema.parse({ limit: 1_000_000, prosa }))) as {
+    nodes?: FaltKnoten[];
+  };
+  const edgesTool = registry['graph_get_edges'];
+  const kanten = edgesTool
+    ? (((await edgesTool.handler(edgesTool.inputSchema.parse({}))) as { edges?: FaltKante[] }).edges ?? [])
+    : [];
+  return { knoten: res.nodes ?? [], kanten };
+}
+
+async function vollerIndex(registry: MCPToolRegistry): Promise<ChannelBlock | null> {
+  const { knoten } = await alles(registry, false);
+  if (knoten.length === 0) return null;
+  const zeilen = [...knoten].sort((a, b) => a.uid.localeCompare(b.uid)).map(toLine);
+  return {
+    channel: 'inventory',
+    text:
+      'Element-Index des ganzen Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT ' +
+      'aufrufen; existierende uids für Kanten referenzieren, graph_get_node für den Wortlaut):\n' +
+      zeilen.join('\n'),
+  };
+}
+
+async function gefaltet(registry: MCPToolRegistry, fund: string[]): Promise<ChannelBlock | null> {
+  const { knoten, kanten } = await alles(registry, true);
+  if (knoten.length === 0) return null;
+  const f = faltung(knoten, kanten, fund);
+  const teile = [
+    'Der Graph, gefaltet um den Fund (bereits eingebettet — graph_elements NICHT aufrufen). OFFEN ist der ' +
+      'Ast des Funds mit Beschreibung; BOX sind Nachbar-Aeste, zugeklappt; INDEX sind alle übrigen uids — ' +
+      'als Kantenziel direkt verwendbar, graph_get_node oder graph_expand öffnet sie:',
+    '## Offen',
+    ...f.offen.map((n) => `${n.uid} · ${n.type} · ${n.name}${n.description ? ' — ' + n.description : ''}`),
+  ];
+  if (f.box.length > 0) teile.push('## Box', ...f.box.map(toLine));
+  if (f.kanten.length > 0) teile.push('## Kanten', ...f.kanten.map((e) => `${e.sourceId} -${e.edgeType}-> ${e.targetId}`));
+  if (f.index.length > 0) teile.push('## Index', f.index.join(', '));
+  return { channel: 'inventory', text: teile.join('\n') };
 }
 
 async function nachTyp(registry: MCPToolRegistry, focusTypes: string[]): Promise<ChannelBlock | null> {

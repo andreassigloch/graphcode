@@ -44,6 +44,7 @@ describe('SCHEMA-executor-config: was ein Lauf ist, steht an EINER Stelle (CR-GC
     expect(cfg.reasoningEffort).toBeUndefined();
     // CR-GC-667: headless ist der Default — nur eine manuelle Session haelt bei einer Frage an.
     expect(cfg.interactive).toBe(false);
+  expect(cfg.inventory).toBe('fund');
   });
 
   it('die drei Backends sind geschlossen — ein viertes wird abgewiesen', () => {

@@ -5,7 +5,8 @@
  *
  * Nachspiel je Lauf aus `audit.jsonl`: Graph vor jeder angewandten Mutation nachbauen, Saat aus
  * `respondsTo` (sonst: was die vorige Mutation beruehrt hat), falten, gegen die beruehrten
- * Knoten pruefen. Reine Auswertung, kein LLM. Definitionen: docs/spikes/SPIKE-GC-compose-faltung.md §2.
+ * Knoten pruefen. Reine Auswertung, kein LLM. Definitionen: docs/spikes/SPIKE-GC-compose-faltung.md §2,
+ * Faltung aus dist/loop/faltung.js — vorher `npm run build`.
  *
  *   node rig/greenfield-systemtest/faltung.mjs [runs-dir] [--json out.json]
  * @author andreas@siglochconsulting
@@ -13,8 +14,9 @@
 import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+// Die Faltung selbst ist Produktcode (CR-GC-682) — hier nur das Nachspiel drumherum.
+import { elternBaum, falten } from '../../dist/loop/faltung.js';
 
-const EIGNER_KANTEN = ['verify', 'io', 'relation', 'satisfy', 'allocate'];
 const MIN_GROESSE = 50;
 
 /** Graph-Zustand als Maps; Kanten-Schluessel `quelle|typ|ziel`. */
@@ -77,63 +79,6 @@ export function beruehrt(g, cmds) {
   };
 }
 
-/** Eltern je Knoten: compose zuerst, sonst der Eigner ueber EIGNER_KANTEN. */
-export function elternBaum(g) {
-  const eltern = new Map();
-  for (const e of g.edges.values()) {
-    if (e.edgeType === 'compose' && g.nodes.has(e.sourceId) && g.nodes.has(e.targetId) && !eltern.has(e.targetId)) {
-      eltern.set(e.targetId, e.sourceId);
-    }
-  }
-  const imBaum = (u) => eltern.has(u) || [...g.edges.values()].some((e) => e.edgeType === 'compose' && e.sourceId === u);
-  const baum = new Set([...g.nodes.keys()].filter(imBaum));
-  for (const typ of EIGNER_KANTEN) {
-    for (const e of g.edges.values()) {
-      if (e.edgeType !== typ) continue;
-      for (const [kind, eigner] of [[e.sourceId, e.targetId], [e.targetId, e.sourceId]]) {
-        if (!g.nodes.has(kind) || !g.nodes.has(eigner) || eltern.has(kind) || baum.has(kind) || kind === eigner) continue;
-        if (!baum.has(eigner) && !eltern.has(eigner)) continue;
-        eltern.set(kind, eigner);
-      }
-    }
-  }
-  // Zyklen brechen: ein Knoten, der ueber seine Eltern zu sich selbst kommt, wird Wurzel.
-  for (const u of [...eltern.keys()]) {
-    const seen = new Set([u]);
-    let p = eltern.get(u);
-    while (p !== undefined) {
-      if (seen.has(p)) { eltern.delete(u); break; }
-      seen.add(p);
-      p = eltern.get(p);
-    }
-  }
-  const kinder = new Map();
-  for (const [k, p] of eltern) kinder.set(p, [...(kinder.get(p) ?? []), k]);
-  return { eltern, kinder };
-}
-
-/** offen / box / (verborgen = Rest) fuer eine Saat. */
-export function falten(g, baum, saat) {
-  const offen = new Set();
-  const stapel = [...saat];
-  while (stapel.length) {
-    const u = stapel.pop();
-    if (offen.has(u)) continue;
-    offen.add(u);
-    stapel.push(...(baum.kinder.get(u) ?? []));
-  }
-  const vorfahren = new Set();
-  for (const s of saat) {
-    let p = baum.eltern.get(s);
-    while (p !== undefined && !vorfahren.has(p)) { vorfahren.add(p); p = baum.eltern.get(p); }
-  }
-  for (const v of vorfahren) offen.add(v);
-  const box = new Set();
-  for (const v of vorfahren) for (const k of baum.kinder.get(v) ?? []) if (!offen.has(k)) box.add(k);
-  for (const u of g.nodes.keys()) if (!baum.eltern.has(u) && !offen.has(u)) box.add(u);
-  return { offen, box };
-}
-
 const zeileOffen = (n) => `+ ${n.uid}|${n.description ?? ''}${Object.keys(n.attributes ?? {}).length ? ' ' + JSON.stringify(n.attributes) : ''}\n`;
 const zeileBox = (n) => `+ ${n.uid} [${n.name ?? ''}]\n`;
 const zeileKante = (e) => `+ ${e.sourceId} -${e.edgeType}-> ${e.targetId}\n`;
@@ -178,8 +123,8 @@ export function nachspielen(auditPfad) {
     const befund = (a.respondsTo ?? []).map((r) => r.elementId).filter((u) => u && g.nodes.has(u));
     const saat = befund.length ? befund : [...vorige].filter((u) => g.nodes.has(u));
     if (g.nodes.size > 0 && saat.length && (b.ref.length || b.inhalt.length)) {
-      const baum = elternBaum(g);
-      const f = falten(g, baum, saat);
+      const baum = elternBaum([...g.nodes.values()], [...g.edges.values()]);
+      const f = falten(g.nodes.keys(), baum, saat);
       const sichtbar = (u) => f.offen.has(u) || f.box.has(u);
       const fehltRef = b.ref.filter((u) => !sichtbar(u));
       const fehltInhalt = b.inhalt.filter((u) => !f.offen.has(u));
