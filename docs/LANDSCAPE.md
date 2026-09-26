@@ -4,7 +4,7 @@
 > Benchmark-Behauptungen, gegen graphcodes USPs geprüft. Wird pro Review fortgeschrieben.
 > (Der frühere R1–R14-Bootstrap `RECOMMENDATIONS.md` ist gelöscht — 2026-08-24; SSOT sind die
 > Graph-REQs + `bok/docs/research/graphify-comparison.md` / `graphengine-efficiency.md`.)
-> **Stand: 2026-08-18** (Stern-/Lizenz-/Datums-Zahlen via `gh api repos/<n>` verifiziert).
+> **Stand: 2026-08-18** (Stern-/Lizenz-/Datums-Zahlen via `gh api repos/<n>` verifiziert; CR-Verweise 2026-09-26 nachgezogen).
 
 ## Kernaussage
 
@@ -88,9 +88,9 @@ Tours, die beim nächsten Commit veralten. Höchste Kosten, kürzeste Halbwertsz
 
 | # | Was | Quelle | Draft-CR |
 |---|---|---|---|
-| L1 | **PreToolUse-Graph-Slice-Injektion** auf dem Discovery-Pfad (Read/Grep/Glob) — macht den Graph zum Default statt zur Wahl des Agents | GitNexus PreToolUse | `CR-DRAFT-GC-361` |
+| L1 | **PreToolUse-Graph-Slice-Injektion** auf dem Discovery-Pfad (Read/Grep/Glob) — macht den Graph zum Default statt zur Wahl des Agents | GitNexus PreToolUse | umgesetzt: `.claude/hooks/inject-graph-slice.sh` (CR-GC-366/367) |
 | L2 | **Token-budgetierter Subgraph**: `graph_context(budget: n)` liefert die größte kohärente Scheibe unter n Token statt fixer Tiefe — bedient `graphcode run` / Local-LLM | graphify-mcp | `ITEM-2026-164` |
-| L3 | **Freshness-Banner inline im Read-Ergebnis** (AF-01..05 in `graph_context`/`graph_impact`, nicht nur in `readiness`) | CodeGraph ⚠️ / GitNexus PostToolUse | `CR-DRAFT-GC-363` |
+| L3 | **Freshness-Banner inline im Read-Ergebnis** (AF-01..05 in `graph_context`/`graph_impact`, nicht nur in `readiness`) | CodeGraph ⚠️ / GitNexus PostToolUse | umgesetzt: CR-GC-363 |
 | L4 | **Confidence-Tags mit Klartext-Begründung** (`EXTRACTED`/`INFERRED`/`AMBIGUOUS`) — = R1, offen. Der Begründungsstring ist das, was einen Slicer-Vorschlag gate-prüfbar macht | Graphify | (R1 — Graph-REQ, Bootstrap-Prosa gelöscht) |
 | L5 | **Benchmark-Hygiene**: ein geteiltes Modell, Spend-Ledger, Zweit-Judge-Validierung, **Coverage als Primärachse** statt Kosten | Graphify-Harness | offen |
 

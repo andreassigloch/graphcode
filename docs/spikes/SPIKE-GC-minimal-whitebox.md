@@ -1,6 +1,6 @@
 # SPIKE-GC: Minimal-Whitebox — ist der Blast-Radius zu groß für den nächsten Job?
 
-**Status:** Proposed (2026-08-18)
+**Status:** Abgeschlossen — Ergebnis: [`SPIKE-GC-minimal-whitebox-RESULTS.md`](SPIKE-GC-minimal-whitebox-RESULTS.md) (Leitlinie T-E2)
 **Voraussetzung:** keine Implementierung — Arm A0/A/B sind deterministisch aus dem
 Selbstmodell rechenbar; nur Arm C braucht den Executor.
 **Verwandt:** `SPIKE-GC-context-sufficiency` (Vorgänger, Implementier-Pfad) ·

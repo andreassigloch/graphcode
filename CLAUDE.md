@@ -29,7 +29,7 @@ the same rebuild moved 810 model elements. That is the failure mode this section
 | Which tests must I run for *this* change? | `graph_tests({changeSet})` — the minimal `vitest run <affected files>`, not the whole suite |
 | Which tests cover this node? | the node's `testRefs` from `graph_context` |
 | Which rules are violated, and where? | `rules_evaluate` · `rules_get_violations` |
-| What should I do next? | `graph_next_step` |
+| What should I do next? | `graph_readiness` (weakest dimension) and the `next` field of every `graph_mutate` result |
 | Which architecture move pays off? | `graph_suggest` (ranked against the target profile) |
 | How coupled are the modules? | `graph_metrics` — cohesion per MOD |
 

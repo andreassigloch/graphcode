@@ -1,6 +1,6 @@
 # SPIKE-GC-abstraction-levels — Zwei Übersichtsebenen aus dem Modell
 
-**Status:** GESTARTET 2026-08-16 (Runde 1: Testcase 1, Blockschnitt-Entwurf vor Gate-Write)
+**Status:** Runden 1–3 abgeschlossen ([RESULTS](SPIKE-GC-abstraction-levels-RESULTS.md)); §7.4 offen, der Wirkketten-Rollup `projectDepth` ist nicht gebaut (Leitlinie T-V1) · gestartet 2026-08-16
 **Herkunft:** Review 2026-08-16 (`docs/review.md` §5, gelöscht 2026-08-24 — Git-History) — die
 Ontologie kodiert die Ebenen-Leiter,
 der eigene Graph nutzt sie nicht (4× FUNC-in-FUNC bei 55 FUNCs, 0× MOD-in-MOD bei 10 MODs).

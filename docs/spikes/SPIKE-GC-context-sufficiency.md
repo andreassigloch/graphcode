@@ -1,6 +1,6 @@
 # SPIKE-GC: Context-Sufficiency — liefert `graph_context` „gerade-gut-genug" Kontext?
 
-**Status:** Proposed (2026-06-26) · **Voraussetzung:** CR-GC-213 (MVP, BLOCKER), optional CR-GC-214 (Arm B), CR-GC-207-Materialisierung (Fixture)
+**Status:** Abgeschlossen — Ergebnis: [`SPIKE-GC-context-sufficiency-RESULTS.md`](SPIKE-GC-context-sufficiency-RESULTS.md) (Leitlinie T-E2) · ursprünglich Proposed 2026-06-26 · **Voraussetzung:** CR-GC-213 (MVP, BLOCKER), optional CR-GC-214 (Arm B), CR-GC-207-Materialisierung (Fixture)
 **Frage:** Liefert das `graph_context`-MVP einem Agenten den **minimal-hinreichenden** Kontext, um einen Milestone zu implementieren — ohne `SPEC.md`/Spike-Re-Reads, bei ≪ Baseline-Kontext — und schafft ein **lokales Modell** denselben Job aus den Bundles?
 
 > Begründung: Die Graph-Build-Arbeit (reiche `description`-Prosa pro Knoten, Test-Konzepte, Spike-Schlüsse) war korrekt — verloren ging die **Konsumtion**: der Impl-Loop re-derivierte aus `SPEC.md`/Spikes, was bereits als Knoten-Prosa im Graph stand. Dieser Spike misst, ob ein ergonomisches Pull-Tool (`graph_context`) die Konsumtion graph-first dreht — und ob das ein kleineres Modell tragfähig macht (= die eigentliche Win-Condition).

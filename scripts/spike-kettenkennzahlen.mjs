@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Spike (Konzept „Modell- vs. Realisierungsarchitektur", docs/Aise_Architektur_Guide.md) —
+// Spike (Konzept „Modell- vs. Realisierungsarchitektur", docs/graphcode_architektur_konzept.md) —
 // lassen sich die acht Kettenkennzahlen auf den realen Familie-Graphen HEUTE deterministisch
 // berechnen, und sagen sie etwas, was R⁶ nicht schon sagt?
 //
