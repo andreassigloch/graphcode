@@ -5,7 +5,7 @@
  * surface (the `graph_help` MCP tool, the `se:help` skill, a renderer) consumes
  * these view-models instead of re-assembling the layers itself (no parallel path).
  *
- * Roll-up, NOT detection (help-system.md §2): every `HelpEntry` ALWAYS carries all
+ * Roll-up, NOT detection (docs/archive/proposals/help-system.md §2): every `HelpEntry` ALWAYS carries all
  * three layers (`plain` / `se` / the exact `prompt` where one applies); the surface
  * picks the depth — graphcode is headless and has no user identity to profile.
  *

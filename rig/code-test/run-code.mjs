@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * run-code.mjs — der Code-Test (CR-GC-610, Leitlinie Satz 7): dieselbe Aufgabe, zwei Arme.
+ * run-code.mjs — der Code-Test (CR-GC-610, graphcode-Leitlinie §6, T-C1): dieselbe Aufgabe, zwei Arme.
  *
  *   gefuehrt — Claude Code MIT graphcode: das sigllm-Golden liegt im Store, die se-Skills sind da;
  *              der Agent baut die Scheduler-Scheibe aus dem Modell (graph_context, graph_realize,

@@ -40,7 +40,7 @@ request                 one real ask: a chat message, or the one CLI intent stri
   step size and order. The loop is *implicit* in its reasoning.
 - **driver mode** — graphcode's built-in executor paces the loop as an *explicit*, fixed state
   machine: small rounds, fresh history each round, deterministic order. Why this exists at all is a
-  strategy, not a convenience — see "going local" in [the claims](06-claims.md).
+  strategy, not a convenience — see "going local" in [the claims](../graphcode_leitlinie.md).
 - **prompt** — everything the model sees in one turn. Its pieces (system prompt, tool definitions,
   graph context, instruction, history) and their measured sizes: [prompt
   anatomy](05-the-advisory-roundtrip.md).
@@ -118,6 +118,6 @@ after the fact, from the audit trail. None of them — ever — blocks anything.
 
 ---
 
-*Companions: [the story](04-the-graphcode-story.md) for the narrative, [the claims](06-claims.md)
+*Companions: [the story](04-the-graphcode-story.md) for the narrative, [the claims](../graphcode_leitlinie.md)
 for the pitch, [the advisory roundtrip](05-the-advisory-roundtrip.md) for one turn end to end,
 [the scoring landscape](07-the-scoring-landscape.md) for how the measurement systems relate.*

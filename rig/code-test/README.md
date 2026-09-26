@@ -1,7 +1,7 @@
-# Code-Test — der Beweis im Code (Leitlinie Satz 7)
+# Code-Test — der Beweis im Code (graphcode-Leitlinie §6, T-C1)
 
 > „Der Beweis muss im Code ankommen: sichtbar bessere Architektur und Effizienz gegenüber frei laufendem
-> Claude Code, nicht bessere Zahlen im Modell.“ — `bok/docs/governance/Aise_Leitlinie.md`
+> Claude Code, nicht bessere Zahlen im Modell.“ — `docs/graphcode_leitlinie.md` §6
 
 Bis hierher hat das Rig nur Phase 1 gemessen, das Autorieren des Modells. Alle Code-Urteile waren
 „nicht prüfbar“, weil kein Lauf Code erzeugte. Dieser Test schließt die Lücke an einer kleinen,
