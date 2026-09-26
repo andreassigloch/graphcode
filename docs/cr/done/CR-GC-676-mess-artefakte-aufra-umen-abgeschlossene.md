@@ -1,6 +1,6 @@
 # CR-GC-676: Mess-Artefakte aufräumen: abgeschlossene Spikes, Recorder, tote Rigs und Alt-Ergebnisse löschen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-26)
 **Typ:** aus Item ITEM-2026-589 (finding)
 **Erstellt:** 2026-09-26
 **Item:** bok/items/ITEM-2026-589.json (Lane: code)
