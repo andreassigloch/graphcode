@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 286 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 289 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 286 CR · 212 done · 0 open.
+Total: 289 CR · 212 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -348,3 +348,6 @@ Total: 286 CR · 212 done · 0 open.
 | `CR-GC-676` | n/a | Mess-Artefakte aufräumen: abgeschlossene Spikes, Recorder, tote Rigs und Alt-Ergebnisse löschen |
 | `CR-GC-677` | n/a | Mess-Artefakte: Recorder kennzahlen/zugverlauf und erledigte Spikes löschen |
 | `CR-GC-678` | n/a | Mess-Artefakte: tote Rigs und Greenfield-Altergebnisse löschen |
+| `CR-GC-679` | n/a | Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID |
+| `CR-GC-680` | n/a | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie |
+| `CR-GC-681` | n/a | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md |

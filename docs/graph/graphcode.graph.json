@@ -2365,6 +2365,24 @@
       "description": "docs/cr/open/CR-GC-678-mess-artefakte-tote-rigs-und-greenfield-.md"
     },
     {
+      "id": "CR-GC-679",
+      "type": "CR",
+      "name": "Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID",
+      "description": "docs/cr/open/CR-GC-679-standard-auswertung-npm-run-messung-schr.md"
+    },
+    {
+      "id": "CR-GC-680",
+      "type": "CR",
+      "name": "Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie",
+      "description": "docs/cr/open/CR-GC-680-mess-doku-konsolidieren-kpi-md-messgroes.md"
+    },
+    {
+      "id": "CR-GC-681",
+      "type": "CR",
+      "name": "Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md",
+      "description": "docs/cr/open/CR-GC-681-neue-artikelserie-u-ber-konzept-aufbau-u.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21606,5 +21624,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 489
+  "graphVersion": 492
 }
