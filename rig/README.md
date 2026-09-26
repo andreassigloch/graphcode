@@ -93,7 +93,6 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 | [`minimal-whitebox/`](minimal-whitebox/README.md) | gate | Wie groß ist die Whitebox gegen den Blast-Radius? | `openMeasured` |
 | [`greenfield-systemtest/`](greenfield-systemtest/README.md) | gate | Kommt ein lokales Modell an ein Frontier-Modell heran? | `createHarness` (Subprozess, Kuzu-Binding) |
 | [`dummy-slicer/`](dummy-slicer/README.md) | gate | Serviert `graph_context` die Definition of Done? | `openMeasured` (echte Wurzel, CR-GC-496) |
-| [`plan-step/`](plan-step/) | — | dito | — |
 | [`graphs/`](graphs/README.md) | korpus | eingefrorene Beispielgraphen | — |
 
 `greenfield-systemtest` baut den Harness in einem **eigenen Prozess**, weil Kuzus natives
@@ -110,9 +109,3 @@ wurde bei CR-GC-491 mit umgestellt.
 Ein Rig, das nicht läuft, ist schlimmer als keins — es steht im Verzeichnis und suggeriert eine
 Messung. **Wer ein Rig anfasst, führt es aus.**
 
-## Offen
-
-`scripts/spike-lexikographisch.mjs` liest die **lebenden** `docs/graph/*.graph.json` von vier
-Repos. Seit `CR-GC-493` sagt der Stempel je Eingabegraph sha256 und `graphVersion`, die Drift ist
-also sichtbar — das **Einfrieren** nach `graphs/` ist eine Datenentscheidung je Graph und steht
-noch aus.

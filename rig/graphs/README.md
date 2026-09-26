@@ -25,10 +25,9 @@ Quellgraph weiterläuft — ein Benchmark, dessen Eingabe sich ändert, misst ni
 
 ### Der Spike-Korpus (die unteren vier) — CR-GC-498
 
-`scripts/spike-lexikographisch.mjs` las bis 2026-09-09 die **lebenden** `docs/graph/*.graph.json`
-dieser vier Repos, drei davon über absolute Pfade in fremde Arbeitskopien. `CR-GC-493` gab ihm
-einen Herkunftsstempel — die Drift war damit sichtbar, aber nicht weg. Seit `CR-GC-498` liest er
-von hier und **prüft die Prüfsumme**: weicht eine Datei ab, bricht der Lauf ab.
+Eingefroren seit `CR-GC-498` (2026-09-09); Leser heute: `scripts/randbreiten.mjs`. Der
+ursprüngliche Leser `spike-lexikographisch.mjs` ist mit seinem No-Go-Befund gelöscht (CR-GC-676,
+Befund in der graphcode-Leitlinie T-O4).
 
 | Datei | `sha256/12` |
 |---|---|
@@ -37,9 +36,9 @@ von hier und **prüft die Prüfsumme**: weicht eine Datei ab, bricht der Lauf ab
 | `graphcode.graph.json` | `bc639cbc90c4` |
 | `moneyflow.graph.json` | `e1d8a6cf3944` |
 
-Die Erwartung steht als Konstante `KORPUS` im Spike selbst, nicht in einem zweiten Manifest —
-neben dem Code, der sie liest. Wer bewusst neu verankert, ändert beides und schreibt die neue
-Zahl in den CR, der sie verankert.
+Die Tabelle ist die Referenz. `randbreiten.mjs` prüft die Prüfsummen heute **nicht** — ein Leser,
+der sich auf die Zahlen verlässt, prüft sie selbst. Wer bewusst neu verankert, ändert die Tabelle
+und schreibt die neue Zahl in den CR, der sie verankert.
 
 **Was die vier unterscheidet** (das Aufnahmekriterium (c), gemessen 2026-09-09):
 
