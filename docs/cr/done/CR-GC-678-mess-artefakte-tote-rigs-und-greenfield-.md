@@ -1,6 +1,6 @@
 # CR-GC-678: Mess-Artefakte: tote Rigs und Greenfield-Altergebnisse löschen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-26)
 **Typ:** aus Item ITEM-2026-591 (finding)
 **Erstellt:** 2026-09-26
 **Item:** bok/items/ITEM-2026-591.json (Lane: code)
