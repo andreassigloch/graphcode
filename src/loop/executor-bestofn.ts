@@ -27,6 +27,16 @@ import { extractMutateFromText, extractToolCallFromText } from './executor-parse
 import { READ_TOOLS, execReadOrGraphTool, pushToolResults } from './executor-tools.js';
 import { formatGateFeedback, ruleIdsOf, type GateClient, type MutateOutcome } from './executor-gate.js';
 import type { CallModel, ExecutorConfig, ExecutorStats, ModelResponse } from './executor.js';
+import { istAbgeschnitten } from './model-answer-contract.js';
+
+/**
+ * Rueckmeldung an das Modell, wenn seine Antwort am Token-Budget abgeschnitten ist (CR-GC-688).
+ * Nichts davon wird uebernommen — auch nicht die vollstaendigen Teile, die der Salvage-Pfad
+ * bergen koennte: ein Teil-Batch sieht fuer Gate und Seed-Stufe aus wie der ganze.
+ */
+export const ABGESCHNITTEN_NUDGE =
+  'Deine Antwort wurde am Token-Budget abgeschnitten — nichts davon wurde uebernommen. ' +
+  'Emittiere den Batch kleiner: nur das, was diese Instruktion verlangt, ohne Erklaerung davor.';
 
 /** Was eine Runde vom Treiber bekommt — derselbe Lauf-Zustand wie der Ein-Kandidaten-Pfad. */
 export interface BestOfNContext {
@@ -103,6 +113,16 @@ async function collectCandidateBatch(
           // Salvage-Pfad unten existiert nur fuer die erste; die Spur muss sie trennen.
           `(no calls, stop=${resp.stopReason ?? 'unbekannt'})`),
     );
+
+    if (istAbgeschnitten(resp.stopReason)) {
+      // CR-GC-688: abgeschnitten ist kein Batch — weder der Text (Salvage bergte den Teil) noch
+      // ein Werkzeugaufruf (seine Eingabe ist ebenso nur der Anfang). Als Text in die History,
+      // nicht als assistantMsg: offene tool_calls verlangten sonst ein Ergebnis je Aufruf.
+      trace(`    abgeschnitten (stop=${resp.stopReason}) — nichts uebernommen`);
+      messages.push({ role: 'assistant', content: resp.text || '(abgeschnitten)' });
+      messages.push({ role: 'user', content: ABGESCHNITTEN_NUDGE });
+      continue;
+    }
 
     if (resp.toolCalls.length === 0) {
       let recovered: unknown = extractMutateFromText(resp.text);

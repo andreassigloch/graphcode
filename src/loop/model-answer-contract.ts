@@ -127,3 +127,19 @@ export function describeWireIssues(err: z.ZodError): string {
     .map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`)
     .join('; ');
 }
+
+/**
+ * Stop-Gruende, mit denen ein Backend „am Token-Budget abgeschnitten" meldet (CR-GC-688):
+ * anthropic `max_tokens`, openai-kompatibel (auch sigllm, ollama) `length`. Zwei Vokabeln, eine
+ * Tatsache — wer nur eine prueft, sieht die andere Haelfte der Backends nicht.
+ */
+const ABGESCHNITTEN = new Set(['max_tokens', 'length']);
+
+/**
+ * Ist die Antwort am Token-Budget abgeschnitten? Dann ist sie KEIN Batch: was daraus geborgen
+ * wird, ist ein Teil, der sich als Ganzes ausgibt (8 ACTORs aus `seed:actor`, der Rest fehlte
+ * still). `null` (Backend nennt keinen Grund) ist nicht abgeschnitten — nie geraten.
+ */
+export function istAbgeschnitten(stopReason: string | null): boolean {
+  return stopReason !== null && ABGESCHNITTEN.has(stopReason);
+}
