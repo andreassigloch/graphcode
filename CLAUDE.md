@@ -33,6 +33,10 @@ the same rebuild moved 810 model elements. That is the failure mode this section
 | Which architecture move pays off? | `graph_suggest` (ranked against the target profile) |
 | How coupled are the modules? | `graph_metrics` — cohesion per MOD |
 
+**In Claude Code these tools are deferred** — the schema is not loaded, grep is. Load every reader
+above in one call before the first structural question (CR-GC-638):
+`ToolSearch select:mcp__graphcode__graph_impact,mcp__graphcode__graph_expand,mcp__graphcode__graph_context,mcp__graphcode__graph_elements,mcp__graphcode__graph_tests,mcp__graphcode__rules_evaluate,mcp__graphcode__rules_get_violations,mcp__graphcode__graph_readiness,mcp__graphcode__graph_suggest,mcp__graphcode__graph_metrics`
+
 Grep stays right for what the graph does not model: *which file contains this string*, *where does
 this symbol live now*, free-text search across prose. It is wrong for anything in the table above.
 

@@ -51,9 +51,10 @@ import { bindTestReportTools } from '../projections/testreport.js';
 /**
  * Tools whose calls are NOT consultation: the gated writes (they ARE the mutation
  * the stamps describe, incl. graph_test_ingest) and graph_export (a file
- * materialization, not steering input).
+ * materialization, not steering input). Exported so CLAUDE.md's ToolSearch line can be checked
+ * to load readers only (CR-GC-638).
  */
-const NON_CONSULTING_TOOLS = new Set([
+export const NON_CONSULTING_TOOLS = new Set([
   'graph_mutate',
   'graph_realize',
   'graph_merge',
