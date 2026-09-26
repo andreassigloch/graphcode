@@ -289,7 +289,7 @@ if (mitDeckung.length) {
   }
   if (zeilen.length) {
     console.log('\n## Bedarf je Informationsaufruf (Leitlinie T-E9)\n');
-    const K = ['neu', 'schon-da', 'teilweise-da', 'buendelbar', 'werkzeug-laden', 'graph-haette'];
+    const K = ['neu', 'doppelt', 'schon-da', 'teilweise-da', 'buendelbar', 'werkzeug-laden', 'graph-haette'];
     console.log(`| Lauf | ${K.join(' | ')} | Cache-Lesung vermeidbar |`);
     console.log(`|---|${K.map(() => '---:').join('|')}|---:|`);
     for (const { r, summe } of zeilen) {
@@ -315,7 +315,7 @@ if (mitDeckung.length) {
   }
   if (spuren.length) {
     if (!zeilen.length) console.log('\n## Bedarf je Informationsaufruf (Leitlinie T-E9)\n');
-    const K = ['neu', 'schon-da', 'je-runde', 'buendelbar', 'graph-haette'];
+    const K = ['neu', 'doppelt', 'schon-da', 'je-runde', 'buendelbar', 'graph-haette'];
     console.log('| Executor-Lauf | ' + K.join(' | ') + ' | Zeichen je-runde / gesamt | haeufigste Wiederholung |');
     console.log(`|---|${K.map(() => '---:').join('|')}|---:|---|`);
     for (const { r, ba, ges, ziel, n } of spuren) {

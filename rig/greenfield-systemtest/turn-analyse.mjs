@@ -240,6 +240,7 @@ const INFO = new Set(['lesen', 'suchen', 'graph-lesen', 'werkzeug-laden', 'testl
 /**
  * Bedarfsanalyse (Leitlinie T-E9): was wollte das Modell je Informations-Aufruf, hatte es das
  * schon, und wo haette es das herbekommen? Deterministische Regeln, in dieser Reihenfolge:
+ *   doppelt        — wortgleicher Aufruf im SELBEN Turn: parallel abgesetzt, dieselbe Antwort.
  *   schon-da       — derselbe Aufruf seit der letzten Aenderung schon gestellt, oder die Datei
  *                    selbst geschrieben (der Inhalt steht im Kontext).
  *   teilweise-da   — die angefragte uid stand schon in einer DETAIL-Antwort (`graph_context`,
@@ -291,7 +292,9 @@ export function bedarfsAnalyse(turns, { modell = null, wurzel = '' } = {}) {
       // Nur was VOR diesem Turn zurueckkam, kann das Modell gekannt haben: parallele Aufrufe
       // im selben Turn sehen die Antworten ihrer Geschwister nicht (und sind schon gebuendelt).
       const frueher = (nr) => nr !== undefined && nr < t.nr;
-      if (b.schluessel && frueher(gesehen.get(b.schluessel))) {
+      if (b.schluessel && gesehen.get(b.schluessel) === t.nr) {
+        urteil = 'doppelt'; grund = 'wortgleich im selben Turn';
+      } else if (b.schluessel && frueher(gesehen.get(b.schluessel))) {
         urteil = 'schon-da'; grund = `seit Turn ${gesehen.get(b.schluessel)} im Kontext`;
       } else if (uids.length && uids.every((u) => frueher(uidGesehen.get(u)))) {
         urteil = 'teilweise-da'; grund = `${uids[0]} stand in der Graph-Antwort aus Turn ${uidGesehen.get(uids[0])}`;
@@ -308,7 +311,7 @@ export function bedarfsAnalyse(turns, { modell = null, wurzel = '' } = {}) {
         else if (uid) { urteil = 'graph-haette'; grund = `graph_context ${uid}`; }
         else if (sym) { urteil = 'graph-haette'; grund = `realRef ${sym} steht im Modell`; }
       }
-      if (b.schluessel) gesehen.set(b.schluessel, t.nr);
+      if (b.schluessel && urteil !== 'doppelt') gesehen.set(b.schluessel, t.nr);
       if (b.art === 'graph-lesen' && DETAIL.has(b.werkzeug)) {
         for (const m of (ergebnisText.get(a.id) ?? '').matchAll(UID)) if (!uidGesehen.has(m[0])) uidGesehen.set(m[0], t.nr);
       }
@@ -366,7 +369,7 @@ function alsClaudeRuf(werkzeug, roh) {
  *   je-runde — derselbe Lesezugriff schon in einer frueheren Runde. Das Modell brauchte ihn
  *              wieder, weil der Rundenprompt ihn nicht traegt: Kandidat fuer den Prompt (Push
  *              statt Pull) — oder ein Zeichen, dass der Prompt ihn nicht verstaendlich traegt.
- * `teilweise-da` entfaellt: die Spur hat keine Antworttexte. Graph-Lesungen verfallen mit jedem
+ * `doppelt` wie beim Claude-Code-Arm. `teilweise-da` entfaellt: die Spur hat keine Antworttexte. Graph-Lesungen verfallen mit jedem
  * `graph_mutate`, Dateilesungen nicht (der Executor schreibt keine Dateien).
  */
 export function bedarfsAnalyseExecutor(aufrufe, { modell = null } = {}) {
@@ -391,7 +394,9 @@ export function bedarfsAnalyseExecutor(aufrufe, { modell = null } = {}) {
     const schluessel = b.schluessel ?? `${a.werkzeug}:${a.roh}`;
     let urteil = 'neu';
     let grund = '';
-    if (dieseRunde.has(schluessel) && dieseRunde.get(schluessel) !== a.turn) {
+    if (dieseRunde.get(schluessel) === a.turn) {
+      urteil = 'doppelt'; grund = 'wortgleich im selben Turn';
+    } else if (dieseRunde.has(schluessel)) {
       urteil = 'schon-da'; grund = `in dieser Runde schon in Turn ${dieseRunde.get(schluessel)}`;
     } else if (frueher.has(schluessel)) {
       urteil = 'je-runde'; grund = `schon in ${frueher.get(schluessel)} frueheren Runden gelesen`;

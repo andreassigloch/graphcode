@@ -201,7 +201,7 @@ describe('bedarfsanalyse: hatte das Modell es schon, oder haette der Graph es ge
     const pfad = schreibe('stream-bedarf.jsonl', [
       assistant('m1', { read: 100 }, [
         ruf('r1', 'Read', { file_path: `${R}aufgabe.md` }),
-        ruf('r2', 'Read', { file_path: `${R}aufgabe.md` }),                     // parallel: kein schon-da
+        ruf('r2', 'Read', { file_path: `${R}aufgabe.md` }),                     // wortgleich parallel: doppelt
         ruf('g1', 'mcp__graphcode__graph_context', { id: 'FUNC-plan' }),
       ]),
       erg('r1'), erg('r2'), erg('g1', 'FUNC-plan satisfies REQ-slot'),
@@ -225,7 +225,7 @@ describe('bedarfsanalyse: hatte das Modell es schon, oder haette der Graph es ge
     ]);
     const { urteile, summe } = bedarfsAnalyse(leseTurns(pfad), { modell: modellIndex(graph), wurzel: ws });
     const u = (ziel: string): string => urteile.filter((x: { ziel: string }) => x.ziel.includes(ziel)).map((x: { urteil: string }) => x.urteil).join(',');
-    expect(u('datei:aufgabe.md')).toBe('neu,neu,schon-da');
+    expect(u('datei:aufgabe.md')).toBe('neu,doppelt,schon-da');
     expect(u('graph_get_node')).toBe('teilweise-da');
     expect(u('RC-01')).toBe('neu');
     expect(u('RC-02')).toBe('buendelbar');
@@ -236,7 +236,8 @@ describe('bedarfsanalyse: hatte das Modell es schon, oder haette der Graph es ge
     expect(urteile.find((x: { art: string }) => x.art === 'testlauf-voll').urteil).toBe('graph-haette');
     // Kosten: Anteil an der Cache-Lesung des ausgeloesten Turns — m4 liest 600, sechs Ergebnisse.
     expect(urteile.find((x: { ziel: string }) => x.ziel.includes('planSlots')).cacheRead).toBe(100);
-    expect(summe.neu.aufrufe).toBe(4);
+    expect(summe.neu.aufrufe).toBe(3);
+    expect(summe.doppelt.aufrufe).toBe(1);
   });
 
   it('Executor: Kontext je Runde neu — Wiederholung aus frueherer Runde heisst je-runde, nicht schon-da', () => {
@@ -249,6 +250,7 @@ describe('bedarfsanalyse: hatte das Modell es schon, oder haette der Graph es ge
       '  1.2: read_file,graph_elements',
       '    read read_file {"path":"material/auftrag.md"} → 4844 Z.',
       '    read graph_elements {"type":"REQ"} → 300 Z.',
+      '    read graph_elements {"type":"REQ"} → 300 Z.',
       '  1.3: graph_elements',
       '    read graph_elements {"type":"UC"} → 120 Z. gekappt',
       '  1.4: graph_mutate',
@@ -259,9 +261,9 @@ describe('bedarfsanalyse: hatte das Modell es schon, oder haette der Graph es ge
     ].join('\n').replace(/…$/, '… → 80 Z.'));
     const aufrufe = leseExecutorSpur(spur);
     expect(aufrufe.map((a: { werkzeug: string }) => a.werkzeug)).toEqual(
-      ['read_file', 'read_file', 'graph_elements', 'graph_elements', 'graph_mutate', 'read_file', 'graph_elements']);
+      ['read_file', 'read_file', 'graph_elements', 'graph_elements', 'graph_elements', 'graph_mutate', 'read_file', 'graph_elements']);
     const { urteile, summe, gekappt } = bedarfsAnalyseExecutor(aufrufe);
-    expect(urteile.map((u: { urteil: string }) => u.urteil)).toEqual(['neu', 'schon-da', 'neu', 'buendelbar', 'je-runde', 'neu']);
+    expect(urteile.map((u: { urteil: string }) => u.urteil)).toEqual(['neu', 'schon-da', 'neu', 'doppelt', 'buendelbar', 'je-runde', 'neu']);
     expect(summe['je-runde']).toEqual({ aufrufe: 1, zeichen: 4844 });
     expect(gekappt).toBe(1);
   });
