@@ -22,7 +22,7 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 ## Umfang (9 Dateien)
 
 `.claude/commands/se/close-violations.md`, `se/optimize.md`, `se-fmea.md`, `se/import-doc.md`,
-`src/kernel/gate.ts` (SCHEMA-01-fixHint), `src/surface/write.ts` (Werkzeugtexte, graph_merge),
+`src/kernel/gate.ts` (SCHEMA-01-fixHint), `src/surface/write.ts` (Werkzeugtexte, graph_merge; formatE-Beschreibung nennt vorab: Knoten-Operationen `+ ~ - !` stehen unter `## Nodes` + `### <TYPE>`, Kanten unter `## Edges` — Nachtrag aus CR-SM-369),
 `README.md`, `rig/code-test/run-code.mjs`, `tests/skills.mcp-conformance.test.ts` (kein JSON-commands-Vorbild).
 
 **Nach CR-GC-685** (write.ts, README und Rig nennen dann kein graph_realize mehr).
