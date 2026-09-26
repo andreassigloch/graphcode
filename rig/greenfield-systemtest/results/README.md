@@ -1,7 +1,7 @@
 # Ergebnisgraphen des Executor-Programms (2026-07-31 … 08-01) — nur noch Fixtures
 
 Das Executor-Programm ist abgeschlossen, seine Rankings sind zurückgezogen (Truncation-Fehler,
-`docs/executor-abschlussbericht.md`; graphcode-Leitlinie T-E3). Die übrigen Läufe (Graphen,
+`docs/archive/executor-abschlussbericht.md`; graphcode-Leitlinie T-E3). Die übrigen Läufe (Graphen,
 Audit-Logs, run.logs v2–v20, Proben) sind mit CR-GC-678 gelöscht und stehen in der git-Historie.
 
 Hier bleiben nur die Graphen, die Tests und Rigs als **Eingabe** lesen:

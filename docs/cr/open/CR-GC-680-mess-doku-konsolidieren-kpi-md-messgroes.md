@@ -13,7 +13,7 @@ Vier Dokumente widersprechen der Leitlinie oder stehen quer zu ihr (Docs-Audit 2
 - `docs/KPI.md`: Ziel Graph/Grep > 1 (T-E1 sagt „keine Schwelle"), 100 % Dateibindung (T-V4: nur die Grenzmenge).
   Wird von `scripts/retro-kpi.mjs`, `tests/retro-kpi.test.ts` und `se-retro` gelesen.
 - `docs/MESSGROESSEN.md`: ℝ⁶ als Treiber (T-O4 No-Go, §5 „Nebenbedingung"), keine Empfehlen-Stufe (§3), keine Kettenkennzahlen (§5).
-- `docs/executor-abschlussbericht.md`: nennt ein Top-Ranking ohne Rückzugsvermerk (T-E3: zurückgezogen).
+- ~~`docs/executor-abschlussbericht.md`: nennt ein Top-Ranking ohne Rückzugsvermerk~~ — erledigt 2026-09-26: nach `docs/archive/` verschoben (Folge-CRs 283–289 done).
 - `docs/spikes/analysecase-kaltstart.md`: Prüfregeln G1–G4 fehlen in Leitlinie §9.1.
 
 ## Zielbild
@@ -31,7 +31,7 @@ Testdefinitionen, nicht die Mechanik.
   „verdiente Null" auch bei leerer Population; Form der benannten Ausnahme (Grund + Ausstiegsbedingung + `decides`-Relation);
   Begriffsleiter Anfrage → Turn → Runde → Kandidat → Batch → Mutation; Kohäsion: LCOM4 vs. ℝ⁶-coherence;
   Graph ist nicht schneller als grep — der Gewinn ist Präzision; G1–G4 aus analysecase.
-- `executor-abschlussbericht.md`: Rückzugsvermerk oben.
+- ~~`executor-abschlussbericht.md`: Rückzugsvermerk oben~~ — entfällt, archiviert.
 - `analysecase-kaltstart.md` → Archiv, nachdem G1–G4 übernommen sind.
 
 ## Abnahme

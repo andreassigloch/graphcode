@@ -49,11 +49,24 @@ Modell ist kein Abbild aller codierten Funktionen — was darunter liegt, bleibt
 **Geltungsbereich.** **Modelliert** wird jedes System — Software, mechanisch, elektrisch —,
 Nachweisbarkeit vor Detailtiefe. **Implementiert** wird nur Code.
 
+**Nachweis.** Die aus dem Modell erzeugte Dokumentation (SRS, ConOps, Architektur, ICD, RTM, VCRM,
+Test- und Integrationsplan, Change Log …) ist kompatibel zum **Dokumentanteil** der gängigen
+Systems-Engineering-Normen: ISO/IEC/IEEE 29148, ISO/IEC/IEEE 15288 und Automotive SPICE. Der
+Dokumentanteil ist der kleinere Teil. Die Normen sind überwiegend Prozessnormen, und Einigung,
+Kommunikation, Planung, Steuerung und Capability Level ≥ 2 belegt kein Dokument. Welche
+Anforderungen dokument-belegbar sind und welche davon graphcode heute erfüllt, steht in
+[`SPIKE-GC-norm-dokumentanteil-RESULTS`](spikes/SPIKE-GC-norm-dokumentanteil-RESULTS.md). Der Unterschied zu frei erzeugter Doku: Traceability und die Konsistenz
+Modell ↔ Code sind **deterministisch** aus demselben Modell belegt, aus dem die Dokumente
+gerendert werden. Ein frei laufendes Frontier-Modell kann Dokumente schreiben, diese Nachweise
+aber nach Einschätzung des Autors nicht erbringen (T-N3).
+
 **DoD Verstehen**
 - Jede Ebene liegt im Breitenband 3–9, jeder Vertragsrand unter seiner Schwelle (T-V1, T-V2).
 - Alle vier Fragen sind beantwortet: die sechs Modell-Dimensionen der Readiness bestehen ihr Gate (T-V3).
 - Das Modell ist zu 100 % mit dem Code gekoppelt — jedes Modul, jede Funktion und jeder Vertrag des
   Modells ist gebunden und kongruent —, ohne jede codierte Funktion abzubilden (T-V4).
+- Jede dokument-belegbare Anforderung aus 29148, 15288 und A-SPICE ist von einer erzeugten Sicht
+  und einer prüfenden Regel gedeckt, oder als Lücke benannt (T-N1, T-N2).
 
 *Hygiene (Voraussetzung, kein eigener Nachweis):* 0 Error-Verletzungen, und nur dort, wo die
 Regeln auch ausgewertet wurden (T-H1); Regel-Matrix und Regelkatalog stimmen überein (T-H2).
@@ -70,7 +83,7 @@ Regelkonformität und Optimierung. Das Gate ist nur der harte Sonderfall des Zie
   UC ohne REQ, CR ohne Commit).
 - **Steuern:** Deterministische Kenngrößen (Readiness, Steuerwert) und Warnungen ziehen wie ein
   Gummiband zurück zur implementierungsreifen Spezifikation.
-- **Empfehlen:** Vorschläge für den nächsten Schritt (`graph_next_step`, `graph_suggest`), auch
+- **Empfehlen:** Vorschläge für den nächsten Schritt (`graph_suggest`, das `next` jeder Mutationsantwort), auch
   statistisch. Nur diese Stufe darf lernen.
 
 Was nie blockt, ist die **Reihenfolge**: Ebenen und Reihenfolgen darf der Nutzer überspringen,
@@ -138,7 +151,8 @@ ist nicht gemessen — es gibt zwei Stützpunkte, keine Kurve (T-E6).
 
 Optimierungsvorschläge werden über Kennzahlen, Gleichgewichte und Invarianten gesteuert.
 „Architektur" meint zwei Dinge, die getrennt bewertet werden
-(Konzept „Modell- vs. Realisierungsarchitektur", 2026-09-25):
+(Konzept „Modell- vs. Realisierungsarchitektur", 2026-09-25,
+`docs/graphcode_architektur_konzept.md`):
 
 - **Modellarchitektur** — Verständlichkeit, domänenneutral: Modul- und Funktionsaggregation über
   die Blackboxen und ihre Beziehungen je Ebene (7 ± 2, Kohäsion LCOM4, Kopplung/Crossings,
@@ -188,6 +202,8 @@ deterministisches Maß tragen, bleiben menschliche Durchsicht — beide Codes ne
 - Ein Greenfield-Lauf endet in gebundenem Code, das Code-Urteil ist prüfbar (T-C2).
 - Ein Umbau am Bestand läuft über Graph-Fragen, nicht über Suche und Volllauf (T-C3).
 - Effizienz wird nur normalisiert verglichen (T-E5).
+- Der freie Arm kann die Norm-Nachweise aus §2 nicht deterministisch erbringen; die Faustregel
+  rechnet ihm die Dokumente deshalb nur als Text an, nicht als Nachweis (T-N3).
 
 ---
 
@@ -314,6 +330,14 @@ Informationsaufrufe. Der Rest ist echter Bedarf, und vor allem Code-Arbeit.
 | **T-V3** Vier Fragen | Ist jede der vier Fragen beantwortet? | `graph_readiness`, Dimensionen `uc`, `req`, `arch`, `schema`, `alloc`, `ver` | jede der sechs Dimensionen besteht ihr Phasen-Gate | Greenfield, Opus, Prosa: 4/8 Gates (Runde 18, 2026-09-23); Executor lokal: 2/8 (Runde 19) |
 | **T-V4** Kopplung Modell ↔ Code | Ist das Modell zu 100 % gekoppelt, ohne ein Abbild des ganzen Codes zu sein? | RC-01…RC-09, R-19/R-20/R-26/R-32; **Grenzmenge** `scripts/grenzmenge.mjs` (CR-GC-545): FUNC/SCHEMA, die eine MOD-Grenze kreuzen, sind Pflicht, alles darunter bleibt Blackbox | Urteil `kongruent`, Bindungsquote 100 %, Grenzmenge 100 % modelliert | graphcode v283: Grenzmenge FUNC 34 % (15/44), SCHEMA 14 % (2026-09-16); sigllm-Fremdlauf FUNC 20/24; sigllm Lauf 2: 33/33 `realRef` erfunden → `gedriftet` |
 
+#### Nachweis (§2)
+
+| Test | Frage | Aufbau | Kriterium | Stand |
+|---|---|---|---|---|
+| **T-N1** Dokumentanteil der Normen | Welche Norm-Anforderungen sind dokument-belegbar, und deckt graphcode sie? | Spike [`SPIKE-GC-norm-dokumentanteil-RESULTS`](spikes/SPIKE-GC-norm-dokumentanteil-RESULTS.md): Normtexte (PAM 4.0 und 29148 im Volltext, 15288 Leseprobe) gegen erzeugte Sichten und prüfende Regeln | jede der 10 dokument-belegbaren Anforderungsklassen ist `ja` oder als Lücke benannt | **3 von 10 ja, 6 teilweise, 1 nein** (semantische Qualität, braucht Urteil). Lücken: BRS/StRS fehlen, REQ ohne Owner/Priorität/Rationale/Risiko, 5.2.7-Wortliste nicht als Lint, Verifikationsmaßnahmen ohne Entry/Exit/Umgebung, dynamische Architektursicht nur als Wirkkette (2026-09-26) |
+| **T-N2** Nachweis deterministisch | Werden Traceability und Konsistenz aus dem Modell geprüft statt behauptet? | R-18 (legale Kante), R-02/R-05/UC-01/R-21 (Abdeckung), R-19/R-20 (Bindung), RC-01…09 (Modell ↔ Code), `graph_test_ingest` (echte Ergebnisse); Sichten deterministisch gerendert (gleicher Graph, gleiche Bytes) | RTM und VCRM ohne Lücke; Bindung 100 %; Ergebnisse aus echten Läufen | graphcode: 118 von 134 TEST gebunden, 119 passed, 1 failed; Bindungsquote FUNC siehe T-V4 |
+| **T-N3** Gegenprobe freies Frontier-Modell | Kann ein frei laufendes Modell dieselben Nachweise erbringen? | Code-Test `frei` mit Auftrag, zusätzlich RTM und VCRM zu liefern; dessen Dokumente per `se:import-doc` einlesen und mit denselben Regeln prüfen | Traceability und Konsistenz sind aus seinen Artefakten deterministisch prüfbar und stimmen | nicht gemessen. Ohne Auftrag lieferte der freie Arm keine IDs und keine Trace-Links (2026-09-23). These des Autors: Links in frei geschriebenem Text sind Behauptungen ohne Prüfer |
+
 #### Managen (§3)
 
 | Test | Frage | Aufbau | Kriterium | Stand |
@@ -322,7 +346,7 @@ Informationsaufrufe. Der Rest ist echter Bedarf, und vor allem Code-Arbeit.
 | **T-M2** Steuern im Lauf | Konvergiert ein Greenfield-Lauf zur implementierungsreifen Spezifikation? | `rig/greenfield-systemtest`, `steuerung.mjs`, `trajektorie.mjs` | Ablehnungen fallen über die Runden; Readiness 8/8; Steuerwert ≤ 1 | Runde 19 (qwen3-coder, N = 3): Ablehnungen 13,3 → 3,0 je Lauf; Handoff nie erreicht (höchstens 4/8), `ms` immer 0 (2026-09-25) |
 | **T-M3** Steuern über die Historie | Sinken die Verstöße je Element, während das Modell wächst? | `scripts/spike-nachweis-history.mjs` (CR-GC-427): 73 git-Stände, alle mit heutigen Regeln gerichtet | Verstöße je Element fallen monoton im Trend | **GO:** 0,954 → 0,039 bei +86 % Elementen (2026-08-25) |
 | **T-M4** Kausalität | Wirkt ein verschobenes Budget der Policy tatsächlich auf das Gate-Urteil? | `tests/steering.steer-causality.test.ts` (CR-GC-484) | 12/12 Prüfungen grün, 3 Rotkontrollen schlagen an | **12/12** (2026-09-07; vorher 2/12) |
-| **T-M5** Empfehlen | Werden Empfehlungen abgerufen und sind sie anwendbar? | Audit der Aufrufe `graph_suggest`/`graph_next_step`; `schatten-suggest.mjs` (CR-GC-609); Hint-Konformanz (CR-GC-432) | ≥ 1 Abruf je Lauf, ≥ 1 angewandter Vorschlag; jede Steuerregel hat eine Fix-Vorlage | Opus: 0 Abrufe; Schatten-Suggest: 0 anwendbare Vorschläge; `FIX_TEMPLATES` decken keine der 5 Steuerregeln; Fremdlauf: ausführbar in 0,03 % der Befunde; Hint-Konformanz nicht messbar (fehlende Stempel) |
+| **T-M5** Empfehlen | Werden Empfehlungen abgerufen und sind sie anwendbar? | Audit der Aufrufe `graph_suggest`; `schatten-suggest.mjs` (CR-GC-609); Hint-Konformanz (CR-GC-432) | ≥ 1 Abruf je Lauf, ≥ 1 angewandter Vorschlag; jede Steuerregel hat eine Fix-Vorlage | Opus: 0 Abrufe; Schatten-Suggest: 0 anwendbare Vorschläge; `FIX_TEMPLATES` decken keine der 5 Steuerregeln; Fremdlauf: ausführbar in 0,03 % der Befunde; Hint-Konformanz nicht messbar (fehlende Stempel) |
 | **T-M6** Reihenfolge blockt nie | Darf der Nutzer Ebenen überspringen? | Gate-Test: MOD/FUNC ohne UC anlegen | Verdict ≠ `error`, Warnungen erlaubt | nicht erhoben |
 
 #### Effizienz (§4)
@@ -371,7 +395,7 @@ Informationsaufrufe. Der Rest ist echter Bedarf, und vor allem Code-Arbeit.
 | Test | Frage | Aufbau | Kriterium | Stand |
 |---|---|---|---|---|
 | **T-H1** Verdiente Null | Sind 0 Errors echt, oder wurde die Regel gar nicht gefragt? | `rules_evaluate` + Liste der nicht ausgewerteten Regeln + Prüfliste der Analysen | 0 Errors **und** alle vorgesehenen Regeln/Analysen ausgewertet | sigllm Lauf 1: 0 Errors bei 0 von 5 Analysen (ITEM-2026-341) |
-| **T-H2** Regel-Matrix | Stimmt die Grammatik-SSOT mit dem Katalog? | `scripts/regel-matrix.mjs` → `docs/research/regel-matrix.md`; Smeagol-Check `tests/skill-rule-ids.test.ts`, `tests/policy-herkunft.test.ts` | jede Regel steht in der Matrix, jede genannte ID existiert | 73 Regeln, 5 blocken, 11 mit Fix-Vorlage (2026-09-23); RC-08/09 fehlen in der Matrix, und kein Test prüft, ob sie aktuell ist |
+| **T-H2** Regel-Matrix | Stimmt die Grammatik-SSOT mit dem Katalog? | `scripts/regel-matrix.mjs` → `docs/views/regel-matrix.md`; Smeagol-Check `tests/skill-rule-ids.test.ts`, `tests/policy-herkunft.test.ts` | jede Regel steht in der Matrix, jede genannte ID existiert | 73 Regeln, 5 blocken, 11 mit Fix-Vorlage (2026-09-23); RC-08/09 fehlen in der Matrix, und kein Test prüft, ob sie aktuell ist |
 | **T-H3** Messinstrumente | Messen die Instrumente selbst richtig? | `tests/rig-measured.test.ts`, `systemtest-rig.test.ts`, `steering.measurement-path.test.ts`, `skill-report-measured.test.ts`, `claims.conformance.test.ts`, `import-boundaries.test.ts` | grün in der VOLL-Lane | grün (Dauertests) |
 
 ### 9.4 Setting der Rigs
@@ -446,7 +470,7 @@ Test-Zuordnung sind Kandidaten zum Entfernen.
 | Minimal-Whitebox | `rig/minimal-whitebox/` | Rig + Spike | T-E2, T-E6 | ausgewertet |
 | moneyflow-Struktur | `rig/moneyflow-struktur/` | Rig, Gate | T-V1, T-V2, T-O4 | ausgewertet |
 | dummy-slicer / context-sufficiency | `rig/dummy-slicer/` | Rig, Spike | T-E2 | ausgewertet (2026-06) |
-| Executor-Programm | `docs/executor-abschlussbericht.md` | Serie | T-E3, T-E6 | abgeschlossen, Rankings zurückgezogen; Rohdaten gelöscht bis auf 4 Fixture-Graphen (CR-GC-678) |
+| Executor-Programm | `docs/archive/executor-abschlussbericht.md` | Serie | T-E3, T-E6 | abgeschlossen, Rankings zurückgezogen; Rohdaten gelöscht bis auf 4 Fixture-Graphen (CR-GC-678) |
 | sigllm-Fremdlauf | `bok/docs/research/fremdlauf-sigllm-2026-09.md` | Replay | T-M1, T-M5, T-V4 | ausgewertet |
 | KPI 1 je CR | `scripts/retro-kpi.mjs`, `scripts/cr-messung.mjs` | Dauermessung | T-E1 | läuft nach jedem Commit |
 | Bedarfsanalyse + Turn-Bilanz | `rig/greenfield-systemtest/turn-analyse.mjs` (`bedarfsAnalyse`, `bedarfsAnalyseExecutor`, `lesenJeAusloeser`), eingebunden in `report.mjs` und `rig/code-test/messen.mjs` | Default-Auswertung jedes Laufs (Stream oder Executor-Spur) | T-E1, T-E5, T-E9 | läuft |
@@ -466,6 +490,7 @@ Test-Zuordnung sind Kandidaten zum Entfernen.
 | ND- / Engpass-Known-Answer | `scripts/spike-nd-known-answer.mjs`, `spike-engpass-known-answer.mjs` | Spikes | T-O6 | ND 0/7, Engpass 6/7 |
 | Abstraktionsebenen | `docs/spikes/SPIKE-GC-abstraction-levels*.md` | Spike | T-V1 | nur qualitativ |
 | Kaltstart test_karp | CR-GC-485 | Einzellauf | T-V3, T-M2 | ausgewertet |
+| Norm-Dokumentanteil | `docs/spikes/SPIKE-GC-norm-dokumentanteil*.md` | Spike (Recherche) | T-N1, T-N2 | ausgewertet (2026-09-26) |
 | Regel-Matrix | `scripts/regel-matrix.mjs` | Generator | T-H2 | läuft |
 
 ---
