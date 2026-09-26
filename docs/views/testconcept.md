@@ -4,7 +4,7 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 133 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 134 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
 
 ```
               ╱╲
@@ -24,7 +24,7 @@
 | System | SYS (1) | E2E | 53 | 53 / 1 | ✓ |
 | Use-case | UC (9) | acceptance / integration | 101 | 9 / 9 scenario | ✓ |
 | Integration | FUNC↔FUNC (150 conn) | integration (chain) | 101 | 119 / 150 connections | ✗ 31 uncovered |
-| Function | FUNC (128) | unit | 79 | 128 / 128 | ✓ |
+| Function | FUNC (128) | unit | 80 | 128 / 128 | ✓ |
 | (support) | — | conformance | 4 | codec round-trip | ✓ |
 
 > GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),

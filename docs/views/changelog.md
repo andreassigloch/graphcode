@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 274 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 286 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 274 CR · 212 done · 0 open.
+Total: 286 CR · 212 done · 0 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -336,3 +336,15 @@ Total: 274 CR · 212 done · 0 open.
 | `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht |
 | `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten |
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich |
+| `CR-GC-667` | n/a | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen |
+| `CR-GC-668` | n/a | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche |
+| `CR-GC-669` | n/a | Migrationswerkzeug REQ-kinds auf zwei Werte |
+| `CR-GC-670` | n/a | graphcode-Eigenmodell auf zwei REQ-kinds migrieren |
+| `CR-GC-671` | n/a | graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor |
+| `CR-GC-672` | n/a | Executor und Preflight auf zwei REQ-kinds |
+| `CR-GC-673` | n/a | Projektionen auf zwei REQ-kinds und Rollen-Attribut |
+| `CR-GC-674` | n/a | SE-Skills und Help auf zwei REQ-kinds |
+| `CR-GC-675` | n/a | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus |
+| `CR-GC-676` | n/a | Mess-Artefakte aufräumen: abgeschlossene Spikes, Recorder, tote Rigs und Alt-Ergebnisse löschen |
+| `CR-GC-677` | n/a | Mess-Artefakte: Recorder kennzahlen/zugverlauf und erledigte Spikes löschen |
+| `CR-GC-678` | n/a | Mess-Artefakte: tote Rigs und Greenfield-Altergebnisse löschen |
