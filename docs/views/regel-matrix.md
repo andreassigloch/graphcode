@@ -1,7 +1,7 @@
 # Regel-Matrix
 
 > GENERIERT von `scripts/regel-matrix.mjs` aus contracts, graph-api-core, se-engine und graphcode — nicht von Hand bearbeiten.
-> 73 Regeln · 59 im Gate-Katalog · 5 blocken (Stufe error) · 3 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
+> 75 Regeln · 59 im Gate-Katalog · 5 blocken (Stufe error) · 3 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
 > Fix-Vorlagen: 11 Regeln tragen eine · 10 schliessen den Fund · 1 Teil-Fix · 0 tot (CR-SM-357).
 
 ## Tasks
@@ -15,7 +15,21 @@
 | fmea | 3 | AF-04 | se-fmea | FM-03 |
 | plan | 6 | AF-05 | se-plan | MS-01, CR-R01 |
 | anforderungsqualitaet | 5 | ausdruecklich / Zustand | se:author-req | — |
-| realisierung | 13 | ausdruecklich / Zustand | se-test | R-19, R-20, R-26, R-32 |
+| realisierung | 15 | ausdruecklich / Zustand | se-test | R-19, R-20, R-26, R-32 |
+
+## Erfueller × kinds
+
+> `X -satisfy-> REQ` ist legal (✓), wenn die REQ genau diese kinds traegt — gefragt bei `isValidTrace` (R-18). Smeagol prueft die in Skills und Prompts genannten Werte dagegen (tests/skill-kinds-werte.test.ts).
+
+| kinds | FUNC | FCHAIN | MOD | SYS |
+|---|:---:|:---:|:---:|:---:|
+| functional | ✓ | ✓ |  |  |
+| non-functional |  | ✓ | ✓ | ✓ |
+| risk |  | ✓ | ✓ | ✓ |
+| mitigation |  | ✓ | ✓ | ✓ |
+| precondition | ✓ | ✓ |  |  |
+| postcondition | ✓ | ✓ |  |  |
+| (ohne kinds) |  | ✓ |  |  |
 
 ## Alle Regeln
 
@@ -55,7 +69,7 @@
 | ND-01 | FuncNearDuplicate | Aehnlichkeit (ND) | warning | kern | PDR | arch |  |  |  | se:top-level |  |  |  |  |
 | ND-02 | SchemaNearDuplicate | Aehnlichkeit (ND) | warning | kern | CDR | schema |  |  |  |  |  |  |  |  |
 | NFR-01 | BudgetOvershoot | Gate | warning | kern | CDR | arch |  |  |  | se:top-level |  |  |  |  |
-| R-01 | REQ must have verification | Gate | error | kern | TRR | ver |  |  | se:close-violations |  |  | se:author-req se-conops se-fmea se-view:fmea |  |  |
+| R-01 | REQ must have verification | Gate | error | kern | TRR | ver |  |  | se:close-violations |  |  | se:author-req se-conops se-fmea se-umbau se-view:fmea |  |  |
 | R-02 | FUNC must satisfy REQ | Gate | warning | kern | PDR | arch |  |  |  | se:top-level |  | se-fmea | schliesst |  |
 | R-04 | Module boundary width | Gate | warning | kern | PDR | alloc | ja |  | se-view:arch | se:top-level | ja | se:top-level |  |  |
 | R-05 | TEST must verify REQ | Gate | warning | kern | TRR | ver |  |  |  |  |  |  |  |  |
@@ -65,7 +79,7 @@
 | R-15 | FCHAIN completeness | Gate | warning | kern | PDR | uc |  |  |  | se:author-uc |  |  |  |  |
 | R-16 | ACTOR must have io | Gate | warning | kern | SRR | uc |  |  |  | se:author-uc |  | se:author-actor |  |  |
 | R-17 | SYS must have compose | Gate | warning | kern | SRR | uc |  |  |  | se:author-uc |  | se:top-level |  |  |
-| R-18 | Valid trace pattern | Gate | error | kern | PDR | arch |  |  |  | se:top-level |  | se:author-actor se:import-doc se-fmea se-plan | schliesst |  |
+| R-18 | Valid trace pattern | Gate | error | kern | PDR | arch |  |  |  | se:top-level |  | se:author-actor se:author-req se:import-doc se-fmea se-plan | schliesst |  |
 | R-19 | Runnable TEST binding | Gate | warning | realisierung | TRR | ver |  | realisierung |  | se-test |  | se-irr se-retro se-test |  |  |
 | R-20 | FUNC realRef binding | Gate | warning | realisierung | TRR | arch |  | realisierung |  | se-test |  | se:import-code se-irr se-retro |  |  |
 | R-21 | FUNC↔FUNC handover needs a shared chain and an integration test | Gate | warning | kern | TRR | ver |  |  |  |  |  |  |  |  |
@@ -76,14 +90,16 @@
 | R-30 | FUNC leaf must belong to a function chain | Gate | warning | kern | PDR | arch |  |  |  | se:top-level |  | se:top-level | schliesst |  |
 | R-31 | FUNC must be wired (io input + output) | Gate | warning | kern | PDR | arch |  |  |  | se:top-level |  |  | Teil-Fix |  |
 | R-32 | SCHEMA must have contract TEST | Gate | warning | realisierung | TRR | ver |  | realisierung |  | se-test |  |  |  |  |
-| RC-01 | FUNC realRef resolves to a declared symbol | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  | se-review |  |  |
+| RC-01 | FUNC realRef resolves to a declared symbol | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  | se-review se-umbau |  |  |
 | RC-02 | testRefs entries resolve to runnable tests | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  | se-review |  |  |
 | RC-03 | SCHEMA realRef resolves to a declared export | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  | se-review |  |  |
 | RC-04 | SCHEMA realRef is parsed at its interface | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  |  |  |  |
 | RC-05 | cross-module import drift | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  |  |  |  |
 | RC-06 | external realRef names a declared dependency | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  |  |  |  |
 | RC-07 | CR node agrees with docs/cr | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  |  |  |  |
-| RD-01 | Unresolved requirement | Gate | warning | kern | SRR | req |  |  | se:close-violations | se:author-req | ja | se:author-req se-plan | schliesst |  |
+| RC-08 | SCHEMA realRef is a Zod schema | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  |  |  |  |
+| RC-09 | SCHEMA is parsed only at its modelled interface | CodeFacts (RC) | warning | realisierung |  |  |  |  |  | se-test |  |  |  |  |
+| RD-01 | Unresolved requirement | Gate | warning | kern | SRR | req |  |  | se:close-violations | se:author-req | ja | se:author-req se-plan se-umbau | schliesst |  |
 | RD-02 | Decomposition consistency | Gate | warning | kern | SRR | req |  |  |  | se:author-req |  |  |  |  |
 | RD-04 | Decomposition breadth | Gate | warning | kern | PDR | arch | ja |  |  | se:top-level |  | se:top-level |  |  |
 | RD-05 | Decomposition too narrow | Gate | warning | kern | PDR | arch |  |  |  | se:top-level |  |  |  |  |

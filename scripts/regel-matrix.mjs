@@ -11,6 +11,8 @@
  *   SKILL_FOR_DIMENSION), Konflikt (beide gesetzt und verschieden), nennt (Prosa-Nennungen in Skills),
  *   Fix und Folge-Regeln (CR-GC-616, beide aus `FIX_ROUNDTRIP` in se-engine — dem gemessenen
  *   Roundtrip je Fix-Vorlage, nicht aus einer gepflegten Liste).
+ * Dazu (CR-GC-668) die Tabelle „Erfueller × kinds": welcher Typ welche REQ-Art per `satisfy` erfuellen
+ * darf — je Zelle `isValidTrace` aus contracts gefragt, nicht aus den where-Listen abgeschrieben.
  * Schreibt docs/views/regel-matrix.csv und docs/views/regel-matrix.md.
  *
  * Aufruf: node scripts/regel-matrix.mjs   (liest Pakete + dist — vorher npm run build)
@@ -84,6 +86,17 @@ const rows = ids.map((id) => {
   };
 });
 
+// CR-GC-668 — Erfueller × kinds. Spalten: jeder Quelltyp mit einem `-satisfy-> REQ`-Pattern; Zeilen:
+// jeder ReqKind plus „ohne kinds" (fehlend = nicht deklariert, ein where-Pattern lehnt dann ab).
+const erfueller = [...new Set(se.TRACE_PATTERNS.filter((p) => p.type === 'satisfy' && p.target === 'REQ').map((p) => p.source))];
+const kindsZeilen = [...se.ReqKind.options.map((k) => [k, [k]]), ['(ohne kinds)', undefined]];
+const erfuellerTabelle = [
+  `| kinds | ${erfueller.join(' | ')} |`,
+  `|---|${erfueller.map(() => ':---:').join('|')}|`,
+  ...kindsZeilen.map(([name, kinds]) => `| ${name} | ${erfueller
+    .map((source) => (se.isValidTrace({ source, target: 'REQ', type: 'satisfy', targetKinds: kinds }) ? '✓' : '')).join(' | ')} |`),
+];
+
 const cols = Object.keys(rows[0]);
 const csv = [cols.join(';'), ...rows.map((r) => cols.map((c) => String(r[c]).replace(/;/g, ',')).join(';'))].join('\n') + '\n';
 
@@ -101,6 +114,12 @@ const md = [
   '| Task | Regeln | Eintrittspunkt im Kern | Skill | abnehmbar im Task |',
   '|---|---:|---|---|---|',
   ...perTask,
+  '',
+  '## Erfueller × kinds',
+  '',
+  '> `X -satisfy-> REQ` ist legal (✓), wenn die REQ genau diese kinds traegt — gefragt bei `isValidTrace` (R-18). Smeagol prueft die in Skills und Prompts genannten Werte dagegen (tests/skill-kinds-werte.test.ts).',
+  '',
+  ...erfuellerTabelle,
   '',
   '## Alle Regeln',
   '',
