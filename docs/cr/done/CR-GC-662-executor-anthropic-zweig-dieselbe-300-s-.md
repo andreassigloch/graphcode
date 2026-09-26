@@ -1,6 +1,6 @@
 # CR-GC-662: Executor anthropic-Zweig: dieselbe 300-s-fetch-Grenze wie CR-GC-656, ungestreamt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-26)
 **Typ:** aus Item ITEM-2026-558 (bug)
 **Erstellt:** 2026-09-24
 **Item:** bok/items/ITEM-2026-558.json (Lane: code)
@@ -41,4 +41,4 @@ Kein Live-Aufruf: der kostet API-Guthaben und braucht die Freigabe des Auftragge
 - [x] Abgeschnittenes Werkzeug-JSON → `input: {}` + `max_tokens`; error-Ereignis → Fehler; JSON-Antwort.
 - [x] Der Zweig sendet `stream: true`, Echo behaelt die Signatur — rot auf dem alten Zweig.
 - [x] Bestehende Roundtrip-Tests aller drei Backends gruen.
-- [ ] Live gegen die API (gcrun-frontier) — offen, braucht Freigabe (Kosten).
+- [—] Live gegen die API (gcrun-frontier) — **entfallen, benannte Ausnahme:** der Arm ist aus der Betrachtung genommen (graphcode-Leitlinie §9.4, Entscheid des Autors 2026-09-25).
