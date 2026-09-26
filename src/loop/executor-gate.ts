@@ -25,6 +25,7 @@ import {
 import type { Graph } from '@sigloch/graph-api-core';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
 import { formatEToCommands } from './format-e-commands.js';
+import { takeQuestionsFromInput } from './executor-parse.js';
 
 export type MutateOutcome = Partial<MutateResult> & {
   success: boolean;
@@ -36,6 +37,8 @@ export type MutateOutcome = Partial<MutateResult> & {
   fitAdvisory?: FitAdvisory;
   /** Readiness-Delta des dryRun-Verdicts (CR-GC-289) — das primäre Ranking-Kriterium nach tier. */
   steeringDelta?: SteeringDelta;
+  /** CR-GC-667: der Batch bestand nur aus Fragezeilen — kein Gate-Call, keine Abweisung. */
+  questionOnly?: boolean;
 };
 
 /** Kompakte Regel-ID-Liste einer Rejection für die run.log-Trace (CR-GC-286). */
@@ -72,6 +75,15 @@ export function formatGateFeedback(result: MutateOutcome): string {
 export interface GateCounters {
   preflightFixed: number;
   preflightBlocked: number;
+  /** CR-GC-667: die Fragen des Laufs an den Auftraggeber, je Wortlaut einmal. */
+  questions: string[];
+}
+
+/** Fragen in die Laufliste; zurueck kommen nur die neuen — eine wiederholte Frage ist keine zweite. */
+export function recordQuestions(stats: Pick<GateCounters, 'questions'>, questions: readonly string[]): string[] {
+  const neu = [...new Set(questions)].filter((q) => !stats.questions.includes(q));
+  stats.questions.push(...neu);
+  return neu;
 }
 
 /** Ergebnis des Preflights: der Batch, der weitergeht, oder das lokale Block-Verdict. */
@@ -133,7 +145,16 @@ export function bindGateClient(
   // Handler-Throws als generisches 'executor-call'. Der Preflight (CR-GC-284)
   // läuft nur auf schema-validem Input — Batch-Hygiene VOR dem Gate, kein
   // zweites Gate-Urteil; bei jedem Preflight-Fehler geht der Batch unverändert durch.
-  const runPreflight = async (input: unknown): Promise<PreflightResult> => {
+  const runPreflight = async (roh: unknown): Promise<PreflightResult> => {
+    // CR-GC-667: Fragezeilen verlassen den Batch hier, an der einen Stelle, die beide Pfade
+    // (Ein-Kandidat und Best-of-N) passieren. Der Codec sieht sie nie.
+    const { input, questions } = takeQuestionsFromInput(roh);
+    for (const q of recordQuestions(stats, questions)) trace(`    frage: ${q}`);
+    const nurFragen =
+      questions.length > 0 &&
+      !(input as { commands?: unknown }).commands &&
+      !String((input as { formatE?: unknown }).formatE ?? '').trim();
+    if (nurFragen) return { effective: input, blocked: { success: false, questionOnly: true }, hints: [], duplicates: [] };
     const parsed = registry['graph_mutate'].inputSchema.safeParse(input);
     if (!parsed.success) return { effective: input, blocked: null, hints: [], duplicates: [] };
     let effective: unknown = parsed.data;

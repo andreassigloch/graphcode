@@ -59,7 +59,7 @@ beforeAll(async () => {
   await harness.initialize();
   await harness.seedFromJson();
   const registry = bindToolsToHarness(harness);
-  gate = bindGateClient(registry, { preflightFixed: 0, preflightBlocked: 0 }, () => {});
+  gate = bindGateClient(registry, { preflightFixed: 0, preflightBlocked: 0, questions: [] }, () => {});
 }, 120_000);
 
 afterAll(async () => {

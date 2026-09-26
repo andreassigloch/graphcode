@@ -32,10 +32,19 @@ import type { ModelAnswer, ModelToolCall } from './model-answer-contract.js';
 // Die drei zustandsfreien Executor-Achsen (CR-GC-320) — Prompt/Injektion,
 // Best-of-N-Ranking, Prosa-Recovery. Kein Re-Export von hier: wer sie braucht,
 // importiert das jeweilige Modul direkt (keine parallelen Pfade).
-import { EMIT_SUFFIX, GUIDE_HINT, IDLE_NUDGE, SYSTEM, buildRoundInjection, jsonCapped } from './executor-prompt.js';
-import { extractMutateFromText, extractToolCallFromText, type RecoveredMutate } from './executor-parse.js';
+import {
+  EMIT_SUFFIX,
+  GUIDE_HINT,
+  IDLE_NUDGE,
+  SYSTEM,
+  buildRoundInjection,
+  headlessAnswer,
+  jsonCapped,
+  ownerAnswer,
+} from './executor-prompt.js';
+import { extractMutateFromText, extractQuestions, extractToolCallFromText, type RecoveredMutate } from './executor-parse.js';
 import { READ_TOOLS, execReadOrGraphTool, pushToolResults } from './executor-tools.js';
-import { bindGateClient, formatGateFeedback, ruleIdsOf, type MutateOutcome } from './executor-gate.js';
+import { bindGateClient, formatGateFeedback, recordQuestions, ruleIdsOf, type MutateOutcome } from './executor-gate.js';
 import { zugvermerk, type Zug } from './zugvermerk.js';
 import { runBestOfNStep } from './executor-bestofn.js';
 import { buildCallModel, buildToolSpecs, toBackendTools } from './executor-backend.js';
@@ -101,6 +110,9 @@ export const ExecutorConfigSchema = z.object({
    * als das 35B-A3B-MoE, für das die Defaults dimensioniert waren. Nur gesetzt gesendet:
    * Backends ohne das Feld dürfen den Request nicht mit unbekanntem Feld ablehnen. */
   reasoningEffort: z.enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh']).optional(),
+  /** CR-GC-667: manuelle Session — eine Fragezeile haelt den Lauf an, der Auftraggeber antwortet.
+   * false (Default) = headless: die Antwort ist der Registertext `openQuestions` (Annahme anlegen). */
+  interactive: z.boolean().default(false),
 });
 export type ExecutorConfig = z.infer<typeof ExecutorConfigSchema>;
 
@@ -150,11 +162,26 @@ export interface ExecutorStats {
   tokensIn: number;
   tokensOut: number;
   tokensReasoning: number;
+  /** CR-GC-667: die Fragen an den Auftraggeber (Fragezeilen), je Wortlaut einmal. */
+  questions: string[];
 }
 
 // ---------------------------------------------------------------------------
 // Der Loop.
 // ---------------------------------------------------------------------------
+
+/**
+ * CR-GC-667 (SCHEMA-ask-owner): der Rueckkanal zum Auftraggeber. Hin gehen die Fragen eines Turns
+ * im Wortlaut der Fragezeilen, zurueck kommt eine freie Antwort; die leere Antwort heisst „als
+ * Annahme mit offenem Wert anlegen“.
+ */
+export type AskOwner = (questions: readonly string[]) => Promise<string>;
+
+/** Der pruefbare Vertrag desselben Austauschs, geprueft, wo die Antwort von aussen hereinkommt. */
+export const OwnerExchangeSchema = z.object({
+  questions: z.array(z.string().min(1)).min(1),
+  answer: z.string(),
+});
 
 export interface RunExecutorOptions {
   registry: MCPToolRegistry;
@@ -166,11 +193,25 @@ export interface RunExecutorOptions {
   /** Test-Injektion: ersetzt den HTTP-Backend-Call. */
   callModel?: CallModel;
   trace?: (line: string) => void;
+  /** CR-GC-667: der Rueckkanal der manuellen Session — Pflicht bei config.interactive. */
+  ask?: AskOwner;
 }
 
 export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorStats> {
   const { registry, workspaceDir, config } = opts;
   const trace = opts.trace ?? ((): void => undefined);
+  // CR-GC-667: kein stiller Rueckfall. Eine manuelle Session ohne Rueckkanal wuerde headless
+  // weiterlaufen und die Fragen mit dem Registertext beantworten — das Gegenteil des Auftrags.
+  // Best-of-N sammelt Kandidaten parallel; ein Anhalten je Kandidat hat dort keinen Ort.
+  if (config.interactive && !opts.ask) throw new Error('runExecutor: interactive ohne Rueckkanal (ask)');
+  if (config.interactive && config.candidates > 1) {
+    throw new Error('runExecutor: interactive verlangt candidates=1 — Best-of-N haelt nicht je Kandidat an');
+  }
+  const beantworte = async (questions: readonly string[]): Promise<string> => {
+    if (!config.interactive || !opts.ask) return headlessAnswer(questions);
+    const austausch = OwnerExchangeSchema.parse({ questions, answer: await opts.ask(questions) });
+    return ownerAnswer(austausch.questions, austausch.answer);
+  };
   const callModel = opts.callModel ?? buildCallModel(config);
   const tools = toBackendTools(buildToolSpecs(registry, config.toolset), config.backend);
 
@@ -191,6 +232,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     tokensIn: 0,
     tokensOut: 0,
     tokensReasoning: 0,
+    questions: [],
   };
 
   // Der Gate-Zugang (executor-gate.ts): Parse → Preflight → graph_mutate → Feedback.
@@ -215,6 +257,9 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // nicht mehr, wer im Prompt die Auswahl macht: das ist im Executor immer der
   // Treiber (CR-GC-568, s. genInput.selection unten).
   const bestOfN = config.candidates > 1;
+  // CR-GC-667: eine Antwort auf eine Frage aus einem Schritt, der mit dem Apply endete — sie reist
+  // mit der naechsten Runde, sonst ginge sie verloren.
+  let antwortNachtrag = '';
   for (let round = 0; round < config.maxRounds; round++) {
     // Volles Frontier-Rendering auch lokal (CR-GC-282 negativ validiert: das
     // Minimal-Rendering halbierte den Durchsatz — v13b 22 vs. v12 82 Elemente;
@@ -282,7 +327,13 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // ob er sie einbettet. Ein Schreiber je Tatsache (CR-GC-358), und zwar der, der sie kennt.
     const injection = config.injection ? await buildRoundInjection(registry, gen) : GUIDE_HINT;
     const baseContent =
-      gen.prompt + (injection ? '\n\n' + injection : '') + (vermerk ? '\n\n' + vermerk : '') + EMIT_SUFFIX + stagnationHint;
+      gen.prompt +
+      (injection ? '\n\n' + injection : '') +
+      (vermerk ? '\n\n' + vermerk : '') +
+      (antwortNachtrag ? '\n\n' + antwortNachtrag : '') +
+      EMIT_SUFFIX +
+      stagnationHint;
+    antwortNachtrag = '';
     if (bestOfN) {
       // Best-of-N (CR-GC-288): Sammeln → Proben → Wählen → Gewinner anwenden.
       // Fokus-Dimension aus dem GenerationStep (CR-GC-289): focusKey hat die
@@ -323,6 +374,14 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       stats.tokensIn += resp.usage.in;
       stats.tokensOut += resp.usage.out;
       stats.tokensReasoning += resp.usage.reasoning;
+      // CR-GC-667: Fragen stehen im Text oder im formatE des Batches — den zweiten Ort liest der
+      // Gate-Zugang. Beide landen in derselben Liste; neu ist, was nach diesem Stand dazukam.
+      const fragenStand = stats.questions.length;
+      for (const q of recordQuestions(stats, extractQuestions(resp.text).questions)) trace(`    frage: ${q}`);
+      const antwortAufFragen = async (): Promise<string> => {
+        const neu = stats.questions.slice(fragenStand);
+        return neu.length > 0 ? beantworte(neu) : '';
+      };
       trace(
         `  ${round + 1}.${turn + 1}: ` +
           (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') +
@@ -361,6 +420,13 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           }
         }
         if (!recovered) {
+          const antwort = await antwortAufFragen();
+          if (antwort) {
+            // Eine Frage ist kein Leerlauf: das Modell bekommt die Antwort und baut weiter.
+            messages.push({ role: 'assistant', content: resp.text });
+            messages.push({ role: 'user', content: antwort });
+            continue;
+          }
           trace(`    idle: ${resp.text.slice(0, 160).replace(/\n/g, ' ')}`);
           if (nudgedInStep) break; // schon nachgefasst — Step aufgeben
           nudgedInStep = true;
@@ -369,10 +435,18 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           continue;
         }
         const outcome = await gate.runMutate(recovered);
+        const antwort = await antwortAufFragen();
+        if (outcome.questionOnly) {
+          // Nur eine schon gestellte Frage wiederholt: keine neue Antwort, sondern der Handlungs-Zwang.
+          messages.push({ role: 'assistant', content: resp.text });
+          messages.push({ role: 'user', content: antwort || IDLE_NUDGE });
+          continue;
+        }
         if (outcome.success) {
           stats.mutatesApplied += 1;
           if (rejectedInStep) stats.repairedAfterRejection += 1;
           trace(`    recovered mutate applied (${outcome.mutations ?? '?'} mutations)`);
+          antwortNachtrag = antwort;
           break;
         }
         // Rejected recovery: Feedback in die History — NICHT stiller Drop (der
@@ -382,7 +456,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         rejectedInStep = true;
         letzteAbweisung = outcome;
         messages.push({ role: 'assistant', content: resp.text });
-        messages.push({ role: 'user', content: formatGateFeedback(outcome) });
+        messages.push({ role: 'user', content: formatGateFeedback(outcome) + (antwort ? '\n\n' + antwort : '') });
         trace(`    recovered mutate REJECTED [${ruleIdsOf(outcome)}] — feeding gate violations back`);
         continue;
       }
@@ -409,6 +483,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           }
           const outcome = await gate.runMutate(call.input);
           results.push(jsonCapped(outcome));
+          if (outcome.questionOnly) continue;
           if (outcome.success) {
             stats.mutatesApplied += 1;
             appliedThisTurn = true;
@@ -433,18 +508,23 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
         }
       }
       const attemptedMutate = appliedThisTurn || rejectedThisTurn;
-      if (!attemptedMutate) readTurns += 1;
+      const antwort = await antwortAufFragen();
+      if (!attemptedMutate && !antwort) readTurns += 1;
       // Lese-Budget (CR-GC-280): devstral exploriert sonst alle 6 Turns (guide/
       // elements) und emittiert nie — ab dem 2. Lese-Turn wandert der Handlungs-
       // Zwang in den Tool-Result-Content (Jinja-sicher, s. Rollen-Alternierung).
-      const feedback =
+      const zwang =
         rejectedThisTurn && !appliedThisTurn && lastRejection
           ? formatGateFeedback(lastRejection)
-          : !attemptedMutate && readTurns >= 2
+          : !attemptedMutate && !antwort && readTurns >= 2
             ? IDLE_NUDGE
             : undefined;
+      // Die Antwort geht mit dem Feedback dieses Turns; endet der Schritt mit dem Apply, mit der
+      // naechsten Runde (CR-GC-667).
+      const feedback = appliedThisTurn ? zwang : [zwang, antwort].filter(Boolean).join('\n\n') || undefined;
       pushToolResults(config.backend, messages, resp.toolCalls, results, feedback);
       if (appliedThisTurn) {
+        antwortNachtrag = antwort;
         if (rejectedInStep || rejectedThisTurn) stats.repairedAfterRejection += 1;
         angewandtImStep = true;
         break; // Step autoriert → nächste generate-Runde

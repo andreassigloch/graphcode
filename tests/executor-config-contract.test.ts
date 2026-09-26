@@ -42,6 +42,8 @@ describe('SCHEMA-executor-config: was ein Lauf ist, steht an EINER Stelle (CR-GC
     // Ohne Angabe wird kein Denk-Budget gesendet — Backends ohne das Feld duerfen den
     // Request nicht wegen eines unbekannten Feldes abweisen.
     expect(cfg.reasoningEffort).toBeUndefined();
+    // CR-GC-667: headless ist der Default — nur eine manuelle Session haelt bei einer Frage an.
+    expect(cfg.interactive).toBe(false);
   });
 
   it('die drei Backends sind geschlossen — ein viertes wird abgewiesen', () => {
