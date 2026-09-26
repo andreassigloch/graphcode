@@ -8,7 +8,7 @@
 
 ## 1  System overview
 
-`SYS-graphcode` — Aise-Leitlinie: SSOT ist bok/docs/governance/Aise_Leitlinie.md (zehn Saetze, Aenderung nur durch den Autor). Der Knoten traegt den Verweis, nicht den Text — Format-E kennt keine mehrzeiligen Beschreibungen (ITEM-2026-183).
+`SYS-graphcode` — graphcode-Leitlinie: SSOT ist docs/graphcode_leitlinie.md (Kern-Claim, DoD je Abschnitt, Testdefinitionen; Aenderung nur durch den Autor). Der Knoten traegt den Verweis, nicht den Text — Format-E kennt keine mehrzeiligen Beschreibungen (ITEM-2026-183).
 
 ## 2  Operational policies & constraints
 
@@ -359,6 +359,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht | `FUNC-inventory-channel` |
 | `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten | `REQ-responsiveness` |
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich | `FUNC-take-steering-snapshot` |
+| `CR-GC-667` | n/a | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen | `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-run-executor` · `FUNC-run-verb` · `REQ-open-point-asked` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

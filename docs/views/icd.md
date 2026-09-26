@@ -4,13 +4,14 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 60 SCHEMA · 131 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 61 SCHEMA · 133 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
 | `SCHEMA-action` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-ask-owner` | src/loop/executor.ts#OwnerExchangeSchema | n/a |
 | `SCHEMA-audit-record` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit.ts#AuditStatsSchema | reviewed |
 | `SCHEMA-candidate-probe` | Konzept (noch kein Zod-Export) | n/a |
@@ -160,6 +161,8 @@
 | `FLOW-mutate-cmd-test-ingest` | `FUNC-test-ingest` | `FUNC-mutate` |
 | `FLOW-next-step-advice` | `FUNC-generation-step` | `ACTOR-agent` |
 | `FLOW-ontology-json` | `FUNC-seed-from-json` | `FUNC-held-back-traces` · `FUNC-import` |
+| `FLOW-open-question` | `FUNC-run-executor` | `ACTOR-owner` |
+| `FLOW-owner-answer` | `ACTOR-owner` | `FUNC-run-executor` |
 | `FLOW-phase-readiness` | `FUNC-compute-phase-readiness` | `FUNC-take-steering-snapshot` |
 | `FLOW-preflight-outcome` | `FUNC-preflight` | `FUNC-gate-client` |
 | `FLOW-query-request-agent` | `ACTOR-agent` | `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-readiness` · `FUNC-list-elements` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` |

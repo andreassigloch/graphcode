@@ -2293,6 +2293,78 @@
       "commitRef": "7152e34"
     },
     {
+      "id": "CR-GC-667",
+      "type": "CR",
+      "name": "Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen",
+      "description": "docs/cr/open/CR-GC-667-executor-fragekanal-offene-punkte-als-fo.md"
+    },
+    {
+      "id": "CR-GC-668",
+      "type": "CR",
+      "name": "Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche",
+      "description": "docs/cr/open/CR-GC-668-regel-matrix-zeigt-erfueller-x-kinds-sme.md"
+    },
+    {
+      "id": "CR-GC-669",
+      "type": "CR",
+      "name": "Migrationswerkzeug REQ-kinds auf zwei Werte",
+      "description": "docs/cr/open/CR-GC-669-migrationswerkzeug-req-kinds-auf-zwei-we.md"
+    },
+    {
+      "id": "CR-GC-670",
+      "type": "CR",
+      "name": "graphcode-Eigenmodell auf zwei REQ-kinds migrieren",
+      "description": "docs/cr/open/CR-GC-670-graphcode-eigenmodell-auf-zwei-req-kinds.md"
+    },
+    {
+      "id": "CR-GC-671",
+      "type": "CR",
+      "name": "graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor",
+      "description": "docs/cr/open/CR-GC-671-graphcode-kern-auf-zwei-req-kinds-und-ne.md"
+    },
+    {
+      "id": "CR-GC-672",
+      "type": "CR",
+      "name": "Executor und Preflight auf zwei REQ-kinds",
+      "description": "docs/cr/open/CR-GC-672-executor-und-preflight-auf-zwei-req-kind.md"
+    },
+    {
+      "id": "CR-GC-673",
+      "type": "CR",
+      "name": "Projektionen auf zwei REQ-kinds und Rollen-Attribut",
+      "description": "docs/cr/open/CR-GC-673-projektionen-auf-zwei-req-kinds-und-roll.md"
+    },
+    {
+      "id": "CR-GC-674",
+      "type": "CR",
+      "name": "SE-Skills und Help auf zwei REQ-kinds",
+      "description": "docs/cr/open/CR-GC-674-se-skills-und-help-auf-zwei-req-kinds.md"
+    },
+    {
+      "id": "CR-GC-675",
+      "type": "CR",
+      "name": "Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus",
+      "description": "docs/cr/open/CR-GC-675-executor-material-hinweis-in-der-intenti.md"
+    },
+    {
+      "id": "CR-GC-676",
+      "type": "CR",
+      "name": "Mess-Artefakte aufräumen: abgeschlossene Spikes, Recorder, tote Rigs und Alt-Ergebnisse löschen",
+      "description": "docs/cr/open/CR-GC-676-mess-artefakte-aufra-umen-abgeschlossene.md"
+    },
+    {
+      "id": "CR-GC-677",
+      "type": "CR",
+      "name": "Mess-Artefakte: Recorder kennzahlen/zugverlauf und erledigte Spikes löschen",
+      "description": "docs/cr/open/CR-GC-677-mess-artefakte-recorder-kennzahlen-zugve.md"
+    },
+    {
+      "id": "CR-GC-678",
+      "type": "CR",
+      "name": "Mess-Artefakte: tote Rigs und Greenfield-Altergebnisse löschen",
+      "description": "docs/cr/open/CR-GC-678-mess-artefakte-tote-rigs-und-greenfield-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3068,6 +3140,18 @@
       "type": "FLOW",
       "name": "Graph-Datei (Snapshot)",
       "description": "Der Inhalt der committeten Graph-Datei, gelesen fuer Seed und Reseed und an den Import uebergeben. (CR-GC-503)"
+    },
+    {
+      "id": "FLOW-open-question",
+      "type": "FLOW",
+      "name": "Frage an den Auftraggeber",
+      "description": "Die Fragezeile des Modells an den Auftraggeber: ein offener Punkt des Auftrags (Zeit, Anzahl, Kanal, Frist), gefragt statt mit einer erfundenen Zahl gefuellt. Der Gate-Zugang nimmt sie aus dem Batch, bevor der Codec ihn sieht, und fuehrt sie in der Laufliste questions. (CR-GC-667)"
+    },
+    {
+      "id": "FLOW-owner-answer",
+      "type": "FLOW",
+      "name": "Antwort des Auftraggebers",
+      "description": "Die Antwort auf eine Fragezeile, mit der naechsten Nachricht an das Modell: in der manuellen Session der Wortlaut des Auftraggebers vom Terminal, headless der Registersatz openQuestions (als Annahme mit offenem Wert anlegen). (CR-GC-667)"
     },
     {
       "id": "FLOW-phase-readiness",
@@ -5586,6 +5670,15 @@
       ]
     },
     {
+      "id": "REQ-open-point-asked",
+      "type": "REQ",
+      "name": "Offene Punkte fragen statt erfinden",
+      "description": "Ein offener Punkt des Auftrags muss als Frage an den Auftraggeber gehen und bis zur Antwort als Annahme mit offenem Wert im Modell stehen, nie als erfundener Wert.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-phase-gate-not-skippable",
       "type": "REQ",
       "name": "Phasen-Gate nennt, was fehlt, und haelt den Zug nicht an",
@@ -6481,6 +6574,17 @@
       "concept": true
     },
     {
+      "id": "SCHEMA-ask-owner",
+      "type": "SCHEMA",
+      "name": "OwnerExchange",
+      "description": "Rueckkanal zum Auftraggeber: hin die Fragen eines Turns im Wortlaut der Fragezeilen (questions, mindestens eine), zurueck eine freie Antwort (answer); leer heisst als Annahme mit offenem Wert anlegen. Geprueft, wo die Antwort von aussen hereinkommt. (CR-GC-667)",
+      "realRef": {
+        "file": "src/loop/executor.ts",
+        "symbol": "OwnerExchangeSchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-audit-record",
       "type": "SCHEMA",
       "name": "Audit-Eintrag (aufgezeichnete Gate-Entscheidung)",
@@ -7136,7 +7240,7 @@
       "id": "SYS-graphcode",
       "type": "SYS",
       "name": "GraphCode",
-      "description": "Aise-Leitlinie: SSOT ist bok/docs/governance/Aise_Leitlinie.md (zehn Saetze, Aenderung nur durch den Autor). Der Knoten traegt den Verweis, nicht den Text — Format-E kennt keine mehrzeiligen Beschreibungen (ITEM-2026-183).",
+      "description": "graphcode-Leitlinie: SSOT ist docs/graphcode_leitlinie.md (Kern-Claim, DoD je Abschnitt, Testdefinitionen; Aenderung nur durch den Autor). Der Knoten traegt den Verweis, nicht den Text — Format-E kennt keine mehrzeiligen Beschreibungen (ITEM-2026-183).",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "analysisFreshness": {
@@ -7638,6 +7742,21 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-executor-question-channel",
+      "type": "TEST",
+      "name": "Fragekanal des Executors pruefen",
+      "description": "Gescripteter Executor-Lauf gegen einen Disk-Store: eine Fragezeile im Batch erreicht das Gate nicht, headless kommt der Registersatz zurueck, manuell die Antwort des Auftraggebers; ohne Rueckkanal bricht die manuelle Session ab.",
+      "testRefs": [
+        {
+          "file": "tests/executor.question-channel.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-09-25T15:05:00.000Z"
         }
       ]
     },
@@ -9411,6 +9530,11 @@
     {
       "source": "ACTOR-owner",
       "target": "FLOW-mutate-cmd-owner",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-owner",
+      "target": "FLOW-owner-answer",
       "type": "io"
     },
     {
@@ -13033,6 +13157,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-667",
+      "target": "FUNC-extract-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-667",
+      "target": "FUNC-gate-client",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-667",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-667",
+      "target": "FUNC-run-verb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-667",
+      "target": "REQ-open-point-asked",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15327,6 +15476,26 @@
     {
       "source": "FLOW-ontology-json",
       "target": "SCHEMA-ontology-json",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-open-question",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-open-question",
+      "target": "SCHEMA-ask-owner",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-owner-answer",
+      "target": "FUNC-run-executor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-owner-answer",
+      "target": "SCHEMA-ask-owner",
       "type": "relation"
     },
     {
@@ -18045,9 +18214,19 @@
     },
     {
       "source": "FUNC-run-executor",
+      "target": "FLOW-open-question",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-run-executor",
       "target": "REQ-one-driver-local-and-frontier",
       "type": "satisfy",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-run-executor",
+      "target": "REQ-open-point-asked",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-run-verb",
@@ -19712,6 +19891,16 @@
     {
       "source": "TEST-executor-preflight",
       "target": "REQ-small-model-viable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-executor-question-channel",
+      "target": "REQ-open-point-asked",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-executor-question-channel",
+      "target": "SCHEMA-ask-owner",
       "type": "verify"
     },
     {
@@ -21417,5 +21606,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 473
+  "graphVersion": 489
 }

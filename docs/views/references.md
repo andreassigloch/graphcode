@@ -24,6 +24,7 @@
 | `ACTOR-owner` | io | `FLOW-cli-invocation` |
 | `ACTOR-owner` | io | `FLOW-config-file` |
 | `ACTOR-owner` | io | `FLOW-mutate-cmd-owner` |
+| `ACTOR-owner` | io | `FLOW-owner-answer` |
 | `ACTOR-owner` | io | `FLOW-query-request-owner` |
 | `ACTOR-owner` | io | `FLOW-systemtest-order` |
 | `ACTOR-owner` | io | `FLOW-version-bump` |
@@ -668,6 +669,11 @@
 | `CR-GC-664` | relation | `FUNC-inventory-channel` |
 | `CR-GC-665` | relation | `REQ-responsiveness` |
 | `CR-GC-666` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-667` | relation | `FUNC-extract-mutate` |
+| `CR-GC-667` | relation | `FUNC-gate-client` |
+| `CR-GC-667` | relation | `FUNC-run-executor` |
+| `CR-GC-667` | relation | `FUNC-run-verb` |
+| `CR-GC-667` | relation | `REQ-open-point-asked` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1102,6 +1108,10 @@
 | `FLOW-ontology-json` | io | `FUNC-held-back-traces` |
 | `FLOW-ontology-json` | io | `FUNC-import` |
 | `FLOW-ontology-json` | relation | `SCHEMA-ontology-json` |
+| `FLOW-open-question` | io | `ACTOR-owner` |
+| `FLOW-open-question` | relation | `SCHEMA-ask-owner` |
+| `FLOW-owner-answer` | io | `FUNC-run-executor` |
+| `FLOW-owner-answer` | relation | `SCHEMA-ask-owner` |
 | `FLOW-phase-readiness` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-phase-readiness` | relation | `SCHEMA-phase-readiness` |
 | `FLOW-preflight-outcome` | io | `FUNC-gate-client` |
@@ -1626,7 +1636,9 @@
 | `FUNC-run-executor` | allocate | `MOD-loop` |
 | `FUNC-run-executor` | io | `FLOW-candidate-batch` |
 | `FUNC-run-executor` | io | `FLOW-model-request` |
+| `FUNC-run-executor` | io | `FLOW-open-question` |
 | `FUNC-run-executor` | satisfy | `REQ-one-driver-local-and-frontier` |
+| `FUNC-run-executor` | satisfy | `REQ-open-point-asked` |
 | `FUNC-run-verb` | allocate | `MOD-surface` |
 | `FUNC-run-verb` | io | `FLOW-run-request` |
 | `FUNC-run-verb` | satisfy | `REQ-one-driver-local-and-frontier` |
@@ -1933,6 +1945,8 @@
 | `TEST-executor-config-contract` | verify | `SCHEMA-executor-config` |
 | `TEST-executor-preflight` | verify | `REQ-preflight-hygiene` |
 | `TEST-executor-preflight` | verify | `REQ-small-model-viable` |
+| `TEST-executor-question-channel` | verify | `REQ-open-point-asked` |
+| `TEST-executor-question-channel` | verify | `SCHEMA-ask-owner` |
 | `TEST-export-graph-guard` | verify | `REQ-deterministic-serialization` |
 | `TEST-export-graph-guard` | verify | `REQ-export-no-clobber` |
 | `TEST-first-step` | verify | `REQ-steering-from-metrics` |
