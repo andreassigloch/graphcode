@@ -117,15 +117,21 @@ export function loadTargetProfile(repoRoot: string): LoadedTargetProfile | null 
 // Intentions-Anker — deterministische Extraktion + Coverage-Read-out (KPI)
 // ---------------------------------------------------------------------------
 
-/** Funktionswörter (de/en), die als Anker nichts verankern. */
-const STOPWORDS = new Set([
+/**
+ * Funktionswörter (de/en), die als Anker nichts verankern. Getrennt nach Sprache, weil sie
+ * zusätzlich die Sprache des Auftrags bestimmen (CR-GC-687, {@link isGermanText}).
+ */
+const STOPWORDS_DE = new Set([
   'und', 'oder', 'der', 'die', 'das', 'den', 'dem', 'des', 'ein', 'eine', 'einem', 'einen', 'einer', 'eines',
   'mit', 'für', 'von', 'aus', 'auf', 'bei', 'nach', 'über', 'unter', 'zum', 'zur', 'als', 'auch', 'dass',
   'sich', 'sie', 'wir', 'ihr', 'ihre', 'ihren', 'sein', 'seine', 'werden', 'wird', 'kann', 'können',
   'soll', 'sollen', 'muss', 'müssen', 'nicht', 'sowie', 'damit', 'dabei', 'dann', 'noch', 'sind', 'ist',
-  'the', 'and', 'with', 'for', 'from', 'that', 'this', 'are', 'can', 'shall', 'must', 'will', 'its',
-  'into', 'over', 'their', 'them', 'they', 'not', 'has', 'have',
 ]);
+const STOPWORDS_EN = new Set([
+  'the', 'and', 'with', 'for', 'from', 'that', 'this', 'are', 'can', 'shall', 'must', 'will', 'its',
+  'into', 'over', 'their', 'them', 'they', 'not', 'has', 'have', 'where', 'which', 'who', 'when',
+]);
+const STOPWORDS = new Set([...STOPWORDS_DE, ...STOPWORDS_EN]);
 
 /**
  * Generische Substantive, die grammatisch tragen, fachlich aber nichts verankern
@@ -144,9 +150,49 @@ const GENERIC_NOUNS = new Set([
 ]);
 
 /**
+ * Deutscher Auftrag? Mehr deutsche als englische Funktionswörter (CR-GC-687). Nur dann trägt
+ * die Großschreibung eine Wortart; bei Gleichstand (auch 0:0) gilt sie nicht.
+ */
+function isGermanText(intent: string): boolean {
+  let de = 0;
+  let en = 0;
+  for (const m of intent.toLowerCase().matchAll(/[\p{L}\p{N}]+/gu)) {
+    if (STOPWORDS_DE.has(m[0])) de += 1;
+    else if (STOPWORDS_EN.has(m[0])) en += 1;
+  }
+  return de > en;
+}
+
+/**
+ * Die Substantive und Eigennamen eines deutschen Textes, kleingeschrieben (CR-GC-687): jedes
+ * Wort, das groß beginnt und NICHT am Satzanfang steht. Am Satzanfang ist Großschreibung kein
+ * Wortart-Signal („Spezifiziere …", „Die …") — ein Wort von dort zählt nur, wenn es an anderer
+ * Stelle im Satzinneren wieder groß steht. Satzgrenze: Textanfang oder `.`/`!`/`?`/`:`/`;`/
+ * Zeilenumbruch seit dem letzten Wort.
+ */
+function germanNounForms(intent: string): Set<string> {
+  const nomen = new Set<string>();
+  let letztesEnde = -1;
+  for (const m of intent.matchAll(/[\p{L}\p{N}]+/gu)) {
+    const start = m.index ?? 0;
+    const satzanfang = letztesEnde < 0 || /[.!?:;\n]/.test(intent.slice(letztesEnde, start));
+    if (!satzanfang && /^\p{Lu}/u.test(m[0])) nomen.add(m[0].toLowerCase());
+    letztesEnde = start + m[0].length;
+  }
+  return nomen;
+}
+
+/**
  * Anker aus der Prosa-Intention: Wort-Token (dieselbe Normalisierung wie der
  * ND-Preflight-Hint, CR-GC-287: `tokens()`) minus Funktionswörter und minus
  * generischer Substantive, in Erstauftritts-Reihenfolge, max 7.
+ *
+ * CR-GC-687: Anker sind BEGRIFFE — der Rundenprompt fragt je unadressiertem Anker nach einem
+ * Use Case. Ein deutscher Auftrag liefert deshalb nur Substantive und Eigennamen
+ * ({@link germanNounForms}); die Wortart steht dort in der Großschreibung, die `tokens()`
+ * wegwirft. Ohne diesen Filter wurden aus „Spezifiziere … bis zur Implementierungsreife. Die
+ * Projektdefinition liegt …" die Anker `spezifiziere`, `bis`, `liegt`. Englisch trägt dieses
+ * Signal nicht — dort bleibt es beim Funktionswort-Filter.
  *
  * CR-GC-307: das Ergebnis wird dem Menschen NICHT mehr zur Bestätigung vorgelegt —
  * die Anker sind ein internes Steuerungsmittel, kein Kundenbegriff. Sie werden still
@@ -154,9 +200,11 @@ const GENERIC_NOUNS = new Set([
  * (`isIntentTooThin`), stellt der Loop stattdessen fachliche Rückfragen.
  */
 export function extractIntentAnchors(intent: string): string[] {
+  const nomen = isGermanText(intent) ? germanNounForms(intent) : null;
   const out: string[] = [];
   for (const t of tokens(intent)) {
     if (STOPWORDS.has(t) || GENERIC_NOUNS.has(t)) continue;
+    if (nomen && !nomen.has(t)) continue;
     out.push(t);
     if (out.length === 7) break;
   }

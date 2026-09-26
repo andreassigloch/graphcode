@@ -118,7 +118,9 @@ describe('Intentions-Anker — Extraktion + Coverage (KPI, nie Veto)', () => {
 
   it('extrahiert deterministisch Inhaltswörter (Funktionswörter raus, max 7, Erstauftritts-Reihenfolge)', () => {
     const anchors = extractIntentAnchors(INTENT);
-    expect(anchors).toEqual(['bestellsystem', 'kunden', 'ersatzteile', 'suchen', 'bestellen']);
+    // CR-GC-687: nur Substantive — `suchen`/`bestellen` sind Verben, kein Begriff, zu dem ein
+    // Use Case fehlen koennte.
+    expect(anchors).toEqual(['bestellsystem', 'kunden', 'ersatzteile']);
     expect(extractIntentAnchors(INTENT)).toEqual(anchors);
   });
 
