@@ -45,7 +45,7 @@ What that buys, measured rather than asserted, is the rest of the series:
 | [03 — Under the hood](03-graphcode-harness-goal-and-concept.md) | the store, the gate, the tools |
 | [04 — The graphcode story](04-the-graphcode-story.md) | the long-form narrative, benefits and downsides |
 | [05 — The advisory roundtrip](05-the-advisory-roundtrip.md) | one edit, end to end, with timings |
-| [06 — Claims](06-claims.md) | the Q&A form, including what did *not* hold up |
+| [Leitlinie](../graphcode_leitlinie.md) | the claims with definition of done and current test status (German) |
 | [07 — The scoring landscape](07-the-scoring-landscape.md) | every number the system computes, and which ones judge |
 | [08 — Glossary](08-glossary.md) | the terms, pinned down |
 | [09 — The systems engineer's view](09-the-systems-engineer-view.md) | keep the thinking, drop the bookkeeping |

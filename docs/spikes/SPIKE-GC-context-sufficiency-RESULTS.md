@@ -30,7 +30,7 @@ Erreicht: **ein kleineres lokales Modell erledigt den Job, weil das Framework pr
 
 ## Agentischer Voll-Loop
 
-Der Executor-/Modell-Benchmark (claude -p vs opencode, Cloud vs lokal, inkl. Graph-Write-back und dem realen graphify-Original-Lauf) ist eigenständig dokumentiert: **[`SPIKE-GC-loop-executor-benchmark`](SPIKE-GC-loop-executor-benchmark.md)**. Kurz: alle lauffähigen Executors implementieren `FN-slice` graph-first (0 SPEC-Reads); **opencode+qwen3.6-27b** ist der lokale Pfad (7 Turns/201 s; voller Lauf schreibt `codeRef` korrekt über das Gate zurück); `claude -p` lokal braucht ≥40k ctx und ist ~3,5× langsamer.
+Der Executor-/Modell-Benchmark (claude -p vs opencode, Cloud vs lokal, inkl. Graph-Write-back und dem realen graphify-Original-Lauf) ist eigenständig dokumentiert: **[`SPIKE-GC-loop-executor-benchmark`](../archive/spikes/SPIKE-GC-loop-executor-benchmark.md)**. Kurz: alle lauffähigen Executors implementieren `FN-slice` graph-first (0 SPEC-Reads); **opencode+qwen3.6-27b** ist der lokale Pfad (7 Turns/201 s; voller Lauf schreibt `codeRef` korrekt über das Gate zurück); `claude -p` lokal braucht ≥40k ctx und ist ~3,5× langsamer.
 
 ## Grenzen (ehrlich)
 

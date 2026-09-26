@@ -50,7 +50,7 @@ Why both exist: a small or locally-run model does better with the second — bei
 to do next, rather than left to plan a large task itself. A large, capable model often does better
 with the first, left to explore on its own terms. Same store, same gate, same rules underneath
 either way; only how work is handed to the model differs. The second form is the strategy
-[the claims](06-claims.md) call *going local*.
+[the claims](../graphcode_leitlinie.md) call *going local*.
 
 ## The bet: a precise query, not a compressed result
 

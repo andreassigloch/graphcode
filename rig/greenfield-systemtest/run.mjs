@@ -6,7 +6,7 @@
 // Apply-Gate, then export the graph + readiness and score against the held-out
 // golden. Raw per-run rows → results.json; report.mjs makes the table.
 //
-// Two executors, deliberately (see SPIKE-GC-loop-executor-benchmark: `claude -p`
+// Two executors, deliberately (see docs/archive/spikes/SPIKE-GC-loop-executor-benchmark: `claude -p`
 // @local overflows the heavy harness; opencode's lean harness is the viable local
 // path). Local arm = opencode + LM Studio; frontier arm = claude -p + Opus. The
 // "opencode vs Claude Code" difference is thus IN the test, not a hidden confound.
@@ -99,7 +99,7 @@ export const CFG = {
     // Emissions-Regime hilft kleinen Modellen und BESCHNEIDET denkende — es nimmt ihnen
     // erst-explorieren-dann-bauen. qwen3.8 denkt, also gehört es auf die Opus-Seite
     // dieser Trennlinie. Voraussetzung ist erst jetzt erfüllt: der `claude -p`-Harness
-    // sprengte 2026-06 noch das lokale Fenster (SPIKE-GC-loop-executor-benchmark: @22k
+    // sprengte 2026-06 noch das lokale Fenster (docs/archive/spikes/SPIKE-GC-loop-executor-benchmark: @22k
     // Overflow, @40k lauffähig) — qwen3.8 lädt mit 119k Kontext.
     { label: 'qwen38-claude', executor: 'claude', local: true,
       model: process.env.LOCAL_CLAUDE_MODEL ?? 'qwen3.8-27b-mlx@4bit' },

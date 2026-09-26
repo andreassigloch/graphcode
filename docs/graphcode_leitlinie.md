@@ -1,4 +1,4 @@
-# Aise-Leitlinie
+# graphcode-Leitlinie
 
 > **SSOT ist dieses Dokument.** Der Systemknoten `SYS-graphcode` trägt nur den Verweis hierher — Format-E kennt keine mehrzeiligen Beschreibungen (ITEM-2026-183).
 > Änderung nur durch den Autor, nicht durch Agenten — im Knoten und hier im selben Zug.
@@ -6,7 +6,7 @@
 **Zweck:** Der Anker für jede Konzept-, Architektur- und Regel-Diskussion. Verläuft sich eine
 Diskussion, wird sie gegen den Kern-Claim (§1) und die Definition of Done des betroffenen
 Abschnitts geprüft. Destilliert am 2026-09-10 aus den Richtungs-Inputs des Autors und
-`graphcode/docs/articles/06-claims.md`, überarbeitet 2026-09-15 (Blocken, drei Stufen,
+`graphcode/docs/archive/articles/06-claims.md`, überarbeitet 2026-09-15 (Blocken, drei Stufen,
 Geltungsbereich, Anker) und 2026-09-25 (DoD je Abschnitt, Testdefinitionen aus den Rigs,
 Review 23.09, Konzept Modell- vs. Realisierungsarchitektur).
 
@@ -114,6 +114,7 @@ arbeitet auf der need-to-know-Whitebox, statt auf dem ganzen Repo zu raten. Kont
 | Whitebox W statt Injektion | 100 % statt 42 % der geänderten Knoten, weniger Token | SPIKE minimal-whitebox |
 | Pull statt Push (Trias nur angeboten) | nicht genommen: `graph_context` 0× bei > 400 Aufrufen | minimal-whitebox Arm pull |
 | Antwort-Diät (Werkzeugantworten −38 %) | Turns 79 → 107, Kosten nicht gesunken | CR-GC-613 |
+| Dateiverweis im Rundenprompt durch den Auftragstext ersetzen (Executor lokal) | Auftrag-Lesungen 12 → 1 je Lauf (3 von 3); Laufzeit 115–246 → 589 s, 23 statt 45–58 Elemente (sauber nur n = 1: zwei Läufe fuhren einen fremden Build) | ITEM-2026-576, Runde 21 |
 
 Die Kosten treibt das **Wiederlesen**, nicht das Schreiben: 99,9 % der Eingabe im
 `claude -p`-Arm, 61 % der Kosten im geführten Code-Arm — getrieben von der Zahl der Turns, nicht vom Modellinhalt (§9.2). Ein **Kipppunkt** Promptgröße → Ausbeute
@@ -224,10 +225,10 @@ Tests aus §9 stehen auf „bestanden" oder tragen eine benannte Ausnahme.
   Steuerregeln (T-M5).
 - **Code-Beweis:** Greenfield erreicht nie gebundenen Code (T-C2). Nach der Faustregel ist der
   geführte Arm heute ≈ 3,5× teurer (T-E5).
-- **Lokales LLM:** Die Executor-Schleife ist nicht zu Ende optimiert, und Runde 20 ist
-  unausgewertet (T-E3).
-- **Rig-Betrieb:** Eine strukturierte Zusammenfassung fehlt. Ein Teil der Läufe und Spikes ist
-  nicht committet (T-F1).
+- **Lokales LLM:** Die Executor-Schleife ist nicht zu Ende optimiert, und Runde 20 zeigt: lokal
+  liegt deutlich hinter Frontier, die Readiness allein erkennt das nicht (T-E3).
+- **Rig-Betrieb:** Eine strukturierte Zusammenfassung fehlt; die `code-test`-Läufe liegen außerhalb
+  des Repos (T-F1).
 
 ---
 
@@ -318,7 +319,7 @@ Informationsaufrufe. Der Rest ist echter Bedarf, und vor allem Code-Arbeit.
 | Test | Frage | Aufbau | Kriterium | Stand |
 |---|---|---|---|---|
 | **T-M1** Unterbinden | Hält das Gate jeden Verstoß aus der DB? | Gate-Unit-Tests (Rollback, R-18); Replay des Fremdlaufs gegen das Audit | kein blockierender Verstoß in der DB; kein Zug meldet `E=0`, während der Graph Errors trägt | sigllm-Fremdlauf: 117 von 137 Bauzügen `E=0`, während der Graph 16 Errors trug (Delta-Semantik); Regel-Matrix: nur 5 von 73 Regeln blocken |
-| **T-M2** Steuern im Lauf | Konvergiert ein Greenfield-Lauf zur implementierungsreifen Spezifikation? | `rig/greenfield-systemtest`, `steuerung.mjs`, `trajektorie.mjs`, `zugverlauf.mjs` | Ablehnungen fallen über die Runden; Readiness 8/8; Steuerwert ≤ 1 | Runde 19 (qwen3-coder, N = 3): Ablehnungen 13,3 → 3,0 je Lauf; Handoff nie erreicht (höchstens 4/8), `ms` immer 0 (2026-09-25) |
+| **T-M2** Steuern im Lauf | Konvergiert ein Greenfield-Lauf zur implementierungsreifen Spezifikation? | `rig/greenfield-systemtest`, `steuerung.mjs`, `trajektorie.mjs` | Ablehnungen fallen über die Runden; Readiness 8/8; Steuerwert ≤ 1 | Runde 19 (qwen3-coder, N = 3): Ablehnungen 13,3 → 3,0 je Lauf; Handoff nie erreicht (höchstens 4/8), `ms` immer 0 (2026-09-25) |
 | **T-M3** Steuern über die Historie | Sinken die Verstöße je Element, während das Modell wächst? | `scripts/spike-nachweis-history.mjs` (CR-GC-427): 73 git-Stände, alle mit heutigen Regeln gerichtet | Verstöße je Element fallen monoton im Trend | **GO:** 0,954 → 0,039 bei +86 % Elementen (2026-08-25) |
 | **T-M4** Kausalität | Wirkt ein verschobenes Budget der Policy tatsächlich auf das Gate-Urteil? | `tests/steering.steer-causality.test.ts` (CR-GC-484) | 12/12 Prüfungen grün, 3 Rotkontrollen schlagen an | **12/12** (2026-09-07; vorher 2/12) |
 | **T-M5** Empfehlen | Werden Empfehlungen abgerufen und sind sie anwendbar? | Audit der Aufrufe `graph_suggest`/`graph_next_step`; `schatten-suggest.mjs` (CR-GC-609); Hint-Konformanz (CR-GC-432) | ≥ 1 Abruf je Lauf, ≥ 1 angewandter Vorschlag; jede Steuerregel hat eine Fix-Vorlage | Opus: 0 Abrufe; Schatten-Suggest: 0 anwendbare Vorschläge; `FIX_TEMPLATES` decken keine der 5 Steuerregeln; Fremdlauf: ausführbar in 0,03 % der Befunde; Hint-Konformanz nicht messbar (fehlende Stempel) |
@@ -330,19 +331,19 @@ Informationsaufrufe. Der Rest ist echter Bedarf, und vor allem Code-Arbeit.
 |---|---|---|---|---|
 | **T-E1** Graph statt Grep | Wo sucht der Agent im Dateisystem, obwohl der Graph die Antwort geliefert hätte? | Zwei Analysezahlen je CR, keine Schwelle: Graph-Leseaufrufe und Suchoperationen (Grep + Glob + Doc-Read), `scripts/retro-kpi.mjs` → `.graphcode/cr-messung.jsonl` nach jedem Commit. Welche Suchen eine Graph-Abfrage beantwortet hätte, weist die Bedarfsanalyse (T-E9) je Lauf aus; für den Referenz-Change zusätzlich `rig/referenz-change/gegenprobe.mjs`. | Jede Suche, die der Graph beantwortet hätte, ist als Optimierungspotenzial ausgewiesen (Werkzeugangebot, Prompt, Skill) | Graph-Leseaufrufe ÷ Suchen im Median 0,5 seit CR-640; CR-GC-661…666 ohne einen Graph-Lesezugriff (2026-09-25). Referenz-Change: 0 Graph-Lesezugriffe gegen 27 Suchen; der Graph hätte 4 statt 172 Testdateien und 20 betroffene Kanten geliefert (2026-09-23) |
 | **T-E2** Whitebox-Kontext | Enthält die Whitebox, was sich tatsächlich ändert? | `rig/minimal-whitebox` (`measure.mjs`), Ground Truth aus dem git-Diff; Spike context-sufficiency | 100 % der geänderten Knoten in W bei \|W\|/\|G\| ≤ 0,05 | W trifft 100 % mit 1 824 Token, die Injektion 42 % mit 2 234 (2026-08-18); ein Bündel von ~667 Token genügt einem 27B-Modell für 5/5 Kriterien (2026-06-26, 1 Knoten) |
-| **T-E3** Lokal ≈ Frontier (Modell) | Nivelliert der Graph den Modellunterschied beim Autorieren? | `rig/greenfield-systemtest`, Arme `gcrun` (lokal, unser Executor) / `opus5` (Frontier, Claude Code). Das ist der Produktvergleich: Modell **und** Treiber verschieden, gewollt, Korpus sigllm-Prosa | Die Spannen von T-V3, T-M1, T-M2 überlappen bei N ≥ 3 | Runde 20 (40 Runden): lokal 91 Elemente, Frontier 187 — unausgewertet, nicht committet, Kosten nicht erfasst. Frühere Rankings zurückgezogen (Truncation-Fehler, Executor-Abschlussbericht) |
+| **T-E3** Lokal ≈ Frontier (Modell) | Nivelliert der Graph den Modellunterschied beim Autorieren? | `rig/greenfield-systemtest`, Arme `gcrun` (lokal, unser Executor) / `opus5` (Frontier, Claude Code). Das ist der Produktvergleich: Modell **und** Treiber verschieden, gewollt, Korpus sigllm-Prosa | Die Spannen von T-V3, T-M1, T-M2 überlappen bei N ≥ 3 | Runde 20 (40 Runden, `auswertung-runde20.md`): lokal 91 Elemente, Frontier 187; Blindurteil: die beste Spec liefert Opus über Claude Code, lokal deutlich dahinter — die Readiness bildet das nicht ab (lokaler Coder: höchste Readiness, schlechtestes Urteil). Kosten nicht erfasst. Frühere Rankings zurückgezogen (Truncation-Fehler, Executor-Abschlussbericht) |
 | **T-E4** Lokal ≈ Frontier (Code) | Dasselbe für Code? | `rig/code-test` mit lokalem Arm | Abnahme gleich, Kennzahlen aus T-C1 in überlappender Spanne | nicht gefahren |
 | **T-E5** Normalisierte Effizienz | Ist die geführte Lieferung billiger als die freie? | Faustregel §9.2 auf `rig/code-test` | `K_geführt ≤ K_frei` bei gleicher Abnahme | **≈ 3,5× teurer** (2,7–4,3×, 2026-09-23) |
 | **T-E6** Kipppunkt des Kontexts | Ab welcher Kürzung fällt die Ausbeute? | Executor-Rig, ≥ 3 Stufen der Promptgröße, getrennt nach „Redundanz" und „tragender Inhalt", N ≥ 3 | Kurve mit dem Punkt, an dem Menge oder Readiness die Streuung verlässt | zwei Stützpunkte: Redundanz −34 % hält die Qualität (CR-GC-650/651), tragenden Inhalt streichen kostet 82 → 22 Elemente (CR-GC-282); keine Kurve |
 | **T-E7** Testauswahl | Sagt der Graph, welche Tests laufen müssen? | `graph_tests` / `impactedTests()`; `scripts/test-selection-audit.mjs` (CR-GC-381); Spike selective-tests (CR-GC-380) | direkt gekoppelte Tests vollständig getroffen; `verify:code` fällt nur bei fehlender Bindung auf VOLL zurück | Trefferquote 13 %, Einsparpotenzial 53 % der Läufe (2026-08-21); Referenz-Change: 4 statt 172 Dateien wären möglich gewesen |
 | **T-E8** Werkzeuglatenz | Ist der Graph schnell genug für die Schleife? | `tests/perf.advisory-roundtrip.spike.test.ts` (CR-GC-400/665), feste Eingabe | Runde lesen → Status → Vorschlag → Anwenden < 200 ms | Median 363 ms, davon Vorschlag 272 ms (2026-08-05); Regelauswertung wächst mit n^1,93 (2026-08-22) |
-| **T-E9** Bedarf je Aufruf | Was wollte das Modell — hatte es das schon, oder hätte der Graph es geliefert? | Default in jedem Lauf: `bedarfsAnalyse` für Claude-Code-Arme (Stream, mit Cache-Lesung je Aufruf), `bedarfsAnalyseExecutor` für den Executor (`run-raw.log`, Antwortgröße in Zeichen); eingebunden in `report.mjs` (Greenfield) und `messen.mjs` (Code-Test). Ein Arm ohne Modell wird gegen das Golden gelesen. Urteile: `schon-da`, `teilweise-da` (uid stand in einer Detail-Antwort), `buendelbar` (gleiches Graph-Werkzeug im Folgeturn), `werkzeug-laden` (ToolSearch), `graph-haette` (Modelldatei gelesen, uid/realRef gesucht, Volllauf trotz gebundener Tests), beim Executor zusätzlich `je-runde` (schon in einer früheren Runde gelesen — sein Kontext beginnt jede Runde neu), sonst `neu` | Jeder vermeidbare Aufruf ist mit Grund und Kosten ausgewiesen und damit Optimierungspotenzial (Werkzeugangebot, Rundenprompt, Skill) | Code-Test geführt: 39 von 50 Aufrufen `neu`, vermeidbar 0,40 $ von 8,15 $ Delta; frei: 10/10 `neu`. Executor lokal (Runde 19, N = 3): 36–51 % der gelesenen Zeichen sind `je-runde`, fast nur der Auftrag (9–10× je Lauf). 200-Runden-Lauf: 78 % `je-runde` — `graph_elements {type:REQ}` 154×, Auftrag 178× (2026-09-25). Gegenbefund: Den Auftrag in den Rundenprompt zu legen, änderte das Nachlesen nicht (CR-GC-663/664, zurückgenommen) |
+| **T-E9** Bedarf je Aufruf | Was wollte das Modell — hatte es das schon, oder hätte der Graph es geliefert? | Default in jedem Lauf: `bedarfsAnalyse` für Claude-Code-Arme (Stream, mit Cache-Lesung je Aufruf), `bedarfsAnalyseExecutor` für den Executor (`run-raw.log`, Antwortgröße in Zeichen); eingebunden in `report.mjs` (Greenfield) und `messen.mjs` (Code-Test). Ein Arm ohne Modell wird gegen das Golden gelesen. Urteile: `doppelt` (wortgleich im selben Turn), `schon-da`, `teilweise-da` (uid stand in einer Detail-Antwort), `buendelbar` (gleiches Graph-Werkzeug im Folgeturn), `werkzeug-laden` (ToolSearch), `graph-haette` (Modelldatei gelesen, uid/realRef gesucht, Volllauf trotz gebundener Tests), beim Executor zusätzlich `je-runde` (schon in einer früheren Runde gelesen — sein Kontext beginnt jede Runde neu), sonst `neu` | Jeder vermeidbare Aufruf ist mit Grund und Kosten ausgewiesen und damit Optimierungspotenzial (Werkzeugangebot, Rundenprompt, Skill) | Code-Test geführt: 39 von 50 Aufrufen `neu`, vermeidbar 0,40 $ von 8,15 $ Delta; frei: 10/10 `neu`. Executor lokal (Runde 19, N = 3): 36–51 % der gelesenen Zeichen sind `je-runde`, fast nur der Auftrag (9–10× je Lauf). 200-Runden-Lauf: 78 % `je-runde` — `graph_elements {type:REQ}` 154×, Auftrag 178× (2026-09-25). Ursache (Runde 21, ITEM-2026-576): Der Dateiverweis in der Intention steht in jedem Rundenprompt. Ohne Verweis fällt das Nachlesen von 12 auf 1 je Lauf. CR-GC-663/664 hatte Text **und** Verweis im Prompt, deshalb blieb es beim Nachlesen. Den ganzen Text mitzuschicken war im sauberen Lauf teurer (589 s statt 115–246 s, n = 1). Offen ist die Variante „Verweis nur in der Seed-Runde“ |
 
 #### Optimieren (§5)
 
 | Test | Frage | Aufbau | Kriterium | Stand |
 |---|---|---|---|---|
-| **T-O1** Kettenkennzahlen | Lassen sich die acht Kennzahlen deterministisch richtig rechnen? | Referenzkette „Zahlung auslösen"; `scripts/spike-kettenkennzahlen.mjs` über 12 Familiengraphen | Referenzkette: Länge 6, synchron 5, Modulgrenzen 2, geteilte Knoten 1 (Banking bestanden, Social Media verletzt); ≥ 90 % der Ketten auswertbar | Spike: 5/8 Kennzahlen rechenbar, 32/76 Ketten auswertbar; ob sie mehr sagen als ℝ⁶, ist nicht entscheidbar (2026-09-25, nicht committet) |
+| **T-O1** Kettenkennzahlen | Lassen sich die acht Kennzahlen deterministisch richtig rechnen? | Referenzkette „Zahlung auslösen"; `scripts/spike-kettenkennzahlen.mjs` über 12 Familiengraphen | Referenzkette: Länge 6, synchron 5, Modulgrenzen 2, geteilte Knoten 1 (Banking bestanden, Social Media verletzt); ≥ 90 % der Ketten auswertbar | Spike: 5/8 Kennzahlen rechenbar, 32/76 Ketten auswertbar; ob sie mehr sagen als ℝ⁶, ist nicht entscheidbar (2026-09-25) |
 | **T-O2** Profil auf der Kette | Wird jede profilierte FCHAIN bewertet und diagnostiziert? | NFR-REQ an FCHAIN; Bewertung mit Diagnose + Handlungsklasse; Divergenz zweier Zielprofile (CR-GC-430) | 100 % der profilierten FCHAINs bewertet; jede Verletzung mit treibendem Knoten und ≥ 1 zulässiger Handlungsklasse | Kettenbewertung nicht implementiert. Zielprofile steuern in verschiedene Richtungen (GO), aber der veröffentlichte `score` hat das falsche Vorzeichen (2026-08-26) |
 | **T-O3** Degradationsschutz | Hält ein Optimierungszug die Invarianten? | Gate-dryRun vor/nach dem Zug; Prognose im CR | jede REQ behält `satisfy`; MT-02/CR-01 bleiben unter Schwelle; Prognose erfüllt | nicht implementiert |
 | **T-O4** Vorzeichen der Architekturkennzahl | Rankt die Kennzahl bekannt bessere Zustände höher? | Positivkontrolle `rig/moneyflow-struktur --structure`; Known-Answer-Set `scripts/known-answer-set.mjs` (CR-SM-281) mit rekursiver und lexikographischer Variante; Archetyp-D7 (CR-GC-438); Ebenen-Konformanz (CR-GC-408) | Known-Answer-Set richtig gerankt; keine Dimension mit Gewicht ≥ 1 meldet beim bestätigten Zug eine Regression | **No-Go** über alle Varianten: moneyflow 5,33 > graphcode 5,24; rekursiv No-Go; lexikographisch widerlegt; D7 ohne eigene Dimension (R² 0,89); Ebenen-Konformanz trennt nicht (Δ 0,000). Konvergenz-Zeuge (CR-GC-407): ℝ⁶ bewegt sich bei 16 verstoßschließenden Zügen kein einziges Mal. Das ist erwartbar, weil Vollständigkeit keine Architektur ist, zeigt aber: ℝ⁶ taugt nicht als Fortschrittsanzeige. moneyflow-Zug: 3/6 Dimensionen melden Regression. Nachfolger Chebyshev (CR-SM-291) meldet GO — nicht nachgeprüft |
@@ -362,7 +363,7 @@ Informationsaufrufe. Der Rest ist echter Bedarf, und vor allem Code-Arbeit.
 
 | Test | Frage | Aufbau | Kriterium | Stand |
 |---|---|---|---|---|
-| **T-F1** Rig-Betrieb | Ist jeder Test reproduzierbar gefahren und ausgewertet? | Bestand §9.5 gegen `rig/README.md` | jedes Rig läuft, stempelt, hat eine committete Auswertung und ist einem T-… zugeordnet | nicht committet: Runde 20 (4 Dateien), `spike-kettenkennzahlen.mjs`, Architektur-Guide. `kennzahlen.mjs` steht seit 2026-09-16. `code-test`-Läufe liegen außerhalb des Repos. `plan-step`, `flow-cardinality`, `import-doc-live` haben kein README |
+| **T-F1** Rig-Betrieb | Ist jeder Test reproduzierbar gefahren und ausgewertet? | Bestand §9.5 gegen `rig/README.md` | jedes Rig läuft, stempelt, hat eine committete Auswertung und ist einem T-… zugeordnet | Abgeschlossene Spikes, Recorder und Alt-Ergebnisse gelöscht (CR-GC-676…678, 2026-09-26); `plan-step`, `flow-cardinality`, `import-doc-live` entfernt. `code-test`-Läufe liegen außerhalb des Repos. Eine strukturierte Gesamtauswertung fehlt |
 | **T-F2** Selbstanwendung | Besteht graphcode seine eigenen Tests? | T-V1…T-V4 auf `docs/graph/graphcode.graph.json` | alle bestanden oder benannte Ausnahme | nicht als Gesamtlauf erhoben |
 
 #### Hygiene (Voraussetzung, kein Claim-Nachweis)
@@ -438,14 +439,14 @@ Test-Zuordnung sind Kandidaten zum Entfernen.
 
 | Aufbau | Pfad | Art | Test | Status |
 |---|---|---|---|---|
-| Greenfield-Systemtest | `rig/greenfield-systemtest/` (+ `steuerung`, `trajektorie`, `turn-analyse`, `schatten-suggest`) | Rig, Serie | T-V3, T-M2, T-M5, T-E3, T-C2 | läuft; Runde 20 unausgewertet |
+| Greenfield-Systemtest | `rig/greenfield-systemtest/` (+ `steuerung`, `trajektorie`, `turn-analyse`, `schatten-suggest`) | Rig, Serie | T-V3, T-M2, T-M5, T-E3, T-C2 | läuft; Runde 20 ausgewertet (`auswertung-runde20.md`) |
 | sigllm-Spezifikation | `rig/sigllm-spezifikation/` | Korpus für Greenfield | T-V3, T-V4, T-O7, T-H1 | ausgewertet (`ergebnis.md`) |
 | Code-Test | `rig/code-test/` | Rig, 2 Arme | T-C1, T-E4, T-E5 | läuft; Läufe außerhalb des Repos |
 | Referenz-Change | `rig/referenz-change/` | Rig, Sitzungsprotokoll | T-E1, T-C3 | nur die Grundlinie |
 | Minimal-Whitebox | `rig/minimal-whitebox/` | Rig + Spike | T-E2, T-E6 | ausgewertet |
 | moneyflow-Struktur | `rig/moneyflow-struktur/` | Rig, Gate | T-V1, T-V2, T-O4 | ausgewertet |
 | dummy-slicer / context-sufficiency | `rig/dummy-slicer/` | Rig, Spike | T-E2 | ausgewertet (2026-06) |
-| Executor-Programm | `docs/executor-abschlussbericht.md` | Serie | T-E3, T-E6 | abgeschlossen, Rankings zurückgezogen |
+| Executor-Programm | `docs/executor-abschlussbericht.md` | Serie | T-E3, T-E6 | abgeschlossen, Rankings zurückgezogen; Rohdaten gelöscht bis auf 4 Fixture-Graphen (CR-GC-678) |
 | sigllm-Fremdlauf | `bok/docs/research/fremdlauf-sigllm-2026-09.md` | Replay | T-M1, T-M5, T-V4 | ausgewertet |
 | KPI 1 je CR | `scripts/retro-kpi.mjs`, `scripts/cr-messung.mjs` | Dauermessung | T-E1 | läuft nach jedem Commit |
 | Bedarfsanalyse + Turn-Bilanz | `rig/greenfield-systemtest/turn-analyse.mjs` (`bedarfsAnalyse`, `bedarfsAnalyseExecutor`, `lesenJeAusloeser`), eingebunden in `report.mjs` und `rig/code-test/messen.mjs` | Default-Auswertung jedes Laufs (Stream oder Executor-Spur) | T-E1, T-E5, T-E9 | läuft |
@@ -454,26 +455,17 @@ Test-Zuordnung sind Kandidaten zum Entfernen.
 | Nachweis-History | `scripts/spike-nachweis-history.mjs` | Spike | T-M3 | GO |
 | Steuer-Kausalität | `tests/steering.steer-causality.test.ts` | Dauertest | T-M4 | grün |
 | Konvergenz-Zeuge | `tests/steering.convergence-witness.spike.test.ts` | Spike-Test | T-O4 | No-Go (ℝ⁶ blind für Vollständigkeitszüge) |
-| Hint-Konformanz | `scripts/spike-hint-konformanz.mjs` | Spike | T-M5 | nicht messbar |
-| Zugverlauf | `scripts/zugverlauf.mjs` | Skript + Test | T-M2 | läuft |
-| Kennzahlen-Verlauf | `scripts/kennzahlen.mjs` → `docs/kennzahlen.md` | Skript | T-O4 | seit 2026-09-16 nicht gepflegt |
 | Selektive Tests / Testauswahl-Audit | `docs/spikes/SPIKE-GC-selective-tests.md`, `scripts/test-selection-audit.mjs` | Spike + Skript | T-E7 | aktuelle Zahl fehlt |
 | Advisory-Latenz | `tests/perf.advisory-roundtrip.spike.test.ts` | Dauertest | T-E8 | läuft |
 | Batch-Seed-Perf | `tests/perf.batch-seed.test.ts` | Dauertest | T-E8 | aktuelle Zahl fehlt |
-| Kettenkennzahlen | `scripts/spike-kettenkennzahlen.mjs` | Spike | T-O1 | nicht committet |
+| Kettenkennzahlen | `scripts/spike-kettenkennzahlen.mjs` | Spike | T-O1 | 5/8 rechenbar |
 | Zielprofil-Divergenz | CR-GC-430 | Spike | T-O2 | GO mit Vorzeichenfehler |
-| Known-Answer-Set ℝ⁶ (+ rekursiv, lexikographisch) | `scripts/known-answer-set.mjs`, `spike-rekursive-metrik.mjs`, `spike-lexikographisch.mjs` | Spikes | T-O4 | No-Go / widerlegt |
-| Archetyp-D7 | `scripts/spike-archetype-eigenvector.mjs` | Spike | T-O4 | No-Go |
-| Ebenen-Konformanz | `scripts/spike-ebenen-konformanz.mjs` | Spike | T-O4 | No-Go |
+| Known-Answer-Set ℝ⁶ | `scripts/known-answer-set.mjs` | Spike | T-O4 | No-Go (Varianten rekursiv, lexikographisch, Archetyp-D7, Ebenen-Konformanz: No-Go, Skripte gelöscht, CR-GC-676) |
 | Architektur-Trockenübung | `tests/arch.optimization-dry-run.spike.test.ts` | Spike-Test | T-O5 | Verschieben No-Go, Konsolidieren GO |
-| Repository-Stil | `scripts/spike-repository-style.mjs` | Spike | T-O5 | M2 ableitbar, M3 → Konzept-CR |
+| Repository-Stil | `tests/repository-style.spike.test.ts` | Dauertest (Modell-Lane) | T-O5 | grün; Spike-Skript gelöscht (CR-GC-677) |
 | ND- / Engpass-Known-Answer | `scripts/spike-nd-known-answer.mjs`, `spike-engpass-known-answer.mjs` | Spikes | T-O6 | ND 0/7, Engpass 6/7 |
-| Blackbox-Regeln L1/L2 | `scripts/spike-blackbox-regeln.mjs` | Spike | T-V1 | GO, umgesetzt |
 | Abstraktionsebenen | `docs/spikes/SPIKE-GC-abstraction-levels*.md` | Spike | T-V1 | nur qualitativ |
 | Kaltstart test_karp | CR-GC-485 | Einzellauf | T-V3, T-M2 | ausgewertet |
-| import-doc-live | CR-GC-337 | Einzellauf | T-V3 | ausgewertet, kein README |
-| flow-cardinality | `rig/flow-cardinality/` | Skripte | T-V2 | kein README |
-| plan-step | `rig/plan-step/` | Modellstand | — | keine Messung, Kandidat zum Entfernen |
 | Regel-Matrix | `scripts/regel-matrix.mjs` | Generator | T-H2 | läuft |
 
 ---
@@ -484,4 +476,4 @@ Views optimieren → triggert Regeln → triggert Methode → triggert Steuerung
 Anker. Der Anker ist das übergeordnete Ziel: **guter Code und gute Code-Architektur** (§6 und §8).
 Eine Diskussion, die keinen Test aus §9 bewegt, zahlt auf keinen Claim ein.
 
-Ziel-Architektur: [`aise-family-architecture.md`](../konzept/aise-family-architecture.md).
+Ziel-Architektur: `bok/docs/konzept/aise-family-architecture.md` (Familie-Repo).

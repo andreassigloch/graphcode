@@ -1,7 +1,7 @@
 /**
  * help-content.ts — the AUTHORED Plain/SE help layer (CR-GC-227).
  *
- * Two audiences (help-system.md §2): a systems engineer who doesn't know OUR
+ * Two audiences (docs/archive/proposals/help-system.md §2): a systems engineer who doesn't know OUR
  * encoding, and a user with no SE background. The DERIVED fields (a rule's
  * title/severity/message, a gate's owned rules, a tool's purpose) already live in
  * `V3_RULES` / `readiness.ts` / the MCP registry — help reads those, never restates
@@ -241,7 +241,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
 };
 
 /**
- * The Vocabulary legend (help-system.md §3) — the one place every element/trace token is
+ * The Vocabulary legend (docs/archive/proposals/help-system.md §3) — the one place every element/trace token is
  * mapped. The token LIST is the ontology (`ElementType`/`TraceType` + the `depends-on`
  * relation label); the two columns are authored. `se` cells in HELP_CONTENT use these tokens.
  */
@@ -270,7 +270,7 @@ export const HELP_VOCAB: Record<string, HelpVocabEntry> = {
 };
 
 /**
- * Element-states note (help-system.md §3): the state on a `FUNC`/`TEST` that decides whether
+ * Element-states note (docs/archive/proposals/help-system.md §3): the state on a `FUNC`/`TEST` that decides whether
  * the binding rules (R-19/R-20) apply.
  */
 export const HELP_ELEMENT_STATES =
