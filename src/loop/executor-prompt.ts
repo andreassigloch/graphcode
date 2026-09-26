@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { skillDatei, type GenerationStep } from './generate.js';
 import { byRank, type ChannelBlock } from './channel-rank.js';
 import { buildInventoryBlock } from './executor-inventory.js';
+import { decision } from './decisions.js';
 
 // ---------------------------------------------------------------------------
 // System-Prompt — bewusst ~1 Seite; die Methode kommt aus graph_generate.
@@ -63,6 +64,14 @@ Zeile nennt), "- uid" löscht. Mehrere Ziele einer Kante: "+ A -verify-> B, C". 
 Nutze GENAU die Kanten aus der Instruktion und existierende uids aus der Element-Liste.
 Lehnt das Gate deinen Batch ab (success:false), korrigiere NUR die beanstandeten Zeilen anhand der
 violations/fixHints und reiche den VOLLSTÄNDIGEN korrigierten Batch erneut ein.
+Nennt der Auftrag einen Wert nicht (Zeit, Anzahl, Kanal, Frist), erfinde keinen. Stell die Frage als
+eigene Zeile im formatE und lege den Punkt mit offenem Wert an — die Antwort kommt mit der nächsten Nachricht:
+? Innerhalb welcher Zeit muss die Anmeldung gelingen?
+## Nodes
+### REQ
++ REQ-login-dauer|Das System muss die Anmeldung innerhalb einer Zielzeit abschliessen; Zielwert offen, beim Auftraggeber erfragt. [__name:Anmeldedauer]
+@kinds ["non-functional"]
+
 list_dir/read_file/grep über ./material nur sparsam, um echte Modul-Namen zu finden — nicht statt Bauen.
 Handeln vor Analysieren: rufe graph_mutate, rate die Instruktion nicht tot.`;
 
@@ -93,6 +102,22 @@ export const EMIT_SUFFIX =
 export const IDLE_NUDGE =
   'Du hast KEINEN graph_mutate-Call emittiert. Emittiere JETZT den geforderten Batch als EINEN ' +
   'graphcode_graph_mutate-Tool-Call mit {"formatE": "..."} — keine Prosa, keine weitere Analyse.';
+
+/**
+ * CR-GC-667: die Antwort auf Fragezeilen, wenn niemand da ist — der Registertext aus CR-GC-592,
+ * derselbe, den `GRAPHCODE.md` und `se:generate` einsetzen. Ein Text, zwei Pfade.
+ */
+export function headlessAnswer(questions: readonly string[]): string {
+  return (
+    `Niemand antwortet in diesem Lauf auf: ${questions.map((q) => `„${q}“`).join(' ')}\n` +
+    decision('openQuestions')
+  );
+}
+
+/** CR-GC-667: die Antwort des Auftraggebers, wie sie das Modell in der naechsten Nachricht sieht. */
+export function ownerAnswer(questions: readonly string[], antwort: string): string {
+  return `Antwort des Auftraggebers auf ${questions.map((q) => `„${q}“`).join(' ')}:\n${antwort.trim() || '(keine Angabe — als Annahme mit offenem Wert anlegen)'}`;
+}
 
 /** Der Guide-Hinweis, wenn die Grammatik NICHT eingebettet ist (injection=false, CR-GC-651). */
 export const GUIDE_HINT = 'Rufe vor dem Schreiben graph_authoring_guide für jeden Elementtyp auf (legale Kanten).';

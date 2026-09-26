@@ -16,6 +16,7 @@ import { DECISIONS, VERDICT_ORDER, decision } from '../src/loop/decisions.js';
 import { generationStep } from '../src/loop/generate.js';
 import { rankCandidates } from '../src/loop/executor-rank.js';
 import { guardrailsContent } from '../src/surface/scaffold-docs.js';
+import { headlessAnswer } from '../src/loop/executor-prompt.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -87,6 +88,10 @@ describe('CR-GC-592: offene Punkte werden Annahmen, keine Rueckfragen ins Leere'
     expect(guard).toContain('## When the brief leaves something open');
     expect(guard).toMatch(/as an assumption/);
     expect(guard).toMatch(/headless run/);
+  });
+
+  it('CR-GC-667: der Executor beantwortet eine Frage headless mit demselben Registersatz', () => {
+    expect(headlessAnswer(['Welcher Kanal?'])).toContain(decision('openQuestions'));
   });
 });
 

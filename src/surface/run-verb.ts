@@ -9,12 +9,14 @@
  *
  * @author andreas@siglochconsulting
  */
+import { createInterface } from 'node:readline/promises';
 import { createHarness } from './create-harness.js';
 import { bindToolsWithContext } from './mcp-tools.js';
 import { deriveMemberName } from './mcp-server.js';
 import {
   ExecutorConfigSchema,
   runExecutor,
+  type AskOwner,
   type CallModel,
   type ExecutorConfig,
   type ExecutorStats,
@@ -69,6 +71,8 @@ export function parseExecutorEnv(env: NodeJS.ProcessEnv): ExecutorConfig {
     ...(env.GRAPHCODE_LLM_REASONING_EFFORT
       ? { reasoningEffort: env.GRAPHCODE_LLM_REASONING_EFFORT }
       : {}),
+    // CR-GC-667: manuelle Session — Fragezeilen halten den Lauf an.
+    ...(env.GRAPHCODE_LLM_INTERACTIVE ? { interactive: env.GRAPHCODE_LLM_INTERACTIVE === '1' } : {}),
   });
 }
 
@@ -95,7 +99,11 @@ export async function executeRun(opts: {
   /** Test-Injektion — Produktion lässt runExecutor den HTTP-Backend-Call bauen. */
   callModel?: CallModel;
   trace?: (line: string) => void;
+  /** Test-Injektion des Rueckkanals — Produktion fragt bei config.interactive auf dem Terminal. */
+  ask?: AskOwner;
 }): Promise<RunSummary> {
+  // CR-GC-667: vor dem Store-Lock pruefen — eine manuelle Session ohne Terminal kann niemand beantworten.
+  const ask = opts.ask ?? (opts.config.interactive ? terminalAsk() : undefined);
   const member = deriveMemberName(opts.repoRoot);
   const harness = await createHarness({
     repoRoot: opts.repoRoot,
@@ -135,6 +143,7 @@ export async function executeRun(opts: {
       config: opts.config,
       callModel: opts.callModel,
       trace: opts.trace,
+      ask,
     });
     let exportPath: string | undefined;
     let exportError: string | undefined;
@@ -151,4 +160,23 @@ export async function executeRun(opts: {
   } finally {
     await harness.close();
   }
+}
+
+/**
+ * CR-GC-667: der Rueckkanal der manuellen Session. Fragen und Eingabe laufen ueber stderr/stdin —
+ * stdout bleibt den MCP-Transporten reserviert. Ohne Terminal gibt es niemanden, der antwortet.
+ */
+function terminalAsk(): AskOwner {
+  if (!process.stdin.isTTY) {
+    throw new Error('graphcode run: GRAPHCODE_LLM_INTERACTIVE=1 verlangt ein Terminal (stdin ist keins).');
+  }
+  return async (questions) => {
+    const rl = createInterface({ input: process.stdin, output: process.stderr });
+    try {
+      const frage = questions.map((q) => `  ? ${q}`).join('\n');
+      return await rl.question(`\n[graphcode run] Das Modell fragt:\n${frage}\nAntwort> `);
+    } finally {
+      rl.close();
+    }
+  };
 }

@@ -139,3 +139,28 @@ export function extractToolCallFromText(text: string): { name: string; input: un
     return null;
   }
 }
+
+/**
+ * CR-GC-667: die Fragezeile `? <Frage>` — der Kanal zum Auftraggeber in derselben Sprache wie der
+ * Batch. Ein offener Punkt des Auftrags wird gefragt statt mit einer erfundenen Zahl gefuellt. Die
+ * Zeile gehoert nicht zu Format-E: sie wird herausgenommen, bevor der Text den Codec erreicht.
+ */
+const FRAGEZEILE = /^[ \t]*\?[ \t]+(\S.*?)[ \t]*$/gm;
+
+/** Fragezeilen aus einem Text: die Fragen und der Text ohne sie. */
+export function extractQuestions(text: string): { rest: string; questions: string[] } {
+  if (!text) return { rest: text, questions: [] };
+  const questions = [...text.matchAll(FRAGEZEILE)].map((m) => m[1]);
+  if (questions.length === 0) return { rest: text, questions };
+  return { rest: text.replace(FRAGEZEILE, '').replace(/\n{3,}/g, '\n\n'), questions };
+}
+
+/** Dasselbe fuer die Eingabe eines graph_mutate-Aufrufs: nur das `formatE`-Feld traegt Fragezeilen. */
+export function takeQuestionsFromInput(input: unknown): { input: unknown; questions: string[] } {
+  if (typeof input !== 'object' || input === null) return { input, questions: [] };
+  const formatE = (input as { formatE?: unknown }).formatE;
+  if (typeof formatE !== 'string') return { input, questions: [] };
+  const { rest, questions } = extractQuestions(formatE);
+  if (questions.length === 0) return { input, questions };
+  return { input: { ...(input as Record<string, unknown>), formatE: rest }, questions };
+}
