@@ -11,7 +11,7 @@
  *   SKILL_FOR_DIMENSION), Konflikt (beide gesetzt und verschieden), nennt (Prosa-Nennungen in Skills),
  *   Fix und Folge-Regeln (CR-GC-616, beide aus `FIX_ROUNDTRIP` in se-engine — dem gemessenen
  *   Roundtrip je Fix-Vorlage, nicht aus einer gepflegten Liste).
- * Schreibt docs/research/regel-matrix.csv und docs/research/regel-matrix.md.
+ * Schreibt docs/views/regel-matrix.csv und docs/views/regel-matrix.md.
  *
  * Aufruf: node scripts/regel-matrix.mjs   (liest Pakete + dist — vorher npm run build)
  *
@@ -110,7 +110,7 @@ const md = [
   '',
 ].join('\n');
 
-mkdirSync(join(ROOT, 'docs', 'research'), { recursive: true });
-writeFileSync(join(ROOT, 'docs', 'research', 'regel-matrix.csv'), csv);
-writeFileSync(join(ROOT, 'docs', 'research', 'regel-matrix.md'), md);
-console.log(`${rows.length} Regeln → docs/research/regel-matrix.{csv,md}`);
+mkdirSync(join(ROOT, 'docs', 'views'), { recursive: true });
+writeFileSync(join(ROOT, 'docs', 'views', 'regel-matrix.csv'), csv);
+writeFileSync(join(ROOT, 'docs', 'views', 'regel-matrix.md'), md);
+console.log(`${rows.length} Regeln → docs/views/regel-matrix.{csv,md}`);
