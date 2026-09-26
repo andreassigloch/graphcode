@@ -256,7 +256,7 @@ element type** — exactly the SP-1 pattern (the store-query concept record, kep
 ```
 # Trade Study: Store engine        (= SP-1 spike + decision, archived in CR-GC-1xx)
 
-Inputs (multiple) — docs/spikes/sp1-store-query-concept.md:
+Inputs (multiple) — docs/archive/records/sp1-store-query-concept.md:
 | Option        | Embeddable | Cypher | Single-writer | Measured P95 | Verdict   |
 |---------------|-----------|--------|---------------|--------------|-----------|
 | Kuzu          | ✓         | ✓      | ✓             | 12 ms        | ✔ chosen  |
@@ -265,7 +265,7 @@ Inputs (multiple) — docs/spikes/sp1-store-query-concept.md:
 
 Archived as:  CR-GC-1xx (decision + why)
                  ├─ relation(decides) ─────────▶ REQ-single-store
-                 └─ evidence ─────────────────▶ docs/spikes/sp1-store-query-concept.md
+                 └─ evidence ─────────────────▶ docs/archive/records/sp1-store-query-concept.md
 > Render se-view:trade = walk relation(label ∈ {alternative, superseded-by, decides}) + CR status.
 > The comparison matrix stays in the spike; only the decision + links live in the graph.
 ```
