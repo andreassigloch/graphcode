@@ -26,9 +26,10 @@
  *
  * @author andreas@siglochconsulting
  */
-import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
-import { join, dirname, relative, resolve as resolvePath } from 'node:path';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import ts from 'typescript';
+import { SRC_EXTS, sourceLayout, resolveImport, type SourceLayout } from './source-roots.js';
 import {
   readRealRef,
   readTestRefs,
@@ -184,10 +185,12 @@ export function extractCodeFacts(graph: CGraph, repoRoot: string): CodeFacts {
     }
     files[rel] = { exists: true, ...parseFileFacts(readFileSync(abs, 'utf8'), abs) };
   }
-  const srcRoot = join(repoRoot, 'src');
-  const scanned = existsSync(srcRoot);
-  if (scanned) {
-    for (const abs of walkSourceFiles(srcRoot)) {
+  // CR-GC-683: the roots are `src/` AND the `src/` of every workspace package — a monorepo
+  // has no top-level `src/`, and its scan used to stop at the referenced files.
+  const layout = sourceLayout(repoRoot);
+  const scanned = layout.roots.length > 0;
+  for (const root of layout.roots) {
+    for (const abs of walkSourceFiles(root)) {
       const rel = relative(repoRoot, abs);
       if (files[rel] === undefined) files[rel] = { exists: true, ...parseFileFacts(readFileSync(abs, 'utf8'), abs) };
     }
@@ -195,7 +198,7 @@ export function extractCodeFacts(graph: CGraph, repoRoot: string): CodeFacts {
   return {
     files,
     fileScope: scanned ? 'all' : 'referenced',
-    importEdges: extractImportEdges(repoRoot),
+    importEdges: extractImportEdges(repoRoot, layout),
     declaredDependencies: extractDeclaredDependencies(repoRoot),
     crFiles: extractCrFiles(repoRoot),
   };
@@ -253,12 +256,11 @@ function extractDeclaredDependencies(repoRoot: string): string[] | undefined {
 // CR-212: file-level import graph of the repo's `src` tree, for RC-05. TS parser
 // (not dependency-cruiser — a heavyweight runtime dep is unjustified for one warn
 // rule, per the CR's Build-vs-Buy gate). JS/TS only, deterministic, no LSP: walk
-// src/**, read each ImportDeclaration / re-export specifier, resolve RELATIVE ones
-// to a real source file (repo-relative). Bare specifiers (node_modules) are
-// skipped — they map to no MOD and produce no findings.
+// every source root, read each ImportDeclaration / re-export specifier, resolve it
+// to a real source file (repo-relative). Relative specifiers and — CR-GC-683 —
+// bare specifiers naming a WORKSPACE package resolve; every other bare specifier is
+// node_modules and skipped — it maps to no MOD and produces no findings.
 // ---------------------------------------------------------------------------
-const SRC_EXTS = ['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs'];
-
 function walkSourceFiles(root: string): string[] {
   const out: string[] = [];
   const visit = (dir: string): void => {
@@ -279,29 +281,10 @@ function walkSourceFiles(root: string): string[] {
   return out;
 }
 
-/** Resolve a relative import specifier to an existing repo-relative source file, or undefined. */
-function resolveRelativeImport(fromAbs: string, spec: string, repoRoot: string): string | undefined {
-  const baseAbs = resolvePath(dirname(fromAbs), spec);
-  const candidates = [
-    baseAbs,
-    // A `.js`/`.mjs`/`.cjs` specifier maps to its TS source (NodeNext convention).
-    baseAbs.replace(/\.(js|mjs|cjs)$/, '.ts'),
-    baseAbs.replace(/\.(js|mjs|cjs)$/, '.tsx'),
-    ...SRC_EXTS.map((x) => baseAbs + x),
-    ...SRC_EXTS.map((x) => join(baseAbs, 'index' + x)),
-  ];
-  for (const c of candidates) {
-    if (existsSync(c) && statSync(c).isFile()) return relative(repoRoot, c);
-  }
-  return undefined;
-}
-
-export function extractImportEdges(repoRoot: string): ImportEdge[] {
-  const srcRoot = join(repoRoot, 'src');
-  if (!existsSync(srcRoot)) return [];
+export function extractImportEdges(repoRoot: string, layout: SourceLayout = sourceLayout(repoRoot)): ImportEdge[] {
   const seen = new Set<string>();
   const edges: ImportEdge[] = [];
-  for (const abs of walkSourceFiles(srcRoot)) {
+  for (const abs of layout.roots.flatMap(walkSourceFiles)) {
     let source: string;
     try {
       source = readFileSync(abs, 'utf8');
@@ -318,8 +301,8 @@ export function extractImportEdges(repoRoot: string): ImportEdge[] {
         ts.isStringLiteral(stmt.moduleSpecifier)
           ? stmt.moduleSpecifier.text
           : undefined;
-      if (!spec || !spec.startsWith('.')) continue; // bare = node_modules → skip
-      const to = resolveRelativeImport(abs, spec, repoRoot);
+      if (!spec) continue;
+      const to = resolveImport(abs, spec, layout, repoRoot);
       if (!to || to === from) continue;
       const key = `${from}\u0000${to}`;
       if (seen.has(key)) continue;

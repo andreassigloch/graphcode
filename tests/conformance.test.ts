@@ -412,6 +412,66 @@ describe('TEST-import-drift: extractImportEdges + RC-05 (CR-212)', () => {
   });
 });
 
+// ── CR-GC-683: monorepo — workspace roots + package-name imports (ITEM-2026-598) ──
+describe('TEST-import-drift-monorepo: workspace packages are scanned and resolved (CR-GC-683)', () => {
+  let dir: string;
+
+  beforeAll(() => {
+    // No top-level src/. packages/app imports packages/lib by NAME, once through the
+    // exports subpath (dist → src) and once through the package root; `zod` stays external.
+    dir = mkdtempSync(join(tmpdir(), 'graphcode-monorepo-'));
+    writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'mono', workspaces: ['packages/*'] }));
+    mkdirSync(join(dir, 'packages', 'lib', 'src', 'se'), { recursive: true });
+    mkdirSync(join(dir, 'packages', 'app', 'src'), { recursive: true });
+    writeFileSync(
+      join(dir, 'packages', 'lib', 'package.json'),
+      JSON.stringify({
+        name: '@x/lib',
+        exports: { '.': { types: './dist/index.d.ts', default: './dist/index.js' }, './se': { default: './dist/se/index.js' } },
+      }),
+    );
+    writeFileSync(join(dir, 'packages', 'lib', 'src', 'index.ts'), 'export const root = 1;\n');
+    writeFileSync(join(dir, 'packages', 'lib', 'src', 'se', 'index.ts'), 'export const se = 1;\n');
+    writeFileSync(join(dir, 'packages', 'app', 'package.json'), JSON.stringify({ name: '@x/app' }));
+    writeFileSync(
+      join(dir, 'packages', 'app', 'src', 'main.ts'),
+      "import { se } from '@x/lib/se';\nimport { root } from '@x/lib';\nimport { z } from 'zod';\nexport const m = se + root + Number(!!z);\n",
+    );
+  });
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  const monoGraph = () => ({
+    nodes: [
+      { uid: 'MOD-app', type: 'MOD', name: 'app', description: '', attributes: { path: 'packages/app' } },
+      { uid: 'MOD-lib', type: 'MOD', name: 'lib', description: '', attributes: { path: 'packages/lib' } },
+    ],
+    edges: [],
+  });
+
+  it('package-name imports resolve to the SOURCE file of the workspace package; externals stay out', () => {
+    const edges = extractImportEdges(dir);
+    expect(edges).toContainEqual({ from: 'packages/app/src/main.ts', to: 'packages/lib/src/se/index.ts' });
+    expect(edges).toContainEqual({ from: 'packages/app/src/main.ts', to: 'packages/lib/src/index.ts' });
+    expect(edges.some((e) => /zod|node_modules|dist/.test(e.to))).toBe(false);
+  });
+
+  it('every workspace src/ is scanned — fileScope all, unreferenced files present', () => {
+    const facts = extractCodeFacts(monoGraph(), dir);
+    expect(facts.fileScope).toBe('all');
+    expect(Object.keys(facts.files)).toEqual(
+      expect.arrayContaining(['packages/app/src/main.ts', 'packages/lib/src/index.ts', 'packages/lib/src/se/index.ts']),
+    );
+  });
+
+  it('the undocumented cross-package import surfaces as RC-05 (was blind: 0 endpoints)', () => {
+    const v = conformanceViolations({ getGraph: monoGraph, getRepoRoot: () => dir });
+    const rc05 = v.filter((x) => x.ruleId === 'RC-05');
+    expect(rc05).toHaveLength(1);
+    expect(rc05[0].elementId).toBe('MOD-app');
+    expect(rc05[0].message).toContain('packages/app/src/main.ts → packages/lib/src/se/index.ts');
+  });
+});
+
 // ---------------------------------------------------------------------------
 // CR-SM-240 follow-through — why the canonical sort in `toOntologyGraph` stays.
 // ---------------------------------------------------------------------------
