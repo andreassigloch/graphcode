@@ -36,6 +36,15 @@
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/deny-stale-prose-read.sh\""
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/deny-headless-question.sh\""
+          }
+        ]
       }
     ]
   }
