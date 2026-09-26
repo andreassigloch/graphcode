@@ -1,6 +1,6 @@
 # CR-GC-677: Mess-Artefakte: Recorder kennzahlen/zugverlauf und erledigte Spikes löschen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-26)
 **Typ:** aus Item ITEM-2026-590 (finding)
 **Erstellt:** 2026-09-26
 **Item:** bok/items/ITEM-2026-590.json (Lane: code)
