@@ -1,6 +1,6 @@
 # CR-GC-701: Die Auftrags-Pruefliste misst Wortlaut gegen die strukturierte Projektdefinition und ist damit zwischen strukturiertem und prosaischem Lauf nicht vergleichbar: 42/42 vs 1/42 bei mehr Elementen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-360 (finding)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-360.json (Lane: code)
