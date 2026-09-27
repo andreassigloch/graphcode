@@ -72,7 +72,7 @@ export const TEMPLATE_FORMAT_E = [
   '### MOD',
   '+ MOD-template|Module that satisfies the template requirement [__name:Template module]',
   '### REQ',
-  // contracts 9.x: MOD -satisfy-> REQ verlangt strukturelle kinds am REQ (where-Prädikat).
+  // contracts 10.x: MOD -satisfy-> REQ verlangt kinds non-functional am REQ (where-Prädikat, CR-SM-366).
   '+ REQ-template-root|First requirement of the new member graph [__name:Template root requirement]',
   '@kinds ["non-functional"]',
   '### SYS',

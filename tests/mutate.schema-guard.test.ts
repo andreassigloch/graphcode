@@ -268,4 +268,35 @@ describe('TEST-mutate-schema-guard: element contract (CR-GC-646)', () => {
     expect(clean.steeringUnmeasurable).toBeUndefined();
     expect(clean.steeringDelta).toBeDefined();
   });
+
+  // CR-GC-671: der Ontologie-Major (contracts 10.x, CR-SM-365/366). risk/mitigation/pre/post
+  // sind keine kinds mehr; die Rolle ist ein REQ-Attribut mit EINEM Leser (readReqRole).
+  // POSITIVKONTROLLE: ohne den role-Zweig in elementFieldIssues geht `role:"hazard"` durch
+  // (success:true) — die FM-Regeln saehen die Rolle dann still nicht.
+  it('an old kind (risk) blocks, and the hint names role instead', async () => {
+    const res = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-ok', attributes: { kinds: ['risk'] } } }]);
+    expect(res.success).toBe(false);
+    const v = res.violations.find((x) => x.ruleId === 'SCHEMA-02');
+    expect(v?.message).toContain('REQ-ok.kinds = ["risk"]');
+    expect(v?.fixHint).toContain('exactly one of functional|non-functional');
+    expect(v?.fixHint).toContain('role ∈ risk|mitigation');
+    expect(v?.fixHint).not.toMatch(/precondition|postcondition/);
+  });
+
+  it('a REQ role outside risk|mitigation blocks — on update-node without type, too', async () => {
+    const res = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-ok', attributes: { role: 'hazard' } } }]);
+    expect(res.success).toBe(false);
+    expect(res.violations.find((x) => x.ruleId === 'SCHEMA-02')?.message).toContain('REQ-ok.role = "hazard"');
+  });
+
+  it('a valid role passes and persists; a foreign node with its own role attribute is not judged', async () => {
+    const ok = await harness.mutate([
+      { op: 'update-node', node: { uid: 'REQ-ok', attributes: { kinds: ['non-functional'], role: 'mitigation' } } },
+      { op: 'add-node', node: { uid: 'CR-t', type: 'CR', name: 't', description: '', attributes: { role: 'decision' } } },
+    ]);
+    expect(ok.success, JSON.stringify(ok.violations)).toBe(true);
+    expect(harness.getGraph().nodes.find((n) => n.uid === 'REQ-ok')?.attributes).toMatchObject({ role: 'mitigation' });
+    const cleared = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-ok', attributes: { role: null } } }]);
+    expect(cleared.success, JSON.stringify(cleared.violations)).toBe(true);
+  });
 });

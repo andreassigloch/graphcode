@@ -34,8 +34,8 @@ describe('CR-GC-551: applyCommands normalisiert `kinds`, nicht erst der Leser', 
   });
 
   it('eine kommagetrennte Zeichenkette wird zur Liste — der Fall aus dem Lauf', () => {
-    const { graph } = applyCommands(leer(), [addReq('REQ-b', 'functional,precondition')]);
-    expect(kindsOf(graph, 'REQ-b')).toEqual(['functional', 'precondition']);
+    const { graph } = applyCommands(leer(), [addReq('REQ-b', 'functional,non-functional')]);
+    expect(kindsOf(graph, 'REQ-b')).toEqual(['functional', 'non-functional']);
   });
 
   it('eine Liste bleibt unveraendert — nicht doppelt normalisiert', () => {
