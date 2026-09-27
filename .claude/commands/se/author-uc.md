@@ -37,14 +37,24 @@ Inspect the returned `violations`; never hand-edit the SSOT. To author the requi
 ## Two conventions for a coherent UC set
 Modelling knowledge, not tool operation — both come from the retired `se:requirements` skill (CR-GC-345) and exist nowhere else.
 
-**UC sequencing goes through a shared FUNC + its REQ — no new edge.** "UC.002 needs a finished contact from UC.001" is a *precondition*, and the metamodel already expresses it: put the precondition in a FUNC, let that FUNC satisfy its own REQ, and compose the FUNC into every UC's chain that depends on it.
+**UC sequencing goes through a shared FUNC — no new edge.** "UC-B needs what UC-A produced" is the entry of B's chain, and the metamodel already expresses it: put the shared step in a FUNC (it satisfies its own `functional` REQ), compose that FUNC into every chain that depends on it, and let its output FLOW be the entry FLOW of the dependent chain.
 ```
-CheckContactExists.FN.006 -satisfy-> ContactExists.RQ.010
-CaptureInterestMain.FC.002 -compose-> CheckContactExists.FN.006
++ FUNC-<shared step> -satisfy-> REQ-<shared step>
++ FCHAIN-<uc a> -compose-> FUNC-<shared step>
++ FCHAIN-<uc b> -compose-> FUNC-<shared step>
++ FUNC-<shared step> -io-> FLOW-<handover>
 ```
-The dependency is then verifiable (the REQ carries a TEST) instead of being an opaque UC→UC arrow. Do not reach for `depends` to order use cases.
+The dependency is then verifiable (the REQ carries a TEST, the chain its integration test) instead of being an opaque UC→UC arrow. Do not reach for `depends` to order use cases.
 
 **Author in batches of 4–5, cross-cutting elements first.** Cut batches by deployment site × actor × functional coupling, max 4–5 UCs per batch — one chat context, so the whole batch stays reviewable. Per batch: propose → review → mutate → check violations. Settle the shared elements (shared FUNCs, their REQs) in the FIRST batch; discovering them in batch three means rewriting batches one and two.
 
-## Write the guard conditions as requirements — not as prose in the UC
-What must be true **before** the scenario can start (precondition) and what holds **after** it finished (postcondition) belongs in the requirements the UC composes, never in the UC text: `add-node` a `REQ` with `kinds: ["precondition"]` or `kinds: ["postcondition"]`, `compose` it from the UC, and give it its verifying `TEST` in the same batch (`se:author-req`). A guard that only lives in the description cannot be tested and is invisible to every view. This used to be a pair of info findings at every UC; since they fired everywhere and nobody acted on them, the check now lives here, in the writing.
+## Write the guard conditions into the chain — not as prose in the UC
+What must be true **before** the scenario can start is the **entry FLOW** of the UC's chain — what crosses into its first function. What holds **after** it finished is the **UC goal** — the Outcome of the UC sentence. Both are checked by the chain's integration test (R-21): a `non-functional` REQ the FCHAIN satisfies end to end, verified by a TEST (`se:author-req`).
+```
++ UC-<name> -compose-> FCHAIN-<name>
++ FCHAIN-<name> -compose-> FUNC-<first step>
++ FLOW-<entry> -io-> FUNC-<first step>
++ FCHAIN-<name> -satisfy-> REQ-<end to end>
++ TEST-<integration> -verify-> REQ-<end to end>
+```
+A guard that only lives in the description cannot be tested and is invisible to every view. This used to be a pair of info findings at every UC; since they fired everywhere and nobody acted on them, the check now lives here, in the writing.

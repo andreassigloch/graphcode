@@ -93,7 +93,7 @@ _Warum hier keine feste Zahl mehr steht (CR-GC-629): diese Seite nannte an zwei 
 
 ## The stack belongs in the model
 
-A MOD without a stack is half a decision. The only legal place is `MOD -satisfy-> REQ` with a **structural** kind (`non-functional` / `risk` / `mitigation`) — a MOD cannot satisfy a behavioural REQ. Source the wording from `bok/docs/governance/STACKS.md`; do not restate it per repo.
+A MOD without a stack is half a decision. The only legal place is `MOD -satisfy-> REQ` where the REQ carries `@kinds ["non-functional"]` — `functional` REQs belong to the FUNCs (`se:author-req`). Source the wording from `bok/docs/governance/STACKS.md`; do not restate it per repo.
 
 ## Author the story first, mark the model second
 

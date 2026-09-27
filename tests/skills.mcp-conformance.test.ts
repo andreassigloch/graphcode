@@ -194,11 +194,12 @@ describe('CR-GC-308: skills instruct only vocabulary the ontology declares', () 
     // The guard is only worth having if it would have caught the original. `S` was
     // what se-fmea told the model to write; no rule has ever read it.
     const allowed = new Set([...ruleReadAttributeKeys(), ...DECLARED_NON_BAG_KEYS, ...FREE_FORM_KEYS]);
-    for (const invented of ['S', 'O', 'D', 'role', 'actionPriority']) {
+    for (const invented of ['S', 'O', 'D', 'actionPriority']) {
       expect(allowed.has(invented), `${invented} must not be allowed`).toBe(false);
     }
-    // …while the replacements the skills now use ARE allowed.
-    for (const real of ['severity', 'occurrence', 'detection', 'label', 'kinds']) {
+    // …while the replacements the skills now use ARE allowed. `role` was an invented key here
+    // until FM-01..03 began reading it (CR-SM-365); se-fmea now writes it (CR-GC-674).
+    for (const real of ['severity', 'occurrence', 'detection', 'label', 'kinds', 'role']) {
       expect(allowed.has(real), `${real} must be allowed`).toBe(true);
     }
   });

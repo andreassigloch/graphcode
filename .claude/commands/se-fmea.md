@@ -114,15 +114,18 @@ The FMEA is not done until findings live in the graph, not just the document.
    | Severity 1–10 | `attributes.severity` (number) | FM-01, FM-03 (RPN) |
    | Occurrence 1–10 | `attributes.occurrence` (number) | FM-01, FM-03 |
    | Detection 1–10 | `attributes.detection` (number) | FM-01, FM-03 |
-   | the hazard | `attributes.kinds: ["risk"]` | FM-01/02/03 select on it |
-   | the countermeasure | `attributes.kinds: ["mitigation"]` | FM-02 |
+   | the hazard | `attributes.role: "risk"` | FM-01/02/03 select on it |
+   | the countermeasure | `attributes.role: "mitigation"` | FM-02 |
+   | what it is | `attributes.kinds` — `["functional"]` or `["non-functional"]`, as for any REQ | R-18 (who may satisfy it) |
+
+   The role is the requirement's *motivation*, the kind is *what it is* — every FMEA REQ carries both. The role is satisfy-neutral; the kind alone picks the satisfier (`se:author-req`).
 
    Writing `S`/`O`/`D` instead makes `FM-01` fire on every risk REQ **and** leaves the view empty — that is precisely the defect CR-GC-308 fixed.
 
    For each new `REQ` add:
-   - a `+ REQ-…` node line, with the FMEA finding in `attributes.rationale`, the S/O/D ratings under the names above, and `attributes.kinds` (each as an `@key value` line below the node),
+   - a `+ REQ-…` node line, with the FMEA finding in `attributes.rationale`, the S/O/D ratings under the names above, `attributes.role` and `attributes.kinds` (each as an `@key value` line below the node),
    - a **`compose`** edge from the risk `REQ` → the mitigation `REQ` (**FM-02**; `relation` between two REQs is *not* in `TRACE_PATTERNS` and `R-18` rejects it),
-   - a `satisfy` edge from the responsible `MOD` (or `SYS`) → the `REQ` (which module is RESPONSIBLE, not merely related; `FUNC -satisfy->` a risk/mitigation REQ is illegal — R-18, `kinds` where-predicate),
+   - a `satisfy` edge onto every leaf `REQ`, chosen by its kind: a `non-functional` REQ from the responsible `MOD` (or the `SYS`, or the `FCHAIN` for an end-to-end effect) — which module is RESPONSIBLE, not merely related; a `functional` REQ from the `FUNC` that performs the countermeasure (R-18, `kinds` where-predicate),
    - a `verify` edge from a `TEST` → the `REQ` (R-01: every REQ must have ≥1 verify). Für ein Risiko mit **Action Priority High** verlangt **FM-03** zusätzlich, dass **jeder** Eintrag in `attributes.testRefs` ein `result: "passed"` trägt (CR-SM-231b) — „irgendeiner grün" zählt nicht, sonst verdeckte ein grüner Unit-Lauf einen roten Visual-Lauf. Ein Eintrag ohne Ergebnis ist nicht bestanden. Solange das nicht steht, zeigt die View das Risiko als unverifiziert, was der ehrliche Zustand ist.
 
    Example — ONE `graph_mutate` call, `formatE`:
@@ -131,17 +134,20 @@ The FMEA is not done until findings live in the graph, not just the document.
    ## Nodes
    ### REQ
    + REQ-NNN|<FMEA finding as a falsifiable statement> [__name:<risk>]
-   @kinds ["risk"]
+   @role risk
+   @kinds ["non-functional"]
    @rationale <FMEA finding>
    @severity 9
    @occurrence 3
    @detection 4
    + REQ-MMM|<the countermeasure, falsifiable> [__name:<countermeasure>]
-   @kinds ["mitigation"]
+   @role mitigation
+   @kinds ["functional"]
 
    ## Edges
    + REQ-NNN -compose-> REQ-MMM
    + MOD-<responsible> -satisfy-> REQ-NNN
+   + FUNC-<countermeasure> -satisfy-> REQ-MMM
    + TEST-<slug> -verify-> REQ-NNN, REQ-MMM
    ```
 

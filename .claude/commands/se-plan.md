@@ -8,7 +8,7 @@ description: Generate the implementation/integration plan — derive the CR buil
 
 ## 1. Read the decomposition — **REQ leads**
 - `graph_elements` `{ "type": "REQ" }` FIRST — the **leaf REQ** (no `compose`→REQ child) are the population the plan must cover. Then `"FUNC"` / `"UC"` / `"TEST"` for the slices.
-- The ontology knows **four** carriers for a REQ: RD-01 accepts `satisfy` from FUNC, FCHAIN, MOD and SYS. Deriving from FUNC leaves alone sees a quarter of the work — measured on the sigllm run: 64 leaf REQ, carried by FUNC 32, MOD 20, FCHAIN 7, SYS 5.
+- The ontology knows **four** carriers for a REQ: RD-01 accepts `satisfy` from FUNC, FCHAIN, MOD and SYS. The REQ's kind picks the carrier: a `functional` REQ is carried by a FUNC, a `non-functional` one by a MOD, the SYS or an FCHAIN. Deriving from FUNC leaves alone sees a quarter of the work — measured on the sigllm run: 64 leaf REQ, carried by FUNC 32, MOD 20, FCHAIN 7, SYS 5.
 - `graph_get_edges` `{ "edgeType": "relation" }` — the `depends-on` dependencies (a `relation` edge with `label: "depends-on"`, e.g. MS→MS), plus `compose` for the decomposition tree.
 
 ## 2. Derive the order (topological, not numeric)

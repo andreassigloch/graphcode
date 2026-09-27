@@ -17,7 +17,7 @@ Walk the standing checklist against the system: **config** (what is environment-
 ## 3. Write the answered concerns through the gate
 For each concern the system MUST satisfy, author a `REQ` via `graph_mutate` (Apply-Gate, L2) — use `se:author-req` so each REQ ships with a verifying TEST in the same batch (a lone REQ is blocked by R-01). **Two things** make it operational, and the render (`se-view:conops` §2) needs **both**:
 
-1. **`attributes.kinds` = `["non-functional"]`** — the only legal spelling. `ReqKind` in `@sigloch/contracts` has exactly 7 values (`functional`, `non-functional`, `risk`, `negative`, `mitigation`, `precondition`, `postcondition`); **`operational` is not one of them** and the gate rejects it. (Until CR-GC-304 this skill offered it as an option and the view filtered on it — the table could never fill.)
+1. **`attributes.kinds` = `["non-functional"]`** — `ReqKind` in `@sigloch/contracts` has exactly two values, `functional` and `non-functional`, and an operational concern is a `non-functional` one. The function that later realizes it (check 7 in `se:top-level`) gets its own `functional` REQ. (Until CR-GC-304 this skill offered it as an option and the view filtered on it — the table could never fill.)
 2. **A trace that puts it at system scope** — `SYS compose REQ` (or `SYS satisfy REQ`), or an edge to/from an `ACTOR` for a user-mgmt/creds concern. A REQ allocated only to one FUNC/MOD is design, not ConOps, and will not appear in the view.
 
 Inspect the returned `violations`; re-apply if blocked. Never hand-edit the SSOT.

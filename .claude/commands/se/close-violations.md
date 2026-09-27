@@ -9,7 +9,7 @@ Resolve V3_RULES error-violations on the live governed graph by linking the trac
 1. `rules_get_violations` `{ "severity": "error" }` — every blocking violation. Each carries `fixHint` + `context.candidate_targets` (RANKED by id/name/description token overlap — the top hit is usually correct) + `context.existing_traces`. Most are **R-01** (REQ without a verify trace) and **RD-01** (leaf REQ without a satisfy trace).
 2. For each violation, read its `fixHint` and the TOP `candidate_targets`:
    - **R-01**: candidates are TESTs; the top-ranked one usually verifies this REQ → propose `+ <TEST> -verify-> <REQ>`.
-   - **RD-01**: candidates are FUNC/FCHAIN/MOD/SYS → propose `+ <FUNC> -satisfy-> <REQ>`.
+   - **RD-01**: candidates are FUNC/FCHAIN/MOD/SYS; the REQ's kind picks among them → propose `+ <FUNC> -satisfy-> <REQ>` for a `functional` REQ, `+ <MOD|SYS|FCHAIN> -satisfy-> <REQ>` for a `non-functional` one.
 3. **Confirm fit before linking.** Ranking is a hint, not truth — check each proposed edge makes SEMANTIC sense (does this TEST actually verify this REQ?). If the top candidate is wrong, scan the rest or `graph_get_node` for detail. If genuinely ambiguous, STOP and ask — never invent a trace to clear a violation.
 4. Batch the confirmed edges through `graph_mutate` as ONE Format-E block (the L2 gate — same gate as any write, author logged). Edges between existing nodes need no `### <TYPE>` section:
 

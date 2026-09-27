@@ -25,7 +25,24 @@ For each new requirement, emit ONE `graph_mutate` batch as Format-E:
 + <FUNC or MOD> -satisfy-> REQ-<slug>
 ```
 
-Every REQ carries `@kinds`: `functional` / `precondition` / `postcondition` is satisfied by a FUNC, `non-functional` / `risk` / `mitigation` by a MOD or the SYS; an FCHAIN may satisfy either. Without `kinds`, `FUNC`/`MOD`/`SYS -satisfy->` is rejected (R-18). The `satisfy` line belongs in the batch whenever the REQ is a leaf (no decomposition) — without it RD-01 flags the REQ. Never author a REQ alone "to add the test later" — that is precisely the debt this invariant prevents.
+Every REQ carries exactly ONE `@kinds` value, and that value decides who satisfies it:
+
+| `@kinds` | satisfied by |
+|---|---|
+| `functional` | a FUNC |
+| `non-functional` | a MOD (local budget), the SYS (system level) or an FCHAIN (end to end along the chain) |
+
+```
++ REQ-<behaviour>|<the system shall do X> [__name:<behaviour>]
+@kinds ["functional"]
++ REQ-<budget>|<the system shall stay within Y> [__name:<budget>]
+@kinds ["non-functional"]
+
++ FUNC-<step> -satisfy-> REQ-<behaviour>
++ MOD-<owner> -satisfy-> REQ-<budget>
+```
+
+A requirement that is both behaviour and budget is cut wrong — split it into two REQs, one of each kind. Without `kinds`, every `-satisfy->` is rejected (R-18). What must hold before a scenario is the entry FLOW of its chain, what holds after is the UC goal — both are checked through the chain's integration test (R-21), so they are not REQs of their own. An FMEA role (`@role risk` / `@role mitigation`, `se-fmea`) sits next to the kind and does not change who satisfies. The `satisfy` line belongs in the batch whenever the REQ is a leaf (no decomposition) — without it RD-01 flags the REQ. Never author a REQ alone "to add the test later" — that is precisely the debt this invariant prevents.
 <!-- inject:end -->
 
 Once the runnable test exists, add an entry to the TEST's `testRefs [{ file, tool, level?, case? }, …]` so `graph_tests` can select it (CR-GC-134). **Eine Abnahme, n Dateien** (CR-SM-231): ein TEST, der als vitest *und* playwright läuft, trägt zwei Einträge — `tool` steht deshalb je Eintrag. Eine Datei gehört zu höchstens einem TEST; R-29 meldet eine doppelt beanspruchte Datei als `error`.
