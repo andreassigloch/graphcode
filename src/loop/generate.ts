@@ -667,9 +667,16 @@ function stepCore(
   // CR-GC-593: nur Dimensionen, die in der FOKUSMENGE Fenster haben — `report.scores` zaehlt
   // alle Regeln, die Fokusmenge nicht. Ohne diese Trennung stuende eine Dimension "mit Funden"
   // da, fuer die es nichts zu tun gibt: genau der Zustand, den die Invariante ausschliesst.
+  // CR-GC-603: in einem Task steht der Eintritt (das fehlende Artefakt) VOR den Regeln des Tasks —
+  // ausdruecklich, nicht per Dimensionsreihenfolge. Bis CR-SM-377 stimmte das nur zufaellig: die
+  // Plan-Regeln lagen in staerkeren Dimensionen; mit CR-R05 (Dimension req) im Plan-Task nicht mehr.
+  const eintritt = task !== 'kern' ? TASK_ENTRY[task] : null;
+  const traegtEintritt = (w: typeof violations): boolean => !!eintritt && w[0]?.rule_id === eintritt;
   const kandidaten = dims
     .map((s) => ({ s, windows: windowsOf(violationsOf(s.dimension as string)) }))
-    .filter((k) => k.windows.length > 0);
+    .filter((k) => k.windows.length > 0)
+    .map((k) => ({ ...k, windows: [...k.windows].sort((a, b) => Number(traegtEintritt(b)) - Number(traegtEintritt(a))) }))
+    .sort((a, b) => Number(a.windows.some(traegtEintritt) ? 0 : 1) - Number(b.windows.some(traegtEintritt) ? 0 : 1));
   let focus: (typeof dims)[number] | undefined;
   let focusViolations: typeof violations = [];
   let focusKey: string | null = null;

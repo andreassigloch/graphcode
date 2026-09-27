@@ -20,6 +20,9 @@ import { generationStep } from '../src/loop/generate.js';
 import { abnehmbar, focusViolations } from '../src/kernel/measure/focus-set.js';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration
 import { spieleNach, referenzTrail } from '../rig/greenfield-systemtest/trajektorie.mjs';
+// @ts-expect-error — Migrationswerkzeug in .mjs (CR-GC-669), bewusst ohne Typdeklaration
+import { proposeDecisions, buildCommands } from '../scripts/migrate-req-kinds.mjs';
+import { applyCommands } from '../src/kernel/apply-commands.js';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown>; [k: string]: unknown }[]; traces: { source: string; target: string; type: string }[] };
@@ -38,12 +41,32 @@ function alsGraph(g: Flat) {
 }
 const lade = (rel: string): Flat => JSON.parse(readFileSync(ROOT + rel, 'utf8'));
 const GOLDEN = 'rig/sigllm-spezifikation/golden/sigllm-v98.graph.json';
+/**
+ * Die opus5-Laeufe sind Archive von VOR dem kinds-Major (CR-SM-366) und liegen nur lokal (runs/ ist
+ * nicht versioniert). Sie werden nicht umgeschrieben — Messdaten bleiben, wie sie gemessen wurden —,
+ * sondern beim Laden im Speicher durch dasselbe Werkzeug migriert, das die SSOTs migriert
+ * (CR-GC-669): Vorschlag, Batch, Anwendung. Eine offene Entscheidung wirft; nichts faellt still weg.
+ */
+function ladeLauf(rel: string): Flat {
+  const g = lade(rel);
+  const entscheidungen = proposeDecisions(g);
+  if (entscheidungen.length === 0) return g;
+  const { graph } = applyCommands(alsGraph(g), buildCommands(entscheidungen, alsGraph(g), { acceptHeuristic: true }));
+  const { nodes, edges } = graph as unknown as {
+    nodes: { uid: string; type: string; name: string; description: string; attributes: Record<string, unknown> }[];
+    edges: { sourceId: string; targetId: string; edgeType: string }[];
+  };
+  return {
+    elements: nodes.map((n) => ({ id: n.uid, type: n.type, name: n.name, description: n.description, attributes: n.attributes })),
+    traces: edges.map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
+  };
+}
 const RUNS = ['opus5-5', 'opus5-6', 'opus5-7', 'opus5-8', 'opus5-9'].map((d) => `rig/greenfield-systemtest/runs/${d}/graph.json`).filter((p) => existsSync(ROOT + p));
 const step = (g: Flat, defer: string[] = []) => generationStep(alsGraph(g), DEFAULT_METRIC_POLICY, undefined, 0.8, defer);
 const GATE = new Set(SE_DESCRIPTOR.rules.map((r: { id: string }) => r.id));
 
 describe('CR-GC-593: done ⇔ kein Fokus — an jedem Graphen des Korpus', () => {
-  const graphen: [string, Flat][] = [[GOLDEN, lade(GOLDEN)], ...RUNS.map((p): [string, Flat] => [p, lade(p)])];
+  const graphen: [string, Flat][] = [[GOLDEN, lade(GOLDEN)], ...RUNS.map((p): [string, Flat] => [p, ladeLauf(p)])];
 
   for (const [name, g] of graphen) {
     it(`${name.split('/').slice(-2).join('/')}: done genau dann, wenn kein Fokus`, () => {
@@ -75,7 +98,7 @@ describe('CR-GC-593: done ⇔ kein Fokus — an jedem Graphen des Korpus', () =>
   });
 
   it('nach defer aendert sich der Prompt; sind alle zurueckgestellt, sagt es die Maschine', () => {
-    const g = lade(RUNS[0] ?? GOLDEN);
+    const g = RUNS[0] ? ladeLauf(RUNS[0]) : lade(GOLDEN);
     const erst = step(g);
     if (!erst.focusKey) return;
     const zweit = step(g, [erst.focusKey]);

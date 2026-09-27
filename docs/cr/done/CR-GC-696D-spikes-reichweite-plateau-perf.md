@@ -1,6 +1,6 @@
 # CR-GC-696D: Spikes nach den neuen Operatoren — Reichweite statt Schrittzahl, Plateau-Zuege, Perf-Befund
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** Teil von CR-GC-696 (Teile 1, 2, 8), aus Item ITEM-2026-614
 **Erstellt:** 2026-09-27
 

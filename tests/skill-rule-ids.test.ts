@@ -195,7 +195,6 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
       'UC-01': 'UC ohne REQ — der Fix ist REQ-Autorieren (se:author-req), nicht UC-Autorieren',
       'RD-01': 'unaufgeloeste REQ — der Fix ist eine satisfy-Kante (se:close-violations), kein neuer Text',
       'R-04': 'Modul-Grenzbreite — der Fix beginnt mit der Sicht (se-view:arch), nicht mit dem Schnitt',
-      'CR-R05': 'Blatt-REQ ohne Bauauftrag — der Befund zaehlt zur Anforderungsdeckung (req), der Fix ist eine CR-relation-Kante aus dem Bauplan (se-plan), kein neuer REQ-Text (CR-SM-343)',
     };
     const eintritte = new Set(Object.values(TASK_ENTRY).filter(Boolean));
     const abweichend = Object.entries(RULE_HELP)

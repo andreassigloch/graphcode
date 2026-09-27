@@ -1,6 +1,6 @@
 # CR-GC-696: Nachzug Lokal-Modus: rote Spikes/Tests nach Major + Operatoren, Vorschlag-Leser ohne add-node
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-614 (finding)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-614.json (Lane: code)
@@ -75,3 +75,11 @@ genannten Dateien) 20+ rot.
 
 Graph-Knoten fuer CR-GC-696B/C/D sind NICHT angelegt (kein graph_mutate am Repo-Store in dieser
 Lane) — beim Integrieren per Werkzeug nachziehen.
+
+## Nachtrag 2026-09-27 (Koordinator)
+
+- `generate.statemachine`: die lokalen opus5-Archive (vor dem kinds-Major) werden beim Laden im Speicher mit `scripts/migrate-req-kinds.mjs` migriert (Vorschlag → Batch → `applyCommands`), nicht umgeschrieben.
+- `generate.task`: mit CR-R05 im Plan-Task (CR-SM-377) stand der Plan-Fund vor dem Eintritt AF-05. Der Eintritt steht jetzt ausdruecklich zuerst (`src/loop/generate.ts`, CR-GC-603), nicht per Dimensionsreihenfolge.
+- `skill-rule-ids`: CR-R05-Ausnahme entfernt — CR-R05 ist seit CR-SM-377 keine Kern-Regel mehr.
+- readiness.model und perf-Spike gruen durch CR-SM-377/378 (Spike 6,43 → 2,44).
+- VOLL danach: rot nur `distribution` (Link-Modus, erwartet) und `verify-model.completeness` wegen `tests/rig-verhalten.test.ts` der parallelen Session (nicht Teil dieses CR).

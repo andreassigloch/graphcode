@@ -1,6 +1,6 @@
 # CR-GC-696C: Kanal-Echo ohne Format-E-Syntax, Vorlagen-Identitaet kennt add-node und retires
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** Teil von CR-GC-696 (Teile 7 und 4-teilweise), aus Item ITEM-2026-614
 **Erstellt:** 2026-09-27
 

@@ -1,6 +1,6 @@
 # CR-GC-696B: Rig-Korpus sigllm-v98 auf zwei REQ-kinds migriert
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** Teil von CR-GC-696 (Teil 6), aus Item ITEM-2026-614
 **Erstellt:** 2026-09-27
 
