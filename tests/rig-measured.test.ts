@@ -10,7 +10,7 @@
  * Erster Fall ist der ZEUGE (der alte Weg, dokumentiert falsch), die uebrigen pruefen den neuen.
  */
 import { describe, it, expect } from 'vitest';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, statSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, statSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
@@ -187,7 +187,10 @@ describe('CR-GC-496: die Wurzel ist echt, der Store ist Wegwerf', () => {
   const REPO = join(__dirname, '..');
 
   it('Urteilsquelle und Aufloesungsbasis bleiben am echten Repo, der Store nicht', async () => {
-    const before = statSync(join(REPO, '.graphcode', 'kuzu')).mtimeMs;
+    // Auf dem CI-Runner gibt es keinen Live-Store (ITEM-2026-187) — dann darf auch keiner entstehen.
+    const live = join(REPO, '.graphcode', 'kuzu');
+    const stempel = () => (existsSync(live) ? statSync(live).mtimeMs : null);
+    const before = stempel();
     const m = await openMeasured({
       graph: join(REPO, 'docs', 'graph', 'graphcode.graph.json'),
       repoRoot: REPO,
@@ -206,7 +209,7 @@ describe('CR-GC-496: die Wurzel ist echt, der Store ist Wegwerf', () => {
       await m.close();
     }
     // Der LIVE-Store des echten Repos wurde nicht angefasst (REQ-single-kuzu-owner).
-    expect(statSync(join(REPO, '.graphcode', 'kuzu')).mtimeMs).toBe(before);
+    expect(stempel()).toBe(before);
   });
 
   it('ohne repoRoot bleibt alles im Wegwerf-Repo — das ist der Vorgabefall', async () => {

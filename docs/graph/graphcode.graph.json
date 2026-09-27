@@ -2683,6 +2683,12 @@
       "description": "docs/cr/open/CR-GC-698-messen-mjs-des-code-tests-misst-die-setu.md"
     },
     {
+      "id": "CR-GC-699",
+      "type": "CR",
+      "name": "CI rot: tests/rig-measured.test.ts (CR-GC-496) stat .graphcode/kuzu ENOENT auf dem Runner — Test setzt lokalen Store voraus (Clean-Machine-Klasse)",
+      "description": "docs/cr/open/CR-GC-699-ci-rot-tests-rig-measured-test-ts-cr-gc-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22326,5 +22332,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 522
+  "graphVersion": 523
 }
