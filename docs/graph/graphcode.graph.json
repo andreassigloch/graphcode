@@ -2731,6 +2731,12 @@
       "description": "docs/cr/open/CR-GC-706-graph-mutate-commands-parameter-entferne.md"
     },
     {
+      "id": "CR-GC-707",
+      "type": "CR",
+      "name": "Executor: Stillstand an AF-01..04 (Analyse-Stempel conops/trade/irr) — S2 gcrun-339..341 je Lauf mehrere 3-Runden-Stillstaende, der Executor kann die Analyse-Skills nicht fahren; Klausel oder gezieltes Zurueckstellen",
+      "description": "docs/cr/open/CR-GC-707-executor-stillstand-an-af-01-04-analyse-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22374,5 +22380,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 530
+  "graphVersion": 531
 }

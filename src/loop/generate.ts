@@ -784,6 +784,13 @@ function stepCore(
     `${dimension}:${vs[0]?.rule_id ?? ''}:${vs.map((v) => v.element_id).sort().join(',')}`;
 
   const deferSet = new Set(defer);
+  // ITEM-2026-632/633: im Treiber-Modus ist ein Eintrittspunkt (AF-01..05) nie Fokus — der Executor
+  // startet keine Tasks (graph_generate ist ihm vorenthalten) und kann den Analyse-Stempel nicht
+  // setzen. Gemessen S2 gcrun-339..341: je AF-Befund drei Runden Stillstand, dabei legte das Modell
+  // unter dem Text der Dimension neue SYS-REQs an (23/16 Dubletten). Bleiben nur Eintrittspunkte,
+  // greift der Endzustand unten („Offen sind Eintrittspunkte") — die Uebergabe an Mensch oder Host.
+  const eintrittImTreiber = (key: string): boolean =>
+    selection === 'driver' && task === 'kern' && TASK_OF_ENTRY.has(key.split(':')[1] ?? '');
   // CR-GC-593: nur Dimensionen, die in der FOKUSMENGE Fenster haben — `report.scores` zaehlt
   // alle Regeln, die Fokusmenge nicht. Ohne diese Trennung stuende eine Dimension "mit Funden"
   // da, fuer die es nichts zu tun gibt: genau der Zustand, den die Invariante ausschliesst.
@@ -803,7 +810,7 @@ function stepCore(
   outer: for (const k of kandidaten) {
     for (const window of k.windows) {
       const key = keyOf(k.s.dimension as string, window);
-      if (!deferSet.has(key)) {
+      if (!deferSet.has(key) && !eintrittImTreiber(key)) {
         focus = k.s;
         focusViolations = window;
         focusKey = key;

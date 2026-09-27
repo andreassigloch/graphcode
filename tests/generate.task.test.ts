@@ -111,6 +111,34 @@ describe('CR-GC-601: graph_generate {task}', () => {
   });
 });
 
+describe('ITEM-2026-632/633: der Treiber fokussiert keinen Eintrittspunkt', () => {
+  // Gemessen S2 gcrun-339..341: AF-04 am SYS im Fokus, Text der ver-Dimension — der Executor kann
+  // den Analyse-Stempel nicht setzen (dafuer braucht es den Task-Skill), er legte je Runde neue
+  // SYS-REQs samt TEST an: 23/16 Dubletten, drei Runden Stillstand je AF-Befund.
+  const drv = (defer: string[]) => generationStep(alsGraph(golden), DEFAULT_METRIC_POLICY, undefined, 0.8, defer, 'driver', null, 'kern');
+
+  it('ueber alle Funde gelaufen, stand nie ein AF-Eintrittspunkt im Fokus', () => {
+    let cur = drv([]);
+    const defer: string[] = [];
+    while (cur.focusKey && defer.length < 120) {
+      defer.push(cur.focusKey);
+      cur = drv(defer);
+    }
+    expect(defer.length).toBeGreaterThan(0);
+    expect(defer.filter((k) => /^[a-z]+:AF-0\d:/.test(k))).toEqual([]);
+  });
+
+  it('der Host (Claude Code) bekommt den Eintrittspunkt weiter — er kann den Task starten', () => {
+    let cur = step('kern');
+    const defer: string[] = [];
+    while (cur.focusKey && !/^[a-z]+:AF-0\d:/.test(cur.focusKey) && defer.length < 60) {
+      defer.push(cur.focusKey);
+      cur = step('kern', defer);
+    }
+    expect(cur.focusKey).toMatch(/:AF-0\d:/);
+  });
+});
+
 describe('CR-GC-601: next bleibt im Task der Sitzung', () => {
   let repoRoot: string;
   let harness: GraphCodeHarness;
