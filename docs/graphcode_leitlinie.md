@@ -466,7 +466,7 @@ Referenz, derselbe Stempel — ein Unterschied zum letzten Lauf ist dann eine Wi
 | Stufe | Wann | Umfang | Deckt |
 |---|---|---|---|
 | **S1 deterministisch** | jede Änderung an Regeln, Policy, Messung; vor jedem Release | `npm run messung` → `docs/messung/stand.md` (Urteil je Test-ID; noch nicht erhoben: T-V1, T-M3, T-E2, T-O4, T-O6, CR-GC-679B) — Minimal-Whitebox Phase 1 · moneyflow-Struktur (Baseline + `--structure`) · Grenzmenge · Randbreiten · Known-Answer-Sets (ℝ⁶, ND, Engpass) · Nachweis-History · Regel-Matrix · Perf-Test · KPI 1 (läuft automatisch) | T-V1, T-V2, T-V4, T-M3, T-M4, T-E1, T-E2, T-E8, T-O4, T-O6, T-H2 |
-| **S2 lokal** | jede Änderung am Executor, an Prompt, Werkzeugangebot oder Steuerung | Greenfield `gcrun` auf **sigllm-prosa**, N = 3, 12 Runden (`lauf-gcrun.env`); `report.mjs` mit Bedarfsanalyse und Arbeitsweise; Blindurteil der Specs (`blindurteil.mjs`) | T-V3, T-V5, T-M1, T-M2, T-E3 (lokale Hälfte), T-E6, T-E9, T-E10, T-E11 |
+| **S2 lokal** | jede Änderung am Executor, an Prompt, Werkzeugangebot oder Steuerung | Greenfield `gcrun` auf **sigllm-prosa**, N = 3, 40 Runden (`lauf-gcrun.env`; ~25 min je Lauf — mit 12 erreicht kein Lauf die arch-Phase); `report.mjs` mit Bedarfsanalyse und Arbeitsweise; Blindurteil der Specs (`blindurteil.mjs`) | T-V3, T-V5, T-M1, T-M2, T-E3 (lokale Hälfte), T-E6, T-E9, T-E10, T-E11 |
 | **S3 Frontier** | auf Anlass: Release, Claim-Aussage nach außen, Richtungsentscheidung | Greenfield `opus5` auf sigllm-prosa (N = 1) · Code-Test `gefuehrt` + `frei` · Referenz-Change | T-C1, T-C3, T-E3 (Frontier-Hälfte), T-E5, T-E9, T-M5 |
 
 S1 und S2 kosten nichts und laufen oft; nur das Blindurteil in S2 braucht Frontier-Token (ein
