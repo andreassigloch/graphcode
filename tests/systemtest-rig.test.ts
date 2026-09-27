@@ -21,7 +21,7 @@ import { spawnSync, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration (Messwerkzeug, kein Produkt-API)
 import {
-  leseTurns, pruefeGegenResultzeile, cacheVerursacher, lesenJeAusloeser, bedarfsAnalyse, modellIndex,
+  leseTurns, kanalBilanz, pruefeGegenResultzeile, cacheVerursacher, lesenJeAusloeser, bedarfsAnalyse, modellIndex,
   leseExecutorSpur, bedarfsAnalyseExecutor, dryRunWirkung,
 } from '../rig/greenfield-systemtest/turn-analyse.mjs';
 // @ts-expect-error — s.o.
@@ -112,6 +112,31 @@ describe('turn-analyse: der Strom misst denselben Lauf wie die Ergebniszeile (CR
       usage: { input_tokens: 5, cache_read_input_tokens: 7, cache_creation_input_tokens: 9 },
     }));
     expect(pruefeGegenResultzeile(lauf).ok).toBe(true);
+  });
+
+  it('trennt Haupt- und Subagent-Kanal ueber parent_tool_use_id (ITEM-2026-503)', () => {
+    // Gemessen an opus5-0: 20 von 71 Turns gehoerten dem Subagenten und standen in der Folge des
+    // Hauptagenten; ein Ergebnis wurde dem naechsten Turn GLEICH WELCHEN Kanals zugeschrieben.
+    const sub = (z: unknown): object => ({ ...(z as object), parent_tool_use_id: 'tA' });
+    const ergebnis = (id: string, text: string): object =>
+      ({ type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: id, content: text }] } });
+    const pfad = schreibe('stream-kanal.jsonl', [
+      assistant('m1', { read: 10 }, [{ type: 'tool_use', id: 'tA', name: 'Agent' }, { type: 'tool_use', id: 'tB', name: 'Bash' }]),
+      ergebnis('tB', 'ok'),
+      sub(assistant('s1', { read: 5 }, [{ type: 'tool_use', id: 'r1', name: 'Read' }])),
+      sub(ergebnis('r1', 'x'.repeat(100))),
+      sub(assistant('s2', { read: 6 })),
+      ergebnis('tA', 'zusammenfassung'),
+      assistant('m2', { read: 20 }),
+    ]);
+    const turns = leseTurns(pfad);
+    expect(turns.map((t: { kanal: string }) => t.kanal)).toEqual(['haupt', 'subagent', 'subagent', 'haupt']);
+    // Das Bash-Ergebnis des Hauptagenten loest keinen Subagent-Turn aus — es wartet auf m2.
+    expect(turns.map((t: { nachErgebnisVon: string[] }) => t.nachErgebnisVon)).toEqual([[], [], ['Read'], ['Bash', 'Agent']]);
+    expect(kanalBilanz(turns)).toEqual({
+      haupt: { turns: 2, aufrufe: 2, ergebnisZeichen: 17, cacheRead: 30 },
+      subagent: { turns: 2, aufrufe: 1, ergebnisZeichen: 100, cacheRead: 11 },
+    });
   });
 
   it('schreibt die Cache-Schreibung dem Werkzeug zu, dessen Ergebnis dem Turn voranging', () => {

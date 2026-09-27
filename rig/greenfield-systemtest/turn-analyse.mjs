@@ -51,11 +51,17 @@ const summe = (a, b) => ({
 export function leseTurns(pfad) {
   const proNachricht = new Map(); // message.id → Turn (zusammengefasst)
   const reihenfolge = [];
-  let offen = [];            // Werkzeuge, deren Ergebnis seit dem letzten Turn eintraf
-  let offenDetail = [];      // dieselben Ergebnisse mit id und Text (fuer die Bedarfsanalyse)
-  const letzteIds = new Map(); // tool_use_id → Name, um Ergebnisse zuzuordnen
+  // Je Kanal eine Warteschlange (ITEM-2026-503): ein Ergebnis loest den naechsten Turn SEINES
+  // Kanals aus. `parent_tool_use_id` gesetzt = Subagent; ohne Trennung stand er in der Folge des
+  // Hauptagenten (opus5-0: 20 von 71 Turns), und ein Ergebnis fiel dem naechsten Turn gleich
+  // welchen Kanals zu.
+  const offen = new Map();       // Kanal → Werkzeuge, deren Ergebnis seit dessen letztem Turn eintraf
+  const offenDetail = new Map(); // Kanal → dieselben Ergebnisse mit id und Text (Bedarfsanalyse)
+  const letzteIds = new Map();   // tool_use_id → Name, um Ergebnisse zuzuordnen
+  const kanalVon = (e) => e.parent_tool_use_id ?? 'haupt';
 
   for (const e of zeilen(pfad)) {
+    const k = kanalVon(e);
     if (e.type === 'assistant' && e.message) {
       const u = e.message.usage ?? {};
       const uses = (e.message.content ?? []).filter((c) => c.type === 'tool_use');
@@ -71,14 +77,15 @@ export function leseTurns(pfad) {
             cacheRead: u.cache_read_input_tokens ?? 0,
             cacheCreate: u.cache_creation_input_tokens ?? 0,
           },
+          kanal: k === 'haupt' ? 'haupt' : 'subagent',
           ruft: rufe,
           aufrufe,
-          nachErgebnisVon: offen,
-          ergebnisse: offenDetail,
+          nachErgebnisVon: offen.get(k) ?? [],
+          ergebnisse: offenDetail.get(k) ?? [],
         });
         reihenfolge.push(id);
-        offen = [];
-        offenDetail = [];
+        offen.set(k, []);
+        offenDetail.set(k, []);
       } else {
         // Dasselbe Ereignis, weiterer Content-Block: Verbrauch NICHT addieren.
         vorhanden.verbrauch.input = Math.max(vorhanden.verbrauch.input, u.input_tokens ?? 0);
@@ -91,13 +98,30 @@ export function leseTurns(pfad) {
     if (e.type === 'user' && e.message) {
       for (const c of e.message.content ?? []) {
         if (c.type !== 'tool_result') continue;
-        offen.push(letzteIds.get(c.tool_use_id) ?? 'unbekannt');
+        if (!offen.has(k)) { offen.set(k, []); offenDetail.set(k, []); }
+        offen.get(k).push(letzteIds.get(c.tool_use_id) ?? 'unbekannt');
         const text = typeof c.content === 'string' ? c.content : JSON.stringify(c.content ?? '');
-        offenDetail.push({ id: c.tool_use_id, text });
+        offenDetail.get(k).push({ id: c.tool_use_id, text });
       }
     }
   }
   return reihenfolge.map((id) => proNachricht.get(id));
+}
+
+/** Je Kanal: Turns, Werkzeugaufrufe, Zeichen der Werkzeugantworten, Cache-Lesung (ITEM-2026-503).
+ *  Ein Vergleich zweier Laeufe ueber „Zeichen im Kontext" ist nur apples-to-apples, wenn beide
+ *  Kanaele ausgewiesen sind — ein Subagent erkundet, was der Hauptagent sonst selbst liest. */
+export function kanalBilanz(turns) {
+  const leer = () => ({ turns: 0, aufrufe: 0, ergebnisZeichen: 0, cacheRead: 0 });
+  const b = { haupt: leer(), subagent: leer() };
+  for (const t of turns) {
+    const z = b[t.kanal ?? 'haupt'];
+    z.turns += 1;
+    z.aufrufe += t.aufrufe.length;
+    z.ergebnisZeichen += t.ergebnisse.reduce((a, r) => a + r.text.length, 0);
+    z.cacheRead += t.verbrauch.cacheRead;
+  }
+  return b;
 }
 
 /**

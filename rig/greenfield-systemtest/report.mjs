@@ -6,7 +6,7 @@
 // Reads results.json + results-opus.json (arms may run separately). @author andreas@siglochconsulting
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import {
-  leseTurns, cacheVerursacher, dryRunWirkung, bedarfsAnalyse, modellIndex, modellImArbeitsbereich,
+  leseTurns, kanalBilanz, cacheVerursacher, dryRunWirkung, bedarfsAnalyse, modellIndex, modellImArbeitsbereich,
   leseExecutorSpur, bedarfsAnalyseExecutor,
 } from './turn-analyse.mjs';
 import { steuerungsBericht } from './steuerung.mjs';
@@ -240,19 +240,19 @@ if (mitDeckung.length) {
         const turns = leseTurns(strom);
         const top = cacheVerursacher(turns).slice(0, 3);
         const ges = turns.reduce((a, t) => a + t.verbrauch.cacheCreate, 0);
-        cache = { turns: turns.length, ges, top };
+        cache = { turns: turns.length, ges, top, sub: kanalBilanz(turns).subagent };
       } catch { /* Strom unlesbar — Zeile bleibt ohne Cache-Spalte */ }
     }
     if (dr || cache) zeilen.push({ r, dr, cache });
   }
   if (zeilen.length) {
     console.log('\n## Kontextkosten und Dry-Run-Wirkung (CR-GC-567)\n');
-    console.log('| Lauf | Turns | Cache-Schreibung | teuerster Verursacher | Previews | verworfen | Quote |');
-    console.log('|---|---:|---:|---|---:|---:|---:|');
+    console.log('| Lauf | Turns | davon Subagent (Turns · Antwortzeichen) | Cache-Schreibung | teuerster Verursacher | Previews | verworfen | Quote |');
+    console.log('|---|---:|---|---:|---|---:|---:|---:|');
     for (const { r, dr, cache } of zeilen) {
       const top = cache?.top?.[0];
       console.log(
-        `| ${r.arm} #${r.run} | ${cache?.turns ?? '—'} | ${cache ? cache.ges.toLocaleString('de-DE') : '—'} `
+        `| ${r.arm} #${r.run} | ${cache?.turns ?? '—'} | ${cache ? `${cache.sub.turns} · ${cache.sub.ergebnisZeichen.toLocaleString('de-DE')}` : '—'} | ${cache ? cache.ges.toLocaleString('de-DE') : '—'} `
         + `| ${top ? `${top.werkzeug} (${top.tokens.toLocaleString('de-DE')})` : '—'} `
         + `| ${dr?.previews ?? '—'} | ${dr?.verworfen ?? '—'} | ${dr?.quote ?? '—'} |`);
     }

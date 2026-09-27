@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 309 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 310 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 309 CR · 303 done · 4 open.
+Total: 310 CR · 303 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -371,3 +371,4 @@ Total: 309 CR · 303 done · 4 open.
 | `CR-GC-697` | done | FCHAIN-skill-report: FUNC-test/-test-ui ohne REQ (R-21) - REQ Red-First mit Test |
 | `CR-GC-698` | n/a | messen.mjs des Code-Tests misst die Setup-Saat statt des Laufergebnisses: es liest docs/graph/<laufname>.graph.json, waehrend der Export unter dem Mitgliedsnamen <package.name>.graph.json landet — fuer gefuehrt-2 meldete es 0 Prozent Bindung, tatsaechlich sind es 4 von 4 (100 Prozent) |
 | `CR-GC-699` | n/a | CI rot: tests/rig-measured.test.ts (CR-GC-496) stat .graphcode/kuzu ENOENT auf dem Runner — Test setzt lokalen Store voraus (Clean-Machine-Klasse) |
+| `CR-GC-700` | n/a | Der Subagent-Kanal ist ungemessen: ein einziger Agent/Explore-Aufruf lieferte im Lauf vom 2026-09-23 32.054 Zeichen = 18 Prozent aller Werkzeugantworten, und weder steuerung.mjs noch die Antwort-Diaet-CRs kennen ihn |
