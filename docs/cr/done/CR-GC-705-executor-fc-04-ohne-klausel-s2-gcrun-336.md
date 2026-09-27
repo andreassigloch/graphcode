@@ -1,6 +1,6 @@
 # CR-GC-705: Executor: FC-04 ohne Klausel — S2 gcrun-336..338 stagnieren je Lauf ~16 von 40 Runden an FC-04/R-16/AF-04, arch nie erreicht; Ausgang FUNC->FLOW->ACTOR fehlt in allen Laeufen. Klausel mit Skelett-uids aus dem Bestand
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-629 (finding)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-629.json (Lane: code)
