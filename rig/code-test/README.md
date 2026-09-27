@@ -33,7 +33,7 @@ die Zerlegung zählt: Zeitrechnung, Zustand, Ausführung, Prüfung und Nachweis 
 
 | Arm | Harness | Modell | Unterschied |
 |---|---|---|---|
-| `gefuehrt` | Claude Code + graphcode-MCP + se-Skills | Opus 5 | Golden im Store; baut entlang der FUNCs/SCHEMAs, bindet mit `graph_realize`, RC-Kongruenz am Ende |
+| `gefuehrt` | Claude Code + graphcode-MCP + se-Skills | Opus 5 | Golden im Store; baut entlang der FUNCs/SCHEMAs, bindet mit `graph_mutate` (Format-E `@realRef`), RC-Kongruenz am Ende |
 | `frei` | Claude Code ohne graphcode | Opus 5 | nur Aufgabe, Vertrag, Auftrag |
 
 Genau eine Achse unterscheidet die Arme: Modell und Werkzeug. Gleich sind das Modell, der Text, die
