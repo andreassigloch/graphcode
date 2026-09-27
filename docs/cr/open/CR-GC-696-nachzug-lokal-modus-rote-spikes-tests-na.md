@@ -18,3 +18,41 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Schnitt (10-Dateien-Grenze)
+
+Der Befund hat acht unabhaengige Teile; ein CR fuer alle sprengt die Grenze. Aufgeteilt:
+
+| CR | Teile | Inhalt |
+|---|---|---|
+| CR-GC-696 (dieser) | (5), (3) | neue Regeln im Katalog-Waechter, Regelzahl 66 → 68, CR-R05-Ausnahme |
+| CR-GC-696B | (6) | Rig-Korpora auf die zwei REQ-kinds migriert |
+| CR-GC-696C | (7), (4 teilweise) | channel-rank; noteTemplateEdits kennt add-node und retires |
+| CR-GC-696D | (1), (2), (8) | Spikes: Reichweite statt Schrittzahl, Deckel Lauf A, Perf-Befund |
+
+(4) executor-prompt.ts und alles unter „NICHT hier" bleibt bei CR-GC-672.
+
+## Umsetzung (5), (3)
+
+**(5) Regelkatalog.** Gegen die verlinkte Arbeitskopie gezaehlt, nicht gegen die 68 im Item:
+`ALL_RULE_DEFS` der readiness-scorenden Profile = **68** (66 + CR-R05 + FC-05, beide `profile: se`);
+RC-10 ist `profile: conformance` und zaehlt dort nicht mit.
+
+- `tests/evaluation.rule-catalog.test.ts`: RC-10 in `NOT_IN_GATE`. Invariante unveraendert — RC-10
+  hat die Signatur `(graph, CodeFacts)` wie RC-01..09, der Gate-Katalog fuehrt sie nicht aus; die
+  Konformanz faehrt sie generisch ueber `CODE_CONFORMANCE_RULES` (keine lokale RC-Liste in `src/`).
+- `docs/articles/03`, `04`: „66 engine rules" → „68"; `tests/claims.conformance.test.ts` Kanarie
+  mitgezogen. README nennt keine Regelzahl.
+- **Rest rot, Eigentuemer SM:** `tests/readiness.model.test.ts` (A/B) — RC-10 fehlt in
+  `RC_PRESENCE_PARTNER` von `@sigloch/graphcode-client` (`packages/graphcode-client/src/readiness.ts`),
+  darum liegt RC-10 auf keinem Phasen-Gate, `PHASE_GATE_RULES ∪ IMPL_GATE_RULES` (70) ≠
+  `getFamilyRuleIds()` (71). Kein graphcode-Fix moeglich: `src/kernel/measure/readiness.ts` re-exportiert
+  nur. Vorschlag fuers SM-Item: `'RC-10': 'R-23'` — RC-10 meldet, dass RC-05 (Partner R-23) an diesem
+  MOD blind ist, also dieselbe Modul-Kopplungs-Kategorie.
+
+**(3) CR-R05.** Befund-Dimension `req` (→ se:author-req), Hilfe-Prompt `se-plan`. Der Prompt ist
+richtig: der Fix fuer eine Blatt-REQ ohne Bauauftrag ist eine `CR -relation->`-Kante aus dem Bauplan,
+kein REQ-Text. Das ist genau die Klasse, fuer die der Test die benannte Ausnahmeliste fuehrt
+(UC-01, RD-01, R-04) — CR-R05 dort mit Grund eingetragen; keine SM-Aenderung noetig.
