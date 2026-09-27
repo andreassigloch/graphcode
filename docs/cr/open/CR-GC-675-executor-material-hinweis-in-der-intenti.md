@@ -67,7 +67,7 @@ Material-Gedaechtnis ueber Runden (CR-GC-663, zurueckgenommen).
       - `read_file material/auftrag.md` ≤ 1 je Lauf (Bedarfsanalyse `je-runde` fuer den Auftrag ≈ 0),
       - Elemente, Readiness req/uc und Laufzeit innerhalb der Basis-Spanne (45–58 El., 115–246 s).
       Faellt die Ausbeute, braucht das Modell den Auftrag je Runde — dann zurueck und Befund im Item.
-- [ ] VOLL-Spur vor dem Schliessen.
+- [x] VOLL-Spur (2026-09-27, Stand zug-exec nach CR-GC-694): 185/186 Dateien gruen; rot nur `tests/rig-measured.test.ts` (vorbestehend).
 
 ## Stand (2026-09-27)
 
