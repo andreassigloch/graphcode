@@ -3,8 +3,8 @@
  * run-code.mjs — der Code-Test (CR-GC-610, graphcode-Leitlinie §6, T-C1): dieselbe Aufgabe, zwei Arme.
  *
  *   gefuehrt — Claude Code MIT graphcode: das sigllm-Golden liegt im Store, die se-Skills sind da;
- *              der Agent baut die Scheduler-Scheibe aus dem Modell (graph_context, graph_realize,
- *              RC-Kongruenz) und darf das Modell durchs Gate anpassen.
+ *              der Agent baut die Scheduler-Scheibe aus dem Modell (graph_context, Binden per
+ *              graph_mutate/Format-E, RC-Kongruenz) und darf das Modell durchs Gate anpassen.
  *   frei     — Claude Code OHNE graphcode: nur Auftrag, Aufgabe und Vertrag.
  * Beide: gleiches Modell (Opus 5), gleicher Text von aufgabe.md und vertrag/contract.ts, gleiche
  * Laufzeit-Obergrenze. Die verdeckte Abnahme sieht keiner (messen.mjs faehrt sie danach).
@@ -49,8 +49,9 @@ const PROMPT = {
 
 Das Systemmodell von SIG Local liegt im graphcode-Store (siehe GRAPHCODE.md). Die Scheibe ist MOD-scheduler
 mit seinen FUNCs, Vertraegen und REQs. Arbeite modellgefuehrt: lies die Scheibe ueber graph_context, schneide
-den Code entlang der FUNCs und SCHEMAs, binde jede FUNC und jedes SCHEMA mit graph_realize an ihren Code und
-jeden TEST an seine Testdatei. Weicht die Aufgabe vom Modell ab (sie ist schmaler), passe das Modell durchs
+den Code entlang der FUNCs und SCHEMAs, binde jede FUNC und jedes SCHEMA per graph_mutate an ihren Code
+(Format-E: "~ FUNC-x" + Folgezeile "@realRef {\"file\":…,\"symbol\":…}") und jeden TEST an seine
+Testdatei ("@testRefs [...]" — die volle Liste). Weicht die Aufgabe vom Modell ab (sie ist schmaler), passe das Modell durchs
 Gate an statt am Modell vorbei zu bauen. Am Ende sagt graph_readiness zu den RC-Regeln kongruent — oder du
 nennst, was bewusst offen bleibt. graph_export vor dem Commit — danach folgt nur noch der Commit; eine
 Leseabfrage nach dem Export loest nichts mehr aus (CR-GC-612).`,

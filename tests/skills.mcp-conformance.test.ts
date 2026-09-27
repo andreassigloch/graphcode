@@ -97,6 +97,23 @@ describe('TEST-skills-mcp: every SE skill is MCP-driven, off the retired localho
     }
     expect(missing).toEqual([]);
   });
+
+  /**
+   * CR-GC-686 — a skill's example IS the pattern the agent copies (memory: "Vorbild statt
+   * Verbot" — examples work, prohibitions do not). The write path is Format-E; a JSON
+   * `commands` array shown as the model to follow teaches the second input path. Matched on
+   * the QUOTED key form only (`"op": "…"`, `"commands": [`) — code that hands a batch through
+   * as transport (se/import-doc) is not an example and is not flagged.
+   */
+  it('no skill shows a JSON-commands batch as the example to follow (CR-GC-686)', () => {
+    const JSON_COMMANDS = /"op"\s*:\s*"|"commands"\s*:\s*\[/;
+    const offenders: string[] = [];
+    for (const f of skillFiles()) {
+      const text = readFileSync(join(COMMANDS_DIR, f), 'utf8');
+      if (JSON_COMMANDS.test(text)) offenders.push(f);
+    }
+    expect(offenders).toEqual([]);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -242,8 +259,9 @@ describe('CR-GC-308: skills instruct only vocabulary the ontology declares', () 
     it('applies a retire suggestion as ONE graph_mutate batch (CR-GC-435)', () => {
       const text = optimize();
       expect(text).toContain('retire');
-      expect(text).toContain('delete-edge');
-      expect(text).toContain('add-edge');
+      // CR-GC-686: the pair is shown as Format-E — `-` retires, `+` adds, in one block.
+      expect(text).toMatch(/^- <retire\.source> -<retire\.type>-> <retire\.target>$/m);
+      expect(text).toMatch(/^\+ <edit\.source> -<edit\.type>-> <edit\.target>$/m);
       // Der Verbund muss als EIN Aufruf benannt sein, nicht als zwei.
       // …als EIN Aufruf/Batch benannt (Markdown-Auszeichnung und Backticks dazwischen erlaubt),
       // nicht als zwei.

@@ -69,8 +69,13 @@ export class Gate {
         ruleId: 'SCHEMA-01',
         severity: 'error',
         message: `command[${i}] does not match MutateCommandSchema — ${detail}`,
+        // CR-GC-686: the hint leads with the preferred path. Format-E never produces a shape
+        // error, so the JSON shapes stay for the one op it lacks (update-edge) and for repair.
         fixHint:
-          "Canonical shapes: {op:'add-node'|'update-node', node:{uid,type,name,description?,attributes?}} · " +
+          'Prefer formatE over commands: node ops (+ add, ~ patch, - delete) go under "## Nodes" + ' +
+          '"### <TYPE>" (e.g. "+ REQ-x|text [__name:Name]", "~ FUNC-x" + "@realRef {…}"); edges under ' +
+          '"## Edges" ("+ A -verify-> B", "- A -verify-> B"); merges under "## Merges" ("M source + target"). ' +
+          "Only update-edge needs commands. Canonical command shapes: {op:'add-node'|'update-node', node:{uid,type,name,description?,attributes?}} · " +
           "{op:'delete-node', uid} · {op:'add-edge', edge:{sourceId,targetId,edgeType,attributes?}} · " +
           "{op:'delete-edge', edge:{sourceId,targetId,edgeType}} · " +
           "{op:'update-edge', edge:{sourceId,targetId,edgeType}, set:{edgeType?|flip?|attributes?}} · " +

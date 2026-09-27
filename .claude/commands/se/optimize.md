@@ -64,22 +64,20 @@ Dann die Frage, wörtlich und einzeln: **„anwenden?"** — pro Vorschlag, nich
 **Kein Auto-Apply.** Die Maschine schlägt vor, der Mensch entscheidet; `graph_suggest` ist
 read-only und hat nichts persistiert. Angewendet wird ausschließlich über `graph_mutate`.
 
-**Reines Anhängen** (kein `retire`):
+**Reines Anhängen** (kein `retire`) — ein Format-E-Block als `formatE`:
 
-```json
-{ "commands": [
-  { "op": "add-edge", "edge": { "sourceId": "<edit.source>", "targetId": "<edit.target>", "edgeType": "<edit.type>" } }
-] }
+```
+## Edges
++ <edit.source> -<edit.type>-> <edit.target>
 ```
 
 **Umhängen** (`edit.retire` ist gesetzt) — als **EIN** `graph_mutate`-Aufruf, nie als zwei
-(CR-GC-435):
+(CR-GC-435); `-` löscht die alte Kante, `+` legt die neue an, im selben Block:
 
-```json
-{ "commands": [
-  { "op": "delete-edge", "edge": { "sourceId": "<retire.source>", "targetId": "<retire.target>", "edgeType": "<retire.type>" } },
-  { "op": "add-edge",    "edge": { "sourceId": "<edit.source>",   "targetId": "<edit.target>",   "edgeType": "<edit.type>" } }
-] }
+```
+## Edges
+- <retire.source> -<retire.type>-> <retire.target>
++ <edit.source> -<edit.type>-> <edit.target>
 ```
 
 Warum als ein Batch: `retire` benennt die Kante, die laut Kardinalitäts-Obergrenze des Meta-Modells

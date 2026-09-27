@@ -147,7 +147,7 @@ live registry so it cannot silently fall behind the code.
 | | `graph_expand` | deepen one branch on demand |
 | | `graph_context` | the definition-of-done pack for ONE node — spec closure in one call |
 | **write** | `graph_mutate` | the write path — through the Apply-Gate (human or AI, same gate); also binds model to code: `~ FUNC-x` + `@realRef {…}`, `@testRefs [...]` on a TEST |
-| | `graph_merge` | additive merge (adds only) — the non-destructive import path |
+| | `graph_merge` | replay a branch worktree's command log onto this store (semantic rebase); the node merge is Format-E `M source + target` via `graph_mutate` |
 | | `graph_reseed` | in-process reseed from the committed SSOT, with an automatic backup |
 | **measure** | `rules_evaluate`, `rules_get_violations` | run the SE rules read-only |
 | | `graph_readiness` | the readiness report: dimensions, phase gates, blocking errors |

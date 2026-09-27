@@ -71,6 +71,11 @@ describe('TEST-mutate-schema-guard (CR-GC-239)', () => {
     expect(v?.severity).toBe('error');
     expect(v?.message).toContain('command[0]');
     expect(v?.fixHint).toContain("op:'add-node'"); // points to the canonical shape
+    // CR-GC-686: the hint leads with the preferred path — Format-E — before the JSON shapes.
+    expect(v?.fixHint).toMatch(/^Prefer formatE/);
+    expect(v?.fixHint).toContain('## Nodes');
+    expect(v?.fixHint).toContain('### <TYPE>');
+    expect(v?.fixHint).toContain('## Edges');
     expect(harness.getGraph().nodes.some((n) => n.uid === 'REQ-typo')).toBe(false);
   });
 

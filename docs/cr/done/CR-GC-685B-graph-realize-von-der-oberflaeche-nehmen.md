@@ -53,6 +53,8 @@ GVE bindet seit CR-GVE-299 ueber `graph_mutate` (Voraussetzung erfuellt).
 - CR-Knoten `CR-GC-685B` anlegen/`done` (`aise cr close`).
 - FUNC des Werkzeugs `graph_realize` (realRef symbol `graph_realize`, write.ts) ist jetzt hohl:
   `graph_impact` + Loeschzug per `/se-umbau`, danach RC-* kongruent.
+  **Bis dahin ist `tests/conformance.test.ts` rot** (2 Tests, RC-01 auf `FUNC-graph-realize`) —
+  gemessen im VOLL-Lauf nach CR-GC-686.
 - TEST-Knoten zu `tests/mcp.realize.test.ts` (Beschreibung "graph_realize setzt…") und
   `REQ-skill-authors-through-gate` (Wortlaut "oder graph_realize") auf Format-E/`graph_mutate`
   nachziehen; FLOW-Beschreibung "bootstrap, import-code-verb, graph_realize und graph_test_ingest

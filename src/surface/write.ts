@@ -75,18 +75,27 @@ const GraphMutateInputSchema = z
   .object({
     // commands is validated by harness.mutate() via MutateCommandSchema internally.
     // We accept any array here to avoid cross-Zod-version schema composition issues (D1).
-    commands: z.array(z.unknown()).min(1).optional(),
+    commands: z
+      .array(z.unknown())
+      .min(1)
+      .optional()
+      .describe('JSON MutateCommand[] — only needed for update-edge (type change/flip of an existing edge); everything else is formatE.'),
     formatE: z
       .string()
       .min(1)
       .optional()
       .describe(
-        'Token-leane Alternative zu commands (CR-GC-276): ein Format-E-v2-Block (dasselbe Dialekt wie ' +
-          'die Read-Slices) wird zu Mutations-Kommandos decodiert und läuft durch DASSELBE Gate. ' +
-          'Bevorzugt für LLM-Autoring (~2–3× weniger Tokens); upsert-Semantik. ' +
+        'SEKTIONEN ZUERST (CR-SM-369): Knoten-Operationen `+ ~ - !` stehen unter "## Nodes" + ' +
+          '"### <TYPE>", Kanten unter "## Edges", Merges unter "## Merges" — eine Knotenzeile ohne ' +
+          'Sektion ist ein Parse-Fehler. Der Schreibweg (CR-GC-276/686): ein Format-E-v2-Block (dasselbe ' +
+          'Dialekt wie die Read-Slices) wird zu Mutations-Kommandos decodiert und läuft durch DASSELBE ' +
+          'Gate; commands braucht nur noch update-edge. ' +
           'OPERATIONEN (CR-GC-627): Format-E ist eine Operationssprache, nicht nur ein Graph-Format — ' +
-          'das Präfix entscheidet. `+` legt an (add-node/add-edge), `-` löscht (delete-node/delete-edge), ' +
-          '`~` ändert einen Knoten als PATCH (update-node: nur was die Zeile nennt), und `M` ist ' +
+          'das Präfix entscheidet. `+` legt an oder überschreibt (add-node/add-edge, Upsert), `-` löscht ' +
+          '(delete-node/delete-edge), `~` ändert einen BESTEHENDEN Knoten als PATCH (update-node: nur was ' +
+          'die Zeile nennt; eine unbekannte uid ist ein Fehler, CR-GC-685) — so bindet man Code: ' +
+          '`~ FUNC-x` + Folgezeile `@realRef {"file":…,"symbol":…}`, an einer TEST `@testRefs [...]` ' +
+          '(ersetzt die Liste — alle Einträge nennen). `M` ist ' +
           'die Merge-Zeile unter "## Merges": `M quelle + ziel` lässt das ZIEL die QUELLE aufnehmen ' +
           '(merge-nodes, genau zwei uids). Ein Löschzug nennt einen Knoten, den es gibt. ' +
           'Dieselbe uid in EINEM Block zu löschen und zu schreiben ' +
@@ -464,10 +473,12 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
   > = {
     name: 'graph_merge',
     description:
-      'Fold one node into another: the target ABSORBS the source, the source disappears, and every ' +
-      'edge is re-pointed. Take it to consolidate duplicates — a merge is the one move that REMOVES ' +
-      'structure, so it runs through the same Apply-Gate and the same OCC check as any write. Coupled ' +
-      'merges that the cardinality bounds require must ride in ONE batch.',
+      "Replay a BRANCH's command log onto this store — the semantic rebase for parallel worktrees " +
+      '(CR-GC-234). `log` is the branch worktree\'s .graphcode/audit.jsonl; every batch it applied after ' +
+      '`sinceVersion` (the shared fork point) runs again through the Apply-Gate, and conflicts come back ' +
+      'per batch. dryRun:true previews with graph and log untouched. NOT the node merge: to fold a ' +
+      'duplicate node into another, send graph_mutate a Format-E line under "## Merges": ' +
+      '`M source + target` (the target absorbs the source).',
     inputSchema: GraphMergeInputSchema,
     async handler(input) {
       const logPath = isAbsolute(input.log) ? input.log : join(harness.getRepoRoot(), input.log);

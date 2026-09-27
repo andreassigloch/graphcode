@@ -194,4 +194,22 @@ describe('TEST-agent-agnostic: identical surface + gate for any MCP client (CR-G
     expect(ccBlocked.node).toBeNull();
     expect(ocBlocked.node).toBeNull();
   });
+  // CR-GC-686: what the agent READS in tools/list decides which tool it reaches for.
+  it('(c) the write texts point at the right tool: graph_merge = branch replay, formatE leads with its sections', async () => {
+    const tools = (await claudeCode.listTools()).tools;
+    const merge = tools.find((t) => t.name === 'graph_merge')!;
+    // graph_merge replays a branch's command log — it is NOT the node merge.
+    expect(merge.description).toMatch(/replay/i);
+    expect(merge.description).toContain('sinceVersion');
+    expect(merge.description).not.toMatch(/target ABSORBS the source/);
+    // …and it sends the node-merge reader to Format-E `M`.
+    expect(merge.description).toContain('M source + target');
+
+    const mutate = tools.find((t) => t.name === 'graph_mutate')!;
+    const formatE = (mutate.inputSchema as { properties: Record<string, { description?: string }> }).properties.formatE;
+    // The section rule comes FIRST (CR-SM-369): node ops under ## Nodes + ### <TYPE>, edges under ## Edges.
+    expect(formatE.description!.slice(0, 200)).toContain('## Nodes');
+    expect(formatE.description!.slice(0, 200)).toContain('### <TYPE>');
+    expect(formatE.description!.slice(0, 200)).toContain('## Edges');
+  });
 });

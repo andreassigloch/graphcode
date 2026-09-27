@@ -120,12 +120,31 @@ The FMEA is not done until findings live in the graph, not just the document.
    Writing `S`/`O`/`D` instead makes `FM-01` fire on every risk REQ **and** leaves the view empty — that is precisely the defect CR-GC-308 fixed.
 
    For each new `REQ` add:
-   - an `add-node` for the `REQ`, with the FMEA finding in `attributes.rationale`, the S/O/D ratings under the names above, and `attributes.kinds`,
-   - an `add-edge` **`compose`** from the risk `REQ` → the mitigation `REQ` (**FM-02**; `relation` between two REQs is *not* in `TRACE_PATTERNS` and `R-18` rejects it),
-   - an `add-edge` `satisfy` from the responsible `MOD` (or `SYS`) → the `REQ` (which module is RESPONSIBLE, not merely related; `FUNC -satisfy->` a risk/mitigation REQ is illegal — R-18, `kinds` where-predicate),
-   - an `add-edge` `verify` from a `TEST` → the `REQ` (R-01: every REQ must have ≥1 verify). Für ein Risiko mit **Action Priority High** verlangt **FM-03** zusätzlich, dass **jeder** Eintrag in `attributes.testRefs` ein `result: "passed"` trägt (CR-SM-231b) — „irgendeiner grün" zählt nicht, sonst verdeckte ein grüner Unit-Lauf einen roten Visual-Lauf. Ein Eintrag ohne Ergebnis ist nicht bestanden. Solange das nicht steht, zeigt die View das Risiko als unverifiziert, was der ehrliche Zustand ist.
+   - a `+ REQ-…` node line, with the FMEA finding in `attributes.rationale`, the S/O/D ratings under the names above, and `attributes.kinds` (each as an `@key value` line below the node),
+   - a **`compose`** edge from the risk `REQ` → the mitigation `REQ` (**FM-02**; `relation` between two REQs is *not* in `TRACE_PATTERNS` and `R-18` rejects it),
+   - a `satisfy` edge from the responsible `MOD` (or `SYS`) → the `REQ` (which module is RESPONSIBLE, not merely related; `FUNC -satisfy->` a risk/mitigation REQ is illegal — R-18, `kinds` where-predicate),
+   - a `verify` edge from a `TEST` → the `REQ` (R-01: every REQ must have ≥1 verify). Für ein Risiko mit **Action Priority High** verlangt **FM-03** zusätzlich, dass **jeder** Eintrag in `attributes.testRefs` ein `result: "passed"` trägt (CR-SM-231b) — „irgendeiner grün" zählt nicht, sonst verdeckte ein grüner Unit-Lauf einen roten Visual-Lauf. Ein Eintrag ohne Ergebnis ist nicht bestanden. Solange das nicht steht, zeigt die View das Risiko als unverifiziert, was der ehrliche Zustand ist.
 
-   Example: `graph_mutate` `{ "commands": [ { "op": "add-node", "node": { "uid": "REQ-NNN", "type": "REQ", "name": "...", "description": "...", "attributes": { "rationale": "<FMEA finding>", "kinds": ["risk"], "severity": 9, "occurrence": 3, "detection": 4 } } }, { "op": "add-node", "node": { "uid": "REQ-MMM", "type": "REQ", "name": "<countermeasure>", "description": "...", "attributes": { "kinds": ["mitigation"] } } }, { "op": "add-edge", "edge": { "sourceId": "REQ-NNN", "targetId": "REQ-MMM", "edgeType": "compose", "attributes": {} } }, { "op": "add-edge", "edge": { "sourceId": "MOD-...", "targetId": "REQ-NNN", "edgeType": "satisfy", "attributes": {} } }, { "op": "add-edge", "edge": { "sourceId": "TEST-...", "targetId": "REQ-NNN", "edgeType": "verify", "attributes": {} } } ] }`.
+   Example — ONE `graph_mutate` call, `formatE`:
+
+   ```
+   ## Nodes
+   ### REQ
+   + REQ-NNN|<FMEA finding as a falsifiable statement> [__name:<risk>]
+   @kinds ["risk"]
+   @rationale <FMEA finding>
+   @severity 9
+   @occurrence 3
+   @detection 4
+   + REQ-MMM|<the countermeasure, falsifiable> [__name:<countermeasure>]
+   @kinds ["mitigation"]
+
+   ## Edges
+   + REQ-NNN -compose-> REQ-MMM
+   + MOD-<responsible> -satisfy-> REQ-NNN
+   + TEST-<slug> -verify-> REQ-NNN, REQ-MMM
+   ```
+
 3. **Check the result.** `graph_mutate` returns `{ success, tier, appliedCommands, violations }`. The gate **BLOCKS the whole batch** if it would introduce a new **error-severity** violation (`tier: "block"`, `success: false`) — it does NOT silently drop nodes/edges. Read `violations`, fix the batch (e.g. add the missing `verify`), and re-apply.
 4. **Check violations:** `rules_get_violations` — resolve any new R-01/R-02 gaps.
 5. **Open a CR** `docs/cr/open/CR-FMEA-NNN-<desc>.md` listing the new RQs, affected spec sections, and acceptance criteria (mirror `CR-FMEA-001`). Patch `specification.md` sections named in the Step-7 impact table. If the SE-schema (ElementType/TraceType/rules) changed, bump the version in `@sigloch/contracts/se/index.ts`.
