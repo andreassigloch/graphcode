@@ -25,6 +25,8 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { projectAuditEntries, type AuditStats } from '../src/surface/audit.js';
+import { alsFormatE } from './helpers/format-e.js';
+import { formatEToCommands } from '../src/loop/format-e-commands.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -67,7 +69,9 @@ const BULK = Array.from({ length: 30 }, (_, i) => [
 const MIXED = [
   { op: 'add-node', node: { uid: 'MOD-a', type: 'MOD', name: 'a', description: 'Ein Modul.' } },
   { op: 'add-node', node: { uid: 'MOD-b', type: 'MOD', name: 'b', description: 'Noch ein Modul.' } },
-  { op: 'delete-node', uid: 'MOD-b' },
+  // ITEM-2026-604: Format-E lehnt Anlegen und Loeschen derselben uid in einem Block ab — geloescht
+  // wird der Seed-Knoten, die Form des Batches (+2 -1) bleibt.
+  { op: 'delete-node', uid: 'SYS-x' },
 ];
 
 type Entry = Record<string, unknown> & {
@@ -102,7 +106,7 @@ describe('TEST-audit-trail-projection (CR-GC-319)', () => {
   });
 
   it('carries the shape of a change without its content (REQ-T01)', async () => {
-    await tools.graph_mutate.handler({ commands: MIXED, consumerId: 't' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(MIXED, harness), consumerId: 't' });
     const [e] = (await tools.audit_trail.handler({})).entries as Entry[];
 
     for (const k of ['id', 'timestamp', 'consumerId', 'operation', 'result', 'graphVersion']) {
@@ -115,7 +119,7 @@ describe('TEST-audit-trail-projection (CR-GC-319)', () => {
 
   it('keeps violations but drops fixHint/context (REQ-T02)', async () => {
     // MOD-a has no allocated FUNC → R-23 fires and carries a fixHint + candidate context.
-    await tools.graph_mutate.handler({ commands: MIXED, consumerId: 't' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(MIXED, harness), consumerId: 't' });
     const [e] = (await tools.audit_trail.handler({})).entries as Entry[];
 
     expect(e.violations!.length).toBeGreaterThan(0);
@@ -142,17 +146,20 @@ describe('TEST-audit-trail-projection (CR-GC-319)', () => {
   it('returns the batches byte-identically on includeCommands (REQ-T03)', async () => {
     // The counterweight to the size budget below: a projection that LOST the batches
     // would ace a size test too. The opt-in has to hand back exactly what was written.
-    await tools.graph_mutate.handler({ commands: BULK, consumerId: 't' });
+    // Geschrieben wird, was das Gate anwendet: der decodierte Text (ITEM-2026-604).
+    const text = alsFormatE(BULK, harness);
+    const angewandt = formatEToCommands(harness.getGraph(), text).commands;
+    await tools.graph_mutate.handler({ formatE: text, consumerId: 't' });
     const [e] = (await tools.audit_trail.handler({ includeCommands: true })).entries as Entry[];
 
-    expect(e.commands).toEqual(BULK);
+    expect(e.commands).toEqual(angewandt);
     expect(e.commandCount).toBe(BULK.length);
   });
 
   it('reports commandCount 0 for a record that carries none (REQ-T05)', async () => {
     // A dryRun writes a `validate` record; export records and pre-CR entries are the same
     // shape. 0 is an answer, not an error.
-    await tools.graph_mutate.handler({ commands: MIXED, consumerId: 't', dryRun: true });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(MIXED, harness), consumerId: 't', dryRun: true });
     const entries = (await tools.audit_trail.handler({})).entries as Entry[];
     const validate = entries.find((x) => x.operation === 'validate')!;
 
@@ -163,14 +170,14 @@ describe('TEST-audit-trail-projection (CR-GC-319)', () => {
 
   it('leaves audit_stats untouched (REQ-T06)', async () => {
     // Stats read the log, not the projection — the numbers must not move.
-    await tools.graph_mutate.handler({ commands: MIXED, consumerId: 't' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(MIXED, harness), consumerId: 't' });
     const stats = (await tools.audit_stats.handler({})) as AuditStats;
     expect(stats.window.entries).toBeGreaterThan(0);
     expect(stats.totals.applied).toBeGreaterThan(0);
   });
 
   it('drops the projection nowhere else — audit_stats is unaffected twice over', async () => {
-    await tools.graph_mutate.handler({ commands: MIXED, consumerId: 't' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(MIXED, harness), consumerId: 't' });
     const stats = (await tools.audit_stats.handler({})) as AuditStats;
     expect(stats.window.entries).toBeGreaterThan(0);
   });
@@ -178,13 +185,15 @@ describe('TEST-audit-trail-projection (CR-GC-319)', () => {
   it('does not touch what was WRITTEN — the log keeps every field', async () => {
     // The whole design rests on this: disk stays the replay source and the learning
     // corpus. If the projection had leaked into recordAudit, replay would silently break.
-    await tools.graph_mutate.handler({ commands: MIXED, consumerId: 't' });
+    const text = alsFormatE(MIXED, harness);
+    const angewandt = formatEToCommands(harness.getGraph(), text).commands;
+    await tools.graph_mutate.handler({ formatE: text, consumerId: 't' });
     const [raw] = (await tools.audit_trail.handler({
       includeCommands: true,
       includeRulesPassed: true,
     })).entries as Entry[];
 
-    expect(raw.commands).toEqual(MIXED);
+    expect(raw.commands).toEqual(angewandt);
     expect(raw).toHaveProperty('rulesPassed');
   });
 });

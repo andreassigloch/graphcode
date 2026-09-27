@@ -30,6 +30,7 @@ import { bindToolsWithContext } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { ToolContext } from '../src/surface/tool-context.js';
 import type { TrajectoryStamps } from '../src/projections/trajectory.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 type StampedEntry = AuditEntry & TrajectoryStamps;
@@ -73,7 +74,7 @@ describe('TEST-trajectory-stamps (CR-GC-434): jede Mutation trägt ihren Auslös
   let ctx: ToolContext;
 
   async function mutate(commands: MutateCommand[]): Promise<Record<string, unknown>> {
-    return (await tools['graph_mutate'].handler({ commands, consumerId: 'stamps-test' })) as Record<string, unknown>;
+    return (await tools['graph_mutate'].handler({ formatE: alsFormatE(commands, harness), consumerId: 'stamps-test' })) as Record<string, unknown>;
   }
 
   async function lastEntry(): Promise<StampedEntry> {
@@ -199,7 +200,7 @@ describe('TEST-trajectory-stamps (CR-GC-434): jede Mutation trägt ihren Auslös
   it('dryRun-Preview trägt keine Stempel und verbraucht weder Konsultation noch Prompt-Frische', async () => {
     ctx.setOrigin({ intent: 'preview dann apply' });
     await tools['graph_readiness'].handler({});
-    await tools['graph_mutate'].handler({ commands: validSet('h'), dryRun: true, consumerId: 'stamps-test' });
+    await tools['graph_mutate'].handler({ formatE: alsFormatE(validSet('h'), harness), dryRun: true, consumerId: 'stamps-test' });
 
     const preview = await lastEntry();
     expect(preview.operation).toBe('validate');

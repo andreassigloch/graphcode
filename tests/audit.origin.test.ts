@@ -21,6 +21,7 @@ import { bindToolsWithContext } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { INTENT_MAX_CHARS, type ToolContext } from '../src/surface/tool-context.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
   mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
@@ -50,7 +51,7 @@ describe('TEST-audit-origin (CR-GC-354): who, and on which prompt', () => {
   let ctx: ToolContext;
 
   async function mutate(suffix: string): Promise<void> {
-    await tools['graph_mutate'].handler({ commands: validSet(suffix), consumerId: 'origin-test' });
+    await tools['graph_mutate'].handler({ formatE: alsFormatE(validSet(suffix), harness), consumerId: 'origin-test' });
   }
 
   async function lastEntry(): Promise<AuditEntry> {
@@ -143,9 +144,9 @@ describe('TEST-audit-origin (CR-GC-354): who, and on which prompt', () => {
     // A REQ without a verifying TEST trips the gate; the record must still carry provenance,
     // otherwise "which prompt produced which rejection" is exactly the question that stays open.
     await tools['graph_mutate'].handler({
-      commands: [
+      formatE: alsFormatE([
         { op: 'add-node', node: { uid: 'REQ-org-lonely', type: 'REQ', name: 'lonely', description: '', attributes: {} } },
-      ],
+      ], harness),
       consumerId: 'origin-test',
     });
 

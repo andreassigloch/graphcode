@@ -21,6 +21,7 @@ import { readFileSync, writeFileSync, mkdtempSync, mkdirSync, rmSync } from 'nod
 import { join, dirname, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { commandsToFormatE } from '@sigloch/graph-api-core';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const GC_ROOT = resolve(HERE, '..', '..');
@@ -101,7 +102,8 @@ async function schatten(laufDir) {
       const s = await reg['graph_suggest'].handler({ k: 20, layer: 'arch' });
       const anwendbar = s.suggestions.filter((x) => x.applicable && x.score > 1e-12);
       const bester = anwendbar[0] ? { ruleId: anwendbar[0].ruleId, elementId: anwendbar[0].elementId, score: anwendbar[0].score } : null;
-      const r = await reg['graph_mutate'].handler({ commands: zuege[i], consumerId: 'schatten' });
+      const typ = new Map(h.getGraph().nodes.map((n) => [n.uid, n.type]));
+      const r = await reg['graph_mutate'].handler({ formatE: commandsToFormatE(zuege[i], (u) => typ.get(u)), consumerId: 'schatten' });
       if (!r.success) {
         zeilen.push({ zug: i + 1, abgelehnt: true, vorschlaege: s.suggestions.length, anwendbar: anwendbar.length, bester, agentVerbesserung: 0, agentTrifft: false });
         continue; // das heutige Gate lehnt einen Zug von damals ab — Stand bleibt, Zeile markiert

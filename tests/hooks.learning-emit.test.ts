@@ -22,6 +22,7 @@ import { TrajectorySchema, type Trajectory } from '@sigloch/learning-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
   mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
@@ -71,8 +72,8 @@ describe('TEST-learning-emit: trajectory.jsonl is a projection of the operations
   it('projects exactly one feed line per operations-log entry, schema-valid', async () => {
     const tools = bindToolsToHarness(harness);
 
-    await tools.graph_mutate.handler({ commands: verifiedReq('01'), consumerId: 'agent-a' });
-    await tools.graph_mutate.handler({ commands: verifiedReq('02'), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('01'), harness), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('02'), harness), consumerId: 'agent-a' });
 
     const lines = readTrajectory(repoRoot);
     // One durable log entry per gated write → one projected feed line.
@@ -99,7 +100,7 @@ describe('TEST-learning-emit: trajectory.jsonl is a projection of the operations
     const tools = bindToolsToHarness(harness);
     // An orphan REQ triggers R-01 error → blocked/rejected.
     await tools.graph_mutate.handler({
-      commands: [{ op: 'add-node', node: { uid: 'REQ-orphan', type: 'REQ', name: 'o', description: '', attributes: {} } }],
+      formatE: alsFormatE([{ op: 'add-node', node: { uid: 'REQ-orphan', type: 'REQ', name: 'o', description: '', attributes: {} } }], harness),
       consumerId: 'agent-a',
     });
 
@@ -112,7 +113,7 @@ describe('TEST-learning-emit: trajectory.jsonl is a projection of the operations
 
   it('feed equals the projection of the durable log across a session restart', async () => {
     const t1 = bindToolsToHarness(harness);
-    await t1.graph_mutate.handler({ commands: verifiedReq('ao1'), consumerId: 'session-1' });
+    await t1.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('ao1'), harness), consumerId: 'session-1' });
     expect(readTrajectory(repoRoot)).toHaveLength(1);
     await harness.close();
 
@@ -121,7 +122,7 @@ describe('TEST-learning-emit: trajectory.jsonl is a projection of the operations
     const harness2 = makeHarness(repoRoot);
     await harness2.initialize();
     const t2 = bindToolsToHarness(harness2);
-    await t2.graph_mutate.handler({ commands: verifiedReq('ao2'), consumerId: 'session-2' });
+    await t2.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('ao2'), harness), consumerId: 'session-2' });
 
     const lines = readTrajectory(repoRoot);
     expect(lines).toHaveLength(2);

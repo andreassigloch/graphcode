@@ -28,6 +28,7 @@ import { registerAutoExport } from '../src/projections/auto-export.js';
 import { writeFileAtomic } from '../src/projections/export.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { MCPTool } from '../src/kernel/tool-contract.js';
+import { alsFormatE, alsEingabe } from './helpers/format-e.js';
 
 const DEBOUNCE = 30;
 const SYSTEM_ID = 'autoexp';
@@ -103,7 +104,7 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
     registerAutoExport(harness, counted, { debounceMs: DEBOUNCE });
     expect(existsSync(join(tmp, GRAPH_JSON))).toBe(false);
 
-    const res = await registry['graph_mutate'].handler(addReq(1));
+    const res = await registry['graph_mutate'].handler(alsEingabe(addReq(1)));
     expect(res.success).toBe(true);
 
     await sleep(DEBOUNCE * 4);
@@ -117,9 +118,9 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
   it('coalesced: drei Mutationen in Folge schreiben EINEN Export', async () => {
     registerAutoExport(harness, counted, { debounceMs: DEBOUNCE });
 
-    await registry['graph_mutate'].handler(addReq(1));
-    await registry['graph_mutate'].handler(addReq(2));
-    await registry['graph_mutate'].handler(addReq(3));
+    await registry['graph_mutate'].handler(alsEingabe(addReq(1)));
+    await registry['graph_mutate'].handler(alsEingabe(addReq(2)));
+    await registry['graph_mutate'].handler(alsEingabe(addReq(3)));
 
     await sleep(DEBOUNCE * 4);
     expect(exports).toBe(1);
@@ -144,13 +145,13 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
     } as MCPTool<unknown, unknown>;
     registerAutoExport(harness, slow, { debounceMs: DEBOUNCE });
 
-    await registry['graph_mutate'].handler(addReq(1));
+    await registry['graph_mutate'].handler(alsEingabe(addReq(1)));
     await sleep(DEBOUNCE * 2); // Export #1 läuft und hängt
     expect(started).toBe(1);
     expect(exports).toBe(0);
 
-    await registry['graph_mutate'].handler(addReq(2));
-    await registry['graph_mutate'].handler(addReq(3));
+    await registry['graph_mutate'].handler(alsEingabe(addReq(2)));
+    await registry['graph_mutate'].handler(alsEingabe(addReq(3)));
     await sleep(DEBOUNCE * 2);
     expect(started).toBe(1); // kein zweiter Export parallel zum laufenden
 
@@ -166,14 +167,14 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
     // no-op: update-edge auf eine Kante, die es nicht gibt → applied, aber mutations === 0
     // (delete-edge ist idempotent-by-delta und zählt als Mutation, harness.ts:654)
     const noop = await registry['graph_mutate'].handler({
-      commands: [{ op: 'update-edge', edge: { sourceId: 'SYS-autoexp', targetId: 'REQ-seed', edgeType: 'refine' }, set: { edgeType: 'compose' } }],
+      formatE: alsFormatE([{ op: 'update-edge', edge: { sourceId: 'SYS-autoexp', targetId: 'REQ-seed', edgeType: 'refine' }, set: { edgeType: 'compose' } }], harness),
       consumerId: 'auto-export-test',
     });
     expect(noop.mutations).toBe(0);
 
     // geblockt: ein REQ ohne verify-Trace (R-01)
     const blocked = await registry['graph_mutate'].handler({
-      commands: [{ op: 'add-node', node: { uid: 'REQ-lonely', type: 'REQ', name: 'Lonely', description: 'Das System muss allein sein.', attributes: {} } }],
+      formatE: alsFormatE([{ op: 'add-node', node: { uid: 'REQ-lonely', type: 'REQ', name: 'Lonely', description: 'Das System muss allein sein.', attributes: {} } }], harness),
       consumerId: 'auto-export-test',
     });
     expect(blocked.success).toBe(false);
@@ -191,7 +192,7 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
     } as MCPTool<unknown, unknown>;
     registerAutoExport(harness, failing, { debounceMs: DEBOUNCE, onError: (e) => errors.push(e) });
 
-    const res = await registry['graph_mutate'].handler(addReq(1));
+    const res = await registry['graph_mutate'].handler(alsEingabe(addReq(1)));
     expect(res.success).toBe(true);
 
     await sleep(DEBOUNCE * 4);

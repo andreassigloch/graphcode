@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
 import { compactStep, NextStep } from '../src/loop/next-step.js';
+import { alsFormatE } from './helpers/format-e.js';
 
 type Antwort = Record<string, unknown>;
 let repoRoot: string;
@@ -38,7 +39,7 @@ afterEach(async () => {
 
 describe('CR-GC-588: next an der angewandten Mutation', () => {
   it('ist genau der Schritt, den graph_generate danach liefert — kompakt, ohne Protokoll und Tabellen', async () => {
-    const antwort = (await tools.graph_mutate.handler({ commands: [SYS], consumerId: 'test' })) as Antwort;
+    const antwort = (await tools.graph_mutate.handler({ formatE: alsFormatE([SYS], harness), consumerId: 'test' })) as Antwort;
     expect(antwort.success).toBe(true);
     const next = NextStep.parse(antwort.next);
     const gen = await tools.graph_generate.handler({});
@@ -52,18 +53,18 @@ describe('CR-GC-588: next an der angewandten Mutation', () => {
   });
 
   it('kostet wenig: next ist kleiner als der Prompt, den es ersetzt', async () => {
-    const antwort = (await tools.graph_mutate.handler({ commands: [SYS], consumerId: 'test' })) as Antwort;
+    const antwort = (await tools.graph_mutate.handler({ formatE: alsFormatE([SYS], harness), consumerId: 'test' })) as Antwort;
     const gen = await tools.graph_generate.handler({});
     expect(JSON.stringify(antwort.next).length).toBeLessThan(JSON.stringify(gen).length);
   });
 
   it('nicht auf der Probe und nicht auf der Ablehnung — dort ist das Urteil der Kanal', async () => {
-    const probe = (await tools.graph_mutate.handler({ commands: [SYS], consumerId: 'test', dryRun: true })) as Antwort;
+    const probe = (await tools.graph_mutate.handler({ formatE: alsFormatE([SYS], harness), consumerId: 'test', dryRun: true })) as Antwort;
     expect(probe).not.toHaveProperty('next');
-    await tools.graph_mutate.handler({ commands: [SYS], consumerId: 'test' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE([SYS], harness), consumerId: 'test' });
     // Eine illegale Kante (R-18) wird abgelehnt.
     const abgelehnt = (await tools.graph_mutate.handler({
-      commands: [knoten('MOD-m', 'MOD', 'M', 'Ein Modul.'), { op: 'add-edge', edge: { sourceId: 'SYS-s', targetId: 'MOD-m', edgeType: 'verify', attributes: {} } }],
+      formatE: alsFormatE([knoten('MOD-m', 'MOD', 'M', 'Ein Modul.'), { op: 'add-edge', edge: { sourceId: 'SYS-s', targetId: 'MOD-m', edgeType: 'verify', attributes: {} } }], harness),
       consumerId: 'test',
     })) as Antwort;
     expect(abgelehnt.success).toBe(false);
@@ -71,7 +72,7 @@ describe('CR-GC-588: next an der angewandten Mutation', () => {
   });
 
   it('der Host-Prompt zeigt auf next, der Treiber-Prompt nicht', async () => {
-    await tools.graph_mutate.handler({ commands: [SYS], consumerId: 'test' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE([SYS], harness), consumerId: 'test' });
     const host = await tools.graph_generate.handler({});
     expect(host.prompt).toContain('als `next` in der Antwort');
     const driver = await tools.graph_generate.handler({ selection: 'driver' });

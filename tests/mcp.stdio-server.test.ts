@@ -25,6 +25,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { buildMcpServer } from '../src/surface/mcp-server.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return { repoRoot, scope: { workspaceId: 'test-ws', systemId: 'graphcode' }, consumerType: 'agent', preCommitTimeout: 5000 };
@@ -88,12 +89,14 @@ describe('TEST-mcp-stdio-server: registry served over the MCP protocol', () => {
     expect(names.length).toBeGreaterThan(0);
     // Schemas are advertised, not empty — the agent KNOWS the inputs.
     const mutate = tools.find((t) => t.name === 'graph_mutate');
-    expect(mutate?.inputSchema?.properties).toHaveProperty('commands');
+    expect(mutate?.inputSchema?.properties).toHaveProperty('formatE');
+    // ITEM-2026-604: Format-E ist der einzige Eingabeweg.
+    expect(mutate?.inputSchema?.properties).not.toHaveProperty('commands');
   });
 
   it('graph_mutate over the protocol == harness.mutate() on a twin (REQ-mcp-gate-symmetry, L2)', async () => {
     const viaMcp = payload<{ success: boolean; tier: string; violations: { ruleId: string }[] }>(
-      await client.callTool({ name: 'graph_mutate', arguments: { commands: VALID_SET, consumerId: 'mcp-it' } }),
+      await client.callTool({ name: 'graph_mutate', arguments: { formatE: alsFormatE(VALID_SET), consumerId: 'mcp-it' } }),
     );
     const direct = await twinHarness.mutate(VALID_SET);
 
@@ -114,7 +117,7 @@ describe('TEST-mcp-stdio-server: registry served over the MCP protocol', () => {
       { op: 'add-node', node: { uid: 'REQ-srv-orphan', type: 'REQ', name: 'Orphan', description: 'no test', attributes: {} } },
     ];
     const viaMcp = payload<{ success: boolean; tier: string; mutations: number; violations: { ruleId: string }[] }>(
-      await client.callTool({ name: 'graph_mutate', arguments: { commands: orphan, consumerId: 'mcp-it' } }),
+      await client.callTool({ name: 'graph_mutate', arguments: { formatE: alsFormatE(orphan), consumerId: 'mcp-it' } }),
     );
     const direct = await twinHarness.mutate(orphan);
 
@@ -126,7 +129,7 @@ describe('TEST-mcp-stdio-server: registry served over the MCP protocol', () => {
   });
 
   it('graph_impact returns a bounded slice, not the full graph (REQ-single-transport / query-precision)', async () => {
-    await client.callTool({ name: 'graph_mutate', arguments: { commands: VALID_SET, consumerId: 'mcp-it' } });
+    await client.callTool({ name: 'graph_mutate', arguments: { formatE: alsFormatE(VALID_SET), consumerId: 'mcp-it' } });
     const impact = payload<{ nodeCount: number; rootId: string; formatE: string }>(
       await client.callTool({ name: 'graph_impact', arguments: { id: 'REQ-srv-001', depth: 1 } }),
     );

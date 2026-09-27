@@ -15,7 +15,8 @@ export type RecoveredMutate = { commands: unknown[] } | { formatE: string };
  * Einen graph_mutate-Batch aus Modell-TEXT bergen (kein Tool-Call). Seit CR-GC-650 emittiert der
  * Executor Format-E; ein Modell, das den Aufruf nicht absetzt, schreibt den Block dann als Text —
  * roh, in einem Code-Zaun oder als JSON `{"formatE": "..."}`. Die `commands`-Bergung bleibt fuer
- * Modelle, die trotz Anweisung JSON-Kommandos schreiben: beide Formen nimmt das Gate an.
+ * Modelle, die trotz Anweisung JSON-Kommandos schreiben; der Preflight (`executor-gate.ts`) macht
+ * daraus Format-E, bevor das Gate sie sieht (ITEM-2026-604).
  */
 export function extractMutateFromText(text: string): RecoveredMutate | null {
   if (!text) return null;

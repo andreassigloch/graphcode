@@ -272,12 +272,22 @@ describe('CR-GC-627: die Grenzen bleiben, wo sie waren', () => {
     expect(knoten('FUNC-opfer'), 'nichts passiert').toBeDefined();
   });
 
-  it('`update-edge` hat kein Präfix und bleibt dem commands-Pfad — die Beschreibung sagt es', () => {
-    const shape = (tools.graph_mutate.inputSchema as unknown as { def: { shape: Record<string, { description?: string }> } }).def.shape;
-    const desc = shape.formatE.description ?? '';
-    expect(desc).toContain('update-edge');
-    // Und die alte Pauschalaussage ist weg.
-    expect(desc).not.toMatch(/Deletes\/updates\/merges brauchen weiterhin commands/);
+  it('`~` an einer Kante ist update-edge: Patch, Typwechsel und Flip — die Attribute bleiben (ITEM-2026-604)', async () => {
+    // Loeschen + Anlegen haette das `label` verloren; `~` patcht die bestehende Kante.
+    const patch = (await tools.graph_mutate.handler({
+      formatE: '## Edges\n~ FUNC-seed -satisfy-> REQ-alt [label:haupt]\n', consumerId: 't',
+    })) as MutateOut;
+    expect(patch.success, JSON.stringify(patch.violations)).toBe(true);
+    expect(kante('FUNC-seed', 'REQ-alt', 'satisfy')?.attributes).toMatchObject({ label: 'haupt' });
+
+    const cmds = formatEToCommands(harness.getGraph(), '## Edges\n~ TEST-seed -verify-> REQ-zweit [__edgeType:relation, __flip:true]\n').commands;
+    expect(cmds).toEqual([
+      { op: 'update-edge', edge: { sourceId: 'TEST-seed', targetId: 'REQ-zweit', edgeType: 'verify' }, set: { edgeType: 'relation', flip: true } },
+    ]);
+  });
+
+  it('`~` an einer Kante ohne Aenderung ist ein Fehler, kein stiller No-op', () => {
+    expect(() => formatEToCommands(harness.getGraph(), '## Edges\n~ FUNC-seed -satisfy-> REQ-alt\n')).toThrow(/aendert nichts/);
   });
 });
 

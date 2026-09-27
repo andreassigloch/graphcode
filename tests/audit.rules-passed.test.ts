@@ -28,6 +28,7 @@ import { RULES_VERSION } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -80,7 +81,7 @@ describe('TEST-audit-rules-passed (CR-GC-314): the positive half is recorded', (
   }
 
   it('records the rules that ran without a finding', async () => {
-    await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     const [entry] = await rawEntries();
 
     expect(entry.rulesPassed, 'positive half missing').toBeDefined();
@@ -88,7 +89,7 @@ describe('TEST-audit-rules-passed (CR-GC-314): the positive half is recorded', (
   });
 
   it('is exactly complementary to violations — the two halves are the full finding', async () => {
-    const res = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    const res = await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     const [entry] = await rawEntries();
 
     const fired = new Set((res.violations as Array<{ ruleId: string }>).map((v) => v.ruleId));
@@ -100,7 +101,7 @@ describe('TEST-audit-rules-passed (CR-GC-314): the positive half is recorded', (
   });
 
   it('carries the rule-set version from the loaded package (REQ-A02)', async () => {
-    await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     const [entry] = await rawEntries();
     expect(entry.rulesetVersion).toBe(RULES_VERSION);
   });
@@ -108,7 +109,7 @@ describe('TEST-audit-rules-passed (CR-GC-314): the positive half is recorded', (
   it('records it for a rejected mutation too — a block is also evidence', async () => {
     // A blocked batch says just as much about which rules looked and were satisfied.
     const res = await tools.graph_mutate.handler({
-      commands: [{ op: 'add-edge', edge: { sourceId: 'SYS-x', targetId: 'SYS-x', edgeType: 'verify' } }],
+      formatE: alsFormatE([{ op: 'add-edge', edge: { sourceId: 'SYS-x', targetId: 'SYS-x', edgeType: 'verify' } }], harness),
       consumerId: 't',
     });
     expect(res.success).toBe(false);
@@ -119,7 +120,7 @@ describe('TEST-audit-rules-passed (CR-GC-314): the positive half is recorded', (
   });
 
   it('records it on a dryRun preview (recordPreview writes the same halves)', async () => {
-    await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't', dryRun: true });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't', dryRun: true });
     const [entry] = await rawEntries();
     expect(entry.operation).toBe('validate');
     expect(entry.rulesPassed).toBeDefined();
@@ -130,7 +131,7 @@ describe('TEST-audit-rules-passed (CR-GC-314): the positive half is recorded', (
   it('WITHHOLDS rulesPassed from audit_trail by default', async () => {
     // The load-bearing one. ~60 rule ids per entry × the default limit of 50 would put a
     // five-figure token block into an agent's context for a field it has no use for.
-    await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     const { entries } = await tools.audit_trail.handler({});
 
     for (const e of entries as Entry[]) {
@@ -141,7 +142,7 @@ describe('TEST-audit-rules-passed (CR-GC-314): the positive half is recorded', (
   it('withholds by ABSENCE, not by an empty array (REQ-A05)', async () => {
     // An empty array would read as "nothing passed" — the exact opposite of the truth.
     // Absence is the only honest way to say "not included here".
-    await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     const { entries } = await tools.audit_trail.handler({});
     const e = (entries as Entry[])[0];
 
@@ -156,7 +157,7 @@ describe('TEST-audit-rules-passed (CR-GC-314): the positive half is recorded', (
   });
 
   it('hands it over when explicitly asked', async () => {
-    await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     const { entries } = await tools.audit_trail.handler({ includeRulesPassed: true });
     expect((entries as Entry[])[0].rulesPassed).toBeDefined();
   });

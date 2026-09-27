@@ -31,6 +31,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { countUnfedMutations } from '../src/projections/trajectory.js';
 import { readExportPending } from '../src/kernel/export-marker.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 /** Eine Feed-Zeile, wie sie die Projektion schreibt — hier als ALTER Bestand. */
@@ -96,7 +97,7 @@ describe('CR-GC-449: the learning feed is anchored to the log it projects', () =
 
   it('a temp-store session does not overwrite the repo feed with its own foreign log', async () => {
     const tools = bindToolsToHarness(harness);
-    await tools.graph_mutate.handler({ commands: verifiedReq('01'), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('01'), harness), consumerId: 'agent-a' });
 
     // Der Repo-Feed gehört dem Repo-Store. Diese Harness schreibt in einen anderen
     // Store, also hat sie hier nichts zu suchen — schon gar nicht mit voller
@@ -106,8 +107,8 @@ describe('CR-GC-449: the learning feed is anchored to the log it projects', () =
 
   it('materializes the feed beside the log it projects — projection identity by construction', async () => {
     const tools = bindToolsToHarness(harness);
-    await tools.graph_mutate.handler({ commands: verifiedReq('02'), consumerId: 'agent-a' });
-    await tools.graph_mutate.handler({ commands: verifiedReq('03'), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('02'), harness), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('03'), harness), consumerId: 'agent-a' });
 
     // Log und Feed liegen im selben Verzeichnis und haben dieselbe Länge — genau
     // das ist die Zusicherung „feed === project(log)".
@@ -118,9 +119,9 @@ describe('CR-GC-449: the learning feed is anchored to the log it projects', () =
 
   it('counts applied gate mutations the repo feed never saw (machine-visible gap)', async () => {
     const tools = bindToolsToHarness(harness);
-    await tools.graph_mutate.handler({ commands: verifiedReq('04'), consumerId: 'agent-a' });
-    await tools.graph_mutate.handler({ commands: verifiedReq('05'), consumerId: 'agent-a' });
-    await tools.graph_mutate.handler({ commands: verifiedReq('06'), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('04'), harness), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('05'), harness), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('06'), harness), consumerId: 'agent-a' });
 
     // Die Gate-Marke zählt repoRoot-seitig JEDE angewendete Mutation (CR-GC-217/426) —
     // egal, in welchem Store sie landete. Der Repo-Feed hat davon keine Zeile.
@@ -139,8 +140,8 @@ describe('CR-GC-449: the learning feed is anchored to the log it projects', () =
     harness = makeHarness(repoRoot, join(repoRoot, '.graphcode'));
     await harness.initialize();
     const tools = bindToolsToHarness(harness);
-    await tools.graph_mutate.handler({ commands: verifiedReq('07'), consumerId: 'agent-a' });
-    await tools.graph_mutate.handler({ commands: verifiedReq('08'), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('07'), harness), consumerId: 'agent-a' });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(verifiedReq('08'), harness), consumerId: 'agent-a' });
 
     expect(countUnfedMutations(repoRoot)).toBe(0);
     const report = (await tools.graph_export.handler({ force: false })) as { unfedMutations?: number };

@@ -32,6 +32,7 @@ import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { generationStep } from '../src/loop/generate.js';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { SteeringDelta } from '../src/kernel/measure/steering-snapshot.js';
 
 /** The attribute-borne bindings whose judgement flips on a flattened encoding. */
@@ -112,7 +113,7 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
     // A no-op-shaped preview: adding an edge that is already there changes nothing,
     // so `before` and `after` of the delta must both equal the standing measurement.
     const res = (await tools.graph_mutate.handler({
-      commands: [{ op: 'add-edge', edge: { sourceId: 'FUNC-parse', targetId: 'MOD-parsing', edgeType: 'allocate', attributes: {} } }],
+      formatE: alsFormatE([{ op: 'add-edge', edge: { sourceId: 'FUNC-parse', targetId: 'MOD-parsing', edgeType: 'allocate', attributes: {} } }], harness),
       dryRun: true,
       consumerId: 't-0',
     })) as { steeringDelta?: SteeringDelta };

@@ -12,6 +12,8 @@
 
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { formatEToCommands } from '../../src/loop/format-e-commands.js';
+import { commandsToFormatE } from '@sigloch/graph-api-core';
+import type { MutateCommand } from '@sigloch/contracts/harness';
 
 /** Kein Bestand: der Text muss jeden Knoten selbst deklarieren (der Normalfall im Test). */
 const LEER: Graph = { nodes: [], edges: [] };
@@ -31,4 +33,25 @@ export function kantenAus(text: string, bestand: Graph = LEER): GraphEdge[] {
   return formatEToCommands(bestand, text)
     .commands.filter((c) => c.op === 'add-edge')
     .map((c) => (c as Extract<typeof c, { op: 'add-edge' }>).edge as GraphEdge);
+}
+
+/**
+ * Ein programmatisch gebauter Batch als der Text, den `graph_mutate` annimmt (ITEM-2026-604).
+ * Dieselbe Funktion, die die Maschinen-Konsumenten nutzen (`commandsToFormatE`, graph-api-core) —
+ * kein eigener Serialisierer im Test. Den Typ geloeschter oder gepatchter Knoten ohne `type` liefert
+ * `bestand` (ein Graph oder ein Harness).
+ */
+export function alsFormatE(commands: readonly unknown[], bestand?: Graph | { getGraph(): Graph }): string {
+  const g = bestand === undefined ? LEER : 'getGraph' in bestand ? bestand.getGraph() : bestand;
+  const typ = new Map(g.nodes.map((n) => [n.uid, n.type]));
+  return commandsToFormatE(commands as MutateCommand[], (uid) => typ.get(uid));
+}
+
+/** `{commands, …rest}` → `{formatE, …rest}` — fuer Fixtures, die an anderer Stelle als Modellausgabe (JSON) dienen. */
+export function alsEingabe<T extends { commands: readonly unknown[] }>(
+  eingabe: T,
+  bestand?: Graph | { getGraph(): Graph },
+): Omit<T, 'commands'> & { formatE: string } {
+  const { commands, ...rest } = eingabe;
+  return { ...rest, formatE: alsFormatE(commands, bestand) };
 }

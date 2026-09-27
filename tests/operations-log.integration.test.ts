@@ -17,6 +17,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { AuditStats } from '../src/surface/audit.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
   mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
@@ -47,9 +48,9 @@ describe('operations-log integration (CR-207): registry uses the durable store l
     const h1 = makeHarness(repoRoot);
     await h1.initialize();
     const t1 = bindToolsToHarness(h1);
-    await t1.graph_mutate.handler({ commands: SPEC, consumerId: 'session-1' });
+    await t1.graph_mutate.handler({ formatE: alsFormatE(SPEC), consumerId: 'session-1' });
     await t1.graph_mutate.handler({
-      commands: [{ op: 'add-node', node: { uid: 'FN-a', type: 'FUNC', name: 'f', description: '', attributes: {} } }],
+      formatE: alsFormatE([{ op: 'add-node', node: { uid: 'FN-a', type: 'FUNC', name: 'f', description: '', attributes: {} } }]),
       consumerId: 'session-1',
     });
     await t1.graph_mutate.handler({
@@ -73,18 +74,18 @@ describe('operations-log integration (CR-207): registry uses the durable store l
     // A REQ is only valid with its verify-traced TEST (R-01) — an APPLIED batch,
     // because graphVersion counts applied batches only (CR-GC-233 OCC semantics).
     await t2.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         { op: 'add-node', node: { uid: 'REQ-b', type: 'REQ', name: 'b', description: '', attributes: {} } },
         { op: 'add-node', node: { uid: 'TEST-b', type: 'TEST', name: 'tb', description: '', attributes: {} } },
         { op: 'add-edge', edge: { sourceId: 'TEST-b', targetId: 'REQ-b', edgeType: 'verify', attributes: {} } },
-      ],
+      ]),
       consumerId: 'session-2',
     });
     const s3 = (await t2.audit_stats.handler({})) as AuditStats;
     expect(s3.graphVersion).toBe(4); // monotonic across the restart
     // A REJECTED write is logged but does NOT move the version (state unchanged).
     await t2.graph_mutate.handler({
-      commands: [{ op: 'add-node', node: { uid: 'REQ-orphan', type: 'REQ', name: 'o', description: '', attributes: {} } }],
+      formatE: alsFormatE([{ op: 'add-node', node: { uid: 'REQ-orphan', type: 'REQ', name: 'o', description: '', attributes: {} } }]),
       consumerId: 'session-2',
     });
     const s4 = (await t2.audit_stats.handler({})) as AuditStats;

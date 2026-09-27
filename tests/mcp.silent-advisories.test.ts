@@ -21,6 +21,7 @@ import { createHarness, type GraphCodeHarness } from '../src/index.js';
 import { bindToolsToHarness } from '../src/index.js';
 import { fitAdvisoryIsSilent, steerAdvisoryIsSilent } from '../src/kernel/measure/fit-advisory.js';
 import { workOrderIsSilent } from '../src/kernel/measure/work-order.js';
+import { alsFormatE } from './helpers/format-e.js';
 
 type Antwort = Record<string, unknown>;
 
@@ -34,7 +35,7 @@ const kante = (sourceId: string, targetId: string, edgeType: string) =>
   ({ op: 'add-edge', edge: { sourceId, targetId, edgeType, attributes: {} } });
 
 const mutiere = async (commands: unknown[]): Promise<Antwort> =>
-  (await tools.graph_mutate.handler({ commands, consumerId: 'test' })) as Antwort;
+  (await tools.graph_mutate.handler({ formatE: alsFormatE(commands, harness), consumerId: 'test' })) as Antwort;
 
 beforeEach(async () => {
   repoRoot = mkdtempSync(join(tmpdir(), 'gc-silent-'));
@@ -126,7 +127,7 @@ describe('TEST-silent-advisories: was nichts sagt, steht nicht da (CR-GC-576)', 
   it('confidence ist auf keiner Antwort — eine Konstante ohne Leser (CR-GC-590)', async () => {
     const antwort = await mutiere([knoten('CR-Y', 'CR', 'Y', 'Ein Change Request ohne Umfang.')]);
     expect(antwort).not.toHaveProperty('confidence');
-    const probe = (await tools.graph_mutate.handler({ commands: architekturZug(), consumerId: 'test', dryRun: true })) as Antwort;
+    const probe = (await tools.graph_mutate.handler({ formatE: alsFormatE(architekturZug(), harness), consumerId: 'test', dryRun: true })) as Antwort;
     expect(probe).not.toHaveProperty('confidence');
     expect(probe).toHaveProperty('steeringDelta'); // die Probe behaelt ihr Vergleichsmass
   });

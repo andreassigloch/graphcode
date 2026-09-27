@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
 import { execReadOrGraphTool, pushToolResults } from '../src/loop/executor-tools.js';
+import { alsFormatE } from './helpers/format-e.js';
 
 describe('executor-tools (CR-GC-506)', () => {
   let repoRoot: string;
@@ -69,9 +70,9 @@ describe('executor-tools (CR-GC-506)', () => {
   it('ein vom Modell angeforderter dryRun geht unverändert durch und persistiert nichts', async () => {
     const batch = {
       dryRun: true,
-      commands: [
+      formatE: alsFormatE([
         { op: 'add-node', node: { uid: 'SYS-x', type: 'SYS', name: 'X', description: 'Probe.', attributes: {} } },
-      ],
+      ]),
     };
     const verdict = JSON.parse(await run('graphcode_graph_mutate', batch)) as { success: boolean };
     expect(verdict.success).toBe(true);
@@ -130,7 +131,7 @@ describe('CR-GC-647: Modell-Aufrufe laufen durch dieselbe Schema-Grenze wie der 
       { op: 'add-node', node: { uid: `TEST-r${i}`, type: 'TEST', name: `Pruefung ${i}`, description: 'Prueft die Anforderung.', attributes: {} } },
       { op: 'add-edge', edge: { sourceId: `TEST-r${i}`, targetId: `REQ-r${i}`, edgeType: 'verify', attributes: {} } },
     ]).flat();
-    const res = (await registry.graph_mutate.handler({ commands, consumerId: 'test' })) as { success: boolean };
+    const res = (await registry.graph_mutate.handler({ formatE: alsFormatE(commands, harness), consumerId: 'test' })) as { success: boolean };
     expect(res.success).toBe(true);
   });
 

@@ -12,9 +12,9 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { knotenAus, kantenAus } from './helpers/format-e.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE, kantenAus, knotenAus } from './helpers/format-e.js';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
   mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
@@ -118,7 +118,7 @@ describe('CR-GC-363: Freshness-Banner inline (graph_context + graph_impact)', ()
   it('frischer Stamp: byte-unverändert; veralteter Stamp: genau eine parsebare Kopfzeile', async () => {
     const tools = bindToolsToHarness(harness);
     // Tool-Layer-Write: zählt den graphVersion-Zähler auf 1 — der Stamp (v1) ist damit CURRENT.
-    const seeded = (await tools.graph_mutate.handler({ commands: STAMPED_SPEC })) as { success: boolean };
+    const seeded = (await tools.graph_mutate.handler({ formatE: alsFormatE(STAMPED_SPEC, harness)})) as { success: boolean };
     expect(seeded.success).toBe(true);
 
     const freshCtx = (await tools.graph_context.handler({ id: 'REQ-reset', depth: 1 })) as { formatE: string };
@@ -130,7 +130,7 @@ describe('CR-GC-363: Freshness-Banner inline (graph_context + graph_impact)', ()
 
     // Zweiter Tool-Write (liegt in KEINER der beiden Scheiben): graphVersion 2 > Stamp v1 → stale.
     const bump = (await tools.graph_mutate.handler({
-      commands: [{ op: 'add-node', node: { uid: 'MOD-unrelated', type: 'MOD', name: 'Anderswo', description: 'unbeteiligt', attributes: {} } }],
+      formatE: alsFormatE([{ op: 'add-node', node: { uid: 'MOD-unrelated', type: 'MOD', name: 'Anderswo', description: 'unbeteiligt', attributes: {} } }], harness),
     })) as { success: boolean };
     expect(bump.success).toBe(true);
 
@@ -155,7 +155,7 @@ describe('CR-GC-363: Freshness-Banner inline (graph_context + graph_impact)', ()
 
   it('ohne jeden Stamp: kein Banner (absent ist nicht "hinter dem Repo-State")', async () => {
     const tools = bindToolsToHarness(harness);
-    const seeded = (await tools.graph_mutate.handler({ commands: SPEC })) as { success: boolean };
+    const seeded = (await tools.graph_mutate.handler({ formatE: alsFormatE(SPEC, harness)})) as { success: boolean };
     expect(seeded.success).toBe(true);
     const ctx = (await tools.graph_context.handler({ id: 'REQ-reset', depth: 1 })) as { formatE: string };
     expect(ctx.formatE.startsWith('## Nodes')).toBe(true);

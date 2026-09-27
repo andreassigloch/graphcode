@@ -32,6 +32,7 @@ import type { TrajectoryStamps } from '../src/projections/trajectory.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
 import { batchFor, type GraphSuggestResult } from '../src/loop/suggest.js';
+import { alsFormatE } from './helpers/format-e.js';
 
 interface Rig {
   tmp: string;
@@ -190,7 +191,7 @@ describe('CR-GC-696C: der angewandte add-node-Batch zaehlt als gelieferte Vorlag
       expect(s?.edit?.retires?.length).toBeGreaterThan(0);
 
       const batch = batchFor(s!.edit!);
-      const out = (await registry.graph_mutate.handler({ commands: batch, consumerId: 'stamps-test' })) as { success: boolean };
+      const out = (await registry.graph_mutate.handler({ formatE: alsFormatE(batch), consumerId: 'stamps-test' })) as { success: boolean };
       expect(out.success).toBe(true);
       const entries = (await ctx.auditLog.query({})) as Array<AuditEntry & TrajectoryStamps>;
       // Rot vor CR-GC-696C: gemerkt war nur die gespiegelte Kante, add-node und delete-edge
@@ -199,9 +200,9 @@ describe('CR-GC-696C: der angewandte add-node-Batch zaehlt als gelieferte Vorlag
 
       // Gegenprobe: eine eigene Formulierung danach bleibt authored.
       const fremd = (await registry.graph_mutate.handler({
-        commands: [{ op: 'add-node', node: { uid: 'REQ-fremd', type: 'REQ', name: 'fremd', description: '', attributes: {} } },
+        formatE: alsFormatE([{ op: 'add-node', node: { uid: 'REQ-fremd', type: 'REQ', name: 'fremd', description: '', attributes: {} } },
           { op: 'add-node', node: { uid: 'TEST-fremd', type: 'TEST', name: 'fremd', description: '', attributes: {} } },
-          { op: 'add-edge', edge: { sourceId: 'TEST-fremd', targetId: 'REQ-fremd', edgeType: 'verify', attributes: {} } }],
+          { op: 'add-edge', edge: { sourceId: 'TEST-fremd', targetId: 'REQ-fremd', edgeType: 'verify', attributes: {} } }]),
         consumerId: 'stamps-test',
       })) as { success: boolean };
       expect(fremd.success).toBe(true);

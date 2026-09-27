@@ -12,6 +12,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { alsFormatE } from './helpers/format-e.js';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
 
 type Antwort = { success: boolean; next?: { phase: string; done: boolean; focusKey: string | null; prompt: string } };
@@ -27,7 +28,7 @@ let n = 0;
 /** Ein Zug, der die Version hebt und keinen Fund loest. */
 const zugOhneWirkung = async (): Promise<Antwort> =>
   (await tools.graph_mutate.handler({
-    commands: [{ op: 'update-node', node: { uid: 'SYS-s', description: `Ein System fuer Bestellungen, Fassung ${++n}.` } }],
+    formatE: alsFormatE([{ op: 'update-node', node: { uid: 'SYS-s', description: `Ein System fuer Bestellungen, Fassung ${++n}.` } }], harness),
     consumerId: 'test',
   })) as Antwort;
 
@@ -39,12 +40,12 @@ beforeEach(async () => {
   tools = bindToolsToHarness(harness);
   // SYS + UC + ACTOR: die Saat ist durch, die Maschine steht in expand mit echten Funden.
   const r = (await tools.graph_mutate.handler({
-    commands: [
+    formatE: alsFormatE([
       knoten('SYS-s', 'SYS', 'S', 'Ein System fuer Bestellungen.'),
       knoten('UC-a', 'UC', 'Bestellen', 'Kunde bestellt ein Teil und erhaelt eine Bestaetigung.'),
       knoten('ACTOR-k', 'ACTOR', 'Kunde', 'Wer bestellt.'),
       kante('SYS-s', 'UC-a', 'compose'),
-    ],
+    ], harness),
     consumerId: 'test',
   })) as Antwort;
   expect(r.success).toBe(true);
@@ -90,7 +91,7 @@ describe('CR-GC-596/606: dreimal dasselbe Feedback → weiter', () => {
 const eintritteAbnehmen = async () => {
   const acceptedFindings = ['AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05'].map((ruleId) => ({ ruleId, reason: 'schlanker Umfang' }));
   const r = (await tools.graph_mutate.handler({
-    commands: [{ op: 'update-node', node: { uid: 'SYS-s', attributes: { acceptedFindings } } }],
+    formatE: alsFormatE([{ op: 'update-node', node: { uid: 'SYS-s', attributes: { acceptedFindings } } }], harness),
     consumerId: 'test',
   })) as Antwort;
   expect(r.success).toBe(true);
@@ -112,10 +113,10 @@ describe('CR-GC-604: Eintrittspunkte stellt die Abbruchregel nie zurueck', () =>
 
   it('festgefahren im Task heisst: zurueck in den Kern, nicht "uebergib an den Menschen"', async () => {
     await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         knoten('MS-1', 'MS', 'Fundament', 'Erster Meilenstein.'),
         { op: 'update-node', node: { uid: 'SYS-s', attributes: { acceptedFindings: [{ ruleId: 'AF-05', reason: 'schlank' }] } } },
-      ],
+      ], harness),
       consumerId: 'test',
     });
     const s = await tools.graph_generate.handler({ task: 'plan' });

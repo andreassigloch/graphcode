@@ -20,6 +20,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { AuditEntry } from '@sigloch/graph-api-core';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand, RuleViolation } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -87,10 +88,10 @@ describe('TEST-mutate-schema-guard (CR-GC-239)', () => {
   });
 
   it('graph_mutate: no graphVersion bump, audit records result:"rejected"', async () => {
-    const ok = await tools.graph_mutate.handler({ commands: VALID, consumerId: 'guard-test' });
+    const ok = await tools.graph_mutate.handler({ formatE: alsFormatE(VALID, harness), consumerId: 'guard-test' });
     expect((ok as { graphVersion: number }).graphVersion).toBe(1);
 
-    const bad = await tools.graph_mutate.handler({ commands: [MALFORMED], consumerId: 'guard-test' });
+    const bad = await tools.graph_mutate.handler({ formatE: alsFormatE([MALFORMED], harness), consumerId: 'guard-test' });
     expect((bad as { success: boolean }).success).toBe(false);
     expect((bad as { graphVersion: number }).graphVersion).toBe(1); // unchanged
 
@@ -134,10 +135,10 @@ describe('TEST-mutate-schema-guard (CR-GC-239)', () => {
   });
 
   it('update-node that changes nothing: 0 mutations, graphVersion stays, no export-pending', async () => {
-    const ok = await tools.graph_mutate.handler({ commands: VALID, consumerId: 'guard-test' });
+    const ok = await tools.graph_mutate.handler({ formatE: alsFormatE(VALID, harness), consumerId: 'guard-test' });
     expect((ok as { graphVersion: number }).graphVersion).toBe(1);
     const noop: MutateCommand = { op: 'update-node', node: { uid: 'REQ-ok', name: 'ok', attributes: {} } };
-    const res = (await tools.graph_mutate.handler({ commands: [noop], consumerId: 'guard-test' })) as {
+    const res = (await tools.graph_mutate.handler({ formatE: alsFormatE([noop], harness), consumerId: 'guard-test' })) as {
       success: boolean;
       mutations: number;
       graphVersion: number;
@@ -147,7 +148,7 @@ describe('TEST-mutate-schema-guard (CR-GC-239)', () => {
     expect(res.graphVersion).toBe(1); // nothing happened → no progress reported
     // a real change still moves it
     const real = (await tools.graph_mutate.handler({
-      commands: [{ op: 'update-node', node: { uid: 'REQ-ok', attributes: { realRef: { file: 'src/x.ts', symbol: 'x' } } } }],
+      formatE: alsFormatE([{ op: 'update-node', node: { uid: 'REQ-ok', attributes: { realRef: { file: 'src/x.ts', symbol: 'x' } } } }], harness),
       consumerId: 'guard-test',
     })) as { mutations: number; graphVersion: number };
     expect(real.mutations).toBe(1);
@@ -250,7 +251,7 @@ describe('TEST-mutate-schema-guard: element contract (CR-GC-646)', () => {
       traces: [],
     });
     const res = (await tools.graph_mutate.handler({
-      commands: [{ op: 'update-node', node: { uid: 'CR-leg', attributes: { status: 'done' } } }],
+      formatE: alsFormatE([{ op: 'update-node', node: { uid: 'CR-leg', attributes: { status: 'done' } } }], harness),
       consumerId: 't',
       dryRun: true,
     })) as { success: boolean; steeringDelta?: unknown; steeringUnmeasurable?: string };
@@ -261,7 +262,7 @@ describe('TEST-mutate-schema-guard: element contract (CR-GC-646)', () => {
     // Nach der Migration ist der Steuerraum wieder messbar.
     await harness.mutate([{ op: 'update-node', node: { uid: 'CR-leg', attributes: { status: 'done' } } }]);
     const clean = (await tools.graph_mutate.handler({
-      commands: [{ op: 'update-node', node: { uid: 'REQ-ok', description: 'x' } }],
+      formatE: alsFormatE([{ op: 'update-node', node: { uid: 'REQ-ok', description: 'x' } }], harness),
       consumerId: 't',
       dryRun: true,
     })) as { steeringDelta?: unknown; steeringUnmeasurable?: string };

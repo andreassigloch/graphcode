@@ -34,6 +34,7 @@ import {
 } from '../src/loop/executor-prompt.js';
 import { extractMutateFromText, extractToolCallFromText } from '../src/loop/executor-parse.js';
 import { ElementType } from '@sigloch/contracts/se';
+import { alsFormatE, alsEingabe } from './helpers/format-e.js';
 
 const CONFIG = ExecutorConfigSchema.parse({
   baseUrl: 'http://scripted.invalid',
@@ -205,7 +206,7 @@ describe('executor (CR-GC-278)', () => {
     const secondCallText = JSON.stringify(calls[1].messages);
     expect(secondCallText).toContain('NICHT übernommen');
     expect(secondCallText).toContain('INPUT-SCHEMA');
-    expect(secondCallText).toContain('commands or formatE');
+    expect(secondCallText).toContain('graph_mutate braucht formatE');
     // … der Step lief weiter und der korrigierte Batch landete durable.
     expect(stats.mutatesRejected).toBe(1);
     expect(stats.mutatesApplied).toBe(1);
@@ -311,7 +312,7 @@ describe('executor (CR-GC-278)', () => {
     }
 
     it('nach der Seed-Phase traegt graph_generate keinen intent mehr (Rig-Start: Seed steht schon)', async () => {
-      const seed = await registry['graph_mutate'].handler(registry['graph_mutate'].inputSchema.parse(VALID_SEED_BATCH));
+      const seed = await registry['graph_mutate'].handler(registry['graph_mutate'].inputSchema.parse(alsEingabe(VALID_SEED_BATCH)));
       expect((seed as { success: boolean }).success).toBe(true);
       const inputs = captureGenerate();
       const { callModel } = scriptedModel(Array.from({ length: 8 }, () => idle));
@@ -391,7 +392,7 @@ describe('executor (CR-GC-278)', () => {
   it('CR-GC-653: kein Kanal verlangt die Duplikat-Vorab-Suche — Ausloeser entfernt, kein Verbot ergaenzt', async () => {
     // Die Verbotssaetze waren gemessen wirkungslos und sind wieder draussen (gcrun-50..52).
     expect(SYSTEM).not.toContain('nicht vorab per Stichwort suchen');
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
     const out = await buildRoundInjection(registry, { focusTypes: ['UC'], skill: 'se:author-uc' });
     expect(out, 'die Liste widerspraeche sonst dem SYSTEM').not.toContain('keine Duplikate anlegen');
   });
@@ -401,7 +402,7 @@ describe('executor (CR-GC-278)', () => {
     const beispiel = block.slice(block.indexOf('## Edges'), block.indexOf('\n\n', block.indexOf('## Edges')) + 1);
     expect(beispiel).toMatch(/^## Edges\n(\+ \S+ -satisfy-> \S+\n)+$/);
     // Die Form ist nicht nur behauptet: zwischen bestehenden Knoten geht sie ohne Knotenzeile durchs Gate.
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
     const res = (await registry['graph_mutate'].handler({
       formatE: '## Nodes\n### REQ\n+ REQ-a|Das System muss X. [__name:A]\n### TEST\n+ TEST-a|Prueft X. [__name:TA]\n\n## Edges\n+ TEST-a -verify-> REQ-a\n',
       consumerId: 'test',
@@ -415,7 +416,7 @@ describe('executor (CR-GC-278)', () => {
   });
 
   it('CR-GC-657: das GANZE SYSTEM-Beispiel ist legal — Knoten-Batch und reiner Kanten-Batch gehen durchs Gate', async () => {
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
     // Der Erfueller aus dem Kanten-Beispiel muss existieren (FCHAIN des UC, darin die FUNC).
     const vorbau = (await registry['graph_mutate'].handler({
       formatE:
@@ -440,7 +441,7 @@ describe('executor (CR-GC-278)', () => {
   });
 
   it('CR-GC-657: der kinds-Patch aus der RD-01-Klausel macht eine REQ ohne kinds fuer FUNC erfuellbar', async () => {
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
     await registry['graph_mutate'].handler({
       formatE:
         '## Nodes\n### FCHAIN\n+ FCHAIN-login|Ablauf [__name:Ablauf]\n### FUNC\n+ FUNC-p|Prueft. [__name:Pruefen]\n' +
@@ -541,15 +542,17 @@ describe('executor (CR-GC-278)', () => {
     expect(Object.keys(mutate.properties)).toEqual(['formatE']);
     expect(mutate.required, 'mit nur einem Feld waere ein leerer Aufruf sonst gueltig').toEqual(['formatE']);
     expect(mutate.properties.formatE.description, 'die Form steht einmal im SYSTEM').toBeUndefined();
-    // Beschreibung = erster Satz; die Empfehlung „Prefer formatE over commands" ist damit weg.
-    expect(byName['graphcode_graph_mutate'].description).toBe('The ONE write path: apply a batch through the Apply-Gate.');
+    // Beschreibung = erster Satz.
+    expect(byName['graphcode_graph_mutate'].description).toBe('The ONE write path: apply a `formatE` block through the Apply-Gate.');
     const katalog = JSON.stringify(specs).length;
     expect(katalog, 'vorher 7.835 Zeichen am eigenen Modell').toBeLessThan(2500);
   });
 
   it("toolset 'full' bleibt ungeschnitten — das Mess-Set vergleicht gegen den vollen Katalog", () => {
     const mutate = buildToolSpecs(registry, 'full').find((s) => s.name === 'graphcode_graph_mutate')!;
-    expect(Object.keys((mutate.schema as { properties: object }).properties)).toContain('commands');
+    // ITEM-2026-604: ungeschnitten heisst auch hier nur noch formatE — commands gibt es nicht mehr.
+    expect(Object.keys((mutate.schema as { properties: object }).properties)).toContain('formatE');
+    expect(Object.keys((mutate.schema as { properties: object }).properties)).not.toContain('commands');
   });
 
   it('CR-GC-652: ein Lese-Aufruf steht MIT Argumenten, Antwortgroesse und Art in der Trace', async () => {
@@ -626,7 +629,7 @@ describe('executor (CR-GC-278)', () => {
 
   it('expand steps get the minimal local-profile rendering — one finding, no gate protocol (CR-GC-282)', async () => {
     // Seed direkt durchs Gate, damit graph_generate in der Expand-Phase startet.
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
     const followUp = {
       commands: [
         {
@@ -708,7 +711,7 @@ describe('executor (CR-GC-278)', () => {
   it('deterministic defer: after 3 stagnant rounds the next generate call defers the focusKey and the prompt switches (CR-GC-281)', async () => {
     // Seed direkt durchs Gate → graph_generate startet in der Expand-Phase mit
     // einem konkreten Fund-Fokus (focusKey).
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
 
     // generate-Inputs mitschneiden (der Executor ruft das Tool intern).
     const genInputs: Record<string, unknown>[] = [];
@@ -824,7 +827,7 @@ describe('executor (CR-GC-278)', () => {
   });
 
   it('round prompt injection (expand): element index with uid · type · name rides in the prompt (CR-GC-285)', async () => {
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
     const { callModel, calls } = scriptedModel([
       toolCallResponse('c1', {
         commands: [
@@ -862,7 +865,7 @@ describe('executor (CR-GC-278)', () => {
   });
 
   it('CR-GC-652: Fund am SYS bekommt den Modulbaum, eine Waise den ausdruecklichen Hinweis — keine Ersatzliste', async () => {
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
     const res = (await registry['graph_mutate'].handler({
       formatE:
         '## Nodes\n### MOD\n+ MOD-kern|Kernmodul [__name:Kern]\n### REQ\n' +
@@ -889,7 +892,7 @@ describe('executor (CR-GC-278)', () => {
   });
 
   it('injection:false (CR-GC-293 Mess-Schalter) suppresses the guide/index injection block entirely', async () => {
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
     const { callModel, calls } = scriptedModel([
       toolCallResponse('c1', {
         commands: [
@@ -919,7 +922,7 @@ describe('executor (CR-GC-278)', () => {
   });
 
   it('index budget: an oversized index is deterministically filtered to the focus types (CR-GC-285)', async () => {
-    await registry['graph_mutate'].handler(VALID_SEED_BATCH);
+    await registry['graph_mutate'].handler(alsEingabe(VALID_SEED_BATCH));
     // Bulk-UCs, bis der ungefilterte Index das Budget sicher reißt …
     const bulk: unknown[] = [];
     for (let i = 0; i < 300; i++) {
@@ -948,7 +951,7 @@ describe('executor (CR-GC-278)', () => {
     });
     bulk.push({ op: 'add-edge', edge: { sourceId: 'UC-login', targetId: 'REQ-kern', edgeType: 'compose', attributes: {} } });
     bulk.push({ op: 'add-edge', edge: { sourceId: 'TEST-kern', targetId: 'REQ-kern', edgeType: 'verify', attributes: {} } });
-    const res = (await registry['graph_mutate'].handler({ commands: bulk })) as { success: boolean };
+    const res = (await registry['graph_mutate'].handler({ formatE: alsFormatE(bulk, harness)})) as { success: boolean };
     expect(res.success).toBe(true);
 
     // CR-GC-559: die ACTOR-Grammatik kommt jetzt in der Stufe `seed:actor` — contracts 9.x

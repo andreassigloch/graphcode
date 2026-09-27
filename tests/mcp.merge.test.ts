@@ -18,6 +18,7 @@ import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { exportGraphJson } from '../src/projections/exporter.js';
 import type { MergeReport } from '../src/kernel/merge.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
   mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
@@ -71,8 +72,8 @@ describe('TEST-merge (CR-GC-234): graph_merge replays a branch log through the g
     branchLog = join(tmpB, '.graphcode', 'audit.jsonl');
 
     // Shared history: the same base batch lands on both sides (version 1 each).
-    await targetTools.graph_mutate.handler({ commands: BASE, consumerId: 'shared', baseVersion: 0 });
-    await branchTools.graph_mutate.handler({ commands: BASE, consumerId: 'shared', baseVersion: 0 });
+    await targetTools.graph_mutate.handler({ formatE: alsFormatE(BASE), consumerId: 'shared', baseVersion: 0 });
+    await branchTools.graph_mutate.handler({ formatE: alsFormatE(BASE), consumerId: 'shared', baseVersion: 0 });
   });
 
   afterEach(async () => {
@@ -84,10 +85,10 @@ describe('TEST-merge (CR-GC-234): graph_merge replays a branch log through the g
 
   it('disjoint changes: replay applies BOTH branch batches onto a moved target — 0 conflicted', async () => {
     // Branch diverges with two batches (versions 2 + 3 on the branch)…
-    await branchTools.graph_mutate.handler({ commands: reqSet('b1'), consumerId: 'agent-b', baseVersion: 1 });
-    await branchTools.graph_mutate.handler({ commands: reqSet('b2'), consumerId: 'agent-b', baseVersion: 2 });
+    await branchTools.graph_mutate.handler({ formatE: alsFormatE(reqSet('b1')), consumerId: 'agent-b', baseVersion: 1 });
+    await branchTools.graph_mutate.handler({ formatE: alsFormatE(reqSet('b2')), consumerId: 'agent-b', baseVersion: 2 });
     // …while the target moved independently (disjoint element).
-    await targetTools.graph_mutate.handler({ commands: reqSet('a1'), consumerId: 'agent-a', baseVersion: 1 });
+    await targetTools.graph_mutate.handler({ formatE: alsFormatE(reqSet('a1')), consumerId: 'agent-a', baseVersion: 1 });
 
     const report = (await targetTools.graph_merge.handler({
       log: branchLog,
@@ -112,15 +113,15 @@ describe('TEST-merge (CR-GC-234): graph_merge replays a branch log through the g
   it('overlapping conflict (branch updates what the target deleted): batch skipped + reported, never resurrected', async () => {
     // Branch updates FN-base (a realize) …
     await branchTools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         { op: 'update-node', node: { uid: 'FN-base', type: 'FUNC', attributes: { realRef: { file: 'src/f.ts', symbol: 'f' } } } },
-      ],
+      ]),
       consumerId: 'agent-b',
       baseVersion: 1,
     });
     // … while the target DELETED it.
     const del = (await targetTools.graph_mutate.handler({
-      commands: [{ op: 'delete-node', uid: 'FN-base' }],
+      formatE: alsFormatE([{ op: 'delete-node', uid: 'FN-base' }], target),
       consumerId: 'agent-a',
       baseVersion: 1,
     })) as { success: boolean };
@@ -145,7 +146,7 @@ describe('TEST-merge (CR-GC-234): graph_merge replays a branch log through the g
   });
 
   it('dryRun: full preview report, but graph + target log stay byte-identical', async () => {
-    await branchTools.graph_mutate.handler({ commands: reqSet('b1'), consumerId: 'agent-b', baseVersion: 1 });
+    await branchTools.graph_mutate.handler({ formatE: alsFormatE(reqSet('b1')), consumerId: 'agent-b', baseVersion: 1 });
 
     const targetLog = join(tmpA, '.graphcode', 'audit.jsonl');
     const graphBefore = exportGraphJson(target.getGraph());
@@ -168,7 +169,7 @@ describe('TEST-merge (CR-GC-234): graph_merge replays a branch log through the g
   });
 
   it('idempotent batches are skipped as already-contained (re-merge is safe)', async () => {
-    await branchTools.graph_mutate.handler({ commands: reqSet('b1'), consumerId: 'agent-b', baseVersion: 1 });
+    await branchTools.graph_mutate.handler({ formatE: alsFormatE(reqSet('b1')), consumerId: 'agent-b', baseVersion: 1 });
 
     const first = (await targetTools.graph_merge.handler({
       log: branchLog,
