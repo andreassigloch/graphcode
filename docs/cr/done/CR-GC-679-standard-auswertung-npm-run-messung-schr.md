@@ -1,6 +1,6 @@
 # CR-GC-679: Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-592 (idea)
 **Erstellt:** 2026-09-26
 **Item:** bok/items/ITEM-2026-592.json (Lane: code)
