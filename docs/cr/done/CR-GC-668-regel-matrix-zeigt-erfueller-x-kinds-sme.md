@@ -1,6 +1,6 @@
 # CR-GC-668: Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-26)
 **Typ:** aus Item ITEM-2026-578 (idea)
 **Erstellt:** 2026-09-25
 **Item:** bok/items/ITEM-2026-578.json (Lane: code)
