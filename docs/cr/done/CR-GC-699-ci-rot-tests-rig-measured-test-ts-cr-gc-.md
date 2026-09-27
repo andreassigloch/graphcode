@@ -1,6 +1,6 @@
 # CR-GC-699: CI rot: tests/rig-measured.test.ts (CR-GC-496) stat .graphcode/kuzu ENOENT auf dem Runner — Test setzt lokalen Store voraus (Clean-Machine-Klasse)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-187 (bug)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-187.json (Lane: code)
