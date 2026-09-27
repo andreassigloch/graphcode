@@ -1,6 +1,6 @@
 # CR-GC-672: Executor und Preflight auf zwei REQ-kinds
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-583 (idea)
 **Erstellt:** 2026-09-25
 **Item:** bok/items/ITEM-2026-583.json (Lane: code)
@@ -86,3 +86,12 @@ Guillemets („Bericht «Monatsabschluss»") bleiben erlaubt. Rot zuerst in
 `tests/executor.preflight.test.ts`; 32 Testdateien um Preflight/Executor/Generate gruen, Build gruen.
 
 Offen: Nachmessung auf dem Build mit Guard (zusammen mit CR-GC-667 Kriterium 4).
+
+## Nachmessung mit Guard (Build 2b62b1a, gcrun-6..8) — Abschluss
+
+- functional-REQ ueber FCHAIN: 0 in 3/3 (gesamt 0 in 9/9).
+- Vorbild-Leck im Ergebnis: 0 in 3/3. Der Guard griff in gcrun-7 siebenmal in einer Runde (REQ-Texte
+  mit Platzhaltern), das Modell reichte danach eigene Texte ein.
+- kinds-Blocks je Lauf: 3 / 6 / 9. Hoeher als auf f5bbc2b (0–4), aber die Laeufe sind groesser
+  (5–7 Seed-UCs, 77–90 Elemente statt 41–52; ITEM-2026-619). Ob geblockte REQs danach ankamen, ist
+  nicht ausgewertet.
