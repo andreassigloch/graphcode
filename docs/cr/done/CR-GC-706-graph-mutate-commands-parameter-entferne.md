@@ -53,4 +53,5 @@ den parallelen Eingabeweg stehen lassen.
 - [x] Rig-Smoke: Schatten-Simulation opus5-15 (Bilanz identisch), moneyflow-Treiber `--propose` (tier suggest).
 - [x] `tsc`, `eslint` sauber; build ok.
 - Benannt: Commit auf dem Branch mit `--no-verify` (der Hook kuendigt die Spur nur an, die volle Suite lief).
-- [x] MCP-Host neu gestartet (alter Prozess vom 14:12, neuer liest den Graphen, CR-Knoten CR-GC-706 da).
+- [x] MCP-Host neu gestartet. Korrektur: der erste Neustart befoerderte einen Proxy vom 2026-09-25
+      (alter Code) zum Owner — auch ihn beendet; der Host laeuft jetzt ab 20:50 (nach dem Build).
