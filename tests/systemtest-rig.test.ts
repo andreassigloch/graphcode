@@ -14,7 +14,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync, realpathSync, readFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync, mkdirSync, realpathSync, readFileSync, existsSync, chmodSync } from 'node:fs';
 import { tmpdir, hostname } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync, spawn } from 'node:child_process';
@@ -29,7 +29,7 @@ import { legality, binding, codeVerdict } from '../rig/greenfield-systemtest/met
 // @ts-expect-error — .mjs ohne Typen, wie die Nachbarn
 import { schattenBilanz, beruehrt, angewandteZuege, schattenBericht } from '../rig/greenfield-systemtest/schatten-suggest.mjs';
 // @ts-expect-error — s.o.
-import { codeKennzahlen, scheibenBindung, turnBilanz, deltaZerlegung } from '../rig/code-test/messen.mjs';
+import { codeKennzahlen, scheibenBindung, kongruenz, turnBilanz, deltaZerlegung } from '../rig/code-test/messen.mjs';
 import { ohneCodeBindung } from '../rig/code-test/run-code.mjs';
 
 let dir: string;
@@ -703,6 +703,33 @@ describe('Code-Test: Kennzahlen am Quelltext, fuer beide Arme gleich (CR-GC-610)
       { source: 'FUNC-fremd', target: 'MOD-x', type: 'allocate' },
     ];
     expect(scheibenBindung(elements, traces, 'MOD-s')).toEqual({ funcs: 2, gebunden: 1, pct: 50, offen: ['FUNC-b'] });
+  });
+
+  it('misst die Kongruenz am Store, nicht an einer Datei daneben (ITEM-2026-509)', async () => {
+    // Gemessen an gefuehrt-2: die Datei <lauf>.graph.json ist die Saat (0 Bindungen), der Stand des
+    // Agenten liegt im Store — gelesen wurde die Saat, Bericht 0 % statt 100 %.
+    const ws = mkdtempSync(join(tmpdir(), 'messen-kongruenz-'));
+    try {
+      const { createHarness } = await import(fileURLToPath(new URL('../dist/index.js', import.meta.url)));
+      const h = await createHarness({ repoRoot: ws, scope: { workspaceId: 'w', systemId: 'w' } });
+      await h.initialize();
+      const funcA = { id: 'FUNC-a', type: 'FUNC', name: 'a', description: 'a' };
+      const saat = { elements: [{ id: 'MOD-s', type: 'MOD', name: 's', description: 's' }, funcA], traces: [{ source: 'FUNC-a', target: 'MOD-s', type: 'allocate' }] };
+      const stand = { ...saat, elements: [saat.elements[0], { ...funcA, realRef: { file: 'src/a.ts', symbol: 'a' } }] };
+      await h.importGraph(stand);
+      await h.close();
+      // Wie gefuehrt-2: die Saat liegt daneben, und der Export frischt sie NICHT auf (dort scheiterte
+      // er still; hier ist das Verzeichnis schreibgeschuetzt). Gemessen werden muss trotzdem der Stand.
+      mkdirSync(join(ws, 'docs', 'graph'), { recursive: true });
+      writeFileSync(join(ws, 'docs', 'graph', `${ws.split('/').pop()}.graph.json`), JSON.stringify(saat));
+      chmodSync(join(ws, 'docs', 'graph'), 0o555);
+
+      const k = await kongruenz(ws, 'MOD-s');
+      expect(k.scheibe).toEqual({ funcs: 1, gebunden: 1, pct: 100, offen: [] });
+    } finally {
+      chmodSync(join(ws, 'docs', 'graph'), 0o755);
+      rmSync(ws, { recursive: true, force: true });
+    }
   });
 
   it('seedet das Golden ohne Code-Bindungen — sonst startet der Arm mit fremden RC-Verstoessen (CR-GC-611)', () => {

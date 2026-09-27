@@ -2677,6 +2677,12 @@
       "commitRef": "2ee2321"
     },
     {
+      "id": "CR-GC-698",
+      "type": "CR",
+      "name": "messen.mjs des Code-Tests misst die Setup-Saat statt des Laufergebnisses: es liest docs/graph/<laufname>.graph.json, waehrend der Export unter dem Mitgliedsnamen <package.name>.graph.json landet — fuer gefuehrt-2 meldete es 0 Prozent Bindung, tatsaechlich sind es 4 von 4 (100 Prozent)",
+      "description": "docs/cr/open/CR-GC-698-messen-mjs-des-code-tests-misst-die-setu.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22320,5 +22326,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 521
+  "graphVersion": 522
 }

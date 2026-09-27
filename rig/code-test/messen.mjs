@@ -137,7 +137,7 @@ export function scheibenBindung(elements, traces, modUid) {
     offen: funcs.filter((f) => !(f.realRef || f.attributes?.realRef)).map((f) => f.id) };
 }
 
-async function kongruenz(ws) {
+export async function kongruenz(ws, scheibe = SCHEIBE) {
   if (!existsSync(join(ws, '.graphcode'))) return null;
   const { createHarness, bindToolsToHarness } = await import(join(GC_ROOT, 'dist', 'index.js'));
   const label = ws.split('/').pop();
@@ -146,16 +146,20 @@ async function kongruenz(ws) {
   try {
     const reg = bindToolsToHarness(h);
     const r = await reg['graph_readiness'].handler({});
-    const exp = await reg['graph_export'].handler({ force: false }).catch(() => null);
-    const graphPfad = join(ws, 'docs', 'graph', `${label}.graph.json`);
-    const graph = JSON.parse(readFileSync(graphPfad, 'utf8'));
+    // Gemessen wird der Store, dieselbe Quelle wie graph_readiness — nie eine Datei daneben. Die Datei
+    // `<lauf>.graph.json` ist die Saat des Rigs; ob ein Export sie auffrischt, garantiert niemand
+    // (ITEM-2026-509: gefuehrt-2 meldete 0 % statt 100 %).
+    const g = h.getGraph();
+    const graph = {
+      elements: g.nodes.map((n) => ({ id: n.uid, type: n.type, attributes: n.attributes ?? {} })),
+      traces: g.edges.map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
+    };
     const v = codeVerdict(r, graph);
     return {
       urteil: v.verdict,
       bindung: v.binding ?? v.bind ?? null,
-      scheibe: scheibenBindung(graph.elements ?? graph.nodes ?? [], graph.traces ?? graph.edges ?? [], SCHEIBE),
+      scheibe: scheibenBindung(graph.elements ?? graph.nodes ?? [], graph.traces ?? graph.edges ?? [], scheibe),
       rc: Object.fromEntries(Object.entries(r.violationsByRule ?? {}).filter(([k]) => k.startsWith('RC-'))),
-      export: !!exp,
     };
   } finally {
     await h.close();
