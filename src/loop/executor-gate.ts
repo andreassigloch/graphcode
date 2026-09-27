@@ -123,6 +123,14 @@ export function bindGateClient(
     const ver = (await registry['graph_get_edges'].handler({ edgeType: 'verify' })) as {
       edges?: { targetId: string }[];
     };
+    // CR-GC-672: compose/allocate — daran nennt der kinds-fixHint den Erfueller mit uid.
+    const struktur: { sourceId: string; targetId: string; edgeType: string }[] = [];
+    for (const edgeType of ['compose', 'allocate']) {
+      const r = (await registry['graph_get_edges'].handler({ edgeType })) as {
+        edges?: { sourceId: string; targetId: string; edgeType: string }[];
+      };
+      struktur.push(...(r.edges ?? []));
+    }
     const nodes = els.nodes ?? [];
     return {
       known: {
@@ -130,6 +138,7 @@ export function bindGateClient(
         verifiedReqs: new Set((ver.edges ?? []).map((e) => e.targetId)),
         // satisfy-`where` (contracts 9.x): der Preflight braucht die deklarierten kinds.
         kinds: new Map(nodes.map((n) => [n.uid, n.attributes?.kinds])),
+        edges: struktur,
       },
       index: nodes.map((n) => ({ uid: n.uid, type: n.type, name: n.name, description: n.description })),
       // CR-GC-650: der Format-E-Leser braucht vom Bestand nur uid und Typ (Typauflösung,

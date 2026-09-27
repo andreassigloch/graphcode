@@ -18,6 +18,7 @@ import type { ChannelBlock } from './channel-rank.js';
 import type { GenerationStep } from './generate.js';
 import { fundKontext, type KontextKante, type KontextKnoten } from './fund-kontext.js';
 import { faltung, type FaltKante, type FaltKnoten } from './faltung.js';
+import { normalizeReqKinds } from '@sigloch/contracts/se';
 
 /** Zeichen-Budget des Element-Index (~2k-Token-Äquivalent). Überschreitung ⇒ harte Kappe von vorn, angesagt. */
 export const INDEX_CHAR_BUDGET = 8000;
@@ -25,7 +26,22 @@ export const INDEX_CHAR_BUDGET = 8000;
 /** Die Kanten, entlang derer der Fund-Kontext laeuft (fund-kontext.ts): hinauf compose, hinunter compose/allocate. */
 const KONTEXT_KANTEN = ['compose', 'allocate'] as const;
 
-const toLine = (n: { uid: string; type: string; name: string }): string => `${n.uid} · ${n.type} · ${n.name}`;
+/** Ein Knoten, wie `graph_elements` ihn liefert — Identitaet plus Attribute (die Beschreibung ist gekuerzt). */
+type InventarKnoten = { uid: string; type: string; name: string; attributes?: Record<string, unknown> };
+
+/**
+ * CR-GC-672: eine REQ-Zeile nennt ihre kinds — der Wert entscheidet, welcher Erfueller legal ist.
+ * Gemessen gcrun-180: 54 der 107 kinds-Blocks betrafen REQs, die schon im Graphen standen; das
+ * Inventar zeigte `uid · TYPE · name`, und das Modell riet den Erfueller. Fehlen die kinds, steht
+ * das da — ohne kinds erfuellt nichts die REQ.
+ */
+function kindsTeil(n: InventarKnoten): string {
+  if (n.type !== 'REQ') return '';
+  const k = normalizeReqKinds(n.attributes?.kinds);
+  return k.length > 0 ? ` · ${k.join(', ')}` : ' · kinds fehlen';
+}
+
+const toLine = (n: InventarKnoten): string => `${n.uid} · ${n.type} · ${n.name}${kindsTeil(n)}`;
 
 /** Deterministisch von vorn kappen; was wegfaellt, wird als Zahl angesagt. */
 function gekappt(lines: string[]): { lines: string[]; rest: number } {
@@ -87,7 +103,7 @@ async function ausFundKontext(
   const kontext = fundKontext({ nodes: res.nodes ?? [], edges }, fund, focusTypes);
   const { lines, rest } = gekappt(kontext.knoten.map(toLine));
   const zeilen = [
-    'Element-Liste aus dem Kontext des Funds (uid · type · name: der Fund, sein Besitzer UC/SYS und dessen ' +
+    'Element-Liste aus dem Kontext des Funds (uid · type · name, bei REQ · kinds: der Fund, sein Besitzer UC/SYS und dessen ' +
       'Realisierung; bereits eingebettet — graph_elements dafür nicht aufrufen; existierende uids für Kanten ' +
       'referenzieren):',
     ...lines,
@@ -126,7 +142,7 @@ async function vollerIndex(registry: MCPToolRegistry): Promise<ChannelBlock | nu
   return {
     channel: 'inventory',
     text:
-      'Element-Index des ganzen Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT ' +
+      'Element-Index des ganzen Graphen (uid · type · name, bei REQ · kinds; bereits eingebettet — graph_elements NICHT ' +
       'aufrufen; existierende uids für Kanten referenzieren, graph_get_node für den Wortlaut):\n' +
       zeilen.join('\n'),
   };
@@ -141,7 +157,7 @@ async function gefaltet(registry: MCPToolRegistry, fund: string[]): Promise<Chan
       'Ast des Funds mit Beschreibung; BOX sind Nachbar-Aeste, zugeklappt; INDEX sind alle übrigen uids — ' +
       'als Kantenziel direkt verwendbar, graph_get_node oder graph_expand öffnet sie:',
     '## Offen',
-    ...f.offen.map((n) => `${n.uid} · ${n.type} · ${n.name}${n.description ? ' — ' + n.description : ''}`),
+    ...f.offen.map((n) => `${toLine(n)}${n.description ? ' — ' + n.description : ''}`),
   ];
   if (f.box.length > 0) teile.push('## Box', ...f.box.map(toLine));
   if (f.kanten.length > 0) teile.push('## Kanten', ...f.kanten.map((e) => `${e.sourceId} -${e.edgeType}-> ${e.targetId}`));
@@ -200,7 +216,7 @@ async function nachTyp(registry: MCPToolRegistry, focusTypes: string[]): Promise
   return {
     channel: 'inventory',
     text:
-      'Element-Index des Graphen (uid · type · name; bereits eingebettet — graph_elements NICHT ' +
+      'Element-Index des Graphen (uid · type · name, bei REQ · kinds; bereits eingebettet — graph_elements NICHT ' +
       'erneut aufrufen; existierende uids für Kanten referenzieren):\n' +
       lines.join('\n') +
       (notiz ? '\n' + notiz : ''),

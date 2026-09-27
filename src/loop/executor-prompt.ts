@@ -40,24 +40,31 @@ existiert — auch nicht für Dokumente/Specs (die bleiben Prosa, kein Graph-Kno
 Jede Nachricht gibt dir EINE präzise Generierungs-Instruktion (inkl. der legalen Kanten). Führe genau sie aus:
 emittiere den geforderten Batch als EINEN graphcode_graph_mutate-Aufruf mit {"formatE": "..."}, dann STOPP.
 
-Format-E (exakt; Knoten unter "## Nodes" in ihrer "### <TYP>"-Sektion, Kanten unter "## Edges"):
+Format-E (exakt; Knoten unter "## Nodes" in ihrer "### <TYP>"-Sektion, Kanten unter "## Edges").
+Vorbild mit Platzhaltern «…» — Inhalte und Werte kommen aus dem Auftrag, eine Aussage je REQ:
 ## Nodes
 ### REQ
-+ REQ-login-passwort|Das System muss Nutzer per Passwort in unter 2 s anmelden. [__name:Anmeldung per Passwort]
++ REQ-beispiel-ablauf|Das System muss «Ergebnis A» erzeugen, sobald «Ausloeser A» eintritt. [__name:«Ergebnis A» erzeugen]
 @kinds ["functional"]
++ REQ-beispiel-grenze|Das System muss «Ergebnis A» in hoechstens «Grenzwert A» erzeugen. [__name:Grenze fuer «Ergebnis A»]
+@kinds ["non-functional"]
 ### TEST
-+ TEST-login-passwort|Lastlauf misst p95 der Anmeldung, Grenze 2 s. [__name:Anmeldung messen]
++ TEST-beispiel-ablauf|«Ausloeser A» herbeifuehren, «Ergebnis A» pruefen. [__name:Ablauf pruefen]
++ TEST-beispiel-grenze|«Ausloeser A» herbeifuehren, Zeit bis «Ergebnis A» gegen «Grenzwert A» messen. [__name:Grenze messen]
 
 ## Edges
-+ UC-login -compose-> REQ-login-passwort
-+ TEST-login-passwort -verify-> REQ-login-passwort
++ UC-beispiel -compose-> REQ-beispiel-ablauf, REQ-beispiel-grenze
++ TEST-beispiel-ablauf -verify-> REQ-beispiel-ablauf
++ TEST-beispiel-grenze -verify-> REQ-beispiel-grenze
 
-Jede REQ traegt @kinds: "functional"/"precondition"/"postcondition" erfuellt eine FUNC, "non-functional"/
-"risk"/"mitigation" ein MOD oder das SYS; eine FCHAIN erfuellt jede. Ohne kinds ist FUNC/MOD/SYS -satisfy-> illegal.
+Jede REQ traegt genau einen kinds-Wert: "functional" (was das System tut) erfuellt eine FUNC der
+FCHAIN des UC; "non-functional" (eine Grenze oder Qualitaet) erfuellt ein MOD (lokales Budget), das SYS
+(Systemebene) oder eine FCHAIN (Ende-zu-Ende). Ohne kinds erfuellt nichts die REQ.
 
 Kanten zwischen BESTEHENDEN Knoten brauchen keine Knotenzeile — ein reiner Kanten-Batch:
 ## Edges
-+ FUNC-login-pruefen -satisfy-> REQ-login-passwort
++ FUNC-beispiel-erzeugen -satisfy-> REQ-beispiel-ablauf
++ FCHAIN-beispiel -satisfy-> REQ-beispiel-grenze
 
 "+" legt an (auf eine bestehende uid: ueberschreibt sie), "~ uid|Text" ändert einen Knoten (nur was die
 Zeile nennt), "- uid" löscht. Mehrere Ziele einer Kante: "+ A -verify-> B, C". uid = "<TYP>-<kebab-name>". Nie " -wort-> " in einer Beschreibung.
@@ -66,10 +73,10 @@ Lehnt das Gate deinen Batch ab (success:false), korrigiere NUR die beanstandeten
 violations/fixHints und reiche den VOLLSTÄNDIGEN korrigierten Batch erneut ein.
 Nennt der Auftrag einen Wert nicht (Zeit, Anzahl, Kanal, Frist), erfinde keinen. Stell die Frage als
 eigene Zeile im formatE und lege den Punkt mit offenem Wert an — die Antwort kommt mit der nächsten Nachricht:
-? Innerhalb welcher Zeit muss die Anmeldung gelingen?
+? Welcher Grenzwert gilt fuer «Ergebnis A»?
 ## Nodes
 ### REQ
-+ REQ-login-dauer|Das System muss die Anmeldung innerhalb einer Zielzeit abschliessen; Zielwert offen, beim Auftraggeber erfragt. [__name:Anmeldedauer]
++ REQ-beispiel-grenze|Das System muss «Ergebnis A» innerhalb eines Grenzwerts erzeugen; Grenzwert offen, beim Auftraggeber erfragt. [__name:Grenze fuer «Ergebnis A»]
 @kinds ["non-functional"]
 
 list_dir/read_file/grep über ./material nur sparsam, um echte Modul-Namen zu finden — nicht statt Bauen.
@@ -84,6 +91,12 @@ Handeln vor Analysieren: rufe graph_mutate, rate die Instruktion nicht tot.`;
 // Beispiel eine Latenz-REQ ohne kinds und `FUNC -satisfy->` darauf — ein illegales Paar
 // (contracts: FUNC erfuellt nur functional/pre/post, MOD/SYS nur non-functional/risk/mitigation).
 // Im Rig geblockt: `FUNC satisfy REQ` 8 → 15 → 24 je drei Laeufe, seit das Beispiel da stand.
+
+// CR-GC-672: zwei kinds-Werte, und das Vorbild zeigt beide mit ihrem legalen Erfueller (FUNC fuer
+// functional, FCHAIN fuer die Ende-zu-Ende-Grenze). Der Inhalt ist Platzhalter «…»: das fruehere
+// Vorbild REQ-login-passwort wurde bei Saettigung inhaltlich uebernommen (gcrun-180: 21 Knoten bis
+// UC-login, der Auftrag sagte „ohne Anmeldung"). Das Modell uebernimmt Form UND Inhalt eines
+// Vorbilds — also traegt es nur Form (Memory executor-prompt-vorbild-statt-verbot).
 
 // CR-GC-654: der reine Kanten-Batch steht als ZWEITES Formvorbild im SYSTEM. Mit nur dem ersten
 // (Knoten samt Kanten) deklarierte qwen3-coder bestehende Knoten neu, um eine Kante anzuhaengen —

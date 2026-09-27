@@ -21,8 +21,8 @@
  * @author andreas@siglochconsulting
  */
 import { MutateCommandSchema, type MutateCommand } from '@sigloch/contracts/harness';
-import { TRACE_PATTERNS, isValidTrace, normalizeReqKinds } from '@sigloch/contracts/se';
-import type { ElementType, ReqKind, TraceType } from '@sigloch/contracts/se';
+import { ReqKind, TRACE_PATTERNS, isValidTrace, normalizeReqKinds } from '@sigloch/contracts/se';
+import type { ElementType, TraceType } from '@sigloch/contracts/se';
 
 /** Graph-Zustand, gegen den der Batch geprüft wird (aus den Registry-Tools). */
 export interface PreflightKnown {
@@ -37,6 +37,12 @@ export interface PreflightKnown {
    * Fehlt die Map (ältere Aufrufer), bleibt das Verhalten das ablehnende.
    */
   kinds?: Map<string, unknown>;
+  /**
+   * Die Kanten des Graphen, an denen der kinds-fixHint den KONKRETEN Erfueller findet (CR-GC-672):
+   * compose (UC→REQ, UC→FCHAIN, FCHAIN→FUNC) und allocate (FUNC→MOD). Fehlt die Liste, nennt der
+   * fixHint nur die Typen.
+   */
+  edges?: readonly { sourceId: string; targetId: string; edgeType: string }[];
 }
 
 export interface PreflightViolation {
@@ -84,12 +90,68 @@ function legalEdgesOf(type: string): string {
   );
 }
 
+/** Wer eine REQ mit diesem kinds-Wert erfuellen darf — aus TRACE_PATTERNS, nie lokal (CR-GC-672). */
+function erfuellerVon(kind: string): string[] {
+  return TRACE_PATTERNS.filter(
+    (p) => p.type === 'satisfy' && p.target === 'REQ' && (p.where?.allowed as readonly string[] | undefined)?.includes(kind),
+  ).map((p) => p.source);
+}
+
+type Kante = { sourceId: string; targetId: string; edgeType: string };
+
+/**
+ * CR-GC-672: der legale Erfueller mit uid — Partner zuerst. Gesucht wird in der Naehe dessen, was das
+ * Modell versucht hat: die FUNCs der versuchten FCHAIN bzw. der Ketten des besitzenden UC (functional),
+ * das MOD und die FCHAIN der versuchten FUNC (non-functional), sonst das SYS. Reihenfolge = Naehe.
+ */
+function partnerUids(
+  kind: string,
+  sourceId: string,
+  reqId: string,
+  typeOf: ReadonlyMap<string, string>,
+  kanten: readonly Kante[],
+): string[] {
+  const erlaubt = new Set(erfuellerVon(kind));
+  const kinder = (uid: string, typ: string): string[] =>
+    kanten.filter((e) => e.edgeType === typ && e.sourceId === uid).map((e) => e.targetId);
+  const eltern = (uid: string, typ: string): string[] =>
+    kanten.filter((e) => e.edgeType === typ && e.targetId === uid).map((e) => e.sourceId);
+  // Besitzende UCs: compose aufwaerts, durch REQ-Eltern hindurch (REQ compose REQ).
+  const ucs: string[] = [];
+  const offen = [reqId];
+  const gesehen = new Set(offen);
+  while (offen.length > 0) {
+    for (const p of eltern(offen.shift()!, 'compose')) {
+      if (gesehen.has(p)) continue;
+      gesehen.add(p);
+      if (typeOf.get(p) === 'UC') ucs.push(p);
+      else if (typeOf.get(p) === 'REQ') offen.push(p);
+    }
+  }
+  const ketten = ucs.flatMap((uc) => kinder(uc, 'compose')).filter((u) => typeOf.get(u) === 'FCHAIN');
+  const src = typeOf.get(sourceId);
+  const kandidaten = [
+    ...(src === 'FCHAIN' ? kinder(sourceId, 'compose') : []),
+    ...(src === 'FUNC' ? kinder(sourceId, 'allocate') : []),
+    ...(src === 'FUNC' ? eltern(sourceId, 'compose') : []),
+    ...ketten.flatMap((k) => kinder(k, 'compose')),
+    ...(src === 'MOD' ? eltern(sourceId, 'allocate') : []),
+    ...ketten,
+    ...[...typeOf].filter(([, t]) => t === 'SYS').map(([u]) => u),
+  ];
+  return [...new Set(kandidaten)].filter((u) => u !== sourceId && erlaubt.has(typeOf.get(u) ?? ''));
+}
+
 /**
  * CR-GC-659: scheitert ein Paar nur am `where`-Praedikat (kinds), nicht am Typpaar, die Meldung, die
- * das sagt — mit den erlaubten und den tatsaechlichen kinds und beiden Reparaturwegen. Vorher hiess es
- * „illegal", und der fixHint darunter listete dasselbe Paar als legal: 34 Blocks in drei Rig-Laeufen,
- * die das Modell so nicht reparieren konnte. Alles aus TRACE_PATTERNS, nie lokal. null, wenn schon
- * das Typpaar illegal ist — dann gilt die bisherige Meldung.
+ * das sagt — mit den erlaubten und den tatsaechlichen kinds. Vorher hiess es „illegal", und der fixHint
+ * darunter listete dasselbe Paar als legal: 34 Blocks in drei Rig-Laeufen. null, wenn schon das
+ * Typpaar illegal ist — dann gilt die bisherige Meldung.
+ *
+ * CR-GC-672: zwei kinds-Werte. Traegt die REQ einen, nennt der fixHint den legalen PARTNER mit uid
+ * (`+ FUNC-x -satisfy-> REQ-y`) — nicht mehr das Umkippen der kinds auf den erlaubten Wert: gemessen
+ * gcrun-180 kippte das Modell sonst, und die FCHAIN fing 46 von 62 funktionalen Erfuellungen auf.
+ * Fehlen die kinds, ist Setzen der einzige Weg — dann der Wert, der zur Kante passt, und der andere.
  */
 function kindsBefund(
   sT: string,
@@ -98,28 +160,42 @@ function kindsBefund(
   sourceId: string,
   targetId: string,
   kindsOf: (uid: string) => readonly string[] | undefined,
+  typeOf: ReadonlyMap<string, string>,
+  kanten: readonly Kante[],
 ): { message: string; fixHint: string } | null {
   const muster = TRACE_PATTERNS.filter((p) => p.source === sT && p.target === tT && p.type === edgeType);
   const mitWhere = muster.find((p) => p.where);
   if (!mitWhere?.where) return null;
   const { on, field, allowed } = mitWhere.where;
   const uid = on === 'target' ? targetId : sourceId;
-  const hat = kindsOf(uid);
-  const endTyp = on === 'target' ? tT : sT;
-  // Wer dieselbe Kante an diesem Ende mit den VORHANDENEN kinds legal ziehen duerfte.
-  const passend = TRACE_PATTERNS.filter(
-    (p) =>
-      p.type === edgeType &&
-      (on === 'target' ? p.target === endTyp : p.source === endTyp) &&
-      (!p.where || (hat ?? []).some((k) => (p.where!.allowed as readonly string[]).includes(k))),
-  ).map((p) => (on === 'target' ? p.source : p.target));
+  const partnerTyp = on === 'target' ? sT : tT;
+  const hat = kindsOf(uid) ?? [];
+  const kopf =
+    `${sT} ${edgeType} ${tT} (${sourceId} → ${targetId}) ist nur legal, wenn ${uid}.${field} eines von ` +
+    `[${allowed.join(', ')}] enthaelt — ${uid} hat ${hat.length ? `[${hat.join(', ')}]` : `KEINE ${field}`}.`;
+  if (hat.length === 0) {
+    const andere = ReqKind.options.filter((k) => !(allowed as readonly string[]).includes(k));
+    return {
+      message: kopf,
+      fixHint:
+        `Genau einen Wert setzen, passend zur Kante: ~ ${uid}|Beschreibung, Folgezeile @${field} ["${allowed[0]}"] ` +
+        `(${partnerTyp} erfuellt ${allowed.join('/')}).` +
+        andere
+          .map((k) => ` Beschreibt ${uid} dagegen eine ${k}-Anforderung: @${field} ["${k}"], Erfueller ${erfuellerVon(k).join(' / ')}.`)
+          .join(''),
+    };
+  }
+  const kind = hat.find((k) => erfuellerVon(k).length > 0) ?? hat[0];
+  const typen = erfuellerVon(kind);
+  const partner = on === 'target' ? partnerUids(kind, sourceId, uid, typeOf, kanten) : [];
+  const fixHint = partner.length
+    ? `Erfueller statt ${sourceId}: + ${partner[0]} -${edgeType}-> ${uid}` +
+      (partner.length > 1 ? ` (ebenso legal: ${partner.slice(1, 4).join(', ')}).` : '.')
+    : `Erfueller einer ${kind}-REQ ist ${typen.join(' / ') || '(kein Typ)'}; keiner haengt am UC von ${uid} — ` +
+      `lege ihn dort an und ziehe die ${edgeType}-Kante von ihm.`;
   return {
-    message:
-      `${sT} ${edgeType} ${tT} (${sourceId} → ${targetId}) ist nur legal, wenn ${uid}.${field} eines von ` +
-      `[${allowed.join(', ')}] enthaelt — ${uid} hat ${hat?.length ? `[${hat.join(', ')}]` : `KEINE ${field}`}.`,
-    fixHint:
-      `Entweder ${field} an ${uid} setzen (~ ${uid}|Beschreibung, Folgezeile @${field} ["${allowed[0]}"]), ` +
-      `oder den passenden Partner nehmen: ${edgeType} von ${[...new Set(passend)].join(' / ') || '(keinem Typ)'}.`,
+    message: `${kopf} ${partnerTyp} erfuellt nur ${allowed.join('/')}; eine ${kind}-REQ erfuellt ${typen.join(' / ')}.`,
+    fixHint,
   };
 }
 
@@ -227,6 +303,12 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
     return k.length > 0 ? k : undefined;
   };
 
+  // Kanten ueber Graph ∪ Batch — der kinds-fixHint sucht daran den konkreten Erfueller (CR-GC-672).
+  const kanten: Kante[] = [
+    ...(known.edges ?? []),
+    ...parsed.flatMap((c) => (c.op === 'add-edge' ? [c.edge] : [])),
+  ];
+
   const violations: PreflightViolation[] = [];
 
   // --- R-18: Trace-Paar-Legalität; nur die Gegenrichtung legal → Auto-Flip ---
@@ -244,7 +326,7 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
       );
       return { ...c, edge: { ...c.edge, sourceId: targetId, targetId: sourceId } };
     }
-    const kinds = kindsBefund(sT, tT, edgeType, sourceId, targetId, kindsOf);
+    const kinds = kindsBefund(sT, tT, edgeType, sourceId, targetId, kindsOf, typeOf, kanten);
     violations.push(
       kinds
         ? { ruleId: 'R-18', severity: 'error', ...kinds }

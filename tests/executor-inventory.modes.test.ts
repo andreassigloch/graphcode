@@ -19,7 +19,9 @@ const SEED = [
   '+ UC-bestellen|Kunde bestellt Ware. [__name:Bestellen]',
   '### REQ',
   '+ REQ-login-zeit|Das System muss die Anmeldung in unter 2 s bestaetigen. [__name:Anmeldezeit]',
+  '@kinds ["non-functional"]',
   '+ REQ-bestellen-mail|Das System muss jede Bestellung per Mail bestaetigen. [__name:Bestellmail]',
+  '@kinds ["functional"]',
   '### TEST',
   '+ TEST-login-zeit|Misst die Anmeldezeit gegen 2 s. [__name:Anmeldezeit messen]',
   '+ TEST-bestellen-mail|Prueft die Bestellmail. [__name:Bestellmail pruefen]',
@@ -77,12 +79,31 @@ describe('Inventar-Kanal als Mess-Schalter (CR-GC-682)', () => {
     const offen = out.slice(out.indexOf('## Offen'), out.indexOf('## Box'));
     const box = out.slice(out.indexOf('## Box'), out.indexOf('## Kanten'));
     const index = out.slice(out.indexOf('## Index'));
-    expect(offen).toContain('REQ-login-zeit · REQ · Anmeldezeit — Das System muss die Anmeldung in unter 2 s bestaetigen.');
+    expect(offen).toContain('REQ-login-zeit · REQ · Anmeldezeit · non-functional — Das System muss die Anmeldung in unter 2 s bestaetigen.');
     expect(offen).toContain('UC-login');
     expect(offen).toContain('SYS-shop');
     expect(box).toContain('UC-bestellen · UC · Bestellen');
     expect(index).toContain('REQ-bestellen-mail');
     expect(out).not.toContain('per Mail bestaetigen');
+  });
+
+  it('CR-GC-672: jede REQ-Zeile traegt ihre kinds — in allen drei Zuschnitten', async () => {
+    // gcrun-180: 54 der 107 kinds-Blocks betrafen REQs, die schon im Graphen standen — das Inventar
+    // zeigte `uid · TYPE · name`, das Modell sah nicht, welcher Erfueller legal ist.
+    const fund = await buildRoundInjection(registry, SCHRITT);
+    expect(fund).toContain('REQ-login-zeit · REQ · Anmeldezeit · non-functional');
+    const index = await buildRoundInjection(registry, SCHRITT, 'index');
+    expect(index).toContain('REQ-bestellen-mail · REQ · Bestellmail · functional');
+    expect(index, 'nur REQ traegt kinds').toMatch(/^UC-login · UC · Anmelden$/m);
+    const seed = await buildRoundInjection(registry, { focusTypes: ['REQ'], skill: null });
+    expect(seed).toContain('REQ-bestellen-mail · REQ · Bestellmail · functional');
+    const ohne = (await registry['graph_mutate'].handler({
+      formatE: '## Nodes\n### REQ\n+ REQ-offen|Das System muss X liefern. [__name:Offen]\n### TEST\n+ TEST-offen|Prueft X. [__name:T]\n\n' +
+        '## Edges\n+ UC-login -compose-> REQ-offen\n+ TEST-offen -verify-> REQ-offen\n',
+      consumerId: 'test',
+    })) as { success: boolean };
+    expect(ohne.success).toBe(true);
+    expect(await buildRoundInjection(registry, SCHRITT, 'index'), 'fehlende kinds sind sichtbar').toContain('REQ-offen · REQ · Offen · kinds fehlen');
   });
 
   it('faltung ohne Fund: kein Ast zum Oeffnen — der volle Index', async () => {

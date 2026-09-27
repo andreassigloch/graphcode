@@ -185,10 +185,11 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         node('ACTOR-kunde', 'ACTOR', 'Kunde'),
         node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt Ersatzteil und erhält Bestätigung.'),
         node('REQ-bestellung', 'REQ', 'Bestellung wird bestätigt', measurable('die Bestellung'), { kinds: ['functional'] }),
-        node('REQ-post', 'REQ', 'Bestellung bestätigt', measurable('die Bestellbestätigung'), {
-          kinds: ['postcondition'],
+        // CR-GC-672: pre-/postcondition gibt es nicht mehr (Vorbedingung = Eingangs-FLOW der Kette,
+        // Nachbedingung = UC-Ziel). Die FCHAIN erfuellt jetzt die Ende-zu-Ende-Grenze (non-functional).
+        node('REQ-post', 'REQ', 'Bestellung Ende-zu-Ende bestätigt', measurable('die Bestellbestätigung'), {
+          kinds: ['non-functional'],
         }),
-        node('REQ-pre', 'REQ', 'Kunde angemeldet', measurable('die Anmeldung'), { kinds: ['precondition'] }),
         node('TEST-bestellung', 'TEST', 'Bestellbestätigung prüfen', '', {
           concept: true,
           testResult: { status: 'pass' },
@@ -217,16 +218,13 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('SYS-shop', 'UC-bestellen', 'compose'),
         edge('UC-bestellen', 'REQ-bestellung', 'compose'),
         edge('UC-bestellen', 'REQ-post', 'compose'),
-        edge('UC-bestellen', 'REQ-pre', 'compose'),
         edge('UC-bestellen', 'FCHAIN-bestellung', 'compose'),
         edge('TEST-bestellung', 'REQ-bestellung', 'verify'),
         edge('TEST-bestellung', 'REQ-post', 'verify'),
-        edge('TEST-bestellung', 'REQ-pre', 'verify'),
         edge('FCHAIN-bestellung', 'FUNC-pruefen', 'compose'),
         edge('FCHAIN-bestellung', 'FUNC-berechnen', 'compose'),
         edge('FCHAIN-bestellung', 'FUNC-bestaetigen', 'compose'),
         edge('FCHAIN-bestellung', 'REQ-post', 'satisfy'),
-        edge('FCHAIN-bestellung', 'REQ-pre', 'satisfy'),
         edge('FUNC-pruefen', 'REQ-bestellung', 'satisfy'),
         edge('FUNC-pruefen', 'MOD-bestellung', 'allocate'),
         edge('FUNC-berechnen', 'REQ-bestellung', 'satisfy'),

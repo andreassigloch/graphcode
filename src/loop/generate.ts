@@ -208,21 +208,21 @@ export const RULE_CLAUSE: Record<
       `Diese UCs haben keine Anforderungen (${uids.join(', ')}): schlage je UC 3–5 REQ-Kandidaten vor` +
       ' (UC compose→REQ), präzise und prüfbar formuliert. Emittiere jede neue REQ zusammen mit einem' +
       ' TEST (TEST verify→REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01).' +
-      ` Bediene ALLE ${uids.length} UCs in EINEM Batch, je UC mindestens zwei REQs — Vorbild fuer zwei UCs:\n` +
+      ` Bediene ALLE ${uids.length} UCs in EINEM Batch, je UC mindestens zwei REQs — Vorbild fuer zwei UCs — Platzhalter «…» aus dem Auftrag fuellen, eine Aussage je REQ, genau ein kinds-Wert:\n` +
       '## Nodes\n### REQ\n' +
-      '+ REQ-login-passwort|Das System muss Nutzer per Passwort in unter 2 s anmelden. [__name:Anmeldung per Passwort]\n@kinds ["functional"]\n' +
-      '+ REQ-login-sperre|Das System muss nach 5 Fehlversuchen das Konto 15 min sperren. [__name:Kontosperre]\n@kinds ["functional"]\n' +
-      '+ REQ-export-format|Das System muss den Stand als CSV mit Kopfzeile exportieren. [__name:CSV-Export]\n@kinds ["functional"]\n' +
-      '+ REQ-export-dauer|Das System muss 10.000 Zeilen in unter 5 s exportieren. [__name:Exportdauer]\n@kinds ["non-functional"]\n' +
+      '+ REQ-beispiel-a-ablauf|Das System muss «Ergebnis A» erzeugen, sobald «Ausloeser A» eintritt. [__name:«Ergebnis A» erzeugen]\n@kinds ["functional"]\n' +
+      '+ REQ-beispiel-a-grenze|Das System muss «Ergebnis A» in hoechstens «Grenzwert A» erzeugen. [__name:Grenze fuer «Ergebnis A»]\n@kinds ["non-functional"]\n' +
+      '+ REQ-beispiel-b-ablauf|Das System muss «Ergebnis B» an «Empfaenger B» uebergeben. [__name:«Ergebnis B» uebergeben]\n@kinds ["functional"]\n' +
+      '+ REQ-beispiel-b-abweisung|Das System muss «Eingabe B» abweisen, wenn «Bedingung B» verletzt ist. [__name:«Eingabe B» abweisen]\n@kinds ["functional"]\n' +
       '### TEST\n' +
-      '+ TEST-login-passwort|Anmeldung mit gueltigem Passwort, Zeit gemessen, Grenze 2 s. [__name:Anmeldung pruefen]\n' +
-      '+ TEST-login-sperre|5 Fehlversuche, 6. Versuch muss abgewiesen werden. [__name:Sperre pruefen]\n' +
-      '+ TEST-export-format|Export oeffnen, Kopfzeile und Trennzeichen pruefen. [__name:Format pruefen]\n' +
-      '+ TEST-export-dauer|10.000 Zeilen exportieren, Zeit gemessen, Grenze 5 s. [__name:Dauer messen]\n\n' +
-      '## Edges\n+ UC-login -compose-> REQ-login-passwort, REQ-login-sperre\n' +
-      '+ UC-export -compose-> REQ-export-format, REQ-export-dauer\n' +
-      '+ TEST-login-passwort -verify-> REQ-login-passwort\n+ TEST-login-sperre -verify-> REQ-login-sperre\n' +
-      '+ TEST-export-format -verify-> REQ-export-format\n+ TEST-export-dauer -verify-> REQ-export-dauer',
+      '+ TEST-beispiel-a-ablauf|«Ausloeser A» herbeifuehren, «Ergebnis A» pruefen. [__name:Ablauf A pruefen]\n' +
+      '+ TEST-beispiel-a-grenze|«Ausloeser A» herbeifuehren, Zeit gegen «Grenzwert A» messen. [__name:Grenze A messen]\n' +
+      '+ TEST-beispiel-b-ablauf|«Ergebnis B» erzeugen, Eingang bei «Empfaenger B» pruefen. [__name:Uebergabe B pruefen]\n' +
+      '+ TEST-beispiel-b-abweisung|«Eingabe B» mit verletzter «Bedingung B» senden, Abweisung pruefen. [__name:Abweisung B pruefen]\n\n' +
+      '## Edges\n+ UC-beispiel-a -compose-> REQ-beispiel-a-ablauf, REQ-beispiel-a-grenze\n' +
+      '+ UC-beispiel-b -compose-> REQ-beispiel-b-ablauf, REQ-beispiel-b-abweisung\n' +
+      '+ TEST-beispiel-a-ablauf -verify-> REQ-beispiel-a-ablauf\n+ TEST-beispiel-a-grenze -verify-> REQ-beispiel-a-grenze\n' +
+      '+ TEST-beispiel-b-ablauf -verify-> REQ-beispiel-b-ablauf\n+ TEST-beispiel-b-abweisung -verify-> REQ-beispiel-b-abweisung',
     skill: { name: 'se:author-req', file: 'author-req.md' },
   },
   // CR-GC-564: der legale Pfad AUSGESCHRIEBEN. ACTOR direkt an UC oder FCHAIN ist die
@@ -258,9 +258,12 @@ export const RULE_CLAUSE: Record<
     text: (uids) =>
       `Diese REQs sind Blaetter ohne Erfueller (${uids.join(', ')}): verbinde jede mit dem Element,` +
       ' das sie erfuellt — FUNC, FCHAIN, MOD oder SYS satisfy→REQ, mit existierenden uids aus der' +
-      ' Element-Liste. Lege KEINE neue REQ an. FUNC erfuellt nur REQs mit kinds functional/precondition/' +
-      'postcondition, MOD und SYS nur non-functional/risk/mitigation, FCHAIN jede — fehlen einer REQ die' +
-      ' kinds, setze sie im selben Batch (~ REQ-x|Text, Folgezeile @kinds [...]).',
+      ' Element-Liste. Lege KEINE neue REQ an. Eine REQ mit kinds functional erfuellt eine FUNC der' +
+      ' zugehoerigen FCHAIN; non-functional erfuellt ein MOD, das SYS oder eine FCHAIN (Ende-zu-Ende).' +
+      ' Fehlen einer REQ die kinds, setze genau einen Wert im selben Batch. Vorbild:\n' +
+      '## Nodes\n### REQ\n~ REQ-beispiel-ablauf\n@kinds ["functional"]\n\n' +
+      '## Edges\n+ FUNC-beispiel-erzeugen -satisfy-> REQ-beispiel-ablauf\n' +
+      '+ FCHAIN-beispiel -satisfy-> REQ-beispiel-grenze',
     // CR-GC-655: keine Anleitung — author-req zeigt REQ-Anlegen, die Klausel verbietet genau das.
     skill: null,
   },

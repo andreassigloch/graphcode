@@ -91,7 +91,8 @@ function ratgeber(): Array<[string, string]> {
     .map(([id, h]): [string, string] => [`RULE_HELP ${id}`, JSON.stringify(h)]);
   return [
     ...skills,
-    ['generate RULE_CLAUSE', JSON.stringify(RULE_CLAUSE)],
+    // CR-GC-672: `text` ist eine Funktion — JSON.stringify liess die Klauseln samt Vorbild still weg.
+    ...Object.entries(RULE_CLAUSE).map(([id, k]): [string, string] => [`generate RULE_CLAUSE ${id}`, k.text(['UC-x'])]),
     ['generate GENERATION_TEMPLATE', JSON.stringify(GENERATION_TEMPLATE)],
     ['executor SYSTEM', SYSTEM],
     ['executor IDLE_NUDGE', IDLE_NUDGE],

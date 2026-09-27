@@ -200,33 +200,77 @@ describe('preflightBatch (CR-GC-284, pur)', () => {
 // Preflight im Executor — reale Disk-Kuzu-Harness, gescriptetes Modell
 // ---------------------------------------------------------------------------
 
-describe('CR-GC-659: scheitert ein Paar nur an den kinds, sagt die Meldung das', () => {
+describe('CR-GC-659/672: scheitert ein Paar nur an den kinds, sagt die Meldung das — mit dem konkreten Erfueller', () => {
   // Gemessen gcrun-80..82: 34 Blocks „Illegales Trace-Paar: FUNC satisfy REQ", der fixHint daneben
   // listete satisfy→REQ als LEGALE Kante von FUNC — ein Widerspruch, kein Reparaturhinweis.
+  // CR-GC-672: zwei kinds-Werte; der fixHint nennt den legalen Partner mit uid (gcrun-180: 107 von 166
+  // Blocks waren kinds-satisfy), statt die kinds auf den erlaubten Wert zu kippen.
+  //   UC-u ─compose→ REQ-f (functional), REQ-nf (non-functional), REQ-ohne, FCHAIN-k
+  //   FCHAIN-k ─compose→ FUNC-p, FUNC-q ;  FUNC-p ─allocate→ MOD-m ;  SYS-s
   const known = (kinds: Record<string, unknown>): PreflightKnown => ({
-    types: new Map([['FUNC-p', 'FUNC'], ['MOD-m', 'MOD'], ['REQ-nf', 'REQ'], ['REQ-ohne', 'REQ'], ['ACTOR-a', 'ACTOR'], ['UC-u', 'UC']]),
-    verifiedReqs: new Set(['REQ-nf', 'REQ-ohne']),
+    types: new Map([
+      ['FUNC-p', 'FUNC'], ['FUNC-q', 'FUNC'], ['MOD-m', 'MOD'], ['FCHAIN-k', 'FCHAIN'], ['SYS-s', 'SYS'],
+      ['REQ-f', 'REQ'], ['REQ-nf', 'REQ'], ['REQ-ohne', 'REQ'], ['ACTOR-a', 'ACTOR'], ['UC-u', 'UC'],
+    ]),
+    verifiedReqs: new Set(['REQ-f', 'REQ-nf', 'REQ-ohne']),
     kinds: new Map(Object.entries(kinds)),
+    edges: [
+      { sourceId: 'UC-u', targetId: 'REQ-f', edgeType: 'compose' },
+      { sourceId: 'UC-u', targetId: 'REQ-nf', edgeType: 'compose' },
+      { sourceId: 'UC-u', targetId: 'REQ-ohne', edgeType: 'compose' },
+      { sourceId: 'UC-u', targetId: 'FCHAIN-k', edgeType: 'compose' },
+      { sourceId: 'FCHAIN-k', targetId: 'FUNC-p', edgeType: 'compose' },
+      { sourceId: 'FCHAIN-k', targetId: 'FUNC-q', edgeType: 'compose' },
+      { sourceId: 'FUNC-p', targetId: 'MOD-m', edgeType: 'allocate' },
+    ],
   });
+  const KINDS = { 'REQ-f': ['functional'], 'REQ-nf': ['non-functional'] };
 
-  it('kinds passen nicht: erlaubte und tatsaechliche kinds, dazu der passende Erfueller', () => {
-    const pf = preflightBatch({ commands: [addEdge('FUNC-p', 'REQ-nf', 'satisfy')] }, known({ 'REQ-nf': ['non-functional'] }));
+  it('FUNC an non-functional: erlaubte und tatsaechliche kinds, fixHint nennt das MOD der FUNC mit uid', () => {
+    const pf = preflightBatch({ commands: [addEdge('FUNC-p', 'REQ-nf', 'satisfy')] }, known(KINDS));
     expect(pf.action).toBe('blocked');
     const v = pf.violations[0];
-    expect(v.message).toContain('nur legal, wenn REQ-nf.kinds eines von [functional, precondition, postcondition]');
+    expect(v.message).toContain('nur legal, wenn REQ-nf.kinds eines von [functional]');
     expect(v.message).toContain('REQ-nf hat [non-functional]');
     expect(v.message, 'kein Widerspruch mehr').not.toContain('Illegales Trace-Paar');
-    expect(v.fixHint).toMatch(/satisfy von .*MOD/);
-    expect(v.fixHint).toContain('FCHAIN');
-    expect(v.fixHint).not.toMatch(/satisfy von [^.]*FUNC/);
+    expect(v.fixHint, 'Partner zuerst, konkret').toContain('+ MOD-m -satisfy-> REQ-nf');
+    expect(v.fixHint).toContain('FCHAIN-k');
+    expect(v.fixHint, 'kein Umkippen der kinds').not.toContain('@kinds');
   });
 
-  it('kinds fehlen: sagt es, und nur FCHAIN darf ohne kinds erfuellen', () => {
+  it('FCHAIN an functional: „nur non-functional; functional an eine FUNC", mit der FUNC der Kette', () => {
+    const pf = preflightBatch({ commands: [addEdge('FCHAIN-k', 'REQ-f', 'satisfy')] }, known(KINDS));
+    const v = pf.violations[0];
+    expect(v.message).toContain('FCHAIN erfuellt nur non-functional; eine functional-REQ erfuellt FUNC');
+    expect(v.fixHint).toContain('+ FUNC-p -satisfy-> REQ-f');
+    expect(v.fixHint).toContain('FUNC-q');
+    expect(v.fixHint).not.toContain('@kinds');
+  });
+
+  it('MOD an functional: die FUNC aus der Kette des besitzenden UC', () => {
+    const pf = preflightBatch({ commands: [addEdge('MOD-m', 'REQ-f', 'satisfy')] }, known(KINDS));
+    expect(pf.violations[0].fixHint).toMatch(/\+ FUNC-[pq] -satisfy-> REQ-f/);
+  });
+
+  it('der Besitzer im selben Batch zaehlt — UC compose REQ steht nur im Batch', () => {
+    const k = known(KINDS);
+    k.types.set('REQ-neu', 'REQ');
+    k.verifiedReqs.add('REQ-neu');
+    k.kinds!.set('REQ-neu', ['functional']);
+    const pf = preflightBatch(
+      { commands: [addEdge('UC-u', 'REQ-neu', 'compose'), addEdge('SYS-s', 'REQ-neu', 'satisfy')] },
+      k,
+    );
+    expect(pf.violations[0].fixHint).toMatch(/\+ FUNC-[pq] -satisfy-> REQ-neu/);
+  });
+
+  it('kinds fehlen: sagt es, genau einen Wert passend zur Kante setzen, und wer den anderen erfuellt', () => {
     const pf = preflightBatch({ commands: [addEdge('FUNC-p', 'REQ-ohne', 'satisfy')] }, known({}));
     const v = pf.violations[0];
     expect(v.message).toContain('REQ-ohne hat KEINE kinds');
     expect(v.fixHint).toContain('@kinds ["functional"]');
-    expect(v.fixHint).toMatch(/satisfy von FCHAIN\./);
+    expect(v.fixHint).toContain('"non-functional"');
+    expect(v.fixHint, 'es gibt nur zwei Werte').not.toMatch(/precondition|postcondition|risk|mitigation/);
   });
 
   it('ist schon das Typpaar illegal, bleibt die bisherige Meldung', () => {
@@ -379,6 +423,28 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
     expect(uc.description).toBe(vorher);
     expect(uc.name).toBe('Login');
     expect(g.edges.some((e) => e.sourceId === 'UC-login' && e.targetId === 'FCHAIN-login')).toBe(true);
+  });
+
+  it('CR-GC-672: FCHAIN an eine functional-REQ — die Rueckmeldung nennt die FUNC der Kette mit uid', async () => {
+    const vorbau = (await registry['graph_mutate'].handler({
+      formatE:
+        '## Nodes\n### FCHAIN\n+ FCHAIN-login|Anmeldeablauf [__name:Anmeldeablauf]\n### FUNC\n' +
+        '+ FUNC-login-pruefen|Prueft die Anmeldedaten. [__name:Anmeldedaten pruefen]\n### REQ\n' +
+        '+ REQ-login-zugang|Das System muss nach gueltiger Anmeldung den Zugang freigeben. [__name:Zugang]\n@kinds ["functional"]\n' +
+        '### TEST\n+ TEST-login-zugang|Gueltige Anmeldung, Zugang pruefen. [__name:Zugang pruefen]\n\n## Edges\n' +
+        '+ UC-login -compose-> FCHAIN-login, REQ-login-zugang\n+ FCHAIN-login -compose-> FUNC-login-pruefen\n' +
+        '+ TEST-login-zugang -verify-> REQ-login-zugang\n',
+      consumerId: 'test',
+    })) as { success: boolean; violations?: unknown };
+    expect(vorbau.success, JSON.stringify(vorbau.violations)).toBe(true);
+    const { callModel, calls } = scriptedModel([
+      toolCallResponse('c1', { formatE: '## Edges\n+ FCHAIN-login -satisfy-> REQ-login-zugang\n' }),
+      toolCallResponse('c2', { formatE: '## Edges\n+ FUNC-login-pruefen -satisfy-> REQ-login-zugang\n' }),
+    ]);
+    await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel });
+    const rueckmeldung = JSON.stringify(calls[1].messages);
+    expect(rueckmeldung).toContain('+ FUNC-login-pruefen -satisfy-> REQ-login-zugang');
+    expect(harness.getGraph().edges.some((e) => e.sourceId === 'FUNC-login-pruefen' && e.edgeType === 'satisfy')).toBe(true);
   });
 
   it('Format-E ohne Befund geht als TEXT ans Gate, nicht uebersetzt', async () => {

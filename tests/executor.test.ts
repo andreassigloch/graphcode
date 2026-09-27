@@ -399,7 +399,7 @@ describe('executor (CR-GC-278)', () => {
   it('CR-GC-654: SYSTEM zeigt einen reinen Kanten-Batch, und das Gate nimmt genau diese Form an', async () => {
     const block = SYSTEM.slice(SYSTEM.indexOf('Kanten zwischen BESTEHENDEN Knoten'));
     const beispiel = block.slice(block.indexOf('## Edges'), block.indexOf('\n\n', block.indexOf('## Edges')) + 1);
-    expect(beispiel).toMatch(/^## Edges\n\+ \S+ -satisfy-> \S+\n$/);
+    expect(beispiel).toMatch(/^## Edges\n(\+ \S+ -satisfy-> \S+\n)+$/);
     // Die Form ist nicht nur behauptet: zwischen bestehenden Knoten geht sie ohne Knotenzeile durchs Gate.
     await registry['graph_mutate'].handler(VALID_SEED_BATCH);
     const res = (await registry['graph_mutate'].handler({
@@ -419,15 +419,18 @@ describe('executor (CR-GC-278)', () => {
     // Der Erfueller aus dem Kanten-Beispiel muss existieren (FCHAIN des UC, darin die FUNC).
     const vorbau = (await registry['graph_mutate'].handler({
       formatE:
-        '## Nodes\n### FCHAIN\n+ FCHAIN-login|Anmeldeablauf [__name:Anmeldeablauf]\n### FUNC\n' +
-        '+ FUNC-login-pruefen|Prueft das Passwort. [__name:Passwort pruefen]\n\n## Edges\n' +
-        '+ UC-login -compose-> FCHAIN-login\n+ FCHAIN-login -compose-> FUNC-login-pruefen\n',
+        '## Nodes\n### UC\n+ UC-beispiel|Nutzer loest den Ablauf aus. [__name:Beispiel]\n### FCHAIN\n' +
+        '+ FCHAIN-beispiel|Ablauf [__name:Ablauf]\n### FUNC\n' +
+        '+ FUNC-beispiel-erzeugen|Erzeugt das Ergebnis. [__name:Ergebnis erzeugen]\n\n## Edges\n' +
+        '+ SYS-app -compose-> UC-beispiel\n+ UC-beispiel -compose-> FCHAIN-beispiel\n' +
+        '+ FCHAIN-beispiel -compose-> FUNC-beispiel-erzeugen\n',
       consumerId: 'test',
     })) as { success: boolean };
     expect(vorbau.success).toBe(true);
     const ab = SYSTEM.indexOf('\n## Nodes\n') + 1; // die Ueberschriftszeile, nicht die Erwaehnung im Satz davor
     const knotenBatch = SYSTEM.slice(ab, SYSTEM.indexOf('\n\nJede REQ traegt', ab)) + '\n';
     expect(knotenBatch).toContain('@kinds ["functional"]');
+    expect(knotenBatch, 'CR-GC-672: beide Werte im Vorbild').toContain('@kinds ["non-functional"]');
     const a = (await registry['graph_mutate'].handler({ formatE: knotenBatch, consumerId: 'test' })) as { success: boolean; violations?: unknown };
     expect(a.success, JSON.stringify(a.violations)).toBe(true);
     const kante = SYSTEM.slice(SYSTEM.indexOf('## Edges', SYSTEM.indexOf('Kanten zwischen BESTEHENDEN')));
@@ -457,18 +460,38 @@ describe('executor (CR-GC-278)', () => {
   it('CR-GC-661: das Vorbild der UC-01-Klausel (zwei UCs, je zwei REQs) geht so durchs Gate', async () => {
     const vorbau = (await registry['graph_mutate'].handler({
       formatE:
-        '## Nodes\n### SYS\n+ SYS-app|Eine App. [__name:App]\n### UC\n+ UC-login|Nutzer meldet sich an. [__name:Login]\n' +
-        '+ UC-export|Nutzer exportiert den Stand. [__name:Export]\n\n## Edges\n+ SYS-app -compose-> UC-login, UC-export\n',
+        '## Nodes\n### SYS\n+ SYS-app|Eine App. [__name:App]\n### UC\n+ UC-beispiel-a|Nutzer loest A aus. [__name:A]\n' +
+        '+ UC-beispiel-b|Nutzer loest B aus. [__name:B]\n\n## Edges\n+ SYS-app -compose-> UC-beispiel-a, UC-beispiel-b\n',
       consumerId: 'test',
     })) as { success: boolean; violations?: unknown };
     expect(vorbau.success, JSON.stringify(vorbau.violations)).toBe(true);
-    const text = RULE_CLAUSE['UC-01'].text(['UC-login', 'UC-export']);
+    const text = RULE_CLAUSE['UC-01'].text(['UC-beispiel-a', 'UC-beispiel-b']);
     expect(text).toContain('Bediene ALLE 2 UCs in EINEM Batch');
     const vorbild = text.slice(text.indexOf('## Nodes')) + '\n';
     const res = (await registry['graph_mutate'].handler({ formatE: vorbild, consumerId: 'test' })) as { success: boolean; violations?: unknown };
     expect(res.success, JSON.stringify(res.violations)).toBe(true);
     const req = harness.getGraph().nodes.filter((n) => n.type === 'REQ');
     expect(req).toHaveLength(4);
+  });
+
+  it('CR-GC-672: die REQ-Vorbilder sind auftragsneutral, atomar und tragen genau einen kinds-Wert', () => {
+    // gcrun-180: das Vorbild REQ-login-passwort wurde bei Saettigung inhaltlich uebernommen — 21 Knoten
+    // bis UC-login, obwohl der Auftrag „ohne Anmeldung" sagte. Vorbilder zeigen Form, keinen Inhalt.
+    const vorbilder = {
+      SYSTEM,
+      'UC-01': RULE_CLAUSE['UC-01'].text(['UC-beispiel-a', 'UC-beispiel-b']),
+      'RD-01': RULE_CLAUSE['RD-01'].text(['REQ-beispiel-ablauf']),
+    };
+    for (const [quelle, text] of Object.entries(vorbilder)) {
+      expect(text, `${quelle}: Fachinhalt im Vorbild`).not.toMatch(/login|passwort|anmeld|export|konto/i);
+      const zeilen = text.split('\n');
+      zeilen.forEach((z, i) => {
+        if (!z.startsWith('+ REQ-')) return;
+        expect(z.match(/\bmuss\b/g), `${quelle}: nicht atomar — ${z}`).toHaveLength(1);
+        expect(zeilen[i + 1], `${quelle}: ${z}`).toMatch(/^@kinds \["(functional|non-functional)"\]$/);
+      });
+    }
+    expect(RULE_CLAUSE['RD-01'].text(['REQ-x'])).toContain('~ REQ-beispiel-ablauf\n@kinds ["functional"]');
   });
 
   it('CR-GC-658: das Vorbild der UC-02-Klausel geht so durchs Gate und loest den Fund auf', async () => {
