@@ -2701,6 +2701,12 @@
       "description": "docs/cr/open/CR-GC-701-die-auftrags-pruefliste-misst-wortlaut-g.md"
     },
     {
+      "id": "CR-GC-702",
+      "type": "CR",
+      "name": "arch-Phase fordert 2 alternative Zerlegungen, bei candidates=1 landen beide: decompose-n-altM-Kaskade",
+      "description": "docs/cr/open/CR-GC-702-arch-phase-fordert-2-alternative-zerlegu.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22344,5 +22350,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 525
+  "graphVersion": 526
 }

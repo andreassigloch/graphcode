@@ -296,6 +296,22 @@ export const GENERATION_TEMPLATE: Record<string, string> = {
 };
 
 /**
+ * Treiber-Fassung der Dimensionen, deren Host-Text Alternativen verlangt (ITEM-2026-610). Im
+ * Treiber-Modus wendet der Treiber den GANZEN Batch an — „2 Alternativen, lass das Gate waehlen"
+ * legte in gcrun-310 beide an und im naechsten Zug Alternativen der Alternativen (35 von 49 REQ
+ * Dubletten). Alternativen entstehen dort ueber N Stichproben (Best-of-N), nie in einem Batch.
+ */
+export const EIN_BATCH: Partial<Record<string, string>> = {
+  arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Genau EINE Zerlegung je Fund — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Vorhandene FUNCs weiterverwenden, keine Varianten daneben anlegen.',
+  alloc: 'Schlage EINEN MOD-Schnitt vor (intern stark, extern schwach gekoppelt), mit den allocate-Kanten FUNC→MOD.',
+};
+
+/** Der Vorschlagstext einer Dimension je Selektion — der Host probt Alternativen selbst, der Treiber nicht. */
+export function vorschlagsText(dimension: string, selection: GenerationSelection): string | undefined {
+  return (selection === 'driver' ? EIN_BATCH[dimension] : undefined) ?? GENERATION_TEMPLATE[dimension];
+}
+
+/**
  * Fokus-Elementtypen je Readiness-Dimension (CR-GC-285). Der Kaltstart steht seit
  * CR-GC-559 in `SEED_STAGES` — hier stehen nur Readiness-Dimensionen.
  * Grundlage der Runden-Prompt-Injektion: der Executor holt
@@ -837,7 +853,7 @@ function stepCore(
       channel: 'proposal',
       value: focus
         ? {
-            text: GENERATION_TEMPLATE[focus.dimension] ?? 'Behebe die Funde der Dimension.',
+            text: vorschlagsText(focus.dimension, selection) ?? 'Behebe die Funde der Dimension.',
             types: [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])],
             skill: SKILL_FOR_DIMENSION[focus.dimension]?.name ?? null,
           }

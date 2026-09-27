@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 311 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 312 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 311 CR · 303 done · 4 open.
+Total: 312 CR · 303 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -373,3 +373,4 @@ Total: 311 CR · 303 done · 4 open.
 | `CR-GC-699` | n/a | CI rot: tests/rig-measured.test.ts (CR-GC-496) stat .graphcode/kuzu ENOENT auf dem Runner — Test setzt lokalen Store voraus (Clean-Machine-Klasse) |
 | `CR-GC-700` | n/a | Der Subagent-Kanal ist ungemessen: ein einziger Agent/Explore-Aufruf lieferte im Lauf vom 2026-09-23 32.054 Zeichen = 18 Prozent aller Werkzeugantworten, und weder steuerung.mjs noch die Antwort-Diaet-CRs kennen ihn |
 | `CR-GC-701` | n/a | Die Auftrags-Pruefliste misst Wortlaut gegen die strukturierte Projektdefinition und ist damit zwischen strukturiertem und prosaischem Lauf nicht vergleichbar: 42/42 vs 1/42 bei mehr Elementen |
+| `CR-GC-702` | n/a | arch-Phase fordert 2 alternative Zerlegungen, bei candidates=1 landen beide: decompose-n-altM-Kaskade |

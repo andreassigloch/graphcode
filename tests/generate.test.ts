@@ -18,7 +18,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
-import { generationStep, DIMENSION_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, RULE_CLAUSE, SKILL_FOR_DIMENSION } from '../src/loop/generate.js';
+import { generationStep, DIMENSION_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, EIN_BATCH, vorschlagsText, RULE_CLAUSE, SKILL_FOR_DIMENSION } from '../src/loop/generate.js';
 import { ElementType } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
@@ -732,6 +732,19 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(klausel).toContain('keine eigenen Gate-Proben');
   });
 
+  it("'driver' verlangt je Dimension EINE Loesung, keine Alternativen im selben Batch (ITEM-2026-610)", () => {
+    // Gemessen gcrun-310 (candidates=1): „2 alternative Zerlegungen, lass das Gate waehlen" — der
+    // Treiber wendet den GANZEN Batch an, also landeten beide, danach Alternativen der Alternativen
+    // (-alt1..alt6, -alt2-alt1), 35 von 49 REQ Dubletten. Alternativen entstehen im Treiber ueber
+    // N Stichproben (Best-of-N), nie innerhalb eines Batches.
+    for (const dimension of Object.keys(GENERATION_TEMPLATE)) {
+      expect(vorschlagsText(dimension, 'driver'), dimension).not.toMatch(/[Aa]lternativ|Lass das Gate wählen/);
+    }
+    // Der Host probt selbst per dryRun — dort bleiben Alternativen richtig.
+    expect(vorschlagsText('arch', 'host')).toContain('2 alternative');
+    expect(vorschlagsText('arch', 'driver')).toContain('Genau EINE Zerlegung');
+  });
+
   it("'driver' (expand): gleiche Funde/Fokus, nur das Protokoll wechselt", () => {
     const host = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const driver = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver');
@@ -1044,7 +1057,7 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
       [...new Set(text.match(/\b[A-Z]{2,7}\b/g) ?? [])].filter((w) => typen.has(w));
     const luecken: string[] = [];
 
-    for (const [dimension, text] of Object.entries(GENERATION_TEMPLATE)) {
+    for (const [dimension, text] of [...Object.entries(GENERATION_TEMPLATE), ...Object.entries(EIN_BATCH)]) {
       const fokus = new Set(DIMENSION_FOCUS_TYPES[dimension] ?? []);
       for (const t of genannt(text)) {
         if (!fokus.has(t)) luecken.push(`Template ${dimension} nennt ${t}, Fokus hat es nicht`);
