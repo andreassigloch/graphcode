@@ -1,4 +1,4 @@
-node_modules/
+node_modules
 dist/
 *.tsbuildinfo
 # .graphcode/ is the local workspace (kuzu store, lock, host.sock, EXPORT_PENDING) —
