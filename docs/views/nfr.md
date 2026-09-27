@@ -4,7 +4,7 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 55 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 75 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
@@ -15,6 +15,7 @@
 | `REQ-batch-seed-performance` | Seed/Import muss batch-skalieren: per-Row-MERGE ist O(langsam) (10k Edges ~51s, SP-2). UNWIND-Batch-Insert (gruppiert je Label/Edge-Table, Werte inline via escapeString) liefert 5k Nodes + 5k Edges < 15s (gemessen 5.3s, 5.6x schneller; Edges 9.6x). Interface unverändert (StorageAdapter.saveNodes/saveEdges), kein Parallelpfad. (CR-GC-120) | ✓ |
 | `REQ-buildable-standalone` | CR-GC-100 Task 0 / SPEC §8 D5 (Blocker): workspace:*-Deps auflösen (versionierte/file-Deps), npm install + tsc --noEmit grün — vor jedem Code. | ✓ |
 | `REQ-cache-layering` | Nur Onto+Rules stabil cachen, nie mit Live-Graph; Prefix-Hygiene. (R8/R14) | ✓ |
+| `REQ-code-governed-quality` | Jede Code-/Modell-Änderung ist gate-validiert (SE-Ontologie + V3_RULES), konsistent und driftfrei — kein ungeprüfter Schreibpfad. | ✓ |
 | `REQ-completeness-single-value` | Das Readiness-Dashboard zeigt EINEN aggregierten Completeness-Wert pro Gate; die Per-Leg-Aufschluesselung (welches Bein, welche Source-Elemente unvollstaendig) erscheint on-click als Drill-down. Ruhiger Wert im Panel, Details on-demand. (CR-GC-250) | ✓ |
 | `REQ-dashboard-ontology-sync` | Das Dashboard/Readiness-Scorer MUSS gegen @sigloch/contracts Ontologie + V3_RULES evaluieren (via harness.evaluateRules, L2) — nicht die aimprove-Vorgänger-Regeln (rules 2.0.0, BQ-06/BQ-02 INCOSE). Heutige 155 BQ-Warnungen messen unsere REQs gegen eine Fremd-Regelbasis; nach Adoption echte Familie-Compliance. (NEXT REQ 2026-06-17) | ✓ |
 | `REQ-dashboard-readonly` | CONSTRAINT: Der Viewer ist strikt read-only. Kein Write-Pfad aus dem Browser (kein mutate/analyze/optimize/nightly-Trigger), kein Projekt-Switching (Single-Repo-Owner, CR-195e), Konsum nur ueber die Host-Bridge. Beleg: aimprove-Dashboard mischte Generator/Optimizer-Trigger ein; graphcode ist Harness-only. | ✓ |
@@ -29,17 +30,36 @@
 | `REQ-graph-context-replaces-reading` | Ein Aufruf liefert die vollstaendige Definition-of-Done eines Realisierungsknotens als begrenzten Slice, sodass das Modell aus dem Graphen implementiert statt die Spezifikation zu lesen. | ✓ |
 | `REQ-graph-integrity` | Strukturelle Integritaet an einem Punkt: GraphCodeCodec.validate() erkennt unbekannte Typen, doppelte UIDs und haengende Endpunkte. Kantenlegalitaet hat genau eine Routine — contracts traceRejection (R-18) —, angewandt wo Daten in den Store gelangen: Gate und Seed; kein validPairs-Klon daneben (keine parallelen Pfade). Kuzu-DDL und Export-Check bleiben Backstops. (CR-GC-200, CR-GC-530, CR-GC-531) | ✓ |
 | `REQ-graph-is-ssot` | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) | ✓ |
+| `REQ-graph-snapshot-per-commit` | Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217) | ✓ |
 | `REQ-harness-schema-in-contracts` | CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen. | ✓ |
 | `REQ-hook-extension-points` | CR-GC-102: registerHook(type, handler) + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; Storage .graphcode/hooks/. | ✓ |
 | `REQ-hook-order-deterministic` | CR-GC-102 L3: Hook-Execution-Order stabil/deterministisch. | ✓ |
 | `REQ-import-se-ontology` | SE-Ontologie aus @sigloch/contracts/se importieren, nicht lokal neu definieren. (SPEC §1, Drift D1) | ✓ |
 | `REQ-install-idempotent` | Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert. | ✓ |
+| `REQ-interactive-capture-suggest` | FCHAIN-capture: NL→Format-E agent-seitig (REQ-no-extraction); Resultat im suggest-Tier durchs Gate, Review vor Persist. | ✓ |
+| `REQ-interface-change-escalation` | Ein Realisierungs-Agent darf ein Interface (FLOW/SCHEMA) NICHT direkt mutieren. Bei Bedarf: (a) Notwendigkeit prüfen (sonst im Vertrag bleiben, Tech-Debt vermeiden); (b) CR an Facilitating-Agent + Boundary pausieren; (c) graph_impact(FLOW) Impact-Analyse; (d) Gate-Entscheidung (versionierte FLOW-Mutation / reject); (e) Dependents re-scopen/sequenzieren. Erhält conflict-free Parallelität; Interface-Drift zentral + gegatet. | ✓ |
 | `REQ-interface-schema` | Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell) | ✓ |
 | `REQ-live-event-in-contracts` | LiveUpdateEvent/UpdateDomain (heute nur graphcode src/emit.ts) als Zod-Schema nach @sigloch/contracts publishen, damit Dashboard/Bridge denselben Vertrag importieren (kein Fork). Analog D1. | ✓ |
 | `REQ-mcp-gate-symmetry` | CR-GC-101 L2: MCP graph_mutate == in-process mutate() — identische Semantik, identisches Violations-Dict (end-to-end). | ✓ |
+| `REQ-model-exchange-post` | Nach einem Lauf steht der eingelesene Bestand als Graph-Zustand mit gesichertem Vorzustand, oder das erzeugte Dokument als Datei unter docs/views; beide tragen den graphVersion-Stempel des Laufs. | ✓ |
 | `REQ-monotone-convergence` | Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder. | ✓ |
 | `REQ-mutation-emits-event` | CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich. | ✓ |
+| `REQ-no-extraction` | Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS) | ✓ |
 | `REQ-phase-gate-not-skippable` | Das aktuelle Phasen-Gate benennt, was bis zur Regel-Vollstaendigkeit fehlt. Die Reihenfolge blockt nie: Ebenen und Phasen darf der Nutzer ueberspringen, Architektur und Optimizer stehen ab dem ersten Zug offen (Leitlinie Satz 5). Blocken kann allein eine Regel an der Schreiboperation. Modell dem Code voraus: heute haelt der Handoff noch an (ITEM-2026-140). | ✓ |
+| `REQ-post-agent-query` | Exakter Subgraph als Format-E; on-demand vertieft; Graph read-only unverändert. | ✓ |
+| `REQ-post-apply-gate` | Gültige Ops persistiert oder bei error-Severity geblockt; consumerType geloggt; Live-Event + Trajectory emittiert. | ✓ |
+| `REQ-post-capture` | Format-E-Kandidaten im suggest-Tier durchs Gate; kein auto-apply; Review vor Persist. | ✓ |
+| `REQ-post-codec-roundtrip` | decode(encode(g))==g; byte-identisch; ungültige Typen → Validierungsfehler. | ✓ |
+| `REQ-post-impact-testing` | Genau die betroffenen Tests ausgewählt (bottom-up); nicht betroffene ausgelassen. | ✓ |
+| `REQ-post-interface-escalation` | Interface NICHT direkt mutiert; eskaliert, impact-analysiert, gegatet, Dependents sequenziert — oder verworfen (im Vertrag bleiben). | ✓ |
+| `REQ-post-modelfree-gate` | Apply + Regelprüfung deterministisch, kein Modell-Call; nur LLM-Zusatzfeatures degradieren. | ✓ |
+| `REQ-pre-agent-query` | Graph geladen, MCP-Tools gebunden, elementId existiert. | ✓ |
+| `REQ-pre-apply-gate` | Harness initialisiert, Graph geladen, gültige MutateCommands liegen vor. | ✓ |
+| `REQ-pre-capture` | NL/Text-Eingang (chat-tauglich) + Agent verfügbar. | ✓ |
+| `REQ-pre-codec-roundtrip` | Gültiger OntologyGraph (encode) bzw. Format-E-JSON (decode). | ✓ |
+| `REQ-pre-impact-testing` | Geändertes Element bekannt; Graph geladen. | ✓ |
+| `REQ-pre-interface-escalation` | Realisierungs-Agent stellt fest: bestehender FLOW-Vertrag reicht nicht. | ✓ |
+| `REQ-pre-modelfree-gate` | MutateCommands liegen vor; LLM-Sidecar evtl. nicht erreichbar. | ✓ |
 | `REQ-precise-context` | Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression. | ✓ |
 | `REQ-precommit-timeout` | CR-GC-102: pre-commit-Hook kann eine Mutation blocken; preCommitTimeout (default 5000ms). | ✓ |
 | `REQ-prompt-provenance` | Jede Gate-Entscheidung ist ihrem Urheber, also Session und Modell, und ihrem ausloesenden Prompt im Wortlaut zuordenbar. Die Aufzeichnung ist abgeleitet, nie vom Konsumenten deklariert, und Abwesenheit bedeutet nicht aufgezeichnet, nie leerer Prompt. (CR-GC-354) | ✓ |

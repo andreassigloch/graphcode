@@ -1,0 +1,1854 @@
+{
+  "tool": "migrate-req-kinds",
+  "cr": "CR-GC-670",
+  "graph": "graphcode",
+  "counts": {
+    "req": 146,
+    "prePost": 32,
+    "risk": 0,
+    "mitigation": 0,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 32,
+    "noKinds": 0,
+    "satisfyToPrePost": 32,
+    "satisfyToRole": 0,
+    "fchainToFunctional": 14
+  },
+  "decisions": [
+    {
+      "uid": "REQ-code-governed-quality",
+      "name": "Gate-validierte, driftfreie Qualität",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-apply-gate",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-test",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-test-ui",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FUNC-test",
+        "FUNC-test-ui"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Qualitaetseigenschaft jeder Aenderung -> non-functional an FCHAIN-apply-gate; FUNC-test/-test-ui-satisfy entfallen",
+      "candidates": [
+        {
+          "uid": "FUNC-evaluate-rules",
+          "name": "evaluateRules()",
+          "via": "FCHAIN-apply-gate",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-emit-trajectory",
+          "name": "materializeTrajectory()",
+          "via": "FCHAIN-apply-gate",
+          "score": 1
+        },
+        {
+          "uid": "FUNC-fit-advisory",
+          "name": "computeFitAdvisory(before, after)",
+          "via": "FCHAIN-apply-gate",
+          "score": 1
+        },
+        {
+          "uid": "FUNC-mutate",
+          "name": "mutate(commands)",
+          "via": "FCHAIN-apply-gate",
+          "score": 1
+        },
+        {
+          "uid": "FUNC-own-kuzu-host",
+          "name": "ownKuzu()",
+          "via": "FCHAIN-apply-gate",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "uid": "REQ-conflict-free-merge",
+      "name": "Conflict-free Graph-Merge",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-merge-branches",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-merge-nodes",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-merge-branches"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Faehigkeit -> functional; FUNC-merge-nodes (realRef) erfuellt, FCHAIN-satisfy entfaellt",
+      "candidates": [
+        {
+          "uid": "FUNC-merge-nodes",
+          "name": "replayBranchLog(log, sinceVersion)",
+          "via": "FCHAIN-merge-branches",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "uid": "REQ-doc-export",
+      "name": "Graph → Markdown Re-Export",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-doc-export",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-export-markdown",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-render-views",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-view-changelog",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-view-conops",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-view-fmea",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-view-icd",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-view-intplan",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-view-rtm",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-doc-export"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Faehigkeit -> functional; FUNC-export-markdown/-render-views (realRef) erfuellen, FCHAIN-doc-export-satisfy entfaellt",
+      "candidates": [
+        {
+          "uid": "FUNC-export-markdown",
+          "name": "exportMarkdown(graph, view)",
+          "via": "FCHAIN-doc-export",
+          "score": 8
+        },
+        {
+          "uid": "FUNC-render-views",
+          "name": "render graph→markdown views",
+          "via": "FCHAIN-doc-export",
+          "score": 5
+        },
+        {
+          "uid": "FUNC-read-tools",
+          "name": "bindReadTools(ctx)",
+          "via": "FCHAIN-doc-export",
+          "score": 1
+        },
+        {
+          "uid": "FUNC-list-elements",
+          "name": "listElements(filter)",
+          "via": "FCHAIN-doc-export",
+          "score": 0
+        },
+        {
+          "uid": "FUNC-serve-stdio",
+          "name": "serveStdio()",
+          "via": "FCHAIN-doc-export",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "uid": "REQ-graph-snapshot-per-commit",
+      "name": "Kanonischer Graph-Snapshot pro Commit",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-snapshot-freshness",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-export-marker",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-graph-export-snapshot",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-mutate",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FUNC-export-marker",
+        "FUNC-graph-export-snapshot",
+        "FUNC-mutate"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Invariante ueber jeden Commit -> non-functional an FCHAIN-snapshot-freshness; FUNC-satisfy entfallen",
+      "candidates": [
+        {
+          "uid": "FUNC-graph-export-snapshot",
+          "name": "graph_export(views?)",
+          "via": "FCHAIN-snapshot-freshness",
+          "score": 10
+        },
+        {
+          "uid": "FUNC-export-marker",
+          "name": "setExportPending",
+          "via": "FCHAIN-snapshot-freshness",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-graph-store",
+          "name": "GraphStore",
+          "via": "FCHAIN-snapshot-freshness",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-held-back-traces",
+          "name": "heldBackTraces(repoRoot, systemId, live)",
+          "via": "FCHAIN-snapshot-freshness",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-mutate",
+          "name": "mutate(commands)",
+          "via": "FCHAIN-snapshot-freshness",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "uid": "REQ-graph-state-recall",
+      "name": "Frueheren Graph-Stand reproduzieren",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-recall",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-apply-reseed",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-reseed",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-rewind",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-recall"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Faehigkeit -> functional; FUNC-rewind/-reseed/-apply-reseed (realRef) erfuellen, FCHAIN-recall-satisfy entfaellt",
+      "candidates": [
+        {
+          "uid": "FUNC-reseed",
+          "name": "reseed(relPath)",
+          "via": "FCHAIN-recall",
+          "score": 11
+        },
+        {
+          "uid": "FUNC-rewind",
+          "name": "graphcode rewind <ref>",
+          "via": "FCHAIN-recall",
+          "score": 10
+        },
+        {
+          "uid": "FUNC-apply-reseed",
+          "name": "applyReseed",
+          "via": "FCHAIN-recall",
+          "score": 5
+        },
+        {
+          "uid": "FUNC-graph-store",
+          "name": "GraphStore",
+          "via": "FCHAIN-recall",
+          "score": 5
+        },
+        {
+          "uid": "FUNC-held-back-traces",
+          "name": "heldBackTraces(repoRoot, systemId, live)",
+          "via": "FCHAIN-recall",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "uid": "REQ-greenfield-systemtest-dod",
+      "name": "Definition-of-Done: Greenfield-Systemtest",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-systemtest-run",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-systemtest-metrics",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-systemtest-report",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-systemtest-run",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-systemtest-turn-analyse",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-systemtest-run"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Nachweis-Lauf -> functional; FUNC-systemtest-* (realRef) erfuellen, FCHAIN-satisfy entfaellt",
+      "candidates": [
+        {
+          "uid": "FUNC-systemtest-metrics",
+          "name": "Lauf bewerten",
+          "via": "FCHAIN-systemtest-run",
+          "score": 5
+        },
+        {
+          "uid": "FUNC-systemtest-report",
+          "name": "Laeufe nebeneinander stellen",
+          "via": "FCHAIN-systemtest-run",
+          "score": 1
+        },
+        {
+          "uid": "FUNC-systemtest-run",
+          "name": "Systemtest-Durchlauf fahren",
+          "via": "FCHAIN-systemtest-run",
+          "score": 1
+        },
+        {
+          "uid": "FUNC-systemtest-turn-analyse",
+          "name": "Turn-Analyse",
+          "via": "FCHAIN-systemtest-run",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "uid": "REQ-impact-based-testing",
+      "name": "Selektives Testset via Impact",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-impact-testing",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-impact-testing"
+      ],
+      "addSatisfy": [
+        "FUNC-deduce-tests"
+      ],
+      "decidedBy": "CR-GC-670",
+      "reason": "Faehigkeit Testauswahl -> functional, an FUNC-deduce-tests (realRef, Glied von FCHAIN-impact-testing) gehaengt",
+      "candidates": [
+        {
+          "uid": "FUNC-deduce-tests",
+          "name": "graph_tests(changeSet)",
+          "via": "FCHAIN-impact-testing",
+          "score": 3
+        },
+        {
+          "uid": "FUNC-graph-impact",
+          "name": "graph_impact(id, depth?)",
+          "via": "FCHAIN-impact-testing",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-resolve-tests-from-code",
+          "name": "Gerichtete code→REQ→TEST-Auflösung",
+          "via": "FCHAIN-impact-testing",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-plan-code-lane",
+          "name": "Code-Spur planen",
+          "via": "FCHAIN-impact-testing",
+          "score": 1
+        },
+        {
+          "uid": "FUNC-test-ingest",
+          "name": "graph_test_ingest",
+          "via": "FCHAIN-impact-testing",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "uid": "REQ-interactive-capture-suggest",
+      "name": "Interaktive Erfassung im suggest-Tier",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-capture",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-capture"
+      ],
+      "addSatisfy": [
+        "FUNC-decode"
+      ],
+      "decidedBy": "CR-GC-670",
+      "reason": "Faehigkeit Erfassung -> functional, an FUNC-decode (realRef, Format-E-Decode, Glied von FCHAIN-capture) gehaengt",
+      "candidates": [
+        {
+          "uid": "FUNC-decode",
+          "name": "formatEToCommands(harness, text)",
+          "via": "FCHAIN-capture",
+          "score": 1
+        },
+        {
+          "uid": "FUNC-mutate",
+          "name": "mutate(commands)",
+          "via": "FCHAIN-capture",
+          "score": 1
+        }
+      ],
+      "korrektur": {
+        "kinds": [
+          "non-functional"
+        ],
+        "dropSatisfy": [
+          "FUNC-decode"
+        ],
+        "addSatisfy": [
+          "FCHAIN-capture"
+        ],
+        "reason": "Korrektur: FUNC-decode (Ueberlappung 1) war der falsche Erfueller — die Testspur fuer src/loop/format-e-commands.ts zog drei fremde Tests (intent-anchors, se-author-uc). Ende-zu-Ende-Eigenschaft der Erfassungskette (suggest-Tier, Review vor Persist) -> non-functional an FCHAIN-capture"
+      }
+    },
+    {
+      "uid": "REQ-interface-change-escalation",
+      "name": "Interface-Änderung nur per Eskalation",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-interface-escalation",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Governance-Regel fuer Realisierungs-Agenten (kein direkter Interface-Zug) -> non-functional an FCHAIN-interface-escalation; kein FUNC realisiert sie allein",
+      "candidates": [
+        {
+          "uid": "FUNC-graph-impact",
+          "name": "graph_impact(id, depth?)",
+          "via": "FCHAIN-interface-escalation",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-read-tools",
+          "name": "bindReadTools(ctx)",
+          "via": "FCHAIN-interface-escalation",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-mutate",
+          "name": "mutate(commands)",
+          "via": "FCHAIN-interface-escalation",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "uid": "REQ-model-exchange-post",
+      "name": "Nachbedingung Modellaustausch",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-model-import",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-model-import -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-model-exchange-pre",
+      "name": "Vorbedingung Modellaustausch",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-import-code-verb",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-no-extraction",
+      "name": "Keine Extraktion in graphcode",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-model-import",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-import-code",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-import-code-verb",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-import-doc",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FUNC-import-code",
+        "FUNC-import-code-verb",
+        "FUNC-import-doc"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Querschnitts-Constraint (keine Extraktion in graphcode) -> non-functional, erfuellt Ende-zu-Ende von FCHAIN-model-import; FUNC-satisfy entfallen",
+      "candidates": [
+        {
+          "uid": "FUNC-import-code-verb",
+          "name": "executeImportCode",
+          "via": "FCHAIN-model-import",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-import-code",
+          "name": "Skill se:import-code",
+          "via": "FCHAIN-model-import",
+          "score": 1
+        },
+        {
+          "uid": "FUNC-import-doc",
+          "name": "Skill se:import-doc",
+          "via": "FCHAIN-model-import",
+          "score": 0
+        },
+        {
+          "uid": "FUNC-mutate",
+          "name": "mutate(commands)",
+          "via": "FCHAIN-model-import",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "uid": "REQ-post-agent-query",
+      "name": "Postcondition: Agent-Graph-Query (Impact + progressive Expansion)",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-agent-query",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-agent-query -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-post-apply-gate",
+      "name": "Postcondition: Apply-Gate-Ablauf (Governed Mutation)",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-apply-gate",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-apply-gate -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-post-capture",
+      "name": "Postcondition: Interaktive Erfassung (Text → suggest-Tier)",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-capture",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-capture -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-post-codec-roundtrip",
+      "name": "Postcondition: Format-E Round-Trip (encode∘decode)",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-codec-roundtrip",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-codec-roundtrip -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-post-emit-trajectory",
+      "name": "Postcondition: FUNC-emit-trajectory",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-emit-trajectory",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-post-emit-update-event",
+      "name": "Postcondition: FUNC-emit-update-event",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-emit-update-event",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-post-export-markdown",
+      "name": "Postcondition: exportMarkdown(graph, view)",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-export-markdown",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-post-harness-cli",
+      "name": "Postcondition: graphcode init|update|remove",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-harness-cli",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-post-impact-testing",
+      "name": "Postcondition: Impact-basierte Testauswahl",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-impact-testing",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-impact-testing -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-post-import",
+      "name": "Postcondition: importGraph(ontology, opts)",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-import",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-post-interface-escalation",
+      "name": "Postcondition: Interface-Änderungs-Eskalation",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-interface-escalation",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-interface-escalation -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-post-merge-nodes",
+      "name": "Postcondition: mergeNodes(graph)",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-merge-nodes",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-post-migrate-schema",
+      "name": "Postcondition: migrateSchema(from, to)",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-migrate-schema",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-post-modelfree-gate",
+      "name": "Postcondition: Modellfreier Gate-Betrieb",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-modelfree-gate",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-modelfree-gate -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-pre-agent-query",
+      "name": "Precondition: Agent-Graph-Query (Impact + progressive Expansion)",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-agent-query",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-agent-query -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-pre-apply-gate",
+      "name": "Precondition: Apply-Gate-Ablauf (Governed Mutation)",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-apply-gate",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-apply-gate -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-pre-capture",
+      "name": "Precondition: Interaktive Erfassung (Text → suggest-Tier)",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-capture",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-capture -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-pre-codec-roundtrip",
+      "name": "Precondition: Format-E Round-Trip (encode∘decode)",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-codec-roundtrip",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-codec-roundtrip -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-pre-emit-trajectory",
+      "name": "Precondition: FUNC-emit-trajectory",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-emit-trajectory",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-pre-emit-update-event",
+      "name": "Precondition: FUNC-emit-update-event",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-emit-update-event",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-pre-export-markdown",
+      "name": "Precondition: exportMarkdown(graph, view)",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-export-markdown",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-pre-harness-cli",
+      "name": "Precondition: graphcode init|update|remove",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-harness-cli",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-pre-impact-testing",
+      "name": "Precondition: Impact-basierte Testauswahl",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-impact-testing",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-impact-testing -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-pre-import",
+      "name": "Precondition: importGraph(ontology, opts)",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-import",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-pre-interface-escalation",
+      "name": "Precondition: Interface-Änderungs-Eskalation",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-interface-escalation",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-interface-escalation -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-pre-merge-nodes",
+      "name": "Precondition: mergeNodes(graph)",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-merge-nodes",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-pre-migrate-schema",
+      "name": "Precondition: migrateSchema(from, to)",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-migrate-schema",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-pre-modelfree-gate",
+      "name": "Precondition: Modellfreier Gate-Betrieb",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-modelfree-gate",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-modelfree-gate -> non-functional an der Kette; Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen"
+    },
+    {
+      "uid": "REQ-session-leaves-nothing-behind",
+      "name": "Sitzungsende hinterlaesst nichts",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-repo-lifecycle",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-session-shutdown",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-repo-lifecycle"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Verhalten beim Sitzungsende -> functional; FUNC-session-shutdown (realRef) erfuellt",
+      "candidates": [
+        {
+          "uid": "FUNC-session-shutdown",
+          "name": "SessionLifecycle",
+          "via": "FCHAIN-repo-lifecycle",
+          "score": 5
+        },
+        {
+          "uid": "FUNC-claim-store-lock",
+          "name": "StoreLock",
+          "via": "FCHAIN-repo-lifecycle",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-gve-sessions",
+          "name": "liveSessions",
+          "via": "FCHAIN-repo-lifecycle",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-gve-supervise",
+          "name": "attachGve",
+          "via": "FCHAIN-repo-lifecycle",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-harness-cli",
+          "name": "graphcode init|update|remove",
+          "via": "FCHAIN-repo-lifecycle",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "uid": "REQ-skill-authors-through-gate",
+      "name": "Autoren-Skill schreibt nur durchs Gate",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-skill-authoring",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-author-req",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-author-uc",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-close-violations",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-conops",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-fmea",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-generate",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-irr",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-optimize",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-plan",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-top-level",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-trade",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-target-profile",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-skill-authoring"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Verhalten der Autoren-Skills -> functional; die Skill-FUNC (realRef) erfuellen",
+      "candidates": [
+        {
+          "uid": "FUNC-close-violations",
+          "name": "Skill se:close-violations",
+          "via": "FCHAIN-skill-authoring",
+          "score": 4
+        },
+        {
+          "uid": "FUNC-se-optimize",
+          "name": "Skill se:optimize",
+          "via": "FCHAIN-skill-authoring",
+          "score": 4
+        },
+        {
+          "uid": "FUNC-author-uc",
+          "name": "Skill se:author-uc",
+          "via": "FCHAIN-skill-authoring",
+          "score": 3
+        },
+        {
+          "uid": "FUNC-se-conops",
+          "name": "Skill se-conops",
+          "via": "FCHAIN-skill-authoring",
+          "score": 3
+        },
+        {
+          "uid": "FUNC-se-generate",
+          "name": "Skill se:generate",
+          "via": "FCHAIN-skill-authoring",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "uid": "REQ-skill-reads-only",
+      "name": "Lesender Skill liest und schreibt nicht",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-skill-report",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-se-help",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-retro",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-review",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-se-status",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-skill-report"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Verhalten der lesenden Skills -> functional; FUNC-se-help/-retro/-review/-status (realRef) erfuellen",
+      "candidates": [
+        {
+          "uid": "FUNC-evaluate-rules",
+          "name": "evaluateRules()",
+          "via": "FCHAIN-skill-report",
+          "score": 4
+        },
+        {
+          "uid": "FUNC-compute-phase-readiness",
+          "name": "computePhaseReadiness(violations)",
+          "via": "FCHAIN-skill-report",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-compute-readiness",
+          "name": "computeReadiness(graph)",
+          "via": "FCHAIN-skill-report",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-function-criticality",
+          "name": "functionCriticality(graph)",
+          "via": "FCHAIN-skill-report",
+          "score": 2
+        },
+        {
+          "uid": "FUNC-score-completeness",
+          "name": "scoreCompleteness(gateId, graph)",
+          "via": "FCHAIN-skill-report",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "uid": "REQ-steering-from-metrics",
+      "name": "Naechster Schritt folgt aus gemessenen Kenngroessen",
+      "case": [
+        "functional-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "functional"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-steering-loop",
+          "type": "FCHAIN"
+        },
+        {
+          "uid": "FUNC-arch-fitness",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-compute-phase-readiness",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-compute-readiness",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-compute-steering-delta",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-fit-advisory",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-function-criticality",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-generation-step",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-goal-steerer",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-module-metrics",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-rank-candidates",
+          "type": "FUNC"
+        },
+        {
+          "uid": "FUNC-take-steering-snapshot",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [
+        "FCHAIN-steering-loop"
+      ],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-670",
+      "reason": "Steuerverhalten -> functional; FUNC-generation-step/-rank-candidates/... (realRef) erfuellen",
+      "candidates": [
+        {
+          "uid": "FUNC-graph-suggest",
+          "name": "graph_suggest(weights)",
+          "via": "FCHAIN-steering-loop",
+          "score": 7
+        },
+        {
+          "uid": "FUNC-gate-client",
+          "name": "bindGateClient(registry, stats, trace)",
+          "via": "FCHAIN-steering-loop",
+          "score": 6
+        },
+        {
+          "uid": "FUNC-fit-advisory",
+          "name": "computeFitAdvisory(before, after)",
+          "via": "FCHAIN-steering-loop",
+          "score": 5
+        },
+        {
+          "uid": "FUNC-rank-candidates",
+          "name": "rankCandidates(probes, focus)",
+          "via": "FCHAIN-steering-loop",
+          "score": 5
+        },
+        {
+          "uid": "FUNC-take-steering-snapshot",
+          "name": "takeSteeringSnapshot(graph, policy)",
+          "via": "FCHAIN-steering-loop",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "uid": "REQ-steering-post",
+      "name": "Nachbedingung Steuerungsrunde",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-take-steering-snapshot",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    },
+    {
+      "uid": "REQ-steering-pre",
+      "name": "Vorbedingung Steuerungsrunde",
+      "case": [
+        "prepost"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FUNC-graph-store",
+          "type": "FUNC"
+        }
+      ],
+      "kinds": [
+        "functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "mechanical",
+      "reason": "pre/postcondition an FUNC -> functional"
+    }
+  ],
+  "hinweis": "Angewendet in zwei Batches ueber graph_mutate: (1) alle 46 Eintraege, (2) Korrektur REQ-interactive-capture-suggest (Feld korrektur)."
+}

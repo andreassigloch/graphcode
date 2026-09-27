@@ -783,7 +783,6 @@
 | `FCHAIN-doc-export` | compose | `FUNC-view-icd` |
 | `FCHAIN-doc-export` | compose | `FUNC-view-intplan` |
 | `FCHAIN-doc-export` | compose | `FUNC-view-rtm` |
-| `FCHAIN-doc-export` | satisfy | `REQ-doc-export` |
 | `FCHAIN-generation-states` | compose | `FUNC-generation-step` |
 | `FCHAIN-generation-states` | compose | `FUNC-graph-suggest` |
 | `FCHAIN-generation-states` | compose | `FUNC-take-steering-snapshot` |
@@ -792,7 +791,6 @@
 | `FCHAIN-impact-testing` | compose | `FUNC-plan-code-lane` |
 | `FCHAIN-impact-testing` | compose | `FUNC-resolve-tests-from-code` |
 | `FCHAIN-impact-testing` | compose | `FUNC-test-ingest` |
-| `FCHAIN-impact-testing` | satisfy | `REQ-impact-based-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-post-impact-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-pre-impact-testing` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-graph-impact` |
@@ -817,7 +815,6 @@
 | `FCHAIN-loop-closure` | satisfy | `REQ-prompt-provenance` |
 | `FCHAIN-loop-closure` | satisfy | `REQ-rule-calibration` |
 | `FCHAIN-merge-branches` | compose | `FUNC-merge-nodes` |
-| `FCHAIN-merge-branches` | satisfy | `REQ-conflict-free-merge` |
 | `FCHAIN-model-import` | compose | `FUNC-import-code` |
 | `FCHAIN-model-import` | compose | `FUNC-import-code-verb` |
 | `FCHAIN-model-import` | compose | `FUNC-import-doc` |
@@ -837,7 +834,6 @@
 | `FCHAIN-recall` | compose | `FUNC-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-rewind` |
 | `FCHAIN-recall` | compose | `FUNC-seed-from-json` |
-| `FCHAIN-recall` | satisfy | `REQ-graph-state-recall` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-bind-tools` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-bootstrap` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-claim-store-lock` |
@@ -849,7 +845,6 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-run-verb` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-session-shutdown` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
-| `FCHAIN-repo-lifecycle` | satisfy | `REQ-session-leaves-nothing-behind` |
 | `FCHAIN-schema-migration` | compose | `FUNC-migrate-schema` |
 | `FCHAIN-schema-migration` | compose | `FUNC-schema-guard` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
@@ -865,7 +860,6 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-top-level` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-trade` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-target-profile` |
-| `FCHAIN-skill-authoring` | satisfy | `REQ-skill-authors-through-gate` |
 | `FCHAIN-skill-report` | compose | `FUNC-check-code-conformance` |
 | `FCHAIN-skill-report` | compose | `FUNC-compute-phase-readiness` |
 | `FCHAIN-skill-report` | compose | `FUNC-compute-readiness` |
@@ -879,7 +873,6 @@
 | `FCHAIN-skill-report` | compose | `FUNC-se-status` |
 | `FCHAIN-skill-report` | compose | `FUNC-test` |
 | `FCHAIN-skill-report` | compose | `FUNC-test-ui` |
-| `FCHAIN-skill-report` | satisfy | `REQ-skill-reads-only` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-auto-export` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-export-marker` |
@@ -918,12 +911,10 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-take-steering-snapshot` |
 | `FCHAIN-steering-loop` | compose | `FUNC-target-profile` |
 | `FCHAIN-steering-loop` | compose | `FUNC-target-profile-load` |
-| `FCHAIN-steering-loop` | satisfy | `REQ-steering-from-metrics` |
 | `FCHAIN-systemtest-run` | compose | `FUNC-systemtest-metrics` |
 | `FCHAIN-systemtest-run` | compose | `FUNC-systemtest-report` |
 | `FCHAIN-systemtest-run` | compose | `FUNC-systemtest-run` |
 | `FCHAIN-systemtest-run` | compose | `FUNC-systemtest-turn-analyse` |
-| `FCHAIN-systemtest-run` | satisfy | `REQ-greenfield-systemtest-dod` |
 | `FLOW-action` | io | `ACTOR-agent` |
 | `FLOW-action` | relation | `SCHEMA-action` |
 | `FLOW-arch-fitness` | io | `FUNC-fit-advisory` |
@@ -1507,6 +1498,7 @@
 | `FUNC-decode` | satisfy | `REQ-formatE-diff-dialect` |
 | `FUNC-deduce-tests` | allocate | `MOD-projections` |
 | `FUNC-deduce-tests` | io | `FLOW-test-selection` |
+| `FUNC-deduce-tests` | satisfy | `REQ-impact-based-testing` |
 | `FUNC-deduce-tests` | satisfy | `REQ-test-runnable-binding` |
 | `FUNC-emit-trajectory` | allocate | `MOD-projections` |
 | `FUNC-emit-trajectory` | io | `FLOW-trajectory` |
@@ -1528,7 +1520,6 @@
 | `FUNC-export-markdown` | satisfy | `REQ-pre-export-markdown` |
 | `FUNC-export-marker` | allocate | `MOD-kernel` |
 | `FUNC-export-marker` | io | `FLOW-export-pending` |
-| `FUNC-export-marker` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-extract-mutate` | allocate | `MOD-loop` |
 | `FUNC-extract-mutate` | io | `FLOW-recovered-batch` |
 | `FUNC-extract-mutate` | satisfy | `REQ-prose-recovery` |
@@ -1565,7 +1556,6 @@
 | `FUNC-graph-expand` | io | `FLOW-expand-subgraph` |
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-graph-export-snapshot` | allocate | `MOD-projections` |
-| `FUNC-graph-export-snapshot` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-graph-export-snapshot` | satisfy | `REQ-held-back-traces-named` |
 | `FUNC-graph-impact` | allocate | `MOD-kernel` |
 | `FUNC-graph-impact` | io | `FLOW-impact-slice` |
@@ -1616,14 +1606,11 @@
 | `FUNC-import` | satisfy | `REQ-post-import` |
 | `FUNC-import` | satisfy | `REQ-pre-import` |
 | `FUNC-import-code` | allocate | `MOD-agent-surface` |
-| `FUNC-import-code` | satisfy | `REQ-no-extraction` |
 | `FUNC-import-code-verb` | allocate | `MOD-surface` |
 | `FUNC-import-code-verb` | io | `FLOW-mutate-cmd-import-code-verb` |
 | `FUNC-import-code-verb` | satisfy | `REQ-model-exchange-pre` |
-| `FUNC-import-code-verb` | satisfy | `REQ-no-extraction` |
 | `FUNC-import-doc` | allocate | `MOD-agent-surface` |
 | `FUNC-import-doc` | io | `FLOW-mutate-cmd-import-doc` |
-| `FUNC-import-doc` | satisfy | `REQ-no-extraction` |
 | `FUNC-inventory-channel` | allocate | `MOD-loop` |
 | `FUNC-inventory-channel` | io | `FLOW-channel-inventory` |
 | `FUNC-inventory-channel` | satisfy | `REQ-inventory-switch` |
@@ -1652,7 +1639,6 @@
 | `FUNC-mutate` | io | `FLOW-gate-verdict` |
 | `FUNC-mutate` | io | `FLOW-graph-delta` |
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
-| `FUNC-mutate` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-nd-similarity` | allocate | `MOD-kernel-measure` |
 | `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
@@ -1774,13 +1760,11 @@
 | `FUNC-target-profile-load` | satisfy | `REQ-target-shifts-ranking` |
 | `FUNC-test` | allocate | `MOD-agent-surface` |
 | `FUNC-test` | io | `FLOW-skill-report-test` |
-| `FUNC-test` | satisfy | `REQ-code-governed-quality` |
 | `FUNC-test-ingest` | allocate | `MOD-projections` |
 | `FUNC-test-ingest` | io | `FLOW-mutate-cmd-test-ingest` |
 | `FUNC-test-ingest` | satisfy | `REQ-test-runnable-binding` |
 | `FUNC-test-ui` | allocate | `MOD-agent-surface` |
 | `FUNC-test-ui` | io | `FLOW-skill-report-test-ui` |
-| `FUNC-test-ui` | satisfy | `REQ-code-governed-quality` |
 | `FUNC-tool-context` | allocate | `MOD-surface` |
 | `FUNC-tool-context` | io | `FLOW-tool-context` |
 | `FUNC-tool-context` | satisfy | `REQ-mcp-tool-registry` |

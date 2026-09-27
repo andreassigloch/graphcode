@@ -5412,7 +5412,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -5658,7 +5658,7 @@
       "description": "Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)",
       "status": "done",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -5774,7 +5774,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -5785,7 +5785,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -5850,7 +5850,7 @@
       "name": "Nachbedingung Modellaustausch",
       "description": "Nach einem Lauf steht der eingelesene Bestand als Graph-Zustand mit gesichertem Vorzustand, oder das erzeugte Dokument als Datei unter docs/views; beide tragen den graphVersion-Stempel des Laufs.",
       "kinds": [
-        "postcondition"
+        "non-functional"
       ]
     },
     {
@@ -5859,7 +5859,7 @@
       "name": "Vorbedingung Modellaustausch",
       "description": "Vor einem Ein- oder Auslesevorgang liegt ein Repo mit initialisiertem Store vor sowie ein lesbarer Fremdbestand: ein Format-E-Artefakt, ein TypeScript-Quellbaum oder ein Dokument.",
       "kinds": [
-        "precondition"
+        "functional"
       ]
     },
     {
@@ -5900,7 +5900,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -5961,7 +5961,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "non-functional"
       ]
     },
     {
@@ -5972,7 +5972,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "non-functional"
       ]
     },
     {
@@ -5983,7 +5983,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "non-functional"
       ]
     },
     {
@@ -5994,7 +5994,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "non-functional"
       ]
     },
     {
@@ -6005,7 +6005,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "functional"
       ]
     },
     {
@@ -6016,7 +6016,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "functional"
       ]
     },
     {
@@ -6027,7 +6027,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "functional"
       ],
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
@@ -6039,7 +6039,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "functional"
       ],
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
@@ -6051,7 +6051,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "non-functional"
       ]
     },
     {
@@ -6062,7 +6062,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "functional"
       ],
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
@@ -6074,7 +6074,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "non-functional"
       ]
     },
     {
@@ -6085,7 +6085,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "functional"
       ]
     },
     {
@@ -6096,7 +6096,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "functional"
       ]
     },
     {
@@ -6107,7 +6107,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "postcondition"
+        "non-functional"
       ]
     },
     {
@@ -6118,7 +6118,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "non-functional"
       ]
     },
     {
@@ -6129,7 +6129,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "non-functional"
       ]
     },
     {
@@ -6140,7 +6140,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "non-functional"
       ]
     },
     {
@@ -6151,7 +6151,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "non-functional"
       ]
     },
     {
@@ -6162,7 +6162,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "functional"
       ]
     },
     {
@@ -6173,7 +6173,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "functional"
       ]
     },
     {
@@ -6184,7 +6184,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "functional"
       ],
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
@@ -6196,7 +6196,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "functional"
       ],
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
@@ -6208,7 +6208,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "non-functional"
       ]
     },
     {
@@ -6219,7 +6219,7 @@
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "functional"
       ],
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
@@ -6231,7 +6231,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "non-functional"
       ]
     },
     {
@@ -6242,7 +6242,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "functional"
       ]
     },
     {
@@ -6253,7 +6253,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "functional"
       ]
     },
     {
@@ -6264,7 +6264,7 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "precondition"
+        "non-functional"
       ]
     },
     {
@@ -6664,7 +6664,7 @@
       "description": "Nach einer Steuerungsrunde liegt die Empfehlung deterministisch aus genau einem Mess-Snapshot vor: derselbe Graph liefert dieselbe Empfehlung, und die Messung hat den Graphen nicht veraendert.",
       "status": "reviewed",
       "kinds": [
-        "postcondition"
+        "functional"
       ]
     },
     {
@@ -6674,7 +6674,7 @@
       "description": "Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.",
       "status": "reviewed",
       "kinds": [
-        "precondition"
+        "functional"
       ]
     },
     {
@@ -14046,9 +14046,7 @@
     {
       "source": "FCHAIN-capture",
       "target": "REQ-interactive-capture-suggest",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-capture",
@@ -14148,11 +14146,6 @@
       "type": "compose"
     },
     {
-      "source": "FCHAIN-doc-export",
-      "target": "REQ-doc-export",
-      "type": "satisfy"
-    },
-    {
       "source": "FCHAIN-generation-states",
       "target": "FUNC-generation-step",
       "type": "compose"
@@ -14193,13 +14186,6 @@
       "source": "FCHAIN-impact-testing",
       "target": "FUNC-test-ingest",
       "type": "compose"
-    },
-    {
-      "source": "FCHAIN-impact-testing",
-      "target": "REQ-impact-based-testing",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FCHAIN-impact-testing",
@@ -14337,11 +14323,6 @@
       "type": "compose"
     },
     {
-      "source": "FCHAIN-merge-branches",
-      "target": "REQ-conflict-free-merge",
-      "type": "satisfy"
-    },
-    {
       "source": "FCHAIN-model-import",
       "target": "FUNC-import-code",
       "type": "compose"
@@ -14450,11 +14431,6 @@
       "type": "compose"
     },
     {
-      "source": "FCHAIN-recall",
-      "target": "REQ-graph-state-recall",
-      "type": "satisfy"
-    },
-    {
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-bind-tools",
       "type": "compose"
@@ -14509,11 +14485,6 @@
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-upgrade",
       "type": "compose"
-    },
-    {
-      "source": "FCHAIN-repo-lifecycle",
-      "target": "REQ-session-leaves-nothing-behind",
-      "type": "satisfy"
     },
     {
       "source": "FCHAIN-schema-migration",
@@ -14591,11 +14562,6 @@
       "type": "compose"
     },
     {
-      "source": "FCHAIN-skill-authoring",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FCHAIN-skill-report",
       "target": "FUNC-check-code-conformance",
       "type": "compose",
@@ -14663,11 +14629,6 @@
       "source": "FCHAIN-skill-report",
       "target": "FUNC-test-ui",
       "type": "compose"
-    },
-    {
-      "source": "FCHAIN-skill-report",
-      "target": "REQ-skill-reads-only",
-      "type": "satisfy"
     },
     {
       "source": "FCHAIN-snapshot-freshness",
@@ -14871,11 +14832,6 @@
       "weight": "1"
     },
     {
-      "source": "FCHAIN-steering-loop",
-      "target": "REQ-steering-from-metrics",
-      "type": "satisfy"
-    },
-    {
       "source": "FCHAIN-systemtest-run",
       "target": "FUNC-systemtest-metrics",
       "type": "compose"
@@ -14894,11 +14850,6 @@
       "source": "FCHAIN-systemtest-run",
       "target": "FUNC-systemtest-turn-analyse",
       "type": "compose"
-    },
-    {
-      "source": "FCHAIN-systemtest-run",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "satisfy"
     },
     {
       "source": "FLOW-action",
@@ -17869,6 +17820,11 @@
     },
     {
       "source": "FUNC-deduce-tests",
+      "target": "REQ-impact-based-testing",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-deduce-tests",
       "target": "REQ-test-runnable-binding",
       "type": "satisfy"
     },
@@ -17997,11 +17953,6 @@
       "source": "FUNC-export-marker",
       "target": "FLOW-export-pending",
       "type": "io"
-    },
-    {
-      "source": "FUNC-export-marker",
-      "target": "REQ-graph-snapshot-per-commit",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-extract-mutate",
@@ -18184,11 +18135,6 @@
       "source": "FUNC-graph-export-snapshot",
       "target": "MOD-projections",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-graph-export-snapshot",
-      "target": "REQ-graph-snapshot-per-commit",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-export-snapshot",
@@ -18469,11 +18415,6 @@
       "type": "allocate"
     },
     {
-      "source": "FUNC-import-code",
-      "target": "REQ-no-extraction",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-import-code-verb",
       "target": "MOD-surface",
       "type": "allocate"
@@ -18489,12 +18430,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-import-code-verb",
-      "target": "REQ-no-extraction",
-      "type": "satisfy",
-      "weight": "1"
-    },
-    {
       "source": "FUNC-import-doc",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -18503,11 +18438,6 @@
       "source": "FUNC-import-doc",
       "target": "FLOW-mutate-cmd-import-doc",
       "type": "io"
-    },
-    {
-      "source": "FUNC-import-doc",
-      "target": "REQ-no-extraction",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-inventory-channel",
@@ -18665,11 +18595,6 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-mutate",
-      "target": "REQ-graph-snapshot-per-commit",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-mutate",
@@ -19282,11 +19207,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-test",
-      "target": "REQ-code-governed-quality",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-test-ingest",
       "target": "MOD-projections",
       "type": "allocate"
@@ -19310,11 +19230,6 @@
       "source": "FUNC-test-ui",
       "target": "FLOW-skill-report-test-ui",
       "type": "io"
-    },
-    {
-      "source": "FUNC-test-ui",
-      "target": "REQ-code-governed-quality",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-tool-context",
@@ -22292,5 +22207,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 514
+  "graphVersion": 1
 }

@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 5 ACTOR, 9 UC, 25 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 5 ACTOR, 9 UC, 26 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -28,6 +28,7 @@
 | `REQ-import-se-ontology` | SE-Ontologie aus @sigloch/contracts/se importieren, nicht lokal neu definieren. (SPEC §1, Drift D1) | open |
 | `REQ-install-idempotent` | Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert. | open |
 | `REQ-interface-schema` | Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell) | open |
+| `REQ-no-extraction` | Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS) | open |
 | `REQ-precommit-timeout` | CR-GC-102: pre-commit-Hook kann eine Mutation blocken; preCommitTimeout (default 5000ms). | open |
 | `REQ-readonly-bridge` | Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS) | done |
 | `REQ-responsiveness` | Bindende NFR (Familie §6b): erste Reaktion < 0,2s (UI+Transport+Store-Query+Onto-/Rule-Check, ohne LLM). Draft-Apply sofort + nur betroffener Subgraph geprüft; volle Konsistenz am Commit. End-to-end über FCHAIN-apply-gate. | open |
