@@ -2707,6 +2707,12 @@
       "description": "docs/cr/open/CR-GC-702-arch-phase-fordert-2-alternative-zerlegu.md"
     },
     {
+      "id": "CR-GC-703",
+      "type": "CR",
+      "name": "Executor-Prompt-Vorbilder lecken als Inhalt: REQ-login-* in 9 von 9 Laeufen eines Auftrags ohne Login",
+      "description": "docs/cr/open/CR-GC-703-executor-prompt-vorbilder-lecken-als-inh.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22350,5 +22356,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 526
+  "graphVersion": 527
 }

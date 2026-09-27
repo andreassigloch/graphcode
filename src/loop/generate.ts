@@ -236,13 +236,16 @@ export const RULE_CLAUSE: Record<
       `Diese UCs sind von keinem ACTOR erreichbar (${uids.join(', ')}): der EINZIGE legale Weg ist` +
       ' ACTOR io→FLOW io→FUNC, wobei die FUNC Mitglied einer FCHAIN des UC ist. ACTOR direkt an UC' +
       ' oder an FCHAIN wird von R-18 abgewiesen, in beiden Richtungen. Jeder FLOW braucht genau einen' +
-      ' Vertrag (FLOW relation→SCHEMA) und genau einen Erzeuger. Vorbild — echte uids statt Platzhalter,' +
-      ' alle neuen Knoten deklariert, alles in EINEM Batch:\n' +
-      '## Nodes\n### FLOW\n+ FLOW-anfrage|Anfrage des Nutzers an das System [__name:Anfrage]\n' +
-      '### SCHEMA\n+ SCHEMA-anfrage|Form der Anfrage: Text und Sitzungs-ID [__name:Anfrage-Vertrag]\n' +
-      '### FUNC\n+ FUNC-anfrage-annehmen|Nimmt die Anfrage entgegen. [__name:Anfrage annehmen]\n\n' +
-      '## Edges\n+ ACTOR-nutzer -io-> FLOW-anfrage\n+ FLOW-anfrage -io-> FUNC-anfrage-annehmen\n' +
-      '+ FLOW-anfrage -relation-> SCHEMA-anfrage\n+ FCHAIN-sitzung -compose-> FUNC-anfrage-annehmen',
+      ' Vertrag (FLOW relation→SCHEMA) und genau einen Erzeuger. Vorbild — uids und Texte aus dem Auftrag' +
+      ' bilden (Platzhalter «…», `beispiel` in einer uid ist nie ein Inhalt); ACTOR und FCHAIN sind die' +
+      ' vorhandenen des UC; alle neuen Knoten deklariert, alles in EINEM Batch:\n' +
+      '## Nodes\n### FLOW\n+ FLOW-beispiel-eingabe|«Eingabe A» von «Akteur A» an das System [__name:«Eingabe A»]\n' +
+      '### SCHEMA\n+ SCHEMA-beispiel-eingabe|Form von «Eingabe A»: «Feld A» und «Feld B» [__name:Vertrag «Eingabe A»]\n' +
+      '### FUNC\n+ FUNC-beispiel-verarbeiten|Verarbeitet «Eingabe A» zu «Ergebnis A». [__name:«Eingabe A» verarbeiten]\n\n' +
+      '## Edges\n+ ACTOR-beispiel -io-> FLOW-beispiel-eingabe\n+ FLOW-beispiel-eingabe -io-> FUNC-beispiel-verarbeiten\n' +
+      '+ FLOW-beispiel-eingabe -relation-> SCHEMA-beispiel-eingabe\n+ FCHAIN-beispiel -compose-> FUNC-beispiel-verarbeiten',
+    // ITEM-2026-607: Platzhalter statt Inhalt. Das fruehere Vorbild (Anfrage/Nutzer/Sitzungs-ID) stand
+    // woertlich in 7 von 9 Laeufen (CR-GC-682); `beispiel`-uids und «X A» sperrt der Preflight (CR-GC-672).
     // CR-GC-658: das Vorbild steht in der Klausel, weil sie die Arbeit beschreibt — ohne es scheiterte
     // qwen3-coder an FLOW ohne SCHEMA (42x R-18) und an Platzhalter-uids (STRUCT), gcrun-70..72.
     // CR-GC-655: bewusst KEIN se:author-uc (so empfiehlt es contracts RULE_HELP). Gemessen gcrun-60/62:

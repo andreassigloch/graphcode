@@ -732,6 +732,21 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(klausel).toContain('keine eigenen Gate-Proben');
   });
 
+  it('jede uid eines Klausel-Vorbilds ist als Vorbild erkennbar — kein Inhalt, der lecken kann (ITEM-2026-607)', () => {
+    // Gemessen CR-GC-682 (9 Laeufe): das UC-02-Vorbild (FLOW-anfrage, FUNC-anfrage-annehmen,
+    // ACTOR-nutzer, FCHAIN-sitzung, „Sitzungs-ID") stand als Inhalt in den Graphen — 63
+    // Annahme-FUNCs, ACTOR nutzer in 7/9. Der Preflight (CR-GC-672) sperrt nur uids mit `beispiel`.
+    const uid = /\b(?:SYS|UC|ACTOR|FCHAIN|FUNC|FLOW|REQ|TEST|MOD|SCHEMA)-[a-z][a-z0-9-]*/g;
+    const lecks: string[] = [];
+    for (const [regel, klausel] of Object.entries(RULE_CLAUSE)) {
+      const vorbild = klausel.text(['UC-fund']).split('\n').filter((z) => /^[+~] /.test(z));
+      for (const u of vorbild.flatMap((z) => z.split('|')[0].match(uid) ?? [])) {
+        if (!/(^|-)beispiel(-|$)/.test(u)) lecks.push(`${regel}: ${u}`);
+      }
+    }
+    expect(lecks).toEqual([]);
+  });
+
   it("'driver' verlangt je Dimension EINE Loesung, keine Alternativen im selben Batch (ITEM-2026-610)", () => {
     // Gemessen gcrun-310 (candidates=1): „2 alternative Zerlegungen, lass das Gate waehlen" — der
     // Treiber wendet den GANZEN Batch an, also landeten beide, danach Alternativen der Alternativen

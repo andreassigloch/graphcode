@@ -29,9 +29,10 @@ export const VORBILD_UIDS = [
   'TEST-beispiel-a-ablauf', 'TEST-beispiel-a-grenze', 'TEST-beispiel-b-ablauf', 'TEST-beispiel-b-abweisung',
   'UC-beispiel-a', 'UC-beispiel-b',
   // generate.ts UC-02, heute
-  'FLOW-anfrage', 'SCHEMA-anfrage', 'FUNC-anfrage-annehmen', 'ACTOR-nutzer', 'FCHAIN-sitzung',
-  // früher (CR-GC-667 bis CR-GC-672)
+  'FLOW-beispiel-eingabe', 'SCHEMA-beispiel-eingabe', 'FUNC-beispiel-verarbeiten', 'ACTOR-beispiel',
+  // früher (CR-GC-667 bis CR-GC-672; UC-02 bis CR-GC-703)
   'REQ-login-passwort', 'REQ-login-dauer', 'UC-login',
+  'FLOW-anfrage', 'SCHEMA-anfrage', 'FUNC-anfrage-annehmen', 'ACTOR-nutzer', 'FCHAIN-sitzung',
 ];
 
 const zaehle = (m, k, n = 1) => { m[k] = (m[k] ?? 0) + n; return m; };
