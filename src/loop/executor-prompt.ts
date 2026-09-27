@@ -104,6 +104,16 @@ export const IDLE_NUDGE =
   'graphcode_graph_mutate-Tool-Call mit {"formatE": "..."} — keine Prosa, keine weitere Analyse.';
 
 /**
+ * Rueckmeldung an das Modell, wenn seine Antwort am Token-Budget abgeschnitten ist (CR-GC-688/691).
+ * Nichts davon wird uebernommen — auch nicht die vollstaendigen Teile, die der Salvage-Pfad
+ * bergen koennte: ein Teil-Batch sieht fuer Gate und Seed-Stufe aus wie der ganze. Beide Pfade
+ * (Ein-Kandidat und Best-of-N) senden diesen einen Text.
+ */
+export const ABGESCHNITTEN_NUDGE =
+  'Deine Antwort wurde am Token-Budget abgeschnitten — nichts davon wurde uebernommen. ' +
+  'Emittiere den Batch kleiner: nur das, was diese Instruktion verlangt, ohne Erklaerung davor.';
+
+/**
  * CR-GC-667: die Antwort auf Fragezeilen, wenn niemand da ist — der Registertext aus CR-GC-592,
  * derselbe, den `GRAPHCODE.md` und `se:generate` einsetzen. Ein Text, zwei Pfade.
  */

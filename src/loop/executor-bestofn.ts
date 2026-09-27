@@ -12,7 +12,7 @@
  */
 import type { DuplicateHit } from '../kernel/measure/nd-similarity.js';
 import type { MCPToolRegistry } from '../kernel/tool-contract.js';
-import { IDLE_NUDGE, SYSTEM } from './executor-prompt.js';
+import { ABGESCHNITTEN_NUDGE, IDLE_NUDGE, SYSTEM } from './executor-prompt.js';
 import {
   deltaSum,
   steerImprovement,
@@ -28,15 +28,6 @@ import { READ_TOOLS, execReadOrGraphTool, pushToolResults } from './executor-too
 import { formatGateFeedback, ruleIdsOf, type GateClient, type MutateOutcome } from './executor-gate.js';
 import type { CallModel, ExecutorConfig, ExecutorStats, ModelResponse } from './executor.js';
 import { istAbgeschnitten } from './model-answer-contract.js';
-
-/**
- * Rueckmeldung an das Modell, wenn seine Antwort am Token-Budget abgeschnitten ist (CR-GC-688).
- * Nichts davon wird uebernommen — auch nicht die vollstaendigen Teile, die der Salvage-Pfad
- * bergen koennte: ein Teil-Batch sieht fuer Gate und Seed-Stufe aus wie der ganze.
- */
-export const ABGESCHNITTEN_NUDGE =
-  'Deine Antwort wurde am Token-Budget abgeschnitten — nichts davon wurde uebernommen. ' +
-  'Emittiere den Batch kleiner: nur das, was diese Instruktion verlangt, ohne Erklaerung davor.';
 
 /** Was eine Runde vom Treiber bekommt — derselbe Lauf-Zustand wie der Ein-Kandidaten-Pfad. */
 export interface BestOfNContext {

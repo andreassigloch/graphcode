@@ -8,8 +8,8 @@
  * ACTORs" und ist durch.
  *
  * Reale Persistenz (Disk-Kuzu im temp repoRoot), gescriptetes Modell — der Modell-Endpoint ist die
- * einzige simulierte Grenze. Hier der Best-of-N-Pfad; der Ein-Kandidaten-Pfad in `executor.ts`
- * wartet auf CR-GC-682 (siehe CR-GC-688).
+ * einzige simulierte Grenze. Beide Pfade: Best-of-N (`executor-bestofn.ts`, CR-GC-688) und der
+ * Ein-Kandidaten-Pfad in `executor.ts` (CR-GC-691) — auf ihm lief der gemessene `seed:actor`.
  *
  * @author andreas@siglochconsulting
  */
@@ -82,7 +82,10 @@ describe('CR-GC-688: istAbgeschnitten kennt die Stop-Vokabeln aller Backends', (
   });
 });
 
-describe('CR-GC-688: Best-of-N uebernimmt nichts aus einer abgeschnittenen Antwort', () => {
+describe.each([
+  { pfad: 'Best-of-N (CR-GC-688)', candidates: 2 },
+  { pfad: 'Ein-Kandidaten-Pfad (CR-GC-691)', candidates: 1 },
+])('$pfad uebernimmt nichts aus einer abgeschnittenen Antwort', ({ candidates }) => {
   let repoRoot: string;
   let harness: Awaited<ReturnType<typeof createHarness>>;
   let registry: ReturnType<typeof bindToolsToHarness>;
@@ -112,7 +115,7 @@ describe('CR-GC-688: Best-of-N uebernimmt nichts aus einer abgeschnittenen Antwo
     model: 'scripted',
     maxRounds: 1,
     maxStepTurns: 4,
-    candidates: 2,
+    candidates,
   });
 
   it('der geborgene Teil-Batch wird verworfen, das Modell erfaehrt den Grund und liefert neu', async () => {
@@ -129,11 +132,13 @@ describe('CR-GC-688: Best-of-N uebernimmt nichts aus einer abgeschnittenen Antwo
     expect(sys.attributes?.note).toBe('aktualisiert');
   });
 
-  it('auch ein abgeschnittener Werkzeugaufruf ist kein Kandidat', async () => {
+  it.each(['max_tokens', 'length'])('auch ein abgeschnittener Werkzeugaufruf (stop=%s) ist kein Kandidat', async (stop) => {
     const teil = { commands: [JSON.parse(actor('a')) as unknown] };
-    const { callModel } = modell(() => mutateCall('k', teil, 'max_tokens'));
-    await runExecutor({ registry, workspaceDir: repoRoot, config, callModel });
+    const { callModel } = modell(() => mutateCall('k', teil, stop));
+    const traces: string[] = [];
+    await runExecutor({ registry, workspaceDir: repoRoot, config, callModel, trace: (l) => traces.push(l) });
     expect(uids()).not.toContain('ACTOR-a');
+    expect(traces.some((l) => l.includes(`abgeschnitten (stop=${stop})`))).toBe(true);
     const sys = harness.getGraph().nodes.find((n) => n.uid === 'SYS-app') as { attributes?: Record<string, unknown> };
     expect(sys.attributes?.note).toBe('aktualisiert');
   });

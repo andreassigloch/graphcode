@@ -28,11 +28,12 @@ import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 import { GenerationStep } from './generate.js';
 // Der Antwortvertrag des Backends (CR-GC-426, SCHEMA-model-answer): geprüft am
 // Empfang, in der Draht-Form JEDES Backends — nicht erst im Prosa-Parser.
-import type { ModelAnswer, ModelToolCall } from './model-answer-contract.js';
+import { istAbgeschnitten, type ModelAnswer, type ModelToolCall } from './model-answer-contract.js';
 // Die drei zustandsfreien Executor-Achsen (CR-GC-320) — Prompt/Injektion,
 // Best-of-N-Ranking, Prosa-Recovery. Kein Re-Export von hier: wer sie braucht,
 // importiert das jeweilige Modul direkt (keine parallelen Pfade).
 import {
+  ABGESCHNITTEN_NUDGE,
   EMIT_SUFFIX,
   GUIDE_HINT,
   IDLE_NUDGE,
@@ -395,12 +396,22 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
           (resp.toolCalls.map((c) => c.name.replace('graphcode_', '')).join(',') +
             // Auch MIT Werkzeugaufruf: am Budget abgeschnitten traegt der Aufruf eine
             // leere Eingabe, und die Spur zeigte nur "graph_mutate" (CR-GC-572).
-            (resp.toolCalls.length && resp.stopReason === 'max_tokens' ? ' (stop=max_tokens)' : '') ||
+            (resp.toolCalls.length && istAbgeschnitten(resp.stopReason) ? ` (stop=${resp.stopReason})` : '') ||
             // CR-GC-426: OHNE den Stop-Grund sieht eine am Token-Budget abgeschnittene
             // Antwort genauso aus wie eine geschwaetzige — beide "(no calls)". Der
             // Salvage-Pfad unten existiert nur fuer die erste; die Spur muss sie trennen.
             `(no calls, stop=${resp.stopReason ?? 'unbekannt'})`),
       );
+
+      if (istAbgeschnitten(resp.stopReason)) {
+        // CR-GC-691 (wie CR-GC-688 im Best-of-N-Pfad): abgeschnitten ist kein Batch — weder der Text
+        // (Salvage bergte den Teil) noch ein Werkzeugaufruf (seine Eingabe ist nur der Anfang). Als
+        // Text in die History, nicht als assistantMsg: offene tool_calls verlangten ein Ergebnis je Aufruf.
+        trace(`    abgeschnitten (stop=${resp.stopReason}) — nichts uebernommen`);
+        messages.push({ role: 'assistant', content: resp.text || '(abgeschnitten)' });
+        messages.push({ role: 'user', content: ABGESCHNITTEN_NUDGE });
+        continue;
+      }
 
       if (resp.toolCalls.length === 0) {
         // Kein Tool-Call: Prosa-Mutate recovern, [ARGS]-Text-Call recovern, sonst idle.
