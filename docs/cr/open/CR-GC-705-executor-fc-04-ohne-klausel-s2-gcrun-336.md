@@ -29,5 +29,12 @@ Runden zurueckgestellt.
 
 - [x] Rot zuerst: „FC-04 gibt je Kette das Skelett fuer den fehlenden Ausgang vor".
 - [x] Betroffene Tests 154/154, `tsc` sauber.
-- [ ] Im Lauf: Stillstand-Runden an FC-04, Ausgangs-Muster im Graphen, erreicht der Lauf `arch` —
-      S2 gcrun-339..341 (40 Runden), misst zugleich CR-GC-702 und T-V5.
+- [x] Im Lauf (S2 gcrun-339..341, 40 Runden, gegen gcrun-336..338 ohne Klausel): FC-04 in keinem Lauf
+      mehr zurueckgestellt (vorher je Lauf mehrfach); `FUNC -io-> FLOW` und `FLOW -io-> ACTOR` jetzt in
+      allen Laeufen (vorher in keinem); Aehnlichkeit zum Golden 56/56/59 % (vorher 46/48/44 %);
+      Stillstand-Runden 11/10/13 (vorher ~16).
+- Nicht erreicht, benannt: `arch` nur einmal im Fokus (AF-02), Ketten weiter mit genau einer FUNC
+  (14/14), MOD 0–1 — CR-GC-702 und T-V5 bleiben ungemessen. Neuer Engpass: Stillstand an AF-01..04
+  (Analyse-Stempel, die der Executor nicht erzeugen kann). Und: die gewonnenen Runden gehen in die
+  req-Phase, wo das Modell bestehende REQ/TEST neu anlegt — Dubletten 23/16/5 (vorher 2/1/4),
+  „ohne Befund" ausgeloest. Beides eigene Items.

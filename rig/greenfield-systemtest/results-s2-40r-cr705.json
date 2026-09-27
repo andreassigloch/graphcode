@@ -1,0 +1,449 @@
+[
+  {
+    "arm": "gcrun",
+    "model": "qwen3-coder-30b-lms:latest",
+    "executor": "gcrun",
+    "run": 339,
+    "stempel": {
+      "korpus": "sigllm-gcrun",
+      "prompt": {
+        "pfad": "/Users/andreas/Developer/dev/graphcode/rig/sigllm-spezifikation/prompt-prosa.txt",
+        "sha256": "0f928b3f930d"
+      },
+      "golden": {
+        "pfad": "/Users/andreas/Developer/dev/graphcode/rig/sigllm-spezifikation/golden/sigllm-v98.graph.json",
+        "sha256": "a2d01827f4a9"
+      },
+      "seed": "SYS-sig-local",
+      "material": "/Users/andreas/Developer/dev/graphcode/rig/sigllm-spezifikation/material-prosa",
+      "zeitgrenze_s": 5400
+    },
+    "exportError": null,
+    "ende": null,
+    "haengenderHost": null,
+    "elements": 94,
+    "traces": 163,
+    "structure": {
+      "UC": 3,
+      "FUNC": 3,
+      "MOD": 0,
+      "REQ": 34,
+      "TEST": 34
+    },
+    "readiness": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "gatesPassed": "3/8"
+    },
+    "spec": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "dimensions": {
+        "req": 0.879,
+        "uc": 0.972,
+        "arch": 0.988,
+        "alloc": null,
+        "ver": 0.843,
+        "schema": 0.667,
+        "cr": null,
+        "ms": 0
+      },
+      "steer": {
+        "worst": 0,
+        "anchor": null
+      },
+      "notEvaluated": [
+        "rule:BQ-01",
+        "rule:BQ-02",
+        "rule:BQ-04",
+        "rule:BQ-06",
+        "rule:BQ-07"
+      ],
+      "advisoryOnly": [
+        "BQ-01",
+        "BQ-02",
+        "BQ-04",
+        "BQ-06",
+        "BQ-07",
+        "ND-01",
+        "ND-02",
+        "RC-01",
+        "RC-02",
+        "RC-03",
+        "RC-04",
+        "RC-05",
+        "RC-06",
+        "RC-07",
+        "RC-08",
+        "RC-09",
+        "RC-10"
+      ]
+    },
+    "code": {
+      "verdict": "nicht pruefbar",
+      "why": "keine Bindung und keine aufloesbare Quelldatei — es gibt nichts zu pruefen",
+      "reach": {
+        "endpoints": 0,
+        "assigned": 0,
+        "pct": 0
+      },
+      "binding": {
+        "leafFuncs": 3,
+        "bound": 0,
+        "pct": 0
+      },
+      "rcViolations": {}
+    },
+    "gate_rejections": 8,
+    "tokens": {
+      "wall_s": 981.6,
+      "ende": null,
+      "cost_usd": 0,
+      "tokens_in": 602612,
+      "tokens_out": 45617,
+      "tokens_reasoning": 0,
+      "loop": {
+        "genRounds": 40,
+        "modelTurns": 120,
+        "mutatesApplied": 46,
+        "mutatesRejected": 8,
+        "repairedAfterRejection": 8,
+        "preflightFixed": 76,
+        "preflightBlocked": 2,
+        "dryRunProbes": 0,
+        "done": false
+      }
+    },
+    "moduleAudit": {
+      "MOD": {
+        "authored": [],
+        "golden": [
+          "Agent-Anwendungen",
+          "Agentenverwaltung",
+          "Gateway",
+          "Ledger",
+          "LLM-Runtime",
+          "Plattformbetrieb",
+          "Scheduler"
+        ]
+      },
+      "FUNC": {
+        "authored": 3,
+        "golden": 24
+      },
+      "UC": {
+        "authored": [
+          "Interaktive Sitzung",
+          "Offline-Arbeit",
+          "Geplante Aufgabe"
+        ],
+        "golden": [
+          "Plattform verwalten",
+          "Lokale Aufgabe ausführen",
+          "Inferenz anfragen"
+        ]
+      }
+    }
+  },
+  {
+    "arm": "gcrun",
+    "model": "qwen3-coder-30b-lms:latest",
+    "executor": "gcrun",
+    "run": 340,
+    "stempel": {
+      "korpus": "sigllm-gcrun",
+      "prompt": {
+        "pfad": "/Users/andreas/Developer/dev/graphcode/rig/sigllm-spezifikation/prompt-prosa.txt",
+        "sha256": "0f928b3f930d"
+      },
+      "golden": {
+        "pfad": "/Users/andreas/Developer/dev/graphcode/rig/sigllm-spezifikation/golden/sigllm-v98.graph.json",
+        "sha256": "a2d01827f4a9"
+      },
+      "seed": "SYS-sig-local",
+      "material": "/Users/andreas/Developer/dev/graphcode/rig/sigllm-spezifikation/material-prosa",
+      "zeitgrenze_s": 5400
+    },
+    "exportError": null,
+    "ende": null,
+    "haengenderHost": null,
+    "elements": 97,
+    "traces": 145,
+    "structure": {
+      "UC": 4,
+      "FUNC": 4,
+      "MOD": 0,
+      "REQ": 33,
+      "TEST": 33
+    },
+    "readiness": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "gatesPassed": "2/8"
+    },
+    "spec": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "dimensions": {
+        "req": 0.923,
+        "uc": 0.956,
+        "arch": 0.977,
+        "alloc": null,
+        "ver": 0.845,
+        "schema": 0.667,
+        "cr": null,
+        "ms": 0
+      },
+      "steer": {
+        "worst": 0,
+        "anchor": null
+      },
+      "notEvaluated": [
+        "rule:BQ-01",
+        "rule:BQ-02",
+        "rule:BQ-04",
+        "rule:BQ-06",
+        "rule:BQ-07"
+      ],
+      "advisoryOnly": [
+        "BQ-01",
+        "BQ-02",
+        "BQ-04",
+        "BQ-06",
+        "BQ-07",
+        "ND-01",
+        "ND-02",
+        "RC-01",
+        "RC-02",
+        "RC-03",
+        "RC-04",
+        "RC-05",
+        "RC-06",
+        "RC-07",
+        "RC-08",
+        "RC-09",
+        "RC-10"
+      ]
+    },
+    "code": {
+      "verdict": "nicht pruefbar",
+      "why": "keine Bindung und keine aufloesbare Quelldatei — es gibt nichts zu pruefen",
+      "reach": {
+        "endpoints": 0,
+        "assigned": 0,
+        "pct": 0
+      },
+      "binding": {
+        "leafFuncs": 4,
+        "bound": 0,
+        "pct": 0
+      },
+      "rcViolations": {}
+    },
+    "gate_rejections": 17,
+    "tokens": {
+      "wall_s": 1216.9,
+      "ende": null,
+      "cost_usd": 0,
+      "tokens_in": 723093,
+      "tokens_out": 56913,
+      "tokens_reasoning": 0,
+      "loop": {
+        "genRounds": 40,
+        "modelTurns": 134,
+        "mutatesApplied": 37,
+        "mutatesRejected": 17,
+        "repairedAfterRejection": 14,
+        "preflightFixed": 90,
+        "preflightBlocked": 4,
+        "dryRunProbes": 0,
+        "done": false
+      }
+    },
+    "moduleAudit": {
+      "MOD": {
+        "authored": [],
+        "golden": [
+          "Agent-Anwendungen",
+          "Agentenverwaltung",
+          "Gateway",
+          "Ledger",
+          "LLM-Runtime",
+          "Plattformbetrieb",
+          "Scheduler"
+        ]
+      },
+      "FUNC": {
+        "authored": 4,
+        "golden": 24
+      },
+      "UC": {
+        "authored": [
+          "SIG Local",
+          "Interaktive Sitzung",
+          "Offline-Arbeit",
+          "Geplante Aufgabe"
+        ],
+        "golden": [
+          "Plattform verwalten",
+          "Lokale Aufgabe ausführen",
+          "Inferenz anfragen"
+        ]
+      }
+    }
+  },
+  {
+    "arm": "gcrun",
+    "model": "qwen3-coder-30b-lms:latest",
+    "executor": "gcrun",
+    "run": 341,
+    "stempel": {
+      "korpus": "sigllm-gcrun",
+      "prompt": {
+        "pfad": "/Users/andreas/Developer/dev/graphcode/rig/sigllm-spezifikation/prompt-prosa.txt",
+        "sha256": "0f928b3f930d"
+      },
+      "golden": {
+        "pfad": "/Users/andreas/Developer/dev/graphcode/rig/sigllm-spezifikation/golden/sigllm-v98.graph.json",
+        "sha256": "a2d01827f4a9"
+      },
+      "seed": "SYS-sig-local",
+      "material": "/Users/andreas/Developer/dev/graphcode/rig/sigllm-spezifikation/material-prosa",
+      "zeitgrenze_s": 5400
+    },
+    "exportError": null,
+    "ende": null,
+    "haengenderHost": null,
+    "elements": 109,
+    "traces": 165,
+    "structure": {
+      "UC": 7,
+      "FUNC": 8,
+      "MOD": 1,
+      "REQ": 27,
+      "TEST": 27
+    },
+    "readiness": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "gatesPassed": "3/8"
+    },
+    "spec": {
+      "compliance": 1,
+      "elementsWithErrors": 0,
+      "dimensions": {
+        "req": 0.918,
+        "uc": 0.986,
+        "arch": 0.969,
+        "alloc": 0.583,
+        "ver": 0.859,
+        "schema": 0.667,
+        "cr": null,
+        "ms": 0
+      },
+      "steer": {
+        "worst": 0,
+        "anchor": null
+      },
+      "notEvaluated": [
+        "rule:BQ-01",
+        "rule:BQ-02",
+        "rule:BQ-04",
+        "rule:BQ-06",
+        "rule:BQ-07"
+      ],
+      "advisoryOnly": [
+        "BQ-01",
+        "BQ-02",
+        "BQ-04",
+        "BQ-06",
+        "BQ-07",
+        "ND-01",
+        "ND-02",
+        "RC-01",
+        "RC-02",
+        "RC-03",
+        "RC-04",
+        "RC-05",
+        "RC-06",
+        "RC-07",
+        "RC-08",
+        "RC-09",
+        "RC-10"
+      ]
+    },
+    "code": {
+      "verdict": "nicht pruefbar",
+      "why": "keine Bindung und keine aufloesbare Quelldatei — es gibt nichts zu pruefen",
+      "reach": {
+        "endpoints": 0,
+        "assigned": 0,
+        "pct": 0
+      },
+      "binding": {
+        "leafFuncs": 8,
+        "bound": 0,
+        "pct": 0
+      },
+      "rcViolations": {
+        "RC-10": 1
+      }
+    },
+    "gate_rejections": 33,
+    "tokens": {
+      "wall_s": 1453.9,
+      "ende": null,
+      "cost_usd": 0,
+      "tokens_in": 816886,
+      "tokens_out": 59389,
+      "tokens_reasoning": 0,
+      "loop": {
+        "genRounds": 40,
+        "modelTurns": 135,
+        "mutatesApplied": 40,
+        "mutatesRejected": 33,
+        "repairedAfterRejection": 15,
+        "preflightFixed": 32,
+        "preflightBlocked": 12,
+        "dryRunProbes": 0,
+        "done": false
+      }
+    },
+    "moduleAudit": {
+      "MOD": {
+        "authored": [
+          "INTENTION erfuellen"
+        ],
+        "golden": [
+          "Agent-Anwendungen",
+          "Agentenverwaltung",
+          "Gateway",
+          "Ledger",
+          "LLM-Runtime",
+          "Plattformbetrieb",
+          "Scheduler"
+        ]
+      },
+      "FUNC": {
+        "authored": 8,
+        "golden": 24
+      },
+      "UC": {
+        "authored": [
+          "Interaktive Sitzung",
+          "Ressourcenisolation",
+          "Neustart-Wiederherstellung",
+          "Ergebnispruefung",
+          "Geplante Aufgabe",
+          "Schlaf-Zustandsbewahrung",
+          "Aufgabenfortsetzung"
+        ],
+        "golden": [
+          "Plattform verwalten",
+          "Lokale Aufgabe ausführen",
+          "Inferenz anfragen"
+        ]
+      }
+    }
+  }
+]
