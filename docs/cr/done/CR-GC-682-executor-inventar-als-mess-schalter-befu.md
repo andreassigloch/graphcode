@@ -86,3 +86,9 @@ Median über je 3 Läufe; in Klammern die Spanne. Ergebnisdateien
 
 **Empfehlung (Entscheidung beim Auftraggeber):** `index` als Default für den lokalen Executor, als
 eigener CR — dieser CR liefert den Schalter und die Messung, er stellt keinen Default um.
+
+**Nachtrag 2026-09-27 — Blindurteil** (`rig/greenfield-systemtest/auswertung-cr682.md`): alle neun
+Specs sind unbrauchbar, kein Auftragspunkt voll abgedeckt, Notensumme 5–7 von 25 in allen drei Armen.
+Der Mengenvorsprung von `index` besteht zum großen Teil aus Dubletten (`gcrun-310`: 35 von 49 REQ).
+**Die Empfehlung oben ist damit zurückgenommen:** kein Default-Wechsel nach diesem Lauf. Der Engpass ist
+das Leck aus den Prompt-Vorbildern (ITEM-2026-607), nicht der Zuschnitt.

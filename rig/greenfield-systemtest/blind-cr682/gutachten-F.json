@@ -1,0 +1,82 @@
+{
+  "spec": "spec-F.md",
+  "punkte": {
+    "P01": {"bewertung": "~", "belege": ["SYS-sig-local"], "anmerkung": "'vollstaendig lokal' nur in der Systembeschreibung; keine REQ, kein Test, kein Verbot eines Cloud-Rückfalls im Fehlerfall."},
+    "P02": {"bewertung": "✗", "belege": [], "anmerkung": "Gemeinsame Inferenz für beide Nutzungen nirgends geführt; es gibt überhaupt keine Inferenz-Funktion."},
+    "P03": {"bewertung": "✗", "belege": [], "anmerkung": "Keine API-Kompatibilität zu üblichen Clients; SCHEMA-interaktive-anfrage ('Text und Sitzungs-ID') ist eine eigene Form."},
+    "P04": {"bewertung": "✗", "belege": ["REQ-interactive-session-auth"], "anmerkung": "Statt Zugang je Nutzer/Gerät mit Einzelwiderruf eine Passwort-Anmeldung mit Zeitgrenze; Widerruf fehlt ganz."},
+    "P05": {"bewertung": "✗", "belege": [], "anmerkung": "Verbrauch je Nutzer fehlt."},
+    "P06": {"bewertung": "✗", "belege": [], "anmerkung": "Wartezeit-Sichtbarkeit fehlt."},
+    "P07": {"bewertung": "~", "belege": ["REQ-geplanter-task-zeitsteuerung", "REQ-scheduled-task-time", "REQ-task-scheduling", "UC-scheduled-task"], "anmerkung": "Nur 'zur geplanten Zeit ausführen'; Daten holen, Modell verarbeiten, Ergebnis ablegen/verschicken fehlen. FLOW-scheduled-task kommt zudem vom ACTOR-user, obwohl niemand anstößt."},
+    "P08": {"bewertung": "✗", "belege": [], "anmerkung": "Mehrstufigkeit und Werkzeugaufrufe fehlen."},
+    "P09": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Abbruchgrenze für Aufgaben; REQ-interactive-session-limit (8 h) betrifft interaktive Sitzungen, nicht Aufträge."},
+    "P10": {"bewertung": "✗", "belege": ["SCHEMA-scheduled-task"], "anmerkung": "Deklarativität fehlt; SCHEMA-scheduled-task enthält 'Skript' und widerspricht damit dem Auftrag."},
+    "P11": {"bewertung": "~", "belege": ["UC-offline-operation", "REQ-offline-operation", "FCHAIN-offline-operation"], "anmerkung": "UC benennt die lokale Instanz ohne Netz; keine REQ zu automatischem Umschalten ohne Umstellen und Rückkehr zur großen Maschine; einzige REQ ist eine offene Antwortzeit."},
+    "P12": {"bewertung": "~", "belege": ["REQ-task-availability"], "anmerkung": "Aufgaben nach Neustart fortsetzen; 'alles von selbst wieder da, ohne Anmeldung' (Dienste, Inferenz) fehlt."},
+    "P13": {"bewertung": "✗", "belege": [], "anmerkung": "Modell-nicht-geladen-Fall fehlt."},
+    "P14": {"bewertung": "~", "belege": ["REQ-resilient-execution", "UC-resilient-execution"], "anmerkung": "'fortsetzen, auch wenn ausgeschaltet' mit offenem Zielwert; Zuklappen/Stromausfall und 'kein Zustandsverlust' nicht prüfbar gefasst."},
+    "P15": {"bewertung": "~", "belege": ["REQ-scheduled-task-recovery", "REQ-offline-operation-resume"], "anmerkung": "Nur pauschal 'ausstehende Aufgaben nachholen'; die je Aufgabe wählbare Politik (alle/letzter/keiner) fehlt."},
+    "P16": {"bewertung": "✗", "belege": [], "anmerkung": "Kein Ausschluss doppelter Ausführung desselben Termins."},
+    "P17": {"bewertung": "✗", "belege": [], "anmerkung": "Vorrang interaktiv und sauberes Zurückstecken des Nachtlaufs fehlen; REQ-task-isolation ist etwas anderes."},
+    "P18": {"bewertung": "~", "belege": ["REQ-task-validation-format", "REQ-task-validation-retry", "REQ-task-result-processing"], "anmerkung": "Formatprüfung und Wiederholung vorhanden; 'vereinbarte Form' nicht als Vertrag benannt, Wiederholung unbegrenzt, Beiseitelegen und Bescheidgeben fehlen."},
+    "P19": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Benachrichtigung bei Fehlern oder auffälligen Ergebnissen; überhaupt kein Benachrichtigungselement."},
+    "P20": {"bewertung": "~", "belege": ["REQ-task-traceability-details", "REQ-task-traceability-origins", "REQ-task-traceability"], "anmerkung": "Prompt und Modell je Ergebnis; Aufgabe und Fassung (Version) der Anweisung fehlen."},
+    "P21": {"bewertung": "✗", "belege": [], "anmerkung": "Zwei Modellprofile und 64-GB-Budget fehlen."},
+    "P22": {"bewertung": "✗", "belege": [], "anmerkung": "Nachweis 'kein Nachdenken im schnellen Profil' fehlt."},
+    "P23": {"bewertung": "✗", "belege": [], "anmerkung": "Umzug ohne Codeänderung fehlt."},
+    "P24": {"bewertung": "✗", "belege": [], "anmerkung": "Geheimnisse im OS-Schlüsselbund fehlen."},
+    "P25": {"bewertung": "✗", "belege": [], "anmerkung": "Abnahmefall Arbeitstagebuch fehlt."},
+    "P26": {"bewertung": "✗", "belege": [], "anmerkung": "Abnahmefall Erreichbarkeitsprüfung inkl. Sofortlauf bei Netzrückkehr fehlt."},
+    "P27": {"bewertung": "✗", "belege": [], "anmerkung": "Trennung Code deterministisch / Modell bewertet fehlt."},
+    "P28": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Abgrenzung (keine Web-UI, kein Außenzugriff, keine Cloud) geführt."},
+    "O1": {"bewertung": "✗", "belege": [], "anmerkung": "Benachrichtigungskanal weder offen geführt noch erwähnt."},
+    "O2": {"bewertung": "✗", "belege": [], "anmerkung": "Ergebnisziel nicht als offen geführt."},
+    "O3": {"bewertung": "✓", "belege": ["REQ-interaktive-session"], "anmerkung": "Antwortzeit ausdrücklich 'Zielwert offen, beim Auftraggeber erfragt'. Dagegen erfindet REQ-interactive-session-auth 2 s für die Anmeldung."},
+    "O4": {"bewertung": "✗", "belege": [], "anmerkung": "Nachtbetrieb unterwegs nicht als offen geführt."},
+    "O5": {"bewertung": "✗", "belege": [], "anmerkung": "Laufzeitumgebung/Messauftrag nicht geführt."}
+  },
+  "erfunden": [
+    {"uid": "REQ-interactive-session-auth", "zitat": "Nutzer per Passwort in unter 2 s anmelden"},
+    {"uid": "REQ-interactive-session-limit", "zitat": "pro Sitzung eine maximale Laufzeit von 8 h erzwingen"},
+    {"uid": "REQ-offline-operation-retry", "zitat": "fehlgeschlagene Aufgaben bis zu 3 Mal wiederholen"},
+    {"uid": "TEST-login-dauer", "zitat": "Lastlauf misst p95 der Anmeldung"},
+    {"uid": "SCHEMA-scheduled-task", "zitat": "Form der Aufgabe: Name, Zeit, Skript"},
+    {"uid": "SCHEMA-interaktive-anfrage", "zitat": "Form der Anfrage: Text und Sitzungs-ID"}
+  ],
+  "fremd": [
+    {"uid": "REQ-interactive-session-auth", "grund": "Passwort-Sitzungslogin statt widerrufbarem Zugang je Nutzer/Gerät; Auftrag verlangt kompatible API ohne Umbau der Clients."},
+    {"uid": "REQ-interactive-session-limit", "grund": "8-h-Sitzungslimit hat keinen Bezug zum Auftrag."},
+    {"uid": "REQ-login-dauer", "grund": "Anmeldedauer ist kein Auftragsthema."},
+    {"uid": "REQ-resilient-execution-recovery", "grund": "Rollback auf den Zustand vor dem Fehler ist nicht verlangt; verlangt ist Beiseitelegen und Bescheid geben."},
+    {"uid": "SCHEMA-scheduled-task", "grund": "'Skript' als Aufgabenform widerspricht 'deklariert, nicht programmiert'."},
+    {"uid": "FLOW-scheduled-task", "grund": "Nutzer löst den geplanten Task aus, der Auftrag verlangt Aufgaben ohne Anstoß."},
+    {"uid": "FLOW-task-validation", "grund": "Validierung als Nutzeranfrage; im Auftrag ist sie automatischer Teil des Laufs."},
+    {"uid": "REQ-offline-operation-resume / REQ-offline-operation-retry", "grund": "Neustart-Nachholen und Retry unter 'Offline-Nutzung' einsortiert, fachlich andere Themen."},
+    {"uid": "ACTOR-external-service", "grund": "Nirgends verbunden, ohne Funktion."}
+  ],
+  "dubletten": {
+    "anzahl": 32,
+    "beispiele": [
+      "REQ-geplanter-task-zeitsteuerung = REQ-scheduled-task-time = REQ-task-scheduling (dreimal 'zur geplanten Zeit ausführen')",
+      "REQ-scheduled-task-recovery = REQ-offline-operation-resume = REQ-task-availability (nach Neustart nachholen/fortsetzen)",
+      "REQ-resilient-execution-isolation = REQ-task-isolation",
+      "REQ-task-traceability = REQ-task-traceability-origins",
+      "REQ-task-validation-format / REQ-task-result-validation / REQ-task-result-processing (Ergebnisprüfung dreifach)",
+      "REQ-interactive-session-auth ~ REQ-login-dauer (Anmeldezeit zweimal)",
+      "FCHAIN-task-traceability: 11 FUNC, weitgehend Synonyme (traceability, -erfassen, traceability-erfassen, -dokumentieren, -logging, -data-collection, -data-tracking, -result-tracking ...)",
+      "FCHAIN-task-validation: 12 FUNC, weitgehend Synonyme (validation-check, -result-check, -output-check, -fehler, -error-handling, task-validation ...)",
+      "FUNC-scheduled-task-execution = FUNC-task-ausfuehrung = FUNC-task-execution = FUNC-task-scheduling = FUNC-geplanter-task-verarbeiten",
+      "FCHAIN-geplanter-task-zeitsteuerung dupliziert FCHAIN-scheduled-task"
+    ]
+  },
+  "falscheErfueller": [
+    {"req": "REQ-resilient-execution-isolation (functional)", "erfueller": "FUNC-anfrage-annehmen, FUNC-aufgabe-aufnehmen, FUNC-offline-anfrage-annehmen", "grund": "Annahme-Funktionen leisten keine Isolation; die vorhandene FUNC-task-isolation wird nicht genutzt."},
+    {"req": "REQ-interactive-session-auth (functional)", "erfueller": "FCHAIN-interaktive-session", "grund": "Kette enthält nur FUNC-anfrage-annehmen; keine Anmeldefunktion."},
+    {"req": "REQ-geplanter-task-zeitsteuerung (functional)", "erfueller": "8 Erfüller inkl. FUNC-geplanter-task-protokollieren, -fehlerhaft-abschliessen", "grund": "Pauschale Zuordnung; Protokollieren oder Fehlabschluss erfüllen keine Zeitsteuerung."},
+    {"req": "REQ-task-result-validation (functional)", "erfueller": "FUNC-task-result-processing", "grund": "Verarbeitung ist keine Prüfung."},
+    {"req": "REQ-resilient-execution-recovery", "erfueller": "—", "grund": "Verhalten als non-functional typisiert; zudem kein MOD/SYS-Erfüller."},
+    {"req": "12 von 23 REQ", "erfueller": "—", "grund": "Ohne Erfüller: REQ-login-dauer, REQ-offline-operation(-resume,-retry), REQ-resilient-execution(-recovery), REQ-scheduled-task-recovery/-time, REQ-task-traceability-details/-origins, REQ-task-validation-format/-retry."}
+  ],
+  "noten": {"treue": 1, "dubletten": 1, "req": 2, "tests": 1, "struktur": 1},
+  "urteil": "Weit von baubar entfernt: 0 von 28 Punkten klar abgedeckt, 20 fehlen, darunter beide Abnahmefälle, API, Modellprofile, Geheimnisse und Umzug; stattdessen erfundene Login-/Sitzungsanforderungen und Synonym-Funktionen – ein Neuanfang aus dem Auftrag ist billiger als eine Reparatur."
+}

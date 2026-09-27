@@ -1,0 +1,81 @@
+{
+  "spec": "spec-J",
+  "punkte": {
+    "P01": {"bewertung": "~", "belege": ["SYS-sig-local"], "anmerkung": "'vollstaendig lokal' nur in der Systembeschreibung; keine REQ, kein Test, kein Verbot des Cloud-Rückfalls im Fehlerfall."},
+    "P02": {"bewertung": "✗", "belege": [], "anmerkung": "Gemeinsame Inferenz kommt nicht vor; es gibt überhaupt keine Inferenz-FUNC."},
+    "P03": {"bewertung": "✗", "belege": [], "anmerkung": "Keine übliche API; statt dessen Passwort-Login (SCHEMA-interactive-login)."},
+    "P04": {"bewertung": "✗", "belege": ["REQ-login-passwort", "REQ-login-sperre"], "anmerkung": "Passwort-Anmeldung mit Kontosperre ersetzt den verlangten widerrufbaren Zugang je Nutzer/Gerät; Widerruf fehlt."},
+    "P05": {"bewertung": "✗", "belege": [], "anmerkung": "Kein Verbrauchs-Accounting."},
+    "P06": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Wartezeit-Erfassung; REQ-login-dauer misst Anmeldedauer, nicht Wartezeit."},
+    "P07": {"bewertung": "~", "belege": ["UC-nightly-aufgaben", "REQ-nightly-aufgaben-start-zeitpunkt"], "anmerkung": "Wiederkehrende nächtliche Aufgaben benannt, aber durch einen externen Scheduler angestoßen; Daten holen, Modell verarbeiten, ablegen/verschicken fehlen."},
+    "P08": {"bewertung": "✗", "belege": [], "anmerkung": "Mehrstufigkeit und Werkzeugaufrufe fehlen."},
+    "P09": {"bewertung": "✗", "belege": ["REQ-nightly-aufgaben-zeitfenster"], "anmerkung": "Ein Ausführungszeitfenster ist keine Abbruchgrenze eines Laufs (Schritte/Budget); allenfalls entfernt verwandt."},
+    "P10": {"bewertung": "✗", "belege": [], "anmerkung": "Deklarative Aufgabendefinition ohne Codeänderung fehlt."},
+    "P11": {"bewertung": "~", "belege": ["REQ-offline-arbeit-automatisch", "REQ-offline-arbeit-aktivieren"], "anmerkung": "Automatischer lokaler Modus bei Netzverlust ja; Rückkehr zur großen Maschine fehlt, statt dessen erfundene 'Synchronisation'."},
+    "P12": {"bewertung": "✗", "belege": [], "anmerkung": "Autostart nach Neustart ohne Anmeldung fehlt."},
+    "P13": {"bewertung": "✗", "belege": [], "anmerkung": "Modell-Laden vor Auftrag fehlt."},
+    "P14": {"bewertung": "✗", "belege": [], "anmerkung": "Kein Zustandserhalt bei Schlaf/Stromausfall."},
+    "P15": {"bewertung": "✗", "belege": [], "anmerkung": "Nachhol-Politik je Aufgabe fehlt."},
+    "P16": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Doppellauf-Sperre."},
+    "P17": {"bewertung": "✗", "belege": [], "anmerkung": "Vorrang interaktiv / sauberes Zurückstecken fehlt."},
+    "P18": {"bewertung": "✗", "belege": ["REQ-externer-service-daten-format"], "anmerkung": "Nur Eingangsvalidierung von JSON externer Dienste; keine Prüfung der Modellausgabe, kein Retry, keine Quarantäne."},
+    "P19": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Benachrichtigung bei Fehlern/Auffälligkeiten."},
+    "P20": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Herkunft (Aufgabe, Prompt-Fassung, Modell)."},
+    "P21": {"bewertung": "✗", "belege": [], "anmerkung": "Weder 64 GB noch zwei Modellprofile."},
+    "P22": {"bewertung": "✗", "belege": [], "anmerkung": "Kein Nachweis 'kein Nachdenken' im schnellen Profil."},
+    "P23": {"bewertung": "✗", "belege": [], "anmerkung": "Umzug ohne Codeänderung fehlt."},
+    "P24": {"bewertung": "✗", "belege": [], "anmerkung": "Schlüsselbund fehlt; SCHEMA-interactive-login führt Passwörter als Daten."},
+    "P25": {"bewertung": "✗", "belege": [], "anmerkung": "Abnahmefall Arbeitstagebuch fehlt."},
+    "P26": {"bewertung": "✗", "belege": [], "anmerkung": "Abnahmefall Erreichbarkeitsprüfung fehlt."},
+    "P27": {"bewertung": "✗", "belege": [], "anmerkung": "Aufteilung Code/Modell nicht adressiert."},
+    "P28": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Abgrenzung (Web-UI, externer Zugriff, Cloud) geführt."},
+    "O1": {"bewertung": "✗", "belege": [], "anmerkung": "Benachrichtigungskanal nicht als offen geführt."},
+    "O2": {"bewertung": "✗", "belege": [], "anmerkung": "Ergebnisziel nicht als offen geführt."},
+    "O3": {"bewertung": "✗", "belege": ["REQ-login-dauer"], "anmerkung": "Offener Zielwert betrifft die Anmeldedauer, nicht den Antwortbeginn; zugleich widerspricht REQ-login-passwort mit erfundenen 2 s."},
+    "O4": {"bewertung": "✗", "belege": [], "anmerkung": "Nachtbetrieb unterwegs nicht als offen geführt."},
+    "O5": {"bewertung": "✗", "belege": [], "anmerkung": "Laufzeitumgebung/Messung nicht erwähnt."}
+  },
+  "erfunden": [
+    {"uid": "REQ-externer-service-daten-format", "zitat": "Daten im JSON-Format von externen Services empfangen"},
+    {"uid": "REQ-externer-service-daten-zeit", "zitat": "innerhalb von 5 Sekunden nach Empfang verarbeiten"},
+    {"uid": "REQ-login-passwort / REQ-interactive-login", "zitat": "per Passwort in unter 2 s anmelden"},
+    {"uid": "REQ-login-sperre / REQ-interactive-sperre / REQ-interactive-sperre-fehlversuche", "zitat": "nach 5 Fehlversuchen das Konto 15 min sperren"},
+    {"uid": "REQ-interactive-sperre-dauer", "zitat": "Sperrung für 15 Minuten halten"},
+    {"uid": "REQ-nightly-aufgaben-start-verzoegerung", "zitat": "innerhalb von 5 Minuten nach dem Startzeitpunkt starten"},
+    {"uid": "REQ-offline-arbeit-aktivieren-zeitpunkt / REQ-offline-arbeit-automatisch-zeitpunkt", "zitat": "innerhalb von 30 Sekunden nach Netzverlust aktivieren"},
+    {"uid": "REQ-offline-arbeit-synchronisation-verzoegerung", "zitat": "mindestens 5 Sekunden warten, bevor es Offline-Arbeit synchronisiert"},
+    {"uid": "SCHEMA-interactive-login", "zitat": "Form der Anmeldung: Benutzername und Passwort"},
+    {"uid": "REQ-nightly-aufgaben-start", "zitat": "nach Beendigung des vorherigen Starts automatisch starten"}
+  ],
+  "fremd": [
+    {"uid": "UC-interactive-anmeldung, UC-interactive-sperre, UC-login-dauer (+ REQ-login-*, REQ-interactive-*)", "grund": "Passwort-Login mit Kontosperre ist ein generisches Web-Login-Muster; der Auftrag verlangt API-Zugänge je Nutzer/Gerät mit Widerruf. Nimmt fast die Hälfte der Spec ein."},
+    {"uid": "ACTOR-externer-service, UC-externer-service-daten-empfangen", "grund": "Externer Dienst, der Daten/Anweisungen liefert, ist nicht Teil des Auftrags; Daten holt das System selbst."},
+    {"uid": "ACTOR-scheduler, FLOW-nightly-aufgaben-start", "grund": "Externer Scheduler widerspricht 'ohne Anstoß' und der Forderung, dass das System selbst plant und nachholt."},
+    {"uid": "REQ-offline-arbeit-synchronisation*, UC-offline-arbeit-synchronisation", "grund": "Synchronisation von Offline-Arbeit steht nicht im Auftrag; gefordert ist nur das Umschalten zurück auf die große Maschine."},
+    {"uid": "FUNC-offline-arbeit-aktivieren-scheduler, FLOW-offline-arbeit-aktivieren-scheduler", "grund": "Scheduler aktiviert den Offline-Modus — fachlich sinnlos."}
+  ],
+  "dubletten": {
+    "anzahl": 12,
+    "beispiele": [
+      "UC-login-dauer wiederholt UC-interactive-anmeldung wörtlich (gleiche drei REQ-uids doppelt gelistet)",
+      "REQ-interactive-login = REQ-login-passwort (2 s Passwort-Login)",
+      "REQ-interactive-sperre = REQ-login-sperre ≈ REQ-interactive-sperre-fehlversuche + REQ-interactive-sperre-dauer",
+      "REQ-offline-arbeit-aktivieren = REQ-offline-arbeit-automatisch-funktion ≈ REQ-offline-arbeit-automatisch",
+      "REQ-offline-arbeit-aktivieren-zeitpunkt = REQ-offline-arbeit-automatisch-zeitpunkt",
+      "REQ-offline-arbeit-synchronisation = REQ-offline-arbeit-synchronisation-daten",
+      "REQ-nightly-aufgaben-zeitfenster = REQ-nightly-aufgaben-zeitfenster-dauer ≈ REQ-nightly-aufgaben-zeitfenster-start",
+      "FUNC-offline-arbeit-aktivieren ≈ FUNC-offline-arbeit-aktivieren-rechner; FLOW-offline-arbeit-aktivieren ≈ FLOW-offline-arbeit-aktivieren-rechner"
+    ]
+  },
+  "falscheErfueller": [
+    {"uid": "REQ-login-sperre", "erfueller": "FUNC-interactive-login-erfolgreich", "grund": "Verarbeitung einer erfolgreichen Anmeldung erfüllt keine Sperre nach Fehlversuchen."},
+    {"uid": "REQ-nightly-aufgaben-zeitfenster-dauer", "erfueller": "FCHAIN-offline-arbeit", "grund": "Falsche Wirkkette; Nachtlauf-Zeitfenster hat mit Offline-Umschaltung nichts zu tun."},
+    {"uid": "REQ-offline-arbeit-synchronisation / -synchronisation-daten", "erfueller": "FCHAIN-offline-arbeit", "grund": "Die Kette enthält nur Aktivierungs-FUNCs; keine FUNC synchronisiert."},
+    {"uid": "FCHAIN-interactive-login", "erfueller": "enthält FUNC-nightly-aufgaben-start, FUNC-offline-arbeit-aktivieren", "grund": "Nachtstart und Offline-Aktivierung in der Login-Kette — Kettenzuordnung sachfremd."},
+    {"uid": "UC-externer-service-daten-empfangen", "erfueller": "Wirkkette FCHAIN-interactive-login", "grund": "Datenempfang über die Login-Kette; keine FUNC empfängt Daten."},
+    {"uid": "REQ-offline-arbeit-aktivieren", "erfueller": "FUNC-offline-arbeit-aktivieren", "grund": "FUNC hängt in der Login-Kette statt in FCHAIN-offline-arbeit."},
+    {"uid": "REQ-externer-service-*, REQ-nightly-aufgaben-zeitfenster-start, REQ-offline-arbeit-automatisch-zeitpunkt, REQ-offline-arbeit-synchronisation-verzoegerung", "erfueller": "—", "grund": "Ohne Erfüller."}
+  ],
+  "noten": {"treue": 1, "dubletten": 1, "req": 2, "tests": 2, "struktur": 1},
+  "urteil": "Nicht baubar und weit vom Auftrag entfernt: die Spec deckt praktisch nur Nachtstart und Offline-Umschaltung vage ab, ersetzt den Kern (API, Inferenz, Nachholen, Robustheit, Herkunft, Modellprofile, Abnahmefälle) durch ein erfundenes Passwort-Login mit Kontosperre, ist massiv dupliziert und führt keinen offenen Punkt als offen."
+}

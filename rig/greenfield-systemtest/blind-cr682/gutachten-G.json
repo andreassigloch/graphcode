@@ -1,0 +1,379 @@
+{
+  "spec": "spec-G",
+  "punkte": {
+    "P01": {
+      "bewertung": "~",
+      "belege": [
+        "SYS-sig-local"
+      ],
+      "anmerkung": "Nur in der SYS-Beschreibung ('vollstaendig lokal'); kein REQ zu 'nichts verlässt den Rechner' oder 'kein Cloud-Rückfall im Fehlerfall', kein Test."
+    },
+    "P02": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Geteilte Inferenz fehlt; die Isolations-REQs (REQ-resource-isolation-model/-task) laufen eher dagegen."
+    },
+    "P03": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Keine übliche API, keine Client-Kompatibilität; stattdessen ein Sitzungs-/Login-Modell."
+    },
+    "P04": {
+      "bewertung": "✗",
+      "belege": [
+        "REQ-sig-local-session-auth"
+      ],
+      "anmerkung": "Nur Passwort-Anmeldung; kein Zugang je Nutzer/Gerät, kein einzelnes Widerrufen."
+    },
+    "P05": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Verbrauch je Nutzer nicht sichtbar."
+    },
+    "P06": {
+      "bewertung": "✗",
+      "belege": [
+        "REQ-throughput-latency"
+      ],
+      "anmerkung": "Die Wartezeit wird nicht sichtbar gemacht; REQ-throughput-latency ist eine erfundene Grenze, keine Anzeige."
+    },
+    "P07": {
+      "bewertung": "~",
+      "belege": [
+        "REQ-scheduled-task-definition",
+        "REQ-scheduled-task-execution",
+        "UC-scheduled-task"
+      ],
+      "anmerkung": "Wiederkehrende Aufgaben definieren/ausführen ja; 'Daten holen – Modell – ablegen/verschicken' fehlt; REQ-scheduled-task-execution hat keinen Erfüller."
+    },
+    "P08": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Mehrstufigkeit und Werkzeugaufrufe fehlen."
+    },
+    "P09": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Keine Abbruchgrenze für Läufe."
+    },
+    "P10": {
+      "bewertung": "~",
+      "belege": [
+        "REQ-scheduled-task-definition"
+      ],
+      "anmerkung": "Aufgaben 'definieren und speichern' ja; 'ohne Codeänderung' bzw. deklarativ steht nicht da und wird nicht geprüft."
+    },
+    "P11": {
+      "bewertung": "~",
+      "belege": [
+        "UC-offline-operation",
+        "UC-sig-local-offline-operation",
+        "REQ-offline-operation-resilience"
+      ],
+      "anmerkung": "Der UC nennt die lokale Instanz offline; das automatische Umschalten ohne Umstellen und die Rückkehr zur großen Maschine fehlen; die REQs handeln von Datenverlust/Neustart."
+    },
+    "P12": {
+      "bewertung": "~",
+      "belege": [
+        "REQ-resilient-execution-recovery",
+        "REQ-offline-operation-persistence",
+        "REQ-recoverable-state-restore"
+      ],
+      "anmerkung": "Wiederherstellung nach Neustart ja; 'von selbst, ohne Anmeldung' fehlt (das Login-Modell widerspricht dem eher)."
+    },
+    "P13": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "'Modell nicht geladen' kommt nicht vor."
+    },
+    "P14": {
+      "bewertung": "~",
+      "belege": [
+        "REQ-recoverable-state-consistency",
+        "REQ-offline-operation-persistence"
+      ],
+      "anmerkung": "Nur 'nach Neustart'; Zuklappen/Stromausfall ohne Zustandsverlust nicht ausdrücklich."
+    },
+    "P15": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Keine wählbare Nachhol-Politik (alle/letzten/keinen)."
+    },
+    "P16": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Keine Exactly-once-Regel für Termine; REQ-resilient-execution-recovery ('alle Aufgaben fortsetzen') riskiert eher Doppelläufe."
+    },
+    "P17": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Kein Vorrang für interaktive Anfragen, kein sauberes Zurückstecken des Nachtlaufs."
+    },
+    "P18": {
+      "bewertung": "~",
+      "belege": [
+        "REQ-task-verification-structure",
+        "REQ-sig-local-task-verification-structure",
+        "REQ-sig-local-task-verification-retry",
+        "REQ-scheduled-task-retry"
+      ],
+      "anmerkung": "Prüfung auf Gültigkeit und Wiederholung vorhanden; 'vereinbarte Form' (Schema) vage; Beiseitelegen und Bescheidgeben fehlen; die Wiederholungszahl ist erfunden."
+    },
+    "P19": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Kein Bescheid bei Fehlern oder auffälligen Ergebnissen."
+    },
+    "P20": {
+      "bewertung": "~",
+      "belege": [
+        "REQ-task-verification-logs"
+      ],
+      "anmerkung": "Inhaltlich richtig (Aufgabe, Anweisung, Modell), aber nur 'bei der Prüfung' statt zu jedem Ergebnis, 'Fassung' der Anweisung fehlt, kein Erfüller."
+    },
+    "P21": {
+      "bewertung": "✗",
+      "belege": [
+        "REQ-resource-isolation-model"
+      ],
+      "anmerkung": "Keine zwei Modellprofile, keine 64 GB; die strikte Modell-Isolation geht am Punkt vorbei."
+    },
+    "P22": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Nachweis 'kein Nachdenken im schnellen Profil' fehlt."
+    },
+    "P23": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Umzug durch Kopieren ohne Codeänderung fehlt."
+    },
+    "P24": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Schlüsselbund und Geheimnisse fehlen; stattdessen Passwort-Login."
+    },
+    "P25": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Arbeitstagebuch fehlt ganz."
+    },
+    "P26": {
+      "bewertung": "✗",
+      "belege": [
+        "ACTOR-netzwerk"
+      ],
+      "anmerkung": "Erreichbarkeitsprüfung fehlt; ACTOR-netzwerk ist angelegt, aber nicht verdrahtet."
+    },
+    "P27": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Die Aufteilung Code deterministisch / Modell bewertet und formuliert fehlt."
+    },
+    "P28": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Keine der drei Abgrenzungen als REQ/Constraint (keine Weboberfläche, kein Zugriff von außen, keine Cloud)."
+    },
+    "O1": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Benachrichtigungskanal nicht erwähnt."
+    },
+    "O2": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Ergebnisziel nicht erwähnt."
+    },
+    "O3": {
+      "bewertung": "✗",
+      "belege": [
+        "REQ-throughput-latency",
+        "REQ-login-dauer"
+      ],
+      "anmerkung": "REQ-throughput-latency setzt erfundene 5 s; REQ-login-dauer führt einen offenen Zielwert, aber für die Anmeldung statt für den Antwortbeginn, und TEST-login-passwort setzt dafür doch 2 s."
+    },
+    "O4": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Nachtbetrieb unterwegs nicht erwähnt."
+    },
+    "O5": {
+      "bewertung": "✗",
+      "belege": [],
+      "anmerkung": "Laufzeitumgebung/Messung nicht erwähnt."
+    }
+  },
+  "erfunden": [
+    {
+      "uid": "REQ-interactive-session-auth",
+      "zitat": "in unter 2 s anmelden"
+    },
+    {
+      "uid": "TEST-login-passwort",
+      "zitat": "p95 der Anmeldung, Grenze 2 s"
+    },
+    {
+      "uid": "TEST-login-dauer",
+      "zitat": "Lastlauf misst p95"
+    },
+    {
+      "uid": "REQ-interactive-session-concurrent",
+      "zitat": "bis zu 10 gleichzeitige interaktive Sitzungen"
+    },
+    {
+      "uid": "REQ-sig-local-session-concurrent",
+      "zitat": "bis zu 10 gleichzeitige interaktive Sitzungen"
+    },
+    {
+      "uid": "REQ-throughput-concurrent",
+      "zitat": "bis zu 10 gleichzeitige interaktive Sitzungen unterstützen"
+    },
+    {
+      "uid": "REQ-recoverable-state-restore",
+      "zitat": "innerhalb von 5 min wiederherstellen"
+    },
+    {
+      "uid": "TEST-resilient-execution-retry",
+      "zitat": "5 fehlerhafte Aufgaben, danach 6. Versuch muss fehlschlagen"
+    },
+    {
+      "uid": "REQ-scheduled-task-retry",
+      "zitat": "bis zu drei Mal automatisch wiederholen"
+    },
+    {
+      "uid": "REQ-sig-local-task-verification-retry",
+      "zitat": "bis zu drei Mal versuchen"
+    },
+    {
+      "uid": "REQ-sig-local-task-verification-dauer",
+      "zitat": "innerhalb von 10 Sekunden abschließen"
+    },
+    {
+      "uid": "REQ-throughput-latency",
+      "zitat": "innerhalb von 5 Sekunden beantworten (O3 ist offen)"
+    },
+    {
+      "uid": "REQ-sig-local-session-auth",
+      "zitat": "per Passwort authentifizieren"
+    },
+    {
+      "uid": "SCHEMA-anfrage",
+      "zitat": "Text und Sitzungs-ID"
+    }
+  ],
+  "fremd": [
+    {
+      "uid": "REQ-sig-local-session-auth",
+      "grund": "Das Passwort-/Sitzungsmodell widerspricht 'API wie die üblichen, Clients ohne Umbau' und 'Zugang je Gerät, widerrufbar'."
+    },
+    {
+      "uid": "REQ-sig-local-session-persistence",
+      "grund": "Sitzungszustände über Neustart wiederherstellen verlangt der Auftrag nicht."
+    },
+    {
+      "uid": "REQ-resource-isolation-model",
+      "grund": "Strikte Ressourcentrennung zwischen Modellen widerspricht der geteilten Inferenz und den geteilten 64 GB (P02/P21)."
+    },
+    {
+      "uid": "REQ-resource-isolation-task",
+      "grund": "Strikte Trennung zwischen Aufgaben steht nicht im Auftrag; verlangt ist Vorrang/Zurückstecken (P17)."
+    },
+    {
+      "uid": "REQ-ressourcen-isolation",
+      "grund": "Wie oben, zudem Dublette."
+    },
+    {
+      "uid": "REQ-sig-local-session-isolation",
+      "grund": "Ressourcentrennung zwischen Sitzungen ist nicht verlangt."
+    },
+    {
+      "uid": "REQ-robuste-ausfuehrung",
+      "grund": "'führt Aufgaben fehlerhaft fort' ist sinnwidrig und nicht aus dem Auftrag."
+    },
+    {
+      "uid": "REQ-sig-local-task-verification-consistency",
+      "grund": "Reproduzierbare Prüfergebnisse bei mehrfachem Lauf sind nicht verlangt."
+    },
+    {
+      "uid": "ACTOR-externer-service",
+      "grund": "Ein externes System, das Aufgaben auslöst, widerspricht 'Aufgaben, die niemand anstößt' und 'kein Zugriff von außen'."
+    },
+    {
+      "uid": "REQ-interactive-session-concurrent / REQ-throughput-concurrent",
+      "grund": "Eine Sitzungs-Kapazitätsgrenze ist nicht Gegenstand des Auftrags."
+    }
+  ],
+  "dubletten": {
+    "anzahl": 16,
+    "beispiele": [
+      "Gleichzeitige Sitzungen 4×: REQ-interactive-session-concurrent, REQ-sig-local-session-concurrent, REQ-throughput-concurrent, REQ-session-concurrent",
+      "Anmeldung 3×: REQ-interactive-session-auth, REQ-sig-local-session-auth, REQ-login-dauer (mit widersprüchlichen Tests TEST-login-dauer/TEST-login-passwort)",
+      "Neustart-Wiederherstellung 5×: REQ-offline-operation-persistence, REQ-recoverable-state-restore, REQ-recoverable-state-consistency, REQ-resilient-execution-recovery, REQ-sig-local-session-persistence",
+      "Ressourcentrennung 4×: REQ-resource-isolation-model, REQ-resource-isolation-task, REQ-ressourcen-isolation, REQ-sig-local-session-isolation",
+      "Ergebnisprüfung 3× + Protokoll 2×: REQ-task-verification-structure, REQ-sig-local-task-verification-structure, REQ-aufgaben-pruefung; REQ-task-verification-logs, REQ-sig-local-task-verification-logs",
+      "Wiederholung 3×: REQ-resilient-execution-retry, REQ-scheduled-task-retry, REQ-sig-local-task-verification-retry; REQ-robuste-ausfuehrung doppelt zu UC-resilient-execution",
+      "Strukturell: sieben UC-Paare (UC-x / UC-sig-local-x, dazu UC-sig-local-throughput mit dem Titel 'Interaktive Sitzung'), FCHAIN-interactive-session/FCHAIN-interaktive-session, FLOW-anfrage/FLOW-interaktive-anfrage, SCHEMA-anfrage/SCHEMA-anfrage-verbund (gleicher Inhalt)"
+    ]
+  },
+  "falscheErfueller": [
+    {
+      "uid": "REQ-sig-local-task-verification-* (5 REQs)",
+      "erfueller": "FUNC-session-authenticate",
+      "grund": "Die Ergebnisprüfung wird der Anmeldefunktion zugeordnet – fachlich falsch."
+    },
+    {
+      "uid": "REQ-session-concurrent",
+      "erfueller": "FUNC-session-authenticate, FUNC-session-authorize",
+      "grund": "Authentifizieren/Autorisieren erfüllt keine Nebenläufigkeit."
+    },
+    {
+      "uid": "REQ-offline-operation-persistence",
+      "erfueller": "FCHAIN-offline-operation",
+      "grund": "Wiederherstellung nach Neustart liegt nicht bei FUNC-offline-work, sondern bei FUNC-state-recover."
+    },
+    {
+      "uid": "REQ-resilient-execution-recovery/-retry, REQ-robuste-ausfuehrung",
+      "erfueller": "FCHAIN-resilient-execution",
+      "grund": "Die Kette enthält nur FUNC-anfrage-annehmen – hohler Erfüller."
+    },
+    {
+      "uid": "REQ-resource-isolation-model, REQ-ressourcen-isolation",
+      "erfueller": "FCHAIN-resource-isolation",
+      "grund": "Die Kette enthält nur FUNC-anfrage-annehmen."
+    },
+    {
+      "uid": "REQ-aufgaben-pruefung",
+      "erfueller": "FCHAIN-task-verification",
+      "grund": "Die Kette enthält nur FUNC-anfrage-annehmen, keine Prüffunktion."
+    },
+    {
+      "uid": "REQ-login-dauer",
+      "erfueller": "FCHAIN-interactive-session",
+      "grund": "Die Kette enthält keine Anmeldefunktion (die liegt in FCHAIN-interaktive-session)."
+    },
+    {
+      "uid": "REQ-interactive-session-auth",
+      "erfueller": "FUNC-anfrage-annehmen",
+      "grund": "Das Annehmen einer Anfrage ist keine Anmeldung."
+    },
+    {
+      "uid": "REQ-throughput-concurrent, REQ-throughput-latency (non-functional)",
+      "erfueller": "—",
+      "grund": "Kein MOD/SYS als Erfüller; der Abschnitt Module ist leer."
+    },
+    {
+      "uid": "9 REQs ohne Erfüller",
+      "erfueller": "—",
+      "grund": "z.B. REQ-scheduled-task-execution, REQ-task-verification-logs/-structure, REQ-resource-isolation-task, REQ-scheduled-task-retry"
+    }
+  ],
+  "noten": {
+    "treue": 1,
+    "dubletten": 1,
+    "req": 2,
+    "tests": 2,
+    "struktur": 1
+  },
+  "urteil": "Weit von baubar: Die Spec deckt keinen der 28 Punkte klar und 8 nur vage ab, verfehlt beide Abnahmefälle und alle offenen Punkte, erfindet ein Login-/Sitzungsmodell mit freien Zahlen, besteht zur Hälfte aus Dubletten und hat hohle Ketten und keine Module – sie müsste neu geschrieben, nicht nachgebessert werden."
+}

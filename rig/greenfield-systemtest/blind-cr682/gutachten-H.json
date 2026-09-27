@@ -1,0 +1,78 @@
+{
+  "spec": "spec-H.md",
+  "punkte": {
+    "P01": {"bewertung": "~", "belege": ["SYS-sig-local"], "anmerkung": "Nur in der SYS-Beschreibung ('vollstaendig lokal'); keine REQ, kein Verbot eines Cloud-Rueckfalls im Fehlerfall, kein Test."},
+    "P02": {"bewertung": "✗", "belege": [], "anmerkung": "Gemeinsame Inferenz fuer beide Nutzungen kommt nicht vor; es gibt ueberhaupt keine Inferenz-/Modell-Funktion."},
+    "P03": {"bewertung": "✗", "belege": [], "anmerkung": "Keine uebliche/kompatible API; SCHEMA-interactive-session ('Text und Sitzungs-ID') ist eine Eigenform."},
+    "P04": {"bewertung": "✗", "belege": ["REQ-interactive-session-auth", "REQ-login-passwort"], "anmerkung": "Nur Passwort-Anmeldung; kein Zugang je Nutzer UND Geraet, kein einzelnes Widerrufen."},
+    "P05": {"bewertung": "✗", "belege": [], "anmerkung": "Verbrauchssicht fehlt."},
+    "P06": {"bewertung": "✗", "belege": [], "anmerkung": "Wartezeit-Sicht fehlt; die 2-s-Antwortgrenze ist keine Sichtbarkeit."},
+    "P07": {"bewertung": "~", "belege": ["UC-scheduled-task", "FLOW-scheduled-task"], "anmerkung": "Geplante Nachtaufgaben als UC vorhanden, aber ausgeloest durch einen externen Scheduler; Daten holen, Modell verarbeiten, ablegen/verschicken fehlen."},
+    "P08": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Mehrstufigkeit, keine Werkzeugaufrufe."},
+    "P09": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Abbruchgrenze."},
+    "P10": {"bewertung": "✗", "belege": ["SCHEMA-scheduled-task"], "anmerkung": "'Aufgabenbeschreibung' im Schema, aber keine Anforderung 'deklarativ, ohne Codeaenderung'."},
+    "P11": {"bewertung": "~", "belege": ["UC-offline-operation", "REQ-offline-operation-resume", "REQ-offline-operation-resume-verify"], "anmerkung": "Offline-Betrieb lokal ist genannt, aber ohne 'kein Umstellen'; die Rueckkehr ist verdreht ('Offline-Betrieb nach Netzwerkverbindung wieder aufnehmen' statt wieder die grosse Maschine nutzen)."},
+    "P12": {"bewertung": "✗", "belege": [], "anmerkung": "Autostart nach Neustart ohne Anmeldung fehlt."},
+    "P13": {"bewertung": "✗", "belege": [], "anmerkung": "Modell-Laden vor dem Auftrag fehlt."},
+    "P14": {"bewertung": "✗", "belege": ["REQ-offline-operation-persist"], "anmerkung": "Zustandserhalt nur bei Netzwerkunterbrechung, nicht bei Zuklappen, Ausschalten oder Stromausfall."},
+    "P15": {"bewertung": "✗", "belege": [], "anmerkung": "Nachhol-Politik je Aufgabe fehlt."},
+    "P16": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Doppellauf-Sperre."},
+    "P17": {"bewertung": "✗", "belege": ["REQ-scheduled-task-coord"], "anmerkung": "Koordiniert nur Nachtaufgaben untereinander; keine Priorisierung interaktiv vor Nachtlauf, kein Zurueckstecken an sauberer Stelle."},
+    "P18": {"bewertung": "~", "belege": ["REQ-scheduled-task-retry"], "anmerkung": "Nur Retry nach Fehlschlag; keine Pruefung der Ausgabe gegen eine vereinbarte Form, kein Beiseitelegen, keine Meldung."},
+    "P19": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Benachrichtigung bei Fehlern/Auffaelligkeiten."},
+    "P20": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Herkunft (Aufgabe, Anweisungsfassung, Modell)."},
+    "P21": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Modellprofile, keine 64-GB-Randbedingung."},
+    "P22": {"bewertung": "✗", "belege": [], "anmerkung": "Kein Nachweis 'kein Nachdenken im schnellen Profil'."},
+    "P23": {"bewertung": "✗", "belege": [], "anmerkung": "Umzug ohne Codeaenderung fehlt."},
+    "P24": {"bewertung": "✗", "belege": [], "anmerkung": "Kein Schluesselbund; Passwort-Anmeldung eingefuehrt, ohne Ablage von Geheimnissen zu regeln."},
+    "P25": {"bewertung": "✗", "belege": [], "anmerkung": "Abnahmefall Arbeitstagebuch fehlt."},
+    "P26": {"bewertung": "✗", "belege": [], "anmerkung": "Abnahmefall Erreichbarkeitspruefung fehlt."},
+    "P27": {"bewertung": "✗", "belege": [], "anmerkung": "Trennung Code deterministisch / Modell bewertet fehlt."},
+    "P28": {"bewertung": "✗", "belege": [], "anmerkung": "Keine Abgrenzung (Web-UI, Aussenzugriff, Cloud) formuliert."},
+    "O1": {"bewertung": "✗", "belege": [], "anmerkung": "Nicht als offen gefuehrt."},
+    "O2": {"bewertung": "✗", "belege": [], "anmerkung": "Nicht als offen gefuehrt."},
+    "O3": {"bewertung": "✗", "belege": ["REQ-interactive-session-limit", "REQ-login-dauer"], "anmerkung": "Antwortzeit mit erfundenen 2 s festgelegt; der einzige 'offen'-Vermerk (REQ-login-dauer) betrifft die Anmeldedauer, nicht den Antwortbeginn."},
+    "O4": {"bewertung": "✗", "belege": [], "anmerkung": "Nicht als offen gefuehrt."},
+    "O5": {"bewertung": "✗", "belege": [], "anmerkung": "Laufzeitumgebung kommt nicht vor."}
+  },
+  "erfunden": [
+    {"uid": "REQ-interactive-session-limit", "zitat": "interaktive Sitzungen innerhalb von 2 s beantworten"},
+    {"uid": "REQ-interactive-session-req-auth", "zitat": "per Passwort in unter 2 s anmelden"},
+    {"uid": "REQ-login-passwort", "zitat": "per Passwort in unter 2 s anmelden"},
+    {"uid": "REQ-scheduled-task-req-auth", "zitat": "per Passwort in unter 2 s anmelden"},
+    {"uid": "REQ-interactive-session-auth", "zitat": "per Passwort authentifizieren (Auftrag nennt nur eigenen, widerrufbaren Zugang)"},
+    {"uid": "TEST-interactive-session-req-auth", "zitat": "Lastlauf misst p95 der Anmeldung"},
+    {"uid": "REQ-scheduled-task-retry", "zitat": "nach einer Frist erneut versuchen (Frist unbestimmt, Auftrag sagt 'noch einmal versuchen')"},
+    {"uid": "ACTOR-scheduler", "zitat": "Ein externer Scheduler, der geplante Aufgaben ausloest"},
+    {"uid": "SCHEMA-interactive-session", "zitat": "Form der Anfrage: Text und Sitzungs-ID"}
+  ],
+  "fremd": [
+    {"uid": "REQ-scheduled-task-req-auth", "grund": "Passwort-Anmeldung eines Nutzers im Nachtlauf-UC, den niemand anstoesst."},
+    {"uid": "REQ-offline-operation-accept-decompose-*", "grund": "39 Anforderungen zu 'Offline-Operation entgegennehmen/validieren/decodieren (Alternative n, Teil m)' ohne Bezug zu irgendeiner Auftragsaussage."},
+    {"uid": "REQ-offline-operation-resume", "grund": "Verdreht den Auftrag: bei Netzrueckkehr soll die grosse Maschine genutzt werden, nicht der Offline-Betrieb wieder aufgenommen."},
+    {"uid": "ACTOR-scheduler", "grund": "Externer Scheduler widerspricht 'selbstaendig, niemand stoesst an' und verlagert eine Kernfunktion aus dem System."},
+    {"uid": "ACTOR-device", "grund": "'Geraet im Offline-Modus' als Akteur, der Anfragen stellt, ist kein Auftragsgegenstand; der Rechner selbst ist Teil des Systems."}
+  ],
+  "dubletten": {
+    "anzahl": 35,
+    "beispiele": [
+      "REQ-interactive-session-req-auth = REQ-login-passwort = REQ-scheduled-task-req-auth (wortgleich 'per Passwort in unter 2 s anmelden'), dazu Ueberlappung mit REQ-interactive-session-auth und REQ-login-dauer",
+      "REQ-offline-operation-resume = REQ-offline-operation-resume-verify (wortgleich)",
+      "REQ-offline-operation-accept-decompose-1 mit 12 Varianten -alt1 ... -alt3-alt3 ('entgegennehmen (Alternative n)')",
+      "REQ-offline-operation-accept-decompose-2 mit 6 Varianten, -3 mit 6 Varianten",
+      "REQ-offline-operation-decode/-execute/-store/-validate doppeln decompose-3/-5/-4/-2; resume-complete/-init doppeln decompose-6/-7",
+      "Gleiches Muster bei FUNC und MOD (je eine FUNC und ein MOD pro Duplikat)"
+    ]
+  },
+  "falscheErfueller": [
+    {"req": "REQ-offline-operation-resume", "erfueller": "FCHAIN-interactive-session", "grund": "Offline-Wiederaufnahme von der Kette der interaktiven Sitzung erfuellt."},
+    {"req": "REQ-scheduled-task-req-auth", "erfueller": "FUNC-scheduled-task-accept", "grund": "Nutzer-Anmeldung von der Annahme einer Nachtaufgabe erfuellt."},
+    {"req": "REQ-interactive-session-req-auth / REQ-login-passwort", "erfueller": "FUNC-interactive-session-accept", "grund": "Kind 'functional' formal zulaessig, aber die REQ ist eine Zeitgrenze (nicht-funktional) und 'Sitzung akzeptieren' ist keine Authentifizierung."},
+    {"req": "REQ-offline-operation-persist", "erfueller": "FUNC-offline-operation-accept", "grund": "Eine Annahmefunktion erfuellt keinen Zustandserhalt."},
+    {"req": "REQ-scheduled-task-coord / -retry", "erfueller": "FUNC-scheduled-task-accept", "grund": "Koordination und Retry an eine reine Annahmefunktion gehaengt."},
+    {"req": "(Struktur)", "erfueller": "FCHAIN-interactive-session", "grund": "Alle drei UCs zeigen auf dieselbe Kette, die Offline- und Nachtlauf-Funktionen mitenthaelt."},
+    {"req": "(Allokation)", "erfueller": "MOD-offline-operation-resume-verify", "grund": "Enthaelt FUNC-interactive-session-accept und FUNC-scheduled-task-accept; kein MOD erfuellt irgendeine nicht-funktionale REQ."}
+  ],
+  "noten": {"treue": 1, "dubletten": 1, "req": 1, "tests": 1, "struktur": 1},
+  "urteil": "Nicht baubar und nahe am Nullpunkt: von 28 Anforderungen ist keine klar abgedeckt, der Grossteil der Spec ist generierter Alternativen-Muell um eine 'Offline-Operation', die Abnahmefaelle und alle Scheitern-Punkte fehlen, eine Neuerstellung aus dem Auftrag ist guenstiger als eine Reparatur."
+}
