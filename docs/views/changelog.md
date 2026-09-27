@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 307 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 307 CR · 300 done · 1 open.
+Total: 307 CR · 303 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -336,22 +336,22 @@ Total: 307 CR · 300 done · 1 open.
 | `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht |
 | `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten |
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich |
-| `CR-GC-667` | n/a | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen |
+| `CR-GC-667` | open | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen |
 | `CR-GC-668` | done | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche |
 | `CR-GC-669` | done | Migrationswerkzeug REQ-kinds auf zwei Werte |
 | `CR-GC-670` | done | graphcode-Eigenmodell auf zwei REQ-kinds migrieren |
 | `CR-GC-671` | done | graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor |
-| `CR-GC-672` | n/a | Executor und Preflight auf zwei REQ-kinds |
+| `CR-GC-672` | done | Executor und Preflight auf zwei REQ-kinds |
 | `CR-GC-672B` | done | Executor zeigt Vorschlaege als Gate-Batch (Split aus CR-GC-672) |
 | `CR-GC-673` | done | Projektionen auf zwei REQ-kinds und Rollen-Attribut |
 | `CR-GC-674` | done | SE-Skills und Help auf zwei REQ-kinds |
-| `CR-GC-675` | n/a | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus |
+| `CR-GC-675` | done | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus |
 | `CR-GC-676` | done | Mess-Artefakte aufräumen: abgeschlossene Spikes, Recorder, tote Rigs und Alt-Ergebnisse löschen |
 | `CR-GC-677` | done | Mess-Artefakte: Recorder kennzahlen/zugverlauf und erledigte Spikes löschen |
 | `CR-GC-678` | done | Mess-Artefakte: tote Rigs und Greenfield-Altergebnisse löschen |
-| `CR-GC-679` | n/a | Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID |
-| `CR-GC-680` | n/a | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie |
-| `CR-GC-681` | n/a | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md |
+| `CR-GC-679` | open | Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID |
+| `CR-GC-680` | open | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie |
+| `CR-GC-681` | open | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md |
 | `CR-GC-682` | done | Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung |
 | `CR-GC-683` | done | Konformanz-Extraktor sieht nur <repo>/src und relative Imports - im Monorepo sigloch-modules 0 Import-Endpunkte, RC-05 und RC-09 dort blind |
 | `CR-GC-684` | done | Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst |
@@ -367,5 +367,5 @@ Total: 307 CR · 300 done · 1 open.
 | `CR-GC-693` | done | Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai/anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS |
 | `CR-GC-694` | done | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt |
 | `CR-GC-695` | done | computePhaseReadiness: nicht anwendbare Regel nicht als erfuellt zaehlen (ruleApplies, CR-SM-372) + Nachzuege FC-05/R-16 |
-| `CR-GC-696` | open | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren |
+| `CR-GC-696` | done | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren |
 | `CR-GC-697` | done | FCHAIN-skill-report: FUNC-test/-test-ui ohne REQ (R-21) - REQ Red-First mit Test |

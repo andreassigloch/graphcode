@@ -2420,7 +2420,8 @@
       "id": "CR-GC-667",
       "type": "CR",
       "name": "Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen",
-      "description": "docs/cr/open/CR-GC-667-executor-fragekanal-offene-punkte-als-fo.md"
+      "description": "docs/cr/open/CR-GC-667-executor-fragekanal-offene-punkte-als-fo.md",
+      "status": "open"
     },
     {
       "id": "CR-GC-668",
@@ -2458,7 +2459,9 @@
       "id": "CR-GC-672",
       "type": "CR",
       "name": "Executor und Preflight auf zwei REQ-kinds",
-      "description": "docs/cr/open/CR-GC-672-executor-und-preflight-auf-zwei-req-kind.md"
+      "description": "docs/cr/done/CR-GC-672-executor-und-preflight-auf-zwei-req-kind.md",
+      "status": "done",
+      "commitRef": "02db84e"
     },
     {
       "id": "CR-GC-672B",
@@ -2488,7 +2491,9 @@
       "id": "CR-GC-675",
       "type": "CR",
       "name": "Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus",
-      "description": "docs/cr/open/CR-GC-675-executor-material-hinweis-in-der-intenti.md"
+      "description": "docs/cr/done/CR-GC-675-executor-material-hinweis-in-der-intenti.md",
+      "status": "done",
+      "commitRef": "2b62b1a"
     },
     {
       "id": "CR-GC-676",
@@ -2518,19 +2523,22 @@
       "id": "CR-GC-679",
       "type": "CR",
       "name": "Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID",
-      "description": "docs/cr/open/CR-GC-679-standard-auswertung-npm-run-messung-schr.md"
+      "description": "docs/cr/open/CR-GC-679-standard-auswertung-npm-run-messung-schr.md",
+      "status": "open"
     },
     {
       "id": "CR-GC-680",
       "type": "CR",
       "name": "Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie",
-      "description": "docs/cr/open/CR-GC-680-mess-doku-konsolidieren-kpi-md-messgroes.md"
+      "description": "docs/cr/open/CR-GC-680-mess-doku-konsolidieren-kpi-md-messgroes.md",
+      "status": "open"
     },
     {
       "id": "CR-GC-681",
       "type": "CR",
       "name": "Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md",
-      "description": "docs/cr/open/CR-GC-681-neue-artikelserie-u-ber-konzept-aufbau-u.md"
+      "description": "docs/cr/open/CR-GC-681-neue-artikelserie-u-ber-konzept-aufbau-u.md",
+      "status": "open"
     },
     {
       "id": "CR-GC-682",
@@ -2656,8 +2664,9 @@
       "id": "CR-GC-696",
       "type": "CR",
       "name": "Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren",
-      "description": "docs/cr/open/CR-GC-696-nachzug-lokal-modus-rote-spikes-tests-na.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-696-nachzug-lokal-modus-rote-spikes-tests-na.md",
+      "status": "done",
+      "commitRef": "f5bbc2b"
     },
     {
       "id": "CR-GC-697",
@@ -22311,5 +22320,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 519
+  "graphVersion": 521
 }

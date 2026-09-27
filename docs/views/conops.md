@@ -361,19 +361,19 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht | `FUNC-inventory-channel` |
 | `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten | `REQ-responsiveness` |
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich | `FUNC-take-steering-snapshot` |
-| `CR-GC-667` | n/a | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen | `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-run-executor` · `FUNC-run-verb` · `REQ-open-point-asked` |
+| `CR-GC-667` | open | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen | `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-run-executor` · `FUNC-run-verb` · `REQ-open-point-asked` |
 | `CR-GC-668` | done | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche | `FUNC-se-fmea` · `FUNC-view-fmea` · `REQ-published-counts-match-code` |
 | `CR-GC-669` | done | Migrationswerkzeug REQ-kinds auf zwei Werte | `FUNC-migrate-schema` |
 | `CR-GC-670` | done | graphcode-Eigenmodell auf zwei REQ-kinds migrieren | `FUNC-migrate-schema` |
 | `CR-GC-671` | done | graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor | `FUNC-evaluate-rules` · `FUNC-mutate` |
-| `CR-GC-672` | n/a | Executor und Preflight auf zwei REQ-kinds | `FUNC-build-round-injection` · `FUNC-generation-step` · `FUNC-inventory-channel` · `FUNC-preflight` |
+| `CR-GC-672` | done | Executor und Preflight auf zwei REQ-kinds | `FUNC-build-round-injection` · `FUNC-generation-step` · `FUNC-inventory-channel` · `FUNC-preflight` |
 | `CR-GC-672B` | done | Executor zeigt Vorschlaege als Gate-Batch (Split aus CR-GC-672) | `FUNC-run-executor` |
 | `CR-GC-673` | done | Projektionen auf zwei REQ-kinds und Rollen-Attribut | `FUNC-authoring-guide` · `FUNC-export-markdown` · `FUNC-render-views` |
 | `CR-GC-674` | done | SE-Skills und Help auf zwei REQ-kinds | `FUNC-author-req` · `FUNC-se-help` |
-| `CR-GC-675` | n/a | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus | `FUNC-generation-step` · `FUNC-run-executor` |
-| `CR-GC-679` | n/a | Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID | `FUNC-systemtest-report` |
-| `CR-GC-680` | n/a | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie | `FUNC-se-retro` |
-| `CR-GC-681` | n/a | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md | `REQ-published-counts-match-code` |
+| `CR-GC-675` | done | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus | `FUNC-generation-step` · `FUNC-run-executor` |
+| `CR-GC-679` | open | Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID | `FUNC-systemtest-report` |
+| `CR-GC-680` | open | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie | `FUNC-se-retro` |
+| `CR-GC-681` | open | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md | `REQ-published-counts-match-code` |
 | `CR-GC-682` | done | Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung | `FUNC-compose-faltung` · `FUNC-inventory-channel` · `REQ-inventory-switch` |
 | `CR-GC-683` | done | Konformanz-Extraktor sieht nur <repo>/src und relative Imports - im Monorepo sigloch-modules 0 Import-Endpunkte, RC-05 und RC-09 dort blind | `FUNC-check-code-conformance` |
 | `CR-GC-684` | done | Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst | `FUNC-graph-suggest` |
@@ -388,7 +388,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-692` | done | Executor meldet gekappten Werkzeugaufruf als INPUT-SCHEMA statt als Budget-Ueberlauf — Modell wiederholt denselben zu grossen Batch (runde7: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt) | `FUNC-gate-client` · `FUNC-run-executor` |
 | `CR-GC-693` | done | Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai/anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS | `FUNC-call-model` · `FUNC-run-verb` · `REQ-one-driver-local-and-frontier` |
 | `CR-GC-694` | done | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt | `FUNC-run-executor` |
-| `CR-GC-696` | open | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren | `FUNC-run-executor` |
+| `CR-GC-696` | done | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren | `FUNC-run-executor` |
 | `CR-GC-697` | done | FCHAIN-skill-report: FUNC-test/-test-ui ohne REQ (R-21) - REQ Red-First mit Test | `REQ-test-skill-red-first` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
