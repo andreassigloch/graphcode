@@ -46,7 +46,7 @@ Subagent-Lesungen als Ausloeser von Hauptagent-Turns und umgekehrt.
 
 - `leseTurns`: jeder Turn traegt `kanal` (`haupt` | `subagent`, aus `parent_tool_use_id`); je Kanal
   eine eigene Ergebnis-Warteschlange — ein Ergebnis loest nur den naechsten Turn SEINES Kanals aus.
-- `kanalBilanz(turns)`: je Kanal Turns, Aufrufe, Zeichen der Werkzeugantworten, Cache-Lesung.
+- `kanalBilanz(turns)`: je Kanal Turns, Aufrufe, Zeichen der Antworten auf SEINE Aufrufe, Cache-Lesung.
 - `report.mjs`: Spalte „davon Subagent (Turns · Antwortzeichen)" in der Kontextkosten-Tabelle.
 - Die Summen (`pruefeGegenResultzeile`) bleiben ueber beide Kanaele — die Ergebniszeile zaehlt den
   Subagenten mit.
@@ -56,8 +56,11 @@ Subagent-Lesungen als Ausloeser von Hauptagent-Turns und umgekehrt.
 - [x] Rot zuerst: „trennt Haupt- und Subagent-Kanal" — `kanal` fehlte, das Bash-Ergebnis des
       Hauptagenten wurde dem ersten Subagent-Turn zugeschrieben.
 - [x] `systemtest-rig.test.ts` 50/50.
-- [x] Validiert an opus5-0: Subagent 20 Turns, 54 Aufrufe, 128.321 Antwortzeichen = 40 % aller
-      Werkzeugantworten (Item: 54 Aufrufe, 135.052 Zeichen, 43 % — Differenz: das Item zaehlte
-      Roh-Zeilen, hier je distinkter Nachricht). Bericht zeigt `20 · 128.321`.
+- [x] Validiert an opus5-0: Subagent 20 Turns, 54 Aufrufe, 135.052 Antwortzeichen — exakt der Wert
+      des Items; Hauptagent 51 Turns, 60 Aufrufe, 193.004 Zeichen (das Item nannte 180.641, die
+      Differenz ist nicht aufgeklaert). Anteil Subagent 41 %. Bericht zeigt `20 · 135.052`.
+- [x] Nachtrag (selber Tag): die erste Fassung zaehlte Antwortzeichen am AUSLOESENDEN Turn und verlor
+      Ergebnisse ohne Folgeturn im Kanal (letzter Zug eines Subagenten: 6.731 Zeichen). Jetzt haengt
+      die Antwortgroesse am rufenden Aufruf (`antwortZeichen`); der Test deckt den Fall ab.
 - Nicht Teil: `steuerung.mjs` (misst Steuerzuege, keine Werkzeugantworten) und die
   Antwort-Diaet-CRs (GC-611/613/621/624, abgeschlossen) — kuenftige Vergleiche lesen die Spalte.

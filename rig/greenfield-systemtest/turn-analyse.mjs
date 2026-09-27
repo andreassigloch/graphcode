@@ -58,6 +58,7 @@ export function leseTurns(pfad) {
   const offen = new Map();       // Kanal → Werkzeuge, deren Ergebnis seit dessen letztem Turn eintraf
   const offenDetail = new Map(); // Kanal → dieselben Ergebnisse mit id und Text (Bedarfsanalyse)
   const letzteIds = new Map();   // tool_use_id → Name, um Ergebnisse zuzuordnen
+  const aufrufNach = new Map();  // tool_use_id → Aufruf-Objekt des rufenden Turns (Antwortzeichen)
   const kanalVon = (e) => e.parent_tool_use_id ?? 'haupt';
 
   for (const e of zeilen(pfad)) {
@@ -67,6 +68,7 @@ export function leseTurns(pfad) {
       const uses = (e.message.content ?? []).filter((c) => c.type === 'tool_use');
       const rufe = uses.map((c) => { letzteIds.set(c.id, c.name); return c.name; });
       const aufrufe = uses.map((c) => ({ id: c.id, name: c.name, input: c.input ?? {} }));
+      for (const a of aufrufe) if (!aufrufNach.has(a.id)) aufrufNach.set(a.id, a);
       const id = e.message.id ?? `ohne-id-${reihenfolge.length}`;
       const vorhanden = proNachricht.get(id);
       if (!vorhanden) {
@@ -102,13 +104,17 @@ export function leseTurns(pfad) {
         offen.get(k).push(letzteIds.get(c.tool_use_id) ?? 'unbekannt');
         const text = typeof c.content === 'string' ? c.content : JSON.stringify(c.content ?? '');
         offenDetail.get(k).push({ id: c.tool_use_id, text });
+        // Am RUFENDEN Aufruf festhalten: ein Ergebnis ohne Folgeturn im Kanal (letzter Zug eines
+        // Subagenten) haengt an keinem ausloesenden Turn — am Aufruf geht es nicht verloren.
+        const aufruf = aufrufNach.get(c.tool_use_id);
+        if (aufruf) aufruf.antwortZeichen = text.length;
       }
     }
   }
   return reihenfolge.map((id) => proNachricht.get(id));
 }
 
-/** Je Kanal: Turns, Werkzeugaufrufe, Zeichen der Werkzeugantworten, Cache-Lesung (ITEM-2026-503).
+/** Je Kanal: Turns, Werkzeugaufrufe, Zeichen der Antworten auf SEINE Aufrufe, Cache-Lesung (ITEM-2026-503).
  *  Ein Vergleich zweier Laeufe ueber „Zeichen im Kontext" ist nur apples-to-apples, wenn beide
  *  Kanaele ausgewiesen sind — ein Subagent erkundet, was der Hauptagent sonst selbst liest. */
 export function kanalBilanz(turns) {
@@ -118,7 +124,7 @@ export function kanalBilanz(turns) {
     const z = b[t.kanal ?? 'haupt'];
     z.turns += 1;
     z.aufrufe += t.aufrufe.length;
-    z.ergebnisZeichen += t.ergebnisse.reduce((a, r) => a + r.text.length, 0);
+    z.ergebnisZeichen += t.aufrufe.reduce((a, x) => a + (x.antwortZeichen ?? 0), 0);
     z.cacheRead += t.verbrauch.cacheRead;
   }
   return b;

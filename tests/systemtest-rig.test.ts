@@ -125,7 +125,9 @@ describe('turn-analyse: der Strom misst denselben Lauf wie die Ergebniszeile (CR
       ergebnis('tB', 'ok'),
       sub(assistant('s1', { read: 5 }, [{ type: 'tool_use', id: 'r1', name: 'Read' }])),
       sub(ergebnis('r1', 'x'.repeat(100))),
-      sub(assistant('s2', { read: 6 })),
+      // Der letzte Zug des Subagenten: sein Ergebnis loest keinen Turn mehr aus — zaehlt trotzdem.
+      sub(assistant('s2', { read: 6 }, [{ type: 'tool_use', id: 'r2', name: 'Read' }])),
+      sub(ergebnis('r2', 'yyy')),
       ergebnis('tA', 'zusammenfassung'),
       assistant('m2', { read: 20 }),
     ]);
@@ -135,7 +137,7 @@ describe('turn-analyse: der Strom misst denselben Lauf wie die Ergebniszeile (CR
     expect(turns.map((t: { nachErgebnisVon: string[] }) => t.nachErgebnisVon)).toEqual([[], [], ['Read'], ['Bash', 'Agent']]);
     expect(kanalBilanz(turns)).toEqual({
       haupt: { turns: 2, aufrufe: 2, ergebnisZeichen: 17, cacheRead: 30 },
-      subagent: { turns: 2, aufrufe: 1, ergebnisZeichen: 100, cacheRead: 11 },
+      subagent: { turns: 2, aufrufe: 2, ergebnisZeichen: 103, cacheRead: 11 },
     });
   });
 
