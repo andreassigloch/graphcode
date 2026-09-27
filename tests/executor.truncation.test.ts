@@ -143,3 +143,60 @@ describe.each([
     expect(sys.attributes?.note).toBe('aktualisiert');
   });
 });
+
+/**
+ * CR-GC-692 (ITEM-2026-427) — das runde7-Muster: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt.
+ *
+ * Am Budget gekappter Werkzeugaufruf: beide Backends liefern `input: {}` (`safeParse` bzw. der
+ * Stream-Zusammenbau) mit Stop-Grund `max_tokens`/`length`. Vorher ging `{}` ans Gate, und das
+ * Modell las „INPUT-SCHEMA: supply exactly one of commands or formatE" — kein Wort vom Budget.
+ * Es schickte denselben zu grossen Batch erneut, bis das Turn-Budget leer war.
+ */
+describe('CR-GC-692: gekappter Werkzeugaufruf ist Budget-Ueberlauf, nicht INPUT-SCHEMA', () => {
+  let repoRoot: string;
+  let harness: Awaited<ReturnType<typeof createHarness>>;
+  let registry: ReturnType<typeof bindToolsToHarness>;
+
+  beforeEach(async () => {
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-truncation-692-'));
+    harness = await createHarness({
+      repoRoot,
+      scope: { workspaceId: 'truncation-692', systemId: 'truncation-692' },
+      consumerType: 'system',
+      preCommitTimeout: 5000,
+    });
+    await harness.initialize();
+    registry = bindToolsToHarness(harness);
+    expect(((await registry['graph_mutate'].handler(SEED)) as { success: boolean }).success).toBe(true);
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  it.each([
+    { candidates: 1, stop: 'max_tokens' },
+    { candidates: 1, stop: 'length' },
+    { candidates: 2, stop: 'max_tokens' },
+  ])('candidates=$candidates, stop=$stop: kein INPUT-SCHEMA, das Modell erfaehrt das Budget', async ({ candidates, stop }) => {
+    // Das Modell wiederholt den gekappten Aufruf, solange es keinen Budget-Hinweis liest (runde7).
+    const { callModel, calls } = modell(() => mutateCall('gross', {}, stop));
+    const traces: string[] = [];
+    const config = ExecutorConfigSchema.parse({
+      baseUrl: 'http://scripted.invalid',
+      model: 'scripted',
+      maxRounds: 1,
+      maxStepTurns: 6,
+      candidates,
+    });
+    const stats = await runExecutor({ registry, workspaceDir: repoRoot, config, callModel, trace: (l) => traces.push(l) });
+
+    expect(stats.mutatesRejected).toBe(0);
+    expect(JSON.stringify(calls)).not.toContain('INPUT-SCHEMA');
+    expect(traces.some((l) => l.includes('INPUT-SCHEMA') || l.includes('input-schema'))).toBe(false);
+    expect(JSON.stringify(calls[1])).toContain('Token-Budget abgeschnitten');
+    const sys = harness.getGraph().nodes.find((n) => n.uid === 'SYS-app') as { attributes?: Record<string, unknown> };
+    expect(sys.attributes?.note).toBe('aktualisiert');
+  });
+});
