@@ -33,6 +33,9 @@ export function isModelRelevant(source) {
 
 /** Die Menge, die `verify:model` fährt. */
 export const INCLUDED = [
+  // CR-GC-679: liest die S1-Zeile der Leitlinie §9.4 und haelt `S1` in scripts/messung.mjs gleich —
+  // eine reine Doku-Aenderung an S1 macht ihn rot, also gehoert er in die Spur.
+  'tests/messung.test.ts',
   // CR-GC-591: liest die committete SSOT und verlangt Rang, Zeitpunkt und Treiber an jedem
   // FLOW-channel-* — eine Modellaenderung an den Kanaelen macht ihn rot, also gehoert er in die Spur.
   'tests/channel-model.test.ts',
