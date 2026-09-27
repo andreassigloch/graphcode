@@ -703,7 +703,9 @@
 | `CR-GC-683` | relation | `FUNC-check-code-conformance` |
 | `CR-GC-684` | relation | `FUNC-graph-suggest` |
 | `CR-GC-685` | relation | `FUNC-bind-tools` |
-| `CR-GC-685` | relation | `FUNC-graph-realize` |
+| `CR-GC-685` | relation | `FUNC-mutate` |
+| `CR-GC-685B` | relation | `FUNC-bind-tools` |
+| `CR-GC-685B` | relation | `FUNC-mutate` |
 | `CR-GC-686` | relation | `FUNC-close-violations` |
 | `CR-GC-686` | relation | `FUNC-import-doc` |
 | `CR-GC-686` | relation | `FUNC-mutate` |
@@ -853,7 +855,6 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-uc` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-close-violations` |
-| `FCHAIN-skill-authoring` | compose | `FUNC-graph-realize` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-mutate` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-conops` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-fmea` |
@@ -1025,7 +1026,6 @@
 | `FLOW-gate-verdict` | io | `ACTOR-owner` |
 | `FLOW-gate-verdict` | io | `FUNC-bootstrap` |
 | `FLOW-gate-verdict` | io | `FUNC-gate-client` |
-| `FLOW-gate-verdict` | io | `FUNC-graph-realize` |
 | `FLOW-gate-verdict` | io | `FUNC-graph-suggest` |
 | `FLOW-gate-verdict` | io | `FUNC-import-code-verb` |
 | `FLOW-gate-verdict` | io | `FUNC-se-retro` |
@@ -1046,7 +1046,6 @@
 | `FLOW-graph-state` | io | `FUNC-fit-advisory` |
 | `FLOW-graph-state` | io | `FUNC-function-criticality` |
 | `FLOW-graph-state` | io | `FUNC-graph-export-snapshot` |
-| `FLOW-graph-state` | io | `FUNC-graph-realize` |
 | `FLOW-graph-state` | io | `FUNC-graph-suggest` |
 | `FLOW-graph-state` | io | `FUNC-list-elements` |
 | `FLOW-graph-state` | io | `FUNC-merge-nodes` |
@@ -1129,8 +1128,6 @@
 | `FLOW-mutate-cmd-close-violations` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-gate-client` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-gate-client` | relation | `SCHEMA-mutate-command` |
-| `FLOW-mutate-cmd-graph-realize` | io | `FUNC-mutate` |
-| `FLOW-mutate-cmd-graph-realize` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-graph-suggest` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-graph-suggest` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-import-code-verb` | io | `FUNC-mutate` |
@@ -1366,7 +1363,6 @@
 | `FUNC-block-autorieren` | allocate | `MOD-agent-surface` |
 | `FUNC-block-autorieren` | compose | `FUNC-author-req` |
 | `FUNC-block-autorieren` | compose | `FUNC-author-uc` |
-| `FUNC-block-autorieren` | compose | `FUNC-graph-realize` |
 | `FUNC-block-autorieren` | compose | `FUNC-import-code` |
 | `FUNC-block-autorieren` | compose | `FUNC-import-doc` |
 | `FUNC-block-autorieren` | compose | `FUNC-se-generate` |
@@ -1579,9 +1575,6 @@
 | `FUNC-graph-readiness` | allocate | `MOD-projections` |
 | `FUNC-graph-readiness` | io | `FLOW-readiness-report` |
 | `FUNC-graph-readiness` | satisfy | `REQ-held-back-traces-named` |
-| `FUNC-graph-realize` | allocate | `MOD-surface` |
-| `FUNC-graph-realize` | io | `FLOW-mutate-cmd-graph-realize` |
-| `FUNC-graph-realize` | satisfy | `REQ-test-runnable-binding` |
 | `FUNC-graph-store` | allocate | `MOD-kernel` |
 | `FUNC-graph-store` | io | `FLOW-graph-state` |
 | `FUNC-graph-store` | satisfy | `REQ-auto-persist-merge` |

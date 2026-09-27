@@ -2541,15 +2541,25 @@
       "id": "CR-GC-685",
       "type": "CR",
       "name": "MCP-Schreibflaeche auf Format-E reduzieren: graph_realize und commands-Parameter raus, graph_merge-Beschreibung falsch (beschreibt Knoten-Merge statt Branch-Replay)",
-      "description": "docs/cr/open/CR-GC-685-mcp-schreibflaeche-auf-format-e-reduzier.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-685-mcp-schreibflaeche-auf-format-e-reduzier.md",
+      "status": "done",
+      "commitRef": "8694757"
+    },
+    {
+      "id": "CR-GC-685B",
+      "type": "CR",
+      "name": "graph_realize von der MCP-Oberflaeche entfernen (Split aus CR-GC-685)",
+      "description": "docs/cr/done/CR-GC-685B-graph-realize-von-der-oberflaeche.md",
+      "status": "done",
+      "commitRef": "1a70de6"
     },
     {
       "id": "CR-GC-686",
       "type": "CR",
       "name": "Vorbilder und Werkzeugtexte auf Format-E: Skills, SCHEMA-01-fixHint, graph_merge-Beschreibung",
-      "description": "docs/cr/open/CR-GC-686-vorbilder-und-werkzeugtexte-auf-format-e.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-686-vorbilder-und-werkzeugtexte-auf-format-e.md",
+      "status": "done",
+      "commitRef": "a38df45"
     },
     {
       "id": "CR-GC-687",
@@ -3069,7 +3079,7 @@
       "id": "FLOW-gate-verdict",
       "type": "FLOW",
       "name": "Gate-Verdikt",
-      "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. bootstrap, import-code-verb, graph_realize und graph_test_ingest lesen es und reichen es weiter; der Gate-Zugang des Executors formt daraus seinen Gate-Ausgang (FLOW-gate-outcome), und erst den liest die Kandidaten-Rangfolge. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501, CR-GC-509)",
+      "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. bootstrap, import-code-verb und graph_test_ingest lesen es und reichen es weiter; der Gate-Zugang des Executors formt daraus seinen Gate-Ausgang (FLOW-gate-outcome), und erst den liest die Kandidaten-Rangfolge. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501, CR-GC-509, CR-GC-685)",
       "status": "reviewed"
     },
     {
@@ -3269,13 +3279,6 @@
       "type": "FLOW",
       "name": "Mutate-Command (gate-client)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-gate-client → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
-    },
-    {
-      "id": "FLOW-mutate-cmd-graph-realize",
-      "type": "FLOW",
-      "name": "Mutate-Command (graph-realize)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-graph-realize → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
       "status": "reviewed"
     },
     {
@@ -4318,18 +4321,6 @@
       "realRef": {
         "file": "src/projections/report.ts",
         "symbol": "graph_readiness",
-        "lang": "ts"
-      }
-    },
-    {
-      "id": "FUNC-graph-realize",
-      "type": "FUNC",
-      "name": "graph_realize",
-      "description": "Das Werkzeug graph_realize: bindet eine FUNC oder ein SCHEMA an sein Code-Symbol (realRef) und ergaenzt optional den testRefs-Eintrag einer Abnahme, in einem flachen Aufruf. Liest dafuer die bestehenden Knoten aus dem Store (write.ts:418), baut daraus die update-node-Kommandos (write.ts:419-470) und schickt sie durch das Apply-Gate (write.ts:493); das Verdict geht mit missingRefs vorher und nachher an den Aufrufer zurueck. (CR-GC-509)",
-      "status": "done",
-      "realRef": {
-        "file": "src/surface/write.ts",
-        "symbol": "graph_realize",
         "lang": "ts"
       }
     },
@@ -6625,7 +6616,7 @@
       "id": "REQ-skill-authors-through-gate",
       "type": "REQ",
       "name": "Autoren-Skill schreibt nur durchs Gate",
-      "description": "Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate oder graph_realize und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.",
+      "description": "Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.",
       "kinds": [
         "functional"
       ]
@@ -8246,7 +8237,7 @@
       "id": "TEST-graph-realize",
       "type": "TEST",
       "name": "Flaches Binden ueber das Gate",
-      "description": "Abnahme der Datei tests/mcp.realize.test.ts: graph_realize setzt die realRef einer FUNC und optional den testRefs-Eintrag einer Abnahme in einem flachen Aufruf, und zwar durch mutate. Kein paralleler Schreibweg neben dem Gate.",
+      "description": "Abnahme der Datei tests/mcp.realize.test.ts: Binden ueber graph_mutate mit Format-E (~ FUNC-x und @realRef, optional @testRefs) setzt realRef und testRefs durch das Gate, und das Ergebnis traegt den Bindungsreport refs mit resolved, introduced und openRefs, sobald der Batch R-19, R-20 oder R-26 beruehrt. Ein ~ auf eine unbekannte uid wird abgelehnt statt einen Phantomknoten anzulegen. (CR-GC-685)",
       "testRefs": [
         {
           "file": "tests/mcp.realize.test.ts",
@@ -13707,7 +13698,17 @@
     },
     {
       "source": "CR-GC-685",
-      "target": "FUNC-graph-realize",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-685B",
+      "target": "FUNC-bind-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-685B",
+      "target": "FUNC-mutate",
       "type": "relation"
     },
     {
@@ -14531,11 +14532,6 @@
     {
       "source": "FCHAIN-skill-authoring",
       "target": "FUNC-close-violations",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-skill-authoring",
-      "target": "FUNC-graph-realize",
       "type": "compose"
     },
     {
@@ -15419,11 +15415,6 @@
     },
     {
       "source": "FLOW-gate-verdict",
-      "target": "FUNC-graph-realize",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-gate-verdict",
       "target": "FUNC-graph-suggest",
       "type": "io"
     },
@@ -15529,11 +15520,6 @@
     {
       "source": "FLOW-graph-state",
       "target": "FUNC-graph-export-snapshot",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-graph-realize",
       "type": "io"
     },
     {
@@ -15959,16 +15945,6 @@
     },
     {
       "source": "FLOW-mutate-cmd-gate-client",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-graph-realize",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-graph-realize",
       "target": "SCHEMA-mutate-command",
       "type": "relation"
     },
@@ -17160,11 +17136,6 @@
     },
     {
       "source": "FUNC-block-autorieren",
-      "target": "FUNC-graph-realize",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-autorieren",
       "target": "FUNC-import-code",
       "type": "compose"
     },
@@ -18262,21 +18233,6 @@
     {
       "source": "FUNC-graph-readiness",
       "target": "REQ-held-back-traces-named",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-graph-realize",
-      "target": "MOD-surface",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-graph-realize",
-      "target": "FLOW-mutate-cmd-graph-realize",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-graph-realize",
-      "target": "REQ-test-runnable-binding",
       "type": "satisfy"
     },
     {
@@ -22330,5 +22286,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 512
+  "graphVersion": 513
 }

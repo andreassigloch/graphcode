@@ -69,7 +69,6 @@
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
 | `FUNC-graph-readiness` | FUNC | graph_readiness(detail?) |
-| `FUNC-graph-realize` | FUNC | graph_realize |
 | `FUNC-graph-store` | FUNC | GraphStore |
 | `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
 | `FUNC-gve-sessions` | FUNC | liveSessions |
@@ -212,7 +211,6 @@
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |
 | `FUNC-graph-readiness` | `MOD-projections` |
-| `FUNC-graph-realize` | `MOD-surface` |
 | `FUNC-graph-store` | `MOD-kernel` |
 | `FUNC-graph-suggest` | `MOD-loop` |
 | `FUNC-gve-sessions` | `MOD-surface` |
