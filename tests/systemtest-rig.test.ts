@@ -14,7 +14,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync, realpathSync, readFileSync, existsSync, chmodSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync, mkdirSync, realpathSync, readFileSync, existsSync, chmodSync, utimesSync } from 'node:fs';
 import { tmpdir, hostname } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync, spawn } from 'node:child_process';
@@ -420,6 +420,23 @@ describe('Betriebsmodi der Arme: jeder Arm nennt seine Achsen (CR-GC-572)', () =
 });
 
 describe('Der Anthropic-Key kommt aus graphcode/.env — und nur zu dem Arm, der ihn liest', () => {
+  it('veraltetesDist nennt jede Quelldatei, die neuer ist als dist — der Lauf mass sonst alten Code', async () => {
+    // Gemessen 2026-09-27: S2-Runde gcrun-330..332 lief auf dist von 15:43, die Aenderungen
+    // (CR-GC-702/703) standen seit 16:16 im src — die Runde mass den Stand VOR dem Fix.
+    const { veraltetesDist } = await import('../rig/greenfield-systemtest/run.mjs');
+    const wurzel = join(dir, 'dist-frische');
+    mkdirSync(join(wurzel, 'src', 'loop'), { recursive: true });
+    mkdirSync(join(wurzel, 'dist'), { recursive: true });
+    writeFileSync(join(wurzel, 'src', 'loop', 'a.ts'), 'x');
+    writeFileSync(join(wurzel, 'dist', 'cli.js'), 'x');
+    const jetzt = Date.now() / 1000;
+    utimesSync(join(wurzel, 'dist', 'cli.js'), jetzt - 100, jetzt - 100);
+    utimesSync(join(wurzel, 'src', 'loop', 'a.ts'), jetzt, jetzt);
+    expect(veraltetesDist(wurzel)).toEqual(['src/loop/a.ts']);
+    utimesSync(join(wurzel, 'dist', 'cli.js'), jetzt + 100, jetzt + 100);
+    expect(veraltetesDist(wurzel)).toEqual([]);
+  });
+
   it('readSecrets liest die Datei, ohne process.env anzufassen', async () => {
     // @ts-expect-error — s.o.
     const { readSecrets } = await import('../rig/greenfield-systemtest/run.mjs');

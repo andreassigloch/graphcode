@@ -13,7 +13,7 @@
 //
 // @author andreas@siglochconsulting
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, cpSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, cpSync, statSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { createHash } from 'node:crypto';
 import { hostname } from 'node:os';
@@ -36,6 +36,25 @@ const MCP_ARGS = [join(GC_ROOT, 'dist', 'cli.js'), 'mcp']; // local dist, not np
  * bestellt hat. So bekommt den Wert nur der Arm, der ihn namentlich liest.
  * Die Datei ist gitignored; `.env.example` nennt die Schluessel ohne Werte.
  */
+/**
+ * Quelldateien, die neuer sind als `dist/cli.js`. Das Rig faehrt `dist` — ist es aelter als `src`,
+ * misst der Lauf den Stand VOR der Aenderung (S2-Runde gcrun-330..332, 2026-09-27). `main` bricht dann ab.
+ */
+export function veraltetesDist(wurzel = GC_ROOT) {
+  const cli = join(wurzel, 'dist', 'cli.js');
+  const stand = existsSync(cli) ? statSync(cli).mtimeMs : 0;
+  const neuer = [];
+  const lauf = (rel) => {
+    for (const e of readdirSync(join(wurzel, rel), { withFileTypes: true })) {
+      const r = join(rel, e.name);
+      if (e.isDirectory()) lauf(r);
+      else if (e.name.endsWith('.ts') && statSync(join(wurzel, r)).mtimeMs > stand) neuer.push(r);
+    }
+  };
+  lauf('src');
+  return neuer.sort();
+}
+
 export function readSecrets(path) {
   return existsSync(path) ? parseEnv(readFileSync(path, 'utf8')) : {};
 }
@@ -683,6 +702,11 @@ function dateiSha(pfad) {
 }
 
 async function main() {
+  const veraltet = veraltetesDist();
+  if (veraltet.length) {
+    process.stderr.write(`dist ist aelter als ${veraltet.length} Quelldatei(en) (${veraltet.slice(0, 3).join(', ')}${veraltet.length > 3 ? ' …' : ''}) — erst \`npm run build\`, sonst misst der Lauf alten Code.\n`);
+    process.exit(1);
+  }
   const outDir = join(HERE, 'runs');
   mkdirSync(outDir, { recursive: true });
   // CR-GC-618: EINMAL gebaut, in JEDE Zeile — auch in eine Abbruchzeile. Eine Ergebnisdatei
