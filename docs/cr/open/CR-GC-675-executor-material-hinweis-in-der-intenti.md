@@ -59,12 +59,34 @@ Material-Gedaechtnis ueber Runden (CR-GC-663, zurueckgenommen).
 
 ## Akzeptanzkriterien
 
-- [ ] Rot zuerst: Test am echten Loop — ab der ersten Runde nach dem Seed enthaelt der
+- [x] Rot zuerst: Test am echten Loop — ab der ersten Runde nach dem Seed enthaelt der
       `graph_generate`-Aufruf keinen `intent` mehr; scheitert der Seed, traegt die Folgerunde ihn weiter.
-- [ ] `graph_tests`-Auswahl (oben) gruen, Type-Check sauber.
+- [x] `graph_tests`-Auswahl (oben) gruen, Type-Check sauber.
 - [ ] Rig S2 auf **festem Build** (`dist/` vor der Serie gebaut, waehrend der Serie kein fremder Build),
       gcrun, sigllm-prosa, N = 3, 12 Runden, gegen gcrun-190..192:
       - `read_file material/auftrag.md` ≤ 1 je Lauf (Bedarfsanalyse `je-runde` fuer den Auftrag ≈ 0),
       - Elemente, Readiness req/uc und Laufzeit innerhalb der Basis-Spanne (45–58 El., 115–246 s).
       Faellt die Ausbeute, braucht das Modell den Auftrag je Runde — dann zurueck und Befund im Item.
 - [ ] VOLL-Spur vor dem Schliessen.
+
+## Stand (2026-09-27)
+
+**Code fertig, Rig-Kriterium offen (Messwelle).**
+
+- `src/loop/executor.ts`: `seedPhase` — die erste Runde traegt den Intent, jede weitere nur, wenn
+  `graph_generate` zuletzt `phase === 'seed'` meldete. Die Phase kennt der Treiber erst aus der
+  Antwort; die erste Runde nach dem Seed traegt ihn deshalb noch (eine Runde Nachlauf).
+- Verworfen: „Intent nur, solange kein SYS im Store steht". Das Rig saet `SYS-sig-local` vor dem
+  Lauf (`run.mjs` `seedSystem`) — der Intent (Auftragstext aus `prompt-prosa.txt` + Material-Hinweis)
+  waere nie beim Modell angekommen, die Seed-Stufen `seed:uc`/`seed:actor` haetten aus der
+  Ein-Satz-SEED_DESC destilliert.
+- Tests (`tests/executor.test.ts`, „intent nur in der Seed-Phase"): Rig-Start mit fertigem Seed →
+  `[intent, –, –]`; gescheiterter Seed → `[intent, intent, intent, –]`. Vorher rot (Intent in jeder
+  Runde). 17 Testdateien, die `executor` importieren, gruen; `npm run build` gruen.
+
+**Erwartung fuer die Messwelle:** mit vorgesaetem SYS laufen im Rig `seed:uc`, `seed:actor` und eine
+Nachlauf-Runde mit Intent — erwartet ≈ 3 `read_file material/auftrag.md` je Lauf statt 12, nicht
+≤ 1. Das Kriterium „≤ 1" setzt voraus, dass nur der SYS-Seed den Intent braucht; die Seed-Stufen
+UC/ACTOR destillieren aus ihm. Offen: Rig S2 (N = 3, 12 Runden, gegen gcrun-190..192) — Lesezahl,
+Elemente, Readiness req/uc, Laufzeit; bei ≈ 3 Lesungen und gehaltener Ausbeute das Kriterium auf
+„≤ Seed-Stufen + 1" anpassen.

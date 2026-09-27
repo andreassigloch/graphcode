@@ -191,7 +191,7 @@ export interface RunExecutorOptions {
   registry: MCPToolRegistry;
   /** Workspace-Root für die Read-Tools (./material etc.). */
   workspaceDir: string;
-  /** Prosa-Intention — nur der erste graph_generate-Call trägt sie. */
+  /** Prosa-Intention — graph_generate traegt sie nur in der Seed-Phase (CR-GC-675). */
   intent?: string;
   config: ExecutorConfig;
   /** Test-Injektion: ersetzt den HTTP-Backend-Call. */
@@ -244,10 +244,13 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   const gate = bindGateClient(registry, stats, trace);
   // Best-of-N (CR-GC-288, executor-bestofn.ts): derselbe Lauf-Zustand wie unten.
   const bestOfNContext = { registry, workspaceDir, config, callModel, tools, stats, trace, gate };
-  // Intent bei JEDEM generate-Call mitgeben (nicht nur beim ersten, wie im Rig):
-  // scheitert der Seed-Step (Timeout, Idle), liefe die Folgerunde sonst ohne
-  // Intent UND ohne SYS in die "Erfrage die Systemintention"-Sackgasse — und
-  // headless kann niemand antworten. Nach dem Seed ist er redundant, nie falsch.
+  // Intent nur in der Seed-Phase (CR-GC-675): die erste Runde traegt ihn, jede weitere nur, wenn
+  // graph_generate zuletzt noch `seed` meldete. Scheitert ein Seed-Step (Timeout, Idle), traegt die
+  // Folgerunde ihn also weiter — sonst liefe sie ohne Intent UND ohne SYS in die "Erfrage die
+  // Systemintention"-Sackgasse. Danach liest generationStep die SYS-Beschreibung; der Intent trug
+  // im Rig den Material-Hinweis, und das Modell las den Auftrag in jeder Runde neu.
+  // Die Phase kennt der Treiber erst aus der Antwort: die erste Runde nach dem Seed traegt ihn noch.
+  let seedPhase = true;
   let lastGenPrompt = '';
   let stagnation = 0;
   /** CR-GC-614: der Weg, nicht der Verlauf — je Runde EIN Eintrag, begrenzt beim Rendern. */
@@ -269,7 +272,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // Minimal-Rendering halbierte den Durchsatz — v13b 22 vs. v12 82 Elemente;
     // die Multi-Kandidaten-Instruktion erzeugt die großen verbundenen Batches).
     const genInput: Record<string, unknown> = {};
-    if (opts.intent) genInput.intent = opts.intent;
+    if (opts.intent && seedPhase) genInput.intent = opts.intent;
     if (deferred.size > 0) genInput.defer = [...deferred];
     // IMMER 'driver', auch bei candidates=1 (CR-GC-568). Der Schema-Default ist
     // 'host' — gedacht für einen MCP-Client, der selbst per dryRun probt. Der
@@ -286,6 +289,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // laut ab — der Vertrag SCHEMA-generation-step gilt an genau dieser Grenze.
     const gen = GenerationStep.parse(await registry['graph_generate'].handler(genInput));
     stats.genRounds = round + 1;
+    seedPhase = gen.phase === 'seed';
     trace(`[generate ${round + 1}] phase=${gen.phase} done=${gen.done}`);
     if (gen.done) {
       stats.done = true;

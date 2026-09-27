@@ -285,6 +285,67 @@ describe('executor (CR-GC-278)', () => {
     expect(harness.getGraph().nodes.map((n) => n.uid)).toContain('SYS-app');
   });
 
+  // CR-GC-675: der Intent traegt den Material-Hinweis des Rigs — in jeder Runde gesendet, las das
+  // Modell den Auftrag in jeder Runde neu. Nach dem Seed faellt generationStep auf die SYS-Beschreibung.
+  describe('intent nur in der Seed-Phase (CR-GC-675)', () => {
+    const INTENT = 'Eine Test-App. Der Auftrag liegt unter ./material/auftrag.md.';
+    const idle: ModelResponse = {
+      text: 'Ich denke noch nach.',
+      toolCalls: [],
+      stopReason: 'end_turn',
+      assistantMsg: { role: 'assistant', content: 'unused' },
+      usage,
+    };
+    /** Protokolliert jeden graph_generate-Aufruf; der Handler bleibt der echte. */
+    function captureGenerate(): Record<string, unknown>[] {
+      const inputs: Record<string, unknown>[] = [];
+      const echt = registry['graph_generate'];
+      registry['graph_generate'] = {
+        ...echt,
+        handler: (input: Record<string, unknown>) => {
+          inputs.push(input);
+          return echt.handler(input);
+        },
+      } as typeof echt;
+      return inputs;
+    }
+
+    it('nach der Seed-Phase traegt graph_generate keinen intent mehr (Rig-Start: Seed steht schon)', async () => {
+      const seed = await registry['graph_mutate'].handler(registry['graph_mutate'].inputSchema.parse(VALID_SEED_BATCH));
+      expect((seed as { success: boolean }).success).toBe(true);
+      const inputs = captureGenerate();
+      const { callModel } = scriptedModel(Array.from({ length: 8 }, () => idle));
+      await runExecutor({
+        registry,
+        workspaceDir: repoRoot,
+        intent: INTENT,
+        config: { ...CONFIG, maxRounds: 3, maxStepTurns: 2 },
+        callModel,
+      });
+      // Die erste Runde kennt die Phase noch nicht; ab der Antwort `expand` faellt der intent weg.
+      expect(inputs.map((i) => i.intent)).toEqual([INTENT, undefined, undefined]);
+    });
+
+    it('scheitert der Seed, traegt die Folgerunde den intent weiter', async () => {
+      const inputs = captureGenerate();
+      const { callModel } = scriptedModel([
+        idle,
+        idle,
+        toolCallResponse('c1', VALID_SEED_BATCH),
+        ...Array.from({ length: 8 }, () => idle),
+      ]);
+      await runExecutor({
+        registry,
+        workspaceDir: repoRoot,
+        intent: INTENT,
+        config: { ...CONFIG, maxRounds: 4, maxStepTurns: 2 },
+        callModel,
+      });
+      // Runde 1 scheitert (seed), Runde 2 legt den Seed an (seed), Runde 3 meldet expand — ab Runde 4 ohne.
+      expect(inputs.map((i) => i.intent)).toEqual([INTENT, INTENT, INTENT, undefined]);
+    });
+  });
+
   it('idle turn (no tool call, no recoverable batch) gets ONE nudge before giving up', async () => {
     const idle: ModelResponse = {
       text: 'Ich analysiere zunächst die Anforderungen in Prosa …',
