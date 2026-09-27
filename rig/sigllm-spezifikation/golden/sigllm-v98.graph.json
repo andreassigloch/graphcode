@@ -801,12 +801,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -929,12 +931,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -961,12 +965,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -977,12 +983,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1025,12 +1033,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1073,12 +1083,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1105,12 +1117,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1121,12 +1135,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1137,12 +1153,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1233,12 +1251,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1329,12 +1349,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1345,11 +1367,11 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "postcondition"
+    "non-functional"
    ],
    "attributes": {
     "kinds": [
-     "postcondition"
+     "non-functional"
     ]
    }
   },
@@ -1361,11 +1383,11 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "postcondition"
+    "non-functional"
    ],
    "attributes": {
     "kinds": [
-     "postcondition"
+     "non-functional"
     ]
    }
   },
@@ -1377,11 +1399,11 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "postcondition"
+    "non-functional"
    ],
    "attributes": {
     "kinds": [
-     "postcondition"
+     "non-functional"
     ]
    }
   },
@@ -1393,11 +1415,11 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "precondition"
+    "non-functional"
    ],
    "attributes": {
     "kinds": [
-     "precondition"
+     "non-functional"
     ]
    }
   },
@@ -1409,11 +1431,11 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "precondition"
+    "non-functional"
    ],
    "attributes": {
     "kinds": [
-     "precondition"
+     "non-functional"
     ]
    }
   },
@@ -1425,11 +1447,11 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "precondition"
+    "non-functional"
    ],
    "attributes": {
     "kinds": [
-     "precondition"
+     "non-functional"
     ]
    }
   },
@@ -1457,12 +1479,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1569,12 +1593,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1601,12 +1627,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -1617,12 +1645,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 7,
     "occurrence": 5,
     "detection": 8,
@@ -1637,12 +1667,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 7,
     "occurrence": 4,
     "detection": 6,
@@ -1657,12 +1689,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 7,
     "occurrence": 5,
     "detection": 6,
@@ -1677,12 +1711,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 8,
     "occurrence": 8,
     "detection": 2,
@@ -1697,12 +1733,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 7,
     "occurrence": 6,
     "detection": 6,
@@ -1717,12 +1755,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 5,
     "occurrence": 5,
     "detection": 5,
@@ -1737,12 +1777,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 8,
     "occurrence": 5,
     "detection": 7,
@@ -1757,12 +1799,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 7,
     "occurrence": 4,
     "detection": 6,
@@ -1777,12 +1821,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 8,
     "occurrence": 3,
     "detection": 5,
@@ -1797,12 +1843,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 9,
     "occurrence": 3,
     "detection": 8,
@@ -1817,12 +1865,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 8,
     "occurrence": 6,
     "detection": 7,
@@ -1837,12 +1887,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 5,
     "occurrence": 4,
     "detection": 6,
@@ -1857,12 +1909,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 7,
     "occurrence": 4,
     "detection": 6,
@@ -1877,12 +1931,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 9,
     "occurrence": 4,
     "detection": 2,
@@ -1897,12 +1953,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 8,
     "occurrence": 7,
     "detection": 8,
@@ -1917,12 +1975,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "risk"
+    "non-functional"
    ],
+   "role": "risk",
    "attributes": {
     "kinds": [
-     "risk"
+     "non-functional"
     ],
+    "role": "risk",
     "severity": 8,
     "occurrence": 4,
     "detection": 5,
@@ -2033,12 +2093,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -2049,12 +2111,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -2097,12 +2161,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {
@@ -2113,12 +2179,14 @@
    "status": "draft",
    "created_at": "",
    "kinds": [
-    "mitigation"
+    "non-functional"
    ],
+   "role": "mitigation",
    "attributes": {
     "kinds": [
-     "mitigation"
-    ]
+     "non-functional"
+    ],
+    "role": "mitigation"
    }
   },
   {

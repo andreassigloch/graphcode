@@ -1,0 +1,982 @@
+{
+  "tool": "migrate-req-kinds",
+  "cr": "CR-GC-696B",
+  "graph": "sigllm",
+  "counts": {
+    "req": 80,
+    "prePost": 6,
+    "risk": 16,
+    "mitigation": 18,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 40,
+    "noKinds": 0,
+    "satisfyToPrePost": 6,
+    "satisfyToRole": 18,
+    "fchainToFunctional": 0
+  },
+  "decisions": [
+    {
+      "uid": "REQ-absence-monitoring-dead-mans-switch",
+      "name": "Abwesenheit wird ueberwacht",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-platform-operations",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-agents-work-outside-protected-locations",
+      "name": "Ergebnisse verlassen die Plattform nur ueber die Auslieferung",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-agent-management",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-bind-address-is-checked-not-assumed",
+      "name": "Bindeadresse wird geprueft, nicht zugesichert",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-llm-runtime",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-capability-and-config-share-one-source",
+      "name": "Faehigkeit und Konfiguration aus einer Quelle",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-gateway",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-command-payload-typed-per-command",
+      "name": "Befehlsnutzlast ist je Befehlsart typisiert",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-platform-operations",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-contract-and-tool-names-resolve",
+      "name": "Vertrags- und Werkzeugnamen loesen auf",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-agent-management",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-denied-access-is-not-success",
+      "name": "Verweigerter Zugriff ist kein Erfolg",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-scheduler",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-fetched-content-is-untrusted",
+      "name": "Geholte Inhalte gelten als unvertrauenswuerdig",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-agent-applications",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-handover-is-acknowledged-or-times-out",
+      "name": "Uebergabe wird bestaetigt oder laeuft ab",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "SYS-sig-local",
+          "type": "SYS"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein SYS ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-model-artifact-integrity-checked",
+      "name": "Herkunft der Modelldatei wird geprueft",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-llm-runtime",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-one-error-vocabulary",
+      "name": "Eine Wertemenge fuer Fehlerursachen",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-platform-operations",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-post-local-agent-run-ends-in-one-of-three",
+      "name": "Nachbedingung: genau einer von drei Ausgaengen",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-local-agent-execution",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-local-agent-execution -> non-functional an der Kette (wie CR-GC-670); Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen — das Golden ist eine Messbasis, kein Umbau"
+    },
+    {
+      "uid": "REQ-post-management-state-all-or-nothing",
+      "name": "Nachbedingung: ganz uebernommen oder unveraendert",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-agent-and-platform-management",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-agent-and-platform-management -> non-functional an der Kette (wie CR-GC-670); Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen — das Golden ist eine Messbasis, kein Umbau"
+    },
+    {
+      "uid": "REQ-post-remote-inference-answered-or-named-error",
+      "name": "Nachbedingung: Antwort oder benannter Fehler",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "postcondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-remote-inference-request",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-remote-inference-request -> non-functional an der Kette (wie CR-GC-670); Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen — das Golden ist eine Messbasis, kein Umbau"
+    },
+    {
+      "uid": "REQ-pre-local-agent-run-due-and-activated",
+      "name": "Vorbedingung: faellig, im Fenster, aktiviert",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-local-agent-execution",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-local-agent-execution -> non-functional an der Kette (wie CR-GC-670); Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen — das Golden ist eine Messbasis, kein Umbau"
+    },
+    {
+      "uid": "REQ-pre-management-command-authorized-and-typed",
+      "name": "Vorbedingung: autorisiert und zur Befehlsart passend",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-agent-and-platform-management",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-agent-and-platform-management -> non-functional an der Kette (wie CR-GC-670); Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen — das Golden ist eine Messbasis, kein Umbau"
+    },
+    {
+      "uid": "REQ-pre-remote-inference-authenticated-and-bound",
+      "name": "Vorbedingung: authentifiziert und Profil gebunden",
+      "case": [
+        "prepost-on-fchain"
+      ],
+      "before": {
+        "kinds": [
+          "precondition"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "FCHAIN-remote-inference-request",
+          "type": "FCHAIN"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": null,
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "Ende-zu-Ende-Bedingung von FCHAIN-remote-inference-request -> non-functional an der Kette (wie CR-GC-670); Aufloesen in Eingangs-FLOW/UC-Ziel bleibt offen — das Golden ist eine Messbasis, kein Umbau"
+    },
+    {
+      "uid": "REQ-queue-depth-bounded-and-rejecting",
+      "name": "Queue-Tiefe ist begrenzt und weist ab",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-gateway",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-result-checked-beyond-schema",
+      "name": "Ergebnis wird jenseits des Schemas geprueft",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-scheduler",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-retry-state-has-one-owner",
+      "name": "Retry-Zustand hat einen Eigentuemer",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-scheduler",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-risk-absence-goes-unnoticed",
+      "name": "Ausbleiben eines Laufs bleibt unbemerkt",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-capability-config-divergence",
+      "name": "Faehigkeitsauskunft und Konfiguration divergieren",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-contract-references-are-free-text",
+      "name": "Vertrags- und Werkzeugverweise sind Freitext",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-daemon-cannot-reach-keychain",
+      "name": "Daemon erreicht den Schluesselbund nicht",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-due-slot-lost-in-sleep",
+      "name": "Faelliger Slot geht im Schlaffenster verloren",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-error-vocabulary-split",
+      "name": "Fehlerursachen in zwei Vokabularen",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-fetched-content-steers-agent",
+      "name": "Geholte Fremdinhalte steuern den Agenten um",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-gateway-queue-unbounded",
+      "name": "Gateway-Queue ist unbegrenzt",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-handover-without-acknowledgement",
+      "name": "Uebergaben ohne Zustellbestaetigung",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-model-artifact-unverified",
+      "name": "Modelldatei ohne Herkunftsnachweis",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-output-schema-valid-but-wrong",
+      "name": "Ausgabe ist schema-valide und fachlich falsch",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-promise-without-owner",
+      "name": "Zusage ohne alleinigen Verantwortlichen",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-retry-accounting-split",
+      "name": "Retry-Buchfuehrung ueber drei Vertraege verteilt",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-runtime-reachable-from-lan",
+      "name": "Backendwechsel verliert die Loopback-Bindung",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-tcc-denies-unattended-access",
+      "name": "TCC verweigert dem unbeaufsichtigten Lauf den Zugriff",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-risk-unvalidated-command-payload",
+      "name": "Managementbefehl traegt unvalidierte Nutzlast",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "risk"
+        ]
+      },
+      "satisfiedBy": [],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "risk",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "risk -> role; Kern-kind non-functional: eine Gefaehrdung ist eine Eigenschaft des Systems, keine Faehigkeit — jede FMEA-REQ traegt Rolle UND kind (se-fmea, Vorbild @role risk / @kinds [\"non-functional\"]); ohne Erfueller, satisfy-neutral"
+    },
+    {
+      "uid": "REQ-scheduler-owns-due-computation",
+      "name": "Faelligkeit entscheidet der Scheduler, nicht launchd",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-scheduler",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-secret-store-matches-run-context",
+      "name": "Secret-Ablage passt zum Ausfuehrungskontext",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-scheduler",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-shared-promise-is-split-or-owned",
+      "name": "Geteilte Zusage wird geteilt oder zugeordnet",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "SYS-sig-local",
+          "type": "SYS"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein SYS ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    },
+    {
+      "uid": "REQ-slot-behaviour-across-sleep",
+      "name": "Nachgeholt wird nur innerhalb der Kadenz",
+      "case": [
+        "role"
+      ],
+      "before": {
+        "kinds": [
+          "mitigation"
+        ]
+      },
+      "satisfiedBy": [
+        {
+          "uid": "MOD-scheduler",
+          "type": "MOD"
+        }
+      ],
+      "kinds": [
+        "non-functional"
+      ],
+      "role": "mitigation",
+      "dropSatisfy": [],
+      "addSatisfy": [],
+      "decidedBy": "CR-GC-696B",
+      "reason": "mitigation -> role; non-functional, weil der Erfueller ein MOD ist (MOD/SYS erfuellen nur non-functional, CR-GC-670); Kante bleibt"
+    }
+  ],
+  "source": "rig/sigllm-spezifikation/golden/sigllm-v98.graph.json",
+  "hinweis": "Vorschlag von scripts/migrate-req-kinds.mjs propose (40 heuristisch); je REQ nach den Regeln von CR-GC-670 entschieden. Abweichung vom Vorschlag: 16 risk-REQ ohne Erfueller bekommen non-functional statt leerem kinds (se-fmea: jede FMEA-REQ traegt Rolle und kind). Keine satisfy-Kante faellt oder kommt dazu."
+}
