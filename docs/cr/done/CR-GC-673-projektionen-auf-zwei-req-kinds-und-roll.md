@@ -64,3 +64,7 @@ Projektionen und Authoring-Guide kennen nur noch functional/non-functional; die 
 Abnahme „Views regeneriert (verify:model)": haengt an CR-GC-670 (Eigenmodell-Migration) — erst dann
 tragen die REQ des Eigenmodells `role` statt `kinds ["risk"]`, und die FMEA-Sicht fuellt sich wieder.
 docs/views wurden hier bewusst nicht regeneriert.
+
+## Nachtrag 2026-09-27
+
+ConOps §2 listete FMEA-REQs (role risk/mitigation, nicht-funktional am SYS) als Betriebsvorgaben — gefunden bei der graphify-Migration (13 Risiken). Filter `reqRole(r) === undefined`; Test auf Abschnitt 2 geschaerft (REQ-persistenz stand auch in §6, der alte Test ueber die ganze Sicht haette einen Filter, der ALLES ausschliesst, nicht bemerkt — mit Gegenprobe belegt).

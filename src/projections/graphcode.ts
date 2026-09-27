@@ -222,7 +222,11 @@ export function operationalReqs(graph: Graph): GraphNode[] {
     if (tgt.type === 'REQ' && src.type === 'ACTOR') systemScoped.add(tgt.uid);
     if (src.type === 'REQ' && tgt.type === 'ACTOR') systemScoped.add(src.uid);
   }
-  return nodesOfType(graph, 'REQ').filter((r) => reqKinds(r).includes('non-functional') && systemScoped.has(r.uid));
+  // Eine FMEA-REQ (role risk|mitigation, CR-SM-365) ist nicht-funktional und oft am SYS, aber
+  // Gefaehrdung bzw. Gegenmassnahme — sie steht in der FMEA-Sicht, nicht als Betriebsvorgabe.
+  return nodesOfType(graph, 'REQ').filter(
+    (r) => reqKinds(r).includes('non-functional') && systemScoped.has(r.uid) && reqRole(r) === undefined,
+  );
 }
 
 export function renderConOps(graph: Graph, name: string): string {

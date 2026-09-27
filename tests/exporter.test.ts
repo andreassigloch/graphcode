@@ -537,6 +537,11 @@ function conOpsGraph(): Graph {
       cn('REQ-funktional', 'REQ', 'Bestellung anlegen', 'Das System legt eine Bestellung an.', {
         kinds: ['functional'],
       }),
+      // §2 boundary case: system-scoped non-functional but an FMEA risk (role) → FMEA view, not ConOps
+      cn('REQ-risiko', 'REQ', 'Datenverlust bei Stromausfall', 'Gefaehrdung.', {
+        kinds: ['non-functional'],
+        role: 'risk',
+      }),
       cn('MOD-core', 'MOD', 'core', 'Kernmodul.'),
       // §4 operational scenarios
       cn('UC-bestellen', 'UC', 'Bestellen', 'Kunde bestellt ein Ersatzteil.'),
@@ -553,6 +558,7 @@ function conOpsGraph(): Graph {
     edges: [
       ce('SYS-shop', 'compose', 'REQ-persistenz'),
       ce('SYS-shop', 'compose', 'REQ-funktional'),
+      ce('SYS-shop', 'compose', 'REQ-risiko'),
       ce('MOD-core', 'satisfy', 'REQ-modul-budget'),
       ce('SYS-shop', 'compose', 'UC-bestellen'),
       ce('SYS-shop', 'compose', 'UC-verwalten'),
@@ -571,9 +577,11 @@ function conOpsGraph(): Graph {
 
 describe('CR-GC-304: ConOps renders the 29148 OpsCon sections from existing nodes', () => {
   const md = (): string => exportMarkdown(conOpsGraph(), 'conops', 'shop');
+  /** Nur Abschnitt 2 — REQ-persistenz steht auch in §6 (CR-Wirkung), ein Test ueber die ganze Sicht saehe es immer. */
+  const abschnitt2 = (): string => md().split('## 2 ')[1]!.split('\n## ')[0]!;
 
   it('§2 lists a system-scoped non-functional REQ as an operational constraint', () => {
-    expect(md()).toContain('REQ-persistenz');
+    expect(abschnitt2()).toContain('REQ-persistenz');
   });
 
   it('§2 excludes a REQ allocated to a single MOD — design, not ConOps', () => {
@@ -582,6 +590,11 @@ describe('CR-GC-304: ConOps renders the 29148 OpsCon sections from existing node
 
   it('§2 excludes a system-scoped FUNCTIONAL REQ', () => {
     expect(md()).not.toContain('REQ-funktional');
+  });
+
+  it('§2 excludes an FMEA REQ (role risk/mitigation) — it belongs to the FMEA view (CR-SM-365)', () => {
+    expect(abschnitt2()).not.toContain('REQ-risiko');
+    expect(abschnitt2(), 'die Pruefung sieht den Abschnitt wirklich').toContain('REQ-persistenz');
   });
 
   it('§3 maps each actor to the use cases it triggers over ACTOR io UC', () => {
