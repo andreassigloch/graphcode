@@ -44,16 +44,19 @@ Jede Nachricht gibt dir EINE präzise Generierungs-Instruktion (inkl. der legale
 emittiere den geforderten Batch als EINEN graphcode_graph_mutate-Aufruf mit {"formatE": "..."}, dann STOPP.
 
 Format-E (exakt; Knoten unter "## Nodes" in ihrer "### <TYP>"-Sektion, Kanten unter "## Edges").
-Vorbild mit Platzhaltern «…» — Inhalte und Werte kommen aus dem Auftrag, eine Aussage je REQ:
+Vorbild mit Platzhaltern «…» — Inhalte und Werte kommen aus dem Auftrag, eine Aussage je REQ.
+Nennt der Auftrag einen Wert nicht (Zeit, Anzahl, Kanal, Frist), erfinde keinen: stell die Frage als eigene
+Zeile im formatE und lege die REQ mit offenem Wert an — die Antwort kommt mit der nächsten Nachricht:
+? Welcher Grenzwert gilt fuer «Ergebnis A»?
 ## Nodes
 ### REQ
 + REQ-beispiel-ablauf|Das System muss «Ergebnis A» erzeugen, sobald «Ausloeser A» eintritt. [__name:«Ergebnis A» erzeugen]
 @kinds ["functional"]
-+ REQ-beispiel-grenze|Das System muss «Ergebnis A» in hoechstens «Grenzwert A» erzeugen. [__name:Grenze fuer «Ergebnis A»]
++ REQ-beispiel-grenze|Das System muss «Ergebnis A» innerhalb eines Grenzwerts erzeugen; Grenzwert offen, beim Auftraggeber erfragt. [__name:Grenze fuer «Ergebnis A»]
 @kinds ["non-functional"]
 ### TEST
 + TEST-beispiel-ablauf|«Ausloeser A» herbeifuehren, «Ergebnis A» pruefen. [__name:Ablauf pruefen]
-+ TEST-beispiel-grenze|«Ausloeser A» herbeifuehren, Zeit bis «Ergebnis A» gegen «Grenzwert A» messen. [__name:Grenze messen]
++ TEST-beispiel-grenze|«Ausloeser A» herbeifuehren, Zeit bis «Ergebnis A» gegen den erfragten Grenzwert messen. [__name:Grenze messen]
 
 ## Edges
 + UC-beispiel -compose-> REQ-beispiel-ablauf, REQ-beispiel-grenze
@@ -74,14 +77,6 @@ Zeile nennt), "- uid" löscht. Mehrere Ziele einer Kante: "+ A -verify-> B, C". 
 Nutze GENAU die Kanten aus der Instruktion und existierende uids aus der Element-Liste.
 Lehnt das Gate deinen Batch ab (success:false), korrigiere NUR die beanstandeten Zeilen anhand der
 violations/fixHints und reiche den VOLLSTÄNDIGEN korrigierten Batch erneut ein.
-Nennt der Auftrag einen Wert nicht (Zeit, Anzahl, Kanal, Frist), erfinde keinen. Stell die Frage als
-eigene Zeile im formatE und lege den Punkt mit offenem Wert an — die Antwort kommt mit der nächsten Nachricht:
-? Welcher Grenzwert gilt fuer «Ergebnis A»?
-## Nodes
-### REQ
-+ REQ-beispiel-grenze|Das System muss «Ergebnis A» innerhalb eines Grenzwerts erzeugen; Grenzwert offen, beim Auftraggeber erfragt. [__name:Grenze fuer «Ergebnis A»]
-@kinds ["non-functional"]
-
 list_dir/read_file/grep über ./material nur sparsam, um echte Modul-Namen zu finden — nicht statt Bauen.
 Handeln vor Analysieren: rufe graph_mutate, rate die Instruktion nicht tot.`;
 
@@ -94,6 +89,10 @@ Handeln vor Analysieren: rufe graph_mutate, rate die Instruktion nicht tot.`;
 // Beispiel eine Latenz-REQ ohne kinds und `FUNC -satisfy->` darauf — ein illegales Paar
 // (contracts: FUNC erfuellt nur functional/pre/post, MOD/SYS nur non-functional/risk/mitigation).
 // Im Rig geblockt: `FUNC satisfy REQ` 8 → 15 → 24 je drei Laeufe, seit das Beispiel da stand.
+
+// CR-GC-667: die Fragezeile steht IM Hauptvorbild, die Grenz-REQ mit offenem Wert. Als eigenes
+// Vorbild hinter einem Hauptvorbild mit „in hoechstens «Grenzwert A»" verlor sie: gcrun-0..2
+// (2026-09-27) stellten 0 Fragen und erfanden 10 Grenzen („5 Sekunden", „30 Minuten").
 
 // CR-GC-672: zwei kinds-Werte, und das Vorbild zeigt beide mit ihrem legalen Erfueller (FUNC fuer
 // functional, FCHAIN fuer die Ende-zu-Ende-Grenze). Der Inhalt ist Platzhalter «…»: das fruehere

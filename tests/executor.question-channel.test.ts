@@ -15,6 +15,7 @@ import { runExecutor, ExecutorConfigSchema, type ModelResponse, type CallModel }
 import { extractQuestions, takeQuestionsFromInput } from '../src/loop/executor-parse.js';
 import { SYSTEM } from '../src/loop/executor-prompt.js';
 import { decision } from '../src/loop/decisions.js';
+import { RULE_CLAUSE } from '../src/loop/generate.js';
 
 const CONFIG = ExecutorConfigSchema.parse({
   baseUrl: 'http://scripted.invalid',
@@ -87,6 +88,22 @@ describe('Fragezeile parsen (CR-GC-667)', () => {
 
   it('der SYSTEM-Prompt zeigt die Fragezeile als Vorbild', () => {
     expect(SYSTEM).toMatch(/^\? .+/m);
+  });
+
+  it('jedes Grenz-Vorbild fragt, statt einen Wert-Platzhalter zu zeigen', () => {
+    // Messwelle 2026-09-27 (gcrun-0..2, Build f5bbc2b): 0 Fragen, 10 erfundene Grenzen („5 Sekunden",
+    // „30 Minuten"). Beide Haupt-Vorbilder zeigten „in hoechstens «Grenzwert A»" — das Modell fuellte den
+    // Platzhalter; das separate Frage-Vorbild verlor. Vorbilder wirken, Hinweise nicht.
+    const vorbilder = { SYSTEM, 'UC-01': RULE_CLAUSE['UC-01'].text(['UC-beispiel-a', 'UC-beispiel-b']) };
+    for (const [quelle, text] of Object.entries(vorbilder)) {
+      expect(text, `${quelle}: Fragezeile direkt vor dem Batch`).toMatch(/^\? .+\n## Nodes$/m);
+      const grenzen = text.split('\n').filter((z) => /^\+ REQ-[\w-]*grenze\|/.test(z));
+      expect(grenzen.length, quelle).toBeGreaterThan(0);
+      for (const z of grenzen) {
+        expect(z, `${quelle}: Wert-Platzhalter`).not.toMatch(/hoechstens «/);
+        expect(z, `${quelle}: Wert nicht offen`).toMatch(/offen/);
+      }
+    }
   });
 });
 

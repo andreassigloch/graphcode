@@ -81,3 +81,18 @@ tests/fund-kontext.test.ts tests/openai-stream.test.ts`, dazu `tests/decision-te
    Frage hat eine Annahme im Graphen (REQ mit offenem Zielwert oder ACTOR mit offenem Kanal).
    Wenn das Modell nie fragt, ist das ein Befund für den Prompt, kein Fehler dieses CR.
 5. RC-* kongruent für die neuen FLOW.
+
+## Messwelle 2026-09-27 (Kriterium 4)
+
+S2 gcrun, N = 3, fester Build f5bbc2b (gcrun-0..2): **0 Fragen** in 3/3 Läufen, dafür 10 Grenz-REQs
+mit Werten, die der Auftrag nicht nennt („5 Sekunden", „30 Minuten", „10 Minuten").
+Ursache: beide Hauptvorbilder (SYSTEM, UC-01-Klausel) zeigten die Grenz-REQ als
+„in hoechstens «Grenzwert A»" — das Modell füllte den Platzhalter; das separate Frage-Vorbild
+dahinter verlor (Memory „Vorbild statt Verbot").
+
+Fix: die Fragezeile steht im Hauptvorbild direkt vor `## Nodes`, die Grenz-REQ trägt den Wert offen
+(„Grenzwert offen, beim Auftraggeber erfragt"); das separate Frage-Vorbild entfällt. Rot zuerst:
+`tests/executor.question-channel.test.ts` „jedes Grenz-Vorbild fragt …" (rot an „hoechstens «").
+19 Testdateien, die `executor-prompt`/`generate` importieren, grün; Build grün.
+
+Offen: Kriterium 4 an einem Build mit diesem Fix nachmessen (Fragen > 0, erfundene Grenzen ≈ 0).

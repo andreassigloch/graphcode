@@ -204,19 +204,21 @@ export const RULE_CLAUSE: Record<
     types: ['UC', 'REQ', 'TEST'],
     // CR-GC-661: die MENGE steht im Vorbild, nicht nur im Satz. Gemessen gcrun-100..102: mit einem
     // Ein-REQ-Beispiel schrieb qwen3-coder in 9 von 11 UC-01-Batches genau eine REQ fuer einen UC.
+    // CR-GC-667: die Grenz-REQ zeigt den offenen Wert samt Fragezeile. Mit „in hoechstens «Grenzwert A»"
+    // fuellte das Modell den Platzhalter (gcrun-0..2 am 2026-09-27: 10 erfundene Grenzen, 0 Fragen).
     text: (uids) =>
       `Diese UCs haben keine Anforderungen (${uids.join(', ')}): schlage je UC 3–5 REQ-Kandidaten vor` +
       ' (UC compose→REQ), präzise und prüfbar formuliert. Emittiere jede neue REQ zusammen mit einem' +
       ' TEST (TEST verify→REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01).' +
-      ` Bediene ALLE ${uids.length} UCs in EINEM Batch, je UC mindestens zwei REQs — Vorbild fuer zwei UCs — Platzhalter «…» aus dem Auftrag fuellen, eine Aussage je REQ, genau ein kinds-Wert:\n` +
-      '## Nodes\n### REQ\n' +
+      ` Bediene ALLE ${uids.length} UCs in EINEM Batch, je UC mindestens zwei REQs — Vorbild fuer zwei UCs — Platzhalter «…» aus dem Auftrag fuellen, eine Aussage je REQ, genau ein kinds-Wert. Nennt der Auftrag einen Wert nicht, erfinde keinen — Fragezeile und offener Wert:\n` +
+      '? Welcher Grenzwert gilt fuer «Ergebnis A»?\n## Nodes\n### REQ\n' +
       '+ REQ-beispiel-a-ablauf|Das System muss «Ergebnis A» erzeugen, sobald «Ausloeser A» eintritt. [__name:«Ergebnis A» erzeugen]\n@kinds ["functional"]\n' +
-      '+ REQ-beispiel-a-grenze|Das System muss «Ergebnis A» in hoechstens «Grenzwert A» erzeugen. [__name:Grenze fuer «Ergebnis A»]\n@kinds ["non-functional"]\n' +
+      '+ REQ-beispiel-a-grenze|Das System muss «Ergebnis A» innerhalb eines Grenzwerts erzeugen; Grenzwert offen, beim Auftraggeber erfragt. [__name:Grenze fuer «Ergebnis A»]\n@kinds ["non-functional"]\n' +
       '+ REQ-beispiel-b-ablauf|Das System muss «Ergebnis B» an «Empfaenger B» uebergeben. [__name:«Ergebnis B» uebergeben]\n@kinds ["functional"]\n' +
       '+ REQ-beispiel-b-abweisung|Das System muss «Eingabe B» abweisen, wenn «Bedingung B» verletzt ist. [__name:«Eingabe B» abweisen]\n@kinds ["functional"]\n' +
       '### TEST\n' +
       '+ TEST-beispiel-a-ablauf|«Ausloeser A» herbeifuehren, «Ergebnis A» pruefen. [__name:Ablauf A pruefen]\n' +
-      '+ TEST-beispiel-a-grenze|«Ausloeser A» herbeifuehren, Zeit gegen «Grenzwert A» messen. [__name:Grenze A messen]\n' +
+      '+ TEST-beispiel-a-grenze|«Ausloeser A» herbeifuehren, Zeit gegen den erfragten Grenzwert messen. [__name:Grenze A messen]\n' +
       '+ TEST-beispiel-b-ablauf|«Ergebnis B» erzeugen, Eingang bei «Empfaenger B» pruefen. [__name:Uebergabe B pruefen]\n' +
       '+ TEST-beispiel-b-abweisung|«Eingabe B» mit verletzter «Bedingung B» senden, Abweisung pruefen. [__name:Abweisung B pruefen]\n\n' +
       '## Edges\n+ UC-beispiel-a -compose-> REQ-beispiel-a-ablauf, REQ-beispiel-a-grenze\n' +
