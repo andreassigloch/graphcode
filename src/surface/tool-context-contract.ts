@@ -24,7 +24,7 @@ import { forwardIssues } from '../kernel/harness-handle-contract.js';
 import type { ToolPort } from '../kernel/tool-contract.js';
 import type { EditSource, TrajectoryStamps } from '../projections/trajectory.js';
 import type { Arbeitsmenge } from '../kernel/measure/working-set.js';
-import type { AuditOrigin, TemplateEdit } from './tool-context.js';
+import type { AuditOrigin } from './tool-context.js';
 
 /** Ein aufrufbares Mitglied mit seiner Signatur — die Abweisung nennt es beim Namen. */
 const member = <F extends (...args: never[]) => unknown>(name: string) =>
@@ -75,8 +75,8 @@ export const ToolContext = z
       member<(consumerId: string, result: MutateResult, commands: MutateCommand[]) => Promise<void>>('recordPreview'),
     /** Note a READ tool that completed (CR-GC-434) — drained onto the next recorded mutation. */
     noteConsulted: member<(toolName: string) => void>('noteConsulted'),
-    /** Note the template edits graph_suggest DELIVERED (CR-GC-434). */
-    noteTemplateEdits: member<(edits: TemplateEdit[]) => void>('noteTemplateEdits'),
+    /** Note the template batches graph_suggest DELIVERED, as commands (CR-GC-434, CR-GC-696C). */
+    noteTemplateEdits: member<(commands: MutateCommand[]) => void>('noteTemplateEdits'),
     /** 'suggestion-template' iff the whole batch is delivered template edits; else 'authored'. */
     classifyEditSource: member<(commands: MutateCommand[]) => EditSource>('classifyEditSource'),
     /** Set the provenance stamped onto every SUBSEQUENT record (CR-GC-354); replaces wholesale. */

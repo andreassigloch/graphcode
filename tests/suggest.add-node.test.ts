@@ -26,7 +26,9 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { SuggestedEdit } from '@sigloch/se-engine';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { bindToolsToHarness, bindToolsWithContext } from '../src/surface/mcp-tools.js';
+import type { AuditEntry } from '@sigloch/graph-api-core';
+import type { TrajectoryStamps } from '../src/projections/trajectory.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
 import { batchFor, type GraphSuggestResult } from '../src/loop/suggest.js';
@@ -171,6 +173,40 @@ describe('CR-GC-684: add-node-Vorschlaege am echten Gate', () => {
         const parents = rig.harness.getGraph().edges.filter((e) => e.edgeType === 'compose' && e.targetId === r.target);
         expect(parents.map((e) => e.sourceId)).toEqual([s!.edit!.node!.uid]);
       }
+    } finally {
+      await dropRig(rig);
+    }
+  }, 120_000);
+});
+
+describe('CR-GC-696C: der angewandte add-node-Batch zaehlt als gelieferte Vorlage', () => {
+  it('RD-04: add-node + retires + edges, exakt wie geliefert angewandt → editSource suggestion-template', async () => {
+    const rig = await makeRig(rd04Fixture());
+    try {
+      const { registry, ctx } = bindToolsWithContext(rig.harness);
+      const res = (await registry.graph_suggest.handler({ k: 20, layer: 'all' })) as GraphSuggestResult;
+      const s = res.suggestions.find((x) => x.ruleId === 'RD-04' && x.elementId === 'FUNC-P' && x.applicable);
+      expect(s?.edit?.op).toBe('add-node');
+      expect(s?.edit?.retires?.length).toBeGreaterThan(0);
+
+      const batch = batchFor(s!.edit!);
+      const out = (await registry.graph_mutate.handler({ commands: batch, consumerId: 'stamps-test' })) as { success: boolean };
+      expect(out.success).toBe(true);
+      const entries = (await ctx.auditLog.query({})) as Array<AuditEntry & TrajectoryStamps>;
+      // Rot vor CR-GC-696C: gemerkt war nur die gespiegelte Kante, add-node und delete-edge
+      // fielen durch — der gelieferte Zug galt als eigene Formulierung.
+      expect(entries[entries.length - 1].editSource).toBe('suggestion-template');
+
+      // Gegenprobe: eine eigene Formulierung danach bleibt authored.
+      const fremd = (await registry.graph_mutate.handler({
+        commands: [{ op: 'add-node', node: { uid: 'REQ-fremd', type: 'REQ', name: 'fremd', description: '', attributes: {} } },
+          { op: 'add-node', node: { uid: 'TEST-fremd', type: 'TEST', name: 'fremd', description: '', attributes: {} } },
+          { op: 'add-edge', edge: { sourceId: 'TEST-fremd', targetId: 'REQ-fremd', edgeType: 'verify', attributes: {} } }],
+        consumerId: 'stamps-test',
+      })) as { success: boolean };
+      expect(fremd.success).toBe(true);
+      const after = (await ctx.auditLog.query({})) as Array<AuditEntry & TrajectoryStamps>;
+      expect(after[after.length - 1].editSource).toBe('authored');
     } finally {
       await dropRig(rig);
     }

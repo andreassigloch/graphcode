@@ -131,9 +131,24 @@ function wortmenge(satz: string): Set<string> {
   );
 }
 
-/** Saetze eines Blocks — Zeilenumbrueche zaehlen wie Satzenden, Listen sind hier ueblich. */
+/**
+ * Eine Format-E-Anweisung: Attributzeile (`@kinds [...]`), Knoten-/Kanten-Zeile (`+ `, `~ `)
+ * oder Abschnittskopf (`## Nodes`, `### REQ`). Das ist SYNTAX eines Vorbilds, keine Arbeit, die
+ * ein Kanal verlangt — zwei Kanaele, die dieselbe Grammatik vorfuehren, sagen nicht zweimal
+ * denselben Imperativ (CR-GC-696C: `@kinds ["non-functional"]` stand im Vorbild der Runde und
+ * im Skill-Template und galt als Doppelung).
+ */
+const FORMAT_E_ZEILE = /^\s*(?:@\w|[+~]\s|#{2,}\s)/;
+
+/**
+ * Saetze eines Blocks — Zeilenumbrueche zaehlen wie Satzenden, Listen sind hier ueblich.
+ * Format-E-Zeilen zaehlen nicht: verglichen wird Prosa, nicht Syntax.
+ */
 function saetze(text: string): string[] {
   return text
+    .split('\n')
+    .filter((zeile) => !FORMAT_E_ZEILE.test(zeile))
+    .join('\n')
     .split(/[.;:\n]+/)
     .map((s) => s.trim())
     .filter((s) => s.length >= 25);

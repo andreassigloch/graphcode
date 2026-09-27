@@ -36,7 +36,7 @@ import { bindWriteTools } from './write.js';
 import { bindReportTools } from '../projections/report.js';
 import { bindAuditTools } from './audit.js';
 import { bindExportTools } from '../projections/export.js';
-import { bindSuggestTools } from '../loop/suggest.js';
+import { bindSuggestTools, batchFor, type GraphSuggestResult } from '../loop/suggest.js';
 import { bindMetricsTools } from '../projections/metrics.js';
 import { bindTestReportTools } from '../projections/testreport.js';
 
@@ -84,9 +84,12 @@ function withConsultationTracking(registry: MCPToolRegistry, ctx: ToolContext): 
         const out = await tool.handler(input);
         ctx.noteConsulted(name);
         if (name === 'graph_suggest') {
-          const suggestions = (out as { suggestions?: Array<{ edit?: { source: string; target: string; type: string } }> })
-            .suggestions;
-          ctx.noteTemplateEdits((suggestions ?? []).flatMap((s) => (s.edit ? [s.edit] : [])));
+          // CR-GC-696C: the delivered template is the BATCH the edit means (add-node, retires,
+          // merges included) — the same `batchFor` the dryRun judged, not the mirrored edge.
+          const { suggestions } = out as GraphSuggestResult;
+          ctx.noteTemplateEdits(
+            (suggestions ?? []).flatMap((s) => (s.edit ? batchFor(s.edit) : [])),
+          );
         }
         return out;
       },

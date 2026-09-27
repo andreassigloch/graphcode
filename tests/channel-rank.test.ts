@@ -145,6 +145,23 @@ describe('sagen zwei Kanaele dieser Runde dasselbe? (CR-GC-573, Kriterium 2)', (
     ])).toEqual([]);
   });
 
+  it('dieselbe Format-E-Zeile in zwei Vorbildern ist Syntax, kein zweiter Imperativ (CR-GC-696C)', () => {
+    // Vorbild der Runde und Skill-Template zeigen beide eine REQ mit `@kinds ["non-functional"]`.
+    // Die Zeile ist Grammatik; verlangt wird in beiden Kanaelen verschiedene Arbeit.
+    const vorbild = '+ REQ-export-dauer|Das System muss 10.000 Zeilen in unter 5 s exportieren. [__name:Exportdauer]\n'
+      + '@kinds ["non-functional"]\n### TEST\n## Edges';
+    expect(duplicateChannels([
+      { channel: 'rule-clause', text: `Schlage je UC drei REQ-Kandidaten vor, Vorbild:\n${vorbild}` },
+      { channel: 'guidance', text: `Jede REQ traegt genau einen kinds-Wert, der den Erfueller bestimmt\n${vorbild}` },
+    ])).toEqual([]);
+    // Positivkontrolle: dieselbe Aussage als PROSA bleibt ein Fund.
+    const prosa = 'Das System muss zehntausend Zeilen in unter fuenf Sekunden exportieren';
+    expect(duplicateChannels([
+      { channel: 'rule-clause', text: prosa },
+      { channel: 'guidance', text: prosa },
+    ])).toHaveLength(1);
+  });
+
   it('zwei Bloecke DESSELBEN Kanals sind kein zweiter Weg', () => {
     const gleich = 'Schlage je UC drei REQ-Kandidaten vor, praezise und pruefbar formuliert';
     expect(duplicateChannels([

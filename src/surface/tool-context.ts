@@ -171,11 +171,28 @@ function readRelayedPrompt(
   return mine.length === 1 ? mine[0] : null;
 }
 
-/** A template edit as graph_suggest delivers it — the identity editSource matches on. */
-export interface TemplateEdit {
-  source: string;
-  target: string;
-  type: string;
+/**
+ * The identity of ONE command of a delivered template batch — what editSource matches on.
+ *
+ * CR-GC-696C: the template is the BATCH graph_suggest delivers (`batchFor(edit)`), not the
+ * mirrored `source/target/type` of the suggestion. Keying on the mirror alone made every
+ * add-node proposal (RD-04, CR-SM-367) and every re-hang (`retire`/`retires`) read as
+ * `authored`, although the author applied exactly the delivered batch. A node is identified
+ * by uid + type (the name is presentation), an edge by its three ends; an op that a template
+ * never contains (update-*, delete-node) has no key and so never counts as templated.
+ */
+function templateCommandKey(cmd: MutateCommand): string | null {
+  switch (cmd.op) {
+    case 'add-node':
+      return `add-node|${cmd.node.uid}|${cmd.node.type}`;
+    case 'add-edge':
+    case 'delete-edge':
+      return `${cmd.op}|${cmd.edge.sourceId}|${cmd.edge.targetId}|${cmd.edge.edgeType}`;
+    case 'merge-nodes':
+      return `merge-nodes|${cmd.sourceUid}|${cmd.targetUid}`;
+    default:
+      return null;
+  }
 }
 
 /** An audit entry plus the CR-GC-434 trigger stamps (JSONL passes them through verbatim). */
@@ -229,29 +246,28 @@ export function createToolContext(
     if (!_consulted.includes(toolName)) _consulted.push(toolName);
   }
 
-  const templateEditKey = (e: TemplateEdit): string => `${e.source}|${e.target}|${e.type}`;
-  /** Template edits graph_suggest delivered in THIS session (identity set for editSource). */
+  /** Commands of the template batches graph_suggest delivered in THIS session (identity set for editSource). */
   const _deliveredTemplateEdits = new Set<string>();
-  function noteTemplateEdits(edits: TemplateEdit[]): void {
-    for (const e of edits) _deliveredTemplateEdits.add(templateEditKey(e));
+  function noteTemplateEdits(commands: MutateCommand[]): void {
+    for (const cmd of commands) {
+      const key = templateCommandKey(cmd);
+      if (key !== null) _deliveredTemplateEdits.add(key);
+    }
   }
 
   /**
-   * 'suggestion-template' iff the batch is non-empty and EVERY command is an
-   * add-edge matching a template edit graph_suggest delivered in this session.
+   * 'suggestion-template' iff the batch is non-empty and EVERY command is a command
+   * of a template batch graph_suggest delivered in this session.
    * Everything else is by definition the author's own formulation - including a
    * template edit delivered by another process, which this session cannot
    * recognize (documented false negative; the safe direction).
    */
   function classifyEditSource(commands: MutateCommand[]): EditSource {
     if (commands.length === 0) return 'authored';
-    const allTemplated = commands.every(
-      (cmd) =>
-        cmd.op === 'add-edge' &&
-        _deliveredTemplateEdits.has(
-          templateEditKey({ source: cmd.edge.sourceId, target: cmd.edge.targetId, type: cmd.edge.edgeType }),
-        ),
-    );
+    const allTemplated = commands.every((cmd) => {
+      const key = templateCommandKey(cmd);
+      return key !== null && _deliveredTemplateEdits.has(key);
+    });
     return allTemplated ? 'suggestion-template' : 'authored';
   }
 
