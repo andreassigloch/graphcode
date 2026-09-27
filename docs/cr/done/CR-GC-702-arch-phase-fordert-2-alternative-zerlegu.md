@@ -32,5 +32,6 @@ das Modell selbst per dryRun.
       Treiber-Text nennt Alternativen.
 - [x] `generate`, `channel-rank`, `skill-rule-ids` 84/84; graph-Auswahl 34/34; `tsc` sauber.
 - [x] Fokus-Typen-Waechter prueft auch die Treiber-Texte.
-- [ ] Wirkung im Lauf (Dubletten-Rate arch) — mit der naechsten S2-Runde (T-SYS/Messwelle).
+- [x] Wirkung im Lauf (nachgetragen 2026-09-27): S2 gcrun-342..344 erreichen erstmals arch
+      (nach CR-GC-705/707) — 0 `-alt`-uids in allen drei Laeufen (CR-682: `-alt1..alt6`, `-alt2-alt1`).
 - Befund nebenbei: `tests/generate.test.ts` traegt keinen testRef an `FUNC-generation-step`.
