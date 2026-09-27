@@ -39,3 +39,28 @@ Testdefinitionen, nicht die Mechanik.
 - Kein Dokument in `docs/` (außer Archiv) widerspricht der Leitlinie in einer Schwelle oder einem Status.
 - `tests/retro-kpi.test.ts` grün gegen die neue Datei.
 - Abhängigkeit: nach CR-GC-679 (Zielordner `docs/messung/`).
+
+## Stand 2026-09-27 — mechanischer Teil erledigt, Leitlinie wartet auf den Autor
+
+**Erledigt (10 Dateien mit diesem CR):**
+- `docs/KPI.md` + `docs/MESSGROESSEN.md` → `docs/messung/kennzahlen.md`, auf Leitlinie-Stand:
+  KPI 1 ohne Schwelle (T-E1); Datei-Bindung „100 % aller Dateien" ersetzt durch Grenzmenge 100 %
+  (T-V4, neu KPI 7); ℝ⁶ als **Anzeige/Nebenbedingung** — war im Dokument noch Treiber-Tiebreaker,
+  ist es aber auch im Code seit CR-GC-483 nicht mehr (Ranking nach Chebyshev, `fitAdvisory` nur
+  berichtet); neu: Zeilen Steuerwert, Empfehlen (§3) und Kettenkennzahlen (§5, Spike).
+- **Code widersprach der Leitlinie:** `retro-kpi.mjs` druckte fuer KPI 1 das Ziel „> 1" —
+  jetzt „— (keine Schwelle, T-E1)"; Test rot gesehen, dann gruen (10/10). `se-retro` liest
+  KPI 1 als Potenzial statt als Urteil.
+- Leser umgestellt: `retro-kpi.mjs`, `tests/retro-kpi.test.ts`, `.claude/commands/se-retro.md`,
+  `rig/referenz-change/{messen.mjs,README.md}`, `docs/articles/07-…`. Nicht umgestellt:
+  `docs/spikes/SPIKE-GC-selective-tests.md` (historischer Befund, zitiert den damaligen Stand).
+
+**Offen — Vorschlaege an den Autor fuer die Leitlinie** (erst danach `analysecase-kaltstart.md` ins Archiv):
+1. §9.1: „eine Definition, ein Rechenort, ein Handelnder" als Regel fuer jede Kennzahl.
+2. §9.1: zwei Schwellen-Ebenen (Verfahren vs. Zielarchitektur); `null` = messen, nicht urteilen.
+3. §9.1: „verdiente Null" auch bei leerer Population (Regeln sehen keine Abwesenheit).
+4. §9.1: Form der benannten Ausnahme — Grund + Ausstiegsbedingung + `decides`-Relation.
+5. §4: Begriffsleiter Anfrage → Turn → Runde → Kandidat → Batch → Mutation.
+6. §5: Kohaesion LCOM4 vs. ℝ⁶-coherence — zwei Fragen, ein Wort.
+7. §4: Der Graph ist nicht schneller als grep — der Gewinn ist Praezision.
+8. §9.1: Pruefregeln G1–G4 aus `docs/spikes/analysecase-kaltstart.md`.

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // retro-kpi — post-project KPI evaluator (CR-GC-212).
 //
-// Computes the 6 standard KPIs (docs/KPI.md) from a session-data JSON the agent
+// Computes the 6 standard KPIs (docs/messung/kennzahlen.md) from a session-data JSON the agent
 // assembles during the retro: graph-vs-grep tool usage (transcript), audit_stats
 // (applied/rejected), graph_readiness start→end, git net-LOC, plan conformance,
 // and R-19/R-20 binding coverage at close. The agent reads audit_* / graph_readiness
@@ -30,7 +30,8 @@ const r2 = (n) => Math.round(n * 100) / 100;
 export function computeKpis(s) {
   const grep = Math.max(1, s.toolUsage.grepGlobDocReads ?? 0);
   return {
-    // KPI 1 — Graph-vs-Grep ratio. Target > 1 (the graph was used, not grep-bypassed).
+    // KPI 1 — Graph-vs-Grep ratio. No threshold (Leitlinie T-E1): every search the graph could
+    // have answered is reported as potential, not judged.
     graphVsGrepRatio: r2((s.toolUsage.graphCalls ?? 0) / grep),
     // KPI 2 — tool usage counts (no target; a usage profile).
     toolUsage: {
@@ -60,7 +61,7 @@ export function computeKpis(s) {
 // Bis CR-GC-639 zaehlte hier niemand: `computeKpis` bekam `toolUsage` von Hand, waehrend der Retro.
 // `rig/referenz-change/messen.mjs` zaehlte dann selbst — mit EIGENER Definition (nur Lesezugriffe,
 // ohne Doc-Reads). Zwei Definitionen derselben Kennzahl laufen auseinander, ohne dass es jemand
-// merkt. Diese EINE Zaehlung folgt `docs/KPI.md`:
+// merkt. Diese EINE Zaehlung folgt `docs/messung/kennzahlen.md`:
 //
 //   KPI 1 = graph_*-Aufrufe ÷ (Grep + Glob + Doc-Read)
 //
@@ -199,7 +200,7 @@ export function leseProtokoll(pfad) {
 /** Render the KPI set as a markdown table. */
 export function renderKpiTable(k) {
   const rows = [
-    ['Graph-vs-Grep ratio', String(k.graphVsGrepRatio), '> 1'],
+    ['Graph-vs-Grep ratio', String(k.graphVsGrepRatio), '— (keine Schwelle, T-E1)'],
     ['Tool usage (mutate/impact/expand/rules)', `${k.toolUsage.mutate}/${k.toolUsage.impact}/${k.toolUsage.expand}/${k.toolUsage.rulesEvaluate}`, '—'],
     ['Tokens per net-LOC', k.tokenPerLoc == null ? 'n/a' : String(k.tokenPerLoc), '↓'],
     ['Plan conformance (depends-on violations)', String(k.planConformance), '0'],

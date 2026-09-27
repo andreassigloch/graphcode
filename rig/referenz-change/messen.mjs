@@ -12,7 +12,7 @@
  * @author andreas@siglochconsulting
  */
 import { readFileSync } from 'node:fs';
-// CR-GC-639: gezaehlt wird NICHT hier. Die eine Zaehlung nach docs/KPI.md steht in retro-kpi.mjs;
+// CR-GC-639: gezaehlt wird NICHT hier. Die eine Zaehlung nach docs/messung/kennzahlen.md steht in retro-kpi.mjs;
 // dieses Skript waehlt nur das Fenster und stellt dar.
 import { werkzeugNutzung, computeKpis } from '../../scripts/retro-kpi.mjs';
 
@@ -79,7 +79,7 @@ console.log('WERKZEUGE');
 for (const [n, v] of [...werkzeuge].sort((a, b) => b[1] - a[1])) console.log(`  ${String(v).padStart(4)}  ${kurz(n)}`);
 console.log(`  ${String(gesamt).padStart(4)}  = gesamt\n`);
 
-console.log('GRAPH GEGEN GREP — KPI 1 nach docs/KPI.md, gezaehlt in scripts/retro-kpi.mjs');
+console.log('GRAPH GEGEN GREP — KPI 1 nach docs/messung/kennzahlen.md, gezaehlt in scripts/retro-kpi.mjs');
 console.log(`  ${String(n.graphCalls).padStart(4)}  graph_*-Aufrufe (davon ${n.graphReads} lesend)`);
 console.log(`  ${String(n.grepGlobDocReads).padStart(4)}  Grep + Glob + Doc-Read (grep nach einer Pipe zaehlt nicht)`);
 console.log(`  KPI 1 = ${kpi1}   (Ziel > 1)${n.graphReads === 0 ? '   — KEINE Graphfrage gestellt' : ''}\n`);

@@ -56,6 +56,12 @@ describe('TEST-retro-kpi (CR-GC-212): post-project KPI standard', () => {
       expect(md).toContain(label);
     }
   });
+
+  it('KPI 1 traegt keine Schwelle — die Leitlinie weist Potenzial aus, sie urteilt nicht (T-E1, CR-GC-680)', () => {
+    const md = renderKpiTable(computeKpis(graphRich));
+    expect(md).toContain('| Graph-vs-Grep ratio | 4 | — (keine Schwelle, T-E1) |');
+    expect(md).not.toContain('> 1');
+  });
 });
 
 /**
@@ -64,7 +70,7 @@ describe('TEST-retro-kpi (CR-GC-212): post-project KPI standard', () => {
  * Bis hierher rechnete `computeKpis` KPI 1 aus Zahlen, die der Agent waehrend der Retro von Hand
  * zusammentrug — gezaehlt hat niemand. `rig/referenz-change/messen.mjs` zaehlte dann selbst, aber
  * mit EIGENER Definition (nur Leseaufrufe, ohne Doc-Reads). Zwei Definitionen derselben Kennzahl
- * sind derselbe Fehler wie zwei Format-E-Leser. Jetzt zaehlt EINE Funktion, nach `docs/KPI.md`:
+ * sind derselbe Fehler wie zwei Format-E-Leser. Jetzt zaehlt EINE Funktion, nach `docs/messung/kennzahlen.md`:
  * `graph_*`-Aufrufe ÷ (Grep + Glob + Doc-Read).
  */
 describe('TEST-retro-kpi: KPI 1 wird aus dem Sitzungsprotokoll gezaehlt (CR-GC-639)', () => {
@@ -90,7 +96,7 @@ describe('TEST-retro-kpi: KPI 1 wird aus dem Sitzungsprotokoll gezaehlt (CR-GC-6
     nutzung('Bash', { command: 'cd /repo && git grep -n foo' }),       // Suche, nach cd &&
   ];
 
-  it('zaehlt nach der Definition aus docs/KPI.md — und nur im Fenster ab der CR-ID', async () => {
+  it('zaehlt nach der Definition aus docs/messung/kennzahlen.md — und nur im Fenster ab der CR-ID', async () => {
     const { werkzeugNutzung, fensterFuer } = await import('../scripts/retro-kpi.mjs');
     const fenster = fensterFuer(protokoll, 'CR-GC-900');
     expect(fenster.length).toBe(protokoll.length - 2);

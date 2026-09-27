@@ -41,7 +41,7 @@ Claude Opus 5, 2026-09-23, Sitzung `82b7759d`, Fenster „keine parallel pfade" 
 | Werkzeugaufrufe | 131 — davon **126 Bash** |
 | Graph-**Lese**aufrufe | **0** |
 | Graph-Schreibaufrufe | 3 (ein Modell-Batch, zweimal `dryRun`) |
-| Suchoperationen (Grep + Glob + Doc-Read, KPI 1 nach `docs/KPI.md`) | **27** ¹ |
+| Suchoperationen (Grep + Glob + Doc-Read, KPI 1 nach `docs/messung/kennzahlen.md`) | **27** ¹ |
 | Volllaeufe `npm test` | **3** (~15 Minuten Wanduhr) |
 | selektive Laeufe | 10 |
 
@@ -50,7 +50,7 @@ gesunken, weil drei Zaehlfehler herausgenommen wurden. Gezaehlt hatte sie auch:
 `npm test | grep FAIL` (ein grep NACH einer Pipe filtert eine Ausgabe), Heredocs, die `grep` oder
 `npm test` nur als Text enthielten, und greps ueber Log-Dateien in `/tmp`. Die eine Zaehlung in
 `scripts/retro-kpi.mjs` zaehlt nur, was als Befehl gegen das Repo LAEUFT, dazu Doc-Reads
-(`docs/graph/`, `docs/views/`, `.graphcode/`), wie `docs/KPI.md` es definiert: **27**. Die Aussage
+(`docs/graph/`, `docs/views/`, `.graphcode/`), wie `docs/messung/kennzahlen.md` es definiert: **27**. Die Aussage
 hat sich dabei nie bewegt: 0 Graph-Lesezugriffe, KPI 1 = 0,11.
 
 

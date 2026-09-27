@@ -4,7 +4,7 @@ version: 1
 description: Post-project retro — compute the 6 graphcode KPIs (graph-vs-grep, tool usage, token/LOC, plan conformance, gate health, binding coverage) and interpret them
 ---
 
-The standard analysis run after a project: did the agent actually use the governed graph (not grep-bypass), and did the gate raise quality? Produces the KPI table (`docs/KPI.md`) and interprets it.
+The standard analysis run after a project: did the agent actually use the governed graph (not grep-bypass), and did the gate raise quality? Produces the KPI table (`docs/messung/kennzahlen.md`) and interprets it.
 
 ## 1. Gather the session data (over MCP + git + transcript)
 Assemble a `retro-session.json`:
@@ -19,7 +19,7 @@ Assemble a `retro-session.json`:
 `node scripts/retro-kpi.mjs retro-session.json` → prints the KPI table.
 
 ## 3. Interpret (the standard read)
-- **Graph-vs-Grep ratio < 1** → the agent grep-bypassed the graph. The headline failure; investigate why the graph wasn't queried (missing export? no onboarding contract?).
+- **Graph-vs-Grep ratio** has no threshold (Leitlinie T-E1). Every search the graph could have answered is potential: list them and ask why the graph wasn't queried (missing export? no onboarding contract?). The graph's gain is precision, not speed.
 - **Plan conformance > 0** → CR numbering disagreed with the real `depends-on` order — forward dependencies were built out of order.
 - **Binding coverage < 100 %** → TESTs/FUNCs were closed without their runnable binding (vacuous-green risk).
 - **Readiness Δ ≤ 0** → the session did not improve the model's compliance.

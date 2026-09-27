@@ -7,7 +7,7 @@ for a first read. This article is for when "wait, are these the same number?" co
 [the advisory roundtrip](05-the-advisory-roundtrip.md).*
 
 *Normative one-pager — every measurement, its single computation site, its denominator and where it is
-consumed: [`docs/MESSGROESSEN.md`](../MESSGROESSEN.md). When this article and that page disagree, the
+consumed: [`docs/messung/kennzahlen.md`](../messung/kennzahlen.md). When this article and that page disagree, the
 page wins; this one explains, it does not define.*
 
 ## The whole landscape on one picture
