@@ -64,3 +64,11 @@ Testdefinitionen, nicht die Mechanik.
 6. §5: Kohaesion LCOM4 vs. ℝ⁶-coherence — zwei Fragen, ein Wort.
 7. §4: Der Graph ist nicht schneller als grep — der Gewinn ist Praezision.
 8. §9.1: Pruefregeln G1–G4 aus `docs/spikes/analysecase-kaltstart.md`.
+
+## Abschluss 2026-09-27 — Entscheid des Autors
+
+Von den acht Vorschlaegen: 1, 2, 3, 6, 7 stehen als Mechanik in `docs/messung/kennzahlen.md`
+(gehoeren laut Zielbild nicht in die Leitlinie); 4 (benannte Ausnahme) steht in der globalen
+CLAUDE.md; 5 (Begriffsleiter) gehoert ins Glossar, nicht in die Leitlinie. **G1–G4 uebernommen**
+als allgemeine Regel in Leitlinie §9.1 („Vier Gegenproben vor jedem Befund").
+`docs/spikes/analysecase-kaltstart.md` → `docs/archive/`.

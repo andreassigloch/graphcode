@@ -267,6 +267,11 @@ zuerst prüft; die DoD der anderen verweist auf ihn.
 - Eine Widerlegung zählt nur mit Positivkontrolle; eine Null zählt nur, wenn die Regel ausgewertet wurde.
 - Eine Architektur-Kennzahl gilt erst, wenn sie ein **Known-Answer-Set** richtig rankt
   (bekannt bessere Zustände, Negativkontrolle moneyflow).
+- **Vier Gegenproben vor jedem Befund** (aus dem Kaltstart-Analysecase, `docs/archive/analysecase-kaltstart.md`):
+  **G1** die Alternative auch dann messen, wenn man die Antwort zu kennen glaubt ·
+  **G2** die naheliegende Erklärung gegen die eigenen Daten halten ·
+  **G3** den Schaden eingrenzen, nicht nur nachweisen ·
+  **G4** prüfen, ob das Werkzeug die Frage überhaupt beantworten kann (gibt es einen zweiten Pfad?).
 
 ### 9.2 Faustregel Effizienz (T-E5)
 
