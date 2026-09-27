@@ -70,6 +70,16 @@ describe('CR-GC-556: die Vorschlaege kommen als Inhalt, nicht als Werkzeug', () 
     expect(out).not.toContain('R-22 @');
   });
 
+  it('ein Vorschlag, den der Gate-Probelauf verworfen hat, bleibt draussen', async () => {
+    // graph_suggest probt jeden Zug am Gate (dryRun); applicable:false heisst, das Gate
+    // lehnt ihn ab. Ihn dem Modell zu zeigen, lehrt einen Zug, der sicher scheitert.
+    const verworfen = vorschlag({ applicable: false });
+    const out = await buildRoundInjection(registry([verworfen]), { focusTypes: ['FUNC'], skill: 'se:top-level' });
+    expect(out).not.toContain('R-22 @');
+    const angenommen = await buildRoundInjection(registry([vorschlag({ applicable: true })]), { focusTypes: ['FUNC'], skill: 'se:top-level' });
+    expect(angenommen).toContain('R-22 @ FUNC-task-execute');
+  });
+
   it('nur Fokus-Typen — ein UC-Vorschlag taucht in einer FUNC-Runde nicht auf', async () => {
     const fremd = vorschlag({ elementId: 'UC-login', edit: { source: 'UC-login', target: 'FCHAIN-a', type: 'compose' } });
     const out = await buildRoundInjection(registry([fremd]), { focusTypes: ['FUNC'], skill: 'se:top-level' });

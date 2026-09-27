@@ -255,6 +255,8 @@ interface SuggestRow {
   elementId?: string;
   delta?: unknown[];
   edit?: SuggestedEdit;
+  /** Ergebnis des Gate-Probelaufs in graph_suggest; `false` = das Gate lehnt den Zug ab. */
+  applicable?: boolean;
 }
 
 /**
@@ -429,6 +431,8 @@ export async function buildRoundChannels(
       const zeilen: string[] = [];
       for (const s of res.suggestions ?? []) {
         if (!s.edit) continue; // ohne Kante nichts Neues gegenueber dem fixHint
+        // Vom Gate-Probelauf verworfen: ein Vorbild, das sicher scheitert, lehrt den falschen Zug.
+        if (s.applicable === false) continue;
         // Auf die Runde zuschneiden — aber ueber ALLE DREI beteiligten Knoten, nicht nur
         // ueber den Fund. GEMESSEN am gcrun-Graphen: der einzige ausfuehrbare Vorschlag
         // ist `RD-01 @ REQ-data-security` mit der Kante FCHAIN -satisfy-> REQ. Ein Filter
