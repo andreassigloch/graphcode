@@ -67,7 +67,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { metrics, toArray, buildAdjacency, detectCommunities, modularityOf, modularityQ } from '@sigloch/se-engine';
+import { metrics, toArray, buildAdjacency, detectCommunities, modularityOf, modularityQ, EPS_AUGMENT } from '@sigloch/se-engine';
 import { moduleMetrics } from '@sigloch/contracts/se';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
@@ -85,6 +85,25 @@ const PROFILE = { coherence: 1, modifiability: 0.7, faultTolerance: 0.3 };
 
 const DIMS = ['modifiability', 'faultTolerance', 'flowEfficiency', 'coherence', 'viability', 'scalability'] as const;
 const EPS = 1e-9;
+
+/**
+ * CR-GC-696D — senkt der Zug das Chebyshev-MAXIMUM, oder nur den Mittelwert?
+ *
+ * Der Score ist `worst + EPS_AUGMENT · mean` (se-engine `steerScore`), `improvement` die
+ * Differenz. Bleibt `worst` stehen, ist `improvement = EPS_AUGMENT · (mean_vorher − mean_nachher)
+ * ≤ EPS_AUGMENT · mean_vorher ≤ EPS_AUGMENT · before` (mean ≤ worst ≤ score). Ein Zug ueber dieser
+ * Schranke hat also nachweislich das Maximum gesenkt; darunter ist er ein PLATEAU-Zug — genau
+ * die Sorte, die dieser Spike seit CR-GC-488/510 nicht als Reichweite zaehlt ("Kompensation
+ * verdeckt das Maximum").
+ *
+ * Bis hierher stand als Schwelle `score > EPS` (1e-9), unter der Aufloesung der Augmentation.
+ * Das war harmlos, solange der Aktionsraum fast leer war. Seit CR-SM-356 liefert se-engine
+ * Umhaenge-Zuege fuer BW-02/CR-01 (compose-Eltern, Allokation), und davon gibt es beliebig
+ * viele, die je einen Term ein wenig senken: gemessen 15 Zuege, davon 11 mit score < 1e-3 bei
+ * unveraendertem Steuerwert — die Kette rannte in den Deckel, statt am Optimum zu stehen.
+ */
+const lowersMaximum = (s: GraphSuggestResult['suggestions'][number]): boolean =>
+  s.score > EPS && s.score > EPS_AUGMENT * (s.verdict?.steer?.before ?? 0);
 /** Harte Obergrenze für die Greedy-Kette — nicht-terminierend soll laut scheitern. */
 const MAX_STEPS = 15;
 
@@ -291,12 +310,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
         // Engpass bei leerem Aktionsraum unlesbar, und genau dann braucht man ihn.
         dominant = res.suggestions.find((s) => s.verdict?.steer?.worstAt)?.verdict!.steer!.worstAt ?? dominant;
         const best = applicable.find(
-          (s) => s.score > EPS && !applied.has(`${s.edit!.source}->${s.edit!.target}`),
+          (s) => lowersMaximum(s) && !applied.has(`${s.edit!.source}->${s.edit!.target}`),
         );
         if (!best) {
           // Erschöpfung: nichts Anwendbares hilft dem Ziel mehr. Was noch auf dem
           // Tisch liegt (anwendbar, aber Δm·t̂ ≤ 0), ist Teil der Reichweiten-Aussage.
-          rest = applicable.filter((s) => s.score <= EPS);
+          rest = applicable.filter((s) => !lowersMaximum(s));
           leftover = rest.length;
           // CR-GC-543: die Übriggebliebenen BENENNEN, nicht nur zählen. Als der Test bei
           // CR-GC-540 rot wurde, sagte er „1" und nicht welcher — die Zuordnung kostete
@@ -327,6 +346,8 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
               : `${e.source} -${e.type}-> ${e.target}${e.retire ? ` (retire ${e.retire.target})` : ''}`,
           promised: best.score,
         });
+        const st = best.verdict!.steer!;
+        console.log(`   Zug ${n}. [${best.ruleId}] @${best.elementId} · Steuerwert ${st.before.toFixed(3)} -> ${st.after.toFixed(3)} · danach am schlimmsten ${st.worstAt ? `${st.worstAt.ruleId} @ ${st.worstAt.elementId}` : '-'}`);
       }
       expect(steps.length, 'Greedy-Kette terminierte nicht (MAX_STEPS)').toBeLessThan(MAX_STEPS);
 
@@ -387,7 +408,16 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       //
       // Wird das falsch — eine ARCHITEKTUR-Bewegung wird möglich, oder der Engpass wandert weg
       // von R-04 @ MOD-kernel —, MUSS dieser Test rot werden: der Befund ist dann veraltet.
-      const OHNE_TOPOLOGIEWIRKUNG = new Set(['CR-R01', 'MS-03', 'CR-01', 'RD-01', 'RD-04', 'R-02']);
+      const OHNE_TOPOLOGIEWIRKUNG = new Set(['CR-R01', 'MS-03', 'CR-01', 'RD-01', 'RD-04', 'R-02', 'R-32']);
+      // CR-GC-696D: R-32 dazu — die Vorlage legt einen Vertragstest an (add-node TEST + verify,
+      // CR-SM-367). TEST liegt nicht in der Architekturebene; das ist Bindung wie R-02.
+      //
+      // CR-GC-696D: PLATEAU-UMHAENGEN. Seit CR-SM-356 schlaegt se-engine fuer BW-02/R-04 Zuege vor,
+      // die ein Kind unter einen anderen compose-Elternteil bzw. eine FUNC in ein anderes Modul
+      // haengen. Das IST Topologie — aber die hier uebrig gebliebenen senken das Maximum nicht
+      // (`lowersMaximum` falsch, score < 1e-3). Sie stehen namentlich hier und nicht in der
+      // Menge oben, weil sie Struktur bewegen: jeder ANDERE Regel-Zug auf dem Plateau reisst weiter.
+      const PLATEAU_UMHAENGEN = new Set(['BW-02', 'R-04']);
       // CR-GC-573 (graphVersion 345) — NEU GEMESSEN, nachdem die Steuerungskanäle Knoten
       // wurden. Dazugekommen ist EIN Vorschlag, und diesmal einer MIT Topologiewirkung:
       //
@@ -417,10 +447,28 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // entschieden ist, steht dieser EINE Kandidat hier namentlich — jeder ANDERE
       // OP-MERGE lässt den Test reißen.
       const GEMESSEN_ABGELEHNT = new Set(['OP-MERGE @ FLOW-channel-gate-protocol']);
-      expect(steps.map((s) => s.edit), 'ein Zug ist möglich geworden — der Befund oben ist veraltet, bitte neu messen').toEqual([]);
+      // CR-GC-696D (graphVersion 1 nach Reseed, contracts 10.12 Link-Modus, se-engine CR-SM-356) —
+      // NEU GEMESSEN. Der Architektur-Aktionsraum ist NICHT mehr leer: zwei Zuege senken das
+      // Chebyshev-Maximum, beide aus den neuen Umhaenge-Operatoren:
+      //
+      //     1. BW-02 @ FUNC-block-abfrage  FUNC-block-anleitung unter FUNC-block-abfrage umgehaengt
+      //        (weg von FUNC-goal-steerer)                                  Steuerwert 3,751 -> 3,501
+      //     2. CR-01 @ MOD-agent-surface   FUNC-list-elements von MOD-kernel nach MOD-agent-surface
+      //                                                                     Steuerwert 3,501 -> 3,251
+      //
+      // Danach steht der Engpass auf R-04 @ MOD-kernel und nichts Anwendbares senkt ihn. Die
+      // Befund-Bilanz ist 0/0, und entlang des Zielprofils realisiert die Kette -0,027: der
+      // Autopilot entschaerft die schlimmste Stelle, dient dem deklarierten Profil (coherence,
+      // modifiability) aber nicht — die beiden Masse ziehen hier auseinander (CR-GC-483:
+      // Chebyshev steuert, ℝ⁶ berichtet). Der erste Zug verlegt eine Anleitung-FUNC in den
+      // Abfrage-Block; ob das fachlich stimmt, entscheidet ein Mensch — der Spike wendet nur an.
+      expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
+        'FUNC-block-abfrage -compose-> FUNC-block-anleitung (retire FUNC-block-anleitung)',
+        'FUNC-list-elements -allocate-> MOD-agent-surface (retire MOD-kernel)',
+      ]);
       expect(
         rest
-          .filter((s) => !OHNE_TOPOLOGIEWIRKUNG.has(s.ruleId))
+          .filter((s) => !OHNE_TOPOLOGIEWIRKUNG.has(s.ruleId) && !PLATEAU_UMHAENGEN.has(s.ruleId))
           .map((s) => `${s.ruleId} @ ${s.elementId}`)
           .filter((k) => !GEMESSEN_ABGELEHNT.has(k)),
         'ein anwendbarer Zug AUSSERHALB der bekannten bindungs-/hygienischen Klassen liegt auf dem Tisch — das waere eine Architekturbewegung, bitte neu messen',
@@ -444,9 +492,13 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // MOD-kernel steht unverändert bei 3,50 — es wurde nicht besser, es wurde überholt.
       // Das ist kein Defekt, sondern die Sichtbarkeit des Befundes aus CR-GC-573: der
       // Rundenprompt HAT viele Schreiber. Vorher war das wahr und unsichtbar.
-      expect(dominant, 'der Engpass ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
-        ruleId: 'BW-02',
-        elementId: 'FUNC-block-grounding',
+      //
+      // CR-GC-696D: `dominant` ist der Engpass NACH der Kette (letzter graph_suggest-Aufruf). Am Start
+      // steht er weiter bei BW-02 (Steuerwert 3,751); die zwei Zuege oben tragen ihn auf
+      // R-04 @ MOD-kernel (3,251) — dort, wo er vor CR-GC-573 schon stand.
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-kernel — bitte neu messen').toEqual({
+        ruleId: 'R-04',
+        elementId: 'MOD-kernel',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

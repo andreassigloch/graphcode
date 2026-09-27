@@ -98,6 +98,8 @@ interface AppliedStep {
   probeScore: number;
   /** The gate advisory's Δm for the ACTUAL edit, on the unit target. */
   advisoryScore: number;
+  /** The gate advisory's raw ℝ⁶ Δm for the ACTUAL edit — lets the OTHER profile judge the same move. */
+  fitDelta: number[];
   before: number[];
   after: number[];
   tier: string;
@@ -215,6 +217,7 @@ async function greedyRun(label: string, weights: Weights, ranking: Ranking): Pro
           // Missing fitDelta would silently rank every candidate at 0; treat it
           // as "unknown", never as "neutral".
           advisory: s.verdict?.fitDelta?.length ? s.verdict.fitDelta.reduce((a, x, i) => a + x * t[i], 0) : Number.NaN,
+          fitDelta: s.verdict?.fitDelta ?? [],
           verdictOk: s.verdict?.success !== false,
           verdictViolations: (s.verdict?.violations ?? []).map((v) => `${v.ruleId}:${v.severity}`),
         }));
@@ -266,6 +269,7 @@ async function greedyRun(label: string, weights: Weights, ranking: Ranking): Pro
           edit: pick.key,
           probeScore: pick.probe,
           advisoryScore: pick.advisory,
+          fitDelta: pick.fitDelta,
           before,
           after: fit(rig.harness),
           tier: String(result.tier),
@@ -393,6 +397,11 @@ describe('CR-GC-430: two opposed target profiles over n greedy steps', () => {
       const uniq = [...new Map(r.signConflicts.map((c) => [`${c.ruleId}`, c])).values()];
       lines.push(`  ${r.label}: ${uniq.length ? uniq.map((c) => `${c.ruleId} probe ${c.probe.toFixed(4)} vs advisory ${c.advisory.toFixed(4)}`).join(' | ') : 'none'}`);
     }
+    lines.push('', '--- moves each advisory run applied that the OTHER profile would refuse (advisory along the other target <= 0)');
+    for (const [r, other] of [[cohAdv, SCALABLE], [scaAdv, COHESIVE]] as const) {
+      const hits = r.steps.filter((st) => st.fitDelta.length > 0 && along(st.fitDelta, other) <= EPS);
+      lines.push(`  ${r.label}: ${hits.map((st) => `${st.ruleId} ${along(st.fitDelta, other).toFixed(4)} ${st.edit}`).join(' | ') || 'none'}`);
+    }
     lines.push('='.repeat(96), '');
     console.log(lines.join('\n'));
 
@@ -409,9 +418,10 @@ describe('CR-GC-430: two opposed target profiles over n greedy steps', () => {
       expect(r.gateBlocks, `gate refused suggestions in ${r.label}/${r.ranking}`).toEqual([]);
     }
 
-    // KILL CRITERION "too short": a chain of 1–2 steps has no reach, however
-    // cleanly the controller computes. Asserted on the advisory runs (the claim)
-    // and on the maximum reach of the surface itself.
+    // KILL CRITERION "no reach" (bis CR-GC-696D: "too short", gemessen als Schrittzahl): a
+    // chain that barely moves toward its target is not steering, however cleanly the
+    // controller computes. Asserted on the advisory runs (the claim) and on the size of
+    // the suggestion surface itself.
     //
     // CR-GC-488 / CR-SM-302 — dieser Block hat einen Regress gefangen und wird deshalb
     // schärfer hinterlassen, als er war.
@@ -437,8 +447,20 @@ describe('CR-GC-430: two opposed target profiles over n greedy steps', () => {
       cohAdv.leftover.every((l) => !Number.isFinite(l.advisory) || l.advisory <= EPS),
       'a leftover edit still HELPED COHESIVE — then the run stopped early, not at an optimum',
     ).toBe(true);
-    expect(cohAdv.steps.length, 'COHESIVE chain too short to be steering').toBeGreaterThan(2);
-    expect(scaAdv.steps.length, 'SCALABLE chain too short to be steering').toBeGreaterThan(2);
+    //
+    // CR-GC-696D — REICHWEITE statt Schrittzahl (Entscheidung Koordinator, ITEM-2026-614). Die
+    // Schrittzahl war ein Stellvertreter, der einen Ein-Kanten-Zugraum voraussetzt: seit
+    // se-engine CR-SM-356/367 liefert graph_suggest auch add-node-Zuege (RD-04: eine
+    // Zwischenebene samt umgehaengter Kinder). SCALABLE erreicht mit EINEM solchen Zug +0,4950
+    // entlang seines Ziels — mehr als die alte 5-Kanten-Kette (+0,3226). "1 Schritt" hiess dort
+    // nicht "keine Reichweite", sondern "ein groesserer Zug". Gemessen wird deshalb, wohin die
+    // Kette das Profil bringt: mindestens so weit wie im Spike-Protokoll (CR-GC-488 hat genau
+    // diese Werte wiederhergestellt). Der Regress, den der Block gefangen hat (COHESIVE +0,0245),
+    // faellt unter diese Schwelle ebenso wie unter die alte.
+    const PROTOCOL_REACH = { COHESIVE: 0.1677, SCALABLE: 0.3226 };
+    expect(along(totalOf(cohAdv), COHESIVE), 'COHESIVE trajectory has no reach toward its target').toBeGreaterThanOrEqual(PROTOCOL_REACH.COHESIVE - 1e-4);
+    expect(along(totalOf(scaAdv), SCALABLE), 'SCALABLE trajectory has no reach toward its target').toBeGreaterThanOrEqual(PROTOCOL_REACH.SCALABLE - 1e-4);
+    // Die Groesse des Zugraums selbst bleibt eine Zahl von Zuegen: EXHAUST wendet jeden an.
     expect(exhaust.steps.length, 'the suggestion surface itself is exhausted after 2 steps').toBeGreaterThan(2);
 
     // KILL CRITERION "no divergence": the end graphs must differ structurally,
@@ -457,14 +479,20 @@ describe('CR-GC-430: two opposed target profiles over n greedy steps', () => {
     );
     expect(differingAllocations.length + differingContracts.length, 'no named allocation or contract differs').toBeGreaterThan(0);
 
-    // The sharpest form of the same criterion: a function that BOTH runs placed,
-    // in DIFFERENT modules. "Allocated here, still homeless there" could be read
-    // as one run simply doing less; "this function lives in another module" cannot.
-    const contested = differingAllocations.filter((fn) => cohAdv.allocations.has(fn) && scaAdv.allocations.has(fn));
-    expect(
-      contested.map((fn) => `${fn}: ${cohAdv.allocations.get(fn)} vs ${scaAdv.allocations.get(fn)}`),
-      'no function is allocated to a DIFFERENT module — the profiles only chose a different subset of the same repairs',
-    ).not.toEqual([]);
+    // The sharpest form of the same criterion: the profiles did not merely choose a
+    // different SUBSET OF THE SAME REPAIRS — each run applied a move the OTHER profile
+    // would have refused at the state where it was applied (its advisory along the other
+    // target is not positive). "Allocated here, still homeless there" could be read as one
+    // run simply doing less; "this move hurts the other target" cannot.
+    //
+    // CR-GC-696D: bis hierher stand da "eine FUNC, die beide Laeufe in VERSCHIEDENE Module
+    // legen". Das ist ein Sonderfall derselben Invariante und setzt, wie die Schrittzahl, den
+    // Ein-Kanten-Zugraum voraus: SCALABLE zieht heute eine Zwischenebene ein (RD-04, add-node)
+    // statt Allokationen umzusetzen — eine andere Architektur, aber keine umkaempfte FUNC.
+    const refusedByOther = (run: RunResult, other: Weights) =>
+      run.steps.filter((st) => st.fitDelta.length > 0 && along(st.fitDelta, other) <= EPS).map((st) => `${st.ruleId} ${st.edit}`);
+    expect(refusedByOther(cohAdv, SCALABLE), 'COHESIVE applied only moves SCALABLE would also take').not.toEqual([]);
+    expect(refusedByOther(scaAdv, COHESIVE), 'SCALABLE applied only moves COHESIVE would also take').not.toEqual([]);
 
     // KILL CRITERION "directionless" (the CR-GC-407 trap): the TRAJECTORY, not
     // the per-step promise, has to move each run toward its own target — and
