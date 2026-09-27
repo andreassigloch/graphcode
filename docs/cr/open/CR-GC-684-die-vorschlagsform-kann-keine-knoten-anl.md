@@ -44,8 +44,11 @@ im selben Commit auf die neue minor heben.
 
 ## Zielbild
 
-`src/loop/suggest.ts` uebersetzt `edit.op === 'add-node'` in `[add-node(node), ...add-edge(edges)]`
-als EIN Batch — neben den bestehenden Zweigen `retire` und `merge-nodes`. Dry-Run und Score laufen
+`src/loop/suggest.ts` uebersetzt `edit.op === 'add-node'` in
+`[add-node(node), ...delete-edge(retires), ...add-edge(edges)]` als EIN Batch — neben den bestehenden
+Zweigen `retire` und `merge-nodes`. `retires[]` kam mit CR-SM-356 dazu: der RD-04-Operator
+(Zwischenebene) haengt mehrere Kinder um. Achtung: se-engine spiegelt `edges[0]` in
+`source/target/type` — ohne den add-node-Zweig entstuende eine Kante ins Nichts (das Gate lehnt ab). Dry-Run und Score laufen
 unveraendert ueber das Gate.
 
 ## Umfang (4 Dateien)
@@ -57,6 +60,7 @@ unveraendert ueber das Gate.
 
 - [ ] Rot zuerst: ein add-node-Vorschlag wird heute verworfen bzw. falsch uebersetzt.
 - [ ] `graph_suggest` am Fixture liefert den Batch, der Dry-Run senkt den Befund.
+- [ ] RD-04-Vorschlag (add-node + retires) am Fixture: Batch passiert das Gate, Steuerwert sinkt.
 - [ ] Schatten-Simulation `rig/greenfield-systemtest/schatten-suggest.mjs` an opus5-14/15: Zahl
       der anwendbaren Vorschlaege vorher/nachher.
 - [ ] VOLL-Lane gruen.
