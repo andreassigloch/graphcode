@@ -49,3 +49,7 @@ RD-04 am Fixture (Disk-Kuzu) — der injizierte Block besteht `graph_mutate({for
 
 NICHT ENTHALTEN: der Block filtert nicht auf `applicable` — ein am dryRun gescheiterter Vorschlag mit
 `edit` wuerde weiter gezeigt. Vorbestehend, nicht Teil dieses CR.
+
+## Nachtrag 2026-09-27
+
+Vorschlaege mit `applicable: false` (vom Gate-Probelauf in graph_suggest verworfen) werden nicht mehr injiziert — Test in `tests/executor.round-injection-suggest-skill.test.ts`, rot vor dem Filter.
