@@ -128,6 +128,10 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/rig-verhalten.test.ts':
+    'Rig-Verhaltensanalyse (Leitlinie T-E10/T-E11): wertet gestellte Logs, Audits und Graphen in einem\n' +
+    'TEMP-Verzeichnis aus und liest die Executor-Prompts (Vorbild-uids). graphcodes eigene SSOT liest er\n' +
+    'nie — eine Modellaenderung kann ihn nicht rot machen; eine Aenderung an Rig-Auswertung oder Vorbild sehr wohl.',
   'tests/attributvertraege.test.ts':
     'CR-GC-643: prueft das Leseverhalten von Code (graph_tests, Verifikationsbericht, Code-Fakten) auf einem Wegwerf-Store — eine Code-Aenderung bricht es, kein Modell-Zug. Der Modellteil (RC-09 am committeten Modell) steht in conformance.test.ts.',
   'tests/retro-kpi.test.ts':
