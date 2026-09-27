@@ -33,7 +33,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { RULE_TO_PHASE } from '@sigloch/contracts/se';
+import { RULE_TO_PHASE, ElementType } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { generationStep, DIMENSION_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
 import { computePhaseReadiness, currentPhaseGate, PHASE_GATE_ORDER } from '../src/kernel/measure/readiness.js';
@@ -56,6 +56,9 @@ interface Round {
   noop: boolean;
 }
 
+/** Jeder Elementtyp vorhanden — jede Regel gestellt (CR-GC-695). */
+const JEDER_TYP: Record<string, number> = Object.fromEntries(ElementType.options.map((t) => [t, 1]));
+
 describe('T-B1 (CR-GC-341): the gate ladder is read off the measurement, not off prose', () => {
   it('walks SRR → PDR → CDR → TRR as coverage is added, one gate at a time', () => {
     // Table-driven over the RULE_TO_PHASE stream itself: this is what
@@ -65,7 +68,7 @@ describe('T-B1 (CR-GC-341): the gate ladder is read off the measurement, not off
 
     // Everything open → the current gate is the FIRST in lifecycle order.
     const allOpen = Object.keys(RULE_TO_PHASE).map((ruleId) => ({ ruleId }));
-    expect(currentPhaseGate(computePhaseReadiness(allOpen))).toBe(PHASE_GATE_ORDER[0]);
+    expect(currentPhaseGate(computePhaseReadiness(allOpen, JEDER_TYP))).toBe(PHASE_GATE_ORDER[0]);
 
     // Clear the gates in order; after each, the current gate must be the next one.
     let open = [...allOpen];
@@ -74,7 +77,7 @@ describe('T-B1 (CR-GC-341): the gate ladder is read off the measurement, not off
       const cleared = new Set(rulesOf(gate));
       open = open.filter((v) => !cleared.has(v.ruleId));
       const expected = i + 1 < PHASE_GATE_ORDER.length ? PHASE_GATE_ORDER[i + 1] : null;
-      expect(currentPhaseGate(computePhaseReadiness(open))).toBe(expected);
+      expect(currentPhaseGate(computePhaseReadiness(open, JEDER_TYP))).toBe(expected);
     }
 
     // And the order is the lifecycle order, not alphabetical.
@@ -89,7 +92,7 @@ describe('T-B1 (CR-GC-341): the gate ladder is read off the measurement, not off
     const open = Object.keys(RULE_TO_PHASE)
       .filter((id) => !cleared.has(id))
       .map((ruleId) => ({ ruleId }));
-    expect(currentPhaseGate(computePhaseReadiness(open))).toBe('SRR');
+    expect(currentPhaseGate(computePhaseReadiness(open, JEDER_TYP))).toBe('SRR');
   });
 });
 

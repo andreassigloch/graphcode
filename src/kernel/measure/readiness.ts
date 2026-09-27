@@ -48,7 +48,7 @@ export {
 // generate.ts/steering.ts, just keyed by phase gate instead of topic dimension.
 // ---------------------------------------------------------------------------
 import { z } from 'zod/v4';
-import { RULE_TO_PHASE, PhaseGate, type PhaseGateType } from '@sigloch/contracts/se';
+import { RULE_TO_PHASE, PhaseGate, ruleApplies, type PhaseGateType } from '@sigloch/contracts/se';
 
 /** INCOSE technical-review gates, in lifecycle order — the Handoff precondition
  * walks this order to find the "current" (first incomplete) gate. */
@@ -65,7 +65,7 @@ export const PhaseGateReadiness = z.object({
   gate: PhaseGate,
   /** Rules mapped to this gate with NO open violation (any severity). */
   covered: z.number().int().nonnegative(),
-  /** Total distinct rule IDs RULE_TO_PHASE maps to this gate. */
+  /** Total distinct rule IDs RULE_TO_PHASE maps to this gate AND that apply to the graph (CR-GC-695). */
   total: z.number().int().nonnegative(),
   /** Rule IDs mapped to this gate that still carry ≥1 open violation, sorted. */
   missing: z.array(z.string()),
@@ -81,16 +81,32 @@ export interface PhaseRuleHit {
   ruleId: string;
 }
 
+/** Element-Typ → Anzahl — die Eingabe von contracts `ruleApplies` (CR-GC-695). */
+export function typeCounts(elements: readonly { type: string }[]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const e of elements) counts[e.type] = (counts[e.type] ?? 0) + 1;
+  return counts;
+}
+
 /** SRR/PDR/CDR/TRR covered/total + missing legs, derived from the rule
  * violation stream + RULE_TO_PHASE (CR-GC-296). A rule counts as "covered"
  * when it currently fires NO violation of any severity — stricter than
  * error-only `blockingErrors`, by design: a gate can be error-free yet still
  * carry warning-level structural gaps (e.g. R-15 empty FCHAIN, R-10 missing
- * FLOW) that a dimension's ratio SCORE dilutes away over many elements. */
-export function computePhaseReadiness(violations: readonly PhaseRuleHit[]): PhaseGateReadiness[] {
+ * FLOW) that a dimension's ratio SCORE dilutes away over many elements.
+ *
+ * CR-GC-695: eine Regel, deren Vorbedingung der Graph nicht erfuellt (contracts `ruleApplies`,
+ * `RULE_PRECONDITION`, CR-SM-343/372), ist NICHT GESTELLT — sie steht weder im Zaehler noch im
+ * Nenner. Vorher zaehlte sie als erfuellt, weil sie schwieg: CR-R05 (Bauauftrag je REQ) las auf
+ * einem Graphen ohne einen einzigen CR als bestanden. Dieselbe Regel wie im contracts-Nenner der
+ * Dimensionen — kein zweiter Vorbedingungs-Katalog hier. */
+export function computePhaseReadiness(
+  violations: readonly PhaseRuleHit[],
+  countByType: Readonly<Record<string, number>>,
+): PhaseGateReadiness[] {
   const openRuleIds = new Set(violations.map((v) => v.ruleId));
   return PHASE_GATE_ORDER.map((gate) => {
-    const ruleIds = Object.keys(RULE_TO_PHASE).filter((id) => RULE_TO_PHASE[id] === gate);
+    const ruleIds = Object.keys(RULE_TO_PHASE).filter((id) => RULE_TO_PHASE[id] === gate && ruleApplies(id, countByType));
     const missing = ruleIds.filter((id) => openRuleIds.has(id)).sort();
     return { gate, total: ruleIds.length, covered: ruleIds.length - missing.length, missing };
   });

@@ -16,8 +16,6 @@ ACTOR -io-> FLOW        FLOW -io-> ACTOR
 
 That is all. `ACTOR compose UC`, `ACTOR io UC`, `ACTOR io FCHAIN`, `ACTOR io FUNC`, `SYS compose ACTOR` — **every one of these is rejected by R-18**, in both directions. The actor reaches a use case only along `ACTOR → FLOW → FUNC`, where that FUNC is a member of one of the UC's function chains. There is no shortcut, and the gate will not invent one for you.
 
-> Two rule texts in the catalogue still contradict this and will be repaired: R-16's fix hint says "link to a UC or FLOW", and CL-01 counts `ACTOR io UC` edges (ITEM-2026-378 / ITEM-2026-379). Follow the grammar, not those two hints.
-
 ## At seed time you name actors; you do not wire them
 
 There are no FUNCs yet, so there is nothing legal to wire *to*. Emit the actors as bare nodes via `graph_mutate` and stop. `R-16` (actor with no io) will fire as a **warning** and is the correct state at this point — it closes by itself when the chains exist. Do not silence it with an invented edge; an R-18 rejection costs a whole round.

@@ -20,6 +20,7 @@
 // @author andreas@siglochconsulting
 import { readFileSync, existsSync } from 'node:fs';
 import { metrics } from '@sigloch/se-engine';
+import { fc05ChainConnected } from '@sigloch/contracts/se';
 
 const DEV = '/Users/andreas/Developer/dev';
 const PROD = '/Users/andreas/Developer/prod';
@@ -60,7 +61,10 @@ export function indexGraph(g) {
   }));
   const reqsOf = new Map(); // Element → REQs, die es per satisfy erfüllt (Rückwärts-Blast-Radius)
   for (const t of g.traces) if (t.type === 'satisfy' && type.get(t.target) === 'REQ') push(reqsOf, t.source, t.target);
-  return { type, prod, cons, modOf, chains, reqsOf };
+  // CR-GC-695 (CR-SM-363): ob eine Kette gerichtet zusammenhaengt, urteilt FC-05 — der EINE Leser.
+  // Eine Kette mit FC-05-Befund ist nicht bewertbar; die Komponentenrechnung unten bleibt nur Diagnose.
+  const fc05 = new Set(fc05ChainConnected(g).map((v) => v.element_id));
+  return { type, prod, cons, modOf, chains, reqsOf, fc05 };
 }
 
 /** Die acht Kennzahlen einer Kette. `shareCount`: FUNC → Anzahl Ketten, in denen sie liegt. */
@@ -120,9 +124,12 @@ export function chainMetrics(ix, chain, shareCount) {
   // ist das die obere Schranke des Konzeptbegriffs „synchron durchlaufener geteilter Knoten".
   const hasIn = new Set([...adj.values()].flatMap((s) => [...s]));
   const bottlenecks = shared.filter((f) => hasIn.has(f) && adj.get(f).size > 0);
-  const measurable = m.size > 0 && components === 1 && entries.size > 0 && exits.size > 0;
+  // Nicht bewertbar: FC-05-Befund (zerfallen), oder ein Glied ohne io-Eingang/-Ausgang — dann
+  // urteilt FC-05 nicht, R-31 meldet es (eine Ursache, ein Befund) —, oder kein Eingang/Ausgang.
+  const unwired = [...m].some((f) => !wiredIn(f) || !wiredOut(f));
+  const measurable = m.size > 0 && !ix.fc05.has(chain.id) && !unwired && entries.size > 0 && exits.size > 0;
   return {
-    funcs: m.size, edges, measurable, components, loose, branches, missingLink, commonSource, entries: entries.size, exits: exits.size,
+    funcs: m.size, edges, measurable, fc05: ix.fc05.has(chain.id), components, loose, branches, missingLink, commonSource, entries: entries.size, exits: exits.size,
     length, syncDepth: null, fanout, crossings, loops,
     shared: shared.length, bottlenecks: bottlenecks.length, errorPathDepth: null,
   };
@@ -193,7 +200,7 @@ for (const x of report) {
 console.log(`\nK-MESSBAR: ${report.filter((x) => !x.skipped && x.share >= 0.8).length}/${report.filter((x) => !x.skipped).length} Graphen ≥ 0,8`);
 console.log(`K-INFO: r(Ølänge, flowEfficiency) = ${f(r, 2)} über n=${ok.length}`);
 console.log(`Realisierungsattribute (sync/scal/volat/source/budget) im Korpus: ${[...new Set(report.flatMap((x) => x.attrHits ?? []))].join(', ') || 'keine'}`);
-const why = (x) => [!x.funcs && 'leer', x.loose && `${x.loose} lose`, x.missingLink && `${x.missingLink} fehlendes Glied`, x.commonSource && `${x.commonSource} Sack`, !x.entries && 'kein Eingang', !x.exits && 'kein Ausgang'].filter(Boolean).join(', ');
+const why = (x) => [!x.funcs && 'leer', x.fc05 && 'FC-05', x.loose && `${x.loose} lose`, x.missingLink && `${x.missingLink} fehlendes Glied`, x.commonSource && `${x.commonSource} Sack`, !x.entries && 'kein Eingang', !x.exits && 'kein Ausgang'].filter(Boolean).join(', ');
 console.log('\nNicht messbare Ketten:');
 for (const x of report.filter((y) => !y.skipped)) for (const row of x.rows.filter((y) => !y.measurable)) console.log(`  ${x.id}\t${row.id}\t${why(row)}`);
 const all = report.filter((y) => !y.skipped).flatMap((y) => y.rows);

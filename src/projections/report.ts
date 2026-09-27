@@ -34,6 +34,7 @@ import { steerScore, steerTerms } from '@sigloch/se-engine';
 import {
   summarizeReadiness,
   computePhaseReadiness,
+  typeCounts,
   type ReadinessReport,
   type PhaseGateReadiness,
 } from '../kernel/measure/readiness.js';
@@ -342,7 +343,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       // und beide Blöcke aus verschiedenen Erhebungen zu speisen.
       const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
       const report = readinessOf(ev, harness.getGraph());
-      const phaseReadiness = computePhaseReadiness(report.violations);
+      const phaseReadiness = computePhaseReadiness(report.violations, typeCounts(harness.getGraph().nodes));
       // Intent-Coverage (CR-GC-295): nur wenn die Config bestätigte Anker trägt;
       // der Loader prüft dabei auch die Zielkonflikt-Paare (Warning, kein Block).
       const anchors = loadTargetProfile(harness.getRepoRoot())?.profile.intentAnchors ?? [];

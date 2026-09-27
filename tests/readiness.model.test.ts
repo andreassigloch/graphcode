@@ -20,7 +20,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { RULE_TO_PHASE } from '@sigloch/contracts/se';
+import { RULE_TO_PHASE, RULE_PRECONDITION, ElementType } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -92,9 +92,12 @@ describe('TEST-readiness-model (A/B): model is defined over V3_RULES, lean scope
 // --- phase_readiness (CR-GC-296): RULE_TO_PHASE rule coverage, orthogonal to --
 // --- the PHASE_GATE_RULES/completeness model above (structural chain legs). --
 
+/** Ein Graph, der jeden Elementtyp traegt — jede Vorbedingung erfuellt, jede Regel gestellt. */
+const JEDER_TYP: Record<string, number> = Object.fromEntries(ElementType.options.map((t) => [t, 1]));
+
 describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
   it('no violations → every gate fully covered, currentPhaseGate is null (Handoff allowed)', () => {
-    const report = computePhaseReadiness([]);
+    const report = computePhaseReadiness([], JEDER_TYP);
     expect(report.map((p) => p.gate)).toEqual(['SRR', 'PDR', 'CDR', 'TRR']);
     for (const gate of report) {
       expect(gate.total).toBeGreaterThan(0);
@@ -105,7 +108,7 @@ describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
   });
 
   it('a PDR-mapped violation (R-15) opens PDR only — SRR ahead of it in order stays irrelevant', () => {
-    const report = computePhaseReadiness([{ ruleId: 'R-15' }]);
+    const report = computePhaseReadiness([{ ruleId: 'R-15' }], JEDER_TYP);
     const pdr = report.find((p) => p.gate === 'PDR')!;
     const srr = report.find((p) => p.gate === 'SRR')!;
     expect(pdr.missing).toEqual(['R-15']);
@@ -116,7 +119,7 @@ describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
 
   it('currentPhaseGate returns the FIRST incomplete gate in SRR→PDR→CDR→TRR order, not the worst', () => {
     // TRR (R-19) AND SRR (BQ-02) both open — SRR comes first in lifecycle order.
-    const report = computePhaseReadiness([{ ruleId: 'R-19' }, { ruleId: 'BQ-02' }]);
+    const report = computePhaseReadiness([{ ruleId: 'R-19' }, { ruleId: 'BQ-02' }], JEDER_TYP);
     expect(currentPhaseGate(report)).toBe('SRR');
   });
 
@@ -125,9 +128,26 @@ describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
       { ruleId: 'R-02' },
       { ruleId: 'R-02' },
       { ruleId: 'R-02' },
-    ]);
+    ], JEDER_TYP);
     const pdr = report.find((p) => p.gate === 'PDR')!;
     expect(pdr.missing).toEqual(['R-02']);
+  });
+
+  // CR-GC-695 (ITEM-2026-609): eine Regel ohne erfuellte Vorbedingung ist nicht gestellt — sie
+  // zaehlt nicht als erfuellt. POSITIVKONTROLLE: ohne ruleApplies steht CR-R05 auf dem Graphen
+  // ohne CR in `total` und `covered` des TRR, und der erste Fall hier ist rot.
+  it('a rule whose precondition the graph lacks is left out of covered AND total (CR-R05 without CR)', () => {
+    const vorbedingt = Object.keys(RULE_PRECONDITION).filter((id) => RULE_TO_PHASE[id] !== undefined);
+    expect(vorbedingt).toContain('CR-R05'); // sonst prueft der Fall nichts
+    const ohneCr = { ...JEDER_TYP, CR: 0 };
+    const mit = computePhaseReadiness([], JEDER_TYP);
+    const ohne = computePhaseReadiness([], ohneCr);
+    const trr = (r: typeof mit) => r.find((p) => p.gate === RULE_TO_PHASE['CR-R05'])!;
+    expect(trr(ohne).total).toBe(trr(mit).total - 1);
+    expect(trr(ohne).covered).toBe(trr(mit).covered - 1);
+    // Mit CR im Graphen und offenem Befund bleibt CR-R05 ein fehlendes Bein.
+    const offen = computePhaseReadiness([{ ruleId: 'CR-R05' }], JEDER_TYP);
+    expect(trr(offen).missing).toContain('CR-R05');
   });
 
   it('PHASE_GATE_ORDER is the INCOSE lifecycle order the Handoff walk relies on', () => {
