@@ -44,17 +44,18 @@ Modelling knowledge, not tool operation — both come from the retired `se:requi
 + FCHAIN-<uc b> -compose-> FUNC-<shared step>
 + FUNC-<shared step> -io-> FLOW-<handover>
 ```
-The dependency is then verifiable (the REQ carries a TEST, the chain its integration test) instead of being an opaque UC→UC arrow. Do not reach for `depends` to order use cases.
+The dependency is then verifiable (the REQ carries a TEST, every chain member its own REQ) instead of being an opaque UC→UC arrow. Do not reach for `depends` to order use cases.
 
 **Author in batches of 4–5, cross-cutting elements first.** Cut batches by deployment site × actor × functional coupling, max 4–5 UCs per batch — one chat context, so the whole batch stays reviewable. Per batch: propose → review → mutate → check violations. Settle the shared elements (shared FUNCs, their REQs) in the FIRST batch; discovering them in batch three means rewriting batches one and two.
 
 ## Write the guard conditions into the chain — not as prose in the UC
-What must be true **before** the scenario can start is the **entry FLOW** of the UC's chain — what crosses into its first function. What holds **after** it finished is the **UC goal** — the Outcome of the UC sentence. Both are checked by the chain's integration test (R-21): a `non-functional` REQ the FCHAIN satisfies end to end, verified by a TEST (`se:author-req`).
+What must be true **before** the scenario can start is the **entry FLOW** of the UC's chain — what crosses into its first function. What holds **after** it finished is the **UC goal** — the Outcome of the UC sentence. The chain is covered (R-21) when **every member FUNC satisfies its own `functional` REQ**, each verified by a TEST (`se:author-req`, R-01). The FCHAIN itself carries only `non-functional` REQs — an end-to-end quality such as a time budget — and only when the scenario has one.
 ```
 + UC-<name> -compose-> FCHAIN-<name>
-+ FCHAIN-<name> -compose-> FUNC-<first step>
++ FCHAIN-<name> -compose-> FUNC-<first step>, FUNC-<last step>
 + FLOW-<entry> -io-> FUNC-<first step>
-+ FCHAIN-<name> -satisfy-> REQ-<end to end>
-+ TEST-<integration> -verify-> REQ-<end to end>
++ FUNC-<first step> -satisfy-> REQ-<first step behaviour>
++ FUNC-<last step> -satisfy-> REQ-<last step behaviour>
++ FCHAIN-<name> -satisfy-> REQ-<end-to-end budget>
 ```
 A guard that only lives in the description cannot be tested and is invisible to every view. This used to be a pair of info findings at every UC; since they fired everywhere and nobody acted on them, the check now lives here, in the writing.
