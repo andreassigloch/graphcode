@@ -221,6 +221,55 @@ function uc02Skelett(uc: string, og?: KlauselBestand): string {
   return `Fuer ${uc}${wahl}:\n## Nodes\n${knoten.join('\n')}\n\n## Edges\n${kanten.join('\n')}`;
 }
 
+/**
+ * FC-04-Skelett je Kette (ITEM-2026-629): Eingang ACTOR→FLOW→FUNC und Ausgang FUNC→FLOW→ACTOR, nur
+ * was fehlt. FUNC (Eingang: erste, Ausgang: letzte der Kette) und ACTOR kommen aus dem Bestand; die
+ * neuen FLOW/SCHEMA-uids stehen fest. Gemessen S2 gcrun-336..338: ohne Klausel ~16 von 40 Runden
+ * Stillstand, der Ausgang (FUNC -io-> FLOW -io-> ACTOR) in keinem Lauf.
+ */
+function fc04Skelett(kette: string, og?: KlauselBestand): string {
+  const name = kette.replace(/^FCHAIN-/, '');
+  const typ = new Map((og?.elements ?? []).map((e) => [e.id, e.type]));
+  const io = (og?.traces ?? []).filter((t) => t.type === 'io');
+  const glieder = (og?.traces ?? [])
+    .filter((t) => t.source === kette && t.type === 'compose' && typ.get(t.target) === 'FUNC')
+    .map((t) => t.target);
+  const akteure = (og?.elements ?? []).filter((e) => e.type === 'ACTOR').map((e) => e.id);
+  const actor = akteure[0] ?? `ACTOR-${name}-akteur`;
+  const vonAkteur = new Set(io.filter((t) => typ.get(t.source) === 'ACTOR').map((t) => t.target));
+  const zuAkteur = new Set(io.filter((t) => typ.get(t.target) === 'ACTOR').map((t) => t.source));
+  const eingang = io.some((t) => glieder.includes(t.target) && vonAkteur.has(t.source));
+  const ausgang = io.some((t) => glieder.includes(t.source) && zuAkteur.has(t.target));
+  const neueFunc = glieder.length === 0;
+  const erste = glieder[0] ?? `FUNC-${name}-liefern`;
+  const letzte = glieder.at(-1) ?? erste;
+
+  const flows: string[] = [];
+  const schemas: string[] = [];
+  const kanten: string[] = [];
+  if (!eingang) {
+    flows.push(`+ FLOW-${name}-eingabe|«Eingabe A» von «Akteur A» an die Kette [__name:«Eingabe A»]`);
+    schemas.push(`+ SCHEMA-${name}-eingabe|Form von «Eingabe A»: «Feld A» und «Feld B» [__name:Vertrag «Eingabe A»]`);
+    kanten.push(`+ ${actor} -io-> FLOW-${name}-eingabe`, `+ FLOW-${name}-eingabe -io-> ${erste}`,
+      `+ FLOW-${name}-eingabe -relation-> SCHEMA-${name}-eingabe`);
+  }
+  if (!ausgang) {
+    flows.push(`+ FLOW-${name}-ergebnis|«Ergebnis A», das die Kette an «Akteur A» liefert [__name:«Ergebnis A»]`);
+    schemas.push(`+ SCHEMA-${name}-ergebnis|Form von «Ergebnis A»: «Feld A» und «Feld B» [__name:Vertrag «Ergebnis A»]`);
+    kanten.push(`+ ${letzte} -io-> FLOW-${name}-ergebnis`, `+ FLOW-${name}-ergebnis -io-> ${actor}`,
+      `+ FLOW-${name}-ergebnis -relation-> SCHEMA-${name}-ergebnis`);
+  }
+  const knoten = [
+    `### FLOW\n${flows.join('\n')}`,
+    `### SCHEMA\n${schemas.join('\n')}`,
+    ...(neueFunc ? [`### FUNC\n+ ${erste}|Liefert «Ergebnis A». [__name:«Ergebnis A» liefern]`] : []),
+    ...(akteure.length ? [] : [`### ACTOR\n+ ${actor}|«Akteur A» aus dem Auftrag [__name:«Akteur A»]`]),
+  ];
+  if (neueFunc) kanten.push(`+ ${kette} -compose-> ${erste}`);
+  const wahl = akteure.length > 1 ? ` (ACTOR: den passenden aus ${akteure.join(', ')})` : '';
+  return `Fuer ${kette}${wahl}:\n## Nodes\n${knoten.join('\n')}\n\n## Edges\n${kanten.join('\n')}`;
+}
+
 export const RULE_CLAUSE: Record<
   string,
   {
@@ -289,6 +338,18 @@ export const RULE_CLAUSE: Record<
     // CR-GC-655: bewusst KEIN se:author-uc (so empfiehlt es contracts RULE_HELP). Gemessen gcrun-60/62:
     // mit dem uc-Skill schrieb qwen3-coder dessen Beispiel ab (SYS compose UC, UC compose FCHAIN) und
     // deklarierte drei Runden lang dieselben UCs neu, teils mit neuer Beschreibung — Fund ungeloest.
+    skill: null,
+  },
+  // ITEM-2026-629: Eingang und Ausgang je Kette, uids aus dem Bestand vorgegeben.
+  'FC-04': {
+    types: ['FCHAIN', 'FUNC', 'FLOW', 'SCHEMA', 'ACTOR'],
+    text: (uids, og) =>
+      `Diese Wirkketten sind nicht an Akteure gebunden (${uids.join(', ')}): jede braucht einen Eingang` +
+      ' (ACTOR io→FLOW io→FUNC der Kette — etwas loest sie aus) UND einen Ausgang (FUNC der Kette io→FLOW' +
+      ' io→ACTOR — sie liefert etwas zurueck). Jeder FLOW braucht genau einen Vertrag (FLOW relation→SCHEMA).' +
+      ' Die uids unten stehen fest — uebernimm sie; ersetze jeden Platzhalter «… A» durch Text aus dem' +
+      ' Auftrag. Alle Ketten in EINEM Batch:\n' +
+      uids.map((k) => fc04Skelett(k, og)).join('\n\n'),
     skill: null,
   },
   // CR-GC-648: RD-01 liegt in der req-Dimension, deren Template „3–5 neue REQs je UC" verlangt —

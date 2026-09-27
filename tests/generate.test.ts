@@ -769,6 +769,35 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(text).not.toMatch(/beispiel/);
   });
 
+  it('FC-04 gibt je Kette das Skelett fuer den fehlenden Ausgang vor — FUNC und ACTOR aus dem Bestand (ITEM-2026-629)', () => {
+    // Gemessen S2 gcrun-336..338: ~16 von 40 Runden Stillstand an FC-04 & Co.; FUNC -io-> FLOW und
+    // FLOW -io-> ACTOR (der Ausgang) in keinem Lauf. Ohne Klausel stand dort nur der uc-Text.
+    const og = {
+      elements: [
+        { id: 'FCHAIN-nachtlauf', type: 'FCHAIN' }, { id: 'FUNC-nachtlauf-annehmen', type: 'FUNC' },
+        { id: 'FUNC-nachtlauf-ausfuehren', type: 'FUNC' }, { id: 'FLOW-nachtlauf-eingabe', type: 'FLOW' },
+        { id: 'ACTOR-betreiber', type: 'ACTOR' }, { id: 'FCHAIN-leer', type: 'FCHAIN' }, { id: 'FUNC-leer-a', type: 'FUNC' },
+      ],
+      traces: [
+        { source: 'FCHAIN-nachtlauf', target: 'FUNC-nachtlauf-annehmen', type: 'compose' },
+        { source: 'FCHAIN-nachtlauf', target: 'FUNC-nachtlauf-ausfuehren', type: 'compose' },
+        { source: 'ACTOR-betreiber', target: 'FLOW-nachtlauf-eingabe', type: 'io' },
+        { source: 'FLOW-nachtlauf-eingabe', target: 'FUNC-nachtlauf-annehmen', type: 'io' },
+        { source: 'FCHAIN-leer', target: 'FUNC-leer-a', type: 'compose' },
+      ],
+    };
+    const text = RULE_CLAUSE['FC-04'].text(['FCHAIN-nachtlauf', 'FCHAIN-leer'], og as never);
+    // Eingang da → nur der Ausgang, an der LETZTEN FUNC der Kette.
+    expect(text).toContain('+ FUNC-nachtlauf-ausfuehren -io-> FLOW-nachtlauf-ergebnis');
+    expect(text).toContain('+ FLOW-nachtlauf-ergebnis -io-> ACTOR-betreiber');
+    expect(text).toContain('+ FLOW-nachtlauf-ergebnis -relation-> SCHEMA-nachtlauf-ergebnis');
+    expect(text).not.toContain('FLOW-nachtlauf-eingabe|');
+    // Weder Eingang noch Ausgang → beide.
+    expect(text).toContain('+ ACTOR-betreiber -io-> FLOW-leer-eingabe');
+    expect(text).toContain('+ FUNC-leer-a -io-> FLOW-leer-ergebnis');
+    expect(text).not.toMatch(/beispiel/);
+  });
+
   it("'driver' verlangt je Dimension EINE Loesung, keine Alternativen im selben Batch (ITEM-2026-610)", () => {
     // Gemessen gcrun-310 (candidates=1): „2 alternative Zerlegungen, lass das Gate waehlen" — der
     // Treiber wendet den GANZEN Batch an, also landeten beide, danach Alternativen der Alternativen
