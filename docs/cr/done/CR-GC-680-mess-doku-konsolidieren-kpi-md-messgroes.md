@@ -1,6 +1,6 @@
 # CR-GC-680: Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-593 (finding)
 **Erstellt:** 2026-09-26
 **Item:** bok/items/ITEM-2026-593.json (Lane: code)
