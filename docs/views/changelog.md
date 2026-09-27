@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 304 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 306 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 304 CR · 287 done · 5 open.
+Total: 306 CR · 299 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -338,12 +338,13 @@ Total: 304 CR · 287 done · 5 open.
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich |
 | `CR-GC-667` | n/a | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen |
 | `CR-GC-668` | done | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche |
-| `CR-GC-669` | n/a | Migrationswerkzeug REQ-kinds auf zwei Werte |
-| `CR-GC-670` | n/a | graphcode-Eigenmodell auf zwei REQ-kinds migrieren |
-| `CR-GC-671` | n/a | graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor |
+| `CR-GC-669` | done | Migrationswerkzeug REQ-kinds auf zwei Werte |
+| `CR-GC-670` | done | graphcode-Eigenmodell auf zwei REQ-kinds migrieren |
+| `CR-GC-671` | done | graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor |
 | `CR-GC-672` | n/a | Executor und Preflight auf zwei REQ-kinds |
-| `CR-GC-673` | n/a | Projektionen auf zwei REQ-kinds und Rollen-Attribut |
-| `CR-GC-674` | n/a | SE-Skills und Help auf zwei REQ-kinds |
+| `CR-GC-672B` | done | Executor zeigt Vorschlaege als Gate-Batch (Split aus CR-GC-672) |
+| `CR-GC-673` | done | Projektionen auf zwei REQ-kinds und Rollen-Attribut |
+| `CR-GC-674` | done | SE-Skills und Help auf zwei REQ-kinds |
 | `CR-GC-675` | n/a | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus |
 | `CR-GC-676` | done | Mess-Artefakte aufräumen: abgeschlossene Spikes, Recorder, tote Rigs und Alt-Ergebnisse löschen |
 | `CR-GC-677` | done | Mess-Artefakte: Recorder kennzahlen/zugverlauf und erledigte Spikes löschen |
@@ -353,7 +354,7 @@ Total: 304 CR · 287 done · 5 open.
 | `CR-GC-681` | n/a | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md |
 | `CR-GC-682` | done | Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung |
 | `CR-GC-683` | done | Konformanz-Extraktor sieht nur <repo>/src und relative Imports - im Monorepo sigloch-modules 0 Import-Endpunkte, RC-05 und RC-09 dort blind |
-| `CR-GC-684` | open | Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst |
+| `CR-GC-684` | done | Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst |
 | `CR-GC-685` | done | MCP-Schreibflaeche auf Format-E reduzieren: graph_realize und commands-Parameter raus, graph_merge-Beschreibung falsch (beschreibt Knoten-Merge statt Branch-Replay) |
 | `CR-GC-685B` | done | graph_realize von der MCP-Oberflaeche entfernen (Split aus CR-GC-685) |
 | `CR-GC-686` | done | Vorbilder und Werkzeugtexte auf Format-E: Skills, SCHEMA-01-fixHint, graph_merge-Beschreibung |
@@ -361,8 +362,9 @@ Total: 304 CR · 287 done · 5 open.
 | `CR-GC-688` | done | seed:actor lieferte 8 Actors aus abgeschnittener Antwort |
 | `CR-GC-689` | done | rules_get_violations ist mit 12.274 Zeichen je Aufruf der groesste Einzelposten des Prosa-Laufs opus5-17 (opus5-16 bei gleicher Eingabe: 2.042) — der Arbeitsmengen-Schnitt aus CR-GC-613 beisst nicht, wenn die Sitzung ueberall geschrieben hat, und genau das tut ein Spezifikationslauf |
 | `CR-GC-690` | done | Hausregel 'im headless-Lauf keine Rueckfrage' steht in GRAPHCODE.md, wird aber nicht durchgesetzt: opus5-0 rief AskUserQuestion zu einer selbst als Rauschen gemessenen Entscheidung |
-| `CR-GC-691` | open | Abgeschnittene Antwort im Ein-Kandidaten-Pfad verwerfen, executor.ts erkennt 'length' nicht (Rest CR-GC-688) |
-| `CR-GC-692` | open | Executor meldet gekappten Werkzeugaufruf als INPUT-SCHEMA statt als Budget-Ueberlauf — Modell wiederholt denselben zu grossen Batch (runde7: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt) |
-| `CR-GC-693` | open | Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai/anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS |
-| `CR-GC-694` | open | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt |
-| `CR-GC-695` | n/a | computePhaseReadiness: nicht anwendbare Regel nicht als erfuellt zaehlen (ruleApplies, CR-SM-372) + Nachzuege FC-05/R-16 |
+| `CR-GC-691` | done | Abgeschnittene Antwort im Ein-Kandidaten-Pfad verwerfen, executor.ts erkennt 'length' nicht (Rest CR-GC-688) |
+| `CR-GC-692` | done | Executor meldet gekappten Werkzeugaufruf als INPUT-SCHEMA statt als Budget-Ueberlauf — Modell wiederholt denselben zu grossen Batch (runde7: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt) |
+| `CR-GC-693` | done | Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai/anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS |
+| `CR-GC-694` | done | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt |
+| `CR-GC-695` | done | computePhaseReadiness: nicht anwendbare Regel nicht als erfuellt zaehlen (ruleApplies, CR-SM-372) + Nachzuege FC-05/R-16 |
+| `CR-GC-696` | open | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren |

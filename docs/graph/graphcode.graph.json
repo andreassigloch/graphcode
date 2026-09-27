@@ -2434,19 +2434,25 @@
       "id": "CR-GC-669",
       "type": "CR",
       "name": "Migrationswerkzeug REQ-kinds auf zwei Werte",
-      "description": "docs/cr/open/CR-GC-669-migrationswerkzeug-req-kinds-auf-zwei-we.md"
+      "description": "docs/cr/done/CR-GC-669-migrationswerkzeug-req-kinds-auf-zwei-we.md",
+      "status": "done",
+      "commitRef": "1c84c66"
     },
     {
       "id": "CR-GC-670",
       "type": "CR",
       "name": "graphcode-Eigenmodell auf zwei REQ-kinds migrieren",
-      "description": "docs/cr/open/CR-GC-670-graphcode-eigenmodell-auf-zwei-req-kinds.md"
+      "description": "docs/cr/done/CR-GC-670-graphcode-eigenmodell-auf-zwei-req-kinds.md",
+      "status": "done",
+      "commitRef": "e893c4c"
     },
     {
       "id": "CR-GC-671",
       "type": "CR",
       "name": "graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor",
-      "description": "docs/cr/open/CR-GC-671-graphcode-kern-auf-zwei-req-kinds-und-ne.md"
+      "description": "docs/cr/done/CR-GC-671-graphcode-kern-auf-zwei-req-kinds-und-ne.md",
+      "status": "done",
+      "commitRef": "0b29a2e"
     },
     {
       "id": "CR-GC-672",
@@ -2455,16 +2461,28 @@
       "description": "docs/cr/open/CR-GC-672-executor-und-preflight-auf-zwei-req-kind.md"
     },
     {
+      "id": "CR-GC-672B",
+      "type": "CR",
+      "name": "Executor zeigt Vorschlaege als Gate-Batch (Split aus CR-GC-672)",
+      "description": "docs/cr/done/CR-GC-672B-executor-zeigt-add-node-vorschlaege-ehrlich.md",
+      "status": "done",
+      "commitRef": "e886c68"
+    },
+    {
       "id": "CR-GC-673",
       "type": "CR",
       "name": "Projektionen auf zwei REQ-kinds und Rollen-Attribut",
-      "description": "docs/cr/open/CR-GC-673-projektionen-auf-zwei-req-kinds-und-roll.md"
+      "description": "docs/cr/done/CR-GC-673-projektionen-auf-zwei-req-kinds-und-roll.md",
+      "status": "done",
+      "commitRef": "6bf2a26"
     },
     {
       "id": "CR-GC-674",
       "type": "CR",
       "name": "SE-Skills und Help auf zwei REQ-kinds",
-      "description": "docs/cr/open/CR-GC-674-se-skills-und-help-auf-zwei-req-kinds.md"
+      "description": "docs/cr/done/CR-GC-674-se-skills-und-help-auf-zwei-req-kinds.md",
+      "status": "done",
+      "commitRef": "4166904"
     },
     {
       "id": "CR-GC-675",
@@ -2534,8 +2552,9 @@
       "id": "CR-GC-684",
       "type": "CR",
       "name": "Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst",
-      "description": "docs/cr/open/CR-GC-684-die-vorschlagsform-kann-keine-knoten-anl.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-684-die-vorschlagsform-kann-keine-knoten-anl.md",
+      "status": "done",
+      "commitRef": "cc21017"
     },
     {
       "id": "CR-GC-685",
@@ -2597,35 +2616,48 @@
       "id": "CR-GC-691",
       "type": "CR",
       "name": "Abgeschnittene Antwort im Ein-Kandidaten-Pfad verwerfen, executor.ts erkennt 'length' nicht (Rest CR-GC-688)",
-      "description": "docs/cr/open/CR-GC-691-abgeschnittene-antwort-im-ein-kandidaten.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-691-abgeschnittene-antwort-im-ein-kandidaten.md",
+      "status": "done",
+      "commitRef": "4e58952"
     },
     {
       "id": "CR-GC-692",
       "type": "CR",
       "name": "Executor meldet gekappten Werkzeugaufruf als INPUT-SCHEMA statt als Budget-Ueberlauf — Modell wiederholt denselben zu grossen Batch (runde7: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt)",
-      "description": "docs/cr/open/CR-GC-692-executor-meldet-gekappten-werkzeugaufruf.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-692-executor-meldet-gekappten-werkzeugaufruf.md",
+      "status": "done",
+      "commitRef": "2ff8e54"
     },
     {
       "id": "CR-GC-693",
       "type": "CR",
       "name": "Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai|anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS",
-      "description": "docs/cr/open/CR-GC-693-backend-sigllm-in-graphcode-run-spricht-.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-693-backend-sigllm-in-graphcode-run-spricht-.md",
+      "status": "done",
+      "commitRef": "a2a4150"
     },
     {
       "id": "CR-GC-694",
       "type": "CR",
       "name": "Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt",
-      "description": "docs/cr/open/CR-GC-694-executor-lokal-kontext-ist-nicht-die-urs.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-694-executor-lokal-kontext-ist-nicht-die-urs.md",
+      "status": "done",
+      "commitRef": "38ed662"
     },
     {
       "id": "CR-GC-695",
       "type": "CR",
       "name": "computePhaseReadiness: nicht anwendbare Regel nicht als erfuellt zaehlen (ruleApplies, CR-SM-372) + Nachzuege FC-05/R-16",
-      "description": "docs/cr/open/CR-GC-695-computephasereadiness-nicht-anwendbare-r.md"
+      "description": "docs/cr/done/CR-GC-695-computephasereadiness-nicht-anwendbare-r.md",
+      "status": "done",
+      "commitRef": "648c744"
+    },
+    {
+      "id": "CR-GC-696",
+      "type": "CR",
+      "name": "Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren",
+      "description": "docs/cr/open/CR-GC-696-nachzug-lokal-modus-rote-spikes-tests-na.md",
+      "status": "open"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -13623,6 +13655,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-672B",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-673",
       "target": "FUNC-authoring-guide",
       "type": "relation"
@@ -13839,6 +13876,11 @@
     },
     {
       "source": "CR-GC-694",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-696",
       "target": "FUNC-run-executor",
       "type": "relation"
     },
@@ -22207,5 +22249,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1
+  "graphVersion": 516
 }

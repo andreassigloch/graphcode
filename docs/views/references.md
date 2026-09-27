@@ -687,6 +687,7 @@
 | `CR-GC-672` | relation | `FUNC-generation-step` |
 | `CR-GC-672` | relation | `FUNC-inventory-channel` |
 | `CR-GC-672` | relation | `FUNC-preflight` |
+| `CR-GC-672B` | relation | `FUNC-run-executor` |
 | `CR-GC-673` | relation | `FUNC-authoring-guide` |
 | `CR-GC-673` | relation | `FUNC-export-markdown` |
 | `CR-GC-673` | relation | `FUNC-render-views` |
@@ -731,6 +732,7 @@
 | `CR-GC-693` | relation | `FUNC-run-verb` |
 | `CR-GC-693` | relation | `REQ-one-driver-local-and-frontier` |
 | `CR-GC-694` | relation | `FUNC-run-executor` |
+| `CR-GC-696` | relation | `FUNC-run-executor` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
