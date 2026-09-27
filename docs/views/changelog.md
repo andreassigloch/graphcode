@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 303 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 304 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 303 CR · 287 done · 5 open.
+Total: 304 CR · 287 done · 5 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -365,3 +365,4 @@ Total: 303 CR · 287 done · 5 open.
 | `CR-GC-692` | open | Executor meldet gekappten Werkzeugaufruf als INPUT-SCHEMA statt als Budget-Ueberlauf — Modell wiederholt denselben zu grossen Batch (runde7: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt) |
 | `CR-GC-693` | open | Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai/anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS |
 | `CR-GC-694` | open | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt |
+| `CR-GC-695` | n/a | computePhaseReadiness: nicht anwendbare Regel nicht als erfuellt zaehlen (ruleApplies, CR-SM-372) + Nachzuege FC-05/R-16 |

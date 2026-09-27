@@ -2622,6 +2622,12 @@
       "status": "open"
     },
     {
+      "id": "CR-GC-695",
+      "type": "CR",
+      "name": "computePhaseReadiness: nicht anwendbare Regel nicht als erfuellt zaehlen (ruleApplies, CR-SM-372) + Nachzuege FC-05/R-16",
+      "description": "docs/cr/open/CR-GC-695-computephasereadiness-nicht-anwendbare-r.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22286,5 +22292,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 513
+  "graphVersion": 514
 }
