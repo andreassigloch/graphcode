@@ -1,6 +1,6 @@
 # CR-GC-704: qwen3-coder instanziiert das Platzhalter-Vorbild von UC-02 nicht: S2 gcrun-333..335 (nach CR-GC-703) uebernimmt FLOW/SCHEMA/FUNC-beispiel-* woertlich 4-8x je Lauf, Preflight blockt jedes Mal, die Runden verfallen; Kandidat: Skelett-uids aus dem UC des Funds vorbelegen, Modell schreibt nur Texte
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-625 (finding)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-625.json (Lane: code)
