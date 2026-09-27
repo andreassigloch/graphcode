@@ -51,6 +51,16 @@ redundancy — all decidable, all computed.
   (Rechenweg Review §18): wie oft bewegen sich ℝ⁶, Steuerwert, Anker, Modularitaet, Engpass und
   Quoten, wie lange steht ein Anker; dazu das Endprofil gegen das Golden. Braucht `GOLDEN`
   (Korpus-env sourcen): `set -a && source rig/sigllm-spezifikation/lauf-prosa.env && set +a`.
+- **Arbeitsweise** (`verhalten.mjs`, Leitlinie T-E11/T-V5, Default im Bericht) — je Lauf
+  Gate-Ablehnungen, Preflight-Blocks, neu angelegter Bestand, Dubletten mit Auslöser, REQ ohne
+  kinds/Erfüller, Vorbild-Leck; über alle Läufe die Struktur gegen das Golden des Stempels.
+- **Blindurteil** (`blindurteil.mjs`, Leitlinie T-E10, eigener Schritt) — die Qualität, die der
+  Bericht nicht rechnen kann:
+  1. `node rig/greenfield-systemtest/blindurteil.mjs vorbereiten <ziel> runs/gcrun-310 …` —
+     anonyme Specs, `zuordnung.json`, je Spec eine `gutachter-<K>.txt`;
+  2. je Spec ein Gutachter (Claude-Subagent) mit genau dieser Vorgabe, keiner sieht eine zweite Spec;
+  3. `node rig/greenfield-systemtest/blindurteil.mjs auswerten <ziel>` — Tabelle je Lauf.
+  Vier Befunde stichprobenartig am Graphen nachprüfen, bevor die Tabelle zitiert wird.
 
 ## Run
 

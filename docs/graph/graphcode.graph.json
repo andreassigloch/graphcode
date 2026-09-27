@@ -9596,6 +9596,12 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed"
+        },
+        {
+          "file": "tests/rig-verhalten.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed"
         }
       ]
     },
@@ -22305,5 +22311,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 518
+  "graphVersion": 519
 }

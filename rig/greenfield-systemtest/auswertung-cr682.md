@@ -103,7 +103,7 @@ der Hand-Referenz `sigllm-v98` nur zu **41–48 %**.
 - **Nie da (0/9), in der Referenz tragend:** MOD satisfy REQ (Referenz 20), REQ compose REQ (18),
   TEST verify SCHEMA (24), SYS compose MOD (7), die CR/MS-Ebene. Selten: FUNC allocate MOD (3/9, Referenz 24).
   **Die Architektur- und Qualitätsebene fehlt ganz** — median 0 MOD gegen 7, 6 SCHEMA gegen 24.
-- **Zu breit, zu flach:** median 9 UC gegen 3; 23 von 39 Wirkketten bestehen aus genau **einer** FUNC
+- **Zu breit, zu flach:** median 9 UC gegen 3; 23 von 43 Wirkketten bestehen aus genau **einer** FUNC
   (Referenz: 4–13).
 
 ### 4. Was allen gemeinsam ist
@@ -150,3 +150,6 @@ Erzeugt aus `gcrun-311` (89 Knoten), Fund `REQ-login-dauer`:
 
 `blind-cr682/` — die neun gerenderten Specs, die Gutachten (JSON) und `zuordnung.json`.
 Renderer: `spec-render.mjs`. Ergebnisdateien der Läufe: `results-cr682-{fund,index,faltung}.json`.
+Reproduzierbar mit den Rig-Werkzeugen (seit 2026-09-27): Tabelle oben `node blindurteil.mjs auswerten
+blind-cr682`; Ablehnungen, Dubletten, Struktur und Prüfungen `node verhalten.mjs
+../sigllm-spezifikation/golden/sigllm-v98.graph.json runs/gcrun-3{00,01,02,10,11,12,20,21,22}`.

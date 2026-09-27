@@ -8130,7 +8130,7 @@ verify ▶ `REQ-store-recovery`
 
 Prueft die Auswertungen des Systemtests gegen echte Artefakte auf Platte: die Zusammenfassung je message.id (sonst zaehlt der Strom das Doppelte), den Abgleich Strom gegen Ergebniszeile, die Zuschreibung der Cache-Schreibung, die Dry-Run-Quote, die Ablehnungszaehlung ohne tier, die Bindungsquote ueber Blatt-FUNCs und das dreiwertige Code-Urteil samt Reichweite. Ohne sie ist der Messaufbau ungemessen — zwei seiner Zaehlfehler fielen bisher erst am lebenden Lauf auf. (CR-GC-574)
 
-verify ▶ `REQ-greenfield-systemtest-dod` · testRefs: `tests/systemtest-rig.test.ts`
+verify ▶ `REQ-greenfield-systemtest-dod` · testRefs: `tests/systemtest-rig.test.ts`, `tests/rig-verhalten.test.ts`
 
 ### 8.128  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 

@@ -12,6 +12,7 @@ import {
 import { steuerungsBericht } from './steuerung.mjs';
 import { vergleichBericht } from './trajektorie.mjs';
 import { schattenBericht } from './schatten-suggest.mjs';
+import { verhaltensBericht } from './verhalten.mjs';
 import { ARM_ACHSEN, achsenUnterschied } from './run.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -338,6 +339,20 @@ if (mitDeckung.length) {
     })
     .filter((l) => existsSync(l.audit));
   if (laeufe.length) console.log('\n' + vergleichBericht(laeufe, process.env.GOLDEN) + '\n');
+}
+
+// Verhalten des Modells (T-E10, T-E11): Ablehnungen, Dubletten, Vorbild-Leck, Struktur gegen das
+// Golden des Stempels. Jeder Lauf mit Spur zaehlt; die Struktur braucht das Golden.
+{
+  const laeufe = rows
+    .filter((r) => !r.error)
+    .map((r) => {
+      const dir = join(HERE, 'runs', `${r.arm}-${r.run}`);
+      return { label: `${r.arm} #${r.run}`, log: join(dir, 'run-raw.log'), audit: join(dir, 'audit.jsonl'), graph: join(dir, 'graph.json') };
+    })
+    .filter((l) => existsSync(l.audit) || existsSync(l.log));
+  const golden = process.env.GOLDEN ?? rows.find((r) => r.stempel?.golden?.pfad)?.stempel.golden.pfad;
+  if (laeufe.length) console.log('\n' + verhaltensBericht(laeufe, gemischt ? null : golden) + '\n');
 }
 
 // CR-GC-609 — Schatten-graph_suggest: nur Laeufe, fuer die schatten-suggest.mjs gelaufen ist (kostet Dry-Runs,
