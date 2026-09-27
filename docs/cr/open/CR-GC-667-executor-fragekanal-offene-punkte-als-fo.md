@@ -96,3 +96,15 @@ Fix: die Fragezeile steht im Hauptvorbild direkt vor `## Nodes`, die Grenz-REQ t
 19 Testdateien, die `executor-prompt`/`generate` importieren, grün; Build grün.
 
 Offen: Kriterium 4 an einem Build mit diesem Fix nachmessen (Fragen > 0, erfundene Grenzen ≈ 0).
+
+## Nachmessung 2026-09-27 (Build 2b62b1a, gcrun-6..8)
+
+| | f5bbc2b (gcrun-0..5) | 2b62b1a (gcrun-6..8) |
+|---|---|---|
+| Fragen je Lauf | 0 in 6/6 | 0 in 3/3 |
+| REQ mit erfundenem Wert | 4 / 4 / 2 (Welle A) | 0 / 0 / 4 |
+| REQ mit offenem Wert („offen, erfragt") | – | 7 / 7 / 2 |
+
+Kriterium 4 **nicht erfüllt**: Das Modell übernimmt die Annahme (offener Wert), lässt die Fragezeile
+aber weg. Laut Kriterium ein Befund für den Prompt: ITEM-2026-620. Der Kanal selbst ist verdrahtet
+und getestet. Offen bleiben Kriterium 3 (manueller Test des Auftraggebers in test_local) und 4.
