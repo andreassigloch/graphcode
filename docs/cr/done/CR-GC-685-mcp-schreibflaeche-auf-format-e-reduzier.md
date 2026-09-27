@@ -1,6 +1,6 @@
 # CR-GC-685: graph_realize entfernen, Bindungsreport ins mutate-Ergebnis
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27) — geteilt, das Entfernen traegt **CR-GC-685B**
 **Typ:** aus Item ITEM-2026-571 (idea)
 **Erstellt:** 2026-09-26
 **Item:** bok/items/ITEM-2026-571.json (Lane: code)
@@ -41,7 +41,53 @@ umschreiben), Werkzeuglisten/-aufrufe in `tests/mcp.agent-agnostic`, `skill-repo
 
 ## Akzeptanz
 
-- [ ] Rot zuerst: `graph_mutate` mit `@realRef` liefert heute keinen `resolved`/`openRefs`-Report.
-- [ ] `tools/list` enthaelt `graph_realize` nicht mehr; Zeichen der Oberflaeche vorher/nachher.
-- [ ] Modell: FUNC des Werkzeugs per `graph_impact` + Loeschzug (se-umbau), RC-* kongruent.
-- [ ] VOLL-Lane gruen.
+- [x] Rot zuerst: `graph_mutate` mit `@realRef` lieferte keinen `resolved`/`openRefs`-Report
+  (`tests/mcp.realize.test.ts`, 5/6 rot: `expected undefined to deeply equal { resolved: … }`).
+- [ ] `tools/list` ohne `graph_realize` → **CR-GC-685B** (Grund: Teilung, s. u.).
+- [ ] Modell → Graph-Lane (s. u.).
+- [ ] VOLL-Lane → laeuft einmal am Ende des Zugs (685 + 685B + 686 auf `zug-685`).
+
+## Teilung (2026-09-27)
+
+Der Umfang "10 Dateien" hielt nicht: das Entfernen des Werkzeugs reisst zusaetzlich
+`tests/claims.conformance.test.ts` (die veroeffentlichte Zahl "24 MCP tools" steht in `README.md`,
+`docs/articles/03-…` und `docs/articles/05-…`) und `tests/skill-authoring-gate.test.ts` (prueft
+GATE_TOOLS gegen die Registry) — dazu ein dritter Verlust, den der Schnitt nicht kannte (s.
+Phantom-Knoten). Zusammen 14 Dateien, ueber der harten Grenze. Geteilt in:
+
+- **CR-GC-685 (dieser):** Bindungsreport ins `graph_mutate`-Ergebnis, Phantom-Knoten-Sperre,
+  alle Test-Konsumenten von `graph_realize` auf Format-E. Das Werkzeug existiert danach noch,
+  hat aber keinen Aufrufer mehr in den Tests ausser seinem eigenen Listeneintrag.
+- **CR-GC-685B:** das Werkzeug von der Oberflaeche nehmen (10 Dateien).
+
+## Ergebnis (2026-09-27)
+
+- `graph_mutate` traegt `refs: { resolved, introduced, openRefs }` (Typ `BindingReport`,
+  `src/surface/write.ts`), wenn ein angewendeter Batch Code-Verweise (R-19/R-20/R-26) geschlossen
+  oder aufgerissen hat — sonst fehlt das Feld (Regel CR-GC-576). Die Nachher-Messung ist dieselbe
+  `evaluateRules`, die `respondsTo` speist: eine Messung, nicht zwei.
+- **Befund, mitgefixt — Phantom-Knoten:** `~` auf eine unbekannte uid legte still einen neuen
+  Knoten an (`applyCommands` macht aus `update-node` ein Upsert, name = uid). `~ FUNC-tippfehler
+  @realRef …` erzeugte so eine FUNC statt abzulehnen; `graph_realize` hatte das mit
+  "unknown funcUid" abgefangen. `src/loop/format-e-commands.ts` lehnt `~` jetzt ab, wenn weder
+  der Speicher noch derselbe Block (`+`) den Knoten kennt — am Produzenten, wie schon `-`.
+  Rot belegt (Guard entfernt → `success: true` + Phantom-FUNC), gruen mit Guard.
+- Test-Konsumenten auf Format-E: `tests/mcp.realize.test.ts` (neu geschrieben: FUNC, TEST,
+  SCHEMA, Batch ohne Bindung ohne `refs`, Mehrfachbindung = ein Audit-Eintrag, unbekannte uid
+  lehnt den ganzen Batch ab), `mcp.occ`, `mcp.silent-advisories`, `operations-log.integration`,
+  `host-shim` (der Fehlerpfad ueber den Shim prueft jetzt `graph_context` auf eine unbekannte uid).
+
+Dateien (7): `src/surface/write.ts`, `src/loop/format-e-commands.ts`, `tests/mcp.realize.test.ts`,
+`tests/mcp.occ.test.ts`, `tests/mcp.silent-advisories.test.ts`,
+`tests/operations-log.integration.test.ts`, `tests/host-shim.test.ts`.
+
+Tests: `npm run verify:code` (Bindung 2/2 Quelldateien) 14 Dateien / 107 gruen; zusaetzlich alle
+Dateien mit `~`-Zeilen (bootstrap, executor, formate-ops, schema-guard) 79/79 gruen.
+
+## Offen (Graph-Lane)
+
+- CR-Knoten `CR-GC-685` auf `done` (`aise cr close`), neuer CR-Knoten `CR-GC-685B`.
+- Die `realRef` der FUNC von `graph_realize` (symbol `graph_realize` in `write.ts`) wird mit
+  CR-GC-685B hohl: FUNC per `graph_impact` + Loeschzug (`/se-umbau`), RC-* danach kongruent.
+- Die FUNC von `format-e-commands` (Format-E-Decode) um die Existenzpruefung fuer `~` ergaenzen
+  (Beschreibung), falls das Modell sie dort nennt.

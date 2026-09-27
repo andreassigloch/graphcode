@@ -302,6 +302,16 @@ const GraphReseedInputSchema = z.object({
     .describe('Committed graph JSON path relative to repoRoot (default docs/graph/<systemId>.graph.json).'),
 });
 
+/** Was ein Batch an den Code-Verweisen (R-19/R-20/R-26) bewegt hat — CR-GC-685. */
+export interface BindingReport {
+  /** Welche fehlenden Code-Verweise dieser Batch geschlossen hat. */
+  resolved: string[];
+  /** Welche er aufgerissen hat — normalerweise leer. */
+  introduced: string[];
+  /** Wie viele Verweise im Modell noch offen sind — die Zahl, nicht die Liste. */
+  openRefs: number;
+}
+
 // -------------------------------------------------------------------------
 // Binding
 // -------------------------------------------------------------------------
@@ -329,11 +339,30 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     new Set(
       violations
         // R-19 testRefs, R-20 FUNC realRef, R-26 SCHEMA realRef (CR-211/228) — the presence rules
-        // whose binding graph_realize resolves; the delta confirms the realization.
+        // a binding (`~ uid` + `@realRef`/`@testRefs`) resolves; the delta confirms the realization.
         .filter((v) => v.ruleId === 'R-19' || v.ruleId === 'R-20' || v.ruleId === 'R-26')
         .map((v) => v.elementId)
         .filter((id): id is string => !!id),
     );
+
+  /**
+   * Der Bindungsreport (CR-GC-611, seit CR-GC-685 am graph_mutate-Ergebnis): welche fehlenden
+   * Code-Verweise der Batch geschlossen und welche er aufgerissen hat, und wie viele offen bleiben
+   * — die Zahl, nicht die Liste. Nur wenn sich an den Verweisen etwas bewegt hat: ein Batch ohne
+   * Bindung traegt kein Feld (dieselbe Regel wie CR-GC-576 — Schweigen kostet null Zeichen).
+   */
+  const refsReport = (
+    before: RuleViolation[],
+    after: RuleViolation[],
+  ): { refs: BindingReport } | Record<string, never> => {
+    const vorher = missingRefIds(before);
+    const nachher = missingRefIds(after);
+    const resolved = [...vorher].filter((id) => !nachher.has(id));
+    const introduced = [...nachher].filter((id) => !vorher.has(id));
+    return resolved.length === 0 && introduced.length === 0
+      ? {}
+      : { refs: { resolved, introduced, openRefs: nachher.size } };
+  };
 
   // -------------------------------------------------------------------------
   // WRITE tools — gate symmetry (L2): delegate to harness.mutate(), no bypass
@@ -341,7 +370,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_mutate: MCPTool<
     z.infer<typeof GraphMutateInputSchema>,
-    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta; steeringUnmeasurable?: string; next?: NextStep }
+    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta; steeringUnmeasurable?: string; next?: NextStep; refs?: BindingReport }
   > = {
     name: 'graph_mutate',
     description:
@@ -460,8 +489,10 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // CR-GC-434: die Gate-Pfad-Stempel — welche Alt-Violations der Batch
         // schloss (gemessenes Vorher/Nachher-Delta) und ob er ein von
         // graph_suggest gelieferter Template-Edit war.
+        // Nachher-Messung einmal, nur bei Anwendung: sie speist respondsTo UND den Bindungsreport.
+        const afterAll = result.success ? harness.evaluateRules() : null;
         await recordAudit(input.consumerId, result, commands, {
-          respondsTo: result.success ? resolvedViolations(respondsBaseline!, harness.evaluateRules()) : [],
+          respondsTo: afterAll ? resolvedViolations(respondsBaseline!, afterAll) : [],
           editSource: ctx.classifyEditSource(commands),
         });
         const out = dropSilentAdvisories(
@@ -478,6 +509,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           graphVersion: graphVersion(),
           ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
           ...(nameWarning ? { nameWarning } : {}),
+          ...(afterAll ? refsReport(respondsBaseline!, afterAll) : {}),
           ...next,
         };
       });

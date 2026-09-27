@@ -153,7 +153,7 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
     expect(read.graphVersion).toBe(1);
   });
 
-  it('graph_realize honours baseVersion identically (stale → reject + delta, fresh → applies)', async () => {
+  it('a Format-E binding (`~ uid @realRef`) honours baseVersion identically (stale → reject + delta, fresh → applies)', async () => {
     await tools.graph_mutate.handler({
       commands: [
         ...validSet('r'),
@@ -165,27 +165,24 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
     });
     await tools.graph_mutate.handler({ commands: validSet('r2'), consumerId: 'agent-r2', baseVersion: 1 });
 
-    const stale = (await tools.graph_realize.handler({
-      funcUid: 'FN-occ',
-      file: 'src/f.ts',
-      symbol: 'f',
+    const binden = '## Nodes\n### FUNC\n~ FN-occ\n@realRef {"file":"src/f.ts","symbol":"f"}';
+    const stale = (await tools.graph_mutate.handler({
+      formatE: binden,
       consumerId: 'agent-r',
       baseVersion: 1, // stale: r2 landed at version 2
-    })) as WriteResult & { resolved: string[] };
+    })) as WriteResult & { refs?: { resolved: string[] } };
     expect(stale.success).toBe(false);
     expect(stale.staleDelta?.entries).toHaveLength(1);
-    expect(stale.resolved).toEqual([]);
+    expect(stale.refs).toBeUndefined();
 
-    const fresh = (await tools.graph_realize.handler({
-      funcUid: 'FN-occ',
-      file: 'src/f.ts',
-      symbol: 'f',
+    const fresh = (await tools.graph_mutate.handler({
+      formatE: binden,
       consumerId: 'agent-r',
       baseVersion: 2,
-    })) as WriteResult & { resolved: string[] };
+    })) as WriteResult & { refs?: { resolved: string[] } };
     expect(fresh.success).toBe(true);
     expect(fresh.graphVersion).toBe(3);
-    expect(fresh.resolved).toContain('FN-occ');
+    expect(fresh.refs?.resolved).toContain('FN-occ');
   });
 
   it('the version survives a process restart (reconstructed from the durable log)', async () => {

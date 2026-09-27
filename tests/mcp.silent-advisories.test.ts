@@ -66,8 +66,8 @@ describe('TEST-silent-advisories: was nichts sagt, steht nicht da (CR-GC-576)', 
       knoten('FUNC-x', 'FUNC', 'X', 'Eine realisierte Funktion.'),
       kante('FUNC-x', 'MOD-a', 'allocate'),
     ]);
-    await tools.graph_realize.handler({
-      funcUid: 'FUNC-x', file: 'src/x.ts', symbol: 'x', consumerId: 'test',
+    await tools.graph_mutate.handler({
+      formatE: '## Nodes\n### FUNC\n~ FUNC-x\n@realRef {"file":"src/x.ts","symbol":"x"}', consumerId: 'test',
     });
 
     // Umhaengen: die Datei muss mitwandern, also hat der workOrder etwas zu sagen.

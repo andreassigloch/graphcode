@@ -127,6 +127,16 @@ export function formatEToCommands(
 
       case 'update_node': {
         const uid = op.semanticId;
+        // CR-GC-685: `~` ist ein PATCH, kein Anlegen. `applyCommands` macht aus `update-node` auf
+        // eine unbekannte uid still einen neuen Knoten (name = uid) — ein Tippfehler in
+        // `~ FUNC-x @realRef …` legte so eine Phantom-FUNC an. graph_realize pruefte das
+        // ("unknown funcUid"); wer ueber Format-E bindet, bekommt dieselbe Ablehnung hier, am Produzenten.
+        if (!angelegt.has(uid) && resolveType(uid) === undefined) {
+          throw new Error(
+            `Format-E: update rejected — node "${uid}" does not exist; "~" patches a node the store ` +
+              'holds (or this block adds with "+"). A new node is "+".',
+          );
+        }
         const type = typPruefen(uid, op.elementType);
         const { name, attributes } = attributeTeilen(op.attributes ?? {});
         // PATCH: nur nennen, was die Zeile nennt. `description: undefined` liesse

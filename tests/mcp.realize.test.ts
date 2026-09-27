@@ -1,9 +1,10 @@
 /**
- * TEST-graph-realize (CR-GC-216) — the flat realize affordance over the gate.
+ * TEST-graph-realize (CR-GC-216, seit CR-GC-685 ueber graph_mutate) — Binden ist ein Format-E-Patch.
  *
- * graph_realize binds a FUNC's realRef (and optionally a TEST's testRefs entry) in one
- * flat call, through harness.mutate() (gate-only, no parallel write path), and
- * returns the missingRefs delta so the realization is confirmed. Real disk Kuzu.
+ * `~ FUNC-x` + `@realRef {…}` (bzw. `@testRefs [...]` an einer TEST, `@realRef` an einem SCHEMA)
+ * laeuft durch DASSELBE Gate wie jeder Write. Was frueher nur graph_realize lieferte — welche
+ * fehlenden Code-Verweise (R-19/R-20/R-26) der Batch geschlossen oder aufgerissen hat und wie viele
+ * offen bleiben — steht jetzt als `refs` im graph_mutate-Ergebnis. Real disk Kuzu.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync, readFileSync, existsSync } from 'node:fs';
@@ -34,13 +35,17 @@ function makeHarness(repoRoot: string): GraphCodeHarness {
 }
 
 // A realized FUNC with no realRef (R-20) and a realized TEST with no testRefs (R-19) — both warnings,
-// so the gate accepts the seed; graph_realize then clears them.
+// so the gate accepts the seed; the Format-E patch then clears them.
 const SPEC: MutateCommand[] = [
   { op: 'add-node', node: { uid: 'FN-x', type: 'FUNC', name: 'Do x', description: '', attributes: {} } },
   { op: 'add-node', node: { uid: 'TEST-x', type: 'TEST', name: 'x test', description: '', attributes: {} } },
 ];
 
-describe('TEST-graph-realize (CR-GC-216): flat realize affordance through the gate', () => {
+/** Ein Format-E-Block aus Zeilen — `## Nodes` vorneweg, die Typ-Sektionen nennt der Aufrufer. */
+const fe = (...lines: string[]): string => ['## Nodes', ...lines].join('\n');
+const ref = (v: unknown): string => JSON.stringify(v);
+
+describe('TEST-graph-realize (CR-GC-685): Binden per Format-E, Bindungsreport im mutate-Ergebnis', () => {
   let repoRoot: string;
   let harness: GraphCodeHarness;
 
@@ -56,149 +61,92 @@ describe('TEST-graph-realize (CR-GC-216): flat realize affordance through the ga
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it('sets realRef through the gate; the FUNC leaves missingRefs; the delta is returned', async () => {
+  it('`~ FN-x @realRef` setzt die realRef durchs Gate; das Ergebnis traegt das Delta der Verweise', async () => {
     const tools = bindToolsToHarness(harness);
-    const out = await tools.graph_realize.handler({ funcUid: 'FN-x', file: 'src/x.ts', symbol: 'doX' });
+    const out = await tools.graph_mutate.handler({
+      formatE: fe('### FUNC', '~ FN-x', `@realRef ${ref({ file: 'src/x.ts', symbol: 'doX' })}`),
+    });
 
     expect(out.success).toBe(true);
-    expect(out.resolved).toContain('FN-x'); // R-20 war offen und ist geschlossen
-    expect(out.introduced).toEqual([]);
-    expect(out.openRefs).toBe(1); // TEST-x (R-19) ist noch offen — die Zahl, nicht die Liste
-    // CR-GC-611: die beiden vollen Listen sind weg (87 % der Antwort, bei jeder Bindung dieselben).
-    expect(out).not.toHaveProperty('missingRefsBefore');
-    expect(out).not.toHaveProperty('missingRefsAfter');
-
-    // The realRef is actually on the node, set through the gate (not a side store).
+    expect(out.refs).toEqual({ resolved: ['FN-x'], introduced: [], openRefs: 1 }); // TEST-x (R-19) bleibt offen
     const fn = harness.getGraph().nodes.find((n) => n.uid === 'FN-x')!;
     expect(fn.attributes.realRef).toEqual({ file: 'src/x.ts', symbol: 'doX' });
   });
 
-  it('optionally adds a TEST testRefs entry (R-19) in the same call', async () => {
+  it('`@testRefs` an einer TEST schliesst R-19 im selben Batch', async () => {
     const tools = bindToolsToHarness(harness);
-    const out = await tools.graph_realize.handler({
-      funcUid: 'FN-x',
-      file: 'src/x.ts',
-      symbol: 'doX',
-      testUid: 'TEST-x',
-      testFile: 'tests/x.test.ts',
+    const out = await tools.graph_mutate.handler({
+      formatE: fe(
+        '### FUNC', '~ FN-x', `@realRef ${ref({ file: 'src/x.ts', symbol: 'doX' })}`,
+        '### TEST', '~ TEST-x', `@testRefs ${ref([{ file: 'tests/x.test.ts', tool: 'vitest' }])}`,
+      ),
     });
 
-    expect(out.resolved).toEqual(expect.arrayContaining(['FN-x', 'TEST-x']));
+    expect(out.refs?.resolved).toEqual(expect.arrayContaining(['FN-x', 'TEST-x']));
+    expect(out.refs?.openRefs).toBe(0);
     const test = harness.getGraph().nodes.find((n) => n.uid === 'TEST-x')!;
     expect(test.attributes.testRefs).toEqual([{ file: 'tests/x.test.ts', tool: 'vitest' }]);
   });
 
-  it('unknown funcUid → a clear error (no silent no-op)', async () => {
+  // CR-211: SCHEMA realRef (R-26) auf demselben Weg.
+  it('bindet eine SCHEMA-realRef; R-26 schliesst', async () => {
     const tools = bindToolsToHarness(harness);
-    await expect(tools.graph_realize.handler({ funcUid: 'FN-nope', file: 'src/x.ts', symbol: 'doX' })).rejects.toThrow(
-      /unknown funcUid/i,
-    );
-  });
-
-  // CR-211: realRef binding through the same affordance.
-  it('binds a SCHEMA realRef; the SCHEMA leaves missingRefs (R-26); delta returned', async () => {
-    const tools = bindToolsToHarness(harness);
-    // A bare SCHEMA has no realRef → R-26 warning (accepted seed, then cleared).
     await harness.mutate([
       { op: 'add-node', node: { uid: 'SCHEMA-x', type: 'SCHEMA', name: 'evt', description: '', attributes: {} } },
     ]);
-    const out = await tools.graph_realize.handler({
-      schemaUid: 'SCHEMA-x',
-      schemaFile: 'src/se/ontology.ts',
-      schemaSymbol: 'EventSchema',
+    const out = await tools.graph_mutate.handler({
+      formatE: fe('### SCHEMA', '~ SCHEMA-x', `@realRef ${ref({ file: 'src/se/ontology.ts', symbol: 'EventSchema' })}`),
     });
 
     expect(out.success).toBe(true);
-    expect(out.resolved).toContain('SCHEMA-x'); // R-26 war offen und ist geschlossen
+    expect(out.refs?.resolved).toContain('SCHEMA-x');
     const sc = harness.getGraph().nodes.find((n) => n.uid === 'SCHEMA-x')!;
     expect(sc.attributes.realRef).toEqual({ file: 'src/se/ontology.ts', symbol: 'EventSchema' });
   });
 
-  it('graph_realize with neither funcUid nor schemaUid → rejected by schema', async () => {
+  it('ein Batch, der keine Bindung beruehrt, traegt kein refs-Feld (Schweigen kostet null Zeichen)', async () => {
     const tools = bindToolsToHarness(harness);
-    await expect(tools.graph_realize.handler({ file: 'src/x.ts', symbol: 'doX' } as never)).rejects.toThrow();
+    const out = await tools.graph_mutate.handler({ formatE: fe('### FUNC', '~ FN-x|Tut x') });
+    expect(out.success).toBe(true);
+    expect(out).not.toHaveProperty('refs');
   });
-});
 
-// CR-GC-611: 15 Aufrufe im Code-Test waren 15-mal dieselbe FUNC-Bindung mit je einer Testzeile mehr.
-describe('TEST-graph-realize-batch (CR-GC-611): mehrere Bindungen in EINEM Gate-Batch', () => {
-  let repoRoot: string;
-  let harness: GraphCodeHarness;
-
-  beforeEach(async () => {
-    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-realize-batch-'));
-    harness = makeHarness(repoRoot);
-    await harness.initialize();
+  it('mehrere Bindungen in EINEM Batch — ein Audit-Eintrag, alle Verweise geschlossen', async () => {
+    const tools = bindToolsToHarness(harness);
     await harness.mutate([
-      ...SPEC,
       { op: 'add-node', node: { uid: 'FN-y', type: 'FUNC', name: 'Do y', description: '', attributes: {} } },
-      { op: 'add-node', node: { uid: 'SCHEMA-x', type: 'SCHEMA', name: 'evt', description: '', attributes: {} } },
     ]);
-  });
-
-  afterEach(async () => {
-    await harness.close();
-    rmSync(repoRoot, { recursive: true, force: true });
-  });
-
-  it('bindet FUNC, FUNC, SCHEMA und TEST in einem Aufruf — ein Audit-Eintrag, alle Verweise geschlossen', async () => {
-    const tools = bindToolsToHarness(harness);
     const vorher = readAuditLines(repoRoot);
-    const out = await tools.graph_realize.handler({
-      bindings: [
-        { funcUid: 'FN-x', file: 'src/x.ts', symbol: 'doX' },
-        { funcUid: 'FN-y', file: 'src/y.ts', symbol: 'doY' },
-        { schemaUid: 'SCHEMA-x', schemaFile: 'src/schema.ts', schemaSymbol: 'EventSchema' },
-        { testUid: 'TEST-x', testFile: 'tests/x.test.ts', funcUid: 'FN-x', file: 'src/x.ts', symbol: 'doX' },
-      ],
+    const out = await tools.graph_mutate.handler({
+      formatE: fe(
+        '### FUNC',
+        '~ FN-x', `@realRef ${ref({ file: 'src/x.ts', symbol: 'doX' })}`,
+        '~ FN-y', `@realRef ${ref({ file: 'src/y.ts', symbol: 'doY' })}`,
+        '### TEST', '~ TEST-x', `@testRefs ${ref([{ file: 'tests/x.test.ts', tool: 'vitest' }])}`,
+      ),
     });
 
     expect(out.success).toBe(true);
-    expect(out.resolved).toEqual(expect.arrayContaining(['FN-x', 'FN-y', 'SCHEMA-x', 'TEST-x']));
-    expect(out.openRefs).toBe(0);
-    expect(readAuditLines(repoRoot).length - vorher.length).toBe(1); // EIN Batch, nicht vier
+    expect(out.refs?.resolved).toEqual(expect.arrayContaining(['FN-x', 'FN-y', 'TEST-x']));
+    expect(out.refs?.openRefs).toBe(0);
+    expect(readAuditLines(repoRoot).length - vorher.length).toBe(1);
   });
 
-  it('haengt mehrere Testfaelle derselben TEST-Datei an, ohne dass der letzte die vorigen frisst', async () => {
+  it('ein unbekannter Knoten lehnt den GANZEN Batch ab — keine Teilanwendung, kein Phantom-Knoten', async () => {
     const tools = bindToolsToHarness(harness);
-    await tools.graph_realize.handler({
-      bindings: [
-        { funcUid: 'FN-x', file: 'src/x.ts', symbol: 'doX', testUid: 'TEST-x', testFile: 'tests/x.test.ts', testCase: 'erster Fall' },
-        { funcUid: 'FN-x', file: 'src/x.ts', symbol: 'doX', testUid: 'TEST-x', testFile: 'tests/x.test.ts', testCase: 'zweiter Fall' },
-      ],
+    const out = await tools.graph_mutate.handler({
+      formatE: fe(
+        '### FUNC',
+        '~ FN-x', `@realRef ${ref({ file: 'src/x.ts', symbol: 'doX' })}`,
+        '~ FN-nope', `@realRef ${ref({ file: 'src/nope.ts', symbol: 'nope' })}`,
+      ),
     });
 
-    const test = harness.getGraph().nodes.find((n) => n.uid === 'TEST-x')!;
-    expect(test.attributes.testRefs).toEqual([
-      { file: 'tests/x.test.ts', tool: 'vitest', case: 'erster Fall' },
-      { file: 'tests/x.test.ts', tool: 'vitest', case: 'zweiter Fall' },
-    ]);
-  });
-
-  it('ein unbekannter Knoten im Batch lehnt den GANZEN Batch ab — keine Teilanwendung', async () => {
-    const tools = bindToolsToHarness(harness);
-    await expect(
-      tools.graph_realize.handler({
-        bindings: [
-          { funcUid: 'FN-x', file: 'src/x.ts', symbol: 'doX' },
-          { funcUid: 'FN-nope', file: 'src/nope.ts', symbol: 'nope' },
-        ],
-      }),
-    ).rejects.toThrow(/bindings\[1\].*unknown funcUid/i);
-
-    const fn = harness.getGraph().nodes.find((n) => n.uid === 'FN-x')!;
-    expect(fn.attributes.realRef).toBeUndefined(); // FN-x blieb ungebunden
-  });
-
-  it('flache Felder UND bindings[] zugleich → vom Schema abgelehnt (ein Pfad, zwei Schreibweisen)', async () => {
-    const tools = bindToolsToHarness(harness);
-    await expect(
-      tools.graph_realize.handler({
-        funcUid: 'FN-x',
-        file: 'src/x.ts',
-        symbol: 'doX',
-        bindings: [{ funcUid: 'FN-y', file: 'src/y.ts', symbol: 'doY' }],
-      } as never),
-    ).rejects.toThrow();
+    expect(out.success).toBe(false);
+    expect(out.violations.map((v) => v.message).join(' ')).toMatch(/FN-nope.*does not exist/);
+    expect(out).not.toHaveProperty('refs');
+    const nodes = harness.getGraph().nodes;
+    expect(nodes.find((n) => n.uid === 'FN-nope')).toBeUndefined();
+    expect(nodes.find((n) => n.uid === 'FN-x')!.attributes.realRef).toBeUndefined();
   });
 });

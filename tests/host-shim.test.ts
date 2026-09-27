@@ -125,9 +125,7 @@ describe('TEST-host-shim (CR-GC-235): host election + thin socket proxy', () => 
     expect(stale.staleDelta?.entries).toHaveLength(1);
 
     // A tool ERROR crosses the shim as an error, not a silent null.
-    await expect(proxy.graph_realize.handler({ funcUid: 'FN-missing', file: 'x', symbol: 'x' })).rejects.toThrow(
-      /unknown funcUid/,
-    );
+    await expect(proxy.graph_context.handler({ id: 'FN-missing' })).rejects.toThrow(/FN-missing.*not found/);
   });
 
   it('host death → the proxy re-elects ONCE (stale-lock reclaim) and continues as host; no dead state', async () => {

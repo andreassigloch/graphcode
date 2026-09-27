@@ -4,7 +4,7 @@
  * FileOperationsLog UNIT behaviour (restart survival, torn tail, compaction,
  * version anchor) is tested in graph-api-core; here we pin the graphcode-side
  * contract on real disk Kuzu: a new session resumes the version from the log
- * instead of resetting to 0, audit_trail reads across sessions, graph_realize is
+ * instead of resetting to 0, audit_trail reads across sessions, a Format-E binding is
  * audited (no bypass), and graphVersion counts APPLIED batches only.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -42,8 +42,8 @@ describe('operations-log integration (CR-207): registry uses the durable store l
   });
   afterEach(() => rmSync(repoRoot, { recursive: true, force: true }));
 
-  it('version + trail continue across sessions; graph_realize is audited (bypass closed)', async () => {
-    // Session 1: one gated write via graph_mutate, one via graph_realize.
+  it('version + trail continue across sessions; a Format-E binding is audited (bypass closed)', async () => {
+    // Session 1: three gated writes via graph_mutate, the last one a `~ uid @realRef` binding.
     const h1 = makeHarness(repoRoot);
     await h1.initialize();
     const t1 = bindToolsToHarness(h1);
@@ -52,11 +52,14 @@ describe('operations-log integration (CR-207): registry uses the durable store l
       commands: [{ op: 'add-node', node: { uid: 'FN-a', type: 'FUNC', name: 'f', description: '', attributes: {} } }],
       consumerId: 'session-1',
     });
-    await t1.graph_realize.handler({ funcUid: 'FN-a', file: 'src/a.ts', symbol: 'a', consumerId: 'session-1' });
+    await t1.graph_mutate.handler({
+      formatE: '## Nodes\n### FUNC\n~ FN-a\n@realRef {"file":"src/a.ts","symbol":"a"}',
+      consumerId: 'session-1',
+    });
     // CR-GC-347 shape: counts moved under `window`/`totals` when audit_stats grew the
     // per-rule/per-consumer aggregation. The numbers are the same numbers.
     const s1 = (await t1.audit_stats.handler({})) as AuditStats;
-    expect(s1.window.entries).toBe(3); // realize IS in the log
+    expect(s1.window.entries).toBe(3); // the binding IS in the log
     expect(s1.graphVersion).toBe(3);
     await h1.close();
 
