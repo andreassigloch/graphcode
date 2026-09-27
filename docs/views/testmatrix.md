@@ -54,7 +54,7 @@
 | `REQ-impact-based-testing` | ✓ | ✓ passed | `TEST-mvp-e2e` · `TEST-selective-test-audit` |
 | `REQ-import-se-ontology` | ✓ | ✓ passed | `TEST-dashboard-ontology-sync` · `TEST-graph-authoring-guide` |
 | `REQ-install-idempotent` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
-| `REQ-interactive-capture-suggest` | ✓ | ⚠ 2/3 passed | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-uc-authoring-style` |
+| `REQ-interactive-capture-suggest` | ✓ | ⚠ 3/4 passed | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-uc-authoring-style` |
 | `REQ-interface-change-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
 | `REQ-interface-schema` | ✓ | ⚠ nie gelaufen | `TEST-interface-schema` |
 | `REQ-inventory-switch` | ✓ | ✓ passed | `TEST-inventory-modes` |
@@ -68,9 +68,9 @@
 | `REQ-near-duplicate-detection` | ✓ | ✓ passed | `TEST-nd-similarity` |
 | `REQ-no-extraction` | ✓ | ⚠ 1/2 passed | `TEST-capture` · `TEST-import-code-verb` |
 | `REQ-npx-distribution` | ✓ | ✗ failed | `TEST-distribution` |
-| `REQ-one-driver-local-and-frontier` | ✓ | ✓ passed | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-one-driver-local-and-frontier` |
+| `REQ-one-driver-local-and-frontier` | ✓ | ✓ passed | `TEST-cli-run` · `TEST-executor-bestofn` · `TEST-executor-truncation` · `TEST-one-driver-local-and-frontier` |
 | `REQ-one-gate-per-repo` | ✓ | ✓ passed | `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-store-lock` |
-| `REQ-open-point-asked` | ✓ | ✓ passed | `TEST-executor-question-channel` |
+| `REQ-open-point-asked` | ✓ | ✓ passed | `TEST-deny-headless-question` · `TEST-executor-question-channel` |
 | `REQ-phase-gate-not-skippable` | ✓ | ✓ passed | `TEST-phase-gate-not-skippable` |
 | `REQ-post-agent-query` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-post-apply-gate` | ✓ | ✓ passed | `TEST-mutate-gate` |
@@ -105,8 +105,8 @@
 | `REQ-preflight-hygiene` | ✓ | ✓ passed | `TEST-executor-preflight` |
 | `REQ-progressive-expansion` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-prompt-provenance` | ✓ | ✓ passed | `TEST-prompt-provenance` |
-| `REQ-prose-recovery` | ✓ | ✓ passed | `TEST-one-driver-local-and-frontier` |
-| `REQ-published-counts-match-code` | ✓ | ✓ passed | `TEST-published-counts-match-code` · `TEST-skill-rule-ids` |
+| `REQ-prose-recovery` | ✓ | ✓ passed | `TEST-executor-truncation` · `TEST-one-driver-local-and-frontier` |
+| `REQ-published-counts-match-code` | ✓ | ✓ passed | `TEST-claude-md-toolsearch` · `TEST-published-counts-match-code` · `TEST-skill-kinds-werte` · `TEST-skill-rule-ids` |
 | `REQ-quality-metric` | ✓ | ⚠ 3/4 passed | `TEST-code-quality` · `TEST-fit-advisory` · `TEST-graph-metrics` · `TEST-retro-kpi` |
 | `REQ-query-precision` | ✓ | ✓ passed | `TEST-impact-subgraph` · `TEST-read-format-param` |
 | `REQ-readiness-completeness` | ✓ | ✓ passed | `TEST-readiness-completeness` |
@@ -149,7 +149,7 @@
 | `REQ-test-runnable-binding` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-graph-realize` · `TEST-test-runnable-binding` · `TEST-testreport` |
 | `REQ-testref-materialized` | ✓ | ✓ passed | `TEST-realref-materialize` · `TEST-testref-materialize` |
 | `REQ-thresholds-from-config` | ✓ | ✓ passed | `TEST-target-profile` · `TEST-thresholds-from-config` |
-| `REQ-token-efficiency` | ✓ | ⚠ 3/4 passed | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` |
+| `REQ-token-efficiency` | ✓ | ⚠ 4/5 passed | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` |
 | `REQ-trajectory-emit` | ✓ | ✓ passed | `TEST-create-harness-smoke` · `TEST-learning-emit` |
 | `REQ-versioned-broadcast` | ✓ | ✓ passed | `TEST-live-view` |
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |

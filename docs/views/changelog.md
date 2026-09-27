@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 302 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 302 CR · 212 done · 0 open.
+Total: 302 CR · 284 done · 7 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -224,61 +224,61 @@ Total: 302 CR · 212 done · 0 open.
 | CR | status | name |
 |---|---|---|
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
-| `CR-GC-535` | n/a | Pre-Commit faehrt verify:model bei Snapshot im Diff |
-| `CR-GC-540` | n/a | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |
+| `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
+| `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |
 | `CR-GC-541` | done | Testauswahl aus dem Modell statt voller Suite: graph_tests liefert fuer jedes Changeset genau die betroffenen Dateien (4 von 4 CRs bitgenau nachgemessen) — die Iteration faehrt trotzdem 141 Dateien |
-| `CR-GC-542` | n/a | SPIKE: findet ND die bekannten Duplikate? Known-Answer-Test gegen drei belegte Paare des Zuges 2026-09-16, bevor ND-01/02 aus notInGate ins Gate wandern |
-| `CR-GC-545` | n/a | Grenzmengen-Messung: welche FUNC MUESSEN ins Modell — die, deren Symbol eine MOD-Grenze kreuzt. Untergrenze, keine Gleichheit; jetzt auf einer Datei->MOD-Aufloesung von 98,9% statt 59% |
-| `CR-GC-546` | n/a | Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md |
-| `CR-GC-547` | n/a | Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen |
-| `CR-GC-548` | n/a | Kennzahlen-Recorder fuer die Null-Zeile eines fremden Projekts: Repo als Argument, Greenfield-fest (kein Snapshot, kein src), JS/JSX statt nur TS, und er meldet seine eigene Reichweite |
+| `CR-GC-542` | done | SPIKE: findet ND die bekannten Duplikate? Known-Answer-Test gegen drei belegte Paare des Zuges 2026-09-16, bevor ND-01/02 aus notInGate ins Gate wandern |
+| `CR-GC-545` | done | Grenzmengen-Messung: welche FUNC MUESSEN ins Modell — die, deren Symbol eine MOD-Grenze kreuzt. Untergrenze, keine Gleichheit; jetzt auf einer Datei->MOD-Aufloesung von 98,9% statt 59% |
+| `CR-GC-546` | done | Grenzvertraege Modul 1 (tool-contract.ts) modellieren und den Kennzahlen-Verlauf mitschreiben - Recorder scripts/kennzahlen.mjs, Reihe in docs/records/kennzahlen.md |
+| `CR-GC-547` | done | Zod plus Test fuer die Grenzvertraege: MCPTool/MCPToolRegistry als Laufzeitvertrag, parse im einen Bauplatz der Registry, Vertrags-TEST gegen die echte Registry - R-32 und RC-04 erfuellen statt abschwaechen |
+| `CR-GC-548` | done | Kennzahlen-Recorder fuer die Null-Zeile eines fremden Projekts: Repo als Argument, Greenfield-fest (kein Snapshot, kein src), JS/JSX statt nur TS, und er meldet seine eigene Reichweite |
 | `CR-GC-549` | done | Zugverlauf aus dem Audit-Log rekonstruieren |
 | `CR-GC-550` | done | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter |
 | `CR-GC-551` | done | kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen "non-functional" statt ["non-functional"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert |
-| `CR-GC-552` | n/a | graphcode run gegen sigllm statt direkt gegen die Runtime — drittes Backend sigllm im Executor |
-| `CR-GC-553` | n/a | Die Bewertungsmaschiene des Rigs (metrics/report/Pruefliste/Prosa-Auftrag, 11 Dateien) wurde unter der fremden Nummer CR-GC-552 committet — die Nummer existierte zur Commit-Zeit noch nicht und wurde spaeter fuer das sigllm-Backend gemintet |
-| `CR-GC-554` | n/a | openai-Backend verliert role und tool_calls[].type: OpenAiWireAnswer deklariert sie nicht, Zod entfernt sie, und die beschnittene Assistenten-Nachricht geht in die naechste Runde zurueck — jeder zweite Turn scheitert am Chat-Template |
-| `CR-GC-555` | n/a | Das Rig misst nicht das Produkt: es treibt claude -p gegen den MCP-Server, waehrend graphcode run einen Executor-Loop mit Rundenprompt, vorenthaltenen Tools, kuratiertem Toolset und Phasen-Gate fuehrt — die gesamte Steuerungsmaschinerie bleibt ungetestet |
-| `CR-GC-556` | n/a | graph_suggest ab Element 1 in den Rundenprompt injizieren statt es dem Modell als Werkzeug anzubieten: das Emissions-Regime verbietet Analyse-Turns, der Host ruft es deterministisch wie graph_generate |
-| `CR-GC-557` | n/a | Rundenprompt verweist auf '(Skill se:author-uc)', den der Executor nicht aufrufen kann: Skills sind .claude/commands-Slash-Kommandos und existieren im Loop nicht |
-| `CR-GC-558` | n/a | Skill-Injektion deckt nur 2 von 9 Fokus-Typen |
-| `CR-GC-559` | n/a | Seed-Phase in gegatete Stufen zerlegen |
-| `CR-GC-560` | n/a | graph_next_step: Konsumenten vom parallelen Steuerungspfad loesen |
-| `CR-GC-561` | n/a | graph_next_step aus der MCP-Registry nehmen |
-| `CR-GC-562` | n/a | src/loop/steering.ts loeschen — toter Steuerungspfad |
-| `CR-GC-565` | n/a | Rig-Prompt gibt die Ontologie vor — misst nicht den Laien-Einstieg |
-| `CR-GC-566` | n/a | focusTypes deckt nicht, was die Rundenanweisung verlangt — Lesen ist erzwungen |
-| `CR-GC-567` | n/a | Rig: claude-Arm mit stream-json fahren — Tokenverbrauch je Turn statt nur Summe |
-| `CR-GC-568` | n/a | Executor: SYSTEM-Prompt verbietet den dryRun-Vergleich, den das Gate-Protokoll verlangt |
+| `CR-GC-552` | done | graphcode run gegen sigllm statt direkt gegen die Runtime — drittes Backend sigllm im Executor |
+| `CR-GC-553` | done | Die Bewertungsmaschiene des Rigs (metrics/report/Pruefliste/Prosa-Auftrag, 11 Dateien) wurde unter der fremden Nummer CR-GC-552 committet — die Nummer existierte zur Commit-Zeit noch nicht und wurde spaeter fuer das sigllm-Backend gemintet |
+| `CR-GC-554` | done | openai-Backend verliert role und tool_calls[].type: OpenAiWireAnswer deklariert sie nicht, Zod entfernt sie, und die beschnittene Assistenten-Nachricht geht in die naechste Runde zurueck — jeder zweite Turn scheitert am Chat-Template |
+| `CR-GC-555` | done | Das Rig misst nicht das Produkt: es treibt claude -p gegen den MCP-Server, waehrend graphcode run einen Executor-Loop mit Rundenprompt, vorenthaltenen Tools, kuratiertem Toolset und Phasen-Gate fuehrt — die gesamte Steuerungsmaschinerie bleibt ungetestet |
+| `CR-GC-556` | done | graph_suggest ab Element 1 in den Rundenprompt injizieren statt es dem Modell als Werkzeug anzubieten: das Emissions-Regime verbietet Analyse-Turns, der Host ruft es deterministisch wie graph_generate |
+| `CR-GC-557` | done | Rundenprompt verweist auf '(Skill se:author-uc)', den der Executor nicht aufrufen kann: Skills sind .claude/commands-Slash-Kommandos und existieren im Loop nicht |
+| `CR-GC-558` | done | Skill-Injektion deckt nur 2 von 9 Fokus-Typen |
+| `CR-GC-559` | done | Seed-Phase in gegatete Stufen zerlegen |
+| `CR-GC-560` | done | graph_next_step: Konsumenten vom parallelen Steuerungspfad loesen |
+| `CR-GC-561` | done | graph_next_step aus der MCP-Registry nehmen |
+| `CR-GC-562` | done | src/loop/steering.ts loeschen — toter Steuerungspfad |
+| `CR-GC-565` | done | Rig-Prompt gibt die Ontologie vor — misst nicht den Laien-Einstieg |
+| `CR-GC-566` | done | focusTypes deckt nicht, was die Rundenanweisung verlangt — Lesen ist erzwungen |
+| `CR-GC-567` | done | Rig: claude-Arm mit stream-json fahren — Tokenverbrauch je Turn statt nur Summe |
+| `CR-GC-568` | done | Executor: SYSTEM-Prompt verbietet den dryRun-Vergleich, den das Gate-Protokoll verlangt |
 | `CR-GC-569` | done | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration |
 | `CR-GC-570` | done | Gate-Antwort ist 70% des Werkzeug-Payloads: 487 Violations in 23 Antworten, 51% Wiederholung, 0 davon gating |
 | `CR-GC-571` | done | Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden) |
-| `CR-GC-572` | n/a | Executor-Arm auf backend=anthropic — der auto-Modus unterscheidet sich dann vom manuellen NUR im Treiber |
+| `CR-GC-572` | done | Executor-Arm auf backend=anthropic — der auto-Modus unterscheidet sich dann vom manuellen NUR im Treiber |
 | `CR-GC-573` | done | Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert |
 | `CR-GC-574` | done | Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse |
-| `CR-GC-575` | n/a | Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden |
+| `CR-GC-575` | done | Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden |
 | `CR-GC-576` | done | Advisory-Rauschen in der Gate-Antwort: steerAdvisory 21/21 null, workOrder 18/21 leer, fitAdvisory 12/21 Null-Delta — 16 Prozent der Antwort |
-| `CR-GC-577` | n/a | dryRun-apply-Verdopplung: MCP-Clients bekommen dieselben Befunde zweimal — 5 Paare in opus5-5 (48/30/34/49/1). Protokollfrage, ob der Probelauf seinen Preis wert ist |
+| `CR-GC-577` | done | dryRun-apply-Verdopplung: MCP-Clients bekommen dieselben Befunde zweimal — 5 Paare in opus5-5 (48/30/34/49/1). Protokollfrage, ob der Probelauf seinen Preis wert ist |
 | `CR-GC-578` | done | audit.trail-projection: Test misst gegen den LEBENDEN .graphcode/audit.jsonl des Repos — Schwellwert 11 Prozent reisst bei 20,8 von 165,2 KB, ohne Codeaenderung. Flaky per Konstruktion |
 | `CR-GC-579` | done | mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument |
-| `CR-GC-580` | n/a | Rig-Workspace ist kein eigenes Git-Repo: claude -p (skip-permissions) committet per git add -A ins graphcode-Repo (runde7 opus5-6, selbst zurueckgesetzt) — initWorkspace braucht git init |
-| `CR-GC-581` | n/a | graph_authoring_guide REQ nennt 'behavioural/structural kinds' ohne Werte und Syntax, UC-05/06 verlangen kinds:[postcondition] — opus5 durchsucht dafuer den Quellcode (runde7: 6/12/31 Suchen, bis 59k Zeichen) |
-| `CR-GC-582` | n/a | graph_generate erreicht im Greenfield nie done=true: Endspiel haengt an AF-01/03 (Frischestempel), BQ-02, FM-01, CR-R03 — der Agent beendet nach eigenem Urteil, im Webapp-Korpus Schleife bis Timeout (runde7, 4/4 Laeufe) |
-| `CR-GC-583` | n/a | steerAdvisory und fitAdvisory widersprechen sich ohne Rang: RD-04-Fix (Zwischenebene) verschlechtert modifiability/coherence — opus5-6 zieht die Ebene ein, opus5-7 verwirft sie per Delta-m (runde7) |
-| `CR-GC-584` | n/a | workOrder bei Bindungsquote 0 % ist reines Rauschen: in allen Greenfield-Laeufen 100 % nur 'blind' (jede FUNC ohne realRef), 4-21 Bloecke je Lauf — CR-576 laesst ihn durch, weil blind nicht leer ist |
-| `CR-GC-585` | n/a | Systemtest-Bericht deckt die Steuerung nicht ab: Kanal-Wirkung, Zeitlinie, Navigation Graph vs Datei (grep/glob), Effizienz je Element und Endstand der Freigabe wurden in Runde 7/8 mit Wegwerf-Skripten erhoben — gehoert in report.mjs |
-| `CR-GC-586` | n/a | Systemtest-Bericht vergleicht Auto nicht mit Hand: Trajektorie nach Review-18 (Steuerwert/Anker-Bewegung, Anker-Standzeiten, Modularitaet, Quoten je Zug aus dem Audit) und Profil gegen das Golden liefen nur als Scratch-Skripte — der handgefuehrte Lauf ist der Bezugspunkt |
-| `CR-GC-587` | n/a | Entscheidungs-Register + Widerspruchstest: jede Entscheidung, die als Text zum Agenten geht (Rangfolge, Probe-Regel, Freigabe-Bedingung), hat EINE Konstante; ein Test prueft Skills/GRAPHCODE.md/Vorlagen/Protokoll gegen sie (Serie 564-583: 7 Widersprueche, 4 davon Text gegen Code) |
-| `CR-GC-588` | n/a | Naechster Fokus in der graph_mutate-Antwort: nach angewandtem Batch den kompakten naechsten GenerationStep mitliefern — 55 % der Mutationen kamen ohne frisches graph_generate, Turns sind der Kostentreiber |
-| `CR-GC-589` | n/a | Anleitung zum Fokus reichen: graph_generate nennt je Fokus-Dimension den passenden se-Skill — heute liest Claude Code se:generate einmal bei 2-5 % und die Anlege-Skills erst am Ende, eine Skill-Korrektur erreicht keinen laufenden Agenten |
-| `CR-GC-590` | n/a | Tote Kanaele streichen oder verlegen, je mit Messung: steeringDelta (6-8/Lauf, nie erwaehnt), tier/confidence, fitAdvisory.regressions ohne Zielprofil (widerspricht 'nur Bericht'), GRAPHCODE-STEERING.md (0 Zugriffe in 5 Laeufen) in GRAPHCODE.md |
-| `CR-GC-591` | n/a | Claude-Code-Kanaele modellieren und in die Rangfolge aufnehmen: CR-573/575 kennen nur die Executor-Kanaele; Gate-Antwortfelder, Werkzeuge auf Abruf, Skills, Doku und Freigabe fehlen mit Rang und Zeitpunkt (vor/nach der Entscheidung) |
-| `CR-GC-592` | n/a | Offene Fragen im Headless-Lauf: AskUserQuestion laeuft in claude -p ins Leere (3 von 5 Laeufen) — GRAPHCODE.md/se:generate sollen offene Punkte als Annahme ins Modell legen statt zu fragen, wenn niemand antwortet |
-| `CR-GC-605` | n/a | Schwere = Gate-Wirkung (gating entfaellt, 6 errors -> warning), Phase INCOSE-korrigiert (AF-01 SRR, AF-05 PDR, R-26 TRR), Smeagol Stufe (e) Empfehlungskonsistenz, Regel-Matrix ohne abgeleitete Spalten |
-| `CR-GC-606` | n/a | Abbruchregel zaehlt zu frueh: zurueckstellen erst beim dritten gleichen Feedback (opus5-15, CR-01 nach Folgezug) |
-| `CR-GC-607` | n/a | Task-Regeln TR-01 (Trade-Entscheidung als CR) und IR-01 (Annahmen-Review promoviert zu CR) ueber crRefs im Frischestempel |
+| `CR-GC-580` | done | Rig-Workspace ist kein eigenes Git-Repo: claude -p (skip-permissions) committet per git add -A ins graphcode-Repo (runde7 opus5-6, selbst zurueckgesetzt) — initWorkspace braucht git init |
+| `CR-GC-581` | done | graph_authoring_guide REQ nennt 'behavioural/structural kinds' ohne Werte und Syntax, UC-05/06 verlangen kinds:[postcondition] — opus5 durchsucht dafuer den Quellcode (runde7: 6/12/31 Suchen, bis 59k Zeichen) |
+| `CR-GC-582` | done | graph_generate erreicht im Greenfield nie done=true: Endspiel haengt an AF-01/03 (Frischestempel), BQ-02, FM-01, CR-R03 — der Agent beendet nach eigenem Urteil, im Webapp-Korpus Schleife bis Timeout (runde7, 4/4 Laeufe) |
+| `CR-GC-583` | done | steerAdvisory und fitAdvisory widersprechen sich ohne Rang: RD-04-Fix (Zwischenebene) verschlechtert modifiability/coherence — opus5-6 zieht die Ebene ein, opus5-7 verwirft sie per Delta-m (runde7) |
+| `CR-GC-584` | done | workOrder bei Bindungsquote 0 % ist reines Rauschen: in allen Greenfield-Laeufen 100 % nur 'blind' (jede FUNC ohne realRef), 4-21 Bloecke je Lauf — CR-576 laesst ihn durch, weil blind nicht leer ist |
+| `CR-GC-585` | done | Systemtest-Bericht deckt die Steuerung nicht ab: Kanal-Wirkung, Zeitlinie, Navigation Graph vs Datei (grep/glob), Effizienz je Element und Endstand der Freigabe wurden in Runde 7/8 mit Wegwerf-Skripten erhoben — gehoert in report.mjs |
+| `CR-GC-586` | done | Systemtest-Bericht vergleicht Auto nicht mit Hand: Trajektorie nach Review-18 (Steuerwert/Anker-Bewegung, Anker-Standzeiten, Modularitaet, Quoten je Zug aus dem Audit) und Profil gegen das Golden liefen nur als Scratch-Skripte — der handgefuehrte Lauf ist der Bezugspunkt |
+| `CR-GC-587` | done | Entscheidungs-Register + Widerspruchstest: jede Entscheidung, die als Text zum Agenten geht (Rangfolge, Probe-Regel, Freigabe-Bedingung), hat EINE Konstante; ein Test prueft Skills/GRAPHCODE.md/Vorlagen/Protokoll gegen sie (Serie 564-583: 7 Widersprueche, 4 davon Text gegen Code) |
+| `CR-GC-588` | done | Naechster Fokus in der graph_mutate-Antwort: nach angewandtem Batch den kompakten naechsten GenerationStep mitliefern — 55 % der Mutationen kamen ohne frisches graph_generate, Turns sind der Kostentreiber |
+| `CR-GC-589` | done | Anleitung zum Fokus reichen: graph_generate nennt je Fokus-Dimension den passenden se-Skill — heute liest Claude Code se:generate einmal bei 2-5 % und die Anlege-Skills erst am Ende, eine Skill-Korrektur erreicht keinen laufenden Agenten |
+| `CR-GC-590` | done | Tote Kanaele streichen oder verlegen, je mit Messung: steeringDelta (6-8/Lauf, nie erwaehnt), tier/confidence, fitAdvisory.regressions ohne Zielprofil (widerspricht 'nur Bericht'), GRAPHCODE-STEERING.md (0 Zugriffe in 5 Laeufen) in GRAPHCODE.md |
+| `CR-GC-591` | done | Claude-Code-Kanaele modellieren und in die Rangfolge aufnehmen: CR-573/575 kennen nur die Executor-Kanaele; Gate-Antwortfelder, Werkzeuge auf Abruf, Skills, Doku und Freigabe fehlen mit Rang und Zeitpunkt (vor/nach der Entscheidung) |
+| `CR-GC-592` | done | Offene Fragen im Headless-Lauf: AskUserQuestion laeuft in claude -p ins Leere (3 von 5 Laeufen) — GRAPHCODE.md/se:generate sollen offene Punkte als Annahme ins Modell legen statt zu fragen, wenn niemand antwortet |
+| `CR-GC-605` | done | Schwere = Gate-Wirkung (gating entfaellt, 6 errors -> warning), Phase INCOSE-korrigiert (AF-01 SRR, AF-05 PDR, R-26 TRR), Smeagol Stufe (e) Empfehlungskonsistenz, Regel-Matrix ohne abgeleitete Spalten |
+| `CR-GC-606` | done | Abbruchregel zaehlt zu frueh: zurueckstellen erst beim dritten gleichen Feedback (opus5-15, CR-01 nach Folgezug) |
+| `CR-GC-607` | done | Task-Regeln TR-01 (Trade-Entscheidung als CR) und IR-01 (Annahmen-Review promoviert zu CR) ueber crRefs im Frischestempel |
 | `CR-GC-608` | done | Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15) |
-| `CR-GC-609` | n/a | Schatten-graph_suggest im Rig: je Zug nachgespielt, was der Optimierer vorgeschlagen haette — opus5-14/15: 0 anwendbare Vorschlaege, keine Vorlage fuer Steuerregeln |
+| `CR-GC-609` | done | Schatten-graph_suggest im Rig: je Zug nachgespielt, was der Optimierer vorgeschlagen haette — opus5-14/15: 0 anwendbare Vorschlaege, keine Vorlage fuer Steuerregeln |
 | `CR-GC-610` | done | Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung |
 | `CR-GC-611` | done | Antwort-Diaet: graph_realize liefert 2x die volle missingRefs-Liste (87% seiner Antwort), graph_mutate next+violations je ~40k Zeichen, authoring_guide 11x wiederholt |
 | `CR-GC-612` | done | Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben |
@@ -286,10 +286,10 @@ Total: 302 CR · 212 done · 0 open.
 | `CR-GC-614` | done | Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15) |
 | `CR-GC-615` | done | Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt) |
 | `CR-GC-616` | done | ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte |
-| `CR-GC-617` | n/a | Rig releaseStore loescht owner.lock statt den Eigentuemer zu beenden: der MCP-Host des Executors ueberlebt den Timeout-SIGTERM als Waise, haelt Kuzu-Handle und ~550 MB, und der geloeschte Lock nimmt der Heartbeat-Erkennung die Grundlage |
-| `CR-GC-618` | n/a | Rig-Ergebniszeile traegt keinen Korpus-Stempel: arm/model/executor/run, aber weder Golden noch Prompt noch Seed — zwei Laeufe auf verschiedenen Korpora sind in der JSON ununterscheidbar, und GOLDEN faellt still auf den lebenden sigloch-modules-Graphen zurueck |
-| `CR-GC-619` | n/a | Rig-Laufverzeichnisse behalten je 109 MB Kuzu-Store, obwohl captureArtifacts graph.json, readiness.json und audit.jsonl laengst herausgezogen hat: 1,8 von 2,2 GB unter runs/ sind rekonstruierbarer Zwischenstand |
-| `CR-GC-620` | n/a | status vergleicht nur die graphcode-Versionen, nicht den geladenen Regelkatalog: der Host urteilte heute mit 76 Regeln waehrend 73 installiert waren (UC-05/06 laengst gestrichen) und meldete ok |
+| `CR-GC-617` | done | Rig releaseStore loescht owner.lock statt den Eigentuemer zu beenden: der MCP-Host des Executors ueberlebt den Timeout-SIGTERM als Waise, haelt Kuzu-Handle und ~550 MB, und der geloeschte Lock nimmt der Heartbeat-Erkennung die Grundlage |
+| `CR-GC-618` | done | Rig-Ergebniszeile traegt keinen Korpus-Stempel: arm/model/executor/run, aber weder Golden noch Prompt noch Seed — zwei Laeufe auf verschiedenen Korpora sind in der JSON ununterscheidbar, und GOLDEN faellt still auf den lebenden sigloch-modules-Graphen zurueck |
+| `CR-GC-619` | done | Rig-Laufverzeichnisse behalten je 109 MB Kuzu-Store, obwohl captureArtifacts graph.json, readiness.json und audit.jsonl laengst herausgezogen hat: 1,8 von 2,2 GB unter runs/ sind rekonstruierbarer Zwischenstand |
+| `CR-GC-620` | done | status vergleicht nur die graphcode-Versionen, nicht den geladenen Regelkatalog: der Host urteilte heute mit 76 Regeln waehrend 73 installiert waren (UC-05/06 laengst gestrichen) und meldete ok |
 | `CR-GC-621` | done | Neuer groesster Antwortgeber nach CR-GC-613: graph_elements 7.143 Zeichen je Aufruf und graph_expand 4.224 — beide ohne Scheibenschnitt, gemessen am Code-Test gefuehrt-0 |
 | `CR-GC-622` | done | graph_authoring_guide wird trotz 'einmal genuegt' 4x gerufen (7.711 Zeichen je Lauf) — derselbe Leitfaden braucht Idempotenz im Werkzeug, nicht einen Satz in der Beschreibung |
 | `CR-GC-623` | done | Werkzeugbeschreibungen nennen einen Parameter, den es nicht gibt: vier Beschreibungen sagen graph_help({id:...}), der Parameter heisst token — zod non-strict schluckt den Fehlaufruf still und liefert die Massnahmenliste statt der Erklaerung (gemessen: sieben graph_help hintereinander in gefuehrt-0) |
@@ -299,21 +299,21 @@ Total: 302 CR · 212 done · 0 open.
 | `CR-GC-627` | done | graph_mutate laesst nur das Plus-Viertel von Format-E durch: der Umweg ueber die Graph-Rekonstruktion wirft jedes Nicht-Add-Op, obwohl der Parser die vier Praefixe kennt und die Abbildung auf MutateCommand eins zu eins ist — Loeschen und Aendern kosten den dreifach teureren commands-Modus |
 | `CR-GC-628` | done | graph_get_edges ist der zweitgroesste Antwortgeber, und sein sparsamer Modus ist die teurere Falle: format formatE serialisiert die Endpunkt-Knoten mit voller Prosa und allen Attributen, am Golden 49.431 Zeichen gegen 18.001 als JSON |
 | `CR-GC-629` | done | Die Urteilsschwelle boundaryWidth steht zweimal (contracts-Startwert und graphcode.config.jsonc), ein Knopf treibt zwei Verteilungen (BW-02 am FUNC-Rand, R-04 am MOD-Rand), und niemand misst sie laufend |
-| `CR-GC-630` | n/a | CR-GC-627 hat den Umweg decode-zu-Graph nur aus graph_mutate entfernt — bootstrap() traegt ihn weiter: decode() dann Graph dann add-node/add-edge. Damit kennt der Kaltstart-Pfad weder die Praefixe minus und tilde noch die nameWarning, und jede kuenftige Aenderung an formatEToCommands laeuft an ihm vorbei |
-| `CR-GC-631` | n/a | GraphCodeCodec ist ein zweiter Codec neben ctx.codec: beide sind new FormatECodec(SE_DESCRIPTOR), encode() ist eine Delegationszeile mit genau einem Aufrufer (graph_elements format formatE), validate() und project() delegieren ebenfalls, und decode() - die einzige echte Eigenleistung - hat nach ITEM-2026-510 keinen Produktionsaufrufer mehr. Komplett entfernen, nicht kapseln |
-| `CR-GC-632` | n/a | tests/helpers/format-e.ts aus CR-GC-631 parst selbst: es projiziert die Parser-Operationen ein zweites Mal, parallel zur Abbildung in formatEToCommands. Der Helfer soll die Produktionsfunktion rufen statt sie nachzubauen - dafuer muss deren Parameter von GraphCodeHarness auf den Graphen verengt werden, den sie als einziges liest |
-| `CR-GC-633` | n/a | Referenz-Change als Rig konservieren: CR-GC-630/631/632 ist eine Aufgabe, an der sich messen laesst OB ein Agent den Graphen fragt statt zu greppen - der eigene Lauf schaffte 0 Graph-Leseaufrufe gegen 54 Suchoperationen und 7 Volllaeufe, waehrend graph_tests 4 statt 172 Dateien genannt und graph_impact die 20 Kanten der geloeschten Knoten vorab gezeigt haette |
-| `CR-GC-634` | n/a | Parallele Pfade sind mit Aehnlichkeitsmassen nicht auffindbar: der Testhelfer aus CR-GC-631 und formatEToCommands kamen auf Name-Jaccard 0,000 und Rumpf-Jaccard 0,164 gegen ND-Schwelle 0,85 - 16 Zeilen gegen 183. Der zweite Pfad ist nie aehnlich, er ist kuerzer und anders benannt. Gemeinsam ist der EINGANG: beide riefen FORMAT_E_CODEC.parse. Die pruefbare Form ist die Zahl der Aufrufer an einem benannten Engpass, nicht ein Mass ueber die Rumpfe |
-| `CR-GC-635` | n/a | Kein Skill deckt den Umbau ab: 12 Skills im Repo, genau einer nennt graph_impact (se-fmea), alle anderen legen an oder berichten. Der Umbau - aendern, ersetzen, loeschen - ist aber die einzige Lage, in der ein vergessener Impact teuer wird und in der die Hausregel keine parallelen Pfade ueberhaupt gilt. Gemessen am Referenz-Change: 0 Graph-Leseaufrufe, 3 Volllaeufe, RC-01 erst nach 300 Sekunden |
-| `CR-GC-636` | n/a | aise dispatch prepare koennte im CR-Geruest einen Abschnitt Umfang laut graph_impact anlegen, der leer bleibt bis jemand ihn fuellt - der Zeitpunkt vor der Arbeit statt beim Commit, und ein CR ohne den Abschnitt ist einer der den Umfang geraten hat |
-| `CR-GC-637` | n/a | Spike-Ergebnis zur Auffindbarkeit paralleler Pfade: an sieben belegten Paaren aus vier CR-Jahrgaengen findet Rumpf-Aehnlichkeit 0 von 7 (Jaccard 2,6 bis 41,4 Prozent gegen Schwelle 0,85), gemeinsamer Engpass auf Dateiebene 6 von 7 - aber bei einer Alarmschwelle die auch 23 Prozent aller Dateipaare trifft. Als Detektor unbrauchbar, als Kandidatenliste brauchbar: 96 Engpaesse aus 5805 Bezeichnern, und die drei die im Change zaehlten sind darin |
-| `CR-GC-638` | n/a | Die graph_*-Lesewerkzeuge sind in Claude-Code-Sitzungen deferred: ihr Schema ist nicht geladen, ein Aufruf verlangt vorher ToolSearch, waehrend Bash immer bereitliegt. Gemessen am Referenz-Change: 2 ToolSearch-Aufrufe insgesamt, beide fuer graph_mutate (Schreiben, wo es keinen Ersatz gibt) - fuers Lesen gewinnt grep, weil es keinen Vorlauf kostet. Die Werkzeugtabelle in CLAUDE.md koennte die ToolSearch-Abfrage mitliefern |
-| `CR-GC-639` | n/a | KPI 1 Graph-vs-Grep nach jedem CR automatisch messen statt im bezahlten Rig: ein post-commit-Hook erkennt den CR-Abschluss (Umbenennung open nach done), sucht das Claude-Code-Protokoll der Sitzung, schneidet das Fenster ab der ersten Nennung der CR-ID und haengt eine Zeile an .graphcode/cr-messung.jsonl. Kostet nichts, liefert reale Streuung. Dabei retro-kpi.mjs (definiert KPI 1, zaehlt nicht selbst) und rig/referenz-change/messen.mjs (zaehlt, aber mit eigener Definition) auf EINE Zaehlung zusammenfuehren |
-| `CR-GC-640` | n/a | Extraktor liefert zodSymbols und fileScope fuer RC-08/RC-09, Messung am eigenen Modell |
-| `CR-GC-641` | n/a | Format-E bekommt eine Zod-Tuer, SCHEMA-format-e bindet sie |
-| `CR-GC-642` | n/a | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen |
-| `CR-GC-643` | n/a | graphcode: testRefs/realRef ueber den Familienleser, Vertraege als SCHEMA im Modell |
-| `CR-GC-644` | n/a | Fuenf lokale Typ-Vertraege werden Zod, Erzeuger parsen ihre Ausgabe |
+| `CR-GC-630` | done | CR-GC-627 hat den Umweg decode-zu-Graph nur aus graph_mutate entfernt — bootstrap() traegt ihn weiter: decode() dann Graph dann add-node/add-edge. Damit kennt der Kaltstart-Pfad weder die Praefixe minus und tilde noch die nameWarning, und jede kuenftige Aenderung an formatEToCommands laeuft an ihm vorbei |
+| `CR-GC-631` | done | GraphCodeCodec ist ein zweiter Codec neben ctx.codec: beide sind new FormatECodec(SE_DESCRIPTOR), encode() ist eine Delegationszeile mit genau einem Aufrufer (graph_elements format formatE), validate() und project() delegieren ebenfalls, und decode() - die einzige echte Eigenleistung - hat nach ITEM-2026-510 keinen Produktionsaufrufer mehr. Komplett entfernen, nicht kapseln |
+| `CR-GC-632` | done | tests/helpers/format-e.ts aus CR-GC-631 parst selbst: es projiziert die Parser-Operationen ein zweites Mal, parallel zur Abbildung in formatEToCommands. Der Helfer soll die Produktionsfunktion rufen statt sie nachzubauen - dafuer muss deren Parameter von GraphCodeHarness auf den Graphen verengt werden, den sie als einziges liest |
+| `CR-GC-633` | done | Referenz-Change als Rig konservieren: CR-GC-630/631/632 ist eine Aufgabe, an der sich messen laesst OB ein Agent den Graphen fragt statt zu greppen - der eigene Lauf schaffte 0 Graph-Leseaufrufe gegen 54 Suchoperationen und 7 Volllaeufe, waehrend graph_tests 4 statt 172 Dateien genannt und graph_impact die 20 Kanten der geloeschten Knoten vorab gezeigt haette |
+| `CR-GC-634` | done | Parallele Pfade sind mit Aehnlichkeitsmassen nicht auffindbar: der Testhelfer aus CR-GC-631 und formatEToCommands kamen auf Name-Jaccard 0,000 und Rumpf-Jaccard 0,164 gegen ND-Schwelle 0,85 - 16 Zeilen gegen 183. Der zweite Pfad ist nie aehnlich, er ist kuerzer und anders benannt. Gemeinsam ist der EINGANG: beide riefen FORMAT_E_CODEC.parse. Die pruefbare Form ist die Zahl der Aufrufer an einem benannten Engpass, nicht ein Mass ueber die Rumpfe |
+| `CR-GC-635` | done | Kein Skill deckt den Umbau ab: 12 Skills im Repo, genau einer nennt graph_impact (se-fmea), alle anderen legen an oder berichten. Der Umbau - aendern, ersetzen, loeschen - ist aber die einzige Lage, in der ein vergessener Impact teuer wird und in der die Hausregel keine parallelen Pfade ueberhaupt gilt. Gemessen am Referenz-Change: 0 Graph-Leseaufrufe, 3 Volllaeufe, RC-01 erst nach 300 Sekunden |
+| `CR-GC-636` | done | aise dispatch prepare koennte im CR-Geruest einen Abschnitt Umfang laut graph_impact anlegen, der leer bleibt bis jemand ihn fuellt - der Zeitpunkt vor der Arbeit statt beim Commit, und ein CR ohne den Abschnitt ist einer der den Umfang geraten hat |
+| `CR-GC-637` | done | Spike-Ergebnis zur Auffindbarkeit paralleler Pfade: an sieben belegten Paaren aus vier CR-Jahrgaengen findet Rumpf-Aehnlichkeit 0 von 7 (Jaccard 2,6 bis 41,4 Prozent gegen Schwelle 0,85), gemeinsamer Engpass auf Dateiebene 6 von 7 - aber bei einer Alarmschwelle die auch 23 Prozent aller Dateipaare trifft. Als Detektor unbrauchbar, als Kandidatenliste brauchbar: 96 Engpaesse aus 5805 Bezeichnern, und die drei die im Change zaehlten sind darin |
+| `CR-GC-638` | done | Die graph_*-Lesewerkzeuge sind in Claude-Code-Sitzungen deferred: ihr Schema ist nicht geladen, ein Aufruf verlangt vorher ToolSearch, waehrend Bash immer bereitliegt. Gemessen am Referenz-Change: 2 ToolSearch-Aufrufe insgesamt, beide fuer graph_mutate (Schreiben, wo es keinen Ersatz gibt) - fuers Lesen gewinnt grep, weil es keinen Vorlauf kostet. Die Werkzeugtabelle in CLAUDE.md koennte die ToolSearch-Abfrage mitliefern |
+| `CR-GC-639` | done | KPI 1 Graph-vs-Grep nach jedem CR automatisch messen statt im bezahlten Rig: ein post-commit-Hook erkennt den CR-Abschluss (Umbenennung open nach done), sucht das Claude-Code-Protokoll der Sitzung, schneidet das Fenster ab der ersten Nennung der CR-ID und haengt eine Zeile an .graphcode/cr-messung.jsonl. Kostet nichts, liefert reale Streuung. Dabei retro-kpi.mjs (definiert KPI 1, zaehlt nicht selbst) und rig/referenz-change/messen.mjs (zaehlt, aber mit eigener Definition) auf EINE Zaehlung zusammenfuehren |
+| `CR-GC-640` | done | Extraktor liefert zodSymbols und fileScope fuer RC-08/RC-09, Messung am eigenen Modell |
+| `CR-GC-641` | done | Format-E bekommt eine Zod-Tuer, SCHEMA-format-e bindet sie |
+| `CR-GC-642` | done | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen |
+| `CR-GC-643` | done | graphcode: testRefs/realRef ueber den Familienleser, Vertraege als SCHEMA im Modell |
+| `CR-GC-644` | done | Fuenf lokale Typ-Vertraege werden Zod, Erzeuger parsen ihre Ausgabe |
 | `CR-GC-645` | done | Letzte Bindungen: Familienvertraege auf Schemas, Codec nicht ueber ctx |
 | `CR-GC-646` | done | Gate nimmt kinds als String an - Element-Attribute werden am Schreibweg nicht gegen den Vertrag geprueft |
 | `CR-GC-647` | done | Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an |
@@ -331,13 +331,13 @@ Total: 302 CR · 212 done · 0 open.
 | `CR-GC-659` | done | Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis |
 | `CR-GC-660` | done | Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt |
 | `CR-GC-661` | done | UC-01: qwen schreibt je Batch 1 REQ fuer 1 UC (9 von 11) — das Beispiel setzt die Menge |
-| `CR-GC-662` | n/a | Executor anthropic-Zweig: dieselbe 300-s-fetch-Grenze wie CR-GC-656, ungestreamt |
+| `CR-GC-662` | done | Executor anthropic-Zweig: dieselbe 300-s-fetch-Grenze wie CR-GC-656, ungestreamt |
 | `CR-GC-663` | done | Executor: Modell liest das Auftragsmaterial jede Runde neu — der Treiber vergisst gelesenes Material |
 | `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht |
 | `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten |
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich |
 | `CR-GC-667` | n/a | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen |
-| `CR-GC-668` | n/a | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche |
+| `CR-GC-668` | done | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche |
 | `CR-GC-669` | n/a | Migrationswerkzeug REQ-kinds auf zwei Werte |
 | `CR-GC-670` | n/a | graphcode-Eigenmodell auf zwei REQ-kinds migrieren |
 | `CR-GC-671` | n/a | graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor |
@@ -345,22 +345,22 @@ Total: 302 CR · 212 done · 0 open.
 | `CR-GC-673` | n/a | Projektionen auf zwei REQ-kinds und Rollen-Attribut |
 | `CR-GC-674` | n/a | SE-Skills und Help auf zwei REQ-kinds |
 | `CR-GC-675` | n/a | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus |
-| `CR-GC-676` | n/a | Mess-Artefakte aufräumen: abgeschlossene Spikes, Recorder, tote Rigs und Alt-Ergebnisse löschen |
-| `CR-GC-677` | n/a | Mess-Artefakte: Recorder kennzahlen/zugverlauf und erledigte Spikes löschen |
-| `CR-GC-678` | n/a | Mess-Artefakte: tote Rigs und Greenfield-Altergebnisse löschen |
+| `CR-GC-676` | done | Mess-Artefakte aufräumen: abgeschlossene Spikes, Recorder, tote Rigs und Alt-Ergebnisse löschen |
+| `CR-GC-677` | done | Mess-Artefakte: Recorder kennzahlen/zugverlauf und erledigte Spikes löschen |
+| `CR-GC-678` | done | Mess-Artefakte: tote Rigs und Greenfield-Altergebnisse löschen |
 | `CR-GC-679` | n/a | Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID |
 | `CR-GC-680` | n/a | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie |
 | `CR-GC-681` | n/a | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md |
-| `CR-GC-682` | n/a | Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung |
-| `CR-GC-683` | n/a | Konformanz-Extraktor sieht nur <repo>/src und relative Imports - im Monorepo sigloch-modules 0 Import-Endpunkte, RC-05 und RC-09 dort blind |
-| `CR-GC-684` | n/a | Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst |
-| `CR-GC-685` | n/a | MCP-Schreibflaeche auf Format-E reduzieren: graph_realize und commands-Parameter raus, graph_merge-Beschreibung falsch (beschreibt Knoten-Merge statt Branch-Replay) |
-| `CR-GC-686` | n/a | Vorbilder und Werkzeugtexte auf Format-E: Skills, SCHEMA-01-fixHint, graph_merge-Beschreibung |
-| `CR-GC-687` | n/a | intentCoverage nennt Stoppwoerter als fehlende Konzepte: der Rundenprompt fordert Use Cases fuer 'spezifiziere', 'bis', 'liegt' — Tokenisierung des Auftragstextes ohne Wortartfilter |
-| `CR-GC-688` | n/a | seed:actor lieferte 8 Actors aus abgeschnittener Antwort |
-| `CR-GC-689` | n/a | rules_get_violations ist mit 12.274 Zeichen je Aufruf der groesste Einzelposten des Prosa-Laufs opus5-17 (opus5-16 bei gleicher Eingabe: 2.042) — der Arbeitsmengen-Schnitt aus CR-GC-613 beisst nicht, wenn die Sitzung ueberall geschrieben hat, und genau das tut ein Spezifikationslauf |
-| `CR-GC-690` | n/a | Hausregel 'im headless-Lauf keine Rueckfrage' steht in GRAPHCODE.md, wird aber nicht durchgesetzt: opus5-0 rief AskUserQuestion zu einer selbst als Rauschen gemessenen Entscheidung |
-| `CR-GC-691` | n/a | Abgeschnittene Antwort im Ein-Kandidaten-Pfad verwerfen, executor.ts erkennt 'length' nicht (Rest CR-GC-688) |
-| `CR-GC-692` | n/a | Executor meldet gekappten Werkzeugaufruf als INPUT-SCHEMA statt als Budget-Ueberlauf — Modell wiederholt denselben zu grossen Batch (runde7: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt) |
-| `CR-GC-693` | n/a | Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai/anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS |
-| `CR-GC-694` | n/a | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt |
+| `CR-GC-682` | done | Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung |
+| `CR-GC-683` | done | Konformanz-Extraktor sieht nur <repo>/src und relative Imports - im Monorepo sigloch-modules 0 Import-Endpunkte, RC-05 und RC-09 dort blind |
+| `CR-GC-684` | open | Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst |
+| `CR-GC-685` | open | MCP-Schreibflaeche auf Format-E reduzieren: graph_realize und commands-Parameter raus, graph_merge-Beschreibung falsch (beschreibt Knoten-Merge statt Branch-Replay) |
+| `CR-GC-686` | open | Vorbilder und Werkzeugtexte auf Format-E: Skills, SCHEMA-01-fixHint, graph_merge-Beschreibung |
+| `CR-GC-687` | done | intentCoverage nennt Stoppwoerter als fehlende Konzepte: der Rundenprompt fordert Use Cases fuer 'spezifiziere', 'bis', 'liegt' — Tokenisierung des Auftragstextes ohne Wortartfilter |
+| `CR-GC-688` | done | seed:actor lieferte 8 Actors aus abgeschnittener Antwort |
+| `CR-GC-689` | done | rules_get_violations ist mit 12.274 Zeichen je Aufruf der groesste Einzelposten des Prosa-Laufs opus5-17 (opus5-16 bei gleicher Eingabe: 2.042) — der Arbeitsmengen-Schnitt aus CR-GC-613 beisst nicht, wenn die Sitzung ueberall geschrieben hat, und genau das tut ein Spezifikationslauf |
+| `CR-GC-690` | done | Hausregel 'im headless-Lauf keine Rueckfrage' steht in GRAPHCODE.md, wird aber nicht durchgesetzt: opus5-0 rief AskUserQuestion zu einer selbst als Rauschen gemessenen Entscheidung |
+| `CR-GC-691` | open | Abgeschnittene Antwort im Ein-Kandidaten-Pfad verwerfen, executor.ts erkennt 'length' nicht (Rest CR-GC-688) |
+| `CR-GC-692` | open | Executor meldet gekappten Werkzeugaufruf als INPUT-SCHEMA statt als Budget-Ueberlauf — Modell wiederholt denselben zu grossen Batch (runde7: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt) |
+| `CR-GC-693` | open | Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai/anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS |
+| `CR-GC-694` | open | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt |
