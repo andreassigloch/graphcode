@@ -69,6 +69,7 @@ unveraendert ueber das Gate.
       vorher → nachher: opus5-14 0 → 0, opus5-15 0 → 3 (alle RD-04, verpasste Steuerverbesserung 0.667).
       Vorbehalt: 18 von 29 bzw. 34 Zuegen weist das heutige Gate beim Nachspielen ab.
 - [ ] VOLL-Lane: nicht gefahren, benannte Ausnahmen unten.
+- [x] Schatten-Simulation nach Publish wiederholt (se-engine 1.10.0 + graphcode 0.26.0, 2026-09-27): identisch, opus5-14 0, opus5-15 3 (RD-04), Nachweis in CR-SM-356.
 
 ## Ergebnis
 
@@ -83,19 +84,19 @@ unveraendert ueber das Gate.
 
 ## Offen (benannt)
 
-1. **Peer-Floor `@sigloch/se-engine`:** nicht gehoben. 1.9.0 (Registry) enthaelt CR-SM-367/356 nicht;
+1. ~~**Peer-Floor `@sigloch/se-engine`:** nicht gehoben.~~ Erledigt mit dem Zug 2026-09-27: `^1.10.0`. 1.9.0 (Registry) enthaelt CR-SM-367/356 nicht;
    gegen 1.9.0 kompiliert `edit.node/edges/retires` nicht. Beim Release auf die naechste minor heben.
 2. **se-engine (Produzent):** `suggestEdits` nimmt einen Operator-Befund nur auf, wenn die generische
    Sonde (`applyRule`) greift — R-32 in einem Graphen ohne jeden TEST faellt heraus, bevor die
    add-node-Vorlage gefragt wird.
-3. **`steering.divergence-two-profiles` rot:** auf master (Link-Modus) rot an „gate refused RD-04
+3. ~~**`steering.divergence-two-profiles` rot:**~~ Gruen gegen se-engine 1.10.0 aus der Registry (2026-09-27). auf master (Link-Modus) rot an „gate refused RD-04
    (R-08)" — genau dieser Befund. Nach dem Fix rot an „SCALABLE chain too short": EIN RD-04-Zug
    realisiert +0.4950 entlang SCALABLE (alte Fuenf-Kanten-Kette +0.3226), danach Optimum. Die
    Kill-Kriterien (Schrittzahl, CONTESTED-Allokation) stammen aus dem Einzelkanten-Aktionsraum —
    Entscheidung noetig, ob der Spike auf Reichweite umgestellt wird.
-4. **`arch.optimization-dry-run.spike` Lauf A rot, unabhaengig:** auch mit master-suggest.ts —
+4. ~~**`arch.optimization-dry-run.spike` Lauf A rot, unabhaengig:**~~ Gruen gegen se-engine 1.10.0 (2026-09-27). auch mit master-suggest.ts —
    15 Zuege (MAX_STEPS) aus BW-02/CR-01-Umhaengen (CR-SM-356), kein add-node-Zug.
-5. **Weitere Leser der Edit-Form:** `src/loop/executor-prompt.ts` zeigt einen Vorschlag als eine Kante,
+5. ~~**Weitere Leser der Edit-Form:**~~ Erledigt: `executor-prompt.ts` rendert ueber `batchFor`, `templateCommandKey` (tool-context.ts) kennt `add-node`. `src/loop/executor-prompt.ts` zeigt einen Vorschlag als eine Kante,
    `src/surface/mcp-tools.ts` (`noteTemplateEdits`) identifiziert Edits ueber source/target — beide
    kennen `node/edges/retires` nicht.
 6. CR-Knoten im Graphen: Status nicht gesetzt (kein graph_mutate in dieser Lane).
