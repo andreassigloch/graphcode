@@ -13,6 +13,7 @@
  * @author andreas@siglochconsulting
  */
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
+import { readReqRole, type ReqRole } from '@sigloch/contracts/se';
 import { byUid } from './exporter.js';
 
 export function nodesOfType(graph: Graph, type: string): GraphNode[] {
@@ -55,6 +56,17 @@ export function adjacency(graph: Graph, edgeType: string): {
 export function reqKinds(n: GraphNode): string[] {
   const k = n.attributes['kinds'];
   return Array.isArray(k) ? k.map(String) : [];
+}
+
+/**
+ * REQ.attributes.role → die FMEA-Rolle (CR-GC-673) — ueber `readReqRole`, den EINEN Leser
+ * (CR-SM-365). Fehlend oder ungueltig heisst: keine Rolle. `risk`/`mitigation` sind seit
+ * CR-SM-366 keine kinds-Werte mehr; ein Alt-REQ mit `kinds ["risk"]` hat keine Rolle, bis die
+ * Migration sie setzt.
+ */
+export function reqRole(n: GraphNode): ReqRole | undefined {
+  const r = readReqRole(n.attributes);
+  return r.state === 'bound' ? r.value : undefined;
 }
 
 /**

@@ -12,7 +12,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { ELEMENT_ATTRIBUTES, ReqKind, ACCEPTED_FINDINGS_ATTRIBUTE } from '@sigloch/contracts/se';
+import { ELEMENT_ATTRIBUTES, ReqKind, ACCEPTED_FINDINGS_ATTRIBUTE, isValidTrace, type ElementType } from '@sigloch/contracts/se';
 import { ABNEHMBAR_JE_TASK } from '../loop/decisions.js';
 
 /** Ein Attribut, wie ein Autor es schreiben muss — Schluessel, erlaubte Werte, Schreibform. */
@@ -27,11 +27,15 @@ export interface AttributeHint {
 /**
  * Die Attribute eines Typs, samt erlaubter Werte (CR-GC-581).
  *
- * `kinds` am REQ steht NICHT in `ELEMENT_ATTRIBUTES` (dort nur FMEA-Felder), obwohl die
+ * `kinds` am REQ steht NICHT in `ELEMENT_ATTRIBUTES` (dort nur role + FMEA-Felder), obwohl die
  * where-Praedikate der satisfy-Kanten und BQ-Regeln es lesen (und bis CR-SM-357 UC-05/06). Der Guide nannte deshalb
  * "behavioural kinds only" ohne einen einzigen Wert — Opus durchsuchte in Runde 7 bis zu 31-mal
  * den Quellcode nach der Schreibweise. Die Werte kommen aus `ReqKind`, der SSOT; lokal ist
  * nur die Tatsache, dass sie als `@kinds [...]` reisen.
+ *
+ * CR-GC-673: seit CR-SM-366 genau EIN Wert aus zwei; die Beschreibung traegt die Erfueller-Tabelle
+ * aus den `where`-Praedikaten der satisfy-Muster. `role` (risk/mitigation, CR-SM-365) kommt als
+ * eigenes Attribut aus `ELEMENT_ATTRIBUTES` und ist satisfy-neutral.
  */
 export function attributesFor(type: string): AttributeHint[] {
   const own: AttributeHint[] = (ELEMENT_ATTRIBUTES[type as keyof typeof ELEMENT_ATTRIBUTES] ?? []).map((a) => ({
@@ -56,10 +60,11 @@ export function attributesFor(type: string): AttributeHint[] {
       type: 'array',
       enumValues: ReqKind.options,
       description:
-        'Art der Anforderung, eine oder mehrere. functional/postcondition/precondition sind ' +
-        'behavioural (FUNC/FCHAIN satisfy), non-functional structural (MOD/SYS satisfy); ' +
-        'Vor- und Nachbedingung eines UC stehen als precondition-/postcondition-REQ am UC (Schreibregel se:author-uc).',
-      syntax: '@kinds ["postcondition"]',
+        'Art der Anforderung, genau EIN Wert. Erfueller: functional ← FUNC; non-functional ← MOD ' +
+        '(lokales Budget), SYS (Systemebene) oder FCHAIN (Ende-zu-Ende). Ohne kinds kein Erfueller (BQ-07); ' +
+        'beides zugleich ist falsch zerlegt — teilen. Die FMEA-Rolle risk/mitigation steht im eigenen ' +
+        'Attribut role und ist satisfy-neutral.',
+      syntax: '@kinds ["functional"]',
     },
     ...own,
     abnahme,
@@ -97,15 +102,19 @@ export function formatEExampleFor(type: string, outgoing: readonly AusgehendesMu
   const uid = `${type}-example`;
   const muster = outgoing.find((m) => m.targetType !== type) ?? outgoing[0];
   /**
-   * Am REQ die kinds — ohne sie ist keine Vor-/Nachbedingung lesbar. Und STRUKTURELL, wo ein
-   * MOD oder SYS erfuellt: contracts 9.x prueft das `where`-Praedikat am satisfy-Muster, ein
-   * Beispiel mit `functional` waere dort am Gate illegal (dieselbe Klausel, die das
-   * Bootstrap-Template seit CR-SM-266 traegt).
+   * Am REQ die kinds — ohne sie hat die REQ keinen Erfueller (BQ-07). Als satisfy-ZIEL entscheidet
+   * das `where`-Praedikat des Musters, welcher Wert legal ist (FUNC ← functional; MOD/SYS/FCHAIN ←
+   * non-functional seit CR-SM-366). Gefragt wird `isValidTrace` selbst, keine lokale Typliste:
+   * die hart verdrahtete MOD/SYS-Liste haette der FCHAIN `functional` gezeigt (CR-GC-673).
    */
   const kinds = (t: string, alsZiel = false): string[] => {
     if (t !== 'REQ') return [];
-    const strukturell = alsZiel && muster?.edgeType === 'satisfy' && (type === 'MOD' || type === 'SYS');
-    return [`@kinds ["${strukturell ? 'non-functional' : 'functional'}"]`];
+    if (!alsZiel || muster?.edgeType !== 'satisfy') return ['@kinds ["functional"]'];
+    const wert = ReqKind.options.find((k) =>
+      isValidTrace({ source: type as ElementType, target: 'REQ', type: 'satisfy', targetKinds: [k] }));
+    // Ein satisfy-Muster, das keinen kinds-Wert zulaesst, ist ein Grammatikfehler — laut, kein Beispiel.
+    if (!wert) throw new Error(`${type} -satisfy-> REQ laesst keinen ReqKind-Wert zu`);
+    return [`@kinds ["${wert}"]`];
   };
 
   const knoten = ['## Nodes', `### ${type}`, `+ ${uid}|One sentence stating what this ${type} is; this field is the DESCRIPTION [__name:Readable ${type} name]`, ...kinds(type)];

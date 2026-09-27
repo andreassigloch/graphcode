@@ -160,19 +160,22 @@ describe('CR-GC-308: rendering a rule-clean FMEA graph fills every column', () =
     });
     return {
       nodes: [
+        // CR-GC-673: die FMEA-Rolle ist ein eigenes Attribut (CR-SM-365), kinds bleibt die Art.
         n('REQ-ausfall', 'REQ', 'Store faellt aus', {
-          kinds: ['risk'],
+          kinds: ['non-functional'],
+          role: 'risk',
           severity: 9,
           occurrence: 3,
           detection: 4,
         }),
-        n('REQ-backup', 'REQ', 'Automatisches Backup', { kinds: ['mitigation'] }),
+        n('REQ-backup', 'REQ', 'Automatisches Backup', { kinds: ['functional'], role: 'mitigation' }),
         n('TEST-ausfall', 'TEST', 'Ausfalltest', {
           // CR-SM-231b: das Ergebnis haengt am testRefs-Eintrag, nicht am Knoten.
           testRefs: [{ file: 'tests/ausfall.test.ts', tool: 'vitest', result: 'passed' }],
         }),
         n('REQ-langsam', 'REQ', 'Store wird langsam', {
-          kinds: ['risk'],
+          kinds: ['non-functional'],
+          role: 'risk',
           severity: 3,
           occurrence: 2,
           detection: 2,
@@ -208,6 +211,57 @@ describe('CR-GC-308: rendering a rule-clean FMEA graph fills every column', () =
     const pending = md.split('\n').filter((l) => l.startsWith('|') && l.includes('wird langsam'));
     expect(rows[0]).toContain('✓');
     expect(pending[0]).toContain('✗');
+  });
+});
+
+describe('CR-GC-673: FMEA und SRS lesen die Rolle, nicht kinds (CR-SM-365/366)', () => {
+  const n = (uid: string, name: string, attributes: Record<string, unknown>) => ({
+    uid, type: 'REQ', name, description: `${name}.`, attributes,
+  });
+
+  it('ein Alt-REQ mit kinds ["risk"] ohne role ist KEINE Fehlerart — FM-01..03 lesen nur role', () => {
+    const g: Graph = {
+      nodes: [
+        n('REQ-alt', 'Altwert-Risiko', { kinds: ['risk'], severity: 9, occurrence: 9, detection: 9 }),
+        n('REQ-neu', 'Rollen-Risiko', { kinds: ['non-functional'], role: 'risk', severity: 2, occurrence: 2, detection: 2 }),
+      ],
+      edges: [],
+    };
+    const md = exportMarkdown(g, 'fmea', 'x');
+    expect(md).toContain('Rollen-Risiko');
+    expect(md).not.toContain('Altwert-Risiko');
+  });
+
+  it('die Mitigation-Spalte nimmt nur ein compose-Ziel mit role mitigation', () => {
+    const g: Graph = {
+      nodes: [
+        n('REQ-risiko', 'Risiko', { kinds: ['non-functional'], role: 'risk', severity: 5, occurrence: 5, detection: 5 }),
+        n('REQ-altmass', 'Altwert-Massnahme', { kinds: ['mitigation'] }),
+        n('REQ-mass', 'Massnahme', { kinds: ['functional'], role: 'mitigation' }),
+      ],
+      edges: [
+        { sourceId: 'REQ-risiko', targetId: 'REQ-altmass', edgeType: 'compose', attributes: {} },
+        { sourceId: 'REQ-risiko', targetId: 'REQ-mass', edgeType: 'compose', attributes: {} },
+      ],
+    };
+    const row = exportMarkdown(g, 'fmea', 'x').split('\n').find((l) => l.includes('Risiko.'))!;
+    expect(row).toContain('REQ-mass');
+    expect(row).not.toContain('REQ-altmass');
+  });
+
+  it('kein View-Code fragt kinds nach risk/mitigation/precondition/postcondition', () => {
+    for (const { file, code } of VIEW_SOURCES) {
+      expect(code, file).not.toMatch(/includes\('(risk|mitigation|precondition|postcondition)'\)/);
+    }
+  });
+
+  it('die SRS zeigt die Rolle als eigenes Feld neben der einen Art', () => {
+    const g: Graph = {
+      nodes: [n('REQ-mass', 'Massnahme', { kinds: ['functional'], role: 'mitigation' })],
+      edges: [],
+    };
+    const md = exportMarkdown(g, 'srs', 'x');
+    expect(md).toContain('kinds: functional · role: mitigation');
   });
 });
 

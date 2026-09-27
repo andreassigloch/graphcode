@@ -16,7 +16,8 @@
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { ReqKind, RULE_HELP, isValidTrace, type ElementType } from '@sigloch/contracts/se';
+import { ReqKind, RULE_HELP, TRACE_PATTERNS, ElementType as ElementTypes, isValidTrace, type ElementType } from '@sigloch/contracts/se';
+import { attributesFor, formatEExampleFor } from '../src/projections/authoring-example.js';
 import { RULE_CLAUSE, GENERATION_TEMPLATE } from '../src/loop/generate.js';
 import { SYSTEM, IDLE_NUDGE } from '../src/loop/executor-prompt.js';
 
@@ -129,5 +130,22 @@ describe('TEST-skill-kinds-werte: genannte kinds-Werte und satisfy-Paare sind le
   it('jedes gezeigte satisfy-Paar mit deklarierten kinds ist nach isValidTrace legal', () => {
     const illegal = ratgeber().flatMap(([quelle, text]) => illegalePaare(text).map((p) => `${quelle}: ${p}`));
     expect(illegal).toEqual([]);
+  });
+});
+
+/**
+ * CR-GC-673: dieselbe Wertebereichs-Pruefung fuer den Authoring-Guide — Attributhinweise und
+ * Format-E-Beispiel je Typ, mit genau dem `outgoing`, das `graph_authoring_guide` hineinreicht.
+ * Eigener Block, weil der Guide kein Skill ist: die Skills zieht CR-GC-674 nach.
+ */
+describe('TEST-skill-kinds-werte: der Authoring-Guide nennt nur ReqKind-Werte (CR-GC-673)', () => {
+  it('Attributhinweise und Beispielblock jedes Typs liegen in ReqKind', () => {
+    const fremd = ElementTypes.options.flatMap((type) => {
+      const outgoing = TRACE_PATTERNS.filter((p) => p.source === type).map((p) => ({ edgeType: p.type, targetType: p.target }));
+      const text = JSON.stringify(attributesFor(type)) + '\n' + formatEExampleFor(type, outgoing);
+      return genannteKinds(text).filter((w) => !WERTE.has(w)).map((w) => `${type}: ${w}`);
+    });
+    expect(genannteKinds(JSON.stringify(attributesFor('REQ'))).length, 'der Scan greift').toBeGreaterThan(0);
+    expect(fremd, `nicht in ReqKind {${[...WERTE].join(',')}}`).toEqual([]);
   });
 });

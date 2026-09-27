@@ -15,7 +15,7 @@
  */
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
 import { generatedHeader, cell } from './exporter.js';
-import { nodesOfType, nodeIndex, adjacency, reqKinds, testLevel, status, ref, refList } from './helpers.js';
+import { nodesOfType, nodeIndex, adjacency, reqKinds, reqRole, testLevel, status, ref, refList } from './helpers.js';
 
 // ---------------------------------------------------------------------------
 // 2. SRS — System Requirements Specification (RENDER · textual spec).
@@ -132,6 +132,7 @@ export function renderSrs(graph: Graph, name: string): string {
    *  satisfier this occurrence sits beneath (cross-note lists the others). */
   const reqEntry = (r: GraphNode, level: number, under: string | null): void => {
     const kinds = reqKinds(r);
+    const role = reqRole(r); // CR-GC-673: die FMEA-Rolle ist ein eigenes Feld, keine Art
     const priority = kinds.includes('non-functional') ? 'should' : 'must';
     const tests = verify.rev.get(r.uid) ?? [];
     const satisfiers = satisfy.rev.get(r.uid) ?? [];
@@ -144,7 +145,8 @@ export function renderSrs(graph: Graph, name: string): string {
     if (others.length > 0) lines.push(`> auch unter: ${refList(others)}`, '');
     lines.push(cell(r.description ?? r.name), '');
     lines.push(
-      `priority: ${priority} · status: ${status(r) || 'n/a'}${kinds.length ? ` · kinds: ${kinds.join('/')}` : ''}`,
+      `priority: ${priority} · status: ${status(r) || 'n/a'}${kinds.length ? ` · kinds: ${kinds.join('/')}` : ''}` +
+        (role ? ` · role: ${role}` : ''),
       '',
       `Verification ◀ ${
         tests.length

@@ -26,7 +26,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { knotenAus, kantenAus } from './helpers/format-e.js';
 import { attributesFor, formatEExampleFor } from '../src/projections/authoring-example.js';
-import { ReqKind, TRACE_PATTERNS } from '@sigloch/contracts/se';
+import { ReqKind, ReqRole, TRACE_PATTERNS, isValidTrace, type ElementType } from '@sigloch/contracts/se';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -268,13 +268,26 @@ describe('TEST-formate-name: der stille name=uid-Fallback wird laut (CR-GC-321)'
   });
 });
 
-describe('CR-GC-581: kinds steht im Guide — Werte UND Schreibweise', () => {
-  it('der REQ-Guide nennt kinds mit allen ReqKind-Werten und der Folgezeilen-Syntax', () => {
+describe('CR-GC-581/673: kinds steht im Guide — Werte, Erfueller UND Schreibweise', () => {
+  it('der REQ-Guide nennt kinds mit genau den zwei ReqKind-Werten und der Folgezeilen-Syntax', () => {
     const kinds = attributesFor('REQ').find((a) => a.key === 'kinds');
     expect(kinds, 'ohne kinds im Guide sucht der Autor im Quellcode (Runde 7: bis 31-mal)').toBeDefined();
     expect(kinds!.enumValues).toEqual(ReqKind.options);
-    expect(kinds!.enumValues).toEqual(expect.arrayContaining(['postcondition', 'precondition']));
-    expect(kinds!.syntax).toBe('@kinds ["postcondition"]');
+    expect(kinds!.enumValues).toEqual(['functional', 'non-functional']);
+    expect(kinds!.syntax).toBe('@kinds ["functional"]');
+  });
+
+  it('CR-GC-673: die kinds-Beschreibung traegt die Erfueller-Tabelle und nennt role satisfy-neutral', () => {
+    const d = attributesFor('REQ').find((a) => a.key === 'kinds')!.description;
+    expect(d).toMatch(/functional\s*(→|->|<-|←)?\s*FUNC|FUNC\s*(←|<-)\s*functional/);
+    expect(d).toMatch(/non-functional[^.]*MOD[^.]*SYS[^.]*FCHAIN/);
+    expect(d).toMatch(/role[^.]*satisfy-neutral/);
+    expect(d).not.toMatch(/precondition|postcondition|behavioural|structural/);
+  });
+
+  it('CR-GC-673: role steht als eigenes REQ-Attribut im Guide, mit den ReqRole-Werten', () => {
+    const role = attributesFor('REQ').find((a) => a.key === 'role');
+    expect(role?.enumValues).toEqual(ReqRole.options);
   });
 
   it('das REQ-Beispiel traegt kinds, und der Codec liest es als Liste', () => {
@@ -283,10 +296,35 @@ describe('CR-GC-581: kinds steht im Guide — Werte UND Schreibweise', () => {
 
   it('die dokumentierte Syntax selbst decodiert — sonst waere der Hinweis eine Falle', () => {
     const knoten = knotenAus(
-      '## Nodes\n### REQ\n+ REQ-post|Nach dem Lauf liegt das Ergebnis vor. [__name:Ergebnis liegt vor]\n' +
+      '## Nodes\n### REQ\n+ REQ-f|Das System stellt einen frueheren Stand her. [__name:Stand herstellen]\n' +
         attributesFor('REQ').find((a) => a.key === 'kinds')!.syntax + '\n',
     );
-    expect(knoten[0].attributes.kinds).toEqual(['postcondition']);
+    expect(knoten[0].attributes.kinds).toEqual(['functional']);
+  });
+
+  /**
+   * CR-GC-673: jede satisfy-Kante eines Beispiels ist nach `isValidTrace` legal — auch fuer die
+   * FCHAIN, die seit CR-SM-366 nur noch non-functional erfuellt. Das Muster wird hineingereicht,
+   * weil die FCHAIN heute `compose -> FUNC` als Beispielmuster waehlt; die kinds-Wahl muss aber
+   * fuer JEDEN Erfueller stimmen, nicht nur fuer den zufaellig gezeigten.
+   */
+  it('CR-GC-673: jede gezeigte satisfy-Kante ist legal, fuer jeden Erfueller-Typ', () => {
+    const erfueller = (TRACE_PATTERNS as ReadonlyArray<{ source: string; target: string; type: string }>)
+      .filter((p) => p.type === 'satisfy' && p.target === 'REQ')
+      .map((p) => p.source);
+    expect(erfueller).toEqual(expect.arrayContaining(['FUNC', 'FCHAIN', 'MOD', 'SYS']));
+    for (const type of erfueller) {
+      const example = formatEExampleFor(type, [{ edgeType: 'satisfy', targetType: 'REQ' }]);
+      const kindsVon = new Map(knotenAus(example).map((n) => [n.uid, n.attributes.kinds as ReqKind[]]));
+      const kanten = kantenAus(example).filter((e) => e.edgeType === 'satisfy');
+      expect(kanten.length, type).toBeGreaterThan(1);
+      for (const e of kanten) {
+        expect(
+          isValidTrace({ source: type as ElementType, target: 'REQ', type: 'satisfy', targetKinds: kindsVon.get(e.targetId) }),
+          `${type} -satisfy-> REQ (kinds ${String(kindsVon.get(e.targetId))})`,
+        ).toBe(true);
+      }
+    }
   });
 
   it('Typen ohne kinds bekommen keins angedichtet', () => {

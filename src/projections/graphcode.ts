@@ -15,7 +15,7 @@
  */
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
 import { generatedHeader, cell } from './exporter.js';
-import { nodesOfType, nodeIndex, adjacency, reqKinds, status, ref, refList, topoOrderMilestones, testResult } from './helpers.js';
+import { nodesOfType, nodeIndex, adjacency, reqKinds, reqRole, status, ref, refList, topoOrderMilestones, testResult } from './helpers.js';
 
 // ---------------------------------------------------------------------------
 // 13. Change Log (RENDER · CR rollup by milestone + status). Specimen #13.
@@ -80,7 +80,7 @@ export function renderChangelog(graph: Graph, name: string): string {
 // `evaluateAllRules`; the renderer read something else on every axis:
 //
 //   FM-01 says `severity`/`occurrence`/`detection`   — it read `S`/`O`/`D`
-//   FM-02 says compose → REQ[kinds ∋ mitigation]     — it read `relation` → REQ-*
+//   FM-02 says compose → mitigation REQ              — it read `relation` → REQ-*
 //   FM-03 says verify AND testResult === 'passed'    — it read "a verify edge exists"
 //
 // The mitigation column was therefore STRUCTURALLY unfillable: `TRACE_PATTERNS` has
@@ -94,23 +94,27 @@ export function renderChangelog(graph: Graph, name: string): string {
 // from contracts together, which is why nothing ever failed.
 //
 // The rule is now the source; this only renders it.
+//
+// CR-GC-673: risk/mitigation are no longer `kinds` values but the REQ's ROLE
+// (`attributes.role`, CR-SM-365/366) — FM-01..03 read only the role, so the view
+// reads it through the same single reader (`readReqRole` via `reqRole`).
 // ---------------------------------------------------------------------------
 
 export function renderFmea(graph: Graph, name: string): string {
   const idx = nodeIndex(graph);
-  const risks = nodesOfType(graph, 'REQ').filter((r) => reqKinds(r).includes('risk'));
+  const risks = nodesOfType(graph, 'REQ').filter((r) => reqRole(r) === 'risk');
   const verify = adjacency(graph, 'verify');
   const compose = adjacency(graph, 'compose'); // FM-02: risk REQ ─compose→ mitigation REQ
   const lines: string[] = [
     generatedHeader(
       name,
       'FMEA (functional risk)',
-      `Render-Form von REQ kind=risk (severity/occurrence/detection nach FM-01). ` +
+      `Render-Form von REQ role=risk (severity/occurrence/detection nach FM-01). ` +
         `${risks.length} Risiken. Deterministisch generiert.`,
     ),
   ];
   lines.push(
-    '| Failure mode (REQ kind=risk) | S | O | D | RPN | Mitigation | verifiziert |',
+    '| Failure mode (REQ role=risk) | S | O | D | RPN | Mitigation | verifiziert |',
     '|---|---|---|---|---|---|---|',
   );
   const num = (n: GraphNode, k: string): string => {
@@ -136,7 +140,7 @@ export function renderFmea(graph: Graph, name: string): string {
     const mitig = (compose.fwd.get(r.uid) ?? [])
       .filter((t) => {
         const n = idx.get(t);
-        return n?.type === 'REQ' && reqKinds(n).includes('mitigation');
+        return n?.type === 'REQ' && reqRole(n) === 'mitigation';
       })
       .sort((a, b) => a.localeCompare(b));
     // FM-03: nur ein BESTANDENER Test zählt. "Test vorhanden" und "Test bestanden"
@@ -155,13 +159,13 @@ export function renderFmea(graph: Graph, name: string): string {
     );
   }
   if (risks.length === 0) {
-    lines.push('| — keine REQ kind=risk im Graph (FMEA noch nicht durchgeführt) | — | — | — | — | — | — |');
+    lines.push('| — keine REQ role=risk im Graph (FMEA noch nicht durchgeführt) | — | — | — | — | — | — |');
   }
   lines.push(
     '',
     '> RENDER der risk/mitigation-REQ, die `se-fmea` durchs Gate geschrieben hat.',
     '> Attribute + Kanten exakt wie FM-01/FM-02/FM-03 sie prüfen: `severity`/`occurrence`/',
-    '> `detection`, Mitigation über `compose` → REQ[`kinds` ∋ `mitigation`], „verifiziert" nur',
+    '> `detection`, Mitigation über `compose` → REQ[`role` = `mitigation`], „verifiziert" nur',
     '> bei einem TEST mit `testResult: passed`. RPN = S·O·D (die FM-03-Zahl).',
     '',
   );
@@ -174,8 +178,8 @@ export function renderFmea(graph: Graph, name: string): string {
 // CR-GC-304 re-cut this view. Three things were wrong:
 //
 //   1. The operational-REQ filter tested `kinds ∋ "operational"` — UNSATISFIABLE.
-//      `ReqKind` in @sigloch/contracts has exactly 7 values and `operational` is
-//      not one of them, so the gate can never accept such a REQ. The table was
+//      `ReqKind` in @sigloch/contracts (since CR-SM-366 exactly functional |
+//      non-functional) has no `operational` value, so the gate can never accept such a REQ. The table was
 //      structurally unfillable, no matter how often the create skill ran.
 //   2. The view advertised "actors/system/use-cases" and rendered no UC at all.
 //      Operational scenarios are the CORE of a ConOps and were entirely absent.
