@@ -1,7 +1,7 @@
 /**
  * tools/write.ts — the gated WRITE tools (MOD-mcp-tools, CR-GC-256).
  *
- * graph_mutate / graph_realize / graph_merge / graph_reseed. Every one of them
+ * graph_mutate / graph_merge / graph_reseed. Every one of them
  * delegates to `harness.mutate()` (L2 gate symmetry — no bypass, no second write
  * path) and runs inside `ctx.serializeToolWrite()`, so the OCC check, the gate
  * apply and the audit record stay one atomic unit against other tool writes.
@@ -11,9 +11,8 @@
 
 import { z } from 'zod/v4';
 import { isAbsolute, join } from 'node:path';
-import type { MutateCommand, MutateResult, RuleViolation, StaleDelta } from '@sigloch/contracts/harness';
+import type { MutateCommand, MutateResult, RuleViolation } from '@sigloch/contracts/harness';
 import { GraphVersionSchema } from '@sigloch/contracts/harness';
-import { readTestRefs } from '@sigloch/contracts/se';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../kernel/merge.js';
 import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import { computeSteeringDelta, measureSteering, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
@@ -215,63 +214,6 @@ function dropSilentAdvisories<T extends object>(result: T, hatZielprofil: boolea
   return out as T;
 }
 
-/**
- * Eine Bindung (CR-GC-216) — FUNC→Code, SCHEMA→Zod-Export, TEST→Testdatei.
- * CR-GC-611: derselbe Satz Felder flach am Aufruf (Kurzform fuer eine Bindung) und in `bindings`
- * (mehrere Bindungen, EIN Gate-Batch). Die Kurzform wird normalisiert, es gibt nur einen Pfad.
- */
-const RealizeBindingSchema = z.object({
-  funcUid: z.string().optional().describe('The FUNC node to realize — sets its realRef (R-20).'),
-  file: z.string().optional().describe('Implementation file path, e.g. src/x.ts (required with funcUid).'),
-  symbol: z.string().optional().describe('The exported symbol (function/class) that realizes the FUNC (required with funcUid).'),
-  lang: z.string().optional().describe('Language id (default ts).'),
-  // CR-211/228: bind a SCHEMA to its Zod export (realRef, R-26/RC-03) in the same call.
-  schemaUid: z.string().optional().describe('Optional SCHEMA node to bind — sets its realRef (R-26/RC-03).'),
-  schemaFile: z.string().optional().describe('File declaring the Zod schema (required when schemaUid is given).'),
-  schemaSymbol: z.string().optional().describe('The exported Zod schema symbol (required when schemaUid is given).'),
-  testUid: z.string().optional().describe('Optional TEST node to bind — adds an entry to its testRefs (R-19, 1:n).'),
-  testFile: z.string().optional().describe('Test file path (required when testUid is given).'),
-  testCase: z.string().optional().describe('Optional test case name.'),
-  tool: z.string().optional().describe('Test tool for the entry (default vitest).'),
-});
-
-export type RealizeBinding = z.infer<typeof RealizeBindingSchema>;
-
-/** Die Prueffolge je Bindung — dieselbe fuer die Kurzform und jeden Eintrag in `bindings`. */
-function bindingFehler(b: RealizeBinding, wo: string): string | undefined {
-  if (b.funcUid === undefined && b.schemaUid === undefined)
-    return `graph_realize: ${wo} supply at least one of funcUid or schemaUid.`;
-  if (b.funcUid !== undefined && (b.file === undefined || b.symbol === undefined))
-    return `graph_realize: ${wo} file and symbol are required with funcUid.`;
-  if (b.schemaUid !== undefined && (b.schemaFile === undefined || b.schemaSymbol === undefined))
-    return `graph_realize: ${wo} schemaFile and schemaSymbol are required with schemaUid.`;
-  if (b.testUid !== undefined && b.testFile === undefined)
-    return `graph_realize: ${wo} testFile is required when testUid is given.`;
-  return undefined;
-}
-
-/** Flat realize affordance (CR-GC-216) — the write-twin of graph_context, no nested union. */
-const GraphRealizeInputSchema = RealizeBindingSchema.extend({
-  // CR-GC-611: mehrere Bindungen in EINEM Gate-Batch — 15 Aufrufe im Code-Test waren 15-mal
-  // dieselbe FUNC-Bindung mit je einer weiteren Testzeile.
-  bindings: z
-    .array(RealizeBindingSchema)
-    .optional()
-    .describe('Several bindings in ONE gated batch (CR-GC-611). Alternative to the flat fields; one audit entry, all-or-nothing.'),
-  consumerId: z.string().default('mcp-client'),
-  baseVersion: baseVersionField,
-})
-  .refine((i) => (i.bindings === undefined) !== (i.funcUid === undefined && i.schemaUid === undefined), {
-    message: 'graph_realize: either the flat fields (one binding) or bindings[] — not both, not neither.',
-  })
-  .refine((i) => i.bindings === undefined || i.bindings.length > 0, { message: 'graph_realize: bindings[] must not be empty.' })
-  .superRefine((i, ctx) => {
-    for (const [n, b] of (i.bindings ?? [i as RealizeBinding]).entries()) {
-      const fehler = bindingFehler(b, i.bindings ? `bindings[${n}]:` : '');
-      if (fehler) ctx.addIssue({ code: 'custom', message: fehler });
-    }
-  });
-
 /** Replay-based branch reintegration (CR-GC-234) — the semantic rebase. */
 const GraphMergeInputSchema = z.object({
   log: z
@@ -346,7 +288,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     );
 
   /**
-   * Der Bindungsreport (CR-GC-611, seit CR-GC-685 am graph_mutate-Ergebnis): welche fehlenden
+   * Der Bindungsreport (CR-GC-611, seit CR-GC-685 am graph_mutate-Ergebnis; graph_realize ist mit CR-GC-685B entfallen): welche fehlenden
    * Code-Verweise der Batch geschlossen und welche er aufgerissen hat, und wie viele offen bleiben
    * — die Zahl, nicht die Liste. Nur wenn sich an den Verweisen etwas bewegt hat: ein Batch ohne
    * Bindung traegt kein Feld (dieselbe Regel wie CR-GC-576 — Schweigen kostet null Zeichen).
@@ -516,148 +458,6 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     },
   };
 
-  const graph_realize: MCPTool<
-    z.infer<typeof GraphRealizeInputSchema>,
-    {
-      success: boolean;
-      tier: MutateResult['tier'];
-      violations: RuleViolation[];
-      /** Welche fehlenden Code-Verweise diese Bindung geschlossen hat (CR-GC-611). */
-      resolved: string[];
-      /** Welche sie aufgerissen hat — normalerweise leer. */
-      introduced: string[];
-      /** Wie viele Verweise im Modell noch offen sind — die Zahl, nicht die Liste. */
-      openRefs: number;
-      graphVersion: number;
-      occWarning?: string;
-      stale?: boolean;
-      staleDelta?: StaleDelta;
-    }
-  > = {
-    name: 'graph_realize',
-    description:
-      'Bind a node to the code that realizes it — realRef on a FUNC, testRefs on a TEST — through the ' +
-      'gate. Take it when a file on disk now implements the node; the binding is what makes RC-* and ' +
-      'graph_tests able to judge at all. Returns the delta, not the node: several bindings in one ' +
-      'batch cost a fraction of one call each.',
-    inputSchema: GraphRealizeInputSchema,
-    async handler(input) {
-      const nodes = harness.getGraph().nodes;
-      // CR-GC-611: Kurzform und bindings[] laufen durch denselben Kommandobau — ein Pfad.
-      // Beides zugleich waere zweideutig; das Schema lehnt es ab, der Handler ebenso (MCP-Clients
-      // parsen ueber das Schema, In-Process-Aufrufer wie der Executor rufen den Handler direkt).
-      if (input.bindings && (input.funcUid || input.schemaUid || input.testUid)) {
-        throw new Error('graph_realize: either the flat fields (one binding) or bindings[] — not both.');
-      }
-      const bindungen: RealizeBinding[] = input.bindings ?? [input];
-      const commands: MutateCommand[] = [];
-
-      for (const [n, b] of bindungen.entries()) {
-        const wo = input.bindings ? `bindings[${n}]: ` : '';
-        const fehler = bindingFehler(b, wo.trim());
-        if (fehler) throw new Error(fehler);
-
-        if (b.funcUid) {
-          const fn = nodes.find((x) => x.uid === b.funcUid);
-          if (!fn) throw new Error(`graph_realize: ${wo}unknown funcUid '${b.funcUid}'.`);
-          commands.push({
-            op: 'update-node',
-            node: {
-              uid: b.funcUid,
-              type: fn.type,
-              attributes: { realRef: { file: b.file!, symbol: b.symbol!, ...(b.lang ? { lang: b.lang } : {}) } },
-            },
-          });
-        }
-
-        // CR-211/228: SCHEMA realRef binding — same update-node/apply-gate path as FUNC realRef.
-        if (b.schemaUid) {
-          const sc = nodes.find((x) => x.uid === b.schemaUid);
-          if (!sc) throw new Error(`graph_realize: ${wo}unknown schemaUid '${b.schemaUid}'.`);
-          commands.push({
-            op: 'update-node',
-            node: {
-              uid: b.schemaUid,
-              type: sc.type,
-              attributes: { realRef: { file: b.schemaFile!, symbol: b.schemaSymbol!, ...(b.lang ? { lang: b.lang } : {}) } },
-            },
-          });
-        }
-
-        if (b.testUid) {
-          const test = nodes.find((x) => x.uid === b.testUid);
-          if (!test) throw new Error(`graph_realize: ${wo}unknown testUid '${b.testUid}'.`);
-          // CR-GC-338: ERGAENZEN, nicht ersetzen. Seit CR-SM-231 ist die Bindung 1:n — eine
-          // Abnahme aus Unit- und Visual-Lauf verlaere sonst bei jedem Realize die andere
-          // Haelfte. Dieselbe Datei zweimal zu binden ist Redundanz, kein zweiter Eintrag.
-          // CR-GC-611: im Batch zaehlt auch, was eine fruehere Bindung DESSELBEN Aufrufs
-          // schon anhaengte — sonst frisst die letzte Testzeile ihre Vorgaengerinnen.
-          const vorher = commands.find((c) => c.op === 'update-node' && c.node.uid === b.testUid);
-          const ausBatch = vorher ? readTestRefs((vorher as { node: { attributes?: Record<string, unknown> } }).node.attributes) : undefined;
-          const existing = ausBatch?.state === 'bound' ? ausBatch : readTestRefs(test.attributes);
-          // Ungueltige Refs werden ersetzt, nicht fortgeschrieben: die neue Bindung ist gueltig.
-          const kept = existing.state === 'bound' ? existing.value.filter((r) => r.file !== b.testFile || r.case !== b.testCase) : [];
-          const added = {
-            file: b.testFile!,
-            tool: b.tool ?? 'vitest',
-            ...(b.testCase ? { case: b.testCase } : {}),
-          };
-          commands.push({
-            op: 'update-node',
-            node: {
-              uid: b.testUid,
-              type: test.type,
-              attributes: { testRefs: [...kept, added] },
-            },
-          });
-        }
-      }
-
-      return serializeToolWrite(async () => {
-        const beforeAll = harness.evaluateRules();
-        const before = missingRefIds(beforeAll);
-        const stale = await occReject(input.consumerId, input.baseVersion, commands);
-        if (stale) {
-          return {
-            success: false,
-            tier: stale.tier,
-            violations: stale.violations,
-            resolved: [],
-            introduced: [],
-            openRefs: before.size,
-            graphVersion: stale.graphVersion,
-            stale: true,
-            staleDelta: stale.staleDelta,
-          };
-        }
-        const result = await harness.mutate(commands);
-        const afterAll = harness.evaluateRules();
-        // No audit bypass (CR-GC-232): realize writes are logged like any gated write.
-        // CR-GC-434: a realize batch is built from the flat input — always 'authored';
-        // respondsTo is the same measured before/after delta as on graph_mutate.
-        await recordAudit(input.consumerId, result, commands, {
-          respondsTo: result.success ? resolvedViolations(beforeAll, afterAll) : [],
-          editSource: 'authored',
-        });
-        const after = missingRefIds(afterAll);
-        // CR-GC-611: das Delta ist die Aussage. Die beiden vollen Listen waren 87 % der
-        // Antwort und sagten bei JEDER Bindung dasselbe ueber das ganze Modell; der Autor
-        // braucht sie nicht zum Weiterarbeiten, und wer sie doch will, fragt
-        // rules_get_violations. Der Audit-Trail oben traegt weiterhin die volle Fassung.
-        return {
-          success: result.success,
-          tier: result.tier,
-          violations: result.violations,
-          resolved: [...before].filter((id) => !after.has(id)),
-          introduced: [...after].filter((id) => !before.has(id)),
-          openRefs: after.size,
-          graphVersion: graphVersion(),
-          ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
-        };
-      });
-    },
-  };
-
   const graph_merge: MCPTool<
     z.infer<typeof GraphMergeInputSchema>,
     MergeReport & { graphVersion: number }
@@ -721,5 +521,5 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     },
   };
 
-  return { graph_mutate, graph_realize, graph_merge, graph_reseed };
+  return { graph_mutate, graph_merge, graph_reseed };
 }

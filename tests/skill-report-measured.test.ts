@@ -33,7 +33,6 @@ const GRAPH = join(REPO, 'docs', 'graph', 'graphcode.graph.json');
 /** Werkzeuge, die den Graphen VERAENDERN. Alles andere liest. */
 const WRITE_TOOLS = [
   'graph_mutate',
-  'graph_realize',
   'graph_reseed',
   'graph_merge',
   'graph_test_ingest',

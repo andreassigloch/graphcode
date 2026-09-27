@@ -61,6 +61,10 @@ describe('TEST-graph-realize (CR-GC-685): Binden per Format-E, Bindungsreport im
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
+  it('graph_realize ist nicht mehr auf der Oberflaeche (CR-GC-685B)', () => {
+    expect(bindToolsToHarness(harness)).not.toHaveProperty('graph_realize');
+  });
+
   it('`~ FN-x @realRef` setzt die realRef durchs Gate; das Ergebnis traegt das Delta der Verweise', async () => {
     const tools = bindToolsToHarness(harness);
     const out = await tools.graph_mutate.handler({

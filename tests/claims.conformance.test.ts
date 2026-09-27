@@ -193,7 +193,9 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       'readiness dimensions=8',
       // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
       // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.
-      'MCP tools=24',
+      // CR-GC-685B: 24 -> 23. `graph_realize` ist weg — Binden ist ein Format-E-Patch
+      // (`~ FUNC-x` + `@realRef`) ueber graph_mutate, der Bindungsreport steht in dessen Ergebnis.
+      'MCP tools=23',
     ]);
   });
 });

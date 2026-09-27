@@ -135,7 +135,7 @@ falling back to the repo directory name.
 
 ### MCP tools
 
-All 24 MCP tools, grouped by role — this table is complete, and a test asserts the count against the
+All 23 MCP tools, grouped by role — this table is complete, and a test asserts the count against the
 live registry so it cannot silently fall behind the code.
 
 | Role | Tool | What it does |
@@ -146,8 +146,7 @@ live registry so it cannot silently fall behind the code.
 | | `graph_impact` | the exact blast-radius: who breaks if I change this (KNOW, not grep) |
 | | `graph_expand` | deepen one branch on demand |
 | | `graph_context` | the definition-of-done pack for ONE node — spec closure in one call |
-| **write** | `graph_mutate` | the write path — through the Apply-Gate (human or AI, same gate) |
-| | `graph_realize` | bind model to code: `realRef` on a FUNC/SCHEMA, `testRefs` on a TEST |
+| **write** | `graph_mutate` | the write path — through the Apply-Gate (human or AI, same gate); also binds model to code: `~ FUNC-x` + `@realRef {…}`, `@testRefs [...]` on a TEST |
 | | `graph_merge` | additive merge (adds only) — the non-destructive import path |
 | | `graph_reseed` | in-process reseed from the committed SSOT, with an automatic backup |
 | **measure** | `rules_evaluate`, `rules_get_violations` | run the SE rules read-only |
@@ -163,7 +162,7 @@ live registry so it cannot silently fall behind the code.
 | **audit** | `audit_trail`, `audit_stats` | mutation history — every gate write logged |
 | **help** | `graph_help` | explain any rule ID, gate, or dashboard token (read-only) |
 
-`graph_realize`, `graph_test_ingest`/`graph_test_report`/`graph_tests` are the answer to the obvious
+The `realRef`/`testRefs` binding and `graph_test_ingest`/`graph_test_report`/`graph_tests` are the answer to the obvious
 objection that a model can drift from its code: the binding is an attribute the rules check (R-19,
 R-20), and "done" means a test result landed in the graph, not that someone ticked a box.
 

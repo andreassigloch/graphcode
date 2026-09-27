@@ -31,7 +31,7 @@ that, every project grows its own dialect and nothing stays comparable.
 | Local execution | OpenCode + bring-your-own-key, or the built-in executor below | Two ways to run a local model — see "Two ways to run the loop" |
 
 The current vocabulary: 12 element types, 6 connection types, 32 legal connection patterns,
-66 engine rules across 8 readiness dimensions, exposed as 24 MCP tools.
+66 engine rules across 8 readiness dimensions, exposed as 23 MCP tools.
 
 ## Two ways to run the loop
 
@@ -75,8 +75,9 @@ deciding what to do next.
 A model of a system is only worth having if it stays attached to the system. Two tools do that
 attaching, and both are checked by rules rather than by good intentions:
 
-- **`graph_realize(id, ref)`** binds a model element to the artifact that realizes it — the file and
-  symbol behind a function or a data shape, the test file and case behind a test. The binding is an
+- **A binding** (`realRef` / `testRefs`, written through `graph_mutate` like any other edit) ties a
+  model element to the artifact that realizes it — the file and symbol behind a function or a data
+  shape, the test file and case behind a test. The binding is an
   attribute, and its absence is a rule finding (a realized function without a code reference, a
   runnable test without a test reference), visible in every readiness report.
 - **`graph_test_ingest` / `graph_test_report` / `graph_tests`** feed a real test run's results back

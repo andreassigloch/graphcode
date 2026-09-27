@@ -29,7 +29,7 @@ const REPO = join(__dirname, '..');
 const GRAPH = join(REPO, 'docs', 'graph', 'graphcode.graph.json');
 
 /** Die Tuer, durch die eine Modell-Erzeugung gehen MUSS. */
-const GATE_TOOLS = ['graph_mutate', 'graph_realize'];
+const GATE_TOOLS = ['graph_mutate'];
 
 /**
  * Ein direkter Schreibzugriff auf die SSOT: ein Werkzeugaufruf (Write/Edit/

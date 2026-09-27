@@ -12,7 +12,7 @@
  *
  * COMPOSITION ROOT (CR-GC-256). The tools themselves live in one module per group:
  *   - `tools/read.ts`   — graph_elements / get_node / get_edges / impact / expand / context
- *   - `tools/write.ts`  — graph_mutate / realize / merge / reseed (all gated)
+ *   - `tools/write.ts`  — graph_mutate / merge / reseed (all gated)
  *   - `tools/report.ts` — rules / audit / readiness / tests / help / authoring
  *   - `tools/export.ts` — graph_export (+ the assertInRepo containment guard, CR-GC-255)
  *   - `tools/suggest.ts`— graph_suggest (se-optimizer binding, dryRun-Verdict, CR-GC-273)
@@ -56,7 +56,6 @@ import { bindTestReportTools } from '../projections/testreport.js';
  */
 export const NON_CONSULTING_TOOLS = new Set([
   'graph_mutate',
-  'graph_realize',
   'graph_merge',
   'graph_reseed',
   'graph_test_ingest',
