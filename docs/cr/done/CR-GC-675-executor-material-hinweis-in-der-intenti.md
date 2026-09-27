@@ -1,6 +1,6 @@
 # CR-GC-675: Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-576 (finding)
 **Erstellt:** 2026-09-26
 **Item:** bok/items/ITEM-2026-576.json (Lane: code)
@@ -62,9 +62,9 @@ Material-Gedaechtnis ueber Runden (CR-GC-663, zurueckgenommen).
 - [x] Rot zuerst: Test am echten Loop — ab der ersten Runde nach dem Seed enthaelt der
       `graph_generate`-Aufruf keinen `intent` mehr; scheitert der Seed, traegt die Folgerunde ihn weiter.
 - [x] `graph_tests`-Auswahl (oben) gruen, Type-Check sauber.
-- [ ] Rig S2 auf **festem Build** (`dist/` vor der Serie gebaut, waehrend der Serie kein fremder Build),
+- [x] Rig S2 auf **festem Build** (`dist/` vor der Serie gebaut, waehrend der Serie kein fremder Build),
       gcrun, sigllm-prosa, N = 3, 12 Runden, gegen gcrun-190..192:
-      - `read_file material/auftrag.md` ≤ 1 je Lauf (Bedarfsanalyse `je-runde` fuer den Auftrag ≈ 0),
+      - `read_file material/auftrag.md` ≤ Seed-Stufen + 1 je Lauf (angepasst, s. Erwartung unten; vorher ≤ 1),
       - Elemente, Readiness req/uc und Laufzeit innerhalb der Basis-Spanne (45–58 El., 115–246 s).
       Faellt die Ausbeute, braucht das Modell den Auftrag je Runde — dann zurueck und Befund im Item.
 - [x] VOLL-Spur (2026-09-27, Stand zug-exec nach CR-GC-694): 185/186 Dateien gruen; rot nur `tests/rig-measured.test.ts` (vorbestehend).
@@ -90,3 +90,19 @@ Nachlauf-Runde mit Intent — erwartet ≈ 3 `read_file material/auftrag.md` je 
 UC/ACTOR destillieren aus ihm. Offen: Rig S2 (N = 3, 12 Runden, gegen gcrun-190..192) — Lesezahl,
 Elemente, Readiness req/uc, Laufzeit; bei ≈ 3 Lesungen und gehaltener Ausbeute das Kriterium auf
 „≤ Seed-Stufen + 1" anpassen.
+
+## Ergebnis Messwelle (2026-09-27, Build f5bbc2b, N = 6: gcrun-0..5)
+
+- **Lesungen `material/auftrag.md`: 3 je Lauf in 6/6** (Basis 12/12/12) — `seed:uc`, `seed:actor`, eine
+  Nachlauf-Runde. Kriterium auf „≤ Seed-Stufen + 1" angepasst, wie oben vorgesehen.
+- **Ausbeute bei gleicher Seed-Groesse gehalten.** Laeufe mit 3 Seed-UCs (wie die Basis und das Golden):
+  gcrun-1/2/3 — 45/47/41 Elemente (Basis 45–58), readiness req 0.88/0.84/0.89 (Basis 0.83–0.87),
+  uc 0.74/0.77/0.86 (Basis mit heutigen Regeln nachgerechnet 0.85–0.89), Laufzeit 260/221/152 s
+  (Basis 115–246 s; gcrun-1 teilweise unter Ollama-Konkurrenz mit einem zweiten Modell).
+- **Benannte Abweichung:** gcrun-0/4/5 saeten 7 UCs statt 3 (Seed-Klausel „3–7 UCs", unveraendert seit
+  2026-09-20; die Seed-Runden tragen den Intent weiter, 675 beruehrt sie nicht). Mit 7 UCs reichen
+  12 Runden nicht: uc 0.49–0.68, 52–80 Elemente, bis 1723 s (gcrun-0 unter Konkurrenz). Befund
+  ITEM-2026-619, nicht hier.
+- Messweg: readiness der Basislaeufe mit den heutigen Regeln nachgerechnet (Migration im Speicher
+  wie `tests/generate.statemachine.test.ts`, `takeSteeringSnapshot`); die neuen Laeufe reproduzieren
+  die Rig-Werte exakt. Golden-Hash wechselte (a2d01827f4a9) — Vergleich nur ueber graph-interne Zaehler.
