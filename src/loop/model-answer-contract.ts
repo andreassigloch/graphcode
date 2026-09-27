@@ -130,7 +130,7 @@ export function describeWireIssues(err: z.ZodError): string {
 
 /**
  * Stop-Gruende, mit denen ein Backend „am Token-Budget abgeschnitten" meldet (CR-GC-688):
- * anthropic `max_tokens`, openai-kompatibel (auch sigllm, ollama) `length`. Zwei Vokabeln, eine
+ * anthropic `max_tokens`, openai-kompatibel (auch ollama und das sigllm-Gateway) `length`. Zwei Vokabeln, eine
  * Tatsache — wer nur eine prueft, sieht die andere Haelfte der Backends nicht.
  */
 const ABGESCHNITTEN = new Set(['max_tokens', 'length']);

@@ -14,6 +14,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { ExecutorConfigSchema } from '../src/loop/executor.js';
+import { parseExecutorEnv } from '../src/surface/run-verb.js';
 
 /** Das Minimum, das der Vertrag verlangt — alles andere hat einen Default. */
 const MINIMAL = { baseUrl: 'http://127.0.0.1:1234', model: 'test-model' };
@@ -47,11 +48,38 @@ describe('SCHEMA-executor-config: was ein Lauf ist, steht an EINER Stelle (CR-GC
   expect(cfg.inventory).toBe('fund');
   });
 
-  it('die drei Backends sind geschlossen — ein viertes wird abgewiesen', () => {
-    for (const backend of ['openai', 'anthropic', 'sigllm']) {
+  it('die zwei Backends sind geschlossen — ein drittes wird abgewiesen', () => {
+    for (const backend of ['openai', 'anthropic']) {
       expect(ExecutorConfigSchema.safeParse({ ...MINIMAL, backend }).success).toBe(true);
     }
     expect(ExecutorConfigSchema.safeParse({ ...MINIMAL, backend: 'ollama' }).success).toBe(false);
+  });
+
+  // CR-GC-693: das sigllm-Gateway spricht openai bzw. anthropic; das fruehere Eigenformat
+  // (/v1/inference, Profilname statt Modell, Token im Body) gibt es dort nicht mehr.
+  it('sigllm ist kein Backend, sondern openai mit API-Key (CR-GC-693)', () => {
+    expect(ExecutorConfigSchema.safeParse({ ...MINIMAL, backend: 'sigllm' }).success).toBe(false);
+    const sigllm = parseExecutorEnv({
+      GRAPHCODE_LLM_BACKEND: 'openai',
+      GRAPHCODE_LLM_BASE_URL: 'https://sigllm.intern:8443',
+      GRAPHCODE_LLM_MODEL: 'qwen3.8-27b',
+      GRAPHCODE_LLM_API_KEY: 'geheim',
+    });
+    expect(sigllm).toMatchObject({ backend: 'openai', apiKey: 'geheim', model: 'qwen3.8-27b' });
+    expect(() =>
+      parseExecutorEnv({
+        GRAPHCODE_LLM_BACKEND: 'sigllm',
+        GRAPHCODE_LLM_BASE_URL: 'https://sigllm.intern:8443',
+        GRAPHCODE_LLM_MODEL: 'reasoning',
+      }),
+    ).toThrow();
+    // Das Token des Eigenformats ist kein Zugang mehr — der Schluessel heisst GRAPHCODE_LLM_API_KEY.
+    const nurToken = parseExecutorEnv({
+      GRAPHCODE_LLM_BASE_URL: 'https://sigllm.intern:8443',
+      GRAPHCODE_LLM_MODEL: 'qwen3.8-27b',
+      GRAPHCODE_LLM_TOKEN: 'alt',
+    });
+    expect(nurToken.apiKey).toBeUndefined();
   });
 
   it('die Kandidatenzahl ist auf 1..8 begrenzt, das Budget auf positive ganze Zahlen', () => {

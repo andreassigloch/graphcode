@@ -26,13 +26,9 @@ npx @sigloch/graphcode run "<intent>" # author the graph via the embedded execut
                                      # or Anthropic BYOK drives graph_generate/mutate directly, no
                                      # coding-agent harness. Env: GRAPHCODE_LLM_BASE_URL +
                                      # GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
-                                     # openai|anthropic|sigllm (default openai), GRAPHCODE_LLM_API_KEY.
-                                     # backend=sigllm posts to a SIG Local gateway (/v1/inference):
-                                     # GRAPHCODE_LLM_TOKEN is required, GRAPHCODE_LLM_MODEL carries the
-                                     # PROFILE name (fast|reasoning) — the platform binds the model,
-                                     # context length and output budget, so neither model nor
-                                     # temperature nor max_tokens travel. Trust its CA via
-                                     # NODE_EXTRA_CA_CERTS.
+                                     # openai|anthropic (default openai), GRAPHCODE_LLM_API_KEY.
+                                     # A SIG Local gateway speaks both: backend openai or anthropic,
+                                     # GRAPHCODE_LLM_API_KEY, trust its CA via NODE_EXTRA_CA_CERTS.
 npx @sigloch/graphcode rewind <ref>  # recall the graph state committed at <ref> — reads the snapshot
                                      # from git object storage, so the working tree is NOT touched.
                                      # Aborts while un-exported model edits are pending (--force drops them)
