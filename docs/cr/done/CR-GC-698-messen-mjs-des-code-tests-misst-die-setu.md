@@ -1,6 +1,6 @@
 # CR-GC-698: messen.mjs des Code-Tests misst die Setup-Saat statt des Laufergebnisses: es liest docs/graph/<laufname>.graph.json, waehrend der Export unter dem Mitgliedsnamen <package.name>.graph.json landet — fuer gefuehrt-2 meldete es 0 Prozent Bindung, tatsaechlich sind es 4 von 4 (100 Prozent)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-509 (bug)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-509.json (Lane: code)
