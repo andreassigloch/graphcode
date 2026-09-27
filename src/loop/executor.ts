@@ -112,6 +112,14 @@ export const ExecutorConfigSchema = z.object({
    * als das 35B-A3B-MoE, für das die Defaults dimensioniert waren. Nur gesetzt gesendet:
    * Backends ohne das Feld dürfen den Request nicht mit unbekanntem Feld ablehnen. */
   reasoningEffort: z.enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh']).optional(),
+  /** CR-GC-694: Saettigungsstopp — kamen in den letzten `saturationWindow` Runden zusammen weniger
+   * als `saturationMinNodes` neue Knoten in den Store, endet der Lauf mit Grund `saettigung`;
+   * `maxRounds` bleibt die Obergrenze. Default aus gcrun-180 (200 Runden, qwen3-coder-30b): kein
+   * 20-Runden-Fenster der Aufbauphase lag unter 13 neuen Knoten (Minimum Runde 11–30, Fehlschlaege und
+   * Ablehnungen), das Rest-Band ab Runde ~185 unter 10. 10 in 20 = die 0,5 Knoten je Runde des
+   * gemessenen Endstands. */
+  saturationWindow: z.number().int().positive().default(20),
+  saturationMinNodes: z.number().int().nonnegative().default(10),
   /** CR-GC-667: manuelle Session — eine Fragezeile haelt den Lauf an, der Auftraggeber antwortet.
    * false (Default) = headless: die Antwort ist der Registertext `openQuestions` (Annahme anlegen). */
   interactive: z.boolean().default(false),
@@ -139,6 +147,8 @@ export type CallModel = (
 export interface ExecutorStats {
   /** true = graph_generate meldete Handoff (Struktur trägt); false = Rundenlimit. */
   done: boolean;
+  /** Warum der Lauf endete (CR-GC-694): Handoff, keine Funde mehr, versiegter Ertrag oder Rundenlimit. */
+  stopReason: 'handoff' | 'stalled' | 'saettigung' | 'maxRounds';
   genRounds: number;
   modelTurns: number;
   mutatesApplied: number;
@@ -199,6 +209,13 @@ export interface RunExecutorOptions {
   ask?: AskOwner;
 }
 
+/** CR-GC-694: die Knotenzahl des Stores — die Groesse, an der der Ertrag einer Runde gemessen wird. */
+async function knotenzahl(registry: MCPToolRegistry): Promise<number> {
+  const tool = registry['graph_elements'];
+  const res = (await tool.handler(tool.inputSchema.parse({ limit: 1 }))) as { total: number };
+  return res.total;
+}
+
 export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorStats> {
   const { registry, workspaceDir, config } = opts;
   const trace = opts.trace ?? ((): void => undefined);
@@ -219,6 +236,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
 
   const stats: ExecutorStats = {
     done: false,
+    stopReason: 'maxRounds',
     genRounds: 0,
     modelTurns: 0,
     mutatesApplied: 0,
@@ -265,7 +283,25 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // CR-GC-667: eine Antwort auf eine Frage aus einem Schritt, der mit dem Apply endete — sie reist
   // mit der naechsten Runde, sonst ginge sie verloren.
   let antwortNachtrag = '';
+  // CR-GC-694: der Ertrag je Runde = Zuwachs der Knotenzahl im Store, gemessen vor jeder Runde.
+  const ertrag: number[] = [];
+  let knotenVorher = await knotenzahl(registry);
   for (let round = 0; round < config.maxRounds; round++) {
+    if (round > 0) {
+      const knoten = await knotenzahl(registry);
+      ertrag.push(knoten - knotenVorher);
+      knotenVorher = knoten;
+      const fenster = ertrag.slice(-config.saturationWindow);
+      const summe = fenster.reduce((a, b) => a + b, 0);
+      if (fenster.length === config.saturationWindow && summe < config.saturationMinNodes) {
+        stats.stopReason = 'saettigung';
+        trace(
+          `[saettigung] ${summe} neue Knoten in den letzten ${config.saturationWindow} Runden ` +
+            `(< ${config.saturationMinNodes}) — Stopp nach Runde ${round}`,
+        );
+        break;
+      }
+    }
     // Volles Frontier-Rendering auch lokal (CR-GC-282 negativ validiert: das
     // Minimal-Rendering halbierte den Durchsatz — v13b 22 vs. v12 82 Elemente;
     // die Multi-Kandidaten-Instruktion erzeugt die großen verbundenen Batches).
@@ -291,10 +327,14 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     trace(`[generate ${round + 1}] phase=${gen.phase} done=${gen.done}`);
     if (gen.done) {
       stats.done = true;
+      stats.stopReason = 'handoff';
       break;
     }
     // CR-GC-596: nur noch zurueckgestellte Funde — die Maschine hat keinen weiteren Vorschlag.
-    if (gen.phase === 'stalled') break;
+    if (gen.phase === 'stalled') {
+      stats.stopReason = 'stalled';
+      break;
+    }
 
     // Stagnations-Detektor (v10-Befund: "applied ≠ Fortschritt" — devstral fügte
     // rundenlang denselben TEST-Knoten OHNE die verify-Kante hinzu; die Violation

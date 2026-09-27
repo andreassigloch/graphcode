@@ -1,6 +1,6 @@
 # CR-GC-694: Saettigungsstopp aus dem Ertrag statt aus der Rundenzahl
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-572 (finding)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-572.json (Lane: code)
@@ -11,13 +11,15 @@ Rig 2026-09-25, qwen3-coder-30b (4 bit, Ollama), 200 Runden (runs/gcrun-180), Pr
 
 ---
 
-## Umfang laut `graph_impact`
+## Umfang — 5 Dateien
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
-
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+| Datei | Aenderung |
+|---|---|
+| `src/loop/executor.ts` | `saturationWindow`/`saturationMinNodes` in `ExecutorConfigSchema`; Ertrag je Runde = Zuwachs der Knotenzahl im Store (`graph_elements.total`), gemessen vor jeder Runde; Stopp mit Spurzeile `[saettigung] …`; `ExecutorStats.stopReason` (`handoff`/`stalled`/`saettigung`/`maxRounds`) |
+| `src/surface/run-verb.ts` | `GRAPHCODE_LLM_SATURATION_WINDOW`, `GRAPHCODE_LLM_SATURATION_MIN_NODES` |
+| `README.md` | `run`-Zeile nennt die Stoppgruende |
+| `tests/executor.saturation.test.ts` (neu) | echter Loop, echter Store: kein Zuwachs → Stopp; Zuwachs je Runde → keine Wirkung; Default + Env |
+| diese Datei | |
 
 ## Schnitt (2026-09-27)
 
@@ -36,7 +38,34 @@ Obergrenze. Schwelle und Fenster als Konfiguration mit gemessenem Default (gcrun
 
 ## Akzeptanz
 
-- [ ] Rot zuerst: Loop-Test mit einem Modell, das ab Runde k nur noch Dubletten liefert — laeuft heute bis maxRounds.
-- [ ] Stopp nach Fenster, Grund `saettigung` im Lauf-Ergebnis und in der Trace.
-- [ ] Default aus gcrun-180 hergeleitet und im CR begruendet; keine Wirkung auf Laeufe mit Ertrag.
-- [ ] VOLL-Spur gruen.
+- [x] Rot zuerst: Loop-Test mit einem Modell, das nur noch bestehende Knoten aendert — lief bis maxRounds (10 statt 3 Runden).
+- [x] Stopp nach Fenster, Grund `saettigung` im Lauf-Ergebnis (`stats.stopReason`) und in der Trace.
+- [x] Default aus gcrun-180 hergeleitet und im CR begruendet (unten); keine Wirkung auf Laeufe mit Ertrag (Test), und keine auf S2 (12 Runden < Fenster 20).
+- [x] VOLL-Spur gruen: 185/186 Dateien, 1632 Tests; rot nur `tests/rig-measured.test.ts` (vorbestehend, unabhaengig).
+
+## Herleitung des Defaults (gcrun-180)
+
+Quelle: `rig/greenfield-systemtest/runs/gcrun-180` (Hauptbaum), `audit.jsonl` (166 Applies) und
+`run-raw.log` (200 Runden). Neue Knoten je Runde = `add-node`-uids, die vorher nicht im Graphen
+standen, den Runden ueber die Spur zugeordnet (157 von 164 Runden-Applies eindeutig — die
+Zuordnung ist ±7 Applies unscharf).
+
+| gleitendes Fenster | kleinste Summe in Runde ≤ 180 | Rest ab Runde ~185 |
+|---|--:|--:|
+| 20 Runden | 13 (Runden 11–30: Fehlschlaege, R-18-Ablehnungen, bestehende Knoten erneut gesendet) | 5–12 |
+| 25 Runden | 20 | 12–15 |
+
+Kleine Fenster (5–12 Runden) stoppen gcrun-180 schon in Runde 15–22 — mitten in der Aufbauphase,
+die danach noch ~120 Knoten brachte. Default deshalb **20 Runden, < 10 neue Knoten** (= 0,5 je
+Runde, der gemessene Endstand): gcrun-180 haette um Runde ~187–191 gestoppt, jeder Lauf mit ≤ 20
+Runden (S2: 12) bleibt unberuehrt.
+
+## Ergebnis
+
+Der Mechanismus steht: der Lauf endet, wenn der Store ueber ein Fenster keinen Zuwachs mehr zeigt,
+mit Grund `saettigung` in Stats und Spur. **Auf gcrun-180 spart der Default nur ~10 von 200
+Runden, nicht die ~120 ab Runde 80.** Grund: die Saettigung ab Runde ~80 ist in der Knotenzahl
+nicht sichtbar — Varianten (`-2`, `-3`, `-5-neu`, kombinatorische Verlaengerungen wie
+`FUNC-zeitstempel-ueberpruefen-nach-nachtlauf-ohne-netz-ohne-anmeldung`) sind neue uids und zaehlen
+als Ertrag. Ein Stopp um Runde 80 braucht ein Ertragsmass ohne Varianten (z. B. Aehnlichkeit gegen
+den Bestand, wie der Preflight-Hinweis „ähnlich vorhanden") — eigener Befund, nicht dieser CR.

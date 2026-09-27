@@ -29,6 +29,9 @@ npx @sigloch/graphcode run "<intent>" # author the graph via the embedded execut
                                      # openai|anthropic (default openai), GRAPHCODE_LLM_API_KEY.
                                      # A SIG Local gateway speaks both: backend openai or anthropic,
                                      # GRAPHCODE_LLM_API_KEY, trust its CA via NODE_EXTRA_CA_CERTS.
+                                     # Stops at handoff, at maxRounds, or when fewer than
+                                     # GRAPHCODE_LLM_SATURATION_MIN_NODES (10) new nodes landed in the
+                                     # last GRAPHCODE_LLM_SATURATION_WINDOW (20) rounds.
 npx @sigloch/graphcode rewind <ref>  # recall the graph state committed at <ref> — reads the snapshot
                                      # from git object storage, so the working tree is NOT touched.
                                      # Aborts while un-exported model edits are pending (--force drops them)

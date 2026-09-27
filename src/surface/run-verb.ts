@@ -66,6 +66,11 @@ export function parseExecutorEnv(env: NodeJS.ProcessEnv): ExecutorConfig {
     ...(env.GRAPHCODE_LLM_REASONING_EFFORT
       ? { reasoningEffort: env.GRAPHCODE_LLM_REASONING_EFFORT }
       : {}),
+    // CR-GC-694: Saettigungsstopp — Fenster (Runden) und Mindestzuwachs (neue Knoten im Fenster).
+    ...(env.GRAPHCODE_LLM_SATURATION_WINDOW ? { saturationWindow: Number(env.GRAPHCODE_LLM_SATURATION_WINDOW) } : {}),
+    ...(env.GRAPHCODE_LLM_SATURATION_MIN_NODES
+      ? { saturationMinNodes: Number(env.GRAPHCODE_LLM_SATURATION_MIN_NODES) }
+      : {}),
     // CR-GC-667: manuelle Session — Fragezeilen halten den Lauf an.
     ...(env.GRAPHCODE_LLM_INTERACTIVE ? { interactive: env.GRAPHCODE_LLM_INTERACTIVE === '1' } : {}),
   });
