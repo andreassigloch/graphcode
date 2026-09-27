@@ -1,6 +1,6 @@
 # CR-GC-706: graph_mutate: commands-Parameter entfernen (67 Dateien, Konsumenten zuerst)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-604 (idea)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-604.json (Lane: code)
