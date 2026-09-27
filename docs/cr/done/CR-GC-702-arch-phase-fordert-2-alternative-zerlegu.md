@@ -1,6 +1,6 @@
 # CR-GC-702: arch-Phase fordert 2 alternative Zerlegungen, bei candidates=1 landen beide: decompose-n-altM-Kaskade
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-610 (bug)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-610.json (Lane: code)
