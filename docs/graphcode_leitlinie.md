@@ -255,7 +255,7 @@ Tests aus §9 stehen auf „bestanden" oder tragen eine benannte Ausnahme.
 
 Jeder Test nennt: **Frage** · **Aufbau** (Rig, Skript oder Unit-Test) · **Kriterium** (bestanden,
 wenn …) · **Stand** (letzte Messung mit Datum, eine ehrliche Zahl). Alle Schwellen sind vom Autor bestätigt (2026-09-25);
-die Schwellen von T-V5 und T-E10…T-E12 sind ein Vorschlag (2026-09-27), die Bestätigung steht aus.
+die Schwellen von T-V5 und T-E10…T-E12 sind gesetzt (2026-09-27) und werden nach den nächsten Testläufen validiert.
 
 Ein Test kann auf mehrere Abschnitte einzahlen. Er steht unter dem Abschnitt, dessen Claim er
 zuerst prüft; die DoD der anderen verweist auf ihn.
