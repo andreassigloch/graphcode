@@ -2713,6 +2713,12 @@
       "description": "docs/cr/open/CR-GC-703-executor-prompt-vorbilder-lecken-als-inh.md"
     },
     {
+      "id": "CR-GC-704",
+      "type": "CR",
+      "name": "qwen3-coder instanziiert das Platzhalter-Vorbild von UC-02 nicht: S2 gcrun-333..335 (nach CR-GC-703) uebernimmt FLOW/SCHEMA/FUNC-beispiel-* woertlich 4-8x je Lauf, Preflight blockt jedes Mal, die Runden verfallen; Kandidat: Skelett-uids aus dem UC des Funds vorbelegen, Modell schreibt nur Texte",
+      "description": "docs/cr/open/CR-GC-704-qwen3-coder-instanziiert-das-platzhalter.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22356,5 +22362,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 527
+  "graphVersion": 528
 }

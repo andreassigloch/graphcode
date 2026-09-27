@@ -183,9 +183,52 @@ const GATE_PROTOCOL: Record<GenerationSelection, string> = {
  * trägt also genau eine Regel: die Klausel wird exakt und mit den konkreten
  * uids gerendert oder gar nicht.
  */
+/** Der Ausschnitt des Bestands, den eine Klausel liest. */
+export type KlauselBestand = {
+  elements: ReadonlyArray<{ id: string; type: string }>;
+  traces: ReadonlyArray<{ source: string; target: string; type: string }>;
+};
+
+/**
+ * UC-02-Skelett je UC (ITEM-2026-625): die uids stehen fest, das Modell schreibt nur die Texte.
+ * Gemessen S2 gcrun-333..335: ein Platzhalter-Vorbild (`FLOW-beispiel-eingabe` …) uebernahm
+ * qwen3-coder 4–8x je Lauf woertlich, der Preflight blockte jedes Mal. FCHAIN und ACTOR kommen aus
+ * dem Bestand, wo es sie gibt; eine fehlende FCHAIN wird angelegt und an den UC gehaengt. Die Texte
+ * bleiben Platzhalter «… A» — uebernommen blockt sie der Preflight, mit Hinweis.
+ */
+function uc02Skelett(uc: string, og?: KlauselBestand): string {
+  const name = uc.replace(/^UC-/, '');
+  const typ = new Map((og?.elements ?? []).map((e) => [e.id, e.type]));
+  const kette = og?.traces.find((t) => t.source === uc && t.type === 'compose' && typ.get(t.target) === 'FCHAIN')?.target;
+  const akteure = (og?.elements ?? []).filter((e) => e.type === 'ACTOR').map((e) => e.id);
+  const fchain = kette ?? `FCHAIN-${name}`;
+  const actor = akteure[0] ?? `ACTOR-${name}-akteur`;
+  const knoten = [
+    `### FLOW\n+ FLOW-${name}-eingabe|«Eingabe A» von «Akteur A» an das System [__name:«Eingabe A»]`,
+    `### SCHEMA\n+ SCHEMA-${name}-eingabe|Form von «Eingabe A»: «Feld A» und «Feld B» [__name:Vertrag «Eingabe A»]`,
+    `### FUNC\n+ FUNC-${name}-annehmen|Nimmt «Eingabe A» entgegen und «Wirkung A». [__name:«Eingabe A» annehmen]`,
+    ...(kette ? [] : [`### FCHAIN\n+ ${fchain}|«Ablauf A» des UC [__name:«Ablauf A»]`]),
+    ...(akteure.length ? [] : [`### ACTOR\n+ ${actor}|«Akteur A» aus dem Auftrag [__name:«Akteur A»]`]),
+  ];
+  const kanten = [
+    ...(kette ? [] : [`+ ${uc} -compose-> ${fchain}`]),
+    `+ ${actor} -io-> FLOW-${name}-eingabe`,
+    `+ FLOW-${name}-eingabe -io-> FUNC-${name}-annehmen`,
+    `+ FLOW-${name}-eingabe -relation-> SCHEMA-${name}-eingabe`,
+    `+ ${fchain} -compose-> FUNC-${name}-annehmen`,
+  ];
+  const wahl = akteure.length > 1 ? ` (ACTOR: den passenden aus ${akteure.join(', ')})` : '';
+  return `Fuer ${uc}${wahl}:\n## Nodes\n${knoten.join('\n')}\n\n## Edges\n${kanten.join('\n')}`;
+}
+
 export const RULE_CLAUSE: Record<
   string,
-  { types: string[]; text: (uids: string[]) => string; skill: { name: string; file: string } | null }
+  {
+    types: string[];
+    /** `og`: der Bestand, fuer Klauseln, die ihr Vorbild aus dem Fund ableiten (ITEM-2026-625). */
+    text: (uids: string[], og?: KlauselBestand) => string;
+    skill: { name: string; file: string } | null;
+  }
 > = {
   'R-15': {
     types: ['FCHAIN', 'FUNC'],
@@ -232,18 +275,13 @@ export const RULE_CLAUSE: Record<
   'UC-02': {
     // CR-GC-658: SCHEMA im Fokus — der Pfad braucht je FLOW einen Vertrag, und das Vorbild nennt ihn.
     types: ['ACTOR', 'UC', 'FCHAIN', 'FUNC', 'FLOW', 'SCHEMA'],
-    text: (uids) =>
+    text: (uids, og) =>
       `Diese UCs sind von keinem ACTOR erreichbar (${uids.join(', ')}): der EINZIGE legale Weg ist` +
       ' ACTOR io→FLOW io→FUNC, wobei die FUNC Mitglied einer FCHAIN des UC ist. ACTOR direkt an UC' +
       ' oder an FCHAIN wird von R-18 abgewiesen, in beiden Richtungen. Jeder FLOW braucht genau einen' +
-      ' Vertrag (FLOW relation→SCHEMA) und genau einen Erzeuger. Vorbild — uids und Texte aus dem Auftrag' +
-      ' bilden (Platzhalter «…», `beispiel` in einer uid ist nie ein Inhalt); ACTOR und FCHAIN sind die' +
-      ' vorhandenen des UC; alle neuen Knoten deklariert, alles in EINEM Batch:\n' +
-      '## Nodes\n### FLOW\n+ FLOW-beispiel-eingabe|«Eingabe A» von «Akteur A» an das System [__name:«Eingabe A»]\n' +
-      '### SCHEMA\n+ SCHEMA-beispiel-eingabe|Form von «Eingabe A»: «Feld A» und «Feld B» [__name:Vertrag «Eingabe A»]\n' +
-      '### FUNC\n+ FUNC-beispiel-verarbeiten|Verarbeitet «Eingabe A» zu «Ergebnis A». [__name:«Eingabe A» verarbeiten]\n\n' +
-      '## Edges\n+ ACTOR-beispiel -io-> FLOW-beispiel-eingabe\n+ FLOW-beispiel-eingabe -io-> FUNC-beispiel-verarbeiten\n' +
-      '+ FLOW-beispiel-eingabe -relation-> SCHEMA-beispiel-eingabe\n+ FCHAIN-beispiel -compose-> FUNC-beispiel-verarbeiten',
+      ' Vertrag (FLOW relation→SCHEMA) und genau einen Erzeuger. Die uids unten stehen fest — uebernimm' +
+      ' sie; ersetze jeden Platzhalter «… A» durch Text aus dem Auftrag. Alle UCs in EINEM Batch:\n' +
+      uids.map((uc) => uc02Skelett(uc, og)).join('\n\n'),
     // ITEM-2026-607: Platzhalter statt Inhalt. Das fruehere Vorbild (Anfrage/Nutzer/Sitzungs-ID) stand
     // woertlich in 7 von 9 Laeufen (CR-GC-682); `beispiel`-uids und «X A» sperrt der Preflight (CR-GC-672).
     // CR-GC-658: das Vorbild steht in der Klausel, weil sie die Arbeit beschreibt — ohne es scheiterte
@@ -846,7 +884,7 @@ function stepCore(
       channel: 'rule-clause',
       value: klausel
         ? {
-            text: klausel.text(focusViolations.map((v) => v.element_id)),
+            text: klausel.text(focusViolations.map((v) => v.element_id), og),
             types: [...klausel.types],
             skill: klausel.skill?.name ?? null,
           }

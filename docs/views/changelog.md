@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 313 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 314 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 313 CR · 303 done · 4 open.
+Total: 314 CR · 303 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -375,3 +375,4 @@ Total: 313 CR · 303 done · 4 open.
 | `CR-GC-701` | n/a | Die Auftrags-Pruefliste misst Wortlaut gegen die strukturierte Projektdefinition und ist damit zwischen strukturiertem und prosaischem Lauf nicht vergleichbar: 42/42 vs 1/42 bei mehr Elementen |
 | `CR-GC-702` | n/a | arch-Phase fordert 2 alternative Zerlegungen, bei candidates=1 landen beide: decompose-n-altM-Kaskade |
 | `CR-GC-703` | n/a | Executor-Prompt-Vorbilder lecken als Inhalt: REQ-login-* in 9 von 9 Laeufen eines Auftrags ohne Login |
+| `CR-GC-704` | n/a | qwen3-coder instanziiert das Platzhalter-Vorbild von UC-02 nicht: S2 gcrun-333..335 (nach CR-GC-703) uebernimmt FLOW/SCHEMA/FUNC-beispiel-* woertlich 4-8x je Lauf, Preflight blockt jedes Mal, die Runden verfallen; Kandidat: Skelett-uids aus dem UC des Funds vorbelegen, Modell schreibt nur Texte |

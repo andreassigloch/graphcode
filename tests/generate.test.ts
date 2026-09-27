@@ -740,11 +740,33 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     const lecks: string[] = [];
     for (const [regel, klausel] of Object.entries(RULE_CLAUSE)) {
       const vorbild = klausel.text(['UC-fund']).split('\n').filter((z) => /^[+~] /.test(z));
+      // Erlaubt: `beispiel` (Preflight sperrt es) oder aus dem Fund abgeleitet (`fund`) — nie Domaeneninhalt.
       for (const u of vorbild.flatMap((z) => z.split('|')[0].match(uid) ?? [])) {
-        if (!/(^|-)beispiel(-|$)/.test(u)) lecks.push(`${regel}: ${u}`);
+        if (!/(^|-)(beispiel|fund)(-|$)/.test(u)) lecks.push(`${regel}: ${u}`);
       }
     }
     expect(lecks).toEqual([]);
+  });
+
+  it('UC-02 gibt die Skelett-uids je UC vor, mit FCHAIN und ACTOR aus dem Bestand (ITEM-2026-625)', () => {
+    // Gemessen S2 gcrun-333..335: qwen3-coder uebernahm FLOW/SCHEMA/FUNC-beispiel-* 4–8x je Lauf
+    // woertlich, der Preflight blockte jedes Mal, die Runden verfielen. Die uids stehen jetzt fest.
+    const og = {
+      elements: [
+        { id: 'UC-nachtlauf', type: 'UC' }, { id: 'UC-abfrage', type: 'UC' },
+        { id: 'FCHAIN-nachtlauf-kette', type: 'FCHAIN' }, { id: 'ACTOR-betreiber', type: 'ACTOR' },
+      ],
+      traces: [{ source: 'UC-nachtlauf', target: 'FCHAIN-nachtlauf-kette', type: 'compose' }],
+    };
+    const text = RULE_CLAUSE['UC-02'].text(['UC-nachtlauf', 'UC-abfrage'], og as never);
+    expect(text).toContain('+ FLOW-nachtlauf-eingabe|');
+    expect(text).toContain('+ FUNC-nachtlauf-annehmen|');
+    expect(text).toContain('+ FCHAIN-nachtlauf-kette -compose-> FUNC-nachtlauf-annehmen');
+    expect(text).toContain('+ ACTOR-betreiber -io-> FLOW-nachtlauf-eingabe');
+    // Kein FCHAIN im Bestand: wird angelegt und an den UC gehaengt.
+    expect(text).toContain('+ FCHAIN-abfrage|');
+    expect(text).toContain('+ UC-abfrage -compose-> FCHAIN-abfrage');
+    expect(text).not.toMatch(/beispiel/);
   });
 
   it("'driver' verlangt je Dimension EINE Loesung, keine Alternativen im selben Batch (ITEM-2026-610)", () => {
