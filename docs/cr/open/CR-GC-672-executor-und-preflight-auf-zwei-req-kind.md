@@ -28,3 +28,15 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Nachtrag aus ITEM-2026-572 (2026-09-27, Schnitt CR-GC-694)
+
+Mit in diesen CR, weil dieselben Dateien:
+- **kinds in der Inventarzeile** fuer REQ (`executor-inventory.ts`): 54 der 107 kinds-Blocks in gcrun-180
+  betrafen REQs, die schon im Graphen standen — das Inventar zeigte `uid · TYPE · name` ohne kinds.
+- **fixHint Partner zuerst** (`preflight.ts` kindsBefund): nicht die kinds auf `allowed[0]` kippen,
+  sondern den legalen Erfueller mit konkreter uid nennen (functional → FUNC der Kette des UC).
+- **Beispiel-Leck:** das Vorbild `REQ-login-passwort` (Executor-SYSTEM, UC-01-Klausel generate.ts:213)
+  wurde bei Saettigung inhaltlich uebernommen (21 Knoten bis UC-login in gcrun-180, Auftrag sagt „ohne
+  Anmeldung"). Vorbild aus auftragsfremder Domaene oder erkennbare Platzhalter; atomar (eine Aussage).
+Grenze 10 Dateien: bei Ueberschreitung Folge-CR, nicht ueberziehen.

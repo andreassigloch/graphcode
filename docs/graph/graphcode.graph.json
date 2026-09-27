@@ -2437,6 +2437,30 @@
       "description": "docs/cr/open/CR-GC-690-hausregel-im-headless-lauf-keine-rueckfr.md"
     },
     {
+      "id": "CR-GC-691",
+      "type": "CR",
+      "name": "Abgeschnittene Antwort im Ein-Kandidaten-Pfad verwerfen, executor.ts erkennt 'length' nicht (Rest CR-GC-688)",
+      "description": "docs/cr/open/CR-GC-691-abgeschnittene-antwort-im-ein-kandidaten.md"
+    },
+    {
+      "id": "CR-GC-692",
+      "type": "CR",
+      "name": "Executor meldet gekappten Werkzeugaufruf als INPUT-SCHEMA statt als Budget-Ueberlauf — Modell wiederholt denselben zu grossen Batch (runde7: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt)",
+      "description": "docs/cr/open/CR-GC-692-executor-meldet-gekappten-werkzeugaufruf.md"
+    },
+    {
+      "id": "CR-GC-693",
+      "type": "CR",
+      "name": "Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai|anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS",
+      "description": "docs/cr/open/CR-GC-693-backend-sigllm-in-graphcode-run-spricht-.md"
+    },
+    {
+      "id": "CR-GC-694",
+      "type": "CR",
+      "name": "Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt",
+      "description": "docs/cr/open/CR-GC-694-executor-lokal-kontext-ist-nicht-die-urs.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21775,5 +21799,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 504
+  "graphVersion": 508
 }
