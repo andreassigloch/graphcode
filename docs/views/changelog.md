@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 306 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 307 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 306 CR · 299 done · 1 open.
+Total: 307 CR · 300 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -368,3 +368,4 @@ Total: 306 CR · 299 done · 1 open.
 | `CR-GC-694` | done | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt |
 | `CR-GC-695` | done | computePhaseReadiness: nicht anwendbare Regel nicht als erfuellt zaehlen (ruleApplies, CR-SM-372) + Nachzuege FC-05/R-16 |
 | `CR-GC-696` | open | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren |
+| `CR-GC-697` | done | FCHAIN-skill-report: FUNC-test/-test-ui ohne REQ (R-21) - REQ Red-First mit Test |

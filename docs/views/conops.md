@@ -389,6 +389,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-693` | done | Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai/anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS | `FUNC-call-model` · `FUNC-run-verb` · `REQ-one-driver-local-and-frontier` |
 | `CR-GC-694` | done | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt | `FUNC-run-executor` |
 | `CR-GC-696` | open | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren | `FUNC-run-executor` |
+| `CR-GC-697` | done | FCHAIN-skill-report: FUNC-test/-test-ui ohne REQ (R-21) - REQ Red-First mit Test | `REQ-test-skill-red-first` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

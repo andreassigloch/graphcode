@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 146 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 147 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 49 REQ
@@ -61,7 +61,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1) — 98 REQ
+### funktional (SWE.1) — 99 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -159,6 +159,7 @@
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` | `FUNC-graph-impact` | `MOD-kernel` |
 | `REQ-target-shifts-ranking` | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` · `FUNC-target-profile-load` | `MOD-loop` |
 | `REQ-test-runnable-binding` | `TEST-formate-binding` · `TEST-graph-realize` · `TEST-test-runnable-binding` · `TEST-testreport` | `FUNC-deduce-tests` · `FUNC-test-ingest` | `MOD-projections` |
+| `REQ-test-skill-red-first` | `TEST-skill-red-first` | `FUNC-test` · `FUNC-test-ui` | `MOD-agent-surface` |
 | `REQ-thresholds-from-config` | `TEST-target-profile` · `TEST-thresholds-from-config` | `FUNC-load-config` | `MOD-kernel` |
 | `REQ-trajectory-emit` | `TEST-create-harness-smoke` · `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` | `MOD-surface` |
@@ -200,7 +201,7 @@
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 
-### Komponente (SWE.2/3) — 108 REQ
+### Komponente (SWE.2/3) — 109 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -306,6 +307,7 @@
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` | `FUNC-graph-impact` | `MOD-kernel` |
 | `REQ-target-shifts-ranking` | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` · `FUNC-target-profile-load` | `MOD-loop` |
 | `REQ-test-runnable-binding` | `TEST-formate-binding` · `TEST-graph-realize` · `TEST-test-runnable-binding` · `TEST-testreport` | `FUNC-deduce-tests` · `FUNC-test-ingest` | `MOD-projections` |
+| `REQ-test-skill-red-first` | `TEST-skill-red-first` | `FUNC-test` · `FUNC-test-ui` | `MOD-agent-surface` |
 | `REQ-testref-materialized` | `TEST-realref-materialize` · `TEST-testref-materialize` | `MOD-projections` | — |
 | `REQ-thresholds-from-config` | `TEST-target-profile` · `TEST-thresholds-from-config` | `FUNC-load-config` | `MOD-kernel` |
 | `REQ-trajectory-emit` | `TEST-create-harness-smoke` · `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |

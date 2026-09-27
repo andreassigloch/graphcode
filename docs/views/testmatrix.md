@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 146 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 147 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -147,6 +147,7 @@
 | `REQ-target-shifts-ranking` | ✓ | ✓ passed | `TEST-executor-bestofn` · `TEST-target-profile` · `TEST-target-shifts-ranking` |
 | `REQ-target-state` | ✓ | ⚠ nie gelaufen | `TEST-target-state` |
 | `REQ-test-runnable-binding` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-graph-realize` · `TEST-test-runnable-binding` · `TEST-testreport` |
+| `REQ-test-skill-red-first` | ✓ | ✓ passed | `TEST-skill-red-first` |
 | `REQ-testref-materialized` | ✓ | ✓ passed | `TEST-realref-materialize` · `TEST-testref-materialize` |
 | `REQ-thresholds-from-config` | ✓ | ✓ passed | `TEST-target-profile` · `TEST-thresholds-from-config` |
 | `REQ-token-efficiency` | ✓ | ⚠ 4/5 passed | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` |
@@ -155,8 +156,8 @@
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
-Coverage: 146/146 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 108/146 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 147/147 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 109/147 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

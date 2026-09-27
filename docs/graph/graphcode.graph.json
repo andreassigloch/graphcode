@@ -2660,6 +2660,14 @@
       "status": "open"
     },
     {
+      "id": "CR-GC-697",
+      "type": "CR",
+      "name": "FCHAIN-skill-report: FUNC-test/-test-ui ohne REQ (R-21) - REQ Red-First mit Test",
+      "description": "docs/cr/done/CR-GC-697-fchain-skill-report-func-test-test-ui-oh.md",
+      "status": "done",
+      "commitRef": "2ee2321"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6792,6 +6800,15 @@
       ]
     },
     {
+      "id": "REQ-test-skill-red-first",
+      "type": "REQ",
+      "name": "Test-Skill lehrt Red-First",
+      "description": "Die Test-Skills lehren Red-First: ein Test zaehlt erst als Beleg, wenn er gegen den kaputten Code aus genau dem benannten Grund rot gesehen wurde. (CR-GC-697)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-testref-materialized",
       "type": "REQ",
       "name": "A bound testRef always resolves to a real file",
@@ -9441,6 +9458,20 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-09-27T06:48:48Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-red-first",
+      "type": "TEST",
+      "name": "Test-Skills lehren Red-First",
+      "description": "Abnahme der Datei tests/skill-red-first.test.ts: se-test und se-test-ui enthalten die Red-First-Regel mit ihren drei Teilen (rot sehen, aus genau diesem Grund, gegen kaputten Code), mit Positivkontrolle. (CR-GC-697)",
+      "testRefs": [
+        {
+          "file": "tests/skill-red-first.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
         }
       ]
     },
@@ -13882,6 +13913,11 @@
     {
       "source": "CR-GC-696",
       "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-697",
+      "target": "REQ-test-skill-red-first",
       "type": "relation"
     },
     {
@@ -19249,6 +19285,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-test",
+      "target": "REQ-test-skill-red-first",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-test-ingest",
       "target": "MOD-projections",
       "type": "allocate"
@@ -19272,6 +19313,11 @@
       "source": "FUNC-test-ui",
       "target": "FLOW-skill-report-test-ui",
       "type": "io"
+    },
+    {
+      "source": "FUNC-test-ui",
+      "target": "REQ-test-skill-red-first",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-tool-context",
@@ -21418,6 +21464,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-skill-red-first",
+      "target": "REQ-test-skill-red-first",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skill-reports-measured-values",
       "target": "REQ-skill-reads-only",
       "type": "verify"
@@ -21880,6 +21931,11 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "REQ-test-skill-red-first",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "REQ-thresholds-from-config",
       "type": "compose"
     },
@@ -22249,5 +22305,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 516
+  "graphVersion": 518
 }

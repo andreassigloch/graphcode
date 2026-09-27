@@ -733,6 +733,7 @@
 | `CR-GC-693` | relation | `REQ-one-driver-local-and-frontier` |
 | `CR-GC-694` | relation | `FUNC-run-executor` |
 | `CR-GC-696` | relation | `FUNC-run-executor` |
+| `CR-GC-697` | relation | `REQ-test-skill-red-first` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1762,11 +1763,13 @@
 | `FUNC-target-profile-load` | satisfy | `REQ-target-shifts-ranking` |
 | `FUNC-test` | allocate | `MOD-agent-surface` |
 | `FUNC-test` | io | `FLOW-skill-report-test` |
+| `FUNC-test` | satisfy | `REQ-test-skill-red-first` |
 | `FUNC-test-ingest` | allocate | `MOD-projections` |
 | `FUNC-test-ingest` | io | `FLOW-mutate-cmd-test-ingest` |
 | `FUNC-test-ingest` | satisfy | `REQ-test-runnable-binding` |
 | `FUNC-test-ui` | allocate | `MOD-agent-surface` |
 | `FUNC-test-ui` | io | `FLOW-skill-report-test-ui` |
+| `FUNC-test-ui` | satisfy | `REQ-test-skill-red-first` |
 | `FUNC-tool-context` | allocate | `MOD-surface` |
 | `FUNC-tool-context` | io | `FLOW-tool-context` |
 | `FUNC-tool-context` | satisfy | `REQ-mcp-tool-registry` |
@@ -2157,6 +2160,7 @@
 | `TEST-single-write-door` | verify | `REQ-single-write-door` |
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
 | `TEST-skill-kinds-werte` | verify | `REQ-published-counts-match-code` |
+| `TEST-skill-red-first` | verify | `REQ-test-skill-red-first` |
 | `TEST-skill-reports-measured-values` | verify | `REQ-skill-reads-only` |
 | `TEST-skill-rule-ids` | verify | `REQ-published-counts-match-code` |
 | `TEST-skills-mcp` | verify | `REQ-doc-export` |
@@ -2244,6 +2248,7 @@
 | `UC-deterministic-steering` | compose | `REQ-steering-post` |
 | `UC-deterministic-steering` | compose | `REQ-steering-pre` |
 | `UC-deterministic-steering` | compose | `REQ-target-shifts-ranking` |
+| `UC-deterministic-steering` | compose | `REQ-test-skill-red-first` |
 | `UC-deterministic-steering` | compose | `REQ-thresholds-from-config` |
 | `UC-efficient-testing` | compose | `FCHAIN-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-graph-tests-operational` |
