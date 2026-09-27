@@ -1,0 +1,2410 @@
+{
+ "cr": "CR-GC-669",
+ "erzeugt": "2026-09-27",
+ "quelle": "Probelauf auf Kopien, heuristische Vorschlaege (nicht entschieden)",
+ "graphen": {
+  "bok": {
+   "counts": {
+    "req": 31,
+    "prePost": 15,
+    "risk": 0,
+    "mitigation": 0,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 15,
+    "noKinds": 0,
+    "satisfyToPrePost": 19,
+    "satisfyToRole": 0,
+    "fchainToFunctional": 3
+   },
+   "decisions": [
+    {
+     "uid": "REQ-befunde-persistent",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-disposition"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-delta-als-item",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-learn-distill"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-delta-evidenz",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-learn-distill"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-e2e-idee-mvp",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-idee-zu-mvp"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-idee-zu-mvp"
+     ],
+     "addSatisfy": [
+      "FUNC-plan-schnitt"
+     ],
+     "decidedBy": "heuristic",
+     "reason": "functional an FCHAIN-idee-zu-mvp — an FUNC-plan-schnitt haengen (Ueberlappung 1)",
+     "candidates": [
+      "FUNC-plan-schnitt:1",
+      "FUNC-dispatch-do:0",
+      "FUNC-disposition:0"
+     ]
+    },
+    {
+     "uid": "REQ-e2e-learn",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-learn-loop"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-learn-loop ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": [
+      "FUNC-disposition:0"
+     ]
+    },
+    {
+     "uid": "REQ-e2e-radar",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-radar-lauf"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-e2e-scan",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-familien-scan"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-familien-scan"
+     ],
+     "addSatisfy": [
+      "FUNC-familien-supervision"
+     ],
+     "decidedBy": "heuristic",
+     "reason": "functional an FCHAIN-familien-scan — an FUNC-familien-supervision haengen (Ueberlappung 2)",
+     "candidates": [
+      "FUNC-familien-supervision:2",
+      "FUNC-disposition:0"
+     ]
+    },
+    {
+     "uid": "REQ-feed-normalisiert",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-radar-abfrage"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-item-erledigt-mit-cr",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-plan-schnitt"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-mvp-nachweis",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-abnahme"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-radar-dedup",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-radar-ablage"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-radar-items",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-radar-ablage"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-radar-kadenz",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-familien-supervision",
+      "FUNC-radar-abfrage"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-radar-vorauss",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-radar-abfrage"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-scan-vorauss",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-familien-supervision"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-scoring-roadmap",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-radar-scoring"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-spec-vor-umsetzung",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-feasibility-spike"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uebergaben-vertrag",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-disposition",
+      "FUNC-radar-abfrage",
+      "FUNC-radar-ablage",
+      "FUNC-radar-scoring"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    }
+   ]
+  },
+  "graph-view-edit": {
+   "counts": {
+    "req": 74,
+    "prePost": 0,
+    "risk": 0,
+    "mitigation": 0,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 0,
+    "noKinds": 3,
+    "satisfyToPrePost": 0,
+    "satisfyToRole": 0,
+    "fchainToFunctional": 0
+   },
+   "decisions": [
+    {
+     "uid": "REQ-view-explorer",
+     "case": [
+      "undeclared-with-satisfier"
+     ],
+     "before": [],
+     "satisfiedBy": [
+      "FUNC-project-view"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "ohne kinds, Erfueller FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-view-fchain-color",
+     "case": [
+      "undeclared-with-satisfier"
+     ],
+     "before": [],
+     "satisfiedBy": [
+      "FUNC-render-diagram"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "ohne kinds, Erfueller FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-view-legible-contrast",
+     "case": [
+      "kinds-mismatch"
+     ],
+     "before": [
+      "non-functional"
+     ],
+     "satisfiedBy": [
+      "FUNC-render-diagram"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FUNC-render-diagram"
+     ],
+     "addSatisfy": [
+      "MOD-renderer"
+     ],
+     "decidedBy": "heuristic",
+     "reason": "non-functional an FUNC-render-diagram — an MOD-renderer haengen (Ueberlappung 0)",
+     "candidates": [
+      "MOD-renderer:0"
+     ]
+    },
+    {
+     "uid": "REQ-view-legible-overlap",
+     "case": [
+      "kinds-mismatch"
+     ],
+     "before": [
+      "non-functional"
+     ],
+     "satisfiedBy": [
+      "FUNC-render-diagram"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FUNC-render-diagram"
+     ],
+     "addSatisfy": [
+      "MOD-renderer"
+     ],
+     "decidedBy": "heuristic",
+     "reason": "non-functional an FUNC-render-diagram — an MOD-renderer haengen (Ueberlappung 1)",
+     "candidates": [
+      "MOD-renderer:1"
+     ]
+    },
+    {
+     "uid": "REQ-view-scope-seed",
+     "case": [
+      "undeclared-with-satisfier"
+     ],
+     "before": [],
+     "satisfiedBy": [
+      "FUNC-project-view"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "ohne kinds, Erfueller FUNC -> functional",
+     "candidates": []
+    }
+   ]
+  },
+  "graphcode": {
+   "counts": {
+    "req": 146,
+    "prePost": 32,
+    "risk": 0,
+    "mitigation": 0,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 32,
+    "noKinds": 0,
+    "satisfyToPrePost": 32,
+    "satisfyToRole": 0,
+    "fchainToFunctional": 14
+   },
+   "decisions": [
+    {
+     "uid": "REQ-code-governed-quality",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-apply-gate",
+      "FUNC-test",
+      "FUNC-test-ui"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-apply-gate"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-test, FUNC-test-ui erfuellt schon — satisfy von FCHAIN-apply-gate entfaellt",
+     "candidates": [
+      "FUNC-evaluate-rules:2",
+      "FUNC-emit-trajectory:1",
+      "FUNC-fit-advisory:1",
+      "FUNC-mutate:1",
+      "FUNC-own-kuzu-host:1"
+     ]
+    },
+    {
+     "uid": "REQ-conflict-free-merge",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-merge-branches",
+      "FUNC-merge-nodes"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-merge-branches"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-merge-nodes erfuellt schon — satisfy von FCHAIN-merge-branches entfaellt",
+     "candidates": [
+      "FUNC-merge-nodes:4"
+     ]
+    },
+    {
+     "uid": "REQ-doc-export",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-doc-export",
+      "FUNC-export-markdown",
+      "FUNC-render-views",
+      "FUNC-view-changelog",
+      "FUNC-view-conops",
+      "FUNC-view-fmea",
+      "FUNC-view-icd",
+      "FUNC-view-intplan",
+      "FUNC-view-rtm"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-doc-export"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-export-markdown, FUNC-render-views, FUNC-view-changelog, FUNC-view-conops, FUNC-view-fmea, FUNC-view-icd, FUNC-view-intplan, FUNC-view-rtm erfuellt schon — satisfy von FCHAIN-doc-export entfaellt",
+     "candidates": [
+      "FUNC-export-markdown:8",
+      "FUNC-render-views:5",
+      "FUNC-read-tools:1",
+      "FUNC-list-elements:0",
+      "FUNC-serve-stdio:0"
+     ]
+    },
+    {
+     "uid": "REQ-graph-snapshot-per-commit",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-snapshot-freshness",
+      "FUNC-export-marker",
+      "FUNC-graph-export-snapshot",
+      "FUNC-mutate"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-snapshot-freshness"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-export-marker, FUNC-graph-export-snapshot, FUNC-mutate erfuellt schon — satisfy von FCHAIN-snapshot-freshness entfaellt",
+     "candidates": [
+      "FUNC-graph-export-snapshot:10",
+      "FUNC-export-marker:2",
+      "FUNC-graph-store:2",
+      "FUNC-held-back-traces:2",
+      "FUNC-mutate:2"
+     ]
+    },
+    {
+     "uid": "REQ-graph-state-recall",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-recall",
+      "FUNC-apply-reseed",
+      "FUNC-reseed",
+      "FUNC-rewind"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-recall"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-apply-reseed, FUNC-reseed, FUNC-rewind erfuellt schon — satisfy von FCHAIN-recall entfaellt",
+     "candidates": [
+      "FUNC-reseed:11",
+      "FUNC-rewind:10",
+      "FUNC-apply-reseed:5",
+      "FUNC-graph-store:5",
+      "FUNC-held-back-traces:5"
+     ]
+    },
+    {
+     "uid": "REQ-greenfield-systemtest-dod",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-systemtest-run",
+      "FUNC-systemtest-metrics",
+      "FUNC-systemtest-report",
+      "FUNC-systemtest-run",
+      "FUNC-systemtest-turn-analyse"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-systemtest-run"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-systemtest-metrics, FUNC-systemtest-report, FUNC-systemtest-run, FUNC-systemtest-turn-analyse erfuellt schon — satisfy von FCHAIN-systemtest-run entfaellt",
+     "candidates": [
+      "FUNC-systemtest-metrics:5",
+      "FUNC-systemtest-report:1",
+      "FUNC-systemtest-run:1",
+      "FUNC-systemtest-turn-analyse:1"
+     ]
+    },
+    {
+     "uid": "REQ-impact-based-testing",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-impact-testing"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-impact-testing"
+     ],
+     "addSatisfy": [
+      "FUNC-deduce-tests"
+     ],
+     "decidedBy": "heuristic",
+     "reason": "functional an FCHAIN-impact-testing — an FUNC-deduce-tests haengen (Ueberlappung 3)",
+     "candidates": [
+      "FUNC-deduce-tests:3",
+      "FUNC-graph-impact:2",
+      "FUNC-resolve-tests-from-code:2",
+      "FUNC-plan-code-lane:1",
+      "FUNC-test-ingest:1"
+     ]
+    },
+    {
+     "uid": "REQ-interactive-capture-suggest",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-capture"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-capture"
+     ],
+     "addSatisfy": [
+      "FUNC-decode"
+     ],
+     "decidedBy": "heuristic",
+     "reason": "functional an FCHAIN-capture — an FUNC-decode haengen (Ueberlappung 1)",
+     "candidates": [
+      "FUNC-decode:1",
+      "FUNC-mutate:1"
+     ]
+    },
+    {
+     "uid": "REQ-interface-change-escalation",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-interface-escalation"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-interface-escalation"
+     ],
+     "addSatisfy": [
+      "FUNC-graph-impact"
+     ],
+     "decidedBy": "heuristic",
+     "reason": "functional an FCHAIN-interface-escalation — an FUNC-graph-impact haengen (Ueberlappung 2)",
+     "candidates": [
+      "FUNC-graph-impact:2",
+      "FUNC-read-tools:2",
+      "FUNC-mutate:1"
+     ]
+    },
+    {
+     "uid": "REQ-model-exchange-post",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-model-import"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-model-exchange-pre",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-import-code-verb"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-no-extraction",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-model-import",
+      "FUNC-import-code",
+      "FUNC-import-code-verb",
+      "FUNC-import-doc"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-model-import"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-import-code, FUNC-import-code-verb, FUNC-import-doc erfuellt schon — satisfy von FCHAIN-model-import entfaellt",
+     "candidates": [
+      "FUNC-import-code-verb:2",
+      "FUNC-import-code:1",
+      "FUNC-import-doc:0",
+      "FUNC-mutate:0"
+     ]
+    },
+    {
+     "uid": "REQ-post-agent-query",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-agent-query"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-apply-gate",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-apply-gate"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-capture",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-capture"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-codec-roundtrip",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-codec-roundtrip"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-emit-trajectory",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-emit-trajectory"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-emit-update-event",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-emit-update-event"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-export-markdown",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-export-markdown"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-harness-cli",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-harness-cli"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-impact-testing",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-impact-testing"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-import",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-import"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-interface-escalation",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-interface-escalation"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-merge-nodes",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-merge-nodes"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-migrate-schema",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-migrate-schema"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-post-modelfree-gate",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-modelfree-gate"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-agent-query",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-agent-query"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-apply-gate",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-apply-gate"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-capture",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-capture"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-codec-roundtrip",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-codec-roundtrip"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-emit-trajectory",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-emit-trajectory"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-emit-update-event",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-emit-update-event"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-export-markdown",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-export-markdown"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-harness-cli",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-harness-cli"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-impact-testing",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-impact-testing"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-import",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-import"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-interface-escalation",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-interface-escalation"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-merge-nodes",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-merge-nodes"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-migrate-schema",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-migrate-schema"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-pre-modelfree-gate",
+     "case": [
+      "prepost-on-fchain"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-modelfree-gate"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "pre/postcondition an FCHAIN -> non-functional (Alternative: Eingangs-FLOW / UC-Ziel)",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-session-leaves-nothing-behind",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-repo-lifecycle",
+      "FUNC-session-shutdown"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-repo-lifecycle"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-session-shutdown erfuellt schon — satisfy von FCHAIN-repo-lifecycle entfaellt",
+     "candidates": [
+      "FUNC-session-shutdown:5",
+      "FUNC-claim-store-lock:2",
+      "FUNC-gve-sessions:2",
+      "FUNC-gve-supervise:2",
+      "FUNC-harness-cli:1"
+     ]
+    },
+    {
+     "uid": "REQ-skill-authors-through-gate",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-skill-authoring",
+      "FUNC-author-req",
+      "FUNC-author-uc",
+      "FUNC-close-violations",
+      "FUNC-se-conops",
+      "FUNC-se-fmea",
+      "FUNC-se-generate",
+      "FUNC-se-irr",
+      "FUNC-se-optimize",
+      "FUNC-se-plan",
+      "FUNC-se-top-level",
+      "FUNC-se-trade",
+      "FUNC-target-profile"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-skill-authoring"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-author-req, FUNC-author-uc, FUNC-close-violations, FUNC-se-conops, FUNC-se-fmea, FUNC-se-generate, FUNC-se-irr, FUNC-se-optimize, FUNC-se-plan, FUNC-se-top-level, FUNC-se-trade, FUNC-target-profile erfuellt schon — satisfy von FCHAIN-skill-authoring entfaellt",
+     "candidates": [
+      "FUNC-close-violations:4",
+      "FUNC-se-optimize:4",
+      "FUNC-author-uc:3",
+      "FUNC-se-conops:3",
+      "FUNC-se-generate:3"
+     ]
+    },
+    {
+     "uid": "REQ-skill-reads-only",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-skill-report",
+      "FUNC-se-help",
+      "FUNC-se-retro",
+      "FUNC-se-review",
+      "FUNC-se-status"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-skill-report"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-se-help, FUNC-se-retro, FUNC-se-review, FUNC-se-status erfuellt schon — satisfy von FCHAIN-skill-report entfaellt",
+     "candidates": [
+      "FUNC-evaluate-rules:4",
+      "FUNC-compute-phase-readiness:2",
+      "FUNC-compute-readiness:2",
+      "FUNC-function-criticality:2",
+      "FUNC-score-completeness:2"
+     ]
+    },
+    {
+     "uid": "REQ-steering-from-metrics",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-steering-loop",
+      "FUNC-arch-fitness",
+      "FUNC-compute-phase-readiness",
+      "FUNC-compute-readiness",
+      "FUNC-compute-steering-delta",
+      "FUNC-fit-advisory",
+      "FUNC-function-criticality",
+      "FUNC-generation-step",
+      "FUNC-goal-steerer",
+      "FUNC-module-metrics",
+      "FUNC-rank-candidates",
+      "FUNC-take-steering-snapshot"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [
+      "FCHAIN-steering-loop"
+     ],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "functional, FUNC-arch-fitness, FUNC-compute-phase-readiness, FUNC-compute-readiness, FUNC-compute-steering-delta, FUNC-fit-advisory, FUNC-function-criticality, FUNC-generation-step, FUNC-goal-steerer, FUNC-module-metrics, FUNC-rank-candidates, FUNC-take-steering-snapshot erfuellt schon — satisfy von FCHAIN-steering-loop entfaellt",
+     "candidates": [
+      "FUNC-graph-suggest:7",
+      "FUNC-gate-client:6",
+      "FUNC-fit-advisory:5",
+      "FUNC-rank-candidates:5",
+      "FUNC-take-steering-snapshot:5"
+     ]
+    },
+    {
+     "uid": "REQ-steering-post",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-take-steering-snapshot"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-steering-pre",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "precondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-graph-store"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    }
+   ]
+  },
+  "graphify": {
+   "counts": {
+    "req": 45,
+    "prePost": 0,
+    "risk": 15,
+    "mitigation": 4,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 19,
+    "noKinds": 0,
+    "satisfyToPrePost": 0,
+    "satisfyToRole": 4,
+    "fchainToFunctional": 0
+   },
+   "decisions": [
+    {
+     "uid": "DigestLargeDoc",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "mitigation"
+     ],
+     "satisfiedBy": [
+      "Slicer"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": "mitigation",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "mitigation -> role, Kern-kind non-functional aus den Erfuellern",
+     "candidates": []
+    },
+    {
+     "uid": "ReadingOrder",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "mitigation"
+     ],
+     "satisfiedBy": [
+      "Slicer"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": "mitigation",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "mitigation -> role, Kern-kind non-functional aus den Erfuellern",
+     "candidates": []
+    },
+    {
+     "uid": "ReconstructionConservation",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "mitigation"
+     ],
+     "satisfiedBy": [
+      "Slicer"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": "mitigation",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "mitigation -> role, Kern-kind non-functional aus den Erfuellern",
+     "candidates": []
+    },
+    {
+     "uid": "RiskBadDoc",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskBelowThreshold",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskColumnWeld",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskDanglingRef",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskEmptyOutput",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskGateUnreachable",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskGateViolations",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskInvalidOverride",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskLlmUnreachable",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskNoText",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskOversized",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskPiiLeak",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskSilentDrop",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskTypeAccuracy",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RiskUnparseableArtifact",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "risk"
+     ],
+     "satisfiedBy": [],
+     "kinds": [],
+     "role": "risk",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "risk -> role, ohne Erfueller kein Kern-kind (Rolle traegt die Bedeutung)",
+     "candidates": []
+    },
+    {
+     "uid": "RobustIngest",
+     "case": [
+      "role"
+     ],
+     "before": [
+      "mitigation"
+     ],
+     "satisfiedBy": [
+      "Slicer"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": "mitigation",
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "mitigation -> role, Kern-kind non-functional aus den Erfuellern",
+     "candidates": []
+    }
+   ]
+  },
+  "kadjar": {
+   "counts": {
+    "req": 305,
+    "prePost": 0,
+    "risk": 0,
+    "mitigation": 0,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 0,
+    "noKinds": 305,
+    "satisfyToPrePost": 0,
+    "satisfyToRole": 0,
+    "fchainToFunctional": 0
+   },
+   "decisions": []
+  },
+  "sigloch-modules": {
+   "counts": {
+    "req": 11,
+    "prePost": 2,
+    "risk": 0,
+    "mitigation": 0,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 2,
+    "noKinds": 0,
+    "satisfyToPrePost": 2,
+    "satisfyToRole": 0,
+    "fchainToFunctional": 0
+   },
+   "decisions": [
+    {
+     "uid": "REQ-nie-auto-apply",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-rank-candidates"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-trajectory-feed",
+     "case": [
+      "prepost"
+     ],
+     "before": [
+      "postcondition"
+     ],
+     "satisfiedBy": [
+      "FUNC-project-trajectory"
+     ],
+     "kinds": [
+      "functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "mechanical",
+     "reason": "pre/postcondition an FUNC -> functional",
+     "candidates": []
+    }
+   ]
+  },
+  "testconcept-gaps": {
+   "counts": {
+    "req": 20,
+    "prePost": 0,
+    "risk": 0,
+    "mitigation": 0,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 0,
+    "noKinds": 0,
+    "satisfyToPrePost": 0,
+    "satisfyToRole": 0,
+    "fchainToFunctional": 5
+   },
+   "decisions": [
+    {
+     "uid": "REQ-sys-journey",
+     "case": [
+      "kinds-mismatch"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "SYS-gve"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an SYS-gve ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-edit-graph",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-apply"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-apply ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-edit-text",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-edit-text"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-edit-text ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-live",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-live"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-live ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-view-graph",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-view-graph"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-view-graph ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-view-doc",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-view-doc"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-view-doc ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    }
+   ]
+  },
+  "testconcept": {
+   "counts": {
+    "req": 20,
+    "prePost": 0,
+    "risk": 0,
+    "mitigation": 0,
+    "functionalAndNonFunctional": 0,
+    "roleWithCoreKind": 0,
+    "noCoreKindAfterMove": 0,
+    "noKinds": 0,
+    "satisfyToPrePost": 0,
+    "satisfyToRole": 0,
+    "fchainToFunctional": 5
+   },
+   "decisions": [
+    {
+     "uid": "REQ-sys-journey",
+     "case": [
+      "kinds-mismatch"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "SYS-gve"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an SYS-gve ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-edit-graph",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-apply"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-apply ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-edit-text",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-edit-text"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-edit-text ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-live",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-live"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-live ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-view-graph",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-view-graph"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-view-graph ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    },
+    {
+     "uid": "REQ-uc-view-doc",
+     "case": [
+      "functional-on-fchain"
+     ],
+     "before": [
+      "functional"
+     ],
+     "satisfiedBy": [
+      "FCHAIN-view-doc"
+     ],
+     "kinds": [
+      "non-functional"
+     ],
+     "role": null,
+     "dropSatisfy": [],
+     "addSatisfy": [],
+     "decidedBy": "heuristic",
+     "reason": "an FCHAIN-view-doc ohne passendes FUNC mit realRef — als non-functional (Ende-zu-Ende) einordnen",
+     "candidates": []
+    }
+   ]
+  }
+ }
+}
