@@ -19,6 +19,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { readBranchLog } from '../src/kernel/merge.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -145,7 +146,7 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(rejected[0].violations?.[0]?.ruleId).toBe('STRUCT');
   });
 
-  it('Schema-Fehler am Handler (In-Process-Caller ohne commands/formatE) → auditiertes INPUT-SCHEMA-Verdict (CR-GC-286)', async () => {
+  it('Schema-Fehler am Handler (In-Process-Caller ohne formatE) → auditiertes INPUT-SCHEMA-Verdict (CR-GC-286)', async () => {
     const res = (await tools.graph_mutate.handler({ consumerId: 'exec-test' })) as {
       success: boolean;
       tier: string;
@@ -154,7 +155,8 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(res.success).toBe(false);
     expect(res.tier).toBe('block');
     expect(res.violations[0].ruleId).toBe('INPUT-SCHEMA');
-    expect(res.violations[0].message).toContain('commands or formatE');
+    // ITEM-2026-604: die Meldung nennt den Umstieg, nicht nur das fehlende Feld.
+    expect(res.violations[0].message).toContain('commandsToFormatE');
 
     const rejected = readAudit(tmp).filter((e) => e.result === 'rejected');
     expect(rejected.length).toBe(1);
@@ -243,9 +245,9 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
 
   it('steeringDelta bei Block-Verdict: Gate hat zurückgerollt ⇒ Delta 0, Blocker-Zählung unverändert', async () => {
     const res = (await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         { op: 'add-node', node: { uid: 'REQ-solo', type: 'REQ', name: 'solo', description: 'Ohne TEST.', attributes: {} } },
-      ],
+      ], harness),
       dryRun: true,
     })) as {
       success: boolean;
@@ -262,9 +264,9 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     await tools.graph_mutate.handler({ formatE: FE_BATCH, dryRun: true, consumerId: 'fe-preview' });
     // Abgelehnter Kandidat (illegales Paar) — auch der ist Evidenz.
     await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         { op: 'add-node', node: { uid: 'REQ-solo', type: 'REQ', name: 'solo', description: '', attributes: {} } },
-      ],
+      ], harness),
       dryRun: true,
       consumerId: 'fe-preview',
     });
@@ -284,11 +286,10 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(readBranchLog(logPath, 0).length).toBe(0);
   });
 
-  it('commands und formatE gleichzeitig (oder keins) → Schema-Fehler am Transport', () => {
+  it('formatE ist der einzige Eingabeweg — commands allein ist ein Schema-Fehler (ITEM-2026-604)', () => {
     const schema = tools.graph_mutate.inputSchema;
-    expect(schema.safeParse({ formatE: FE_BATCH, commands: [{ op: 'noop' }] }).success).toBe(false);
     expect(schema.safeParse({ consumerId: 'x' }).success).toBe(false);
+    expect(schema.safeParse({ commands: [{ op: 'noop' }] }).success).toBe(false);
     expect(schema.safeParse({ formatE: FE_BATCH }).success).toBe(true);
-    expect(schema.safeParse({ commands: [{ op: 'noop' }] }).success).toBe(true);
   });
 });

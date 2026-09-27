@@ -18,7 +18,7 @@ import { byRank, type ChannelBlock } from './channel-rank.js';
 import { buildInventoryBlock, type InventarModus } from './executor-inventory.js';
 import { decision } from './decisions.js';
 import { batchFor } from './suggest.js';
-import { commandsToFormatE } from './format-e-commands.js';
+import { commandsToFormatE } from '@sigloch/graph-api-core';
 import type { SuggestedEdit } from '@sigloch/se-engine';
 
 // ---------------------------------------------------------------------------

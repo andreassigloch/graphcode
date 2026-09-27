@@ -36,6 +36,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { buildMcpServer } from '../src/surface/mcp-server.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return { repoRoot, scope: { workspaceId: 'test-ws', systemId: 'graphcode' }, consumerType: 'agent', preCommitTimeout: 5000 };
@@ -142,10 +143,10 @@ describe('TEST-agent-agnostic: identical surface + gate for any MCP client (CR-G
 
   it('(b1) a valid mutation passes the gate identically for either agent (REQ-agent-agnostic)', async () => {
     const viaClaude = payload<GateResult>(
-      await claudeCode.callTool({ name: 'graph_mutate', arguments: { commands: validSet('cc'), consumerId: 'agent-claude-code' } }),
+      await claudeCode.callTool({ name: 'graph_mutate', arguments: { formatE: alsFormatE(validSet('cc')), consumerId: 'agent-claude-code' } }),
     );
     const viaOpenCode = payload<GateResult>(
-      await openCode.callTool({ name: 'graph_mutate', arguments: { commands: validSet('oc'), consumerId: 'agent-opencode' } }),
+      await openCode.callTool({ name: 'graph_mutate', arguments: { formatE: alsFormatE(validSet('oc')), consumerId: 'agent-opencode' } }),
     );
 
     // Same success + same tier — author-independent.
@@ -168,10 +169,10 @@ describe('TEST-agent-agnostic: identical surface + gate for any MCP client (CR-G
 
   it('(b2) an R-01-introducing mutation is BLOCKED identically for either agent (REQ-agent-agnostic)', async () => {
     const viaClaude = payload<GateResult>(
-      await claudeCode.callTool({ name: 'graph_mutate', arguments: { commands: orphanReq('cc'), consumerId: 'agent-claude-code' } }),
+      await claudeCode.callTool({ name: 'graph_mutate', arguments: { formatE: alsFormatE(orphanReq('cc')), consumerId: 'agent-claude-code' } }),
     );
     const viaOpenCode = payload<GateResult>(
-      await openCode.callTool({ name: 'graph_mutate', arguments: { commands: orphanReq('oc'), consumerId: 'agent-opencode' } }),
+      await openCode.callTool({ name: 'graph_mutate', arguments: { formatE: alsFormatE(orphanReq('oc')), consumerId: 'agent-opencode' } }),
     );
 
     // Identical BLOCK: same success(false), same tier(block), same 0 mutations, same R-01.

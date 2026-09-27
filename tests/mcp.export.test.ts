@@ -18,6 +18,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -99,7 +100,7 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
     const tools = bindToolsToHarness(harness);
     // Through the tool layer (not harness.mutate() directly) so ctx's audit-log-backed
     // counter actually advances — graph_export must read the SAME live counter.
-    const mutateRes = await tools.graph_mutate.handler({ commands: SPEC });
+    const mutateRes = await tools.graph_mutate.handler({ formatE: alsFormatE(SPEC, harness)});
     expect(mutateRes.success).toBe(true);
     expect(mutateRes.graphVersion).toBeGreaterThan(0);
 
@@ -111,7 +112,7 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
     // A second export after a further mutate carries the ADVANCED version — proves
     // it's stamped at write time, not a stale value captured at bind time.
     const mutate2 = await tools.graph_mutate.handler({
-      commands: [{ op: 'update-node', node: { uid: 'SYS-auth', type: 'SYS', name: 'Auth service v2', description: 'demo member', attributes: {} } }],
+      formatE: alsFormatE([{ op: 'update-node', node: { uid: 'SYS-auth', type: 'SYS', name: 'Auth service v2', description: 'demo member', attributes: {} } }], harness),
     });
     expect(mutate2.graphVersion).toBeGreaterThan(mutateRes.graphVersion);
     const res2 = await tools.graph_export.handler({});

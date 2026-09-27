@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { DEFAULT_METRIC_POLICY, taskOf } from '@sigloch/contracts/se';
 import { generationStep, TASK_SKILL } from '../src/loop/generate.js';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
+import { alsFormatE } from './helpers/format-e.js';
 
 type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown>; [k: string]: unknown }[]; traces: { source: string; target: string; type: string; label?: string }[] };
 const golden: Flat = JSON.parse(readFileSync(fileURLToPath(new URL('../rig/sigllm-spezifikation/golden/sigllm-v98.graph.json', import.meta.url)), 'utf8'));
@@ -124,13 +125,13 @@ describe('CR-GC-601: next bleibt im Task der Sitzung', () => {
     await harness.initialize();
     tools = bindToolsToHarness(harness);
     await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         knoten('SYS-s', 'SYS', 'S', 'Ein System fuer Bestellungen.'),
         knoten('UC-a', 'UC', 'Bestellen', 'Kunde bestellt ein Teil und erhaelt eine Bestaetigung.'),
         knoten('ACTOR-k', 'ACTOR', 'Kunde', 'Wer bestellt.'),
         knoten('MS-1', 'MS', 'Fundament', 'Erster Meilenstein.'),
         { op: 'add-edge', edge: { sourceId: 'SYS-s', targetId: 'UC-a', edgeType: 'compose', attributes: {} } },
-      ],
+      ], harness),
       consumerId: 't',
     });
   });
@@ -143,7 +144,7 @@ describe('CR-GC-601: next bleibt im Task der Sitzung', () => {
     const plan = await tools.graph_generate.handler({ task: 'plan' });
     expect(plan.skill).toBe('se-plan');
     const r = (await tools.graph_mutate.handler({
-      commands: [{ op: 'update-node', node: { uid: 'SYS-s', description: 'Fassung 2.' } }],
+      formatE: alsFormatE([{ op: 'update-node', node: { uid: 'SYS-s', description: 'Fassung 2.' } }], harness),
       consumerId: 't',
     })) as { next?: { skill: string | null } };
     expect(r.next!.skill).toBe('se-plan');

@@ -13,6 +13,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness } from '../src/index.js';
 import { scoreReadiness, bindToolsToHarness } from '../src/index.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { LiveUpdateEvent } from '../src/surface/emit.js';
 
 const REAL_GRAPH = join(__dirname, '..', 'docs/graph/graphcode.graph.json');
@@ -51,7 +52,7 @@ describe('smoke: createHarness production path', () => {
     // where the operations log + learning-feed projection are produced — CR-252).
     const tools = bindToolsToHarness(harness);
     const res = await tools.graph_mutate.handler({
-      commands: [{ op: 'update-node', node: { uid: 'MS-2-coding-vv', attributes: { status: 'reviewed' } } }],
+      formatE: alsFormatE([{ op: 'update-node', node: { uid: 'MS-2-coding-vv', attributes: { status: 'reviewed' } } }], harness),
       consumerId: 'smoke',
     });
     expect(res.success).toBe(true);

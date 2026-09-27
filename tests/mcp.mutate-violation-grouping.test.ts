@@ -33,6 +33,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { groupViolationsByRule, ELEMENT_PLACEHOLDER } from '../src/kernel/evaluation.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, RuleViolation } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -163,9 +164,9 @@ describe('TEST-mutate-violation-grouping: am Gate (CR-GC-570)', () => {
 
   it('AK2: ein geblockter Batch verliert keinen blockierenden Befund', async () => {
     const full = await tools.graph_mutate.handler({
-      commands: BLOCKED_BATCH, consumerId: 't', violations: 'full', dryRun: true,
+      formatE: alsFormatE(BLOCKED_BATCH, harness), consumerId: 't', violations: 'full', dryRun: true,
     });
-    const summary = await tools.graph_mutate.handler({ commands: BLOCKED_BATCH, consumerId: 't', dryRun: true });
+    const summary = await tools.graph_mutate.handler({ formatE: alsFormatE(BLOCKED_BATCH, harness), consumerId: 't', dryRun: true });
     expect(full.tier).toBe('block');
     expect(summary.tier).toBe('block');
 
@@ -179,9 +180,9 @@ describe('TEST-mutate-violation-grouping: am Gate (CR-GC-570)', () => {
 
   it('AK2: auch Meldung und fixHint kommen unveraendert zurueck', async () => {
     const full = await tools.graph_mutate.handler({
-      commands: BLOCKED_BATCH, consumerId: 't', violations: 'full', dryRun: true,
+      formatE: alsFormatE(BLOCKED_BATCH, harness), consumerId: 't', violations: 'full', dryRun: true,
     });
-    const summary = await tools.graph_mutate.handler({ commands: BLOCKED_BATCH, consumerId: 't', dryRun: true });
+    const summary = await tools.graph_mutate.handler({ formatE: alsFormatE(BLOCKED_BATCH, harness), consumerId: 't', dryRun: true });
     const key = (x: { ruleId: string; elementId?: string; message: string; fixHint?: string }) =>
       [x.ruleId, x.elementId ?? '', x.message, x.fixHint ?? ''].join(' | ');
     const fullSet = (full.violations as RuleViolation[]).map(key).sort();
@@ -190,9 +191,9 @@ describe('TEST-mutate-violation-grouping: am Gate (CR-GC-570)', () => {
 
   it('die Antwort schrumpft messbar — gleiche Befunde, weniger Bytes', async () => {
     const full = await tools.graph_mutate.handler({
-      commands: MOD_WAVE, consumerId: 't', violations: 'full', dryRun: true,
+      formatE: alsFormatE(MOD_WAVE, harness), consumerId: 't', violations: 'full', dryRun: true,
     });
-    const summary = await tools.graph_mutate.handler({ commands: MOD_WAVE, consumerId: 't', dryRun: true });
+    const summary = await tools.graph_mutate.handler({ formatE: alsFormatE(MOD_WAVE, harness), consumerId: 't', dryRun: true });
     const grouped = summary.violations as Grouped[];
     // Die Welle muss wirklich eine Welle sein, sonst beweist das Verhaeltnis nichts.
     expect(expand(grouped).length).toBeGreaterThanOrEqual(MOD_WAVE.length);

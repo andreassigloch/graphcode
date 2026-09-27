@@ -24,12 +24,12 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { knotenAus, kantenAus } from './helpers/format-e.js';
 import { attributesFor, formatEExampleFor } from '../src/projections/authoring-example.js';
 import { ReqKind, ReqRole, TRACE_PATTERNS, isValidTrace, type ElementType } from '@sigloch/contracts/se';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { alsFormatE, kantenAus, knotenAus } from './helpers/format-e.js';
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return {
@@ -166,14 +166,14 @@ describe('TEST-formate-name: der stille name=uid-Fallback wird laut (CR-GC-321)'
   // REQ-N05 (c) — der commands-Pfad
   it('meldet nichts auf dem commands-Pfad (dort ist name explizite Autorenabsicht)', async () => {
     const res = (await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         {
           op: 'add-node',
           node: { uid: 'REQ-gamma', type: 'REQ', name: 'REQ-gamma', description: 'Das System muss den Pfad trennen.', attributes: { kinds: ['functional'] } },
         },
         { op: 'add-edge', edge: { sourceId: 'TEST-seed', targetId: 'REQ-gamma', edgeType: 'verify' } },
         { op: 'add-edge', edge: { sourceId: 'FUNC-seed', targetId: 'REQ-gamma', edgeType: 'satisfy' } },
-      ],
+      ], harness),
       consumerId: 't',
     })) as MutateOut;
 

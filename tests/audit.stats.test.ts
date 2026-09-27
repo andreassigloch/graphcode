@@ -24,6 +24,7 @@ import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { ToolContext } from '../src/surface/tool-context.js';
 import { aggregateAuditEntries, type AuditStats } from '../src/surface/audit.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
   const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(repoRoot, 'kuzu') });
@@ -192,8 +193,8 @@ describe('TEST-rule-calibration (CR-GC-347): which rule blocks whom, how often',
 
   it('filters by since and consumerId; an empty match is empty, not an error', async () => {
     ctx.setOrigin({ model: 'test-model' });
-    await tools['graph_mutate'].handler({ commands: validSet('a'), consumerId: 'alice' });
-    await tools['graph_mutate'].handler({ commands: lonelyReq('b'), consumerId: 'bob' });
+    await tools['graph_mutate'].handler({ formatE: alsFormatE(validSet('a'), harness), consumerId: 'alice' });
+    await tools['graph_mutate'].handler({ formatE: alsFormatE(lonelyReq('b'), harness), consumerId: 'bob' });
 
     const all = (await tools['audit_stats'].handler({})) as AuditStats;
     expect(all.window.entries).toBe(2);

@@ -534,7 +534,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
             (call.input as Record<string, unknown>).dryRun === true;
           if (isDryRun) {
             stats.dryRunProbes += 1;
-            results.push(await execReadOrGraphTool(registry, workspaceDir, call.name, call.input));
+            results.push(await execReadOrGraphTool(registry, workspaceDir, call.name, await gate.alsText(call.input)));
             continue;
           }
           const outcome = await gate.runMutate(call.input);

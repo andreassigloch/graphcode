@@ -20,6 +20,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 const GOLDEN = join(__dirname, '..', 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
@@ -53,7 +54,7 @@ beforeAll(async () => {
     op: 'update-node',
     node: { uid, attributes: { spezLauf: '689' } },
   }));
-  const res = await tools.graph_mutate.handler({ commands: zug, consumerId: 'test-689' });
+  const res = await tools.graph_mutate.handler({ formatE: alsFormatE(zug, harness), consumerId: 'test-689' });
   if (!res.success) throw new Error(`Fixture schreibt nicht: ${JSON.stringify(res.violations).slice(0, 500)}`);
 }, 180_000);
 

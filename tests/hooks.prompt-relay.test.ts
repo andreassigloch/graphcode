@@ -32,6 +32,7 @@ import {
 } from '../src/surface/tool-context.js';
 import { mergedSettingsContent, shippedHookFiles } from '../src/surface/scaffold-templates.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 
 const HOOK = join(process.cwd(), '.claude/hooks/record-prompt.sh');
 
@@ -77,7 +78,7 @@ describe('TEST-prompt-relay (CR-GC-356): the client relays, the trail records', 
   let ctx: ToolContext;
 
   async function mutate(suffix: string): Promise<void> {
-    await tools['graph_mutate'].handler({ commands: validSet(suffix), consumerId: 'relay-test' });
+    await tools['graph_mutate'].handler({ formatE: alsFormatE(validSet(suffix), harness), consumerId: 'relay-test' });
   }
 
   async function lastEntry(): Promise<AuditEntry> {
@@ -176,7 +177,7 @@ describe('TEST-prompt-relay (CR-GC-356): the client relays, the trail records', 
   it('records ABSENCE when the ancestry is unknown — no key, no guess', async () => {
     const { registry, ctx: blind } = bindToolsWithContext(harness, undefined, { ownerPid: null });
     submitPrompt(repoRoot, 'claude-sess-001', 'unser prompt');
-    await registry['graph_mutate'].handler({ commands: validSet('z'), consumerId: 'relay-test' });
+    await registry['graph_mutate'].handler({ formatE: alsFormatE(validSet('z'), harness), consumerId: 'relay-test' });
 
     const all = (await blind.auditLog.query({})) as AuditEntry[];
     const entry = all[all.length - 1];

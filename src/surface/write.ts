@@ -73,23 +73,20 @@ const baseVersionField = GraphVersionSchema.optional().describe(
 
 const GraphMutateInputSchema = z
   .object({
-    // commands is validated by harness.mutate() via MutateCommandSchema internally.
-    // We accept any array here to avoid cross-Zod-version schema composition issues (D1).
-    commands: z
-      .array(z.unknown())
-      .min(1)
-      .optional()
-      .describe('JSON MutateCommand[] — only needed for update-edge (type change/flip of an existing edge); everything else is formatE.'),
+    // ITEM-2026-604: der EINE Eingabeweg. `commands` ist entfallen — Maschinen-Konsumenten
+    // schreiben ihre Kommandos mit `commandsToFormatE` (@sigloch/graph-api-core) als Text.
     formatE: z
-      .string()
+      .string({
+        error: 'graph_mutate braucht formatE — `commands` entfaellt (ITEM-2026-604); Kommandos schreibt ' +
+          '`commandsToFormatE` aus @sigloch/graph-api-core als Text.',
+      })
       .min(1)
-      .optional()
       .describe(
         'SEKTIONEN ZUERST (CR-SM-369): Knoten-Operationen `+ ~ - !` stehen unter "## Nodes" + ' +
           '"### <TYPE>", Kanten unter "## Edges", Merges unter "## Merges" — eine Knotenzeile ohne ' +
           'Sektion ist ein Parse-Fehler. Der Schreibweg (CR-GC-276/686): ein Format-E-v2-Block (dasselbe ' +
           'Dialekt wie die Read-Slices) wird zu Mutations-Kommandos decodiert und läuft durch DASSELBE ' +
-          'Gate; commands braucht nur noch update-edge. ' +
+          'Gate. ' +
           'OPERATIONEN (CR-GC-627): Format-E ist eine Operationssprache, nicht nur ein Graph-Format — ' +
           'das Präfix entscheidet. `+` legt an oder überschreibt (add-node/add-edge, Upsert), `-` löscht ' +
           '(delete-node/delete-edge), `~` ändert einen BESTEHENDEN Knoten als PATCH (update-node: nur was ' +
@@ -99,8 +96,9 @@ const GraphMutateInputSchema = z
           'die Merge-Zeile unter "## Merges": `M quelle + ziel` lässt das ZIEL die QUELLE aufnehmen ' +
           '(merge-nodes, genau zwei uids). Ein Löschzug nennt einen Knoten, den es gibt. ' +
           'Dieselbe uid in EINEM Block zu löschen und zu schreiben ' +
-          'wird abgelehnt — die Persistenz schreibt Deletes zuletzt. EINZIGE Ausnahme: `update-edge` ' +
-          '(Typwechsel/Flip einer bestehenden Kante) hat kein Präfix und braucht weiterhin commands. ' +
+          'wird abgelehnt — die Persistenz schreibt Deletes zuletzt. `~` an einer KANTE ist ein Patch ' +
+          '(update-edge): `~ A -t-> B [label:x]` ändert Attribute, `[__edgeType:satisfy]` den Typ, ' +
+          '`[__flip:true]` die Richtung — die übrigen Attribute der Kante bleiben. ' +
           'Kanten zwischen BESTEHENDEN Knoten brauchen keine ' +
           '`### <TYPE>`-Sektion (CR-GC-310) — der Typ kommt aus dem Store; ein reiner Kanten-Batch ist ' +
           '"## Edges" + Zeilen der Form "+ A -verify-> B". Eine unbekannte uid bleibt ein Fehler. '
@@ -140,9 +138,6 @@ const GraphMutateInputSchema = z
           'full liefert das ungekürzte Ergebnis mit einem Eintrag je Element. Wer candidate_targets ' +
           'braucht, fragt gezielt rules_get_violations / rules_evaluate — die bleiben auf voller Tiefe.',
       ),
-  })
-  .refine((i) => (i.commands === undefined) !== (i.formatE === undefined), {
-    message: 'graph_mutate: supply exactly one of commands or formatE.',
   });
 
 /**
@@ -325,9 +320,8 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
   > = {
     name: 'graph_mutate',
     description:
-      'The ONE write path: apply a batch through the Apply-Gate. Prefer a `formatE` block over ' +
-      '`commands` — it carries adds, deletes, updates and merges alike (CR-GC-627), at ~2–3× fewer ' +
-      'tokens; only `update-edge` still needs `commands`. `dryRun:true` returns the full verdict ' +
+      'The ONE write path: apply a `formatE` block through the Apply-Gate. It carries adds, ' +
+      'deletes, updates and merges alike (CR-GC-627). `dryRun:true` returns the full verdict ' +
       'without applying. Pass the `graphVersion` of your last read as `baseVersion` — a stale base is ' +
       'rejected with the delta since. The full command signatures come back in the SCHEMA-01 error ' +
       'text, so they need not be carried here.',
@@ -367,17 +361,12 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // Format-E-Decode VOR dem Gate: ein Parse-Fehler ist ein Block-Verdict,
         // kein Transport-Crash — der Autor bekommt die Codec-Meldung als Violation.
         let commands: MutateCommand[];
-        // CR-GC-321: nur der formatE-Pfad kennt den stillen `name = uid`-Fallback;
-        // auf dem commands-Pfad ist `name` explizite Autorenabsicht.
+        // CR-GC-321: der stille `name = uid`-Fallback wird laut (`nameWarning`).
         let nameWarning: string | undefined;
         try {
-          if (input.formatE !== undefined) {
-            const decoded = formatEToCommands(harness.getGraph(), input.formatE);
-            commands = decoded.commands;
-            nameWarning = nameWarningFor(decoded.unnamed);
-          } else {
-            commands = input.commands as MutateCommand[];
-          }
+          const decoded = formatEToCommands(harness.getGraph(), input.formatE);
+          commands = decoded.commands;
+          nameWarning = nameWarningFor(decoded.unnamed);
         } catch (err) {
           const result: MutateResult = {
             success: false,
@@ -391,7 +380,10 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           };
           // CR-GC-286: der Decode-Fehler ist eine Rejection wie jede andere —
           // ohne Audit reißt die F2-Kette (early return war der unauditierte Pfad).
-          await recordAudit(input.consumerId, result, []);
+          // ITEM-2026-604: im Probelauf ist er eine PROBE (validate), wie jedes andere dryRun-Verdict —
+          // sonst zaehlt eine geblockte Best-of-N-Probe als Schreibversuch.
+          if (input.dryRun) await recordPreview(input.consumerId, result, []);
+          else await recordAudit(input.consumerId, result, []);
           return { ...result, graphVersion: graphVersion() };
         }
         const stale = await occReject(input.consumerId, input.baseVersion, commands);

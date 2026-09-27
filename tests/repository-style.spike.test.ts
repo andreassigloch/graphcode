@@ -47,6 +47,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
+import { alsFormatE } from './helpers/format-e.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
 
 const REPO_GRAPH = fileURLToPath(new URL('../docs/graph/graphcode.graph.json', import.meta.url));
@@ -130,7 +131,7 @@ describe('CR-DRAFT-GC-466 M1 — Graph-State auf einen Produzentenblock (Trocken
           op: 'delete-edge',
           edge: { sourceId: uid, targetId: 'FLOW-graph-state', edgeType: 'io' },
         }));
-        const result = (await rig.tools.graph_mutate.handler({ commands })) as { success: boolean; appliedCommands: number };
+        const result = (await rig.tools.graph_mutate.handler({ formatE: alsFormatE(commands) })) as { success: boolean; appliedCommands: number };
         expect(result.success).toBe(true);
         expect(result.appliedCommands).toBe(wrong.length);
         await rig.harness.loadGraph();

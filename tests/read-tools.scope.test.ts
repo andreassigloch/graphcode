@@ -21,8 +21,8 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { KUERZUNGS_LEGENDE } from '../src/surface/read.js';
-import { kantenAus } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+import { alsFormatE, kantenAus } from './helpers/format-e.js';
 
 const GOLDEN = join(__dirname, '..', 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
 
@@ -86,7 +86,7 @@ describe('CR-GC-613: nach einem Schreibzug schneiden die Werkzeuge', () => {
     const zug: MutateCommand[] = [
       { op: 'update-node', node: { uid: SCHEIBE, attributes: { path: 'src/scheduler' } } },
     ];
-    const res = await tools.graph_mutate.handler({ commands: zug, consumerId: 'test-613' });
+    const res = await tools.graph_mutate.handler({ formatE: alsFormatE(zug, harness), consumerId: 'test-613' });
     expect(res.success, 'das Fixture muss schreiben, sonst prueft der Test nichts').toBe(true);
   }, 60_000);
 
@@ -289,13 +289,13 @@ describe('CR-GC-628: die Kantenantwort traegt Kanten', () => {
     // entweder fallenlassen oder faelschlich den Geschwistern mitgeben.
     const eine = (await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'json' })).edges[0];
     const zug = await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         {
           op: 'update-edge',
           edge: { sourceId: eine.sourceId, targetId: eine.targetId, edgeType: 'compose' },
           set: { attributes: { cardinality: '1..1' } },
         },
-      ],
+      ], harness),
       consumerId: 'test-628',
     });
     expect(zug.success, JSON.stringify(zug.violations)).toBe(true);

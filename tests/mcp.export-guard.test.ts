@@ -22,6 +22,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -128,13 +129,13 @@ describe('TEST-mcp-export-guard: graph_export refuses to clobber the committed S
 
     it('merge→export without force: the audited merge-nodes deletion is self-accounted, no force needed', async () => {
       const tools = bindToolsToHarness(harness);
-      expect((await tools.graph_mutate.handler({ commands: SPEC })).success).toBe(true);
+      expect((await tools.graph_mutate.handler({ formatE: alsFormatE(SPEC, harness)})).success).toBe(true);
       await tools.graph_export.handler({ force: false }); // baseline commit: MOD-reset present
 
       // A second MOD absorbs MOD-reset via an audited, applied merge-nodes batch —
       // MOD-reset (+ its satisfy→REQ-reset edge identity) vanishes from the live graph.
-      expect((await tools.graph_mutate.handler({ commands: [addMod2] })).success).toBe(true);
-      const merged = await tools.graph_mutate.handler({ commands: [mergeMod] });
+      expect((await tools.graph_mutate.handler({ formatE: alsFormatE([addMod2], harness)})).success).toBe(true);
+      const merged = await tools.graph_mutate.handler({ formatE: alsFormatE([mergeMod], harness)});
       expect(merged.success).toBe(true);
       expect(harness.getGraph().nodes.some((n) => n.uid === 'MOD-reset')).toBe(false);
 
@@ -150,7 +151,7 @@ describe('TEST-mcp-export-guard: graph_export refuses to clobber the committed S
 
     it('a foreign drop (no audited own-process deletion) is still refused without force', async () => {
       const tools = bindToolsToHarness(harness);
-      expect((await tools.graph_mutate.handler({ commands: SPEC })).success).toBe(true);
+      expect((await tools.graph_mutate.handler({ formatE: alsFormatE(SPEC, harness)})).success).toBe(true);
       await tools.graph_export.handler({ force: false });
 
       // Same scenario as the "refuses when the write would drop..." test above, but
@@ -174,10 +175,10 @@ describe('TEST-mcp-export-guard: graph_export refuses to clobber the committed S
       // durable audit log survives, but processStartVersion (captured at THIS
       // bindExportTools call) is now past it, so it must not count as self-provenance.
       const priorTools = bindToolsToHarness(harness);
-      expect((await priorTools.graph_mutate.handler({ commands: SPEC })).success).toBe(true);
+      expect((await priorTools.graph_mutate.handler({ formatE: alsFormatE(SPEC, harness)})).success).toBe(true);
       await priorTools.graph_export.handler({ force: false }); // baseline commit
-      expect((await priorTools.graph_mutate.handler({ commands: [addMod2] })).success).toBe(true);
-      expect((await priorTools.graph_mutate.handler({ commands: [mergeMod] })).success).toBe(true);
+      expect((await priorTools.graph_mutate.handler({ formatE: alsFormatE([addMod2], harness)})).success).toBe(true);
+      expect((await priorTools.graph_mutate.handler({ formatE: alsFormatE([mergeMod], harness)})).success).toBe(true);
       // Do NOT re-export here — the committed file still has MOD-reset (stale relative
       // to the live graph), exactly like a process that merged but crashed before export.
 

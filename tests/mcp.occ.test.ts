@@ -18,6 +18,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { MutateResultSchema } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand, MutateResult, RuleViolation } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -69,7 +70,7 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
     expect(read0.graphVersion).toBe(0);
 
     const w1 = (await tools.graph_mutate.handler({
-      commands: validSet('a'),
+      formatE: alsFormatE(validSet('a'), harness),
       consumerId: 'agent-1',
       baseVersion: read0.graphVersion,
     })) as WriteResult;
@@ -92,12 +93,12 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
     // Writer A reads at version 0 …
     const base = 0;
     // … then B and C land two batches (versions 1 + 2).
-    await tools.graph_mutate.handler({ commands: validSet('b'), consumerId: 'agent-b', baseVersion: 0 });
-    await tools.graph_mutate.handler({ commands: validSet('c'), consumerId: 'agent-c', baseVersion: 1 });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(validSet('b'), harness), consumerId: 'agent-b', baseVersion: 0 });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(validSet('c'), harness), consumerId: 'agent-c', baseVersion: 1 });
 
     // A's write on the stale base is REJECTED — nothing applied, nothing persisted.
     const stale = (await tools.graph_mutate.handler({
-      commands: validSet('a'),
+      formatE: alsFormatE(validSet('a'), harness),
       consumerId: 'agent-a',
       baseVersion: base,
     })) as WriteResult;
@@ -125,7 +126,7 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
 
     // Retry loop: re-read → current version → the SAME batch now applies.
     const retry = (await tools.graph_mutate.handler({
-      commands: validSet('a'),
+      formatE: alsFormatE(validSet('a'), harness),
       consumerId: 'agent-a',
       baseVersion: gone.graphVersion,
     })) as WriteResult;
@@ -134,15 +135,15 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
   });
 
   it('without baseVersion: no block, but an explicit OCC warning (soft migration)', async () => {
-    const w = (await tools.graph_mutate.handler({ commands: validSet('w'), consumerId: 'agent-w' })) as WriteResult;
+    const w = (await tools.graph_mutate.handler({ formatE: alsFormatE(validSet('w'), harness), consumerId: 'agent-w' })) as WriteResult;
     expect(w.success).toBe(true);
     expect(w.occWarning).toMatch(/baseVersion/);
   });
 
   it('a gate-REJECTED write does not move the version (applied batches only)', async () => {
-    await tools.graph_mutate.handler({ commands: validSet('x'), consumerId: 'agent-x', baseVersion: 0 });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(validSet('x'), harness), consumerId: 'agent-x', baseVersion: 0 });
     const rejected = (await tools.graph_mutate.handler({
-      commands: [{ op: 'add-node', node: { uid: 'REQ-occ-orphan', type: 'REQ', name: 'o', description: '', attributes: {} } }],
+      formatE: alsFormatE([{ op: 'add-node', node: { uid: 'REQ-occ-orphan', type: 'REQ', name: 'o', description: '', attributes: {} } }], harness),
       consumerId: 'agent-x',
       baseVersion: 1,
     })) as WriteResult; // fresh base, but R-01 blocks it at the gate
@@ -155,15 +156,15 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
 
   it('a Format-E binding (`~ uid @realRef`) honours baseVersion identically (stale → reject + delta, fresh → applies)', async () => {
     await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         ...validSet('r'),
         { op: 'add-node', node: { uid: 'FN-occ', type: 'FUNC', name: 'f', description: '', attributes: {} } },
         { op: 'add-edge', edge: { sourceId: 'FN-occ', targetId: 'REQ-occ-r', edgeType: 'satisfy', attributes: {} } },
-      ],
+      ], harness),
       consumerId: 'agent-r',
       baseVersion: 0,
     });
-    await tools.graph_mutate.handler({ commands: validSet('r2'), consumerId: 'agent-r2', baseVersion: 1 });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(validSet('r2'), harness), consumerId: 'agent-r2', baseVersion: 1 });
 
     const binden = '## Nodes\n### FUNC\n~ FN-occ\n@realRef {"file":"src/f.ts","symbol":"f"}';
     const stale = (await tools.graph_mutate.handler({
@@ -186,7 +187,7 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
   });
 
   it('the version survives a process restart (reconstructed from the durable log)', async () => {
-    await tools.graph_mutate.handler({ commands: validSet('s'), consumerId: 'session-1', baseVersion: 0 });
+    await tools.graph_mutate.handler({ formatE: alsFormatE(validSet('s'), harness), consumerId: 'session-1', baseVersion: 0 });
     await harness.close();
 
     // "Next session": new harness + registry over the SAME store + log.
@@ -198,7 +199,7 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
 
     // OCC still bites across the restart: version-0 base is stale now.
     const stale = (await tools.graph_mutate.handler({
-      commands: validSet('s2'),
+      formatE: alsFormatE(validSet('s2'), harness),
       consumerId: 'session-2',
       baseVersion: 0,
     })) as WriteResult;

@@ -30,6 +30,7 @@
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { commandsToFormatE } from '@sigloch/graph-api-core';
 
 /** Die Altwerte, die entfallen, und wohin sie gehen. */
 export const LEGACY_CONDITION = ['precondition', 'postcondition'];
@@ -302,7 +303,8 @@ export function buildCommands(decisions, graph, { acceptHeuristic = false } = {}
 export async function applyDecisions(registry, harness, decisions, { acceptHeuristic = false, dryRun = false } = {}) {
   const commands = buildCommands(decisions, harness.getGraph(), { acceptHeuristic });
   if (commands.length === 0) return { commands: 0, result: null, exported: null };
-  const result = await registry['graph_mutate'].handler({ commands, consumerId: 'migrate-req-kinds', dryRun });
+  const typ = new Map(harness.getGraph().nodes.map((n) => [n.uid, n.type]));
+  const result = await registry['graph_mutate'].handler({ formatE: commandsToFormatE(commands, (u) => typ.get(u)), consumerId: 'migrate-req-kinds', dryRun });
   if (!result.success || dryRun) return { commands: commands.length, result, exported: null };
   const exported = await registry['graph_export'].handler({});
   return { commands: commands.length, result, exported };

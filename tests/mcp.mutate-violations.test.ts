@@ -30,6 +30,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { alsFormatE } from './helpers/format-e.js';
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return {
@@ -133,7 +134,7 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
   });
 
   it('drops `context` (and with it candidate_targets) by default', async () => {
-    const res = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    const res = await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     expect(res.violations.length).toBeGreaterThan(0);
     for (const v of res.violations as Violation[]) {
       expect(v.context, `${v.ruleId} must not carry context in a summary`).toBeUndefined();
@@ -143,7 +144,7 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
   it('KEEPS fixHint — the driver reads it to repair a batch', async () => {
     // Non-negotiable: `formatGateFeedback` in the executor renders fixHint. Dropping
     // it to save bytes would turn a fixable violation into an opaque one.
-    const res = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    const res = await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     const withHint = (res.violations as Violation[]).filter((v) => v.fixHint !== undefined);
     expect(withHint.length).toBeGreaterThan(0);
   });
@@ -151,7 +152,7 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
   it('keeps ruleId, severity, message and the affected uid', async () => {
     // CR-GC-570: die uid steht jetzt in `elements`, nicht mehr in `elementId` — ein
     // Eintrag traegt die Regel EINMAL und dazu alle Elemente, auf die sie zutrifft.
-    const res = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    const res = await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     const v = (res.violations as Grouped[])[0];
     expect(v.ruleId).toBeTruthy();
     expect(v.severity).toBeTruthy();
@@ -160,7 +161,7 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
   });
 
   it("violations: 'full' returns exactly today's payload, context included", async () => {
-    const res = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't', violations: 'full' });
+    const res = await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't', violations: 'full' });
     const withCtx = (res.violations as Violation[]).filter((v) => v.context !== undefined);
     expect(withCtx.length).toBeGreaterThan(0);
   });
@@ -170,8 +171,8 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
     // wortgleich wiederholt; die Faltung darf keinen Fund verlieren, keinen
     // umsortieren und keine Meldung veraendern. Genau das prueft die Rueckrichtung:
     // ein Aufrufer, der `{el}` einsetzt, haelt wieder die volle Liste in der Hand.
-    const full = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't', violations: 'full', dryRun: true });
-    const summary = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't', dryRun: true });
+    const full = await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't', violations: 'full', dryRun: true });
+    const summary = await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't', dryRun: true });
     const strip = (vs: Violation[]) =>
       vs.map(({ context: _c, ...rest }) => rest as Violation);
     expect(expand(summary.violations as Grouped[])).toEqual(strip(full.violations as Violation[]));
@@ -179,7 +180,7 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
 
   it('dryRun is unchanged: steeringDelta present, nothing persisted', async () => {
     const before = harness.getGraph().nodes.length;
-    const res = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't', dryRun: true });
+    const res = await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't', dryRun: true });
     expect(res.steeringDelta).toBeDefined();
     // `mutations` counts what the gate applied IN MEMORY before rolling back
     // (CR-GC-234) — the persistence claim has to be read off the graph, not off
@@ -209,12 +210,12 @@ describe('TEST-mutate-violations: the payload actually shrinks (CR-GC-309)', () 
 
   it('a candidate_targets-heavy answer is far smaller with the default — measured, not estimated', async () => {
     const full = await tools.graph_mutate.handler({
-      commands: BULKY_BATCH,
+      formatE: alsFormatE(BULKY_BATCH, harness),
       consumerId: 't',
       violations: 'full',
       dryRun: true,
     });
-    const summary = await tools.graph_mutate.handler({ commands: BULKY_BATCH, consumerId: 't', dryRun: true });
+    const summary = await tools.graph_mutate.handler({ formatE: alsFormatE(BULKY_BATCH, harness), consumerId: 't', dryRun: true });
     const fullBytes = JSON.stringify(full).length;
     const summaryBytes = JSON.stringify(summary).length;
     // The fixture must really be at field-test scale, or the ratio below proves
@@ -269,9 +270,9 @@ describe('TEST-mutate-violations: the second dryRun pass is already redundant (C
   it('a blocked batch persists NOTHING in a single direct call — no dry run needed first', async () => {
     const before = harness.getGraph().nodes.length;
     const res = await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         { op: 'add-node', node: { uid: 'REQ-allein', type: 'REQ', name: 'Allein', description: 'Ohne Test.' } },
-      ],
+      ], harness),
       consumerId: 't',
     });
     expect(res.tier).toBe('block');
@@ -282,7 +283,7 @@ describe('TEST-mutate-violations: the second dryRun pass is already redundant (C
   });
 
   it('a clean batch applies in that same single call', async () => {
-    const res = await tools.graph_mutate.handler({ commands: ADD_MOD, consumerId: 't' });
+    const res = await tools.graph_mutate.handler({ formatE: alsFormatE(ADD_MOD, harness), consumerId: 't' });
     expect(res.success).toBe(true);
     expect(res.mutations).toBeGreaterThan(0);
     expect(harness.getGraph().nodes.some((n) => n.uid === 'MOD-neu')).toBe(true);
@@ -293,9 +294,9 @@ describe('TEST-mutate-violations: the second dryRun pass is already redundant (C
     // above collapses and `applyIf` would become necessary. This is the tripwire.
     const before = harness.getGraph().nodes.length;
     const blocked = await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         { op: 'add-node', node: { uid: 'REQ-zwei', type: 'REQ', name: 'Zwei', description: 'Auch ohne Test.' } },
-      ],
+      ], harness),
       consumerId: 't',
     });
     const persisted = harness.getGraph().nodes.length > before;

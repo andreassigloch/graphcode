@@ -18,6 +18,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { bootstrap, TEMPLATE_FORMAT_E } from '../src/surface/bootstrap.js';
 import { formatEToCommands } from '../src/loop/format-e-commands.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -121,11 +122,11 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
     // the gate path is the one in use by mutating one more governed change through
     // the bound registry and seeing it audited.
     await registry['graph_mutate'].handler({
-      commands: [
+      formatE: alsFormatE([
         { op: 'add-node', node: { uid: 'REQ-extra', type: 'REQ', name: 'Extra', description: 'x', attributes: {} } },
         { op: 'add-node', node: { uid: 'TEST-extra', type: 'TEST', name: 'Extra test', description: '', attributes: {} } },
         { op: 'add-edge', edge: { sourceId: 'TEST-extra', targetId: 'REQ-extra', edgeType: 'verify', attributes: {} } },
-      ],
+      ], harness),
       consumerId: 'bootstrap-bot',
     });
     const { entries } = await registry['audit_trail'].handler({ limit: 10 });

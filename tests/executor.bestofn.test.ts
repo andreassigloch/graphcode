@@ -18,6 +18,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
+import { alsEingabe } from './helpers/format-e.js';
 import {
   runExecutor,
   ExecutorConfigSchema,
@@ -416,7 +417,7 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     registry = bindToolsToHarness(harness);
     // Expand-Phase: Seed direkt durchs Gate, damit die Kandidaten-Batches auf
     // existierende uids referenzieren können.
-    const res = (await registry['graph_mutate'].handler(SEED_BATCH)) as { success: boolean };
+    const res = (await registry['graph_mutate'].handler(alsEingabe(SEED_BATCH))) as { success: boolean };
     expect(res.success).toBe(true);
   });
 

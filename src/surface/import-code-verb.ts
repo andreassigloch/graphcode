@@ -28,7 +28,8 @@ import {
   type GateViolation,
   type MutateTransportResult,
 } from '@sigloch/graphify';
-import type { MutateResult } from '@sigloch/contracts/harness';
+import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
+import { commandsToFormatE } from '@sigloch/graph-api-core';
 import { createHarness } from './create-harness.js';
 import { bindToolsToHarness } from './mcp-tools.js';
 import { deriveMemberName } from './mcp-server.js';
@@ -217,8 +218,11 @@ export async function executeImportCode(opts: {
         ...cmds,
       ];
       if (batch.length === 0) return { success: true, violations: [] };
+      // ITEM-2026-604: graph_mutate nimmt nur Format-E. Den Typ der geloeschten Knoten kennt der
+      // Bestand (`prev`), den der angelegten der Batch selbst.
+      const typ = new Map(prev.nodes.map((n) => [n.uid, n.type]));
       const res = (await registry['graph_mutate'].handler({
-        commands: batch,
+        formatE: commandsToFormatE(batch as MutateCommand[], (uid) => typ.get(uid)),
         consumerId: 'import-code',
       })) as MutateResult;
       return {

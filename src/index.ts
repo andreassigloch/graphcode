@@ -78,7 +78,7 @@ export type { HealthPayload } from './surface/health.js';
 // session uses. No second Kuzu owner, no new outward protocol (still local,
 // still no AuthN — same trust boundary as repo access, CR-GC-235's own
 // scoping). This is graph-view-edit's write transport: its own
-// /api/mutate calls callHost(..., 'graph_mutate', {commands, baseVersion,
+// /api/mutate calls callHost(..., 'graph_mutate', {formatE, baseVersion,
 // consumerId}) instead of opening a competing harness. `startHostSocket` is
 // exported alongside it purely for consumer-side integration TESTS — spin up
 // a real temp-disk harness + its own throwaway socket to test callHost

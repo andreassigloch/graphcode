@@ -12,7 +12,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import type { MutateResult } from '@sigloch/contracts/harness';
+import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 import type { FitAdvisory } from '../kernel/measure/fit-advisory.js';
 import type { SteeringDelta } from '../kernel/measure/steering-snapshot.js';
 import type { MCPToolRegistry } from '../kernel/tool-contract.js';
@@ -22,7 +22,7 @@ import {
   type DuplicateHit,
   type IndexedElement,
 } from '../kernel/measure/nd-similarity.js';
-import type { Graph } from '@sigloch/graph-api-core';
+import { commandsToFormatE, type Graph } from '@sigloch/graph-api-core';
 import { preflightBatch, type PreflightKnown } from './preflight.js';
 import { formatEToCommands } from './format-e-commands.js';
 import { takeQuestionsFromInput } from './executor-parse.js';
@@ -101,6 +101,8 @@ export interface GateClient {
   callGate(input: unknown, hints?: string[]): Promise<MutateOutcome>;
   /** Preflight, dann Gate — der Ein-Kandidaten-Pfad. */
   runMutate(input: unknown): Promise<MutateOutcome>;
+  /** JSON-Kommandos des Modells → Format-E, mit Typen aus dem Bestand (ITEM-2026-604). */
+  alsText(input: unknown): Promise<unknown>;
 }
 
 export function bindGateClient(
@@ -154,16 +156,42 @@ export function bindGateClient(
   // Handler-Throws als generisches 'executor-call'. Der Preflight (CR-GC-284)
   // läuft nur auf schema-validem Input — Batch-Hygiene VOR dem Gate, kein
   // zweites Gate-Urteil; bei jedem Preflight-Fehler geht der Batch unverändert durch.
+  /**
+   * ITEM-2026-604: graph_mutate nimmt nur Format-E. Hat das Modell JSON-Kommandos geschrieben (die
+   * Text-Bergung in executor-parse.ts birgt sie, auch aus abgeschnittenem Text), werden sie HIER Text
+   * — an der einen Stelle, die den Bestand kennt; Preflight und die Gate-Probe (dryRun) nutzen sie.
+   * Scheitert das (Typ unbekannt), bleibt die Eingabe, und das Gate meldet INPUT-SCHEMA, auditiert.
+   */
+  const alsText = async (input: unknown): Promise<unknown> => {
+    const kommandos = (input as { commands?: unknown } | null)?.commands;
+    if (!Array.isArray(kommandos)) return input;
+    try {
+      const snap = await loadGraphSnapshot();
+      const typ = new Map(snap.bestand.nodes.map((n) => [n.uid, n.type]));
+      const { commands: _weg, ...rest } = input as Record<string, unknown>;
+      return { ...rest, formatE: commandsToFormatE(kommandos as MutateCommand[], (uid) => typ.get(uid)) };
+    } catch (err) {
+      trace(`    commands → Format-E gescheitert: ${err instanceof Error ? err.message : String(err)}`);
+      return input;
+    }
+  };
+
   const runPreflight = async (roh: unknown): Promise<PreflightResult> => {
     // CR-GC-667: Fragezeilen verlassen den Batch hier, an der einen Stelle, die beide Pfade
     // (Ein-Kandidat und Best-of-N) passieren. Der Codec sieht sie nie.
-    const { input, questions } = takeQuestionsFromInput(roh);
+    const { input: ohneFragen, questions } = takeQuestionsFromInput(roh);
+    let input: unknown = ohneFragen;
     for (const q of recordQuestions(stats, questions)) trace(`    frage: ${q}`);
     const nurFragen =
       questions.length > 0 &&
       !(input as { commands?: unknown }).commands &&
       !String((input as { formatE?: unknown }).formatE ?? '').trim();
     if (nurFragen) return { effective: input, blocked: { success: false, questionOnly: true }, hints: [], duplicates: [] };
+    // Der Preflight prueft die Kommandos des Modells im ORIGINAL — eine Kante auf eine unbekannte
+    // uid bekommt so ihr lokales Feedback mit Kandidaten, statt am Decodieren des Textes zu scheitern.
+    const kommandos = (input as { commands?: unknown }).commands;
+    const vomModell = Array.isArray(kommandos) ? kommandos : null;
+    input = await alsText(input);
     const parsed = registry['graph_mutate'].inputSchema.safeParse(input);
     if (!parsed.success) return { effective: input, blocked: null, hints: [], duplicates: [] };
     let effective: unknown = parsed.data;
@@ -174,9 +202,11 @@ export function bindGateClient(
       // CR-GC-650: der Executor emittiert Format-E. Der Preflight prüft Commands — also erst mit
       // der EINEN Abbildung übersetzen (dieselbe, die graph_mutate fährt). Ein Parse-Fehler ist
       // kein Preflight-Urteil: der Text geht unverändert ans Gate, dessen Meldung auditiert ist.
-      const data = parsed.data as { formatE?: string; commands?: unknown[] };
-      let alsCommands: { commands: unknown[] } = data as { commands: unknown[] };
-      if (typeof data.formatE === 'string') {
+      const data = parsed.data as { formatE: string };
+      let alsCommands: { commands: unknown[] };
+      if (vomModell) {
+        alsCommands = { commands: vomModell };
+      } else {
         try {
           alsCommands = { commands: formatEToCommands(snap.bestand, data.formatE).commands };
         } catch {
@@ -199,15 +229,19 @@ export function bindGateClient(
         for (const line of pf.fixes) trace(`    preflight: ${line}`);
         // Repariert heisst: die reparierten Commands gehen, nicht der Originaltext. Ohne
         // Reparatur bleibt der Text (unten) — er traegt die Namenswarnung des Gates mit.
-        const rest: Record<string, unknown> = { ...(parsed.data as Record<string, unknown>) };
-        delete rest.formatE;
-        effective = { ...rest, commands: (pf.input as { commands: unknown[] }).commands };
+        // ITEM-2026-604: auch der reparierte Batch geht als Format-E ans Gate.
+        const typ = new Map(snap.bestand.nodes.map((n) => [n.uid, n.type]));
+        effective = {
+          ...(parsed.data as Record<string, unknown>),
+          formatE: commandsToFormatE((pf.input as { commands: MutateCommand[] }).commands, (uid) => typ.get(uid)),
+        };
       }
       // CR-GC-287: REQ/UC-Duplikat-HINWEIS (kein Block!) — neue add-nodes gegen
       // den Element-Index; der Batch geht trotzdem ans Gate, das Gate entscheidet.
       // CR-GC-361: EINE Messung, zwei Konsumenten — die Zeilen gehen als Feedback
       // ans Modell, die Treffer als bereinigter Fokus-Delta ins Best-of-N-Ranking.
-      duplicates = duplicateHits(pf.action === 'fixed' ? effective : alsCommands, snap.index);
+      // Die Kommandos, nicht der Text: `effective` ist nach einer Reparatur Format-E (ITEM-2026-604).
+      duplicates = duplicateHits(pf.action === 'fixed' ? pf.input : alsCommands, snap.index);
       hints = renderDuplicateHints(duplicates);
       for (const h of hints) trace(`    preflight hint: ${h}`);
     } catch (err) {
@@ -241,8 +275,7 @@ export function bindGateClient(
     const outcome = await callGate(pre.effective, pre.hints);
     // CR-GC-286-Beobachtbarkeit: bei INPUT-SCHEMA die Top-Level-Form loggen —
     // das Audit speichert bei Schema-Fehlern den Roh-Input nicht (commands:[]),
-    // ohne diese Zeile ist "supply exactly one of commands or formatE" nicht
-    // diagnostizierbar (beide gesetzt? keins?).
+    // ohne diese Zeile ist ein fehlendes oder falsch benanntes `formatE` nicht diagnostizierbar.
     if (!outcome.success && (outcome.violations ?? []).some((v) => v.ruleId === 'INPUT-SCHEMA')) {
       const keys =
         typeof input === 'object' && input !== null ? Object.keys(input).join(',') : typeof input;
@@ -251,5 +284,5 @@ export function bindGateClient(
     return outcome;
   };
 
-  return { runPreflight, callGate, runMutate };
+  return { runPreflight, callGate, runMutate, alsText };
 }

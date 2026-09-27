@@ -18,6 +18,7 @@ import {
   type ModelResponse,
   type CallModel,
 } from '../src/loop/executor.js';
+import { alsFormatE, alsEingabe } from './helpers/format-e.js';
 import { preflightBatch, fuzzyCandidates, type PreflightKnown } from '../src/loop/preflight.js';
 
 const CONFIG = ExecutorConfigSchema.parse({
@@ -349,7 +350,7 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
     });
     await harness.initialize();
     registry = bindToolsToHarness(harness);
-    const seeded = (await registry['graph_mutate'].handler(SEED_BATCH)) as { success: boolean };
+    const seeded = (await registry['graph_mutate'].handler(alsEingabe(SEED_BATCH))) as { success: boolean };
     expect(seeded.success).toBe(true);
   });
 
@@ -539,7 +540,7 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
   it('ähnlicher REQ/UC-add-node → Hinweis-Trace, Batch geht TROTZDEM ans Gate und wird applied (CR-GC-287)', async () => {
     // Bestand: Duplikat-Vorlagen in den Graphen legen (direkter Gate-Call, kein Preflight).
     const seeded = (await registry['graph_mutate'].handler({
-      commands: [
+      formatE: alsFormatE([
         addNode(
           'REQ-batch-atomicity-all-or-nothing',
           'REQ',
@@ -551,7 +552,7 @@ describe('executor preflight (CR-GC-284, real harness)', () => {
         addEdge('TEST-batch-atomicity', 'REQ-batch-atomicity-all-or-nothing', 'verify'),
         addNode('UC-export-graph', 'UC', 'User exports the current graph state', 'A user requests and downloads the governed graph in a specified format.'),
         addEdge('SYS-app', 'UC-export-graph', 'compose'),
-      ],
+      ], harness),
     })) as { success: boolean };
     expect(seeded.success).toBe(true);
 

@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { OntologyGraph, RuleViolation } from '@sigloch/contracts/se';
 import { focusViolations, blockingOf, abnehmbar } from '../src/kernel/measure/focus-set.js';
+import { alsFormatE } from './helpers/format-e.js';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
 
 const v = (rule_id: string, severity: 'error' | 'warning' | 'info', element_id = 'REQ-r'): RuleViolation =>
@@ -86,12 +87,12 @@ describe('CR-GC-598: ein ausdrueckliches defer gilt fuer die Sitzung', () => {
     await harness.initialize();
     tools = bindToolsToHarness(harness);
     await tools.graph_mutate.handler({
-      commands: [
+      formatE: alsFormatE([
         knoten('SYS-s', 'SYS', 'S', 'Ein System fuer Bestellungen.'),
         knoten('UC-a', 'UC', 'Bestellen', 'Kunde bestellt ein Teil und erhaelt eine Bestaetigung.'),
         knoten('ACTOR-k', 'ACTOR', 'Kunde', 'Wer bestellt.'),
         { op: 'add-edge', edge: { sourceId: 'SYS-s', targetId: 'UC-a', edgeType: 'compose', attributes: {} } },
-      ],
+      ], harness),
       consumerId: 't',
     });
   });
@@ -106,7 +107,7 @@ describe('CR-GC-598: ein ausdrueckliches defer gilt fuer die Sitzung', () => {
     const mitDefer = await tools.graph_generate.handler({ defer: [k] });
     expect(mitDefer.focusKey).not.toBe(k);
     const r = (await tools.graph_mutate.handler({
-      commands: [{ op: 'update-node', node: { uid: 'SYS-s', description: 'Fassung 2.' } }],
+      formatE: alsFormatE([{ op: 'update-node', node: { uid: 'SYS-s', description: 'Fassung 2.' } }], harness),
       consumerId: 't',
     })) as { next?: { focusKey: string | null } };
     expect(r.next!.focusKey).not.toBe(k);

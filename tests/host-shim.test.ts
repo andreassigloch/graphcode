@@ -18,6 +18,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { startHostSocket, buildProxyRegistry, HostGoneError, HOST_SOCK_BASENAME, type HostSocket } from '../src/surface/host-shim.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -75,7 +76,7 @@ describe('TEST-host-shim (CR-GC-235): host election + thin socket proxy', () => 
 
     // Client 2 (proxy) mutates → the write goes through the host's ONE gate…
     const viaProxy = (await proxy.graph_mutate.handler({
-      commands: validSet('p'),
+      formatE: alsFormatE(validSet('p')),
       consumerId: 'client-2',
       baseVersion: 0,
     })) as WriteResult;
@@ -91,7 +92,7 @@ describe('TEST-host-shim (CR-GC-235): host election + thin socket proxy', () => 
     expect(hostRead.graphVersion).toBe(1);
 
     // Host session writes → the proxy's read sees it (incl. the OCC version).
-    await hostTools.graph_mutate.handler({ commands: validSet('h'), consumerId: 'client-1', baseVersion: 1 });
+    await hostTools.graph_mutate.handler({ formatE: alsFormatE(validSet('h')), consumerId: 'client-1', baseVersion: 1 });
     const proxyRead = (await proxy.graph_get_node.handler({ uid: 'REQ-shim-h' })) as {
       node: { uid: string } | null;
       graphVersion: number;
@@ -106,8 +107,8 @@ describe('TEST-host-shim (CR-GC-235): host election + thin socket proxy', () => 
       { op: 'add-node', node: { uid: 'REQ-shim-orphan', type: 'REQ', name: 'o', description: '', attributes: {} } },
     ];
 
-    const direct = (await hostTools.graph_mutate.handler({ commands: orphan, consumerId: 'direct' })) as WriteResult;
-    const shimmed = (await proxy.graph_mutate.handler({ commands: orphan, consumerId: 'shimmed' })) as WriteResult;
+    const direct = (await hostTools.graph_mutate.handler({ formatE: alsFormatE(orphan), consumerId: 'direct' })) as WriteResult;
+    const shimmed = (await proxy.graph_mutate.handler({ formatE: alsFormatE(orphan), consumerId: 'shimmed' })) as WriteResult;
 
     // Identical BLOCK: success/tier/rule — and the OCC rejection works over the shim too.
     expect(direct.success).toBe(false);
@@ -115,9 +116,9 @@ describe('TEST-host-shim (CR-GC-235): host election + thin socket proxy', () => 
     expect(shimmed.tier).toBe(direct.tier);
     expect(shimmed.violations.map((v) => v.ruleId).sort()).toEqual(direct.violations.map((v) => v.ruleId).sort());
 
-    await proxy.graph_mutate.handler({ commands: validSet('x'), consumerId: 'shimmed', baseVersion: 0 });
+    await proxy.graph_mutate.handler({ formatE: alsFormatE(validSet('x')), consumerId: 'shimmed', baseVersion: 0 });
     const stale = (await proxy.graph_mutate.handler({
-      commands: validSet('y'),
+      formatE: alsFormatE(validSet('y')),
       consumerId: 'shimmed',
       baseVersion: 0,
     })) as WriteResult & { staleDelta?: { entries: unknown[] } };
@@ -139,7 +140,7 @@ describe('TEST-host-shim (CR-GC-235): host election + thin socket proxy', () => 
     });
 
     // Warm write over the live host, then KILL the host (socket + lock gone).
-    await proxy.graph_mutate.handler({ commands: validSet('pre'), consumerId: 'client-2', baseVersion: 0 });
+    await proxy.graph_mutate.handler({ formatE: alsFormatE(validSet('pre')), consumerId: 'client-2', baseVersion: 0 });
     await hostSock!.close();
     await host!.close();
     hostSock = null;
@@ -147,7 +148,7 @@ describe('TEST-host-shim (CR-GC-235): host election + thin socket proxy', () => 
 
     // Next call: reconnect fails → ONE re-election → served locally as the new host.
     const after = (await proxy.graph_mutate.handler({
-      commands: validSet('post'),
+      formatE: alsFormatE(validSet('post')),
       consumerId: 'client-2',
       baseVersion: 1,
     })) as WriteResult;

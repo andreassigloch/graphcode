@@ -14,6 +14,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const SYSTEM_ID = 'legacy';
@@ -82,7 +83,7 @@ describe('TEST-import-rejected-traces: Seed mit musterfremder Kante (CR-GC-530)'
 
     // Durch das Werkzeug, nicht harness.mutate(): nur graph_mutate schreibt das Audit, aus dem die
     // Export-Sperre die eigene Löschung erkennt (wie in mcp.export-guard.test.ts, CR-GC-296).
-    const repair = await tools.graph_mutate.handler({ commands: [{ op: 'delete-edge', edge: LEGACY_EDGE }] });
+    const repair = await tools.graph_mutate.handler({ formatE: alsFormatE([{ op: 'delete-edge', edge: LEGACY_EDGE }], harness)});
     expect(repair.success).toBe(true);
 
     await tools.graph_export.handler({ force: false });
@@ -110,7 +111,7 @@ describe('TEST-import-rejected-traces: Seed mit musterfremder Kante (CR-GC-530)'
 
     await expect(tools.graph_export.handler({ force: false })).rejects.toThrow(/ACTOR-op -io-> UC-use.*delete-edge/s);
 
-    await tools.graph_mutate.handler({ commands: [{ op: 'delete-edge', edge: LEGACY_EDGE }] });
+    await tools.graph_mutate.handler({ formatE: alsFormatE([{ op: 'delete-edge', edge: LEGACY_EDGE }], harness)});
     await tools.graph_export.handler({ force: false });
     expect((await tools.graph_readiness.handler({})).heldBackTraces).toEqual([]);
   });

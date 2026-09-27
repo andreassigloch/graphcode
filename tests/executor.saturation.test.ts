@@ -16,6 +16,7 @@ import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
 import { runExecutor, ExecutorConfigSchema, type ModelResponse, type CallModel } from '../src/loop/executor.js';
 import { parseExecutorEnv } from '../src/surface/run-verb.js';
+import { alsEingabe } from './helpers/format-e.js';
 
 const usage = { in: 10, out: 10, reasoning: 0 };
 
@@ -78,7 +79,7 @@ describe('CR-GC-694: Saettigungsstopp aus dem Ertrag', () => {
     });
     await harness.initialize();
     registry = bindToolsToHarness(harness);
-    expect(((await registry['graph_mutate'].handler(SEED)) as { success: boolean }).success).toBe(true);
+    expect(((await registry['graph_mutate'].handler(alsEingabe(SEED))) as { success: boolean }).success).toBe(true);
   });
 
   afterEach(async () => {

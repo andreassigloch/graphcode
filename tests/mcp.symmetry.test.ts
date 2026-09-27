@@ -19,6 +19,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -67,7 +68,7 @@ describe('TEST-mcp-symmetry: MCP graph_mutate == harness.mutate()', () => {
 
     // Path (a): MCP handler
     const registry = bindToolsToHarness(harnessA);
-    const mcpResult = await registry['graph_mutate'].handler({ commands, consumerId: 'test' });
+    const mcpResult = await registry['graph_mutate'].handler({ formatE: alsFormatE(commands), consumerId: 'test' });
 
     // Path (b): direct harness call
     const directResult = await harnessB.mutate(commands);
@@ -89,7 +90,7 @@ describe('TEST-mcp-symmetry: MCP graph_mutate == harness.mutate()', () => {
     ];
 
     const registry = bindToolsToHarness(harnessA);
-    const mcpResult = await registry['graph_mutate'].handler({ commands, consumerId: 'test' });
+    const mcpResult = await registry['graph_mutate'].handler({ formatE: alsFormatE(commands), consumerId: 'test' });
     const directResult = await harnessB.mutate(commands);
 
     expect(mcpResult.success).toBe(false);
@@ -120,7 +121,7 @@ describe('TEST-mcp-symmetry: MCP graph_mutate == harness.mutate()', () => {
     ];
 
     const registry = bindToolsToHarness(harnessA);
-    await registry['graph_mutate'].handler({ commands, consumerId: 'ci-bot' });
+    await registry['graph_mutate'].handler({ formatE: alsFormatE(commands), consumerId: 'ci-bot' });
 
     const { entries } = await registry['audit_trail'].handler({ limit: 10 });
     expect(entries.length).toBeGreaterThanOrEqual(1);

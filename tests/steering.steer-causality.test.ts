@@ -48,6 +48,7 @@ import { generationStep } from '../src/loop/generate.js';
 import { CONFIG_FILENAME, DEFAULT_FOCUS_THRESHOLD, loadGraphcodeConfig } from '../src/kernel/config.js';
 import { DEFAULT_METRIC_POLICY, evaluateAllRules } from '@sigloch/contracts/se';
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';
+import { alsFormatE } from './helpers/format-e.js';
 import { batchFor, type GraphSuggestResult } from '../src/loop/suggest.js';
 
 /**
@@ -238,9 +239,9 @@ describe('T-S2 (CR-GC-484): ein angewandter Zug bewegt den Score am Gate — der
     const version = (await rig.tools.graph_readiness.handler({ detail: false })).graphVersion;
     const res = await rig.tools.graph_mutate.handler({
       baseVersion: version,
-      commands: [
+      formatE: alsFormatE([
         { op: 'add-node', node: { uid: 'FUNC-extra', type: 'FUNC', name: 'Extra', description: 'Kandidaten-Funktion ohne compose-Elternteil — eine vierte Wurzel.', attributes: {} } },
-      ],
+      ]),
       violations: 'summary',
     });
     expect(res.success).toBe(true);
@@ -268,7 +269,7 @@ describe('T-S2 (CR-GC-484): ein angewandter Zug bewegt den Score am Gate — der
     const version = (await rig.tools.graph_readiness.handler({ detail: false })).graphVersion;
     const res = await rig.tools.graph_mutate.handler({
       baseVersion: version,
-      commands: [{ op: 'add-node', node: { uid: 'UC-probe', type: 'UC', name: 'Probe', description: 'Probe fuer die Budget-Bindung.', attributes: {} } }],
+      formatE: alsFormatE([{ op: 'add-node', node: { uid: 'UC-probe', type: 'UC', name: 'Probe', description: 'Probe fuer die Budget-Bindung.', attributes: {} } }]),
       violations: 'summary',
     });
     const gemeldet = (res as { steerAdvisory?: { before: number } }).steerAdvisory!;

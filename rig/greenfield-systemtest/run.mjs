@@ -18,7 +18,7 @@ import { join, dirname } from 'node:path';
 import { createHash } from 'node:crypto';
 import { hostname } from 'node:os';
 import { parseEnv } from 'node:util';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runMetrics } from './metrics.mjs';
 // CR-GC-617: DER eine Leser des Lockfiles (CR-GC-420) — kein zweites JSON.parse im Rig.
 import { readLockOwner } from '../../dist/index.js';
@@ -573,6 +573,10 @@ function authorViaGraphcodeRun(dir, arm) {
   };
 }
 
+// ITEM-2026-604: graph_mutate nimmt nur Format-E; die eingebetteten Skripte laufen im Laufverzeichnis,
+// wo `@sigloch/graph-api-core` nicht aufloesbar ist — also die aufgeloeste URL einsetzen.
+const GAC_URL = pathToFileURL(join(GC_ROOT, 'node_modules', '@sigloch', 'graph-api-core', 'dist', 'index.js')).href;
+
 const SEED_SCRIPT = `
 const dir = process.argv[1];
 const label = dir.split('/').pop();
@@ -581,10 +585,11 @@ const { bindToolsToHarness } = await import(${JSON.stringify(join(GC_ROOT, 'dist
 const h = await createHarness({ repoRoot: dir, scope: { workspaceId: label, systemId: label } });
 await h.initialize();
 const reg = bindToolsToHarness(h);
-await reg['graph_mutate'].handler({ commands: [{ op: 'add-node', node: {
+const { commandsToFormatE } = await import(${JSON.stringify(GAC_URL)});
+await reg['graph_mutate'].handler({ formatE: commandsToFormatE([{ op: 'add-node', node: {
   uid: process.argv[2], type: 'SYS', name: process.argv[3],
   description: process.argv[4], attributes: {},
-} }] });
+} }]) });
 await h.close();
 `;
 /**
@@ -611,8 +616,10 @@ const h = await createHarness({ repoRoot: dir, scope: { workspaceId: label, syst
 await h.initialize();
 const reg = bindToolsToHarness(h);
 let i = 0;
+const { commandsToFormatE } = await import(${JSON.stringify(GAC_URL)});
 for (const commands of JSON.parse(readFileSync(batchesPath, 'utf8'))) {
-  const r = await reg['graph_mutate'].handler({ commands, consumerId: 'rewind' });
+  const typ = new Map(h.getGraph().nodes.map((n) => [n.uid, n.type]));
+  const r = await reg['graph_mutate'].handler({ formatE: commandsToFormatE(commands, (u) => typ.get(u)), consumerId: 'rewind' });
   i++;
   if (!r.success) { process.stderr.write('Rewind-Zug ' + i + ' vom heutigen Gate abgelehnt: ' + JSON.stringify(r.violations).slice(0, 300) + '\\n'); process.exit(3); }
 }
