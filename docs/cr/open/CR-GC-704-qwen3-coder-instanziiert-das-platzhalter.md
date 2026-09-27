@@ -30,4 +30,7 @@ _(kein Body im Item — Befund/Zielbild hier ausarbeiten, BEVOR die Lane startet
 - [x] Rot zuerst: „UC-02 gibt die Skelett-uids je UC vor".
 - [x] Betroffene Tests 153/153 (generate, rig-verhalten, preflight, channel-rank, skill-rule-ids,
       graph-Auswahl); `tsc` sauber.
-- [ ] Im Lauf: PREFLIGHT-VORBILD-Blocks je Lauf (vorher 5–8) — S2-Runde mit 40 Runden, gleich im Anschluss.
+- [x] Im Lauf (S2, 40 Runden, gcrun-336..338): die Skelett-uids werden uebernommen (kein
+      `beispiel`-uid mehr, Vorbild-Leck 0/0/0). Geblockt wird jetzt der TEXT: das Modell laesst die
+      Platzhalter «… A» stehen, der Preflight blockt 4–8x je Lauf, der Folgeversuch geht durch.
+      Teilwirkung — die Runden gehen nicht mehr an erfundene uids verloren, aber an Platzhaltertexte.
