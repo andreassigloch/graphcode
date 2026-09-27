@@ -7,8 +7,9 @@
 Diskussion, wird sie gegen den Kern-Claim (§1) und die Definition of Done des betroffenen
 Abschnitts geprüft. Destilliert am 2026-09-10 aus den Richtungs-Inputs des Autors und
 `graphcode/docs/archive/articles/06-claims.md`, überarbeitet 2026-09-15 (Blocken, drei Stufen,
-Geltungsbereich, Anker) und 2026-09-25 (DoD je Abschnitt, Testdefinitionen aus den Rigs,
-Review 23.09, Konzept Modell- vs. Realisierungsarchitektur).
+Geltungsbereich, Anker), 2026-09-25 (DoD je Abschnitt, Testdefinitionen aus den Rigs,
+Review 23.09, Konzept Modell- vs. Realisierungsarchitektur) und 2026-09-27 (§4 nur Ziel, Prinzip,
+DoD; Messmethode zu den Tests; T-V5, T-E10…T-E12).
 
 **Übergeordnetes Ziel:** guter Code und gute Code-Architektur.
 
@@ -63,6 +64,8 @@ aber nach Einschätzung des Autors nicht erbringen (T-N3).
 **DoD Verstehen**
 - Jede Ebene liegt im Breitenband 3–9, jeder Vertragsrand unter seiner Schwelle (T-V1, T-V2).
 - Alle vier Fragen sind beantwortet: die sechs Modell-Dimensionen der Readiness bestehen ihr Gate (T-V3).
+- Ein Greenfield-Lauf trägt alle Ebenen der Referenz, auch Architektur (MOD) und Qualität
+  (TEST an SCHEMA), nicht nur das Szenario-Skelett (T-V5).
 - Das Modell ist zu 100 % mit dem Code gekoppelt — jedes Modul, jede Funktion und jeder Vertrag des
   Modells ist gebunden und kongruent —, ohne jede codierte Funktion abzubilden (T-V4).
 - Jede dokument-belegbare Anforderung aus 29148, 15288 und A-SPICE ist von einer erzeugten Sicht
@@ -104,9 +107,7 @@ Architektur und Optimierer stehen ab dem ersten Zug offen.
 
 ## 4. Managen — den LLM-Agenten führen (Effizienz) · *zahlt ein auf M*
 
-Struktur und Determinismus des Graphen versorgen das LLM gezielt mit dem Nötigen: der Agent
-arbeitet auf der need-to-know-Whitebox, statt auf dem ganzen Repo zu raten. Kontextmanagement
-*ist* Abstraktion. Zwei Claims:
+**Ziel.** Zwei Claims:
 
 - **Lokal ≈ Frontier:** Ein lokales Modell erzeugt unter graphcode-Führung Modelle und Code auf
   Augenhöhe mit einem Frontier-Modell.
@@ -114,24 +115,19 @@ arbeitet auf der need-to-know-Whitebox, statt auf dem ganzen Repo zu raten. Kont
   laufendes Claude Code mit Opus — **normalisiert** auf den Lieferumfang: Das Modell und die
   daraus erzeugten Dokumente (RTM, ICD, Testkonzept …) sind Lieferung, nicht Overhead.
 
-**Kontext gegen Output — was gemessen ist.** Die Achse ist *welcher* Inhalt, nicht wie viel:
+**Prinzip.** Struktur und Determinismus des Graphen versorgen das LLM gezielt mit dem Nötigen: der
+Agent arbeitet auf der need-to-know-Whitebox, statt auf dem ganzen Repo zu raten.
+Kontextmanagement *ist* Abstraktion. Das Vorgehen ist für jeden Ausführenden dasselbe — Mensch,
+Frontier-Modell oder Executor mit lokalem Modell: vom Groben ins Feine, geführt vom schon
+erzeugten Graphen. Verschieden sind nur zwei Stellgrößen:
 
-| Eingriff in den Kontext | Wirkung auf Menge / Qualität | Quelle |
-|---|---|---|
-| Redundanz streichen (Werkzeugkatalog, erster Turn −34 %) | Qualität gleich, Ablehnungen 5,7 → 3,0, Laufzeit 596 → 186 s | CR-GC-650/651 |
-| Tragenden Inhalt streichen (Kandidaten-Text, Beispiele) | 82 → 22 Elemente | CR-GC-282 |
-| Weiter kürzen (Elementliste −57 %) | Menge im Rauschen, Nachfragen +20 % | CR-GC-652 |
-| Mehr Kontext (Auftrag + UC-Liste) | Tokens +38 %, Verhalten unverändert — zurückgenommen | CR-GC-663/664 |
-| Vorbilder statt Verbote | Ablehnungen 13,3 → 3,0, Readiness req/uc .80/.79 → .89/.85 | CR-GC-658/659 |
-| Gezieltes Bündel (`graph_context`, ~667 Token statt ~34k SPEC) | lokales 27B-Modell: 5/5 Kriterien | SPIKE context-sufficiency |
-| Whitebox W statt Injektion | 100 % statt 42 % der geänderten Knoten, weniger Token | SPIKE minimal-whitebox |
-| Pull statt Push (Trias nur angeboten) | nicht genommen: `graph_context` 0× bei > 400 Aufrufen | minimal-whitebox Arm pull |
-| Antwort-Diät (Werkzeugantworten −38 %) | Turns 79 → 107, Kosten nicht gesunken | CR-GC-613 |
-| Dateiverweis im Rundenprompt durch den Auftragstext ersetzen (Executor lokal) | Auftrag-Lesungen 12 → 1 je Lauf (3 von 3); Laufzeit 115–246 → 589 s, 23 statt 45–58 Elemente (sauber nur n = 1: zwei Läufe fuhren einen fremden Build) | ITEM-2026-576, Runde 21 |
+- die **Schnittgröße** — wie viel Arbeit ein Paket umfasst. Die untere Grenze gibt die Ontologie
+  (ein Anker, eine Ebene darunter), die obere das Budget des Ausführenden.
+- das **Kontextrezept** — was mitkommt: der Anker offen, die Geschwister als Box, der Rest als
+  Index, der passende Ausschnitt des Auftrags. Es zählt *welcher* Inhalt, nicht wie viel.
 
-Die Kosten treibt das **Wiederlesen**, nicht das Schreiben: 99,9 % der Eingabe im
-`claude -p`-Arm, 61 % der Kosten im geführten Code-Arm — getrieben von der Zahl der Turns, nicht vom Modellinhalt (§9.2). Ein **Kipppunkt** Promptgröße → Ausbeute
-ist nicht gemessen — es gibt zwei Stützpunkte, keine Kurve (T-E6).
+Konzept: [`graphcode_arbeitspakete_konzept.md`](graphcode_arbeitspakete_konzept.md). Wie die
+Stellgrößen gemessen werden, steht bei den Tests (§9.3 Effizienz).
 
 **DoD Effizienz**
 - Jede Suche, die der Graph beantwortet hätte, ist als Optimierungspotenzial erkannt (T-E1), und der Agent bekommt eine
@@ -141,6 +137,11 @@ ist nicht gemessen — es gibt zwei Stützpunkte, keine Kurve (T-E6).
   Frontier-Arm — im Modell (T-E3) und im Code (T-E4).
 - Nach der Faustregel (§9.2) kostet die geführte Lieferung höchstens so viel wie die freie (T-E5).
 - Der Kontext ist auf seinen Kipppunkt eingestellt: kleiner wird er nur, solange die Ausbeute hält (T-E6).
+- Die lokal erzeugte Spec trifft den Auftrag so gut wie die Frontier-Spec und erfindet keinen
+  offenen Wert — im Blindurteil gegen die Auftragspunkte, nicht an der Readiness (T-E10).
+- Das Modell referenziert den Bestand, statt ihn neu zu schreiben, legt keine Dubletten an und
+  übernimmt aus Vorbildern die Form, nicht den Inhalt (T-E11).
+- Für jedes eingesetzte Modell ist gemessen, welche Schnittgröße es trägt (T-E12).
 - Der Graph sagt, welche Tests laufen müssen, und antwortet schnell genug für die Schleife (T-E7, T-E8).
 - Jeder Lauf weist je Informationsaufruf aus, was das Modell wollte, ob es das schon hatte und ob der
   Graph es geliefert hätte (T-E9).
@@ -253,7 +254,11 @@ Tests aus §9 stehen auf „bestanden" oder tragen eine benannte Ausnahme.
 ### 9.1 Gemeinsame Regeln
 
 Jeder Test nennt: **Frage** · **Aufbau** (Rig, Skript oder Unit-Test) · **Kriterium** (bestanden,
-wenn …) · **Stand** (letzte Messung mit Datum, eine ehrliche Zahl). Alle Schwellen sind vom Autor bestätigt (2026-09-25).
+wenn …) · **Stand** (letzte Messung mit Datum, eine ehrliche Zahl). Alle Schwellen sind vom Autor bestätigt (2026-09-25);
+die Schwellen von T-V5 und T-E10…T-E12 sind ein Vorschlag (2026-09-27), die Bestätigung steht aus.
+
+Ein Test kann auf mehrere Abschnitte einzahlen. Er steht unter dem Abschnitt, dessen Claim er
+zuerst prüft; die DoD der anderen verweist auf ihn.
 
 - Messung nur über `openMeasured` mit Stempel (`rig/README.md`); ohne Stempel keine Zahl.
 - Aussagen über Arme erst ab **N ≥ 3** je Arm; darunter wird eine Spanne berichtet,
@@ -329,6 +334,7 @@ Informationsaufrufe. Der Rest ist echter Bedarf, und vor allem Code-Arbeit.
 | **T-V2** Vertragsrand | Ist der Rand jeder Blackbox schmal? | BW-02 (FUNC), R-04 (MOD), CR-01; `scripts/randbreiten.mjs` + `tests/randbreiten.test.ts` | 0 Befunde über Schwelle (BW-02: > 5 SCHEMA) | graphcode: 16 Befunde bei 19 Whiteboxes (84 %); moneyflow hat 0 Whiteboxes, dort kann BW-02 nicht feuern (2026-09-23) |
 | **T-V3** Vier Fragen | Ist jede der vier Fragen beantwortet? | `graph_readiness`, Dimensionen `uc`, `req`, `arch`, `schema`, `alloc`, `ver` | jede der sechs Dimensionen besteht ihr Phasen-Gate | Greenfield, Opus, Prosa: 4/8 Gates (Runde 18, 2026-09-23); Executor lokal: 2/8 (Runde 19) |
 | **T-V4** Kopplung Modell ↔ Code | Ist das Modell zu 100 % gekoppelt, ohne ein Abbild des ganzen Codes zu sein? | RC-01…RC-09, R-19/R-20/R-26/R-32; **Grenzmenge** `scripts/grenzmenge.mjs` (CR-GC-545): FUNC/SCHEMA, die eine MOD-Grenze kreuzen, sind Pflicht, alles darunter bleibt Blackbox | Urteil `kongruent`, Bindungsquote 100 %, Grenzmenge 100 % modelliert | graphcode v283: Grenzmenge FUNC 34 % (15/44), SCHEMA 14 % (2026-09-16); sigllm-Fremdlauf FUNC 20/24; sigllm Lauf 2: 33/33 `realRef` erfunden → `gedriftet` |
+| **T-V5** Struktur gegen die Referenz | Trägt ein Greenfield-Lauf alle Ebenen, die die Referenz trägt? | `rig/greenfield-systemtest/verhalten.mjs` (`struktur`), Default in `report.mjs` gegen das Golden des Stempels: Typ-Kante-Typ-Muster in allen / in keinem Lauf, Jaccard Lauf↔Lauf und Lauf↔Golden, Typverteilung, FUNC je Wirkkette | kein Muster, das im Golden tragend ist (≥ 5 Kanten), fehlt in allen Läufen; Wirkketten mit genau einer FUNC ≤ 20 % | CR-GC-682 (9 Läufe qwen3-coder): untereinander 85 %, zum Golden 41–48 %. In keinem Lauf: MOD satisfy REQ, REQ compose REQ, TEST verify SCHEMA, SYS compose MOD, CR/MS. Median 0 MOD (Golden 7), 9 UC (3); 23 von 43 Ketten mit genau einer FUNC (2026-09-27) |
 
 #### Nachweis (§2)
 
@@ -351,17 +357,45 @@ Informationsaufrufe. Der Rest ist echter Bedarf, und vor allem Code-Arbeit.
 
 #### Effizienz (§4)
 
+**These.** Was ein Modell liefert, hängt davon ab, *welcher* Inhalt im Kontext steht und wie groß
+der Arbeitsschnitt ist — nicht davon, wie viel Kontext es bekommt.
+
+**Prinzip — wie gemessen wird.**
+- **Zwei Stellgrößen, eine je Messung:** Schnittgröße und Kontextrezept (§4). Modell, Treiber,
+  Auftrag und Rundenzahl bleiben fest (§9.4).
+- **Eingriffe nach Klasse getrennt:** Redundanz streichen · tragenden Inhalt streichen · Inhalt
+  ergänzen · Push gegen Pull. Die Klassen wirken gegenläufig; gemittelt heben sie sich auf.
+- **Drei Wirkgrößen, keine allein:** Menge (Elemente), Qualität (Blindurteil gegen die
+  Auftragspunkte, T-E10), Kosten (Turns und Wiederlesen, §9.2). Dazu die Arbeitsweise (T-E11), die
+  erklärt, *warum* sich eine Größe bewegt. Die Readiness trennt die Arme nicht (T-E3).
+- **Bedarf je Aufruf** (T-E9): was das Modell nachlas, ob es das schon hatte, ob der Graph es
+  geliefert hätte.
+- **Nachspiel vor Lauf:** Ein neues Kontextrezept wird zuerst deterministisch gegen
+  aufgezeichnete Läufe nachgespielt (Nachladequote, Größe), dann im echten Lauf gemessen. Das
+  Nachspiel sagt, was fehlt — nicht, was das Modell mit dem Rest tut.
+- **Streuung vor Effekt, Kurve statt Stützpunkt:** N ≥ 3 je Arm (§9.1); Schnittgröße und
+  Kipppunkt über ≥ 3 Stufen je Modell.
+
+**Beispiel.** CR-GC-682 verglich drei Kontextrezepte — Befund-Kontext, voller Index, Faltung — mit
+qwen3-coder, je N = 3. Nach Menge gewann der Index (Median 126 gegen 112 und 83 Elemente). Das
+Blindurteil fand in allen neun Specs keinen der 28 Auftragspunkte voll abgedeckt, und die
+Arbeitsweise zeigte den Grund: Die Mehr-Elemente waren Dubletten, der Inhalt kam aus den
+Prompt-Vorbildern statt aus dem Auftrag. Nach Menge allein wäre der falsche Default gewählt worden.
+
 | Test | Frage | Aufbau | Kriterium | Stand |
 |---|---|---|---|---|
 | **T-E1** Graph statt Grep | Wo sucht der Agent im Dateisystem, obwohl der Graph die Antwort geliefert hätte? | Zwei Analysezahlen je CR, keine Schwelle: Graph-Leseaufrufe und Suchoperationen (Grep + Glob + Doc-Read), `scripts/retro-kpi.mjs` → `.graphcode/cr-messung.jsonl` nach jedem Commit. Welche Suchen eine Graph-Abfrage beantwortet hätte, weist die Bedarfsanalyse (T-E9) je Lauf aus; für den Referenz-Change zusätzlich `rig/referenz-change/gegenprobe.mjs`. | Jede Suche, die der Graph beantwortet hätte, ist als Optimierungspotenzial ausgewiesen (Werkzeugangebot, Prompt, Skill) | Graph-Leseaufrufe ÷ Suchen im Median 0,5 seit CR-640; CR-GC-661…666 ohne einen Graph-Lesezugriff (2026-09-25). Referenz-Change: 0 Graph-Lesezugriffe gegen 27 Suchen; der Graph hätte 4 statt 172 Testdateien und 20 betroffene Kanten geliefert (2026-09-23) |
-| **T-E2** Whitebox-Kontext | Enthält die Whitebox, was sich tatsächlich ändert? | `rig/minimal-whitebox` (`measure.mjs`), Ground Truth aus dem git-Diff; Spike context-sufficiency | 100 % der geänderten Knoten in W bei \|W\|/\|G\| ≤ 0,05 | W trifft 100 % mit 1 824 Token, die Injektion 42 % mit 2 234 (2026-08-18); ein Bündel von ~667 Token genügt einem 27B-Modell für 5/5 Kriterien (2026-06-26, 1 Knoten) |
+| **T-E2** Whitebox-Kontext | Enthält die Whitebox, was sich tatsächlich ändert? | `rig/minimal-whitebox` (`measure.mjs`), Ground Truth aus dem git-Diff; Spike context-sufficiency; Faltungs-Nachspiel `rig/greenfield-systemtest/faltung.mjs` (SPIKE compose-faltung) | 100 % der geänderten Knoten in W bei \|W\|/\|G\| ≤ 0,05 | W trifft 100 % mit 1 824 Token, die Injektion 42 % mit 2 234 (2026-08-18); ein Bündel von ~667 Token genügt einem 27B-Modell für 5/5 Kriterien (2026-06-26, 1 Knoten). Pull statt Push wird nicht genommen: `graph_context` 0× bei > 400 Aufrufen (Arm `pull`). Faltung im Nachspiel: 5 % Nachladen bei 35 % Größe (mit uid-Index); im echten Lauf schlägt das Modell die nackten uids nach und liefert weniger als mit dem Index (CR-GC-682, 2026-09-27) |
 | **T-E3** Lokal ≈ Frontier (Modell) | Nivelliert der Graph den Modellunterschied beim Autorieren? | `rig/greenfield-systemtest`, Arme `gcrun` (lokal, unser Executor) / `opus5` (Frontier, Claude Code). Das ist der Produktvergleich: Modell **und** Treiber verschieden, gewollt, Korpus sigllm-Prosa | Die Spannen von T-V3, T-M1, T-M2 überlappen bei N ≥ 3 | Runde 20 (40 Runden, `auswertung-runde20.md`): lokal 91 Elemente, Frontier 187; Blindurteil: die beste Spec liefert Opus über Claude Code, lokal deutlich dahinter — die Readiness bildet das nicht ab (lokaler Coder: höchste Readiness, schlechtestes Urteil). Kosten nicht erfasst. Frühere Rankings zurückgezogen (Truncation-Fehler, Executor-Abschlussbericht) |
 | **T-E4** Lokal ≈ Frontier (Code) | Dasselbe für Code? | `rig/code-test` mit lokalem Arm | Abnahme gleich, Kennzahlen aus T-C1 in überlappender Spanne | nicht gefahren |
 | **T-E5** Normalisierte Effizienz | Ist die geführte Lieferung billiger als die freie? | Faustregel §9.2 auf `rig/code-test` | `K_geführt ≤ K_frei` bei gleicher Abnahme | **≈ 3,5× teurer** (2,7–4,3×, 2026-09-23) |
-| **T-E6** Kipppunkt des Kontexts | Ab welcher Kürzung fällt die Ausbeute? | Executor-Rig, ≥ 3 Stufen der Promptgröße, getrennt nach „Redundanz" und „tragender Inhalt", N ≥ 3 | Kurve mit dem Punkt, an dem Menge oder Readiness die Streuung verlässt | zwei Stützpunkte: Redundanz −34 % hält die Qualität (CR-GC-650/651), tragenden Inhalt streichen kostet 82 → 22 Elemente (CR-GC-282); keine Kurve |
+| **T-E6** Kipppunkt des Kontexts | Ab welcher Kürzung fällt die Ausbeute? | Executor-Rig, ≥ 3 Stufen der Promptgröße, getrennt nach „Redundanz" und „tragender Inhalt", N ≥ 3 | Kurve mit dem Punkt, an dem Menge oder Readiness die Streuung verlässt | keine Kurve, nur Einzelpunkte: Redundanz −34 % hält die Qualität (CR-GC-650/651); tragenden Inhalt streichen kostet 82 → 22 Elemente (CR-GC-282); Elementliste −57 %: Menge im Rauschen, Nachfragen +20 % (CR-GC-652); Auftrag + UC-Liste dazu: Tokens +38 %, Verhalten gleich (CR-GC-663/664); Vorbilder statt Verbote: Ablehnungen 13,3 → 3,0 (CR-GC-658/659); Zuschnitt Befund/Index/Faltung: Menge 112/126/83, Qualität gleich am Boden (CR-GC-682) |
 | **T-E7** Testauswahl | Sagt der Graph, welche Tests laufen müssen? | `graph_tests` / `impactedTests()`; `scripts/test-selection-audit.mjs` (CR-GC-381); Spike selective-tests (CR-GC-380) | direkt gekoppelte Tests vollständig getroffen; `verify:code` fällt nur bei fehlender Bindung auf VOLL zurück | Trefferquote 13 %, Einsparpotenzial 53 % der Läufe (2026-08-21); Referenz-Change: 4 statt 172 Dateien wären möglich gewesen |
 | **T-E8** Werkzeuglatenz | Ist der Graph schnell genug für die Schleife? | `tests/perf.advisory-roundtrip.spike.test.ts` (CR-GC-400/665), feste Eingabe | Runde lesen → Status → Vorschlag → Anwenden < 200 ms | Median 363 ms, davon Vorschlag 272 ms (2026-08-05); Regelauswertung wächst mit n^1,93 (2026-08-22) |
 | **T-E9** Bedarf je Aufruf | Was wollte das Modell — hatte es das schon, oder hätte der Graph es geliefert? | Default in jedem Lauf: `bedarfsAnalyse` für Claude-Code-Arme (Stream, mit Cache-Lesung je Aufruf), `bedarfsAnalyseExecutor` für den Executor (`run-raw.log`, Antwortgröße in Zeichen); eingebunden in `report.mjs` (Greenfield) und `messen.mjs` (Code-Test). Ein Arm ohne Modell wird gegen das Golden gelesen. Urteile: `doppelt` (wortgleich im selben Turn), `schon-da`, `teilweise-da` (uid stand in einer Detail-Antwort), `buendelbar` (gleiches Graph-Werkzeug im Folgeturn), `werkzeug-laden` (ToolSearch), `graph-haette` (Modelldatei gelesen, uid/realRef gesucht, Volllauf trotz gebundener Tests), beim Executor zusätzlich `je-runde` (schon in einer früheren Runde gelesen — sein Kontext beginnt jede Runde neu), sonst `neu` | Jeder vermeidbare Aufruf ist mit Grund und Kosten ausgewiesen und damit Optimierungspotenzial (Werkzeugangebot, Rundenprompt, Skill) | Code-Test geführt: 39 von 50 Aufrufen `neu`, vermeidbar 0,40 $ von 8,15 $ Delta; frei: 10/10 `neu`. Executor lokal (Runde 19, N = 3): 36–51 % der gelesenen Zeichen sind `je-runde`, fast nur der Auftrag (9–10× je Lauf). 200-Runden-Lauf: 78 % `je-runde` — `graph_elements {type:REQ}` 154×, Auftrag 178× (2026-09-25). Ursache (Runde 21, ITEM-2026-576): Der Dateiverweis in der Intention steht in jedem Rundenprompt. Ohne Verweis fällt das Nachlesen von 12 auf 1 je Lauf. CR-GC-663/664 hatte Text **und** Verweis im Prompt, deshalb blieb es beim Nachlesen. Den ganzen Text mitzuschicken war im sauberen Lauf teurer (589 s statt 115–246 s, n = 1). Offen ist die Variante „Verweis nur in der Seed-Runde“ |
+| **T-E10** Auftragstreue (Blindurteil) | Deckt die Spec den Auftrag, ohne offene Werte zu erfinden? | `rig/greenfield-systemtest/blindurteil.mjs`: `vorbereiten` rendert je Lauf eine anonyme Spec (`spec-render.mjs`) mit Zuordnung und Gutachter-Vorgabe; ein Gutachter je Spec (Claude-Subagent, ohne Vergleich, ohne Herkunft) bewertet jeden Auftragspunkt (`rig/sigllm-spezifikation/golden/auftragspunkte.json`, 28 P + 5 O) mit ✓/~/✗, erfundene Werte, Dubletten, fünf Noten; `auswerten` fasst zur Tabelle je Lauf. Stichprobe der Befunde am Graphen | lokaler Arm in der Spanne des Frontier-Arms bei ✓ (P) und Notensumme; 0 erfundene Werte bei den O-Punkten | CR-GC-682 (qwen3-coder, 9 Läufe): ✓ 0 von 28 in allen Läufen, ~ 3–9; O offen geführt 0–1 von 5; erfunden 6–14; Notensumme 5–7 von 25 (Boden 5). Frontier-Arm mit diesem Raster nicht gemessen (2026-09-27) |
+| **T-E11** Arbeitsweise | Referenziert das Modell den Bestand, statt ihn neu zu schreiben — und übernimmt es aus Vorbildern die Form statt des Inhalts? | `rig/greenfield-systemtest/verhalten.mjs`, Default in `report.mjs`: Gate-Ablehnungen und Preflight-Blocks je Regel, neu angelegter Bestand je Typ (`run-raw.log`); Dubletten mit Form und Auslöser (Nachbau aus `audit.jsonl`); REQ ohne kinds, ohne Erfüller, namensgleich; Vorbild-Leck gegen `VORBILD_UIDS` (Wächter `tests/rig-verhalten.test.ts`) | Vorbild-Leck 0; Dubletten ≤ 5 % der Elemente; neu angelegter Bestand fällt über die Runden | CR-GC-682 (9 Läufe): 927 Neuanlagen bestehender Knoten, 125 Dubletten (75 ohne Befund, `arch`-Alternativen bei einem Kandidaten), Vorbild-Leck in 9 von 9 (ITEM-2026-607/610, 2026-09-27) |
+| **T-E12** Schnittgröße je Modell | Welche Paketgröße trägt ein Modell? | Paket-Werkzeug und Planer (Konzept Arbeitspakete, CR 2); Stufen: ein Anker mit einer Ebene · ein Anker mit zwei Ebenen · alle Geschwister einer Ebene; Abnahmequote je Paket (Regeln im Geltungsbereich des Pakets), T-E10 und T-E11 je Stufe; N ≥ 3 je Modell und Stufe | je Modell die größte Stufe, deren Abnahmequote und Auftragstreue in der Streuung der kleinsten Stufe liegen | nicht gefahren — Paket-Werkzeug fehlt |
 
 #### Optimieren (§5)
 
@@ -427,10 +461,11 @@ Referenz, derselbe Stempel — ein Unterschied zum letzten Lauf ist dann eine Wi
 | Stufe | Wann | Umfang | Deckt |
 |---|---|---|---|
 | **S1 deterministisch** | jede Änderung an Regeln, Policy, Messung; vor jedem Release | Minimal-Whitebox Phase 1 · moneyflow-Struktur (Baseline + `--structure`) · Grenzmenge · Randbreiten · Known-Answer-Sets (ℝ⁶, ND, Engpass) · Nachweis-History · Regel-Matrix · Perf-Test · KPI 1 (läuft automatisch) | T-V1, T-V2, T-V4, T-M3, T-M4, T-E1, T-E2, T-E8, T-O4, T-O6, T-H2 |
-| **S2 lokal** | jede Änderung am Executor, an Prompt, Werkzeugangebot oder Steuerung | Greenfield `gcrun` auf **sigllm-prosa**, N = 3, 12 Runden (`lauf-gcrun.env`) | T-V3, T-M1, T-M2, T-E3 (lokale Hälfte), T-E6, T-E9 |
+| **S2 lokal** | jede Änderung am Executor, an Prompt, Werkzeugangebot oder Steuerung | Greenfield `gcrun` auf **sigllm-prosa**, N = 3, 12 Runden (`lauf-gcrun.env`); `report.mjs` mit Bedarfsanalyse und Arbeitsweise; Blindurteil der Specs (`blindurteil.mjs`) | T-V3, T-V5, T-M1, T-M2, T-E3 (lokale Hälfte), T-E6, T-E9, T-E10, T-E11 |
 | **S3 Frontier** | auf Anlass: Release, Claim-Aussage nach außen, Richtungsentscheidung | Greenfield `opus5` auf sigllm-prosa (N = 1) · Code-Test `gefuehrt` + `frei` · Referenz-Change | T-C1, T-C3, T-E3 (Frontier-Hälfte), T-E5, T-E9, T-M5 |
 
-S1 und S2 kosten nichts und laufen oft. S3 kostet je Durchgang rund 40–50 $ plus eine Sitzung;
+S1 und S2 kosten nichts und laufen oft; nur das Blindurteil in S2 braucht Frontier-Token (ein
+Gutachter je Spec). S3 kostet je Durchgang rund 40–50 $ plus eine Sitzung;
 eine Aussage aus S3 mit n = 1 ist eine Spanne, kein Urteil (§9.1).
 
 #### Spezifische Vergleiche
@@ -450,6 +485,8 @@ lokale Modelle; ein Frontier-Arm läuft nativ in Claude Code.
 | Bringt graphcode besseren Code? | Code-Test `gefuehrt` ↔ `frei` | Werkzeug + Modell | T-C1, T-E5 |
 | Muss die Struktur im Auftrag stehen? | Korpus sigllm-spezifikation ↔ sigllm-prosa | Input-Struktur | T-V3 |
 | Push oder Pull beim Kontext? | Minimal-Whitebox `full` ↔ `whitebox` ↔ `off` ↔ `pull` | Injektion | T-E2, T-E6 |
+| Welches Kontextrezept? | `GCRUN_INVENTORY` `fund` ↔ `index` ↔ `faltung` (CR-GC-682) | Inventar-Zuschnitt | T-E6, T-E10, T-E11 |
+| Welche Schnittgröße trägt das Modell? | Paketstufen je Modell (Konzept Arbeitspakete) | Schnittgröße | T-E12 |
 | Wie viel Prompt braucht der Executor? | S2 vor ↔ nach einer Prompt-Änderung (Serie CR-GC-650…664) | Promptinhalt | T-E6 |
 | Hilft die Gate-Probe (dryRun)? | `GCRUN_CANDIDATES` 1 ↔ 2 (CR-GC-568) | Kandidatenzahl | T-M2 |
 | Wie viel kostet Wiederlesen? | Rewind-Lauf ↔ Normallauf (halbe Turns) | Turn-Zahl | T-E5 |
@@ -464,6 +501,9 @@ Test-Zuordnung sind Kandidaten zum Entfernen.
 | Aufbau | Pfad | Art | Test | Status |
 |---|---|---|---|---|
 | Greenfield-Systemtest | `rig/greenfield-systemtest/` (+ `steuerung`, `trajektorie`, `turn-analyse`, `schatten-suggest`) | Rig, Serie | T-V3, T-M2, T-M5, T-E3, T-C2 | läuft; Runde 20 ausgewertet (`auswertung-runde20.md`) |
+| Arbeitsweise | `rig/greenfield-systemtest/verhalten.mjs` (+ `nachbau.mjs`), eingebunden in `report.mjs` | Default-Auswertung jedes Laufs | T-V5, T-E11 | läuft (2026-09-27) |
+| Blindurteil | `rig/greenfield-systemtest/blindurteil.mjs` (+ `spec-render.mjs`), Raster `rig/sigllm-spezifikation/golden/auftragspunkte.json` | Rig-Schritt mit Gutachtern | T-E10 | CR-GC-682 ausgewertet (`auswertung-cr682.md`) |
+| Faltungs-Nachspiel | `rig/greenfield-systemtest/faltung.mjs`, Faltung aus `src/loop/faltung.ts` | Replay | T-E2 | ausgewertet (SPIKE compose-faltung) |
 | sigllm-Spezifikation | `rig/sigllm-spezifikation/` | Korpus für Greenfield | T-V3, T-V4, T-O7, T-H1 | ausgewertet (`ergebnis.md`) |
 | Code-Test | `rig/code-test/` | Rig, 2 Arme | T-C1, T-E4, T-E5 | läuft; Läufe außerhalb des Repos |
 | Referenz-Change | `rig/referenz-change/` | Rig, Sitzungsprotokoll | T-E1, T-C3 | nur die Grundlinie |
