@@ -1,6 +1,6 @@
 # CR-GC-707: Executor: Stillstand an AF-01..04 (Analyse-Stempel conops/trade/irr) — S2 gcrun-339..341 je Lauf mehrere 3-Runden-Stillstaende, der Executor kann die Analyse-Skills nicht fahren; Klausel oder gezieltes Zurueckstellen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-632 (finding)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-632.json (Lane: code)
