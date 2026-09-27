@@ -1,6 +1,6 @@
 # CR-GC-700: Der Subagent-Kanal ist ungemessen: ein einziger Agent/Explore-Aufruf lieferte im Lauf vom 2026-09-23 32.054 Zeichen = 18 Prozent aller Werkzeugantworten, und weder steuerung.mjs noch die Antwort-Diaet-CRs kennen ihn
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-503 (finding)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-503.json (Lane: code)
