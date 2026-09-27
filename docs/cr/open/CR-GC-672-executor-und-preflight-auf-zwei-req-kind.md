@@ -70,3 +70,19 @@ Offen:
   mit `beispiel` bzw. «» im Ergebnis = Vorbild-Leck) — Live-Laeufe nur nach Freigabe.
 - Golden-basierte Tests (`generate.task`, `generate.statemachine`, `steer-optimum`) bleiben rot, bis
   der Rig-Korpus (sigllm-v98 mit risk/mitigation/pre/post) migriert ist — CR-GC-696, nicht hier.
+
+## Messwelle 2026-09-27 (Build f5bbc2b, S2 gcrun, N = 6: gcrun-0..5)
+
+| Zaehler | Basis gcrun-190..192 | neu gcrun-0..5 |
+|---|---|---|
+| kinds-Blocks je Lauf (Preflight R-18 an kinds) | 0 / 0 / 2 | 3 / 1 / 0 / 0 / 1 / 4 |
+| functional-REQ ueber FCHAIN erfuellt | 3 / 3 / 6 | 0 in 6/6 |
+| Vorbild-Leck (uid `beispiel`, Platzhalter «… X») | – | 1 von 6 (gcrun-3: `REQ-beispiel-grenze` + TEST, woertlich, applied) |
+
+Die kinds-Blocks bleiben niedrig (12 Runden je Lauf; die 107 aus gcrun-180 waren 200 Runden).
+Das Leck faengt jetzt der Preflight: ein add-node mit uid `…-beispiel-…` oder Platzhalter
+`«<Wort> <Grossbuchstabe>»` in Name/Text blockt als `PREFLIGHT-VORBILD` vor dem Gate; echte
+Guillemets („Bericht «Monatsabschluss»") bleiben erlaubt. Rot zuerst in
+`tests/executor.preflight.test.ts`; 32 Testdateien um Preflight/Executor/Generate gruen, Build gruen.
+
+Offen: Nachmessung auf dem Build mit Guard (zusammen mit CR-GC-667 Kriterium 4).

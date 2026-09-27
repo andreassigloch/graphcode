@@ -63,6 +63,9 @@ export interface PreflightOutcome {
   violations: PreflightViolation[];
 }
 
+/** Platzhalter der Prompt-Vorbilder: «Ergebnis A», «Empfaenger B» — Wort(e) plus Grossbuchstabe. */
+const VORBILD_PLATZHALTER = /«[^»]* [A-Z]»/;
+
 /** Nur diese Ops versteht der Preflight — alles andere reicht er unverändert durch. */
 const SIMPLE_OPS = new Set(['add-node', 'add-edge']);
 
@@ -289,6 +292,35 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
   }
   parsed.length = 0;
   parsed.push(...ohneNeudeklaration);
+
+  // --- Kein Knoten aus dem Vorbild (CR-GC-672) --------------------------------
+  // Die Vorbilder im Prompt zeigen Form mit Platzhaltern («Ergebnis A») und uids „-beispiel-".
+  // Gemessen gcrun-3 (2026-09-27): REQ-beispiel-grenze woertlich uebernommen und applied. Ein
+  // Hinweis im Prompt wirkt nicht (Memory executor-prompt-vorbild-statt-verbot) — der Datenschaden
+  // wird hier gefangen. Der Platzhalter endet auf einen Grossbuchstaben; echte Guillemets nicht.
+  const ausVorbild = parsed.flatMap((c) =>
+    c.op === 'add-node' && (/(^|-)beispiel(-|$)/.test(c.node.uid) || VORBILD_PLATZHALTER.test(`${c.node.name} ${c.node.description}`))
+      ? [c.node.uid]
+      : [],
+  );
+  if (ausVorbild.length > 0) {
+    return {
+      action: 'blocked',
+      input: raw,
+      fixes: [],
+      violations: [
+        {
+          // Keine Katalogregel: ein Vorbild-Knoten ist Batch-Hygiene, kein Modellbefund.
+          ruleId: 'PREFLIGHT-VORBILD',
+          severity: 'error',
+          message: `Aus dem Vorbild uebernommen: ${ausVorbild.join(', ')} — uid oder Text ist Platzhalter.`,
+          fixHint:
+            'uid, Name und Text aus dem Auftrag bilden; «…» sind Platzhalter, keine Inhalte. ' +
+            'Fehlt ein Wert im Auftrag: Fragezeile und offener Wert.',
+        },
+      ],
+    };
+  }
 
   // uid → Typ über Graph ∪ Batch (add-nodes zählen als vorhanden).
   const typeOf = new Map(known.types);

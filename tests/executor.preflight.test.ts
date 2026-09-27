@@ -307,6 +307,33 @@ describe('CR-GC-660: ein bestehender Knoten wird nicht ueberschrieben', () => {
   });
 });
 
+describe('CR-GC-672: ein Knoten aus dem Vorbild erreicht das Gate nicht', () => {
+  // Messwelle 2026-09-27, gcrun-3: REQ-beispiel-grenze samt «Ergebnis A» woertlich uebernommen und applied.
+  const known: PreflightKnown = { types: new Map([['UC-a', 'UC']]), verifiedReqs: new Set(), kinds: new Map() };
+
+  it('uid aus dem Vorbild oder Platzhalter «… X» → blocked, der fixHint verlangt Inhalt aus dem Auftrag', () => {
+    for (const node of [
+      addNode('REQ-beispiel-grenze', 'REQ', 'Grenze', 'Das System muss schnell antworten.'),
+      addNode('REQ-antwortzeit', 'REQ', 'Grenze fuer «Ergebnis A»', 'Das System muss antworten.'),
+      addNode('TEST-antwortzeit', 'TEST', 'Messen', '«Ausloeser A» herbeifuehren, Zeit messen.'),
+    ]) {
+      const pf = preflightBatch({ commands: [node, addEdge('UC-a', node.node.uid, 'compose')] }, known);
+      expect(pf.action, node.node.uid).toBe('blocked');
+      expect(pf.violations[0].ruleId).toBe('PREFLIGHT-VORBILD');
+      expect(pf.violations[0].message).toContain(node.node.uid);
+      expect(pf.violations[0].fixHint).toMatch(/Auftrag/);
+    }
+  });
+
+  it('Guillemets in echter Prosa bleiben erlaubt', () => {
+    const pf = preflightBatch(
+      { commands: [addNode('UC-b', 'UC', 'Bericht «Monatsabschluss» erzeugen', 'Nutzer erzeugt den «Monatsabschluss».')] },
+      known,
+    );
+    expect(pf.action).toBe('pass');
+  });
+});
+
 describe('executor preflight (CR-GC-284, real harness)', () => {
   let repoRoot: string;
   let harness: Awaited<ReturnType<typeof createHarness>>;
