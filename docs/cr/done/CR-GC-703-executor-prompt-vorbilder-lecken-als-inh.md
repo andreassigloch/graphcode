@@ -1,6 +1,6 @@
 # CR-GC-703: Executor-Prompt-Vorbilder lecken als Inhalt: REQ-login-* in 9 von 9 Laeufen eines Auftrags ohne Login
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-607 (bug)
 **Erstellt:** 2026-09-27
 **Item:** bok/items/ITEM-2026-607.json (Lane: code)
