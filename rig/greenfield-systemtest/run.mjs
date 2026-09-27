@@ -62,8 +62,6 @@ export const CFG = {
    * vergass, bekam ihn still untergeschoben. Ohne Golden entfaellt der Abgleich und sagt das.
    */
   golden: process.env.GOLDEN ?? null,
-  /** Prueflliste der Auftrags-Anforderungen (CR-GC-553). Optional: ohne sie entfaellt der Abgleich. */
-  checklist: process.env.CHECKLIST ?? null,
   /**
    * Rewind (CR-GC-597): statt nur des SYS die ersten `rewindMoves` angewandten Zuege aus einem
    * Audit-Trail durchs Gate nachspielen — gezielter Endspiel-Test fuer einen Bruchteil der Kosten.
@@ -728,7 +726,7 @@ async function main() {
         const m = runMetrics({
           graphPath: join(dir, 'graph.json'), readinessPath: join(dir, 'readiness.json'),
           auditPath: join(dir, 'audit.jsonl'), goldenPath: CFG.golden,
-          checklistPath: CFG.checklist, usage,
+          usage,
         });
         // CR-GC-615: das Feld steht IMMER in der Zeile (null = sauber exportiert). Nur so ist
         // "kein Exportfehler" eine Aussage und nicht die Abwesenheit einer Aussage.

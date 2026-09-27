@@ -196,32 +196,9 @@ if (mitLoop.length) {
   console.log('Agent Mutationen ohne Rueckkanal ab (gemessen: 16 von 19 ohne vorheriges Werkzeug).\n');
 }
 
-// CR-GC-553 — wurde jede Anforderung des Auftrags umgesetzt oder verworfen?
-const mitDeckung = rows.filter((x) => !x.error && x.briefCoverage);
-if (mitDeckung.length) {
-  console.log('\n## Auftrags-Anforderungen — PRUEFLISTE, keine Note\n');
-  console.log('Wortlaut-Ueberdeckung misst **Abschreiben, nicht Deckung** — und zwar messbar:');
-  console.log('die Pruefliste ist aus der STRUKTURIERTEN Projektdefinition gezogen (`quelle` in');
-  console.log('anforderungen-auftrag.json). Lauf 1 las genau diesen Wortlaut und erreicht 42/42,');
-  console.log('Lauf 2 las die Prosa-Fassung und erreicht 1/42 — bei mehr Elementen und mehr Use');
-  console.log('Cases. Die Zahl misst also den INPUT des Arms, nicht sein Ergebnis, und ist zwischen');
-  console.log('den beiden Laeufen NICHT vergleichbar. Die Liste unten ist zum LESEN, schwaechste');
-  console.log('zuerst; ein Score daraus waere eine Praemie auf Transkription (ITEM-2026-360).\n');
-  console.log('Deterministisch waere die Frage nur mit HERKUNFT am REQ. Die Ontologie hat kein');
-  console.log('solches Feld, und ihr status-Enum (draft/reviewed/open/done) kennt kein');
-  console.log('"verworfen" — beide Haelften der Frage sind heute nicht ausdrueckbar (ITEM-2026-306).\n');
-  for (const r of mitDeckung) {
-    const b = r.briefCoverage;
-    console.log(`### ${r.arm} #${r.run} — ${b.gesamt} Anforderungen, ${b.schwach} davon schwach gedeckt (< 0,3)`);
-    console.log(`explizit verworfen: ${b.explizitVerworfen.length} (Konstrukt existiert nicht — die Null ist erzwungen)\n`);
-    console.log('| Anforderung | Überdeckung | bester Treffer | Text |');
-    console.log('|---|---:|---|---|');
-    for (const z of b.zeilen.slice(0, 10)) {
-      console.log(`| ${z.id} | ${z.ueberdeckung} | ${z.match ?? '—'} | ${z.text.slice(0, 70)} |`);
-    }
-    console.log(`\n(die zehn schwaechsten von ${b.gesamt}; die vollstaendige Liste steht in results*.json)\n`);
-  }
-}
+// Ob der Auftrag gedeckt ist, beantwortet das Blindurteil (`blindurteil.mjs`, T-E10) gegen das
+// Raster `auftragspunkte.json` — die Wortlaut-Pruefliste (CR-GC-553) mass den Input des Arms und
+// ist mit CR-GC-701 entfernt.
 
 // CR-GC-567 — wohin geht das Kontextfenster, und traegt der Dry-Run die Auswahl?
 // Zwei Fragen, die die Ergebniszeile eines Laufs nicht beantworten kann: sie kennt nur

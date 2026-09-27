@@ -442,7 +442,7 @@ eingefroren; ein Benchmark, dessen Eingabe weiterläuft, misst nichts.
 
 | Rig | Aufgabe (Input des Arms) | Referenz | Arme | Kosten je Lauf |
 |---|---|---|---|---|
-| Greenfield · Korpus **sigllm-prosa** | `material-prosa/auftrag.md`: SIG Local als Prosa, ohne Kennungen und Zerlegung; Saat = ein SYS-Knoten | Golden `sigllm-v98.graph.json` (handgeführt, Ende der Spezifikation: 255 Elemente / 506 Traces) + Prüfliste `anforderungen-auftrag.json` | `gcrun` (lokal, Executor) · `opus5` (Opus, Claude Code) | lokal 0 $, ~3–4 min; Opus 18–26 $ |
+| Greenfield · Korpus **sigllm-prosa** | `material-prosa/auftrag.md`: SIG Local als Prosa, ohne Kennungen und Zerlegung; Saat = ein SYS-Knoten | Golden `sigllm-v98.graph.json` (handgeführt, Ende der Spezifikation: 255 Elemente / 506 Traces) + Raster `auftragspunkte.json` (Blindurteil, T-E10) | `gcrun` (lokal, Executor) · `opus5` (Opus, Claude Code) | lokal 0 $, ~3–4 min; Opus 18–26 $ |
 | Greenfield · Korpus **sigllm-spezifikation** | Projektdefinition (245 Zeilen, **mit** Systemzerlegung und Akteuren) | dasselbe Golden | wie oben | wie oben |
 | Greenfield · Default **graphcode-webapp** | `prompt.txt`: „Web-App mit Multiuser aus dem Harness, sigloch-Module maximal nutzen" | keine (kein Golden, kein Abgleich) | wie oben | wie oben |
 | Code-Test | `aufgabe.md` + `vertrag/contract.ts`: Scheduler der Nachtaufträge (Termine, Nachholen, nie zweimal, Neustart …) | verdeckte Abnahme mit 15 Tests; `referenz/` belegt Erfüllbarkeit (15/15) und Trennschärfe (ohne Persistenz 11/15) | `gefuehrt` (Claude Code + graphcode + Golden) · `frei` (Claude Code allein), beide Opus 5 | gefuehrt ~10–11 $, frei ~2,3 $ |

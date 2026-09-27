@@ -2695,6 +2695,12 @@
       "description": "docs/cr/open/CR-GC-700-der-subagent-kanal-ist-ungemessen-ein-ei.md"
     },
     {
+      "id": "CR-GC-701",
+      "type": "CR",
+      "name": "Die Auftrags-Pruefliste misst Wortlaut gegen die strukturierte Projektdefinition und ist damit zwischen strukturiertem und prosaischem Lauf nicht vergleichbar: 42/42 vs 1/42 bei mehr Elementen",
+      "description": "docs/cr/open/CR-GC-701-die-auftrags-pruefliste-misst-wortlaut-g.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22338,5 +22344,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 524
+  "graphVersion": 525
 }
