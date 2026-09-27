@@ -118,12 +118,17 @@ const SCORE_EPS = 1e-12;
  * dryRun geht, wie der Consumer ihn anwenden soll (CR-GC-431: die Zahl gehört
  * dem ausgelieferten Zug).
  *
- * Zwei Verbund-Formen, beide aus se-engine hergeleitet, keine Grammatik hier:
+ * Drei Verbund-Formen, alle aus se-engine hergeleitet, keine Grammatik hier:
  *
  *   - `retire` (CR-GC-435): `[delete-edge(retire), add-edge(edit)]` — Umhängen.
  *   - `merges` (CR-GC-444): `[merge-nodes(primär), ...merges]` — Konsolidieren.
  *     Ein FLOW-Merge OHNE den gekoppelten SCHEMA-Merge stirbt am Gate, weil
  *     `FLOW -relation-> SCHEMA` 1..1 ist (R-18, drittes Bein).
+ *   - `add-node` (CR-GC-684, se-engine CR-SM-367/356):
+ *     `[add-node(node), ...delete-edge(retires), ...add-edge(edges)]` — ein neuer
+ *     Knoten samt seiner Einbindung, ggf. mit umgehängten Kindern (RD-04). Die
+ *     gespiegelte Kante `source/target/type` (= `edges[0]`) wird NICHT zusätzlich
+ *     angelegt: allein zeigte sie auf einen Knoten, den es noch nicht gibt (R-08).
  *
  * Der Fallstrick „delete+add DERSELBEN uid in einem Batch" (persist schreibt
  * deletes LAST) wird nicht getroffen: beim Umhängen unterscheiden sich die
@@ -135,6 +140,20 @@ export function batchFor(edit: SuggestedEdit): MutateCommand[] {
     return [
       { op: 'merge-nodes', sourceUid: edit.source, targetUid: edit.target },
       ...(edit.merges ?? []).map((m): MutateCommand => ({ op: 'merge-nodes', sourceUid: m.source, targetUid: m.target })),
+    ];
+  }
+  if (edit.op === 'add-node') {
+    if (!edit.node || !edit.edges?.length) {
+      throw new Error(`add-node-Vorschlag ohne node/edges (${edit.source} -${edit.type}-> ${edit.target}) — se-engine-Vertrag verletzt`);
+    }
+    return [
+      { op: 'add-node', node: { ...edit.node, attributes: {} } },
+      ...(edit.retires ?? []).map(
+        (r): MutateCommand => ({ op: 'delete-edge', edge: { sourceId: r.source, targetId: r.target, edgeType: r.type } }),
+      ),
+      ...edit.edges.map(
+        (e): MutateCommand => ({ op: 'add-edge', edge: { sourceId: e.source, targetId: e.target, edgeType: e.type, attributes: {} } }),
+      ),
     ];
   }
   return [

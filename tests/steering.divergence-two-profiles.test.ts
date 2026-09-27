@@ -61,7 +61,7 @@ import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
 import { makeSteeringConfig } from './fixtures/steering-graphs.js';
 import { DIVERGENCE_FIXTURE } from './fixtures/divergence-graph.js';
-import type { GraphSuggestResult } from '../src/loop/suggest.js';
+import { batchFor, type GraphSuggestResult } from '../src/loop/suggest.js';
 
 const DIMS = ['modifiability', 'faultTolerance', 'flowEfficiency', 'coherence', 'viability', 'scalability'] as const;
 type Weights = Partial<Record<(typeof DIMS)[number], number>>;
@@ -251,9 +251,11 @@ async function greedyRun(label: string, weights: Weights, ranking: Ranking): Pro
       for (const pick of candidates) {
         const before = fit(rig.harness);
         attempted.add(pick.key);
-        const result = await rig.harness.mutate([
-          { op: 'add-edge', edge: { sourceId: pick.edit.source, targetId: pick.edit.target, edgeType: pick.edit.type, attributes: {} } },
-        ]);
+        const result = await rig.harness.mutate(
+          // CR-GC-684: DERSELBE Batch, den der dryRun beurteilt hat (`batchFor`) — ein nacktes
+          // add-edge verwarf retire/retires und legte bei add-node eine Kante ins Nichts (R-08).
+          batchFor(pick.edit),
+        );
         if (!result.success) {
           gateBlocks.push({ n, ruleId: pick.ruleId, edit: pick.key, violations: result.violations.map((v) => `${v.ruleId}:${v.severity}`) });
           continue;

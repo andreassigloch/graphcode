@@ -1,6 +1,6 @@
 # CR-GC-684: graph_suggest wendet add-node-Vorschlaege als ein Batch an
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-27)
 **Typ:** aus Item ITEM-2026-350 (finding)
 **Erstellt:** 2026-09-26
 **Item:** bok/items/ITEM-2026-350.json (Lane: code)
@@ -58,9 +58,44 @@ unveraendert ueber das Gate.
 
 ## Akzeptanz
 
-- [ ] Rot zuerst: ein add-node-Vorschlag wird heute verworfen bzw. falsch uebersetzt.
-- [ ] `graph_suggest` am Fixture liefert den Batch, der Dry-Run senkt den Befund.
-- [ ] RD-04-Vorschlag (add-node + retires) am Fixture: Batch passiert das Gate, Steuerwert sinkt.
-- [ ] Schatten-Simulation `rig/greenfield-systemtest/schatten-suggest.mjs` an opus5-14/15: Zahl
-      der anwendbaren Vorschlaege vorher/nachher.
-- [ ] VOLL-Lane gruen.
+- [x] Rot zuerst: `tests/suggest.add-node.test.ts` — alle drei rot vor der Aenderung: `batchFor` lieferte
+      nur das gespiegelte `add-edge(edges[0])`; R-32 und RD-04 wies das Gate mit R-08 ab
+      (Kante auf den noch nicht existierenden Knoten).
+- [x] `graph_suggest` am Fixture liefert den Batch (R-32: TEST-Knoten + verify), anwendbar; angewandt
+      ist der Befund am SCHEMA weg.
+- [x] RD-04 (add-node + retires) am Fixture: Batch passiert das Gate, `steer.improvement > 0`, angewandt
+      feuert RD-04 am Eltern nicht mehr, jedes umgehaengte Kind hat genau einen compose-Eltern (Store).
+- [x] Schatten-Simulation opus5-14/15 (kein LLM, nur Dry-Runs), Zuege mit anwendbarem Vorschlag
+      vorher → nachher: opus5-14 0 → 0, opus5-15 0 → 3 (alle RD-04, verpasste Steuerverbesserung 0.667).
+      Vorbehalt: 18 von 29 bzw. 34 Zuegen weist das heutige Gate beim Nachspielen ab.
+- [ ] VOLL-Lane: nicht gefahren, benannte Ausnahmen unten.
+
+## Ergebnis
+
+- `src/loop/suggest.ts` `batchFor`: dritter Zweig `add-node` → `[add-node(node), ...delete-edge(retires),
+  ...add-edge(edges)]`; die gespiegelte Kante wird nicht zusaetzlich angelegt.
+- Zweite Uebersetzung entfernt: `tests/steering.divergence-two-profiles.test.ts` und
+  `tests/suggest.ranks-the-delivered-edit.test.ts` bauten den Batch selbst als nacktes `add-edge` —
+  jetzt `batchFor`.
+- `tests/suggest.rehang.test.ts`: die Invariante war „retire.source === edit.source" — gilt fuers
+  Umallokieren (R-04/CR-01), nicht fuer BW-02 (retire = compose des ALTEN Eltern). Wahre Invariante:
+  gleicher Kantentyp, genau EIN gemeinsames Ende in derselben Rolle (Umhaengen).
+
+## Offen (benannt)
+
+1. **Peer-Floor `@sigloch/se-engine`:** nicht gehoben. 1.9.0 (Registry) enthaelt CR-SM-367/356 nicht;
+   gegen 1.9.0 kompiliert `edit.node/edges/retires` nicht. Beim Release auf die naechste minor heben.
+2. **se-engine (Produzent):** `suggestEdits` nimmt einen Operator-Befund nur auf, wenn die generische
+   Sonde (`applyRule`) greift — R-32 in einem Graphen ohne jeden TEST faellt heraus, bevor die
+   add-node-Vorlage gefragt wird.
+3. **`steering.divergence-two-profiles` rot:** auf master (Link-Modus) rot an „gate refused RD-04
+   (R-08)" — genau dieser Befund. Nach dem Fix rot an „SCALABLE chain too short": EIN RD-04-Zug
+   realisiert +0.4950 entlang SCALABLE (alte Fuenf-Kanten-Kette +0.3226), danach Optimum. Die
+   Kill-Kriterien (Schrittzahl, CONTESTED-Allokation) stammen aus dem Einzelkanten-Aktionsraum —
+   Entscheidung noetig, ob der Spike auf Reichweite umgestellt wird.
+4. **`arch.optimization-dry-run.spike` Lauf A rot, unabhaengig:** auch mit master-suggest.ts —
+   15 Zuege (MAX_STEPS) aus BW-02/CR-01-Umhaengen (CR-SM-356), kein add-node-Zug.
+5. **Weitere Leser der Edit-Form:** `src/loop/executor-prompt.ts` zeigt einen Vorschlag als eine Kante,
+   `src/surface/mcp-tools.ts` (`noteTemplateEdits`) identifiziert Edits ueber source/target — beide
+   kennen `node/edges/retires` nicht.
+6. CR-Knoten im Graphen: Status nicht gesetzt (kein graph_mutate in dieser Lane).

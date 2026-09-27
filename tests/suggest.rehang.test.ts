@@ -153,10 +153,21 @@ describe('CR-GC-435: am Repo-Graphen urteilt der dryRun über den Verbund', () =
       // Wo ein Edit ein retire trägt, hat der dryRun den VERBUND beurteilt — ein
       // `applicable:true` an so einem Edit ist ohne den Batch-dryRun unmöglich,
       // denn das nackte add-edge weist das Gate ab (Test oben).
+      //
+      // CR-GC-684: die Invariante ist das UMHÄNGEN, nicht „gleiche Quelle". Das bewegte
+      // Element hält seine Rolle, das andere Ende wechselt: beim Umallokieren (R-04/CR-01,
+      // `FUNC -allocate-> MOD`) ist es die Quelle, beim Umhängen eines Kindes (BW-02,
+      // `Eltern -compose-> Kind`, retire = compose des ALTEN Eltern) das Ziel. Gleicher
+      // Kantentyp, genau EIN gemeinsames Ende in derselben Rolle — sonst wäre es kein
+      // Umhängen, sondern ein Löschen plus ein unabhängiges Anhängen.
       for (const s of res.suggestions) {
         if (!s.edit?.retire || !s.applicable) continue;
         expect(s.verdict?.success).toBe(true);
-        expect(s.edit.retire.source).toBe(s.edit.source);
+        const { retire } = s.edit;
+        expect(retire.type).toBe(s.edit.type);
+        const sameSource = retire.source === s.edit.source;
+        const sameTarget = retire.target === s.edit.target;
+        expect(sameSource !== sameTarget, `${retire.source}->${retire.target} vs ${s.edit.source}->${s.edit.target}`).toBe(true);
       }
     } finally {
       await dropRig(rig);
