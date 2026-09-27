@@ -56,3 +56,22 @@ RC-10 ist `profile: conformance` und zaehlt dort nicht mit.
 richtig: der Fix fuer eine Blatt-REQ ohne Bauauftrag ist eine `CR -relation->`-Kante aus dem Bauplan,
 kein REQ-Text. Das ist genau die Klasse, fuer die der Test die benannte Ausnahmeliste fuehrt
 (UC-01, RD-01, R-04) — CR-R05 dort mit Grund eingetragen; keine SM-Aenderung noetig.
+
+## VOLL-Lauf im Worktree (2026-09-27, `npx vitest run`, Link-Modus)
+
+188 Dateien, 1662 Tests: **11 rot in 8 Dateien**, 1647 gruen, 4 skipped. Vorher (nur die hier
+genannten Dateien) 20+ rot.
+
+| Datei | Tests | Ursache | Eigentuemer |
+|---|---|---|---|
+| `distribution.test.ts` | 1 | Link-Modus (erwartet) | — |
+| `executor.preflight.test.ts` | 2 | kinds-Meldung | CR-GC-672 |
+| `skill-kinds-werte.test.ts` | 1 | executor SYSTEM nennt pre/postcondition | CR-GC-672 |
+| `generate.test.ts` | 1 | Phasen/done | CR-GC-672 |
+| `generate.statemachine.test.ts` | 3 | CR-R05 im Kern-Fokus am Golden (CR-GC-696B) | CR-GC-672 |
+| `readiness.model.test.ts` | 1 | RC-10 ohne Gate in graphcode-client | SM (Item vorschlagen) |
+| `perf.advisory-roundtrip.spike.test.ts` | 1 | `bestBySteer` O(Kandidaten × n²), CR-SM-356 | SM (Item vorschlagen) |
+| `rig-measured.test.ts` | 1 | `statSync(.graphcode/kuzu)` — ein frischer Checkout hat keinen Store; Klasse „saubere Maschine", vorbestehend, nicht aus diesem Zug | eigener Befund |
+
+Graph-Knoten fuer CR-GC-696B/C/D sind NICHT angelegt (kein graph_mutate am Repo-Store in dieser
+Lane) — beim Integrieren per Werkzeug nachziehen.
