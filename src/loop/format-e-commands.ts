@@ -14,8 +14,8 @@
  * @author andreas@siglochconsulting
  */
 
-import { FormatEInputSchema } from '@sigloch/graph-api-core';
-import type { Graph } from '@sigloch/graph-api-core';
+import { FormatEInputSchema, SE_FORMAT_E_CODEC } from '@sigloch/graph-api-core';
+import type { Graph, GraphEdge, GraphNode } from '@sigloch/graph-api-core';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 
 /**
@@ -243,4 +243,57 @@ export function formatEToCommands(
   }
 
   return { commands: [...knotenSchreiben, ...kanten, ...merges, ...knotenLoeschen], unnamed };
+}
+
+/**
+ * `MutateCommand[]` → Format-E-Text — die Rueckrichtung zu `formatEToCommands` (CR-GC-672B).
+ *
+ * Wer einen fertigen Batch als Text zeigen will (die Vorschlaege der Rundeninjektion), zeigt damit
+ * genau das, was das Gate bekaeme: `formatEToCommands(bestand, commandsToFormatE(cmds))` ergibt
+ * dieselben Kommandos. Knoten und angelegte Kanten schreibt der EINE Codec
+ * (`SE_FORMAT_E_CODEC.serialize`, roundTrip — samt `[__name:…]`). Der Codec serialisiert einen
+ * ZUSTAND, keinen Diff; was ein Zustand nicht ausdrueckt, steht hier als Zeile der Sprache:
+ * `- A -t-> B` (Kante loeschen) und `M a + b` (Knoten zusammenlegen).
+ *
+ * Nur die vier Operationen, die ein Vorschlag (`batchFor`) erzeugt. Alles andere ist ein Wurf,
+ * kein stilles Weglassen — ein Block, der weniger zeigt als der Batch, waere die alte Luege.
+ */
+export function commandsToFormatE(commands: readonly MutateCommand[]): string {
+  const nodes: GraphNode[] = [];
+  const addEdges: GraphEdge[] = [];
+  const deleteLines: string[] = [];
+  const mergeLines: string[] = [];
+  for (const c of commands) {
+    switch (c.op) {
+      case 'add-node':
+        nodes.push({ ...c.node, attributes: c.node.attributes ?? {} });
+        break;
+      case 'add-edge':
+        addEdges.push({ ...c.edge, attributes: c.edge.attributes ?? {} });
+        break;
+      case 'delete-edge':
+        deleteLines.push(`- ${c.edge.sourceId} -${c.edge.edgeType}-> ${c.edge.targetId}`);
+        break;
+      case 'merge-nodes':
+        mergeLines.push(`M ${c.sourceUid} + ${c.targetUid}`);
+        break;
+      default:
+        throw new Error(`commandsToFormatE: "${c.op}" hat hier keine Textform — nur add-node/add-edge/delete-edge/merge-nodes`);
+    }
+  }
+  const teile: string[] = [];
+  if (nodes.length > 0) teile.push(SE_FORMAT_E_CODEC.serialize({ nodes, edges: [] }, { roundTrip: true }).trim());
+  const addLines =
+    addEdges.length > 0
+      ? // OHNE roundTrip: dessen Validierung verlangt jeden Endpunkt als Knoten im selben Graphen —
+        // ein Diff haengt aber an Knoten, die im Speicher stehen, nicht in diesem Block.
+        SE_FORMAT_E_CODEC.serialize({ nodes: [], edges: addEdges })
+          .trim()
+          .split('\n')
+          .filter((z) => z !== '## Edges')
+      : [];
+  // Loeschzeilen vor den Anlagen — dieselbe Reihenfolge wie `batchFor`.
+  if (deleteLines.length + addLines.length > 0) teile.push(['## Edges', ...deleteLines, ...addLines].join('\n'));
+  if (mergeLines.length > 0) teile.push(['## Merges', ...mergeLines].join('\n'));
+  return teile.join('\n\n');
 }

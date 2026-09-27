@@ -1,6 +1,6 @@
 # CR-GC-672B: Executor zeigt add-node-Vorschlaege ehrlich
 
-**Status:** 🟠 Open
+**Status:** ✅ Done 2026-09-27
 **Typ:** Folge-CR aus CR-GC-672 (Grenze 10 Dateien), Quelle ITEM-2026-614 Punkt 4
 **Erstellt:** 2026-09-27
 
@@ -25,3 +25,27 @@ so durchs Gate).
 
 ABNAHME: Unit-Test rot → gruen; der gerenderte Batch eines echten add-node-Vorschlags (RD-04 oder
 RD-01 add-node am Fixture) besteht den Gate-dryRun.
+
+---
+
+## Umsetzung (2026-09-27)
+
+- `src/loop/format-e-commands.ts`: `commandsToFormatE(commands)` — die Rueckrichtung zu
+  `formatEToCommands`. Knoten und angelegte Kanten schreibt `SE_FORMAT_E_CODEC.serialize` (Knoten mit
+  `roundTrip` samt `[__name:…]`; Kanten ohne, weil dessen Validierung jeden Endpunkt im selben Graphen
+  verlangt). Was ein Zustand nicht ausdrueckt, steht als Sprachzeile: `- A -t-> B`, `M a + b`.
+  Andere Ops werfen — kein stilles Weglassen.
+- `src/loop/executor-prompt.ts`: `SuggestRow.edit` ist `SuggestedEdit`; jeder Vorschlag wird als
+  `commandsToFormatE(batchFor(edit))` gerendert. Eine einzelne angelegte Kante bleibt Einzeile, alles
+  andere steht als ```format-e-Block (delta im Kopf). Der Fokus-Filter liest alle beruehrten uids
+  (node, edges, retires, retire, merges).
+- `merge-nodes`: Format-E drueckt ihn aus (`## Merges` / `M source + target`) — er steht jetzt als Merge
+  da statt als `relation`-Kante.
+
+ABNAHME: `tests/executor.round-injection-suggest-skill.test.ts`, describe CR-GC-672B — rot vorher
+(`RD-04 @ FUNC-P: FUNC-P -compose-> FUNC-P-ebene`, Kante auf einen nicht existierenden Knoten), gruen
+nachher: Knoten-/Loesch-/Kantenzeilen; Rundlauf `formatEToCommands(block)` = `batchFor(edit)`;
+RD-04 am Fixture (Disk-Kuzu) — der injizierte Block besteht `graph_mutate({formatE, dryRun:true})`.
+
+NICHT ENTHALTEN: der Block filtert nicht auf `applicable` — ein am dryRun gescheiterter Vorschlag mit
+`edit` wuerde weiter gezeigt. Vorbestehend, nicht Teil dieses CR.

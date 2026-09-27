@@ -17,6 +17,9 @@ import { skillDatei, type GenerationStep } from './generate.js';
 import { byRank, type ChannelBlock } from './channel-rank.js';
 import { buildInventoryBlock, type InventarModus } from './executor-inventory.js';
 import { decision } from './decisions.js';
+import { batchFor } from './suggest.js';
+import { commandsToFormatE } from './format-e-commands.js';
+import type { SuggestedEdit } from '@sigloch/se-engine';
 
 // ---------------------------------------------------------------------------
 // System-Prompt — bewusst ~1 Seite; die Methode kommt aus graph_generate.
@@ -251,7 +254,41 @@ interface SuggestRow {
   ruleId?: string;
   elementId?: string;
   delta?: unknown[];
-  edit?: { source: string; target: string; type: string };
+  edit?: SuggestedEdit;
+}
+
+/**
+ * Alle uids, die ein Zug beruehrt — fuer den Fokus-Filter (CR-GC-672B). Bei `add-node` spiegeln
+ * `source/target` nur `edges[0]`; der neue Knoten und die umgehaengten Kanten gehoeren dazu.
+ */
+function beruehrteUids(s: SuggestRow): string[] {
+  const e = s.edit!;
+  return [
+    s.elementId ?? '',
+    e.source,
+    e.target,
+    ...(e.node ? [e.node.uid] : []),
+    ...(e.edges ?? []).flatMap((k) => [k.source, k.target]),
+    ...(e.retires ?? []).flatMap((k) => [k.source, k.target]),
+    ...(e.retire ? [e.retire.source, e.retire.target] : []),
+    ...(e.merges ?? []).flatMap((m) => [m.source, m.target]),
+  ];
+}
+
+/**
+ * Der Zug eines Vorschlags als Text — `batchFor` (was `graph_suggest` am Gate geprueft hat) durch
+ * den Format-E-Serializer, keine zweite Uebersetzung (CR-GC-672B). Ist der Batch eine einzige
+ * angelegte Kante, bleibt es die Einzeile `A -t-> B`; sonst steht der ganze Batch als
+ * ```format-e-Block da. Vorher stand hier IMMER `source -type-> target` — bei `add-node` eine Kante
+ * auf einen Knoten, den es noch nicht gibt, bei `merge-nodes` eine relation-Kante statt des Merges.
+ */
+function zugAlsText(edit: SuggestedEdit): string {
+  const text = commandsToFormatE(batchFor(edit));
+  const zeilen = text.split('\n');
+  if (zeilen.length === 2 && zeilen[0] === '## Edges' && zeilen[1].startsWith('+ ') && !zeilen[1].includes(', ')) {
+    return ' ' + zeilen[1].slice(2);
+  }
+  return '\n```format-e\n' + text + '\n```';
 }
 
 /** Hoechstens so viele Vorschlagszeilen je Runde — der Block bleibt eine Beigabe. */
@@ -398,9 +435,8 @@ export async function buildRoundChannels(
         // allein auf den Fund haette ihn bei Fokus ACTOR/UC/FCHAIN/FUNC weggeworfen — also
         // genau das eine, was die Runde haette anwenden koennen.
         const typVon = (id: unknown): string => String(id ?? '').split('-')[0];
-        const beteiligt = [s.elementId, s.edit.source, s.edit.target].map(typVon);
+        const beteiligt = beruehrteUids(s).map(typVon);
         if (fokus.size > 0 && !beteiligt.some((ty) => fokus.has(ty))) continue;
-        const kante = `${s.edit.source} -${s.edit.type}-> ${s.edit.target}`;
         // CR-GC-648: ein Null-Delta ist keine Aussage — gemessen trugen beide Vorschlaege einer
         // Runde `[0.000 ×6]` unter dem Satz „negativ heisst Verbesserung". Nur ein Zug, der
         // etwas bewegt, bekommt seine Zahlen.
@@ -409,14 +445,16 @@ export async function buildRoundChannels(
         const d = bewegt
           ? ` · delta [${s.delta!.map((x) => (typeof x === 'number' ? x.toFixed(3) : '?')).join(' ')}]`
           : '';
-        zeilen.push(`- ${s.ruleId} @ ${s.elementId}: ${kante}${d}`);
+        // Das delta steht im Kopf, VOR einem Block — hinter der schliessenden Fence haenge es in der Luft.
+        zeilen.push(`- ${s.ruleId} @ ${s.elementId}${d}:${zugAlsText(s.edit)}`);
         if (zeilen.length >= SUGGEST_MAX_ROWS) break;
       }
       if (zeilen.length > 0) {
         blocks.push({
           channel: 'proposal',
           text:
-            'Ausfuehrbare Vorschlaege (aus den Regel-Vorlagen gerechnet, Kante bereits geprueft; '
+            'Ausfuehrbare Vorschlaege (aus den Regel-Vorlagen gerechnet, als Batch am Gate vorgeprueft — '
+            + 'ein Block ist EIN Zug: ganz uebernehmen oder gar nicht; '
             + '`delta` ist der ℝ⁶-Zug — negativ heisst Verbesserung). Uebernimm sie, wenn sie zur '
             + 'Instruktion passen, sonst begruende im Batch, warum nicht:\n' + zeilen.join('\n'),
         });

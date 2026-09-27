@@ -16,6 +16,17 @@ import { describe, it, expect } from 'vitest';
 import { buildRoundInjection, WITHHELD_TOOLS } from '../src/loop/executor-prompt.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { z } from 'zod/v4';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { SE_DESCRIPTOR, type Graph } from '@sigloch/graph-api-core';
+import type { SuggestedEdit } from '@sigloch/se-engine';
+import { KuzuAdapter } from './helpers/store.js';
+import { GraphCodeHarness } from '../src/kernel/harness.js';
+import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { batchFor } from '../src/loop/suggest.js';
+import { formatEToCommands } from '../src/loop/format-e-commands.js';
+import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
 
 /** Eine Registry-Attrappe: nur die Handler, die die Injektion anfasst. */
 function registry(suggestions: unknown[]): MCPToolRegistry {
@@ -210,3 +221,129 @@ describe('CR-GC-651: der injizierte Skill-Ausschnitt passt zum Executor', () => 
     });
   }
 });
+
+describe('CR-GC-672B: ein add-node-Vorschlag steht als der Batch da, den das Gate bekommt', () => {
+  // Vorher: EINE Zeile `FUNC-P -compose-> FUNC-mid` — die gespiegelte edges[0], eine Kante auf
+  // einen Knoten, den es noch nicht gibt. Das Modell uebernahm sie, das Gate wies sie ab (R-08);
+  // Knoten, weitere Kanten und retires sah es nie.
+  const edit: SuggestedEdit = {
+    op: 'add-node',
+    source: 'FUNC-P', target: 'FUNC-mid', type: 'compose',
+    rationale: 'x',
+    node: { uid: 'FUNC-mid', type: 'FUNC', name: 'mid', description: 'Zwischenebene.' },
+    edges: [
+      { source: 'FUNC-P', target: 'FUNC-mid', type: 'compose' },
+      { source: 'FUNC-mid', target: 'FUNC-c0', type: 'compose' },
+    ],
+    retires: [{ source: 'FUNC-P', target: 'FUNC-c0', type: 'compose', rationale: 'umgehaengt' }],
+  };
+  const bestand: Graph = {
+    nodes: ['FUNC-P', 'FUNC-c0'].map((uid) => ({ uid, type: 'FUNC', name: uid, description: '', attributes: {} })),
+    edges: [{ sourceId: 'FUNC-P', targetId: 'FUNC-c0', edgeType: 'compose', attributes: {} }],
+  };
+
+  it('Knotenzeile, Loeschzeile und alle Kanten — nicht die gespiegelte Einzelkante', async () => {
+    const out = await buildRoundInjection(
+      registry([vorschlag({ ruleId: 'RD-04', elementId: 'FUNC-P', edit })]),
+      { focusTypes: ['FUNC'], skill: 'se:top-level' },
+    );
+    const block = formatEBlockOf(out, 'RD-04 @ FUNC-P');
+    expect(block, 'kein Format-E-Block zum Vorschlag').not.toBeNull();
+    expect(block).toContain('## Nodes\n### FUNC\n+ FUNC-mid|Zwischenebene. [__name:mid]');
+    expect(block).toContain('- FUNC-P -compose-> FUNC-c0');
+    expect(block).toContain('+ FUNC-mid -compose-> FUNC-c0');
+    expect(block).toContain('+ FUNC-P -compose-> FUNC-mid');
+  });
+
+  it('der gerenderte Block IST batchFor — zurueckgelesen ergibt er dieselben Kommandos', async () => {
+    const out = await buildRoundInjection(
+      registry([vorschlag({ ruleId: 'RD-04', elementId: 'FUNC-P', edit })]),
+      { focusTypes: ['FUNC'], skill: 'se:top-level' },
+    );
+    const { commands } = formatEToCommands(bestand, formatEBlockOf(out, 'RD-04 @ FUNC-P')!);
+    const key = (c: unknown) => JSON.stringify(c);
+    expect(commands.map(key).sort()).toEqual(batchFor(edit).map(key).sort());
+  });
+
+  it('ein Einzelkanten-Vorschlag mit retire zeigt die Loeschzeile', async () => {
+    const umhaengen = vorschlag({
+      edit: {
+        op: 'add-trace', source: 'FUNC-task-execute', target: 'MOD-sched', type: 'allocate', rationale: 'x',
+        retire: { source: 'FUNC-task-execute', target: 'MOD-alt', type: 'allocate', rationale: 'weicht' },
+      },
+    });
+    const out = await buildRoundInjection(registry([umhaengen]), { focusTypes: ['FUNC'], skill: 'se:top-level' });
+    const block = formatEBlockOf(out, 'R-22 @ FUNC-task-execute');
+    expect(block).toContain('- FUNC-task-execute -allocate-> MOD-alt');
+    expect(block).toContain('+ FUNC-task-execute -allocate-> MOD-sched');
+  });
+
+  it('merge-nodes steht als ## Merges da, nicht als relation-Kante', async () => {
+    const merge = vorschlag({
+      ruleId: 'OP-MERGE', elementId: 'FLOW-a',
+      edit: {
+        op: 'merge-nodes', source: 'FLOW-a', target: 'FLOW-b', type: 'relation', rationale: 'x',
+        merges: [{ source: 'SCHEMA-a', target: 'SCHEMA-b', rationale: 'gekoppelt' }],
+      },
+    });
+    const out = await buildRoundInjection(registry([merge]), { focusTypes: ['FLOW'], skill: null });
+    const block = formatEBlockOf(out, 'OP-MERGE @ FLOW-a');
+    expect(block).toContain('## Merges\nM FLOW-a + FLOW-b\nM SCHEMA-a + SCHEMA-b');
+    expect(out).not.toContain('FLOW-a -relation-> FLOW-b');
+  });
+
+  it('RD-04 am echten Gate: der injizierte Block besteht den dryRun von graph_mutate', async () => {
+    const tmp = mkdtempSync(join(tmpdir(), 'graphcode-672b-'));
+    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
+    const harness = new GraphCodeHarness(makeSteeringConfig(tmp), storage);
+    try {
+      await harness.initialize();
+      await harness.importGraph(rd04Fixture());
+      const tools = bindToolsToHarness(harness);
+      const out = await buildRoundInjection(tools, { focusTypes: ['FUNC'], skill: null });
+      const block = formatEBlockOf(out, 'RD-04 @ FUNC-P');
+      expect(block, `kein RD-04-Block im Rundeninhalt:\n${out}`).not.toBeNull();
+      expect(block).toContain('## Nodes');
+      expect(block, 'RD-04 haengt Kinder um — die Loeschzeilen gehoeren in den Block').toMatch(/^- FUNC-P -compose-> FUNC-c\d$/m);
+      const res = (await tools.graph_mutate.handler({ formatE: block!, dryRun: true })) as {
+        success: boolean; violations?: { ruleId: string; message: string }[];
+      };
+      expect(res.success, JSON.stringify(res.violations)).toBe(true);
+    } finally {
+      await harness.close();
+      rmSync(tmp, { recursive: true, force: true });
+    }
+  }, 120_000);
+});
+
+/** Der ```format-e-Block, der im Rundeninhalt unter der Vorschlagszeile `kopf` steht. */
+function formatEBlockOf(out: string, kopf: string): string | null {
+  const ab = out.indexOf(kopf);
+  if (ab < 0) return null;
+  const m = /```format-e\n([\s\S]*?)\n```/.exec(out.slice(ab));
+  return m ? m[1] : null;
+}
+
+/** RD-04: `FUNC-P` hat zehn Kinder; vier reichen einander Daten weiter (wie tests/suggest.add-node.test.ts). */
+function rd04Fixture(): FixtureGraph {
+  const kids = Array.from({ length: 10 }, (_, i) => `FUNC-c${i}`);
+  const elements: FixtureGraph['elements'] = [
+    { id: 'FUNC-P', type: 'FUNC', name: 'P', description: 'Eltern mit zu vielen Kindern.' },
+    ...kids.map((id) => ({ id, type: 'FUNC', name: id, description: `Kind ${id}.` })),
+  ];
+  const traces: FixtureGraph['traces'] = kids.map((c) => ({ source: 'FUNC-P', target: c, type: 'compose' }));
+  for (let i = 0; i < 3; i++) {
+    const flow = `FLOW-k${i}`;
+    const schema = `SCHEMA-k${i}`;
+    elements.push(
+      { id: flow, type: 'FLOW', name: flow, description: `Uebergabe ${i}.` },
+      { id: schema, type: 'SCHEMA', name: schema, description: `Vertrag ${i}.` },
+    );
+    traces.push(
+      { source: `FUNC-c${i}`, target: flow, type: 'io' },
+      { source: flow, target: `FUNC-c${i + 1}`, type: 'io' },
+      { source: flow, target: schema, type: 'relation' },
+    );
+  }
+  return { elements, traces };
+}
