@@ -2725,6 +2725,12 @@
       "description": "docs/cr/open/CR-GC-705-executor-fc-04-ohne-klausel-s2-gcrun-336.md"
     },
     {
+      "id": "CR-GC-706",
+      "type": "CR",
+      "name": "graph_mutate: commands-Parameter entfernen (67 Dateien, Konsumenten zuerst)",
+      "description": "docs/cr/open/CR-GC-706-graph-mutate-commands-parameter-entferne.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22368,5 +22374,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 529
+  "graphVersion": 530
 }
