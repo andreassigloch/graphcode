@@ -60,26 +60,44 @@ describe('ablehnungen', () => {
 });
 
 describe('dubletten', () => {
-  it('erkennt Zwilling nach Name und nach Text, mit Auslöser aus respondsTo', () => {
+  it('erkennt Zwilling nach Text und nach Name mit ähnlichem Text, mit Auslöser aus respondsTo', () => {
     const req = (uid: string, name: string, description: string) =>
       ({ op: 'add-node', node: { uid, type: 'REQ', name, description } });
     const zeilen = [
-      { operation: 'mutate', result: 'applied', commands: [req('REQ-login', 'Login', 'Anmeldung per Passwort')] },
-      // gleicher Name, Suffix an den Zwilling, ohne Befund
-      { operation: 'mutate', result: 'applied', commands: [req('REQ-login-neu', 'Login', 'etwas anderes')] },
+      { operation: 'mutate', result: 'applied', commands: [req('REQ-login', 'Login', 'Anmeldung per Passwort am Portal')] },
+      // gleicher Name, Suffix an den Zwilling, Text halb gleich (≥ 40 %), ohne Befund
+      { operation: 'mutate', result: 'applied', commands: [req('REQ-login-neu', 'Login', 'Anmeldung per Passwort')] },
+      // gleicher Name allein ist KEINE Dublette (CR-GC-708: „Benachrichtigung prüfen" heißen verschiedene TESTs)
+      { operation: 'mutate', result: 'applied', commands: [req('REQ-login-sso', 'Login', 'Single Sign-on über den Firmen-IdP')] },
       // anderer Name, gleicher Text, auf einen Befund hin
       { operation: 'mutate', result: 'applied', respondsTo: [{ ruleId: 'UC-01', elementId: 'UC-a' }],
-        commands: [req('REQ-anmelden', 'Anmelden', 'Anmeldung per Passwort')] },
+        commands: [req('REQ-anmelden', 'Anmelden', 'Anmeldung per Passwort am Portal')] },
       // abgelehnte Mutation zählt nicht
-      { operation: 'mutate', result: 'rejected', commands: [req('REQ-login-x', 'Login', 'x')] },
+      { operation: 'mutate', result: 'rejected', commands: [req('REQ-login-x', 'Login', 'Anmeldung per Passwort am Portal')] },
       // Überschreiben derselben uid ist keine Dublette
-      { operation: 'mutate', result: 'applied', commands: [req('REQ-login', 'Login', 'Anmeldung per Passwort')] },
+      { operation: 'mutate', result: 'applied', commands: [req('REQ-login', 'Login', 'Anmeldung per Passwort am Portal')] },
     ];
     writeFileSync(join(dir, 'audit.jsonl'), zeilen.map((z) => JSON.stringify(z)).join('\n') + '\n');
     const d = dubletten(readFileSync(join(dir, 'audit.jsonl'), 'utf8'));
     expect(d.anzahl).toBe(2);
     expect(d.form).toEqual({ 'Suffix an den Zwilling': 1, 'ähnlicher Text, neue uid': 1 });
     expect(d.ausloeser).toEqual({ 'ohne Befund': 1, 'UC-01': 1 });
+  });
+
+  it('zählt jeden Typ, auch innerhalb eines Batches, und Schablonentext getrennt (CR-GC-708)', () => {
+    const knoten = (uid: string, type: string, description: string) => ({ op: 'add-node', node: { uid, type, name: uid, description } });
+    const zeilen = [{
+      operation: 'mutate', result: 'applied', commands: [
+        knoten('MOD-budget-1', 'MOD', 'Verwaltet das Rechenbudget der lokalen Instanz'),
+        knoten('MOD-budget-2', 'MOD', 'Verwaltet das Rechenbudget der lokalen Instanz'),
+        knoten('SCHEMA-a', 'SCHEMA', 'Form von Eingabe: Feld1 und Feld2'),
+        knoten('SCHEMA-b', 'SCHEMA', 'Form von Eingabe: Feld1 und Feld2'),
+      ],
+    }];
+    writeFileSync(join(dir, 'audit.jsonl'), zeilen.map((z) => JSON.stringify(z)).join('\n') + '\n');
+    const d = dubletten(readFileSync(join(dir, 'audit.jsonl'), 'utf8'));
+    expect(d.typ).toEqual({ MOD: 1 });
+    expect(d.platzhalter).toBe(1);
   });
 });
 

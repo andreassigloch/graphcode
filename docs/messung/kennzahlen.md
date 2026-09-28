@@ -63,6 +63,23 @@ misst weiter die Datei-Deckung aller Tests — als Reichweite der Testauswahl (T
 exportiertes 231-KB-`kuzu.wal`, kein committetes `graph.json`, die CR-Reihenfolge als Prosa in
 `CLAUDE.md` —, aber messbar war es nicht, weil es keine KPI gab.
 
+## Executor-Züge — KVP je S2-Runde (CR-GC-708)
+
+Wer den Treiber ändert (Auftragstext, Kontext, Skill, Abstellmaßnahme), handelt auf diese Zahlen —
+sie sagen, **welche Fokusregel mit welchem Zug beantwortet wird und was der Zug anrichtet**. Rechnet
+`rig/greenfield-systemtest/zuege.mjs`, im S2-Bericht (`report.mjs`) für jeden Executor-Lauf.
+
+| Größe | Definition | Kriterium |
+|---|---|---|
+| Lösungsquote je Fokusregel | Runden, nach denen alle Funde des Fokusfensters weg sind ÷ Runden mit dieser Regel im Fokus | — (Profil); eine Regel bei 0 % ist ein Auftrag, der den legalen Zug nicht nennt |
+| Neue Fokusfunde je Runde | Fokusfunde nach der Runde, die vorher nicht standen, je Regel | — (Profil); zeigt Kaskaden (Fokus X → Zug → Funde Y) |
+| Regel-Pareto je Zugtyp | kleinste Regelmenge, deren Kenntnis 80 % / 95 % der Züge fehlerfrei durchs Gate brächte (Gate-Delta aus `audit.jsonl`) | — (Profil); die Regeln, die ein Auftrag für diesen Zug als Vorbild tragen muss |
+| Dubletten | neuer Knoten mit ≥ 70 % Wortgleichheit (gleicher Name: ≥ 40 %) zu einem Knoten desselben Typs, je Kommando, jeder Typ; Schablonentext getrennt | Leitlinie T-E11 |
+
+Das Nachspiel steuert mit dem heutigen Code; stimmen Stagnation und Defer nicht mit dem Log überein,
+meldet der Bericht „nicht nachspielbar" statt Zahlen. Deshalb gehört die Auswertung direkt hinter
+den Lauf, nicht Wochen später.
+
 ## Schwellen — zwei Ebenen, nie im Code
 
 Keine Urteilsschwelle steht als Literal im Regelcode. Sie steht auf einer von zwei Ebenen, und die

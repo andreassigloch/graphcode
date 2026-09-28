@@ -13,6 +13,7 @@ import { steuerungsBericht } from './steuerung.mjs';
 import { vergleichBericht } from './trajektorie.mjs';
 import { schattenBericht } from './schatten-suggest.mjs';
 import { verhaltensBericht } from './verhalten.mjs';
+import { zugBericht } from './zuege.mjs';
 import { ARM_ACHSEN, achsenUnterschied } from './run.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -330,6 +331,16 @@ if (mitLoop.length) {
     .filter((l) => existsSync(l.audit) || existsSync(l.log));
   const golden = process.env.GOLDEN ?? rows.find((r) => r.stempel?.golden?.pfad)?.stempel.golden.pfad;
   if (laeufe.length) console.log('\n' + verhaltensBericht(laeufe, gemischt ? null : golden) + '\n');
+}
+
+// CR-GC-708 — Zuege je Runde: Fokus → Zug → Wirkung, Regel-Pareto je Zugtyp. Jeder Lauf mit Executor-Log;
+// das Nachspiel prueft sich selbst gegen das Log und meldet „nicht nachspielbar" statt falscher Zahlen.
+{
+  const laeufe = rows
+    .filter((r) => !r.error)
+    .map((r) => ({ label: `${r.arm} #${r.run}`, dir: join(HERE, 'runs', `${r.arm}-${r.run}`) }))
+    .filter((l) => existsSync(join(l.dir, 'audit.jsonl')));
+  if (laeufe.length) console.log('\n' + (await zugBericht(laeufe)) + '\n');
 }
 
 // CR-GC-609 — Schatten-graph_suggest: nur Laeufe, fuer die schatten-suggest.mjs gelaufen ist (kostet Dry-Runs,

@@ -52,8 +52,15 @@ redundancy — all decidable, all computed.
   Quoten, wie lange steht ein Anker; dazu das Endprofil gegen das Golden. Braucht `GOLDEN`
   (Korpus-env sourcen): `set -a && source rig/sigllm-spezifikation/lauf-prosa.env && set +a`.
 - **Arbeitsweise** (`verhalten.mjs`, Leitlinie T-E11/T-V5, Default im Bericht) — je Lauf
-  Gate-Ablehnungen, Preflight-Blocks, neu angelegter Bestand, Dubletten mit Auslöser, REQ ohne
-  kinds/Erfüller, Vorbild-Leck; über alle Läufe die Struktur gegen das Golden des Stempels.
+  Gate-Ablehnungen, Preflight-Blocks, neu angelegter Bestand, Dubletten (jeder Typ, auch im Batch;
+  Schablonentext getrennt) mit Auslöser, REQ ohne kinds/Erfüller, Vorbild-Leck; über alle Läufe die
+  Struktur gegen das Golden des Stempels.
+- **Züge** (`zuege.mjs`, CR-GC-708, Default im Bericht, jeder Executor-Lauf) — das KVP-Instrument:
+  je Fokusregel Runden, Lösungsquote, Runden ohne Zug, typischer Zug und die neuen Fokusfunde, die
+  der Zug erzeugt; die häufigsten Muster Fokusregel → Zug; je Zugtyp das Regel-Pareto (welche
+  Regeln 80 % / 95 % der Züge fehlerfrei durchs Gate brächten). Das Nachspiel rechnet den Fokus mit
+  dem heutigen `dist/` und prüft sich gegen Stagnation und Defer des Logs — weicht der Code seit dem
+  Lauf ab, steht „nicht nachspielbar" statt Zahlen. Einzeln: `node zuege.mjs runs/gcrun-342 …`.
 - **Blindurteil** (`blindurteil.mjs`, Leitlinie T-E10, eigener Schritt) — die Qualität, die der
   Bericht nicht rechnen kann:
   1. `node rig/greenfield-systemtest/blindurteil.mjs vorbereiten <ziel> runs/gcrun-310 …` —

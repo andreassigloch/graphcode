@@ -2737,6 +2737,12 @@
       "description": "docs/cr/open/CR-GC-707-executor-stillstand-an-af-01-04-analyse-.md"
     },
     {
+      "id": "CR-GC-708",
+      "type": "CR",
+      "name": "S2-Standardmessung: Zug-Analyse je Runde (Fokus→Zug→Gate→Fundänderung) und Regel-Pareto je Zugtyp als KVP-Instrument",
+      "description": "docs/cr/open/CR-GC-708-s2-standardmessung-zug-analyse-je-runde-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22380,5 +22386,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 531
+  "graphVersion": 532
 }

@@ -68,36 +68,46 @@ const textAehnlich = (a, b) => {
   return i / (A.size + B.size - i);
 };
 const normName = (s) => (s ?? '').toLowerCase().replace(/[^a-zäöüß]/g, '');
+/**
+ * Schablonentext — aus einem Vorbild („Feld1 und Feld2", „Ergebnis A") oder der TEST-Rumpf, den der
+ * Preflight ergänzt („it.todo: Prüfe …"). Ein Qualitätsmangel bzw. Werkzeugtext, keine Dublette des Modells.
+ */
+const PLATZHALTER = /\bFeld ?(?:[0-9]|[A-Z]\b)|\bErgebnis [A-Z]\b|^it\.todo:/;
 
 /**
- * Dubletten aus `audit.jsonl`: ein neu angelegter REQ/FUNC/UC/FCHAIN, zu dem schon ein Knoten
- * desselben Typs mit gleichem Namen oder ≥ 70 % Wortgleichheit steht. Je Dublette: Form und
- * Auslöser (Regel-IDs aus `respondsTo`, sonst „ohne Befund“ = Seed- oder Phasenauftrag).
+ * Dubletten aus `audit.jsonl`: ein neu angelegter Knoten, zu dem schon ein Knoten desselben Typs mit
+ * gleichem Namen oder ≥ 70 % Wortgleichheit steht — jeder Typ, und geprüft je Kommando gegen den
+ * laufenden Bestand, also auch innerhalb eines Batches (CR-GC-708: bis dahin nur REQ/FUNC/UC/FCHAIN
+ * gegen den Stand vor dem Batch — gcrun-342 zeigte 28 %, über alle Typen waren es 58 %). Je Dublette:
+ * Typ, Form und Auslöser (Regel-IDs aus `respondsTo`, sonst „ohne Befund“ = Seed- oder Phasenauftrag).
+ * Gleicher Name zählt nur mit ≥ 40 % Wortgleichheit; Kopien von Schablonentext zählen getrennt.
+ * Unschärfe bleiben kurze TEST-Texte („X auslösen, Benachrichtigung prüfen"): Stichprobe 2026-09-28 ~80 % echt.
  */
 export function dubletten(audit) {
   const g = leererGraph();
   const typ = {}, form = {}, ausloeser = {};
-  let anzahl = 0;
+  let anzahl = 0, platzhalter = 0;
   for (const z of audit.split('\n')) {
     if (!z.trim()) continue;
     const a = JSON.parse(z);
     if (a.operation !== 'mutate' || a.result !== 'applied') continue;
     const befund = [...new Set((a.respondsTo ?? []).map((r) => r.ruleId))];
     for (const c of a.commands) {
-      if (c.op !== 'add-node' || g.nodes.has(c.node.uid) || !['REQ', 'FUNC', 'UC', 'FCHAIN'].includes(c.node.type)) continue;
-      const neu = c.node;
-      const zwilling = [...g.nodes.values()].find((o) => o.type === neu.type
-        && (normName(o.name) === normName(neu.name) || textAehnlich(o.description, neu.description) >= 0.7));
+      const neu = c.op === 'add-node' && !g.nodes.has(c.node.uid) ? c.node : null;
+      // Gleicher Name allein reicht nicht: „Benachrichtigung prüfen" heißen verschiedene TESTs.
+      const zwilling = neu && [...g.nodes.values()].find((o) => o.type === neu.type && (textAehnlich(o.description, neu.description) >= 0.7
+        || (normName(o.name) === normName(neu.name) && textAehnlich(o.description, neu.description) >= 0.4)));
+      anwenden(g, c);
       if (!zwilling) continue;
+      if (PLATZHALTER.test(neu.description ?? '')) { platzhalter++; continue; }
       anzahl++;
       zaehle(typ, neu.type);
       zaehle(form, neu.uid.startsWith(zwilling.uid) ? 'Suffix an den Zwilling'
         : normName(neu.name) === normName(zwilling.name) ? 'gleicher Name, neue uid' : 'ähnlicher Text, neue uid');
       zaehle(ausloeser, befund.length ? befund.join('+') : 'ohne Befund');
     }
-    for (const c of a.commands) anwenden(g, c);
   }
-  return { anzahl, typ, form, ausloeser };
+  return { anzahl, typ, form, ausloeser, platzhalter };
 }
 
 /** Knoten und Kanten eines exportierten Graphen; Kanten nur zwischen vorhandenen Knoten. */
@@ -164,7 +174,7 @@ export function verhaltensBericht(laeufe, goldenPfad) {
   const top = (o, n = 4) => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, n).map(([k, v]) => `${k} ${v}`).join(', ') || '—';
   const summe = (o) => Object.values(o).reduce((a, b) => a + b, 0);
   const z = ['## Verhalten des Modells (Leitlinie T-E10, T-E11)', '',
-    '| Lauf | Gate-Ablehnungen | Preflight-Block | Bestand neu angelegt | Dubletten (Auslöser) | REQ · ohne kinds · ohne Erfüller · namensgleich überzählig | Vorbild-Leck |',
+    '| Lauf | Gate-Ablehnungen | Preflight-Block | Bestand neu angelegt | Dubletten (Typ; Auslöser) | REQ · ohne kinds · ohne Erfüller · namensgleich überzählig | Vorbild-Leck |',
     '|---|---|---|---|---|---|---|'];
   const graphen = [];
   for (const l of laeufe) {
@@ -174,7 +184,7 @@ export function verhaltensBericht(laeufe, goldenPfad) {
     if (g) graphen.push(g);
     const p = g ? pruefungen(g) : null;
     z.push(`| ${l.label} | ${a ? `${summe(a.gate)}: ${top(a.gate, 3)}` : '—'} | ${a ? summe(a.preflightBlock) : '—'} `
-      + `| ${a ? `${summe(a.wiederAngelegt)}: ${top(a.wiederAngelegt, 3)}` : '—'} | ${d ? `${d.anzahl}: ${top(d.ausloeser, 2)}` : '—'} `
+      + `| ${a ? `${summe(a.wiederAngelegt)}: ${top(a.wiederAngelegt, 3)}` : '—'} | ${d ? `${d.anzahl}: ${top(d.typ, 3)}; ${top(d.ausloeser, 2)}${d.platzhalter ? ` (+${d.platzhalter} Schablone)` : ''}` : '—'} `
       + `| ${p ? `${p.req} · ${p.ohneKinds} · ${p.ohneErfueller} · ${p.namensgleich}` : '—'} | ${p ? p.vorbildLeck.join(', ') || '—' : '—'} |`);
   }
   if (goldenPfad && existsSync(goldenPfad) && graphen.length) {
