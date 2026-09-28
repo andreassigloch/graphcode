@@ -1,6 +1,6 @@
 # CR-GC-708: S2-Standardmessung: Zug-Analyse je Runde und Regel-Pareto je Zugtyp
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-28)
 **Typ:** aus Item ITEM-2026-637 (idea)
 **Erstellt:** 2026-09-28
 **Item:** bok/items/ITEM-2026-637.json (Lane: code)
