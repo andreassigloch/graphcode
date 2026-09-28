@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 318 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 319 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 318 CR · 303 done · 4 open.
+Total: 319 CR · 303 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -380,3 +380,4 @@ Total: 318 CR · 303 done · 4 open.
 | `CR-GC-706` | n/a | graph_mutate: commands-Parameter entfernen (67 Dateien, Konsumenten zuerst) |
 | `CR-GC-707` | n/a | Executor: Stillstand an AF-01..04 (Analyse-Stempel conops/trade/irr) — S2 gcrun-339..341 je Lauf mehrere 3-Runden-Stillstaende, der Executor kann die Analyse-Skills nicht fahren; Klausel oder gezieltes Zurueckstellen |
 | `CR-GC-708` | n/a | S2-Standardmessung: Zug-Analyse je Runde (Fokus→Zug→Gate→Fundänderung) und Regel-Pareto je Zugtyp als KVP-Instrument |
+| `CR-GC-709` | n/a | Kennzahlverlauf je S2-Runde mitschreiben (docs/messung/verlauf.md), damit jede Änderung am Executor ihre Wirkung belegt |

@@ -115,36 +115,44 @@ export async function nachspielen(dir) {
   const jeRegel = (ks) => ks.reduce((m, k) => zaehle(m, k.split('|')[0]), {});
 
   let graph = { nodes: [], edges: [] };
-  for (const a of saat) if (a.result === 'applied') graph = applyCommands(cloneGraph(graph), a.commands).graph;
   const defer = [];
   const abweichung = [];
   let letzterPrompt, stagnation = 0;
   const zeilen = [];
-  for (const r of runden) {
-    const gen = generationStep(graph, policy, undefined, schwelle, [...defer], 'driver', null, 'kern', null);
-    stagnation = gen.prompt === letzterPrompt ? stagnation + 1 : 0;
-    if (stagnation !== r.stagnation) abweichung.push(`Runde ${r.n}: Stagnation ${stagnation} statt ${r.stagnation}`);
-    if (r.defer && r.defer !== gen.focusKey) abweichung.push(`Runde ${r.n}: Defer ${r.defer} statt ${gen.focusKey}`);
-    const vorher = takeSteeringSnapshot(graph, policy);
-    const typVon = (uid) => graph.nodes.find((n) => n.uid === uid)?.type ?? uid.split('-')[0];
-    const angewandt = r.audit.filter((a) => a.result === 'applied');
-    const zug = angewandt.length ? zugForm(angewandt.flatMap((a) => a.commands), typVon) : 'ohne Zug';
-    for (const a of angewandt) graph = applyCommands(cloneGraph(graph), a.commands).graph;
-    const nachher = takeSteeringSnapshot(graph, policy);
-    const [vF, nF] = [new Set(vorher.focus.map(schluessel)), new Set(nachher.focus.map(schluessel))];
-    const nAlle = new Set(nachher.violations.map(schluessel));
-    const [, regel = null, ids = ''] = gen.focusKey?.split(':') ?? [];
-    const fenster = regel ? ids.split(',').map((e) => `${regel}|${e}`) : [];
-    zeilen.push({
-      runde: r.n, phase: gen.phase, fokus: gen.focusKey ?? null, regel, zug,
-      geloest: fenster.length > 0 && fenster.every((k) => !nAlle.has(k)),
-      ablehnungen: r.audit.filter((a) => a.result === 'rejected')
-        .map((a) => [...new Set((a.violations ?? []).filter((v) => v.severity === 'error').map((v) => v.ruleId))].join(',') || 'STRUCT'),
-      neu: jeRegel([...nF].filter((k) => !vF.has(k))),
-      fokusmenge: [vF.size, nF.size],
-    });
-    if (r.defer) defer.push(r.defer);
-    letzterPrompt = gen.prompt;
+  // Ein alter Lauf kann Werte tragen, die das heutige Schema verbietet (z. B. REQ-kinds vor CR-SM-366):
+  // der Snapshot wirft dann einen ZodError. Das ist ein Befund über den Lauf, kein Fehler der Auswertung.
+  try {
+    for (const a of saat) if (a.result === 'applied') graph = applyCommands(cloneGraph(graph), a.commands).graph;
+    for (const r of runden) {
+      const gen = generationStep(graph, policy, undefined, schwelle, [...defer], 'driver', null, 'kern', null);
+      stagnation = gen.prompt === letzterPrompt ? stagnation + 1 : 0;
+      if (stagnation !== r.stagnation) abweichung.push(`Runde ${r.n}: Stagnation ${stagnation} statt ${r.stagnation}`);
+      if (r.defer && r.defer !== gen.focusKey) abweichung.push(`Runde ${r.n}: Defer ${r.defer} statt ${gen.focusKey}`);
+      const vorher = takeSteeringSnapshot(graph, policy);
+      const typVon = (uid) => graph.nodes.find((n) => n.uid === uid)?.type ?? uid.split('-')[0];
+      const angewandt = r.audit.filter((a) => a.result === 'applied');
+      const zug = angewandt.length ? zugForm(angewandt.flatMap((a) => a.commands), typVon) : 'ohne Zug';
+      for (const a of angewandt) graph = applyCommands(cloneGraph(graph), a.commands).graph;
+      const nachher = takeSteeringSnapshot(graph, policy);
+      const [vF, nF] = [new Set(vorher.focus.map(schluessel)), new Set(nachher.focus.map(schluessel))];
+      const nAlle = new Set(nachher.violations.map(schluessel));
+      const [, regel = null, ids = ''] = gen.focusKey?.split(':') ?? [];
+      const fenster = regel ? ids.split(',').map((e) => `${regel}|${e}`) : [];
+      zeilen.push({
+        runde: r.n, phase: gen.phase, fokus: gen.focusKey ?? null, regel, zug,
+        geloest: fenster.length > 0 && fenster.every((k) => !nAlle.has(k)),
+        ablehnungen: r.audit.filter((a) => a.result === 'rejected')
+          .map((a) => [...new Set((a.violations ?? []).filter((v) => v.severity === 'error').map((v) => v.ruleId))].join(',') || 'STRUCT'),
+        neu: jeRegel([...nF].filter((k) => !vF.has(k))),
+        fokusmenge: [vF.size, nF.size],
+      });
+      if (r.defer) defer.push(r.defer);
+      letzterPrompt = gen.prompt;
+    }
+  } catch (e) {
+    if (e?.name !== 'ZodError') throw e;
+    const i = e.issues?.[0];
+    return { nachspielbar: false, grund: `Graph verletzt das heutige Schema (${i?.path?.join('.') ?? '?'}: ${i?.message ?? e.message})` };
   }
   if (abweichung.length) return { nachspielbar: false, grund: `Steuerung weicht vom Log ab (Code seit dem Lauf geändert?): ${abweichung.slice(0, 2).join('; ')}` };
   return { nachspielbar: true, zeilen };

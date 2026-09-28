@@ -8,7 +8,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration (Messwerkzeug, kein Produkt-API)
@@ -131,5 +131,58 @@ describe('nachspielen (echtes dist)', () => {
     const s = await nachspielen(d);
     expect(s.nachspielbar).toBe(false);
     expect(s.grund).toMatch(/Stagnation/);
+  });
+});
+
+describe('nachspielen: Lauf gegen ein heutiges Schema', () => {
+  it('meldet „nicht nachspielbar" mit dem Schemabefund, statt den Bericht abzubrechen', async () => {
+    const d = join(dir, 'altschema');
+    mkdirSync(d);
+    const audit = [
+      { operation: 'mutate', result: 'applied', timestamp: '2026-09-28T10:00:00Z', commands: [
+        knoten('SYS-s', 'SYS', 'Shop', 'Ein Webshop.'),
+        { op: 'add-node', node: { uid: 'REQ-alt', type: 'REQ', name: 'Alt', description: 'Alt.', attributes: { kinds: ['risk'] } } },
+      ] },
+    ];
+    writeFileSync(join(d, 'audit.jsonl'), audit.map((a) => JSON.stringify(a)).join('\n') + '\n');
+    writeFileSync(join(d, 'run-raw.log'), '[generate 1] phase=expand done=false\n');
+    const s = await nachspielen(d);
+    expect(s.nachspielbar).toBe(false);
+    expect(s.grund).toMatch(/Schema/);
+  });
+});
+
+describe('verlauf (CR-GC-709)', () => {
+  it('schreibt je Runde eine Zeile, je Lauf ein Wert, und legt die Datei mit Kopf an', async () => {
+    // @ts-expect-error — s.o.
+    const { zeile, anhaengen } = await import('../rig/greenfield-systemtest/verlauf.mjs');
+    const rows = [{ tokens: { loop: { genRounds: 40 } } }, { tokens: { loop: { genRounds: 40 } } }];
+    const ks = [
+      { elemente: 100, gate: '80 %', dubletten: '5 %', ketten: '2/4', golden: '60 %', fokusEnde: '20', loesung: '70 %', mod: 3 },
+      { elemente: 90, gate: '70 %', dubletten: '—', ketten: '1/3', golden: '55 %', fokusEnde: '25', loesung: '—', mod: 2 },
+    ];
+    const z = zeile('2026-09-28', 'CR-X', rows, ks);
+    expect(z).toBe('| 2026-09-28 | CR-X | 2 × 40 | 100 / 90 | 80 % / 70 % | 5 % / — | 2/4 / 1/3 | 60 % / 55 % | 20 / 25 | 70 % / — | 3 / 2 |');
+    const pfad = join(dir, 'verlauf.md');
+    anhaengen(z, pfad);
+    anhaengen(z, pfad);
+    const text = readFileSync(pfad, 'utf8');
+    expect(text.startsWith('# Kennzahlverlauf')).toBe(true);
+    expect(text.split('\n').filter((l) => l.startsWith('| 2026-09-28')).length).toBe(2);
+  });
+
+  it('laufKennzahlen liest Ergebniszeile, Audit, Graph und Nachspiel eines echten Laufverzeichnisses', async () => {
+    // @ts-expect-error — s.o.
+    const { laufKennzahlen } = await import('../rig/greenfield-systemtest/verlauf.mjs');
+    const d = join(dir, 'gut'); // aus „nachspielen (echtes dist)" — dort angelegt
+    writeFileSync(join(d, 'graph.json'), JSON.stringify({ elements: [
+      { id: 'SYS-s', type: 'SYS', name: 'Shop', description: 'Ein Webshop.' },
+      { id: 'UC-kaufen', type: 'UC', name: 'Buch kaufen', description: 'Der Kunde kauft ein Buch.' },
+    ], traces: [{ source: 'SYS-s', target: 'UC-kaufen', type: 'compose' }] }));
+    const k = await laufKennzahlen({ elements: 3, structure: { MOD: 0 }, tokens: { loop: { mutatesApplied: 3, mutatesRejected: 1 } } }, d, null);
+    expect(k.gate).toBe('75 %');
+    expect(k.dubletten).toBe('0 %');
+    expect(Number(k.fokusEnde)).toBeGreaterThan(0);
+    expect(k.loesung).toMatch(/%$/);
   });
 });

@@ -2743,6 +2743,12 @@
       "description": "docs/cr/open/CR-GC-708-s2-standardmessung-zug-analyse-je-runde-.md"
     },
     {
+      "id": "CR-GC-709",
+      "type": "CR",
+      "name": "Kennzahlverlauf je S2-Runde mitschreiben (docs/messung/verlauf.md), damit jede Änderung am Executor ihre Wirkung belegt",
+      "description": "docs/cr/open/CR-GC-709-kennzahlverlauf-je-s2-runde-mitschreiben.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22386,5 +22392,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 532
+  "graphVersion": 533
 }

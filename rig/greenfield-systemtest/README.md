@@ -61,6 +61,9 @@ redundancy — all decidable, all computed.
   Regeln 80 % / 95 % der Züge fehlerfrei durchs Gate brächten). Das Nachspiel rechnet den Fokus mit
   dem heutigen `dist/` und prüft sich gegen Stagnation und Defer des Logs — weicht der Code seit dem
   Lauf ab, steht „nicht nachspielbar" statt Zahlen. Einzeln: `node zuege.mjs runs/gcrun-342 …`.
+- **Verlauf** (`verlauf.mjs`, CR-GC-709, **nach jeder S2-Runde**) —
+  `node verlauf.mjs results-<runde>.json "<Anlass>"` hängt die Kennzahlen der Runde als Zeile an
+  `docs/messung/verlauf.md` an. Eine Executor-Änderung gilt erst als wirksam, wenn ihre Zeile dort steht.
 - **Blindurteil** (`blindurteil.mjs`, Leitlinie T-E10, eigener Schritt) — die Qualität, die der
   Bericht nicht rechnen kann:
   1. `node rig/greenfield-systemtest/blindurteil.mjs vorbereiten <ziel> runs/gcrun-310 …` —

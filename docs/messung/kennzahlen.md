@@ -78,7 +78,8 @@ sie sagen, **welche Fokusregel mit welchem Zug beantwortet wird und was der Zug 
 
 Das Nachspiel steuert mit dem heutigen Code; stimmen Stagnation und Defer nicht mit dem Log überein,
 meldet der Bericht „nicht nachspielbar" statt Zahlen. Deshalb gehört die Auswertung direkt hinter
-den Lauf, nicht Wochen später.
+den Lauf, nicht Wochen später. Die Kennzahlen jeder Runde schreibt `verlauf.mjs` (CR-GC-709) als Zeile nach
+[`verlauf.md`](verlauf.md) — dort steht, was jede Änderung am Executor bewirkt hat.
 
 ## Schwellen — zwei Ebenen, nie im Code
 
