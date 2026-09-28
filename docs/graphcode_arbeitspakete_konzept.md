@@ -1,7 +1,9 @@
 # Konzept: Arbeitspakete statt Befund-Schleife
 
-Stand 2026-09-27. Wie der Executor ein kleines Modell mit begrenztem Kontext vom Groben ins Feine
-führt — durch die Ontologie, ihre Regeln und den Graphen, den es selbst erzeugt.
+Stand 2026-09-28. Wie der Executor ein kleines Modell mit begrenztem Kontext vom Groben ins Feine
+führt — durch die Ontologie, ihre Regeln und den Graphen, den es selbst erzeugt. Seit 2026-09-28
+konsequent als **Ebenenzyklus** (Abschnitt unten): Inhalt einer Ebene, Abschluss mit
+Architekturreview, erst dann die nächste Ebene.
 
 ## Ziel und Kernthese
 
@@ -56,9 +58,10 @@ Ein Template hat sechs Teile; vier davon liefert die Ontologie:
 |---|---|---|---|---|
 | **T-SYS** Rahmen | SYS | ACTOR, UC (SYS compose UC), je UC die Absätze des Auftrags, aus denen er stammt | R-17; 3–9 UCs; jeder Auftragsabsatz einem UC zugeordnet oder als Abgrenzung/offen markiert; keine zwei UCs über der Überlappungsschwelle | je UC ein T-UC |
 | **T-UC** Szenario | UC | REQ mit `kinds` + TEST (UC compose REQ, TEST verify REQ); eine FCHAIN (UC compose FCHAIN) mit FUNCs als Blackbox; FLOWs ACTOR→FUNC→…→ACTOR mit SCHEMA-Stub; FUNC satisfy REQ, FCHAIN satisfy End-zu-End-NFR; Fragezeilen für offene Werte | UC-01/02/03, R-01, R-02, R-10, R-15, R-30, R-31, IO-02; ≤ 9 REQ und ≤ 9 FUNC je Kette | nach allen UCs: T-KONS |
-| **T-KONS** Konsolidierung | Geschwistermenge einer Ebene | Zusammenlegen (`M a + b`) oder Unterscheiden je Kandidatenpaar | kein Paar über der Schwelle offen; R-12 | T-FUNC für markierte FUNCs |
-| **T-FUNC** Zerlegung | FUNC mit RD-04/RD-05 oder zu breiter Schnittstelle | 3–7 Unter-FUNCs (FUNC compose FUNC), interne FLOWs, bei Bedarf REQ compose REQ | RD-02 (Schnittstelle der Kinder = Schnittstelle des Elternteils), RD-04/05, R-21, R-31 | rekursiv je Unter-FUNC, sonst T-MOD |
-| **T-MOD** Struktur | SYS bzw. MOD | SYS/MOD compose MOD, FUNC allocate MOD, MOD satisfy nicht-funktionale REQ | R-22, R-23, R-04, R-12 | rekursiv je MOD, dann T-VERTRAG |
+| **T-KONS** Konsolidierung | Geschwistermenge einer Ebene | Zusammenlegen (`M a + b`) oder Unterscheiden je Kandidatenpaar | kein Paar über der Schwelle offen; R-12 | Teil des Ebenenabschlusses (T-EBENE) |
+| **T-FUNC** Zerlegung | FUNC mit RD-04/RD-05 oder zu breiter Schnittstelle | 3–7 Unter-FUNCs (FUNC compose FUNC), interne FLOWs, bei Bedarf REQ compose REQ | RD-02 (Schnittstelle der Kinder = Schnittstelle des Elternteils), RD-04/05, R-21, R-31 | T-EBENE für diesen Anker, dann je Unter-FUNC |
+| **T-EBENE** Ebenenabschluss | Anker, dessen Kinder stehen | Zusammenlegungen, Modulentscheidung je Kind (bleibt im MOD des Ankers oder eigenes MOD), fehlende Geschwister-Flüsse | Abschnitt „Ebenenzyklus": RD-04/05, T-KONS, BW-02/R-04, IO-01/R-31/FC-04, RD-02, R-22 für diese Kinder | nächste Ebene; beim Rücksprung T-EBENE des Elternteils (nur Rand) |
+| **T-MOD** Struktur | SYS bzw. MOD | SYS/MOD compose MOD, FUNC allocate MOD, MOD satisfy nicht-funktionale REQ — **je Ebene im T-EBENE**; als eigenes Paket nur noch für die Wurzel (Stack) | R-22, R-23, R-04, R-12 | T-VERTRAG |
 | **T-VERTRAG** Schnittstelle | FLOW mit SCHEMA | Felder des SCHEMA, TEST verify SCHEMA | R-10, R-32 | T-ABSCHLUSS |
 | **T-ABSCHLUSS** | SYS | restliche Verifikation (R-01, R-05), MS/CR-Planung (MS compose UC/REQ/FUNC) | keine Fehler-Regel verletzt; offene Punkte benannt | — |
 
@@ -100,6 +103,7 @@ Die `se`-Skills fassen diese Arbeitsgänge heute schon, aber nach Tätigkeit sta
 | T-SYS | `top-level` (SYS-Blackbox, UCs), `author-uc`, `author-actor` | stark |
 | T-UC | `author-req` (REQ + TEST); Wirkkette nur als Teil von `top-level` | halb — kein Skill „UC → Wirkkette mit FUNCs und FLOWs“ |
 | T-KONS | — (`optimize` schlägt Merges nur als Architekturzug vor) | fehlt |
+| T-EBENE | — (`top-level` kennt Blackbox-Zerlegung, aber keinen Abschluss je Ebene) | fehlt |
 | T-FUNC | `top-level` („rekursiv per Blackbox-Zerlegung“) | vorhanden, im großen Skill |
 | T-MOD | `top-level` (MOD + Stack), `optimize` | vorhanden |
 | T-VERTRAG | `top-level` (Verträge) | am Rand |
@@ -114,9 +118,11 @@ ein kleines Modell zu groß. Der Umbau heißt: `top-level` nach Ankern schneiden
 
 Eine Warteschlange von Paketen ersetzt „schwächste Dimension über den ganzen Graphen“:
 
-1. **In der Breite je Ebene, in der Tiefe im Paket.** T-SYS → alle T-UC (Reihenfolge des Auftrags) →
-   T-KONS → T-FUNC wo markiert → T-MOD → T-VERTRAG → T-ABSCHLUSS. Die Breite ist nötig, weil die
-   Konsolidierung alle UCs sehen muss, bevor eine FUNC zerlegt wird.
+1. **In der Breite je Ebene, in der Tiefe im Paket — und jede Ebene wird abgeschlossen, bevor die
+   nächste beginnt.** T-SYS → alle T-UC (Reihenfolge des Auftrags) → T-EBENE der UC-Ebene → je
+   markierter FUNC: T-FUNC → T-EBENE → … → T-VERTRAG → T-ABSCHLUSS. Die Breite ist nötig, weil der
+   Abschluss alle Geschwister sehen muss; die Architektur entsteht im Abschluss jeder Ebene, nicht
+   als Nachsortieren am Ende (Abschnitt „Ebenenzyklus").
 2. **Ein Paket = ein zusammenhängender Batch**, dann Gate, dann höchstens *k* Reparaturrunden **nur
    für die Befunde dieses Pakets**. Danach ist es abgeschlossen oder als „offen mit Grund“ markiert —
    nie endlos.
@@ -125,6 +131,85 @@ Eine Warteschlange von Paketen ersetzt „schwächste Dimension über den ganzen
    Element, das noch keinen Anker hat, wartet auf das Template der nächsten Ebene.
 4. **Ebenengrenzen sind Prüfpunkte für den Menschen.** Nach T-SYS die UC-Liste bestätigen, nach T-KONS
    die Zusammenlegungen — dort bündelt der Fragekanal (CR-GC-667) seine Fragen.
+
+## Ebenenzyklus (2026-09-28)
+
+Spezifikation und Architektur sind **ein** Modell. Getrennt werden nicht zwei Phasen, sondern zwei
+Durchgänge **je Ebene** — die Blackbox-Logik der Leitlinie (§2: jede Ebene eine Blackbox mit 3–9
+Kindern und schmalem Rand) konsequent als Arbeitsweise:
+
+> **Eine Ebene ist ein Anker und seine `compose`-Kinder.** Durchgang 1 füllt sie mit Inhalt, die
+> Kinder bleiben Blackboxen. Durchgang 2 schließt sie ab: ein Architekturreview nur dieser Ebene.
+> Erst eine abgeschlossene Ebene darf geöffnet werden, und wer nach oben zurückkehrt, prüft den Rand.
+
+Weder „nach jedem Inhaltszug ein Architekturzug" (zu kleinteilig, der Schnitt braucht die
+Geschwister) noch „erst alles erzeugen, dann umsortieren" (die Knoten entstehen wild, das Sortieren
+kostet mehr als das Erzeugen). Der Abschluss einer Ebene ist der natürliche Zeitpunkt: alle
+Geschwister stehen, darunter ist noch nichts gebaut.
+
+### Die drei Schritte
+
+| Schritt | Umfang | Züge | Kontext |
+|---|---|---|---|
+| **1 Inhalt** | Anker öffnen, 3–9 Kinder anlegen | je Kind ein **Block**: das Kind mit REQ (`kinds`), TEST, satisfy/verify, dazu die Flüsse zwischen den Geschwistern und am Rand des Ankers | Anker offen, Geschwister des Ankers als Box, Rest als Index |
+| **2 Abschluss** (T-EBENE) | nur diese Ebene | Zusammenlegen, Flüsse schließen, Modul je Kind entscheiden | alle Kinder offen, ihr Inneres leer |
+| **3 Rücksprung** | Elternebene, nur ihr Rand | Rand nachziehen, wenn die Kinder ihn geändert haben | Anker als Box mit seinen Kindern |
+
+### Was der Abschluss prüft
+
+| Prüfung | Regel | Bemerkung |
+|---|---|---|
+| Breite 3–9 | RD-04, RD-05 | RD-05 „nur 1–2 Kinder": auflösen oder sammeln, **nie** mit Kopien auffüllen (gcrun-342: 7 Klone) |
+| keine Dubletten unter Geschwistern | T-KONS, ND-01/02 | nur die Geschwistermenge — klein und genau |
+| Datenfluss zwischen den Geschwistern geschlossen | IO-01, R-31, FC-04 | Inhalt, kein Architekturbefund: beantwortet mit Flüssen, nie mit Zerlegung oder MOD |
+| Rand der Kinder = Rand des Ankers | RD-02 | der Blackbox-Vertrag |
+| schmaler Rand | BW-02 (FUNC), R-04 (MOD) | |
+| Modul je Kind | R-22 für diese Kinder | siehe unten |
+
+### Modulentscheidung je Ebene
+
+MOD und FUNC **können** identisch sein, müssen es nicht; bei Software ist das unkritischer als bei
+Hardware. Der Modulschnitt folgt **technischen Randbedingungen**, nicht dem Datenfluss: Dateigröße
+(≤ 500 Zeilen), Programmiersprache und Laufzeit, Frontend/Backend, APIs bündeln. Je Kind gibt es
+darum genau zwei legale Antworten:
+
+- **bleibt im MOD des Ankers** — der Normalfall, keine neue Struktur;
+- **eigenes MOD** (`MOD compose MOD` unter dem MOD des Ankers), weil eine Randbedingung es verlangt —
+  mit der Randbedingung als Begründung.
+
+Die Entscheidung betrifft 3–9 Elemente statt des ganzen FUNC-Baums. Eine Rechnung liefert dafür nur
+**Kandidaten**: CNM über die Kopplung der Kinder trifft den gezogenen Schnitt nicht (ARI ≤ 0,40 am
+Golden und an graphcode), die Cluster liegen aber zu 63–77 % in einem MOD
+([SPIKE-GC-inhalt-vs-architektur](spikes/SPIKE-GC-inhalt-vs-architektur.md)).
+
+### Was global bleibt
+
+Die Ebene fängt Dubletten unter Geschwistern — nicht dieselbe Anforderung unter zwei UCs. In
+gcrun-343/344 lagen von 47 Dublettenpaaren 9 unter demselben Elternteil, 8 eine Ebene höher, **26 in
+verschiedenen Zweigen**. Die Ähnlichkeitsprüfung beim Anlegen (Preflight) bleibt deshalb global und
+gilt für jeden Typ, nicht nur REQ/UC.
+
+### Belege (S2-Runde gcrun-342..344, `rig/greenfield-systemtest/zuege.mjs`)
+
+- 76 % der Runden (91/120) vervollständigen halbe Inhaltsblöcke und erzeugen dabei 256 neue
+  Fokusfunde — der Block-Zug in Schritt 1 ersetzt diese Kette.
+- 10 der 12 Runden, in denen ein MOD entstand, hatten einen **Inhalts**-Fokus (IO-01, ND-01, UC-01,
+  R-30): ohne Ebenengrenze beantwortet das Modell Inhaltsbefunde mit Architektur.
+- „MOD + allocate" geht zu 36 % durchs Gate (4 Regeln für 95 %), Inhaltszüge zu 79–100 % (0–1 Regel).
+- Nicht gemessen: ob der Zyklus Runden und Dubletten tatsächlich senkt — das zeigt erst eine
+  S2-Runde, eingetragen in `docs/messung/verlauf.md`.
+
+### Offen
+
+- **Randbedingungen im Modell:** Sprache, Laufzeit, Schicht und Größe stehen heute nicht am Element.
+  Ohne sie ist „eigenes MOD" eine Behauptung ohne Prüfer; Vorschlag: Attribute am MOD (Sprache,
+  Laufzeit) und eine Regel, die ein Kind im Fremd-MOD ohne abweichende Randbedingung meldet —
+  Contracts-Sache (Familie-Review).
+- **Abschlusskriterium im Treiber:** Zustand je Ebene (offen / abgeschlossen / offen mit Grund) und ein
+  Fokus, der auf die Ebene beschränkt ist. Heute zieht der Treiber Fundfenster je Regel über den ganzen
+  Graphen und springt dadurch zwischen den Ebenen.
+- **realRef im Spec:** R-19/R-20/R-26 stehen schon nicht im Fokus, aber noch in jeder Gate-Rückmeldung
+  an das Modell — dort gehören sie im Spec ebenfalls heraus.
 
 ## Kontext eines Pakets
 
@@ -174,17 +259,20 @@ Login, keine „Anfrage annehmen“ (ITEM-2026-607).
 Korpus `sigllm-gcrun`, qwen3.8 (Spezifikationsmodell der lokalen Kette) und qwen3-coder, je 3 Läufe,
 heutiger Treiber gegen Paket-Planer. Gemessen nach Leitlinie §9.3: Blindurteil gegen `golden/auftragspunkte.json`
 (T-E10, `blindurteil.mjs`), Vorbild-Leck und Dubletten (T-E11, `verhalten.mjs`), Struktur gegen das
-Golden (T-V5), Abnahmequote und Kontextgröße je Paket (T-E12). Ein Paket-Planer, der das Blindurteil nicht hebt, ist widerlegt — auch wenn
+Golden (T-V5), Abnahmequote und Kontextgröße je Paket (T-E12), dazu je Runde Lösungsquote je
+Fokusregel und Regel-Pareto je Zugtyp (`zuege.mjs`, CR-GC-708). Ein Paket-Planer, der das Blindurteil nicht hebt, ist widerlegt — auch wenn
 die Readiness steigt.
 
 ## Schnitt in CRs
 
 1. **Vorbilder und Alternativen** (ITEM-2026-607, ITEM-2026-610) — klein, Voraussetzung, allein messbar.
 2. **Paket-Werkzeug, Planer-Gerüst, T-SYS mit Auftragszuordnung, T-UC** mit Faltung als Kontext und Paket-Abnahme; `top-level` in T-SYS/T-UC geschnitten.
-3. **T-KONS.**
-4. **T-FUNC, T-MOD, T-VERTRAG, T-ABSCHLUSS.**
+3. **T-EBENE** (Ebenenabschluss mit T-KONS und Modulentscheidung je Kind) und der ebenenbeschränkte
+   Fokus im Treiber; Preflight-Ähnlichkeit für jeden Typ.
+4. **T-FUNC, T-VERTRAG, T-ABSCHLUSS**; T-MOD nur noch für die Wurzel.
 
-Nach 2 wird gemessen; 3 und 4 nur, wenn 2 das Blindurteil hebt.
+Nach 2 wird gemessen; 3 und 4 nur, wenn 2 das Blindurteil hebt. Jede Messung steht als Zeile in
+`docs/messung/verlauf.md` (CR-GC-709).
 
 ## Entscheidungen (2026-09-27)
 
