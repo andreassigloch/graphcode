@@ -1,6 +1,6 @@
 # CR-GC-709: Kennzahlverlauf je S2-Runde mitschreiben
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-28)
 **Typ:** aus Item ITEM-2026-638 (idea)
 **Erstellt:** 2026-09-28
 **Item:** bok/items/ITEM-2026-638.json (Lane: code)
