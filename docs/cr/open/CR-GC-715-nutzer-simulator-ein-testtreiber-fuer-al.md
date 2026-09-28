@@ -17,7 +17,9 @@ später D1.
 ## Ziel
 
 **EIN** Testtreiber für alle Ketten im Automode, der den **Nutzer simuliert**, wo nötig und möglich:
-- startet den Client headless (`claude -p` bzw. `opencode run`) mit dem Initial-Prompt des Korpus;
+- startet den Client headless mit dem Initial-Prompt des Korpus — genau zwei Pfade (Entscheid
+  2026-09-28): Kette A = `claude -p` mit Abo, Kette D2 = `opencode run` mit qwen über das sigllm-Gateway.
+  Claude Code gegen qwen läuft zwar (Smoke 2026-09-28), sein Rahmen belegt aber 32–37k von 64k Token je Turn;
 - beantwortet Rückfragen aus einer Antwortdatei des Korpus (Auftraggeber-Wissen, z. B. die offenen
   Punkte); was dort nicht steht, beantwortet er mit „offen, bitte als offen führen" — nie erfunden;
 - treibt weiter („weiter", Phasenwechsel), bis **spec ready + code ready** oder das Budget endet;
