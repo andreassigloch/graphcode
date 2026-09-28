@@ -7,6 +7,12 @@
 
 ---
 
+## Neuschnitt (2026-09-28)
+
+Zielkette ist D2 (CR-GC-714): der Planer gehört nicht als Schleife in den Executor allein, sondern
+als Werkzeug „nächstes Paket" an graphcode — für jeden Client (Kette A) und für den Executor (D2)
+gleich. Vor Beginn so neu schneiden.
+
 ## Befund
 
 Ab der ersten FUNC wählt die schwächste Readiness-Dimension über den ganzen Graphen den nächsten

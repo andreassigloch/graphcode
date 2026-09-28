@@ -2773,6 +2773,18 @@
       "description": "docs/cr/open/CR-GC-713-t-ebene-ebenenabschluss-mit-architekturr.md"
     },
     {
+      "id": "CR-GC-714",
+      "type": "CR",
+      "name": "D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck",
+      "description": "docs/cr/open/CR-GC-714-d2-delegation-client-gibt-modellarbeit-u.md"
+    },
+    {
+      "id": "CR-GC-715",
+      "type": "CR",
+      "name": "Nutzer-Simulator: EIN Testtreiber fuer alle Ketten (A, D2, spaeter D1) im Automode — simuliert den Nutzer, Ziel autonom spec ready + code ready",
+      "description": "docs/cr/open/CR-GC-715-nutzer-simulator-ein-testtreiber-fuer-al.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22416,5 +22428,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 537
+  "graphVersion": 539
 }

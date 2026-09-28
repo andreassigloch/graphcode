@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 323 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 325 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 323 CR · 303 done · 4 open.
+Total: 325 CR · 303 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -385,3 +385,5 @@ Total: 323 CR · 303 done · 4 open.
 | `CR-GC-711` | n/a | Planer statt Befund-Schleife: Paket-Warteschlange je Ebene, k=2 Reparaturrunden, Fremdbefunde an den Besitzer; T-SYS mit Auftragszuordnung |
 | `CR-GC-712` | n/a | T-UC als Paket: Block-Zug je UC (REQ/TEST/FCHAIN/FUNC/FLOW), SCHEMA als markierter Stub statt Schablonentext; top-level in T-SYS/T-UC schneiden |
 | `CR-GC-713` | n/a | T-EBENE: Ebenenabschluss mit Architekturreview (Breite, Geschwister-Dubletten, Rand, Modul je Kind) und ebenenbeschraenkter Fokus |
+| `CR-GC-714` | n/a | D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck |
+| `CR-GC-715` | n/a | Nutzer-Simulator: EIN Testtreiber fuer alle Ketten (A, D2, spaeter D1) im Automode — simuliert den Nutzer, Ziel autonom spec ready + code ready |
