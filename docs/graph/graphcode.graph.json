@@ -2749,6 +2749,30 @@
       "description": "docs/cr/open/CR-GC-709-kennzahlverlauf-je-s2-runde-mitschreiben.md"
     },
     {
+      "id": "CR-GC-710",
+      "type": "CR",
+      "name": "Paket-Werkzeug: Kontext um einen Anker (Faltung + nummerierter Auftragsausschnitt), Vorschlagsrahmen aus TRACE_PATTERNS, Abnahmestand je Anker",
+      "description": "docs/cr/open/CR-GC-710-paket-werkzeug-kontext-um-einen-anker-fa.md"
+    },
+    {
+      "id": "CR-GC-711",
+      "type": "CR",
+      "name": "Planer statt Befund-Schleife: Paket-Warteschlange je Ebene, k=2 Reparaturrunden, Fremdbefunde an den Besitzer; T-SYS mit Auftragszuordnung",
+      "description": "docs/cr/open/CR-GC-711-planer-statt-befund-schleife-paket-warte.md"
+    },
+    {
+      "id": "CR-GC-712",
+      "type": "CR",
+      "name": "T-UC als Paket: Block-Zug je UC (REQ/TEST/FCHAIN/FUNC/FLOW), SCHEMA als markierter Stub statt Schablonentext; top-level in T-SYS/T-UC schneiden",
+      "description": "docs/cr/open/CR-GC-712-t-uc-als-paket-block-zug-je-uc-req-test-.md"
+    },
+    {
+      "id": "CR-GC-713",
+      "type": "CR",
+      "name": "T-EBENE: Ebenenabschluss mit Architekturreview (Breite, Geschwister-Dubletten, Rand, Modul je Kind) und ebenenbeschraenkter Fokus",
+      "description": "docs/cr/open/CR-GC-713-t-ebene-ebenenabschluss-mit-architekturr.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22392,5 +22416,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 533
+  "graphVersion": 537
 }

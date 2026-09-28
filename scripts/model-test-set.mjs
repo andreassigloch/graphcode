@@ -135,6 +135,10 @@ export const EXCLUDED = {
     'Rig-Verhaltensanalyse (Leitlinie T-E10/T-E11): wertet gestellte Logs, Audits und Graphen in einem\n' +
     'TEMP-Verzeichnis aus und liest die Executor-Prompts (Vorbild-uids). graphcodes eigene SSOT liest er\n' +
     'nie — eine Modellaenderung kann ihn nicht rot machen; eine Aenderung an Rig-Auswertung oder Vorbild sehr wohl.',
+  'tests/rig-zuege.test.ts':
+    'Rig-Zug-Analyse und Kennzahlverlauf (CR-GC-708/709): spielt gestellte Logs und Audits in einem\n' +
+    'TEMP-Verzeichnis nach und wertet Regeln darauf aus. graphcodes eigene SSOT liest er nie — eine\n' +
+    'Modellaenderung kann ihn nicht rot machen; eine Aenderung an Treiber, Regeln oder Rig-Auswertung sehr wohl.',
   'tests/attributvertraege.test.ts':
     'CR-GC-643: prueft das Leseverhalten von Code (graph_tests, Verifikationsbericht, Code-Fakten) auf einem Wegwerf-Store — eine Code-Aenderung bricht es, kein Modell-Zug. Der Modellteil (RC-09 am committeten Modell) steht in conformance.test.ts.',
   'tests/retro-kpi.test.ts':

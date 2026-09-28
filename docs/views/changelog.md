@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 319 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 323 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 319 CR · 303 done · 4 open.
+Total: 323 CR · 303 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -381,3 +381,7 @@ Total: 319 CR · 303 done · 4 open.
 | `CR-GC-707` | n/a | Executor: Stillstand an AF-01..04 (Analyse-Stempel conops/trade/irr) — S2 gcrun-339..341 je Lauf mehrere 3-Runden-Stillstaende, der Executor kann die Analyse-Skills nicht fahren; Klausel oder gezieltes Zurueckstellen |
 | `CR-GC-708` | n/a | S2-Standardmessung: Zug-Analyse je Runde (Fokus→Zug→Gate→Fundänderung) und Regel-Pareto je Zugtyp als KVP-Instrument |
 | `CR-GC-709` | n/a | Kennzahlverlauf je S2-Runde mitschreiben (docs/messung/verlauf.md), damit jede Änderung am Executor ihre Wirkung belegt |
+| `CR-GC-710` | n/a | Paket-Werkzeug: Kontext um einen Anker (Faltung + nummerierter Auftragsausschnitt), Vorschlagsrahmen aus TRACE_PATTERNS, Abnahmestand je Anker |
+| `CR-GC-711` | n/a | Planer statt Befund-Schleife: Paket-Warteschlange je Ebene, k=2 Reparaturrunden, Fremdbefunde an den Besitzer; T-SYS mit Auftragszuordnung |
+| `CR-GC-712` | n/a | T-UC als Paket: Block-Zug je UC (REQ/TEST/FCHAIN/FUNC/FLOW), SCHEMA als markierter Stub statt Schablonentext; top-level in T-SYS/T-UC schneiden |
+| `CR-GC-713` | n/a | T-EBENE: Ebenenabschluss mit Architekturreview (Breite, Geschwister-Dubletten, Rand, Modul je Kind) und ebenenbeschraenkter Fokus |
