@@ -1,6 +1,6 @@
 # CR-GC-714: D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-29)
 **Typ:** aus Item ITEM-2026-644 (idea)
 **Erstellt:** 2026-09-28
 **Item:** bok/items/ITEM-2026-644.json (Lane: code)
@@ -78,3 +78,15 @@ Konfigurationsschema, Tests (Integration: Host + Werkzeug + Executor gegen ein T
 
 Modell: `FUNC-graph-delegate`, `REQ-delegate-in-host`, `TEST-delegate-in-host`, `FLOW-delegate-call`,
 `FLOW-delegation-request`, `SCHEMA-delegate-input` (graphVersion 540).
+
+## Nachweis (2026-09-29)
+
+- `tests/delegate.test.ts` (8 Tests): Host mit Socket + Proxy, Delegation → Frage → Antwort →
+  Fortsetzung, ein Schreiber; Warte-Budget; Eingabevertrag; Executor-Angebot ohne `graph_delegate`
+  (rot gegengeprüft); Config mit `apiKeyFile`, Schlüssel in der Datei abgewiesen. Volle Suite 193/193.
+- Smoke auf dem echten Weg: `graphcode mcp` über stdio (MCP-SDK-Client) in einer Kopie der
+  `agentdiary-local`-Config, qwen3-coder-30b über das sigllm-Gateway, 2 Runden: Werkzeug angeboten,
+  2 Züge angewandt, 0 abgelehnt, 4 Knoten im Store.
+- **Benannte Lücke:** der Smoke lief mit einem SDK-Client, nicht mit OpenCode. Der erste
+  OpenCode-Lauf in `agentdiary-local` (Config und `NODE_EXTRA_CA_CERTS` sind dort eingetragen) ist
+  der Vergleichslauf selbst — das Repo bleibt dafür leer.
