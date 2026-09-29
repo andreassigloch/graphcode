@@ -157,6 +157,15 @@ describe('blindurteil', () => {
     expect(spec).not.toContain('gcrun');
     expect(readFileSync(join(ziel, 'gutachter-A.txt'), 'utf8')).toContain(join(ziel, 'gutachten-A.json'));
     expect(existsSync(join(ziel, 'gutachten-A.json'))).toBe(false);
+    // Ein anderer Korpus: Raster und Auftrag reisen in die Gutachter-Vorgabe, nicht die sigllm-Vorgabe.
+    const raster = join(dir, 'raster.json');
+    writeFileSync(raster, JSON.stringify({ punkte: [{ id: 'P01', text: 'x' }, { id: 'O01', text: 'y' }] }));
+    const anders = join(dir, 'blind-anders');
+    vorbereiten(anders, [lauf], () => 0, { raster, auftrag: join(dir, 'auftrag.md') });
+    const vorgabe = readFileSync(join(anders, 'gutachter-A.txt'), 'utf8');
+    expect(vorgabe).toContain(raster);
+    expect(vorgabe).toContain(join(dir, 'auftrag.md'));
+    expect(vorgabe).not.toContain('sigllm-spezifikation');
 
     writeFileSync(join(ziel, 'gutachten-A.json'), JSON.stringify({
       punkte: { P01: { bewertung: '✓' }, P02: { bewertung: '~' }, P03: { bewertung: '✗' }, O1: { bewertung: '✓' }, O2: { bewertung: '✗' } },

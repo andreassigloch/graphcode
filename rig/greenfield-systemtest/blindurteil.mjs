@@ -11,7 +11,8 @@
  *     → Tabelle je Lauf: ✓/~/✗ über die Auftragspunkte P*, offen geführte O*, erfundene Werte,
  *       Dubletten, Notensumme (5–25, Boden 5)
  *
- * Raster: `rig/sigllm-spezifikation/golden/auftragspunkte.json`. Die Gutachter sind Subagenten; ihre
+ * Raster: `rig/sigllm-spezifikation/golden/auftragspunkte.json`; ein anderer Korpus per
+ *   `--raster=<json> --auftrag=<md>` (z. B. `rig/agentdiary/golden/`). Die Gutachter sind Subagenten; ihre
  * Vorgabe steht hier, damit jede Runde dieselbe Frage stellt (Herkunft: Auswertung CR-GC-682).
  * @author andreas@siglochconsulting
  */
@@ -51,7 +52,8 @@ Antworte am Ende knapp: Zahl ✓/~/✗ über die P*, Zahl ✓ über die O*, die 
 `;
 }
 
-export function vorbereiten(ziel, laeufe, zufall = Math.random) {
+/** `korpus`: Raster und Auftrag eines anderen Korpus (z. B. rig/agentdiary) — Vorgabe sigllm. */
+export function vorbereiten(ziel, laeufe, zufall = Math.random, korpus = {}) {
   mkdirSync(ziel, { recursive: true });
   const k = KENNUNG.slice(0, laeufe.length);
   for (let i = k.length - 1; i > 0; i--) { const j = Math.floor(zufall() * (i + 1)); [k[i], k[j]] = [k[j], k[i]]; }
@@ -61,7 +63,7 @@ export function vorbereiten(ziel, laeufe, zufall = Math.random) {
     zuordnung[kennung] = lauf.split('/').pop();
     const spec = join(ziel, `spec-${kennung}.md`);
     writeFileSync(spec, render(JSON.parse(readFileSync(join(lauf, 'graph.json'), 'utf8')), kennung));
-    writeFileSync(join(ziel, `gutachter-${kennung}.txt`), gutachterVorgabe(resolve(spec), resolve(ziel, `gutachten-${kennung}.json`)));
+    writeFileSync(join(ziel, `gutachter-${kennung}.txt`), gutachterVorgabe(resolve(spec), resolve(ziel, `gutachten-${kennung}.json`), korpus));
   });
   writeFileSync(join(ziel, 'zuordnung.json'), JSON.stringify(zuordnung, null, 1) + '\n');
   return zuordnung;
@@ -92,9 +94,14 @@ export function auswerten(ziel) {
 }
 
 if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop())) {
-  const [schritt, ziel, ...laeufe] = process.argv.slice(2);
+  const flags = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
+  const [schritt, ziel, ...laeufe] = process.argv.slice(2).filter((a) => !a.startsWith('--'));
   if (schritt === 'vorbereiten' && ziel && laeufe.length) {
-    const z = vorbereiten(ziel, laeufe);
+    const korpus = {
+      ...(flags.raster ? { raster: resolve(flags.raster) } : {}),
+      ...(flags.auftrag ? { auftrag: resolve(flags.auftrag) } : {}),
+    };
+    const z = vorbereiten(ziel, laeufe, Math.random, korpus);
     console.log(`${Object.keys(z).length} Specs in ${ziel}. Je Spec einen Gutachter mit gutachter-<K>.txt starten, dann: node blindurteil.mjs auswerten ${ziel}`);
   } else if (schritt === 'auswerten' && ziel && existsSync(join(ziel, 'zuordnung.json'))) {
     console.log('| Lauf | Spec | ✓ · ~ · ✗ (P*) | O* offen geführt | erfunden | Dubletten | Notensumme |');
@@ -103,7 +110,7 @@ if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop()
       console.log(`| ${z.lauf} | ${z.kennung} | ${z.voll} · ${z.teil} · ${z.fehlt} | ${z.offenGefuehrt} | ${z.erfunden} | ${z.dubletten} | ${z.notensumme} |`);
     }
   } else {
-    console.error('node blindurteil.mjs vorbereiten <ziel-dir> <lauf-dir> … | auswerten <ziel-dir>');
+    console.error('node blindurteil.mjs vorbereiten <ziel-dir> <lauf-dir> … [--raster=<json>] [--auftrag=<md>] | auswerten <ziel-dir>');
     process.exit(1);
   }
 }
