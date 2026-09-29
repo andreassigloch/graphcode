@@ -48,6 +48,12 @@ export const GraphcodeConfigSchema = z.object({
   metricPolicy: MetricPolicySchema,
   /** Schwelle, unter der eine Readiness-Dimension als zu schwach gilt. */
   focusThreshold: z.number().min(0).max(1),
+  /**
+   * CR-GC-714: das lokale Modell hinter `graph_delegate`. Hier nur gehalten — geprueft wird er
+   * dort, wo er gebraucht wird (`surface/delegate.ts` gegen `ExecutorConfigSchema`), weil der
+   * Kernel den Executor nicht kennt. Fehlt er, bietet der Host das Werkzeug nicht an.
+   */
+  executor: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type GraphcodeConfig = z.infer<typeof GraphcodeConfigSchema>;

@@ -39,6 +39,7 @@ import { bindExportTools } from '../projections/export.js';
 import { bindSuggestTools, batchFor, type GraphSuggestResult } from '../loop/suggest.js';
 import { bindMetricsTools } from '../projections/metrics.js';
 import { bindTestReportTools } from '../projections/testreport.js';
+import { bindDelegateTool, type DelegateBinding } from './delegate.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -123,40 +124,48 @@ function withConsultationTracking(registry: MCPToolRegistry, ctx: ToolContext): 
 export function bindToolsWithContext(
   harness: GraphCodeHarness,
   auditLog?: AuditLog,
-  opts?: { ownerPid?: string | null },
+  opts?: {
+    ownerPid?: string | null;
+    /** CR-GC-714: mit konfiguriertem lokalem Modell kommt `graph_delegate` dazu, sonst nicht. */
+    delegate?: DelegateBinding;
+  },
 ): { registry: MCPToolRegistry; ctx: ToolContext } {
   // Exactly one context per registry — the whole reason the groups take `ctx`
   // instead of `(harness, auditLog)` (CR-GC-256 Decision §1).
   const ctx = createToolContext(harness, auditLog, opts);
 
-  return {
+  // CR-GC-434: one wrapping point for consultedTools/template-edit capture —
+  // the groups stay unchanged, the registry surface (names/schemas) is identical.
+  // CR-GC-547: der Vertrag wird HIER geprueft, nicht von einem Aufrufer, der es koennte.
+  // Acht Fabriken legen ihre Werkzeuge in EIN Register; bis hierher hielt es nur der
+  // Compiler, und der sieht nichts, was durch `Record<string, MCPTool<any, any>>` kommt.
+  // Ein Werkzeug ohne `handler` oder mit einem `inputSchema`, das keins ist, fiele sonst
+  // erst beim Aufruf auf — im Agenten. `parse`, nicht `safeParse`: ein kaputtes Register
+  // ist kein Zustand, in dem der Host weiterlaufen soll.
+  const registry = MCPToolRegistrySchema.parse(withConsultationTracking(
+    {
+      ...bindReadTools(ctx),
+      ...bindWriteTools(ctx),
+      ...bindReportTools(ctx),
+      ...bindAuditTools(ctx),
+      ...bindExportTools(ctx),
+      ...bindSuggestTools(ctx),
+      ...bindMetricsTools(ctx),
+      ...bindTestReportTools(ctx),
+    },
     ctx,
-    // CR-GC-434: one wrapping point for consultedTools/template-edit capture —
-    // the groups stay unchanged, the registry surface (names/schemas) is identical.
-    // CR-GC-547: der Vertrag wird HIER geprueft, nicht von einem Aufrufer, der es koennte.
-    // Acht Fabriken legen ihre Werkzeuge in EIN Register; bis hierher hielt es nur der
-    // Compiler, und der sieht nichts, was durch `Record<string, MCPTool<any, any>>` kommt.
-    // Ein Werkzeug ohne `handler` oder mit einem `inputSchema`, das keins ist, fiele sonst
-    // erst beim Aufruf auf — im Agenten. `parse`, nicht `safeParse`: ein kaputtes Register
-    // ist kein Zustand, in dem der Host weiterlaufen soll.
-    registry: MCPToolRegistrySchema.parse(withConsultationTracking(
-      {
-        ...bindReadTools(ctx),
-        ...bindWriteTools(ctx),
-        ...bindReportTools(ctx),
-        ...bindAuditTools(ctx),
-        ...bindExportTools(ctx),
-        ...bindSuggestTools(ctx),
-        ...bindMetricsTools(ctx),
-        ...bindTestReportTools(ctx),
-      },
-      ctx,
-    )) as MCPToolRegistry,
-  };
+  )) as MCPToolRegistry;
+  // Nach dem Binden, weil der Executor genau diese Registry treibt (CR-GC-714).
+  if (opts?.delegate) registry.graph_delegate = bindDelegateTool(registry, ctx, opts.delegate);
+  return { ctx, registry };
 }
 
-export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLog): MCPToolRegistry {
-  return bindToolsWithContext(harness, auditLog).registry;
+export function bindToolsToHarness(
+  harness: GraphCodeHarness,
+  auditLog?: AuditLog,
+  opts?: { delegate?: DelegateBinding },
+): MCPToolRegistry {
+  return bindToolsWithContext(harness, auditLog, opts).registry;
 }
 
 

@@ -33,6 +33,7 @@ import {
 } from '@sigloch/graphcode-client';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { bindToolsToHarness } from './mcp-tools.js';
+import type { DelegateBinding } from './delegate.js';
 import type { MCPToolRegistry } from '../kernel/tool-contract.js';
 
 // The CLIENT half (socket name, wire types, `callHost`) lives in
@@ -147,6 +148,8 @@ function isDeadSocket(err: unknown): boolean {
 export function buildProxyRegistry(opts: {
   socketPath: string;
   promote?: () => Promise<MCPToolRegistry>;
+  /** CR-GC-714: der Host bietet `graph_delegate` an — dann auch der Proxy (Handler leitet weiter). */
+  delegate?: DelegateBinding;
 }): MCPToolRegistry {
   const unboundHarness = new Proxy(
     {},
@@ -164,7 +167,7 @@ export function buildProxyRegistry(opts: {
       throw new Error('proxy registry: audit log accessed at bind time');
     },
   };
-  const template = bindToolsToHarness(unboundHarness, unboundLog);
+  const template = bindToolsToHarness(unboundHarness, unboundLog, { delegate: opts.delegate });
 
   // After a successful promotion the proxy IS the host — dispatch goes local.
   let local: MCPToolRegistry | null = null;

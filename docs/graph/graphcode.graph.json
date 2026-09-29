@@ -3179,6 +3179,18 @@
       "description": "Die RC-Befunde aus dem Abgleich Modell gegen Code (conformanceEvaluation). Sie gehen in die volle Auswertung und damit in die Readiness, nicht ins Gate. (CR-GC-501)"
     },
     {
+      "id": "FLOW-delegate-call",
+      "type": "FLOW",
+      "name": "Delegations-Aufruf",
+      "description": "Der Aufruf des Clients an graph_delegate: Auftrag zum Start, Antwort auf offene Fragen zum Fortsetzen, Warte-Budget je Aufruf."
+    },
+    {
+      "id": "FLOW-delegation-request",
+      "type": "FLOW",
+      "name": "Delegierter Lauf-Auftrag",
+      "description": "Der Auftrag von graph_delegate an die Treiberschleife: Auftrag des Clients, die Lauf-Config aus der Repo-Config mit festem Rueckkanal, und die Antworten des Clients auf die Fragen des Executors."
+    },
+    {
       "id": "FLOW-dimension-readiness",
       "type": "FLOW",
       "name": "Dimensions-Readiness (8 Scores)",
@@ -4435,6 +4447,17 @@
       "concept": true
     },
     {
+      "id": "FUNC-graph-delegate",
+      "type": "FUNC",
+      "name": "graph_delegate",
+      "description": "Das Werkzeug graph_delegate: ein angedockter Client gibt Modellarbeit an den Executor im Host-Prozess ab. Die Frage des Executors beendet den Aufruf, der naechste Aufruf mit der Antwort setzt den Lauf fort; nach dem Warte-Budget kehrt der Aufruf mit laeuft zurueck. Modell und Gateway kommen aus dem Abschnitt executor der Repo-Config, ohne ihn gibt es das Werkzeug nicht.",
+      "realRef": {
+        "file": "src/surface/delegate.ts",
+        "symbol": "bindDelegateTool",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-graph-expand",
       "type": "FUNC",
       "name": "graph_expand(handle, branch, depth+1)",
@@ -5645,6 +5668,15 @@
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-delegate-in-host",
+      "type": "REQ",
+      "name": "Delegation an den Executor im Host",
+      "description": "Ein angedockter Client kann Modellarbeit an den Executor im Host-Prozess abgeben; der Executor schreibt durch denselben Store und dasselbe Gate wie der Client, seine offenen Fragen gehen an den Client zurueck, und ein Aufruf kehrt spaetestens nach seinem Warte-Budget zurueck.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -7084,6 +7116,17 @@
       }
     },
     {
+      "id": "SCHEMA-delegate-input",
+      "type": "SCHEMA",
+      "name": "Delegations-Eingabe",
+      "description": "Eingabe von graph_delegate: auftrag, antwort, maxRounds, wartenSek; auftrag und antwort schliessen sich aus.",
+      "realRef": {
+        "file": "src/surface/delegate.ts",
+        "symbol": "DelegateInputSchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-executor-config",
       "type": "SCHEMA",
       "name": "ExecutorConfig",
@@ -8064,6 +8107,20 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-delegate-in-host",
+      "type": "TEST",
+      "name": "Delegation ueber den Host",
+      "description": "Host mit Socket und Proxy wie eine zweite Client-Session, gescriptetes Modell: Delegation, eine Frage, Antwort, Fortsetzung, geschriebener Knoten ueber den Proxy lesbar; Warte-Budget liefert laeuft; Eingabevertrag mit Abweisungen; der Executor bekommt graph_delegate nicht angeboten; ein Schluessel in der eingecheckten Config wird abgewiesen.",
+      "testRefs": [
+        {
+          "file": "tests/delegate.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed"
         }
       ]
     },
@@ -10014,6 +10071,11 @@
     }
   ],
   "traces": [
+    {
+      "source": "ACTOR-agent",
+      "target": "FLOW-delegate-call",
+      "type": "io"
+    },
     {
       "source": "ACTOR-agent",
       "target": "FLOW-formatE-artifact-agent",
@@ -14044,6 +14106,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-714",
+      "target": "FUNC-graph-delegate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-714",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-714",
+      "target": "REQ-delegate-in-host",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -14945,6 +15022,11 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-graph-delegate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-graph-readiness",
       "type": "compose"
     },
@@ -15416,6 +15498,26 @@
     {
       "source": "FLOW-conformance-findings",
       "target": "SCHEMA-rule-violation",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-delegate-call",
+      "target": "FUNC-graph-delegate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-delegate-call",
+      "target": "SCHEMA-delegate-input",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-delegation-request",
+      "target": "FUNC-run-executor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-delegation-request",
+      "target": "SCHEMA-executor-config",
       "type": "relation"
     },
     {
@@ -18316,6 +18418,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-graph-delegate",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-delegate",
+      "target": "FLOW-delegation-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-delegate",
+      "target": "REQ-delegate-in-host",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-graph-expand",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -20574,6 +20691,16 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
+      "source": "TEST-delegate-in-host",
+      "target": "REQ-delegate-in-host",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-delegate-in-host",
+      "target": "SCHEMA-delegate-input",
+      "type": "verify"
+    },
+    {
       "source": "TEST-deny-headless-question",
       "target": "REQ-open-point-asked",
       "type": "verify"
@@ -22308,6 +22435,11 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-delegate-in-host",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-graph-context-replaces-reading",
       "type": "compose"
     },
@@ -22428,5 +22560,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 539
+  "graphVersion": 540
 }

@@ -147,8 +147,9 @@ export function ownerAnswer(questions: readonly string[], antwort: string): stri
 /** Der Guide-Hinweis, wenn die Grammatik NICHT eingebettet ist (injection=false, CR-GC-651). */
 export const GUIDE_HINT = 'Rufe vor dem Schreiben graph_authoring_guide für jeden Elementtyp auf (legale Kanten).';
 
-/** Diese Tools ruft der EXECUTOR deterministisch — dem Modell werden sie vorenthalten. */
-export const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_suggest']);
+/** Diese Tools ruft der EXECUTOR deterministisch — dem Modell werden sie vorenthalten; `graph_delegate`
+ * ist der Eingang des Executors selbst (CR-GC-714), ein Executor delegiert nicht an sich. */
+export const WITHHELD_TOOLS = new Set(['graph_generate', 'graph_suggest', 'graph_delegate']);
 
 /**
  * Das kuratierte Minimal-Set für den generativen Loop (toolset 'authoring') — je Werkzeug die

@@ -8,6 +8,7 @@
 
 | source | type | target |
 |---|---|---|
+| `ACTOR-agent` | io | `FLOW-delegate-call` |
 | `ACTOR-agent` | io | `FLOW-formatE-artifact-agent` |
 | `ACTOR-agent` | io | `FLOW-mutate-cmd-agent` |
 | `ACTOR-agent` | io | `FLOW-query-request-agent` |
@@ -734,6 +735,9 @@
 | `CR-GC-694` | relation | `FUNC-run-executor` |
 | `CR-GC-696` | relation | `FUNC-run-executor` |
 | `CR-GC-697` | relation | `REQ-test-skill-red-first` |
+| `CR-GC-714` | relation | `FUNC-graph-delegate` |
+| `CR-GC-714` | relation | `FUNC-run-executor` |
+| `CR-GC-714` | relation | `REQ-delegate-in-host` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -897,6 +901,7 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-fund-kontext` |
 | `FCHAIN-steering-loop` | compose | `FUNC-gate-client` |
 | `FCHAIN-steering-loop` | compose | `FUNC-generation-step` |
+| `FCHAIN-steering-loop` | compose | `FUNC-graph-delegate` |
 | `FCHAIN-steering-loop` | compose | `FUNC-graph-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-graph-suggest` |
 | `FCHAIN-steering-loop` | compose | `FUNC-held-back-traces` |
@@ -990,6 +995,10 @@
 | `FLOW-config-file` | relation | `SCHEMA-metric-policy` |
 | `FLOW-conformance-findings` | io | `FUNC-compute-readiness` |
 | `FLOW-conformance-findings` | relation | `SCHEMA-rule-violation` |
+| `FLOW-delegate-call` | io | `FUNC-graph-delegate` |
+| `FLOW-delegate-call` | relation | `SCHEMA-delegate-input` |
+| `FLOW-delegation-request` | io | `FUNC-run-executor` |
+| `FLOW-delegation-request` | relation | `SCHEMA-executor-config` |
 | `FLOW-dimension-readiness` | io | `FUNC-graph-readiness` |
 | `FLOW-dimension-readiness` | io | `FUNC-se-retro` |
 | `FLOW-dimension-readiness` | io | `FUNC-se-review` |
@@ -1555,6 +1564,9 @@
 | `FUNC-goal-steerer` | compose | `FUNC-block-q-improvement` |
 | `FUNC-goal-steerer` | io | `FLOW-action` |
 | `FUNC-goal-steerer` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-graph-delegate` | allocate | `MOD-surface` |
+| `FUNC-graph-delegate` | io | `FLOW-delegation-request` |
+| `FUNC-graph-delegate` | satisfy | `REQ-delegate-in-host` |
 | `FUNC-graph-expand` | allocate | `MOD-kernel` |
 | `FUNC-graph-expand` | io | `FLOW-expand-subgraph` |
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |
@@ -1972,6 +1984,8 @@
 | `TEST-dashboard-readonly` | verify | `REQ-artifact-freshness` |
 | `TEST-dashboard-readonly` | verify | `REQ-dashboard-readonly` |
 | `TEST-dashboard-readonly` | verify | `REQ-readiness-transparent` |
+| `TEST-delegate-in-host` | verify | `REQ-delegate-in-host` |
+| `TEST-delegate-in-host` | verify | `SCHEMA-delegate-input` |
 | `TEST-deny-headless-question` | verify | `REQ-open-point-asked` |
 | `TEST-deny-stale-read` | verify | `REQ-graph-is-ssot` |
 | `TEST-distribution` | verify | `REQ-buildable-standalone` |
@@ -2294,6 +2308,7 @@
 | `UC-reduced-llm` | compose | `FCHAIN-modelfree-gate` |
 | `UC-reduced-llm` | compose | `REQ-advisory-roundtrip-latency` |
 | `UC-reduced-llm` | compose | `REQ-cache-layering` |
+| `UC-reduced-llm` | compose | `REQ-delegate-in-host` |
 | `UC-reduced-llm` | compose | `REQ-graph-context-replaces-reading` |
 | `UC-reduced-llm` | compose | `REQ-inventory-switch` |
 | `UC-reduced-llm` | compose | `REQ-one-driver-local-and-frontier` |

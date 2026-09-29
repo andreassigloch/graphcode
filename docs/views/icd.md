@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 61 SCHEMA · 132 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 62 SCHEMA · 134 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -18,6 +18,7 @@
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness-completeness.ts#GateCompleteness | reviewed |
+| `SCHEMA-delegate-input` | src/surface/delegate.ts#DelegateInputSchema | n/a |
 | `SCHEMA-executor-config` | src/loop/executor.ts#ExecutorConfigSchema | reviewed |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
 | `SCHEMA-fit-advisory` | src/kernel/measure/fit-advisory.ts#FitAdvisory | reviewed |
@@ -105,6 +106,8 @@
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-phase-readiness` |
 | `FLOW-config-file` | `ACTOR-owner` | `FUNC-load-config` |
 | `FLOW-conformance-findings` | `FUNC-check-code-conformance` | `FUNC-compute-readiness` |
+| `FLOW-delegate-call` | `ACTOR-agent` | `FUNC-graph-delegate` |
+| `FLOW-delegation-request` | `FUNC-graph-delegate` | `FUNC-run-executor` |
 | `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-graph-readiness` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-take-steering-snapshot` · `FUNC-test` · `FUNC-test-ui` |
 | `FLOW-element-slice` | `FUNC-list-elements` | `ACTOR-agent` · `FUNC-gate-client` |
 | `FLOW-expand-subgraph` | `FUNC-graph-expand` | `FUNC-read-tools` |

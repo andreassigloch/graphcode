@@ -41,3 +41,40 @@ Konfigurationsschema, Tests (Integration: Host + Werkzeug + Executor gegen ein T
 
 - Integrationstest: angedockter Host, Delegation, eine Frage, Antwort, Fortsetzung — ein Schreiber.
 - Smoke in `agentdiary-local`: OpenCode delegiert ein Paket, der Graph wächst, `graphcode status` grün.
+
+---
+
+## Umsetzung (2026-09-29)
+
+- **`graph_delegate`** (`src/surface/delegate.ts`): startet `runExecutor` im Host-Prozess gegen dieselbe
+  Registry wie der Client, ohne sich selbst (`WITHHELD_TOOLS`). Der Rückkanal aus CR-GC-667 (`ask`)
+  ist der Haltepunkt: die Frage beendet den Aufruf (`status: frage`), `{antwort}` löst das Versprechen
+  ein, der Lauf geht weiter. Ein Aufruf kehrt spätestens nach `wartenSek` (Vorgabe 120, höchstens
+  600) mit `status: laeuft` zurück — ein lokaler Lauf dauert länger als jede Client-Zeitgrenze;
+  `{}` wartet weiter. Höchstens eine Delegation je Host. Audit-Herkunft während des Laufs: Modell
+  des Executors + Auftrag (`setOrigin`).
+- **Config**: Abschnitt `executor` in `graphcode.config.jsonc`, geprüft gegen `DelegateConfigSchema`
+  (= `ExecutorConfigSchema` ohne `apiKey`/`interactive`/`candidates`/`judge`, dafür `apiKeyFile`).
+  Die Datei ist eingecheckt, ein Schlüssel darin wird abgewiesen. Der Kernel hält den Abschnitt nur
+  (`z.record`), geprüft wird in `surface/`, weil der Kernel den Executor nicht kennt. Ohne Abschnitt
+  kein Werkzeug — in Host **und** Proxy (beide lesen dieselbe Config).
+- **CA-Zertifikat** des sigllm-Gateways: `NODE_EXTRA_CA_CERTS` in der MCP-Umgebung des Clients
+  (Node liest es nur beim Start).
+- `graphcode run` bleibt unverändert (Env-Config); beide rufen denselben `runExecutor`.
+- **Nicht enthalten:** Anker/Paket als Eingabe — kommt mit CR-GC-710, der `graph_delegate` um das
+  Paket erweitert. Bis dahin wirkt der Auftrag wie bei `graphcode run` in der Seed-Phase; danach
+  führt `graph_generate` über die Readiness.
+
+```jsonc
+"executor": {
+  "backend": "openai",
+  "baseUrl": "https://127.0.0.1:8080",
+  "model": "qwen3-coder-30b-lms:latest",
+  "apiKeyFile": "~/Developer/prod/sigllm/data/client-token.txt",
+  "maxTokens": 4096,
+  "maxRounds": 40
+}
+```
+
+Modell: `FUNC-graph-delegate`, `REQ-delegate-in-host`, `TEST-delegate-in-host`, `FLOW-delegate-call`,
+`FLOW-delegation-request`, `SCHEMA-delegate-input` (graphVersion 540).

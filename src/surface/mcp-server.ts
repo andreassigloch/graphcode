@@ -31,6 +31,8 @@ import { SessionLifecycle } from './session-lifecycle.js';
 import { attachGve } from './gve.js';
 import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from './host-shim.js';
 import { HostBridge } from './host.js';
+import { delegateBindingOf } from './delegate.js';
+import { loadGraphcodeConfig } from '../kernel/config.js';
 import type { LiveUpdateEvent } from './emit.js';
 import { readPackageVersion } from '../kernel/package-version.js';
 
@@ -140,7 +142,8 @@ async function bootHost(
   // des Exports — deshalb der flush() beim Shutdown weiter unten. Die JSON wird oben nur
   // noch fuer den EINEN Fall gelesen, in dem sie die Quelle ist: ein frischer Clone ohne
   // Store (seed-on-empty).
-  const registry = bindToolsToHarness(harness);
+  // CR-GC-714: `graph_delegate` nur mit konfiguriertem lokalem Modell.
+  const registry = bindToolsToHarness(harness, undefined, { delegate: delegateBindingOf(harness.getGraphcodeConfig()) });
   // Der Export folgt der Mutation (CR-GC-323) — entprellt + single-flight. NUR hier, im
   // gewählten Host: er allein besitzt den Store und schreibt. Ein Proxy oder eine
   // Test-Registry bindet dieselben Tools, darf davon aber nichts ins Repo schreiben.
@@ -245,7 +248,9 @@ export async function serveStdio(opts?: {
     // Election lost → thin proxy to the live host. `promote` is the single
     // re-election attempt when the host dies mid-session (stale-lock reclaim).
     const socketPath = join(repoRoot, '.graphcode', HOST_SOCK_BASENAME);
-    registry = buildProxyRegistry({ socketPath, promote: electAndBoot });
+    // Dieselbe Werkzeugflaeche wie der Host — die Config des Repos entscheidet ueber graph_delegate.
+    const delegate = delegateBindingOf(loadGraphcodeConfig(repoRoot));
+    registry = buildProxyRegistry({ socketPath, promote: electAndBoot, delegate });
     process.stderr.write(
       `[graphcode] client: store owned by pid ${err.owner.pid} — proxying stdio to ${socketPath}\n`,
     );
