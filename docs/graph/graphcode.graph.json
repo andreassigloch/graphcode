@@ -14138,6 +14138,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-717",
+      "target": "REQ-single-kuzu-owner",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -22577,5 +22582,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 543
+  "graphVersion": 544
 }

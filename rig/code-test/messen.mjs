@@ -98,11 +98,17 @@ function vitestJson(cwd, args, env = {}) {
   return { dateien: j.numTotalTestSuites ?? j.testResults?.length ?? 0, tests: j.numTotalTests, gruen: j.numPassedTests, offen: (j.numPendingTests ?? 0) + (j.numTodoTests ?? 0) };
 }
 
-async function architektur(ws) {
+export async function architektur(ws) {
   const kopie = mkdtempSync(join(tmpdir(), 'ct-import-'));
   for (const d of ['src', 'vertrag']) if (existsSync(join(ws, d))) cpSync(join(ws, d), join(kopie, d), { recursive: true });
   cpSync(join(ws, 'package.json'), join(kopie, 'package.json'));
-  for (const p of tsDateien(join(kopie, 'src'))) if (istStub(readFileSync(join(kopie, 'src', p), 'utf8'))) rmSync(join(kopie, 'src', p));
+  // Gemessen wird der Code des Arms: ohne generierte Stubs und ohne die mitliegenden Tests — sonst
+  // macht import-code aus jeder *.test.ts einen Knoten, und der Steuerwert misst die Tests mit (CR-GC-717).
+  for (const d of ['src', 'vertrag']) {
+    for (const p of tsDateien(join(kopie, d))) {
+      if (istTest(p) || istStub(readFileSync(join(kopie, d, p), 'utf8'))) rmSync(join(kopie, d, p));
+    }
+  }
   execFileSync('git', ['init', '-q'], { cwd: kopie });
   execFileSync('node', [CLI, 'init'], { cwd: kopie, stdio: 'pipe' });
   execFileSync('node', [CLI, 'import-code', '.'], { cwd: kopie, stdio: 'pipe', timeout: 300_000 });
@@ -137,19 +143,29 @@ export function scheibenBindung(elements, traces, modUid) {
     offen: funcs.filter((f) => !(f.realRef || f.attributes?.realRef)).map((f) => f.id) };
 }
 
+/**
+ * Kongruenz am exportierten Snapshot, geoeffnet ueber `openMeasured` (CR-GC-717): Wegwerf-Store,
+ * `realRef`-Aufloesung und Config am echten Arbeitsbereich. Der Live-Store des Laufs wird nie
+ * geoeffnet — laeuft dort ein Host, waere das ein zweiter Schreiber (REQ-single-kuzu-owner).
+ *
+ * Welcher Snapshot: der unter dem Mitgliedsnamen, derselbe, den graph_export schreibt — nicht die
+ * Saat `<lauf>.graph.json` daneben (ITEM-2026-509: gefuehrt-2 meldete 0 % statt 100 %). Haengt er
+ * hinter dem Store (`.graphcode/EXPORT_PENDING`), steht das in `snapshot.hinterStore`.
+ */
 export async function kongruenz(ws, scheibe = SCHEIBE) {
-  if (!existsSync(join(ws, '.graphcode'))) return null;
-  const { createHarness, bindToolsToHarness } = await import(join(GC_ROOT, 'dist', 'index.js'));
-  const label = ws.split('/').pop();
-  const h = await createHarness({ repoRoot: ws, scope: { workspaceId: label, systemId: label } });
-  await h.initialize();
+  const { deriveMemberName } = await import(join(GC_ROOT, 'dist', 'surface', 'mcp-server.js'));
+  const pfad = join(ws, 'docs', 'graph', `${deriveMemberName(ws)}.graph.json`);
+  if (!existsSync(pfad)) return null;
+  const marke = join(ws, '.graphcode', 'EXPORT_PENDING');
+  let hinterStore = null;
+  if (existsSync(marke)) {
+    try { hinterStore = JSON.parse(readFileSync(marke, 'utf8')); } catch { hinterStore = { ohneInhalt: true }; }
+  }
+  const { openMeasured } = await import(join(GC_ROOT, 'dist', 'index.js'));
+  const m = await openMeasured({ graph: pfad, repoRoot: ws, systemId: ws.split('/').pop() });
   try {
-    const reg = bindToolsToHarness(h);
-    const r = await reg['graph_readiness'].handler({});
-    // Gemessen wird der Store, dieselbe Quelle wie graph_readiness — nie eine Datei daneben. Die Datei
-    // `<lauf>.graph.json` ist die Saat des Rigs; ob ein Export sie auffrischt, garantiert niemand
-    // (ITEM-2026-509: gefuehrt-2 meldete 0 % statt 100 %).
-    const g = h.getGraph();
+    const r = await m.tools['graph_readiness'].handler({});
+    const g = m.graph();
     const graph = {
       elements: g.nodes.map((n) => ({ id: n.uid, type: n.type, attributes: n.attributes ?? {} })),
       traces: g.edges.map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
@@ -158,11 +174,12 @@ export async function kongruenz(ws, scheibe = SCHEIBE) {
     return {
       urteil: v.verdict,
       bindung: v.binding ?? v.bind ?? null,
-      scheibe: scheibenBindung(graph.elements ?? graph.nodes ?? [], graph.traces ?? graph.edges ?? [], scheibe),
+      scheibe: scheibenBindung(graph.elements, graph.traces, scheibe),
       rc: Object.fromEntries(Object.entries(r.violationsByRule ?? {}).filter(([k]) => k.startsWith('RC-'))),
+      snapshot: { pfad, hinterStore },
     };
   } finally {
-    await h.close();
+    await m.close();
   }
 }
 
@@ -257,7 +274,7 @@ export function vergleich(ms) {
     zeile('Importzyklen', (m) => m.code.importzyklen),
     zeile('import-code: MOD / FUNC / FLOW / SCHEMA', (m) => `${m.architektur.MOD} / ${m.architektur.FUNC} / ${m.architektur.FLOW} / ${m.architektur.SCHEMA}`),
     zeile('Steuerwert des Codes', (m) => m.architektur.steuerwert),
-    zeile('Kongruenz (RC)', (m) => m.kongruenz?.urteil ?? 'kein Modell'),
+    zeile('Kongruenz (RC)', (m) => (m.kongruenz ? `${m.kongruenz.urteil}${m.kongruenz.snapshot.hinterStore ? ' (Snapshot hinter Store!)' : ''}` : 'kein Modell')),
     zeile('Bindung Scheibe / ganzes Modell', (m) => m.kongruenz ? `${m.kongruenz.scheibe.gebunden}/${m.kongruenz.scheibe.funcs} (${m.kongruenz.scheibe.pct}%) / ${m.kongruenz.bindung?.pct ?? '—'}%` : 'kein Modell'),
     zeile('Kosten $ / Turns / Sekunden', (m) => m.effizienz ? `${m.effizienz.cost_usd} / ${m.effizienz.turns} / ${m.effizienz.wall_s}` : null),
     zeile('API-Turns nach graphcode / Datei-Code / ToolSearch', (m) => ['graphcode', 'datei/code', 'ToolSearch']

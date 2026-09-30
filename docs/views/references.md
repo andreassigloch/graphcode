@@ -739,6 +739,7 @@
 | `CR-GC-714` | relation | `FUNC-run-executor` |
 | `CR-GC-714` | relation | `REQ-delegate-in-host` |
 | `CR-GC-716` | relation | `FUNC-systemtest-report` |
+| `CR-GC-717` | relation | `REQ-single-kuzu-owner` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

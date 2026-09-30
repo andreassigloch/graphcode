@@ -29,7 +29,7 @@ import { legality, binding, codeVerdict } from '../rig/greenfield-systemtest/met
 // @ts-expect-error — .mjs ohne Typen, wie die Nachbarn
 import { schattenBilanz, beruehrt, angewandteZuege, schattenBericht } from '../rig/greenfield-systemtest/schatten-suggest.mjs';
 // @ts-expect-error — s.o.
-import { codeKennzahlen, scheibenBindung, kongruenz, turnBilanz, deltaZerlegung } from '../rig/code-test/messen.mjs';
+import { codeKennzahlen, scheibenBindung, kongruenz, architektur, turnBilanz, deltaZerlegung } from '../rig/code-test/messen.mjs';
 import { ohneCodeBindung } from '../rig/code-test/run-code.mjs';
 
 let dir: string;
@@ -749,32 +749,62 @@ describe('Code-Test: Kennzahlen am Quelltext, fuer beide Arme gleich (CR-GC-610)
     expect(scheibenBindung(elements, traces, 'MOD-s')).toEqual({ funcs: 2, gebunden: 1, pct: 50, offen: ['FUNC-b'] });
   });
 
-  it('misst die Kongruenz am Store, nicht an einer Datei daneben (ITEM-2026-509)', async () => {
-    // Gemessen an gefuehrt-2: die Datei <lauf>.graph.json ist die Saat (0 Bindungen), der Stand des
-    // Agenten liegt im Store — gelesen wurde die Saat, Bericht 0 % statt 100 %.
-    const ws = mkdtempSync(join(tmpdir(), 'messen-kongruenz-'));
+  it('misst die Kongruenz am exportierten Snapshot im Wegwerf-Store — nie am Live-Store (CR-GC-717, ITEM-2026-509)', async () => {
+    // CR-GC-717: kongruenz oeffnete createHarness auf dem ECHTEN Repo. Laeuft dort ein Host (so in
+    // agentdiary-frontier), ist das ein zweiter Schreiber (REQ-single-kuzu-owner). Hier haelt ein
+    // lebender Fremdprozess den Store. ITEM-2026-509 bleibt: gemessen wird der Export unter dem
+    // Mitgliedsnamen, nicht die Saat <lauf>.graph.json daneben.
+    const ws = mkdtempSync(join(realpathSync(tmpdir()), 'messen-kongruenz-'));
+    const host = spawn('node', ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore' });
     try {
-      const { createHarness } = await import(fileURLToPath(new URL('../dist/index.js', import.meta.url)));
-      const h = await createHarness({ repoRoot: ws, scope: { workspaceId: 'w', systemId: 'w' } });
-      await h.initialize();
+      writeFileSync(join(ws, 'package.json'), JSON.stringify({ name: '@x/sig-local-scheduler' }));
       const funcA = { id: 'FUNC-a', type: 'FUNC', name: 'a', description: 'a' };
       const saat = { elements: [{ id: 'MOD-s', type: 'MOD', name: 's', description: 's' }, funcA], traces: [{ source: 'FUNC-a', target: 'MOD-s', type: 'allocate' }] };
       const stand = { ...saat, elements: [saat.elements[0], { ...funcA, realRef: { file: 'src/a.ts', symbol: 'a' } }] };
-      await h.importGraph(stand);
-      await h.close();
-      // Wie gefuehrt-2: die Saat liegt daneben, und der Export frischt sie NICHT auf (dort scheiterte
-      // er still; hier ist das Verzeichnis schreibgeschuetzt). Gemessen werden muss trotzdem der Stand.
       mkdirSync(join(ws, 'docs', 'graph'), { recursive: true });
       writeFileSync(join(ws, 'docs', 'graph', `${ws.split('/').pop()}.graph.json`), JSON.stringify(saat));
-      chmodSync(join(ws, 'docs', 'graph'), 0o555);
+      writeFileSync(join(ws, 'docs', 'graph', 'sig-local-scheduler.graph.json'), JSON.stringify(stand));
+      mkdirSync(join(ws, '.graphcode'), { recursive: true });
+      const lock = JSON.stringify({ pid: host.pid, hostname: hostname(), startedAt: new Date().toISOString(), version: '0.27.0' });
+      writeFileSync(join(ws, '.graphcode', 'owner.lock'), lock);
 
       const k = await kongruenz(ws, 'MOD-s');
       expect(k.scheibe).toEqual({ funcs: 1, gebunden: 1, pct: 100, offen: [] });
+      expect(k.snapshot).toEqual({ pfad: join(ws, 'docs', 'graph', 'sig-local-scheduler.graph.json'), hinterStore: null });
+      // Der Live-Store bleibt unberuehrt: kein Kuzu im echten Repo, der Lock gehoert weiter dem Host.
+      expect(existsSync(join(ws, '.graphcode', 'kuzu'))).toBe(false);
+      expect(readFileSync(join(ws, '.graphcode', 'owner.lock'), 'utf8')).toBe(lock);
+
+      // Haengt der Snapshot hinter dem Store, sagt die Messung das — statt still Altes zu melden.
+      writeFileSync(join(ws, '.graphcode', 'EXPORT_PENDING'), JSON.stringify({ since: '2026-09-30T00:00:00Z', versionsBehind: 3 }));
+      expect((await kongruenz(ws, 'MOD-s')).snapshot.hinterStore).toEqual({ since: '2026-09-30T00:00:00Z', versionsBehind: 3 });
     } finally {
-      chmodSync(join(ws, 'docs', 'graph'), 0o755);
+      host.kill();
       rmSync(ws, { recursive: true, force: true });
     }
   });
+
+  it('architektur importiert den Code ohne die mitliegenden Testdateien (CR-GC-717)', async () => {
+    const mit = mkdtempSync(join(tmpdir(), 'messen-arch-mit-'));
+    const ohne = mkdtempSync(join(tmpdir(), 'messen-arch-ohne-'));
+    try {
+      for (const ws of [mit, ohne]) {
+        mkdirSync(join(ws, 'src', 'kern'), { recursive: true });
+        mkdirSync(join(ws, 'src', 'zustand'), { recursive: true });
+        writeFileSync(join(ws, 'package.json'), JSON.stringify({ name: 'arch', type: 'module' }));
+        writeFileSync(join(ws, 'src', 'kern', 'scheduler.ts'), "import { lade } from '../zustand/speicher.js';\nexport function createScheduler() { return lade(); }\n");
+        writeFileSync(join(ws, 'src', 'zustand', 'speicher.ts'), 'export function lade() { return 1; }\n');
+      }
+      writeFileSync(join(mit, 'src', 'kern', 'scheduler.test.ts'), "import { createScheduler } from './scheduler.js';\nexport function pruefe() { return createScheduler(); }\n");
+      writeFileSync(join(mit, 'src', 'zustand', 'speicher.test.ts'), "import { lade } from './speicher.js';\nexport function pruefe2() { return lade(); }\n");
+      const a = await architektur(mit);
+      const b = await architektur(ohne);
+      expect(a).toEqual(b);
+    } finally {
+      rmSync(mit, { recursive: true, force: true });
+      rmSync(ohne, { recursive: true, force: true });
+    }
+  }, 120_000);
 
   it('seedet das Golden ohne Code-Bindungen — sonst startet der Arm mit fremden RC-Verstoessen (CR-GC-611)', () => {
     const golden = {

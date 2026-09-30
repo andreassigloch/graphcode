@@ -45,10 +45,13 @@ Obergrenze (60 min) und die Paket-Ausstattung (TypeScript, vitest).
 2. **Eigene Tests** — `vitest run` im Arbeitsbereich.
 3. **Code** — Dateien, Module (Verzeichnisse), Zeilen, größte Datei, Exporte, relative Importe,
    Importzyklen. Tests und unveränderte graphcode-Stubs (CR-GC-205) zählen nicht.
-4. **Architektur** — `graphcode import-code` auf einer Kopie des Codes, deterministisch und ohne LLM,
-   für beide Arme gleich: MOD/FUNC/FLOW/SCHEMA und der Steuerwert (RD-04, BW-02, R-04, CR-01, MT-02).
+4. **Architektur** — `graphcode import-code` auf einer Kopie des Codes (ohne Tests und Stubs, CR-GC-717),
+   deterministisch und ohne LLM, für beide Arme gleich: MOD/FUNC/FLOW/SCHEMA und der Steuerwert (RD-04, BW-02, R-04, CR-01, MT-02).
    Damit misst derselbe Regelkatalog den Code beider Arme — auch den, der nie ein Modell hatte.
-5. **Kongruenz** — nur `gefuehrt`: RC-Urteil (kongruent / gedriftet / nicht prüfbar) und Bindungsquote.
+5. **Kongruenz** — nur `gefuehrt`: RC-Urteil (kongruent / gedriftet / nicht prüfbar) und Bindungsquote,
+   am exportierten Snapshot `docs/graph/<Mitgliedsname>.graph.json` über `openMeasured` (Wegwerf-Store,
+   nie der Live-Store des Laufs; CR-GC-717). Steht `.graphcode/EXPORT_PENDING`, meldet die Zeile
+   „Snapshot hinter Store“.
 6. **Effizienz** — Kosten, Turns, Sekunden, dazu die **Turn-Bilanz** aus `claude-stream.jsonl`: wie viele
    API-Turns nach einer graphcode-Antwort, nach Datei-/Code-Arbeit oder nach ToolSearch kamen und wie viel
    Cache-Lesung sie kosteten. Gegen den freien Arm zerlegt `deltaZerlegung` die Mehrkosten in Posten, die
