@@ -30,6 +30,7 @@
  */
 import { spawnSync, execFileSync } from 'node:child_process';
 import { buildContext, planCodeLane } from '../dist/projections/test-selection-audit.js';
+import { INCLUDED as MODEL_TESTS } from './model-test-set.mjs';
 
 const argv = process.argv.slice(2);
 const plan = argv.includes('--plan');
@@ -52,7 +53,7 @@ function changedFiles() {
 }
 
 const files = changedFiles();
-const result = planCodeLane(files, buildContext(repoRoot));
+const result = planCodeLane(files, buildContext(repoRoot), { modelTests: MODEL_TESTS });
 for (const line of result.lines) console.error(line);
 
 if (result.command === null) {

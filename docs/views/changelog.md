@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 329 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 330 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 329 CR · 303 done · 4 open.
+Total: 330 CR · 303 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -391,3 +391,4 @@ Total: 329 CR · 303 done · 4 open.
 | `CR-GC-717` | n/a | rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD |
 | `CR-GC-718` | n/a | Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox |
 | `CR-GC-719` | n/a | Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718) |
+| `CR-GC-720` | n/a | Schlupf in CR-GC-719: CODE-Spur ignoriert eine Modell-Aenderung im selben Diff (docs/graph) — 3 Tests des Modell-Satzes lagen ausserhalb der Auswahl; und schlupfFreieFolge zaehlt je CR nur die juengste Zeile, ein Nachlauf verdeckt den Schlupf |

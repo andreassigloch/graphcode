@@ -28,17 +28,19 @@ describe('Schlupf (CR-GC-718)', () => {
     expect(schlupfVon([], ['tests/a.test.ts'], []).schlupf).toEqual([]);
   });
 
-  it('die Folge zaehlt CODE-CRs ohne Schlupf rueckwaerts, VOLL ist neutral, Schlupf bricht ab, je CR die juengste Zeile', () => {
+  it('die Folge zaehlt CODE-CRs ohne Schlupf rueckwaerts, VOLL ist neutral, Schlupf bricht ab, ein Schlupf in irgendeinem Lauf eines CR zaehlt', () => {
     const zeilen = [
       zeile('CR-0', '2025-12-31', 'CODE'), // vor dem Schlupf — darf nicht mehr zaehlen
       zeile('CR-1', '2026-01-01', 'CODE', ['tests/x.test.ts']),
       zeile('CR-2', '2026-01-02', 'CODE'),
       zeile('CR-3', '2026-01-03', 'VOLL'),
       zeile('CR-4', '2026-01-04', 'CODE', ['tests/y.test.ts']),
-      zeile('CR-4', '2026-01-05', 'CODE'), // Nachlauf desselben CR ersetzt den ersten
+      zeile('CR-4', '2026-01-05', 'CODE'), // Nachlauf nach dem Fix verdeckt den Schlupf NICHT (CR-GC-720)
       zeile('CR-5', '2026-01-06', 'CODE'),
     ];
-    expect(schlupfFreieFolge(zeilen)).toBe(3);
+    expect(schlupfFreieFolge(zeilen)).toBe(1);
+    // ohne CR-4 zaehlt die Folge bis zum Schlupf von CR-1: CR-5, CR-2 (CR-3 VOLL neutral)
+    expect(schlupfFreieFolge(zeilen.filter((z) => z.cr !== 'CR-4'))).toBe(2);
     expect(SCHLUPF_SCHWELLE).toBe(10);
   });
 });

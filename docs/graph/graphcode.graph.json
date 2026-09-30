@@ -2809,6 +2809,12 @@
       "description": "docs/cr/open/CR-GC-719-zusage-blackbox-schnittstellentests-100-.md"
     },
     {
+      "id": "CR-GC-720",
+      "type": "CR",
+      "name": "Schlupf in CR-GC-719: CODE-Spur ignoriert eine Modell-Aenderung im selben Diff (docs/graph) — 3 Tests des Modell-Satzes lagen ausserhalb der Auswahl; und schlupfFreieFolge zaehlt je CR nur die juengste Zeile, ein Nachlauf verdeckt den Schlupf",
+      "description": "docs/cr/open/CR-GC-720-schlupf-in-cr-gc-719-code-spur-ignoriert.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14297,6 +14303,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-720",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-720",
+      "target": "FUNC-plan-code-lane",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-720",
+      "target": "REQ-full-run-on-probation",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -22907,5 +22928,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 548
+  "graphVersion": 550
 }

@@ -747,6 +747,9 @@
 | `CR-GC-719` | relation | `REQ-graceful-degradation` |
 | `CR-GC-719` | relation | `REQ-hook-extension-points` |
 | `CR-GC-719` | relation | `REQ-interface-schema` |
+| `CR-GC-720` | relation | `FUNC-measure-test-schlupf` |
+| `CR-GC-720` | relation | `FUNC-plan-code-lane` |
+| `CR-GC-720` | relation | `REQ-full-run-on-probation` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

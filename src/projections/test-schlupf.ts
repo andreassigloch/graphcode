@@ -60,16 +60,21 @@ export function schlupfVon(
 }
 
 /**
- * Die Folge ohne Schlupf, vom jüngsten Eintrag rückwärts: CODE-Zeilen ohne Schlupf zählen,
- * VOLL/KEINE zählen nicht und brechen nicht ab, ein Schlupf bricht ab. Je CR zählt die jüngste Zeile.
+ * Die Folge ohne Schlupf, vom jüngsten CR rückwärts: CODE-CRs ohne Schlupf zählen, VOLL/KEINE
+ * zählen nicht und brechen nicht ab, ein Schlupf bricht ab. Ein Schlupf in IRGENDEINEM Lauf eines
+ * CR zählt — der Nachlauf nach dem Fix macht den ersten nicht ungeschehen (CR-GC-720: in CR-GC-719
+ * verdeckte die jüngste Zeile drei rote Tests außerhalb der Auswahl).
  */
 export function schlupfFreieFolge(zeilen: readonly SchlupfZeile[]): number {
-  const jeCr = new Map<string, SchlupfZeile>();
-  for (const z of zeilen) jeCr.set(z.cr, z);
+  const jeCr = new Map<string, { at: string; spur: SchlupfZeile['spur']; schlupf: boolean }>();
+  for (const z of [...zeilen].sort((x, y) => x.at.localeCompare(y.at))) {
+    const vorher = jeCr.get(z.cr);
+    jeCr.set(z.cr, { at: z.at, spur: z.spur, schlupf: (vorher?.schlupf ?? false) || z.schlupf.length > 0 });
+  }
   const neueste = [...jeCr.values()].sort((x, y) => y.at.localeCompare(x.at));
   let folge = 0;
   for (const z of neueste) {
-    if (z.schlupf.length > 0) break;
+    if (z.schlupf) break;
     if (z.spur === 'CODE') folge++;
   }
   return folge;

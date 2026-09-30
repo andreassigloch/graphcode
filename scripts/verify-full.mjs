@@ -20,6 +20,7 @@ import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSyn
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { buildContext, planCodeLane, selectForChange } from '../dist/projections/test-selection-audit.js';
+import { INCLUDED as MODEL_TESTS } from './model-test-set.mjs';
 import { blackboxBindung, leseSchlupfZeilen, schlupfFreieFolge, schlupfVon, SchlupfZeileSchema, SCHLUPF_SCHWELLE } from '../dist/projections/test-schlupf.js';
 
 const cr = process.argv[2];
@@ -35,7 +36,7 @@ const ausBaum = git(['status', '--porcelain']).split('\n').filter(Boolean).map((
 const files = [...new Set([...ausCommits, ...ausBaum])].filter((f) => existsSync(join(repoRoot, f)));
 
 const ctx = buildContext(repoRoot);
-const plan = planCodeLane(files, ctx);
+const plan = planCodeLane(files, ctx, { modelTests: MODEL_TESTS });
 const auswahl = selectForChange(files, ctx);
 const zusage = blackboxBindung(ctx.graph);
 
@@ -55,13 +56,13 @@ if (existsSync(bericht)) {
 rmSync(tmp, { recursive: true, force: true });
 
 const spur = plan.lane;
-const { schlupf, schlupfNurGraph } = schlupfVon(rot, spur === 'CODE' ? auswahl.files : ctx.allTests, auswahl.graphOnly);
+const { schlupf, schlupfNurGraph } = schlupfVon(rot, spur === 'CODE' ? plan.files : ctx.allTests, auswahl.graphOnly);
 const zeile = SchlupfZeileSchema.parse({
   cr,
   at: new Date().toISOString(),
   code: git(['rev-parse', '--short', 'HEAD']).trim(),
   spur,
-  ausgewaehlt: spur === 'CODE' ? auswahl.files.length : gesamt,
+  ausgewaehlt: spur === 'CODE' ? plan.files.length : gesamt,
   ausGraph: auswahl.graphOnly.length,
   gesamt,
   rot,

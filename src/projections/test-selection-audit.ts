@@ -243,8 +243,21 @@ export function selectForChange(changedFiles: string[], ctx: AuditContext, opts:
  * `test-selection-audit`) und dieser Plan aus `src/` heraus unit-getestet wird — eine
  * Ausgabe, die nur im Skript entsteht, prüft niemand.
  */
-export function planCodeLane(changedFiles: string[], ctx: AuditContext): CodeLanePlan {
+/** Der committete Snapshot im Diff — dann ist die Aenderung auch eine Modell-Aenderung (CR-GC-720). */
+const MODEL_SNAPSHOT = /^docs\/graph\/[^/]+\.graph\.json$/;
+
+/**
+ * `opts.modelTests`: der Modell-Testsatz (`scripts/model-test-set.mjs`). Liegt neben Quelldateien
+ * auch der Snapshot im Diff, nimmt die CODE-Spur ihn dazu — Graph und Import sehen eine
+ * Modell-Aenderung nicht, und genau dort lag der Schlupf von CR-GC-719.
+ */
+export function planCodeLane(changedFiles: string[], ctx: AuditContext, opts: { modelTests?: readonly string[] } = {}): CodeLanePlan {
   const selection = selectForChange(changedFiles, ctx);
+  const modellAenderung = changedFiles.some((f) => MODEL_SNAPSHOT.test(f));
+  const modellSatz = modellAenderung && selection.complete && selection.files.length > 0
+    ? (opts.modelTests ?? []).filter((t) => ctx.allTests.includes(t) && !selection.files.includes(t))
+    : [];
+  if (modellSatz.length > 0) selection.files = [...selection.files, ...modellSatz].sort();
   const byUid = new Map(ctx.graph.nodes.map((n) => [n.uid, n]));
   const sources = changedFiles.filter((f) => isSourceFile(f) && !ctx.allTests.includes(f));
   const lane: CodeLanePlan['lane'] =
@@ -260,7 +273,8 @@ export function planCodeLane(changedFiles: string[], ctx: AuditContext): CodeLan
     const viaImport = selection.files.filter((f) => !selection.graphOnly.includes(f)).length;
     lines.push(
       `[verify:code] Spur: CODE — ${selection.files.length} von ${ctx.allTests.length} Testdateien; ` +
-        `${selection.graphOnly.length} aus dem Graphen, ${viaImport} über den direkten Import.`,
+        `${selection.graphOnly.length} aus dem Graphen, ${viaImport - modellSatz.length} über den direkten Import` +
+        (modellSatz.length > 0 ? `, ${modellSatz.length} aus dem Modell-Satz (Snapshot im Diff).` : '.'),
     );
   } else if (lane === 'VOLL') {
     lines.push(`[verify:code] Spur: VOLL — ${selection.reason}.`);

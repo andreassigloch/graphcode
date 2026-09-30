@@ -452,6 +452,18 @@ describe('CODE-Spur: die Auswahl, ihre Reichweite und ihr Fallback (CR-GC-541)',
     expect(result.files).toEqual(['tests/alpha.test.ts', 'tests/beta.test.ts']);
   });
 
+  it('Code und Modell im selben Diff: die CODE-Spur nimmt den Modell-Testsatz dazu (CR-GC-720)', () => {
+    // CR-GC-719: Quelle + docs/graph im Diff, CODE waehlte 4 Dateien — drei Tests des Modell-Satzes
+    // wurden im Volllauf rot und lagen ausserhalb der Auswahl (Schlupf).
+    const modelTests = ['tests/verify-model.completeness.test.ts', 'tests/mcp.tests-operational.test.ts'];
+    const mit = planCodeLane(['src/loop/format-e-commands.ts', 'docs/graph/graphcode.graph.json'], ctx, { modelTests });
+    expect(mit.lane).toBe('CODE');
+    for (const t of modelTests) expect(mit.files).toContain(t);
+    expect(mit.lines.join('\n')).toMatch(/Modell-Satz/);
+    const ohne = planCodeLane(['src/loop/format-e-commands.ts'], ctx, { modelTests });
+    expect(ohne.files).not.toContain('tests/verify-model.completeness.test.ts');
+  });
+
   it('der Plan sagt die Spur, den Befehl und die Reichweite an — und nie einen Befehl ohne Dateien', () => {
     const code = planCodeLane(['src/loop/format-e-commands.ts'], ctx);
     expect(code.lane).toBe('CODE');
