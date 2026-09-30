@@ -2803,6 +2803,12 @@
       "description": "docs/cr/open/CR-GC-718-volllauf-je-cr-an-messung-binden-verify-.md"
     },
     {
+      "id": "CR-GC-719",
+      "type": "CR",
+      "name": "Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718)",
+      "description": "docs/cr/open/CR-GC-719-zusage-blackbox-schnittstellentests-100-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -8110,6 +8116,36 @@
       ]
     },
     {
+      "id": "TEST-contracts-kernel",
+      "type": "TEST",
+      "name": "Kernel-Vertraege",
+      "description": "Vertragstest SCHEMA-graph-delta (GraphStore.commit weist formfremdes Delta vor dem ersten Schreibzug ab), SCHEMA-ontology-json (Import und heldBackTraces weisen formfremde SSOT-Datei ab) und SCHEMA-phase-readiness (jede Gate-Zeile, auch im GenerationStep). Kuzu auf Platte. (CR-GC-719)",
+      "testRefs": [
+        {
+          "file": "tests/contracts.kernel.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-09-30T08:39:36.000Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-contracts-surface",
+      "type": "TEST",
+      "name": "Surface-Vertraege",
+      "description": "Vertragstest SCHEMA-audit-stats (echte audit_stats-Antwort; NaN-Stand und fehlendes window abgewiesen) und SCHEMA-mutate-result (graphcode als Erzeuger: angewandt, geblockt, dryRun erfuellen den Vertrag; formfremdes Verdict abgewiesen). (CR-GC-719)",
+      "testRefs": [
+        {
+          "file": "tests/contracts.surface.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-09-30T08:39:36.000Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-create-harness-smoke",
       "type": "TEST",
       "name": "Produktionsverdrahtung der Fabrik",
@@ -8395,6 +8431,21 @@
       ]
     },
     {
+      "id": "TEST-flow-contracts",
+      "type": "TEST",
+      "name": "Fluss-Vertraege Modellantwort und Export-Marke",
+      "description": "Vertragstest SCHEMA-model-answer (openai/anthropic normalisiert, abweichendes Wire-Format ist Vertragsbruch) und SCHEMA-export-pending (Marke zaehlt, Alt-Marke wird nicht geraten, Hook liest beide Felder). Echter Loopback-HTTP-Server und echte Dateien. (CR-GC-426)",
+      "testRefs": [
+        {
+          "file": "tests/flow-contracts.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-09-30T08:39:36.000Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-formate-binding",
       "type": "TEST",
       "name": "Bindung ueber Format-E kommt an",
@@ -8673,7 +8724,16 @@
       "status": "open",
       "level": "integration",
       "tool": "vitest",
-      "concept": true
+      "concept": false,
+      "testRefs": [
+        {
+          "file": "tests/hooks.extension-points.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-09-30T08:39:36.000Z"
+        }
+      ]
     },
     {
       "id": "TEST-host-shim",
@@ -8825,19 +8885,6 @@
       "level": "integration",
       "tool": "vitest",
       "constraint": "direct FLOW mutation rejected"
-    },
-    {
-      "id": "TEST-interface-schema",
-      "type": "TEST",
-      "name": "Interface-Schema-Test",
-      "description": "Jeder FLOW hat ein SCHEMA (relation); ein FLOW ohne Datenformat ist ein Readiness-Blocker. (REQ-interface-schema)",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "method": "inspection",
-      "concept": true,
-      "level": "inspection",
-      "tool": "jq/grep",
-      "constraint": "every FLOW relation SCHEMA"
     },
     {
       "id": "TEST-inventory-modes",
@@ -9186,15 +9233,6 @@
       ]
     },
     {
-      "id": "TEST-no-direct-graph-write",
-      "type": "TEST",
-      "name": "No-Direct-Graph-Write-Test",
-      "description": "Direkter Edit/Write auf den committeten SSOT wird von der Harness verweigert; graph_mutate (MCP) gelingt + ist gate-validiert; CI verwirft hand-editiertes (Nicht-Export) JSON. (CR-GC-201)",
-      "status": "open",
-      "created_at": "2026-06-18T00:00:00.000Z",
-      "concept": true
-    },
-    {
       "id": "TEST-occ",
       "type": "TEST",
       "name": "Optimistische Nebenlaeufigkeit am Werkzeug",
@@ -9426,10 +9464,19 @@
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "method": "test",
-      "concept": true,
+      "concept": false,
       "level": "acceptance",
       "tool": "benchmark, 2 LLMs",
-      "constraint": "small/local LLM succeeds"
+      "constraint": "small/local LLM succeeds",
+      "testRefs": [
+        {
+          "file": "tests/gate.modelfree.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-09-30T08:39:36.000Z"
+        }
+      ]
     },
     {
       "id": "TEST-repo-lifecycle",
@@ -9564,6 +9611,21 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-schema-parse-at-interface",
+      "type": "TEST",
+      "name": "Schema-Parse an der Schnittstelle",
+      "description": "Vertragstest SCHEMA-fit-advisory, SCHEMA-steering-delta (Ranking-Grenze executor-rank) und SCHEMA-generation-step (Registry-Grenze runExecutor): vertragstreue Antwort kommt als Daten durch, formfremde wird abgewiesen statt still gerankt. (CR-GC-413)",
+      "testRefs": [
+        {
+          "file": "tests/schema-parse-at-interface.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-09-30T08:39:36.000Z"
         }
       ]
     },
@@ -14212,6 +14274,26 @@
     {
       "source": "CR-GC-718",
       "target": "REQ-full-run-on-probation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-719",
+      "target": "REQ-gate-only-writes",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-719",
+      "target": "REQ-graceful-degradation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-719",
+      "target": "REQ-hook-extension-points",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-719",
+      "target": "REQ-interface-schema",
       "type": "relation"
     },
     {
@@ -20738,6 +20820,11 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "source": "TEST-cli-scaffold",
+      "target": "SCHEMA-cli-command",
+      "type": "verify"
+    },
+    {
       "source": "TEST-code-conformance",
       "target": "REQ-graph-code-conformance",
       "type": "verify"
@@ -20774,6 +20861,31 @@
     {
       "source": "TEST-codec-validation",
       "target": "REQ-graph-integrity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-contracts-kernel",
+      "target": "SCHEMA-graph-delta",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-contracts-kernel",
+      "target": "SCHEMA-ontology-json",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-contracts-kernel",
+      "target": "SCHEMA-phase-readiness",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-contracts-surface",
+      "target": "SCHEMA-audit-stats",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-contracts-surface",
+      "target": "SCHEMA-mutate-result",
       "type": "verify"
     },
     {
@@ -20890,6 +21002,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-doc-export",
+      "target": "SCHEMA-markdown-view",
+      "type": "verify"
+    },
+    {
       "source": "TEST-docs-taxonomy",
       "target": "REQ-docs-taxonomy",
       "type": "verify",
@@ -20957,6 +21074,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-export-graph-guard",
+      "target": "REQ-gate-only-writes",
+      "type": "verify"
+    },
+    {
       "source": "TEST-first-step",
       "target": "REQ-steering-from-metrics",
       "type": "verify"
@@ -20969,6 +21091,16 @@
     {
       "source": "TEST-fit-advisory",
       "target": "REQ-steering-from-metrics",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-flow-contracts",
+      "target": "SCHEMA-export-pending",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-flow-contracts",
+      "target": "SCHEMA-model-answer",
       "type": "verify"
     },
     {
@@ -21084,6 +21216,11 @@
     {
       "source": "TEST-gve-supervision",
       "target": "REQ-viewer-owned-by-repo",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gve-supervision",
+      "target": "SCHEMA-session-registry",
       "type": "verify"
     },
     {
@@ -21246,13 +21383,6 @@
       "type": "verify"
     },
     {
-      "source": "TEST-interface-schema",
-      "target": "REQ-interface-schema",
-      "type": "verify",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "TEST-inventory-modes",
       "target": "REQ-inventory-switch",
       "type": "verify"
@@ -21280,6 +21410,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-live-event-contract",
+      "target": "SCHEMA-update-event",
+      "type": "verify"
     },
     {
       "source": "TEST-live-view",
@@ -21463,6 +21598,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-mutate-input-formate",
+      "target": "SCHEMA-format-e",
+      "type": "verify"
+    },
+    {
       "source": "TEST-mutate-schema-guard",
       "target": "REQ-harness-schema-in-contracts",
       "type": "verify"
@@ -21470,6 +21610,16 @@
     {
       "source": "TEST-mutate-schema-guard",
       "target": "REQ-structure-driven",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-schema-guard",
+      "target": "SCHEMA-mutate-command",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-schema-guard",
+      "target": "SCHEMA-steering-snapshot",
       "type": "verify"
     },
     {
@@ -21533,13 +21683,6 @@
       "source": "TEST-nd-similarity",
       "target": "REQ-rule-enforcement",
       "type": "verify"
-    },
-    {
-      "source": "TEST-no-direct-graph-write",
-      "target": "REQ-gate-only-writes",
-      "type": "verify",
-      "weight": 1,
-      "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
       "source": "TEST-occ",
@@ -21618,6 +21761,11 @@
     },
     {
       "source": "TEST-readiness-completeness",
+      "target": "REQ-interface-schema",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-readiness-completeness",
       "target": "REQ-readiness-completeness",
       "type": "verify"
     },
@@ -21641,6 +21789,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-readonly-bridge",
+      "target": "SCHEMA-health-report",
+      "type": "verify"
     },
     {
       "source": "TEST-realref-materialize",
@@ -21771,6 +21924,26 @@
       "type": "verify"
     },
     {
+      "source": "TEST-schema-migration",
+      "target": "SCHEMA-schema-fingerprint",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-schema-parse-at-interface",
+      "target": "SCHEMA-fit-advisory",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-schema-parse-at-interface",
+      "target": "SCHEMA-generation-step",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-schema-parse-at-interface",
+      "target": "SCHEMA-steering-delta",
+      "type": "verify"
+    },
+    {
       "source": "TEST-se-plan-ordering",
       "target": "REQ-structure-driven",
       "type": "verify"
@@ -21793,6 +21966,16 @@
     {
       "source": "TEST-selective-test-audit",
       "target": "SCHEMA-code-lane-plan",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-selective-test-audit",
+      "target": "SCHEMA-impacted-tests",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-selective-test-audit",
+      "target": "SCHEMA-test-selection",
       "type": "verify"
     },
     {
@@ -21825,6 +22008,11 @@
     {
       "source": "TEST-single-measurement-path",
       "target": "REQ-steering-pre",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-single-write-door",
+      "target": "REQ-gate-only-writes",
       "type": "verify"
     },
     {
@@ -21890,6 +22078,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-store-lock",
+      "target": "SCHEMA-lock-owner",
+      "type": "verify"
+    },
+    {
       "source": "TEST-store-recovery",
       "target": "REQ-store-recovery",
       "type": "verify"
@@ -21907,6 +22100,11 @@
     {
       "source": "TEST-target-profile",
       "target": "REQ-thresholds-from-config",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-target-profile",
+      "target": "SCHEMA-target-profile",
       "type": "verify"
     },
     {
@@ -21954,6 +22152,11 @@
     {
       "source": "TEST-thresholds-from-config",
       "target": "REQ-thresholds-from-config",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-thresholds-from-config",
+      "target": "SCHEMA-metric-policy",
       "type": "verify"
     },
     {
@@ -22704,5 +22907,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 546
+  "graphVersion": 548
 }

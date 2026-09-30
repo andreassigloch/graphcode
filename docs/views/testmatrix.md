@@ -39,8 +39,8 @@
 | `REQ-formatE-parity` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` |
 | `REQ-frame-binding` | ✓ | ⚠ 1/2 passed | `TEST-code-quality` · `TEST-graph-realize` |
 | `REQ-full-run-on-probation` | ✓ | ✓ passed | `TEST-test-schlupf` |
-| `REQ-gate-only-writes` | ✓ | ⚠ 2/3 passed | `TEST-graph-realize` · `TEST-no-direct-graph-write` · `TEST-path-containment` |
-| `REQ-graceful-degradation` | ✓ | ⚠ 1/2 passed | `TEST-gve-supervision` · `TEST-reduced-llm` |
+| `REQ-gate-only-writes` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-graph-realize` · `TEST-path-containment` · `TEST-single-write-door` |
+| `REQ-graceful-degradation` | ✓ | ✓ passed | `TEST-gve-supervision` · `TEST-reduced-llm` |
 | `REQ-graph-code-conformance` | ✓ | ✓ passed | `TEST-code-conformance` |
 | `REQ-graph-context-replaces-reading` | ✓ | ✓ passed | `TEST-graph-context-replaces-reading` |
 | `REQ-graph-integrity` | ✓ | ✓ passed | `TEST-codec-validation` · `TEST-graph-integrity` · `TEST-import-sys-anchor` · `TEST-merge-no-duplicate-edge` |
@@ -51,14 +51,14 @@
 | `REQ-greenfield-systemtest-dod` | ✓ | ⚠ 1/2 passed | `TEST-greenfield-systemtest` · `TEST-systemtest-evaluations` |
 | `REQ-harness-schema-in-contracts` | ✓ | ✓ passed | `TEST-mcp-symmetry` · `TEST-mutate-schema-guard` |
 | `REQ-held-back-traces-named` | ✓ | ⚠ nie gelaufen | `TEST-import-rejected-traces` |
-| `REQ-hook-extension-points` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
-| `REQ-hook-order-deterministic` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
+| `REQ-hook-extension-points` | ✓ | ✓ passed | `TEST-hooks` |
+| `REQ-hook-order-deterministic` | ✓ | ✓ passed | `TEST-hooks` |
 | `REQ-impact-based-testing` | ✓ | ✓ passed | `TEST-mvp-e2e` · `TEST-selective-test-audit` |
 | `REQ-import-se-ontology` | ✓ | ✓ passed | `TEST-dashboard-ontology-sync` · `TEST-graph-authoring-guide` |
 | `REQ-install-idempotent` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
 | `REQ-interactive-capture-suggest` | ✓ | ⚠ 3/4 passed | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-uc-authoring-style` |
 | `REQ-interface-change-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
-| `REQ-interface-schema` | ✓ | ⚠ nie gelaufen | `TEST-interface-schema` |
+| `REQ-interface-schema` | ✓ | ✓ passed | `TEST-readiness-completeness` |
 | `REQ-inventory-switch` | ✓ | ✓ passed | `TEST-inventory-modes` |
 | `REQ-live-event-in-contracts` | ✓ | ✓ passed | `TEST-live-event-contract` |
 | `REQ-mcp-gate-symmetry` | ✓ | ✓ passed | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` |
@@ -87,7 +87,7 @@
 | `REQ-post-interface-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
 | `REQ-post-merge-nodes` | ✓ | ✓ passed | `TEST-merge` · `TEST-merge-no-duplicate-edge` |
 | `REQ-post-migrate-schema` | ✓ | ✓ passed | `TEST-schema-migration` |
-| `REQ-post-modelfree-gate` | ✓ | ⚠ nie gelaufen | `TEST-reduced-llm` |
+| `REQ-post-modelfree-gate` | ✓ | ✓ passed | `TEST-reduced-llm` |
 | `REQ-pre-agent-query` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-pre-apply-gate` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-pre-capture` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
@@ -101,9 +101,9 @@
 | `REQ-pre-interface-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
 | `REQ-pre-merge-nodes` | ✓ | ✓ passed | `TEST-merge` |
 | `REQ-pre-migrate-schema` | ✓ | ✓ passed | `TEST-schema-migration` |
-| `REQ-pre-modelfree-gate` | ✓ | ⚠ nie gelaufen | `TEST-reduced-llm` |
+| `REQ-pre-modelfree-gate` | ✓ | ✓ passed | `TEST-reduced-llm` |
 | `REQ-precise-context` | ✓ | ⚠ 3/4 passed | `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` |
-| `REQ-precommit-timeout` | ✓ | ⚠ nie gelaufen | `TEST-hooks` |
+| `REQ-precommit-timeout` | ✓ | ✓ passed | `TEST-hooks` |
 | `REQ-preflight-hygiene` | ✓ | ✓ passed | `TEST-executor-preflight` |
 | `REQ-progressive-expansion` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-prompt-provenance` | ✓ | ✓ passed | `TEST-prompt-provenance` |
@@ -137,7 +137,7 @@
 | `REQ-single-write-door` | ✓ | ✓ passed | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` |
 | `REQ-skill-authors-through-gate` | ✓ | ✓ passed | `TEST-skill-authors-through-gate` |
 | `REQ-skill-reads-only` | ✓ | ✓ passed | `TEST-skill-reports-measured-values` |
-| `REQ-small-model-viable` | ✓ | ⚠ 2/3 passed | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` |
+| `REQ-small-model-viable` | ✓ | ✓ passed | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` |
 | `REQ-steering-from-metrics` | ✓ | ✓ passed | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` |
 | `REQ-steering-post` | ✓ | ✓ passed | `TEST-single-measurement-path` |
 | `REQ-steering-pre` | ✓ | ✓ passed | `TEST-single-measurement-path` |
@@ -159,7 +159,7 @@
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
 Coverage: 149/149 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 111/149 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 120/149 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

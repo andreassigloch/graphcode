@@ -394,6 +394,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-716` | n/a | steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210) | `FUNC-systemtest-report` |
 | `CR-GC-717` | n/a | rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD | `REQ-single-kuzu-owner` |
 | `CR-GC-718` | n/a | Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox | `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `REQ-full-run-on-probation` |
+| `CR-GC-719` | n/a | Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718) | `REQ-gate-only-writes` · `REQ-graceful-degradation` · `REQ-hook-extension-points` · `REQ-interface-schema` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

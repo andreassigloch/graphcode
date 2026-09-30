@@ -374,12 +374,15 @@ describe('CODE-Spur: die Auswahl, ihre Reichweite und ihr Fallback (CR-GC-541)',
 
   // CR-GC-631/649: die Datei heisst jetzt `src/loop/format-e-commands.ts` — der Handschnitt
   // aus CR-GC-536 ist derselbe geblieben, gemessen: dieselben vier Dateien.
+  // CR-GC-719: plus der Vertragstest von SCHEMA-format-e (TEST-mutate-input-formate) — der
+  // Uebersetzer parst genau diesen Vertrag, also gehoert sein Test in die Auswahl.
   it('src/loop/format-e-commands.ts waehlt aus dem Graphen genau den Handschnitt aus CR-GC-536', () => {
     const result = selectForChange(['src/loop/format-e-commands.ts'], ctx);
 
     expect(result.graphOnly).toEqual([
       'tests/codec.roundtrip.test.ts',
       'tests/codec.validation.test.ts',
+      'tests/mcp.mutate-input.test.ts',
       'tests/mutate.edge-only-batch.test.ts',
       'tests/mutate.formate-name.test.ts',
     ]);

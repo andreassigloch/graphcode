@@ -103,11 +103,13 @@ describe('TEST-graph-tests-operational: graph_tests operational on the committed
   });
 
   it('(g) impacted concept-only TESTs surface under unresolved, never silently dropped', async () => {
-    // MOD-codec satisfies REQ-interface-schema, verified only by the concept-only
-    // TEST-interface-schema → it must appear as unresolved, not vanish.
+    // REQ-docs-taxonomy is verified only by the concept-only TEST-docs-taxonomy (a named gap
+    // of CR-GC-719: docs/records is gitignored, durability is not checkable in-repo) → it must
+    // appear as unresolved, not vanish. CR-GC-719 bound TEST-interface-schema's REQ to a real
+    // file, so that uid no longer serves as the concept-only witness.
     const res = await registry['graph_tests'].handler({ changeSet: ['MOD-projections', 'MOD-kernel'], depth: 3 });
     const unresolvedIds = res.unresolved.map((u: { id: string }) => u.id);
-    expect(unresolvedIds).toContain('TEST-interface-schema');
+    expect(unresolvedIds).toContain('TEST-docs-taxonomy');
     // Every unresolved entry is a genuinely concept-only node in the committed graph.
     const conceptIds = new Set(
       harness.getGraph().nodes.filter((n) => n.attributes?.concept === true).map((n) => n.uid),

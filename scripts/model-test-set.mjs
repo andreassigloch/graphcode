@@ -139,6 +139,10 @@ export const EXCLUDED = {
     'Rig-Zug-Analyse und Kennzahlverlauf (CR-GC-708/709): spielt gestellte Logs und Audits in einem\n' +
     'TEMP-Verzeichnis nach und wertet Regeln darauf aus. graphcodes eigene SSOT liest er nie — eine\n' +
     'Modellaenderung kann ihn nicht rot machen; eine Aenderung an Treiber, Regeln oder Rig-Auswertung sehr wohl.',
+  'tests/contracts.kernel.test.ts':
+    'CR-GC-719: nennt `docs/graph/` nur als PFAD, unter dem der Test eine eigene formfremde bzw.\n' +
+    'vertragstreue SSOT-Datei in ein TEMP-Repo schreibt (SCHEMA-ontology-json). graphcodes eigene SSOT\n' +
+    'liest er nie — eine Modellaenderung kann ihn nicht rot machen; eine Aenderung am Vertrag sehr wohl.',
   'tests/attributvertraege.test.ts':
     'CR-GC-643: prueft das Leseverhalten von Code (graph_tests, Verifikationsbericht, Code-Fakten) auf einem Wegwerf-Store — eine Code-Aenderung bricht es, kein Modell-Zug. Der Modellteil (RC-09 am committeten Modell) steht in conformance.test.ts.',
   'tests/retro-kpi.test.ts':
