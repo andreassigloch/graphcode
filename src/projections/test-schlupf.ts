@@ -77,7 +77,7 @@ export function schlupfFreieFolge(zeilen: readonly SchlupfZeile[]): number {
 
 export type BindungsTeil = z.infer<typeof BindungsTeilSchema>;
 /** blackbox: TESTs an REQs, die eine Blackbox erfüllt (MOD, SYS, FCHAIN, Wurzel-FUNC).
- *  schnittstelle: Verträge (SCHEMA an einem FLOW), je Vertrag mindestens ein gebundener TEST. */
+ *  schnittstelle: realisierte Verträge (SCHEMA mit realRef an einem FLOW), je Vertrag ein gebundener TEST. */
 export type BlackboxBindung = z.infer<typeof BlackboxBindungSchema>;
 
 const gebunden = (attrs: Record<string, unknown> | undefined): boolean =>
@@ -102,8 +102,14 @@ export function blackboxBindung(graph: Graph): BlackboxBindung {
   const bbTests = [...new Set(verify.filter((e) => bbReq.has(e.targetId)).map((e) => e.sourceId))].sort();
   const bbOffen = bbTests.filter((uid) => !gebunden(byUid.get(uid)?.attributes));
 
+  // Nur REALISIERTE Verträge (realRef), wie R-32: ein Konzept-Vertrag hat keinen Code, den ein Test treffen kann.
+  const realisiert = (uid: string): boolean => !!byUid.get(uid)?.attributes?.realRef;
   const vertraege = [
-    ...new Set(graph.edges.filter((e) => e.edgeType === 'relation' && typ(e.sourceId) === 'FLOW' && typ(e.targetId) === 'SCHEMA').map((e) => e.targetId)),
+    ...new Set(
+      graph.edges
+        .filter((e) => e.edgeType === 'relation' && typ(e.sourceId) === 'FLOW' && typ(e.targetId) === 'SCHEMA' && realisiert(e.targetId))
+        .map((e) => e.targetId),
+    ),
   ].sort();
   const vOffen = vertraege.filter(
     (s) => !verify.some((e) => e.targetId === s && gebunden(byUid.get(e.sourceId)?.attributes)),

@@ -47,19 +47,21 @@ describe('Zusage: Blackbox- und Schnittstellentests gebunden (CR-GC-718)', () =>
   const n = (uid: string, type: string, attributes: Record<string, unknown> = {}) => ({ uid, type, name: uid, description: '', attributes });
   const e = (sourceId: string, edgeType: string, targetId: string) => ({ sourceId, edgeType, targetId, attributes: {} });
   const ref = { testRefs: [{ file: 'tests/x.test.ts' }] };
+  const real = { realRef: { file: 'src/x.ts' } };
   const graph = {
     nodes: [
       n('MOD-a', 'MOD'), n('FUNC-top', 'FUNC'), n('FUNC-innen', 'FUNC'),
       n('REQ-mod', 'REQ'), n('REQ-top', 'REQ'), n('REQ-innen', 'REQ'),
       n('TEST-mod', 'TEST', ref), n('TEST-top', 'TEST'), n('TEST-innen', 'TEST'),
-      n('FLOW-f', 'FLOW'), n('SCHEMA-ok', 'SCHEMA'), n('SCHEMA-offen', 'SCHEMA'), n('FLOW-g', 'FLOW'),
+      n('FLOW-f', 'FLOW'), n('SCHEMA-ok', 'SCHEMA', real), n('SCHEMA-offen', 'SCHEMA', real), n('FLOW-g', 'FLOW'),
+      n('SCHEMA-konzept', 'SCHEMA'),
       n('TEST-vertrag', 'TEST', ref),
     ],
     edges: [
       e('FUNC-top', 'compose', 'FUNC-innen'),
       e('MOD-a', 'satisfy', 'REQ-mod'), e('FUNC-top', 'satisfy', 'REQ-top'), e('FUNC-innen', 'satisfy', 'REQ-innen'),
       e('TEST-mod', 'verify', 'REQ-mod'), e('TEST-top', 'verify', 'REQ-top'), e('TEST-innen', 'verify', 'REQ-innen'),
-      e('FLOW-f', 'relation', 'SCHEMA-ok'), e('FLOW-g', 'relation', 'SCHEMA-offen'),
+      e('FLOW-f', 'relation', 'SCHEMA-ok'), e('FLOW-g', 'relation', 'SCHEMA-offen'), e('FLOW-g', 'relation', 'SCHEMA-konzept'),
       e('TEST-vertrag', 'verify', 'SCHEMA-ok'),
     ],
   } as unknown as Graph;
@@ -69,7 +71,7 @@ describe('Zusage: Blackbox- und Schnittstellentests gebunden (CR-GC-718)', () =>
     expect(z.blackbox).toEqual({ total: 2, gebunden: 1, offen: ['TEST-top'] });
   });
 
-  it('jeder Vertrag an einem FLOW braucht einen gebundenen TEST', () => {
+  it('jeder realisierte Vertrag an einem FLOW braucht einen gebundenen TEST; ein Konzept-Vertrag zaehlt nicht', () => {
     expect(blackboxBindung(graph).schnittstelle).toEqual({ total: 2, gebunden: 1, offen: ['SCHEMA-offen'] });
   });
 });
