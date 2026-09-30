@@ -1,6 +1,6 @@
 # CR-GC-719: Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-30)
 **Typ:** aus Item ITEM-2026-668 (finding)
 **Erstellt:** 2026-09-30
 **Item:** bok/items/ITEM-2026-668.json (Lane: graph)
