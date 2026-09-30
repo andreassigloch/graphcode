@@ -1,6 +1,6 @@
 # CR-GC-717: rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-30)
 **Typ:** aus Item ITEM-2026-664 (bug)
 **Erstellt:** 2026-09-30
 **Item:** bok/items/ITEM-2026-664.json (Lane: graph)
