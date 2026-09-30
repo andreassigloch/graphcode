@@ -1,6 +1,6 @@
 # CR-GC-716: steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-30)
 **Typ:** aus Item ITEM-2026-663 (bug)
 **Erstellt:** 2026-09-30
 **Item:** bok/items/ITEM-2026-663.json (Lane: graph)
