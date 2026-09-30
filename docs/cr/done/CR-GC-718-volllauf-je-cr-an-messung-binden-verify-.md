@@ -1,6 +1,6 @@
 # CR-GC-718: Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-30)
 **Typ:** aus Item ITEM-2026-667 (idea)
 **Erstellt:** 2026-09-30
 **Item:** bok/items/ITEM-2026-667.json (Lane: code)
