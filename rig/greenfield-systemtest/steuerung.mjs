@@ -81,13 +81,18 @@ export function kanalWirkung({ aufrufe, texte }) {
     const fokus = schritt.focusKey ?? schritt.focusDimension ?? null;
     if (vorher !== null && fokus === vorher) wiederholt++;
     vorher = fokus;
+    // Das Fenster reicht bis zur naechsten Fokusquelle — EINSCHLIESSLICH, wenn sie eine Mutation ist:
+    // die wurde unter DIESEM Fokus geschrieben, ihr `next` ist erst die Antwort darauf (CR-GC-716).
+    // Ohne das ist das Fenster leer, sobald jede Mutation `next` traegt (Kette A).
     const bis = aufrufe.findIndex((x, j) => j > i && fokusVon(x));
-    const batches = aufrufe.slice(i + 1, bis < 0 ? undefined : bis).filter((x) => istMutate(x) && !x.input.dryRun);
-    if (!batches.length) continue;
-    beurteilt++;
-    const text = batches.map((x) => String(x.input.formatE ?? JSON.stringify(x.input))).join('\n');
+    const ende = bis < 0 ? undefined : istMutate(aufrufe[bis]) ? bis + 1 : bis;
+    const batches = aufrufe.slice(i + 1, ende).filter((x) => istMutate(x) && !x.input.dryRun);
     const typen = schritt.focusTypes ?? [];
     const uids = schritt.focusKey ? String(schritt.focusKey).split(':')[2]?.split(',').filter(Boolean) ?? [] : [];
+    // Ein Schritt ohne Fokus (`done`, Handoff) gibt keine Richtung vor — nichts zu befolgen (CR-GC-716).
+    if (!batches.length || (!typen.length && !uids.length)) continue;
+    beurteilt++;
+    const text = batches.map((x) => String(x.input.formatE ?? JSON.stringify(x.input))).join('\n');
     const typTreffer = typen.some((t) => text.includes(`### ${t}`) || text.includes(`${t}-`));
     const uidTreffer = uids.length === 0 || uids.some((u) => text.includes(u));
     if (typTreffer && uidTreffer) befolgt++;
@@ -150,11 +155,56 @@ function ziel(text) {
   if (/material\/|auftrag\.md/.test(text)) return 'auftrag';
   if (/docs\/(views|graph)\//.test(text)) return 'sichten';
   if (/GRAPHCODE[\w-]*\.md|\.claude\/(commands|skills)|\bse-[\w-]+\.md/.test(text)) return 'doku';
-  if (/graphcode\/(src|dist)|node_modules\/@sigloch|sigloch-modules|contracts|se-engine|graph-api-core|ontology\.ts|meta-model|format-e-codec/.test(text)) return 'werkzeugQuelle';
+  // Kein nacktes `contracts`: das traf das eigene src/contracts/ eines Fremdrepos (CR-GC-716).
+  // @sigloch/contracts steckt in node_modules/@sigloch bzw. sigloch-modules.
+  if (/graphcode\/(src|dist)|node_modules\/@sigloch|sigloch-modules|se-engine|graph-api-core|ontology\.ts|meta-model|format-e-codec/.test(text)) return 'werkzeugQuelle';
   return 'sonst';
 }
 
 const DATEI_WERKZEUGE = new Set(['Read', 'Grep', 'Glob']);
+const LESE_VERBEN = new Set(['grep', 'rg', 'find', 'cat', 'ls', 'head', 'sed', 'tail']);
+
+/** Zerlegt an Trennern AUSSERHALB von Anfuehrungszeichen — `grep "a\\|b"` ist ein Segment. */
+function teile(text, trenner) {
+  const teileListe = [];
+  let akt = '', quote = null;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quote) {
+      if (c === '\\' && quote === '"') { akt += c + (text[++i] ?? ''); continue; }
+      if (c === quote) quote = null;
+      akt += c;
+      continue;
+    }
+    if (c === "'" || c === '"') { quote = c; akt += c; continue; }
+    const t = trenner.exec(text.slice(i, i + 2));
+    if (t) { teileListe.push(akt); akt = ''; i += t[0].length - 1; continue; }
+    akt += c;
+  }
+  teileListe.push(akt);
+  return teileListe;
+}
+
+/**
+ * Die lesenden Segmente einer Bash-Zeile — leer, wenn sie nichts nachschlaegt (CR-GC-716).
+ * Lesend ist ein Segment, dessen Pipeline-KOPF ein Lese-Verb ist. Nicht lesend: Heredoc-Koerper
+ * und `$(…)` (Argumente, kein Nachschlagen), `cat >`/`sed -i` (Schreiben), ein grep HINTER `|`
+ * (filtert die Ausgabe eines Testlaufs oder Commits). Auf einem Sitzungs-Transcript waren 77 von
+ * 148 „Dateizugriffen" Commit-, Testlauf- oder Schreibzeilen.
+ */
+export function leseSegmente(command) {
+  const ohneHeredoc = String(command).replace(/<<-?\s*['"]?(\w+)['"]?[^\n]*\n[\s\S]*?\n\1(?=\n|$)/g, '');
+  let ohneSubst = ohneHeredoc;
+  for (let alt = null; alt !== ohneSubst;) { alt = ohneSubst; ohneSubst = ohneSubst.replace(/\$\([^()]*\)|`[^`]*`/g, ''); }
+  const kopf = (seg) => teile(seg, /^\|/)[0].trim().replace(/^(do|then|else|\{|\()\s+/, '').replace(/^(\w+=\S*\s+)+/, '');
+  return teile(ohneSubst, /^(&&|\|\||;|\n)/).map(kopf).filter((k) => {
+    const [verb, ...rest] = k.split(/\s+/);
+    if (!LESE_VERBEN.has(verb)) return false;
+    if (verb === 'cat' && /^>/.test(rest[0] ?? '')) return false;
+    if (verb === 'sed' && rest.includes('-i')) return false;
+    return true;
+  });
+}
 const GRAPH_LESEN = new Set([
   'graph_elements', 'graph_get_node', 'graph_get_edges', 'graph_context', 'graph_expand',
   'graph_impact', 'graph_readiness', 'graph_help', 'graph_authoring_guide', 'rules_get_violations',
@@ -172,9 +222,10 @@ export function navigation({ aufrufe }) {
   const zeichen = { auftrag: 0, doku: 0, sichten: 0, werkzeugQuelle: 0, sonst: 0 };
   let graph = 0, graphZeichen = 0;
   for (const a of aufrufe) {
-    const bashSuche = a.name === 'Bash' && /\b(grep|rg|find|cat|ls|head|sed|tail)\b/.test(String(a.input.command ?? ''));
-    if (DATEI_WERKZEUGE.has(a.name) || bashSuche) {
-      const k = ziel(JSON.stringify(a.input));
+    const lesend = a.name === 'Bash' ? leseSegmente(a.input.command ?? '') : [];
+    if (DATEI_WERKZEUGE.has(a.name) || lesend.length) {
+      // Das Ziel nur aus dem, was gelesen wird — nicht aus Commit-Botschaft oder Heredoc.
+      const k = ziel(a.name === 'Bash' ? lesend.join('\n') : JSON.stringify(a.input));
       datei[k]++; zeichen[k] += a.zeichen;
     } else if (GRAPH_LESEN.has(a.name)) {
       graph++; graphZeichen += a.zeichen;
@@ -188,11 +239,16 @@ export function navigation({ aufrufe }) {
   };
 }
 
-/** Kosten je Element aus der `result`-Zeile — die einzige vollstaendige Usage des Laufs. */
+/**
+ * Kosten je Element aus der `result`-Zeile — die einzige vollstaendige Usage des Laufs. Ein
+ * Sitzungs-Transcript (Kette A) hat keine: dann sagt das Ergebnis das, statt still leer zu sein.
+ */
 export function effizienz(schluss, elemente) {
   const u = schluss?.usage;
-  if (!u || !elemente) return null;
+  if (!u) return { verfuegbar: false, grund: 'kein result' };
+  if (!elemente) return { verfuegbar: false, grund: 'keine Elementzahl' };
   return {
+    verfuegbar: true,
     centJeElement: +((100 * (schluss.total_cost_usd ?? 0)) / elemente).toFixed(1),
     ausgabeJeElement: Math.round((u.output_tokens ?? 0) / elemente),
     cacheSchreibungJeElement: Math.round((u.cache_creation_input_tokens ?? 0) / elemente),
@@ -202,20 +258,24 @@ export function effizienz(schluss, elemente) {
   };
 }
 
-/** Was beim letzten graph_generate zur Freigabe fehlte — die Antwort auf "warum nie done?". */
+/**
+ * Der Endstand der Freigabe — alles aus EINER Quelle, der letzten Fokusquelle (CR-GC-716). Ist das
+ * ein `next`, fehlen ihm Schwellen, Gates und blockierende Fehler: dann `null`, nie die Tabellen
+ * eines aelteren graph_generate (die zeigten im Frontier-Lauf den Stand v25 neben dem Endstand).
+ */
 export function endstand({ aufrufe }) {
-  // Der letzte Schritt mit Fokus — graph_generate oder `next`; die Tabellen stehen nur am generate.
-  const letzterGen = [...aufrufe].reverse().find((a) => a.name === 'graph_generate' && a.antwort)?.antwort;
-  const letzterSchritt = [...aufrufe].reverse().map(fokusVon).find(Boolean);
-  const g = letzterGen ? { ...letzterGen, ...(letzterSchritt ?? {}) } : letzterSchritt;
-  if (!g) return null;
+  const letzte = [...aufrufe].reverse().find(fokusVon);
+  if (!letzte) return null;
+  const g = fokusVon(letzte);
+  const tabellen = letzte.name === 'graph_generate';
   return {
+    quelle: tabellen ? 'graph_generate' : 'next',
     done: g.done === true,
     phase: g.phase,
-    blockierend: g.blockingErrors,
-    unterSchwelle: (g.readiness ?? []).filter((r) => r.score === null || r.score < g.threshold)
-      .map((r) => `${r.dimension}=${r.score ?? 'null'}`),
-    gateOffen: (g.phaseReadiness ?? []).filter((p) => p.missing.length).map((p) => `${p.gate}: ${p.missing.join(', ')}`),
+    blockierend: tabellen ? g.blockingErrors : null,
+    unterSchwelle: tabellen ? (g.readiness ?? []).filter((r) => r.score === null || r.score < g.threshold)
+      .map((r) => `${r.dimension}=${r.score ?? 'null'}`) : null,
+    gateOffen: tabellen ? (g.phaseReadiness ?? []).filter((p) => p.missing.length).map((p) => `${p.gate}: ${p.missing.join(', ')}`) : null,
     letzterFokus: g.focusKey ?? g.focusDimension ?? null,
   };
 }
@@ -242,7 +302,7 @@ export function steuerungsBericht(laeufe) {
       + `| ${ge(k.fitAdvisory)} | ${ge(k.steerAdvisory)} | ${ge(k.steeringDelta)} | ${ge(k.workOrder)} `
       + `| ${k.readiness} | ${k.help} | ${k.suggest} | ${k.steeringMd} | ${k.rueckfragen} |`);
   }
-  out.push('\nFokus befolgt = der naechste angewandte Batch nach einem `graph_generate` enthaelt die Fokus-Typen');
+  out.push('\nFokus befolgt = der naechste angewandte Batch nach einer Fokusquelle (`graph_generate` oder `next`) enthaelt die Fokus-Typen');
   out.push('und eine Fokus-uid (grob, je Lauf vergleichbar). geliefert/erwaehnt: ein Kanal, der oft kommt und');
   out.push('nie genannt wird, traegt die Entscheidung erkennbar nicht. 0 bei suggest/STEERING.md = toter Kanal.\n');
 
@@ -273,20 +333,22 @@ export function steuerungsBericht(laeufe) {
   out.push('| Lauf | Elemente | Cent | Ausgabe-Tokens | Cache-Schreibung | Cache-Lesung | Turns | Sekunden |');
   out.push('|---|---:|---:|---:|---:|---:|---:|---:|');
   for (const { l, e } of rows) {
-    out.push(e
+    out.push(e.verfuegbar
       ? `| ${l.label} | ${zahl(l.elemente)} | ${zahl(e.centJeElement)} | ${zahl(e.ausgabeJeElement)} | ${zahl(e.cacheSchreibungJeElement)} `
         + `| ${zahl(e.cacheLesungJeElement)} | ${zahl(e.turnsJeElement)} | ${zahl(e.sekundenJeElement)} |`
-      : `| ${l.label} | ${zahl(l.elemente)} | — | — | — | — | — | — |`);
+      : `| ${l.label} | ${zahl(l.elemente)} | nicht verfuegbar (${e.grund}) | — | — | — | — | — |`);
   }
   out.push('\nDie Cache-Lesung waechst mit Turns x Kontextlaenge — sie ist der Posten, sobald die Gate-Antwort klein ist.\n');
 
-  out.push('### Endstand der Freigabe (letztes `graph_generate`)\n');
+  out.push('### Endstand der Freigabe (letzte Fokusquelle: `graph_generate` oder `next`)\n');
   out.push('| Lauf | done | blockierend | unter Schwelle | offen an den Gates | letzter Fokus |');
   out.push('|---|---|---:|---|---|---|');
+  // `next` traegt keine Tabellen — benannt statt mit einem aelteren generate aufgefuellt.
+  const tab = (x, f) => (x === null ? 'nicht im next' : f(x) || '—');
   for (const { l, end } of rows) {
     out.push(end
-      ? `| ${l.label} | ${end.done ? 'ja' : 'nein'} | ${end.blockierend} | ${end.unterSchwelle.join(', ') || '—'} `
-        + `| ${end.gateOffen.join(' · ') || '—'} | ${end.letzterFokus ?? '—'} |`
+      ? `| ${l.label} | ${end.done ? 'ja' : 'nein'} | ${tab(end.blockierend, zahl)} | ${tab(end.unterSchwelle, (x) => x.join(', '))} `
+        + `| ${tab(end.gateOffen, (x) => x.join(' · '))} | ${end.letzterFokus ?? '—'} |`
       : `| ${l.label} | — | — | — | — | — |`);
   }
   return out.join('\n');

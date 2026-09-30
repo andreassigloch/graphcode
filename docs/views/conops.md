@@ -391,6 +391,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-696` | done | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren | `FUNC-run-executor` |
 | `CR-GC-697` | done | FCHAIN-skill-report: FUNC-test/-test-ui ohne REQ (R-21) - REQ Red-First mit Test | `REQ-test-skill-red-first` |
 | `CR-GC-714` | n/a | D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck | `FUNC-graph-delegate` · `FUNC-run-executor` · `REQ-delegate-in-host` |
+| `CR-GC-716` | n/a | steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210) | `FUNC-systemtest-report` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

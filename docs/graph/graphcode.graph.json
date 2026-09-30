@@ -14133,6 +14133,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-716",
+      "target": "FUNC-systemtest-report",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -22572,5 +22577,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 542
+  "graphVersion": 543
 }

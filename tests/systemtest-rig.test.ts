@@ -578,11 +578,11 @@ describe('Steuerungsauswertung im Bericht (CR-GC-585)', () => {
     const m = await import('../rig/greenfield-systemtest/steuerung.mjs');
     const s = m.leseStrom(pfad);
     expect(m.effizienz(s.schluss, 10)).toEqual({
-      centJeElement: 10, ausgabeJeElement: 50, cacheSchreibungJeElement: 100,
+      verfuegbar: true, centJeElement: 10, ausgabeJeElement: 50, cacheSchreibungJeElement: 100,
       cacheLesungJeElement: 2000, turnsJeElement: 0.9, sekundenJeElement: 2,
     });
     expect(m.endstand(s)).toEqual({
-      done: false, phase: 'expand', blockierend: 2, unterSchwelle: ['uc=0.5', 'ms=null'],
+      quelle: 'graph_generate', done: false, phase: 'expand', blockierend: 2, unterSchwelle: ['uc=0.5', 'ms=null'],
       gateOffen: ['SRR: UC-01'], letzterFokus: 'uc:UC-01:UC-a',
     });
   });
