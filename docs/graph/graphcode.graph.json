@@ -2785,6 +2785,18 @@
       "description": "docs/cr/open/CR-GC-715-nutzer-simulator-ein-testtreiber-fuer-al.md"
     },
     {
+      "id": "CR-GC-716",
+      "type": "CR",
+      "name": "steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210)",
+      "description": "docs/cr/open/CR-GC-716-steuerung-mjs-auf-claude-code-sitzungs-t.md"
+    },
+    {
+      "id": "CR-GC-717",
+      "type": "CR",
+      "name": "rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD",
+      "description": "docs/cr/open/CR-GC-717-rig-code-test-messen-mjs-kongruenz-oeffn.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22560,5 +22572,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 540
+  "graphVersion": 542
 }
