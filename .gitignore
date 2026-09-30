@@ -43,3 +43,4 @@ docs/views/dashboard.url
 
 # Interne Rig-Läufe mit echtem Auftrag und Rechnerdaten — lokal, nicht öffentlich.
 rig/agentdiary/
+rig/moneyflow-struktur/

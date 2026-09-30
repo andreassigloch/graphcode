@@ -89,7 +89,7 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 
 | Rig | Klasse | Frage | Aufbau |
 |---|---|---|---|
-| [`moneyflow-struktur/`](moneyflow-struktur/README.md) | gate | Wie sieht moneyflow durch das echte Gate aus? | `openMeasured` |
+| `moneyflow-struktur/` (intern, nicht im Repo) | gate | Wie sieht moneyflow durch das echte Gate aus? | `openMeasured` |
 | [`minimal-whitebox/`](minimal-whitebox/README.md) | gate | Wie groß ist die Whitebox gegen den Blast-Radius? | `openMeasured` |
 | [`greenfield-systemtest/`](greenfield-systemtest/README.md) | gate | Kommt ein lokales Modell an ein Frontier-Modell heran? | `createHarness` (Subprozess, Kuzu-Binding) |
 | `agentdiary/` (intern, nicht im Repo) | gate | Liefert der lokale Arm (D2) am echten Auftrag, was Frontier liefert? | Arm-Repos + Blindurteil |
