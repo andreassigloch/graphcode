@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 148 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 149 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -38,6 +38,7 @@
 | `REQ-formatE-diff-dialect` | ✓ | ✓ passed | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` |
 | `REQ-formatE-parity` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` |
 | `REQ-frame-binding` | ✓ | ⚠ 1/2 passed | `TEST-code-quality` · `TEST-graph-realize` |
+| `REQ-full-run-on-probation` | ✓ | ✓ passed | `TEST-test-schlupf` |
 | `REQ-gate-only-writes` | ✓ | ⚠ 2/3 passed | `TEST-graph-realize` · `TEST-no-direct-graph-write` · `TEST-path-containment` |
 | `REQ-graceful-degradation` | ✓ | ⚠ 1/2 passed | `TEST-gve-supervision` · `TEST-reduced-llm` |
 | `REQ-graph-code-conformance` | ✓ | ✓ passed | `TEST-code-conformance` |
@@ -157,8 +158,8 @@
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
-Coverage: 148/148 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 110/148 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 149/149 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 111/149 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -251,6 +252,7 @@ Belegt: 110/148 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-rank-candidates` → `FUNC-run-executor` | `FLOW-candidate-ranking` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-render-views` → `FUNC-export-markdown` | `FLOW-query-request-render-views` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-resolve-tests-from-code` → `FUNC-deduce-tests` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
+| `FUNC-resolve-tests-from-code` → `FUNC-measure-test-schlupf` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
 | `FUNC-resolve-tests-from-code` → `FUNC-plan-code-lane` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
 | `FUNC-run-executor` → `FUNC-call-model` | `FLOW-model-request` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-gate-client` | `FLOW-candidate-batch` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
@@ -285,4 +287,4 @@ Belegt: 110/148 REQ bestanden (74%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-view-intplan` → `FUNC-export-markdown` | `FLOW-query-request-view-intplan` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-view-rtm` → `FUNC-export-markdown` | `FLOW-query-request-view-rtm` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 
-> 41/120 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 79 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 42/121 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 79 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

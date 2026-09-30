@@ -85,6 +85,7 @@
 | `FUNC-inventory-channel` | FUNC | buildInventoryBlock |
 | `FUNC-list-elements` | FUNC | listElements(filter) |
 | `FUNC-load-config` | FUNC | loadGraphcodeConfig |
+| `FUNC-measure-test-schlupf` | FUNC | Testauswahl-Schlupf messen |
 | `FUNC-merge-nodes` | FUNC | replayBranchLog(log, sinceVersion) |
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
@@ -228,6 +229,7 @@
 | `FUNC-inventory-channel` | `MOD-loop` |
 | `FUNC-list-elements` | `MOD-kernel` |
 | `FUNC-load-config` | `MOD-kernel` |
+| `FUNC-measure-test-schlupf` | `MOD-projections` |
 | `FUNC-merge-nodes` | `MOD-kernel` |
 | `FUNC-migrate-schema` | `MOD-kernel` |
 | `FUNC-module-metrics` | `MOD-projections` |

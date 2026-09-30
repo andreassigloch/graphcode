@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 62 SCHEMA · 134 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 63 SCHEMA · 135 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -56,6 +56,7 @@
 | `SCHEMA-round-injection` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-rule-violation` | packages/contracts/src/harness/index.ts#RuleViolationSchema | n/a |
 | `SCHEMA-schema-fingerprint` | src/kernel/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
+| `SCHEMA-schlupf-zeile` | src/projections/test-schlupf.ts#SchlupfZeileSchema | n/a |
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
 | `SCHEMA-steering-channel` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
@@ -124,7 +125,7 @@
 | `FLOW-health-report` | `FUNC-health-endpoint` | `ACTOR-dashboard` |
 | `FLOW-held-back-traces` | `FUNC-held-back-traces` | `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` |
 | `FLOW-impact-slice` | `FUNC-graph-impact` | `FUNC-read-tools` |
-| `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` · `FUNC-plan-code-lane` |
+| `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` · `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` |
 | `FLOW-imported-graph` | `FUNC-import` | `FUNC-graph-store` |
 | `FLOW-install-result-collect-status` | `FUNC-collect-status` | `ACTOR-owner` |
 | `FLOW-install-result-harness-cli` | `FUNC-harness-cli` | `ACTOR-owner` |
@@ -185,6 +186,7 @@
 | `FLOW-rule-findings` | `FUNC-evaluate-rules` | `FUNC-health-endpoint` · `FUNC-mutate` |
 | `FLOW-run-request` | `FUNC-run-verb` | `FUNC-run-executor` |
 | `FLOW-schema-fingerprint` | `FUNC-schema-guard` | `FUNC-graph-store` |
+| `FLOW-schlupf-zeile` | `FUNC-measure-test-schlupf` | `ACTOR-owner` |
 | `FLOW-session-entry` | `FUNC-gve-supervise` | `FUNC-gve-sessions` |
 | `FLOW-session-registry` | `FUNC-gve-sessions` | `FUNC-gve-supervise` |
 | `FLOW-skill-report-se-help` | `FUNC-se-help` | `ACTOR-owner` |

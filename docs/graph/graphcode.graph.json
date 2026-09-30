@@ -2797,6 +2797,12 @@
       "description": "docs/cr/open/CR-GC-717-rig-code-test-messen-mjs-kongruenz-oeffn.md"
     },
     {
+      "id": "CR-GC-718",
+      "type": "CR",
+      "name": "Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox",
+      "description": "docs/cr/open/CR-GC-718-volllauf-je-cr-an-messung-binden-verify-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3724,6 +3730,12 @@
       "type": "FLOW",
       "name": "Schema-Fingerabdruck",
       "description": "Der Fingerabdruck der generierten DDL als Marker neben dem Store: 16 Hex-Zeichen. Beim Anlegen gestempelt, beim naechsten Start gelesen - er entscheidet, ob der Store weggeworfen und neu befuellt wird."
+    },
+    {
+      "id": "FLOW-schlupf-zeile",
+      "type": "FLOW",
+      "name": "Schlupf-Zeile",
+      "description": "Eine Zeile je Volllauf in docs/messung/testauswahl.jsonl: CR, Spur, Auswahl, rote Dateien, Schlupf, Zusage der Bindung."
     },
     {
       "id": "FLOW-session-entry",
@@ -4700,6 +4712,17 @@
       "realRef": {
         "file": "src/kernel/config.ts",
         "symbol": "loadGraphcodeConfig",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-measure-test-schlupf",
+      "type": "FUNC",
+      "name": "Testauswahl-Schlupf messen",
+      "description": "Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Getragen von scripts/verify-full.mjs. (CR-GC-718)",
+      "realRef": {
+        "file": "src/projections/test-schlupf.ts",
+        "symbol": "schlupfVon",
         "lang": "ts"
       }
     },
@@ -5787,6 +5810,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-full-run-on-probation",
+      "type": "REQ",
+      "name": "Volllauf auf Bewaehrung",
+      "description": "Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -7553,6 +7585,17 @@
       "realRef": {
         "file": "src/kernel/schema-fingerprint-contract.ts",
         "symbol": "SchemaFingerprintSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-schlupf-zeile",
+      "type": "SCHEMA",
+      "name": "Schlupf-Zeile (Vertrag)",
+      "description": "Vertrag der Schlupf-Zeile: cr, at, code, spur, ausgewaehlt, ausGraph, gesamt, rot, schlupf, schlupfNurGraph, zusage (blackbox, schnittstelle).",
+      "realRef": {
+        "file": "src/projections/test-schlupf.ts",
+        "symbol": "SchlupfZeileSchema",
         "lang": "ts"
       }
     },
@@ -9843,6 +9886,20 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-test-schlupf",
+      "type": "TEST",
+      "name": "Schlupf und Zusage",
+      "description": "Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf bricht ab, je CR die juengste Zeile), Blackbox- und Schnittstellenbindung am synthetischen Graphen, gepruefte JSONL-Zeilen.",
+      "testRefs": [
+        {
+          "file": "tests/test-schlupf.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
         }
       ]
     },
@@ -14143,6 +14200,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-718",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-718",
+      "target": "FUNC-plan-code-lane",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-718",
+      "target": "REQ-full-run-on-probation",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -14471,6 +14543,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-impact-testing",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-impact-testing",
@@ -15950,6 +16027,11 @@
     },
     {
       "source": "FLOW-impacted-tests",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-impacted-tests",
       "target": "FUNC-plan-code-lane",
       "type": "io"
     },
@@ -16736,6 +16818,16 @@
     {
       "source": "FLOW-schema-fingerprint",
       "target": "SCHEMA-schema-fingerprint",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-schlupf-zeile",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-schlupf-zeile",
+      "target": "SCHEMA-schlupf-zeile",
       "type": "relation"
     },
     {
@@ -18829,6 +18921,21 @@
       "target": "REQ-thresholds-from-config",
       "type": "satisfy",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-measure-test-schlupf",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-measure-test-schlupf",
+      "target": "FLOW-schlupf-zeile",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-measure-test-schlupf",
+      "target": "REQ-full-run-on-probation",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-merge-nodes",
@@ -21820,6 +21927,16 @@
       "created_at": "2026-06-19T00:00:00.000Z"
     },
     {
+      "source": "TEST-test-schlupf",
+      "target": "REQ-full-run-on-probation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-schlupf",
+      "target": "SCHEMA-schlupf-zeile",
+      "type": "verify"
+    },
+    {
       "source": "TEST-testref-materialize",
       "target": "REQ-testref-materialized",
       "type": "verify"
@@ -22220,6 +22337,11 @@
     },
     {
       "source": "UC-efficient-testing",
+      "target": "REQ-full-run-on-probation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-efficient-testing",
       "target": "REQ-graph-tests-operational",
       "type": "compose"
     },
@@ -22582,5 +22704,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 544
+  "graphVersion": 546
 }

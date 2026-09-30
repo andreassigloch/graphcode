@@ -87,7 +87,7 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
-- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-graph-impact` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
+- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-graph-impact` → `FUNC-measure-test-schlupf` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -393,6 +393,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-714` | n/a | D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck | `FUNC-graph-delegate` · `FUNC-run-executor` · `REQ-delegate-in-host` |
 | `CR-GC-716` | n/a | steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210) | `FUNC-systemtest-report` |
 | `CR-GC-717` | n/a | rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD | `REQ-single-kuzu-owner` |
+| `CR-GC-718` | n/a | Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox | `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `REQ-full-run-on-probation` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

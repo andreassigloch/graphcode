@@ -37,6 +37,7 @@
     "test": "vitest run",
     "verify:model": "node scripts/verify-model.mjs",
     "verify:code": "node scripts/verify-code.mjs",
+    "verify:full": "node scripts/verify-full.mjs",
     "messung": "node scripts/messung.mjs",
     "test:watch": "vitest",
     "lint": "eslint src",

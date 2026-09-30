@@ -740,6 +740,9 @@
 | `CR-GC-714` | relation | `REQ-delegate-in-host` |
 | `CR-GC-716` | relation | `FUNC-systemtest-report` |
 | `CR-GC-717` | relation | `REQ-single-kuzu-owner` |
+| `CR-GC-718` | relation | `FUNC-measure-test-schlupf` |
+| `CR-GC-718` | relation | `FUNC-plan-code-lane` |
+| `CR-GC-718` | relation | `REQ-full-run-on-probation` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -797,6 +800,7 @@
 | `FCHAIN-generation-states` | compose | `FUNC-take-steering-snapshot` |
 | `FCHAIN-impact-testing` | compose | `FUNC-deduce-tests` |
 | `FCHAIN-impact-testing` | compose | `FUNC-graph-impact` |
+| `FCHAIN-impact-testing` | compose | `FUNC-measure-test-schlupf` |
 | `FCHAIN-impact-testing` | compose | `FUNC-plan-code-lane` |
 | `FCHAIN-impact-testing` | compose | `FUNC-resolve-tests-from-code` |
 | `FCHAIN-impact-testing` | compose | `FUNC-test-ingest` |
@@ -1078,6 +1082,7 @@
 | `FLOW-impact-slice` | io | `FUNC-read-tools` |
 | `FLOW-impact-slice` | relation | `SCHEMA-impact-slice` |
 | `FLOW-impacted-tests` | io | `FUNC-deduce-tests` |
+| `FLOW-impacted-tests` | io | `FUNC-measure-test-schlupf` |
 | `FLOW-impacted-tests` | io | `FUNC-plan-code-lane` |
 | `FLOW-impacted-tests` | relation | `SCHEMA-impacted-tests` |
 | `FLOW-imported-graph` | io | `FUNC-graph-store` |
@@ -1234,6 +1239,8 @@
 | `FLOW-run-request` | relation | `SCHEMA-executor-config` |
 | `FLOW-schema-fingerprint` | io | `FUNC-graph-store` |
 | `FLOW-schema-fingerprint` | relation | `SCHEMA-schema-fingerprint` |
+| `FLOW-schlupf-zeile` | io | `ACTOR-owner` |
+| `FLOW-schlupf-zeile` | relation | `SCHEMA-schlupf-zeile` |
 | `FLOW-session-entry` | io | `FUNC-gve-sessions` |
 | `FLOW-session-entry` | relation | `SCHEMA-session-registry` |
 | `FLOW-session-registry` | io | `FUNC-gve-supervise` |
@@ -1638,6 +1645,9 @@
 | `FUNC-load-config` | allocate | `MOD-kernel` |
 | `FUNC-load-config` | io | `FLOW-metric-policy` |
 | `FUNC-load-config` | satisfy | `REQ-thresholds-from-config` |
+| `FUNC-measure-test-schlupf` | allocate | `MOD-projections` |
+| `FUNC-measure-test-schlupf` | io | `FLOW-schlupf-zeile` |
+| `FUNC-measure-test-schlupf` | satisfy | `REQ-full-run-on-probation` |
 | `FUNC-merge-nodes` | allocate | `MOD-kernel` |
 | `FUNC-merge-nodes` | io | `FLOW-mutate-cmd-merge-nodes` |
 | `FUNC-merge-nodes` | satisfy | `REQ-auto-persist-merge` |
@@ -2192,6 +2202,8 @@
 | `TEST-target-shifts-ranking` | verify | `REQ-target-shifts-ranking` |
 | `TEST-target-state` | verify | `REQ-target-state` |
 | `TEST-test-runnable-binding` | verify | `REQ-test-runnable-binding` |
+| `TEST-test-schlupf` | verify | `REQ-full-run-on-probation` |
+| `TEST-test-schlupf` | verify | `SCHEMA-schlupf-zeile` |
 | `TEST-testref-materialize` | verify | `REQ-testref-materialized` |
 | `TEST-testreport` | verify | `REQ-audit-trail` |
 | `TEST-testreport` | verify | `REQ-test-runnable-binding` |
@@ -2267,6 +2279,7 @@
 | `UC-deterministic-steering` | compose | `REQ-test-skill-red-first` |
 | `UC-deterministic-steering` | compose | `REQ-thresholds-from-config` |
 | `UC-efficient-testing` | compose | `FCHAIN-impact-testing` |
+| `UC-efficient-testing` | compose | `REQ-full-run-on-probation` |
 | `UC-efficient-testing` | compose | `REQ-graph-tests-operational` |
 | `UC-efficient-testing` | compose | `REQ-impact-based-testing` |
 | `UC-efficient-testing` | compose | `REQ-post-impact-testing` |

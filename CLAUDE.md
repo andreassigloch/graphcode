@@ -100,9 +100,17 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
 - After **every** `.ts` change: `npm run build` / `type-check`. No unchecked TypeScript commits.
 - **While working, run the selected set, not the whole suite.** `graph_tests({changeSet})` walks
   `code node →satisfy/allocate→ REQ →verify→ TEST`, resolves each TEST via its `testRefs`, and emits
-  the minimal `vitest run` command. The full suite is the **gate before closing a CR**, not the
-  inner loop — that is where the graph pays for itself, and it went unused through the 2026-08-27
-  restructure (every agent ran the full suite, repeatedly).
+  the minimal `vitest run` command. The full suite is not the inner loop — that is where the graph
+  pays for itself, and it went unused through the 2026-08-27 restructure (every agent ran the full
+  suite, repeatedly).
+- **The commitment behind the selection:** the tests of every blackbox and of its interfaces are
+  bound 100 % (`testRefs`); what runs inside a blackbox (unit tests) the blackbox knows itself — in
+  the selection that is the direct import. `verify:full` prints both ratios (CR-GC-718).
+- **The full suite per CR is on probation, not a law** (CR-GC-718). Before closing a CR run
+  `npm run verify:full <CR-ID>`: it runs the whole suite and records in
+  `docs/messung/testauswahl.jsonl` whether a red test lay **outside** the selection `verify:code`
+  makes for that CR's change (Schlupf). After **10 consecutive CODE-lane CRs without Schlupf** the
+  per-CR full run is dropped; CI and publish keep it. One Schlupf resets the count.
 - **Three lanes, one rule: the lane must fit the diff** (CR-GC-399/535/541). The `pre-commit` hook
   names the lane for the staged diff; it runs only the model lane, CI runs the full suite.
 
@@ -110,7 +118,7 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
   |---|---|---|---|
   | MODELL | `npm run verify:model` | only `docs/` in the diff | the fixed set in `scripts/model-test-set.mjs` (~46 files, ~45 s), kept complete by `tests/verify-model.completeness.test.ts` |
   | CODE | `npm run verify:code` | source files changed | derived per changeset from the committed snapshot via `impactedTests()` — the same function `graph_tests` uses |
-  | VOLL | `npm test` | before closing a CR, before publish, in CI | all 142 files (~280 s) — the only lane that catches the clean-machine class |
+  | VOLL | `npm run verify:full <CR>` · `npm test` | before closing a CR (until 10 CRs without Schlupf), before publish, in CI | all 142 files (~280 s) — the only lane that catches the clean-machine class |
 
 - **A derived set is only as good as its binding.** `verify:code` prints the binding ratio of the
   changeset and every impacted TEST without `testRefs`, and falls back to the FULL lane whenever a

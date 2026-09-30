@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 148 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 149 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 49 REQ
@@ -61,7 +61,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1) — 100 REQ
+### funktional (SWE.1) — 101 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -85,6 +85,7 @@
 | `REQ-done-iff-no-focus` | `TEST-generation-statemachine` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-decode` | `MOD-loop` |
 | `REQ-formatE-parity` | `TEST-formate-binding` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` | `MOD-projections` | — |
+| `REQ-full-run-on-probation` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 | `REQ-gate-only-writes` | `TEST-graph-realize` · `TEST-no-direct-graph-write` · `TEST-path-containment` | `MOD-agent-surface` · `MOD-kernel` · `MOD-loop` · `MOD-surface` | — |
 | `REQ-graph-context-replaces-reading` | `TEST-graph-context-replaces-reading` | `MOD-surface` | — |
 | `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` | — |
@@ -202,7 +203,7 @@
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 
-### Komponente (SWE.2/3) — 110 REQ
+### Komponente (SWE.2/3) — 111 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -231,6 +232,7 @@
 | `REQ-export-no-clobber` | `TEST-export-graph-guard` · `TEST-mcp-export-guard` | `MOD-projections` | — |
 | `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-decode` | `MOD-loop` |
 | `REQ-formatE-parity` | `TEST-formate-binding` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` | `MOD-projections` | — |
+| `REQ-full-run-on-probation` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 | `REQ-gate-only-writes` | `TEST-graph-realize` · `TEST-no-direct-graph-write` · `TEST-path-containment` | `MOD-agent-surface` · `MOD-kernel` · `MOD-loop` · `MOD-surface` | — |
 | `REQ-graph-code-conformance` | `TEST-code-conformance` | `FUNC-check-code-conformance` | `MOD-kernel` |
 | `REQ-graph-context-replaces-reading` | `TEST-graph-context-replaces-reading` | `MOD-surface` | — |

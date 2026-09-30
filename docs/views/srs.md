@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 148 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 149 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -66,7 +66,7 @@ io ▶ `FLOW-model-answer` · io ◀ `FLOW-model-wire-request`
 
 Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)
 
-io ▶ `FLOW-channel-dimension-template` · `FLOW-channel-gate-protocol` · `FLOW-channel-guidance` · `FLOW-channel-idle-nudge` · `FLOW-channel-rule-clause` · `FLOW-channel-system-prompt` · `FLOW-cli-invocation` · `FLOW-config-file` · `FLOW-mutate-cmd-owner` · `FLOW-owner-answer` · `FLOW-query-request-owner` · `FLOW-systemtest-order` · `FLOW-version-bump` · io ◀ `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-code-lane-plan` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-markdown-docs` · `FLOW-open-question` · `FLOW-rendered-views` · `FLOW-skill-report-se-help` · `FLOW-skill-report-se-retro` · `FLOW-skill-report-se-review` · `FLOW-skill-report-se-status` · `FLOW-skill-report-test` · `FLOW-skill-report-test-ui` · `FLOW-systemtest-verdict` · `FLOW-test-selection`
+io ▶ `FLOW-channel-dimension-template` · `FLOW-channel-gate-protocol` · `FLOW-channel-guidance` · `FLOW-channel-idle-nudge` · `FLOW-channel-rule-clause` · `FLOW-channel-system-prompt` · `FLOW-cli-invocation` · `FLOW-config-file` · `FLOW-mutate-cmd-owner` · `FLOW-owner-answer` · `FLOW-query-request-owner` · `FLOW-systemtest-order` · `FLOW-version-bump` · io ◀ `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-code-lane-plan` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-markdown-docs` · `FLOW-open-question` · `FLOW-rendered-views` · `FLOW-schlupf-zeile` · `FLOW-skill-report-se-help` · `FLOW-skill-report-se-retro` · `FLOW-skill-report-se-review` · `FLOW-skill-report-se-status` · `FLOW-skill-report-test` · `FLOW-skill-report-test-ui` · `FLOW-systemtest-verdict` · `FLOW-test-selection`
 
 ## 3  Use Cases & Verhalten
 
@@ -1910,7 +1910,21 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-binding` (integration) · `TEST-graph-realize` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
-##### 3.3.1.4  `FUNC-plan-code-lane` — Code-Spur planen
+##### 3.3.1.4  `FUNC-measure-test-schlupf` — Testauswahl-Schlupf messen
+
+Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Getragen von scripts/verify-full.mjs. (CR-GC-718)
+
+io ◀ `FLOW-impacted-tests` · io ▶ `FLOW-schlupf-zeile` · allocate ▶ `MOD-projections`
+
+###### `REQ-full-run-on-probation` — Volllauf auf Bewaehrung
+
+Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-measure-test-schlupf` · allocate ▶ `MOD-projections`
+
+##### 3.3.1.5  `FUNC-plan-code-lane` — Code-Spur planen
 
 Plant die Testspur einer Code-Aenderung gegen den committeten Snapshot: aufgeloeste Dateien aus impactedTests, Entscheidung zwischen CODE, VOLL und KEINE, das Laufkommando und der Bericht mit Bindungsquote und unaufgeloesten TESTs. Getragen vom Runner scripts/verify-code.mjs und vom pre-commit-Hook. (CR-GC-541)
 
@@ -1924,7 +1938,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
 
-##### 3.3.1.5  `FUNC-test-ingest` — graph_test_ingest
+##### 3.3.1.6  `FUNC-test-ingest` — graph_test_ingest
 
 > auch in: `FUNC-block-abfrage`
 
@@ -6084,7 +6098,7 @@ io ◀ `FUNC-graph-impact` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-imp
 
 Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug.
 
-io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-deduce-tests` · `FUNC-plan-code-lane` · schema ▶ `SCHEMA-impacted-tests`
+io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-deduce-tests` · `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · schema ▶ `SCHEMA-impacted-tests`
 
 ### 4.49  `FLOW-imported-graph` — Importierter Graph
 
@@ -6446,157 +6460,163 @@ Der Fingerabdruck der generierten DDL als Marker neben dem Store: 16 Hex-Zeichen
 
 io ◀ `FUNC-schema-guard` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-schema-fingerprint`
 
-### 4.109  `FLOW-session-entry` — Sitzungseintrag
+### 4.109  `FLOW-schlupf-zeile` — Schlupf-Zeile
+
+Eine Zeile je Volllauf in docs/messung/testauswahl.jsonl: CR, Spur, Auswahl, rote Dateien, Schlupf, Zusage der Bindung.
+
+io ◀ `FUNC-measure-test-schlupf` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-schlupf-zeile`
+
+### 4.110  `FLOW-session-entry` — Sitzungseintrag
 
 Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
 
-### 4.110  `FLOW-session-registry` — Sitzungsregister
+### 4.111  `FLOW-session-registry` — Sitzungsregister
 
 Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird.
 
 io ◀ `FUNC-gve-sessions` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-session-registry`
 
-### 4.111  `FLOW-skill-report-se-help` — Skill-Bericht (se-help)
+### 4.112  `FLOW-skill-report-se-help` — Skill-Bericht (se-help)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-help → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-se-help` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.112  `FLOW-skill-report-se-retro` — Skill-Bericht (se-retro)
+### 4.113  `FLOW-skill-report-se-retro` — Skill-Bericht (se-retro)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-retro → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-se-retro` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.113  `FLOW-skill-report-se-review` — Skill-Bericht (se-review)
+### 4.114  `FLOW-skill-report-se-review` — Skill-Bericht (se-review)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-review → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-se-review` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.114  `FLOW-skill-report-se-status` — Skill-Bericht (se-status)
+### 4.115  `FLOW-skill-report-se-status` — Skill-Bericht (se-status)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-status → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-se-status` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.115  `FLOW-skill-report-test` — Skill-Bericht (test)
+### 4.116  `FLOW-skill-report-test` — Skill-Bericht (test)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-test` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.116  `FLOW-skill-report-test-ui` — Skill-Bericht (test-ui)
+### 4.117  `FLOW-skill-report-test-ui` — Skill-Bericht (test-ui)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test-ui → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-test-ui` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.117  `FLOW-skill-request` — Skill-Aufruf
+### 4.118  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
 io ◀ `ACTOR-agent` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-### 4.118  `FLOW-sse-frame` — SSE-Frame (versioniert)
+### 4.119  `FLOW-sse-frame` — SSE-Frame (versioniert)
 
 Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501)
 
 io ◀ `FUNC-broadcast-diff` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-### 4.119  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.120  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-bind-tools` · `FUNC-rank-candidates` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.120  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.121  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-steering-delta` · `FUNC-generation-step` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.121  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
+### 4.122  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
 
 Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Verbindung ACTOR-agent → FUNC-take-steering-snapshot; aufgetrennt aus FLOW-steering-trigger (CR-GC-510).
 
 io ◀ `ACTOR-agent` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.122  `FLOW-store-ownership` — Store-Besitzanspruch
+### 4.123  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.123  `FLOW-systemtest-artifacts` — Lauf-Artefakte
+### 4.124  `FLOW-systemtest-artifacts` — Lauf-Artefakte
 
 Was ein einzelner Lauf hinterlaesst und die Auswertung wieder aufnimmt — der Uebergabepunkt zwischen Fahren und Bewerten.
 
 io ◀ `FUNC-systemtest-run` · io ▶ `FUNC-systemtest-metrics` · `FUNC-systemtest-turn-analyse` · schema ▶ `SCHEMA-systemtest-artifacts`
 
-### 4.124  `FLOW-systemtest-order` — Systemtest-Auftrag
+### 4.125  `FLOW-systemtest-order` — Systemtest-Auftrag
 
 Der Anstoss des Menschen an den Messaufbau: welche Arme, wie viele Laeufe, gegen welches Golden und welche Pruefliste.
 
 io ◀ `ACTOR-owner` · io ▶ `FUNC-systemtest-run` · schema ▶ `SCHEMA-systemtest-order`
 
-### 4.125  `FLOW-systemtest-row` — Bewertungszeile
+### 4.126  `FLOW-systemtest-row` — Bewertungszeile
 
 Das Ergebnis der Bewertung eines Laufs, wie es in results-*.json abgelegt und vom Bericht wieder gelesen wird.
 
 io ◀ `FUNC-systemtest-metrics` · io ▶ `FUNC-systemtest-report` · schema ▶ `SCHEMA-systemtest-row`
 
-### 4.126  `FLOW-systemtest-turn-profile` — Turn-Profil
+### 4.127  `FLOW-systemtest-turn-profile` — Turn-Profil
 
 Die aufgeschnittene Verbrauchsspur eines Laufs, die der Bericht neben die Bewertungszeilen stellt.
 
 io ◀ `FUNC-systemtest-turn-analyse` · io ▶ `FUNC-systemtest-report` · schema ▶ `SCHEMA-systemtest-turn-profile`
 
-### 4.127  `FLOW-systemtest-verdict` — Systemtest-Bericht
+### 4.128  `FLOW-systemtest-verdict` — Systemtest-Bericht
 
 Der Bericht an den Menschen: jeder Rohlauf, Spannweiten je Arm, Turn-Auswertung, Modul-Audit und die ausdruecklich benannten Grenzen der Aussage.
 
 io ◀ `FUNC-systemtest-report` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-systemtest-verdict`
 
-### 4.128  `FLOW-target-profile` — Zielprofil
+### 4.129  `FLOW-target-profile` — Zielprofil
 
 Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform.
 
 io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-generation-step` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-target-profile`
 
-### 4.129  `FLOW-target-profile-file` — Zielprofil (Rohform)
+### 4.130  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
 Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet.
 
 io ◀ `FUNC-target-profile` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-### 4.130  `FLOW-test-selection` — Selektive Testauswahl
+### 4.131  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-agent` · `ACTOR-owner` · schema ▶ `SCHEMA-test-selection`
 
-### 4.131  `FLOW-tool-context` — Werkzeug-Kontext
+### 4.132  `FLOW-tool-context` — Werkzeug-Kontext
 
 Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-### 4.132  `FLOW-tool-registry` — Werkzeug-Register
+### 4.133  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-tool-registry`
 
-### 4.133  `FLOW-trajectory` — Trajectory/Outcome
+### 4.134  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.134  `FLOW-version-bump` — Version-Bump
+### 4.135  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
@@ -6878,95 +6898,101 @@ Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist
 
 schema ◀ `FLOW-schema-fingerprint`
 
-### 5.47  `SCHEMA-session-registry` — SessionEntry
+### 5.47  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
+
+Vertrag der Schlupf-Zeile: cr, at, code, spur, ausgewaehlt, ausGraph, gesamt, rot, schlupf, schlupfNurGraph, zusage (blackbox, schnittstelle).
+
+schema ◀ `FLOW-schlupf-zeile`
+
+### 5.48  `SCHEMA-session-registry` — SessionEntry
 
 pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
 
 schema ◀ `FLOW-session-entry` · `FLOW-session-registry`
 
-### 5.48  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
+### 5.49  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
 
 Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts, am FLOW als Attribut channelRank gespiegelt — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht, und neun statt einem Vertrag an jeder Modulgrenze. Der Rang steht deshalb am Knoten: ohne ihn sind zwei Kanaele mit gleichem Produzenten und Konsumenten im Graphen ununterscheidbar, und der Optimizer schlaegt sie zum Merge vor. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format. (CR-GC-573)
 
 schema ◀ `FLOW-channel-dimension-template` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-protocol` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-guidance` · `FLOW-channel-handoff` · `FLOW-channel-idle-nudge` · `FLOW-channel-inventory` · `FLOW-channel-next-step` · `FLOW-channel-proposal-suggest` · `FLOW-channel-rule-clause` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-channel-system-prompt`
 
-### 5.49  `SCHEMA-steering-delta` — SteeringDelta
+### 5.50  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-### 5.50  `SCHEMA-steering-snapshot` — SteeringSnapshot
+### 5.51  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.51  `SCHEMA-systemtest-artifacts` — Lauf-Artefakte
+### 5.52  `SCHEMA-systemtest-artifacts` — Lauf-Artefakte
 
 Was ein Lauf auf Platte hinterlaesst und die Auswertung wieder aufnimmt: graph.json, readiness.json, audit.jsonl (der Gate-Log des Laufs), claude-stream.jsonl beziehungsweise run-raw.log (der Turn-Strom) und usage.json. Concept-only: Dateien, kein Wire-Format. (CR-GC-574)
 
 schema ◀ `FLOW-systemtest-artifacts`
 
-### 5.52  `SCHEMA-systemtest-order` — Systemtest-Auftrag
+### 5.53  `SCHEMA-systemtest-order` — Systemtest-Auftrag
 
 Was ein Durchlauf braucht, bevor er faehrt: Arme, Laufzahl und Startindex, Auftragstext, Seed-System, Materialverzeichnis, Golden-Graph, Pruefliste, Zeitdeckel, Ergebnisdatei. Je Arm zusaetzlich die drei Betriebsmodus-Achsen — wer treibt, welches Modell, welcher Agent-Harness —, damit ein Bericht benennen kann, worin sich zwei Arme unterscheiden; ein Arm, der den Modell-Endpunkt bezahlt, faehrt nur auf namentliche Nennung. Reist als Umgebung, nicht als Datei — deshalb concept-only: ein Zod-Symbol gibt es nicht und soll es nicht geben, solange der Aufbau ein Messwerkzeug ist. (CR-GC-574, Achsen CR-GC-572)
 
 schema ◀ `FLOW-systemtest-order`
 
-### 5.53  `SCHEMA-systemtest-row` — Bewertungszeile eines Laufs
+### 5.54  `SCHEMA-systemtest-row` — Bewertungszeile eines Laufs
 
 Eine Zeile je Lauf in results-*.json: Arm, Modell, Executor, Laufnummer, Elementzahl, Struktur je Typ, Readiness, Spezifikations- und Code-Urteil samt Reichweite, Gate-Ablehnungen, Verbrauch und die beiden Audit-Listen. Concept-only. (CR-GC-574)
 
 schema ◀ `FLOW-systemtest-row`
 
-### 5.54  `SCHEMA-systemtest-turn-profile` — Turn-Profil eines Laufs
+### 5.55  `SCHEMA-systemtest-turn-profile` — Turn-Profil eines Laufs
 
 Je Turn Verbrauch und vorausgegangene Werkzeugergebnisse, dazu der Abgleich gegen die Ergebniszeile, die Zuschreibung der Cache-Schreibung je Werkzeug und die Dry-Run-Quote. Concept-only. (CR-GC-574)
 
 schema ◀ `FLOW-systemtest-turn-profile`
 
-### 5.55  `SCHEMA-systemtest-verdict` — Systemtest-Bericht
+### 5.56  `SCHEMA-systemtest-verdict` — Systemtest-Bericht
 
 Der Bericht als Text: je Rohlauf eine Zeile, je Arm Spannweiten, die Turn-Auswertung, das Modul-Audit und ein ausdruecklicher Grenzen-Block. Concept-only — er wird gelesen, nicht geparst; ein Vertrag mit Zod-Symbol waere hier eine Behauptung. (CR-GC-574)
 
 schema ◀ `FLOW-systemtest-verdict`
 
-### 5.56  `SCHEMA-target-profile` — TargetProfile
+### 5.57  `SCHEMA-target-profile` — TargetProfile
 
 weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.
 
 schema ◀ `FLOW-target-profile` · `FLOW-target-profile-file`
 
-### 5.57  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
+### 5.58  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
 
 Attributvertrag testRefs am TEST: Liste der Laufdateien (file, case, tool, level, result). Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readTestRefs (absent, invalid, bound; CR-SM-360).
 
-### 5.58  `SCHEMA-test-selection` — TestSelection
+### 5.59  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.59  `SCHEMA-tool-context` — Werkzeug-Kontext
+### 5.60  `SCHEMA-tool-context` — Werkzeug-Kontext
 
 Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Codecs, Graphversion, Sitzung, Aufrufer. Zod-Vertrag, geparst in createToolContext; ToolPort ist die segregierte Sicht darauf, erzwungen beim Kompilieren (_portCheck).
 
 schema ◀ `FLOW-tool-context`
 
-### 5.60  `SCHEMA-tool-registry` — Werkzeug-Register
+### 5.61  `SCHEMA-tool-registry` — Werkzeug-Register
 
 Die gebundenen MCP-Werkzeuge mit Namen und Eingabeschema. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.
 
 schema ◀ `FLOW-tool-registry`
 
-### 5.61  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.62  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-trajectory`
 
-### 5.62  `SCHEMA-update-event` — UpdateEvent
+### 5.63  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 
@@ -7008,7 +7034,7 @@ allocate ◀ `FUNC-block-antrieb` · `FUNC-block-q-improvement` · `FUNC-build-r
 
 Reine Projektionen des Graphen: Messung, Readiness, Codec, Export, Markdown-Views, Trajektorie. Liest den Graphen ueber die kernel-Abfrage und schreibt nie in ihn zurueck. (CR-GC-446)
 
-allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest` · satisfy ▶ `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-export-no-clobber` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-single-measurement-path` · `REQ-testref-materialized`
+allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest` · satisfy ▶ `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-export-no-clobber` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-single-measurement-path` · `REQ-testref-materialized`
 
 ### 6.6  `MOD-surface` — surface — MCP, CLI, Host-Socket, Viewer
 
@@ -8194,67 +8220,73 @@ Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wi
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-### 8.133  `TEST-testref-materialize` — Export stub-materialization test
+### 8.133  `TEST-test-schlupf` — Schlupf und Zusage
+
+Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf bricht ab, je CR die juengste Zeile), Blackbox- und Schnittstellenbindung am synthetischen Graphen, gepruefte JSONL-Zeilen.
+
+verify ▶ `REQ-full-run-on-probation` · `SCHEMA-schlupf-zeile` · testRefs: `tests/test-schlupf.test.ts`
+
+### 8.134  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-### 8.134  `TEST-testreport` — Rueckweg des Testergebnisses
+### 8.135  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-### 8.135  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+### 8.136  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · testRefs: `tests/config.test.ts`
 
-### 8.136  `TEST-token-efficiency` — Token-Budget-Test
+### 8.137  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-### 8.137  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+### 8.138  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-### 8.138  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+### 8.139  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-### 8.139  `TEST-upgrade` — Abnahme des upgrade-Verbs
+### 8.140  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
 
-### 8.140  `TEST-views-auditor` — Sichten fuer den Auditor
+### 8.141  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-### 8.141  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+### 8.142  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-### 8.142  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+### 8.143  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-### 8.143  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+### 8.144  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
@@ -8262,4 +8294,4 @@ verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.
 
 ## 9  Traceability summary
 
-148 REQ · 148 verified · 0 without a verifying TEST (R-01).
+149 REQ · 149 verified · 0 without a verifying TEST (R-01).
