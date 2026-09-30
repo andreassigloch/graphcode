@@ -40,3 +40,6 @@ docs/views/dashboard.url
 # Lokale Geheimnisse (ANTHROPIC_API_KEY fuer den Rig-Arm gcrun-frontier) — nie committen.
 .env
 .env.local
+
+# Interne Rig-Läufe mit echtem Auftrag und Rechnerdaten — lokal, nicht öffentlich.
+rig/agentdiary/

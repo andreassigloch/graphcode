@@ -92,7 +92,7 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 | [`moneyflow-struktur/`](moneyflow-struktur/README.md) | gate | Wie sieht moneyflow durch das echte Gate aus? | `openMeasured` |
 | [`minimal-whitebox/`](minimal-whitebox/README.md) | gate | Wie groß ist die Whitebox gegen den Blast-Radius? | `openMeasured` |
 | [`greenfield-systemtest/`](greenfield-systemtest/README.md) | gate | Kommt ein lokales Modell an ein Frontier-Modell heran? | `createHarness` (Subprozess, Kuzu-Binding) |
-| [`agentdiary/`](agentdiary/README.md) | gate | Liefert der lokale Arm (D2) am echten Auftrag, was Frontier liefert? | Arm-Repos + Blindurteil |
+| `agentdiary/` (intern, nicht im Repo) | gate | Liefert der lokale Arm (D2) am echten Auftrag, was Frontier liefert? | Arm-Repos + Blindurteil |
 | [`dummy-slicer/`](dummy-slicer/README.md) | gate | Serviert `graph_context` die Definition of Done? | `openMeasured` (echte Wurzel, CR-GC-496) |
 | [`graphs/`](graphs/README.md) | korpus | eingefrorene Beispielgraphen | — |
 
