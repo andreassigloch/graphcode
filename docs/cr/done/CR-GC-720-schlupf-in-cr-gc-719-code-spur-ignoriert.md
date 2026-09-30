@@ -1,6 +1,6 @@
 # CR-GC-720: Schlupf in CR-GC-719: CODE-Spur ignoriert eine Modell-Aenderung im selben Diff (docs/graph) — 3 Tests des Modell-Satzes lagen ausserhalb der Auswahl; und schlupfFreieFolge zaehlt je CR nur die juengste Zeile, ein Nachlauf verdeckt den Schlupf
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-09-30)
 **Typ:** aus Item ITEM-2026-669 (bug)
 **Erstellt:** 2026-09-30
 **Item:** bok/items/ITEM-2026-669.json (Lane: code)
