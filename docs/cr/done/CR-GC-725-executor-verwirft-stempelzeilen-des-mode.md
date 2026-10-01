@@ -1,6 +1,6 @@
 # CR-GC-725: Executor verwirft Stempelzeilen des Modells: eine @analysisFreshness-Zeile verlaesst den Batch vor dem Gate (executor-gate.ts), den Stempel setzt allein der Executor, wenn das Artefakt steht (CR-GC-724). Executor-Teil von ITEM-2026-684; local-1 setzte fuenf Stempel ohne Artefakt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-01)
 **Typ:** aus Item ITEM-2026-695 (finding)
 **Erstellt:** 2026-10-01
 **Item:** bok/items/ITEM-2026-695.json (Lane: code)
