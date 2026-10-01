@@ -1,6 +1,6 @@
 ---
 name: se-plan
-version: 4
+version: 5
 description: Generate the implementation/integration plan — derive the CR build order from the graph's depends-on DAG, cut CRs (≤5 files) whose content is the graph_context slice (not written scope), enforce an io-integration test + submodule build per CR, and write MS/CR/relation through the gate
 ---
 
@@ -46,3 +46,6 @@ Emit the ordered sequence (milestones → their CRs), and explicitly list any fo
 **Mandatory closing line:** *n of m leaf REQ have a build order; the uncovered are: …* — the figure `deriveImplPlan` returns as `reqCoverage` (computed in the core so a test pins it, not restated here). A **non-empty `uncovered` means the plan is NOT finished**, and that stands in the output.
 
 Never report completeness over the set you chose yourself. The measured failure this rule exists for: a plan reported *"20 of 20 ordered, no cycles"* while 24 of 64 leaf REQ had no build order at all — and those 24 were exactly the ones mitigating all 16 open FM-03 risks.
+
+## 7. Stamp the task
+Close the task with **one** `graph_mutate` batch that updates the SYS root: `attributes.analysisFreshness.implplan = { graphVersion: <current graphVersion()> }` — after the MS and CR nodes of step 4 are in the graph. The artifact id is `implplan`, the task is called `plan` (`graph_generate {task:'plan'}`). **AF-05** (the entry rule of the task) stays open until then. A plan with no MS/CR in the graph has not happened: leave AF-05 open instead of stamping a prose list.

@@ -62,6 +62,12 @@ describe('CR-GC-601: graph_generate {task}', () => {
     expect(s.done).toBe(false);
     expect(s.focusKey).toMatch(/:AF-02:/);
     expect(s.prompt).toContain('Das Artefakt des Tasks trade fehlt noch');
+    // CR-GC-721: der Satz nennt die Arbeit (Skill, Schritte) — nicht mehr den Stempel als Handlung.
+    // local-1 (2026-09-30) setzte nach "setze am Ende seinen Frischestempel am SYS (analysisFreshness)"
+    // fuenf Stempel ohne ein Artefakt.
+    expect(s.prompt).toContain('Lade den Skill se-trade');
+    // (Der Fund-Hinweis dahinter kommt aus contracts — CR-SM-382 nimmt dort das Attribut heraus.)
+    expect(s.prompt).not.toMatch(/Frischestempel|\(analysisFreshness/);
     // ein im Kern abgenommener Eintritt ("im schlanken Umfang nicht noetig") gilt auch im Task
     sys.attributes = { ...sys.attributes, acceptedFindings: [{ ruleId: 'AF-02', reason: 'lean' }] };
     const ab = generationStep(alsGraph(ohne), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'trade');

@@ -1,6 +1,6 @@
 ---
 name: se-conops
-version: 2
+version: 3
 description: Concept of Operations (CREATE) — surface operational concerns (config/creds/user-mgmt/deploy) BEFORE use cases and write them as system-scoped non-functional REQ through the gate
 ---
 
@@ -29,5 +29,8 @@ If this work runs under a CR, add `relation` edges from that CR to every element
 An operational concern with **no answer** is a blocking gap — list it explicitly (it is the ConOps equivalent of a never-performed analysis), not a silent omission.
 
 Two gaps are **structural**, not yours to close ad-hoc: **modes of operation** (normal/degraded/maintenance) have no `MODE` element type — the view prints the gap; do not invent a local attribute for it. And a UC without an `FCHAIN` renders as "kein Betriebsablauf beschrieben" — that is a real finding, so either author the chain or leave it visible.
+
+## 6. Stamp the task
+Close the task with **one** `graph_mutate` batch that updates the SYS root: `attributes.analysisFreshness.conops = { graphVersion: <current graphVersion()> }` — after the operational REQ of step 3 are in the graph. The stamp records that this walk happened at that graph version; **AF-01** (the entry rule of the task `conops`) stays open until then. A ConOps that wrote no operational REQ and named no gap has not happened: leave AF-01 open instead of stamping an empty walk.
 
 The output is the operational REQ in the graph plus the named gaps — produced before the UCs are written.

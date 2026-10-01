@@ -2815,6 +2815,12 @@
       "description": "docs/cr/open/CR-GC-720-schlupf-in-cr-gc-719-code-spur-ignoriert.md"
     },
     {
+      "id": "CR-GC-721",
+      "type": "CR",
+      "name": "Fehlleitende Hinweise an das Modell (local-1): AF-01..05 fix_hint und Task-Prompt generate.ts nennen den Stempel als Handlung statt der Analysearbeit; Artefakt-id implplan/assumption-review weicht vom Task-Namen plan/irr ab (Fehlaufruf task implplan); die im Prompt genannten se-Skills liegen nur als .claude/commands vor, OpenCode findet sie nicht (liest .opencode/skills/<name>/SKILL.md, geprueft mit opencode debug skill 1.18.33). Hinweise nennen Task, Skill und ersten Arbeitsschritt als Vorbild; Skills zusaetzlich fuer OpenCode ausliefern. Erzwingung (684/685) bleibt eigener Schritt",
+      "description": "docs/cr/open/CR-GC-721-fehlleitende-hinweise-an-das-modell-loca.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14318,6 +14324,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-721",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-721",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-721",
+      "target": "FUNC-se-conops",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-721",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-721",
+      "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -22928,5 +22959,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 550
+  "graphVersion": 552
 }

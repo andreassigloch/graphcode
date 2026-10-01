@@ -53,6 +53,7 @@ import {
   GUARDRAILS_FILE,
   STEERING_FILE,
   COMMANDS_DIR,
+  OPENCODE_SKILLS_DIR,
   LEGACY_SKILLS_DIR,
   LEGACY_WORKSPACE_DIR,
   HOOKS_DIR,
@@ -62,6 +63,7 @@ import {
   shippedSkillFiles,
   shippedHookFiles,
   parseSkillFrontmatter,
+  opencodeSkill,
   isGraphcodeHookEntry,
   mergedSettingsContent,
   mcpConfigContent,
@@ -238,6 +240,10 @@ function installSkills(repoRoot: string, res: InstallResult): void {
     const destAbs = join(repoRoot, COMMANDS_DIR, f);
     mkdirSync(dirname(destAbs), { recursive: true });
     writeArtifact(destAbs, join(COMMANDS_DIR, f), content, res);
+    // CR-GC-721: derselbe Skill fuer OpenCode — dort registriert `.claude/commands/` nichts.
+    const oc = opencodeSkill(f, content);
+    mkdirSync(dirname(join(repoRoot, oc.rel)), { recursive: true });
+    writeArtifact(join(repoRoot, oc.rel), oc.rel, oc.content, res);
   }
   removeLegacySkills(repoRoot, res);
 }
@@ -292,22 +298,26 @@ export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): S
     removeLegacySkills(repoRoot, { action: 'update', repoRoot, created: [], updated: [], removed: [], preserved: [] });
   }
   for (const f of files) {
-    const rel = join(COMMANDS_DIR, f);
-    const content = readFileSync(join(srcDir, f), 'utf8');
-    const destAbs = join(repoRoot, COMMANDS_DIR, f);
-    if (!dry) mkdirSync(dirname(destAbs), { recursive: true });
-    if (!existsSync(destAbs)) {
-      if (!dry) writeFileSync(destAbs, content, 'utf8');
-      res.added.push(rel);
-      continue;
-    }
-    const shippedVersion = parseSkillFrontmatter(content).version;
-    const targetVersion = parseSkillFrontmatter(readFileSync(destAbs, 'utf8')).version;
-    if (shippedVersion > targetVersion) {
-      if (!dry) writeFileSync(destAbs, content, 'utf8');
-      res.updated.push(rel);
-    } else {
-      res.unchanged.push(rel);
+    const shipped = readFileSync(join(srcDir, f), 'utf8');
+    // CR-GC-721: beide Ziele nach derselben Regel — das Command fuer Claude Code, der Skill-Ordner fuer OpenCode.
+    for (const { rel, content } of [{ rel: join(COMMANDS_DIR, f), content: shipped }, opencodeSkill(f, shipped)]) {
+      const destAbs = join(repoRoot, rel);
+      if (!existsSync(destAbs)) {
+        if (!dry) {
+          mkdirSync(dirname(destAbs), { recursive: true });
+          writeFileSync(destAbs, content, 'utf8');
+        }
+        res.added.push(rel);
+        continue;
+      }
+      const shippedVersion = parseSkillFrontmatter(content).version;
+      const targetVersion = parseSkillFrontmatter(readFileSync(destAbs, 'utf8')).version;
+      if (shippedVersion > targetVersion) {
+        if (!dry) writeFileSync(destAbs, content, 'utf8');
+        res.updated.push(rel);
+      } else {
+        res.unchanged.push(rel);
+      }
     }
   }
   return res;
@@ -320,6 +330,7 @@ export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): S
  */
 function removeSkills(repoRoot: string, res: InstallResult): void {
   removeLegacySkills(repoRoot, res);
+  removeOpencodeSkills(repoRoot, res);
   const destDir = join(repoRoot, COMMANDS_DIR);
   if (!existsSync(destDir)) return;
   for (const f of shippedSkillFiles()) {
@@ -334,6 +345,25 @@ function removeSkills(repoRoot: string, res: InstallResult): void {
   // both skills + hooks are removed (pruneClaudeIfEmpty).
   if (readdirSync(destDir).length === 0) {
     rmSync(destDir, { recursive: true, force: true });
+  }
+}
+
+/**
+ * Die OpenCode-Kopien der ausgelieferten Skills entfernen (CR-GC-721) — nur die Ordner, die dieses
+ * Paket schreibt; `.opencode/skills` und `.opencode` nur, wenn WIR sie geleert haben.
+ */
+function removeOpencodeSkills(repoRoot: string, res: InstallResult): void {
+  const skillsDir = join(repoRoot, OPENCODE_SKILLS_DIR);
+  if (!existsSync(skillsDir)) return;
+  const srcDir = packagedSkillsDir();
+  for (const f of shippedSkillFiles()) {
+    const oc = opencodeSkill(f, readFileSync(join(srcDir, f), 'utf8'));
+    removeArtifact(join(repoRoot, oc.rel), oc.rel, res);
+    const dir = dirname(join(repoRoot, oc.rel));
+    if (existsSync(dir) && readdirSync(dir).length === 0) rmSync(dir, { recursive: true, force: true });
+  }
+  for (const dir of [skillsDir, dirname(skillsDir)]) {
+    if (existsSync(dir) && readdirSync(dir).length === 0) rmSync(dir, { recursive: true, force: true });
   }
 }
 

@@ -750,6 +750,11 @@
 | `CR-GC-720` | relation | `FUNC-measure-test-schlupf` |
 | `CR-GC-720` | relation | `FUNC-plan-code-lane` |
 | `CR-GC-720` | relation | `REQ-full-run-on-probation` |
+| `CR-GC-721` | relation | `FUNC-generation-step` |
+| `CR-GC-721` | relation | `FUNC-harness-cli` |
+| `CR-GC-721` | relation | `FUNC-se-conops` |
+| `CR-GC-721` | relation | `FUNC-se-fmea` |
+| `CR-GC-721` | relation | `FUNC-se-plan` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

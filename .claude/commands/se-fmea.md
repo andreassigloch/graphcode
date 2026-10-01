@@ -1,6 +1,6 @@
 ---
 name: se-fmea
-version: 2
+version: 3
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
@@ -155,6 +155,7 @@ The FMEA is not done until findings live in the graph, not just the document.
 4. **Check violations:** `rules_get_violations` — resolve any new R-01/R-02 gaps.
 5. **Open a CR** `docs/cr/open/CR-FMEA-NNN-<desc>.md` listing the new RQs, affected spec sections, and acceptance criteria (mirror `CR-FMEA-001`). Patch `specification.md` sections named in the Step-7 impact table. If the SE-schema (ElementType/TraceType/rules) changed, bump the version in `@sigloch/contracts/se/index.ts`.
 6. On completion, `git mv` the CR `open/ → done/` and commit `feat: FMEA findings for <scope> (CR-FMEA-NNN)`.
+7. **Stamp the task.** Close with **one** `graph_mutate` batch that updates the SYS root: `attributes.analysisFreshness.fmea = { graphVersion: <current graphVersion()> }` — after the risk and mitigation REQ of step 2 are in the graph. **AF-04** (the entry rule of the task `fmea`) stays open until then. An FMEA with no risk REQ in the graph has not happened: leave AF-04 open instead of stamping an empty analysis.
 
 ---
 

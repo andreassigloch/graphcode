@@ -77,6 +77,14 @@ export const STEERING_FILE = 'GRAPHCODE-STEERING.md';
  * Commands-Schema. Pfad im Paket = Pfad im Ziel, kein Mapping zur Laufzeit.
  */
 export const COMMANDS_DIR = join('.claude', 'commands');
+/**
+ * Dieselben Skills fuer OpenCode (CR-GC-721) — wie `opencode.json` neben `.mcp.json` derselbe
+ * Server im Schema des zweiten Clients ist. OpenCode liest `.claude/commands/` nicht; es sucht
+ * `<name>/SKILL.md` unter `.opencode/skills/` (geprueft mit `opencode debug skill`, 1.18.33).
+ * Gemessen im lokalen AgentDiary-Lauf (local-1, 2026-09-30): der Task-Prompt nannte `se-fmea`,
+ * der Client hatte keinen einzigen se-Skill — und setzte stattdessen den Stempel.
+ */
+export const OPENCODE_SKILLS_DIR = join('.opencode', 'skills');
 /** Das Alt-Ziel bis 0.9.0 — install/sync/remove räumen dort verwaiste se-*.md ab. */
 export const LEGACY_SKILLS_DIR = join('.claude', 'skills');
 /**
@@ -148,6 +156,26 @@ export function parseSkillFrontmatter(content: string): SkillMeta {
     }
   }
   return meta;
+}
+
+/**
+ * Ein ausgelieferter Skill in OpenCodes Form (CR-GC-721): Ordner = Name, Datei = `SKILL.md`.
+ * OpenCode-Namen sind klein mit Bindestrich — der Doppelpunkt des Commands-Schemas
+ * (`se:generate`, `se-view:arch`) wird zum Bindestrich, der Originalname steht in der
+ * Beschreibung, weil Prompts und Regelhinweise ihn nennen. Abgeleitet beim Installieren aus
+ * derselben Paketdatei, keine zweite Quelle; `version` reist mit, damit `skills sync` beide
+ * Ziele nach derselben Regel vergleicht.
+ */
+export function opencodeSkill(file: string, content: string): { name: string; rel: string; content: string } {
+  const meta = parseSkillFrontmatter(content);
+  const original = meta.name || file.replace(/\.md$/, '').replace(/[\\/]/g, ':');
+  const name = original.replace(/:/g, '-').toLowerCase();
+  const lines = content.split('\n');
+  const end = lines[0]?.trim() === '---' ? lines.indexOf('---', 1) : -1;
+  const body = end > 0 ? lines.slice(end + 1).join('\n') : content;
+  const description = name === original ? meta.description : `${meta.description} (${original})`;
+  const head = ['---', `name: ${name}`, `version: ${meta.version}`, `description: ${JSON.stringify(description)}`, '---'];
+  return { name, rel: join(OPENCODE_SKILLS_DIR, name, 'SKILL.md'), content: `${head.join('\n')}\n${body}` };
 }
 
 /** Minimal shape of Claude Code's `settings.json` PreToolUse hook config (CR-GC-214). */

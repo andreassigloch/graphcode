@@ -918,8 +918,11 @@ function stepCore(
     ? `Die Abnahme von ${fensterRegel} zählt nicht — Architekturregeln sind nicht abnehmbar; löse den Fund im Modell. `
     : fensterRegel !== undefined && task !== 'kern' && fensterRegel === TASK_ENTRY[task]
       ? // CR-GC-603: das Artefakt fehlt noch — der Task ist nicht durch, nur weil sein Regelset nichts findet.
-        `Das Artefakt des Tasks ${task} fehlt noch: erarbeite es mit dem Skill ${TASK_SKILL[task]} und setze am Ende ` +
-        `seinen Frischestempel am SYS (analysisFreshness${task === 'trade' || task === 'irr' ? ', mit crRefs: die CRs, die aus dem Task hervorgegangen sind' : ''}). `
+        // CR-GC-721: der Satz nannte den Stempel als einzige greifbare Handlung ("setze am Ende seinen
+        // Frischestempel am SYS (analysisFreshness)") — local-1 setzte ihn und sonst nichts. Jetzt nennt er
+        // die Arbeit; den Stempel schreibt der letzte Schritt des Skills, der Fund-Hinweis den ersten.
+        `Das Artefakt des Tasks ${task} fehlt noch. Lade den Skill ${TASK_SKILL[task]} und arbeite seine Schritte ` +
+        'der Reihe nach ab, jeden Fund als Zug über graph_mutate; sein letzter Schritt schließt den Task ab. '
     : fensterRegel !== undefined && task === 'kern' && TASK_OF_ENTRY.has(fensterRegel)
       ? // CR-GC-601: ein Eintrittspunkt — der Task ist eine Blackbox, der Kern loest ihn nicht selbst.
         `${fensterRegel} ist der Eintrittspunkt des Tasks ${TASK_OF_ENTRY.get(fensterRegel)}: starte ihn mit ` +

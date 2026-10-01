@@ -22,7 +22,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync, existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { readdirSync } from 'node:fs';
 import {
   scaffold,
@@ -50,6 +50,8 @@ const OWN_VERSION = JSON.parse(
 ).version as string;
 const COMMANDS_DIR = join('.claude', 'commands');
 const LEGACY_SKILLS_DIR = join('.claude', 'skills');
+/** CR-GC-721: dieselben Skills in OpenCodes Form — `<name>/SKILL.md`, `:` als `-`. */
+const OPENCODE_SKILLS_DIR = join('.opencode', 'skills');
 const HOOKS_DIR = join('.claude', 'hooks');
 /** The predecessor product's workspace — graphcode wrote its feed there until CR-GC-330. */
 const LEGACY_WORKSPACE = '.aimprove';
@@ -74,6 +76,10 @@ function listSkillTree(dir: string): string[] {
   return out.sort();
 }
 const SHIPPED_SKILLS = listSkillTree(join(__dirname, '..', '.claude', 'commands'));
+/** Der Ziel-Pfad eines ausgelieferten Skills fuer OpenCode: `se/generate.md` → `.opencode/skills/se-generate/SKILL.md`. */
+const opencodePath = (f: string): string =>
+  join(OPENCODE_SKILLS_DIR, f.replace(/\.md$/, '').replace(/[\\/]/g, '-'), 'SKILL.md');
+const SYNC_TARGETS = SHIPPED_SKILLS.flatMap((f) => [join(COMMANDS_DIR, f), opencodePath(f)]).sort();
 /** The deny-*.sh hooks this package ships (CR-GC-214) — same no-hardcoded-count principle. */
 const SHIPPED_HOOKS = readdirSync(join(__dirname, '..', '.claude', 'hooks'))
   .filter((f) => f.startsWith('deny-') && f.endsWith('.sh'))
@@ -148,6 +154,48 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     // No stray files in the scaffolded commands tree — and NOTHING in the legacy dir.
     expect(listSkillTree(join(repo, COMMANDS_DIR))).toEqual(SHIPPED_SKILLS);
     expect(existsSync(join(repo, LEGACY_SKILLS_DIR))).toBe(false);
+  });
+
+  it('init liefert dieselben Skills fuer OpenCode aus: <name>/SKILL.md, Name ohne Doppelpunkt (CR-GC-721)', async () => {
+    const res = await scaffold('init', { repoRoot: repo });
+    const namen: string[] = [];
+    for (const f of SHIPPED_SKILLS) {
+      const rel = opencodePath(f);
+      expect(existsSync(join(repo, rel)), rel).toBe(true);
+      expect(res.created).toContain(rel);
+      const quelle = readFileSync(join(__dirname, '..', '.claude', 'commands', f), 'utf8');
+      const ziel = readFileSync(join(repo, rel), 'utf8');
+      const name = /^name: (.+)$/m.exec(ziel)![1];
+      namen.push(name);
+      // OpenCode: klein mit Bindestrich, gleich dem Ordnernamen — sonst registriert der Loader nichts.
+      expect(name).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+      expect(rel).toBe(join(OPENCODE_SKILLS_DIR, name, 'SKILL.md'));
+      // Der Originalname bleibt auffindbar (Prompts nennen `se:author-req`), der Rumpf ist derselbe.
+      const original = /^name: (.+)$/m.exec(quelle)![1];
+      if (original !== name) expect(ziel).toContain(`(${original})`);
+      const rumpf = (t: string): string => t.slice(t.indexOf('\n---\n', 3) + 5);
+      expect(rumpf(ziel)).toBe(rumpf(quelle));
+      // Die Beschreibung ist YAML-sicher gequotet und nicht leer — ohne sie blendet OpenCode den Skill aus.
+      expect(JSON.parse(/^description: (.+)$/m.exec(ziel)![1]).length).toBeGreaterThan(10);
+    }
+    expect(new Set(namen).size).toBe(SHIPPED_SKILLS.length);
+    // Die Skills, die der Task-Prompt nennt, sind unter genau diesem Namen da.
+    for (const n of ['se-conops', 'se-trade', 'se-irr', 'se-fmea', 'se-plan', 'se-test', 'se-author-req']) {
+      expect(namen).toContain(n);
+    }
+  });
+
+  it('remove nimmt die OpenCode-Skills restlos mit, fremde bleiben stehen (CR-GC-721)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const eigen = join(repo, OPENCODE_SKILLS_DIR, 'mein-skill', 'SKILL.md');
+    mkdirSync(dirname(eigen), { recursive: true });
+    writeFileSync(eigen, '---\nname: mein-skill\ndescription: eigener Skill\n---\n', 'utf8');
+    await scaffold('remove', { repoRoot: repo });
+    expect(readdirSync(join(repo, OPENCODE_SKILLS_DIR))).toEqual(['mein-skill']);
+    rmSync(join(repo, OPENCODE_SKILLS_DIR, 'mein-skill'), { recursive: true });
+    await scaffold('init', { repoRoot: repo });
+    await scaffold('remove', { repoRoot: repo });
+    expect(existsSync(join(repo, '.opencode'))).toBe(false);
   });
 
   it('update migrates legacy flat .claude/skills/se-*.md copies away (CR-GC-277)', async () => {
@@ -689,7 +737,7 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
     expect(res.added).toEqual([]);
     expect(res.updated).toEqual([]);
     // Every shipped skill reports unchanged (init wrote the current version).
-    expect(res.unchanged.sort()).toEqual(SHIPPED_SKILLS.map((f) => join(COMMANDS_DIR, f)).sort());
+    expect(res.unchanged.sort()).toEqual(SYNC_TARGETS);
   });
 
   it('a stale/older copy is restored — reports updated and rewrites the shipped version', async () => {
@@ -713,7 +761,7 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
   it('a missing copy is added (sync also bootstraps a fresh .claude/skills)', () => {
     // No init: the target has no .claude/skills at all.
     const res = syncSkills(repo);
-    expect(res.added.sort()).toEqual(SHIPPED_SKILLS.map((f) => join(COMMANDS_DIR, f)).sort());
+    expect(res.added.sort()).toEqual(SYNC_TARGETS);
     expect(res.updated).toEqual([]);
     expect(res.unchanged).toEqual([]);
     // Every shipped skill now exists on disk, byte-identical to the source.
@@ -726,13 +774,23 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
     }
   });
 
+  it('eine veraltete OpenCode-Kopie wird nach derselben Versionsregel ersetzt (CR-GC-721)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const rel = opencodePath('se-fmea.md');
+    const frisch = readFileSync(join(repo, rel), 'utf8');
+    writeFileSync(join(repo, rel), '---\nname: se-fmea\nversion: 0\ndescription: "alt"\n---\nalt\n', 'utf8');
+    const res = syncSkills(repo);
+    expect(res.updated).toEqual([rel]);
+    expect(readFileSync(join(repo, rel), 'utf8')).toBe(frisch);
+  });
+
   it('sync is idempotent — a second run after the first is all unchanged', () => {
     const first = syncSkills(repo); // bootstraps (all added)
-    expect(first.added.length).toBe(SHIPPED_SKILLS.length);
+    expect(first.added.length).toBe(SYNC_TARGETS.length);
     const second = syncSkills(repo);
     expect(second.added).toEqual([]);
     expect(second.updated).toEqual([]);
-    expect(second.unchanged.length).toBe(SHIPPED_SKILLS.length);
+    expect(second.unchanged.length).toBe(SYNC_TARGETS.length);
   });
 });
 
