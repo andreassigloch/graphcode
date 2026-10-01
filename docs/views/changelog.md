@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 331 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 333 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 331 CR · 304 done · 4 open.
+Total: 333 CR · 304 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -393,3 +393,5 @@ Total: 331 CR · 304 done · 4 open.
 | `CR-GC-719` | n/a | Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718) |
 | `CR-GC-720` | n/a | Schlupf in CR-GC-719: CODE-Spur ignoriert eine Modell-Aenderung im selben Diff (docs/graph) — 3 Tests des Modell-Satzes lagen ausserhalb der Auswahl; und schlupfFreieFolge zaehlt je CR nur die juengste Zeile, ein Nachlauf verdeckt den Schlupf |
 | `CR-GC-721` | done | Fehlleitende Hinweise an das Modell (local-1): AF-01..05 fix_hint und Task-Prompt generate.ts nennen den Stempel als Handlung statt der Analysearbeit; Artefakt-id implplan/assumption-review weicht vom Task-Namen plan/irr ab (Fehlaufruf task implplan); die im Prompt genannten se-Skills liegen nur als .claude/commands vor, OpenCode findet sie nicht (liest .opencode/skills/<name>/SKILL.md, geprueft mit opencode debug skill 1.18.33). Hinweise nennen Task, Skill und ersten Arbeitsschritt als Vorbild; Skills zusaetzlich fuer OpenCode ausliefern. Erzwingung (684/685) bleibt eigener Schritt |
+| `CR-GC-722` | n/a | MCP-Werkzeugflaeche verkleinern: 23 Tools = 32.029 Zeichen tools/list, die OpenCode je Anfrage laedt (fester Sockel lokal ca. 21.500 Tokens). Gemessen 2026-08-29..09-30: Claude Code 2.745 Aufrufe, OpenCode/qwen 196. (1) Service-Operationen aus der MCP-Liste in CLI-Verben: graph_merge (0 Aufrufe, kein Aufrufer, kein Skill), graph_reseed (1), audit_trail (1), audit_stats (0) = -5.204 Zeichen. (2) Spike Zusammenfuehrung: rules_evaluate + rules_get_violations sind ein Werkzeug mit Umfang-Parameter (gleiche Form, nur Arbeitsmenge vs. Modell); graph_expand Tiefe 1 liefert dieselben Kanten wie graph_get_edges(uid) und wurde 4x gerufen; graph_get_node bleibt (einziger Prosa-Kanal, meistgerufenes Tool in OpenCode 68/196); graph_help/graph_authoring_guide und graph_test_report/ingest nicht deckungsgleich. (3) Werkzeugprofil am MCP-Server nach Vorbild Executor-toolset authoring: Kern 10 Tools = 15.411 Zeichen (48 %). (4) Texte: graph_mutate 4.685 Zeichen (formatE-Sprachdoku 2.441), detail-Parameter 1.400 Zeichen doppelt, Default full in 98 von 100 Aufrufen ueberschrieben. Offen: Token-Zahl ist geschaetzt, A/B mit opencode gegen qwen fehlt |
+| `CR-GC-723` | n/a | Werkzeugprofil je LLM-Art am MCP-Server: Variable GRAPHCODE_LLM=local/cloud (Scaffold schreibt local in opencode.json, cloud in .mcp.json). local = graph_delegate + Leser graph_elements, graph_get_node, graph_context, Leser-Beschreibung auf den ersten Satz; kein graph_mutate (ein Schreibweg: der Executor im Host). cloud = volle Liste. Entscheid Autor 2026-10-01, Messung in ITEM-2026-687 (Liste heute 32.029 Zeichen, OpenCode laedt sie je Anfrage). Abnahme: A/B-Lauf OpenCode gegen qwen |

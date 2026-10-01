@@ -755,6 +755,8 @@
 | `CR-GC-721` | relation | `FUNC-se-conops` |
 | `CR-GC-721` | relation | `FUNC-se-fmea` |
 | `CR-GC-721` | relation | `FUNC-se-plan` |
+| `CR-GC-722` | relation | `FUNC-bind-tools` |
+| `CR-GC-722` | relation | `REQ-mcp-tool-registry` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

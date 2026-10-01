@@ -213,4 +213,13 @@ describe('TEST-agent-agnostic: identical surface + gate for any MCP client (CR-G
     expect(formatE.description!.slice(0, 200)).toContain('### <TYPE>');
     expect(formatE.description!.slice(0, 200)).toContain('## Edges');
   });
+
+  // CR-GC-722: ein Client ohne Nachlade-Mechanik (OpenCode) traegt die ganze Liste in JEDER
+  // Anfrage. Die Schranke ist eine Sperrklinke — sie darf nur sinken. Vor der Kuerzung mass
+  // dieselbe Zaehlung 32.029 Zeichen, die Schranke haette also gefeuert.
+  it('(d) the tools/list payload stays under its budget (ratchet, may only shrink)', async () => {
+    const tools = (await openCode.listTools()).tools;
+    const zeichen = tools.reduce((summe, t) => summe + JSON.stringify(t).length, 0);
+    expect(zeichen).toBeLessThanOrEqual(28_300);
+  });
 });

@@ -69,21 +69,13 @@ import { schneide, type Umfang } from '../kernel/measure/working-set.js';
 const detailField = z
   .enum(['summary', 'full', 'grouped'])
   .default('full')
+  // CR-GC-722: der Text nennt die drei Formen, nicht ihre Herkunft. Der Default bleibt `full`
+  // (Zusage aus CR-GC-309, verankert in mcp.mutate-violations) — anders als bei graph_mutate.
   .describe(
-    'full (Default) = das ungekürzte Finding inkl. `context` (candidate_targets/existing_traces). ' +
-      'summary lässt `context` weg — ruleId, severity, message, fixHint, elementId und source ' +
-      'bleiben, also alles zum Verstehen und Reparieren; `context` stellt den Löwenanteil der ' +
-      'Antwortbytes (gemessen: Ergebnisse über 750 KB bei 667 Knoten). ' +
-      'grouped (CR-GC-411) = die Mittel-Ebene: EINE Gruppe je ruleId mit {ruleId, severity, count, ' +
-      'message, fixHint, elementIds, elementIdsOmitted}, absteigend nach count. Erst gruppieren, ' +
-      'dann kappen — `count` zählt über die UNGEKAPPTEN Verstöße, `elementIdsOmitted` benennt die ' +
-      'Kappung (10 Element-IDs je Gruppe). Für die Diagnose "welche Regeln feuern, an welchen ' +
-      'Elementen" ohne Zeile-pro-Verstoß-Rauschen; `total` bei rules_get_violations bleibt die ' +
-      'Zahl der VERSTÖSSE, nicht der Gruppen. Wer die Element-IDs vollständig braucht, nimmt summary. ' +
-      'Gleiche Semantik wie graph_mutate.violations, aber SPIEGELVERKEHRTER Default: graph_mutate ' +
-      'kürzt per Default, die Diagnose-Tools liefern per Default voll — das ist die Zusage aus ' +
-      'CR-GC-309 ("wer candidate_targets braucht, fragt rules_get_violations"), verankert in ' +
-      'mcp.mutate-violations. Bei drohendem Überlauf hier explizit summary oder grouped anfordern.',
+    'full (Default): jedes Finding ungekürzt inkl. `context` (candidate_targets) — auf großen ' +
+      'Modellen sehr groß. summary: ohne `context`, ein Eintrag je Verstoß. grouped: EINE Gruppe ' +
+      'je ruleId mit count, message, fixHint und bis zu 10 elementIds (`elementIdsOmitted` zählt ' +
+      'den Rest) — für die Übersicht; `total` bleibt die Zahl der Verstöße.',
   );
 
 /** Die drei Projektionen EINER Ergebnisliste (CR-GC-398 + CR-GC-411). */

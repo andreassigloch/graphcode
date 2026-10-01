@@ -65,10 +65,8 @@ export function resolvedViolations(before: RuleViolation[], after: RuleViolation
  * shape) — no local parallel schema.
  */
 const baseVersionField = GraphVersionSchema.optional().describe(
-  'Optimistic concurrency (CR-GC-233): the graphVersion your last read returned. ' +
-    'If the graph moved since (baseVersion < current graphVersion) the write is REJECTED ' +
-    'with the staleDelta (applied batches since baseVersion) — re-read, adapt, retry. ' +
-    'Omitting it skips the check (warning only; lost-update window).',
+  'The graphVersion your last read returned. If the graph moved since, the write is REJECTED ' +
+    'with the delta — re-read, adapt, retry. Omitting it skips the check (warning only).',
 );
 
 const GraphMutateInputSchema = z
@@ -81,62 +79,40 @@ const GraphMutateInputSchema = z
           '`commandsToFormatE` aus @sigloch/graph-api-core als Text.',
       })
       .min(1)
+      // CR-GC-722: nur was der Schreiber zum Schreiben braucht. Herkunft und Begruendung der
+      // einzelnen Regeln stehen in den CRs, nicht im Schema — das laedt ein Client je Anfrage.
       .describe(
-        'SEKTIONEN ZUERST (CR-SM-369): Knoten-Operationen `+ ~ - !` stehen unter "## Nodes" + ' +
-          '"### <TYPE>", Kanten unter "## Edges", Merges unter "## Merges" — eine Knotenzeile ohne ' +
-          'Sektion ist ein Parse-Fehler. Der Schreibweg (CR-GC-276/686): ein Format-E-v2-Block (dasselbe ' +
-          'Dialekt wie die Read-Slices) wird zu Mutations-Kommandos decodiert und läuft durch DASSELBE ' +
-          'Gate. ' +
-          'OPERATIONEN (CR-GC-627): Format-E ist eine Operationssprache, nicht nur ein Graph-Format — ' +
-          'das Präfix entscheidet. `+` legt an oder überschreibt (add-node/add-edge, Upsert), `-` löscht ' +
-          '(delete-node/delete-edge), `~` ändert einen BESTEHENDEN Knoten als PATCH (update-node: nur was ' +
-          'die Zeile nennt; eine unbekannte uid ist ein Fehler, CR-GC-685) — so bindet man Code: ' +
-          '`~ FUNC-x` + Folgezeile `@realRef {"file":…,"symbol":…}`, an einer TEST `@testRefs [...]` ' +
-          '(ersetzt die Liste — alle Einträge nennen). `M` ist ' +
-          'die Merge-Zeile unter "## Merges": `M quelle + ziel` lässt das ZIEL die QUELLE aufnehmen ' +
-          '(merge-nodes, genau zwei uids). Ein Löschzug nennt einen Knoten, den es gibt. ' +
-          'Dieselbe uid in EINEM Block zu löschen und zu schreiben ' +
-          'wird abgelehnt — die Persistenz schreibt Deletes zuletzt. `~` an einer KANTE ist ein Patch ' +
-          '(update-edge): `~ A -t-> B [label:x]` ändert Attribute, `[__edgeType:satisfy]` den Typ, ' +
-          '`[__flip:true]` die Richtung — die übrigen Attribute der Kante bleiben. ' +
-          'Kanten zwischen BESTEHENDEN Knoten brauchen keine ' +
-          '`### <TYPE>`-Sektion (CR-GC-310) — der Typ kommt aus dem Store; ein reiner Kanten-Batch ist ' +
-          '"## Edges" + Zeilen der Form "+ A -verify-> B". Eine unbekannte uid bleibt ein Fehler. '
-          + 'FAN-OUT (CR-GC-625): die Zielseite ist eine LISTE — "+ A -verify-> B, C, D" schreibt drei '
-          + 'Kanten. Ein Inline-Attributblock der Zeile gilt fuer ALLE ihre Ziele; Kanten mit eigenem '
-          + 'cardinality/constraint/notes bleiben deshalb einzeln. ' +
-          'NAME (CR-GC-321): `+ uid|text` hat nur ZWEI positionale Felder — uid und BESCHREIBUNG. ' +
-          'Der Name reist als Attribut `__name`: inline `+ REQ-x|Beschreibung [__name:Lesbarer Name]`, ' +
-          'oder als Folgezeile `@__name Lesbarer Name` wenn der Name Komma oder eckige Klammer enthält. ' +
-          'OHNE `__name` wird die uid zum Namen (kein Fehler, aber jede Sicht zeigt dann "REQ-x" ' +
-          'statt des Namens) — das Ergebnis meldet die betroffenen uids als `nameWarning`.',
+        'Knotenzeilen (`+ ~ - !`) stehen unter "## Nodes" + "### <TYPE>", Kanten unter "## Edges", ' +
+          'Merges unter "## Merges" — eine Knotenzeile ohne Sektion ist ein Parse-Fehler. Derselbe ' +
+          'Format-E-v2-Dialekt wie die Lese-Scheiben. ' +
+          'Das Präfix ist die Operation: `+` legt an oder überschreibt, `-` löscht (nur was es gibt), ' +
+          '`~` ändert Bestehendes als PATCH (nur was die Zeile nennt; unbekannte uid = Fehler), ' +
+          '`M quelle + ziel` lässt das ZIEL die QUELLE aufnehmen. ' +
+          'Binden: `~ FUNC-x` + Folgezeile `@realRef {"file":…,"symbol":…}`; an einer TEST ' +
+          '`@testRefs [...]` (ersetzt die Liste — alle Einträge nennen). ' +
+          'Kante patchen: `~ A -t-> B [label:x]`; `[__edgeType:satisfy]` ändert den Typ, ' +
+          '`[__flip:true]` die Richtung. ' +
+          'Kanten zwischen bestehenden Knoten brauchen keine `### <TYPE>`-Sektion. ' +
+          'Fan-out: `+ A -verify-> B, C` schreibt zwei Kanten; ein Inline-Attributblock gilt für ' +
+          'alle Ziele der Zeile. ' +
+          '`+ uid|text`: text ist die BESCHREIBUNG. Der Name reist als `[__name:Lesbarer Name]` oder ' +
+          'als Folgezeile `@__name …` (bei Komma oder eckiger Klammer); ohne ihn wird die uid zum ' +
+          'Namen (`nameWarning`). ' +
+          'Dieselbe uid in einem Block zu löschen und zu schreiben wird abgelehnt.',
       ),
     dryRun: z
       .boolean()
       .default(false)
-      .describe(
-        'true = volles Gate-Verdict (tier/violations/fitAdvisory), NICHTS persistiert (CR-GC-234); ' +
-          'der Preview wird als validate-Eintrag auditiert (Vorschlag→Verdict, F2-Evidenz), die ' +
-          'graphVersion bewegt sich nicht.',
-      ),
+      .describe('true = volles Gate-Urteil, nichts wird persistiert; die graphVersion bewegt sich nicht.'),
     consumerId: z.string().default('mcp-client'),
     baseVersion: baseVersionField,
     violations: z
       .enum(['summary', 'full'])
       .default('summary')
       .describe(
-        'Detailtiefe der zurückgegebenen Violations (CR-GC-309). summary (Default) trägt ruleId, ' +
-          'severity, message, fixHint und die betroffenen Elemente — alles, was zum Reparieren des ' +
-          'Batches nötig ist; es entfällt `context` (und damit candidate_targets), das den Löwenanteil ' +
-          'der Bytes ausmacht. ' +
-          'FORM (CR-GC-570): summary liefert EINEN Eintrag je (Regel, Meldungsmuster) mit ' +
-          '`elements: [uid, …]` statt einen je Element, und `{el}` steht in message/fixHint an der ' +
-          'Stelle der uid — je Element einmal einzusetzen. Das ist eine Faktorisierung, keine Kürzung: ' +
-          'kein Befund fällt weg, auch kein blockierender, und die Originalmeldung ist wieder ' +
-          'herstellbar. Gemessen −64 % Antwortbytes, weil sich der Befundkörper sonst je Element ' +
-          'wortgleich wiederholt. ' +
-          'full liefert das ungekürzte Ergebnis mit einem Eintrag je Element. Wer candidate_targets ' +
-          'braucht, fragt gezielt rules_get_violations / rules_evaluate — die bleiben auf voller Tiefe.',
+        'summary (Default): EIN Eintrag je (Regel, Meldungsmuster) mit `elements: [uid, …]`; `{el}` ' +
+          'in message/fixHint steht für die uid. Ohne `context`. full: ein Eintrag je Element, ' +
+          'ungekürzt. candidate_targets liefern rules_get_violations / rules_evaluate.',
       ),
   });
 
