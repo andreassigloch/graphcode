@@ -1,6 +1,6 @@
 # CR-GC-724: Analysen ueber den Executor (lokaler Weg, Profil local): graph_delegate und graphcode run nehmen task (conops|trade|irr|fmea|plan) und reichen ihn an graph_generate; die fuenf Analyse-Skills bekommen einen inject-Ausschnitt mit gueltigem Format-E-Vorbild fuer ihr Artefakt (Test: jedes Vorbild geht durchs Gate); Werkzeugtext und AGENTS.md nennen die Tasks. IRR: Annahmen als Rueckfrage, offene als CR. Beleg: local-2 — mit Profil local hat der Client kein graph_generate/graph_mutate, der Executor kennt keinen task. Stempel durch den Code folgt als eigener Schritt (ITEM-2026-684)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-01)
 **Typ:** aus Item ITEM-2026-694 (idea)
 **Erstellt:** 2026-10-01
 **Item:** bok/items/ITEM-2026-694.json (Lane: code)
