@@ -8502,6 +8502,19 @@
       ]
     },
     {
+      "id": "TEST-formate-ops",
+      "type": "TEST",
+      "name": "Format-E-Operationen und ihre Beschreibung",
+      "description": "Abnahme der Datei tests/mutate.formate-ops.test.ts: jedes Praefix der Operationssprache laeuft durch dasselbe Gate, und die formatE-Beschreibung am Werkzeug nennt genau die Praefixe, die der Code annimmt. Nachgetragen, weil die Datei ohne Knoten ausserhalb jeder Testauswahl lag (Schlupf CR-GC-722).",
+      "testRefs": [
+        {
+          "file": "tests/mutate.formate-ops.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
+    },
+    {
       "id": "TEST-generation-statemachine",
       "type": "TEST",
       "name": "Zustandsmaschine ueber den Korpus",
@@ -21195,6 +21208,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-formate-ops",
+      "target": "REQ-formatE-parity",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-formate-ops",
+      "target": "REQ-mcp-tool-registry",
+      "type": "verify"
+    },
+    {
       "source": "TEST-generation-statemachine",
       "target": "REQ-done-iff-no-focus",
       "type": "verify"
@@ -22983,5 +23006,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 556
+  "graphVersion": 558
 }

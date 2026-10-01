@@ -87,7 +87,7 @@ const GraphMutateInputSchema = z
           'Format-E-v2-Dialekt wie die Lese-Scheiben. ' +
           'Das Präfix ist die Operation: `+` legt an oder überschreibt, `-` löscht (nur was es gibt), ' +
           '`~` ändert Bestehendes als PATCH (nur was die Zeile nennt; unbekannte uid = Fehler), ' +
-          '`M quelle + ziel` lässt das ZIEL die QUELLE aufnehmen. ' +
+          '`M` ist die Merge-Zeile: `M quelle + ziel` lässt das ZIEL die QUELLE aufnehmen. ' +
           'Binden: `~ FUNC-x` + Folgezeile `@realRef {"file":…,"symbol":…}`; an einer TEST ' +
           '`@testRefs [...]` (ersetzt die Liste — alle Einträge nennen). ' +
           'Kante patchen: `~ A -t-> B [label:x]`; `[__edgeType:satisfy]` ändert den Typ, ' +

@@ -36,7 +36,7 @@
 | `REQ-done-iff-no-focus` | ✓ | ⚠ nie gelaufen | `TEST-generation-statemachine` |
 | `REQ-export-no-clobber` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-mcp-export-guard` |
 | `REQ-formatE-diff-dialect` | ✓ | ✓ passed | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` |
-| `REQ-formatE-parity` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` |
+| `REQ-formatE-parity` | ✓ | ⚠ 4/5 passed | `TEST-formate-binding` · `TEST-formate-ops` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` |
 | `REQ-frame-binding` | ✓ | ⚠ 1/2 passed | `TEST-code-quality` · `TEST-graph-realize` |
 | `REQ-full-run-on-probation` | ✓ | ✓ passed | `TEST-test-schlupf` |
 | `REQ-gate-only-writes` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-graph-realize` · `TEST-path-containment` · `TEST-single-write-door` |
@@ -62,7 +62,7 @@
 | `REQ-inventory-switch` | ✓ | ✓ passed | `TEST-inventory-modes` |
 | `REQ-live-event-in-contracts` | ✓ | ✓ passed | `TEST-live-event-contract` |
 | `REQ-mcp-gate-symmetry` | ✓ | ✓ passed | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` |
-| `REQ-mcp-tool-registry` | ✓ | ✓ passed | `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` |
+| `REQ-mcp-tool-registry` | ✓ | ⚠ 3/4 passed | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` |
 | `REQ-model-exchange-post` | ✓ | ✓ passed | `TEST-doc-export` · `TEST-import-code-verb` |
 | `REQ-model-exchange-pre` | ✓ | ✓ passed | `TEST-import-code-verb` |
 | `REQ-monotone-convergence` | ✓ | ✓ passed | `TEST-monotone-convergence` |
@@ -159,7 +159,7 @@
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
 Coverage: 149/149 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 120/149 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 118/149 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

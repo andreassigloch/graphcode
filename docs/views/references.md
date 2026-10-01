@@ -2051,6 +2051,8 @@
 | `TEST-formate-binding` | verify | `REQ-formatE-parity` |
 | `TEST-formate-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-formate-name` | verify | `REQ-formatE-diff-dialect` |
+| `TEST-formate-ops` | verify | `REQ-formatE-parity` |
+| `TEST-formate-ops` | verify | `REQ-mcp-tool-registry` |
 | `TEST-generation-statemachine` | verify | `REQ-done-iff-no-focus` |
 | `TEST-graph-authoring-guide` | verify | `REQ-import-se-ontology` |
 | `TEST-graph-authoring-guide` | verify | `REQ-structural-rule-shared` |
