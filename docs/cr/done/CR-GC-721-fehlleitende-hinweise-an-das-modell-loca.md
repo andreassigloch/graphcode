@@ -1,6 +1,6 @@
 # CR-GC-721: Fehlleitende Hinweise an das Modell (local-1): AF-01..05 fix_hint und Task-Prompt generate.ts nennen den Stempel als Handlung statt der Analysearbeit; Artefakt-id implplan/assumption-review weicht vom Task-Namen plan/irr ab (Fehlaufruf task implplan); die im Prompt genannten se-Skills liegen nur als .claude/commands vor, OpenCode findet sie nicht (liest .opencode/skills/<name>/SKILL.md, geprueft mit opencode debug skill 1.18.33). Hinweise nennen Task, Skill und ersten Arbeitsschritt als Vorbild; Skills zusaetzlich fuer OpenCode ausliefern. Erzwingung (684/685) bleibt eigener Schritt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-01)
 **Typ:** aus Item ITEM-2026-686 (finding)
 **Erstellt:** 2026-10-01
 **Item:** bok/items/ITEM-2026-686.json (Lane: code)
