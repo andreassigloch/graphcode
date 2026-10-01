@@ -2842,13 +2842,17 @@
       "id": "CR-GC-724",
       "type": "CR",
       "name": "Analysen ueber den Executor (lokaler Weg, Profil local): graph_delegate und graphcode run nehmen task (conops|trade|irr|fmea|plan) und reichen ihn an graph_generate; die fuenf Analyse-Skills bekommen einen inject-Ausschnitt mit gueltigem Format-E-Vorbild fuer ihr Artefakt (Test: jedes Vorbild geht durchs Gate); Werkzeugtext und AGENTS.md nennen die Tasks. IRR: Annahmen als Rueckfrage, offene als CR. Beleg: local-2 — mit Profil local hat der Client kein graph_generate/graph_mutate, der Executor kennt keinen task. Stempel durch den Code folgt als eigener Schritt (ITEM-2026-684)",
-      "description": "docs/cr/open/CR-GC-724-analysen-ueber-den-executor-lokaler-weg-.md"
+      "description": "docs/cr/done/CR-GC-724-analysen-ueber-den-executor-lokaler-weg-.md",
+      "status": "done",
+      "commitRef": "f427c58"
     },
     {
       "id": "CR-GC-725",
       "type": "CR",
       "name": "Executor verwirft Stempelzeilen des Modells: eine @analysisFreshness-Zeile verlaesst den Batch vor dem Gate (executor-gate.ts), den Stempel setzt allein der Executor, wenn das Artefakt steht (CR-GC-724). Executor-Teil von ITEM-2026-684; local-1 setzte fuenf Stempel ohne Artefakt",
-      "description": "docs/cr/open/CR-GC-725-executor-verwirft-stempelzeilen-des-mode.md"
+      "description": "docs/cr/done/CR-GC-725-executor-verwirft-stempelzeilen-des-mode.md",
+      "status": "done",
+      "commitRef": "46edc6f"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23225,5 +23229,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 563
+  "graphVersion": 564
 }
