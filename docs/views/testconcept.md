@@ -4,7 +4,7 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 148 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 149 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
 
 ```
               ╱╲
@@ -14,7 +14,7 @@
           ╱  UC /   ╲       Use-case level · 9 UC
          ╱integration╲      ⚠ 9 / 9 UC exercised by a scenario test
         ╱────────────╲      ✗ 42/152 FUNC↔FUNC connections tested  ← GAP
-       ╱  Function /   ╲     Function level · 131 FUNC
+       ╱  Function /   ╲     Function level · 132 FUNC
       ╱      unit       ╲
      ╱───────────────────╲
 ```
@@ -22,9 +22,9 @@
 | Level | Element | Test kind | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
 | System | SYS (1) | E2E | 55 | 55 / 1 | ✓ |
-| Use-case | UC (9) | acceptance / integration | 104 | 9 / 9 scenario | ✓ |
-| Integration | FUNC↔FUNC (152 conn) | integration (chain) | 104 | 42 / 152 connections | ✗ 110 uncovered |
-| Function | FUNC (131) | unit | 86 | 131 / 131 | ✓ |
+| Use-case | UC (9) | acceptance / integration | 105 | 9 / 9 scenario | ✓ |
+| Integration | FUNC↔FUNC (152 conn) | integration (chain) | 105 | 42 / 152 connections | ✗ 110 uncovered |
+| Function | FUNC (132) | unit | 87 | 132 / 132 | ✓ |
 | (support) | — | conformance | 4 | codec round-trip | ✓ |
 
 > GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),

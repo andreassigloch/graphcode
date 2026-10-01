@@ -10,6 +10,7 @@
  * @author andreas@siglochconsulting
  */
 import { createInterface } from 'node:readline/promises';
+import type { AnalyseTask } from '../loop/task-artifact.js';
 import { createHarness } from './create-harness.js';
 import { bindToolsWithContext } from './mcp-tools.js';
 import { deriveMemberName } from './mcp-server.js';
@@ -101,6 +102,8 @@ export async function executeRun(opts: {
   trace?: (line: string) => void;
   /** Test-Injektion des Rueckkanals — Produktion fragt bei config.interactive auf dem Terminal. */
   ask?: AskOwner;
+  /** CR-GC-724: der Analyse-Task dieses Laufs (`graphcode run --task fmea`); ohne Angabe der Kern. */
+  task?: AnalyseTask;
 }): Promise<RunSummary> {
   // CR-GC-667: vor dem Store-Lock pruefen — eine manuelle Session ohne Terminal kann niemand beantworten.
   const ask = opts.ask ?? (opts.config.interactive ? terminalAsk() : undefined);
@@ -140,6 +143,7 @@ export async function executeRun(opts: {
       registry,
       workspaceDir: opts.repoRoot,
       intent: opts.intent,
+      task: opts.task,
       config: opts.config,
       callModel: opts.callModel,
       trace: opts.trace,

@@ -2839,6 +2839,18 @@
       "commitRef": "c9eff8a"
     },
     {
+      "id": "CR-GC-724",
+      "type": "CR",
+      "name": "Analysen ueber den Executor (lokaler Weg, Profil local): graph_delegate und graphcode run nehmen task (conops|trade|irr|fmea|plan) und reichen ihn an graph_generate; die fuenf Analyse-Skills bekommen einen inject-Ausschnitt mit gueltigem Format-E-Vorbild fuer ihr Artefakt (Test: jedes Vorbild geht durchs Gate); Werkzeugtext und AGENTS.md nennen die Tasks. IRR: Annahmen als Rueckfrage, offene als CR. Beleg: local-2 — mit Profil local hat der Client kein graph_generate/graph_mutate, der Executor kennt keinen task. Stempel durch den Code folgt als eigener Schritt (ITEM-2026-684)",
+      "description": "docs/cr/open/CR-GC-724-analysen-ueber-den-executor-lokaler-weg-.md"
+    },
+    {
+      "id": "CR-GC-725",
+      "type": "CR",
+      "name": "Executor verwirft Stempelzeilen des Modells: eine @analysisFreshness-Zeile verlaesst den Batch vor dem Gate (executor-gate.ts), den Stempel setzt allein der Executor, wenn das Artefakt steht (CR-GC-724). Executor-Teil von ITEM-2026-684; local-1 setzte fuenf Stempel ohne Artefakt",
+      "description": "docs/cr/open/CR-GC-725-executor-verwirft-stempelzeilen-des-mode.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5254,6 +5266,17 @@
       }
     },
     {
+      "id": "FUNC-task-abschluss",
+      "type": "FUNC",
+      "name": "schliesseTaskWennErfuellt",
+      "description": "Prüft vor jedem Schritt eines Analyse-Tasks (conops, trade, irr, fmea, plan), ob dessen Artefakt im Graphen steht, und setzt dann den Frischestempel am SYS durch das Gate; das Modell sieht und setzt den Stempel nicht. Die Rechnung steht rein in task-artifact.ts, das Vorbild der Runde in task-clause.ts. (CR-GC-724)",
+      "realRef": {
+        "file": "src/loop/executor-task.ts",
+        "symbol": "schliesseTaskWennErfuellt",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-test",
       "type": "FUNC",
       "name": "se-test (red-first test design)",
@@ -5573,6 +5596,15 @@
       "created_at": "2026-06-17T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-analyse-artefakt-vor-stempel",
+      "type": "REQ",
+      "name": "Analyse-Stempel nur mit Artefakt",
+      "description": "Der Executor muss eine Analyse erst dann als durchgeführt stempeln, wenn ihr Artefakt im Graphen steht.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -10002,6 +10034,19 @@
       "name": "Abnahme Zielbild",
       "description": "Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.",
       "concept": true
+    },
+    {
+      "id": "TEST-task-analysen",
+      "type": "TEST",
+      "name": "Analysen über den Executor",
+      "description": "Jedes Analyse-Vorbild geht durchs Gate und ergibt eine Einheit des Artefakts; der Executor stempelt nur mit Artefakt und trägt die übrigen Stempel mit.",
+      "testRefs": [
+        {
+          "file": "tests/task-analysen.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
     },
     {
       "id": "TEST-test-runnable-binding",
@@ -14450,6 +14495,41 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-724",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-724",
+      "target": "FUNC-graph-delegate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-724",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-724",
+      "target": "FUNC-task-abschluss",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-724",
+      "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-725",
+      "target": "FUNC-gate-client",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-725",
+      "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15452,6 +15532,11 @@
       "target": "FUNC-target-profile-load",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-task-abschluss",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-systemtest-run",
@@ -19904,6 +19989,16 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-task-abschluss",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-task-abschluss",
+      "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-test",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -22321,6 +22416,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-task-analysen",
+      "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "verify"
+    },
+    {
       "source": "TEST-test-runnable-binding",
       "target": "REQ-test-runnable-binding",
       "type": "verify",
@@ -22985,6 +23085,11 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-cache-layering",
       "type": "compose"
     },
@@ -23120,5 +23225,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 560
+  "graphVersion": 563
 }

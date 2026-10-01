@@ -129,6 +129,7 @@
 | `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
 | `FUNC-target-profile` | FUNC | Skill se:target-profile |
 | `FUNC-target-profile-load` | FUNC | loadTargetProfile |
+| `FUNC-task-abschluss` | FUNC | schliesseTaskWennErfuellt |
 | `FUNC-test` | FUNC | se-test (red-first test design) |
 | `FUNC-test-ingest` | FUNC | graph_test_ingest |
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
@@ -274,6 +275,7 @@
 | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `FUNC-target-profile` | `MOD-agent-surface` |
 | `FUNC-target-profile-load` | `MOD-loop` |
+| `FUNC-task-abschluss` | `MOD-loop` |
 | `FUNC-test` | `MOD-agent-surface` |
 | `FUNC-test-ingest` | `MOD-projections` |
 | `FUNC-test-ui` | `MOD-agent-surface` |

@@ -31,6 +31,8 @@ import { abnehmbar, focusViolations as fokusmenge, blockingOf } from '../kernel/
 import { TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
 import { steerTerms, STEER_RULES } from '@sigloch/se-engine';
 import { STEUER_FENSTER, type SteerOptimum, type SteerState } from './stagnation.js';
+import { istAnalyseTask } from './task-artifact.js';
+import { TASK_CLAUSE } from './task-clause.js';
 
 /**
  * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
@@ -938,6 +940,11 @@ function stepCore(
   // je rule_id) — und mit den konkreten uids, statt als globales Verbot.
   const windowRule = focusViolations[0]?.rule_id;
   const klausel = windowRule ? RULE_CLAUSE[windowRule] : undefined;
+  // CR-GC-724: im Executor (selection 'driver') stellt am Eintrittspunkt eines Analyse-Tasks die
+  // Task-Klausel den Imperativ — Auftrag und Vorbild statt des Verweises auf einen Skill, den der
+  // Executor nicht laden kann. Der Host-Weg (Client mit Skills) bleibt beim Verweis.
+  const taskKlausel =
+    selection === 'driver' && istAnalyseTask(task) && windowRule === TASK_ENTRY[task] ? TASK_CLAUSE[task] : undefined;
   // EIN Imperativ je Runde (CR-GC-564). Vorher wurde die Klausel an das Dimensions-Template
   // ANGEHÄNGT — und R-15s Klausel endete mit „KEINE neue FCHAIN anlegen", also mit dem
   // Widerruf dessen, was drei Zeilen vorher stand. Das Template ist nach DIMENSION
@@ -953,7 +960,9 @@ function stepCore(
   const imperativ = winner<{ text: string; types: string[]; skill: string | null }>([
     {
       channel: 'rule-clause',
-      value: klausel
+      value: taskKlausel
+        ? { text: taskKlausel.text(og), types: [...taskKlausel.types], skill: null }
+        : klausel
         ? {
             text: klausel.text(focusViolations.map((v) => v.element_id), og),
             types: [...klausel.types],
@@ -977,9 +986,12 @@ function stepCore(
   return {
     phase: 'expand',
     done: false,
-    prompt:
-      `${taskVorsatz}Intention: "${effectiveIntent}". ${coverageLine}${abnahmeHinweis}Schwächste Dimension: ${focus!.dimension}. ` +
-      `Funde: ${funde}. ${template} ${gateProtocol}`,
+    // CR-GC-724: am Task-Eintritt im Executor ist der Fund „das Artefakt fehlt“ — sein Hinweis nennt
+    // graph_generate und einen Skill, beides hat der Executor nicht. Die Klausel sagt, was zu tun ist.
+    prompt: taskKlausel
+      ? `${taskVorsatz}Intention: "${effectiveIntent}". ${template} ${gateProtocol}`
+      : `${taskVorsatz}Intention: "${effectiveIntent}". ${coverageLine}${abnahmeHinweis}Schwächste Dimension: ${focus!.dimension}. ` +
+        `Funde: ${funde}. ${template} ${gateProtocol}`,
     readiness,
     threshold,
     blockingErrors,
@@ -990,7 +1002,8 @@ function stepCore(
     // einer Dimension, waehrend der Text nach anderen Typen verlangt. Seit CR-GC-575 ist das
     // keine zweite Bedingung mehr, sondern derselbe Gewinner.
     focusTypes: imperativ?.value.types ?? [],
-    focusElements: [...new Set(focusViolations.map((v) => v.element_id))],
+    // CR-GC-724: am Task-Eintritt ist das Fund-Element das SYS — der Bestand kommt nach Typ, nicht aus seinem Kontext.
+    focusElements: taskKlausel ? [] : [...new Set(focusViolations.map((v) => v.element_id))],
     focusDimension: focus!.dimension as string,
     imperativSkill: imperativ?.value.skill ?? null,
   };

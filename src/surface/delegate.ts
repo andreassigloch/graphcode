@@ -33,6 +33,7 @@ import {
   type ExecutorStats,
 } from '../loop/executor.js';
 import type { ToolContext } from './tool-context.js';
+import { ANALYSE_TASKS } from '../loop/task-artifact.js';
 
 /**
  * Der Abschnitt `executor` in `graphcode.config.jsonc`. Die Datei ist eingecheckt — deshalb kein
@@ -159,6 +160,10 @@ export const DelegateInputSchema = z
       .min(1)
       .optional()
       .describe('Startet eine Delegation: die Modellarbeit in Prosa, oder ein Verweis auf material/<datei>, das du angelegt hast.'),
+    task: z
+      .enum(ANALYSE_TASKS)
+      .optional()
+      .describe('Analyse statt Kernarbeit: conops, trade, irr (Annahmen), fmea, plan (Bauaufträge). auftrag ist dann optional.'),
     antwort: z
       .string()
       .optional()
@@ -213,7 +218,8 @@ export function bindDelegateTool(
       'laeuft (Warte-Budget abgelaufen — mit {} weiter warten) oder fehler. Höchstens eine Delegation zugleich.',
     inputSchema: DelegateInputSchema,
     async handler(input) {
-      if (input.auftrag !== undefined) {
+      // CR-GC-724: auch ein Task allein startet eine Delegation — die Intention steht dann am SYS.
+      if (input.auftrag !== undefined || input.task !== undefined) {
         if (laufend) throw new Error('graph_delegate: es läuft bereits eine Delegation — erst beenden ({} oder {antwort}).');
         if (input.antwort !== undefined) throw new Error('graph_delegate: auftrag und antwort schließen sich aus.');
         const repoRoot = ctx.harness.getRepoRoot();
@@ -222,11 +228,12 @@ export function bindDelegateTool(
         laufend = d;
         const eigene = Object.fromEntries(Object.entries(registry).filter(([n]) => n !== 'graph_delegate'));
         // Herkunft im Audit: diese Züge schrieb das Executor-Modell im Auftrag des Clients.
-        ctx.setOrigin({ model: config.model, intent: input.auftrag });
+        ctx.setOrigin({ model: config.model, intent: input.auftrag ?? `Task ${input.task}` });
         void runExecutor({
           registry: eigene,
           workspaceDir: repoRoot,
           intent: input.auftrag,
+          task: input.task,
           config,
           callModel: binding.callModel,
           ask: d.frage,
@@ -243,6 +250,8 @@ export function bindDelegateTool(
                 angewandt: s.mutatesApplied,
                 abgelehnt: s.mutatesRejected,
                 fragen: s.questions,
+                // CR-GC-724: die Analyse gilt nur als durchgeführt, wenn ihr Artefakt im Modell steht.
+                ...(input.task ? { analyse: { task: input.task, durchgefuehrt: s.taskStempel !== undefined, artefakt: s.taskStempel?.einheiten ?? [] } } : {}),
                 tokensIn: s.tokensIn,
                 tokensOut: s.tokensOut,
               },
@@ -252,7 +261,7 @@ export function bindDelegateTool(
           .finally(() => ctx.setOrigin({}));
         return antwortAuf(d, input.wartenSek);
       }
-      if (!laufend) throw new Error('graph_delegate: keine Delegation läuft — starte mit {auftrag}.');
+      if (!laufend) throw new Error('graph_delegate: keine Delegation läuft — starte mit {auftrag} oder {task}.');
       if (input.antwort !== undefined) {
         if (!laufend.wartetAufAntwort) throw new Error('graph_delegate: der Executor hat keine offene Frage.');
         laufend.beantworte(input.antwort);

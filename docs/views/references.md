@@ -761,6 +761,13 @@
 | `CR-GC-723` | relation | `FUNC-serve-stdio` |
 | `CR-GC-723` | relation | `FUNC-tool-profile` |
 | `CR-GC-723` | relation | `REQ-tool-profile-by-llm` |
+| `CR-GC-724` | relation | `FUNC-generation-step` |
+| `CR-GC-724` | relation | `FUNC-graph-delegate` |
+| `CR-GC-724` | relation | `FUNC-run-executor` |
+| `CR-GC-724` | relation | `FUNC-task-abschluss` |
+| `CR-GC-724` | relation | `REQ-analyse-artefakt-vor-stempel` |
+| `CR-GC-725` | relation | `FUNC-gate-client` |
+| `CR-GC-725` | relation | `REQ-analyse-artefakt-vor-stempel` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -944,6 +951,7 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-take-steering-snapshot` |
 | `FCHAIN-steering-loop` | compose | `FUNC-target-profile` |
 | `FCHAIN-steering-loop` | compose | `FUNC-target-profile-load` |
+| `FCHAIN-steering-loop` | compose | `FUNC-task-abschluss` |
 | `FCHAIN-systemtest-run` | compose | `FUNC-systemtest-metrics` |
 | `FCHAIN-systemtest-run` | compose | `FUNC-systemtest-report` |
 | `FCHAIN-systemtest-run` | compose | `FUNC-systemtest-run` |
@@ -1808,6 +1816,8 @@
 | `FUNC-target-profile-load` | allocate | `MOD-loop` |
 | `FUNC-target-profile-load` | io | `FLOW-target-profile` |
 | `FUNC-target-profile-load` | satisfy | `REQ-target-shifts-ranking` |
+| `FUNC-task-abschluss` | allocate | `MOD-loop` |
+| `FUNC-task-abschluss` | satisfy | `REQ-analyse-artefakt-vor-stempel` |
 | `FUNC-test` | allocate | `MOD-agent-surface` |
 | `FUNC-test` | io | `FLOW-skill-report-test` |
 | `FUNC-test` | satisfy | `REQ-test-skill-red-first` |
@@ -2253,6 +2263,7 @@
 | `TEST-target-profile` | verify | `SCHEMA-target-profile` |
 | `TEST-target-shifts-ranking` | verify | `REQ-target-shifts-ranking` |
 | `TEST-target-state` | verify | `REQ-target-state` |
+| `TEST-task-analysen` | verify | `REQ-analyse-artefakt-vor-stempel` |
 | `TEST-test-runnable-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-test-schlupf` | verify | `REQ-full-run-on-probation` |
 | `TEST-test-schlupf` | verify | `SCHEMA-schlupf-zeile` |
@@ -2376,6 +2387,7 @@
 | `UC-reduced-llm` | compose | `FCHAIN-agent-query` |
 | `UC-reduced-llm` | compose | `FCHAIN-modelfree-gate` |
 | `UC-reduced-llm` | compose | `REQ-advisory-roundtrip-latency` |
+| `UC-reduced-llm` | compose | `REQ-analyse-artefakt-vor-stempel` |
 | `UC-reduced-llm` | compose | `REQ-cache-layering` |
 | `UC-reduced-llm` | compose | `REQ-delegate-in-host` |
 | `UC-reduced-llm` | compose | `REQ-graph-context-replaces-reading` |

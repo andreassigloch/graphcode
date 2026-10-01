@@ -49,6 +49,9 @@ import { bindGateClient, formatGateFeedback, recordQuestions, ruleIdsOf, type Mu
 import { zugvermerk, type Zug } from './zugvermerk.js';
 import { runBestOfNStep } from './executor-bestofn.js';
 import { buildCallModel, buildToolSpecs, toBackendTools } from './executor-backend.js';
+import type { RuleTask } from '@sigloch/contracts/se';
+import { istAnalyseTask } from './task-artifact.js';
+import { beginneTask, schliesseTaskWennErfuellt, type TaskStempel } from './executor-task.js';
 
 // ---------------------------------------------------------------------------
 // Config (lokal per CR-GC-278 — Promotion nach @sigloch/contracts erst mit der
@@ -149,6 +152,8 @@ export interface ExecutorStats {
   done: boolean;
   /** Warum der Lauf endete (CR-GC-694): Handoff, keine Funde mehr, versiegter Ertrag oder Rundenlimit. */
   stopReason: 'handoff' | 'stalled' | 'saettigung' | 'maxRounds';
+  /** CR-GC-724: der Stempel, den der Executor für den Analyse-Task dieses Laufs gesetzt hat. */
+  taskStempel?: TaskStempel;
   genRounds: number;
   modelTurns: number;
   mutatesApplied: number;
@@ -207,6 +212,11 @@ export interface RunExecutorOptions {
   trace?: (line: string) => void;
   /** CR-GC-667: der Rueckkanal der manuellen Session — Pflicht bei config.interactive. */
   ask?: AskOwner;
+  /**
+   * CR-GC-724: der Task dieses Laufs (Default: der Kern). Bei einem Analyse-Task reicht der Executor
+   * ihn an graph_generate und setzt den Stempel selbst, sobald das Artefakt steht (task-artifact.ts).
+   */
+  task?: RuleTask;
 }
 
 /** CR-GC-694: die Knotenzahl des Stores — die Groesse, an der der Ertrag einer Runde gemessen wird. */
@@ -286,6 +296,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
   // CR-GC-694: der Ertrag je Runde = Zuwachs der Knotenzahl im Store, gemessen vor jeder Runde.
   const ertrag: number[] = [];
   let knotenVorher = await knotenzahl(registry);
+  const taskZustand = istAnalyseTask(opts.task) ? await beginneTask(registry, opts.task) : null;
   for (let round = 0; round < config.maxRounds; round++) {
     if (round > 0) {
       const knoten = await knotenzahl(registry);
@@ -305,7 +316,17 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // Volles Frontier-Rendering auch lokal (CR-GC-282 negativ validiert: das
     // Minimal-Rendering halbierte den Durchsatz — v13b 22 vs. v12 82 Elemente;
     // die Multi-Kandidaten-Instruktion erzeugt die großen verbundenen Batches).
+    // CR-GC-724: vor dem Schritt pruefen, ob das Artefakt des Tasks steht — dann schliesst der CODE den
+    // Eintritt (Stempel), und graph_generate zeigt die Detailregeln des Tasks oder meldet ihn fertig.
+    if (taskZustand) {
+      const gestempelt = await schliesseTaskWennErfuellt(registry, taskZustand);
+      if (gestempelt) {
+        stats.taskStempel = gestempelt;
+        trace(`[task ${taskZustand.task}] Artefakt steht (${gestempelt.einheiten.length} Einheiten) — Stempel gesetzt`);
+      }
+    }
     const genInput: Record<string, unknown> = {};
+    if (opts.task && opts.task !== 'kern') genInput.task = opts.task;
     if (opts.intent && seedPhase) genInput.intent = opts.intent;
     if (deferred.size > 0) genInput.defer = [...deferred];
     // IMMER 'driver', auch bei candidates=1 (CR-GC-568). Der Schema-Default ist
@@ -600,6 +621,14 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
       ergebnis: angewandtImStep ? 'angewandt' : rejectedInStep ? 'abgewiesen' : 'nichts',
       regeln: angewandtImStep ? '' : ruleIdsOf(letzteAbweisung),
     });
+  }
+  // CR-GC-724: die letzte Runde kann das Artefakt vollendet haben — die Prüfung steht sonst nur am Rundenanfang.
+  if (taskZustand) {
+    const gestempelt = await schliesseTaskWennErfuellt(registry, taskZustand);
+    if (gestempelt) {
+      stats.taskStempel = gestempelt;
+      trace(`[task ${taskZustand.task}] Artefakt steht (${gestempelt.einheiten.length} Einheiten) — Stempel gesetzt`);
+    }
   }
   return stats;
 }

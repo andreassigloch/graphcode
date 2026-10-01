@@ -39,8 +39,12 @@ import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 
 const CONFIG = DelegateConfigSchema.parse({ baseUrl: 'http://scripted.invalid', model: 'scripted' });
 
-/** Gemessen am 2026-10-01: 3.303 Zeichen (volle Liste: 28.210). Darf nur sinken. */
-const LOKAL_SCHRANKE = 3_400;
+/**
+ * Gemessen am 2026-10-01: 3.303 Zeichen (volle Liste: 28.210). Darf durch Umformulieren nur sinken.
+ * CR-GC-724 hob sie einmal an: graph_delegate nimmt `task` (fünf Analysen) — ein neuer Parameter,
+ * +197 Zeichen (3.303 → 3.500).
+ */
+const LOKAL_SCHRANKE = 3_600;
 
 async function listed(registry: MCPToolRegistry): Promise<Array<{ name: string; description?: string }>> {
   const server = bindRegistryToMcpServer(registry);

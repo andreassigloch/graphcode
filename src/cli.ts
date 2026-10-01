@@ -31,6 +31,7 @@
  * @author andreas@siglochconsulting
  */
 import { serveStdio } from './surface/mcp-server.js';
+import { ANALYSE_TASKS, istAnalyseTask } from './loop/task-artifact.js';
 import { serveHost } from './surface/host.js';
 import { StoreOwnershipError } from './kernel/store-lock.js';
 import { scaffold, syncSkills, type CliCommand } from './surface/scaffold.js';
@@ -48,7 +49,8 @@ Usage:
   graphcode status  Läuft mein Host, und wo ist MEIN Dashboard? Read-only —
                     prüft die Repo-Identität des Viewers, statt eine Adresse
                     zu raten. Exit 1, wenn eines von beiden fehlt.
-  graphcode run "<intent>"  Author the graph via the embedded executor (no
+  graphcode run "<intent>" [--task conops|trade|irr|fmea|plan]
+                    Author the graph via the embedded executor (no
                     foreign harness). Env: GRAPHCODE_LLM_BASE_URL +
                     GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
                     openai|anthropic, GRAPHCODE_LLM_API_KEY
@@ -106,11 +108,20 @@ async function main(): Promise<void> {
     case 'run': {
       // Embedded executor (CR-GC-279): same store election as `graphcode mcp`;
       // stdout stays reserved for MCP transports — every report goes to stderr.
-      const intent = process.argv[3];
+      // CR-GC-724: `graphcode run ["<intent>"] --task fmea` fährt eine Analyse statt des Kerns.
+      const runArgs = process.argv.slice(3);
+      const taskAt = runArgs.indexOf('--task');
+      const taskArg = taskAt >= 0 ? runArgs[taskAt + 1] : undefined;
+      if (taskAt >= 0 && !istAnalyseTask(taskArg)) {
+        process.stderr.write(`graphcode run: --task erwartet ${ANALYSE_TASKS.join(' | ')}\n`);
+        process.exit(1);
+      }
+      const intent = runArgs.find((a, i) => !a.startsWith('--') && (taskAt < 0 || i !== taskAt + 1));
       try {
         const summary = await executeRun({
           repoRoot: process.cwd(),
           intent,
+          task: istAnalyseTask(taskArg) ? taskArg : undefined,
           config: parseExecutorEnv(process.env),
           trace: (line) => process.stderr.write(line + '\n'),
         });
