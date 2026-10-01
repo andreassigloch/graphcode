@@ -112,7 +112,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
         graphcode: {
           command: 'node',
           args: [HOST_ENTRY, 'mcp'],
-          env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
+          env: { GRAPHCODE_CLIENT_LLM: 'cloud', GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
         },
       },
     });
@@ -430,7 +430,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(mcp.mcpServers.graphcode).toEqual({
       command: 'node',
       args: [HOST_ENTRY, 'mcp'],
-      env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
+      env: { GRAPHCODE_CLIENT_LLM: 'cloud', GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
     });
     expect(mcp.mcpServers.context7).toEqual({ command: 'npx', args: ['-y', 'some-other-mcp'] });
     expect(res.updated).toEqual(expect.arrayContaining([MCP]));
@@ -465,6 +465,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(mcp.mcpServers.graphcode.env).toEqual({
       GRAPHCODE_NO_GVE: '1',
       GRAPHCODE_GVE_BIN: 'node ../graph-view-edit/bin/gve.mjs',
+      GRAPHCODE_CLIENT_LLM: 'cloud',
       GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)),
     });
   });
@@ -481,6 +482,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     const cfg = JSON.parse(readFileSync(join(repo, OPENCODE), 'utf8'));
     expect(cfg.mcp.graphcode.environment).toEqual({
       GRAPHCODE_NO_GVE: '1',
+      GRAPHCODE_CLIENT_LLM: 'local',
       GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)),
     });
   });
@@ -607,7 +609,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
           type: 'local',
           command: ['node', HOST_ENTRY, 'mcp'],
           enabled: true,
-          environment: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
+          environment: { GRAPHCODE_CLIENT_LLM: 'local', GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
         },
       },
     });

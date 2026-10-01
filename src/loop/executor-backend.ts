@@ -71,8 +71,9 @@ export function buildToolSpecs(
   return [...gc, ...rd];
 }
 
-/** Der erste Satz einer Werkzeugbeschreibung — im Executor waehlt der Treiber, nicht das Modell (CR-GC-651). */
-function ersterSatz(text: string): string {
+/** Der erste Satz einer Werkzeugbeschreibung — im Executor waehlt der Treiber, nicht das Modell (CR-GC-651).
+ *  Exportiert fuer das lokale Werkzeugprofil am MCP-Server (CR-GC-723): eine Kuerzungsregel, nicht zwei. */
+export function ersterSatz(text: string): string {
   const ende = text.search(/\.(\s|$)/);
   return ende >= 0 ? text.slice(0, ende + 1) : text;
 }

@@ -133,6 +133,7 @@
 | `FUNC-test-ingest` | FUNC | graph_test_ingest |
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
 | `FUNC-tool-context` | FUNC | createToolContext |
+| `FUNC-tool-profile` | FUNC | applyToolProfile(registry |
 | `FUNC-upgrade` | FUNC | executeUpgrade(opts) |
 | `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
 | `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
@@ -277,6 +278,7 @@
 | `FUNC-test-ingest` | `MOD-projections` |
 | `FUNC-test-ui` | `MOD-agent-surface` |
 | `FUNC-tool-context` | `MOD-surface` |
+| `FUNC-tool-profile` | `MOD-surface` |
 | `FUNC-upgrade` | `MOD-surface` |
 | `FUNC-view-changelog` | `MOD-agent-surface` |
 | `FUNC-view-conops` | `MOD-agent-surface` |

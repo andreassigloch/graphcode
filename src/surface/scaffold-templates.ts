@@ -307,7 +307,7 @@ function keptHostPort(servers: Record<string, unknown>): number | null {
 /**
  * The env block a previous scaffold left on the graphcode entry, minus the port
  * (that one is recomputed) — so `update` PRESERVES the operator's own switches:
- * `GRAPHCODE_NO_GVE`, `GRAPHCODE_GVE_BIN`, the `GRAPHCODE_LLM_*`
+ * `GRAPHCODE_NO_GVE`, `GRAPHCODE_GVE_BIN`, `GRAPHCODE_CLIENT_LLM`, the `GRAPHCODE_LLM_*`
  * set for `graphcode run`. Before this, update rewrote `env` to the single port
  * key, so an opt-out silently came back on at the next update — the same class
  * of surprise the kept port was introduced to avoid. `command`/`args` stay
@@ -339,7 +339,8 @@ export function mcpConfigContent(repoRoot: string, existingRaw: string | null): 
       graphcode: {
         command: 'node',
         args: [HOST_ENTRY, 'mcp'],
-        env: { ...keptEnv(servers, 'env'), GRAPHCODE_HOST_PORT: String(port) },
+        // CR-GC-723: Claude Code = Cloud-LLM. Vor keptEnv: ein von Hand gesetzter Wert bleibt.
+        env: { GRAPHCODE_CLIENT_LLM: 'cloud', ...keptEnv(servers, 'env'), GRAPHCODE_HOST_PORT: String(port) },
       },
     },
   };
@@ -368,7 +369,8 @@ export function opencodeConfigContent(repoRoot: string, existingRaw: string | nu
         type: 'local',
         command: ['node', HOST_ENTRY, 'mcp'],
         enabled: true,
-        environment: { ...keptEnv(mcp, 'environment'), GRAPHCODE_HOST_PORT: String(port) },
+        // CR-GC-723: OpenCode = lokales LLM — der Server bietet dann graph_delegate + Leser.
+        environment: { GRAPHCODE_CLIENT_LLM: 'local', ...keptEnv(mcp, 'environment'), GRAPHCODE_HOST_PORT: String(port) },
       },
     },
   };

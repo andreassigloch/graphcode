@@ -757,6 +757,10 @@
 | `CR-GC-721` | relation | `FUNC-se-plan` |
 | `CR-GC-722` | relation | `FUNC-bind-tools` |
 | `CR-GC-722` | relation | `REQ-mcp-tool-registry` |
+| `CR-GC-723` | relation | `FUNC-harness-cli` |
+| `CR-GC-723` | relation | `FUNC-serve-stdio` |
+| `CR-GC-723` | relation | `FUNC-tool-profile` |
+| `CR-GC-723` | relation | `REQ-tool-profile-by-llm` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -871,6 +875,7 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-run-verb` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-session-shutdown` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-tool-profile` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
 | `FCHAIN-schema-migration` | compose | `FUNC-migrate-schema` |
 | `FCHAIN-schema-migration` | compose | `FUNC-schema-guard` |
@@ -1120,6 +1125,7 @@
 | `FLOW-mcp-tool` | io | `FUNC-bind-tools` |
 | `FLOW-mcp-tool` | relation | `SCHEMA-mcp-tool` |
 | `FLOW-mcp-tool-registry` | io | `FUNC-serve-stdio` |
+| `FLOW-mcp-tool-registry` | io | `FUNC-tool-profile` |
 | `FLOW-mcp-tool-registry` | relation | `SCHEMA-mcp-tool-registry` |
 | `FLOW-measurement-vector` | io | `FUNC-generation-step` |
 | `FLOW-measurement-vector` | relation | `SCHEMA-measurement-vector` |
@@ -1328,6 +1334,8 @@
 | `FLOW-test-selection` | relation | `SCHEMA-test-selection` |
 | `FLOW-tool-context` | io | `FUNC-bind-tools` |
 | `FLOW-tool-context` | relation | `SCHEMA-tool-context` |
+| `FLOW-tool-profile-view` | io | `FUNC-serve-stdio` |
+| `FLOW-tool-profile-view` | relation | `SCHEMA-mcp-tool-registry` |
 | `FLOW-tool-registry` | io | `FUNC-serve-stdio` |
 | `FLOW-tool-registry` | relation | `SCHEMA-tool-registry` |
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
@@ -1470,6 +1478,7 @@
 | `FUNC-block-ruestzeug` | compose | `FUNC-migrate-schema` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-schema-guard` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-tool-context` |
+| `FUNC-block-ruestzeug` | compose | `FUNC-tool-profile` |
 | `FUNC-block-speicherwerk` | allocate | `MOD-kernel` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-apply-reseed` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-auto-export` |
@@ -1811,6 +1820,9 @@
 | `FUNC-tool-context` | allocate | `MOD-surface` |
 | `FUNC-tool-context` | io | `FLOW-tool-context` |
 | `FUNC-tool-context` | satisfy | `REQ-mcp-tool-registry` |
+| `FUNC-tool-profile` | allocate | `MOD-surface` |
+| `FUNC-tool-profile` | io | `FLOW-tool-profile-view` |
+| `FUNC-tool-profile` | satisfy | `REQ-tool-profile-by-llm` |
 | `FUNC-upgrade` | allocate | `MOD-surface` |
 | `FUNC-upgrade` | io | `FLOW-install-result-upgrade` |
 | `FUNC-upgrade` | satisfy | `REQ-repo-update` |
@@ -2255,6 +2267,7 @@
 | `TEST-tool-contract` | verify | `SCHEMA-mcp-tool` |
 | `TEST-tool-contract` | verify | `SCHEMA-mcp-tool-registry` |
 | `TEST-tool-contract` | verify | `SCHEMA-tool-context` |
+| `TEST-tool-profile` | verify | `REQ-tool-profile-by-llm` |
 | `TEST-uc-authoring-style` | verify | `REQ-interactive-capture-suggest` |
 | `TEST-upgrade` | verify | `REQ-install-idempotent` |
 | `TEST-upgrade` | verify | `REQ-repo-update` |
@@ -2378,6 +2391,7 @@
 | `UC-reduced-llm` | compose | `REQ-round-prompt-injection` |
 | `UC-reduced-llm` | compose | `REQ-small-model-viable` |
 | `UC-reduced-llm` | compose | `REQ-subgraph-slicing` |
+| `UC-reduced-llm` | compose | `REQ-tool-profile-by-llm` |
 | `UC-repo-lifecycle` | compose | `FCHAIN-repo-lifecycle` |
 | `UC-repo-lifecycle` | compose | `FCHAIN-schema-migration` |
 | `UC-repo-lifecycle` | compose | `REQ-bootstrap-through-gate` |

@@ -32,6 +32,7 @@ import { attachGve } from './gve.js';
 import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from './host-shim.js';
 import { HostBridge } from './host.js';
 import { delegateBindingOf } from './delegate.js';
+import { applyToolProfile, assertProfileServable, clientLlmFromEnv } from './tool-profile.js';
 import { loadGraphcodeConfig } from '../kernel/config.js';
 import type { LiveUpdateEvent } from './emit.js';
 import { readPackageVersion } from '../kernel/package-version.js';
@@ -178,6 +179,11 @@ export async function serveStdio(opts?: {
   // repo-specific name (e.g. auth-service.graph.json), not the generic 'graphcode'.
   const member = deriveMemberName(repoRoot);
   const scope = opts?.scope ?? { workspaceId: member, systemId: member };
+  // CR-GC-723: das Werkzeugprofil folgt der LLM-Art des Clients. VOR der Wahl geprueft —
+  // ein lokaler Client ohne Executor haette keinen Schreibweg, und der Fehler soll keinen
+  // Store-Lock hinterlassen.
+  const clientLlm = clientLlmFromEnv();
+  assertProfileServable(clientLlm, delegateBindingOf(loadGraphcodeConfig(repoRoot)) !== undefined);
 
   /**
    * One election attempt: win the lock and come up as a full host — incl. the
@@ -261,7 +267,8 @@ export async function serveStdio(opts?: {
   // abgeraeumt: der Viewer geht vor dem Store-Lock, wie eh und je.
   const gve = await attachGve(repoRoot);
   if (gve) lifecycle.add({ name: 'gve dashboard', close: () => gve.stop() });
-  const server = bindRegistryToMcpServer(registry);
+  // Nur die stdio-Sicht dieses Clients wird geschnitten; host.sock traegt weiter die volle Registry.
+  const server = bindRegistryToMcpServer(applyToolProfile(registry, clientLlm));
   await server.connect(new StdioServerTransport());
 }
 

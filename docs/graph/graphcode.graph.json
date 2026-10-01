@@ -3912,6 +3912,12 @@
       "description": "Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel."
     },
     {
+      "id": "FLOW-tool-profile-view",
+      "type": "FLOW",
+      "name": "Registry in Profilsicht",
+      "description": "Die Registry in der Sicht des Profils: dieselben Werkzeuge, auf die LLM-Art des Clients zugeschnitten. Geht an die stdio-Bindung dieses einen Clients."
+    },
+    {
       "id": "FLOW-tool-registry",
       "type": "FLOW",
       "name": "Werkzeug-Register",
@@ -5292,6 +5298,18 @@
       "realRef": {
         "file": "src/surface/tool-context.ts",
         "symbol": "createToolContext",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-tool-profile",
+      "type": "FUNC",
+      "name": "applyToolProfile(registry",
+      "description": "Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723)",
+      "status": "done",
+      "realRef": {
+        "file": "src/surface/tool-profile.ts",
+        "symbol": "applyToolProfile",
         "lang": "ts"
       }
     },
@@ -7060,6 +7078,15 @@
       "status": "done",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-tool-profile-by-llm",
+      "type": "REQ",
+      "name": "Werkzeugprofil je LLM-Art",
+      "description": "Der MCP-Server bietet je LLM-Art des Clients ein Werkzeugprofil: cloud die volle Registry, local nur graph_delegate und die Leser graph_elements, graph_get_node, graph_context. Im lokalen Profil gibt es genau einen Schreibweg, den Executor im Host; ohne konfigurierten Executor startet es nicht.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -10076,6 +10103,19 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-09-16T16:40:15.158Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-tool-profile",
+      "type": "TEST",
+      "name": "Werkzeugprofil-Test",
+      "description": "Abnahme der Datei tests/mcp.tool-profile.test.ts: das lokale Profil listet ueber tools/list genau vier Werkzeuge ohne graph_mutate, die Leser sind die gebundenen Werkzeuge mit gekuerzter Beschreibung, local ohne Executor ist ein Fehler, die Nutzlast bleibt unter ihrer Schranke, und das Scaffold setzt die Variable je Host-Config.",
+      "testRefs": [
+        {
+          "file": "tests/mcp.tool-profile.test.ts",
+          "tool": "vitest",
+          "level": "integration"
         }
       ]
     },
@@ -14386,6 +14426,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-723",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-723",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-723",
+      "target": "FUNC-tool-profile",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-723",
+      "target": "REQ-tool-profile-by-llm",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15027,6 +15087,11 @@
     {
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-session-shutdown",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-tool-profile",
       "type": "compose"
     },
     {
@@ -16324,6 +16389,11 @@
     },
     {
       "source": "FLOW-mcp-tool-registry",
+      "target": "FUNC-tool-profile",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mcp-tool-registry",
       "target": "SCHEMA-mcp-tool-registry",
       "type": "relation"
     },
@@ -17367,6 +17437,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-tool-profile-view",
+      "target": "FUNC-serve-stdio",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-tool-profile-view",
+      "target": "SCHEMA-mcp-tool-registry",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-tool-registry",
       "target": "FUNC-serve-stdio",
       "type": "io"
@@ -18082,6 +18162,11 @@
     {
       "source": "FUNC-block-ruestzeug",
       "target": "FUNC-tool-context",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-ruestzeug",
+      "target": "FUNC-tool-profile",
       "type": "compose"
     },
     {
@@ -19872,6 +19957,21 @@
     {
       "source": "FUNC-tool-context",
       "target": "REQ-mcp-tool-registry",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-tool-profile",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-tool-profile",
+      "target": "FLOW-tool-profile-view",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-tool-profile",
+      "target": "REQ-tool-profile-by-llm",
       "type": "satisfy"
     },
     {
@@ -22293,6 +22393,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-tool-profile",
+      "target": "REQ-tool-profile-by-llm",
+      "type": "verify"
+    },
+    {
       "source": "TEST-uc-authoring-style",
       "target": "REQ-interactive-capture-suggest",
       "type": "verify"
@@ -22952,6 +23057,11 @@
       "type": "compose"
     },
     {
+      "source": "UC-reduced-llm",
+      "target": "REQ-tool-profile-by-llm",
+      "type": "compose"
+    },
+    {
       "source": "UC-repo-lifecycle",
       "target": "FCHAIN-repo-lifecycle",
       "type": "compose"
@@ -23006,5 +23116,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 558
+  "graphVersion": 559
 }

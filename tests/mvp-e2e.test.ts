@@ -105,7 +105,7 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
         graphcode: {
           command: 'node',
           args: [HOST_ENTRY, 'mcp'],
-          env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(tmp)) },
+          env: { GRAPHCODE_CLIENT_LLM: 'cloud', GRAPHCODE_HOST_PORT: String(deriveHostPort(tmp)) },
         },
       },
     });

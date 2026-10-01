@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 149 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 150 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -2422,7 +2422,7 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
-io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-profile-view` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -2744,7 +2744,7 @@ Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-mar
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
-io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-profile-view` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -3416,7 +3416,23 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-surface`
 
-##### 3.9.1.2  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
+##### 3.9.1.2  `FUNC-tool-profile` — applyToolProfile(registry
+
+> auch in: `FUNC-block-ruestzeug`
+
+Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723)
+
+io ◀ `FLOW-mcp-tool-registry` · io ▶ `FLOW-tool-profile-view` · allocate ▶ `MOD-surface`
+
+###### `REQ-tool-profile-by-llm` — Werkzeugprofil je LLM-Art
+
+Der MCP-Server bietet je LLM-Art des Clients ein Werkzeugprofil: cloud die volle Registry, local nur graph_delegate und die Leser graph_elements, graph_get_node, graph_context. Im lokalen Profil gibt es genau einen Schreibweg, den Executor im Host; ohne konfigurierten Executor startet es nicht.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-tool-profile` (integration) · satisfy ◀ `FUNC-tool-profile` · allocate ▶ `MOD-surface`
+
+##### 3.9.1.3  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
 
 > auch in: `FUNC-block-bedienung`
 
@@ -3434,7 +3450,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-cli-dispatch` · `FUNC-harness-cli` · allocate ▶ `MOD-surface`
 
-##### 3.9.1.3  `FUNC-bootstrap` — bootstrap
+##### 3.9.1.4  `FUNC-bootstrap` — bootstrap
 
 > auch in: `FUNC-block-speicherwerk`
 
@@ -3452,7 +3468,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-##### 3.9.1.4  `FUNC-claim-store-lock` — StoreLock
+##### 3.9.1.5  `FUNC-claim-store-lock` — StoreLock
 
 > auch in: `FCHAIN-apply-gate` · `FUNC-block-speicherwerk`
 
@@ -3470,7 +3486,7 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-##### 3.9.1.5  `FUNC-session-shutdown` — SessionLifecycle
+##### 3.9.1.6  `FUNC-session-shutdown` — SessionLifecycle
 
 > auch in: `FCHAIN-apply-gate` · `FUNC-block-host-sitzung`
 
@@ -3486,7 +3502,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
 
-##### 3.9.1.6  `FUNC-collect-status` — collectStatus
+##### 3.9.1.7  `FUNC-collect-status` — collectStatus
 
 > auch in: `FUNC-block-bedienung`
 
@@ -3504,7 +3520,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · allocate ▶ `MOD-surface`
 
-##### 3.9.1.7  `FUNC-gve-supervise` — attachGve
+##### 3.9.1.8  `FUNC-gve-supervise` — attachGve
 
 > auch in: `FUNC-block-host-sitzung`
 
@@ -3522,7 +3538,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-surface`
 
-##### 3.9.1.8  `FUNC-gve-sessions` — liveSessions
+##### 3.9.1.9  `FUNC-gve-sessions` — liveSessions
 
 > auch in: `FUNC-block-host-sitzung`
 
@@ -3540,7 +3556,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-surface`
 
-##### 3.9.1.9  `FUNC-harness-cli` — graphcode init/update/remove
+##### 3.9.1.10  `FUNC-harness-cli` — graphcode init/update/remove
 
 > auch in: `FUNC-block-bedienung`
 
@@ -3600,7 +3616,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-surface`
 
-##### 3.9.1.10  `FUNC-run-verb` — executeRun
+##### 3.9.1.11  `FUNC-run-verb` — executeRun
 
 > auch in: `FCHAIN-steering-loop` · `FUNC-block-bedienung`
 
@@ -3618,7 +3634,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-run` (integration) · `TEST-executor-bestofn` (integration) · `TEST-executor-truncation` (integration) · `TEST-one-driver-local-and-frontier` (integration) · satisfy ◀ `FUNC-call-model` · `FUNC-read-anthropic-stream` · `FUNC-read-openai-stream` · `FUNC-run-executor` · `FUNC-run-verb` · allocate ▶ `MOD-loop` · `MOD-surface`
 
-##### 3.9.1.11  `FUNC-upgrade` — executeUpgrade(opts)
+##### 3.9.1.12  `FUNC-upgrade` — executeUpgrade(opts)
 
 > auch in: `FUNC-block-bedienung`
 
@@ -3938,7 +3954,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 
 Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
 
-io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-profile-view` · `FLOW-tool-registry` · io ▶ — · allocate ▶ `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -4075,6 +4091,22 @@ CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (writ
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-surface`
+
+###### 3.10.1.3.6  `FUNC-tool-profile` — applyToolProfile(registry
+
+> auch in: `FCHAIN-repo-lifecycle`
+
+Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723)
+
+io ◀ `FLOW-mcp-tool-registry` · io ▶ `FLOW-tool-profile-view` · allocate ▶ `MOD-surface`
+
+###### `REQ-tool-profile-by-llm` — Werkzeugprofil je LLM-Art
+
+Der MCP-Server bietet je LLM-Art des Clients ein Werkzeugprofil: cloud die volle Registry, local nur graph_delegate und die Leser graph_elements, graph_get_node, graph_context. Im lokalen Profil gibt es genau einen Schreibweg, den Executor im Host; ohne konfigurierten Executor startet es nicht.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-tool-profile` (integration) · satisfy ◀ `FUNC-tool-profile` · allocate ▶ `MOD-surface`
 
 #### 3.10.2  `FUNC-block-grounding` — Grounding
 
@@ -6158,7 +6190,7 @@ io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-mc
 
 Traegt MCPToolRegistry ueber die Modulgrenze.
 
-io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-mcp-tool-registry`
+io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · `FUNC-tool-profile` · schema ▶ `SCHEMA-mcp-tool-registry`
 
 ### 4.59  `FLOW-measurement-vector` — Messvektor
 
@@ -6604,19 +6636,25 @@ Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphve
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-### 4.133  `FLOW-tool-registry` — Werkzeug-Register
+### 4.133  `FLOW-tool-profile-view` — Registry in Profilsicht
+
+Die Registry in der Sicht des Profils: dieselben Werkzeuge, auf die LLM-Art des Clients zugeschnitten. Geht an die stdio-Bindung dieses einen Clients.
+
+io ◀ `FUNC-tool-profile` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-mcp-tool-registry`
+
+### 4.134  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-tool-registry`
 
-### 4.134  `FLOW-trajectory` — Trajectory/Outcome
+### 4.135  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.135  `FLOW-version-bump` — Version-Bump
+### 4.136  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
@@ -6784,7 +6822,7 @@ schema ◀ `FLOW-mcp-tool`
 
 Die Abbildung Name -> Werkzeug, mit der eine Schicht ihre Werkzeuge uebergibt. Der Vertrag zwischen Tool-Fabrik und Host-Bindung.
 
-schema ◀ `FLOW-mcp-tool-registry`
+schema ◀ `FLOW-mcp-tool-registry` · `FLOW-tool-profile-view`
 
 ### 5.28  `SCHEMA-measurement-vector` — Messvektor (Vertrag der vier Entscheidungen)
 
@@ -7040,7 +7078,7 @@ allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-block-dokumen
 
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
-allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-host-sitzung` · `FUNC-block-live-dashboard` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-delegate` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-host-sitzung` · `FUNC-block-live-dashboard` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-delegate` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-tool-profile` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
 
 ### 6.7  `MOD-systemtest` — Systemtest-Rig
 
@@ -8274,37 +8312,43 @@ Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPTool
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-### 8.142  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+### 8.142  `TEST-tool-profile` — Werkzeugprofil-Test
+
+Abnahme der Datei tests/mcp.tool-profile.test.ts: das lokale Profil listet ueber tools/list genau vier Werkzeuge ohne graph_mutate, die Leser sind die gebundenen Werkzeuge mit gekuerzter Beschreibung, local ohne Executor ist ein Fehler, die Nutzlast bleibt unter ihrer Schranke, und das Scaffold setzt die Variable je Host-Config.
+
+verify ▶ `REQ-tool-profile-by-llm` · testRefs: `tests/mcp.tool-profile.test.ts`
+
+### 8.143  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-### 8.143  `TEST-upgrade` — Abnahme des upgrade-Verbs
+### 8.144  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
 
-### 8.144  `TEST-views-auditor` — Sichten fuer den Auditor
+### 8.145  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-### 8.145  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+### 8.146  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-### 8.146  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+### 8.147  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-### 8.147  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+### 8.148  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
@@ -8312,4 +8356,4 @@ verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.
 
 ## 9  Traceability summary
 
-149 REQ · 149 verified · 0 without a verifying TEST (R-01).
+150 REQ · 150 verified · 0 without a verifying TEST (R-01).
