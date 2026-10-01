@@ -86,6 +86,17 @@ export function recordQuestions(stats: Pick<GateCounters, 'questions'>, question
   return neu;
 }
 
+const STEMPELZEILE = /^[ \t]*@analysisFreshness\b.*\n?/gm;
+
+/** Die Stempelzeilen aus dem Format-E-Text einer Eingabe nehmen; alles andere bleibt, wie es ist. */
+export function ohneStempelzeilen(input: unknown): { input: unknown; entfernt: number } {
+  const formatE = (input as { formatE?: unknown } | null)?.formatE;
+  if (typeof formatE !== 'string') return { input, entfernt: 0 };
+  const entfernt = formatE.match(STEMPELZEILE)?.length ?? 0;
+  if (entfernt === 0) return { input, entfernt };
+  return { input: { ...(input as Record<string, unknown>), formatE: formatE.replace(STEMPELZEILE, '') }, entfernt };
+}
+
 /** Ergebnis des Preflights: der Batch, der weitergeht, oder das lokale Block-Verdict. */
 export interface PreflightResult {
   effective: unknown;
@@ -192,6 +203,11 @@ export function bindGateClient(
     const kommandos = (input as { commands?: unknown }).commands;
     const vomModell = Array.isArray(kommandos) ? kommandos : null;
     input = await alsText(input);
+    // CR-GC-724: den Stempel einer Analyse setzt der Executor, wenn ihr Artefakt steht (executor-task.ts).
+    // Eine Stempelzeile des Modells verlaesst den Batch hier — local-1 setzte fuenf davon ohne Artefakt.
+    const ohne = ohneStempelzeilen(input);
+    if (ohne.entfernt > 0) trace(`    stempel: ${ohne.entfernt} Zeile(n) @analysisFreshness aus dem Batch genommen`);
+    input = ohne.input;
     const parsed = registry['graph_mutate'].inputSchema.safeParse(input);
     if (!parsed.success) return { effective: input, blocked: null, hints: [], duplicates: [] };
     let effective: unknown = parsed.data;

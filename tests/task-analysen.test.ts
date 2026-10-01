@@ -12,6 +12,7 @@ import { createHarness, bindToolsToHarness } from '../src/index.js';
 import { DEFAULT_METRIC_POLICY, type OntologyGraph } from '@sigloch/contracts/se';
 import { runExecutor, ExecutorConfigSchema, type CallModel, type ModelResponse } from '../src/loop/executor.js';
 import { generationStep } from '../src/loop/generate.js';
+import { ohneStempelzeilen } from '../src/loop/executor-gate.js';
 import { TASK_CLAUSE, alsTaskGraph } from '../src/loop/task-clause.js';
 import { ANALYSE_TASKS, abschluss, artefakte, offen, stempelZug, type AnalyseTask, type TaskGraph } from '../src/loop/task-artifact.js';
 import { DelegateInputSchema } from '../src/surface/delegate.js';
@@ -204,6 +205,23 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     expect(s.fmea.graphVersion).toBe(stats.taskStempel!.graphVersion);
     expect(s.fmea.graphVersion).toBe(harness.getGraph().nodes.length > 0 ? stats.taskStempel!.graphVersion : -1);
     expect(s.trade, 'der Stempel aus dem Kern-Graphen überlebt').toEqual({ graphVersion: 1, crRefs: [] });
+  });
+
+  it('Executor: ein Stempel des Modells erreicht das Gate nicht — ohne Artefakt bleibt der Task offen', async () => {
+    const schummel = '## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"fmea":{"graphVersion":99}}\n';
+    const { callModel } = scripted([mutateCall('c1', schummel), mutateCall('c2', schummel)]);
+    const traces: string[] = [];
+    const stats = await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel, task: 'fmea', trace: (l) => traces.push(l) });
+    expect(traces.join('\n')).toContain('@analysisFreshness aus dem Batch genommen');
+    expect(stats.taskStempel).toBeUndefined();
+    expect(stempel().fmea).toBeUndefined();
+  });
+
+  it('ohneStempelzeilen nimmt nur die Stempelzeile', () => {
+    const r = ohneStempelzeilen({ formatE: '## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"fmea":{}}\n@role x\n' });
+    expect(r.entfernt).toBe(1);
+    expect((r.input as { formatE: string }).formatE).toBe('## Nodes\n### SYS\n~ SYS-app\n@role x\n');
+    expect(ohneStempelzeilen({ formatE: '## Edges\n+ A -io-> B\n' }).entfernt).toBe(0);
   });
 
   it('graph_delegate nimmt task allein oder mit auftrag — und nur die Analyse-Tasks', () => {
