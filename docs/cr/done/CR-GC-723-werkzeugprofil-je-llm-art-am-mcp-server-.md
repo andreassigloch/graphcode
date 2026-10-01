@@ -1,6 +1,6 @@
 # CR-GC-723: Werkzeugprofil je LLM-Art am MCP-Server: Variable GRAPHCODE_LLM=local|cloud (Scaffold schreibt local in opencode.json, cloud in .mcp.json). local = graph_delegate + Leser graph_elements, graph_get_node, graph_context, Leser-Beschreibung auf den ersten Satz; kein graph_mutate (ein Schreibweg: der Executor im Host). cloud = volle Liste. Entscheid Autor 2026-10-01, Messung in ITEM-2026-687 (Liste heute 32.029 Zeichen, OpenCode laedt sie je Anfrage). Abnahme: A/B-Lauf OpenCode gegen qwen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-01)
 **Typ:** aus Item ITEM-2026-688 (idea)
 **Erstellt:** 2026-10-01
 **Item:** bok/items/ITEM-2026-688.json (Lane: code)
