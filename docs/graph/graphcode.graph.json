@@ -2874,7 +2874,9 @@
       "id": "CR-GC-728",
       "type": "CR",
       "name": "graph_delegate sagt dem Client nicht, warum ein Lauf endete und was als Naechstes geht. Probe todo B4 (2026-10-02): nach fertigem Kern meldete der Executor stopReason stalled, 0 Zuege, 0 Token — offen waren nur die Eintrittspunkte der Analysen. Der Client (qwen3.8) hielt das fuer einen Ausfall des Modells und schickte fuenf weitere Auftraege mit genauen Kantenanweisungen; jeder endete gleich. Dazu: ein auftrag bei bestehendem Modell wird still verworfen (Intent nur in der Seed-Phase), der Client erfaehrt es nicht",
-      "description": "docs/cr/open/CR-GC-728-graph-delegate-sagt-dem-client-nicht-war.md"
+      "description": "docs/cr/open/CR-GC-728-graph-delegate-sagt-dem-client-nicht-war.md",
+      "status": "done",
+      "commitRef": "c70dd0b"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23368,5 +23370,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 572
+  "graphVersion": 573
 }
