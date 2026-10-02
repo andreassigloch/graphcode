@@ -1,6 +1,6 @@
 # CR-GC-728: graph_delegate sagt dem Client nicht, warum ein Lauf endete und was als Naechstes geht. Probe todo B4 (2026-10-02): nach fertigem Kern meldete der Executor stopReason stalled, 0 Zuege, 0 Token — offen waren nur die Eintrittspunkte der Analysen. Der Client (qwen3.8) hielt das fuer einen Ausfall des Modells und schickte fuenf weitere Auftraege mit genauen Kantenanweisungen; jeder endete gleich. Dazu: ein auftrag bei bestehendem Modell wird still verworfen (Intent nur in der Seed-Phase), der Client erfaehrt es nicht
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-02)
 **Typ:** aus Item ITEM-2026-710 (bug)
 **Erstellt:** 2026-10-02
 **Item:** bok/items/ITEM-2026-710.json (Lane: code)
