@@ -1,6 +1,6 @@
 # CR-GC-726: graph_delegate wartet standardmaessig 120 s, OpenCode bricht MCP-Aufrufe nach 60 s ab: der Client sieht 'Request timed out', der Executor laeuft unbemerkt weiter (Lauf local-3, 2026-10-02: 5 Batches, 52 Befehle geschrieben, Client begann zu coden). Dazu: die Spur der Delegation steht nur im Speicher, nach einem Abbruch ist nicht feststellbar, woran der Lauf steht
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-02)
 **Typ:** aus Item ITEM-2026-705 (bug)
 **Erstellt:** 2026-10-02
 **Item:** bok/items/ITEM-2026-705.json (Lane: code)
