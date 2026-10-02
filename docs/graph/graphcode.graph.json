@@ -2858,13 +2858,17 @@
       "id": "CR-GC-726",
       "type": "CR",
       "name": "graph_delegate wartet standardmaessig 120 s, OpenCode bricht MCP-Aufrufe nach 60 s ab: der Client sieht 'Request timed out', der Executor laeuft unbemerkt weiter (Lauf local-3, 2026-10-02: 5 Batches, 52 Befehle geschrieben, Client begann zu coden). Dazu: die Spur der Delegation steht nur im Speicher, nach einem Abbruch ist nicht feststellbar, woran der Lauf steht",
-      "description": "docs/cr/open/CR-GC-726-graph-delegate-wartet-standardmaessig-12.md"
+      "description": "docs/cr/open/CR-GC-726-graph-delegate-wartet-standardmaessig-12.md",
+      "status": "done",
+      "commitRef": "51bbdd1"
     },
     {
       "id": "CR-GC-727",
       "type": "CR",
       "name": "D2 auf einer GPU: der wartende Client nimmt dem Executor die Rechenzeit. Probe todo 2026-10-02: jede graph_delegate({})-Abfrage des Clients kostet eine Inferenz mit 14-19 k Token ohne Cache; Executor-Runden dauern 2-5 min statt 15-85 s, qwen3.8 im Executor reisst den 300-s-Aufruf-Timeout. Das Warte-Budget muss je Repo einstellbar sein (executor.wartenSek), gepaart mit dem Abbruch des Clients (OpenCode experimental.mcp_timeout); die Obergrenze 55 s aus CR-GC-726 verhindert das",
-      "description": "docs/cr/open/CR-GC-727-d2-auf-einer-gpu-der-wartende-client-nim.md"
+      "description": "docs/cr/open/CR-GC-727-d2-auf-einer-gpu-der-wartende-client-nim.md",
+      "status": "done",
+      "commitRef": "f4e806d"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23319,5 +23323,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 569
+  "graphVersion": 570
 }
