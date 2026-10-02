@@ -1,6 +1,6 @@
 # CR-GC-727: D2 auf einer GPU: der wartende Client nimmt dem Executor die Rechenzeit. Probe todo 2026-10-02: jede graph_delegate({})-Abfrage des Clients kostet eine Inferenz mit 14-19 k Token ohne Cache; Executor-Runden dauern 2-5 min statt 15-85 s, qwen3.8 im Executor reisst den 300-s-Aufruf-Timeout. Das Warte-Budget muss je Repo einstellbar sein (executor.wartenSek), gepaart mit dem Abbruch des Clients (OpenCode experimental.mcp_timeout); die Obergrenze 55 s aus CR-GC-726 verhindert das
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-02)
 **Typ:** aus Item ITEM-2026-706 (finding)
 **Erstellt:** 2026-10-02
 **Item:** bok/items/ITEM-2026-706.json (Lane: code)
