@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 152 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 153 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 49 REQ
@@ -61,7 +61,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1) — 104 REQ
+### funktional (SWE.1) — 105 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -83,6 +83,7 @@
 | `REQ-dashboard-readonly` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-delegate-antwortet-vor-client-abbruch` | `TEST-delegate-in-host` | `FUNC-graph-delegate` | `MOD-surface` |
 | `REQ-delegate-in-host` | `TEST-delegate-in-host` | `FUNC-graph-delegate` | `MOD-surface` |
+| `REQ-delegate-wartebudget-je-repo` | `TEST-delegate-in-host` | `FUNC-graph-delegate` | `MOD-surface` |
 | `REQ-deterministic-serialization` | `TEST-export-graph-guard` · `TEST-roundtrip` | `MOD-projections` | — |
 | `REQ-done-iff-no-focus` | `TEST-generation-statemachine` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-decode` | `MOD-loop` |
@@ -206,7 +207,7 @@
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 
-### Komponente (SWE.2/3) — 114 REQ
+### Komponente (SWE.2/3) — 115 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -229,6 +230,7 @@
 | `REQ-dashboard-readonly` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-delegate-antwortet-vor-client-abbruch` | `TEST-delegate-in-host` | `FUNC-graph-delegate` | `MOD-surface` |
 | `REQ-delegate-in-host` | `TEST-delegate-in-host` | `FUNC-graph-delegate` | `MOD-surface` |
+| `REQ-delegate-wartebudget-je-repo` | `TEST-delegate-in-host` | `FUNC-graph-delegate` | `MOD-surface` |
 | `REQ-deterministic-serialization` | `TEST-export-graph-guard` · `TEST-roundtrip` | `MOD-projections` | — |
 | `REQ-disk-persistence` | `TEST-mvp-e2e` | `MOD-kernel` | — |
 | `REQ-doc-export` | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` | `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` | `MOD-agent-surface` · `MOD-projections` |

@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 152 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 153 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -31,6 +31,7 @@
 | `REQ-dashboard-readonly` | ✓ | ✓ passed | `TEST-dashboard-readonly` |
 | `REQ-delegate-antwortet-vor-client-abbruch` | ✓ | ✓ passed | `TEST-delegate-in-host` |
 | `REQ-delegate-in-host` | ✓ | ✓ passed | `TEST-delegate-in-host` |
+| `REQ-delegate-wartebudget-je-repo` | ✓ | ✓ passed | `TEST-delegate-in-host` |
 | `REQ-deterministic-serialization` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-roundtrip` |
 | `REQ-disk-persistence` | ✓ | ✓ passed | `TEST-mvp-e2e` |
 | `REQ-doc-export` | ✓ | ✓ passed | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` |
@@ -161,8 +162,8 @@
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
-Coverage: 152/152 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 119/152 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 153/153 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 120/153 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

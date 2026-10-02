@@ -174,18 +174,40 @@ describe('graph_delegate (CR-GC-714)', () => {
     expect(((await client.graph_delegate.handler({})) as { status: string }).status).toBe('fertig');
   });
 
-  it('Eingabevertrag: auftrag und antwort schliessen sich aus, fremde Felder und ein Budget ab 60 s sind abgewiesen', async () => {
+  it('Eingabevertrag: auftrag und antwort schliessen sich aus, fremde Felder sind abgewiesen; die Warte-Vorgabe liegt unter dem Client-Abbruch', async () => {
     const { callModel } = scriptedModel([]);
     const client = await angedockt(callModel);
     await expect(client.graph_delegate.handler({ auftrag: 'a', antwort: 'b' })).rejects.toThrow(/schließen sich aus/);
     expect(DelegateInputSchema.safeParse({ auftrag: 'a', fremd: 1 }).success).toBe(false);
-    // CR-GC-726: kein Aufruf wartet länger als der 60-s-Abbruch des MCP-Clients.
+    // CR-GC-726: ohne eigene Einstellung wartet kein Aufruf länger als der 60-s-Abbruch des MCP-Clients.
     const CLIENT_ABBRUCH_SEK = 60;
-    expect(WARTEN_MAX_SEK).toBeLessThan(CLIENT_ABBRUCH_SEK);
-    expect(DelegateInputSchema.safeParse({ wartenSek: CLIENT_ABBRUCH_SEK }).success).toBe(false);
-    expect(DelegateInputSchema.safeParse({ wartenSek: WARTEN_MAX_SEK }).success).toBe(true);
-    expect(DelegateInputSchema.parse({}).wartenSek).toBe(WARTEN_VORGABE_SEK);
-    expect(WARTEN_VORGABE_SEK).toBeLessThan(WARTEN_MAX_SEK);
+    expect(WARTEN_VORGABE_SEK).toBeLessThan(CLIENT_ABBRUCH_SEK);
+    expect(DelegateInputSchema.parse({}).wartenSek).toBeUndefined();
+    expect(DelegateInputSchema.safeParse({ wartenSek: WARTEN_MAX_SEK + 1 }).success).toBe(false);
+    // CR-GC-727: ein längeres Budget ist eine Einstellung des Repos, kein Wert des Modells.
+    expect(DelegateConfigSchema.parse({ baseUrl: 'http://x.invalid', model: 'm', wartenSek: 600 }).wartenSek).toBe(600);
+    expect(DelegateConfigSchema.safeParse({ baseUrl: 'http://x.invalid', model: 'm', wartenSek: WARTEN_MAX_SEK + 1 }).success).toBe(false);
+  });
+
+  it('CR-GC-727: executor.wartenSek aus der Config bestimmt, wie lange ein Aufruf ohne eigenes Budget wartet', async () => {
+    let freigeben!: () => void;
+    const tor = new Promise<void>((r) => (freigeben = r));
+    const { callModel } = scriptedModel([mutateCall('c1', SEED)], tor);
+    const kurz = DelegateConfigSchema.parse({ ...CONFIG, wartenSek: 1 });
+    const host = bindToolsToHarness(harness, undefined, { delegate: { config: kurz, callModel } });
+
+    const t0 = Date.now();
+    const erst = (await host.graph_delegate.handler({ auftrag: 'Eine Test-App.' })) as { status: string };
+    const gewartet = Date.now() - t0;
+    expect(erst.status).toBe('laeuft');
+    // 1 s aus der Config, nicht die Vorgabe von 45 s.
+    expect(gewartet).toBeGreaterThanOrEqual(900);
+    expect(gewartet).toBeLessThan(5000);
+    // Der Executor bekommt das Feld nicht — es gehört der Delegation.
+    expect(executorConfigFor(kurz, repoRoot)).not.toHaveProperty('wartenSek');
+
+    freigeben();
+    expect(((await host.graph_delegate.handler({})) as { status: string }).status).toBe('fertig');
   });
 
   it('der Executor bekommt graph_delegate nicht angeboten', () => {

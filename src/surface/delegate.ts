@@ -37,6 +37,22 @@ import type { ToolContext } from './tool-context.js';
 import { ANALYSE_TASKS } from '../loop/task-artifact.js';
 
 /**
+ * Das Warte-Budget eines Aufrufs (CR-GC-726, CR-GC-727). MCP-Clients brechen einen Aufruf nach 60 s
+ * ab (Vorgabe des MCP-SDK; OpenCode 1.18 übernimmt sie). Wartet der Host länger, sieht der Client
+ * „Request timed out“ statt `laeuft`. Gemessen im Lauf local-3 (2026-10-02): Vorgabe 120 s,
+ * Executor-Runde 85 s — der Client hielt graphcode für defekt und begann zu coden. Darum liegt die
+ * VORGABE unter 60 s.
+ *
+ * Kurz zu warten hat auf einer GPU einen Preis: jede Abfrage `graph_delegate({})` ist eine Inferenz
+ * des Client-Modells über seinen ganzen Kontext, und die nimmt dem Executor die Rechenzeit (Probe
+ * todo, 2026-10-02: 14–19 k Token je Abfrage ohne Cache, Executor-Runden 2–5 min statt 15–85 s).
+ * Darum ist das Budget je Repo einstellbar (`executor.wartenSek`) — gepaart mit dem Abbruch des
+ * Clients, der dann länger warten muss.
+ */
+export const WARTEN_VORGABE_SEK = 45;
+export const WARTEN_MAX_SEK = 3600;
+
+/**
  * Der Abschnitt `executor` in `graphcode.config.jsonc`. Die Datei ist eingecheckt — deshalb kein
  * `apiKey`, sondern `apiKeyFile` (Pfad, `~` erlaubt). `interactive` und `candidates` sind keine
  * Felder: eine Delegation fragt immer zurück, und Best-of-N hält nicht je Kandidat an.
@@ -47,7 +63,15 @@ export const DelegateConfigSchema = ExecutorConfigSchema.omit({
   candidates: true,
   judge: true,
 })
-  .extend({ apiKeyFile: z.string().min(1).optional() })
+  .extend({
+    apiKeyFile: z.string().min(1).optional(),
+    /**
+     * Warte-Budget eines graph_delegate-Aufrufs für dieses Repo (CR-GC-727). Nur zusammen mit dem
+     * Abbruch des MCP-Clients höher setzen — der Client muss länger warten als dieser Wert
+     * (OpenCode: `experimental.mcp_timeout` in opencode.json, in Millisekunden).
+     */
+    wartenSek: z.number().int().min(1).max(WARTEN_MAX_SEK).optional(),
+  })
   .strict();
 export type DelegateConfig = z.infer<typeof DelegateConfigSchema>;
 
@@ -75,7 +99,7 @@ function expandHome(path: string, repoRoot: string): string {
 
 /** Die Lauf-Config: Schlüssel frisch von der Platte gelesen, interactive fest an. */
 export function executorConfigFor(cfg: DelegateConfig, repoRoot: string, maxRounds?: number): ExecutorConfig {
-  const { apiKeyFile, ...rest } = cfg;
+  const { apiKeyFile, wartenSek: _wartenSek, ...rest } = cfg;
   const apiKey = apiKeyFile ? readFileSync(expandHome(apiKeyFile, repoRoot), 'utf8').trim() : undefined;
   return ExecutorConfigSchema.parse({
     ...rest,
@@ -154,17 +178,6 @@ class Delegation {
   }
 }
 
-/**
- * Das Warte-Budget eines Aufrufs (CR-GC-726). MCP-Clients brechen einen Aufruf nach 60 s ab
- * (Vorgabe des MCP-SDK; OpenCode 1.18 übernimmt sie). Wartet der Host länger, sieht der Client
- * „Request timed out“ statt `laeuft`, und ein Ereignis, das dem abgebrochenen Aufruf zugestellt
- * wird, ist verloren. Gemessen im Lauf local-3 (2026-10-02): Vorgabe 120 s, Executor-Runde 85 s —
- * der Client hielt graphcode für defekt und begann zu coden, der Executor schrieb unbemerkt weiter.
- * Darum bleibt auch die Obergrenze unter 60 s.
- */
-export const WARTEN_VORGABE_SEK = 45;
-export const WARTEN_MAX_SEK = 55;
-
 /** Die Spur der Delegationen eines Repos, eine Zeile je Schritt — lesbar, auch wenn kein Aufruf wartet. */
 export const DELEGATION_LOG = 'delegation.log';
 
@@ -189,8 +202,8 @@ export const DelegateInputSchema = z
       .int()
       .min(1)
       .max(WARTEN_MAX_SEK)
-      .default(WARTEN_VORGABE_SEK)
-      .describe('Längstens so lange wartet dieser Aufruf; danach status laeuft, und graph_delegate({}) wartet weiter.'),
+      .optional()
+      .describe('Längstens so lange wartet dieser Aufruf; danach status laeuft, und graph_delegate({}) wartet weiter. Vorgabe aus der Config.'),
   })
   .strict();
 
@@ -216,8 +229,8 @@ export function bindDelegateTool(
 ): MCPTool<z.infer<typeof DelegateInputSchema>, unknown> {
   let laufend: Delegation | null = null;
 
-  async function antwortAuf(d: Delegation, wartenSek: number): Promise<unknown> {
-    const e = await d.naechstes(wartenSek * 1000);
+  async function antwortAuf(d: Delegation, wartenSek: number | undefined): Promise<unknown> {
+    const e = await d.naechstes((wartenSek ?? binding.config.wartenSek ?? WARTEN_VORGABE_SEK) * 1000);
     if (!e) return { status: 'laeuft', spur: d.letzteSpur, hinweis: WEITER };
     if (e.status === 'frage') return { status: 'frage', fragen: e.fragen, hinweis: ANTWORTEN };
     laufend = null;

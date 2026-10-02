@@ -2861,6 +2861,12 @@
       "description": "docs/cr/open/CR-GC-726-graph-delegate-wartet-standardmaessig-12.md"
     },
     {
+      "id": "CR-GC-727",
+      "type": "CR",
+      "name": "D2 auf einer GPU: der wartende Client nimmt dem Executor die Rechenzeit. Probe todo 2026-10-02: jede graph_delegate({})-Abfrage des Clients kostet eine Inferenz mit 14-19 k Token ohne Cache; Executor-Runden dauern 2-5 min statt 15-85 s, qwen3.8 im Executor reisst den 300-s-Aufruf-Timeout. Das Warte-Budget muss je Repo einstellbar sein (executor.wartenSek), gepaart mit dem Abbruch des Clients (OpenCode experimental.mcp_timeout); die Obergrenze 55 s aus CR-GC-726 verhindert das",
+      "description": "docs/cr/open/CR-GC-727-d2-auf-einer-gpu-der-wartende-client-nim.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5815,6 +5821,15 @@
       "type": "REQ",
       "name": "Delegation an den Executor im Host",
       "description": "Ein angedockter Client kann Modellarbeit an den Executor im Host-Prozess abgeben; der Executor schreibt durch denselben Store und dasselbe Gate wie der Client, seine offenen Fragen gehen an den Client zurueck, und ein Aufruf kehrt spaetestens nach seinem Warte-Budget zurueck.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-delegate-wartebudget-je-repo",
+      "type": "REQ",
+      "name": "Warte-Budget je Repo",
+      "description": "Das Warte-Budget eines graph_delegate-Aufrufs muss je Repo einstellbar sein (executor.wartenSek), damit ein Client auf derselben GPU nicht waehrend der Arbeit des Executors abfragt; ohne Einstellung gilt die Vorgabe unter 60 Sekunden.",
       "kinds": [
         "functional"
       ]
@@ -14564,6 +14579,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-727",
+      "target": "FUNC-graph-delegate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-727",
+      "target": "REQ-delegate-wartebudget-je-repo",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-727",
+      "target": "SCHEMA-delegate-input",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -18931,6 +18961,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-graph-delegate",
+      "target": "REQ-delegate-wartebudget-je-repo",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-graph-expand",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -21270,6 +21305,11 @@
     },
     {
       "source": "TEST-delegate-in-host",
+      "target": "REQ-delegate-wartebudget-je-repo",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-delegate-in-host",
       "target": "SCHEMA-delegate-input",
       "type": "verify"
     },
@@ -23149,6 +23189,11 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-delegate-wartebudget-je-repo",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-graph-context-replaces-reading",
       "type": "compose"
     },
@@ -23274,5 +23319,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 567
+  "graphVersion": 569
 }
