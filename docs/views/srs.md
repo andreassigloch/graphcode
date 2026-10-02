@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 153 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 154 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -1659,6 +1659,14 @@ Verification ◀ `TEST-delegate-in-host` (integration) · satisfy ◀ `FUNC-grap
 ###### `REQ-delegate-in-host` — Delegation an den Executor im Host
 
 Ein angedockter Client kann Modellarbeit an den Executor im Host-Prozess abgeben; der Executor schreibt durch denselben Store und dasselbe Gate wie der Client, seine offenen Fragen gehen an den Client zurueck, und ein Aufruf kehrt spaetestens nach seinem Warte-Budget zurueck.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-delegate-in-host` (integration) · satisfy ◀ `FUNC-graph-delegate` · allocate ▶ `MOD-surface`
+
+###### `REQ-delegate-schluss-in-worten` — Schluss einer Delegation in Worten
+
+Das Ergebnis einer Delegation muss dem Client in Worten nennen, warum der Lauf endete und welcher Aufruf weiterfuehrt: Rundenbudget aufgebraucht, Kern ohne bearbeitbaren Hinweis mit den offenen Analysen, festgefahren ohne weiteren Weg, oder fertig; ein Auftragstext, der bei bestehendem Modell nicht gelesen wurde, steht ebenfalls dort.
 
 priority: must · status: n/a · kinds: functional
 
@@ -7656,7 +7664,7 @@ verify ▶ `REQ-artifact-freshness` · `REQ-dashboard-readonly` · `REQ-readines
 
 Host mit Socket und Proxy wie eine zweite Client-Session, gescriptetes Modell: Delegation, eine Frage, Antwort, Fortsetzung, geschriebener Knoten ueber den Proxy lesbar; Warte-Budget liefert laeuft; Eingabevertrag mit Abweisungen; der Executor bekommt graph_delegate nicht angeboten; ein Schluessel in der eingecheckten Config wird abgewiesen.
 
-verify ▶ `REQ-delegate-antwortet-vor-client-abbruch` · `REQ-delegate-in-host` · `REQ-delegate-wartebudget-je-repo` · `SCHEMA-delegate-input` · testRefs: `tests/delegate.test.ts`
+verify ▶ `REQ-delegate-antwortet-vor-client-abbruch` · `REQ-delegate-in-host` · `REQ-delegate-schluss-in-worten` · `REQ-delegate-wartebudget-je-repo` · `SCHEMA-delegate-input` · testRefs: `tests/delegate.test.ts`
 
 ### 8.28  `TEST-deny-headless-question` — Keine Rueckfrage ins Leere im headless-Lauf
 
@@ -8392,4 +8400,4 @@ verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.
 
 ## 9  Traceability summary
 
-153 REQ · 153 verified · 0 without a verifying TEST (R-01).
+154 REQ · 154 verified · 0 without a verifying TEST (R-01).

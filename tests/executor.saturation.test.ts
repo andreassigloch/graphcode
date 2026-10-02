@@ -115,6 +115,8 @@ describe('CR-GC-694: Saettigungsstopp aus dem Ertrag', () => {
     });
     expect(stats.genRounds).toBe(10);
     expect(stats.stopReason).toBe('maxRounds');
+    // CR-GC-728: der Lauf begann auf einem bestehenden Modell — die erste Runde war keine Seed-Runde.
+    expect(stats.startPhase).toBe('expand');
     expect(harness.getGraph().nodes.filter((n) => n.uid.startsWith('ACTOR-r'))).toHaveLength(10);
   });
 

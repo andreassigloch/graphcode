@@ -154,6 +154,12 @@ export interface ExecutorStats {
   stopReason: 'handoff' | 'stalled' | 'saettigung' | 'maxRounds';
   /** CR-GC-724: der Stempel, den der Executor für den Analyse-Task dieses Laufs gesetzt hat. */
   taskStempel?: TaskStempel;
+  /** CR-GC-728: die Phase der ersten Runde — `seed` heißt, der Auftrag hat das Modell begonnen;
+   * sonst stand schon eines, und der Auftrag wurde nicht gelesen. */
+  startPhase?: GenerationStep['phase'];
+  /** CR-GC-728: bei `stalled` — die Analyse-Tasks mit offenem Eintrittspunkt und die zurückgestellten Funde. */
+  offeneTasks?: string[];
+  offeneFunde?: string[];
   genRounds: number;
   modelTurns: number;
   mutatesApplied: number;
@@ -345,6 +351,7 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     const gen = GenerationStep.parse(await registry['graph_generate'].handler(genInput));
     stats.genRounds = round + 1;
     seedPhase = gen.phase === 'seed';
+    stats.startPhase ??= gen.phase;
     trace(`[generate ${round + 1}] phase=${gen.phase} done=${gen.done}`);
     if (gen.done) {
       stats.done = true;
@@ -354,6 +361,8 @@ export async function runExecutor(opts: RunExecutorOptions): Promise<ExecutorSta
     // CR-GC-596: nur noch zurueckgestellte Funde — die Maschine hat keinen weiteren Vorschlag.
     if (gen.phase === 'stalled') {
       stats.stopReason = 'stalled';
+      stats.offeneTasks = gen.offeneTasks ?? [];
+      stats.offeneFunde = gen.offeneFunde ?? [];
       break;
     }
 

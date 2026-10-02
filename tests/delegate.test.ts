@@ -19,6 +19,7 @@ import {
   DelegateInputSchema,
   DELEGATION_LOG,
   executorConfigFor,
+  schlussHinweis,
   WARTEN_MAX_SEK,
   WARTEN_VORGABE_SEK,
 } from '../src/surface/delegate.js';
@@ -208,6 +209,34 @@ describe('graph_delegate (CR-GC-714)', () => {
 
     freigeben();
     expect(((await host.graph_delegate.handler({})) as { status: string }).status).toBe('fertig');
+  });
+
+  it('CR-GC-728: der Schluss nennt den Grund und den Aufruf, der weiterführt', async () => {
+    // Ende am Rundenbudget (CONFIG: maxRounds 1), der Auftrag hat das leere Modell begonnen.
+    const { callModel } = scriptedModel([mutateCall('c1', SEED)]);
+    const client = await angedockt(callModel);
+    const erst = (await client.graph_delegate.handler({ auftrag: 'Eine Test-App mit Anmeldung.' })) as {
+      ergebnis: { stopReason: string; hinweis: string };
+    };
+    expect(erst.ergebnis.stopReason).toBe('maxRounds');
+    expect(erst.ergebnis.hinweis).toContain('graph_delegate({auftrag:"weiter"})');
+    expect(erst.ergebnis.hinweis).not.toContain('nicht gelesen');
+
+  });
+
+  it('CR-GC-728: festgefahren mit offenen Analysen nennt den Task-Aufruf, ohne Analysen das Ende', () => {
+    const mitTasks = schlussHinweis(
+      { stopReason: 'stalled', startPhase: 'expand', offeneTasks: ['conops', 'fmea'], offeneFunde: ['task:AF-01:SYS-x'] },
+      { auftrag: 'weiter' },
+    );
+    expect(mitTasks).toContain('graph_delegate({task:"conops"})');
+    expect(mitTasks).toContain('Analysen conops, fmea');
+    expect(mitTasks).toContain('Der Auftragstext wurde nicht gelesen');
+    const ohne = schlussHinweis({ stopReason: 'stalled', startPhase: 'expand', offeneTasks: [], offeneFunde: ['uc:UC-02:UC-a'] }, { task: undefined });
+    expect(ohne).toContain('sitzt fest');
+    expect(ohne).toContain('uc:UC-02:UC-a');
+    expect(ohne).toContain('berichte dem Nutzer');
+    expect(schlussHinweis({ stopReason: 'handoff', startPhase: 'seed' }, { auftrag: 'x' })).toBe('Fertig: kein offener Regelhinweis mehr.');
   });
 
   it('der Executor bekommt graph_delegate nicht angeboten', () => {

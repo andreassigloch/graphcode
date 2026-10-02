@@ -115,6 +115,8 @@ export function executorConfigFor(cfg: DelegateConfig, repoRoot: string, maxRoun
 
 export interface DelegationErgebnis {
   stopReason: ExecutorStats['stopReason'];
+  /** CR-GC-728: warum der Lauf endete und welcher Aufruf weiterführt — in Worten für den Client. */
+  hinweis: string;
   runden: number;
   angewandt: number;
   abgelehnt: number;
@@ -214,6 +216,45 @@ export interface DelegateBinding {
 }
 
 const WEITER = 'graph_delegate({}) wartet weiter auf den Lauf.';
+
+/**
+ * CR-GC-728: der Schluss eines Laufs in Worten. Gemessen in der Probe todo (2026-10-02): `stalled`
+ * mit 0 Zügen und 0 Token las der Client als Ausfall des Modells und schickte fünf weitere Aufträge.
+ * Der Text nennt deshalb den Grund und den Aufruf, der weiterführt — oder dass keiner weiterführt.
+ */
+export function schlussHinweis(
+  s: Pick<ExecutorStats, 'stopReason' | 'startPhase' | 'offeneTasks' | 'offeneFunde'>,
+  input: { auftrag?: string; task?: string },
+): string {
+  const teile: string[] = [];
+  if (input.auftrag !== undefined && input.task === undefined && s.startPhase !== undefined && s.startPhase !== 'seed') {
+    teile.push(
+      'Der Auftragstext wurde nicht gelesen: das Modell bestand schon, und dann arbeitet der Executor die offenen Regelhinweise ab, keinen Text.',
+    );
+  }
+  const funde = s.offeneFunde ?? [];
+  const tasks = s.offeneTasks ?? [];
+  const liste = funde.length > 0 ? ` Zurückgestellt: ${funde.slice(0, 5).join('; ')}${funde.length > 5 ? ` (+${funde.length - 5} weitere)` : ''}.` : '';
+  switch (s.stopReason) {
+    case 'handoff':
+      teile.push('Fertig: kein offener Regelhinweis mehr.');
+      break;
+    case 'stalled':
+      teile.push(
+        tasks.length > 0
+          ? `Im Kern ist kein Regelhinweis mehr bearbeitbar. Offen sind die Analysen ${tasks.join(', ')} — starte sie einzeln, zuerst graph_delegate({task:"${tasks[0]}"}).${liste}`
+          : `Der Executor sitzt fest: jeder offene Regelhinweis blieb nach zwei Versuchen stehen.${liste} Ein weiterer Auftrag ändert daran nichts — berichte dem Nutzer.`,
+      );
+      break;
+    case 'saettigung':
+      teile.push('Beendet: die letzten Runden brachten kaum neue Elemente. Lies den Bestand und berichte dem Nutzer.');
+      break;
+    case 'maxRounds':
+      teile.push('Das Rundenbudget ist aufgebraucht, es sind noch Regelhinweise offen. graph_delegate({auftrag:"weiter"}) setzt die Arbeit an ihnen fort.');
+      break;
+  }
+  return teile.join(' ');
+}
 const ANTWORTEN =
   'Beantworte die Fragen selbst, per Recherche oder beim Nutzer und rufe graph_delegate({antwort}); ' +
   'eine leere Antwort legt sie als Annahme mit offenem Wert an.';
@@ -287,6 +328,7 @@ export function bindDelegateTool(
               status: 'fertig',
               ergebnis: {
                 stopReason: s.stopReason,
+                hinweis: schlussHinweis(s, input),
                 runden: s.genRounds,
                 angewandt: s.mutatesApplied,
                 abgelehnt: s.mutatesRejected,

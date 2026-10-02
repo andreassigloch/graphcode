@@ -2871,6 +2871,12 @@
       "commitRef": "f4e806d"
     },
     {
+      "id": "CR-GC-728",
+      "type": "CR",
+      "name": "graph_delegate sagt dem Client nicht, warum ein Lauf endete und was als Naechstes geht. Probe todo B4 (2026-10-02): nach fertigem Kern meldete der Executor stopReason stalled, 0 Zuege, 0 Token — offen waren nur die Eintrittspunkte der Analysen. Der Client (qwen3.8) hielt das fuer einen Ausfall des Modells und schickte fuenf weitere Auftraege mit genauen Kantenanweisungen; jeder endete gleich. Dazu: ein auftrag bei bestehendem Modell wird still verworfen (Intent nur in der Seed-Phase), der Client erfaehrt es nicht",
+      "description": "docs/cr/open/CR-GC-728-graph-delegate-sagt-dem-client-nicht-war.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5825,6 +5831,15 @@
       "type": "REQ",
       "name": "Delegation an den Executor im Host",
       "description": "Ein angedockter Client kann Modellarbeit an den Executor im Host-Prozess abgeben; der Executor schreibt durch denselben Store und dasselbe Gate wie der Client, seine offenen Fragen gehen an den Client zurueck, und ein Aufruf kehrt spaetestens nach seinem Warte-Budget zurueck.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-delegate-schluss-in-worten",
+      "type": "REQ",
+      "name": "Schluss einer Delegation in Worten",
+      "description": "Das Ergebnis einer Delegation muss dem Client in Worten nennen, warum der Lauf endete und welcher Aufruf weiterfuehrt: Rundenbudget aufgebraucht, Kern ohne bearbeitbaren Hinweis mit den offenen Analysen, festgefahren ohne weiteren Weg, oder fertig; ein Auftragstext, der bei bestehendem Modell nicht gelesen wurde, steht ebenfalls dort.",
       "kinds": [
         "functional"
       ]
@@ -14598,6 +14613,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-728",
+      "target": "FUNC-graph-delegate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-728",
+      "target": "REQ-delegate-schluss-in-worten",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-728",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -18966,6 +18996,11 @@
     },
     {
       "source": "FUNC-graph-delegate",
+      "target": "REQ-delegate-schluss-in-worten",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-delegate",
       "target": "REQ-delegate-wartebudget-je-repo",
       "type": "satisfy"
     },
@@ -21309,6 +21344,11 @@
     },
     {
       "source": "TEST-delegate-in-host",
+      "target": "REQ-delegate-schluss-in-worten",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-delegate-in-host",
       "target": "REQ-delegate-wartebudget-je-repo",
       "type": "verify"
     },
@@ -23193,6 +23233,11 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-delegate-schluss-in-worten",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-delegate-wartebudget-je-repo",
       "type": "compose"
     },
@@ -23323,5 +23368,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 570
+  "graphVersion": 572
 }

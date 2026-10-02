@@ -774,6 +774,9 @@
 | `CR-GC-727` | relation | `FUNC-graph-delegate` |
 | `CR-GC-727` | relation | `REQ-delegate-wartebudget-je-repo` |
 | `CR-GC-727` | relation | `SCHEMA-delegate-input` |
+| `CR-GC-728` | relation | `FUNC-graph-delegate` |
+| `CR-GC-728` | relation | `REQ-delegate-schluss-in-worten` |
+| `CR-GC-728` | relation | `SCHEMA-generation-step` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1614,6 +1617,7 @@
 | `FUNC-graph-delegate` | io | `FLOW-delegation-request` |
 | `FUNC-graph-delegate` | satisfy | `REQ-delegate-antwortet-vor-client-abbruch` |
 | `FUNC-graph-delegate` | satisfy | `REQ-delegate-in-host` |
+| `FUNC-graph-delegate` | satisfy | `REQ-delegate-schluss-in-worten` |
 | `FUNC-graph-delegate` | satisfy | `REQ-delegate-wartebudget-je-repo` |
 | `FUNC-graph-expand` | allocate | `MOD-kernel` |
 | `FUNC-graph-expand` | io | `FLOW-expand-subgraph` |
@@ -2048,6 +2052,7 @@
 | `TEST-dashboard-readonly` | verify | `REQ-readiness-transparent` |
 | `TEST-delegate-in-host` | verify | `REQ-delegate-antwortet-vor-client-abbruch` |
 | `TEST-delegate-in-host` | verify | `REQ-delegate-in-host` |
+| `TEST-delegate-in-host` | verify | `REQ-delegate-schluss-in-worten` |
 | `TEST-delegate-in-host` | verify | `REQ-delegate-wartebudget-je-repo` |
 | `TEST-delegate-in-host` | verify | `SCHEMA-delegate-input` |
 | `TEST-deny-headless-question` | verify | `REQ-open-point-asked` |
@@ -2401,6 +2406,7 @@
 | `UC-reduced-llm` | compose | `REQ-cache-layering` |
 | `UC-reduced-llm` | compose | `REQ-delegate-antwortet-vor-client-abbruch` |
 | `UC-reduced-llm` | compose | `REQ-delegate-in-host` |
+| `UC-reduced-llm` | compose | `REQ-delegate-schluss-in-worten` |
 | `UC-reduced-llm` | compose | `REQ-delegate-wartebudget-je-repo` |
 | `UC-reduced-llm` | compose | `REQ-graph-context-replaces-reading` |
 | `UC-reduced-llm` | compose | `REQ-inventory-switch` |

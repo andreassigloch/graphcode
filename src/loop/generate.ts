@@ -86,6 +86,12 @@ export const GenerationStep = z.object({
   /** CR-GC-608: der Steuerzustand (Termvektor, Summe der Ueberschuesse) — das Fertig-Kriterium der
    * Steuerregeln liest ihn im Sitzungsgedaechtnis; `next` traegt ihn nicht. */
   steer: z.object({ key: z.string(), sum: z.number(), terms: z.array(z.string()) }).optional(),
+  /** CR-GC-728: nur in phase 'stalled' — die Analyse-Tasks, deren Eintrittspunkt offen ist. Als Feld,
+   * weil ein Treiber ohne graph_generate (graph_delegate) sie dem Client nennen muss, ohne den
+   * Prompt-Text zu zerlegen. Leer = der Kern selbst sitzt fest. */
+  offeneTasks: z.array(z.string()).optional(),
+  /** CR-GC-728: nur in phase 'stalled' — die zurückgestellten Fund-Fenster (focusKeys). */
+  offeneFunde: z.array(z.string()).optional(),
 });
 export type GenerationStep = z.infer<typeof GenerationStep>;
 
@@ -849,6 +855,8 @@ function stepCore(
       focusKey: null,
       focusTypes: [],
       focusDimension: null,
+      offeneTasks,
+      offeneFunde: offen,
     };
   }
 
