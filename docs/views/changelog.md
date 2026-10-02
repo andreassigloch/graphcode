@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 335 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 336 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 335 CR · 308 done · 4 open.
+Total: 336 CR · 308 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -397,3 +397,4 @@ Total: 335 CR · 308 done · 4 open.
 | `CR-GC-723` | done | Werkzeugprofil je LLM-Art am MCP-Server: Variable GRAPHCODE_LLM=local/cloud (Scaffold schreibt local in opencode.json, cloud in .mcp.json). local = graph_delegate + Leser graph_elements, graph_get_node, graph_context, Leser-Beschreibung auf den ersten Satz; kein graph_mutate (ein Schreibweg: der Executor im Host). cloud = volle Liste. Entscheid Autor 2026-10-01, Messung in ITEM-2026-687 (Liste heute 32.029 Zeichen, OpenCode laedt sie je Anfrage). Abnahme: A/B-Lauf OpenCode gegen qwen |
 | `CR-GC-724` | done | Analysen ueber den Executor (lokaler Weg, Profil local): graph_delegate und graphcode run nehmen task (conops/trade/irr/fmea/plan) und reichen ihn an graph_generate; die fuenf Analyse-Skills bekommen einen inject-Ausschnitt mit gueltigem Format-E-Vorbild fuer ihr Artefakt (Test: jedes Vorbild geht durchs Gate); Werkzeugtext und AGENTS.md nennen die Tasks. IRR: Annahmen als Rueckfrage, offene als CR. Beleg: local-2 — mit Profil local hat der Client kein graph_generate/graph_mutate, der Executor kennt keinen task. Stempel durch den Code folgt als eigener Schritt (ITEM-2026-684) |
 | `CR-GC-725` | done | Executor verwirft Stempelzeilen des Modells: eine @analysisFreshness-Zeile verlaesst den Batch vor dem Gate (executor-gate.ts), den Stempel setzt allein der Executor, wenn das Artefakt steht (CR-GC-724). Executor-Teil von ITEM-2026-684; local-1 setzte fuenf Stempel ohne Artefakt |
+| `CR-GC-726` | n/a | graph_delegate wartet standardmaessig 120 s, OpenCode bricht MCP-Aufrufe nach 60 s ab: der Client sieht 'Request timed out', der Executor laeuft unbemerkt weiter (Lauf local-3, 2026-10-02: 5 Batches, 52 Befehle geschrieben, Client begann zu coden). Dazu: die Spur der Delegation steht nur im Speicher, nach einem Abbruch ist nicht feststellbar, woran der Lauf steht |

@@ -19,12 +19,13 @@
  *
  * @author andreas@siglochconsulting
  */
-import { readFileSync } from 'node:fs';
+import { appendFileSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { isAbsolute, join } from 'node:path';
 import { z } from 'zod/v4';
 import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { LoadedConfig } from '../kernel/config.js';
+import { GRAPHCODE_DIR } from '../kernel/workspace.js';
 import {
   ExecutorConfigSchema,
   runExecutor,
@@ -153,6 +154,20 @@ class Delegation {
   }
 }
 
+/**
+ * Das Warte-Budget eines Aufrufs (CR-GC-726). MCP-Clients brechen einen Aufruf nach 60 s ab
+ * (Vorgabe des MCP-SDK; OpenCode 1.18 übernimmt sie). Wartet der Host länger, sieht der Client
+ * „Request timed out“ statt `laeuft`, und ein Ereignis, das dem abgebrochenen Aufruf zugestellt
+ * wird, ist verloren. Gemessen im Lauf local-3 (2026-10-02): Vorgabe 120 s, Executor-Runde 85 s —
+ * der Client hielt graphcode für defekt und begann zu coden, der Executor schrieb unbemerkt weiter.
+ * Darum bleibt auch die Obergrenze unter 60 s.
+ */
+export const WARTEN_VORGABE_SEK = 45;
+export const WARTEN_MAX_SEK = 55;
+
+/** Die Spur der Delegationen eines Repos, eine Zeile je Schritt — lesbar, auch wenn kein Aufruf wartet. */
+export const DELEGATION_LOG = 'delegation.log';
+
 export const DelegateInputSchema = z
   .object({
     auftrag: z
@@ -173,8 +188,8 @@ export const DelegateInputSchema = z
       .number()
       .int()
       .min(1)
-      .max(600)
-      .default(120)
+      .max(WARTEN_MAX_SEK)
+      .default(WARTEN_VORGABE_SEK)
       .describe('Längstens so lange wartet dieser Aufruf; danach status laeuft, und graph_delegate({}) wartet weiter.'),
   })
   .strict();
@@ -220,12 +235,23 @@ export function bindDelegateTool(
     async handler(input) {
       // CR-GC-724: auch ein Task allein startet eine Delegation — die Intention steht dann am SYS.
       if (input.auftrag !== undefined || input.task !== undefined) {
-        if (laufend) throw new Error('graph_delegate: es läuft bereits eine Delegation — erst beenden ({} oder {antwort}).');
+        if (laufend) {
+          throw new Error(
+            'graph_delegate: es läuft bereits eine Delegation — rufe graph_delegate({}) auf, um auf sie zu warten' +
+              (laufend.wartetAufAntwort ? ', oder graph_delegate({antwort}), sie hat eine offene Frage.' : '.'),
+          );
+        }
         if (input.antwort !== undefined) throw new Error('graph_delegate: auftrag und antwort schließen sich aus.');
         const repoRoot = ctx.harness.getRepoRoot();
         const config = executorConfigFor(binding.config, repoRoot, input.maxRounds);
         const d = new Delegation();
         laufend = d;
+        const spurDatei = join(repoRoot, GRAPHCODE_DIR, DELEGATION_LOG);
+        const spur = (zeile: string): void => {
+          d.letzteSpur = zeile;
+          appendFileSync(spurDatei, `${new Date().toISOString()}\t${zeile.replace(/\n/g, ' ⏎ ')}\n`);
+        };
+        spur(`[delegation] start ${input.task ? `task=${input.task} ` : ''}modell=${config.model}`);
         const eigene = Object.fromEntries(Object.entries(registry).filter(([n]) => n !== 'graph_delegate'));
         // Herkunft im Audit: diese Züge schrieb das Executor-Modell im Auftrag des Clients.
         ctx.setOrigin({ model: config.model, intent: input.auftrag ?? `Task ${input.task}` });
@@ -236,12 +262,14 @@ export function bindDelegateTool(
           task: input.task,
           config,
           callModel: binding.callModel,
-          ask: d.frage,
-          trace: (zeile) => {
-            d.letzteSpur = zeile;
+          ask: (fragen) => {
+            spur(`[delegation] frage ${fragen.join(' | ')}`);
+            return d.frage(fragen);
           },
+          trace: spur,
         })
-          .then((s) =>
+          .then((s) => {
+            spur(`[delegation] fertig stop=${s.stopReason} runden=${s.genRounds} angewandt=${s.mutatesApplied} abgelehnt=${s.mutatesRejected}`);
             d.melde({
               status: 'fertig',
               ergebnis: {
@@ -255,15 +283,23 @@ export function bindDelegateTool(
                 tokensIn: s.tokensIn,
                 tokensOut: s.tokensOut,
               },
-            }),
-          )
-          .catch((err: unknown) => d.melde({ status: 'fehler', fehler: err instanceof Error ? err.message : String(err) }))
+            });
+          })
+          .catch((err: unknown) => {
+            const fehler = err instanceof Error ? err.message : String(err);
+            spur(`[delegation] fehler ${fehler}`);
+            d.melde({ status: 'fehler', fehler });
+          })
           .finally(() => ctx.setOrigin({}));
         return antwortAuf(d, input.wartenSek);
       }
       if (!laufend) throw new Error('graph_delegate: keine Delegation läuft — starte mit {auftrag} oder {task}.');
       if (input.antwort !== undefined) {
         if (!laufend.wartetAufAntwort) throw new Error('graph_delegate: der Executor hat keine offene Frage.');
+        appendFileSync(
+          join(ctx.harness.getRepoRoot(), GRAPHCODE_DIR, DELEGATION_LOG),
+          `${new Date().toISOString()}\t[delegation] antwort ${input.antwort.replace(/\n/g, ' ⏎ ')}\n`,
+        );
         laufend.beantworte(input.antwort);
       }
       return antwortAuf(laufend, input.wartenSek);

@@ -6,14 +6,22 @@
  * Harness im Host-Prozess.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
 import { type CallModel, type ModelResponse } from '../src/loop/executor.js';
 import { buildToolSpecs } from '../src/loop/executor-backend.js';
 import { loadGraphcodeConfig, DEFAULT_CONFIG } from '../src/kernel/config.js';
-import { delegateBindingOf, DelegateConfigSchema, DelegateInputSchema, executorConfigFor } from '../src/surface/delegate.js';
+import {
+  delegateBindingOf,
+  DelegateConfigSchema,
+  DelegateInputSchema,
+  DELEGATION_LOG,
+  executorConfigFor,
+  WARTEN_MAX_SEK,
+  WARTEN_VORGABE_SEK,
+} from '../src/surface/delegate.js';
 import { startHostSocket, buildProxyRegistry, type HostSocket } from '../src/surface/host-shim.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 
@@ -137,6 +145,24 @@ describe('graph_delegate (CR-GC-714)', () => {
     await expect(client.graph_delegate.handler({})).rejects.toThrow(/keine Delegation/);
   });
 
+  it('CR-GC-726: die Spur steht in .graphcode/delegation.log — Start, Frage, Antwort, Ende', async () => {
+    const { callModel } = scriptedModel([mutateCall('c1', `? ${FRAGE}\n`), mutateCall('c2', SEED)]);
+    const client = await angedockt(callModel);
+    await client.graph_delegate.handler({ auftrag: 'Eine Test-App mit Anmeldung.' });
+    // Ein zweiter Auftrag nennt den Aufruf, der weiterführt — hier die offene Frage.
+    await expect(client.graph_delegate.handler({ auftrag: 'Zweiter Auftrag.' })).rejects.toThrow(/graph_delegate\(\{antwort\}\)/);
+    await client.graph_delegate.handler({ antwort: 'in 2 Sekunden' });
+
+    const zeilen = readFileSync(join(repoRoot, '.graphcode', DELEGATION_LOG), 'utf8').trimEnd().split('\n');
+    const text = zeilen.map((z) => z.split('\t')[1]);
+    expect(text[0]).toBe('[delegation] start modell=scripted');
+    expect(text).toContain(`[delegation] frage ${FRAGE}`);
+    expect(text).toContain('[delegation] antwort in 2 Sekunden');
+    expect(text.at(-1)).toMatch(/^\[delegation\] fertig stop=\w+ runden=\d+ angewandt=1 abgelehnt=0$/);
+    // Jede Zeile trägt ihren Zeitpunkt.
+    for (const z of zeilen) expect(z).toMatch(/^\d{4}-\d\d-\d\dT[\d:.]+Z\t/);
+  });
+
   it('eine Antwort ohne offene Frage wird abgewiesen', async () => {
     let freigeben!: () => void;
     const tor = new Promise<void>((r) => (freigeben = r));
@@ -148,13 +174,18 @@ describe('graph_delegate (CR-GC-714)', () => {
     expect(((await client.graph_delegate.handler({})) as { status: string }).status).toBe('fertig');
   });
 
-  it('Eingabevertrag: auftrag und antwort schliessen sich aus, fremde Felder und Budget > 600 s sind abgewiesen', async () => {
+  it('Eingabevertrag: auftrag und antwort schliessen sich aus, fremde Felder und ein Budget ab 60 s sind abgewiesen', async () => {
     const { callModel } = scriptedModel([]);
     const client = await angedockt(callModel);
     await expect(client.graph_delegate.handler({ auftrag: 'a', antwort: 'b' })).rejects.toThrow(/schließen sich aus/);
     expect(DelegateInputSchema.safeParse({ auftrag: 'a', fremd: 1 }).success).toBe(false);
-    expect(DelegateInputSchema.safeParse({ wartenSek: 601 }).success).toBe(false);
-    expect(DelegateInputSchema.parse({}).wartenSek).toBe(120);
+    // CR-GC-726: kein Aufruf wartet länger als der 60-s-Abbruch des MCP-Clients.
+    const CLIENT_ABBRUCH_SEK = 60;
+    expect(WARTEN_MAX_SEK).toBeLessThan(CLIENT_ABBRUCH_SEK);
+    expect(DelegateInputSchema.safeParse({ wartenSek: CLIENT_ABBRUCH_SEK }).success).toBe(false);
+    expect(DelegateInputSchema.safeParse({ wartenSek: WARTEN_MAX_SEK }).success).toBe(true);
+    expect(DelegateInputSchema.parse({}).wartenSek).toBe(WARTEN_VORGABE_SEK);
+    expect(WARTEN_VORGABE_SEK).toBeLessThan(WARTEN_MAX_SEK);
   });
 
   it('der Executor bekommt graph_delegate nicht angeboten', () => {

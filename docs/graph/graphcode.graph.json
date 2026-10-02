@@ -2855,6 +2855,12 @@
       "commitRef": "46edc6f"
     },
     {
+      "id": "CR-GC-726",
+      "type": "CR",
+      "name": "graph_delegate wartet standardmaessig 120 s, OpenCode bricht MCP-Aufrufe nach 60 s ab: der Client sieht 'Request timed out', der Executor laeuft unbemerkt weiter (Lauf local-3, 2026-10-02: 5 Batches, 52 Befehle geschrieben, Client begann zu coden). Dazu: die Spur der Delegation steht nur im Speicher, nach einem Abbruch ist nicht feststellbar, woran der Lauf steht",
+      "description": "docs/cr/open/CR-GC-726-graph-delegate-wartet-standardmaessig-12.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5793,6 +5799,15 @@
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-delegate-antwortet-vor-client-abbruch",
+      "type": "REQ",
+      "name": "Delegation antwortet vor dem Client-Abbruch",
+      "description": "Ein Aufruf von graph_delegate muss vor dem Abbruch des MCP-Clients antworten: Warte-Vorgabe und Obergrenze liegen unter 60 Sekunden, und die Spur der Delegation steht mit Zeitpunkt in einer Datei des Stores, lesbar auch ohne wartenden Aufruf.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -14534,6 +14549,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-726",
+      "target": "FUNC-graph-delegate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-726",
+      "target": "REQ-delegate-antwortet-vor-client-abbruch",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-726",
+      "target": "SCHEMA-delegate-input",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -18892,6 +18922,11 @@
     },
     {
       "source": "FUNC-graph-delegate",
+      "target": "REQ-delegate-antwortet-vor-client-abbruch",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-delegate",
       "target": "REQ-delegate-in-host",
       "type": "satisfy"
     },
@@ -21225,6 +21260,11 @@
     },
     {
       "source": "TEST-delegate-in-host",
+      "target": "REQ-delegate-antwortet-vor-client-abbruch",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-delegate-in-host",
       "target": "REQ-delegate-in-host",
       "type": "verify"
     },
@@ -23099,6 +23139,11 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-delegate-antwortet-vor-client-abbruch",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-delegate-in-host",
       "type": "compose"
     },
@@ -23229,5 +23274,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 564
+  "graphVersion": 567
 }

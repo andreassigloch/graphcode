@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 151 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 152 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -1647,6 +1647,14 @@ Verification ◀ `TEST-executor-truncation` (integration) · `TEST-one-driver-lo
 Das Werkzeug graph_delegate: ein angedockter Client gibt Modellarbeit an den Executor im Host-Prozess ab. Die Frage des Executors beendet den Aufruf, der naechste Aufruf mit der Antwort setzt den Lauf fort; nach dem Warte-Budget kehrt der Aufruf mit laeuft zurueck. Modell und Gateway kommen aus dem Abschnitt executor der Repo-Config, ohne ihn gibt es das Werkzeug nicht.
 
 io ◀ `FLOW-delegate-call` · io ▶ `FLOW-delegation-request` · allocate ▶ `MOD-surface`
+
+###### `REQ-delegate-antwortet-vor-client-abbruch` — Delegation antwortet vor dem Client-Abbruch
+
+Ein Aufruf von graph_delegate muss vor dem Abbruch des MCP-Clients antworten: Warte-Vorgabe und Obergrenze liegen unter 60 Sekunden, und die Spur der Delegation steht mit Zeitpunkt in einer Datei des Stores, lesbar auch ohne wartenden Aufruf.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-delegate-in-host` (integration) · satisfy ◀ `FUNC-graph-delegate` · allocate ▶ `MOD-surface`
 
 ###### `REQ-delegate-in-host` — Delegation an den Executor im Host
 
@@ -7640,7 +7648,7 @@ verify ▶ `REQ-artifact-freshness` · `REQ-dashboard-readonly` · `REQ-readines
 
 Host mit Socket und Proxy wie eine zweite Client-Session, gescriptetes Modell: Delegation, eine Frage, Antwort, Fortsetzung, geschriebener Knoten ueber den Proxy lesbar; Warte-Budget liefert laeuft; Eingabevertrag mit Abweisungen; der Executor bekommt graph_delegate nicht angeboten; ein Schluessel in der eingecheckten Config wird abgewiesen.
 
-verify ▶ `REQ-delegate-in-host` · `SCHEMA-delegate-input` · testRefs: `tests/delegate.test.ts`
+verify ▶ `REQ-delegate-antwortet-vor-client-abbruch` · `REQ-delegate-in-host` · `SCHEMA-delegate-input` · testRefs: `tests/delegate.test.ts`
 
 ### 8.28  `TEST-deny-headless-question` — Keine Rueckfrage ins Leere im headless-Lauf
 
@@ -8376,4 +8384,4 @@ verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.
 
 ## 9  Traceability summary
 
-151 REQ · 151 verified · 0 without a verifying TEST (R-01).
+152 REQ · 152 verified · 0 without a verifying TEST (R-01).
