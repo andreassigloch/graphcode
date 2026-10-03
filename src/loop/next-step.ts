@@ -37,16 +37,58 @@ const ANALYSE: Record<Task, string> = {
   realisierung: 'die Bindung an Code und Tests',
 };
 
-/** Je Fokus-Dimension die Bitte des Nutzers; `{n}` = die Namen der Fund-Elemente. */
-export const VORSCHLAG_DIMENSION: Record<string, string> = {
-  uc: 'Arbeite die Abläufe {n} weiter aus.',
-  req: 'Schärfe die Anforderungen an {n}.',
-  arch: 'Lege Funktionen und Datenflüsse für {n} an.',
-  alloc: 'Ordne die Funktionen {n} Modulen zu.',
-  ver: 'Ergänze Tests für {n}.',
-  schema: 'Beschreibe die Datenformate der Flüsse {n}.',
-  cr: 'Verknüpfe die Änderungen {n} mit ihrem Umfang.',
-  ms: 'Plane die Meilensteine {n}.',
+/**
+ * Je Kern-Regel die Bitte des Nutzers; `{n}` = die Namen der Fund-Elemente (CR-GC-730). Je Regel, nicht je
+ * Dimension: ein Fund-Fenster gehoert genau einer Regel, und ein Vorschlag soll genau einen Schritt nennen.
+ * Je Dimension („Arbeite die Ablaeufe weiter aus") las der Client ihn als „alles Offene" und baute in Probe G
+ * Zug 3 zwei Plan-Schritte in einem Zug (38 min, 5 Ablehnungen). Die Eintrittspunkte AF-01..05 stehen in
+ * ANALYSE; `tests/mcp.mutate-next-step.test.ts` haelt die Liste gleich mit den Kern-Regeln der contracts.
+ */
+export const VORSCHLAG_REGEL: Record<string, string> = {
+  // Abläufe (uc)
+  'UC-01': 'Lege für die Abläufe {n} Anforderungen mit Test an.',
+  'UC-02': 'Verbinde die Abläufe {n} über Datenflüsse mit ihrem Nutzer.',
+  'UC-03': 'Beschreibe die Abläufe {n} als Kette von Funktionen.',
+  'UC-04': 'Beschreibe das Ziel der Abläufe {n}.',
+  'R-15': 'Vervollständige die Funktionsketten {n}.',
+  'R-16': 'Verbinde den Nutzer {n} über Datenflüsse mit den Funktionen.',
+  'R-17': 'Lege die Abläufe des Systems {n} an.',
+  'FC-02': 'Beschreibe die Abläufe {n} als Kette von Funktionen.',
+  'FC-03': 'Hebe die inneren Schritte der Funktionen {n} auf die Ebene ihrer Kette.',
+  'FC-04': 'Verbinde Anfang und Ende der Funktionsketten {n} mit dem Nutzer.',
+  'FC-05': 'Verbinde die Schritte der Funktionsketten {n} über Datenflüsse.',
+  // Anforderungen (req)
+  'RD-01': 'Lege an, was die Anforderungen {n} erfüllt.',
+  'RD-02': 'Lass die Anforderungen {n} nur über ihre Teilanforderungen erfüllen.',
+  // Architektur (arch)
+  'R-02': 'Ordne die Funktionen {n} den Anforderungen zu, die sie erfüllen.',
+  'R-08': 'Repariere oder entferne die Verbindungen an {n}, deren Ziel fehlt.',
+  'R-10': 'Vervollständige die Datenflüsse {n}: woher sie kommen und wohin sie gehen.',
+  'IO-02': 'Gib den Datenflüssen {n} je genau eine Quelle.',
+  'R-12': 'Löse die zyklische Abhängigkeit um {n} auf.',
+  'R-18': 'Korrigiere die unzulässigen Verbindungen an {n}.',
+  'RD-04': 'Gruppiere die Teile unter {n}, es sind zu viele auf einer Ebene.',
+  'RD-05': 'Löse die Ebene unter {n} auf oder sammle dort, was zusammengehört.',
+  'R-30': 'Ordne die Funktionen {n} der Kette ihres Ablaufs zu.',
+  'R-31': 'Verbinde die Funktionen {n} auf der fehlenden Seite mit einem Datenfluss.',
+  'BW-02': 'Bündle die Datenformate an der Grenze von {n} oder teile den Block.',
+  'CR-01': 'Prüfe den Schnitt zwischen {n}, dort fließen ungewöhnlich viele Daten.',
+  'IO-01': 'Ergänze den Datenfluss zwischen den Schritten {n}.',
+  'NFR-01': 'Bringe {n} unter sein Budget oder ändere das Budget bewusst.',
+  'ND-01': 'Führe die doppelten Funktionen {n} zusammen oder grenze sie ab.',
+  // Module (alloc)
+  'R-04': 'Verringere die Datenformate an der Grenze des Moduls {n}.',
+  'R-22': 'Ordne die Funktionen {n} Modulen zu.',
+  'R-23': 'Gib den Modulen {n} Funktionen oder entferne sie.',
+  'MT-01': 'Prüfe die Abhängigkeiten des Moduls {n}.',
+  'MT-02': 'Teile das Modul {n}, seine Teile arbeiten nicht zusammen.',
+  // Prüfung (ver)
+  'R-01': 'Ergänze Tests für die Anforderungen {n}.',
+  'R-05': 'Ordne die Tests {n} den Anforderungen zu, die sie prüfen.',
+  'R-21': 'Sichere die Übergaben zwischen {n} mit Anforderungen oder einem Integrationstest ab.',
+  // Datenformate (schema)
+  'SC-02': 'Verbinde das Datenformat {n} mit seinem Datenfluss oder entferne es.',
+  'ND-02': 'Führe die doppelten Datenformate {n} zusammen oder grenze sie ab.',
 };
 
 /** Der Kaltstart je Stufe (SEED_STAGES). */
@@ -86,10 +128,11 @@ export function vorschlagAusSchritt(step: GenerationStep, graph: Graph, task: Ru
     return satz;
   }
   if (task !== 'kern') return `Führe ${ANALYSE[task]} weiter.`;
-  const eintritt = TASK_OF_ENTRY.get(step.focusKey?.split(':')[1] ?? '');
+  const regel = step.focusKey?.split(':')[1] ?? '';
+  const eintritt = TASK_OF_ENTRY.get(regel);
   if (eintritt) return `Führe ${ANALYSE[eintritt]} durch.`;
-  const vorlage = VORSCHLAG_DIMENSION[dim];
-  if (!vorlage) throw new Error(`CR-GC-729: kein Vorschlag für Dimension ${dim}`);
+  const vorlage = VORSCHLAG_REGEL[regel];
+  if (!vorlage) throw new Error(`CR-GC-730: kein Vorschlag für Regel ${regel}`);
   return mitNamen(vorlage, graph, step.focusElements ?? []);
 }
 

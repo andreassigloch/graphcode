@@ -13,8 +13,9 @@ import { mkdtempSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
-import { VORSCHLAG_DIMENSION, VORSCHLAG_SEED, vorschlagAusSchritt } from '../src/loop/next-step.js';
-import { DIMENSION_FOCUS_TYPES, SEED_STAGES, type GenerationStep } from '../src/loop/generate.js';
+import { ALL_RULE_DEFS, TASK_ENTRY, taskOf } from '@sigloch/contracts/se';
+import { VORSCHLAG_REGEL, VORSCHLAG_SEED, vorschlagAusSchritt } from '../src/loop/next-step.js';
+import { SEED_STAGES, type GenerationStep } from '../src/loop/generate.js';
 import { alsFormatE } from './helpers/format-e.js';
 
 type Antwort = Record<string, unknown>;
@@ -60,6 +61,9 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
     expect(antwort.success).toBe(true);
     const vorschlag = String(antwort.vorschlag);
     expect(vorschlag).toContain('Bestellung annehmen');
+    // CR-GC-730: der Satz gehoert zur Regel des Fund-Fensters — ein Schritt, nicht „alles Offene".
+    const regel = String((await tools.graph_generate.handler({})).focusKey).split(':')[1];
+    expect(vorschlag).toBe(VORSCHLAG_REGEL[regel].replace('{n}', 'Bestellung annehmen'));
     for (const muster of KEIN_AUFTRAG) expect(vorschlag, String(muster)).not.toMatch(muster);
     // Derselbe Zustand liefert dem Agenten ueber graph_generate weiter den vollen Imperativ.
     const gen = await tools.graph_generate.handler({});
@@ -80,10 +84,15 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
     expect(vorschlagAusSchritt(step, { nodes: [], edges: [] }, 'kern')).toBe('Führe das Einsatzkonzept (ConOps) durch.');
   });
 
-  it('jede Fokus-Dimension und jede Kaltstart-Stufe hat einen Satz — keine Luecke, die erst im Lauf wirft', () => {
-    expect(Object.keys(VORSCHLAG_DIMENSION).sort()).toEqual(Object.keys(DIMENSION_FOCUS_TYPES).sort());
+  it('CR-GC-730: jede Kern-Regel und jede Kaltstart-Stufe hat einen Satz — keine Luecke, die erst im Lauf wirft', () => {
+    // Fokus stellen koennen die Kern-Regeln ohne info; die Eintrittspunkte der Analysen haben ihren eigenen Satz.
+    const eintritte = new Set(Object.values(TASK_ENTRY).filter((e): e is string => e !== null));
+    const regeln = Object.values(ALL_RULE_DEFS as Record<string, { id: string; severity: string }>)
+      .filter((r) => taskOf(r.id) === 'kern' && r.severity !== 'info' && !eintritte.has(r.id))
+      .map((r) => r.id);
+    expect(Object.keys(VORSCHLAG_REGEL).sort()).toEqual([...new Set(regeln)].sort());
     expect(Object.keys(VORSCHLAG_SEED).sort()).toEqual(Object.keys(SEED_STAGES).map((s) => `seed:${s}`).sort());
-    for (const satz of [...Object.values(VORSCHLAG_DIMENSION), ...Object.values(VORSCHLAG_SEED)]) {
+    for (const satz of [...Object.values(VORSCHLAG_REGEL), ...Object.values(VORSCHLAG_SEED)]) {
       for (const muster of KEIN_AUFTRAG) expect(satz, String(muster)).not.toMatch(muster);
     }
   });
