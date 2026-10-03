@@ -300,7 +300,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       'deletes, updates and merges alike (CR-GC-627). `dryRun:true` returns the full verdict ' +
       'without applying. Pass the `graphVersion` of your last read as `baseVersion` — a stale base is ' +
       'rejected with the delta since. The full command signatures come back in the SCHEMA-01 error ' +
-      'text, so they need not be carried here.',
+      'text, so they need not be carried here. `vorschlag` in the result is for the user, not for you (CR-GC-732).',
     inputSchema: GraphMutateInputSchema,
     async handler(raw) {
       return serializeToolWrite(async () => {

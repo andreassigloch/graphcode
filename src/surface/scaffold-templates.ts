@@ -85,6 +85,12 @@ export const COMMANDS_DIR = join('.claude', 'commands');
  * der Client hatte keinen einzigen se-Skill — und setzte stattdessen den Stempel.
  */
 export const OPENCODE_SKILLS_DIR = join('.opencode', 'skills');
+/**
+ * Das OpenCode-Plugin, das den `vorschlag` einer angewandten Mutation aus der Antwort nimmt und dem Nutzer ins
+ * Eingabefeld legt (CR-GC-732, gemessen in Probe G/H). Pfad im Paket = Pfad im Ziel, wie Skills und Hooks.
+ * OpenCode laedt `.opencode/plugin/*.js` beim Start.
+ */
+export const OPENCODE_PLUGIN = join('.opencode', 'plugin', 'graphcode-vorschlag.js');
 /** Das Alt-Ziel bis 0.9.0 — install/sync/remove räumen dort verwaiste se-*.md ab. */
 export const LEGACY_SKILLS_DIR = join('.claude', 'skills');
 /**
@@ -187,6 +193,11 @@ export type SettingsShape = {
 };
 
 /** The `.claude/hooks/` dir shipped INSIDE this package (dev: repo root; bundled: package root). */
+/** Das ausgelieferte OpenCode-Plugin im Paket (CR-GC-732). */
+export function packagedOpencodePlugin(): string {
+  return join(packageRootDir(), OPENCODE_PLUGIN);
+}
+
 export function packagedHooksDir(): string {
   return join(packageRootDir(), HOOKS_DIR);
 }

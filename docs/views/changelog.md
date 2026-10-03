@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 341 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 342 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 341 CR · 314 done · 4 open.
+Total: 342 CR · 314 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -403,3 +403,4 @@ Total: 341 CR · 314 done · 4 open.
 | `CR-GC-729` | done | next an der Mutation wird Vorschlag an den Nutzer (Chat-Vorbefuellung), ohne Fix-Anleitung und Abnahme-Angebot |
 | `CR-GC-730` | done | Vorschlag je Dimension zu grob: ein Vorschlag soll einen Schritt benennen, daher je Regel formulieren (Probe G Zug 3: 38 min, zwei Plan-Schritte in einem Zug) |
 | `CR-GC-731` | done | Vorschlag zu UC-02 liest sich wie erledigt, wenn der Akteur angebunden ist, aber Funktionen fehlen (Probe H Zug 4) |
+| `CR-GC-732` | n/a | graphcode init liefert das OpenCode-Plugin aus, das den Vorschlag ins Eingabefeld legt (gemessen in Probe G/H) |

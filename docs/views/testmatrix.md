@@ -121,8 +121,8 @@
 | `REQ-readonly-bridge` | ✓ | ✓ passed | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` |
 | `REQ-real-health-check` | ✓ | ✓ passed | `TEST-readonly-bridge` |
 | `REQ-recommend-next-step` | ✓ | ⚠ nie gelaufen | `TEST-recommend-next-step` |
-| `REQ-repo-install` | ✓ | ✗ failed | `TEST-cli-scaffold` · `TEST-distribution` |
-| `REQ-repo-uninstall` | ✓ | ✓ passed | `TEST-cli-scaffold` |
+| `REQ-repo-install` | ✓ | ✗ failed | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-opencode-plugin` |
+| `REQ-repo-uninstall` | ✓ | ⚠ 1/2 passed | `TEST-cli-scaffold` · `TEST-opencode-plugin` |
 | `REQ-repo-update` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
 | `REQ-responsiveness` | ✓ | ⚠ nie gelaufen | `TEST-responsiveness` |
 | `REQ-round-prompt-injection` | ✓ | ✓ passed | `TEST-one-driver-local-and-frontier` |
@@ -164,7 +164,7 @@
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
 Coverage: 154/154 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 121/154 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 120/154 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

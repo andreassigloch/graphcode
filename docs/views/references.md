@@ -780,6 +780,8 @@
 | `CR-GC-729` | relation | `FUNC-generation-step` |
 | `CR-GC-730` | relation | `FUNC-generation-step` |
 | `CR-GC-731` | relation | `FUNC-generation-step` |
+| `CR-GC-732` | relation | `FUNC-generation-step` |
+| `CR-GC-732` | relation | `REQ-repo-install` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -2203,6 +2205,8 @@
 | `TEST-one-driver-local-and-frontier` | verify | `REQ-one-driver-local-and-frontier` |
 | `TEST-one-driver-local-and-frontier` | verify | `REQ-prose-recovery` |
 | `TEST-one-driver-local-and-frontier` | verify | `REQ-round-prompt-injection` |
+| `TEST-opencode-plugin` | verify | `REQ-repo-install` |
+| `TEST-opencode-plugin` | verify | `REQ-repo-uninstall` |
 | `TEST-operations-log` | verify | `REQ-audit-trail` |
 | `TEST-path-containment` | verify | `REQ-gate-only-writes` |
 | `TEST-path-containment` | verify | `REQ-graph-is-ssot` |

@@ -2903,6 +2903,12 @@
       "commitRef": "71e8f3c"
     },
     {
+      "id": "CR-GC-732",
+      "type": "CR",
+      "name": "graphcode init liefert das OpenCode-Plugin aus, das den Vorschlag ins Eingabefeld legt (gemessen in Probe G/H)",
+      "description": "docs/cr/open/CR-GC-732-graphcode-init-liefert-das-opencode-plug.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -9461,6 +9467,20 @@
       ]
     },
     {
+      "id": "TEST-opencode-plugin",
+      "type": "TEST",
+      "name": "OpenCode-Plugin-Test",
+      "description": "init und update legen das OpenCode-Plugin fuer den Vorschlag an den Nutzer byte-gleich zum Paket ab, remove nimmt nur dieses mit; der Hook nimmt den vorschlag aus einer echten graph_mutate-Antwort und legt ihn ins Eingabefeld (CR-GC-732).",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/opencode-plugin.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
+    },
+    {
       "id": "TEST-operations-log",
       "type": "TEST",
       "name": "Dauerhaftes Betriebslog in graphcode",
@@ -14666,6 +14686,16 @@
     {
       "source": "CR-GC-731",
       "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-732",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-732",
+      "target": "REQ-repo-install",
       "type": "relation"
     },
     {
@@ -22177,6 +22207,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-opencode-plugin",
+      "target": "REQ-repo-install",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-opencode-plugin",
+      "target": "REQ-repo-uninstall",
+      "type": "verify"
+    },
+    {
       "source": "TEST-operations-log",
       "target": "REQ-audit-trail",
       "type": "verify"
@@ -23409,5 +23449,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 582
+  "graphVersion": 584
 }

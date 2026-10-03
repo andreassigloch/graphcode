@@ -64,6 +64,8 @@ import {
   shippedHookFiles,
   parseSkillFrontmatter,
   opencodeSkill,
+  OPENCODE_PLUGIN,
+  packagedOpencodePlugin,
   isGraphcodeHookEntry,
   mergedSettingsContent,
   mcpConfigContent,
@@ -368,6 +370,27 @@ function removeOpencodeSkills(repoRoot: string, res: InstallResult): void {
 }
 
 /**
+ * Das OpenCode-Plugin fuer den Vorschlag an den Nutzer (CR-GC-732). Idempotent wie Skills und Hooks; ohne
+ * Plugin sieht der OpenCode-Agent den `vorschlag` selbst und der Nutzer nichts.
+ */
+function installOpencodePlugin(repoRoot: string, res: InstallResult): void {
+  const src = packagedOpencodePlugin();
+  if (!existsSync(src)) return; // nicht gepackt — das Substrat installiert trotzdem.
+  const dest = join(repoRoot, OPENCODE_PLUGIN);
+  mkdirSync(dirname(dest), { recursive: true });
+  writeArtifact(dest, OPENCODE_PLUGIN, readFileSync(src, 'utf8'), res);
+}
+
+/** Das Plugin entfernen; `.opencode/plugin` und `.opencode` nur, wenn WIR sie geleert haben. */
+function removeOpencodePlugin(repoRoot: string, res: InstallResult): void {
+  const dest = join(repoRoot, OPENCODE_PLUGIN);
+  removeArtifact(dest, OPENCODE_PLUGIN, res);
+  for (const dir of [dirname(dest), dirname(dirname(dest))]) {
+    if (existsSync(dir) && readdirSync(dir).length === 0) rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+/**
  * Copy the package's `deny-*.sh` PreToolUse hooks into the target repo's `.claude/hooks/`
  * and register them in `.claude/settings.json` (CR-GC-214). Idempotent (byte-identical
  * re-write = `preserved`). Without this, consumer-repo agents have no read/write enforcement.
@@ -494,6 +517,7 @@ export async function scaffold(
       // like the guardrails — it carries no user content to preserve.
       writeArtifact(steeringAbs, STEERING_FILE, steeringContent(), res);
       installSkills(repoRoot, res);
+      installOpencodePlugin(repoRoot, res);
       installHooks(repoRoot, res);
       registerDependency(repoRoot, res);
       return res;
@@ -521,6 +545,7 @@ export async function scaffold(
       // like the guardrails — it carries no user content to preserve.
       writeArtifact(steeringAbs, STEERING_FILE, steeringContent(), res);
       installSkills(repoRoot, res);
+      installOpencodePlugin(repoRoot, res);
       installHooks(repoRoot, res);
       registerDependency(repoRoot, res);
       return res;
@@ -535,6 +560,7 @@ export async function scaffold(
       removeHostConfig(opencodeAbs, OPENCODE_CONFIG, 'mcp', res);
       removeArtifact(guardrailsAbs, GUARDRAILS_FILE, res);
       removeArtifact(steeringAbs, STEERING_FILE, res);
+      removeOpencodePlugin(repoRoot, res);
       removeSkills(repoRoot, res);
       removeHooks(repoRoot, res);
       removeLegacyTrajectory(repoRoot, res);

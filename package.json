@@ -26,7 +26,8 @@
     "dist",
     ".claude/commands",
     ".claude/hooks",
-    ".claude/settings.json"
+    ".claude/settings.json",
+    ".opencode/plugin"
   ],
   "engines": {
     "node": ">=22"
