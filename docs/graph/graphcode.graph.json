@@ -2898,7 +2898,9 @@
       "id": "CR-GC-731",
       "type": "CR",
       "name": "Vorschlag zu UC-02 liest sich wie erledigt, wenn der Akteur angebunden ist, aber Funktionen fehlen (Probe H Zug 4)",
-      "description": "docs/cr/open/CR-GC-731-vorschlag-zu-uc-02-liest-sich-wie-erledi.md"
+      "description": "docs/cr/open/CR-GC-731-vorschlag-zu-uc-02-liest-sich-wie-erledi.md",
+      "status": "done",
+      "commitRef": "71e8f3c"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23407,5 +23409,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 581
+  "graphVersion": 582
 }
