@@ -1,6 +1,6 @@
 # CR-GC-729: next an der Mutation wird Vorschlag an den Nutzer (Chat-Vorbefuellung), ohne Fix-Anleitung und Abnahme-Angebot
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-03)
 **Typ:** aus Item ITEM-2026-712 (idea)
 **Erstellt:** 2026-10-03
 **Item:** bok/items/ITEM-2026-712.json (Lane: code)
