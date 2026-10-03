@@ -2781,7 +2781,7 @@
     {
       "id": "CR-GC-715",
       "type": "CR",
-      "name": "Nutzer-Simulator: EIN Testtreiber fuer alle Ketten (A, D2, spaeter D1) im Automode — simuliert den Nutzer, Ziel autonom spec ready + code ready",
+      "name": "Nutzer-Simulator: EIN Testtreiber fuer das interaktive Rig — Enter auf jeden vorschlag",
       "description": "docs/cr/open/CR-GC-715-nutzer-simulator-ein-testtreiber-fuer-al.md"
     },
     {
@@ -23464,5 +23464,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 588
+  "graphVersion": 589
 }
