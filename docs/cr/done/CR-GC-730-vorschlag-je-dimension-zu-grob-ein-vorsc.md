@@ -1,6 +1,6 @@
 # CR-GC-730: Vorschlag je Dimension zu grob: ein Vorschlag soll einen Schritt benennen, daher je Regel formulieren (Probe G Zug 3: 38 min, zwei Plan-Schritte in einem Zug)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-03)
 **Typ:** aus Item ITEM-2026-713 (finding)
 **Erstellt:** 2026-10-03
 **Item:** bok/items/ITEM-2026-713.json (Lane: code)
