@@ -1,6 +1,6 @@
 # CR-GC-733: Vorschlagssaetze aus RULE_HELP (contracts) lesen statt eigener Tabelle; Regelmatrix zeigt Spalte Vorschlag; Pruefung beim Hoststart
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-03)
 **Typ:** aus Item ITEM-2026-718 (idea)
 **Erstellt:** 2026-10-03
 **Item:** bok/items/ITEM-2026-718.json (Lane: code)
