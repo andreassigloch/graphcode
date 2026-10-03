@@ -1,6 +1,6 @@
 # CR-GC-731: Vorschlag zu UC-02 liest sich wie erledigt, wenn der Akteur angebunden ist, aber Funktionen fehlen (Probe H Zug 4)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-03)
 **Typ:** aus Item ITEM-2026-714 (bug)
 **Erstellt:** 2026-10-03
 **Item:** bok/items/ITEM-2026-714.json (Lane: code)
