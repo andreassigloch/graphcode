@@ -1,6 +1,6 @@
 # CR-GC-732: graphcode init liefert das OpenCode-Plugin aus, das den Vorschlag ins Eingabefeld legt (gemessen in Probe G/H)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-03)
 **Typ:** aus Item ITEM-2026-715 (idea)
 **Erstellt:** 2026-10-03
 **Item:** bok/items/ITEM-2026-715.json (Lane: code)
