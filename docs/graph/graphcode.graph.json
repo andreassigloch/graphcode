@@ -2882,7 +2882,9 @@
       "id": "CR-GC-729",
       "type": "CR",
       "name": "next an der Mutation wird Vorschlag an den Nutzer (Chat-Vorbefuellung), ohne Fix-Anleitung und Abnahme-Angebot",
-      "description": "docs/cr/open/CR-GC-729-next-an-der-mutation-wird-vorschlag-an-d.md"
+      "description": "docs/cr/open/CR-GC-729-next-an-der-mutation-wird-vorschlag-an-d.md",
+      "status": "done",
+      "commitRef": "887a206"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23381,5 +23383,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 575
+  "graphVersion": 576
 }
