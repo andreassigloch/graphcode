@@ -40,7 +40,7 @@ describe('CR-GC-591: jeder Kanal traegt Rang, Zeitpunkt und Treiber', () => {
     });
   }
 
-  it('die Host-Kanaele der Bericht-Tabelle sind da: Verdict, next, Advisories, Skill-Verweis, Guardrails, Freigabe', () => {
+  it('die Host-Kanaele der Bericht-Tabelle sind da: Verdict, Vorschlag, Advisories, Skill-Verweis, Guardrails, Freigabe', () => {
     const ids = new Set(kanaele.map((k) => k.id));
     for (const id of ['FLOW-channel-gate-verdict', 'FLOW-channel-next-step', 'FLOW-channel-steer-advisory',
       'FLOW-channel-fit-advisory', 'FLOW-channel-skill-reference', 'FLOW-channel-guardrails', 'FLOW-channel-handoff']) {
@@ -49,10 +49,10 @@ describe('CR-GC-591: jeder Kanal traegt Rang, Zeitpunkt und Treiber', () => {
   });
 
   it('was NACH der Entscheidung kommt, hat nie den Rang eines Imperativs — sonst gaebe es zwei Stimmen je Runde', () => {
-    // Zwei Ausnahmen, beide begruendet: das Gate-Verdict IST die Gate-Wahrheit (Rang 1) und kommt
-    // naturgemaess als Antwort; `next` IST der Imperativ der naechsten Runde, nur frueher transportiert.
+    // Eine Ausnahme, begruendet: das Gate-Verdict IST die Gate-Wahrheit (Rang 1) und kommt naturgemaess
+    // als Antwort. Seit CR-GC-729 keine zweite mehr: der Vorschlag an der Mutation ist fuer den Nutzer.
     for (const k of kanaele) {
-      if (at(k, 'zeitpunkt') !== 'antwort' || k.id === 'FLOW-channel-next-step' || at(k, 'channelRank') === 'gate-truth') continue;
+      if (at(k, 'zeitpunkt') !== 'antwort' || at(k, 'channelRank') === 'gate-truth') continue;
       expect(rankOf(at(k, 'channelRank') as Channel), `${k.id} kommt nach der Entscheidung und darf keinen Imperativ-Rang tragen`)
         .toBeGreaterThan(rankOf('rule-clause'));
     }

@@ -4,7 +4,7 @@
  *
  * Rewind opus5-12: die Probe meldete "blockingErrors 0 → 8" fuer S/O/D an den Risiko-REQs — das
  * waren FM-03-Fehler, am Gate `gating: false` und abnehmbar. Der Agent liess FM-01 deshalb offen,
- * statt S/O/D zu setzen und FM-03 abzunehmen. Und ein ausdrueckliches `defer` vergass `next`.
+ * statt S/O/D zu setzen und FM-03 abzunehmen. Und ein ausdrueckliches `defer` vergass der Folgeschritt.
  *
  * @author andreas@siglochconsulting
  */
@@ -101,15 +101,15 @@ describe('CR-GC-598: ein ausdrueckliches defer gilt fuer die Sitzung', () => {
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it('graph_generate {defer:[K]} — danach nennt auch next K nicht mehr', async () => {
+  it('graph_generate {defer:[K]} — nach dem naechsten Zug nennt auch der Schritt K nicht mehr', async () => {
     const erst = await tools.graph_generate.handler({});
     const k = erst.focusKey!;
     const mitDefer = await tools.graph_generate.handler({ defer: [k] });
     expect(mitDefer.focusKey).not.toBe(k);
-    const r = (await tools.graph_mutate.handler({
+    await tools.graph_mutate.handler({
       formatE: alsFormatE([{ op: 'update-node', node: { uid: 'SYS-s', description: 'Fassung 2.' } }], harness),
       consumerId: 't',
-    })) as { next?: { focusKey: string | null } };
-    expect(r.next!.focusKey).not.toBe(k);
+    });
+    expect((await tools.graph_generate.handler({})).focusKey).not.toBe(k);
   });
 });

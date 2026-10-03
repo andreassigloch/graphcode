@@ -15,7 +15,7 @@ import { join } from 'node:path';
 import { alsFormatE } from './helpers/format-e.js';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
 
-type Antwort = { success: boolean; next?: { phase: string; done: boolean; focusKey: string | null; prompt: string } };
+type Antwort = { success: boolean; vorschlag?: string };
 let repoRoot: string;
 let harness: GraphCodeHarness;
 let tools: ReturnType<typeof bindToolsToHarness>;
@@ -31,6 +31,12 @@ const zugOhneWirkung = async (): Promise<Antwort> =>
     formatE: alsFormatE([{ op: 'update-node', node: { uid: 'SYS-s', description: `Ein System fuer Bestellungen, Fassung ${++n}.` } }], harness),
     consumerId: 'test',
   })) as Antwort;
+/** Ein Zug ohne Wirkung, dann der Schritt — seit CR-GC-729 liest der Agent ihn nur aus graph_generate.
+ * Derselbe Graph-Stand zaehlt im Gedaechtnis nur einmal, ob Mutation oder graph_generate ihn zuerst sieht. */
+const zugDannSchritt = async (task?: 'plan') => {
+  await zugOhneWirkung();
+  return tools.graph_generate.handler(task ? { task } : {});
+};
 
 beforeEach(async () => {
   repoRoot = mkdtempSync(join(tmpdir(), 'gc-stag-'));
@@ -59,18 +65,18 @@ describe('CR-GC-596/606: dreimal dasselbe Feedback → weiter', () => {
   it('nach einem Zug ohne Wirkung bleibt der Fokus (Folgezug ist kein Versuch), nach dem zweiten kommt ein anderer', async () => {
     const erst = await tools.graph_generate.handler({});
     expect(erst.phase).toBe('expand');
-    const eins = await zugOhneWirkung();
-    expect(eins.next!.focusKey).toBe(erst.focusKey);
-    const zwei = await zugOhneWirkung();
-    expect(zwei.next!.focusKey).not.toBe(erst.focusKey);
+    const eins = await zugDannSchritt();
+    expect(eins.focusKey).toBe(erst.focusKey);
+    const zwei = await zugDannSchritt();
+    expect(zwei.focusKey).not.toBe(erst.focusKey);
   });
 
   it('graph_generate ohne Zug dazwischen zaehlt nicht und setzt den Zaehler nicht zurueck', async () => {
     const erst = await tools.graph_generate.handler({});
     await zugOhneWirkung();
     expect((await tools.graph_generate.handler({})).focusKey).toBe(erst.focusKey);
-    const zwei = await zugOhneWirkung();
-    expect(zwei.next!.focusKey).not.toBe(erst.focusKey);
+    const zwei = await zugDannSchritt();
+    expect(zwei.focusKey).not.toBe(erst.focusKey);
   });
 
   it('zweimal graph_generate OHNE Zug: gleiche Antwort — kein Zug, kein Abbruch (Determinismus)', async () => {
@@ -98,17 +104,17 @@ const eintritteAbnehmen = async () => {
 };
 
 describe('CR-GC-604: Eintrittspunkte stellt die Abbruchregel nie zurueck', () => {
-  it('bleibt ein Eintrittspunkt nach Zuegen ohne Wirkung stehen, nennt next weiter ihn — mit dem Skill des Tasks', async () => {
-    let r: Antwort | undefined;
+  it('bleibt ein Eintrittspunkt nach Zuegen ohne Wirkung stehen, nennt der Schritt weiter ihn — mit dem Skill des Tasks', async () => {
+    let r: Awaited<ReturnType<typeof zugDannSchritt>> | undefined;
     for (let i = 0; i < 60; i++) {
-      r = await zugOhneWirkung();
-      if (/:AF-0\d:/.test(r.next!.focusKey ?? '')) break;
+      r = await zugDannSchritt();
+      if (/:AF-0\d:/.test(r.focusKey ?? '')) break;
     }
-    const eintritt = r!.next!.focusKey!;
+    const eintritt = r!.focusKey!;
     expect(eintritt).toMatch(/:AF-0\d:/);
-    const danach = (await zugOhneWirkung()) as { next?: { focusKey: string | null; skill: string | null } };
-    expect(danach.next!.focusKey).toBe(eintritt);
-    expect(danach.next!.skill).toMatch(/^se-(conops|trade|irr|fmea|plan)$/);
+    const danach = await zugDannSchritt();
+    expect(danach.focusKey).toBe(eintritt);
+    expect(danach.skill).toMatch(/^se-(conops|trade|irr|fmea|plan)$/);
   });
 
   it('festgefahren im Task heisst: zurueck in den Kern, nicht "uebergib an den Menschen"', async () => {
@@ -121,10 +127,10 @@ describe('CR-GC-604: Eintrittspunkte stellt die Abbruchregel nie zurueck', () =>
     });
     const s = await tools.graph_generate.handler({ task: 'plan' });
     expect(s.phase).toBe('expand');
-    let letzte: Antwort['next'];
+    let letzte: Awaited<ReturnType<typeof zugDannSchritt>> | undefined;
     for (let i = 0; i < 20; i++) {
-      letzte = (await zugOhneWirkung()).next;
-      if (letzte!.phase === 'stalled') break;
+      letzte = await zugDannSchritt('plan');
+      if (letzte.phase === 'stalled') break;
     }
     expect(letzte!.phase).toBe('stalled');
     expect(letzte!.prompt).toMatch(/Task plan festgefahren/);
@@ -137,13 +143,8 @@ describe('CR-GC-596: nur noch Zurueckgestelltes → stalled, nicht done', () => 
   beforeEach(eintritteAbnehmen);
 
   it('nach genug Zuegen ohne Wirkung endet die Maschine stalled — mit Liste, ohne Fokus, nie done', async () => {
-    let s = await tools.graph_generate.handler({});
-    let letzte: Antwort['next'] = undefined;
-    for (let i = 0; i < 60 && s.phase !== 'stalled'; i++) {
-      const r = await zugOhneWirkung();
-      letzte = r.next;
-      if (letzte!.phase === 'stalled') break;
-    }
+    let letzte = await tools.graph_generate.handler({});
+    for (let i = 0; i < 60 && letzte.phase !== 'stalled'; i++) letzte = await zugDannSchritt();
     expect(letzte!.phase).toBe('stalled');
     expect(letzte!.done).toBe(false);
     expect(letzte!.focusKey).toBeNull();
@@ -151,10 +152,10 @@ describe('CR-GC-596: nur noch Zurueckgestelltes → stalled, nicht done', () => 
     expect(letzte!.prompt).toMatch(/Nicht weiter mutieren/);
   });
 
-  it('stalled gilt auch fuer graph_generate — dasselbe Gedaechtnis wie next', async () => {
+  it('stalled gilt auch fuer graph_generate — dasselbe Gedaechtnis wie der Vorschlag an den Nutzer', async () => {
     for (let i = 0; i < 60; i++) {
       const r = await zugOhneWirkung();
-      if (r.next!.phase === 'stalled') break;
+      if (r.vorschlag === 'Zeig mir die offenen Regelhinweise und was du je Hinweis vorschlägst.') break;
     }
     const s = await tools.graph_generate.handler({});
     expect(s.phase).toBe('stalled');

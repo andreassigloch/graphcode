@@ -76,7 +76,7 @@ export function lokalesOptimum(
 }
 
 export interface FocusMemory {
-  /** CR-GC-601: der Task, in dem die Sitzung gerade arbeitet — `next` bleibt darin, bis graph_generate ohne task. */
+  /** CR-GC-601: der Task, in dem die Sitzung gerade arbeitet — sie bleibt darin, bis graph_generate ohne task. */
   task: RuleTask;
   /** Der zuletzt ausgelieferte Fokus, die Graph-Version dazu und wie oft er nach einem Zug wiederkam. */
   last: { key: string; version: number; repeats: number } | null;
@@ -111,7 +111,7 @@ export function stepWithMemory(
   compute: (defer: string[], optimum: SteerOptimum | null) => GenerationStep,
   extraDefer: readonly string[] = [],
 ): GenerationStep {
-  // CR-GC-598: ein ausdrueckliches defer des Hosts gilt fuer die Sitzung — sonst bot `next` beim
+  // CR-GC-598: ein ausdrueckliches defer des Hosts gilt fuer die Sitzung — sonst bot der Folgeschritt beim
   // naechsten Zug das eben zurueckgestellte Fenster wieder an (Rewind opus5-12, Zug 23).
   for (const k of extraDefer) memory.deferred.add(k);
   const alle = () => [...memory.deferred];

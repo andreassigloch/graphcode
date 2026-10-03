@@ -777,6 +777,7 @@
 | `CR-GC-728` | relation | `FUNC-graph-delegate` |
 | `CR-GC-728` | relation | `REQ-delegate-schluss-in-worten` |
 | `CR-GC-728` | relation | `SCHEMA-generation-step` |
+| `CR-GC-729` | relation | `FUNC-generation-step` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

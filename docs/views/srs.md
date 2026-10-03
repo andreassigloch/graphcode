@@ -5984,9 +5984,9 @@ Rang 4 — was es schon gibt. Vorhandene Knoten als uid-type-name-Zeilen, damit 
 
 io ◀ `FUNC-inventory-channel` · io ▶ `FUNC-build-round-injection` · schema ▶ `SCHEMA-steering-channel`
 
-### 4.18  `FLOW-channel-next-step` — Kanal: naechster Schritt in der Antwort
+### 4.18  `FLOW-channel-next-step` — Kanal: Vorschlag an den Nutzer
 
-Rang 2, antwort — derselbe GenerationStep, den graph_generate liefern wuerde, kompakt an der angewandten Mutation (CR-GC-588). Kein zweiter Imperativ, sondern der Imperativ der naechsten Runde, einen Roundtrip frueher.
+Rang 6, antwort — der Vorschlag an den NUTZER an der angewandten Mutation (CR-GC-729): ein Satz in seiner Sprache, gewaehlt wie der naechste GenerationStep, ohne Fix-Anleitung, Werkzeugaufrufe und Abnahme-Angebot; ein Client-Plugin legt ihn ins Eingabefeld. Vorher (CR-GC-588) der Imperativ der naechsten Runde — der Client las ihn als Auftrag. Der Auftrag an den Agenten kommt nur von graph_generate.
 
 io ◀ `FUNC-generation-step` · io ▶ `ACTOR-agent` · schema ▶ `SCHEMA-steering-channel`
 

@@ -20,7 +20,7 @@ import { stripViolationContext, groupViolationsByRule, type GroupedViolation } f
 import { fitAdvisoryIsSilent, steerAdvisoryIsSilent, type FitAdvisory, type SteerAdvisory } from '../kernel/measure/fit-advisory.js';
 import { workOrderIsSilent, type WorkOrder } from '../kernel/measure/work-order.js';
 import { loadTargetProfile } from '../loop/target-profile.js';
-import { nextStepAfterApply, type NextStep } from '../loop/next-step.js';
+import { vorschlagNachAnwendung } from '../loop/next-step.js';
 import { focusMemoryOf } from '../loop/stagnation.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
 import type { ToolContext } from './tool-context.js';
@@ -292,7 +292,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
 
   const graph_mutate: MCPTool<
     z.infer<typeof GraphMutateInputSchema>,
-    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta; steeringUnmeasurable?: string; next?: NextStep; refs?: BindingReport }
+    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta; steeringUnmeasurable?: string; vorschlag?: string; refs?: BindingReport }
   > = {
     name: 'graph_mutate',
     description:
@@ -418,10 +418,10 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           input.violations === 'full' ? result : summarizeViolations(result),
           hatZielrichtung(harness.getRepoRoot()),
         );
-        // CR-GC-588: der naechste Schritt faehrt mit — derselbe, den graph_generate liefern
-        // wuerde, ohne den Roundtrip. Nur nach Anwendung; bei Ablehnung ist das Urteil der Kanal.
-        const next = result.success
-          ? { next: nextStepAfterApply(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold(), harness.getRepoRoot(), focusMemoryOf(harness), graphVersion()) }
+        // CR-GC-729: der Vorschlag an den NUTZER faehrt mit — ein Satz, den ein Client-Plugin ins
+        // Eingabefeld legt. Nur nach Anwendung; bei Ablehnung ist das Urteil der Kanal.
+        const vorschlag = result.success
+          ? { vorschlag: vorschlagNachAnwendung(harness.getGraph(), harness.getMetricPolicy(), harness.getFocusThreshold(), harness.getRepoRoot(), focusMemoryOf(harness), graphVersion()) }
           : {};
         return {
           ...out,
@@ -429,7 +429,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           ...(input.baseVersion === undefined ? { occWarning: OCC_WARNING } : {}),
           ...(nameWarning ? { nameWarning } : {}),
           ...(afterAll ? refsReport(respondsBaseline!, afterAll) : {}),
-          ...next,
+          ...vorschlag,
         };
       });
     },

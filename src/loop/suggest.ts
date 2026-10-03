@@ -332,7 +332,7 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       .describe(
         "CR-GC-601: den Task starten, dessen Eintrittspunkt der Kern nennt (fmea, plan, conops, trade, irr, " +
           'anforderungsqualitaet, realisierung) — dieselbe Maschine mit seinem detaillierten Regelset als Warnung. ' +
-          'Ohne Angabe: der Kern. `next` an der Mutation bleibt im Task, bis graph_generate ohne task.',
+          'Ohne Angabe: der Kern. Die Sitzung bleibt im Task, bis graph_generate ohne task.',
       ),
     defer: z
       .array(z.string())

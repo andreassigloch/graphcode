@@ -29,13 +29,13 @@ the same rebuild moved 810 model elements. That is the failure mode this section
 | Which tests must I run for *this* change? | `graph_tests({changeSet})` — the minimal `vitest run <affected files>`, not the whole suite |
 | Which tests cover this node? | the node's `testRefs` from `graph_context` |
 | Which rules are violated, and where? | `rules_evaluate` · `rules_get_violations` |
-| What should I do next? | `graph_readiness` (weakest dimension) and the `next` field of every `graph_mutate` result |
+| What should I do next? | `graph_generate` (the step) · `graph_readiness` (weakest dimension); the `vorschlag` of a `graph_mutate` result is for the user, not the agent |
 | Which architecture move pays off? | `graph_suggest` (ranked against the target profile) |
 | How coupled are the modules? | `graph_metrics` — cohesion per MOD |
 
 **In Claude Code these tools are deferred** — the schema is not loaded, grep is. Load every reader
 above in one call before the first structural question (CR-GC-638):
-`ToolSearch select:mcp__graphcode__graph_impact,mcp__graphcode__graph_expand,mcp__graphcode__graph_context,mcp__graphcode__graph_elements,mcp__graphcode__graph_tests,mcp__graphcode__rules_evaluate,mcp__graphcode__rules_get_violations,mcp__graphcode__graph_readiness,mcp__graphcode__graph_suggest,mcp__graphcode__graph_metrics`
+`ToolSearch select:mcp__graphcode__graph_impact,mcp__graphcode__graph_expand,mcp__graphcode__graph_context,mcp__graphcode__graph_elements,mcp__graphcode__graph_tests,mcp__graphcode__rules_evaluate,mcp__graphcode__rules_get_violations,mcp__graphcode__graph_readiness,mcp__graphcode__graph_generate,mcp__graphcode__graph_suggest,mcp__graphcode__graph_metrics`
 
 Grep stays right for what the graph does not model: *which file contains this string*, *where does
 this symbol live now*, free-text search across prose. It is wrong for anything in the table above.

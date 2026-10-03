@@ -56,7 +56,7 @@ export const CHANNEL_REASON: Record<Channel, string> = {
  *   prompt  — im Rundenprompt bzw. vor dem Schreiben (Guide, Klausel, Skill, GRAPHCODE.md)
  *   probe   — in der Antwort auf dryRun, also vor dem Anwenden (steeringDelta, Verdict der Probe)
  *   antwort — in der Antwort auf die angewandte Mutation, also nach der Entscheidung
- *             (Advisories, `next`, das Verdict der Anwendung)
+ *             (Advisories, `vorschlag`, das Verdict der Anwendung)
  *
  * Am Kanal-Knoten im Modell als Attribut `zeitpunkt`; `tests/channel-model.test.ts` verlangt
  * es fuer jeden FLOW-channel-* und prueft es gegen diese Liste.

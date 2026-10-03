@@ -84,7 +84,7 @@ export const GenerationStep = z.object({
    * Transporte. null, wenn es fuer die Dimension keinen Autorier-Skill gibt. */
   skill: z.string().nullable(),
   /** CR-GC-608: der Steuerzustand (Termvektor, Summe der Ueberschuesse) — das Fertig-Kriterium der
-   * Steuerregeln liest ihn im Sitzungsgedaechtnis; `next` traegt ihn nicht. */
+   * Steuerregeln liest ihn im Sitzungsgedaechtnis. */
   steer: z.object({ key: z.string(), sum: z.number(), terms: z.array(z.string()) }).optional(),
   /** CR-GC-728: nur in phase 'stalled' — die Analyse-Tasks, deren Eintrittspunkt offen ist. Als Feld,
    * weil ein Treiber ohne graph_generate (graph_delegate) sie dem Client nennen muss, ohne den
@@ -149,11 +149,10 @@ export type GenerationSelection = 'host' | 'driver';
  * vergleichen, ohne sie zu verursachen — die Grundlage von Best-of-N (CR-GC-288). */
 const PROTOCOL_GUIDE =
   'Gate-Protokoll: (1) vor dem Schreiben graph_authoring_guide für jeden Elementtyp aufrufen (legale Kanten). ';
-// CR-GC-588: der Host bekommt den naechsten Schritt als `next` an der angewandten Mutation —
-// derselbe Schritt, ein Roundtrip weniger. graph_generate bleibt fuer Einstieg und `defer`.
+// CR-GC-729: der naechste Schritt des Agenten kommt nur von graph_generate. Der `vorschlag` an der
+// Mutationsantwort ist fuer den Nutzer (CR-GC-588 hatte dort den Imperativ — der Client las ihn als Auftrag).
 const PROTOCOL_NEXT_HOST =
-  'Der nächste Schritt steht als `next` in der Antwort auf die angewandte Mutation — führe ihn direkt aus; ' +
-  'graph_generate nur zum Einstieg, wenn `next` fehlt oder du ein Fund-Set zurückstellen willst (defer).';
+  'Den nächsten Schritt holst du mit graph_generate; der `vorschlag` an der Mutationsantwort ist für den Nutzer, nicht für dich.';
 const GATE_PROTOCOL: Record<GenerationSelection, string> = {
   host:
     PROTOCOL_GUIDE +

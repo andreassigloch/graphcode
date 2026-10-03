@@ -145,7 +145,7 @@ describe('ITEM-2026-632/633: der Treiber fokussiert keinen Eintrittspunkt', () =
   });
 });
 
-describe('CR-GC-601: next bleibt im Task der Sitzung', () => {
+describe('CR-GC-601: die Sitzung bleibt im Task', () => {
   let repoRoot: string;
   let harness: GraphCodeHarness;
   let tools: ReturnType<typeof bindToolsToHarness>;
@@ -174,14 +174,15 @@ describe('CR-GC-601: next bleibt im Task der Sitzung', () => {
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it('graph_generate {task:plan}, dann ein Zug: next spricht weiter vom Plan-Task, ohne task zurueck in den Kern', async () => {
+  it('graph_generate {task:plan}, dann ein Zug: der Vorschlag spricht weiter vom Plan-Task, ohne task zurueck in den Kern', async () => {
     const plan = await tools.graph_generate.handler({ task: 'plan' });
     expect(plan.skill).toBe('se-plan');
     const r = (await tools.graph_mutate.handler({
       formatE: alsFormatE([{ op: 'update-node', node: { uid: 'SYS-s', description: 'Fassung 2.' } }], harness),
       consumerId: 't',
-    })) as { next?: { skill: string | null } };
-    expect(r.next!.skill).toBe('se-plan');
+    })) as { vorschlag?: string };
+    // CR-GC-729: der Vorschlag an den Nutzer ersetzt `next` — die Sitzung bleibt im Task.
+    expect(r.vorschlag).toBe('Führe den Bauplan weiter.');
     const kern = await tools.graph_generate.handler({});
     expect(kern.skill).not.toBe('se-plan');
   });

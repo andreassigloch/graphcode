@@ -2879,6 +2879,12 @@
       "commitRef": "c70dd0b"
     },
     {
+      "id": "CR-GC-729",
+      "type": "CR",
+      "name": "next an der Mutation wird Vorschlag an den Nutzer (Chat-Vorbefuellung), ohne Fix-Anleitung und Abnahme-Angebot",
+      "description": "docs/cr/open/CR-GC-729-next-an-der-mutation-wird-vorschlag-an-d.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3179,9 +3185,9 @@
     {
       "id": "FLOW-channel-next-step",
       "type": "FLOW",
-      "name": "Kanal: naechster Schritt in der Antwort",
-      "description": "Rang 2, antwort — derselbe GenerationStep, den graph_generate liefern wuerde, kompakt an der angewandten Mutation (CR-GC-588). Kein zweiter Imperativ, sondern der Imperativ der naechsten Runde, einen Roundtrip frueher.",
-      "channelRank": "rule-clause",
+      "name": "Kanal: Vorschlag an den Nutzer",
+      "description": "Rang 6, antwort — der Vorschlag an den NUTZER an der angewandten Mutation (CR-GC-729): ein Satz in seiner Sprache, gewaehlt wie der naechste GenerationStep, ohne Fix-Anleitung, Werkzeugaufrufe und Abnahme-Angebot; ein Client-Plugin legt ihn ins Eingabefeld. Vorher (CR-GC-588) der Imperativ der naechsten Runde — der Client las ihn als Auftrag. Der Auftrag an den Agenten kommt nur von graph_generate.",
+      "channelRank": "proposal",
       "zeitpunkt": "antwort",
       "treiber": "host",
       "concept": true
@@ -14630,6 +14636,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-729",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23370,5 +23381,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 573
+  "graphVersion": 575
 }
