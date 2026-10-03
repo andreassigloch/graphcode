@@ -19,7 +19,7 @@
  * @author andreas@siglochconsulting
  */
 import type { Graph } from '@sigloch/graph-api-core';
-import { TASK_ENTRY, type MetricPolicy, type RuleTask } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, RULE_HELP, TASK_ENTRY, taskOf, type MetricPolicy, type RuleTask } from '@sigloch/contracts/se';
 import { generationStep, type GenerationStep } from './generate.js';
 import { loadTargetProfile } from './target-profile.js';
 import { stepWithMemory, type FocusMemory } from './stagnation.js';
@@ -37,61 +37,26 @@ const ANALYSE: Record<Task, string> = {
   realisierung: 'die Bindung an Code und Tests',
 };
 
+const TASK_OF_ENTRY = new Map(
+  (Object.entries(TASK_ENTRY) as [Task, string | null][]).filter(([, e]) => e).map(([t, e]) => [e as string, t]),
+);
+
 /**
- * Je Kern-Regel die Bitte des Nutzers; `{n}` = die Namen der Fund-Elemente (CR-GC-730). Je Regel, nicht je
- * Dimension: ein Fund-Fenster gehoert genau einer Regel, und ein Vorschlag soll genau einen Schritt nennen.
- * Je Dimension („Arbeite die Ablaeufe weiter aus") las der Client ihn als „alles Offene" und baute in Probe G
- * Zug 3 zwei Plan-Schritte in einem Zug (38 min, 5 Ablehnungen). Die Eintrittspunkte AF-01..05 stehen in
- * ANALYSE; `tests/mcp.mutate-next-step.test.ts` haelt die Liste gleich mit den Kern-Regeln der contracts.
+ * Die Saetze je Kern-Regel stehen seit CR-SM-384 in den contracts (`RULE_HELP[id].vorschlag`, CR-GC-733): die
+ * Regelmatrix ist SSOT fuer alle Texte einer Regel, und der Smeagol-Check dort haelt Menge und Form (jede
+ * Kern-Regel ohne info und ohne Eintrittspunkt hat einen Satz; kein Werkzeug, kein Fix, keine Regel-ID). Hier
+ * steht nur, was keine Regel ist: Kaltstart, Analysen, Freigabe, Festgefahren.
+ *
+ * Startpruefung statt Wurf nach dem Schreiben (Probe G, CR-GC-730): fehlt einer fokusfaehigen Regel der Satz —
+ * nur bei einer contracts-Version unter dem Peer-Floor moeglich —, faellt der Host beim Laden, nicht die
+ * Mutation nach dem Persistieren.
  */
-export const VORSCHLAG_REGEL: Record<string, string> = {
-  // Abläufe (uc)
-  'UC-01': 'Lege für die Abläufe {n} Anforderungen mit Test an.',
-  // CR-GC-731: UC-02 verlangt ACTOR → FLOW → FUNC der Kette des Ablaufs. Ist der Nutzer schon an Datenflüsse
-  // angebunden, fehlen die Funktionen — der Satz nennt sie, sonst liest er sich wie erledigt (Probe H Zug 4).
-  'UC-02': 'Lege für die Abläufe {n} die Funktionen an, die der Nutzer über einen Datenfluss auslöst.',
-  'UC-03': 'Beschreibe die Abläufe {n} als Kette von Funktionen.',
-  'UC-04': 'Beschreibe das Ziel der Abläufe {n}.',
-  'R-15': 'Vervollständige die Funktionsketten {n}.',
-  'R-16': 'Verbinde den Nutzer {n} über Datenflüsse mit den Funktionen.',
-  'R-17': 'Lege die Abläufe des Systems {n} an.',
-  'FC-02': 'Beschreibe die Abläufe {n} als Kette von Funktionen.',
-  'FC-03': 'Hebe die inneren Schritte der Funktionen {n} auf die Ebene ihrer Kette.',
-  'FC-04': 'Verbinde Anfang und Ende der Funktionsketten {n} mit dem Nutzer.',
-  'FC-05': 'Verbinde die Schritte der Funktionsketten {n} über Datenflüsse.',
-  // Anforderungen (req)
-  'RD-01': 'Lege an, was die Anforderungen {n} erfüllt.',
-  'RD-02': 'Lass die Anforderungen {n} nur über ihre Teilanforderungen erfüllen.',
-  // Architektur (arch)
-  'R-02': 'Ordne die Funktionen {n} den Anforderungen zu, die sie erfüllen.',
-  'R-08': 'Repariere oder entferne die Verbindungen an {n}, deren Ziel fehlt.',
-  'R-10': 'Vervollständige die Datenflüsse {n}: woher sie kommen und wohin sie gehen.',
-  'IO-02': 'Gib den Datenflüssen {n} je genau eine Quelle.',
-  'R-12': 'Löse die zyklische Abhängigkeit um {n} auf.',
-  'R-18': 'Korrigiere die unzulässigen Verbindungen an {n}.',
-  'RD-04': 'Gruppiere die Teile unter {n}, es sind zu viele auf einer Ebene.',
-  'RD-05': 'Löse die Ebene unter {n} auf oder sammle dort, was zusammengehört.',
-  'R-30': 'Ordne die Funktionen {n} der Kette ihres Ablaufs zu.',
-  'R-31': 'Verbinde die Funktionen {n} auf der fehlenden Seite mit einem Datenfluss.',
-  'BW-02': 'Bündle die Datenformate an der Grenze von {n} oder teile den Block.',
-  'CR-01': 'Prüfe den Schnitt zwischen {n}, dort fließen ungewöhnlich viele Daten.',
-  'IO-01': 'Ergänze den Datenfluss zwischen den Schritten {n}.',
-  'NFR-01': 'Bringe {n} unter sein Budget oder ändere das Budget bewusst.',
-  'ND-01': 'Führe die doppelten Funktionen {n} zusammen oder grenze sie ab.',
-  // Module (alloc)
-  'R-04': 'Verringere die Datenformate an der Grenze des Moduls {n}.',
-  'R-22': 'Ordne die Funktionen {n} Modulen zu.',
-  'R-23': 'Gib den Modulen {n} Funktionen oder entferne sie.',
-  'MT-01': 'Prüfe die Abhängigkeiten des Moduls {n}.',
-  'MT-02': 'Teile das Modul {n}, seine Teile arbeiten nicht zusammen.',
-  // Prüfung (ver)
-  'R-01': 'Ergänze Tests für die Anforderungen {n}.',
-  'R-05': 'Ordne die Tests {n} den Anforderungen zu, die sie prüfen.',
-  'R-21': 'Sichere die Übergaben zwischen {n} mit Anforderungen oder einem Integrationstest ab.',
-  // Datenformate (schema)
-  'SC-02': 'Verbinde das Datenformat {n} mit seinem Datenfluss oder entferne es.',
-  'ND-02': 'Führe die doppelten Datenformate {n} zusammen oder grenze sie ab.',
-};
+const OHNE_VORSCHLAG = ALL_RULE_DEFS
+  .filter((r) => taskOf(r.id) === 'kern' && r.severity !== 'info' && !TASK_OF_ENTRY.has(r.id) && !RULE_HELP[r.id]?.vorschlag)
+  .map((r) => r.id);
+if (OHNE_VORSCHLAG.length > 0) {
+  throw new Error(`CR-GC-733: RULE_HELP ohne vorschlag fuer ${OHNE_VORSCHLAG.join(', ')} — contracts >= 10.14 noetig`);
+}
 
 /** Der Kaltstart je Stufe (SEED_STAGES). */
 export const VORSCHLAG_SEED: Record<string, string> = {
@@ -100,9 +65,6 @@ export const VORSCHLAG_SEED: Record<string, string> = {
   'seed:actor': 'Lege die Nutzer (Akteure) an und verbinde sie mit den Abläufen.',
 };
 
-const TASK_OF_ENTRY = new Map(
-  (Object.entries(TASK_ENTRY) as [Task, string | null][]).filter(([, e]) => e).map(([t, e]) => [e as string, t]),
-);
 
 function namen(graph: Graph, uids: readonly string[]): string {
   const byUid = new Map(graph.nodes.map((n) => [n.uid, n.name]));
@@ -133,8 +95,8 @@ export function vorschlagAusSchritt(step: GenerationStep, graph: Graph, task: Ru
   const regel = step.focusKey?.split(':')[1] ?? '';
   const eintritt = TASK_OF_ENTRY.get(regel);
   if (eintritt) return `Führe ${ANALYSE[eintritt]} durch.`;
-  const vorlage = VORSCHLAG_REGEL[regel];
-  if (!vorlage) throw new Error(`CR-GC-730: kein Vorschlag für Regel ${regel}`);
+  const vorlage = RULE_HELP[regel]?.vorschlag;
+  if (!vorlage) throw new Error(`CR-GC-733: kein Vorschlag für Regel ${regel}`);
   return mitNamen(vorlage, graph, step.focusElements ?? []);
 }
 

@@ -2911,6 +2911,12 @@
       "commitRef": "2b5ce74"
     },
     {
+      "id": "CR-GC-733",
+      "type": "CR",
+      "name": "Vorschlagssaetze aus RULE_HELP (contracts) lesen statt eigener Tabelle; Regelmatrix zeigt Spalte Vorschlag; Pruefung beim Hoststart",
+      "description": "docs/cr/open/CR-GC-733-vorschlagssaetze-aus-rule-help-contracts.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14701,6 +14707,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-733",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23451,5 +23462,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 585
+  "graphVersion": 587
 }

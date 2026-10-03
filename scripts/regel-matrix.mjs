@@ -7,7 +7,7 @@
  * Kern-Fokus" = Task kern ∧ Bedarf Gate/Aehnlichkeit ∧ Stufe ≠ info, „Eintritt fuer" steckt im Task):
  *   Bedarf (was die Regel zum Urteilen braucht: Gate | Aehnlichkeit (ND) | CodeFacts (RC) | nur Steuerung),
  *   Stufe (info / warning / error — error heisst blockt, CR-SM-353), Task (+ Eintritt fuer <task>),
- *   Phase, Dimension, Steuerregel, abnehmbar in, Hilfe-Prompt (RULE_HELP.prompt), Skill (TASK_SKILL bzw.
+ *   Phase, Dimension, Steuerregel, abnehmbar in, Hilfe-Prompt (RULE_HELP.prompt), Vorschlag an den Nutzer (RULE_HELP.vorschlag, CR-GC-733), Skill (TASK_SKILL bzw.
  *   SKILL_FOR_DIMENSION), Konflikt (beide gesetzt und verschieden), nennt (Prosa-Nennungen in Skills),
  *   Fix und Folge-Regeln (CR-GC-616, beide aus `FIX_ROUNDTRIP` in se-engine — dem gemessenen
  *   Roundtrip je Fix-Vorlage, nicht aus einer gepflegten Liste).
@@ -66,6 +66,7 @@ const rows = ids.map((id) => {
   const task = se.taskOf(id);
   const dim = se.RULE_TO_DIMENSION[id] ?? '';
   const prompt = se.RULE_HELP[id]?.prompt ?? '';
+  const vorschlag = se.RULE_HELP[id]?.vorschlag ?? '';
   const skill = skillOf(id, task, dim);
   return {
     Regel: id,
@@ -78,6 +79,7 @@ const rows = ids.map((id) => {
     Steuerregel: STEER_RULES.includes(id) ? 'ja' : '',
     'abnehmbar in': (abIn.get(id) ?? []).join(' '),
     'Hilfe-Prompt': prompt,
+    Vorschlag: vorschlag,
     Skill: skill,
     Konflikt: prompt && skill && prompt !== skill ? 'ja' : '',
     nennt: nennt(id).join(' '),
