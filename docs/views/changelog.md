@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 343 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 343 CR · 315 done · 4 open.
+Total: 343 CR · 316 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -404,4 +404,4 @@ Total: 343 CR · 315 done · 4 open.
 | `CR-GC-730` | done | Vorschlag je Dimension zu grob: ein Vorschlag soll einen Schritt benennen, daher je Regel formulieren (Probe G Zug 3: 38 min, zwei Plan-Schritte in einem Zug) |
 | `CR-GC-731` | done | Vorschlag zu UC-02 liest sich wie erledigt, wenn der Akteur angebunden ist, aber Funktionen fehlen (Probe H Zug 4) |
 | `CR-GC-732` | done | graphcode init liefert das OpenCode-Plugin aus, das den Vorschlag ins Eingabefeld legt (gemessen in Probe G/H) |
-| `CR-GC-733` | n/a | Vorschlagssaetze aus RULE_HELP (contracts) lesen statt eigener Tabelle; Regelmatrix zeigt Spalte Vorschlag; Pruefung beim Hoststart |
+| `CR-GC-733` | done | Vorschlagssaetze aus RULE_HELP (contracts) lesen statt eigener Tabelle; Regelmatrix zeigt Spalte Vorschlag; Pruefung beim Hoststart |
