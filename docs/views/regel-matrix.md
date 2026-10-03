@@ -104,7 +104,7 @@
 | RD-05 | Decomposition too narrow | Gate | warning | kern | PDR | arch |  |  |  | Löse die Ebene {n} in die Ebene darüber auf oder sammle unter ihr, was zusammengehört. | se:top-level |  |  |  |  |
 | SC-02 | Schema referenced by FLOW | Gate | warning | kern | CDR | schema |  |  |  | Verbinde das Datenformat {n} mit seinem Datenfluss oder entferne es. |  |  |  | schliesst |  |
 | TR-01 | Trade decision recorded as CR | Gate | warning | trade | PDR | arch |  |  | se-trade |  | se-trade |  | se-trade |  |  |
-| UC-01 | UC has requirements | Gate | warning | kern | SRR | uc |  |  | se:author-req | Lege für die Abläufe {n} Anforderungen mit Test an. | se:author-uc | ja | se:author-uc |  |  |
+| UC-01 | UC has requirements | Gate | warning | kern | SRR | uc |  |  | se:author-req | Lege für die Abläufe {n} Anforderungen mit Test an: fachliche je Funktion, Ende-zu-Ende-Vorgaben an der Kette. | se:author-uc | ja | se:author-uc |  |  |
 | UC-02 | UC has actor | Gate | warning | kern | SRR | uc |  |  |  | Lege für die Abläufe {n} die Funktionen an, die der Nutzer über einen Datenfluss auslöst. | se:author-uc |  | se:author-actor se:author-uc | schliesst |  |
 | UC-03 | UC has scenario | Gate | warning | kern | SRR | uc |  |  | se:author-uc | Beschreibe die Abläufe {n} als Kette von Funktionen. | se:author-uc |  | se:author-uc |  |  |
 | UC-04 | UC has goal | Gate | warning | kern | SRR | uc |  |  | se:author-uc | Beschreibe das Ziel der Abläufe {n}. | se:author-uc |  |  |  |  |
