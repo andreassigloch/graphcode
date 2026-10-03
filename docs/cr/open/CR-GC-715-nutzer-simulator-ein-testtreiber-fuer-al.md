@@ -1,39 +1,47 @@
-# CR-GC-715: Nutzer-Simulator: EIN Testtreiber fuer alle Ketten (A, D2, spaeter D1) im Automode — simuliert den Nutzer, Ziel autonom spec ready + code ready
+# CR-GC-715: Nutzer-Simulator: EIN Testtreiber für das interaktive Rig — drückt Enter auf jeden `vorschlag`, beantwortet Fragen aus dem Antwortblatt
 
 **Status:** 🟠 Open
 **Typ:** aus Item ITEM-2026-645 (idea)
-**Erstellt:** 2026-09-28
-**Item:** bok/items/ITEM-2026-645.json (Lane: code)
+**Erstellt:** 2026-09-28 · **umgeschrieben:** 2026-10-03 (Autor: interaktiv ist der Hauptfall, Executor eingefroren, S2 ersetzt)
 
 ---
 
 ## Befund
 
-Das Rig treibt jede Kette mit eigenem Arm (`opus5`: `claude -p`; `gcrun`: `graphcode run`), und
-optimiert wurde seit 2026-09-24 fast nur der Arm `gcrun` — Kette C, ohne Client. Die Zielketten
-(Entscheid 2026-09-28) laufen aber immer über einen Client: A (Claude), D2 (lokaler Client + Executor),
-später D1.
+Bis 2026-10-03 war der Simulator als Automode-Treiber beschrieben („autonom bis spec ready + code ready“, Ketten A/D2
+über `graphcode run` oder `graph_delegate`). Dieser Automodus ist jetzt Testmodus, nicht Zielbild; der Executor ist
+eingefroren. Die Proben G–J und der Frontier-Arm B (2026-10-03, `rig/agentdiary/messung-rollen-todo.md`) haben den
+interaktiven Ablauf von Hand gefahren: Start-Prompt → Agent fragt und plant → „Ja, Schritt 1“ → je Zug der
+vorbefüllte `vorschlag`. Von Hand heißt: ohne Stempel, N = 1–4, und mein Simulator hat die Fragen des Agenten nie
+beantwortet — J und Frontier B setzten darum Annahmen.
 
 ## Ziel
 
-**EIN** Testtreiber für alle Ketten im Automode, der den **Nutzer simuliert**, wo nötig und möglich:
-- startet den Client headless mit dem Initial-Prompt des Korpus — genau zwei Pfade (Entscheid
-  2026-09-28): Kette A = `claude -p` mit Abo, Kette D2 = `opencode run` mit qwen über das sigllm-Gateway.
-  Claude Code gegen qwen läuft zwar (Smoke 2026-09-28), sein Rahmen belegt aber 32–37k von 64k Token je Turn;
-- beantwortet Rückfragen aus einer Antwortdatei des Korpus (Auftraggeber-Wissen, z. B. die offenen
-  Punkte); was dort nicht steht, beantwortet er mit „offen, bitte als offen führen" — nie erfunden;
-- treibt weiter („weiter", Phasenwechsel), bis **spec ready + code ready** oder das Budget endet;
-- schreibt dieselben Artefakte je Lauf (Audit, Stream/Log, Graph, Code, Tests), damit `report.mjs`,
-  `zuege.mjs`, `verlauf.mjs` und das Blindurteil für jede Kette gleich rechnen.
+**EIN** Testtreiber für beide Arme des interaktiven Rigs (Leitlinie §9.4/§9.5, T-E3):
 
-Königsdisziplin: autonom spec ready + code ready. Die Kette ist die Messachse, der Treiber konstant.
+- startet den Client headless mit dem Start-Prompt des Korpus — `opencode run --attach` (Arm `modellieren lokal`,
+  qwen3.8 über sigllm) oder `claude -p --resume` (Arm `modellieren Frontier`, Opus); gleiche Anweisung in beiden
+  Armen (OpenCode-Agent `modellieren` bzw. dieselbe Datei als CLAUDE.md);
+- liest nach jedem Zug den `vorschlag` (lokal: `.graphcode/vorschlag.txt` aus dem Plugin; Frontier: aus der
+  Antwort von `graph_mutate` im Stream) und schickt ihn unverändert als nächsten Zug — das ist das Enter des Nutzers;
+- beantwortet Fragen des Agenten aus einem festen **Antwortblatt** des Korpus (Auftraggeber-Wissen); was dort nicht
+  steht, beantwortet er mit „offen, bitte als offen führen“ — nie erfunden. Eine Frage erkennt er an der letzten
+  Agenten-Antwort (Fragezeichen oder `AskUserQuestion`); dann geht die Antwort vor dem Vorschlag;
+- endet nach fester Zugzahl oder wenn der Vorschlag die Freigabe nennt („Fasse das Modell zusammen …“);
+- schreibt je Lauf dieselben Artefakte (Audit, Stream/OpenCode-DB-Auszug mit Denken, Graph-Export, Fragen und
+  Antworten) mit `openMeasured`-Stempel, damit `report.mjs`, Blindurteil und die Bedarfsanalyse (T-E9, OpenCode-Spur
+  folgt als eigenes Item) für beide Arme gleich rechnen.
+
+Je Zug gemessen: Dauer, Schritte, Gate-Ablehnungen, Steuerwert (Audit); Zug 1: Fragenzahl; am Ende Blindurteil.
 
 ## Umfang
 
-`rig/` (neuer Treiber, Korpus-Antwortdatei, Anbindung an `run.mjs`), Ablösung der Arme `opus5`/`gcrun`
-durch Ketten A/D2 — kein paralleler Pfad; Kette C bleibt nur, solange D2 fehlt (CR-GC-714).
+`rig/interaktiv/` (Treiber, Antwortblatt je Korpus, Anbindung an `run.mjs`), Korpus zunächst Todo-Liste
+(Start-Prompt und Antwortblatt aus `todo-local/README.md` und Probe-Antworten), dann sigllm-Prosa. Die Arme
+`opus5`/`gcrun` des Greenfield-Rigs bleiben eingefroren stehen (S2 alt), kein paralleler Treiber für dieselbe Frage.
 
 ## Akzeptanz
 
-- Kette A und D2 auf demselben Korpus (AgentDiary und sigllm) mit demselben Treiber, je Kette eine
-  Zeile in `docs/messung/verlauf.md`; Fragen und Antworten des Simulators im Lauf protokolliert.
+- Beide Arme auf dem Todo-Korpus, N ≥ 3, je Lauf eine Zeile in `docs/messung/verlauf.md` mit Stempel.
+- Fragen und Antworten des Simulators im Lauf protokolliert; kein erfundener Wert (Blindurteil O-Punkte 0).
+- T-E3-Kriterium der Leitlinie ist aus den Artefakten berechenbar (Spannen je Zug, Fragenzahl Zug 1, Blindurteil).
