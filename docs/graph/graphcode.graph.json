@@ -2906,7 +2906,9 @@
       "id": "CR-GC-732",
       "type": "CR",
       "name": "graphcode init liefert das OpenCode-Plugin aus, das den Vorschlag ins Eingabefeld legt (gemessen in Probe G/H)",
-      "description": "docs/cr/open/CR-GC-732-graphcode-init-liefert-das-opencode-plug.md"
+      "description": "docs/cr/open/CR-GC-732-graphcode-init-liefert-das-opencode-plug.md",
+      "status": "done",
+      "commitRef": "2b5ce74"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23449,5 +23451,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 584
+  "graphVersion": 585
 }
