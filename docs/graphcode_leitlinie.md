@@ -8,8 +8,10 @@ Diskussion, wird sie gegen den Kern-Claim (§1) und die Definition of Done des b
 Abschnitts geprüft. Destilliert am 2026-09-10 aus den Richtungs-Inputs des Autors und
 `graphcode/docs/archive/articles/06-claims.md`, überarbeitet 2026-09-15 (Blocken, drei Stufen,
 Geltungsbereich, Anker), 2026-09-25 (DoD je Abschnitt, Testdefinitionen aus den Rigs,
-Review 23.09, Konzept Modell- vs. Realisierungsarchitektur) und 2026-09-27 (§4 nur Ziel, Prinzip,
-DoD; Messmethode zu den Tests; T-V5, T-E10…T-E12).
+Review 23.09, Konzept Modell- vs. Realisierungsarchitektur), 2026-09-27 (§4 nur Ziel, Prinzip,
+DoD; Messmethode zu den Tests; T-V5, T-E10…T-E12) und 2026-10-03 (interaktives Modellieren als
+Hauptfall, `vorschlag` statt `next`, Executor eingefroren, S2 und T-E3 auf das interaktive Rig,
+Prompt-Bilanz statt Zeichengrenze; Änderung vom Autor delegiert).
 
 **Übergeordnetes Ziel:** guter Code und gute Code-Architektur.
 
@@ -85,9 +87,12 @@ Regelkonformität und Optimierung. Das Gate ist nur der harte Sonderfall des Zie
   muss mit Korrektur wiederholt werden. Das gilt auch für Vollständigkeitsregeln (REQ ohne TEST,
   UC ohne REQ, CR ohne Commit).
 - **Steuern:** Deterministische Kenngrößen (Readiness, Steuerwert) und Warnungen ziehen wie ein
-  Gummiband zurück zur implementierungsreifen Spezifikation.
-- **Empfehlen:** Vorschläge für den nächsten Schritt (`graph_suggest`, das `next` jeder Mutationsantwort), auch
-  statistisch. Nur diese Stufe darf lernen.
+  Gummiband zurück zur implementierungsreifen Spezifikation — an der Antwort an den Agenten
+  (`steerAdvisory`); den Nutzer erreichen die Steuerregeln als `vorschlag`.
+- **Empfehlen:** Vorschläge für den nächsten Schritt (`graph_suggest`; der `vorschlag` jeder
+  angewandten Mutationsantwort — ein Satz an den **Nutzer**, je Regel formuliert, gewählt wie der
+  Schritt von `graph_generate`, CR-GC-729…732), auch statistisch. Der Arbeitsauftrag an den Agenten
+  kommt nur von `graph_generate`. Nur diese Stufe darf lernen.
 
 Was nie blockt, ist die **Reihenfolge**: Ebenen und Reihenfolgen darf der Nutzer überspringen,
 Architektur und Optimierer stehen ab dem ersten Zug offen.
@@ -117,14 +122,21 @@ Architektur und Optimierer stehen ab dem ersten Zug offen.
 
 **Prinzip.** Struktur und Determinismus des Graphen versorgen das LLM gezielt mit dem Nötigen: der
 Agent arbeitet auf der need-to-know-Whitebox, statt auf dem ganzen Repo zu raten.
-Kontextmanagement *ist* Abstraktion. Das Vorgehen ist für jeden Ausführenden dasselbe — Mensch,
-Frontier-Modell oder Executor mit lokalem Modell: vom Groben ins Feine, geführt vom schon
+Kontextmanagement *ist* Abstraktion. Der Hauptfall ist **interaktiv** (2026-10-03): der Nutzer
+führt Zug für Zug, der Agent — lokal (qwen3.8 in OpenCode) oder Frontier (Opus in Claude Code) —
+fragt, baut einen kleinen Schritt, berichtet, endet. Der Automodus (`graph_generate`-Schleife,
+Executor) ist Testmodus, nicht Zielbild. Das Vorgehen ist für jeden Ausführenden dasselbe — Mensch,
+Frontier- oder lokales Modell, Executor: vom Groben ins Feine, geführt vom schon
 erzeugten Graphen. Verschieden sind nur zwei Stellgrößen:
 
 - die **Schnittgröße** — wie viel Arbeit ein Paket umfasst. Die untere Grenze gibt die Ontologie
-  (ein Anker, eine Ebene darunter), die obere das Budget des Ausführenden.
+  (ein Anker, eine Ebene darunter), die obere das Budget des Ausführenden. Interaktiv ist der
+  Schnitt der `vorschlag`: ein Schritt je Regel je Zug.
 - das **Kontextrezept** — was mitkommt: der Anker offen, die Geschwister als Box, der Rest als
   Index, der passende Ausschnitt des Auftrags. Es zählt *welcher* Inhalt, nicht wie viel.
+  Maßgeblich ist die **Prompt-Bilanz**: die Gesamtgröße des ersten Prompts beim Modell, je
+  Bestandteil zugeordnet, mit so wenig Standardanteil wie nötig — nicht eine Zeichengrenze je
+  Datei (die 6 000 Zeichen für `GRAPHCODE.md`, CR-GC-612, waren willkürlich). Messung offen (T-E6).
 
 Konzept: [`graphcode_arbeitspakete_konzept.md`](graphcode_arbeitspakete_konzept.md). Wie die
 Stellgrößen gemessen werden, steht bei den Tests (§9.3 Effizienz).
@@ -232,18 +244,21 @@ Optimum an Verträgen haben.
 **DoD Ziel:** T-V1 bis T-V4, T-O4 und T-C1 sind an moneyflow **oder** sirail erfüllt, und alle
 Tests aus §9 stehen auf „bestanden" oder tragen eine benannte Ausnahme.
 
-**Offene Punkte auf dem Weg dorthin** (Stand 2026-09-25):
+**Offene Punkte auf dem Weg dorthin** (Stand 2026-09-25; Empfehlen und Lokales LLM 2026-10-03):
 - **Architektur-Kennzahl:** Jede Messung des ℝ⁶-Vektors gegen eine bekannte Antwort endete als
   No-Go oder widerlegt (T-O4). Die Realisierungsarchitektur (§5) ist beschrieben, aber nur als
   Spike gerechnet (T-O1).
 - **Steuerung:** Sie wirkt bei Greenfield und über die Historie, nicht bei CR-Arbeit (T-M2, T-M3,
   T-E1, T-C3).
-- **Empfehlen:** Empfehlungen werden nicht abgerufen, und keine Fix-Vorlage deckt die fünf
-  Steuerregeln (T-M5).
+- **Empfehlen:** `graph_suggest` wird nicht abgerufen; der `vorschlag` an den Nutzer ist noch ohne
+  Stempel gemessen (2026-10-03: in 6 Zügen unverändert abgeschickt, 2 Ablehnungen in 9 Bau-Zügen),
+  und keine Fix-Vorlage deckt die fünf Steuerregeln (T-M5).
 - **Code-Beweis:** Greenfield erreicht nie gebundenen Code (T-C2). Nach der Faustregel ist der
   geführte Arm heute ≈ 3,5× teurer (T-E5).
-- **Lokales LLM:** Die Executor-Schleife ist nicht zu Ende optimiert, und Runde 20 zeigt: lokal
-  liegt deutlich hinter Frontier, die Readiness allein erkennt das nicht (T-E3).
+- **Lokales LLM:** Der Executor ist eingefroren (2026-10-03); interaktiv trägt qwen3.8 ohne ihn
+  (3 Läufe ohne Stempel: Bau-Züge Median 1,8 min, 2 Ablehnungen in 9 Zügen). Der Vergleich zu
+  Frontier im selben interaktiven Ablauf ist nicht gemessen — das Rig fehlt (T-E3); Runde 20
+  (Executor) zeigte lokal deutlich hinter Frontier, die Readiness allein erkennt das nicht.
 - **Rig-Betrieb:** Eine strukturierte Zusammenfassung fehlt; die `code-test`-Läufe liegen außerhalb
   des Repos (T-F1).
 
@@ -357,7 +372,7 @@ Informationsaufrufe. Der Rest ist echter Bedarf, und vor allem Code-Arbeit.
 | **T-M2** Steuern im Lauf | Konvergiert ein Greenfield-Lauf zur implementierungsreifen Spezifikation? | `rig/greenfield-systemtest`, `steuerung.mjs`, `trajektorie.mjs` | Ablehnungen fallen über die Runden; Readiness 8/8; Steuerwert ≤ 1 | Runde 19 (qwen3-coder, N = 3): Ablehnungen 13,3 → 3,0 je Lauf; Handoff nie erreicht (höchstens 4/8), `ms` immer 0 (2026-09-25) |
 | **T-M3** Steuern über die Historie | Sinken die Verstöße je Element, während das Modell wächst? | `scripts/spike-nachweis-history.mjs` (CR-GC-427): 73 git-Stände, alle mit heutigen Regeln gerichtet | Verstöße je Element fallen monoton im Trend | **GO:** 0,954 → 0,039 bei +86 % Elementen (2026-08-25) |
 | **T-M4** Kausalität | Wirkt ein verschobenes Budget der Policy tatsächlich auf das Gate-Urteil? | `tests/steering.steer-causality.test.ts` (CR-GC-484) | 12/12 Prüfungen grün, 3 Rotkontrollen schlagen an | siehe [`docs/messung/stand.md`](messung/stand.md) (`npm run messung`) |
-| **T-M5** Empfehlen | Werden Empfehlungen abgerufen und sind sie anwendbar? | Audit der Aufrufe `graph_suggest`; `schatten-suggest.mjs` (CR-GC-609); Hint-Konformanz (CR-GC-432) | ≥ 1 Abruf je Lauf, ≥ 1 angewandter Vorschlag; jede Steuerregel hat eine Fix-Vorlage | Opus: 0 Abrufe; Schatten-Suggest: 0 anwendbare Vorschläge; `FIX_TEMPLATES` decken keine der 5 Steuerregeln; Fremdlauf: ausführbar in 0,03 % der Befunde; Hint-Konformanz nicht messbar (fehlende Stempel) |
+| **T-M5** Empfehlen | Erreichen Empfehlungen den Nutzer und sind sie anwendbar? | Audit der Aufrufe `graph_suggest`; `schatten-suggest.mjs` (CR-GC-609); Hint-Konformanz (CR-GC-432); `vorschlag` je angewandter Mutation (CR-GC-729…732) im interaktiven Rig (§9.5): übernommene Vorschläge und Ablehnungen je Zug | ≥ 1 angewandte Empfehlung je Lauf (`graph_suggest`-Abruf oder übernommener `vorschlag`); jede Steuerregel hat einen Vorschlagssatz und eine Fix-Vorlage | Opus: 0 Abrufe; Schatten-Suggest: 0 anwendbare Vorschläge; `FIX_TEMPLATES` decken keine der 5 Steuerregeln, `VORSCHLAG_REGEL` alle 5; Fremdlauf: ausführbar in 0,03 % der Befunde; Hint-Konformanz nicht messbar (fehlende Stempel). Interaktiv qwen3.8 (2026-10-03, 3 Läufe ohne Stempel): `vorschlag` in 6 Zügen unverändert abgeschickt, 2 Ablehnungen in 9 Bau-Zügen |
 | **T-M6** Reihenfolge blockt nie | Darf der Nutzer Ebenen überspringen? | Gate-Test: MOD/FUNC ohne UC anlegen | Verdict ≠ `error`, Warnungen erlaubt | nicht erhoben |
 
 #### Effizienz (§4)
@@ -391,16 +406,16 @@ Prompt-Vorbildern statt aus dem Auftrag. Nach Menge allein wäre der falsche Def
 |---|---|---|---|---|
 | **T-E1** Graph statt Grep | Wo sucht der Agent im Dateisystem, obwohl der Graph die Antwort geliefert hätte? | Zwei Analysezahlen je CR, keine Schwelle: Graph-Leseaufrufe und Suchoperationen (Grep + Glob + Doc-Read), `scripts/retro-kpi.mjs` → `.graphcode/cr-messung.jsonl` nach jedem Commit. Welche Suchen eine Graph-Abfrage beantwortet hätte, weist die Bedarfsanalyse (T-E9) je Lauf aus; für den Referenz-Change zusätzlich `rig/referenz-change/gegenprobe.mjs`. | Jede Suche, die der Graph beantwortet hätte, ist als Optimierungspotenzial ausgewiesen (Werkzeugangebot, Prompt, Skill) | siehe [`docs/messung/stand.md`](messung/stand.md) (`npm run messung`) |
 | **T-E2** Whitebox-Kontext | Enthält die Whitebox, was sich tatsächlich ändert? | `rig/minimal-whitebox` (`measure.mjs`), Ground Truth aus dem git-Diff; Spike context-sufficiency; Faltungs-Nachspiel `rig/greenfield-systemtest/faltung.mjs` (SPIKE compose-faltung) | 100 % der geänderten Knoten in W bei \|W\|/\|G\| ≤ 0,05 | W trifft 100 % mit 1 824 Token, die Injektion 42 % mit 2 234 (2026-08-18); ein Bündel von ~667 Token genügt einem 27B-Modell für 5/5 Kriterien (2026-06-26, 1 Knoten). Pull statt Push wird nicht genommen: `graph_context` 0× bei > 400 Aufrufen (Arm `pull`). Faltung im Nachspiel: 5 % Nachladen bei 35 % Größe (mit uid-Index); im echten Lauf schlägt das Modell die nackten uids nach und liefert weniger als mit dem Index (CR-GC-682, 2026-09-27) |
-| **T-E3** Lokal ≈ Frontier (Modell) | Nivelliert der Graph den Modellunterschied beim Autorieren? | `rig/greenfield-systemtest`, Arme `gcrun` (lokal, unser Executor) / `opus5` (Frontier, Claude Code). Das ist der Produktvergleich: Modell **und** Treiber verschieden, gewollt, Korpus sigllm-Prosa | Die Spannen von T-V3, T-M1, T-M2 überlappen bei N ≥ 3 | Runde 20 (40 Runden, `auswertung-runde20.md`): lokal 91 Elemente, Frontier 187; Blindurteil: die beste Spec liefert Opus über Claude Code, lokal deutlich dahinter — die Readiness bildet das nicht ab (lokaler Coder: höchste Readiness, schlechtestes Urteil). Kosten nicht erfasst. Frühere Rankings zurückgezogen (Truncation-Fehler, Executor-Abschlussbericht) |
+| **T-E3** Lokal ≈ Frontier (Modell) | Nivelliert der Graph den Modellunterschied beim interaktiven Modellieren? | Interaktives Rig (geplant, §9.5): der Nutzer-Simulator (CR-GC-715) drückt bei jedem `vorschlag` Enter und beantwortet Fragen aus einem festen Antwortblatt; Arme `modellieren lokal` (qwen3.8, OpenCode) / `modellieren Frontier` (Opus, Claude Code) — derselbe Ablauf, Modell **und** Client verschieden (Produktvergleich), Korpus sigllm-Prosa, `openMeasured`-Stempel, N ≥ 3. Je Zug: Dauer, Schritte, Ablehnungen, Steuerwert (Audit); Fragen in Zug 1; Blindurteil gegen die Auftragspunkte (T-E10) | Die Spannen von Dauer, Ablehnungen und Steuerwert je Zug überlappen bei N ≥ 3, und das Blindurteil trennt die Arme nicht | Nicht gefahren. Lokaler Arm, Vorprobe ohne Stempel (qwen3.8, 2026-10-03, 4 Läufe, Spanne): Zug 1 2,0–4,1 min mit Fragen in 3 von 4; Bau-Züge (3 Läufe) Median 1,8 min (0,9–8,1), 2 Ablehnungen in 9 Zügen. Vorläufer über den Executor (Runde 20, 40 Runden, `auswertung-runde20.md`): lokal 91 Elemente, Frontier 187; Blindurteil lokal deutlich hinter Opus — die Readiness bildet das nicht ab (lokaler Coder: höchste Readiness, schlechtestes Urteil). Kosten nicht erfasst. Frühere Rankings zurückgezogen (Truncation-Fehler, Executor-Abschlussbericht) |
 | **T-E4** Lokal ≈ Frontier (Code) | Dasselbe für Code? | `rig/code-test` mit lokalem Arm | Abnahme gleich, Kennzahlen aus T-C1 in überlappender Spanne | nicht gefahren |
 | **T-E5** Normalisierte Effizienz | Ist die geführte Lieferung billiger als die freie? | Faustregel §9.2 auf `rig/code-test` | `K_geführt ≤ K_frei` bei gleicher Abnahme | **≈ 3,5× teurer** (2,7–4,3×, 2026-09-23) |
-| **T-E6** Kipppunkt des Kontexts | Ab welcher Kürzung fällt die Ausbeute? | Executor-Rig, ≥ 3 Stufen der Promptgröße, getrennt nach „Redundanz" und „tragender Inhalt", N ≥ 3 | Kurve mit dem Punkt, an dem Menge oder Readiness die Streuung verlässt | keine Kurve, nur Einzelpunkte: Redundanz −34 % hält die Qualität (CR-GC-650/651); tragenden Inhalt streichen kostet 82 → 22 Elemente (CR-GC-282); Elementliste −57 %: Menge im Rauschen, Nachfragen +20 % (CR-GC-652); Auftrag + UC-Liste dazu: Tokens +38 %, Verhalten gleich (CR-GC-663/664); Vorbilder statt Verbote: Ablehnungen 13,3 → 3,0 (CR-GC-658/659); Zuschnitt Befund/Index/Faltung: Menge 112/126/83, Qualität gleich am Boden (CR-GC-682) |
+| **T-E6** Kipppunkt des Kontexts | Ab welcher Kürzung fällt die Ausbeute? | Executor-Rig (eingefroren) bzw. interaktives Rig, ≥ 3 Stufen der Promptgröße, getrennt nach „Redundanz" und „tragender Inhalt", N ≥ 3; interaktiv gemessen als Prompt-Bilanz (§4): Gesamtgröße der ersten Anfrage je Bestandteil | Kurve mit dem Punkt, an dem Menge oder Readiness die Streuung verlässt | keine Kurve, nur Einzelpunkte: Redundanz −34 % hält die Qualität (CR-GC-650/651); tragenden Inhalt streichen kostet 82 → 22 Elemente (CR-GC-282); Elementliste −57 %: Menge im Rauschen, Nachfragen +20 % (CR-GC-652); Auftrag + UC-Liste dazu: Tokens +38 %, Verhalten gleich (CR-GC-663/664); Vorbilder statt Verbote: Ablehnungen 13,3 → 3,0 (CR-GC-658/659); Zuschnitt Befund/Index/Faltung: Menge 112/126/83, Qualität gleich am Boden (CR-GC-682). Interaktiv, ein Lauf je Aufbau, ohne Stempel (2026-10-03): erste Anfrage 61 552 gegen ~17 800 Zeichen bei gleicher Dauer von Zug 1 (22 min) — die Dauer kam aus der Ausgabe; mit Vorbildern im Prompt Zug 1 in 2–4 min; Ausgabelimit 8 192 brach das Denken ab (25 750 Zeichen Denken in 9,5 min), seit 32 768 kein Abbruch |
 | **T-E7** Testauswahl | Sagt der Graph, welche Tests laufen müssen? | `graph_tests` / `impactedTests()`; `scripts/test-selection-audit.mjs` (CR-GC-381); Spike selective-tests (CR-GC-380) | direkt gekoppelte Tests vollständig getroffen; `verify:code` fällt nur bei fehlender Bindung auf VOLL zurück | Trefferquote 13 %, Einsparpotenzial 53 % der Läufe (2026-08-21); Referenz-Change: 4 statt 172 Dateien wären möglich gewesen |
 | **T-E8** Werkzeuglatenz | Ist der Graph schnell genug für die Schleife? | `tests/perf.advisory-roundtrip.spike.test.ts` (CR-GC-400/665), feste Eingabe | Runde lesen → Status → Vorschlag → Anwenden < 200 ms | siehe [`docs/messung/stand.md`](messung/stand.md) (`npm run messung`) |
 | **T-E9** Bedarf je Aufruf | Was wollte das Modell — hatte es das schon, oder hätte der Graph es geliefert? | Default in jedem Lauf: `bedarfsAnalyse` für Claude-Code-Arme (Stream, mit Cache-Lesung je Aufruf), `bedarfsAnalyseExecutor` für den Executor (`run-raw.log`, Antwortgröße in Zeichen); eingebunden in `report.mjs` (Greenfield) und `messen.mjs` (Code-Test). Ein Arm ohne Modell wird gegen das Golden gelesen. Urteile: `doppelt` (wortgleich im selben Turn), `schon-da`, `teilweise-da` (uid stand in einer Detail-Antwort), `buendelbar` (gleiches Graph-Werkzeug im Folgeturn), `werkzeug-laden` (ToolSearch), `graph-haette` (Modelldatei gelesen, uid/realRef gesucht, Volllauf trotz gebundener Tests), beim Executor zusätzlich `je-runde` (schon in einer früheren Runde gelesen — sein Kontext beginnt jede Runde neu), sonst `neu` | Jeder vermeidbare Aufruf ist mit Grund und Kosten ausgewiesen und damit Optimierungspotenzial (Werkzeugangebot, Rundenprompt, Skill) | Code-Test geführt: 39 von 50 Aufrufen `neu`, vermeidbar 0,40 $ von 8,15 $ Delta; frei: 10/10 `neu`. Executor lokal (Runde 19, N = 3): 36–51 % der gelesenen Zeichen sind `je-runde`, fast nur der Auftrag (9–10× je Lauf). 200-Runden-Lauf: 78 % `je-runde` — `graph_elements {type:REQ}` 154×, Auftrag 178× (2026-09-25). Ursache (Runde 21, ITEM-2026-576): Der Dateiverweis in der Intention steht in jedem Rundenprompt. Ohne Verweis fällt das Nachlesen von 12 auf 1 je Lauf. CR-GC-663/664 hatte Text **und** Verweis im Prompt, deshalb blieb es beim Nachlesen. Den ganzen Text mitzuschicken war im sauberen Lauf teurer (589 s statt 115–246 s, n = 1). Offen ist die Variante „Verweis nur in der Seed-Runde“ |
 | **T-E10** Auftragstreue (Blindurteil) | Deckt die Spec den Auftrag, ohne offene Werte zu erfinden? | `rig/greenfield-systemtest/blindurteil.mjs`: `vorbereiten` rendert je Lauf eine anonyme Spec (`spec-render.mjs`) mit Zuordnung und Gutachter-Vorgabe; ein Gutachter je Spec (Claude-Subagent, ohne Vergleich, ohne Herkunft) bewertet jeden Auftragspunkt (`rig/sigllm-spezifikation/golden/auftragspunkte.json`, 28 P + 5 O) mit ✓/~/✗, erfundene Werte, Dubletten, fünf Noten; `auswerten` fasst zur Tabelle je Lauf. Stichprobe der Befunde am Graphen | lokaler Arm in der Spanne des Frontier-Arms bei ✓ (P) und Notensumme; 0 erfundene Werte bei den O-Punkten | CR-GC-682 (qwen3-coder, 9 Läufe): ✓ 0 von 28 in allen Läufen, ~ 3–9; O offen geführt 0–1 von 5; erfunden 6–14; Notensumme 5–7 von 25 (Boden 5). Frontier-Arm mit diesem Raster nicht gemessen (2026-09-27) |
 | **T-E11** Arbeitsweise | Referenziert das Modell den Bestand, statt ihn neu zu schreiben — und übernimmt es aus Vorbildern die Form statt des Inhalts? | `rig/greenfield-systemtest/verhalten.mjs`, Default in `report.mjs`: Gate-Ablehnungen und Preflight-Blocks je Regel, neu angelegter Bestand je Typ (`run-raw.log`); Dubletten mit Form und Auslöser (Nachbau aus `audit.jsonl`); REQ ohne kinds, ohne Erfüller, namensgleich; Vorbild-Leck gegen `VORBILD_UIDS` (Wächter `tests/rig-verhalten.test.ts`) | Vorbild-Leck 0; Dubletten ≤ 5 % der Elemente; neu angelegter Bestand fällt über die Runden | CR-GC-682 (9 Läufe): 927 Neuanlagen bestehender Knoten, 125 Dubletten (75 ohne Befund, `arch`-Alternativen bei einem Kandidaten), Vorbild-Leck in 9 von 9 (ITEM-2026-607/610, 2026-09-27) |
-| **T-E12** Schnittgröße je Modell | Welche Paketgröße trägt ein Modell? | Paket-Werkzeug und Planer (Konzept Arbeitspakete, CR 2); Stufen: ein Anker mit einer Ebene · ein Anker mit zwei Ebenen · alle Geschwister einer Ebene; Abnahmequote je Paket (Regeln im Geltungsbereich des Pakets), T-E10 und T-E11 je Stufe; N ≥ 3 je Modell und Stufe | je Modell die größte Stufe, deren Abnahmequote und Auftragstreue in der Streuung der kleinsten Stufe liegen | nicht gefahren — Paket-Werkzeug fehlt |
+| **T-E12** Schnittgröße je Modell | Welche Paketgröße trägt ein Modell? | Paket-Werkzeug und Planer (Konzept Arbeitspakete, CR 2); Stufen: ein Anker mit einer Ebene · ein Anker mit zwei Ebenen · alle Geschwister einer Ebene; Abnahmequote je Paket (Regeln im Geltungsbereich des Pakets), T-E10 und T-E11 je Stufe; N ≥ 3 je Modell und Stufe | je Modell die größte Stufe, deren Abnahmequote und Auftragstreue in der Streuung der kleinsten Stufe liegen | nicht gefahren — Paket-Werkzeug fehlt. Erster Punkt qwen3.8, interaktiv, ohne Stempel (2026-10-03): ein Vorschlag je Regel (ein Schritt je Zug) trägt — Median 1,8 min, 2 Ablehnungen in 9 Zügen; ein Vorschlag je Dimension (zwei Regeln) kostete 38,5 min und 5 Ablehnungen in einem Zug (CR-GC-730) |
 
 #### Optimieren (§5)
 
@@ -447,7 +462,7 @@ eingefroren; ein Benchmark, dessen Eingabe weiterläuft, misst nichts.
 
 | Rig | Aufgabe (Input des Arms) | Referenz | Arme | Kosten je Lauf |
 |---|---|---|---|---|
-| Greenfield · Korpus **sigllm-prosa** | `material-prosa/auftrag.md`: SIG Local als Prosa, ohne Kennungen und Zerlegung; Saat = ein SYS-Knoten | Golden `sigllm-v98.graph.json` (handgeführt, Ende der Spezifikation: 255 Elemente / 506 Traces) + Raster `auftragspunkte.json` (Blindurteil, T-E10) | `gcrun` (lokal, Executor) · `opus5` (Opus, Claude Code) | lokal 0 $, ~3–4 min; Opus 18–26 $ |
+| Greenfield · Korpus **sigllm-prosa** | `material-prosa/auftrag.md`: SIG Local als Prosa, ohne Kennungen und Zerlegung; Saat = ein SYS-Knoten | Golden `sigllm-v98.graph.json` (handgeführt, Ende der Spezifikation: 255 Elemente / 506 Traces) + Raster `auftragspunkte.json` (Blindurteil, T-E10) | `gcrun` (lokal, Executor — eingefroren) · `opus5` (Opus, Claude Code); geplant: `modellieren lokal` (qwen3.8, OpenCode) · `modellieren Frontier` (Opus, Claude Code), interaktiv über den Nutzer-Simulator (§9.5) | lokal 0 $, ~3–4 min; Opus 18–26 $ |
 | Greenfield · Korpus **sigllm-spezifikation** | Projektdefinition (245 Zeilen, **mit** Systemzerlegung und Akteuren) | dasselbe Golden | wie oben | wie oben |
 | Greenfield · Default **graphcode-webapp** | `prompt.txt`: „Web-App mit Multiuser aus dem Harness, sigloch-Module maximal nutzen" | keine (kein Golden, kein Abgleich) | wie oben | wie oben |
 | Code-Test | `aufgabe.md` + `vertrag/contract.ts`: Scheduler der Nachtaufträge (Termine, Nachholen, nie zweimal, Neustart …) | verdeckte Abnahme mit 15 Tests; `referenz/` belegt Erfüllbarkeit (15/15) und Trennschärfe (ohne Persistenz 11/15) | `gefuehrt` (Claude Code + graphcode + Golden) · `frei` (Claude Code allein), beide Opus 5 | gefuehrt ~10–11 $, frei ~2,3 $ |
@@ -466,8 +481,8 @@ Referenz, derselbe Stempel — ein Unterschied zum letzten Lauf ist dann eine Wi
 | Stufe | Wann | Umfang | Deckt |
 |---|---|---|---|
 | **S1 deterministisch** | jede Änderung an Regeln, Policy, Messung; vor jedem Release | `npm run messung` → `docs/messung/stand.md` (Urteil je Test-ID; noch nicht erhoben: T-V1, T-M3, T-E2, T-O4, T-O6, CR-GC-679B) — Minimal-Whitebox Phase 1 · moneyflow-Struktur (Baseline + `--structure`) · Grenzmenge · Randbreiten · Known-Answer-Sets (ℝ⁶, ND, Engpass) · Nachweis-History · Regel-Matrix · Perf-Test · KPI 1 (läuft automatisch) | T-V1, T-V2, T-V4, T-M3, T-M4, T-E1, T-E2, T-E8, T-O4, T-O6, T-H2 |
-| **S2 lokal** | jede Änderung am Executor, an Prompt, Werkzeugangebot oder Steuerung | Greenfield `gcrun` auf **sigllm-prosa**, N = 3, 40 Runden (`lauf-gcrun.env`; ~25 min je Lauf — mit 12 erreicht kein Lauf die arch-Phase); `report.mjs` mit Bedarfsanalyse und Arbeitsweise; Blindurteil der Specs (`blindurteil.mjs`) | T-V3, T-V5, T-M1, T-M2, T-E3 (lokale Hälfte), T-E6, T-E9, T-E10, T-E11 |
-| **S3 Frontier** | auf Anlass: Release, Claim-Aussage nach außen, Richtungsentscheidung | Greenfield `opus5` auf sigllm-prosa (N = 1) · Code-Test `gefuehrt` + `frei` · Referenz-Change | T-C1, T-C3, T-E3 (Frontier-Hälfte), T-E5, T-E9, T-M5 |
+| **S2 lokal** | jede Änderung an Prompt, `vorschlag`, Werkzeugangebot oder Steuerung | Interaktives Rig (geplant, §9.5): Nutzer-Simulator (CR-GC-715) auf **sigllm-prosa**, Arm `modellieren lokal` (qwen3.8, OpenCode), N ≥ 3, `openMeasured`-Stempel; je Zug Dauer, Schritte, Ablehnungen, Steuerwert (Audit), Fragen in Zug 1; `report.mjs` mit Bedarfsanalyse und Arbeitsweise; Blindurteil der Specs (`blindurteil.mjs`). Ersetzt den Executor-Lauf `gcrun` (N = 3, 40 Runden; eingefroren 2026-10-03) | T-V3, T-V5, T-M1, T-M2, T-M5, T-E3 (lokaler Arm), T-E6, T-E9, T-E10, T-E11, T-E12 |
+| **S3 Frontier** | auf Anlass: Release, Claim-Aussage nach außen, Richtungsentscheidung | Interaktives Rig, Arm `modellieren Frontier` (Opus, Claude Code; N = 1) · Code-Test `gefuehrt` + `frei` · Referenz-Change | T-C1, T-C3, T-E3 (Frontier-Arm), T-E5, T-E9, T-M5 |
 
 S1 und S2 kosten nichts und laufen oft; nur das Blindurteil in S2 braucht Frontier-Token (ein
 Gutachter je Spec). S3 kostet je Durchgang rund 40–50 $ plus eine Sitzung;
@@ -479,20 +494,22 @@ Ein Vergleich gilt nur zwischen Armen, die sich in **genau einer** Achse untersc
 (`ARM_ACHSEN` in `run.mjs` rechnet das aus).
 Ausnahme ist der Produktvergleich lokal gegen Frontier (T-E3): Er vergleicht bewusst zwei ganze Produkte.
 
-**Aus der Betrachtung genommen: Executor mit Frontier-Modell** (`gcrun-frontier`). Ein
-Frontier-Modell leistet, was der Executor von außen erzwingt, intern besser und schneller. Das
-ist zum zweiten Mal belegt (Entscheid des Autors 2026-09-25). Der Executor ist das Werkzeug für
-lokale Modelle; ein Frontier-Arm läuft nativ in Claude Code.
+**Der Executor (`graph_delegate`, `graphcode run`) ist eingefroren** (Entscheid des Autors
+2026-10-03): kein Ausbau; er bleibt für headless und schwächere Modelle und wird für größere
+Aufgaben vermutlich wieder gebraucht. Für qwen3.8 ist er nicht mehr nötig — interaktiv 2
+Gate-Ablehnungen in 9 Bau-Zügen ohne Executor (3 Läufe ohne Stempel). Executor mit
+Frontier-Modell (`gcrun-frontier`) bleibt aus der Betrachtung (Entscheid 2026-09-25): ein
+Frontier-Modell leistet intern besser und schneller, was der Executor von außen erzwingt.
 
 | Frage | Arm gegen Arm | die eine Achse | Test |
 |---|---|---|---|
-| Ist lokal mit unserem Executor so gut wie Frontier? | `gcrun` ↔ `opus5` | Modell + Treiber (Produktvergleich) | T-E3 |
+| Ist lokal interaktiv so gut wie Frontier? | `modellieren lokal` (qwen3.8, OpenCode) ↔ `modellieren Frontier` (Opus, Claude Code) | Modell + Client (Produktvergleich), derselbe Ablauf | T-E3 |
 | Bringt graphcode besseren Code? | Code-Test `gefuehrt` ↔ `frei` | Werkzeug + Modell | T-C1, T-E5 |
 | Muss die Struktur im Auftrag stehen? | Korpus sigllm-spezifikation ↔ sigllm-prosa | Input-Struktur | T-V3 |
 | Push oder Pull beim Kontext? | Minimal-Whitebox `full` ↔ `whitebox` ↔ `off` ↔ `pull` | Injektion | T-E2, T-E6 |
 | Welches Kontextrezept? | `GCRUN_INVENTORY` `fund` ↔ `index` ↔ `faltung` (CR-GC-682) | Inventar-Zuschnitt | T-E6, T-E10, T-E11 |
 | Welche Schnittgröße trägt das Modell? | Paketstufen je Modell (Konzept Arbeitspakete) | Schnittgröße | T-E12 |
-| Wie viel Prompt braucht der Executor? | S2 vor ↔ nach einer Prompt-Änderung (Serie CR-GC-650…664) | Promptinhalt | T-E6 |
+| Wie viel Prompt braucht der Agent? | S2 vor ↔ nach einer Prompt-Änderung (Executor: Serie CR-GC-650…664; interaktiv: Prompt-Bilanz der ersten Anfrage) | Promptinhalt | T-E6 |
 | Hilft die Gate-Probe (dryRun)? | `GCRUN_CANDIDATES` 1 ↔ 2 (CR-GC-568) | Kandidatenzahl | T-M2 |
 | Wie viel kostet Wiederlesen? | Rewind-Lauf ↔ Normallauf (halbe Turns) | Turn-Zahl | T-E5 |
 | Rankt eine Kennzahl richtig — auch bei schlechter Bindung? | Korpus `rig/graphs/` (Bindung 0 % … 92 %) | Graph | T-O4 |
@@ -505,7 +522,8 @@ Test-Zuordnung sind Kandidaten zum Entfernen.
 
 | Aufbau | Pfad | Art | Test | Status |
 |---|---|---|---|---|
-| Greenfield-Systemtest | `rig/greenfield-systemtest/` (+ `steuerung`, `trajektorie`, `turn-analyse`, `schatten-suggest`) | Rig, Serie | T-V3, T-M2, T-M5, T-E3, T-C2 | läuft; Runde 20 ausgewertet (`auswertung-runde20.md`) |
+| Greenfield-Systemtest | `rig/greenfield-systemtest/` (+ `steuerung`, `trajektorie`, `turn-analyse`, `schatten-suggest`) | Rig, Serie | T-V3, T-M2, T-M5, T-E3, T-C2 | läuft; Runde 20 ausgewertet (`auswertung-runde20.md`); Arm `gcrun` eingefroren (2026-10-03) |
+| Interaktives Rig | Pfad offen — Treiber: Nutzer-Simulator (CR-GC-715, offen): Enter bei jedem `vorschlag`, Antworten aus festem Antwortblatt; Arme `modellieren lokal` (qwen3.8, OpenCode) · `modellieren Frontier` (Opus, Claude Code) | Rig, Serie | T-E3, T-M2, T-M5, T-E10 | geplant (2026-10-03); Vorprobe 4 Läufe lokal ohne Stempel, nicht committet |
 | Arbeitsweise | `rig/greenfield-systemtest/verhalten.mjs` (+ `nachbau.mjs`), eingebunden in `report.mjs` | Default-Auswertung jedes Laufs | T-V5, T-E11 | läuft (2026-09-27) |
 | Blindurteil | `rig/greenfield-systemtest/blindurteil.mjs` (+ `spec-render.mjs`), Raster `rig/sigllm-spezifikation/golden/auftragspunkte.json` | Rig-Schritt mit Gutachtern | T-E10 | CR-GC-682 ausgewertet (`auswertung-cr682.md`) |
 | Faltungs-Nachspiel | `rig/greenfield-systemtest/faltung.mjs`, Faltung aus `src/loop/faltung.ts` | Replay | T-E2 | ausgewertet (SPIKE compose-faltung) |
@@ -515,7 +533,7 @@ Test-Zuordnung sind Kandidaten zum Entfernen.
 | Minimal-Whitebox | `rig/minimal-whitebox/` | Rig + Spike | T-E2, T-E6 | ausgewertet |
 | moneyflow-Struktur | `rig/moneyflow-struktur/` | Rig, Gate | T-V1, T-V2, T-O4 | ausgewertet |
 | dummy-slicer / context-sufficiency | `rig/dummy-slicer/` | Rig, Spike | T-E2 | ausgewertet (2026-06) |
-| Executor-Programm | `docs/archive/executor-abschlussbericht.md` | Serie | T-E3, T-E6 | abgeschlossen, Rankings zurückgezogen; Rohdaten gelöscht bis auf 4 Fixture-Graphen (CR-GC-678) |
+| Executor-Programm | `docs/archive/executor-abschlussbericht.md` | Serie | T-E3, T-E6 | abgeschlossen, Rankings zurückgezogen; Rohdaten gelöscht bis auf 4 Fixture-Graphen (CR-GC-678); Executor eingefroren (2026-10-03) |
 | sigllm-Fremdlauf | `bok/docs/research/fremdlauf-sigllm-2026-09.md` | Replay | T-M1, T-M5, T-V4 | ausgewertet |
 | KPI 1 je CR | `scripts/retro-kpi.mjs`, `scripts/cr-messung.mjs` | Dauermessung | T-E1 | läuft nach jedem Commit |
 | Messstand S1 | `scripts/messung.mjs` (`npm run messung`) → `docs/messung/stand.md` | Runner, deterministisch | T-V2, T-V4, T-M4, T-E1, T-E8, T-H2 | läuft (2026-09-27); T-V1, T-M3, T-E2, T-O4, T-O6 folgen (CR-GC-679B) |
