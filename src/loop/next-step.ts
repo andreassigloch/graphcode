@@ -47,7 +47,9 @@ const ANALYSE: Record<Task, string> = {
 export const VORSCHLAG_REGEL: Record<string, string> = {
   // Abläufe (uc)
   'UC-01': 'Lege für die Abläufe {n} Anforderungen mit Test an.',
-  'UC-02': 'Verbinde die Abläufe {n} über Datenflüsse mit ihrem Nutzer.',
+  // CR-GC-731: UC-02 verlangt ACTOR → FLOW → FUNC der Kette des Ablaufs. Ist der Nutzer schon an Datenflüsse
+  // angebunden, fehlen die Funktionen — der Satz nennt sie, sonst liest er sich wie erledigt (Probe H Zug 4).
+  'UC-02': 'Lege für die Abläufe {n} die Funktionen an, die der Nutzer über einen Datenfluss auslöst.',
   'UC-03': 'Beschreibe die Abläufe {n} als Kette von Funktionen.',
   'UC-04': 'Beschreibe das Ziel der Abläufe {n}.',
   'R-15': 'Vervollständige die Funktionsketten {n}.',

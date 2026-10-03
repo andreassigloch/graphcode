@@ -70,6 +70,16 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
     expect(gen.prompt).toMatch(/Fix:|graph_/);
   });
 
+  it('CR-GC-731: UC-02 nennt die fehlenden Funktionen, auch wenn der Nutzer schon an Datenfluesse angebunden ist', async () => {
+    await mutiere([SYS]);
+    await mutiere([knoten('UC-a', 'UC', 'Bestellung annehmen', 'Der Kunde gibt eine Bestellung auf.'), kante('SYS-s', 'compose', 'UC-a')]);
+    await mutiere([knoten('ACTOR-k', 'ACTOR', 'Kunde', 'Eine Person, die bestellt.')]);
+    const step = { phase: 'expand', focusKey: 'uc:UC-02:UC-a', focusDimension: 'uc', focusElements: ['UC-a'] } as GenerationStep;
+    const satz = vorschlagAusSchritt(step, harness.getGraph(), 'kern');
+    expect(satz).toContain('Funktionen');
+    expect(satz).toContain('Bestellung annehmen');
+  });
+
   it('nicht auf der Probe und nicht auf der Ablehnung — dort ist das Urteil der Kanal', async () => {
     expect(await mutiere([SYS], true)).not.toHaveProperty('vorschlag');
     await mutiere([SYS]);

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 340 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 341 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 340 CR · 313 done · 4 open.
+Total: 341 CR · 313 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -402,3 +402,4 @@ Total: 340 CR · 313 done · 4 open.
 | `CR-GC-728` | done | graph_delegate sagt dem Client nicht, warum ein Lauf endete und was als Naechstes geht. Probe todo B4 (2026-10-02): nach fertigem Kern meldete der Executor stopReason stalled, 0 Zuege, 0 Token — offen waren nur die Eintrittspunkte der Analysen. Der Client (qwen3.8) hielt das fuer einen Ausfall des Modells und schickte fuenf weitere Auftraege mit genauen Kantenanweisungen; jeder endete gleich. Dazu: ein auftrag bei bestehendem Modell wird still verworfen (Intent nur in der Seed-Phase), der Client erfaehrt es nicht |
 | `CR-GC-729` | done | next an der Mutation wird Vorschlag an den Nutzer (Chat-Vorbefuellung), ohne Fix-Anleitung und Abnahme-Angebot |
 | `CR-GC-730` | done | Vorschlag je Dimension zu grob: ein Vorschlag soll einen Schritt benennen, daher je Regel formulieren (Probe G Zug 3: 38 min, zwei Plan-Schritte in einem Zug) |
+| `CR-GC-731` | n/a | Vorschlag zu UC-02 liest sich wie erledigt, wenn der Akteur angebunden ist, aber Funktionen fehlen (Probe H Zug 4) |
