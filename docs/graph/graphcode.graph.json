@@ -2890,7 +2890,9 @@
       "id": "CR-GC-730",
       "type": "CR",
       "name": "Vorschlag je Dimension zu grob: ein Vorschlag soll einen Schritt benennen, daher je Regel formulieren (Probe G Zug 3: 38 min, zwei Plan-Schritte in einem Zug)",
-      "description": "docs/cr/open/CR-GC-730-vorschlag-je-dimension-zu-grob-ein-vorsc.md"
+      "description": "docs/cr/open/CR-GC-730-vorschlag-je-dimension-zu-grob-ein-vorsc.md",
+      "status": "done",
+      "commitRef": "3ace5c1"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23394,5 +23396,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 578
+  "graphVersion": 579
 }

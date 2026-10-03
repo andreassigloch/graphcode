@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 340 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 340 CR · 312 done · 4 open.
+Total: 340 CR · 313 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -401,4 +401,4 @@ Total: 340 CR · 312 done · 4 open.
 | `CR-GC-727` | done | D2 auf einer GPU: der wartende Client nimmt dem Executor die Rechenzeit. Probe todo 2026-10-02: jede graph_delegate({})-Abfrage des Clients kostet eine Inferenz mit 14-19 k Token ohne Cache; Executor-Runden dauern 2-5 min statt 15-85 s, qwen3.8 im Executor reisst den 300-s-Aufruf-Timeout. Das Warte-Budget muss je Repo einstellbar sein (executor.wartenSek), gepaart mit dem Abbruch des Clients (OpenCode experimental.mcp_timeout); die Obergrenze 55 s aus CR-GC-726 verhindert das |
 | `CR-GC-728` | done | graph_delegate sagt dem Client nicht, warum ein Lauf endete und was als Naechstes geht. Probe todo B4 (2026-10-02): nach fertigem Kern meldete der Executor stopReason stalled, 0 Zuege, 0 Token — offen waren nur die Eintrittspunkte der Analysen. Der Client (qwen3.8) hielt das fuer einen Ausfall des Modells und schickte fuenf weitere Auftraege mit genauen Kantenanweisungen; jeder endete gleich. Dazu: ein auftrag bei bestehendem Modell wird still verworfen (Intent nur in der Seed-Phase), der Client erfaehrt es nicht |
 | `CR-GC-729` | done | next an der Mutation wird Vorschlag an den Nutzer (Chat-Vorbefuellung), ohne Fix-Anleitung und Abnahme-Angebot |
-| `CR-GC-730` | n/a | Vorschlag je Dimension zu grob: ein Vorschlag soll einen Schritt benennen, daher je Regel formulieren (Probe G Zug 3: 38 min, zwei Plan-Schritte in einem Zug) |
+| `CR-GC-730` | done | Vorschlag je Dimension zu grob: ein Vorschlag soll einen Schritt benennen, daher je Regel formulieren (Probe G Zug 3: 38 min, zwei Plan-Schritte in einem Zug) |
