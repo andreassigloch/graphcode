@@ -1,6 +1,6 @@
 # CR-GC-713: T-EBENE: Ebenenabschluss mit Architekturreview (Breite, Geschwister-Dubletten, Rand, Modul je Kind) und ebenenbeschraenkter Fokus
 
-**Status:** 🟠 Open
+**Status:** ⏸ Geparkt (2026-10-04, Entscheid Autor) — Abnehmer war der Executor, der seit dem Leitlinien-Entscheid 2026-10-03 eingefroren ist. Wieder aufnehmen nur, wenn die Vorschlagsfolge im interaktiven Rig (CR-GC-715) dieselben Muster zeigt (Ebenensprünge, halbe UCs, Module unter Inhalts-Fokus); dann 711 für den Vorschlag neu schneiden.
 **Typ:** aus Item ITEM-2026-643 (idea)
 **Erstellt:** 2026-09-28
 **Item:** bok/items/ITEM-2026-643.json (Lane: code)
