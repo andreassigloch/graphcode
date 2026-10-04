@@ -131,6 +131,10 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/mcp.mutate-next-step.test.ts':
+    'Vorschlag an den Nutzer (CR-GC-729..734): liest die Regel-Saetze aus den contracts und ein eingefrorenes\n' +
+    'Fremdmodell (tests/fixtures/todo-local-v9.graph.json), nie graphcodes eigene SSOT — eine Modellaenderung\n' +
+    'kann ihn nicht rot machen; eine Aenderung an next-step.ts sehr wohl (Spur CODE).',
   'tests/rig-verhalten.test.ts':
     'Rig-Verhaltensanalyse (Leitlinie T-E10/T-E11): wertet gestellte Logs, Audits und Graphen in einem\n' +
     'TEMP-Verzeichnis aus und liest die Executor-Prompts (Vorbild-uids). graphcodes eigene SSOT liest er\n' +

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 343 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 344 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 343 CR · 316 done · 4 open.
+Total: 344 CR · 316 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -405,3 +405,4 @@ Total: 343 CR · 316 done · 4 open.
 | `CR-GC-731` | done | Vorschlag zu UC-02 liest sich wie erledigt, wenn der Akteur angebunden ist, aber Funktionen fehlen (Probe H Zug 4) |
 | `CR-GC-732` | done | graphcode init liefert das OpenCode-Plugin aus, das den Vorschlag ins Eingabefeld legt (gemessen in Probe G/H) |
 | `CR-GC-733` | done | Vorschlagssaetze aus RULE_HELP (contracts) lesen statt eigener Tabelle; Regelmatrix zeigt Spalte Vorschlag; Pruefung beim Hoststart |
+| `CR-GC-734` | n/a | Vorschlag wiederholt einen Analyse-Eintrittspunkt (AF-01..05) endlos, auch nachdem der Nutzer ihn beauftragt hat und der Zug ihn nicht schliessen konnte; Eintrittspunkte sind von der Zurueckstellung ausgenommen (CR-GC-604) — Handlauf todo-local 2026-10-03 |

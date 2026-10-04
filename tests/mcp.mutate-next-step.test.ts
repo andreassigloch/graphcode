@@ -9,13 +9,15 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
-import { RULE_HELP } from '@sigloch/contracts/se';
-import { VORSCHLAG_SEED, vorschlagAusSchritt } from '../src/loop/next-step.js';
-import { SEED_STAGES, type GenerationStep } from '../src/loop/generate.js';
+import { DEFAULT_METRIC_POLICY, RULE_HELP } from '@sigloch/contracts/se';
+import { VORSCHLAG_SEED, vorschlagAusSchritt, vorschlagNachAnwendung, vorschlagOffeneAnalyse } from '../src/loop/next-step.js';
+import { SEED_STAGES, generationStep, type GenerationStep } from '../src/loop/generate.js';
+import { focusMemoryOf } from '../src/loop/stagnation.js';
 import { alsFormatE } from './helpers/format-e.js';
 
 type Antwort = Record<string, unknown>;
@@ -92,6 +94,27 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
   it('Eintrittspunkt einer Analyse: der Nutzer bekommt die Analyse als Bitte, ohne Abnahme-Angebot', () => {
     const step = { phase: 'expand', focusKey: 'req:AF-01:SYS-s', focusDimension: 'req', focusElements: ['SYS-s'] } as GenerationStep;
     expect(vorschlagAusSchritt(step, { nodes: [], edges: [] }, 'kern')).toBe('Führe das Einsatzkonzept (ConOps) durch.');
+  });
+
+  it('CR-GC-734: ein offener Eintrittspunkt — Auftrag, dann Frage nach dem Stand, dann der naechste Schritt', () => {
+    // Handlauf todo-local v9: Kern fertig, AF-01..05 offen, kein Stempel. Vorher hiess es nach jedem Zug „ConOps".
+    type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown> }[]; traces: { source: string; target: string; type: string; label?: string }[] };
+    const flat: Flat = JSON.parse(readFileSync(fileURLToPath(new URL('./fixtures/todo-local-v9.graph.json', import.meta.url)), 'utf8'));
+    const graph = {
+      nodes: flat.elements.map((e) => ({ uid: e.id, type: e.type, name: e.name ?? e.id, description: e.description ?? '', attributes: e.attributes ?? {} })),
+      edges: flat.traces.map((t) => ({ sourceId: t.source, targetId: t.target, edgeType: t.type, attributes: t.label ? { label: t.label } : {} })),
+    } as never;
+    const memory = focusMemoryOf({});
+    const zug = (v: number) => vorschlagNachAnwendung(graph, DEFAULT_METRIC_POLICY, 0.8, repoRoot, memory, v);
+
+    expect(zug(10)).toBe('Führe das Einsatzkonzept (ConOps) durch.');
+    expect(zug(11)).toBe(vorschlagOffeneAnalyse('conops'));
+    const weiter = zug(12);
+    expect(weiter).not.toContain('Einsatzkonzept');
+    for (const muster of KEIN_AUFTRAG) expect(weiter, String(muster)).not.toMatch(muster);
+    // Der Autopilot bleibt am Eintrittspunkt (CR-GC-604): das Gedaechtnis hat nichts zurueckgestellt.
+    const auto = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [...memory.deferred], 'host', null, 'kern');
+    expect(auto.focusKey).toMatch(/:AF-01:/);
   });
 
   it('CR-GC-733: die Saetze je Regel kommen aus den contracts (Regelmatrix ist SSOT); hier nur Kaltstart-Stufen', () => {

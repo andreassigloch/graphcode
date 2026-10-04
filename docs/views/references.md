@@ -783,6 +783,7 @@
 | `CR-GC-732` | relation | `FUNC-generation-step` |
 | `CR-GC-732` | relation | `REQ-repo-install` |
 | `CR-GC-733` | relation | `FUNC-generation-step` |
+| `CR-GC-734` | relation | `FUNC-generation-step` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

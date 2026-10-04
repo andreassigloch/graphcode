@@ -101,6 +101,22 @@ export function vorschlagAusSchritt(step: GenerationStep, graph: Graph, task: Ru
 }
 
 /**
+ * CR-GC-734: wie oft ein Eintrittspunkt dem Nutzer in dieser Sitzung schon vorgeschlagen wurde. Der Autopilot
+ * bleibt am Eintrittspunkt, bis der Task ihn schliesst (CR-GC-604); dem Nutzer nennt ihn der Vorschlag zweimal —
+ * als Auftrag, dann als Frage nach dem Stand — und geht danach weiter. Zaehlt Zuege, nicht Agentenverhalten.
+ * Sitzungszustand wie das FocusMemory, an dem er haengt.
+ */
+const genannt = new WeakMap<FocusMemory, Map<string, number>>();
+
+/** Satz 2: der Eintrittspunkt ist nach einem Zug noch offen. */
+export function vorschlagOffeneAnalyse(task: Task): string {
+  const name = ANALYSE[task];
+  return `${name.charAt(0).toUpperCase()}${name.slice(1)} ist noch nicht abgeschlossen — was fehlt dafür?`;
+}
+
+const eintrittDes = (step: GenerationStep): Task | undefined => TASK_OF_ENTRY.get(step.focusKey?.split(':')[1] ?? '');
+
+/**
  * Der Vorschlag nach einer angewandten Mutation — gewaehlt wie der Schritt, den `graph_generate`
  * fuer einen MCP-Host liefern wuerde: Intention aus dem SYS, Schwelle des Hosts, `selection: 'host'`,
  * Profil frisch geladen, dasselbe Sitzungsgedaechtnis (CR-GC-596).
@@ -114,8 +130,21 @@ export function vorschlagNachAnwendung(
   version: number,
 ): string {
   const profile = loadTargetProfile(repoRoot);
-  const step = stepWithMemory(memory, version, (defer, optimum) =>
-    generationStep(graph, policy, undefined, threshold, defer, 'host', profile, memory.task, optimum),
-  );
-  return vorschlagAusSchritt(step, graph, memory.task);
+  const rechne = (defer: string[], optimum = memory.steerOptimum) =>
+    generationStep(graph, policy, undefined, threshold, defer, 'host', profile, memory.task, optimum);
+  const step = stepWithMemory(memory, version, rechne);
+  const task = memory.task === 'kern' ? eintrittDes(step) : undefined;
+  if (!task || !step.focusKey) return vorschlagAusSchritt(step, graph, memory.task);
+
+  let zaehler = genannt.get(memory);
+  if (!zaehler) genannt.set(memory, (zaehler = new Map()));
+  const mal = zaehler.get(step.focusKey) ?? 0;
+  if (mal < 2) zaehler.set(step.focusKey, mal + 1);
+  if (mal === 0) return vorschlagAusSchritt(step, graph, memory.task);
+  if (mal === 1) return vorschlagOffeneAnalyse(task);
+  // Genannt: der naechste Schritt ohne die genannten Eintrittspunkte — rein gerechnet, das Gedaechtnis bleibt das
+  // des Autopiloten. Sind nur sie offen, ignoriert generationStep das defer und liefert einen davon.
+  const ohne = rechne([...memory.deferred, ...zaehler.keys()]);
+  const nochEintritt = eintrittDes(ohne);
+  return nochEintritt && zaehler.has(ohne.focusKey ?? '') ? vorschlagOffeneAnalyse(nochEintritt) : vorschlagAusSchritt(ohne, graph, memory.task);
 }
