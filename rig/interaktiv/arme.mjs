@@ -21,6 +21,8 @@ import { createInterface } from 'node:readline';
 
 export const VORLAGE = '/Users/andreas/Developer/dev/todo-local';
 const CA = join(process.env.HOME, 'Developer/prod/sigllm/data/tls/sig-llm-ca.crt');
+/** Das Claude-Code-CLI: `GRAPHCODE_RIG_CLAUDE`, sonst das im PATH (Opus 5.5 braucht >= 2.1.280). */
+export const CLAUDE = process.env.GRAPHCODE_RIG_CLAUDE ?? 'claude';
 const LESER = ['graph_authoring_guide', 'graph_elements', 'graph_get_node', 'graph_get_edges', 'graph_context', 'graph_impact'];
 
 /** Die Vorlage als frisches Repo ohne Modell: eingecheckter Stand, kein Store, kein Export, eigener Host-Port. */
@@ -116,7 +118,7 @@ export async function frontier(repo, modell = 'claude-opus-5-5') {
   const erlaubt = [...LESER, 'graph_mutate', 'rules_evaluate'].map((w) => `mcp__graphcode__${w}`).concat(['Skill', 'Read', 'Glob', 'Grep', 'WebFetch']);
   const env = { ...process.env };
   delete env.CLAUDECODE;
-  const p = spawn('claude', ['-p', '--input-format', 'stream-json', '--output-format', 'stream-json', '--verbose', '--model', modell,
+  const p = spawn(CLAUDE, ['-p', '--input-format', 'stream-json', '--output-format', 'stream-json', '--verbose', '--model', modell,
     '--mcp-config', '.mcp.json', '--strict-mcp-config', '--setting-sources', 'project',
     '--allowedTools', erlaubt.join(','), '--disallowedTools', 'AskUserQuestion,Bash,Edit,Write,MultiEdit,NotebookEdit,Task'],
   { cwd: repo, env, stdio: ['pipe', 'pipe', 'pipe'] });
@@ -154,6 +156,8 @@ export async function frontier(repo, modell = 'claude-opus-5-5') {
             try { const v = JSON.parse(roh).vorschlag; if (typeof v === 'string') vorschlag = v; } catch { /* Fehlertext */ }
           }
         }
+        // Ein Fehler-Ergebnis (Modell abgelehnt, API-Fehler) ist kein Zug — der Lauf bricht laut ab.
+        if (x.type === 'result' && x.is_error) throw new Error(`claude: ${x.result}`);
         if (x.type === 'result') return { text: texte.join('\n'), dauerMs: Date.now() - start, werkzeuge, vorschlag, kostenUsd: x.total_cost_usd };
       }
     },

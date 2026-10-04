@@ -8,6 +8,7 @@
  * Nachricht (Antwortblatt vor Vorschlag) → Ende bei Freigabe oder Zuglimit. Artefakte unter
  * rig/interaktiv/runs/<arm>-<nr>/: lauf.json (Züge, Nachrichten, Antworten, Dauer, Werkzeuge, Audit je Zug),
  * denken.json, audit.jsonl, graph.json (Export des Hosts) — und eine Zeile mit Stempel in docs/messung/interaktiv.md.
+ * Frontier: `GRAPHCODE_RIG_CLAUDE=<pfad>` wählt das CLI (Opus 5.5 braucht Claude Code >= 2.1.280).
  * Das Blindurteil danach: node rig/greenfield-systemtest/blindurteil.mjs vorbereiten <ziel> runs/… --raster=…
  *
  * @author andreas@siglochconsulting
