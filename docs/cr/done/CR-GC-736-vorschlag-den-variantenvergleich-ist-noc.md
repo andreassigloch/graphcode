@@ -1,6 +1,6 @@
 # CR-GC-736: Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-04)
 **Typ:** aus Item ITEM-2026-728 (bug)
 **Erstellt:** 2026-10-04
 **Item:** bok/items/ITEM-2026-728.json (Lane: code)
