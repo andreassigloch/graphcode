@@ -1,6 +1,6 @@
 # CR-GC-735: Abschlussvermerk überschreibt die anderen: ~ SYS @analysisFreshness {x} ersetzt das ganze Objekt (2. Stempel löscht den 1.); Skills sagen 'analysisFreshness.<id> = …' — gemessen im Replay todo-local 2026-10-04
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-04)
 **Typ:** aus Item ITEM-2026-726 (bug)
 **Erstellt:** 2026-10-04
 **Item:** bok/items/ITEM-2026-726.json (Lane: code)
