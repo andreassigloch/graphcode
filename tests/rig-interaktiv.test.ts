@@ -7,11 +7,11 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { fragen, naechsteNachricht, ende, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/interaktiv/simulator.mjs';
+import { fragen, naechsteNachricht, ende, kernFertig, bisKern, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/interaktiv/simulator.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
 import { kennzahlen, auditDelta } from '../rig/interaktiv/auswertung.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { alsClaudeMd } from '../rig/interaktiv/arme.mjs';
+import { alsClaudeMd, mitModell } from '../rig/interaktiv/arme.mjs';
 
 const korpus = JSON.parse(readFileSync(fileURLToPath(new URL('../rig/interaktiv/korpus/todo.json', import.meta.url)), 'utf8'));
 
@@ -59,6 +59,19 @@ describe('CR-GC-715: Nutzer-Simulator', () => {
     expect(ende(3, 12, 'x')).toBeNull();
   });
 
+  it('Kern fertig = graphcode schlägt eine Analyse vor (Auftrag oder Satz 2); der Lauf endet dort, die Normierung schneidet dort', () => {
+    expect(kernFertig('Führe das Einsatzkonzept (ConOps) durch.')).toBe(true);
+    expect(kernFertig('Das Einsatzkonzept (ConOps) ist noch nicht abgeschlossen — was fehlt dafür?')).toBe(true);
+    expect(kernFertig('Der Variantenvergleich (Trade-off) ist noch nicht abgeschlossen — was fehlt dafür?')).toBe(true);
+    expect(kernFertig('Lege die Nutzer (Akteure) an und verbinde sie mit den Abläufen.')).toBe(false);
+    expect(kernFertig(null)).toBe(false);
+    expect(ende(4, 12, 'x', 'Führe das Annahmen-Review durch.')).toBe('kern');
+    expect(ende(4, 12, 'x', 'Führe das Annahmen-Review durch.', 'zuglimit')).toBeNull();
+    const z = (vorschlag: string | null) => ({ vorschlag });
+    expect(bisKern([z(null), z('Lege die Nutzer an.'), z('Führe das Einsatzkonzept (ConOps) durch.'), z('x')])).toHaveLength(3);
+    expect(bisKern([z(null), z('x')])).toBeNull();
+  });
+
   it('der Korpus legt jede offene Frage als O* fest und gibt dem Start-Prompt die Vorgabe', () => {
     expect(korpus.start).toContain('done mit unbekannter Nummer');
     expect(korpus.punkte.filter((p: { id: string }) => p.id.startsWith('O')).length).toBeGreaterThan(0);
@@ -70,6 +83,15 @@ describe('CR-GC-715: Kennzahlen und Arme', () => {
     const z = (dauerMs: number, text: string, werkzeuge: string[], angenommen: number, abgelehnt: number) => ({ dauerMs, text, werkzeuge, audit: { angenommen, abgelehnt } });
     const k = kennzahlen({ ende: 'zuglimit', zuege: [z(120_000, ZUG1, ['a'], 0, 0), z(60_000, 'ok', ['a', 'b', 'c'], 1, 1), z(180_000, 'ok', ['a', 'b'], 1, 0)] });
     expect(k).toMatchObject({ zuege: 3, dauerMedian: 120_000, dauerMax: 180_000, fragenZug1: 2, schritteMedian: 2, schritteMax: 3, angenommen: 2, abgelehnt: 1 });
+  });
+
+  it('--modell ersetzt nur das Client-Modell: Kopie des Vorlage-Eintrags mit neuer id, Vorlage unverändert', () => {
+    const vorlage = { reasoning: true, temperature: true, options: { reasoningEffort: 'medium' }, limit: { context: 65536, output: 16384 }, id: 'qwen3.8-27b-lms:latest' };
+    const cfg = { model: 'ollama/qwen3.8-27b-lms:medium', provider: { ollama: { models: { 'qwen3.8-27b-lms:medium': vorlage } } } };
+    mitModell(cfg, 'ollama/qwen3.8:27b-nvfp4');
+    expect(cfg.model).toBe('ollama/qwen3.8:27b-nvfp4');
+    expect(cfg.provider.ollama.models['qwen3.8:27b-nvfp4' as keyof typeof cfg.provider.ollama.models]).toMatchObject({ ...vorlage, id: 'qwen3.8:27b-nvfp4' });
+    expect(cfg.provider.ollama.models['qwen3.8-27b-lms:medium'].id).toBe('qwen3.8-27b-lms:latest');
   });
 
   it('auditDelta zählt nur Mutationen', () => {

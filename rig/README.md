@@ -110,8 +110,11 @@ Client-Prozess über alle Züge — damit EIN Host und sein Sitzungsgedächtnis,
 
 Der Simulator (`simulator.mjs`) tut, was der Nutzer tat: Start-Prompt; echte Fragen beantwortet er einmal mit dem
 Antwortblatt des Korpus (`korpus/todo.json`, die Antworten des Autors aus dem Handlauf), sonst „offen, bitte als
-offen führen"; danach schickt er den Vorschlag des Zugs ab (Enter). Er erfindet nichts. Ende bei der Freigabe-Bitte
-oder am Zuglimit. Artefakte unter `rig/interaktiv/runs/<arm>-<nr>/` (nicht im Repo), je Lauf eine Zeile mit Stempel
+offen führen"; danach schickt er den Vorschlag des Zugs ab (Enter). Er erfindet nichts. Ein Lauf endet am Kern:
+sobald graphcode als nächsten Schritt eine Analyse vorschlägt (`--bis=kern`, Vorgabe) — Analysen sprengen lokal das
+Kontextfenster und werden je Analyse in einer eigenen Sitzung gemessen. Ältere, längere Läufe normiert
+`auswertung.mjs normieren <lauf-dir>` auf denselben Schnitt (Graph am Schnitt aus dem Audit nachgespielt).
+`--modell=<id>` und `--arm=<kennung>` fahren einen weiteren Arm aus derselben Vorlage (z. B. ein anderes lokales Modell). Artefakte unter `rig/interaktiv/runs/<arm>-<nr>/` (nicht im Repo), je Lauf eine Zeile mit Stempel
 in [`docs/messung/interaktiv.md`](../docs/messung/interaktiv.md). Blindurteil: `blindurteil.mjs vorbereiten … --raster`
 mit dem Raster aus `korpus/todo.json`.
 

@@ -25,16 +25,33 @@ const CA = join(process.env.HOME, 'Developer/prod/sigllm/data/tls/sig-llm-ca.crt
 export const CLAUDE = process.env.GRAPHCODE_RIG_CLAUDE ?? 'claude';
 const LESER = ['graph_authoring_guide', 'graph_elements', 'graph_get_node', 'graph_get_edges', 'graph_context', 'graph_impact'];
 
-/** Die Vorlage als frisches Repo ohne Modell: eingecheckter Stand, kein Store, kein Export, eigener Host-Port. */
-export function repoAnlegen(ziel, hostPort) {
+/**
+ * Die Vorlage als frisches Repo ohne Modell: eingecheckter Stand, kein Store, kein Export, eigener Host-Port.
+ * `modell` (z. B. `ollama/qwen3.8:27b-nvfp4`) ersetzt nur das Client-Modell: sein Eintrag ist eine Kopie des
+ * Vorlage-Eintrags (Denkstufe, Grenzen) mit der neuen id — Sampling am Agenten bleibt, die Vorlage bleibt unberührt.
+ */
+export function repoAnlegen(ziel, hostPort, modell = null) {
   execFileSync('git', ['clone', '--quiet', VORLAGE, ziel]);
   rmSync(join(ziel, 'docs', 'graph'), { recursive: true, force: true });
   rmSync(join(ziel, '.graphcode'), { recursive: true, force: true });
   const cfgPfad = join(ziel, 'opencode.json');
   const cfg = JSON.parse(readFileSync(cfgPfad, 'utf8'));
   cfg.mcp.graphcode.environment.GRAPHCODE_HOST_PORT = String(hostPort);
+  mitModell(cfg, modell);
   writeFileSync(cfgPfad, JSON.stringify(cfg, null, 2) + '\n');
   return ziel;
+}
+
+/** Rein: das Client-Modell ersetzen — Eintrag als Kopie des Vorlage-Modells mit neuer id, sonst nichts. */
+export function mitModell(cfg, modell) {
+  if (!modell || modell === cfg.model) return cfg;
+  const [anbieter, schluessel] = modell.split(/\/(.*)/s);
+  const modelle = cfg.provider[anbieter].models;
+  const vorlage = modelle[cfg.model.slice(anbieter.length + 1)];
+  if (!vorlage) throw new Error(`Vorlage-Modell ${cfg.model} fehlt unter provider.${anbieter}.models`);
+  modelle[schluessel] = { ...structuredClone(vorlage), id: schluessel, name: schluessel };
+  cfg.model = modell;
+  return cfg;
 }
 
 const warteAufPort = async (port, ms = 60_000) => {
@@ -52,6 +69,19 @@ const warteAufPort = async (port, ms = 60_000) => {
 
 const vorschlagDatei = (repo) => join(repo, '.graphcode', 'vorschlag.txt');
 const mtime = (p) => (existsSync(p) ? statSync(p).mtimeMs : 0);
+
+const OPENCODE_DB = join(process.env.HOME, '.local/share/opencode/opencode.db');
+
+/**
+ * Abbrüche eines Zugs aus der OpenCode-DB: Antworten, die am Ausgabelimit endeten (`finish: length`), und
+ * Fehler (z. B. ContextOverflowError beim Verdichten). Der JSON-Strom von `opencode run` trägt beides nicht.
+ */
+function abbrueche(sitzung, seit) {
+  if (!sitzung) return { laenge: 0, fehler: 0 };
+  const sql = `select json_extract(data,'$.finish'), json_extract(data,'$.error.name') from message where session_id='${sitzung}' and time_created>=${seit} and json_extract(data,'$.role')='assistant'`;
+  const zeilen = execFileSync('sqlite3', ['-separator', '\t', OPENCODE_DB, sql], { encoding: 'utf8' }).split('\n').filter(Boolean).map((l) => l.split('\t'));
+  return { laenge: zeilen.filter(([f]) => f === 'length').length, fehler: zeilen.filter(([, e]) => e).length };
+}
 
 /** Arm lokal: OpenCode-Server + je Zug ein angehängter Lauf. */
 export async function lokal(repo, port) {
@@ -79,14 +109,13 @@ export async function lokal(repo, port) {
       const text = ereignisse.filter((x) => x.type === 'text').map((x) => x.part.text).join('\n');
       const werkzeuge = ereignisse.filter((x) => x.type === 'tool_use').map((x) => x.part.tool);
       const neu = mtime(vorschlagDatei(repo)) > vorher;
-      return { text, dauerMs: Date.now() - start, werkzeuge, vorschlag: neu ? readFileSync(vorschlagDatei(repo), 'utf8').trim() : null };
+      return { text, dauerMs: Date.now() - start, werkzeuge, vorschlag: neu ? readFileSync(vorschlagDatei(repo), 'utf8').trim() : null, abbruch: abbrueche(sitzung, start) };
     },
     /** Das Denken der Sitzung aus der OpenCode-DB (steht nicht im JSON-Strom, Memory opencode-denken-in-db). */
     denken() {
       if (!sitzung) return [];
-      const db = join(process.env.HOME, '.local/share/opencode/opencode.db');
       const sql = `select p.data from part p join message m on p.message_id=m.id where m.session_id='${sitzung}' and json_extract(p.data,'$.type')='reasoning' order by p.time_created`;
-      return execFileSync('sqlite3', [db, sql], { encoding: 'utf8', maxBuffer: 1 << 28 }).split('\n').filter(Boolean).map((l) => JSON.parse(l).text);
+      return execFileSync('sqlite3', [OPENCODE_DB, sql], { encoding: 'utf8', maxBuffer: 1 << 28 }).split('\n').filter(Boolean).map((l) => JSON.parse(l).text);
     },
     get sitzung() { return sitzung; },
     async ende() { server.kill('SIGTERM'); await new Promise((r) => server.on('close', r)); },
@@ -138,11 +167,13 @@ export async function frontier(repo, modell = 'claude-opus-5-5') {
       const start = Date.now();
       p.stdin.write(JSON.stringify({ type: 'user', message: { role: 'user', content: [{ type: 'text', text: nachricht }] } }) + '\n');
       const texte = [], werkzeuge = [], namen = new Map();
+      let laenge = 0;
       let vorschlag = null;
       for (;;) {
         const x = await naechstes();
         if (x.type === 'system' && x.model) modellId = x.model;
         if (x.type === 'assistant') {
+          if (x.message.stop_reason === 'max_tokens') laenge++;
           for (const c of x.message.content ?? []) {
             if (c.type === 'text') texte.push(c.text);
             if (c.type === 'thinking') denken.push(c.thinking);
@@ -158,7 +189,7 @@ export async function frontier(repo, modell = 'claude-opus-5-5') {
         }
         // Ein Fehler-Ergebnis (Modell abgelehnt, API-Fehler) ist kein Zug — der Lauf bricht laut ab.
         if (x.type === 'result' && x.is_error) throw new Error(`claude: ${x.result}`);
-        if (x.type === 'result') return { text: texte.join('\n'), dauerMs: Date.now() - start, werkzeuge, vorschlag, kostenUsd: x.total_cost_usd };
+        if (x.type === 'result') return { text: texte.join('\n'), dauerMs: Date.now() - start, werkzeuge, vorschlag, abbruch: { laenge, fehler: 0 }, kostenUsd: x.total_cost_usd };
       }
     },
     denken: () => denken,

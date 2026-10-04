@@ -9,7 +9,9 @@
  *   - Sonst schickt er den Vorschlag dieses Zugs ab (das Enter im Eingabefeld). Brachte der Zug keinen (keine
  *     angewandte Mutation), stimmt er dem Plan des Agenten zu: vor der ersten Mutation „Ja, beginne mit Schritt 1.",
  *     danach „Ja, weiter mit dem nächsten Schritt."
- *   - Er endet nach fester Zugzahl oder nachdem er die Freigabe-Bitte abgeschickt hat.
+ *   - Er endet am Kern (Vorgabe): sobald graphcode als nächsten Schritt eine Analyse vorschlägt, ist der Kern
+ *     nach graphcodes eigenem Urteil fertig. Analysen sprengen lokal das Kontextfenster (lokal-2, 2026-10-04) und
+ *     werden je Analyse in einer eigenen Sitzung gemessen. Sonst: Freigabe-Bitte abgeschickt oder Zuglimit.
  * Antworten gehen vor dem Vorschlag, beides in einer Nachricht.
  *
  * @author andreas@siglochconsulting
@@ -47,8 +49,24 @@ export function naechsteNachricht({ antwort, vorschlag, blattGegeben, antwortbla
   return { nachricht: teile.join('\n\n'), blattGegeben: blattGegeben || offen.length > 0, beantwortet: offen.length };
 }
 
-/** Ende: Zugzahl erreicht oder die Freigabe-Bitte ist abgeschickt. */
-export function ende(zug, maxZuege, letzteNachricht) {
+/** Die Analysen in den Vorschlagssätzen von graphcode (src/loop/next-step.ts, ANALYSE und Satz 2). */
+const ANALYSE = '(das Einsatzkonzept|das Annahmen-Review|den Variantenvergleich|der Variantenvergleich|die Fehlerbetrachtung|den Bauplan|der Bauplan)';
+const ANALYSE_VORSCHLAG = new RegExp(`^(Führe ${ANALYSE} |${ANALYSE} .*ist noch nicht abgeschlossen)`, 'i');
+
+/** Der Kern ist fertig, wenn graphcode als nächsten Schritt eine Analyse vorschlägt. */
+export function kernFertig(vorschlag) {
+  return ANALYSE_VORSCHLAG.test(String(vorschlag ?? ''));
+}
+
+/** Ende nach einem Zug: Kern fertig (bei `bis: 'kern'`), Freigabe-Bitte abgeschickt oder Zuglimit. */
+export function ende(zug, maxZuege, letzteNachricht, vorschlag = null, bis = 'kern') {
+  if (bis === 'kern' && kernFertig(vorschlag)) return 'kern';
   if (String(letzteNachricht ?? '').endsWith(FREIGABE)) return 'freigabe';
   return zug >= maxZuege ? 'zuglimit' : null;
+}
+
+/** Die Züge bis einschließlich des ersten, nach dem der Kern fertig war — die Normierung älterer Läufe. */
+export function bisKern(zuege) {
+  const i = zuege.findIndex((z) => kernFertig(z.vorschlag));
+  return i < 0 ? null : zuege.slice(0, i + 1);
 }

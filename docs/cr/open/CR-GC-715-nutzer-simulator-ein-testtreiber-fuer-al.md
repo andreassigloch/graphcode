@@ -63,3 +63,8 @@ Abweichungen vom Ziel oben: die Zeilen stehen in einer eigenen Tabelle `docs/mes
 Zug startete einen neuen Host und verlöre dessen Sitzungsgedächtnis, CR-GC-734), sondern als EIN Prozess mit
 Nachrichten über stdin. Beide Arme entstehen aus derselben Vorlage, nicht aus `todo-frontier-b`.
 
+Nachtrag 2026-10-04 abends (Entscheid Autor): Läufe enden am Kern (erster Analyse-Vorschlag von graphcode) — die
+Analysen sprengten lokal das Kontextfenster (lokal-2: `finish: length` bei 72 000 Zeichen Denken, danach dreimal
+`ContextOverflowError`). Der Vergleich ist auf den Kern normiert; die 12-Züge-Läufe stehen als Rohdaten (Reihe 1).
+Neu: `--modell`/`--arm` für weitere Arme, Abbrüche je Zug (Ausgabelimit, Fehler) aus OpenCode-DB bzw. Stream.
+
