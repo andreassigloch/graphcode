@@ -409,7 +409,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-731` | done | Vorschlag zu UC-02 liest sich wie erledigt, wenn der Akteur angebunden ist, aber Funktionen fehlen (Probe H Zug 4) | `FUNC-generation-step` |
 | `CR-GC-732` | done | graphcode init liefert das OpenCode-Plugin aus, das den Vorschlag ins Eingabefeld legt (gemessen in Probe G/H) | `FUNC-generation-step` · `REQ-repo-install` |
 | `CR-GC-733` | done | Vorschlagssaetze aus RULE_HELP (contracts) lesen statt eigener Tabelle; Regelmatrix zeigt Spalte Vorschlag; Pruefung beim Hoststart | `FUNC-generation-step` |
-| `CR-GC-734` | n/a | Vorschlag wiederholt einen Analyse-Eintrittspunkt (AF-01..05) endlos, auch nachdem der Nutzer ihn beauftragt hat und der Zug ihn nicht schliessen konnte; Eintrittspunkte sind von der Zurueckstellung ausgenommen (CR-GC-604) — Handlauf todo-local 2026-10-03 | `FUNC-generation-step` |
+| `CR-GC-734` | done | Vorschlag wiederholt einen Analyse-Eintrittspunkt (AF-01..05) endlos, auch nachdem der Nutzer ihn beauftragt hat und der Zug ihn nicht schliessen konnte; Eintrittspunkte sind von der Zurueckstellung ausgenommen (CR-GC-604) — Handlauf todo-local 2026-10-03 | `FUNC-generation-step` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

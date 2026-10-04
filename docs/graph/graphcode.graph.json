@@ -2922,7 +2922,9 @@
       "id": "CR-GC-734",
       "type": "CR",
       "name": "Vorschlag wiederholt einen Analyse-Eintrittspunkt (AF-01..05) endlos, auch nachdem der Nutzer ihn beauftragt hat und der Zug ihn nicht schliessen konnte; Eintrittspunkte sind von der Zurueckstellung ausgenommen (CR-GC-604) — Handlauf todo-local 2026-10-03",
-      "description": "docs/cr/open/CR-GC-734-vorschlag-wiederholt-einen-analyse-eintr.md"
+      "description": "docs/cr/open/CR-GC-734-vorschlag-wiederholt-einen-analyse-eintr.md",
+      "status": "done",
+      "commitRef": "d1276e6"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23475,5 +23477,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 591
+  "graphVersion": 592
 }
