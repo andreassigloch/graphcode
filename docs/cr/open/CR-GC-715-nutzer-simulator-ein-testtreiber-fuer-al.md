@@ -45,3 +45,21 @@ Je Zug gemessen: Dauer, Schritte, Gate-Ablehnungen, Steuerwert (Audit); Zug 1: F
 - Beide Arme auf dem Todo-Korpus, N ≥ 3, je Lauf eine Zeile in `docs/messung/verlauf.md` mit Stempel.
 - Fragen und Antworten des Simulators im Lauf protokolliert; kein erfundener Wert (Blindurteil O-Punkte 0).
 - T-E3-Kriterium der Leitlinie ist aus den Artefakten berechenbar (Spannen je Zug, Fragenzahl Zug 1, Blindurteil).
+
+## Umsetzung (2026-10-04)
+
+| Datei | Inhalt |
+|---|---|
+| `rig/interaktiv/treiber.mjs` | Lauf: Repo aus Vorlage, Züge, Artefakte, Stempel (`openMeasured` am Export), Zeile |
+| `rig/interaktiv/arme.mjs` | lokal (`opencode serve` + `run --attach`, Vorschlag aus `vorschlag.txt`, Denken aus `opencode.db`) · frontier (EIN `claude -p` mit stream-json-Eingabe, Vorschlag aus dem Stream, Denken aus `thinking`) |
+| `rig/interaktiv/simulator.mjs` | rein: Fragen erkennen, Antwortblatt einmal, sonst Vorschlag; Ende Freigabe/Zuglimit |
+| `rig/interaktiv/auswertung.mjs` | Kennzahlen je Lauf, Zeile nach `docs/messung/interaktiv.md` |
+| `rig/interaktiv/korpus/todo.json` | Start-Prompt, Antwortblatt (Antworten des Autors im Handlauf), Raster P01–P11 / O01–O05 |
+| `tests/rig-interaktiv.test.ts` | Simulator, Kennzahlen, Prompt-Umschrift |
+| `rig/README.md`, `.gitignore` | Abschnitt interaktiv; `rig/interaktiv/runs/` intern |
+
+Abweichungen vom Ziel oben: die Zeilen stehen in einer eigenen Tabelle `docs/messung/interaktiv.md` — die Spalten von
+`verlauf.md` sind die des Executor-Rigs. Der Frontier-Arm läuft nicht über `claude -p --resume` (ein neuer Prozess je
+Zug startete einen neuen Host und verlöre dessen Sitzungsgedächtnis, CR-GC-734), sondern als EIN Prozess mit
+Nachrichten über stdin. Beide Arme entstehen aus derselben Vorlage, nicht aus `todo-frontier-b`.
+

@@ -95,10 +95,25 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 | `agentdiary/` (intern, nicht im Repo) | gate | Liefert der lokale Arm (D2) am echten Auftrag, was Frontier liefert? | Arm-Repos + Blindurteil |
 | [`dummy-slicer/`](dummy-slicer/README.md) | gate | Serviert `graph_context` die Definition of Done? | `openMeasured` (echte Wurzel, CR-GC-496) |
 | [`graphs/`](graphs/README.md) | korpus | eingefrorene Beispielgraphen | — |
+| `interaktiv/` | gate | Wie gut modellieren lokaler und Frontier-Agent im interaktiven Betrieb (T-E3)? | Vorlage todo-local → je Arm ein Prozess, Simulator, `openMeasured` am Export |
 
 `greenfield-systemtest` baut den Harness in einem **eigenen Prozess**, weil Kuzus natives
 Binding sonst zweimal im selben Prozess lädt. Es benutzt `createHarness` direkt und ist damit
 korrekt — der Beleg, dass der Weg gangbar ist, noch bevor es `openMeasured` gab.
+
+## interaktiv — der Nutzer-Simulator (CR-GC-715)
+
+`node rig/interaktiv/treiber.mjs <lokal|frontier> <nr> [--zuege=12]` fährt einen Lauf des interaktiven Hauptfalls
+(Leitlinie §9.4/§9.5): beide Arme aus derselben Vorlage (`todo-local`, eingecheckter Stand ohne Modell), derselbe
+Prompt (Claude Code: als `CLAUDE.md`, nur Werkzeugnamen umgeschrieben), dieselben fünf Analyse-Skills. Je Arm EIN
+Client-Prozess über alle Züge — damit EIN Host und sein Sitzungsgedächtnis, wie im Handbetrieb.
+
+Der Simulator (`simulator.mjs`) tut, was der Nutzer tat: Start-Prompt; echte Fragen beantwortet er einmal mit dem
+Antwortblatt des Korpus (`korpus/todo.json`, die Antworten des Autors aus dem Handlauf), sonst „offen, bitte als
+offen führen"; danach schickt er den Vorschlag des Zugs ab (Enter). Er erfindet nichts. Ende bei der Freigabe-Bitte
+oder am Zuglimit. Artefakte unter `rig/interaktiv/runs/<arm>-<nr>/` (nicht im Repo), je Lauf eine Zeile mit Stempel
+in [`docs/messung/interaktiv.md`](../docs/messung/interaktiv.md). Blindurteil: `blindurteil.mjs vorbereiten … --raster`
+mit dem Raster aus `korpus/todo.json`.
 
 ## Was ein Rig sonst still tut: nichts
 
