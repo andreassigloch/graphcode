@@ -5,7 +5,8 @@
  * Reale Persistenz (Disk-Kuzu im temp repoRoot), echtes Gate — simuliert ist nur der Modell-Endpunkt.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
@@ -215,6 +216,24 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     expect(traces.join('\n')).toContain('@analysisFreshness aus dem Batch genommen');
     expect(stats.taskStempel).toBeUndefined();
     expect(stempel().fmea).toBeUndefined();
+  });
+
+  it('CR-GC-735: ein Patch ersetzt analysisFreshness ganz — lesen, übernehmen, ganz schreiben hält alle', async () => {
+    expect(Object.keys(stempel())).toEqual(['trade']);
+    // Der Teil-Stempel, wie die Skills ihn bis CR-GC-735 nahelegten: trade geht verloren (todo-local, 2026-10-04).
+    await mutate('## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"conops":{"graphVersion":2}}\n');
+    expect(Object.keys(stempel())).toEqual(['conops']);
+    // Lesen, übernehmen, ganz schreiben — der Weg der Skills und von stempelZug.
+    await mutate(`## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness ${JSON.stringify({ ...stempel(), fmea: { graphVersion: 3 } })}\n`);
+    expect(Object.keys(stempel()).sort()).toEqual(['conops', 'fmea']);
+  });
+
+  it('CR-GC-735: jeder Analyse-Skill schließt mit lesen, übernehmen, ganz schreiben', () => {
+    for (const skill of ['se-conops', 'se-trade', 'se-irr', 'se-fmea', 'se-plan']) {
+      const text = readFileSync(fileURLToPath(new URL(`../.claude/commands/${skill}.md`, import.meta.url)), 'utf8');
+      expect(text, skill).toContain('read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`');
+      expect(text, skill).not.toMatch(/attributes\.analysisFreshness[.[]/);
+    }
   });
 
   it('ohneStempelzeilen nimmt nur die Stempelzeile', () => {

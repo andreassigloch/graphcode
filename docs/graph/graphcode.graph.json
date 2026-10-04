@@ -2927,6 +2927,12 @@
       "commitRef": "d1276e6"
     },
     {
+      "id": "CR-GC-735",
+      "type": "CR",
+      "name": "Abschlussvermerk überschreibt die anderen: ~ SYS @analysisFreshness {x} ersetzt das ganze Objekt (2. Stempel löscht den 1.); Skills sagen 'analysisFreshness.<id> = …' — gemessen im Replay todo-local 2026-10-04",
+      "description": "docs/cr/open/CR-GC-735-abschlussvermerk-u-berschreibt-die-ander.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14727,6 +14733,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-735",
+      "target": "FUNC-task-abschluss",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23477,5 +23488,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 592
+  "graphVersion": 594
 }
