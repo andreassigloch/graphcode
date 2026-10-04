@@ -2938,7 +2938,9 @@
       "id": "CR-GC-736",
       "type": "CR",
       "name": "Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3)",
-      "description": "docs/cr/open/CR-GC-736-vorschlag-den-variantenvergleich-ist-noc.md"
+      "description": "docs/cr/open/CR-GC-736-vorschlag-den-variantenvergleich-ist-noc.md",
+      "status": "done",
+      "commitRef": "5988277"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -14746,6 +14748,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-736",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23496,5 +23503,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 596
+  "graphVersion": 597
 }

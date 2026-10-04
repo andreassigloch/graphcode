@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 346 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 346 CR · 318 done · 4 open.
+Total: 346 CR · 319 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -407,4 +407,4 @@ Total: 346 CR · 318 done · 4 open.
 | `CR-GC-733` | done | Vorschlagssaetze aus RULE_HELP (contracts) lesen statt eigener Tabelle; Regelmatrix zeigt Spalte Vorschlag; Pruefung beim Hoststart |
 | `CR-GC-734` | done | Vorschlag wiederholt einen Analyse-Eintrittspunkt (AF-01..05) endlos, auch nachdem der Nutzer ihn beauftragt hat und der Zug ihn nicht schliessen konnte; Eintrittspunkte sind von der Zurueckstellung ausgenommen (CR-GC-604) — Handlauf todo-local 2026-10-03 |
 | `CR-GC-735` | done | Abschlussvermerk überschreibt die anderen: ~ SYS @analysisFreshness {x} ersetzt das ganze Objekt (2. Stempel löscht den 1.); Skills sagen 'analysisFreshness.<id> = …' — gemessen im Replay todo-local 2026-10-04 |
-| `CR-GC-736` | n/a | Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3) |
+| `CR-GC-736` | done | Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3) |
