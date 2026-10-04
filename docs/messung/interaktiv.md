@@ -33,3 +33,25 @@ Geschnitten beim ersten Analyse-Vorschlag von graphcode (`simulator.mjs`, `kernF
 | 2026-10-04 | lokal-nvfp4 | 1 | graph 3aa3e128819c (36/58) · policy todo/graphcode.config.jsonc · rules 34.0.0 · code 22bb37c | ollama/qwen3.8:27b-nvfp4 | 6 · kern | 2.9 / 8.4 | 5 | 2.5 / 8 | 5 / 5 | 0 / 0 | 36 · 58 |
 | 2026-10-04 | lokal-nvfp4 | 2 | graph 379baeb26f0c (42/52) · policy todo/graphcode.config.jsonc · rules 34.0.0 · code 22bb37c+dirty | ollama/qwen3.8:27b-nvfp4 | 4 · kern | 2.0 / 5.2 | 5 | 4 / 7 | 3 / 3 | 0 / 0 | 42 · 52 |
 | 2026-10-04 | lokal-nvfp4 | 3 | graph 5c4f2d6bc6c9 (29/53) · policy todo/graphcode.config.jsonc · rules 34.0.0 · code 22bb37c+dirty | ollama/qwen3.8:27b-nvfp4 | 4 · kern | 2.2 / 10.6 | 5 | 4 / 6 | 2 / 2 | 0 / 0 | 29 · 53 |
+
+### Blindurteil bis Kern (2026-10-04)
+
+Ein anonymer Gutachter je Spec (`blindurteil.mjs`, Raster `rig/interaktiv/korpus/todo.json`: 11 Vorgaben P*, 5 offene
+Punkte O*); Frontier und lokal in einer gemischten Runde, nvfp4 als eigene Runde mit derselben Vorgabe.
+
+| Arm | Lauf | P* ✓ · ~ · ✗ | O* offen geführt | erfunden | Dubletten | Notensumme |
+|---|---|---|---|---|---|---|
+| frontier | 1 | 10 · 0 · 1 | 3 | 0 | 0 | 21 |
+| frontier | 2 | 9 · 1 · 1 | 3 | 2 | 2 | 19 |
+| frontier | 3 | 10 · 0 · 1 | 5 | 0 | 3 | 18 |
+| lokal | 1 | 5 · 5 · 1 | 0 | 4 | 0 | 15 |
+| lokal | 2 | 9 · 1 · 1 | 0 | 5 | 1 | 17 |
+| lokal | 3 | 10 · 1 · 0 | 1 | 4 | 0 | 18 |
+| lokal-nvfp4 | 1 | 11 · 0 · 0 | 0 | 3 | 0 | 19 |
+| lokal-nvfp4 | 2 | 7 · 2 · 2 | 0 | 2 | 3 | 13 |
+| lokal-nvfp4 | 3 | 9 · 1 · 1 | 1 | 0 | 0 | 16 |
+
+T-E3 (Spannen überlappen, Blindurteil trennt nicht): **nicht erfüllt**. Getrennt: offen geführte Punkte (Frontier 3–5,
+lokal 0–1, nvfp4 0–1), erfundene Werte (Frontier 0–2, lokal 4–5), Zugdauer, Fragen in Zug 1. Überlappend: Ablehnungen,
+P*-Abdeckung. In allen Armen: keine Lade-/Speicher-Funktion für todos.json; drei Frontier-Kerne ohne Modul.
+

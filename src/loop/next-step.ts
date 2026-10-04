@@ -110,7 +110,9 @@ const genannt = new WeakMap<FocusMemory, Map<string, number>>();
 
 /** Satz 2: der Eintrittspunkt ist nach einem Zug noch offen. */
 export function vorschlagOffeneAnalyse(task: Task): string {
-  const name = ANALYSE[task];
+  // ANALYSE steht im Akkusativ („Führe … durch"); als Subjekt braucht der Satz den Nominativ — nur der
+  // maskuline Artikel unterscheidet sich (CR-GC-736, „Den Variantenvergleich ist …" im Rig interaktiv).
+  const name = ANALYSE[task].replace(/^den /, 'der ');
   return `${name.charAt(0).toUpperCase()}${name.slice(1)} ist noch nicht abgeschlossen — was fehlt dafür?`;
 }
 

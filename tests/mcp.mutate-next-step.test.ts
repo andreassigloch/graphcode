@@ -117,6 +117,12 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
     expect(auto.focusKey).toMatch(/:AF-01:/);
   });
 
+  it('CR-GC-736: Satz 2 steht im Nominativ — „Der Variantenvergleich", nicht „Den"', () => {
+    expect(vorschlagOffeneAnalyse('trade')).toBe('Der Variantenvergleich (Trade-off) ist noch nicht abgeschlossen — was fehlt dafür?');
+    expect(vorschlagOffeneAnalyse('plan')).toBe('Der Bauplan ist noch nicht abgeschlossen — was fehlt dafür?');
+    expect(vorschlagOffeneAnalyse('fmea')).toBe('Die Fehlerbetrachtung (FMEA) ist noch nicht abgeschlossen — was fehlt dafür?');
+  });
+
   it('CR-GC-733: die Saetze je Regel kommen aus den contracts (Regelmatrix ist SSOT); hier nur Kaltstart-Stufen', () => {
     // Menge und Form der Regel-Saetze prueft der Smeagol-Check in contracts (CR-SM-384); graphcode faellt beim
     // Laden, wenn einer fehlt (OHNE_VORSCHLAG in next-step.ts).
