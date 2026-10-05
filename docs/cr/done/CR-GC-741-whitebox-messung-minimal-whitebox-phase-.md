@@ -1,6 +1,6 @@
 # CR-GC-741: Whitebox-Messung (minimal-whitebox Phase 1) als S1-Messung in npm run messung (T-E2)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-05)
 **Typ:** aus Item ITEM-2026-744 (idea)
 **Erstellt:** 2026-10-05
 **Item:** bok/items/ITEM-2026-744.json (Lane: code)
