@@ -106,7 +106,7 @@ function ontologyJsonToGraph(raw: OntologyJson): Graph {
  */
 /**
  * CR-GC-334: der Inline-Block `[k:v]` ist untypisierter Text — `maxFiles:4` und
- * `concept:true` kommen als `"4"`/`"true"` zurück. Das ist eine bekannte Grenze des
+ * `external:true` kommen als `"4"`/`"true"` zurück. Das ist eine bekannte Grenze des
  * Formats, KEIN Bindungsverlust: Zahlen und Booleans bleiben lesbar und bedeutungsgleich.
  * Deshalb werden Skalare beidseitig auf String normalisiert — **Objekte und Arrays nicht**,
  * die müssen exakt gleich zurückkommen (genau das war der Defekt).

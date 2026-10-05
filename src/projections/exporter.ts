@@ -330,9 +330,12 @@ export function exportMarkdown(graph: Graph, view: MarkdownView, name = 'graphco
 // testRefs NEVER resolve to a phantom file. A TEST can be bound to a file before
 // it is implemented; rendering a minimal `it.todo` stub guarantees the file
 // exists (graph_tests → real selective run, no false-green) while vitest reports
-// the stub pending (suite stays green). Concept-only TESTs (no run artifact yet)
-// are skipped. PURE — returns {file, content} for every bound TEST; the caller
-// (graph_export) writes only files that don't already exist and NEVER overwrites.
+// the stub pending (suite stays green). Materialized is the FILE of an EXISTING
+// binding, never the binding: a TEST without `testRefs` gets nothing, so an export
+// of a draft writes no stub and cannot itself begin the realization (contracts
+// CR-SM-392 — R-19 waits for the first binding or the implplan stamp; CR-GC-744).
+// PURE — returns {file, content} for every bound TEST; the caller (graph_export)
+// writes only files that don't already exist and NEVER overwrites.
 // ---------------------------------------------------------------------------
 
 /** A runnable stub the export would scaffold for one graph TEST binding. */
@@ -352,7 +355,6 @@ export function renderTestStubs(graph: Graph): TestStub[] {
   const stubs: TestStub[] = [];
   for (const node of graph.nodes) {
     if (node.type !== 'TEST') continue;
-    if (node.attributes?.concept === true) continue; // concept-only: no run artifact
     const parsed = readTestRefs(node.attributes);
     if (parsed.state !== 'bound') continue; // unbound TEST → R-19 surfaces it, nothing to scaffold
     // CR-GC-338: ein Stub JE EINTRAG — sonst bleibt bei einer Abnahme mit Unit- und
@@ -371,8 +373,8 @@ export function renderTestStubs(graph: Graph): TestStub[] {
 // in the code": nothing ever created the Zod file. Rendering a minimal
 // `z.unknown()` export makes the binding resolvable (RC-03/RC-04 see a real
 // export instead of a missing file) and leaves an explicit TODO where the real
-// contract goes. concept-only / external SCHEMAs are skipped — they are exempt
-// from the binding requirement and have no artifact to scaffold. Non-TS
+// contract goes. `external` SCHEMAs are skipped — their contract lives in another
+// package, there is no artifact to scaffold here. Non-TS
 // realizations (`lang` other than ts/tsx/js) are skipped too: a Zod stub would be
 // the wrong artifact. PURE — the caller (graph_export) writes only files that do
 // not already exist and NEVER overwrites.
@@ -397,7 +399,7 @@ export function renderSchemaStubs(graph: Graph): SchemaStub[] {
   const stubs: SchemaStub[] = [];
   for (const node of graph.nodes) {
     if (node.type !== 'SCHEMA') continue;
-    if (node.attributes?.concept === true || node.attributes?.external === true) continue;
+    if (node.attributes?.external === true) continue;
     const parsed = readRealRef(node.attributes);
     if (parsed.state !== 'bound') continue; // unbound SCHEMA → R-26 surfaces it, nothing to scaffold
     const ref = parsed.value;

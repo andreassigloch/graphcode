@@ -287,9 +287,11 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(md).toMatch(/selected set/i);
     // The full suite is named as the gate before closing, not as the inner loop.
     expect(md).toMatch(/full suite/i);
-    // Die nicht aufgeloesten Eintraege muessen GELESEN werden — ein Konzept-TEST ist eine Luecke.
+    // Die nicht aufgeloesten Eintraege muessen GELESEN werden — ein TEST ohne testRefs ist eine Luecke.
     expect(md).toMatch(/could NOT resolve/i);
-    expect(md).toMatch(/concept-only/i);
+    expect(md).toMatch(/unbound TEST/);
+    // CR-GC-744 (contracts CR-SM-393): das Attribut `concept` gibt es nicht mehr — kein Text bietet es an.
+    expect(md).not.toMatch(/concept-only|concept:\s*true/i);
   });
 
   it('GRAPHCODE.md verweist auf die lebende Hilfe, ohne sie nachzuerzaehlen (CR-GC-230, geschnitten CR-GC-612)', async () => {

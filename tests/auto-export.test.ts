@@ -47,7 +47,7 @@ const fixture = {
   elements: [
     { id: 'SYS-autoexp', type: 'SYS', name: 'Auto Export', description: 'Ein System.' },
     { id: 'REQ-seed', type: 'REQ', name: 'Seed Req', description: 'Das System muss exportieren.' },
-    { id: 'TEST-seed', type: 'TEST', name: 'Seed Test', description: 'concept', concept: true },
+    { id: 'TEST-seed', type: 'TEST', name: 'Seed Test', description: 'Prueft den Export.' },
   ],
   traces: [
     { source: 'SYS-autoexp', target: 'REQ-seed', type: 'compose' },
@@ -60,7 +60,7 @@ function addReq(n: number) {
   return {
     commands: [
       { op: 'add-node', node: { uid: `REQ-${n}`, type: 'REQ', name: `Req ${n}`, description: `Das System muss ${n} tun.`, attributes: {} } },
-      { op: 'add-node', node: { uid: `TEST-${n}`, type: 'TEST', name: `Test ${n}`, description: 'concept', attributes: { concept: true } } },
+      { op: 'add-node', node: { uid: `TEST-${n}`, type: 'TEST', name: `Test ${n}`, description: `Prueft ${n}.`, attributes: {} } },
       { op: 'add-edge', edge: { sourceId: `TEST-${n}`, targetId: `REQ-${n}`, edgeType: 'verify', attributes: {} } },
       { op: 'add-edge', edge: { sourceId: 'SYS-autoexp', targetId: `REQ-${n}`, edgeType: 'compose', attributes: {} } },
     ],

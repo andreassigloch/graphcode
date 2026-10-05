@@ -107,7 +107,7 @@ export function blackboxBindung(graph: Graph): BlackboxBindung {
   const bbTests = [...new Set(verify.filter((e) => bbReq.has(e.targetId)).map((e) => e.sourceId))].sort();
   const bbOffen = bbTests.filter((uid) => !gebunden(byUid.get(uid)?.attributes));
 
-  // Nur REALISIERTE Verträge (realRef), wie R-32: ein Konzept-Vertrag hat keinen Code, den ein Test treffen kann.
+  // Nur REALISIERTE Verträge (realRef), wie R-32: ein Vertrag ohne realRef hat keinen Code, den ein Test treffen kann.
   const realisiert = (uid: string): boolean => !!byUid.get(uid)?.attributes?.realRef;
   const vertraege = [
     ...new Set(

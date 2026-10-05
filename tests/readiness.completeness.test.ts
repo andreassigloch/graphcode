@@ -147,7 +147,7 @@ describe('CR-GC-250 CDR — FLOW→SCHEMA', () => {
   });
 });
 
-// --- TRR: binding required; concept exemption is R-19/R-20's OWN call --------
+// --- TRR: binding required once realization has begun (R-19/R-20's own call) ---
 
 describe('CR-GC-250 TRR — binding (testRef / realRef)', () => {
   it('an unbound TEST is incomplete at TRR once realization has begun (complete at CDR)', () => {
@@ -166,14 +166,6 @@ describe('CR-GC-250 TRR — binding (testRef / realRef)', () => {
     // Positivkontrolle: derselbe Graph mit Bauplan-Stempel stellt die Beine.
     const begun: G = { nodes: [BAUPLAN, node('TEST-t', 'TEST'), node('FUNC-f', 'FUNC')], edges: [] };
     expect(gate(begun, 'TRR').completeness.total).toBe(COMPLETENESS_SLICES.TRR.length);
-  });
-
-  it('a concept:true TEST reads complete at TRR too (CR-SM-226: exemption is R-19\'s own call, not re-decided here)', () => {
-    // R-19 itself exempts attributes.concept===true from ever firing — completeness
-    // now reads straight off R-19's violation stream (COMPLETENESS_SLICES doc), so
-    // it no longer re-imposes a stricter local rule on top.
-    const g: G = { nodes: [node('TEST-t', 'TEST', { concept: true, testRef: null })], edges: [] };
-    expect(gate(g, 'TRR', []).passed).toBe(true);
   });
 
   it('a bound TEST (real testRef) turns TRR green', () => {

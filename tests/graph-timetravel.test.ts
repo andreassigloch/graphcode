@@ -40,7 +40,7 @@ function makeConfig(repoRoot: string): HarnessConfig {
 function reqWithTest(suffix: string): MutateCommand[] {
   return [
     { op: 'add-node', node: { uid: `REQ-${suffix}`, type: 'REQ', name: `Req ${suffix}`, description: '', attributes: {} } },
-    { op: 'add-node', node: { uid: `TEST-${suffix}`, type: 'TEST', name: `Test ${suffix}`, description: '', attributes: { concept: true } } },
+    { op: 'add-node', node: { uid: `TEST-${suffix}`, type: 'TEST', name: `Test ${suffix}`, description: '', attributes: {} } },
     { op: 'add-edge', edge: { sourceId: `TEST-${suffix}`, targetId: `REQ-${suffix}`, edgeType: 'verify', attributes: {} } },
   ];
 }
@@ -56,7 +56,7 @@ const S0 = {
   elements: [
     { id: 'SYS-tt', type: 'SYS', name: 'tt', description: 'Time-travel-Fixture.' },
     { id: 'REQ-a', type: 'REQ', name: 'Req a', description: '' },
-    { id: 'TEST-a', type: 'TEST', name: 'Test a', description: '', concept: true },
+    { id: 'TEST-a', type: 'TEST', name: 'Test a', description: '' },
   ],
   traces: [
     { source: 'TEST-a', target: 'REQ-a', type: 'verify' },

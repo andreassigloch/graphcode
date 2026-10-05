@@ -270,12 +270,15 @@ export const HELP_VOCAB: Record<string, HelpVocabEntry> = {
 };
 
 /**
- * Element-states note (docs/archive/proposals/help-system.md §3): the state on a `FUNC`/`TEST` that decides whether
- * the binding rules (R-19/R-20) apply.
+ * Element-states note (docs/archive/proposals/help-system.md §3): what decides whether the binding rules
+ * (R-19/R-20/R-26) apply. Since contracts CR-SM-392/393 the "not due yet" state is a property of the
+ * GRAPH (realization begun or not), no longer a per-element flag.
  */
 export const HELP_ELEMENT_STATES =
-  'A `FUNC` or `TEST` carries a state: **realized** (the default — meant to be built/written now) · ' +
-  '`concept:true` (planned, not built/written yet — a stub) · `external:true` (provided by an outside library, not built here).';
+  'A `FUNC`, `MOD` or `SCHEMA` is either **realized here** (the default — it gets a `realRef`) or ' +
+  '`external:true` (provided by an outside library, not built here). A `TEST` is bound to its file through `testRefs`. ' +
+  'The binding rules (R-19/R-20/R-26) are not evaluated while the model is a draft; they start once realization has ' +
+  'begun — the implementation plan is stamped, or the first `realRef`/`testRefs` is set anywhere in the graph.';
 
 /**
  * One authored metric item (CR-GC-458). The six ℝ⁶ dimensions decide every

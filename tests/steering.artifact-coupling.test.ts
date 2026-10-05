@@ -214,3 +214,54 @@ describe('T-B4 (CR-GC-353): a phase-gate finding and a document gap are the same
     check('after');
   });
 });
+
+/**
+ * CR-GC-744 (contracts CR-SM-392): R-26 ist erst gestellt, wenn die Realisierung begonnen hat. Die
+ * Kopplung „im Dokument markiert = am Gate offen" muss auch im Entwurf gelten — sonst zeigt das ICD an
+ * jedem SCHEMA eine Warnung, die keine Regel haelt. POSITIVKONTROLLE: dieselben SCHEMAs, sobald eine
+ * Bindung im Graphen steht.
+ */
+describe('T-B4 im Entwurf: das ICD markiert R-26 nur, wo die Regel gestellt ist', () => {
+  let tmp: string;
+  let harness: GraphCodeHarness;
+  const MARKER = GAP_IN_VIEW['R-26'][0].marker;
+  const r26 = (): string[] => harness.evaluateRules().filter((v) => v.ruleId === 'R-26').map((v) => v.elementId ?? '').sort();
+  const icd = (): string => exportMarkdown(harness.getGraph(), 'icd', 'entwurf');
+
+  beforeEach(async () => {
+    tmp = mkdtempSync(join(tmpdir(), 'graphcode-artifact-entwurf-'));
+    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
+    harness = new GraphCodeHarness(makeSteeringConfig(tmp), storage);
+    await harness.initialize();
+    await harness.importGraph({
+      elements: [
+        { id: 'SYS-e', type: 'SYS', name: 'Entwurf', description: 'Ein System im Entwurf.' },
+        { id: 'SCHEMA-a', type: 'SCHEMA', name: 'A', description: 'Vertrag A.' },
+        { id: 'SCHEMA-b', type: 'SCHEMA', name: 'B', description: 'Vertrag B.' },
+      ],
+      traces: [],
+    });
+  });
+
+  afterEach(async () => {
+    await harness.close();
+    rmSync(tmp, { recursive: true, force: true });
+  });
+
+  it('Entwurf: keine R-26 am Gate, keine R-26-Marke im ICD — die Zeile sagt „noch nicht gebunden"', () => {
+    expect(r26()).toEqual([]);
+    const md = icd();
+    expect(mentions(md, 'SCHEMA-a')).toBe(true);
+    expect(markedUids(md, MARKER)).toEqual([]);
+    expect(markedUids(md, 'noch nicht gebunden (Entwurf)')).toEqual(['SCHEMA-a', 'SCHEMA-b']);
+  });
+
+  it('nach der ersten Bindung: das andere SCHEMA ist am Gate offen UND im ICD markiert', async () => {
+    const res = await harness.mutate([
+      { op: 'update-node', node: { uid: 'SCHEMA-a', type: 'SCHEMA', attributes: { realRef: { file: 'src/a.ts', symbol: 'A' } } } },
+    ]);
+    expect(res.success).toBe(true);
+    expect(r26()).toEqual(['SCHEMA-b']);
+    expect(markedUids(icd(), MARKER)).toEqual(['SCHEMA-b']);
+  });
+});

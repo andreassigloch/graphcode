@@ -184,8 +184,9 @@ export const GATE_FIXTURE: FixtureGraph = {
       type: 'SCHEMA',
       name: 'DocumentEnvelope',
       description: 'Shape of the raw document envelope carried into the parser.',
-      // No realRef, and neither `external` nor `concept` — so the ICD prints the
-      // R-26 warning rather than the legitimate "defined elsewhere" note.
+      // No realRef and not `external` — so the ICD prints the R-26 warning rather than
+      // the legitimate "defined elsewhere" note. (The fixture carries bindings elsewhere:
+      // realization has begun, R-26 is evaluated — contracts CR-SM-392.)
     },
     {
       id: 'REQ-audit-trail',

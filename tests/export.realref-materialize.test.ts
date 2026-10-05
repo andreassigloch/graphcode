@@ -7,8 +7,9 @@
  *
  * Asserts: (a) a missing realRef file is materialized as a valid Zod stub, exporting the
  * realRef's symbol, and listed under `stubs`; (b) an EXISTING schema file is never
- * overwritten; (c) concept-only and external SCHEMAs are skipped (they are exempt from
- * R-26 and have nothing to scaffold); (d) an unbound SCHEMA scaffolds nothing.
+ * overwritten; (c) an `external` SCHEMA is skipped (its contract lives in another package);
+ * the retired `concept` attribute decides nothing (contracts CR-SM-393) — a bound Alt-SCHEMA
+ * carrying it is materialized like any other; (d) an unbound SCHEMA scaffolds nothing.
  *
  * Real disk Kuzu (tmp dir, never :memory:). repoRoot is the tmp dir, so all scaffolded
  * files land under it and are cleaned up. No mocks.
@@ -34,6 +35,7 @@ describe('TEST-realref-materialize: graph_export scaffolds missing realRef stubs
 
   const BOUND_MISSING = 'src/schemas/_generated-order.ts'; // file does NOT exist → materialize
   const BOUND_EXISTING = 'src/schemas/_already-real.ts'; // file exists → never overwrite
+  const BOUND_ALT = 'src/schemas/_generated-alt.ts'; // Alt-Graph: bound AND still carrying `concept: true`
   const SENTINEL = '// REAL SCHEMA — must not be overwritten\n';
 
   const fixture = {
@@ -46,7 +48,13 @@ describe('TEST-realref-materialize: graph_export scaffolds missing realRef stubs
         id: 'SCHEMA-existing', type: 'SCHEMA', name: 'Existing', description: 'already implemented',
         realRef: { file: BOUND_EXISTING, symbol: 'ExistingSchema' },
       },
-      { id: 'SCHEMA-concept', type: 'SCHEMA', name: 'Concept', description: 'no Zod export yet', concept: true },
+      // Alt-Graph: `concept: true` — ohne Bindung schlicht ungebunden, mit Bindung materialisiert.
+      { id: 'SCHEMA-alt-unbound', type: 'SCHEMA', name: 'AltUnbound', description: 'no Zod export yet', concept: true },
+      {
+        id: 'SCHEMA-alt-bound', type: 'SCHEMA', name: 'AltBound', description: 'bound, attribute left over', concept: true,
+        realRef: { file: BOUND_ALT, symbol: 'AltBoundSchema' },
+      },
+      { id: 'SCHEMA-external-bound', type: 'SCHEMA', name: 'ExternalBound', description: 'foreign contract, bound', external: true, realRef: { file: 'src/schemas/_external.ts', symbol: 'Foreign' } },
       { id: 'SCHEMA-external', type: 'SCHEMA', name: 'External', description: 'foreign contract', external: true },
       { id: 'SCHEMA-unbound', type: 'SCHEMA', name: 'Unbound', description: 'no realRef at all — R-26 surfaces it' },
     ],
@@ -83,13 +91,19 @@ describe('TEST-realref-materialize: graph_export scaffolds missing realRef stubs
     expect(content).toContain('TODO');
   });
 
-  it('(b) never overwrites an existing schema file, (c) skips concept/external, (d) skips unbound', async () => {
+  it('(b) never overwrites an existing schema file, (c) skips external — `concept` decides nothing, (d) skips unbound', async () => {
     const res = await registry['graph_export'].handler({ force: false });
 
     // (b) the real file is untouched and absent from the created list.
     expect(readFileSync(join(tmp, BOUND_EXISTING), 'utf8')).toBe(SENTINEL);
     expect(res.stubs).not.toContain(BOUND_EXISTING);
-    // (c)+(d) exempt and unbound SCHEMAs produce no file at all.
-    expect(res.stubs).toEqual([BOUND_MISSING]); // exactly one stub created
+    // (c)+(d) external and unbound SCHEMAs produce no file; the bound Alt-SCHEMA does,
+    // although it carries `concept: true`.
+    expect([...res.stubs].sort()).toEqual([BOUND_ALT, BOUND_MISSING].sort());
+    expect(existsSync(join(tmp, 'src/schemas/_external.ts'))).toBe(false);
+    expect(readFileSync(join(tmp, BOUND_ALT), 'utf8')).toContain('export const AltBoundSchema = z.unknown();');
+    // R-26 reports exactly the unbound ones — with or without the retired attribute.
+    const r26 = harness.evaluateRules().filter((v) => v.ruleId === 'R-26').map((v) => v.elementId).sort();
+    expect(r26).toEqual(['SCHEMA-alt-unbound', 'SCHEMA-unbound']);
   });
 });

@@ -139,7 +139,7 @@ What wasted rounds on the first run, measured:
 3. **Does any block have two lives?** Not "is it in several chains" — the chains are a lattice, and a shared FUNC is the meet point, not a smell. The signals are: it satisfies REQs from **two different UCs**, it is fed by **two different actors**, and it runs on **two different cadences**. All three together mean two functions. Split it.
 4. **Is every name active?** A block named for what it *holds* hides what it *decides*.
 5. **Which stack implements this MOD**, and does it exist as a `satisfy`-bound REQ?
-6. **Does the code already exist?** Check the repo before modelling greenfield. A `concept: true` FUNC over existing code is a claim the code will break (ITEM-2026-170 D2).
+6. **Does the code already exist?** Check the repo before modelling greenfield. A FUNC modelled as not-yet-built (no `realRef`) over existing code is a claim the code will break (ITEM-2026-170 D2).
 7. **More than five top-level FUNCs? Something is off.** Five is the working budget, not a hard cap — but every slot above it needs a stated reason, because **operations is still coming**: user management, configuration, credentials, deployment, logging. Those land as their own top-level block at the very end, and a decomposition that already spent seven slots on features has nowhere to put them. Count the compose-forest roots, not the chain members, and budget before you spend the last slot.
 
 ## Boundaries

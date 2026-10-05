@@ -23,4 +23,4 @@ Resolve V3_RULES error-violations on the live governed graph by linking the trac
 5. Re-run `rules_get_violations` `{ "severity": "error" }`. Repeat from step 1 until the list is empty — or until only genuinely-ambiguous violations remain (then surface them).
 6. When green, `graph_export` to materialize the committed SSOT.
 
-**A REQ with no plausible verifying TEST is not well-formed** — do NOT fabricate a TEST to silence R-01. Author a real concept-level TEST with `se:author-req`, or flag the REQ for review. Never a fake trace, never a fake test.
+**A REQ with no plausible verifying TEST is not well-formed** — do NOT fabricate a TEST to silence R-01. Author a real TEST (target + tool + pass/fail constraint) with `se:author-req`, or flag the REQ for review. Never a fake trace, never a fake test.

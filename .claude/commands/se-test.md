@@ -19,8 +19,8 @@ evidence once you have watched the same assertion go red for the exact failure i
 3. **Observe it red for that reason** — a bug-catching test must fail on the broken code; a
    regression guard must fail when you revert the fix. Green on the first run against broken code
    means the assertion is wrong. Fix the test, not your confidence.
-4. **Bind it in the model** — a runnable `TEST` node carries a resolvable `testRef` (R-19),
-   `concept:false`. An unbound test lets `graph_readiness` report a REQ "verified" over nothing.
+4. **Bind it in the model** — a `TEST` node carries a resolvable `testRefs` entry (R-19).
+   An unbound test lets `graph_readiness` report a REQ "verified" over nothing.
    Run `graph_tests` to see which TESTs actually resolve to a file.
 
 ## Anti-patterns this kills
@@ -30,8 +30,8 @@ evidence once you have watched the same assertion go red for the exact failure i
   (gesture → handler → state → effect), not the unit in isolation.
 - **Proxy-green** — asserting a stand-in (a log line, a DOM node's existence) instead of the
   effect. Move the assertion up to the effect itself.
-- **Vacuous-green** — a `TEST` node that is `concept:true` or points at no file, yet counted as
-  verification. Materialize a real `testRef`, even a failing `it.todo` stub, before the CR closes.
+- **Vacuous-green** — a `TEST` node that points at no file, yet counted as
+  verification. Materialize a real `testRefs` entry, even a failing `it.todo` stub, before the CR closes.
 
 For views, renderers, and any pixel-bearing surface, use **se-test-ui** — it adds the assertion
 ladder, the four silent styling seams, and the mockup-as-acceptance-criterion gate.

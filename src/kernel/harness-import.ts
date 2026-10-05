@@ -164,7 +164,7 @@ export async function importOntologyGraph(
   if (opts?.rejectUnverifiedReqs && unverifiedReqs.length > 0) {
     throw new Error(
       `Import rejected: ${unverifiedReqs.length} REQ(s) without a verify-traced TEST ` +
-        `(${unverifiedReqs.join(', ')}). Author each REQ together with a concept-level TEST + verify ` +
+        `(${unverifiedReqs.join(', ')}). Author each REQ together with a TEST + verify ` +
         `trace — the REQ-with-test invariant holds on every write path (CR-GC-203 item 6).`,
     );
   }

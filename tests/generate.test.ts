@@ -191,7 +191,6 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
           kinds: ['non-functional'],
         }),
         node('TEST-bestellung', 'TEST', 'Bestellbestätigung prüfen', '', {
-          concept: true,
           testResult: { status: 'pass' },
         }),
         node('FCHAIN-bestellung', 'FCHAIN', 'Bestellablauf'),

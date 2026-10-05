@@ -72,11 +72,11 @@ the feature is **not covered** no matter how many unit tests pass.
 - [ ] The view's mockup testids / selectors are asserted present.
 - [ ] At least one level-1 or level-2 assertion (pixel or computed-style), never presence-only.
 - [ ] The reachability chain is driven by a real gesture, not a direct function call.
-- [ ] Its graph `TEST` node is `concept:false` with a resolvable `testRef` — run `graph_tests`;
+- [ ] Its graph `TEST` node carries a resolvable `testRefs` entry — run `graph_tests`;
       an unbound TEST node means the requirement is **not** verified, whatever the RTM says.
 
 ## Binding the test node in the graph
 
-Bind it immediately — a `TEST` must carry a real `testRef.file`, even a failing stub. A
-`concept:true` TEST is an IOU, and `graph_readiness` will still report the REQ "verified" over an
-empty promise. Never let a UI CR close against a concept-only test.
+Bind it immediately — a `TEST` must carry a real `testRefs` file, even a failing stub. A
+TEST without `testRefs` is an IOU: R-01 is satisfied by the bare `verify` edge, so the REQ reads
+"verified" over an empty promise. Never let a UI CR close against an unbound test.

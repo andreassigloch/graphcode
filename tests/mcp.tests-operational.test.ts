@@ -73,17 +73,24 @@ describe('TEST-graph-tests-operational: graph_tests operational on the committed
     expect(res.coverage.files).not.toContain('tests/panels.test.ts');
   });
 
-  it('(f) testRefs-coverage conformance: every TEST node is runnable-with-existing-file OR explicitly concept-only', async () => {
+  // CR-GC-744 (contracts CR-SM-393): die Selbstauskunft `concept: true` ist entfallen. Was vorher
+  // „laufbar ODER ausdruecklich Konzept" hiess, heisst jetzt „laufbar ODER von R-19 gemeldet" — die
+  // Luecke bleibt benannt, aber vom Katalog, nicht vom Element. Das Selbstmodell ist begonnen
+  // (Bindungen stehen), also ist R-19 gestellt.
+  it('(f) testRefs-coverage conformance: every TEST node is runnable-with-existing-file OR reported by R-19', async () => {
     const testNodes = harness.getGraph().nodes.filter((n) => n.type === 'TEST');
     expect(testNodes.length).toBeGreaterThan(40);
+    const r19 = new Set(harness.evaluateRules().filter((v) => v.ruleId === 'R-19').map((v) => v.elementId));
 
     const offenders: string[] = [];
+    let unbound = 0;
     for (const n of testNodes) {
       const raw = n.attributes?.testRefs;
-      const isConcept = n.attributes?.concept === true;
       if (raw === undefined || raw === null) {
-        // No silent gap: a TEST without a runnable binding MUST be flagged concept-only.
-        if (!isConcept) offenders.push(`${n.uid}: no testRefs and not concept-only`);
+        unbound++;
+        // No silent gap: a TEST without a runnable binding MUST carry the R-19 finding —
+        // whatever else it carries (an old `concept: true` exempts nothing any more).
+        if (!r19.has(n.uid)) offenders.push(`${n.uid}: no testRefs and no R-19 finding`);
         continue;
       }
       const parsed = TestRefsSchema.safeParse(raw);
@@ -100,21 +107,26 @@ describe('TEST-graph-tests-operational: graph_tests operational on the committed
       }
     }
     expect(offenders).toEqual([]);
+    expect(unbound).toBeGreaterThan(0); // sonst prueft der R-19-Zweig nichts
   });
 
-  it('(g) impacted concept-only TESTs surface under unresolved, never silently dropped', async () => {
-    // REQ-docs-taxonomy is verified only by the concept-only TEST-docs-taxonomy (a named gap
+  it('(g) impacted TESTs without testRefs surface under unresolved, never silently dropped', async () => {
+    // REQ-docs-taxonomy is verified only by the unbound TEST-docs-taxonomy (a named gap
     // of CR-GC-719: docs/records is gitignored, durability is not checkable in-repo) → it must
     // appear as unresolved, not vanish. CR-GC-719 bound TEST-interface-schema's REQ to a real
-    // file, so that uid no longer serves as the concept-only witness.
+    // file, so that uid no longer serves as the witness.
     const res = await registry['graph_tests'].handler({ changeSet: ['MOD-projections', 'MOD-kernel'], depth: 3 });
     const unresolvedIds = res.unresolved.map((u: { id: string }) => u.id);
     expect(unresolvedIds).toContain('TEST-docs-taxonomy');
-    // Every unresolved entry is a genuinely concept-only node in the committed graph.
-    const conceptIds = new Set(
-      harness.getGraph().nodes.filter((n) => n.attributes?.concept === true).map((n) => n.uid),
+    // Every unresolved entry is a TEST without testRefs in the committed graph, named as such —
+    // one reason, whether or not the node still carries the retired `concept` attribute.
+    const unboundIds = new Set(
+      harness.getGraph().nodes.filter((n) => n.type === 'TEST' && (n.attributes?.testRefs === undefined || n.attributes?.testRefs === null)).map((n) => n.uid),
     );
-    for (const id of unresolvedIds) expect(conceptIds.has(id)).toBe(true);
+    for (const u of res.unresolved as Array<{ id: string; reason: string }>) {
+      expect(unboundIds.has(u.id), u.id).toBe(true);
+      expect(u.reason).toBe('no testRefs attribute');
+    }
     // Resolved + unresolved account for every impacted TEST.
     expect(res.coverage.resolved + res.unresolved.length).toBe(res.coverage.impactedTests);
   });

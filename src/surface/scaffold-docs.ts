@@ -83,7 +83,7 @@ export function guardrailsContent(): string {
     '- **Inner loop: the selected set** for the change at hand, not the whole suite. Running',
     '  everything after every edit is the habit the selection exists to replace.',
     '- **The full suite is the gate before a change closes.**',
-    '- **Read what the selection could NOT resolve.** A concept-only TEST has no run artifact, so the',
+    '- **Read what the selection could NOT resolve.** An unbound TEST has no run artifact, so the',
     '  selected run does not cover it — a coverage gap to close, not noise to skip past.',
     '',
     '## When the brief leaves something open',

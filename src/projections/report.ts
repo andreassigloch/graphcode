@@ -384,7 +384,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   // →verify→ TEST`, a REQ changeset degenerates to its verify-dependents. Each impacted
   // TEST is resolved via its `testRefs` runnable bindings to concrete files; the emitted
   // command runs ONLY those affected test files — never the full suite. TESTs without a
-  // testRefs (concept-only) surface under `unresolved`, never lost.
+  // testRefs (unbound) surface under `unresolved`, never lost.
   //
   // git-diff → node: the changeSet is graph node uids, not paths. The agent maps a
   // changed source file to its node by the repo's MOD/FUNC naming convention
@@ -410,7 +410,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       'incoming-impact, which never reaches a code node’s tests), a REQ degenerates to its verify- ' +
       'dependents. Resolves each impacted TEST via its `testRefs` bindings [{file, case?, tool, level?}, …] ' +
       'and emits the minimal `vitest run <only-affected-files>` command + coverage. TESTs without a ' +
-      'resolvable testRefs (concept-only) are reported under `unresolved` (never silently dropped).',
+      'resolvable testRefs (unbound) are reported under `unresolved` (never silently dropped).',
     inputSchema: GraphTestsInputSchema,
     async handler(input) {
       // Directed code→REQ→TEST resolution via the SINGLE getSubgraph primitive
@@ -430,8 +430,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
         // eigener, benannter Grund, kein stilles Weglassen.
         const read = readTestRefs(node.attributes);
         if (read.state === 'absent') {
-          const reason = node.attributes?.concept === true ? 'concept-only (no run artifact yet)' : 'no testRefs attribute';
-          unresolved.push({ id: node.uid, name: node.name, reason });
+          unresolved.push({ id: node.uid, name: node.name, reason: 'no testRefs attribute' });
           continue;
         }
         if (read.state === 'invalid') {

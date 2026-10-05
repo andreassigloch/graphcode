@@ -118,7 +118,7 @@ async function bootHost(
       if (seeded.unverifiedReqs.length > 0) {
         process.stderr.write(
           `[graphcode] WARNING: ${seeded.unverifiedReqs.length} imported REQ(s) lack a verify-traced ` +
-            `TEST (R-01): ${seeded.unverifiedReqs.join(', ')}. Author a concept-level TEST + verify trace.\n`,
+            `TEST (R-01): ${seeded.unverifiedReqs.join(', ')}. Author a TEST + verify trace.\n`,
         );
       }
       // CR-GC-530: traces no TRACE_PATTERN admits any more were held back from the store.
