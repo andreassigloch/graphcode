@@ -2980,7 +2980,9 @@
       "id": "CR-GC-741",
       "type": "CR",
       "name": "Whitebox-Messung (minimal-whitebox Phase 1) als S1-Messung in npm run messung (T-E2)",
-      "description": "docs/cr/open/CR-GC-741-whitebox-messung-minimal-whitebox-phase-.md"
+      "description": "docs/cr/open/CR-GC-741-whitebox-messung-minimal-whitebox-phase-.md",
+      "status": "done",
+      "commitRef": "7664c59"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23509,5 +23511,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 611
+  "graphVersion": 612
 }
