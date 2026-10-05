@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 348 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 349 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 348 CR · 320 done · 4 open.
+Total: 349 CR · 321 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -409,4 +409,5 @@ Total: 348 CR · 320 done · 4 open.
 | `CR-GC-735` | done | Abschlussvermerk überschreibt die anderen: ~ SYS @analysisFreshness {x} ersetzt das ganze Objekt (2. Stempel löscht den 1.); Skills sagen 'analysisFreshness.<id> = …' — gemessen im Replay todo-local 2026-10-04 |
 | `CR-GC-736` | done | Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3) |
 | `CR-GC-737` | done | Beispielgraphen in ein eigenes Verzeichnis: rig/graphs, Fixture-Graphen und sigllm-Golden eingefroren unter beispielgraphen/ |
-| `CR-GC-738` | n/a | rig/ ist das eine Rig: Treiber mit Sequenz, Aufgaben (todo, sigllm-prosa), serie.json, Referenzlauf je Standardfall |
+| `CR-GC-738` | done | rig/ ist das eine Rig: Treiber mit Sequenz, Aufgaben (todo, sigllm-prosa), serie.json, Referenzlauf je Standardfall |
+| `CR-GC-739` | n/a | auswertung/: konfigurierbarer Runner über Lauf-Artefakte, benchmark.jsonl als Gedächtnis, benchmark.md generiert |

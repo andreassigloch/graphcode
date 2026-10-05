@@ -2954,7 +2954,15 @@
       "id": "CR-GC-738",
       "type": "CR",
       "name": "rig/ ist das eine Rig: Treiber mit Sequenz, Aufgaben (todo, sigllm-prosa), serie.json, Referenzlauf je Standardfall",
-      "description": "docs/cr/open/CR-GC-738-rig-ist-das-eine-rig-treiber-mit-sequenz.md"
+      "description": "docs/cr/open/CR-GC-738-rig-ist-das-eine-rig-treiber-mit-sequenz.md",
+      "status": "done",
+      "commitRef": "cd46729"
+    },
+    {
+      "id": "CR-GC-739",
+      "type": "CR",
+      "name": "auswertung/: konfigurierbarer Runner über Lauf-Artefakte, benchmark.jsonl als Gedächtnis, benchmark.md generiert",
+      "description": "docs/cr/open/CR-GC-739-auswertung-konfigurierbarer-runner-u-ber.md"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23517,5 +23525,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 600
+  "graphVersion": 602
 }
