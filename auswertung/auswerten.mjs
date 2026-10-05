@@ -21,7 +21,7 @@ import { kennzahlen } from './kennzahlen.mjs';
 import { verhalten } from './verhalten.mjs';
 import { schatten } from './schatten-suggest.mjs';
 import { blindurteilFuer } from './blindurteil.mjs';
-import { aufgabeLaden } from '../rig/simulator.mjs';
+import { aufgabeLaden, AUFGABEN } from '../rig/simulator.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const RUNS = join(HERE, '..', 'rig', 'runs');
@@ -130,7 +130,8 @@ export async function auswertenLauf(laufDir, analysen = ANALYSEN) {
     const referenz = join(aufgabeLaden(lauf.aufgabe).referenz(lauf.arm), 'graph.json');
     teile.verhalten = verhalten(laufDir, existsSync(referenz) ? referenz : null);
   }
-  if (analysen.includes('schatten')) teile.schatten = (await schatten(laufDir)).bilanz;
+  // Ein Lauf mit Basis (Aufgabe auf einem Referenzgraphen) wird von dort nachgespielt, nicht vom leeren Store.
+  if (analysen.includes('schatten')) teile.schatten = (await schatten(laufDir, undefined, { basis: lauf.basis ? join(AUFGABEN, lauf.basis) : null })).bilanz;
   if (analysen.includes('blindurteil')) teile.blindurteil = blindurteilFuer(laufDir);
   const datum = new Date(statSync(join(laufDir, 'lauf.json')).mtimeMs).toISOString().slice(0, 10);
   return datensatz(lauf, teile, datum);

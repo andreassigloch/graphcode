@@ -195,3 +195,17 @@ describe('nachspielenRein: ohne Store, ohne Gate', () => {
     expect(r.graph.edges.length).toBe(abgelegt.traces.length);
   });
 });
+
+describe('nachspielen mit Basis: ein Lauf, der auf einem Referenzgraphen beginnt', () => {
+  it('leeres Audit auf der Basis ergibt die Basis — SRR und PDR bestanden, aber mit Warnungen (das Ziel der Stufe warnungsfrei)', async () => {
+    const basis = join(process.cwd(), 'rig', 'aufgaben', 'todo', 'referenz', 'lokal', 'graph.json');
+    const abgelegt = JSON.parse(readFileSync(basis, 'utf8'));
+    const repo = join(dir, 'basis-leer');
+    mkdirSync(repo, { recursive: true });
+    const r = await nachspielen(join(repo, 'kein-audit.jsonl'), repo, Infinity, { basis });
+    expect(r.flach.elements.length).toBe(abgelegt.elements.length);
+    expect(r.gates.SRR && r.gates.PDR).toBe(true);
+    expect(r.befund.fehler).toBe(0);
+    expect(r.befund.warnungen).toBeGreaterThan(0);
+  }, 60_000);
+});

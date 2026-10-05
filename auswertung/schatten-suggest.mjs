@@ -36,7 +36,7 @@ export function schattenBilanz(zeilen) {
   };
 }
 
-export async function schatten(laufDir, repo = join(laufDir, 'todo')) {
+export async function schatten(laufDir, repo = join(laufDir, 'todo'), { basis = null } = {}) {
   const { generationStep } = await import('../dist/loop/generate.js');
   const zeilen = [];
   let offen = null;
@@ -50,6 +50,7 @@ export async function schatten(laufDir, repo = join(laufDir, 'todo')) {
     offen = null;
   };
   await nachspielen(join(laufDir, 'audit.jsonl'), repo, Infinity, {
+    basis,
     jeZug: async (leer, i, commands) => {
       schliessen(leer);
       const vorher = steuerwert(leer);

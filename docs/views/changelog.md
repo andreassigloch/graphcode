@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 350 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 351 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 350 CR · 324 done · 4 open.
+Total: 351 CR · 324 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -412,3 +412,4 @@ Total: 350 CR · 324 done · 4 open.
 | `CR-GC-738` | done | rig/ ist das eine Rig: Treiber mit Sequenz, Aufgaben (todo, sigllm-prosa), serie.json, Referenzlauf je Standardfall |
 | `CR-GC-739` | done | auswertung/: konfigurierbarer Runner über Lauf-Artefakte, benchmark.jsonl als Gedächtnis, benchmark.md generiert |
 | `CR-GC-740` | done | Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv |
+| `CR-GC-741` | n/a | Whitebox-Messung (minimal-whitebox Phase 1) als S1-Messung in npm run messung (T-E2) |

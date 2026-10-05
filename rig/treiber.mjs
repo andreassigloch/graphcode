@@ -26,10 +26,10 @@
  * @author andreas@siglochconsulting
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, copyFileSync, rmSync } from 'node:fs';
-import { dirname, join, resolve, basename } from 'node:path';
+import { dirname, join, resolve, basename, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { naechsteNachricht, ende, analyseIn, sitzungswechsel, aufgabeLaden } from './simulator.mjs';
+import { naechsteNachricht, ende, ZIEL, analyseIn, sitzungswechsel, aufgabeLaden, AUFGABEN } from './simulator.mjs';
 import { auditDelta } from '../auswertung/kennzahlen.mjs';
 import { nachspielen } from '../auswertung/nachspielen.mjs';
 import { repoAnlegen, frontierRepo, lokal, frontier, vorlageStand } from './arme.mjs';
@@ -68,27 +68,31 @@ const auditZeilen = (repo) => {
 };
 
 /**
- * Stufe `modellieren`: Züge bis SRR und PDR bestanden. `lage` trägt, was alle Stufen teilen: Repo, Client-Fabrik,
- * Aufgabe, Grenzen, Protokoll und das Denken; die Stufe hängt ihre Züge an und gibt den Grund des Endes zurück.
+ * Eine Stufe: Züge, bis ihr Ziel (simulator.ZIEL) am Nachbau aus dem Audit erreicht ist. `lage` trägt, was alle Stufen
+ * teilen: Repo, Client-Fabrik, Aufgabe, Basis, Grenzen, Protokoll und das Denken; die Stufe hängt ihre Züge an und
+ * gibt den Grund des Endes zurück. Die erste Stufe beginnt mit start.md, jede weitere mit `<stufe>.md` der Aufgabe.
  */
-async function modellieren(lage) {
+async function stufe(name, lage) {
   const { repo, oeffnen, aufgabe, maxZuege, jeSitzung, protokoll, denken, kennung, nr } = lage;
+  const zuegeVorher = protokoll.length;
+  const start = zuegeVorher === 0 ? aufgabe.start : aufgabe.stufenPrompt(name);
+  if (!start) throw new Error(`Aufgabe ${aufgabe.name}: Stufe „${name}" folgt auf eine andere und braucht ${name}.md`);
   let s = await oeffnen(), sitzung = 1, thema = null, zugInSitzung = 0;
-  let nachricht = aufgabe.start, blattGegeben = false, gebaut = false, grund = null, gates = {}, letzterVorschlag = null;
+  let nachricht = start, blattGegeben = false, gebaut = false, grund = null, gates = {}, befund = null, letzterVorschlag = null;
   lage.modell = s.modell;
   try {
-    for (let zug = 1; ; zug++) {
+    for (let zug = zuegeVorher + 1; ; zug++) {
       const vorher = auditZeilen(repo).length;
       const r = await s.zug(nachricht);
       zugInSitzung++;
       letzterVorschlag = r.vorschlag ?? letzterVorschlag;
       const audit = auditDelta(auditZeilen(repo).slice(vorher));
       gebaut ||= audit.angenommen > 0;
-      if (audit.angenommen > 0) gates = (await nachspielen(join(repo, '.graphcode', 'audit.jsonl'), repo)).gates;
-      protokoll.push({ zug, stufe: 'modellieren', sitzung, nachricht, ...r, audit, gates });
+      if (audit.angenommen > 0) ({ gates, befund } = await nachspielen(join(repo, '.graphcode', 'audit.jsonl'), repo, Infinity, { basis: lage.basis }));
+      protokoll.push({ zug, stufe: name, sitzung, nachricht, ...r, audit, gates, befund });
       lage.schreiben();
-      console.log(`[${kennung}-${nr}] Zug ${zug} (Sitzung ${sitzung}): ${(r.dauerMs / 60_000).toFixed(1)} min, ${r.werkzeuge.length} Schritte, +${audit.angenommen}/-${audit.abgelehnt}, Abbruch L${r.abbruch?.laenge ?? 0}/F${r.abbruch?.fehler ?? 0}, SRR ${gates.SRR ? '✓' : '·'} PDR ${gates.PDR ? '✓' : '·'}, Vorschlag: ${r.vorschlag ?? '—'}`);
-      grund = ende(zug, maxZuege, nachricht, gates);
+      console.log(`[${kennung}-${nr}] Zug ${zug} (Sitzung ${sitzung}): ${(r.dauerMs / 60_000).toFixed(1)} min, ${r.werkzeuge.length} Schritte, +${audit.angenommen}/-${audit.abgelehnt}, Abbruch L${r.abbruch?.laenge ?? 0}/F${r.abbruch?.fehler ?? 0}, SRR ${gates.SRR ? '✓' : '·'} PDR ${gates.PDR ? '✓' : '·'}, F${befund?.fehler ?? '·'}/W${befund?.warnungen ?? '·'}, Vorschlag: ${r.vorschlag ?? '—'}`);
+      grund = ende(zug - zuegeVorher, maxZuege, nachricht, ZIEL[name](gates, befund));
       if (grund) break;
       // Frische Sitzung: neues Thema laut Vorschlag, oder die Sitzung hat ihr Zuglimit erreicht.
       if (sitzungswechsel(thema, r.vorschlag) || zugInSitzung >= jeSitzung) {
@@ -98,8 +102,8 @@ async function modellieren(lage) {
         await hostWeg(repo);
         s = await oeffnen();
         sitzung++;
-        // Die frische Sitzung beginnt mit dem letzten Vorschlag — ohne einen mit dem Start-Prompt.
-        nachricht = letzterVorschlag ?? aufgabe.start;
+        // Die frische Sitzung beginnt mit dem letzten Vorschlag — ohne einen mit dem Start-Prompt der Stufe.
+        nachricht = letzterVorschlag ?? start;
         thema = analyseIn(nachricht);
         zugInSitzung = 0;
         blattGegeben = false;
@@ -118,8 +122,8 @@ async function modellieren(lage) {
   return grund;
 }
 
-/** Die Stufen, die eine Sequenz nennen darf. Eine neue Stufe kommt hier dazu — und nirgends sonst. */
-export const STUFEN = { modellieren };
+/** Die Stufen, die eine Sequenz nennen darf; ihr Ziel steht in simulator.ZIEL. Eine neue Stufe kommt hier dazu — und nirgends sonst. */
+export const STUFEN = { modellieren: (lage) => stufe('modellieren', lage), warnungsfrei: (lage) => stufe('warnungsfrei', lage) };
 
 export async function lauf(arm, nr, { aufgabe: aufgabeName = 'todo', zuege: maxZuege = 30, jeSitzung = 8, modell = null, kennung = arm, stand: st = stand() } = {}) {
   const aufgabe = aufgabeLaden(aufgabeName);
@@ -129,11 +133,16 @@ export async function lauf(arm, nr, { aufgabe: aufgabeName = 'todo', zuege: maxZ
   mkdirSync(dir, { recursive: true });
   const repo = repoAnlegen(join(dir, 'todo'), 4800 + nr + (arm === 'frontier' ? 50 : 0), arm === 'lokal' ? modell : null);
   if (arm === 'frontier') frontierRepo(repo, 4850 + nr);
+  // Basis: der Host seedet beim ersten Start aus docs/graph/<systemId>.graph.json — der Lauf beginnt auf diesem Graphen.
+  if (aufgabe.basis) {
+    mkdirSync(join(repo, 'docs', 'graph'), { recursive: true });
+    copyFileSync(aufgabe.basis, join(repo, 'docs', 'graph', `${basename(repo)}.graph.json`));
+  }
   const oeffnen = () => (arm === 'lokal' ? lokal(repo, 4900 + nr) : frontier(repo, modell ?? 'claude-opus-5-5'));
 
   const protokoll = [], denken = [];
-  const kopf = { arm: kennung, nr, aufgabe: aufgabeName, sequenz: aufgabe.sequenz, stand: st };
-  const lage = { repo, oeffnen, aufgabe, maxZuege, jeSitzung, protokoll, denken, kennung, nr, modell: null, sitzungen: 0,
+  const kopf = { arm: kennung, nr, aufgabe: aufgabeName, sequenz: aufgabe.sequenz, stand: st, ...(aufgabe.basis ? { basis: relative(AUFGABEN, aufgabe.basis) } : {}) };
+  const lage = { repo, oeffnen, aufgabe, basis: aufgabe.basis, maxZuege, jeSitzung, protokoll, denken, kennung, nr, modell: null, sitzungen: 0,
     schreiben: () => writeFileSync(join(dir, 'lauf.json'), JSON.stringify({ ...kopf, zuege: protokoll }, null, 1)) };
   let grund = null;
   try {

@@ -1,0 +1,7 @@
+{
+ "quelle": "Stufe warnungsfrei auf dem Referenzlauf todo/lokal (Entscheid Autor 2026-10-05: ein warnungsfreies Modell, der fertige Referenzlauf als Basis). Antwortblatt und Raster wie todo.",
+ "sequenz": [
+  "warnungsfrei"
+ ],
+ "basis": "../todo/referenz/lokal/graph.json"
+}

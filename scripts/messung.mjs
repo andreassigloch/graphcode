@@ -29,7 +29,6 @@ export const S1 = ['T-V1', 'T-V2', 'T-V4', 'T-M3', 'T-M4', 'T-E1', 'T-E2', 'T-E8
 const NICHT_ERHOBEN = {
   'T-V1': ['0 Befunde auf allen Ebenen', '`rig/moneyflow-struktur/driver.mjs` gibt nur Prosa aus'],
   'T-M3': ['Verstöße je Element fallen monoton im Trend', '`spike-nachweis-history.mjs` hat kein Urteilsfeld, nur Kill-Zeilen'],
-  'T-E2': ['100 % der geänderten Knoten in W bei |W|/|G| ≤ 0,05', '`run-phase1.mjs` schreibt ins Repo (`rig/minimal-whitebox/results/`)'],
   'T-O4': ['Known-Answer-Set richtig gerankt, keine Regression einer Dimension mit Gewicht ≥ 1', '`known-answer-set.mjs` gibt nur Markdown aus'],
   'T-O6': ['≥ 6/7 bekannte Paare gefunden', 'ND- und Engpass-Spike geben nur Prosa aus'],
 };
@@ -170,6 +169,11 @@ async function erhebe() {
   } else {
     zeile('T-E1', kriteriumE1, '— keine `.graphcode/cr-messung.jsonl` (die Dauermessung laeuft nur lokal)', 'nicht erhoben');
   }
+
+  // T-E2: die Whitebox gegen die tatsächlich geänderten Knoten der jüngsten CR-Commits (scripts/whitebox-messung.mjs).
+  const { whiteboxMessung } = await import(join(REPO, 'scripts', 'whitebox-messung.mjs'));
+  const wb = await whiteboxMessung(REPO);
+  zeile('T-E2', '100 % der geänderten Knoten in W bei |W|/|G| ≤ 0,05 (jüngste 10 CR-Commits)', wb.wert, wb.urteil);
 
   for (const [id, [kriterium, grund]] of Object.entries(NICHT_ERHOBEN)) zeile(id, kriterium, `— ${grund} (CR-GC-679B)`, 'nicht erhoben');
   return { zeilen, stempel };

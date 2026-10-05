@@ -18,15 +18,17 @@
  *
  * @author andreas@siglochconsulting
  */
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { readFileSync, existsSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const AUFGABEN = join(dirname(fileURLToPath(import.meta.url)), 'aufgaben');
 
 /**
  * Die Aufgabe, die der Nutzer mitbringt (Leitlinie §9.4): start.md (sein erster Prompt), antwortblatt.md (was er auf
- * Fragen antwortet), punkte.json (Raster der P- und O-Punkte fürs Blindurteil), aufgabe.json (Quelle, Sequenz der Stufen).
+ * Fragen antwortet), punkte.json (Raster der P- und O-Punkte fürs Blindurteil), aufgabe.json (Quelle, Sequenz der Stufen,
+ * optional `basis`: ein Graph, mit dem der Lauf beginnt — etwa der Referenzlauf einer anderen Aufgabe). Eine spätere
+ * Stufe der Sequenz bekommt ihren Prompt aus `<stufe>.md`; die erste aus start.md.
  */
 export function aufgabeLaden(name, root = AUFGABEN) {
   const dir = join(root, name);
@@ -34,7 +36,9 @@ export function aufgabeLaden(name, root = AUFGABEN) {
   const raster = JSON.parse(readFileSync(join(dir, 'punkte.json'), 'utf8'));
   return {
     name, ...meta, sequenz: meta.sequenz ?? ['modellieren'],
+    basis: meta.basis ? resolve(dir, meta.basis) : null,
     start: readFileSync(join(dir, 'start.md'), 'utf8').trim(),
+    stufenPrompt: (stufe) => (existsSync(join(dir, `${stufe}.md`)) ? readFileSync(join(dir, `${stufe}.md`), 'utf8').trim() : null),
     antwortblatt: readFileSync(join(dir, 'antwortblatt.md'), 'utf8').trim(),
     punkte: raster.punkte, rasterHinweis: raster.hinweis,
     referenz: (arm) => join(dir, 'referenz', arm),
@@ -87,9 +91,19 @@ export function sitzungswechsel(thema, vorschlag) {
   return vorschlag != null && analyseIn(vorschlag) !== thema;
 }
 
-/** Ende nach einem Zug: SRR und PDR bestanden, Freigabe-Bitte abgeschickt oder Zuglimit. */
-export function ende(zug, maxZuege, letzteNachricht, gates = {}) {
-  if (gates.SRR && gates.PDR) return 'srr+pdr';
+/**
+ * Das Ziel einer Stufe, geprüft am Nachbau aus dem Audit nach jedem Zug mit Mutation: `modellieren` endet, sobald die
+ * Readiness SRR und PDR als bestanden meldet; `warnungsfrei` endet, sobald die Regelprüfung weder Fehler noch Warnung
+ * meldet. Eine neue Stufe bekommt hier ihr Ziel — der Treiber kennt nur den Namen des erreichten Ziels.
+ */
+export const ZIEL = {
+  modellieren: (gates) => (gates?.SRR && gates?.PDR ? 'srr+pdr' : null),
+  warnungsfrei: (gates, befund) => (befund && befund.fehler === 0 && befund.warnungen === 0 ? 'warnungsfrei' : null),
+};
+
+/** Ende nach einem Zug: Ziel der Stufe erreicht, Freigabe-Bitte abgeschickt oder Zuglimit. */
+export function ende(zug, maxZuege, letzteNachricht, erreicht = null) {
+  if (erreicht) return erreicht;
   if (String(letzteNachricht ?? '').endsWith(FREIGABE)) return 'freigabe';
   return zug >= maxZuege ? 'zuglimit' : null;
 }

@@ -9,7 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { fragen, naechsteNachricht, ende, analyseIn, sitzungswechsel, aufgabeLaden, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/simulator.mjs';
+import { fragen, naechsteNachricht, ende, ZIEL, analyseIn, sitzungswechsel, aufgabeLaden, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/simulator.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
 import { auditDelta } from '../auswertung/kennzahlen.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
@@ -63,10 +63,26 @@ describe('CR-GC-715: Nutzer-Simulator', () => {
     expect(ende(3, 12, 'x')).toBeNull();
   });
 
-  it('endet, sobald die Readiness SRR und PDR als bestanden meldet', () => {
-    expect(ende(4, 30, 'x', { SRR: true, PDR: true, CDR: false })).toBe('srr+pdr');
-    expect(ende(4, 30, 'x', { SRR: true, PDR: false })).toBeNull();
-    expect(ende(4, 30, 'x')).toBeNull();
+  it('endet, sobald die Stufe ihr Ziel meldet: modellieren bei SRR und PDR, warnungsfrei ohne Fehler und Warnung', () => {
+    expect(ZIEL.modellieren({ SRR: true, PDR: true, CDR: false })).toBe('srr+pdr');
+    expect(ZIEL.modellieren({ SRR: true, PDR: false })).toBeNull();
+    expect(ZIEL.modellieren({})).toBeNull();
+    expect(ZIEL.warnungsfrei({ SRR: true, PDR: true }, { fehler: 0, warnungen: 0 })).toBe('warnungsfrei');
+    expect(ZIEL.warnungsfrei({ SRR: true, PDR: true }, { fehler: 0, warnungen: 3 })).toBeNull();
+    expect(ZIEL.warnungsfrei({}, null)).toBeNull();
+    expect(ende(4, 30, 'x', 'srr+pdr')).toBe('srr+pdr');
+    expect(ende(4, 30, 'x', null)).toBeNull();
+    expect(Object.keys(STUFEN).sort()).toEqual(Object.keys(ZIEL).sort());
+  });
+
+  it('eine Aufgabe mit Basis startet auf dem Referenzgraphen einer anderen Aufgabe', () => {
+    const a = aufgabeLaden('todo-warnungsfrei');
+    expect(a.sequenz).toEqual(['warnungsfrei']);
+    expect(a.basis).toBe(join(korpus.referenz('lokal'), 'graph.json'));
+    expect(existsSync(a.basis)).toBe(true);
+    expect(a.antwortblatt).toBe(korpus.antwortblatt);
+    expect(korpus.basis).toBeNull();
+    expect(korpus.stufenPrompt('warnungsfrei')).toBeNull();
   });
 
   it('erkennt die Analyse eines Vorschlags (Auftrag oder Satz 2, auch der alte Akkusativ)', () => {

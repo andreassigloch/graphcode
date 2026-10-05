@@ -84,13 +84,15 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 | Rig | Klasse | Frage | Aufbau |
 |---|---|---|---|
 | `rig/` selbst (unten) | gate | Wie gut modellieren lokaler und Frontier-Agent im interaktiven Betrieb (T-E3)? | Vorlage todo-local → je Sitzung ein Prozess, Simulator, `openMeasured` am Export |
-| [`minimal-whitebox/`](minimal-whitebox/README.md) Phase 1 | gate | Wie groß ist die Whitebox gegen den Blast-Radius (T-E2)? | `openMeasured`; wird `scripts/whitebox-messung.mjs` (ITEM-2026-744) |
 | `moneyflow-struktur/` (intern, nicht im Repo) | gate | Wie sieht moneyflow durch das echte Gate aus? | `openMeasured` |
 | `agentdiary/` (intern, nicht im Repo) | gate | Liefert der lokale Arm (D2) am echten Auftrag, was Frontier liefert? | Arm-Repos + Blindurteil |
 
 Gefallen mit CR-GC-740 (Konzept §5, Löschkonzept §6): `greenfield-systemtest` (Executor-Arme; Texte unter
 [`docs/archive/messung-executor/`](../docs/archive/messung-executor/greenfield-systemtest-README.md)), `code-test`,
-`referenz-change`, `dummy-slicer`, `sigllm-spezifikation` (Prompt und Antwortblatt leben in `aufgaben/sigllm-prosa/`).
+`referenz-change`, `dummy-slicer`, `sigllm-spezifikation` (Prompt und Antwortblatt leben in `aufgaben/sigllm-prosa/`);
+mit CR-GC-741 `minimal-whitebox` — die Whitebox-Messung (T-E2) ist jetzt `scripts/whitebox-messung.mjs` in `npm run messung`,
+die Jobs kommen aus der CR-Historie statt aus einer Liste. `agentdiary` (lokal) ist mit seinen Texten nach
+[`docs/archive/messung-agentdiary/`](../docs/archive/messung-agentdiary/README.md) gegangen.
 
 ## Das Rig (CR-GC-715, CR-GC-738)
 

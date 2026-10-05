@@ -45,11 +45,12 @@ export async function nachspielenRein(auditPfad) {
  * Reihenfolge durch das Gate. `jeZug(leer, i, commands)` läuft vor jeder angewandten Mutation mit dem offenen
  * Wegwerf-Store — für Analysen, die den Stand davor brauchen; `amEnde(leer)` läuft nach der letzten.
  */
-export async function nachspielen(auditPfad, repo, n = Infinity, { systemId = 'todo', jeZug = null, amEnde = null } = {}) {
+export async function nachspielen(auditPfad, repo, n = Infinity, { systemId = 'todo', jeZug = null, amEnde = null, basis = null } = {}) {
   const angewandt = mutationen(auditPfad).slice(0, n).filter((a) => a.result === 'applied');
   const { openMeasured } = await import('../dist/index.js');
   const { commandsToFormatE } = await import('@sigloch/graph-api-core');
-  const leer = await openMeasured({ systemId, configFrom: repo });
+  // `basis`: der Graph, mit dem der Lauf begann (Aufgabe mit Basis) — der Wegwerf-Store startet dort, nicht leer.
+  const leer = await openMeasured(basis ? { graph: basis, systemId, configFrom: repo } : { systemId, configFrom: repo });
   try {
     for (const [i, a] of angewandt.entries()) {
       if (jeZug) await jeZug(leer, i, a.commands);
@@ -59,9 +60,13 @@ export async function nachspielen(auditPfad, repo, n = Infinity, { systemId = 't
     }
     if (amEnde) await amEnde(leer);
     const readiness = await leer.tools.graph_readiness.handler({});
+    // Der Befund der ganzen Regelprüfung (ein Eintrag je Element): das Ziel der Stufe `warnungsfrei`.
+    const ev = await leer.tools.rules_evaluate.handler({ detail: 'full' });
+    const zaehle = (s) => ev.violations.filter((v) => v.severity === s).length;
     return {
       flach: flach(leer.graph()),
       gates: Object.fromEntries(readiness.phaseGates.map((x) => [x.id, x.passed])),
+      befund: { fehler: zaehle('error'), warnungen: zaehle('warning') },
       readiness,
     };
   } finally {
