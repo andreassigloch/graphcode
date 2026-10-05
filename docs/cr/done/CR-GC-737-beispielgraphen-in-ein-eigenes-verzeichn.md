@@ -1,6 +1,6 @@
 # CR-GC-737: Beispielgraphen in ein eigenes Verzeichnis: rig/graphs, Fixture-Graphen und sigllm-Golden eingefroren unter beispielgraphen/
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-05)
 **Typ:** aus Item ITEM-2026-740 (idea)
 **Erstellt:** 2026-10-05
 **Item:** bok/items/ITEM-2026-740.json (Lane: code)
