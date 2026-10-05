@@ -1,6 +1,6 @@
 # Messaufbau — Rig, Auswertung, Beispielgraphen
 
-Stand 2026-10-05, Entwurf zur Freigabe durch den Autor. Ordnet, was unter `rig/` gewachsen ist, nach
+Stand 2026-10-05, vom Autor freigegeben (Entscheide unten in §7). Ordnet, was unter `rig/` gewachsen ist, nach
 drei Dingen, die heute vermischt liegen — und sagt, was davon bleibt, wohin es geht und was gelöscht wird.
 Begriffe sind die der Leitlinie (§9.4: Aufgabe, Referenz, Arm, Treiber, Stempel); kein neuer kommt dazu.
 
@@ -24,8 +24,9 @@ rig/
   arme.mjs             die Clients: lokal (OpenCode) · frontier (Claude Code); Repo aus der Vorlage
   serie.json           das Standard-Set: Aufgaben × Arme (mit Modell) × N, Zug- und Sitzungsgrenzen
   aufgaben/
-    todo/aufgabe.json          Start-Prompt, Antwortblatt, Raster (P*/O*), Quelle
-    sigllm-prosa/aufgabe.json  Auftrag als Prosa, Projektdefinition als Antwortblatt, Raster, Referenz
+    todo/aufgabe.json          Start-Prompt, Antwortblatt, Raster (P*/O*), Quelle, Sequenz
+    todo/referenz/<arm>/       der Referenzlauf: graph.json · audit.jsonl · lauf.json · denken.json · stempel.json
+    sigllm-prosa/aufgabe.json  Auftrag als Prosa, Projektdefinition als Antwortblatt, Raster, Sequenz
   runs/                (gitignored) je Lauf: lauf.json · audit.jsonl · graph.json · denken.json · todo/
 
 auswertung/
@@ -60,11 +61,24 @@ bei Freigabe-Bitte oder Zuglimit. Jede Analyse und die Rückkehr zur Strukturarb
 Sitzung (neuer Client-Prozess, derselbe Store). So steht es seit CR-GC-715 in `treiber.mjs`; neu ist nur der Ort.
 
 **Aufgabe** (`aufgaben/<name>/aufgabe.json`): `start` (der Prompt), `antwortblatt` (was der Nutzer auf Fragen
-antwortet — das Bedienskript), `punkte` (Raster P*/O* für das Blindurteil), `quelle`, optional `referenz`
-(ein Beispielgraph, gegen den `verhalten` die Struktur misst). Für `todo` ist das heute `korpus/todo.json`;
+antwortet — das Bedienskript), `punkte` (Raster P*/O* für das Blindurteil), `quelle`, `sequenz`. Für `todo` ist das heute `korpus/todo.json`;
 für `sigllm-prosa` liegen die Teile unter `rig/sigllm-spezifikation/` (Auftrag, Projektdefinition,
 `auftragspunkte.json`, Golden) und werden zu einer Aufgabe zusammengezogen — die Leitlinie nennt S2 auf
 sigllm-prosa.
+
+**Sequenz** (`aufgabe.sequenz`, Vorgabe `["modellieren"]`): die Stufen eines Laufs, jede mit eigener
+Ende-Regel. Heute gibt es eine — `modellieren` endet bei SRR und PDR. Code-Erzeugung oder eine andere Folge
+(etwa „modellieren → code → abnahme") kommt als weitere Stufe in dieselbe Schleife: der Treiber kennt die Stufen,
+die Stufe kennt ihr Ende und ihre Artefakte. Nicht jetzt gebaut, aber so geschnitten, dass es ein Modul und
+kein zweiter Treiber wird (Entscheid Autor 2026-10-05).
+
+**Referenzlauf** (`aufgaben/<name>/referenz/<arm>/`): je Standardfall (Aufgabe × Arm) liegt **ein** Lauf
+im Repo vorrätig — Referenzgraph, graphcode-Log (`audit.jsonl`), LLM-Log (`lauf.json` mit Nachrichten und
+Antworten, `denken.json`) und sein Stempel. Zusammen rund 250 KB; das Lauf-Repo (60 MB) bleibt draußen. Er ist
+die Referenz der Leitlinie §9.4 für diese Aufgabe: `verhalten` misst die Struktur gegen seinen Graphen, Tests
+spielen sein Audit nach (statt lokaler Läufe, die niemand außer dem Autor hat), und eine Sequenzstufe nach dem
+Modellieren kann auf seinem Graphen aufsetzen, ohne erst zu modellieren. `treiber.mjs referenz runs/<lauf>`
+tauscht ihn aus — der Autor entscheidet, welcher Lauf Referenz wird; der alte geht mit dem Tausch.
 
 **Arm** = Client × Modell. Die Vorlage trägt das lokale Vorgabemodell (seit 2026-10-05 `qwen3.8:27b-nvfp4`);
 `--modell` tauscht es, `--arm` benennt die Kennung. Frontier = Claude Code mit `claude-opus-5-5`.
@@ -92,7 +106,7 @@ Schlüssel `arm-nr` + Stempel; erneutes Auswerten ersetzt die Zeile) und erzeugt
 |---|---|---|---|---|
 | `kennzahlen` | Wie lief es: Züge, Sitzungen, Dauer je Zug, Fragen in Zug 1, Schritte, Mutationen angenommen/abgelehnt, Abbrüche, Zug an dem SRR bzw. PDR fiel | `lauf.json` | T-E3 | `rig/interaktiv/auswertung.mjs` |
 | `nachspielen` | Graph und Readiness nach n Mutationen | `audit.jsonl`, Lauf-Repo | Grundlage | `auswertung.mjs` (ersetzt `nachbau.mjs`, `zuege.nachspielen`) |
-| `verhalten` | Ablehnungen je Regel, Dubletten, Struktur gegen die Referenz | `audit.jsonl`, `graph.json`, `aufgabe.referenz` | T-E11, T-V5 | `greenfield-systemtest/verhalten.mjs` ohne die Executor-Eingänge (`run-raw.log`, Preflight) |
+| `verhalten` | Ablehnungen je Regel, Dubletten, Struktur gegen den Referenzlauf | `audit.jsonl`, `graph.json`, `referenz/<arm>/graph.json` | T-E11, T-V5 | `greenfield-systemtest/verhalten.mjs` ohne die Executor-Eingänge (`run-raw.log`, Preflight) |
 | `schatten-suggest` | Was hätte `graph_suggest` je Zug vorgeschlagen, und wurde es berührt? | `audit.jsonl` | T-M5 | `greenfield-systemtest/schatten-suggest.mjs` |
 | `blindurteil` | Deckt die Spec den Auftrag, ohne offene Werte zu erfinden? | `graph.json`, `aufgabe.punkte`, `aufgabe.start` | T-E10 | `greenfield-systemtest/blindurteil.mjs` + `spec-render.mjs`; Raster aus der Aufgabe statt fest aus sigllm |
 
@@ -142,8 +156,7 @@ die Aufgabe sigllm-prosa). Löschen nur, wenn `grep` keinen Leser mehr findet.
 
 Mitzuziehen: `tests/systemtest-rig.test.ts`, `rig-zuege`, `rig-steuerung-transcript` (fallen),
 `rig-verhalten` (Blindurteil- und Verhalten-Teile → neue Testdatei), `generate.statemachine.test.ts`
-(nutzt `trajektorie.spieleNach` — Nachspiel in den Test holen oder auf `nachspielen` umstellen; die
-opus5-Läufe liegen nur lokal), Pfade in `nd-similarity`, `steer-optimum`, `generate.task`,
+(nutzt `trajektorie.spieleNach` und lokale opus5-Läufe — auf `nachspielen` und den Referenzlauf umstellen), Pfade in `nd-similarity`, `steer-optimum`, `generate.task`,
 `apply-commands.kinds`, `randbreiten`, `scripts/model-test-set.mjs`, `scripts/randbreiten.mjs`,
 `scripts/messung.mjs` (Texte zu T-V1/T-E2); Kommentare in `src/loop/executor.ts`, `src/surface/mcp-server.ts`;
 `.gitignore`; das Selbstmodell (`TEST-greenfield-systemtest`, `REQ-greenfield-systemtest-dod`, FUNC-Knoten
@@ -172,7 +185,7 @@ die Freigabe des Autors, sonst werden es sieben statt vier CRs.
 | CR | Inhalt | Lane |
 |---|---|---|
 | 1 | `beispielgraphen/` anlegen: `rig/graphs/*`, `results/*.graph.json`, Golden umziehen; Leser umstellen (`randbreiten.mjs`, `model-test-set.mjs`, 6 Tests) | CODE |
-| 2 | `rig/` neu: `interaktiv/*` eine Ebene hoch, `aufgaben/todo/`, `aufgaben/sigllm-prosa/` aus `sigllm-spezifikation`; `serie.json`; Vorlage-Commit im Stempel; `rig/README.md` neu | CODE |
+| 2 | `rig/` neu: `interaktiv/*` eine Ebene hoch, `aufgaben/todo/`, `aufgaben/sigllm-prosa/` aus `sigllm-spezifikation`; Sequenz im Treiber; `serie.json`; Vorlage-Commit im Stempel; `treiber.mjs referenz`; erste Referenzläufe todo (lokal nvfp4, frontier); `rig/README.md` neu | CODE |
 | 3 | `auswertung/`: Runner, `kennzahlen`, `nachspielen`, `verhalten`, `schatten-suggest`, `blindurteil`+`spec-render` umgestellt; `benchmark.jsonl/md`; `interaktiv.md` übernommen; Tests | CODE |
 | 4 | Löschen: `greenfield-systemtest/` restlos, `sigllm-spezifikation/` Rest, `code-test/`, `referenz-change/`, `dummy-slicer/`, `minimal-whitebox` Executor-Teile + `results/`, `.env.example`; Auswertungstexte → `docs/archive/messung-executor/`; abhängige Tests; Kommentare; `.gitignore`; Selbstmodell | CODE + Modell |
 | 5 | `scripts/whitebox-messung.mjs` aus `minimal-whitebox` Phase 1, in `npm run messung` (= CR-GC-679B, T-E2) | CODE |
@@ -181,11 +194,9 @@ die Freigabe des Autors, sonst werden es sieben statt vier CRs.
 Vor CR 4 fährt die erste Serie nach neuer Definition (`--serie`, todo, lokal nvfp4 × 3, frontier × 3), damit
 `benchmark.md` nicht leer startet und die Rohdaten vom 2026-10-04 nach Regel 1 gehen können.
 
-**Entscheidungen des Autors** (vor CR 1):
-- `code-test` und `referenz-change` löschen wie empfohlen — oder behalten, dann als eigenes Rig bzw. als
-  Aufgabe + Auswertung einordnen (je ein weiterer CR).
-- Rohdaten-Löschung als ein Posten je CR.
-- `rig/agentdiary` lokal löschen (2,6 MB, nicht versioniert).
-- Leitlinie §9.4 (Tabelle Aufgaben, Standard-Set S2/S3, spezifische Vergleiche) und §9.5 (Bestand): Zeilen
-  zu Greenfield, Code-Test, Referenz-Change, sigllm-Spezifikation, Faltung, Bedarfsanalyse, Arbeitsweise und
-  Blindurteil ändern sich. Vorschlag für den Text liefere ich nach CR 4; ändern tut sie der Autor.
+**Entscheide des Autors** (2026-10-05): `code-test` und `referenz-change` werden gelöscht; Lösch-CRs dürfen
+mehr als zehn Dateien tragen; Sequenzen (Code-Erzeugung u. a.) müssen automatisiert testbar werden; je
+Standardfall liegt ein Referenzlauf mit Graph, graphcode-Log und LLM-Log vorrätig und wird bei einer neuen
+Referenz ausgetauscht. Offen: `rig/agentdiary` (lokal, intern — trägt Auswertungstexte, die nach Regel 2 nicht
+in den Papierkorb gehören; Ort nennt der Autor). Leitlinie §9.4/§9.5: Textvorschlag nach CR 4, ändern tut der
+Autor.
