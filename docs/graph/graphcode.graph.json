@@ -2962,7 +2962,9 @@
       "id": "CR-GC-739",
       "type": "CR",
       "name": "auswertung/: konfigurierbarer Runner über Lauf-Artefakte, benchmark.jsonl als Gedächtnis, benchmark.md generiert",
-      "description": "docs/cr/open/CR-GC-739-auswertung-konfigurierbarer-runner-u-ber.md"
+      "description": "docs/cr/open/CR-GC-739-auswertung-konfigurierbarer-runner-u-ber.md",
+      "status": "done",
+      "commitRef": "2c38665"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23525,5 +23527,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 602
+  "graphVersion": 604
 }
