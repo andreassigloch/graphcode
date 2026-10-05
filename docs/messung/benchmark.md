@@ -9,10 +9,10 @@
 
 | Aufgabe | Arm | Modell | Stand (code · vorlage) | N | Züge | Sitzungen | Dauer je Zug Median (min) | Fragen Zug 1 | Mutationen + / − | PDR nach Zug | Dubletten | Blindurteil P ✓ · ~ · ✗ / O offen / erfunden / Dubl. / Noten |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| todo-hand-warnungsfrei | frontier | claude-opus-5-5 | 1e67ea6 · 511714e | 1 | 2 | 1 | 0.9 | 1 | 3 / 0 | 1 | 2 | — |
-| todo-hand-warnungsfrei | lokal | ollama/qwen3.8:27b-nvfp4 | 1e67ea6 · 511714e | 1 | 3 | 1 | 12.7 | 0 | 3 / 0 | 1 | 0 | — |
-| todo-warnungsfrei | frontier | claude-opus-5-5 | 1e67ea6 · 511714e | 1 | 1 | 1 | 0.9 | 0 | 2 / 0 | 1 | 0 | — |
-| todo-warnungsfrei | lokal | ollama/qwen3.8:27b-nvfp4 | 1e67ea6 · 511714e | 1 | 2 | 1 | 13.0 | 2 | 3 / 2 | 1 | 0 | — |
+| todo-hand-warnungsfrei | frontier | claude-opus-5-5 | 2b87961 · 511714e | 1 | 2 | 1 | 0.4 | 2 | 2 / 0 | 1 | 0 | — |
+| todo-hand-warnungsfrei | lokal | ollama/qwen3.8:27b-nvfp4 | 2b87961 · 511714e | 1 | 2 | 1 | 12.2 | 3 | 3 / 0 | 1 | 0 | — |
+| todo-warnungsfrei | frontier | claude-opus-5-5 | 2b87961 · 511714e | 1 | 1 | 1 | 0.8 | 0 | 1 / 0 | 1 | 0 | — |
+| todo-warnungsfrei | lokal | ollama/qwen3.8:27b-nvfp4 | 2b87961 · 511714e | 1 | 3 | 1 | 9.8 | 0 | 3 / 0 | 1 | 0 | — |
 | todo | frontier | claude-opus-5-5 | 533dc29 · 511714e | 3 | 10–12 | 4–7 | 0.5–0.6 | 7 | 10–12 / 1 | 10–12 | 0–4 | 11 · 0 · 0 / 1–4 / 2–9 / 3–6 / 16–18 |
 | todo | lokal | ollama/qwen3.8:27b-nvfp4 | 533dc29 · 511714e | 3 | 5–10 | 1–3 | 1.1–2.4 | 4–6 | 4–17 / 2–6 | 2–10 | 0–2 | 9–10 · 1–2 · 0 / 0 / 2–7 / 0–4 / 15–17 |
 
@@ -21,11 +21,15 @@
 | Datum | Aufgabe | Arm | Lauf | Modell | Stand | Ende | Züge · Sitzungen | Dauer Median / Max (min) | Fragen Zug 1 | Schritte Median / Max | Mutationen + / − | Abbrüche L / F | SRR / PDR nach Zug | Elemente · Kanten | Dubletten | Gate-Fehler je Regel | Schatten: Vorschlag getroffen / verpasst | Blindurteil |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 2026-10-05 | todo-hand-warnungsfrei | frontier | 1 | claude-opus-5-5 | 1e67ea6 · 511714e | warnungsfrei | 2 · 1 | 0.9 / 1.5 | 1 | 11 / 20 | 3 / 0 | 0 / 0 | 1 / 1 | 64 · 127 | 2 | — | 0/0 / 0 | — |
+| 2026-10-05 | todo-hand-warnungsfrei | frontier | 2 | claude-opus-5-5 | 2b87961 · 511714e | warnungsfrei | 2 · 1 | 0.4 / 0.5 | 2 | 7.5 / 11 | 2 / 0 | 0 / 0 | 1 / 1 | 54 · 100 | 0 | — | 0/0 / 0 | — |
 | 2026-10-05 | todo-hand-warnungsfrei | lokal | 1 | ollama/qwen3.8:27b-nvfp4 | 1e67ea6 · 511714e | warnungsfrei | 3 · 1 | 12.7 / 33.9 | 0 | 7 / 8 | 3 / 0 | 3 / 0 | 1 / 1 | 59 · 105 | 0 | — | 0/0 / 0 | — |
+| 2026-10-05 | todo-hand-warnungsfrei | lokal | 2 | ollama/qwen3.8:27b-nvfp4 | 2b87961 · 511714e | warnungsfrei | 2 · 1 | 12.2 / 15.4 | 3 | 15 / 24 | 3 / 0 | 1 / 0 | 1 / 1 | 57 · 107 | 0 | — | 0/0 / 0 | — |
 | 2026-10-05 | todo-warnungsfrei | frontier | 1 | claude-opus-5-5 | 0164699+dirty · 511714e | freigabe | 8 · 7 | 0.9 / 1.7 | 1 | 10 / 14 | 10 / 0 | 0 / 0 | 1 / 1 | 68 · 154 | 13 | — | 0/0 / 0 | — |
 | 2026-10-05 | todo-warnungsfrei | frontier | 2 | claude-opus-5-5 | 1e67ea6 · 511714e | warnungsfrei | 1 · 1 | 0.9 / 0.9 | 0 | 20 / 20 | 2 / 0 | 0 / 0 | 1 / 1 | 38 · 59 | 0 | — | 0/0 / 0 | — |
+| 2026-10-05 | todo-warnungsfrei | frontier | 3 | claude-opus-5-5 | 2b87961 · 511714e | warnungsfrei | 1 · 1 | 0.8 / 0.8 | 0 | 10 / 10 | 1 / 0 | 0 / 0 | 1 / 1 | 38 · 59 | 0 | — | 0/0 / 0 | — |
 | 2026-10-05 | todo-warnungsfrei | lokal | 1 | ollama/qwen3.8:27b-nvfp4 | b4c6733+dirty · 511714e | freigabe | 4 · 1 | 13.3 / 21.0 | 1 | 9.5 / 26 | 2 / 2 | 1 / 0 | 1 / 1 | 38 · 57 | 0 | R-18×2 IO-02×1 | 0/0 / 0 | — |
 | 2026-10-05 | todo-warnungsfrei | lokal | 2 | ollama/qwen3.8:27b-nvfp4 | 1e67ea6 · 511714e | warnungsfrei | 2 · 1 | 13.0 / 15.2 | 2 | 15.5 / 16 | 3 / 2 | 1 / 0 | 1 / 1 | 38 · 57 | 0 | R-18×2 STRUCT×1 | 0/0 / 0 | — |
+| 2026-10-05 | todo-warnungsfrei | lokal | 3 | ollama/qwen3.8:27b-nvfp4 | 2b87961 · 511714e | warnungsfrei | 3 · 1 | 9.8 / 11.4 | 0 | 9 / 20 | 3 / 0 | 1 / 0 | 1 / 1 | 38 · 57 | 0 | — | 0/0 / 0 | — |
 | 2026-10-05 | todo | frontier | 4 | claude-opus-5-5 | 8c498e8 · 511714e | srr+pdr | 11 · 6 | 0.7 / 1.7 | 5 | 7 / 14 | 11 / 1 | 0 / 0 | 4 / 11 | 71 · 121 | 5 | R-18×6 | 0/0 / 0 | 11 · 0 · 0 / 3 / 6 / 8 / 14 |
 | 2026-10-05 | todo | frontier | 5 | claude-opus-5-5 | 8c498e8 · 511714e | srr+pdr | 11 · 7 | 0.8 / 1.8 | 6 | 5 / 20 | 12 / 1 | 0 / 0 | 4 / 11 | 61 · 109 | 1 | R-18×6 | 0/0 / 0 | 11 · 0 · 0 / 4 / 5 / 3 / 19 |
 | 2026-10-05 | todo | frontier | 6 | claude-opus-5-5 | 8c498e8 · 511714e | srr+pdr | 11 · 6 | 0.7 / 2.6 | 7 | 5 / 16 | 11 / 1 | 0 / 0 | 4 / 11 | 70 · 126 | 3 | R-18×6 | 0/0 / 0 | 11 · 0 · 0 / 5 / 6 / 7 / 18 |
