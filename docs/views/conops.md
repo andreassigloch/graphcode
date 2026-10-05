@@ -408,7 +408,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-734` | done | Vorschlag wiederholt einen Analyse-Eintrittspunkt (AF-01..05) endlos, auch nachdem der Nutzer ihn beauftragt hat und der Zug ihn nicht schliessen konnte; Eintrittspunkte sind von der Zurueckstellung ausgenommen (CR-GC-604) — Handlauf todo-local 2026-10-03 | `FUNC-generation-step` |
 | `CR-GC-735` | done | Abschlussvermerk überschreibt die anderen: ~ SYS @analysisFreshness {x} ersetzt das ganze Objekt (2. Stempel löscht den 1.); Skills sagen 'analysisFreshness.<id> = …' — gemessen im Replay todo-local 2026-10-04 | `FUNC-task-abschluss` |
 | `CR-GC-736` | done | Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3) | `FUNC-generation-step` |
-| `CR-GC-740` | n/a | Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv | `MOD-auswertung` · `MOD-rig` · `REQ-rig-benchmark` |
+| `CR-GC-740` | done | Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv | `MOD-auswertung` · `MOD-rig` · `REQ-rig-benchmark` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

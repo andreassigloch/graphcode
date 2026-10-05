@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 350 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 350 CR · 322 done · 4 open.
+Total: 350 CR · 323 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -411,4 +411,4 @@ Total: 350 CR · 322 done · 4 open.
 | `CR-GC-737` | done | Beispielgraphen in ein eigenes Verzeichnis: rig/graphs, Fixture-Graphen und sigllm-Golden eingefroren unter beispielgraphen/ |
 | `CR-GC-738` | done | rig/ ist das eine Rig: Treiber mit Sequenz, Aufgaben (todo, sigllm-prosa), serie.json, Referenzlauf je Standardfall |
 | `CR-GC-739` | done | auswertung/: konfigurierbarer Runner über Lauf-Artefakte, benchmark.jsonl als Gedächtnis, benchmark.md generiert |
-| `CR-GC-740` | n/a | Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv |
+| `CR-GC-740` | done | Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv |

@@ -2970,7 +2970,9 @@
       "id": "CR-GC-740",
       "type": "CR",
       "name": "Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv",
-      "description": "docs/cr/open/CR-GC-740-messaufbauten-alter-definition-lo-schen-.md"
+      "description": "docs/cr/open/CR-GC-740-messaufbauten-alter-definition-lo-schen-.md",
+      "status": "done",
+      "commitRef": "dfe8e26"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23489,5 +23491,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 607
+  "graphVersion": 608
 }
