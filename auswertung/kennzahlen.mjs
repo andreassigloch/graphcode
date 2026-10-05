@@ -49,6 +49,10 @@ export function kennzahlen(lauf) {
     // Läufe ohne Abbruch-Zählung tragen null — „—" statt einer erfundenen 0.
     abbruch: z.length && z.every((x) => x.abbruch) ? { laenge: z.reduce((a, x) => a + x.abbruch.laenge, 0), fehler: z.reduce((a, x) => a + x.abbruch.fehler, 0) } : null,
     gateZug: { SRR: gateZug(z, 'SRR'), PDR: gateZug(z, 'PDR') },
+    // Was der Nutzer-Simulator je Zug entschied, je Art (CR-GC-742) — null bei Läufen davor.
+    simulator: z.some((x) => x.simulator) ? z.flatMap((x) => x.simulator ?? []).reduce((m, e) => ({ ...m, [e.art]: (m[e.art] ?? 0) + 1 }), {}) : null,
+    // Offene Warnungen am Ende (abgenommene zählen nicht) — null, wenn der Lauf keinen Befund trägt.
+    warnungenEnde: z.at(-1)?.befund ? { offen: z.at(-1).befund.warnungen, abgenommen: z.at(-1).befund.abgenommen ?? null } : null,
     elemente: lauf.graph?.elements ?? null,
     kanten: lauf.graph?.traces ?? null,
   };

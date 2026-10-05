@@ -3,5 +3,9 @@
  "sequenz": [
   "warnungsfrei"
  ],
- "basis": "../todo/referenz/lokal/graph.json"
+ "basis": "../todo/referenz/lokal/graph.json",
+ "politik": {
+  "analysen": "ablehnen",
+  "freigabe": "bei-ziel"
+ }
 }

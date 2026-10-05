@@ -1,5 +1,5 @@
-Das Modell der Todo-Liste für die Kommandozeile steht schon: SRR und PDR sind bestanden, es ist der Stand des
-Referenzlaufs. Jetzt soll es warnungsfrei werden.
+Das Modell der Todo-Liste für die Kommandozeile steht schon: es ist der Stand meines Handlaufs. Der Kern steht,
+Einsatzkonzept, Variantenvergleich und Annahmen-Review sind gemacht. Jetzt soll es warnungsfrei werden.
 
 Ziel: die Regelprüfung (`rules_evaluate`) meldet keinen Fehler und keine offene Warnung mehr.
 Geh die Warnungen Regel für Regel durch, beginnend mit der Regel, die am häufigsten feuert, und behebe sie im Modell.

@@ -9,6 +9,8 @@
 
 | Aufgabe | Arm | Modell | Stand (code · vorlage) | N | Züge | Sitzungen | Dauer je Zug Median (min) | Fragen Zug 1 | Mutationen + / − | PDR nach Zug | Dubletten | Blindurteil P ✓ · ~ · ✗ / O offen / erfunden / Dubl. / Noten |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
+| todo-warnungsfrei | frontier | claude-opus-5-5 | 0164699+dirty · 511714e | 1 | 8 | 7 | 0.9 | 1 | 10 / 0 | 1 | 13 | — |
+| todo-warnungsfrei | lokal | ollama/qwen3.8:27b-nvfp4 | b4c6733+dirty · 511714e | 1 | 4 | 1 | 13.3 | 1 | 2 / 2 | 1 | 0 | — |
 | todo | frontier | claude-opus-5-5 | 8c498e8 · 511714e | 3 | 11 | 6–7 | 0.7–0.8 | 5–7 | 11–12 / 1 | 11 | 1–5 | 11 · 0 · 0 / 3–5 / 5–6 / 3–8 / 14–19 |
 | todo | lokal | ollama/qwen3.8:27b-nvfp4 | 8c498e8 · 511714e | 3 | 5–18 | 1–6 | 2.0–2.8 | 5–6 | 4–14 / 2–5 | 2–18 | 0–9 | 10–11 · 0–1 · 0 / 0–1 / 0–6 / 2–4 / 14–19 |
 
@@ -16,6 +18,8 @@
 
 | Datum | Aufgabe | Arm | Lauf | Modell | Stand | Ende | Züge · Sitzungen | Dauer Median / Max (min) | Fragen Zug 1 | Schritte Median / Max | Mutationen + / − | Abbrüche L / F | SRR / PDR nach Zug | Elemente · Kanten | Dubletten | Gate-Fehler je Regel | Schatten: Vorschlag getroffen / verpasst | Blindurteil |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2026-10-05 | todo-warnungsfrei | frontier | 1 | claude-opus-5-5 | 0164699+dirty · 511714e | freigabe | 8 · 7 | 0.9 / 1.7 | 1 | 10 / 14 | 10 / 0 | 0 / 0 | 1 / 1 | 68 · 154 | 13 | — | 0/0 / 0 | — |
+| 2026-10-05 | todo-warnungsfrei | lokal | 1 | ollama/qwen3.8:27b-nvfp4 | b4c6733+dirty · 511714e | freigabe | 4 · 1 | 13.3 / 21.0 | 1 | 9.5 / 26 | 2 / 2 | 1 / 0 | 1 / 1 | 38 · 57 | 0 | R-18×2 IO-02×1 | 0/0 / 0 | — |
 | 2026-10-05 | todo | frontier | 4 | claude-opus-5-5 | 8c498e8 · 511714e | srr+pdr | 11 · 6 | 0.7 / 1.7 | 5 | 7 / 14 | 11 / 1 | 0 / 0 | 4 / 11 | 71 · 121 | 5 | R-18×6 | 0/0 / 0 | 11 · 0 · 0 / 3 / 6 / 8 / 14 |
 | 2026-10-05 | todo | frontier | 5 | claude-opus-5-5 | 8c498e8 · 511714e | srr+pdr | 11 · 7 | 0.8 / 1.8 | 6 | 5 / 20 | 12 / 1 | 0 / 0 | 4 / 11 | 61 · 109 | 1 | R-18×6 | 0/0 / 0 | 11 · 0 · 0 / 4 / 5 / 3 / 19 |
 | 2026-10-05 | todo | frontier | 6 | claude-opus-5-5 | 8c498e8 · 511714e | srr+pdr | 11 · 6 | 0.7 / 2.6 | 7 | 5 / 16 | 11 / 1 | 0 / 0 | 4 / 11 | 70 · 126 | 3 | R-18×6 | 0/0 / 0 | 11 · 0 · 0 / 5 / 6 / 7 / 18 |

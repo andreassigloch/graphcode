@@ -29,7 +29,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, copyFi
 import { dirname, join, resolve, basename, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { naechsteNachricht, ende, ZIEL, analyseIn, sitzungswechsel, aufgabeLaden, AUFGABEN } from './simulator.mjs';
+import { naechsteNachricht, ende, ZIEL, zielText, analyseIn, sitzungswechsel, aufgabeLaden, AUFGABEN } from './simulator.mjs';
 import { auditDelta } from '../auswertung/kennzahlen.mjs';
 import { nachspielen } from '../auswertung/nachspielen.mjs';
 import { repoAnlegen, frontierRepo, lokal, frontier, vorlageStand } from './arme.mjs';
@@ -44,8 +44,9 @@ export const REFERENZ_DATEIEN = ['graph.json', 'audit.jsonl', 'lauf.json', 'denk
 /** Code-Stand von graphcode und Commit der Vorlage — der Stand, gegen den `serie` Fehlendes zählt. */
 export function stand() {
   const git = (...a) => execFileSync('git', a, { cwd: HERE, encoding: 'utf8' }).trim();
-  // Nur verfolgte Änderungen zählen — ein neues, noch nicht committetes Verzeichnis ändert den gemessenen Code nicht.
-  const dirty = git('status', '--porcelain', '--untracked-files=no', '--', '..').length > 0;
+  // Nur verfolgte Änderungen am Code zählen — ein neues, noch nicht committetes Verzeichnis ändert den gemessenen Code
+  // nicht, und docs/ (Benchmark, Modell-Export) schreibt die Auswertung zwischen zwei Läufen.
+  const dirty = git('status', '--porcelain', '--untracked-files=no', '--', '..', ':(exclude,top)docs').length > 0;
   return { code: git('rev-parse', '--short', 'HEAD') + (dirty ? '+dirty' : ''), vorlage: vorlageStand() };
 }
 
@@ -77,7 +78,7 @@ async function stufe(name, lage) {
   const zuegeVorher = protokoll.length;
   const start = zuegeVorher === 0 ? aufgabe.start : aufgabe.stufenPrompt(name);
   if (!start) throw new Error(`Aufgabe ${aufgabe.name}: Stufe „${name}" folgt auf eine andere und braucht ${name}.md`);
-  let s = await oeffnen(), sitzung = 1, thema = null, zugInSitzung = 0;
+  let s = await oeffnen(), sitzung = 1, thema = null, zugInSitzung = 0, leerlauf = 0;
   let nachricht = start, blattGegeben = false, gebaut = false, grund = null, gates = {}, befund = null, letzterVorschlag = null;
   lage.modell = s.modell;
   try {
@@ -85,31 +86,36 @@ async function stufe(name, lage) {
       const vorher = auditZeilen(repo).length;
       const r = await s.zug(nachricht);
       zugInSitzung++;
-      letzterVorschlag = r.vorschlag ?? letzterVorschlag;
       const audit = auditDelta(auditZeilen(repo).slice(vorher));
       gebaut ||= audit.angenommen > 0;
-      if (audit.angenommen > 0) ({ gates, befund } = await nachspielen(join(repo, '.graphcode', 'audit.jsonl'), repo, Infinity, { basis: lage.basis }));
-      protokoll.push({ zug, stufe: name, sitzung, nachricht, ...r, audit, gates, befund });
+      leerlauf = audit.angenommen > 0 ? 0 : leerlauf + 1;
+      // Der Stand am Nachbau: nach jeder Mutation, und einmal vorab, wenn der Lauf auf einer Basis beginnt.
+      if (audit.angenommen > 0 || (befund === null && lage.basis)) ({ gates, befund } = await nachspielen(join(repo, '.graphcode', 'audit.jsonl'), repo, Infinity, { basis: lage.basis }));
+      const erreicht = ZIEL[name](gates, befund);
+      // Der Nutzer entscheidet seine nächste Nachricht — die Entscheidung steht am Zug, auf den sie antwortet.
+      const n = naechsteNachricht({ antwort: r.text, vorschlag: r.vorschlag, blattGegeben, antwortblatt: aufgabe.antwortblatt, antworten: aufgabe.antworten,
+        gebaut, politik: aufgabe.politik, ziel: { erreicht: Boolean(erreicht), text: zielText(name, befund) } });
+      letzterVorschlag = n.vorschlag ?? letzterVorschlag;
+      protokoll.push({ zug, stufe: name, sitzung, nachricht, ...r, audit, gates, befund, simulator: n.entscheidungen });
       lage.schreiben();
-      console.log(`[${kennung}-${nr}] Zug ${zug} (Sitzung ${sitzung}): ${(r.dauerMs / 60_000).toFixed(1)} min, ${r.werkzeuge.length} Schritte, +${audit.angenommen}/-${audit.abgelehnt}, Abbruch L${r.abbruch?.laenge ?? 0}/F${r.abbruch?.fehler ?? 0}, SRR ${gates.SRR ? '✓' : '·'} PDR ${gates.PDR ? '✓' : '·'}, F${befund?.fehler ?? '·'}/W${befund?.warnungen ?? '·'}, Vorschlag: ${r.vorschlag ?? '—'}`);
-      grund = ende(zug - zuegeVorher, maxZuege, nachricht, ZIEL[name](gates, befund));
+      console.log(`[${kennung}-${nr}] Zug ${zug} (Sitzung ${sitzung}): ${(r.dauerMs / 60_000).toFixed(1)} min, ${r.werkzeuge.length} Schritte, +${audit.angenommen}/-${audit.abgelehnt}, Abbruch L${r.abbruch?.laenge ?? 0}/F${r.abbruch?.fehler ?? 0}, SRR ${gates.SRR ? '✓' : '·'} PDR ${gates.PDR ? '✓' : '·'}, F${befund?.fehler ?? '·'}/W${befund?.warnungen ?? '·'}${befund?.abgenommen ? ` (abgenommen ${befund.abgenommen})` : ''}, Vorschlag: ${r.vorschlag ?? '—'} → Nutzer: ${n.entscheidungen.map((e) => e.art).join('+')}`);
+      grund = ende(zug - zuegeVorher, maxZuege, nachricht, erreicht, leerlauf);
       if (grund) break;
-      // Frische Sitzung: neues Thema laut Vorschlag, oder die Sitzung hat ihr Zuglimit erreicht.
-      if (sitzungswechsel(thema, r.vorschlag) || zugInSitzung >= jeSitzung) {
+      // Frische Sitzung: der abgeschickte Vorschlag hat ein neues Thema, oder die Sitzung hat ihr Zuglimit erreicht.
+      if (sitzungswechsel(thema, n.vorschlag) || zugInSitzung >= jeSitzung) {
         denken.push(...s.denken());
         lage.modell = s.modell;
         await s.ende();
         await hostWeg(repo);
         s = await oeffnen();
         sitzung++;
-        // Die frische Sitzung beginnt mit dem letzten Vorschlag — ohne einen mit dem Start-Prompt der Stufe.
+        // Die frische Sitzung beginnt mit dem letzten abgeschickten Vorschlag — ohne einen mit dem Start-Prompt der Stufe.
         nachricht = letzterVorschlag ?? start;
         thema = analyseIn(nachricht);
         zugInSitzung = 0;
         blattGegeben = false;
         continue;
       }
-      const n = naechsteNachricht({ antwort: r.text, vorschlag: r.vorschlag, blattGegeben, antwortblatt: aufgabe.antwortblatt, gebaut });
       nachricht = n.nachricht;
       blattGegeben = n.blattGegeben;
     }
@@ -154,12 +160,25 @@ export async function lauf(arm, nr, { aufgabe: aufgabeName = 'todo', zuege: maxZ
     writeFileSync(join(dir, 'denken.json'), JSON.stringify(denken, null, 1));
   }
 
-  // Der Host exportiert beim Beenden (auto-export); gemessen wird der Export, nie der Store.
+  // Der Host exportiert beim Beenden (auto-export); gemessen wird der Export, nie der Store. Erst warten, bis der
+  // letzte Host weg ist — sonst ist der Export der einer früheren Sitzung (frontier-1 am 2026-10-05: Export v4,
+  // Audit v10, EXPORT_PENDING). Ist der Export trotzdem älter als das Audit, zählt das Audit: der Graph wird aus
+  // ihm nachgebaut (nachspielen, echtes Gate) und als `graphQuelle: nachspiel` ausgewiesen.
+  await hostWeg(repo).catch((e) => console.log(`[${kennung}-${nr}] ${e.message}`));
   await new Promise((r) => setTimeout(r, 3000));
+  if (existsSync(join(repo, '.graphcode', 'audit.jsonl'))) copyFileSync(join(repo, '.graphcode', 'audit.jsonl'), join(dir, 'audit.jsonl'));
   const exporte = existsSync(join(repo, 'docs', 'graph')) ? readdirSync(join(repo, 'docs', 'graph')).filter((f) => f.endsWith('.graph.json')) : [];
-  let graph = null, stempel = 'graph —';
-  if (exporte.length === 1) {
+  const letzteVersion = Math.max(0, ...auditZeilen(repo).map((l) => JSON.parse(l)).filter((a) => a.operation === 'mutate' && a.result === 'applied').map((a) => a.graphVersion ?? 0));
+  let graph = null, stempel = 'graph —', graphQuelle = 'export';
+  if (exporte.length === 1 && JSON.parse(readFileSync(join(repo, 'docs', 'graph', exporte[0]), 'utf8')).graphVersion === letzteVersion) {
     copyFileSync(join(repo, 'docs', 'graph', exporte[0]), join(dir, 'graph.json'));
+  } else if (existsSync(join(dir, 'audit.jsonl'))) {
+    const nb = await nachspielen(join(dir, 'audit.jsonl'), repo, Infinity, { basis: aufgabe.basis });
+    writeFileSync(join(dir, 'graph.json'), JSON.stringify({ ...nb.flach, graphVersion: letzteVersion }, null, 1));
+    graphQuelle = 'nachspiel';
+    console.log(`[${kennung}-${nr}] Export fehlt oder veraltet (${exporte.length ? 'v' + JSON.parse(readFileSync(join(repo, 'docs', 'graph', exporte[0]), 'utf8')).graphVersion : 'kein Export'} gegen Audit v${letzteVersion}) — graph.json aus dem Audit nachgebaut`);
+  }
+  if (existsSync(join(dir, 'graph.json'))) {
     const m = await openMeasured({ graph: resolve(dir, 'graph.json'), systemId: 'todo', configFrom: repo });
     try {
       stempel = `${stampLine(m.provenance).replace(`${dir}/`, '')} · vorlage ${st.vorlage}`;
@@ -168,9 +187,8 @@ export async function lauf(arm, nr, { aufgabe: aufgabeName = 'todo', zuege: maxZ
       await m.close();
     }
   }
-  if (existsSync(join(repo, '.graphcode', 'audit.jsonl'))) copyFileSync(join(repo, '.graphcode', 'audit.jsonl'), join(dir, 'audit.jsonl'));
 
-  const ergebnis = { ...kopf, modell: lage.modell, stempel, ende: grund, sitzungen: lage.sitzungen, graph, zuege: protokoll, dir };
+  const ergebnis = { ...kopf, modell: lage.modell, stempel, ende: grund, sitzungen: lage.sitzungen, graph, graphQuelle, zuege: protokoll, dir };
   writeFileSync(join(dir, 'lauf.json'), JSON.stringify({ ...ergebnis, dir: undefined }, null, 1));
   return ergebnis;
 }

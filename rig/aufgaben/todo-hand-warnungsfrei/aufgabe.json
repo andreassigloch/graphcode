@@ -1,0 +1,11 @@
+{
+ "quelle": "Stufe warnungsfrei auf dem Handlauf des Autors in todo-local (Arbeitsstand docs/graph/todo-local.graph.json vom 2026-10-04, 54 Elemente: Kern, Einsatzkonzept, Variantenvergleich und Annahmen-Review gemacht; Fehlerbetrachtung und Bauplan nicht). Eingefroren als basis.graph.json. Antwortblatt und Raster wie todo.",
+ "sequenz": [
+  "warnungsfrei"
+ ],
+ "basis": "basis.graph.json",
+ "politik": {
+  "analysen": "ablehnen",
+  "freigabe": "bei-ziel"
+ }
+}

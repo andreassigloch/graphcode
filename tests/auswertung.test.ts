@@ -18,7 +18,7 @@ import { schattenBilanz, beruehrt } from '../auswertung/schatten-suggest.mjs';
 // @ts-expect-error — s.o.
 import { datensatz, upsert, juengsteSerie, rendern, ANALYSEN } from '../auswertung/auswerten.mjs';
 // @ts-expect-error — s.o.
-import { mutationen, nachspielen, nachspielenRein } from '../auswertung/nachspielen.mjs';
+import { mutationen, nachspielen, nachspielenRein, befundAus } from '../auswertung/nachspielen.mjs';
 
 let dir: string;
 beforeAll(() => { dir = mkdtempSync(join(tmpdir(), 'auswertung-')); });
@@ -207,5 +207,22 @@ describe('nachspielen mit Basis: ein Lauf, der auf einem Referenzgraphen beginnt
     expect(r.gates.SRR && r.gates.PDR).toBe(true);
     expect(r.befund.fehler).toBe(0);
     expect(r.befund.warnungen).toBeGreaterThan(0);
+    expect(r.befund.abgenommen).toBe(0);
+    expect(r.befund.offen.map((o: { regel: string }) => o.regel)).toContain('AF-01');
   }, 60_000);
+
+  it('befundAus: ein mit Grund abgenommener Fund zählt nicht als offene Warnung — am Element oder am System', () => {
+    const graph = { nodes: [
+      { uid: 'SYS-x', type: 'SYS', attributes: { acceptedFindings: [{ ruleId: 'AF-01', reason: 'nicht beauftragt' }] } },
+      { uid: 'FLOW-a', type: 'FLOW', attributes: {} },
+    ] };
+    const vs = [
+      { ruleId: 'AF-01', severity: 'warning', elementId: 'SYS-x' }, { ruleId: 'AF-02', severity: 'warning', elementId: 'SYS-x' },
+      { ruleId: 'R-10', severity: 'warning', elementId: 'FLOW-a' }, { ruleId: 'R-18', severity: 'error', elementId: 'FLOW-a' },
+      { ruleId: 'MS-03', severity: 'info', elementId: 'FLOW-a' },
+    ];
+    const abgenommenVon = (e: { attributes: { acceptedFindings?: { ruleId: string }[] } }) => new Set((e.attributes.acceptedFindings ?? []).map((a) => a.ruleId));
+    expect(befundAus(vs, graph, abgenommenVon)).toEqual({ fehler: 1, warnungen: 2, abgenommen: 1,
+      offen: [{ regel: 'R-18', element: 'FLOW-a' }, { regel: 'AF-02', element: 'SYS-x' }, { regel: 'R-10', element: 'FLOW-a' }] });
+  });
 });

@@ -410,6 +410,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-736` | done | Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3) | `FUNC-generation-step` |
 | `CR-GC-740` | done | Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv | `MOD-auswertung` · `MOD-rig` · `REQ-rig-benchmark` |
 | `CR-GC-741` | done | Whitebox-Messung (minimal-whitebox Phase 1) als S1-Messung in npm run messung (T-E2) | `MOD-rig` · `REQ-rig-benchmark` |
+| `CR-GC-742` | n/a | Rig-Simulator beantwortet eine Entscheidungsfrage des Agenten mit dem ganzen Antwortblatt plus Vorschlag - Widerspruch, 66k Zeichen Denken bis Ausgabelimit (lokal-1 Zug 2); Regel: Frage mit Optionen bekommt eine Antwort | `MOD-auswertung` · `MOD-rig` · `REQ-rig-benchmark` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

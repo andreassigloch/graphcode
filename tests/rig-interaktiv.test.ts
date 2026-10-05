@@ -9,7 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { fragen, naechsteNachricht, ende, ZIEL, analyseIn, sitzungswechsel, aufgabeLaden, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/simulator.mjs';
+import { fragen, naechsteNachricht, ende, ZIEL, zielText, blattLesen, blattTreffer, frageArt, analyseIn, sitzungswechsel, aufgabeLaden, POLITIK, STILLSTAND, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN, OFFEN_EINZELN, DEINE_ENTSCHEIDUNG, ANALYSEN_NEIN, ANALYSEN_JA, NOCH_NICHT, MACH_WEITER } from '../rig/simulator.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
 import { auditDelta } from '../auswertung/kennzahlen.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
@@ -31,36 +31,121 @@ const ZUG1 = `**Fragen**
 
 Soll ich mit Schritt 1 beginnen oder noch die offenen Fragen vorher klären?`;
 
-describe('CR-GC-715: Nutzer-Simulator', () => {
-  it('erkennt echte Fragen, nicht die Bitte um Zustimmung', () => {
+/** lokal-1 (todo-warnungsfrei, 2026-10-05), Ende von Zug 1: eine Entscheidungsfrage am Modell. */
+const FRAGE_MODELL = `Bleibt **R-10**: \`FLOW-ausgabe\` hat keinen Producer.
+
+**Frage zu R-10 / \`FLOW-ausgabe\`:**
+1. Ist \`FLOW-ausgabe\` redundant (die spezifischen FLOWs decken alles ab) → löschen (inkl. ihrer Kanten)?
+2. Oder soll sie die generische „Terminal-Ausgabe" darstellen → welcher Producer (z.B. \`FUNC-list\` als primäre Ausgabefunktion)?
+
+Ich warte auf deine Antwort, bevor ich R-10 behandle.`;
+
+/** frontier-1 (todo-warnungsfrei, 2026-10-05), Ende von Zug 1: welche Analysen? */
+const FRAGE_ANALYSEN = `**Offen (AF-01 bis AF-05, je 1× am System Todo-CLI)**
+Einsatzkonzept (ConOps), Trade Study, Annahmen-Review, FMEA und Bauplan sind nicht durchgeführt.
+
+**Fragen**
+1. Welche der fünf Analysen soll ich durchführen, und welche nehme ich ab?`;
+
+const lage = (extra: object) => ({ vorschlag: null, blattGegeben: true, antwortblatt: korpus.antwortblatt, antworten: korpus.antworten, gebaut: true, ...extra });
+const arten = (n: { entscheidungen: { art: string }[] }) => n.entscheidungen.map((e) => e.art);
+
+describe('CR-GC-715/742: Nutzer-Simulator', () => {
+  it('erkennt echte Fragen, nicht die Bitte um Zustimmung zum Vorgehen — eine Zustimmung zu Inhalt bleibt eine Frage', () => {
     expect(fragen(ZUG1)).toHaveLength(2);
     expect(fragen('Im Modell: drei Abläufe.\n\nSoll ich mit Schritt 3 weitermachen?')).toEqual([]);
+    expect(fragen('Soll ich „keine Anmeldung, keine Geheimnisse" als Anforderung festschreiben?')).toHaveLength(1);
   });
 
-  it('Zug 1 mit Fragen: das ganze Antwortblatt, dann die Zustimmung zum Plan — nichts erfunden', () => {
-    const n = naechsteNachricht({ antwort: ZUG1, vorschlag: null, blattGegeben: false, antwortblatt: korpus.antwortblatt, gebaut: false });
+  it('das Blatt trägt Stichworte für den Abgleich; der Nutzer (und der Gutachter) sieht sie nie', () => {
+    expect(korpus.antwortblatt).not.toContain('[');
+    expect(korpus.antwortblatt).toContain('- Die Datei heißt todos.json und liegt im Arbeitsverzeichnis.');
+    expect(korpus.antworten).toHaveLength(8);
+    expect(blattLesen('Kopf\n- [a, B c] Antwort eins\n- ohne Stichwort')).toEqual({ text: 'Kopf\n- Antwort eins\n- ohne Stichwort', eintraege: [{ stichworte: ['a', 'b c'], text: 'Antwort eins' }] });
+    expect(blattTreffer('Wie heißt die Datei, todos.json?', korpus.antworten).map((e: { text: string }) => e.text)).toEqual(['Die Datei heißt todos.json und liegt im Arbeitsverzeichnis.']);
+    expect(frageArt('Welches Format hat die Ausgabe?', korpus.antworten)).toBe('wissen');
+    expect(frageArt('Reicht ein Modul (`MOD-todo`)?', korpus.antworten)).toBe('blatt');
+    expect(frageArt('Liegt die Test-Datei im Arbeitsverzeichnis?', korpus.antworten)).toBe('blatt');
+    expect(frageArt('Braucht die Test-Datei ein Format?', korpus.antworten)).toBe('wissen');
+  });
+
+  it('Zug 1 mit Wissensfragen: das ganze Antwortblatt, dann die Zustimmung zum Plan — nichts erfunden', () => {
+    const n = naechsteNachricht(lage({ antwort: ZUG1, blattGegeben: false, gebaut: false }));
     expect(n.nachricht).toBe(`${korpus.antwortblatt}\n\n${OFFEN}\n\n${ZUSTIMMUNG}`);
     expect(n.blattGegeben).toBe(true);
     expect(n.beantwortet).toBe(2);
+    expect(arten(n)).toEqual(['blatt-ganz', 'zustimmung']);
   });
 
-  it('später: der Vorschlag des Zugs ist die Nachricht; eine neue Frage bekommt den Verweis, nicht das Blatt noch einmal', () => {
+  it('fragt der Agent nichts, ist graphcodes Vorschlag die Nachricht', () => {
     const v = 'Lege für die Abläufe add, list, done Anforderungen mit Test an.';
-    expect(naechsteNachricht({ antwort: 'Im Modell: …\nSoll ich weitermachen?', vorschlag: v, blattGegeben: true, antwortblatt: korpus.antwortblatt, gebaut: true }).nachricht).toBe(v);
-    const n = naechsteNachricht({ antwort: 'Welches Format hat die Ausgabe?', vorschlag: v, blattGegeben: true, antwortblatt: korpus.antwortblatt, gebaut: true });
-    expect(n.nachricht.endsWith(v)).toBe(true);
-    expect(n.nachricht).not.toContain(korpus.antwortblatt);
-    expect(n.nachricht).toContain(OFFEN);
+    const n = naechsteNachricht(lage({ antwort: 'Im Modell: …\nSoll ich weitermachen?', vorschlag: v }));
+    expect(n.nachricht).toBe(v);
+    expect(n.vorschlag).toBe(v);
+    expect(arten(n)).toEqual(['vorschlag']);
+  });
+
+  it('spätere Wissensfrage: die passende Zeile des Blatts, sonst „offen" — nie das Blatt noch einmal; danach der Vorschlag, wie im Handlauf', () => {
+    const v = 'Lege für die Abläufe add, list, done Anforderungen mit Test an.';
+    const treffer = naechsteNachricht(lage({ antwort: 'Was passiert bei einer kaputten Datei?', vorschlag: v }));
+    expect(treffer.nachricht).toBe(`- Kaputte oder ungültige JSON-Datei: Fehlermeldung, Exit-Code 1.\n\n${v}`);
+    expect(treffer.vorschlag).toBe(v);
+    expect(arten(treffer)).toEqual(['blatt-zeile', 'vorschlag']);
+    const ohne = naechsteNachricht(lage({ antwort: 'Welches Format hat die Ausgabe?' }));
+    expect(ohne.nachricht).toBe(`${OFFEN_EINZELN}\n\n${WEITER}`);
+    expect(arten(ohne)).toEqual(['offen', 'zustimmung']);
+    // Eine Zustimmung zu Inhalt, den das Blatt nicht deckt, wäre eine Vorgabe — er stimmt nicht zu.
+    const inhalt = naechsteNachricht(lage({ antwort: 'Soll ich „keine Anmeldung, keine Geheimnisse" als Anforderung festschreiben?', vorschlag: v }));
+    expect(inhalt.nachricht).toBe(`${OFFEN_EINZELN}\n\n${v}`);
+  });
+
+  it('Entscheidungsfrage am Modell (lokal-1, R-10): eine Antwort — weder Blatt noch graphcodes Vorschlag', () => {
+    const n = naechsteNachricht(lage({ antwort: FRAGE_MODELL, blattGegeben: false, vorschlag: 'Vervollständige die Datenflüsse Terminal-Ausgabe: woher sie kommen und wohin sie gehen.' }));
+    expect(n.nachricht).toBe(`${DEINE_ENTSCHEIDUNG}\n\n${MACH_WEITER}`);
+    expect(n.blattGegeben).toBe(false);
+    expect(arten(n)).toEqual(['modell-entscheidung', 'modell-entscheidung', 'vorschlag-zurueckgestellt']);
+  });
+
+  it('Analysefrage (frontier-1): die Politik der Aufgabe antwortet', () => {
+    const nein = naechsteNachricht(lage({ antwort: FRAGE_ANALYSEN, politik: { analysen: 'ablehnen', freigabe: 'bei-ziel' }, vorschlag: 'Führe das Einsatzkonzept (ConOps) durch.' }));
+    expect(nein.nachricht).toBe(`${ANALYSEN_NEIN}\n\n${MACH_WEITER}`);
+    expect(arten(nein)).toEqual(['analyse-antwort', 'vorschlag-zurueckgestellt']);
+    expect(naechsteNachricht(lage({ antwort: FRAGE_ANALYSEN })).nachricht).toBe(`${ANALYSEN_JA}\n\n${MACH_WEITER}`);
+    expect(aufgabeLaden('todo-warnungsfrei').politik).toEqual({ analysen: 'ablehnen', freigabe: 'bei-ziel' });
+    expect(korpus.politik).toEqual(POLITIK);
+  });
+
+  it('Politik am Vorschlag: Analysen ablehnen, Freigabe erst am Ziel — mit dem Stand, der noch fehlt', () => {
+    const politik = { analysen: 'ablehnen', freigabe: 'bei-ziel' };
+    const befund = { fehler: 0, warnungen: 3, abgenommen: 5, offen: [{ regel: 'CR-R02', element: 'CR-a' }, { regel: 'CR-R02', element: 'CR-b' }, { regel: 'R-10', element: 'FLOW-x' }] };
+    const text = zielText('warnungsfrei', befund);
+    expect(text).toBe('Die Regelprüfung meldet noch 3 offene Warnungen: CR-R02 ×2, R-10.');
+    expect(zielText('modellieren', befund)).toBeNull();
+    const analyse = naechsteNachricht(lage({ antwort: 'Fertig.', vorschlag: 'Führe das Einsatzkonzept (ConOps) durch.', politik, ziel: { erreicht: false, text } }));
+    expect(analyse.nachricht).toBe(`${ANALYSEN_NEIN} ${text}`);
+    expect(analyse.vorschlag).toBeNull();
+    expect(arten(analyse)).toEqual(['analyse-abgelehnt']);
+    const zuFrueh = naechsteNachricht(lage({ antwort: 'Fertig.', vorschlag: FREIGABE, politik, ziel: { erreicht: false, text } }));
+    expect(zuFrueh.nachricht).toBe(`${NOCH_NICHT} ${text}`);
+    expect(arten(zuFrueh)).toEqual(['freigabe-verweigert']);
+    expect(naechsteNachricht(lage({ antwort: 'Fertig.', vorschlag: FREIGABE, politik, ziel: { erreicht: true, text: null } })).nachricht).toBe(FREIGABE);
+    // Wie im Handlauf (Vorgabe): der Nutzer folgt dem Analyse-Vorschlag und gibt frei, wenn graphcode es vorschlägt.
+    expect(naechsteNachricht(lage({ antwort: 'Fertig.', vorschlag: 'Führe das Einsatzkonzept (ConOps) durch.' })).nachricht).toBe('Führe das Einsatzkonzept (ConOps) durch.');
+    expect(naechsteNachricht(lage({ antwort: 'Fertig.', vorschlag: FREIGABE })).nachricht).toBe(FREIGABE);
   });
 
   it('ohne Vorschlag nach dem ersten Bau: weiter, nicht wieder „Schritt 1"', () => {
-    expect(naechsteNachricht({ antwort: 'Gelesen.', vorschlag: null, blattGegeben: true, antwortblatt: '', gebaut: true }).nachricht).toBe(WEITER);
+    expect(naechsteNachricht(lage({ antwort: 'Gelesen.' })).nachricht).toBe(WEITER);
+    expect(naechsteNachricht(lage({ antwort: 'Gelesen.', gebaut: false })).nachricht).toBe(ZUSTIMMUNG);
   });
 
   it('endet nach der abgeschickten Freigabe oder am Zuglimit', () => {
     expect(ende(3, 12, FREIGABE)).toBe('freigabe');
     expect(ende(12, 12, 'x')).toBe('zuglimit');
     expect(ende(3, 12, 'x')).toBeNull();
+    // Stillstand: mehrere Züge in Folge ohne angenommene Mutation — der Lauf dreht sich, er endet.
+    expect(ende(5, 30, 'x', null, STILLSTAND)).toBe('stillstand');
+    expect(ende(5, 30, 'x', null, STILLSTAND - 1)).toBeNull();
   });
 
   it('endet, sobald die Stufe ihr Ziel meldet: modellieren bei SRR und PDR, warnungsfrei ohne Fehler und Warnung', () => {

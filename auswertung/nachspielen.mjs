@@ -23,6 +23,25 @@ export function flach(g) {
 }
 
 /**
+ * Rein: der Befund einer Regelprüfung — Fehler und OFFENE Warnungen. Ein Fund, den sein Träger (das Element, sonst
+ * das System) mit Grund abgenommen hat (`acceptedFindings`, CR-SM-349), zählt nicht als offen: `rules_evaluate` zeigt
+ * ihn weiter wie jeden anderen (ITEM-2026-748), wer „warnungsfrei" prüft, muss ihn selbst herausnehmen.
+ * `abgenommenVon(element)` liefert die abgenommenen Regel-IDs eines Elements (contracts `acceptedRuleIds`).
+ */
+export function befundAus(violations, graph, abgenommenVon) {
+  const byId = new Map(graph.nodes.map((n) => [n.uid, n]));
+  const sys = graph.nodes.find((n) => n.type === 'SYS');
+  const ab = (v) => { const t = byId.get(v.elementId) ?? sys; return Boolean(t) && abgenommenVon({ attributes: t.attributes ?? {} }).has(v.ruleId); };
+  const fehler = violations.filter((v) => v.severity === 'error');
+  const warn = violations.filter((v) => v.severity === 'warning');
+  const offen = warn.filter((v) => !ab(v));
+  return {
+    fehler: fehler.length, warnungen: offen.length, abgenommen: warn.length - offen.length,
+    offen: [...fehler, ...offen].map((v) => ({ regel: v.ruleId, element: v.elementId })),
+  };
+}
+
+/**
  * Rein, ohne Store und ohne Gate-Urteil: die angewandten Mutationen eines Audits in Reihenfolge durch
  * `applyCommands` — der Endgraph als Harness-Graph und die Zahl der Züge. Für Eigenschaftstests über Trails
  * (tests/generate.statemachine.test.ts); wer das Gate-Urteil braucht, nimmt `nachspielen`.
@@ -49,6 +68,7 @@ export async function nachspielen(auditPfad, repo, n = Infinity, { systemId = 't
   const angewandt = mutationen(auditPfad).slice(0, n).filter((a) => a.result === 'applied');
   const { openMeasured } = await import('../dist/index.js');
   const { commandsToFormatE } = await import('@sigloch/graph-api-core');
+  const { acceptedRuleIds } = await import('@sigloch/contracts/se');
   // `basis`: der Graph, mit dem der Lauf begann (Aufgabe mit Basis) — der Wegwerf-Store startet dort, nicht leer.
   const leer = await openMeasured(basis ? { graph: basis, systemId, configFrom: repo } : { systemId, configFrom: repo });
   try {
@@ -62,11 +82,10 @@ export async function nachspielen(auditPfad, repo, n = Infinity, { systemId = 't
     const readiness = await leer.tools.graph_readiness.handler({});
     // Der Befund der ganzen Regelprüfung (ein Eintrag je Element): das Ziel der Stufe `warnungsfrei`.
     const ev = await leer.tools.rules_evaluate.handler({ detail: 'full' });
-    const zaehle = (s) => ev.violations.filter((v) => v.severity === s).length;
     return {
       flach: flach(leer.graph()),
       gates: Object.fromEntries(readiness.phaseGates.map((x) => [x.id, x.passed])),
-      befund: { fehler: zaehle('error'), warnungen: zaehle('warning') },
+      befund: befundAus(ev.violations, leer.graph(), acceptedRuleIds),
       readiness,
     };
   } finally {

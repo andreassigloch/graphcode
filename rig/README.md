@@ -105,18 +105,23 @@ Eingaben liegen unter [`beispielgraphen/`](../beispielgraphen/README.md).
 | Treiber | `treiber.mjs` | `<lokal\|frontier> <nr> [--aufgabe --zuege --sitzung --modell --arm]` · `serie [--plan]` · `referenz <lauf-dir>` |
 | Simulator | `simulator.mjs` | der Nutzer: Start-Prompt, Antwortblatt einmal je Sitzung, Enter auf den Vorschlag, Sitzungswechsel; lädt die Aufgabe |
 | Arme | `arme.mjs` | lokal = OpenCode (`opencode serve` + `run --attach`), frontier = Claude Code (`claude -p`, stream-json); Repo aus der Vorlage `todo-local` |
-| Aufgabe | `aufgaben/<name>/` | `start.md`, `antwortblatt.md`, `punkte.json` (Raster P-/O-Punkte), `aufgabe.json` (Quelle, Sequenz); `referenz/<arm>/` der Referenzlauf |
+| Aufgabe | `aufgaben/<name>/` | `start.md`, `antwortblatt.md` (Zeilen `- [stichworte] Antwort`), `punkte.json` (Raster P-/O-Punkte), `aufgabe.json` (Quelle, Sequenz, optional `basis` und `politik`); `referenz/<arm>/` der Referenzlauf |
 | Serie | `serie.json` | das Standard-Set: Aufgaben × Arme (mit Modell) × n, Zug- und Sitzungsgrenzen |
 | Läufe | `runs/<aufgabe>/<arm>-<nr>/` | (gitignored) `lauf.json`, `audit.jsonl`, `graph.json`, `denken.json`, das Lauf-Repo |
 
-**Lauf.** Frisches Repo aus der Vorlage → die Stufen der Sequenz (`aufgabe.sequenz`, heute `modellieren`): Start-Prompt;
-echte Fragen beantwortet der Simulator einmal je Sitzung mit dem Antwortblatt, sonst „offen, bitte als offen führen";
-danach schickt er den Vorschlag des Zugs ab. Er erfindet nichts. Die Stufe endet, sobald die Readiness **SRR und PDR**
-als bestanden meldet — nach jedem Zug mit Mutation geprüft an einem Nachbau aus dem Audit (`nachspielen`, der laufende
-Host bleibt unberührt; `auswertung/nachspielen.mjs`). PDR verlangt seit graphcode-client 1.6.0 (CR-SM-389) die Allokation jeder Funktion; die
-Analysen sind dort offene Hinweise, keine Sperre. Jede Analyse läuft in einer frischen Sitzung (neuer Client-Prozess,
-derselbe Store), ebenso die Rückkehr zur Strukturarbeit. Eine weitere Stufe (Code aus dem Modell, Abnahme) ist eine
-Funktion in `STUFEN` — kein zweiter Treiber.
+**Lauf.** Frisches Repo aus der Vorlage (bei einer Aufgabe mit `basis` mit deren Graph als Start) → die Stufen der
+Sequenz (`aufgabe.sequenz`: `modellieren`, `warnungsfrei`): Start-Prompt, dann antwortet der Simulator je Anliegen des
+Agenten einmal (CR-GC-742): Verfahrensfrage → Zustimmung; Wissensfrage → das Antwortblatt (erste Runde der Sitzung ganz,
+danach die passende Zeile, sonst „offen, bitte als offen führen"); Entscheidungsfrage am Modell → „deine Entscheidung";
+Frage zu den Analysen → die Politik der Aufgabe. Danach schickt er graphcodes Vorschlag des Zugs ab — außer der Agent
+wartet auf eine Entscheidung, oder die Politik steht dagegen (`analysen: ablehnen`, `freigabe: bei-ziel`). Er erfindet
+nichts und stimmt keinem Inhalt zu, den das Blatt nicht deckt; jede seiner Entscheidungen steht je Zug in `lauf.json`.
+Eine Stufe endet, sobald ihr Ziel am Nachbau aus dem Audit steht (`simulator.ZIEL`; `nachspielen`, der laufende Host
+bleibt unberührt): `modellieren` bei **SRR und PDR** bestanden — PDR verlangt seit graphcode-client 1.6.0 (CR-SM-389)
+die Allokation jeder Funktion —, `warnungsfrei` ohne Fehler und ohne offene Warnung (mit Grund abgenommene Funde
+zählen nicht). Sonst bei Freigabe, Stillstand (vier Züge ohne angenommene Mutation) oder Zuglimit. Jede Analyse läuft
+in einer frischen Sitzung (neuer Client-Prozess, derselbe Store), ebenso die Rückkehr zur Strukturarbeit. Eine weitere
+Stufe ist eine Zeile in `STUFEN` und ihr Ziel in `ZIEL` — kein zweiter Treiber.
 
 **Stand und Stempel.** Jeder Lauf trägt `stand` = Code-Stand von graphcode + Commit der Vorlage (dort lebt der Prompt);
 `serie` zählt nur Läufe dieses Stands. Der Stempel der Zeile kommt wie überall aus `openMeasured` am Export.

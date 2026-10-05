@@ -2985,6 +2985,12 @@
       "commitRef": "7664c59"
     },
     {
+      "id": "CR-GC-742",
+      "type": "CR",
+      "name": "Rig-Simulator beantwortet eine Entscheidungsfrage des Agenten mit dem ganzen Antwortblatt plus Vorschlag - Widerspruch, 66k Zeichen Denken bis Ausgabelimit (lokal-1 Zug 2); Regel: Frage mit Optionen bekommt eine Antwort",
+      "description": "docs/cr/open/CR-GC-742-rig-simulator-beantwortet-eine-entscheid.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14762,6 +14768,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-742",
+      "target": "MOD-auswertung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-742",
+      "target": "MOD-rig",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-742",
+      "target": "REQ-rig-benchmark",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23511,5 +23532,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 612
+  "graphVersion": 614
 }
