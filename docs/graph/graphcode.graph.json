@@ -2988,7 +2988,9 @@
       "id": "CR-GC-742",
       "type": "CR",
       "name": "Rig-Simulator beantwortet eine Entscheidungsfrage des Agenten mit dem ganzen Antwortblatt plus Vorschlag - Widerspruch, 66k Zeichen Denken bis Ausgabelimit (lokal-1 Zug 2); Regel: Frage mit Optionen bekommt eine Antwort",
-      "description": "docs/cr/open/CR-GC-742-rig-simulator-beantwortet-eine-entscheid.md"
+      "description": "docs/cr/open/CR-GC-742-rig-simulator-beantwortet-eine-entscheid.md",
+      "status": "done",
+      "commitRef": "1365c4e"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23532,5 +23534,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 614
+  "graphVersion": 615
 }
