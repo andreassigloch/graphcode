@@ -10,12 +10,12 @@
 
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
-| `SCHEMA-action` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-action` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-ask-owner` | src/loop/executor.ts#OwnerExchangeSchema | n/a |
-| `SCHEMA-audit-record` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit.ts#AuditStatsSchema | reviewed |
-| `SCHEMA-benchmark-datensatz` | Konzept (noch kein Zod-Export) | reviewed |
-| `SCHEMA-candidate-probe` | Konzept (noch kein Zod-Export) | n/a |
+| `SCHEMA-benchmark-datensatz` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-candidate-probe` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness-completeness.ts#GateCompleteness | reviewed |
@@ -25,49 +25,49 @@
 | `SCHEMA-fit-advisory` | src/kernel/measure/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | packages/graph-api-core/src/format-e-door.ts#FormatEInputSchema | reviewed |
 | `SCHEMA-function-criticality` | packages/contracts/src/se/function-criticality.ts#FunctionCriticality | reviewed |
-| `SCHEMA-gate-outcome` | Konzept (noch kein Zod-Export) | n/a |
+| `SCHEMA-gate-outcome` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-graph-delta` | src/kernel/graph-store.ts#GraphDeltaSchema | n/a |
-| `SCHEMA-harness-handle` | Konzept (noch kein Zod-Export) | n/a |
+| `SCHEMA-harness-handle` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
-| `SCHEMA-lauf-artefakte` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-lauf-artefakte` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-learning-advice` | extern definiert (kein realRef) | draft |
 | `SCHEMA-learning-query` | extern definiert (kein realRef) | draft |
 | `SCHEMA-lock-owner` | src/kernel/lock-owner-contract.ts#LockOwner | n/a |
 | `SCHEMA-markdown-view` | src/projections/exporter.ts#MarkdownViewSchema | reviewed |
 | `SCHEMA-mcp-tool` | src/kernel/tool-contract.ts#MCPToolSchema | n/a |
 | `SCHEMA-mcp-tool-registry` | src/kernel/tool-contract.ts#MCPToolRegistrySchema | n/a |
-| `SCHEMA-measurement-vector` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-measurement-vector` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicySchema | n/a |
 | `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
 | `SCHEMA-model-answer` | src/loop/model-answer-contract.ts#ModelAnswer | n/a |
-| `SCHEMA-model-request` | Konzept (noch kein Zod-Export) | n/a |
+| `SCHEMA-model-request` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-module-metrics` | packages/contracts/src/se/metric-rules.ts#ModuleMetrics | reviewed |
 | `SCHEMA-mutate-command` | packages/contracts/src/harness/index.ts#MutateCommandSchema | reviewed |
 | `SCHEMA-mutate-result` | packages/contracts/src/harness/index.ts#MutateResultSchema | reviewed |
 | `SCHEMA-ontology-graph` | packages/contracts/src/se/ontology.ts#OntologyGraph | reviewed |
 | `SCHEMA-ontology-json` | src/kernel/harness-import.ts#OntologyJsonSchema | n/a |
 | `SCHEMA-phase-readiness` | src/kernel/measure/readiness.ts#PhaseGateReadiness | reviewed |
-| `SCHEMA-preflight-outcome` | Konzept (noch kein Zod-Export) | n/a |
-| `SCHEMA-query-params` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-preflight-outcome` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-query-params` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
 | `SCHEMA-real-ref` | packages/contracts/src/se/ontology.ts#RealRefSchema | reviewed |
 | `SCHEMA-rejected-trace` | src/kernel/harness-import.ts#RejectedTraceSchema | n/a |
-| `SCHEMA-round-injection` | Konzept (noch kein Zod-Export) | n/a |
+| `SCHEMA-round-injection` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-rule-violation` | packages/contracts/src/harness/index.ts#RuleViolationSchema | n/a |
 | `SCHEMA-schema-fingerprint` | src/kernel/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
 | `SCHEMA-schlupf-zeile` | src/projections/test-schlupf.ts#SchlupfZeileSchema | n/a |
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
-| `SCHEMA-steering-channel` | Konzept (noch kein Zod-Export) | reviewed |
+| `SCHEMA-steering-channel` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
 | `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshotSchema | reviewed |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
 | `SCHEMA-test-refs` | packages/contracts/src/se/ontology.ts#TestRefsSchema | reviewed |
 | `SCHEMA-test-selection` | src/kernel/measure/test-selection.ts#TestSelectionSchema | n/a |
 | `SCHEMA-tool-context` | src/surface/tool-context-contract.ts#ToolContext | n/a |
-| `SCHEMA-tool-registry` | Konzept (noch kein Zod-Export) | n/a |
+| `SCHEMA-tool-registry` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
 

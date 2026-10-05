@@ -783,6 +783,8 @@
 | `CR-GC-742` | relation | `MOD-auswertung` |
 | `CR-GC-742` | relation | `MOD-rig` |
 | `CR-GC-742` | relation | `REQ-rig-benchmark` |
+| `CR-GC-743` | relation | `FUNC-score-completeness` |
+| `CR-GC-744` | relation | `FUNC-test` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

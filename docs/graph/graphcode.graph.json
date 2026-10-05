@@ -2993,6 +2993,22 @@
       "commitRef": "1365c4e"
     },
     {
+      "id": "CR-GC-743",
+      "type": "CR",
+      "name": "Nachzug contracts 10.15 - CR-R05 gestrichen und Bindungsregeln ab Realisierung",
+      "description": "docs/cr/done/CR-GC-743-nachzug-contracts-10-15-cr-r05-gestrichen-bindungsregeln-ab-realisierung.md",
+      "status": "done",
+      "commitRef": "4a6aa67"
+    },
+    {
+      "id": "CR-GC-744",
+      "type": "CR",
+      "name": "Nachzug contracts 10.15 - Attribut concept entfaellt",
+      "description": "docs/cr/done/CR-GC-744-nachzug-contracts-10-15-attribut-concept-entfaellt.md",
+      "status": "done",
+      "commitRef": "b72f608"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14785,6 +14801,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-743",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-744",
+      "target": "FUNC-test",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23534,5 +23560,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 615
+  "graphVersion": 616
 }

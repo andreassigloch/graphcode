@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 352 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 354 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 352 CR · 326 done · 4 open.
+Total: 354 CR · 328 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -414,3 +414,5 @@ Total: 352 CR · 326 done · 4 open.
 | `CR-GC-740` | done | Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv |
 | `CR-GC-741` | done | Whitebox-Messung (minimal-whitebox Phase 1) als S1-Messung in npm run messung (T-E2) |
 | `CR-GC-742` | done | Rig-Simulator beantwortet eine Entscheidungsfrage des Agenten mit dem ganzen Antwortblatt plus Vorschlag - Widerspruch, 66k Zeichen Denken bis Ausgabelimit (lokal-1 Zug 2); Regel: Frage mit Optionen bekommt eine Antwort |
+| `CR-GC-743` | done | Nachzug contracts 10.15 - CR-R05 gestrichen und Bindungsregeln ab Realisierung |
+| `CR-GC-744` | done | Nachzug contracts 10.15 - Attribut concept entfaellt |
