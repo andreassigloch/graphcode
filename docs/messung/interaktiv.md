@@ -1,6 +1,6 @@
 # Interaktives Rig (CR-GC-715)
 
-Eine Zeile je Lauf, geschrieben von `rig/interaktiv/treiber.mjs`. Korpus, Simulator und Arme: `rig/README.md`
+Eine Zeile je Lauf, geschrieben von `rig/treiber.mjs`. Korpus, Simulator und Arme: `rig/README.md`
 (Abschnitt „interaktiv"). Dauer in Minuten; „Schritte" = Werkzeugaufrufe je Zug; „Ablehnungen" = vom Gate
 abgelehnte Mutationen. Das Blindurteil steht je Runde unter der Tabelle.
 
@@ -38,7 +38,7 @@ bei den drei Frontier-Läufen und bei lokal-nvfp4-2 (kein Modul).
 
 ### Blindurteil bis zum ersten Analyse-Vorschlag (2026-10-04)
 
-Ein anonymer Gutachter je Spec (`blindurteil.mjs`, Raster `rig/interaktiv/korpus/todo.json`: 11 Vorgaben P*, 5 offene
+Ein anonymer Gutachter je Spec (`blindurteil.mjs`, Raster `rig/aufgaben/todo/punkte.json`: 11 Vorgaben P*, 5 offene
 Punkte O*); Frontier und lokal in einer gemischten Runde, nvfp4 als eigene Runde mit derselben Vorgabe.
 
 | Arm | Lauf | P* ✓ · ~ · ✗ | O* offen geführt | erfunden | Dubletten | Notensumme |

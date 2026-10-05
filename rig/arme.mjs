@@ -1,5 +1,5 @@
 /**
- * arme.mjs — die zwei Arme des interaktiven Rigs (CR-GC-715): derselbe Agent, zwei Clients.
+ * arme.mjs — die zwei Arme des Rigs (CR-GC-715): derselbe Agent, zwei Clients.
  *
  *   lokal    — OpenCode, Agent `modellieren`, qwen3.8 über sigllm. `opencode serve` hält EINEN Prozess (und damit
  *              EINEN graphcode-Host mit seinem Sitzungsgedächtnis, CR-GC-734) über alle Züge; je Zug ein
@@ -23,6 +23,12 @@ export const VORLAGE = '/Users/andreas/Developer/dev/todo-local';
 const CA = join(process.env.HOME, 'Developer/prod/sigllm/data/tls/sig-llm-ca.crt');
 /** Das Claude-Code-CLI: `GRAPHCODE_RIG_CLAUDE`, sonst das im PATH (Opus 5.5 braucht >= 2.1.280). */
 export const CLAUDE = process.env.GRAPHCODE_RIG_CLAUDE ?? 'claude';
+/** Der Commit der Vorlage — dort lebt der Prompt; `+dirty`, wenn der Arbeitsbaum davon abweicht. */
+export function vorlageStand() {
+  const git = (...a) => execFileSync('git', a, { cwd: VORLAGE, encoding: 'utf8' }).trim();
+  return git('rev-parse', '--short', 'HEAD') + (git('status', '--porcelain').length ? '+dirty' : '');
+}
+
 const LESER = ['graph_authoring_guide', 'graph_elements', 'graph_get_node', 'graph_get_edges', 'graph_context', 'graph_impact'];
 
 /**

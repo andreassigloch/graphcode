@@ -22,8 +22,9 @@ import { fileURLToPath } from 'node:url';
 import { render } from './spec-render.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-export const RASTER = resolve(HERE, '../sigllm-spezifikation/golden/auftragspunkte.json');
-export const AUFTRAG = resolve(HERE, '../sigllm-spezifikation/material-prosa/auftrag.md');
+// CR-GC-738: Raster und Auftrag sind Teile der Aufgabe sigllm-prosa (rig/aufgaben/); dieses Modul fällt mit CR 4.
+export const RASTER = resolve(HERE, '../aufgaben/sigllm-prosa/punkte.json');
+export const AUFTRAG = resolve(HERE, '../aufgaben/sigllm-prosa/start.md');
 const KENNUNG = 'ABCDEFGHJKLMNPQRSTUVWXYZ'.split('');
 
 export function gutachterVorgabe(spec, gutachten, { auftrag = AUFTRAG, raster = RASTER } = {}) {

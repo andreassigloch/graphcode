@@ -1,19 +1,23 @@
 /**
- * CR-GC-715 — der Nutzer-Simulator und die Lauf-Kennzahlen des interaktiven Rigs (rig/interaktiv), rein geprüft.
+ * CR-GC-715/738 — Nutzer-Simulator, Aufgabe, Serie, Referenzlauf und Lauf-Kennzahlen des Rigs (rig/), rein geprüft.
  *
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { fragen, naechsteNachricht, ende, analyseIn, sitzungswechsel, bisErsteAnalyse, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/interaktiv/simulator.mjs';
+import { fragen, naechsteNachricht, ende, analyseIn, sitzungswechsel, bisErsteAnalyse, aufgabeLaden, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/simulator.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { kennzahlen, auditDelta } from '../rig/interaktiv/auswertung.mjs';
+import { kennzahlen, auditDelta } from '../rig/auswertung.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { alsClaudeMd, mitModell } from '../rig/interaktiv/arme.mjs';
+import { alsClaudeMd, mitModell } from '../rig/arme.mjs';
+// @ts-expect-error — Rig-Module sind .mjs ohne Typen
+import { fehlendeLaeufe, referenzSetzen, STUFEN, REFERENZ_DATEIEN } from '../rig/treiber.mjs';
 
-const korpus = JSON.parse(readFileSync(fileURLToPath(new URL('../rig/interaktiv/korpus/todo.json', import.meta.url)), 'utf8'));
+const korpus = aufgabeLaden('todo');
 
 /** Zug 1 des Handlaufs todo-local (2026-10-03, 17:48), gekürzt auf die Form. */
 const ZUG1 = `**Fragen**
@@ -90,9 +94,54 @@ describe('CR-GC-715: Nutzer-Simulator', () => {
     expect(bisErsteAnalyse([z(null), z('x')])).toBeNull();
   });
 
-  it('der Korpus legt jede offene Frage als O* fest und gibt dem Start-Prompt die Vorgabe', () => {
+  it('die Aufgabe legt jede offene Frage als O* fest und gibt dem Start-Prompt die Vorgabe', () => {
     expect(korpus.start).toContain('done mit unbekannter Nummer');
     expect(korpus.punkte.filter((p: { id: string }) => p.id.startsWith('O')).length).toBeGreaterThan(0);
+    expect(korpus.sequenz).toEqual(['modellieren']);
+    for (const st of korpus.sequenz) expect(STUFEN[st]).toBeTypeOf('function');
+    const prosa = aufgabeLaden('sigllm-prosa');
+    expect(prosa.start).toContain('SIG Local');
+    expect(prosa.antwortblatt.length).toBeGreaterThan(5000);
+    expect(prosa.punkte.length).toBe(33);
+  });
+
+  it('die Serie fährt je Aufgabe × Arm, was für den heutigen Stand fehlt — mit der nächsten freien Nummer', () => {
+    const serie = { aufgaben: ['todo'], arme: [{ arm: 'lokal' }, { arm: 'frontier', kennung: 'frontier', modell: 'claude-opus-5-5' }], n: 2 };
+    const st = { code: 'abc1234', vorlage: 'f41ab7e' };
+    const alt = { aufgabe: 'todo', arm: 'lokal', nr: 1, ende: 'srr+pdr', stand: { code: 'alt0000', vorlage: 'f41ab7e' } };
+    const neu = { aufgabe: 'todo', arm: 'lokal', nr: 2, ende: 'srr+pdr', stand: st };
+    const abgebrochen = { aufgabe: 'todo', arm: 'frontier', nr: 1, stand: st };
+    expect(fehlendeLaeufe(serie, [alt, neu, abgebrochen], st)).toEqual([
+      { arm: 'lokal', kennung: 'lokal', modell: null, aufgabe: 'todo', nr: 3 },
+      { arm: 'frontier', kennung: 'frontier', modell: 'claude-opus-5-5', aufgabe: 'todo', nr: 2 },
+      { arm: 'frontier', kennung: 'frontier', modell: 'claude-opus-5-5', aufgabe: 'todo', nr: 3 },
+    ]);
+    expect(fehlendeLaeufe(serie, [neu, { ...neu, nr: 3 }], st).filter((o: { arm: string }) => o.arm === 'lokal')).toEqual([]);
+  });
+
+  it('referenz: die vier Artefakte und der Stempel wandern zur Aufgabe, der alte Referenzlauf geht', () => {
+    const tmp = mkdtempSync(join(tmpdir(), 'rig-referenz-'));
+    try {
+      const lauf = join(tmp, 'runs', 'todo', 'lokal-2');
+      mkdirSync(lauf, { recursive: true });
+      for (const f of REFERENZ_DATEIEN) writeFileSync(join(lauf, f), f === 'lauf.json'
+        ? JSON.stringify({ aufgabe: 'todo', arm: 'lokal', nr: 2, ende: 'srr+pdr', stempel: 'graph x', stand: { code: 'c', vorlage: 'v' }, modell: 'm' })
+        : f);
+      const alt = join(tmp, 'aufgaben', 'todo', 'referenz', 'lokal');
+      mkdirSync(alt, { recursive: true });
+      writeFileSync(join(alt, 'graph.json'), 'alt');
+      writeFileSync(join(alt, 'rest.txt'), 'bleibt nicht');
+      const ziel = referenzSetzen(lauf, join(tmp, 'aufgaben'));
+      expect(ziel).toBe(alt);
+      expect(readFileSync(join(ziel, 'graph.json'), 'utf8')).toBe('graph.json');
+      expect(existsSync(join(ziel, 'rest.txt'))).toBe(false);
+      const st = JSON.parse(readFileSync(join(ziel, 'stempel.json'), 'utf8'));
+      expect(st).toMatchObject({ lauf: 'lokal-2', stempel: 'graph x', stand: { code: 'c', vorlage: 'v' }, modell: 'm', ende: 'srr+pdr' });
+      rmSync(join(lauf, 'graph.json'));
+      expect(() => referenzSetzen(lauf, join(tmp, 'aufgaben'))).toThrow(/graph.json fehlt/);
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
   });
 });
 

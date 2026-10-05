@@ -11,11 +11,11 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fragen, bisErsteAnalyse } from './simulator.mjs';
 
-export const TABELLE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'docs', 'messung', 'interaktiv.md');
+export const TABELLE = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs', 'messung', 'interaktiv.md');
 
 const KOPF = `# Interaktives Rig (CR-GC-715)
 
-Eine Zeile je Lauf, geschrieben von \`rig/interaktiv/treiber.mjs\`. Korpus, Simulator und Arme: \`rig/README.md\`
+Eine Zeile je Lauf, geschrieben von \`rig/treiber.mjs\`. Korpus, Simulator und Arme: \`rig/README.md\`
 (Abschnitt „interaktiv"). Dauer in Minuten; „Schritte" = Werkzeugaufrufe je Zug; „Ablehnungen" = vom Gate
 abgelehnte Mutationen. Das Blindurteil steht je Runde unter der Tabelle.
 
@@ -74,7 +74,7 @@ export function auditDelta(zeilen) {
 export async function nachspielen(auditPfad, repo, n = Infinity) {
   const audit = existsSync(auditPfad) ? readFileSync(auditPfad, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((a) => a.operation === 'mutate') : [];
   const angewandt = audit.slice(0, n).filter((a) => a.result === 'applied');
-  const { openMeasured } = await import('../../dist/index.js');
+  const { openMeasured } = await import('../dist/index.js');
   const { commandsToFormatE } = await import('@sigloch/graph-api-core');
   const leer = await openMeasured({ systemId: 'todo', configFrom: repo });
   try {
@@ -111,7 +111,7 @@ export async function normieren(dir) {
   const auditPfad = existsSync(join(dir, 'audit.jsonl')) ? join(dir, 'audit.jsonl') : join(dir, 'todo', '.graphcode', 'audit.jsonl');
   const repo = join(dir, 'todo');
   const { flach } = await nachspielen(auditPfad, repo, n);
-  const { openMeasured, stampLine } = await import('../../dist/index.js');
+  const { openMeasured, stampLine } = await import('../dist/index.js');
   const pfad = resolve(dir, 'graph-kern.json');
   writeFileSync(pfad, JSON.stringify(flach, null, 1));
   const m = await openMeasured({ graph: pfad, systemId: 'todo', configFrom: repo });
@@ -127,7 +127,7 @@ export async function normieren(dir) {
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const [schritt, ...dirs] = process.argv.slice(2);
   if (schritt !== 'normieren' || dirs.length === 0) {
-    console.error('node rig/interaktiv/auswertung.mjs normieren <lauf-dir> …');
+    console.error('node rig/auswertung.mjs normieren <lauf-dir> …');
     process.exit(1);
   }
   for (const d of dirs) {

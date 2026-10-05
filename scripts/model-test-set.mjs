@@ -131,6 +131,10 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/rig-interaktiv.test.ts':
+    'Rig (CR-GC-715/738): prueft Simulator, Aufgabe, Serie und Referenzlauf an gestellten lauf.json/graph.json in\n' +
+    'einem TEMP-Verzeichnis; `graph.json` ist dort der Dateiname eines Lauf-Artefakts. graphcodes eigene SSOT liest\n' +
+    'er nie — eine Modellaenderung kann ihn nicht rot machen; eine Aenderung an rig/*.mjs sehr wohl (Spur CODE).',
   'tests/mcp.mutate-next-step.test.ts':
     'Vorschlag an den Nutzer (CR-GC-729..734): liest die Regel-Saetze aus den contracts und ein eingefrorenes\n' +
     'Fremdmodell (tests/fixtures/todo-local-v9.graph.json), nie graphcodes eigene SSOT — eine Modellaenderung\n' +

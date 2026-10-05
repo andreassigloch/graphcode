@@ -94,31 +94,46 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 | [`greenfield-systemtest/`](greenfield-systemtest/README.md) | gate | Kommt ein lokales Modell an ein Frontier-Modell heran? | `createHarness` (Subprozess, Kuzu-Binding) |
 | `agentdiary/` (intern, nicht im Repo) | gate | Liefert der lokale Arm (D2) am echten Auftrag, was Frontier liefert? | Arm-Repos + Blindurteil |
 | [`dummy-slicer/`](dummy-slicer/README.md) | gate | Serviert `graph_context` die Definition of Done? | `openMeasured` (echte Wurzel, CR-GC-496) |
-| `interaktiv/` | gate | Wie gut modellieren lokaler und Frontier-Agent im interaktiven Betrieb (T-E3)? | Vorlage todo-local → je Arm ein Prozess, Simulator, `openMeasured` am Export |
+| `rig/` selbst (oben) | gate | Wie gut modellieren lokaler und Frontier-Agent im interaktiven Betrieb (T-E3)? | Vorlage todo-local → je Sitzung ein Prozess, Simulator, `openMeasured` am Export |
 
 `greenfield-systemtest` baut den Harness in einem **eigenen Prozess**, weil Kuzus natives
 Binding sonst zweimal im selben Prozess lädt. Es benutzt `createHarness` direkt und ist damit
 korrekt — der Beleg, dass der Weg gangbar ist, noch bevor es `openMeasured` gab.
 
-## interaktiv — der Nutzer-Simulator (CR-GC-715)
+## Das Rig (CR-GC-715, CR-GC-738)
 
-`node rig/interaktiv/treiber.mjs <lokal|frontier> <nr> [--zuege=30] [--sitzung=8]` fährt einen Lauf des interaktiven
-Hauptfalls (Leitlinie §9.4/§9.5): beide Arme aus derselben Vorlage (`todo-local`, eingecheckter Stand ohne Modell),
-derselbe Prompt (Claude Code: als `CLAUDE.md`, nur Werkzeugnamen umgeschrieben), dieselben fünf Analyse-Skills. Je
-Sitzung EIN Client-Prozess — damit EIN Host und sein Sitzungsgedächtnis, wie im Handbetrieb.
+`rig/` ist **das** Rig, kein Ordner voller Rigs (Konzept: [`docs/graphcode_messaufbau_konzept.md`](../docs/graphcode_messaufbau_konzept.md)).
+Es fährt Läufe und hinterlässt Artefakte; gerechnet wird in der Auswertung, eingefrorene Eingaben liegen unter
+[`beispielgraphen/`](../beispielgraphen/README.md).
 
-Der Simulator (`simulator.mjs`) tut, was der Nutzer tat: Start-Prompt; echte Fragen beantwortet er einmal je Sitzung
-mit dem Antwortblatt des Korpus (`korpus/todo.json`, die Antworten des Autors aus dem Handlauf), sonst „offen, bitte
-als offen führen"; danach schickt er den Vorschlag des Zugs ab (Enter). Er erfindet nichts. Ein Lauf endet, sobald
-die Readiness **SRR und PDR** als bestanden meldet — nach jedem Zug mit Mutation geprüft an einem Nachbau aus dem
-Audit (`auswertung.mjs nachspielen`, der laufende Host bleibt unberührt). PDR verlangt seit graphcode-client 1.6.0
-(CR-SM-389) die Allokation jeder Funktion; die Analysen sind dort offene Hinweise, keine Sperre. Jede Analyse läuft in
-einer frischen Sitzung (neuer Client-Prozess, derselbe Store) — Analysen sprengen lokal sonst das Kontextfenster;
-ebenso die Rückkehr zur Strukturarbeit. Die Läufe vom 2026-10-04 schneidet `auswertung.mjs normieren <lauf-dir>` beim
-ersten Analyse-Vorschlag (Graph am Schnitt aus dem Audit nachgespielt).
-`--modell=<id>` und `--arm=<kennung>` fahren einen weiteren Arm aus derselben Vorlage (z. B. ein anderes lokales Modell). Artefakte unter `rig/interaktiv/runs/<arm>-<nr>/` (nicht im Repo), je Lauf eine Zeile mit Stempel
-in [`docs/messung/interaktiv.md`](../docs/messung/interaktiv.md). Blindurteil: `blindurteil.mjs vorbereiten … --raster`
-mit dem Raster aus `korpus/todo.json`.
+| Baustein | Datei | tut |
+|---|---|---|
+| Treiber | `treiber.mjs` | `<lokal\|frontier> <nr> [--aufgabe --zuege --sitzung --modell --arm]` · `serie [--plan]` · `referenz <lauf-dir>` |
+| Simulator | `simulator.mjs` | der Nutzer: Start-Prompt, Antwortblatt einmal je Sitzung, Enter auf den Vorschlag, Sitzungswechsel; lädt die Aufgabe |
+| Arme | `arme.mjs` | lokal = OpenCode (`opencode serve` + `run --attach`), frontier = Claude Code (`claude -p`, stream-json); Repo aus der Vorlage `todo-local` |
+| Aufgabe | `aufgaben/<name>/` | `start.md`, `antwortblatt.md`, `punkte.json` (Raster P-/O-Punkte), `aufgabe.json` (Quelle, Sequenz); `referenz/<arm>/` der Referenzlauf |
+| Serie | `serie.json` | das Standard-Set: Aufgaben × Arme (mit Modell) × n, Zug- und Sitzungsgrenzen |
+| Läufe | `runs/<aufgabe>/<arm>-<nr>/` | (gitignored) `lauf.json`, `audit.jsonl`, `graph.json`, `denken.json`, das Lauf-Repo |
+
+**Lauf.** Frisches Repo aus der Vorlage → die Stufen der Sequenz (`aufgabe.sequenz`, heute `modellieren`): Start-Prompt;
+echte Fragen beantwortet der Simulator einmal je Sitzung mit dem Antwortblatt, sonst „offen, bitte als offen führen";
+danach schickt er den Vorschlag des Zugs ab. Er erfindet nichts. Die Stufe endet, sobald die Readiness **SRR und PDR**
+als bestanden meldet — nach jedem Zug mit Mutation geprüft an einem Nachbau aus dem Audit (`nachspielen`, der laufende
+Host bleibt unberührt). PDR verlangt seit graphcode-client 1.6.0 (CR-SM-389) die Allokation jeder Funktion; die
+Analysen sind dort offene Hinweise, keine Sperre. Jede Analyse läuft in einer frischen Sitzung (neuer Client-Prozess,
+derselbe Store), ebenso die Rückkehr zur Strukturarbeit. Eine weitere Stufe (Code aus dem Modell, Abnahme) ist eine
+Funktion in `STUFEN` — kein zweiter Treiber.
+
+**Stand und Stempel.** Jeder Lauf trägt `stand` = Code-Stand von graphcode + Commit der Vorlage (dort lebt der Prompt);
+`serie` zählt nur Läufe dieses Stands. Der Stempel der Zeile kommt wie überall aus `openMeasured` am Export.
+
+**Referenzlauf.** Je Aufgabe × Arm liegt ein Lauf im Repo vorrätig (`aufgaben/<name>/referenz/<arm>/`: Graph,
+graphcode-Log, LLM-Log, Stempel): die Referenz der Leitlinie §9.4 für diese Aufgabe, Eingang für Tests und für
+Stufen nach dem Modellieren. `treiber.mjs referenz runs/<aufgabe>/<lauf>` tauscht ihn — der Autor entscheidet,
+welcher Lauf Referenz wird.
+
+Zeilen je Lauf: [`docs/messung/interaktiv.md`](../docs/messung/interaktiv.md). Frontier: `GRAPHCODE_RIG_CLAUDE=<pfad>`
+wählt das Claude-CLI (Opus 5.5 braucht >= 2.1.280).
 
 ## Was ein Rig sonst still tut: nichts
 

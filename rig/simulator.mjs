@@ -1,8 +1,8 @@
 /**
- * simulator.mjs — der Nutzer des interaktiven Rigs (CR-GC-715), rein und deterministisch.
+ * simulator.mjs — der Nutzer des Rigs (CR-GC-715), rein und deterministisch; dazu die Aufgabe, die er mitbringt.
  *
  * Er tut, was der Nutzer in den Handläufen tat, und nichts darüber hinaus:
- *   - Zug 1 ist der Start-Prompt des Korpus.
+ *   - Zug 1 ist der Start-Prompt der Aufgabe.
  *   - Stellt der Agent eine echte Frage (nicht nur „Soll ich anfangen?"), antwortet er aus dem Antwortblatt —
  *     beim ersten Mal mit dem ganzen Blatt, danach mit dem Verweis darauf. Was dort nicht steht, ist offen; er
  *     erfindet nichts.
@@ -18,6 +18,28 @@
  *
  * @author andreas@siglochconsulting
  */
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+export const AUFGABEN = join(dirname(fileURLToPath(import.meta.url)), 'aufgaben');
+
+/**
+ * Die Aufgabe, die der Nutzer mitbringt (Leitlinie §9.4): start.md (sein erster Prompt), antwortblatt.md (was er auf
+ * Fragen antwortet), punkte.json (Raster der P- und O-Punkte fürs Blindurteil), aufgabe.json (Quelle, Sequenz der Stufen).
+ */
+export function aufgabeLaden(name, root = AUFGABEN) {
+  const dir = join(root, name);
+  const meta = JSON.parse(readFileSync(join(dir, 'aufgabe.json'), 'utf8'));
+  const raster = JSON.parse(readFileSync(join(dir, 'punkte.json'), 'utf8'));
+  return {
+    name, ...meta, sequenz: meta.sequenz ?? ['modellieren'],
+    start: readFileSync(join(dir, 'start.md'), 'utf8').trim(),
+    antwortblatt: readFileSync(join(dir, 'antwortblatt.md'), 'utf8').trim(),
+    punkte: raster.punkte, rasterHinweis: raster.hinweis,
+    referenz: (arm) => join(dir, 'referenz', arm),
+  };
+}
 
 /** Der Vorschlag, mit dem graphcode die Freigabe einleitet (src/loop/next-step.ts, Phase handoff im Kern). */
 export const FREIGABE = 'Fasse das Modell zusammen — ich prüfe es und gebe es frei.';

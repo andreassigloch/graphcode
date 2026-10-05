@@ -1,3 +1,10 @@
+Ich will das System SIG Local so weit durchspezifizieren, dass man es danach bauen kann. Was es können soll,
+steht unten — in meinen Worten, nicht als Spezifikation. Den Rest sollst du daraus herleiten, nicht abschreiben.
+
+Erst das Modell, noch kein Code.
+
+---
+
 # SIG Local — was ich bauen will
 
 Stand 2026-09-17. Aufgeschrieben als Auftrag, nicht als Spezifikation: ich beschreibe, was das

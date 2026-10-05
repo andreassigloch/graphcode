@@ -2946,7 +2946,9 @@
       "id": "CR-GC-737",
       "type": "CR",
       "name": "Beispielgraphen in ein eigenes Verzeichnis: rig/graphs, Fixture-Graphen und sigllm-Golden eingefroren unter beispielgraphen/",
-      "description": "docs/cr/open/CR-GC-737-beispielgraphen-in-ein-eigenes-verzeichn.md"
+      "description": "docs/cr/open/CR-GC-737-beispielgraphen-in-ein-eigenes-verzeichn.md",
+      "status": "done",
+      "commitRef": "1793e6c"
     },
     {
       "id": "CR-GC-738",
@@ -23515,5 +23517,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 599
+  "graphVersion": 600
 }
