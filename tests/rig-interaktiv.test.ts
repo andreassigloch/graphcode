@@ -88,7 +88,9 @@ describe('CR-GC-715/742: Nutzer-Simulator', () => {
   it('spätere Wissensfrage: die passende Zeile des Blatts, sonst „offen" — nie das Blatt noch einmal; danach der Vorschlag, wie im Handlauf', () => {
     const v = 'Lege für die Abläufe add, list, done Anforderungen mit Test an.';
     const treffer = naechsteNachricht(lage({ antwort: 'Was passiert bei einer kaputten Datei?', vorschlag: v }));
-    expect(treffer.nachricht).toBe(`- Kaputte oder ungültige JSON-Datei: Fehlermeldung, Exit-Code 1.\n\n${v}`);
+    // Nie mit einem Strich beginnen: `opencode run` liest das als Option und bricht ab (lokal-9, 2026-10-05).
+    expect(treffer.nachricht).toBe(`Kaputte oder ungültige JSON-Datei: Fehlermeldung, Exit-Code 1.\n\n${v}`);
+    expect(treffer.nachricht.startsWith('-')).toBe(false);
     expect(treffer.vorschlag).toBe(v);
     expect(arten(treffer)).toEqual(['blatt-zeile', 'vorschlag']);
     const ohne = naechsteNachricht(lage({ antwort: 'Welches Format hat die Ausgabe?' }));

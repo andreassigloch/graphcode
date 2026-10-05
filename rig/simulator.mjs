@@ -188,7 +188,8 @@ export function naechsteNachricht({ antwort, vorschlag, blattGegeben, antwortbla
       ohneTreffer ||= treffer.length === 0;
       entscheidungen.push(treffer.length ? { art: 'blatt-zeile', frage: w.frage, treffer: treffer.map((t) => t.text) } : { art: 'offen', frage: w.frage });
     }
-    if (zeilen.length) teile.push(zeilen.map((z) => `- ${z}`).join('\n'));
+    // Ohne Aufzählungsstrich: eine Nachricht, die mit „-" beginnt, liest `opencode run` als Option (lokal-9, 2026-10-05).
+    if (zeilen.length) teile.push(zeilen.join('\n'));
     if (ohneTreffer) teile.push(zeilen.length ? `Zum Rest: ${OFFEN_EINZELN}` : OFFEN_EINZELN);
   }
   const modell = arten.filter((a) => a.art === 'modell');
