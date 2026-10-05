@@ -1,6 +1,6 @@
 # CR-GC-739: auswertung/: konfigurierbarer Runner über Lauf-Artefakte, benchmark.jsonl als Gedächtnis, benchmark.md generiert
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-05)
 **Typ:** aus Item ITEM-2026-742 (idea)
 **Erstellt:** 2026-10-05
 **Item:** bok/items/ITEM-2026-742.json (Lane: code)
