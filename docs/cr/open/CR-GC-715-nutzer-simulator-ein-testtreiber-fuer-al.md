@@ -68,3 +68,10 @@ Analysen sprengten lokal das Kontextfenster (lokal-2: `finish: length` bei 72 00
 `ContextOverflowError`). Der Vergleich ist auf den Kern normiert; die 12-Züge-Läufe stehen als Rohdaten (Reihe 1).
 Neu: `--modell`/`--arm` für weitere Arme, Abbrüche je Zug (Ausgabelimit, Fehler) aus OpenCode-DB bzw. Stream.
 
+Nachtrag 2026-10-05 (Entscheid Autor, „keine neuen Begriffe — SRR und PDR fertig"): Läufe enden, sobald die
+Readiness SRR und PDR als bestanden meldet, geprüft nach jedem Zug an einem Nachbau aus dem Audit
+(`auswertung.mjs nachspielen`). PDR verlangt dafür die Allokation (CR-SM-389, graphcode-client 1.6.0); vorher bestand
+PDR mit drei Funktionen ohne Modul. Jede Analyse und die Rückkehr zur Strukturarbeit laufen in einer frischen Sitzung
+(neuer Client-Prozess, derselbe Store; `--sitzung` begrenzt die Züge je Sitzung). Der Begriff „Kern" entfällt; die
+Läufe vom 2026-10-04 bleiben beim ersten Analyse-Vorschlag normiert.
+

@@ -8,7 +8,7 @@ abgelehnte Mutationen. Das Blindurteil steht je Runde unter der Tabelle.
 
 Nicht vergleichbar: die Analysen sprengen lokal das Kontextfenster. lokal-2 lief ab Zug 9 in `finish: length`
 (72 000 Zeichen Denken) und dreimal `ContextOverflowError` beim Verdichten — abgebrochen, keine Zeile; lokal-3 nicht
-gefahren. Verglichen wird normiert auf den Kern (unten).
+gefahren. Verglichen wird normiert bis zum ersten Analyse-Vorschlag (unten).
 
 | Datum | Arm | Lauf | Stempel | Modell | Züge · Ende | Dauer je Zug Median / Max | Fragen Zug 1 | Schritte Median / Max | Mutationen angenommen / abgelehnt | Elemente · Kanten |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -17,10 +17,12 @@ gefahren. Verglichen wird normiert auf den Kern (unten).
 | 2026-10-04 | frontier | 3 | graph a3bc05aaac8b (53/90) · policy todo/graphcode.config.jsonc · rules 34.0.0 · code 7065d59+dirty | claude-opus-5-5 | 12 · zuglimit | 0.4 / 1.1 | 6 | 2.5 / 13 | 10 / 2 | 53 · 90 |
 | 2026-10-04 | lokal | 1 | graph 09fbdb5c4ab6 (37/70) · policy todo/graphcode.config.jsonc · rules 34.0.0 · code 9423ca4+dirty | ollama/qwen3.8-27b-lms:medium | 12 · zuglimit | 6.5 / 25.3 | 4 | 4.5 / 14 | 10 / 5 | 37 · 70 |
 
-## Normiert auf den Kern
+## Normiert bis zum ersten Analyse-Vorschlag (2026-10-04)
 
-Geschnitten beim ersten Analyse-Vorschlag von graphcode (`simulator.mjs`, `kernFertig`); ältere Läufe über
-`auswertung.mjs normieren` (Graph am Schnitt aus dem Audit nachgespielt), neue Läufe enden dort (`--bis=kern`).
+Geschnitten beim ersten Analyse-Vorschlag von graphcode; ältere Läufe über `auswertung.mjs normieren` (Graph am
+Schnitt aus dem Audit nachgespielt). Spalte „Ende": `kern` = so hieß dieser Schnitt bis 2026-10-04. Seit 2026-10-05
+enden Läufe bei „SRR und PDR bestanden" (PDR mit Allokation, CR-SM-389) — nachgerechnet: an diesem Schnitt fehlt das
+bei den drei Frontier-Läufen und bei lokal-nvfp4-2 (kein Modul).
 
 | Datum | Arm | Lauf | Stempel | Modell | Züge · Ende | Dauer je Zug Median / Max | Fragen Zug 1 | Schritte Median / Max | Mutationen angenommen / abgelehnt | Abbrüche Länge / Fehler | Elemente · Kanten |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -34,7 +36,7 @@ Geschnitten beim ersten Analyse-Vorschlag von graphcode (`simulator.mjs`, `kernF
 | 2026-10-04 | lokal-nvfp4 | 2 | graph 379baeb26f0c (42/52) · policy todo/graphcode.config.jsonc · rules 34.0.0 · code 22bb37c+dirty | ollama/qwen3.8:27b-nvfp4 | 4 · kern | 2.0 / 5.2 | 5 | 4 / 7 | 3 / 3 | 0 / 0 | 42 · 52 |
 | 2026-10-04 | lokal-nvfp4 | 3 | graph 5c4f2d6bc6c9 (29/53) · policy todo/graphcode.config.jsonc · rules 34.0.0 · code 22bb37c+dirty | ollama/qwen3.8:27b-nvfp4 | 4 · kern | 2.2 / 10.6 | 5 | 4 / 6 | 2 / 2 | 0 / 0 | 29 · 53 |
 
-### Blindurteil bis Kern (2026-10-04)
+### Blindurteil bis zum ersten Analyse-Vorschlag (2026-10-04)
 
 Ein anonymer Gutachter je Spec (`blindurteil.mjs`, Raster `rig/interaktiv/korpus/todo.json`: 11 Vorgaben P*, 5 offene
 Punkte O*); Frontier und lokal in einer gemischten Runde, nvfp4 als eigene Runde mit derselben Vorgabe.

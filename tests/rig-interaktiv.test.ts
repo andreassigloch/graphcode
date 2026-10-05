@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { fragen, naechsteNachricht, ende, kernFertig, bisKern, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/interaktiv/simulator.mjs';
+import { fragen, naechsteNachricht, ende, analyseIn, sitzungswechsel, bisErsteAnalyse, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/interaktiv/simulator.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
 import { kennzahlen, auditDelta } from '../rig/interaktiv/auswertung.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
@@ -59,17 +59,35 @@ describe('CR-GC-715: Nutzer-Simulator', () => {
     expect(ende(3, 12, 'x')).toBeNull();
   });
 
-  it('Kern fertig = graphcode schlägt eine Analyse vor (Auftrag oder Satz 2); der Lauf endet dort, die Normierung schneidet dort', () => {
-    expect(kernFertig('Führe das Einsatzkonzept (ConOps) durch.')).toBe(true);
-    expect(kernFertig('Das Einsatzkonzept (ConOps) ist noch nicht abgeschlossen — was fehlt dafür?')).toBe(true);
-    expect(kernFertig('Der Variantenvergleich (Trade-off) ist noch nicht abgeschlossen — was fehlt dafür?')).toBe(true);
-    expect(kernFertig('Lege die Nutzer (Akteure) an und verbinde sie mit den Abläufen.')).toBe(false);
-    expect(kernFertig(null)).toBe(false);
-    expect(ende(4, 12, 'x', 'Führe das Annahmen-Review durch.')).toBe('kern');
-    expect(ende(4, 12, 'x', 'Führe das Annahmen-Review durch.', 'zuglimit')).toBeNull();
+  it('endet, sobald die Readiness SRR und PDR als bestanden meldet', () => {
+    expect(ende(4, 30, 'x', { SRR: true, PDR: true, CDR: false })).toBe('srr+pdr');
+    expect(ende(4, 30, 'x', { SRR: true, PDR: false })).toBeNull();
+    expect(ende(4, 30, 'x')).toBeNull();
+  });
+
+  it('erkennt die Analyse eines Vorschlags (Auftrag oder Satz 2, auch der alte Akkusativ)', () => {
+    expect(analyseIn('Führe das Einsatzkonzept (ConOps) durch.')).toBe('Einsatzkonzept');
+    expect(analyseIn('Das Einsatzkonzept (ConOps) ist noch nicht abgeschlossen — was fehlt dafür?')).toBe('Einsatzkonzept');
+    expect(analyseIn('Der Variantenvergleich (Trade-off) ist noch nicht abgeschlossen — was fehlt dafür?')).toBe('Variantenvergleich');
+    expect(analyseIn('Den Variantenvergleich (Trade-off) ist noch nicht abgeschlossen — was fehlt dafür?')).toBe('Variantenvergleich');
+    expect(analyseIn('Führe die Fehlerbetrachtung (FMEA) durch.')).toBe('Fehlerbetrachtung');
+    expect(analyseIn('Lege die Nutzer (Akteure) an und verbinde sie mit den Abläufen.')).toBeNull();
+    expect(analyseIn(null)).toBeNull();
+  });
+
+  it('frische Sitzung bei neuem Thema: Analyse aus der Strukturarbeit, andere Analyse, zurück zur Struktur', () => {
+    expect(sitzungswechsel(null, 'Führe das Einsatzkonzept (ConOps) durch.')).toBe(true);
+    expect(sitzungswechsel('Einsatzkonzept', 'Das Einsatzkonzept (ConOps) ist noch nicht abgeschlossen — was fehlt dafür?')).toBe(false);
+    expect(sitzungswechsel('Einsatzkonzept', 'Führe das Annahmen-Review durch.')).toBe(true);
+    expect(sitzungswechsel('Einsatzkonzept', 'Ordne die Funktionen Modulen zu.')).toBe(true);
+    expect(sitzungswechsel(null, 'Ordne die Funktionen Modulen zu.')).toBe(false);
+    expect(sitzungswechsel('Einsatzkonzept', null)).toBe(false);
+  });
+
+  it('die Normierung der Läufe vom 2026-10-04 schneidet beim ersten Analyse-Vorschlag', () => {
     const z = (vorschlag: string | null) => ({ vorschlag });
-    expect(bisKern([z(null), z('Lege die Nutzer an.'), z('Führe das Einsatzkonzept (ConOps) durch.'), z('x')])).toHaveLength(3);
-    expect(bisKern([z(null), z('x')])).toBeNull();
+    expect(bisErsteAnalyse([z(null), z('Lege die Nutzer an.'), z('Führe das Einsatzkonzept (ConOps) durch.'), z('x')])).toHaveLength(3);
+    expect(bisErsteAnalyse([z(null), z('x')])).toBeNull();
   });
 
   it('der Korpus legt jede offene Frage als O* fest und gibt dem Start-Prompt die Vorgabe', () => {

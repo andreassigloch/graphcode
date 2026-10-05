@@ -103,17 +103,20 @@ korrekt — der Beleg, dass der Weg gangbar ist, noch bevor es `openMeasured` ga
 
 ## interaktiv — der Nutzer-Simulator (CR-GC-715)
 
-`node rig/interaktiv/treiber.mjs <lokal|frontier> <nr> [--zuege=12]` fährt einen Lauf des interaktiven Hauptfalls
-(Leitlinie §9.4/§9.5): beide Arme aus derselben Vorlage (`todo-local`, eingecheckter Stand ohne Modell), derselbe
-Prompt (Claude Code: als `CLAUDE.md`, nur Werkzeugnamen umgeschrieben), dieselben fünf Analyse-Skills. Je Arm EIN
-Client-Prozess über alle Züge — damit EIN Host und sein Sitzungsgedächtnis, wie im Handbetrieb.
+`node rig/interaktiv/treiber.mjs <lokal|frontier> <nr> [--zuege=30] [--sitzung=8]` fährt einen Lauf des interaktiven
+Hauptfalls (Leitlinie §9.4/§9.5): beide Arme aus derselben Vorlage (`todo-local`, eingecheckter Stand ohne Modell),
+derselbe Prompt (Claude Code: als `CLAUDE.md`, nur Werkzeugnamen umgeschrieben), dieselben fünf Analyse-Skills. Je
+Sitzung EIN Client-Prozess — damit EIN Host und sein Sitzungsgedächtnis, wie im Handbetrieb.
 
-Der Simulator (`simulator.mjs`) tut, was der Nutzer tat: Start-Prompt; echte Fragen beantwortet er einmal mit dem
-Antwortblatt des Korpus (`korpus/todo.json`, die Antworten des Autors aus dem Handlauf), sonst „offen, bitte als
-offen führen"; danach schickt er den Vorschlag des Zugs ab (Enter). Er erfindet nichts. Ein Lauf endet am Kern:
-sobald graphcode als nächsten Schritt eine Analyse vorschlägt (`--bis=kern`, Vorgabe) — Analysen sprengen lokal das
-Kontextfenster und werden je Analyse in einer eigenen Sitzung gemessen. Ältere, längere Läufe normiert
-`auswertung.mjs normieren <lauf-dir>` auf denselben Schnitt (Graph am Schnitt aus dem Audit nachgespielt).
+Der Simulator (`simulator.mjs`) tut, was der Nutzer tat: Start-Prompt; echte Fragen beantwortet er einmal je Sitzung
+mit dem Antwortblatt des Korpus (`korpus/todo.json`, die Antworten des Autors aus dem Handlauf), sonst „offen, bitte
+als offen führen"; danach schickt er den Vorschlag des Zugs ab (Enter). Er erfindet nichts. Ein Lauf endet, sobald
+die Readiness **SRR und PDR** als bestanden meldet — nach jedem Zug mit Mutation geprüft an einem Nachbau aus dem
+Audit (`auswertung.mjs nachspielen`, der laufende Host bleibt unberührt). PDR verlangt seit graphcode-client 1.6.0
+(CR-SM-389) die Allokation jeder Funktion; die Analysen sind dort offene Hinweise, keine Sperre. Jede Analyse läuft in
+einer frischen Sitzung (neuer Client-Prozess, derselbe Store) — Analysen sprengen lokal sonst das Kontextfenster;
+ebenso die Rückkehr zur Strukturarbeit. Die Läufe vom 2026-10-04 schneidet `auswertung.mjs normieren <lauf-dir>` beim
+ersten Analyse-Vorschlag (Graph am Schnitt aus dem Audit nachgespielt).
 `--modell=<id>` und `--arm=<kennung>` fahren einen weiteren Arm aus derselben Vorlage (z. B. ein anderes lokales Modell). Artefakte unter `rig/interaktiv/runs/<arm>-<nr>/` (nicht im Repo), je Lauf eine Zeile mit Stempel
 in [`docs/messung/interaktiv.md`](../docs/messung/interaktiv.md). Blindurteil: `blindurteil.mjs vorbereiten … --raster`
 mit dem Raster aus `korpus/todo.json`.

@@ -9,9 +9,11 @@
  *   - Sonst schickt er den Vorschlag dieses Zugs ab (das Enter im Eingabefeld). Brachte der Zug keinen (keine
  *     angewandte Mutation), stimmt er dem Plan des Agenten zu: vor der ersten Mutation „Ja, beginne mit Schritt 1.",
  *     danach „Ja, weiter mit dem nächsten Schritt."
- *   - Er endet am Kern (Vorgabe): sobald graphcode als nächsten Schritt eine Analyse vorschlägt, ist der Kern
- *     nach graphcodes eigenem Urteil fertig. Analysen sprengen lokal das Kontextfenster (lokal-2, 2026-10-04) und
- *     werden je Analyse in einer eigenen Sitzung gemessen. Sonst: Freigabe-Bitte abgeschickt oder Zuglimit.
+ *   - Der Lauf endet, wenn die Readiness SRR und PDR als bestanden meldet (Entscheid Autor 2026-10-05), bei der
+ *     Freigabe-Bitte oder am Zuglimit.
+ *   - Eine Analyse läuft in einer frischen Sitzung: schlägt graphcode eine Analyse vor, die nicht das Thema der
+ *     laufenden Sitzung ist — oder zeigt eine Analyse-Sitzung wieder auf Strukturarbeit —, beginnt die nächste
+ *     Sitzung mit diesem Vorschlag. Analysen sprengen lokal sonst das Kontextfenster (lokal-2, 2026-10-04).
  * Antworten gehen vor dem Vorschlag, beides in einer Nachricht.
  *
  * @author andreas@siglochconsulting
@@ -50,23 +52,28 @@ export function naechsteNachricht({ antwort, vorschlag, blattGegeben, antwortbla
 }
 
 /** Die Analysen in den Vorschlagssätzen von graphcode (src/loop/next-step.ts, ANALYSE und Satz 2). */
-const ANALYSE = '(das Einsatzkonzept|das Annahmen-Review|den Variantenvergleich|der Variantenvergleich|die Fehlerbetrachtung|den Bauplan|der Bauplan)';
-const ANALYSE_VORSCHLAG = new RegExp(`^(Führe ${ANALYSE} |${ANALYSE} .*ist noch nicht abgeschlossen)`, 'i');
+const ANALYSE_VORSCHLAG = /^(?:Führe (?:das|den|die) (Einsatzkonzept|Annahmen-Review|Variantenvergleich|Fehlerbetrachtung|Bauplan)\b|(?:Das|Der|Den|Die) (Einsatzkonzept|Annahmen-Review|Variantenvergleich|Fehlerbetrachtung|Bauplan)\b.*ist noch nicht abgeschlossen)/i;
 
-/** Der Kern ist fertig, wenn graphcode als nächsten Schritt eine Analyse vorschlägt. */
-export function kernFertig(vorschlag) {
-  return ANALYSE_VORSCHLAG.test(String(vorschlag ?? ''));
+/** Die Analyse, die ein Vorschlag nennt (`Einsatzkonzept`, …), sonst null. */
+export function analyseIn(vorschlag) {
+  const m = ANALYSE_VORSCHLAG.exec(String(vorschlag ?? ''));
+  return m ? (m[1] ?? m[2]) : null;
 }
 
-/** Ende nach einem Zug: Kern fertig (bei `bis: 'kern'`), Freigabe-Bitte abgeschickt oder Zuglimit. */
-export function ende(zug, maxZuege, letzteNachricht, vorschlag = null, bis = 'kern') {
-  if (bis === 'kern' && kernFertig(vorschlag)) return 'kern';
+/** Neue Sitzung, wenn der Vorschlag ein anderes Thema hat als die laufende Sitzung (null = Strukturarbeit). */
+export function sitzungswechsel(thema, vorschlag) {
+  return vorschlag != null && analyseIn(vorschlag) !== thema;
+}
+
+/** Ende nach einem Zug: SRR und PDR bestanden, Freigabe-Bitte abgeschickt oder Zuglimit. */
+export function ende(zug, maxZuege, letzteNachricht, gates = {}) {
+  if (gates.SRR && gates.PDR) return 'srr+pdr';
   if (String(letzteNachricht ?? '').endsWith(FREIGABE)) return 'freigabe';
   return zug >= maxZuege ? 'zuglimit' : null;
 }
 
-/** Die Züge bis einschließlich des ersten, nach dem der Kern fertig war — die Normierung älterer Läufe. */
-export function bisKern(zuege) {
-  const i = zuege.findIndex((z) => kernFertig(z.vorschlag));
+/** Die Züge bis einschließlich des ersten mit Analyse-Vorschlag — die Normierung der Läufe vom 2026-10-04. */
+export function bisErsteAnalyse(zuege) {
+  const i = zuege.findIndex((z) => analyseIn(z.vorschlag));
   return i < 0 ? null : zuege.slice(0, i + 1);
 }

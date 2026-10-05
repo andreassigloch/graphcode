@@ -9,7 +9,7 @@
 import { appendFileSync, existsSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fragen, bisKern } from './simulator.mjs';
+import { fragen, bisErsteAnalyse } from './simulator.mjs';
 
 export const TABELLE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'docs', 'messung', 'interaktiv.md');
 
@@ -67,48 +67,58 @@ export function auditDelta(zeilen) {
 }
 
 /**
- * Normierung auf den Kern (Entscheid Autor 2026-10-04): ein Lauf, der über den Kern hinaus lief, wird beim ersten
- * Analyse-Vorschlag geschnitten. Die Züge bis dorthin geben die Kennzahlen; der Graph an diesem Punkt entsteht
- * neu aus dem Audit (die angewandten Mutationen dieser Züge, in Reihenfolge, durch das echte Gate eines
- * Wegwerf-Stores) — gemessen wird er wie jeder Export über `openMeasured`.
+ * Der Graph nach den ersten `n` Mutationen des Audits, neu gebaut durch das echte Gate eines Wegwerf-Stores (die
+ * angewandten Einträge in Reihenfolge), und die Phasen-Gates der Readiness darauf. Ein laufender Host wird so nie
+ * angefasst; der Treiber prüft damit nach jedem Zug, ob SRR und PDR bestanden sind.
  */
-export async function normieren(dir) {
-  const lauf = JSON.parse(readFileSync(join(dir, 'lauf.json'), 'utf8'));
-  const zuege = bisKern(lauf.zuege);
-  if (!zuege) throw new Error(`${dir}: kein Zug mit Analyse-Vorschlag — der Kern wurde nicht fertig`);
-  const n = zuege.reduce((a, z) => a + z.audit.angenommen + z.audit.abgelehnt, 0);
-  // Ein abgebrochener Lauf hat sein Audit nur im Lauf-Repo (kopiert wird erst am Ende).
-  const auditPfad = existsSync(join(dir, 'audit.jsonl')) ? join(dir, 'audit.jsonl') : join(dir, 'todo', '.graphcode', 'audit.jsonl');
-  const audit = readFileSync(auditPfad, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((a) => a.operation === 'mutate');
+export async function nachspielen(auditPfad, repo, n = Infinity) {
+  const audit = existsSync(auditPfad) ? readFileSync(auditPfad, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((a) => a.operation === 'mutate') : [];
   const angewandt = audit.slice(0, n).filter((a) => a.result === 'applied');
-
-  const { openMeasured, stampLine } = await import('../../dist/index.js');
+  const { openMeasured } = await import('../../dist/index.js');
   const { commandsToFormatE } = await import('@sigloch/graph-api-core');
-  const repo = join(dir, 'todo');
   const leer = await openMeasured({ systemId: 'todo', configFrom: repo });
-  let flach;
   try {
     for (const a of angewandt) {
       const typ = (uid) => leer.graph().nodes.find((x) => x.uid === uid)?.type;
-      const r = await leer.tools.graph_mutate.handler({ formatE: commandsToFormatE(a.commands, typ), consumerId: 'normieren' });
-      if (!r.success) throw new Error(`${dir}: Audit-Eintrag ${a.id} geht beim Nachspielen nicht durchs Gate`);
+      const r = await leer.tools.graph_mutate.handler({ formatE: commandsToFormatE(a.commands, typ), consumerId: 'nachspielen' });
+      if (!r.success) throw new Error(`${auditPfad}: Audit-Eintrag ${a.id} geht beim Nachspielen nicht durchs Gate`);
     }
     const g = leer.graph();
-    flach = {
-      elements: g.nodes.map((x) => ({ id: x.uid, type: x.type, name: x.name, description: x.description, attributes: x.attributes ?? {} })),
-      traces: g.edges.map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType, ...(e.attributes?.label ? { label: e.attributes.label } : {}) })),
+    const readiness = await leer.tools.graph_readiness.handler({});
+    return {
+      flach: {
+        elements: g.nodes.map((x) => ({ id: x.uid, type: x.type, name: x.name, description: x.description, attributes: x.attributes ?? {} })),
+        traces: g.edges.map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType, ...(e.attributes?.label ? { label: e.attributes.label } : {}) })),
+      },
+      gates: Object.fromEntries(readiness.phaseGates.map((x) => [x.id, x.passed])),
     };
   } finally {
     await leer.close();
   }
+}
+
+/**
+ * Normierung der Läufe vom 2026-10-04 (Entscheid Autor): geschnitten beim ersten Analyse-Vorschlag. Die Züge bis
+ * dorthin geben die Kennzahlen; der Graph an diesem Punkt entsteht über `nachspielen` neu — gemessen wird er wie
+ * jeder Export über `openMeasured`.
+ */
+export async function normieren(dir) {
+  const lauf = JSON.parse(readFileSync(join(dir, 'lauf.json'), 'utf8'));
+  const zuege = bisErsteAnalyse(lauf.zuege);
+  if (!zuege) throw new Error(`${dir}: kein Zug mit Analyse-Vorschlag`);
+  const n = zuege.reduce((a, z) => a + z.audit.angenommen + z.audit.abgelehnt, 0);
+  // Ein abgebrochener Lauf hat sein Audit nur im Lauf-Repo (kopiert wird erst am Ende).
+  const auditPfad = existsSync(join(dir, 'audit.jsonl')) ? join(dir, 'audit.jsonl') : join(dir, 'todo', '.graphcode', 'audit.jsonl');
+  const repo = join(dir, 'todo');
+  const { flach } = await nachspielen(auditPfad, repo, n);
+  const { openMeasured, stampLine } = await import('../../dist/index.js');
   const pfad = resolve(dir, 'graph-kern.json');
   writeFileSync(pfad, JSON.stringify(flach, null, 1));
   const m = await openMeasured({ graph: pfad, systemId: 'todo', configFrom: repo });
   try {
-    const kern = { ...lauf, ende: `kern (normiert, Zug ${zuege.length}/${lauf.zuege.length})`, zuege, stempel: stampLine(m.provenance).replace(`${resolve(dir)}/`, '').replace(`${dir.replace(/\/$/, '')}/`, ''),
+    return { ...lauf, ende: `erste Analyse (normiert, Zug ${zuege.length}/${lauf.zuege.length})`, zuege, stempel: stampLine(m.provenance).replace(`${resolve(dir)}/`, '').replace(`${dir.replace(/\/$/, '')}/`, ''),
       modell: lauf.modell ?? JSON.parse(readFileSync(join(repo, 'opencode.json'), 'utf8')).model,
       graph: { elements: m.provenance.graph.elements, traces: m.provenance.graph.traces } };
-    return kern;
   } finally {
     await m.close();
   }
