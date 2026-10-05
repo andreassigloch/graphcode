@@ -125,7 +125,8 @@ export const CFG = {
     // graph_generate, kuratiertes Toolset, Gate-Rueckkanal mit Reparatur, Preflight.
     // Die beiden Arme darueber messen einen Agenten, der zufaellig dieselben Werkzeuge hat.
     { label: 'gcrun', executor: 'gcrun',
-      model: process.env.GCRUN_MODEL ?? 'qwen3-coder-30b-lms:latest',
+      // Lokales Vorgabemodell seit 2026-10-05: qwen3.8 nvfp4 (MLX); die Reihen bis dahin liefen mit qwen3-coder.
+      model: process.env.GCRUN_MODEL ?? 'qwen3.8:27b-nvfp4',
       backend: process.env.GCRUN_BACKEND ?? 'openai',
       baseUrl: process.env.GCRUN_BASE_URL ?? 'http://127.0.0.1:11434',
       apiKey: process.env.GCRUN_API_KEY ?? 'ollama',
