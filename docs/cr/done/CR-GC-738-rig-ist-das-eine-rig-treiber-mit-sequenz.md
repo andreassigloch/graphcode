@@ -1,6 +1,6 @@
 # CR-GC-738: rig/ ist das eine Rig: Treiber mit Sequenz, Aufgaben (todo, sigllm-prosa), serie.json, Referenzlauf je Standardfall
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-05)
 **Typ:** aus Item ITEM-2026-741 (idea)
 **Erstellt:** 2026-10-05
 **Item:** bok/items/ITEM-2026-741.json (Lane: code)
