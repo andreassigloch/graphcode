@@ -111,7 +111,7 @@ function buildSnapshot(graph: Graph, policy: MetricPolicy): SteeringSnapshot {
     focus,
     blockingErrors: blockingOf(focus),
     report: computeReadiness(og, policy),
-    phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id })), og),
+    phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id })), graph),
   };
   return snapshot;
 }

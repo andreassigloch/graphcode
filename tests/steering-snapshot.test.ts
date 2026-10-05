@@ -169,7 +169,7 @@ describe('CR-GC-502: phaseReadiness kommt aus dem Snapshot', () => {
     graph.nodes.find((n) => n.uid === 'TEST-bestellung')!.attributes = { testResult: 'passed' };
     const snap = takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY);
     expect(snap.phaseReadiness.length).toBeGreaterThan(0);
-    expect(snap.phaseReadiness).toEqual(computePhaseReadiness(snap.violations.map((v) => ({ ruleId: v.rule_id })), snap.og));
+    expect(snap.phaseReadiness).toEqual(computePhaseReadiness(snap.violations.map((v) => ({ ruleId: v.rule_id })), graph));
     // Der Graph hat einen offenen R-19-Befund — mindestens ein Gate muss ihn als fehlend fuehren.
     expect(snap.phaseReadiness.some((g) => g.missing.includes('R-19'))).toBe(true);
   });

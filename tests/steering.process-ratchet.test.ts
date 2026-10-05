@@ -33,7 +33,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { RULE_TO_PHASE, type OntologyGraph } from '@sigloch/contracts/se';
+import { RULE_TO_PHASE } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { generationStep, DIMENSION_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
 import { computePhaseReadiness, currentPhaseGate, PHASE_GATE_ORDER } from '../src/kernel/measure/readiness.js';
@@ -58,9 +58,9 @@ interface Round {
 
 /** Realisierung begonnen (eine Bindung steht) — jede Regel gestellt (CR-GC-695, contracts CR-SM-392). */
 const BEGONNEN = {
-  elements: [{ id: 'FUNC-a', type: 'FUNC', name: 'a', description: '', status: 'draft', created_at: '2026-10-05T00:00:00Z', attributes: { realRef: { file: 'src/a.ts' } } }],
-  traces: [],
-} as OntologyGraph;
+  nodes: [{ uid: 'FUNC-a', type: 'FUNC', name: 'a', description: '', attributes: { realRef: { file: 'src/a.ts' } } }],
+  edges: [],
+} as unknown as Parameters<typeof computePhaseReadiness>[1];
 
 describe('T-B1 (CR-GC-341): the gate ladder is read off the measurement, not off prose', () => {
   it('walks SRR → PDR → CDR → TRR as coverage is added, one gate at a time', () => {

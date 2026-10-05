@@ -163,9 +163,14 @@ describe('CR-GC-250 TRR — binding (testRef / realRef)', () => {
   it('in a draft the TRR binding legs are not asked: 0/0, not n/n', () => {
     const draft: G = { nodes: [node('SYS-x', 'SYS'), node('TEST-t', 'TEST'), node('FUNC-f', 'FUNC')], edges: [] };
     expect(gate(draft, 'TRR').completeness).toMatchObject({ covered: 0, total: 0 });
+    // contracts CR-SM-394 / CR-GC-745: 0/0, weil nicht gefragt wurde, ist kein Bestehen.
+    expect(gate(draft, 'TRR')).toMatchObject({ state: 'not-reached', passed: false, blocking: [] });
+    // Die Gates davor sind am selben Entwurf gestellt und unveraendert.
+    for (const id of ['SRR', 'PDR', 'CDR']) expect(gate(draft, id).state).not.toBe('not-reached');
     // Positivkontrolle: derselbe Graph mit Bauplan-Stempel stellt die Beine.
     const begun: G = { nodes: [BAUPLAN, node('TEST-t', 'TEST'), node('FUNC-f', 'FUNC')], edges: [] };
     expect(gate(begun, 'TRR').completeness.total).toBe(COMPLETENESS_SLICES.TRR.length);
+    expect(gate(begun, 'TRR', [violation('R-19', 'TEST-t'), violation('R-20', 'FUNC-f')]).state).toBe('open'); // gefragt, und beide Beine melden
   });
 
   it('a bound TEST (real testRef) turns TRR green', () => {

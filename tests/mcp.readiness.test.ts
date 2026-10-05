@@ -19,7 +19,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { getFamilyRuleIds } from '../src/kernel/measure/readiness.js';
+import { getFamilyRuleIds, GATE_STATE_LABELS } from '../src/kernel/measure/readiness.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -108,6 +108,55 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     }
     // A warning is not an error → compliance (error-severity) stays 1.0.
     expect(report.compliance.score).toBe(1);
+  });
+
+  // CR-GC-745 (contracts CR-SM-394): ein Entwurf ohne eine einzige Bindung las „Test Readiness Review
+  // bestanden". Jetzt traegt das Gate seinen Zustand und dessen Anzeigetext — auf beiden Achsen.
+  describe('CR-GC-745: der Zustand des Gates am Werkzeug', () => {
+    type Row = { gate: string; covered: number; total: number; missing: string[]; state: string };
+    const achse = (report: Record<string, unknown>, gate: string) =>
+      (report['phase_readiness'] as Row[]).find((p) => p.gate === gate)!;
+
+    it('Entwurf: TRR ist nicht durchschritten (passed false, Anzeigetext), SRR bleibt bestanden', async () => {
+      const tools = bindToolsToHarness(harness);
+      expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
+
+      const report = await tools.graph_readiness.handler({});
+      const gate = (id: string) => report.phaseGates.find((g) => g.id === id)!;
+
+      expect(gate('TRR')).toMatchObject({ state: 'not-reached', passed: false, completeness: { covered: 0, total: 0 } });
+      expect(gate('TRR').stateLabel).toBe(GATE_STATE_LABELS['not-reached']);
+      expect(gate('TRR').stateLabel).toBe('nicht durchschritten'); // das Wort des Nutzers, einmal festgehalten
+      // SRR ist am selben Entwurf gestellt und bestanden — der Zustand aendert nur TRR.
+      expect(gate('SRR')).toMatchObject({ state: 'passed', passed: true, stateLabel: GATE_STATE_LABELS.passed });
+      // An jedem Gate: der Boolean folgt aus dem Zustand, der Text aus der einen Tabelle.
+      for (const g of [...report.phaseGates, ...report.implGates]) {
+        expect(g.passed).toBe(g.state === 'passed');
+        expect(g.stateLabel).toBe(GATE_STATE_LABELS[g.state]);
+      }
+      // Die zweite Achse (Regelabdeckung) liest dieselbe Lage: voll gedeckt, aber nicht durchschritten.
+      expect(achse(report, 'TRR').state).toBe('not-reached');
+      expect(achse(report, 'TRR').covered).toBe(achse(report, 'TRR').total);
+    });
+
+    it('mit einer Bindung ist TRR gefragt — und offen, solange eine Funktion ohne Code dasteht', async () => {
+      const tools = bindToolsToHarness(harness);
+      expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
+      expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
+      const bound = await tools.graph_mutate.handler({
+        formatE: ['## Nodes', '### TEST', '~ TEST-reset', '@testRefs [{"file":"tests/reset.test.ts","tool":"vitest"}]'].join('\n'),
+        consumerId: 'test',
+      });
+      expect(bound.success).toBe(true);
+
+      const report = await tools.graph_readiness.handler({ detail: true });
+      const trr = report.phaseGates.find((g) => g.id === 'TRR')!;
+      expect(trr).toMatchObject({ state: 'open', passed: false, stateLabel: GATE_STATE_LABELS.open });
+      expect(trr.completeness.total).toBeGreaterThan(0);
+      expect(trr.blocking.join(' ')).toContain('FUNC.realRef');
+      expect(achse(report, 'TRR').state).toBe('open');
+      expect(achse(report, 'TRR').missing).toContain('R-20');
+    });
   });
 
   // CR-GC-203 item 2 — graph_readiness summary mode keeps the result within the MCP limit.

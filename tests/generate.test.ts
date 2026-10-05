@@ -250,18 +250,19 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.blockingErrors).toBe(0);
     const srr = step.phaseReadiness.find((p) => p.gate === 'SRR');
     const pdr = step.phaseReadiness.find((p) => p.gate === 'PDR');
-    expect(srr).toEqual({ gate: 'SRR', total: srr?.total, covered: srr?.total, missing: [] });
+    expect(srr).toEqual({ gate: 'SRR', total: srr?.total, covered: srr?.total, missing: [], state: 'passed' });
     // CR-GC-303: die frühere „bekannte Lücke" ist WEG. AF-01..03 galten hier als
     // dauerhaft offen, weil der Steering-Pfad seinen OntologyGraph aus dem geflachten
     // Export baute und `element.attributes` dort nicht existiert — kein Stamp konnte
     // je gesehen werden. Seit `takeSteeringSnapshot` denselben Mapper wie der
     // Harness-Pfad benutzt, trägt der Stamp am Fixture-SYS und PDR ist voll gedeckt.
     // Damit ist PDR aus MODELLINHALT erreichbar, nicht mehr durch Encoding blockiert.
-    expect(pdr).toEqual({ gate: 'PDR', total: pdr?.total, covered: pdr?.total, missing: [] });
+    expect(pdr).toEqual({ gate: 'PDR', total: pdr?.total, covered: pdr?.total, missing: [], state: 'passed' });
     // CDR/TRR bleiben in DIESEM Fixture offen — bewusst, aus fehlendem Modellinhalt
     // (keine FMEA-/implplan-Stamps, keine Code-/Test-Bindungen), nicht aus Encoding.
     const currentGate = step.phaseReadiness.find((p) => p.covered < p.total);
     expect(currentGate?.gate).toBe('CDR');
+    expect(currentGate?.state).toBe('open'); // CR-GC-745: der Zustand reist im Schritt mit
     expect(step.phase).not.toBe('handoff');
     expect(step.done).toBe(false);
   });

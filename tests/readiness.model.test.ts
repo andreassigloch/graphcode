@@ -20,7 +20,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { RULE_TO_PHASE, RULE_PRECONDITION, type OntologyElement, type OntologyGraph } from '@sigloch/contracts/se';
+import { RULE_TO_PHASE, RULE_PRECONDITION } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -92,9 +92,12 @@ describe('TEST-readiness-model (A/B): model is defined over V3_RULES, lean scope
 // --- phase_readiness (CR-GC-296): RULE_TO_PHASE rule coverage, orthogonal to --
 // --- the PHASE_GATE_RULES/completeness model above (structural chain legs). --
 
-const el = (id: string, type: OntologyElement['type'], attributes: Record<string, unknown> = {}): OntologyElement =>
-  ({ id, type, name: id, description: '', status: 'draft', created_at: '2026-10-05T00:00:00Z', attributes }) as OntologyElement;
-const graphOf = (...elements: OntologyElement[]): OntologyGraph => ({ elements, traces: [] });
+// CR-GC-745: der Graph in der Form des Stores — `computePhaseReadiness` liest den Zustand des Gates
+// ueber `unposedLegs` (graphcode-client), und das liest diese Form.
+type StoreGraph = Pick<Graph, 'nodes' | 'edges'>;
+const el = (uid: string, type: string, attributes: Record<string, unknown> = {}): StoreGraph['nodes'][number] =>
+  ({ uid, type, name: uid, description: '', attributes }) as StoreGraph['nodes'][number];
+const graphOf = (...nodes: StoreGraph['nodes']): StoreGraph => ({ nodes, edges: [] });
 /** Ein Entwurf: kein Bauplan-Stempel, keine Bindung — die Bindungsregeln sind nicht gestellt (CR-SM-392). */
 const ENTWURF = graphOf(el('SYS-s', 'SYS'), el('FUNC-a', 'FUNC'), el('TEST-a', 'TEST'), el('SCHEMA-a', 'SCHEMA'));
 /** Die Realisierung hat begonnen (eine Bindung steht) — jede Vorbedingung erfuellt, jede Regel gestellt. */
@@ -177,6 +180,44 @@ describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
         el('FUNC-a', 'FUNC'),
       );
       expect(beine(computePhaseReadiness([], gestempelt)).total).toBe(beine(computePhaseReadiness([], BEGONNEN)).total);
+    });
+  });
+
+  // CR-GC-745 (contracts CR-SM-394): `covered === total` ist kein Urteil. Im Entwurf liest TRR 8/8,
+  // weil seine Bindungsregeln nicht gestellt sind — die Achse wies es damit als erreicht aus und
+  // `currentPhaseGate` lief ueber TRR hinaus (null = „alle vier durch"). ROT ZUERST belegt: gegen den
+  // Stand davor liefern der erste und der dritte Fall `undefined` bzw. `null`.
+  describe('Zustand der Regelabdeckung (CR-GC-745)', () => {
+    const trr = (r: ReturnType<typeof computePhaseReadiness>) => r.find((p) => p.gate === 'TRR')!;
+
+    it('Entwurf ohne Befund: TRR ist not-reached, obwohl covered === total — und bleibt das aktuelle Gate', () => {
+      const report = computePhaseReadiness([], ENTWURF);
+      expect(trr(report).covered).toBe(trr(report).total); // die Zahl allein laese „durch"
+      expect(trr(report).missing).toEqual([]);
+      expect(trr(report).state).toBe('not-reached');
+      expect(report.filter((p) => p.gate !== 'TRR').map((p) => p.state)).toEqual(['passed', 'passed', 'passed']);
+      expect(currentPhaseGate(report)).toBe('TRR');
+    });
+
+    it('ein Befund hat Vorrang: Entwurf mit offener TRR-Regel ist open, nicht not-reached', () => {
+      const report = computePhaseReadiness([{ ruleId: 'R-01' }], ENTWURF);
+      expect(trr(report).state).toBe('open');
+      expect(trr(report).missing).toEqual(['R-01']);
+    });
+
+    it('mit einer Bindung ist gefragt: ohne Befund passed, mit offenem R-19 open', () => {
+      expect(trr(computePhaseReadiness([], BEGONNEN)).state).toBe('passed');
+      expect(currentPhaseGate(computePhaseReadiness([], BEGONNEN))).toBeNull();
+      expect(trr(computePhaseReadiness([{ ruleId: 'R-19' }], BEGONNEN)).state).toBe('open');
+    });
+
+    it('state === passed genau dann, wenn nichts offen UND jedes Bein gestellt ist — an jedem Gate', () => {
+      for (const g of [ENTWURF, BEGONNEN]) {
+        for (const p of computePhaseReadiness([{ ruleId: 'R-15' }], g)) {
+          if (p.missing.length > 0) expect(p.state).toBe('open');
+          else expect(['passed', 'not-reached']).toContain(p.state);
+        }
+      }
     });
   });
 

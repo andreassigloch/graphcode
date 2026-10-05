@@ -28,13 +28,14 @@ import {
   type SteerSpaceType,
 } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot, type SteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
-import { toOntologyGraph } from '../kernel/conformance.js';
 // CR-GC-537: die EINE Normierung des Steuerungsraums. Erst seit CR-SM-340 aus dem Paket
 // erreichbar — davor gab es sie nur paketintern, und ein Host haette sie nachbauen muessen.
 import { steerScore, steerTerms } from '@sigloch/se-engine';
 import {
   summarizeReadiness,
   computePhaseReadiness,
+  GATE_STATE_LABELS,
+  type ReadinessGate,
   type ReadinessReport,
   type PhaseGateReadiness,
 } from '../kernel/measure/readiness.js';
@@ -277,9 +278,18 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     terms: steerTerms(snap.violations),
   });
 
+  /** Der Anzeigetext des Zustands, am Gate mitgegeben — gelesen, nie hier formuliert (CR-GC-745). */
+  type GateMitAnzeige = ReadinessGate & { stateLabel: string };
+  const mitAnzeige = (g: ReadinessGate): GateMitAnzeige => ({ ...g, stateLabel: GATE_STATE_LABELS[g.state] });
+
   const graph_readiness: MCPTool<
     z.infer<typeof GraphReadinessInputSchema>,
-    ReadinessReport & {
+    Omit<ReadinessReport, 'phaseGates' | 'implGates'> & {
+      /** CR-GC-745: jedes Gate mit seinem Zustand UND dessen Anzeigetext (`GATE_STATE_LABELS`,
+       * graphcode-client) — `passed: false` allein sagt nicht, ob etwas offen ist oder ob noch
+       * nichts zu pruefen war (`not-reached`, „nicht durchschritten"). */
+      phaseGates: GateMitAnzeige[];
+      implGates: GateMitAnzeige[];
       [PHASE_READINESS_NAME]: PhaseGateReadiness[];
       /** CR-GC-325: die 8 RULE_TO_DIMENSION-Themenscores — die zweite Projektion
        * DESSELBEN Regelstroms, aus DEMSELBEN Snapshot wie graph_generate. */
@@ -335,7 +345,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       // und beide Blöcke aus verschiedenen Erhebungen zu speisen.
       const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
       const report = readinessOf(ev, harness.getGraph());
-      const phaseReadiness = computePhaseReadiness(report.violations, toOntologyGraph(harness.getGraph()));
+      const phaseReadiness = computePhaseReadiness(report.violations, harness.getGraph());
       // Intent-Coverage (CR-GC-295): nur wenn die Config bestätigte Anker trägt;
       // der Loader prüft dabei auch die Zielkonflikt-Paare (Warning, kein Block).
       const anchors = loadTargetProfile(harness.getRepoRoot())?.profile.intentAnchors ?? [];
@@ -357,8 +367,11 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
        * Verstossliste der beiden Diagnose-Werkzeuge, nie der Score.
        */
       const umfang = schneide(report.violations, await arbeitsmenge(), (v) => v.elementId).umfang;
+      const shown = input.detail ? report : summarizeReadiness(report);
       return {
-        ...(input.detail ? report : summarizeReadiness(report)),
+        ...shown,
+        phaseGates: shown.phaseGates.map(mitAnzeige),
+        implGates: shown.implGates.map(mitAnzeige),
         umfang,
         [PHASE_READINESS_NAME]: phaseReadiness,
         [DIMENSION_READINESS_NAME]: dimensionReadiness(snapshot),
