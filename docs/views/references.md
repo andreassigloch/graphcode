@@ -785,6 +785,9 @@
 | `CR-GC-742` | relation | `REQ-rig-benchmark` |
 | `CR-GC-743` | relation | `FUNC-score-completeness` |
 | `CR-GC-744` | relation | `FUNC-test` |
+| `CR-GC-745` | relation | `FUNC-score-completeness` |
+| `CR-GC-745` | relation | `SCHEMA-phase-readiness` |
+| `CR-GC-746` | relation | `FUNC-score-completeness` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

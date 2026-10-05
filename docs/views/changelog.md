@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 354 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 356 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 354 CR · 328 done · 4 open.
+Total: 356 CR · 330 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -416,3 +416,5 @@ Total: 354 CR · 328 done · 4 open.
 | `CR-GC-742` | done | Rig-Simulator beantwortet eine Entscheidungsfrage des Agenten mit dem ganzen Antwortblatt plus Vorschlag - Widerspruch, 66k Zeichen Denken bis Ausgabelimit (lokal-1 Zug 2); Regel: Frage mit Optionen bekommt eine Antwort |
 | `CR-GC-743` | done | Nachzug contracts 10.15 - CR-R05 gestrichen und Bindungsregeln ab Realisierung |
 | `CR-GC-744` | done | Nachzug contracts 10.15 - Attribut concept entfaellt |
+| `CR-GC-745` | done | Nachzug client 1.6.1 - Gate-Zustand auf beiden Achsen |
+| `CR-GC-746` | done | Nachzug client 1.6.1 - Gate-Zustand in Hilfe Export und Rig-Beleg |

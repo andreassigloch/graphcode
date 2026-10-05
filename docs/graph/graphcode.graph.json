@@ -3009,6 +3009,22 @@
       "commitRef": "b72f608"
     },
     {
+      "id": "CR-GC-745",
+      "type": "CR",
+      "name": "Nachzug client 1.6.1 - Gate-Zustand auf beiden Achsen",
+      "description": "docs/cr/done/CR-GC-745-nachzug-client-1-6-1-gate-zustand-auf-beiden-achsen.md",
+      "status": "done",
+      "commitRef": "749fa70"
+    },
+    {
+      "id": "CR-GC-746",
+      "type": "CR",
+      "name": "Nachzug client 1.6.1 - Gate-Zustand in Hilfe Export und Rig-Beleg",
+      "description": "docs/cr/done/CR-GC-746-nachzug-client-1-6-1-gate-zustand-in-hilfe-export-und-rig-beleg.md",
+      "status": "done",
+      "commitRef": "e18664f"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14811,6 +14827,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-745",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-745",
+      "target": "SCHEMA-phase-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-746",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23560,5 +23591,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 616
+  "graphVersion": 617
 }

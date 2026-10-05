@@ -413,6 +413,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-742` | done | Rig-Simulator beantwortet eine Entscheidungsfrage des Agenten mit dem ganzen Antwortblatt plus Vorschlag - Widerspruch, 66k Zeichen Denken bis Ausgabelimit (lokal-1 Zug 2); Regel: Frage mit Optionen bekommt eine Antwort | `MOD-auswertung` · `MOD-rig` · `REQ-rig-benchmark` |
 | `CR-GC-743` | done | Nachzug contracts 10.15 - CR-R05 gestrichen und Bindungsregeln ab Realisierung | `FUNC-score-completeness` |
 | `CR-GC-744` | done | Nachzug contracts 10.15 - Attribut concept entfaellt | `FUNC-test` |
+| `CR-GC-745` | done | Nachzug client 1.6.1 - Gate-Zustand auf beiden Achsen | `FUNC-score-completeness` |
+| `CR-GC-746` | done | Nachzug client 1.6.1 - Gate-Zustand in Hilfe Export und Rig-Beleg | `FUNC-score-completeness` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
