@@ -1,6 +1,6 @@
 # CR-GC-740: Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-05)
 **Typ:** aus Item ITEM-2026-743 (idea)
 **Erstellt:** 2026-10-05
 **Item:** bok/items/ITEM-2026-743.json (Lane: code)
