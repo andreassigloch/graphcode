@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 63 SCHEMA · 136 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 60 SCHEMA · 133 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -14,6 +14,7 @@
 | `SCHEMA-ask-owner` | src/loop/executor.ts#OwnerExchangeSchema | n/a |
 | `SCHEMA-audit-record` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit.ts#AuditStatsSchema | reviewed |
+| `SCHEMA-benchmark-datensatz` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-candidate-probe` | Konzept (noch kein Zod-Export) | n/a |
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
@@ -31,6 +32,7 @@
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
+| `SCHEMA-lauf-artefakte` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-learning-advice` | extern definiert (kein realRef) | draft |
 | `SCHEMA-learning-query` | extern definiert (kein realRef) | draft |
 | `SCHEMA-lock-owner` | src/kernel/lock-owner-contract.ts#LockOwner | n/a |
@@ -61,11 +63,6 @@
 | `SCHEMA-steering-channel` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
 | `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshotSchema | reviewed |
-| `SCHEMA-systemtest-artifacts` | Konzept (noch kein Zod-Export) | reviewed |
-| `SCHEMA-systemtest-order` | Konzept (noch kein Zod-Export) | reviewed |
-| `SCHEMA-systemtest-row` | Konzept (noch kein Zod-Export) | reviewed |
-| `SCHEMA-systemtest-turn-profile` | Konzept (noch kein Zod-Export) | reviewed |
-| `SCHEMA-systemtest-verdict` | Konzept (noch kein Zod-Export) | reviewed |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
 | `SCHEMA-test-refs` | packages/contracts/src/se/ontology.ts#TestRefsSchema | reviewed |
 | `SCHEMA-test-selection` | src/kernel/measure/test-selection.ts#TestSelectionSchema | n/a |
@@ -83,6 +80,7 @@
 | `FLOW-audit-entries` | `FUNC-audit-trail` | `ACTOR-owner` · `FUNC-se-retro` |
 | `FLOW-audit-record` | `FUNC-mutate` | `FUNC-audit-stats` · `FUNC-audit-trail` |
 | `FLOW-audit-report` | `FUNC-audit-stats` | `ACTOR-owner` · `FUNC-se-retro` |
+| `FLOW-benchmark-datensatz` | `FUNC-auswertung-auswerten` | — |
 | `FLOW-candidate-batch` | `FUNC-run-executor` | `FUNC-gate-client` · `FUNC-preflight` |
 | `FLOW-candidate-ranking` | `FUNC-rank-candidates` | `FUNC-run-executor` |
 | `FLOW-channel-dimension-template` | `ACTOR-owner` | `FUNC-generation-step` |
@@ -130,6 +128,7 @@
 | `FLOW-install-result-collect-status` | `FUNC-collect-status` | `ACTOR-owner` |
 | `FLOW-install-result-harness-cli` | `FUNC-harness-cli` | `ACTOR-owner` |
 | `FLOW-install-result-upgrade` | `FUNC-upgrade` | `ACTOR-owner` |
+| `FLOW-lauf-artefakte` | `FUNC-rig-lauf` | `FUNC-auswertung-auswerten` · `FUNC-auswertung-blindurteil` · `FUNC-auswertung-nachspielen` · `FUNC-rig-referenz` |
 | `FLOW-learning-advice` | `ACTOR-learning-engine` | `FUNC-graph-suggest` |
 | `FLOW-learning-query` | `FUNC-graph-suggest` | `ACTOR-learning-engine` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `FUNC-broadcast-diff` · `FUNC-serve-sse` · `FUNC-serve-stdio` |
@@ -201,11 +200,6 @@
 | `FLOW-steering-snapshot` | `FUNC-take-steering-snapshot` | `FUNC-compute-steering-delta` · `FUNC-generation-step` |
 | `FLOW-steering-trigger-agent` | `ACTOR-agent` | `FUNC-take-steering-snapshot` |
 | `FLOW-store-ownership` | `FUNC-claim-store-lock` | `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` |
-| `FLOW-systemtest-artifacts` | `FUNC-systemtest-run` | `FUNC-systemtest-metrics` · `FUNC-systemtest-turn-analyse` |
-| `FLOW-systemtest-order` | `ACTOR-owner` | `FUNC-systemtest-run` |
-| `FLOW-systemtest-row` | `FUNC-systemtest-metrics` | `FUNC-systemtest-report` |
-| `FLOW-systemtest-turn-profile` | `FUNC-systemtest-turn-analyse` | `FUNC-systemtest-report` |
-| `FLOW-systemtest-verdict` | `FUNC-systemtest-report` | `ACTOR-owner` |
 | `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-generation-step` · `FUNC-graph-suggest` |
 | `FLOW-target-profile-file` | `FUNC-target-profile` | `FUNC-target-profile-load` |
 | `FLOW-test-selection` | `FUNC-deduce-tests` | `ACTOR-agent` · `ACTOR-owner` |

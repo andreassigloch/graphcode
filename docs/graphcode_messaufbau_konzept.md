@@ -62,7 +62,7 @@ Sitzung (neuer Client-Prozess, derselbe Store). So steht es seit CR-GC-715 in `t
 
 **Aufgabe** (`aufgaben/<name>/aufgabe.json`): `start` (der Prompt), `antwortblatt` (was der Nutzer auf Fragen
 antwortet — das Bedienskript), `punkte` (Raster P*/O* für das Blindurteil), `quelle`, `sequenz`. Für `todo` ist das heute `korpus/todo.json`;
-für `sigllm-prosa` liegen die Teile unter `rig/sigllm-spezifikation/` (Auftrag, Projektdefinition,
+für `sigllm-prosa` lagen die Teile bis CR-GC-740 unter `rig/sigllm-spezifikation/` (Auftrag, Projektdefinition,
 `auftragspunkte.json`, Golden) und werden zu einer Aufgabe zusammengezogen — die Leitlinie nennt S2 auf
 sigllm-prosa.
 
@@ -144,14 +144,14 @@ die Aufgabe sigllm-prosa). Löschen nur, wenn `grep` keinen Leser mehr findet.
 | `sigllm-spezifikation/golden/sigllm-v98.graph.json` | Beispielgraph (Golden) | → `beispielgraphen/` | fünf Tests, `randbreiten`, `model-test-set` |
 | `sigllm-spezifikation/{material-prosa/auftrag.md, material/…projektdefinition.md, golden/auftragspunkte.json}` | Aufgabe | → `rig/aufgaben/sigllm-prosa/` | Leitlinie S2 auf sigllm-prosa |
 | `sigllm-spezifikation/{lauf*.env, prompt*.txt, golden/referenz-trail.jsonl, README.md}` | Executor-Konfiguration, Trajektorie | **löschen** | Eingang weg; `ergebnis.md` → Archiv |
-| `rig/code-test/` | Rig für Code (T-C1, T-E4, T-E5), zwei Arme, Golden im Store | **löschen** (Empfehlung) | nicht die aktuelle Definition; baut auf dem Executor-Golden auf. T-C1 verliert seinen Aufbau — Nachfolger wäre eine Code-Phase nach SRR+PDR im selben Rig, eigener Entscheid |
-| `rig/referenz-change/` | Aufgabe + Auswertung über ein Sitzungsprotokoll (T-E1, T-C3) | **löschen** (Empfehlung) | T-E1 läuft als Dauermessung (`cr-messung`, `retro-kpi`); „nur die Grundlinie", nie wiederholt. T-C3 verliert seinen Aufbau |
+| `rig/code-test/` | Rig für Code (T-C1, T-E4, T-E5), zwei Arme, Golden im Store | **gelöscht** (CR-GC-740) | nicht die aktuelle Definition; baut auf dem Executor-Golden auf. T-C1 verliert seinen Aufbau — Nachfolger wäre eine Code-Phase nach SRR+PDR im selben Rig, eigener Entscheid |
+| `rig/referenz-change/` | Aufgabe + Auswertung über ein Sitzungsprotokoll (T-E1, T-C3) | **gelöscht** (CR-GC-740) | T-E1 läuft als Dauermessung (`cr-messung`, `retro-kpi`); „nur die Grundlinie", nie wiederholt. T-C3 verliert seinen Aufbau |
 | `rig/minimal-whitebox/{measure,jobs,run-phase1}.mjs` | S1-Messung am eigenen Modell (T-E2) | → `scripts/whitebox-messung.mjs`, in `npm run messung` (das ist CR-GC-679B) | deterministisch, kein Lauf; gehört zu den S1-Messungen |
-| `rig/minimal-whitebox/{run-armC*,run-phase1-authoring,run-typediet,tally-toolcalls}.mjs`, `results/` (69) | Executor-Arme, Rohdaten | **löschen** | Eingang `buildRoundInjection` ist Executor; SPIKE-RESULTS trägt das Ergebnis |
-| `rig/dummy-slicer/` | fiktives Konsumenten-Repo, Spike 2026-06 | **löschen** | ausgewertet, kein Leser (Fixture `perf-basis` nennt nur Pfade) |
+| `rig/minimal-whitebox/{run-armC*,run-pull-*,run-phase1-authoring,run-typediet,tally-toolcalls}`, `results/` (69) | Executor-Arme, Rohdaten | **gelöscht** (CR-GC-740) | Eingang `buildRoundInjection` ist Executor; SPIKE-RESULTS trägt das Ergebnis |
+| `rig/dummy-slicer/` | fiktives Konsumenten-Repo, Spike 2026-06 | **gelöscht** (CR-GC-740) | ausgewertet, kein Leser (Fixture `perf-basis` nennt nur Pfade) |
 | `rig/moneyflow-struktur/`, `rig/agentdiary/` | lokal, nicht im Repo | moneyflow bleibt (S1-Positivkontrolle T-O4); agentdiary **lokal löschen** nach Freigabe | agentdiary = Executor-Kette D2 |
-| `rig/interaktiv/runs/` (565 MB) | Rohdaten der Reihe 2026-10-04 | bleiben bis zur ersten Serie nach neuer Definition, dann löschen | Regel 1 |
-| `.env.example` | Schlüssel für den Opus-Arm von `run.mjs` | **löschen** | einziger Leser fällt |
+| `rig/interaktiv/runs/` (565 MB) | Rohdaten der Reihe 2026-10-04 | nach der Serie 2026-10-05 mit den Greenfield-Rohdaten (2,2 GB) in den Papierkorb (CR-GC-740); lokal bleibt die Serie 4–6 | Regel 1 |
+| `.env.example` | Schlüssel für den Opus-Arm von `run.mjs` | **gelöscht** (CR-GC-740) | einziger Leser fällt |
 | `docs/messung/interaktiv.md` | Tabelle des Rigs | → `docs/archive/messung-interaktiv-2026-10-04.md`, aus `benchmark.md` verlinkt (CR-GC-739) | andere Ende-Regel, nicht vergleichbar — Regel 2 |
 
 Mitzuziehen: `tests/systemtest-rig.test.ts`, `rig-zuege`, `rig-steuerung-transcript` (fallen),
@@ -187,7 +187,7 @@ die Freigabe des Autors, sonst werden es sieben statt vier CRs.
 | 1 | `beispielgraphen/` anlegen: `rig/graphs/*`, `results/*.graph.json`, Golden umziehen; Leser umstellen (`randbreiten.mjs`, `model-test-set.mjs`, 6 Tests) | CODE |
 | 2 | `rig/` neu: `interaktiv/*` eine Ebene hoch, `aufgaben/todo/`, `aufgaben/sigllm-prosa/` aus `sigllm-spezifikation`; Sequenz im Treiber; `serie.json`; Vorlage-Commit im Stempel; `treiber.mjs referenz`; erste Referenzläufe todo (lokal nvfp4, frontier); `rig/README.md` neu | CODE |
 | 3 | `auswertung/`: Runner, `kennzahlen`, `nachspielen`, `verhalten`, `schatten-suggest`, `blindurteil`+`spec-render` umgestellt; `benchmark.jsonl/md`; `interaktiv.md` übernommen; Tests | CODE |
-| 4 | Löschen: `greenfield-systemtest/` restlos, `sigllm-spezifikation/` Rest, `code-test/`, `referenz-change/`, `dummy-slicer/`, `minimal-whitebox` Executor-Teile + `results/`, `.env.example`; Auswertungstexte → `docs/archive/messung-executor/`; abhängige Tests; Kommentare; `.gitignore`; Selbstmodell | CODE + Modell |
+| 4 | Löschen: `greenfield-systemtest/` restlos, `sigllm-spezifikation/` Rest, `code-test/`, `referenz-change/`, `dummy-slicer/`, `minimal-whitebox` Executor-Teile + `results/`, `.env.example`; Auswertungstexte → `docs/archive/messung-executor/`; abhängige Tests; Kommentare; `.gitignore`; Selbstmodell — **CR-GC-740** | CODE + Modell |
 | 5 | `scripts/whitebox-messung.mjs` aus `minimal-whitebox` Phase 1, in `npm run messung` (= CR-GC-679B, T-E2) | CODE |
 | 6 | Items: Bedarfsanalyse/Turn-Bilanz interaktiv (T-E9, T-E5); Code-Phase nach SRR+PDR (T-C1) — falls gewollt | — |
 

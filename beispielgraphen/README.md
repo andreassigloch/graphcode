@@ -7,8 +7,7 @@ statt gegen synthetische Fixtures messen.
 **Warum hier und nicht in `docs/graph/`:** `docs/graph/*.graph.json` ist im jeweiligen
 Consumer-Repo der *regierte* Export — einziger Schreiber ist `graph_export`, Hand-Writes
 blockt der `deny-graph-write`-Hook (CR-GC-201), und der Pre-Commit-Guard prüft seine
-Frische. Eine Fixture-Kopie dort wäre ein zweiter, driftender SSOT. Gleiche Begründung wie
-bei `rig/dummy-slicer/model/dummy-slicer.graph.json`.
+Frische. Eine Fixture-Kopie dort wäre ein zweiter, driftender SSOT.
 
 Die Dateien hier sind **eingefrorene Snapshots**. Sie werden nicht mitgezogen, wenn der
 Quellgraph weiterläuft — ein Benchmark, dessen Eingabe sich ändert, misst nichts.
@@ -25,11 +24,13 @@ Quellgraph weiterläuft — ein Benchmark, dessen Eingabe sich ändert, misst ni
 | `sigllm-v98.graph.json` + `sigllm-v98.audit.jsonl` | handgeführter Lauf sigllm 17./18.09.2026, Ende der Spezifikation (das „Golden") mit seinem Audit (der Hand-Trail, den `generate.statemachine` nachspielt) | 2026-09-18, graphVersion 98 | 255 / 506 |
 | `gc-run-haiku45.graph.json` | Executor-Programm 2026-07/08 (CR-GC-678: einer von vier behaltenen Graphen) | 2026-08-01 | 86 / 154 |
 | `gc-run-devstral-v14.graph.json` | Executor-Programm 2026-07/08 (dito) | 2026-08-01 | 85 / 148 |
+| `dummy-slicer.graph.json` | fiktives Konsumenten-Repo `rig/dummy-slicer` (Spike 2026-06; Rig gelöscht mit CR-GC-740), Spezifikationsstand mit unrealisiertem `FN-slice` | 2026-06 | 13 / 14 |
 
 Leser (CR-GC-737, Löschkonzept Regel 5 — ein Graph ohne Leser geht): `scripts/randbreiten.mjs` liest alle;
 `sigllm-v98` lesen `generate.statemachine`, `generate.task`, `steer-optimum`, `policy-herkunft`,
 `read-tools.scope`, `working-set.spezlauf` und die Aufgabe `rig/aufgaben/sigllm-prosa`; die beiden
-`gc-run-*` liest `tests/nd-similarity.test.ts`.
+`gc-run-*` liest `tests/nd-similarity.test.ts`; `dummy-slicer` ist die Kalibrier-Fixture J1 der Whitebox-Messung
+(`rig/minimal-whitebox/jobs.mjs`, T-E2).
 
 ### Der Spike-Korpus (die unteren vier) — CR-GC-498
 
@@ -46,6 +47,7 @@ Befund in der graphcode-Leitlinie T-O4).
 | `sigllm-v98.graph.json` | `a2d01827f4a9` |
 | `gc-run-haiku45.graph.json` | `2ad907d1c308` |
 | `gc-run-devstral-v14.graph.json` | `c72856633b89` |
+| `dummy-slicer.graph.json` | `67f95860f44c` |
 
 Die Tabelle ist die Referenz. `randbreiten.mjs` prüft die Prüfsummen heute **nicht** — ein Leser,
 der sich auf die Zahlen verlässt, prüft sie selbst. Wer bewusst neu verankert, ändert die Tabelle
@@ -79,5 +81,5 @@ synthetische Graphen; und er ist code-los, also ohne aufgelöste `realRef`/`test
 
 Ein Graph gehört hierher, wenn er (a) aus einem echten Lauf stammt, nicht generiert ist,
 (b) mit Datum und `graphVersion` in der Tabelle steht und (c) eine Eigenschaft trägt, die
-die anderen nicht haben — Größe, Typmix, Bindungsgrad. Läufe des Executor-Programms
-gehören stattdessen nach `rig/greenfield-systemtest/results/`.
+die anderen nicht haben — Größe, Typmix, Bindungsgrad. Läufe des Rigs liegen unter `rig/runs/`
+(gitignored); je Aufgabe × Arm hält `rig/aufgaben/<name>/referenz/<arm>/` den Referenzlauf vorrätig.

@@ -143,14 +143,6 @@ export const EXCLUDED = {
     'Vorschlag an den Nutzer (CR-GC-729..734): liest die Regel-Saetze aus den contracts und ein eingefrorenes\n' +
     'Fremdmodell (tests/fixtures/todo-local-v9.graph.json), nie graphcodes eigene SSOT — eine Modellaenderung\n' +
     'kann ihn nicht rot machen; eine Aenderung an next-step.ts sehr wohl (Spur CODE).',
-  'tests/rig-verhalten.test.ts':
-    'Rig-Verhaltensanalyse (Leitlinie T-E10/T-E11): wertet gestellte Logs, Audits und Graphen in einem\n' +
-    'TEMP-Verzeichnis aus und liest die Executor-Prompts (Vorbild-uids). graphcodes eigene SSOT liest er\n' +
-    'nie — eine Modellaenderung kann ihn nicht rot machen; eine Aenderung an Rig-Auswertung oder Vorbild sehr wohl.',
-  'tests/rig-zuege.test.ts':
-    'Rig-Zug-Analyse und Kennzahlverlauf (CR-GC-708/709): spielt gestellte Logs und Audits in einem\n' +
-    'TEMP-Verzeichnis nach und wertet Regeln darauf aus. graphcodes eigene SSOT liest er nie — eine\n' +
-    'Modellaenderung kann ihn nicht rot machen; eine Aenderung an Treiber, Regeln oder Rig-Auswertung sehr wohl.',
   'tests/contracts.kernel.test.ts':
     'CR-GC-719: nennt `docs/graph/` nur als PFAD, unter dem der Test eine eigene formfremde bzw.\n' +
     'vertragstreue SSOT-Datei in ein TEMP-Repo schreibt (SCHEMA-ontology-json). graphcodes eigene SSOT\n' +
@@ -212,14 +204,9 @@ export const EXCLUDED = {
     'der Eigentuemer-Spalte oder am Task-Fokus sehr wohl.',
   'tests/generate.statemachine.test.ts':
     'Eigenschaftstest der Zustandsmaschine (CR-GC-593). Der Treffer ist das GOLDEN EINES RIG-KORPUS\n' +
-    'und die Auto-Graphen unter rig/, nie graphcodes eigene SSOT: geprueft wird done ⇔ kein Fokus\n' +
+    'und die Referenzlaeufe unter rig/aufgaben/, nie graphcodes eigene SSOT: geprueft wird done ⇔ kein Fokus\n' +
     'ueber fremde Graphen. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an\n' +
     'der Fokuswahl oder am Regelkatalog sehr wohl.',
-  'tests/systemtest-rig.test.ts':
-    'Auswertungen des Systemtest-Rigs (CR-GC-574/585/586). Der Treffer ist das GOLDEN EINES\n' +
-    'RIG-KORPUS (`beispielgraphen/sigllm-v98.graph.json`), nie graphcodes eigene\n' +
-    'SSOT: geprueft wird, dass der Hand-Trail dieses Golden nachspielt. Eine Aenderung an\n' +
-    'graphcodes Modell kann ihn nicht rot machen; eine an der Nachspiel-Rechnung sehr wohl.',
   'tests/flow-contracts.test.ts':
     'Fluss-Vertraege (CR-GC-426/535). Der Treffer ist ein FIXTURE-DATEINAME: der Hook-Teil\n' +
     'legt `docs/graph/x.graph.json` mit LEEREM Inhalt in einem Wegwerf-Repo an und prueft,\n' +

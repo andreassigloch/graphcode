@@ -52,7 +52,6 @@
 | `REQ-graph-snapshot-per-commit` | ✓ | ✓ passed | `TEST-auto-export` · `TEST-graph-time-travel` |
 | `REQ-graph-state-recall` | ✓ | ✓ passed | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` |
 | `REQ-graph-tests-operational` | ✓ | ✓ passed | `TEST-graph-tests-operational` · `TEST-selective-test-audit` |
-| `REQ-greenfield-systemtest-dod` | ✓ | ⚠ 1/2 passed | `TEST-greenfield-systemtest` · `TEST-systemtest-evaluations` |
 | `REQ-harness-schema-in-contracts` | ✓ | ✓ passed | `TEST-mcp-symmetry` · `TEST-mutate-schema-guard` |
 | `REQ-held-back-traces-named` | ✓ | ⚠ nie gelaufen | `TEST-import-rejected-traces` |
 | `REQ-hook-extension-points` | ✓ | ✓ passed | `TEST-hooks` |
@@ -125,6 +124,7 @@
 | `REQ-repo-uninstall` | ✓ | ⚠ 1/2 passed | `TEST-cli-scaffold` · `TEST-opencode-plugin` |
 | `REQ-repo-update` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
 | `REQ-responsiveness` | ✓ | ⚠ nie gelaufen | `TEST-responsiveness` |
+| `REQ-rig-benchmark` | ✓ | ✓ passed | `TEST-auswertung` · `TEST-rig` |
 | `REQ-round-prompt-injection` | ✓ | ✓ passed | `TEST-one-driver-local-and-frontier` |
 | `REQ-roundtrip-conformance` | ✓ | ✓ passed | `TEST-roundtrip` |
 | `REQ-rule-calibration` | ✓ | ✓ passed | `TEST-audit-rules-passed` · `TEST-rule-calibration` |
@@ -164,7 +164,7 @@
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
 Coverage: 154/154 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 120/154 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 121/154 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -260,6 +260,10 @@ Belegt: 120/154 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-resolve-tests-from-code` → `FUNC-deduce-tests` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
 | `FUNC-resolve-tests-from-code` → `FUNC-measure-test-schlupf` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
 | `FUNC-resolve-tests-from-code` → `FUNC-plan-code-lane` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
+| `FUNC-rig-lauf` → `FUNC-auswertung-auswerten` | `FLOW-lauf-artefakte` | `FCHAIN-rig-benchmark` | ⚠ keine Abdeckung |  |  |
+| `FUNC-rig-lauf` → `FUNC-auswertung-blindurteil` | `FLOW-lauf-artefakte` | `FCHAIN-rig-benchmark` | ⚠ keine Abdeckung |  |  |
+| `FUNC-rig-lauf` → `FUNC-auswertung-nachspielen` | `FLOW-lauf-artefakte` | `FCHAIN-rig-benchmark` | ⚠ keine Abdeckung |  |  |
+| `FUNC-rig-lauf` → `FUNC-rig-referenz` | `FLOW-lauf-artefakte` | `FCHAIN-rig-benchmark` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-call-model` | `FLOW-model-request` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-gate-client` | `FLOW-candidate-batch` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-preflight` | `FLOW-candidate-batch` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
@@ -275,10 +279,6 @@ Belegt: 120/154 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-se-trade` → `FUNC-mutate` | `FLOW-mutate-cmd-se-trade` | `FCHAIN-skill-authoring` | ⚠ keine Abdeckung |  |  |
 | `FUNC-seed-from-json` → `FUNC-held-back-traces` | `FLOW-ontology-json` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
 | `FUNC-seed-from-json` → `FUNC-import` | `FLOW-ontology-json` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
-| `FUNC-systemtest-metrics` → `FUNC-systemtest-report` | `FLOW-systemtest-row` | `FCHAIN-systemtest-run` | ⚠ keine Abdeckung |  |  |
-| `FUNC-systemtest-run` → `FUNC-systemtest-metrics` | `FLOW-systemtest-artifacts` | `FCHAIN-systemtest-run` | ⚠ keine Abdeckung |  |  |
-| `FUNC-systemtest-run` → `FUNC-systemtest-turn-analyse` | `FLOW-systemtest-artifacts` | `FCHAIN-systemtest-run` | ⚠ keine Abdeckung |  |  |
-| `FUNC-systemtest-turn-analyse` → `FUNC-systemtest-report` | `FLOW-systemtest-turn-profile` | `FCHAIN-systemtest-run` | ⚠ keine Abdeckung |  |  |
 | `FUNC-take-steering-snapshot` → `FUNC-compute-steering-delta` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-measurement-vector` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-steering-snapshot` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |

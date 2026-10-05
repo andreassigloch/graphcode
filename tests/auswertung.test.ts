@@ -18,7 +18,7 @@ import { schattenBilanz, beruehrt } from '../auswertung/schatten-suggest.mjs';
 // @ts-expect-error — s.o.
 import { datensatz, upsert, juengsteSerie, rendern, ANALYSEN } from '../auswertung/auswerten.mjs';
 // @ts-expect-error — s.o.
-import { mutationen, nachspielen } from '../auswertung/nachspielen.mjs';
+import { mutationen, nachspielen, nachspielenRein } from '../auswertung/nachspielen.mjs';
 
 let dir: string;
 beforeAll(() => { dir = mkdtempSync(join(tmpdir(), 'auswertung-')); });
@@ -182,4 +182,16 @@ describe('nachspielen: die Referenzläufe der Aufgabe todo', () => {
     expect(r.gates.SRR).toBe(true);
     expect(r.gates.PDR).toBe(true);
   }, 180_000);
+});
+
+describe('nachspielenRein: ohne Store, ohne Gate', () => {
+  it('spielt die angewandten Mutationen des Referenzlaufs durch applyCommands und trifft den abgelegten Graphen', async () => {
+    const ref = join(process.cwd(), 'rig', 'aufgaben', 'todo', 'referenz', 'lokal');
+    const abgelegt = JSON.parse(readFileSync(join(ref, 'graph.json'), 'utf8'));
+    const r = await nachspielenRein(join(ref, 'audit.jsonl'));
+    expect(r.zuege).toBe(mutationen(join(ref, 'audit.jsonl')).filter((a) => a.result === 'applied').length);
+    expect(r.abgelehnt).toBeGreaterThan(0);
+    expect(r.graph.nodes.length).toBe(abgelegt.elements.length);
+    expect(r.graph.edges.length).toBe(abgelegt.traces.length);
+  });
 });

@@ -23,6 +23,24 @@ export function flach(g) {
 }
 
 /**
+ * Rein, ohne Store und ohne Gate-Urteil: die angewandten Mutationen eines Audits in Reihenfolge durch
+ * `applyCommands` — der Endgraph als Harness-Graph und die Zahl der Züge. Für Eigenschaftstests über Trails
+ * (tests/generate.statemachine.test.ts); wer das Gate-Urteil braucht, nimmt `nachspielen`.
+ */
+export async function nachspielenRein(auditPfad) {
+  const { applyCommands, cloneGraph } = await import('../dist/kernel/apply-commands.js');
+  const alle = mutationen(auditPfad);
+  let graph = { nodes: [], edges: [] };
+  let zuege = 0;
+  for (const a of alle) {
+    if (a.result !== 'applied' || !a.commands?.length) continue;
+    graph = applyCommands(cloneGraph(graph), a.commands).graph;
+    zuege++;
+  }
+  return { zuege, abgelehnt: alle.filter((a) => a.result !== 'applied').length, graph };
+}
+
+/**
  * Die ersten `n` Mutationen (angewandte wie abgelehnte zählen) nachspielen: nur die angewandten gehen in
  * Reihenfolge durch das Gate. `jeZug(leer, i, commands)` läuft vor jeder angewandten Mutation mit dem offenen
  * Wegwerf-Store — für Analysen, die den Stand davor brauchen; `amEnde(leer)` läuft nach der letzten.

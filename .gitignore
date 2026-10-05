@@ -37,7 +37,7 @@ docs/views/cr-list.md
 CLAUDE.local.md
 docs/views/dashboard.url
 
-# Lokale Geheimnisse (ANTHROPIC_API_KEY fuer den Rig-Arm gcrun-frontier) — nie committen.
+# Lokale Geheimnisse — nie committen.
 .env
 .env.local
 

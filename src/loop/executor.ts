@@ -8,8 +8,9 @@
  * und injiziert dessen Instruktion (inkl. Kanten-Grammatik); das Modell
  * emittiert nur den geforderten Batch via `graph_mutate`.
  *
- * Kernkorrektur gegenüber dem Rig-Prototyp (rig/greenfield-systemtest/
- * driver.mjs): der REPAIR-LOOP. Der Prototyp brach den Step nach dem ersten
+ * Kernkorrektur gegenüber dem Rig-Prototyp (driver.mjs des Greenfield-Rigs, gelöscht
+ * mit CR-GC-740; Texte unter docs/archive/messung-executor/): der REPAIR-LOOP. Der
+ * Prototyp brach den Step nach dem ersten
  * Mutate ab — auch bei Gate-Rejection; das Modell sah die violations nie
  * (die Fehldiagnose "lokal kann Expand nicht"). Hier läuft der Step weiter,
  * bis das Gate `success:true` sagt oder das Step-Budget endet, und jede

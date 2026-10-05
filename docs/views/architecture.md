@@ -14,6 +14,9 @@
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
 | `FUNC-audit-stats` | FUNC | aggregateAuditEntries(entries) |
 | `FUNC-audit-trail` | FUNC | projectAuditEntries(entries, opts) |
+| `FUNC-auswertung-auswerten` | FUNC | Lauf auswerten |
+| `FUNC-auswertung-blindurteil` | FUNC | Blindurteil |
+| `FUNC-auswertung-nachspielen` | FUNC | Audit nachspielen |
 | `FUNC-author-req` | FUNC | Skill se:author-req |
 | `FUNC-author-uc` | FUNC | Skill se:author-uc |
 | `FUNC-authoring-guide` | FUNC | graph_authoring_guide(type) |
@@ -102,6 +105,9 @@
 | `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
+| `FUNC-rig-lauf` | FUNC | Lauf fahren |
+| `FUNC-rig-referenz` | FUNC | Referenzlauf setzen |
+| `FUNC-rig-serie` | FUNC | Serie fahren |
 | `FUNC-run-executor` | FUNC | runExecutor |
 | `FUNC-run-verb` | FUNC | executeRun |
 | `FUNC-schema-guard` | FUNC | schemaFingerprint |
@@ -122,10 +128,6 @@
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-session-shutdown` | FUNC | SessionLifecycle |
-| `FUNC-systemtest-metrics` | FUNC | Lauf bewerten |
-| `FUNC-systemtest-report` | FUNC | Laeufe nebeneinander stellen |
-| `FUNC-systemtest-run` | FUNC | Systemtest-Durchlauf fahren |
-| `FUNC-systemtest-turn-analyse` | FUNC | Turn-Analyse |
 | `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
 | `FUNC-target-profile` | FUNC | Skill se:target-profile |
 | `FUNC-target-profile-load` | FUNC | loadTargetProfile |
@@ -143,13 +145,14 @@
 | `FUNC-view-intplan` | FUNC | se-view-intplan (Integrations-/Testplan) |
 | `FUNC-view-rtm` | FUNC | se-view-rtm (RTM) |
 | `MOD-agent-surface` | MOD | agent-surface — Skill-Treiber |
+| `MOD-auswertung` | MOD | Auswertung |
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
 | `MOD-kernel` | MOD | kernel — Store, Gate, Regeln, OpLog |
 | `MOD-kernel-measure` | MOD | measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot |
 | `MOD-loop` | MOD | loop — Autopilot und Executor |
 | `MOD-projections` | MOD | projections — Graph nach Artefakt |
+| `MOD-rig` | MOD | Rig |
 | `MOD-surface` | MOD | surface — MCP, CLI, Host-Socket, Viewer |
-| `MOD-systemtest` | MOD | Systemtest-Rig |
 | `SYS-graphcode` | SYS | GraphCode |
 
 ## Allokation (FUNC -allocate-> MOD)
@@ -160,6 +163,9 @@
 | `FUNC-arch-fitness` | `MOD-kernel-measure` |
 | `FUNC-audit-stats` | `MOD-surface` |
 | `FUNC-audit-trail` | `MOD-surface` |
+| `FUNC-auswertung-auswerten` | `MOD-auswertung` |
+| `FUNC-auswertung-blindurteil` | `MOD-auswertung` |
+| `FUNC-auswertung-nachspielen` | `MOD-auswertung` |
 | `FUNC-author-req` | `MOD-agent-surface` |
 | `FUNC-author-uc` | `MOD-agent-surface` |
 | `FUNC-authoring-guide` | `MOD-projections` |
@@ -248,6 +254,9 @@
 | `FUNC-reseed` | `MOD-kernel` |
 | `FUNC-resolve-tests-from-code` | `MOD-kernel` |
 | `FUNC-rewind` | `MOD-surface` |
+| `FUNC-rig-lauf` | `MOD-rig` |
+| `FUNC-rig-referenz` | `MOD-rig` |
+| `FUNC-rig-serie` | `MOD-rig` |
 | `FUNC-run-executor` | `MOD-loop` |
 | `FUNC-run-verb` | `MOD-surface` |
 | `FUNC-schema-guard` | `MOD-kernel` |
@@ -268,10 +277,6 @@
 | `FUNC-serve-sse` | `MOD-surface` |
 | `FUNC-serve-stdio` | `MOD-surface` |
 | `FUNC-session-shutdown` | `MOD-surface` |
-| `FUNC-systemtest-metrics` | `MOD-systemtest` |
-| `FUNC-systemtest-report` | `MOD-systemtest` |
-| `FUNC-systemtest-run` | `MOD-systemtest` |
-| `FUNC-systemtest-turn-analyse` | `MOD-systemtest` |
 | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `FUNC-target-profile` | `MOD-agent-surface` |
 | `FUNC-target-profile-load` | `MOD-loop` |

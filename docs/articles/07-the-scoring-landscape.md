@@ -192,7 +192,7 @@ fixed*, separate from whether the graph got better overall. Worth its own view l
 
 **Progress — rank 3 against rank 4, one point per round actually applied.** Every point is a real
 accepted edit from one real run — devstral through the best-of-N driver, 22 applied rounds, raw log
-committed as [`gc-run-devstral-v18-bo3.run.log`](../../rig/greenfield-systemtest/results/logs/gc-run-devstral-v18-bo3.run.log).
+committed as `gc-run-devstral-v18-bo3.run.log` (raw log of the executor programme, kept outside the repo).
 Round 1 (the cold start — first SYS/ACTORs/UCs from nothing) is left off the plot, off-scale at
 `dimension_readiness` +1.42 / fitness +6.67, and stated here instead of squashing the other 21
 points into a corner.
@@ -209,7 +209,7 @@ least-bad option, not a guaranteed-good one.
 
 **Efficiency — cumulative applied vs. rejected, rank 1 only.** A second real run (Haiku 4.5, 56 real
 `mutate` calls in sequence, raw log committed as
-[`gc-run-haiku45.audit.jsonl`](../../rig/greenfield-systemtest/results/audit/gc-run-haiku45.audit.jsonl))
+`gc-run-haiku45.audit.jsonl`; its final graph is [`beispielgraphen/gc-run-haiku45.graph.json`](../../beispielgraphen/gc-run-haiku45.graph.json))
 — mutations-count dropped from this view entirely, for the reason above: it's
 a tiebreaker of last resort, not a measure of anything, so counting it as "efficiency" would credit
 the wrong thing.

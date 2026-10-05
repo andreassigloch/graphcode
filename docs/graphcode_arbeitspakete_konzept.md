@@ -16,7 +16,7 @@ einzeln detaillieren, die anderen als Kontext. Das Modell wird vom selbst erzeug
 
 ## Befund: heute ist es eine Befund-Schleife
 
-Gemessen an neun Läufen (`rig/greenfield-systemtest/auswertung-cr682.md`):
+Gemessen an neun Läufen (`docs/archive/messung-executor/auswertung-cr682.md`):
 
 - `graph_generate` arbeitet vier Schritte vom Groben ins Feine (SYS, UCs, ACTORs, Gerüst). Ab der
   ersten FUNC wählt allein die **schwächste Readiness-Dimension über den ganzen Graphen** den nächsten
@@ -189,7 +189,7 @@ gcrun-343/344 lagen von 47 Dublettenpaaren 9 unter demselben Elternteil, 8 eine 
 verschiedenen Zweigen**. Die Ähnlichkeitsprüfung beim Anlegen (Preflight) bleibt deshalb global und
 gilt für jeden Typ, nicht nur REQ/UC.
 
-### Belege (S2-Runde gcrun-342..344, `rig/greenfield-systemtest/zuege.mjs`)
+### Belege (S2-Runde gcrun-342..344, `zuege.mjs` des Greenfield-Rigs, gelöscht mit CR-GC-740)
 
 - 76 % der Runden (91/120) vervollständigen halbe Inhaltsblöcke und erzeugen dabei 256 neue
   Fokusfunde — der Block-Zug in Schritt 1 ersetzt diese Kette.

@@ -98,7 +98,7 @@ function vitest(datei, json) {
 
 async function erhebe() {
   const dist = await import(join(REPO, 'dist', 'index.js'));
-  const { codeVerdict } = await import(join(REPO, 'rig', 'greenfield-systemtest', 'metrics.mjs'));
+  const { codeVerdict } = await import(join(REPO, 'scripts', 'kongruenz.mjs'));
   const { randbreiten } = await import(join(REPO, 'scripts', 'randbreiten.mjs'));
   const { messeGrenzmenge } = await import(join(REPO, 'scripts', 'grenzmenge.mjs'));
   const se = await import('@sigloch/contracts/se');

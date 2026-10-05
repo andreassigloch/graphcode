@@ -2967,6 +2967,12 @@
       "commitRef": "2c38665"
     },
     {
+      "id": "CR-GC-740",
+      "type": "CR",
+      "name": "Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv",
+      "description": "docs/cr/open/CR-GC-740-messaufbauten-alter-definition-lo-schen-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3084,6 +3090,13 @@
       "status": "reviewed"
     },
     {
+      "id": "FCHAIN-rig-benchmark",
+      "type": "FCHAIN",
+      "name": "Rig: Lauf",
+      "description": "Lauf fahren, Audit nachspielen, Lauf auswerten, Referenz setzen: vom Start-Prompt zur Zeile im Benchmark und zum vorrätigen Referenzlauf.",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-schema-migration",
       "type": "FCHAIN",
       "name": "Schema-Migration bei Version-Bump",
@@ -3112,13 +3125,6 @@
       "type": "FCHAIN",
       "name": "Kenngroessen-Steuerungsschleife",
       "description": "Die Schleife in der Reihenfolge der Messgroessen-Landschaft: messen, projizieren, Fokus waehlen, Kandidaten bewerten, Prompt stellen, Gate. Nicht zu verwechseln mit FCHAIN-advisory-roundtrip: der antwortet auf eine Frage, diese Kette waehlt selbst den naechsten Schritt.",
-      "status": "reviewed"
-    },
-    {
-      "id": "FCHAIN-systemtest-run",
-      "type": "FCHAIN",
-      "name": "Systemtest: Lauf, Artefakte, Auswertung, Befund",
-      "description": "Die Kette, mit der das Produkt ueber sich selbst misst: der Mensch stellt den Auftrag, ein Durchlauf je Arm hinterlaesst Artefakte, Bewertung und Turn-Analyse lesen sie unabhaengig voneinander, der Bericht stellt beides nebeneinander. Einzelne Arme, Modelle und Laufnummern sind Konfiguration und bekommen bewusst keinen Knoten. (CR-GC-574)",
       "status": "reviewed"
     },
     {
@@ -3155,6 +3161,12 @@
       "name": "Audit-Auswertung",
       "description": "Die Auswertung der Aufzeichnung im Aggregat: Haeufigkeiten je Regel, Konsument und Modell ueber die Zeit.",
       "status": "reviewed"
+    },
+    {
+      "id": "FLOW-benchmark-datensatz",
+      "type": "FLOW",
+      "name": "Benchmark-Datensatz",
+      "description": "Ein Datensatz je Lauf: Identität, Stand, Gates des letzten Zugs, die Teile der Analysen."
     },
     {
       "id": "FLOW-candidate-batch",
@@ -3510,6 +3522,12 @@
       "name": "Lifecycle-Result (upgrade)",
       "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
       "status": "reviewed"
+    },
+    {
+      "id": "FLOW-lauf-artefakte",
+      "type": "FLOW",
+      "name": "Lauf-Artefakte",
+      "description": "lauf.json, audit.jsonl, graph.json, denken.json eines Laufs."
     },
     {
       "id": "FLOW-learning-advice",
@@ -3990,36 +4008,6 @@
       "description": "Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert."
     },
     {
-      "id": "FLOW-systemtest-artifacts",
-      "type": "FLOW",
-      "name": "Lauf-Artefakte",
-      "description": "Was ein einzelner Lauf hinterlaesst und die Auswertung wieder aufnimmt — der Uebergabepunkt zwischen Fahren und Bewerten."
-    },
-    {
-      "id": "FLOW-systemtest-order",
-      "type": "FLOW",
-      "name": "Systemtest-Auftrag",
-      "description": "Der Anstoss des Menschen an den Messaufbau: welche Arme, wie viele Laeufe, gegen welches Golden und welche Pruefliste."
-    },
-    {
-      "id": "FLOW-systemtest-row",
-      "type": "FLOW",
-      "name": "Bewertungszeile",
-      "description": "Das Ergebnis der Bewertung eines Laufs, wie es in results-*.json abgelegt und vom Bericht wieder gelesen wird."
-    },
-    {
-      "id": "FLOW-systemtest-turn-profile",
-      "type": "FLOW",
-      "name": "Turn-Profil",
-      "description": "Die aufgeschnittene Verbrauchsspur eines Laufs, die der Bericht neben die Bewertungszeilen stellt."
-    },
-    {
-      "id": "FLOW-systemtest-verdict",
-      "type": "FLOW",
-      "name": "Systemtest-Bericht",
-      "description": "Der Bericht an den Menschen: jeder Rohlauf, Spannweiten je Arm, Turn-Auswertung, Modul-Audit und die ausdruecklich benannten Grenzen der Aussage."
-    },
-    {
       "id": "FLOW-target-profile",
       "type": "FLOW",
       "name": "Zielprofil",
@@ -4118,6 +4106,42 @@
         "file": "src/surface/audit.ts",
         "symbol": "projectAuditEntries",
         "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-auswertung-auswerten",
+      "type": "FUNC",
+      "name": "Lauf auswerten",
+      "description": "Einen Lauf auswerten: die gewählten Analysen rechnen, den Datensatz in benchmark.jsonl ersetzen oder anhängen, benchmark.md neu erzeugen.",
+      "status": "done",
+      "realRef": {
+        "file": "auswertung/auswerten.mjs",
+        "symbol": "auswertenLauf",
+        "lang": "js"
+      }
+    },
+    {
+      "id": "FUNC-auswertung-blindurteil",
+      "type": "FUNC",
+      "name": "Blindurteil",
+      "description": "Anonyme Specs mit Raster und Auftrag der Aufgabe vorbereiten und die Gutachten einlesen.",
+      "status": "done",
+      "realRef": {
+        "file": "auswertung/blindurteil.mjs",
+        "symbol": "vorbereiten",
+        "lang": "js"
+      }
+    },
+    {
+      "id": "FUNC-auswertung-nachspielen",
+      "type": "FUNC",
+      "name": "Audit nachspielen",
+      "description": "Den Graphen eines Laufs aus dem Audit durch das echte Gate eines Wegwerf-Stores neu bauen und die Readiness darauf messen; der laufende Host bleibt unberührt.",
+      "status": "done",
+      "realRef": {
+        "file": "auswertung/nachspielen.mjs",
+        "symbol": "nachspielen",
+        "lang": "js"
       }
     },
     {
@@ -5098,6 +5122,42 @@
       }
     },
     {
+      "id": "FUNC-rig-lauf",
+      "type": "FUNC",
+      "name": "Lauf fahren",
+      "description": "Einen Lauf fahren: frisches Repo aus der Vorlage, Stufen der Sequenz, der Simulator antwortet; Ende, sobald SRR und PDR am Nachbau aus dem Audit bestanden sind.",
+      "status": "done",
+      "realRef": {
+        "file": "rig/treiber.mjs",
+        "symbol": "lauf",
+        "lang": "js"
+      }
+    },
+    {
+      "id": "FUNC-rig-referenz",
+      "type": "FUNC",
+      "name": "Referenzlauf setzen",
+      "description": "Einen Lauf zur Referenz der Aufgabe machen: Graph, graphcode-Log, LLM-Log und Stempel nach aufgaben/<name>/referenz/<arm>/; der alte Referenzlauf geht.",
+      "status": "done",
+      "realRef": {
+        "file": "rig/treiber.mjs",
+        "symbol": "referenzSetzen",
+        "lang": "js"
+      }
+    },
+    {
+      "id": "FUNC-rig-serie",
+      "type": "FUNC",
+      "name": "Serie fahren",
+      "description": "Die Serie fahren: fehlende Läufe je Aufgabe und Arm für den aktuellen Stand bestimmen, fahren, am Ende auswerten.",
+      "status": "done",
+      "realRef": {
+        "file": "rig/treiber.mjs",
+        "symbol": "fehlendeLaeufe",
+        "lang": "js"
+      }
+    },
+    {
       "id": "FUNC-run-executor",
       "type": "FUNC",
       "name": "runExecutor",
@@ -5307,48 +5367,6 @@
       }
     },
     {
-      "id": "FUNC-systemtest-metrics",
-      "type": "FUNC",
-      "name": "Lauf bewerten",
-      "description": "Reine Arithmetik ueber die Artefakte eines Laufs: Struktur, Readiness, Spezifikations- und Code-Urteil samt Reichweite, Ablehnungen aus dem Audit, Modul-Audit gegen das Golden und die Wortlaut-Pruefliste des Auftrags. Kein KI-Richter, kein Live-Store — jede Zahl ist aus den abgelegten Dateien reproduzierbar. (CR-GC-553, CR-GC-574)",
-      "status": "done",
-      "realRef": {
-        "file": "rig/greenfield-systemtest/metrics.mjs",
-        "symbol": "runMetrics"
-      }
-    },
-    {
-      "id": "FUNC-systemtest-report",
-      "type": "FUNC",
-      "name": "Laeufe nebeneinander stellen",
-      "description": "Stellt jeden Rohlauf einzeln dar statt eines Mittels, nennt je Arm Spannweiten statt Streuungsmasse, haengt die Turn-Auswertung an und benennt die Grenzen der Aussage. Ein Korpus je Bericht — zwei Fragen mit verschiedenen Goldens in einer Tabelle waeren keine Messung. (CR-GC-553, CR-GC-574)",
-      "status": "done",
-      "realRef": {
-        "file": "rig/greenfield-systemtest/report.mjs"
-      }
-    },
-    {
-      "id": "FUNC-systemtest-run",
-      "type": "FUNC",
-      "name": "Systemtest-Durchlauf fahren",
-      "description": "Je Arm und Lauf: frischer Workspace, Material hineinkopiert, SYS-Seed in einem eigenen Prozess, Store-Schloss freigegeben, Executor gestartet, Artefakte eingesammelt. Die Arme sind Konfiguration — Modellnamen und Laufnummern bekommen bewusst keinen Knoten. (CR-GC-574)",
-      "status": "done",
-      "realRef": {
-        "file": "rig/greenfield-systemtest/run.mjs"
-      }
-    },
-    {
-      "id": "FUNC-systemtest-turn-analyse",
-      "type": "FUNC",
-      "name": "Turn-Analyse",
-      "description": "Schneidet den stream-json-Strom eines Laufs je Turn auf: Verbrauch, welches Werkzeugergebnis dem teuersten Cache-Zuwachs voranging, und die Dry-Run-Wirkung aus dem Audit. Fasst je message.id zusammen, weil eine Assistant-Nachricht je Content-Block im Strom steht; ohne das zaehlte sie das Doppelte. Voraussetzung jeder Optimierungsschleife am Kontextverbrauch. (CR-GC-567, CR-GC-574)",
-      "status": "done",
-      "realRef": {
-        "file": "rig/greenfield-systemtest/turn-analyse.mjs",
-        "symbol": "leseTurns"
-      }
-    },
-    {
       "id": "FUNC-take-steering-snapshot",
       "type": "FUNC",
       "name": "takeSteeringSnapshot(graph, policy)",
@@ -5552,6 +5570,14 @@
       "path": ".claude/commands"
     },
     {
+      "id": "MOD-auswertung",
+      "type": "MOD",
+      "name": "Auswertung",
+      "description": "Rechnet über die Artefakte eines Laufs: Kennzahlen, Verhalten, Schatten-Vorschläge, Blindurteil. Ein Datensatz je Lauf in docs/messung/benchmark.jsonl, benchmark.md wird daraus erzeugt.",
+      "path": "auswertung/",
+      "status": "done"
+    },
+    {
       "id": "MOD-dashboard",
       "type": "MOD",
       "name": "dashboard — Live-Viewer-App",
@@ -5593,20 +5619,20 @@
       "path": "src/projections"
     },
     {
+      "id": "MOD-rig",
+      "type": "MOD",
+      "name": "Rig",
+      "description": "Das Rig: fährt Läufe einer Aufgabe mit einem Arm (lokal oder frontier) aus der Vorlage todo-local, mit Nutzer-Simulator; eine Stufe endet, wenn SRR und PDR bestanden sind. Hinterlässt je Lauf lauf.json, audit.jsonl, graph.json, denken.json.",
+      "path": "rig/",
+      "status": "done"
+    },
+    {
       "id": "MOD-surface",
       "type": "MOD",
       "name": "surface — MCP, CLI, Host-Socket, Viewer",
       "description": "Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)",
       "status": "done",
       "path": "src/surface"
-    },
-    {
-      "id": "MOD-systemtest",
-      "type": "MOD",
-      "name": "Systemtest-Rig",
-      "description": "Der Messaufbau, mit dem das Produkt ueber sich selbst lernt: ein Greenfield-Durchlauf je Arm, seine Artefakte, ihre Auswertung. Liegt ausserhalb des Abhaengigkeits-DAG von src, weil er gegen dist faehrt wie jeder Kunde — Verbraucher des Produkts, nicht eine seiner Schichten. (CR-GC-574)",
-      "path": "rig/greenfield-systemtest",
-      "status": "reviewed"
     },
     {
       "id": "MS-1-specification",
@@ -6139,16 +6165,6 @@
       "name": "graph_tests liefert den korrekten selektiven Testset für einen Code-Change",
       "description": "Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.",
       "status": "done",
-      "kinds": [
-        "functional"
-      ]
-    },
-    {
-      "id": "REQ-greenfield-systemtest-dod",
-      "type": "REQ",
-      "name": "Definition-of-Done: Greenfield-Systemtest",
-      "description": "Der End-to-End-Nachweis für reduced-llm + token-efficiency + code-quality: leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal genutzt). Authoring qwen3.6-35b-a3b (local) vs. Opus 5 (frontier), je 3×, ein Host (Claude Code). Scoring regelbasiert: readiness, reuse-coverage vs. Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral).",
-      "status": "open",
       "kinds": [
         "functional"
       ]
@@ -6934,6 +6950,16 @@
       ]
     },
     {
+      "id": "REQ-rig-benchmark",
+      "type": "REQ",
+      "name": "Rig-Läufe messbar und reproduzierbar",
+      "description": "Jeder Lauf des Rigs endet, wenn SRR und PDR bestanden sind, und steht als ein Datensatz mit Stand in docs/messung/benchmark.jsonl; je Aufgabe und Arm liegt ein Referenzlauf im Repo, dessen Audit durch das heutige Gate denselben Graphen ergibt.",
+      "status": "done",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-round-prompt-injection",
       "type": "REQ",
       "name": "Der Runden-Prompt traegt Leitfaden und Elementindex",
@@ -7351,6 +7377,14 @@
       }
     },
     {
+      "id": "SCHEMA-benchmark-datensatz",
+      "type": "SCHEMA",
+      "name": "Benchmark-Datensatz",
+      "description": "id, datum, aufgabe, arm, nr, modell, stand, ende, gates, kennzahlen, verhalten, schatten, blindurteil.",
+      "concept": true,
+      "status": "reviewed"
+    },
+    {
       "id": "SCHEMA-candidate-probe",
       "type": "SCHEMA",
       "name": "Kandidat mit Verdict",
@@ -7542,6 +7576,14 @@
         "symbol": "TestImpactResultSchema",
         "lang": "ts"
       }
+    },
+    {
+      "id": "SCHEMA-lauf-artefakte",
+      "type": "SCHEMA",
+      "name": "Lauf-Artefakte",
+      "description": "lauf.json mit arm, nr, aufgabe, sequenz, stand, modell, stempel, ende, sitzungen, graph, zuege; audit.jsonl eine Zeile je Gate-Aufruf; graph.json der flache Export.",
+      "concept": true,
+      "status": "reviewed"
     },
     {
       "id": "SCHEMA-learning-advice",
@@ -7881,46 +7923,6 @@
       }
     },
     {
-      "id": "SCHEMA-systemtest-artifacts",
-      "type": "SCHEMA",
-      "name": "Lauf-Artefakte",
-      "description": "Was ein Lauf auf Platte hinterlaesst und die Auswertung wieder aufnimmt: graph.json, readiness.json, audit.jsonl (der Gate-Log des Laufs), claude-stream.jsonl beziehungsweise run-raw.log (der Turn-Strom) und usage.json. Concept-only: Dateien, kein Wire-Format. (CR-GC-574)",
-      "concept": true,
-      "status": "reviewed"
-    },
-    {
-      "id": "SCHEMA-systemtest-order",
-      "type": "SCHEMA",
-      "name": "Systemtest-Auftrag",
-      "description": "Was ein Durchlauf braucht, bevor er faehrt: Arme, Laufzahl und Startindex, Auftragstext, Seed-System, Materialverzeichnis, Golden-Graph, Pruefliste, Zeitdeckel, Ergebnisdatei. Je Arm zusaetzlich die drei Betriebsmodus-Achsen — wer treibt, welches Modell, welcher Agent-Harness —, damit ein Bericht benennen kann, worin sich zwei Arme unterscheiden; ein Arm, der den Modell-Endpunkt bezahlt, faehrt nur auf namentliche Nennung. Reist als Umgebung, nicht als Datei — deshalb concept-only: ein Zod-Symbol gibt es nicht und soll es nicht geben, solange der Aufbau ein Messwerkzeug ist. (CR-GC-574, Achsen CR-GC-572)",
-      "concept": true,
-      "status": "reviewed"
-    },
-    {
-      "id": "SCHEMA-systemtest-row",
-      "type": "SCHEMA",
-      "name": "Bewertungszeile eines Laufs",
-      "description": "Eine Zeile je Lauf in results-*.json: Arm, Modell, Executor, Laufnummer, Elementzahl, Struktur je Typ, Readiness, Spezifikations- und Code-Urteil samt Reichweite, Gate-Ablehnungen, Verbrauch und die beiden Audit-Listen. Concept-only. (CR-GC-574)",
-      "concept": true,
-      "status": "reviewed"
-    },
-    {
-      "id": "SCHEMA-systemtest-turn-profile",
-      "type": "SCHEMA",
-      "name": "Turn-Profil eines Laufs",
-      "description": "Je Turn Verbrauch und vorausgegangene Werkzeugergebnisse, dazu der Abgleich gegen die Ergebniszeile, die Zuschreibung der Cache-Schreibung je Werkzeug und die Dry-Run-Quote. Concept-only. (CR-GC-574)",
-      "concept": true,
-      "status": "reviewed"
-    },
-    {
-      "id": "SCHEMA-systemtest-verdict",
-      "type": "SCHEMA",
-      "name": "Systemtest-Bericht",
-      "description": "Der Bericht als Text: je Rohlauf eine Zeile, je Arm Spannweiten, die Turn-Auswertung, das Modul-Audit und ein ausdruecklicher Grenzen-Block. Concept-only — er wird gelesen, nicht geparst; ein Vertrag mit Zod-Symbol waere hier eine Behauptung. (CR-GC-574)",
-      "concept": true,
-      "status": "reviewed"
-    },
-    {
       "id": "SCHEMA-target-profile",
       "type": "SCHEMA",
       "name": "TargetProfile",
@@ -8158,6 +8160,23 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-auswertung",
+      "type": "TEST",
+      "name": "Auswertung des Rigs",
+      "description": "Analysen an gestellten Artefakten; Nachspielen der Referenzläufe durch das echte Gate: gleiche Element- und Kantenzahl wie graph.json, SRR und PDR bestanden.",
+      "status": "done",
+      "method": "test",
+      "level": "integration",
+      "testRefs": [
+        {
+          "file": "tests/auswertung.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed"
         }
       ]
     },
@@ -8860,16 +8879,6 @@
           "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
-    },
-    {
-      "id": "TEST-greenfield-systemtest",
-      "type": "TEST",
-      "name": "Top-Level Greenfield System-Test",
-      "description": "Leeres Repo, ein Prompt (Web-App aus graphcode, Multiuser, Module maximal nutzen). Authoring: qwen3.6-35b-a3b (local) vs Opus 5 (frontier), je 3×, ein Host (Claude Code). Metriken/Run: readiness, reuse-coverage vs Modul-Graph-Golden, illegal/blocked, redundanz, tokens_in/out/reasoning, cost, wall_s. Best-fit → Impl-Plan durchs Gate → Coding (qwen-35b · devstral). Scorer regelbasiert, keine KI-Bewertung.",
-      "status": "open",
-      "method": "test",
-      "level": "acceptance",
-      "concept": true
     },
     {
       "id": "TEST-gve-autostart",
@@ -9813,6 +9822,23 @@
       ]
     },
     {
+      "id": "TEST-rig",
+      "type": "TEST",
+      "name": "Rig-Treiber",
+      "description": "Treiber-Reinteile: fehlende Läufe je Stand, Referenzlauf setzen, Aufgabe laden, Stufen.",
+      "status": "done",
+      "method": "test",
+      "level": "unit",
+      "testRefs": [
+        {
+          "file": "tests/rig-interaktiv.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
+        }
+      ]
+    },
+    {
       "id": "TEST-roundtrip",
       "type": "TEST",
       "name": "Format-E Round-Trip Conformance",
@@ -10131,29 +10157,6 @@
       "level": "integration",
       "tool": "vitest",
       "concept": true
-    },
-    {
-      "id": "TEST-systemtest-evaluations",
-      "type": "TEST",
-      "name": "Abnahme der Rig-Auswertungen",
-      "description": "Prueft die Auswertungen des Systemtests gegen echte Artefakte auf Platte: die Zusammenfassung je message.id (sonst zaehlt der Strom das Doppelte), den Abgleich Strom gegen Ergebniszeile, die Zuschreibung der Cache-Schreibung, die Dry-Run-Quote, die Ablehnungszaehlung ohne tier, die Bindungsquote ueber Blatt-FUNCs und das dreiwertige Code-Urteil samt Reichweite. Ohne sie ist der Messaufbau ungemessen — zwei seiner Zaehlfehler fielen bisher erst am lebenden Lauf auf. (CR-GC-574)",
-      "status": "done",
-      "method": "test",
-      "level": "integration",
-      "testRefs": [
-        {
-          "file": "tests/systemtest-rig.test.ts",
-          "tool": "vitest",
-          "level": "integration",
-          "result": "passed"
-        },
-        {
-          "file": "tests/rig-verhalten.test.ts",
-          "tool": "vitest",
-          "level": "integration",
-          "result": "passed"
-        }
-      ]
     },
     {
       "id": "TEST-target-profile",
@@ -10580,11 +10583,6 @@
     {
       "source": "ACTOR-owner",
       "target": "FLOW-query-request-owner",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-owner",
-      "target": "FLOW-systemtest-order",
       "type": "io"
     },
     {
@@ -13708,16 +13706,6 @@
     },
     {
       "source": "CR-GC-572",
-      "target": "FUNC-systemtest-report",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-572",
-      "target": "FUNC-systemtest-run",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-572",
       "target": "REQ-one-driver-local-and-frontier",
       "type": "relation"
     },
@@ -13734,21 +13722,6 @@
     {
       "source": "CR-GC-573",
       "target": "FUNC-generation-step",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-574",
-      "target": "FUNC-systemtest-turn-analyse",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-574",
-      "target": "MOD-systemtest",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-574",
-      "target": "REQ-greenfield-systemtest-dod",
       "type": "relation"
     },
     {
@@ -13812,11 +13785,6 @@
       "type": "relation"
     },
     {
-      "source": "CR-GC-610",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "relation"
-    },
-    {
       "source": "CR-GC-612",
       "target": "FUNC-se-help",
       "type": "relation"
@@ -13834,16 +13802,6 @@
     {
       "source": "CR-GC-614",
       "target": "FUNC-run-executor",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-615",
-      "target": "FUNC-systemtest-report",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-615",
-      "target": "REQ-greenfield-systemtest-dod",
       "type": "relation"
     },
     {
@@ -14327,11 +14285,6 @@
       "type": "relation"
     },
     {
-      "source": "CR-GC-679",
-      "target": "FUNC-systemtest-report",
-      "type": "relation"
-    },
-    {
       "source": "CR-GC-680",
       "target": "FUNC-se-retro",
       "type": "relation"
@@ -14534,11 +14487,6 @@
     {
       "source": "CR-GC-714",
       "target": "REQ-delegate-in-host",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-716",
-      "target": "FUNC-systemtest-report",
       "type": "relation"
     },
     {
@@ -14774,6 +14722,21 @@
     {
       "source": "CR-GC-736",
       "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-740",
+      "target": "MOD-auswertung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-740",
+      "target": "MOD-rig",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-740",
+      "target": "REQ-rig-benchmark",
       "type": "relation"
     },
     {
@@ -15431,6 +15394,36 @@
       "type": "compose"
     },
     {
+      "source": "FCHAIN-rig-benchmark",
+      "target": "FUNC-auswertung-auswerten",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-rig-benchmark",
+      "target": "FUNC-auswertung-blindurteil",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-rig-benchmark",
+      "target": "FUNC-auswertung-nachspielen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-rig-benchmark",
+      "target": "FUNC-rig-lauf",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-rig-benchmark",
+      "target": "FUNC-rig-referenz",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-rig-benchmark",
+      "target": "FUNC-rig-serie",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-schema-migration",
       "target": "FUNC-migrate-schema",
       "type": "compose"
@@ -15786,26 +15779,6 @@
       "type": "compose"
     },
     {
-      "source": "FCHAIN-systemtest-run",
-      "target": "FUNC-systemtest-metrics",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-systemtest-run",
-      "target": "FUNC-systemtest-report",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-systemtest-run",
-      "target": "FUNC-systemtest-run",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-systemtest-run",
-      "target": "FUNC-systemtest-turn-analyse",
-      "type": "compose"
-    },
-    {
       "source": "FLOW-action",
       "target": "ACTOR-agent",
       "type": "io"
@@ -15868,6 +15841,11 @@
     {
       "source": "FLOW-audit-report",
       "target": "SCHEMA-audit-stats",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-benchmark-datensatz",
+      "target": "SCHEMA-benchmark-datensatz",
       "type": "relation"
     },
     {
@@ -16650,6 +16628,31 @@
     {
       "source": "FLOW-install-result-upgrade",
       "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-lauf-artefakte",
+      "target": "FUNC-auswertung-auswerten",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lauf-artefakte",
+      "target": "FUNC-auswertung-blindurteil",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lauf-artefakte",
+      "target": "FUNC-auswertung-nachspielen",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lauf-artefakte",
+      "target": "FUNC-rig-referenz",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lauf-artefakte",
+      "target": "SCHEMA-lauf-artefakte",
       "type": "relation"
     },
     {
@@ -17668,61 +17671,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-systemtest-artifacts",
-      "target": "FUNC-systemtest-metrics",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-systemtest-artifacts",
-      "target": "FUNC-systemtest-turn-analyse",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-systemtest-artifacts",
-      "target": "SCHEMA-systemtest-artifacts",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-systemtest-order",
-      "target": "FUNC-systemtest-run",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-systemtest-order",
-      "target": "SCHEMA-systemtest-order",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-systemtest-row",
-      "target": "FUNC-systemtest-report",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-systemtest-row",
-      "target": "SCHEMA-systemtest-row",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-systemtest-turn-profile",
-      "target": "FUNC-systemtest-report",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-systemtest-turn-profile",
-      "target": "SCHEMA-systemtest-turn-profile",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-systemtest-verdict",
-      "target": "ACTOR-owner",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-systemtest-verdict",
-      "target": "SCHEMA-systemtest-verdict",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-target-profile",
       "target": "FUNC-generation-step",
       "type": "io"
@@ -17869,6 +17817,41 @@
       "source": "FUNC-audit-trail",
       "target": "FLOW-audit-entries",
       "type": "io"
+    },
+    {
+      "source": "FUNC-auswertung-auswerten",
+      "target": "MOD-auswertung",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-auswertung-auswerten",
+      "target": "FLOW-benchmark-datensatz",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-auswertung-auswerten",
+      "target": "REQ-rig-benchmark",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-auswertung-blindurteil",
+      "target": "MOD-auswertung",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-auswertung-blindurteil",
+      "target": "REQ-rig-benchmark",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-auswertung-nachspielen",
+      "target": "MOD-auswertung",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-auswertung-nachspielen",
+      "target": "REQ-rig-benchmark",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-author-req",
@@ -19818,6 +19801,41 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-rig-lauf",
+      "target": "MOD-rig",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-rig-lauf",
+      "target": "FLOW-lauf-artefakte",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-rig-lauf",
+      "target": "REQ-rig-benchmark",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-rig-referenz",
+      "target": "MOD-rig",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-rig-referenz",
+      "target": "REQ-rig-benchmark",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-rig-serie",
+      "target": "MOD-rig",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-rig-serie",
+      "target": "REQ-rig-benchmark",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-run-executor",
       "target": "MOD-loop",
       "type": "allocate"
@@ -20127,66 +20145,6 @@
     {
       "source": "FUNC-session-shutdown",
       "target": "REQ-session-leaves-nothing-behind",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-systemtest-metrics",
-      "target": "MOD-systemtest",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-systemtest-metrics",
-      "target": "FLOW-systemtest-row",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-systemtest-metrics",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-systemtest-report",
-      "target": "MOD-systemtest",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-systemtest-report",
-      "target": "FLOW-systemtest-verdict",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-systemtest-report",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-systemtest-run",
-      "target": "MOD-systemtest",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-systemtest-run",
-      "target": "FLOW-systemtest-artifacts",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-systemtest-run",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-systemtest-turn-analyse",
-      "target": "MOD-systemtest",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-systemtest-turn-analyse",
-      "target": "FLOW-systemtest-turn-profile",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-systemtest-turn-analyse",
-      "target": "REQ-greenfield-systemtest-dod",
       "type": "satisfy"
     },
     {
@@ -20851,6 +20809,11 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "MOD-auswertung",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "MOD-dashboard",
       "type": "compose"
     },
@@ -20871,12 +20834,12 @@
     },
     {
       "source": "SYS-graphcode",
-      "target": "MOD-surface",
+      "target": "MOD-rig",
       "type": "compose"
     },
     {
       "source": "SYS-graphcode",
-      "target": "MOD-systemtest",
+      "target": "MOD-surface",
       "type": "compose"
     },
     {
@@ -20935,11 +20898,6 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -21066,6 +21024,11 @@
     {
       "source": "SYS-graphcode",
       "target": "REQ-responsiveness",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-rig-benchmark",
       "type": "compose"
     },
     {
@@ -21241,6 +21204,11 @@
     {
       "source": "TEST-audit-trail-projection",
       "target": "REQ-token-efficiency",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-auswertung",
+      "target": "REQ-rig-benchmark",
       "type": "verify"
     },
     {
@@ -21766,12 +21734,6 @@
       "source": "TEST-graph-time-travel",
       "target": "REQ-graph-state-recall",
       "type": "verify"
-    },
-    {
-      "source": "TEST-greenfield-systemtest",
-      "target": "REQ-greenfield-systemtest-dod",
-      "type": "verify",
-      "weight": "1"
     },
     {
       "source": "TEST-gve-autostart",
@@ -22445,6 +22407,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-rig",
+      "target": "REQ-rig-benchmark",
+      "type": "verify"
+    },
+    {
       "source": "TEST-roundtrip",
       "target": "REQ-codec-validation",
       "type": "verify"
@@ -22670,11 +22637,6 @@
     {
       "source": "TEST-store-recovery",
       "target": "REQ-store-recovery",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-systemtest-evaluations",
-      "target": "REQ-greenfield-systemtest-dod",
       "type": "verify"
     },
     {
@@ -23310,7 +23272,7 @@
     },
     {
       "source": "UC-loop-closure",
-      "target": "FCHAIN-systemtest-run",
+      "target": "FCHAIN-rig-benchmark",
       "type": "compose"
     },
     {
@@ -23527,5 +23489,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 604
+  "graphVersion": 607
 }

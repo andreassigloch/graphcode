@@ -52,8 +52,8 @@ const SERVER_VERSION = readPackageVersion();
  *
  * KOMPAKT serialisiert (CR-GC-579). Bis hierher stand hier `JSON.stringify(result, null, 2)`
  * — Einrueckung fuer einen Leser, den es nicht gibt: ein Werkzeugergebnis liest ein Parser.
- * Gemessen an `rig/greenfield-systemtest/runs/opus5-5` ueber ALLE Werkzeug-Ergebnisse im
- * Kontextfenster: 266.188 gegen 217.442 Zeichen, **18,3 % des Gesamtpayloads** fuer
+ * Gemessen am Greenfield-Lauf opus5-5 (2026-09, Rig gelöscht mit CR-GC-740) ueber ALLE
+ * Werkzeug-Ergebnisse im Kontextfenster: 266.188 gegen 217.442 Zeichen, **18,3 % des Gesamtpayloads** fuer
  * Leerzeichen und Zeilenumbrueche. Am staerksten trifft es `graph_readiness` (38,2 %), weil
  * seine Antwort fast nur aus Zahlenfeldern besteht und `null, 2` jedes Array-Element auf
  * eine eigene Zeile schreibt — sechs Dimensionen werden achtzehn Zeilen.

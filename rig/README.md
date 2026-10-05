@@ -67,16 +67,10 @@ Stempel: graph e1d8a6cf3944 (1229/966) · policy default · rules 19.2.0 · code
 also gelten die Startwerte — vorher stand dieselbe Tatsache nirgends.
 
 **Ein Rig mit mehreren Korpora stempelt den Korpus in jede Ergebniszeile** (CR-GC-618). Das
-Greenfield-Rig hielt als einziges diese Regel nicht ein: seine Zeile nannte Arm, Modell und
-Executor, aber nicht, welche Frage gestellt wurde — die steckte in sieben Umgebungsvariablen,
-die `rig/sigllm-spezifikation/lauf*.env` per `source` setzt. Wer das vergass, fuhr klaglos den
-eingebauten Webapp-Korpus, und die Ergebnisdatei sah aus wie jede andere. Am 2026-09-22 wurde so
-ein Webapp-Lauf gegen sigllm-Grundlinien gehalten.
-
-Der Stempel traegt Korpusname, Prompt und Golden je mit sha256, Seed und Zeitgrenze. `GOLDEN` hat
-**keinen Default** mehr — ohne Golden entfaellt der Abgleich und sagt das (`grund`), statt gegen
-einen mitlaufenden Fremdgraphen zu rechnen. `report.mjs` weigert sich, Zeilen verschiedener
-Herkunft zu einer Spanne zu mitteln.
+Greenfield-Rig (gelöscht mit CR-GC-740) hielt als einziges diese Regel nicht ein: seine Zeile nannte
+Arm, Modell und Executor, aber nicht, welche Frage gestellt wurde — die steckte in Umgebungsvariablen.
+Am 2026-09-22 wurde so ein Webapp-Lauf gegen sigllm-Grundlinien gehalten. Heute trägt jeder Lauf
+`aufgabe` und `stand` in `lauf.json`, und `serie` zählt nur Läufe desselben Stands.
 
 ## Blindheitsausgang statt Rang
 
@@ -89,16 +83,14 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 
 | Rig | Klasse | Frage | Aufbau |
 |---|---|---|---|
+| `rig/` selbst (unten) | gate | Wie gut modellieren lokaler und Frontier-Agent im interaktiven Betrieb (T-E3)? | Vorlage todo-local → je Sitzung ein Prozess, Simulator, `openMeasured` am Export |
+| [`minimal-whitebox/`](minimal-whitebox/README.md) Phase 1 | gate | Wie groß ist die Whitebox gegen den Blast-Radius (T-E2)? | `openMeasured`; wird `scripts/whitebox-messung.mjs` (ITEM-2026-744) |
 | `moneyflow-struktur/` (intern, nicht im Repo) | gate | Wie sieht moneyflow durch das echte Gate aus? | `openMeasured` |
-| [`minimal-whitebox/`](minimal-whitebox/README.md) | gate | Wie groß ist die Whitebox gegen den Blast-Radius? | `openMeasured` |
-| [`greenfield-systemtest/`](greenfield-systemtest/README.md) | gate | Kommt ein lokales Modell an ein Frontier-Modell heran? | `createHarness` (Subprozess, Kuzu-Binding) |
 | `agentdiary/` (intern, nicht im Repo) | gate | Liefert der lokale Arm (D2) am echten Auftrag, was Frontier liefert? | Arm-Repos + Blindurteil |
-| [`dummy-slicer/`](dummy-slicer/README.md) | gate | Serviert `graph_context` die Definition of Done? | `openMeasured` (echte Wurzel, CR-GC-496) |
-| `rig/` selbst (oben) | gate | Wie gut modellieren lokaler und Frontier-Agent im interaktiven Betrieb (T-E3)? | Vorlage todo-local → je Sitzung ein Prozess, Simulator, `openMeasured` am Export |
 
-`greenfield-systemtest` baut den Harness in einem **eigenen Prozess**, weil Kuzus natives
-Binding sonst zweimal im selben Prozess lädt. Es benutzt `createHarness` direkt und ist damit
-korrekt — der Beleg, dass der Weg gangbar ist, noch bevor es `openMeasured` gab.
+Gefallen mit CR-GC-740 (Konzept §5, Löschkonzept §6): `greenfield-systemtest` (Executor-Arme; Texte unter
+[`docs/archive/messung-executor/`](../docs/archive/messung-executor/greenfield-systemtest-README.md)), `code-test`,
+`referenz-change`, `dummy-slicer`, `sigllm-spezifikation` (Prompt und Antwortblatt leben in `aufgaben/sigllm-prosa/`).
 
 ## Das Rig (CR-GC-715, CR-GC-738)
 

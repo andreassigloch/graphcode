@@ -1,1 +1,0 @@
-Ich will das System SIG Local so weit durchspezifizieren, dass man es danach bauen kann. Was es koennen soll, steht in ./material/auftrag.md — in meinen Worten, nicht als Spezifikation. Den Rest sollst du daraus herleiten, nicht abschreiben.

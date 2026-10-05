@@ -9,7 +9,7 @@
 export const JOBS = [
   {
     name: 'J1 — 1 Knoten, Implementieren (FN-slice, Kalibrierung)',
-    fixture: { graph: 'rig/dummy-slicer/model/dummy-slicer.graph.json', systemId: 'dummy-slicer' },
+    fixture: { graph: 'beispielgraphen/dummy-slicer.graph.json', systemId: 'dummy-slicer' },
     seeds: ['FN-slice'],
     focusTypes: ['FUNC'],
     groundTruth: ['FN-slice'],

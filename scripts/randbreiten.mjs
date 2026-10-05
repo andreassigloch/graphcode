@@ -34,8 +34,9 @@ export const SCHWELLEN = [5, 7];
  *   - `snapshot` — eingefroren und eingecheckt (`beispielgraphen/`). Nur diese haelt der
  *     Test fest: ihre Zahlen koennen sich nur aendern, wenn die REGEL oder die Zaehlung wandert.
  *   - `live`     — der eigene SSOT. Wandert mit jedem Modellzug; wird berichtet, nicht gehalten.
- *   - `lauf`     — Rig-Laeufe unter `runs/` (gitignored). Auf einer frischen Maschine nicht da;
- *     ihr Fehlen ist ein ZUSTAND, kein Fehler.
+ *   - `lauf`     — die Referenzlaeufe des Rigs (`rig/aufgaben/<aufgabe>/referenz/<arm>/graph.json`,
+ *     CR-GC-738). Committet, aber sie wechseln, sobald der Autor eine neue Referenz setzt — berichtet,
+ *     nicht gehalten.
  */
 export function quellen(repo = REPO) {
   const out = [];
@@ -53,18 +54,12 @@ export function quellen(repo = REPO) {
     }
   }
 
-  const laeufe = join(repo, 'rig/greenfield-systemtest/runs');
-  if (existsSync(laeufe)) {
-    for (const lauf of readdirSync(laeufe).sort()) {
-      const dir = join(laeufe, lauf, 'docs/graph');
-      if (!existsSync(dir)) continue;
-      const dateien = readdirSync(dir).filter((f) => f.endsWith('.graph.json')).sort();
-      for (const datei of dateien) {
-        // Ein Lauf kann mehrere Systeme tragen (`opus5-2` fuehrt `opus5-2` und `webapp`). Der
-        // Name muss sie unterscheiden, sonst stehen zwei Zeilen unter einem Schluessel.
-        const stamm = datei.replace(/\.graph\.json$/, '');
-        nimm(dateien.length > 1 ? `${lauf}/${stamm} (Lauf)` : `${lauf} (Lauf)`, join(dir, datei), 'lauf');
-      }
+  const aufgaben = join(repo, 'rig/aufgaben');
+  if (existsSync(aufgaben)) {
+    for (const aufgabe of readdirSync(aufgaben).sort()) {
+      const referenz = join(aufgaben, aufgabe, 'referenz');
+      if (!existsSync(referenz)) continue;
+      for (const arm of readdirSync(referenz).sort()) nimm(`${aufgabe}/${arm} (Referenzlauf)`, join(referenz, arm, 'graph.json'), 'lauf');
     }
   }
   return out;

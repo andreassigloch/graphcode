@@ -6,8 +6,8 @@
  * waehrend der Fokus aus einer vierten kam. Die Maschine konnte "nichts zu tun" und "nicht
  * fertig" zugleich sagen; gemessen war es ein Livelock: 0 von 9 Laeufen erreichten `handoff`.
  *
- * Die Invariante: `done ⇔ kein Fokus`. Geprueft an allem, was wir an Graphen haben — fuenf
- * Auto-Laeufe, das handgefuehrte Golden und jeder Zwischenstand seines Trails. Keine Beispiele.
+ * Die Invariante: `done ⇔ kein Fokus`. Geprueft an allem, was wir an Graphen haben — die Referenzlaeufe
+ * des Rigs (CR-GC-738, lokal und frontier), das handgefuehrte Golden und der Endstand seines Trails. Keine Beispiele.
  *
  * @author andreas@siglochconsulting
  */
@@ -19,7 +19,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { generationStep } from '../src/loop/generate.js';
 import { abnehmbar, focusViolations } from '../src/kernel/measure/focus-set.js';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration
-import { spieleNach, referenzTrail } from '../rig/greenfield-systemtest/trajektorie.mjs';
+import { nachspielenRein } from '../auswertung/nachspielen.mjs';
 // @ts-expect-error — Migrationswerkzeug in .mjs (CR-GC-669), bewusst ohne Typdeklaration
 import { proposeDecisions, buildCommands } from '../scripts/migrate-req-kinds.mjs';
 import { applyCommands } from '../src/kernel/apply-commands.js';
@@ -42,10 +42,10 @@ function alsGraph(g: Flat) {
 const lade = (rel: string): Flat => JSON.parse(readFileSync(ROOT + rel, 'utf8'));
 const GOLDEN = 'beispielgraphen/sigllm-v98.graph.json';
 /**
- * Die opus5-Laeufe sind Archive von VOR dem kinds-Major (CR-SM-366) und liegen nur lokal (runs/ ist
- * nicht versioniert). Sie werden nicht umgeschrieben — Messdaten bleiben, wie sie gemessen wurden —,
- * sondern beim Laden im Speicher durch dasselbe Werkzeug migriert, das die SSOTs migriert
- * (CR-GC-669): Vorschlag, Batch, Anwendung. Eine offene Entscheidung wirft; nichts faellt still weg.
+ * Ein Lauf-Graph wird nicht umgeschrieben — Messdaten bleiben, wie sie gemessen wurden —, sondern beim Laden
+ * im Speicher durch dasselbe Werkzeug migriert, das die SSOTs migriert (CR-GC-669): Vorschlag, Batch,
+ * Anwendung. Eine offene Entscheidung wirft; nichts faellt still weg. Die Referenzlaeufe von heute brauchen
+ * keine Migration; der Pfad bleibt fuer die naechste Grammatik.
  */
 function ladeLauf(rel: string): Flat {
   const g = lade(rel);
@@ -61,7 +61,8 @@ function ladeLauf(rel: string): Flat {
     traces: edges.map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
   };
 }
-const RUNS = ['opus5-5', 'opus5-6', 'opus5-7', 'opus5-8', 'opus5-9'].map((d) => `rig/greenfield-systemtest/runs/${d}/graph.json`).filter((p) => existsSync(ROOT + p));
+/** Die Referenzlaeufe des Rigs — committet, einer je Arm (rig/README.md „Referenzlauf"). */
+const RUNS = ['lokal', 'frontier'].map((arm) => `rig/aufgaben/todo/referenz/${arm}/graph.json`).filter((p) => existsSync(ROOT + p));
 const step = (g: Flat, defer: string[] = []) => generationStep(alsGraph(g), DEFAULT_METRIC_POLICY, undefined, 0.8, defer);
 const GATE = new Set(SE_DESCRIPTOR.rules.map((r: { id: string }) => r.id));
 
@@ -78,11 +79,12 @@ describe('CR-GC-593: done ⇔ kein Fokus — an jedem Graphen des Korpus', () =>
     });
   }
 
-  it('jeder Zwischenstand des Hand-Trails: done ⇔ kein Fokus, und nie "pruefe manuell"', () => {
-    const trail = referenzTrail(ROOT + GOLDEN);
-    expect(trail).toBeTruthy();
-    const { zuege, graph } = spieleNach(trail);
-    expect(zuege.length).toBeGreaterThan(50);
+  it('der Endstand des Hand-Trails, nachgespielt: done ⇔ kein Fokus', async () => {
+    // CR-GC-737: das Audit des Golden liegt neben ihm als <name>.audit.jsonl.
+    const trail = ROOT + GOLDEN.replace(/\.graph\.json$/, '.audit.jsonl');
+    expect(existsSync(trail)).toBe(true);
+    const { zuege, graph } = await nachspielenRein(trail);
+    expect(zuege).toBeGreaterThan(50);
     // Der Endstand des Nachspiels ist ein Harness-Graph; die Invariante gilt auch dort.
     const s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(s.done).toBe(s.focusKey === null);
