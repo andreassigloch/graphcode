@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 350 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 350 CR · 323 done · 4 open.
+Total: 350 CR · 324 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -386,7 +386,7 @@ Total: 350 CR · 323 done · 4 open.
 | `CR-GC-712` | n/a | T-UC als Paket: Block-Zug je UC (REQ/TEST/FCHAIN/FUNC/FLOW), SCHEMA als markierter Stub statt Schablonentext; top-level in T-SYS/T-UC schneiden |
 | `CR-GC-713` | n/a | T-EBENE: Ebenenabschluss mit Architekturreview (Breite, Geschwister-Dubletten, Rand, Modul je Kind) und ebenenbeschraenkter Fokus |
 | `CR-GC-714` | n/a | D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck |
-| `CR-GC-715` | n/a | Nutzer-Simulator: EIN Testtreiber fuer das interaktive Rig — Enter auf jeden vorschlag |
+| `CR-GC-715` | done | Nutzer-Simulator: EIN Testtreiber fuer das interaktive Rig — Enter auf jeden vorschlag |
 | `CR-GC-716` | n/a | steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210) |
 | `CR-GC-717` | n/a | rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD |
 | `CR-GC-718` | n/a | Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox |

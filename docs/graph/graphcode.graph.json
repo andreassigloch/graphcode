@@ -2782,7 +2782,9 @@
       "id": "CR-GC-715",
       "type": "CR",
       "name": "Nutzer-Simulator: EIN Testtreiber fuer das interaktive Rig — Enter auf jeden vorschlag",
-      "description": "docs/cr/open/CR-GC-715-nutzer-simulator-ein-testtreiber-fuer-al.md"
+      "description": "docs/cr/open/CR-GC-715-nutzer-simulator-ein-testtreiber-fuer-al.md",
+      "status": "done",
+      "commitRef": "0f00973"
     },
     {
       "id": "CR-GC-716",
@@ -23491,5 +23493,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 608
+  "graphVersion": 609
 }
