@@ -124,7 +124,7 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
   changeset and every impacted TEST without `testRefs`, and falls back to the FULL lane whenever a
   changed source file has no node, a build/dependency trigger is in the diff, or the selection would
   be empty. A lane that reports green because it saw less is worse than no lane.
-- **Read the `unresolved` list.** A concept-only TEST has no run artifact; a selected run that
+- **Read the `unresolved` list.** An unbound TEST has no run artifact; a selected run that
   skips it is not coverage, and `graph_tests` reports it rather than dropping it silently.
 - **Real tests, no mocks.** Persistence on disk, never `:memory:`.
 - Unit (gate / rule-eval) · integration (MCP + local Kuzu) · conformance (Format-E round-trip).

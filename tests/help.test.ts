@@ -8,8 +8,9 @@ import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { RULE_TO_PHASE } from '@sigloch/contracts/se';
-import { computeReadiness, ABSENT_CREATION_PROVIDER } from '../src/kernel/measure/readiness.js';
+import { computeReadiness, ABSENT_CREATION_PROVIDER, GATE_STATE_LABELS } from '../src/kernel/measure/readiness.js';
 import { helpEntry, helpForRules, contextualHelp } from '../src/projections/help.js';
+import { TOOL_HELP } from '../src/projections/tool-help.js';
 
 describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the live sources', () => {
   it('helpEntry returns all three layers for a panel / gate / rule / artifact', () => {
@@ -81,5 +82,49 @@ describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the 
     const firstWarning = measures.findIndex((m) => m.severity === 'warning');
     const lastError = measures.map((m) => m.severity).lastIndexOf('error');
     if (firstWarning >= 0 && lastError >= 0) expect(lastError).toBeLessThan(firstWarning);
+  });
+
+  // CR-GC-746 (contracts CR-SM-394): ein nicht durchschrittenes Gate hat ein leeres `blocking`. Die
+  // Massnahmenliste las nur `blocking` und die Befunde — ein sauberer Entwurf ergab eine leere Liste,
+  // und die liest wie „alles bestanden".
+  describe('CR-GC-746: ein nicht durchschrittenes Gate in der Hilfe', () => {
+    const entwurf: Pick<Graph, 'nodes' | 'edges'> = {
+      nodes: [
+        { uid: 'SYS-x', type: 'SYS', name: 'x', description: '', attributes: {} },
+        { uid: 'TEST-t', type: 'TEST', name: 't', description: '', attributes: {} },
+        { uid: 'FUNC-f', type: 'FUNC', name: 'f', description: '', attributes: {} },
+      ],
+      edges: [],
+    };
+
+    it('contextualHelp nennt es als eigene Massnahme — mit Gate, Anzeigetext und der Erklaerung des Gates', () => {
+      const report = computeReadiness([], entwurf);
+      expect(report.phaseGates.find((g) => g.id === 'TRR')).toMatchObject({ state: 'not-reached', blocking: [] });
+      const measures = contextualHelp(report, []);
+      const trr = measures.filter((m) => m.blockerKind === 'not-reached');
+      expect(trr.map((m) => m.gateId)).toEqual(['TRR']);
+      expect(trr[0]!.entry.id).toBe('TRR');
+      expect(trr[0]!.severity).toBe('info'); // kein Befund: es gibt hier noch nichts zu tun
+      expect(trr[0]!.message).toContain(GATE_STATE_LABELS['not-reached']);
+      expect(trr[0]!.elementIds).toEqual([]);
+    });
+
+    it('Positivkontrolle: mit einer Bindung ist das Gate gefragt — keine solche Massnahme', () => {
+      const begonnen = {
+        nodes: [...entwurf.nodes.slice(0, 2), { ...entwurf.nodes[2]!, attributes: { realRef: { file: 'src/f.ts' } } }],
+        edges: [],
+      };
+      const measures = contextualHelp(computeReadiness([], begonnen), []);
+      expect(measures.filter((m) => m.blockerKind === 'not-reached')).toEqual([]);
+    });
+
+    it('der Gate-Eintrag TRR und die Werkzeug-Hilfe kennen den dritten Zustand, im Wort der einen Tabelle', () => {
+      expect(helpEntry('TRR')!.plain).toContain(GATE_STATE_LABELS['not-reached']);
+      // Die Gates ohne Vorbedingungs-Bein behaupten ihn nicht.
+      for (const id of ['SRR', 'PDR', 'CDR']) expect(helpEntry(id)!.plain).not.toContain(GATE_STATE_LABELS['not-reached']);
+      const se = TOOL_HELP.graph_readiness!.se;
+      for (const label of Object.values(GATE_STATE_LABELS)) expect(se).toContain(label);
+      expect(se).toContain('stateLabel');
+    });
   });
 });

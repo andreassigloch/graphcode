@@ -30,6 +30,7 @@
  */
 
 import { RULE_HELP } from '@sigloch/contracts/se';
+import { GATE_STATE_LABELS } from '../kernel/measure/readiness.js';
 
 /** One authored help item: the two plain-language layers (+ a copy-prompt where one applies). */
 export interface HelpContentEntry {
@@ -91,7 +92,9 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   },
   TRR: {
     plain:
-      '**Pass:** every test is connected to the feature it checks and can actually run. **Red:** open it to see the unwired or non-runnable tests.',
+      '**Pass:** every test is connected to the feature it checks and can actually run. **Red:** open it to see the unwired or non-runnable tests. ' +
+      // CR-GC-746: der dritte Zustand (contracts CR-SM-394) — das Wort kommt aus der einen Tabelle.
+      `**Not reached („${GATE_STATE_LABELS['not-reached']}“):** nothing is built yet — no test or function points to code and no build plan is stamped. There is nothing to check, so the gate is neither passed nor red; it is asked with the first binding.`,
     se: 'Test Readiness Review — test cases and bindings are ready to begin formal verification.',
     prompt: 'se-view:testmatrix, then se:close-violations',
   },

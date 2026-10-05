@@ -20,6 +20,7 @@ import type { RuleViolation } from '@sigloch/contracts/harness';
 import {
   PHASE_GATE_RULES,
   PHASE_GATE_LABELS,
+  GATE_STATE_LABELS,
   IMPL_GATE_MILESTONES,
   IMPL_GATE_RULES,
   creationBlockingMsg,
@@ -65,8 +66,12 @@ export interface ContextualMeasure {
   entry: HelpEntry;
   /** Highest severity among the grouped violations (CR-GC-316) — order-independent. */
   severity: 'error' | 'warning' | 'info';
-  /** A failing rule (keyed `ruleId`) or a not-done creation (keyed artifact id, CR-GC-221). */
-  blockerKind: 'rule' | 'creation';
+  /**
+   * A failing rule (keyed `ruleId`), a not-done creation (keyed artifact id, CR-GC-221), or a gate
+   * that is `not-reached` (keyed gate id, CR-GC-746): nothing blocks it and nothing was asked yet.
+   * The third is not a blocker to work off — it is there so an empty list never reads as "all passed".
+   */
+  blockerKind: 'rule' | 'creation' | 'not-reached';
   /**
    * How often this rule fires (CR-GC-316). The TRUE count — `elementIds` may be
    * shorter, so a caller can always tell that the list was cut.
@@ -74,7 +79,7 @@ export interface ContextualMeasure {
   count: number;
   /** Up to `MAX_EXAMPLE_ELEMENTS` offending uids (rule blockers). Evidence, not the full set. */
   elementIds: string[];
-  /** The gate that surfaced the blocker (creation blockers). */
+  /** The gate that surfaced the blocker (creation blockers) or that is not reached. */
   gateId?: string;
   /** The first grouped violation's message, as an example of the shape. */
   message: string;
@@ -208,7 +213,8 @@ const SEVERITY_RANK: Record<string, number> = { error: 0, warning: 1, info: 2 };
  * The explained sibling of Recommendations (§7): ranked, explained measures from the
  * live readiness + violations. Handles BOTH blocker kinds (CR-GC-221): rule violations
  * (keyed `ruleId`) and not-done creations from `ReadinessGate.blocking[]` (keyed artifact
- * id, NOT a `ruleId`). Errors rank before warnings before info; ties keep input order.
+ * id, NOT a `ruleId`) — plus every gate that is `not-reached` (CR-GC-746), which has no
+ * blocker at all. Errors rank before warnings before info; ties keep input order.
  */
 export function contextualHelp(readiness: ReadinessReport, violations: RuleViolation[]): ContextualMeasure[] {
   const measures: ContextualMeasure[] = [];
@@ -269,6 +275,24 @@ export function contextualHelp(readiness: ReadinessReport, violations: RuleViola
           });
       }
     }
+  }
+
+  // Not-reached gates (CR-GC-746, contracts CR-SM-394). Such a gate has an EMPTY `blocking` — the
+  // two loops above cannot see it, and on a clean draft the list came back empty, which reads as
+  // "everything passed". The state and its display text are read from the gate, never derived here.
+  for (const g of readiness.phaseGates) {
+    if (g.state !== 'not-reached') continue;
+    const entry = helpEntry(g.id);
+    if (entry)
+      measures.push({
+        entry,
+        severity: 'info',
+        blockerKind: 'not-reached',
+        count: 1,
+        elementIds: [],
+        gateId: g.id,
+        message: `${g.label}: ${GATE_STATE_LABELS[g.state]}`,
+      });
   }
 
   return measures.sort((a, b) => (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3));

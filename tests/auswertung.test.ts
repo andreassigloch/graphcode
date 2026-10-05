@@ -19,6 +19,8 @@ import { schattenBilanz, beruehrt } from '../auswertung/schatten-suggest.mjs';
 import { datensatz, upsert, juengsteSerie, rendern, ANALYSEN } from '../auswertung/auswerten.mjs';
 // @ts-expect-error — s.o.
 import { mutationen, nachspielen, nachspielenRein, befundAus } from '../auswertung/nachspielen.mjs';
+// @ts-expect-error — s.o.
+import { ZIEL } from '../rig/simulator.mjs';
 
 let dir: string;
 beforeAll(() => { dir = mkdtempSync(join(tmpdir(), 'auswertung-')); });
@@ -205,6 +207,14 @@ describe('nachspielen mit Basis: ein Lauf, der auf einem Referenzgraphen beginnt
     const r = await nachspielen(join(repo, 'kein-audit.jsonl'), repo, Infinity, { basis });
     expect(r.flach.elements.length).toBe(abgelegt.elements.length);
     expect(r.gates.SRR && r.gates.PDR).toBe(true);
+    // CR-GC-746 (contracts CR-SM-394): der Referenzgraph ist ein Entwurf (keine Bindung, kein Bauplan-Stempel).
+    // Das Rig liest je Gate den Boolean — SRR und PDR unverändert, also endet die Modellierstufe wie zuvor.
+    // TRR liest jetzt false statt true: nicht durchschritten, nicht offen; wer das zeigen will, nimmt `state`.
+    expect(abgelegt.elements.some((e: { realRef?: unknown; testRefs?: unknown }) => e.realRef || e.testRefs)).toBe(false);
+    expect(ZIEL.modellieren(r.gates)).toBe('srr+pdr');
+    expect(r.gates.TRR).toBe(false);
+    const zustand = Object.fromEntries(r.readiness.phaseGates.map((g: { id: string; state: string }) => [g.id, g.state]));
+    expect(zustand).toMatchObject({ SRR: 'passed', PDR: 'passed', TRR: 'not-reached' });
     expect(r.befund.fehler).toBe(0);
     expect(r.befund.warnungen).toBeGreaterThan(0);
     expect(r.befund.abgenommen).toBe(0);
