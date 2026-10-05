@@ -1,0 +1,1032 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-person",
+      "type": "ACTOR",
+      "name": "Person am Terminal",
+      "description": "Eine Person am Terminal; sie ist Anfang und Ende jedes Ablaufs: sie gibt einen Befehl ein und liest die Ausgabe."
+    },
+    {
+      "id": "CR-fehlende-datei",
+      "type": "CR",
+      "name": "Verhalten bei fehlender todos.json",
+      "description": "Entschieden (Trade Study): Fehlt todos.json im Arbeitsverzeichnis, gilt die Liste als leer. add legt die Datei an, list meldet die leere Liste, done lehnt die Nummer als unbekannt ab; list und done legen keine Datei an.",
+      "status": "open",
+      "rationale": "Trade Study fehlende Datei. Optionen: (A) fehlende Datei gilt als leere Liste, (B) jeder Befehl meldet Fehler mit Exit-Code 1, (C) nur add legt an, list und done melden Fehler. Kriterien: Aufwand, Risiko, Umkehrbarkeit, Passung zum Umfang. A: kein neuer Befehl, Erststart geht, deckt sich mit der Meldung zur leeren Liste und dem Speicherort je Arbeitsverzeichnis; Risiko: im falschen Verzeichnis erscheint eine leere Liste statt eines Fehlers. B: Erststart unmöglich ohne einen vierten Befehl zum Anlegen, den der Umfang nicht hat. C: zwei Deutungen desselben Zustands, list vor dem ersten add ist ein Fehler. Gewinner A: einzige Option ohne neuen Befehl und mit einer einzigen Deutung; später strenger zu werden bleibt möglich. Ursprung: Annahmen-Review."
+    },
+    {
+      "id": "CR-option-fehlende-datei-fehler",
+      "type": "CR",
+      "name": "Option fehlende Datei ist Fehler",
+      "description": "Verworfene Option der Trade Study fehlende Datei: jeder Befehl meldet bei fehlender todos.json einen Fehler mit Exit-Code 1.",
+      "status": "done",
+      "spike": true,
+      "architectureOnly": true,
+      "rationale": "Verworfen: der Erststart wäre ohne einen zusätzlichen Befehl zum Anlegen unmöglich."
+    },
+    {
+      "id": "CR-option-fehlende-datei-nur-add",
+      "type": "CR",
+      "name": "Option nur add legt Datei an",
+      "description": "Verworfene Option der Trade Study fehlende Datei: add legt todos.json an, list und done melden bei fehlender Datei einen Fehler.",
+      "status": "done",
+      "spike": true,
+      "architectureOnly": true,
+      "rationale": "Verworfen: derselbe Zustand wird je Befehl verschieden gedeutet, und list vor dem ersten add wäre ein Fehler."
+    },
+    {
+      "id": "CR-option-feste-nummer",
+      "type": "CR",
+      "name": "Option feste Todo-Nummer",
+      "description": "Verworfene Option der Trade Study Todo-Nummer: jedes Todo trägt eine feste, in todos.json gespeicherte Nummer, die nie neu vergeben wird.",
+      "status": "done",
+      "spike": true,
+      "architectureOnly": true,
+      "rationale": "Verworfen zugunsten der Position: der Vorteil greift erst bei Löschen oder Umsortieren, beides ist nicht im Umfang; Kosten sind Nummernfeld, Zähler und zusätzliche Ungültig-Fälle."
+    },
+    {
+      "id": "CR-todos-json-format",
+      "type": "CR",
+      "name": "Format von todos.json und Todo-Nummer",
+      "description": "Entschieden (Trade Study): Die Todo-Nummer ist die Position des Todos in todos.json, gezählt ab 1 in der Reihenfolge des Anlegens; add hängt hinten an, kein Befehl sortiert um oder entfernt. Offen bleibt das Datenformat der Datei als SCHEMA mit Datenfluss.",
+      "status": "open",
+      "rationale": "Trade Study Todo-Nummer. Optionen: (A) Position in der Datei, (B) feste Nummer je Todo, in der Datei gespeichert und nie neu vergeben. Kriterien: Aufwand, Risiko falsches Todo, Umkehrbarkeit, Passung zum Umfang. A: kein Zusatzfeld, keine zusätzlichen Ungültig-Fälle; mit add, list, done ändert sich keine Position, list und done zählen gleich; Wechsel zu B später ohne Verlust (Nummer := Position). B: bleibt stabil bei Löschen oder Umsortieren, die es im Umfang nicht gibt; kostet Nummernfeld, Zähler und neue Ungültig-Fälle (doppelte, fehlende Nummer); Rückweg zu A ändert sichtbare Nummern. Gewinner A: gleiche Sicherheit im heutigen Umfang bei weniger Aufwand und offenem Weg zu B. Bedingung: kommt ein Befehl zum Löschen oder Sortieren, ist die Entscheidung neu zu treffen. Ursprung: Annahmen-Review, Risiko falsches Todo (FMEA FM-04)."
+    },
+    {
+      "id": "FCHAIN-todo-anlegen",
+      "type": "FCHAIN",
+      "name": "Ablauf Todo anlegen",
+      "description": "Die Person gibt add mit Text ein, das System legt das Todo an und antwortet am Terminal."
+    },
+    {
+      "id": "FCHAIN-todo-erledigen",
+      "type": "FCHAIN",
+      "name": "Ablauf Todo erledigen",
+      "description": "Die Person gibt done mit Nummer ein, das System markiert das Todo als erledigt und antwortet am Terminal."
+    },
+    {
+      "id": "FCHAIN-todos-zeigen",
+      "type": "FCHAIN",
+      "name": "Ablauf Todos zeigen",
+      "description": "Die Person gibt list ein, das System antwortet am Terminal mit den Todos oder der Meldung zur leeren Liste."
+    },
+    {
+      "id": "FLOW-ausgabe-add",
+      "type": "FLOW",
+      "name": "Ausgabe add",
+      "description": "Ausgabe am Terminal zu add: Ergebnis oder Fehlermeldung mit Exit-Code 1. Offen: Ausgabe nach erfolgreichem Anlegen."
+    },
+    {
+      "id": "FLOW-ausgabe-done",
+      "type": "FLOW",
+      "name": "Ausgabe done",
+      "description": "Ausgabe am Terminal zu done: Ergebnis, Meldung zum schon erledigten Todo oder Fehlermeldung mit Exit-Code 1 bei unbekannter Nummer. Offen: Exit-Code bei schon erledigtem Todo."
+    },
+    {
+      "id": "FLOW-ausgabe-list",
+      "type": "FLOW",
+      "name": "Ausgabe list",
+      "description": "Ausgabe am Terminal zu list: die Todos mit Nummer und Marke für erledigte, oder die Meldung zur leeren Liste."
+    },
+    {
+      "id": "FLOW-eingabe-add",
+      "type": "FLOW",
+      "name": "Eingabe add",
+      "description": "Eingabe am Terminal: Befehl add mit dem Text des Todos."
+    },
+    {
+      "id": "FLOW-eingabe-done",
+      "type": "FLOW",
+      "name": "Eingabe done",
+      "description": "Eingabe am Terminal: Befehl done mit der Nummer des Todos."
+    },
+    {
+      "id": "FLOW-eingabe-list",
+      "type": "FLOW",
+      "name": "Eingabe list",
+      "description": "Eingabe am Terminal: Befehl list."
+    },
+    {
+      "id": "FUNC-todo-anlegen",
+      "type": "FUNC",
+      "name": "Todo anlegen",
+      "description": "Nimmt den Befehl add mit Text entgegen, legt das Todo an und gibt das Ergebnis aus; leerer Text oder nur Leerzeichen ergibt Fehlermeldung und Exit-Code 1."
+    },
+    {
+      "id": "FUNC-todo-erledigen",
+      "type": "FUNC",
+      "name": "Todo erledigen",
+      "description": "Nimmt den Befehl done mit Nummer entgegen und markiert das Todo als erledigt; unbekannte Nummer ergibt Fehlermeldung und Exit-Code 1, ein schon erledigtes Todo eine Meldung."
+    },
+    {
+      "id": "FUNC-todos-zeigen",
+      "type": "FUNC",
+      "name": "Todos zeigen",
+      "description": "Nimmt den Befehl list entgegen und gibt offene und erledigte Todos aus, erledigte mit Marke; bei leerer Liste eine Meldung."
+    },
+    {
+      "id": "MOD-todo-befehle",
+      "type": "MOD",
+      "name": "Todo-Befehle",
+      "description": "Das eine Modul der Todo-Liste: es trägt die drei Funktionen Todo anlegen, Todo erledigen und Todos zeigen samt Lesen und Schreiben von todos.json. Offen: Dateipfad des Moduls."
+    },
+    {
+      "id": "REQ-add-ende-zu-ende",
+      "type": "REQ",
+      "name": "add von Person zu Person",
+      "description": "Jeder Aufruf von add beginnt mit der Eingabe der Person am Terminal und endet mit einer Ausgabe am Terminal an sie, bei Erfolg wie bei Fehler.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-add-leerer-text",
+      "type": "REQ",
+      "name": "add lehnt leeren Text ab",
+      "description": "add mit leerem Text oder nur Leerzeichen gibt eine Fehlermeldung aus, endet mit Exit-Code 1 und legt kein Todo an.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-add-legt-an",
+      "type": "REQ",
+      "name": "add legt Todo an",
+      "description": "add mit einem Text, der nicht leer ist und nicht nur aus Leerzeichen besteht, legt ein offenes Todo mit diesem Text in todos.json im Arbeitsverzeichnis an.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-betrieb-fehleranzeige",
+      "type": "REQ",
+      "name": "Fehler zeigen sich an Terminal und Exit-Code",
+      "description": "Lehnt das System einen Befehl als Fehler ab (leerer Text, unbekannte Nummer, kaputte oder ungültige todos.json), erfährt die Person das über eine Fehlermeldung am Terminal und den Exit-Code 1.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-betrieb-speicherort",
+      "type": "REQ",
+      "name": "Speicherort folgt dem Arbeitsverzeichnis",
+      "description": "Jeder Befehl liest und schreibt die Todos in der Datei todos.json im Arbeitsverzeichnis des Aufrufs; das Arbeitsverzeichnis bestimmt, welche Liste gemeint ist.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-datei-ungueltig",
+      "type": "REQ",
+      "name": "Ungültige Datei wird abgelehnt",
+      "description": "Ist todos.json kaputt oder ungültig, gibt jeder Befehl eine Fehlermeldung aus und endet mit Exit-Code 1. Offen: Verhalten bei fehlender Datei.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-done-ende-zu-ende",
+      "type": "REQ",
+      "name": "done von Person zu Person",
+      "description": "Jeder Aufruf von done beginnt mit der Eingabe der Person am Terminal und endet mit einer Ausgabe am Terminal an sie, bei Erfolg, Meldung und Fehler.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-done-markiert",
+      "type": "REQ",
+      "name": "done markiert als erledigt",
+      "description": "done mit der Nummer eines offenen Todos markiert dieses Todo in todos.json als erledigt.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-done-nennt-todo",
+      "type": "REQ",
+      "name": "done nennt das markierte Todo",
+      "description": "done gibt nach erfolgreichem Markieren den Text des markierten Todos aus.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-done-schon-erledigt",
+      "type": "REQ",
+      "name": "done meldet schon erledigt",
+      "description": "done auf ein schon erledigtes Todo gibt eine Meldung aus. Offen: Exit-Code.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-done-unbekannte-nummer",
+      "type": "REQ",
+      "name": "done lehnt unbekannte Nummer ab",
+      "description": "done mit unbekannter Nummer gibt eine Fehlermeldung aus und endet mit Exit-Code 1.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-fehler-laesst-datei-unveraendert",
+      "type": "REQ",
+      "name": "Fehler lässt Datei unverändert",
+      "description": "Endet ein Befehl mit Exit-Code 1, ist todos.json danach Byte für Byte unverändert.",
+      "role": "mitigation",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-list-ende-zu-ende",
+      "type": "REQ",
+      "name": "list von Person zu Person",
+      "description": "Jeder Aufruf von list beginnt mit der Eingabe der Person am Terminal und endet mit einer Ausgabe am Terminal an sie, bei Todos wie bei leerer Liste.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-list-leere-liste",
+      "type": "REQ",
+      "name": "list meldet leere Liste",
+      "description": "list gibt bei leerer Liste eine Meldung aus.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-list-zeigt-alle",
+      "type": "REQ",
+      "name": "list zeigt offene und erledigte",
+      "description": "list zeigt alle offenen und erledigten Todos mit Nummer; erledigte tragen eine Marke.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-nummer-list-gleich-done",
+      "type": "REQ",
+      "name": "Nummer in list und done gleich",
+      "description": "Die Nummer, die list zu einem Todo zeigt, bezeichnet bei einem unmittelbar folgenden done dasselbe Todo.",
+      "role": "mitigation",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-risiko-datenverlust-schreiben",
+      "type": "REQ",
+      "name": "Risiko Datenverlust beim Schreiben",
+      "description": "Kein Befehl hinterlässt todos.json in einem Zustand, in dem zuvor gespeicherte Todos verloren oder unlesbar sind, auch nicht bei Abbruch oder Fehler.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA FM-01 und FM-05: add und done schreiben todos.json neu. Bricht der Schreibvorgang ab (Prozess beendet, Platte voll) oder schreibt ein Befehl trotz Fehler, bleibt ein Teilstand zurück; danach lehnen alle drei Abläufe die Datei als ungültig ab und die ganze Liste ist verloren. Kein bestehender Test prüft das. Bewertung ist Ingenieursschätzung.",
+      "severity": 8,
+      "occurrence": 3,
+      "detection": 8
+    },
+    {
+      "id": "REQ-risiko-falsches-todo",
+      "type": "REQ",
+      "name": "Risiko falsches Todo erledigt",
+      "description": "done markiert nie ein anderes Todo als das, das die Person unter dieser Nummer in der list-Ausgabe gesehen hat.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA FM-04: Die Nummer wird in zwei Abläufen geführt, list zeigt sie und done deutet sie; das Modell legt nicht fest, ob sie Position oder feste Nummer ist (CR-todos-json-format). Deuten beide sie verschieden, markiert done still ein falsches Todo, die Person merkt es nicht und es gibt kein Zurück. Bewertung ist Ingenieursschätzung.",
+      "severity": 7,
+      "occurrence": 4,
+      "detection": 8
+    },
+    {
+      "id": "REQ-schreiben-ganz-oder-gar-nicht",
+      "type": "REQ",
+      "name": "Schreiben ganz oder gar nicht",
+      "description": "Nach jedem Befehl enthält todos.json entweder vollständig den Stand vor dem Befehl oder vollständig den neuen Stand, auch wenn der Schreibvorgang abbricht.",
+      "role": "mitigation",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "SCHEMA-befehlszeile",
+      "type": "SCHEMA",
+      "name": "Befehlszeile",
+      "description": "Format der Eingabe am Terminal: ein Befehl (add, list, done) mit seinem Argument — add mit Text, done mit Nummer, list ohne. Offen: Verhalten bei unbekanntem Befehl oder fehlendem Argument."
+    },
+    {
+      "id": "SCHEMA-terminalausgabe",
+      "type": "SCHEMA",
+      "name": "Terminalausgabe",
+      "description": "Format der Ausgabe am Terminal: Text (Ergebnis, Meldung oder Fehlermeldung) und Exit-Code; bei Fehlern Exit-Code 1. Offen: Wortlaut der Meldungen, Kanal der Fehlermeldungen."
+    },
+    {
+      "id": "SYS-todo",
+      "type": "SYS",
+      "name": "Todo-Liste",
+      "description": "Todo-Liste für die Kommandozeile: eine Person am Terminal legt Todos an, sieht sie und markiert sie als erledigt. Die Todos liegen in der Datei todos.json im Arbeitsverzeichnis; ist die Datei kaputt oder ungültig, gibt es eine Fehlermeldung und Exit-Code 1. Offen: Verhalten bei fehlender Datei.",
+      "analysisFreshness": {
+        "conops": {
+          "graphVersion": 4
+        },
+        "assumption-review": {
+          "graphVersion": 6,
+          "crRefs": [
+            "CR-fehlende-datei",
+            "CR-todos-json-format"
+          ]
+        },
+        "fmea": {
+          "graphVersion": 8
+        },
+        "trade": {
+          "graphVersion": 10,
+          "crRefs": [
+            "CR-todos-json-format",
+            "CR-fehlende-datei"
+          ]
+        }
+      }
+    },
+    {
+      "id": "TEST-add-ende-zu-ende",
+      "type": "TEST",
+      "name": "Test add von Person zu Person",
+      "description": "add als Prozess gestartet, einmal mit gültigem und einmal mit leerem Text: in beiden Fällen erscheint eine Ausgabe am Terminal."
+    },
+    {
+      "id": "TEST-add-leerer-text",
+      "type": "TEST",
+      "name": "Test add lehnt leeren Text ab",
+      "description": "add \"\" und add \"   \": jeweils Fehlermeldung, Exit-Code 1, todos.json unverändert."
+    },
+    {
+      "id": "TEST-add-legt-an",
+      "type": "TEST",
+      "name": "Test add legt Todo an",
+      "description": "add \"Milch kaufen\" bei gültiger todos.json: danach enthält die Datei ein offenes Todo mit dem Text Milch kaufen."
+    },
+    {
+      "id": "TEST-betrieb-fehleranzeige",
+      "type": "TEST",
+      "name": "Test Fehler zeigen sich an Terminal und Exit-Code",
+      "description": "add \"\", done mit unbekannter Nummer und list bei kaputter todos.json, jeweils als Prozess gestartet: jedes Mal eine Fehlermeldung am Terminal und Exit-Code 1."
+    },
+    {
+      "id": "TEST-betrieb-speicherort",
+      "type": "TEST",
+      "name": "Test Speicherort folgt dem Arbeitsverzeichnis",
+      "description": "add \"Milch kaufen\" in Verzeichnis A, dann list in Verzeichnis A und in einem zweiten Verzeichnis B mit eigener todos.json: A zeigt das Todo, B nicht, und die Datei in B ist unverändert."
+    },
+    {
+      "id": "TEST-datei-ungueltig",
+      "type": "TEST",
+      "name": "Test ungültige Datei",
+      "description": "todos.json mit kaputtem JSON und mit gültigem JSON falscher Form: add, list und done geben jeweils eine Fehlermeldung aus und enden mit Exit-Code 1."
+    },
+    {
+      "id": "TEST-done-ende-zu-ende",
+      "type": "TEST",
+      "name": "Test done von Person zu Person",
+      "description": "done als Prozess gestartet mit offener, schon erledigter und unbekannter Nummer: in allen drei Fällen erscheint eine Ausgabe am Terminal."
+    },
+    {
+      "id": "TEST-done-markiert",
+      "type": "TEST",
+      "name": "Test done markiert als erledigt",
+      "description": "todos.json mit einem offenen Todo: done mit dessen Nummer, danach ist es in der Datei als erledigt markiert."
+    },
+    {
+      "id": "TEST-done-nennt-todo",
+      "type": "TEST",
+      "name": "Test done nennt das markierte Todo",
+      "description": "todos.json mit dem offenen Todo Milch kaufen: done mit dessen Nummer gibt eine Ausgabe aus, die den Text Milch kaufen enthält."
+    },
+    {
+      "id": "TEST-done-schon-erledigt",
+      "type": "TEST",
+      "name": "Test done meldet schon erledigt",
+      "description": "todos.json mit einem erledigten Todo: done mit dessen Nummer gibt die Meldung aus, das Todo bleibt erledigt."
+    },
+    {
+      "id": "TEST-done-unbekannte-nummer",
+      "type": "TEST",
+      "name": "Test done lehnt unbekannte Nummer ab",
+      "description": "done mit einer Nummer, die es nicht gibt: Fehlermeldung, Exit-Code 1, todos.json unverändert."
+    },
+    {
+      "id": "TEST-fehler-laesst-datei-unveraendert",
+      "type": "TEST",
+      "name": "Test Fehler lässt Datei unverändert",
+      "description": "add \"\", done mit unbekannter Nummer und add bei kaputter todos.json: der Dateiinhalt ist vorher und nachher Byte für Byte gleich."
+    },
+    {
+      "id": "TEST-list-ende-zu-ende",
+      "type": "TEST",
+      "name": "Test list von Person zu Person",
+      "description": "list als Prozess gestartet, einmal mit Todos und einmal mit leerer Liste: in beiden Fällen erscheint eine Ausgabe am Terminal."
+    },
+    {
+      "id": "TEST-list-leere-liste",
+      "type": "TEST",
+      "name": "Test list meldet leere Liste",
+      "description": "todos.json mit leerer Liste: list gibt die Meldung zur leeren Liste aus."
+    },
+    {
+      "id": "TEST-list-zeigt-alle",
+      "type": "TEST",
+      "name": "Test list zeigt offene und erledigte",
+      "description": "todos.json mit einem offenen und einem erledigten Todo: list zeigt beide mit Nummer, nur das erledigte trägt die Marke."
+    },
+    {
+      "id": "TEST-nummer-list-gleich-done",
+      "type": "TEST",
+      "name": "Test Nummer in list und done gleich",
+      "description": "todos.json mit drei Todos, eines erledigt: done mit der Nummer, die list für ein bestimmtes offenes Todo zeigt; danach trägt in list genau dieses Todo die Marke."
+    },
+    {
+      "id": "TEST-schreiben-ganz-oder-gar-nicht",
+      "type": "TEST",
+      "name": "Test Schreiben ganz oder gar nicht",
+      "description": "add und done bei erzwungenem Schreibfehler mitten im Schreiben: todos.json ist danach gültig und enthält vollständig den alten oder vollständig den neuen Stand."
+    },
+    {
+      "id": "UC-todo-anlegen",
+      "type": "UC",
+      "name": "Todo anlegen",
+      "description": "Die Person legt mit add \"<text>\" ein Todo an; leerer Text oder nur Leerzeichen führt zu Fehlermeldung und Exit-Code 1. Offen: Ausgabe nach erfolgreichem Anlegen."
+    },
+    {
+      "id": "UC-todo-erledigen",
+      "type": "UC",
+      "name": "Todo erledigen",
+      "description": "Die Person markiert mit done <nr> ein Todo als erledigt; unbekannte Nummer führt zu Fehlermeldung und Exit-Code 1, ein schon erledigtes Todo zu einer Meldung. Offen: ob die Nummer Position oder feste Nummer ist; Exit-Code bei schon erledigtem Todo; Verhalten bei nicht-numerischer Nummer."
+    },
+    {
+      "id": "UC-todos-zeigen",
+      "type": "UC",
+      "name": "Todos zeigen",
+      "description": "Die Person sieht mit list alle offenen und erledigten Todos mit Nummer, erledigte mit einer Marke; bei leerer Liste eine Meldung. Offen: Aussehen der Marke und Reihenfolge der Todos."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-person",
+      "target": "FLOW-eingabe-add",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-person",
+      "target": "FLOW-eingabe-done",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-person",
+      "target": "FLOW-eingabe-list",
+      "type": "io"
+    },
+    {
+      "source": "CR-fehlende-datei",
+      "target": "REQ-add-legt-an",
+      "type": "relation"
+    },
+    {
+      "source": "CR-fehlende-datei",
+      "target": "REQ-betrieb-speicherort",
+      "type": "relation"
+    },
+    {
+      "source": "CR-fehlende-datei",
+      "target": "REQ-datei-ungueltig",
+      "type": "relation",
+      "label": "decides"
+    },
+    {
+      "source": "CR-fehlende-datei",
+      "target": "REQ-list-leere-liste",
+      "type": "relation"
+    },
+    {
+      "source": "CR-option-fehlende-datei-fehler",
+      "target": "REQ-datei-ungueltig",
+      "type": "relation",
+      "label": "superseded-by"
+    },
+    {
+      "source": "CR-option-fehlende-datei-nur-add",
+      "target": "REQ-datei-ungueltig",
+      "type": "relation",
+      "label": "superseded-by"
+    },
+    {
+      "source": "CR-option-feste-nummer",
+      "target": "REQ-nummer-list-gleich-done",
+      "type": "relation",
+      "label": "superseded-by"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "FUNC-todo-anlegen",
+      "type": "relation"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "FUNC-todo-erledigen",
+      "type": "relation"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "FUNC-todos-zeigen",
+      "type": "relation"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "REQ-add-legt-an",
+      "type": "relation"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "REQ-datei-ungueltig",
+      "type": "relation"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "REQ-done-markiert",
+      "type": "relation"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "REQ-done-unbekannte-nummer",
+      "type": "relation"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "REQ-list-zeigt-alle",
+      "type": "relation"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "REQ-nummer-list-gleich-done",
+      "type": "relation",
+      "label": "decides"
+    },
+    {
+      "source": "CR-todos-json-format",
+      "target": "UC-todo-erledigen",
+      "type": "relation"
+    },
+    {
+      "source": "FCHAIN-todo-anlegen",
+      "target": "FUNC-todo-anlegen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-todo-anlegen",
+      "target": "REQ-add-ende-zu-ende",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-todo-erledigen",
+      "target": "FUNC-todo-erledigen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-todo-erledigen",
+      "target": "REQ-done-ende-zu-ende",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-todos-zeigen",
+      "target": "FUNC-todos-zeigen",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-todos-zeigen",
+      "target": "REQ-list-ende-zu-ende",
+      "type": "satisfy"
+    },
+    {
+      "source": "FLOW-ausgabe-add",
+      "target": "ACTOR-person",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ausgabe-add",
+      "target": "SCHEMA-terminalausgabe",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-ausgabe-done",
+      "target": "ACTOR-person",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ausgabe-done",
+      "target": "SCHEMA-terminalausgabe",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-ausgabe-list",
+      "target": "ACTOR-person",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ausgabe-list",
+      "target": "SCHEMA-terminalausgabe",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-eingabe-add",
+      "target": "FUNC-todo-anlegen",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-eingabe-add",
+      "target": "SCHEMA-befehlszeile",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-eingabe-done",
+      "target": "FUNC-todo-erledigen",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-eingabe-done",
+      "target": "SCHEMA-befehlszeile",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-eingabe-list",
+      "target": "FUNC-todos-zeigen",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-eingabe-list",
+      "target": "SCHEMA-befehlszeile",
+      "type": "relation"
+    },
+    {
+      "source": "FUNC-todo-anlegen",
+      "target": "MOD-todo-befehle",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-todo-anlegen",
+      "target": "FLOW-ausgabe-add",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-todo-anlegen",
+      "target": "REQ-add-leerer-text",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todo-anlegen",
+      "target": "REQ-add-legt-an",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todo-anlegen",
+      "target": "REQ-datei-ungueltig",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todo-erledigen",
+      "target": "MOD-todo-befehle",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-todo-erledigen",
+      "target": "FLOW-ausgabe-done",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-todo-erledigen",
+      "target": "REQ-datei-ungueltig",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todo-erledigen",
+      "target": "REQ-done-markiert",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todo-erledigen",
+      "target": "REQ-done-nennt-todo",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todo-erledigen",
+      "target": "REQ-done-schon-erledigt",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todo-erledigen",
+      "target": "REQ-done-unbekannte-nummer",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todos-zeigen",
+      "target": "MOD-todo-befehle",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-todos-zeigen",
+      "target": "FLOW-ausgabe-list",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-todos-zeigen",
+      "target": "REQ-datei-ungueltig",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todos-zeigen",
+      "target": "REQ-list-leere-liste",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-todos-zeigen",
+      "target": "REQ-list-zeigt-alle",
+      "type": "satisfy"
+    },
+    {
+      "source": "REQ-risiko-datenverlust-schreiben",
+      "target": "REQ-fehler-laesst-datei-unveraendert",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risiko-datenverlust-schreiben",
+      "target": "REQ-schreiben-ganz-oder-gar-nicht",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risiko-falsches-todo",
+      "target": "REQ-done-nennt-todo",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risiko-falsches-todo",
+      "target": "REQ-nummer-list-gleich-done",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "MOD-todo-befehle",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-betrieb-fehleranzeige",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-betrieb-speicherort",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-datei-ungueltig",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-risiko-datenverlust-schreiben",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-risiko-falsches-todo",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "UC-todo-anlegen",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "UC-todo-erledigen",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "UC-todos-zeigen",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-betrieb-fehleranzeige",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-betrieb-speicherort",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-fehler-laesst-datei-unveraendert",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-nummer-list-gleich-done",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-risiko-datenverlust-schreiben",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-risiko-falsches-todo",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "REQ-schreiben-ganz-oder-gar-nicht",
+      "type": "satisfy"
+    },
+    {
+      "source": "TEST-add-ende-zu-ende",
+      "target": "REQ-add-ende-zu-ende",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-add-leerer-text",
+      "target": "REQ-add-leerer-text",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-add-legt-an",
+      "target": "REQ-add-legt-an",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-betrieb-fehleranzeige",
+      "target": "REQ-betrieb-fehleranzeige",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-betrieb-speicherort",
+      "target": "REQ-betrieb-speicherort",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-datei-ungueltig",
+      "target": "REQ-datei-ungueltig",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-ende-zu-ende",
+      "target": "REQ-done-ende-zu-ende",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-markiert",
+      "target": "REQ-done-markiert",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-nennt-todo",
+      "target": "REQ-done-nennt-todo",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-nennt-todo",
+      "target": "REQ-risiko-falsches-todo",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-schon-erledigt",
+      "target": "REQ-done-schon-erledigt",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-unbekannte-nummer",
+      "target": "REQ-done-unbekannte-nummer",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-fehler-laesst-datei-unveraendert",
+      "target": "REQ-fehler-laesst-datei-unveraendert",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-fehler-laesst-datei-unveraendert",
+      "target": "REQ-risiko-datenverlust-schreiben",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-list-ende-zu-ende",
+      "target": "REQ-list-ende-zu-ende",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-list-leere-liste",
+      "target": "REQ-list-leere-liste",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-list-zeigt-alle",
+      "target": "REQ-list-zeigt-alle",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-nummer-list-gleich-done",
+      "target": "REQ-nummer-list-gleich-done",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-nummer-list-gleich-done",
+      "target": "REQ-risiko-falsches-todo",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-schreiben-ganz-oder-gar-nicht",
+      "target": "REQ-risiko-datenverlust-schreiben",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-schreiben-ganz-oder-gar-nicht",
+      "target": "REQ-schreiben-ganz-oder-gar-nicht",
+      "type": "verify"
+    },
+    {
+      "source": "UC-todo-anlegen",
+      "target": "FCHAIN-todo-anlegen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todo-anlegen",
+      "target": "REQ-add-ende-zu-ende",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todo-anlegen",
+      "target": "REQ-add-leerer-text",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todo-anlegen",
+      "target": "REQ-add-legt-an",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todo-erledigen",
+      "target": "FCHAIN-todo-erledigen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todo-erledigen",
+      "target": "REQ-done-ende-zu-ende",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todo-erledigen",
+      "target": "REQ-done-markiert",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todo-erledigen",
+      "target": "REQ-done-schon-erledigt",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todo-erledigen",
+      "target": "REQ-done-unbekannte-nummer",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todos-zeigen",
+      "target": "FCHAIN-todos-zeigen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todos-zeigen",
+      "target": "REQ-list-ende-zu-ende",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todos-zeigen",
+      "target": "REQ-list-leere-liste",
+      "type": "compose"
+    },
+    {
+      "source": "UC-todos-zeigen",
+      "target": "REQ-list-zeigt-alle",
+      "type": "compose"
+    }
+  ],
+  "graphVersion": 12
+}

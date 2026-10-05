@@ -1,0 +1,572 @@
+{
+  "elements": [
+    {
+      "id": "ACTOR-person",
+      "type": "ACTOR",
+      "name": "Person am Terminal",
+      "description": "Eine Person am Terminal: sie gibt die Befehle ein und liest die Ausgabe; sie ist Anfang und Ende jedes Ablaufs."
+    },
+    {
+      "id": "FCHAIN-add",
+      "type": "FCHAIN",
+      "name": "Kette add",
+      "description": "Kette add: Eingabe lesen, Text prüfen, Aufgabe anlegen, melden."
+    },
+    {
+      "id": "FCHAIN-done",
+      "type": "FCHAIN",
+      "name": "Kette done",
+      "description": "Kette done: Nummer lesen, Aufgabe markieren oder melden."
+    },
+    {
+      "id": "FCHAIN-list",
+      "type": "FCHAIN",
+      "name": "Kette list",
+      "description": "Kette list: Datei lesen, Aufgaben anzeigen oder melden."
+    },
+    {
+      "id": "FLOW-ausgabe",
+      "type": "FLOW",
+      "name": "Terminal-Ausgabe",
+      "description": "Ausgabe am Terminal: Meldungen und die Aufgabenliste, die die Person sieht."
+    },
+    {
+      "id": "FLOW-ausgabe-add",
+      "type": "FLOW",
+      "name": "Ausgabe add",
+      "description": "Ausgabe des Befehls add: Bestätigung oder Fehlermeldung an die Person."
+    },
+    {
+      "id": "FLOW-ausgabe-done",
+      "type": "FLOW",
+      "name": "Ausgabe done",
+      "description": "Ausgabe des Befehls done: Bestätigung, Meldung oder Fehlermeldung an die Person."
+    },
+    {
+      "id": "FLOW-ausgabe-list",
+      "type": "FLOW",
+      "name": "Ausgabe list",
+      "description": "Ausgabe des Befehls list: die Aufgabenliste mit Marken oder eine Meldung an die Person."
+    },
+    {
+      "id": "FLOW-eingabe",
+      "type": "FLOW",
+      "name": "Terminal-Eingabe",
+      "description": "Eingabe am Terminal: der Befehl der Person (add, list, done) mit seinen Argumenten."
+    },
+    {
+      "id": "FUNC-add",
+      "type": "FUNC",
+      "name": "add",
+      "description": "add: liest den Befehl von der Terminal-Eingabe, prüft den Text auf Nicht-Leerheit, legt die Aufgabe in todos.json an und meldet.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-done",
+      "type": "FUNC",
+      "name": "done",
+      "description": "done: liest die Nummer von der Terminal-Eingabe, markiert die Aufgabe in todos.json als erledigt; unbekannte Nummer und schon erledigt werden gemeldet.",
+      "concept": true
+    },
+    {
+      "id": "FUNC-list",
+      "type": "FUNC",
+      "name": "list",
+      "description": "list: liest todos.json, zeigt offene und erledigte Aufgaben (erledigte mit Marke) auf der Terminal-Ausgabe; leere Liste und kaputte Datei werden gemeldet.",
+      "concept": true
+    },
+    {
+      "id": "MOD-todo",
+      "type": "MOD",
+      "name": "Todo-Modul",
+      "description": "Das eine Modul der Todo-CLI: es liest die Terminal-Eingabe, wendet den Befehl an und schreibt die Terminal-Ausgabe; der Speicher ist todos.json.",
+      "concept": true
+    },
+    {
+      "id": "REQ-add-e2e",
+      "type": "REQ",
+      "name": "add→list: Aufgabe erscheint",
+      "description": "Ende-zu-Ende: eine mit add angelegte Aufgabe erscheint bei einem anschließenden list.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-add-leer",
+      "type": "REQ",
+      "name": "add: leerer Text abgelehnt",
+      "description": "add mit leerem Text oder nur Leerzeichen wird abgelehnt: Fehlermeldung, Exit-Code 1.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-add-text",
+      "type": "REQ",
+      "name": "add: Text wird gespeichert",
+      "description": "Eine Aufgabe mit nicht-leerem Text wird angelegt und in todos.json gespeichert.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-done-e2e",
+      "type": "REQ",
+      "name": "done→list: Marke erscheint",
+      "description": "Ende-zu-Ende: eine mit done erledigte Aufgabe trägt bei einem anschließenden list die Marke.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-done-mark",
+      "type": "REQ",
+      "name": "done: wird markiert",
+      "description": "Eine Aufgabe mit gegebener Nummer wird als erledigt markiert und in todos.json gespeichert.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-done-schon",
+      "type": "REQ",
+      "name": "done: schon erledigt meldet",
+      "description": "done auf ein bereits erledigtes Todo: eine Meldung.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-done-unknown",
+      "type": "REQ",
+      "name": "done: unbekannte Nummer abgelehnt",
+      "description": "done mit unbekannter Nummer: Fehlermeldung, Exit-Code 1.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-list-alle",
+      "type": "REQ",
+      "name": "list: alle mit Marke",
+      "description": "Offene und erledigte Aufgaben werden angezeigt; erledigte tragen eine Marke.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-list-kaputt",
+      "type": "REQ",
+      "name": "list: kaputte Datei abgefangen",
+      "description": "Eine kaputte oder ungültige JSON-Datei führt zu einer Fehlermeldung, Exit-Code 1.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-list-leer",
+      "type": "REQ",
+      "name": "list: leere Liste meldet",
+      "description": "Bei leerer Liste gibt es eine Meldung.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "SCHEMA-befehl",
+      "type": "SCHEMA",
+      "name": "Befehlsformat",
+      "description": "Format der Terminal-Eingabe: ein Befehl (add, list, done) mit seinen Argumenten.",
+      "concept": true
+    },
+    {
+      "id": "SCHEMA-meldung",
+      "type": "SCHEMA",
+      "name": "Meldungsformat",
+      "description": "Format der Terminal-Ausgabe: eine Meldung oder die Aufgabenliste mit erledigt-Marken.",
+      "concept": true
+    },
+    {
+      "id": "SYS-todo",
+      "type": "SYS",
+      "name": "Todo-CLI",
+      "description": "Todo-Liste für die Kommandozeile: eine Person am Terminal legt Aufgaben an, liest sie und markiert sie erledigt; der Speicher ist die Datei todos.json im Arbeitsverzeichnis."
+    },
+    {
+      "id": "TEST-add-e2e",
+      "type": "TEST",
+      "name": "test add→list",
+      "description": "Nach add erscheint die Aufgabe in list.",
+      "concept": true
+    },
+    {
+      "id": "TEST-add-leer",
+      "type": "TEST",
+      "name": "test add leer",
+      "description": "add mit leerem Text bzw. nur Leerzeichen: Fehlermeldung, Exit-Code 1.",
+      "concept": true
+    },
+    {
+      "id": "TEST-add-text",
+      "type": "TEST",
+      "name": "test add Text",
+      "description": "add mit Text legt die Aufgabe an; todos.json enthält sie.",
+      "concept": true
+    },
+    {
+      "id": "TEST-done-e2e",
+      "type": "TEST",
+      "name": "test done→list",
+      "description": "Nach done trägt die Aufgabe in list die Marke.",
+      "concept": true
+    },
+    {
+      "id": "TEST-done-mark",
+      "type": "TEST",
+      "name": "test done markiert",
+      "description": "done mit gültiger Nummer markiert die Aufgabe; todos.json zeigt erledigt.",
+      "concept": true
+    },
+    {
+      "id": "TEST-done-schon",
+      "type": "TEST",
+      "name": "test done schon",
+      "description": "done auf bereits erledigtes Todo: eine Meldung.",
+      "concept": true
+    },
+    {
+      "id": "TEST-done-unknown",
+      "type": "TEST",
+      "name": "test done unbekannt",
+      "description": "done mit unbekannter Nummer: Fehlermeldung, Exit-Code 1.",
+      "concept": true
+    },
+    {
+      "id": "TEST-list-alle",
+      "type": "TEST",
+      "name": "test list alle",
+      "description": "Offene und erledigte Aufgaben werden angezeigt, erledigte mit Marke.",
+      "concept": true
+    },
+    {
+      "id": "TEST-list-kaputt",
+      "type": "TEST",
+      "name": "test list kaputt",
+      "description": "Kaputte/ungültige JSON-Datei: Fehlermeldung, Exit-Code 1.",
+      "concept": true
+    },
+    {
+      "id": "TEST-list-leer",
+      "type": "TEST",
+      "name": "test list leer",
+      "description": "Bei leerer Liste erscheint die Meldung.",
+      "concept": true
+    },
+    {
+      "id": "UC-add",
+      "type": "UC",
+      "name": "Aufgabe anlegen",
+      "description": "Die Person legt eine Aufgabe mit Text an. Leerer Text oder nur Leerzeichen wird abgelehnt: Fehlermeldung, Exit-Code 1."
+    },
+    {
+      "id": "UC-done",
+      "type": "UC",
+      "name": "Aufgabe erledigen",
+      "description": "Die Person markiert eine Aufgabe per Nummer als erledigt. Unbekannte Nummer: Fehlermeldung, Exit-Code 1. Bereits erledigt: eine Meldung."
+    },
+    {
+      "id": "UC-list",
+      "type": "UC",
+      "name": "Aufgaben anzeigen",
+      "description": "Die Person sieht alle Aufgaben, offene und erledigte; erledigte tragen eine Marke. Bei leerer Liste gibt es eine Meldung."
+    }
+  ],
+  "traces": [
+    {
+      "source": "ACTOR-person",
+      "target": "FLOW-eingabe",
+      "type": "io"
+    },
+    {
+      "source": "FCHAIN-add",
+      "target": "FUNC-add",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-done",
+      "target": "FUNC-done",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-list",
+      "target": "FUNC-list",
+      "type": "compose"
+    },
+    {
+      "source": "FLOW-ausgabe",
+      "target": "ACTOR-person",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ausgabe",
+      "target": "SCHEMA-meldung",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-ausgabe-add",
+      "target": "ACTOR-person",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ausgabe-add",
+      "target": "SCHEMA-meldung",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-ausgabe-done",
+      "target": "ACTOR-person",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ausgabe-done",
+      "target": "SCHEMA-meldung",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-ausgabe-list",
+      "target": "ACTOR-person",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ausgabe-list",
+      "target": "SCHEMA-meldung",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-eingabe",
+      "target": "FUNC-add",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-eingabe",
+      "target": "FUNC-done",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-eingabe",
+      "target": "FUNC-list",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-eingabe",
+      "target": "SCHEMA-befehl",
+      "type": "relation"
+    },
+    {
+      "source": "FUNC-add",
+      "target": "MOD-todo",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-add",
+      "target": "FLOW-ausgabe-add",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-add",
+      "target": "REQ-add-leer",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-add",
+      "target": "REQ-add-text",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-done",
+      "target": "MOD-todo",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-done",
+      "target": "FLOW-ausgabe-done",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-done",
+      "target": "REQ-done-mark",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-done",
+      "target": "REQ-done-schon",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-done",
+      "target": "REQ-done-unknown",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-list",
+      "target": "MOD-todo",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-list",
+      "target": "FLOW-ausgabe-list",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-list",
+      "target": "REQ-list-alle",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-list",
+      "target": "REQ-list-kaputt",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-list",
+      "target": "REQ-list-leer",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "MOD-todo",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "UC-add",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "UC-done",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-todo",
+      "target": "UC-list",
+      "type": "compose"
+    },
+    {
+      "source": "TEST-add-e2e",
+      "target": "REQ-add-e2e",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-add-leer",
+      "target": "REQ-add-leer",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-add-text",
+      "target": "REQ-add-text",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-e2e",
+      "target": "REQ-done-e2e",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-mark",
+      "target": "REQ-done-mark",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-schon",
+      "target": "REQ-done-schon",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-done-unknown",
+      "target": "REQ-done-unknown",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-list-alle",
+      "target": "REQ-list-alle",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-list-kaputt",
+      "target": "REQ-list-kaputt",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-list-leer",
+      "target": "REQ-list-leer",
+      "type": "verify"
+    },
+    {
+      "source": "UC-add",
+      "target": "FCHAIN-add",
+      "type": "compose"
+    },
+    {
+      "source": "UC-add",
+      "target": "REQ-add-e2e",
+      "type": "compose"
+    },
+    {
+      "source": "UC-add",
+      "target": "REQ-add-leer",
+      "type": "compose"
+    },
+    {
+      "source": "UC-add",
+      "target": "REQ-add-text",
+      "type": "compose"
+    },
+    {
+      "source": "UC-done",
+      "target": "FCHAIN-done",
+      "type": "compose"
+    },
+    {
+      "source": "UC-done",
+      "target": "REQ-done-e2e",
+      "type": "compose"
+    },
+    {
+      "source": "UC-done",
+      "target": "REQ-done-mark",
+      "type": "compose"
+    },
+    {
+      "source": "UC-done",
+      "target": "REQ-done-schon",
+      "type": "compose"
+    },
+    {
+      "source": "UC-done",
+      "target": "REQ-done-unknown",
+      "type": "compose"
+    },
+    {
+      "source": "UC-list",
+      "target": "FCHAIN-list",
+      "type": "compose"
+    },
+    {
+      "source": "UC-list",
+      "target": "REQ-list-alle",
+      "type": "compose"
+    },
+    {
+      "source": "UC-list",
+      "target": "REQ-list-kaputt",
+      "type": "compose"
+    },
+    {
+      "source": "UC-list",
+      "target": "REQ-list-leer",
+      "type": "compose"
+    }
+  ],
+  "graphVersion": 4
+}

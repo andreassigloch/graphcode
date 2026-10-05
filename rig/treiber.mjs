@@ -18,9 +18,9 @@
  * Sitzung. Eine weitere Stufe (etwa Code aus dem Modell) ist eine Funktion in STUFEN — kein zweiter Treiber.
  *
  * Artefakte unter rig/runs/<aufgabe>/<arm>-<nr>/: lauf.json (Stand, Züge mit Stufe, Sitzung, Nachricht, Antwort,
- * Dauer, Werkzeugen, Audit, Gates), denken.json, audit.jsonl, graph.json (Export des Hosts), das Lauf-Repo — und eine
- * Zeile mit Stempel in docs/messung/interaktiv.md. Der Stand nennt neben dem Code-Stand von graphcode den Commit der
- * Vorlage, weil der Prompt dort lebt.
+ * Dauer, Werkzeugen, Audit, Gates), denken.json, audit.jsonl, graph.json (Export des Hosts), das Lauf-Repo. Der Treiber
+ * rechnet nichts außer dem Ende; die Datensätze schreibt `auswertung/auswerten.mjs` (nach `serie` automatisch). Der
+ * Stand nennt neben dem Code-Stand von graphcode den Commit der Vorlage, weil der Prompt dort lebt.
  * Frontier: `GRAPHCODE_RIG_CLAUDE=<pfad>` wählt das CLI (Opus 5.5 braucht Claude Code >= 2.1.280).
  *
  * @author andreas@siglochconsulting
@@ -30,7 +30,8 @@ import { dirname, join, resolve, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { naechsteNachricht, ende, analyseIn, sitzungswechsel, aufgabeLaden } from './simulator.mjs';
-import { kennzahlen, zeile, anhaengen, auditDelta, nachspielen } from './auswertung.mjs';
+import { auditDelta } from '../auswertung/kennzahlen.mjs';
+import { nachspielen } from '../auswertung/nachspielen.mjs';
 import { repoAnlegen, frontierRepo, lokal, frontier, vorlageStand } from './arme.mjs';
 import { openMeasured, stampLine } from '../dist/index.js';
 
@@ -120,7 +121,7 @@ async function modellieren(lage) {
 /** Die Stufen, die eine Sequenz nennen darf. Eine neue Stufe kommt hier dazu — und nirgends sonst. */
 export const STUFEN = { modellieren };
 
-export async function lauf(arm, nr, { aufgabe: aufgabeName = 'todo', zuege: maxZuege = 30, jeSitzung = 8, modell = null, kennung = arm } = {}) {
+export async function lauf(arm, nr, { aufgabe: aufgabeName = 'todo', zuege: maxZuege = 30, jeSitzung = 8, modell = null, kennung = arm, stand: st = stand() } = {}) {
   const aufgabe = aufgabeLaden(aufgabeName);
   for (const st of aufgabe.sequenz) if (!STUFEN[st]) throw new Error(`Aufgabe ${aufgabeName}: Stufe „${st}" kennt der Treiber nicht (${Object.keys(STUFEN).join(', ')})`);
   const dir = join(RUNS, aufgabeName, `${kennung}-${nr}`);
@@ -130,7 +131,7 @@ export async function lauf(arm, nr, { aufgabe: aufgabeName = 'todo', zuege: maxZ
   if (arm === 'frontier') frontierRepo(repo, 4850 + nr);
   const oeffnen = () => (arm === 'lokal' ? lokal(repo, 4900 + nr) : frontier(repo, modell ?? 'claude-opus-5-5'));
 
-  const protokoll = [], denken = [], st = stand();
+  const protokoll = [], denken = [];
   const kopf = { arm: kennung, nr, aufgabe: aufgabeName, sequenz: aufgabe.sequenz, stand: st };
   const lage = { repo, oeffnen, aufgabe, maxZuege, jeSitzung, protokoll, denken, kennung, nr, modell: null, sitzungen: 0,
     schreiben: () => writeFileSync(join(dir, 'lauf.json'), JSON.stringify({ ...kopf, zuege: protokoll }, null, 1)) };
@@ -160,9 +161,8 @@ export async function lauf(arm, nr, { aufgabe: aufgabeName = 'todo', zuege: maxZ
   }
   if (existsSync(join(repo, '.graphcode', 'audit.jsonl'))) copyFileSync(join(repo, '.graphcode', 'audit.jsonl'), join(dir, 'audit.jsonl'));
 
-  const ergebnis = { ...kopf, modell: lage.modell, stempel, ende: grund, sitzungen: lage.sitzungen, graph, zuege: protokoll };
-  writeFileSync(join(dir, 'lauf.json'), JSON.stringify(ergebnis, null, 1));
-  anhaengen(zeile(new Date().toISOString().slice(0, 10), ergebnis, kennzahlen(ergebnis)));
+  const ergebnis = { ...kopf, modell: lage.modell, stempel, ende: grund, sitzungen: lage.sitzungen, graph, zuege: protokoll, dir };
+  writeFileSync(join(dir, 'lauf.json'), JSON.stringify({ ...ergebnis, dir: undefined }, null, 1));
   return ergebnis;
 }
 
@@ -216,7 +216,17 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
     for (const o of offen) console.log(`${'plan' in flags ? 'fehlt' : 'fahre'}: ${o.aufgabe} ${o.kennung}-${o.nr}${o.modell ? ` (${o.modell})` : ''}`);
     if (!('plan' in flags)) {
       const serie = JSON.parse(readFileSync(SERIE, 'utf8'));
-      for (const o of offen) await lauf(o.arm, o.nr, { aufgabe: o.aufgabe, zuege: serie.zuege, jeSitzung: serie.sitzung, modell: o.modell, kennung: o.kennung });
+      // EIN Stand für die ganze Serie: der Code ist beim Start geladen, was danach im Arbeitsbaum passiert, fährt nicht mit.
+      const st = stand();
+      const gefahren = [];
+      for (const o of offen) gefahren.push((await lauf(o.arm, o.nr, { aufgabe: o.aufgabe, zuege: serie.zuege, jeSitzung: serie.sitzung, modell: o.modell, kennung: o.kennung, stand: st })).dir);
+      // Die Serie endet mit ihren Datensätzen — ohne Zeile im laufenden Dokument ist ein Lauf nicht gemessen.
+      const { auswertenLauf, lesen, upsert, rendern, JSONL, MD } = await import('../auswertung/auswerten.mjs');
+      let saetze = lesen();
+      for (const d of gefahren) saetze = upsert(saetze, await auswertenLauf(d));
+      writeFileSync(JSONL, saetze.map((x) => JSON.stringify(x)).join('\n') + '\n');
+      writeFileSync(MD, rendern(saetze));
+      console.log(`${gefahren.length} Läufe ausgewertet → docs/messung/benchmark.md`);
     }
   } else if (worte[0] === 'referenz') {
     if (!worte[1]) usage();
@@ -225,6 +235,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
     const [arm, nr] = worte;
     if (!['lokal', 'frontier'].includes(arm) || !Number.isInteger(Number(nr))) usage();
     const e = await lauf(arm, Number(nr), { aufgabe: flags.aufgabe ?? 'todo', zuege: Number(flags.zuege ?? 30), jeSitzung: Number(flags.sitzung ?? 8), modell: flags.modell ?? null, kennung: flags.arm ?? arm });
-    console.log(`[${e.arm}-${nr}] Ende: ${e.ende} nach ${e.zuege.length} Zügen · ${e.stempel}`);
+    console.log(`[${e.arm}-${nr}] Ende: ${e.ende} nach ${e.zuege.length} Zügen · ${e.stempel}\nAuswerten: node auswertung/auswerten.mjs ${e.dir}`);
   }
 }

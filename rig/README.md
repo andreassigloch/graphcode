@@ -103,8 +103,8 @@ korrekt — der Beleg, dass der Weg gangbar ist, noch bevor es `openMeasured` ga
 ## Das Rig (CR-GC-715, CR-GC-738)
 
 `rig/` ist **das** Rig, kein Ordner voller Rigs (Konzept: [`docs/graphcode_messaufbau_konzept.md`](../docs/graphcode_messaufbau_konzept.md)).
-Es fährt Läufe und hinterlässt Artefakte; gerechnet wird in der Auswertung, eingefrorene Eingaben liegen unter
-[`beispielgraphen/`](../beispielgraphen/README.md).
+Es fährt Läufe und hinterlässt Artefakte; gerechnet wird in [`auswertung/`](../auswertung/README.md), eingefrorene
+Eingaben liegen unter [`beispielgraphen/`](../beispielgraphen/README.md).
 
 | Baustein | Datei | tut |
 |---|---|---|
@@ -119,7 +119,7 @@ Es fährt Läufe und hinterlässt Artefakte; gerechnet wird in der Auswertung, e
 echte Fragen beantwortet der Simulator einmal je Sitzung mit dem Antwortblatt, sonst „offen, bitte als offen führen";
 danach schickt er den Vorschlag des Zugs ab. Er erfindet nichts. Die Stufe endet, sobald die Readiness **SRR und PDR**
 als bestanden meldet — nach jedem Zug mit Mutation geprüft an einem Nachbau aus dem Audit (`nachspielen`, der laufende
-Host bleibt unberührt). PDR verlangt seit graphcode-client 1.6.0 (CR-SM-389) die Allokation jeder Funktion; die
+Host bleibt unberührt; `auswertung/nachspielen.mjs`). PDR verlangt seit graphcode-client 1.6.0 (CR-SM-389) die Allokation jeder Funktion; die
 Analysen sind dort offene Hinweise, keine Sperre. Jede Analyse läuft in einer frischen Sitzung (neuer Client-Prozess,
 derselbe Store), ebenso die Rückkehr zur Strukturarbeit. Eine weitere Stufe (Code aus dem Modell, Abnahme) ist eine
 Funktion in `STUFEN` — kein zweiter Treiber.
@@ -132,7 +132,8 @@ graphcode-Log, LLM-Log, Stempel): die Referenz der Leitlinie §9.4 für diese Au
 Stufen nach dem Modellieren. `treiber.mjs referenz runs/<aufgabe>/<lauf>` tauscht ihn — der Autor entscheidet,
 welcher Lauf Referenz wird.
 
-Zeilen je Lauf: [`docs/messung/interaktiv.md`](../docs/messung/interaktiv.md). Frontier: `GRAPHCODE_RIG_CLAUDE=<pfad>`
+Datensätze je Lauf: [`docs/messung/benchmark.md`](../docs/messung/benchmark.md) (`serie` wertet am Ende selbst aus;
+ein einzelner Lauf: `node auswertung/auswerten.mjs <lauf-dir>`). Frontier: `GRAPHCODE_RIG_CLAUDE=<pfad>`
 wählt das Claude-CLI (Opus 5.5 braucht >= 2.1.280).
 
 ## Was ein Rig sonst still tut: nichts

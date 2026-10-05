@@ -1,0 +1,11 @@
+{
+ "lauf": "frontier-5",
+ "stempel": "graph fa5d66df6863 (61/109) · policy todo/graphcode.config.jsonc · rules 34.1.0 · code 8c498e8 · vorlage 511714e",
+ "stand": {
+  "code": "8c498e8",
+  "vorlage": "511714e"
+ },
+ "modell": "claude-opus-5-5",
+ "ende": "srr+pdr",
+ "gesetzt": "2026-10-05"
+}

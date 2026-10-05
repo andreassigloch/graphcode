@@ -131,6 +131,10 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/auswertung.test.ts':
+    'Auswertung des Rigs (CR-GC-739): rechnet ueber gestellte lauf.json/audit.jsonl/graph.json in einem TEMP-Verzeichnis\n' +
+    'und ueber einen Lauf unter rig/runs; graphcodes eigene SSOT liest er nie — eine Modellaenderung kann ihn nicht rot\n' +
+    'machen; eine Aenderung an auswertung/*.mjs sehr wohl (Spur CODE).',
   'tests/rig-interaktiv.test.ts':
     'Rig (CR-GC-715/738): prueft Simulator, Aufgabe, Serie und Referenzlauf an gestellten lauf.json/graph.json in\n' +
     'einem TEMP-Verzeichnis; `graph.json` ist dort der Dateiname eines Lauf-Artefakts. graphcodes eigene SSOT liest\n' +

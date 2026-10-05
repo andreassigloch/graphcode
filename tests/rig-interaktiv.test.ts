@@ -9,9 +9,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { fragen, naechsteNachricht, ende, analyseIn, sitzungswechsel, bisErsteAnalyse, aufgabeLaden, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/simulator.mjs';
+import { fragen, naechsteNachricht, ende, analyseIn, sitzungswechsel, aufgabeLaden, FREIGABE, ZUSTIMMUNG, WEITER, OFFEN } from '../rig/simulator.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
-import { kennzahlen, auditDelta } from '../rig/auswertung.mjs';
+import { auditDelta } from '../auswertung/kennzahlen.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
 import { alsClaudeMd, mitModell } from '../rig/arme.mjs';
 // @ts-expect-error — Rig-Module sind .mjs ohne Typen
@@ -88,12 +88,6 @@ describe('CR-GC-715: Nutzer-Simulator', () => {
     expect(sitzungswechsel('Einsatzkonzept', null)).toBe(false);
   });
 
-  it('die Normierung der Läufe vom 2026-10-04 schneidet beim ersten Analyse-Vorschlag', () => {
-    const z = (vorschlag: string | null) => ({ vorschlag });
-    expect(bisErsteAnalyse([z(null), z('Lege die Nutzer an.'), z('Führe das Einsatzkonzept (ConOps) durch.'), z('x')])).toHaveLength(3);
-    expect(bisErsteAnalyse([z(null), z('x')])).toBeNull();
-  });
-
   it('die Aufgabe legt jede offene Frage als O* fest und gibt dem Start-Prompt die Vorgabe', () => {
     expect(korpus.start).toContain('done mit unbekannter Nummer');
     expect(korpus.punkte.filter((p: { id: string }) => p.id.startsWith('O')).length).toBeGreaterThan(0);
@@ -146,12 +140,6 @@ describe('CR-GC-715: Nutzer-Simulator', () => {
 });
 
 describe('CR-GC-715: Kennzahlen und Arme', () => {
-  it('Kennzahlen je Lauf: Median/Max der Dauer, Fragen in Zug 1, Gate-Ergebnis', () => {
-    const z = (dauerMs: number, text: string, werkzeuge: string[], angenommen: number, abgelehnt: number) => ({ dauerMs, text, werkzeuge, audit: { angenommen, abgelehnt } });
-    const k = kennzahlen({ ende: 'zuglimit', zuege: [z(120_000, ZUG1, ['a'], 0, 0), z(60_000, 'ok', ['a', 'b', 'c'], 1, 1), z(180_000, 'ok', ['a', 'b'], 1, 0)] });
-    expect(k).toMatchObject({ zuege: 3, dauerMedian: 120_000, dauerMax: 180_000, fragenZug1: 2, schritteMedian: 2, schritteMax: 3, angenommen: 2, abgelehnt: 1 });
-  });
-
   it('--modell ersetzt nur das Client-Modell: Kopie des Vorlage-Eintrags mit neuer id, Vorlage unverändert', () => {
     const vorlage = { reasoning: true, temperature: true, options: { reasoningEffort: 'medium' }, limit: { context: 65536, output: 16384 }, id: 'qwen3.8-27b-lms:latest' };
     const cfg = { model: 'ollama/qwen3.8-27b-lms:medium', provider: { ollama: { models: { 'qwen3.8-27b-lms:medium': vorlage } } } };

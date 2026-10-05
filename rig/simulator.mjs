@@ -93,9 +93,3 @@ export function ende(zug, maxZuege, letzteNachricht, gates = {}) {
   if (String(letzteNachricht ?? '').endsWith(FREIGABE)) return 'freigabe';
   return zug >= maxZuege ? 'zuglimit' : null;
 }
-
-/** Die Züge bis einschließlich des ersten mit Analyse-Vorschlag — die Normierung der Läufe vom 2026-10-04. */
-export function bisErsteAnalyse(zuege) {
-  const i = zuege.findIndex((z) => analyseIn(z.vorschlag));
-  return i < 0 ? null : zuege.slice(0, i + 1);
-}

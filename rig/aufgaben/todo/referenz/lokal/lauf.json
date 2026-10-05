@@ -1,0 +1,160 @@
+{
+  "arm": "lokal",
+  "nr": 6,
+  "aufgabe": "todo",
+  "sequenz": [
+    "modellieren"
+  ],
+  "stand": {
+    "code": "8c498e8",
+    "vorlage": "511714e"
+  },
+  "modell": "ollama/qwen3.8:27b-nvfp4",
+  "stempel": "graph 6ddf870cd71d (39/57) · policy todo/graphcode.config.jsonc · rules 34.1.0 · code 8c498e8 · vorlage 511714e",
+  "ende": "srr+pdr",
+  "sitzungen": 1,
+  "graph": {
+    "elements": 39,
+    "traces": 57
+  },
+  "zuege": [
+    {
+      "zug": 1,
+      "stufe": "modellieren",
+      "sitzung": 1,
+      "nachricht": "Wir modellieren mit graphcode eine Todo-Liste für die Kommandozeile.\n\nBefehle:  add \"<text>\", list, done <nr>.\nSpeicher: eine JSON-Datei im Arbeitsverzeichnis.\nFehler:   done mit unbekannter Nummer -> Fehlermeldung, Exit-Code 1.\nNutzer:   eine Person am Terminal.\n\nErst das Modell, noch kein Code.",
+      "text": "Ich lese zuerst das Autoring-Guide und den aktuellen Modellbestand, bevor ich frage.\nLeeres Modell, Version 0. Bevor ich schreibe, ein paar Fragen — und ein Vorschlag für die Schritte.\n\n**Fragen**\n1. Was zeigt `list` bei leerer Liste — gar nichts, oder einen Hinweis wie *„keine Aufgaben\"*?\n2. Darf `add` einen leeren Text annehmen, oder wird das abgelehnt?\n3. Existiert die JSON-Datei noch nicht: wird sie bei `add`/`list` still angelegt, oder ist das ein Fehler?\n4. `done <nr>`: Was ist die Nummer — die **Position** in der Liste (ändert sich, wenn Aufgaben entfernt werden) oder eine **feste ID**? Und was passiert, wenn man eine Aufgabe zweimal `done` markiert?\n5. Gibt es einen Befehl zum **Löschen** von Aufgaben, oder nur `add`/`list`/`done`?\n\n**Vorschlag für die Schritte**\n1. System + die drei Abläufe (`add`, `list`, `done`)\n2. Der Nutzer (Terminal-Person) und wie er die Abläufe auslöst\n3. je Ablauf eine Anforderung mit Test (inkl. Fehlerfall `done` mit unbekannter Nr → Exit 1)\n4. Funktionen + Datenflüsse + Datenformat der JSON-Datei\n\nSoll ich mit Schritt 1 beginnen?",
+      "dauerMs": 55167,
+      "werkzeuge": [
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_elements"
+      ],
+      "vorschlag": null,
+      "abbruch": {
+        "laenge": 0,
+        "fehler": 0
+      },
+      "audit": {
+        "angenommen": 0,
+        "abgelehnt": 0
+      },
+      "gates": {}
+    },
+    {
+      "zug": 2,
+      "stufe": "modellieren",
+      "sitzung": 1,
+      "nachricht": "Meine Vorgaben:\n- list zeigt offene und erledigte Todos, erledigte mit einer Marke.\n- add mit leerem Text oder nur Leerzeichen: Fehlermeldung, Exit-Code 1.\n- done auf ein schon erledigtes Todo: eine Meldung.\n- list bei leerer Liste: eine Meldung.\n- Kaputte oder ungültige JSON-Datei: Fehlermeldung, Exit-Code 1.\n- Die Datei heißt todos.json und liegt im Arbeitsverzeichnis.\n- Die Person ist Anfang und Ende jedes Ablaufs; Eingabe und Ausgabe am Terminal sind die Datenflüsse.\n- Ein Modul reicht.\n\nWas dort nicht steht, ist offen — bitte als offen führen, nicht festlegen.\n\nJa, beginne mit Schritt 1.",
+      "text": "Klar. Ich führe die offenen Punkte (Löschen, Bedeutung der Nummer) bewusst **nicht** fest — sie bleiben offen. Jetzt Schritt 1: System und die drei Abläufe.\nIm Modell: System **Todo-CLI** mit den drei Abläufen **Aufgabe anlegen**, **Aufgaben anzeigen** und **Aufgabe erledigen**.\n\nRegelhinweise: die Abläufe haben noch keinen Nutzer (UC-02), keine Anforderungen (UC-01) und keinen Verhaltensablauf (UC-03/FC-02) — das sind die nächsten Schritte. Hinzu kommen die fünf Systemhinweise AF-01…AF-05 (ConOps, Trade Study, Annahmen-Review, FMEA, Bauplan) — die führe ich nur auf deinen Auftrag aus.\n\nDeine Vorgaben stehen in den Beschreibungen der Abläufe; offen bleiben bewusst: **Löschen** und die **Bedeutung der Nummer** (Position vs. feste ID).\n\nSoll ich mit Schritt 2 (der Nutzer am Terminal) fortfahren?",
+      "dauerMs": 35477,
+      "werkzeuge": [
+        "graphcode_graph_mutate"
+      ],
+      "vorschlag": "Lege die Nutzer (Akteure) an und verbinde sie mit den Abläufen.",
+      "abbruch": {
+        "laenge": 0,
+        "fehler": 0
+      },
+      "audit": {
+        "angenommen": 1,
+        "abgelehnt": 0
+      },
+      "gates": {
+        "SRR": false,
+        "PDR": true,
+        "CDR": true,
+        "TRR": true
+      }
+    },
+    {
+      "zug": 3,
+      "stufe": "modellieren",
+      "sitzung": 1,
+      "nachricht": "Lege die Nutzer (Akteure) an und verbinde sie mit den Abläufen.",
+      "text": "Ich lese das Guide für den Akteurtyp, bevor ich schreibe.\nIch lese das Guide für FLOW, um die korrekte Verkabelung zu sehen — der Akteur verbindet sich über Datenflüsse, nicht direkt mit dem Ablauf.\nDer Akteur verbindet sich in graphcode über Datenflüsse (nicht direkt mit dem Ablauf): er **löst** über den Eingabe-Fluss aus und **empfängt** über den Ausgabe-Fluss. Die Flüsse binden sich an die Funktionen in Schritt 4 — so wird der Akteur „Anfang und Ende jedes Ablaufs\". Ich lege die Person und die zwei Terminal-Flüsse an und verdrahte sie.\nDas Gate blockiert: jeder Datenfluss braucht ein Datenformat (SCHEMA, R-18 — hart) und einen Verbraucher/Erzeuger (R-10 — Warnung, kommt in Schritt 4 mit den Funktionen). Ich lese das SCHEMA-Guide und lege im selben Zug die zwei Formate an.\nDas Gate blockiert hart: jeder Fluss braucht ein Datenformat. Da noch kein Code existiert, markiere ich die zwei Formate als `@concept` (modelliert, noch keine Umsetzung). Ich wiederhole den Zug mit den Schemata.\nIm Modell: **Person am Terminal** ist jetzt Anfang und Ende — sie löst über den Fluss **Terminal-Eingabe** aus und empfängt über **Terminal-Ausgabe**. Beide Flüsse tragen als Format die beiden Konzepte **Befehlsformat** und **Meldungsformat** (noch `@concept`, da kein Code existiert).\n\nRegelhinweise: die Flüsse haben noch keinen Erzeuger/Verbraucher (R-10) und die Abläufe sind noch nicht vom Akteur erreichbar (UC-02) — beides schließt Schritt 4, wenn die Funktionen an die Flüsse anbinden.\n\nOffen bleiben weiterhin **Löschen** und die **Bedeutung der Nummer**.\n\nSoll ich mit Schritt 3 (je Ablauf eine Anforderung mit Test, inkl. der Fehlerfälle) fortfahren, oder zuerst Schritt 4 (Funktionen + Datenflüsse)?",
+      "dauerMs": 182274,
+      "werkzeuge": [
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_mutate",
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_mutate"
+      ],
+      "vorschlag": "Lege für die Abläufe Aufgabe anlegen, Aufgabe erledigen, Aufgaben anzeigen Anforderungen mit Test an: fachliche je Funktion, Ende-zu-Ende-Vorgaben an der Kette.",
+      "abbruch": {
+        "laenge": 0,
+        "fehler": 0
+      },
+      "audit": {
+        "angenommen": 1,
+        "abgelehnt": 1
+      },
+      "gates": {
+        "SRR": false,
+        "PDR": true,
+        "CDR": true,
+        "TRR": true
+      }
+    },
+    {
+      "zug": 4,
+      "stufe": "modellieren",
+      "sitzung": 1,
+      "nachricht": "Lege für die Abläufe Aufgabe anlegen, Aufgabe erledigen, Aufgaben anzeigen Anforderungen mit Test an: fachliche je Funktion, Ende-zu-Ende-Vorgaben an der Kette.",
+      "text": "Ich lese die Guides für REQ und TEST, bevor ich schreibe.\nIch lege je Ablauf fachliche Anforderungen an (je Funktion) plus die Ende-zu-Ende-Vorgaben, die über die Kette gehen (add→list, done→list). Da noch kein Code existiert, sind alle Tests `@concept`. Die Ende-zu-Ende-Anforderungen werden in Schritt 4 von den Funktionsketten (FCHAIN) erfüllt.\nIch lese die Guides für FUNC und FCHAIN, um die Kette korrekt zu bauen.\nIm Modell: je Ablauf die fachlichen Anforderungen — **add** (Text gespeichert, leerer Text abgelehnt, add→list), **list** (alle mit Marke, leere Liste meldet, kaputte Datei abgefangen), **done** (markiert, unbekannte Nummer abgelehnt, schon erledigt meldet, done→list) — jeweils mit einem Test. Alle Tests sind `@concept` (noch kein Code).\n\nRegelhinweise: RD-01 — die Anforderungen haben noch keinen Erfüller (satisfy-Trace). Das ist Schritt 4, wo die Funktionen die fachlichen Anforderungen erfüllen und die FCHAINs die Ende-zu-Ende-Vorgaben.\n\nOffen bleiben weiterhin **Löschen** und die **Bedeutung der Nummer**.\n\nSoll ich mit Schritt 4 (Funktionen + Datenflüsse + Modul + FCHAINs) fortfahren?",
+      "dauerMs": 169815,
+      "werkzeuge": [
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_mutate",
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_authoring_guide"
+      ],
+      "vorschlag": "Lege für die Abläufe Aufgabe anlegen, Aufgabe erledigen, Aufgaben anzeigen die Funktionen an, die der Nutzer über einen Datenfluss auslöst.",
+      "abbruch": {
+        "laenge": 0,
+        "fehler": 0
+      },
+      "audit": {
+        "angenommen": 1,
+        "abgelehnt": 0
+      },
+      "gates": {
+        "SRR": false,
+        "PDR": true,
+        "CDR": true,
+        "TRR": true
+      }
+    },
+    {
+      "zug": 5,
+      "stufe": "modellieren",
+      "sitzung": 1,
+      "nachricht": "Lege für die Abläufe Aufgabe anlegen, Aufgabe erledigen, Aufgaben anzeigen die Funktionen an, die der Nutzer über einen Datenfluss auslöst.",
+      "text": "Ich lese das Guide für FUNC und FCHAIN, um die Verkabelung korrekt zu setzen.\nIch lege das eine Modul und die drei Funktionen an, die der Nutzer über den Fluss **Terminal-Eingabe** auslöst und die in **Terminal-Ausgabe** schreiben. Jede Funktion erfüllt ihre fachliche Anforderung und ist dem Modul zugeordnet. Noch kein Code → alle `@concept`.\nDas Gate blockiert: ein Datenfluss darf nur **einen** Erzeuger haben (IO-02) — also braucht jede Funktion ihren eigenen Ausgabe-Fluss (das gemeinsame Format bleibt auf **Meldungsformat**). Und R-30 verlangt, dass jede Funktion in der FCHAIN ihres Ablaufs steht. Ich lege beides an.\nIm Modell: das eine Modul **Todo-Modul** mit den drei Funktionen **add**, **list**, **done**. Jede wird vom Fluss **Terminal-Eingabe** ausgelöst, schreibt in ihren eigenen Ausgabe-Fluss (add/list/done) — das gemeinsame Format bleibt **Meldungsformat** — und die Person empfängt sie. Jede Funktion steht in der Kette ihres Ablaufs und erfüllt ihre fachliche Anforderung.\n\nRegelhinweise: keine mehr — das Modell ist jetzt konsistent (kein blockierender Fund).\n\nOffen bleiben weiterhin **Löschen** und die **Bedeutung der Nummer**.\n\nSoll ich als Nächstes die Ende-zu-Ende-Vorgaben (add→list, done→list) an die Ketten anbinden, oder eine der offenen Fragen klären?",
+      "dauerMs": 213134,
+      "werkzeuge": [
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_authoring_guide",
+        "graphcode_graph_mutate",
+        "graphcode_graph_mutate"
+      ],
+      "vorschlag": "Lege an, was die Anforderungen add→list: Aufgabe erscheint, done→list: Marke erscheint erfüllt.",
+      "abbruch": {
+        "laenge": 0,
+        "fehler": 0
+      },
+      "audit": {
+        "angenommen": 1,
+        "abgelehnt": 1
+      },
+      "gates": {
+        "SRR": true,
+        "PDR": true,
+        "CDR": true,
+        "TRR": true
+      }
+    }
+  ]
+}

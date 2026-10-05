@@ -152,7 +152,7 @@ die Aufgabe sigllm-prosa). Löschen nur, wenn `grep` keinen Leser mehr findet.
 | `rig/moneyflow-struktur/`, `rig/agentdiary/` | lokal, nicht im Repo | moneyflow bleibt (S1-Positivkontrolle T-O4); agentdiary **lokal löschen** nach Freigabe | agentdiary = Executor-Kette D2 |
 | `rig/interaktiv/runs/` (565 MB) | Rohdaten der Reihe 2026-10-04 | bleiben bis zur ersten Serie nach neuer Definition, dann löschen | Regel 1 |
 | `.env.example` | Schlüssel für den Opus-Arm von `run.mjs` | **löschen** | einziger Leser fällt |
-| `docs/messung/interaktiv.md` | Tabelle des Rigs | → Abschnitt „2026-10-04, alte Ende-Regel" in `benchmark.md`; Datei entfällt | ein laufendes Dokument |
+| `docs/messung/interaktiv.md` | Tabelle des Rigs | → `docs/archive/messung-interaktiv-2026-10-04.md`, aus `benchmark.md` verlinkt (CR-GC-739) | andere Ende-Regel, nicht vergleichbar — Regel 2 |
 
 Mitzuziehen: `tests/systemtest-rig.test.ts`, `rig-zuege`, `rig-steuerung-transcript` (fallen),
 `rig-verhalten` (Blindurteil- und Verhalten-Teile → neue Testdatei), `generate.statemachine.test.ts`

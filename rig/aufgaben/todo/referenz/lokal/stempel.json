@@ -1,0 +1,11 @@
+{
+ "lauf": "lokal-6",
+ "stempel": "graph 6ddf870cd71d (39/57) · policy todo/graphcode.config.jsonc · rules 34.1.0 · code 8c498e8 · vorlage 511714e",
+ "stand": {
+  "code": "8c498e8",
+  "vorlage": "511714e"
+ },
+ "modell": "ollama/qwen3.8:27b-nvfp4",
+ "ende": "srr+pdr",
+ "gesetzt": "2026-10-05"
+}

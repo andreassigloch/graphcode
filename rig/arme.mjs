@@ -23,10 +23,13 @@ export const VORLAGE = '/Users/andreas/Developer/dev/todo-local';
 const CA = join(process.env.HOME, 'Developer/prod/sigllm/data/tls/sig-llm-ca.crt');
 /** Das Claude-Code-CLI: `GRAPHCODE_RIG_CLAUDE`, sonst das im PATH (Opus 5.5 braucht >= 2.1.280). */
 export const CLAUDE = process.env.GRAPHCODE_RIG_CLAUDE ?? 'claude';
-/** Der Commit der Vorlage — dort lebt der Prompt; `+dirty`, wenn der Arbeitsbaum davon abweicht. */
+/**
+ * Der Commit der Vorlage — dort lebt der Prompt; `+dirty`, wenn der Arbeitsbaum davon abweicht. Der Modell-Export
+ * (`docs/graph/`) zählt nicht: `repoAnlegen` entfernt ihn, er erreicht keinen Lauf.
+ */
 export function vorlageStand() {
   const git = (...a) => execFileSync('git', a, { cwd: VORLAGE, encoding: 'utf8' }).trim();
-  return git('rev-parse', '--short', 'HEAD') + (git('status', '--porcelain').length ? '+dirty' : '');
+  return git('rev-parse', '--short', 'HEAD') + (git('status', '--porcelain', '--untracked-files=no', '--', '.', ':!docs/graph').length ? '+dirty' : '');
 }
 
 const LESER = ['graph_authoring_guide', 'graph_elements', 'graph_get_node', 'graph_get_edges', 'graph_context', 'graph_impact'];
