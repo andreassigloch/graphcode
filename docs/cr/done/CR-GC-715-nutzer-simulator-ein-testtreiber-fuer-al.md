@@ -1,6 +1,6 @@
 # CR-GC-715: Nutzer-Simulator: EIN Testtreiber für das interaktive Rig — drückt Enter auf jeden `vorschlag`, beantwortet Fragen aus dem Antwortblatt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-05)
 **Typ:** aus Item ITEM-2026-645 (idea)
 **Erstellt:** 2026-09-28 · **umgeschrieben:** 2026-10-03 (Autor: interaktiv ist der Hauptfall, Executor eingefroren, S2 ersetzt)
 
@@ -75,3 +75,11 @@ PDR mit drei Funktionen ohne Modul. Jede Analyse und die Rückkehr zur Struktura
 (neuer Client-Prozess, derselbe Store; `--sitzung` begrenzt die Züge je Sitzung). Der Begriff „Kern" entfällt; die
 Läufe vom 2026-10-04 bleiben beim ersten Analyse-Vorschlag normiert.
 
+
+## Abschluss (2026-10-05)
+
+Umgesetzt mit 0d4063f … 0f00973 (Simulator, Treiber, Arme, Ende-Regel SRR+PDR). Der Aufbau ist mit CR-GC-738 zu `rig/`
+(das eine Rig: Aufgaben, Sequenz, Serie, Referenzlauf) und mit CR-GC-739 zu `auswertung/` (Datensatz je Lauf,
+`docs/messung/benchmark.md`) weitergezogen; die Reihe 2026-10-04 steht in `docs/archive/messung-interaktiv-2026-10-04.md`.
+Offene Akzeptanzpunkte dieses CR (Zeile je Lauf in `verlauf.md`, N ≥ 3 beide Arme) sind durch die Serie 2026-10-05
+(3 × lokal, 3 × frontier, `benchmark.md`) erfüllt — in der Form von CR-GC-739. Geschlossen als abgelöst.
