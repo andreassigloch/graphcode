@@ -1,6 +1,6 @@
 # CR-GC-742: Rig-Simulator: je Anliegen des Agenten eine Antwort, Politik je Aufgabe, Entscheidungen im Protokoll
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-05)
 **Typ:** aus Item ITEM-2026-749 (finding)
 **Erstellt:** 2026-10-05
 **Item:** bok/items/ITEM-2026-749.json (Lane: code)
