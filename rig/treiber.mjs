@@ -43,7 +43,8 @@ export const REFERENZ_DATEIEN = ['graph.json', 'audit.jsonl', 'lauf.json', 'denk
 /** Code-Stand von graphcode und Commit der Vorlage — der Stand, gegen den `serie` Fehlendes zählt. */
 export function stand() {
   const git = (...a) => execFileSync('git', a, { cwd: HERE, encoding: 'utf8' }).trim();
-  const dirty = git('status', '--porcelain', '--', '..').length > 0;
+  // Nur verfolgte Änderungen zählen — ein neues, noch nicht committetes Verzeichnis ändert den gemessenen Code nicht.
+  const dirty = git('status', '--porcelain', '--untracked-files=no', '--', '..').length > 0;
   return { code: git('rev-parse', '--short', 'HEAD') + (dirty ? '+dirty' : ''), vorlage: vorlageStand() };
 }
 
