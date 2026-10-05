@@ -28,13 +28,13 @@ import {
   type SteerSpaceType,
 } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot, type SteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
+import { toOntologyGraph } from '../kernel/conformance.js';
 // CR-GC-537: die EINE Normierung des Steuerungsraums. Erst seit CR-SM-340 aus dem Paket
 // erreichbar — davor gab es sie nur paketintern, und ein Host haette sie nachbauen muessen.
 import { steerScore, steerTerms } from '@sigloch/se-engine';
 import {
   summarizeReadiness,
   computePhaseReadiness,
-  typeCounts,
   type ReadinessReport,
   type PhaseGateReadiness,
 } from '../kernel/measure/readiness.js';
@@ -335,7 +335,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       // und beide Blöcke aus verschiedenen Erhebungen zu speisen.
       const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
       const report = readinessOf(ev, harness.getGraph());
-      const phaseReadiness = computePhaseReadiness(report.violations, typeCounts(harness.getGraph().nodes));
+      const phaseReadiness = computePhaseReadiness(report.violations, toOntologyGraph(harness.getGraph()));
       // Intent-Coverage (CR-GC-295): nur wenn die Config bestätigte Anker trägt;
       // der Loader prüft dabei auch die Zielkonflikt-Paare (Warning, kein Block).
       const anchors = loadTargetProfile(harness.getRepoRoot())?.profile.intentAnchors ?? [];

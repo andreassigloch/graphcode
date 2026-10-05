@@ -802,8 +802,8 @@ function stepCore(
   // alle Regeln, die Fokusmenge nicht. Ohne diese Trennung stuende eine Dimension "mit Funden"
   // da, fuer die es nichts zu tun gibt: genau der Zustand, den die Invariante ausschliesst.
   // CR-GC-603: in einem Task steht der Eintritt (das fehlende Artefakt) VOR den Regeln des Tasks —
-  // ausdruecklich, nicht per Dimensionsreihenfolge. Bis CR-SM-377 stimmte das nur zufaellig: die
-  // Plan-Regeln lagen in staerkeren Dimensionen; mit CR-R05 (Dimension req) im Plan-Task nicht mehr.
+  // ausdruecklich, nicht per Dimensionsreihenfolge: in welcher Dimension die Regeln eines Tasks
+  // liegen, ist Sache des Katalogs und wandert mit ihm.
   const eintritt = task !== 'kern' ? TASK_ENTRY[task] : null;
   const traegtEintritt = (w: typeof violations): boolean => !!eintritt && w[0]?.rule_id === eintritt;
   const kandidaten = dims

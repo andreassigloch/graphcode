@@ -22,7 +22,7 @@ import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { exportGraphJson } from '../src/projections/exporter.js';
-import { computePhaseReadiness, typeCounts } from '../src/kernel/measure/readiness.js';
+import { computePhaseReadiness } from '../src/kernel/measure/readiness.js';
 
 function node(
   uid: string,
@@ -169,7 +169,7 @@ describe('CR-GC-502: phaseReadiness kommt aus dem Snapshot', () => {
     graph.nodes.find((n) => n.uid === 'TEST-bestellung')!.attributes = { testResult: 'passed' };
     const snap = takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY);
     expect(snap.phaseReadiness.length).toBeGreaterThan(0);
-    expect(snap.phaseReadiness).toEqual(computePhaseReadiness(snap.violations.map((v) => ({ ruleId: v.rule_id })), typeCounts(snap.og.elements)));
+    expect(snap.phaseReadiness).toEqual(computePhaseReadiness(snap.violations.map((v) => ({ ruleId: v.rule_id })), snap.og));
     // Der Graph hat einen offenen R-19-Befund — mindestens ein Gate muss ihn als fehlend fuehren.
     expect(snap.phaseReadiness.some((g) => g.missing.includes('R-19'))).toBe(true);
   });

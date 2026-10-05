@@ -189,7 +189,9 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // Die beiden UC-Regeln sind zur SCHREIBREGEL in se:author-uc geworden (sie feuerten in 14 von
       // 21 Graphen an fast jedem UC), RD-03 hatte keinen Leser und feuerte einmal in 21 Graphen.
       // Wieder drei Artikel, wieder alle drei nachgezogen.
-      'engine rules=68',
+      // CR-SM-390 (contracts Regelkatalog 35.0.0, CR-GC-743): CR-R05 (Blatt-REQ ohne Bauauftrag) entfaellt
+      // ersatzlos — 68 -> 67. Zwei Artikel nannten 68, beide nachgezogen.
+      'engine rules=67',
       'readiness dimensions=8',
       // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
       // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.

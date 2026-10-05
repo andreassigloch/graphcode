@@ -128,6 +128,9 @@ describe('TEST-formate-binding: @realRef/@testRefs ueberleben den Format-E-Schre
    * ausgewertet wird. Rot-zuerst heißt hier: die Regel muss beweisbar noch feuern.
    */
   it('R-20 feuert weiterhin fuer eine FUNC ohne Bindung', async () => {
+    // Im selben Graphen wie die gebundenen Knoten: erst deren Bindung beginnt die Realisierung
+    // (contracts CR-SM-392) — in einem Entwurf ohne jede Bindung ist R-20 nicht gestellt.
+    await tools.graph_mutate.handler({ formatE: BOUND_BATCH, consumerId: 'test' });
     const res = (await tools.graph_mutate.handler({
       formatE: UNBOUND_BATCH,
       consumerId: 'test',
@@ -137,5 +140,6 @@ describe('TEST-formate-binding: @realRef/@testRefs ueberleben den Format-E-Schre
     expect(
       harness.evaluateRules().some((v) => v.ruleId === 'R-20' && v.elementId === 'FUNC-unbound'),
     ).toBe(true);
+    expect(harness.evaluateRules().some((v) => v.ruleId === 'R-20' && v.elementId === 'FUNC-bound')).toBe(false);
   });
 });

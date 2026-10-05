@@ -36,7 +36,11 @@ function makeHarness(repoRoot: string): GraphCodeHarness {
 
 // A realized FUNC with no realRef (R-20) and a realized TEST with no testRefs (R-19) — both warnings,
 // so the gate accepts the seed; the Format-E patch then clears them.
+// FN-begonnen traegt bereits eine Bindung: die Realisierung HAT begonnen (contracts CR-SM-392), also
+// sind R-19/R-20/R-26 gestellt und melden an FN-x / TEST-x. Ohne sie waere der Graph ein Entwurf,
+// die Regeln schwiegen, und der Report haette nichts zu schliessen (eigener Fall unten).
 const SPEC: MutateCommand[] = [
+  { op: 'add-node', node: { uid: 'FN-begonnen', type: 'FUNC', name: 'Already bound', description: '', attributes: { realRef: { file: 'src/begonnen.ts', symbol: 'begonnen' } } } },
   { op: 'add-node', node: { uid: 'FN-x', type: 'FUNC', name: 'Do x', description: '', attributes: {} } },
   { op: 'add-node', node: { uid: 'TEST-x', type: 'TEST', name: 'x test', description: '', attributes: {} } },
 ];
@@ -106,6 +110,31 @@ describe('TEST-graph-realize (CR-GC-685): Binden per Format-E, Bindungsreport im
     expect(out.refs?.resolved).toContain('SCHEMA-x');
     const sc = harness.getGraph().nodes.find((n) => n.uid === 'SCHEMA-x')!;
     expect(sc.attributes.realRef).toEqual({ file: 'src/se/ontology.ts', symbol: 'EventSchema' });
+  });
+
+  // contracts CR-SM-392 — die Klippe der ersten Bindung, am Report sichtbar: im Entwurf (keine
+  // Bindung, kein Bauplan-Stempel) sind die Bindungsregeln nicht gestellt. Die ERSTE Bindung beginnt
+  // die Realisierung; damit melden alle uebrigen ungebundenen Elemente — der Report nennt sie als
+  // `introduced`, und `resolved` bleibt leer, weil vorher nichts gemeldet war.
+  it('die ERSTE Bindung in einem Entwurf: nichts war offen, die uebrigen melden ab jetzt', async () => {
+    const entwurfRoot = mkdtempSync(join(tmpdir(), 'graphcode-realize-entwurf-'));
+    const entwurf = makeHarness(entwurfRoot);
+    try {
+      await entwurf.initialize();
+      await entwurf.mutate(SPEC.filter((c) => c.op !== 'add-node' || c.node.uid !== 'FN-begonnen'));
+      const bindingRules = (h: GraphCodeHarness) => h.evaluateRules().filter((v) => ['R-19', 'R-20', 'R-26'].includes(v.ruleId));
+      expect(bindingRules(entwurf)).toEqual([]); // Entwurf: nicht gestellt
+
+      const out = await bindToolsToHarness(entwurf).graph_mutate.handler({
+        formatE: fe('### FUNC', '~ FN-x', `@realRef ${ref({ file: 'src/x.ts', symbol: 'doX' })}`),
+      });
+      expect(out.success).toBe(true);
+      expect(out.refs).toEqual({ resolved: [], introduced: ['TEST-x'], openRefs: 1 });
+      expect(bindingRules(entwurf).map((v) => `${v.ruleId}:${v.elementId}`)).toEqual(['R-19:TEST-x']);
+    } finally {
+      await entwurf.close();
+      rmSync(entwurfRoot, { recursive: true, force: true });
+    }
   });
 
   it('ein Batch, der keine Bindung beruehrt, traegt kein refs-Feld (Schweigen kostet null Zeichen)', async () => {

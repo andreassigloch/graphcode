@@ -20,7 +20,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { RULE_TO_PHASE, RULE_PRECONDITION, ElementType } from '@sigloch/contracts/se';
+import { RULE_TO_PHASE, RULE_PRECONDITION, type OntologyElement, type OntologyGraph } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -92,12 +92,17 @@ describe('TEST-readiness-model (A/B): model is defined over V3_RULES, lean scope
 // --- phase_readiness (CR-GC-296): RULE_TO_PHASE rule coverage, orthogonal to --
 // --- the PHASE_GATE_RULES/completeness model above (structural chain legs). --
 
-/** Ein Graph, der jeden Elementtyp traegt — jede Vorbedingung erfuellt, jede Regel gestellt. */
-const JEDER_TYP: Record<string, number> = Object.fromEntries(ElementType.options.map((t) => [t, 1]));
+const el = (id: string, type: OntologyElement['type'], attributes: Record<string, unknown> = {}): OntologyElement =>
+  ({ id, type, name: id, description: '', status: 'draft', created_at: '2026-10-05T00:00:00Z', attributes }) as OntologyElement;
+const graphOf = (...elements: OntologyElement[]): OntologyGraph => ({ elements, traces: [] });
+/** Ein Entwurf: kein Bauplan-Stempel, keine Bindung — die Bindungsregeln sind nicht gestellt (CR-SM-392). */
+const ENTWURF = graphOf(el('SYS-s', 'SYS'), el('FUNC-a', 'FUNC'), el('TEST-a', 'TEST'), el('SCHEMA-a', 'SCHEMA'));
+/** Die Realisierung hat begonnen (eine Bindung steht) — jede Vorbedingung erfuellt, jede Regel gestellt. */
+const BEGONNEN = graphOf(el('SYS-s', 'SYS'), el('FUNC-a', 'FUNC', { realRef: { file: 'src/a.ts' } }), el('TEST-a', 'TEST'), el('SCHEMA-a', 'SCHEMA'));
 
 describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
   it('no violations → every gate fully covered, currentPhaseGate is null (Handoff allowed)', () => {
-    const report = computePhaseReadiness([], JEDER_TYP);
+    const report = computePhaseReadiness([], BEGONNEN);
     expect(report.map((p) => p.gate)).toEqual(['SRR', 'PDR', 'CDR', 'TRR']);
     for (const gate of report) {
       expect(gate.total).toBeGreaterThan(0);
@@ -108,7 +113,7 @@ describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
   });
 
   it('a PDR-mapped violation (R-15) opens PDR only — SRR ahead of it in order stays irrelevant', () => {
-    const report = computePhaseReadiness([{ ruleId: 'R-15' }], JEDER_TYP);
+    const report = computePhaseReadiness([{ ruleId: 'R-15' }], BEGONNEN);
     const pdr = report.find((p) => p.gate === 'PDR')!;
     const srr = report.find((p) => p.gate === 'SRR')!;
     expect(pdr.missing).toEqual(['R-15']);
@@ -119,7 +124,7 @@ describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
 
   it('currentPhaseGate returns the FIRST incomplete gate in SRR→PDR→CDR→TRR order, not the worst', () => {
     // TRR (R-19) AND SRR (BQ-02) both open — SRR comes first in lifecycle order.
-    const report = computePhaseReadiness([{ ruleId: 'R-19' }, { ruleId: 'BQ-02' }], JEDER_TYP);
+    const report = computePhaseReadiness([{ ruleId: 'R-19' }, { ruleId: 'BQ-02' }], BEGONNEN);
     expect(currentPhaseGate(report)).toBe('SRR');
   });
 
@@ -128,26 +133,51 @@ describe('computePhaseReadiness / currentPhaseGate (CR-GC-296)', () => {
       { ruleId: 'R-02' },
       { ruleId: 'R-02' },
       { ruleId: 'R-02' },
-    ], JEDER_TYP);
+    ], BEGONNEN);
     const pdr = report.find((p) => p.gate === 'PDR')!;
     expect(pdr.missing).toEqual(['R-02']);
   });
 
-  // CR-GC-695 (ITEM-2026-609): eine Regel ohne erfuellte Vorbedingung ist nicht gestellt — sie
-  // zaehlt nicht als erfuellt. POSITIVKONTROLLE: ohne ruleApplies steht CR-R05 auf dem Graphen
-  // ohne CR in `total` und `covered` des TRR, und der erste Fall hier ist rot.
-  it('a rule whose precondition the graph lacks is left out of covered AND total (CR-R05 without CR)', () => {
-    const vorbedingt = Object.keys(RULE_PRECONDITION).filter((id) => RULE_TO_PHASE[id] !== undefined);
-    expect(vorbedingt).toContain('CR-R05'); // sonst prueft der Fall nichts
-    const ohneCr = { ...JEDER_TYP, CR: 0 };
-    const mit = computePhaseReadiness([], JEDER_TYP);
-    const ohne = computePhaseReadiness([], ohneCr);
-    const trr = (r: typeof mit) => r.find((p) => p.gate === RULE_TO_PHASE['CR-R05'])!;
-    expect(trr(ohne).total).toBe(trr(mit).total - 1);
-    expect(trr(ohne).covered).toBe(trr(mit).covered - 1);
-    // Mit CR im Graphen und offenem Befund bleibt CR-R05 ein fehlendes Bein.
-    const offen = computePhaseReadiness([{ ruleId: 'CR-R05' }], JEDER_TYP);
-    expect(trr(offen).missing).toContain('CR-R05');
+  // CR-GC-695 / CR-GC-743: eine Regel ohne erfuellte Vorbedingung ist nicht gestellt — sie zaehlt
+  // nicht als erfuellt. Seit contracts CR-SM-392 ist die Vorbedingung „Realisierung begonnen"
+  // (Bauplan-Stempel oder eine Bindung) an R-19/R-20/R-26/RC-10. POSITIVKONTROLLE: ohne den
+  // ruleApplies-Filter stehen die drei im Entwurf in `total` und `covered`, und der erste Fall ist rot.
+  describe('Vorbedingung „Realisierung begonnen" (CR-SM-392)', () => {
+    const vorbedingt = Object.keys(RULE_PRECONDITION).filter((id) => RULE_TO_PHASE[id] !== undefined).sort();
+    const beine = (r: ReturnType<typeof computePhaseReadiness>) => ({
+      total: r.reduce((n, p) => n + p.total, 0),
+      covered: r.reduce((n, p) => n + p.covered, 0),
+      missing: r.flatMap((p) => p.missing),
+    });
+
+    it('die Phasen-Gates tragen die Bindungsregeln R-19/R-20/R-26 — sonst prueft der Block nichts', () => {
+      expect(vorbedingt).toEqual(['R-19', 'R-20', 'R-26']);
+    });
+
+    it('Entwurf (kein Stempel, keine Bindung): die Bindungsregeln stehen weder im Zaehler noch im Nenner', () => {
+      const entwurf = beine(computePhaseReadiness([], ENTWURF));
+      const begonnen = beine(computePhaseReadiness([], BEGONNEN));
+      expect(entwurf.total).toBe(begonnen.total - vorbedingt.length);
+      expect(entwurf.covered).toBe(begonnen.covered - vorbedingt.length);
+      // Auch ein (hypothetisch) gemeldeter Befund macht eine nicht gestellte Regel nicht zum fehlenden Bein.
+      const gemeldet = beine(computePhaseReadiness(vorbedingt.map((ruleId) => ({ ruleId })), ENTWURF));
+      expect(gemeldet.missing).toEqual([]);
+      expect(gemeldet.covered).toBe(entwurf.covered);
+    });
+
+    it('mit EINER Bindung zaehlen sie: offen als fehlendes Bein, sonst als gedeckt', () => {
+      const offen = beine(computePhaseReadiness(vorbedingt.map((ruleId) => ({ ruleId })), BEGONNEN));
+      expect(offen.missing.sort()).toEqual(vorbedingt);
+      expect(offen.covered).toBe(offen.total - vorbedingt.length);
+    });
+
+    it('der Bauplan-Stempel allein genuegt ebenfalls', () => {
+      const gestempelt = graphOf(
+        el('SYS-s', 'SYS', { analysisFreshness: { implplan: { graphVersion: 1 } } }),
+        el('FUNC-a', 'FUNC'),
+      );
+      expect(beine(computePhaseReadiness([], gestempelt)).total).toBe(beine(computePhaseReadiness([], BEGONNEN)).total);
+    });
   });
 
   it('PHASE_GATE_ORDER is the INCOSE lifecycle order the Handoff walk relies on', () => {

@@ -22,7 +22,7 @@ import { OntologyGraph, ReadinessReport, RuleViolation } from '@sigloch/contract
 import { evaluateAllRules } from '@sigloch/contracts/se';
 import { computeReadiness } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../conformance.js';
-import { computePhaseReadiness, PhaseGateReadiness, typeCounts } from './readiness.js';
+import { computePhaseReadiness, PhaseGateReadiness } from './readiness.js';
 
 /**
  * Ein Messpunkt des Steuerraums — ein Zod-Vertrag aus Bausteinen der Familie (CR-GC-644), kein Typ.
@@ -111,7 +111,7 @@ function buildSnapshot(graph: Graph, policy: MetricPolicy): SteeringSnapshot {
     focus,
     blockingErrors: blockingOf(focus),
     report: computeReadiness(og, policy),
-    phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id })), typeCounts(og.elements)),
+    phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id })), og),
   };
   return snapshot;
 }

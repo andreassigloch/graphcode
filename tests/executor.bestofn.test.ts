@@ -520,8 +520,11 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     // CR-GC-616: derselbe Vorgang noch einmal — UC-05/UC-06 entfallen, also schrumpft der
     // NENNER der uc-Dimension (-0.13 → -0.14, +0.10 → +0.13). `total` von Kandidat 2 bleibt
     // +1.63: die beiden Regeln feuerten am UC-Volumen, nicht an der Fokus-Reparatur.
+    // CR-GC-743 (contracts CR-SM-392): `total` von Kandidat 2 +1.63 → +1.79. Der neue TEST-login
+    // traegt im Entwurf (kein Bauplan-Stempel, keine Bindung) kein R-19 mehr — die Bindungsregeln
+    // sind vor Beginn der Realisierung nicht gestellt. Fokus-Deltas und Pick unveraendert.
     expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.14 total=-0\.14 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=12/.test(l))).toBe(true);
-    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.13 total=\+1\.63 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.13 total=\+1\.79 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
     expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
     expect(uids()).toContain('REQ-login'); // der Ziel-Delta-Gewinner ist persistiert …
     expect(uids()).toContain('TEST-login');

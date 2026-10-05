@@ -160,6 +160,10 @@ describe('TEST-occ (CR-GC-233): graphVersion on reads, baseVersion check on writ
         ...validSet('r'),
         { op: 'add-node', node: { uid: 'FN-occ', type: 'FUNC', name: 'f', description: '', attributes: {} } },
         { op: 'add-edge', edge: { sourceId: 'FN-occ', targetId: 'REQ-occ-r', edgeType: 'satisfy', attributes: {} } },
+        // Eine bestehende Bindung: die Realisierung hat begonnen (contracts CR-SM-392), R-20 ist an
+        // FN-occ gestellt — sonst haette die Bindung unten nichts zu schliessen und `refs` bliebe leer.
+        { op: 'add-node', node: { uid: 'FN-occ-bound', type: 'FUNC', name: 'g', description: '', attributes: { realRef: { file: 'src/g.ts', symbol: 'g' } } } },
+        { op: 'add-edge', edge: { sourceId: 'FN-occ-bound', targetId: 'REQ-occ-r', edgeType: 'satisfy', attributes: {} } },
       ], harness),
       consumerId: 'agent-r',
       baseVersion: 0,

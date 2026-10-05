@@ -73,15 +73,17 @@ describe('TEST-path-containment: no graph-driven write escapes repoRoot (CR-GC-2
   });
 
   it('sink 1: a traversing testRef never materializes a stub outside repoRoot', async () => {
-    // The gate accepts the attribute (testRef presence is R-19 warning-level, not a
+    // The gate accepts the attribute (testRefs presence is R-19 warning-level, not a
     // block) — containment must therefore hold at the WRITE, not at the write's input.
+    // CR-GC-743: the attribute is `testRefs` (list). The fixture carried the pre-CR-SM-231
+    // name `testRef`, which no reader sees — R-19 fired on "absent", not on the traversal.
     await harness.mutate([
       {
         op: 'update-node',
         node: {
           uid: 'TEST-reset',
           type: 'TEST',
-          attributes: { testRef: { file: '../../ESCAPED-BY-EXPORT.test.ts', tool: 'vitest' } },
+          attributes: { testRefs: [{ file: '../../ESCAPED-BY-EXPORT.test.ts', tool: 'vitest' }] },
         },
       },
     ]);
@@ -94,7 +96,10 @@ describe('TEST-path-containment: no graph-driven write escapes repoRoot (CR-GC-2
     expect(existsSync(join(outer, 'ESCAPED-BY-EXPORT.test.ts'))).toBe(false);
     expect(existsSync(join(outer, 'nested', 'ESCAPED-BY-EXPORT.test.ts'))).toBe(false);
 
-    // R-19 reports the invalid binding — the gap is surfaced, not swallowed.
+    // R-19 reports the invalid binding — the gap is surfaced, not swallowed. (An invalid
+    // binding is a binding attempt: it counts as "realization begun", contracts CR-SM-392.)
+    const stored = harness.getGraph().nodes.find((n) => n.uid === 'TEST-reset')!;
+    expect(stored.attributes.testRefs).toEqual([{ file: '../../ESCAPED-BY-EXPORT.test.ts', tool: 'vitest' }]);
     const violations = harness.evaluateRules();
     expect(violations.some((v) => v.ruleId === 'R-19' && v.elementId === 'TEST-reset')).toBe(true);
   });

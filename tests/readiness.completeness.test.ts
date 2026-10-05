@@ -40,6 +40,8 @@ const violation = (ruleId: string, elementId: string, severity: RuleViolation['s
   elementId,
   message: `${elementId}: ${ruleId} fired (test fixture)`,
 });
+/** Ein SYS mit Bauplan-Stempel: die Realisierung hat begonnen, die Bindungsregeln sind gestellt (CR-SM-392). */
+const BAUPLAN = node('SYS-plan', 'SYS', { analysisFreshness: { implplan: { graphVersion: 1 } } });
 const gate = (g: G, id: string, violations: RuleViolation[] = []) =>
   computeReadiness(violations, g).phaseGates.find((x) => x.id === id)!;
 
@@ -148,10 +150,22 @@ describe('CR-GC-250 CDR — FLOW→SCHEMA', () => {
 // --- TRR: binding required; concept exemption is R-19/R-20's OWN call --------
 
 describe('CR-GC-250 TRR — binding (testRef / realRef)', () => {
-  it('a TEST with no testRef and no concept exemption is incomplete at TRR (complete at CDR)', () => {
-    const g: G = { nodes: [node('TEST-t', 'TEST', { testRef: null })], edges: [] };
+  it('an unbound TEST is incomplete at TRR once realization has begun (complete at CDR)', () => {
+    const g: G = { nodes: [BAUPLAN, node('TEST-t', 'TEST')], edges: [] };
     expect(gate(g, 'CDR').passed).toBe(true); // TEST is not a CDR-slice source
-    expect(gate(g, 'TRR', [violation('R-19', 'TEST-t')]).passed).toBe(false);
+    const trr = gate(g, 'TRR', [violation('R-19', 'TEST-t')]);
+    expect(trr.completeness.total).toBeGreaterThan(0);
+    expect(trr.passed).toBe(false);
+  });
+
+  // contracts CR-SM-392 / graphcode-client 1.6.1: vor Beginn der Realisierung (kein Bauplan-Stempel,
+  // keine Bindung) sind die TRR-Beine nicht gestellt — weder Zaehler noch Nenner, 0/0.
+  it('in a draft the TRR binding legs are not asked: 0/0, not n/n', () => {
+    const draft: G = { nodes: [node('SYS-x', 'SYS'), node('TEST-t', 'TEST'), node('FUNC-f', 'FUNC')], edges: [] };
+    expect(gate(draft, 'TRR').completeness).toMatchObject({ covered: 0, total: 0 });
+    // Positivkontrolle: derselbe Graph mit Bauplan-Stempel stellt die Beine.
+    const begun: G = { nodes: [BAUPLAN, node('TEST-t', 'TEST'), node('FUNC-f', 'FUNC')], edges: [] };
+    expect(gate(begun, 'TRR').completeness.total).toBe(COMPLETENESS_SLICES.TRR.length);
   });
 
   it('a concept:true TEST reads complete at TRR too (CR-SM-226: exemption is R-19\'s own call, not re-decided here)', () => {
@@ -163,15 +177,16 @@ describe('CR-GC-250 TRR — binding (testRef / realRef)', () => {
   });
 
   it('a bound TEST (real testRef) turns TRR green', () => {
-    const g: G = { nodes: [node('TEST-t', 'TEST', { testRef: { file: 'tests/x.test.ts' } })], edges: [] };
+    const g: G = { nodes: [node('TEST-t', 'TEST', { testRefs: [{ file: 'tests/x.test.ts', tool: 'vitest' }] })], edges: [] };
     const trr = gate(g, 'TRR');
+    expect(trr.completeness.total).toBeGreaterThan(0); // die Bindung selbst stellt die Beine (CR-SM-392)
     expect(trr.completeness.covered).toBe(trr.completeness.total);
     expect(trr.passed).toBe(true);
   });
 
   it('a leaf FUNC needs realRef; a decomposed parent FUNC is realized by its children', () => {
     // R-20 (FUNC realRef binding) fires — the leaf carries neither realRef nor children.
-    const leafNoCode: G = { nodes: [node('FUNC-leaf', 'FUNC')], edges: [] };
+    const leafNoCode: G = { nodes: [BAUPLAN, node('FUNC-leaf', 'FUNC')], edges: [] };
     expect(gate(leafNoCode, 'TRR', [violation('R-20', 'FUNC-leaf')]).passed).toBe(false);
     const parent: G = {
       nodes: [node('FUNC-p', 'FUNC'), node('FUNC-c', 'FUNC', { realRef: { file: 'src/x.ts' } })],

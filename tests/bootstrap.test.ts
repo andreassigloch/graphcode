@@ -66,13 +66,14 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
     const { result, nodes, edges } = await bootstrap(harness, TEMPLATE_FORMAT_E);
 
     // Gate verdict: applies cleanly (R-01 satisfied, no error-severity violation), at
-    // 'suggest' tier — the template's placeholder TEST is unbound (no testRef yet),
-    // which R-19 surfaces as a non-blocking warning for the new member to resolve when
-    // they implement it (CR-GC-205 Item 4). Nothing blocks; the fill persists.
+    // 'suggest' tier. The template's placeholder TEST is unbound (no testRefs yet) — in a
+    // draft that is the state, not a finding: R-19 is not evaluated before realization has
+    // begun (contracts CR-SM-392: no implplan stamp, no binding anywhere). It reports once
+    // the new member binds the first element. Nothing blocks; the fill persists.
     expect(result.success).toBe(true);
     expect(result.tier).toBe('suggest');
     expect(result.violations.filter((v) => v.severity === 'error')).toHaveLength(0);
-    expect(result.violations.some((v) => v.ruleId === 'R-19')).toBe(true);
+    expect(result.violations.some((v) => v.ruleId === 'R-19')).toBe(false);
     expect(nodes).toBe(erwarteteKnoten);
     expect(edges).toBe(erwarteteKanten);
     // appliedCommands == nodes + edges proves nodes-first then edges went in one batch.
