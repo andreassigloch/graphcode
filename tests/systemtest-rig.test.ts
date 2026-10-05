@@ -612,7 +612,7 @@ describe('Auto gegen Hand im Bericht (CR-GC-586)', () => {
   let dir: string;
   beforeAll(() => {
     dir = mkdtempSync(join(tmpdir(), 'gc-trajektorie-'));
-    writeFileSync(join(dir, 'referenz-trail.jsonl'), trail.map((z) => JSON.stringify(z)).join('\n') + '\n');
+    writeFileSync(join(dir, 'golden.audit.jsonl'), trail.map((z) => JSON.stringify(z)).join('\n') + '\n');
     writeFileSync(join(dir, 'arm-audit.jsonl'), trail.slice(0, 2).map((z) => JSON.stringify(z)).join('\n') + '\n');
     const g = { elements: [{ id: 'SYS-s', type: 'SYS', name: 'SYS-s' }, { id: 'UC-a', type: 'UC', name: 'UC-a' }], traces: [{ source: 'SYS-s', target: 'UC-a', type: 'compose' }] };
     writeFileSync(join(dir, 'golden.graph.json'), JSON.stringify(g));
@@ -623,7 +623,7 @@ describe('Auto gegen Hand im Bericht (CR-GC-586)', () => {
   it('der Trail wird nachgespielt: abgelehnte Zuege zaehlen, wenden aber nichts an', async () => {
     // @ts-expect-error — s.o.
     const m = await import('../rig/greenfield-systemtest/trajektorie.mjs');
-    const t = m.spieleNach(join(dir, 'referenz-trail.jsonl'));
+    const t = m.spieleNach(join(dir, 'golden.audit.jsonl'));
     expect(t.zuege.map((z: { elemente: number }) => z.elemente)).toEqual([1, 2, 3]);
     expect(t.abgelehnt).toBe(1);
     expect(m.bewegung(t.zuege).uebergaenge).toBe(2);
@@ -632,7 +632,7 @@ describe('Auto gegen Hand im Bericht (CR-GC-586)', () => {
   it('der Hand-Trail wird neben dem Golden gefunden — und nur dort', async () => {
     // @ts-expect-error — s.o.
     const m = await import('../rig/greenfield-systemtest/trajektorie.mjs');
-    expect(m.referenzTrail(join(dir, 'golden.graph.json'))).toBe(join(dir, 'referenz-trail.jsonl'));
+    expect(m.referenzTrail(join(dir, 'golden.graph.json'))).toBe(join(dir, 'golden.audit.jsonl'));
     expect(m.referenzTrail(join(tmpdir(), 'kein-korpus', 'x.graph.json'))).toBeNull();
     expect(m.referenzTrail(undefined)).toBeNull();
   });
@@ -660,7 +660,7 @@ describe('Auto gegen Hand im Bericht (CR-GC-586)', () => {
   it('echter Korpus: der Hand-Trail spielt genau das Golden nach (sigllm v98, 255 Elemente)', async () => {
     // @ts-expect-error — s.o.
     const m = await import('../rig/greenfield-systemtest/trajektorie.mjs');
-    const golden = fileURLToPath(new URL('../rig/sigllm-spezifikation/golden/sigllm-v98.graph.json', import.meta.url));
+    const golden = fileURLToPath(new URL('../beispielgraphen/sigllm-v98.graph.json', import.meta.url));
     const t = m.spieleNach(m.referenzTrail(golden));
     expect(t.zuege.at(-1).elemente).toBe(m.profil(JSON.parse(readFileSync(golden, 'utf8'))).elemente);
   });

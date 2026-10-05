@@ -8,7 +8,5 @@ Hier bleiben nur die Graphen, die Tests und Rigs als **Eingabe** lesen:
 
 | Datei | Leser |
 |---|---|
-| `gc-run-haiku45.graph.json` | `tests/nd-similarity.test.ts` |
-| `gc-run-devstral-v14.graph.json` | `tests/nd-similarity.test.ts` |
 | `gc-run-devstral-v9.graph.json` | `rig/minimal-whitebox/run-phase1-authoring.mjs` (A3a) |
 | `gc-run-opus5.graph.json` | `rig/minimal-whitebox/run-phase1-authoring.mjs` (A3b) |

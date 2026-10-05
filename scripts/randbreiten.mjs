@@ -31,7 +31,7 @@ export const SCHWELLEN = [5, 7];
  * Die erreichbaren Graphen, in fester Reihenfolge.
  *
  * Drei Klassen, bewusst getrennt:
- *   - `snapshot` — eingefroren und eingecheckt (`rig/graphs/`, das Golden). Nur diese haelt der
+ *   - `snapshot` — eingefroren und eingecheckt (`beispielgraphen/`). Nur diese haelt der
  *     Test fest: ihre Zahlen koennen sich nur aendern, wenn die REGEL oder die Zaehlung wandert.
  *   - `live`     — der eigene SSOT. Wandert mit jedem Modellzug; wird berichtet, nicht gehalten.
  *   - `lauf`     — Rig-Laeufe unter `runs/` (gitignored). Auf einer frischen Maschine nicht da;
@@ -44,9 +44,9 @@ export function quellen(repo = REPO) {
   };
 
   nimm('graphcode (live)', join(repo, 'docs/graph/graphcode.graph.json'), 'live');
-  nimm('sigllm-v98 (golden)', join(repo, 'rig/sigllm-spezifikation/golden/sigllm-v98.graph.json'), 'snapshot');
+  nimm('sigllm-v98 (golden)', join(repo, 'beispielgraphen/sigllm-v98.graph.json'), 'snapshot');
 
-  const korpus = join(repo, 'rig/graphs');
+  const korpus = join(repo, 'beispielgraphen');
   if (existsSync(korpus)) {
     for (const datei of readdirSync(korpus).filter((f) => f.endsWith('.graph.json')).sort()) {
       nimm(datei.replace(/\.graph\.json$/, ''), join(korpus, datei), 'snapshot');

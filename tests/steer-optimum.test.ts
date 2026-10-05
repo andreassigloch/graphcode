@@ -78,7 +78,7 @@ describe('CR-GC-608: das Sitzungsgedaechtnis zaehlt nur Steuerzuege', () => {
 
 describe('CR-GC-608: am Golden (sigllm v98, Steueranker BW-02 0,5)', () => {
   type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown>; [k: string]: unknown }[]; traces: { source: string; target: string; type: string }[] };
-  const g: Flat = JSON.parse(readFileSync(fileURLToPath(new URL('../rig/sigllm-spezifikation/golden/sigllm-v98.graph.json', import.meta.url)), 'utf8'));
+  const g: Flat = JSON.parse(readFileSync(fileURLToPath(new URL('../beispielgraphen/sigllm-v98.graph.json', import.meta.url)), 'utf8'));
   const graph = {
     nodes: g.elements.map((e) => {
       const attrs: Record<string, unknown> = { ...(e.attributes ?? {}) };

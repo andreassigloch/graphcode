@@ -1,4 +1,4 @@
-# Beispielgraphen — Korpus für Benchmark, Test und Demo
+# Beispielgraphen — eingefrorene Graphen für Benchmark, Test und Demo
 
 Echte, exportierte `*.graph.json` aus abgeschlossenen graphcode-Läufen. Zweck: Renderer-
 und Tooling-Arbeit (Graphview, Viewer-Spikes, Layout-Benchmarks) gegen **echte** Graphen
@@ -22,6 +22,14 @@ Quellgraph weiterläuft — ein Benchmark, dessen Eingabe sich ändert, misst ni
 | `graph-view-edit.graph.json` | `~/Developer/dev/graph-view-edit`, Commit `b833e8d` | 2026-09-09, graphVersion 1192 | 276 / 671 — 131 CR, 74 REQ, 18 TEST, 13 FUNC |
 | `graphcode.graph.json` | dieses Repo, Commit `27acdcd` | 2026-09-09, graphVersion 242 | 669 / 1823 — 164 CR, 137 REQ, 124 TEST, 115 FUNC |
 | `moneyflow.graph.json` | `~/Developer/dev/moneyflow`, Commit `8209648` | 2026-09-09, graphVersion 1 | 1229 / 966 — 425 TEST, 306 FUNC, 220 FLOW, 155 MOD |
+| `sigllm-v98.graph.json` + `sigllm-v98.audit.jsonl` | handgeführter Lauf sigllm 17./18.09.2026, Ende der Spezifikation (das „Golden") mit seinem Audit (der Hand-Trail, den `generate.statemachine` nachspielt) | 2026-09-18, graphVersion 98 | 255 / 506 |
+| `gc-run-haiku45.graph.json` | Executor-Programm 2026-07/08 (CR-GC-678: einer von vier behaltenen Graphen) | 2026-08-01 | 86 / 154 |
+| `gc-run-devstral-v14.graph.json` | Executor-Programm 2026-07/08 (dito) | 2026-08-01 | 85 / 148 |
+
+Leser (CR-GC-737, Löschkonzept Regel 5 — ein Graph ohne Leser geht): `scripts/randbreiten.mjs` liest alle;
+`sigllm-v98` lesen `generate.statemachine`, `generate.task`, `steer-optimum`, `policy-herkunft`,
+`read-tools.scope`, `working-set.spezlauf` und die Aufgabe `rig/aufgaben/sigllm-prosa`; die beiden
+`gc-run-*` liest `tests/nd-similarity.test.ts`.
 
 ### Der Spike-Korpus (die unteren vier) — CR-GC-498
 
@@ -35,6 +43,9 @@ Befund in der graphcode-Leitlinie T-O4).
 | `graph-view-edit.graph.json` | `a97af935f5b3` |
 | `graphcode.graph.json` | `bc639cbc90c4` |
 | `moneyflow.graph.json` | `e1d8a6cf3944` |
+| `sigllm-v98.graph.json` | `a2d01827f4a9` |
+| `gc-run-haiku45.graph.json` | `2ad907d1c308` |
+| `gc-run-devstral-v14.graph.json` | `c72856633b89` |
 
 Die Tabelle ist die Referenz. `randbreiten.mjs` prüft die Prüfsummen heute **nicht** — ein Leser,
 der sich auf die Zahlen verlässt, prüft sie selbst. Wer bewusst neu verankert, ändert die Tabelle

@@ -17,7 +17,7 @@ import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src
 import { alsFormatE } from './helpers/format-e.js';
 
 type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown>; [k: string]: unknown }[]; traces: { source: string; target: string; type: string; label?: string }[] };
-const golden: Flat = JSON.parse(readFileSync(fileURLToPath(new URL('../rig/sigllm-spezifikation/golden/sigllm-v98.graph.json', import.meta.url)), 'utf8'));
+const golden: Flat = JSON.parse(readFileSync(fileURLToPath(new URL('../beispielgraphen/sigllm-v98.graph.json', import.meta.url)), 'utf8'));
 const alsGraph = (g: Flat) => {
   const KNOWN = new Set(['id', 'type', 'name', 'description', 'attributes']);
   return {

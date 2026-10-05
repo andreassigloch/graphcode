@@ -44,11 +44,11 @@ Config-Ladung und den policy-gebauten Descriptor.
 | Klasse | Frage | Aufbau |
 |---|---|---|
 | **gate** | „was tut das System?" | `openMeasured`, echtes `harness.mutate()` — Verdict, `tier`, Advisories, Rollback |
-| **korpus** | „wie rankt diese Funktion?" | **eingefrorener** Snapshot (`rig/graphs/`), reine Funktion, kein Store |
+| **korpus** | „wie rankt diese Funktion?" | **eingefrorener** Snapshot (`beispielgraphen/`), reine Funktion, kein Store |
 
 Eine Gate-Frage an einem Korpus-Aufbau ist der Fehler, nicht das Ergebnis — und umgekehrt.
 Ein Benchmark, dessen Eingabe weiterläuft, misst nichts; deshalb sind die Graphen unter
-[`graphs/`](graphs/README.md) eingefrorene Kopien und keine Zeiger auf `docs/graph/`.
+[`beispielgraphen/`](../beispielgraphen/README.md) eingefrorene Kopien und keine Zeiger auf `docs/graph/`.
 
 ## Ohne Stempel keine Zahl
 
@@ -94,7 +94,6 @@ alphabetischen Tiebreak. **Eine Messung ohne Streuung hat kein Ergebnis, sondern
 | [`greenfield-systemtest/`](greenfield-systemtest/README.md) | gate | Kommt ein lokales Modell an ein Frontier-Modell heran? | `createHarness` (Subprozess, Kuzu-Binding) |
 | `agentdiary/` (intern, nicht im Repo) | gate | Liefert der lokale Arm (D2) am echten Auftrag, was Frontier liefert? | Arm-Repos + Blindurteil |
 | [`dummy-slicer/`](dummy-slicer/README.md) | gate | Serviert `graph_context` die Definition of Done? | `openMeasured` (echte Wurzel, CR-GC-496) |
-| [`graphs/`](graphs/README.md) | korpus | eingefrorene Beispielgraphen | — |
 | `interaktiv/` | gate | Wie gut modellieren lokaler und Frontier-Agent im interaktiven Betrieb (T-E3)? | Vorlage todo-local → je Arm ein Prozess, Simulator, `openMeasured` am Export |
 
 `greenfield-systemtest` baut den Harness in einem **eigenen Prozess**, weil Kuzus natives

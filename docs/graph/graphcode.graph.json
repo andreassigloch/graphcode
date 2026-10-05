@@ -2943,6 +2943,18 @@
       "commitRef": "5988277"
     },
     {
+      "id": "CR-GC-737",
+      "type": "CR",
+      "name": "Beispielgraphen in ein eigenes Verzeichnis: rig/graphs, Fixture-Graphen und sigllm-Golden eingefroren unter beispielgraphen/",
+      "description": "docs/cr/open/CR-GC-737-beispielgraphen-in-ein-eigenes-verzeichn.md"
+    },
+    {
+      "id": "CR-GC-738",
+      "type": "CR",
+      "name": "rig/ ist das eine Rig: Treiber mit Sequenz, Aufgaben (todo, sigllm-prosa), serie.json, Referenzlauf je Standardfall",
+      "description": "docs/cr/open/CR-GC-738-rig-ist-das-eine-rig-treiber-mit-sequenz.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -23503,5 +23515,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 597
+  "graphVersion": 599
 }

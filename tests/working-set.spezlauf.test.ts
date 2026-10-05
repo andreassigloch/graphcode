@@ -23,7 +23,7 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
-const GOLDEN = join(__dirname, '..', 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
+const GOLDEN = join(__dirname, '..', 'beispielgraphen', 'sigllm-v98.graph.json');
 
 let tmp: string;
 let harness: GraphCodeHarness;

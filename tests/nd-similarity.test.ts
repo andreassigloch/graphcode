@@ -34,7 +34,7 @@ import { generationStep } from '../src/loop/generate.js';
 
 const fixture = (name: string): OntologyGraph =>
   JSON.parse(
-    readFileSync(fileURLToPath(new URL(`../rig/greenfield-systemtest/results/${name}.graph.json`, import.meta.url)), 'utf8'),
+    readFileSync(fileURLToPath(new URL(`../beispielgraphen/${name}.graph.json`, import.meta.url)), 'utf8'),
   ) as OntologyGraph;
 
 const el = (id: string, type: string, name: string, description: string, attributes?: Record<string, unknown>) =>

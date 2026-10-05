@@ -189,7 +189,7 @@ export const EXCLUDED = {
     'oder eine nackte Schwelle im Skilltext sehr wohl.',
   'tests/read-tools.scope.test.ts':
     'CR-GC-613: misst die ANTWORTGROESSEN der Lesewerkzeuge gegen das GOLDEN EINES RIG-KORPUS\n' +
-    '(`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene SSOT. Eine\n' +
+    '(`beispielgraphen/sigllm-v98.graph.json`), nie graphcodes eigene SSOT. Eine\n' +
     'Aenderung an graphcodes Modell kann ihn nicht rot machen; eine am Schnitt der Lesewerkzeuge\n' +
     'oder am Format-E-Serialisierer sehr wohl.',
   'tests/working-set.spezlauf.test.ts':
@@ -209,7 +209,7 @@ export const EXCLUDED = {
     'der Fokuswahl oder am Regelkatalog sehr wohl.',
   'tests/systemtest-rig.test.ts':
     'Auswertungen des Systemtest-Rigs (CR-GC-574/585/586). Der Treffer ist das GOLDEN EINES\n' +
-    'RIG-KORPUS (`rig/sigllm-spezifikation/golden/sigllm-v98.graph.json`), nie graphcodes eigene\n' +
+    'RIG-KORPUS (`beispielgraphen/sigllm-v98.graph.json`), nie graphcodes eigene\n' +
     'SSOT: geprueft wird, dass der Hand-Trail dieses Golden nachspielt. Eine Aenderung an\n' +
     'graphcodes Modell kann ihn nicht rot machen; eine an der Nachspiel-Rechnung sehr wohl.',
   'tests/flow-contracts.test.ts':

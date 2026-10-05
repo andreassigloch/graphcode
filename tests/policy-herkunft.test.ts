@@ -31,7 +31,7 @@ import { openMeasured } from '../src/surface/measured.js';
 
 const REPO = join(__dirname, '..');
 const CONFIG_TEXT = readFileSync(join(REPO, CONFIG_FILENAME), 'utf8');
-const GOLDEN = join(REPO, 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
+const GOLDEN = join(REPO, 'beispielgraphen', 'sigllm-v98.graph.json');
 
 /** Die Marke, mit der eine bewusste Abweichung sich zu erkennen gibt. */
 const MARKE = /^\s*\/\/\s*ABWEICHUNG\s+(\w+)\s*:/gm;

@@ -40,7 +40,7 @@ function alsGraph(g: Flat) {
   } as never;
 }
 const lade = (rel: string): Flat => JSON.parse(readFileSync(ROOT + rel, 'utf8'));
-const GOLDEN = 'rig/sigllm-spezifikation/golden/sigllm-v98.graph.json';
+const GOLDEN = 'beispielgraphen/sigllm-v98.graph.json';
 /**
  * Die opus5-Laeufe sind Archive von VOR dem kinds-Major (CR-SM-366) und liegen nur lokal (runs/ ist
  * nicht versioniert). Sie werden nicht umgeschrieben — Messdaten bleiben, wie sie gemessen wurden —,

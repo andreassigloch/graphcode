@@ -11,7 +11,7 @@
  *     bewegt, kann nicht steuern — und wie lange ein Anker steht.
  *  2. Profil des Endgraphen gegen das Golden: Typen, Fehler, Steuerwert, Anker, ℝ⁶.
  *
- * Der Hand-Trail liegt als `referenz-trail.jsonl` NEBEN dem Golden (Korpus-Konvention). Bis
+ * Der Hand-Trail liegt als `<golden>.audit.jsonl` NEBEN dem Golden (`beispielgraphen/`, CR-GC-737). Bis
  * hierher liefen beide Blicke nur als Scratch-Skripte.
  *
  * @author andreas@siglochconsulting
@@ -29,7 +29,8 @@ const r4 = (x) => (x == null || Number.isNaN(x) ? null : Number(x.toFixed(4)));
 /** Der Hand-Trail eines Korpus: neben dem Golden, sonst keiner. */
 export function referenzTrail(goldenPfad) {
   if (!goldenPfad) return null;
-  const p = join(dirname(goldenPfad), 'referenz-trail.jsonl');
+  // CR-GC-737: das Audit des Golden liegt neben ihm als <name>.audit.jsonl (beispielgraphen/).
+  const p = goldenPfad.replace(/\.graph\.json$/, '.audit.jsonl');
   return existsSync(p) ? p : null;
 }
 

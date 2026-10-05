@@ -24,7 +24,7 @@ import { KUERZUNGS_LEGENDE } from '../src/surface/read.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 import { alsFormatE, kantenAus } from './helpers/format-e.js';
 
-const GOLDEN = join(__dirname, '..', 'rig', 'sigllm-spezifikation', 'golden', 'sigllm-v98.graph.json');
+const GOLDEN = join(__dirname, '..', 'beispielgraphen', 'sigllm-v98.graph.json');
 
 /** Die Scheibe, an der der Code-Test arbeitet: das Scheduler-Modul und was daran haengt. */
 const SCHEIBE = 'MOD-scheduler';

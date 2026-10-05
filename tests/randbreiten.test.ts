@@ -12,7 +12,7 @@
  * bei moneyflow Befunde behaelt — mit einer Zahl sind beide nicht zu kalibrieren. Dieser Test
  * DREHT nichts; er haelt den Stand fest, damit die Frage jederzeit beantwortbar ist.
  *
- * WAS GEHALTEN WIRD, und was nicht: nur die EINGEFRORENEN Graphen (`rig/graphs/`, das Golden).
+ * WAS GEHALTEN WIRD, und was nicht: nur die EINGEFRORENEN Graphen (`beispielgraphen/`).
  * Ihre Zahlen koennen sich nur aendern, wenn die Regel oder die Zaehlung wandert — genau das
  * soll auffallen. Der eigene LIVE-Graph wandert mit jedem Modellzug und wird deshalb nur auf
  * Plausibilitaet geprueft, nicht gepinnt; Rig-Laeufe liegen unter `runs/` und sind auf einer
