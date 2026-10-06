@@ -10,7 +10,7 @@ description: Assumption Review — detect unproven assumptions, pin them in a co
 Query the live graph — do not guess from prose:
 1. `graph_elements` `{ "type": "REQ" }` and `{ "type": "FUNC" }` — scan `description`/`attributes.rationale` for claims asserted without evidence ("assume", "should", "presumably", an unbenchmarked number, an unverified external dependency).
 2. `rules_get_violations` `{ "severity": "warning" }` — R-19/R-20 (unbound TEST/FUNC) and unverified REQs are assumptions about realizability that nothing yet proves.
-3. `graph_readiness` — a rule-green gate whose creations are absent is itself a standing assumption ("analysis-done") — name it.
+3. `graph_readiness` — a mark that reads reached while an analysis rule (AF-01 … AF-04) is accepted or still open is itself a standing assumption ("analysis-done") — name it.
 
 ## 2. Pin the record (immutable, commit-stamped)
 Write `docs/records/irr-<short-commit>.md` (use the current `git rev-parse --short HEAD`). It is an immutable snapshot — never overwrite an existing one; a new review = a new commit-stamped file. Each entry: `assumption | why it is load-bearing | evidence today (none/weak/strong) | what would falsify it`.

@@ -157,7 +157,7 @@ live registry so it cannot silently fall behind the code.
 | | `graph_merge` | replay a branch worktree's command log onto this store (semantic rebase); the node merge is Format-E `M source + target` via `graph_mutate` |
 | | `graph_reseed` | in-process reseed from the committed SSOT, with an automatic backup |
 | **measure** | `rules_evaluate`, `rules_get_violations` | run the SE rules read-only |
-| | `graph_readiness` | the readiness report: dimensions, phase gates, blocking errors |
+| | `graph_readiness` | the readiness report: dimensions, the marks SRR/PDR/CDR/TRR/Bau, blocking errors |
 | | `graph_metrics` | per-module architecture metrics **plus the thresholds they were judged against** |
 | **generate** | `graph_generate` | the cold-start driver: seed → expand → handoff, as a state machine |
 | | `graph_suggest` | rank candidate fixes by how far they move the graph toward your target |
@@ -215,7 +215,7 @@ token/LOC, plan conformance, gate health, binding coverage).
 Every on-screen token is explained in three layers (plain · in SE terms · the exact fix),
 for a systems engineer who doesn't know this encoding **and** a user with no SE background:
 
-- **`se:help <token>`** — explain a rule (`R-04`), gate (`CDR`), panel, or artifact (`fmea`).
+- **`se:help <token>`** — explain a rule (`R-04`), mark (`CDR`), panel, or artifact (`fmea`).
 - **`se:help`** (no argument) — ranked, explained next steps from the live readiness + violations.
 - **`graph_help`** — the read-only MCP tool the skill is a thin surface over.
 

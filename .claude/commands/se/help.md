@@ -10,12 +10,12 @@ This is a thin surface over the `graph_help` MCP tool (the read-only help data l
 
 ## Lookup a token
 When the user names an on-screen token, call `graph_help` `{ "token": "<token>" }` and present its `HelpEntry`:
-- a ruleId (`R-04`, `R-01`, `RD-02`), a gate (`SRR`/`PDR`/`CDR`/`TRR`, `SAR`/`FCA`/`SVR`/`FRR`),
+- a ruleId (`R-04`, `R-01`, `RD-02`) — its entry carries the rule's `stage` and `mark` —, a mark (`SRR`/`PDR`/`CDR`/`TRR`/`Bau`),
 - a panel (`readiness`/`recommendations`/`artifacts`/`impact`/`health`), an artifact (`fmea`, `srs`, `assumption-review`, …), or a vocabulary token (`REQ`, `verify`, `compose`).
 
 Show the **Plain** line, then **In SE terms**, then the **exact** copy-prompt (a real `se:*` skill or MCP call) the reader can run. An unknown token returns a clear error listing the valid kinds — relay it, don't guess.
 
 ## Contextual help (no argument)
-When the user asks "what should I do / what's wrong", call `graph_help` with **no argument** → the ranked, explained measures from the live readiness + violations (the explained sibling of Recommendations). It covers **both** blocker kinds: rule violations and not-done-creation gate blockers (a never-performed FMEA/ConOps/Trade — CR-GC-221). Present them highest-severity first, each with its Plain explanation and the copy-prompt to fix it.
+When the user asks "what should I do / what's wrong", call `graph_help` with **no argument** → the ranked, explained measures from the live readiness + violations (the explained sibling of Recommendations). One measure per failing rule; an analysis that was never performed (FMEA/ConOps/Trade) is one of them, as the finding of its rule (AF-01 … AF-05). Present them highest-severity first, each with its Plain explanation and the copy-prompt to fix it.
 
 Derive everything from `graph_help` — do not restate rule text from memory; the tool merges the authored Plain/SE layers with the live `V3_RULES`/readiness skeleton, so it never drifts.

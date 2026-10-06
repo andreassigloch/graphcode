@@ -34,7 +34,7 @@ Perform the gate check:
 - List every error-severity violation as a **BLOCKER** — `ruleId` · `elementId` · `message`.
 - List warning-severity violations as **WARNINGS**.
 - Flag readiness below the 70% threshold: report `compliance.score` as a percentage.
-- Name the current phase if a milestone marks it — query `graph_elements` `{ "type": "MS" }` and read element status. The formal phase model (SRR/PDR/CDR/TRR gates) is **not yet defined** in graphcode (CR-GC-125); derive a best-effort phase and say so — do not assert a gate that does not exist.
+- Name where the model stands from `graph_readiness` `marks` (SRR, PDR, CDR, TRR, Bau — in order): the first mark that is not `reached` is the current one; with `{ "detail": true }` its `holding` lists the findings that hold it. Do not derive a phase from milestones or prose.
 - Recommend specific next actions to clear the top blockers, using each violation's `message`.
 - State clearly: **PASS** (no error-severity violations) or **FAIL** (blockers remain) — und
   daneben das Kongruenz-Urteil aus der Tabelle oben. Ein PASS ohne Kongruenz-Aussage ist die
