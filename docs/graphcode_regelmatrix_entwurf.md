@@ -329,6 +329,9 @@ Nach der Umsetzung im Katalog (CR-SM-395), zweiter Durchgang:
 23. Analysen hinterlassen keinen Bauauftrag. Betriebskonzept, Fehleranalyse und Annahmen-Review schreiben
     Anforderungen mit Test; den Auftrag schneidet später der Bauplan. Nur der Variantenvergleich legt einen Auftrag
     an, als Träger der Entscheidung (`decides`), und der eröffnet den Bau nicht.
+24. Annahmen-Review und Fehleranalyse zeigen am Ende die ganze Liste, auch das mit geringem Gewicht, und fragen,
+    was Anforderung wird. Ohne Antwort schreiben sie das Tragende.
+25. „Modul ohne Pfad" (RC-10) wartet weiter auf den Bau: Im Entwurf gibt es keinen Code, den der Abgleich sähe.
 
 ## 9. Offen
 
