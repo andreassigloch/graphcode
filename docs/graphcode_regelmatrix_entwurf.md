@@ -13,7 +13,9 @@ prüft.
    Eine leere Pflichtmenge ist deshalb immer ein Befund — der Existenz-Regel eine Stufe davor.
 3. Die Mengen stehen in einer festen Reihenfolge, den **Stufen**. Der nächste Schritt ist der erste Befund in dieser
    Reihenfolge. Die Reihenfolge priorisiert, sie verbietet nichts (Leitlinie §3).
-4. Ein Gate ist eine **Marke** zwischen zwei Stufen: „bis hierher kein fälliger Befund".
+4. Ein Gate ist eine **Marke** zwischen zwei Stufen: bis hierher kein Fehler und kein offener Existenz-Befund.
+   Andere Warnungen halten eine Marke nicht; „warnungsfrei" ist die getrennte Aussage des Durchgangs mit
+   `se:close-violations`.
 
 „0 von 0" kann damit nicht als bestanden gelesen werden: Entweder ist die Menge freiwillig, oder die Existenz-Regel
 davor ist offen. Der Nutzer sieht Zahlen, der Agent bekommt „in Ordnung" oder „Aktion".
@@ -303,6 +305,9 @@ den Abgleichregeln zu hoch, weil die Messung ohne den Quellbaum lief.
 
 10. „Ungebautes hat einen Auftrag": Es reicht, dass es einen offenen Auftrag gibt. Ob der Auftrag die richtigen
     Elemente trifft, zeigt der Git-Diff.
+
+11. Eine Marke halten Fehler und offene Existenz-Befunde, nicht jede Warnung (wie heute).
+12. Der Zwischenstand vom 2026-10-05 wird nicht veröffentlicht; ein Zug nach der Umsetzung (CR-SM-395).
 
 ## 9. Offen
 
