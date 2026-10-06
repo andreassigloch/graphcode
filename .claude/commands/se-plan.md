@@ -1,6 +1,6 @@
 ---
 name: se-plan
-version: 5
+version: 6
 description: Generate the implementation/integration plan — derive the CR build order from the graph's depends-on DAG, cut CRs (≤5 files) whose content is the graph_context slice (not written scope), enforce an io-integration test + submodule build per CR, and write MS/CR/relation through the gate
 ---
 
@@ -47,5 +47,5 @@ Emit the ordered sequence (milestones → their CRs), and explicitly list any fo
 
 Never report completeness over the set you chose yourself. The measured failure this rule exists for: a plan reported *"20 of 20 ordered, no cycles"* while 24 of 64 leaf REQ had no build order at all — and those 24 were exactly the ones mitigating all 16 open FM-03 risks.
 
-## 7. Stamp the task
-Close the task with **one** `graph_mutate` batch on the SYS root. `analysisFreshness` is one attribute for all analyses and a patch replaces it whole: read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`, set `"implplan": { graphVersion: <current graphVersion()> }`, and write the complete object with the `baseVersion` you read — after the MS and CR nodes of step 4 are in the graph. The artifact id is `implplan`. **AF-05** (the entry rule of this analysis) stays open until then. A plan with no MS/CR in the graph has not happened: leave AF-05 open instead of stamping a prose list.
+## 7. No stamp — the plan is the open orders
+The plan sets **no** stamp on the SYS root. Its result is what step 4 wrote: the CRs — each with `status: "open"` — and the milestones. **AF-05** (the entry rule of this analysis: there is unbuilt work but no open order) is closed by the first open CR, and it comes back whenever something unbuilt has no open order left — after the last CR is done and a new function was added, the plan is due again. A plan with no CR in the graph has not happened: leave AF-05 open instead of writing a prose list. With an open CR the binding rules (R-19, R-20, R-26) become due; their findings are the work list of the build.

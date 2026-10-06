@@ -27,9 +27,6 @@ import { SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
 // config — otherwise the trail records a claim instead of a fact.
 import { RULES_VERSION } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult, StaleDelta, StaleDeltaEntry } from '@sigloch/contracts/harness';
-// CR-GC-363: die EINE bestehende Freshness-Klassifikation (liest die AF-01..05-Stamps
-// SYS.attributes.analysisFreshness.<id>.graphVersion gegen den Live-Zähler) — das
-// Banner rechnet Freshness NICHT neu, es konsumiert genau diese Funktion.
 import {
   materializeTrajectory,
   type EditSource,

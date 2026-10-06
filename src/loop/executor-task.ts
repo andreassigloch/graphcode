@@ -5,10 +5,13 @@
  * und den Stempel durch dasselbe Gate schreiben wie jeden anderen Zug. Das Modell sieht den Stempel
  * nicht und setzt ihn nicht — er ist die Feststellung des Executors, dass das Artefakt steht.
  *
+ * CR-GC-752: der Bauplan hat keinen Stempel. Seine Eintrittsregel schließt der erste offene Auftrag,
+ * den das Modell schreibt — hier ist für `plan` nichts zu setzen.
+ *
  * @author andreas@siglochconsulting
  */
 import type { MCPToolRegistry } from '../kernel/tool-contract.js';
-import { abschluss, artefakte, stempelZug, STEMPEL_ID, type AnalyseTask, type TaskGraph } from './task-artifact.js';
+import { abschluss, artefakte, hatStempel, stempelZug, STEMPEL_ID, type AnalyseTask, type TaskGraph } from './task-artifact.js';
 
 export interface TaskZustand {
   task: AnalyseTask;
@@ -59,7 +62,8 @@ export async function beginneTask(registry: MCPToolRegistry, task: AnalyseTask):
     task,
     bestand: new Set(artefakte(task, graph)),
     gezaehlt: undefined,
-    gestempelt: stempelVon(sys)[STEMPEL_ID[task]] !== undefined,
+    // Ohne Stempel (Bauplan) gibt es für den Executor nichts abzuschließen.
+    gestempelt: hatStempel(task) ? stempelVon(sys)[STEMPEL_ID[task]] !== undefined : true,
   };
 }
 
@@ -68,9 +72,10 @@ export async function beginneTask(registry: MCPToolRegistry, task: AnalyseTask):
  * Ein abgelehnter Stempel-Zug ist ein Fehler des Executors, kein Zustand, über den man hinweggeht.
  */
 export async function schliesseTaskWennErfuellt(registry: MCPToolRegistry, z: TaskZustand): Promise<TaskStempel | null> {
-  if (z.gestempelt) return null;
+  const task = z.task;
+  if (z.gestempelt || !hatStempel(task)) return null;
   const { graph, sys, graphVersion } = await lies(registry);
-  const urteil = abschluss(z.task, graph, z.bestand, z.gezaehlt);
+  const urteil = abschluss(task, graph, z.bestand, z.gezaehlt);
   z.gezaehlt = urteil.einheiten.length;
   if (!urteil.fertig || !sys) return null;
   // Der Stempel nennt die Version NACH diesem Zug: ein Batch hebt graphVersion um genau eins.
@@ -78,14 +83,14 @@ export async function schliesseTaskWennErfuellt(registry: MCPToolRegistry, z: Ta
   const mutate = registry['graph_mutate'];
   const res = (await mutate.handler(
     mutate.inputSchema.parse({
-      formatE: stempelZug(z.task, sys.uid, stempelVon(sys), version, urteil.einheiten),
+      formatE: stempelZug(task, sys.uid, stempelVon(sys), version, urteil.einheiten),
       baseVersion: graphVersion,
       consumerId: 'graphcode-executor',
     }),
   )) as { success: boolean; violations?: unknown };
   if (!res.success) {
-    throw new Error(`Task ${z.task}: der Stempel-Zug wurde abgelehnt — ${JSON.stringify(res.violations).slice(0, 400)}`);
+    throw new Error(`Task ${task}: der Stempel-Zug wurde abgelehnt — ${JSON.stringify(res.violations).slice(0, 400)}`);
   }
   z.gestempelt = true;
-  return { task: z.task, einheiten: urteil.einheiten, graphVersion: version };
+  return { task, einheiten: urteil.einheiten, graphVersion: version };
 }

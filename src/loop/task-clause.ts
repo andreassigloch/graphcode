@@ -9,7 +9,8 @@
  * EIN Vorbild in Format-E: die Form des Artefakts, mit den uids des Graphen, ohne Fachinhalt.
  *
  * Der Stempel kommt im Text nicht vor: ihn setzt der Executor, wenn das Artefakt steht
- * (task-artifact.ts).
+ * (task-artifact.ts). Der Bauplan hat keinen (CR-GC-752): sein Vorbild schreibt OFFENE Aufträge
+ * (`@status open`) — der erste schließt die Eintrittsregel AF-05.
  *
  * @author andreas@siglochconsulting
  */
@@ -69,7 +70,7 @@ function plan(og: OntologyGraph): string {
   const req = ohne[0] ?? ersteVom(og, 'REQ', 'REQ-beispiel');
   const req2 = ohne[1] ?? req;
   return (
-    'Bauplan: schneide je Blatt-REQ einen Bauauftrag (CR), der auf die REQ zeigt, und ordne die CRs Meilensteinen ' +
+    'Bauplan: schneide je Blatt-REQ einen offenen Bauauftrag (CR mit status open), der auf die REQ zeigt, und ordne die CRs Meilensteinen ' +
     '(MS) zu — ein Meilenstein ist ein Stand, der für sich läuft. Die Reihenfolge der Meilensteine steht als ' +
     'depends-on-Kante. ' +
     (ohne.length > 0 ? `Noch ohne Bauauftrag: ${liste(ohne)}. ` : '') +
@@ -78,8 +79,8 @@ function plan(og: OntologyGraph): string {
     '+ MS-beispiel-1|«Was nach Meilenstein 1 läuft». [__name:«Meilenstein 1»]\n' +
     '+ MS-beispiel-2|«Was nach Meilenstein 2 zusätzlich läuft». [__name:«Meilenstein 2»]\n' +
     '### CR\n' +
-    `+ CR-beispiel-1|Realisiere ${req}: Code, Test grün. [__name:«Bauauftrag 1»]\n` +
-    `+ CR-beispiel-2|Realisiere ${req2}: Code, Test grün. [__name:«Bauauftrag 2»]\n\n` +
+    `+ CR-beispiel-1|Realisiere ${req}: Code, Test grün. [__name:«Bauauftrag 1»]\n@status open\n` +
+    `+ CR-beispiel-2|Realisiere ${req2}: Code, Test grün. [__name:«Bauauftrag 2»]\n@status open\n\n` +
     '## Edges\n' +
     `+ CR-beispiel-1 -relation-> ${req}, MS-beispiel-1\n` +
     `+ CR-beispiel-2 -relation-> ${req2}, MS-beispiel-2\n` +

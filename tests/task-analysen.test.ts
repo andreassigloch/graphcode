@@ -15,7 +15,7 @@ import { runExecutor, ExecutorConfigSchema, type CallModel, type ModelResponse }
 import { generationStep } from '../src/loop/generate.js';
 import { ohneStempelzeilen } from '../src/loop/executor-gate.js';
 import { TASK_CLAUSE, alsTaskGraph } from '../src/loop/task-clause.js';
-import { ANALYSE_TASKS, abschluss, artefakte, offen, stempelZug, type AnalyseTask, type TaskGraph } from '../src/loop/task-artifact.js';
+import { ANALYSE_TASKS, STEMPEL_ID, abschluss, artefakte, hatStempel, offen, stempelZug, type AnalyseTask, type TaskGraph } from '../src/loop/task-artifact.js';
 import { DelegateInputSchema } from '../src/surface/delegate.js';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
@@ -191,7 +191,53 @@ describe('CR-GC-724: Analysen über den Executor', () => {
       '## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"conops":{"graphVersion":3},"fmea":{"graphVersion":7}}\n',
     );
     expect(stempelZug('irr', 'SYS-app', {}, 7, ['CR-a'])).toContain('"assumption-review":{"graphVersion":7,"crRefs":["CR-a"]}');
-    expect(stempelZug('plan', 'SYS-app', {}, 7, ['MS-1'])).toContain('"implplan":{"graphVersion":7}');
+  });
+
+  // CR-GC-752 (contracts 11, CR-SM-395): der Bauplan ist die Menge der offenen Auftraege, kein Stempel.
+  describe('CR-GC-752: der Bauplan setzt keinen Stempel — sein Ergebnis sind offene Auftraege', () => {
+    const planFokus = () => generationStep(harness.getGraph(), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver', null, 'plan');
+
+    it('es gibt fuer den Bauplan keinen Stempel-Schluessel; die vier Analysen behalten ihren', () => {
+      expect(hatStempel('plan')).toBe(false);
+      expect(Object.keys(STEMPEL_ID).sort()).toEqual(ANALYSE_TASKS.filter((t) => t !== 'plan').sort());
+      expect(Object.values(STEMPEL_ID)).not.toContain('implplan');
+    });
+
+    it('Executor: das Vorbild schreibt offene Auftraege — kein Stempel, der Eintritt ist damit geschlossen, der Task durch', async () => {
+      // Vorher: es gibt Ungebautes ohne Auftrag — der Eintritt des Bauplans steht im Fokus.
+      expect(planFokus().focusKey).toMatch(/:AF-05:/);
+      const text = TASK_CLAUSE.plan.text(og());
+      expect(text).toContain('@status open');
+      const { callModel } = scripted([mutateCall('c1', vorbildAlsBatch(text))]);
+      const traces: string[] = [];
+      const stats = await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel, task: 'plan', trace: (l) => traces.push(l) });
+      // Das Vorbild geht im Executor durch: die Meilenstein-Reihenfolge (`MS -relation-> MS [depends-on]`) wies der
+      // Preflight bis CR-GC-752 ab, weil er das Label nicht las.
+      expect(traces.join('\n')).not.toMatch(/preflight blocked/);
+      expect(stats.taskStempel).toBeUndefined();
+      expect(stempel()).not.toHaveProperty('implplan');
+      const auftraege = harness.getGraph().nodes.filter((n) => n.type === 'CR');
+      expect(auftraege.length).toBeGreaterThan(0);
+      expect(auftraege.every((n) => n.attributes?.status === 'open')).toBe(true);
+      // Der offene Auftrag schliesst den Eintritt: der Task meldet fertig, ohne dass jemand etwas stempelt.
+      const danach = planFokus();
+      expect(danach.done).toBe(true);
+      expect(danach.prompt).toMatch(/Task plan fertig/);
+    });
+
+    it('ein Bauplan-Stempel von Hand schliesst den Eintritt NICHT — er wird nicht mehr gelesen', async () => {
+      const res = await mutate(`## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness ${JSON.stringify({ ...stempel(), implplan: { graphVersion: 2 } })}\n`);
+      expect(res.success, JSON.stringify(res.violations)).toBe(true); // ein Alt-Graph mit Stempel laedt und schreibt weiter
+      expect(planFokus().focusKey).toMatch(/:AF-05:/);
+    });
+
+    it('der Skill se-plan stempelt nicht mehr und nennt den offenen Auftrag als Ergebnis', () => {
+      const text = readFileSync(fileURLToPath(new URL('../.claude/commands/se-plan.md', import.meta.url)), 'utf8');
+      expect(text).not.toMatch(/"implplan"\s*:/);
+      expect(text).not.toContain('keep every entry already in `analysisFreshness`');
+      expect(text).toContain('`status: "open"`');
+      expect(text).toMatch(/sets \*\*no\*\* stamp/);
+    });
   });
 
   it('Executor: schreibt das Modell das Artefakt, setzt der Executor den Stempel — die übrigen bleiben', async () => {
@@ -228,8 +274,9 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     expect(Object.keys(stempel()).sort()).toEqual(['conops', 'fmea']);
   });
 
-  it('CR-GC-735: jeder Analyse-Skill schließt mit lesen, übernehmen, ganz schreiben', () => {
-    for (const skill of ['se-conops', 'se-trade', 'se-irr', 'se-fmea', 'se-plan']) {
+  it('CR-GC-735: jeder Analyse-Skill mit Stempel schließt mit lesen, übernehmen, ganz schreiben', () => {
+    // CR-GC-752: ohne se-plan — der Bauplan stempelt nicht (eigener Fall oben).
+    for (const skill of ['se-conops', 'se-trade', 'se-irr', 'se-fmea']) {
       const text = readFileSync(fileURLToPath(new URL(`../.claude/commands/${skill}.md`, import.meta.url)), 'utf8');
       expect(text, skill).toContain('read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`');
       expect(text, skill).not.toMatch(/attributes\.analysisFreshness[.[]/);

@@ -75,6 +75,7 @@ const legalPair = (
   edgeType: string,
   sourceKinds?: readonly string[],
   targetKinds?: readonly string[],
+  label?: string,
 ): boolean =>
   isValidTrace({
     source: source as ElementType,
@@ -82,6 +83,10 @@ const legalPair = (
     type: edgeType as TraceType,
     sourceKinds: sourceKinds as readonly ReqKind[] | undefined,
     targetKinds: targetKinds as readonly ReqKind[] | undefined,
+    // CR-GC-752: das Label gehoert zum Muster (`MS -relation-> MS` gilt nur als `depends-on`). Ohne es
+    // wies der Preflight die Meilenstein-Reihenfolge ab, die das Gate annimmt — das Vorbild des Bauplans
+    // kam im Executor deshalb nie durch.
+    ...(label === undefined ? {} : { label }),
   });
 
 /** Legale ausgehende Kanten eines Typs — für das R-18-Feedback (aus TRACE_PATTERNS, nie lokal). */
@@ -350,8 +355,9 @@ export function preflightBatch(raw: unknown, known: PreflightKnown): PreflightOu
     const sT = typeOf.get(sourceId);
     const tT = typeOf.get(targetId);
     if (!sT || !tT) return c; // unbekannte Referenz → R-08 unten übernimmt
-    if (legalPair(sT, tT, edgeType, kindsOf(sourceId), kindsOf(targetId))) return c;
-    if (legalPair(tT, sT, edgeType, kindsOf(targetId), kindsOf(sourceId))) {
+    const label = typeof c.edge.attributes?.label === 'string' ? c.edge.attributes.label : undefined;
+    if (legalPair(sT, tT, edgeType, kindsOf(sourceId), kindsOf(targetId), label)) return c;
+    if (legalPair(tT, sT, edgeType, kindsOf(targetId), kindsOf(sourceId), label)) {
       fixes.push(
         `R-18 auto-flip: ${sourceId} ${edgeType} ${targetId} → ${targetId} ${edgeType} ${sourceId} ` +
           `(legal ist ${tT} ${edgeType} ${sT})`,

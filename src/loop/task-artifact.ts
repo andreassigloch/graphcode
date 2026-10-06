@@ -16,6 +16,11 @@
  * Für conops und irr trägt der Graph kein Merkmal, das eine Betriebsanforderung oder eine Annahme
  * von gewöhnlicher Kern-Arbeit unterscheidet — dort zählt, was WÄHREND des Tasks entstand.
  *
+ * CR-GC-752 (contracts 11, CR-SM-395): der Bauplan setzt KEINEN Stempel mehr. Sein Ergebnis sind
+ * offene Aufträge (CR mit `status: open`) und Meilensteine; die Eintrittsregel AF-05 („es gibt
+ * Ungebautes, aber keinen offenen Auftrag") schließt der erste offene Auftrag selbst. `artefakte` und
+ * `offen` gelten für `plan` weiter — sie speisen den Rundenprompt (welche REQ hat noch keinen Auftrag).
+ *
  * Rein: liest eine neutrale Graph-Form, damit Rundenprompt (OntologyGraph) und Executor (Registry)
  * dieselbe Rechnung benutzen.
  *
@@ -23,21 +28,26 @@
  */
 import { normalizeReqKinds } from '@sigloch/contracts/se';
 
-/** Die Tasks, die ein Artefakt mit Stempel hinterlassen. */
+/** Die Analysen — jede hinterlässt ein Artefakt im Graphen. */
 export const ANALYSE_TASKS = ['conops', 'trade', 'irr', 'fmea', 'plan'] as const;
 export type AnalyseTask = (typeof ANALYSE_TASKS)[number];
 
 export const istAnalyseTask = (task: string | undefined): task is AnalyseTask =>
   (ANALYSE_TASKS as readonly string[]).includes(task ?? '');
 
+/** Die Analysen, deren Abschluss ein Stempel am SYS ist — alle außer dem Bauplan (CR-GC-752). */
+export type GestempelterTask = Exclude<AnalyseTask, 'plan'>;
+
 /** Der Schlüssel des Stempels unter `SYS.attributes.analysisFreshness` — er weicht vom Task-Namen ab. */
-export const STEMPEL_ID: Readonly<Record<AnalyseTask, string>> = {
+export const STEMPEL_ID: Readonly<Record<GestempelterTask, string>> = {
   conops: 'conops',
   trade: 'trade',
   irr: 'assumption-review',
   fmea: 'fmea',
-  plan: 'implplan',
 };
+
+/** Schließt ein Stempel diese Analyse ab? Beim Bauplan nicht — dort ist es der offene Auftrag. */
+export const hatStempel = (task: AnalyseTask): task is GestempelterTask => task in STEMPEL_ID;
 
 /** Bei diesen Tasks zählt nur, was während des Tasks entstand. */
 export const NUR_NEUE: ReadonlySet<AnalyseTask> = new Set(['conops', 'irr']);
@@ -169,7 +179,7 @@ export function abschluss(
  * Wert ersetzt und nicht in ihn hinein mischt — die übrigen Stempel reisen deshalb mit.
  */
 export function stempelZug(
-  task: AnalyseTask,
+  task: GestempelterTask,
   sysUid: string,
   bisher: Record<string, unknown>,
   graphVersion: number,
