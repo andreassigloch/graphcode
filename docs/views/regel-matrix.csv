@@ -3,14 +3,14 @@ CR-R03;No concurrent mutation;immer;;–;warning;Gate;kern;cr;;;;Kläre, welcher
 R-08;Trace consistency;immer;;–;error;Gate;kern;arch;;;;Repariere oder entferne die Verbindungen an {n}, deren Ziel fehlt.;se:top-level;;;;
 R-18;Valid trace pattern;immer;;–;error;Gate;kern;arch;;;;Korrigiere die unzulässigen Verbindungen an {n}.;se:top-level;;se:author-actor se:author-req se:import-doc se-fmea se-plan se-view:fmea;schliesst;
 R-33;Graph must have a SYS;1 System;existence;SRR;warning;Gate;kern;uc;;;;Lege zuerst das System an und benenne, was gebaut wird.;se:author-uc;;;;
-R-17;SYS must have compose;2 Anwendungsfall;existence;SRR;warning;Gate;kern;uc;;;;Lege die Abläufe des Systems {n} an.;se:author-uc;;se:top-level;;
+R-17;SYS must have a use case;2 Anwendungsfall;existence;SRR;warning;Gate;kern;uc;;;;Lege die Abläufe des Systems {n} an.;se:author-uc;;se:top-level;;
 UC-02;UC has actor;2 Anwendungsfall;existence;SRR;warning;Gate;kern;uc;;;;Lege für die Abläufe {n} die Funktionen an, die der Nutzer über einen Datenfluss auslöst.;se:author-uc;;se:author-actor se:author-uc;schliesst;
-AF-01;ConOps freshness stamp present;2 Anwendungsfall;analysis;SRR;warning;Gate;kern, Eintritt fuer conops;req;;ja (Analyse);se-conops;;se-conops;;se-conops;;
 CL-01;ConopsCompleteness;2 Anwendungsfall;;SRR;warning;Gate;kern;uc;;ja — Ein Akteur, der das System in nur einer Betriebsart nutzt, ist ein gueltiger Befund des Einsatzkonzepts — ob eine zweite fehlt, entscheidet der Auftraggeber.;se-conops;Ordne den Akteuren {n} Abläufe in mindestens zwei Betriebsarten zu.;se-conops;;;;
 FC-02;Leaf UC has FCHAIN;2 Anwendungsfall;;SRR;warning;Gate;kern;uc;;;se:author-uc;Beschreibe die Abläufe {n} als Kette von Funktionen.;se:author-uc;;se:author-uc se-fmea;;
 R-16;ACTOR must have io;2 Anwendungsfall;;SRR;warning;Gate;kern;uc;;;;Verbinde den Nutzer {n} über Datenflüsse mit den Funktionen.;se:author-uc;;se:author-actor;;
 UC-04;UC has goal;2 Anwendungsfall;;SRR;warning;Gate;kern;uc;;;se:author-uc;Beschreibe das Ziel der Abläufe {n}.;se:author-uc;;;;
 UC-01;UC has requirements;3 Anforderung;existence;SRR;warning;Gate;kern;uc;;;se:author-req;Lege für die Abläufe {n} Anforderungen mit Test an: fachliche je Funktion, Ende-zu-Ende-Vorgaben an der Kette.;se:author-uc;ja;se:author-uc;;
+AF-01;ConOps freshness stamp present;3 Anforderung;analysis;SRR;warning;Gate;kern, Eintritt fuer conops;req;;ja (Analyse);se-conops;;se-conops;;se-conops se-irr;;
 BQ-01;Unambiguous;3 Anforderung;;SRR;warning;nur Steuerung;anforderungsqualitaet;req;;;se:author-req;;se:author-req;;;;
 BQ-02;Verifiable;3 Anforderung;;SRR;warning;nur Steuerung;anforderungsqualitaet;req;;;se:author-req;;se:author-req;;;;
 BQ-04;Necessary;3 Anforderung;;SRR;warning;nur Steuerung;anforderungsqualitaet;req;;;;;se:author-req;;;;
@@ -48,8 +48,7 @@ R-23;MOD must have allocated FUNC;7 Modul;;PDR;warning;Gate;kern;alloc;;;;Gib de
 RD-04;Decomposition breadth;7 Modul;;PDR;warning;Gate;kern;arch;ja;;;Gruppiere die Teile unter {n}, es sind zu viele auf einer Ebene.;se:top-level;;se:top-level;schliesst;
 RD-05;Decomposition too narrow;7 Modul;;PDR;warning;Gate;kern;arch;;;;Löse die Ebene {n} in die Ebene darüber auf oder sammle unter ihr, was zusammengehört.;se:top-level;;;;
 TR-01;Trade decision recorded as CR;7 Modul;analysis;PDR;warning;Gate;kern;arch;;ja (Analyse);se-trade;Halte die Entscheidung des Variantenvergleichs für {n} als Änderungsauftrag fest.;se-trade;;se-trade;;
-R-34;FLOW must have a SCHEMA;8 Schema;existence;CDR;warning;Gate;kern;schema;;;;Gib den Datenflüssen {n} ein Datenformat.;;;;;
-AF-04;FMEA freshness stamp present;8 Schema;analysis;CDR;warning;Gate;kern, Eintritt fuer fmea;ver;;ja (Analyse);se-fmea;;se-fmea;;se-fmea;;
+AF-04;FMEA freshness stamp present;8 Schema;analysis;CDR;warning;Gate;kern, Eintritt fuer fmea;ver;;ja (Analyse);se-fmea;;se-fmea;;se-fmea se-irr;;
 ND-02;SchemaNearDuplicate;8 Schema;;CDR;warning;Aehnlichkeit (ND);kern;schema;;;;Führe die doppelten Datenformate {n} zusammen oder grenze sie ab.;;;;;
 SC-02;Schema referenced by FLOW;8 Schema;;CDR;warning;Gate;kern;schema;;;;Verbinde das Datenformat {n} mit seinem Datenfluss oder entferne es.;;;;schliesst;
 R-01;REQ must have verification;9 Test;existence;TRR;error;Gate;kern;ver;;;se:close-violations;Ergänze Tests für die Anforderungen {n}.;;;se:author-req se:author-uc se-conops se-fmea se-test-ui se-umbau se-view:fmea;;
@@ -63,9 +62,10 @@ CR-R02;Done requires commit;10 Plan;;Bau;warning;Gate;kern;cr;;;;Trage bei den e
 MS-01;Milestone empty scope;10 Plan;;Bau;warning;Gate;kern;ms;;;;Ordne den Meilensteinen {n} ihren Umfang zu.;;;;;
 MS-02;Milestone dangling dependency;10 Plan;;Bau;warning;Gate;kern;ms;;;;Korrigiere die Abhängigkeiten der Meilensteine {n}.;;;;;
 MS-03;CR without milestone;10 Plan;;Bau;info;Gate;kern;ms;;;se-plan;;se-plan;;;schliesst;
-R-19;Runnable TEST binding;11 Bindung;;Bau;warning;Gate;kern;ver;;;;Verbinde die Tests {n} mit ihren Testdateien.;;;se-irr se-retro se-test;;
-R-20;FUNC realRef binding;11 Bindung;;Bau;warning;Gate;kern;arch;;;;Verbinde die Funktionen {n} mit ihrem Code.;se:top-level;;se:import-code se-irr se-retro;;
-R-26;SCHEMA must have realRef;11 Bindung;;Bau;warning;Gate;kern;schema;;;;Verbinde die Datenformate {n} mit ihrem Schema im Code.;;;;;
+RC-07;CR node agrees with docs/cr;10 Plan;;Bau;warning;CodeFacts (RC);kern;;;;;Gleiche die Änderungsaufträge {n} mit ihren Dateien ab.;;;;;
+R-19;Runnable TEST binding;11 Bindung;;Bau;warning;Gate;kern;ver;;;;Verbinde die Tests {n} mit ihren Testdateien.;;;se-irr se-plan se-retro se-test;;
+R-20;FUNC realRef binding;11 Bindung;;Bau;warning;Gate;kern;arch;;;;Verbinde die Funktionen {n} mit ihrem Code.;se:top-level;;se:import-code se-irr se-plan se-retro;;
+R-26;SCHEMA must have realRef;11 Bindung;;Bau;warning;Gate;kern;schema;;;;Verbinde die Datenformate {n} mit ihrem Schema im Code.;;;se-plan;;
 R-29;Test file exclusivity;11 Bindung;;Bau;error;Gate;kern;ver;;;;Gib jede Testdatei von {n} nur einem Test.;;;se:author-req;;
 VR-01;TestNoResult;11 Bindung;;Bau;info;Gate;kern;ver;;;;;;;;;
 RC-01;FUNC realRef resolves to a declared symbol;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Korrigiere die Code-Verweise der Funktionen {n}, sie zeigen ins Leere.;;;se-review se-umbau;;
@@ -74,7 +74,6 @@ RC-03;SCHEMA realRef resolves to a declared export;12 Abgleich;;Bau;warning;Code
 RC-04;SCHEMA realRef is parsed at its interface;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Lies die Datenformate {n} im Code an der Schnittstelle, an der das Modell sie führt.;;;;;
 RC-05;cross-module import drift;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Trage die Abhängigkeit der Module {n} ins Modell ein oder entferne den Import.;;;;;
 RC-06;external realRef names a declared dependency;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Trage die Pakete, auf die {n} verweisen, als Abhängigkeit ein.;;;;;
-RC-07;CR node agrees with docs/cr;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Gleiche die Änderungsaufträge {n} mit ihren Dateien ab.;;;;;
 RC-08;SCHEMA realRef is a Zod schema;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Binde die Datenformate {n} an ein Schema statt an einen Typ.;;;;;
 RC-09;SCHEMA is parsed only at its modelled interface;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Prüfe, wo die Datenformate {n} außerhalb ihrer Schnittstelle gelesen werden.;;;;;
 RC-10;MOD has resolvable files;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Gib den Modulen {n} ihren Quellordner.;;;;;

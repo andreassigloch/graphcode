@@ -503,9 +503,9 @@ export const SEED_STAGES = {
  * Befund; die Texte der Stufen (gemessen entstanden: CR-GC-559, ITEM-2026-625) sind unveraendert und
  * stehen als Kaltstart-Fassung dieser Regeln in `stepCore`.
  *
- * Was eine Regel nicht meldet, loest keine Stufe aus — auch dort, wo der alte Zustandstest es tat
- * (ein System, das nur Anforderungen unter sich hat: R-17 schweigt, CR-SM-395 §10.5). Aendert der
- * Katalog die Regel, folgt der Schritt ohne Aenderung hier.
+ * Was eine Regel nicht meldet, loest keine Stufe aus. Aendert der Katalog die Regel, folgt der Schritt
+ * ohne Aenderung hier — so mit CR-SM-396: R-17 verlangt seither einen Anwendungsfall, nicht irgendeine
+ * Unterstruktur.
  */
 export const SEED_RULE = { sys: 'R-33', uc: 'R-17', actor: 'UC-02' } as const;
 

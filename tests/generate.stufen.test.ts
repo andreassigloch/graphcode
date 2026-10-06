@@ -68,7 +68,7 @@ function fensterfolge(graph: Graph): string[] {
 
 const KORPUS: [string, Graph][] = [
   ['Referenz lokal', lade('rig/aufgaben/todo/referenz/lokal/graph.json')],
-  ['Referenz frontier (zwei offene Auftraege)', lade('rig/aufgaben/todo/referenz/frontier/graph.json')],
+  ['Referenz frontier (nur Entscheidungs-Auftraege)', lade('rig/aufgaben/todo/referenz/frontier/graph.json')],
   ['Golden sigllm v98', lade('beispielgraphen/sigllm-v98.graph.json')],
 ];
 
@@ -115,7 +115,11 @@ describe('CR-GC-749: der Schritt waehlt die frueheste Stufe', () => {
   });
 
   it('ein offener Auftrag: die Bindungsbefunde stehen im Fokus, aber erst nach allem, was vor dem Bau liegt', () => {
-    const graph = KORPUS[1]![1];
+    // Die Referenz traegt nur Entscheidungs-Auftraege (`decides`); die eroeffnen den Bau nicht (CR-SM-396).
+    expect(fensterfolge(KORPUS[1]![1]).map(regelVon).filter((r) => rang(r) === 11)).toEqual([]);
+    const basis = KORPUS[1]![1];
+    const func = basis.nodes.find((x) => x.type === 'FUNC')!.uid;
+    const graph = g([...basis.nodes, n('CR-bau', 'CR', 'Baue die Funktion.', { status: 'open' })], [...basis.edges, e('CR-bau', func, 'relation')]);
     const folge = fensterfolge(graph).map(regelVon);
     const bindung = folge.filter((r) => rang(r) === 11);
     expect(bindung.length).toBeGreaterThan(0);

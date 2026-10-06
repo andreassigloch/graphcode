@@ -47,8 +47,10 @@ const ANALYSEN: ReadonlySet<string> = new Set(ALL_RULE_DEFS.filter((r) => r.role
 /**
  * Abnehmbar ueber die Analysen hinaus — einzeln begruendet (CR-GC-748). Massstab wie in CR-GC-594:
  * nur, was IM MODELL nicht erfuellbar ist. Geprueft und NICHT mehr abnehmbar:
- *   - R-19, R-20, R-26, R-32 (Bindung): sie standen hier, weil sie im Entwurf feuerten. Sie sind erst
+ *   - R-19, R-20, R-26 (Bindung): sie standen hier, weil sie im Entwurf feuerten. Sie sind erst
  *     faellig, wenn der Bau eroeffnet ist — dann sind ihre Befunde die Arbeitsliste, nichts zum Abnehmen.
+ *   - R-32 (Vertragstest je Schema): gilt seit CR-SM-396 fuer jedes Schema, auch im Entwurf — ein TEST
+ *     mit verify auf das Schema schliesst den Befund im Modell.
  *   - MS-01 (Meilenstein ohne Auftrag), CR-R01 (Auftrag ohne Umfang): beide schliesst ein Zug im
  *     Modell — Auftrag zuordnen, Umfang verbinden, oder das Element loeschen.
  */

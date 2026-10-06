@@ -368,12 +368,10 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
     }
 
     // A FLOW with no data contract. Since contracts 9 that is grammar (R-18, the lower bound of
-    // `FLOW -relation-> SCHEMA`), since contracts 11 also the existence rule of the schema stage
-    // (R-34). CR-GC-749: the step orders by stage, and a grammar error holds every stage — so the
+    // `FLOW -relation-> SCHEMA`). CR-GC-749: the step orders by stage, and a grammar error holds every stage — so the
     // actuator needs this repair before it can do anything else. Only FLOWs get a contract; an R-18
     // finding at another element has no canonical repair and is left to stop the run by name.
     case 'R-18':
-    case 'R-34':
     case 'SC-02':
     case 'SC-04':
       for (const flow of elementIds.filter((id) => id.startsWith('FLOW-'))) {

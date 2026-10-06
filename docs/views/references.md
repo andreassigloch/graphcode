@@ -791,6 +791,8 @@
 | `CR-GC-751` | relation | `FUNC-evaluate-rules` |
 | `CR-GC-752` | relation | `FUNC-run-executor` |
 | `CR-GC-752` | relation | `FUNC-se-plan` |
+| `CR-GC-753` | relation | `FUNC-generation-step` |
+| `CR-GC-753` | relation | `FUNC-score-completeness` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

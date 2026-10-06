@@ -3073,6 +3073,13 @@
       "commitRef": "4526296"
     },
     {
+      "id": "CR-GC-753",
+      "type": "CR",
+      "name": "Nachzug Regelkatalog 40 - die neun Entscheidungen zur Regelmatrix",
+      "description": "docs/cr/done/CR-GC-753-nachzug-regelkatalog-40-entscheidungen-zur-regelmatrix.md",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14871,6 +14878,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-753",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-753",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23573,5 +23590,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 620
+  "graphVersion": 621
 }

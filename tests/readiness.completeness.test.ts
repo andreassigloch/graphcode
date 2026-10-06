@@ -23,8 +23,8 @@ import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js
 
 const node = (uid: string, type: string, attributes: Record<string, unknown> = {}): Graph['nodes'][number] =>
   ({ uid, type, name: uid, description: `Das System muss ${uid} leisten.`, attributes }) as Graph['nodes'][number];
-const edge = (sourceId: string, targetId: string, edgeType: string) =>
-  ({ sourceId, targetId, edgeType, attributes: {} }) as Graph['edges'][number];
+const edge = (sourceId: string, targetId: string, edgeType: string, label?: string) =>
+  ({ sourceId, targetId, edgeType, attributes: label ? { label } : {} }) as Graph['edges'][number];
 
 /** Der echte Regellauf des Steuerkatalogs, in der Form, die `computeReadiness` liest. */
 function befunde(g: Graph): RuleViolation[] {
@@ -42,14 +42,15 @@ function entwurf(extra: Graph['nodes'] = [], kanten: Graph['edges'] = []): Graph
     nodes: [
       node('SYS-x', 'SYS'), node('UC-x', 'UC'), node('ACTOR-a', 'ACTOR'), node('FLOW-in', 'FLOW'), node('FLOW-out', 'FLOW'),
       node('SCHEMA-in', 'SCHEMA'), node('SCHEMA-out', 'SCHEMA'), node('FUNC-f', 'FUNC'), node('FCHAIN-c', 'FCHAIN'),
-      node('REQ-r', 'REQ', { kinds: ['functional'] }), node('TEST-t', 'TEST'), node('MOD-m', 'MOD'), ...extra,
+      node('REQ-r', 'REQ', { kinds: ['functional'] }), node('TEST-t', 'TEST'), node('TEST-s', 'TEST'), node('MOD-m', 'MOD'), ...extra,
     ],
     edges: [
       edge('SYS-x', 'UC-x', 'compose'), edge('UC-x', 'FCHAIN-c', 'compose'), edge('UC-x', 'REQ-r', 'compose'),
       edge('FCHAIN-c', 'FUNC-f', 'compose'), edge('ACTOR-a', 'FLOW-in', 'io'), edge('FLOW-in', 'FUNC-f', 'io'),
       edge('FUNC-f', 'FLOW-out', 'io'), edge('FLOW-out', 'ACTOR-a', 'io'), edge('FLOW-in', 'SCHEMA-in', 'relation'),
       edge('FLOW-out', 'SCHEMA-out', 'relation'), edge('FUNC-f', 'REQ-r', 'satisfy'), edge('TEST-t', 'REQ-r', 'verify'),
-      edge('FUNC-f', 'MOD-m', 'allocate'), edge('SYS-x', 'MOD-m', 'compose'), ...kanten,
+      edge('FUNC-f', 'MOD-m', 'allocate'), edge('SYS-x', 'MOD-m', 'compose'),
+      edge('TEST-s', 'SCHEMA-in', 'verify'), edge('TEST-s', 'SCHEMA-out', 'verify'), ...kanten,
     ],
   };
 }
@@ -106,6 +107,12 @@ describe('eine leere Pflichtmenge haelt die Marke — „0 von 0" liest nie als 
     expect(trr.holding.some((h) => h.elementId === 'REQ-r')).toBe(true);
   });
 
+  it('ein Schema ohne Vertragstest haelt TRR — auch ungebunden (CR-SM-396)', () => {
+    const g = ohne(entwurf(), 'TEST-s');
+    expect(marke(g, 'CDR').reached).toBe(true);
+    expect(marke(g, 'TRR').holding.map((h) => `${h.ruleId}:${h.elementId}`).sort()).toEqual(['R-32:SCHEMA-in', 'R-32:SCHEMA-out']);
+  });
+
   it('eine Marke bleibt offen, solange eine fruehere es ist', () => {
     const g = ohne(entwurf(), 'FCHAIN-c');
     const erreicht = marken(g).map((m) => m.reached);
@@ -136,6 +143,12 @@ describe('die Marke Bau: Plan, Bindung, Abgleich', () => {
     expect(bau.holding.some((h) => bindungsRegeln.includes(h.ruleId))).toBe(true);
     // die Marken der Spezifikation beruehrt das nicht
     for (const id of ['SRR', 'PDR', 'CDR', 'TRR']) expect(marke(g, id).reached, id).toBe(true);
+  });
+
+  it('ein offener Entscheidungs-Auftrag (decides) eroeffnet den Bau nicht — daraus entsteht kein Code (CR-SM-396)', () => {
+    const g = entwurf([node('CR-1', 'CR', { status: 'open' })], [edge('CR-1', 'REQ-r', 'relation', 'decides')]);
+    expect(befunde(g).filter((v) => bindungsRegeln.includes(v.ruleId))).toEqual([]);
+    expect(marke(g, 'Bau').holding.map((h) => h.ruleId)).toContain('AF-05'); // der Bauplan bleibt faellig
   });
 
   it('eine Bindung von Hand, ohne Auftrag, zaehlt genauso', () => {
