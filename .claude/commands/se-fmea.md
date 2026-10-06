@@ -1,6 +1,6 @@
 ---
 name: se-fmea
-version: 4
+version: 5
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
@@ -104,7 +104,7 @@ Danach, für jede Funktion:
 
 The FMEA is not done until findings live in the graph, not just the document.
 
-1. **Derive requirements** from AP-High/Medium mitigations. Each becomes a `REQ` node. Check the graph first for ID collisions via `graph_get_node` `{ "uid": "<candidate>" }` (uids are not idempotent — a re-add is a collision). Use the next free `REQ-NNN`.
+1. **Ask which risks become requirements, then derive them.** Show the user the whole risk matrix from Step 5 — every failure mode, Low AP included — with your recommendation per line (`write` for High and Medium AP, `leave` for Low). Ask which of them to write as requirements. The user decides: a Low one the user picks is written like any other; a High or Medium one the user declines stays in the document with that decision and its justification noted (AIAG-VDA demands the justification). If nobody answers (headless run), write High and Medium and say so in the closing report. Each chosen mitigation becomes a `REQ` node. Check the graph first for ID collisions via `graph_get_node` `{ "uid": "<candidate>" }` (uids are not idempotent — a re-add is a collision). Use the next free `REQ-NNN`.
 2. **Apply to graph** via `graph_mutate` with a single `MutateCommand[]` batch — every write goes through the Apply-Gate (L2).
 
    **The graph attribute names are fixed by the rules — do not invent your own (CR-GC-308).** `FM-01`/`FM-02`/`FM-03` in `@sigloch/contracts/se` read exactly these keys, and so does the FMEA view. The S/O/D above are the *document's* column headers; in the graph they are spelled out:
