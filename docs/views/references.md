@@ -788,6 +788,7 @@
 | `CR-GC-745` | relation | `FUNC-score-completeness` |
 | `CR-GC-745` | relation | `SCHEMA-phase-readiness` |
 | `CR-GC-746` | relation | `FUNC-score-completeness` |
+| `CR-GC-747` | relation | `FUNC-test` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

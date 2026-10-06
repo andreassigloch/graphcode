@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 357 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 357 CR · 330 done · 4 open.
+Total: 357 CR · 331 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -418,4 +418,4 @@ Total: 357 CR · 330 done · 4 open.
 | `CR-GC-744` | done | Nachzug contracts 10.15 - Attribut concept entfaellt |
 | `CR-GC-745` | done | Nachzug client 1.6.1 - Gate-Zustand auf beiden Achsen |
 | `CR-GC-746` | done | Nachzug client 1.6.1 - Gate-Zustand in Hilfe Export und Rig-Beleg |
-| `CR-GC-747` | n/a | Skill zum Abarbeiten der Warnungen: se:close-violations deckt heute nur Fehler (R-01, RD-01); erweitern auf alle offenen Befunde, Regel fuer Regel, mit den drei Auswegen beheben, abnehmen mit Grund, fragen - Vorlage ist der in 8 Rig-Laeufen gemessene Auftrag der Stufe warnungsfrei |
+| `CR-GC-747` | done | Skill zum Abarbeiten der Warnungen: se:close-violations deckt heute nur Fehler (R-01, RD-01); erweitern auf alle offenen Befunde, Regel fuer Regel, mit den drei Auswegen beheben, abnehmen mit Grund, fragen - Vorlage ist der in 8 Rig-Laeufen gemessene Auftrag der Stufe warnungsfrei |

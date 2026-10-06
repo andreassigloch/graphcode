@@ -415,6 +415,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-744` | done | Nachzug contracts 10.15 - Attribut concept entfaellt | `FUNC-test` |
 | `CR-GC-745` | done | Nachzug client 1.6.1 - Gate-Zustand auf beiden Achsen | `FUNC-score-completeness` |
 | `CR-GC-746` | done | Nachzug client 1.6.1 - Gate-Zustand in Hilfe Export und Rig-Beleg | `FUNC-score-completeness` |
+| `CR-GC-747` | done | Skill zum Abarbeiten der Warnungen: se:close-violations deckt heute nur Fehler (R-01, RD-01); erweitern auf alle offenen Befunde, Regel fuer Regel, mit den drei Auswegen beheben, abnehmen mit Grund, fragen - Vorlage ist der in 8 Rig-Laeufen gemessene Auftrag der Stufe warnungsfrei | `FUNC-test` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
