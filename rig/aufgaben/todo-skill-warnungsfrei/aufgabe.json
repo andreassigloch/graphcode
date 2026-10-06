@@ -1,0 +1,11 @@
+{
+ "quelle": "Wie todo-warnungsfrei, aber der Auftrag ist der Skill se:close-violations (v2, CR-GC-747) statt des handgeschriebenen Auftrags — misst den Skilltext. start.md trägt den Skill wörtlich (tests/rig-interaktiv.test.ts hält das fest).",
+ "sequenz": [
+  "warnungsfrei"
+ ],
+ "basis": "../todo/referenz/lokal/graph.json",
+ "politik": {
+  "analysen": "ablehnen",
+  "freigabe": "bei-ziel"
+ }
+}

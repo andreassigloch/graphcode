@@ -270,3 +270,35 @@ describe('CR-GC-715: Kennzahlen und Arme', () => {
     expect(c.replace(/mcp__graphcode__/g, 'graphcode_').replace('`Read`, `Glob`, `Grep`', '`read`, `glob`, `grep`').replace('`WebFetch`', '`webfetch`')).toBe(p + '\n@graph_memory.md\n');
   });
 });
+
+describe('Aufgaben mit dem Skill als Auftrag (CR-GC-747)', () => {
+  // Gemessen wird der Skilltext selbst. Eine Kopie, die vom Skill abweicht, misst etwas anderes als das,
+  // was der Nutzer mit `se:close-violations` bekommt — deshalb wörtlich, und hier festgehalten.
+  const skill = readFileSync(join(fileURLToPath(new URL('..', import.meta.url)), '.claude', 'commands', 'se', 'close-violations.md'), 'utf8')
+    .replace(/^---[\s\S]*?---\n\n/, '');
+  // Der Name der zweiten Aufgabe ist kurz gehalten: der Pfad des Host-Sockets im Lauf-Repo darf 103 Zeichen nicht
+  // überschreiten, sonst startet der Host nicht (ITEM-2026-761).
+  for (const [name, vergleich] of [['todo-skill-warnungsfrei', 'todo-warnungsfrei'], ['todo-hand-skill-wf', 'todo-hand-warnungsfrei']]) {
+    it(`${name}: start.md trägt den Skill wörtlich, Stufe und Politik wie die Vergleichsaufgabe`, () => {
+      const a = aufgabeLaden(name);
+      const v = aufgabeLaden(vergleich);
+      expect(a.start).toContain(skill.trim());
+      expect(a.politik).toEqual(v.politik);
+      expect(a.basis).toBe(v.basis);
+      expect(a.antworten).toEqual(v.antworten);
+    });
+  }
+  it('eine Frage nach dem Entfernen eines benannten Elements ist eine Entscheidung am Modell (Lauf frontier-1, Zug 2)', () => {
+    // Opus nennt Elemente beim Namen statt bei der uid; „entfernen" stand nicht in der Wortliste. Der Simulator
+    // antwortete „als offen führen", der Agent führte den Befund offen, der Lauf endete im Stillstand.
+    const blatt = aufgabeLaden('todo-skill-warnungsfrei').antworten;
+    expect(frageArt('Soll ich **Terminal-Ausgabe** entfernen?', blatt)).toBe('modell');
+    expect(frageArt('Soll der Fluss bleiben, also behalten, und der Befund angenommen werden?', blatt)).not.toBe('wissen');
+  });
+  it('der Skill nennt die drei Auswege und kein concept', () => {
+    expect(skill).toMatch(/Fix it in the model/);
+    expect(skill).toMatch(/Accept it with a reason/);
+    expect(skill).toMatch(/Ask the user/);
+    expect(skill).not.toMatch(/concept\s*:\s*true|@concept/);
+  });
+});

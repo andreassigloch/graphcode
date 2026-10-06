@@ -54,7 +54,7 @@ mit jeder Änderung wieder auf, bis die neuen Elemente geplant, gebunden und abg
 Eine eigene Regel „Bauplan durchgeführt, aber nichts gebunden" braucht es damit nicht: Nach dem Planen stehen die
 Bindungsregeln selbst als Befunde da.
 
-**Analysen** (Einsatzkonzept, Variantenvergleich, Annahmen-Review, Fehlerbetrachtung, Bauplan, neu: Konsolidierung)
+**Analysen** (Einsatzkonzept, Variantenvergleich, Annahmen-Review, Fehlerbetrachtung, Bauplan)
 sind Existenz-Regeln für ein Artefakt. Nur sie dürfen mit Begründung abgenommen werden. Wer den Bauplan abnimmt
 („Bau nicht beauftragt"), hat eine warnungsfreie Spezifikation.
 
@@ -63,13 +63,16 @@ es die Elemente gibt.
 
 ## 3. Die Matrix
 
+Die Matrix gibt es bereits als erzeugte Sicht (`scripts/regel-matrix.mjs` → `docs/views/regel-matrix.md`, eine Zeile
+je Regel, jede Spalte aus der Quelle gelesen). Der Entwurf ändert ihre Spalten: „Stufe" und „Rolle" ersetzen „Phase"
+und große Teile von „Task"; die Tabelle hier ist die Vorschau darauf.
+
 Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **Rolle** (Existenz, Analyse oder leer).
 „Gate heute" steht nur zum Vergleich da; ≠ markiert, wo die Marke aus der Stufe von der heutigen Handzuordnung abweicht.
 
 | Stufe | Regel | prüft | Menge | Schwere | Rolle | Gate heute | Marke aus Stufe |
 |---|---|---|---|---|---|---|---|
 | immer | CR-R03 | No concurrent mutation | all | Warnung |  | SRR | – |
-| immer | **neu** | Regel mit mehr als zwölf fälligen Befunden → Konsolidierung | Befunde | Warnung | Analyse | – | – |
 | immer | R-08 | Trace consistency | all | **Fehler** |  | PDR | – |
 | immer | R-18 | Valid trace pattern | all | **Fehler** |  | PDR | – |
 | 1 System | **neu** | Graph hat ein System | graph | Warnung | Existenz | (Code) | SRR |
@@ -156,8 +159,7 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
   wandern: elf zur Marke „Bau" (die fünf Bindungsregeln, der Bauplan und die fünf Regeln über Aufträge und
   Meilensteine) und eine innerhalb der Spezifikation (NFR-01, Budgets: vom Detailentwurf zum Vorentwurf). Die zehn
   Abgleichregeln, die heute an keinem Gate hängen, bekommen die Marke „Bau".
-- **Drei Regeln sind neu:** zwei Existenz-Regeln (System, Schema) und der Wächter für die Konsolidierung (§6). Die
-  beiden Existenz-Regeln ersetzen Sonderlogik, die es heute an anderer Stelle gibt. **Eine Regel wird neu gefasst:**
+- **Zwei Regeln sind neu:** die Existenz-Regeln für System und Schema. Beide ersetzen Sonderlogik, die es heute an anderer Stelle gibt. **Eine Regel wird neu gefasst:**
   AF-05 fragt nicht mehr nach einem Stempel, sondern ob es für Ungebautes einen offenen Auftrag gibt.
 - **Fünf Regeln sind Fehler** und blockieren die Schreiboperation: R-08, R-18, R-01, IO-02, R-29. Unverändert.
 
@@ -228,20 +230,16 @@ genauer als die heutige Zählung nach Elementtyp. Sie ist **nicht Teil dieses Um
 **Eskalation ist die Readiness im Viewer.** Sie gibt es schon: Prozent je Dimension und die Marken. Wer den nächsten
 Schritt ignoriert, sieht die Werte fallen. Es kommt kein neuer Mechanismus dazu, und es blockiert nichts.
 
-**Wächter „Konsolidierung"** (neu, als Analyse):
-- Eine Regel ohne Stufe: Übersteigt die Zahl der fälligen Warnungen ein Maß, lautet der Befund „Konsolidierung
-  fällig".
-- Sie verhält sich wie jede Analyse: ein Befund am System, ein Skill dahinter, mit Begründung abnehmbar. Der Kunde
-  kann sie ignorieren; im Viewer bleibt sie sichtbar.
-- Wiederverwendbar sind `se:close-violations` (arbeitet Befunde nach Rang ab), `graph_suggest` (Architekturzüge nach
-  Wirkung) und die Doppelgänger-Regeln ND-01/ND-02.
-- **Das Maß ist ein Wert der Betriebs-Config, Startwert 12:** Hat eine einzelne Regel der Spezifikation (Stufen 1
-  bis 9) mehr als zwölf fällige Befunde, ist die Konsolidierung fällig. Zwölf sind vier Schritte zu je drei Befunden.
-  Korrigiert wird bei Bedarf.
-- **Warum nur die Spezifikation zählt:** Nach dem Planen sind die Bindungsbefunde die Arbeitsliste des Baus. Ein
-  Projekt mit 18 ungebauten Tests hat kein Konsolidierungsproblem, es hat Arbeit vor sich.
+**Der Skill zum Abarbeiten ist das Wichtige, der Auslöser ist geparkt** (Entscheidung 2026-10-06).
 
-Gemessen an 14 Modellen (offene Warnungen je Regel, alle Stufen):
+- **Skill:** `se:close-violations` arbeitet die offenen Befunde ab, Fehler zuerst, dann Warnungen Regel für Regel,
+  mit drei Auswegen je Befund: im Modell beheben, mit Begründung abnehmen, den Nutzer fragen. Bis CR-GC-747 deckte
+  er nur Fehler. Im Cockpit hängt er schon heute am Feld „Empfehlungen".
+- **Auslöser:** Ob der Skill von Hand aus der Warnungsanzeige im Cockpit gestartet wird oder ein Wächter ihn
+  vorschlägt, wird später festgelegt. Offen ist vor allem, ab wann die Zahl der Warnungen im Bau „kritisch" ist;
+  dort sind viele Befunde zunächst nur die Arbeitsliste.
+
+Als Grundlage für diese spätere Entscheidung, gemessen an 14 Modellen (offene Warnungen je Regel, alle Stufen):
 
 | Modell | Elemente | Warnungen | Regeln mit > 3 | Regeln mit > 12 |
 |---|---|---|---|---|
@@ -251,12 +249,9 @@ Gemessen an 14 Modellen (offene Warnungen je Regel, alle Stufen):
 | graphify | 181 | 140 | 11 | 3 |
 | graphcode | 1043 | 437 | 18 | 8 |
 
-- Mit dem Maß „mehr als drei" schlüge der Wächter in fünf der zehn kleinen Rig-Modelle an, mit „mehr als zwölf" in
-  zweien. In beiden ist die Ursache dieselbe: Der Agent hat im Entwurf einen Test gebunden, und danach meldeten alle
-  übrigen Tests „nicht gebunden" (13 und 18 Befunde). Das ist die Arbeitsliste, kein Wildwuchs; mit „nur
-  Spezifikation" bleibt der Wächter dort still.
-- In den vier Bestandsmodellen schlägt er mit beiden Maßen an. Die Zahlen von graphcode sind bei den Abgleichregeln
-  zu hoch, weil die Messung ohne den Quellbaum lief.
+Die zwei kleinen Modelle mit einer Regel über zwölf haben dieselbe Ursache: Der Agent hat im Entwurf einen Test
+gebunden, danach meldeten alle übrigen Tests „nicht gebunden" (13 und 18 Befunde). Die Zahlen von graphcode sind bei
+den Abgleichregeln zu hoch, weil die Messung ohne den Quellbaum lief.
 
 ## 7. Checkfragen
 
@@ -300,8 +295,8 @@ Gemessen an 14 Modellen (offene Warnungen je Regel, alle Stufen):
 4. Eskalation ist die Readiness im Viewer; vorhandenes wiederverwenden.
 5. Jeder Datenfluss hat ein Schema, jedes Schema einen Test (R-32 bleibt für alle Schemas).
 6. Die genaue Zahl „geprüft" braucht der Agent nicht; keine zusätzlichen Züge.
-7. Ein Wächter schlägt eine Konsolidierung vor, als Analyse, ignorierbar. Sein Maß ist ein Config-Wert, Startwert
-   „mehr als zwölf Befunde einer Regel".
+7. Der Skill zum Abarbeiten der Warnungen hat Vorrang (CR-GC-747). Ob ein Wächter ihn auslöst oder der Nutzer aus
+   dem Cockpit, ist geparkt.
 8. Weitere Attribute und Stempel der Phasensteuerung auflösen (§4).
 9. Planen und Bauen sind ein Vorgang, derselbe für den ersten Bau und für jede Änderung. Nach dem Plan muss etwas
    das Coding starten.
@@ -316,7 +311,8 @@ Gemessen an 14 Modellen (offene Warnungen je Regel, alle Stufen):
    über Anforderungen, verlangt aber einen Test für jedes hohe Risiko; hinge sie an der Stufe „Anforderung", wäre SRR
    erst nach der Fehlerbetrachtung und den Tests erreichbar. Mit „braucht" bleiben vier der fünf Regeln an ihrer
    heutigen Marke, nur die Budget-Regel NFR-01 wandert vom Detailentwurf zum Vorentwurf.
-2. **Wächter zählt nur die Spezifikation** (§6) — mein Vorschlag aus der Messung, noch nicht entschieden.
+2. **Auslöser des Skills** (geparkt): von Hand aus dem Cockpit oder durch einen Wächter, und ab welcher Zahl von
+   Warnungen im Bau.
 
 ## 10. Was wegfällt, grob gezählt
 
@@ -324,9 +320,9 @@ Geschätzt aus dem heutigen Quelltext, ohne Tests; die Umsetzung kann abweichen.
 
 | | fällt weg | kommt dazu | Saldo |
 |---|---|---|---|
-| Regeln | 0 (CR-R05 ist seit dem 2026-10-05 gestrichen) | 3 (System, Schema, Wächter) | 77 → 80 |
+| Regeln | 0 (CR-R05 ist seit dem 2026-10-05 gestrichen) | 2 (System, Schema) | 77 → 79 |
 | Tabellen je Regel oder Gate | etwa 11 (Gate je Regel, Pflichtliste, Vorbedingung, Pflicht-Analysen, drei Tabellen der Bau-Gates, Gate-Zustände und ihre Texte, Kaltstart-Stufen, große Teile der Arbeitsschritt-Zuordnung) | 1 Spalte „Stufe", 1 Spalte „Rolle" | etwa −9 |
-| Attribute und Felder | etwa 13: `concept` an fünf Typen (erledigt), der Bauplan-Stempel, am Gate Zustand, Anzeigetext, Punktzahl, Vollständigkeit und Pflicht-Analysen, im Bericht der Durchsetzungs-Schalter und die Phasenabdeckung | 1 Config-Wert (Wächter) | etwa −12 |
+| Attribute und Felder | etwa 13: `concept` an fünf Typen (erledigt), der Bauplan-Stempel, am Gate Zustand, Anzeigetext, Punktzahl, Vollständigkeit und Pflicht-Analysen, im Bericht der Durchsetzungs-Schalter und die Phasenabdeckung | – | etwa −13 |
 | Funktionen | etwa 14 (Gate-Bewertung, Bau-Gate-Bewertung, Vollständigkeit und ihre Beine, Vorbedingung in drei Teilen, Kerntyp, Phasenabdeckung in zwei Teilen, Aktualität der Analysen, Kaltstart) | etwa 3 (fällig, nächster Befund nach Stufe, Marke) | etwa −11 |
 | Quelltext-Zeilen sigloch-modules | etwa 620 | etwa 200 | etwa −400 |
 | Quelltext-Zeilen graphcode | etwa 280 | etwa 60 | etwa −200 |

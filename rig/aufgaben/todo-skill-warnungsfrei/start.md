@@ -1,8 +1,6 @@
----
-name: se:close-violations
-version: 2
-description: Work the open findings of the governed graph down to zero — errors first, then warnings rule by rule; fix in the model, accept with a reason what the order leaves out, ask instead of inventing
----
+Das Modell der Todo-Liste für die Kommandozeile steht schon: SRR und PDR sind bestanden, es ist der Stand des
+Referenzlaufs. Arbeite jetzt die offenen Befunde ab, nach
+dem folgenden Verfahren. Kein Code — nur das Modell.
 
 Work the open findings of the live governed graph down to zero. graphcode computes the work list and the fix-context; you decide the semantic fit. **Done** means: `rules_evaluate` reports no error and no open warning. A finding that its carrier has accepted with a reason is not open.
 

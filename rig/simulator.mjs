@@ -112,7 +112,7 @@ export function fragen(text) {
 const ANALYSE_WORT = /\b(ConOps|Einsatzkonzept|Trade(-| )?(off|Study|Studie)|Variantenvergleich|Annahmen-Review|Assumption Review|FMEA|Fehlerbetrachtung|Bauplan|Implementation Plan|Analysen?|abnehmen|abgenommen\w*|Abnahmegrund)\b|\bAF-(\*|0\d)/i;
 /** Eine uid des Modells (Großschreibung zählt — „Test-Datei" ist keine) oder ein Begriff der Modellarbeit. */
 const MODELL_UID = /\b(?:SYS|UC|REQ|FUNC|FCHAIN|FLOW|SCHEMA|MOD|TEST|ACTOR|CR|MS)-[A-Za-z0-9-]+/;
-const MODELL_WORT = /\b(Kanten?|Knoten|Trace|satisfy|compose|allocate|Producer|Erzeuger|Konsument\w*|Erfüller|redundant|Duplikat|löschen|zusammenlegen|Meilenstein\w*|Wirkketten?|Kettenprofil|Datenfluss|Datenflüsse|Protokoll|Record)\b/i;
+const MODELL_WORT = /\b(Kanten?|Knoten|Trace|satisfy|compose|allocate|Producer|Erzeuger|Konsument\w*|Erfüller|redundant|Duplikat|löschen|entfernen?|entfernt|streichen|behalten|zusammenlegen|Meilenstein\w*|Wirkketten?|Kettenprofil|Datenfluss|Datenflüsse|Protokoll|Record)\b/i;
 
 /** Die Zeilen des Blatts, die eine Frage am besten treffen (meiste Stichworte; ohne Treffer keine). */
 export function blattTreffer(frage, eintraege) {

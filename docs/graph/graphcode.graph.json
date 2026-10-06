@@ -3025,6 +3025,12 @@
       "commitRef": "e18664f"
     },
     {
+      "id": "CR-GC-747",
+      "type": "CR",
+      "name": "Skill zum Abarbeiten der Warnungen: se:close-violations deckt heute nur Fehler (R-01, RD-01); erweitern auf alle offenen Befunde, Regel fuer Regel, mit den drei Auswegen beheben, abnehmen mit Grund, fragen - Vorlage ist der in 8 Rig-Laeufen gemessene Auftrag der Stufe warnungsfrei",
+      "description": "docs/cr/open/CR-GC-747-skill-zum-abarbeiten-der-warnungen-se-cl.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -23591,5 +23597,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 617
+  "graphVersion": 618
 }
