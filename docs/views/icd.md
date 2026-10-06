@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 60 SCHEMA · 133 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 59 SCHEMA · 132 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -18,7 +18,7 @@
 | `SCHEMA-candidate-probe` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
-| `SCHEMA-completeness` | packages/graphcode-client/src/readiness-completeness.ts#GateCompleteness | reviewed |
+| `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMark | reviewed |
 | `SCHEMA-delegate-input` | src/surface/delegate.ts#DelegateInputSchema | n/a |
 | `SCHEMA-executor-config` | src/loop/executor.ts#ExecutorConfigSchema | reviewed |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
@@ -49,7 +49,6 @@
 | `SCHEMA-mutate-result` | packages/contracts/src/harness/index.ts#MutateResultSchema | reviewed |
 | `SCHEMA-ontology-graph` | packages/contracts/src/se/ontology.ts#OntologyGraph | reviewed |
 | `SCHEMA-ontology-json` | src/kernel/harness-import.ts#OntologyJsonSchema | n/a |
-| `SCHEMA-phase-readiness` | src/kernel/measure/readiness.ts#PhaseGateReadiness | reviewed |
 | `SCHEMA-preflight-outcome` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-query-params` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
@@ -102,7 +101,7 @@
 | `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-bootstrap` · `FUNC-claim-store-lock` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-upgrade` |
 | `FLOW-cli-invocation` | `ACTOR-owner` | `FUNC-cli-dispatch` · `FUNC-plan-code-lane` |
 | `FLOW-code-lane-plan` | `FUNC-plan-code-lane` | `ACTOR-owner` |
-| `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-phase-readiness` |
+| `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-readiness` |
 | `FLOW-config-file` | `ACTOR-owner` | `FUNC-load-config` |
 | `FLOW-conformance-findings` | `FUNC-check-code-conformance` | `FUNC-compute-readiness` |
 | `FLOW-delegate-call` | `ACTOR-agent` | `FUNC-graph-delegate` |
@@ -165,7 +164,6 @@
 | `FLOW-ontology-json` | `FUNC-seed-from-json` | `FUNC-held-back-traces` · `FUNC-import` |
 | `FLOW-open-question` | `FUNC-run-executor` | `ACTOR-owner` |
 | `FLOW-owner-answer` | `ACTOR-owner` | `FUNC-run-executor` |
-| `FLOW-phase-readiness` | `FUNC-compute-phase-readiness` | `FUNC-take-steering-snapshot` |
 | `FLOW-preflight-outcome` | `FUNC-preflight` | `FUNC-gate-client` |
 | `FLOW-query-request-agent` | `ACTOR-agent` | `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-readiness` · `FUNC-list-elements` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` |
 | `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-export-markdown` |

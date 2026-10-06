@@ -78,8 +78,8 @@ Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessene
 Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-llm` · `ACTOR-owner`
 
 - `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
-- `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-function-criticality` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
-- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compose-faltung` → `FUNC-compute-phase-readiness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-fund-kontext` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-delegate` → `FUNC-graph-readiness` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-inventory-channel` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-read-anthropic-stream` → `FUNC-read-openai-stream` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-task-abschluss`
+- `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-function-criticality` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compose-faltung` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-fund-kontext` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-delegate` → `FUNC-graph-readiness` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-inventory-channel` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-read-anthropic-stream` → `FUNC-read-openai-stream` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-task-abschluss`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -181,7 +181,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-122` | done | New-Member Bootstrap durchs Gate (Format-E Cold-Start) | `FUNC-import` · `REQ-bootstrap-through-gate` |
 | `CR-GC-123` | done | MVP E2E-Acceptance: bootstrap → spec → KNOW-query → implement → re-export | `REQ-token-efficiency` · `UC-code-quality` · `UC-efficient-testing` · `UC-reduced-llm` |
 | `CR-GC-124` | done | OpenCode-Execution: agent-agnostic 2nd client, headless BYOK | `FUNC-serve-stdio` · `MOD-surface` · `REQ-agent-agnostic` · `REQ-single-transport` |
-| `CR-GC-125` | done | Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE) | `FUNC-compute-phase-readiness` · `MOD-dashboard` · `MOD-surface` · `REQ-readiness-model` |
+| `CR-GC-125` | done | Readiness-Modell definieren & realisieren (Phase/Impl/INCOSE) | `MOD-dashboard` · `MOD-surface` · `REQ-readiness-model` |
 | `CR-GC-126` | done | Query-Layer: Cypher, korrekte Impact-Richtung (KNOW statt guess) | `MOD-kernel` · `MOD-surface` · `REQ-progressive-expansion` · `REQ-query-precision` |
 | `CR-GC-127` | done | graph_export als MCP-Tool — Agent-Loop ueber MCP geschlossen | `FUNC-graph-export-snapshot` · `MOD-surface` |
 | `CR-GC-128` | done | Repo-abgeleiteter Member-Name + README-Setup | `FUNC-serve-stdio` · `MOD-projections` |
@@ -211,8 +211,6 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-217` | done | Graph-State Time-Travel (commit-gebundener Snapshot) | `FUNC-graph-export-snapshot` · `FUNC-reseed` · `REQ-graph-snapshot-per-commit` · `UC-graph-time-travel` |
 | `CR-GC-218` | done | Concurrent-agent isolation and safe graph recall | `FUNC-claim-store-lock` |
 | `CR-GC-219` | done | Flatten redundant nested attributes field | `FUNC-export-markdown` |
-| `CR-GC-221` | done | Readiness: creations as gate precondition (phase + impl) | `FUNC-compute-phase-readiness` |
-| `CR-GC-226` | done | Doku/Graph: lean=no-artifacts abloesen + Artefakt-Modell seeden | `FUNC-compute-phase-readiness` |
 | `CR-GC-227` | done | Help content layer (authored Plain/SE annotation, HELP_CONTENT) | `FUNC-se-help` |
 | `CR-GC-228` | done | Help data layer (pure projection to HelpEntry, help.ts) | `FUNC-se-help` |
 | `CR-GC-229` | done | Help surfaces (graph_help MCP tool + se:help skill) | `FUNC-se-help` |
@@ -302,7 +300,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-331` | done | graphcode remove raeumt auch den Vorgaenger-Ordner weg | `FUNC-harness-cli` · `REQ-repo-uninstall` |
 | `CR-GC-339` | done | Artikel-Claims belastbar machen | `FUNC-export-markdown` |
 | `CR-GC-340` | done | Steuerungsnachweis I: Messpfad und Architektur-Richtung | `FUNC-check-code-conformance` · `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · `REQ-applied-suggestion-moves-target` · `REQ-published-counts-match-code` · `REQ-single-measurement-path` · `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` |
-| `CR-GC-341` | done | Steuerungsnachweis II: Regel-Korrektheit und Prozess-Ratsche | `FUNC-compute-phase-readiness` · `FUNC-mutate` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable` · `REQ-single-write-door` |
+| `CR-GC-341` | done | Steuerungsnachweis II: Regel-Korrektheit und Prozess-Ratsche | `FUNC-mutate` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable` · `REQ-single-write-door` |
 | `CR-GC-342` | done | Eigenes Modell: Ableitungskette der Anforderungen | `FUNC-mutate` · `REQ-graph-context-replaces-reading` · `REQ-one-driver-local-and-frontier` |
 | `CR-GC-343` | done | Nachdokumentation ausgelieferter Funktion | `FUNC-export-markdown` · `REQ-published-counts-match-code` |
 | `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster | `FUNC-gve-sessions` · `FUNC-gve-supervise` · `MOD-surface` |
@@ -416,6 +414,11 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-745` | done | Nachzug client 1.6.1 - Gate-Zustand auf beiden Achsen | `FUNC-score-completeness` |
 | `CR-GC-746` | done | Nachzug client 1.6.1 - Gate-Zustand in Hilfe Export und Rig-Beleg | `FUNC-score-completeness` |
 | `CR-GC-747` | done | Skill zum Abarbeiten der Warnungen: se:close-violations deckt heute nur Fehler (R-01, RD-01); erweitern auf alle offenen Befunde, Regel fuer Regel, mit den drei Auswegen beheben, abnehmen mit Grund, fragen - Vorlage ist der in 8 Rig-Laeufen gemessene Auftrag der Stufe warnungsfrei | `FUNC-test` |
+| `CR-GC-748` | done | Nachzug contracts 11 - Marken statt Gates, Build wieder gruen | `FUNC-compute-readiness` · `FUNC-score-completeness` |
+| `CR-GC-749` | done | Schritt waehlt nach Stufe, Kaltstart aus den Existenz-Regeln | `FUNC-generation-step` |
+| `CR-GC-750` | done | Regelmatrix mit Stufe, Rolle, Marke - Skilltexte ohne Gates | `FUNC-se-help` |
+| `CR-GC-751` | done | rules_evaluate liefert die Arbeitsreihenfolge nach Stufe | `FUNC-evaluate-rules` |
+| `CR-GC-752` | done | Bauplan ohne Stempel - offene Auftraege sind das Ergebnis | `FUNC-run-executor` · `FUNC-se-plan` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

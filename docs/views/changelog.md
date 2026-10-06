@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 357 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 362 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 357 CR · 331 done · 4 open.
+Total: 362 CR · 336 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -419,3 +419,8 @@ Total: 357 CR · 331 done · 4 open.
 | `CR-GC-745` | done | Nachzug client 1.6.1 - Gate-Zustand auf beiden Achsen |
 | `CR-GC-746` | done | Nachzug client 1.6.1 - Gate-Zustand in Hilfe Export und Rig-Beleg |
 | `CR-GC-747` | done | Skill zum Abarbeiten der Warnungen: se:close-violations deckt heute nur Fehler (R-01, RD-01); erweitern auf alle offenen Befunde, Regel fuer Regel, mit den drei Auswegen beheben, abnehmen mit Grund, fragen - Vorlage ist der in 8 Rig-Laeufen gemessene Auftrag der Stufe warnungsfrei |
+| `CR-GC-748` | done | Nachzug contracts 11 - Marken statt Gates, Build wieder gruen |
+| `CR-GC-749` | done | Schritt waehlt nach Stufe, Kaltstart aus den Existenz-Regeln |
+| `CR-GC-750` | done | Regelmatrix mit Stufe, Rolle, Marke - Skilltexte ohne Gates |
+| `CR-GC-751` | done | rules_evaluate liefert die Arbeitsreihenfolge nach Stufe |
+| `CR-GC-752` | done | Bauplan ohne Stempel - offene Auftraege sind das Ergebnis |

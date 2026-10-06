@@ -173,7 +173,6 @@
 | `CR-GC-124` | relation | `MS-4-mvp2` |
 | `CR-GC-124` | relation | `REQ-agent-agnostic` |
 | `CR-GC-124` | relation | `REQ-single-transport` |
-| `CR-GC-125` | relation | `FUNC-compute-phase-readiness` |
 | `CR-GC-125` | relation | `MOD-dashboard` |
 | `CR-GC-125` | relation | `MOD-surface` |
 | `CR-GC-125` | relation | `MS-4-mvp2` |
@@ -262,13 +261,11 @@
 | `CR-GC-219` | relation | `FUNC-export-markdown` |
 | `CR-GC-219` | relation | `MS-5-efficiency` |
 | `CR-GC-220` | relation | `MS-6-adoption` |
-| `CR-GC-221` | relation | `FUNC-compute-phase-readiness` |
 | `CR-GC-221` | relation | `MS-6-adoption` |
 | `CR-GC-222` | relation | `MS-6-adoption` |
 | `CR-GC-223` | relation | `MS-6-adoption` |
 | `CR-GC-224` | relation | `MS-6-adoption` |
 | `CR-GC-225` | relation | `MS-6-adoption` |
-| `CR-GC-226` | relation | `FUNC-compute-phase-readiness` |
 | `CR-GC-226` | relation | `MS-6-adoption` |
 | `CR-GC-227` | relation | `FUNC-se-help` |
 | `CR-GC-227` | relation | `MS-6-adoption` |
@@ -534,7 +531,6 @@
 | `CR-GC-340` | relation | `REQ-single-measurement-path` |
 | `CR-GC-340` | relation | `REQ-target-shifts-ranking` |
 | `CR-GC-340` | relation | `REQ-thresholds-from-config` |
-| `CR-GC-341` | relation | `FUNC-compute-phase-readiness` |
 | `CR-GC-341` | relation | `FUNC-mutate` |
 | `CR-GC-341` | relation | `MS-6-adoption` |
 | `CR-GC-341` | relation | `REQ-monotone-convergence` |
@@ -786,9 +782,15 @@
 | `CR-GC-743` | relation | `FUNC-score-completeness` |
 | `CR-GC-744` | relation | `FUNC-test` |
 | `CR-GC-745` | relation | `FUNC-score-completeness` |
-| `CR-GC-745` | relation | `SCHEMA-phase-readiness` |
 | `CR-GC-746` | relation | `FUNC-score-completeness` |
 | `CR-GC-747` | relation | `FUNC-test` |
+| `CR-GC-748` | relation | `FUNC-compute-readiness` |
+| `CR-GC-748` | relation | `FUNC-score-completeness` |
+| `CR-GC-749` | relation | `FUNC-generation-step` |
+| `CR-GC-750` | relation | `FUNC-se-help` |
+| `CR-GC-751` | relation | `FUNC-evaluate-rules` |
+| `CR-GC-752` | relation | `FUNC-run-executor` |
+| `CR-GC-752` | relation | `FUNC-se-plan` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -927,7 +929,6 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-trade` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-target-profile` |
 | `FCHAIN-skill-report` | compose | `FUNC-check-code-conformance` |
-| `FCHAIN-skill-report` | compose | `FUNC-compute-phase-readiness` |
 | `FCHAIN-skill-report` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-skill-report` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-skill-report` | compose | `FUNC-function-criticality` |
@@ -952,7 +953,6 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-build-round-injection` |
 | `FCHAIN-steering-loop` | compose | `FUNC-call-model` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compose-faltung` |
-| `FCHAIN-steering-loop` | compose | `FUNC-compute-phase-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-steering-delta` |
 | `FCHAIN-steering-loop` | compose | `FUNC-extract-mutate` |
@@ -1046,7 +1046,7 @@
 | `FLOW-cli-invocation` | relation | `SCHEMA-cli-command` |
 | `FLOW-code-lane-plan` | io | `ACTOR-owner` |
 | `FLOW-code-lane-plan` | relation | `SCHEMA-code-lane-plan` |
-| `FLOW-completeness` | io | `FUNC-compute-phase-readiness` |
+| `FLOW-completeness` | io | `FUNC-compute-readiness` |
 | `FLOW-completeness` | relation | `SCHEMA-completeness` |
 | `FLOW-config-file` | io | `FUNC-load-config` |
 | `FLOW-config-file` | relation | `SCHEMA-metric-policy` |
@@ -1232,8 +1232,6 @@
 | `FLOW-open-question` | relation | `SCHEMA-ask-owner` |
 | `FLOW-owner-answer` | io | `FUNC-run-executor` |
 | `FLOW-owner-answer` | relation | `SCHEMA-ask-owner` |
-| `FLOW-phase-readiness` | io | `FUNC-take-steering-snapshot` |
-| `FLOW-phase-readiness` | relation | `SCHEMA-phase-readiness` |
 | `FLOW-preflight-outcome` | io | `FUNC-gate-client` |
 | `FLOW-preflight-outcome` | relation | `SCHEMA-preflight-outcome` |
 | `FLOW-query-request-agent` | io | `FUNC-authoring-guide` |
@@ -1489,7 +1487,6 @@
 | `FUNC-block-live-dashboard` | compose | `FUNC-serve-sse` |
 | `FUNC-block-messwerk` | allocate | `MOD-projections` |
 | `FUNC-block-messwerk` | compose | `FUNC-arch-fitness` |
-| `FUNC-block-messwerk` | compose | `FUNC-compute-phase-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-steering-delta` |
 | `FUNC-block-messwerk` | compose | `FUNC-fit-advisory` |
@@ -1557,9 +1554,6 @@
 | `FUNC-collect-status` | satisfy | `REQ-real-health-check` |
 | `FUNC-compose-faltung` | allocate | `MOD-loop` |
 | `FUNC-compose-faltung` | satisfy | `REQ-inventory-switch` |
-| `FUNC-compute-phase-readiness` | allocate | `MOD-kernel-measure` |
-| `FUNC-compute-phase-readiness` | io | `FLOW-phase-readiness` |
-| `FUNC-compute-phase-readiness` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-compute-readiness` | allocate | `MOD-kernel-measure` |
 | `FUNC-compute-readiness` | io | `FLOW-dimension-readiness` |
 | `FUNC-compute-readiness` | satisfy | `REQ-readiness-model` |
@@ -2053,7 +2047,6 @@
 | `TEST-codec-validation` | verify | `REQ-graph-integrity` |
 | `TEST-contracts-kernel` | verify | `SCHEMA-graph-delta` |
 | `TEST-contracts-kernel` | verify | `SCHEMA-ontology-json` |
-| `TEST-contracts-kernel` | verify | `SCHEMA-phase-readiness` |
 | `TEST-contracts-surface` | verify | `SCHEMA-audit-stats` |
 | `TEST-contracts-surface` | verify | `SCHEMA-mutate-result` |
 | `TEST-create-harness-smoke` | verify | `REQ-mutation-emits-event` |

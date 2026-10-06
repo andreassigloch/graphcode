@@ -3033,6 +3033,46 @@
       "commitRef": "93c010a"
     },
     {
+      "id": "CR-GC-748",
+      "type": "CR",
+      "name": "Nachzug contracts 11 - Marken statt Gates, Build wieder gruen",
+      "description": "docs/cr/done/CR-GC-748-nachzug-contracts-11-marken-statt-gates-build-wieder-gruen.md",
+      "status": "done",
+      "commitRef": "4a8bce1"
+    },
+    {
+      "id": "CR-GC-749",
+      "type": "CR",
+      "name": "Schritt waehlt nach Stufe, Kaltstart aus den Existenz-Regeln",
+      "description": "docs/cr/done/CR-GC-749-schritt-waehlt-nach-stufe-kaltstart-aus-den-existenz-regeln.md",
+      "status": "done",
+      "commitRef": "a24d5c2"
+    },
+    {
+      "id": "CR-GC-750",
+      "type": "CR",
+      "name": "Regelmatrix mit Stufe, Rolle, Marke - Skilltexte ohne Gates",
+      "description": "docs/cr/done/CR-GC-750-regelmatrix-mit-stufe-rolle-marke-skilltexte-ohne-gates.md",
+      "status": "done",
+      "commitRef": "ebbbb00"
+    },
+    {
+      "id": "CR-GC-751",
+      "type": "CR",
+      "name": "rules_evaluate liefert die Arbeitsreihenfolge nach Stufe",
+      "description": "docs/cr/done/CR-GC-751-rules-evaluate-liefert-die-arbeitsreihenfolge-nach-stufe.md",
+      "status": "done",
+      "commitRef": "c3466ca"
+    },
+    {
+      "id": "CR-GC-752",
+      "type": "CR",
+      "name": "Bauplan ohne Stempel - offene Auftraege sind das Ergebnis",
+      "description": "docs/cr/done/CR-GC-752-bauplan-ohne-stempel-offene-auftraege-sind-das-ergebnis.md",
+      "status": "done",
+      "commitRef": "4526296"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3416,8 +3456,8 @@
     {
       "id": "FLOW-completeness",
       "type": "FLOW",
-      "name": "Completeness je Gate",
-      "description": "covered gegen total ueber die Element-Population eines Gates plus die fehlenden je Bein. Die einzige Projektion, die Abwesenheit messen kann; Regeln je Element feuern bei null Elementen null mal.",
+      "name": "Marken der Readiness",
+      "description": "Je Marke: erreicht oder nicht, und die Befunde, die sie halten. Abwesenheit steht darin als Befund einer Existenz-Regel, nicht als eigene Zaehlung.",
       "status": "reviewed"
     },
     {
@@ -3837,13 +3877,6 @@
       "type": "FLOW",
       "name": "Antwort des Auftraggebers",
       "description": "Die Antwort auf eine Fragezeile, mit der naechsten Nachricht an das Modell: in der manuellen Session der Wortlaut des Auftraggebers vom Terminal, headless der Registersatz openQuestions (als Annahme mit offenem Wert anlegen). (CR-GC-667)"
-    },
-    {
-      "id": "FLOW-phase-readiness",
-      "type": "FLOW",
-      "name": "Phasen-Readiness (SRR/PDR/CDR/TRR)",
-      "description": "Dieselbe Regelauswertung auf die Phasen-Gates projiziert: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse, nicht die zweite Messung.",
-      "status": "reviewed"
     },
     {
       "id": "FLOW-preflight-outcome",
@@ -4489,18 +4522,6 @@
       "realRef": {
         "file": "src/loop/faltung.ts",
         "symbol": "faltung",
-        "lang": "ts"
-      }
-    },
-    {
-      "id": "FUNC-compute-phase-readiness",
-      "type": "FUNC",
-      "name": "computePhaseReadiness(violations)",
-      "description": "Projiziert denselben Regelstrom auf die Phasen-Gates SRR/PDR/CDR/TRR: je Gate abgedeckte gegen alle Regel-IDs plus die fehlenden. Die zweite Achse neben den Dimensionen, aus einer Quelle.",
-      "status": "done",
-      "realRef": {
-        "file": "src/kernel/measure/readiness.ts",
-        "symbol": "computePhaseReadiness",
         "lang": "ts"
       }
     },
@@ -5256,15 +5277,15 @@
     {
       "id": "FUNC-score-completeness",
       "type": "FUNC",
-      "name": "scoreCompleteness(gateId, graph)",
-      "description": "Berechnet die Completeness-Dimension pro Gate: traversiert die Phase-Slice-Beine (Meta-Modell 1..*) ueber die treibende Source-Population und liefert covered/total + per-leg missing[]. Ergaenzt scorePhaseGate in src/readiness.ts; ein Gate ist passed nur wenn rule-clean UND completeness.covered==total. Config = statische Phase->Beine-Map, im Test gegen die Meta-Modell-Kardinalitaeten asserted (Drift-Lock). (CR-GC-250)",
+      "name": "computeMarks(violations)",
+      "description": "Liest aus einem Regellauf je Marke (SRR, PDR, CDR, TRR, Bau), ob sie erreicht ist und welche Befunde sie halten: Fehler und offene Existenz-Befunde der Stufen bis zur Marke. Eine leere Pflichtmenge meldet die Existenz-Regel ihrer Stufe, deshalb liest null von null nie als erreicht. Loest die Beine-Zaehlung je Gate ab (CR-SM-395, CR-GC-748). Aus @sigloch/graphcode-client, deshalb external.",
       "status": "done",
       "concept": false,
       "codeRef": null,
       "external": true,
       "realRef": {
-        "file": "packages/graphcode-client/src/readiness-completeness.ts",
-        "symbol": "scoreCompleteness",
+        "file": "packages/graphcode-client/src/readiness.ts",
+        "symbol": "computeMarks",
         "lang": "ts"
       }
     },
@@ -6904,8 +6925,8 @@
     {
       "id": "REQ-readiness-completeness",
       "type": "REQ",
-      "name": "Readiness Completeness-Dimension (cardinality-driven)",
-      "description": "Readiness traegt eine strukturelle Completeness-Dimension pro Gate, orthogonal zur Violation-Severity: ein Gate ist NICHT gruen, solange ein vom Meta-Modell als 1..* markiertes Ketten-Bein seiner Phase unvollstaendig ist. Coverage wird ueber die TREIBENDE Source-Population gemessen -> Abwesenheit zaehlt (0 FCHAIN -> alle UC unvollstaendig -> SRR rot). Warnings behalten ihre Severity (keine Inflation); das Gate-Urteil ergaenzt die Completeness-Invariante. Phase-Slices: SRR {UC->FCHAIN, UC->REQ}, PDR {FCHAIN->FUNC, FUNC->satisfy, FUNC->MOD}, CDR {REQ<-verify-TEST, FLOW->SCHEMA}, TRR {testRef/codeRef non-concept}. concept:true gilt bis CDR, zaehlt erst ab TRR nicht als complete. (CR-GC-250)",
+      "name": "Marke haelt bei leerer Pflichtmenge",
+      "description": "Eine Marke der Readiness ist nicht erreicht, solange eine Pflichtmenge ihrer Stufen leer oder unvollstaendig ist: Abwesenheit zaehlt. Den Nachweis fuehrt die Existenz-Regel der Stufe (System, Anwendungsfall, Anforderung, Wirkkette, Funktion, Datenfluss, Modul, Schema, Test), nicht eine zweite Zaehlung neben den Regeln. Warnungen behalten ihre Schwere; die Marke halten Fehler und offene Existenz-Befunde, und eine Marke bleibt offen, solange eine fruehere es ist. (CR-GC-250, neu gefasst mit CR-GC-748)",
       "status": "reviewed",
       "kinds": [
         "functional"
@@ -7481,13 +7502,13 @@
     {
       "id": "SCHEMA-completeness",
       "type": "SCHEMA",
-      "name": "GateCompleteness",
-      "description": "covered, total und je Bein die fehlenden Elemente eines Gates. Aus @sigloch/graphcode-client, deshalb external.",
+      "name": "ReadinessMark",
+      "description": "Eine Marke: id, Bezeichnung, erreicht, haltende Befunde. Aus @sigloch/graphcode-client, deshalb external.",
       "status": "reviewed",
       "external": true,
       "realRef": {
-        "file": "packages/graphcode-client/src/readiness-completeness.ts",
-        "symbol": "GateCompleteness",
+        "file": "packages/graphcode-client/src/readiness.ts",
+        "symbol": "ReadinessMark",
         "lang": "ts"
       }
     },
@@ -7829,18 +7850,6 @@
       "realRef": {
         "file": "src/kernel/harness-import.ts",
         "symbol": "OntologyJsonSchema",
-        "lang": "ts"
-      }
-    },
-    {
-      "id": "SCHEMA-phase-readiness",
-      "type": "SCHEMA",
-      "name": "PhaseGateReadiness",
-      "description": "Je Gate: abgedeckte und alle Regel-IDs plus die fehlenden.",
-      "status": "reviewed",
-      "realRef": {
-        "file": "src/kernel/measure/readiness.ts",
-        "symbol": "PhaseGateReadiness",
         "lang": "ts"
       }
     },
@@ -8430,7 +8439,7 @@
       "id": "TEST-contracts-kernel",
       "type": "TEST",
       "name": "Kernel-Vertraege",
-      "description": "Vertragstest SCHEMA-graph-delta (GraphStore.commit weist formfremdes Delta vor dem ersten Schreibzug ab), SCHEMA-ontology-json (Import und heldBackTraces weisen formfremde SSOT-Datei ab) und SCHEMA-phase-readiness (jede Gate-Zeile, auch im GenerationStep). Kuzu auf Platte. (CR-GC-719)",
+      "description": "Vertragstest SCHEMA-graph-delta (GraphStore.commit weist formfremdes Delta vor dem ersten Schreibzug ab) und SCHEMA-ontology-json (Import und heldBackTraces weisen formfremde SSOT-Datei ab). Kuzu auf Platte. (CR-GC-719)",
       "testRefs": [
         {
           "file": "tests/contracts.kernel.test.ts",
@@ -9712,7 +9721,7 @@
       "id": "TEST-readiness-completeness",
       "type": "TEST",
       "name": "Readiness-Vollstaendigkeits-Abnahme",
-      "description": "Abnahme der Datei tests/readiness.completeness.test.ts ueber alle vier Gates: UC ohne FCHAIN faellt bei SRR, die aktor-begrenzte Kette bei PDR, FLOW ohne SCHEMA bei CDR, fehlende Bindung bei TRR; die Coverage rechnet gegen die Source-Population und liefert einen einzigen Wert je Dimension. Verifiziert REQ-readiness-completeness, REQ-completeness-actor-bounded und REQ-completeness-single-value zusammen (CR-GC-383).",
+      "description": "Abnahme der Datei tests/readiness.completeness.test.ts an echten Regellaeufen: der leere Graph erreicht keine Marke, ein Anwendungsfall ohne Wirkkette haelt SRR, eine Funktion ohne Modul PDR, ein Datenfluss ohne Schema CDR, eine Anforderung ohne Test TRR; Plan, Bindung und Abgleich halten Bau. Die Kurzform traegt einen Wert je Marke. Verifiziert REQ-readiness-completeness, REQ-completeness-actor-bounded und REQ-completeness-single-value zusammen (CR-GC-383, CR-GC-748).",
       "status": "done",
       "method": "test",
       "concept": false,
@@ -11624,12 +11633,6 @@
     },
     {
       "source": "CR-GC-125",
-      "target": "FUNC-compute-phase-readiness",
-      "type": "relation",
-      "weight": "1"
-    },
-    {
-      "source": "CR-GC-125",
       "target": "MOD-dashboard",
       "type": "relation",
       "weight": 1,
@@ -12125,12 +12128,6 @@
     },
     {
       "source": "CR-GC-221",
-      "target": "FUNC-compute-phase-readiness",
-      "type": "relation",
-      "weight": "1"
-    },
-    {
-      "source": "CR-GC-221",
       "target": "MS-6-adoption",
       "type": "relation"
     },
@@ -12153,12 +12150,6 @@
       "source": "CR-GC-225",
       "target": "MS-6-adoption",
       "type": "relation"
-    },
-    {
-      "source": "CR-GC-226",
-      "target": "FUNC-compute-phase-readiness",
-      "type": "relation",
-      "weight": "1"
     },
     {
       "source": "CR-GC-226",
@@ -13581,11 +13572,6 @@
     },
     {
       "source": "CR-GC-341",
-      "target": "FUNC-compute-phase-readiness",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-341",
       "target": "FUNC-mutate",
       "type": "relation"
     },
@@ -14840,11 +14826,6 @@
       "type": "relation"
     },
     {
-      "source": "CR-GC-745",
-      "target": "SCHEMA-phase-readiness",
-      "type": "relation"
-    },
-    {
       "source": "CR-GC-746",
       "target": "FUNC-score-completeness",
       "type": "relation"
@@ -14852,6 +14833,41 @@
     {
       "source": "CR-GC-747",
       "target": "FUNC-test",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-748",
+      "target": "FUNC-compute-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-748",
+      "target": "FUNC-score-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-749",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-750",
+      "target": "FUNC-se-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-751",
+      "target": "FUNC-evaluate-rules",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-752",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-752",
+      "target": "FUNC-se-plan",
       "type": "relation"
     },
     {
@@ -15621,12 +15637,6 @@
     },
     {
       "source": "FCHAIN-skill-report",
-      "target": "FUNC-compute-phase-readiness",
-      "type": "compose",
-      "weight": "1"
-    },
-    {
-      "source": "FCHAIN-skill-report",
       "target": "FUNC-compute-readiness",
       "type": "compose"
     },
@@ -15750,12 +15760,6 @@
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-compose-faltung",
       "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-compute-phase-readiness",
-      "type": "compose",
-      "weight": "1"
     },
     {
       "source": "FCHAIN-steering-loop",
@@ -16236,7 +16240,7 @@
     },
     {
       "source": "FLOW-completeness",
-      "target": "FUNC-compute-phase-readiness",
+      "target": "FUNC-compute-readiness",
       "type": "io"
     },
     {
@@ -17190,16 +17194,6 @@
     {
       "source": "FLOW-owner-answer",
       "target": "SCHEMA-ask-owner",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-phase-readiness",
-      "target": "FUNC-take-steering-snapshot",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-phase-readiness",
-      "target": "SCHEMA-phase-readiness",
       "type": "relation"
     },
     {
@@ -18490,11 +18484,6 @@
     },
     {
       "source": "FUNC-block-messwerk",
-      "target": "FUNC-compute-phase-readiness",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-messwerk",
       "target": "FUNC-compute-readiness",
       "type": "compose"
     },
@@ -18831,21 +18820,6 @@
     {
       "source": "FUNC-compose-faltung",
       "target": "REQ-inventory-switch",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-compute-phase-readiness",
-      "target": "MOD-kernel-measure",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-compute-phase-readiness",
-      "target": "FLOW-phase-readiness",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-compute-phase-readiness",
-      "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
     {
@@ -21507,11 +21481,6 @@
       "type": "verify"
     },
     {
-      "source": "TEST-contracts-kernel",
-      "target": "SCHEMA-phase-readiness",
-      "type": "verify"
-    },
-    {
       "source": "TEST-contracts-surface",
       "target": "SCHEMA-audit-stats",
       "type": "verify"
@@ -23604,5 +23573,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 619
+  "graphVersion": 620
 }

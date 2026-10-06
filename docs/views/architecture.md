@@ -50,7 +50,6 @@
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-collect-status` | FUNC | collectStatus |
 | `FUNC-compose-faltung` | FUNC | Compose-Faltung |
-| `FUNC-compute-phase-readiness` | FUNC | computePhaseReadiness(violations) |
 | `FUNC-compute-readiness` | FUNC | computeReadiness(graph) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
 | `FUNC-create-harness` | FUNC | createHarness |
@@ -111,7 +110,7 @@
 | `FUNC-run-executor` | FUNC | runExecutor |
 | `FUNC-run-verb` | FUNC | executeRun |
 | `FUNC-schema-guard` | FUNC | schemaFingerprint |
-| `FUNC-score-completeness` | FUNC | scoreCompleteness(gateId, graph) |
+| `FUNC-score-completeness` | FUNC | computeMarks(violations) |
 | `FUNC-se-conops` | FUNC | Skill se-conops |
 | `FUNC-se-fmea` | FUNC | Skill se-fmea |
 | `FUNC-se-generate` | FUNC | Skill se:generate |
@@ -199,7 +198,6 @@
 | `FUNC-close-violations` | `MOD-agent-surface` |
 | `FUNC-collect-status` | `MOD-surface` |
 | `FUNC-compose-faltung` | `MOD-loop` |
-| `FUNC-compute-phase-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
 | `FUNC-create-harness` | `MOD-surface` |
