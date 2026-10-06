@@ -103,17 +103,21 @@ function trade(og: OntologyGraph): string {
 }
 
 function irr(og: OntologyGraph): string {
-  const ziel = ersteVom(og, 'REQ', ersteVom(og, 'FUNC', 'FUNC-beispiel'));
+  const sys = ersteVom(og, 'SYS', 'SYS-beispiel');
   return (
     'Annahmen-Review: nenne die unbewiesenen Annahmen, auf denen das Modell ruht — ungemessene Zahlen, ungeprüfte ' +
     'Fremdsysteme, vorausgesetzte Rechte, Material ohne Auswertung. Stelle jede zuerst als Fragezeile an den ' +
-    'Auftraggeber. Was nach der Antwort offen bleibt, lege als CR an, der auf das Element zeigt, das an der Annahme ' +
-    'hängt. Vorbild:\n' +
+    'Auftraggeber. Was nach der Antwort offen bleibt und das Modell trägt, lege als REQ mit TEST an — der TEST ' +
+    'ist das, was die Annahme widerlegen würde. Kein CR: den Bauauftrag schneidet später der Bauplan. Vorbild:\n' +
     '? «Annahme A» — trifft das zu, und woran ist es belegt?\n' +
-    '## Nodes\n### CR\n' +
-    '+ CR-annahme-beispiel-a|Annahme: «Annahme A». Bricht, wenn sie falsch ist: «Folge A». Beleg: «Messung oder Spike A». [__name:Annahme «A»]\n\n' +
+    '## Nodes\n### REQ\n' +
+    '+ REQ-annahme-beispiel-a|Das System muss «Annahme A» einhalten; bricht sie, folgt «Folge A». [__name:Annahme «A»]\n' +
+    '@kinds ["non-functional"]\n' +
+    '### TEST\n' +
+    '+ TEST-annahme-beispiel-a|«Messung oder Spike A» durchführen und «Annahme A» prüfen. [__name:Test Annahme «A»]\n\n' +
     '## Edges\n' +
-    `+ CR-annahme-beispiel-a -relation-> ${ziel}`
+    `+ ${sys} -compose-> REQ-annahme-beispiel-a\n` +
+    '+ TEST-annahme-beispiel-a -verify-> REQ-annahme-beispiel-a'
   );
 }
 
@@ -139,7 +143,7 @@ function conops(og: OntologyGraph): string {
 export const TASK_CLAUSE: Readonly<Record<AnalyseTask, TaskKlausel>> = {
   conops: { types: ['SYS', 'ACTOR', 'REQ', 'TEST'], text: conops },
   trade: { types: ['CR', 'FUNC', 'MOD', 'UC'], text: trade },
-  irr: { types: ['CR', 'REQ', 'FUNC'], text: irr },
+  irr: { types: ['SYS', 'REQ', 'TEST'], text: irr },
   fmea: { types: ['FCHAIN', 'FUNC', 'REQ', 'TEST'], text: fmea },
   plan: { types: ['MS', 'CR', 'REQ'], text: plan },
 };

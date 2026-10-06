@@ -223,7 +223,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   },
   'assumption-review': {
     plain: 'The unproven assumptions and how risky they are.',
-    se: 'Assumption Review (was IRR) — an analysis, graphcode-specific; commit-pinned record promoted to CRs.',
+    se: 'Assumption Review (was IRR) — an analysis, graphcode-specific; commit-pinned record; each load-bearing assumption becomes a REQ with its verifying TEST.',
     prompt: 'se-irr',
   },
   trade: {

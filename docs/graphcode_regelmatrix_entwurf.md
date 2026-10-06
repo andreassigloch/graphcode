@@ -66,7 +66,7 @@ es die Elemente gibt.
 ## 3. Die Matrix
 
 > Stand des Entwurfs. Die gültige Matrix wird aus dem Katalog erzeugt: [regel-matrix.md](views/regel-matrix.md).
-> Abweichungen seit dem Entwurf stehen in §8, Punkte 13–21 (R-17, R-32, AF-01, RC-07; R-34 gibt es nicht).
+> Abweichungen seit dem Entwurf stehen in §8, Punkte 13–23 (R-17, R-32, AF-01, RC-05, RC-07, IR-01; R-34 gibt es nicht).
 
 Die Matrix gibt es bereits als erzeugte Sicht (`scripts/regel-matrix.mjs` → `docs/views/regel-matrix.md`, eine Zeile
 je Regel, jede Spalte aus der Quelle gelesen). Der Entwurf ändert ihre Spalten: „Stufe" und „Rolle" ersetzen „Phase"

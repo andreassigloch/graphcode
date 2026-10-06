@@ -109,16 +109,19 @@ describe('CR-GC-601: graph_generate {task}', () => {
     expect(kernRegeln(mit)).not.toContain('TR-01');
   });
 
-  it('CR-GC-607/748: irr — leere crRefs sind ein legitimer Ausgang, ein fehlender CR nicht (IR-01, im Kern)', () => {
+  it('CR-GC-607/748: irr — leere reqRefs sind ein legitimer Ausgang, eine fehlende REQ nicht (IR-01, im Kern; CR-GC-754)', () => {
     const g = structuredClone(golden);
     const sys = g.elements.find((e) => e.type === 'SYS')!;
     const af = sys.attributes!.analysisFreshness as Record<string, { graphVersion: number }>;
-    const mitRefs = (crRefs: string[]) => {
-      sys.attributes = { ...sys.attributes, analysisFreshness: { ...af, 'assumption-review': { ...af['assumption-review'], crRefs } } };
+    const mitRefs = (reqRefs: string[]) => {
+      sys.attributes = { ...sys.attributes, analysisFreshness: { ...af, 'assumption-review': { ...af['assumption-review'], reqRefs } } };
       return kernRegeln(g);
     };
     expect(mitRefs([])).not.toContain('IR-01');
-    expect(mitRefs(['CR-gibt-es-nicht'])).toContain('IR-01');
+    expect(mitRefs(['REQ-gibt-es-nicht'])).toContain('IR-01');
+    // ein alter Vermerk mit crRefs hat keinen Leser mehr — kein Parallelpfad
+    sys.attributes = { ...sys.attributes, analysisFreshness: { ...af, 'assumption-review': { ...af['assumption-review'], crRefs: ['CR-gibt-es-nicht'] } } };
+    expect(kernRegeln(g)).not.toContain('IR-01');
   });
 
   it('im Kern: steht ein Eintrittspunkt im Fokus, nennt der Prompt den Task und seinen Skill', () => {

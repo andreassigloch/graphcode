@@ -1,16 +1,16 @@
 ---
 name: se-fmea
-version: 3
+version: 4
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
-Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbook (2019)** 7-step method, mapped onto this project's SE-ontology graph. Output is `docs/records/failure-mode-analysis.md` plus a CR that integrates derived requirements into the graph. This is the FMEA **create** skill; once findings are in the graph, render them with `se-view:fmea` (the read-only FMEA view) — do not re-author the analysis at render time.
+Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbook (2019)** 7-step method, mapped onto this project's SE-ontology graph. Output is `docs/records/failure-mode-analysis.md` plus the derived requirements with their tests in the graph. This is the FMEA **create** skill; once findings are in the graph, render them with `se-view:fmea` (the read-only FMEA view) — do not re-author the analysis at render time.
 
 **Scope argument:** the user names the analysis target. **The default and preferred unit is one `FCHAIN`** — a Wirkkette is a bounded end-to-end effect path with a named trigger and a named result, which is exactly what a failure mode needs to be stated against ("the chain does not reach its result because ..."). A `MOD` or a component (e.g. `ACS712`) is a legitimate but secondary scope: it cuts across chains, so its failure effects can only be stated per chain anyway. A whole-`SYS` scope means *every* chain, one profile each — say so and confirm the effort before starting.
 
 If unscoped, ask for it — do not guess. If the user names a `MOD` or a component, resolve it to the chains it participates in (`allocate` → FUNC → `compose` → FCHAIN) and run Step 2 per chain.
 
-Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbatim): `docs/records/failure-mode-analysis.md`, integrated via `docs/cr/done/CR-FMEA-001-failure-mode-requirements.md`.
+Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbatim): `docs/records/failure-mode-analysis.md`.
 
 ---
 
@@ -153,9 +153,8 @@ The FMEA is not done until findings live in the graph, not just the document.
 
 3. **Check the result.** `graph_mutate` returns `{ success, tier, appliedCommands, violations }`. The gate **BLOCKS the whole batch** if it would introduce a new **error-severity** violation (`tier: "block"`, `success: false`) — it does NOT silently drop nodes/edges. Read `violations`, fix the batch (e.g. add the missing `verify`), and re-apply.
 4. **Check violations:** `rules_get_violations` — resolve any new R-01/R-02 gaps.
-5. **Open a CR** `docs/cr/open/CR-FMEA-NNN-<desc>.md` listing the new RQs, affected spec sections, and acceptance criteria (mirror `CR-FMEA-001`). Patch `specification.md` sections named in the Step-7 impact table. If the SE-schema (ElementType/TraceType/rules) changed, bump the version in `@sigloch/contracts/se/index.ts`.
-6. On completion, `git mv` the CR `open/ → done/` and commit `feat: FMEA findings for <scope> (CR-FMEA-NNN)`.
-7. **Stamp the task.** Close with **one** `graph_mutate` batch on the SYS root. `analysisFreshness` is one attribute for all analyses and a patch replaces it whole: read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`, set `"fmea": { graphVersion: <current graphVersion()> }`, and write the complete object with the `baseVersion` you read — after the risk and mitigation REQ of step 2 are in the graph. **AF-04** (the entry rule of the task `fmea`) stays open until then. An FMEA with no risk REQ in the graph has not happened: leave AF-04 open instead of stamping an empty analysis.
+5. **No CR.** An analysis leaves no build order: the requirements and their tests are the result, and the build order for whatever they still need is cut later by `se-plan`. If the SE-schema (ElementType/TraceType/rules) would have to change, stop and name it — that is a contracts change, not part of this analysis.
+6. **Stamp the task.** Close with **one** `graph_mutate` batch on the SYS root. `analysisFreshness` is one attribute for all analyses and a patch replaces it whole: read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`, set `"fmea": { graphVersion: <current graphVersion()> }`, and write the complete object with the `baseVersion` you read — after the risk and mitigation REQ of step 2 are in the graph. **AF-04** (the entry rule of the task `fmea`) stays open until then. An FMEA with no risk REQ in the graph has not happened: leave AF-04 open instead of stamping an empty analysis.
 
 ---
 

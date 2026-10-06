@@ -39,7 +39,7 @@ R-22;FUNC must be allocated to MOD;7 Modul;existence;PDR;warning;Gate;kern;alloc
 AF-02;Trade Study freshness stamp present;7 Modul;analysis;PDR;warning;Gate;kern, Eintritt fuer trade;arch;;ja (Analyse);se-trade;;se-trade;;se-trade;;
 AF-03;Assumption Review freshness stamp present;7 Modul;analysis;PDR;warning;Gate;kern, Eintritt fuer irr;req;;ja (Analyse);se-irr;;se-irr;;;;
 CR-01;CrossingFlowCount;7 Modul;;PDR;warning;Gate;kern;arch;ja;;;Prüfe den Schnitt zwischen {n}, dort fließen ungewöhnlich viele Daten.;se:top-level;;se:top-level;schliesst;
-IR-01;Assumption review promoted to CR;7 Modul;analysis;PDR;warning;Gate;kern;req;;ja (Analyse);se-irr;Lege die Änderungsaufträge an, die das Annahmen-Review für {n} nennt.;se-irr;;se-irr;;
+IR-01;Assumption review requirements exist;7 Modul;analysis;PDR;warning;Gate;kern;req;;ja (Analyse);se-irr;Lege die Anforderungen an, die das Annahmen-Review für {n} nennt.;se-irr;;se-irr;;
 MT-01;Module instability;7 Modul;;PDR;warning;Gate;kern;alloc;;;;Prüfe die Abhängigkeiten des Moduls {n}.;se:top-level;;;;
 MT-02;Module cohesion (LCOM4);7 Modul;;PDR;warning;Gate;kern;alloc;ja;;;Teile das Modul {n}, seine Teile arbeiten nicht zusammen.;se:top-level;;se:top-level;;
 NFR-01;BudgetOvershoot;7 Modul;;PDR;warning;Gate;kern;arch;;;;Bringe {n} unter sein Budget oder ändere das Budget bewusst.;se:top-level;;;;
@@ -62,6 +62,7 @@ CR-R02;Done requires commit;10 Plan;;Bau;warning;Gate;kern;cr;;;;Trage bei den e
 MS-01;Milestone empty scope;10 Plan;;Bau;warning;Gate;kern;ms;;;;Ordne den Meilensteinen {n} ihren Umfang zu.;;;;;
 MS-02;Milestone dangling dependency;10 Plan;;Bau;warning;Gate;kern;ms;;;;Korrigiere die Abhängigkeiten der Meilensteine {n}.;;;;;
 MS-03;CR without milestone;10 Plan;;Bau;info;Gate;kern;ms;;;se-plan;;se-plan;;;schliesst;
+RC-05;cross-module import drift;10 Plan;;Bau;warning;CodeFacts (RC);kern;;;;;Trage die Abhängigkeit der Module {n} ins Modell ein oder entferne den Import.;;;;;
 RC-07;CR node agrees with docs/cr;10 Plan;;Bau;warning;CodeFacts (RC);kern;;;;;Gleiche die Änderungsaufträge {n} mit ihren Dateien ab.;;;;;
 R-19;Runnable TEST binding;11 Bindung;;Bau;warning;Gate;kern;ver;;;;Verbinde die Tests {n} mit ihren Testdateien.;;;se-irr se-plan se-retro se-test;;
 R-20;FUNC realRef binding;11 Bindung;;Bau;warning;Gate;kern;arch;;;;Verbinde die Funktionen {n} mit ihrem Code.;se:top-level;;se:import-code se-irr se-plan se-retro;;
@@ -72,7 +73,6 @@ RC-01;FUNC realRef resolves to a declared symbol;12 Abgleich;;Bau;warning;CodeFa
 RC-02;testRefs entries resolve to runnable tests;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Korrigiere die Testverweise von {n}, die Testfälle gibt es nicht.;;;se-review;;
 RC-03;SCHEMA realRef resolves to a declared export;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Korrigiere die Code-Verweise der Datenformate {n}, sie zeigen ins Leere.;;;se-review;;
 RC-04;SCHEMA realRef is parsed at its interface;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Lies die Datenformate {n} im Code an der Schnittstelle, an der das Modell sie führt.;;;;;
-RC-05;cross-module import drift;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Trage die Abhängigkeit der Module {n} ins Modell ein oder entferne den Import.;;;;;
 RC-06;external realRef names a declared dependency;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Trage die Pakete, auf die {n} verweisen, als Abhängigkeit ein.;;;;;
 RC-08;SCHEMA realRef is a Zod schema;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Binde die Datenformate {n} an ein Schema statt an einen Typ.;;;;;
 RC-09;SCHEMA is parsed only at its modelled interface;12 Abgleich;;Bau;warning;CodeFacts (RC);kern;;;;;Prüfe, wo die Datenformate {n} außerhalb ihrer Schnittstelle gelesen werden.;;;;;

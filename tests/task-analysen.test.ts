@@ -180,17 +180,23 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     expect(offen('fmea', ganz)).toEqual([]);
     expect(abschluss('fmea', ganz, new Set(), undefined).fertig).toBe(true);
     // conops/irr: was vor dem Task schon da war, ist nicht der Ertrag des Tasks.
-    const cr: TaskGraph = { nodes: [...leer.nodes, { id: 'CR-alt', type: 'CR' }], edges: leer.edges };
-    expect(abschluss('irr', cr, new Set(['CR-alt']), 0).fertig).toBe(false);
-    expect(abschluss('irr', cr, new Set(), 0).einheiten).toEqual(['CR-alt']);
+    // irr (CR-GC-754): die Einheit ist eine REQ mit verifizierendem TEST — ein CR zaehlt nicht, eine REQ ohne TEST auch nicht.
+    const annahme: TaskGraph = {
+      nodes: [...leer.nodes, { id: 'CR-alt', type: 'CR' }, { id: 'REQ-nackt', type: 'REQ' }, { id: 'REQ-alt', type: 'REQ' }, { id: 'TEST-alt', type: 'TEST' }],
+      edges: [...leer.edges, { source: 'TEST-alt', type: 'verify', target: 'REQ-alt' }],
+    };
+    const bestand = new Set(artefakte('irr', leer));
+    expect(abschluss('irr', annahme, new Set([...bestand, 'REQ-alt']), 0).fertig).toBe(false);
+    expect(abschluss('irr', annahme, bestand, 0).einheiten).toEqual(['REQ-alt']);
   });
 
-  it('Stempel-Zug: trägt die übrigen Stempel mit und nennt crRefs nur bei trade und irr', () => {
+  it('Stempel-Zug: trägt die übrigen Stempel mit und nennt crRefs bei trade, reqRefs bei irr', () => {
     const bisher = { conops: { graphVersion: 3 } };
     expect(stempelZug('fmea', 'SYS-app', bisher, 7, ['REQ-r'])).toBe(
       '## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"conops":{"graphVersion":3},"fmea":{"graphVersion":7}}\n',
     );
-    expect(stempelZug('irr', 'SYS-app', {}, 7, ['CR-a'])).toContain('"assumption-review":{"graphVersion":7,"crRefs":["CR-a"]}');
+    expect(stempelZug('irr', 'SYS-app', {}, 7, ['REQ-a'])).toContain('"assumption-review":{"graphVersion":7,"reqRefs":["REQ-a"]}');
+    expect(stempelZug('trade', 'SYS-app', {}, 7, ['CR-a'])).toContain('"trade":{"graphVersion":7,"crRefs":["CR-a"]}');
   });
 
   // CR-GC-752 (contracts 11, CR-SM-395): der Bauplan ist die Menge der offenen Auftraege, kein Stempel.

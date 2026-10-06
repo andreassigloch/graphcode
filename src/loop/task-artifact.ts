@@ -12,7 +12,7 @@
  *   plan    — ein Meilenstein, dem mindestens ein CR zugeordnet ist
  *   trade   — ein CR mit einer `decides`-Kante
  *   conops  — eine nicht-funktionale REQ am System            (nur NEUE zählen, s. u.)
- *   irr     — ein CR je offener Annahme                       (nur NEUE zählen, s. u.)
+ *   irr     — eine REQ mit verifizierendem TEST je tragender Annahme (nur NEUE zählen, s. u.)
  * Für conops und irr trägt der Graph kein Merkmal, das eine Betriebsanforderung oder eine Annahme
  * von gewöhnlicher Kern-Arbeit unterscheidet — dort zählt, was WÄHREND des Tasks entstand.
  *
@@ -23,6 +23,10 @@
  *
  * Rein: liest eine neutrale Graph-Form, damit Rundenprompt (OntologyGraph) und Executor (Registry)
  * dieselbe Rechnung benutzen.
+ *
+ * CR-GC-754 (Regelkatalog 41, CR-SM-397): eine Analyse hinterlässt keinen Bauauftrag. Das Annahmen-Review
+ * schreibt je tragender Annahme eine REQ mit TEST; sein Stempel nennt sie unter `reqRefs` (IR-01). Einen CR
+ * legt nur noch der Variantenvergleich an — als Träger der Entscheidung (`decides`, TR-01 liest `crRefs`).
  *
  * @author andreas@siglochconsulting
  */
@@ -52,8 +56,8 @@ export const hatStempel = (task: AnalyseTask): task is GestempelterTask => task 
 /** Bei diesen Tasks zählt nur, was während des Tasks entstand. */
 export const NUR_NEUE: ReadonlySet<AnalyseTask> = new Set(['conops', 'irr']);
 
-/** Tasks, deren Stempel die entstandenen CRs nennt (TR-01, IR-01 lesen `crRefs`). */
-const MIT_CR_REFS: ReadonlySet<AnalyseTask> = new Set(['trade', 'irr']);
+/** Tasks, deren Stempel die entstandenen Einheiten nennt, und das Feld dafür: TR-01 liest `crRefs`, IR-01 `reqRefs`. */
+const REF_FELD: Readonly<Partial<Record<AnalyseTask, 'crRefs' | 'reqRefs'>>> = { trade: 'crRefs', irr: 'reqRefs' };
 
 export interface TaskKnoten {
   id: string;
@@ -98,7 +102,7 @@ export function artefakte(task: AnalyseTask, g: TaskGraph): string[] {
         case 'trade':
           return n.type === 'CR' && hat((e) => e.type === 'relation' && e.source === n.id && e.label === 'decides');
         case 'irr':
-          return n.type === 'CR';
+          return n.type === 'REQ' && hat((e) => e.type === 'verify' && e.target === n.id && typ.get(e.source) === 'TEST');
         case 'conops':
           return (
             n.type === 'REQ' &&
@@ -185,7 +189,8 @@ export function stempelZug(
   graphVersion: number,
   einheiten: readonly string[],
 ): string {
-  const stempel = MIT_CR_REFS.has(task) ? { graphVersion, crRefs: [...einheiten] } : { graphVersion };
+  const feld = REF_FELD[task];
+  const stempel = feld ? { graphVersion, [feld]: [...einheiten] } : { graphVersion };
   const wert = { ...bisher, [STEMPEL_ID[task]]: stempel };
   return `## Nodes\n### SYS\n~ ${sysUid}\n@analysisFreshness ${JSON.stringify(wert)}\n`;
 }
