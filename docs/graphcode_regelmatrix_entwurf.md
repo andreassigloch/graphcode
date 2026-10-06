@@ -309,6 +309,20 @@ den Abgleichregeln zu hoch, weil die Messung ohne den Quellbaum lief.
 11. Eine Marke halten Fehler und offene Existenz-Befunde, nicht jede Warnung (wie heute).
 12. Der Zwischenstand vom 2026-10-05 wird nicht veröffentlicht; ein Zug nach der Umsetzung (CR-SM-395).
 
+Nach der Umsetzung im Katalog (CR-SM-395), zweiter Durchgang:
+
+13. „Schema hat einen Test" (R-32) gilt für alle Schemas, nicht nur für gebundene.
+14. „Datenfluss hat ein Schema" (R-34) entfällt wieder: Die Grammatik (R-18) lehnt den Fall schon beim Schreiben ab.
+15. Grammatikfehler halten jede Marke.
+16. Ein offener Auftrag zählt nur dann als Bauauftrag, wenn daraus Code entsteht. Reine Entscheidungs-Aufträge
+    aus Variantenvergleich und Annahmen-Review eröffnen den Bau nicht.
+17. „System hat Anwendungsfälle" (R-17) verlangt mindestens einen Anwendungsfall.
+18. Ein mit Grund abgenommener Befund „Ungebautes ohne Auftrag" (AF-05) hält die Marke „Bau" weiter. Die Abnahme
+    ist kein Ausweg, um den Bau als erreicht zu lesen.
+19. Hinweise halten keine Marke.
+20. Der Abgleich von Auftragsdatei und Modell (RC-07) gilt immer, unabhängig vom Bau.
+21. Die Betriebskonzept-Analyse (AF-01) liegt hinter den Anforderungen (Stufe 3).
+
 ## 9. Offen
 
 1. **Stufe nach „braucht" statt nach „läuft über".** So steht es jetzt in der Matrix. Die Folge der anderen Lesart
