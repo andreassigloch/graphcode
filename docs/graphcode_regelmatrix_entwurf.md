@@ -1,6 +1,6 @@
 # Regelmatrix, vereinfacht — Entwurf
 
-Stand 2026-10-06, zweite Fassung nach den Entscheidungen des Autors (§8) · Entwurf, kein Code · Zahlen aus dem Katalog
+Stand 2026-10-06, dritte Fassung nach den Entscheidungen des Autors (§8) · Entwurf, kein Code · Zahlen aus dem Katalog
 `@sigloch/contracts` (Regelsatz 37.0.0, 77 Regeln) · umgesetzt wird in sigloch-modules (Smeagol), graphcode zieht nach.
 
 ## 1. Der eine Mechanismus
@@ -31,23 +31,35 @@ davor ist offen. Der Nutzer sieht Zahlen, der Agent bekommt „in Ordnung" oder 
 | 7 | Modul | R-22 (Funktion wohnt in einem Modul) | PDR |
 | 8 | Schema | **neu** — „Datenfluss hat ein Schema", heute ein Ausschnitt der Grammatikregel R-18 | CDR |
 | 9 | Test | R-01 (Anforderung hat einen Test), R-32 (Schema hat einen Test) | TRR |
-| 10 | Bauplan | AF-05 — eine Analyse, abnehmbar | |
-| 11 | Bau | **neu, zur Entscheidung** — „Bauplan durchgeführt, aber nichts gebunden" | |
-| 12 | Bindung | — (R-19, R-20, R-26, R-29, VR-01) | |
-| 13 | Abgleich Modell gegen Code | — (RC-01 bis RC-10) | Bau |
+| 10 | Plan (Aufträge, Meilensteine) | AF-05, neu gefasst: „Ungebautes hat einen Auftrag" — eine Analyse, abnehmbar | |
+| 11 | Bindung | — (R-19, R-20, R-26, R-29, VR-01) | |
+| 12 | Abgleich Modell gegen Code | — (RC-01 bis RC-10) | Bau |
 
 **Die Spezifikation endet mit der Testbereitschaft** (Stufe 9): Jede Anforderung und jedes Schema hat einen Test.
-Der Bauplan kommt danach.
 
-**Der Bau beginnt mit der ersten Bindung an Code** — ob sie aus dem Bauplan kommt oder von Hand. Ab dann sind die 15
-Regeln der Stufen 12 und 13 fällig; vorher ist ihre Menge leer, denn ihre Menge sind die Elemente eines Projekts mit
-Code. Der Bauplan-Stempel löst nichts mehr aus.
+**Ab Stufe 10 ist es ein Vorgang, derselbe für den ersten Bau und für jede Änderung:**
 
-**Freiwillige Mengen** haben keine Existenz-Regel. Ihre Regeln sind fällig, sobald es die Elemente gibt:
-Änderungsaufträge und Meilensteine (Plan), Risiko-Anforderungen (Fehlerbetrachtung).
+1. **Ungebautes** sind Funktionen, Tests und Schemas ohne Bindung an Code. Beim ersten Bau ist das alles, bei einer
+   Änderung sind es die neuen Elemente.
+2. **Planen:** Gibt es Ungebautes ohne offenen Auftrag, lautet der Befund „Bauplan fällig". Das Ergebnis des Bauplans
+   sind Aufträge (und Meilensteine), keine Marke am System.
+3. **Bauen:** Sobald es einen offenen Auftrag oder eine Bindung gibt, sind die Bindungsregeln fällig. Ihre Befunde
+   sind die Arbeitsliste: Sie starten das Coding und enden, wenn alles gebunden ist. Eine Bindung von Hand, ohne
+   Bauplan, zählt genauso.
+4. **Abgleichen:** Die Regeln Modell gegen Code prüfen, was gebunden ist.
+
+Die Marke „Bau" heißt: kein fälliger Befund in den Stufen 10 bis 12. Sie ist nach dem ersten Bau erreicht und geht
+mit jeder Änderung wieder auf, bis die neuen Elemente geplant, gebunden und abgeglichen sind.
+
+Eine eigene Regel „Bauplan durchgeführt, aber nichts gebunden" braucht es damit nicht: Nach dem Planen stehen die
+Bindungsregeln selbst als Befunde da.
 
 **Analysen** (Einsatzkonzept, Variantenvergleich, Annahmen-Review, Fehlerbetrachtung, Bauplan, neu: Konsolidierung)
-sind Existenz-Regeln für ein Artefakt. Nur sie dürfen mit Begründung abgenommen werden.
+sind Existenz-Regeln für ein Artefakt. Nur sie dürfen mit Begründung abgenommen werden. Wer den Bauplan abnimmt
+(„Bau nicht beauftragt"), hat eine warnungsfreie Spezifikation.
+
+**Freiwillige Menge** bleibt nur die der Risiko-Anforderungen (Fehlerbetrachtung): Ihre Regeln sind fällig, sobald
+es die Elemente gibt.
 
 ## 3. Die Matrix
 
@@ -57,7 +69,7 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | Stufe | Regel | prüft | Menge | Schwere | Rolle | Gate heute | Marke aus Stufe |
 |---|---|---|---|---|---|---|---|
 | immer | CR-R03 | No concurrent mutation | all | Warnung |  | SRR | – |
-| immer | **neu** | Zu viele fällige Warnungen → Konsolidierung | Befunde | Warnung | Analyse | – | – |
+| immer | **neu** | Regel mit mehr als drei fälligen Befunden → Konsolidierung | Befunde | Warnung | Analyse | – | – |
 | immer | R-08 | Trace consistency | all | **Fehler** |  | PDR | – |
 | immer | R-18 | Valid trace pattern | all | **Fehler** |  | PDR | – |
 | 1 System | **neu** | Graph hat ein System | graph | Warnung | Existenz | (Code) | SRR |
@@ -115,36 +127,36 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | 9 Test | R-01 | REQ must have verification | REQ | **Fehler** | Existenz | TRR | TRR |
 | 9 Test | R-32 | SCHEMA must have contract TEST | SCHEMA | Warnung | Existenz | TRR | TRR |
 | 9 Test | R-05 | TEST must verify REQ | TEST | Warnung |  | TRR | TRR |
-| 10 Bauplan | AF-05 | Implementation Plan freshness stamp present | graph | Warnung | Analyse | PDR | – |
-| 11 Bau | **neu** | Bauplan durchgeführt, aber nichts gebunden | Bauplan | Warnung | Existenz | – | Bau |
-| 12 Bindung | R-19 | Runnable TEST binding | TEST | Warnung |  | TRR | Bau ≠ |
-| 12 Bindung | R-20 | FUNC realRef binding | FUNC | Warnung |  | TRR | Bau ≠ |
-| 12 Bindung | R-26 | SCHEMA must have realRef | SCHEMA | Warnung |  | TRR | Bau ≠ |
-| 12 Bindung | R-29 | Test file exclusivity | TEST | **Fehler** |  | TRR | Bau ≠ |
-| 12 Bindung | VR-01 | TestNoResult | TEST | Hinweis |  | TRR | Bau ≠ |
-| 13 Abgleich | RC-01 | FUNC realRef resolves to a declared symbol | FUNC | Warnung |  | – | Bau |
-| 13 Abgleich | RC-02 | testRefs entries resolve to runnable tests | TEST | Warnung |  | – | Bau |
-| 13 Abgleich | RC-03 | SCHEMA realRef resolves to a declared export | SCHEMA | Warnung |  | – | Bau |
-| 13 Abgleich | RC-04 | SCHEMA realRef is parsed at its interface | SCHEMA | Warnung |  | – | Bau |
-| 13 Abgleich | RC-05 | cross-module import drift | MOD | Warnung |  | – | Bau |
-| 13 Abgleich | RC-06 | external realRef names a declared dependency | FUNC, MOD, SCHEMA | Warnung |  | – | Bau |
-| 13 Abgleich | RC-07 | CR node agrees with docs/cr | CR, SYS | Warnung |  | – | Bau |
-| 13 Abgleich | RC-08 | SCHEMA realRef is a Zod schema | SCHEMA | Warnung |  | – | Bau |
-| 13 Abgleich | RC-09 | SCHEMA is parsed only at its modelled interface | SCHEMA | Warnung |  | – | Bau |
-| 13 Abgleich | RC-10 | MOD has resolvable files | MOD | Warnung |  | – | Bau |
-| Plan | CR-R01 | CR must track | CR | Warnung |  | SRR | – |
-| Plan | CR-R02 | Done requires commit | CR | Warnung |  | TRR | – |
-| Plan | MS-01 | Milestone empty scope | MS | Warnung |  | SRR | – |
-| Plan | MS-02 | Milestone dangling dependency | MS | Warnung |  | SRR | – |
-| Plan | MS-03 | CR without milestone | CR | Hinweis |  | SRR | – |
+| 10 Plan | AF-05 | Ungebautes hat einen Auftrag (heute: Bauplan-Stempel vorhanden) | Ungebautes | Warnung | Existenz | PDR | Bau ≠ |
+| 10 Plan | CR-R01 | CR must track | CR | Warnung |  | SRR | Bau ≠ |
+| 10 Plan | CR-R02 | Done requires commit | CR | Warnung |  | TRR | Bau ≠ |
+| 10 Plan | MS-01 | Milestone empty scope | MS | Warnung |  | SRR | Bau ≠ |
+| 10 Plan | MS-02 | Milestone dangling dependency | MS | Warnung |  | SRR | Bau ≠ |
+| 10 Plan | MS-03 | CR without milestone | CR | Hinweis |  | SRR | Bau ≠ |
+| 11 Bindung | R-19 | Runnable TEST binding | TEST | Warnung |  | TRR | Bau ≠ |
+| 11 Bindung | R-20 | FUNC realRef binding | FUNC | Warnung |  | TRR | Bau ≠ |
+| 11 Bindung | R-26 | SCHEMA must have realRef | SCHEMA | Warnung |  | TRR | Bau ≠ |
+| 11 Bindung | R-29 | Test file exclusivity | TEST | **Fehler** |  | TRR | Bau ≠ |
+| 11 Bindung | VR-01 | TestNoResult | TEST | Hinweis |  | TRR | Bau ≠ |
+| 12 Abgleich | RC-01 | FUNC realRef resolves to a declared symbol | FUNC | Warnung |  | – | Bau |
+| 12 Abgleich | RC-02 | testRefs entries resolve to runnable tests | TEST | Warnung |  | – | Bau |
+| 12 Abgleich | RC-03 | SCHEMA realRef resolves to a declared export | SCHEMA | Warnung |  | – | Bau |
+| 12 Abgleich | RC-04 | SCHEMA realRef is parsed at its interface | SCHEMA | Warnung |  | – | Bau |
+| 12 Abgleich | RC-05 | cross-module import drift | MOD | Warnung |  | – | Bau |
+| 12 Abgleich | RC-06 | external realRef names a declared dependency | FUNC, MOD, SCHEMA | Warnung |  | – | Bau |
+| 12 Abgleich | RC-07 | CR node agrees with docs/cr | CR, SYS | Warnung |  | – | Bau |
+| 12 Abgleich | RC-08 | SCHEMA realRef is a Zod schema | SCHEMA | Warnung |  | – | Bau |
+| 12 Abgleich | RC-09 | SCHEMA is parsed only at its modelled interface | SCHEMA | Warnung |  | – | Bau |
+| 12 Abgleich | RC-10 | MOD has resolvable files | MOD | Warnung |  | – | Bau |
 
 **Gelesen:**
-- **Die Marke folgt streng der Stufe.** Bei 48 der 58 vergleichbaren Regeln ist das die heutige Zuordnung. Zehn
-  wandern: fünf Bindungsregeln von der Testbereitschaft zur neuen Marke „Bau" (R-19, R-20, R-26, R-29, VR-01), fünf
-  innerhalb der Spezifikation (FM-03, FC-04, FC-05, R-21, NFR-01). Die zehn Abgleichregeln, die heute an keinem Gate
-  hängen, bekommen die Marke „Bau".
-- **Vier Regeln sind neu:** drei Existenz-Regeln (System, Schema, Bau) und der Wächter für die Konsolidierung (§6).
-  Zwei davon ersetzen Sonderlogik, die es heute an anderer Stelle gibt.
+- **Die Marke folgt streng der Stufe.** Bei 48 der 64 vergleichbaren Regeln ist das die heutige Zuordnung. 16
+  wandern: elf zur Marke „Bau" (die fünf Bindungsregeln, der Bauplan und die fünf Regeln über Aufträge und
+  Meilensteine), fünf innerhalb der Spezifikation (FM-03, FC-04, FC-05, R-21, NFR-01). Die zehn Abgleichregeln, die
+  heute an keinem Gate hängen, bekommen die Marke „Bau".
+- **Drei Regeln sind neu:** zwei Existenz-Regeln (System, Schema) und der Wächter für die Konsolidierung (§6). Die
+  beiden Existenz-Regeln ersetzen Sonderlogik, die es heute an anderer Stelle gibt. **Eine Regel wird neu gefasst:**
+  AF-05 fragt nicht mehr nach einem Stempel, sondern ob Ungebautes einen Auftrag hat.
 - **Fünf Regeln sind Fehler** und blockieren die Schreiboperation: R-08, R-18, R-01, IO-02, R-29. Unverändert.
 
 ## 4. Was entfällt
@@ -155,7 +167,7 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 |---|---|---|
 | Zuordnung Regel → Gate (67 Einträge) | contracts | abgeleitet aus der Stufe |
 | Pflichtliste je Gate mit eigenem Quelltyp (9 Einträge) | graphcode-client | Rolle „Existenz" in der Matrix |
-| Vorbedingung „erst ab Baubeginn" (4 Regeln) | contracts, seit CR-SM-392 | Menge der Stufen 12 und 13 |
+| Vorbedingung „erst ab Baubeginn" (4 Regeln) | contracts, seit CR-SM-392 | Menge der Stufen 11 und 12 |
 | „Code-Präsenz nur, wenn etwas gebunden ist" | graphcode, Fokusmenge | dieselbe Menge |
 | Kaltstart-Stufen (kein System, kein Anwendungsfall) | graphcode, `graph_generate` | Existenz-Regeln der Stufen 1 und 2 |
 | Gate-Zustand mit drei Werten und Anzeigetext | graphcode-client, seit CR-SM-394 | „fälliger Befund ja oder nein" |
@@ -171,14 +183,14 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | `concept` an fünf Elementtypen | Zwischenstand im Bau | entfallen (CR-SM-393) |
 | Aktualität der Analyse-Artefakte (aktuell, veraltet, fehlt) samt Schalter „Durchsetzung an/aus" | Gate nur mit frischen Analysen bestanden | **auflösen** — im Produktpfad steht der Schalter seit CR-GC-259 auf „aus", die Rechnung läuft also ohne Wirkung |
 | Pflicht-Analysen je Gate (eigene Tabelle) | welche Analyse an welches Gate gehört | **auflösen** — die Analyse-Regel trägt ihre Stufe selbst |
-| Vier Bau-Gates (SAR, FCA, SVR, FRR), fest an vier Meilenstein-Kennungen gebunden | Abnahme des Baus je Meilenstein | **auflösen** zugunsten der einen Marke „Bau"; die Kennungen sind die des graphcode-Projekts selbst und passen auf kein anderes |
+| Vier Bau-Gates (SAR, FCA, SVR, FRR), fest an vier Meilenstein-Kennungen gebunden | Abnahme des Baus je Meilenstein | **auflösen** zugunsten der einen Marke „Bau" (§2). Heute sind das vier zusätzliche Gates, die prüfen, ob alle Aufträge eines bestimmten Meilensteins erledigt sind; die vier Kennungen sind die des graphcode-Projekts selbst und passen auf kein anderes |
 | Zuordnung Regel → Arbeitsschritt (Kern, Einsatzkonzept, Fehlerbetrachtung, Plan, Realisierung …) | der Kern soll Detailregeln fremder Artefakte nicht sehen | **weitgehend auflösen** — Regeln über freiwillige Mengen schweigen von selbst, bis es die Elemente gibt. Es bleibt die Zuordnung Analyse → Skill. Ausnahme zu prüfen: CL-01 |
 | Liste „abnehmbar je Arbeitsschritt" | was mit Begründung abgelehnt werden darf | **kürzen** auf die Analysen. Die vier Bindungsregeln stehen dort nur, weil sie im Entwurf feuerten |
 | Umfangsschalter „schlank/voll" und Profilliste „se/coding" | zwei Lesarten der Readiness | **prüfen** — ob beide noch einen Leser haben, habe ich nicht nachverfolgt |
-| Bauplan-Stempel als Auslöser der Bau-Regeln | „Bau begonnen" | **entfällt** als Auslöser (Entscheidung 1); der Stempel bleibt nur der Nachweis der Analyse |
+| Bauplan-Stempel am System | „Bauplan durchgeführt", einmal für immer | **auflösen** — der Plan ist die Menge der offenen Aufträge, und er wird bei jeder Änderung wieder fällig. Ein einmaliger Stempel kann das nicht ausdrücken |
 
 **Bleiben:**
-- Analyse-Stempel am System (fünf), als einziger Nachweis „durchgeführt". Aus dem Ergebnis ableiten ginge nur, wenn
+- Analyse-Stempel am System (vier, ohne den Bauplan), als einziger Nachweis „durchgeführt". Aus dem Ergebnis ableiten ginge nur, wenn
   eine Analyse nie ohne Ergebnis enden kann; eine Fehlerbetrachtung ohne Risiko ist aber möglich.
 - Abgenommene Befunde mit Begründung, `external`, die Rolle einer Anforderung in der Fehlerbetrachtung,
   `architectureOnly` und `status` am Änderungsauftrag: Das sind Tatsachen über das Projekt, keine Steuerung.
@@ -221,8 +233,8 @@ Schritt ignoriert, sieht die Werte fallen. Es kommt kein neuer Mechanismus dazu,
   kann sie ignorieren; im Viewer bleibt sie sichtbar.
 - Wiederverwendbar sind `se:close-violations` (arbeitet Befunde nach Rang ab), `graph_suggest` (Architekturzüge nach
   Wirkung) und die Doppelgänger-Regeln ND-01/ND-02.
-- Das Maß gehört in die Betriebs-Config des Repos, wo jede Urteilsschwelle genau einmal steht. Sein Wert ist
-  **nicht bekannt** und muss am Bestand geeicht werden (Verteilung der Warnungen je Element über die 35 Modelle).
+- **Das Maß ist das Fenster aus §5:** Hat eine einzelne Regel mehr als drei fällige Befunde, also mehr, als ein
+  Schritt abarbeitet, ist die Konsolidierung fällig. Es gibt keine zweite Schwelle und keine Eichung.
 
 ## 7. Checkfragen
 
@@ -231,7 +243,7 @@ Schritt ignoriert, sieht die Werte fallen. Es kommt kein neuer Mechanismus dazu,
 | Was er tut | Was passiert | Hält das Gummiband? |
 |---|---|---|
 | Springt vor: legt Funktionen und Module an, bevor es Anwendungsfälle gibt | Die Schreiboperation geht durch. Die Regeln über Funktionen und Module sind fällig, weil ihre Menge existiert. Der nächste Schritt zeigt weiter auf die früheste Lücke. | Ja |
-| Bindet Code, ohne den Bauplan zu machen | Die erste Bindung macht die Regeln der Stufen 12 und 13 fällig. Der Bauplan bleibt als offene Analyse stehen. | Ja |
+| Bindet Code, ohne den Bauplan zu machen | Die erste Bindung macht die Regeln der Stufen 11 und 12 fällig. Für das übrige Ungebaute bleibt „Bauplan fällig" stehen. | Ja |
 | Schreibt Code am Modell vorbei, ohne zu binden | Das Modell sieht nichts. | **Nein.** Das fängt nur der Abgleich über den Git-Diff (ITEM-2026-751) oder ein Code-Import. |
 | Bindet auf etwas, das es nicht gibt | RC-01 meldet, dass die Bindung nicht auflöst. | Ja |
 | Nimmt Befunde ab, um Ruhe zu haben | Abnehmbar sind nur Analysen, mit Begründung, gezählt. | Ja |
@@ -249,12 +261,14 @@ Schritt ignoriert, sieht die Werte fallen. Es kommt kein neuer Mechanismus dazu,
 
 ### 7.3 Weitere Fälle
 
-- **Änderung an einem gebauten Projekt.** Eine neue Funktion ist ungebunden, es gibt Code, also meldet die
-  Bindungsregel genau die neuen Elemente. Das ist die Arbeitsliste der Änderung.
+- **Änderung an einem gebauten Projekt.** Eine neue Funktion ist ungebunden: „Bauplan fällig" für sie, und die
+  Bindungsregel meldet genau die neuen Elemente. Das ist die Arbeitsliste der Änderung, mit demselben Vorgang wie
+  beim ersten Bau.
 - **Rückfall.** Wird der letzte Anwendungsfall gelöscht, öffnet sich die Existenz-Regel wieder.
-- **Bauplan abgenommen, nichts gebunden.** Die Stufen 12 und 13 bleiben still; die Spezifikation kann warnungsfrei sein.
-- **Letzte Bindung entfernt.** Die Stufen 12 und 13 verstummen wieder. Das ist richtig, wenn der Code wirklich weg
-  ist, und eine Lücke, wenn nur die Bindung gelöscht wurde; siehe „Code am Modell vorbei".
+- **Bauplan abgenommen, nichts gebunden.** Die Stufen 11 und 12 bleiben still; die Spezifikation kann warnungsfrei sein.
+- **Auftrag erledigt, Element noch ungebunden.** Der Befund „Bauplan fällig" kommt für dieses Element wieder.
+- **Letzte Bindung entfernt, kein offener Auftrag.** Die Stufen 11 und 12 verstummen wieder. Das ist richtig, wenn
+  der Code wirklich weg ist, und eine Lücke, wenn nur die Bindung gelöscht wurde; siehe „Code am Modell vorbei".
 
 ## 8. Entschieden (Autor, 2026-10-06)
 
@@ -262,19 +276,22 @@ Schritt ignoriert, sieht die Werte fallen. Es kommt kein neuer Mechanismus dazu,
 2. Der Bauplan kommt nach der Testbereitschaft.
 3. Rückmeldung an den Agenten: wie heute gemessen (§5), nur nach Stufe geordnet.
 4. Eskalation ist die Readiness im Viewer; vorhandenes wiederverwenden.
-5. Jeder Datenfluss hat ein Schema, jedes Datenfluss-Schema einen Test.
+5. Jeder Datenfluss hat ein Schema, jedes Schema einen Test (R-32 bleibt für alle Schemas).
 6. Die genaue Zahl „geprüft" braucht der Agent nicht; keine zusätzlichen Züge.
-7. Ein Wächter schlägt eine Konsolidierung vor, als Analyse, ignorierbar.
+7. Ein Wächter schlägt eine Konsolidierung vor, als Analyse, ignorierbar. Sein Maß ist das Fenster: mehr als drei
+   Befunde einer Regel.
 8. Weitere Attribute und Stempel der Phasensteuerung auflösen (§4).
+9. Planen und Bauen sind ein Vorgang, derselbe für den ersten Bau und für jede Änderung. Nach dem Plan muss etwas
+   das Coding starten.
 
 ## 9. Offen
 
-1. **Stufe 11:** Soll es die Regel „Bauplan durchgeführt, aber nichts gebunden" geben? Mit ihr ist ein Modell nach
-   dem Bauplan erst warnungsfrei, wenn der Bau begonnen hat. Ohne sie endet die Führung am Bauplan.
-2. **Bau-Gates:** Ersetzt die eine Marke „Bau" die vier Bau-Gates samt ihrer Bindung an Meilensteine?
-3. **Fünf Regeln wandern innerhalb der Spezifikation**, wenn die Marke streng der Stufe folgt (FM-03, FC-04, FC-05,
+1. **Fünf Regeln wandern innerhalb der Spezifikation**, wenn die Marke streng der Stufe folgt (FM-03, FC-04, FC-05,
    R-21, NFR-01). Die Ursache ist jeweils, dass die Regel einen früheren Elementtyp prüft, als ihr Thema nahelegt.
-   Einzeln durchgehen oder der Stufe folgen lassen?
-4. **R-32 „Schema hat einen Test"** gilt heute für jedes Schema. Die Entscheidung nennt das Datenfluss-Schema.
-   Einschränken?
-5. **Maß des Wächters:** Eichung am Bestand als eigener Schritt vor der Einführung?
+   Annahme bis auf Widerspruch: Sie folgen der Stufe.
+2. **Der Wächter in großen Modellen.** Mit dem Maß „mehr als drei Befunde einer Regel" steht er in jedem Import und
+   in jedem größeren Bestandsmodell dauerhaft an. Ob das als Hinweis trägt oder zu laut ist, zeigt sich am Bestand.
+3. **„Ungebautes hat einen Auftrag"** ist die Frage der gestrichenen Regel CR-R05, jetzt einmal je Zustand statt je
+   Anforderung. Zu klären bei der Umsetzung: Reicht „es gibt einen offenen Auftrag", oder muss der Auftrag auf die
+   ungebauten Elemente zeigen? Das Erste ist einfacher; das Zweite hatten wir verworfen, weil Plan und Ist fast
+   immer abweichen und der Git-Diff die Wahrheit ist.
