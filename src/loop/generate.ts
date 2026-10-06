@@ -19,7 +19,7 @@
  */
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
-import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, RULE_TO_DIMENSION, STAGE_SETS } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 import { acceptedRuleIds } from '@sigloch/contracts/se';
@@ -495,14 +495,44 @@ export const SEED_STAGES = {
 } as const;
 
 /**
+ * Welche Existenz-Regel welche Kaltstart-Stufe AUSLOEST (CR-GC-749).
+ *
+ * Bis hierher folgte die Stufe aus drei eigenen Zustandstests am Graphen (kein SYS / kein UC / kein
+ * ACTOR). Seit contracts 11 (CR-SM-395) verlangt je eine Existenz-Regel die Menge: R-33 das System,
+ * R-17 was das System unter sich hat, UC-02 den Akteur je Anwendungsfall. Der Ausloeser ist jetzt ihr
+ * Befund; die Texte der Stufen (gemessen entstanden: CR-GC-559, ITEM-2026-625) sind unveraendert und
+ * stehen als Kaltstart-Fassung dieser Regeln in `stepCore`.
+ *
+ * Was eine Regel nicht meldet, loest keine Stufe aus — auch dort, wo der alte Zustandstest es tat
+ * (ein System, das nur Anforderungen unter sich hat: R-17 schweigt, CR-SM-395 §10.5). Aendert der
+ * Katalog die Regel, folgt der Schritt ohne Aenderung hier.
+ */
+export const SEED_RULE = { sys: 'R-33', uc: 'R-17', actor: 'UC-02' } as const;
+
+const REGEL = new Map(ALL_RULE_DEFS.map((r) => [r.id, r]));
+/**
+ * Der Rang einer Regel in der Reihenfolge der Stufen (CR-GC-749) — aus `ALL_RULE_DEFS[].stage`.
+ * `immer` (Regeln ueber alle Elemente) gilt an jeder Stufe, also schon vor der ersten. Eine Regel,
+ * die der Katalog nicht kennt, hat keine Stufe und steht hinten.
+ */
+export function stufenRang(ruleId: string): number {
+  const stage = REGEL.get(ruleId)?.stage;
+  return stage === undefined ? STAGE_SETS.length + 1 : stage === 'immer' ? 0 : stage;
+}
+/** Die Stufe einer Regel beim Namen ihrer Menge — fuer den Prompt. */
+function stufenName(ruleId: string): string {
+  const stage = REGEL.get(ruleId)?.stage;
+  return stage === undefined || stage === 'immer' ? 'jede (gilt für alle Elemente)' : STAGE_SETS[stage - 1]!;
+}
+
+/**
  * Der nächste Generierungsschritt für (Graph, Intention). Deterministisch —
  * gleicher Graph + gleiche Intention + gleiches defer ⇒ gleicher Schritt.
  *
  * `defer` (CR-GC-281): zurückgestellte focusKeys — Fund-Sets, an denen sich
  * der Host festgefahren hat. Die Fokus-Wahl überspringt sie deterministisch
- * (erst nächstes Fund-Fenster derselben Dimension, dann nächstschwächere
- * Dimension); sind ALLE Kandidaten zurückgestellt, wird defer ignoriert
- * (kein Dead-End) und das im Prompt kenntlich gemacht.
+ * (das nächste Fenster in der Reihenfolge der Stufen, CR-GC-749); sind ALLE
+ * Kandidaten zurückgestellt, endet die Maschine `stalled` (CR-GC-596).
  *
  * Ein 'local'-Minimal-Rendering (CR-GC-282) wurde gemessen und VERWORFEN:
  * v13b lieferte 22 Elemente vs. 82 mit diesem vollen Rendering — die
@@ -598,7 +628,10 @@ function stepCore(
     .map((s) => ({ dimension: s.dimension as string, score: s.score, violations: s.violations }));
 
   // --- Phase seed: noch kein System im Graphen -----------------------------
-  if (!sys) {
+  // CR-GC-749: der Ausloeser ist der Befund der Existenz-Regel des Systems (R-33), nicht mehr ein
+  // eigener Blick in den Graphen. Er gilt in jedem Arbeitsschritt — ohne System gibt es keine Analyse —,
+  // deshalb aus dem Kern-Fokus des Snapshots gelesen, nicht aus dem des Tasks.
+  if (snap.focus.some((v) => v.rule_id === SEED_RULE.sys)) {
     if (!effectiveIntent) {
       // Runde-1-Frage (CR-GC-295): das Zielprofil beim Menschen erfragen, nicht
       // das Modell beim Handoff raten lassen. Optional, nie blockierend — ein
@@ -668,44 +701,6 @@ function stepCore(
     };
   }
 
-  // --- Seed-Stufen 2 und 3 (CR-GC-559) -------------------------------------
-  // Greifen NUR, solange keine Struktur existiert: ein importierter oder reifer
-  // Graph ohne ACTOR darf nicht in den Kaltstart zurückfallen — dort melden
-  // UC-02/R-16/FC-04 dasselbe auf dem expand-Pfad, und der Regler misst.
-  const strukturBegonnen = og.elements.some((e) => e.type === 'FUNC' || e.type === 'MOD');
-  if (!strukturBegonnen && task === 'kern') {
-    const seedRumpf = (prompt: string, stufe: keyof typeof SEED_STAGES): Omit<GenerationStep, 'skill'> => ({
-      phase: 'seed',
-      done: false,
-      prompt: prompt + gateProtocol,
-      readiness,
-      threshold,
-      blockingErrors,
-      focusKey: null,
-      focusTypes: [...SEED_STAGES[stufe]],
-      focusDimension: `seed:${stufe}`,
-    });
-    if (!og.elements.some((e) => e.type === 'UC')) {
-      return seedRumpf(
-        `Intention: "${effectiveIntent}". Die SYS-Wurzel steht. Destilliere daraus 3–7 UCs ` +
-          '(je Actor–Verb–Objekt–Ergebnis, ≤25 Wörter) und hänge jeden mit SYS compose UC an die Wurzel. ' +
-          'Nur UCs — ACTORs und Struktur folgen als eigene Schritte. ',
-        'uc',
-      );
-    }
-    if (!og.elements.some((e) => e.type === 'ACTOR')) {
-      return seedRumpf(
-        `Intention: "${effectiveIntent}". SYS und die Use Cases stehen. Bestimme jetzt das MINIMUM ` +
-          'distinkter ACTORs, das die Systemgrenze eindeutig macht: je UC einen Auslöser und einen ' +
-          'Empfänger des Ergebnisses, dann zusammenfassen, was gleich über die Grenze geht. ' +
-          'Emittiere die ACTORs als BLOSSE Knoten ohne Kanten — die einzige legale Anbindung ist ' +
-          'ACTOR io→FLOW io→FUNC, und FLOWs/FUNCs gibt es noch nicht. R-16 (Actor ohne io) ist danach ' +
-          'der richtige Zustand und schliesst sich mit der Struktur von selbst. ',
-        'actor',
-      );
-    }
-  }
-
   // Intent-Coverage-Zeile (CR-GC-295): unadressierte Anker steuern JEDE Runde,
   // nicht nur Runde 1 — KPI/Read-out, nie ein Gate-Blocker oder Handoff-Veto.
   const anchors = profile?.profile.intentAnchors ?? [];
@@ -722,18 +717,19 @@ function stepCore(
       ? `Noch nirgends beschrieben: ${unaddressed.join(', ')}. Fehlt dazu ein Use Case oder Requirement? `
       : '';
 
-  // --- Phase expand: niedrigste Dimension mit handlungsfähigen Funden ------
-  // Fund-Rotation (CR-GC-281): Kandidaten = 3er-Fenster der deterministisch
-  // sortierten Violations je Dimension (schwächste zuerst). Fenster, deren
-  // focusKey in `defer` liegt, werden übersprungen — erst innerhalb der
-  // Dimension, dann die nächstschwächere. Alles deferred ⇒ defer ignorieren.
-  // Nicht messbar (null) rankt OBEN: ein naiver Komparator ergäbe NaN und sortierte gar nicht.
+  // --- Phase expand: das frueheste Fenster in der Reihenfolge der Stufen ----
+  // CR-GC-749: die REGEL wird nach ihrer Stufe gewaehlt (contracts `ALL_RULE_DEFS[].stage`), frueheste
+  // zuerst; in einer Stufe steht die Existenz-Regel vorn — sie verlangt die Menge, ueber die die
+  // uebrigen Regeln der Stufe urteilen. Darunter gilt die bisherige Ordnung unveraendert: schwaechste
+  // Dimension, Schwere, Klausel, Regel-ID. Vorher stand die Dimension an erster Stelle; der Schritt
+  // sprang damit zwischen den Stufen (gemessen am Referenzlauf lokal: 3, 2, 7, 7, 6, 8, 10).
+  // Fund-Rotation (CR-GC-281): Kandidaten = 3er-Fenster je Regel. Fenster, deren focusKey in `defer`
+  // liegt, werden uebersprungen. Alles zurueckgestellt ⇒ stalled (CR-GC-596).
   // CR-GC-593: die Dimensionen kommen aus der FOKUSMENGE, nicht aus `report.scores` — dort
   // faellt eine Dimension mit `applicable = 0` weg, auch wenn eine graphweite Regel in ihr
   // feuert (AF-05 → `ms` ohne MS-Element: unsichtbar, und die Maschine waere "done" mit
   // einem offenen Fund). Score und Fundzahl der Dimension liefert der Bericht weiterhin.
-  // Score nur, wo die Dimension Elemente hat: bei `applicable = 0` liefert der Bericht 0, nicht
-  // null — und 0 rangierte VOR jeder echten schwachen Dimension.
+  // Score nur, wo die Dimension Elemente hat (`applicable > 0`) — sonst „nicht messbar".
   const scoreOf = (d: string): number | null => {
     const rep = report.scores.find((s) => s.dimension === d);
     return rep && rep.applicable > 0 ? rep.score : null;
@@ -765,34 +761,13 @@ function stepCore(
   // Ordnung nur nebenbei; was sie wirklich stellt, ist die ANWEISUNG: eine Regel mit Klausel
   // (RULE_CLAUSE — UC-01, UC-02, R-15) baut Struktur, die andere Funde erst erreichbar macht,
   // und kommt innerhalb einer Schwere vor einer Regel, die nur einen Fund meldet.
-  const klauselRang = (v: (typeof violations)[number]): number => (v.rule_id in RULE_CLAUSE ? 0 : 1);
-  const violationsOf = (dimension: string): typeof violations =>
-    violations
-      .filter((v) => RULE_TO_DIMENSION[v.rule_id] === dimension)
-      .sort(
-        (a, b) =>
-          severityRang(a) - severityRang(b) ||
-          klauselRang(a) - klauselRang(b) ||
-          a.rule_id.localeCompare(b.rule_id) ||
-          a.element_id.localeCompare(b.element_id),
-      );
+  const klauselRang = (ruleId: string): number => (ruleId in RULE_CLAUSE ? 0 : 1);
   // Fund-Fenster (CR-GC-290): 3er-Fenster je rule_id-Gruppe, nie regelübergreifend
   // gemischt — sonst verschränken sich z.B. FCHAIN-Erzeugung (R-15) und
   // UC-Population (UC-01) über Runden hinweg statt sich sauber abzuschließen.
-  const windowsOf = (vs: typeof violations): (typeof violations)[] => {
-    const byRule = new Map<string, typeof violations>();
-    for (const v of vs) {
-      const list = byRule.get(v.rule_id);
-      if (list) list.push(v);
-      else byRule.set(v.rule_id, [v]);
-    }
-    const windows: (typeof violations)[] = [];
-    for (const list of byRule.values()) {
-      for (let i = 0; i < list.length; i += 3) windows.push(list.slice(i, i + 3));
-    }
-    return windows;
-  };
-  // rule_id im Key (CR-GC-290): windowsOf liefert nie regelgemischte Fenster mehr,
+  const fundeVon = (ruleId: string): typeof violations =>
+    violations.filter((v) => v.rule_id === ruleId).sort((a, b) => a.element_id.localeCompare(b.element_id));
+  // rule_id im Key (CR-GC-290): ein Fenster traegt genau eine Regel,
   // also identifiziert (dimension, rule_id, element_ids) das Fund-Set eindeutig —
   // ohne rule_id würden zwei Fenster über dieselben Elemente, aber verschiedene
   // Regeln, auf denselben Key kollabieren.
@@ -809,38 +784,89 @@ function stepCore(
   // verlangt die Analyse, nicht einen Modellzug des Executors. Die Rolle steht am Katalog.
   const eintrittImTreiber = (key: string): boolean =>
     selection === 'driver' && task === 'kern' && (TASK_OF_ENTRY.has(key.split(':')[1] ?? '') || istAnalyse(key.split(':')[1] ?? ''));
-  // CR-GC-593: nur Dimensionen, die in der FOKUSMENGE Fenster haben — `report.scores` zaehlt
-  // alle Regeln, die Fokusmenge nicht. Ohne diese Trennung stuende eine Dimension "mit Funden"
-  // da, fuer die es nichts zu tun gibt: genau der Zustand, den die Invariante ausschliesst.
   // CR-GC-603: in einem Task steht der Eintritt (das fehlende Artefakt) VOR den Regeln des Tasks —
-  // ausdruecklich, nicht per Dimensionsreihenfolge: in welcher Dimension die Regeln eines Tasks
-  // liegen, ist Sache des Katalogs und wandert mit ihm.
+  // ausdruecklich, nicht ueber Stufe oder Dimension: wo die Regeln eines Tasks liegen, ist Sache des
+  // Katalogs und wandert mit ihm.
   const eintritt = task !== 'kern' ? TASK_ENTRY[task] : null;
-  const traegtEintritt = (w: typeof violations): boolean => !!eintritt && w[0]?.rule_id === eintritt;
-  const kandidaten = dims
-    .map((s) => ({ s, windows: windowsOf(violationsOf(s.dimension as string)) }))
-    .filter((k) => k.windows.length > 0)
-    .map((k) => ({ ...k, windows: [...k.windows].sort((a, b) => Number(traegtEintritt(b)) - Number(traegtEintritt(a))) }))
-    .sort((a, b) => Number(a.windows.some(traegtEintritt) ? 0 : 1) - Number(b.windows.some(traegtEintritt) ? 0 : 1));
-  let focus: (typeof dims)[number] | undefined;
-  let focusViolations: typeof violations = [];
-  let focusKey: string | null = null;
-  outer: for (const k of kandidaten) {
-    for (const window of k.windows) {
-      const key = keyOf(k.s.dimension as string, window);
-      if (!deferSet.has(key) && !eintrittImTreiber(key)) {
-        focus = k.s;
-        focusViolations = window;
-        focusKey = key;
-        break outer;
-      }
+  const dimRang = new Map(dims.map((d, i) => [d.dimension, i]));
+  const existenzRang = (ruleId: string): number => (REGEL.get(ruleId)?.role === 'existence' ? 0 : 1);
+  const schwereVon = (ruleId: string): number => Math.min(...violations.filter((v) => v.rule_id === ruleId).map(severityRang));
+  // Nur Regeln mit Dimension (CR-GC-593): sie traegt Vorschlagstext und Fokus-Typen des Fensters.
+  const regeln = [...new Set(violations.map((v) => v.rule_id))]
+    .filter((id) => dimOf(id) !== undefined)
+    .sort(
+      (a, b) =>
+        Number(b === eintritt) - Number(a === eintritt) ||
+        stufenRang(a) - stufenRang(b) ||
+        existenzRang(a) - existenzRang(b) ||
+        dimRang.get(dimOf(a)!)! - dimRang.get(dimOf(b)!)! ||
+        schwereVon(a) - schwereVon(b) ||
+        klauselRang(a) - klauselRang(b) ||
+        a.localeCompare(b),
+    );
+  const kandidaten = regeln.flatMap((ruleId) => {
+    const funde = fundeVon(ruleId);
+    const dim = dims[dimRang.get(dimOf(ruleId)!)!]!;
+    const fenster: { dim: (typeof dims)[number]; funde: typeof violations; key: string }[] = [];
+    for (let i = 0; i < funde.length; i += 3) {
+      const teil = funde.slice(i, i + 3);
+      fenster.push({ dim, funde: teil, key: keyOf(dim.dimension, teil) });
+    }
+    return fenster;
+  });
+  const gewaehlt = kandidaten.find((k) => !deferSet.has(k.key) && !eintrittImTreiber(k.key));
+  const focus = gewaehlt?.dim;
+  const focusViolations: typeof violations = gewaehlt?.funde ?? [];
+  const focusKey: string | null = gewaehlt?.key ?? null;
+
+  // --- Kaltstart-Stufen 2 und 3 (CR-GC-559, Ausloeser seit CR-GC-749 aus der Regel) ------------
+  // Stellt die Existenz-Regel des Systems (R-17) bzw. des Akteurs (UC-02) das Fenster und hat die
+  // Struktur noch nicht begonnen, bekommt der Agent die Kaltstart-Fassung: die Stufe in EINEM
+  // eigenen Schritt, mit den gemessenen Texten. Mit begonnener Struktur (FUNC oder MOD — ein
+  // importierter oder reifer Graph) stellt dieselbe Regel ihr gewoehnliches Fenster: dort ist es
+  // Rueckwaerts-Spezifikation, kein Kaltstart, und der Regler misst.
+  const strukturBegonnen = og.elements.some((e) => e.type === 'FUNC' || e.type === 'MOD');
+  if (task === 'kern' && !strukturBegonnen && gewaehlt) {
+    const seedRumpf = (prompt: string, stufe: keyof typeof SEED_STAGES): Omit<GenerationStep, 'skill'> => ({
+      phase: 'seed',
+      done: false,
+      prompt: prompt + gateProtocol,
+      readiness,
+      threshold,
+      blockingErrors,
+      focusKey: null,
+      focusTypes: [...SEED_STAGES[stufe]],
+      focusDimension: `seed:${stufe}`,
+    });
+    const regel = windowRuleOf(gewaehlt.funde);
+    if (regel === SEED_RULE.uc) {
+      return seedRumpf(
+        `Intention: "${effectiveIntent}". Die SYS-Wurzel steht. Destilliere daraus 3–7 UCs ` +
+          '(je Actor–Verb–Objekt–Ergebnis, ≤25 Wörter) und hänge jeden mit SYS compose UC an die Wurzel. ' +
+          'Nur UCs — ACTORs und Struktur folgen als eigene Schritte. ',
+        'uc',
+      );
+    }
+    // Die Akteur-Stufe ist die Fassung von UC-02 fuer einen Bestand OHNE Akteur: erst die blossen
+    // Knoten, die Anbindung folgt mit der Struktur. Gibt es Akteure, gilt die Klausel der Regel
+    // (`RULE_CLAUSE['UC-02']`) — sie liest den Bestand auf dieselbe Weise.
+    if (regel === SEED_RULE.actor && !og.elements.some((e) => e.type === 'ACTOR')) {
+      return seedRumpf(
+        `Intention: "${effectiveIntent}". SYS und die Use Cases stehen. Bestimme jetzt das MINIMUM ` +
+          'distinkter ACTORs, das die Systemgrenze eindeutig macht: je UC einen Auslöser und einen ' +
+          'Empfänger des Ergebnisses, dann zusammenfassen, was gleich über die Grenze geht. ' +
+          'Emittiere die ACTORs als BLOSSE Knoten ohne Kanten — die einzige legale Anbindung ist ' +
+          'ACTOR io→FLOW io→FUNC, und FLOWs/FUNCs gibt es noch nicht. R-16 (Actor ohne io) ist danach ' +
+          'der richtige Zustand und schliesst sich mit der Struktur von selbst. ',
+        'actor',
+      );
     }
   }
   if (!focus && kandidaten.length > 0) {
     // CR-GC-596: alle offenen Funde sind zurueckgestellt. Frueher: "Zurueckstellung ignorieren,
     // wiederholen" — genau dort entstand die Schleife (Lauf 11: R-04 sechsmal). `done` waere
     // derselbe Ausweg, den die Abnahme-Politik verschliesst. Also ein eigener Endzustand.
-    const offen = kandidaten.flatMap((k) => k.windows.map((w) => keyOf(k.s.dimension as string, w)));
+    const offen = kandidaten.map((k) => k.key);
     const liste = `(${offen.length}): ${offen.join('; ')}. `;
     // CR-GC-604: wohin es weitergeht, haengt davon ab, WO die Maschine festsitzt. Im Task: zurueck in den
     // Kern (Task-Regeln sind Warnungen, opus5-14: CR-R03 im Plan). Im Kern mit offenem Eintrittspunkt
@@ -1010,7 +1036,7 @@ function stepCore(
     // graph_generate und einen Skill, beides hat der Executor nicht. Die Klausel sagt, was zu tun ist.
     prompt: taskKlausel
       ? `${taskVorsatz}Intention: "${effectiveIntent}". ${template} ${gateProtocol}`
-      : `${taskVorsatz}Intention: "${effectiveIntent}". ${coverageLine}${abnahmeHinweis}Schwächste Dimension: ${focus!.dimension}. ` +
+      : `${taskVorsatz}Intention: "${effectiveIntent}". ${coverageLine}${abnahmeHinweis}Stufe: ${stufenName(focusViolations[0]!.rule_id)}. ` +
         `Funde: ${funde}. ${template} ${gateProtocol}`,
     readiness,
     threshold,

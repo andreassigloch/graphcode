@@ -367,10 +367,16 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
       return cmds;
     }
 
-    // A FLOW with no data contract.
+    // A FLOW with no data contract. Since contracts 9 that is grammar (R-18, the lower bound of
+    // `FLOW -relation-> SCHEMA`), since contracts 11 also the existence rule of the schema stage
+    // (R-34). CR-GC-749: the step orders by stage, and a grammar error holds every stage — so the
+    // actuator needs this repair before it can do anything else. Only FLOWs get a contract; an R-18
+    // finding at another element has no canonical repair and is left to stop the run by name.
+    case 'R-18':
+    case 'R-34':
     case 'SC-02':
     case 'SC-04':
-      for (const flow of elementIds) {
+      for (const flow of elementIds.filter((id) => id.startsWith('FLOW-'))) {
         const schema = `SCHEMA-${flow}-${seq}`;
         cmds.push(
           node(schema, 'SCHEMA', `Shape of ${flow}`, `The data contract carried by ${flow}.`, {
@@ -459,6 +465,12 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
       for (const chain of elementIds) {
         for (const fn of ['FUNC-parse', 'FUNC-render']) cmds.push(edge(chain, 'compose', fn));
       }
+      return cmds;
+
+    // A function that belongs to no scenario chain — hang it off the review chain as a step.
+    // (CR-GC-749: at stage 5 this comes up before R-21; without it the run stops there.)
+    case 'R-30':
+      for (const fn of elementIds) cmds.push(edge('FCHAIN-review', 'compose', fn));
       return cmds;
 
     // A scenario chain with no entry/exit flow to the outside world.

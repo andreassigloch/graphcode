@@ -202,6 +202,11 @@ export const EXCLUDED = {
     'Task-Modus der Zustandsmaschine (CR-GC-601). Der Treffer ist das GOLDEN EINES RIG-KORPUS, nie\n' +
     'graphcodes eigene SSOT. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an\n' +
     'der Eigentuemer-Spalte oder am Task-Fokus sehr wohl.',
+  'tests/generate.stufen.test.ts':
+    'Eigenschaftstest der Fensterwahl nach Stufe und des Kaltstarts aus den Existenz-Regeln (CR-GC-749).\n' +
+    'Der Treffer ist das GOLDEN EINES RIG-KORPUS und die Referenzlaeufe unter rig/aufgaben/, nie graphcodes\n' +
+    'eigene SSOT. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an der Fensterwahl\n' +
+    'oder an Stufe und Rolle im Regelkatalog sehr wohl.',
   'tests/generate.statemachine.test.ts':
     'Eigenschaftstest der Zustandsmaschine (CR-GC-593). Der Treffer ist das GOLDEN EINES RIG-KORPUS\n' +
     'und die Referenzlaeufe unter rig/aufgaben/, nie graphcodes eigene SSOT: geprueft wird done ⇔ kein Fokus\n' +

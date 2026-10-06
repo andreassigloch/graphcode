@@ -48,6 +48,21 @@ const g = (nodes: unknown[], edges: unknown[]): Graph => ({ nodes, edges }) as G
 
 const EMPTY = g([], []);
 
+/**
+ * Der Schritt, dessen Fenster die genannte Regel stellt — fruehere Fenster werden zurueckgestellt.
+ * CR-GC-749: welche Regel ZUERST kommt, bestimmt die Stufe am Katalog; die Faelle hier pruefen, was
+ * ein Fenster einer bestimmten Regel traegt, und haengen deshalb nicht an der Reihenfolge.
+ */
+function bisRegel(graph: Graph, regel: string): ReturnType<typeof generationStep> {
+  const defer: string[] = [];
+  let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, defer);
+  while (step.focusKey && step.focusKey.split(':')[1] !== regel && defer.length < 200) {
+    defer.push(step.focusKey);
+    step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, defer);
+  }
+  return step;
+}
+
 /** Stufe einer Regel, aus dem Katalog gelesen — `immer` zaehlt als 0. */
 const stufeVon = (ruleId: string): number => {
   const st = ALL_RULE_DEFS.find((r) => r.id === ruleId)?.stage;
@@ -83,7 +98,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.prompt).toContain('Noch keine ACTORs, keine UCs');
   });
 
-  it('SYS mit Defiziten → expand fokussiert die schwächste Dimension mit konkreten Funden', () => {
+  it('SYS mit Defiziten → expand stellt ein Fenster mit konkreten Funden', () => {
     const graph = g(
       [
         node('SYS-shop', 'SYS', 'shop', INTENT),
@@ -965,6 +980,9 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
   // entstand. CR-GC-563 loeste das ueber die Schwere (UC-02 war error); seit CR-SM-353 sind
   // UC-01/UC-02 Warnungen, und die Ordnung haengt an der KLAUSEL (RULE_CLAUSE): eine Regel mit
   // Bauanweisung kommt vor einer, die nur meldet. Der Fund, der zuerst drankommt, bestimmt die Struktur.
+  // CR-GC-749: ueber der Klausel steht jetzt die STUFE der Regel (contracts 11). UC-02 und FC-02 liegen an
+  // derselben Stufe — dort entscheidet weiter die Klausel (und UC-02 ist die Existenz-Regel der Stufe);
+  // UC-01 liegt eine Stufe spaeter und kommt deshalb nach FC-02.
   const lauf4 = g(
     [
       node('SYS-sig', 'SYS', 'SIG Local', 'Lokale LLM-Kapazitaet im internen Netz.'),
@@ -986,28 +1004,30 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
   it('das erste Fenster traegt eine Klausel-Regel, obwohl FC-02 alphabetisch vorne stuende', () => {
     const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
-    // Klausel: UC-01, UC-02 · ohne: FC-02, R-15, R-16, UC-03.
+    // Klausel: UC-01, UC-02 · ohne: FC-02, R-16, UC-03.
     // Alphabetisch gewaenne FC-02 — genau das ist in Rig-Lauf 4 passiert.
     expect(['UC-01', 'UC-02'], `erstes Fenster war ${regelVon(step.focusKey)}`).toContain(
       regelVon(step.focusKey),
     );
   });
 
-  it('erst wenn KEIN Klausel-Fenster mehr offen ist, kommt der erste blosse Fund', () => {
+  it('in einer Stufe kommt die Klausel-Regel vor dem blossen Fund — FC-02 nie vor UC-02', () => {
     const gesehen: string[] = [];
     const keys: string[] = [];
     let step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
-    for (let i = 0; i < 6 && step.focusKey && !keys.includes(step.focusKey); i++) {
+    for (let i = 0; i < 12 && step.focusKey && !keys.includes(step.focusKey); i++) {
       gesehen.push(regelVon(step.focusKey));
       keys.push(step.focusKey);
       step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
     }
-    const ersteWarnung = gesehen.findIndex((r) => !['UC-01', 'UC-02'].includes(r));
-    expect(ersteWarnung, `Reihenfolge war ${gesehen.join(' → ')}`).toBeGreaterThan(0);
-    // Vor dem ersten blossen Fund stehen ausschliesslich Klausel-Regeln.
-    expect(gesehen.slice(0, ersteWarnung).every((r) => ['UC-01', 'UC-02'].includes(r))).toBe(true);
-    // Und innerhalb eines Rangs bleibt es alphabetisch (Determinismus, CR-GC-290).
-    expect(gesehen[ersteWarnung]).toBe('FC-02');
+    const folge = gesehen.join(' → ');
+    expect(gesehen, folge).toContain('UC-02');
+    expect(gesehen, folge).toContain('FC-02');
+    expect(stufeVon('UC-02')).toBe(stufeVon('FC-02')); // dieselbe Stufe — sonst prueft der Fall nichts
+    expect(gesehen.indexOf('UC-02'), folge).toBeLessThan(gesehen.indexOf('FC-02'));
+    // Ueber die Stufen hinweg entscheidet die Stufe: die Folge ist nach ihr geordnet.
+    const stufen = gesehen.map(stufeVon);
+    expect(stufen, folge).toEqual([...stufen].sort((a, b) => a - b));
   });
 
   it('zweimal derselbe Graph ⇒ derselbe focusKey', () => {
@@ -1046,7 +1066,7 @@ describe('CR-GC-564: die Regel-Klausel IST die Anweisung', () => {
   );
 
   it('UC-01 verlangt REQ — und NICHT die ACTOR/FCHAIN/UC-Aufzählung der Dimension', () => {
-    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = bisRegel(ohneReq, 'UC-01');
     expect((step.focusKey as string).split(':')[1]).toBe('UC-01');
     expect(step.prompt).toContain('REQ-Kandidaten');
     expect(step.prompt).toContain('UC compose→REQ');
@@ -1057,9 +1077,7 @@ describe('CR-GC-564: die Regel-Klausel IST die Anweisung', () => {
   });
 
   it('UC-02 schreibt den legalen Pfad aus — R-18 hat ihn zwei Runden gekostet', () => {
-    // UC-01 zurückstellen, dann ist UC-02 das nächste Fehler-Fenster.
-    const erst = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
-    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, [erst.focusKey as string]);
+    const step = bisRegel(ohneReq, 'UC-02');
     expect((step.focusKey as string).split(':')[1]).toBe('UC-02');
     expect(step.prompt).toContain('ACTOR io→FLOW io→FUNC');
     expect(step.prompt).toContain('R-18');
@@ -1096,15 +1114,14 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
   );
 
   it('UC-01 trägt REQ und TEST im Fokus — die Klausel verlangt beide', () => {
-    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = bisRegel(ohneReq, 'UC-01');
     expect((step.focusKey as string).split(':')[1]).toBe('UC-01');
     expect(step.focusTypes).toContain('REQ');
     expect(step.focusTypes).toContain('TEST');
   });
 
   it('UC-02 trägt FLOW im Fokus — ohne FLOW ist der legale Pfad nicht beschreibbar', () => {
-    const erst = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
-    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, [erst.focusKey as string]);
+    const step = bisRegel(ohneReq, 'UC-02');
     expect((step.focusKey as string).split(':')[1]).toBe('UC-02');
     expect(step.focusTypes).toContain('FLOW');
   });
@@ -1198,14 +1215,13 @@ describe('CR-GC-655: die Anleitung folgt dem Gewinner, nicht der Dimension', () 
   );
 
   it('UC-01 nennt se:author-req (die Arbeit ist REQ-Autorieren), nicht se:author-uc', () => {
-    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = bisRegel(ohneReq, 'UC-01');
     expect((step.focusKey as string).split(':')[1]).toBe('UC-01');
     expect(step.skill).toBe('se:author-req');
   });
 
   it('UC-02 nennt KEINEN Skill — die Klausel beschreibt den ACTOR-Pfad selbst', () => {
-    const erst = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
-    const step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, [erst.focusKey as string]);
+    const step = bisRegel(ohneReq, 'UC-02');
     expect((step.focusKey as string).split(':')[1]).toBe('UC-02');
     expect(step.skill).toBeNull();
   });

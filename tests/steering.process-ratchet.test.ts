@@ -167,15 +167,21 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
      * Gegenstand des Tests irgendetwas passiert waere.
      *
      * Zugesichert wird stattdessen, was die Scope-Notiz oben verspricht: der Lauf faellt nie
-     * zurueck, er macht netto Fortschritt, und wo er endet, endet er NAMENTLICH — an R-21, fuer
-     * die der Scriptor bewusst keine kanonische Reparatur hat. Das ist kein Loch im Scriptor:
-     * CR-SM-334 fuehrt Zweig 3 (Befund am Sender-FUNC, keine gemeinsame Kette) ausdruecklich als
-     * NICHT-Operator — eine mechanische Kante waere dort ein Test, wo die Modellierung fehlt.
+     * zurueck, er macht netto Fortschritt, und wo er endet, endet er NAMENTLICH — an einer Regel,
+     * fuer die der Scriptor bewusst keine kanonische Reparatur hat.
+     *
+     * CR-GC-749: bis hierher war das R-21 (CR-SM-334 fuehrt Zweig 3 ausdruecklich als
+     * NICHT-Operator). Seit der Schritt nach Stufe waehlt, kommt der Lauf zuerst an die Stufe
+     * „Datenfluss": R-31 verlangt, dass eine Funktion verdrahtet ist (Eingang und Ausgang). Welcher
+     * Datenfluss das ist, ist Modellierung — eine mechanische FLOW-Kante waere dort dasselbe wie bei
+     * R-21: ein Test, wo die Modellierung fehlt. R-21 (Stufe „Test") erreicht der Lauf nicht mehr.
+     * Davor liegen, in dieser Reihenfolge: R-18 (der Datenfluss ohne Vertrag — ein Fehler, er steht
+     * vor jeder Stufe), UC-02, R-02, R-30.
      */
     expect(trace.length).toBeGreaterThan(1);
     const last = trace[trace.length - 1];
     expect(last.applied, `Lauf endete an ${last.ruleId}, aber mit angewandtem Batch`).toBe(false);
-    expect(last.ruleId, 'der Scriptor lief an einer ANDEREN Regel aus — entscheiden, nicht uebernehmen').toBe('R-21');
+    expect(last.ruleId, 'der Scriptor lief an einer ANDEREN Regel aus — entscheiden, nicht uebernehmen').toBe('R-31');
 
     for (let i = 1; i < trace.length; i++) {
       expect(trace[i].openRules, `open rules rose at round ${trace[i].round}`).toBeLessThanOrEqual(trace[i - 1].openRules);
@@ -183,10 +189,18 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
     }
 
     // Net progress, not merely "did not get worse" — measured on the open rules. Blocking errors
-    // are Gate-Schuld only since CR-SM-353 (UC-01/UC-02 are warnings now); the scripted actor
-    // never touches the fixture's one pre-existing error, so the count holds instead of falling.
+    // are Gate-Schuld only since CR-SM-353 (UC-01/UC-02 are warnings now). CR-GC-749: the fixture's
+    // one pre-existing error (the data flow without a contract) is now the FIRST thing the step
+    // asks for, so the count falls to zero instead of holding.
     expect(trace[trace.length - 1].openRules).toBeLessThan(trace[0].openRules);
-    expect(trace[trace.length - 1].blockingErrors).toBeLessThanOrEqual(trace[0].blockingErrors);
+    expect(trace[0].blockingErrors).toBeGreaterThan(0);
+    expect(trace[trace.length - 1].blockingErrors).toBe(0);
+    // And the rounds walk the stages forward — never an earlier one after a later one.
+    const stufen = trace.filter((r) => r.ruleId !== null).map((r) => {
+      const st = ALL_RULE_DEFS.find((d) => d.id === r.ruleId)!.stage;
+      return st === 'immer' ? 0 : st;
+    });
+    expect(stufen).toEqual([...stufen].sort((a, b) => a - b));
   });
 
   it('T-B3 — the driver does not circle: a focus set is revisited at most once, and never after it is deferred', async () => {

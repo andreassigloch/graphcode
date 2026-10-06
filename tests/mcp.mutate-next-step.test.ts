@@ -98,10 +98,17 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
 
   it('CR-GC-734: ein offener Eintrittspunkt — Auftrag, dann Frage nach dem Stand, dann der naechste Schritt', () => {
     // Handlauf todo-local v9: Kern fertig, AF-01..05 offen, kein Stempel. Vorher hiess es nach jedem Zug „ConOps".
-    type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown> }[]; traces: { source: string; target: string; type: string; label?: string }[] };
+    type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown>; [k: string]: unknown }[]; traces: { source: string; target: string; type: string; label?: string }[] };
     const flat: Flat = JSON.parse(readFileSync(fileURLToPath(new URL('./fixtures/todo-local-v9.graph.json', import.meta.url)), 'utf8'));
+    // CR-GC-749: der flache Export traegt Attribute (kinds, status …) auf der obersten Ebene. Ohne sie zu heben,
+    // fehlen jeder REQ die kinds, und R-18 meldet an jeder satisfy-Kante — „Kern fertig" stimmte dann nicht. Bis
+    // der Schritt nach Stufe waehlte, fiel das nicht auf: die Fehler standen in einer spaeteren Dimension.
+    const KNOWN = new Set(['id', 'type', 'name', 'description', 'attributes']);
     const graph = {
-      nodes: flat.elements.map((e) => ({ uid: e.id, type: e.type, name: e.name ?? e.id, description: e.description ?? '', attributes: e.attributes ?? {} })),
+      nodes: flat.elements.map((e) => ({
+        uid: e.id, type: e.type, name: e.name ?? e.id, description: e.description ?? '',
+        attributes: { ...(e.attributes ?? {}), ...Object.fromEntries(Object.entries(e).filter(([k]) => !KNOWN.has(k))) },
+      })),
       edges: flat.traces.map((t) => ({ sourceId: t.source, targetId: t.target, edgeType: t.type, attributes: t.label ? { label: t.label } : {} })),
     } as never;
     const memory = focusMemoryOf({});

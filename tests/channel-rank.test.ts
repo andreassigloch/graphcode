@@ -92,7 +92,12 @@ describe('die Ordnung wird angewandt, nicht ein zweites Mal entschieden (CR-GC-5
     // Vorbedingung der Aussage: dieses Fenster wird WIRKLICH von einer Regel mit Klausel
     // gestellt. Ohne diese Kontrolle prueft der Rest nichts.
     expect(klausel, `Fenster ${step.focusKey} stellt keine Klausel-Regel`).toBeTruthy();
-    expect(step.prompt).toContain(klausel.text(['UC-bestellen']));
+    // Die Klausel liest den Bestand (ITEM-2026-625: FCHAIN und ACTOR aus dem Graphen) — derselbe Ausschnitt wie im Schritt.
+    const bestand = {
+      elements: (GRAPH.nodes as { uid: string; type: string }[]).map((n) => ({ id: n.uid, type: n.type })),
+      traces: (GRAPH.edges as { sourceId: string; targetId: string; edgeType: string }[]).map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
+    };
+    expect(step.prompt).toContain(klausel.text(['UC-bestellen'], bestand));
     expect(step.focusTypes).toEqual([...klausel.types]);
     // Und die Dimensions-Vorlage (Rang 6) steht NICHT daneben — ein Imperativ je Runde.
     expect(step.prompt).not.toContain(GENERATION_TEMPLATE[dimension]);
