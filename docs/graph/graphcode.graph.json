@@ -3077,7 +3077,8 @@
       "type": "CR",
       "name": "Nachzug Regelkatalog 40 - die neun Entscheidungen zur Regelmatrix",
       "description": "docs/cr/done/CR-GC-753-nachzug-regelkatalog-40-entscheidungen-zur-regelmatrix.md",
-      "status": "done"
+      "status": "done",
+      "commitRef": "810d953"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -23590,5 +23591,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 621
+  "graphVersion": 622
 }
