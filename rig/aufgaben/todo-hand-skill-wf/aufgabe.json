@@ -1,5 +1,5 @@
 {
- "quelle": "Wie todo-hand-warnungsfrei, aber der Auftrag ist der Skill se:close-violations (v2, CR-GC-747) statt des handgeschriebenen Auftrags — misst den Skilltext. start.md trägt den Skill wörtlich (tests/rig-interaktiv.test.ts hält das fest).",
+ "quelle": "Wie todo-hand-warnungsfrei, aber der Auftrag ist der Skill se:close-violations (v3, CR-GC-750) statt des handgeschriebenen Auftrags — misst den Skilltext. start.md trägt den Skill wörtlich (tests/rig-interaktiv.test.ts hält das fest).",
  "sequenz": [
   "warnungsfrei"
  ],

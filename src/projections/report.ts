@@ -22,6 +22,8 @@ import {
   TRACE_PATTERNS,
   DIMENSION_READINESS_NAME,
   ReadinessDimension,
+  ALL_RULE_DEFS,
+  type RuleStage,
   type ReadinessScoreType,
   type ImportCoverage,
   type SteerSpaceType,
@@ -41,6 +43,7 @@ import {
 } from '../kernel/evaluation.js';
 import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../loop/target-profile.js';
+import { stufenRang } from '../loop/generate.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from './help.js';
 import { attributesFor, formatEExampleFor, type AttributeHint } from './authoring-example.js';
 import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
@@ -67,12 +70,36 @@ const detailField = z
   .describe(
     'full (Default): jedes Finding ungekürzt inkl. `context` (candidate_targets) — auf großen ' +
       'Modellen sehr groß. summary: ohne `context`, ein Eintrag je Verstoß. grouped: EINE Gruppe ' +
-      'je ruleId mit count, message, fixHint und bis zu 10 elementIds (`elementIdsOmitted` zählt ' +
-      'den Rest) — für die Übersicht; `total` bleibt die Zahl der Verstöße.',
+      'je ruleId mit stage, count, message, fixHint und bis zu 10 elementIds (`elementIdsOmitted` zählt ' +
+      'den Rest), in Arbeitsreihenfolge (Fehler, dann nach stage); `total` bleibt die Zahl der Verstöße.',
   );
 
 /** Die drei Projektionen EINER Ergebnisliste (CR-GC-398 + CR-GC-411). */
 type Detail = 'summary' | 'full' | 'grouped';
+
+/**
+ * Eine Gruppe mit der Stufe ihrer Regel (CR-GC-750) — `stage` aus `ALL_RULE_DEFS` (1–12 oder
+ * `'immer'`), fehlt bei einer Regel, die der Katalog nicht kennt.
+ */
+export type ViolationGroupWithStage = ViolationGroup & { stage?: RuleStage };
+const STAGE_OF = new Map(ALL_RULE_DEFS.map((r) => [r.id, r.stage]));
+const SCHWERE: Record<string, number> = { error: 0, warning: 1, info: 2 };
+
+/**
+ * Die Gruppen in ARBEITSREIHENFOLGE (CR-GC-750): Fehler zuerst (sie sperren jeden weiteren
+ * Schreibzug), dann nach Stufe — frueheste zuerst, derselbe Rang wie beim Schritt (`stufenRang`) —,
+ * in einer Stufe die haeufigste Regel (die Ordnung, in der `groupViolations` liefert; der Sort ist
+ * stabil). `se:close-violations` arbeitet die Liste so ab, wie sie kommt; die Reihenfolge stand dort
+ * als Prosa und wich damit vom Katalog ab, sobald eine Regel die Stufe wechselte.
+ */
+function inArbeitsreihenfolge(groups: ViolationGroup[]): ViolationGroupWithStage[] {
+  return groups
+    .map((g): ViolationGroupWithStage => {
+      const stage = STAGE_OF.get(g.ruleId);
+      return stage === undefined ? g : { ...g, stage };
+    })
+    .sort((a, b) => (SCHWERE[a.severity] ?? 3) - (SCHWERE[b.severity] ?? 3) || stufenRang(a.ruleId) - stufenRang(b.ruleId));
+}
 
 /** Default-Auflösung für Direktaufrufe des Handlers (Tests, In-Process) — dort
  *  läuft kein Zod-Parse, der den Schema-Default einsetzen würde. */
@@ -135,18 +162,18 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
    * Projektion der EINEN Ergebnisliste — nie eine zweite Erhebung (CR-GC-398).
    * `grouped` (CR-GC-411) delegiert an die SSOT-Aggregation aus
    * @sigloch/graphcode-client, dieselbe, die das gve-Dashboard rendert — kein
-   * zweiter Gruppierungspfad in der Familie.
+   * zweiter Gruppierungspfad in der Familie. Dazu je Gruppe die Stufe, in Arbeitsreihenfolge (CR-GC-750).
    */
-  const project = (findings: Finding[], detail: Detail): Finding[] | ViolationGroup[] => {
+  const project = (findings: Finding[], detail: Detail): Finding[] | ViolationGroupWithStage[] => {
     if (detail === 'full') return findings;
-    if (detail === 'grouped') return groupViolations(findings);
+    if (detail === 'grouped') return inArbeitsreihenfolge(groupViolations(findings));
     return stripViolationContext(findings);
   };
 
   const rules_evaluate: MCPTool<
     z.infer<typeof RulesEvaluateInputSchema>,
     {
-      violations: Finding[] | ViolationGroup[];
+      violations: Finding[] | ViolationGroupWithStage[];
       skipped: string[];
       notInGate: string[];
       importCoverage: ImportCoverage | null;
@@ -173,7 +200,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
 
   const rules_get_violations: MCPTool<
     z.infer<typeof RulesGetViolationsInputSchema>,
-    { violations: Finding[] | ViolationGroup[]; total: number; skipped: string[]; notInGate: string[]; umfang: Umfang }
+    { violations: Finding[] | ViolationGroupWithStage[]; total: number; skipped: string[]; notInGate: string[]; umfang: Umfang }
   > = {
     name: 'rules_get_violations',
     description:

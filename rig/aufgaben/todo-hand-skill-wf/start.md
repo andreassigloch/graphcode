@@ -5,12 +5,12 @@ Work the open findings of the live governed graph down to zero. graphcode comput
 
 ## The work list
 
-`rules_evaluate` `{ "detail": "grouped" }` — one group per rule: `count`, `message`, `fixHint`, `elementIds`. Read `skipped` as well: a rule that was not evaluated has not passed.
+`rules_evaluate` `{ "detail": "grouped" }` — one group per rule: `stage`, `count`, `message`, `fixHint`, `elementIds`. Read `skipped` as well: a rule that was not evaluated has not passed.
 
-Order:
+Order — the groups arrive in it, take them from the top:
 1. **Errors first** — they block every further write.
-2. **Then warnings, upstream before downstream**: system, use cases, requirements and chains before functions, flows and modules, those before schemas and tests. A fix upstream often clears findings downstream; the reverse never happens.
-3. Among rules of the same level: the one that fires most often.
+2. **Then by `stage`**, the number each group carries: the lowest first (`immer` = a rule over all elements, before stage 1). A fix at an early stage often clears findings at later ones; the reverse never happens.
+3. Within one stage: the rule that fires most often.
 
 **One rule per batch.** Fix the findings of one rule in one `graph_mutate` block, read the result, then take the next rule. A batch that mixes rules is harder to get through the gate and harder to repair when it is rejected.
 

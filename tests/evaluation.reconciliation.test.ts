@@ -154,11 +154,8 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
     expect(groups.length).toBeLessThan(grouped.total);
     expect(groups.reduce((a, g) => a + g.count, 0)).toBe(grouped.total);
 
-    // Jede Regel genau einmal, absteigend nach count.
+    // Jede Regel genau einmal.
     expect(new Set(groups.map((g) => g.ruleId)).size).toBe(groups.length);
-    expect([...groups].sort((a, b) => b.count - a.count).map((g) => g.ruleId)).toEqual(
-      groups.map((g) => g.ruleId),
-    );
 
     // Erst gruppieren, dann kappen: die Kappung ist benannt, nie still.
     for (const g of groups) {
@@ -170,7 +167,10 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
     // die SSOT-Funktion aus @sigloch/graphcode-client auf DERSELBEN Grundgesamtheit.
     // Ein lokaler Nachbau (und damit auch ein cap-then-count) würde hier abweichen;
     // das Verhalten über der Kappgrenze deckt die Unit-Suite des Pakets ab.
-    expect(groups).toEqual(groupViolations(evaluateAll(harness).findings));
+    // CR-GC-750: dazu traegt jede Gruppe die Stufe ihrer Regel, und die Reihenfolge ist die Arbeitsreihenfolge
+    // (naechster Fall) — verglichen wird deshalb ohne `stage` und ohne Reihenfolge.
+    const nachRegel = <T extends { ruleId: string }>(xs: T[]): T[] => [...xs].sort((a, b) => a.ruleId.localeCompare(b.ruleId));
+    expect(nachRegel(groups.map(({ stage: _stage, ...g }) => g))).toEqual(nachRegel(groupViolations(evaluateAll(harness).findings)));
 
     // Dieselbe Grundgesamtheit auch über rules_evaluate.
     const evaluated = await tools.rules_evaluate.handler({ detail: 'grouped' });
@@ -203,6 +203,29 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
     // CR-GC-489: die Quelle sagt sich regelfein an, nicht als Sammelbegriff.
     expect(degraded.skipped).toContain('rule:RC-01');
     expect(degraded.importCoverage).toBeNull();
+  });
+
+  // CR-GC-750: `se:close-violations` arbeitet die Gruppen in der Reihenfolge ab, in der sie kommen. Die
+  // Reihenfolge stand dort als Prosa („upstream before downstream"); jetzt liefert sie das Werkzeug, aus der
+  // Stufe der Regel am Katalog.
+  it('detail:"grouped" traegt je Gruppe die Stufe der Regel und kommt in Arbeitsreihenfolge: Fehler zuerst, dann nach Stufe, dann die haeufigste', async () => {
+    const { ALL_RULE_DEFS } = await import('@sigloch/contracts/se');
+    const def = new Map(ALL_RULE_DEFS.map((r) => [r.id, r]));
+    const groups = (await tools.rules_evaluate.handler({ detail: 'grouped' })).violations as Array<ViolationGroup & { stage?: number | 'immer' }>;
+    expect(groups.length).toBeGreaterThan(3);
+    for (const g of groups) expect(g.stage, g.ruleId).toBe(def.get(g.ruleId)?.stage);
+    const schwere = (g: ViolationGroup): number => (g.severity === 'error' ? 0 : g.severity === 'warning' ? 1 : 2);
+    const rang = (g: { stage?: number | 'immer' }): number => (g.stage === undefined ? 99 : g.stage === 'immer' ? 0 : g.stage);
+    for (let i = 1; i < groups.length; i++) {
+      const [a, b] = [groups[i - 1]!, groups[i]!];
+      const ordnung = schwere(a) - schwere(b) || rang(a) - rang(b) || b.count - a.count;
+      expect(ordnung, `${a.ruleId} (${a.severity}, Stufe ${a.stage}, ${a.count}×) vor ${b.ruleId} (${b.severity}, Stufe ${b.stage}, ${b.count}×)`).toBeLessThanOrEqual(0);
+    }
+    // Nicht leer geprueft: der Graph traegt Gruppen an mindestens drei verschiedenen Stufen.
+    expect(new Set(groups.map((g) => g.stage)).size).toBeGreaterThanOrEqual(3);
+    // Die anderen Detailstufen bleiben, wie sie sind — keine Stufe am einzelnen Befund.
+    const voll = (await tools.rules_evaluate.handler({ detail: 'summary' })).violations as Array<Record<string, unknown>>;
+    expect(voll.every((v) => !('stage' in v))).toBe(true);
   });
 
   it('Antwortgröße auf dem REALEN Graphen: grouped ≪ summary ≪ full', async () => {

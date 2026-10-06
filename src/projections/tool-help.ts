@@ -75,6 +75,8 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'der Quellbaum nicht messbar war). Eine feuernde Regel steht NIE in `skipped`.\n' +
       '• `notInGate` — Regeln, die der Gate-Katalog nicht führt (ND-*, RC-*). Sie können hier feuern, ' +
       'blockieren aber nie eine Mutation.\n' +
+      "Mit `detail:'grouped'` eine Gruppe je Regel, mit ihrer `stage` (1–12 oder `immer`) und in " +
+      'Arbeitsreihenfolge: Fehler zuerst, dann die früheste Stufe, in einer Stufe die häufigste Regel.\n' +
       '`importCoverage` nennt die Reichweite der RC-Auflösung. Ein Ergebnis ohne `skipped` zu lesen ' +
       'heißt, eine Zahl für vollständig zu halten, die es nicht ist.',
   },
