@@ -325,6 +325,10 @@ Nach der Umsetzung im Katalog (CR-SM-395), zweiter Durchgang:
 19. Hinweise halten keine Marke.
 20. Der Abgleich von Auftragsdatei und Modell (RC-07) gilt immer, unabhängig vom Bau.
 21. Die Betriebskonzept-Analyse (AF-01) liegt hinter den Anforderungen (Stufe 3).
+22. Der Abgleich der Modulgrenzen (RC-05) gilt immer, wie RC-07.
+23. Analysen hinterlassen keinen Bauauftrag. Betriebskonzept, Fehleranalyse und Annahmen-Review schreiben
+    Anforderungen mit Test; den Auftrag schneidet später der Bauplan. Nur der Variantenvergleich legt einen Auftrag
+    an, als Träger der Entscheidung (`decides`), und der eröffnet den Bau nicht.
 
 ## 9. Offen
 
