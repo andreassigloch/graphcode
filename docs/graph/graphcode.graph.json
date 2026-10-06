@@ -3081,6 +3081,14 @@
       "commitRef": "810d953"
     },
     {
+      "id": "CR-GC-754",
+      "type": "CR",
+      "name": "Nachzug Regelkatalog 41 - Analysen hinterlassen keinen Bauauftrag",
+      "description": "docs/cr/done/CR-GC-754-nachzug-regelkatalog-41-analysen-ohne-bauauftrag.md",
+      "status": "done",
+      "commitRef": "a1c7a56"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14889,6 +14897,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-754",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-754",
+      "target": "FUNC-task-abschluss",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23591,5 +23609,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 622
+  "graphVersion": 623
 }

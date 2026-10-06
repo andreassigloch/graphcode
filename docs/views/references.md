@@ -793,6 +793,8 @@
 | `CR-GC-752` | relation | `FUNC-se-plan` |
 | `CR-GC-753` | relation | `FUNC-generation-step` |
 | `CR-GC-753` | relation | `FUNC-score-completeness` |
+| `CR-GC-754` | relation | `FUNC-run-executor` |
+| `CR-GC-754` | relation | `FUNC-task-abschluss` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

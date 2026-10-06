@@ -420,6 +420,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-751` | done | rules_evaluate liefert die Arbeitsreihenfolge nach Stufe | `FUNC-evaluate-rules` |
 | `CR-GC-752` | done | Bauplan ohne Stempel - offene Auftraege sind das Ergebnis | `FUNC-run-executor` · `FUNC-se-plan` |
 | `CR-GC-753` | done | Nachzug Regelkatalog 40 - die neun Entscheidungen zur Regelmatrix | `FUNC-generation-step` · `FUNC-score-completeness` |
+| `CR-GC-754` | done | Nachzug Regelkatalog 41 - Analysen hinterlassen keinen Bauauftrag | `FUNC-run-executor` · `FUNC-task-abschluss` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
