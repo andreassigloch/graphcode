@@ -31,8 +31,8 @@ später festgelegt (`docs/graphcode_regelmatrix_entwurf.md` §6). Im Cockpit hä
 |---|---|---|---|
 | Referenzlauf | Opus | 1 Zug, warnungsfrei | 2 Züge, warnungsfrei |
 | Handlauf | Opus | 2 Züge, warnungsfrei | 1 Zug, warnungsfrei |
-| Referenzlauf | qwen | 3 Züge, warnungsfrei | siehe Nachtrag |
-| Handlauf | qwen | 2 Züge, warnungsfrei | siehe Nachtrag |
+| Referenzlauf | qwen | 3 Züge, 26 min, warnungsfrei | 2 Züge, 20 min, warnungsfrei |
+| Handlauf | qwen | 2 Züge, 24 min, warnungsfrei | 2 Züge, 23 min, warnungsfrei |
 
 Der Unterschied am Referenzlauf: Mit dem Skill fragt Opus, bevor er einen verwaisten Datenfluss löscht („Never: delete
 an element because a rule complains about it"), statt selbst zu entscheiden. Das kostet einen Zug und ist für den

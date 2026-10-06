@@ -9,8 +9,12 @@
 
 | Aufgabe | Arm | Modell | Stand (code · vorlage) | N | Züge | Sitzungen | Dauer je Zug Median (min) | Fragen Zug 1 | Mutationen + / − | PDR nach Zug | Dubletten | Blindurteil P ✓ · ~ · ✗ / O offen / erfunden / Dubl. / Noten |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
+| todo-hand-skill-wf | frontier | claude-opus-5-5 | 1a2502f+dirty · 511714e | 1 | 1 | 1 | 0.6 | 0 | 3 / 0 | 1 | 0 | — |
+| todo-hand-skill-wf | lokal | ollama/qwen3.8:27b-nvfp4 | b152035 · 511714e | 1 | 2 | 1 | 11.7 | 0 | 2 / 0 | 1 | 0 | — |
 | todo-hand-warnungsfrei | frontier | claude-opus-5-5 | 2b87961 · 511714e | 1 | 2 | 1 | 0.4 | 2 | 2 / 0 | 1 | 0 | — |
 | todo-hand-warnungsfrei | lokal | ollama/qwen3.8:27b-nvfp4 | 2b87961 · 511714e | 1 | 2 | 1 | 12.2 | 3 | 3 / 0 | 1 | 0 | — |
+| todo-skill-warnungsfrei | frontier | claude-opus-5-5 | 1a2502f+dirty · 511714e | 1 | 2 | 1 | 0.4 | 1 | 3 / 1 | 1 | 0 | — |
+| todo-skill-warnungsfrei | lokal | ollama/qwen3.8:27b-nvfp4 | 1a2502f+dirty · 511714e | 1 | 2 | 1 | 10.1 | 1 | 3 / 2 | 1 | 0 | — |
 | todo-warnungsfrei | frontier | claude-opus-5-5 | 2b87961 · 511714e | 1 | 1 | 1 | 0.8 | 0 | 1 / 0 | 1 | 0 | — |
 | todo-warnungsfrei | lokal | ollama/qwen3.8:27b-nvfp4 | 2b87961 · 511714e | 1 | 3 | 1 | 9.8 | 0 | 3 / 0 | 1 | 0 | — |
 | todo | frontier | claude-opus-5-5 | 533dc29 · 511714e | 3 | 10–12 | 4–7 | 0.5–0.6 | 7 | 10–12 / 1 | 10–12 | 0–4 | 11 · 0 · 0 / 1–4 / 2–9 / 3–6 / 16–18 |
@@ -42,5 +46,9 @@
 | 2026-10-05 | todo | lokal | 7 | ollama/qwen3.8:27b-nvfp4 | 533dc29 · 511714e | srr+pdr | 5 · 1 | 1.1 / 11.4 | 4 | 4 / 8 | 6 / 2 | 0 / 0 | 5 / 2 | 54 · 92 | 2 | R-18×6 IO-02×3 | 0/0 / 0 | 10 · 1 · 0 / 0 / 4 / 4 / 15 |
 | 2026-10-05 | todo | lokal | 8 | ollama/qwen3.8:27b-nvfp4 | 533dc29 · 511714e | srr+pdr | 5 · 1 | 1.9 / 12.4 | 6 | 2 / 10 | 4 / 2 | 0 / 0 | 5 / 2 | 44 · 77 | 0 | R-18×2 IO-02×1 | 0/0 / 0 | 9 · 2 · 0 / 0 / 2 / 0 / 17 |
 | 2026-10-05 | todo | lokal | 9 | ollama/qwen3.8:27b-nvfp4 | 533dc29 · 511714e | srr+pdr | 10 · 3 | 2.4 / 21.0 | 6 | 6 / 41 | 17 / 6 | 0 / 0 | 5 / 10 | 71 · 119 | 0 | R-18×12 IO-02×1 STRUCT×1 R-01×1 | 0/0 / 0 | 10 · 1 · 0 / 0 / 7 / 3 / 16 |
+| 2026-10-06 | todo-hand-skill-wf | frontier | 1 | claude-opus-5-5 | 1a2502f+dirty · 511714e | warnungsfrei | 1 · 1 | 0.6 / 0.6 | 0 | 14 / 14 | 3 / 0 | 0 / 0 | 1 / 1 | 54 · 100 | 0 | — | 0/0 / 0 | — |
+| 2026-10-06 | todo-hand-skill-wf | lokal | 1 | ollama/qwen3.8:27b-nvfp4 | b152035 · 511714e | warnungsfrei | 2 · 1 | 11.7 / 18.8 | 0 | 6.5 / 9 | 2 / 0 | 1 / 0 | 1 / 1 | 54 · 100 | 0 | — | 0/0 / 0 | — |
+| 2026-10-06 | todo-skill-warnungsfrei | frontier | 2 | claude-opus-5-5 | 1a2502f+dirty · 511714e | warnungsfrei | 2 · 1 | 0.4 / 0.7 | 1 | 6.5 / 10 | 3 / 1 | 0 / 0 | 1 / 1 | 38 · 59 | 0 | R-18×2 | 0/0 / 0 | — |
+| 2026-10-06 | todo-skill-warnungsfrei | lokal | 1 | ollama/qwen3.8:27b-nvfp4 | 1a2502f+dirty · 511714e | warnungsfrei | 2 · 1 | 10.1 / 19.0 | 1 | 11.5 / 19 | 3 / 2 | 0 / 0 | 1 / 1 | 38 · 57 | 0 | R-18×2 IO-02×1 | 0/0 / 0 | — |
 
 Reihe vom 2026-10-04 mit der alten Ende-Regel (Schnitt am ersten Analyse-Vorschlag): [messung-interaktiv-2026-10-04.md](../../docs/archive/messung-interaktiv-2026-10-04.md).
