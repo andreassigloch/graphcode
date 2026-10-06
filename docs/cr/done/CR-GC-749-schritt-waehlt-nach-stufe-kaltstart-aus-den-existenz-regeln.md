@@ -5,7 +5,7 @@
 **Erstellt:** 2026-10-06
 **Item:** bok/items/ITEM-2026-762.json (Lane: code)
 **Deckt:** sigloch-modules CR-SM-395 §6 (Nachzug graphcode), Entwurf `docs/graphcode_regelmatrix_entwurf.md` §1.3, §5, §8.3.
-**Schnitt:** Teil 2 von 3 (Teil 1: CR-GC-748, Teil 3: CR-GC-750). 8 Dateien: 1 Quelldatei, 1 Skript, 6 Testdateien.
+**Schnitt:** Teil 2 von 3 (Teil 1: CR-GC-748, Teil 3: CR-GC-750, 751, 752). 8 Dateien: 1 Quelldatei, 1 Skript, 6 Testdateien.
 
 ---
 

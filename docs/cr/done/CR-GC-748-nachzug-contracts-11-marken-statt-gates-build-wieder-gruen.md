@@ -7,8 +7,9 @@
 **Deckt:** sigloch-modules CR-SM-395 (Commits 9631a27..c34cbf5, unveröffentlicht) — `@sigloch/contracts` 11.0.0,
 `se-engine` 2.0.0, `graphcode-client` 2.0.0, `graph-api-core` 5.10.2. Entwurf: `docs/graphcode_regelmatrix_entwurf.md`.
 **Schnitt:** Teil 1 von 3. Dieser CR macht Build und Suite wieder grün (Exporte, Marken, Bericht, Hilfe, Panels,
-Rig). Teil 2 (CR-GC-749): der Schritt wählt nach Stufe, der Kaltstart kommt aus den Regeln. Teil 3 (CR-GC-750):
-Regelmatrix-Skript, Skills, Rig-Aufgaben. Baut zurück: CR-GC-745, CR-GC-746 (Gate-Zustand) und aus CR-GC-743/744
+Rig). Teil 2 (CR-GC-749): der Schritt wählt nach Stufe, der Kaltstart kommt aus den Regeln. Teil 3 in drei
+CRs: CR-GC-750 (Regelmatrix-Skript, Skilltexte), CR-GC-751 (Reihenfolge in `rules_evaluate`, Skill
+`se:close-violations`, Rig-Aufgaben), CR-GC-752 (Bauplan ohne Stempel). Baut zurück: CR-GC-745, CR-GC-746 (Gate-Zustand) und aus CR-GC-743/744
 die Leser von `ruleApplies`.
 
 ---
