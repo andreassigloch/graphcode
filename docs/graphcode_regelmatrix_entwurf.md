@@ -137,8 +137,8 @@ Die Spalte „Gate heute" steht nur zum Vergleich da.
 | Plan  | MS-03 | CR without milestone | CR | Hinweis |  | SRR | – |
 
 **Gelesen:**
-- **Das Gate lässt sich aus der Stufe ableiten.** Bei 61 der 67 Regeln mit Gate stimmt die Ableitung mit der heutigen
-  Handzuordnung überein. Die sechs Abweichungen (≠): FM-03, FC-04, FC-05, R-21, NFR-01, AF-05. Die zehn
+- **Das Gate lässt sich aus der Stufe ableiten.** Bei 53 der 59 Regeln, die heute ein Gate und im Entwurf eine Stufe haben,
+  stimmt die Ableitung mit der Handzuordnung überein. Die sechs Abweichungen (≠): FM-03, FC-04, FC-05, R-21, NFR-01, AF-05. Die zehn
   Abgleichregeln, die heute an keinem Gate hängen, bekommen über die Stufe eines.
 - **Fünf Regeln sind Fehler** und blockieren am Gate der Schreiboperation: R-08, R-18, R-01, IO-02, R-29. Daran ändert
   der Entwurf nichts.
