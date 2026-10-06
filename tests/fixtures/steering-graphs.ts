@@ -205,12 +205,15 @@ export const GATE_FIXTURE: FixtureGraph = {
   ],
 };
 
-/** The four (gate, rule, element) triples `GATE_FIXTURE` opens, in lifecycle order. */
+/**
+ * The four (rule, element) pairs `GATE_FIXTURE` opens. CR-GC-748: no mark is written here — which
+ * mark a rule lies before is `ALL_RULE_DEFS[].mark` (contracts), and a test that needs it reads it.
+ */
 export const GATE_FINDINGS = [
-  { gate: 'SRR', ruleId: 'R-16', elementId: 'ACTOR-auditor' },
-  { gate: 'PDR', ruleId: 'R-22', elementId: 'FUNC-audit' },
-  { gate: 'TRR', ruleId: 'R-26', elementId: 'SCHEMA-envelope' },
-  { gate: 'TRR', ruleId: 'R-01', elementId: 'REQ-audit-trail' },
+  { ruleId: 'R-16', elementId: 'ACTOR-auditor' },
+  { ruleId: 'R-22', elementId: 'FUNC-audit' },
+  { ruleId: 'R-26', elementId: 'SCHEMA-envelope' },
+  { ruleId: 'R-01', elementId: 'REQ-audit-trail' },
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -411,14 +414,22 @@ export function scriptedActor(focus: ParsedFocus, seq: number): unknown[] | null
     case 'AF-01':
     case 'AF-02':
     case 'AF-03':
-    case 'AF-04':
-    case 'AF-05': {
-      // All five stamps at once, on purpose: attribute merge is per TOP-LEVEL key,
-      // so writing `analysisFreshness: {implplan}` REPLACES the object and unstamps
+    case 'AF-04': {
+      // All four stamps at once, on purpose: attribute merge is per TOP-LEVEL key,
+      // so writing `analysisFreshness: {fmea}` REPLACES the object and unstamps
       // conops/trade — one rule cleared, two re-opened. Measured, not assumed.
       const stamps: Record<string, { graphVersion: number }> = {};
       for (const artifact of Object.values(AF_ARTIFACT)) stamps[artifact] = { graphVersion: seq + 1 };
       cmds.push({ op: 'update-node', node: { uid: 'SYS-steering', attributes: { analysisFreshness: stamps } } });
+      return cmds;
+    }
+
+    // CR-GC-748 (contracts 11): the build plan has no stamp. "There is unbuilt work but no open
+    // order" is closed by an open order — a CR with `status: open` that names its scope.
+    case 'AF-05': {
+      const cr = `CR-plan-${seq}`;
+      cmds.push({ op: 'add-node', node: { uid: cr, type: 'CR', name: 'Build order', description: 'Realize the open elements.', attributes: { status: 'open' } } });
+      cmds.push(edge(cr, 'relation', 'FUNC-render'));
       return cmds;
     }
 
@@ -474,5 +485,4 @@ const AF_ARTIFACT: Record<string, string> = {
   'AF-02': 'trade',
   'AF-03': 'assumption-review',
   'AF-04': 'fmea',
-  'AF-05': 'implplan',
 };

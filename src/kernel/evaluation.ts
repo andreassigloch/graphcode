@@ -57,7 +57,6 @@ import {
   getRuleDefsForProfile,
   ND_RULES,
   evaluateNDRules,
-  PHASE_READINESS_NAME,
   DIMENSION_READINESS_NAME,
 } from '@sigloch/contracts/se';
 import { conformanceEvaluation, toOntologyGraph, type ConformanceHarness } from './conformance.js';
@@ -211,7 +210,7 @@ export function ruleCatalogs(harness: Pick<EvaluationHarness, 'getLoadedRuleIds'
     gate: {
       catalog: 'SE_DESCRIPTOR.rules (@sigloch/graph-api-core) + CODE_CONFORMANCE_RULES',
       ruleCount: loaded.length,
-      fields: ['compliance', 'violations', 'violationsByRule', 'phaseGates', 'implGates', PHASE_READINESS_NAME],
+      fields: ['compliance', 'violations', 'violationsByRule', 'marks'],
     },
     steering: {
       catalog: 'ALL_RULE_DEFS (@sigloch/contracts/se) via evaluateAllRules',

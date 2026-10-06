@@ -7,6 +7,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { Mark } from '@sigloch/contracts/se';
 // @ts-expect-error — Auswertung ist .mjs ohne Typen
 import { kennzahlen, auditDelta } from '../auswertung/kennzahlen.mjs';
 // @ts-expect-error — s.o.
@@ -171,7 +172,7 @@ describe('auswerten: Datensatz, Upsert, jüngste Serie, Dokument', () => {
 describe('nachspielen: die Referenzläufe der Aufgabe todo', () => {
   // Der vorrätige Referenzlauf ist nur dann eine Referenz, wenn sein Audit durchs heutige Gate geht und denselben
   // Graphen ergibt wie `graph.json` — sonst ist er mit dem Regelkatalog gedriftet und muss getauscht werden.
-  it.each(['lokal', 'frontier'])('%s: Audit geht durchs Gate, ergibt den abgelegten Graphen, SRR und PDR bestanden', async (arm) => {
+  it.each(['lokal', 'frontier'])('%s: Audit geht durchs Gate, ergibt den abgelegten Graphen, SRR und PDR erreicht — das Ziel der Modellierstufe', async (arm) => {
     const ref = join(process.cwd(), 'rig', 'aufgaben', 'todo', 'referenz', arm);
     const abgelegt = JSON.parse(readFileSync(join(ref, 'graph.json'), 'utf8'));
     const lauf = JSON.parse(readFileSync(join(ref, 'lauf.json'), 'utf8'));
@@ -183,6 +184,16 @@ describe('nachspielen: die Referenzläufe der Aufgabe todo', () => {
     expect(r.flach.traces.length).toBe(abgelegt.traces.length);
     expect(r.gates.SRR).toBe(true);
     expect(r.gates.PDR).toBe(true);
+    // CR-GC-748: das Ende der Modellierstufe liest die Marken (graphcode-client 2). Es bleibt „SRR und PDR
+    // erreicht" — an beiden Referenzen meldet das Ziel wie vor dem Umbau.
+    expect(ZIEL.modellieren(r.gates)).toBe('srr+pdr');
+    // `gates` ist je Marke ein Boolean, gelesen aus `readiness.marks[].reached` — eine Quelle, kein zweiter Weg.
+    expect(r.gates).toEqual(Object.fromEntries(r.readiness.marks.map((m: { id: string; reached: boolean }) => [m.id, m.reached])));
+    expect(Object.keys(r.gates)).toEqual(Mark.options);
+    // Ein eingefrorener Lauf traegt je Zug dasselbe Feld: `kennzahlen.gateZug` liest alte und neue Laeufe gleich.
+    expect(Object.keys(kennzahlen(lauf).gateZug)).toEqual(['SRR', 'PDR']);
+    expect(kennzahlen(lauf).gateZug.SRR).not.toBeNull();
+    expect(kennzahlen(lauf).gateZug.PDR).not.toBeNull();
   }, 180_000);
 });
 
@@ -199,7 +210,7 @@ describe('nachspielenRein: ohne Store, ohne Gate', () => {
 });
 
 describe('nachspielen mit Basis: ein Lauf, der auf einem Referenzgraphen beginnt', () => {
-  it('leeres Audit auf der Basis ergibt die Basis — SRR und PDR bestanden, aber mit Warnungen (das Ziel der Stufe warnungsfrei)', async () => {
+  it('leeres Audit auf der Basis ergibt die Basis — SRR und PDR erreicht, aber mit Warnungen (das Ziel der Stufe warnungsfrei)', async () => {
     const basis = join(process.cwd(), 'rig', 'aufgaben', 'todo', 'referenz', 'lokal', 'graph.json');
     const abgelegt = JSON.parse(readFileSync(basis, 'utf8'));
     const repo = join(dir, 'basis-leer');
@@ -207,14 +218,13 @@ describe('nachspielen mit Basis: ein Lauf, der auf einem Referenzgraphen beginnt
     const r = await nachspielen(join(repo, 'kein-audit.jsonl'), repo, Infinity, { basis });
     expect(r.flach.elements.length).toBe(abgelegt.elements.length);
     expect(r.gates.SRR && r.gates.PDR).toBe(true);
-    // CR-GC-746 (contracts CR-SM-394): der Referenzgraph ist ein Entwurf (keine Bindung, kein Bauplan-Stempel).
-    // Das Rig liest je Gate den Boolean — SRR und PDR unverändert, also endet die Modellierstufe wie zuvor.
-    // TRR liest jetzt false statt true: nicht durchschritten, nicht offen; wer das zeigen will, nimmt `state`.
+    // CR-GC-748 (contracts 11, CR-SM-395): der Referenzgraph ist ein Entwurf — keine Bindung, kein offener
+    // Auftrag. Das Rig liest je Marke den Boolean; SRR und PDR unveraendert, also endet die Modellierstufe wie
+    // zuvor. Die Marke Bau ist offen: es gibt Ungebautes ohne Auftrag. (TRR bewusst nicht festgehalten — ob ein
+    // ungebundenes Schema sie haelt, ist im Katalog offen, CR-SM-395 §10.1.)
     expect(abgelegt.elements.some((e: { realRef?: unknown; testRefs?: unknown }) => e.realRef || e.testRefs)).toBe(false);
     expect(ZIEL.modellieren(r.gates)).toBe('srr+pdr');
-    expect(r.gates.TRR).toBe(false);
-    const zustand = Object.fromEntries(r.readiness.phaseGates.map((g: { id: string; state: string }) => [g.id, g.state]));
-    expect(zustand).toMatchObject({ SRR: 'passed', PDR: 'passed', TRR: 'not-reached' });
+    expect(r.gates.Bau).toBe(false);
     expect(r.befund.fehler).toBe(0);
     expect(r.befund.warnungen).toBeGreaterThan(0);
     expect(r.befund.abgenommen).toBe(0);

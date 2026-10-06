@@ -158,9 +158,8 @@ describe('SCHEMA-generation-step wird am Registry-Übergang geparst (RC-04)', ()
     const raw = await registry.graph_generate.handler({ intent: 'Ein Testsystem für den Vertrag.' });
     const step = GenerationStep.parse(raw);
     expect(step.phase).toBe('seed');
-    // phaseReadiness ist genestet mitgeprüft (SCHEMA-phase-readiness).
-    expect(step.phaseReadiness.length).toBeGreaterThan(0);
-    for (const gate of step.phaseReadiness) expect(gate.covered).toBeLessThanOrEqual(gate.total);
+    // Genestete Felder sind mitgeprüft: die Readiness-Zeilen tragen je eine Dimension.
+    for (const zeile of step.readiness) expect(typeof zeile.dimension).toBe('string');
   });
 
   it('eine gewanderte Tool-Antwort bricht laut ab, statt still auf undefined zu steuern', async () => {
@@ -175,7 +174,7 @@ describe('SCHEMA-generation-step wird am Registry-Übergang geparst (RC-04)', ()
         config: execConfig,
         callModel: neverCalled,
       }),
-    ).rejects.toThrow(/prompt|phaseReadiness|invalid/i);
+    ).rejects.toThrow(/prompt|readiness|invalid/i);
   });
 
   it('eine Antwort mit unbekannter phase wird abgewiesen (Enum, nicht freier String)', async () => {

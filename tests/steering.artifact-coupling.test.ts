@@ -29,12 +29,12 @@
  * one world's progress.
  *
  * SCOPE, STATED PLAINLY (T-B1 follow-up): closing these four findings does NOT
- * move the gate POINTER, and this file does not pretend otherwise. `GATE_FIXTURE`
- * carries further open SRR rules (UC-03/FC-02/MS-01/…), so `SRR`
- * stays current by definition of `currentPhaseGate`. What IS asserted on the real
- * graph is the coupling one level down — each gate's `missing` rule list shrinks
- * by exactly the rule that was repaired, and by nothing else. The ordered-ladder
- * property itself is T-B1 in `steering.process-ratchet.test.ts`.
+ * move the first open mark, and this file does not pretend otherwise. `GATE_FIXTURE`
+ * carries further open findings (UC-03/FC-02/…). What IS asserted on the real graph is
+ * the coupling one level down — the set of open rules shrinks by the rules that were
+ * repaired and gains nothing. The ordered-ladder property itself is T-B1 in
+ * `steering.process-ratchet.test.ts`. (CR-GC-748: the per-gate `missing` list this used
+ * to read is gone with the rule coverage per phase.)
  *
  * Real disk Kuzu (temp dir), no mocks, no `:memory:`.
  *
@@ -49,7 +49,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { exportMarkdown, type MarkdownView } from '../src/projections/exporter.js';
 import { generationStep, DIMENSION_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
-import { currentPhaseGate } from '../src/kernel/measure/readiness.js';
+import { ALL_RULE_DEFS } from '@sigloch/contracts/se';
 import { GATE_FIXTURE, GATE_FINDINGS, makeSteeringConfig, parseFocusKey, scriptedActor } from './fixtures/steering-graphs.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 
@@ -88,7 +88,7 @@ function mentions(markdown: string, uid: string): boolean {
   return markdown.includes(`\`${uid}\``);
 }
 
-describe('T-B4 (CR-GC-353): a phase-gate finding and a document gap are the same fact', () => {
+describe('T-B4 (CR-GC-353): a rule finding and a document gap are the same fact', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
 
@@ -122,8 +122,9 @@ describe('T-B4 (CR-GC-353): a phase-gate finding and a document gap are the same
     expect(res.success, `gate rejected the repair for ${ruleId}: ${JSON.stringify(res.violations)}`).toBe(true);
   }
 
-  for (const { gate, ruleId, elementId } of GATE_FINDINGS) {
-    it(`${gate} · ${ruleId} — the gap is WRITTEN in the document before, and gone after`, async () => {
+  for (const { ruleId, elementId } of GATE_FINDINGS) {
+    const mark = ALL_RULE_DEFS.find((r) => r.id === ruleId)?.mark ?? 'immer';
+    it(`${mark} · ${ruleId} — the gap is WRITTEN in the document before, and gone after`, async () => {
       // ── before ────────────────────────────────────────────────────────────
       expect(openFor(ruleId)).toEqual([elementId]);
 
@@ -159,35 +160,26 @@ describe('T-B4 (CR-GC-353): a phase-gate finding and a document gap are the same
     for (const { ruleId, elementId } of GATE_FINDINGS) expect(openFor(ruleId)).toEqual([elementId]);
   });
 
-  it('T-B1 follow-up — on a REAL graph each gate loses exactly the rule that was repaired', async () => {
-    const missingByGate = (): Record<string, string[]> => {
-      const s = generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering reference system', harness.getFocusThreshold(), []);
-      return Object.fromEntries(s.phaseReadiness.map((g) => [g.gate, [...g.missing].sort()]));
-    };
+  it('T-B1 follow-up — on a REAL graph the open rules lose the ones that were repaired, and gain none', async () => {
+    const offeneRegeln = (): string[] => [...new Set(harness.evaluateRules().map((v) => v.ruleId))].sort();
 
-    const before = missingByGate();
-    for (const { gate, ruleId } of GATE_FINDINGS) {
-      expect(before[gate], `${ruleId} is not open at ${gate} before the repair`).toContain(ruleId);
-    }
+    const before = offeneRegeln();
+    for (const { ruleId } of GATE_FINDINGS) expect(before, `${ruleId} is not open before the repair`).toContain(ruleId);
 
     let seq = 1;
     for (const { ruleId, elementId } of GATE_FINDINGS) await repair(ruleId, elementId, seq++);
 
-    const after = missingByGate();
-    for (const { gate, ruleId } of GATE_FINDINGS) {
-      expect(after[gate], `${ruleId} still open at ${gate} after its repair`).not.toContain(ruleId);
-      // MONOTONE, not "exactly one rule less". Measured: allocating FUNC-audit into
-      // MOD-parsing (R-22) also cleared MT-01 at PDR, because the module's
-      // instability dropped back under the judging threshold. That is a real
-      // second-order effect of a structural edit, and demanding "only the target
-      // rule moved" would assert something false about the model. What must hold
-      // is that repairing opens NOTHING new at the gate.
-      const opened = after[gate].filter((r) => !before[gate].includes(r));
-      expect(opened, `${gate} gained new open rules from the repairs`).toEqual([]);
-    }
+    const after = offeneRegeln();
+    for (const { ruleId } of GATE_FINDINGS) expect(after, `${ruleId} still open after its repair`).not.toContain(ruleId);
+    // MONOTONE, not "exactly four rules less". Measured: allocating FUNC-audit into
+    // MOD-parsing (R-22) also cleared MT-01, because the module's instability dropped
+    // back under the judging threshold. That is a real second-order effect of a
+    // structural edit, and demanding "only the target rule moved" would assert
+    // something false about the model. What must hold is that repairing opens NOTHING new.
+    expect(after.filter((r) => !before.includes(r)), 'the repairs opened new rules').toEqual([]);
   });
 
-  it('T-B1 follow-up — phase and focusTypes stay read off the measurement in BOTH states', async () => {
+  it('T-B1 follow-up — focusTypes stay read off the measurement in BOTH states', async () => {
     const step = () =>
       generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering reference system', harness.getFocusThreshold(), []);
 
@@ -201,16 +193,11 @@ describe('T-B4 (CR-GC-353): a phase-gate finding and a document gap are the same
       expect(s.focusTypes, `${label}: focusTypes drifted from its declared source`).toEqual(
         RULE_CLAUSE[regel]?.types ?? DIMENSION_FOCUS_TYPES[parseFocusKey(s.focusKey!).dimension],
       );
-      // And the gate pointer is the first incomplete gate of the SAME measurement.
-      expect(currentPhaseGate(s.phaseReadiness)).toBe('SRR');
     };
 
     check('before');
     let seq = 1;
     for (const { ruleId, elementId } of GATE_FINDINGS) await repair(ruleId, elementId, seq++);
-    // Still SRR — and that is the honest result, not a weakness of the repair:
-    // UC-03/FC-02/MS-01/… remain open at SRR, so the pointer must not
-    // move. A test that made it move here would be measuring its own fixture.
     check('after');
   });
 });

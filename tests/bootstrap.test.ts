@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { ALL_RULE_DEFS } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { bootstrap, TEMPLATE_FORMAT_E } from '../src/surface/bootstrap.js';
@@ -52,8 +53,12 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
     const g = harness.getGraph();
     expect(g.nodes).toHaveLength(0);
     expect(g.edges).toHaveLength(0);
-    // Empty baseline → zero violations, so ANY new error in a batch would block.
-    expect(harness.evaluateRules()).toHaveLength(0);
+    // Empty baseline → no error, so ANY new error in a batch would block. The one finding an empty
+    // graph carries since contracts 11 (CR-SM-395) is the existence rule that demands the system —
+    // a warning, and exactly what the bootstrap below closes.
+    const leer = harness.evaluateRules();
+    expect(leer.filter((v) => v.severity === 'error')).toEqual([]);
+    expect(leer.map((v) => ALL_RULE_DEFS.find((r) => r.id === v.ruleId)?.role)).toEqual(['existence']);
   });
 
   it('fills the empty graph from the template Format-E THROUGH the gate', async () => {

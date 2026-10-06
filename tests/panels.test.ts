@@ -3,7 +3,7 @@
  *
  * graphcode ships the read-only view-models behind each panel; the Cytoscape
  * renderer lives in graph-view-edit. Asserts the shapers project real MCP-tool
- * outputs into panels: readiness with a blocking drill-down
+ * outputs into panels: readiness with the findings that hold each mark
  * (REQ-readiness-transparent), recommendations that surface the CR-GC-203
  * fix-context (fixHint + top ranked candidate), the artifact traffic-light
  * (REQ-artifact-freshness), and the subscribe→panel mapping
@@ -17,15 +17,15 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { Mark } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { scoreReadiness } from '../src/kernel/measure/readiness.js';
 import {
   readinessPanel,
   recommendationsPanel,
   artifactFreshness,
-  analysisFreshness,
+  analysisSignals,
   artifactsPanel,
-  creationCurrencyProvider,
   impactPanel,
   healthPanel,
   panelsForEvent,
@@ -68,15 +68,18 @@ describe('TEST-dashboard-panels: headless MOD-dashboard data-layer (CR-GC-115)',
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  it('readinessPanel exposes 4 phase + 4 impl gates each with a blocking drill-down (REQ-readiness-transparent)', () => {
+  it('readinessPanel exposes the marks, each with the findings that hold it (REQ-readiness-transparent)', () => {
     const panel = readinessPanel(scoreReadiness(harness));
     expect(typeof panel.compliancePct).toBe('number');
-    expect(panel.phaseGates).toHaveLength(4);
-    expect(panel.implGates).toHaveLength(4);
-    for (const g of [...panel.phaseGates, ...panel.implGates]) {
-      expect(Array.isArray(g.blocking)).toBe(true); // the drill-down, not just a light
-      expect(typeof g.passed).toBe('boolean');
+    expect(panel.marks.map((m) => m.id)).toEqual(Mark.options);
+    for (const m of panel.marks) {
+      expect(Array.isArray(m.holding)).toBe(true); // the drill-down, not just a light
+      expect(m.reached).toBe(m.holding.length === 0);
     }
+    // REQ-uncovered has no verifying test: an open mark SAYS so — the answer to "why not".
+    const offen = panel.marks.find((m) => !m.reached)!;
+    expect(panel.marks.some((m) => m.holding.some((h) => h.elementId === 'REQ-uncovered'))).toBe(true);
+    expect(offen.holding.length).toBeGreaterThan(0);
   });
 
   it('recommendationsPanel surfaces fixHint + the top ranked candidate, error-first (uses CR-GC-203 item 1)', () => {
@@ -107,31 +110,25 @@ describe('TEST-dashboard-panels: headless MOD-dashboard data-layer (CR-GC-115)',
     expect(panel.artifacts.every((a) => a.kind === 'render')).toBe(true);
   });
 
-  it('CR-GC-222: analysis rows classify by scope-currency, NEVER mtime', () => {
-    expect(analysisFreshness('current')).toBe('live');
-    expect(analysisFreshness('stale')).toBe('stale');
-    expect(analysisFreshness('absent')).toBe('absent');
-
+  it('CR-GC-222/748: an analysis row reads on record or absent — NEVER mtime, and never stale', () => {
     const panel = artifactsPanel([
       { id: 'rtm', exists: true, staleVsGraph: true }, // render → stale by mtime
-      { id: 'fmea', currency: 'stale' }, // analysis → stale by scope
-      // A creation is NEVER mtime-classified: staleVsGraph is ignored, only currency counts.
-      { id: 'conops', exists: true, staleVsGraph: false, currency: 'absent' },
+      { id: 'fmea', exists: true, staleVsGraph: true }, // analysis on record: the mtime signal is ignored
+      { id: 'conops', exists: false, staleVsGraph: false },
     ]);
     const byId = (id: string) => panel.artifacts.find((a) => a.id === id)!;
     expect(byId('rtm').kind).toBe('render');
     expect(byId('rtm').freshness).toBe('stale');
     expect(byId('fmea').kind).toBe('analysis');
-    expect(byId('fmea').freshness).toBe('stale');
-    // conops carries a "fresh" mtime signal but its currency is absent → red (no mtime leakage).
+    expect(byId('fmea').freshness).toBe('live');
     expect(byId('conops').kind).toBe('analysis');
     expect(byId('conops').freshness).toBe('absent');
   });
 
   it('CR-GC-222: two groups, IRR relabeled "Assumption Review", labels are names not ids', () => {
     const panel = artifactsPanel([
-      { id: 'fmea', currency: 'current' },
-      { id: 'assumption-review', currency: 'current' },
+      { id: 'fmea', exists: true },
+      { id: 'assumption-review', exists: true },
       { id: 'srs', exists: true, staleVsGraph: false },
     ]);
     const byId = (id: string) => panel.artifacts.find((a) => a.id === id)!;
@@ -144,14 +141,18 @@ describe('TEST-dashboard-panels: headless MOD-dashboard data-layer (CR-GC-115)',
     expect(panel.artifacts.every((a) => a.label !== a.id)).toBe(true);
   });
 
-  it('CR-GC-222: creationCurrencyProvider supplies CR-221 readiness with analysis currency', () => {
-    const provider = creationCurrencyProvider([
-      { id: 'fmea', currency: 'stale' },
-      { id: 'conops', currency: 'current' },
-    ]);
-    expect(provider('fmea')).toBe('stale');
-    expect(provider('conops')).toBe('current');
-    expect(provider('trade')).toBe('absent'); // never analyzed → 🔴 absent
+  it('CR-GC-748: analysisSignals reads the stamps off the graph — one signal per analysis, on record or not', () => {
+    const graph = (stamps: Record<string, unknown>) => ({
+      nodes: [{ uid: 'SYS-x', type: 'SYS', name: 'x', description: '', attributes: { analysisFreshness: stamps } }],
+    });
+    const leer = analysisSignals(graph({}));
+    expect(leer.length).toBeGreaterThan(0);
+    expect(leer.every((sig) => sig.exists === false)).toBe(true);
+    const mitFmea = analysisSignals(graph({ fmea: { graphVersion: 3 } }));
+    expect(mitFmea.find((sig) => sig.id === 'fmea')!.exists).toBe(true);
+    expect(mitFmea.filter((sig) => sig.exists).map((sig) => sig.id)).toEqual(['fmea']);
+    // The signals feed the artifact tab as they are: every one is an analysis row of the catalog.
+    expect(artifactsPanel(mitFmea).artifacts.every((a) => a.kind === 'analysis')).toBe(true);
   });
 
   it('panelsForEvent maps invalidation domains to the panels to refresh, deduped (FUNC-subscribe-updates)', () => {

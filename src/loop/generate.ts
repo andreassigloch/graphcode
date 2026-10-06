@@ -22,16 +22,15 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { RULE_TO_DIMENSION } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
-import { PhaseGateReadiness } from '../kernel/measure/readiness.js';
 import { acceptedRuleIds } from '@sigloch/contracts/se';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
 import { decision } from './decisions.js';
-import { abnehmbar, focusViolations as fokusmenge, blockingOf } from '../kernel/measure/focus-set.js';
-import { TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
+import { ABNEHMBAR, istAnalyse, focusViolations as fokusmenge, blockingOf } from '../kernel/measure/focus-set.js';
+import { RULE_HELP, TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
 import { steerTerms, STEER_RULES } from '@sigloch/se-engine';
 import { STEUER_FENSTER, type SteerOptimum, type SteerState } from './stagnation.js';
-import { istAnalyseTask } from './task-artifact.js';
+import { ANALYSE_TASKS, istAnalyseTask } from './task-artifact.js';
 import { TASK_CLAUSE } from './task-clause.js';
 
 /**
@@ -55,10 +54,6 @@ export const GenerationStep = z.object({
   threshold: z.number(),
   /** Error-Violations (Gate-Blocker) — müssen vor dem Handoff auf 0. */
   blockingErrors: z.number(),
-  /** SRR/PDR/CDR/TRR Regelabdeckung (CR-GC-296, RULE_TO_PHASE) — die zweite
-   * Handoff-Bedingung neben Schwelle + blockingErrors: das AKTUELLE Gate
-   * (erstes unvollständiges in SRR→PDR→CDR→TRR) muss covered===total sein. */
-  phaseReadiness: z.array(PhaseGateReadiness),
   /** Stabiler Identifikator des fokussierten Fund-Sets (CR-GC-281):
    * `${dimension}:${element_ids sortiert, komma-getrennt}`. null wenn kein
    * Fokus (seed/handoff/keine regelbaren Funde). */
@@ -472,11 +467,26 @@ export const TASK_SKILL: Readonly<Record<Exclude<RuleTask, 'kern'>, string>> = {
   fmea: 'se-fmea',
   plan: 'se-plan',
   anforderungsqualitaet: 'se:author-req',
-  realisierung: 'se-test',
 };
 const TASK_OF_ENTRY = new Map(
   (Object.entries(TASK_ENTRY) as [Exclude<RuleTask, 'kern'>, string | null][]).filter(([, e]) => e).map(([t, e]) => [e as string, t]),
 );
+
+/**
+ * Der Skill der Analyse, zu der eine Regel gehoert (CR-GC-748) — gelesen aus der Regelhilfe
+ * (contracts `RULE_HELP[…].prompt`), wenn sie einen Analyse-Skill nennt; sonst undefined.
+ *
+ * Bis contracts 10 nahm ein Arbeitsschritt dem Kern die Regeln seiner Analyse ab (FM-01..03 der
+ * Fehlerbetrachtung, CL-01 dem Einsatzkonzept, TR-01/IR-01 Variantenvergleich und Annahmen-Review).
+ * Seit der gekuerzten Zuordnung (CR-SM-395) fuehrt sie der Kern. Wem sie gehoeren, sagt weiter der
+ * Katalog — der Skill-Zeiger der Regel —, nicht eine Liste hier: der Schritt nennt dann diesen Skill
+ * statt der Autorier-Anleitung der Dimension (fuer FM-01 waere das `se:author-req`).
+ */
+const ANALYSE_SKILLS: ReadonlySet<string> = new Set(ANALYSE_TASKS.map((t) => TASK_SKILL[t]));
+export function analyseSkill(ruleId: string): string | undefined {
+  const skill = RULE_HELP[ruleId]?.prompt;
+  return skill !== undefined && ANALYSE_SKILLS.has(skill) ? skill : undefined;
+}
 
 export const SEED_STAGES = {
   sys: ['SYS'],
@@ -516,12 +526,17 @@ export function generationStep(
   // CR-GC-601: im Task nennt der Schritt den Skill des Tasks, im Kern den der Fokus-Dimension.
   // CR-GC-604: steht im Kern ein Eintrittspunkt im Fokus, ist der Skill der des Tasks — nicht der
   // der Dimension (AF-04/AF-05 liegen in ver/ms, fuer die es keinen Autorier-Skill gibt: `next.skill` war null).
-  const eintrittsTask = task === 'kern' && core.focusKey ? TASK_OF_ENTRY.get(core.focusKey.split(':')[1] ?? '') : undefined;
+  const fensterRegel = core.focusKey?.split(':')[1] ?? '';
+  const eintrittsTask = task === 'kern' && core.focusKey ? TASK_OF_ENTRY.get(fensterRegel) : undefined;
+  // CR-GC-748: eine Regel, die zu einer Analyse gehoert und keine Klausel traegt, nennt deren Skill.
+  const skillDerAnalyse = core.focusKey && !(fensterRegel in RULE_CLAUSE) ? analyseSkill(fensterRegel) : undefined;
   const skill =
     task !== 'kern'
       ? TASK_SKILL[task]
       : eintrittsTask
         ? TASK_SKILL[eintrittsTask]
+        : skillDerAnalyse !== undefined
+          ? skillDerAnalyse
         : // CR-GC-655: im expand entscheidet der Imperativ (Klausel vor Dimension); seed/handoff
           // haben keinen, dort gilt die Dimension (seed:uc → author-uc usw.).
           imperativSkill !== undefined
@@ -564,8 +579,8 @@ function stepCore(
 ): Omit<GenerationStep, 'skill' | 'steer'> & { imperativSkill?: string | null } {
   const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
-  // computeReadiness + Phasen-Gates — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const { og, report, phaseReadiness } = snap;
+  // computeReadiness — geteilt mit dem steeringDelta des dryRun-Verdicts.
+  const { og, report } = snap;
   // CR-GC-601: im Kern die Kern-Fokusmenge des Snapshots, im Task das detaillierte Regelset (Warnung).
   // CR-GC-608: am lokalen Optimum verlassen die Steuerregeln den Kern-Fokus.
   const violations = task === 'kern'
@@ -581,9 +596,6 @@ function stepCore(
   const readiness = report.scores
     .filter((s) => s.applicable > 0)
     .map((s) => ({ dimension: s.dimension as string, score: s.score, violations: s.violations }));
-  // CR-GC-296: RULE_TO_PHASE-Achse aus demselben Regelstrom — die zweite,
-  // strengere Handoff-Bedingung neben Schwelle + blockingErrors (s.u.). Seit CR-GC-502
-  // rechnet sie der Snapshot, generationStep liest sie nur.
 
   // --- Phase seed: noch kein System im Graphen -----------------------------
   if (!sys) {
@@ -606,7 +618,6 @@ function stepCore(
         readiness,
         threshold,
         blockingErrors,
-        phaseReadiness,
         focusKey: null,
         focusTypes: [],
         focusDimension: null,
@@ -651,7 +662,6 @@ function stepCore(
       readiness,
       threshold,
       blockingErrors,
-      phaseReadiness,
       focusKey: null,
       focusTypes: [...SEED_STAGES.sys],
       focusDimension: 'seed:sys',
@@ -671,7 +681,6 @@ function stepCore(
       readiness,
       threshold,
       blockingErrors,
-      phaseReadiness,
       focusKey: null,
       focusTypes: [...SEED_STAGES[stufe]],
       focusDimension: `seed:${stufe}`,
@@ -796,8 +805,10 @@ function stepCore(
   // setzen. Gemessen S2 gcrun-339..341: je AF-Befund drei Runden Stillstand, dabei legte das Modell
   // unter dem Text der Dimension neue SYS-REQs an (23/16 Dubletten). Bleiben nur Eintrittspunkte,
   // greift der Endzustand unten („Offen sind Eintrittspunkte") — die Uebergabe an Mensch oder Host.
+  // CR-GC-748: dasselbe gilt fuer jede Regel mit Rolle `analysis` (TR-01, IR-01) — auch ihr Befund
+  // verlangt die Analyse, nicht einen Modellzug des Executors. Die Rolle steht am Katalog.
   const eintrittImTreiber = (key: string): boolean =>
-    selection === 'driver' && task === 'kern' && TASK_OF_ENTRY.has(key.split(':')[1] ?? '');
+    selection === 'driver' && task === 'kern' && (TASK_OF_ENTRY.has(key.split(':')[1] ?? '') || istAnalyse(key.split(':')[1] ?? ''));
   // CR-GC-593: nur Dimensionen, die in der FOKUSMENGE Fenster haben — `report.scores` zaehlt
   // alle Regeln, die Fokusmenge nicht. Ohne diese Trennung stuende eine Dimension "mit Funden"
   // da, fuer die es nichts zu tun gibt: genau der Zustand, den die Invariante ausschliesst.
@@ -850,7 +861,6 @@ function stepCore(
       readiness,
       threshold,
       blockingErrors,
-      phaseReadiness,
       focusKey: null,
       focusTypes: [],
       focusDimension: null,
@@ -860,22 +870,22 @@ function stepCore(
   }
 
   // --- Freigabe (CR-GC-593): done ⇔ kein Fokus ----------------------------
-  // Kein Waechter aus einer anderen Quelle als der Fokuswahl. Schwelle und Phasen-Gate stehen
-  // weiter im Bericht (readiness, phaseReadiness), sie entscheiden nur nicht mehr — gemessen
-  // hatten sie in fuenf Laeufen nie einen Schritt gewaehlt, aber in allen die Freigabe gesperrt.
+  // Kein Waechter aus einer anderen Quelle als der Fokuswahl. Die Schwelle steht weiter im
+  // Bericht (readiness), sie entscheidet nur nicht mehr — gemessen hatte sie in fuenf Laeufen nie
+  // einen Schritt gewaehlt, aber in allen die Freigabe gesperrt. Die Marken stehen in graph_readiness.
   if (!focus && task !== 'kern') {
-    // CR-GC-601/603: der Task ist durch — Eintritt geschlossen (Frischestempel oder Abnahme) und sein
-    // Regelset ohne offenen Fund; der Eintritt steht in der Task-Fokusmenge. Dann zurueck in den Kern.
+    // CR-GC-601/603: der Task ist durch — sein Eintritt schweigt (die Analyse ist gestempelt, beim
+    // Bauplan: es gibt einen offenen Auftrag) oder ist abgenommen, und seine Regeln haben keinen
+    // offenen Fund; der Eintritt steht in der Task-Fokusmenge. Dann zurueck in den Kern.
     return {
       phase: 'handoff',
       done: true,
       prompt:
-        `Task ${task} fertig: das Artefakt ist gestempelt (oder abgenommen), sein Regelset hat keinen offenen Fund. ` +
+        `Task ${task} fertig: sein Eintrittspunkt ist geschlossen (oder abgenommen), seine Regeln haben keinen offenen Fund. ` +
         'Zurück in den Kern: graph_generate ohne task.',
       readiness,
       threshold,
       blockingErrors,
-      phaseReadiness,
       focusKey: null,
       focusTypes: [],
       focusDimension: null,
@@ -906,7 +916,6 @@ function stepCore(
       readiness,
       threshold,
       blockingErrors,
-      phaseReadiness,
       focusKey: null,
       focusTypes: [],
       focusDimension: null,
@@ -920,7 +929,7 @@ function stepCore(
   // sagt der Prompt, warum der Fund trotzdem hier steht — sonst dreht der Agent eine Schleife.
   const ignorierteAbnahme =
     windowRuleOf(focusViolations) !== undefined &&
-    !abnehmbar(task).has(windowRuleOf(focusViolations)!) &&
+    !ABNEHMBAR.has(windowRuleOf(focusViolations)!) &&
     focusViolations.some((v) => acceptedRuleIds(elementById.get(v.element_id) ?? sysEl ?? {}).has(v.rule_id));
   const fensterRegel = windowRuleOf(focusViolations);
   const abnahmeHinweis = ignorierteAbnahme
@@ -937,9 +946,13 @@ function stepCore(
         `${fensterRegel} ist der Eintrittspunkt des Tasks ${TASK_OF_ENTRY.get(fensterRegel)}: starte ihn mit ` +
         `graph_generate {task:'${TASK_OF_ENTRY.get(fensterRegel)}'} (Skill ${TASK_SKILL[TASK_OF_ENTRY.get(fensterRegel)!]}) — ` +
         'oder nimm ihn als acceptedFindings mit Grund ab, wenn das Artefakt im schlanken Umfang nicht nötig ist. '
-      : fensterRegel !== undefined && abnehmbar(task).has(fensterRegel)
-        ? `${fensterRegel} ist abnehmbar: ist der Fund im Modell nicht erfüllbar, lege ihn als acceptedFindings [{ruleId, reason}] mit Grund ab. `
-        : '';
+      : // CR-GC-748: eine Regel einer Analyse im Kern — der Skill der Analyse beschreibt die Arbeit.
+        (fensterRegel !== undefined && task === 'kern' && !(fensterRegel in RULE_CLAUSE) && analyseSkill(fensterRegel) !== undefined
+          ? `${fensterRegel} gehört zu einer Analyse: lade den Skill ${analyseSkill(fensterRegel)} und behebe den Fund nach seinen Schritten. `
+          : '') +
+        (fensterRegel !== undefined && ABNEHMBAR.has(fensterRegel)
+          ? `${fensterRegel} ist abnehmbar: ist der Fund im Modell nicht erfüllbar, lege ihn als acceptedFindings [{ruleId, reason}] mit Grund ab. `
+          : '');
   const funde = focusViolations
     .map((v) => `${v.element_id} (${v.rule_id}: ${v.message}${v.fix_hint ? ` — Fix: ${v.fix_hint}` : ''})`)
     .join('; ');
@@ -1002,7 +1015,6 @@ function stepCore(
     readiness,
     threshold,
     blockingErrors,
-    phaseReadiness,
     focusKey,
     // CR-GC-566: dieselbe Praezedenz wie beim Imperativ (CR-GC-564) — stellt eine Regel die
     // Anweisung, bestimmt sie auch die Typen. Sonst stuende im Rundeninhalt die Grammatik

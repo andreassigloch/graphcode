@@ -58,10 +58,10 @@ describe('TEST-help-tool (CR-GC-229): graph_help over MCP', () => {
 
   it('no argument → contextual, ranked measures from live readiness + violations', async () => {
     const tools = bindToolsToHarness(harness);
-    const out = (await tools.graph_help.handler({})) as { measures: Array<{ blockerKind: string; entry: { plain: string; se: string } }> };
+    const out = (await tools.graph_help.handler({})) as { measures: Array<{ entry: { id?: string; plain: string; se: string } }> };
     expect(Array.isArray(out.measures)).toBe(true);
     // The seeded R-17 warning surfaces as a rule measure carrying the help layers.
-    const r17 = out.measures.find((m) => m.blockerKind === 'rule' && (m as { entry: { id?: string } }).entry.id === 'R-17');
+    const r17 = out.measures.find((m) => m.entry.id === 'R-17');
     expect(r17, 'R-17 measure present').toBeDefined();
     expect(r17!.entry.plain.length).toBeGreaterThan(0);
     expect(r17!.entry.se.length).toBeGreaterThan(0);
@@ -70,7 +70,7 @@ describe('TEST-help-tool (CR-GC-229): graph_help over MCP', () => {
   it('with a token → the HelpEntry, all three layers', async () => {
     const tools = bindToolsToHarness(harness);
     const entry = (await tools.graph_help.handler({ token: 'CDR' })) as { kind: string; title: string; plain: string; se: string; prompt?: string };
-    expect(entry.kind).toBe('gate');
+    expect(entry.kind).toBe('mark'); // CR-GC-748: Marke statt Gate
     expect(entry.title).toMatch(/Critical Design Review/);
     expect(entry.plain.length).toBeGreaterThan(0);
     expect(entry.se.length).toBeGreaterThan(0);

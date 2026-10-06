@@ -39,8 +39,8 @@ export interface Decision {
 
 // CR-GC-598: die abnehmbare Klasse lebt im Kernel (focus-set.ts), weil Schritt, Probe und Bericht
 // sie teilen; hier nur der Text dazu.
-import { ABNEHMBAR_JE_TASK } from '../kernel/measure/focus-set.js';
-export { ABNEHMBAR_JE_TASK };
+import { ABNEHMBAR, ABNEHMBAR_BEGRUENDET } from '../kernel/measure/focus-set.js';
+export { ABNEHMBAR };
 
 export const DECISIONS = {
   /** CR-GC-577: die Probe gilt Alternativen, nie einem einzelnen Batch. */
@@ -109,15 +109,11 @@ export const DECISIONS = {
     text:
       'Einen Fund, der im Modell nicht erfuellbar ist, legst du als benannte Abweichung ab: ' +
       '`acceptedFindings: [{ruleId, reason}]` am betroffenen Element (graphweite Regeln am SYS), der Grund ist Pflicht. ' +
-      'Im Kern abnehmbar sind nur die Eintrittspunkte ' + ABNEHMBAR_JE_TASK.kern.join(', ') +
-      ' (das Artefakt ist im schlanken Umfang nicht noetig); in einem Task: ' +
-      (Object.entries(ABNEHMBAR_JE_TASK) as [string, readonly string[]][])
-        .filter(([t, ids]) => t !== 'kern' && ids.length > 0)
-        .map(([t, ids]) => `${t} ${ids.join('/')}`)
-        .join(', ') +
+      'Abnehmbar sind nur die Analysen ' + [...ABNEHMBAR].filter((id) => !(id in ABNEHMBAR_BEGRUENDET)).sort().join(', ') +
+      ' (das Artefakt ist im schlanken Umfang nicht noetig), dazu ' + Object.keys(ABNEHMBAR_BEGRUENDET).join(' und ') +
       '. Architekturregeln sind nicht abnehmbar — eine Abnahme daran zaehlt nicht, der Fund bleibt: bauen.',
     forbidden: [/acceptedFindings[^.]{0,80}(jede|alle|beliebige) Regel/i],
-    source: 'CR-GC-594, CR-GC-600',
+    source: 'CR-GC-594, CR-GC-748',
   },
 } as const satisfies Record<string, Decision>;
 

@@ -22,7 +22,6 @@ import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { exportGraphJson } from '../src/projections/exporter.js';
-import { computePhaseReadiness } from '../src/kernel/measure/readiness.js';
 
 function node(
   uid: string,
@@ -39,8 +38,8 @@ function edge(sourceId: string, edgeType: string, targetId: string): GraphEdge {
 
 /**
  * A graph whose bindings are ALL present: testRef (R-19), realRef+codeRef (R-20),
- * testResult (VR-01), FLOW→SCHEMA (SC-04) and the five analysisFreshness stamps
- * (AF-01..05). Every one of those rules must stay SILENT — each fired unconditionally
+ * testResult (VR-01), FLOW→SCHEMA (SC-04), the four analysisFreshness stamps (AF-01..04)
+ * and nothing unbuilt (AF-05 — since contracts 11 the build plan is no stamp, CR-SM-395). Every one of those rules must stay SILENT — each fired unconditionally
  * before the fix, because the flattened export hid the very attributes they read.
  */
 function fullyBoundGraph(): Graph {
@@ -52,7 +51,6 @@ function fullyBoundGraph(): Graph {
           trade: { graphVersion: 1 },
           'assumption-review': { graphVersion: 1 },
           fmea: { graphVersion: 1 },
-          implplan: { graphVersion: 1 },
         },
       }),
       node('REQ-bestellung', 'REQ', 'Bestellung persistieren', 'Das System soll die Bestellung speichern.', {
@@ -72,7 +70,8 @@ function fullyBoundGraph(): Graph {
       }),
       node('FLOW-bestellung', 'FLOW', 'Bestelldaten', 'Die Bestellnutzlast.'),
       node('SCHEMA-bestellung', 'SCHEMA', 'BestellungSchema', 'Zod-Vertrag der Bestellung.', {
-        zodDefinition: 'z.object({ id: z.string() })',
+        // CR-GC-748: gebunden — sonst waere das Schema „Ungebautes ohne offenen Auftrag" (AF-05, contracts 11).
+        realRef: { file: 'src/bestellung.ts', symbol: 'BestellungSchema' },
       }),
     ],
     edges: [
@@ -116,7 +115,7 @@ describe('takeSteeringSnapshot — attributes reach the rules (CR-GC-303)', () =
     expect(snap.violations.filter((v) => v.rule_id === 'R-20')).toEqual([]);
   });
 
-  it('AF-01..05 stay silent when SYS carries all five freshness stamps', () => {
+  it('AF-01..05 stay silent when SYS carries the four freshness stamps and nothing is unbuilt', () => {
     const snap = takeSteeringSnapshot(fullyBoundGraph(), DEFAULT_METRIC_POLICY);
     const af = snap.violations.filter((v) => v.rule_id.startsWith('AF-')).map((v) => v.rule_id);
     expect(af).toEqual([]);
@@ -156,21 +155,5 @@ describe('takeSteeringSnapshot — attributes reach the rules (CR-GC-303)', () =
     const snapshotBefore = JSON.stringify(graph);
     takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY);
     expect(JSON.stringify(graph)).toBe(snapshotBefore);
-  });
-});
-
-/**
- * CR-GC-502: die Phasen-Gates rechnet das Messwerk, nicht der Leser. Vorher projizierte
- * generationStep sie selbst aus `violations`; der Snapshot trug das Feld nicht.
- */
-describe('CR-GC-502: phaseReadiness kommt aus dem Snapshot', () => {
-  it('traegt die Phasen-Gates aus DEMSELBEN Regelstrom wie violations', () => {
-    const graph = fullyBoundGraph();
-    graph.nodes.find((n) => n.uid === 'TEST-bestellung')!.attributes = { testResult: 'passed' };
-    const snap = takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY);
-    expect(snap.phaseReadiness.length).toBeGreaterThan(0);
-    expect(snap.phaseReadiness).toEqual(computePhaseReadiness(snap.violations.map((v) => ({ ruleId: v.rule_id })), graph));
-    // Der Graph hat einen offenen R-19-Befund — mindestens ein Gate muss ihn als fehlend fuehren.
-    expect(snap.phaseReadiness.some((g) => g.missing.includes('R-19'))).toBe(true);
   });
 });

@@ -13,13 +13,12 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { PHASE_GATE_RULES } from '../src/kernel/measure/readiness.js';
 import type { GraphCodeHarness } from '../src/kernel/harness.js';
 import { openMeasured, type Measured } from '../src/surface/measured.js';
 import { extractCodeFacts, extractImportEdges, conformanceViolations, toOntologyGraph } from '../src/kernel/conformance.js';
 import { evaluateAll, readinessOf } from '../src/kernel/evaluation.js';
 import { elementToNode } from '../src/kernel/element-node.js';
-import { evaluateAllRules, DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, evaluateAllRules, DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const REPO_ROOT = join(__dirname, '..');
@@ -159,7 +158,7 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     ).toBe(true);
   });
 
-  it('broken binding surfaces in the readiness report: violationsByRule + open at its owner gate', () => {
+  it('broken binding surfaces in the readiness report: violationsByRule + held at the mark of its rule', () => {
     const g = harness.getGraph();
     const broken: typeof g = {
       nodes: g.nodes.map((n) =>
@@ -172,29 +171,27 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     // CR-GC-489: derselbe Ausdruck, den die Produktion schreibt (`report.ts`, graph_readiness).
     // Vorher stand hier `scoreReadinessWithConformance` — ein Wrapper, dessen einziger Aufrufer
     // dieser Test war, waehrend fuenf Produktionsstellen seinen Rumpf inline schrieben.
-    const port = {
+    const port = (graph: typeof g) => ({
       evaluateRules: () => harness.evaluateRules(),
-      getGraph: () => broken,
+      getGraph: () => graph,
       getRepoRoot: () => REPO_ROOT,
       // CR-GC-428: die Auswertung weist auch aus, welche Regeln der geladene
       // Katalog NICHT führt — dafür braucht sie ihn.
       getLoadedRuleIds: () => harness.getLoadedRuleIds(),
-    };
-    const report = readinessOf(evaluateAll(port), broken);
-    expect(report.violationsByRule['RC-01']).toBe(1);
-    // WHICH gate owns RC-01 is the readiness model's business, not this test's — since
-    // CR-GC-312 it is derived (RC-01 inherits the gate of R-20, the presence rule it
-    // resolves) instead of being written down. Naming a gate here is how the model
-    // drifted from contracts on 21 rules while every test stayed green. What this test
-    // asserts is the conformance→readiness wiring: a broken binding is OPEN at its owner.
-    // CR-SM-353: RC-01 ist warning — blocken tut nur Gate-Schuld; die gebrochene Bindung steht
-    // als offener Fund am Gate ihres Praesenz-Partners (R-20 → TRR) und faerbt `passed` nicht.
-    const ownerId = Object.keys(PHASE_GATE_RULES).find((id) =>
-      PHASE_GATE_RULES[id]!.includes('RC-01'),
-    )!;
-    const owner = report.phaseGates.find((gate) => gate.id === ownerId);
-    expect(owner?.open.some((o) => o.startsWith('RC-01:'))).toBe(true);
-    expect(owner?.blocking.some((b) => b.startsWith('RC-01:'))).toBe(false);
+    });
+    // Gegen den unveraenderten Graphen gemessen, nicht gegen eine feste Zahl: ob das committete Modell
+    // selbst RC-sauber ist, prueft der Fall oben — hier zaehlt nur, dass die EINE gebrochene Bindung ankommt.
+    const vorher = readinessOf(evaluateAll(port(g)), g).violationsByRule['RC-01'] ?? 0;
+    const report = readinessOf(evaluateAll(port(broken)), broken);
+    expect(report.violationsByRule['RC-01']).toBe(vorher + 1);
+    // WHICH mark RC-01 lies before is the catalog's business, not this test's (CR-GC-312: naming
+    // a gate here is how the model drifted from contracts on 21 rules while every test stayed
+    // green) — it is read from the rule definition. What this test asserts is the
+    // conformance→readiness wiring: the broken binding is one of the findings that HOLD that mark.
+    const markId = ALL_RULE_DEFS.find((r) => r.id === 'RC-01')!.mark!;
+    const mark = report.marks.find((m) => m.id === markId)!;
+    expect(mark.reached).toBe(false);
+    expect(mark.holding.some((h) => h.ruleId === 'RC-01' && h.elementId === 'FUNC-mutate')).toBe(true);
   });
 
   it('resolves .mjs and .jsx realRefs and vitest case names (gve reality)', () => {
@@ -444,6 +441,9 @@ describe('TEST-import-drift-monorepo: workspace packages are scanned and resolve
     nodes: [
       { uid: 'MOD-app', type: 'MOD', name: 'app', description: '', attributes: { path: 'packages/app' } },
       { uid: 'MOD-lib', type: 'MOD', name: 'lib', description: '', attributes: { path: 'packages/lib' } },
+      // CR-GC-748: ein offener Auftrag — der Bau ist eroeffnet, die Abgleichregeln (Stufe 12) sind faellig.
+      // So haengt der Fall nicht daran, ob RC-05 auf den Bau wartet (im Katalog offen, CR-SM-395 §10.8).
+      { uid: 'CR-1', type: 'CR', name: 'Bauauftrag', description: '', attributes: { status: 'open' } },
     ],
     edges: [],
   });

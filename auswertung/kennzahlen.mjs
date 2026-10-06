@@ -1,7 +1,7 @@
 /**
  * kennzahlen.mjs — wie ein Lauf lief, aus `lauf.json` allein (Leitlinie T-E3): Züge, Sitzungen, Dauer je Zug,
- * Fragen in Zug 1, Werkzeugschritte, Mutationen angenommen/abgelehnt, Abbrüche, der Zug, in dem SRR bzw. PDR
- * fiel, Umfang des Graphen. Rein; `auditDelta` zählt die Mutationen eines Zugs aus den Audit-Zeilen, die er
+ * Fragen in Zug 1, Werkzeugschritte, Mutationen angenommen/abgelehnt, Abbrüche, der Zug, an dem SRR bzw. PDR
+ * erreicht wurde, Umfang des Graphen. Rein; `auditDelta` zählt die Mutationen eines Zugs aus den Audit-Zeilen, die er
  * hinterließ (der Treiber ruft es je Zug).
  *
  * @author andreas@siglochconsulting
@@ -21,8 +21,10 @@ export function auditDelta(zeilen) {
 }
 
 /**
- * Der Zug, ab dem das Gate bestanden blieb — null, wenn es am Ende nicht bestanden ist. Nicht der erste Treffer:
- * PDR steht bei leerem Graphen formal auf „bestanden" (keine Funktion, keine Lücke) und fällt mit der ersten Funktion.
+ * Der Zug, ab dem die Marke erreicht blieb — null, wenn sie es am Ende nicht ist. Nicht der erste Treffer: in
+ * Läufen vor CR-GC-748 stand PDR bei leerem Graphen formal auf „bestanden" (keine Funktion, keine Lücke) und fiel
+ * mit der ersten Funktion. Gelesen wird je Zug `gates[<Marke>]` — so heißt das Feld in jedem `lauf.json`, alt wie
+ * neu; seit CR-GC-748 füllt es `nachspielen` aus `readiness.marks[].reached`.
  */
 const gateZug = (zuege, gate) => {
   if (!zuege.length || !zuege.at(-1).gates?.[gate]) return null;

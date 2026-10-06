@@ -1,7 +1,7 @@
 /**
  * nachspielen.mjs — der Graph eines Laufs nach n Mutationen, neu gebaut aus `audit.jsonl` durch das echte Gate
  * eines Wegwerf-Stores (`openMeasured`), und die Readiness darauf. Grundlage für das Ende-Urteil des Treibers
- * (SRR und PDR bestanden) und für jede Analyse, die Zwischenstände braucht (schatten-suggest). Ein laufender Host
+ * (SRR und PDR erreicht) und für jede Analyse, die Zwischenstände braucht (schatten-suggest). Ein laufender Host
  * wird nie angefasst; gemessen wird nie am Live-Store (rig/README.md, „die eine Regel").
  *
  * @author andreas@siglochconsulting
@@ -84,7 +84,9 @@ export async function nachspielen(auditPfad, repo, n = Infinity, { systemId = 't
     const ev = await leer.tools.rules_evaluate.handler({ detail: 'full' });
     return {
       flach: flach(leer.graph()),
-      gates: Object.fromEntries(readiness.phaseGates.map((x) => [x.id, x.passed])),
+      // Je Marke (SRR, PDR, CDR, TRR, Bau), ob sie erreicht ist. Das Feld heisst weiter `gates`: so steht es je Zug
+      // in den eingefrorenen `lauf.json`, und `kennzahlen.gateZug` liest alte wie neue Laeufe ueber denselben Weg.
+      gates: Object.fromEntries(readiness.marks.map((m) => [m.id, m.reached])),
       befund: befundAus(ev.violations, leer.graph(), acceptedRuleIds),
       readiness,
     };

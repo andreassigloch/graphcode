@@ -1,16 +1,16 @@
 /**
  * TEST-help-content-coverage (CR-GC-227) — the authored Plain/SE layer covers every
  * live dashboard token, checked against the registries (NOT a hand-count): a new rule,
- * gate, artifact, or ontology token fails this test only if its help entry is missing.
+ * mark, artifact, or ontology token fails this test only if its help entry is missing.
  */
 import { describe, it, expect } from 'vitest';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { PHASE_GATE_RULES, IMPL_GATE_MILESTONES } from '../src/kernel/measure/readiness.js';
+import { MARK_LABELS } from '../src/kernel/measure/readiness.js';
 import { ARTIFACT_CATALOG } from '../src/projections/panels.js';
 import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, HELP_ELEMENT_STATES, METRIC_HELP } from '../src/projections/help-content.js';
 import { helpEntry } from '../src/projections/help.js';
 import { METRIC_DIMENSIONS } from '@sigloch/se-engine';
-import { ALL_RULE_DEFS, CODE_CONFORMANCE_RULES } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, CODE_CONFORMANCE_RULES, Mark } from '@sigloch/contracts/se';
 
 const nonEmpty = (s: unknown) => typeof s === 'string' && s.trim().length > 0;
 
@@ -47,8 +47,7 @@ describe('TEST-help-content-coverage (CR-GC-227): authored Plain/SE covers the l
     const known = new Set([
       ...ALL_RULE_DEFS.map((r) => r.id),
       ...CODE_CONFORMANCE_RULES.map((r) => r.id),
-      ...Object.keys(PHASE_GATE_RULES),
-      ...Object.keys(IMPL_GATE_MILESTONES),
+      ...Mark.options,
       ...HELP_PANEL_IDS,
       ...ARTIFACT_CATALOG.map((a) => a.id),
       ...Object.keys(HELP_VOCAB),
@@ -60,12 +59,15 @@ describe('TEST-help-content-coverage (CR-GC-227): authored Plain/SE covers the l
     expect(Object.keys(HELP_CONTENT).filter((id) => !known.has(id))).toEqual([]);
   });
 
-  it('every phase + implementation gate id is covered (from readiness.ts, not hand-listed)', () => {
-    const gateIds = [...Object.keys(PHASE_GATE_RULES), ...Object.keys(IMPL_GATE_MILESTONES)];
-    expect(gateIds).toEqual(['SRR', 'PDR', 'CDR', 'TRR', 'SAR', 'FCA', 'SVR', 'FRR']);
-    for (const id of gateIds) {
-      expect(HELP_CONTENT[id], `HELP_CONTENT missing gate ${id}`).toBeDefined();
+  // CR-GC-748: die Marken kommen aus dem Katalog (`Mark`), nicht aus einer Liste hier — eine sechste
+  // Marke drueben laesst diesen Test fallen. Die vier Bau-Gates (SAR/FCA/SVR/FRR) gibt es nicht mehr;
+  // ein Eintrag zu ihnen fiele im Fall darueber auf.
+  it('every mark id is covered (from the catalog, not hand-listed) and titled by its label', () => {
+    expect(Mark.options.length).toBeGreaterThan(0);
+    for (const id of Mark.options) {
+      expect(HELP_CONTENT[id], `HELP_CONTENT missing mark ${id}`).toBeDefined();
       expect(nonEmpty(HELP_CONTENT[id]?.plain) && nonEmpty(HELP_CONTENT[id]?.se)).toBe(true);
+      expect(helpEntry(id)).toMatchObject({ kind: 'mark', title: MARK_LABELS[id] });
     }
   });
 

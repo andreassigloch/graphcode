@@ -5,7 +5,9 @@
  * Stelle, an der graphcode das Schema parst (R-32: jede Variante inkl. Abweisung):
  *   SCHEMA-graph-delta     → `GraphDeltaSchema.parse` in `GraphStore.commit` (Persistenzgrenze)
  *   SCHEMA-ontology-json   → `OntologyJsonSchema.parse` in `importOntologyGraph` / `heldBackTraces`
- *   SCHEMA-phase-readiness → `PhaseGateReadiness`, wie sie in `GenerationStep` über MCP reist
+ *
+ * CR-GC-748: der dritte Vertrag dieser Datei (SCHEMA-phase-readiness, `PhaseGateReadiness`) ist mit der
+ * Phasenabdeckung entfallen — es gibt die Zeile nicht mehr, die er beschrieb.
  *
  * Keine Mocks: Kuzu auf Platte in mkdtemp, echte Tool-Registry.
  *
@@ -22,9 +24,6 @@ import { GraphStore, GraphDeltaSchema } from '../src/kernel/graph-store.js';
 import { StoreLock } from '../src/kernel/store-lock.js';
 import { OntologyJsonSchema, heldBackTraces } from '../src/kernel/harness-import.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { PhaseGateReadiness } from '../src/kernel/measure/readiness.js';
-import { GenerationStep } from '../src/loop/generate.js';
-import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 
 const SCOPE = { workspaceId: 'contracts-ws', systemId: 'contracts' };
 
@@ -135,49 +134,5 @@ describe('SCHEMA-ontology-json wird geprüft, wo die SSOT-Datei das Programm bet
 
     writeFileSync(join(tmp, 'docs', 'graph', `${SCOPE.systemId}.graph.json`), JSON.stringify(GOOD));
     expect(heldBackTraces(tmp, SCOPE.systemId, { nodes: [], edges: [] })).toEqual(expect.any(Array));
-  });
-});
-
-// ---------------------------------------------------------------------------
-// SCHEMA-phase-readiness — FLOW-phase-readiness, Messwerk → GenerationStep → Executor
-// ---------------------------------------------------------------------------
-
-describe('SCHEMA-phase-readiness: jede Phase-Gate-Zeile ist ein Vertrag', () => {
-  let tmp: string;
-  let harness: GraphCodeHarness;
-
-  beforeEach(async () => {
-    tmp = mkdtempSync(join(tmpdir(), 'graphcode-contract-phase-'));
-    const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: join(tmp, 'kuzu') });
-    harness = new GraphCodeHarness(makeConfig(tmp), storage);
-    await harness.initialize();
-  });
-
-  afterEach(async () => {
-    await harness.close();
-    rmSync(tmp, { recursive: true, force: true });
-  });
-
-  it('die ECHTE Tool-Antwort trägt Zeilen, die den Vertrag einzeln erfüllen', async () => {
-    const raw = (await bindToolsToHarness(harness).graph_generate.handler({ intent: 'Ein Testsystem.' })) as {
-      phaseReadiness: unknown[];
-    };
-    expect(raw.phaseReadiness.length).toBeGreaterThan(0);
-    for (const row of raw.phaseReadiness) expect(PhaseGateReadiness.safeParse(row).success).toBe(true);
-  });
-
-  it('eine Zeile mit unbekanntem Gate, negativer Deckung oder ohne missing wird abgewiesen', async () => {
-    const raw = (await bindToolsToHarness(harness).graph_generate.handler({ intent: 'Ein Testsystem.' })) as Record<
-      string,
-      unknown
-    > & { phaseReadiness: Array<Record<string, unknown>> };
-    const row = raw.phaseReadiness[0]!;
-    expect(PhaseGateReadiness.safeParse({ ...row, gate: 'XYZ' }).success).toBe(false);
-    expect(PhaseGateReadiness.safeParse({ ...row, covered: -1 }).success).toBe(false);
-    const { missing: _missing, ...ohneMissing } = row;
-    expect(PhaseGateReadiness.safeParse(ohneMissing).success).toBe(false);
-    // An der Grenze: dieselbe kaputte Zeile bricht den ganzen GenerationStep.
-    expect(GenerationStep.safeParse(raw).success).toBe(true);
-    expect(GenerationStep.safeParse({ ...raw, phaseReadiness: [{ ...row, gate: 'XYZ' }] }).success).toBe(false);
   });
 });

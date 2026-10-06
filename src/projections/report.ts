@@ -20,7 +20,6 @@ import {
   readTestRefs,
   type TestRef,
   TRACE_PATTERNS,
-  PHASE_READINESS_NAME,
   DIMENSION_READINESS_NAME,
   ReadinessDimension,
   type ReadinessScoreType,
@@ -31,14 +30,7 @@ import { takeSteeringSnapshot, type SteeringSnapshot } from '../kernel/measure/s
 // CR-GC-537: die EINE Normierung des Steuerungsraums. Erst seit CR-SM-340 aus dem Paket
 // erreichbar — davor gab es sie nur paketintern, und ein Host haette sie nachbauen muessen.
 import { steerScore, steerTerms } from '@sigloch/se-engine';
-import {
-  summarizeReadiness,
-  computePhaseReadiness,
-  GATE_STATE_LABELS,
-  type ReadinessGate,
-  type ReadinessReport,
-  type PhaseGateReadiness,
-} from '../kernel/measure/readiness.js';
+import { summarizeReadiness, type ReadinessReport } from '../kernel/measure/readiness.js';
 import {
   evaluateAll,
   readinessOf,
@@ -278,19 +270,11 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     terms: steerTerms(snap.violations),
   });
 
-  /** Der Anzeigetext des Zustands, am Gate mitgegeben — gelesen, nie hier formuliert (CR-GC-745). */
-  type GateMitAnzeige = ReadinessGate & { stateLabel: string };
-  const mitAnzeige = (g: ReadinessGate): GateMitAnzeige => ({ ...g, stateLabel: GATE_STATE_LABELS[g.state] });
-
   const graph_readiness: MCPTool<
     z.infer<typeof GraphReadinessInputSchema>,
-    Omit<ReadinessReport, 'phaseGates' | 'implGates'> & {
-      /** CR-GC-745: jedes Gate mit seinem Zustand UND dessen Anzeigetext (`GATE_STATE_LABELS`,
-       * graphcode-client) — `passed: false` allein sagt nicht, ob etwas offen ist oder ob noch
-       * nichts zu pruefen war (`not-reached`, „nicht durchschritten"). */
-      phaseGates: GateMitAnzeige[];
-      implGates: GateMitAnzeige[];
-      [PHASE_READINESS_NAME]: PhaseGateReadiness[];
+    // CR-GC-748: `marks` (SRR/PDR/CDR/TRR/Bau, je `reached` und `holding`) reist im Bericht des
+    // Clients mit — durchgereicht, hier weder gerechnet noch angereichert.
+    ReadinessReport & {
       /** CR-GC-325: die 8 RULE_TO_DIMENSION-Themenscores — die zweite Projektion
        * DESSELBEN Regelstroms, aus DEMSELBEN Snapshot wie graph_generate. */
       [DIMENSION_READINESS_NAME]: ReadinessScoreType[];
@@ -330,14 +314,14 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     name: 'graph_readiness',
     description:
       'Where does the project stand? Coverage (how many places are done) AND severity (how bad the ' +
-      'worst open one is), from ONE rule run: compliance, the SRR/PDR/CDR/TRR gates, the MS impl-gates, ' +
+      'worst open one is), from ONE rule run: compliance, the marks SRR/PDR/CDR/TRR/Bau, ' +
       'the 8 topic scores and the steering space. Take it to decide WHAT NEXT, not to diagnose a single ' +
       'finding — that is rules_get_violations. Read `score` only together with `measured`, and the ' +
       'numbers only together with `skipped` and `importCoverage`: a figure without its reach is not a ' +
       'statement. `graph_help({token:"graph_readiness"})` explains every block. Read-only.',
     inputSchema: GraphReadinessInputSchema,
     async handler(input) {
-      // EINE Erhebung, drei Ableitungen (Report, Phase-Gates, skipped) — CR-GC-398.
+      // EINE Erhebung, zwei Ableitungen (Report mit Marken, skipped) — CR-GC-398.
       const ev = evaluateAll(harness);
       // CR-GC-537: EIN Snapshot für die beiden Projektionen des Steering-Katalogs
       // (dimension_readiness und steer). Vorher nahm `dimensionReadiness` ihn selbst —
@@ -345,7 +329,6 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       // und beide Blöcke aus verschiedenen Erhebungen zu speisen.
       const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
       const report = readinessOf(ev, harness.getGraph());
-      const phaseReadiness = computePhaseReadiness(report.violations, harness.getGraph());
       // Intent-Coverage (CR-GC-295): nur wenn die Config bestätigte Anker trägt;
       // der Loader prüft dabei auch die Zielkonflikt-Paare (Warning, kein Block).
       const anchors = loadTargetProfile(harness.getRepoRoot())?.profile.intentAnchors ?? [];
@@ -370,10 +353,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       const shown = input.detail ? report : summarizeReadiness(report);
       return {
         ...shown,
-        phaseGates: shown.phaseGates.map(mitAnzeige),
-        implGates: shown.implGates.map(mitAnzeige),
         umfang,
-        [PHASE_READINESS_NAME]: phaseReadiness,
         [DIMENSION_READINESS_NAME]: dimensionReadiness(snapshot),
         steer: steerSpace(snapshot),
         graphVersion: graphVersion(),
@@ -496,8 +476,8 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
         const entry = helpEntry(input.token);
         if (!entry) {
           throw new Error(
-            `graph_help: unknown token '${input.token}'. Try a ruleId (e.g. R-04), a gate (SRR/PDR/CDR/TRR, ` +
-              `SAR/FCA/SVR/FRR), a panel (readiness/recommendations/artifacts/impact/health), an artifact ` +
+            `graph_help: unknown token '${input.token}'. Try a ruleId (e.g. R-04), a mark (SRR/PDR/CDR/TRR/Bau), ` +
+              `a panel (readiness/recommendations/artifacts/impact/health), an artifact ` +
               `(e.g. fmea), a metric dimension (coherence/modifiability/faultTolerance/flowEfficiency/` +
               `viability/scalability), or a vocabulary token (e.g. REQ). Omit the token for contextual help.`,
           );
@@ -507,7 +487,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       // EINE Erhebung für Report UND Maßnahmenliste (CR-GC-398) — vorher liefen
       // hier zwei Auswertungen nebeneinander, die auseinanderlaufen konnten.
       const ev = evaluateAll(harness);
-      return { measures: contextualHelp(readinessOf(ev, harness.getGraph()), ev.findings) };
+      return { measures: contextualHelp(ev.findings) };
     },
   };
 

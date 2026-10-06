@@ -8,7 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, DEFAULT_METRIC_POLICY, MARK_STAGE } from '@sigloch/contracts/se';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -20,6 +20,8 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { generationStep, DIMENSION_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, EIN_BATCH, vorschlagsText, RULE_CLAUSE, SKILL_FOR_DIMENSION } from '../src/loop/generate.js';
 import { ElementType } from '@sigloch/contracts/se';
+import { computeMarks } from '../src/kernel/measure/readiness.js';
+import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 /**
@@ -45,6 +47,19 @@ const edge = (sourceId: string, targetId: string, edgeType: string) => ({
 const g = (nodes: unknown[], edges: unknown[]): Graph => ({ nodes, edges }) as Graph;
 
 const EMPTY = g([], []);
+
+/** Stufe einer Regel, aus dem Katalog gelesen — `immer` zaehlt als 0. */
+const stufeVon = (ruleId: string): number => {
+  const st = ALL_RULE_DEFS.find((r) => r.id === ruleId)?.stage;
+  return st === undefined || st === 'immer' ? 0 : st;
+};
+/** Die Marken eines Graphen aus dem Regelstrom des Steuerkatalogs — dieselbe Rechnung wie im Bericht. */
+const markenVon = (graph: Graph) =>
+  computeMarks(
+    takeSteeringSnapshot(graph, DEFAULT_METRIC_POLICY).violations.map((v) => ({
+      ruleId: v.rule_id, severity: v.severity, elementId: v.element_id, message: v.message,
+    })),
+  );
 const INTENT = 'Ein Bestellsystem, mit dem Kunden Ersatzteile suchen und bestellen.';
 
 describe('generationStep — Zustandsmaschine (pur)', () => {
@@ -151,15 +166,13 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.prompt).toContain('im selben Batch');
   });
 
-  it('SRR/PDR regel-vollständig, aber CDR/TRR offen → kein done; die Phasen bleiben Bericht (CR-GC-296/593)', () => {
+  it('SRR und PDR erreicht, spätere Stufen offen → kein done; die Marken bleiben Bericht (CR-GC-593/748)', () => {
     // SRR+PDR sind mit einer angereicherten, aber realen Struktur regel-vollständig
     // erreichbar (26/26 je Gate, geprüft): REQ-Text mit Verifizierbarkeits-Pattern
     // (BQ-02/06/07), Prä-/Postcondition-REQs (Schreibregel, seit CR-SM-357 keine Regel), eine FCHAIN mit FUNC (R-15)
     // inkl. Actor-Ein-/Ausgang über FLOW (FC-04/R-10) und FUNC→MOD-Allokation
-    // (R-22/R-23). CDR/TRR bleiben in DIESEM Fixture absichtlich ausgeklammert
-    // (s. Test unten) — computePhaseReadiness/currentPhaseGate selbst werden pur
-    // getestet (nächster describe-Block), das Handoff-Gating hier über die REALE
-    // generationStep-Pipeline nur für die tatsächlich erreichbaren Gates.
+    // (R-22/R-23). Die Stufen danach bleiben in DIESEM Fixture absichtlich offen (keine
+    // FMEA, kein Bauplan) — die Freigabe folgt allein dem Fokus, nie einer Marke.
     const measurable = (topic: string): string =>
       `Das System muss ${topic} innerhalb von 2 Sekunden bestätigen und protokollieren.`;
     const graph = g(
@@ -168,14 +181,13 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         // das wirkungslos — der Steering-Pfad las den geflachten Export, in dem
         // `attributes` gar nicht existiert, also feuerten AF-01..03 unabhängig vom
         // Modellinhalt. Jetzt trägt der Stamp und PDR wird erreichbar.
-        // CR-SM-354: conops ist SRR, trade/assumption-review/implplan sind PDR — deshalb
-        // traegt das Fixture auch den implplan-Stempel; CDR/TRR bleiben ohne fmea / Bindung.
+        // conops gehoert zu SRR, trade/assumption-review zu PDR (Stufe der Regel, contracts 11);
+        // fmea und der Bauplan (offene Auftraege) fehlen — das sind die spaeteren Stufen.
         node('SYS-shop', 'SYS', 'shop', INTENT, {
           analysisFreshness: {
             conops: { graphVersion: 1 },
             trade: { graphVersion: 1, crRefs: ['CR-trade'] },
             'assumption-review': { graphVersion: 1 },
-            implplan: { graphVersion: 1 },
           },
         }),
         // CR-SM-355: TR-01 (PDR) verlangt die Entscheidung als CR mit decides-Kante; MS-03 (info)
@@ -248,30 +260,25 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);
     expect(step.blockingErrors).toBe(0);
-    const srr = step.phaseReadiness.find((p) => p.gate === 'SRR');
-    const pdr = step.phaseReadiness.find((p) => p.gate === 'PDR');
-    expect(srr).toEqual({ gate: 'SRR', total: srr?.total, covered: srr?.total, missing: [], state: 'passed' });
-    // CR-GC-303: die frühere „bekannte Lücke" ist WEG. AF-01..03 galten hier als
-    // dauerhaft offen, weil der Steering-Pfad seinen OntologyGraph aus dem geflachten
-    // Export baute und `element.attributes` dort nicht existiert — kein Stamp konnte
-    // je gesehen werden. Seit `takeSteeringSnapshot` denselben Mapper wie der
-    // Harness-Pfad benutzt, trägt der Stamp am Fixture-SYS und PDR ist voll gedeckt.
-    // Damit ist PDR aus MODELLINHALT erreichbar, nicht mehr durch Encoding blockiert.
-    expect(pdr).toEqual({ gate: 'PDR', total: pdr?.total, covered: pdr?.total, missing: [], state: 'passed' });
-    // CDR/TRR bleiben in DIESEM Fixture offen — bewusst, aus fehlendem Modellinhalt
-    // (keine FMEA-/implplan-Stamps, keine Code-/Test-Bindungen), nicht aus Encoding.
-    const currentGate = step.phaseReadiness.find((p) => p.covered < p.total);
-    expect(currentGate?.gate).toBe('CDR');
-    expect(currentGate?.state).toBe('open'); // CR-GC-745: der Zustand reist im Schritt mit
+    // CR-GC-303: die Stempel am Fixture-SYS tragen — SRR und PDR sind aus MODELLINHALT erreicht,
+    // nicht durch Encoding blockiert. CR-GC-748: gelesen an den Marken des Clients, nicht mehr an einer
+    // eigenen Regelabdeckung je Phase.
+    const marken = markenVon(graph);
+    expect(marken.find((m) => m.id === 'SRR')).toMatchObject({ reached: true, holding: [] });
+    expect(marken.find((m) => m.id === 'PDR')).toMatchObject({ reached: true, holding: [] });
+    // Der Schritt ist trotzdem nicht fertig: sein Fokus liegt auf einer Regel HINTER der Marke PDR.
     expect(step.phase).not.toBe('handoff');
     expect(step.done).toBe(false);
+    expect(stufeVon(step.focusKey!.split(':')[1]!)).toBeGreaterThan(MARK_STAGE.PDR);
+    // Und er traegt keine Phasenzeilen mehr.
+    expect(step).not.toHaveProperty('phaseReadiness');
   });
 
-  it('threshold erreicht, aber PDR-Lücke (leere FCHAIN, R-15) → kein done (CR-GC-296)', () => {
+  it('threshold erreicht, aber eine leere FCHAIN (R-15) → kein done, und die Marke der Regel ist offen (CR-GC-296/748)', () => {
     // Realer Bug-Fall: alle RULE_TO_DIMENSION-Scores liegen (bei threshold=0) über
     // der Schwelle und es gibt keine error-Violation — die alte Handoff-Bedingung
-    // hätte "Struktur trägt" gemeldet, obwohl die FCHAIN leer ist (R-15, PDR-
-    // gemappt via RULE_TO_PHASE) — die Score-Ratio verdünnt den Fund unsichtbar.
+    // hätte "Struktur trägt" gemeldet, obwohl die FCHAIN leer ist (R-15, eine
+    // Existenz-Regel) — die Score-Ratio verdünnt den Fund unsichtbar.
     const graph = g(
       [
         node('SYS-shop', 'SYS', 'shop', INTENT),
@@ -303,8 +310,10 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);
     expect(step.blockingErrors).toBe(0); // kein error — die alte Bedingung allein hätte done:true erlaubt
-    const pdr = step.phaseReadiness.find((p) => p.gate === 'PDR');
-    expect(pdr?.missing).toContain('R-15');
+    const r15 = ALL_RULE_DEFS.find((r) => r.id === 'R-15')!;
+    const marke = markenVon(graph).find((m) => m.id === r15.mark)!;
+    expect(marke.reached).toBe(false);
+    expect(marke.holding.some((h) => h.ruleId === 'R-15' && h.elementId === 'FCHAIN-bestellung')).toBe(true);
     expect(step.phase).not.toBe('handoff');
     expect(step.done).toBe(false);
   });

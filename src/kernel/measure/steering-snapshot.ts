@@ -3,9 +3,7 @@
  *
  * EIN Messpfad für "wo steht der Graph im Readiness-Raum": voller Regelkatalog
  * (`evaluateAllRules` inkl. UC-01/ND — dafür die ND-Matrix-Injektion, CR-GC-287)
- * plus `computeReadiness` und die Phasen-Gates aus demselben Regelstrom — exakt der
- * Raum, in dem `graph_generate` den Fokus
- * wählt. Genutzt von `generationStep` (Fokus-Wahl) und vom dryRun-Zweig in
+ * plus `computeReadiness` — exakt der Raum, in dem `graph_generate` den Fokus wählt. Genutzt von `generationStep` (Fokus-Wahl) und vom dryRun-Zweig in
  * `graph_mutate` (steeringDelta im Preview-Verdict). Keine Duplikation: die
  * frühere Inline-Sequenz in generate.ts ist hierher extrahiert.
  *
@@ -22,7 +20,6 @@ import { OntologyGraph, ReadinessReport, RuleViolation } from '@sigloch/contract
 import { evaluateAllRules } from '@sigloch/contracts/se';
 import { computeReadiness } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../conformance.js';
-import { computePhaseReadiness, PhaseGateReadiness } from './readiness.js';
 
 /**
  * Ein Messpunkt des Steuerraums — ein Zod-Vertrag aus Bausteinen der Familie (CR-GC-644), kein Typ.
@@ -36,11 +33,6 @@ export const SteeringSnapshotSchema = z.object({
   /** Error-Funde — die Gate-Blocker-Zählung des Steering-Raums. */
   blockingErrors: z.number(),
   report: ReadinessReport,
-  /**
-   * Die Phasen-Gates aus DEMSELBEN Regelstrom (CR-GC-296). Gerechnet hier, im Messwerk,
-   * nicht beim Leser: generationStep projizierte sie bis CR-GC-502 selbst aus `violations`.
-   */
-  phaseReadiness: z.array(PhaseGateReadiness),
   /** CR-GC-598: die Fokusmenge (focus-set.ts) — was die Steuerung zeigt. */
   focus: z.array(RuleViolation),
 });
@@ -111,7 +103,6 @@ function buildSnapshot(graph: Graph, policy: MetricPolicy): SteeringSnapshot {
     focus,
     blockingErrors: blockingOf(focus),
     report: computeReadiness(og, policy),
-    phaseReadiness: computePhaseReadiness(violations.map((v) => ({ ruleId: v.rule_id })), graph),
   };
   return snapshot;
 }

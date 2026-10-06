@@ -19,7 +19,8 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { getFamilyRuleIds, GATE_STATE_LABELS } from '../src/kernel/measure/readiness.js';
+import { getFamilyRuleIds, MARK_LABELS } from '../src/kernel/measure/readiness.js';
+import { ALL_RULE_DEFS, Mark } from '@sigloch/contracts/se';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -110,36 +111,32 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     expect(report.compliance.score).toBe(1);
   });
 
-  // CR-GC-745 (contracts CR-SM-394): ein Entwurf ohne eine einzige Bindung las „Test Readiness Review
-  // bestanden". Jetzt traegt das Gate seinen Zustand und dessen Anzeigetext — auf beiden Achsen.
-  describe('CR-GC-745: der Zustand des Gates am Werkzeug', () => {
-    type Row = { gate: string; covered: number; total: number; missing: string[]; state: string };
-    const achse = (report: Record<string, unknown>, gate: string) =>
-      (report['phase_readiness'] as Row[]).find((p) => p.gate === gate)!;
+  // CR-GC-748 (contracts 11 / graphcode-client 2, CR-SM-395): das Werkzeug reicht die Marken des Clients
+  // durch. Die Gates mit ihrem Zustand (CR-GC-745), die Bau-Gates und die zweite Achse `phase_readiness`
+  // (CR-GC-296) gibt es nicht mehr — auch nicht als leeres Feld.
+  describe('CR-GC-748: die Marken am Werkzeug', () => {
+    const stufe = (ruleId: string) => ALL_RULE_DEFS.find((r) => r.id === ruleId)?.stage;
 
-    it('Entwurf: TRR ist nicht durchschritten (passed false, Anzeigetext), SRR bleibt bestanden', async () => {
+    it('Entwurf: fuenf Marken in Reihenfolge, je erreicht oder offen — und kein Gate-Feld daneben', async () => {
       const tools = bindToolsToHarness(harness);
       expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
 
-      const report = await tools.graph_readiness.handler({});
-      const gate = (id: string) => report.phaseGates.find((g) => g.id === id)!;
-
-      expect(gate('TRR')).toMatchObject({ state: 'not-reached', passed: false, completeness: { covered: 0, total: 0 } });
-      expect(gate('TRR').stateLabel).toBe(GATE_STATE_LABELS['not-reached']);
-      expect(gate('TRR').stateLabel).toBe('nicht durchschritten'); // das Wort des Nutzers, einmal festgehalten
-      // SRR ist am selben Entwurf gestellt und bestanden — der Zustand aendert nur TRR.
-      expect(gate('SRR')).toMatchObject({ state: 'passed', passed: true, stateLabel: GATE_STATE_LABELS.passed });
-      // An jedem Gate: der Boolean folgt aus dem Zustand, der Text aus der einen Tabelle.
-      for (const g of [...report.phaseGates, ...report.implGates]) {
-        expect(g.passed).toBe(g.state === 'passed');
-        expect(g.stateLabel).toBe(GATE_STATE_LABELS[g.state]);
+      const report = await tools.graph_readiness.handler({ detail: true });
+      expect(report.marks.map((m) => m.id)).toEqual(Mark.options);
+      for (const m of report.marks) {
+        expect(m.reached).toBe(m.holding.length === 0);
+        expect(m.label).toBe(MARK_LABELS[m.id]);
       }
-      // Die zweite Achse (Regelabdeckung) liest dieselbe Lage: voll gedeckt, aber nicht durchschritten.
-      expect(achse(report, 'TRR').state).toBe('not-reached');
-      expect(achse(report, 'TRR').covered).toBe(achse(report, 'TRR').total);
+      for (const alt of ['phaseGates', 'implGates', 'phase_readiness']) expect(report).not.toHaveProperty(alt);
+      // Im Entwurf meldet keine Bindungsregel: nichts ist gebunden, kein Auftrag ist offen.
+      expect(report.violations.filter((v) => stufe(v.ruleId) === 11)).toEqual([]);
+      // Bau ist trotzdem nicht erreicht — es gibt Ungebautes, und das sagt ein Befund, kein Schweigen.
+      const bau = report.marks.find((m) => m.id === 'Bau')!;
+      expect(bau.reached).toBe(false);
+      expect(bau.holding.length).toBeGreaterThan(0);
     });
 
-    it('mit einer Bindung ist TRR gefragt — und offen, solange eine Funktion ohne Code dasteht', async () => {
+    it('mit einer Bindung sind die Bindungsregeln faellig — die Funktion ohne Code haelt Bau', async () => {
       const tools = bindToolsToHarness(harness);
       expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
       expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
@@ -150,17 +147,14 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
       expect(bound.success).toBe(true);
 
       const report = await tools.graph_readiness.handler({ detail: true });
-      const trr = report.phaseGates.find((g) => g.id === 'TRR')!;
-      expect(trr).toMatchObject({ state: 'open', passed: false, stateLabel: GATE_STATE_LABELS.open });
-      expect(trr.completeness.total).toBeGreaterThan(0);
-      expect(trr.blocking.join(' ')).toContain('FUNC.realRef');
-      expect(achse(report, 'TRR').state).toBe('open');
-      expect(achse(report, 'TRR').missing).toContain('R-20');
+      const bau = report.marks.find((m) => m.id === 'Bau')!;
+      expect(bau.reached).toBe(false);
+      expect(bau.holding.some((h) => h.elementId === 'FUNC-login' && stufe(h.ruleId) === 11)).toBe(true);
     });
   });
 
   // CR-GC-203 item 2 — graph_readiness summary mode keeps the result within the MCP limit.
-  it('summary is the default (drops raw violations + gate lists, keeps scores + counts); detail:true restores them', async () => {
+  it('summary is the default (drops raw violations + what holds each mark, keeps verdicts + counts); detail:true restores them', async () => {
     const tools = bindToolsToHarness(harness);
     expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
     expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
@@ -170,11 +164,9 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
 
     // Summary drops the heavy per-element lists…
     expect(summary.violations).toEqual([]);
-    for (const gate of [...summary.phaseGates, ...summary.implGates]) {
-      expect(gate.blocking).toEqual([]);
-      expect(gate.open).toEqual([]);
-    }
-    // …but keeps scores + counts (the R-02 warning is still counted, scores match detail).
+    for (const m of summary.marks) expect(m.holding).toEqual([]);
+    // …but keeps the verdict per mark, scores + counts (the R-02 warning is still counted).
+    expect(summary.marks.map((m) => [m.id, m.reached])).toEqual(detail.marks.map((m) => [m.id, m.reached]));
     expect(summary.violationsByRule['R-02']).toBeGreaterThanOrEqual(1);
     expect(summary.violationsByRule).toEqual(detail.violationsByRule);
     expect(summary.compliance.score).toBe(detail.compliance.score);
@@ -182,34 +174,7 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
 
     // detail:true restores the full lists.
     expect(detail.violations.length).toBeGreaterThanOrEqual(1);
-    expect(
-      [...detail.phaseGates, ...detail.implGates].some((g) => g.blocking.length > 0 || g.open.length > 0),
-    ).toBe(true);
-  });
-
-  // CR-GC-296 — phase_readiness: the RULE_TO_PHASE-derived axis alongside the
-  // pre-existing phaseGates (structural completeness, CR-GC-250). Both name the
-  // same 4 gates but count DIFFERENT things — rule coverage here, not chain legs.
-  it('phase_readiness (CR-GC-296): SRR/PDR/CDR/TRR covered/total + missing, in both summary and detail', async () => {
-    const tools = bindToolsToHarness(harness);
-    expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
-    expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
-
-    const summary = await tools.graph_readiness.handler({});
-    const detail = await tools.graph_readiness.handler({ detail: true });
-
-    for (const report of [summary, detail]) {
-      expect(report.phase_readiness.map((p) => p.gate)).toEqual(['SRR', 'PDR', 'CDR', 'TRR']);
-      for (const gate of report.phase_readiness) {
-        expect(gate.total).toBeGreaterThan(0);
-        expect(gate.covered).toBeLessThanOrEqual(gate.total);
-        expect(gate.missing.length).toBe(gate.total - gate.covered);
-      }
-    }
-    // FUNC-login has no satisfy→REQ (R-02, warning, PDR-mapped) — it must show up
-    // as a PDR gap even though it never trips `blockingErrors` (not error-severity).
-    const pdr = summary.phase_readiness.find((p) => p.gate === 'PDR');
-    expect(pdr?.missing).toContain('R-02');
+    expect(detail.marks.some((m) => m.holding.length > 0)).toBe(true);
   });
 
   // -------------------------------------------------------------------------

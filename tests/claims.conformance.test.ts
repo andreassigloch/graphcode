@@ -191,7 +191,10 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // Wieder drei Artikel, wieder alle drei nachgezogen.
       // CR-SM-390 (contracts Regelkatalog 35.0.0, CR-GC-743): CR-R05 (Blatt-REQ ohne Bauauftrag) entfaellt
       // ersatzlos — 68 -> 67. Zwei Artikel nannten 68, beide nachgezogen.
-      'engine rules=67',
+      // CR-SM-395 (contracts 11, Regelkatalog 39.0.0, CR-GC-748): R-33 (der Graph hat ein System) und R-34
+      // (der Datenfluss hat ein Schema) kommen dazu, die Existenz-Regeln der Stufen 1 und 8 — 67 -> 69.
+      // Zwei Artikel nannten 67, beide nachgezogen.
+      'engine rules=69',
       'readiness dimensions=8',
       // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
       // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.

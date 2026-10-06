@@ -33,7 +33,7 @@ const zugOhneWirkung = async (): Promise<Antwort> =>
   })) as Antwort;
 /** Ein Zug ohne Wirkung, dann der Schritt — seit CR-GC-729 liest der Agent ihn nur aus graph_generate.
  * Derselbe Graph-Stand zaehlt im Gedaechtnis nur einmal, ob Mutation oder graph_generate ihn zuerst sieht. */
-const zugDannSchritt = async (task?: 'plan') => {
+const zugDannSchritt = async (task?: 'anforderungsqualitaet') => {
   await zugOhneWirkung();
   return tools.graph_generate.handler(task ? { task } : {});
 };
@@ -117,23 +117,30 @@ describe('CR-GC-604: Eintrittspunkte stellt die Abbruchregel nie zurueck', () =>
     expect(danach.skill).toMatch(/^se-(conops|trade|irr|fmea|plan)$/);
   });
 
+  // CR-GC-748: bis contracts 10 fuehrte der Bauplan ein eigenes Regelset (MS-01 als Fund im Task). Die
+  // Analysen tragen keines mehr; der eine Arbeitsschritt mit eigenen Regeln ist die Textqualitaet der
+  // Anforderungen. An ihm steht die Aussage jetzt.
   it('festgefahren im Task heisst: zurueck in den Kern, nicht "uebergib an den Menschen"', async () => {
-    await tools.graph_mutate.handler({
+    const r = (await tools.graph_mutate.handler({
       formatE: alsFormatE([
-        knoten('MS-1', 'MS', 'Fundament', 'Erster Meilenstein.'),
-        { op: 'update-node', node: { uid: 'SYS-s', attributes: { acceptedFindings: [{ ruleId: 'AF-05', reason: 'schlank' }] } } },
+        knoten('REQ-vage', 'REQ', 'Schnell', 'Das System soll moeglichst schnell und benutzerfreundlich sein.'),
+        knoten('TEST-vage', 'TEST', 'Schnell pruefen', 'Prueft, ob es schnell ist.'),
+        kante('UC-a', 'REQ-vage', 'compose'),
+        kante('TEST-vage', 'REQ-vage', 'verify'),
       ], harness),
       consumerId: 'test',
-    });
-    const s = await tools.graph_generate.handler({ task: 'plan' });
+    })) as Antwort;
+    expect(r.success).toBe(true);
+    const s = await tools.graph_generate.handler({ task: 'anforderungsqualitaet' });
     expect(s.phase).toBe('expand');
+    expect(s.focusKey).toMatch(/:BQ-\d+:/);
     let letzte: Awaited<ReturnType<typeof zugDannSchritt>> | undefined;
-    for (let i = 0; i < 20; i++) {
-      letzte = await zugDannSchritt('plan');
+    for (let i = 0; i < 30; i++) {
+      letzte = await zugDannSchritt('anforderungsqualitaet');
       if (letzte.phase === 'stalled') break;
     }
     expect(letzte!.phase).toBe('stalled');
-    expect(letzte!.prompt).toMatch(/Task plan festgefahren/);
+    expect(letzte!.prompt).toMatch(/Task anforderungsqualitaet festgefahren/);
     expect(letzte!.prompt).toMatch(/graph_generate ohne task/);
     expect(letzte!.prompt).not.toMatch(/Menschen/);
   });

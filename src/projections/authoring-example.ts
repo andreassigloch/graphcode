@@ -13,7 +13,7 @@
  * @author andreas@siglochconsulting
  */
 import { ELEMENT_ATTRIBUTES, ReqKind, ACCEPTED_FINDINGS_ATTRIBUTE, isValidTrace, type ElementType } from '@sigloch/contracts/se';
-import { ABNEHMBAR_JE_TASK } from '../loop/decisions.js';
+import { ABNEHMBAR } from '../loop/decisions.js';
 
 /** Ein Attribut, wie ein Autor es schreiben muss — Schluessel, erlaubte Werte, Schreibform. */
 export interface AttributeHint {
@@ -49,8 +49,8 @@ export function attributesFor(type: string): AttributeHint[] {
   const abnahme: AttributeHint = {
     key: ACCEPTED_FINDINGS_ATTRIBUTE.key,
     type: ACCEPTED_FINDINGS_ATTRIBUTE.type,
-    enumValues: [...new Set(Object.values(ABNEHMBAR_JE_TASK).flat())],
-    description: ACCEPTED_FINDINGS_ATTRIBUTE.description + ' Abnehmbar sind nur die Regeln in enumValues (im Kern die Eintrittspunkte AF-*, sonst je Task); Architekturregeln nicht.',
+    enumValues: [...ABNEHMBAR],
+    description: ACCEPTED_FINDINGS_ATTRIBUTE.description + ' Abnehmbar sind nur die Regeln in enumValues (die Analysen und zwei begruendete Ausnahmen); Architekturregeln nicht.',
     syntax: '@acceptedFindings [{"ruleId":"FM-03","reason":"Nachweis erst mit dem ersten Testlauf"}]',
   };
   if (type !== 'REQ') return [...own, abnahme];

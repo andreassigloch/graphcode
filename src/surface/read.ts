@@ -379,18 +379,6 @@ export function buildContextSlice(
 export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
   const { harness, graphVersion } = ctx;
 
-  /**
-   * CR-GC-363: Freshness-Banner inline — eine `//`-Kopfzeile vor dem Format-E-
-   * Ergebnis, wenn ein vorhandener AF-Stamp hinter dem Live-Graph-Stand liegt.
-   * Frischer Stamp → byte-unverändert (kein Rauschen). Die Klassifikation kommt
-   * aus `ctx.staleAnalysisBanner()` (computeAnalysisCurrency über die AF-Stamps),
-   * hier wird nichts neu gerechnet. Format-E-parsebar: parse überspringt `//`.
-   */
-  const withFreshnessBanner = (formatE: string): string => {
-    const banner = ctx.staleAnalysisBanner();
-    return banner ? `${banner}\n${formatE}` : formatE;
-  };
-
   const graph_elements: MCPTool<
     z.infer<typeof GraphElementsInputSchema>,
     | { nodes: GraphNode[]; total: number; graphVersion: number; legende?: string }
@@ -557,7 +545,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
         nodeCount: slice.nodes.length,
         edgeCount: slice.edges.length,
         roles: Object.fromEntries(slice.nodes.map((n) => [n.uid, n.role])),
-        formatE: withFreshnessBanner(formatE),
+        formatE,
         graphVersion: graphVersion(),
       };
     },
@@ -626,12 +614,12 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
         (input.depth > 1 ? buildContextSlice(graph, input.id, input.depth - 1).slice : slice).nodes.map((n) => n.uid),
       );
       const { innen, rand } = schneideRand(slice, innenIds);
-      // CR-GC-373: Agenten-Sicht; CR-GC-363: Freshness-Banner, wenn AF-Stamps veraltet sind.
+      // CR-GC-373: Agenten-Sicht.
       const gekuerzt = kuerzeAussenring(innen, input.id);
       const legende = gekuerzt.nodes.some((n) => n.description === '…') ? `${KUERZUNGS_LEGENDE}\n` : '';
       const formatE =
         legende +
-        withFreshnessBanner(SE_FORMAT_E_CODEC.serialize(gekuerzt, { omitProvenance: true })) +
+        SE_FORMAT_E_CODEC.serialize(gekuerzt, { omitProvenance: true }) +
         (rand ? `\n\n${RAND_UEBERSCHRIFT}\n${rand}` : '');
       return {
         rootId: input.id,

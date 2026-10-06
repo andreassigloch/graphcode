@@ -14,10 +14,10 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { DEFAULT_METRIC_POLICY, evaluateAllRules } from '@sigloch/contracts/se';
+import { DEFAULT_METRIC_POLICY, evaluateAllRules, TASK_ENTRY } from '@sigloch/contracts/se';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { generationStep } from '../src/loop/generate.js';
-import { abnehmbar, focusViolations } from '../src/kernel/measure/focus-set.js';
+import { ABNEHMBAR, focusViolations } from '../src/kernel/measure/focus-set.js';
 // @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration
 import { nachspielenRein } from '../auswertung/nachspielen.mjs';
 // @ts-expect-error — Migrationswerkzeug in .mjs (CR-GC-669), bewusst ohne Typdeklaration
@@ -118,14 +118,17 @@ describe('CR-GC-593: done ⇔ kein Fokus — an jedem Graphen des Korpus', () =>
 describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
   const golden = lade(GOLDEN);
 
-  it('ohne Abnahmen: nicht done, und der Rest ist eine kurze Liste menschlicher Entscheidungen', () => {
+  const og = { elements: golden.elements, traces: golden.traces } as never;
+  const offeneRegeln = (): string[] => [...new Set(focusViolations(og, evaluateAllRules(og, DEFAULT_METRIC_POLICY)).map((v) => v.rule_id))].sort();
+
+  it('ohne Abnahmen: nicht done, und der Rest ist eine kurze Liste', () => {
     const s = step(golden);
     expect(s.done).toBe(false);
-    const og = { elements: golden.elements, traces: golden.traces } as never;
-    const offen = new Set(focusViolations(og, evaluateAllRules(og, DEFAULT_METRIC_POLICY)).map((v) => v.rule_id));
-    // Gemessen 2026-09-22: das ist, was der Handlauf am Ende der Spezifikation bewusst offen liess.
-    // CR-GC-599/600: FM-* gehoeren der FMEA, MS-01 dem Bauplan — der Kern sieht nur noch diese drei.
-    expect([...offen].sort()).toEqual(['AF-05', 'BW-02', 'RD-05']);
+    // Gemessen 2026-09-22 (contracts 10): AF-05, BW-02, RD-05 — was der Handlauf am Ende der Spezifikation
+    // bewusst offen liess. Gemessen 2026-10-06 (contracts 11, CR-GC-748): dieselben drei, dazu was bis dahin
+    // ein Arbeitsschritt dem Kern abnahm — FM-03 (Fehlerbetrachtung), MS-01 (Bauplan), TR-01
+    // (Variantenvergleich) und die Bindung R-19/R-20 (das Golden traegt Bindungen, der Bau ist eroeffnet).
+    expect(offeneRegeln()).toEqual(['AF-05', 'BW-02', 'FM-03', 'MS-01', 'R-19', 'R-20', 'RD-05', 'TR-01']);
   });
 
   /** Nimmt an jedem Fund der genannten Regeln ab — am betroffenen Element, graphweit am SYS. */
@@ -143,32 +146,50 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
     return kopie;
   };
 
-  it('CR-GC-594/600: der abnehmbare Eintrittspunkt (AF-05) verschwindet aus dem Fokus, die Architektur bleibt', () => {
-    const s = step(mitAbnahmen(['AF-05']));
+  it('CR-GC-594/748: was abnehmbar ist, verschwindet mit der Abnahme aus dem Fokus — der Rest bleibt', () => {
+    const abnehmbare = offeneRegeln().filter((r) => ABNEHMBAR.has(r));
+    const rest = offeneRegeln().filter((r) => !ABNEHMBAR.has(r));
+    expect(abnehmbare.length).toBeGreaterThan(0);
+    expect(rest.length).toBeGreaterThan(0);
+    const s = step(mitAbnahmen(abnehmbare));
     expect(s.done).toBe(false);
-    expect(['BW-02', 'RD-05']).toContain(s.focusKey!.split(':')[1]);
+    expect(rest).toContain(s.focusKey!.split(':')[1]);
   });
 
-  it('CR-GC-594: eine Abnahme an einer Architekturregel zaehlt nicht — das Golden ist heute nicht done, und der Prompt sagt warum', () => {
-    const s = step(mitAbnahmen(['AF-05', 'BW-02', 'RD-05']));
+  it('CR-GC-594: eine Abnahme an einer nicht abnehmbaren Regel zaehlt nicht — das Golden ist heute nicht done, und der Prompt sagt warum', () => {
+    const rest = offeneRegeln().filter((r) => !ABNEHMBAR.has(r));
+    const s = step(mitAbnahmen(offeneRegeln()));
     expect(s.done).toBe(false);
     const regel = s.focusKey!.split(':')[1];
-    expect(['BW-02', 'RD-05']).toContain(regel);
+    expect(rest).toContain(regel);
     expect(s.prompt).toContain(`Die Abnahme von ${regel} zählt nicht`);
   });
 
-  it('CR-GC-594: steht der Fokus auf einer abnehmbaren Regel, nennt der Prompt die Abnahme — zum Zeitpunkt der Entscheidung', () => {
-    // Die Architektur-Fenster per defer zurueckstellen, bis eine abnehmbare Regel den Fokus stellt.
+  /** Stellt Fenster zurueck, bis eine Regel aus `ziel` den Fokus stellt. */
+  const bisFokusAuf = (ziel: (regel: string) => boolean) => {
     let cur = step(golden);
     const defer: string[] = [];
-    while (cur.focusKey && abnehmbar().has(cur.focusKey.split(':')[1]) === false && defer.length < 50) {
+    while (cur.focusKey && !ziel(cur.focusKey.split(':')[1]!) && defer.length < 200) {
       defer.push(cur.focusKey);
       cur = step(golden, defer);
     }
-    expect(abnehmbar().has(cur.focusKey!.split(':')[1])).toBe(true);
-    // CR-GC-601: im Kern sind nur Eintrittspunkte abnehmbar — der Prompt nennt den Task UND die Abnahme.
+    return cur;
+  };
+  const eintritte = new Set(Object.values(TASK_ENTRY).filter((e): e is string => e !== null));
+
+  it('CR-GC-594/601: steht der Fokus auf einem Eintrittspunkt, nennt der Prompt den Task UND die Abnahme — zum Zeitpunkt der Entscheidung', () => {
+    const cur = bisFokusAuf((r) => eintritte.has(r));
+    expect(eintritte.has(cur.focusKey!.split(':')[1]!)).toBe(true);
     expect(cur.prompt).toMatch(/ist der Eintrittspunkt des Tasks/);
     expect(cur.prompt).toMatch(/acceptedFindings mit Grund ab/);
+  });
+
+  it('CR-GC-748: steht der Fokus auf einer anderen abnehmbaren Regel, nennt der Prompt die Abnahme ohne Task', () => {
+    const cur = bisFokusAuf((r) => ABNEHMBAR.has(r) && !eintritte.has(r));
+    const regel = cur.focusKey!.split(':')[1]!;
+    expect(ABNEHMBAR.has(regel) && !eintritte.has(regel)).toBe(true);
+    expect(cur.prompt).toContain(`${regel} ist abnehmbar`);
+    expect(cur.prompt).not.toMatch(/ist der Eintrittspunkt des Tasks/);
   });
 
   it('eine Abnahme ohne Grund zaehlt nicht', () => {

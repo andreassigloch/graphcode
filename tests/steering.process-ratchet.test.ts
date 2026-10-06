@@ -7,7 +7,7 @@
  * What was missing is the CONTROL LOOP: that applying the steering repeatedly walks
  * a graph forward without falling back and without circling.
  *
- *   T-B1  graph maturity      → current gate / phase / focus types   (the ladder)
+ *   T-B1  graph maturity      → the first mark not reached           (the ladder)
  *   T-B3  rounds in the loop  → monotone progress, no circling       (the ratchet)
  *   T-B5  defer              → focus moves, state does not           (control)
  *
@@ -33,12 +33,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { RULE_TO_PHASE } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, Mark, MARK_STAGE } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { generationStep, DIMENSION_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
-import { computePhaseReadiness, currentPhaseGate, PHASE_GATE_ORDER } from '../src/kernel/measure/readiness.js';
+import { computeMarks } from '../src/kernel/measure/readiness.js';
+import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { ARCH_FIXTURE, makeSteeringConfig, parseFocusKey, scriptedActor } from './fixtures/steering-graphs.js';
-import type { MutateCommand } from '@sigloch/contracts/harness';
+import type { MutateCommand, RuleViolation } from '@sigloch/contracts/harness';
 
 /** Round cap. Generous but finite: a controller that circles must fail, not hang. */
 const MAX_ROUNDS = 30;
@@ -49,53 +50,49 @@ interface Round {
   focusKey: string | null;
   ruleId: string | null;
   blockingErrors: number;
-  /** Total covered legs across all four gates — the ratchet's scalar. */
-  coveredLegs: number;
+  /** Distinct rules with an open finding in the steering stream — the ratchet's scalar; SMALLER is better. */
+  openRules: number;
   applied: boolean;
   /** true when the batch was accepted but changed nothing — stagnation. */
   noop: boolean;
 }
 
-/** Realisierung begonnen (eine Bindung steht) — jede Regel gestellt (CR-GC-695, contracts CR-SM-392). */
-const BEGONNEN = {
-  nodes: [{ uid: 'FUNC-a', type: 'FUNC', name: 'a', description: '', attributes: { realRef: { file: 'src/a.ts' } } }],
-  edges: [],
-} as unknown as Parameters<typeof computePhaseReadiness>[1];
+const befund = (ruleId: string, severity: RuleViolation['severity']): RuleViolation => ({
+  ruleId, severity, elementId: 'X-1', message: `${ruleId} (Fixture)`,
+});
 
-describe('T-B1 (CR-GC-341): the gate ladder is read off the measurement, not off prose', () => {
-  it('walks SRR → PDR → CDR → TRR as coverage is added, one gate at a time', () => {
-    // Table-driven over the RULE_TO_PHASE stream itself: this is what
-    // `currentPhaseGate` consumes, so feeding it directly tests the ladder rather
-    // than a fixture's ability to hit four exact maturity levels.
-    const rulesOf = (gate: string) => Object.keys(RULE_TO_PHASE).filter((id) => RULE_TO_PHASE[id] === gate);
+describe('T-B1 (CR-GC-341): the ladder is read off the measurement, not off prose', () => {
+  // CR-GC-748: die Leiter sind die Marken, und ihre Reihenfolge ist die der Stufen (contracts
+  // `MARK_STAGE`). `currentPhaseGate` — die eigene Rechnung „erstes unvollstaendiges Gate" — gibt es
+  // nicht mehr; die erste nicht erreichte Marke IST die aktuelle. Tabellengetrieben ueber den Katalog:
+  // je Marke eine Existenz-Regel ihrer Stufen, keine Regel-ID steht hier.
+  const existenzVor = (mark: (typeof Mark.options)[number]) =>
+    ALL_RULE_DEFS.find((r) => r.mark === mark && r.role === 'existence');
+  const ersteOffene = (violations: RuleViolation[]) => computeMarks(violations).find((m) => !m.reached)?.id ?? null;
 
-    // Everything open → the current gate is the FIRST in lifecycle order.
-    const allOpen = Object.keys(RULE_TO_PHASE).map((ruleId) => ({ ruleId }));
-    expect(currentPhaseGate(computePhaseReadiness(allOpen, BEGONNEN))).toBe(PHASE_GATE_ORDER[0]);
-
-    // Clear the gates in order; after each, the current gate must be the next one.
-    let open = [...allOpen];
-    for (let i = 0; i < PHASE_GATE_ORDER.length; i++) {
-      const gate = PHASE_GATE_ORDER[i];
-      const cleared = new Set(rulesOf(gate));
-      open = open.filter((v) => !cleared.has(v.ruleId));
-      const expected = i + 1 < PHASE_GATE_ORDER.length ? PHASE_GATE_ORDER[i + 1] : null;
-      expect(currentPhaseGate(computePhaseReadiness(open, BEGONNEN))).toBe(expected);
+  it('walks the marks in stage order as the missing sets are added, one mark at a time', () => {
+    const mitExistenz = Mark.options.filter((m) => existenzVor(m));
+    expect(mitExistenz.length).toBeGreaterThan(1);
+    // Alles offen: die aktuelle Marke ist die erste.
+    let offen = mitExistenz.map((m) => befund(existenzVor(m)!.id, existenzVor(m)!.severity));
+    expect(ersteOffene(offen)).toBe(mitExistenz[0]);
+    // Der Reihe nach schliessen: die aktuelle Marke rueckt genau eine weiter, am Ende ist keine offen.
+    for (const [i, mark] of mitExistenz.entries()) {
+      offen = offen.filter((v) => v.ruleId !== existenzVor(mark)!.id);
+      expect(ersteOffene(offen)).toBe(mitExistenz[i + 1] ?? null);
     }
-
-    // And the order is the lifecycle order, not alphabetical.
-    expect([...PHASE_GATE_ORDER]).toEqual(['SRR', 'PDR', 'CDR', 'TRR']);
+    // Die Reihenfolge der Marken ist die ihrer Stufen.
+    const stufen = Mark.options.map((m) => MARK_STAGE[m]);
+    expect(stufen).toEqual([...stufen].sort((a, b) => a - b));
   });
 
-  it('clearing a LATER gate first does not advance the current gate', () => {
-    // The anti-shortcut: doing the CDR work early must not let SRR count as done.
-    // Without this, "the ladder is ordered" would hold vacuously for any subset.
-    const rulesOf = (gate: string) => Object.keys(RULE_TO_PHASE).filter((id) => RULE_TO_PHASE[id] === gate);
-    const cleared = new Set(rulesOf('CDR'));
-    const open = Object.keys(RULE_TO_PHASE)
-      .filter((id) => !cleared.has(id))
-      .map((ruleId) => ({ ruleId }));
-    expect(currentPhaseGate(computePhaseReadiness(open, BEGONNEN))).toBe('SRR');
+  it('clearing a LATER mark first does not advance the current one', () => {
+    const [erste, ...spaeter] = Mark.options.filter((m) => existenzVor(m));
+    expect(spaeter.length).toBeGreaterThan(0);
+    const nurErste = [befund(existenzVor(erste!)!.id, existenzVor(erste!)!.severity)];
+    expect(ersteOffene(nurErste)).toBe(erste);
+    // …und jede spaetere Marke bleibt mit offen: was eine fruehe haelt, haelt alle danach.
+    expect(computeMarks(nurErste).every((m) => !m.reached)).toBe(true);
   });
 });
 
@@ -125,11 +122,13 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
     const deferred: string[] = [];
     for (let round = 0; round < MAX_ROUNDS; round++) {
       const s = step(deferred);
-      const legs = s.phaseReadiness.reduce((n, g) => n + g.covered, 0);
+      // CR-GC-748: the scalar comes from the same snapshot the step is cut from (the rule coverage
+      // per phase it used to be read off is gone).
+      const offen = new Set(takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()).violations.map((v) => v.rule_id)).size;
       const focus = s.focusKey ? parseFocusKey(s.focusKey) : null;
 
       if (s.phase === 'handoff' || !s.focusKey || !focus) {
-        trace.push({ round, phase: s.phase, focusKey: s.focusKey, ruleId: null, blockingErrors: s.blockingErrors, coveredLegs: legs, applied: false, noop: false });
+        trace.push({ round, phase: s.phase, focusKey: s.focusKey, ruleId: null, blockingErrors: s.blockingErrors, openRules: offen, applied: false, noop: false });
         break;
       }
 
@@ -137,7 +136,7 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
       if (!batch) {
         // The scripted actuator has no canonical repair for this rule. Recorded as
         // a stop, never as progress — see the scope note at the top of the file.
-        trace.push({ round, phase: s.phase, focusKey: s.focusKey, ruleId: focus.ruleId, blockingErrors: s.blockingErrors, coveredLegs: legs, applied: false, noop: false });
+        trace.push({ round, phase: s.phase, focusKey: s.focusKey, ruleId: focus.ruleId, blockingErrors: s.blockingErrors, openRules: offen, applied: false, noop: false });
         break;
       }
 
@@ -147,7 +146,7 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
       const after = harness.getGraph();
       const noop = res.success && after.nodes.length + after.edges.length === sizeBefore;
 
-      trace.push({ round, phase: s.phase, focusKey: s.focusKey, ruleId: focus.ruleId, blockingErrors: s.blockingErrors, coveredLegs: legs, applied: res.success, noop });
+      trace.push({ round, phase: s.phase, focusKey: s.focusKey, ruleId: focus.ruleId, blockingErrors: s.blockingErrors, openRules: offen, applied: res.success, noop });
 
       if (!res.success) break;
       // Stagnation handling is the DRIVER's job, and `defer` is the published knob
@@ -158,7 +157,7 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
     return trace;
   }
 
-  it('T-B3 — repeated steering never falls back: gate coverage is monotone and blocking errors never rise', async () => {
+  it('T-B3 — repeated steering never falls back: the set of open rules never grows and blocking errors never rise', async () => {
     const trace = await runLoop();
 
     /*
@@ -179,14 +178,14 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
     expect(last.ruleId, 'der Scriptor lief an einer ANDEREN Regel aus — entscheiden, nicht uebernehmen').toBe('R-21');
 
     for (let i = 1; i < trace.length; i++) {
-      expect(trace[i].coveredLegs, `gate coverage fell at round ${trace[i].round}`).toBeGreaterThanOrEqual(trace[i - 1].coveredLegs);
+      expect(trace[i].openRules, `open rules rose at round ${trace[i].round}`).toBeLessThanOrEqual(trace[i - 1].openRules);
       expect(trace[i].blockingErrors, `blocking errors rose at round ${trace[i].round}`).toBeLessThanOrEqual(trace[i - 1].blockingErrors);
     }
 
-    // Net progress, not merely "did not get worse" — measured on gate coverage. Blocking errors
+    // Net progress, not merely "did not get worse" — measured on the open rules. Blocking errors
     // are Gate-Schuld only since CR-SM-353 (UC-01/UC-02 are warnings now); the scripted actor
     // never touches the fixture's one pre-existing error, so the count holds instead of falling.
-    expect(trace[trace.length - 1].coveredLegs).toBeGreaterThan(trace[0].coveredLegs);
+    expect(trace[trace.length - 1].openRules).toBeLessThan(trace[0].openRules);
     expect(trace[trace.length - 1].blockingErrors).toBeLessThanOrEqual(trace[0].blockingErrors);
   });
 
@@ -239,7 +238,7 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
     }
   });
 
-  it('T-B5 — defer moves the focus and NOTHING else: same violations, same readiness, same gates', async () => {
+  it('T-B5 — defer moves the focus and NOTHING else: same violations, same readiness', async () => {
     const before = step();
     expect(before.focusKey).toBeTruthy();
 
@@ -253,8 +252,6 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
     // or T-B3's monotonicity could be produced by deferring rather than by fixing.
     expect(after.blockingErrors).toBe(before.blockingErrors);
     expect(after.readiness).toEqual(before.readiness);
-    expect(after.phaseReadiness).toEqual(before.phaseReadiness);
-    expect(currentPhaseGate(after.phaseReadiness)).toBe(currentPhaseGate(before.phaseReadiness));
 
     // And the graph itself is untouched — generationStep is a pure measurement.
     expect(harness.getGraph().nodes.length).toBe(ARCH_FIXTURE.elements.length);

@@ -1,19 +1,20 @@
 /**
  * TEST-help-projection (CR-GC-228) — help.ts is a pure projection (no DB): every
- * HelpEntry carries all three layers; helpForRules covers the live V3_RULES;
- * contextualHelp ranks BOTH rule and creation blockers (CR-GC-221), errors first.
+ * HelpEntry carries all three layers; helpForRules covers the live catalog, grouped by mark;
+ * contextualHelp explains the failing rules, errors first.
  */
 import { describe, it, expect } from 'vitest';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { RULE_TO_PHASE } from '@sigloch/contracts/se';
-import { computeReadiness, ABSENT_CREATION_PROVIDER, GATE_STATE_LABELS } from '../src/kernel/measure/readiness.js';
-import { helpEntry, helpForRules, contextualHelp } from '../src/projections/help.js';
+import { ALL_RULE_DEFS, DEFAULT_METRIC_POLICY, Mark } from '@sigloch/contracts/se';
+import { MARK_LABELS } from '../src/kernel/measure/readiness.js';
+import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
+import { helpEntry, helpForRules, contextualHelp, RULES_WITHOUT_MARK } from '../src/projections/help.js';
 import { TOOL_HELP } from '../src/projections/tool-help.js';
 
 describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the live sources', () => {
-  it('helpEntry returns all three layers for a panel / gate / rule / artifact', () => {
+  it('helpEntry returns all three layers for a panel / mark / rule / artifact', () => {
     for (const id of ['readiness', 'SRR', 'R-01', 'fmea']) {
       const e = helpEntry(id);
       expect(e, id).toBeDefined();
@@ -21,16 +22,21 @@ describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the 
       expect(e!.se.length).toBeGreaterThan(0);
       expect((e!.prompt ?? '').length, `${id} prompt`).toBeGreaterThan(0); // these four carry an exact-prompt
     }
-    // Derived skeleton: a rule carries severity + owning gate from the live registries.
+    // Derived skeleton: a rule carries severity, stage and mark from the live registries.
     const r01 = helpEntry('R-01')!;
     expect(r01.kind).toBe('rule');
     expect(r01.severity).toBe('error');
-    // The gate comes from the live map, so assert THAT it is derived from it — not a
-    // literal. Pinning 'SRR' here is what let the readiness model drift away from
-    // contracts' RULE_TO_PHASE on 21 rules without a test noticing (CR-GC-312).
-    expect(r01.ownedByGate).toBe(RULE_TO_PHASE['R-01']);
+    // Stage and mark come from the rule definition, so assert THAT they are derived from it —
+    // not a literal (CR-GC-312: a pinned gate is how the model drifted on 21 rules unnoticed).
+    const def = (id: string) => ALL_RULE_DEFS.find((r) => r.id === id)!;
+    expect(r01.stage).toBe(def('R-01').stage);
+    expect(r01.mark).toBe(def('R-01').mark);
+    // A rule over all elements belongs to no single mark.
+    const immer = ALL_RULE_DEFS.find((r) => r.stage === 'immer' && helpEntry(r.id))!;
+    expect(helpEntry(immer.id)).toMatchObject({ stage: 'immer' });
+    expect(helpEntry(immer.id)!.mark).toBeUndefined();
     expect(r01.source).toBe('derived');
-    // A gate uses its INCOSE label; an artifact its catalog label; a token has no prompt.
+    // A mark uses its label; an artifact its catalog label; a token has no prompt.
     expect(helpEntry('SRR')!.title).toMatch(/System Requirements Review/);
     expect(helpEntry('fmea')!.kind).toBe('artifact');
     const tok = helpEntry('REQ')!;
@@ -40,91 +46,55 @@ describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the 
     expect(helpEntry('NOPE-999')).toBeUndefined();
   });
 
-  it('helpForRules covers every live V3_RULES rule, grouped by owning gate (no hand-count)', () => {
+  it('helpForRules covers every live V3_RULES rule, grouped by mark (no hand-count)', () => {
     const groups = helpForRules();
     const covered = new Set(Object.values(groups).flat().map((e) => e.id));
     for (const r of SE_DESCRIPTOR.rules as Array<{ id: string }>) {
       expect(covered.has(r.id), `rule ${r.id} not in helpForRules`).toBe(true);
     }
-    // Grouping follows RULE_TO_PHASE, so check the rule lands in the group that map
+    // The groups are the marks plus the one for rules that belong to none.
+    expect(Object.keys(groups)).toEqual([...Mark.options, RULES_WITHOUT_MARK]);
+    // Grouping follows the rule definition, so check each rule lands in the group ITS mark
     // names — not in a group this test remembers (CR-GC-312).
-    expect(groups[RULE_TO_PHASE['R-01']].map((e) => e.id)).toContain('R-01');
-    expect(groups.impl.map((e) => e.id)).toEqual(expect.arrayContaining(['MS-01', 'MS-02']));
+    for (const [group, entries] of Object.entries(groups)) {
+      for (const e of entries) expect(ALL_RULE_DEFS.find((r) => r.id === e.id)!.mark ?? RULES_WITHOUT_MARK, e.id).toBe(group);
+    }
+    // No rule twice.
+    const ids = Object.values(groups).flat().map((e) => e.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('contextualHelp ranks BOTH rule and creation blockers, errors first (CR-GC-221)', () => {
+  // CR-GC-748: nur noch Regelbefunde. Die „creation blocker" (CR-GC-221) und das nicht durchschrittene
+  // Gate (CR-GC-746) sind mit der Gate-Rechnung entfallen — was eine Marke haelt, IST ein Regelbefund.
+  it('contextualHelp explains the failing rules, one measure each, errors first', () => {
     const violations: RuleViolation[] = [
       { ruleId: 'R-02', severity: 'warning', elementId: 'FUNC-x', message: 'FUNC-x does not satisfy any requirement' },
       { ruleId: 'R-01', severity: 'error', elementId: 'REQ-y', message: 'REQ-y has no verification trace' },
     ];
-    const graph: Pick<Graph, 'nodes' | 'edges'> = {
-      nodes: [{ uid: 'REQ-y', type: 'REQ', name: 'y', description: '', attributes: {} }],
-      edges: [],
-    };
-    // ABSENT provider → phase gates block on their required creations (PDR: fmea/trade, …).
-    const report = computeReadiness(violations, graph, ABSENT_CREATION_PROVIDER);
-    const measures = contextualHelp(report, violations);
-
-    const kinds = new Set(measures.map((m) => m.blockerKind));
-    expect(kinds.has('rule')).toBe(true);
-    expect(kinds.has('creation')).toBe(true);
-    // A known creation blocker (fmea, a PDR creation) is surfaced, keyed on the artifact id.
-    const fmea = measures.find((m) => m.blockerKind === 'creation' && m.entry.id === 'fmea');
-    expect(fmea).toBeDefined();
-    expect(fmea!.entry.kind).toBe('artifact');
-    expect(fmea!.gateId).toBeTruthy();
-    // Every measure carries the help layers.
+    const measures = contextualHelp(violations);
+    expect(measures.map((m) => m.entry.id)).toEqual(['R-01', 'R-02']);
     for (const m of measures) {
+      expect(m.entry.kind).toBe('rule');
       expect(m.entry.plain.length).toBeGreaterThan(0);
       expect(m.entry.se.length).toBeGreaterThan(0);
     }
-    // Errors rank before warnings.
-    const firstWarning = measures.findIndex((m) => m.severity === 'warning');
-    const lastError = measures.map((m) => m.severity).lastIndexOf('error');
-    if (firstWarning >= 0 && lastError >= 0) expect(lastError).toBeLessThan(firstWarning);
   });
 
-  // CR-GC-746 (contracts CR-SM-394): ein nicht durchschrittenes Gate hat ein leeres `blocking`. Die
-  // Massnahmenliste las nur `blocking` und die Befunde — ein sauberer Entwurf ergab eine leere Liste,
-  // und die liest wie „alles bestanden".
-  describe('CR-GC-746: ein nicht durchschrittenes Gate in der Hilfe', () => {
-    const entwurf: Pick<Graph, 'nodes' | 'edges'> = {
-      nodes: [
-        { uid: 'SYS-x', type: 'SYS', name: 'x', description: '', attributes: {} },
-        { uid: 'TEST-t', type: 'TEST', name: 't', description: '', attributes: {} },
-        { uid: 'FUNC-f', type: 'FUNC', name: 'f', description: '', attributes: {} },
-      ],
-      edges: [],
-    };
+  it('CR-GC-748: ein leerer Graph ergibt keine leere Liste — die Existenz-Regel des Systems ist die Massnahme', () => {
+    const leer: Graph = { nodes: [], edges: [] };
+    const befunde = takeSteeringSnapshot(leer, DEFAULT_METRIC_POLICY).violations.map((v) => ({
+      ruleId: v.rule_id, severity: v.severity, elementId: v.element_id, message: v.message,
+    }));
+    const measures = contextualHelp(befunde);
+    expect(measures.length).toBeGreaterThan(0);
+    expect(measures.every((m) => ALL_RULE_DEFS.find((r) => r.id === m.entry.id)?.role === 'existence')).toBe(true);
+  });
 
-    it('contextualHelp nennt es als eigene Massnahme — mit Gate, Anzeigetext und der Erklaerung des Gates', () => {
-      const report = computeReadiness([], entwurf);
-      expect(report.phaseGates.find((g) => g.id === 'TRR')).toMatchObject({ state: 'not-reached', blocking: [] });
-      const measures = contextualHelp(report, []);
-      const trr = measures.filter((m) => m.blockerKind === 'not-reached');
-      expect(trr.map((m) => m.gateId)).toEqual(['TRR']);
-      expect(trr[0]!.entry.id).toBe('TRR');
-      expect(trr[0]!.severity).toBe('info'); // kein Befund: es gibt hier noch nichts zu tun
-      expect(trr[0]!.message).toContain(GATE_STATE_LABELS['not-reached']);
-      expect(trr[0]!.elementIds).toEqual([]);
-    });
-
-    it('Positivkontrolle: mit einer Bindung ist das Gate gefragt — keine solche Massnahme', () => {
-      const begonnen = {
-        nodes: [...entwurf.nodes.slice(0, 2), { ...entwurf.nodes[2]!, attributes: { realRef: { file: 'src/f.ts' } } }],
-        edges: [],
-      };
-      const measures = contextualHelp(computeReadiness([], begonnen), []);
-      expect(measures.filter((m) => m.blockerKind === 'not-reached')).toEqual([]);
-    });
-
-    it('der Gate-Eintrag TRR und die Werkzeug-Hilfe kennen den dritten Zustand, im Wort der einen Tabelle', () => {
-      expect(helpEntry('TRR')!.plain).toContain(GATE_STATE_LABELS['not-reached']);
-      // Die Gates ohne Vorbedingungs-Bein behaupten ihn nicht.
-      for (const id of ['SRR', 'PDR', 'CDR']) expect(helpEntry(id)!.plain).not.toContain(GATE_STATE_LABELS['not-reached']);
-      const se = TOOL_HELP.graph_readiness!.se;
-      for (const label of Object.values(GATE_STATE_LABELS)) expect(se).toContain(label);
-      expect(se).toContain('stateLabel');
-    });
+  it('die Marken erklaeren sich: jede hat einen Eintrag, und die Werkzeug-Hilfe nennt das Feld und alle Marken', () => {
+    for (const id of Mark.options) expect(helpEntry(id)).toMatchObject({ kind: 'mark', title: MARK_LABELS[id] });
+    const se = TOOL_HELP.graph_readiness!.se;
+    expect(se).toContain('`marks`');
+    for (const id of Mark.options) expect(se).toContain(id);
+    for (const alt of ['phaseGates', 'implGates', 'phase_readiness', 'stateLabel']) expect(se).not.toContain(alt);
   });
 });

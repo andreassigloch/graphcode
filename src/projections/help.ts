@@ -10,22 +10,15 @@
  * picks the depth — graphcode is headless and has no user identity to profile.
  *
  * Anti-drift: the authored two layers come from `help-content.ts`; the derived
- * fields (a rule's title/severity, its owning gate, the artifact label) are read
+ * fields (a rule's title/severity, its stage and mark, the artifact label) are read
  * from the live sources — a new rule appears in help automatically (CR-GC-227).
  *
  * @author andreas@siglochconsulting
  */
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
-import {
-  PHASE_GATE_RULES,
-  PHASE_GATE_LABELS,
-  GATE_STATE_LABELS,
-  IMPL_GATE_MILESTONES,
-  IMPL_GATE_RULES,
-  creationBlockingMsg,
-  type ReadinessReport,
-} from '../kernel/measure/readiness.js';
+import { ALL_RULE_DEFS, Mark } from '@sigloch/contracts/se';
+import { MARK_LABELS } from '../kernel/measure/readiness.js';
 import { ARTIFACT_CATALOG } from './panels.js';
 import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, METRIC_HELP } from './help-content.js';
 import { TOOL_HELP } from './tool-help.js';
@@ -33,7 +26,7 @@ import { TOOL_HELP } from './tool-help.js';
 /** A fully-assembled help item — all three layers + the derived skeleton. */
 export interface HelpEntry {
   id: string;
-  kind: 'rule' | 'gate' | 'panel' | 'artifact' | 'token' | 'metric' | 'tool';
+  kind: 'rule' | 'mark' | 'panel' | 'artifact' | 'token' | 'metric' | 'tool';
   /** Plain-language title — derived (rule/gate/artifact name) or the token. */
   title: string;
   /** The raw on-screen token, if different from the title (e.g. `R-04`, `CDR`). */
@@ -46,8 +39,10 @@ export interface HelpEntry {
   prompt?: string;
   /** Rules only — severity, from V3_RULES (derived). */
   severity?: string;
-  /** Rules only — the gate that owns the rule, from readiness.ts (derived). */
-  ownedByGate?: string;
+  /** Rules only — the stage the rule carries at its definition, 1–12 or `'immer'` (`ALL_RULE_DEFS[].stage`, derived). */
+  stage?: number | 'immer';
+  /** Rules only — the mark that stage lies before (`ALL_RULE_DEFS[].mark`, derived); absent for `'immer'`. */
+  mark?: string;
   /**
    * Metrics only (CR-GC-458) — the three questions a NUMBER raises, which are not the
    * ones a rule raises: what is counted, what it is for, what moves it. `plain`/`se`
@@ -67,20 +62,12 @@ export interface ContextualMeasure {
   /** Highest severity among the grouped violations (CR-GC-316) — order-independent. */
   severity: 'error' | 'warning' | 'info';
   /**
-   * A failing rule (keyed `ruleId`), a not-done creation (keyed artifact id, CR-GC-221), or a gate
-   * that is `not-reached` (keyed gate id, CR-GC-746): nothing blocks it and nothing was asked yet.
-   * The third is not a blocker to work off — it is there so an empty list never reads as "all passed".
-   */
-  blockerKind: 'rule' | 'creation' | 'not-reached';
-  /**
    * How often this rule fires (CR-GC-316). The TRUE count — `elementIds` may be
    * shorter, so a caller can always tell that the list was cut.
    */
   count: number;
   /** Up to `MAX_EXAMPLE_ELEMENTS` offending uids (rule blockers). Evidence, not the full set. */
   elementIds: string[];
-  /** The gate that surfaced the blocker (creation blockers) or that is not reached. */
-  gateId?: string;
   /** The first grouped violation's message, as an example of the shape. */
   message: string;
 }
@@ -98,15 +85,10 @@ const RULE_BY_ID = new Map(
 );
 const ARTIFACT_BY_ID = new Map(ARTIFACT_CATALOG.map((a) => [a.id, a]));
 
-/** rule id → the gate that owns it (phase gates + the impl-gate milestone rules). */
-const GATE_OF_RULE: Map<string, string> = (() => {
-  const m = new Map<string, string>();
-  for (const [gate, ruleIds] of Object.entries(PHASE_GATE_RULES)) {
-    for (const r of ruleIds) m.set(r, gate);
-  }
-  for (const r of IMPL_GATE_RULES) m.set(r, 'impl');
-  return m;
-})();
+/** rule id → its definition in the catalog: stage and the mark derived from it (CR-SM-395). */
+const RULE_DEF = new Map(ALL_RULE_DEFS.map((r) => [r.id, r]));
+/** The group of the rules that belong to no single mark (`stage: 'immer'`). */
+export const RULES_WITHOUT_MARK = 'immer';
 
 const PANEL_IDS = new Set<string>(HELP_PANEL_IDS);
 const isReadinessNumber = (id: string) => id === 'compliance' || id === 'totalElements' || id === 'elementsWithErrors';
@@ -136,15 +118,16 @@ export function helpEntry(id: string): HelpEntry | undefined {
       se: content.se,
       prompt: content.prompt,
       severity: rule.severity,
-      ownedByGate: GATE_OF_RULE.get(id),
+      stage: RULE_DEF.get(id)?.stage,
+      mark: RULE_DEF.get(id)?.mark ?? undefined,
       source: 'derived',
     };
   }
 
-  // Gate — title from the readiness labels.
-  if (content && (id in PHASE_GATE_RULES || id in IMPL_GATE_MILESTONES)) {
-    const title = PHASE_GATE_LABELS[id] ?? IMPL_GATE_MILESTONES[id]?.label ?? id;
-    return { id, kind: 'gate', title, token: id, plain: content.plain, se: content.se, prompt: content.prompt, source: 'authored' };
+  // Mark — title from the readiness labels.
+  const mark = Mark.safeParse(id);
+  if (content && mark.success) {
+    return { id, kind: 'mark', title: MARK_LABELS[mark.data], token: id, plain: content.plain, se: content.se, prompt: content.prompt, source: 'authored' };
   }
 
   // Artifact — label from the catalog (CR-GC-222).
@@ -194,29 +177,31 @@ export function helpEntry(id: string): HelpEntry | undefined {
 }
 
 /**
- * The full rule catalog grouped by its owning gate (§8 Rules tab). Phase rules sit
- * under SRR/PDR/CDR/TRR; the milestone rules (MS-01/MS-02) under `impl`. Derived from
- * `readiness.ts`, so it covers exactly the live `V3_RULES` set — no hand-count.
+ * The full rule catalog grouped by mark (§8 Rules tab): SRR/PDR/CDR/TRR/Bau, plus `immer` for the
+ * rules over all elements that belong to no single mark. Derived from `ALL_RULE_DEFS[].mark`, so it
+ * covers exactly the live catalog — no hand-count, and a rule that moves stage moves group.
  */
 export function helpForRules(): Record<string, HelpEntry[]> {
-  const groups: Record<string, HelpEntry[]> = {};
-  for (const [gate, ruleIds] of Object.entries(PHASE_GATE_RULES)) {
-    groups[gate] = ruleIds.map((r) => helpEntry(r)).filter((e): e is HelpEntry => !!e);
+  const groups: Record<string, HelpEntry[]> = Object.fromEntries([...Mark.options, RULES_WITHOUT_MARK].map((m) => [m, []]));
+  for (const r of ALL_RULE_DEFS) {
+    const entry = helpEntry(r.id);
+    if (entry) groups[r.mark ?? RULES_WITHOUT_MARK]!.push(entry);
   }
-  groups.impl = [...IMPL_GATE_RULES].map((r) => helpEntry(r)).filter((e): e is HelpEntry => !!e);
   return groups;
 }
 
 const SEVERITY_RANK: Record<string, number> = { error: 0, warning: 1, info: 2 };
 
 /**
- * The explained sibling of Recommendations (§7): ranked, explained measures from the
- * live readiness + violations. Handles BOTH blocker kinds (CR-GC-221): rule violations
- * (keyed `ruleId`) and not-done creations from `ReadinessGate.blocking[]` (keyed artifact
- * id, NOT a `ruleId`) — plus every gate that is `not-reached` (CR-GC-746), which has no
- * blocker at all. Errors rank before warnings before info; ties keep input order.
+ * The explained sibling of Recommendations (§7): ranked, explained measures from the live
+ * violations — one per failing rule. Errors rank before warnings before info; ties keep input order.
+ *
+ * CR-GC-748: only rule findings. The creation blockers (CR-GC-221) and the `not-reached` gates
+ * (CR-GC-746) are gone with the gate computation: what holds a mark IS a rule finding (an error or
+ * an open existence finding), so it already stands in `violations` — and an empty graph is no
+ * longer silent (R-33).
  */
-export function contextualHelp(readiness: ReadinessReport, violations: RuleViolation[]): ContextualMeasure[] {
+export function contextualHelp(violations: RuleViolation[]): ContextualMeasure[] {
   const measures: ContextualMeasure[] = [];
 
   // Rule blockers — ONE measure per rule, not per violation (CR-GC-316). Each measure
@@ -233,7 +218,6 @@ export function contextualHelp(readiness: ReadinessReport, violations: RuleViola
       byRule.set(v.ruleId, {
         entry,
         severity: v.severity,
-        blockerKind: 'rule',
         count: 1,
         elementIds: v.elementId ? [v.elementId] : [],
         message: v.message,
@@ -250,50 +234,6 @@ export function contextualHelp(readiness: ReadinessReport, violations: RuleViola
     }
   }
   measures.push(...byRule.values());
-
-  // Creation-not-done blockers — a creation in a gate's creationArtifacts whose
-  // blocking message is present (CR-GC-221). Deduped across gates.
-  const seen = new Set<string>();
-  for (const g of [...readiness.phaseGates, ...readiness.implGates]) {
-    for (const c of g.creationArtifacts) {
-      if (seen.has(c)) continue;
-      const msg = creationBlockingMsg(c, g.id);
-      if (g.blocking.includes(msg)) {
-        seen.add(c);
-        const entry = helpEntry(c);
-        // Already one per artifact (deduped by `seen`), so count is 1 by construction
-        // and there is no offending element — a creation blocker is an ABSENCE.
-        if (entry)
-          measures.push({
-            entry,
-            severity: 'error',
-            blockerKind: 'creation',
-            count: 1,
-            elementIds: [],
-            gateId: g.id,
-            message: msg,
-          });
-      }
-    }
-  }
-
-  // Not-reached gates (CR-GC-746, contracts CR-SM-394). Such a gate has an EMPTY `blocking` — the
-  // two loops above cannot see it, and on a clean draft the list came back empty, which reads as
-  // "everything passed". The state and its display text are read from the gate, never derived here.
-  for (const g of readiness.phaseGates) {
-    if (g.state !== 'not-reached') continue;
-    const entry = helpEntry(g.id);
-    if (entry)
-      measures.push({
-        entry,
-        severity: 'info',
-        blockerKind: 'not-reached',
-        count: 1,
-        elementIds: [],
-        gateId: g.id,
-        message: `${g.label}: ${GATE_STATE_LABELS[g.state]}`,
-      });
-  }
 
   return measures.sort((a, b) => (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3));
 }

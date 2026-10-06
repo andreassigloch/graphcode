@@ -142,15 +142,17 @@ describe('TEST-skill-rule-ids (d): Kanaele, Tasks und Abnahmen passen zusammen (
     }
   });
 
-  it('Abnahme je Task nur an eigenen Regeln — im Kern nur an Eintrittspunkten', async () => {
-    const { ABNEHMBAR_JE_TASK } = await import('../src/kernel/measure/focus-set.js');
-    const { TASK_ENTRY, taskOf } = await import('@sigloch/contracts/se');
-    const eintritte = new Set(Object.values(TASK_ENTRY).filter(Boolean));
-    for (const [task, ids] of Object.entries(ABNEHMBAR_JE_TASK) as [string, string[]][]) {
-      for (const id of ids) {
-        if (task === 'kern') expect(eintritte.has(id), `Kern: ${id} ist kein Eintrittspunkt`).toBe(true);
-        else expect(taskOf(id), `${task}: ${id} gehoert ${taskOf(id)}`).toBe(task);
-      }
+  // CR-GC-748: eine Menge statt „je Task" — die Regeln der Analysen stehen im Kern und werden dort abgenommen.
+  it('abnehmbar ist nur, was der Fokus zeigen kann: Regeln des Katalogs, im Gate-Katalog, keine info', async () => {
+    const { ABNEHMBAR } = await import('../src/kernel/measure/focus-set.js');
+    const { ALL_RULE_DEFS } = await import('@sigloch/contracts/se');
+    const { SE_DESCRIPTOR } = await import('@sigloch/graph-api-core');
+    const gate = new Set((SE_DESCRIPTOR.rules ?? []).map((r: { id: string }) => r.id));
+    for (const id of ABNEHMBAR) {
+      const def = ALL_RULE_DEFS.find((r) => r.id === id);
+      expect(def, `${id} ist keine Regel des Katalogs`).toBeDefined();
+      expect(gate.has(id), `${id} nicht im Gate-Katalog — der Fokus zeigt sie nie`).toBe(true);
+      expect(def!.severity, id).not.toBe('info');
     }
   });
 });
@@ -197,8 +199,12 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
       'R-04': 'Modul-Grenzbreite — der Fix beginnt mit der Sicht (se-view:arch), nicht mit dem Schnitt',
     };
     const eintritte = new Set(Object.values(TASK_ENTRY).filter(Boolean));
+    // CR-GC-748: eine Regel, deren Hilfe einen Analyse-Skill nennt (FM-01..03, CL-01, TR-01, IR-01 — seit
+    // contracts 11 Kern-Regeln), nimmt die Dimension gar nicht: der Schritt nennt den Skill der Analyse
+    // (`analyseSkill`, Fall darunter). Sie ist deshalb keine Abweichung und steht nicht in der Ratsche.
+    const { analyseSkill } = await import('../src/loop/generate.js');
     const abweichend = Object.entries(RULE_HELP)
-      .filter(([id, e]) => e.prompt && taskOf(id) === 'kern' && !eintritte.has(id))
+      .filter(([id, e]) => e.prompt && taskOf(id) === 'kern' && !eintritte.has(id) && analyseSkill(id) === undefined)
       .filter(([id, e]) => {
         const dim = RULE_TO_DIMENSION[id];
         const skill = dim ? SKILL_FOR_DIMENSION[dim]?.name : undefined;
@@ -207,6 +213,39 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
       .map(([id]) => id);
     expect(abweichend.filter((id) => !(id in AUSNAHMEN)), 'unbenannte Abweichung').toEqual([]);
     expect(Object.keys(AUSNAHMEN).filter((id) => !abweichend.includes(id)), 'Ausnahme ohne Abweichung — streichen').toEqual([]);
+  });
+
+  it('CR-GC-748: steht eine Regel einer Analyse im Kern-Fokus, nennt der Schritt den Skill der Analyse — nicht den der Dimension', async () => {
+    const { DEFAULT_METRIC_POLICY, RULE_HELP } = await import('@sigloch/contracts/se');
+    const { generationStep, analyseSkill, SKILL_FOR_DIMENSION } = await import('../src/loop/generate.js');
+    // Eine Risiko-Anforderung ohne Bewertung: FM-01 meldet — eine Regel der Fehlerbetrachtung, im Kern sichtbar.
+    const n = (uid: string, type: string, description: string, attributes: Record<string, unknown> = {}) =>
+      ({ uid, type, name: uid, description, attributes });
+    const e = (sourceId: string, targetId: string, edgeType: string) => ({ sourceId, targetId, edgeType, attributes: {} });
+    const graph = {
+      nodes: [
+        n('SYS-s', 'SYS', 'Ein System fuer Bestellungen.'),
+        n('UC-a', 'UC', 'Kunde bestellt ein Teil und erhaelt eine Bestaetigung.'),
+        n('ACTOR-k', 'ACTOR', 'Wer bestellt.'),
+        n('FUNC-f', 'FUNC', 'Nimmt die Bestellung entgegen.'),
+        n('REQ-risk', 'REQ', 'Das System muss Datenverlust beim Schreiben ausschliessen.', { role: 'risk', kinds: ['non-functional'] }),
+        n('TEST-risk', 'TEST', 'Schreibabbruch herbeifuehren, Datei pruefen.'),
+      ],
+      edges: [e('SYS-s', 'UC-a', 'compose'), e('SYS-s', 'REQ-risk', 'compose'), e('SYS-s', 'REQ-risk', 'satisfy'), e('TEST-risk', 'REQ-risk', 'verify')],
+    } as never;
+    let cur = generationStep(graph, DEFAULT_METRIC_POLICY, 'Bestellungen', 0.8, []);
+    const defer: string[] = [];
+    while (cur.focusKey && cur.focusKey.split(':')[1] !== 'FM-01' && defer.length < 40) {
+      defer.push(cur.focusKey);
+      cur = generationStep(graph, DEFAULT_METRIC_POLICY, 'Bestellungen', 0.8, defer);
+    }
+    expect(cur.focusKey).toMatch(/:FM-01:/);
+    expect(analyseSkill('FM-01')).toBe(RULE_HELP['FM-01']!.prompt);
+    expect(cur.skill).toBe(analyseSkill('FM-01'));
+    expect(cur.skill).not.toBe(SKILL_FOR_DIMENSION[cur.focusDimension!]?.name);
+    expect(cur.prompt).toContain(`lade den Skill ${cur.skill}`);
+    // Eine gewoehnliche Kern-Regel gehoert zu keiner Analyse.
+    expect(analyseSkill('R-22')).toBeUndefined();
   });
 
   it('Werkzeugnamen in Hilfe und Skills existieren in der MCP-Registry', async () => {
@@ -240,12 +279,13 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
     expect(errors.filter((id) => !gate.has(id))).toEqual([]);
   });
 
-  it('eine Task-Regel mit error ist ein Gate-Blocker — genau R-29 — und der Task-Fokus reicht die Schwere durch', async () => {
+  it('keine Regel eines Arbeitsschritts hat Gate-Wirkung — der Task-Fokus reicht die Schwere trotzdem durch', async () => {
     const { taskOf } = await import('@sigloch/contracts/se');
-    // R-29 (Testdatei-Exklusivitaet) gehoert der Realisierung UND blockt am Gate: ein Altfund davon
-    // im Task ist Gate-Schuld, keine Warnung — deshalb schreibt der Fokus die Schwere nicht mehr um
-    // (CR-GC-605). Waechst diese Liste, hat eine Task-Regel Gate-Wirkung bekommen: entscheiden, nicht uebernehmen.
-    expect(ALL_RULE_DEFS.filter((r) => taskOf(r.id) !== 'kern' && r.severity === 'error').map((r) => r.id)).toEqual(['R-29']);
+    // Bis contracts 10 stand hier R-29 (Testdatei-Exklusivitaet, Arbeitsschritt `realisierung`): ein
+    // Altfund davon im Task war Gate-Schuld, keine Warnung — deshalb schreibt der Fokus die Schwere
+    // nicht um (CR-GC-605). Den Arbeitsschritt gibt es nicht mehr (CR-SM-395), R-29 gehoert dem Kern.
+    // Waechst diese Liste, hat eine Task-Regel Gate-Wirkung bekommen: entscheiden, nicht uebernehmen.
+    expect(ALL_RULE_DEFS.filter((r) => taskOf(r.id) !== 'kern' && r.severity === 'error').map((r) => r.id)).toEqual([]);
   });
 
   /**

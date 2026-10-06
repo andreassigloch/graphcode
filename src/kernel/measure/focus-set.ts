@@ -9,21 +9,30 @@
  * Jetzt eine, im Kernel, damit Schritt (generate), Probe (steeringDelta) und Bericht sie teilen:
  *   1. nur Regeln, die das GATE auswertet (SE_DESCRIPTOR.rules);
  *   2. keine info-Regeln;
- *   3. Praesenz von Code (R-19/20/26/27/32) nur, wenn ueberhaupt etwas gebunden ist;
- *   4. keine abgenommenen Funde der abnehmbaren Klasse (acceptedFindings, CR-SM-349/CR-GC-594);
- *   5. seit CR-GC-600 aus der Eigentuemer-Spalte (contracts `taskOf`, CR-SM-350) statt aus vier
- *      Sonderlisten: der Kern sieht Kern-Regeln und die Eintrittspunkte der Tasks; ein Task sieht sein
- *      detailliertes Regelset (FMEA: FM-01..03, Bauplan: MS- und CR-R-Regeln, Realisierung: Praesenzregeln).
+ *   3. keine abgenommenen Funde der abnehmbaren Klasse (acceptedFindings, CR-SM-349/CR-GC-594);
+ *   4. aus der Eigentuemer-Spalte (contracts `taskOf`): der Kern sieht alles, was kein Arbeitsschritt
+ *      ihm abnimmt; ein Arbeitsschritt sieht seine Regeln und seinen Eintrittspunkt.
  * Dazu ND-01/02: das Gate wertet Beinahe-Duplikate nie aus, CR-GC-287 hat sie aber ausdruecklich in den
  * Fokus gelegt (der Snapshot injiziert die Aehnlichkeit) — CR-GC-593 hatte das still zurueckgedreht.
  * `blockingErrors` = Fehler-Funde der Fokusmenge (ohne abgenommene). NICHT "blockt am Gate": das tun nur
  * R-01/R-08/IO-02/R-18/R-29, und deren Funde koennen im gespeicherten Graphen gar nicht stehen.
+ *
+ * CR-GC-748 (contracts 11, CR-SM-395) — was hier NICHT mehr steht:
+ *   - „Praesenz von Code nur, wenn etwas gebunden ist": das ist die FAELLIGKEIT (`isDue`), und sie
+ *     haengt am Katalog. Eine Regel der Stufen 11 und 12 meldet nicht, bevor der Bau eroeffnet ist (ein
+ *     offener Auftrag oder eine Bindung); die Fokusmenge bekommt nur faellige Befunde zu sehen und
+ *     fragt den Zustand kein zweites Mal ab.
+ *   - die Regelsets der Analysen und der Arbeitsschritt `realisierung`: FM-, MS-, CR-R- und
+ *     Bindungsregeln gehoeren seit der gekuerzten Zuordnung dem Kern. Sie schweigen, solange es ihre
+ *     Elemente nicht gibt; danach ordnet sie die Stufe (generate.ts).
+ *   - „abnehmbar je Task": eine Menge, s. `ABNEHMBAR`.
  *
  * @author andreas@siglochconsulting
  */
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import {
   acceptedRuleIds,
+  ALL_RULE_DEFS,
   taskOf,
   TASK_ENTRY,
   type OntologyGraph,
@@ -31,46 +40,51 @@ import {
   type RuleTask,
 } from '@sigloch/contracts/se';
 
+/** Verlangt die Regel ein Analyse-Artefakt? Die Rolle steht an der Regeldefinition (CR-SM-395). */
+export const istAnalyse = (ruleId: string): boolean => ANALYSEN.has(ruleId);
+const ANALYSEN: ReadonlySet<string> = new Set(ALL_RULE_DEFS.filter((r) => r.role === 'analysis').map((r) => r.id));
+
 /**
- * Was je Task abnehmbar ist (CR-GC-594/600) — nur, was IN DIESEM TASK im Modell nicht erfuellbar ist.
- * Im Kern sind das die Eintrittspunkte der Tasks ("dieses Artefakt ist im schlanken Umfang nicht
- * noetig"); innerhalb eines Tasks die Regeln, die Code, einen Testlauf oder eine Entscheidung des
- * Auftraggebers brauchen. Architekturregeln stehen nirgends darin — heute darf sie niemand abnehmen.
+ * Abnehmbar ueber die Analysen hinaus — einzeln begruendet (CR-GC-748). Massstab wie in CR-GC-594:
+ * nur, was IM MODELL nicht erfuellbar ist. Geprueft und NICHT mehr abnehmbar:
+ *   - R-19, R-20, R-26, R-32 (Bindung): sie standen hier, weil sie im Entwurf feuerten. Sie sind erst
+ *     faellig, wenn der Bau eroeffnet ist — dann sind ihre Befunde die Arbeitsliste, nichts zum Abnehmen.
+ *   - MS-01 (Meilenstein ohne Auftrag), CR-R01 (Auftrag ohne Umfang): beide schliesst ein Zug im
+ *     Modell — Auftrag zuordnen, Umfang verbinden, oder das Element loeschen.
  */
-export const ABNEHMBAR_JE_TASK: Readonly<Record<RuleTask, readonly string[]>> = {
-  kern: Object.values(TASK_ENTRY).filter((e): e is string => e !== null),
-  conops: ['CL-01'],
-  trade: [],
-  irr: [],
-  fmea: ['FM-03'],
-  plan: ['MS-01', 'CR-R01'],
-  anforderungsqualitaet: [],
-  realisierung: ['R-19', 'R-20', 'R-26', 'R-32'],
+export const ABNEHMBAR_BEGRUENDET: Readonly<Record<string, string>> = {
+  'CL-01': 'Ein Akteur, der das System in nur einer Betriebsart nutzt, ist ein gueltiger Befund des Einsatzkonzepts — ob eine zweite fehlt, entscheidet der Auftraggeber.',
+  'FM-03': 'Verlangt einen BESTANDENEN Testlauf (`result: passed`); den gibt es erst mit Code, die Regel ist aber faellig, sobald es ein hohes Risiko gibt.',
 };
 
-/** Die abnehmbaren Regeln eines Tasks als Menge. */
-export function abnehmbar(task: RuleTask = 'kern'): ReadonlySet<string> {
-  return new Set(ABNEHMBAR_JE_TASK[task]);
-}
+/**
+ * Was mit Begruendung abgenommen werden darf (CR-GC-594, neu gefasst CR-GC-748): die Regeln mit Rolle
+ * `analysis`, die Eintrittsregeln der Analysen (`TASK_ENTRY` — der Bauplan AF-05 traegt die Rolle
+ * `existence`, ist aber als Analyse abnehmbar: „Bau nicht beauftragt") und die begruendeten Ausnahmen.
+ * Architekturregeln stehen nicht darin — heute darf sie niemand abnehmen. Eine Menge fuer Kern und
+ * Arbeitsschritt: die Regeln der Analysen stehen jetzt im Kern, dort werden sie abgenommen.
+ */
+export const ABNEHMBAR: ReadonlySet<string> = new Set([
+  ...ANALYSEN,
+  ...Object.values(TASK_ENTRY).filter((e): e is string => e !== null),
+  ...Object.keys(ABNEHMBAR_BEGRUENDET),
+]);
 
 const GATE_RULES = new Set((SE_DESCRIPTOR.rules ?? []).map((r) => r.id));
 /** CR-GC-287: vom Gate nie ausgewertet, von der Steuerung bewusst im Kern gezeigt. */
 const STEERING_ONLY_KERN: ReadonlySet<string> = new Set(['ND-01', 'ND-02']);
 
 /**
- * Die Fokusmenge eines Graphen fuer einen Task (CR-GC-600/601). Kern: Kern-Regeln des Gate-Katalogs
- * (dazu ND) — Task-Regeln sieht er nicht, nur deren Eintrittspunkte (AF-*, selbst Kern-Regeln).
- * Task: genau die Regeln des Tasks, als WARNUNG (Entscheidung 2026-09-22: detailliert, nicht
- * blockierend) — und sein eigener Eintrittspunkt (CR-GC-603): die Task-Regeln pruefen nur, was
- * schon existiert, ohne Artefakt meldete jeder Task beim Start "fertig" (opus5-14, alle fuenf).
- * Der Task ist erst durch, wenn auch der Frischestempel steht oder der Eintritt abgenommen ist.
- * In beiden Faellen ohne info und ohne abgenommene Funde.
+ * Die Fokusmenge eines Graphen fuer einen Arbeitsschritt (CR-GC-600/601). Kern: die Regeln des
+ * Gate-Katalogs (dazu ND), die kein Arbeitsschritt ihm abnimmt. Arbeitsschritt: seine Regeln (heute nur
+ * die Textqualitaet der Anforderungen) und sein Eintrittspunkt (CR-GC-603) — eine Analyse ist erst
+ * durch, wenn ihre Eintrittsregel schweigt oder abgenommen ist. In beiden Faellen ohne info und ohne
+ * abgenommene Funde.
  */
 export function focusViolations(og: OntologyGraph, violations: readonly RuleViolation[], task: RuleTask = 'kern'): RuleViolation[] {
   const byId = new Map(og.elements.map((e) => [e.id, e]));
   const sys = og.elements.find((e) => e.type === 'SYS');
   const eintritt = task === 'kern' ? null : TASK_ENTRY[task];
-  const ab = new Set([...abnehmbar(task), ...(eintritt ? [eintritt] : [])]);
   const imTask = (id: string): boolean =>
     task === 'kern'
       ? taskOf(id) === 'kern' && (GATE_RULES.has(id) || STEERING_ONLY_KERN.has(id))
@@ -79,11 +93,10 @@ export function focusViolations(og: OntologyGraph, violations: readonly RuleViol
     .filter((v) => {
       if (v.severity === 'info' || !imTask(v.rule_id)) return false;
       const traeger = byId.get(v.element_id) ?? sys;
-      return !(traeger && ab.has(v.rule_id) && acceptedRuleIds(traeger).has(v.rule_id));
+      return !(traeger && ABNEHMBAR.has(v.rule_id) && acceptedRuleIds(traeger).has(v.rule_id));
     });
   // CR-SM-353 / CR-GC-605: kein error → warning-Mapping mehr. Seit `error` die Gate-Wirkung IST,
-  // ist ein error einer Task-Regel Gate-Schuld (heute nur R-29; Smeagol Stufe (e) haelt die Liste fest)
-  // — die Schwere wird durchgereicht, nicht umgeschrieben.
+  // wird die Schwere durchgereicht, nicht umgeschrieben.
 }
 
 /** Fehler-Funde der Fokusmenge — abgenommene zaehlen nicht (Rewind opus5-12: 0 → 8 durch FM-03). */

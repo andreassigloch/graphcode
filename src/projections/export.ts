@@ -238,9 +238,9 @@ export function bindExportTools(ctx: ToolPort): MCPToolRegistry {
 
       mkdirSync(dirname(jsonAbs), { recursive: true });
       // CR-GC-300: stamp graphVersion at WRITE time (not processStartVersion, which
-      // is the boundary this registry booted at) — the live comparison value GVE's
-      // computeAnalysisCurrency() needs against SYS.attributes.analysisFreshness.*
-      // .graphVersion. Postprocessing of the unchanged exportGraphJson() output —
+      // is the boundary this registry booted at) — the state of the graph this file
+      // was written from. (Its first reader, the currency of the analysis stamps, is gone
+      // with CR-SM-395.) Postprocessing of the unchanged exportGraphJson() output —
       // exportGraphJson() itself stays the byte-identical inverse of importGraph
       // (9 call-sites, exporter.test.ts).
       // Canonical form bleibt erhalten (`null, 2` + trailing newline) — ohne sie

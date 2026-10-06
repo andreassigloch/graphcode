@@ -53,11 +53,6 @@ export const ToolContext = z
     /** Read accessor for the applied-batch counter (never a settable field). */
     graphVersion: member<() => number>('graphVersion'),
     /**
-     * CR-GC-363: genau EINE Format-E-Kopfzeile (`//`-Kommentar, ohne '\n'), wenn ein
-     * VORHANDENER AF-Freshness-Stamp hinter dem Live-graphVersion liegt; sonst ''.
-     */
-    staleAnalysisBanner: member<() => string>('staleAnalysisBanner'),
-    /**
      * The ONLY writer of the version + the audit log (no audit bypass, CR-GC-232).
      * `stamps` (CR-GC-434) carries what only the GATE PATH can determine.
      */

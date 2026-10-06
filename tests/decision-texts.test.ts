@@ -109,8 +109,8 @@ describe('CR-GC-594: die Abnahme-Politik steht einmal und ueberall gleich', () =
 
   it('der Guide nennt acceptedFindings an jedem Typ, mit genau der abnehmbaren Klasse', async () => {
     const { attributesFor } = await import('../src/projections/authoring-example.js');
-    const { ABNEHMBAR_JE_TASK } = await import('../src/loop/decisions.js');
-    const alle = [...new Set(Object.values(ABNEHMBAR_JE_TASK).flat())];
+    const { ABNEHMBAR } = await import('../src/loop/decisions.js');
+    const alle = [...ABNEHMBAR];
     for (const t of ['REQ', 'FUNC', 'MOD', 'SYS', 'UC']) {
       const a = attributesFor(t).find((x: { key: string }) => x.key === 'acceptedFindings');
       expect(a, t).toBeDefined();
@@ -119,9 +119,8 @@ describe('CR-GC-594: die Abnahme-Politik steht einmal und ueberall gleich', () =
   });
 
   it('keine Architekturregel ist abnehmbar', async () => {
-    const { ABNEHMBAR_JE_TASK } = await import('../src/loop/decisions.js');
+    const { ABNEHMBAR: alle } = await import('../src/loop/decisions.js');
     const { STEER_RULES } = await import('@sigloch/se-engine');
-    const alle = new Set(Object.values(ABNEHMBAR_JE_TASK).flat());
     for (const id of [...STEER_RULES, 'R-02', 'R-10', 'R-15', 'R-22', 'RD-01', 'RD-05', 'UC-01', 'UC-02', 'FC-02', 'FC-04', 'IO-01']) {
       expect(alle.has(id), id).toBe(false);
     }

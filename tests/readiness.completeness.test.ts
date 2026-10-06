@@ -1,243 +1,159 @@
 /**
- * TEST-readiness-completeness — CR-GC-250 acceptance.
+ * TEST-readiness-completeness — eine leere Pflichtmenge ist ein Befund, nie „erreicht".
  *
- * EINE Abnahme über diese Datei (CR-GC-383): die früheren Knoten
- * TEST-completeness-actor-bounded und TEST-completeness-single-value banden dieselbe
- * Datei und sind hier aufgegangen; die Abnahme verifiziert alle drei REQ zusammen.
+ * Bis CR-GC-748 pruefte diese Datei die Vollstaendigkeits-Beine je Gate (CR-GC-250,
+ * `COMPLETENESS_SLICES`/`scoreCompleteness`): eine eigene Rechnung „x von y" neben den Regeln, die
+ * dasselbe schon melden. Mit contracts 11 / graphcode-client 2 (CR-SM-395) ist sie entfallen. Die
+ * Aussage, fuer die sie gebaut wurde — graph-view-edit las gruen, waehrend eine verlangte Kette leer
+ * war (irr-3e4e26c A2/A12/A13) —, traegt jetzt die Existenz-Regel der Stufe davor: sie meldet die
+ * fehlende Menge, und ihr Befund haelt die Marke. Genau das steht hier, an echten Regellaeufen statt an
+ * handgebauten Befunden.
  *
- * Proves the structural completeness dimension closes the graph-view-edit
- * false-green (irr-3e4e26c A2/A12/A13): a gate reads NOT-green while a mandated
- * chain leg is empty, measured over the DRIVING population so absence counts —
- * even though no error-severity rule fires. Deterministic unit cases on the pure
- * computeReadiness (no mocks, no gate needed). Warnings are NOT promoted: the
- * gate verdict gains a completeness invariant, rule severities are untouched.
+ * Bewusst NICHT festgeschrieben: welche Regel-ID eine Marke haelt, wo der Katalog dazu offene Fragen
+ * fuehrt (CR-SM-395 §10). Die Faelle fragen nach der Rolle der haltenden Regel und nach dem Element.
  *
- * CR-SM-226 (graphcode-client 0.5.0) rebuilt `scoreCompleteness` to read each
- * leg off its named contracts rule's OWN violation in the SUPPLIED `violations`
- * stream (COMPLETENESS_SLICES: SRR=R-17/UC-03/UC-01, PDR=R-15/FC-04, CDR=SC-04,
- * TRR=R-19/R-20) instead of re-walking the graph with local hasTestRef/hasCodeRef/
- * actor-boundary helpers (CR-GC-250's original, now-deleted second implementation
- * of what those rules already check). `gate()` below hand-crafts the ONE
- * violation each fixture's rule twin would actually fire — deterministic,
- * mirrors the rule's own semantics, no full evaluateAllRules() dependency.
+ * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
-import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { ALL_RULE_DEFS, DEFAULT_METRIC_POLICY, Mark } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
-import { computeReadiness, summarizeReadiness } from '../src/kernel/measure/readiness.js';
-import { scoreCompleteness, COMPLETENESS_SLICES } from '../src/projections/readiness-completeness.js';
+import { computeReadiness, summarizeReadiness, type ReadinessMark } from '../src/kernel/measure/readiness.js';
+import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 
-type G = Pick<Graph, 'nodes' | 'edges'>;
 const node = (uid: string, type: string, attributes: Record<string, unknown> = {}): Graph['nodes'][number] =>
-  ({ uid, type, name: uid, description: '', attributes }) as Graph['nodes'][number];
+  ({ uid, type, name: uid, description: `Das System muss ${uid} leisten.`, attributes }) as Graph['nodes'][number];
 const edge = (sourceId: string, targetId: string, edgeType: string) =>
   ({ sourceId, targetId, edgeType, attributes: {} }) as Graph['edges'][number];
-/** A minimal hand-crafted violation for one of COMPLETENESS_SLICES' rule twins. */
-const violation = (ruleId: string, elementId: string, severity: RuleViolation['severity'] = 'warning'): RuleViolation => ({
-  ruleId,
-  severity,
-  elementId,
-  message: `${elementId}: ${ruleId} fired (test fixture)`,
-});
-/** Ein SYS mit Bauplan-Stempel: die Realisierung hat begonnen, die Bindungsregeln sind gestellt (CR-SM-392). */
-const BAUPLAN = node('SYS-plan', 'SYS', { analysisFreshness: { implplan: { graphVersion: 1 } } });
-const gate = (g: G, id: string, violations: RuleViolation[] = []) =>
-  computeReadiness(violations, g).phaseGates.find((x) => x.id === id)!;
 
-// --- SRR: UC without an FCHAIN is never green (the headline defect) -----------
+/** Der echte Regellauf des Steuerkatalogs, in der Form, die `computeReadiness` liest. */
+function befunde(g: Graph): RuleViolation[] {
+  return takeSteeringSnapshot(g, DEFAULT_METRIC_POLICY).violations.map((v) => ({
+    ruleId: v.rule_id, severity: v.severity, elementId: v.element_id, message: v.message,
+  }));
+}
+const marken = (g: Graph): ReadinessMark[] => computeReadiness(befunde(g), g).marks;
+const marke = (g: Graph, id: string): ReadinessMark => marken(g).find((m) => m.id === id)!;
+const ROLLE = new Map(ALL_RULE_DEFS.map((r) => [r.id, r.role]));
 
-describe('CR-GC-250 SRR — UC chain completeness', () => {
-  it('a UC with 0 FCHAIN drives SRR red though no error-severity rule fires', () => {
-    const g: G = { nodes: [node('SYS-x', 'SYS'), node('UC-x', 'UC')], edges: [edge('SYS-x', 'UC-x', 'compose')] };
-    // UC-x has no FCHAIN (UC-03) and no REQ (UC-01) — both fire; R-17 (SYS→UC's
-    // twin) does not, SYS-x already composes UC-x.
-    const violations = [violation('UC-03', 'UC-x'), violation('UC-01', 'UC-x')];
-    const srr = gate(g, 'SRR', violations);
-    // SYS→UC covered; UC→FCHAIN + UC→REQ missing → 1/3, gate blocked.
-    expect(srr.completeness.covered).toBe(1);
-    expect(srr.completeness.total).toBe(3);
-    expect(srr.passed).toBe(false);
-    expect(srr.blocking.some((b) => b.includes('completeness') && b.includes('UC→FCHAIN'))).toBe(true);
-    // Both hand-crafted violations are warnings — completeness reads it blocked
-    // even though nothing at error severity fired (the whole point of CR-GC-250).
-    expect(violations.every((v) => v.severity !== 'error')).toBe(true);
-  });
-
-  it('completing the UC chain (FCHAIN + REQ) turns SRR green', () => {
-    const g: G = {
-      nodes: [node('SYS-x', 'SYS'), node('UC-x', 'UC'), node('FCHAIN-x', 'FCHAIN'), node('REQ-x', 'REQ')],
-      edges: [edge('SYS-x', 'UC-x', 'compose'), edge('UC-x', 'FCHAIN-x', 'compose'), edge('UC-x', 'REQ-x', 'compose')],
-    };
-    const srr = gate(g, 'SRR');
-    expect(srr.completeness.covered).toBe(srr.completeness.total);
-    expect(srr.passed).toBe(true);
-  });
+/** Eine Spezifikation ohne Luecke bis zur Testbereitschaft: nichts gebunden, kein Auftrag. */
+function entwurf(extra: Graph['nodes'] = [], kanten: Graph['edges'] = []): Graph {
+  return {
+    nodes: [
+      node('SYS-x', 'SYS'), node('UC-x', 'UC'), node('ACTOR-a', 'ACTOR'), node('FLOW-in', 'FLOW'), node('FLOW-out', 'FLOW'),
+      node('SCHEMA-in', 'SCHEMA'), node('SCHEMA-out', 'SCHEMA'), node('FUNC-f', 'FUNC'), node('FCHAIN-c', 'FCHAIN'),
+      node('REQ-r', 'REQ', { kinds: ['functional'] }), node('TEST-t', 'TEST'), node('MOD-m', 'MOD'), ...extra,
+    ],
+    edges: [
+      edge('SYS-x', 'UC-x', 'compose'), edge('UC-x', 'FCHAIN-c', 'compose'), edge('UC-x', 'REQ-r', 'compose'),
+      edge('FCHAIN-c', 'FUNC-f', 'compose'), edge('ACTOR-a', 'FLOW-in', 'io'), edge('FLOW-in', 'FUNC-f', 'io'),
+      edge('FUNC-f', 'FLOW-out', 'io'), edge('FLOW-out', 'ACTOR-a', 'io'), edge('FLOW-in', 'SCHEMA-in', 'relation'),
+      edge('FLOW-out', 'SCHEMA-out', 'relation'), edge('FUNC-f', 'REQ-r', 'satisfy'), edge('TEST-t', 'REQ-r', 'verify'),
+      edge('FUNC-f', 'MOD-m', 'allocate'), edge('SYS-x', 'MOD-m', 'compose'), ...kanten,
+    ],
+  };
+}
+const ohne = (g: Graph, ...uids: string[]): Graph => ({
+  nodes: g.nodes.filter((n) => !uids.includes(n.uid)),
+  edges: g.edges.filter((e) => !uids.includes(e.sourceId) && !uids.includes(e.targetId)),
 });
 
-// --- PDR: FCHAIN must be actor-bounded (trigger + consumer) -------------------
-
-describe('CR-GC-250 PDR — FCHAIN actor-bounded', () => {
-  const base = (): Graph['nodes'][number][] => [
-    node('FCHAIN-c', 'FCHAIN'), node('FUNC-a', 'FUNC'), node('ACTOR-in', 'ACTOR'),
-    node('ACTOR-out', 'ACTOR'), node('FLOW-in', 'FLOW'), node('FLOW-out', 'FLOW'),
-  ];
-
-  it('a chain with a function but no actor trigger/consumer holds PDR red', () => {
-    const g: G = { nodes: base(), edges: [edge('FCHAIN-c', 'FUNC-a', 'compose')] };
-    // R-15 (FCHAIN→FUNC) satisfied — FCHAIN-c does compose a FUNC. FC-04
-    // (actor-bounded) fires — no entry/exit wiring.
-    const pdr = gate(g, 'PDR', [violation('FC-04', 'FCHAIN-c')]);
-    // FCHAIN→FUNC covered, actor-bounded missing → not complete.
-    expect(pdr.completeness.missing.some((m) => m.startsWith('FCHAIN-actor-bounded'))).toBe(true);
-    expect(pdr.passed).toBe(false);
-  });
-
-  it('ACTOR→FLOW→FUNC entry AND FUNC→FLOW→ACTOR exit makes the chain complete', () => {
-    const g: G = {
-      nodes: base(),
-      edges: [
-        edge('FCHAIN-c', 'FUNC-a', 'compose'),
-        edge('ACTOR-in', 'FLOW-in', 'io'), edge('FLOW-in', 'FUNC-a', 'io'),   // trigger
-        edge('FUNC-a', 'FLOW-out', 'io'), edge('FLOW-out', 'ACTOR-out', 'io'), // consumer
-      ],
-    };
-    const pdr = gate(g, 'PDR');
-    expect(pdr.completeness.covered).toBe(pdr.completeness.total);
-    expect(pdr.passed).toBe(true);
-  });
-
-  it('trigger without consumer is still incomplete (both ends required)', () => {
-    const g: G = {
-      nodes: base(),
-      edges: [
-        edge('FCHAIN-c', 'FUNC-a', 'compose'),
-        edge('ACTOR-in', 'FLOW-in', 'io'), edge('FLOW-in', 'FUNC-a', 'io'), // only entry
-      ],
-    };
-    // FC-04 still fires — entry alone doesn't bound the chain (needs entry AND exit).
-    expect(gate(g, 'PDR', [violation('FC-04', 'FCHAIN-c')]).passed).toBe(false);
-  });
-});
-
-// --- CDR: every FLOW carries a SCHEMA (schema-before-code) --------------------
-
-describe('CR-GC-250 CDR — FLOW→SCHEMA', () => {
-  it('a FLOW without a SCHEMA holds CDR red; adding the SCHEMA relation clears it', () => {
-    // CR-GC-488: der Zwilling dieses Beins ist nicht mehr SC-04. Mit CR-SM-271 ist die
-    // Untergrenze `FLOW -relation-> SCHEMA [1..1]` GRAMMATIK geworden und meldet als
-    // R-18-Bein — SC-04 gibt es nicht mehr, und ein Befund unter einer gestrichenen ID
-    // fiel hier still nach `advisory` durch: das Gate las gruen, ohne dass etwas rot war.
-    // Damit wandert der Fall zugleich von `warning` auf `error`; die Deckungszahl unten
-    // ist deshalb die eigentliche Zusage, nicht das `passed` (das jetzt auch die Severity
-    // traegt). Der Zwilling steht in COMPLETENESS_SLICES.CDR und wird hier mitgeprueft.
-    expect(COMPLETENESS_SLICES.CDR.map((l) => l.ruleId)).toEqual(['R-18']);
-    const noSchema: G = { nodes: [node('FLOW-f', 'FLOW')], edges: [] };
-    const cdr = gate(noSchema, 'CDR', [violation('R-18', 'FLOW-f', 'error')]);
-    expect(cdr.completeness).toMatchObject({ covered: 0, total: 1 });
-    expect(cdr.blocking.some((b) => b.includes('completeness') && b.includes('FLOW→SCHEMA'))).toBe(true);
-    expect(cdr.passed).toBe(false);
-    const withSchema: G = {
-      nodes: [node('FLOW-f', 'FLOW'), node('SCHEMA-s', 'SCHEMA')],
-      edges: [edge('FLOW-f', 'SCHEMA-s', 'relation')],
-    };
-    const green = gate(withSchema, 'CDR');
-    expect(green.completeness).toMatchObject({ covered: 1, total: 1 });
-    expect(green.passed).toBe(true);
-  });
-});
-
-// --- TRR: binding required once realization has begun (R-19/R-20's own call) ---
-
-describe('CR-GC-250 TRR — binding (testRef / realRef)', () => {
-  it('an unbound TEST is incomplete at TRR once realization has begun (complete at CDR)', () => {
-    const g: G = { nodes: [BAUPLAN, node('TEST-t', 'TEST')], edges: [] };
-    expect(gate(g, 'CDR').passed).toBe(true); // TEST is not a CDR-slice source
-    const trr = gate(g, 'TRR', [violation('R-19', 'TEST-t')]);
-    expect(trr.completeness.total).toBeGreaterThan(0);
-    expect(trr.passed).toBe(false);
-  });
-
-  // contracts CR-SM-392 / graphcode-client 1.6.1: vor Beginn der Realisierung (kein Bauplan-Stempel,
-  // keine Bindung) sind die TRR-Beine nicht gestellt — weder Zaehler noch Nenner, 0/0.
-  it('in a draft the TRR binding legs are not asked: 0/0, not n/n', () => {
-    const draft: G = { nodes: [node('SYS-x', 'SYS'), node('TEST-t', 'TEST'), node('FUNC-f', 'FUNC')], edges: [] };
-    expect(gate(draft, 'TRR').completeness).toMatchObject({ covered: 0, total: 0 });
-    // contracts CR-SM-394 / CR-GC-745: 0/0, weil nicht gefragt wurde, ist kein Bestehen.
-    expect(gate(draft, 'TRR')).toMatchObject({ state: 'not-reached', passed: false, blocking: [] });
-    // Die Gates davor sind am selben Entwurf gestellt und unveraendert.
-    for (const id of ['SRR', 'PDR', 'CDR']) expect(gate(draft, id).state).not.toBe('not-reached');
-    // Positivkontrolle: derselbe Graph mit Bauplan-Stempel stellt die Beine.
-    const begun: G = { nodes: [BAUPLAN, node('TEST-t', 'TEST'), node('FUNC-f', 'FUNC')], edges: [] };
-    expect(gate(begun, 'TRR').completeness.total).toBe(COMPLETENESS_SLICES.TRR.length);
-    expect(gate(begun, 'TRR', [violation('R-19', 'TEST-t'), violation('R-20', 'FUNC-f')]).state).toBe('open'); // gefragt, und beide Beine melden
-  });
-
-  it('a bound TEST (real testRef) turns TRR green', () => {
-    const g: G = { nodes: [node('TEST-t', 'TEST', { testRefs: [{ file: 'tests/x.test.ts', tool: 'vitest' }] })], edges: [] };
-    const trr = gate(g, 'TRR');
-    expect(trr.completeness.total).toBeGreaterThan(0); // die Bindung selbst stellt die Beine (CR-SM-392)
-    expect(trr.completeness.covered).toBe(trr.completeness.total);
-    expect(trr.passed).toBe(true);
-  });
-
-  it('a leaf FUNC needs realRef; a decomposed parent FUNC is realized by its children', () => {
-    // R-20 (FUNC realRef binding) fires — the leaf carries neither realRef nor children.
-    const leafNoCode: G = { nodes: [BAUPLAN, node('FUNC-leaf', 'FUNC')], edges: [] };
-    expect(gate(leafNoCode, 'TRR', [violation('R-20', 'FUNC-leaf')]).passed).toBe(false);
-    const parent: G = {
-      nodes: [node('FUNC-p', 'FUNC'), node('FUNC-c', 'FUNC', { realRef: { file: 'src/x.ts' } })],
-      edges: [edge('FUNC-p', 'FUNC-c', 'compose')],
-    };
-    // parent is non-leaf (holds — R-20 exempts non-leaf parents realized by their
-    // children), child is a leaf with realRef (holds) → no R-20 violations → complete.
-    expect(gate(parent, 'TRR').passed).toBe(true);
-  });
-});
-
-// --- Drift lock: every meta-model 1..* leg is assigned to a phase -------------
-
-describe('CR-GC-250 drift lock — cardinality legs are covered', () => {
-  it('every meta-model 1..* compose pattern has a matching completeness leg', () => {
-    const legIds = new Set(Object.values(COMPLETENESS_SLICES).flat().map((l) => l.id));
-    const mandatory = (SE_DESCRIPTOR.patterns ?? []).filter(
-      (p) => (p as { cardinality?: string }).cardinality === '1..*',
-    );
-    expect(mandatory.length).toBeGreaterThan(0);
-    for (const p of mandatory) {
-      expect(legIds.has(`${p.source}→${p.target}`), `${p.source}→${p.target} (1..*) not assigned to a phase`).toBe(true);
-    }
-  });
-});
-
-// --- Single value per gate + on-click detail (REQ-completeness-single-value) --
-
-describe('CR-GC-250 single value — one number per gate, detail on demand', () => {
-  const g: G = { nodes: [node('SYS-x', 'SYS'), node('UC-x', 'UC')], edges: [] };
-
-  it('each phase gate exposes exactly one completeness {covered,total}', () => {
-    for (const gt of computeReadiness([], g).phaseGates) {
-      expect(typeof gt.completeness.covered).toBe('number');
-      expect(typeof gt.completeness.total).toBe('number');
+describe('eine leere Pflichtmenge haelt die Marke — „0 von 0" liest nie als erreicht', () => {
+  it('der leere Graph: keine Marke ist erreicht, und was sie haelt, ist ein Existenz-Befund', () => {
+    const alle = marken({ nodes: [], edges: [] });
+    expect(alle.map((m) => m.id)).toEqual(Mark.options);
+    for (const m of alle) {
+      expect(m.reached, m.id).toBe(false);
+      expect(m.holding.length, m.id).toBeGreaterThan(0);
+      expect(m.holding.every((h) => ROLLE.get(h.ruleId) === 'existence'), m.id).toBe(true);
     }
   });
 
-  it('summary keeps the covered/total value but drops the per-leg missing detail', () => {
-    // SYS-x has no compose at all (R-17), UC-x has no FCHAIN (UC-03) / REQ (UC-01) —
-    // all three SRR legs fire.
-    const violations = [violation('R-17', 'SYS-x'), violation('UC-03', 'UC-x'), violation('UC-01', 'UC-x')];
-    const full = computeReadiness(violations, g);
-    const summary = summarizeReadiness(full);
-    const srrFull = full.phaseGates.find((x) => x.id === 'SRR')!;
-    const srrSum = summary.phaseGates.find((x) => x.id === 'SRR')!;
-    expect(srrSum.completeness.covered).toBe(srrFull.completeness.covered);
-    expect(srrSum.completeness.total).toBe(srrFull.completeness.total);
-    expect(srrFull.completeness.missing.length).toBeGreaterThan(0); // detail available in full
-    expect(srrSum.completeness.missing).toEqual([]);                 // stripped in summary
+  it('ein UC ohne Wirkkette haelt SRR, obwohl kein Fehler meldet (der Anlass von CR-GC-250)', () => {
+    const g: Graph = { nodes: [node('SYS-x', 'SYS'), node('UC-x', 'UC')], edges: [edge('SYS-x', 'UC-x', 'compose')] };
+    const srr = marke(g, 'SRR');
+    expect(srr.reached).toBe(false);
+    expect(srr.holding.some((h) => h.elementId === 'UC-x')).toBe(true);
+    expect(srr.holding.every((h) => h.severity !== 'error')).toBe(true);
   });
 
-  it('scoreCompleteness is vacuously complete (1) when no source elements exist', () => {
-    const empty = scoreCompleteness('SRR', { nodes: [], edges: [] }, []);
-    expect(empty).toEqual({ covered: 0, total: 0, missing: [] });
+  it('die lueckenlose Spezifikation erreicht SRR, PDR, CDR und TRR — die Positivkontrolle', () => {
+    const g = entwurf();
+    for (const id of ['SRR', 'PDR', 'CDR', 'TRR']) expect(marke(g, id).holding.map((h) => h.ruleId), id).toEqual([]);
+  });
+
+  it('eine Funktion ohne Modul haelt PDR, nicht SRR', () => {
+    const g = ohne(entwurf(), 'MOD-m');
+    expect(marke(g, 'SRR').reached).toBe(true);
+    const pdr = marke(g, 'PDR');
+    expect(pdr.reached).toBe(false);
+    expect(pdr.holding.some((h) => h.elementId === 'FUNC-f')).toBe(true);
+  });
+
+  it('ein Datenfluss ohne Schema haelt CDR; mit Schema ist sie erreicht', () => {
+    const g = ohne(entwurf(), 'SCHEMA-out');
+    const cdr = marke(g, 'CDR');
+    expect(cdr.reached).toBe(false);
+    expect(cdr.holding.some((h) => h.elementId === 'FLOW-out')).toBe(true);
+    expect(marke(entwurf(), 'CDR').reached).toBe(true);
+  });
+
+  it('eine Anforderung ohne Test haelt TRR, nicht CDR', () => {
+    const g = ohne(entwurf(), 'TEST-t');
+    expect(marke(g, 'CDR').reached).toBe(true);
+    const trr = marke(g, 'TRR');
+    expect(trr.reached).toBe(false);
+    expect(trr.holding.some((h) => h.elementId === 'REQ-r')).toBe(true);
+  });
+
+  it('eine Marke bleibt offen, solange eine fruehere es ist', () => {
+    const g = ohne(entwurf(), 'FCHAIN-c');
+    const erreicht = marken(g).map((m) => m.reached);
+    expect(erreicht[0]).toBe(false);
+    // nie „offen, dann erreicht": was SRR haelt, haelt jede spaetere Marke.
+    expect(erreicht.join(',')).not.toMatch(/false,(false,)*true/);
+  });
+});
+
+describe('die Marke Bau: Plan, Bindung, Abgleich', () => {
+  const bindungsRegeln = ALL_RULE_DEFS.filter((r) => r.stage === 11).map((r) => r.id);
+
+  it('Entwurf ohne Auftrag und ohne Bindung: keine Bindungsregel meldet, Bau ist trotzdem nicht erreicht', () => {
+    const g = entwurf();
+    expect(befunde(g).filter((v) => bindungsRegeln.includes(v.ruleId))).toEqual([]);
+    const bau = marke(g, 'Bau');
+    expect(bau.reached).toBe(false); // es gibt Ungebautes ohne Auftrag — der Bauplan ist faellig
+    expect(bau.holding.length).toBeGreaterThan(0);
+  });
+
+  it('ein offener Auftrag macht die Bindungsregeln faellig — ihre Befunde halten Bau', () => {
+    const g = entwurf([node('CR-1', 'CR', { status: 'open' })], [edge('CR-1', 'FUNC-f', 'relation')]);
+    const gemeldet = befunde(g).filter((v) => bindungsRegeln.includes(v.ruleId));
+    expect(gemeldet.some((v) => v.elementId === 'FUNC-f')).toBe(true);
+    expect(gemeldet.some((v) => v.elementId === 'TEST-t')).toBe(true);
+    const bau = marke(g, 'Bau');
+    expect(bau.reached).toBe(false);
+    expect(bau.holding.some((h) => bindungsRegeln.includes(h.ruleId))).toBe(true);
+    // die Marken der Spezifikation beruehrt das nicht
+    for (const id of ['SRR', 'PDR', 'CDR', 'TRR']) expect(marke(g, id).reached, id).toBe(true);
+  });
+
+  it('eine Bindung von Hand, ohne Auftrag, zaehlt genauso', () => {
+    const g = entwurf();
+    g.nodes.find((n) => n.uid === 'TEST-t')!.attributes = { testRefs: [{ file: 'tests/x.test.ts', tool: 'vitest' }] };
+    const gemeldet = befunde(g).filter((v) => bindungsRegeln.includes(v.ruleId));
+    expect(gemeldet.some((v) => v.elementId === 'FUNC-f')).toBe(true);
+    expect(gemeldet.some((v) => v.elementId === 'TEST-t' && v.severity !== 'info')).toBe(false); // der gebundene Test meldet nicht
+  });
+});
+
+describe('ein Wert je Marke, das Warum auf Anfrage (REQ-completeness-single-value)', () => {
+  it('die Kurzform behaelt `reached` und laesst `holding` weg', () => {
+    const g: Graph = { nodes: [node('SYS-x', 'SYS'), node('UC-x', 'UC')], edges: [] };
+    const voll = computeReadiness(befunde(g), g);
+    const kurz = summarizeReadiness(voll);
+    expect(kurz.marks.map((m) => [m.id, m.reached])).toEqual(voll.marks.map((m) => [m.id, m.reached]));
+    expect(voll.marks[0]!.holding.length).toBeGreaterThan(0);
+    expect(kurz.marks.every((m) => m.holding.length === 0)).toBe(true);
   });
 });

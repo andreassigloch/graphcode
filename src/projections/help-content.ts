@@ -29,8 +29,7 @@
  * @author andreas@siglochconsulting
  */
 
-import { RULE_HELP } from '@sigloch/contracts/se';
-import { GATE_STATE_LABELS } from '../kernel/measure/readiness.js';
+import { Mark, MARK_STAGE, RULE_HELP, STAGE_SETS, type MarkType } from '@sigloch/contracts/se';
 
 /** One authored help item: the two plain-language layers (+ a copy-prompt where one applies). */
 export interface HelpContentEntry {
@@ -49,6 +48,18 @@ export interface HelpVocabEntry {
   /** Standard SE concept the token maps to. */
   se: string;
 }
+
+/**
+ * Die Mengen, die eine Marke abschliesst — aus dem Katalog gelesen (`STAGE_SETS`, `MARK_STAGE`), nicht
+ * hier aufgezaehlt: wandert eine Stufe, wandert der Hilfetext mit (CR-GC-748).
+ */
+function mengenBis(mark: MarkType): string {
+  const vor = Mark.options[Mark.options.indexOf(mark) - 1];
+  return STAGE_SETS.slice(vor ? MARK_STAGE[vor] : 0, MARK_STAGE[mark]).join(', ');
+}
+const markSe = (name: string, mark: MarkType): string =>
+  `${name} — the mark after stage ${MARK_STAGE[mark]} (sets: ${mengenBis(mark)}). Reached when no finding holds it; ` +
+  'what holds it comes with the mark (`holding`).';
 
 /** Canonical dashboard panel ids — the five MOD-dashboard panels (no live registry). */
 export const HELP_PANEL_IDS = ['readiness', 'recommendations', 'artifacts', 'impact', 'health'] as const;
@@ -71,57 +82,46 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   // Panels, die drei Readiness-Zahlen, die Artefakte und `METRIC_HELP`.
   ...RULE_HELP,
 
-  // --- Phase gates (keyed on gate id; owned rules come from readiness.ts) ------------
+  // --- Marks (keyed on mark id; the rules of a mark are `ALL_RULE_DEFS[].mark`) --------
+  // CR-GC-748: fuenf Marken statt vier Phasen-Gates plus vier Bau-Gates (CR-SM-395). Eine Marke ist
+  // erreicht oder offen — es gibt keinen dritten Zustand mehr. Was eine Marke haelt, entscheidet
+  // `computeMarks` (graphcode-client); die Texte hier nennen deshalb keine Regelliste.
   SRR: {
     plain:
-      '**Pass:** every feature you have promised is written down clearly and each can be checked by a test. **Red:** open it to see which features are missing a test → author one.',
-    se: 'System Requirements Review — the requirements baseline is complete, consistent, feasible, and verifiable before design starts.',
+      '**Reached:** the system, its use cases and who uses them, the requirements and a scenario per use case are in the model, and nothing in it is wrong. **Open:** it lists what is still missing or wrong.',
+    se: markSe('System Requirements Review', 'SRR'),
     prompt: 'se-review, then se:author-req',
   },
   PDR: {
     plain:
-      '**Pass:** there is a high-level design — the functions, the data moving between them, and the people/systems that use it. **Red:** open it to see what is not yet connected.',
-    se: 'Preliminary Design Review — the architectural design meets requirements at acceptable risk, mature enough to start detailed design.',
+      '**Reached:** there is a high-level design — the functions, the data moving between them, and the modules they live in. **Open:** it lists what is not yet there or not connected.',
+    se: markSe('Preliminary Design Review', 'PDR'),
     prompt: 'se-view:arch',
   },
   CDR: {
     plain:
-      '**Pass:** the detailed design is ready to build — no module too big, nothing depends on itself in a loop, every link is allowed, every function points to its code. **Red:** open it to see which of those is off.',
-    se: 'Critical Design Review — the detailed design is complete and sound enough to start building.',
-    prompt: 'se-view:rtm, se-view:arch',
+      '**Reached:** every piece of data that moves between functions has a defined form (a contract). **Open:** it lists the data flows without one.',
+    se: markSe('Critical Design Review', 'CDR'),
+    prompt: 'se-view:icd',
   },
   TRR: {
     plain:
-      '**Pass:** every test is connected to the feature it checks and can actually run. **Red:** open it to see the unwired or non-runnable tests. ' +
-      // CR-GC-746: der dritte Zustand (contracts CR-SM-394) — das Wort kommt aus der einen Tabelle.
-      `**Not reached („${GATE_STATE_LABELS['not-reached']}“):** nothing is built yet — no test or function points to code and no build plan is stamped. There is nothing to check, so the gate is neither passed nor red; it is asked with the first binding.`,
-    se: 'Test Readiness Review — test cases and bindings are ready to begin formal verification.',
+      '**Reached:** the specification is complete — everything it demands has a test that checks it. **Open:** it lists what has no test yet. Whether the tests run against code is the next mark (Bau).',
+    se: markSe('Test Readiness Review', 'TRR'),
     prompt: 'se-view:testmatrix, then se:close-violations',
   },
-
-  // --- Implementation gates — reuse INCOSE acronyms but mean "milestone delivered" ----
-  SAR: {
-    plain: 'Milestone 1 (specification) is fully delivered. Red → see the open work items for MS-1.',
-    se: 'Here: MS-1 acceptance. (Standard: System Acceptance Review.)',
-  },
-  FCA: {
-    plain: 'Milestone 2 (writing the code and checking it works) is fully delivered.',
-    se: 'Here: MS-2 acceptance. (Standard: Functional Configuration Audit — as-built matches requirements.)',
-  },
-  SVR: {
-    plain: 'Milestone 3 (MVP readiness) is fully delivered.',
-    se: 'Here: MS-3 acceptance. (Standard: System Verification Review — system meets its requirements.)',
-  },
-  FRR: {
-    plain: 'Milestone 4 (second MVP) is fully delivered.',
-    se: 'Here: MS-4 acceptance. (Standard: Functional Readiness Review.)',
+  Bau: {
+    plain:
+      '**Reached:** nothing is left to plan, to connect to code, or to reconcile with the code. **Open:** the list is the work list of the build. It opens again with every change to the model — that is normal.',
+    se: markSe('Build', 'Bau') + ' Its findings are the work list of the build: plan (open CRs), binding (realRef, testRefs), conformance model against code.',
+    prompt: 'se-plan, then se:close-violations',
   },
 
   // --- Panels (the five MOD-dashboard panels) ---------------------------------------
   readiness: {
     plain:
-      'How finished the project is: one percentage plus eight checks. A red check tells you which part still has problems — open it to see them.',
-    se: 'Compliance score (error-clean elements ÷ total) + eight gates: four INCOSE design reviews + four milestone-acceptance gates.',
+      `How finished the project is: one percentage plus ${Mark.options.length} marks. An open mark tells you which part still has problems — open it to see them.`,
+    se: `Compliance score (error-clean elements ÷ total) + the marks ${Mark.options.join(', ')}, each reached or open with the findings that hold it.`,
     prompt: 'se-status',
   },
   recommendations: {
@@ -133,7 +133,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   artifacts: {
     plain:
       'Which project documents are current, out-of-date, or missing — a missing failure-analysis or an out-of-date spec is hidden risk, shown here as a traffic light.',
-    se: 'INCOSE artifact freshness: 🟢 live · 🟡 stale · 🔴 absent, split into renders (re-derivable → re-export) and creations (need fresh analysis → re-analysis).',
+    se: 'INCOSE artifacts: renders (re-derivable → re-export) read 🟢 live · 🟡 stale · 🔴 absent; analyses read 🟢 on record · 🔴 absent — an analysis has no stale.',
     prompt: 'se-review',
   },
   impact: {
@@ -152,7 +152,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   // --- The three Readiness numbers --------------------------------------------------
   compliance: {
     plain:
-      "The share of things you've defined that have no serious problem. 100% only when all are clean. The single 'are we there yet' number; the gates show why it is below 100.",
+      "The share of things you've defined that have no serious problem. 100% only when all are clean. The single 'are we there yet' number; the marks show why it is below 100.",
     se: '`(totalElements − elementsWithErrors) / totalElements`; the one quantitative readiness KPI.',
   },
   totalElements: {
@@ -218,27 +218,27 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   },
   conops: {
     plain: 'How the system is operated and who uses it.',
-    se: 'Concept of Operations (a creation — needs fresh analysis; render with `se-view:conops`).',
+    se: 'Concept of Operations (an analysis; render with `se-view:conops`).',
     prompt: 'se-conops',
   },
   'assumption-review': {
     plain: 'The unproven assumptions and how risky they are.',
-    se: 'Assumption Review (was IRR) — a creation, graphcode-specific; commit-pinned record promoted to CRs.',
+    se: 'Assumption Review (was IRR) — an analysis, graphcode-specific; commit-pinned record promoted to CRs.',
     prompt: 'se-irr',
   },
   trade: {
     plain: 'The design options weighed and the choice made.',
-    se: 'Trade Study (a creation; render with `se-view:trade`).',
+    se: 'Trade Study (an analysis; render with `se-view:trade`).',
     prompt: 'se-trade',
   },
   fmea: {
     plain: 'The "what can break and how it is handled" analysis.',
-    se: 'Failure Mode and Effects Analysis (a creation; render with `se-view:fmea`).',
+    se: 'Failure Mode and Effects Analysis (an analysis; render with `se-view:fmea`).',
     prompt: 'se-fmea',
   },
   implplan: {
-    plain: 'The work slices and milestones (a judgment, not auto-derived).',
-    se: 'Implementation Plan (a creation; `se-plan` creates, `se-view:implplan` renders).',
+    plain: 'The work slices and milestones — the open work orders of the build.',
+    se: 'Implementation Plan — a render of the CR/MS structure (`se-view:implplan`); `se-plan` writes the CRs and milestones. No stamp: the plan is the set of open CRs.',
     prompt: 'se-plan',
   },
 };

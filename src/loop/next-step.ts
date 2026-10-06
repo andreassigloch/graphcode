@@ -34,7 +34,6 @@ const ANALYSE: Record<Task, string> = {
   fmea: 'die Fehlerbetrachtung (FMEA)',
   plan: 'den Bauplan',
   anforderungsqualitaet: 'die Prüfung der Anforderungsqualität',
-  realisierung: 'die Bindung an Code und Tests',
 };
 
 const TASK_OF_ENTRY = new Map(

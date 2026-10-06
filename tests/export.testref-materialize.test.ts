@@ -23,7 +23,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import { realizationBegun } from '@sigloch/contracts/se';
+import { isDue } from '@sigloch/contracts/se';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -164,8 +164,12 @@ describe('TEST-testref-materialize (e): ein Export im Entwurf beginnt die Realis
     rmSync(tmp, { recursive: true, force: true });
   });
 
+  // CR-GC-748: „der Bau ist eroeffnet" ist die Faelligkeit einer Regel der Stufe 11 (contracts `isDue`,
+  // CR-SM-395) — ein offener Auftrag oder eine Bindung. Vorher: `realizationBegun` (CR-SM-392).
+  const bauEroeffnet = (): boolean => isDue({ stage: 11, domain: [] }, toOntologyGraph(harness.getGraph()));
+
   it('schreibt keinen Stub, setzt keine Bindung, und die Bindungsregeln bleiben still', async () => {
-    expect(realizationBegun(toOntologyGraph(harness.getGraph()))).toBe(false);
+    expect(bauEroeffnet()).toBe(false);
     expect(bindungsBefunde()).toEqual([]);
 
     const res = await bindToolsToHarness(harness)['graph_export'].handler({ force: false });
@@ -174,7 +178,7 @@ describe('TEST-testref-materialize (e): ein Export im Entwurf beginnt die Realis
     expect(existsSync(join(tmp, 'tests'))).toBe(false);
     expect(existsSync(join(tmp, 'src'))).toBe(false);
     expect(gebunden()).toEqual([]);
-    expect(realizationBegun(toOntologyGraph(harness.getGraph()))).toBe(false);
+    expect(bauEroeffnet()).toBe(false);
     expect(bindungsBefunde()).toEqual([]);
   });
 
@@ -182,7 +186,7 @@ describe('TEST-testref-materialize (e): ein Export im Entwurf beginnt die Realis
     await harness.mutate([
       { op: 'update-node', node: { uid: 'TEST-e', type: 'TEST', attributes: { testRefs: [{ file: 'tests/e.test.ts', tool: 'vitest' }] } } },
     ]);
-    expect(realizationBegun(toOntologyGraph(harness.getGraph()))).toBe(true);
+    expect(bauEroeffnet()).toBe(true);
     expect(bindungsBefunde().map((v) => `${v.ruleId}:${v.elementId}`)).toEqual(['R-26:SCHEMA-e']);
 
     const res = await bindToolsToHarness(harness)['graph_export'].handler({ force: false });

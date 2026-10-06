@@ -212,7 +212,7 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
   it('steeringDelta (CR-GC-289): im dryRun-Verdict, deterministisch, NICHT im Apply-Verdict', async () => {
     type SteeringDelta = {
       blockingErrors: { before: number; after: number };
-      dimensions: Record<string, { before: number; after: number; delta: number }>;
+      dimensions: Record<string, { before: number | null; after: number | null; delta: number }>;
     };
     const dryRun = async (): Promise<{ success: boolean; steeringDelta?: SteeringDelta; graphVersion: number }> =>
       (await tools.graph_mutate.handler({ formatE: FE_BATCH, dryRun: true, consumerId: 'sd-test' })) as never;
@@ -223,9 +223,12 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     const sd = first.steeringDelta!;
     expect(sd.blockingErrors.before).toBe(0); // leerer Graph: keine Steering-Blocker
     // REQ+TEST+verify machen req/ver anwendbar — der Fortschritt ist messbar positiv.
-    expect(sd.dimensions.req.after).toBeGreaterThan(sd.dimensions.req.before);
+    // se-engine 2 (CR-SM-395): am leeren Graphen ist nichts geprueft — `before` ist „nicht messbar" (null),
+    // nicht 0 %. „Wird messbar" zaehlt im Delta als Fortschritt (null → 0).
+    expect(sd.dimensions.req!.before).toBeNull();
+    expect(sd.dimensions.req!.after).toBeGreaterThan(0);
     for (const d of Object.values(sd.dimensions)) {
-      expect(d.delta).toBeCloseTo(d.after - d.before, 10);
+      expect(d.delta).toBeCloseTo((d.after ?? 0) - (d.before ?? 0), 10);
     }
 
     // Deterministisch: identischer Vorschlag auf identischem Zustand ⇒ identisches Delta.

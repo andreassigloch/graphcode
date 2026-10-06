@@ -12,7 +12,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { GATE_STATES, GATE_STATE_LABELS } from '../kernel/measure/readiness.js';
+import { Mark } from '@sigloch/contracts/se';
 
 /** Die beiden Schichten, die ein Werkzeug-Eintrag trägt — wie bei Regeln: umgangssprachlich, dann SE. */
 export interface ToolHelpEntry {
@@ -31,17 +31,12 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
     se:
       'ReadinessReport aus `harness.evaluateRules()` (L2-Gate) plus RC-Code-Konformanz. Blöcke:\n' +
       '• `compliance` — Anteil der Elemente ohne error-Verstoß.\n' +
-      '• `phaseGates` SRR/PDR/CDR/TRR — INCOSE-Reviews als disjunkte Partition der Element-Regeln, ' +
-      'Vollständigkeit der Ableitungskette. Je Gate `state` passed · open · not-reached, als ' +
-      `\`stateLabel\` ${GATE_STATES.map((s) => GATE_STATE_LABELS[s]).join(' · ')}; \`passed\` ist nur ` +
-      '`state === "passed"`. not-reached: nichts blockiert, aber es war noch nichts zu prüfen (TRR vor ' +
-      'der ersten Bindung) — nicht bestanden, auch bei `score` 1 und `completeness` 0/0.\n' +
-      '• `implGates` SAR/FCA/SVR/FRR — Meilenstein-Stufen MS-1..4, fertig genau dann, wenn die ' +
-      'zugeordneten CR done UND ihr Umfang error-frei sind.\n' +
-      '• `phase_readiness` — DIESELBEN vier Gates von der anderen Achse: Regelabdeckung je Gate ' +
-      '(abgedeckte/alle Regel-IDs aus RULE_TO_PHASE ohne offenen Verstoß, plus die fehlenden IDs). ' +
-      'Orthogonal zur Element-Vollständigkeit von `phaseGates`. Trägt denselben `state`: ' +
-      '`covered === total` heißt nur, dass keine GESTELLTE Regel offen ist.\n' +
+      `• \`marks\` ${Mark.options.join('/')} — die Marken zwischen den Stufen der Regelmatrix, in Reihenfolge. Je ` +
+      'Marke `reached` und `holding`: die Befunde, die sie halten (leer ⇔ erreicht). Eine Marke halten ' +
+      'Fehler und offene Existenz-Befunde bis zu ihrer Stufe; die letzte zusätzlich alle Befunde von Plan, ' +
+      'Bindung und Abgleich — ihre Arbeitsliste. Andere Warnungen halten keine Marke: „warnungsfrei" ist ' +
+      'die getrennte Aussage von `rules_evaluate`. Ohne `detail` ist `holding` leer und nur `reached` zählt. ' +
+      'Welche Regel zu welcher Marke gehört: `graph_help({token:"<ruleId>"})` → `stage`, `mark`.\n' +
       '• `dimension_readiness` — die 8 RULE_TO_DIMENSION-Themenscores (req/uc/arch/alloc/ver/schema/' +
       'cr/ms), gescored aus dem VOLLEN contracts-Katalog inkl. BQ-*/ND-*, also einer WEITEREN ' +
       'Grundgesamtheit als `violationsByRule`.\n' +

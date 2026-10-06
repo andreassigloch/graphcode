@@ -18,12 +18,8 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
-import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
-import { computeReadiness, ABSENT_CREATION_PROVIDER } from '../src/kernel/measure/readiness.js';
 import { contextualHelp, MAX_EXAMPLE_ELEMENTS } from '../src/projections/help.js';
-
-const EMPTY_GRAPH: Pick<Graph, 'nodes' | 'edges'> = { nodes: [], edges: [] };
 
 /** N violations of one rule, one per element — the `CR-R02: 96` shape. */
 function repeated(ruleId: string, severity: RuleViolation['severity'], n: number): RuleViolation[] {
@@ -36,8 +32,7 @@ function repeated(ruleId: string, severity: RuleViolation['severity'], n: number
 }
 
 function measuresFor(violations: RuleViolation[]) {
-  const report = computeReadiness(violations, EMPTY_GRAPH, ABSENT_CREATION_PROVIDER);
-  return contextualHelp(report, violations).filter((m) => m.blockerKind === 'rule');
+  return contextualHelp(violations);
 }
 
 describe('TEST-help-contextual-dedup (CR-GC-316): one measure per rule', () => {
@@ -89,20 +84,6 @@ describe('TEST-help-contextual-dedup (CR-GC-316): one measure per rule', () => {
     ]);
     expect(measures[0].severity).toBe('error');
   });
-
-  it('leaves creation blockers untouched — one per artifact, count 1', () => {
-    const report = computeReadiness([], EMPTY_GRAPH, ABSENT_CREATION_PROVIDER);
-    const creations = contextualHelp(report, []).filter((m) => m.blockerKind === 'creation');
-
-    expect(creations.length).toBeGreaterThan(0);
-    for (const c of creations) {
-      expect(c.count).toBe(1);
-      expect(c.elementIds).toEqual([]);
-      expect(c.gateId).toBeTruthy();
-    }
-  });
-
-  // -- the claim that matters ------------------------------------------------
 
   it('decouples the payload from graph size — doubling violations does not grow it', () => {
     // Not "the answer got shorter" — "the answer stopped tracking the graph". The
