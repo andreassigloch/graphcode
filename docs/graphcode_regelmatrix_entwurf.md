@@ -69,7 +69,7 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | Stufe | Regel | prüft | Menge | Schwere | Rolle | Gate heute | Marke aus Stufe |
 |---|---|---|---|---|---|---|---|
 | immer | CR-R03 | No concurrent mutation | all | Warnung |  | SRR | – |
-| immer | **neu** | Regel mit mehr als drei fälligen Befunden → Konsolidierung | Befunde | Warnung | Analyse | – | – |
+| immer | **neu** | Regel mit mehr als zwölf fälligen Befunden → Konsolidierung | Befunde | Warnung | Analyse | – | – |
 | immer | R-08 | Trace consistency | all | **Fehler** |  | PDR | – |
 | immer | R-18 | Valid trace pattern | all | **Fehler** |  | PDR | – |
 | 1 System | **neu** | Graph hat ein System | graph | Warnung | Existenz | (Code) | SRR |
@@ -88,12 +88,9 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | 3 Anforderung | BQ-07 | Complete | REQ | Warnung |  | SRR | SRR |
 | 3 Anforderung | FM-01 | RiskReqFmeaAttributes | REQ | Warnung |  | SRR | SRR |
 | 3 Anforderung | FM-02 | RiskReqMitigation | REQ | Warnung |  | SRR | SRR |
-| 3 Anforderung | FM-03 | HighRiskVerification | REQ | Warnung |  | TRR | SRR ≠ |
 | 3 Anforderung | RD-01 | Unresolved requirement | REQ | Warnung |  | SRR | SRR |
 | 3 Anforderung | RD-02 | Decomposition consistency | REQ | Warnung |  | SRR | SRR |
 | 4 Wirkkette | UC-03 | UC has scenario | UC | Warnung | Existenz | SRR | SRR |
-| 4 Wirkkette | FC-04 | FCHAIN actor-bounded (trigger+consumer) | FCHAIN | Warnung |  | PDR | SRR ≠ |
-| 4 Wirkkette | FC-05 | FCHAIN is connected (producer -> consumer) | FCHAIN | Warnung |  | PDR | SRR ≠ |
 | 5 Funktion | R-15 | FCHAIN completeness | FCHAIN | Warnung | Existenz | PDR | PDR |
 | 5 Funktion | BW-02 | Whitebox boundary width | FUNC | Warnung |  | PDR | PDR |
 | 5 Funktion | FC-03 | FCHAIN is flat | FUNC | Warnung |  | PDR | PDR |
@@ -102,11 +99,12 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | 5 Funktion | ND-01 | FuncNearDuplicate | FUNC | Warnung |  | PDR | PDR |
 | 5 Funktion | R-02 | FUNC must satisfy REQ | FUNC | Warnung |  | PDR | PDR |
 | 5 Funktion | R-12 | No circular dependencies | FUNC | Warnung |  | PDR | PDR |
-| 5 Funktion | R-21 | FUNC↔FUNC handover needs a shared chain covered by member REQs or an integration test | FCHAIN, FUNC | Warnung |  | TRR | PDR ≠ |
 | 5 Funktion | R-30 | FUNC leaf must belong to a function chain | FUNC | Warnung |  | PDR | PDR |
 | 6 Datenfluss | R-31 | FUNC must be wired (io input + output) | FUNC | Warnung | Existenz | PDR | PDR |
 | 6 Datenfluss | IO-02 | FLOW single producer | FLOW | **Fehler** |  | PDR | PDR |
 | 6 Datenfluss | R-10 | FLOW completeness | FLOW | Warnung |  | PDR | PDR |
+| 6 Datenfluss | FC-04 | FCHAIN actor-bounded (trigger+consumer) | FCHAIN | Warnung |  | PDR | PDR |
+| 6 Datenfluss | FC-05 | FCHAIN is connected (producer -> consumer) | FCHAIN | Warnung |  | PDR | PDR |
 | 7 Modul | R-22 | FUNC must be allocated to MOD | FUNC | Warnung | Existenz | PDR | PDR |
 | 7 Modul | AF-02 | Trade Study freshness stamp present | graph | Warnung | Analyse | PDR | PDR |
 | 7 Modul | AF-03 | Assumption Review freshness stamp present | graph | Warnung | Analyse | PDR | PDR |
@@ -127,6 +125,8 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | 9 Test | R-01 | REQ must have verification | REQ | **Fehler** | Existenz | TRR | TRR |
 | 9 Test | R-32 | SCHEMA must have contract TEST | SCHEMA | Warnung | Existenz | TRR | TRR |
 | 9 Test | R-05 | TEST must verify REQ | TEST | Warnung |  | TRR | TRR |
+| 9 Test | FM-03 | HighRiskVerification | REQ | Warnung |  | TRR | TRR |
+| 9 Test | R-21 | FUNC↔FUNC handover needs a shared chain covered by member REQs or an integration test | FCHAIN, FUNC | Warnung |  | TRR | TRR |
 | 10 Plan | AF-05 | Ungebautes hat einen Auftrag (heute: Bauplan-Stempel vorhanden) | Ungebautes | Warnung | Existenz | PDR | Bau ≠ |
 | 10 Plan | CR-R01 | CR must track | CR | Warnung |  | SRR | Bau ≠ |
 | 10 Plan | CR-R02 | Done requires commit | CR | Warnung |  | TRR | Bau ≠ |
@@ -150,13 +150,15 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | 12 Abgleich | RC-10 | MOD has resolvable files | MOD | Warnung |  | – | Bau |
 
 **Gelesen:**
-- **Die Marke folgt streng der Stufe.** Bei 48 der 64 vergleichbaren Regeln ist das die heutige Zuordnung. 16
+- **Die Stufe einer Regel ist die späteste Menge, die sie braucht**, nicht der Elementtyp, über den sie läuft. Eine
+  Regel „Wirkkette ist durch Akteure begrenzt" läuft über Wirkketten, braucht aber Funktionen und Datenflüsse.
+- **Die Marke folgt streng der Stufe.** Bei 52 der 64 vergleichbaren Regeln ist das die heutige Zuordnung. Zwölf
   wandern: elf zur Marke „Bau" (die fünf Bindungsregeln, der Bauplan und die fünf Regeln über Aufträge und
-  Meilensteine), fünf innerhalb der Spezifikation (FM-03, FC-04, FC-05, R-21, NFR-01). Die zehn Abgleichregeln, die
-  heute an keinem Gate hängen, bekommen die Marke „Bau".
+  Meilensteine) und eine innerhalb der Spezifikation (NFR-01, Budgets: vom Detailentwurf zum Vorentwurf). Die zehn
+  Abgleichregeln, die heute an keinem Gate hängen, bekommen die Marke „Bau".
 - **Drei Regeln sind neu:** zwei Existenz-Regeln (System, Schema) und der Wächter für die Konsolidierung (§6). Die
   beiden Existenz-Regeln ersetzen Sonderlogik, die es heute an anderer Stelle gibt. **Eine Regel wird neu gefasst:**
-  AF-05 fragt nicht mehr nach einem Stempel, sondern ob Ungebautes einen Auftrag hat.
+  AF-05 fragt nicht mehr nach einem Stempel, sondern ob es für Ungebautes einen offenen Auftrag gibt.
 - **Fünf Regeln sind Fehler** und blockieren die Schreiboperation: R-08, R-18, R-01, IO-02, R-29. Unverändert.
 
 ## 4. Was entfällt
@@ -233,8 +235,28 @@ Schritt ignoriert, sieht die Werte fallen. Es kommt kein neuer Mechanismus dazu,
   kann sie ignorieren; im Viewer bleibt sie sichtbar.
 - Wiederverwendbar sind `se:close-violations` (arbeitet Befunde nach Rang ab), `graph_suggest` (Architekturzüge nach
   Wirkung) und die Doppelgänger-Regeln ND-01/ND-02.
-- **Das Maß ist das Fenster aus §5:** Hat eine einzelne Regel mehr als drei fällige Befunde, also mehr, als ein
-  Schritt abarbeitet, ist die Konsolidierung fällig. Es gibt keine zweite Schwelle und keine Eichung.
+- **Das Maß ist ein Wert der Betriebs-Config, Startwert 12:** Hat eine einzelne Regel der Spezifikation (Stufen 1
+  bis 9) mehr als zwölf fällige Befunde, ist die Konsolidierung fällig. Zwölf sind vier Schritte zu je drei Befunden.
+  Korrigiert wird bei Bedarf.
+- **Warum nur die Spezifikation zählt:** Nach dem Planen sind die Bindungsbefunde die Arbeitsliste des Baus. Ein
+  Projekt mit 18 ungebauten Tests hat kein Konsolidierungsproblem, es hat Arbeit vor sich.
+
+Gemessen an 14 Modellen (offene Warnungen je Regel, alle Stufen):
+
+| Modell | Elemente | Warnungen | Regeln mit > 3 | Regeln mit > 12 |
+|---|---|---|---|---|
+| Rig-Läufe und Referenzen, Aufgabe todo (10 Modelle) | 38–76 | 0–32 | 0–3 | 0–1 |
+| sigloch-modules | 87 | 71 | 7 | 1 |
+| bok | 147 | 70 | 7 | 2 |
+| graphify | 181 | 140 | 11 | 3 |
+| graphcode | 1043 | 437 | 18 | 8 |
+
+- Mit dem Maß „mehr als drei" schlüge der Wächter in fünf der zehn kleinen Rig-Modelle an, mit „mehr als zwölf" in
+  zweien. In beiden ist die Ursache dieselbe: Der Agent hat im Entwurf einen Test gebunden, und danach meldeten alle
+  übrigen Tests „nicht gebunden" (13 und 18 Befunde). Das ist die Arbeitsliste, kein Wildwuchs; mit „nur
+  Spezifikation" bleibt der Wächter dort still.
+- In den vier Bestandsmodellen schlägt er mit beiden Maßen an. Die Zahlen von graphcode sind bei den Abgleichregeln
+  zu hoch, weil die Messung ohne den Quellbaum lief.
 
 ## 7. Checkfragen
 
@@ -278,20 +300,37 @@ Schritt ignoriert, sieht die Werte fallen. Es kommt kein neuer Mechanismus dazu,
 4. Eskalation ist die Readiness im Viewer; vorhandenes wiederverwenden.
 5. Jeder Datenfluss hat ein Schema, jedes Schema einen Test (R-32 bleibt für alle Schemas).
 6. Die genaue Zahl „geprüft" braucht der Agent nicht; keine zusätzlichen Züge.
-7. Ein Wächter schlägt eine Konsolidierung vor, als Analyse, ignorierbar. Sein Maß ist das Fenster: mehr als drei
-   Befunde einer Regel.
+7. Ein Wächter schlägt eine Konsolidierung vor, als Analyse, ignorierbar. Sein Maß ist ein Config-Wert, Startwert
+   „mehr als zwölf Befunde einer Regel".
 8. Weitere Attribute und Stempel der Phasensteuerung auflösen (§4).
 9. Planen und Bauen sind ein Vorgang, derselbe für den ersten Bau und für jede Änderung. Nach dem Plan muss etwas
    das Coding starten.
 
+10. „Ungebautes hat einen Auftrag": Es reicht, dass es einen offenen Auftrag gibt. Ob der Auftrag die richtigen
+    Elemente trifft, zeigt der Git-Diff.
+
 ## 9. Offen
 
-1. **Fünf Regeln wandern innerhalb der Spezifikation**, wenn die Marke streng der Stufe folgt (FM-03, FC-04, FC-05,
-   R-21, NFR-01). Die Ursache ist jeweils, dass die Regel einen früheren Elementtyp prüft, als ihr Thema nahelegt.
-   Annahme bis auf Widerspruch: Sie folgen der Stufe.
-2. **Der Wächter in großen Modellen.** Mit dem Maß „mehr als drei Befunde einer Regel" steht er in jedem Import und
-   in jedem größeren Bestandsmodell dauerhaft an. Ob das als Hinweis trägt oder zu laut ist, zeigt sich am Bestand.
-3. **„Ungebautes hat einen Auftrag"** ist die Frage der gestrichenen Regel CR-R05, jetzt einmal je Zustand statt je
-   Anforderung. Zu klären bei der Umsetzung: Reicht „es gibt einen offenen Auftrag", oder muss der Auftrag auf die
-   ungebauten Elemente zeigen? Das Erste ist einfacher; das Zweite hatten wir verworfen, weil Plan und Ist fast
-   immer abweichen und der Git-Diff die Wahrheit ist.
+1. **Stufe nach „braucht" statt nach „läuft über".** So steht es jetzt in der Matrix. Die Folge der anderen Lesart
+   wäre gewesen: Die Marke SRR verlangte etwas, das erst viel später entstehen kann. Beispiel FM-03: Die Regel läuft
+   über Anforderungen, verlangt aber einen Test für jedes hohe Risiko; hinge sie an der Stufe „Anforderung", wäre SRR
+   erst nach der Fehlerbetrachtung und den Tests erreichbar. Mit „braucht" bleiben vier der fünf Regeln an ihrer
+   heutigen Marke, nur die Budget-Regel NFR-01 wandert vom Detailentwurf zum Vorentwurf.
+2. **Wächter zählt nur die Spezifikation** (§6) — mein Vorschlag aus der Messung, noch nicht entschieden.
+
+## 10. Was wegfällt, grob gezählt
+
+Geschätzt aus dem heutigen Quelltext, ohne Tests; die Umsetzung kann abweichen.
+
+| | fällt weg | kommt dazu | Saldo |
+|---|---|---|---|
+| Regeln | 0 (CR-R05 ist seit dem 2026-10-05 gestrichen) | 3 (System, Schema, Wächter) | 77 → 80 |
+| Tabellen je Regel oder Gate | etwa 11 (Gate je Regel, Pflichtliste, Vorbedingung, Pflicht-Analysen, drei Tabellen der Bau-Gates, Gate-Zustände und ihre Texte, Kaltstart-Stufen, große Teile der Arbeitsschritt-Zuordnung) | 1 Spalte „Stufe", 1 Spalte „Rolle" | etwa −9 |
+| Attribute und Felder | etwa 13: `concept` an fünf Typen (erledigt), der Bauplan-Stempel, am Gate Zustand, Anzeigetext, Punktzahl, Vollständigkeit und Pflicht-Analysen, im Bericht der Durchsetzungs-Schalter und die Phasenabdeckung | 1 Config-Wert (Wächter) | etwa −12 |
+| Funktionen | etwa 14 (Gate-Bewertung, Bau-Gate-Bewertung, Vollständigkeit und ihre Beine, Vorbedingung in drei Teilen, Kerntyp, Phasenabdeckung in zwei Teilen, Aktualität der Analysen, Kaltstart) | etwa 3 (fällig, nächster Befund nach Stufe, Marke) | etwa −11 |
+| Quelltext-Zeilen sigloch-modules | etwa 620 | etwa 200 | etwa −400 |
+| Quelltext-Zeilen graphcode | etwa 280 | etwa 60 | etwa −200 |
+
+Zur Einordnung: Die fünf Katalog-Änderungen vom 2026-10-05 haben den Quelltext netto vergrößert (sigloch-modules
++308 −201, graphcode +135 −59 Zeilen). Ein Teil davon, die Vorbedingung und der Gate-Zustand, ist genau das, was
+dieser Entwurf wieder entfernt.
