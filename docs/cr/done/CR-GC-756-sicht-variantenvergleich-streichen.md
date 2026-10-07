@@ -1,6 +1,6 @@
 # CR-GC-756: Sicht Variantenvergleich streichen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-07)
 **Typ:** aus Item ITEM-2026-766 (idea)
 **Erstellt:** 2026-10-07
 **Item:** bok/items/ITEM-2026-766.json (Lane: code)
