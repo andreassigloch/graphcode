@@ -1,6 +1,6 @@
 ---
 name: se:optimize
-version: 1
+version: 2
 description: Was schlägt die Architekturmaschine vor? — graph_suggest gegen das Zielprofil ziehen, die Top-Vorschläge mit Δm und Anwendbarkeit zeigen, den gewählten Zug durchs Apply-Gate anwenden. Kein Auto-Apply.
 ---
 
@@ -88,7 +88,23 @@ Reihenfolge illegal (zwei Allokationen) oder unternormiert (gar keine).
 Lehnt das Gate ab, ist das **das Ergebnis** — nicht der Anlass, den Edit zurechtzubiegen. Lies die
 Violation vor und geh zum nächsten Vorschlag.
 
-## 5. Danach
+## 5. Festhalten — ein erledigter Auftrag je Sitzung
+
+Eine angewendete Optimierung ist eine Änderung am Modell und wird festgehalten wie jede andere —
+ein Text, ein Knoten, Kanten auf das Geänderte:
+
+1. **Text.** `docs/cr/done/<nächste CR-Nummer>-<kurzname>.md` — die nächste freie Nummer nach den
+   Dateien in `docs/cr/open/` und `docs/cr/done/`, gleiches Präfix; `CR-001` in einem Repo ohne
+   Aufträge. Darin: die Zielrichtung, je angewendetem Zug Regel, Element, Δm und der Grund der Wahl,
+   und die Vorschläge, die der Mensch abgelehnt hat, mit seinem Grund.
+2. **Modell.** Ein `graph_mutate`-Aufruf: der CR-Knoten — nur Kennung und Titel, `status: "done"` —
+   mit je einer `relation`-Kante auf jedes Element, das ein angewendeter Zug umgehängt oder
+   verbunden hat.
+
+Wurde nichts angewendet, entsteht kein Auftrag. Zieht ein Zug Code-Arbeit nach sich (`codeImpact`),
+schneidet `se-plan` den Bauauftrag dafür — der erledigte Auftrag hier dokumentiert nur.
+
+## 6. Danach
 
 Nach jeder angewendeten Änderung `graph_suggest` erneut aufrufen: der Graph ist ein anderer, das
 Ranking auch. Ein Vorschlag mit `score ≤ 0` trägt **weg** von der Zielrichtung — nicht anwenden,

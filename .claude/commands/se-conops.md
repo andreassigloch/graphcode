@@ -1,6 +1,6 @@
 ---
 name: se-conops
-version: 3
+version: 4
 description: Concept of Operations (CREATE) — surface operational concerns (config/creds/user-mgmt/deploy) BEFORE use cases and write them as system-scoped non-functional REQ through the gate
 ---
 
@@ -22,8 +22,12 @@ For each concern the system MUST satisfy, author a `REQ` via `graph_mutate` (App
 
 Inspect the returned `violations`; re-apply if blocked. Never hand-edit the SSOT.
 
-## 4. Bind the CR so the change sections fill
-If this work runs under a CR, add `relation` edges from that CR to every element you created (`CR relation → REQ`, `→ FUNC`, `→ MOD`, `→ UC`). §6 of the ConOps view ("nature of changes / summary of impacts", 29148) is rendered from exactly those edges — a CR without them is invisible there. It need not be a new use case; a single new function is a legitimate change entry.
+## 4. Record the walk as a closed change request
+A ConOps walk is a change to the model, and it is documented like one — one text, one node, edges to what it touched:
+1. **Text.** Write `docs/cr/done/<next CR id>-<slug>.md` — the next free number after the files in `docs/cr/open/` and `docs/cr/done/`, same prefix; `CR-001` in a repo without CRs. It carries each concern of step 1 with its answer: the requirement written for it, or the gap and why it stays open.
+2. **Model.** In the same `graph_mutate` batch as the requirements, add the CR node — id and title only, `status: "done"` — with one `relation` edge from it to every element you created (`CR relation → REQ`, `→ FUNC`, `→ MOD`, `→ UC`). §6 of the ConOps view ("nature of changes / summary of impacts", 29148) is rendered from exactly those edges.
+
+A closed CR documents; it orders no build. What the requirements still need built is cut by `se-plan`.
 
 ## 5. Report the gaps
 An operational concern with **no answer** is a blocking gap — list it explicitly (it is the ConOps equivalent of a never-performed analysis), not a silent omission.
@@ -33,4 +37,4 @@ Two gaps are **structural**, not yours to close ad-hoc: **modes of operation** (
 ## 6. Stamp the task
 Close the task with **one** `graph_mutate` batch on the SYS root. `analysisFreshness` is one attribute for all analyses and a patch replaces it whole: read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`, set `"conops": { graphVersion: <current graphVersion()> }`, and write the complete object with the `baseVersion` you read — after the operational REQ of step 3 are in the graph. The stamp records that this walk happened at that graph version; **AF-01** (the entry rule of the task `conops`) stays open until then. A ConOps that wrote no operational REQ and named no gap has not happened: leave AF-01 open instead of stamping an empty walk.
 
-The output is the operational REQ in the graph plus the named gaps — produced before the UCs are written.
+The output is the operational REQ in the graph, the closed CR that records the walk, and the named gaps — produced before the UCs are written.

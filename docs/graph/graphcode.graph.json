@@ -3089,6 +3089,12 @@
       "commitRef": "a1c7a56"
     },
     {
+      "id": "CR-GC-755",
+      "type": "CR",
+      "name": "Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43",
+      "description": "docs/cr/open/CR-GC-755-entscheidung-ist-ein-erledigter-auftrag-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -23609,5 +23615,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 623
+  "graphVersion": 624
 }

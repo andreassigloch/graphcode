@@ -1,16 +1,14 @@
 ---
 name: se-fmea
-version: 5
+version: 6
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
-Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbook (2019)** 7-step method, mapped onto this project's SE-ontology graph. Output is `docs/records/failure-mode-analysis.md` plus the derived requirements with their tests in the graph. This is the FMEA **create** skill; once findings are in the graph, render them with `se-view:fmea` (the read-only FMEA view) — do not re-author the analysis at render time.
+Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbook (2019)** 7-step method, mapped onto this project's SE-ontology graph. Output is one closed change request (`docs/cr/done/`) carrying the analysis, plus the derived requirements with their tests in the graph. This is the FMEA **create** skill; once findings are in the graph, render them with `se-view:fmea` (the read-only FMEA view) — do not re-author the analysis at render time.
 
 **Scope argument:** the user names the analysis target. **The default and preferred unit is one `FCHAIN`** — a Wirkkette is a bounded end-to-end effect path with a named trigger and a named result, which is exactly what a failure mode needs to be stated against ("the chain does not reach its result because ..."). A `MOD` or a component (e.g. `ACS712`) is a legitimate but secondary scope: it cuts across chains, so its failure effects can only be stated per chain anyway. A whole-`SYS` scope means *every* chain, one profile each — say so and confirm the effort before starting.
 
 If unscoped, ask for it — do not guess. If the user names a `MOD` or a component, resolve it to the chains it participates in (`allocate` → FUNC → `compose` → FCHAIN) and run Step 2 per chain.
-
-Reference exemplar (existing, RPN-based — upgrade it to AP, do not copy verbatim): `docs/records/failure-mode-analysis.md`.
 
 ---
 
@@ -88,7 +86,7 @@ Danach, für jede Funktion:
 - State the **residual risk** intent: which mitigations lower O (prevention) vs. D (detection).
 
 ### Step 7 — Documentation of Results
-- Write `docs/records/failure-mode-analysis.md` with sections:
+- Write the analysis as the text of a closed change request: `docs/cr/done/<next CR id>-<slug>.md` — the next free number after the files in `docs/cr/open/` and `docs/cr/done/`, same prefix; `CR-001` in a repo without CRs. It is the only prose record; a new analysis is a new CR, never an edit of an old one. Sections:
   1. Zusammenfassung (count of FMs + Top-3 AP-High risks)
   2. Kettenprofil (die Step-2-Tabelle: `FCHAIN | Mitglieder | Linearität | Importe | Übergaben | Akteursgrenze`) — sie begründet, warum die Fehlermodi dort sitzen, wo sie sitzen
   3. Fehlermodi im Detail (`FM-NN`, the Step-4 entries) — jeder Eintrag nennt seine Quelle (A/B/C/D oder „frei abgeleitet") und die Element-uids, aus denen er stammt
@@ -153,7 +151,7 @@ The FMEA is not done until findings live in the graph, not just the document.
 
 3. **Check the result.** `graph_mutate` returns `{ success, tier, appliedCommands, violations }`. The gate **BLOCKS the whole batch** if it would introduce a new **error-severity** violation (`tier: "block"`, `success: false`) — it does NOT silently drop nodes/edges. Read `violations`, fix the batch (e.g. add the missing `verify`), and re-apply.
 4. **Check violations:** `rules_get_violations` — resolve any new R-01/R-02 gaps.
-5. **No CR.** An analysis leaves no build order: the requirements and their tests are the result, and the build order for whatever they still need is cut later by `se-plan`. If the SE-schema (ElementType/TraceType/rules) would have to change, stop and name it — that is a contracts change, not part of this analysis.
+5. **Add the CR node.** In the same batch as the requirements (or directly after it), add the CR node of Step 7 — id and title only, `status: "done"` — with one `relation` edge from it to every REQ and TEST this analysis wrote. A closed CR documents; it orders no build: the build order for whatever the requirements still need is cut later by `se-plan`. If the SE-schema (ElementType/TraceType/rules) would have to change, stop and name it — that is a contracts change, not part of this analysis.
 6. **Stamp the task.** Close with **one** `graph_mutate` batch on the SYS root. `analysisFreshness` is one attribute for all analyses and a patch replaces it whole: read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`, set `"fmea": { graphVersion: <current graphVersion()> }`, and write the complete object with the `baseVersion` you read — after the risk and mitigation REQ of step 2 are in the graph. **AF-04** (the entry rule of the task `fmea`) stays open until then. An FMEA with no risk REQ in the graph has not happened: leave AF-04 open instead of stamping an empty analysis.
 
 ---

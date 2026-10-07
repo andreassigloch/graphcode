@@ -289,6 +289,19 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     }
   });
 
+  it('eine Entscheidung ist ein erledigter Auftrag: Analysen und Optimierung halten sich als CR in done/ fest', () => {
+    // Ein Ort fuer den Text (docs/cr/done), ein schlanker Knoten, relation-Kanten auf das Geaenderte —
+    // kein zweites Dokument unter docs/records, keine Etiketten an Kanten, keine Optionsknoten.
+    for (const skill of ['se-conops', 'se-trade', 'se-irr', 'se-fmea', 'se/optimize']) {
+      const text = readFileSync(fileURLToPath(new URL(`../.claude/commands/${skill}.md`, import.meta.url)), 'utf8');
+      expect(text, skill).toContain('docs/cr/done/');
+      expect(text, skill).toContain('status: "done"');
+      expect(text, skill).toMatch(/`relation`/);
+      expect(text, skill).not.toMatch(/Write `docs\/records\//);
+      expect(text, skill).not.toMatch(/superseded-by|label: ?decides|architectureOnly|commitRef/);
+    }
+  });
+
   it('ohneStempelzeilen nimmt nur die Stempelzeile', () => {
     const r = ohneStempelzeilen({ formatE: '## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"fmea":{}}\n@role x\n' });
     expect(r.entfernt).toBe(1);
