@@ -445,7 +445,7 @@ export function conformanceViolations(harness: Pick<ConformanceHarness, 'getGrap
 }
 
 // Die Zusammenfuehrung beider Quellen lebt in `evaluation.ts` (CR-GC-398), seit CR-GC-489 als
-// `readinessOf(evaluateAll(h), h.getGraph())` ohne benannten Wrapper:
+// `readinessOf(evaluateAll(h))` ohne benannten Wrapper:
 // die Zusammenführung beider Quellen ist ab jetzt EINE Fläche, und die lebt dort.
 // Dieses Modul liefert nur noch die Konformanz-QUELLE (`conformanceViolations`),
 // nie eine zweite Gesamtauswertung.

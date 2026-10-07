@@ -30,7 +30,6 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'genau die ist, aus der die Empfehlung entstand.',
     se:
       'ReadinessReport aus `harness.evaluateRules()` (L2-Gate) plus RC-Code-Konformanz. Blöcke:\n' +
-      '• `compliance` — Anteil der Elemente ohne error-Verstoß.\n' +
       `• \`marks\` ${Mark.options.join('/')} — die Marken zwischen den Stufen der Regelmatrix, in Reihenfolge. Je ` +
       'Marke `reached` und `holding`: die Befunde, die sie halten (leer ⇔ erreicht). Eine Marke halten ' +
       'Fehler und offene Existenz-Befunde bis zu ihrer Stufe; die letzte zusätzlich alle Befunde von Plan, ' +

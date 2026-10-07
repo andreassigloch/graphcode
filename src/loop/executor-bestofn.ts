@@ -20,7 +20,6 @@ import {
   rankCandidates,
   effectiveFocusDelta,
   temperatureSpread,
-  totalDelta,
   type CandidateProbe,
 } from './executor-rank.js';
 import { extractMutateFromText, extractToolCallFromText } from './executor-parse.js';
@@ -234,7 +233,7 @@ function traceCandidate(
     `  candidate ${c.index + 1}/${n}: tier=${tier} focus(${focusStage ?? '-'})=${fmtDelta(
       focusDelta(v, focusStage),
     )}${dupes > 0 ? ` dupes=${dupes} eff=${fmtDelta(eff)}` : ''}` +
-      ` total=${fmtDelta(totalDelta(v))} steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
+      ` steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
   );
 }
 
@@ -254,7 +253,7 @@ async function modelJudgePick(
         .join(',') || '-';
     return (
       `${i + 1}. tier=${v.tier ?? '?'} focus(${focusStage ?? '-'})=${fmtDelta(focusDelta(v, focusStage))} ` +
-      `total=${fmtDelta(totalDelta(v))} steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0} violations=${viols}`
+      `steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0} violations=${viols}`
     );
   });
   const prompt =

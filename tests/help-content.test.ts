@@ -51,12 +51,14 @@ describe('TEST-help-content-coverage (CR-GC-227): authored Plain/SE covers the l
       ...HELP_PANEL_IDS,
       ...ARTIFACT_CATALOG.map((a) => a.id),
       ...Object.keys(HELP_VOCAB),
-      // Die drei Zahlen des Compliance-Kastens haben keine Live-Registry, aus der sie
-      // ableitbar waeren — sie stehen nur hier und im Dashboard. Deshalb einmal benannt,
-      // statt die Pruefung dafuer aufzuweichen.
-      'compliance', 'totalElements', 'elementsWithErrors',
     ]);
     expect(Object.keys(HELP_CONTENT).filter((id) => !known.has(id))).toEqual([]);
+    // CR-GC-758: die drei Zahlen des Compliance-Kastens sind gestrichen — auch ihre Eintraege,
+    // und `graph_help` kennt die Tokens nicht mehr.
+    for (const tot of ['compliance', 'totalElements', 'elementsWithErrors']) {
+      expect(HELP_CONTENT[tot], tot).toBeUndefined();
+      expect(helpEntry(tot), tot).toBeUndefined();
+    }
   });
 
   // CR-GC-748: die Marken kommen aus dem Katalog (`Mark`), nicht aus einer Liste hier — eine sechste

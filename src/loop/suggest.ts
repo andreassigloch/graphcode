@@ -346,18 +346,24 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       .default('host')
       .describe(
         "Wer die Kandidaten-Auswahl macht (CR-GC-288): 'host' = der MCP-Client vergleicht selbst per " +
-          "dryRun (Protokoll-Prosa im Prompt, Default für alle MCP-Clients); 'driver' = ein " +
+          "dryRun (Default); 'driver' = ein " +
           'Best-of-N-Treiber probt und wählt im Code — der dryRun-Auftrag verschwindet aus dem Prompt.',
+      ),
+    peek: z
+      .boolean()
+      .default(false)
+      .describe(
+        'true = nur lesen: der nächste Schritt der Sitzung, ohne sie zu ändern.',
       ),
   });
 
   const graph_generate: MCPTool<z.infer<typeof GraphGenerateInputSchema>, GenerationStep> = {
     name: 'graph_generate',
     description:
-      'Der Kaltstart-Generierungstreiber (Regime 1: LLM schlägt vor, Gate scort/wählt). Liefert aus ' +
+      'Der Generierungstreiber (LLM schlägt vor, Gate wählt). Liefert aus ' +
       'Prosa-Intention + Graph-Zustand die KONKRETE nächste Generierungs-Instruktion: seed (SYS/ACTOR/UC ' +
-      'aus der Intention) → expand (Deficit-Dimension, konkrete Funde, Kandidaten-Protokoll: dryRun-' +
-      'Vergleich per Verdict + fitAdvisory, bester Batch echt) → handoff (Schwelle erreicht → graph_suggest). ' +
+      'aus der Intention) → expand (früheste Stufe, konkrete Funde, Kandidaten per dryRun, bester Batch echt) ' +
+      '→ handoff (→ graph_suggest). ' +
       'Read-only und deterministisch; das Vorschlagen bleibt beim Host, das Urteil beim Gate. ' +
       'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation).',
     inputSchema: GraphGenerateInputSchema,
@@ -366,6 +372,12 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       // EINE Check-Pfad, ein Hand-Edit der Config wirkt ab der nächsten Runde.
       const repoRoot = harness.getRepoRoot();
       const profile = loadTargetProfile(repoRoot);
+      // CR-GC-758: nachsehen heisst lesen — kein Anker-Write, kein Taskwechsel, kein Zaehlen. Der Schritt
+      // kommt aus dem Stand der Sitzung (Task, Zurueckgestelltes, Steuer-Optimum), wie der naechste echte.
+      if (input.peek) {
+        const m = focusMemoryOf(harness);
+        return generationStep(harness.getGraph(), harness.getMetricPolicy(), undefined, input.threshold ?? harness.getFocusThreshold(), [...m.deferred], 'host', profile, m.task, m.steerOptimum);
+      }
       // CR-GC-307: die Kernthemen der Intention werden STILL gesetzt — kein
       // Bestätigungsschritt beim Menschen, der Begriff dahinter ist Steuerungs-
       // internes. Bewusst HIER und nicht in generationStep: die Zustandsmaschine

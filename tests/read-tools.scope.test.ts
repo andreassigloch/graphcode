@@ -110,17 +110,20 @@ describe('CR-GC-613: nach einem Schreibzug schneiden die Werkzeuge', () => {
     gemessen.testReport = groesse(t);
   }, 120_000);
 
-  it('graph_readiness weist den Umfang aus — die SCORES bleiben global', async () => {
+  it('graph_readiness weist den Umfang aus — die ZAHLEN bleiben global', async () => {
     const r = await tools.graph_readiness.handler({});
     expect(r.umfang.art).toBe('arbeitsmenge');
     expect(r.umfang.ausserhalb).toBeGreaterThan(0);
-    // Die Zusage dieses Werkzeugs ist eine Aussage ueber das PROJEKT. Eine geschnittene
-    // Compliance-Zahl waere genau das falsche Gruen, vor dem der CR selbst warnt.
-    const compliance = (r as unknown as { compliance: { score?: number } | number }).compliance;
-    const wert = typeof compliance === 'number' ? compliance : compliance.score;
-    expect(typeof wert).toBe('number');
-    expect(wert!).toBeGreaterThanOrEqual(0);
-    expect(wert!).toBeLessThanOrEqual(1);
+    // Die Zusage dieses Werkzeugs ist eine Aussage ueber das PROJEKT. Eine geschnittene Zahl waere
+    // genau das falsche Gruen, vor dem der CR selbst warnt. CR-GC-758: der Compliance-Prozentwert ist
+    // gestrichen; global bleiben die Befundzahlen — je Regel, je Stufe und die Liste selbst.
+    const d = await tools.graph_readiness.handler({ detail: true });
+    const jeRegel = Object.values(r.violationsByRule).reduce((n, c) => n + c, 0);
+    expect(d.violations.length).toBe(jeRegel);
+    expect(r.stages.reduce((n, s) => n + s.findings, 0)).toBe(jeRegel);
+    // Ungeschnitten: die Zahl schliesst ein, was AUSSERHALB der Arbeitsmenge liegt.
+    expect(jeRegel).toBeGreaterThanOrEqual(r.umfang.ausserhalb);
+    expect(d.umfang.ausserhalb).toBe(r.umfang.ausserhalb);
   }, 120_000);
 
   it('graph_context traegt die Prosa des Ankers, seiner REQ und seiner SCHEMA — sonst Kanten', async () => {

@@ -21,7 +21,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { join } from 'node:path';
 import { ALL_RULE_DEFS, Mark, MARK_STAGE } from '@sigloch/contracts/se';
-import type { Graph } from '@sigloch/graph-api-core';
 import type { RuleViolation } from '@sigloch/contracts/harness';
 import type { GraphCodeHarness } from '../src/kernel/harness.js';
 import { openMeasured, type Measured } from '../src/surface/measured.js';
@@ -73,21 +72,17 @@ describe('TEST-readiness-model (A/B): model is defined over the family rules, le
 // --- (C) unit: the report passes the marks through ---------------------------
 
 describe('TEST-readiness-model (C): computeReadiness carries the marks of the client', () => {
-  const graph: Pick<Graph, 'nodes' | 'edges'> = {
-    nodes: [{ uid: 'REQ-x', type: 'REQ', name: 'x', description: '', attributes: {} }],
-    edges: [],
-  };
   const violations: RuleViolation[] = [
     { ruleId: 'R-01', severity: 'error', elementId: 'REQ-x', message: 'REQ-x has no verification trace' },
     { ruleId: 'R-02', severity: 'warning', elementId: 'FUNC-y', message: 'FUNC-y does not satisfy any requirement' },
   ];
 
   it('`marks` is `computeMarks` over the same findings — no second computation in between', () => {
-    expect(computeReadiness(violations, graph).marks).toEqual(computeMarks(violations));
+    expect(computeReadiness(violations).marks).toEqual(computeMarks(violations));
   });
 
   it('a mark is reached exactly when nothing holds it, and what holds it is one of the findings handed in', () => {
-    const r = computeReadiness(violations, graph);
+    const r = computeReadiness(violations);
     for (const m of r.marks) {
       expect(m.reached, m.id).toBe(m.holding.length === 0);
       for (const h of m.holding) expect(violations).toContainEqual(h);
@@ -101,7 +96,7 @@ describe('TEST-readiness-model (C): computeReadiness carries the marks of the cl
   });
 
   it('no finding, no holder: every mark reads reached', () => {
-    expect(computeReadiness([], graph).marks.every((m) => m.reached)).toBe(true);
+    expect(computeReadiness([]).marks.every((m) => m.reached)).toBe(true);
   });
 });
 

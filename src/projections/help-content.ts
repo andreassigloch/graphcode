@@ -149,22 +149,6 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
     prompt: 'Check graphcode health: store, gate, versions.',
   },
 
-  // --- The three Readiness numbers --------------------------------------------------
-  compliance: {
-    plain:
-      "The share of things you've defined that have no serious problem. 100% only when all are clean. The single 'are we there yet' number; the marks show why it is below 100.",
-    se: '`(totalElements − elementsWithErrors) / totalElements`; the one quantitative readiness KPI.',
-  },
-  totalElements: {
-    plain: "How many items you've defined in total. It is the denominator behind the percentage.",
-    se: 'Count of all ontology elements (`REQ`/`FUNC`/`TEST`/`MOD`/…).',
-  },
-  elementsWithErrors: {
-    plain:
-      'How many of those items have a serious problem you need to fix — each one is listed in Recommendations.',
-    se: 'Elements carrying ≥1 `error`-severity violation.',
-  },
-
   // --- Artifacts (keyed on ARTIFACT_CATALOG id; kind/names come from CR-220/222/223) --
   srs: {
     plain: "The requirements document — the features you've promised, per use case.",

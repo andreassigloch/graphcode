@@ -181,8 +181,8 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     });
     // Gegen den unveraenderten Graphen gemessen, nicht gegen eine feste Zahl: ob das committete Modell
     // selbst RC-sauber ist, prueft der Fall oben — hier zaehlt nur, dass die EINE gebrochene Bindung ankommt.
-    const vorher = readinessOf(evaluateAll(port(g)), g).violationsByRule['RC-01'] ?? 0;
-    const report = readinessOf(evaluateAll(port(broken)), broken);
+    const vorher = readinessOf(evaluateAll(port(g))).violationsByRule['RC-01'] ?? 0;
+    const report = readinessOf(evaluateAll(port(broken)));
     expect(report.violationsByRule['RC-01']).toBe(vorher + 1);
     // WHICH mark RC-01 lies before is the catalog's business, not this test's (CR-GC-312: naming
     // a gate here is how the model drifted from contracts on 21 rules while every test stayed

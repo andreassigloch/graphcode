@@ -32,7 +32,7 @@ function befunde(g: Graph): RuleViolation[] {
     ruleId: v.rule_id, severity: v.severity, elementId: v.element_id, message: v.message,
   }));
 }
-const marken = (g: Graph): ReadinessMark[] => computeReadiness(befunde(g), g).marks;
+const marken = (g: Graph): ReadinessMark[] => computeReadiness(befunde(g)).marks;
 const marke = (g: Graph, id: string): ReadinessMark => marken(g).find((m) => m.id === id)!;
 const ROLLE = new Map(ALL_RULE_DEFS.map((r) => [r.id, r.role]));
 
@@ -166,7 +166,7 @@ describe('die Marke Bau: Plan, Bindung, Abgleich', () => {
 describe('ein Wert je Marke, das Warum auf Anfrage (REQ-completeness-single-value)', () => {
   it('die Kurzform behaelt `reached` und laesst `holding` weg', () => {
     const g: Graph = { nodes: [node('SYS-x', 'SYS'), node('UC-x', 'UC')], edges: [] };
-    const voll = computeReadiness(befunde(g), g);
+    const voll = computeReadiness(befunde(g));
     const kurz = summarizeReadiness(voll);
     expect(kurz.marks.map((m) => [m.id, m.reached])).toEqual(voll.marks.map((m) => [m.id, m.reached]));
     expect(voll.marks[0]!.holding.length).toBeGreaterThan(0);

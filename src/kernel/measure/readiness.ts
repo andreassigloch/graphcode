@@ -30,7 +30,6 @@ export {
   scoreReadiness,
   getFamilyRuleIds,
   type IncoseScope,
-  type ReadinessDimension,
   type ReadinessMark,
   type ReadinessReport,
 } from '@sigloch/graphcode-client';

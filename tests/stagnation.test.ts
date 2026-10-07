@@ -9,11 +9,13 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { alsFormatE } from './helpers/format-e.js';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
+import { focusMemoryOf } from '../src/loop/stagnation.js';
+import { TARGET_PROFILE_REL } from '../src/loop/target-profile.js';
 
 type Antwort = { success: boolean; vorschlag?: string };
 let repoRoot: string;
@@ -167,5 +169,118 @@ describe('CR-GC-596: nur noch Zurueckgestelltes → stalled, nicht done', () => 
     const s = await tools.graph_generate.handler({});
     expect(s.phase).toBe('stalled');
     expect(s.done).toBe(false);
+  });
+});
+
+/**
+ * CR-GC-758 — `graph_generate {peek:true}`: nachsehen heisst lesen. Der Schritt, den die Sitzung als
+ * naechsten bekaeme (ihr Task, ihre zurueckgestellten Fund-Sets), ohne dass die Sitzung sich aendert:
+ * kein Taskwechsel, kein Zaehlen, kein Zurueckstellen, kein Anker-Write. Fuer Anzeigen, die pollen.
+ */
+describe('CR-GC-758: peek sieht nach, ohne die Sitzung zu aendern', () => {
+  /** Der Sitzungsstand, wie die Abbruchregel ihn fuehrt — als Wert, zum Vergleichen. */
+  const stand = () => {
+    const m = focusMemoryOf(harness);
+    return { task: m.task, last: m.last ? { ...m.last } : null, deferred: [...m.deferred].sort(), steerVerlauf: m.steerVerlauf.length, steerOptimum: m.steerOptimum };
+  };
+
+  it('(a) der Peek steht im Task der Sitzung und laesst ihn stehen — ein Aufruf ohne peek und ohne task setzt ihn zurueck', async () => {
+    const fmea = await tools.graph_generate.handler({ task: 'fmea' });
+    expect(fmea.skill).toBe('se-fmea');
+    expect(focusMemoryOf(harness).task).toBe('fmea');
+    const vorher = stand();
+
+    const peek = await tools.graph_generate.handler({ peek: true });
+    // Derselbe Schritt, den die Sitzung bekommt — nicht ein Schritt im Kern.
+    expect(peek.skill).toBe('se-fmea');
+    expect(peek.focusKey).toBe(fmea.focusKey);
+    expect(peek.phase).toBe(fmea.phase);
+    expect(peek.prompt).toBe(fmea.prompt);
+    // Ein zweiter Peek aendert nichts: gleiche Antwort, gleicher Sitzungsstand, Task weiter fmea.
+    const nochmal = await tools.graph_generate.handler({ peek: true });
+    expect(nochmal).toEqual(peek);
+    expect(stand()).toEqual(vorher);
+    // `task` am Peek wird nicht uebernommen: weder im Schritt noch in der Sitzung.
+    const mitTask = await tools.graph_generate.handler({ peek: true, task: 'plan' });
+    expect(mitTask.skill).toBe('se-fmea');
+    expect(mitTask.focusKey).toBe(fmea.focusKey);
+    expect(focusMemoryOf(harness).task).toBe('fmea');
+    expect(stand()).toEqual(vorher);
+
+    // Gegenprobe (bestehendes Verhalten, CR-GC-601): OHNE peek und ohne task geht es zurueck in den Kern —
+    // und der Peek folgt der Sitzung dorthin.
+    const kern = await tools.graph_generate.handler({});
+    expect(focusMemoryOf(harness).task).toBe('kern');
+    expect(kern.skill).not.toBe('se-fmea');
+    const danach = await tools.graph_generate.handler({ peek: true });
+    expect(danach.skill).toBe(kern.skill);
+    expect(danach.focusKey).toBe(kern.focusKey);
+  });
+
+  it('(b) Peeks zwischen zwei Zuegen zaehlen keine Wiederholung — allein durch Peeks wird der Fokus nie zurueckgestellt', async () => {
+    const erst = await tools.graph_generate.handler({});
+    expect(erst.phase).toBe('expand');
+    const s0 = stand();
+    expect(s0.last).toMatchObject({ key: erst.focusKey, repeats: 0 });
+    const zehnPeeks = async (wo: string) => {
+      for (let i = 0; i < 10; i++) {
+        const peek = await tools.graph_generate.handler({ peek: true });
+        expect(peek.focusKey, `${wo}, Peek ${i + 1}`).toBe(erst.focusKey);
+      }
+    };
+
+    // Ohne Zug: zehn Peeks, Sitzungsstand unveraendert.
+    await zehnPeeks('vor dem ersten Zug');
+    expect(stand()).toEqual(s0);
+
+    // Ein Zug ohne Wirkung zaehlt EINE Wiederholung (der Zug selbst meldet sich im Gedaechtnis, CR-GC-729).
+    await zugOhneWirkung();
+    const s1 = stand();
+    expect(s1.last).toMatchObject({ key: erst.focusKey, repeats: 1 });
+    // Zehn Peeks danach: weiter derselbe Fokus, weiter EINE Wiederholung — gezaehlt haette schon der
+    // zweite die Schwelle (2) erreicht und das Fund-Set zurueckgestellt.
+    await zehnPeeks('zwischen den Zuegen');
+    expect(stand()).toEqual(s1);
+    expect(focusMemoryOf(harness).deferred.size).toBe(0);
+    // Auch der echte Aufruf sieht den Fokus noch (kein Zug dazwischen: nichts zaehlen).
+    expect((await tools.graph_generate.handler({})).focusKey).toBe(erst.focusKey);
+
+    // Gegenprobe: zurueckgestellt wird erst mit dem ZWEITEN Zug — genau wie ohne jeden Peek (Fall oben).
+    const zwei = await zugDannSchritt();
+    expect(zwei.focusKey).not.toBe(erst.focusKey);
+    expect([...focusMemoryOf(harness).deferred]).toEqual([erst.focusKey]);
+    // Und der Peek folgt der Sitzung: derselbe neue Fokus, wieder ohne etwas zu aendern.
+    const s2 = stand();
+    expect((await tools.graph_generate.handler({ peek: true })).focusKey).toBe(zwei.focusKey);
+    expect(stand()).toEqual(s2);
+  });
+
+  it('(c) ein in der Sitzung zurueckgestelltes Fund-Set fehlt auch im Peek — `defer` und `intent` am Peek wirken nicht', async () => {
+    const erst = await tools.graph_generate.handler({});
+    const key = erst.focusKey!;
+    expect(key).toBeTruthy();
+
+    // `defer` am Peek wird nicht uebernommen: der Fokus bleibt, die Sitzung stellt nichts zurueck.
+    const peekMitDefer = await tools.graph_generate.handler({ peek: true, defer: [key] });
+    expect(peekMitDefer.focusKey).toBe(key);
+    expect(focusMemoryOf(harness).deferred.size).toBe(0);
+    // `intent` am Peek schreibt keine Anker (der Datei-Write ist ein Effekt des echten Aufrufs).
+    const intent = 'Ein Bestellsystem fuer Ersatzteile: Kunden bestellen Teile, das Lager bestaetigt die Lieferung, die Buchhaltung stellt die Rechnung.';
+    await tools.graph_generate.handler({ peek: true, intent });
+    expect(existsSync(join(repoRoot, TARGET_PROFILE_REL))).toBe(false);
+
+    // Ein NORMALER Aufruf stellt zurueck — fuer die Sitzung (CR-GC-598).
+    const weiter = await tools.graph_generate.handler({ defer: [key] });
+    expect(weiter.focusKey).not.toBe(key);
+    expect([...focusMemoryOf(harness).deferred]).toEqual([key]);
+    // Der Peek liefert denselben Folgeschritt, nicht das zurueckgestellte Fund-Set.
+    const peek = await tools.graph_generate.handler({ peek: true });
+    expect(peek.focusKey).toBe(weiter.focusKey);
+    expect(peek.focusKey).not.toBe(key);
+    expect(peek.prompt).toBe(weiter.prompt);
+
+    // Positivkontrolle zum Anker-Write: derselbe `intent` OHNE peek schreibt die Datei.
+    await tools.graph_generate.handler({ intent, defer: [key] });
+    expect(existsSync(join(repoRoot, TARGET_PROFILE_REL))).toBe(true);
   });
 });

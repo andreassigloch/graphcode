@@ -156,13 +156,6 @@ export function effectiveFocusDelta(
   return raw * (1 - share);
 }
 
-/** Gesamt-Delta: Summe der Befund-Deltas aller Stufen (positiv = weniger Befunde). */
-export function totalDelta(verdict: CandidateProbe['verdict']): number {
-  const sd = steeringDeltaOf(verdict);
-  if (!sd) return 0;
-  return Object.values(sd.stages).reduce((s, d) => s + d.delta, 0);
-}
-
 /** blockingErrors-ANSTIEG (Steering-Katalog) — strikt schlechter, nie belohnt. */
 function blockingRise(verdict: CandidateProbe['verdict']): number {
   const b = steeringDeltaOf(verdict)?.blockingErrors;
@@ -171,12 +164,13 @@ function blockingRise(verdict: CandidateProbe['verdict']): number {
 
 /**
  * Deterministisches Kandidaten-Ranking (der Judge 'gate'), CR-GC-289: Ziel-Delta
- * statt Volumen — das Kriterium ist der messbare Steuerungs-Fortschritt im
- * Readiness-Raum, dem Raum, in dem graph_generate den Fokus wählt:
- * tier (auto-apply > suggest > block) →
- * um Redundanz bereinigter Score-Delta der FOKUS-Dimension (GenerationStep.focusKey,
- * CR-GC-361) →
- * Gesamt-Readiness-Delta (blockingErrors-Anstieg strikt schlechter, davor) →
+ * statt Volumen — das Kriterium ist der Fortschritt dort, wo graph_generate den Fokus wählt:
+ * block verwerfen →
+ * um Redundanz bereinigtes Befund-Delta der FOKUS-Stufe (GenerationStep.focusStage, CR-GC-361/757) →
+ * kein Anstieg blockierender Fehler →
+ * tier (auto-apply > suggest) →
+ * (CR-GC-758: KEIN Gesamt-Delta mehr. Jedes neue Element bringt erst eigene Befunde mit; die Summe
+ * ueber alle Stufen rankte deshalb den Zug, der nichts tut, vor jeden, der etwas aufbaut.) →
  * ZERSTOERUNGS-SPERRE (ein Zug, der Elemente entfernt, nie ueber einem, der keine entfernt) →
  * Chebyshev-Verbesserung (CR-GC-483; ersetzt das Δm-fitAdvisory, das nur noch berichtet wird) →
  * Element-Ausbeute (mutations) → Kandidaten-Index (Determinismus-Anker).
@@ -198,7 +192,6 @@ export function rankCandidates<T extends CandidateProbe>(
       viable(b) - viable(a) ||
       effectiveFocusDelta(b, focusStage) - effectiveFocusDelta(a, focusStage) ||
       blockingRise(a.verdict) - blockingRise(b.verdict) ||
-      totalDelta(b.verdict) - totalDelta(a.verdict) ||
       tierOf(b) - tierOf(a) ||
       // CR-GC-483: erst die Sperre, dann der Score. Der ℝ⁶ (deltaSum) rankt nicht mehr.
       (removesElements(a.verdict) ? 1 : 0) - (removesElements(b.verdict) ? 1 : 0) ||

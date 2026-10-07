@@ -70,7 +70,8 @@ describe('TEST-dashboard-panels: headless MOD-dashboard data-layer (CR-GC-115)',
 
   it('readinessPanel exposes the marks, each with the findings that hold it (REQ-readiness-transparent)', () => {
     const panel = readinessPanel(scoreReadiness(harness));
-    expect(typeof panel.compliancePct).toBe('number');
+    // CR-GC-758 (CR-SM-402): nur noch die Marken — kein Prozentwert, keine Elementzahlen daneben.
+    expect(Object.keys(panel)).toEqual(['marks']);
     expect(panel.marks.map((m) => m.id)).toEqual(Mark.options);
     for (const m of panel.marks) {
       expect(Array.isArray(m.holding)).toBe(true); // the drill-down, not just a light

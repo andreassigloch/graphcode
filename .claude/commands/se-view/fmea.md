@@ -1,6 +1,6 @@
 ---
 name: se-view:fmea
-version: 1
+version: 2
 description: FMEA view — failure-mode risk elements (S/O/D, Action Priority), mitigation coverage, verification gaps
 ---
 
@@ -10,7 +10,7 @@ Render the **FMEA** from the live governed graph — graphcode has no view endpo
 2. `graph_get_edges` `{ "edgeType": "satisfy" }` — who carries each risk/mitigation REQ: MOD/SYS/FCHAIN for a `non-functional` one (which module owns the hazard), FUNC for a `functional` countermeasure. The role does not decide the satisfier, the kind does (R-18, `kinds` where-predicate).
 3. `graph_get_edges` `{ "edgeType": "verify" }` — TEST→REQ links: is each risk REQ verified (R-01)? An unverified risk REQ is an open hazard.
 4. `rules_get_violations` `{ "severity": "error" }` — R-01 (risk REQ without verify) and FM-03 (high-risk REQ without verification) are the canonical risk-blocker signals.
-5. `graph_readiness` → `compliance.score` for the overall risk-clean fraction, and `violationsByRule` for the R-01/FM-03 counts.
+5. `graph_readiness` → `violationsByRule` for the R-01/FM-03 counts.
 
 Present a structured summary:
 
@@ -22,7 +22,7 @@ For each REQ with role `risk`, name its REQ(s) with role `mitigation` (linked by
 
 ## 3. Abdeckung & Readiness
 - Risk REQs verified (have a `verify` edge) vs. unverified (R-01 gaps from step 4).
-- Overall risk-clean readiness: `compliance.score` as a percentage, plus the R-01 / FM-03 counts from `violationsByRule`.
+- The R-01 / FM-03 counts from `violationsByRule`.
 
 ## 4. Risikomatrix
 A Mermaid `graph LR` linking each High/Medium-AP risk REQ to its responsible MOD/SYS/FCHAIN and its mitigation REQ. Keep node labels free of `(`, `)`, and `|` — those blank the whole diagram; use the uid or a plain-text name.

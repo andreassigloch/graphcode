@@ -22,7 +22,12 @@ import { exportGraphJson } from '../src/projections/exporter.js';
 
 /** Eine Antwort in der Form, die am teuersten war: viele kleine Zahlenfelder. */
 const READINESS_ARTIG = {
-  compliance: { score: 0.967, totalElements: 832, elementsWithErrors: 27 },
+  // CR-GC-758: der Compliance-Block (score, totalElements, elementsWithErrors) ist gestrichen.
+  marks: [
+    { id: 'SRR', reached: true },
+    { id: 'PDR', reached: false },
+    { id: 'Bau', reached: false },
+  ],
   // CR-GC-757: Befunde je Stufe (vorher `dimension_readiness` mit Prozentwert und Fundzahl).
   stages: [
     { name: 'Anwendungsfall', findings: 6 },

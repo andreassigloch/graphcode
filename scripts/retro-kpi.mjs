@@ -3,7 +3,7 @@
 //
 // Computes the 6 standard KPIs (docs/messung/kennzahlen.md) from a session-data JSON the agent
 // assembles during the retro: graph-vs-grep tool usage (transcript), audit_stats
-// (applied/rejected), graph_readiness start→end, git net-LOC, plan conformance,
+// (applied/rejected), findings (graph_readiness stages) start→end, git net-LOC, plan conformance,
 // and R-19/R-20 binding coverage at close. The agent reads audit_* / graph_readiness
 // over MCP (no 2nd DB handle here — this runner only reads the JSON + git).
 //
@@ -24,7 +24,7 @@ const r2 = (n) => Math.round(n * 100) / 100;
  * (the agent reads the audit + readiness tools over MCP, the transcript for tool counts, git for LOC).
  *
  * `s` shape: `{ toolUsage:{graphCalls,grepGlobDocReads,mutate?,impact?,expand?,rulesEvaluate?},`
- * `audit:{applied,rejected}, readiness:{start,end}, git:{netLoc,tokens?},`
+ * `audit:{applied,rejected}, findings:{start,end}, git:{netLoc,tokens?},`
  * `plan:{dependsOnViolations}, binding:{coveragePct} }`.
  */
 export function computeKpis(s) {
@@ -44,10 +44,10 @@ export function computeKpis(s) {
     tokenPerLoc: s.git.tokens != null && s.git.netLoc > 0 ? r2(s.git.tokens / s.git.netLoc) : null,
     // KPI 4 — plan conformance: # CRs violating depends-on order. Target 0.
     planConformance: s.plan.dependsOnViolations,
-    // KPI 5 — gate health: applied÷rejected + readiness delta start→end.
+    // KPI 5 — gate health: applied÷rejected + findings delta start→end (sum of `graph_readiness.stages`).
     gateHealth: {
       appliedRejectedRatio: r2((s.audit.applied ?? 0) / Math.max(1, s.audit.rejected ?? 0)),
-      readinessDelta: r2((s.readiness.end ?? 0) - (s.readiness.start ?? 0)),
+      findingsDelta: (s.findings.end ?? 0) - (s.findings.start ?? 0),
     },
     // KPI 6 — binding coverage: R-19/R-20 (testRef/codeRef) at close. Target 100%.
     bindingCoverage: s.binding.coveragePct,
@@ -205,7 +205,7 @@ export function renderKpiTable(k) {
     ['Tokens per net-LOC', k.tokenPerLoc == null ? 'n/a' : String(k.tokenPerLoc), '↓'],
     ['Plan conformance (depends-on violations)', String(k.planConformance), '0'],
     ['Gate health (applied÷rejected)', String(k.gateHealth.appliedRejectedRatio), '—'],
-    ['Readiness Δ (start→end)', String(k.gateHealth.readinessDelta), '↑'],
+    ['Findings Δ (start→end)', String(k.gateHealth.findingsDelta), '↓'],
     ['Binding coverage (R-19/R-20)', `${k.bindingCoverage}%`, '100%'],
   ];
   return ['| KPI | Value | Target |', '|---|---|---|', ...rows.map((r) => `| ${r[0]} | ${r[1]} | ${r[2]} |`)].join('\n');
@@ -230,7 +230,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.error(
       `retro-kpi: no session file at ${path}.\n` +
         'Assemble it during the retro (se-retro): toolUsage (transcript), audit (audit_stats), ' +
-        'readiness {start,end} (graph_readiness), git {netLoc,tokens}, plan {dependsOnViolations}, binding {coveragePct}.',
+        'findings {start,end} (graph_readiness: sum of stages[].findings), git {netLoc,tokens}, plan {dependsOnViolations}, binding {coveragePct}.',
     );
     process.exit(1);
   }

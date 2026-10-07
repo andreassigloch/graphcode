@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 367 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 368 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 367 CR · 338 done · 4 open.
+Total: 368 CR · 338 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -429,3 +429,4 @@ Total: 367 CR · 338 done · 4 open.
 | `CR-GC-755` | n/a | Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43 |
 | `CR-GC-756` | n/a | Sicht Variantenvergleich streichen |
 | `CR-GC-757` | n/a | Stufe statt Dimension - Befunde zaehlen statt Prozent |
+| `CR-GC-758` | n/a | Rang ohne Gesamt-Delta, Stufen im Bericht wie die Marken, lesender Schritt |

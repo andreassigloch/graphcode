@@ -3107,6 +3107,12 @@
       "description": "docs/cr/open/CR-GC-757-stufe-statt-dimension-befunde-zaehlen-st.md"
     },
     {
+      "id": "CR-GC-758",
+      "type": "CR",
+      "name": "Rang ohne Gesamt-Delta, Stufen im Bericht wie die Marken, lesender Schritt",
+      "description": "docs/cr/open/CR-GC-758-rang-ohne-gesamt-delta-stufen-im-bericht.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -23692,5 +23698,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 628
+  "graphVersion": 629
 }

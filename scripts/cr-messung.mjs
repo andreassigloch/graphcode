@@ -78,7 +78,7 @@ export function miss(crId, { repo, protokolle, commit = null, jetzt = new Date()
   return kandidaten.map((p) => {
     const fenster = fensterFuer(leseProtokoll(p), crId);
     const n = werkzeugNutzung(fenster);
-    const kpi1 = computeKpis({ toolUsage: n, audit: {}, readiness: {}, git: { netLoc: 0 }, plan: {}, binding: {} }).graphVsGrepRatio;
+    const kpi1 = computeKpis({ toolUsage: n, audit: {}, findings: {}, git: { netLoc: 0 }, plan: {}, binding: {} }).graphVsGrepRatio;
     return { ...basis, sitzung: p.split('/').pop().replace('.jsonl', ''), fensterSaetze: fenster.length, ...n, kpi1 };
   });
 }

@@ -17,6 +17,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
+import { countByStage } from '@sigloch/graphcode-client';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { getFamilyRuleIds, MARK_LABELS } from '../src/kernel/measure/readiness.js';
@@ -75,20 +76,21 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  it('returns the ReadinessReport shape for a clean gated member (compliance 1.0, no errors)', async () => {
+  it('returns the ReadinessReport shape for a clean gated member (no error finding, no compliance percentage)', async () => {
     const tools = bindToolsToHarness(harness);
     const applied = await harness.mutate(CLEAN_MEMBER);
     expect(applied.success).toBe(true);
 
     const report = await tools.graph_readiness.handler({});
 
-    // Shape: compliance dimension + per-rule counts + sorted raw violations + timestamp.
-    expect(typeof report.compliance.score).toBe('number');
-    expect(typeof report.compliance.label).toBe('string');
-    expect(report.compliance.totalElements).toBe(harness.getGraph().nodes.length);
-    expect(report.compliance.totalElements).toBe(4);
-    expect(report.compliance.elementsWithErrors).toBe(0);
-    expect(report.compliance.score).toBe(1);
+    // Shape: marks + per-rule counts + sorted raw violations + timestamp.
+    // CR-GC-758 (CR-SM-402): the compliance percentage is gone without a replacement — not kept as an empty field.
+    expect(report).not.toHaveProperty('compliance');
+    expect(report.marks.map((m) => m.id)).toEqual(Mark.options);
+    expect(harness.getGraph().nodes.length).toBe(4);
+    // "No errors" is now said by the findings themselves: the clean member carries no error finding.
+    const detail = await tools.graph_readiness.handler({ detail: true });
+    expect(detail.violations.filter((v) => v.severity === 'error')).toEqual([]);
     expect(Array.isArray(report.violations)).toBe(true);
     expect(typeof report.violationsByRule).toBe('object');
     // computedAt is a real ISO-8601 timestamp.
@@ -114,8 +116,11 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     for (const v of report.violations) {
       expect(/^BQ-/i.test(v.ruleId)).toBe(false);
     }
-    // A warning is not an error → compliance (error-severity) stays 1.0.
-    expect(report.compliance.score).toBe(1);
+    // A warning is not an error: R-02 reports as a warning, and the report carries no error finding.
+    const r02 = report.violations.filter((v) => v.ruleId === 'R-02');
+    expect(r02.length).toBe(report.violationsByRule['R-02']);
+    expect(r02.every((v) => v.severity === 'warning')).toBe(true);
+    expect(report.violations.filter((v) => v.severity === 'error')).toEqual([]);
   });
 
   // CR-GC-748 (contracts 11 / graphcode-client 2, CR-SM-395): das Werkzeug reicht die Marken des Clients
@@ -176,7 +181,6 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     expect(summary.marks.map((m) => [m.id, m.reached])).toEqual(detail.marks.map((m) => [m.id, m.reached]));
     expect(summary.violationsByRule['R-02']).toBeGreaterThanOrEqual(1);
     expect(summary.violationsByRule).toEqual(detail.violationsByRule);
-    expect(summary.compliance.score).toBe(detail.compliance.score);
     expect(JSON.stringify(summary).length).toBeLessThan(JSON.stringify(detail).length);
 
     // detail:true restores the full lists.
@@ -188,16 +192,20 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
   // CR-GC-757: findings per stage — the other projection of the SAME rule stream.
   // (Before: CR-GC-325, eight percentage scores per dimension with a denominator.
   // The dimension is gone; what is left is a count of what reports, per stage.)
+  // CR-GC-758: the stream is the REPORT's (`violations`, gate catalogue incl. code conformance) —
+  // the findings the marks are computed from —, no longer the steering snapshot.
   // -------------------------------------------------------------------------
 
-  it('stages (CR-GC-757): all 13 stages in order, a plain count each, in summary and detail', async () => {
+  it('stages (CR-GC-757/758): all 13 stages in order, a plain count of the report\'s findings each, in summary and detail', async () => {
     const tools = bindToolsToHarness(harness);
     expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
     expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
 
     const summary = await tools.graph_readiness.handler({});
     const detail = await tools.graph_readiness.handler({ detail: true });
-    const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
+    // The findings of the report — only `detail:true` lists them; the summary counts the same ones.
+    const befunde = detail.violations;
+    expect(befunde.length).toBeGreaterThan(0);
 
     for (const report of [summary, detail]) {
       // Completeness: a MISSING stage must not read as "nothing reports here" — all 13, in order.
@@ -208,13 +216,15 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
         expect(Object.keys(s).sort(), s.name).toEqual(['findings', 'name']);
         expect(Number.isInteger(s.findings) && s.findings >= 0, s.name).toBe(true);
       }
-      // The sum is the number of findings of the steering rule run — nothing dropped, nothing counted twice.
-      expect(report.stages.reduce((n, s) => n + s.findings, 0)).toBe(snapshot.violations.length);
+      // The sum is the number of findings of the report — nothing dropped, nothing counted twice.
+      expect(report.stages.reduce((n, s) => n + s.findings, 0)).toBe(befunde.length);
       // Each stage counts exactly the findings of the rules the catalogue puts there.
       for (const s of report.stages) {
-        const erwartet = snapshot.violations.filter((v) => stufenName(v.rule_id) === s.name).length;
+        const erwartet = befunde.filter((v) => stufenName(v.ruleId) === s.name).length;
         expect(s.findings, s.name).toBe(erwartet);
       }
+      // The same function the client (viewer) counts with — no second way to count.
+      expect(report.stages).toEqual(countByStage(befunde).map((s) => ({ name: s.name, findings: s.findings })));
       // The old block is gone, not kept beside the new one.
       expect(report).not.toHaveProperty('dimension_readiness');
     }
@@ -223,22 +233,37 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     expect(summary.stages).toEqual(detail.stages);
   });
 
-  // CR-GC-560: dieselbe Invariante, jetzt gegen `graph_generate`. Sie hing vorher an
-  // `graph_next_step` — dem zweiten Steuerungswerkzeug auf derselben Messung, das
-  // CR-GC-561/562 entfernen. Die Frage bleibt dieselbe: EINE Rechnung, nicht zwei.
-  it('is ONE computation, not two: graph_generate reads the same snapshot as graph_readiness', async () => {
+  // CR-GC-758: der Bericht hat EINEN Befundstrom. Vorher (CR-GC-560) stand hier „graph_generate liest
+  // denselben Snapshot wie graph_readiness" — das gilt nicht mehr: der Bericht zaehlt seine Stufen in den
+  // Befunden der Marken (Gate-Katalog inkl. Code-Abgleich), die Schrittwahl weiter im Steuerkatalog.
+  it('the stages of the report count the same findings as the marks; graph_generate keeps counting in the steering catalogue', async () => {
     const tools = bindToolsToHarness(harness);
     expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
     expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
 
-    const readiness = await tools.graph_readiness.handler({});
-    const step = await tools.graph_generate.handler({});
+    const report = await tools.graph_readiness.handler({ detail: true });
+    const schluessel = (v: { ruleId: string; elementId?: string }) => `${v.ruleId}@${v.elementId ?? ''}`;
+    const imBericht = new Set(report.violations.map(schluessel));
 
+    // Every finding that holds a mark is a finding of the report — the marks read no second stream.
+    const haltend = report.marks.flatMap((m) => m.holding);
+    expect(haltend.length, 'fixture holds at least one mark').toBeGreaterThan(0);
+    for (const h of haltend) expect(imBericht.has(schluessel(h)), schluessel(h)).toBe(true);
+    // …and the stages sum exactly those findings: one number per stage, from the same list.
+    expect(report.stages.reduce((n, s) => n + s.findings, 0)).toBe(report.violations.length);
+    // Every finding that holds a mark is counted in the stage its rule belongs to.
+    for (const h of haltend) {
+      expect(report.stages.find((s) => s.name === stufenName(h.ruleId))!.findings, schluessel(h)).toBeGreaterThanOrEqual(1);
+    }
+
+    // The step choice counts in the steering snapshot (ALL_RULE_DEFS) — its own catalogue, its own numbers.
+    const step = await tools.graph_generate.handler({});
+    const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
     expect(step.readiness.length, 'fixture has findings, so stages carry a count').toBeGreaterThan(0);
-    // The step lists exactly the stages with findings, with the count the report shows — same order.
     expect(step.readiness).toEqual(
-      readiness.stages.filter((s) => s.findings > 0).map((s) => ({ stage: s.name, findings: s.findings })),
+      snapshot.stages.filter((s) => s.findings > 0).map((s) => ({ stage: s.name, findings: s.findings })),
     );
+    expect(step.readiness.reduce((n, s) => n + s.findings, 0)).toBe(snapshot.violations.length);
     // Und die Fokus-Stufe ist eine, in der der Snapshot wirklich Befunde zaehlt.
     expect(step.focusStage).not.toBeNull();
     if (step.focusStage && !step.focusStage.startsWith('seed:')) {

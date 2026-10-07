@@ -32,7 +32,6 @@ import {
   steeringDeltaOf,
   deltaSum,
   focusDelta,
-  totalDelta,
   rankCandidates,
 } from '../src/loop/executor-rank.js';
 
@@ -85,14 +84,15 @@ describe('SCHEMA-fit-advisory wird im Ranking geparst (RC-04)', () => {
 });
 
 describe('SCHEMA-steering-delta wird im Ranking geparst (RC-04)', () => {
-  it('vertragstreues Delta steuert Fokus- und Gesamt-Delta', () => {
+  it('vertragstreues Delta steuert das Fokus-Delta — je Stufe, die es nennt', () => {
     const c = cand(0, { success: true, steeringDelta: DELTA });
     expect(steeringDeltaOf(c.verdict)).toEqual(DELTA);
     expect(focusDelta(c.verdict, 'Anforderung')).toBe(2);
     expect(focusDelta(c.verdict, 'Modul')).toBe(-1);
     // Eine Stufe, die das Delta nicht nennt (kein Befund auf beiden Seiten), zaehlt 0.
     expect(focusDelta(c.verdict, 'Schema')).toBe(0);
-    expect(totalDelta(c.verdict)).toBe(1);
+    // CR-GC-758: ohne Fokus-Stufe gibt es kein Delta — eine Summe ueber die Stufen (hier 1) liest niemand.
+    expect(focusDelta(c.verdict, null)).toBe(0);
   });
 
   it('die alte Form (`dimensions` statt `stages`) ist kein Delta mehr (CR-GC-757)', () => {
@@ -102,7 +102,9 @@ describe('SCHEMA-steering-delta wird im Ranking geparst (RC-04)', () => {
     });
     expect(steeringDeltaOf(alt.verdict)).toBeNull();
     expect(focusDelta(alt.verdict, 'req')).toBe(0);
-    expect(totalDelta(alt.verdict)).toBe(0);
+    // … und rankt nicht als Fortschritt: gegen ein gueltiges Delta derselben Stufe verliert es.
+    const neu = cand(1, { success: true, steeringDelta: { blockingErrors: DELTA.blockingErrors, stages: { req: { before: 5, after: 4, delta: 1 } } } });
+    expect(rankCandidates([alt, neu], 'req')[0]).toBe(neu);
   });
 
   it('ein Delta ohne blockingErrors ist kein Delta — es rankt nicht als Fortschritt', () => {
@@ -111,8 +113,8 @@ describe('SCHEMA-steering-delta wird im Ranking geparst (RC-04)', () => {
     // sauberer Fortschritt gerankt worden.
     const broken = cand(0, { success: true, steeringDelta: { stages: DELTA.stages } });
     expect(steeringDeltaOf(broken.verdict)).toBeNull();
-    expect(focusDelta(broken.verdict, 'Anforderung')).toBe(0);
-    expect(totalDelta(broken.verdict)).toBe(0);
+    // Keine Stufe des verworfenen Deltas zaehlt — weder die mit Gewinn noch die mit Verlust.
+    for (const stufe of Object.keys(DELTA.stages)) expect(focusDelta(broken.verdict, stufe)).toBe(0);
   });
 
   it('geprüftes Delta schlägt ungeprüftes: der Kandidat mit gültigem Vertrag gewinnt', () => {

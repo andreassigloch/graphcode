@@ -91,7 +91,6 @@ const RULE_DEF = new Map(ALL_RULE_DEFS.map((r) => [r.id, r]));
 export const RULES_WITHOUT_MARK = 'immer';
 
 const PANEL_IDS = new Set<string>(HELP_PANEL_IDS);
-const isReadinessNumber = (id: string) => id === 'compliance' || id === 'totalElements' || id === 'elementsWithErrors';
 
 /**
  * Assemble the `HelpEntry` for any dashboard id — a ruleId, gate id, panel id,
@@ -136,8 +135,8 @@ export function helpEntry(id: string): HelpEntry | undefined {
     return { id, kind: 'artifact', title: art.label, plain: content.plain, se: content.se, prompt: content.prompt, source: 'authored' };
   }
 
-  // Panel or readiness number.
-  if (content && (PANEL_IDS.has(id) || isReadinessNumber(id))) {
+  // Panel.
+  if (content && PANEL_IDS.has(id)) {
     return { id, kind: 'panel', title: id, plain: content.plain, se: content.se, prompt: content.prompt, source: 'authored' };
   }
 

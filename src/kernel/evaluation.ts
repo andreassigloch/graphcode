@@ -209,12 +209,12 @@ export function ruleCatalogs(harness: Pick<EvaluationHarness, 'getLoadedRuleIds'
     gate: {
       catalog: 'SE_DESCRIPTOR.rules (@sigloch/graph-api-core) + CODE_CONFORMANCE_RULES',
       ruleCount: loaded.length,
-      fields: ['compliance', 'violations', 'violationsByRule', 'marks'],
+      fields: ['violations', 'violationsByRule', 'marks', 'stages'],
     },
     steering: {
       catalog: 'ALL_RULE_DEFS (@sigloch/contracts/se) via evaluateAllRules',
       ruleCount: ALL_RULE_DEFS.length,
-      fields: ['stages'],
+      fields: ['steer'],
     },
     notInGate: unevaluatedRuleIds(loaded),
   };
@@ -300,12 +300,12 @@ export function evaluateAll(harness: EvaluationHarness): Evaluation {
 // CR-GC-489: `scoreReadinessWithConformance` ist hier GELOESCHT. Sie hatte genau einen
 // Aufrufer (einen Test), waehrend ihr Docstring behauptete, jeder Readiness-Konsument gehe
 // durch sie hindurch — fuenf Aufrufstellen schrieben ihren Rumpf inline. Ein zweiter Pfad plus
-// eine Zusage, die er nicht hielt. Der Ausdruck ist `readinessOf(evaluateAll(h), h.getGraph())`,
+// eine Zusage, die er nicht hielt. Der Ausdruck ist `readinessOf(evaluateAll(h))`,
 // und er steht dort, wo er gebraucht wird.
 
 /** Readiness aus einer bereits erhobenen Auswertung — kein zweiter Lauf. */
-export function readinessOf(evaluation: Evaluation, graph: CGraph): ReadinessReport {
-  return computeReadiness(evaluation.findings, graph);
+export function readinessOf(evaluation: Evaluation): ReadinessReport {
+  return computeReadiness(evaluation.findings);
 }
 
 /**

@@ -132,18 +132,21 @@ describe('TEST-nd-im-report: ND-Funde erscheinen im Report-Pfad (CR-GC-442)', ()
     expect(readiness.skipped).not.toContain('rule:ND-02');
   });
 
-  it('Compliance zählt den ND-Fund NICHT mehr als Fehler — ND ist warning, die Zahl kennt nur Gate-Schuld (CR-SM-353)', () => {
+  it('der ND-Fund ist KEIN Fehler-Befund — ND ist warning, im Bericht sichtbar und so eingestuft (CR-SM-353)', () => {
     const ev = evaluateAll(harness);
     const nd02 = ndOf(ev.findings, 'ND-02');
 
     expect(nd02).toHaveLength(1);
     expect(nd02[0].severity).toBe('warning');
     expect(nd02[0].elementId).toBe('SCHEMA-report-request');
-    // `elementsWithErrors` zaehlt Elemente mit error-Funden — und ND-02 ist keiner mehr. Der Fund
-    // bleibt sichtbar (Verstossliste, Report, Fokus), er faerbt nur die Compliance nicht mehr.
-    const report = readinessOf(ev, harness.getGraph());
-    const fehlerElemente = new Set(ev.findings.filter((f) => f.severity === 'error').map((f) => f.elementId)).size;
-    expect(report.compliance.elementsWithErrors).toBe(fehlerElemente);
+    // Der Fund bleibt sichtbar (Verstossliste, Report, Fokus) — als Warnung, nicht als Fehler.
+    // (CR-GC-758: `compliance.elementsWithErrors`, an dem das bisher hing, gibt es nicht mehr.)
+    const report = readinessOf(ev);
+    const imBericht = report.violations.filter((v) => v.ruleId === 'ND-02');
+    expect(imBericht).toHaveLength(1);
+    expect(imBericht[0].severity).toBe('warning');
+    expect(report.violationsByRule['ND-02']).toBe(1);
+    expect(report.violations.filter((v) => v.severity === 'error').map((v) => v.ruleId)).not.toContain('ND-02');
     expect(ev.findings.filter((f) => f.severity === 'error').map((f) => f.ruleId)).not.toContain('ND-02');
   });
 });

@@ -8,10 +8,11 @@
  *
  * Kern-Invarianten: N Kandidaten werden als Gate-dryRun geprobt (auditiert als
  * validate, nie ein Step-Abschluss), NUR der Gewinner wird ohne dryRun
- * angewandt; die Auswahl ist deterministisch (Befund-Delta der Fokus-Stufe →
- * Gesamt-Befund-Delta mit blockingErrors-Anstieg strikt schlechter → tier →
- * Δm arch → Ausbeute); judge:'model' loggt BEIDE Picks; N=1 bleibt der
- * unveränderte heutige Pfad.
+ * angewandt; die Auswahl ist deterministisch (block verwerfen → Befund-Delta der
+ * Fokus-Stufe → kein Anstieg blockierender Fehler → tier → Zerstoerungs-Sperre →
+ * Chebyshev-Verbesserung → Ausbeute → Index; CR-GC-758: KEIN Gesamt-Delta, auch
+ * nicht als Stufe); judge:'model' loggt BEIDE Picks; N=1 bleibt der unveränderte
+ * heutige Pfad.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
@@ -32,7 +33,6 @@ import {
   steerImprovement,
   removesElements,
   focusDelta,
-  totalDelta,
   temperatureSpread,
   TEMPERATURE_ANCHORS,
 } from '../src/loop/executor-rank.js';
@@ -257,8 +257,8 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     ),
   });
 
-  it('CR-GC-289: das Delta der Fokus-Stufe schlägt Gesamt-Delta, Δm UND Ausbeute', () => {
-    // a: besserer Gesamt-Fortschritt + Δm + Volumen, aber NICHT in der Fokus-Stufe.
+  it('CR-GC-289: das Delta der Fokus-Stufe schlägt Fortschritt anderer Stufen, Δm UND Ausbeute', () => {
+    // a: mehr Fortschritt in anderen Stufen + Δm + Volumen, aber NICHT in der Fokus-Stufe.
     const a = cand(0, {
       success: true, tier: 'suggest', mutations: 40,
       fitAdvisory: fit([2.0]),
@@ -271,10 +271,41 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     });
     expect(focusDelta(b.verdict, 'Anforderung')).toBe(1);
     expect(focusDelta(a.verdict, 'Anforderung')).toBe(0);
-    expect(totalDelta(a.verdict)).toBe(5);
     expect(rankCandidates([a, b], 'Anforderung')[0]).toBe(b);
-    // Ohne Fokus-Stufe fällt die Stufe weg — dann gewinnt a über das Gesamt-Delta.
+    // Ohne Fokus-Stufe fällt die Stufe weg — dann gewinnt a, und zwar ueber die Ausbeute (40 > 12),
+    // nicht ueber die Summe der Stufen (CR-GC-758): mit getauschter Ausbeute gewinnt b.
     expect(rankCandidates([a, b], null)[0]).toBe(a);
+    const aKlein = cand(0, { ...a.verdict, mutations: 12 });
+    const bGross = cand(1, { ...b.verdict, mutations: 40 });
+    expect(rankCandidates([aKlein, bGross], null)[0]).toBe(bGross);
+  });
+
+  it('CR-GC-758: die Summe ueber alle Stufen rankt nicht — der aufbauende Zug verliert nicht gegen den, der nichts tut', () => {
+    // Der Anlass: jedes neue Element bringt erst eigene Befunde mit (hier 3 mehr, ausserhalb der
+    // Fokus-Stufe). Mit dem Gesamt-Delta als Rangstufe stand `nichts` (Summe 0) vor `baut` (Summe -3).
+    const nichts = cand(0, {
+      success: true, tier: 'suggest', mutations: 1,
+      steeringDelta: steering(0, 0, {}),
+    });
+    const baut = cand(1, {
+      success: true, tier: 'suggest', mutations: 4,
+      steeringDelta: steering(0, 0, { Anwendungsfall: 0, Anforderung: -2, Plan: -1 }),
+    });
+    expect(focusDelta(nichts.verdict, 'Anwendungsfall')).toBe(0);
+    expect(focusDelta(baut.verdict, 'Anwendungsfall')).toBe(0);
+    // Gleichstand in der Fokus-Stufe, bei den Blockern, im tier, in der Sperre und im Steuerwert —
+    // es entscheidet die Ausbeute, in beiden Eingabe-Reihenfolgen.
+    expect(rankCandidates([nichts, baut], 'Anwendungsfall')[0]).toBe(baut);
+    expect(rankCandidates([baut, nichts], 'Anwendungsfall')[0]).toBe(baut);
+    // Bei gleicher Ausbeute bleibt nur der Index — die Befunde der anderen Stufen sind kein Kriterium.
+    const nichtsGleich = cand(0, { ...nichts.verdict, mutations: 4 });
+    expect(rankCandidates([baut, nichtsGleich], 'Anwendungsfall')[0]).toBe(nichtsGleich);
+    // Die Fokus-Stufe selbst zaehlt weiter: wer DORT Befunde hinzufuegt, verliert gegen Nichtstun.
+    const verschlechtert = cand(2, {
+      success: true, tier: 'suggest', mutations: 12,
+      steeringDelta: steering(0, 0, { Anwendungsfall: -12 }),
+    });
+    expect(rankCandidates([verschlechtert, nichts], 'Anwendungsfall')[0]).toBe(nichts);
   });
 
   // -------------------------------------------------------------------------
@@ -356,14 +387,18 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     const twice = rankCandidates(mk(), 'Anforderung').map((c) => c.index);
     expect(once).toEqual(twice);
     // Alle drei liegen im bereinigten Fokus-Delta gleichauf (1 Befund): 0 und 2 durch
-    // die Bereinigung (2 minus 2 von 4), 1 roh. Die naechste Stufe trennt sie —
-    // Gesamt-Delta 2 (0 und 2) vor 1 (1); zwischen 0 und 2 entscheidet der
-    // Index-Anker zuletzt.
-    expect(once).toEqual([0, 2, 1]);
+    // die Bereinigung (2 minus 2 von 4), 1 roh. Keine weitere Stufe trennt sie (CR-GC-758:
+    // das ROHE Delta 2 gegen 1 ist kein Kriterium mehr, es gibt kein Gesamt-Delta) —
+    // Blocker, tier, Sperre, Steuerwert und Ausbeute sind gleich, es bleibt der Index-Anker.
+    expect(effectiveFocusDelta(mk()[0], 'Anforderung')).toBeCloseTo(1);
+    expect(effectiveFocusDelta(mk()[1], 'Anforderung')).toBe(1);
+    expect(once).toEqual([0, 1, 2]);
+    // Der Anker ist der Index, nicht die Eingabe-Reihenfolge.
+    expect(rankCandidates(mk().reverse(), 'Anforderung').map((c) => c.index)).toEqual([0, 1, 2]);
   });
 
   it('CR-GC-289: blockingErrors-Anstieg ist strikt schlechter als jeder Befund-Abbau', () => {
-    // a: großes Gesamt-Delta, aber neue Steering-Blocker; b: kleines Plus, keine neuen Blocker.
+    // a: großer Befund-Abbau, aber neue Steering-Blocker; b: kleines Plus, keine neuen Blocker.
     const a = cand(0, {
       success: true, tier: 'suggest', mutations: 26,
       steeringDelta: steering(1, 7, { Anwendungsfall: 5 }),
@@ -473,9 +508,11 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(uids()).not.toContain('GHOST-x');
 
     // Trace-Zeilen (CR-GC-289): ALLE Ranking-Stufen sichtbar — tier, Fokus-Delta,
-    // Gesamt-Delta, Chebyshev-Verbesserung (CR-GC-483), Δm, mutations — plus der Pick.
+    // Chebyshev-Verbesserung (CR-GC-483), Δm, mutations — plus der Pick.
     // `steer` steht VOR `Δm`, weil es rankt und Δm nur noch berichtet wird.
-    const CAND = String.raw`tier=(\S+) focus\(Anwendungsfall\)=([+-]\d+\.\d{2}) total=([+-]\d+\.\d{2}) steer=([+-]\d+\.\d{2}) Δm=([+-]\d+\.\d{2}) mutations=(\d+)`;
+    // CR-GC-758: kein `total=` mehr — was nicht rankt, steht nicht in der Spur.
+    expect(traces.some((l) => /total=/.test(l))).toBe(false);
+    const CAND = String.raw`tier=(\S+) focus\(Anwendungsfall\)=([+-]\d+\.\d{2}) steer=([+-]\d+\.\d{2}) Δm=([+-]\d+\.\d{2}) mutations=(\d+)`;
     expect(traces.some((l) => new RegExp(String.raw`candidate 1/3: tier=block .*mutations=0`).test(l))).toBe(true);
     expect(traces.some((l) => new RegExp(String.raw`candidate 2/3: ${CAND}`).test(l))).toBe(true);
     expect(traces.some((l) => /candidate 3\/3: tier=auto-apply/.test(l))).toBe(true);
@@ -508,17 +545,77 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
 
     expect(stats.mutatesApplied).toBe(1);
     // Der Trace macht den Pick nachvollziehbar. CR-GC-757: gezaehlt werden Befunde je Stufe, ganze Zahlen,
-    // `delta = vorher − nachher` (vorher: Prozentpunkte der Dimension uc, -0.14 / +0.13, total +1.79).
-    // A: Fokus-Stufe 3 → 15 (je neuem UC UC-02 und FC-02), gesamt 24 Befunde mehr.
-    // B: Fokus-Stufe 3 → 3; gesamt 3 Befunde mehr — UC-01 faellt weg, die neue REQ bringt RD-01, BQ-06,
-    // BQ-07 (Stufe Anforderung) und AF-05 (Stufe Plan) mit. Der Pick ist Nr. 2, weil A die Fokus-Stufe
-    // verschlechtert — nicht mehr, weil B sie verbessert.
-    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(Anwendungsfall\)=-12\.00 total=-24\.00 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=12/.test(l))).toBe(true);
-    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(Anwendungsfall\)=\+0\.00 total=-3\.00 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
+    // `delta = vorher − nachher`. CR-GC-758: die Spur traegt kein `total=` mehr — die Summe rankt nicht.
+    // A: Fokus-Stufe 3 → 15 (je neuem UC UC-02 und FC-02).
+    // B: Fokus-Stufe 3 → 3 — UC-01 faellt weg, die neue REQ bringt eigene Befunde in ANDEREN Stufen mit
+    // (Anforderung, Plan). Der Pick ist Nr. 2, weil A die Fokus-Stufe verschlechtert — nicht, weil B sie verbessert.
+    expect(traces.some((l) => /total=/.test(l))).toBe(false);
+    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(Anwendungsfall\)=-12\.00 steer=\+0\.00 Δm=\+0\.00 mutations=12$/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(Anwendungsfall\)=\+0\.00 steer=\+0\.00 Δm=\+0\.00 mutations=4$/.test(l))).toBe(true);
     expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
     expect(uids()).toContain('REQ-login'); // der Ziel-Delta-Gewinner ist persistiert …
     expect(uids()).toContain('TEST-login');
     expect(uids()).not.toContain('UC-vol-1'); // … das Volumen nicht
+  });
+
+  it('CR-GC-758 am echten Gate: Aufbau (REQ+TEST) gegen Nichtstun bei Gleichstand in der Fokus-Stufe — gemessen entscheidet tier, nicht mehr die Summe', async () => {
+    // Der Anlass des CR: der aufbauende Zug bringt eigene Befunde mit, der Zug, der nichts tut, keine.
+    // Gemessen (2026-10-07) an den echten dryRun-Verdicts:
+    type Verdict = {
+      success: boolean; tier: string; mutations: number;
+      steeringDelta: { blockingErrors: { before: number; after: number }; stages: Record<string, { before: number; after: number; delta: number }> };
+    };
+    const probe = async (batch: { commands: readonly unknown[] }): Promise<Verdict> =>
+      (await registry['graph_mutate'].handler({ ...alsEingabe(batch, harness), dryRun: true })) as Verdict;
+    const baut = await probe(FOCUS_REPAIR_BATCH);
+    const nichts = await probe(UPDATE_SYS_BATCH);
+    const summe = (v: Verdict) => Object.values(v.steeringDelta.stages).reduce((n, d) => n + d.delta, 0);
+
+    // Aufbau: Fokus-Stufe unveraendert (3 → 3), zwei Befunde mehr in Anforderung, einer mehr in Plan.
+    expect(baut.tier).toBe('suggest');
+    expect(baut.mutations).toBe(4);
+    expect(baut.steeringDelta.blockingErrors).toEqual({ before: 0, after: 0 });
+    expect(baut.steeringDelta.stages.Anwendungsfall).toEqual({ before: 3, after: 3, delta: 0 });
+    expect(baut.steeringDelta.stages.Anforderung).toEqual({ before: 2, after: 4, delta: -2 });
+    expect(baut.steeringDelta.stages.Plan).toEqual({ before: 0, after: 1, delta: -1 });
+    expect(summe(baut)).toBe(-3);
+    // Nichtstun: keine Stufe bewegt sich, kein neuer Befund — und GENAU DESHALB tier auto-apply.
+    expect(nichts.tier).toBe('auto-apply');
+    expect(nichts.mutations).toBe(1);
+    expect(summe(nichts)).toBe(0);
+    for (const d of Object.values(nichts.steeringDelta.stages)) expect(d.delta).toBe(0);
+
+    // Was rankt. Die Summe (-3 gegen 0) ist kein Kriterium mehr: bei gleichem tier gewinnt der Aufbau
+    // ueber die Ausbeute (4 > 1) — vor CR-GC-758 gewann hier Nichtstun ueber das Gesamt-Delta.
+    const a = { index: 0, verdict: baut } as Parameters<typeof rankCandidates>[0][number];
+    const n = { index: 1, verdict: nichts } as Parameters<typeof rankCandidates>[0][number];
+    const nGleicherTier = { index: 1, verdict: { ...nichts, tier: 'suggest' } } as Parameters<typeof rankCandidates>[0][number];
+    expect(rankCandidates([nGleicherTier, a], 'Anwendungsfall')[0]).toBe(a);
+    // Mit den Verdicts, wie das Gate sie wirklich gibt, steht Nichtstun WEITER vorn — jetzt ueber die
+    // Stufe tier (auto-apply > suggest): die Warnungen, die der Aufbau mitbringt, machen ihn zum suggest.
+    // Das ist der gemessene Stand, kein Wunsch; faellt er, aendert sich die Rangfolge an dieser Zeile.
+    expect(rankCandidates([a, n], 'Anwendungsfall')[0]).toBe(n);
+
+    // Derselbe Befund durch den ganzen Treiber: gepickt und persistiert wird Kandidat 2 (Nichtstun).
+    const { callModel } = scriptedModel([
+      toolCallResponse('c1', FOCUS_REPAIR_BATCH),
+      toolCallResponse('c2', UPDATE_SYS_BATCH),
+    ]);
+    const traces: string[] = [];
+    const stats = await runExecutor({
+      registry,
+      workspaceDir: repoRoot,
+      config: config({ candidates: 2 }),
+      callModel,
+      trace: (l) => traces.push(l),
+    });
+    expect(stats.mutatesApplied).toBe(1);
+    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(Anwendungsfall\)=\+0\.00 steer=\+0\.00 Δm=\+0\.00 mutations=4$/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 2\/2: tier=auto-apply focus\(Anwendungsfall\)=\+0\.00 steer=\+0\.00 Δm=\+0\.00 mutations=1$/.test(l))).toBe(true);
+    expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
+    expect(uids()).not.toContain('REQ-login');
+    const sys = harness.getGraph().nodes.find((k) => k.uid === 'SYS-app') as { attributes?: Record<string, unknown> };
+    expect(sys.attributes?.note).toBe('aktualisiert');
   });
 
   it("judge:'model': beide Picks werden geloggt, angewandt wird der Modell-Pick (Disagreement messbar)", async () => {

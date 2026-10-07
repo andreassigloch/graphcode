@@ -75,7 +75,10 @@ describe('smoke: createHarness production path', () => {
 
     // Readiness is family-measured (contracts V3_RULES, not foreign BQ rules).
     const r = scoreReadiness(harness);
-    expect(r.compliance.score).toBeGreaterThan(0);
+    // CR-GC-758: kein Compliance-Prozentwert mehr — der Bericht traegt die fuenf Marken und die Befunde.
+    expect(r).not.toHaveProperty('compliance');
+    expect(r.marks.map((m) => m.id)).toEqual(['SRR', 'PDR', 'CDR', 'TRR', 'Bau']);
+    expect(Object.values(r.violationsByRule).reduce((n, c) => n + c, 0)).toBe(r.violations.length);
     expect(Object.keys(r.violationsByRule).every((id) => !/^BQ-/i.test(id))).toBe(true);
 
     // MCP query-precision: graph_impact returns a bounded slice, not the full graph.

@@ -38,7 +38,7 @@ import {
   type Finding,
   type RuleCatalogs,
 } from '../kernel/evaluation.js';
-import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
+import { countByStage, groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../loop/target-profile.js';
 import { stufenRang } from '../loop/generate.js';
 import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from './help.js';
@@ -239,7 +239,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     },
   };
 
-  // READINESS tool — exposes the family compliance score (CR-GC-107 / MOD-readiness)
+  // READINESS tool — exposes the family readiness report (marks, findings per stage) (CR-GC-107 / MOD-readiness)
   // over the agent surface. se-review / se-status read it instead of the retired
   // GET /api/graph/readiness. Delegates to scoreReadiness(harness) → evaluateRules()
   // (L2 gate) so the score is driven by contracts V3_RULES (R-/RD-), never foreign BQ-*.
@@ -299,7 +299,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     name: 'graph_readiness',
     description:
       'Where does the project stand? Coverage (how many places are done) AND severity (how bad the ' +
-      'worst open one is), from ONE rule run: compliance, the marks SRR/PDR/CDR/TRR/Bau, ' +
+      'worst open one is), from ONE rule run: the marks SRR/PDR/CDR/TRR/Bau, ' +
       'the findings per stage and the steering space. Take it to decide WHAT NEXT, not to diagnose a single ' +
       'finding — that is rules_get_violations. Read `score` only together with `measured`, and the ' +
       'numbers only together with `skipped` and `importCoverage`: a figure without its reach is not a ' +
@@ -313,7 +313,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       // ein zweiter Aufruf hier hiesse, denselben vollen Regellauf zweimal zu fahren
       // und beide Blöcke aus verschiedenen Erhebungen zu speisen.
       const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
-      const report = readinessOf(ev, harness.getGraph());
+      const report = readinessOf(ev);
       // Intent-Coverage (CR-GC-295): nur wenn die Config bestätigte Anker trägt;
       // der Loader prüft dabei auch die Zielkonflikt-Paare (Warning, kein Block).
       const anchors = loadTargetProfile(harness.getRepoRoot())?.profile.intentAnchors ?? [];
@@ -339,7 +339,9 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       return {
         ...shown,
         umfang,
-        stages: snapshot.stages,
+        // CR-GC-758: aus DENSELBEN Befunden wie die Marken (`report.violations`) — eine Zahl je Stufe im
+        // Bericht, dieselbe wie im Viewer. Die Schrittwahl zaehlt weiter im Steuerkatalog (Snapshot).
+        stages: countByStage(report.violations).map((s) => ({ name: s.name, findings: s.findings })),
         steer: steerSpace(snapshot),
         graphVersion: graphVersion(),
         intentCoverage: coverage,

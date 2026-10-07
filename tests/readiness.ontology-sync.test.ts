@@ -9,7 +9,7 @@
  *   (1) Every violation ruleId from the full SSOT graph is a member of
  *       SE_DESCRIPTOR.rules.map(r => r.id)  — contracts rule-IDs only.
  *   (2) No ruleId matches /^BQ-/i           — foreign BQ rules absent.
- *   (3) scoreReadiness() returns a numeric compliance score in [0, 1].
+ *   (3) entfallen mit CR-GC-758 (CR-SM-402): den Compliance-Prozentwert gibt es nicht mehr.
  *   (4) violationsByRule keys are a subset of family rule-IDs.
  *
  * Uses real disk Kuzu (temp dir), seeds the full SSOT graph, no mocks,
@@ -87,18 +87,6 @@ describe('TEST-dashboard-ontology-sync: readiness is family-measured, not BQ-mea
     const report = scoreReadiness(harness);
     const bqRuleIds = report.violations.map((v) => v.ruleId).filter((id) => /^BQ-/i.test(id));
     expect(bqRuleIds).toHaveLength(0);
-  });
-
-  it('(3) compliance dimension is numeric in [0, 1]', () => {
-    const report = scoreReadiness(harness);
-    expect(typeof report.compliance.score).toBe('number');
-    expect(report.compliance.score).toBeGreaterThanOrEqual(0);
-    expect(report.compliance.score).toBeLessThanOrEqual(1);
-    expect(report.compliance.totalElements).toBe(harness.getGraph().nodes.length);
-    console.log(
-      `Compliance: ${(report.compliance.score * 100).toFixed(1)}% ` +
-      `(${report.compliance.elementsWithErrors} of ${report.compliance.totalElements} elements have errors)`,
-    );
   });
 
   it('(4) violationsByRule keys are a subset of family rule-IDs', () => {

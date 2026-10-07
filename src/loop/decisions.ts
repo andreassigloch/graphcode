@@ -19,9 +19,8 @@
  */
 export const VERDICT_ORDER = [
   { key: 'viable', text: 'block verwerfen' },
-  { key: 'focusDelta', text: 'steeringDelta der Fokus-Dimension' },
+  { key: 'focusDelta', text: 'steeringDelta der Fokus-Stufe (weniger Befunde)' },
   { key: 'blockingRise', text: 'kein Anstieg blockierender Fehler' },
-  { key: 'totalDelta', text: 'Gesamt-Readiness-Delta' },
   { key: 'tier', text: 'tier (auto-apply > suggest)' },
   { key: 'removesElements', text: 'ein Zug, der nichts entfernt' },
   { key: 'steerImprovement', text: 'steerAdvisory.improvement (entschaerft der Zug die schlimmste Stelle?)' },

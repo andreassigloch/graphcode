@@ -237,9 +237,12 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
     expect(gate.ruleCount).toBeLessThan(steering.ruleCount);
     // Welche Zahl aus welchem Katalog kommt — die Frage, die vorher nur der
     // Beschreibungstext beantwortete.
-    expect(gate.fields).toContain('violationsByRule');
-    expect(steering.fields).toEqual(['stages']);
-    // CR-GC-757: das genannte Feld steht wirklich am Ergebnis — 13 Stufen, gezaehlt, keine Prozentzahl.
+    // CR-GC-758: die Stufen des Berichts zaehlen im Gate-Katalog (dieselben Befunde wie die Marken);
+    // aus dem Steuerkatalog kommt nur noch der Steuerraum.
+    expect(gate.fields).toEqual(['violations', 'violationsByRule', 'marks', 'stages']);
+    expect(steering.fields).toEqual(['steer']);
+    // Jedes genannte Feld steht wirklich am Ergebnis — 13 Stufen, gezaehlt, keine Prozentzahl (CR-GC-757).
+    for (const feld of [...gate.fields, ...steering.fields]) expect(readiness, feld).toHaveProperty(feld);
     expect(readiness.stages).toHaveLength(13);
     expect(notInGate).toEqual(NOT_IN_GATE);
     // Dieselbe Ableitung wie die Auswertung, kein zweiter Rechenweg.

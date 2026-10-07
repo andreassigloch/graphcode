@@ -1,12 +1,12 @@
 ---
 name: se-review
-version: 1
+version: 2
 description: Readiness gate check — blockers and next steps
 ---
 
 Pull readiness + violations from the governed graph over MCP. The graphcode harness speaks **MCP-stdio only** — there is no HTTP server, use the bound tools:
 
-1. `graph_readiness` → the `ReadinessReport`: `compliance` (fraction of elements with **no error-severity** violation, in `[0,1]`), `violationsByRule` (counts keyed by contracts rule-ID — `R-*` / `RD-*`, never `BQ-*`), and the severity-sorted raw `violations` (`{ ruleId, severity, message, elementId }`).
+1. `graph_readiness` → the `ReadinessReport`: `marks` (SRR, PDR, CDR, TRR, Bau — each `reached` or held by findings), `stages` (findings per stage), `violationsByRule` (counts keyed by contracts rule-ID — `R-*` / `RD-*`, never `BQ-*`), and the severity-sorted raw `violations` (`{ ruleId, severity, message, elementId }`).
 2. `rules_get_violations` with `{ "severity": "error" }` for the hard blockers, then `{ "severity": "warning" }` for the warnings.
 
 **Kongruenz-Urteil (BOK-CR-033).** `graph_readiness` liefert zwei Felder, die den Score erst
@@ -33,7 +33,6 @@ Perform the gate check:
 
 - List every error-severity violation as a **BLOCKER** — `ruleId` · `elementId` · `message`.
 - List warning-severity violations as **WARNINGS**.
-- Flag readiness below the 70% threshold: report `compliance.score` as a percentage.
 - Name where the model stands from `graph_readiness` `marks` (SRR, PDR, CDR, TRR, Bau — in order): the first mark that is not `reached` is the current one; with `{ "detail": true }` its `holding` lists the findings that hold it. Do not derive a phase from milestones or prose.
 - Recommend specific next actions to clear the top blockers, using each violation's `message`.
 - State clearly: **PASS** (no error-severity violations) or **FAIL** (blockers remain) — und

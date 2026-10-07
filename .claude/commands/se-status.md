@@ -1,12 +1,12 @@
 ---
 name: se-status
-version: 1
+version: 2
 description: Show SE project status — readiness, violations, top fixes
 ---
 
 Pull status from the governed graph over MCP. The graphcode harness is **MCP-stdio only** — there are no HTTP endpoints, use the bound tools:
 
-1. `graph_readiness` → overall `compliance.score` + `violationsByRule` (counts per contracts rule-ID),
+1. `graph_readiness` → `marks` (SRR, PDR, CDR, TRR, Bau), `stages` (findings per stage) + `violationsByRule` (counts per contracts rule-ID),
    plus `skipped` (jede NICHT ausgewertete Regel als `rule:<id>`) und `importCoverage` (Reichweite
    der Code-Konformanz, `null` wenn sie nicht lief) — BOK-CR-033.
 2. `rules_get_violations` → current violations; filter `{ "severity": "error" }` and `{ "severity": "warning" }` (skip info).
@@ -14,7 +14,7 @@ Pull status from the governed graph over MCP. The graphcode harness is **MCP-std
 
 Format as a compact overview:
 
-- Current phase (from `MS` element status) and overall readiness percentage (`compliance.score`).
+- Where the model stands: the marks in order (`reached` or not) and the findings per stage from `stages`; milestones (`MS`) as planning context. No percentage.
 - Readiness by rule: one bar per `violationsByRule` entry (`ruleId` → count) — use block characters or plain counts.
 - Violations: error count, warning count (skip info severity).
 - **Kongruenz** in einer Zeile: `kongruent` · `gedriftet` · `nicht prüfbar`. Stehen `rule:RC-*`
