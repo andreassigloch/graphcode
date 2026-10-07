@@ -795,6 +795,12 @@
 | `CR-GC-753` | relation | `FUNC-score-completeness` |
 | `CR-GC-754` | relation | `FUNC-run-executor` |
 | `CR-GC-754` | relation | `FUNC-task-abschluss` |
+| `CR-GC-755` | relation | `FUNC-se-conops` |
+| `CR-GC-755` | relation | `FUNC-se-fmea` |
+| `CR-GC-755` | relation | `FUNC-se-irr` |
+| `CR-GC-755` | relation | `FUNC-se-optimize` |
+| `CR-GC-755` | relation | `FUNC-se-trade` |
+| `CR-GC-756` | relation | `FUNC-render-views` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

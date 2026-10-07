@@ -421,6 +421,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-752` | done | Bauplan ohne Stempel - offene Auftraege sind das Ergebnis | `FUNC-run-executor` · `FUNC-se-plan` |
 | `CR-GC-753` | done | Nachzug Regelkatalog 40 - die neun Entscheidungen zur Regelmatrix | `FUNC-generation-step` · `FUNC-score-completeness` |
 | `CR-GC-754` | done | Nachzug Regelkatalog 41 - Analysen hinterlassen keinen Bauauftrag | `FUNC-run-executor` · `FUNC-task-abschluss` |
+| `CR-GC-755` | n/a | Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43 | `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-trade` |
+| `CR-GC-756` | n/a | Sicht Variantenvergleich streichen | `FUNC-render-views` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

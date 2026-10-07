@@ -3095,6 +3095,12 @@
       "description": "docs/cr/open/CR-GC-755-entscheidung-ist-ein-erledigter-auftrag-.md"
     },
     {
+      "id": "CR-GC-756",
+      "type": "CR",
+      "name": "Sicht Variantenvergleich streichen",
+      "description": "docs/cr/open/CR-GC-756-sicht-variantenvergleich-streichen.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5177,7 +5183,7 @@
       "id": "FUNC-render-views",
       "type": "FUNC",
       "name": "render graph→markdown views",
-      "description": "PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, trade, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.",
+      "description": "PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
@@ -5414,7 +5420,7 @@
       "id": "FUNC-se-trade",
       "type": "FUNC",
       "name": "Skill se-trade",
-      "description": "Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheidung mit decides-Kanten im Graph.",
+      "description": "Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, die Entscheidung als erledigten Auftrag festhalten (Text in docs/cr/done, schlanker Knoten, relation-Kanten auf das Entschiedene).",
       "realRef": {
         "file": ".claude/commands/se-trade.md"
       }
@@ -14913,6 +14919,36 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-755",
+      "target": "FUNC-se-conops",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-755",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-755",
+      "target": "FUNC-se-irr",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-755",
+      "target": "FUNC-se-optimize",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-755",
+      "target": "FUNC-se-trade",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-756",
+      "target": "FUNC-render-views",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23615,5 +23651,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 624
+  "graphVersion": 626
 }

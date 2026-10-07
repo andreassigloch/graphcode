@@ -1,6 +1,6 @@
 # CR-GC-755: Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-07)
 **Typ:** aus Item ITEM-2026-765 (idea)
 **Erstellt:** 2026-10-07
 **Item:** bok/items/ITEM-2026-765.json (Lane: code)

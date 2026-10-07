@@ -822,7 +822,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FUNC-block-urteilsarbeit`
 
-Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheidung mit decides-Kanten im Graph.
+Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, die Entscheidung als erledigten Auftrag festhalten (Text in docs/cr/done, schlanker Knoten, relation-Kanten auf das Entschiedene).
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-trade` · allocate ▶ `MOD-agent-surface`
 
@@ -2724,7 +2724,7 @@ graph_export ueber MCP-stdio: serveStdio nimmt die View-Auswahl (FLOW-export-req
 
 > auch in: `FUNC-block-dokumentenwerk`
 
-PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, trade, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.
+PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.
 
 io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-render-views` · `FLOW-rendered-views` · allocate ▶ `MOD-agent-surface`
 
@@ -4408,7 +4408,7 @@ Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-mar
 
 > auch in: `FCHAIN-doc-export`
 
-PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, trade, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.
+PROMPT-realisierter Graph-nach-Markdown-Renderer via se-view-Commands. Steht fuer die View-Skills OHNE eigenen FUNC-Knoten (arch, implplan, nfr, testconcept, testmatrix, srs, cr-list, references); realRef zeigt auf arch.md als deren Vertreter. Interim-Realisierung von REQ-doc-export, bis FUNC-export-markdown (code, MOD-docs) sie ersetzt.
 
 io ◀ `FLOW-query-request-owner` · io ▶ `FLOW-query-request-render-views` · `FLOW-rendered-views` · allocate ▶ `MOD-agent-surface`
 
@@ -5334,7 +5334,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, Entscheidung mit decides-Kanten im Graph.
+Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, die Entscheidung als erledigten Auftrag festhalten (Text in docs/cr/done, schlanker Knoten, relation-Kanten auf das Entschiedene).
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-trade` · allocate ▶ `MOD-agent-surface`
 

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 365 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 366 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 365 CR · 338 done · 4 open.
+Total: 366 CR · 338 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -427,3 +427,4 @@ Total: 365 CR · 338 done · 4 open.
 | `CR-GC-753` | done | Nachzug Regelkatalog 40 - die neun Entscheidungen zur Regelmatrix |
 | `CR-GC-754` | done | Nachzug Regelkatalog 41 - Analysen hinterlassen keinen Bauauftrag |
 | `CR-GC-755` | n/a | Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43 |
+| `CR-GC-756` | n/a | Sicht Variantenvergleich streichen |
