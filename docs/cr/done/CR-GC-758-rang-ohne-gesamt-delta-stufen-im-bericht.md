@@ -1,6 +1,6 @@
 # CR-GC-758: Rang ohne Gesamt-Delta, Stufen im Bericht wie die Marken, lesender Schritt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-07)
 **Typ:** aus Item ITEM-2026-768 (idea)
 **Erstellt:** 2026-10-07
 
