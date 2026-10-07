@@ -1,6 +1,6 @@
 # CR-GC-757: Stufe statt Dimension - Befunde zaehlen statt Prozent
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-07)
 **Typ:** aus Item (idea)
 **Erstellt:** 2026-10-07
 
