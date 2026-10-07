@@ -145,10 +145,13 @@ describe('die Marke Bau: Plan, Bindung, Abgleich', () => {
     for (const id of ['SRR', 'PDR', 'CDR', 'TRR']) expect(marke(g, id).reached, id).toBe(true);
   });
 
-  it('ein offener Entscheidungs-Auftrag (decides) eroeffnet den Bau nicht — daraus entsteht kein Code (CR-SM-396)', () => {
-    const g = entwurf([node('CR-1', 'CR', { status: 'open' })], [edge('CR-1', 'REQ-r', 'relation', 'decides')]);
-    expect(befunde(g).filter((v) => bindungsRegeln.includes(v.ruleId))).toEqual([]);
-    expect(marke(g, 'Bau').holding.map((h) => h.ruleId)).toContain('AF-05'); // der Bauplan bleibt faellig
+  it('eine Entscheidung ist ein ERLEDIGTER Auftrag und eroeffnet den Bau nicht; ein Etikett an der Kante aendert nichts (CR-SM-400)', () => {
+    const erledigt = entwurf([node('CR-1', 'CR', { status: 'done' })], [edge('CR-1', 'REQ-r', 'relation')]);
+    expect(befunde(erledigt).filter((v) => bindungsRegeln.includes(v.ruleId))).toEqual([]);
+    expect(marke(erledigt, 'Bau').holding.map((h) => h.ruleId)).toContain('AF-05'); // der Bauplan bleibt faellig
+    // offen ist offen: das Etikett `decides` nimmt einen offenen Auftrag nicht mehr aus
+    const offen = entwurf([node('CR-1', 'CR', { status: 'open' })], [edge('CR-1', 'REQ-r', 'relation', 'decides')]);
+    expect(befunde(offen).filter((v) => bindungsRegeln.includes(v.ruleId)).length).toBeGreaterThan(0);
   });
 
   it('eine Bindung von Hand, ohne Auftrag, zaehlt genauso', () => {

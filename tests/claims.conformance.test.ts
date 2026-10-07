@@ -34,8 +34,7 @@ import {
   ELEMENT_DESCRIPTIONS,
   TraceType,
   TRACE_PATTERNS,
-  ALL_RULE_DEFS,
-  RULE_TO_DIMENSION, READINESS_SCORED_PROFILES,
+  RULE_TO_DIMENSION,
 } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
@@ -111,7 +110,7 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
      * `ALL_RULE_DEFS.length` stehengeblieben, haette die Prosa auf 69 gehoben werden muessen —
      * und damit eine Aussage behauptet, die falsch ist.
      */
-    { phrase: 'engine rules', actual: () => ALL_RULE_DEFS.filter((r) => (READINESS_SCORED_PROFILES as readonly string[]).includes(r.profile)).length },
+    { phrase: 'engine rules', actual: () => Object.keys(RULE_TO_DIMENSION).length },
     { phrase: 'readiness dimensions', actual: () => new Set(Object.values(RULE_TO_DIMENSION)).size },
     { phrase: 'MCP tools', actual: () => toolCount },
   ];
@@ -196,7 +195,10 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // Zwei Artikel nannten 67, beide nachgezogen.
       // CR-SM-396 (Regelkatalog 40.0.0, CR-GC-753): R-34 entfaellt wieder — die Grammatik (R-18) lehnt den
       // Datenfluss ohne Schema schon beim Schreiben ab — 69 -> 68. Zwei Artikel nannten 69, beide nachgezogen.
-      'engine rules=68',
+      // CR-SM-399/400 (Regelkatalog 42/43, CR-GC-755): IR-01 und TR-01 entfallen — eine Entscheidung ist ein
+      // erledigter Auftrag, kein Feld im Vermerk — 68 -> 66. Gezaehlt wird, was eine Dimension hat
+      // (`RULE_TO_DIMENSION`); die Profil-Liste `READINESS_SCORED_PROFILES` gibt es nicht mehr.
+      'engine rules=66',
       'readiness dimensions=8',
       // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
       // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.

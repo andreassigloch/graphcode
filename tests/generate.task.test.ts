@@ -94,34 +94,23 @@ describe('CR-GC-601: graph_generate {task}', () => {
     expect(ab.done).toBe(true);
   });
 
-  it('CR-GC-607/748: trade mit Stempel ohne crRefs — der Task ist durch, aber der Kern fuehrt TR-01; mit Entscheidungs-CR im Stempel nicht mehr', () => {
-    const ohne = step('trade');
-    expect(ohne.done).toBe(true); // der Eintritt (AF-02) schweigt: die Analyse ist gestempelt
-    expect(ohne.skill).toBe(TASK_SKILL.trade);
-    expect(ohne.prompt).toMatch(/Task trade fertig/);
-    expect(ohne.prompt).toMatch(/graph_generate ohne task/);
-    expect(kernRegeln(golden)).toContain('TR-01'); // „Entscheidung nicht als CR festgehalten" — jetzt ein Befund des Kerns
-    // Der Golden traegt genau eine Entscheidung: CR-SL-001 -relation[decides]-> MOD-llm-runtime.
-    const mit = structuredClone(golden);
-    const sys = mit.elements.find((e) => e.type === 'SYS')!;
+  it('CR-GC-755: trade mit Stempel — der Task ist durch; ein Alt-Vermerk mit crRefs oder reqRefs meldet nichts mehr', () => {
+    const s = step('trade');
+    expect(s.done).toBe(true); // der Eintritt (AF-02) schweigt: die Analyse ist gestempelt
+    expect(s.skill).toBe(TASK_SKILL.trade);
+    expect(s.prompt).toMatch(/Task trade fertig/);
+    expect(s.prompt).toMatch(/graph_generate ohne task/);
+    // TR-01 und IR-01 sind entfallen (Regelkatalog 42/43): die Felder haben keinen Leser, auch nicht mit toten Zeigern.
+    const alt = structuredClone(golden);
+    const sys = alt.elements.find((e) => e.type === 'SYS')!;
     const af = sys.attributes!.analysisFreshness as Record<string, { graphVersion: number }>;
-    sys.attributes = { ...sys.attributes, analysisFreshness: { ...af, trade: { ...af.trade, crRefs: ['CR-SL-001'] } } };
-    expect(kernRegeln(mit)).not.toContain('TR-01');
-  });
-
-  it('CR-GC-607/748: irr — leere reqRefs sind ein legitimer Ausgang, eine fehlende REQ nicht (IR-01, im Kern; CR-GC-754)', () => {
-    const g = structuredClone(golden);
-    const sys = g.elements.find((e) => e.type === 'SYS')!;
-    const af = sys.attributes!.analysisFreshness as Record<string, { graphVersion: number }>;
-    const mitRefs = (reqRefs: string[]) => {
-      sys.attributes = { ...sys.attributes, analysisFreshness: { ...af, 'assumption-review': { ...af['assumption-review'], reqRefs } } };
-      return kernRegeln(g);
+    sys.attributes = {
+      ...sys.attributes,
+      analysisFreshness: { ...af, trade: { ...af.trade, crRefs: ['CR-gibt-es-nicht'] }, 'assumption-review': { ...af['assumption-review'], reqRefs: ['REQ-gibt-es-nicht'] } },
     };
-    expect(mitRefs([])).not.toContain('IR-01');
-    expect(mitRefs(['REQ-gibt-es-nicht'])).toContain('IR-01');
-    // ein alter Vermerk mit crRefs hat keinen Leser mehr — kein Parallelpfad
-    sys.attributes = { ...sys.attributes, analysisFreshness: { ...af, 'assumption-review': { ...af['assumption-review'], crRefs: ['CR-gibt-es-nicht'] } } };
-    expect(kernRegeln(g)).not.toContain('IR-01');
+    expect(kernRegeln(alt)).toEqual(kernRegeln(golden));
+    expect(kernRegeln(alt)).not.toContain('TR-01');
+    expect(kernRegeln(alt)).not.toContain('IR-01');
   });
 
   it('im Kern: steht ein Eintrittspunkt im Fokus, nennt der Prompt den Task und seinen Skill', () => {

@@ -10,11 +10,11 @@
  * Eine „Einheit“ ist das kleinste vollständige Stück des Artefakts:
  *   fmea    — eine Risiko-REQ mit Gegenmaßnahme (compose) und einem Erfüller (satisfy)
  *   plan    — ein Meilenstein, dem mindestens ein CR zugeordnet ist
- *   trade   — ein CR mit einer `decides`-Kante
+ *   trade   — ein erledigter CR mit einer relation-Kante auf das Entschiedene (nur NEUE zählen, s. u.)
  *   conops  — eine nicht-funktionale REQ am System            (nur NEUE zählen, s. u.)
  *   irr     — eine REQ mit verifizierendem TEST je tragender Annahme (nur NEUE zählen, s. u.)
- * Für conops und irr trägt der Graph kein Merkmal, das eine Betriebsanforderung oder eine Annahme
- * von gewöhnlicher Kern-Arbeit unterscheidet — dort zählt, was WÄHREND des Tasks entstand.
+ * Für conops, irr und trade trägt der Graph kein Merkmal, das eine Betriebsanforderung, eine Annahme
+ * oder eine Entscheidung von gewöhnlicher Arbeit unterscheidet — dort zählt, was WÄHREND des Tasks entstand.
  *
  * CR-GC-752 (contracts 11, CR-SM-395): der Bauplan setzt KEINEN Stempel mehr. Sein Ergebnis sind
  * offene Aufträge (CR mit `status: open`) und Meilensteine; die Eintrittsregel AF-05 („es gibt
@@ -24,9 +24,10 @@
  * Rein: liest eine neutrale Graph-Form, damit Rundenprompt (OntologyGraph) und Executor (Registry)
  * dieselbe Rechnung benutzen.
  *
- * CR-GC-754 (Regelkatalog 41, CR-SM-397): eine Analyse hinterlässt keinen Bauauftrag. Das Annahmen-Review
- * schreibt je tragender Annahme eine REQ mit TEST; sein Stempel nennt sie unter `reqRefs` (IR-01). Einen CR
- * legt nur noch der Variantenvergleich an — als Träger der Entscheidung (`decides`, TR-01 liest `crRefs`).
+ * CR-GC-755 (Regelkatalog 43, CR-SM-399/400): eine Entscheidung ist ein erledigter Auftrag. Der
+ * Variantenvergleich hinterlässt einen CR mit `status: done` und relation-Kanten; ein Etikett an der
+ * Kante gibt es nicht mehr, und der Stempel nennt keine Einheiten (TR-01, IR-01, `crRefs`, `reqRefs`
+ * sind entfallen). Ein erledigter Auftrag eröffnet keinen Bau.
  *
  * @author andreas@siglochconsulting
  */
@@ -54,10 +55,7 @@ export const STEMPEL_ID: Readonly<Record<GestempelterTask, string>> = {
 export const hatStempel = (task: AnalyseTask): task is GestempelterTask => task in STEMPEL_ID;
 
 /** Bei diesen Tasks zählt nur, was während des Tasks entstand. */
-export const NUR_NEUE: ReadonlySet<AnalyseTask> = new Set(['conops', 'irr']);
-
-/** Tasks, deren Stempel die entstandenen Einheiten nennt, und das Feld dafür: TR-01 liest `crRefs`, IR-01 `reqRefs`. */
-const REF_FELD: Readonly<Partial<Record<AnalyseTask, 'crRefs' | 'reqRefs'>>> = { trade: 'crRefs', irr: 'reqRefs' };
+export const NUR_NEUE: ReadonlySet<AnalyseTask> = new Set(['conops', 'irr', 'trade']);
 
 export interface TaskKnoten {
   id: string;
@@ -100,7 +98,7 @@ export function artefakte(task: AnalyseTask, g: TaskGraph): string[] {
         case 'plan':
           return n.type === 'MS' && hat((e) => e.type === 'relation' && e.target === n.id && typ.get(e.source) === 'CR');
         case 'trade':
-          return n.type === 'CR' && hat((e) => e.type === 'relation' && e.source === n.id && e.label === 'decides');
+          return n.type === 'CR' && n.attributes?.status === 'done' && hat((e) => e.type === 'relation' && e.source === n.id);
         case 'irr':
           return n.type === 'REQ' && hat((e) => e.type === 'verify' && e.target === n.id && typ.get(e.source) === 'TEST');
         case 'conops':
@@ -187,10 +185,7 @@ export function stempelZug(
   sysUid: string,
   bisher: Record<string, unknown>,
   graphVersion: number,
-  einheiten: readonly string[],
 ): string {
-  const feld = REF_FELD[task];
-  const stempel = feld ? { graphVersion, [feld]: [...einheiten] } : { graphVersion };
-  const wert = { ...bisher, [STEMPEL_ID[task]]: stempel };
+  const wert = { ...bisher, [STEMPEL_ID[task]]: { graphVersion } };
   return `## Nodes\n### SYS\n~ ${sysUid}\n@analysisFreshness ${JSON.stringify(wert)}\n`;
 }

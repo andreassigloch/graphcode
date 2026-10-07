@@ -93,12 +93,13 @@ function trade(og: OntologyGraph): string {
   const ziel = ersteVom(og, 'FUNC', ersteVom(og, 'UC', 'FUNC-beispiel'));
   return (
     'Trade Study: nenne die offene Entwurfsentscheidung mit mindestens zwei Optionen und den Kriterien, nach denen ' +
-    'du wählst. Halte die Entscheidung als CR fest, der mit einer decides-Kante auf das zeigt, was er entscheidet. ' +
+    'du wählst. Halte die Entscheidung als erledigten CR fest (status done), der auf das zeigt, was er entscheidet. ' +
     'Kennst du ein Kriterium nicht, frage mit einer Fragezeile. Vorbild:\n' +
     '## Nodes\n### CR\n' +
-    '+ CR-beispiel-entscheidung|Frage: «Entscheidung A». Optionen: «Option A», «Option B». Gewählt: «Option A», weil «Kriterium A». [__name:«Entscheidung A»]\n\n' +
+    '+ CR-beispiel-entscheidung|Frage: «Entscheidung A». Optionen: «Option A», «Option B». Gewählt: «Option A», weil «Kriterium A». [__name:«Entscheidung A»]\n' +
+    '@status done\n\n' +
     '## Edges\n' +
-    `+ CR-beispiel-entscheidung -relation-> ${ziel} [label:decides]`
+    `+ CR-beispiel-entscheidung -relation-> ${ziel}`
   );
 }
 

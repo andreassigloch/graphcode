@@ -477,7 +477,7 @@ const TASK_OF_ENTRY = new Map(
  * (contracts `RULE_HELP[…].prompt`), wenn sie einen Analyse-Skill nennt; sonst undefined.
  *
  * Bis contracts 10 nahm ein Arbeitsschritt dem Kern die Regeln seiner Analyse ab (FM-01..03 der
- * Fehlerbetrachtung, CL-01 dem Einsatzkonzept, TR-01/IR-01 Variantenvergleich und Annahmen-Review).
+ * Fehlerbetrachtung, CL-01 dem Einsatzkonzept).
  * Seit der gekuerzten Zuordnung (CR-SM-395) fuehrt sie der Kern. Wem sie gehoeren, sagt weiter der
  * Katalog — der Skill-Zeiger der Regel —, nicht eine Liste hier: der Schritt nennt dann diesen Skill
  * statt der Autorier-Anleitung der Dimension (fuer FM-01 waere das `se:author-req`).
@@ -780,7 +780,7 @@ function stepCore(
   // setzen. Gemessen S2 gcrun-339..341: je AF-Befund drei Runden Stillstand, dabei legte das Modell
   // unter dem Text der Dimension neue SYS-REQs an (23/16 Dubletten). Bleiben nur Eintrittspunkte,
   // greift der Endzustand unten („Offen sind Eintrittspunkte") — die Uebergabe an Mensch oder Host.
-  // CR-GC-748: dasselbe gilt fuer jede Regel mit Rolle `analysis` (TR-01, IR-01) — auch ihr Befund
+  // CR-GC-748: dasselbe gilt fuer jede Regel mit Rolle `analysis` — auch ihr Befund
   // verlangt die Analyse, nicht einen Modellzug des Executors. Die Rolle steht am Katalog.
   const eintrittImTreiber = (key: string): boolean =>
     selection === 'driver' && task === 'kern' && (TASK_OF_ENTRY.has(key.split(':')[1] ?? '') || istAnalyse(key.split(':')[1] ?? ''));

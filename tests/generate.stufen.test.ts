@@ -115,7 +115,7 @@ describe('CR-GC-749: der Schritt waehlt die frueheste Stufe', () => {
   });
 
   it('ein offener Auftrag: die Bindungsbefunde stehen im Fokus, aber erst nach allem, was vor dem Bau liegt', () => {
-    // Die Referenz traegt nur Entscheidungs-Auftraege (`decides`); die eroeffnen den Bau nicht (CR-SM-396).
+    // Die Referenz traegt nur erledigte Auftraege (Entscheidungen); ein erledigter Auftrag eroeffnet den Bau nicht.
     expect(fensterfolge(KORPUS[1]![1]).map(regelVon).filter((r) => rang(r) === 11)).toEqual([]);
     const basis = KORPUS[1]![1];
     const func = basis.nodes.find((x) => x.type === 'FUNC')!.uid;

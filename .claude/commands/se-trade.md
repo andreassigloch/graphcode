@@ -20,5 +20,5 @@ Check the returned `violations` and re-apply if the gate blocks the batch. Never
 
 A closed CR documents; it orders no build. What the decision still needs built is cut by `se-plan`, like everything else that is not built yet.
 
-## 4. Stamp the task — with the decision CR
-Close the task with **one** `graph_mutate` batch on the SYS root. `analysisFreshness` is one attribute for all analyses and a patch replaces it whole: read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`, set `"trade": { graphVersion: <current graphVersion()>, crRefs: [<the decision CR id>] }`, and write the complete object with the `baseVersion` you read. **TR-01** (task rule of `trade`) fires when the stamp names no CR or names a CR that does not exist. A trade that ends without a decision is not stamped: leave AF-02 open instead of stamping an empty study.
+## 4. Stamp the task
+Close the task with **one** `graph_mutate` batch on the SYS root. `analysisFreshness` is one attribute for all analyses and a patch replaces it whole: read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`, set `"trade": { graphVersion: <current graphVersion()> }`, and write the complete object with the `baseVersion` you read — after the decision CR of step 3 is in the graph. **AF-02** (the entry rule of the task `trade`) stays open until then. A trade that ends without a decision is not stamped: leave AF-02 open instead of stamping an empty study.

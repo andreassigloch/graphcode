@@ -25,7 +25,7 @@ const KERN = [
   '## Nodes',
   '### SYS',
   '+ SYS-app|Ein System zum Prüfen der Analyse-Tasks. [__name:Test App]',
-  '@analysisFreshness {"trade":{"graphVersion":1,"crRefs":[]}}',
+  '@analysisFreshness {"trade":{"graphVersion":1}}',
   '### UC',
   '+ UC-ablauf|Der Nutzer löst den Ablauf aus und erhält das Ergebnis. [__name:Ablauf]',
   '### FCHAIN',
@@ -103,10 +103,10 @@ describe('CR-GC-724: Analysen über den Executor', () => {
       violations?: unknown;
     };
   const og = (): OntologyGraph => toOntologyGraph(harness.getGraph());
-  const stempel = (): Record<string, { graphVersion: number; crRefs?: string[] }> =>
+  const stempel = (): Record<string, { graphVersion: number }> =>
     (harness.getGraph().nodes.find((n) => n.type === 'SYS')!.attributes?.analysisFreshness ?? {}) as Record<
       string,
-      { graphVersion: number; crRefs?: string[] }
+      { graphVersion: number }
     >;
 
   beforeEach(async () => {
@@ -190,13 +190,13 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     expect(abschluss('irr', annahme, bestand, 0).einheiten).toEqual(['REQ-alt']);
   });
 
-  it('Stempel-Zug: trägt die übrigen Stempel mit und nennt crRefs bei trade, reqRefs bei irr', () => {
+  it('Stempel-Zug: trägt die übrigen Stempel mit — der Vermerk ist nur die Graphversion, bei jeder Analyse', () => {
     const bisher = { conops: { graphVersion: 3 } };
-    expect(stempelZug('fmea', 'SYS-app', bisher, 7, ['REQ-r'])).toBe(
+    expect(stempelZug('fmea', 'SYS-app', bisher, 7)).toBe(
       '## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"conops":{"graphVersion":3},"fmea":{"graphVersion":7}}\n',
     );
-    expect(stempelZug('irr', 'SYS-app', {}, 7, ['REQ-a'])).toContain('"assumption-review":{"graphVersion":7,"reqRefs":["REQ-a"]}');
-    expect(stempelZug('trade', 'SYS-app', {}, 7, ['CR-a'])).toContain('"trade":{"graphVersion":7,"crRefs":["CR-a"]}');
+    expect(stempelZug('irr', 'SYS-app', {}, 7)).toContain('"assumption-review":{"graphVersion":7}}');
+    expect(stempelZug('trade', 'SYS-app', {}, 7)).toContain('"trade":{"graphVersion":7}}');
   });
 
   // CR-GC-752 (contracts 11, CR-SM-395): der Bauplan ist die Menge der offenen Auftraege, kein Stempel.
@@ -257,7 +257,7 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     const s = stempel();
     expect(s.fmea.graphVersion).toBe(stats.taskStempel!.graphVersion);
     expect(s.fmea.graphVersion).toBe(harness.getGraph().nodes.length > 0 ? stats.taskStempel!.graphVersion : -1);
-    expect(s.trade, 'der Stempel aus dem Kern-Graphen überlebt').toEqual({ graphVersion: 1, crRefs: [] });
+    expect(s.trade, 'der Stempel aus dem Kern-Graphen überlebt').toEqual({ graphVersion: 1 });
   });
 
   it('Executor: ein Stempel des Modells erreicht das Gate nicht — ohne Artefakt bleibt der Task offen', async () => {

@@ -83,7 +83,7 @@ export async function schliesseTaskWennErfuellt(registry: MCPToolRegistry, z: Ta
   const mutate = registry['graph_mutate'];
   const res = (await mutate.handler(
     mutate.inputSchema.parse({
-      formatE: stempelZug(task, sys.uid, stempelVon(sys), version, urteil.einheiten),
+      formatE: stempelZug(task, sys.uid, stempelVon(sys), version),
       baseVersion: graphVersion,
       consumerId: 'graphcode-executor',
     }),

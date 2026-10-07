@@ -126,9 +126,9 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
     expect(s.done).toBe(false);
     // Gemessen 2026-09-22 (contracts 10): AF-05, BW-02, RD-05 — was der Handlauf am Ende der Spezifikation
     // bewusst offen liess. Gemessen 2026-10-06 (contracts 11, CR-GC-748): dieselben drei, dazu was bis dahin
-    // ein Arbeitsschritt dem Kern abnahm — FM-03 (Fehlerbetrachtung), MS-01 (Bauplan), TR-01
-    // (Variantenvergleich) und die Bindung R-19/R-20 (das Golden traegt Bindungen, der Bau ist eroeffnet).
-    expect(offeneRegeln()).toEqual(['AF-05', 'BW-02', 'FM-03', 'MS-01', 'R-19', 'R-20', 'RD-05', 'TR-01']);
+    // ein Arbeitsschritt dem Kern abnahm — FM-03 (Fehlerbetrachtung), MS-01 (Bauplan) und die Bindung
+    // R-19/R-20 (das Golden traegt Bindungen, der Bau ist eroeffnet). TR-01 ist mit Regelkatalog 43 entfallen.
+    expect(offeneRegeln()).toEqual(['AF-05', 'BW-02', 'FM-03', 'MS-01', 'R-19', 'R-20', 'RD-05']);
   });
 
   /** Nimmt an jedem Fund der genannten Regeln ab — am betroffenen Element, graphweit am SYS. */

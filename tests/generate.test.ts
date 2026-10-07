@@ -201,7 +201,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         node('SYS-shop', 'SYS', 'shop', INTENT, {
           analysisFreshness: {
             conops: { graphVersion: 1 },
-            trade: { graphVersion: 1, crRefs: ['CR-trade'] },
+            trade: { graphVersion: 1 },
             'assumption-review': { graphVersion: 1 },
           },
         }),

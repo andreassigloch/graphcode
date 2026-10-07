@@ -112,9 +112,10 @@ describe('ND-01 — FUNC-Near-Duplicates (konstruierte Duplikate)', () => {
 describe('ND-02 — SCHEMA-Near-Duplicates (konstruierte Duplikate)', () => {
   const og: OntologyGraph = {
     elements: [
-      el('SCHEMA-report-request', 'SCHEMA', 'ReportRequest', 'Request payload for a custom report.', { fields: ['metricIds', 'format', 'userId'] }),
-      el('SCHEMA-report-req', 'SCHEMA', 'ReportReq', 'Request payload for a tailored report.', { fields: ['metricIds', 'format', 'userId'] }),
-      el('SCHEMA-audit-entry', 'SCHEMA', 'AuditEntry', 'One immutable audit log line with author and verdict.', { fields: ['timestamp', 'author', 'verdict'] }),
+      // Regelkatalog 42 (CR-SM-399): ND-02 liest die Beschreibung, das Attribut `fields` hat keinen Leser mehr.
+      el('SCHEMA-report-request', 'SCHEMA', 'ReportRequest', 'Request payload for a custom report: metricIds, format, userId.'),
+      el('SCHEMA-report-req', 'SCHEMA', 'ReportReq', 'Request payload for a custom report: metricIds, format, userId.'),
+      el('SCHEMA-audit-entry', 'SCHEMA', 'AuditEntry', 'One immutable audit log line with timestamp, author and verdict.'),
       el('FLOW-report-request', 'FLOW', 'report request', 'Report request flow.'),
     ],
     traces: [
@@ -123,7 +124,7 @@ describe('ND-02 — SCHEMA-Near-Duplicates (konstruierte Duplikate)', () => {
     ],
   } as OntologyGraph;
 
-  it('evaluateAllRules meldet ND-02 für das Feld-identische Paar', () => {
+  it('evaluateAllRules meldet ND-02 für das Paar mit gleicher Beschreibung', () => {
     const { ids: schemaIds, matrix } = schemaSimilarity(og);
     expect(schemaIds[0]).toBe('SCHEMA-audit-entry');
     const nd = evaluateAllRules(og, DEFAULT_METRIC_POLICY).filter((v) => v.rule_id === 'ND-02');

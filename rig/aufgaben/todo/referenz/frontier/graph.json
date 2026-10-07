@@ -11,7 +11,7 @@
       "type": "CR",
       "name": "Verhalten bei fehlender todos.json",
       "description": "Entschieden (Trade Study): Fehlt todos.json im Arbeitsverzeichnis, gilt die Liste als leer. add legt die Datei an, list meldet die leere Liste, done lehnt die Nummer als unbekannt ab; list und done legen keine Datei an.",
-      "status": "open",
+      "status": "done",
       "rationale": "Trade Study fehlende Datei. Optionen: (A) fehlende Datei gilt als leere Liste, (B) jeder Befehl meldet Fehler mit Exit-Code 1, (C) nur add legt an, list und done melden Fehler. Kriterien: Aufwand, Risiko, Umkehrbarkeit, Passung zum Umfang. A: kein neuer Befehl, Erststart geht, deckt sich mit der Meldung zur leeren Liste und dem Speicherort je Arbeitsverzeichnis; Risiko: im falschen Verzeichnis erscheint eine leere Liste statt eines Fehlers. B: Erststart unmöglich ohne einen vierten Befehl zum Anlegen, den der Umfang nicht hat. C: zwei Deutungen desselben Zustands, list vor dem ersten add ist ein Fehler. Gewinner A: einzige Option ohne neuen Befehl und mit einer einzigen Deutung; später strenger zu werden bleibt möglich. Ursprung: Annahmen-Review."
     },
     {
@@ -49,7 +49,7 @@
       "type": "CR",
       "name": "Format von todos.json und Todo-Nummer",
       "description": "Entschieden (Trade Study): Die Todo-Nummer ist die Position des Todos in todos.json, gezählt ab 1 in der Reihenfolge des Anlegens; add hängt hinten an, kein Befehl sortiert um oder entfernt. Offen bleibt das Datenformat der Datei als SCHEMA mit Datenfluss.",
-      "status": "open",
+      "status": "done",
       "rationale": "Trade Study Todo-Nummer. Optionen: (A) Position in der Datei, (B) feste Nummer je Todo, in der Datei gespeichert und nie neu vergeben. Kriterien: Aufwand, Risiko falsches Todo, Umkehrbarkeit, Passung zum Umfang. A: kein Zusatzfeld, keine zusätzlichen Ungültig-Fälle; mit add, list, done ändert sich keine Position, list und done zählen gleich; Wechsel zu B später ohne Verlust (Nummer := Position). B: bleibt stabil bei Löschen oder Umsortieren, die es im Umfang nicht gibt; kostet Nummernfeld, Zähler und neue Ungültig-Fälle (doppelte, fehlende Nummer); Rückweg zu A ändert sichtbare Nummern. Gewinner A: gleiche Sicherheit im heutigen Umfang bei weniger Aufwand und offenem Weg zu B. Bedingung: kommt ein Befehl zum Löschen oder Sortieren, ist die Entscheidung neu zu treffen. Ursprung: Annahmen-Review, Risiko falsches Todo (FMEA FM-04)."
     },
     {
