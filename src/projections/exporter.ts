@@ -28,7 +28,7 @@ import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { readTestRefs, readRealRef, type TestRef, type RealRef } from '@sigloch/contracts/se';
 import { renderSrs } from './srs.js';
 import { renderNfr, renderRtm, renderIcd, renderTestConcept, renderTestMatrix, renderIntPlan } from './incose.js';
-import { renderChangelog, renderFmea, renderConOps, renderTrade, renderImplPlan } from './graphcode.js';
+import { renderChangelog, renderFmea, renderConOps, renderImplPlan } from './graphcode.js';
 
 // ---------------------------------------------------------------------------
 // SCHEMA-markdown-view — app-specific, NOT in @sigloch/contracts.
@@ -40,7 +40,7 @@ import { renderChangelog, renderFmea, renderConOps, renderTrade, renderImplPlan 
  *
  * Foundation views (architecture/cr-list/references) mirror FLOW-export-request;
  * CR-GC-220 adds the SE-artifact projections (srs/nfr/rtm/icd/testconcept/
- * testmatrix/intplan/changelog + the render-form of fmea/conops/trade/implplan) so
+ * testmatrix/intplan/changelog + the render-form of fmea/conops/implplan) so
  * EVERY render-able artifact is a deterministic function of the graph, not an
  * agent-rendered `se-view:*` skill.
  *
@@ -318,8 +318,6 @@ export function exportMarkdown(graph: Graph, view: MarkdownView, name = 'graphco
       return renderFmea(graph, name);
     case 'conops':
       return renderConOps(graph, name);
-    case 'trade':
-      return renderTrade(graph, name);
     case 'implplan':
       return renderImplPlan(graph, name);
   }

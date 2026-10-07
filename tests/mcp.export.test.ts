@@ -88,7 +88,7 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
     for (const v of ['architecture', 'cr-list', 'references']) expect(written).toContain(v);
     expect(written).toContain('srs'); // the requirements view (CR-GC-305: replaced `spec`)
     expect(written).not.toContain('spec');
-    expect(written.length).toBe(15);
+    expect(written.length).toBe(14);
     for (const v of res.views) {
       const md = readFileSync(join(repoRoot, v.path), 'utf8');
       expect(md).toContain('GENERATED');

@@ -191,13 +191,12 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     'changelog',
     'fmea',
     'conops',
-    'trade',
     'implplan',
   ] as const;
 
-  it('CR-GC-220: schema accepts all 12 new views (15 total after CR-GC-305)', () => {
+  it('CR-GC-220: schema accepts the 11 views of that CR (14 total after CR-GC-756)', () => {
     for (const v of CR220_VIEWS) expect(() => MarkdownViewSchema.parse(v)).not.toThrow();
-    expect(MARKDOWN_VIEWS.length).toBe(15);
+    expect(MARKDOWN_VIEWS.length).toBe(14);
     // CR-GC-305: `spec` is gone and must be a HARD reject, not a silent fallback —
     // a consumer still passing it has to fail loudly, not receive some other view.
     expect([...MARKDOWN_VIEWS]).not.toContain('spec');
@@ -464,12 +463,22 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     expect(md2).toMatch(/Integration \| FUNC↔FUNC \(1 conn\) \| integration \(chain\) \| 1 \| 1 \/ 1 connections \| ✓/);
   });
 
-  it('CR-GC-220: FMEA/Trade render an explicit empty-state (never silently blank)', () => {
-    // The live graph has no risk REQ / trade relations yet — must say so, not be empty.
+  it('CR-GC-220: FMEA renders an explicit empty-state (never silently blank)', () => {
+    // The live graph has no risk REQ yet — must say so, not be empty.
     const fmea = exportMarkdown(graph, 'fmea');
     expect(fmea).toContain('FMEA');
-    const trade = exportMarkdown(graph, 'trade');
-    expect(trade).toContain('Trade Studies');
+  });
+
+  it('CR-GC-756: die Sicht Variantenvergleich gibt es nicht mehr — Entscheidungen stehen in der Aenderungsliste', () => {
+    expect(MarkdownViewSchema.safeParse('trade').success).toBe(false);
+    const g: Graph = {
+      nodes: [
+        { uid: 'CR-wahl', type: 'CR', name: 'Store-Wahl', description: '', attributes: { status: 'done' } },
+        { uid: 'MOD-store', type: 'MOD', name: 'store', description: 'Der Store.', attributes: {} },
+      ],
+      edges: [{ sourceId: 'CR-wahl', targetId: 'MOD-store', edgeType: 'relation', attributes: {} }],
+    };
+    expect(exportMarkdown(g, 'changelog', 'x')).toContain('CR-wahl');
   });
 
   it('CR-GC-220: VIEW_FILENAMES covers every view exactly once', () => {

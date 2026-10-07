@@ -188,10 +188,9 @@ export const VIEW_BLURBS: Record<MarkdownView, string> = {
   testconcept: 'The test pyramid over the model, with the end-to-end gap computed, not claimed.',
   testmatrix: 'Which test verifies which requirement (VCRM) — and which requirement has none.',
   intplan: 'Integration and test plan: in which order the parts come together, verified how.',
-  changelog: 'The change history, derived from the CR nodes.',
+  changelog: 'The change history, derived from the CR nodes — builds and decisions alike.',
   fmea: 'Failure modes with severity/occurrence/detection, action priority, and mitigation coverage.',
   conops: 'Concept of operations: user classes, scenarios, constraints — the operational picture.',
-  trade: 'The decisions: which options were evaluated, which won, what superseded what.',
   implplan: 'Milestones and the change requests assigned to them — the build order.',
 };
 

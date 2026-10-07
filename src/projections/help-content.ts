@@ -223,12 +223,12 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   },
   'assumption-review': {
     plain: 'The unproven assumptions and how risky they are.',
-    se: 'Assumption Review (was IRR) — an analysis, graphcode-specific; commit-pinned record; each load-bearing assumption becomes a REQ with its verifying TEST.',
+    se: 'Assumption Review (was IRR) — an analysis, graphcode-specific; recorded as a closed CR; each chosen assumption becomes a REQ with its verifying TEST.',
     prompt: 'se-irr',
   },
   trade: {
     plain: 'The design options weighed and the choice made.',
-    se: 'Trade Study (an analysis; render with `se-view:trade`).',
+    se: 'Trade Study (an analysis; the decision is a closed CR and shows in the change log, `se-view:changelog`).',
     prompt: 'se-trade',
   },
   fmea: {

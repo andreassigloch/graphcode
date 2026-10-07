@@ -201,7 +201,6 @@ has a skill that renders it into `docs/views/`:
 | `se-view:intplan` · `se-view:implplan` | integration & test plan · implementation plan (MS/CR) |
 | `se-view:conops` | Concept of Operations (ISO 29148 §5.2.4) |
 | `se-view:fmea` | FMEA — failure modes, S/O/D, action priority |
-| `se-view:trade` | trade studies — decisions and superseded options |
 | `se-view:changelog` | change log from the CR history |
 
 Because they are generated, "the document is incomplete" and "the gate is still open" are the same

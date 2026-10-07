@@ -388,47 +388,6 @@ export function renderConOps(graph: Graph, name: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// 11. Trade Study — render-form of decision CRs + relation edges (Specimen #11).
-//    Walks relation(label ∈ {alternative, superseded-by, decides}); empty → note.
-// ---------------------------------------------------------------------------
-
-export function renderTrade(graph: Graph, name: string): string {
-  const idx = nodeIndex(graph);
-  const tradeLabels = new Set(['alternative', 'superseded-by', 'decides']);
-  const edges = graph.edges
-    .filter((e) => e.edgeType === 'relation' && tradeLabels.has(String(e.attributes['label'])))
-    .sort(
-      (a, b) =>
-        a.sourceId.localeCompare(b.sourceId) ||
-        String(a.attributes['label']).localeCompare(String(b.attributes['label'])) ||
-        a.targetId.localeCompare(b.targetId),
-    );
-  const lines: string[] = [
-    generatedHeader(
-      name,
-      'Trade Studies',
-      `Render der decision-CRs + relation(decides/alternative/superseded-by). Deterministisch generiert.`,
-    ),
-  ];
-  lines.push('| Decision (CR) | label | → target | CR status |', '|---|---|---|---|');
-  if (edges.length === 0) {
-    lines.push('| — keine Trade-Study-relation im Graph | — | — | — |');
-  } else {
-    for (const e of edges) {
-      const cr = idx.get(e.sourceId);
-      lines.push(`| ${ref(e.sourceId)} | ${String(e.attributes['label'])} | ${ref(e.targetId)} | ${cr ? status(cr) || 'n/a' : '—'} |`);
-    }
-  }
-  lines.push(
-    '',
-    '> RENDER — walks relation(label ∈ {alternative, superseded-by, decides}) + CR status.',
-    '> The comparison matrix stays in the spike; only the decision + links live in the graph.',
-    '',
-  );
-  return lines.join('\n');
-}
-
-// ---------------------------------------------------------------------------
 // 14. Implementation Plan — render-form of the MS/CR slices + depends-on chain
 //     (Specimen #14). CREATE (se-plan) originates the slices; this RENDERs them
 //     leaf→root by milestone with the test-level mapping mirroring the pyramid.

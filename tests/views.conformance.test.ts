@@ -265,31 +265,6 @@ describe('CR-GC-673: FMEA und SRS lesen die Rolle, nicht kinds (CR-SM-365/366)',
   });
 });
 
-describe('CR-GC-308: Trade view and se-trade skill agree on the attribute key', () => {
-  it('the skill writes `label`, the same key the exporter reads', () => {
-    const skill = readFileSync(new URL('../.claude/commands/se-trade.md', import.meta.url), 'utf8');
-    expect(skill).toContain('attributes.label');
-    // `role` was the invention; `label` is the family convention, already declared on
-    // MS -relation-> MS[depends-on] in TRACE_PATTERNS.
-    expect(skill).not.toContain('attributes.role');
-  });
-
-  it('a decision written the way the skill says renders in trade.md', () => {
-    const graph: Graph = {
-      nodes: [
-        { uid: 'CR-wahl', type: 'CR', name: 'Store-Wahl', description: 'Kuzu statt Neo4j.', attributes: { status: 'done' } },
-        { uid: 'MOD-store', type: 'MOD', name: 'store', description: 'Der Store.', attributes: {} },
-      ],
-      edges: [
-        { sourceId: 'CR-wahl', targetId: 'MOD-store', edgeType: 'relation', attributes: { label: 'decides' } },
-      ],
-    };
-    const md = exportMarkdown(graph, 'trade', 'x');
-    expect(md).toContain('CR-wahl');
-    expect(md).toContain('decides');
-  });
-});
-
 describe('CR-GC-308: every view still renders (no regression from the key changes)', () => {
   it('all 15 views produce a GENERATED header on an empty graph', () => {
     for (const v of MARKDOWN_VIEWS) {
