@@ -152,12 +152,14 @@ describe('T-C3 (CR-GC-340): the judging threshold is a knob in the config, not a
       const a = snap(low);
       const b = snap(high);
 
-      // Same findings AND same scores — the threshold judges, it does not measure (CR-GC-514:
+      // Same findings AND same counts per stage — the threshold judges, it does not measure (CR-GC-514:
       // the snapshot no longer takes it; before CR-SM-310 it turned it into a `ready` flag).
       const ids = (s: typeof a) => s.violations.map((v) => `${v.rule_id}/${v.element_id}`).sort();
       expect(ids(a)).toEqual(ids(b));
       expect(a.blockingErrors).toBe(b.blockingErrors);
-      expect(a.report.scores).toEqual(b.report.scores);
+      expect(a.stages).toEqual(b.stages);
+      expect(a.stages).toHaveLength(13);
+      expect(a.stages.some((s) => s.findings > 0)).toBe(true);
 
       // The config value arrives where the focus is judged — and only there. That the verdict
       // flips with it (handoff at threshold 0) is proven on a real fixture in generate.test.ts.
@@ -334,7 +336,9 @@ describe('T-S4 (CR-GC-484): innerhalb aller Budgets ist der Score BLIND — doku
 
   it('und `readiness` ist dort NICHT blind — der komplementaere Partner traegt weiter', async () => {
     const rep = await rig.tools.graph_readiness.handler({ detail: false });
-    const dims = rep.dimension_readiness as { dimension: string; score: number | null }[];
-    expect(dims.some((d) => d.score !== null && d.score < 1)).toBe(true);
+    // CR-GC-757: der Partner zaehlt Befunde je Stufe (vorher: ein Prozentwert unter 1 in einer Dimension).
+    const stufen = rep.stages as { name: string; findings: number }[];
+    expect(stufen).toHaveLength(13);
+    expect(stufen.some((s) => s.findings > 0)).toBe(true);
   });
 });

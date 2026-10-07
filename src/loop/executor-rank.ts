@@ -117,10 +117,10 @@ export function removesElements(verdict: CandidateProbe['verdict']): boolean {
   return parsed.success ? parsed.data.removesElements : false;
 }
 
-/** Score-Delta der Fokus-Dimension aus dem steeringDelta des dryRun-Verdicts (CR-GC-289). */
-export function focusDelta(verdict: CandidateProbe['verdict'], focusDimension?: string | null): number {
-  if (!focusDimension) return 0;
-  return steeringDeltaOf(verdict)?.dimensions[focusDimension]?.delta ?? 0;
+/** Befund-Delta der Fokus-Stufe aus dem steeringDelta des dryRun-Verdicts (positiv = weniger Befunde; CR-GC-757). */
+export function focusDelta(verdict: CandidateProbe['verdict'], focusStage?: string | null): number {
+  if (!focusStage) return 0;
+  return steeringDeltaOf(verdict)?.stages[focusStage]?.delta ?? 0;
 }
 
 /**
@@ -144,9 +144,9 @@ export function focusDelta(verdict: CandidateProbe['verdict'], focusDimension?: 
  */
 export function effectiveFocusDelta(
   candidate: CandidateProbe,
-  focusDimension?: string | null,
+  focusStage?: string | null,
 ): number {
-  const raw = focusDelta(candidate.verdict, focusDimension);
+  const raw = focusDelta(candidate.verdict, focusStage);
   const dupes = candidate.duplicates?.length ?? 0;
   if (raw <= 0 || dupes === 0) return raw;
   // mutations = Element-Ausbeute des Batches. Fehlt sie (oder ist 0), während
@@ -156,11 +156,11 @@ export function effectiveFocusDelta(
   return raw * (1 - share);
 }
 
-/** Gesamt-Readiness-Delta: ungewichtete Summe der Score-Deltas aller Dimensionen. */
+/** Gesamt-Delta: Summe der Befund-Deltas aller Stufen (positiv = weniger Befunde). */
 export function totalDelta(verdict: CandidateProbe['verdict']): number {
   const sd = steeringDeltaOf(verdict);
   if (!sd) return 0;
-  return Object.values(sd.dimensions).reduce((s, d) => s + d.delta, 0);
+  return Object.values(sd.stages).reduce((s, d) => s + d.delta, 0);
 }
 
 /** blockingErrors-ANSTIEG (Steering-Katalog) — strikt schlechter, nie belohnt. */
@@ -184,7 +184,7 @@ function blockingRise(verdict: CandidateProbe['verdict']): number {
  */
 export function rankCandidates<T extends CandidateProbe>(
   candidates: T[],
-  focusDimension?: string | null,
+  focusStage?: string | null,
 ): T[] {
   const viable = (c: CandidateProbe): number => (c.verdict?.success === true ? 1 : 0);
   const tierOf = (c: CandidateProbe): number => TIER_RANK[c.verdict?.tier ?? 'suggest'] ?? 1;
@@ -196,7 +196,7 @@ export function rankCandidates<T extends CandidateProbe>(
   return [...candidates].sort(
     (a, b) =>
       viable(b) - viable(a) ||
-      effectiveFocusDelta(b, focusDimension) - effectiveFocusDelta(a, focusDimension) ||
+      effectiveFocusDelta(b, focusStage) - effectiveFocusDelta(a, focusStage) ||
       blockingRise(a.verdict) - blockingRise(b.verdict) ||
       totalDelta(b.verdict) - totalDelta(a.verdict) ||
       tierOf(b) - tierOf(a) ||

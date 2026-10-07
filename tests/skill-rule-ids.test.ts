@@ -85,7 +85,7 @@ describe('TEST-skill-rule-ids: keine erfundenen Regeln in Skills und Prompts (CR
 
   it('jede im Rundenprompt genannte Regel-ID steht im Katalog', () => {
     // Der Weg, der das Modell WIRKLICH erreicht: Klausel-Schluessel, Klauseltexte,
-    // Dimensions-Vorlagen und die beiden Konstanten des Executors.
+    // Stufen-Vorlagen und die beiden Konstanten des Executors.
     const texte = [
       ...Object.keys(RULE_CLAUSE),
       ...Object.entries(RULE_CLAUSE).map(([, k]) => k.text(['UID-1'])),
@@ -160,7 +160,7 @@ describe('TEST-skill-rule-ids (d): Kanaele, Tasks und Abnahmen passen zusammen (
 /**
  * Smeagol Stufe (e) — Empfehlungskonsistenz (CR-GC-605). Eine Regel gibt ihre Empfehlung an drei
  * Stellen: `fix_hint` (Regeldefinition), `RULE_HELP.prompt` (contracts, der Skill-Zeiger) und in
- * graphcode `TASK_SKILL` / `SKILL_FOR_DIMENSION`. Bis hierher prueften contracts nur die FORM des
+ * graphcode `TASK_SKILL` / `SKILL_FOR_STAGE`. Bis hierher prueften contracts nur die FORM des
  * Prompts; ob der Skill existiert, weiss nur das Repo, das die Skills ausliefert. Vorbild: rustc
  * `lint-docs`, Clippy `cargo dev update_lints --check`, Roslyn `FixableDiagnosticIds`.
  */
@@ -188,26 +188,32 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
     }
   });
 
-  it('Kern-Regel: Hilfe-Prompt und Dimensions-Skill stimmen ueberein — oder die Abweichung steht hier mit Grund (Ratsche)', async () => {
-    const { RULE_HELP, RULE_TO_DIMENSION, TASK_ENTRY, taskOf } = await import('@sigloch/contracts/se');
-    const { SKILL_FOR_DIMENSION } = await import('../src/loop/generate.js');
-    // Benannte Abweichungen: der Fix liegt in einer anderen Dimension als der Fund. Eine Ausnahme,
+  it('Kern-Regel: Hilfe-Prompt und Skill der Stufe stimmen ueberein — oder die Abweichung steht hier mit Grund (Ratsche)', async () => {
+    const { RULE_HELP, ALL_RULE_DEFS, STAGE_SETS, TASK_ENTRY, taskOf } = await import('@sigloch/contracts/se');
+    const { SKILL_FOR_STAGE } = await import('../src/loop/generate.js');
+    // CR-GC-757: der Skill haengt an der STUFE der Regel (vorher: an ihrer Dimension).
+    const stufenName = (id: string): string | undefined => {
+      const st = ALL_RULE_DEFS.find((r) => r.id === id)?.stage;
+      return st === undefined ? undefined : st === 'immer' ? 'immer' : STAGE_SETS[st - 1];
+    };
+    // Benannte Abweichungen: der Fix liegt in einer anderen Stufe als der Fund. Eine Ausnahme,
     // die nicht mehr abweicht, laesst den Test fallen — die Liste darf nur schrumpfen.
+    // CR-GC-757: UC-01 ist gestrichen — die Regel steht in der Stufe Anforderung, deren Skill
+    // se:author-req ist; Hilfe und Stufe stimmen jetzt ueberein (vorher: Dimension uc → se:author-uc).
     const AUSNAHMEN: Record<string, string> = {
-      'UC-01': 'UC ohne REQ — der Fix ist REQ-Autorieren (se:author-req), nicht UC-Autorieren',
       'RD-01': 'unaufgeloeste REQ — der Fix ist eine satisfy-Kante (se:close-violations), kein neuer Text',
       'R-04': 'Modul-Grenzbreite — der Fix beginnt mit der Sicht (se-view:arch), nicht mit dem Schnitt',
     };
     const eintritte = new Set(Object.values(TASK_ENTRY).filter(Boolean));
     // CR-GC-748: eine Regel, deren Hilfe einen Analyse-Skill nennt (FM-01..03, CL-01, TR-01, IR-01 — seit
-    // contracts 11 Kern-Regeln), nimmt die Dimension gar nicht: der Schritt nennt den Skill der Analyse
+    // contracts 11 Kern-Regeln), nimmt die Stufe gar nicht: der Schritt nennt den Skill der Analyse
     // (`analyseSkill`, Fall darunter). Sie ist deshalb keine Abweichung und steht nicht in der Ratsche.
     const { analyseSkill } = await import('../src/loop/generate.js');
     const abweichend = Object.entries(RULE_HELP)
       .filter(([id, e]) => e.prompt && taskOf(id) === 'kern' && !eintritte.has(id) && analyseSkill(id) === undefined)
       .filter(([id, e]) => {
-        const dim = RULE_TO_DIMENSION[id];
-        const skill = dim ? SKILL_FOR_DIMENSION[dim]?.name : undefined;
+        const stufe = stufenName(id);
+        const skill = stufe ? SKILL_FOR_STAGE[stufe]?.name : undefined;
         return skill !== undefined && skill !== e.prompt;
       })
       .map(([id]) => id);
@@ -215,9 +221,9 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
     expect(Object.keys(AUSNAHMEN).filter((id) => !abweichend.includes(id)), 'Ausnahme ohne Abweichung — streichen').toEqual([]);
   });
 
-  it('CR-GC-748: steht eine Regel einer Analyse im Kern-Fokus, nennt der Schritt den Skill der Analyse — nicht den der Dimension', async () => {
+  it('CR-GC-748: steht eine Regel einer Analyse im Kern-Fokus, nennt der Schritt den Skill der Analyse — nicht den der Stufe', async () => {
     const { DEFAULT_METRIC_POLICY, RULE_HELP } = await import('@sigloch/contracts/se');
-    const { generationStep, analyseSkill, SKILL_FOR_DIMENSION } = await import('../src/loop/generate.js');
+    const { generationStep, analyseSkill, SKILL_FOR_STAGE } = await import('../src/loop/generate.js');
     // Eine Risiko-Anforderung ohne Bewertung: FM-01 meldet — eine Regel der Fehlerbetrachtung, im Kern sichtbar.
     const n = (uid: string, type: string, description: string, attributes: Record<string, unknown> = {}) =>
       ({ uid, type, name: uid, description, attributes });
@@ -242,7 +248,10 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
     expect(cur.focusKey).toMatch(/:FM-01:/);
     expect(analyseSkill('FM-01')).toBe(RULE_HELP['FM-01']!.prompt);
     expect(cur.skill).toBe(analyseSkill('FM-01'));
-    expect(cur.skill).not.toBe(SKILL_FOR_DIMENSION[cur.focusDimension!]?.name);
+    // Die Stufe haette einen eigenen Skill — sonst waere „nicht den der Stufe" leer geprueft.
+    expect(cur.focusStage).toBe('Anforderung');
+    expect(SKILL_FOR_STAGE[cur.focusStage!]?.name).toBe('se:author-req');
+    expect(cur.skill).not.toBe(SKILL_FOR_STAGE[cur.focusStage!]?.name);
     expect(cur.prompt).toContain(`lade den Skill ${cur.skill}`);
     // Eine gewoehnliche Kern-Regel gehoert zu keiner Analyse.
     expect(analyseSkill('R-22')).toBeUndefined();

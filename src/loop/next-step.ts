@@ -82,10 +82,10 @@ export function vorschlagAusSchritt(step: GenerationStep, graph: Graph, task: Ru
       : 'Die Analyse ist fertig — zurück zum Modell.';
   }
   if (step.phase === 'stalled') return 'Zeig mir die offenen Regelhinweise und was du je Hinweis vorschlägst.';
-  const dim = step.focusDimension ?? '';
+  const dim = step.focusStage ?? '';
   if (step.phase === 'seed') {
     // Weder SYS noch Intention: die Frage geht an den Nutzer, der Agent stellt sie.
-    if (step.focusDimension === null) return 'Frag mich, was das System für wen leisten soll.';
+    if (step.focusStage === null) return 'Frag mich, was das System für wen leisten soll.';
     const satz = VORSCHLAG_SEED[dim];
     if (!satz) throw new Error(`CR-GC-729: kein Vorschlag für Kaltstart-Stufe ${dim}`);
     return satz;

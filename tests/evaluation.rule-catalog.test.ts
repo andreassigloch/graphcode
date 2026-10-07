@@ -26,7 +26,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { ALL_RULE_DEFS, DIMENSION_READINESS_NAME } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import {
@@ -238,7 +238,9 @@ describe('TEST-rule-catalog-gap: die ungeladenen Regeln werden benannt (CR-GC-42
     // Welche Zahl aus welchem Katalog kommt — die Frage, die vorher nur der
     // Beschreibungstext beantwortete.
     expect(gate.fields).toContain('violationsByRule');
-    expect(steering.fields).toEqual([DIMENSION_READINESS_NAME]);
+    expect(steering.fields).toEqual(['stages']);
+    // CR-GC-757: das genannte Feld steht wirklich am Ergebnis — 13 Stufen, gezaehlt, keine Prozentzahl.
+    expect(readiness.stages).toHaveLength(13);
     expect(notInGate).toEqual(NOT_IN_GATE);
     // Dieselbe Ableitung wie die Auswertung, kein zweiter Rechenweg.
     expect(notInGate).toEqual(ruleCatalogs(harness).notInGate);

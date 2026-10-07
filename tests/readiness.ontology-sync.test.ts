@@ -58,7 +58,7 @@ describe('TEST-dashboard-ontology-sync: readiness is family-measured, not BQ-mea
   });
 
   it('CR-GC-492: geurteilt wird mit der Config des Repos, nicht mit Startwerten', () => {
-    // Die Schwellen der Readiness-Dimensionen stammen aus graphcode.config.jsonc,
+    // Die Schwellen der Regeln (MetricPolicy) stammen aus graphcode.config.jsonc,
     // nicht aus DEFAULT_CONFIG — sonst misst dieser Test an der Produktion vorbei.
     expect(measured.provenance.policy.source).toBe('file');
   });

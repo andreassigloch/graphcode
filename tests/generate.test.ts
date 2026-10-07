@@ -8,7 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { ALL_RULE_DEFS, DEFAULT_METRIC_POLICY, MARK_STAGE } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, DEFAULT_METRIC_POLICY, MARK_STAGE, STAGE_SETS } from '@sigloch/contracts/se';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -18,7 +18,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
-import { generationStep, DIMENSION_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, EIN_BATCH, vorschlagsText, RULE_CLAUSE, SKILL_FOR_DIMENSION } from '../src/loop/generate.js';
+import { generationStep, STAGE_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, EIN_BATCH, vorschlagsText, RULE_CLAUSE, SKILL_FOR_STAGE } from '../src/loop/generate.js';
 import { ElementType } from '@sigloch/contracts/se';
 import { computeMarks } from '../src/kernel/measure/readiness.js';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
@@ -68,6 +68,11 @@ const stufeVon = (ruleId: string): number => {
   const st = ALL_RULE_DEFS.find((r) => r.id === ruleId)?.stage;
   return st === undefined || st === 'immer' ? 0 : st;
 };
+/** Name der Stufe einer Regel (CR-GC-757) — der Kopf des focusKey und der Schluessel von Vorlage, Fokus-Typen und Skill. */
+const stufenName = (ruleId: string): string => {
+  const st = ALL_RULE_DEFS.find((r) => r.id === ruleId)!.stage;
+  return st === 'immer' ? 'immer' : STAGE_SETS[st - 1]!;
+};
 /** Die Marken eines Graphen aus dem Regelstrom des Steuerkatalogs — dieselbe Rechnung wie im Bericht. */
 const markenVon = (graph: Graph) =>
   computeMarks(
@@ -89,7 +94,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
   it('leerer Graph mit Intention → Stufe 1 fordert GENAU die SYS-Wurzel (CR-GC-559)', () => {
     const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
     expect(step.phase).toBe('seed');
-    expect(step.focusDimension).toBe('seed:sys');
+    expect(step.focusStage).toBe('seed:sys');
     expect(step.prompt).toContain(INTENT);
     for (const part of ['SYS', 'dryRun', 'fitAdvisory', 'graph_authoring_guide']) {
       expect(step.prompt).toContain(part);
@@ -137,7 +142,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('TEST-req', 'REQ-tbd', 'verify'),
       ],
     );
-    // Die req-Dimension ist nicht zwingend der erste Fokus — per defer dorthin rotieren.
+    // Die Stufe Anforderung ist nicht zwingend der erste Fokus — per defer dorthin rotieren.
     let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const keys: string[] = [];
     while (step.focusKey && !step.prompt.includes('REQ-Kandidaten') && keys.length < 10) {
@@ -290,10 +295,9 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
   });
 
   it('threshold erreicht, aber eine leere FCHAIN (R-15) → kein done, und die Marke der Regel ist offen (CR-GC-296/748)', () => {
-    // Realer Bug-Fall: alle RULE_TO_DIMENSION-Scores liegen (bei threshold=0) über
-    // der Schwelle und es gibt keine error-Violation — die alte Handoff-Bedingung
-    // hätte "Struktur trägt" gemeldet, obwohl die FCHAIN leer ist (R-15, eine
-    // Existenz-Regel) — die Score-Ratio verdünnt den Fund unsichtbar.
+    // Realer Bug-Fall: es gibt keine error-Violation — die alte Handoff-Bedingung (Prozentwerte je
+    // Dimension über der Schwelle, mit CR-GC-757 entfallen) hätte "Struktur trägt" gemeldet, obwohl
+    // die FCHAIN leer ist (R-15, eine Existenz-Regel).
     const graph = g(
       [
         node('SYS-shop', 'SYS', 'shop', INTENT),
@@ -335,7 +339,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
 });
 
 describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
-  // SYS + 2 UCs ohne Actor/REQ/FCHAIN → mehrere Dimensionen mit Funden,
+  // SYS + 2 UCs ohne Actor/REQ/FCHAIN → mehrere Stufen mit Funden,
   // also garantiert mehr als ein Fokus-Kandidat.
   const graph = g(
     [
@@ -347,10 +351,16 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
     [edge('SYS-shop', 'UC-bestellen', 'compose'), edge('SYS-shop', 'UC-suchen', 'compose')],
   );
 
-  it('focusKey ist stabil und deterministisch (dimension:element_ids sortiert)', () => {
+  it('focusKey ist stabil und deterministisch (stufe:regel:element_ids sortiert)', () => {
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
-    expect(step.focusKey).toMatch(/^[a-z]+:.+/);
+    // CR-GC-757: der Schluessel beginnt mit dem NAMEN der Stufe (vorher: mit der Dimension).
+    const [stufe, regel, elemente] = (step.focusKey as string).split(':');
+    expect([...STAGE_SETS, 'immer']).toContain(stufe);
+    expect(stufe).toBe(step.focusStage);
+    expect(stufe).toBe(stufenName(regel!));
+    expect(elemente).toBe([...elemente!.split(',')].sort().join(','));
+    expect(step.focusElements).toEqual(elemente!.split(','));
     // Gleicher Graph + gleiches defer ⇒ identischer Schritt inkl. focusKey.
     expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
     // Kein Fokus ⇒ kein focusKey (seed).
@@ -387,7 +397,7 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
 });
 
 describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', () => {
-  it('Fund-Fenster mischt nie zwei rule_id in derselben Dimension (uc: R-15 FCHAIN-leer + UC-01 UC-ohne-REQ)', () => {
+  it('Fund-Fenster mischt nie zwei rule_id (R-15 FCHAIN-leer + UC-01 UC-ohne-REQ)', () => {
     // Realer Fall aus dem Audit (gc-run-haiku45, Batch audit-1785579447396-8092tv):
     // eine leere FCHAIN (R-15) und eine REQ-lose UC (UC-01) landeten im selben Fenster.
     const graph = g(
@@ -404,20 +414,21 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
     );
     let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const keys: string[] = [];
-    const seenUcWindows: string[] = [];
     while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 20) {
-      if (step.focusKey.startsWith('uc:')) seenUcWindows.push(step.focusKey);
       keys.push(step.focusKey);
       step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
     }
-    // Jedes uc-Fenster trägt genau eine rule_id im Key (dimension:rule_id:elemente) —
-    // R-15 (FCHAIN-leer) und UC-Funde (UC-bestellen) tauchen nie im selben Fenster auf.
-    expect(seenUcWindows.length).toBeGreaterThan(0);
-    for (const key of seenUcWindows) {
-      const [, ruleId] = key.split(':');
+    // Jedes Fenster trägt genau eine rule_id im Key (stufe:rule_id:elemente) —
+    // R-15 (FCHAIN-leer) und UC-01 (UC-bestellen) tauchen nie im selben Fenster auf.
+    // CR-GC-757: die beiden Regeln liegen jetzt auch in verschiedenen Stufen (vorher: beide Dimension uc).
+    for (const key of keys) {
+      const [stufe, ruleId] = key.split(':');
       expect(ruleId).toMatch(/^[A-Z]+-\d+$/);
+      expect(stufe).toBe(stufenName(ruleId!));
     }
-    expect(new Set(seenUcWindows).size).toBe(seenUcWindows.length);
+    expect(keys).toContain('Funktion:R-15:FCHAIN-leer');
+    expect(keys).toContain('Anforderung:UC-01:UC-bestellen');
+    expect(new Set(keys).size).toBe(keys.length);
   });
 
   it('Prompt trägt kein "(Score X, N Funde)" mehr — die "Funde: ..."-Liste bleibt', () => {
@@ -438,9 +449,9 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
 
 describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-Befund)', () => {
   // Messlauf-Befund (devstral, v18-bo3-Config + CR-290/291): 24 Runden lang im
-  // uc-Fokus festgefahren — R-15 (FCHAIN ohne compose→FUNC) sitzt in der 'uc'-
-  // Dimension, aber weder das uc-Template noch DIMENSION_FOCUS_TYPES.uc noch die
-  // Funde-Zeile erwähnten FUNC/fix_hint. Das Modell befolgte das Template
+  // uc-Fokus festgefahren — R-15 (FCHAIN ohne compose→FUNC) sass in der damaligen
+  // Dimension 'uc', aber weder das uc-Template noch deren Fokus-Typen noch die
+  // Funde-Zeile erwähnten FUNC/fix_hint (seit CR-GC-757: Stufe Funktion). Das Modell befolgte das Template
   // wörtlich (mehr ACTOR/FCHAIN/UC) und erzeugte dadurch IMMER MEHR R-15-Funde,
   // statt die leere FCHAIN mit FUNC zu befüllen — ein sich selbst verstärkender
   // Loop, den CR-290s reine Rule-ID-Fenster (viele Runden am Stück nur R-15)
@@ -458,18 +469,18 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     ],
   );
 
-  it('uc-Template weist bei R-15 explizit auf FUNC compose→FCHAIN hin statt auf neue ACTOR/FCHAIN/UC', () => {
+  it('das R-15-Fenster weist explizit auf FUNC compose→FCHAIN hin statt auf neue ACTOR/FCHAIN/UC', () => {
     // contracts 9.x: auf einer leeren Kette feuert FC-01 zwangsläufig mit (eine
     // Actor-Grenze über den Eltern-UC gibt es ohne ACTOR io→UC nicht mehr) und
     // rankt lexikographisch vor R-15 — per defer ins R-15-Fenster rotieren.
     let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const keys: string[] = [];
-    while (step.focusKey && !/^uc:R-15:/.test(step.focusKey) && keys.length < 10) {
+    while (step.focusKey && !/^Funktion:R-15:/.test(step.focusKey) && keys.length < 10) {
       keys.push(step.focusKey);
       step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
     }
     expect(step.phase).toBe('expand');
-    expect(step.focusKey).toMatch(/^uc:R-15:/);
+    expect(step.focusKey).toMatch(/^Funktion:R-15:/);
     expect(step.prompt).toContain('FUNC');
     expect(step.prompt).toContain('compose→FUNC');
     // CR-GC-564: die Klausel IST die Anweisung. Vorher wurde sie an das Dimensions-Template
@@ -490,22 +501,25 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     const keys: string[] = [];
     let checkedNonR15 = 0;
     let checkedR15 = 0;
+    let checkedTemplate = 0;
     while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 20) {
-      if (step.focusKey.startsWith('uc:')) {
-        const [, ruleId] = step.focusKey.split(':');
-        const template = 'FCHAIN-Szenarien (UC compose FCHAIN)';
+      {
+        // CR-GC-757: die Vorlage haengt an der STUFE des Fensters (vorher: an der Dimension uc).
+        const [stufe, ruleId] = step.focusKey.split(':');
+        const template = GENERATION_TEMPLATE[stufe!]!;
+        expect(template, `Stufe ${stufe} ohne Vorlage`).toBeTruthy();
         if (ruleId === 'R-15') {
           expect(step.prompt).toContain('3±2 FUNC-Elemente');
           expect(step.prompt, 'Klausel UND Template im selben Prompt').not.toContain(template);
           checkedR15++;
-        } else if (ruleId === 'UC-01' || ruleId === 'UC-02') {
+        } else if (ruleId! in RULE_CLAUSE) {
           expect(step.prompt, 'Klausel UND Template im selben Prompt').not.toContain(template);
           checkedNonR15++;
-        } else {
-          // Regel ohne eigene Klausel ⇒ das Dimensions-Template ist der Imperativ.
-          expect(step.prompt).toContain(template);
+        } else if (!/^AF-0\d$/.test(ruleId!)) {
+          // Regel ohne eigene Klausel ⇒ die Vorlage ihrer Stufe ist der Imperativ.
+          expect(step.prompt, `Fenster ${step.focusKey}`).toContain(template);
           expect(step.prompt).not.toContain('3±2 FUNC-Elemente');
-          checkedNonR15++;
+          checkedTemplate++;
         }
       }
       keys.push(step.focusKey);
@@ -514,44 +528,89 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     // Beide Zweige müssen wirklich durchlaufen worden sein, sonst prüft der Test nichts.
     expect(checkedR15).toBeGreaterThan(0);
     expect(checkedNonR15).toBeGreaterThan(0);
+    expect(checkedTemplate).toBeGreaterThan(0);
   });
 
   it('Funde-Zeile trägt den fix_hint der Violation (R-15: "Add FUNC elements via compose trace")', () => {
     // Wie oben: erst ins R-15-Fenster rotieren (FC-01 rankt seit contracts 9.x davor).
     let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const keys: string[] = [];
-    while (step.focusKey && !/^uc:R-15:/.test(step.focusKey) && keys.length < 10) {
+    while (step.focusKey && !/^Funktion:R-15:/.test(step.focusKey) && keys.length < 10) {
       keys.push(step.focusKey);
       step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
     }
     expect(step.prompt).toContain('Fix: Add FUNC elements via compose trace');
   });
 
-  it('DIMENSION_FOCUS_TYPES.uc trägt FUNC — Runden-Injektion liefert die FUNC-Kantengrammatik im uc-Fokus mit', () => {
-    expect(DIMENSION_FOCUS_TYPES.uc).toContain('FUNC');
-    // CR-GC-566: im R-15-Fenster bestimmt die KLAUSEL die Typen, nicht die Dimension —
+  it('die Fokus-Typen der Stufe von R-15 tragen FUNC — Runden-Injektion liefert die FUNC-Kantengrammatik im R-15-Fokus mit', () => {
+    // CR-GC-757: R-15 liegt in der Stufe Funktion; deren Typen tragen FUNC und FCHAIN (vorher: Dimension uc).
+    const stufe = stufenName('R-15');
+    expect(stufe).toBe('Funktion');
+    expect(STAGE_FOCUS_TYPES[stufe]).toContain('FUNC');
+    expect(STAGE_FOCUS_TYPES[stufe]).toContain('FCHAIN');
+    // CR-GC-566: im R-15-Fenster bestimmt die KLAUSEL die Typen, nicht die Stufe —
     // und sie nennt genau die zwei, um die es geht. Dorthin rotieren statt das erste
-    // beliebige uc-Fenster zu nehmen (das ist seit CR-GC-563 UC-01 und redet über REQ).
+    // beliebige Fenster zu nehmen.
     const keys: string[] = [];
     let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
-    while (step.focusKey && !/^uc:R-15:/.test(step.focusKey) && keys.length < 10) {
+    while (step.focusKey && !/^Funktion:R-15:/.test(step.focusKey) && keys.length < 10) {
       keys.push(step.focusKey);
       step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
     }
-    expect(step.focusKey).toMatch(/^uc:R-15:/);
+    expect(step.focusKey).toMatch(/^Funktion:R-15:/);
     expect(step.focusTypes).toContain('FUNC');
   });
 });
 
-describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => {
-  it('das Mapping trägt genau die 8 Readiness-Dimensionen — der Seed ist keine (CR-GC-559)', () => {
-    expect(Object.keys(DIMENSION_FOCUS_TYPES).sort()).toEqual(
-      ['alloc', 'arch', 'cr', 'ms', 'req', 'schema', 'uc', 'ver'],
-    );
-    for (const types of Object.values(DIMENSION_FOCUS_TYPES)) {
+describe('STAGE_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285, CR-GC-757)', () => {
+  /** Jede Stufe, an der ein Modellzug etwas loest: alle ausser Abgleich, dazu `immer`. */
+  const STUFEN_MIT_VORLAGE = [...STAGE_SETS.filter((s) => s !== 'Abgleich'), 'immer'];
+
+  it('das Mapping trägt genau die Stufen ausser Abgleich, dazu `immer` — der Seed ist keine (CR-GC-559)', () => {
+    expect(Object.keys(STAGE_FOCUS_TYPES).sort()).toEqual([...STUFEN_MIT_VORLAGE].sort());
+    for (const types of Object.values(STAGE_FOCUS_TYPES)) {
       expect(types.length).toBeGreaterThan(0);
     }
-    expect(DIMENSION_FOCUS_TYPES.ver).toEqual(['TEST', 'REQ']);
+    expect(STAGE_FOCUS_TYPES.Test).toEqual(['TEST', 'REQ']);
+    expect(Object.keys(STAGE_FOCUS_TYPES).some((k) => k.startsWith('seed'))).toBe(false);
+  });
+
+  it('Vorlage und Fokus-Typen sind ueber dieselben Stufen geschluesselt; Abgleich hat keine (CR-GC-757)', () => {
+    expect(Object.keys(GENERATION_TEMPLATE).sort()).toEqual([...STUFEN_MIT_VORLAGE].sort());
+    expect(GENERATION_TEMPLATE.Abgleich).toBeUndefined();
+    expect(STAGE_FOCUS_TYPES.Abgleich).toBeUndefined();
+    // Jede Regel, die ein Fenster stellen kann (nicht Profil `conformance`), findet Vorlage und Typen ihrer Stufe.
+    for (const r of ALL_RULE_DEFS.filter((d) => d.profile !== 'conformance')) {
+      expect(GENERATION_TEMPLATE[stufenName(r.id)], `${r.id} (${stufenName(r.id)}) ohne Vorlage`).toBeTruthy();
+      expect(STAGE_FOCUS_TYPES[stufenName(r.id)], `${r.id} (${stufenName(r.id)}) ohne Fokus-Typen`).toBeTruthy();
+    }
+    // Was in Abgleich steht, traegt das Profil `conformance` und stellt kein Fenster — deshalb fehlt dort keine Vorlage.
+    const abgleich = ALL_RULE_DEFS.filter((d) => stufenName(d.id) === 'Abgleich');
+    expect(abgleich.length).toBeGreaterThan(0);
+    expect(abgleich.filter((d) => d.profile !== 'conformance').map((d) => d.id)).toEqual([]);
+  });
+
+  it('die acht Vorlagen stehen an den Stufen, die der Auftrag nennt (CR-GC-757, Zuordnung)', () => {
+    const gruppen: string[][] = [
+      ['System', 'Anwendungsfall', 'Wirkkette'], // ← uc
+      ['Anforderung'], // ← req
+      ['Funktion', 'Datenfluss', 'immer'], // ← arch
+      ['Modul'], // ← alloc
+      ['Schema'], // ← schema
+      ['Test', 'Bindung'], // ← ver
+      ['Plan'], // ← ms
+    ];
+    // In einer Gruppe dieselbe Vorlage und dieselben Typen, zwischen den Gruppen verschiedene.
+    for (const gruppe of gruppen) {
+      for (const stufe of gruppe) {
+        expect(GENERATION_TEMPLATE[stufe], stufe).toBe(GENERATION_TEMPLATE[gruppe[0]!]);
+        expect(STAGE_FOCUS_TYPES[stufe], stufe).toEqual(STAGE_FOCUS_TYPES[gruppe[0]!]);
+      }
+    }
+    expect(new Set(gruppen.map((gr) => GENERATION_TEMPLATE[gr[0]!])).size).toBe(gruppen.length);
+    expect(gruppen.flat().sort()).toEqual([...STUFEN_MIT_VORLAGE].sort());
+    // Die Vorlage `cr` („Lege CR-Knoten … an") ist gestrichen — den Bauplan schneidet se-plan.
+    expect(Object.values(GENERATION_TEMPLATE).some((t) => t.includes('Lege CR-Knoten'))).toBe(false);
   });
 
   it('Stufe 1 trägt nur SYS; seed ohne Intention trägt keine Typen', () => {
@@ -559,7 +618,7 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
     expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS).focusTypes).toEqual([]);
   });
 
-  it('expand trägt die Typen der Fokus-Dimension (konsistent zum focusKey)', () => {
+  it('expand trägt die Typen der Fokus-Stufe (konsistent zum focusKey)', () => {
     const graph = g(
       [
         node('SYS-shop', 'SYS', 'shop', INTENT),
@@ -570,9 +629,10 @@ describe('DIMENSION_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285)', () => 
     );
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
-    const [dim, regel] = (step.focusKey as string).split(':');
-    // CR-GC-566: die Klausel hat Vorrang, wenn es eine gibt — sonst die Dimension.
-    expect(step.focusTypes).toEqual(RULE_CLAUSE[regel]?.types ?? DIMENSION_FOCUS_TYPES[dim]);
+    const [stufe, regel] = (step.focusKey as string).split(':');
+    expect(stufe).toBe(step.focusStage);
+    // CR-GC-566: die Klausel hat Vorrang, wenn es eine gibt — sonst die Stufe.
+    expect(step.focusTypes).toEqual(RULE_CLAUSE[regel]?.types ?? STAGE_FOCUS_TYPES[stufe]);
   });
 
   // 'handoff trägt keine Fokus-Typen' (die literale focusTypes:[] im handoff-Return)
@@ -673,16 +733,18 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
 describe('CR-GC-589: der Schritt nennt seine Anleitung — eine Zuordnung fuer beide Treiber', () => {
   it('seed:uc → se:author-uc, ohne Skill → null', () => {
     const seed = generationStep(g([node('SYS-shop', 'SYS', 'shop', INTENT)], []), DEFAULT_METRIC_POLICY, INTENT, 0.8);
-    expect(seed.focusDimension).toBe('seed:uc');
+    expect(seed.focusStage).toBe('seed:uc');
     expect(seed.skill).toBe('se:author-uc');
-    expect(SKILL_FOR_DIMENSION['ver']).toBeUndefined(); // keine Anleitung, kein erfundener Eintrag
+    // keine Anleitung, kein erfundener Eintrag: fuer Schema, Test, Plan und Bindung gibt es keinen Autorier-Skill
+    for (const stufe of ['Schema', 'Test', 'Plan', 'Bindung', 'Abgleich']) expect(SKILL_FOR_STAGE[stufe], stufe).toBeUndefined();
+    expect(SKILL_FOR_STAGE['Anforderung']?.name).toBe('se:author-req');
   });
 
   it('der Executor hat keine zweite Tabelle und keine zweite Entscheidung (CR-GC-655)', () => {
     const src = readFileSync(fileURLToPath(new URL('../src/loop/executor-prompt.ts', import.meta.url)), 'utf8');
-    expect(src).not.toMatch(/const SKILL_FOR_DIMENSION\s*[:=]/);
-    // Er liest den Skill, den der Schritt nennt — nicht die Dimension.
-    expect(src).not.toContain('SKILL_FOR_DIMENSION[');
+    expect(src).not.toMatch(/const SKILL_FOR_(STAGE|DIMENSION)\s*[:=]/);
+    // Er liest den Skill, den der Schritt nennt — nicht die Stufe.
+    expect(src).not.toMatch(/SKILL_FOR_(STAGE|DIMENSION)\[/);
     expect(src).toContain('skillDatei(step.skill)');
   });
 });
@@ -822,17 +884,24 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(text).not.toMatch(/beispiel/);
   });
 
-  it("'driver' verlangt je Dimension EINE Loesung, keine Alternativen im selben Batch (ITEM-2026-610)", () => {
+  it("'driver' verlangt je Stufe EINE Loesung, keine Alternativen im selben Batch (ITEM-2026-610)", () => {
     // Gemessen gcrun-310 (candidates=1): „2 alternative Zerlegungen, lass das Gate waehlen" — der
     // Treiber wendet den GANZEN Batch an, also landeten beide, danach Alternativen der Alternativen
     // (-alt1..alt6, -alt2-alt1), 35 von 49 REQ Dubletten. Alternativen entstehen im Treiber ueber
     // N Stichproben (Best-of-N), nie innerhalb eines Batches.
-    for (const dimension of Object.keys(GENERATION_TEMPLATE)) {
-      expect(vorschlagsText(dimension, 'driver'), dimension).not.toMatch(/[Aa]lternativ|Lass das Gate wählen/);
+    for (const stufe of Object.keys(GENERATION_TEMPLATE)) {
+      expect(vorschlagsText(stufe, 'driver'), stufe).not.toMatch(/[Aa]lternativ|Lass das Gate wählen/);
     }
     // Der Host probt selbst per dryRun — dort bleiben Alternativen richtig.
-    expect(vorschlagsText('arch', 'host')).toContain('2 alternative');
-    expect(vorschlagsText('arch', 'driver')).toContain('Genau EINE Zerlegung');
+    for (const stufe of ['Funktion', 'Datenfluss', 'immer']) {
+      expect(vorschlagsText(stufe, 'host'), stufe).toContain('2 alternative');
+      expect(vorschlagsText(stufe, 'driver'), stufe).toContain('Genau EINE Zerlegung');
+    }
+    expect(vorschlagsText('Modul', 'host')).toContain('2 Alternativen');
+    expect(vorschlagsText('Modul', 'driver')).toContain('EINEN MOD-Schnitt');
+    // Eine Stufe ohne Vorlage (Abgleich) hat in keinem Modus einen Text.
+    expect(vorschlagsText('Abgleich', 'host')).toBeUndefined();
+    expect(vorschlagsText('Abgleich', 'driver')).toBeUndefined();
   });
 
   it("'driver' (expand): gleiche Funde/Fokus, nur das Protokoll wechselt", () => {
@@ -917,7 +986,7 @@ describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
   it('SYS allein → Stufe 2 destilliert die UCs', () => {
     const step = generationStep(sysOnly, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('seed');
-    expect(step.focusDimension).toBe('seed:uc');
+    expect(step.focusStage).toBe('seed:uc');
     expect(step.focusTypes).toEqual([...SEED_STAGES.uc]);
     expect(step.prompt).toContain('3–7 UCs');
   });
@@ -925,7 +994,7 @@ describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
   it('SYS + UC → Stufe 3 schneidet das Minimum distinkter ACTORs', () => {
     const step = generationStep(sysUc, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('seed');
-    expect(step.focusDimension).toBe('seed:actor');
+    expect(step.focusStage).toBe('seed:actor');
     expect(step.focusTypes).toEqual([...SEED_STAGES.actor]);
     expect(step.prompt).toContain('MINIMUM');
     // Der gemessene Fehler war die erfundene Kante — die Stufe verbietet sie ausdrücklich.
@@ -962,7 +1031,7 @@ describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
   it('die Intentions-Rückfrage bleibt vorgeschaltet — ohne Intention keine Stufe', () => {
     const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('seed');
-    expect(step.focusDimension).toBeNull();
+    expect(step.focusStage).toBeNull();
   });
 
   it('jede Stufe ist deterministisch', () => {
@@ -1065,13 +1134,13 @@ describe('CR-GC-564: die Regel-Klausel IST die Anweisung', () => {
     ],
   );
 
-  it('UC-01 verlangt REQ — und NICHT die ACTOR/FCHAIN/UC-Aufzählung der Dimension', () => {
+  it('UC-01 verlangt REQ — und NICHT die ACTOR/FCHAIN/UC-Aufzählung der UC-Vorlage', () => {
     const step = bisRegel(ohneReq, 'UC-01');
     expect((step.focusKey as string).split(':')[1]).toBe('UC-01');
     expect(step.prompt).toContain('REQ-Kandidaten');
     expect(step.prompt).toContain('UC compose→REQ');
     // Der Satz, den das Modell in Lauf 5 befolgt hat, darf nicht mehr im Prompt stehen.
-    expect(step.prompt, 'das Dimensions-Template steht neben der Klausel').not.toContain(
+    expect(step.prompt, 'die UC-Vorlage steht neben der Klausel').not.toContain(
       'FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention',
     );
   });
@@ -1083,7 +1152,7 @@ describe('CR-GC-564: die Regel-Klausel IST die Anweisung', () => {
     expect(step.prompt).toContain('R-18');
   });
 
-  it('eine Regel OHNE Klausel bekommt weiterhin das Dimensions-Template', () => {
+  it('eine Regel OHNE Klausel bekommt die Vorlage ihrer Stufe', () => {
     // UC-01 und UC-02 zurückstellen ⇒ FC-02, das keine eigene Klausel hat.
     const keys: string[] = [];
     let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
@@ -1092,6 +1161,8 @@ describe('CR-GC-564: die Regel-Klausel IST die Anweisung', () => {
       step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
     }
     expect((step.focusKey as string).split(':')[1]).toBe('FC-02');
+    expect(step.focusStage).toBe(stufenName('FC-02'));
+    expect(step.prompt).toContain(GENERATION_TEMPLATE[stufenName('FC-02')]);
     expect(step.prompt).toContain('FCHAIN-Szenarien (UC compose FCHAIN)');
   });
 
@@ -1126,7 +1197,7 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
     expect(step.focusTypes).toContain('FLOW');
   });
 
-  it('eine Regel ohne Klausel bekommt die Typen ihrer Dimension', () => {
+  it('eine Regel ohne Klausel bekommt die Typen ihrer Stufe', () => {
     const keys: string[] = [];
     let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     for (let i = 0; i < 4 && ['UC-01', 'UC-02'].includes((step.focusKey as string).split(':')[1]); i++) {
@@ -1134,7 +1205,8 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
       step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
     }
     expect((step.focusKey as string).split(':')[1]).toBe('FC-02');
-    expect(step.focusTypes).toEqual(DIMENSION_FOCUS_TYPES.uc);
+    expect(stufenName('FC-02')).toBe('Anwendungsfall');
+    expect(step.focusTypes).toEqual(STAGE_FOCUS_TYPES.Anwendungsfall);
   });
 
   /**
@@ -1149,10 +1221,10 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
       [...new Set(text.match(/\b[A-Z]{2,7}\b/g) ?? [])].filter((w) => typen.has(w));
     const luecken: string[] = [];
 
-    for (const [dimension, text] of [...Object.entries(GENERATION_TEMPLATE), ...Object.entries(EIN_BATCH)]) {
-      const fokus = new Set(DIMENSION_FOCUS_TYPES[dimension] ?? []);
-      for (const t of genannt(text)) {
-        if (!fokus.has(t)) luecken.push(`Template ${dimension} nennt ${t}, Fokus hat es nicht`);
+    for (const [stufe, text] of [...Object.entries(GENERATION_TEMPLATE), ...Object.entries(EIN_BATCH)]) {
+      const fokus = new Set(STAGE_FOCUS_TYPES[stufe] ?? []);
+      for (const t of genannt(text as string)) {
+        if (!fokus.has(t)) luecken.push(`Template ${stufe} nennt ${t}, Fokus hat es nicht`);
       }
     }
     for (const [regel, klausel] of Object.entries(RULE_CLAUSE)) {
@@ -1200,7 +1272,7 @@ describe('CR-GC-648: RD-01 verlangt den Erfueller, nicht neue REQs', () => {
   });
 });
 
-describe('CR-GC-655: die Anleitung folgt dem Gewinner, nicht der Dimension', () => {
+describe('CR-GC-655: die Anleitung folgt dem Gewinner, nicht der Stufe', () => {
   // Gemessen (gcrun-60/62): im UC-02-Fenster stand der uc-Skill author-uc daneben; qwen3-coder schrieb
   // dessen Beispiel (SYS compose UC, UC compose FCHAIN) drei Runden lang ab, statt den ACTOR-Pfad zu
   // bauen — und ueberschrieb dabei UC-Beschreibungen.
@@ -1232,7 +1304,7 @@ describe('CR-GC-655: die Anleitung folgt dem Gewinner, nicht der Dimension', () 
     }
   });
 
-  it('ein Template-Fenster (keine Klausel) behaelt den Skill seiner Dimension', () => {
+  it('ein Template-Fenster (keine Klausel) behaelt den Skill seiner Stufe', () => {
     const keys: string[] = [];
     let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     for (let i = 0; i < 6 && step.focusKey && (step.focusKey.split(':')[1] as string) in RULE_CLAUSE; i++) {
@@ -1241,6 +1313,8 @@ describe('CR-GC-655: die Anleitung folgt dem Gewinner, nicht der Dimension', () 
     }
     const regel = (step.focusKey as string).split(':')[1];
     expect(regel in RULE_CLAUSE, `Fenster ${regel}`).toBe(false);
-    expect(step.skill).toBe(SKILL_FOR_DIMENSION[step.focusDimension as string]?.name ?? null);
+    expect(step.focusStage).toBe(stufenName(regel!));
+    expect(SKILL_FOR_STAGE[stufenName(regel!)], `Stufe ${stufenName(regel!)} ohne Skill — der Fall prueft sonst nur null`).toBeDefined();
+    expect(step.skill).toBe(SKILL_FOR_STAGE[stufenName(regel!)]!.name);
   });
 });

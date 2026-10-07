@@ -35,7 +35,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { ALL_RULE_DEFS, Mark, MARK_STAGE } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { generationStep, DIMENSION_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
+import { generationStep, STAGE_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
 import { computeMarks } from '../src/kernel/measure/readiness.js';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import { ARCH_FIXTURE, makeSteeringConfig, parseFocusKey, scriptedActor } from './fixtures/steering-graphs.js';
@@ -271,14 +271,18 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
     expect(harness.getGraph().nodes.length).toBe(ARCH_FIXTURE.elements.length);
   });
 
-  it('T-B5 — the focus types are the ones the focus dimension declares, not free text', async () => {
+  it('T-B5 — the focus types are the ones the focus stage declares, not free text', async () => {
     const s = step();
-    const { dimension } = parseFocusKey(s.focusKey!);
-    // CR-GC-566: a rule clause declares its own types and wins over the dimension —
+    // CR-GC-757: the head of the focus key is the NAME of the stage (the fixture helper still calls
+    // the field `dimension`).
+    const { dimension: stufe } = parseFocusKey(s.focusKey!);
+    expect(stufe).toBe(s.focusStage);
+    expect(STAGE_FOCUS_TYPES[stufe], `stage ${stufe} declares no focus types`).toBeDefined();
+    // CR-GC-566: a rule clause declares its own types and wins over the stage —
     // otherwise the injected grammar covers types the instruction never asks for, and
-    // misses the ones it does. Falls back to the dimension when there is no clause.
+    // misses the ones it does. Falls back to the stage when there is no clause.
     const regel = s.focusKey!.split(':')[1];
-    expect(s.focusTypes).toEqual(RULE_CLAUSE[regel]?.types ?? DIMENSION_FOCUS_TYPES[dimension]);
+    expect(s.focusTypes).toEqual(RULE_CLAUSE[regel]?.types ?? STAGE_FOCUS_TYPES[stufe]);
   });
 
   it('T-B5 — deferring EVERYTHING does not dead-end the driver', async () => {

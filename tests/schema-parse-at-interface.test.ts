@@ -53,7 +53,8 @@ const FIT = {
 /** Ein steeringDelta, wie der dryRun-Zweig von `graph_mutate` es emittiert. */
 const DELTA = {
   blockingErrors: { before: 2, after: 0 },
-  dimensions: { req: { before: 0.5, after: 0.7, delta: 0.2 } },
+  // CR-GC-757: Befunde je Stufe, `delta = before − after` (positiv = weniger Befunde).
+  stages: { Anforderung: { before: 5, after: 3, delta: 2 }, Modul: { before: 1, after: 2, delta: -1 } },
 };
 
 const cand = (index: number, verdict: Record<string, unknown> | null) =>
@@ -87,17 +88,30 @@ describe('SCHEMA-steering-delta wird im Ranking geparst (RC-04)', () => {
   it('vertragstreues Delta steuert Fokus- und Gesamt-Delta', () => {
     const c = cand(0, { success: true, steeringDelta: DELTA });
     expect(steeringDeltaOf(c.verdict)).toEqual(DELTA);
-    expect(focusDelta(c.verdict, 'req')).toBeCloseTo(0.2);
-    expect(totalDelta(c.verdict)).toBeCloseTo(0.2);
+    expect(focusDelta(c.verdict, 'Anforderung')).toBe(2);
+    expect(focusDelta(c.verdict, 'Modul')).toBe(-1);
+    // Eine Stufe, die das Delta nicht nennt (kein Befund auf beiden Seiten), zaehlt 0.
+    expect(focusDelta(c.verdict, 'Schema')).toBe(0);
+    expect(totalDelta(c.verdict)).toBe(1);
+  });
+
+  it('die alte Form (`dimensions` statt `stages`) ist kein Delta mehr (CR-GC-757)', () => {
+    const alt = cand(0, {
+      success: true,
+      steeringDelta: { blockingErrors: DELTA.blockingErrors, dimensions: { req: { before: 0.5, after: 0.7, delta: 0.2 } } },
+    });
+    expect(steeringDeltaOf(alt.verdict)).toBeNull();
+    expect(focusDelta(alt.verdict, 'req')).toBe(0);
+    expect(totalDelta(alt.verdict)).toBe(0);
   });
 
   it('ein Delta ohne blockingErrors ist kein Delta — es rankt nicht als Fortschritt', () => {
-    // Der gefährliche Fall: ohne Prüfung hätte `dimensions` gezogen, während
+    // Der gefährliche Fall: ohne Prüfung hätte `stages` gezogen, während
     // `blockingErrors` fehlt — ein Kandidat, der Gate-Fehler einführt, wäre als
     // sauberer Fortschritt gerankt worden.
-    const broken = cand(0, { success: true, steeringDelta: { dimensions: DELTA.dimensions } });
+    const broken = cand(0, { success: true, steeringDelta: { stages: DELTA.stages } });
     expect(steeringDeltaOf(broken.verdict)).toBeNull();
-    expect(focusDelta(broken.verdict, 'req')).toBe(0);
+    expect(focusDelta(broken.verdict, 'Anforderung')).toBe(0);
     expect(totalDelta(broken.verdict)).toBe(0);
   });
 
@@ -107,9 +121,9 @@ describe('SCHEMA-steering-delta wird im Ranking geparst (RC-04)', () => {
       success: true,
       tier: 'suggest',
       mutations: 99,
-      steeringDelta: { blockingErrors: 'keine', dimensions: { req: { delta: 9 } } },
+      steeringDelta: { blockingErrors: 'keine', stages: { Anforderung: { delta: 9 } } },
     });
-    expect(rankCandidates([garbage, valid], 'req')[0]).toBe(valid);
+    expect(rankCandidates([garbage, valid], 'Anforderung')[0]).toBe(valid);
   });
 });
 
@@ -158,8 +172,13 @@ describe('SCHEMA-generation-step wird am Registry-Übergang geparst (RC-04)', ()
     const raw = await registry.graph_generate.handler({ intent: 'Ein Testsystem für den Vertrag.' });
     const step = GenerationStep.parse(raw);
     expect(step.phase).toBe('seed');
-    // Genestete Felder sind mitgeprüft: die Readiness-Zeilen tragen je eine Dimension.
-    for (const zeile of step.readiness) expect(typeof zeile.dimension).toBe('string');
+    // Genestete Felder sind mitgeprüft: die Readiness-Zeilen tragen je eine Stufe und ihre Zahl (CR-GC-757).
+    // Am leeren Graphen meldet genau die Existenz-Regel des Systems — die Liste ist nicht leer.
+    expect(step.readiness).toEqual([{ stage: 'System', findings: 1 }]);
+    expect(step.focusStage).toBe('seed:sys');
+    // Die alte Zeilenform (Dimension, Prozentwert) erfüllt den Vertrag nicht mehr.
+    const alt = { ...(raw as Record<string, unknown>), readiness: [{ dimension: 'req', score: 0.5, violations: 1 }] };
+    expect(GenerationStep.safeParse(alt).success).toBe(false);
   });
 
   it('eine gewanderte Tool-Antwort bricht laut ab, statt still auf undefined zu steuern', async () => {

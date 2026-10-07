@@ -37,9 +37,9 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'Bindung und Abgleich — ihre Arbeitsliste. Andere Warnungen halten keine Marke: „warnungsfrei" ist ' +
       'die getrennte Aussage von `rules_evaluate`. Ohne `detail` ist `holding` leer und nur `reached` zählt. ' +
       'Welche Regel zu welcher Marke gehört: `graph_help({token:"<ruleId>"})` → `stage`, `mark`.\n' +
-      '• `dimension_readiness` — die 8 RULE_TO_DIMENSION-Themenscores (req/uc/arch/alloc/ver/schema/' +
-      'cr/ms), gescored aus dem VOLLEN contracts-Katalog inkl. BQ-*/ND-*, also einer WEITEREN ' +
-      'Grundgesamtheit als `violationsByRule`.\n' +
+      '• `stages` — die Zahl der Befunde je Stufe (System bis Abgleich, dann `immer`), gezählt aus dem ' +
+      'VOLLEN contracts-Katalog inkl. BQ-*/ND-*, also einer WEITEREN Grundgesamtheit als ' +
+      '`violationsByRule`. Keine Prozentzahl: 0 heißt, in dieser Stufe meldet nichts.\n' +
       '• `steer` — der Steuerungsraum aus demselben Snapshot: worst/worstAt/mean/score/measured plus ' +
       'ein Term je gemessener Blackbox. KLEINER IST BESSER, 0 heißt: jede Blackbox im Budget. ' +
       '`score` nur zusammen mit `measured` lesen — score 0 bei measured 0 heißt "nichts gemessen", ' +

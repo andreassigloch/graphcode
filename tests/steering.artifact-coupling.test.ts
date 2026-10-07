@@ -48,7 +48,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { exportMarkdown, type MarkdownView } from '../src/projections/exporter.js';
-import { generationStep, DIMENSION_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
+import { generationStep, STAGE_FOCUS_TYPES, RULE_CLAUSE } from '../src/loop/generate.js';
 import { ALL_RULE_DEFS } from '@sigloch/contracts/se';
 import { GATE_FIXTURE, GATE_FINDINGS, makeSteeringConfig, parseFocusKey, scriptedActor } from './fixtures/steering-graphs.js';
 import type { MutateCommand } from '@sigloch/contracts/harness';
@@ -187,11 +187,11 @@ describe('T-B4 (CR-GC-353): a rule finding and a document gap are the same fact'
       const s = step();
       expect(s.focusKey, `${label}: no focus although findings are open`).toBeTruthy();
       // focusTypes is not free text — it is what the rule clause declares, or failing
-      // that the focus DIMENSION (CR-GC-566: the clause wins, same precedence as the
+      // that the focus STAGE (CR-GC-566, CR-GC-757 — the fixture helper still names the key head `dimension`: the clause wins, same precedence as the
       // imperative in CR-GC-564).
       const regel = s.focusKey!.split(':')[1];
       expect(s.focusTypes, `${label}: focusTypes drifted from its declared source`).toEqual(
-        RULE_CLAUSE[regel]?.types ?? DIMENSION_FOCUS_TYPES[parseFocusKey(s.focusKey!).dimension],
+        RULE_CLAUSE[regel]?.types ?? STAGE_FOCUS_TYPES[parseFocusKey(s.focusKey!).dimension],
       );
     };
 

@@ -3101,6 +3101,12 @@
       "description": "docs/cr/open/CR-GC-756-sicht-variantenvergleich-streichen.md"
     },
     {
+      "id": "CR-GC-757",
+      "type": "CR",
+      "name": "Stufe statt Dimension - Befunde zaehlen statt Prozent",
+      "description": "docs/cr/open/CR-GC-757-stufe-statt-dimension-befunde-zaehlen-st.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14949,6 +14955,41 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-757",
+      "target": "FUNC-compute-steering-delta",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-757",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-757",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-757",
+      "target": "FUNC-rank-candidates",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-757",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-757",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-757",
+      "target": "SCHEMA-steering-delta",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23651,5 +23692,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 626
+  "graphVersion": 628
 }

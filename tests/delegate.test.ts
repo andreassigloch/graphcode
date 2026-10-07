@@ -226,15 +226,15 @@ describe('graph_delegate (CR-GC-714)', () => {
 
   it('CR-GC-728: festgefahren mit offenen Analysen nennt den Task-Aufruf, ohne Analysen das Ende', () => {
     const mitTasks = schlussHinweis(
-      { stopReason: 'stalled', startPhase: 'expand', offeneTasks: ['conops', 'fmea'], offeneFunde: ['task:AF-01:SYS-x'] },
+      { stopReason: 'stalled', startPhase: 'expand', offeneTasks: ['conops', 'fmea'], offeneFunde: ['Anforderung:AF-01:SYS-x'] },
       { auftrag: 'weiter' },
     );
     expect(mitTasks).toContain('graph_delegate({task:"conops"})');
     expect(mitTasks).toContain('Analysen conops, fmea');
     expect(mitTasks).toContain('Der Auftragstext wurde nicht gelesen');
-    const ohne = schlussHinweis({ stopReason: 'stalled', startPhase: 'expand', offeneTasks: [], offeneFunde: ['uc:UC-02:UC-a'] }, { task: undefined });
+    const ohne = schlussHinweis({ stopReason: 'stalled', startPhase: 'expand', offeneTasks: [], offeneFunde: ['Anwendungsfall:UC-02:UC-a'] }, { task: undefined });
     expect(ohne).toContain('sitzt fest');
-    expect(ohne).toContain('uc:UC-02:UC-a');
+    expect(ohne).toContain('Anwendungsfall:UC-02:UC-a');
     expect(ohne).toContain('berichte dem Nutzer');
     expect(schlussHinweis({ stopReason: 'handoff', startPhase: 'seed' }, { auftrag: 'x' })).toBe('Fertig: kein offener Regelhinweis mehr.');
   });

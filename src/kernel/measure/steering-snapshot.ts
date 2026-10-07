@@ -16,9 +16,9 @@ import { focusViolations, blockingOf } from './focus-set.js';
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { MetricPolicy } from '@sigloch/contracts/se';
-import { OntologyGraph, ReadinessReport, RuleViolation } from '@sigloch/contracts/se';
+import { OntologyGraph, RuleViolation } from '@sigloch/contracts/se';
+import { countByStage } from '@sigloch/graphcode-client';
 import { evaluateAllRules } from '@sigloch/contracts/se';
-import { computeReadiness } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../conformance.js';
 
 /**
@@ -32,7 +32,8 @@ export const SteeringSnapshotSchema = z.object({
   violations: z.array(RuleViolation),
   /** Error-Funde — die Gate-Blocker-Zählung des Steering-Raums. */
   blockingErrors: z.number(),
-  report: ReadinessReport,
+  /** CR-GC-757: Befunde je Stufe (1–12, dann `immer`) — die eine Einteilung; keine Prozentzahl. */
+  stages: z.array(z.object({ name: z.string(), findings: z.number() })),
   /** CR-GC-598: die Fokusmenge (focus-set.ts) — was die Steuerung zeigt. */
   focus: z.array(RuleViolation),
 });
@@ -102,52 +103,50 @@ function buildSnapshot(graph: Graph, policy: MetricPolicy): SteeringSnapshot {
     // 74-Regel-Stroms (FM-03 war damals ein nicht-blockender error und abnehmbar; die Probe meldete sonst 0 → 8).
     focus,
     blockingErrors: blockingOf(focus),
-    report: computeReadiness(og, policy),
+    stages: befundeJeStufe(violations),
   };
   return snapshot;
 }
 
-export const SteeringDimensionDelta = z.object({
-  // null = nicht messbar (Kernmenge leer, contracts 9.x) — nie 0 %.
-  before: z.number().nullable(),
-  after: z.number().nullable(),
+/** Befunde je Stufe — `countByStage` des Clients (eine Rechnung fuer Schritt, Probe, Bericht und Viewer). */
+function befundeJeStufe(violations: readonly RuleViolation[]): { name: string; findings: number }[] {
+  const harness = violations.map((v) => ({ ruleId: v.rule_id, severity: v.severity, elementId: v.element_id, message: v.message }));
+  return countByStage(harness as Parameters<typeof countByStage>[0]).map((s) => ({ name: s.name, findings: s.findings }));
+}
+
+export const SteeringStageDelta = z.object({
+  before: z.number(),
+  after: z.number(),
+  /** Positiv = weniger Befunde in der Stufe. */
   delta: z.number(),
 });
-export type SteeringDimensionDelta = z.infer<typeof SteeringDimensionDelta>;
+export type SteeringStageDelta = z.infer<typeof SteeringStageDelta>;
 
 /**
- * Steuerungs-Fortschritt einer (probierten) Mutation im Readiness-Raum:
- * blockingErrors vorher/nachher + Score-Delta je Dimension. Dimensionen mit
- * applicable=0 auf BEIDEN Seiten entfallen (dort ist der Score konstruktiv 0,
- * nicht "perfekt").
+ * Steuerungs-Fortschritt einer (probierten) Mutation: blockingErrors vorher/nachher und die Zahl der
+ * Befunde je Stufe vorher/nachher (CR-GC-757 — vorher ein Score-Delta je Dimension). Stufen ohne
+ * Befund auf beiden Seiten entfallen.
  *
- * Zod, nicht `interface` (SCHEMA-steering-delta): das Delta hängt am dryRun-
- * Verdict von `graph_mutate` und wird im Best-of-N-Ranking aus einem
- * Tool-Ergebnis gelesen — dort war es bis hierher ein blanker Cast.
+ * Zod, nicht `interface` (SCHEMA-steering-delta): das Delta hängt am dryRun-Verdict von
+ * `graph_mutate` und wird im Best-of-N-Ranking aus einem Tool-Ergebnis gelesen.
  */
 export const SteeringDelta = z.object({
   blockingErrors: z.object({ before: z.number(), after: z.number() }),
-  dimensions: z.record(z.string(), SteeringDimensionDelta),
+  stages: z.record(z.string(), SteeringStageDelta),
 });
 export type SteeringDelta = z.infer<typeof SteeringDelta>;
 
 /** Delta zweier Snapshots — deterministisch, reine Daten (kein Zeitstempel). */
 export function computeSteeringDelta(before: SteeringSnapshot, after: SteeringSnapshot): SteeringDelta {
-  const dimensions: Record<string, SteeringDimensionDelta> = {};
-  const beforeByDim = new Map(before.report.scores.map((s) => [s.dimension as string, s]));
-  for (const a of after.report.scores) {
-    const b = beforeByDim.get(a.dimension as string);
-    if ((b?.applicable ?? 0) === 0 && a.applicable === 0) continue;
-    // Delta über nicht messbare Seiten: null zählt als 0 — „wird messbar" ist Fortschritt,
-    // die before/after-Werte selbst bleiben ehrlich null.
-    dimensions[a.dimension as string] = {
-      before: b?.score ?? null,
-      after: a.score,
-      delta: (a.score ?? 0) - (b?.score ?? 0),
-    };
+  const stages: Record<string, SteeringStageDelta> = {};
+  const vorher = new Map(before.stages.map((s) => [s.name, s.findings]));
+  for (const a of after.stages) {
+    const b = vorher.get(a.name) ?? 0;
+    if (b === 0 && a.findings === 0) continue;
+    stages[a.name] = { before: b, after: a.findings, delta: b - a.findings };
   }
   return {
     blockingErrors: { before: before.blockingErrors, after: after.blockingErrors },
-    dimensions,
+    stages,
   };
 }

@@ -116,7 +116,7 @@ describe('CR-GC-601: graph_generate {task}', () => {
   it('im Kern: steht ein Eintrittspunkt im Fokus, nennt der Prompt den Task und seinen Skill', () => {
     let cur = step('kern');
     const defer: string[] = [];
-    while (cur.focusKey && !/^[a-z]+:AF-0\d:/.test(cur.focusKey) && defer.length < 60) {
+    while (cur.focusKey && !/^[^:]+:AF-0\d:/.test(cur.focusKey) && defer.length < 60) {
       defer.push(cur.focusKey);
       cur = step('kern', defer);
     }
@@ -139,13 +139,13 @@ describe('ITEM-2026-632/633: der Treiber fokussiert keinen Eintrittspunkt', () =
       cur = drv(defer);
     }
     expect(defer.length).toBeGreaterThan(0);
-    expect(defer.filter((k) => /^[a-z]+:AF-0\d:/.test(k))).toEqual([]);
+    expect(defer.filter((k) => /^[^:]+:AF-0\d:/.test(k))).toEqual([]);
   });
 
   it('der Host (Claude Code) bekommt den Eintrittspunkt weiter — er kann den Task starten', () => {
     let cur = step('kern');
     const defer: string[] = [];
-    while (cur.focusKey && !/^[a-z]+:AF-0\d:/.test(cur.focusKey) && defer.length < 60) {
+    while (cur.focusKey && !/^[^:]+:AF-0\d:/.test(cur.focusKey) && defer.length < 60) {
       defer.push(cur.focusKey);
       cur = step('kern', defer);
     }

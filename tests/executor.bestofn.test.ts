@@ -8,8 +8,8 @@
  *
  * Kern-Invarianten: N Kandidaten werden als Gate-dryRun geprobt (auditiert als
  * validate, nie ein Step-Abschluss), NUR der Gewinner wird ohne dryRun
- * angewandt; die Auswahl ist deterministisch (tier → Fokus-Score-Delta →
- * Gesamt-Readiness-Delta mit blockingErrors-Anstieg strikt schlechter →
+ * angewandt; die Auswahl ist deterministisch (Befund-Delta der Fokus-Stufe →
+ * Gesamt-Befund-Delta mit blockingErrors-Anstieg strikt schlechter → tier →
  * Δm arch → Ausbeute); judge:'model' loggt BEIDE Picks; N=1 bleibt der
  * unveränderte heutige Pfad.
  */
@@ -125,10 +125,10 @@ const FUNC_PAIR_BATCH = {
   ],
 };
 
-// --- CR-GC-289: A-vs-B — Volumen gegen Fokus-Reparatur (Fokus nach Seed = 'uc') ---
-// A: 6 neue UCs ohne REQ (12 Mutationen) — Steering: uc-Score SINKT (-0.12),
-//    blockingErrors steigen 1→7. B: REQ+TEST auf UC-login (4 Mutationen) —
-//    uc +0.18, req/ver werden anwendbar, blockingErrors 1→0. Beide tier=suggest.
+// --- CR-GC-289: A-vs-B — Volumen gegen Reparatur (Fokus nach Seed = Stufe 'Anwendungsfall') ---
+// A: 6 neue UCs ohne REQ (12 Mutationen) — 12 Befunde MEHR in der Fokus-Stufe (UC-02, FC-02 je UC).
+// B: REQ+TEST auf UC-login (4 Mutationen) — die Fokus-Stufe bleibt bei 3 Befunden, UC-01 faellt weg
+//    (Stufe Anforderung), die neue REQ bringt eigene Befunde mit. Beide tier=suggest.
 
 const VOLUME_UC_BATCH = {
   commands: Array.from({ length: 6 }, (_, i) => i + 1).flatMap((i) => [
@@ -192,22 +192,22 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
 
   it('v17-Fix: Fortschritts-suggest schlägt Null-Fortschritt-auto-apply (tier ist keine Vorstufe mehr)', () => {
     // Der Runde-3-Fall aus v17: 20 Upsert-Mutationen als auto-apply mit total=0.00
-    // gegen eine kleine Reparatur (+0.04 auf der Fokus-Dimension) als suggest.
+    // gegen eine kleine Reparatur (ein Befund weniger in der Fokus-Stufe) als suggest.
     const noop = cand(0, {
       success: true, tier: 'auto-apply', mutations: 20,
       steeringDelta: steering(0, 0, {}),
     });
     const repair = cand(1, {
       success: true, tier: 'suggest', mutations: 2,
-      steeringDelta: steering(0, 0, { uc: 0.04 }),
+      steeringDelta: steering(0, 0, { Anwendungsfall: 1 }),
     });
-    expect(rankCandidates([noop, repair], 'uc')[0]).toBe(repair);
+    expect(rankCandidates([noop, repair], 'Anwendungsfall')[0]).toBe(repair);
     // Bei ECHTEM Gleichstand im Ziel-Delta bleibt auto-apply die Präferenz.
     const cleanEqual = cand(2, {
       success: true, tier: 'auto-apply', mutations: 2,
-      steeringDelta: steering(0, 0, { uc: 0.04 }),
+      steeringDelta: steering(0, 0, { Anwendungsfall: 1 }),
     });
-    expect(rankCandidates([repair, cleanEqual], 'uc')[0]).toBe(cleanEqual);
+    expect(rankCandidates([repair, cleanEqual], 'Anwendungsfall')[0]).toBe(cleanEqual);
   });
 
   /**
@@ -249,29 +249,31 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     expect(rankCandidates([ohne, mit])[0]).toBe(mit);
   });
 
-  const steering = (blockBefore: number, blockAfter: number, dims: Record<string, number>) => ({
+  /** CR-GC-757: Befunde je Stufe, ganze Zahlen — `delta = before − after`, positiv heisst weniger Befunde. */
+  const steering = (blockBefore: number, blockAfter: number, stufen: Record<string, number>) => ({
     blockingErrors: { before: blockBefore, after: blockAfter },
-    dimensions: Object.fromEntries(
-      Object.entries(dims).map(([d, delta]) => [d, { before: 0.5, after: 0.5 + delta, delta }]),
+    stages: Object.fromEntries(
+      Object.entries(stufen).map(([s, delta]) => [s, { before: 10, after: 10 - delta, delta }]),
     ),
   });
 
-  it('CR-GC-289: Fokus-Score-Delta schlägt Gesamt-Delta, Δm UND Ausbeute', () => {
-    // a: besserer Gesamt-Fortschritt + Δm + Volumen, aber NICHT auf der Fokus-Dimension.
+  it('CR-GC-289: das Delta der Fokus-Stufe schlägt Gesamt-Delta, Δm UND Ausbeute', () => {
+    // a: besserer Gesamt-Fortschritt + Δm + Volumen, aber NICHT in der Fokus-Stufe.
     const a = cand(0, {
       success: true, tier: 'suggest', mutations: 40,
       fitAdvisory: fit([2.0]),
-      steeringDelta: steering(0, 0, { arch: 0.3, alloc: 0.2 }),
+      steeringDelta: steering(0, 0, { Funktion: 3, Modul: 2 }),
     });
     const b = cand(1, {
       success: true, tier: 'suggest', mutations: 12,
       fitAdvisory: fit([0]),
-      steeringDelta: steering(0, 0, { req: 0.04 }),
+      steeringDelta: steering(0, 0, { Anforderung: 1 }),
     });
-    expect(focusDelta(b.verdict, 'req')).toBeCloseTo(0.04);
-    expect(totalDelta(a.verdict)).toBeCloseTo(0.5);
-    expect(rankCandidates([a, b], 'req')[0]).toBe(b);
-    // Ohne Fokus-Dimension fällt die Stufe weg — dann gewinnt a über das Gesamt-Delta.
+    expect(focusDelta(b.verdict, 'Anforderung')).toBe(1);
+    expect(focusDelta(a.verdict, 'Anforderung')).toBe(0);
+    expect(totalDelta(a.verdict)).toBe(5);
+    expect(rankCandidates([a, b], 'Anforderung')[0]).toBe(b);
+    // Ohne Fokus-Stufe fällt die Stufe weg — dann gewinnt a über das Gesamt-Delta.
     expect(rankCandidates([a, b], null)[0]).toBe(a);
   });
 
@@ -288,26 +290,27 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     }) as Parameters<typeof rankCandidates>[0][number];
 
   it('CR-GC-361: bei identischem Fokus-Delta gewinnt der eigenständige, nicht der volumigere Duplikat-Batch', () => {
-    // Der gemessene Fehler: Readiness-Regeln sind strukturell pro Element, ein
-    // Beinahe-Duplikat erfüllt sie exakt so gut. Beide Kandidaten heben `req`
-    // um dasselbe — der Duplikat-Batch nur deshalb, weil er mehr Knoten mitbringt,
+    // Der gemessene Fehler: die Regeln sind strukturell pro Element, ein
+    // Beinahe-Duplikat erfüllt sie exakt so gut. Beide Kandidaten raeumen in `Anforderung`
+    // gleich viele Befunde — der Duplikat-Batch nur deshalb, weil er mehr Knoten mitbringt,
     // und er gewinnt ohne die Bereinigung den späten `mutations`-Tiebreaker.
     const dupes = candDup(
       0,
-      { success: true, tier: 'suggest', mutations: 5, steeringDelta: steering(0, 0, { req: 0.1 }) },
+      { success: true, tier: 'suggest', mutations: 5, steeringDelta: steering(0, 0, { Anforderung: 2 }) },
       5,
     );
     const clean = cand(1, {
       success: true, tier: 'suggest', mutations: 3,
-      steeringDelta: steering(0, 0, { req: 0.1 }),
+      steeringDelta: steering(0, 0, { Anforderung: 2 }),
     });
 
     // Der ROHE Fokus-Delta ist identisch — genau deshalb entschied vorher die Menge.
-    expect(focusDelta(dupes.verdict, 'req')).toBeCloseTo(focusDelta(clean.verdict, 'req'));
+    expect(focusDelta(dupes.verdict, 'Anforderung')).toBe(2);
+    expect(focusDelta(clean.verdict, 'Anforderung')).toBe(2);
     // Bereinigt: der Gewinn des Duplikat-Batches ist vollständig unbelegt.
-    expect(effectiveFocusDelta(dupes, 'req')).toBeCloseTo(0);
-    expect(effectiveFocusDelta(clean, 'req')).toBeCloseTo(0.1);
-    expect(rankCandidates([dupes, clean], 'req')[0]).toBe(clean);
+    expect(effectiveFocusDelta(dupes, 'Anforderung')).toBeCloseTo(0);
+    expect(effectiveFocusDelta(clean, 'Anforderung')).toBe(2);
+    expect(rankCandidates([dupes, clean], 'Anforderung')[0]).toBe(clean);
   });
 
   it('CR-GC-361: echter Fortschritt MIT einem Duplikat schlägt weiterhin Null-Fortschritt', () => {
@@ -316,15 +319,15 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     // des Gewinns — es löscht ihn nicht aus.
     const progress = candDup(
       0,
-      { success: true, tier: 'suggest', mutations: 5, steeringDelta: steering(0, 0, { req: 0.1 }) },
+      { success: true, tier: 'suggest', mutations: 5, steeringDelta: steering(0, 0, { Anforderung: 2 }) },
       1,
     );
     const noProgress = cand(1, {
       success: true, tier: 'auto-apply', mutations: 20,
-      steeringDelta: steering(0, 0, { req: 0 }),
+      steeringDelta: steering(0, 0, { Anforderung: 0 }),
     });
-    expect(effectiveFocusDelta(progress, 'req')).toBeCloseTo(0.08);
-    expect(rankCandidates([progress, noProgress], 'req')[0]).toBe(progress);
+    expect(effectiveFocusDelta(progress, 'Anforderung')).toBeCloseTo(1.6);
+    expect(rankCandidates([progress, noProgress], 'Anforderung')[0]).toBe(progress);
   });
 
   it('CR-GC-361: Verluste werden nicht bereinigt, und ohne Duplikate ändert sich nichts', () => {
@@ -332,45 +335,46 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     // Verschlechterung nicht abmildern.
     const loss = candDup(
       0,
-      { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: -0.2 }) },
+      { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { Anforderung: -2 }) },
       4,
     );
-    expect(effectiveFocusDelta(loss, 'req')).toBeCloseTo(-0.2);
+    expect(effectiveFocusDelta(loss, 'Anforderung')).toBe(-2);
     // Ohne Duplikate ist der bereinigte Wert der rohe — der Pfad ist für alle
     // bisherigen Kandidaten unverändert.
-    const plain = cand(1, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: 0.3 }) });
-    expect(effectiveFocusDelta(plain, 'req')).toBeCloseTo(focusDelta(plain.verdict, 'req'));
+    const plain = cand(1, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { Anforderung: 3 }) });
+    expect(effectiveFocusDelta(plain, 'Anforderung')).toBe(3);
+    expect(focusDelta(plain.verdict, 'Anforderung')).toBe(3);
   });
 
   it('CR-GC-361: Determinismus — gleiche Kandidaten ⇒ gleiche Reihenfolge, Index bleibt der Anker', () => {
     const mk = () => [
-      candDup(0, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: 0.1 }) }, 2),
-      cand(1, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: 0.05 }) }),
-      candDup(2, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { req: 0.1 }) }, 2),
+      candDup(0, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { Anforderung: 2 }) }, 2),
+      cand(1, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { Anforderung: 1 }) }),
+      candDup(2, { success: true, tier: 'suggest', mutations: 4, steeringDelta: steering(0, 0, { Anforderung: 2 }) }, 2),
     ];
-    const once = rankCandidates(mk(), 'req').map((c) => c.index);
-    const twice = rankCandidates(mk(), 'req').map((c) => c.index);
+    const once = rankCandidates(mk(), 'Anforderung').map((c) => c.index);
+    const twice = rankCandidates(mk(), 'Anforderung').map((c) => c.index);
     expect(once).toEqual(twice);
-    // Alle drei liegen im bereinigten Fokus-Delta gleichauf (0.05): 0 und 2 durch
-    // die Bereinigung (0.1 minus 2 von 4), 1 roh. Die naechste Stufe trennt sie —
-    // Gesamt-Delta 0.1 (0 und 2) vor 0.05 (1); zwischen 0 und 2 entscheidet der
+    // Alle drei liegen im bereinigten Fokus-Delta gleichauf (1 Befund): 0 und 2 durch
+    // die Bereinigung (2 minus 2 von 4), 1 roh. Die naechste Stufe trennt sie —
+    // Gesamt-Delta 2 (0 und 2) vor 1 (1); zwischen 0 und 2 entscheidet der
     // Index-Anker zuletzt.
     expect(once).toEqual([0, 2, 1]);
   });
 
-  it('CR-GC-289: blockingErrors-Anstieg ist strikt schlechter als jedes Score-Plus', () => {
+  it('CR-GC-289: blockingErrors-Anstieg ist strikt schlechter als jeder Befund-Abbau', () => {
     // a: großes Gesamt-Delta, aber neue Steering-Blocker; b: kleines Plus, keine neuen Blocker.
     const a = cand(0, {
       success: true, tier: 'suggest', mutations: 26,
-      steeringDelta: steering(1, 7, { uc: 0.5 }),
+      steeringDelta: steering(1, 7, { Anwendungsfall: 5 }),
     });
     const b = cand(1, {
       success: true, tier: 'suggest', mutations: 3,
-      steeringDelta: steering(1, 1, { uc: 0.01 }),
+      steeringDelta: steering(1, 1, { Anwendungsfall: 1 }),
     });
     expect(rankCandidates([a, b], null)[0]).toBe(b);
-    // Auf der Fokus-Stufe zählt weiterhin das reine Score-Delta (Reihenfolge lt. CR).
-    expect(rankCandidates([a, b], 'uc')[0]).toBe(a);
+    // Auf der Fokus-Stufe zählt weiterhin das reine Befund-Delta (Reihenfolge lt. CR).
+    expect(rankCandidates([a, b], 'Anwendungsfall')[0]).toBe(a);
   });
 
   it('Gleichstand in tier UND Δm → Element-Ausbeute (mutations), dann Index', () => {
@@ -471,7 +475,7 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     // Trace-Zeilen (CR-GC-289): ALLE Ranking-Stufen sichtbar — tier, Fokus-Delta,
     // Gesamt-Delta, Chebyshev-Verbesserung (CR-GC-483), Δm, mutations — plus der Pick.
     // `steer` steht VOR `Δm`, weil es rankt und Δm nur noch berichtet wird.
-    const CAND = String.raw`tier=(\S+) focus\(uc\)=([+-]\d+\.\d{2}) total=([+-]\d+\.\d{2}) steer=([+-]\d+\.\d{2}) Δm=([+-]\d+\.\d{2}) mutations=(\d+)`;
+    const CAND = String.raw`tier=(\S+) focus\(Anwendungsfall\)=([+-]\d+\.\d{2}) total=([+-]\d+\.\d{2}) steer=([+-]\d+\.\d{2}) Δm=([+-]\d+\.\d{2}) mutations=(\d+)`;
     expect(traces.some((l) => new RegExp(String.raw`candidate 1/3: tier=block .*mutations=0`).test(l))).toBe(true);
     expect(traces.some((l) => new RegExp(String.raw`candidate 2/3: ${CAND}`).test(l))).toBe(true);
     expect(traces.some((l) => /candidate 3\/3: tier=auto-apply/.test(l))).toBe(true);
@@ -483,11 +487,11 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(entries.filter((e) => e.operation !== 'validate' && e.result === 'applied').length).toBe(1);
   });
 
-  it('CR-GC-289 Kern: Fokus-Reparatur (REQ+TEST, 4 Mutationen) schlägt UC-Volumen (12 Mutationen) — echte Verdicts', async () => {
-    // Fokus der Runde nach dem Seed = 'uc' (UC-login ohne REQ/FCHAIN). A (Volumen):
-    // 6 UCs ohne REQ — uc-Score SINKT. B (Fokus-Reparatur):
-    // REQ+TEST auf UC-login — uc +0.18. Beide tier=suggest; unter CR-288-Ranking
-    // (Δm=0 beidseitig → mutations) hätte A gewonnen — Volumen-Bias der v16-Monokultur.
+  it('CR-GC-289 Kern: REQ+TEST (4 Mutationen) schlägt UC-Volumen (12 Mutationen) über die Fokus-Stufe — echte Verdicts', async () => {
+    // Fokus der Runde nach dem Seed = Stufe 'Anwendungsfall' (Fenster UC-02 an UC-login). A (Volumen):
+    // 6 UCs ohne REQ — 12 Befunde mehr in der Fokus-Stufe. B (REQ+TEST auf UC-login): die Fokus-Stufe
+    // bleibt unveraendert. Beide tier=suggest; unter CR-288-Ranking (Δm=0 beidseitig → mutations)
+    // hätte A gewonnen — Volumen-Bias der v16-Monokultur.
     const { callModel } = scriptedModel([
       toolCallResponse('c1', VOLUME_UC_BATCH), // suggest, Δm=0, mutations=12
       toolCallResponse('c2', FOCUS_REPAIR_BATCH), // suggest, Δm=0, mutations=4
@@ -503,28 +507,14 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     });
 
     expect(stats.mutatesApplied).toBe(1);
-    // Der Trace macht den Pick nachvollziehbar: A mit negativem, B mit positivem Fokus-Delta.
-    // CR-SM-235/239: die `total`-Werte haben sich mit dem korrigierten Nenner geschaerft.
-    // Vorher las Kandidat 1 (18 UC-Mutationen) `total=+0.05` — leicht POSITIV, obwohl er das
-    // Modell verschlechtert; die Zahl kam aus Dimensionen ohne Inhalt und aus Graph-Checks,
-    // die als Ein-Element-Gruppe mitzaehlten. Jetzt `-0.17`: der Volumen-Kandidat ist als
-    // Netto-Verschlechterung sichtbar. Die FOKUS-Deltas sind unveraendert (-0.17 / +0.18) —
-    // die uc-Dimension der Fixture wurde nicht angefasst.
-    // (totals seit contracts 3.1.0 inkl. AF-01..05-Dimension — Fokus-Deltas unverändert)
-    // contracts 9.x: ACTOR io→UC entfällt — der Volumen-Kandidat trägt 12 statt 18
-    // Mutationen, sein Fokus-Delta ist -0.12; das Urteil (Fokus schlägt Volumen) bleibt.
-    // CR-GC-488: die Zahlen sind mit dem Katalog gewandert (-0.12 → -0.13, +0.18/+1.71 →
-    // +0.10/+1.63). CR-SM-294/295 haben neun Regeln gestrichen und CR-SM-271 hat ein Bein
-    // ergänzt — beides ändert Zähler UND Nenner der uc-Dimension. Was NICHT wandert, ist
-    // das Urteil: Kandidat 1 bleibt negativ, Kandidat 2 positiv, der Pick ist Nr. 2.
-    // CR-GC-616: derselbe Vorgang noch einmal — UC-05/UC-06 entfallen, also schrumpft der
-    // NENNER der uc-Dimension (-0.13 → -0.14, +0.10 → +0.13). `total` von Kandidat 2 bleibt
-    // +1.63: die beiden Regeln feuerten am UC-Volumen, nicht an der Fokus-Reparatur.
-    // CR-GC-743 (contracts CR-SM-392): `total` von Kandidat 2 +1.63 → +1.79. Der neue TEST-login
-    // traegt im Entwurf (kein Bauplan-Stempel, keine Bindung) kein R-19 mehr — die Bindungsregeln
-    // sind vor Beginn der Realisierung nicht gestellt. Fokus-Deltas und Pick unveraendert.
-    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(uc\)=-0\.14 total=-0\.14 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=12/.test(l))).toBe(true);
-    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(uc\)=\+0\.13 total=\+1\.79 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
+    // Der Trace macht den Pick nachvollziehbar. CR-GC-757: gezaehlt werden Befunde je Stufe, ganze Zahlen,
+    // `delta = vorher − nachher` (vorher: Prozentpunkte der Dimension uc, -0.14 / +0.13, total +1.79).
+    // A: Fokus-Stufe 3 → 15 (je neuem UC UC-02 und FC-02), gesamt 24 Befunde mehr.
+    // B: Fokus-Stufe 3 → 3; gesamt 3 Befunde mehr — UC-01 faellt weg, die neue REQ bringt RD-01, BQ-06,
+    // BQ-07 (Stufe Anforderung) und AF-05 (Stufe Plan) mit. Der Pick ist Nr. 2, weil A die Fokus-Stufe
+    // verschlechtert — nicht mehr, weil B sie verbessert.
+    expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(Anwendungsfall\)=-12\.00 total=-24\.00 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=12/.test(l))).toBe(true);
+    expect(traces.some((l) => /candidate 2\/2: tier=suggest focus\(Anwendungsfall\)=\+0\.00 total=-3\.00 steer=[+-]\d\.\d\d Δm=\+0\.00 mutations=4/.test(l))).toBe(true);
     expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
     expect(uids()).toContain('REQ-login'); // der Ziel-Delta-Gewinner ist persistiert …
     expect(uids()).toContain('TEST-login');

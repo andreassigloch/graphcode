@@ -19,7 +19,8 @@ import {
   schemaSimilarity,
   tokens,
   jaccard,
-  RULE_TO_DIMENSION,
+  ALL_RULE_DEFS,
+  STAGE_SETS,
   type OntologyGraph,
 } from '@sigloch/contracts/se';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
@@ -141,9 +142,15 @@ describe('Gate-Regression — ND ist NIE Gate-Regel (AK 2)', () => {
     expect(ids.filter((id) => id.startsWith('ND-'))).toHaveLength(0);
   });
 
-  it('RULE_TO_DIMENSION mappt ND-01→arch, ND-02→schema (generate-Fokus kann rotieren)', () => {
-    expect(RULE_TO_DIMENSION['ND-01']).toBe('arch');
-    expect(RULE_TO_DIMENSION['ND-02']).toBe('schema');
+  it('ND-01 steht in der Stufe Funktion, ND-02 in der Stufe Schema — und keine ist Abgleich (generate-Fokus kann rotieren)', () => {
+    // CR-GC-757: die Stufe der Regel traegt Vorlage und Fokus-Typen des Fensters (vorher: die Dimension arch/schema).
+    const regel = (id: string) => ALL_RULE_DEFS.find((r) => r.id === id)!;
+    const stufe = (id: string): string => STAGE_SETS[(regel(id).stage as number) - 1]!;
+    expect(stufe('ND-01')).toBe('Funktion');
+    expect(stufe('ND-02')).toBe('Schema');
+    // Profil `conformance` stellt kein Fenster — die ND-Regeln gehoeren nicht dazu.
+    expect(regel('ND-01').profile).not.toBe('conformance');
+    expect(regel('ND-02').profile).not.toBe('conformance');
   });
 });
 

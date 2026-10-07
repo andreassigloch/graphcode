@@ -143,9 +143,9 @@ An illegal connection is not a warning in a report you might read — it never e
 
 ### 3. Readiness — is it complete and well-formed?
 
-66 engine rules feed 8 readiness dimensions: requirements, use cases, functional architecture,
-module allocation, verification, interfaces, change requests, milestones. Each area gets a percentage
-and a threshold.
+66 engine rules are ordered in 12 stages: system, use cases, requirements, function chains, functions,
+data flows, modules, schemas, tests, plan, binding, conformance. Each stage shows the count of its open
+findings.
 
 Notice what this deliberately does *not* ask. Not "is the content correct" — no tool can decide that.
 It asks "is it complete and consistent", which *is* decidable, and which is most of what a quality

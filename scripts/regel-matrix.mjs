@@ -12,8 +12,8 @@
  *   Schritt die Regeln waehlt: Stufe, in der Stufe die Existenz-Regel vorn.
  *   Bedarf (was die Regel zum Urteilen braucht: Gate | Aehnlichkeit (ND) | CodeFacts (RC) | nur Steuerung),
  *   Schwere (info / warning / error — error heisst blockt, CR-SM-353), Task (+ Eintritt fuer <task>),
- *   Dimension, Steuerregel, abnehmbar (mit Grund, wo er nicht aus der Rolle folgt), Hilfe-Prompt (RULE_HELP.prompt), Vorschlag an den Nutzer (RULE_HELP.vorschlag, CR-GC-733), Skill (wie der Schritt ihn nennt:
- *   TASK_SKILL, der Skill der Analyse oder SKILL_FOR_DIMENSION), Konflikt (beide gesetzt und verschieden), nennt (Prosa-Nennungen in Skills),
+ *   Steuerregel, abnehmbar (mit Grund, wo er nicht aus der Rolle folgt), Hilfe-Prompt (RULE_HELP.prompt), Vorschlag an den Nutzer (RULE_HELP.vorschlag, CR-GC-733), Skill (wie der Schritt ihn nennt:
+ *   TASK_SKILL, der Skill der Analyse oder SKILL_FOR_STAGE), Konflikt (beide gesetzt und verschieden), nennt (Prosa-Nennungen in Skills),
  *   Fix und Folge-Regeln (CR-GC-616, beide aus `FIX_ROUNDTRIP` in se-engine — dem gemessenen
  *   Roundtrip je Fix-Vorlage, nicht aus einer gepflegten Liste).
  * Dazu (CR-GC-668) die Tabelle „Erfueller × kinds": welcher Typ welche REQ-Art per `satisfy` erfuellen
@@ -33,7 +33,7 @@ import { STEER_RULES, FIX_ROUNDTRIP } from '@sigloch/se-engine';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { ABNEHMBAR, ABNEHMBAR_BEGRUENDET } = await import(join(ROOT, 'dist', 'kernel', 'measure', 'focus-set.js'));
-const { TASK_SKILL, SKILL_FOR_DIMENSION, analyseSkill, stufenRang } = await import(join(ROOT, 'dist', 'loop', 'generate.js'));
+const { TASK_SKILL, SKILL_FOR_STAGE, analyseSkill, stufenRang } = await import(join(ROOT, 'dist', 'loop', 'generate.js'));
 
 const gate = new Set((SE_DESCRIPTOR.rules ?? []).map((r) => r.id));
 const defs = new Map(se.ALL_RULE_DEFS.map((r) => [r.id, r]));
@@ -58,7 +58,7 @@ const nennt = (id) => skillTexte
 
 const bedarf = (id) => gate.has(id) ? 'Gate' : id.startsWith('ND-') ? 'Aehnlichkeit (ND)' : id.startsWith('RC-') ? 'CodeFacts (RC)' : 'nur Steuerung';
 // Wie generate.ts (CR-GC-604/748): im Task der Task-Skill, an einem Eintrittspunkt der Skill des Tasks,
-// an einer Regel einer Analyse deren Skill, sonst der der Dimension.
+// an einer Regel einer Analyse deren Skill, sonst der der Stufe.
 /**
  * CR-GC-616 — was die Fix-Vorlage der Regel auf ihrem Ausloese-Fixture tatsaechlich tut. Gemessen
  * von `tests/unit/fix-roundtrip.test.ts` in se-engine, hier nur gelesen. Leer = keine Vorlage
@@ -71,15 +71,15 @@ const fixOf = (id) => {
   if (!e.applied) return 'tot';
   return e.cleared ? 'schliesst' : 'Teil-Fix';
 };
-const skillOf = (id, task, dim) => task !== 'kern' ? TASK_SKILL[task] : entryFor.has(id) ? TASK_SKILL[entryFor.get(id)] : (analyseSkill(id) ?? SKILL_FOR_DIMENSION[dim]?.name ?? '');
+const skillOf = (id, task, stufe) => task !== 'kern' ? TASK_SKILL[task] : entryFor.has(id) ? TASK_SKILL[entryFor.get(id)] : (analyseSkill(id) ?? SKILL_FOR_STAGE[stufe]?.name ?? '');
 
 const rows = ids.map((id) => {
   const def = defs.get(id);
   const task = se.taskOf(id);
-  const dim = se.RULE_TO_DIMENSION[id] ?? '';
+  const stufe = def.stage === 'immer' ? 'immer' : se.STAGE_SETS[def.stage - 1];
   const prompt = se.RULE_HELP[id]?.prompt ?? '';
   const vorschlag = se.RULE_HELP[id]?.vorschlag ?? '';
-  const skill = skillOf(id, task, dim);
+  const skill = skillOf(id, task, stufe);
   return {
     // `Regel` bleibt die erste Spalte: `scripts/messung.mjs` (T-H2) liest die IDs dort.
     Regel: id,
@@ -90,7 +90,6 @@ const rows = ids.map((id) => {
     Schwere: def.severity ?? '',
     Bedarf: bedarf(id),
     Task: entryFor.has(id) ? `${task}, Eintritt fuer ${entryFor.get(id)}` : task,
-    Dimension: dim,
     Steuerregel: STEER_RULES.includes(id) ? 'ja' : '',
     abnehmbar: abnehmbar(id),
     'Hilfe-Prompt': prompt,

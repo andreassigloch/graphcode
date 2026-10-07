@@ -217,7 +217,7 @@ function traceCandidate(
   trace: (line: string) => void,
   c: RoundCandidate,
   n: number,
-  focusDimension: string | null,
+  focusStage: string | null,
 ): void {
   if (!c.verdict) {
     trace(`  candidate ${c.index + 1}/${n}: no batch`);
@@ -229,10 +229,10 @@ function traceCandidate(
   // bereinigte, nach dem wirklich gerankt wird. Sonst ist ein Pick, der am
   // bereinigten Wert kippt, aus der Trace nicht nachvollziehbar.
   const dupes = c.duplicates.length;
-  const eff = effectiveFocusDelta(c, focusDimension);
+  const eff = effectiveFocusDelta(c, focusStage);
   trace(
-    `  candidate ${c.index + 1}/${n}: tier=${tier} focus(${focusDimension ?? '-'})=${fmtDelta(
-      focusDelta(v, focusDimension),
+    `  candidate ${c.index + 1}/${n}: tier=${tier} focus(${focusStage ?? '-'})=${fmtDelta(
+      focusDelta(v, focusStage),
     )}${dupes > 0 ? ` dupes=${dupes} eff=${fmtDelta(eff)}` : ''}` +
       ` total=${fmtDelta(totalDelta(v))} steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0}`,
   );
@@ -242,7 +242,7 @@ function traceCandidate(
 async function modelJudgePick(
   ctx: BestOfNContext,
   viable: RoundCandidate[],
-  focusDimension: string | null,
+  focusStage: string | null,
 ): Promise<RoundCandidate | null> {
   const { callModel, tools, stats } = ctx;
   const lines = viable.map((c, i) => {
@@ -253,7 +253,7 @@ async function modelJudgePick(
         .map((x) => `${x.ruleId}[${x.severity}]`)
         .join(',') || '-';
     return (
-      `${i + 1}. tier=${v.tier ?? '?'} focus(${focusDimension ?? '-'})=${fmtDelta(focusDelta(v, focusDimension))} ` +
+      `${i + 1}. tier=${v.tier ?? '?'} focus(${focusStage ?? '-'})=${fmtDelta(focusDelta(v, focusStage))} ` +
       `total=${fmtDelta(totalDelta(v))} steer=${fmtDelta(steerImprovement(v))} Δm=${fmtDelta(deltaSum(v))} mutations=${v.mutations ?? 0} violations=${viols}`
     );
   });
@@ -285,7 +285,7 @@ async function modelJudgePick(
 export async function runBestOfNStep(
   ctx: BestOfNContext,
   baseContent: string,
-  focusDimension: string | null,
+  focusStage: string | null,
 ): Promise<void> {
   const { config, stats, trace, gate } = ctx;
   const n = config.candidates;
@@ -305,7 +305,7 @@ export async function runBestOfNStep(
     c.batch = await collectCandidateBatch(ctx, c.messages, `cand ${k + 1}/${n}`, c.temperature);
     if (c.batch !== null) stats.candidatesSampled += 1;
     await probeCandidate(ctx, c);
-    traceCandidate(trace, c, n, focusDimension);
+    traceCandidate(trace, c, n, focusStage);
     candidates.push(c);
   }
 
@@ -314,7 +314,7 @@ export async function runBestOfNStep(
   for (;;) {
     const withVerdict = candidates.filter((c) => c.verdict !== null);
     if (withVerdict.length === 0) return; // kein Kandidat lieferte einen Batch — nächste Runde
-    const ranked = rankCandidates(withVerdict, focusDimension);
+    const ranked = rankCandidates(withVerdict, focusStage);
     const viable = ranked.filter((c) => c.verdict!.success === true);
 
     if (viable.length === 0) {
@@ -334,7 +334,7 @@ export async function runBestOfNStep(
       if (best.batch === null) return;
       stats.candidatesSampled += 1;
       await probeCandidate(ctx, best);
-      traceCandidate(trace, best, n, focusDimension);
+      traceCandidate(trace, best, n, focusStage);
       continue;
     }
 
@@ -343,7 +343,7 @@ export async function runBestOfNStep(
     const algoPick = viable[0];
     let winner = algoPick;
     if (config.judge === 'model' && viable.length > 1) {
-      const modelPick = await modelJudgePick(ctx, viable, focusDimension);
+      const modelPick = await modelJudgePick(ctx, viable, focusStage);
       stats.modelPicks += 1;
       if (modelPick !== null && modelPick.index !== algoPick.index) {
         stats.judgeDisagreements += 1;
@@ -382,6 +382,6 @@ export async function runBestOfNStep(
     if (winner.batch === null) return;
     stats.candidatesSampled += 1;
     await probeCandidate(ctx, winner);
-    traceCandidate(trace, winner, n, focusDimension);
+    traceCandidate(trace, winner, n, focusStage);
   }
 }

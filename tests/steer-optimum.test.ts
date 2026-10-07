@@ -45,7 +45,7 @@ describe('CR-GC-608: das Sitzungsgedaechtnis zaehlt nur Steuerzuege', () => {
       return {
         phase: optimum ? 'handoff' : 'expand', done: !!optimum, prompt: '', readiness: [], threshold: 0.8,
         blockingErrors: 0, focusKey: optimum ? null : fokusOhneOptimum, focusTypes: [],
-        focusDimension: null, skill: null, steer: z('R-04@MOD-a (0.50)', 0.5),
+        focusStage: null, skill: null, steer: z('R-04@MOD-a (0.50)', 0.5),
       };
     };
     return { compute, aufrufe };
@@ -53,7 +53,7 @@ describe('CR-GC-608: das Sitzungsgedaechtnis zaehlt nur Steuerzuege', () => {
 
   it('drei Steuerzuege ohne Wirkung: Optimum (Plateau), die Maschine meldet done — nie stalled', () => {
     const m = neu();
-    const { compute } = rechner('alloc:R-04:MOD-a');
+    const { compute } = rechner('Modul:R-04:MOD-a');
     let s = stepWithMemory(m, 1, compute);
     for (let v = 2; v <= 4 && !s.done; v++) s = stepWithMemory(m, v, compute);
     expect(m.steerOptimum?.grund).toBe('plateau');
@@ -63,14 +63,14 @@ describe('CR-GC-608: das Sitzungsgedaechtnis zaehlt nur Steuerzuege', () => {
 
   it('die Abbruchregel stellt einen Steuerfokus NICHT zurueck — das Fertig-Kriterium ist zustaendig', () => {
     const m = neu();
-    const { compute } = rechner('alloc:R-04:MOD-a');
+    const { compute } = rechner('Modul:R-04:MOD-a');
     for (let v = 1; v <= 3; v++) stepWithMemory(m, v, compute);
     expect(m.deferred.size).toBe(0);
   });
 
   it('Zuege bei einem Nicht-Steuerfokus zaehlen nicht (REQ-Arbeit ist kein Plateau)', () => {
     const m = neu();
-    const { compute } = rechner('req:RD-01:REQ-a');
+    const { compute } = rechner('Anforderung:RD-01:REQ-a');
     for (let v = 1; v <= 6; v++) stepWithMemory(m, v, compute);
     expect(m.steerOptimum).toBeNull();
   });

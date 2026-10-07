@@ -20,6 +20,8 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { readBranchLog } from '../src/kernel/merge.js';
 import { alsFormatE } from './helpers/format-e.js';
+import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
+import { STAGE_SETS } from '@sigloch/contracts/se';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -212,8 +214,11 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
   it('steeringDelta (CR-GC-289): im dryRun-Verdict, deterministisch, NICHT im Apply-Verdict', async () => {
     type SteeringDelta = {
       blockingErrors: { before: number; after: number };
-      dimensions: Record<string, { before: number | null; after: number | null; delta: number }>;
+      stages: Record<string, { before: number; after: number; delta: number }>;
     };
+    const stufen = (): { name: string; findings: number }[] =>
+      takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy()).stages;
+    const vorher = stufen();
     const dryRun = async (): Promise<{ success: boolean; steeringDelta?: SteeringDelta; graphVersion: number }> =>
       (await tools.graph_mutate.handler({ formatE: FE_BATCH, dryRun: true, consumerId: 'sd-test' })) as never;
 
@@ -222,14 +227,23 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(first.graphVersion).toBe(0); // Messung, keine Bewegung
     const sd = first.steeringDelta!;
     expect(sd.blockingErrors.before).toBe(0); // leerer Graph: keine Steering-Blocker
-    // REQ+TEST+verify machen req/ver anwendbar — der Fortschritt ist messbar positiv.
-    // se-engine 2 (CR-SM-395): am leeren Graphen ist nichts geprueft — `before` ist „nicht messbar" (null),
-    // nicht 0 %. „Wird messbar" zaehlt im Delta als Fortschritt (null → 0).
-    expect(sd.dimensions.req!.before).toBeNull();
-    expect(sd.dimensions.req!.after).toBeGreaterThan(0);
-    for (const d of Object.values(sd.dimensions)) {
-      expect(d.delta).toBeCloseTo((d.after ?? 0) - (d.before ?? 0), 10);
+    // CR-GC-757: Befunde je Stufe, ganze Zahlen, `delta = before − after` (positiv = weniger Befunde).
+    // Vorher: Prozentwert je Dimension, am leeren Graphen „nicht messbar" (null).
+    expect(Object.keys(sd.stages).length).toBeGreaterThan(0);
+    for (const [name, d] of Object.entries(sd.stages)) {
+      expect([...STAGE_SETS, 'immer'], name).toContain(name);
+      expect(Number.isInteger(d.before) && Number.isInteger(d.after), name).toBe(true);
+      expect(d.delta, name).toBe(d.before - d.after);
+      // Stufen ohne Befund auf beiden Seiten fehlen.
+      expect(d.before + d.after, name).toBeGreaterThan(0);
+      // Die Vorher-Seite ist der Stand des unberuehrten Graphen — dieselbe Messung wie im Schritt.
+      expect(d.before, name).toBe(vorher.find((s) => s.name === name)!.findings);
     }
+    // Der leere Graph traegt genau den Befund „es gibt kein System" (R-33, Stufe System).
+    expect(vorher.filter((s) => s.findings > 0)).toEqual([{ name: 'System', findings: 1 }]);
+    expect(sd.stages.System!.before).toBe(1);
+    // Der Vorschlag bewegt die Messung: mindestens eine Stufe aendert ihre Zahl.
+    expect(Object.values(sd.stages).some((d) => d.delta !== 0)).toBe(true);
 
     // Deterministisch: identischer Vorschlag auf identischem Zustand ⇒ identisches Delta.
     const second = await dryRun();
@@ -244,6 +258,15 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     };
     expect(applied.success).toBe(true);
     expect(applied.steeringDelta).toBeUndefined();
+
+    // Die Probe hat richtig vorhergesagt: nach dem echten Apply stehen je Stufe die Zahlen, die das
+    // dryRun-Delta als `after` nannte — und keine Stufe mit Befund fehlt im Delta.
+    const nachher = stufen();
+    for (const s of nachher) {
+      const b = vorher.find((v) => v.name === s.name)!.findings;
+      if (b === 0 && s.findings === 0) expect(sd.stages[s.name], s.name).toBeUndefined();
+      else expect(sd.stages[s.name], s.name).toEqual({ before: b, after: s.findings, delta: b - s.findings });
+    }
   });
 
   it('steeringDelta bei Block-Verdict: Gate hat zurückgerollt ⇒ Delta 0, Blocker-Zählung unverändert', async () => {
@@ -255,12 +278,14 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     })) as {
       success: boolean;
       tier: string;
-      steeringDelta?: { blockingErrors: { before: number; after: number }; dimensions: Record<string, { delta: number }> };
+      steeringDelta?: { blockingErrors: { before: number; after: number }; stages: Record<string, { before: number; after: number; delta: number }> };
     };
     expect(res.success).toBe(false); // R-01: REQ ohne verify-TEST
     const sd = res.steeringDelta!;
     expect(sd.blockingErrors.after).toBe(sd.blockingErrors.before);
-    for (const d of Object.values(sd.dimensions)) expect(d.delta).toBe(0);
+    // Nicht leer: der Befund des leeren Graphen (R-33, Stufe System) steht auf beiden Seiten — sonst prueft die Schleife nichts.
+    expect(sd.stages.System).toEqual({ before: 1, after: 1, delta: 0 });
+    for (const d of Object.values(sd.stages)) expect(d.delta).toBe(0);
   });
 
   it('Preview-Audit: Vorschlag→Verdict im Log (validate), Merge-Replay überspringt ihn', async () => {

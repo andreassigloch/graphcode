@@ -57,7 +57,6 @@ import {
   getRuleDefsForProfile,
   ND_RULES,
   evaluateNDRules,
-  DIMENSION_READINESS_NAME,
 } from '@sigloch/contracts/se';
 import { conformanceEvaluation, toOntologyGraph, type ConformanceHarness } from './conformance.js';
 import type { ImportCoverage } from '@sigloch/contracts/se';
@@ -182,7 +181,7 @@ export interface RuleCatalogProvenance {
  * Die Katalog-Herkunft je Zahlenblock (CR-GC-428).
  *
  * `graph_readiness` mischt zwei Ströme: die Verstoßzahlen kommen aus dem
- * geladenen Gate-Katalog, `dimension_readiness` aus dem vollen contracts-Katalog
+ * geladenen Gate-Katalog, `stages` aus dem vollen contracts-Katalog
  * des Steering-Pfads. Beide Zahlen sind richtig und beantworten dieselbe Frage
  * verschieden — deshalb reist die Herkunft ab jetzt AM ERGEBNIS mit, nicht nur
  * im Beschreibungstext des Werkzeugs.
@@ -215,7 +214,7 @@ export function ruleCatalogs(harness: Pick<EvaluationHarness, 'getLoadedRuleIds'
     steering: {
       catalog: 'ALL_RULE_DEFS (@sigloch/contracts/se) via evaluateAllRules',
       ruleCount: ALL_RULE_DEFS.length,
-      fields: [DIMENSION_READINESS_NAME],
+      fields: ['stages'],
     },
     notInGate: unevaluatedRuleIds(loaded),
   };

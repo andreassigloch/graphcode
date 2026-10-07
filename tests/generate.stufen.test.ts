@@ -143,19 +143,19 @@ describe('CR-GC-749: der Kaltstart kommt aus den Existenz-Regeln', () => {
     const leer = g([]);
     expect(meldet(leer, SEED_RULE.sys)).toBe(true);
     const s = step(leer);
-    expect(s).toMatchObject({ phase: 'seed', focusDimension: 'seed:sys', focusTypes: ['SYS'], focusKey: null });
+    expect(s).toMatchObject({ phase: 'seed', focusStage: 'seed:sys', focusTypes: ['SYS'], focusKey: null });
     expect(s.prompt).toContain('Lege GENAU EIN Element an: die SYS-Wurzel');
     // ohne Intention fragt er zuerst danach — der Befund ist derselbe
-    expect(generationStep(leer, DEFAULT_METRIC_POLICY, undefined, 0.8)).toMatchObject({ phase: 'seed', focusDimension: null });
+    expect(generationStep(leer, DEFAULT_METRIC_POLICY, undefined, 0.8)).toMatchObject({ phase: 'seed', focusStage: null });
   });
 
   it('Elemente ohne System (Import): derselbe Befund, derselbe Schritt — und mit SYS nicht mehr', () => {
     const ohneSys = g([n('REQ-r', 'REQ', undefined, { kinds: ['functional'] }), n('TEST-t', 'TEST')], [e('TEST-t', 'REQ-r', 'verify')]);
     expect(meldet(ohneSys, SEED_RULE.sys)).toBe(true);
-    expect(step(ohneSys).focusDimension).toBe('seed:sys');
+    expect(step(ohneSys).focusStage).toBe('seed:sys');
     const mitSys = g([n('SYS-x', 'SYS'), ...ohneSys.nodes], ohneSys.edges);
     expect(meldet(mitSys, SEED_RULE.sys)).toBe(false);
-    expect(step(mitSys).focusDimension).not.toBe('seed:sys');
+    expect(step(mitSys).focusStage).not.toBe('seed:sys');
   });
 
   // Der Ausloeser ist die REGEL, nicht ein eigener Zustandstest. Ob R-17 auch dann meldet, wenn das System
@@ -171,7 +171,7 @@ describe('CR-GC-749: der Kaltstart kommt aus den Existenz-Regeln', () => {
     )],
   ];
   it.each(FAELLE)('%s: die Stufe „Anwendungsfaelle" steht nur an, wenn die Existenz-Regel des Systems meldet — und dann, wenn keine andere der Stufe vor ihr steht', (_name, graph) => {
-    const stufeUc = step(graph).focusDimension === 'seed:uc';
+    const stufeUc = step(graph).focusStage === 'seed:uc';
     // notwendig: ohne Befund der Regel keine Stufe — auch dort, wo der alte Zustandstest („kein UC") sie stellte.
     if (stufeUc) expect(meldet(graph, SEED_RULE.uc)).toBe(true);
     // hinreichend, sobald sie die einzige meldende Existenz-Regel ihrer Stufe ist. Melden zwei (die UCs stehen,
@@ -184,7 +184,7 @@ describe('CR-GC-749: der Kaltstart kommt aus den Existenz-Regeln', () => {
 
   it('SYS allein: die Regel meldet, der Schritt destilliert die Anwendungsfaelle — Text wie bisher', () => {
     const s = step(FAELLE[0]![1]);
-    expect(s).toMatchObject({ phase: 'seed', focusDimension: 'seed:uc', focusTypes: ['SYS', 'UC'], focusKey: null, skill: 'se:author-uc' });
+    expect(s).toMatchObject({ phase: 'seed', focusStage: 'seed:uc', focusTypes: ['SYS', 'UC'], focusKey: null, skill: 'se:author-uc' });
     expect(s.prompt).toContain('Die SYS-Wurzel steht. Destilliere daraus 3–7 UCs');
   });
 
@@ -192,7 +192,7 @@ describe('CR-GC-749: der Kaltstart kommt aus den Existenz-Regeln', () => {
     const graph = FAELLE[1]![1];
     expect(meldet(graph, SEED_RULE.actor)).toBe(true);
     const s = step(graph);
-    expect(s).toMatchObject({ phase: 'seed', focusDimension: 'seed:actor', focusTypes: ['ACTOR', 'UC'], focusKey: null });
+    expect(s).toMatchObject({ phase: 'seed', focusStage: 'seed:actor', focusTypes: ['ACTOR', 'UC'], focusKey: null });
     expect(s.prompt).toContain('Bestimme jetzt das MINIMUM');
   });
 
@@ -207,6 +207,6 @@ describe('CR-GC-749: der Kaltstart kommt aus den Existenz-Regeln', () => {
 
   it('in einem Arbeitsschritt gilt der Kaltstart des Systems ebenso — ohne System gibt es keine Analyse', () => {
     const s = generationStep(g([]), DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'host', null, 'fmea');
-    expect(s.focusDimension).toBe('seed:sys');
+    expect(s.focusStage).toBe('seed:sys');
   });
 });

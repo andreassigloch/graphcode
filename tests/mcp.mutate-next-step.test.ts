@@ -76,7 +76,7 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
     await mutiere([SYS]);
     await mutiere([knoten('UC-a', 'UC', 'Bestellung annehmen', 'Der Kunde gibt eine Bestellung auf.'), kante('SYS-s', 'compose', 'UC-a')]);
     await mutiere([knoten('ACTOR-k', 'ACTOR', 'Kunde', 'Eine Person, die bestellt.')]);
-    const step = { phase: 'expand', focusKey: 'uc:UC-02:UC-a', focusDimension: 'uc', focusElements: ['UC-a'] } as GenerationStep;
+    const step = { phase: 'expand', focusKey: 'Anwendungsfall:UC-02:UC-a', focusStage: 'Anwendungsfall', focusElements: ['UC-a'] } as GenerationStep;
     const satz = vorschlagAusSchritt(step, harness.getGraph(), 'kern');
     expect(satz).toContain('Funktionen');
     expect(satz).toContain('Bestellung annehmen');
@@ -92,7 +92,7 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
   });
 
   it('Eintrittspunkt einer Analyse: der Nutzer bekommt die Analyse als Bitte, ohne Abnahme-Angebot', () => {
-    const step = { phase: 'expand', focusKey: 'req:AF-01:SYS-s', focusDimension: 'req', focusElements: ['SYS-s'] } as GenerationStep;
+    const step = { phase: 'expand', focusKey: 'Anforderung:AF-01:SYS-s', focusStage: 'Anforderung', focusElements: ['SYS-s'] } as GenerationStep;
     expect(vorschlagAusSchritt(step, { nodes: [], edges: [] }, 'kern')).toBe('Führe das Einsatzkonzept (ConOps) durch.');
   });
 

@@ -23,10 +23,11 @@ import { exportGraphJson } from '../src/projections/exporter.js';
 /** Eine Antwort in der Form, die am teuersten war: viele kleine Zahlenfelder. */
 const READINESS_ARTIG = {
   compliance: { score: 0.967, totalElements: 832, elementsWithErrors: 27 },
-  dimension_readiness: [
-    { dimension: 'req', score: 0.815, violations: 262 },
-    { dimension: 'uc', score: 0.975, violations: 6 },
-    { dimension: 'arch', score: 0.982, violations: 64 },
+  // CR-GC-757: Befunde je Stufe (vorher `dimension_readiness` mit Prozentwert und Fundzahl).
+  stages: [
+    { name: 'Anwendungsfall', findings: 6 },
+    { name: 'Anforderung', findings: 262 },
+    { name: 'Funktion', findings: 64 },
   ],
   steer: { worst: 3.75, mean: 1.1164, measured: 42 },
   violations: [],

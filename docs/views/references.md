@@ -801,6 +801,13 @@
 | `CR-GC-755` | relation | `FUNC-se-optimize` |
 | `CR-GC-755` | relation | `FUNC-se-trade` |
 | `CR-GC-756` | relation | `FUNC-render-views` |
+| `CR-GC-757` | relation | `FUNC-compute-steering-delta` |
+| `CR-GC-757` | relation | `FUNC-generation-step` |
+| `CR-GC-757` | relation | `FUNC-graph-readiness` |
+| `CR-GC-757` | relation | `FUNC-rank-candidates` |
+| `CR-GC-757` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-757` | relation | `SCHEMA-generation-step` |
+| `CR-GC-757` | relation | `SCHEMA-steering-delta` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

@@ -18,7 +18,7 @@ import { z } from 'zod/v4';
 import { CHANNEL_ORDER, CHANNEL_REASON, rankOf, outranks, winner, byRank, duplicateChannels } from '../src/loop/channel-rank.js';
 import { buildRoundChannels } from '../src/loop/executor-prompt.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
-import { generationStep, RULE_CLAUSE, GENERATION_TEMPLATE, DIMENSION_FOCUS_TYPES } from '../src/loop/generate.js';
+import { generationStep, RULE_CLAUSE, GENERATION_TEMPLATE, STAGE_FOCUS_TYPES } from '../src/loop/generate.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 
@@ -87,7 +87,10 @@ describe('die Ordnung wird angewandt, nicht ein zweites Mal entschieden (CR-GC-5
   it('stellt eine Regel das Fenster, gewinnt ihre Klausel — fuer TEXT und Fokus-Typen zugleich', () => {
     const step = generationStep(GRAPH, DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(step.phase).toBe('expand');
-    const [dimension, regel] = (step.focusKey as string).split(':');
+    const [stufe, regel] = (step.focusKey as string).split(':');
+    // CR-GC-757: der Schluessel beginnt mit dem Namen der Stufe, und die Stufe traegt eine Vorlage.
+    expect(step.focusStage).toBe(stufe);
+    expect(GENERATION_TEMPLATE[stufe], `Stufe ${stufe} ohne Vorlage`).toBeTruthy();
     const klausel = RULE_CLAUSE[regel];
     // Vorbedingung der Aussage: dieses Fenster wird WIRKLICH von einer Regel mit Klausel
     // gestellt. Ohne diese Kontrolle prueft der Rest nichts.
@@ -99,9 +102,9 @@ describe('die Ordnung wird angewandt, nicht ein zweites Mal entschieden (CR-GC-5
     };
     expect(step.prompt).toContain(klausel.text(['UC-bestellen'], bestand));
     expect(step.focusTypes).toEqual([...klausel.types]);
-    // Und die Dimensions-Vorlage (Rang 6) steht NICHT daneben — ein Imperativ je Runde.
-    expect(step.prompt).not.toContain(GENERATION_TEMPLATE[dimension]);
-    expect(step.focusTypes).not.toEqual(DIMENSION_FOCUS_TYPES[dimension]);
+    // Und die Vorlage der Stufe (Rang 6) steht NICHT daneben — ein Imperativ je Runde.
+    expect(step.prompt).not.toContain(GENERATION_TEMPLATE[stufe]);
+    expect(step.focusTypes).not.toEqual(STAGE_FOCUS_TYPES[stufe]);
   });
 
   it('die beiden anwendenden Stellen beziehen die Ordnung aus channel-rank, statt sie zu wiederholen', () => {

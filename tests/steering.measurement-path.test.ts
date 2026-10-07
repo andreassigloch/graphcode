@@ -12,7 +12,7 @@
  * read `element.attributes?.x`. Any surface that measures via
  * `JSON.parse(exportGraphJson(...))` therefore sees R-19/R-20/R-26/VR-01/AF-01..05
  * differently from the surfaces that go through `takeSteeringSnapshot` — which
- * silently reorders the focus dimensions. `ARCH_FIXTURE` carries `realRef`,
+ * silently reorders the focus (and shifts the findings per stage). `ARCH_FIXTURE` carries `realRef`,
  * `testRefs` and `SYS.analysisFreshness` precisely so that divergence is visible
  * here instead of in production.
  *
@@ -34,6 +34,7 @@ import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js
 import { ARCH_FIXTURE, makeSteeringConfig } from './fixtures/steering-graphs.js';
 import { alsFormatE } from './helpers/format-e.js';
 import type { SteeringDelta } from '../src/kernel/measure/steering-snapshot.js';
+import { STAGE_SETS } from '@sigloch/contracts/se';
 
 /** The attribute-borne bindings whose judgement flips on a flattened encoding. */
 const ATTRIBUTE_BORNE_RULES = ['R-19', 'R-20', 'R-26', 'VR-01', 'AF-01', 'AF-02', 'AF-03', 'AF-04', 'AF-05'];
@@ -87,24 +88,25 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
   // `nextStep` nicht mehr gibt — zwei Rangwahlen auf einer Messung, eine davon ohne Leser.
   // Die Zusicherung, um die es hier geht, bleibt: generationStep misst ueber den GETEILTEN
   // Snapshot und nicht ueber eine eigene Graph-Abbildung (die Lektion aus CR-GC-324).
-  it('generationStep reports the blocking errors and dimension scores of the shared snapshot', async () => {
+  it('generationStep reports the blocking errors and the findings per stage of the shared snapshot', async () => {
     const snap = snapshot();
     const gen = generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
 
     expect(gen.blockingErrors).toBe(snap.blockingErrors);
 
-    // Same dimensions, same scores — generationStep exposes the applicable ones.
-    const fromSnapshot = new Map(
-      snap.report.scores.filter((s) => s.applicable > 0).map((s) => [s.dimension as string, s.score]),
-    );
-    const fromGen = new Map(gen.readiness.map((r) => [r.dimension, r.score]));
-    expect([...fromGen.keys()].sort()).toEqual([...fromSnapshot.keys()].sort());
-    for (const [dim, score] of fromGen) expect(score).toBe(fromSnapshot.get(dim));
+    // CR-GC-757: the snapshot carries all 13 stages in order; the step exposes the ones with findings,
+    // with the same count, in the same order (before: percentage scores of the applicable dimensions).
+    expect(snap.stages.map((s) => s.name)).toEqual([...STAGE_SETS, 'immer']);
+    expect(snap.stages.reduce((n, s) => n + s.findings, 0)).toBe(snap.violations.length);
+    const fromSnapshot = snap.stages.filter((s) => s.findings > 0).map((s) => ({ stage: s.name, findings: s.findings }));
+    expect(fromSnapshot.length).toBeGreaterThan(0);
+    expect(gen.readiness).toEqual(fromSnapshot);
 
-    // Die Fokus-Dimension muss eine sein, die der Snapshot wirklich scort.
-    if (gen.focusDimension && !gen.focusDimension.startsWith('seed:')) {
-      expect(fromSnapshot.has(gen.focusDimension)).toBe(true);
-    }
+    // Die Fokus-Stufe muss eine sein, in der der Snapshot wirklich Befunde zaehlt.
+    expect(gen.focusStage).not.toBeNull();
+    expect(gen.focusStage!.startsWith('seed:')).toBe(false);
+    expect(fromSnapshot.some((s) => s.stage === gen.focusStage)).toBe(true);
+    expect(gen.focusKey!.split(':')[0]).toBe(gen.focusStage);
   });
 
   it('the dryRun steeringDelta measures from the same before-state as the other two', async () => {
@@ -122,13 +124,14 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
     expect(delta).toBeDefined();
     expect(delta!.blockingErrors.before).toBe(snap.blockingErrors);
 
-    const scored = new Map(
-      snap.report.scores.filter((s) => s.applicable > 0).map((s) => [s.dimension as string, s.score]),
+    // CR-GC-757: the delta lists exactly the stages with findings — and since nothing changes,
+    // before and after both equal the standing count, delta 0.
+    const standing = Object.fromEntries(
+      snap.stages.filter((s) => s.findings > 0).map((s) => [s.name, { before: s.findings, after: s.findings, delta: 0 }]),
     );
-    for (const [dim, d] of Object.entries(delta!.dimensions)) {
-      if (!scored.has(dim)) continue;
-      expect(d.before).toBe(scored.get(dim));
-    }
+    expect(Object.keys(standing).length).toBeGreaterThan(0);
+    expect(delta!.stages).toEqual(standing);
+    expect(delta!.blockingErrors.after).toBe(snap.blockingErrors);
   });
 
   it('the graph is unchanged by measuring it — all three surfaces are read-only', async () => {
@@ -150,9 +153,11 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
       JSON.stringify({
         violations: s.violations.map((v) => `${v.rule_id}/${v.element_id}/${v.severity}`).sort(),
         blockingErrors: s.blockingErrors,
-        scores: s.report.scores.map((x) => `${x.dimension}=${x.score}/${x.applicable}`).sort(),
+        stages: s.stages.map((x) => `${x.name}=${x.findings}`),
       });
     expect(key(a)).toBe(key(b));
+    // Not vacuous: the fixture has findings, and the stage counts are part of the key.
+    expect(a.stages.some((x) => x.findings > 0)).toBe(true);
   });
 
   // CR-GC-562: REQ-steering-post woertlich — „derselbe Graph liefert dieselbe EMPFEHLUNG".

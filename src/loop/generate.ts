@@ -19,7 +19,7 @@
  */
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
-import { ALL_RULE_DEFS, RULE_TO_DIMENSION, STAGE_SETS } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, STAGE_SETS } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 import { acceptedRuleIds } from '@sigloch/contracts/se';
@@ -48,17 +48,16 @@ export const GenerationStep = z.object({
   done: z.boolean(),
   /** Die konkrete generative Instruktion für den MCP-Host. */
   prompt: z.string(),
-  /** Readiness-Stand je anwendbarer Dimension. */
-  // score: null = „nicht messbar" (Kernmenge leer, contracts 9.x) — nie 0 %.
-  readiness: z.array(z.object({ dimension: z.string(), score: z.number().nullable(), violations: z.number() })),
+  /** Befunde je Stufe — nur die Stufen, in denen etwas meldet (CR-GC-757). */
+  readiness: z.array(z.object({ stage: z.string(), findings: z.number() })),
   threshold: z.number(),
   /** Error-Violations (Gate-Blocker) — müssen vor dem Handoff auf 0. */
   blockingErrors: z.number(),
   /** Stabiler Identifikator des fokussierten Fund-Sets (CR-GC-281):
-   * `${dimension}:${element_ids sortiert, komma-getrennt}`. null wenn kein
+   * `${stufe}:${rule_id}:${element_ids sortiert}`. null wenn kein
    * Fokus (seed/handoff/keine regelbaren Funde). */
   focusKey: z.string().nullable(),
-  /** Fokus-Elementtypen des Schritts (CR-GC-285): `DIMENSION_FOCUS_TYPES` der
+  /** Fokus-Elementtypen des Schritts (CR-GC-285): `STAGE_FOCUS_TYPES` der
    * Fokus-Dimension bzw. der seed-Phase; leer bei handoff/keinem Fokus. Der
    * Executor injiziert dafür Guide-Slice + Element-Index in den Runden-Prompt,
    * ohne den Prompt-String parsen zu müssen. */
@@ -68,12 +67,12 @@ export const GenerationStep = z.object({
    * die uids braucht, soll sie lesen, nicht aus einem zusammengesetzten Schluessel herausschneiden.
    * Nur in der expand-Phase gesetzt; seed/handoff/Task-Einstieg haben keinen Fund. */
   focusElements: z.array(z.string()).optional(),
-  /** Fokus-Dimension des Schritts (CR-GC-558): Schluessel in `DIMENSION_FOCUS_TYPES`
+  /** Fokus-Dimension des Schritts (CR-GC-558): Schluessel in `STAGE_FOCUS_TYPES`
    * (`seed` | `uc` | `req` | `arch` | ...), null bei handoff. Steckt zwar auch im
    * `focusKey`-Praefix, aber der ist ein zusammengesetzter Identifikator — wer die
    * Dimension braucht, soll sie lesen, nicht aus einem Key herausschneiden. Der
    * Executor waehlt daran die Autorier-Anleitung. */
-  focusDimension: z.string().nullable(),
+  focusStage: z.string().nullable(),
   /** CR-GC-589: die Anleitung zur Fokus-Dimension als VERWEIS (`se:author-req`) — der Host laedt
    * den Skill ueber sein Skill-Werkzeug, der Executor spielt den Rumpf ein. Eine Zuordnung, zwei
    * Transporte. null, wenn es fuer die Dimension keinen Autorier-Skill gibt. */
@@ -99,14 +98,18 @@ export type GenerationStep = z.infer<typeof GenerationStep>;
  * `se-view:*` bleibt draussen: Darstellungen, keine Bauanleitungen. `ver`/`schema`/`cr`/`ms`
  * fehlen, weil es fuer sie keinen Autorier-Skill GIBT — ein Eintrag waere eine Luege.
  */
-export const SKILL_FOR_DIMENSION: Record<string, { name: string; file: string } | undefined> = {
+export const SKILL_FOR_STAGE: Record<string, { name: string; file: string } | undefined> = {
   'seed:sys': { name: 'se:top-level', file: 'top-level.md' },
   'seed:uc': { name: 'se:author-uc', file: 'author-uc.md' },
   'seed:actor': { name: 'se:author-actor', file: 'author-actor.md' },
-  uc: { name: 'se:author-uc', file: 'author-uc.md' },
-  req: { name: 'se:author-req', file: 'author-req.md' },
-  arch: { name: 'se:top-level', file: 'top-level.md' },
-  alloc: { name: 'se:top-level', file: 'top-level.md' },
+  System: { name: 'se:author-uc', file: 'author-uc.md' },
+  Anwendungsfall: { name: 'se:author-uc', file: 'author-uc.md' },
+  Anforderung: { name: 'se:author-req', file: 'author-req.md' },
+  Wirkkette: { name: 'se:author-uc', file: 'author-uc.md' },
+  Funktion: { name: 'se:top-level', file: 'top-level.md' },
+  Datenfluss: { name: 'se:top-level', file: 'top-level.md' },
+  Modul: { name: 'se:top-level', file: 'top-level.md' },
+  immer: { name: 'se:top-level', file: 'top-level.md' },
 };
 
 /** Wer die Verdicts liest (CR-GC-288): 'host' = der MCP-Client probt selbst per
@@ -382,21 +385,41 @@ export const RULE_CLAUSE: Record<
  * von `.claude/commands/se/`) → undefined, dann gibt es keinen Anleitungs-Block.
  */
 export function skillDatei(name: string): { name: string; file: string } | undefined {
-  const alle = [...Object.values(SKILL_FOR_DIMENSION), ...Object.values(RULE_CLAUSE).map((k) => k.skill)];
+  const alle = [...Object.values(SKILL_FOR_STAGE), ...Object.values(RULE_CLAUSE).map((k) => k.skill)];
   return alle.find((sk): sk is { name: string; file: string } => !!sk && sk.name === name);
 }
 
 /** Generative Instruktion je Readiness-Dimension — die einzige Handlungsanweisung des
  * Systems, seit die generischen Lese-Zwillinge in `steering.ts` mit CR-GC-562 gefallen sind. */
+const VORLAGE_UC =
+  'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (Anbindung ACTOR io→FLOW io→FUNC in der FCHAIN des UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter — die volle Anleitung steht als Block im Rundeninhalt.';
+const VORLAGE_REQ =
+  'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.';
+const VORLAGE_ARCH =
+  'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Schlage je Fund 2 alternative FUNC/FCHAIN-Zerlegungen vor — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Lass das Gate wählen.';
+const VORLAGE_ALLOC =
+  'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen, der Steuerwert entscheidet.';
+const VORLAGE_VER =
+  'Schlage je unverifiziertem REQ einen TEST-Kandidaten vor (TEST verify REQ), mit konkretem Prüfschritt in der description.';
+const VORLAGE_SCHEMA =
+  'Schlage SCHEMA-Definitionen für die FLOWs ohne Schema vor (FLOW relation SCHEMA), eine pro Datenform, wiederverwendet statt dupliziert.';
+const VORLAGE_MS =
+  'Schlage 2–4 Milestones mit depends-on-Reihenfolge vor (MS relation MS) und ordne CRs zu (CR relation MS).';
+/** Generative Instruktion je STUFE (CR-GC-757) — eine Vorlage kann an mehreren Stufen stehen. Abgleich hat keine: was
+ * dort meldet, loest kein Modellzug. */
 export const GENERATION_TEMPLATE: Record<string, string> = {
-  uc: 'Schlage je Fund 2–3 Kandidaten vor: fehlende ACTORs (Anbindung ACTOR io→FLOW io→FUNC in der FCHAIN des UC), FCHAIN-Szenarien (UC compose FCHAIN) oder fehlende UCs aus der Intention. UC-Stil: Actor–Verb–Objekt–Ergebnis, ≤25 Wörter — die volle Anleitung steht als Block im Rundeninhalt.',
-  req: 'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.',
-  arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Schlage je Fund 2 alternative FUNC/FCHAIN-Zerlegungen vor — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Lass das Gate wählen.',
-  alloc: 'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen, der Steuerwert entscheidet.',
-  ver: 'Schlage je unverifiziertem REQ einen TEST-Kandidaten vor (TEST verify REQ), mit konkretem Prüfschritt in der description.',
-  schema: 'Schlage SCHEMA-Definitionen für die FLOWs ohne Schema vor (FLOW relation SCHEMA), eine pro Datenform, wiederverwendet statt dupliziert.',
-  cr: 'Lege CR-Knoten für die anstehenden Umbauten an (CR relation FUNC/MOD, status/commitRef nach Abschluss).',
-  ms: 'Schlage 2–4 Milestones mit depends-on-Reihenfolge vor (MS relation MS) und ordne CRs zu (CR relation MS).',
+  System: VORLAGE_UC,
+  Anwendungsfall: VORLAGE_UC,
+  Anforderung: VORLAGE_REQ,
+  Wirkkette: VORLAGE_UC,
+  Funktion: VORLAGE_ARCH,
+  Datenfluss: VORLAGE_ARCH,
+  Modul: VORLAGE_ALLOC,
+  Schema: VORLAGE_SCHEMA,
+  Test: VORLAGE_VER,
+  Plan: VORLAGE_MS,
+  Bindung: VORLAGE_VER,
+  immer: VORLAGE_ARCH,
 };
 
 /**
@@ -405,14 +428,20 @@ export const GENERATION_TEMPLATE: Record<string, string> = {
  * legte in gcrun-310 beide an und im naechsten Zug Alternativen der Alternativen (35 von 49 REQ
  * Dubletten). Alternativen entstehen dort ueber N Stichproben (Best-of-N), nie in einem Batch.
  */
+const EIN_BATCH_ARCH =
+  'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Genau EINE Zerlegung je Fund — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Vorhandene FUNCs weiterverwenden, keine Varianten daneben anlegen.';
+const EIN_BATCH_ALLOC =
+  'Schlage EINEN MOD-Schnitt vor (intern stark, extern schwach gekoppelt), mit den allocate-Kanten FUNC→MOD.';
 export const EIN_BATCH: Partial<Record<string, string>> = {
-  arch: 'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Genau EINE Zerlegung je Fund — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Vorhandene FUNCs weiterverwenden, keine Varianten daneben anlegen.',
-  alloc: 'Schlage EINEN MOD-Schnitt vor (intern stark, extern schwach gekoppelt), mit den allocate-Kanten FUNC→MOD.',
+  Funktion: EIN_BATCH_ARCH,
+  Datenfluss: EIN_BATCH_ARCH,
+  Modul: EIN_BATCH_ALLOC,
+  immer: EIN_BATCH_ARCH,
 };
 
 /** Der Vorschlagstext einer Dimension je Selektion — der Host probt Alternativen selbst, der Treiber nicht. */
-export function vorschlagsText(dimension: string, selection: GenerationSelection): string | undefined {
-  return (selection === 'driver' ? EIN_BATCH[dimension] : undefined) ?? GENERATION_TEMPLATE[dimension];
+export function vorschlagsText(stufe: string, selection: GenerationSelection): string | undefined {
+  return (selection === 'driver' ? EIN_BATCH[stufe] : undefined) ?? GENERATION_TEMPLATE[stufe];
 }
 
 /**
@@ -424,18 +453,19 @@ export function vorschlagsText(dimension: string, selection: GenerationSelection
  * (Turn-Analyse: 41–59 % reine Lese-Turns, guide 72–107× pro Lauf).
  * Keys = die Dimensionen von GENERATION_TEMPLATE.
  */
-export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
-  // CR-GC-566: FLOW ist dabei, weil das Template die Anbindung ACTOR io→FLOW io→FUNC verlangt.
-  uc: ['ACTOR', 'UC', 'FCHAIN', 'FUNC', 'FLOW'],
-  // CR-GC-566: TEST, weil das Template die REQ nur MIT ihrem verify-TEST zulaesst (R-01).
-  req: ['UC', 'REQ', 'TEST'],
-  // CR-GC-566: MOD, weil das Template allocate→MOD im selben Batch verlangt.
-  arch: ['FCHAIN', 'FUNC', 'FLOW', 'REQ', 'MOD'],
-  alloc: ['FUNC', 'MOD'],
-  ver: ['TEST', 'REQ'],
-  schema: ['FLOW', 'SCHEMA'],
-  cr: ['CR', 'FUNC', 'MOD'],
-  ms: ['MS', 'CR'],
+export const STAGE_FOCUS_TYPES: Record<string, string[]> = {
+  System: ['ACTOR', 'UC', 'FCHAIN', 'FUNC', 'FLOW'],
+  Anwendungsfall: ['ACTOR', 'UC', 'FCHAIN', 'FUNC', 'FLOW'],
+  Anforderung: ['UC', 'REQ', 'TEST'],
+  Wirkkette: ['ACTOR', 'UC', 'FCHAIN', 'FUNC', 'FLOW'],
+  Funktion: ['FCHAIN', 'FUNC', 'FLOW', 'REQ', 'MOD'],
+  Datenfluss: ['FCHAIN', 'FUNC', 'FLOW', 'REQ', 'MOD'],
+  Modul: ['FUNC', 'MOD'],
+  Schema: ['FLOW', 'SCHEMA'],
+  Test: ['TEST', 'REQ'],
+  Plan: ['MS', 'CR'],
+  Bindung: ['TEST', 'REQ'],
+  immer: ['FCHAIN', 'FUNC', 'FLOW', 'REQ', 'MOD'],
 };
 
 /**
@@ -449,7 +479,7 @@ export const DIMENSION_FOCUS_TYPES: Record<string, string[]> = {
  *
  * Kein Zaehler und kein Zustand: die Stufe folgt aus dem Graphen (kein SYS / kein UC /
  * kein ACTOR), `generationStep` bleibt rein. `seed` steht bewusst NICHT mehr in
- * DIMENSION_FOCUS_TYPES — dort gehoeren Readiness-Dimensionen hin, und der Seed ist keine.
+ * STAGE_FOCUS_TYPES — dort gehoeren Readiness-Dimensionen hin, und der Seed ist keine.
  */
 // Die Fokusmenge lebt in kernel/measure/focus-set.ts (CR-GC-598/600) — eine Definition fuer
 // Schritt, Probe und Bericht, abgeleitet aus der Eigentuemer-Spalte der Regeln.
@@ -571,8 +601,8 @@ export function generationStep(
           // haben keinen, dort gilt die Dimension (seed:uc → author-uc usw.).
           imperativSkill !== undefined
           ? imperativSkill
-          : core.focusDimension
-            ? (SKILL_FOR_DIMENSION[core.focusDimension]?.name ?? null)
+          : core.focusStage
+            ? (SKILL_FOR_STAGE[core.focusStage]?.name ?? null)
             : null;
   return { ...core, skill, steer: steerState(snap.violations) };
 }
@@ -608,9 +638,9 @@ function stepCore(
   steerOptimum: SteerOptimum | null = null,
 ): Omit<GenerationStep, 'skill' | 'steer'> & { imperativSkill?: string | null } {
   const gateProtocol = GATE_PROTOCOL[selection];
-  // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval +
-  // computeReadiness — geteilt mit dem steeringDelta des dryRun-Verdicts.
-  const { og, report } = snap;
+  // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval + Befunde je Stufe —
+  // geteilt mit dem steeringDelta des dryRun-Verdicts.
+  const { og, stages } = snap;
   // CR-GC-601: im Kern die Kern-Fokusmenge des Snapshots, im Task das detaillierte Regelset (Warnung).
   // CR-GC-608: am lokalen Optimum verlassen die Steuerregeln den Kern-Fokus.
   const violations = task === 'kern'
@@ -623,9 +653,8 @@ function stepCore(
   const sysEl = og.elements.find((e) => e.type === 'SYS');
   const sys = og.elements.find((e) => e.type === 'SYS');
   const effectiveIntent = intent?.trim() || sys?.description?.trim() || '';
-  const readiness = report.scores
-    .filter((s) => s.applicable > 0)
-    .map((s) => ({ dimension: s.dimension as string, score: s.score, violations: s.violations }));
+  // CR-GC-757: Befunde je Stufe (contracts `stage` an der Regel) — keine Prozentzahl, kein Nenner.
+  const readiness = stages.filter((s) => s.findings > 0).map((s) => ({ stage: s.name, findings: s.findings }));
 
   // --- Phase seed: noch kein System im Graphen -----------------------------
   // CR-GC-749: der Ausloeser ist der Befund der Existenz-Regel des Systems (R-33), nicht mehr ein
@@ -653,7 +682,7 @@ function stepCore(
         blockingErrors,
         focusKey: null,
         focusTypes: [],
-        focusDimension: null,
+        focusStage: null,
       };
     }
     // Steuerung im Hintergrund (CR-GC-307): erst HIER existiert eine Intention.
@@ -697,7 +726,7 @@ function stepCore(
       blockingErrors,
       focusKey: null,
       focusTypes: [...SEED_STAGES.sys],
-      focusDimension: 'seed:sys',
+      focusStage: 'seed:sys',
     };
   }
 
@@ -725,26 +754,6 @@ function stepCore(
   // sprang damit zwischen den Stufen (gemessen am Referenzlauf lokal: 3, 2, 7, 7, 6, 8, 10).
   // Fund-Rotation (CR-GC-281): Kandidaten = 3er-Fenster je Regel. Fenster, deren focusKey in `defer`
   // liegt, werden uebersprungen. Alles zurueckgestellt ⇒ stalled (CR-GC-596).
-  // CR-GC-593: die Dimensionen kommen aus der FOKUSMENGE, nicht aus `report.scores` — dort
-  // faellt eine Dimension mit `applicable = 0` weg, auch wenn eine graphweite Regel in ihr
-  // feuert (AF-05 → `ms` ohne MS-Element: unsichtbar, und die Maschine waere "done" mit
-  // einem offenen Fund). Score und Fundzahl der Dimension liefert der Bericht weiterhin.
-  // Score nur, wo die Dimension Elemente hat (`applicable > 0`) — sonst „nicht messbar".
-  const scoreOf = (d: string): number | null => {
-    const rep = report.scores.find((s) => s.dimension === d);
-    return rep && rep.applicable > 0 ? rep.score : null;
-  };
-  const dimOf = (id: string): string | undefined => RULE_TO_DIMENSION[id];
-  const dims = [...new Set(violations.map((v) => dimOf(v.rule_id)).filter((d): d is string => d !== undefined))]
-    .map((dimension) => ({
-      dimension,
-      score: scoreOf(dimension),
-      violations: violations.filter((v) => dimOf(v.rule_id) === dimension).length,
-    }))
-    // Messbare Dimensionen zuerst, schwaechste voran; "nicht messbar" (kein Element der
-    // Dimension, nur ein graphweiter Fund wie AF-05) zuletzt — vorher stand es wegen `null → -1`
-    // VOR jedem echten Fehler, und die Frischestempel waren ploetzlich der erste Fokus.
-    .sort((a, b) => (a.score ?? 2) - (b.score ?? 2) || b.violations - a.violations || a.dimension.localeCompare(b.dimension));
   // Rang der Severity (CR-GC-563): error vor warning vor allem anderen. Unbekanntes
   // rankt hinten statt NaN zu erzeugen.
   const severityRang = (v: (typeof violations)[number]): number =>
@@ -768,11 +777,11 @@ function stepCore(
   const fundeVon = (ruleId: string): typeof violations =>
     violations.filter((v) => v.rule_id === ruleId).sort((a, b) => a.element_id.localeCompare(b.element_id));
   // rule_id im Key (CR-GC-290): ein Fenster traegt genau eine Regel,
-  // also identifiziert (dimension, rule_id, element_ids) das Fund-Set eindeutig —
+  // also identifiziert (stufe, rule_id, element_ids) das Fund-Set eindeutig —
   // ohne rule_id würden zwei Fenster über dieselben Elemente, aber verschiedene
   // Regeln, auf denselben Key kollabieren.
-  const keyOf = (dimension: string, vs: typeof violations): string =>
-    `${dimension}:${vs[0]?.rule_id ?? ''}:${vs.map((v) => v.element_id).sort().join(',')}`;
+  const keyOf = (stufe: string, vs: typeof violations): string =>
+    `${stufe}:${vs[0]?.rule_id ?? ''}:${vs.map((v) => v.element_id).sort().join(',')}`;
 
   const deferSet = new Set(defer);
   // ITEM-2026-632/633: im Treiber-Modus ist ein Eintrittspunkt (AF-01..05) nie Fokus — der Executor
@@ -788,34 +797,37 @@ function stepCore(
   // ausdruecklich, nicht ueber Stufe oder Dimension: wo die Regeln eines Tasks liegen, ist Sache des
   // Katalogs und wandert mit ihm.
   const eintritt = task !== 'kern' ? TASK_ENTRY[task] : null;
-  const dimRang = new Map(dims.map((d, i) => [d.dimension, i]));
   const existenzRang = (ruleId: string): number => (REGEL.get(ruleId)?.role === 'existence' ? 0 : 1);
   const schwereVon = (ruleId: string): number => Math.min(...violations.filter((v) => v.rule_id === ruleId).map(severityRang));
-  // Nur Regeln mit Dimension (CR-GC-593): sie traegt Vorschlagstext und Fokus-Typen des Fensters.
+  // Die Abgleich-Regeln (Profil `conformance`) stellen kein Fenster (CR-GC-757, vorher: „Regeln ohne
+  // Dimension", dieselbe Menge) — ihren Befund loest kein Modellzug.
+  const stufeVon = (ruleId: string): string => {
+    const stage = REGEL.get(ruleId)?.stage;
+    return stage === undefined ? '' : stage === 'immer' ? 'immer' : STAGE_SETS[stage - 1]!;
+  };
   const regeln = [...new Set(violations.map((v) => v.rule_id))]
-    .filter((id) => dimOf(id) !== undefined)
+    .filter((id) => REGEL.get(id) !== undefined && REGEL.get(id)!.profile !== 'conformance')
     .sort(
       (a, b) =>
         Number(b === eintritt) - Number(a === eintritt) ||
         stufenRang(a) - stufenRang(b) ||
         existenzRang(a) - existenzRang(b) ||
-        dimRang.get(dimOf(a)!)! - dimRang.get(dimOf(b)!)! ||
         schwereVon(a) - schwereVon(b) ||
         klauselRang(a) - klauselRang(b) ||
         a.localeCompare(b),
     );
   const kandidaten = regeln.flatMap((ruleId) => {
     const funde = fundeVon(ruleId);
-    const dim = dims[dimRang.get(dimOf(ruleId)!)!]!;
-    const fenster: { dim: (typeof dims)[number]; funde: typeof violations; key: string }[] = [];
+    const stufe = stufeVon(ruleId);
+    const fenster: { stufe: string; funde: typeof violations; key: string }[] = [];
     for (let i = 0; i < funde.length; i += 3) {
       const teil = funde.slice(i, i + 3);
-      fenster.push({ dim, funde: teil, key: keyOf(dim.dimension, teil) });
+      fenster.push({ stufe, funde: teil, key: keyOf(stufe, teil) });
     }
     return fenster;
   });
   const gewaehlt = kandidaten.find((k) => !deferSet.has(k.key) && !eintrittImTreiber(k.key));
-  const focus = gewaehlt?.dim;
+  const focus = gewaehlt?.stufe;
   const focusViolations: typeof violations = gewaehlt?.funde ?? [];
   const focusKey: string | null = gewaehlt?.key ?? null;
 
@@ -836,7 +848,7 @@ function stepCore(
       blockingErrors,
       focusKey: null,
       focusTypes: [...SEED_STAGES[stufe]],
-      focusDimension: `seed:${stufe}`,
+      focusStage: `seed:${stufe}`,
     });
     const regel = windowRuleOf(gewaehlt.funde);
     if (regel === SEED_RULE.uc) {
@@ -889,7 +901,7 @@ function stepCore(
       blockingErrors,
       focusKey: null,
       focusTypes: [],
-      focusDimension: null,
+      focusStage: null,
       offeneTasks,
       offeneFunde: offen,
     };
@@ -914,7 +926,7 @@ function stepCore(
       blockingErrors,
       focusKey: null,
       focusTypes: [],
-      focusDimension: null,
+      focusStage: null,
     };
   }
   if (!focus) {
@@ -944,7 +956,7 @@ function stepCore(
       blockingErrors,
       focusKey: null,
       focusTypes: [],
-      focusDimension: null,
+      focusStage: null,
     };
   }
 
@@ -1020,9 +1032,9 @@ function stepCore(
       channel: 'proposal',
       value: focus
         ? {
-            text: vorschlagsText(focus.dimension, selection) ?? 'Behebe die Funde der Dimension.',
-            types: [...(DIMENSION_FOCUS_TYPES[focus.dimension] ?? [])],
-            skill: SKILL_FOR_DIMENSION[focus.dimension]?.name ?? null,
+            text: vorschlagsText(focus, selection) ?? 'Behebe die Funde der Stufe.',
+            types: [...(STAGE_FOCUS_TYPES[focus] ?? [])],
+            skill: SKILL_FOR_STAGE[focus]?.name ?? null,
           }
         : null,
     },
@@ -1049,7 +1061,7 @@ function stepCore(
     focusTypes: imperativ?.value.types ?? [],
     // CR-GC-724: am Task-Eintritt ist das Fund-Element das SYS — der Bestand kommt nach Typ, nicht aus seinem Kontext.
     focusElements: taskKlausel ? [] : [...new Set(focusViolations.map((v) => v.element_id))],
-    focusDimension: focus!.dimension as string,
+    focusStage: focus!,
     imperativSkill: imperativ?.value.skill ?? null,
   };
 }

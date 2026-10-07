@@ -2,8 +2,8 @@
  * T-D1 (CR-GC-340) — the published numbers are asserted against the LIVING source.
  *
  * `docs/articles/*.md` and `README.md` state how many element types, connection
- * types, legal connection patterns, engine rules, readiness dimensions and MCP tools
- * graphcode has. Every one of those came out of a contracts version, and every
+ * types, legal connection patterns, engine rules and MCP tools graphcode has (the
+ * readiness dimensions were part of that list until CR-GC-757 struck the dimension). Every one of those came out of a contracts version, and every
  * contracts bump can make them silently false — which is exactly what the claim
  * audit of 2026-08-15 found (37/66/22 written, 36/72/25 shipped).
  *
@@ -16,7 +16,7 @@
  * a line break — the articles are hard-wrapped.
  *
  *   13 element types · 7 connection types · 36 legal connection patterns
- *   72 engine rules  · 8 readiness dimensions · 25 MCP tools
+ *   72 engine rules  · 25 MCP tools            (state of the 2026-08-15 audit)
  *
  * "engine rules" rather than plain "rules" on purpose: the audit found the word
  * "rules" doing duty for BOTH the rule catalogue and the legal trace patterns, two
@@ -34,7 +34,7 @@ import {
   ELEMENT_DESCRIPTIONS,
   TraceType,
   TRACE_PATTERNS,
-  RULE_TO_DIMENSION,
+  ALL_RULE_DEFS,
 } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
@@ -101,17 +101,16 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
     { phrase: 'legal connection patterns', actual: () => TRACE_PATTERNS.length },
     /*
      * CR-SM-305: NICHT `ALL_RULE_DEFS.length`. Der Katalog traegt seit contracts 10.1 auch die
-     * sechs Kongruenz-Regeln (RC-01..06), und die fuettern KEINE readiness-Dimension — sie
-     * brauchen `CodeFacts` und werden von `evaluateAllRules` gar nicht ausgefuehrt. Der Satz
-     * im Artikel lautet „<n> engine rules feed 8 readiness dimensions"; die Zahl, die ihn wahr
-     * macht, ist die der SCORENDEN Regeln, nicht die Katalogzahl.
+     * Kongruenz-Regeln (Profil `conformance`, RC-*), und die laufen nicht im Regellauf des Modells —
+     * sie brauchen `CodeFacts` und werden von `evaluateAllRules` gar nicht ausgefuehrt. Die Zahl,
+     * die den Satz im Artikel wahr macht, ist die der Regeln, die am Modell melden koennen, nicht
+     * die Katalogzahl.
      *
-     * Der Unterschied ist genau der Grund, aus dem dieser Test existiert: waere hier stumpf
-     * `ALL_RULE_DEFS.length` stehengeblieben, haette die Prosa auf 69 gehoben werden muessen —
-     * und damit eine Aussage behauptet, die falsch ist.
+     * CR-GC-757: gezaehlt wird ueber das Profil — dieselbe Menge, die vorher „hat eine Dimension"
+     * hiess (`RULE_TO_DIMENSION` gibt es nicht mehr). Die Phrase „readiness dimensions" ist mit
+     * der Dimension entfallen: es gibt keine lebende Quelle mehr, gegen die sie zu pruefen waere.
      */
-    { phrase: 'engine rules', actual: () => Object.keys(RULE_TO_DIMENSION).length },
-    { phrase: 'readiness dimensions', actual: () => new Set(Object.values(RULE_TO_DIMENSION)).size },
+    { phrase: 'engine rules', actual: () => ALL_RULE_DEFS.filter((r) => r.profile !== 'conformance').length },
     { phrase: 'MCP tools', actual: () => toolCount },
   ];
 
@@ -162,7 +161,7 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
     expect(offenders).toEqual([]);
   });
 
-  it('the six live values are the ones the audit recorded (canary for a contracts bump)', () => {
+  it('the five live values are the ones the audit recorded (canary for a contracts bump)', () => {
     // Not a second source of truth: this fails LOUDLY on a contracts bump so someone
     // re-reads the articles, instead of the prose drifting behind a green suite.
     // Update this list together with the text, never instead of it.
@@ -196,10 +195,10 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // CR-SM-396 (Regelkatalog 40.0.0, CR-GC-753): R-34 entfaellt wieder — die Grammatik (R-18) lehnt den
       // Datenfluss ohne Schema schon beim Schreiben ab — 69 -> 68. Zwei Artikel nannten 69, beide nachgezogen.
       // CR-SM-399/400 (Regelkatalog 42/43, CR-GC-755): IR-01 und TR-01 entfallen — eine Entscheidung ist ein
-      // erledigter Auftrag, kein Feld im Vermerk — 68 -> 66. Gezaehlt wird, was eine Dimension hat
-      // (`RULE_TO_DIMENSION`); die Profil-Liste `READINESS_SCORED_PROFILES` gibt es nicht mehr.
+      // erledigter Auftrag, kein Feld im Vermerk — 68 -> 66.
+      // CR-SM-401 (Regelkatalog 44, CR-GC-757): die Dimension entfaellt; gezaehlt wird, was nicht das Profil
+      // `conformance` traegt — dieselbe Menge, weiter 66. „readiness dimensions=8" ist ersatzlos gestrichen.
       'engine rules=66',
-      'readiness dimensions=8',
       // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
       // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.
       // CR-GC-685B: 24 -> 23. `graph_realize` ist weg — Binden ist ein Format-E-Patch

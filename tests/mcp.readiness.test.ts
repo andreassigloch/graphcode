@@ -20,8 +20,15 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { getFamilyRuleIds, MARK_LABELS } from '../src/kernel/measure/readiness.js';
-import { ALL_RULE_DEFS, Mark } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, Mark, STAGE_SETS } from '@sigloch/contracts/se';
+import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
+
+/** Name der Stufe einer Regel, aus dem Katalog gelesen (CR-GC-757). */
+const stufenName = (ruleId: string): string => {
+  const st = ALL_RULE_DEFS.find((r) => r.id === ruleId)!.stage;
+  return st === 'immer' ? 'immer' : STAGE_SETS[st - 1]!;
+};
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
   // Kuzu needs the .graphcode parent to exist (createHarness mkdirs it; direct construction doesn't).
@@ -178,49 +185,42 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
   });
 
   // -------------------------------------------------------------------------
-  // CR-GC-325: the 8 RULE_TO_DIMENSION topic scores — the other projection of
-  // the SAME rule stream. Before this CR `computeReadiness` ran inside nextStep
-  // and seven of its eight results were thrown away; a dashboard that wanted the
-  // architecture axis had to recompute it (which graph-view-edit actually did).
+  // CR-GC-757: findings per stage — the other projection of the SAME rule stream.
+  // (Before: CR-GC-325, eight percentage scores per dimension with a denominator.
+  // The dimension is gone; what is left is a count of what reports, per stage.)
   // -------------------------------------------------------------------------
 
-  it('dimension_readiness (CR-GC-325): all 8 dimensions, each with its denominator, in summary and detail', async () => {
+  it('stages (CR-GC-757): all 13 stages in order, a plain count each, in summary and detail', async () => {
     const tools = bindToolsToHarness(harness);
     expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
     expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
 
     const summary = await tools.graph_readiness.handler({});
     const detail = await tools.graph_readiness.handler({ detail: true });
+    const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
 
     for (const report of [summary, detail]) {
-      // Completeness: a MISSING dimension must not read as "all good" (req 5).
-      expect(report.dimension_readiness.map((d) => d.dimension)).toEqual([
-        'req',
-        'uc',
-        'arch',
-        'alloc',
-        'ver',
-        'schema',
-        'cr',
-        'ms',
-      ]);
-      for (const d of report.dimension_readiness) {
-        // The denominator is mandatory — a score without `applicable` is not
-        // interpretable (req 4: ms reads 0 % off 67 findings over 15 elements).
-        expect(typeof d.applicable, `${d.dimension}.applicable`).toBe('number');
-        expect(typeof d.violations, `${d.dimension}.violations`).toBe('number');
-        // contracts 9.x (CR-SM-270): score ist number | null — null heißt „nicht
-        // messbar" (leere Kernmenge), nie 0 %.
-        if (d.score === null) {
-          expect(d.coreApplicable, `${d.dimension}: null nur bei leerer Kernmenge`).toBe(0);
-        } else {
-          expect(d.score).toBeGreaterThanOrEqual(0);
-          expect(d.score).toBeLessThanOrEqual(1);
-        }
-        // CR-GC-514: reine Messung — das Ergebnis traegt kein Urteil `ready`.
-        expect(Object.keys(d)).not.toContain('ready');
+      // Completeness: a MISSING stage must not read as "nothing reports here" — all 13, in order.
+      expect(report.stages.map((s) => s.name)).toEqual([...STAGE_SETS, 'immer']);
+      expect(report.stages).toHaveLength(13);
+      for (const s of report.stages) {
+        // A count, nothing else: no score, no denominator, no verdict.
+        expect(Object.keys(s).sort(), s.name).toEqual(['findings', 'name']);
+        expect(Number.isInteger(s.findings) && s.findings >= 0, s.name).toBe(true);
       }
+      // The sum is the number of findings of the steering rule run — nothing dropped, nothing counted twice.
+      expect(report.stages.reduce((n, s) => n + s.findings, 0)).toBe(snapshot.violations.length);
+      // Each stage counts exactly the findings of the rules the catalogue puts there.
+      for (const s of report.stages) {
+        const erwartet = snapshot.violations.filter((v) => stufenName(v.rule_id) === s.name).length;
+        expect(s.findings, s.name).toBe(erwartet);
+      }
+      // The old block is gone, not kept beside the new one.
+      expect(report).not.toHaveProperty('dimension_readiness');
     }
+    // The fixture really has findings (R-02 on the orphan FUNC, stage Funktion) — otherwise 13 zeros would pass.
+    expect(summary.stages.find((s) => s.name === 'Funktion')!.findings).toBeGreaterThanOrEqual(1);
+    expect(summary.stages).toEqual(detail.stages);
   });
 
   // CR-GC-560: dieselbe Invariante, jetzt gegen `graph_generate`. Sie hing vorher an
@@ -234,16 +234,15 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     const readiness = await tools.graph_readiness.handler({});
     const step = await tools.graph_generate.handler({});
 
-    expect(step.readiness.length, 'fixture has findings, so dimensions are measurable').toBeGreaterThan(0);
-    for (const d of step.readiness) {
-      const score = readiness.dimension_readiness.find((r) => r.dimension === d.dimension);
-      expect(score, `dimension ${d.dimension} missing from dimension_readiness`).toBeDefined();
-      expect(d.score).toBe(score!.score);
-      expect(d.violations).toBe(score!.violations);
-    }
-    // Und die Fokus-Dimension ist eine, die der Snapshot wirklich scort.
-    if (step.focusDimension && !step.focusDimension.startsWith('seed:')) {
-      expect(step.readiness.some((d) => d.dimension === step.focusDimension)).toBe(true);
+    expect(step.readiness.length, 'fixture has findings, so stages carry a count').toBeGreaterThan(0);
+    // The step lists exactly the stages with findings, with the count the report shows — same order.
+    expect(step.readiness).toEqual(
+      readiness.stages.filter((s) => s.findings > 0).map((s) => ({ stage: s.name, findings: s.findings })),
+    );
+    // Und die Fokus-Stufe ist eine, in der der Snapshot wirklich Befunde zaehlt.
+    expect(step.focusStage).not.toBeNull();
+    if (step.focusStage && !step.focusStage.startsWith('seed:')) {
+      expect(step.readiness.some((d) => d.stage === step.focusStage)).toBe(true);
     }
   });
 });
