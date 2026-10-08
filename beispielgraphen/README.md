@@ -24,13 +24,16 @@ Quellgraph weiterläuft — ein Benchmark, dessen Eingabe sich ändert, misst ni
 | `sigllm-v98.graph.json` + `sigllm-v98.audit.jsonl` | handgeführter Lauf sigllm 17./18.09.2026, Ende der Spezifikation (das „Golden") mit seinem Audit (der Hand-Trail, den `generate.statemachine` nachspielt) | 2026-09-18, graphVersion 98 | 255 / 506 |
 | `gc-run-haiku45.graph.json` | Executor-Programm 2026-07/08 (CR-GC-678: einer von vier behaltenen Graphen) | 2026-08-01 | 86 / 154 |
 | `gc-run-devstral-v14.graph.json` | Executor-Programm 2026-07/08 (dito) | 2026-08-01 | 85 / 148 |
+| `todo-referenz/lokal/graph.json` | Referenzlauf der Rig-Aufgabe `todo`, Arm lokal (qwen3.8, OpenCode); eingefroren mit CR-GC-764, die lebende Referenz pflegt graphanalyze | 2026-10-08, graphVersion 4 | 39 / 57 |
+| `todo-referenz/frontier/graph.json` | dito, Arm frontier (Opus, Claude Code) | 2026-10-08, graphVersion 12 | 61 / 109 |
 | `dummy-slicer.graph.json` | fiktives Konsumenten-Repo `rig/dummy-slicer` (Spike 2026-06; Rig gelöscht mit CR-GC-740), Spezifikationsstand mit unrealisiertem `FN-slice` | 2026-06 | 13 / 14 |
 
 Leser (CR-GC-737, Löschkonzept Regel 5 — ein Graph ohne Leser geht): `scripts/randbreiten.mjs` liest alle;
 `sigllm-v98` lesen `generate.statemachine`, `generate.task`, `steer-optimum`, `policy-herkunft`,
-`read-tools.scope`, `working-set.spezlauf` und die Aufgabe `rig/aufgaben/sigllm-prosa`; die beiden
+`read-tools.scope`, `working-set.spezlauf` und die Aufgabe `sigllm-prosa` in graphanalyze; die beiden
 `gc-run-*` liest `tests/nd-similarity.test.ts`; `dummy-slicer` ist die Kalibrier-Fixture J1 der Whitebox-Messung
-(`rig/minimal-whitebox/jobs.mjs`, T-E2).
+(`scripts/whitebox-messung.mjs`, T-E2); die beiden `todo-referenz` lesen `generate.statemachine` und `generate.stufen`
+(sie liegen im Unterverzeichnis, damit `randbreiten.mjs` sie nicht als gehaltenen Schnappschuss zählt).
 
 ### Der Spike-Korpus (die unteren vier) — CR-GC-498
 
@@ -81,5 +84,5 @@ synthetische Graphen; und er ist code-los, also ohne aufgelöste `realRef`/`test
 
 Ein Graph gehört hierher, wenn er (a) aus einem echten Lauf stammt, nicht generiert ist,
 (b) mit Datum und `graphVersion` in der Tabelle steht und (c) eine Eigenschaft trägt, die
-die anderen nicht haben — Größe, Typmix, Bindungsgrad. Läufe des Rigs liegen unter `rig/runs/`
-(gitignored); je Aufgabe × Arm hält `rig/aufgaben/<name>/referenz/<arm>/` den Referenzlauf vorrätig.
+die anderen nicht haben — Größe, Typmix, Bindungsgrad. Läufe des Rigs und der Referenzlauf je Aufgabe × Arm
+liegen im privaten Repo graphanalyze (`rig/runs/`, `rig/aufgaben/<name>/referenz/<arm>/`).

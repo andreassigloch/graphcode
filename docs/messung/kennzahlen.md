@@ -65,9 +65,9 @@ exportiertes 231-KB-`kuzu.wal`, kein committetes `graph.json`, die CR-Reihenfolg
 
 ## Läufe des Rigs — ein Datensatz je Lauf (CR-GC-739)
 
-Was ein Lauf des Rigs war, steht als Datensatz in [`benchmark.jsonl`](benchmark.jsonl) und gerendert in
-[`benchmark.md`](benchmark.md); die Größen und ihre Eingänge definiert
-[`auswertung/README.md`](../../auswertung/README.md) (Kennzahlen, Verhalten, Schatten-Vorschläge, Blindurteil).
+Rig und Auswertung leben seit CR-GC-764 im privaten Repo graphanalyze. Was ein Lauf des Rigs war, steht dort als
+Datensatz in `docs/messung/benchmark.jsonl` und gerendert in `benchmark.md`; die Größen und ihre Eingänge definiert
+dort `auswertung/README.md` (Kennzahlen, Verhalten, Schatten-Vorschläge, Blindurteil).
 Eine Größe davon bleibt hier, weil die Leitlinie sie als Test führt:
 
 | Größe | Definition | Kriterium |

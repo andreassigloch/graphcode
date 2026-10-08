@@ -804,6 +804,7 @@
 | `CR-GC-763` | relation | `FUNC-rank-candidates` |
 | `CR-GC-764` | relation | `REQ-benchmark-harness` |
 | `CR-GC-764` | relation | `UC-loop-closure` |
+| `CR-GC-765` | relation | `REQ-benchmark-harness` |
 | `CR-GC-766` | relation | `FUNC-take-steering-snapshot` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

@@ -423,6 +423,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-762` | n/a | Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen | `FUNC-export-markdown` |
 | `CR-GC-763` | n/a | Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen | `FUNC-rank-candidates` |
 | `CR-GC-764` | n/a | Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte) | `REQ-benchmark-harness` · `UC-loop-closure` |
+| `CR-GC-765` | n/a | Leitlinie und Verweise nach dem Split auf graphanalyze umstellen | `REQ-benchmark-harness` |
 | `CR-GC-766` | n/a | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) | `FUNC-take-steering-snapshot` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,

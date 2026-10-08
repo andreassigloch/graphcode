@@ -27,7 +27,7 @@ export const S1 = ['T-V1', 'T-V2', 'T-V4', 'T-M3', 'T-M4', 'T-E1', 'T-E2', 'T-E8
 
 /** Noch ohne lesbaren Wert: die Quelle gibt nur Prosa aus (Folge-CR CR-GC-679B). */
 const NICHT_ERHOBEN = {
-  'T-V1': ['0 Befunde auf allen Ebenen', '`rig/moneyflow-struktur/driver.mjs` gibt nur Prosa aus'],
+  'T-V1': ['0 Befunde auf allen Ebenen', '`rig/moneyflow-struktur/driver.mjs` (graphanalyze) gibt nur Prosa aus'],
   'T-M3': ['Verstöße je Element fallen monoton im Trend', '`spike-nachweis-history.mjs` hat kein Urteilsfeld, nur Kill-Zeilen'],
   'T-O4': ['Known-Answer-Set richtig gerankt, keine Regression einer Dimension mit Gewicht ≥ 1', '`known-answer-set.mjs` gibt nur Markdown aus'],
   'T-O6': ['≥ 6/7 bekannte Paare gefunden', 'ND- und Engpass-Spike geben nur Prosa aus'],

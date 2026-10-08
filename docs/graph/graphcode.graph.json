@@ -14857,6 +14857,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-765",
+      "target": "REQ-benchmark-harness",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-766",
       "target": "FUNC-take-steering-snapshot",
       "type": "relation"
@@ -23404,5 +23409,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 642
+  "graphVersion": 643
 }

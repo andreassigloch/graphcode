@@ -288,7 +288,7 @@ GraphCode owns the **implementation** plus its own graph model. The graph SSOT f
 own model is [`docs/graph/graphcode.graph.json`](docs/graph/graphcode.graph.json); the claims,
 definition of done and test status are in [`docs/graphcode_leitlinie.md`](docs/graphcode_leitlinie.md) (German).
 [`docs/articles/`](docs/articles/) is the plain-language introduction; the numbers it cites come
-from [`docs/spikes/`](docs/spikes/) (raw benchmark runs; the current measurement setup is [`rig/`](rig/README.md) + [`auswertung/`](auswertung/README.md)).
+from [`docs/spikes/`](docs/spikes/) (raw benchmark runs; the rigs and evaluators that produce current measurements live in a separate private repository).
 GraphCode is part of a larger internal toolchain; some design-history documents reference private
 governance docs that are not part of this repository.
 
