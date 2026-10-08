@@ -45,3 +45,6 @@ docs/views/dashboard.url
 rig/agentdiary/
 rig/moneyflow-struktur/
 rig/runs/
+# Auswertungen echter Projekte (Spec, Gutachten, Messung, Raster mit Auftrag) — lokal, nicht öffentlich.
+docs/messung/energymanager-*/
+rig/aufgaben/energymanager/
