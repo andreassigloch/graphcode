@@ -1,6 +1,6 @@
 # CR-GC-760: Testvorgehen als Allgemeinvorgabe prüfen: Abnahme je Use Case, Smoke-Test, Risiko-Tests, Prüfaufbau
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-08)
 **Typ:** aus Item ITEM-2026-778 (idea)
 **Erstellt:** 2026-10-08
 **Item:** bok/items/ITEM-2026-778.json (Lane: graph)
