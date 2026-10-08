@@ -1,6 +1,6 @@
 # CR-GC-759: Werteklassen Laufzeit-Parameter, Start-Konfiguration, Invariante als Allgemeinvorgabe prüfen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-08)
 **Typ:** aus Item ITEM-2026-777 (idea)
 **Erstellt:** 2026-10-08
 **Item:** bok/items/ITEM-2026-777.json (Lane: graph)
