@@ -14,9 +14,6 @@
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
 | `FUNC-audit-stats` | FUNC | aggregateAuditEntries(entries) |
 | `FUNC-audit-trail` | FUNC | projectAuditEntries(entries, opts) |
-| `FUNC-auswertung-auswerten` | FUNC | Lauf auswerten |
-| `FUNC-auswertung-blindurteil` | FUNC | Blindurteil |
-| `FUNC-auswertung-nachspielen` | FUNC | Audit nachspielen |
 | `FUNC-author-req` | FUNC | Skill se:author-req |
 | `FUNC-author-uc` | FUNC | Skill se:author-uc |
 | `FUNC-authoring-guide` | FUNC | graph_authoring_guide(type) |
@@ -104,9 +101,6 @@
 | `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
-| `FUNC-rig-lauf` | FUNC | Lauf fahren |
-| `FUNC-rig-referenz` | FUNC | Referenzlauf setzen |
-| `FUNC-rig-serie` | FUNC | Serie fahren |
 | `FUNC-run-executor` | FUNC | runExecutor |
 | `FUNC-run-verb` | FUNC | executeRun |
 | `FUNC-schema-guard` | FUNC | schemaFingerprint |
@@ -144,13 +138,11 @@
 | `FUNC-view-intplan` | FUNC | se-view-intplan (Integrations-/Testplan) |
 | `FUNC-view-rtm` | FUNC | se-view-rtm (RTM) |
 | `MOD-agent-surface` | MOD | agent-surface — Skill-Treiber |
-| `MOD-auswertung` | MOD | Auswertung |
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
 | `MOD-kernel` | MOD | kernel — Store, Gate, Regeln, OpLog |
 | `MOD-kernel-measure` | MOD | measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot |
 | `MOD-loop` | MOD | loop — Autopilot und Executor |
 | `MOD-projections` | MOD | projections — Graph nach Artefakt |
-| `MOD-rig` | MOD | Rig |
 | `MOD-surface` | MOD | surface — MCP, CLI, Host-Socket, Viewer |
 | `SYS-graphcode` | SYS | GraphCode |
 
@@ -162,9 +154,6 @@
 | `FUNC-arch-fitness` | `MOD-kernel-measure` |
 | `FUNC-audit-stats` | `MOD-surface` |
 | `FUNC-audit-trail` | `MOD-surface` |
-| `FUNC-auswertung-auswerten` | `MOD-auswertung` |
-| `FUNC-auswertung-blindurteil` | `MOD-auswertung` |
-| `FUNC-auswertung-nachspielen` | `MOD-auswertung` |
 | `FUNC-author-req` | `MOD-agent-surface` |
 | `FUNC-author-uc` | `MOD-agent-surface` |
 | `FUNC-authoring-guide` | `MOD-projections` |
@@ -252,9 +241,6 @@
 | `FUNC-reseed` | `MOD-kernel` |
 | `FUNC-resolve-tests-from-code` | `MOD-kernel` |
 | `FUNC-rewind` | `MOD-surface` |
-| `FUNC-rig-lauf` | `MOD-rig` |
-| `FUNC-rig-referenz` | `MOD-rig` |
-| `FUNC-rig-serie` | `MOD-rig` |
 | `FUNC-run-executor` | `MOD-loop` |
 | `FUNC-run-verb` | `MOD-surface` |
 | `FUNC-schema-guard` | `MOD-kernel` |

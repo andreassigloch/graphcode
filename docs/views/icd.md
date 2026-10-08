@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 59 SCHEMA · 132 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 57 SCHEMA · 130 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -14,7 +14,6 @@
 | `SCHEMA-ask-owner` | src/loop/executor.ts#OwnerExchangeSchema | n/a |
 | `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit.ts#AuditStatsSchema | reviewed |
-| `SCHEMA-benchmark-datensatz` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-candidate-probe` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
@@ -32,7 +31,6 @@
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
-| `SCHEMA-lauf-artefakte` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-learning-advice` | extern definiert (kein realRef) | draft |
 | `SCHEMA-learning-query` | extern definiert (kein realRef) | draft |
 | `SCHEMA-lock-owner` | src/kernel/lock-owner-contract.ts#LockOwner | n/a |
@@ -79,7 +77,6 @@
 | `FLOW-audit-entries` | `FUNC-audit-trail` | `ACTOR-owner` · `FUNC-se-retro` |
 | `FLOW-audit-record` | `FUNC-mutate` | `FUNC-audit-stats` · `FUNC-audit-trail` |
 | `FLOW-audit-report` | `FUNC-audit-stats` | `ACTOR-owner` · `FUNC-se-retro` |
-| `FLOW-benchmark-datensatz` | `FUNC-auswertung-auswerten` | — |
 | `FLOW-candidate-batch` | `FUNC-run-executor` | `FUNC-gate-client` · `FUNC-preflight` |
 | `FLOW-candidate-ranking` | `FUNC-rank-candidates` | `FUNC-run-executor` |
 | `FLOW-channel-dimension-template` | `ACTOR-owner` | `FUNC-generation-step` |
@@ -127,7 +124,6 @@
 | `FLOW-install-result-collect-status` | `FUNC-collect-status` | `ACTOR-owner` |
 | `FLOW-install-result-harness-cli` | `FUNC-harness-cli` | `ACTOR-owner` |
 | `FLOW-install-result-upgrade` | `FUNC-upgrade` | `ACTOR-owner` |
-| `FLOW-lauf-artefakte` | `FUNC-rig-lauf` | `FUNC-auswertung-auswerten` · `FUNC-auswertung-blindurteil` · `FUNC-auswertung-nachspielen` · `FUNC-rig-referenz` |
 | `FLOW-learning-advice` | `ACTOR-learning-engine` | `FUNC-graph-suggest` |
 | `FLOW-learning-query` | `FUNC-graph-suggest` | `ACTOR-learning-engine` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `FUNC-broadcast-diff` · `FUNC-serve-sse` · `FUNC-serve-stdio` |

@@ -4,30 +4,30 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 150 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 148 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
 
 ```
               ╱╲
              ╱E2╲          System level · SYS-graphcode
-            ╱ E  ╲         ✓ 56 E2E test(s)
+            ╱ E  ╲         ✓ 54 E2E test(s)
            ╱──────╲
           ╱  UC /   ╲       Use-case level · 9 UC
          ╱integration╲      ⚠ 9 / 9 UC exercised by a scenario test
-        ╱────────────╲      ✗ 42/151 FUNC↔FUNC connections tested  ← GAP
-       ╱  Function /   ╲     Function level · 133 FUNC
+        ╱────────────╲      ✗ 42/147 FUNC↔FUNC connections tested  ← GAP
+       ╱  Function /   ╲     Function level · 127 FUNC
       ╱      unit       ╲
      ╱───────────────────╲
 ```
 
 | Level | Element | Test kind | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
-| System | SYS (1) | E2E | 56 | 56 / 1 | ✓ |
+| System | SYS (1) | E2E | 54 | 54 / 1 | ✓ |
 | Use-case | UC (9) | acceptance / integration | 105 | 9 / 9 scenario | ✓ |
-| Integration | FUNC↔FUNC (151 conn) | integration (chain) | 105 | 42 / 151 connections | ✗ 109 uncovered |
-| Function | FUNC (133) | unit | 88 | 133 / 133 | ✓ |
+| Integration | FUNC↔FUNC (147 conn) | integration (chain) | 105 | 42 / 147 connections | ✗ 105 uncovered |
+| Function | FUNC (127) | unit | 86 | 127 / 127 | ✓ |
 | (support) | — | conformance | 4 | codec round-trip | ✓ |
 
 > GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),
 > not a testRef.level attribute; System, UC & Integration rows are DERIVED from coverage, so a missing
-> E2E run surfaces as ✗ (currently 56 E2E test(s)) and an untested FUNC↔FUNC connection (R-21)
-> surfaces as ✗ (42/151 covered) instead of being silently absent.
+> E2E run surfaces as ✗ (currently 54 E2E test(s)) and an untested FUNC↔FUNC connection (R-21)
+> surfaces as ✗ (42/147 covered) instead of being silently absent.

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 375 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 376 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 375 CR · 338 done · 4 open.
+Total: 376 CR · 338 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -437,3 +437,4 @@ Total: 375 CR · 338 done · 4 open.
 | `CR-GC-763` | n/a | Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen |
 | `CR-GC-764` | n/a | Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte) |
 | `CR-GC-765` | n/a | Leitlinie und Verweise nach dem Split auf graphanalyze umstellen |
+| `CR-GC-766` | n/a | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) |

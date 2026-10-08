@@ -114,7 +114,6 @@ Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
 - `FCHAIN-loop-closure` — Schleifenschluss (aufzeichnen → auswerten → justieren): `FUNC-audit-stats` → `FUNC-audit-trail` → `FUNC-mutate` → `FUNC-se-retro`
-- `FCHAIN-rig-benchmark` — Rig: Lauf: `FUNC-auswertung-auswerten` → `FUNC-auswertung-blindurteil` → `FUNC-auswertung-nachspielen` → `FUNC-rig-lauf` → `FUNC-rig-referenz` → `FUNC-rig-serie`
 
 ### `UC-model-exchange` — Modell ein- und ausgeben
 
@@ -406,9 +405,6 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-734` | done | Vorschlag wiederholt einen Analyse-Eintrittspunkt (AF-01..05) endlos, auch nachdem der Nutzer ihn beauftragt hat und der Zug ihn nicht schliessen konnte; Eintrittspunkte sind von der Zurueckstellung ausgenommen (CR-GC-604) — Handlauf todo-local 2026-10-03 | `FUNC-generation-step` |
 | `CR-GC-735` | done | Abschlussvermerk überschreibt die anderen: ~ SYS @analysisFreshness {x} ersetzt das ganze Objekt (2. Stempel löscht den 1.); Skills sagen 'analysisFreshness.<id> = …' — gemessen im Replay todo-local 2026-10-04 | `FUNC-task-abschluss` |
 | `CR-GC-736` | done | Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3) | `FUNC-generation-step` |
-| `CR-GC-740` | done | Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv | `MOD-auswertung` · `MOD-rig` · `REQ-rig-benchmark` |
-| `CR-GC-741` | done | Whitebox-Messung (minimal-whitebox Phase 1) als S1-Messung in npm run messung (T-E2) | `MOD-rig` · `REQ-rig-benchmark` |
-| `CR-GC-742` | done | Rig-Simulator beantwortet eine Entscheidungsfrage des Agenten mit dem ganzen Antwortblatt plus Vorschlag - Widerspruch, 66k Zeichen Denken bis Ausgabelimit (lokal-1 Zug 2); Regel: Frage mit Optionen bekommt eine Antwort | `MOD-auswertung` · `MOD-rig` · `REQ-rig-benchmark` |
 | `CR-GC-743` | done | Nachzug contracts 10.15 - CR-R05 gestrichen und Bindungsregeln ab Realisierung | `FUNC-score-completeness` |
 | `CR-GC-744` | done | Nachzug contracts 10.15 - Attribut concept entfaellt | `FUNC-test` |
 | `CR-GC-745` | done | Nachzug client 1.6.1 - Gate-Zustand auf beiden Achsen | `FUNC-score-completeness` |
@@ -426,6 +422,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-757` | n/a | Stufe statt Dimension - Befunde zaehlen statt Prozent | `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-graph-readiness` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` |
 | `CR-GC-762` | n/a | Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen | `FUNC-export-markdown` |
 | `CR-GC-763` | n/a | Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen | `FUNC-rank-candidates` |
+| `CR-GC-764` | n/a | Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte) | `REQ-benchmark-harness` · `UC-loop-closure` |
+| `CR-GC-766` | n/a | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) | `FUNC-take-steering-snapshot` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

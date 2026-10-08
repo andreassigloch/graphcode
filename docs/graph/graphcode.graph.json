@@ -3155,6 +3155,12 @@
       "description": "docs/cr/open/CR-GC-765-leitlinie-und-verweise-nach-dem-split-au.md"
     },
     {
+      "id": "CR-GC-766",
+      "type": "CR",
+      "name": "Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge)",
+      "description": "docs/cr/open/CR-GC-766-marken-bericht-und-viewer-zaehlen-wie-de.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3272,13 +3278,6 @@
       "status": "reviewed"
     },
     {
-      "id": "FCHAIN-rig-benchmark",
-      "type": "FCHAIN",
-      "name": "Rig: Lauf",
-      "description": "Lauf fahren, Audit nachspielen, Lauf auswerten, Referenz setzen: vom Start-Prompt zur Zeile im Benchmark und zum vorrätigen Referenzlauf.",
-      "status": "done"
-    },
-    {
       "id": "FCHAIN-schema-migration",
       "type": "FCHAIN",
       "name": "Schema-Migration bei Version-Bump",
@@ -3343,12 +3342,6 @@
       "name": "Audit-Auswertung",
       "description": "Die Auswertung der Aufzeichnung im Aggregat: Haeufigkeiten je Regel, Konsument und Modell ueber die Zeit.",
       "status": "reviewed"
-    },
-    {
-      "id": "FLOW-benchmark-datensatz",
-      "type": "FLOW",
-      "name": "Benchmark-Datensatz",
-      "description": "Ein Datensatz je Lauf: Identität, Stand, Gates des letzten Zugs, die Teile der Analysen."
     },
     {
       "id": "FLOW-candidate-batch",
@@ -3704,12 +3697,6 @@
       "name": "Lifecycle-Result (upgrade)",
       "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
       "status": "reviewed"
-    },
-    {
-      "id": "FLOW-lauf-artefakte",
-      "type": "FLOW",
-      "name": "Lauf-Artefakte",
-      "description": "lauf.json, audit.jsonl, graph.json, denken.json eines Laufs."
     },
     {
       "id": "FLOW-learning-advice",
@@ -4281,42 +4268,6 @@
         "file": "src/surface/audit.ts",
         "symbol": "projectAuditEntries",
         "lang": "ts"
-      }
-    },
-    {
-      "id": "FUNC-auswertung-auswerten",
-      "type": "FUNC",
-      "name": "Lauf auswerten",
-      "description": "Einen Lauf auswerten: die gewählten Analysen rechnen, den Datensatz in benchmark.jsonl ersetzen oder anhängen, benchmark.md neu erzeugen.",
-      "status": "done",
-      "realRef": {
-        "file": "auswertung/auswerten.mjs",
-        "symbol": "auswertenLauf",
-        "lang": "js"
-      }
-    },
-    {
-      "id": "FUNC-auswertung-blindurteil",
-      "type": "FUNC",
-      "name": "Blindurteil",
-      "description": "Anonyme Specs mit Raster und Auftrag der Aufgabe vorbereiten und die Gutachten einlesen.",
-      "status": "done",
-      "realRef": {
-        "file": "auswertung/blindurteil.mjs",
-        "symbol": "vorbereiten",
-        "lang": "js"
-      }
-    },
-    {
-      "id": "FUNC-auswertung-nachspielen",
-      "type": "FUNC",
-      "name": "Audit nachspielen",
-      "description": "Den Graphen eines Laufs aus dem Audit durch das echte Gate eines Wegwerf-Stores neu bauen und die Readiness darauf messen; der laufende Host bleibt unberührt.",
-      "status": "done",
-      "realRef": {
-        "file": "auswertung/nachspielen.mjs",
-        "symbol": "nachspielen",
-        "lang": "js"
       }
     },
     {
@@ -5285,42 +5236,6 @@
       }
     },
     {
-      "id": "FUNC-rig-lauf",
-      "type": "FUNC",
-      "name": "Lauf fahren",
-      "description": "Einen Lauf fahren: frisches Repo aus der Vorlage, Stufen der Sequenz, der Simulator antwortet; Ende, sobald SRR und PDR am Nachbau aus dem Audit bestanden sind.",
-      "status": "done",
-      "realRef": {
-        "file": "rig/treiber.mjs",
-        "symbol": "lauf",
-        "lang": "js"
-      }
-    },
-    {
-      "id": "FUNC-rig-referenz",
-      "type": "FUNC",
-      "name": "Referenzlauf setzen",
-      "description": "Einen Lauf zur Referenz der Aufgabe machen: Graph, graphcode-Log, LLM-Log und Stempel nach aufgaben/<name>/referenz/<arm>/; der alte Referenzlauf geht.",
-      "status": "done",
-      "realRef": {
-        "file": "rig/treiber.mjs",
-        "symbol": "referenzSetzen",
-        "lang": "js"
-      }
-    },
-    {
-      "id": "FUNC-rig-serie",
-      "type": "FUNC",
-      "name": "Serie fahren",
-      "description": "Die Serie fahren: fehlende Läufe je Aufgabe und Arm für den aktuellen Stand bestimmen, fahren, am Ende auswerten.",
-      "status": "done",
-      "realRef": {
-        "file": "rig/treiber.mjs",
-        "symbol": "fehlendeLaeufe",
-        "lang": "js"
-      }
-    },
-    {
       "id": "FUNC-run-executor",
       "type": "FUNC",
       "name": "runExecutor",
@@ -5733,14 +5648,6 @@
       "path": ".claude/commands"
     },
     {
-      "id": "MOD-auswertung",
-      "type": "MOD",
-      "name": "Auswertung",
-      "description": "Rechnet über die Artefakte eines Laufs: Kennzahlen, Verhalten, Schatten-Vorschläge, Blindurteil. Ein Datensatz je Lauf in docs/messung/benchmark.jsonl, benchmark.md wird daraus erzeugt.",
-      "path": "auswertung/",
-      "status": "done"
-    },
-    {
       "id": "MOD-dashboard",
       "type": "MOD",
       "name": "dashboard — Live-Viewer-App",
@@ -5780,14 +5687,6 @@
       "description": "Reine Projektionen des Graphen: Messung, Readiness, Codec, Export, Markdown-Views, Trajektorie. Liest den Graphen ueber die kernel-Abfrage und schreibt nie in ihn zurueck. (CR-GC-446)",
       "status": "done",
       "path": "src/projections"
-    },
-    {
-      "id": "MOD-rig",
-      "type": "MOD",
-      "name": "Rig",
-      "description": "Das Rig: fährt Läufe einer Aufgabe mit einem Arm (lokal oder frontier) aus der Vorlage todo-local, mit Nutzer-Simulator; eine Stufe endet, wenn SRR und PDR bestanden sind. Hinterlässt je Lauf lauf.json, audit.jsonl, graph.json, denken.json.",
-      "path": "rig/",
-      "status": "done"
     },
     {
       "id": "MOD-surface",
@@ -7113,16 +7012,6 @@
       ]
     },
     {
-      "id": "REQ-rig-benchmark",
-      "type": "REQ",
-      "name": "Rig-Läufe messbar und reproduzierbar",
-      "description": "Jeder Lauf des Rigs endet, wenn SRR und PDR bestanden sind, und steht als ein Datensatz mit Stand in docs/messung/benchmark.jsonl; je Aufgabe und Arm liegt ein Referenzlauf im Repo, dessen Audit durch das heutige Gate denselben Graphen ergibt.",
-      "status": "done",
-      "kinds": [
-        "functional"
-      ]
-    },
-    {
       "id": "REQ-round-prompt-injection",
       "type": "REQ",
       "name": "Der Runden-Prompt traegt Leitfaden und Elementindex",
@@ -7540,14 +7429,6 @@
       }
     },
     {
-      "id": "SCHEMA-benchmark-datensatz",
-      "type": "SCHEMA",
-      "name": "Benchmark-Datensatz",
-      "description": "id, datum, aufgabe, arm, nr, modell, stand, ende, gates, kennzahlen, verhalten, schatten, blindurteil.",
-      "concept": true,
-      "status": "reviewed"
-    },
-    {
       "id": "SCHEMA-candidate-probe",
       "type": "SCHEMA",
       "name": "Kandidat mit Verdict",
@@ -7739,14 +7620,6 @@
         "symbol": "TestImpactResultSchema",
         "lang": "ts"
       }
-    },
-    {
-      "id": "SCHEMA-lauf-artefakte",
-      "type": "SCHEMA",
-      "name": "Lauf-Artefakte",
-      "description": "lauf.json mit arm, nr, aufgabe, sequenz, stand, modell, stempel, ende, sitzungen, graph, zuege; audit.jsonl eine Zeile je Gate-Aufruf; graph.json der flache Export.",
-      "concept": true,
-      "status": "reviewed"
     },
     {
       "id": "SCHEMA-learning-advice",
@@ -8311,23 +8184,6 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
-        }
-      ]
-    },
-    {
-      "id": "TEST-auswertung",
-      "type": "TEST",
-      "name": "Auswertung des Rigs",
-      "description": "Analysen an gestellten Artefakten; Nachspielen der Referenzläufe durch das echte Gate: gleiche Element- und Kantenzahl wie graph.json, SRR und PDR bestanden.",
-      "status": "done",
-      "method": "test",
-      "level": "integration",
-      "testRefs": [
-        {
-          "file": "tests/auswertung.test.ts",
-          "tool": "vitest",
-          "level": "integration",
-          "result": "passed"
         }
       ]
     },
@@ -9969,23 +9825,6 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
-        }
-      ]
-    },
-    {
-      "id": "TEST-rig",
-      "type": "TEST",
-      "name": "Rig-Treiber",
-      "description": "Treiber-Reinteile: fehlende Läufe je Stand, Referenzlauf setzen, Aufgabe laden, Stufen.",
-      "status": "done",
-      "method": "test",
-      "level": "unit",
-      "testRefs": [
-        {
-          "file": "tests/rig-interaktiv.test.ts",
-          "tool": "vitest",
-          "level": "unit",
-          "result": "passed"
         }
       ]
     },
@@ -14853,46 +14692,6 @@
       "type": "relation"
     },
     {
-      "source": "CR-GC-740",
-      "target": "MOD-auswertung",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-740",
-      "target": "MOD-rig",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-740",
-      "target": "REQ-rig-benchmark",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-741",
-      "target": "MOD-rig",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-741",
-      "target": "REQ-rig-benchmark",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-742",
-      "target": "MOD-auswertung",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-742",
-      "target": "MOD-rig",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-742",
-      "target": "REQ-rig-benchmark",
-      "type": "relation"
-    },
-    {
       "source": "CR-GC-743",
       "target": "FUNC-score-completeness",
       "type": "relation"
@@ -15045,6 +14844,21 @@
     {
       "source": "CR-GC-763",
       "target": "FUNC-rank-candidates",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-764",
+      "target": "REQ-benchmark-harness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-764",
+      "target": "UC-loop-closure",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-766",
+      "target": "FUNC-take-steering-snapshot",
       "type": "relation"
     },
     {
@@ -15702,36 +15516,6 @@
       "type": "compose"
     },
     {
-      "source": "FCHAIN-rig-benchmark",
-      "target": "FUNC-auswertung-auswerten",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-rig-benchmark",
-      "target": "FUNC-auswertung-blindurteil",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-rig-benchmark",
-      "target": "FUNC-auswertung-nachspielen",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-rig-benchmark",
-      "target": "FUNC-rig-lauf",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-rig-benchmark",
-      "target": "FUNC-rig-referenz",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-rig-benchmark",
-      "target": "FUNC-rig-serie",
-      "type": "compose"
-    },
-    {
       "source": "FCHAIN-schema-migration",
       "target": "FUNC-migrate-schema",
       "type": "compose"
@@ -16137,11 +15921,6 @@
     {
       "source": "FLOW-audit-report",
       "target": "SCHEMA-audit-stats",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-benchmark-datensatz",
-      "target": "SCHEMA-benchmark-datensatz",
       "type": "relation"
     },
     {
@@ -16924,31 +16703,6 @@
     {
       "source": "FLOW-install-result-upgrade",
       "target": "SCHEMA-cli-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-lauf-artefakte",
-      "target": "FUNC-auswertung-auswerten",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-lauf-artefakte",
-      "target": "FUNC-auswertung-blindurteil",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-lauf-artefakte",
-      "target": "FUNC-auswertung-nachspielen",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-lauf-artefakte",
-      "target": "FUNC-rig-referenz",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-lauf-artefakte",
-      "target": "SCHEMA-lauf-artefakte",
       "type": "relation"
     },
     {
@@ -18103,41 +17857,6 @@
       "source": "FUNC-audit-trail",
       "target": "FLOW-audit-entries",
       "type": "io"
-    },
-    {
-      "source": "FUNC-auswertung-auswerten",
-      "target": "MOD-auswertung",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-auswertung-auswerten",
-      "target": "FLOW-benchmark-datensatz",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-auswertung-auswerten",
-      "target": "REQ-rig-benchmark",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-auswertung-blindurteil",
-      "target": "MOD-auswertung",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-auswertung-blindurteil",
-      "target": "REQ-rig-benchmark",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-auswertung-nachspielen",
-      "target": "MOD-auswertung",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-auswertung-nachspielen",
-      "target": "REQ-rig-benchmark",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-author-req",
@@ -20067,41 +19786,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-rig-lauf",
-      "target": "MOD-rig",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-rig-lauf",
-      "target": "FLOW-lauf-artefakte",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-rig-lauf",
-      "target": "REQ-rig-benchmark",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-rig-referenz",
-      "target": "MOD-rig",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-rig-referenz",
-      "target": "REQ-rig-benchmark",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-rig-serie",
-      "target": "MOD-rig",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-rig-serie",
-      "target": "REQ-rig-benchmark",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-run-executor",
       "target": "MOD-loop",
       "type": "allocate"
@@ -21075,11 +20759,6 @@
     },
     {
       "source": "SYS-graphcode",
-      "target": "MOD-auswertung",
-      "type": "compose"
-    },
-    {
-      "source": "SYS-graphcode",
       "target": "MOD-dashboard",
       "type": "compose"
     },
@@ -21096,11 +20775,6 @@
     {
       "source": "SYS-graphcode",
       "target": "MOD-projections",
-      "type": "compose"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "MOD-rig",
       "type": "compose"
     },
     {
@@ -21294,11 +20968,6 @@
     },
     {
       "source": "SYS-graphcode",
-      "target": "REQ-rig-benchmark",
-      "type": "compose"
-    },
-    {
-      "source": "SYS-graphcode",
       "target": "REQ-schema-version-migration",
       "type": "compose"
     },
@@ -21470,11 +21139,6 @@
     {
       "source": "TEST-audit-trail-projection",
       "target": "REQ-token-efficiency",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-auswertung",
-      "target": "REQ-rig-benchmark",
       "type": "verify"
     },
     {
@@ -22668,11 +22332,6 @@
       "type": "verify"
     },
     {
-      "source": "TEST-rig",
-      "target": "REQ-rig-benchmark",
-      "type": "verify"
-    },
-    {
       "source": "TEST-roundtrip",
       "target": "REQ-codec-validation",
       "type": "verify"
@@ -23533,11 +23192,6 @@
     },
     {
       "source": "UC-loop-closure",
-      "target": "FCHAIN-rig-benchmark",
-      "type": "compose"
-    },
-    {
-      "source": "UC-loop-closure",
       "target": "REQ-prompt-provenance",
       "type": "compose"
     },
@@ -23750,5 +23404,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 639
+  "graphVersion": 642
 }

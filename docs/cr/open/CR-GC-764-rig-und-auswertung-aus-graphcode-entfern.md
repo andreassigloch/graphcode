@@ -79,3 +79,21 @@ Mehr als 10 Dateien, weil der Zug überwiegend löscht; geändert werden sieben.
 
 Leitlinie, `README.md`, `CLAUDE.md`, `docs/messung/kennzahlen.md`, `beispielgraphen/README.md`, der Text zu T-V1 in
 `scripts/messung.mjs` → CR-GC-765. Die öffentliche History → ITEM-2026-786.
+
+## Ergebnis (2026-10-08)
+
+- **Dateien:** 75 geändert, 7 055 Zeilen entfernt, 39 neu (`a65ef0f8`). `rig/runs` (1,7 GB) liegt in graphanalyze.
+- **Modell:** 16 Knoten in einem Batch durchs Gate entfernt (Graph-Version 641 → 642, 58 Mutationen): zwei MOD,
+  sechs FUNC, `FCHAIN-rig-benchmark`, zwei FLOW, zwei SCHEMA (`SCHEMA-lauf-artefakte` kam beim Lesen der Kanten dazu),
+  `REQ-rig-benchmark`, zwei TEST. Einziger Befund am Zug: RD-04 an `SYS-graphcode`, bestand vorher.
+- **Abweichung vom Plan:** `UC-loop-closure` bleibt. Der Trockenlauf zeigte, dass der Anwendungsfall eine zweite
+  Wirkkette trägt (`FCHAIN-loop-closure`); `graph_impact` listet nur eingehende Kanten, die Annahme „einzige
+  Wirkkette" war falsch. Umfang des CR-Knotens: `UC-loop-closure`, `REQ-benchmark-harness`.
+- **Kongruenz:** keine RC-01 (kein `realRef` zeigt ins Leere); Import-Deckung 109 von 110 Dateien
+  (`src/index.ts` ohne Zuordnung, bestand vorher). RC-04 (13) und RC-07 (28) stehen im Bericht und stammen nicht aus
+  diesem Zug; gemessen vom laufenden Host, der seit 2026-10-07 läuft.
+- **Volllauf** (`verify:full`, sauberes Arbeitsverzeichnis auf `a65ef0f8` mit dem exportierten Modell): 200 von 201
+  Dateien grün, 1 755 Tests. Rot: `tests/distribution.test.ts` — das gepackte Paket importiert `countByStage` aus
+  `@sigloch/graphcode-client`, das die Registry-Version nicht exportiert (Link-Modus seit CR-GC-757, in den
+  Aufzeichnungen von CR-GC-763 und CR-GC-766 ebenfalls rot). Kein Schlupf.
+- **Gegenprobe graphanalyze:** siehe Commit dort nach diesem CR.
