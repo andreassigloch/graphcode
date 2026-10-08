@@ -1,6 +1,6 @@
 ---
 name: se:author-req
-version: 1
+version: 2
 description: Author a REQ together with its verifying TEST concept in one gated batch — the REQ-with-test invariant
 ---
 
@@ -8,6 +8,8 @@ description: Author a REQ together with its verifying TEST concept in one gated 
 A requirement you cannot state a verification for is not well-formed. Author every new REQ in the SAME gated batch as a TEST + `verify` trace — the test's statement (target + tool + constraint, NOT code) is the intrinsic proof the REQ is meaningful and falsifiable (CR-GC-203 item 6). The gate enforces this: a lone REQ raises an R-01 error and is BLOCKED under delta-semantics, so this skill is about leaning INTO the gate, not working around it.
 
 **Write the requirement so it can be checked (BQ, CR-GC-602).** Use the agreed form — "The system shall …" / „Das System muss …" — and put the measurable part into the sentence: a number, a limit or an observable condition, never a vague word ("fast", "appropriate"). Name who acts, on what, under which condition.
+
+**Every fixed value says what kind it is — in the sentence, next to the value** (CR-GC-759): *runtime parameter* (changeable in operation, takes effect at once, with history), *start configuration* (read at start, fixed until restart), *invariant* (not adjustable by any path) or *call value* (belongs to one call and stands in that call's contract). Whatever shapes the system's behaviour is adjustable unless the requirement says invariant. Write it into the text, not into a free attribute: the views show the text, a free attribute stays invisible to the reader. Two values of different kinds in one requirement are a sign that it is two requirements — split it, so the invariant gets its own test that it cannot be changed; keep them together only if you can say why.
 
 For each new requirement, emit ONE `graph_mutate` batch as Format-E:
 

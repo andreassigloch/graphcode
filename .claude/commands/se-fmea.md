@@ -1,6 +1,6 @@
 ---
 name: se-fmea
-version: 6
+version: 7
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
@@ -157,6 +157,7 @@ The FMEA is not done until findings live in the graph, not just the document.
 ---
 
 ## Rules
+- **So viele Tests wie nötig, der Rest ist Verlinkung (CR-GC-760).** Jede Risiko-REQ braucht ihren `verify` (R-01, FM-03) — das heißt nicht: einen eigenen Test. Entscheide je Risiko: belegt der Test der Gegenmaßnahme, dass das Risiko beherrscht ist, dann verweise auf ihn (`TEST -verify-> REQ-risiko, REQ-massnahme`). Nur wo er das nicht belegt, entsteht ein neuer Test. Kein wortgleicher zweiter Test.
 - **Die Wirkkette ist die Analyse-Einheit.** Ein Fehlermodus wird gegen das *Ergebnis der Kette* formuliert, nicht gegen ein Bauteil. Ohne Kettenprofil (Step 2) kein Step 4.
 - **Kennzahl vor Kreativität.** Importgrad und Linearität sagen, wo die Kette schwach ist; die frei abgeleiteten Fehlermodi kommen danach und füllen nur, was die vier Quellen nicht abgedeckt haben.
 - **Kein Doppelurteil mit dem Regelsatz.** Was `FC-02`…`FC-04`, `R-01`, `FM-01`…`FM-03` schon melden, wird zitiert, nicht neu behauptet. Was der Regelsatz *nicht* prüft (Linearität, Importgrad, doppelte Zustandsgrößen), wird als Analystenbefund gekennzeichnet — mit der Berechnung daneben.

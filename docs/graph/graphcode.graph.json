@@ -3125,6 +3125,12 @@
       "description": "docs/cr/open/CR-GC-760-testvorgehen-als-allgemeinvorgabe-pru-fe.md"
     },
     {
+      "id": "CR-GC-761",
+      "type": "CR",
+      "name": "Sicht cr-list streichen — die Änderungsliste (changelog) ersetzt sie",
+      "description": "docs/cr/open/CR-GC-761-sicht-cr-list-streichen-die-a-nderungsli.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -23710,5 +23716,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 631
+  "graphVersion": 632
 }

@@ -1,6 +1,6 @@
 ---
 name: se:top-level
-version: 1
+version: 2
 description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at 7±2 blocks per level, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
@@ -143,5 +143,7 @@ What wasted rounds on the first run, measured:
 7. **More than five top-level FUNCs? Something is off.** Five is the working budget, not a hard cap — but every slot above it needs a stated reason, because **operations is still coming**: user management, configuration, credentials, deployment, logging. Those land as their own top-level block at the very end, and a decomposition that already spent seven slots on features has nowhere to put them. Count the compose-forest roots, not the chain members, and budget before you spend the last slot.
 
 ## Boundaries
+
+**Only the product is modelled (CR-GC-760).** Test rigs, simulated sources, test-data generators, demos, examples and spikes live in their own directories outside the product code and get no `MOD`: they are not part of the delivered system, and a module for them would sit under `SYS` as if they were. Tests still bind to their files through `testRefs`.
 
 `graph_authoring_guide {type}` for the legal edges before you write. Several alternatives go through `graph_mutate` with `dryRun: true` and are compared; a single batch goes straight in — a rejection persists nothing. With targets from phase 2, read `fitAdvisory` against them; without targets it is a report, not a verdict. This skill **creates** the cut; `se-view:arch` renders it, `se-plan` sequences it, `se:close-violations` cleans up after it. No parallel path.

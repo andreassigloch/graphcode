@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 370 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 371 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 370 CR · 338 done · 4 open.
+Total: 371 CR · 338 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -432,3 +432,4 @@ Total: 370 CR · 338 done · 4 open.
 | `CR-GC-758` | n/a | Rang ohne Gesamt-Delta, Stufen im Bericht wie die Marken, lesender Schritt |
 | `CR-GC-759` | n/a | Werteklassen Laufzeit-Parameter, Start-Konfiguration, Invariante als Allgemeinvorgabe prüfen |
 | `CR-GC-760` | n/a | Testvorgehen als Allgemeinvorgabe prüfen: Abnahme je Use Case, Smoke-Test, Risiko-Tests, Prüfaufbau |
+| `CR-GC-761` | n/a | Sicht cr-list streichen — die Änderungsliste (changelog) ersetzt sie |

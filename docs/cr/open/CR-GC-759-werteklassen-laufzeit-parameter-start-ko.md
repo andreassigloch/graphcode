@@ -62,6 +62,43 @@ Zu beantworten:
 - Die Gegenprobe aus Frage 1 steht mit Zahlen im CR: Werte gesamt, zugeordnet, nicht zuordenbar.
 - Bei Übernahme: je ein Item für Contracts, Regel und Ansicht; keine Umsetzung in diesem CR.
 
+## Entscheid (Autor, 2026-10-08): nur als Skill-Konvention übernehmen
+
+**Übernommen:**
+
+1. Die Klasse steht im Text der Anforderung, am Wert — nicht in einem freien Attribut. Der Skill `se:author-req`
+   gibt die vier Klassen und die Regel des Auftraggebers vor. Jede Sicht zeigt sie damit von selbst.
+2. Ergänzung des Autors a): Die Unterscheidung der Klassen gehört ins Einsatzkonzept — „solche Infrastruktur-
+   Standards wie die hier definierten Datentöpfe und ihr Management". Der Skill `se-conops` führt „Werteklassen"
+   als Betriebsbelang: welche Werte in welche Klasse fallen, wo jede Klasse liegt und wie sie verwaltet wird.
+3. Ergänzung des Autors b): Mehrere Werte verschiedener Klasse in einer Anforderung sind ein Hinweis auf einen
+   Schnitt. Der Skill `se:author-req` nennt das als Prüfung beim Schreiben.
+
+**Verworfen:**
+
+- *Attribut mit festem Wertebereich an der REQ.* Die Klasse hängt am einzelnen Wert, nicht an der Anforderung:
+  im energymanager tragen 9 von 40 Anforderungen zwei Werte verschiedener Klasse, der Inhalt des Attributs ist
+  freier Text in 39 Wortlauten.
+- *Eigenes Element je Wert.* Ein neuer Typ für eine Angabe, die im Satz steht.
+- *Regel „Zahl mit Einheit trägt eine Klasse".* Zu wenig Gegenstand außerhalb von Gerätemodellen, und sie
+  bräuchte eine Mustererkennung im Text.
+- *Sichten zeigen freie Attribute.* Nicht nötig, wenn im Text steht, was ein Leser sehen soll.
+
+**Gegenprobe (Frage 1), grobe Mustersuche „Zahl mit Einheit" in der Beschreibung:**
+
+| Modell | Anforderungen | mit Zahl und Einheit |
+|---|---|---|
+| energymanager | 98 | 23 (40 tragen eine Klasse, auch Werte ohne Zahl wie „nur lesend") |
+| graphcode | 154 | 8 |
+| sigllm | 83 | 0 |
+| siconizer | 44 | 0 |
+
+Die Zuordnung „jeder Wert genau einer Klasse" von Hand an den 8 Anforderungen von graphcode ist nicht gemacht.
+
+**Umsetzung:** `.claude/commands/se/author-req.md` (Version 2), `.claude/commands/se-conops.md` (Version 5).
+Im energymanager bleibt nachzuziehen: die 40 Attribute `werteklasse` in den Text heben, die 9 Anforderungen mit
+zwei Klassen auf einen Schnitt prüfen (dort, nicht hier).
+
 ---
 
 ## Umfang laut `graph_impact`

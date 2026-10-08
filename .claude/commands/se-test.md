@@ -1,6 +1,6 @@
 ---
 name: se-test
-version: 1
+version: 2
 description: The general red-first rule — design any test so you have seen it fail for the right reason before you trust it green. Use before writing or reviewing a test, or when a CR is about to close on "tests green". The UI-specific method is se-test-ui.
 ---
 
@@ -22,6 +22,20 @@ evidence once you have watched the same assertion go red for the exact failure i
 4. **Bind it in the model** — a `TEST` node carries a resolvable `testRefs` entry (R-19).
    An unbound test lets `graph_readiness` report a REQ "verified" over nothing.
    Run `graph_tests` to see which TESTs actually resolve to a file.
+
+## Acceptance: one play-through per use case (CR-GC-760)
+
+The system is done when it starts and every use case can be played through by its actor or an actor
+simulator — first with test data over simulated sources, then against the real ones. Model it with
+what is there: the play-through is a `TEST` that verifies the requirements of its use case
+(`TEST -verify-> REQ`, the requirements the use case composes). There is no edge from a test to a use
+case; the chain is always architecture element – requirement – test. The **smoke test** is the run of
+all play-throughs on one started system.
+
+Where a test sits follows from the requirement it verifies, not from how it is written: a test of a
+requirement directly under the system is system verification, whatever its technique. If a unit-style
+test is all that verifies a system requirement, either the requirement belongs further down or the
+play-through is still missing — say which.
 
 ## Anti-patterns this kills
 

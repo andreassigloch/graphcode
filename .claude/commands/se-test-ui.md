@@ -1,6 +1,6 @@
 ---
 name: se-test-ui
-version: 1
+version: 2
 description: Design UI tests that verify RENDERED INTENT (the mockup), not DOM presence. Use before writing or reviewing any test for a view/component/renderer, or when a UI CR is about to close. Encodes the anti-false-green rules from the 2026-07-08 blind-render retrospective.
 ---
 
@@ -72,6 +72,10 @@ the feature is **not covered** no matter how many unit tests pass.
 - [ ] The view's mockup testids / selectors are asserted present.
 - [ ] At least one level-1 or level-2 assertion (pixel or computed-style), never presence-only.
 - [ ] The reachability chain is driven by a real gesture, not a direct function call.
+- [ ] **Visible, readable, not overlapping (CR-GC-760)** — every element the requirement names is
+      inside the viewport, its text meets the contrast limit (4.5:1 unless the requirement says
+      otherwise), and no element covers another; checked at each of the fixed window sizes the
+      requirement lists. A model with a graphical surface carries this as its own requirement.
 - [ ] Its graph `TEST` node carries a resolvable `testRefs` entry — run `graph_tests`;
       an unbound TEST node means the requirement is **not** verified, whatever the RTM says.
 

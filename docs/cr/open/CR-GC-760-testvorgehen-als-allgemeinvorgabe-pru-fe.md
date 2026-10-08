@@ -67,6 +67,30 @@ Zu beantworten:
 - Für die Punkte 1 und 4 stehen Zahlen aus mindestens zwei Bestandsmodellen im CR.
 - Bei Übernahme: je ein Item für Contracts, Regel, Ansicht und Skill; keine Umsetzung in diesem CR.
 
+## Entscheid (Autor, 2026-10-08)
+
+| # | Frage | Entscheid | Verworfen, Grund |
+|---|---|---|---|
+| 1 | Stufe eines Tests | **Bleibt aus der Lage** der Anforderung — „das ist eindeutiger". Die Benennung der Stufen wird gegen Automotive SPICE und die SE-Normen abgeglichen (eigener Auftrag, siehe unten). | Stufe am Test (`testRefs.level`): eine Selbstauskunft neben der Lage. |
+| 2 | Abnahme-Anforderung | **Skill-Konvention** (`se-test`): Durchspiel je Anwendungsfall, Smoke-Test als Lauf aller Durchspiele. | Pflicht-Anforderung mit Regel. |
+| 3 | Test am Anwendungsfall | **Verworfen.** Die Kette ist Architekturelement – Anforderung – Test. | `verify` von TEST auf UC/FCHAIN (Grammatikänderung). |
+| 4 | Risiko-Tests | **Skill-Konvention** (`se-fmea`): so viele Tests wie nötig, der Rest ist Verlinkung. | Regel „Risiko hat nur den Test seiner Maßnahme": träfe 30 von 49 Risiken im Bestand, in sigllm 16 von 16. |
+| 5 | Prüfaufbau | **Die unproduktiven Verzeichnisse kommen nicht ins Modell** (`se:top-level`). | Kennzeichen „nicht Teil des Produkts" am MOD; Rust-Layout in `graphcode init`. |
+| 6 | Oberflächenprüfung | **Skill** (`se-test-ui`): sichtbar, Kontrast, keine Überlappung, je feste Fenstergröße. | — |
+
+**Zahlen (36 Modelle, 2026-10-08):**
+
+- Frage 1: 499 von 504 Test-Bindungen tragen `testRefs.level` (neun Werte). „E2E" nach Lage gegen die eigene
+  Angabe der gebundenen Tests (e2e/system/acceptance): graphcode 57 → 4 (48 gebunden), energymanager 34 → 0
+  (20 gebunden), siconizer 23 → 12, sigllm 12 → 1.
+- Frage 4: 49 Risiko-Anforderungen, keine ohne Test; 30 nur mit dem Test der Maßnahme (sigllm 16/16,
+  agentdiary-frontier 10/10, graphify 3/15, energymanager 1/8).
+
+**Umsetzung in diesem Auftrag (nur Skilltexte):** `se-test` (Version 2), `se-fmea` (7), `se-test-ui` (2),
+`se:top-level` (2).
+
+**Folge-Item:** Benennung der Stufen in der Testübersicht und der Anforderungsmatrix nach Automotive SPICE.
+
 ---
 
 ## Umfang laut `graph_impact`
