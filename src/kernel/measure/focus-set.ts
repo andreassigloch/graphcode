@@ -77,6 +77,13 @@ const GATE_RULES = new Set((SE_DESCRIPTOR.rules ?? []).map((r) => r.id));
 const STEERING_ONLY_KERN: ReadonlySet<string> = new Set(['ND-01', 'ND-02']);
 
 /**
+ * Zaehlt die Regel? Der Gate-Katalog und ND — dieselbe Menge, aus der Marken, Bericht und Viewer zaehlen
+ * (CR-GC-766). Die Textregeln der Anforderungsqualitaet (BQ) stehen nicht darin: sie melden nur in ihrem
+ * eigenen Arbeitsschritt.
+ */
+export const zaehlt = (ruleId: string): boolean => GATE_RULES.has(ruleId) || STEERING_ONLY_KERN.has(ruleId);
+
+/**
  * Die Fokusmenge eines Graphen fuer einen Arbeitsschritt (CR-GC-600/601). Kern: die Regeln des
  * Gate-Katalogs (dazu ND), die kein Arbeitsschritt ihm abnimmt. Arbeitsschritt: seine Regeln (heute nur
  * die Textqualitaet der Anforderungen) und sein Eintrittspunkt (CR-GC-603) — eine Analyse ist erst
@@ -89,7 +96,7 @@ export function focusViolations(og: OntologyGraph, violations: readonly RuleViol
   const eintritt = task === 'kern' ? null : TASK_ENTRY[task];
   const imTask = (id: string): boolean =>
     task === 'kern'
-      ? taskOf(id) === 'kern' && (GATE_RULES.has(id) || STEERING_ONLY_KERN.has(id))
+      ? taskOf(id) === 'kern' && zaehlt(id)
       : taskOf(id) === task || id === eintritt;
   return violations
     .filter((v) => {

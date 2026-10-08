@@ -574,21 +574,22 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     const nichts = await probe(UPDATE_SYS_BATCH);
     const summe = (v: Verdict) => Object.values(v.steeringDelta.stages).reduce((n, d) => n + d.delta, 0);
 
-    // Aufbau: Fokus-Stufe unveraendert (3 → 3), zwei Befunde mehr in Anforderung, einer mehr in Plan.
+    // Aufbau: Fokus-Stufe unveraendert (3 → 3), einer mehr in Plan. Die zwei Textregel-Befunde der neuen
+    // Anforderung (BQ) zaehlen seit CR-GC-766 nicht mehr in der Stufe.
     expect(baut.tier).toBe('suggest');
     expect(baut.mutations).toBe(4);
     expect(baut.steeringDelta.blockingErrors).toEqual({ before: 0, after: 0 });
     expect(baut.steeringDelta.stages.Anwendungsfall).toEqual({ before: 3, after: 3, delta: 0 });
-    expect(baut.steeringDelta.stages.Anforderung).toEqual({ before: 2, after: 4, delta: -2 });
+    expect(baut.steeringDelta.stages.Anforderung).toEqual({ before: 2, after: 2, delta: 0 });
     expect(baut.steeringDelta.stages.Plan).toEqual({ before: 0, after: 1, delta: -1 });
-    expect(summe(baut)).toBe(-3);
+    expect(summe(baut)).toBe(-1);
     // Nichtstun: keine Stufe bewegt sich, kein neuer Befund — und GENAU DESHALB tier auto-apply.
     expect(nichts.tier).toBe('auto-apply');
     expect(nichts.mutations).toBe(1);
     expect(summe(nichts)).toBe(0);
     for (const d of Object.values(nichts.steeringDelta.stages)) expect(d.delta).toBe(0);
 
-    // Was rankt. Die Summe (-3 gegen 0) ist kein Kriterium mehr: bei gleichem tier gewinnt der Aufbau
+    // Was rankt. Die Summe (-1 gegen 0) ist kein Kriterium mehr: bei gleichem tier gewinnt der Aufbau
     // ueber die Ausbeute (4 > 1) — vor CR-GC-758 gewann hier Nichtstun ueber das Gesamt-Delta.
     const a = { index: 0, verdict: baut } as Parameters<typeof rankCandidates>[0][number];
     const n = { index: 1, verdict: nichts } as Parameters<typeof rankCandidates>[0][number];

@@ -233,10 +233,9 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
     expect(summary.stages).toEqual(detail.stages);
   });
 
-  // CR-GC-758: der Bericht hat EINEN Befundstrom. Vorher (CR-GC-560) stand hier „graph_generate liest
-  // denselben Snapshot wie graph_readiness" — das gilt nicht mehr: der Bericht zaehlt seine Stufen in den
-  // Befunden der Marken (Gate-Katalog inkl. Code-Abgleich), die Schrittwahl weiter im Steuerkatalog.
-  it('the stages of the report count the same findings as the marks; graph_generate keeps counting in the steering catalogue', async () => {
+  // CR-GC-758/766: EIN Befundstrom. Der Bericht zaehlt seine Stufen in den Befunden der Marken, und der
+  // Schritt zaehlt dieselbe Regelmenge — bis CR-GC-766 zaehlte er die Textregeln (BQ) mit, die Anzeige nicht.
+  it('the stages of the report count the same findings as the marks, and graph_generate counts the same (CR-GC-766)', async () => {
     const tools = bindToolsToHarness(harness);
     expect((await harness.mutate(CLEAN_MEMBER)).success).toBe(true);
     expect((await harness.mutate(ORPHAN_FUNC)).success).toBe(true);
@@ -256,14 +255,19 @@ describe('TEST-mcp-readiness: graph_readiness scores family readiness over the b
       expect(report.stages.find((s) => s.name === stufenName(h.ruleId))!.findings, schluessel(h)).toBeGreaterThanOrEqual(1);
     }
 
-    // The step choice counts in the steering snapshot (ALL_RULE_DEFS) — its own catalogue, its own numbers.
+    // The step counts what the report counts. The code comparison (RC) is the one stream the step
+    // cannot run per batch; everything else is the same number per stage.
     const step = await tools.graph_generate.handler({});
     const snapshot = takeSteeringSnapshot(harness.getGraph(), harness.getMetricPolicy());
     expect(step.readiness.length, 'fixture has findings, so stages carry a count').toBeGreaterThan(0);
+    const ohneAbgleich = report.violations.filter((v) => !v.ruleId.startsWith('RC-'));
     expect(step.readiness).toEqual(
-      snapshot.stages.filter((s) => s.findings > 0).map((s) => ({ stage: s.name, findings: s.findings })),
+      countByStage(ohneAbgleich).filter((s) => s.findings > 0).map((s) => ({ stage: s.name, findings: s.findings })),
     );
-    expect(step.readiness.reduce((n, s) => n + s.findings, 0)).toBe(snapshot.violations.length);
+    // The text rules fire in the snapshot and are not counted: they belong to their own task.
+    const text = snapshot.violations.filter((v) => v.rule_id.startsWith('BQ-'));
+    expect(text.length, 'fixture carries a text-rule finding').toBeGreaterThan(0);
+    expect(snapshot.stages.reduce((n, s) => n + s.findings, 0)).toBe(snapshot.violations.length - text.length);
     // Und die Fokus-Stufe ist eine, in der der Snapshot wirklich Befunde zaehlt.
     expect(step.focusStage).not.toBeNull();
     if (step.focusStage && !step.focusStage.startsWith('seed:')) {

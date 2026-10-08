@@ -97,7 +97,8 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
     // CR-GC-757: the snapshot carries all 13 stages in order; the step exposes the ones with findings,
     // with the same count, in the same order (before: percentage scores of the applicable dimensions).
     expect(snap.stages.map((s) => s.name)).toEqual([...STAGE_SETS, 'immer']);
-    expect(snap.stages.reduce((n, s) => n + s.findings, 0)).toBe(snap.violations.length);
+    // CR-GC-766: counted are the rules the display counts — not the text rules (BQ) of their own task.
+    expect(snap.stages.reduce((n, s) => n + s.findings, 0)).toBe(snap.violations.filter((v) => !v.rule_id.startsWith('BQ-')).length);
     const fromSnapshot = snap.stages.filter((s) => s.findings > 0).map((s) => ({ stage: s.name, findings: s.findings }));
     expect(fromSnapshot.length).toBeGreaterThan(0);
     expect(gen.readiness).toEqual(fromSnapshot);

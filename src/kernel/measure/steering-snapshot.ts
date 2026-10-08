@@ -12,7 +12,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { focusViolations, blockingOf } from './focus-set.js';
+import { focusViolations, blockingOf, zaehlt } from './focus-set.js';
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { MetricPolicy } from '@sigloch/contracts/se';
@@ -103,7 +103,8 @@ function buildSnapshot(graph: Graph, policy: MetricPolicy): SteeringSnapshot {
     // 74-Regel-Stroms (FM-03 war damals ein nicht-blockender error und abnehmbar; die Probe meldete sonst 0 → 8).
     focus,
     blockingErrors: blockingOf(focus),
-    stages: befundeJeStufe(violations),
+    // CR-GC-766: dieselbe Regelmenge wie Marken, Bericht und Viewer — der Schritt zaehlt nichts, was dort fehlt.
+    stages: befundeJeStufe(violations.filter((v) => zaehlt(v.rule_id))),
   };
   return snapshot;
 }

@@ -340,7 +340,8 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
         ...shown,
         umfang,
         // CR-GC-758: aus DENSELBEN Befunden wie die Marken (`report.violations`) — eine Zahl je Stufe im
-        // Bericht, dieselbe wie im Viewer. Die Schrittwahl zaehlt weiter im Steuerkatalog (Snapshot).
+        // Bericht, dieselbe wie im Viewer und im Schritt (CR-GC-766); der Bericht zaehlt zusaetzlich den
+        // Code-Abgleich (RC), den der Schritt je Batch nicht fahren kann.
         stages: countByStage(report.violations).map((s) => ({ name: s.name, findings: s.findings })),
         steer: steerSpace(snapshot),
         graphVersion: graphVersion(),
