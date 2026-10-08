@@ -1,6 +1,6 @@
 # CR-GC-764: Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-08)
 **Typ:** aus Item ITEM-2026-787 (idea)
 **Erstellt:** 2026-10-08
 **Item:** bok/items/ITEM-2026-787.json (Lane: graph)
