@@ -3113,6 +3113,18 @@
       "description": "docs/cr/open/CR-GC-758-rang-ohne-gesamt-delta-stufen-im-bericht.md"
     },
     {
+      "id": "CR-GC-759",
+      "type": "CR",
+      "name": "Werteklassen Laufzeit-Parameter, Start-Konfiguration, Invariante als Allgemeinvorgabe prüfen",
+      "description": "docs/cr/open/CR-GC-759-werteklassen-laufzeit-parameter-start-ko.md"
+    },
+    {
+      "id": "CR-GC-760",
+      "type": "CR",
+      "name": "Testvorgehen als Allgemeinvorgabe prüfen: Abnahme je Use Case, Smoke-Test, Risiko-Tests, Prüfaufbau",
+      "description": "docs/cr/open/CR-GC-760-testvorgehen-als-allgemeinvorgabe-pru-fe.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -23698,5 +23710,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 629
+  "graphVersion": 631
 }
