@@ -1,6 +1,6 @@
 # CR-GC-762: Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergänzen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-08)
 **Typ:** aus Item ITEM-2026-785 (idea)
 **Erstellt:** 2026-10-08
 
