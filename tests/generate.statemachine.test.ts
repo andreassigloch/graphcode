@@ -18,8 +18,7 @@ import { DEFAULT_METRIC_POLICY, evaluateAllRules, TASK_ENTRY } from '@sigloch/co
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { generationStep } from '../src/loop/generate.js';
 import { ABNEHMBAR, focusViolations } from '../src/kernel/measure/focus-set.js';
-// @ts-expect-error — Rig-Auswertung in .mjs, bewusst ohne Typdeklaration
-import { nachspielenRein } from '../auswertung/nachspielen.mjs';
+import { nachspielenRein } from './helpers/nachspielen-rein.js';
 // @ts-expect-error — Migrationswerkzeug in .mjs (CR-GC-669), bewusst ohne Typdeklaration
 import { proposeDecisions, buildCommands } from '../scripts/migrate-req-kinds.mjs';
 import { applyCommands } from '../src/kernel/apply-commands.js';
@@ -61,8 +60,8 @@ function ladeLauf(rel: string): Flat {
     traces: edges.map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
   };
 }
-/** Die Referenzlaeufe des Rigs — committet, einer je Arm (rig/README.md „Referenzlauf"). */
-const RUNS = ['lokal', 'frontier'].map((arm) => `rig/aufgaben/todo/referenz/${arm}/graph.json`).filter((p) => existsSync(ROOT + p));
+/** Zwei Referenzlaeufe der Aufgabe todo, einer je Arm — eingefrorene Kopie (CR-GC-764), die lebende Referenz pflegt graphanalyze. */
+const RUNS = ['lokal', 'frontier'].map((arm) => `beispielgraphen/todo-referenz/${arm}/graph.json`).filter((p) => existsSync(ROOT + p));
 const step = (g: Flat, defer: string[] = []) => generationStep(alsGraph(g), DEFAULT_METRIC_POLICY, undefined, 0.8, defer);
 const GATE = new Set(SE_DESCRIPTOR.rules.map((r: { id: string }) => r.id));
 

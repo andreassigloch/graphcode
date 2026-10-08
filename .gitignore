@@ -41,10 +41,4 @@ docs/views/dashboard.url
 .env
 .env.local
 
-# Interne Rig-Läufe mit echtem Auftrag und Rechnerdaten — lokal, nicht öffentlich.
-rig/agentdiary/
-rig/moneyflow-struktur/
-rig/runs/
-# Auswertungen echter Projekte (Spec, Gutachten, Messung, Raster mit Auftrag) — lokal, nicht öffentlich.
-docs/messung/energymanager-*/
-rig/aufgaben/energymanager/
+# Rigs, Läufe und Auswertungen leben seit CR-GC-764 im privaten Repo graphanalyze.

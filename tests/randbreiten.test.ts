@@ -26,7 +26,7 @@ import { randbreiten, SCHWELLEN } from '../scripts/randbreiten.mjs';
 
 interface Zeile {
   name: string;
-  klasse: 'live' | 'snapshot' | 'lauf';
+  klasse: 'live' | 'snapshot';
   func: number;
   mod: number;
   wb: number;

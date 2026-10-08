@@ -67,8 +67,8 @@ function fensterfolge(graph: Graph): string[] {
 }
 
 const KORPUS: [string, Graph][] = [
-  ['Referenz lokal', lade('rig/aufgaben/todo/referenz/lokal/graph.json')],
-  ['Referenz frontier (nur Entscheidungs-Auftraege)', lade('rig/aufgaben/todo/referenz/frontier/graph.json')],
+  ['Referenz lokal', lade('beispielgraphen/todo-referenz/lokal/graph.json')],
+  ['Referenz frontier (nur Entscheidungs-Auftraege)', lade('beispielgraphen/todo-referenz/frontier/graph.json')],
   ['Golden sigllm v98', lade('beispielgraphen/sigllm-v98.graph.json')],
 ];
 

@@ -30,13 +30,10 @@ export const SCHWELLEN = [5, 7];
 /**
  * Die erreichbaren Graphen, in fester Reihenfolge.
  *
- * Drei Klassen, bewusst getrennt:
+ * Zwei Klassen, bewusst getrennt:
  *   - `snapshot` — eingefroren und eingecheckt (`beispielgraphen/`). Nur diese haelt der
  *     Test fest: ihre Zahlen koennen sich nur aendern, wenn die REGEL oder die Zaehlung wandert.
  *   - `live`     — der eigene SSOT. Wandert mit jedem Modellzug; wird berichtet, nicht gehalten.
- *   - `lauf`     — die Referenzlaeufe des Rigs (`rig/aufgaben/<aufgabe>/referenz/<arm>/graph.json`,
- *     CR-GC-738). Committet, aber sie wechseln, sobald der Autor eine neue Referenz setzt — berichtet,
- *     nicht gehalten.
  */
 export function quellen(repo = REPO) {
   const out = [];
@@ -54,14 +51,6 @@ export function quellen(repo = REPO) {
     }
   }
 
-  const aufgaben = join(repo, 'rig/aufgaben');
-  if (existsSync(aufgaben)) {
-    for (const aufgabe of readdirSync(aufgaben).sort()) {
-      const referenz = join(aufgaben, aufgabe, 'referenz');
-      if (!existsSync(referenz)) continue;
-      for (const arm of readdirSync(referenz).sort()) nimm(`${aufgabe}/${arm} (Referenzlauf)`, join(referenz, arm, 'graph.json'), 'lauf');
-    }
-  }
   return out;
 }
 

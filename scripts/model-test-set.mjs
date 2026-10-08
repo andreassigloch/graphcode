@@ -131,14 +131,6 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
-  'tests/auswertung.test.ts':
-    'Auswertung des Rigs (CR-GC-739): rechnet ueber gestellte lauf.json/audit.jsonl/graph.json in einem TEMP-Verzeichnis\n' +
-    'und ueber einen Lauf unter rig/runs; graphcodes eigene SSOT liest er nie — eine Modellaenderung kann ihn nicht rot\n' +
-    'machen; eine Aenderung an auswertung/*.mjs sehr wohl (Spur CODE).',
-  'tests/rig-interaktiv.test.ts':
-    'Rig (CR-GC-715/738): prueft Simulator, Aufgabe, Serie und Referenzlauf an gestellten lauf.json/graph.json in\n' +
-    'einem TEMP-Verzeichnis; `graph.json` ist dort der Dateiname eines Lauf-Artefakts. graphcodes eigene SSOT liest\n' +
-    'er nie — eine Modellaenderung kann ihn nicht rot machen; eine Aenderung an rig/*.mjs sehr wohl (Spur CODE).',
   'tests/mcp.mutate-next-step.test.ts':
     'Vorschlag an den Nutzer (CR-GC-729..734): liest die Regel-Saetze aus den contracts und ein eingefrorenes\n' +
     'Fremdmodell (tests/fixtures/todo-local-v9.graph.json), nie graphcodes eigene SSOT — eine Modellaenderung\n' +
@@ -204,12 +196,12 @@ export const EXCLUDED = {
     'der Eigentuemer-Spalte oder am Task-Fokus sehr wohl.',
   'tests/generate.stufen.test.ts':
     'Eigenschaftstest der Fensterwahl nach Stufe und des Kaltstarts aus den Existenz-Regeln (CR-GC-749).\n' +
-    'Der Treffer ist das GOLDEN EINES RIG-KORPUS und die Referenzlaeufe unter rig/aufgaben/, nie graphcodes\n' +
-    'eigene SSOT. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an der Fensterwahl\n' +
+    'Der Treffer ist das GOLDEN EINES RIG-KORPUS und zwei eingefrorene Referenzlaeufe unter beispielgraphen/,\n' +
+    'nie graphcodes eigene SSOT. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an der Fensterwahl\n' +
     'oder an Stufe und Rolle im Regelkatalog sehr wohl.',
   'tests/generate.statemachine.test.ts':
     'Eigenschaftstest der Zustandsmaschine (CR-GC-593). Der Treffer ist das GOLDEN EINES RIG-KORPUS\n' +
-    'und die Referenzlaeufe unter rig/aufgaben/, nie graphcodes eigene SSOT: geprueft wird done ⇔ kein Fokus\n' +
+    'und zwei eingefrorene Referenzlaeufe unter beispielgraphen/, nie graphcodes eigene SSOT: geprueft wird done ⇔ kein Fokus\n' +
     'ueber fremde Graphen. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an\n' +
     'der Fokuswahl oder am Regelkatalog sehr wohl.',
   'tests/flow-contracts.test.ts':
