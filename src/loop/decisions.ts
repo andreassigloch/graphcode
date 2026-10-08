@@ -4,7 +4,8 @@
  * Serie CR-GC-564..583: sieben Widersprueche, die erst ein Lauf fand — vier davon Text gegen
  * Code. Die Rangfolge der Verdicts stand an vier Stellen (`rankCandidates`, Host-Protokoll,
  * `se:generate` zweimal, alloc-Vorlage), drei waren falsch. Und das Host-Protokoll aus
- * CR-GC-583 nannte den Steuerwert VOR dem tier — `rankCandidates` sortiert tier vor Steuerwert.
+ * CR-GC-583 nannte den Steuerwert VOR dem tier, als `rankCandidates` noch tier vor Steuerwert sortierte
+ * (seit CR-GC-763 steht tier zuletzt).
  * Tests pruefen den Code; die Texte prueft dieser Baustein: jede Entscheidung hat hier EINE
  * Fassung, Protokoll und Skills setzen sie ein, `tests/decision-texts.test.ts` verbietet die
  * widersprechenden Formulierungen in allem, was ausgeliefert wird.
@@ -21,10 +22,10 @@ export const VERDICT_ORDER = [
   { key: 'viable', text: 'block verwerfen' },
   { key: 'focusDelta', text: 'steeringDelta der Fokus-Stufe (weniger Befunde)' },
   { key: 'blockingRise', text: 'kein Anstieg blockierender Fehler' },
-  { key: 'tier', text: 'tier (auto-apply > suggest)' },
   { key: 'removesElements', text: 'ein Zug, der nichts entfernt' },
   { key: 'steerImprovement', text: 'steerAdvisory.improvement (entschaerft der Zug die schlimmste Stelle?)' },
   { key: 'mutations', text: 'Element-Ausbeute' },
+  { key: 'tier', text: 'tier (auto-apply > suggest)' },
 ] as const;
 
 export interface Decision {
@@ -62,9 +63,9 @@ export const DECISIONS = {
       /tier[^.]{0,60}\bund\b[^.]{0,20}fitAdvisory/, // "tier ... und fitAdvisory (Δm ...)" — die abgesetzte Ordnung
       /Δm-Vergleich entscheidet/,
       /fitAdvisory \(Δm/,
-      /steerAdvisory[^.]{0,80}dann tier/, // Steuerwert vor tier — CR-GC-583s eigener Fehler
+      /tier[^.]{0,80}dann steerAdvisory/, // tier vor Steuerwert — die Ordnung vor CR-GC-763
     ],
-    source: 'CR-GC-483, CR-GC-583, rankCandidates',
+    source: 'CR-GC-483, CR-GC-583, CR-GC-763, rankCandidates',
   },
   /** CR-GC-296/582: wann `done` — die Freigabe auf graph_suggest. */
   handoff: {

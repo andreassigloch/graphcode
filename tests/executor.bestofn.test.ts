@@ -184,10 +184,13 @@ describe('Best-of-N ranking (pur, deterministisch)', () => {
     regressions: delta.flatMap((d, i) => (d < 0 ? [`d${i}`] : [])),
   });
 
-  it('ohne Ziel-Delta bleibt tier die Präferenz: auto-apply schlägt suggest trotz schlechterem Δm', () => {
-    const a = cand(0, { success: true, tier: 'suggest', fitAdvisory: fit([0.9]), mutations: 99 });
+  it('CR-GC-763: tier entscheidet zuletzt — erst bei gleicher Ausbeute schlägt auto-apply suggest', () => {
+    const a = cand(0, { success: true, tier: 'suggest', fitAdvisory: fit([0.9]), mutations: 1 });
     const b = cand(1, { success: true, tier: 'auto-apply', fitAdvisory: fit([-0.5]), mutations: 1 });
     expect(rankCandidates([a, b])[0]).toBe(b);
+    // Mehr angelegte Elemente schlagen das bessere tier.
+    const mehr = cand(2, { success: true, tier: 'suggest', mutations: 4 });
+    expect(rankCandidates([b, mehr])[0]).toBe(mehr);
   });
 
   it('v17-Fix: Fortschritts-suggest schlägt Null-Fortschritt-auto-apply (tier ist keine Vorstufe mehr)', () => {
@@ -558,7 +561,7 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(uids()).not.toContain('UC-vol-1'); // … das Volumen nicht
   });
 
-  it('CR-GC-758 am echten Gate: Aufbau (REQ+TEST) gegen Nichtstun bei Gleichstand in der Fokus-Stufe — gemessen entscheidet tier, nicht mehr die Summe', async () => {
+  it('CR-GC-758 am echten Gate: Aufbau (REQ+TEST) gegen Nichtstun bei Gleichstand in der Fokus-Stufe — der Aufbau gewinnt über die Ausbeute (CR-GC-763)', async () => {
     // Der Anlass des CR: der aufbauende Zug bringt eigene Befunde mit, der Zug, der nichts tut, keine.
     // Gemessen (2026-10-07) an den echten dryRun-Verdicts:
     type Verdict = {
@@ -591,12 +594,12 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     const n = { index: 1, verdict: nichts } as Parameters<typeof rankCandidates>[0][number];
     const nGleicherTier = { index: 1, verdict: { ...nichts, tier: 'suggest' } } as Parameters<typeof rankCandidates>[0][number];
     expect(rankCandidates([nGleicherTier, a], 'Anwendungsfall')[0]).toBe(a);
-    // Mit den Verdicts, wie das Gate sie wirklich gibt, steht Nichtstun WEITER vorn — jetzt ueber die
-    // Stufe tier (auto-apply > suggest): die Warnungen, die der Aufbau mitbringt, machen ihn zum suggest.
-    // Das ist der gemessene Stand, kein Wunsch; faellt er, aendert sich die Rangfolge an dieser Zeile.
-    expect(rankCandidates([a, n], 'Anwendungsfall')[0]).toBe(n);
+    // Auch mit den Verdicts, wie das Gate sie wirklich gibt: die Warnungen, die der Aufbau mitbringt,
+    // machen ihn zum suggest, Nichtstun ist auto-apply — tier steht seit CR-GC-763 hinter der Ausbeute
+    // (4 > 1) und entscheidet das nicht mehr.
+    expect(rankCandidates([n, a], 'Anwendungsfall')[0]).toBe(a);
 
-    // Derselbe Befund durch den ganzen Treiber: gepickt und persistiert wird Kandidat 2 (Nichtstun).
+    // Derselbe Befund durch den ganzen Treiber: gepickt und persistiert wird Kandidat 1 (Aufbau).
     const { callModel } = scriptedModel([
       toolCallResponse('c1', FOCUS_REPAIR_BATCH),
       toolCallResponse('c2', UPDATE_SYS_BATCH),
@@ -612,10 +615,10 @@ describe('Best-of-N executor (CR-GC-288, echter Gate-/Store-Pfad)', () => {
     expect(stats.mutatesApplied).toBe(1);
     expect(traces.some((l) => /candidate 1\/2: tier=suggest focus\(Anwendungsfall\)=\+0\.00 steer=\+0\.00 Δm=\+0\.00 mutations=4$/.test(l))).toBe(true);
     expect(traces.some((l) => /candidate 2\/2: tier=auto-apply focus\(Anwendungsfall\)=\+0\.00 steer=\+0\.00 Δm=\+0\.00 mutations=1$/.test(l))).toBe(true);
-    expect(traces.some((l) => l.includes('pick: candidate 2 (judge=gate)'))).toBe(true);
-    expect(uids()).not.toContain('REQ-login');
+    expect(traces.some((l) => l.includes('pick: candidate 1 (judge=gate)'))).toBe(true);
+    expect(uids()).toContain('REQ-login');
     const sys = harness.getGraph().nodes.find((k) => k.uid === 'SYS-app') as { attributes?: Record<string, unknown> };
-    expect(sys.attributes?.note).toBe('aktualisiert');
+    expect(sys.attributes?.note).toBeUndefined();
   });
 
   it("judge:'model': beide Picks werden geloggt, angewandt wird der Modell-Pick (Disagreement messbar)", async () => {

@@ -781,15 +781,16 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(klausel).toContain('persistiert nichts');
   });
 
-  it("'host': die Rangfolge kommt aus dem Register — tier vor Steuerwert, wie rankCandidates (CR-GC-583/587)", () => {
+  it("'host': die Rangfolge kommt aus dem Register — tier zuletzt, wie rankCandidates (CR-GC-587/763)", () => {
     // CR-GC-583 hatte hier "Steuerwert vor tier" gepinnt — und damit den Widerspruch zu
     // `rankCandidates` zementiert. Seit CR-GC-587 ist der Satz aus VERDICT_ORDER abgeleitet;
     // die Ordnung selbst prueft tests/decision-texts.test.ts gegen den Komparator.
     const klausel = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS).prompt.split('Gate-Protokoll')[1];
     const tier = klausel.indexOf('tier (auto-apply > suggest)');
     const steer = klausel.indexOf('steerAdvisory.improvement');
-    expect(klausel.indexOf('block verwerfen')).toBeLessThan(tier);
-    expect(tier).toBeLessThan(steer);
+    expect(klausel.indexOf('block verwerfen')).toBeLessThan(steer);
+    expect(steer).toBeLessThan(klausel.indexOf('Element-Ausbeute'));
+    expect(klausel.indexOf('Element-Ausbeute')).toBeLessThan(tier);
     expect(klausel).toContain('fitAdvisory ist nur Bericht');
   });
 

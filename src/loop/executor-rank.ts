@@ -168,12 +168,13 @@ function blockingRise(verdict: CandidateProbe['verdict']): number {
  * block verwerfen →
  * um Redundanz bereinigtes Befund-Delta der FOKUS-Stufe (GenerationStep.focusStage, CR-GC-361/757) →
  * kein Anstieg blockierender Fehler →
- * tier (auto-apply > suggest) →
  * (CR-GC-758: KEIN Gesamt-Delta mehr. Jedes neue Element bringt erst eigene Befunde mit; die Summe
  * ueber alle Stufen rankte deshalb den Zug, der nichts tut, vor jeden, der etwas aufbaut.) →
  * ZERSTOERUNGS-SPERRE (ein Zug, der Elemente entfernt, nie ueber einem, der keine entfernt) →
  * Chebyshev-Verbesserung (CR-GC-483; ersetzt das Δm-fitAdvisory, das nur noch berichtet wird) →
- * Element-Ausbeute (mutations) → Kandidaten-Index (Determinismus-Anker).
+ * Element-Ausbeute (mutations) →
+ * tier (auto-apply > suggest; CR-GC-763: zuletzt — ein Zug, der nichts aendert, ist immer auto-apply
+ * und schlug davor jeden Aufbau, der eine Freigabe braucht) → Kandidaten-Index (Determinismus-Anker).
  * block/Preflight-Block/fehlendes Verdict ranken als tier 0.
  */
 export function rankCandidates<T extends CandidateProbe>(
@@ -186,17 +187,17 @@ export function rankCandidates<T extends CandidateProbe>(
   // (20 Upsert-Mutationen, total=0.00) einen Reparatur-suggest (+0.04) schlagen —
   // Reparatur-Batches tragen oft frische Warnings (R-19 der neuen TESTs) und
   // landen als suggest. tier ist deshalb nur noch (1) Block-Filter und (2)
-  // SPÄTE Präferenz bei gleichem Ziel-Delta; das Ziel-Delta führt.
+  // LETZTE Präferenz vor dem Index (CR-GC-763); das Ziel-Delta führt.
   return [...candidates].sort(
     (a, b) =>
       viable(b) - viable(a) ||
       effectiveFocusDelta(b, focusStage) - effectiveFocusDelta(a, focusStage) ||
       blockingRise(a.verdict) - blockingRise(b.verdict) ||
-      tierOf(b) - tierOf(a) ||
       // CR-GC-483: erst die Sperre, dann der Score. Der ℝ⁶ (deltaSum) rankt nicht mehr.
       (removesElements(a.verdict) ? 1 : 0) - (removesElements(b.verdict) ? 1 : 0) ||
       steerImprovement(b.verdict) - steerImprovement(a.verdict) ||
       (b.verdict?.mutations ?? 0) - (a.verdict?.mutations ?? 0) ||
+      tierOf(b) - tierOf(a) ||
       a.index - b.index,
   );
 }

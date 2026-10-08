@@ -136,11 +136,16 @@ describe('CR-GC-587: VERDICT_ORDER ist die Ordnung von rankCandidates, nicht ein
     verdict: { success: true, tier, mutations: 3, steerAdvisory: steer(improvement) },
   });
 
-  it('tier vor Steuerwert — der Fehler in CR-GC-583s Prosa', () => {
+  it('Steuerwert vor tier — tier ist das letzte Kriterium (CR-GC-763)', () => {
     // A: schlechteres tier, besserer Steuerwert. B: besseres tier, kein Steuerwert-Gewinn.
-    const [erster] = rankCandidates([cand(0, 'suggest', 0.5), cand(1, 'auto-apply', 0)] as never);
+    const [erster] = rankCandidates([cand(1, 'auto-apply', 0), cand(0, 'suggest', 0.5)] as never);
+    expect(erster.index).toBe(0);
+    expect(VERDICT_ORDER.at(-1)?.key).toBe('tier');
+  });
+
+  it('bei sonst gleichem Verdict entscheidet tier', () => {
+    const [erster] = rankCandidates([cand(0, 'suggest', 0.5), cand(1, 'auto-apply', 0.5)] as never);
     expect(erster.index).toBe(1);
-    expect(VERDICT_ORDER.findIndex((v) => v.key === 'tier')).toBeLessThan(VERDICT_ORDER.findIndex((v) => v.key === 'steerImprovement'));
   });
 
   it('bei gleichem tier entscheidet der Steuerwert — die Parse-Gegenprobe', () => {
