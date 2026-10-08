@@ -85,15 +85,24 @@ export function testLevel(n: GraphNode): string {
   return typeof top === 'string' ? top : '';
 }
 
+/** The verification level of a test — named after what it verifies, as Automotive SPICE does. */
+export type TestLevel = 'system' | 'requirements' | 'integration' | 'interface' | 'component' | 'unit';
+
 /**
- * Pyramid level(s) of a TEST, derived from the graph POSITION of the REQ(s) it
- * verifies (CR-GC-240) — a real TEST node almost never carries a testRefs[].level, so
- * an attribute-based classification degenerates to all-unleveled even when every
- * REQ is verified. A test verifying a SYS-composed REQ is System/e2e; a UC-composed
- * REQ is Use-Case/integration; a FUNC-satisfied REQ is Function/unit; an
- * FCHAIN-satisfied REQ is also integration (the chain wires FUNC↔FUNC, so its
- * test is an interface/integration test — CR for R-21). A test inherits every
- * level of every REQ it verifies (multi-assignment allowed).
+ * Verification level(s) of a TEST, derived from the graph POSITION of the REQ(s) it verifies
+ * (CR-GC-240; named after the norm since CR-GC-762). The level says WHAT is verified, not how the
+ * test is written — Automotive SPICE orders verification by the left side of the V:
+ *
+ *   REQ composed by the SYS      → system verification            (SYS.5)
+ *   REQ composed by a UC         → requirements verification      (SWE.6 · HWE.4)
+ *   REQ satisfied by an FCHAIN   → integration verification       (SYS.4 · SWE.5)
+ *   SCHEMA (the contract of a flow) → integration verification    (SYS.4 · SWE.5): a test on a
+ *                                   schema verifies an interface between elements
+ *   REQ satisfied by a MOD       → component verification         (SWE.5 · HWE.3)
+ *   REQ satisfied by a FUNC      → unit verification              (SWE.4 · HWE.3)
+ *
+ * Validation (VAL.1 — against the intended use) has no position: a test hangs on requirements only.
+ * A test inherits every level of every REQ it verifies (multi-assignment allowed).
  */
 export function levelsOfTest(
   t: GraphNode,
@@ -101,17 +110,20 @@ export function levelsOfTest(
   verify: { fwd: Map<string, string[]> },
   compose: { rev: Map<string, string[]> },
   satisfy: { rev: Map<string, string[]> },
-): Set<'e2e' | 'integration' | 'unit'> {
-  const levels = new Set<'e2e' | 'integration' | 'unit'>();
+): Set<TestLevel> {
+  const levels = new Set<TestLevel>();
   for (const reqUid of verify.fwd.get(t.uid) ?? []) {
+    // `verify` zeigt auf REQ oder SCHEMA (R-32): der Test am Schema prueft eine Schnittstelle.
+    if (idx.get(reqUid)?.type === 'SCHEMA') levels.add('interface');
     for (const parent of compose.rev.get(reqUid) ?? []) {
       const type = idx.get(parent)?.type;
-      if (type === 'SYS') levels.add('e2e');
-      else if (type === 'UC') levels.add('integration');
+      if (type === 'SYS') levels.add('system');
+      else if (type === 'UC') levels.add('requirements');
     }
     for (const satisfier of satisfy.rev.get(reqUid) ?? []) {
       const st = idx.get(satisfier)?.type;
       if (st === 'FUNC') levels.add('unit');
+      else if (st === 'MOD') levels.add('component');
       else if (st === 'FCHAIN') levels.add('integration');
     }
   }

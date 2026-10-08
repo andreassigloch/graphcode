@@ -21,7 +21,7 @@ import { generatedHeader, cell } from './exporter.js';
 // CR-GC-327: DIESELBE Lesart von "was ist das Ergebnis dieses TEST" wie der
 // Prüfreport — inklusive `not-run` statt Leerstring. Kein zweiter Begriff.
 import { resultOf } from './verification-report.js';
-import { nodesOfType, nodeIndex, adjacency, reqKinds, testLevel, testResult, levelsOfTest, reqLevels, rolledUpCoverage, status, ref, refList, topoOrderMilestones, type ReqLevel } from './helpers.js';
+import { nodesOfType, nodeIndex, adjacency, reqKinds, testLevel, testResult, levelsOfTest, reqLevels, rolledUpCoverage, status, ref, refList, topoOrderMilestones, type ReqLevel, type TestLevel } from './helpers.js';
 
 // ---------------------------------------------------------------------------
 // 3. NFR Register (RENDER · REQ kind=non-functional). Specimen #3.
@@ -113,9 +113,11 @@ export function renderIcd(graph: Graph, name: string): string {
  */
 const REQ_LEVEL_LABEL: Record<ReqLevel, string> = {
   system: 'System (SYS.2)',
-  functional: 'funktional (SWE.1)',
-  integration: 'Integration (SWE.4)',
-  component: 'Komponente (SWE.2/3)',
+  functional: 'funktional (SWE.1 · HWE.1)',
+  // CR-GC-762: SWE.4 ist die Unit-VERIFIKATION. Eine Anforderung, die eine Wirkkette erfuellt, liegt
+  // auf der Architekturebene; eine, die Funktion oder Modul erfuellt, auf der des Entwurfs.
+  integration: 'Architektur (SYS.3 · SWE.2)',
+  component: 'Entwurf (SWE.3 · HWE.2)',
 };
 /** Top-down, the order an assessor reads them in. */
 const REQ_LEVEL_ORDER: ReqLevel[] = ['system', 'functional', 'integration', 'component'];
@@ -210,12 +212,27 @@ export function renderTestConcept(graph: Graph, name: string): string {
   const satisfy = adjacency(graph, 'satisfy'); // FUNC → REQ (among other pairs)
 
   const levelsByTest = new Map(tests.map((t) => [t.uid, levelsOfTest(t, idx, verify, compose, satisfy)]));
-  const testsWith = (level: 'e2e' | 'integration' | 'unit'): number =>
+  const testsWith = (level: TestLevel): number =>
     tests.filter((t) => levelsByTest.get(t.uid)!.has(level)).length;
 
-  const e2e = testsWith('e2e');
-  const ucLevel = testsWith('integration');
+  const e2e = testsWith('system');
+  const ucLevel = testsWith('requirements');
+  const chainLevel = testsWith('integration');
+  const modLevel = testsWith('component');
   const unit = testsWith('unit');
+  const modCount = nodesOfType(graph, 'MOD').length;
+  // Wie viele Funktionen bzw. Module eine gepruefte Anforderung erfuellen — vorher stand in der
+  // Funktionszeile fest `n / n ✓`, ohne dass etwas gezaehlt wurde.
+  const mitGeprueft = (type: 'FUNC' | 'MOD'): number =>
+    nodesOfType(graph, type).filter((n) => (satisfy.fwd.get(n.uid) ?? []).some((rq) => (verify.rev.get(rq) ?? []).length > 0)).length;
+  const schemas = nodesOfType(graph, 'SCHEMA');
+  const schemaVerified = schemas.filter((sc) => (verify.rev.get(sc.uid) ?? []).length > 0).length;
+  const schemaTests = testsWith('interface');
+  // Abdeckung der Systemzeile: gepruefte Systemanforderungen, nicht „Tests je System".
+  const sysReqs = nodesOfType(graph, 'SYS').flatMap((sy) => (compose.fwd.get(sy.uid) ?? []).filter((c) => idx.get(c)?.type === 'REQ'));
+  const sysReqVerified = sysReqs.filter((rq) => (verify.rev.get(rq) ?? []).length > 0).length;
+  const funcVerified = mitGeprueft('FUNC');
+  const modVerified = mitGeprueft('MOD');
   // (support): codec round-trip tests verify no REQ, so they have no graph
   // position to derive a level from — testRef.level stays descriptive here.
   const conformance = tests.filter((t) => testLevel(t) === 'conformance').length;
@@ -276,47 +293,52 @@ export function renderTestConcept(graph: Graph, name: string): string {
 
   // The E2E gap: ✗ MISSING when 0 E2E-level tests exist; ✓ otherwise. COMPUTED.
   const sysVerdict = e2e === 0 ? '✗ MISSING — must be added' : '✓';
-  const sysGap = e2e === 0 ? `✗ ${e2e} tests — NO end-to-end run exists.  ← GAP` : `✓ ${e2e} E2E test(s)`;
-  const ucVerdict = ucScenario >= ucCount ? '✓' : `⚠ ${ucCount - ucScenario} UC have no scenario path`;
-  const funcVerdict = '✓';
+  const sysGap = e2e === 0 ? `✗ ${e2e} tests — no system requirement is verified.  ← GAP` : `✓ ${e2e} test(s) of system requirements`;
+  const ucVerdict = ucScenario >= ucCount ? '✓' : `⚠ ${ucCount - ucScenario} UC without a verified requirement`;
+  const anteil = (n: number, von: number): string => (von === 0 ? '—' : n >= von ? '✓' : `⚠ ${von - n} without a verified requirement`);
 
   const lines: string[] = [
     generatedHeader(
       name,
       'Test Concept',
-      `${tests.length} TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.`,
+      `${tests.length} TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.`,
     ),
   ];
   const sysLabel = nodesOfType(graph, 'SYS')[0]?.uid ?? 'SYS';
-  lines.push('```', '              ╱╲', `             ╱E2╲          System level · ${sysLabel}`);
-  lines.push(`            ╱ E  ╲         ${sysGap}`);
-  lines.push('           ╱──────╲');
-  lines.push(`          ╱  UC /   ╲       Use-case level · ${ucCount} UC`);
-  lines.push(`         ╱integration╲      ⚠ ${ucScenario} / ${ucCount} UC exercised by a scenario test`);
-  lines.push(`        ╱────────────╲      ${connGap}`);
-  lines.push(`       ╱  Function /   ╲     Function level · ${funcCount} FUNC`);
-  lines.push('      ╱      unit       ╲');
-  lines.push('     ╱───────────────────╲', '```', '');
+  lines.push('```', '              ╱╲', `             ╱SYS╲         System · ${sysLabel}`);
+  lines.push(`            ╱      ╲        ${sysGap}`);
+  lines.push('           ╱────────╲');
+  lines.push(`          ╱ use cases ╲      ${ucCount} UC · ${ucScenario} / ${ucCount} with a verified requirement`);
+  lines.push('         ╱────────────╲');
+  lines.push(`        ╱ integration  ╲     ${connGap}`);
+  lines.push('       ╱────────────────╲');
+  lines.push(`      ╱ module · function ╲   ${modCount} MOD · ${funcCount} FUNC`);
+  lines.push('     ╱────────────────────╲', '```', '');
 
-  // Layers top→bottom by scope: System(E2E) ▸ Use-case acceptance ▸ FUNC↔FUNC
-  // integration ▸ Function unit. FUNC↔FUNC tests ARE integration, so they sit in
-  // the integration band ABOVE unit — not below it.
-  lines.push('| Level | Element | Test kind | Tests | Coverage | Verdict |', '|---|---|---|---|---|---|');
-  lines.push(`| System | SYS (${sysCount}) | E2E | ${e2e} | ${e2e} / ${sysCount} | ${sysVerdict} |`);
+  // Stufen von oben nach unten, benannt nach dem, WAS geprueft wird (CR-GC-762). Die Prozessnummern
+  // nennen Software und Hardware: dieselbe Lage gilt fuer beide.
+  lines.push('| Level | Element | Verification | Tests | Coverage | Verdict |', '|---|---|---|---|---|---|');
+  lines.push(`| System | SYS (${sysCount}) | system verification (SYS.5) | ${e2e} | ${sysReqVerified} / ${sysReqs.length} system requirements | ${sysVerdict} |`);
   lines.push(
-    `| Use-case | UC (${ucCount}) | acceptance / integration | ${ucLevel} | ${ucScenario} / ${ucCount} scenario | ${ucVerdict} |`,
+    `| Use-case | UC (${ucCount}) | requirements verification (SWE.6 · HWE.4) | ${ucLevel} | ${ucScenario} / ${ucCount} use cases | ${ucVerdict} |`,
   );
   lines.push(
-    `| Integration | FUNC↔FUNC (${totalConn} conn) | integration (chain) | ${ucLevel} | ${coveredConn} / ${totalConn} connections | ${connVerdict} |`,
+    `| Integration | FUNC↔FUNC (${totalConn} conn) | integration verification (SYS.4 · SWE.5) | ${chainLevel} | ${coveredConn} / ${totalConn} connections | ${connVerdict} |`,
   );
-  lines.push(`| Function | FUNC (${funcCount}) | unit | ${unit} | ${funcCount} / ${funcCount} | ${funcVerdict} |`);
+  lines.push(
+    `| Interface | SCHEMA (${schemas.length}) | integration verification (SYS.4 · SWE.5) | ${schemaTests} | ${schemaVerified} / ${schemas.length} schemas | ${schemas.length === 0 ? '—' : schemaVerified >= schemas.length ? '✓' : `⚠ ${schemas.length - schemaVerified} without a test`} |`,
+  );
+  lines.push(`| Module | MOD (${modCount}) | component verification (SWE.5 · HWE.3) | ${modLevel} | ${modVerified} / ${modCount} | ${anteil(modVerified, modCount)} |`);
+  lines.push(`| Function | FUNC (${funcCount}) | unit verification (SWE.4 · HWE.3) | ${unit} | ${funcVerified} / ${funcCount} | ${anteil(funcVerified, funcCount)} |`);
+  lines.push(`| (validation) | UC (${ucCount}) | validation (VAL.1) | — | no position in the model | — |`);
   lines.push(`| (support) | — | conformance | ${conformance} | codec round-trip | ✓ |`);
   lines.push('');
   lines.push(
-    `> GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),`,
-    `> not a testRef.level attribute; System, UC & Integration rows are DERIVED from coverage, so a missing`,
-    `> E2E run surfaces as ✗ (currently ${e2e} E2E test(s)) and an untested FUNC↔FUNC connection (R-21)`,
-    `> surfaces as ✗ (${coveredConn}/${totalConn} covered) instead of being silently absent.`,
+    `> GENERATED — the level of a TEST is the graph position of what it verifies (a REQ under SYS/UC/FCHAIN/MOD/FUNC, or a SCHEMA):`,
+    `> it says WHAT is verified, not how the test is written. A test of a system requirement counts as system`,
+    `> verification even if it is a unit-style test — whether it plays the system through, this table cannot say.`,
+    `> Validation against the intended use has no position: a play-through of a use case is a test of its requirements.`,
+    `> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (${coveredConn}/${totalConn} covered).`,
     '',
   );
   return lines.join('\n');

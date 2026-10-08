@@ -808,6 +808,7 @@
 | `CR-GC-757` | relation | `FUNC-take-steering-snapshot` |
 | `CR-GC-757` | relation | `SCHEMA-generation-step` |
 | `CR-GC-757` | relation | `SCHEMA-steering-delta` |
+| `CR-GC-762` | relation | `FUNC-export-markdown` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

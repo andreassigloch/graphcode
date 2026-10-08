@@ -424,6 +424,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-755` | n/a | Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43 | `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-trade` |
 | `CR-GC-756` | n/a | Sicht Variantenvergleich streichen | `FUNC-render-views` |
 | `CR-GC-757` | n/a | Stufe statt Dimension - Befunde zaehlen statt Prozent | `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-graph-readiness` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` |
+| `CR-GC-762` | n/a | Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen | `FUNC-export-markdown` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

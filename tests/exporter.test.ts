@@ -365,9 +365,10 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     };
     const md = exportMarkdown(zeroE2e, 'testconcept');
     expect(md).toContain('✗ MISSING');
-    expect(md).toContain('NO end-to-end run exists');
-    // The System row reports 0 E2E tests, loudly.
-    expect(md).toMatch(/System \| SYS \(1\) \| E2E \| 0/);
+    expect(md).toContain('no system requirement is verified');
+    // The System row reports 0 tests of system requirements, loudly — named after the norm (CR-GC-762).
+    expect(md).toMatch(/System \| SYS \(1\) \| system verification \(SYS\.5\) \| 0/);
+    expect(md).not.toContain('E2E');
 
     // Adding a SYS-composed REQ verified by a test flips the row to ✓ — purely
     // via graph position (CR-GC-240), still no testRef.level anywhere.
@@ -385,7 +386,7 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     };
     const md2 = exportMarkdown(withE2e, 'testconcept');
     expect(md2).not.toContain('✗ MISSING');
-    expect(md2).toMatch(/System \| SYS \(1\) \| E2E \| 1/);
+    expect(md2).toMatch(/System \| SYS \(1\) \| system verification \(SYS\.5\) \| 1 \| 1 \/ 1 system requirements \| ✓/);
   });
 
   it('CR-GC-240: full REQ coverage renders a clean pyramid with ZERO testRef.level attributes anywhere', () => {
@@ -420,10 +421,12 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     const md = exportMarkdown(graph, 'testconcept');
     expect(md).not.toContain('✗ MISSING');
     expect(md).not.toContain('GAP');
-    expect(md).not.toContain('UC have no scenario path');
-    expect(md).toMatch(/System \| SYS \(1\) \| E2E \| 1 \| 1 \/ 1 \| ✓/);
-    expect(md).toMatch(/Use-case \| UC \(2\) \| acceptance \/ integration \| 2 \| 2 \/ 2 scenario \| ✓/);
-    expect(md).toMatch(/Function \| FUNC \(1\) \| unit \| 1 \| 1 \/ 1 \| ✓/);
+    expect(md).not.toContain('UC without a verified requirement');
+    expect(md).toMatch(/System \| SYS \(1\) \| system verification \(SYS\.5\) \| 1 \| 1 \/ 1 system requirements \| ✓/);
+    expect(md).toMatch(/Use-case \| UC \(2\) \| requirements verification \(SWE\.6 · HWE\.4\) \| 2 \| 2 \/ 2 use cases \| ✓/);
+    expect(md).toMatch(/Function \| FUNC \(1\) \| unit verification \(SWE\.4 · HWE\.3\) \| 1 \| 1 \/ 1 \| ✓/);
+    // Validierung hat keine Lage im Modell — die Zeile sagt es, statt eine Zahl zu erfinden.
+    expect(md).toMatch(/\(validation\) \| UC \(2\) \| validation \(VAL\.1\) \| — \| no position in the model/);
   });
 
   it('R-21: TestConcept flags a FUNC↔FUNC connection with no integration test as ✗ GAP', () => {
@@ -449,7 +452,7 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     expect(md.indexOf('| Integration | FUNC↔FUNC')).toBeLessThan(md.indexOf('| Function |'));
     expect(md.indexOf('| Integration | FUNC↔FUNC')).toBeGreaterThan(md.indexOf('| Use-case |'));
     expect(md).toContain('0/1 FUNC↔FUNC connections tested  ← GAP');
-    expect(md).toMatch(/Integration \| FUNC↔FUNC \(1 conn\) \| integration \(chain\) \| \d+ \| 0 \/ 1 connections \| ✗ 1 uncovered/);
+    expect(md).toMatch(/Integration \| FUNC↔FUNC \(1 conn\) \| integration verification \(SYS\.4 · SWE\.5\) \| 0 \| 0 \/ 1 connections \| ✗ 1 uncovered/);
 
     // Add the verifying integration test → connection covered, integration level counted.
     const covered: Graph = {
@@ -460,7 +463,31 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     expect(md2).toContain('✓ 1/1 FUNC↔FUNC connections integration-tested');
     expect(md2).not.toContain('FUNC↔FUNC connections tested  ← GAP');
     // FCHAIN-satisfied REQ verified → the test counts as integration level.
-    expect(md2).toMatch(/Integration \| FUNC↔FUNC \(1 conn\) \| integration \(chain\) \| 1 \| 1 \/ 1 connections \| ✓/);
+    expect(md2).toMatch(/Integration \| FUNC↔FUNC \(1 conn\) \| integration verification \(SYS\.4 · SWE\.5\) \| 1 \| 1 \/ 1 connections \| ✓/);
+  });
+
+  it('CR-GC-762: Modul- und Schema-Tests haben eine Stufe — vorher zaehlte die Uebersicht sie nicht', () => {
+    const g: Graph = {
+      nodes: [
+        { uid: 'SYS-x', type: 'SYS', name: 'x', attributes: {} },
+        { uid: 'MOD-m', type: 'MOD', name: 'm', attributes: {} },
+        { uid: 'REQ-nf', type: 'REQ', name: 'nf', attributes: {} },
+        { uid: 'SCHEMA-s', type: 'SCHEMA', name: 's', attributes: {} },
+        { uid: 'SCHEMA-ohne', type: 'SCHEMA', name: 'o', attributes: {} },
+        { uid: 'TEST-m', type: 'TEST', name: 'tm', attributes: {} },
+        { uid: 'TEST-s', type: 'TEST', name: 'ts', attributes: {} },
+      ],
+      edges: [
+        { sourceId: 'MOD-m', targetId: 'REQ-nf', edgeType: 'satisfy', attributes: {} },
+        { sourceId: 'TEST-m', targetId: 'REQ-nf', edgeType: 'verify', attributes: {} },
+        { sourceId: 'TEST-s', targetId: 'SCHEMA-s', edgeType: 'verify', attributes: {} },
+      ],
+    };
+    const md = exportMarkdown(g, 'testconcept');
+    expect(md).toMatch(/Module \| MOD \(1\) \| component verification \(SWE\.5 · HWE\.3\) \| 1 \| 1 \/ 1 \| ✓/);
+    expect(md).toMatch(/Interface \| SCHEMA \(2\) \| integration verification \(SYS\.4 · SWE\.5\) \| 1 \| 1 \/ 2 schemas \| ⚠ 1 without a test/);
+    // der Schema-Test zaehlt NICHT in die Zeile der Funktion-zu-Funktion-Verbindungen
+    expect(md).toMatch(/Integration \| FUNC↔FUNC \(0 conn\) \| integration verification \(SYS\.4 · SWE\.5\) \| 0 \|/);
   });
 
   it('CR-GC-220: FMEA renders an explicit empty-state (never silently blank)', () => {

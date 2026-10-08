@@ -96,23 +96,23 @@ describe('TEST-views-auditor (CR-GC-317): RTM layers', () => {
 
   it('groups requirements by the element that carries the assignment', () => {
     expect(md).toContain('### System (SYS.2)');
-    expect(md).toContain('### funktional (SWE.1)');
-    expect(md).toContain('### Integration (SWE.4)');
-    expect(md).toContain('### Komponente (SWE.2/3)');
+    expect(md).toContain('### funktional (SWE.1 · HWE.1)');
+    expect(md).toContain('### Architektur (SYS.3 · SWE.2)');
+    expect(md).toContain('### Entwurf (SWE.3 · HWE.2)');
     expect(md).toContain('### ohne Anker (unassigned)');
   });
 
   it('finds the compose legs — SYS and UC', () => {
     expect(section('System (SYS.2)')).toContain('REQ-sys');
-    expect(section('funktional (SWE.1)')).toContain('REQ-uc');
+    expect(section('funktional (SWE.1 · HWE.1)')).toContain('REQ-uc');
   });
 
   it('finds the SATISFY legs too — this is what CR-GC-317 missed (CR-GC-318)', () => {
     // 67 of this repo's 111 REQs are assigned ONLY over a satisfy edge. Reading `compose`
     // alone reported them as unanchored — a reporter gap sold as a model finding.
-    expect(section('Komponente (SWE.2/3)')).toContain('REQ-func'); // FUNC -satisfy->
-    expect(section('Komponente (SWE.2/3)')).toContain('REQ-mod'); // MOD  -satisfy->
-    expect(section('Integration (SWE.4)')).toContain('REQ-chain'); // FCHAIN -satisfy->
+    expect(section('Entwurf (SWE.3 · HWE.2)')).toContain('REQ-func'); // FUNC -satisfy->
+    expect(section('Entwurf (SWE.3 · HWE.2)')).toContain('REQ-mod'); // MOD  -satisfy->
+    expect(section('Architektur (SYS.3 · SWE.2)')).toContain('REQ-chain'); // FCHAIN -satisfy->
   });
 
   it('resolves REQ→REQ transitively — "derived" is a provenance, not a layer', () => {

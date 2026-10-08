@@ -3131,6 +3131,12 @@
       "description": "docs/cr/open/CR-GC-761-sicht-cr-list-streichen-die-a-nderungsli.md"
     },
     {
+      "id": "CR-GC-762",
+      "type": "CR",
+      "name": "Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen",
+      "description": "docs/cr/open/CR-GC-762-teststufen-und-anforderungsebenen-nach-a.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -15014,6 +15020,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-762",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23716,5 +23727,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 632
+  "graphVersion": 634
 }
