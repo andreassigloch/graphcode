@@ -1,6 +1,6 @@
 # CR-GC-766: Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-08)
 **Typ:** aus Item ITEM-2026-790 (finding)
 **Erstellt:** 2026-10-08
 **Item:** bok/items/ITEM-2026-790.json (Lane: code)
