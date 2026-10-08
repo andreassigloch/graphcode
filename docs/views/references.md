@@ -809,6 +809,7 @@
 | `CR-GC-757` | relation | `SCHEMA-generation-step` |
 | `CR-GC-757` | relation | `SCHEMA-steering-delta` |
 | `CR-GC-762` | relation | `FUNC-export-markdown` |
+| `CR-GC-763` | relation | `FUNC-rank-candidates` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

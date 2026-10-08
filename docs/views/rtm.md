@@ -61,7 +61,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 106 REQ
+### funktional (SWE.1) — 106 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -172,7 +172,7 @@
 | `REQ-versioned-broadcast` | `TEST-live-view` | `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` | `MOD-surface` |
 | `REQ-viewer-owned-by-repo` | `TEST-gve-autostart` · `TEST-gve-supervision` | `FUNC-gve-sessions` · `FUNC-gve-supervise` | `MOD-surface` |
 
-### Architektur (SYS.3 · SWE.2) — 31 REQ
+### Integration (SWE.4) — 31 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -208,7 +208,7 @@
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-small-model-viable` | `TEST-executor-preflight` · `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 
-### Entwurf (SWE.3 · HWE.2) — 116 REQ
+### Komponente (SWE.2/3) — 116 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|

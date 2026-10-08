@@ -425,6 +425,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-756` | n/a | Sicht Variantenvergleich streichen | `FUNC-render-views` |
 | `CR-GC-757` | n/a | Stufe statt Dimension - Befunde zaehlen statt Prozent | `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-graph-readiness` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` |
 | `CR-GC-762` | n/a | Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen | `FUNC-export-markdown` |
+| `CR-GC-763` | n/a | Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen | `FUNC-rank-candidates` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

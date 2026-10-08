@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 372 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 375 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 372 CR · 338 done · 4 open.
+Total: 375 CR · 338 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -434,3 +434,6 @@ Total: 372 CR · 338 done · 4 open.
 | `CR-GC-760` | n/a | Testvorgehen als Allgemeinvorgabe prüfen: Abnahme je Use Case, Smoke-Test, Risiko-Tests, Prüfaufbau |
 | `CR-GC-761` | n/a | Sicht cr-list streichen — die Änderungsliste (changelog) ersetzt sie |
 | `CR-GC-762` | n/a | Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen |
+| `CR-GC-763` | n/a | Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen |
+| `CR-GC-764` | n/a | Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte) |
+| `CR-GC-765` | n/a | Leitlinie und Verweise nach dem Split auf graphanalyze umstellen |

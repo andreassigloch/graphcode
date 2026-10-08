@@ -1268,7 +1268,7 @@ Verification ◀ `TEST-executor-truncation` (integration) · `TEST-one-driver-lo
 
 > auch in: `FUNC-block-q-improvement`
 
-Ordnet die Kandidaten einer Runde deterministisch: tier zuerst, dann das Delta der Fokus-Dimension, dann das Gesamt-Delta, dann die Architektur-Fitness als Tiebreaker. Kein Modell-Urteil, nur gemessene Groessen.
+Ordnet die Kandidaten einer Runde deterministisch: blockierte verwerfen, dann das Befund-Delta der Fokus-Stufe, dann kein Anstieg blockierender Fehler, dann ein Zug der nichts entfernt, dann der Steuerwert, dann die Zahl angelegter Elemente, zuletzt die Einstufung des Gates. Kein Modell-Urteil, nur gemessene Groessen.
 
 io ◀ `FLOW-fit-advisory` · `FLOW-gate-outcome` · `FLOW-round-prompt` · `FLOW-steering-delta` · io ▶ `FLOW-candidate-ranking` · allocate ▶ `MOD-loop`
 
@@ -5826,7 +5826,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 > auch in: `FCHAIN-steering-loop`
 
-Ordnet die Kandidaten einer Runde deterministisch: tier zuerst, dann das Delta der Fokus-Dimension, dann das Gesamt-Delta, dann die Architektur-Fitness als Tiebreaker. Kein Modell-Urteil, nur gemessene Groessen.
+Ordnet die Kandidaten einer Runde deterministisch: blockierte verwerfen, dann das Befund-Delta der Fokus-Stufe, dann kein Anstieg blockierender Fehler, dann ein Zug der nichts entfernt, dann der Steuerwert, dann die Zahl angelegter Elemente, zuletzt die Einstufung des Gates. Kein Modell-Urteil, nur gemessene Groessen.
 
 io ◀ `FLOW-fit-advisory` · `FLOW-gate-outcome` · `FLOW-round-prompt` · `FLOW-steering-delta` · io ▶ `FLOW-candidate-ranking` · allocate ▶ `MOD-loop`
 
