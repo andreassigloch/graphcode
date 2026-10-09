@@ -836,6 +836,16 @@ Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, 
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-plan` · allocate ▶ `MOD-agent-surface`
 
+###### `REQ-analyse-artefakt-vor-stempel` — Analyse zaehlt nur mit Ergebnis im Graphen
+
+> auch unter: `FUNC-generation-step`
+
+Der Bauplan gilt erst mit offenen Auftraegen im Graphen als durchgefuehrt; ein von Hand gesetzter Stempel schliesst seinen Eintritt nicht. Jeder Analyse-Skill mit Stempel schreibt ihn durch Lesen, Uebernehmen und ganz Schreiben, sodass kein Stempel einer anderen Analyse verloren geht.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · `FUNC-se-plan` · allocate ▶ `MOD-agent-surface` · `MOD-loop`
+
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
 > auch unter: `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
@@ -934,13 +944,15 @@ Die Zustandsmaschine der Generierung (CR-GC-593): seed:sys -> seed:uc -> seed:ac
 
 io ◀ `FLOW-channel-dimension-template` · `FLOW-channel-gate-protocol` · `FLOW-channel-rule-clause` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generation-step-suggest` · `FLOW-generation-step-vorschlag` · `FLOW-next-step-advice` · allocate ▶ `MOD-loop`
 
-###### `REQ-analyse-artefakt-vor-stempel` — Analyse zaehlt nur mit Artefakt
+###### `REQ-analyse-artefakt-vor-stempel` — Analyse zaehlt nur mit Ergebnis im Graphen
 
-Eine Analyse gilt erst dann als durchgefuehrt, wenn ihr Artefakt im Graphen steht; ein Stempel allein ist kein Artefakt.
+> auch unter: `FUNC-se-plan`
+
+Der Bauplan gilt erst mit offenen Auftraegen im Graphen als durchgefuehrt; ein von Hand gesetzter Stempel schliesst seinen Eintritt nicht. Jeder Analyse-Skill mit Stempel schreibt ihn durch Lesen, Uebernehmen und ganz Schreiben, sodass kein Stempel einer anderen Analyse verloren geht.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · `FUNC-se-plan` · allocate ▶ `MOD-agent-surface` · `MOD-loop`
 
 ###### `REQ-done-iff-no-focus` — Freigabe genau dann, wenn kein Fokus
 
@@ -1486,13 +1498,15 @@ Die Zustandsmaschine der Generierung (CR-GC-593): seed:sys -> seed:uc -> seed:ac
 
 io ◀ `FLOW-channel-dimension-template` · `FLOW-channel-gate-protocol` · `FLOW-channel-rule-clause` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generation-step-suggest` · `FLOW-generation-step-vorschlag` · `FLOW-next-step-advice` · allocate ▶ `MOD-loop`
 
-###### `REQ-analyse-artefakt-vor-stempel` — Analyse zaehlt nur mit Artefakt
+###### `REQ-analyse-artefakt-vor-stempel` — Analyse zaehlt nur mit Ergebnis im Graphen
 
-Eine Analyse gilt erst dann als durchgefuehrt, wenn ihr Artefakt im Graphen steht; ein Stempel allein ist kein Artefakt.
+> auch unter: `FUNC-se-plan`
+
+Der Bauplan gilt erst mit offenen Auftraegen im Graphen als durchgefuehrt; ein von Hand gesetzter Stempel schliesst seinen Eintritt nicht. Jeder Analyse-Skill mit Stempel schreibt ihn durch Lesen, Uebernehmen und ganz Schreiben, sodass kein Stempel einer anderen Analyse verloren geht.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · `FUNC-se-plan` · allocate ▶ `MOD-agent-surface` · `MOD-loop`
 
 ###### `REQ-done-iff-no-focus` — Freigabe genau dann, wenn kein Fokus
 
@@ -5100,6 +5114,16 @@ Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, 
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-plan` · allocate ▶ `MOD-agent-surface`
 
+###### `REQ-analyse-artefakt-vor-stempel` — Analyse zaehlt nur mit Ergebnis im Graphen
+
+> auch unter: `FUNC-generation-step`
+
+Der Bauplan gilt erst mit offenen Auftraegen im Graphen als durchgefuehrt; ein von Hand gesetzter Stempel schliesst seinen Eintritt nicht. Jeder Analyse-Skill mit Stempel schreibt ihn durch Lesen, Uebernehmen und ganz Schreiben, sodass kein Stempel einer anderen Analyse verloren geht.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · `FUNC-se-plan` · allocate ▶ `MOD-agent-surface` · `MOD-loop`
+
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
 > auch unter: `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
@@ -5456,13 +5480,15 @@ Die Zustandsmaschine der Generierung (CR-GC-593): seed:sys -> seed:uc -> seed:ac
 
 io ◀ `FLOW-channel-dimension-template` · `FLOW-channel-gate-protocol` · `FLOW-channel-rule-clause` · `FLOW-measurement-vector` · `FLOW-steering-snapshot` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generation-step-suggest` · `FLOW-generation-step-vorschlag` · `FLOW-next-step-advice` · allocate ▶ `MOD-loop`
 
-###### `REQ-analyse-artefakt-vor-stempel` — Analyse zaehlt nur mit Artefakt
+###### `REQ-analyse-artefakt-vor-stempel` — Analyse zaehlt nur mit Ergebnis im Graphen
 
-Eine Analyse gilt erst dann als durchgefuehrt, wenn ihr Artefakt im Graphen steht; ein Stempel allein ist kein Artefakt.
+> auch unter: `FUNC-se-plan`
+
+Der Bauplan gilt erst mit offenen Auftraegen im Graphen als durchgefuehrt; ein von Hand gesetzter Stempel schliesst seinen Eintritt nicht. Jeder Analyse-Skill mit Stempel schreibt ihn durch Lesen, Uebernehmen und ganz Schreiben, sodass kein Stempel einer anderen Analyse verloren geht.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · `FUNC-se-plan` · allocate ▶ `MOD-agent-surface` · `MOD-loop`
 
 ###### `REQ-done-iff-no-focus` — Freigabe genau dann, wenn kein Fokus
 
@@ -7710,7 +7736,7 @@ verify ▶ `REQ-target-state`
 
 ### 8.125  `TEST-task-analysen` — Analyse-Tasks
 
-Jedes Analyse-Vorbild geht durchs Gate und ergibt eine Einheit des Artefakts; ein Stempel allein ist kein Artefakt; der Bauplan setzt keinen Stempel, sein Ergebnis sind offene Auftraege.
+Am Task-Eintritt verweist der Schritt auf den Skill des Tasks; ein Bauplan-Stempel von Hand schliesst den Eintritt nicht; ein Patch ersetzt die Stempel ganz, und jeder Analyse-Skill schliesst mit Lesen, Uebernehmen, ganz Schreiben.
 
 verify ▶ `REQ-analyse-artefakt-vor-stempel` · testRefs: `tests/task-analysen.test.ts`
 

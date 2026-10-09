@@ -126,9 +126,8 @@ const GraphMutateInputSchema = z
  * ist, `elementId` sagt WO. Wer die Kandidatenliste wirklich braucht, fragt
  * `rules_get_violations`; das ist Query-Precision, nicht Result-Kompression.
  *
- * `fixHint` bleibt zwingend erhalten: der eingebettete Executor rendert ihn in
- * `formatGateFeedback` — ihn wegzukürzen machte aus einer reparierbaren Violation
- * eine undurchsichtige.
+ * `fixHint` bleibt zwingend erhalten — ihn wegzukürzen machte aus einer reparierbaren
+ * Violation eine undurchsichtige.
  */
 function summarizeViolations<T extends { violations: MutateResult['violations'] }>(
   result: T,
@@ -305,7 +304,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     async handler(raw) {
       return serializeToolWrite(async () => {
         // Input-Parität (CR-GC-286): derselbe Zod-Parse wie am MCP-Transport, auch
-        // für In-Process-Caller (Executor, Tests). Ein Schema-Fehler ist ein
+        // für In-Process-Caller (Tests). Ein Schema-Fehler ist ein
         // AUDITIERTES Block-Verdict mit der Zod-Meldung — kein unauditierter
         // Handler-Throw (die 63/81-Lücke der Opus-Nachanalyse).
         const parsedInput = GraphMutateInputSchema.safeParse(raw);

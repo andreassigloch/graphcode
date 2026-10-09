@@ -129,7 +129,7 @@ export type SteeringStageDelta = z.infer<typeof SteeringStageDelta>;
  * Befund auf beiden Seiten entfallen.
  *
  * Zod, nicht `interface` (SCHEMA-steering-delta): das Delta hängt am dryRun-Verdict von
- * `graph_mutate` und wird im Best-of-N-Ranking aus einem Tool-Ergebnis gelesen.
+ * `graph_mutate` und wird vom Client aus einem Tool-Ergebnis gelesen.
  */
 export const SteeringDelta = z.object({
   blockingErrors: z.object({ before: z.number(), after: z.number() }),

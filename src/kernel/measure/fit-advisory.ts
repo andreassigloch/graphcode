@@ -19,9 +19,8 @@ import { toOntologyGraph } from '../conformance.js';
 
 /**
  * Datenvertrag des Advisory (SCHEMA-fit-advisory) — Zod, nicht `interface`:
- * das Advisory verlässt den Prozess am MutateResult und kommt beim Best-of-N-
- * Ranking (`executor-rank`) aus einem Tool-Ergebnis zurück, das dort nur
- * gecastet war. Erst ein Schema macht daraus prüfbare Daten.
+ * das Advisory verlässt den Prozess am MutateResult und wird vom Client aus
+ * einem Tool-Ergebnis gelesen. Erst ein Schema macht daraus prüfbare Daten.
  */
 export const FitAdvisory = z.object({
   /** Messebene: Architektur-Teilgraph (FUNC/FLOW/MOD/SCHEMA/ACTOR). */
@@ -96,7 +95,7 @@ export function computeFitAdvisory(before: Graph, after: Graph): FitAdvisory {
 // gesetzt. Er wird HIER berechnet, im selben Durchlauf und aus demselben Vorher/Nachher-Paar,
 // damit es keinen zweiten Weg zum Steuersignal gibt.
 //
-// Warum am Gate und nicht im Executor: der Executor sieht vom dryRun nur die NEUEN Violations
+// Warum am Gate und nicht beim Client: der Client sieht vom dryRun nur die NEUEN Violations
 // (Delta-Semantik), nie den Gesamtzustand. Der Score ist aber eine Aussage über den Zustand
 // („wie schlimm ist die schlimmste Stelle"), nicht über die Differenz — er lässt sich aus den
 // neuen Befunden allein nicht bilden.

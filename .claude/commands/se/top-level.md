@@ -46,7 +46,7 @@ The trees give every node one place to roll up to; the lattice is what gets roll
 
 **Disjointness holds at every level.** The chains are a lattice, so *overlap* is expected — a shared FUNC is the meet point. What is forbidden is *identity*: two sibling UCs whose chains have the same members describe the same behaviour twice. Compare the member sets yourself — **no rule does it for you.** AO-D03 (`DuplicatePathDetection`) is the nearest guard and it is dead: it looks for `FUNC -io-> FUNC`, a pair the grammar does not allow, so it has never fired on any family graph (ITEM-2026-170 §5.3).
 
-_(Der Bereich zwischen den `inject`-Markern wird vom Executor-Loop in die Runden `seed:sys`, `arch` und `alloc` injiziert (CR-GC-558/559) — ein Modell im Loop kann diesen Skill nicht aufrufen. Alles ausserhalb bleibt Anleitung fuer den Menschen.)_
+_(Den Bereich zwischen den `inject`-Markern spielte der Executor-Loop in die Runden `seed:sys`, `arch` und `alloc` ein (CR-GC-558/559); der Executor ist mit CR-GC-775 ausgelagert, im Host liest die Marker niemand.)_
 
 <!-- inject:start -->
 ## Order

@@ -13,7 +13,7 @@ at the root.
 | `index.ts`, `cli.ts` | entry points (`main`/`bin`) | bound via `realRef`, not by path |
 | `kernel/` | `MOD-kernel` | Store ∘ Gate ∘ Regeln ∘ OpLog — the one Kuzu owner; `apply(Command[]) → Verdict`, `query(TypedQuery) → Slice` |
 | `projections/` | `MOD-projections` | Messung · Readiness · Codec · Export · Views · Trajectory — pure Graph → X |
-| `loop/` | `MOD-loop` | Autopilot + Executor — a client like any other |
+| `loop/` | `MOD-loop` | Autopilot (step choice, suggest) — a client like any other |
 | `surface/` | `MOD-surface` | MCP-stdio · CLI · Host-Socket · Viewer/SSE — adapters, no logic |
 
 `MOD-agent-surface` lives under `.claude/commands/` (the skill drivers, `path` set there);
@@ -25,7 +25,7 @@ at the root.
 |---|---|
 | `harness/`, `conformance/conformance.ts` + `evaluation.ts`, `element-slice/`, `schema-migration/`, `hooks/hooks.ts` | `kernel/` |
 | `codec/`, `views/`, `completeness/`, `conformance/testreport.ts`, the measuring half of `steering/`, the report/export half of `tools/` | `projections/` |
-| `executor/`, the deciding half of `steering/` (`generate`, `steering`, `se-plan`, `target-profile`), `tools/suggest.ts` | `loop/` |
+| `executor/` (moved out of the repo with CR-GC-775), the deciding half of `steering/` (`generate`, `steering`, `se-plan`, `target-profile`), `tools/suggest.ts` | `loop/` |
 | `cli/`, `viewer/`, the MCP-verb half of `tools/`, `hooks/emit.ts` | `surface/` |
 
 Two files were **split by responsibility**, not moved (CR-GC-447):

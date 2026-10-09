@@ -16,9 +16,6 @@
  * es ist Laufzustand, kein Modellinhalt. Gleicher Graph, gleiche Version, gleicher Aufruf —
  * gleiche Antwort: wer graph_generate zweimal ohne Zug ruft, bekommt keinen Abbruch.
  *
- * Nur fuer `selection: 'host'`. Der Executor behaelt vorerst seine gemessene Zaehlung (Hinweis bei
- * der ersten Wiederholung, Zurueckstellen bei der dritten) — ITEM-2026-449 fuehrt beides zusammen.
- *
  * @author andreas@siglochconsulting
  */
 import type { GenerationStep } from './generate.js';

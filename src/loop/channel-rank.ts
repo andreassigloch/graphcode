@@ -4,7 +4,7 @@
  * Bis hierher entschied verstreuter Code, welcher Kanal gewinnt, wenn zwei dasselbe
  * adressieren: ein Ternaer in `generate.ts` (Klausel schlaegt Template, CR-GC-564), ein
  * zweiter Ternaer drei Zeilen weiter fuer die Fokus-Typen (CR-GC-566), und die Reihenfolge
- * der Bloecke in `executor-prompt.ts`, die niemand erklaert hat. **Es gab keine erklaerte
+ * der Bloecke im Rundenprompt des Executors (ausgelagert mit CR-GC-775), die niemand erklaert hat. **Es gab keine erklaerte
  * Rangfolge** — jeder Konflikt musste durch einen Lauf gefunden werden, viermal in der
  * Serie CR-GC-560..568.
  *
@@ -13,8 +13,8 @@
  * Entscheidung; Grammatik und Bestand sind Tatsachen; Anleitung ist Qualitaet;
  * ein Vorschlag ist eine Option.
  *
- * Was hier ausdruecklich NICHT steht: Fokus-Typen-Wahl, `defer`, Kandidatenzahl und die
- * Selektionsvariante. Das ist Mechanik des Treibers, kein Kanal, der dem Modell etwas SAGT
+ * Was hier ausdruecklich NICHT steht: Fokus-Typen-Wahl und `defer`. Das ist Mechanik
+ * der Schrittwahl, kein Kanal, der dem Modell etwas SAGT
  * — sie in dieselbe Ordnung zu ziehen waere eine zweite Bedeutung fuer dasselbe Wort.
  *
  * @author andreas@siglochconsulting
@@ -85,20 +85,4 @@ export function winner<T>(slots: readonly ChannelSlot<T>[]): { channel: Channel;
     }
   }
   return best;
-}
-
-/** Ein Beitrag EINES Kanals zum Rundenprompt (CR-GC-573). */
-export interface ChannelBlock {
-  readonly channel: Channel;
-  readonly text: string;
-}
-
-/** Zwei Kanaele, die in derselben Runde dasselbe sagen. */
-export interface ChannelEcho {
-  readonly a: Channel;
-  readonly b: Channel;
-  readonly satzA: string;
-  readonly satzB: string;
-  /** Jaccard-Ueberlappung der bedeutungstragenden Woerter, 0..1. */
-  readonly overlap: number;
 }

@@ -115,8 +115,8 @@ function withConsultationTracking(registry: MCPToolRegistry, ctx: ToolContext): 
  * Bind the registry AND hand back the context behind it (CR-GC-354).
  *
  * The registry alone cannot carry provenance: `setOrigin` is deliberately out of band, so
- * a caller that knows the model and the prompt — the embedded executor (CR-GC-355), the
- * prompt hook (CR-GC-356) — needs the context itself. Exposing it as an extra registry key
+ * a caller that knows the model and the prompt — the prompt hook (CR-GC-356) — needs
+ * the context itself. Exposing it as an extra registry key
  * would leak a non-tool into every registry enumeration (`tests/mcp.symmetry.test.ts`),
  * hence a second VIEW on the same single binding, never a second binding.
  */

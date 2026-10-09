@@ -341,14 +341,6 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
         'Zurückgestellte focusKeys (aus GenerationStep.focusKey): diese Fund-Sets werden bei der ' +
           'Fokus-Wahl deterministisch übersprungen; sind alle Kandidaten zurückgestellt, wird defer ignoriert.',
       ),
-    selection: z
-      .enum(['host', 'driver'])
-      .default('host')
-      .describe(
-        "Wer die Kandidaten-Auswahl macht (CR-GC-288): 'host' = der MCP-Client vergleicht selbst per " +
-          "dryRun (Default); 'driver' = ein " +
-          'Best-of-N-Treiber probt und wählt im Code — der dryRun-Auftrag verschwindet aus dem Prompt.',
-      ),
     peek: z
       .boolean()
       .default(false)
@@ -376,7 +368,7 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       // kommt aus dem Stand der Sitzung (Task, Zurueckgestelltes, Steuer-Optimum), wie der naechste echte.
       if (input.peek) {
         const m = focusMemoryOf(harness);
-        return generationStep(harness.getGraph(), harness.getMetricPolicy(), undefined, input.threshold ?? harness.getFocusThreshold(), [...m.deferred], 'host', profile, m.task, m.steerOptimum);
+        return generationStep(harness.getGraph(), harness.getMetricPolicy(), undefined, input.threshold ?? harness.getFocusThreshold(), [...m.deferred], profile, m.task, m.steerOptimum);
       }
       // CR-GC-307: die Kernthemen der Intention werden STILL gesetzt — kein
       // Bestätigungsschritt beim Menschen, der Begriff dahinter ist Steuerungs-
@@ -390,10 +382,9 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       // CR-GC-601: der Task der Sitzung — ohne `task` zurueck in den Kern.
       const task = input.task ?? 'kern';
       const compute = (defer: string[], optimum: SteerOptimum | null = null) =>
-        generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), defer, input.selection, profile, task, optimum);
-      // CR-GC-596: fuer den Host fuehrt die Maschine das Gedaechtnis (zweimal gleicher Fokus nach
-      // einem Zug → zurueckstellen). Der Treiber (Executor) zaehlt vorerst selbst — ITEM-2026-449.
-      if (input.selection === 'driver') return compute(input.defer ?? []);
+        generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), defer, profile, task, optimum);
+      // CR-GC-596: die Maschine fuehrt das Gedaechtnis (zweimal gleicher Fokus nach einem Zug →
+      // zurueckstellen).
       const memory = focusMemoryOf(harness);
       memory.task = task;
       return stepWithMemory(memory, ctx.graphVersion(), compute, input.defer ?? []);

@@ -34,8 +34,8 @@ const alsGraph = (g: Flat) => {
     edges: g.traces.map((t) => ({ sourceId: t.source, targetId: t.target, edgeType: t.type, attributes: t.label ? { label: t.label } : {} })),
   } as never;
 };
-const step = (task: Parameters<typeof generationStep>[7] = 'kern', defer: string[] = []) =>
-  generationStep(alsGraph(golden), DEFAULT_METRIC_POLICY, undefined, 0.8, defer, 'host', null, task);
+const step = (task: Parameters<typeof generationStep>[6] = 'kern', defer: string[] = []) =>
+  generationStep(alsGraph(golden), DEFAULT_METRIC_POLICY, undefined, 0.8, defer, null, task);
 
 /** Die Regeln, die im Kern-Fokus eines Graphen offen sind. */
 const kernRegeln = (g: Flat): string[] => {
@@ -65,7 +65,7 @@ describe('CR-GC-601: graph_generate {task}', () => {
     const ziel = mit.elements.find((e) => e.type === 'FUNC')!.id;
     mit.elements.push({ id: 'CR-bau-1', type: 'CR', name: 'Bauauftrag', description: 'Realisiere das Ungebaute.', attributes: { status: 'open' } });
     mit.traces.push({ source: 'CR-bau-1', target: ziel, type: 'relation' });
-    const s = generationStep(alsGraph(mit), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'plan');
+    const s = generationStep(alsGraph(mit), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'plan');
     expect(s.done).toBe(true);
     expect(s.prompt).toMatch(/Task plan fertig/);
     expect(kernRegeln(golden)).toContain('AF-05');
@@ -78,7 +78,7 @@ describe('CR-GC-601: graph_generate {task}', () => {
     const stempel = { ...(sys.attributes!.analysisFreshness as Record<string, unknown>) };
     delete stempel.trade;
     sys.attributes = { ...sys.attributes, analysisFreshness: stempel };
-    const s = generationStep(alsGraph(ohne), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'trade');
+    const s = generationStep(alsGraph(ohne), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'trade');
     expect(s.done).toBe(false);
     expect(s.focusKey).toMatch(/:AF-02:/);
     expect(s.prompt).toContain('Das Artefakt des Tasks trade fehlt noch');
@@ -90,7 +90,7 @@ describe('CR-GC-601: graph_generate {task}', () => {
     expect(s.prompt).not.toMatch(/Frischestempel|\(analysisFreshness/);
     // ein im Kern abgenommener Eintritt ("im schlanken Umfang nicht noetig") gilt auch im Task
     sys.attributes = { ...sys.attributes, acceptedFindings: [{ ruleId: 'AF-02', reason: 'lean' }] };
-    const ab = generationStep(alsGraph(ohne), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'trade');
+    const ab = generationStep(alsGraph(ohne), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'trade');
     expect(ab.done).toBe(true);
   });
 
@@ -122,34 +122,6 @@ describe('CR-GC-601: graph_generate {task}', () => {
     }
     expect(cur.focusKey).toMatch(/:AF-05:/);
     expect(cur.prompt).toContain("graph_generate {task:'plan'} (Skill se-plan)");
-  });
-});
-
-describe('ITEM-2026-632/633: der Treiber fokussiert keinen Eintrittspunkt', () => {
-  // Gemessen S2 gcrun-339..341: AF-04 am SYS im Fokus, Text der ver-Dimension — der Executor kann
-  // den Analyse-Stempel nicht setzen (dafuer braucht es den Task-Skill), er legte je Runde neue
-  // SYS-REQs samt TEST an: 23/16 Dubletten, drei Runden Stillstand je AF-Befund.
-  const drv = (defer: string[]) => generationStep(alsGraph(golden), DEFAULT_METRIC_POLICY, undefined, 0.8, defer, 'driver', null, 'kern');
-
-  it('ueber alle Funde gelaufen, stand nie ein AF-Eintrittspunkt im Fokus', () => {
-    let cur = drv([]);
-    const defer: string[] = [];
-    while (cur.focusKey && defer.length < 120) {
-      defer.push(cur.focusKey);
-      cur = drv(defer);
-    }
-    expect(defer.length).toBeGreaterThan(0);
-    expect(defer.filter((k) => /^[^:]+:AF-0\d:/.test(k))).toEqual([]);
-  });
-
-  it('der Host (Claude Code) bekommt den Eintrittspunkt weiter — er kann den Task starten', () => {
-    let cur = step('kern');
-    const defer: string[] = [];
-    while (cur.focusKey && !/^[^:]+:AF-0\d:/.test(cur.focusKey) && defer.length < 60) {
-      defer.push(cur.focusKey);
-      cur = step('kern', defer);
-    }
-    expect(cur.focusKey).toMatch(/:AF-0\d:/);
   });
 });
 

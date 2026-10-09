@@ -18,7 +18,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
-import { generationStep, STAGE_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, EIN_BATCH, vorschlagsText, RULE_CLAUSE, SKILL_FOR_STAGE } from '../src/loop/generate.js';
+import { generationStep, STAGE_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, RULE_CLAUSE, SKILL_FOR_STAGE } from '../src/loop/generate.js';
 import { ElementType } from '@sigloch/contracts/se';
 import { computeMarks } from '../src/kernel/measure/readiness.js';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
@@ -667,7 +667,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
   });
 
   it('mit vorhandenem Profil entfällt die Runde-1-Zielprofil-Frage', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', withProfile({ coherence: 1 }));
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, 0.8, [], withProfile({ coherence: 1 }));
     expect(step.prompt).not.toContain('Zielprofil');
   });
 
@@ -703,7 +703,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
     const profile = withProfile({}, ['bestellen', 'zauberdrache', 'teil']);
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', profile);
+    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], profile);
     expect(step.phase).toBe('expand');
     // CR-GC-307: Klartext statt Steuerungs-Vokabular — der Mensch sieht die WIRKUNG
     // (ein Thema kommt nirgends vor), nie den Mechanismus.
@@ -712,7 +712,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
     // 'bestellen'/'teil' sind über UC-Name/Beschreibung adressiert — nicht gelistet.
     expect(step.prompt).not.toMatch(/Noch nirgends beschrieben:[^.]*bestellen/);
     // Deterministisch auch mit Profil.
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', profile)).toEqual(step);
+    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], profile)).toEqual(step);
   });
 
   it('ohne Profil: expand-Prompt unverändert ohne Anker-Zeile (N=1-Determinismus, Regression)', () => {
@@ -741,7 +741,7 @@ describe('CR-GC-589: der Schritt nennt seine Anleitung — eine Zuordnung fuer b
   });
 });
 
-describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
+describe('Gate-Protokoll des Schritts (CR-GC-288)', () => {
   const expandGraph = g(
     [
       node('SYS-shop', 'SYS', 'shop', INTENT),
@@ -751,15 +751,13 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     [edge('SYS-shop', 'UC-bestellen', 'compose')],
   );
 
-  it("Default 'host': der dryRun-Vergleichs-Auftrag bleibt im Prompt (MCP-Clients ohne Treiber)", () => {
+  it('der dryRun-Vergleichs-Auftrag steht im Prompt', () => {
     const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
     expect(step.prompt).toContain('dryRun:true');
     expect(step.prompt).toContain('fitAdvisory');
-    // Explizites 'host' ist identisch zum Default — kein zweiter Pfad.
-    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'host')).toEqual(step);
   });
 
-  it("'host': die Probe gilt MEHREREN Alternativen, nicht einem einzelnen Batch (CR-GC-577)", () => {
+  it("die Probe gilt MEHREREN Alternativen, nicht einem einzelnen Batch (CR-GC-577)", () => {
     // Gemessen an `runs/opus5-5`: sechs Paare aus Probe und Anwendung DESSELBEN Batches,
     // 20 % des graph_mutate-Payloads. Die Gegenrechnung ueber alle Laeufe: der opus5-Arm
     // probte 30-mal, 4-mal kam `block`, 3 davon wurden nicht angewandt — und diese 3 haben
@@ -773,7 +771,7 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(klausel).toContain('persistiert nichts');
   });
 
-  it("'host': die Rangfolge kommt aus dem Register — tier zuletzt, wie rankCandidates (CR-GC-587/763)", () => {
+  it('die Rangfolge kommt aus dem Register — tier zuletzt (CR-GC-587/763)', () => {
     // CR-GC-583 hatte hier "Steuerwert vor tier" gepinnt — und damit den Widerspruch zu
     // `rankCandidates` zementiert. Seit CR-GC-587 ist der Satz aus VERDICT_ORDER abgeleitet;
     // die Ordnung selbst prueft tests/decision-texts.test.ts gegen den Komparator.
@@ -784,31 +782,6 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(steer).toBeLessThan(klausel.indexOf('Element-Ausbeute'));
     expect(klausel.indexOf('Element-Ausbeute')).toBeLessThan(tier);
     expect(klausel).toContain('fitAdvisory ist nur Bericht');
-  });
-
-  it("'driver' (seed): dryRun-Auftrag, Guide-Schritt und Folgeschritt raus", () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'driver');
-    expect(step.phase).toBe('seed');
-    expect(step.prompt).not.toContain('dryRun');
-    expect(step.prompt).toContain('Treiber');
-    // CR-GC-651: auch den Guide-Schritt sagt im Treiber-Modus der Treiber, nicht der Auftrag.
-    expect(step.prompt).not.toContain('graph_authoring_guide');
-    // CR-GC-648: den Folgeschritt macht der Treiber — dem Modell ist graph_generate vorenthalten.
-    expect(step.prompt.split('Gate-Protokoll')[1]).not.toContain('graph_generate');
-    // Nur das Protokoll wechselt — die generative Instruktion selbst ist identisch.
-    const host = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
-    expect(step.prompt.split('Gate-Protokoll')[0]).toBe(host.prompt.split('Gate-Protokoll')[0]);
-  });
-
-  it("'driver' verspricht keinen Kandidaten-Vergleich — die Klausel gilt bei einem wie bei N Kandidaten (CR-GC-568)", () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'driver');
-    const klausel = step.prompt.split('Gate-Protokoll')[1];
-    // Der Executor setzt 'driver' auch bei candidates=1; dann gibt es NICHTS zu
-    // waehlen. Eine Klausel, die "jeden Kandidaten" oder "den Gewinner" nennt,
-    // waere dort schlicht falsch — das Modell emittiert genau einen Batch.
-    for (const wort of ['Kandidaten', 'Gewinner']) expect(klausel).not.toContain(wort);
-    expect(klausel).toContain('EINEN vollständigen Batch');
-    expect(klausel).toContain('keine eigenen Gate-Proben');
   });
 
   it('jede uid eines Klausel-Vorbilds ist als Vorbild erkennbar — kein Inhalt, der lecken kann (ITEM-2026-607)', () => {
@@ -877,36 +850,20 @@ describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
     expect(text).not.toMatch(/beispiel/);
   });
 
-  it("'driver' verlangt je Stufe EINE Loesung, keine Alternativen im selben Batch (ITEM-2026-610)", () => {
-    // Gemessen gcrun-310 (candidates=1): „2 alternative Zerlegungen, lass das Gate waehlen" — der
-    // Treiber wendet den GANZEN Batch an, also landeten beide, danach Alternativen der Alternativen
-    // (-alt1..alt6, -alt2-alt1), 35 von 49 REQ Dubletten. Alternativen entstehen im Treiber ueber
-    // N Stichproben (Best-of-N), nie innerhalb eines Batches.
-    for (const stufe of Object.keys(GENERATION_TEMPLATE)) {
-      expect(vorschlagsText(stufe, 'driver'), stufe).not.toMatch(/[Aa]lternativ|Lass das Gate wählen/);
-    }
-    // Der Host probt selbst per dryRun — dort bleiben Alternativen richtig.
+  it('die Vorlagen der Zerlegung und des Modulschnitts verlangen Alternativen — der Host probt sie per dryRun', () => {
     for (const stufe of ['Funktion', 'Datenfluss', 'immer']) {
-      expect(vorschlagsText(stufe, 'host'), stufe).toContain('2 alternative');
-      expect(vorschlagsText(stufe, 'driver'), stufe).toContain('Genau EINE Zerlegung');
+      expect(GENERATION_TEMPLATE[stufe], stufe).toContain('2 alternative');
     }
-    expect(vorschlagsText('Modul', 'host')).toContain('2 Alternativen');
-    expect(vorschlagsText('Modul', 'driver')).toContain('EINEN MOD-Schnitt');
-    // Eine Stufe ohne Vorlage (Abgleich) hat in keinem Modus einen Text.
-    expect(vorschlagsText('Abgleich', 'host')).toBeUndefined();
-    expect(vorschlagsText('Abgleich', 'driver')).toBeUndefined();
+    expect(GENERATION_TEMPLATE['Modul']).toContain('2 Alternativen');
+    // Eine Stufe ohne Vorlage (Abgleich) hat keinen Text.
+    expect(GENERATION_TEMPLATE['Abgleich']).toBeUndefined();
   });
 
-  it("'driver' (expand): gleiche Funde/Fokus, nur das Protokoll wechselt", () => {
-    const host = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
-    const driver = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver');
-    expect(driver.phase).toBe('expand');
-    expect(driver.focusKey).toBe(host.focusKey);
-    expect(driver.focusTypes).toEqual(host.focusTypes);
-    expect(driver.prompt).not.toContain('dryRun');
-    expect(host.prompt).toContain('dryRun:true');
-    // Deterministisch auch mit selection.
-    expect(generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver')).toEqual(driver);
+  it('expand: der dryRun-Auftrag steht auch dort im Prompt, der Schritt ist deterministisch', () => {
+    const step = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    expect(step.phase).toBe('expand');
+    expect(step.prompt).toContain('dryRun:true');
+    expect(generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
   });
 });
 
@@ -958,14 +915,15 @@ describe('graph_generate — MCP-Binding (echter Harness)', () => {
     expect(second.prompt).toContain(INTENT); // aus SYS-description, ohne intent-Parameter
   });
 
-  it("selection:'driver' schaltet die dryRun-Passage im Tool-Prompt ab; Default bleibt 'host' (CR-GC-288)", async () => {
-    const host = (await tools.graph_generate.handler({ intent: INTENT })) as { prompt: string };
-    expect(host.prompt).toContain('dryRun:true'); // MCP-Clients ohne Treiber: Protokoll bleibt
-
+  it('das Eingabefeld selection gibt es nicht mehr — graph_generate liefert nur den Host-Schritt (CR-GC-777)', async () => {
+    const shape = (tools.graph_generate.inputSchema as unknown as { shape: Record<string, unknown> }).shape;
+    expect(Object.keys(shape)).not.toContain('selection');
+    // Wer das Feld noch sendet, bekommt den Host-Schritt: es wird nicht gelesen.
     const parsed = tools.graph_generate.inputSchema.parse({ intent: INTENT, selection: 'driver' });
-    const driver = (await tools.graph_generate.handler(parsed)) as { prompt: string };
-    expect(driver.prompt).not.toContain('dryRun');
-    expect(driver.prompt).toContain('Treiber');
+    expect(parsed).not.toHaveProperty('selection');
+    const step = (await tools.graph_generate.handler(parsed)) as { prompt: string };
+    expect(step.prompt).toContain('dryRun:true');
+    expect(step.prompt).not.toContain('Treiber');
   });
 });
 
@@ -1214,7 +1172,7 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
       [...new Set(text.match(/\b[A-Z]{2,7}\b/g) ?? [])].filter((w) => typen.has(w));
     const luecken: string[] = [];
 
-    for (const [stufe, text] of [...Object.entries(GENERATION_TEMPLATE), ...Object.entries(EIN_BATCH)]) {
+    for (const [stufe, text] of Object.entries(GENERATION_TEMPLATE)) {
       const fokus = new Set(STAGE_FOCUS_TYPES[stufe] ?? []);
       for (const t of genannt(text as string)) {
         if (!fokus.has(t)) luecken.push(`Template ${stufe} nennt ${t}, Fokus hat es nicht`);

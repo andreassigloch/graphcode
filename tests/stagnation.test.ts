@@ -86,13 +86,6 @@ describe('CR-GC-596/606: dreimal dasselbe Feedback → weiter', () => {
     const b = await tools.graph_generate.handler({});
     expect(b.focusKey).toBe(a.focusKey);
   });
-
-  it('der Treiber (selection driver) fuehrt vorerst selbst Buch — die Maschine stellt fuer ihn nichts zurueck', async () => {
-    const a = await tools.graph_generate.handler({ selection: 'driver' });
-    await zugOhneWirkung();
-    const b = await tools.graph_generate.handler({ selection: 'driver' });
-    expect(b.focusKey).toBe(a.focusKey);
-  });
 });
 
 /** Alle Eintrittspunkte abnehmen — sonst bleibt immer einer offen (CR-GC-604) und stalled ist unerreichbar. */

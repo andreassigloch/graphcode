@@ -726,6 +726,10 @@
 | `CR-GC-775` | relation | `MOD-surface` |
 | `CR-GC-776` | relation | `MOD-kernel-measure` |
 | `CR-GC-776` | relation | `MOD-loop` |
+| `CR-GC-777` | relation | `FUNC-generation-step` |
+| `CR-GC-777` | relation | `FUNC-graph-suggest` |
+| `CR-GC-778` | relation | `FUNC-fit-advisory` |
+| `CR-GC-778` | relation | `FUNC-mutate` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1619,6 +1623,7 @@
 | `FUNC-se-optimize` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-plan` | allocate | `MOD-agent-surface` |
 | `FUNC-se-plan` | io | `FLOW-mutate-cmd-se-plan` |
+| `FUNC-se-plan` | satisfy | `REQ-analyse-artefakt-vor-stempel` |
 | `FUNC-se-plan` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-retro` | allocate | `MOD-agent-surface` |
 | `FUNC-se-retro` | io | `FLOW-skill-report-se-retro` |

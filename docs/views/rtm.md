@@ -65,7 +65,7 @@
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-advisory-roundtrip-latency` | `TEST-advisory-roundtrip-latency` | `FCHAIN-advisory-roundtrip` | — |
-| `REQ-analyse-artefakt-vor-stempel` | `TEST-task-analysen` | `FUNC-generation-step` | `MOD-loop` |
+| `REQ-analyse-artefakt-vor-stempel` | `TEST-task-analysen` | `FUNC-generation-step` · `FUNC-se-plan` | `MOD-agent-surface` · `MOD-loop` |
 | `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-kernel-measure` · `MOD-loop` |
 | `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-kernel` |
@@ -202,7 +202,7 @@
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-agent-agnostic` | `TEST-agent-agnostic` | `MOD-surface` | — |
-| `REQ-analyse-artefakt-vor-stempel` | `TEST-task-analysen` | `FUNC-generation-step` | `MOD-loop` |
+| `REQ-analyse-artefakt-vor-stempel` | `TEST-task-analysen` | `FUNC-generation-step` · `FUNC-se-plan` | `MOD-agent-surface` · `MOD-loop` |
 | `REQ-applied-suggestion-moves-target` | `TEST-applied-suggestion-moves-target` | `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` | `MOD-kernel-measure` · `MOD-loop` |
 | `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-kernel` |

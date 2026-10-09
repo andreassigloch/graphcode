@@ -1,7 +1,8 @@
 /**
- * CR-GC-724 — Analyse-Tasks: das Vorbild der Runde kommt aus `TASK_CLAUSE`, und ob eine Analyse
- * stattgefunden hat, sagt das Artefakt im Graphen (`task-artifact.ts`), nicht ein Stempel allein.
- * Der eingebettete Executor, der den Task fuhr und den Stempel setzte, ist mit CR-GC-775 ausgelagert.
+ * CR-GC-724 — Analyse-Tasks: am Eintritt eines Tasks verweist der Schritt auf den Skill; der
+ * Stempel am SYS (`analysisFreshness`) ist Sache der Skills, der Bauplan hat keinen (CR-GC-752).
+ * Der eingebettete Executor, der den Task fuhr und den Stempel setzte, ist mit CR-GC-775 ausgelagert,
+ * seine Vorbilder (`TASK_CLAUSE`) und sein Abschlusskriterium mit CR-GC-777 geloescht.
  *
  * Reale Persistenz (Disk-Kuzu im temp repoRoot), echtes Gate.
  */
@@ -11,11 +12,8 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
-import { DEFAULT_METRIC_POLICY, type OntologyGraph } from '@sigloch/contracts/se';
+import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { generationStep } from '../src/loop/generate.js';
-import { TASK_CLAUSE, alsTaskGraph } from '../src/loop/task-clause.js';
-import { ANALYSE_TASKS, STEMPEL_ID, abschluss, artefakte, offen, type TaskGraph } from '../src/loop/task-artifact.js';
-import { toOntologyGraph } from '../src/kernel/conformance.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 
 /** Ein kleiner, gate-gültiger Kern: ein UC, eine Kette mit zwei Gliedern, eine REQ mit TEST, ein Modul. */
@@ -50,17 +48,6 @@ const KERN = [
   '',
 ].join('\n');
 
-/** Das Vorbild einer Klausel als Batch — Platzhalter gefüllt, wie ein Modell es täte. */
-function vorbildAlsBatch(text: string): string {
-  return (
-    text
-      .slice(text.indexOf('## Nodes'))
-      .replace(/beispiel/g, 'echt')
-      .replace(/«1–10»/g, '5')
-      .replace(/«([^»]*)»/g, '$1') + '\n'
-  );
-}
-
 describe('CR-GC-724: Analyse-Tasks', () => {
   let repoRoot: string;
   let harness: Awaited<ReturnType<typeof createHarness>>;
@@ -71,7 +58,6 @@ describe('CR-GC-724: Analyse-Tasks', () => {
       success: boolean;
       violations?: unknown;
     };
-  const og = (): OntologyGraph => toOntologyGraph(harness.getGraph());
   const stempel = (): Record<string, { graphVersion: number }> =>
     (harness.getGraph().nodes.find((n) => n.type === 'SYS')!.attributes?.analysisFreshness ?? {}) as Record<
       string,
@@ -97,95 +83,16 @@ describe('CR-GC-724: Analyse-Tasks', () => {
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
-  describe('das Vorbild jeder Analyse geht durchs Gate und ergibt eine Einheit des Artefakts', () => {
-    for (const task of ANALYSE_TASKS) {
-      it(task, async () => {
-        const vorher = new Set(artefakte(task, alsTaskGraph(og())));
-        const text = TASK_CLAUSE[task].text(og());
-        // Form ohne Fachinhalt und ohne den Stempel.
-        expect(text).not.toMatch(/analysisFreshness|graphVersion|Stempel|graph_generate|Skill/);
-        const res = await mutate(vorbildAlsBatch(text));
-        expect(res.success, JSON.stringify(res.violations)).toBe(true);
-        const neu = artefakte(task, alsTaskGraph(og())).filter((id) => !vorher.has(id));
-        expect(neu.length, `${task}: das Vorbild erzeugt keine Einheit`).toBeGreaterThan(0);
-      });
-    }
-  });
-
-  it('Rundenprompt: im Treiber-Modus trägt der Task-Eintritt die Klausel, beim Host den Verweis auf den Skill', () => {
-    const schritt = (selection: 'driver' | 'host') =>
-      generationStep(harness.getGraph(), DEFAULT_METRIC_POLICY, undefined, 0.8, [], selection, null, 'fmea');
-    const driver = schritt('driver');
-    expect(driver.focusKey).toMatch(/:AF-04:/);
-    expect(driver.prompt).toContain('Noch ohne Fehlermodus: FCHAIN-ablauf');
-    expect(driver.prompt).toContain('+ FCHAIN-ablauf -satisfy-> REQ-risk-beispiel-a');
-    expect(driver.prompt).not.toMatch(/Lade den Skill|graph_generate|analysisFreshness/);
-    expect(driver.focusTypes).toEqual([...TASK_CLAUSE.fmea.types]);
-    // Bestand nach Typ, nicht aus dem Kontext des SYS.
-    expect(driver.focusElements).toEqual([]);
-    const host = schritt('host');
-    expect(host.prompt).toContain('Lade den Skill se-fmea');
-    expect(host.prompt).not.toContain('REQ-risk-beispiel-a');
-  });
-
-  it('Kriterium: ein Stempel allein ist kein Artefakt, eine vollständige Einheit schon', () => {
-    const leer: TaskGraph = alsTaskGraph(og());
-    expect(artefakte('fmea', leer)).toEqual([]);
-    expect(offen('fmea', leer)).toEqual(['FCHAIN-ablauf']);
-    expect(abschluss('fmea', leer, new Set(), undefined).fertig).toBe(false);
-    // Auch nach einer Runde ohne Ertrag: null Einheiten bleiben null.
-    expect(abschluss('fmea', leer, new Set(), 0).fertig).toBe(false);
-    // Risiko ohne Gegenmaßnahme zählt nicht.
-    const halb: TaskGraph = {
-      nodes: [...leer.nodes, { id: 'REQ-r', type: 'REQ', attributes: { role: 'risk' } }],
-      edges: [...leer.edges, { source: 'FCHAIN-ablauf', type: 'satisfy', target: 'REQ-r' }],
-    };
-    expect(artefakte('fmea', halb)).toEqual([]);
-    const ganz: TaskGraph = {
-      nodes: [...halb.nodes, { id: 'REQ-m', type: 'REQ', attributes: { role: 'mitigation' } }],
-      edges: [...halb.edges, { source: 'REQ-r', type: 'compose', target: 'REQ-m' }],
-    };
-    expect(artefakte('fmea', ganz)).toEqual(['REQ-r']);
-    expect(offen('fmea', ganz)).toEqual([]);
-    expect(abschluss('fmea', ganz, new Set(), undefined).fertig).toBe(true);
-    // conops/irr: was vor dem Task schon da war, ist nicht der Ertrag des Tasks.
-    // irr (CR-GC-754): die Einheit ist eine REQ mit verifizierendem TEST — ein CR zaehlt nicht, eine REQ ohne TEST auch nicht.
-    const annahme: TaskGraph = {
-      nodes: [...leer.nodes, { id: 'CR-alt', type: 'CR' }, { id: 'REQ-nackt', type: 'REQ' }, { id: 'REQ-alt', type: 'REQ' }, { id: 'TEST-alt', type: 'TEST' }],
-      edges: [...leer.edges, { source: 'TEST-alt', type: 'verify', target: 'REQ-alt' }],
-    };
-    const bestand = new Set(artefakte('irr', leer));
-    expect(abschluss('irr', annahme, new Set([...bestand, 'REQ-alt']), 0).fertig).toBe(false);
-    expect(abschluss('irr', annahme, bestand, 0).einheiten).toEqual(['REQ-alt']);
+  it('Rundenprompt: am Task-Eintritt verweist der Schritt auf den Skill des Tasks', () => {
+    const schritt = generationStep(harness.getGraph(), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'fmea');
+    expect(schritt.focusKey).toMatch(/:AF-04:/);
+    expect(schritt.prompt).toContain('Lade den Skill se-fmea');
+    expect(schritt.skill).toBe('se-fmea');
   });
 
   // CR-GC-752 (contracts 11, CR-SM-395): der Bauplan ist die Menge der offenen Auftraege, kein Stempel.
   describe('CR-GC-752: der Bauplan setzt keinen Stempel — sein Ergebnis sind offene Auftraege', () => {
-    const planFokus = () => generationStep(harness.getGraph(), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver', null, 'plan');
-
-    it('es gibt fuer den Bauplan keinen Stempel-Schluessel; die vier Analysen behalten ihren', () => {
-      expect(STEMPEL_ID).not.toHaveProperty('plan');
-      expect(Object.keys(STEMPEL_ID).sort()).toEqual(ANALYSE_TASKS.filter((t) => t !== 'plan').sort());
-      expect(Object.values(STEMPEL_ID)).not.toContain('implplan');
-    });
-
-    it('das Vorbild schreibt offene Auftraege — kein Stempel, der Eintritt ist damit geschlossen, der Task durch', async () => {
-      // Vorher: es gibt Ungebautes ohne Auftrag — der Eintritt des Bauplans steht im Fokus.
-      expect(planFokus().focusKey).toMatch(/:AF-05:/);
-      const text = TASK_CLAUSE.plan.text(og());
-      expect(text).toContain('@status open');
-      // Das Vorbild geht durchs Gate — samt Meilenstein-Reihenfolge (`MS -relation-> MS [depends-on]`).
-      const res = await mutate(vorbildAlsBatch(text));
-      expect(res.success, JSON.stringify(res.violations)).toBe(true);
-      expect(stempel()).not.toHaveProperty('implplan');
-      const auftraege = harness.getGraph().nodes.filter((n) => n.type === 'CR');
-      expect(auftraege.length).toBeGreaterThan(0);
-      expect(auftraege.every((n) => n.attributes?.status === 'open')).toBe(true);
-      // Der offene Auftrag schliesst den Eintritt: der Task meldet fertig, ohne dass jemand etwas stempelt.
-      const danach = planFokus();
-      expect(danach.done).toBe(true);
-      expect(danach.prompt).toMatch(/Task plan fertig/);
-    });
+    const planFokus = () => generationStep(harness.getGraph(), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'plan');
 
     it('ein Bauplan-Stempel von Hand schliesst den Eintritt NICHT — er wird nicht mehr gelesen', async () => {
       const res = await mutate(`## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness ${JSON.stringify({ ...stempel(), implplan: { graphVersion: 2 } })}\n`);

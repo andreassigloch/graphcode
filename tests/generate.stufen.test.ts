@@ -206,7 +206,7 @@ describe('CR-GC-749: der Kaltstart kommt aus den Existenz-Regeln', () => {
   });
 
   it('in einem Arbeitsschritt gilt der Kaltstart des Systems ebenso — ohne System gibt es keine Analyse', () => {
-    const s = generationStep(g([]), DEFAULT_METRIC_POLICY, INTENT, 0.8, [], 'host', null, 'fmea');
+    const s = generationStep(g([]), DEFAULT_METRIC_POLICY, INTENT, 0.8, [], null, 'fmea');
     expect(s.focusStage).toBe('seed:sys');
   });
 });

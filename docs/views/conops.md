@@ -408,6 +408,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-773` | n/a | Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche | `MOD-loop` |
 | `CR-GC-775` | n/a | Executor im Host auslagern: Zugaenge entfernen (graph_delegate, graphcode run, Schalter, Config-Abschnitt) | `MOD-loop` · `MOD-surface` |
 | `CR-GC-776` | n/a | Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen | `MOD-kernel-measure` · `MOD-loop` |
+| `CR-GC-777` | n/a | Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen) | `FUNC-generation-step` · `FUNC-graph-suggest` |
+| `CR-GC-778` | n/a | Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht | `FUNC-fit-advisory` · `FUNC-mutate` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

@@ -90,15 +90,15 @@ describe('CR-GC-608: am Golden (sigllm v98, Steueranker BW-02 0,5)', () => {
   const istSteuer = (key: string | null) => !!key && (STEER_RULES as readonly string[]).includes(key.split(':')[1] ?? '');
 
   it('der Schritt traegt den Steuerzustand; am Optimum steht keine Steuerregel mehr im Fokus', () => {
-    const ohne = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'kern');
+    const ohne = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'kern');
     expect(ohne.steer!.sum).toBeGreaterThan(0);
     const optimum: SteerOptimum = { grund: 'kreis', sum: ohne.steer!.sum, terms: ohne.steer!.terms };
-    let s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'host', null, 'kern', optimum);
+    let s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'kern', optimum);
     const defer: string[] = [];
     while (s.focusKey && defer.length < 80) {
       expect(istSteuer(s.focusKey)).toBe(false);
       defer.push(s.focusKey);
-      s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, defer, 'host', null, 'kern', optimum);
+      s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, defer, null, 'kern', optimum);
     }
   });
 

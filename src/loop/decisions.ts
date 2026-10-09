@@ -5,7 +5,7 @@
  * Code. Die Rangfolge der Verdicts stand an vier Stellen (`rankCandidates`, Host-Protokoll,
  * `se:generate` zweimal, alloc-Vorlage), drei waren falsch. Und das Host-Protokoll aus
  * CR-GC-583 nannte den Steuerwert VOR dem tier, als `rankCandidates` noch tier vor Steuerwert sortierte
- * (seit CR-GC-763 steht tier zuletzt).
+ * (seit CR-GC-763 steht tier zuletzt). `rankCandidates` ist mit dem Executor ausgelagert (CR-GC-775).
  * Tests pruefen den Code; die Texte prueft dieser Baustein: jede Entscheidung hat hier EINE
  * Fassung, Protokoll und Skills setzen sie ein, `tests/decision-texts.test.ts` verbietet die
  * widersprechenden Formulierungen in allem, was ausgeliefert wird.
@@ -14,9 +14,10 @@
  */
 
 /**
- * Die Reihenfolge, in der `rankCandidates` (executor-rank.ts) Verdicts vergleicht — als Daten,
- * damit der Prosa-Satz daraus abgeleitet wird und nicht daneben gepflegt.
- * `tests/decision-texts.test.ts` pinnt die Ordnung gegen den Komparator.
+ * Die Reihenfolge, in der Verdicts verglichen werden — als Daten, damit der Prosa-Satz daraus
+ * abgeleitet wird und nicht daneben gepflegt. Bis CR-GC-775 war sie die Ordnung des Komparators
+ * `rankCandidates` (executor-rank.ts); seither vergleicht der Host nach dem Satz, den
+ * `DECISIONS.verdictRank` daraus bildet. `tests/decision-texts.test.ts` pinnt die Schluessel.
  */
 export const VERDICT_ORDER = [
   { key: 'viable', text: 'block verwerfen' },

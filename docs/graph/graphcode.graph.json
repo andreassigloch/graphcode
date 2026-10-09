@@ -3214,6 +3214,18 @@
       "description": "docs/cr/open/CR-GC-776-executor-im-host-auslagern-toten-code-te.md"
     },
     {
+      "id": "CR-GC-777",
+      "type": "CR",
+      "name": "Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen)",
+      "description": "docs/cr/open/CR-GC-777-zweiter-ring-nach-der-executor-auslageru.md"
+    },
+    {
+      "id": "CR-GC-778",
+      "type": "CR",
+      "name": "Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht",
+      "description": "docs/cr/open/CR-GC-778-gate-entlasten-architekturmass-steuerwer.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5631,8 +5643,8 @@
     {
       "id": "REQ-analyse-artefakt-vor-stempel",
       "type": "REQ",
-      "name": "Analyse zaehlt nur mit Artefakt",
-      "description": "Eine Analyse gilt erst dann als durchgefuehrt, wenn ihr Artefakt im Graphen steht; ein Stempel allein ist kein Artefakt.",
+      "name": "Analyse zaehlt nur mit Ergebnis im Graphen",
+      "description": "Der Bauplan gilt erst mit offenen Auftraegen im Graphen als durchgefuehrt; ein von Hand gesetzter Stempel schliesst seinen Eintritt nicht. Jeder Analyse-Skill mit Stempel schreibt ihn durch Lesen, Uebernehmen und ganz Schreiben, sodass kein Stempel einer anderen Analyse verloren geht.",
       "kinds": [
         "functional"
       ]
@@ -9708,7 +9720,7 @@
       "id": "TEST-task-analysen",
       "type": "TEST",
       "name": "Analyse-Tasks",
-      "description": "Jedes Analyse-Vorbild geht durchs Gate und ergibt eine Einheit des Artefakts; ein Stempel allein ist kein Artefakt; der Bauplan setzt keinen Stempel, sein Ergebnis sind offene Auftraege.",
+      "description": "Am Task-Eintritt verweist der Schritt auf den Skill des Tasks; ein Bauplan-Stempel von Hand schliesst den Eintritt nicht; ein Patch ersetzt die Stempel ganz, und jeder Analyse-Skill schliesst mit Lesen, Uebernehmen, ganz Schreiben.",
       "testRefs": [
         {
           "file": "tests/task-analysen.test.ts",
@@ -13969,6 +13981,26 @@
     {
       "source": "CR-GC-776",
       "target": "MOD-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-777",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-777",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-778",
+      "target": "FUNC-fit-advisory",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-778",
+      "target": "FUNC-mutate",
       "type": "relation"
     },
     {
@@ -18638,6 +18670,11 @@
     },
     {
       "source": "FUNC-se-plan",
+      "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-plan",
       "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
     },
@@ -21958,5 +21995,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 668
+  "graphVersion": 671
 }

@@ -26,19 +26,16 @@ import { acceptedRuleIds } from '@sigloch/contracts/se';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
 import { decision } from './decisions.js';
-import { ABNEHMBAR, istAnalyse, focusViolations as fokusmenge, blockingOf } from '../kernel/measure/focus-set.js';
+import { ABNEHMBAR, focusViolations as fokusmenge, blockingOf } from '../kernel/measure/focus-set.js';
 import { RULE_HELP, TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
 import { steerTerms, STEER_RULES } from '@sigloch/se-engine';
 import { STEUER_FENSTER, type SteerOptimum, type SteerState } from './stagnation.js';
-import { ANALYSE_TASKS, istAnalyseTask } from './task-artifact.js';
-import { TASK_CLAUSE } from './task-clause.js';
+import { ANALYSE_TASKS } from './task-artifact.js';
 
 /**
  * Datenvertrag der Generierungs-Instruktion (SCHEMA-generation-step) — Zod, nicht
  * `interface`: der Step ist das Ergebnis des MCP-Tools `graph_generate` und damit
- * die Grenze zwischen Substrat und Agent/Executor. Der eingebettete Executor hat
- * ihn bisher blank gecastet; `GenerationStep.parse` in `runExecutor` macht daraus
- * einen erzwungenen Vertrag.
+ * die Grenze zwischen Substrat und Agent.
  */
 export const GenerationStep = z.object({
   /** seed = leerer Graph; expand = Deficit-getriebene Verdichtung; handoff = Schwelle erreicht. */
@@ -58,31 +55,26 @@ export const GenerationStep = z.object({
    * Fokus (seed/handoff/keine regelbaren Funde). */
   focusKey: z.string().nullable(),
   /** Fokus-Elementtypen des Schritts (CR-GC-285): `STAGE_FOCUS_TYPES` der
-   * Fokus-Dimension bzw. der seed-Phase; leer bei handoff/keinem Fokus. Der
-   * Executor injiziert dafür Guide-Slice + Element-Index in den Runden-Prompt,
-   * ohne den Prompt-String parsen zu müssen. */
+   * Fokus-Dimension bzw. der seed-Phase; leer bei handoff/keinem Fokus. Als
+   * Feld, damit ein Leser den Prompt-String nicht parsen muss. */
   focusTypes: z.array(z.string()),
   /** Die Fund-Knoten des Schritts (CR-GC-652) — dieselben uids, die im `focusKey` stecken, aber als
-   * Feld: der Executor schneidet daraus die Element-Liste (gerichteter Weg zum Besitzer), und wer
-   * die uids braucht, soll sie lesen, nicht aus einem zusammengesetzten Schluessel herausschneiden.
-   * Nur in der expand-Phase gesetzt; seed/handoff/Task-Einstieg haben keinen Fund. */
+   * Feld: wer die uids braucht, soll sie lesen, nicht aus einem zusammengesetzten Schluessel
+   * herausschneiden. Nur in der expand-Phase gesetzt; seed/handoff haben keinen Fund. */
   focusElements: z.array(z.string()).optional(),
   /** Fokus-Dimension des Schritts (CR-GC-558): Schluessel in `STAGE_FOCUS_TYPES`
    * (`seed` | `uc` | `req` | `arch` | ...), null bei handoff. Steckt zwar auch im
    * `focusKey`-Praefix, aber der ist ein zusammengesetzter Identifikator — wer die
-   * Dimension braucht, soll sie lesen, nicht aus einem Key herausschneiden. Der
-   * Executor waehlt daran die Autorier-Anleitung. */
+   * Dimension braucht, soll sie lesen, nicht aus einem Key herausschneiden. */
   focusStage: z.string().nullable(),
   /** CR-GC-589: die Anleitung zur Fokus-Dimension als VERWEIS (`se:author-req`) — der Host laedt
-   * den Skill ueber sein Skill-Werkzeug, der Executor spielt den Rumpf ein. Eine Zuordnung, zwei
-   * Transporte. null, wenn es fuer die Dimension keinen Autorier-Skill gibt. */
+   * den Skill ueber sein Skill-Werkzeug. null, wenn es fuer die Dimension keinen Autorier-Skill gibt. */
   skill: z.string().nullable(),
   /** CR-GC-608: der Steuerzustand (Termvektor, Summe der Ueberschuesse) — das Fertig-Kriterium der
    * Steuerregeln liest ihn im Sitzungsgedaechtnis. */
   steer: z.object({ key: z.string(), sum: z.number(), terms: z.array(z.string()) }).optional(),
   /** CR-GC-728: nur in phase 'stalled' — die Analyse-Tasks, deren Eintrittspunkt offen ist. Als Feld,
-   * weil ein Treiber ohne graph_generate (graph_delegate) sie dem Client nennen muss, ohne den
-   * Prompt-Text zu zerlegen. Leer = der Kern selbst sitzt fest. */
+   * damit ein Leser sie nennen kann, ohne den Prompt-Text zu zerlegen. Leer = der Kern selbst sitzt fest. */
   offeneTasks: z.array(z.string()).optional(),
   /** CR-GC-728: nur in phase 'stalled' — die zurückgestellten Fund-Fenster (focusKeys). */
   offeneFunde: z.array(z.string()).optional(),
@@ -91,8 +83,7 @@ export type GenerationStep = z.infer<typeof GenerationStep>;
 
 /**
  * Welche Autorier-Anleitung zu welcher Fokus-Dimension gehoert (CR-GC-558; seit CR-GC-589 HIER,
- * weil beide Treiber sie lesen: der Executor fuer den Rumpf je Runde, der Host als Verweis im
- * Schritt). Vorher stand sie nur im Executor — Claude Code las `se:generate` einmal bei 2–5 % des
+ * der Host liest sie als Verweis im Schritt). Vorher stand sie nur im Executor — Claude Code las `se:generate` einmal bei 2–5 % des
  * Laufs und die Anlege-Skills erst am Ende, um Frischestempel zu erfuellen.
  *
  * `se-view:*` bleibt draussen: Darstellungen, keine Bauanleitungen. `ver`/`schema`/`cr`/`ms`
@@ -112,24 +103,11 @@ export const SKILL_FOR_STAGE: Record<string, { name: string; file: string } | un
   immer: { name: 'se:top-level', file: 'top-level.md' },
 };
 
-/** Wer die Verdicts liest (CR-GC-288): 'host' = der MCP-Client probt selbst per
- * dryRun und vergleicht (Protokoll-Prosa im Prompt); 'driver' = der Treiber führt
- * den Batch am Gate — der dryRun-Vergleichs-Auftrag verschwindet aus dem Prompt
- * (keine parallelen Pfade: der Prompt verlangt nicht, was der Code schon tut).
- *
- * Eine Aussage über den KANAL, nicht über die Kandidatenzahl (CR-GC-568): die
- * 'driver'-Klausel gilt wortgleich bei einem wie bei N Kandidaten — ob der Treiber
- * zwischen mehreren wählt, ist seine Sache und geht das Modell nichts an. Der
- * Executor setzt deshalb immer 'driver'; der Default 'host' gehört dem MCP-Client,
- * der als einziger analysieren darf. */
-export type GenerationSelection = 'host' | 'driver';
-
 /** Gate-Protokoll — identisch in jeder Phase; Kandidatenwahl ist Gate-Sache, nie
- * LLM-Bauchgefühl. EIN Template, zwei Selektions-Varianten (CR-GC-288). Im Treiber-Modus
- * entfallen Guide-Schritt (CR-GC-651) und Folgeschritt (CR-GC-648): beides weiss oder tut dort
- * der Treiber, nicht das Modell.
+ * LLM-Bauchgefühl. Bis CR-GC-777 stand daneben eine Treiber-Fassung fuer den eingebetteten
+ * Executor (CR-GC-288); seit dessen Auslagerung (CR-GC-775) gibt es nur diese.
  *
- * CR-GC-577: die host-Variante verlangt die Probe nur noch bei MEHREREN Alternativen.
+ * CR-GC-577: das Protokoll verlangt die Probe nur noch bei MEHREREN Alternativen.
  * Gemessen an `runs/opus5-5`: sechs Paare aus Probe und Anwendung DESSELBEN Batches, und
  * das Gate lieferte seinen Befundsatz jedes Mal zweimal — 20 % des graph_mutate-Payloads,
  * auch nach CR-GC-570/576/579 (der Posten schrumpfte um 76 %, sein ANTEIL nur von 24 auf
@@ -151,26 +129,15 @@ const PROTOCOL_GUIDE =
 // Mutationsantwort ist fuer den Nutzer (CR-GC-588 hatte dort den Imperativ — der Client las ihn als Auftrag).
 const PROTOCOL_NEXT_HOST =
   'Den nächsten Schritt holst du mit graph_generate; der `vorschlag` an der Mutationsantwort ist für den Nutzer, nicht für dich.';
-const GATE_PROTOCOL: Record<GenerationSelection, string> = {
-  host:
-    PROTOCOL_GUIDE +
-    // CR-GC-587: Probe-Regel und Rangfolge kommen aus dem Register, nicht aus Prosa hier.
-    // (CR-GC-583 hatte hier den Steuerwert VOR dem tier genannt — `rankCandidates` sortiert
-    // tier vor Steuerwert. Genau die Klasse Fehler, gegen die das Register steht.)
-    '(2) ' + decision('probe') + ' ' + decision('verdictRank') + ' ' +
-    '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
-    '(4) ' +
-    PROTOCOL_NEXT_HOST,
-  // CR-GC-651: kein Schritt (1) im Treiber-Modus. Ob die Grammatik schon im Rundeninhalt steht,
-  // weiss nur der Treiber (Injektion an/aus) — also schreibt ER den Guide-Hinweis, wenn er fehlt.
-  // Vorher stand hier „Guide aufrufen", und die Injektion widerrief es zwei Absaetze spaeter.
-  driver:
-    'Gate-Protokoll: Emittiere EINEN vollständigen Batch — keine eigenen Gate-Proben: der Treiber führt ihn ' +
-    // CR-GC-648: kein Folgeschritt „graph_generate erneut aufrufen" — im Treiber-Modus ruft der
-    // TREIBER graph_generate, dem Modell ist das Werkzeug vorenthalten. Der Satz war ein zweiter
-    // Imperativ zu einer Sache, die das Modell nicht tun kann.
-    'selbst ans Gate (Fokus-Delta, Steuerwert, tier, Element-Ausbeute) und wendet nur an, was dort besteht.',
-};
+const GATE_PROTOCOL =
+  PROTOCOL_GUIDE +
+  // CR-GC-587: Probe-Regel und Rangfolge kommen aus dem Register, nicht aus Prosa hier.
+  // (CR-GC-583 hatte hier den Steuerwert VOR dem tier genannt — `rankCandidates` sortierte
+  // tier vor Steuerwert. Genau die Klasse Fehler, gegen die das Register steht.)
+  '(2) ' + decision('probe') + ' ' + decision('verdictRank') + ' ' +
+  '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
+  '(4) ' +
+  PROTOCOL_NEXT_HOST;
 
 /**
  * Regel-spezifische Zusatzklausel, NUR gerendert wenn genau diese Regel das
@@ -378,17 +345,6 @@ export const RULE_CLAUSE: Record<
   },
 };
 
-/**
- * Die Datei zu einem Skillnamen (CR-GC-655) — aus den ZWEI Tabellen, die Skills vergeben:
- * Dimension und Regel-Klausel. Der Executor spielt den Rumpf ein, den `step.skill` nennt; er
- * leitet ihn nicht ein zweites Mal aus der Dimension ab. Unbekannt (z. B. ein Task-Skill ausserhalb
- * von `.claude/commands/se/`) → undefined, dann gibt es keinen Anleitungs-Block.
- */
-export function skillDatei(name: string): { name: string; file: string } | undefined {
-  const alle = [...Object.values(SKILL_FOR_STAGE), ...Object.values(RULE_CLAUSE).map((k) => k.skill)];
-  return alle.find((sk): sk is { name: string; file: string } => !!sk && sk.name === name);
-}
-
 /** Generative Instruktion je Readiness-Dimension — die einzige Handlungsanweisung des
  * Systems, seit die generischen Lese-Zwillinge in `steering.ts` mit CR-GC-562 gefallen sind. */
 const VORLAGE_UC =
@@ -423,34 +379,8 @@ export const GENERATION_TEMPLATE: Record<string, string> = {
 };
 
 /**
- * Treiber-Fassung der Dimensionen, deren Host-Text Alternativen verlangt (ITEM-2026-610). Im
- * Treiber-Modus wendet der Treiber den GANZEN Batch an — „2 Alternativen, lass das Gate waehlen"
- * legte in gcrun-310 beide an und im naechsten Zug Alternativen der Alternativen (35 von 49 REQ
- * Dubletten). Alternativen entstehen dort ueber N Stichproben (Best-of-N), nie in einem Batch.
- */
-const EIN_BATCH_ARCH =
-  'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Genau EINE Zerlegung je Fund — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Vorhandene FUNCs weiterverwenden, keine Varianten daneben anlegen.';
-const EIN_BATCH_ALLOC =
-  'Schlage EINEN MOD-Schnitt vor (intern stark, extern schwach gekoppelt), mit den allocate-Kanten FUNC→MOD.';
-export const EIN_BATCH: Partial<Record<string, string>> = {
-  Funktion: EIN_BATCH_ARCH,
-  Datenfluss: EIN_BATCH_ARCH,
-  Modul: EIN_BATCH_ALLOC,
-  immer: EIN_BATCH_ARCH,
-};
-
-/** Der Vorschlagstext einer Dimension je Selektion — der Host probt Alternativen selbst, der Treiber nicht. */
-export function vorschlagsText(stufe: string, selection: GenerationSelection): string | undefined {
-  return (selection === 'driver' ? EIN_BATCH[stufe] : undefined) ?? GENERATION_TEMPLATE[stufe];
-}
-
-/**
  * Fokus-Elementtypen je Readiness-Dimension (CR-GC-285). Der Kaltstart steht seit
  * CR-GC-559 in `SEED_STAGES` — hier stehen nur Readiness-Dimensionen.
- * Grundlage der Runden-Prompt-Injektion: der Executor holt
- * die `graph_authoring_guide`-Slices dieser Typen und filtert den
- * Element-Index darauf, statt das Modell sie pro Runde erfragen zu lassen
- * (Turn-Analyse: 41–59 % reine Lese-Turns, guide 72–107× pro Lauf).
  * Keys = die Dimensionen von GENERATION_TEMPLATE.
  */
 export const STAGE_FOCUS_TYPES: Record<string, string[]> = {
@@ -576,13 +506,12 @@ export function generationStep(
   intent: string | undefined,
   threshold: number,
   defer: string[] = [],
-  selection: GenerationSelection = 'host',
   profile: LoadedTargetProfile | null = null,
   task: RuleTask = 'kern',
   steerOptimum: SteerOptimum | null = null,
 ): GenerationStep {
   const snap = takeSteeringSnapshot(graph, policy);
-  const { imperativSkill, ...core } = stepCore(snap, policy, intent, threshold, defer, selection, profile, task, steerOptimum);
+  const { imperativSkill, ...core } = stepCore(snap, policy, intent, threshold, defer, profile, task, steerOptimum);
   // CR-GC-601: im Task nennt der Schritt den Skill des Tasks, im Kern den der Fokus-Dimension.
   // CR-GC-604: steht im Kern ein Eintrittspunkt im Fokus, ist der Skill der des Tasks — nicht der
   // der Dimension (AF-04/AF-05 liegen in ver/ms, fuer die es keinen Autorier-Skill gibt: `next.skill` war null).
@@ -632,12 +561,10 @@ function stepCore(
   // hatte drei Antworten — hier, im Tool-Schema und in se-steering. Jetzt eine: die Config.
   threshold: number,
   defer: string[] = [],
-  selection: GenerationSelection = 'host',
   profile: LoadedTargetProfile | null = null,
   task: RuleTask = 'kern',
   steerOptimum: SteerOptimum | null = null,
 ): Omit<GenerationStep, 'skill' | 'steer'> & { imperativSkill?: string | null } {
-  const gateProtocol = GATE_PROTOCOL[selection];
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval + Befunde je Stufe —
   // geteilt mit dem steeringDelta des dryRun-Verdicts.
   const { og, stages } = snap;
@@ -720,7 +647,7 @@ function stepCore(
         'Lege GENAU EIN Element an: die SYS-Wurzel, description = die Intention wörtlich. ' +
         'Noch keine ACTORs, keine UCs, keine Struktur — die folgen als eigene Schritte. ' +
         steeringNote +
-        gateProtocol,
+        GATE_PROTOCOL,
       readiness,
       threshold,
       blockingErrors,
@@ -784,15 +711,6 @@ function stepCore(
     `${stufe}:${vs[0]?.rule_id ?? ''}:${vs.map((v) => v.element_id).sort().join(',')}`;
 
   const deferSet = new Set(defer);
-  // ITEM-2026-632/633: im Treiber-Modus ist ein Eintrittspunkt (AF-01..05) nie Fokus — der Executor
-  // startet keine Tasks (graph_generate ist ihm vorenthalten) und kann den Analyse-Stempel nicht
-  // setzen. Gemessen S2 gcrun-339..341: je AF-Befund drei Runden Stillstand, dabei legte das Modell
-  // unter dem Text der Dimension neue SYS-REQs an (23/16 Dubletten). Bleiben nur Eintrittspunkte,
-  // greift der Endzustand unten („Offen sind Eintrittspunkte") — die Uebergabe an Mensch oder Host.
-  // CR-GC-748: dasselbe gilt fuer jede Regel mit Rolle `analysis` — auch ihr Befund
-  // verlangt die Analyse, nicht einen Modellzug des Executors. Die Rolle steht am Katalog.
-  const eintrittImTreiber = (key: string): boolean =>
-    selection === 'driver' && task === 'kern' && (TASK_OF_ENTRY.has(key.split(':')[1] ?? '') || istAnalyse(key.split(':')[1] ?? ''));
   // CR-GC-603: in einem Task steht der Eintritt (das fehlende Artefakt) VOR den Regeln des Tasks —
   // ausdruecklich, nicht ueber Stufe oder Dimension: wo die Regeln eines Tasks liegen, ist Sache des
   // Katalogs und wandert mit ihm.
@@ -826,7 +744,7 @@ function stepCore(
     }
     return fenster;
   });
-  const gewaehlt = kandidaten.find((k) => !deferSet.has(k.key) && !eintrittImTreiber(k.key));
+  const gewaehlt = kandidaten.find((k) => !deferSet.has(k.key));
   const focus = gewaehlt?.stufe;
   const focusViolations: typeof violations = gewaehlt?.funde ?? [];
   const focusKey: string | null = gewaehlt?.key ?? null;
@@ -842,7 +760,7 @@ function stepCore(
     const seedRumpf = (prompt: string, stufe: keyof typeof SEED_STAGES): Omit<GenerationStep, 'skill'> => ({
       phase: 'seed',
       done: false,
-      prompt: prompt + gateProtocol,
+      prompt: prompt + GATE_PROTOCOL,
       readiness,
       threshold,
       blockingErrors,
@@ -998,11 +916,6 @@ function stepCore(
   // je rule_id) — und mit den konkreten uids, statt als globales Verbot.
   const windowRule = focusViolations[0]?.rule_id;
   const klausel = windowRule ? RULE_CLAUSE[windowRule] : undefined;
-  // CR-GC-724: im Executor (selection 'driver') stellt am Eintrittspunkt eines Analyse-Tasks die
-  // Task-Klausel den Imperativ — Auftrag und Vorbild statt des Verweises auf einen Skill, den der
-  // Executor nicht laden kann. Der Host-Weg (Client mit Skills) bleibt beim Verweis.
-  const taskKlausel =
-    selection === 'driver' && istAnalyseTask(task) && windowRule === TASK_ENTRY[task] ? TASK_CLAUSE[task] : undefined;
   // EIN Imperativ je Runde (CR-GC-564). Vorher wurde die Klausel an das Dimensions-Template
   // ANGEHÄNGT — und R-15s Klausel endete mit „KEINE neue FCHAIN anlegen", also mit dem
   // Widerruf dessen, was drei Zeilen vorher stand. Das Template ist nach DIMENSION
@@ -1018,9 +931,7 @@ function stepCore(
   const imperativ = winner<{ text: string; types: string[]; skill: string | null }>([
     {
       channel: 'rule-clause',
-      value: taskKlausel
-        ? { text: taskKlausel.text(og), types: [...taskKlausel.types], skill: null }
-        : klausel
+      value: klausel
         ? {
             text: klausel.text(focusViolations.map((v) => v.element_id), og),
             types: [...klausel.types],
@@ -1032,7 +943,7 @@ function stepCore(
       channel: 'proposal',
       value: focus
         ? {
-            text: vorschlagsText(focus, selection) ?? 'Behebe die Funde der Stufe.',
+            text: GENERATION_TEMPLATE[focus] ?? 'Behebe die Funde der Stufe.',
             types: [...(STAGE_FOCUS_TYPES[focus] ?? [])],
             skill: SKILL_FOR_STAGE[focus]?.name ?? null,
           }
@@ -1044,12 +955,9 @@ function stepCore(
   return {
     phase: 'expand',
     done: false,
-    // CR-GC-724: am Task-Eintritt im Executor ist der Fund „das Artefakt fehlt“ — sein Hinweis nennt
-    // graph_generate und einen Skill, beides hat der Executor nicht. Die Klausel sagt, was zu tun ist.
-    prompt: taskKlausel
-      ? `${taskVorsatz}Intention: "${effectiveIntent}". ${template} ${gateProtocol}`
-      : `${taskVorsatz}Intention: "${effectiveIntent}". ${coverageLine}${abnahmeHinweis}Stufe: ${stufenName(focusViolations[0]!.rule_id)}. ` +
-        `Funde: ${funde}. ${template} ${gateProtocol}`,
+    prompt:
+      `${taskVorsatz}Intention: "${effectiveIntent}". ${coverageLine}${abnahmeHinweis}Stufe: ${stufenName(focusViolations[0]!.rule_id)}. ` +
+      `Funde: ${funde}. ${template} ${GATE_PROTOCOL}`,
     readiness,
     threshold,
     blockingErrors,
@@ -1059,8 +967,7 @@ function stepCore(
     // einer Dimension, waehrend der Text nach anderen Typen verlangt. Seit CR-GC-575 ist das
     // keine zweite Bedingung mehr, sondern derselbe Gewinner.
     focusTypes: imperativ?.value.types ?? [],
-    // CR-GC-724: am Task-Eintritt ist das Fund-Element das SYS — der Bestand kommt nach Typ, nicht aus seinem Kontext.
-    focusElements: taskKlausel ? [] : [...new Set(focusViolations.map((v) => v.element_id))],
+    focusElements: [...new Set(focusViolations.map((v) => v.element_id))],
     focusStage: focus!,
     imperativSkill: imperativ?.value.skill ?? null,
   };

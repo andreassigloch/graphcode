@@ -119,7 +119,7 @@ const eintrittDes = (step: GenerationStep): Task | undefined => TASK_OF_ENTRY.ge
 
 /**
  * Der Vorschlag nach einer angewandten Mutation — gewaehlt wie der Schritt, den `graph_generate`
- * fuer einen MCP-Host liefern wuerde: Intention aus dem SYS, Schwelle des Hosts, `selection: 'host'`,
+ * liefern wuerde: Intention aus dem SYS, Schwelle des Hosts,
  * Profil frisch geladen, dasselbe Sitzungsgedaechtnis (CR-GC-596).
  */
 export function vorschlagNachAnwendung(
@@ -132,7 +132,7 @@ export function vorschlagNachAnwendung(
 ): string {
   const profile = loadTargetProfile(repoRoot);
   const rechne = (defer: string[], optimum = memory.steerOptimum) =>
-    generationStep(graph, policy, undefined, threshold, defer, 'host', profile, memory.task, optimum);
+    generationStep(graph, policy, undefined, threshold, defer, profile, memory.task, optimum);
   const step = stepWithMemory(memory, version, rechne);
   const task = memory.task === 'kern' ? eintrittDes(step) : undefined;
   if (!task || !step.focusKey) return vorschlagAusSchritt(step, graph, memory.task);

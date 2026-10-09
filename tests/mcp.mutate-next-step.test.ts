@@ -120,7 +120,7 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
     expect(weiter).not.toContain('Einsatzkonzept');
     for (const muster of KEIN_AUFTRAG) expect(weiter, String(muster)).not.toMatch(muster);
     // Der Autopilot bleibt am Eintrittspunkt (CR-GC-604): das Gedaechtnis hat nichts zurueckgestellt.
-    const auto = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [...memory.deferred], 'host', null, 'kern');
+    const auto = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [...memory.deferred], null, 'kern');
     expect(auto.focusKey).toMatch(/:AF-01:/);
   });
 
@@ -137,12 +137,9 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
     for (const satz of Object.values(VORSCHLAG_SEED)) for (const muster of KEIN_AUFTRAG) expect(satz, String(muster)).not.toMatch(muster);
   });
 
-  it('der Host-Prompt weist den Vorschlag dem Nutzer zu, der Treiber-Prompt kennt ihn nicht', async () => {
+  it('der Prompt des Schritts weist den Vorschlag dem Nutzer zu', async () => {
     await mutiere([SYS]);
     const host = await tools.graph_generate.handler({});
     expect(host.prompt).toContain('der `vorschlag` an der Mutationsantwort ist für den Nutzer');
-    const driver = await tools.graph_generate.handler({ selection: 'driver' });
-    expect(driver.prompt, 'CR-GC-648: der Treiber ruft graph_generate, nicht das Modell').not.toContain('graph_generate');
-    expect(driver.prompt).not.toContain('vorschlag');
   });
 });
