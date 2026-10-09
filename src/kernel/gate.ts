@@ -13,7 +13,6 @@
  * @author andreas@siglochconsulting
  */
 import type { Graph, OntologyDescriptor, RuleViolation as CoreRuleViolation, DefaultRuleEngine } from '@sigloch/graph-api-core';
-import type { MetricPolicy } from '@sigloch/contracts/se';
 import { z } from 'zod';
 import { MutateCommandSchema, type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
 import { OntologyElement, ReqKind, ReqRole, readReqRole } from '@sigloch/contracts/se';
@@ -21,8 +20,6 @@ import type { HookSystem } from './hooks.js';
 import type { GraphStore } from './graph-store.js';
 import { applyCommands, cloneGraph } from './apply-commands.js';
 import { setExportPending } from './export-marker.js';
-import { computeFitAdvisory, computeSteerAdvisory, type FitAdvisory, type SteerAdvisory } from './measure/fit-advisory.js';
-import { congruenceWorkOrder, type WorkOrder } from './measure/work-order.js';
 
 export interface GateDeps {
   readonly store: GraphStore;
@@ -30,19 +27,25 @@ export interface GateDeps {
   /** The SE descriptor the engine was built from — its node/edge types feed the pre-persist guard. */
   readonly descriptor: OntologyDescriptor;
   readonly hooks: HookSystem;
-  /** The judging thresholds (CR-GC-329) — same object graph_metrics reports. */
-  readonly metricPolicy: MetricPolicy;
   /** Repo root for the export-pending drift marker (CR-GC-217). */
   readonly repoRoot: string;
+}
+
+/** Das Urteil und, bei einem angenommenen Zug, der Stand davor und danach (CR-GC-778). */
+export interface GateOutcome {
+  result: MutateResult;
+  states: { before: Graph; after: Graph } | null;
 }
 
 export class Gate {
   constructor(private readonly deps: GateDeps) {}
 
-  async apply(
-    commands: MutateCommand[],
-    dryRun = false,
-  ): Promise<MutateResult & { fitAdvisory?: FitAdvisory }> {
+  /**
+   * Urteilen und speichern (CR-GC-778). Neben dem Urteil gibt das Gate den Stand davor und danach
+   * heraus — das Paar, aus dem ein Aufrufer berichten kann (`measure/zug-bericht.ts`). Ein
+   * geblockter Zug hat kein Paar: der Kandidat ist verworfen, es gibt nichts zu berichten.
+   */
+  async apply(commands: MutateCommand[], dryRun = false): Promise<GateOutcome> {
     // Step 0 — shape validation (CR-GC-239). MCP transports hand commands over as
     // plain JSON; a shape typo (`op:"add_node"`, flat fields) must never pass the
     // gate as a silent no-op with success:true. Parse EVERY command against the
@@ -114,7 +117,7 @@ export class Gate {
         tier: 'block',
       };
       if (!dryRun) await this.deps.hooks.runPostApplyHooks(result);
-      return result;
+      return { result, states: null };
     }
     commands = parsedCommands; // normalized: schema defaults (attributes: {}) applied
 
@@ -133,7 +136,7 @@ export class Gate {
         tier: 'block',
       };
       if (!dryRun) await this.deps.hooks.runPostApplyHooks(result);
-      return result;
+      return { result, states: null };
     }
 
     // Step 2 — apply to a CANDIDATE copy (CR-GC-503) + a pre-mutation rule
@@ -182,7 +185,7 @@ export class Gate {
         tier: 'block',
       };
       if (!dryRun) await this.deps.hooks.runPostApplyHooks(result);
-      return result;
+      return { result, states: null };
     }
 
     // Step 4 (APPLY) — persist the delta to disk Kuzu. A dry run (CR-GC-234)
@@ -201,24 +204,13 @@ export class Gate {
     }
 
     const tier = newViolations.some((v) => v.severity === 'warning') ? 'suggest' : 'auto-apply';
-    // Fit-Gate Härtegrad 1 (CR-GC-274): Δm-Advisory auf layer:'arch' pro
-    // erfolgreicher Mutation — eine MESSUNG, kein Gate: tier/success bleiben
-    // allein regelbestimmt ("Metrik rankt, Gate urteilt").
-    const result: MutateResult & { fitAdvisory: FitAdvisory; steerAdvisory: SteerAdvisory; workOrder: WorkOrder } = {
+    const result: MutateResult = {
       success: true,
       appliedCommands: commands.length,
       mutations,
       violations: newViolations,
       confidence: 1,
       tier,
-      fitAdvisory: computeFitAdvisory(snapshot, candidate),
-      // CR-GC-483: das Steuersignal. `fitAdvisory` bleibt daneben stehen und wird berichtet —
-      // es rankt nur nichts mehr (CR-SM-292).
-      steerAdvisory: computeSteerAdvisory(snapshot, candidate, this.deps.metricPolicy),
-      // CR-GC-490: die vierte Kante Modell → Code. Wandert eine `allocate`-Kante, sagt das
-      // Ergebnis jetzt, WELCHE Datei mitwandern muss — eine Liste, kein Refactoring, und wie
-      // die beiden Advisories daneben ein Advisory: `tier` bleibt regelbestimmt.
-      workOrder: congruenceWorkOrder(snapshot, candidate),
     };
 
     // CR-GC-239 invariant: an applied batch that changed NOTHING is suspicious.
@@ -232,8 +224,9 @@ export class Gate {
     // Step 5 — post-apply hooks (skipped on a dry run: no phantom events).
     if (!dryRun) await this.deps.hooks.runPostApplyHooks(result);
 
-    // Step 6 — return.
-    return result;
+    // Step 6 — return. Die Berichte zum Zug (Architekturmass, Steuerwert, Dateiliste) rechnet der
+    // Aufrufer aus dem Paar, nicht das Gate (CR-GC-778).
+    return { result, states: { before: snapshot, after: candidate } };
   }
 
   /**

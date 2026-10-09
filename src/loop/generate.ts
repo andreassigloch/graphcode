@@ -868,7 +868,7 @@ function stepCore(
         targetInstruction +
         coverageLine +
         'Arbeite die Funde ab (Fix-Template-Edits über graph_mutate, Fund-only-Suggestions manuell); ' +
-        'das fitAdvisory jeder Mutation zeigt, ob Δm in Zielrichtung läuft. Die Metrik rankt, das Gate urteilt.',
+        'das fitAdvisory jedes Probelaufs (dryRun:true) zeigt, ob Δm in Zielrichtung läuft. Die Metrik rankt, das Gate urteilt.',
       readiness,
       threshold,
       blockingErrors,

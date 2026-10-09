@@ -46,6 +46,7 @@ import {
   persistIntentAnchors,
 } from './target-profile.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
+import { mitBericht } from '../kernel/measure/zug-bericht.js';
 
 // -------------------------------------------------------------------------
 // Input schema
@@ -235,14 +236,15 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
           // („zwei Allokationen", „zwei SCHEMAs an einem FLOW") werden nie
           // gemessen. Welche Kante weicht bzw. welcher Merge mitlaufen muss, hat
           // se-engine hergeleitet — hier wird kein Grammatikwissen nachgebaut.
-          const res = await harness.mutate(batchFor(s.edit), { dryRun: true });
+          // CR-GC-778: Architekturmass und Steuerwert rechnet das Werkzeug aus dem Paar des Gates.
+          const res = mitBericht(await harness.mutateWithStates(batchFor(s.edit), { dryRun: true }), harness.getMetricPolicy(), { fit: true });
           await harness.loadGraph();
           out.push({
             tier: res.tier,
             success: res.success,
             violations: res.violations.map((v) => ({ ruleId: v.ruleId, severity: v.severity, message: v.message })),
-            fitDelta: (res as { fitAdvisory?: { delta?: number[] } }).fitAdvisory?.delta ?? [],
-            steer: (res as { steerAdvisory?: SuggestVerdict['steer'] }).steerAdvisory,
+            fitDelta: res.fitAdvisory?.delta ?? [],
+            steer: res.steerAdvisory,
           });
         }
         return out;

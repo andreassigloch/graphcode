@@ -19,6 +19,7 @@ import { computeSteeringDelta, measureSteering, type SteeringDelta } from '../ke
 import { stripViolationContext, groupViolationsByRule, type GroupedViolation } from '../kernel/evaluation.js';
 import { fitAdvisoryIsSilent, steerAdvisoryIsSilent, type FitAdvisory, type SteerAdvisory } from '../kernel/measure/fit-advisory.js';
 import { workOrderIsSilent, type WorkOrder } from '../kernel/measure/work-order.js';
+import { mitBericht } from '../kernel/measure/zug-bericht.js';
 import { loadTargetProfile } from '../loop/target-profile.js';
 import { vorschlagNachAnwendung } from '../loop/next-step.js';
 import { focusMemoryOf } from '../loop/stagnation.js';
@@ -380,7 +381,14 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // L2: identical semantics — delegate straight to the gate, no bypass.
         // Cast: MCP transports deserialize commands as plain objects; harness.mutate()
         // validates internally via MutateCommandSchema.
-        const result = await harness.mutate(commands, { dryRun: input.dryRun });
+        // CR-GC-778: die Berichte zum Zug rechnet diese Schicht aus dem Paar, das das Gate herausgibt.
+        // Das Architekturmass nur im Probelauf — beim echten Schreiben blockt, waehlt und rankt es
+        // nichts; den Stand danach zeigt `graph_metrics`.
+        const result = mitBericht(
+          await harness.mutateWithStates(commands, { dryRun: input.dryRun }),
+          harness.getMetricPolicy(),
+          { fit: input.dryRun },
+        );
         if (input.dryRun) {
           // Der Gate-dryRun lässt den Applied-Zustand in-memory (CR-GC-234) —
           // GENAU JETZT messen (bei block hat das Gate schon zurückgerollt ⇒

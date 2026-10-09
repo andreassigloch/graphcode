@@ -36,6 +36,9 @@ const kante = (sourceId: string, targetId: string, edgeType: string) =>
 
 const mutiere = async (commands: unknown[]): Promise<Antwort> =>
   (await tools.graph_mutate.handler({ formatE: alsFormatE(commands, harness), consumerId: 'test' })) as Antwort;
+/** Derselbe Zug als Probelauf — nur dort steht das Architekturmass (CR-GC-778). */
+const probe = async (commands: unknown[]): Promise<Antwort> =>
+  (await tools.graph_mutate.handler({ formatE: alsFormatE(commands, harness), consumerId: 'test', dryRun: true })) as Antwort;
 
 beforeEach(async () => {
   repoRoot = mkdtempSync(join(tmpdir(), 'gc-silent-'));
@@ -100,26 +103,31 @@ describe('TEST-silent-advisories: was nichts sagt, steht nicht da (CR-GC-576)', 
   it('ein Advisory MIT Regression erscheint unveraendert — MIT Zielprofil (CR-GC-590)', async () => {
     // Seit CR-GC-590 ist der ℝ⁶ ohne Ziel kein Verdict: erst das Profil macht ihn zur Richtung.
     writeFileSync(join(repoRoot, '.graphcode', 'target-profile.json'), JSON.stringify({ weights: { coherence: 1 } }));
-    const antwort = await mutiere(architekturZug());
+    const antwort = await probe(architekturZug());
     expect(antwort.success).toBe(true);
     expect(antwort).toHaveProperty('fitAdvisory');
     const fit = antwort.fitAdvisory as { delta: number[] };
     expect(fit.delta.some((d) => d !== 0)).toBe(true);
     expect(fitAdvisoryIsSilent(fit as never)).toBe(false);
+    // CR-GC-778: beim echten Schreiben steht es nicht — dort blockt, waehlt und rankt es nichts.
+    const echt = await mutiere(architekturZug());
+    expect(echt.success).toBe(true);
+    expect(echt).not.toHaveProperty('fitAdvisory');
   });
 
   it('OHNE Zielprofil kommt kein fitAdvisory ueber die Leitung — auch nicht mit Regression (CR-GC-590)', async () => {
     // Runde 7: 8–15 fitAdvisory-Bloecke je Lauf, fast alle mit `regressions`, und der Agent
     // entschied Modulschnitte danach — obwohl der Satz "nur Bericht" hiess. Ohne Ziel ist eine
     // Regression keine Aussage; der Audit-Trail behaelt sie (Evidenz), die Antwort nicht.
-    const antwort = await mutiere(architekturZug());
+    // CR-GC-778: im Probelauf geprueft — nur dort wird das Architekturmass ueberhaupt gerechnet.
+    const antwort = await probe(architekturZug());
     expect(antwort.success).toBe(true);
     expect(antwort).not.toHaveProperty('fitAdvisory');
   });
 
   it('eine Profildatei nur mit Intent-Ankern ist KEIN Zielprofil — kein fitAdvisory (Phase-1-Lauf: 9 Bloecke)', async () => {
     writeFileSync(join(repoRoot, '.graphcode', 'target-profile.json'), JSON.stringify({ intentAnchors: ['lokal', 'nachts', 'unterwegs'] }));
-    const antwort = await mutiere(architekturZug());
+    const antwort = await probe(architekturZug());
     expect(antwort.success).toBe(true);
     expect(antwort).not.toHaveProperty('fitAdvisory');
   });

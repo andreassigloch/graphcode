@@ -56,9 +56,8 @@ import {
 } from './harness-import.js';
 import { StoreLock } from './store-lock.js';
 import { listElements, type ElementFilter } from './element-slice.js';
-import { type FitAdvisory } from './measure/fit-advisory.js';
 import { GraphStore } from './graph-store.js';
-import { Gate } from './gate.js';
+import { Gate, type GateOutcome } from './gate.js';
 
 export class GraphCodeHarness {
   private readonly config: HarnessConfig;
@@ -141,7 +140,6 @@ export class GraphCodeHarness {
       engine,
       descriptor: this.descriptor,
       hooks: this.hooks,
-      metricPolicy: this.metricPolicy,
       repoRoot: this.config.repoRoot,
     });
   }
@@ -344,7 +342,16 @@ export class GraphCodeHarness {
   async mutate(
     commands: MutateCommand[],
     opts?: { dryRun?: boolean },
-  ): Promise<MutateResult & { fitAdvisory?: FitAdvisory }> {
+  ): Promise<MutateResult> {
+    return (await this.mutateWithStates(commands, opts)).result;
+  }
+
+  /**
+   * Derselbe Zug, dazu der Stand davor und danach (CR-GC-778) — fuer die zwei Werkzeuge, die zum
+   * Zug berichten (`measure/zug-bericht.ts`). Das Paar entsteht IM serialisierten Schreiben: ein
+   * Aufrufer, der den Stand davor selbst vorher liest, saehe einen fremden Zug dazwischen.
+   */
+  async mutateWithStates(commands: MutateCommand[], opts?: { dryRun?: boolean }): Promise<GateOutcome> {
     return this.serializeWrite(() => this.gate.apply(commands, opts?.dryRun ?? false));
   }
 

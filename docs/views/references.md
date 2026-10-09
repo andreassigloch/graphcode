@@ -758,6 +758,7 @@
 | `FCHAIN-apply-gate` | compose | `FUNC-own-kuzu-host` |
 | `FCHAIN-apply-gate` | compose | `FUNC-session-shutdown` |
 | `FCHAIN-apply-gate` | compose | `FUNC-tool-context` |
+| `FCHAIN-apply-gate` | compose | `FUNC-zug-bericht` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-code-governed-quality` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-mcp-gate-symmetry` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-post-apply-gate` |
@@ -898,6 +899,7 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-target-profile` |
 | `FCHAIN-steering-loop` | compose | `FUNC-target-profile-load` |
 | `FCHAIN-steering-loop` | compose | `FUNC-vorschlag` |
+| `FCHAIN-steering-loop` | compose | `FUNC-zug-bericht` |
 | `FCHAIN-test-ingest` | compose | `FUNC-mutate` |
 | `FCHAIN-test-ingest` | compose | `FUNC-test-ingest` |
 | `FLOW-action` | io | `ACTOR-agent` |
@@ -974,7 +976,7 @@
 | `FLOW-expand-subgraph` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-export-pending` | io | `ACTOR-owner` |
 | `FLOW-export-pending` | relation | `SCHEMA-export-pending` |
-| `FLOW-fit-advisory` | io | `FUNC-mutate` |
+| `FLOW-fit-advisory` | io | `FUNC-zug-bericht` |
 | `FLOW-fit-advisory` | relation | `SCHEMA-fit-advisory` |
 | `FLOW-formatE-artifact-agent` | io | `FUNC-decode` |
 | `FLOW-formatE-artifact-agent` | relation | `SCHEMA-format-e` |
@@ -1253,6 +1255,11 @@
 | `FLOW-version-bump` | relation | `SCHEMA-query-params` |
 | `FLOW-vorschlag` | io | `ACTOR-owner` |
 | `FLOW-vorschlag` | relation | `SCHEMA-mutate-result` |
+| `FLOW-zug-bericht` | io | `ACTOR-agent` |
+| `FLOW-zug-bericht` | io | `FUNC-graph-suggest` |
+| `FLOW-zug-bericht` | relation | `SCHEMA-zug-bericht` |
+| `FLOW-zug-staende` | io | `FUNC-zug-bericht` |
+| `FLOW-zug-staende` | relation | `SCHEMA-ontology-graph` |
 | `FUNC-apply-reseed` | allocate | `MOD-kernel` |
 | `FUNC-apply-reseed` | io | `FLOW-reseeded-graph` |
 | `FUNC-apply-reseed` | satisfy | `REQ-graph-state-recall` |
@@ -1328,6 +1335,7 @@
 | `FUNC-block-gate` | compose | `FUNC-check-code-conformance` |
 | `FUNC-block-gate` | compose | `FUNC-evaluate-rules` |
 | `FUNC-block-gate` | compose | `FUNC-mutate` |
+| `FUNC-block-gate` | compose | `FUNC-zug-bericht` |
 | `FUNC-block-gate` | io | `FLOW-channel-gate-verdict` |
 | `FUNC-block-gedaechtnis` | allocate | `MOD-projections` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-decode` |
@@ -1570,6 +1578,7 @@
 | `FUNC-mutate` | io | `FLOW-audit-record` |
 | `FUNC-mutate` | io | `FLOW-gate-verdict` |
 | `FUNC-mutate` | io | `FLOW-graph-delta` |
+| `FUNC-mutate` | io | `FLOW-zug-staende` |
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-kernel` |
@@ -1701,6 +1710,9 @@
 | `FUNC-vorschlag` | allocate | `MOD-loop` |
 | `FUNC-vorschlag` | io | `FLOW-vorschlag` |
 | `FUNC-vorschlag` | satisfy | `REQ-recommend-next-step` |
+| `FUNC-zug-bericht` | allocate | `MOD-kernel-measure` |
+| `FUNC-zug-bericht` | io | `FLOW-zug-bericht` |
+| `FUNC-zug-bericht` | satisfy | `REQ-bericht-ist-kein-urteil` |
 | `MOD-agent-surface` | satisfy | `REQ-gate-only-writes` |
 | `MOD-dashboard` | satisfy | `REQ-artifact-freshness` |
 | `MOD-dashboard` | satisfy | `REQ-dashboard-ontology-sync` |
@@ -1905,6 +1917,8 @@
 | `TEST-formate-name` | verify | `REQ-formatE-diff-dialect` |
 | `TEST-formate-ops` | verify | `REQ-formatE-parity` |
 | `TEST-formate-ops` | verify | `REQ-mcp-tool-registry` |
+| `TEST-gate-urteilt-und-speichert` | verify | `REQ-bericht-ist-kein-urteil` |
+| `TEST-gate-urteilt-und-speichert` | verify | `SCHEMA-zug-bericht` |
 | `TEST-generation-statemachine` | verify | `REQ-done-iff-no-focus` |
 | `TEST-graph-authoring-guide` | verify | `REQ-import-se-ontology` |
 | `TEST-graph-authoring-guide` | verify | `REQ-structural-rule-shared` |
@@ -2159,6 +2173,7 @@
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-report` |
 | `UC-deterministic-steering` | compose | `FCHAIN-steering-loop` |
 | `UC-deterministic-steering` | compose | `REQ-applied-suggestion-moves-target` |
+| `UC-deterministic-steering` | compose | `REQ-bericht-ist-kein-urteil` |
 | `UC-deterministic-steering` | compose | `REQ-done-iff-no-focus` |
 | `UC-deterministic-steering` | compose | `REQ-monotone-convergence` |
 | `UC-deterministic-steering` | compose | `REQ-near-duplicate-detection` |

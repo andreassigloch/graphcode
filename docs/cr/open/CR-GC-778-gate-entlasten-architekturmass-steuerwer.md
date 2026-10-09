@@ -69,16 +69,53 @@ Entwurf: `src/kernel/gate.ts`, `src/kernel/harness.ts` (Rückgabetyp), eine Date
 `src/surface/write.ts`, `src/loop/suggest.ts`, ein neuer Test. Folge: zehn Testdateien, die die Berichte an
 `harness.mutate` lesen, stellen auf die neue Funktion um.
 
-## Vom Autor zu entscheiden
+## Entschieden (Autor, 2026-10-09)
 
-1. **Der Satz in `CLAUDE.md`** „measurement … sits below the gate because the gate judges with it" stimmt
-   danach nur noch für die Regelauswertung. Soll er geändert werden?
-2. **Probelauf:** Soll `graph_mutate` mit `dryRun` die drei Berichte weiter immer liefern (heute so), oder nur
-   auf Wunsch? Vorschlag: weiter immer, das ist der Zweck des Probelaufs.
-3. **Architekturmaß im echten Schreiben:** Es blockt nicht, wählt nicht und rankt nicht mehr. Soll es beim
-   echten Schreiben ganz entfallen und nur im Probelauf und in `graph_metrics` stehen? Das spart je Schreiben
-   eine Rechnung über den ganzen Graphen. Vorschlag: ja.
+1. Der Satz in `CLAUDE.md` wird geändert.
+2. Probelauf liefert die Berichte weiter immer.
+3. Das Architekturmaß entfällt beim echten Schreiben; es steht im Probelauf und in `graph_metrics`.
 
-## Erwartete Wirkung auf die Kettenkennzahlen (auf einer Modellkopie gerechnet)
+## Umgesetzt
 
-Rückkopplung der Steuerungsschleife von 9 auf 7 Funktionen, der Gate-Kette von 5 auf 3.
+- **Gate** (`src/kernel/gate.ts`): rechnet keinen Bericht mehr und importiert das Messwerk nicht. Es gibt
+  neben dem Urteil den Stand davor und danach heraus; ein geblockter Zug hat kein Paar.
+- **Harness** (`src/kernel/harness.ts`): `mutate()` unverändert für alle Aufrufer; neu `mutateWithStates()`
+  für die zwei Werkzeuge, die berichten. Das Paar entsteht im serialisierten Schreiben — ein Aufrufer, der
+  den Stand davor selbst vorher läse, sähe einen fremden Zug dazwischen.
+- **Messwerk** (`src/kernel/measure/zug-bericht.ts`, neu): `zugBericht` und `mitBericht`; der Bericht ist ein
+  Zod-Vertrag (`ZugBericht`). Dafür ist die Dateiliste (`WorkOrder`) jetzt ebenfalls ein Zod-Schema.
+- **Werkzeuge**: `graph_mutate` (`src/surface/write.ts`) und `graph_suggest` (`src/loop/suggest.ts`) rechnen die
+  Berichte aus dem Paar.
+- **Texte**: der Freigabe-Prompt und der Skill `se:top-level` sprechen vom Probelauf statt von „jeder Mutation".
+- **Modell**: `FUNC-zug-bericht`, zwei Flüsse, ein Vertrag, `REQ-bericht-ist-kein-urteil` mit Test; der Fluss
+  der Fit-Bewertung geht nicht mehr ans Gate.
+
+## Was nicht so kam wie angekündigt
+
+1. **Das Risiko „Zug gespeichert, aber als Fehler gemeldet" ließ sich nicht belegen.** Acht Formen von
+   Altbestand (falsch typisierte `kinds`, `testRefs`, `realRef`, `status`, `acceptedFindings`,
+   `analysisFreshness`, `role`, fehlende Beschreibung) über den Import eingespielt, danach ein gültiger Zug:
+   keine der drei Rechnungen warf. Befund 1 oben war aus dem Code gelesen und bleibt unbelegt. Der Umbau ist
+   damit eine Entkopplung, keine Fehlerbehebung. Die Absicherung in `zugBericht` (fehlender Bericht statt
+   Wurf) ist an einem absichtlich unlesbaren Graph-Stand getestet, nicht an einem echten Fall.
+2. **Der Kern importiert das Messwerk weiter**, nur das Gate nicht mehr: `evaluation.ts` braucht den
+   Reifegrad, `harness.ts` die Testauswahl, `tool-contract.ts` einen Typ. Die Sperrklinke „Kern importiert
+   kein Messwerk" (Schritt 5) ist deshalb nicht möglich; geprüft wird nur das Gate.
+3. **Die Rückkopplung der Steuerungsschleife ist nicht kleiner geworden**, sondern um eine Funktion
+   gewachsen (9 → 10): Das Vorschlagswerkzeug liest den Bericht und schreibt wieder ans Gate, das schließt
+   den Kreis über die neue Funktion. Die Rechnung auf der Modellkopie hatte diese Kante nicht. In der
+   Gate-Kette ist die Rückkopplung wie vorhergesagt auf den Kern geschrumpft (5 → 3).
+
+## Tests
+
+- Rot zuerst: `tests/gate.urteilt-und-speichert.test.ts`, neun Fälle.
+- Angepasst: `harness.fit-advisory`, `work-order`, `mcp.silent-advisories` (das Architekturmaß wird im
+  Probelauf geprüft; neu: beim echten Schreiben steht es nicht).
+- Volllauf: 178 von 181 Dateien grün. Rot: die zwei Link-Modus-Tests und
+  `tests/arch.optimization-dry-run.spike.test.ts` — die festgeschriebene Autopilot-Messung, die sich mit
+  jedem Modellzug verschiebt (heute zum vierten Mal neu festgeschrieben).
+
+## Vorhersage vor dem Bau (auf einer Modellkopie gerechnet)
+
+Rückkopplung der Steuerungsschleife von 9 auf 7 Funktionen, der Gate-Kette von 5 auf 3. Eingetreten ist
+nur das Zweite, siehe oben.

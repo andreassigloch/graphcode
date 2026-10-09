@@ -59,7 +59,7 @@ The top triad is anchored at the SYS node, but only two legs are edges: `SYS -co
 
 **1 · UC + REQ.** What the system does for whom → `se:author-uc`, then `se:author-req` (REQ-with-test invariant). Requirements are what the FUNCs will have to satisfy — they precede the functions.
 
-**2 · Architecture targets.** → `se:target-profile`, **before any cut.** Without declared weights, every `fitAdvisory` on a mutation reports *movement* (`regressions: [...]`) but not whether that movement is damage — you never said what you wanted. Targets turn the advisory from a reading into a verdict.
+**2 · Architecture targets.** → `se:target-profile`, **before any cut.** Without declared weights, every `fitAdvisory` on a dry run reports *movement* (`regressions: [...]`) but not whether that movement is damage — you never said what you wanted. Targets turn the advisory from a reading into a verdict.
 
 **3 · The triad, level 1.** Strictly in this inner order:
 

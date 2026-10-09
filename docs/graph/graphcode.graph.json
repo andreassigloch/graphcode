@@ -4244,6 +4244,18 @@
       "description": "Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis. (CR-GC-770)"
     },
     {
+      "id": "FLOW-zug-bericht",
+      "type": "FLOW",
+      "name": "Bericht zum Zug",
+      "description": "Die Berichte zum Zug in der Antwort der zwei Werkzeuge, die berichten: graph_mutate an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)"
+    },
+    {
+      "id": "FLOW-zug-staende",
+      "type": "FLOW",
+      "name": "Stand davor und danach",
+      "description": "Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil herausgibt. Ein geblockter Zug hat kein Paar. (CR-GC-778)"
+    },
+    {
       "id": "FUNC-apply-reseed",
       "type": "FUNC",
       "name": "applyReseed",
@@ -5478,6 +5490,18 @@
       }
     },
     {
+      "id": "FUNC-zug-bericht",
+      "type": "FUNC",
+      "name": "zugBericht(before",
+      "description": "Rechnet aus dem Stand vor und nach einem Zug die Berichte: Steuerwert und Dateiliste, auf Wunsch das Architekturmass. Scheitert die Rechnung, nennt das Ergebnis den fehlenden Bericht, statt zu werfen. Rein, ohne Store. (CR-GC-778)",
+      "status": "done",
+      "realRef": {
+        "file": "src/kernel/measure/zug-bericht.ts",
+        "symbol": "zugBericht",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "MOD-agent-surface",
       "type": "MOD",
       "name": "agent-surface — Skill-Treiber",
@@ -5708,6 +5732,16 @@
       "description": "Setting zum Vergleich graphcode-Modus vs. Claude-Code-classic über eine fixe Task-Suite, 2 LLMs (groß + klein/lokal), mit Token-Counter + Quality-Scorer. Liefert task×mode×LLM → {tokens, success, quality} und belegt token-efficiency + reduced-llm + code-quality. NUR Requirement — Harness-Bau ist Realisierung (eigene CR).",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-bericht-ist-kein-urteil",
+      "type": "REQ",
+      "name": "Ein Bericht ist kein Urteil",
+      "description": "Das Gate urteilt und speichert; die Berichte zu einem Zug rechnet es nicht. Wer berichtet, rechnet aus dem Stand davor und danach, den das Gate herausgibt. Scheitert die Rechnung, bleibt der Zug angewandt und gemeldet, und die Antwort nennt den fehlenden Bericht. Das Architekturmass steht nur im Probelauf, nicht beim echten Schreiben.",
+      "status": "done",
       "kinds": [
         "functional"
       ]
@@ -7719,6 +7753,18 @@
       }
     },
     {
+      "id": "SCHEMA-zug-bericht",
+      "type": "SCHEMA",
+      "name": "Bericht zum Zug",
+      "description": "Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass nur auf Wunsch. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778)",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/kernel/measure/zug-bericht.ts",
+        "symbol": "ZugBericht",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SYS-graphcode",
       "type": "SYS",
       "name": "GraphCode",
@@ -8326,6 +8372,21 @@
           "file": "tests/mutate.formate-ops.test.ts",
           "tool": "vitest",
           "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "TEST-gate-urteilt-und-speichert",
+      "type": "TEST",
+      "name": "Das Gate urteilt und speichert",
+      "description": "Die Antwort des Gates traegt keinen Bericht und das Gate importiert das Messwerk nicht; ein angenommener Zug gibt den Stand davor und danach heraus, ein geblockter nicht; der Bericht traegt seinen Vertrag; scheitert die Messung, bleibt der Zug angewandt und die Antwort nennt den fehlenden Bericht. (CR-GC-778)",
+      "testRefs": [
+        {
+          "file": "tests/gate.urteilt-und-speichert.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-10-09T20:00:00.000Z"
         }
       ]
     },
@@ -14164,6 +14225,11 @@
     },
     {
       "source": "FCHAIN-apply-gate",
+      "target": "FUNC-zug-bericht",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
       "target": "REQ-code-governed-quality",
       "type": "satisfy"
     },
@@ -14923,6 +14989,11 @@
       "type": "compose"
     },
     {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-zug-bericht",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-test-ingest",
       "target": "FUNC-mutate",
       "type": "compose"
@@ -15309,9 +15380,8 @@
     },
     {
       "source": "FLOW-fit-advisory",
-      "target": "FUNC-mutate",
-      "type": "io",
-      "weight": "1"
+      "target": "FUNC-zug-bericht",
+      "type": "io"
     },
     {
       "source": "FLOW-fit-advisory",
@@ -16738,6 +16808,31 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-zug-bericht",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-zug-bericht",
+      "target": "FUNC-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-zug-bericht",
+      "target": "SCHEMA-zug-bericht",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-zug-staende",
+      "target": "FUNC-zug-bericht",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-zug-staende",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
       "source": "FUNC-apply-reseed",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -17110,6 +17205,11 @@
     {
       "source": "FUNC-block-gate",
       "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-gate",
+      "target": "FUNC-zug-bericht",
       "type": "compose"
     },
     {
@@ -18401,6 +18501,11 @@
     },
     {
       "source": "FUNC-mutate",
+      "target": "FLOW-zug-staende",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-mutate",
       "target": "REQ-confidence-tier",
       "type": "satisfy",
       "weight": 1,
@@ -19069,6 +19174,21 @@
     {
       "source": "FUNC-vorschlag",
       "target": "REQ-recommend-next-step",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-zug-bericht",
+      "target": "MOD-kernel-measure",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-zug-bericht",
+      "target": "FLOW-zug-bericht",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-zug-bericht",
+      "target": "REQ-bericht-ist-kein-urteil",
       "type": "satisfy"
     },
     {
@@ -20210,6 +20330,16 @@
     {
       "source": "TEST-formate-ops",
       "target": "REQ-mcp-tool-registry",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gate-urteilt-und-speichert",
+      "target": "REQ-bericht-ist-kein-urteil",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gate-urteilt-und-speichert",
+      "target": "SCHEMA-zug-bericht",
       "type": "verify"
     },
     {
@@ -21566,6 +21696,11 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "REQ-bericht-ist-kein-urteil",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "REQ-done-iff-no-focus",
       "type": "compose"
     },
@@ -21995,5 +22130,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 671
+  "graphVersion": 672
 }

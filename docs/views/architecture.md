@@ -121,6 +121,7 @@
 | `FUNC-view-intplan` | FUNC | se-view-intplan (Integrations-/Testplan) |
 | `FUNC-view-rtm` | FUNC | se-view-rtm (RTM) |
 | `FUNC-vorschlag` | FUNC | Vorschlag nach dem Zug |
+| `FUNC-zug-bericht` | FUNC | zugBericht(before |
 | `MOD-agent-surface` | MOD | agent-surface — Skill-Treiber |
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
 | `MOD-kernel` | MOD | kernel — Store, Gate, Regeln, OpLog |
@@ -245,3 +246,4 @@
 | `FUNC-view-intplan` | `MOD-agent-surface` |
 | `FUNC-view-rtm` | `MOD-agent-surface` |
 | `FUNC-vorschlag` | `MOD-loop` |
+| `FUNC-zug-bericht` | `MOD-kernel-measure` |

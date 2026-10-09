@@ -63,7 +63,7 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
-- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-arch-fitness` → `FUNC-claim-store-lock` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-session-shutdown` → `FUNC-tool-context`
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-arch-fitness` → `FUNC-claim-store-lock` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-session-shutdown` → `FUNC-tool-context` → `FUNC-zug-bericht`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (serialize∘parse): `FUNC-decode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-read-tools`
@@ -78,7 +78,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` ·
 - `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
 - `FCHAIN-skill-help` — Skill erklaert: `FUNC-se-help`
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
-- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-vorschlag`
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-vorschlag` → `FUNC-zug-bericht`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 

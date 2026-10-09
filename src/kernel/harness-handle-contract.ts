@@ -50,6 +50,7 @@ const Surface = z.object({
   listElements: member('listElements'),
   testImpact: member('testImpact'),
   mutate: member('mutate'),
+  mutateWithStates: member('mutateWithStates'),
   evaluateRules: member('evaluateRules'),
   importGraph: member('importGraph'),
   seedFromJson: member('seedFromJson'),

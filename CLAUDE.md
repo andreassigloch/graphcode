@@ -54,8 +54,10 @@ compressing a large result.
   **operations**, not edits — they replace the state, kernel-internal; neither a second write path
   nor a gate bypass (CR-GC-467).
 - **Dependency direction is a DAG** — `kernel ← loop ← projections ← surface ← index/cli`. The
-  kernel (store · measurement · gate) knows no client; measurement (readiness, fit-advisory,
-  test-selection, similarity) sits *below* the gate because the gate judges with it. Enforced by
+  kernel (store · measurement · gate) knows no client. The gate judges by rules and stores,
+  nothing else: it imports no measurement and hands out the state before and after an accepted
+  edit; whoever reports on an edit computes from that pair (CR-GC-778). Measurement (readiness,
+  fit-advisory, test-selection) stays in the kernel because the harness reports with it. Enforced by
   `tests/import-boundaries.test.ts` as a ratchet: the known debt is listed there and may only
   shrink (CR-GC-467; derivation and measurement in CR-DRAFT-GC-466).
 - **Two trees** — `MOD` is the dependency tree, `FUNC` the value tree (Grounding · Führung ·

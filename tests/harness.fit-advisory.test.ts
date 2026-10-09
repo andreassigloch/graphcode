@@ -1,10 +1,11 @@
 /**
- * CR-GC-274 — Fit-Gate Härtegrad 1: Δm-Advisory pro Mutation am Apply-Gate.
+ * CR-GC-274 — Fit-Gate Härtegrad 1: Δm-Advisory zu einem Zug.
  *
- * Eine MESSUNG, kein Gate: jede erfolgreiche Mutation (auch dryRun) trägt
- * fitAdvisory (ℝ⁶ vor/nach/Δ auf layer:'arch'); tier/success bleiben allein
- * regelbestimmt — auch bei benannten Regressionen. Geblockte Mutationen
- * tragen KEIN Advisory. Real disk Kuzu (temp dir), no mocks.
+ * Eine MESSUNG, kein Gate: zu jedem angenommenen Zug (auch dryRun) laesst sich das
+ * fitAdvisory rechnen (ℝ⁶ vor/nach/Δ auf layer:'arch'); tier/success bleiben allein
+ * regelbestimmt — auch bei benannten Regressionen. Ein geblockter Zug traegt KEIN Advisory.
+ * Seit CR-GC-778 rechnet es nicht mehr das Gate, sondern der Aufrufer aus dem Paar, das das
+ * Gate herausgibt (`mitBericht`). Real disk Kuzu (temp dir), no mocks.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync } from 'node:fs';
@@ -13,7 +14,8 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { mitBericht } from '../src/kernel/measure/zug-bericht.js';
+import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return {
@@ -43,9 +45,12 @@ const FIXTURE = {
   ],
 };
 
-describe('Fit-Advisory (CR-GC-274): Δm-Messung am Gate, nie ein Blocker', () => {
+describe('Fit-Advisory (CR-GC-274): Δm-Messung zum Zug, nie ein Blocker', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
+  /** Der Zug mit Bericht, wie `graph_mutate` im Probelauf und `graph_suggest` ihn bilden. */
+  const zug = async (commands: MutateCommand[], opts?: { dryRun?: boolean }) =>
+    mitBericht(await harness.mutateWithStates(commands, opts), harness.getMetricPolicy(), { fit: true });
 
   beforeEach(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-fit-advisory-'));
@@ -61,7 +66,7 @@ describe('Fit-Advisory (CR-GC-274): Δm-Messung am Gate, nie ein Blocker', () =>
   });
 
   it('erfolgreiche Arch-Mutation trägt fitAdvisory mit konsistentem Δ (ℝ⁶, arch)', async () => {
-    const res = await harness.mutate([
+    const res = await zug([
       { op: 'add-edge', edge: { sourceId: 'FUNC-b', targetId: 'FUNC-c', edgeType: 'compose', attributes: {} } },
     ]);
     expect(res.success).toBe(true);
@@ -78,7 +83,7 @@ describe('Fit-Advisory (CR-GC-274): Δm-Messung am Gate, nie ein Blocker', () =>
   });
 
   it('Doku-Mutation außerhalb des Arch-Layers → Δ = 0 auf allen Dimensionen', async () => {
-    const res = await harness.mutate([
+    const res = await zug([
       { op: 'update-node', node: { uid: 'REQ-x', description: 'doc only, topology untouched' } },
     ]);
     expect(res.success).toBe(true);
@@ -89,7 +94,7 @@ describe('Fit-Advisory (CR-GC-274): Δm-Messung am Gate, nie ein Blocker', () =>
   it('Regression wird benannt, aber nicht geblockt (Messung, kein Gate)', async () => {
     // allocate a→MOD zieht eine Cross-Community-Kante ein: irgendeine Dimension
     // verliert (mindestens modifiability/coherence auf dem Mini-Graphen).
-    const res = await harness.mutate([
+    const res = await zug([
       { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'MOD-core', edgeType: 'allocate', attributes: {} } },
     ]);
     expect(res.success).toBe(true);
@@ -101,7 +106,7 @@ describe('Fit-Advisory (CR-GC-274): Δm-Messung am Gate, nie ein Blocker', () =>
   });
 
   it('geblockte Mutation trägt KEIN fitAdvisory', async () => {
-    const res = await harness.mutate([
+    const res = await zug([
       { op: 'add-edge', edge: { sourceId: 'REQ-x', targetId: 'TEST-x', edgeType: 'compose', attributes: {} } },
     ]);
     expect(res.success).toBe(false);
@@ -110,7 +115,7 @@ describe('Fit-Advisory (CR-GC-274): Δm-Messung am Gate, nie ein Blocker', () =>
   });
 
   it('dryRun-Verdict trägt fitAdvisory; loadGraph restauriert', async () => {
-    const res = await harness.mutate(
+    const res = await zug(
       [{ op: 'add-edge', edge: { sourceId: 'FUNC-b', targetId: 'FUNC-c', edgeType: 'compose', attributes: {} } }],
       { dryRun: true },
     );

@@ -20,6 +20,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { openMeasured } from '../src/surface/measured.js';
 import { congruenceWorkOrder, type FileMove } from '../src/kernel/measure/work-order.js';
+import { mitBericht } from '../src/kernel/measure/zug-bericht.js';
 
 type N = { uid: string; type: string; name: string; attributes?: Record<string, unknown> };
 type E = { sourceId: string; targetId: string; edgeType: string };
@@ -104,10 +105,15 @@ describe('CR-GC-490: der Auftrag erreicht das Mutations-Ergebnis', () => {
     writeFileSync(graph, JSON.stringify(FIXTURE));
     const m = await openMeasured({ graph, systemId: 'wo' });
     try {
-      const res = (await m.harness.mutate([
-        { op: 'delete-edge', edge: { sourceId: 'FUNC-a', targetId: 'MOD-x', edgeType: 'allocate' } },
-        { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'MOD-y', edgeType: 'allocate' } },
-      ])) as unknown as { success: boolean; tier: string; workOrder: { moves: FileMove[]; blind: unknown[] } };
+      // CR-GC-778: der Auftrag entsteht aus dem Paar, das das Gate herausgibt.
+      const res = mitBericht(
+        await m.harness.mutateWithStates([
+          { op: 'delete-edge', edge: { sourceId: 'FUNC-a', targetId: 'MOD-x', edgeType: 'allocate' } },
+          { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'MOD-y', edgeType: 'allocate' } },
+        ]),
+        m.harness.getMetricPolicy(),
+        { fit: false },
+      ) as unknown as { success: boolean; tier: string; workOrder: { moves: FileMove[]; blind: unknown[] } };
 
       expect(res.success, 'der Zug selbst muss durchs Gate gehen').toBe(true);
       expect(res.workOrder.moves).toEqual([

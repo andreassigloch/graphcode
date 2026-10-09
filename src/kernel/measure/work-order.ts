@@ -22,35 +22,39 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod/v4';
 import { readRealRef } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;
 
 /** Eine Datei, die dem Modell-Zug folgen muss. `null` heißt „keinem Modul zugeordnet". */
-export interface FileMove {
-  readonly file: string;
-  readonly funcId: string;
-  readonly fromMod: string | null;
-  readonly toMod: string | null;
-}
+export const FileMove = z.object({
+  file: z.string(),
+  funcId: z.string(),
+  fromMod: z.string().nullable(),
+  toMod: z.string().nullable(),
+});
+export type FileMove = z.infer<typeof FileMove>;
 
 /** Eine FUNC, deren Zuordnung sich bewegt hat, ohne dass eine Datei ableitbar wäre. */
-export interface BlindFunc {
-  readonly funcId: string;
-  readonly reason: string;
-}
+export const BlindFunc = z.object({
+  funcId: z.string(),
+  reason: z.string(),
+});
+export type BlindFunc = z.infer<typeof BlindFunc>;
 
-export interface WorkOrder {
+export const WorkOrder = z.object({
   /** Was zu tun ist — je Zeile eine Datei, ein Von und ein Nach. */
-  readonly moves: readonly FileMove[];
+  moves: z.array(FileMove),
   /**
    * Was NICHT ableitbar war. Pflichtfeld, nicht Kür: eine leere `moves`-Liste bei 30 blinden
    * FUNCs wäre dieselbe Fail-open-Lüge wie das Sammel-Token aus CR-GC-489. Ohne Bindung gibt
    * es keinen Auftrag — und genau das muss dastehen.
    */
-  readonly blind: readonly BlindFunc[];
-}
+  blind: z.array(BlindFunc),
+});
+export type WorkOrder = z.infer<typeof WorkOrder>;
 
 /**
  * Sagt dieser Auftrag ueberhaupt etwas? (CR-GC-576)

@@ -477,10 +477,11 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // dem Gate nach MOD-agent-surface folgen. Derselbe Befund, ein Schritt weiter.
       // CR-GC-776 (graphVersion 667) — NEU GEMESSEN, nachdem der Executor aus dem Modell fiel (85 Knoten):
       // jetzt drei Zuege, alle drei ziehen Kernfunktionen nach MOD-agent-surface. Weiter derselbe Befund.
+      // CR-GC-778 (graphVersion 672) — NEU GEMESSEN, nachdem die Berichte zum Zug aus dem Gate wanderten:
+      // wieder zwei Zuege statt drei.
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-mutate -allocate-> MOD-agent-surface (retire MOD-kernel)',
         'FUNC-list-elements -allocate-> MOD-agent-surface (retire MOD-kernel)',
-        'FUNC-merge-nodes -allocate-> MOD-agent-surface (retire MOD-kernel)',
       ]);
       expect(
         rest

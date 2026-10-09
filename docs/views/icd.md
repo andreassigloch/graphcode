@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 49 SCHEMA · 123 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 50 SCHEMA · 125 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -59,6 +59,7 @@
 | `SCHEMA-tool-registry` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
+| `SCHEMA-zug-bericht` | src/kernel/measure/zug-bericht.ts#ZugBericht | reviewed |
 
 ## Flows (producer → consumer)
 
@@ -92,7 +93,7 @@
 | `FLOW-element-slice` | `FUNC-list-elements` | `ACTOR-agent` |
 | `FLOW-expand-subgraph` | `FUNC-graph-expand` | `FUNC-read-tools` |
 | `FLOW-export-pending` | `FUNC-export-marker` | `ACTOR-owner` |
-| `FLOW-fit-advisory` | `FUNC-fit-advisory` | `FUNC-mutate` |
+| `FLOW-fit-advisory` | `FUNC-fit-advisory` | `FUNC-zug-bericht` |
 | `FLOW-formatE-artifact-agent` | `ACTOR-agent` | `FUNC-decode` |
 | `FLOW-formatE-artifact-read-tools` | `FUNC-read-tools` | `ACTOR-agent` |
 | `FLOW-function-criticality` | `FUNC-function-criticality` | `ACTOR-dashboard` |
@@ -187,3 +188,5 @@
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-version-bump` | `ACTOR-owner` | `FUNC-migrate-schema` · `FUNC-schema-guard` |
 | `FLOW-vorschlag` | `FUNC-vorschlag` | `ACTOR-owner` |
+| `FLOW-zug-bericht` | `FUNC-zug-bericht` | `ACTOR-agent` · `FUNC-graph-suggest` |
+| `FLOW-zug-staende` | `FUNC-mutate` | `FUNC-zug-bericht` |

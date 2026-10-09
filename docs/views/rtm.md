@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 144 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 145 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 48 REQ
@@ -60,7 +60,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 97 REQ
+### funktional (SWE.1 · HWE.1) — 98 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -70,6 +70,7 @@
 | `REQ-artifact-freshness` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-kernel` |
 | `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` | `MOD-kernel` · `MOD-projections` |
+| `REQ-bericht-ist-kein-urteil` | `TEST-gate-urteilt-und-speichert` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 | `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` | `MOD-kernel` · `MOD-surface` |
 | `REQ-cache-layering` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-chain-metrics` | `TEST-graph-metrics` | `FUNC-chain-metrics` | `MOD-projections` |
@@ -197,7 +198,7 @@
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 
-### Entwurf (SWE.3 · HWE.2) — 107 REQ
+### Entwurf (SWE.3 · HWE.2) — 108 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -208,6 +209,7 @@
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-graph-impact` | `MOD-kernel` |
 | `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` | `MOD-kernel` · `MOD-projections` |
 | `REQ-batch-seed-performance` | `TEST-batch-seed` | `MOD-kernel` | — |
+| `REQ-bericht-ist-kein-urteil` | `TEST-gate-urteilt-und-speichert` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 | `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` | `MOD-kernel` · `MOD-surface` |
 | `REQ-buildable-standalone` | `TEST-distribution` | `MOD-surface` | — |
 | `REQ-cache-layering` | `TEST-cache` | `MOD-surface` | — |
