@@ -380,8 +380,9 @@ export function opencodeConfigContent(repoRoot: string, existingRaw: string | nu
         type: 'local',
         command: ['node', HOST_ENTRY, 'mcp'],
         enabled: true,
-        // CR-GC-723: OpenCode = lokales LLM — der Server bietet dann graph_delegate + Leser.
-        environment: { GRAPHCODE_CLIENT_LLM: 'local', ...keptEnv(mcp, 'environment'), GRAPHCODE_HOST_PORT: String(port) },
+        // CR-GC-769: auch OpenCode schreibt direkt durchs Gate. Das Profil local (Executor im Host,
+        // CR-GC-723) ist geparkt; ein von Hand gesetzter Wert bleibt (keptEnv).
+        environment: { GRAPHCODE_CLIENT_LLM: 'cloud', ...keptEnv(mcp, 'environment'), GRAPHCODE_HOST_PORT: String(port) },
       },
     },
   };

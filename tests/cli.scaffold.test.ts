@@ -484,7 +484,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     const cfg = JSON.parse(readFileSync(join(repo, OPENCODE), 'utf8'));
     expect(cfg.mcp.graphcode.environment).toEqual({
       GRAPHCODE_NO_GVE: '1',
-      GRAPHCODE_CLIENT_LLM: 'local',
+      GRAPHCODE_CLIENT_LLM: 'cloud',
       GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)),
     });
   });
@@ -611,7 +611,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
           type: 'local',
           command: ['node', HOST_ENTRY, 'mcp'],
           enabled: true,
-          environment: { GRAPHCODE_CLIENT_LLM: 'local', GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
+          environment: { GRAPHCODE_CLIENT_LLM: 'cloud', GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
         },
       },
     });

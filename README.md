@@ -69,12 +69,15 @@ Both host configs are written every time and **merged**, never overwritten: a fo
 in `.mcp.json`, or your `provider` / `model` block in `opencode.json`, survives `init`, `update`
 and `remove` — only the `graphcode` entry is ours.
 
-Each config tells the server which kind of model drives the client, via `GRAPHCODE_CLIENT_LLM`:
-`.mcp.json` says `cloud` (the full tool list), `opencode.json` says `local`. A local model gets
-`graph_delegate` plus the readers `graph_elements`, `graph_get_node`, `graph_context` — it hands
-model work to the executor in the host instead of writing through the gate itself, so the `local`
-profile needs the `executor` section in `graphcode.config.jsonc` and refuses to start without it.
-Running OpenCode against a cloud model? Set the value to `cloud`; `update` keeps your choice.
+Each config sets `GRAPHCODE_CLIENT_LLM`, and both say `cloud`: the client gets the full tool list
+and writes through the gate itself. That holds for a local model too — a local model with a
+thinking level follows the `vorschlag` each write returns.
+
+The value `local` selects a **parked** path (since 2026-10-03): the client gets only
+`graph_delegate` plus the readers `graph_elements`, `graph_get_node`, `graph_context` and hands
+model work to the executor in the host. It needs the `executor` section in
+`graphcode.config.jsonc` and refuses to start without it. The path still works and is tested, but
+it is no longer measured or developed. `update` keeps whichever value a config already carries.
 
 **2. Add `.graphcode/` to `.gitignore` and reload your agent host.** Claude Code picks up
 `.mcp.json`, OpenCode picks up `opencode.json`. The agent then sees a `graphcode` MCP server

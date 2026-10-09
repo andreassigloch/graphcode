@@ -808,6 +808,9 @@
 | `CR-GC-766` | relation | `FUNC-take-steering-snapshot` |
 | `CR-GC-767` | relation | `FUNC-chain-metrics` |
 | `CR-GC-767` | relation | `REQ-chain-metrics` |
+| `CR-GC-769` | relation | `FUNC-graph-delegate` |
+| `CR-GC-769` | relation | `FUNC-run-executor` |
+| `CR-GC-769` | relation | `FUNC-tool-profile` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

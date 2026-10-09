@@ -1290,7 +1290,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 > auch in: `FUNC-block-antrieb`
 
-Die Treiberschleife selbst: stellt je Turn die Anfrage an den Modell-Draht, liest die Antwort, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Jeden sonstigen Werkzeugaufruf des Modells, auch einen selbst angeforderten dryRun, prueft die Werkzeug-Ausfuehrung gegen dasselbe strenge Eingabeschema wie der MCP-Server, bevor sie ihn an die Registry weiterreicht. (CR-GC-506, CR-GC-507, CR-GC-647)
+Die Treiberschleife selbst: stellt je Turn die Anfrage an den Modell-Draht, liest die Antwort, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Jeden sonstigen Werkzeugaufruf des Modells, auch einen selbst angeforderten dryRun, prueft die Werkzeug-Ausfuehrung gegen dasselbe strenge Eingabeschema wie der MCP-Server, bevor sie ihn an die Registry weiterreicht. (CR-GC-506, CR-GC-507, CR-GC-647) GEPARKT seit 2026-10-03: der Executor im Host ist eingefroren, erreichbar nur ueber das Profil local oder graphcode run. (CR-GC-769)
 
 io ◀ `FLOW-candidate-ranking` · `FLOW-channel-idle-nudge` · `FLOW-channel-system-prompt` · `FLOW-delegation-request` · `FLOW-gate-outcome` · `FLOW-model-answer` · `FLOW-owner-answer` · `FLOW-recovered-batch` · `FLOW-round-injection` · `FLOW-round-prompt` · `FLOW-run-request` · io ▶ `FLOW-candidate-batch` · `FLOW-model-request` · `FLOW-open-question` · allocate ▶ `MOD-loop`
 
@@ -1612,7 +1612,7 @@ Verification ◀ `TEST-executor-truncation` (integration) · `TEST-one-driver-lo
 
 ##### 3.2.4.21  `FUNC-graph-delegate` — graph_delegate
 
-Das Werkzeug graph_delegate: ein angedockter Client gibt Modellarbeit an den Executor im Host-Prozess ab. Die Frage des Executors beendet den Aufruf, der naechste Aufruf mit der Antwort setzt den Lauf fort; nach dem Warte-Budget kehrt der Aufruf mit laeuft zurueck. Modell und Gateway kommen aus dem Abschnitt executor der Repo-Config, ohne ihn gibt es das Werkzeug nicht.
+Das Werkzeug graph_delegate: ein angedockter Client gibt Modellarbeit an den Executor im Host-Prozess ab. Die Frage des Executors beendet den Aufruf, der naechste Aufruf mit der Antwort setzt den Lauf fort; nach dem Warte-Budget kehrt der Aufruf mit laeuft zurueck. Modell und Gateway kommen aus dem Abschnitt executor der Repo-Config, ohne ihn gibt es das Werkzeug nicht. GEPARKT seit 2026-10-03: ein lokales Modell mit Denkstufe schreibt selbst durchs Gate, gefuehrt vom vorschlag nach jedem Zug; der Weg wird nicht mehr gemessen. (CR-GC-769)
 
 io ◀ `FLOW-delegate-call` · io ▶ `FLOW-delegation-request` · allocate ▶ `MOD-surface`
 
@@ -3512,7 +3512,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 > auch in: `FUNC-block-ruestzeug`
 
-Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723)
+Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723) GEPARKT seit 2026-10-03: das Profil local samt Executor im Host; das Scaffold setzt fuer beide Hosts cloud, der Weg bleibt waehlbar und getestet. (CR-GC-769)
 
 io ◀ `FLOW-mcp-tool-registry` · io ▶ `FLOW-tool-profile-view` · allocate ▶ `MOD-surface`
 
@@ -4134,7 +4134,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 > auch in: `FCHAIN-repo-lifecycle`
 
-Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723)
+Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723) GEPARKT seit 2026-10-03: das Profil local samt Executor im Host; das Scaffold setzt fuer beide Hosts cloud, der Weg bleibt waehlbar und getestet. (CR-GC-769)
 
 io ◀ `FLOW-mcp-tool-registry` · io ▶ `FLOW-tool-profile-view` · allocate ▶ `MOD-surface`
 
@@ -5658,7 +5658,7 @@ Verification ◀ `TEST-executor-preflight` (integration) · satisfy ◀ `FUNC-pr
 
 > auch in: `FCHAIN-steering-loop`
 
-Die Treiberschleife selbst: stellt je Turn die Anfrage an den Modell-Draht, liest die Antwort, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Jeden sonstigen Werkzeugaufruf des Modells, auch einen selbst angeforderten dryRun, prueft die Werkzeug-Ausfuehrung gegen dasselbe strenge Eingabeschema wie der MCP-Server, bevor sie ihn an die Registry weiterreicht. (CR-GC-506, CR-GC-507, CR-GC-647)
+Die Treiberschleife selbst: stellt je Turn die Anfrage an den Modell-Draht, liest die Antwort, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Jeden sonstigen Werkzeugaufruf des Modells, auch einen selbst angeforderten dryRun, prueft die Werkzeug-Ausfuehrung gegen dasselbe strenge Eingabeschema wie der MCP-Server, bevor sie ihn an die Registry weiterreicht. (CR-GC-506, CR-GC-507, CR-GC-647) GEPARKT seit 2026-10-03: der Executor im Host ist eingefroren, erreichbar nur ueber das Profil local oder graphcode run. (CR-GC-769)
 
 io ◀ `FLOW-candidate-ranking` · `FLOW-channel-idle-nudge` · `FLOW-channel-system-prompt` · `FLOW-delegation-request` · `FLOW-gate-outcome` · `FLOW-model-answer` · `FLOW-owner-answer` · `FLOW-recovered-batch` · `FLOW-round-injection` · `FLOW-round-prompt` · `FLOW-run-request` · io ▶ `FLOW-candidate-batch` · `FLOW-model-request` · `FLOW-open-question` · allocate ▶ `MOD-loop`
 

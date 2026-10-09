@@ -3173,6 +3173,12 @@
       "description": "docs/cr/open/CR-GC-768-17-von-21-wirkketten-nicht-bewertbar-sae.md"
     },
     {
+      "id": "CR-GC-769",
+      "type": "CR",
+      "name": "Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet",
+      "description": "docs/cr/open/CR-GC-769-scaffold-stellt-opencode-auf-den-eingefr.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -4921,7 +4927,7 @@
       "id": "FUNC-graph-delegate",
       "type": "FUNC",
       "name": "graph_delegate",
-      "description": "Das Werkzeug graph_delegate: ein angedockter Client gibt Modellarbeit an den Executor im Host-Prozess ab. Die Frage des Executors beendet den Aufruf, der naechste Aufruf mit der Antwort setzt den Lauf fort; nach dem Warte-Budget kehrt der Aufruf mit laeuft zurueck. Modell und Gateway kommen aus dem Abschnitt executor der Repo-Config, ohne ihn gibt es das Werkzeug nicht.",
+      "description": "Das Werkzeug graph_delegate: ein angedockter Client gibt Modellarbeit an den Executor im Host-Prozess ab. Die Frage des Executors beendet den Aufruf, der naechste Aufruf mit der Antwort setzt den Lauf fort; nach dem Warte-Budget kehrt der Aufruf mit laeuft zurueck. Modell und Gateway kommen aus dem Abschnitt executor der Repo-Config, ohne ihn gibt es das Werkzeug nicht. GEPARKT seit 2026-10-03: ein lokales Modell mit Denkstufe schreibt selbst durchs Gate, gefuehrt vom vorschlag nach jedem Zug; der Weg wird nicht mehr gemessen. (CR-GC-769)",
       "realRef": {
         "file": "src/surface/delegate.ts",
         "symbol": "bindDelegateTool",
@@ -5378,7 +5384,7 @@
       "id": "FUNC-run-executor",
       "type": "FUNC",
       "name": "runExecutor",
-      "description": "Die Treiberschleife selbst: stellt je Turn die Anfrage an den Modell-Draht, liest die Antwort, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Jeden sonstigen Werkzeugaufruf des Modells, auch einen selbst angeforderten dryRun, prueft die Werkzeug-Ausfuehrung gegen dasselbe strenge Eingabeschema wie der MCP-Server, bevor sie ihn an die Registry weiterreicht. (CR-GC-506, CR-GC-507, CR-GC-647)",
+      "description": "Die Treiberschleife selbst: stellt je Turn die Anfrage an den Modell-Draht, liest die Antwort, uebergibt jeden Kandidaten-Batch dem Gate-Zugang und zaehlt Runden, Turns, Anwendungen und Rejections. Die Best-of-N-Runde (executor-bestofn.ts) liest die Rangfolge und waehlt den Gewinner. Jeden sonstigen Werkzeugaufruf des Modells, auch einen selbst angeforderten dryRun, prueft die Werkzeug-Ausfuehrung gegen dasselbe strenge Eingabeschema wie der MCP-Server, bevor sie ihn an die Registry weiterreicht. (CR-GC-506, CR-GC-507, CR-GC-647) GEPARKT seit 2026-10-03: der Executor im Host ist eingefroren, erreichbar nur ueber das Profil local oder graphcode run. (CR-GC-769)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor.ts",
@@ -5683,7 +5689,7 @@
       "id": "FUNC-tool-profile",
       "type": "FUNC",
       "name": "applyToolProfile(registry",
-      "description": "Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723)",
+      "description": "Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723) GEPARKT seit 2026-10-03: das Profil local samt Executor im Host; das Scaffold setzt fuer beide Hosts cloud, der Weg bleibt waehlbar und getestet. (CR-GC-769)",
       "status": "done",
       "realRef": {
         "file": "src/surface/tool-profile.ts",
@@ -15039,6 +15045,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-769",
+      "target": "FUNC-graph-delegate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-769",
+      "target": "FUNC-run-executor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-769",
+      "target": "FUNC-tool-profile",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23909,5 +23930,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 649
+  "graphVersion": 651
 }

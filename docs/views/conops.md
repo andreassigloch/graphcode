@@ -429,6 +429,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-765` | n/a | Leitlinie und Verweise nach dem Split auf graphanalyze umstellen | `REQ-benchmark-harness` |
 | `CR-GC-766` | n/a | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) | `FUNC-take-steering-snapshot` |
 | `CR-GC-767` | n/a | Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics | `FUNC-chain-metrics` · `REQ-chain-metrics` |
+| `CR-GC-769` | n/a | Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet | `FUNC-graph-delegate` · `FUNC-run-executor` · `FUNC-tool-profile` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

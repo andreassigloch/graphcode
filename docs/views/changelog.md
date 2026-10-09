@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 378 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 379 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 378 CR · 338 done · 4 open.
+Total: 379 CR · 338 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -440,3 +440,4 @@ Total: 378 CR · 338 done · 4 open.
 | `CR-GC-766` | n/a | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) |
 | `CR-GC-767` | n/a | Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics |
 | `CR-GC-768` | n/a | 17 von 21 Wirkketten nicht bewertbar: Saecke, lose Glieder, fehlende Glieder |
+| `CR-GC-769` | n/a | Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet |

@@ -10,6 +10,11 @@
  *   local — `graph_delegate` (der EINE Schreibweg) + drei Leser. Kein `graph_mutate`: zwei
  *           Schreibwege nebeneinander wären eine Wahl, die das lokale Modell falsch trifft.
  *
+ * GEPARKT seit 2026-10-03 (Entscheid des Autors, CR-GC-769): das Profil `local` und mit ihm der
+ * Executor im Host. Ein lokales Modell mit Denkstufe (qwen3.8) schreibt selbst durchs Gate, gefuehrt
+ * vom `vorschlag` nach jedem Zug; das Scaffold setzt deshalb fuer beide Hosts `cloud`. Der Weg bleibt
+ * waehlbar und getestet, wird aber nicht mehr gemessen und nicht weiterentwickelt.
+ *
  * Der Server sieht den Client, nicht dessen Modell — deshalb sagt es ihm die Host-Config
  * (`GRAPHCODE_CLIENT_LLM`, vom Scaffold in `.mcp.json` / `opencode.json` geschrieben). Das Profil
  * ist eine SICHT auf die eine Registry: dieselben Handler, kein zweiter Bindungspfad.

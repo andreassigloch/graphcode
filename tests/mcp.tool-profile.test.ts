@@ -135,20 +135,21 @@ describe('TEST-tool-profile: das Scaffold setzt die Variable (CR-GC-723)', () =>
   });
   afterEach(() => rmSync(repo, { recursive: true, force: true }));
 
-  it('(g) opencode.json = local, .mcp.json = cloud; ein Handwert überlebt update', async () => {
+  // CR-GC-769: beide Hosts schreiben direkt; das Profil local (Executor im Host) ist geparkt.
+  it('(g) opencode.json = cloud, .mcp.json = cloud; ein Handwert überlebt update', async () => {
     await scaffold('init', { repoRoot: repo });
     const oc = (): Record<string, string> =>
       JSON.parse(readFileSync(join(repo, 'opencode.json'), 'utf8')).mcp.graphcode.environment;
     const cc = (): Record<string, string> =>
       JSON.parse(readFileSync(join(repo, '.mcp.json'), 'utf8')).mcpServers.graphcode.env;
-    expect(oc()[CLIENT_LLM_ENV]).toBe('local');
+    expect(oc()[CLIENT_LLM_ENV]).toBe('cloud');
     expect(cc()[CLIENT_LLM_ENV]).toBe('cloud');
 
-    // OpenCode gegen ein Cloud-Modell: der Betreiber stellt um, update lässt es stehen.
+    // Der geparkte Executor-Weg bleibt wählbar: der Betreiber stellt um, update lässt es stehen.
     const edited = JSON.parse(readFileSync(join(repo, 'opencode.json'), 'utf8'));
-    edited.mcp.graphcode.environment[CLIENT_LLM_ENV] = 'cloud';
+    edited.mcp.graphcode.environment[CLIENT_LLM_ENV] = 'local';
     writeFileSync(join(repo, 'opencode.json'), JSON.stringify(edited, null, 2) + '\n', 'utf8');
     await scaffold('update', { repoRoot: repo });
-    expect(oc()[CLIENT_LLM_ENV]).toBe('cloud');
+    expect(oc()[CLIENT_LLM_ENV]).toBe('local');
   });
 });
