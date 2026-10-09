@@ -3758,13 +3758,13 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 > auch in: `FUNC-block-ruestzeug`
 
-Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723) GEPARKT seit 2026-10-03: das Profil local samt Executor im Host; das Scaffold setzt fuer beide Hosts cloud, der Weg bleibt waehlbar und getestet. (CR-GC-769)
+Schneidet die gebundene Registry auf das Profil des Schreibwegs zu, den der Client waehlt, gelesen aus GRAPHCODE_WRITE_PATH: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723) GEPARKT seit 2026-10-03: das Profil delegate samt Executor im Host; das Scaffold setzt fuer beide Hosts direct, der Weg bleibt waehlbar und getestet. (CR-GC-769) Der Schalter gilt je Client; den alten Namen GRAPHCODE_CLIENT_LLM weist der Host ab, update schreibt ihn um. (CR-GC-772)
 
 io ◀ `FLOW-mcp-tool-registry` · io ▶ `FLOW-tool-profile-view` · allocate ▶ `MOD-surface`
 
 ###### `REQ-tool-profile-by-llm` — Werkzeugprofil je LLM-Art
 
-Der MCP-Server bietet je LLM-Art des Clients ein Werkzeugprofil: cloud die volle Registry, local nur graph_delegate und die Leser graph_elements, graph_get_node, graph_context. Im lokalen Profil gibt es genau einen Schreibweg, den Executor im Host; ohne konfigurierten Executor startet es nicht.
+Der MCP-Server bietet je Schreibweg des Clients ein Werkzeugprofil: direct die volle Registry, delegate nur graph_delegate und die Leser graph_elements, graph_get_node, graph_context. Im Profil delegate gibt es genau einen Schreibweg, den Executor im Host; ohne konfigurierten Executor startet es nicht. Der Schalter gilt je Client; nicht gesetzt heisst direct, ein unbekannter Wert und der fruehere Schaltername sind ein Startfehler.
 
 priority: must · status: n/a · kinds: functional
 
@@ -4380,13 +4380,13 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 > auch in: `FCHAIN-repo-lifecycle`
 
-Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723) GEPARKT seit 2026-10-03: das Profil local samt Executor im Host; das Scaffold setzt fuer beide Hosts cloud, der Weg bleibt waehlbar und getestet. (CR-GC-769)
+Schneidet die gebundene Registry auf das Profil des Schreibwegs zu, den der Client waehlt, gelesen aus GRAPHCODE_WRITE_PATH: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723) GEPARKT seit 2026-10-03: das Profil delegate samt Executor im Host; das Scaffold setzt fuer beide Hosts direct, der Weg bleibt waehlbar und getestet. (CR-GC-769) Der Schalter gilt je Client; den alten Namen GRAPHCODE_CLIENT_LLM weist der Host ab, update schreibt ihn um. (CR-GC-772)
 
 io ◀ `FLOW-mcp-tool-registry` · io ▶ `FLOW-tool-profile-view` · allocate ▶ `MOD-surface`
 
 ###### `REQ-tool-profile-by-llm` — Werkzeugprofil je LLM-Art
 
-Der MCP-Server bietet je LLM-Art des Clients ein Werkzeugprofil: cloud die volle Registry, local nur graph_delegate und die Leser graph_elements, graph_get_node, graph_context. Im lokalen Profil gibt es genau einen Schreibweg, den Executor im Host; ohne konfigurierten Executor startet es nicht.
+Der MCP-Server bietet je Schreibweg des Clients ein Werkzeugprofil: direct die volle Registry, delegate nur graph_delegate und die Leser graph_elements, graph_get_node, graph_context. Im Profil delegate gibt es genau einen Schreibweg, den Executor im Host; ohne konfigurierten Executor startet es nicht. Der Schalter gilt je Client; nicht gesetzt heisst direct, ein unbekannter Wert und der fruehere Schaltername sind ein Startfehler.
 
 priority: must · status: n/a · kinds: functional
 

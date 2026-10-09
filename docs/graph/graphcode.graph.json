@@ -5761,7 +5761,7 @@
       "id": "FUNC-tool-profile",
       "type": "FUNC",
       "name": "applyToolProfile(registry",
-      "description": "Schneidet die gebundene Registry auf das Profil der LLM-Art des Clients zu, gelesen aus GRAPHCODE_CLIENT_LLM: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723) GEPARKT seit 2026-10-03: das Profil local samt Executor im Host; das Scaffold setzt fuer beide Hosts cloud, der Weg bleibt waehlbar und getestet. (CR-GC-769)",
+      "description": "Schneidet die gebundene Registry auf das Profil des Schreibwegs zu, den der Client waehlt, gelesen aus GRAPHCODE_WRITE_PATH: eine Sicht auf dieselben Handler, kein zweiter Bindungspfad. Der Host-Socket traegt weiter die volle Registry. (CR-GC-723) GEPARKT seit 2026-10-03: das Profil delegate samt Executor im Host; das Scaffold setzt fuer beide Hosts direct, der Weg bleibt waehlbar und getestet. (CR-GC-769) Der Schalter gilt je Client; den alten Namen GRAPHCODE_CLIENT_LLM weist der Host ab, update schreibt ihn um. (CR-GC-772)",
       "status": "done",
       "realRef": {
         "file": "src/surface/tool-profile.ts",
@@ -7589,7 +7589,7 @@
       "id": "REQ-tool-profile-by-llm",
       "type": "REQ",
       "name": "Werkzeugprofil je LLM-Art",
-      "description": "Der MCP-Server bietet je LLM-Art des Clients ein Werkzeugprofil: cloud die volle Registry, local nur graph_delegate und die Leser graph_elements, graph_get_node, graph_context. Im lokalen Profil gibt es genau einen Schreibweg, den Executor im Host; ohne konfigurierten Executor startet es nicht.",
+      "description": "Der MCP-Server bietet je Schreibweg des Clients ein Werkzeugprofil: direct die volle Registry, delegate nur graph_delegate und die Leser graph_elements, graph_get_node, graph_context. Im Profil delegate gibt es genau einen Schreibweg, den Executor im Host; ohne konfigurierten Executor startet es nicht. Der Schalter gilt je Client; nicht gesetzt heisst direct, ein unbekannter Wert und der fruehere Schaltername sind ein Startfehler.",
       "kinds": [
         "functional"
       ]
@@ -15215,6 +15215,11 @@
     {
       "source": "CR-GC-770",
       "target": "FUNC-vorschlag",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-772",
+      "target": "FUNC-tool-profile",
       "type": "relation"
     },
     {
@@ -24316,5 +24321,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 661
+  "graphVersion": 662
 }

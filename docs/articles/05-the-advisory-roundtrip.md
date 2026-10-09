@@ -147,7 +147,7 @@ fill them very differently.
 **The driver column describes a parked path.** Since 2026-10-03 the built-in executor is frozen: a
 local model with a thinking level writes through the gate itself, exactly like a frontier model, and
 both are steered by the per-edit suggestion. The driver is still selectable
-(`GRAPHCODE_CLIENT_LLM=local` plus an `executor` section) and still tested, but no longer measured
+(`GRAPHCODE_WRITE_PATH=delegate` plus an `executor` section) and still tested, but no longer measured
 or developed. The column stays as the record of what it does.
 
 | Piece | Driver (built-in executor, parked) | Host (Claude Code / OpenCode) |

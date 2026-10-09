@@ -31,8 +31,8 @@ import { scaffold } from '../src/surface/scaffold.js';
 import {
   applyToolProfile,
   assertProfileServable,
-  clientLlmFromEnv,
-  CLIENT_LLM_ENV,
+  writePathFromEnv,
+  WRITE_PATH_ENV,
   LOCAL_READERS,
 } from '../src/surface/tool-profile.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
@@ -79,17 +79,17 @@ describe('TEST-tool-profile: Werkzeugprofil je LLM-Art (CR-GC-723)', () => {
   });
 
   it('(a) cloud lässt die Registry unverändert', () => {
-    expect(applyToolProfile(mitExecutor, 'cloud')).toBe(mitExecutor);
+    expect(applyToolProfile(mitExecutor, 'direct')).toBe(mitExecutor);
   });
 
   it('(b) local bietet über tools/list genau graph_delegate und die drei Leser', async () => {
-    const names = (await listed(applyToolProfile(mitExecutor, 'local'))).map((t) => t.name).sort();
+    const names = (await listed(applyToolProfile(mitExecutor, 'delegate'))).map((t) => t.name).sort();
     expect(names).toEqual(['graph_context', 'graph_delegate', 'graph_elements', 'graph_get_node']);
     expect(names).not.toContain('graph_mutate');
   });
 
   it('(c) die Leser sind die gebundenen Werkzeuge, nur die Beschreibung ist gekürzt', async () => {
-    const local = applyToolProfile(mitExecutor, 'local');
+    const local = applyToolProfile(mitExecutor, 'delegate');
     for (const name of LOCAL_READERS) {
       const voll = mitExecutor[name].description;
       expect(voll.startsWith(local[name].description)).toBe(true);
@@ -105,22 +105,30 @@ describe('TEST-tool-profile: Werkzeugprofil je LLM-Art (CR-GC-723)', () => {
 
   it('(d) local ohne Executor ist ein Fehler, der die Config nennt', () => {
     const ohne = bindToolsToHarness(harness);
-    expect(() => applyToolProfile(ohne, 'local')).toThrow(/executor.*graphcode\.config\.jsonc/);
-    expect(() => assertProfileServable('local', false)).toThrow(/graph_delegate/);
-    expect(() => assertProfileServable('local', true)).not.toThrow();
-    expect(() => assertProfileServable('cloud', false)).not.toThrow();
+    expect(() => applyToolProfile(ohne, 'delegate')).toThrow(/executor.*graphcode\.config\.jsonc/);
+    expect(() => assertProfileServable('delegate', false)).toThrow(/graph_delegate/);
+    expect(() => assertProfileServable('delegate', true)).not.toThrow();
+    expect(() => assertProfileServable('direct', false)).not.toThrow();
   });
 
-  it('(e) nicht gesetzt = cloud, unbekannter Wert = Fehler', () => {
-    expect(clientLlmFromEnv({})).toBe('cloud');
-    expect(clientLlmFromEnv({ [CLIENT_LLM_ENV]: '' })).toBe('cloud');
-    expect(clientLlmFromEnv({ [CLIENT_LLM_ENV]: 'local' })).toBe('local');
-    expect(clientLlmFromEnv({ [CLIENT_LLM_ENV]: 'cloud' })).toBe('cloud');
-    expect(() => clientLlmFromEnv({ [CLIENT_LLM_ENV]: 'lokal' })).toThrow(/local \| cloud/);
+  it('(e) nicht gesetzt = direct, unbekannter Wert = Fehler', () => {
+    expect(writePathFromEnv({})).toBe('direct');
+    expect(writePathFromEnv({ [WRITE_PATH_ENV]: '' })).toBe('direct');
+    expect(writePathFromEnv({ [WRITE_PATH_ENV]: 'delegate' })).toBe('delegate');
+    expect(writePathFromEnv({ [WRITE_PATH_ENV]: 'direct' })).toBe('direct');
+    expect(() => writePathFromEnv({ [WRITE_PATH_ENV]: 'local' })).toThrow(/direct \| delegate/);
+  });
+
+  // CR-GC-772: kein zweiter Schalter. Die alte Variable wird nicht still weitergelesen.
+  it('(e2) die alte Variable GRAPHCODE_CLIENT_LLM ist ein Fehler, der den neuen Schalter und update nennt', () => {
+    expect(() => writePathFromEnv({ GRAPHCODE_CLIENT_LLM: 'cloud' })).toThrow(/GRAPHCODE_WRITE_PATH.*graphcode update/);
+    expect(() => writePathFromEnv({ GRAPHCODE_CLIENT_LLM: 'local', [WRITE_PATH_ENV]: 'delegate' })).toThrow(
+      /GRAPHCODE_WRITE_PATH/,
+    );
   });
 
   it('(f) die Nutzlast des lokalen Profils bleibt unter ihrer Schranke (Sperrklinke)', async () => {
-    const zeichen = (await listed(applyToolProfile(mitExecutor, 'local'))).reduce(
+    const zeichen = (await listed(applyToolProfile(mitExecutor, 'delegate'))).reduce(
       (summe, t) => summe + JSON.stringify(t).length,
       0,
     );
@@ -135,21 +143,41 @@ describe('TEST-tool-profile: das Scaffold setzt die Variable (CR-GC-723)', () =>
   });
   afterEach(() => rmSync(repo, { recursive: true, force: true }));
 
-  // CR-GC-769: beide Hosts schreiben direkt; das Profil local (Executor im Host) ist geparkt.
-  it('(g) opencode.json = cloud, .mcp.json = cloud; ein Handwert überlebt update', async () => {
+  // CR-GC-769: beide Hosts schreiben direkt; der Weg ueber den Executor im Host ist geparkt.
+  it('(g) opencode.json = direct, .mcp.json = direct; ein Handwert überlebt update', async () => {
     await scaffold('init', { repoRoot: repo });
     const oc = (): Record<string, string> =>
       JSON.parse(readFileSync(join(repo, 'opencode.json'), 'utf8')).mcp.graphcode.environment;
     const cc = (): Record<string, string> =>
       JSON.parse(readFileSync(join(repo, '.mcp.json'), 'utf8')).mcpServers.graphcode.env;
-    expect(oc()[CLIENT_LLM_ENV]).toBe('cloud');
-    expect(cc()[CLIENT_LLM_ENV]).toBe('cloud');
+    expect(oc()[WRITE_PATH_ENV]).toBe('direct');
+    expect(cc()[WRITE_PATH_ENV]).toBe('direct');
 
     // Der geparkte Executor-Weg bleibt wählbar: der Betreiber stellt um, update lässt es stehen.
     const edited = JSON.parse(readFileSync(join(repo, 'opencode.json'), 'utf8'));
-    edited.mcp.graphcode.environment[CLIENT_LLM_ENV] = 'local';
+    edited.mcp.graphcode.environment[WRITE_PATH_ENV] = 'delegate';
     writeFileSync(join(repo, 'opencode.json'), JSON.stringify(edited, null, 2) + '\n', 'utf8');
     await scaffold('update', { repoRoot: repo });
-    expect(oc()[CLIENT_LLM_ENV]).toBe('local');
+    expect(oc()[WRITE_PATH_ENV]).toBe('delegate');
+  });
+
+  // CR-GC-772: update schreibt die alte Variable um, statt sie stehen zu lassen.
+  it('(h) update übersetzt GRAPHCODE_CLIENT_LLM: local wird delegate, cloud wird direct, der alte Schlüssel fällt', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const alt = (datei: string, pfad: (c: any) => Record<string, string>, wert: string): void => {
+      const c = JSON.parse(readFileSync(join(repo, datei), 'utf8'));
+      delete pfad(c)[WRITE_PATH_ENV];
+      pfad(c).GRAPHCODE_CLIENT_LLM = wert;
+      writeFileSync(join(repo, datei), JSON.stringify(c, null, 2) + '\n', 'utf8');
+    };
+    alt('opencode.json', (c) => c.mcp.graphcode.environment, 'local');
+    alt('.mcp.json', (c) => c.mcpServers.graphcode.env, 'cloud');
+    await scaffold('update', { repoRoot: repo });
+    const oc = JSON.parse(readFileSync(join(repo, 'opencode.json'), 'utf8')).mcp.graphcode.environment;
+    const cc = JSON.parse(readFileSync(join(repo, '.mcp.json'), 'utf8')).mcpServers.graphcode.env;
+    expect(oc[WRITE_PATH_ENV]).toBe('delegate');
+    expect(cc[WRITE_PATH_ENV]).toBe('direct');
+    expect('GRAPHCODE_CLIENT_LLM' in oc).toBe(false);
+    expect('GRAPHCODE_CLIENT_LLM' in cc).toBe(false);
   });
 });

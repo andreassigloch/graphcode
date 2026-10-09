@@ -26,44 +26,30 @@ Zwei Dinge, die beim Lesen des Codes klar wurden:
 - Der Abschnitt `executor` wird in graphcode geprüft (`DelegateConfigSchema`, `src/surface/delegate.ts`),
   nicht in contracts. Ein neues Feld dort braucht kein Familien-Review.
 
-## Vom Autor zu entscheiden, bevor gebaut wird
+## Entschieden (Autor, 2026-10-09)
 
-**Gilt der Schalter je Repo oder je Client?**
+Je Client bleiben, umbenennen: `GRAPHCODE_WRITE_PATH=direct|delegate`, Voreinstellung `direct`.
 
-| | je Repo (`graphcode.config.jsonc`) | je Client (Host-Datei, wie heute) |
-|---|---|---|
-| Ein Schalter, ein Ort | ja | zwei Dateien je Repo |
-| Claude Code und OpenCode am selben Repo | beide bekommen dieselbe Werkzeugliste | jeder seine eigene |
-| Passt zu „lokal immer OpenCode, Frontier immer Claude Code" | nur, wenn ein Repo nie beides zugleich nutzt | ja |
+Grund gegen den Repo-Schalter: Claude Code und OpenCode am selben Repo bekämen dieselbe Werkzeugliste;
+bei `energymanager` verlöre Claude Code das direkte Schreiben.
 
-Beispiel: `energymanager` wurde mit Claude Code geführt und soll lokal mit OpenCode weiterlaufen. Mit einem
-Repo-Schalter auf „nur Delegation" verlöre dort auch Claude Code `graph_mutate`.
+## Umgesetzt
 
-Vorschlag: **je Client bleiben, aber umbenennen** — der Schalter sagt dann, was er tut
-(`GRAPHCODE_WRITE_PATH=direct|delegate`), und die Voreinstellung ist `direct`. Der Repo-Abschnitt
-`executor` bleibt die Stelle, an der das Modell des Executors steht.
+- `src/surface/tool-profile.ts`: `writePathFromEnv`, Werte `direct` und `delegate`. Steht die alte Variable
+  noch in der Umgebung, startet der Host nicht und nennt den neuen Schalter und `graphcode update`.
+- `src/surface/scaffold-templates.ts`: beide Host-Dateien bekommen `GRAPHCODE_WRITE_PATH: direct`. `update`
+  schreibt einen alten Wert um (`cloud` wird `direct`, `local` wird `delegate`) und entfernt den alten Schlüssel.
+- `src/surface/mcp-server.ts`, `README.md`, zwei Dokumente unter `docs/`.
+- Der Dateititel dieser CR nennt noch die verworfene Repo-Variante.
 
-## Umfang (bei beiden Varianten)
+## Tests
 
-`src/surface/tool-profile.ts`, `src/surface/mcp-server.ts`, `src/surface/scaffold-templates.ts`, bei der
-Repo-Variante zusätzlich `src/surface/delegate.ts`; `README.md`; `tests/mcp.tool-profile.test.ts`,
-`tests/cli.scaffold.test.ts`, `tests/mvp-e2e.test.ts`; Modellknoten `FUNC-tool-profile`.
+Rot zuerst, elf Fälle in `tests/mcp.tool-profile.test.ts` und `tests/cli.scaffold.test.ts`: neuer Name und neue
+Werte, alte Variable als Fehler, `update` übersetzt beide alten Werte.
 
-## Akzeptanz
+## Folge für bestehende Repos
 
-- Rot zuerst.
-- Kein zweiter Schalter: die alte Variable wird nicht still weitergelesen. Steht sie noch in einer Host-Datei,
-  startet der Host mit einer Meldung, die den neuen Schalter nennt — oder `update` schreibt sie um; welche
-  der beiden, steht nach der Entscheidung oben fest.
-- Die fünf Probe-Repos mit konfiguriertem Executor sind benannt behandelt.
-- `npm run verify:code`, vor dem Schließen `npm run verify:full CR-GC-772`.
-
----
-
-## Umfang laut `graph_impact`
-
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
-
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+Ein Repo, das graphcode aktualisiert, braucht `graphcode update` (macht `upgrade` mit). Ohne das startet der
+Host nicht, solange die alte Variable in der Host-Datei steht. Betroffen sind alle Repos mit graphcode; die
+fünf mit konfiguriertem Executor (`agentdiary-local`, `-local-3`, `-local-run1`, `todo-probe-c`, `todo-probe-d`)
+behalten nach `update` ihren Weg als `delegate`.

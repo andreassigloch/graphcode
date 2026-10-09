@@ -432,6 +432,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-767` | n/a | Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics | `FUNC-chain-metrics` · `REQ-chain-metrics` |
 | `CR-GC-769` | n/a | Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet | `FUNC-graph-delegate` · `FUNC-run-executor` · `FUNC-tool-profile` |
 | `CR-GC-770` | n/a | Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt | `FUNC-block-antrieb` · `FUNC-inventory-channel` · `FUNC-vorschlag` |
+| `CR-GC-772` | n/a | Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt | `FUNC-tool-profile` |
 | `CR-GC-773` | n/a | Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche | `FUNC-compose-faltung` · `FUNC-fund-kontext` · `FUNC-nd-similarity` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,

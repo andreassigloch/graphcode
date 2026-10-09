@@ -153,7 +153,7 @@ ein lokales Modell kostet zu viel Kontext, OpenCode mit dem Claude-Abo ist nicht
 **Geparkt seit 2026-10-03:** der Executor im Host. Auf diesem Weg gab der lokale Client die
 Modellarbeit an eine eingebaute Treiberschleife ab, die selbst das Modell rief, mehrere Kandidaten
 bewertete und den besten ans Gate gab. Seit das Denk-Modell direkt durchs Gate schreibt, wird der
-Weg nicht mehr gemessen. Er ist über `GRAPHCODE_CLIENT_LLM=local` weiter wählbar (CR-GC-769).
+Weg nicht mehr gemessen. Er ist über `GRAPHCODE_WRITE_PATH=delegate` je Client weiter wählbar (CR-GC-769, CR-GC-772).
 
 ## Abgleich mit den älteren Darstellungen
 
@@ -180,17 +180,16 @@ Was noch abweicht:
 
 | Befund | Grund |
 |---|---|
-| Die Executor-Kette ist nicht bewertbar | Die Dublettensuche hat keinen Fluss zu ihrem Aufrufer; dafür fehlt ein Vertrag (R-31) |
 | Der Zug des Nutzers steht nicht als Fluss im Modell | Er läuft über zwei Akteure außerhalb des Systems; die Kette tritt am Nutzer aus und am Gate wieder ein |
 
 ## Entschieden (Autor, 2026-10-09)
 
 - Die Führung von außen ist **eine** Kette.
 - Der Vorschlag trägt den Vertrag der Gate-Antwort.
-- Helfer ohne eigenen Vertrag werden Teil ihres Aufrufers.
+- Helfer bekommen einen eigenen Vertrag im Code und einen Fluss im Modell (CR-GC-773); beide Ketten sind bewertbar.
+- Der Schalter für den Executor gilt je Client und heißt `GRAPHCODE_WRITE_PATH` (CR-GC-772).
 
 ## Noch offen
 
-1. **Die Marken stehen neben der Schleife.** Sie wählt nach Stufen, nicht nach Marken, und nennt sie dem
-   Nutzer nicht. Ist das gewollt, oder soll der Vorschlag das Erreichen einer Marke melden?
-2. **Der Schalter für den Executor** heißt nach der Modellart, wählt aber den Schreibweg (CR-GC-770, Teil 2).
+**Die Marken stehen neben der Schleife.** Sie wählt nach Stufen, nicht nach Marken, und nennt sie dem
+Nutzer nicht. Ist das gewollt, oder soll der Vorschlag das Erreichen einer Marke melden?

@@ -814,6 +814,7 @@
 | `CR-GC-770` | relation | `FUNC-block-antrieb` |
 | `CR-GC-770` | relation | `FUNC-inventory-channel` |
 | `CR-GC-770` | relation | `FUNC-vorschlag` |
+| `CR-GC-772` | relation | `FUNC-tool-profile` |
 | `CR-GC-773` | relation | `FUNC-compose-faltung` |
 | `CR-GC-773` | relation | `FUNC-fund-kontext` |
 | `CR-GC-773` | relation | `FUNC-nd-similarity` |
