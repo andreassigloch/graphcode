@@ -166,25 +166,31 @@ Weg nicht mehr gemessen. Er ist über `GRAPHCODE_CLIENT_LLM=local` weiter wählb
 Keine der drei zeigt die heutige schließende Kante: den Vorschlag an den Nutzer nach jeder
 angewandten Änderung.
 
-## Wo das eigene Modell von diesem Dokument abweicht
+## Die Schleife im eigenen Modell
 
-Die Kette `FCHAIN-steering-loop` im graphcode-Modell bildet die Schleife nicht ab:
+Seit CR-GC-770 steht die Schleife so im graphcode-Modell:
 
-| Befund | Beleg |
+- **`FCHAIN-steering-loop`, Führung von außen:** die fünf Schritte oben als eine Kette, mit Store und
+  Regelprüfung als Gliedern und dem Vorschlag als eigener Funktion (`FUNC-vorschlag`). Bewertbar, eine
+  Rückkopplung: Gate → Store → Messen.
+- **`FCHAIN-executor-loop`, Executor im Host:** der geparkte Treiber. Schritt, Gate, Fit-Bewertung und
+  Snapshot teilt er mit der ersten Kette.
+
+Was noch abweicht:
+
+| Befund | Grund |
 |---|---|
-| Die Schleife schließt im Modell nicht. Vom Gate führt kein Weg zurück zum Messen; Store und Regelprüfung sind keine Glieder. | Erreichbarkeit im Graphen, 2026-10-09 |
-| Schritt ③ fehlt. Keine Funktion ist an `src/loop/next-step.ts` gebunden. | Bindungen im Graphen |
-| Die Kette mischt die Schleife mit dem geparkten Executor. Die Stufe „Kandidaten bewerten" gibt es nur dort. | 31 Glieder, davon rund die Hälfte Executor |
-| Sieben Glieder liegen außerhalb des Funktionsbaums. | kein übergeordneter Block |
-| Drei Helfer ohne eigenen Vertrag halten die Kette unbewertbar. | Regel R-31 |
+| Die Executor-Kette ist nicht bewertbar | Die Dublettensuche hat keinen Fluss zu ihrem Aufrufer; dafür fehlt ein Vertrag (R-31) |
+| Der Zug des Nutzers steht nicht als Fluss im Modell | Er läuft über zwei Akteure außerhalb des Systems; die Kette tritt am Nutzer aus und am Gate wieder ein |
 
-## Offene Fragen an den Autor
+## Entschieden (Autor, 2026-10-09)
 
-1. **Soll-Schnitt im Modell:** eine Kette mit genau den fünf Schritten oben, über Gate, Store,
-   Messen, Fokus, Vorschlag; der Executor als eigene, geparkte Kette?
-2. **Der Zug des Nutzers** läuft über einen Akteur außerhalb des Systems. Nach der Kettenregel endet
-   eine Kette am Akteur. Gilt die Schleife dann als eine Kette, die am Nutzer aus- und wieder
-   eintritt, oder als zwei?
-3. **Die Marken stehen neben der Schleife.** Sie wählt nach Stufen, nicht nach Marken, und nennt sie
-   dem Nutzer nicht. Ist das gewollt, oder soll der Vorschlag das Erreichen einer Marke melden?
-4. **Die drei Darstellungen:** neu zeichnen oder durch dieses Dokument ersetzen?
+- Die Führung von außen ist **eine** Kette.
+- Der Vorschlag trägt den Vertrag der Gate-Antwort.
+- Helfer ohne eigenen Vertrag werden Teil ihres Aufrufers.
+
+## Noch offen
+
+1. **Die Marken stehen neben der Schleife.** Sie wählt nach Stufen, nicht nach Marken, und nennt sie dem
+   Nutzer nicht. Ist das gewollt, oder soll der Vorschlag das Erreichen einer Marke melden?
+2. **Der Schalter für den Executor** heißt nach der Modellart, wählt aber den Schreibweg (CR-GC-770, Teil 2).

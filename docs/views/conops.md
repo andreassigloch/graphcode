@@ -77,10 +77,11 @@ Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessene
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-llm` · `ACTOR-owner`
 
+- `FCHAIN-executor-loop` — Executor im Host (geparkt): `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-delegate` → `FUNC-inventory-channel` → `FUNC-list-elements` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-read-anthropic-stream` → `FUNC-read-openai-stream` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-task-abschluss`
 - `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
 - `FCHAIN-skill-help` — Skill erklaert: `FUNC-se-help`
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
-- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compose-faltung` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-fund-kontext` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-delegate` → `FUNC-graph-readiness` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-inventory-channel` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-read-anthropic-stream` → `FUNC-read-openai-stream` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-task-abschluss`
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-vorschlag`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -344,7 +345,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-649` | done | formatEToCommands nach loop — Voraussetzung fuer den Executor-Preflight auf Format-E | `FUNC-decode` |
 | `CR-GC-650` | done | Executor emittiert Format-E statt commands (Faktor 2,4-3,3 Ausgabe) — Rig-Messung zuerst | `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-preflight` · `FUNC-run-executor` |
 | `CR-GC-651` | done | Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1 | `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-generation-step` · `FUNC-run-executor` |
-| `CR-GC-652` | done | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung | `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-generation-step` · `FUNC-inventory-channel` |
+| `CR-GC-652` | done | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung | `FUNC-build-round-injection` · `FUNC-generation-step` · `FUNC-inventory-channel` |
 | `CR-GC-653` | done | Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen) | `FUNC-build-round-injection` · `FUNC-inventory-channel` · `FUNC-run-executor` |
 | `CR-GC-654` | done | Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch | `FUNC-run-executor` |
 | `CR-GC-655` | done | Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req) | `FUNC-build-round-injection` · `FUNC-generation-step` |
@@ -371,7 +372,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-675` | done | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus | `FUNC-generation-step` · `FUNC-run-executor` |
 | `CR-GC-680` | open | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie | `FUNC-se-retro` |
 | `CR-GC-681` | open | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md | `REQ-published-counts-match-code` |
-| `CR-GC-682` | done | Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung | `FUNC-compose-faltung` · `FUNC-inventory-channel` · `REQ-inventory-switch` |
+| `CR-GC-682` | done | Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung | `FUNC-inventory-channel` · `REQ-inventory-switch` |
 | `CR-GC-683` | done | Konformanz-Extraktor sieht nur <repo>/src und relative Imports - im Monorepo sigloch-modules 0 Import-Endpunkte, RC-05 und RC-09 dort blind | `FUNC-check-code-conformance` |
 | `CR-GC-684` | done | Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst | `FUNC-graph-suggest` |
 | `CR-GC-685` | done | MCP-Schreibflaeche auf Format-E reduzieren: graph_realize und commands-Parameter raus, graph_merge-Beschreibung falsch (beschreibt Knoten-Merge statt Branch-Replay) | `FUNC-bind-tools` · `FUNC-mutate` |
@@ -430,6 +431,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-766` | n/a | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) | `FUNC-take-steering-snapshot` |
 | `CR-GC-767` | n/a | Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics | `FUNC-chain-metrics` · `REQ-chain-metrics` |
 | `CR-GC-769` | n/a | Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet | `FUNC-graph-delegate` · `FUNC-run-executor` · `FUNC-tool-profile` |
+| `CR-GC-770` | n/a | Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt | `FUNC-block-antrieb` · `FUNC-inventory-channel` · `FUNC-vorschlag` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

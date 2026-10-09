@@ -3244,6 +3244,12 @@
       "status": "reviewed"
     },
     {
+      "id": "FCHAIN-executor-loop",
+      "type": "FCHAIN",
+      "name": "Executor im Host (geparkt)",
+      "description": "GEPARKT seit 2026-10-03. Die eingebaute Treiberschleife: ein Lauf-Verb oder eine Delegation startet sie, sie baut den Runden-Prompt aus dem gerechneten Schritt, ruft das Modell, prueft die Kandidaten vor und gibt den besten ans Gate. Aus FCHAIN-steering-loop geloest: dort stand sie vermischt mit der Fuehrung von aussen. Schritt, Gate, Fit-Bewertung und Snapshot teilt sie mit jener Kette. (CR-GC-770)"
+    },
+    {
       "id": "FCHAIN-generation-states",
       "type": "FCHAIN",
       "name": "Generierung: von der Saat zur Freigabe",
@@ -3347,7 +3353,7 @@
       "id": "FCHAIN-steering-loop",
       "type": "FCHAIN",
       "name": "Kenngroessen-Steuerungsschleife",
-      "description": "Die Schleife in der Reihenfolge der Messgroessen-Landschaft: messen, projizieren, Fokus waehlen, Kandidaten bewerten, Prompt stellen, Gate. Nicht zu verwechseln mit FCHAIN-advisory-roundtrip: der antwortet auf eine Frage, diese Kette waehlt selbst den naechsten Schritt.",
+      "description": "Die Fuehrung von aussen, fuer beide Clients: messen, Fokus waehlen, vorschlagen, Zug des Nutzers, Gate, und ueber den Store zurueck zum Messen. Die Kette tritt am Nutzer aus dem System aus und kommt mit seinem Zug am Gate wieder herein. Nicht zu verwechseln mit FCHAIN-advisory-roundtrip, der auf eine Frage antwortet, und mit FCHAIN-executor-loop, dem geparkten Treiber. (CR-GC-770)",
       "status": "reviewed"
     },
     {
@@ -3691,6 +3697,12 @@
       "type": "FLOW",
       "name": "Generierungsschritt zum Vorschlag",
       "description": "Der gerechnete naechste Schritt, wie ihn das Vorschlagswerkzeug als Grundlage nimmt. Beleg: src/loop/suggest.ts, graph_suggest ruft generationStep. (CR-GC-768)"
+    },
+    {
+      "id": "FLOW-generation-step-vorschlag",
+      "type": "FLOW",
+      "name": "Generierungsschritt zum Vorschlag an den Nutzer",
+      "description": "Der gerechnete Schritt auf dem Weg zum Satz an den Nutzer. Beleg: src/loop/next-step.ts, vorschlagNachAnwendung ruft generationStep. (CR-GC-770)"
     },
     {
       "id": "FLOW-graph-delta",
@@ -4366,6 +4378,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-vorschlag",
+      "type": "FLOW",
+      "name": "Vorschlag an den Nutzer",
+      "description": "Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis. (CR-GC-770)"
+    },
+    {
       "id": "FUNC-apply-reseed",
       "type": "FUNC",
       "name": "applyReseed",
@@ -4486,7 +4504,7 @@
       "id": "FUNC-block-antrieb",
       "type": "FUNC",
       "name": "Antrieb",
-      "description": "Die Treiberschleife zum Modell: Runde bauen, Antwort bergen, Kandidaten vorpruefen, Aehnlichkeiten einspeisen."
+      "description": "GEPARKT seit 2026-10-03. Die Treiberschleife zum Modell: Runde bauen, Antwort bergen, Kandidaten vorpruefen, Aehnlichkeiten einspeisen. (CR-GC-770)"
     },
     {
       "id": "FUNC-block-autorieren",
@@ -4550,6 +4568,12 @@
       "type": "FUNC",
       "name": "Messwerk",
       "description": "Ebene-0-Block Sales-Sicht: Kennzahlen aus dem Modell selbst — Reifegrad, Phasen-Gates, Architektur-Fitness — live, ohne KI. Realisiert durch seine Kinder."
+    },
+    {
+      "id": "FUNC-block-modelldraht",
+      "type": "FUNC",
+      "name": "Modell-Draht",
+      "description": "Der Draht zum Modell-Endpunkt im geparkten Executor: Anfrage stellen, Antwortstrom lesen, Kommando aus Prosa bergen. (CR-GC-770)"
     },
     {
       "id": "FUNC-block-optimierung",
@@ -4700,18 +4724,6 @@
       "realRef": {
         "file": "src/surface/status.ts",
         "symbol": "collectStatus",
-        "lang": "ts"
-      }
-    },
-    {
-      "id": "FUNC-compose-faltung",
-      "type": "FUNC",
-      "name": "Compose-Faltung",
-      "description": "Der Graph als Blackbox-Baum um eine Saat: Baum aus compose, Knoten ausserhalb haengen an ihrem Eigner (verify, io, relation, satisfy, allocate); offen sind Saat, Teilbaum und Vorfahren, Box sind die Geschwister auf dem Weg und die Wurzeln, alle uebrigen als nackter uid-Index. Rein, ohne Store. (CR-GC-682)",
-      "status": "done",
-      "realRef": {
-        "file": "src/loop/faltung.ts",
-        "symbol": "faltung",
         "lang": "ts"
       }
     },
@@ -4888,18 +4900,6 @@
       "realRef": {
         "file": "packages/contracts/src/se/function-criticality.ts",
         "symbol": "functionCriticality",
-        "lang": "ts"
-      }
-    },
-    {
-      "id": "FUNC-fund-kontext",
-      "type": "FUNC",
-      "name": "fundKontext",
-      "description": "Der gerichtete Weg vom Fund zu seinen Kandidaten: ueber compose hinauf bis zum Besitzer (UC oder SYS; ist der Fund selbst einer, nicht weiter), dann hinunter durch den Realisierungsbaum (compose und allocate nur zu FCHAIN, FUNC, MOD, SYS). Gefiltert auf die Fokus-Typen; nennt die Fund-Knoten ohne Besitzer. Rein, ohne Store. (CR-GC-652)",
-      "status": "done",
-      "realRef": {
-        "file": "src/loop/fund-kontext.ts",
-        "symbol": "fundKontext",
         "lang": "ts"
       }
     },
@@ -5149,7 +5149,7 @@
       "id": "FUNC-inventory-channel",
       "type": "FUNC",
       "name": "buildInventoryBlock",
-      "description": "Der Inventar-Kanal der Rundeninjektion: welche vorhandenen Knoten das Modell mitbekommt. Zuschnitt per Mess-Schalter (CR-GC-682): fund = mit Fund aus dessen Kontext (FUNC-fund-kontext), ohne Fund nach Fokus-Typ, reihum, gekappt; index = jeder Knoten als Identitaetszeile ohne Kappe; faltung = der Graph gefaltet um den Fund (FUNC-compose-faltung), ohne Fund der volle Index. Hat ein Fund keinen Besitzer, steht das ausdruecklich da statt einer Ersatzliste. Liest ueber graph_elements und graph_get_edges durch deren Schema-Schicht. (CR-GC-652, CR-GC-682)",
+      "description": "Der Inventar-Kanal der Rundeninjektion: welche vorhandenen Knoten das Modell mitbekommt. Zuschnitt per Mess-Schalter (CR-GC-682): fund = mit Fund aus dessen Kontext, dem gerichteten Weg vom Fund ueber seinen Besitzer in den Realisierungsbaum (src/loop/fund-kontext.ts); ohne Fund nach Fokus-Typ, reihum, gekappt; index = jeder Knoten als Identitaetszeile ohne Kappe; faltung = der Graph als Blackbox-Baum um den Fund gefaltet (src/loop/faltung.ts), ohne Fund der volle Index. Hat ein Fund keinen Besitzer, steht das ausdruecklich da statt einer Ersatzliste. Liest ueber graph_elements und graph_get_edges durch deren Schema-Schicht. Die beiden Helfer waren bis CR-GC-770 eigene Knoten ohne eigenen Vertrag. (CR-GC-652, CR-GC-682, CR-GC-770)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor-inventory.ts",
@@ -5794,6 +5794,17 @@
       "codeRef": null,
       "realRef": {
         "file": ".claude/commands/se-view/rtm.md"
+      }
+    },
+    {
+      "id": "FUNC-vorschlag",
+      "type": "FUNC",
+      "name": "Vorschlag nach dem Zug",
+      "description": "Rechnet nach jeder angewandten Aenderung den naechsten Schritt und fasst ihn in einen Satz an den Nutzer: gewaehlt wie der Schritt fuer einen MCP-Host, mit dem Gedaechtnis der Sitzung. Der Satz reist als Feld vorschlag in der Antwort des Gates und schliesst damit die Schleife zwischen zwei Zuegen. (CR-GC-770)",
+      "realRef": {
+        "file": "src/loop/next-step.ts",
+        "symbol": "vorschlagNachAnwendung",
+        "lang": "ts"
       }
     },
     {
@@ -14188,11 +14199,6 @@
     },
     {
       "source": "CR-GC-652",
-      "target": "FUNC-fund-kontext",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-652",
       "target": "FUNC-generation-step",
       "type": "relation"
     },
@@ -14439,11 +14445,6 @@
     {
       "source": "CR-GC-681",
       "target": "REQ-published-counts-match-code",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-682",
-      "target": "FUNC-compose-faltung",
       "type": "relation"
     },
     {
@@ -15072,6 +15073,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-770",
+      "target": "FUNC-block-antrieb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-770",
+      "target": "FUNC-inventory-channel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-770",
+      "target": "FUNC-vorschlag",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15382,6 +15398,111 @@
     {
       "source": "FCHAIN-doc-export",
       "target": "FUNC-view-rtm",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-authoring-guide",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-build-round-injection",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-call-model",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-compute-steering-delta",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-extract-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-fit-advisory",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-gate-client",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-graph-delegate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-inventory-channel",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-list-elements",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-nd-similarity",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-preflight",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-rank-candidates",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-read-anthropic-stream",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-read-openai-stream",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-run-executor",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-run-verb",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-task-abschluss",
       "type": "compose"
     },
     {
@@ -15921,55 +16042,17 @@
     },
     {
       "source": "FCHAIN-steering-loop",
-      "target": "FUNC-authoring-guide",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-build-round-injection",
-      "type": "compose",
-      "weight": "1"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-call-model",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-compose-faltung",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
       "target": "FUNC-compute-readiness",
       "type": "compose"
     },
     {
       "source": "FCHAIN-steering-loop",
-      "target": "FUNC-compute-steering-delta",
-      "type": "compose",
-      "weight": "1"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-extract-mutate",
-      "type": "compose",
-      "weight": "1"
+      "target": "FUNC-evaluate-rules",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-fit-advisory",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-fund-kontext",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-gate-client",
       "type": "compose"
     },
     {
@@ -15979,12 +16062,12 @@
     },
     {
       "source": "FCHAIN-steering-loop",
-      "target": "FUNC-graph-delegate",
+      "target": "FUNC-graph-readiness",
       "type": "compose"
     },
     {
       "source": "FCHAIN-steering-loop",
-      "target": "FUNC-graph-readiness",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
@@ -15999,60 +16082,12 @@
     },
     {
       "source": "FCHAIN-steering-loop",
-      "target": "FUNC-inventory-channel",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-list-elements",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
       "target": "FUNC-load-config",
       "type": "compose"
     },
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-mutate",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-nd-similarity",
-      "type": "compose",
-      "weight": "1"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-preflight",
-      "type": "compose",
-      "weight": "1"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-rank-candidates",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-read-anthropic-stream",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-read-openai-stream",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-run-executor",
-      "type": "compose",
-      "weight": "1"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-run-verb",
       "type": "compose"
     },
     {
@@ -16073,7 +16108,7 @@
     },
     {
       "source": "FCHAIN-steering-loop",
-      "target": "FUNC-task-abschluss",
+      "target": "FUNC-vorschlag",
       "type": "compose"
     },
     {
@@ -16687,6 +16722,16 @@
     },
     {
       "source": "FLOW-generation-step-suggest",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-generation-step-vorschlag",
+      "target": "FUNC-vorschlag",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-generation-step-vorschlag",
       "target": "SCHEMA-generation-step",
       "type": "relation"
     },
@@ -17764,16 +17809,6 @@
     },
     {
       "source": "FLOW-round-prompt",
-      "target": "FUNC-compose-faltung",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-round-prompt",
-      "target": "FUNC-fund-kontext",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-round-prompt",
       "target": "FUNC-inventory-channel",
       "type": "io"
     },
@@ -18227,6 +18262,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-vorschlag",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-vorschlag",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation"
+    },
+    {
       "source": "FUNC-apply-reseed",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -18453,22 +18498,27 @@
     },
     {
       "source": "FUNC-block-antrieb",
+      "target": "FUNC-block-modelldraht",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-antrieb",
       "target": "FUNC-build-round-injection",
       "type": "compose"
     },
     {
       "source": "FUNC-block-antrieb",
-      "target": "FUNC-call-model",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-antrieb",
-      "target": "FUNC-extract-mutate",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-antrieb",
       "target": "FUNC-gate-client",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-antrieb",
+      "target": "FUNC-graph-delegate",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-antrieb",
+      "target": "FUNC-inventory-channel",
       "type": "compose"
     },
     {
@@ -18484,6 +18534,11 @@
     {
       "source": "FUNC-block-antrieb",
       "target": "FUNC-run-executor",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-antrieb",
+      "target": "FUNC-task-abschluss",
       "type": "compose"
     },
     {
@@ -18837,6 +18892,31 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-block-modelldraht",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-modelldraht",
+      "target": "FUNC-call-model",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-modelldraht",
+      "target": "FUNC-extract-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-modelldraht",
+      "target": "FUNC-read-anthropic-stream",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-modelldraht",
+      "target": "FUNC-read-openai-stream",
+      "type": "compose"
+    },
+    {
       "source": "FUNC-block-optimierung",
       "target": "FUNC-block-urteilsarbeit",
       "type": "compose"
@@ -18874,6 +18954,11 @@
     {
       "source": "FUNC-block-q-improvement",
       "target": "FUNC-target-profile-load",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-q-improvement",
+      "target": "FUNC-vorschlag",
       "type": "compose"
     },
     {
@@ -19144,16 +19229,6 @@
     {
       "source": "FUNC-collect-status",
       "target": "REQ-real-health-check",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-compose-faltung",
-      "target": "MOD-loop",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-compose-faltung",
-      "target": "REQ-inventory-switch",
       "type": "satisfy"
     },
     {
@@ -19430,16 +19505,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-fund-kontext",
-      "target": "MOD-loop",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-fund-kontext",
-      "target": "REQ-round-prompt-injection",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-gate-client",
       "target": "MOD-loop",
       "type": "allocate"
@@ -19482,6 +19547,11 @@
     {
       "source": "FUNC-generation-step",
       "target": "FLOW-generation-step-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-generation-step",
+      "target": "FLOW-generation-step-vorschlag",
       "type": "io"
     },
     {
@@ -20867,6 +20937,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-vorschlag",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-vorschlag",
+      "target": "FLOW-vorschlag",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-vorschlag",
+      "target": "REQ-recommend-next-step",
+      "type": "satisfy"
     },
     {
       "source": "MOD-agent-surface",
@@ -23448,6 +23533,11 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "FCHAIN-executor-loop",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "FCHAIN-generation-states",
       "type": "compose"
     },
@@ -23942,5 +24032,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 653
+  "graphVersion": 656
 }

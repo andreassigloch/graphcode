@@ -42,6 +42,34 @@ Zwei Ketten (Grafik: https://claude.ai/artifact/EofCFkPK1K7tBXmgWippdc):
    schweigt, zeigt der Trockenlauf — vor dem Schreiben prüfen.
 4. **Block für Kette B.** Fünf der sieben blocklosen Glieder wandern nach B. Eigener Block „Executor, geparkt"?
 
+## Entscheidungen des Autors (2026-10-09)
+
+1. Kette A ist **eine** Kette. 2. Der Vorschlag trägt den Vertrag der Gate-Antwort. 3. Helfer werden Teil ihres
+Aufrufers. 4. Der Executor bekommt einen eigenen, als geparkt bezeichneten Block.
+
+## Stand 2026-10-09: Teil 1 (Modell) umgesetzt
+
+graphVersion 653 → 656, drei Züge. `graph_metrics`: Kette A bewertbar, Länge 4, **eine** Rückkopplung; 23 von
+25 Ketten bewertbar. Modell-Spur grün.
+
+| Was | Wie |
+|---|---|
+| Vorschlag | neue Funktion `FUNC-vorschlag`, gebunden an `vorschlagNachAnwendung`; erfüllt `REQ-recommend-next-step`, die bisher niemand erfüllte |
+| Schluss der Schleife | Store und Regelprüfung sind Glieder; zwei neue Flüsse (Schritt → Vorschlag → Nutzer), Verträge: `SCHEMA-generation-step` und `SCHEMA-mutate-result` |
+| Kette B | `FCHAIN-executor-loop`, 21 Glieder. Schritt, Gate, Fit-Bewertung und Snapshot teilt sie mit Kette A — sonst meldet R-21 zwei Übergaben ohne gemeinsame Kette |
+| Block | `FUNC-block-antrieb` WAR schon der Executor-Block; er ist jetzt als geparkt beschrieben und nimmt die blocklosen Glieder auf. Kein zweiter Block daneben. Darunter neu `FUNC-block-modelldraht` (vier Funktionen), damit der Block bei neun Kindern bleibt |
+| Faltung, Fund-Kontext | in `FUNC-inventory-channel` aufgegangen (Merge) |
+
+**Abweichungen vom Vorschlag, mit Grund:**
+
+- **Helfer als Kind des Aufrufers geht nicht.** Der Trockenlauf meldet dann vier neue Befunde (R-30 Funktion in
+  keiner Kette ×2, FC-03 verschachtelte Kette, RD-05). Der Merge ist befundfrei. **Preis:** `src/loop/faltung.ts`
+  und `src/loop/fund-kontext.ts` sind an keine Funktion mehr gebunden; ändert sich eine der beiden, fällt die
+  Code-Spur auf den Volllauf zurück.
+- **Dublettensuche bleibt ein eigener Knoten.** Der Merge in den Gate-Client ist illegal (R-18: zwei Module —
+  die Funktion liegt im Messwerk, ihr Aufrufer in der Schleife). Sie bräuchte einen Fluss mit eigenem Vertrag;
+  den gibt es im Code nur als TypeScript-Typ. Kette B bleibt deshalb nicht bewertbar (ein loses Glied).
+
 ## Schnitt in zwei Teile (Dateigrenze)
 
 - **Teil 1, Modell:** nur `graph_mutate`; Dateien: Graph, Sichten, `docs/project/steuerungsschleife.md`.
