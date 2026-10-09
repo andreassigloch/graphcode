@@ -1,6 +1,6 @@
 # CR-GC-778: Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-809 (idea)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-809.json (Lane: code)
