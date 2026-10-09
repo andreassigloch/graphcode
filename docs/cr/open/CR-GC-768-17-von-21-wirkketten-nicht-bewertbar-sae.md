@@ -104,16 +104,41 @@ Vertragstest von SCHEMA-mutate-command, weil das Modell den Fluss decode → mut
 Erzeuger je Fluss, und CR-GC-510 hat `mutate-cmd` bewusst je Erzeuger aufgetrennt. Die Frage zu
 `skill-authoring` unten entfällt damit; dort bleibt nur das lose Glied `target-profile`.
 
-## Offen — Entscheidung des Autors je Kette
+## Stand 2026-10-09: Schritt 3 umgesetzt (Freigabe des Autors)
 
-| Kette | Was fehlt | Optionen |
+Bewertbar: 22 von 24 Ketten (Ziel 17 von 21). Ein Zug durchs Gate (graphVersion 647 → 648).
+
+| Regel | vor der CR | nach der CR |
 |---|---|---|
-| doc-export | `serve-stdio` und die Lesewerkzeuge hängen nicht am Export-Teil | Glieder herausnehmen (der Export läuft im Code nicht über sie) oder Kette teilen |
-| impact-testing | `graph-impact` und `test-ingest` hängen nicht an der Testauswahl | `graph-impact` herausnehmen; `test-ingest` in eine eigene Kette „Testergebnis einlesen" |
-| skill-authoring | `target-profile` führt nicht zum Gate | herausnehmen (liegt schon in steering-loop) |
-| skill-report | vier Teile: Berichts-Skills, Regeln + Modulmetrik, Kritikalität, Hilfe | teilen — je Bericht eine Kette — oder Glieder herausnehmen |
-| steering-loop | `compose-faltung`, `fund-kontext`, `nd-similarity` sind Helfer ohne eigenen Vertrag | als Teil ihres Aufrufers führen statt als Kettenglied, oder je ein Konzept-SCHEMA anlegen (kostet je zwei neue Warnungen) |
-| schema-migration | `migrate-schema` ist nicht gebaut | bleibt nicht bewertbar, bis CR-DRAFT-GC-437 entschieden ist |
+| FC-05 Kette zerfällt | 6 | 0 |
+| IO-01 Glied nicht an der Kette | 4 | 0 |
+| R-31 Funktion ohne Anschluss | 18 | 4 |
+| R-21 Übergabe ohne gemeinsame Kette | 13 | 9 |
+
+Alle anderen Regeln melden gleich viele Verstöße wie vorher.
+
+| Kette | Was getan wurde | Beleg |
+|---|---|---|
+| doc-export | `serve-stdio`, `list-elements`, `read-tools`, `view-fmea` herausgenommen | Der Sicht-Skill FMEA liest über die Lesewerkzeuge, nicht über den Export (`.claude/commands/se-view/fmea.md`) |
+| agent-query | `view-fmea` und `list-elements` aufgenommen | dieselbe Stelle |
+| impact-testing | `graph-impact` und `test-ingest` herausgenommen | Die Testauswahl ruft `testImpact`, nicht `impact` (`src/kernel/harness.ts`) |
+| test-ingest (neu) | eigene Kette „Testergebnis zurückschreiben" | Der Rückweg hängt an der Auswahl nur über den Agenten |
+| skill-authoring | `target-profile` herausgenommen | liegt in steering-loop |
+| skill-report | Regelbefunde an `se-status`, `se-review`, `se-retro` angeschlossen; `function-criticality` und `se-help` herausgenommen | Die drei Skills rufen `rules_get_violations` bzw. `rules_evaluate` (Skill-Dateien) |
+| dashboard-metrics (neu) | Modulmetrik und Kritikalität ans Dashboard | Einziger Abnehmer der Kritikalität ist das Dashboard |
+| skill-help (neu) | Hilfe-Skill als eigene Kette | zieht keine Messung |
+
+**Abweichung vom Vorschlag „je Bericht eine Kette":** Nicht nötig — die Berichts-Skills hängen über die
+Regelprüfung zusammen, sobald dieser Fluss im Modell steht.
+
+## Nicht bewertbar, mit Grund
+
+| Kette | Grund |
+|---|---|
+| steering-loop | `compose-faltung`, `fund-kontext`, `nd-similarity` sind Helfer ohne eigenen Vertrag (R-31). Ein Fluss bräuchte je ein Konzept-SCHEMA und brächte je zwei neue Warnungen. Offen: als Teil ihres Aufrufers führen. Dazu die Größe: 31 Funktionen. |
+| schema-migration | `migrate-schema` ist nicht gebaut (CR-DRAFT-GC-437). |
+
+Beides sind Folgebefunde, kein Rest dieser CR.
 
 ---
 

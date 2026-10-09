@@ -69,7 +69,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (serialize∘parse): `FUNC-decode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-read-tools`
-- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-target-profile`
+- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 
@@ -78,7 +78,8 @@ Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessene
 Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-llm` · `ACTOR-owner`
 
 - `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
-- `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-function-criticality` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-help` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
+- `FCHAIN-skill-help` — Skill erklaert: `FUNC-se-help`
+- `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
 - `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compose-faltung` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-fund-kontext` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-delegate` → `FUNC-graph-readiness` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-inventory-channel` → `FUNC-list-elements` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-read-anthropic-stream` → `FUNC-read-openai-stream` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-task-abschluss`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
@@ -87,7 +88,8 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
-- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-graph-impact` → `FUNC-measure-test-schlupf` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
+- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-measure-test-schlupf` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code`
+- `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-mutate` → `FUNC-test-ingest`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -105,6 +107,7 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-owner`
 
+- `FCHAIN-dashboard-metrics` — Kennzahlen ans Dashboard: `FUNC-function-criticality` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-mutate`
 - `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-store` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-serve-sse` → `FUNC-serve-stdio`
 
 ### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
@@ -121,7 +124,7 @@ Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehi
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
-- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-export-markdown` → `FUNC-list-elements` → `FUNC-read-tools` → `FUNC-render-views` → `FUNC-serve-stdio` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
+- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-export-markdown` → `FUNC-render-views` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
 - `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-cli-dispatch` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc` → `FUNC-mutate`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
@@ -131,7 +134,7 @@ Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokale
 Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
 - `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-target-profile-load`
-- `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-read-tools`
+- `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-list-elements` → `FUNC-read-tools` → `FUNC-view-fmea`
 - `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb: `FUNC-evaluate-rules` → `FUNC-mutate`
 
 ### `UC-repo-lifecycle` — Repo einrichten und betreiben

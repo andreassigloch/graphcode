@@ -190,7 +190,7 @@
 | `FLOW-reseeded-graph` | `FUNC-apply-reseed` | `FUNC-graph-store` |
 | `FLOW-round-injection` | `FUNC-build-round-injection` | `FUNC-run-executor` |
 | `FLOW-round-prompt` | `FUNC-generation-step` | `FUNC-build-round-injection` · `FUNC-compose-faltung` · `FUNC-fund-kontext` · `FUNC-inventory-channel` · `FUNC-rank-candidates` · `FUNC-run-executor` |
-| `FLOW-rule-findings` | `FUNC-evaluate-rules` | `FUNC-health-endpoint` · `FUNC-mutate` |
+| `FLOW-rule-findings` | `FUNC-evaluate-rules` | `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` |
 | `FLOW-run-request` | `FUNC-run-verb` | `FUNC-run-executor` |
 | `FLOW-schema-fingerprint` | `FUNC-schema-guard` | `FUNC-graph-store` |
 | `FLOW-schlupf-zeile` | `FUNC-measure-test-schlupf` | `ACTOR-owner` |

@@ -3213,6 +3213,12 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FCHAIN-dashboard-metrics",
+      "type": "FCHAIN",
+      "name": "Kennzahlen ans Dashboard",
+      "description": "Nach einer Aenderung rechnet das Messwerk Modulmetrik und Funktionskritikalitaet aus dem Store-Zustand und liefert sie ans Dashboard. Aus FCHAIN-skill-report geloest: kein Berichts-Skill liest die Kritikalitaet. (CR-GC-768)"
+    },
+    {
       "id": "FCHAIN-doc-export",
       "type": "FCHAIN",
       "name": "Doc-Export (stdio → exporter)",
@@ -3302,6 +3308,12 @@
       "description": "Ein Mensch beauftragt einen Autoren-Skill; der Skill legt Knoten und Kanten durch das Apply-Gate an."
     },
     {
+      "id": "FCHAIN-skill-help",
+      "type": "FCHAIN",
+      "name": "Skill erklaert",
+      "description": "Ein Mensch ruft den Hilfe-Skill und bekommt die Erklaerung zurueck. Aus FCHAIN-skill-report geloest: die Hilfe zieht keine Messung. (CR-GC-768)"
+    },
+    {
       "id": "FCHAIN-skill-report",
       "type": "FCHAIN",
       "name": "Skill berichtet gemessenen Stand",
@@ -3319,6 +3331,12 @@
       "name": "Kenngroessen-Steuerungsschleife",
       "description": "Die Schleife in der Reihenfolge der Messgroessen-Landschaft: messen, projizieren, Fokus waehlen, Kandidaten bewerten, Prompt stellen, Gate. Nicht zu verwechseln mit FCHAIN-advisory-roundtrip: der antwortet auf eine Frage, diese Kette waehlt selbst den naechsten Schritt.",
       "status": "reviewed"
+    },
+    {
+      "id": "FCHAIN-test-ingest",
+      "type": "FCHAIN",
+      "name": "Testergebnis zurueckschreiben",
+      "description": "Der Agent meldet die Ergebnisse eines Testlaufs zurueck; das Werkzeug ordnet sie den TEST-Knoten zu und schreibt sie durch das Gate. Aus FCHAIN-impact-testing geloest: der Rueckweg haengt an der Auswahl nur ueber den Agenten, nicht ueber einen Fluss. (CR-GC-768)"
     },
     {
       "id": "FLOW-action",
@@ -15024,7 +15042,17 @@
     },
     {
       "source": "FCHAIN-agent-query",
+      "target": "FUNC-list-elements",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-agent-query",
       "target": "FUNC-read-tools",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-agent-query",
+      "target": "FUNC-view-fmea",
       "type": "compose"
     },
     {
@@ -15212,28 +15240,33 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-function-criticality",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-module-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-doc-export",
       "target": "FUNC-export-markdown",
       "type": "compose"
     },
     {
       "source": "FCHAIN-doc-export",
-      "target": "FUNC-list-elements",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-doc-export",
-      "target": "FUNC-read-tools",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-doc-export",
       "target": "FUNC-render-views",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-doc-export",
-      "target": "FUNC-serve-stdio",
       "type": "compose"
     },
     {
@@ -15244,11 +15277,6 @@
     {
       "source": "FCHAIN-doc-export",
       "target": "FUNC-view-conops",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-doc-export",
-      "target": "FUNC-view-fmea",
       "type": "compose"
     },
     {
@@ -15288,13 +15316,6 @@
     },
     {
       "source": "FCHAIN-impact-testing",
-      "target": "FUNC-graph-impact",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-impact-testing",
       "target": "FUNC-measure-test-schlupf",
       "type": "compose"
     },
@@ -15306,11 +15327,6 @@
     {
       "source": "FCHAIN-impact-testing",
       "target": "FUNC-resolve-tests-from-code",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-impact-testing",
-      "target": "FUNC-test-ingest",
       "type": "compose"
     },
     {
@@ -15708,8 +15724,8 @@
       "type": "compose"
     },
     {
-      "source": "FCHAIN-skill-authoring",
-      "target": "FUNC-target-profile",
+      "source": "FCHAIN-skill-help",
+      "target": "FUNC-se-help",
       "type": "compose"
     },
     {
@@ -15730,11 +15746,6 @@
     },
     {
       "source": "FCHAIN-skill-report",
-      "target": "FUNC-function-criticality",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-skill-report",
       "target": "FUNC-module-metrics",
       "type": "compose",
       "weight": "1"
@@ -15744,11 +15755,6 @@
       "target": "FUNC-score-completeness",
       "type": "compose",
       "weight": "1"
-    },
-    {
-      "source": "FCHAIN-skill-report",
-      "target": "FUNC-se-help",
-      "type": "compose"
     },
     {
       "source": "FCHAIN-skill-report",
@@ -15978,6 +15984,16 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-task-abschluss",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-test-ingest",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-test-ingest",
+      "target": "FUNC-test-ingest",
       "type": "compose"
     },
     {
@@ -17680,6 +17696,21 @@
     {
       "source": "FLOW-rule-findings",
       "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-rule-findings",
+      "target": "FUNC-se-retro",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-rule-findings",
+      "target": "FUNC-se-review",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-rule-findings",
+      "target": "FUNC-se-status",
       "type": "io"
     },
     {
@@ -23287,6 +23318,11 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "FCHAIN-skill-help",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "FCHAIN-skill-report",
       "type": "compose"
     },
@@ -23366,6 +23402,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-efficient-testing",
+      "target": "FCHAIN-test-ingest",
+      "type": "compose"
     },
     {
       "source": "UC-efficient-testing",
@@ -23449,6 +23490,11 @@
     {
       "source": "UC-graph-time-travel",
       "target": "REQ-pre-merge-nodes",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "FCHAIN-dashboard-metrics",
       "type": "compose"
     },
     {
@@ -23756,5 +23802,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 647
+  "graphVersion": 648
 }
