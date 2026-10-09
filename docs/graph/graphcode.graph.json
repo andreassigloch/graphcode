@@ -3179,6 +3179,18 @@
       "description": "docs/cr/open/CR-GC-769-scaffold-stellt-opencode-auf-den-eingefr.md"
     },
     {
+      "id": "CR-GC-770",
+      "type": "CR",
+      "name": "Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt",
+      "description": "docs/cr/open/CR-GC-770-steuerungsschleife-im-modell-schliesst-n.md"
+    },
+    {
+      "id": "CR-GC-771",
+      "type": "CR",
+      "name": "Kandidatenvergleich im Dialog: mehrere Entwuerfe per Trockenlauf vergleichen, auch fuer Frontier",
+      "description": "docs/cr/open/CR-GC-771-kandidatenvergleich-im-dialog-mehrere-en.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -23930,5 +23942,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 651
+  "graphVersion": 653
 }

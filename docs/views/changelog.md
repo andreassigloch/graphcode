@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 379 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 381 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 379 CR · 338 done · 4 open.
+Total: 381 CR · 338 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -441,3 +441,5 @@ Total: 379 CR · 338 done · 4 open.
 | `CR-GC-767` | n/a | Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics |
 | `CR-GC-768` | n/a | 17 von 21 Wirkketten nicht bewertbar: Saecke, lose Glieder, fehlende Glieder |
 | `CR-GC-769` | n/a | Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet |
+| `CR-GC-770` | n/a | Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt |
+| `CR-GC-771` | n/a | Kandidatenvergleich im Dialog: mehrere Entwuerfe per Trockenlauf vergleichen, auch fuer Frontier |
