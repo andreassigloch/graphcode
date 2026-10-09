@@ -1,6 +1,6 @@
 # CR-GC-769: Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-799 (finding)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-799.json (Lane: code)
