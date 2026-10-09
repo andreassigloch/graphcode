@@ -5,6 +5,7 @@
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-801.json (Lane: code)
 **Priorität:** 2 (Autor, 2026-10-09) — zuerst die Wirkkettenanalyse und ihre Maßnahmen; von dort kommt voraussichtlich der erste echte Anwendungsfall für den Vergleich.
+**Hinweis (2026-10-09):** Der Executor ist ausgelagert (CR-GC-775). Die Rangfolge `rankCandidates` und Best-of-N liegen an der Marke `executor-geparkt-2026-10-09`; der Ist-Stand unten beschreibt Stelle 1 als Geschichte.
 
 ---
 
