@@ -60,3 +60,15 @@ beschrieb die Ähnlichkeitsmatrizen der Regeln ND-01/ND-02. Die rechnen seit CR-
 | Neue Regelbefunde | — | 0 |
 
 Offen bleibt `FCHAIN-schema-migration` (ein loses Glied), nicht Teil dieser CR.
+
+## Volllauf
+
+`npm run verify:full CR-GC-773`: 199 von 202 Dateien grün. Rot:
+
+- `tests/arch.optimization-dry-run.spike.test.ts` — **Schlupf**, außerhalb der Auswahl. Die festgeschriebene
+  Autopilot-Messung hat sich durch den Modellzug verschoben: der Autopilot hängt einen zweiten falschen Zug an
+  (Regelauswertung nach `MOD-agent-surface`). Neu gemessen und festgeschrieben; der Befund bleibt ITEM-2026-798.
+- `tests/distribution.test.ts`, `tests/lockfile-sync.test.ts` — erwartet im Link-Modus (contracts 11.1 unveröffentlicht).
+
+Der erste Volllauf hing 20 Minuten ohne Last und wurde abgebrochen; der zweite lief durch. Ursache des Hängers
+nicht gefunden.

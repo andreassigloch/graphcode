@@ -472,8 +472,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // Der Zug entsteht, weil jeder Skill einen eigenen Fluss zum Gate traegt und der Operator nur
       // die Zahl der Vertraege an der Grenze senkt. Er steht hier als Messwert, nicht als Empfehlung;
       // der Befund am Vorschlagswerkzeug ist ITEM-2026-798.
+      // CR-GC-773 (graphVersion 661) — NEU GEMESSEN, nachdem drei Helfer-Vertraege ins Modell kamen:
+      // der Autopilot haengt jetzt einen zweiten, ebenso falschen Zug an — die Regelauswertung soll
+      // dem Gate nach MOD-agent-surface folgen. Derselbe Befund, ein Schritt weiter.
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-mutate -allocate-> MOD-agent-surface (retire MOD-kernel)',
+        'FUNC-evaluate-rules -allocate-> MOD-agent-surface (retire MOD-kernel)',
       ]);
       expect(
         rest
