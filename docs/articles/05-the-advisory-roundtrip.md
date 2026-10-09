@@ -82,6 +82,40 @@ Intent: *"make the auth module more resistant to change."*
 
 You (or the agent) see the *tradeoff* in ⑤ — without the advisor ever having blocked the edit.
 
+## What comes back after every edit: the suggestion
+
+The roundtrip above answers a question someone asked. Every applied edit also carries an answer
+nobody asked for: the field `vorschlag`, one sentence naming the next sensible
+step. It is what closes the loop between two edits.
+
+graphcode computes it without a language model: evaluate all rules, take the earliest of the twelve
+stages (system, use case, requirement … binding, conformance) that still has an open finding, pick
+one rule there and at most three elements it fires on, and render that rule's sentence with the
+element names filled in. Same graph, same sentence.
+
+The sentence is addressed to the **user**, not to the agent. A client can put it in the input field;
+the user sends it, edits it, or types something else. Guidance here is an offer — nothing blocks if
+it is ignored.
+
+![The steering loop: measure, pick the focus, suggest, edit, gate](img/rule-kpi-loop.svg)
+
+## Comparing candidates: a principle for the host, a mechanism only in the parked driver
+
+A dry run (`dryRun: true`) returns the full verdict without saving anything: allowed or blocked,
+the findings per stage before and after, the fitness numbers, the coupling score. That makes several
+drafts of the same step comparable before one of them lands.
+
+- **For a host (Claude Code, OpenCode) this is a principle.** The instruction that `graph_generate`
+  returns says: if you have several alternatives, probe each with a dry run, compare the verdicts,
+  apply only the best. Nothing enforces it, and the per-edit suggestion does not carry it. Measured
+  on two full runs (2026-10-09): 6 and 7 dry-run probes among 77 and 39 write calls, and no call to
+  `graph_generate` at all.
+- **In the built-in driver it was a mechanism.** The driver asked the model for N independent
+  answers to the same round prompt, probed each at the gate, ranked them deterministically — not
+  blocked, then most findings closed in the focus stage, then no new blocking errors, then nothing
+  deleted, then the better coupling score — and applied only the winner. The driver is parked (see
+  below), and the mechanism with it.
+
 ## How fast is one round, really
 
 ①+②+③+④ is deterministic — no LLM, no network — so it has an actual wall-clock cost worth
@@ -102,7 +136,7 @@ median at reference size.
 Two honest caveats. The 200ms is a target and a spike measurement, not a gate: the committed test
 asserts a deliberately generous ceiling, because a hard millisecond bound in CI measures the build
 machine, not the code. And the round does not scale flat — 5× the graph is still far over
-(≈3,100ms today); that remains open, not hidden.
+(≈3,100ms then; re-measured 2026-10-09 at 2,000 nodes: 2,709ms median); that remains open, not hidden.
 
 ## Prompt anatomy, per turn
 
@@ -110,7 +144,13 @@ What actually goes into a turn's context breaks into six pieces — and the two 
 loop from [Under the Hood](03-graphcode-harness-goal-and-concept.md) ("Two ways to run the loop")
 fill them very differently.
 
-| Piece | Driver (built-in executor) | Host (Claude Code / OpenCode) |
+**The driver column describes a parked path.** Since 2026-10-03 the built-in executor is frozen: a
+local model with a thinking level writes through the gate itself, exactly like a frontier model, and
+both are steered by the per-edit suggestion. The driver is still selectable
+(`GRAPHCODE_CLIENT_LLM=local` plus an `executor` section) and still tested, but no longer measured
+or developed. The column stays as the record of what it does.
+
+| Piece | Driver (built-in executor, parked) | Host (Claude Code / OpenCode) |
 |---|---|---|
 | System prompt | graphcode's own, fixed, ~320 tokens, identical every round | the assistant's own system prompt — a different artifact, not graphcode's, not measurable from here |
 | Tool definitions | not applicable — the driver calls the gate directly | graphcode's 23 MCP tools, ~4,100 tokens of names + descriptions, loaded once per session |
@@ -164,6 +204,10 @@ and order as it goes; the driver's inner loop is an external, fixed, determinist
 imposing small steps on a model that can't reliably choose its own. Same outer shape, two different
 drivers for the same inner wheel.
 
+Today only the host paces. What the driver did by force — one small step at a time — the host path
+gets as an offer: the suggestion after every edit names exactly one next step, and the user decides
+whether to take it.
+
 ## Self-correction: what blocks, what is carried as debt
 
 The gate is a **judge, not a repairer**, and it only rules on what changes with *this* edit. Two
@@ -175,8 +219,8 @@ behaviors, split by how serious the problem is:
 
 - **Leave a link half-finished → carried as debt, not blocked.** A test not yet wired to real code,
   or a function not yet wired to a real file, is a softer warning: the edit still lands, but the gap
-  stays visible every time you check status, and it keeps the readiness score down until it's
-  resolved. A placeholder for the missing test file is created automatically so nothing points at a
+  stays visible every time you check status, and it keeps the corresponding mark (TRR, or Bau once
+  the build is open) from being reached until it's resolved. A placeholder for the missing test file is created automatically so nothing points at a
   file that doesn't exist — the assertion inside it is still yours to write.
 
 Nothing has to be asked for — the system always surfaces the next open item on its own. It does not
