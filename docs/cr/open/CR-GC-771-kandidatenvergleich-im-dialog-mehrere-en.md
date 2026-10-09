@@ -4,6 +4,7 @@
 **Typ:** aus Item ITEM-2026-801 (idea)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-801.json (Lane: code)
+**Priorität:** 2 (Autor, 2026-10-09) — zuerst die Wirkkettenanalyse und ihre Maßnahmen; von dort kommt voraussichtlich der erste echte Anwendungsfall für den Vergleich.
 
 ---
 
