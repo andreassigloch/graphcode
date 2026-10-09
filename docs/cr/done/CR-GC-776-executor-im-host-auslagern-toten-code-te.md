@@ -1,6 +1,6 @@
 # CR-GC-776: Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-807 (idea)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-807.json (Lane: code)
