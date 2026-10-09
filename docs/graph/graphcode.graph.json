@@ -3161,6 +3161,18 @@
       "description": "docs/cr/open/CR-GC-766-marken-bericht-und-viewer-zaehlen-wie-de.md"
     },
     {
+      "id": "CR-GC-767",
+      "type": "CR",
+      "name": "Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics",
+      "description": "docs/cr/open/CR-GC-767-kettenbewertung-stufe-1-kettenkennzahlen.md"
+    },
+    {
+      "id": "CR-GC-768",
+      "type": "CR",
+      "name": "17 von 21 Wirkketten nicht bewertbar: Saecke, lose Glieder, fehlende Glieder",
+      "description": "docs/cr/open/CR-GC-768-17-von-21-wirkketten-nicht-bewertbar-sae.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3523,6 +3535,12 @@
       "description": "Was der Mensch in die Schale tippt: Verb und Optionen als Argumentliste, noch nicht aufgeloest."
     },
     {
+      "id": "FLOW-cli-invocation-import-code",
+      "type": "FLOW",
+      "name": "CLI-Aufruf (import-code)",
+      "description": "Der CLI-Aufruf, den der Skill se:import-code absetzt. Beleg: .claude/commands/se/import-code.md, npx @sigloch/graphcode import-code. (CR-GC-768)"
+    },
+    {
       "id": "FLOW-code-lane-plan",
       "type": "FLOW",
       "name": "Plan der Code-Spur",
@@ -3627,10 +3645,22 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-generation-step-suggest",
+      "type": "FLOW",
+      "name": "Generierungsschritt zum Vorschlag",
+      "description": "Der gerechnete naechste Schritt, wie ihn das Vorschlagswerkzeug als Grundlage nimmt. Beleg: src/loop/suggest.ts, graph_suggest ruft generationStep. (CR-GC-768)"
+    },
+    {
       "id": "FLOW-graph-delta",
       "type": "FLOW",
       "name": "Angenommenes Delta",
       "description": "Der Kandidat, den das Gate angenommen hat, samt Persistenz-Delta. Nur mutate liefert ihn, nur der GraphStore uebernimmt ihn: erst auf Platte, dann als Arbeitskopie. (CR-GC-503)"
+    },
+    {
+      "id": "FLOW-graph-snapshot-file",
+      "type": "FLOW",
+      "name": "Graph-Snapshot-Datei",
+      "description": "Der kanonische Snapshot docs/graph als Datei im Repo, die der Owner committet. Beleg: src/projections/export.ts, graph_export schreibt die Datei. (CR-GC-768)"
     },
     {
       "id": "FLOW-graph-state",
@@ -3645,6 +3675,12 @@
       "type": "FLOW",
       "name": "Harness-Griff",
       "description": "Der fertig verdrahtete Harness, den die Fabrik liefert: Store geoeffnet, Lock beansprucht, Regelwerk geladen. Alles, was auf dem Graphen arbeitet, holt ihn hier ab."
+    },
+    {
+      "id": "FLOW-harness-handle-host",
+      "type": "FLOW",
+      "name": "Harness-Griff (Host)",
+      "description": "Der Harness des Store-Besitzers, wie ihn der Host-Prozess fuer seine Routen haelt. Beleg: src/surface/host.ts, serveHost ruft ownKuzu und liest owned.harness. (CR-GC-768)"
     },
     {
       "id": "FLOW-health-report",
@@ -3723,6 +3759,18 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "id": "FLOW-live-event-host",
+      "type": "FLOW",
+      "name": "Live-Ereignis (Host)",
+      "description": "Das Aenderungsereignis, das der Host an seinen Verteiler reicht. Beleg: src/surface/host.ts, onUpdateEvent ruft this.broadcast. (CR-GC-768)"
+    },
+    {
+      "id": "FLOW-lock-release",
+      "type": "FLOW",
+      "name": "Lock-Freigabe",
+      "description": "Die Freigabe des Store-Locks am Sitzungsende, als letzter Abraeumschritt. Beleg: src/surface/mcp-server.ts, lifecycle.add store lock ruft harness.close. (CR-GC-768)"
+    },
+    {
       "id": "FLOW-markdown-docs",
       "type": "FLOW",
       "name": "Exportierte Sichten",
@@ -3761,6 +3809,18 @@
       "type": "FLOW",
       "name": "Modellantwort",
       "description": "Die Roh-Antwort des Modell-Endpunkts auf einen Runden-Prompt — sie betritt das System von aussen, produziert von ACTOR-llm. Traegt Text, Werkzeugaufrufe und den Stop-Grund; fehlt der Werkzeugaufruf, ist der Text die einzige Spur, aus der die Prosa-Recovery ein Kommando holt. (Produzent korrigiert CR-GC-569)"
+    },
+    {
+      "id": "FLOW-model-answer-anthropic",
+      "type": "FLOW",
+      "name": "Zusammengesetzte Modellantwort (Anthropic)",
+      "description": "Die aus dem Strom von /v1/messages zusammengesetzte Modellantwort in Nicht-Streaming-Form. Beleg: src/loop/executor-backend.ts, buildCallModel ruft leseAnthropicAntwort. (CR-GC-768)"
+    },
+    {
+      "id": "FLOW-model-answer-openai",
+      "type": "FLOW",
+      "name": "Zusammengesetzte Modellantwort (OpenAI)",
+      "description": "Die aus dem Strom von /v1/chat/completions zusammengesetzte Modellantwort in derselben Drahtform. Beleg: src/loop/executor-backend.ts, buildCallModel ruft leseOpenAiAntwort. (CR-GC-768)"
     },
     {
       "id": "FLOW-model-request",
@@ -3819,6 +3879,12 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-mutate-cmd-decode",
+      "type": "FLOW",
+      "name": "Mutate-Command (decode)",
+      "description": "Die aus Format-E gelesenen Kommandos auf dem Weg ans Gate. Beleg: src/surface/write.ts, graph_mutate ruft formatEToCommands und reicht das Ergebnis an harness.mutate, ebenso src/surface/bootstrap.ts. (CR-GC-768)"
+    },
+    {
       "id": "FLOW-mutate-cmd-gate-client",
       "type": "FLOW",
       "name": "Mutate-Command (gate-client)",
@@ -3831,6 +3897,12 @@
       "name": "Mutate-Command (graph-suggest)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-graph-suggest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
       "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-host-socket",
+      "type": "FLOW",
+      "name": "Mutate-Command (host-socket)",
+      "description": "Der Schreibaufruf eines zweiten Prozesses, vom Socket an das Werkzeug des Besitzers weitergereicht. Beleg: src/surface/host-shim.ts, startHostSocket ruft tool.handler mit der geparsten Eingabe. (CR-GC-768)"
     },
     {
       "id": "FLOW-mutate-cmd-import-code-verb",
@@ -3915,6 +3987,12 @@
       "name": "Mutate-Command (se-trade)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-trade → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
       "status": "reviewed"
+    },
+    {
+      "id": "FLOW-mutate-cmd-task-abschluss",
+      "type": "FLOW",
+      "name": "Mutate-Command (task-abschluss)",
+      "description": "Der Stempel-Zug eines erfuellten Analyse-Tasks auf dem Weg ans Gate. Beleg: src/loop/executor-task.ts, schliesseTaskWennErfuellt ruft graph_mutate ueber die Registry. (CR-GC-768)"
     },
     {
       "id": "FLOW-mutate-cmd-test-ingest",
@@ -4042,6 +4120,24 @@
       "type": "FLOW",
       "name": "Gerenderte Sicht (Skill)",
       "description": "Die Markdown-Sicht, die ein se-view-Skill auf Zuruf rendert. Gleicher Vertrag wie der deterministische Export, anderer Erzeuger und anderer Anlass."
+    },
+    {
+      "id": "FLOW-reseed-order",
+      "type": "FLOW",
+      "name": "Reseed-Auftrag",
+      "description": "Der serialisierte Auftrag, den Store aus dem Snapshot neu aufzusetzen. Beleg: src/kernel/harness.ts, reseed ruft applyReseed hinter dem Single-Writer. (CR-GC-768)"
+    },
+    {
+      "id": "FLOW-reseed-snapshot",
+      "type": "FLOW",
+      "name": "Snapshot zum Reseed",
+      "description": "Der bereitgestellte Snapshot eines Commits auf dem Weg zum Neuaufsetzen. Beleg: src/surface/rewind.ts, executeRewind ruft harness.reseed. (CR-GC-768)"
+    },
+    {
+      "id": "FLOW-reseeded-graph",
+      "type": "FLOW",
+      "name": "Neu aufgesetzter Bestand",
+      "description": "Der neu aufgesetzte Bestand auf dem Weg in den Store. Beleg: src/kernel/harness-import.ts, applyReseed schreibt in das importTarget des GraphStore. (CR-GC-768)"
     },
     {
       "id": "FLOW-round-injection",
@@ -4204,6 +4300,12 @@
       "type": "FLOW",
       "name": "Werkzeug-Register",
       "description": "Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler."
+    },
+    {
+      "id": "FLOW-tool-surface",
+      "type": "FLOW",
+      "name": "Werkzeug-Oberflaeche am Agenten",
+      "description": "Die gebundenen Werkzeuge, wie der Agent sie ueber stdio sieht und ruft. Beleg: src/surface/mcp-server.ts, serveStdio verbindet den Server mit dem stdio-Transport. (CR-GC-768)"
     },
     {
       "id": "FLOW-trajectory",
@@ -14922,11 +15024,6 @@
     },
     {
       "source": "FCHAIN-agent-query",
-      "target": "FUNC-list-elements",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-agent-query",
       "target": "FUNC-read-tools",
       "type": "compose"
     },
@@ -15239,6 +15336,11 @@
     },
     {
       "source": "FCHAIN-interface-escalation",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
       "target": "FUNC-mutate",
       "type": "compose",
       "weight": 1,
@@ -15302,6 +15404,11 @@
     },
     {
       "source": "FCHAIN-live-update",
+      "target": "FUNC-own-kuzu-host",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
       "target": "FUNC-serve-sse",
       "type": "compose",
       "weight": "1"
@@ -15349,6 +15456,11 @@
     {
       "source": "FCHAIN-merge-branches",
       "target": "FUNC-merge-nodes",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-cli-dispatch",
       "type": "compose"
     },
     {
@@ -15484,6 +15596,11 @@
       "target": "FUNC-collect-status",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-create-harness",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-repo-lifecycle",
@@ -16190,6 +16307,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-cli-invocation-import-code",
+      "target": "FUNC-cli-dispatch",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-invocation-import-code",
+      "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-code-lane-plan",
       "target": "ACTOR-owner",
       "type": "io"
@@ -16297,6 +16424,11 @@
     {
       "source": "FLOW-element-slice",
       "target": "FUNC-gate-client",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-element-slice",
+      "target": "FUNC-task-abschluss",
       "type": "io"
     },
     {
@@ -16433,6 +16565,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-generation-step-suggest",
+      "target": "FUNC-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-generation-step-suggest",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-graph-delta",
       "target": "FUNC-graph-store",
       "type": "io"
@@ -16440,6 +16582,16 @@
     {
       "source": "FLOW-graph-delta",
       "target": "SCHEMA-graph-delta",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-graph-snapshot-file",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot-file",
+      "target": "SCHEMA-ontology-json",
       "type": "relation"
     },
     {
@@ -16616,6 +16768,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-harness-handle-host",
+      "target": "FUNC-serve-sse",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-harness-handle-host",
+      "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-health-report",
       "target": "ACTOR-dashboard",
       "type": "io"
@@ -16753,6 +16915,26 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-live-event-host",
+      "target": "FUNC-broadcast-diff",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-live-event-host",
+      "target": "SCHEMA-update-event",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-lock-release",
+      "target": "FUNC-claim-store-lock",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lock-release",
+      "target": "SCHEMA-lock-owner",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-markdown-docs",
       "target": "ACTOR-owner",
       "type": "io",
@@ -16843,6 +17025,26 @@
     },
     {
       "source": "FLOW-model-answer",
+      "target": "SCHEMA-model-answer",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-model-answer-anthropic",
+      "target": "FUNC-call-model",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-model-answer-anthropic",
+      "target": "SCHEMA-model-answer",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-model-answer-openai",
+      "target": "FUNC-call-model",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-model-answer-openai",
       "target": "SCHEMA-model-answer",
       "type": "relation"
     },
@@ -16938,6 +17140,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-mutate-cmd-decode",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-decode",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-mutate-cmd-gate-client",
       "target": "FUNC-mutate",
       "type": "io"
@@ -16954,6 +17166,16 @@
     },
     {
       "source": "FLOW-mutate-cmd-graph-suggest",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-host-socket",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-host-socket",
       "target": "SCHEMA-mutate-command",
       "type": "relation"
     },
@@ -17074,6 +17296,16 @@
     },
     {
       "source": "FLOW-mutate-cmd-se-trade",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-task-abschluss",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-task-abschluss",
       "target": "SCHEMA-mutate-command",
       "type": "relation"
     },
@@ -17360,6 +17592,36 @@
     {
       "source": "FLOW-rendered-views",
       "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-reseed-order",
+      "target": "FUNC-apply-reseed",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-reseed-order",
+      "target": "SCHEMA-ontology-json",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-reseed-snapshot",
+      "target": "FUNC-reseed",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-reseed-snapshot",
+      "target": "SCHEMA-ontology-json",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-reseeded-graph",
+      "target": "FUNC-graph-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-reseeded-graph",
+      "target": "SCHEMA-ontology-graph",
       "type": "relation"
     },
     {
@@ -17786,6 +18048,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-tool-surface",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-tool-surface",
+      "target": "SCHEMA-tool-registry",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-trajectory",
       "target": "ACTOR-learning-engine",
       "type": "io",
@@ -17822,6 +18094,11 @@
       "source": "FUNC-apply-reseed",
       "target": "MOD-kernel",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-apply-reseed",
+      "target": "FLOW-reseeded-graph",
+      "type": "io"
     },
     {
       "source": "FUNC-apply-reseed",
@@ -18780,6 +19057,11 @@
     },
     {
       "source": "FUNC-decode",
+      "target": "FLOW-mutate-cmd-decode",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-decode",
       "target": "REQ-codec-validation",
       "type": "satisfy",
       "weight": 1,
@@ -19043,6 +19325,11 @@
     },
     {
       "source": "FUNC-generation-step",
+      "target": "FLOW-generation-step-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-generation-step",
       "target": "FLOW-next-step-advice",
       "type": "io"
     },
@@ -19147,6 +19434,11 @@
       "source": "FUNC-graph-export-snapshot",
       "target": "MOD-projections",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
+      "target": "FLOW-graph-snapshot-file",
+      "type": "io"
     },
     {
       "source": "FUNC-graph-export-snapshot",
@@ -19387,6 +19679,11 @@
     },
     {
       "source": "FUNC-host-socket",
+      "target": "FLOW-mutate-cmd-host-socket",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-host-socket",
       "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
@@ -19425,6 +19722,11 @@
       "source": "FUNC-import-code",
       "target": "MOD-agent-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-import-code",
+      "target": "FLOW-cli-invocation-import-code",
+      "type": "io"
     },
     {
       "source": "FUNC-import-code-verb",
@@ -19645,6 +19947,11 @@
     },
     {
       "source": "FUNC-own-kuzu-host",
+      "target": "FLOW-harness-handle-host",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-own-kuzu-host",
       "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
@@ -19700,6 +20007,11 @@
     },
     {
       "source": "FUNC-read-anthropic-stream",
+      "target": "FLOW-model-answer-anthropic",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-read-anthropic-stream",
       "target": "REQ-one-driver-local-and-frontier",
       "type": "satisfy"
     },
@@ -19707,6 +20019,11 @@
       "source": "FUNC-read-openai-stream",
       "target": "MOD-loop",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-read-openai-stream",
+      "target": "FLOW-model-answer-openai",
+      "type": "io"
     },
     {
       "source": "FUNC-read-openai-stream",
@@ -19762,6 +20079,11 @@
     },
     {
       "source": "FUNC-reseed",
+      "target": "FLOW-reseed-order",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-reseed",
       "target": "REQ-graph-state-recall",
       "type": "satisfy"
     },
@@ -19784,6 +20106,11 @@
       "source": "FUNC-rewind",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-rewind",
+      "target": "FLOW-reseed-snapshot",
+      "type": "io"
     },
     {
       "source": "FUNC-rewind",
@@ -20079,6 +20406,11 @@
     },
     {
       "source": "FUNC-serve-sse",
+      "target": "FLOW-live-event-host",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-sse",
       "target": "REQ-versioned-broadcast",
       "type": "satisfy"
     },
@@ -20089,6 +20421,11 @@
     },
     {
       "source": "FUNC-serve-stdio",
+      "target": "FLOW-tool-surface",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-stdio",
       "target": "REQ-mcp-tool-registry",
       "type": "satisfy"
     },
@@ -20096,6 +20433,11 @@
       "source": "FUNC-session-shutdown",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-session-shutdown",
+      "target": "FLOW-lock-release",
+      "type": "io"
     },
     {
       "source": "FUNC-session-shutdown",
@@ -20167,6 +20509,11 @@
       "source": "FUNC-task-abschluss",
       "target": "MOD-loop",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-task-abschluss",
+      "target": "FLOW-mutate-cmd-task-abschluss",
+      "type": "io"
     },
     {
       "source": "FUNC-task-abschluss",
@@ -23409,5 +23756,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 643
+  "graphVersion": 647
 }

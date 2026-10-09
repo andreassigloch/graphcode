@@ -816,7 +816,6 @@
 | `FCHAIN-advisory-roundtrip` | satisfy | `REQ-advisory-roundtrip-latency` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
-| `FCHAIN-agent-query` | compose | `FUNC-list-elements` |
 | `FCHAIN-agent-query` | compose | `FUNC-read-tools` |
 | `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
 | `FCHAIN-agent-query` | satisfy | `REQ-pre-agent-query` |
@@ -870,6 +869,7 @@
 | `FCHAIN-impact-testing` | satisfy | `REQ-post-impact-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-pre-impact-testing` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-graph-impact` |
+| `FCHAIN-interface-escalation` | compose | `FUNC-graph-store` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-mutate` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-read-tools` |
 | `FCHAIN-interface-escalation` | satisfy | `REQ-interface-change-escalation` |
@@ -881,6 +881,7 @@
 | `FCHAIN-live-update` | compose | `FUNC-graph-store` |
 | `FCHAIN-live-update` | compose | `FUNC-health-endpoint` |
 | `FCHAIN-live-update` | compose | `FUNC-mutate` |
+| `FCHAIN-live-update` | compose | `FUNC-own-kuzu-host` |
 | `FCHAIN-live-update` | compose | `FUNC-serve-sse` |
 | `FCHAIN-live-update` | compose | `FUNC-serve-stdio` |
 | `FCHAIN-live-update` | satisfy | `REQ-mutation-emits-event` |
@@ -891,6 +892,7 @@
 | `FCHAIN-loop-closure` | satisfy | `REQ-prompt-provenance` |
 | `FCHAIN-loop-closure` | satisfy | `REQ-rule-calibration` |
 | `FCHAIN-merge-branches` | compose | `FUNC-merge-nodes` |
+| `FCHAIN-model-import` | compose | `FUNC-cli-dispatch` |
 | `FCHAIN-model-import` | compose | `FUNC-import-code` |
 | `FCHAIN-model-import` | compose | `FUNC-import-code-verb` |
 | `FCHAIN-model-import` | compose | `FUNC-import-doc` |
@@ -915,6 +917,7 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-cli-dispatch` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-collect-status` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-create-harness` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-gve-sessions` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-gve-supervise` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
@@ -1052,6 +1055,8 @@
 | `FLOW-cli-invocation` | io | `FUNC-cli-dispatch` |
 | `FLOW-cli-invocation` | io | `FUNC-plan-code-lane` |
 | `FLOW-cli-invocation` | relation | `SCHEMA-cli-command` |
+| `FLOW-cli-invocation-import-code` | io | `FUNC-cli-dispatch` |
+| `FLOW-cli-invocation-import-code` | relation | `SCHEMA-cli-command` |
 | `FLOW-code-lane-plan` | io | `ACTOR-owner` |
 | `FLOW-code-lane-plan` | relation | `SCHEMA-code-lane-plan` |
 | `FLOW-completeness` | io | `FUNC-compute-readiness` |
@@ -1074,6 +1079,7 @@
 | `FLOW-dimension-readiness` | relation | `SCHEMA-readiness-report` |
 | `FLOW-element-slice` | io | `ACTOR-agent` |
 | `FLOW-element-slice` | io | `FUNC-gate-client` |
+| `FLOW-element-slice` | io | `FUNC-task-abschluss` |
 | `FLOW-element-slice` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-expand-subgraph` | io | `FUNC-read-tools` |
 | `FLOW-expand-subgraph` | relation | `SCHEMA-ontology-graph` |
@@ -1100,8 +1106,12 @@
 | `FLOW-gate-verdict` | io | `FUNC-test-ingest` |
 | `FLOW-gate-verdict` | io | `FUNC-tool-context` |
 | `FLOW-gate-verdict` | relation | `SCHEMA-mutate-result` |
+| `FLOW-generation-step-suggest` | io | `FUNC-graph-suggest` |
+| `FLOW-generation-step-suggest` | relation | `SCHEMA-generation-step` |
 | `FLOW-graph-delta` | io | `FUNC-graph-store` |
 | `FLOW-graph-delta` | relation | `SCHEMA-graph-delta` |
+| `FLOW-graph-snapshot-file` | io | `ACTOR-owner` |
+| `FLOW-graph-snapshot-file` | relation | `SCHEMA-ontology-json` |
 | `FLOW-graph-state` | io | `ACTOR-owner` |
 | `FLOW-graph-state` | io | `FUNC-arch-fitness` |
 | `FLOW-graph-state` | io | `FUNC-auto-export` |
@@ -1133,6 +1143,8 @@
 | `FLOW-harness-handle` | io | `FUNC-serve-stdio` |
 | `FLOW-harness-handle` | io | `FUNC-tool-context` |
 | `FLOW-harness-handle` | relation | `SCHEMA-harness-handle` |
+| `FLOW-harness-handle-host` | io | `FUNC-serve-sse` |
+| `FLOW-harness-handle-host` | relation | `SCHEMA-harness-handle` |
 | `FLOW-health-report` | io | `ACTOR-dashboard` |
 | `FLOW-health-report` | relation | `SCHEMA-health-report` |
 | `FLOW-held-back-traces` | io | `FUNC-graph-export-snapshot` |
@@ -1160,6 +1172,10 @@
 | `FLOW-live-event` | io | `FUNC-serve-sse` |
 | `FLOW-live-event` | io | `FUNC-serve-stdio` |
 | `FLOW-live-event` | relation | `SCHEMA-update-event` |
+| `FLOW-live-event-host` | io | `FUNC-broadcast-diff` |
+| `FLOW-live-event-host` | relation | `SCHEMA-update-event` |
+| `FLOW-lock-release` | io | `FUNC-claim-store-lock` |
+| `FLOW-lock-release` | relation | `SCHEMA-lock-owner` |
 | `FLOW-markdown-docs` | io | `ACTOR-owner` |
 | `FLOW-markdown-docs` | relation | `SCHEMA-markdown-view` |
 | `FLOW-mcp-tool` | io | `FUNC-bind-tools` |
@@ -1178,6 +1194,10 @@
 | `FLOW-model-answer` | io | `FUNC-read-openai-stream` |
 | `FLOW-model-answer` | io | `FUNC-run-executor` |
 | `FLOW-model-answer` | relation | `SCHEMA-model-answer` |
+| `FLOW-model-answer-anthropic` | io | `FUNC-call-model` |
+| `FLOW-model-answer-anthropic` | relation | `SCHEMA-model-answer` |
+| `FLOW-model-answer-openai` | io | `FUNC-call-model` |
+| `FLOW-model-answer-openai` | relation | `SCHEMA-model-answer` |
 | `FLOW-model-request` | io | `FUNC-call-model` |
 | `FLOW-model-request` | relation | `SCHEMA-model-request` |
 | `FLOW-model-wire-request` | io | `ACTOR-llm` |
@@ -1196,10 +1216,14 @@
 | `FLOW-mutate-cmd-bootstrap` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-close-violations` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-close-violations` | relation | `SCHEMA-mutate-command` |
+| `FLOW-mutate-cmd-decode` | io | `FUNC-mutate` |
+| `FLOW-mutate-cmd-decode` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-gate-client` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-gate-client` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-graph-suggest` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-graph-suggest` | relation | `SCHEMA-mutate-command` |
+| `FLOW-mutate-cmd-host-socket` | io | `FUNC-mutate` |
+| `FLOW-mutate-cmd-host-socket` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-import-code-verb` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-import-code-verb` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-import-doc` | io | `FUNC-mutate` |
@@ -1224,6 +1248,8 @@
 | `FLOW-mutate-cmd-se-top-level` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-se-trade` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-se-trade` | relation | `SCHEMA-mutate-command` |
+| `FLOW-mutate-cmd-task-abschluss` | io | `FUNC-mutate` |
+| `FLOW-mutate-cmd-task-abschluss` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-test-ingest` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-test-ingest` | relation | `SCHEMA-mutate-command` |
 | `FLOW-next-step-advice` | io | `ACTOR-agent` |
@@ -1281,6 +1307,12 @@
 | `FLOW-recovered-batch` | relation | `SCHEMA-mutate-command` |
 | `FLOW-rendered-views` | io | `ACTOR-owner` |
 | `FLOW-rendered-views` | relation | `SCHEMA-markdown-view` |
+| `FLOW-reseed-order` | io | `FUNC-apply-reseed` |
+| `FLOW-reseed-order` | relation | `SCHEMA-ontology-json` |
+| `FLOW-reseed-snapshot` | io | `FUNC-reseed` |
+| `FLOW-reseed-snapshot` | relation | `SCHEMA-ontology-json` |
+| `FLOW-reseeded-graph` | io | `FUNC-graph-store` |
+| `FLOW-reseeded-graph` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-round-injection` | io | `FUNC-run-executor` |
 | `FLOW-round-injection` | relation | `SCHEMA-round-injection` |
 | `FLOW-round-prompt` | io | `FUNC-build-round-injection` |
@@ -1365,12 +1397,15 @@
 | `FLOW-tool-profile-view` | relation | `SCHEMA-mcp-tool-registry` |
 | `FLOW-tool-registry` | io | `FUNC-serve-stdio` |
 | `FLOW-tool-registry` | relation | `SCHEMA-tool-registry` |
+| `FLOW-tool-surface` | io | `ACTOR-agent` |
+| `FLOW-tool-surface` | relation | `SCHEMA-tool-registry` |
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
 | `FLOW-trajectory` | relation | `SCHEMA-trajectory` |
 | `FLOW-version-bump` | io | `FUNC-migrate-schema` |
 | `FLOW-version-bump` | io | `FUNC-schema-guard` |
 | `FLOW-version-bump` | relation | `SCHEMA-query-params` |
 | `FUNC-apply-reseed` | allocate | `MOD-kernel` |
+| `FUNC-apply-reseed` | io | `FLOW-reseeded-graph` |
 | `FUNC-apply-reseed` | satisfy | `REQ-graph-state-recall` |
 | `FUNC-arch-fitness` | allocate | `MOD-kernel-measure` |
 | `FUNC-arch-fitness` | io | `FLOW-arch-fitness` |
@@ -1561,6 +1596,7 @@
 | `FUNC-create-harness` | io | `FLOW-harness-handle` |
 | `FUNC-create-harness` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-decode` | allocate | `MOD-loop` |
+| `FUNC-decode` | io | `FLOW-mutate-cmd-decode` |
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
 | `FUNC-decode` | satisfy | `REQ-formatE-diff-dialect` |
 | `FUNC-deduce-tests` | allocate | `MOD-projections` |
@@ -1608,6 +1644,7 @@
 | `FUNC-generation-step` | io | `FLOW-channel-handoff` |
 | `FUNC-generation-step` | io | `FLOW-channel-next-step` |
 | `FUNC-generation-step` | io | `FLOW-channel-skill-reference` |
+| `FUNC-generation-step` | io | `FLOW-generation-step-suggest` |
 | `FUNC-generation-step` | io | `FLOW-next-step-advice` |
 | `FUNC-generation-step` | io | `FLOW-round-prompt` |
 | `FUNC-generation-step` | satisfy | `REQ-done-iff-no-focus` |
@@ -1629,6 +1666,7 @@
 | `FUNC-graph-expand` | io | `FLOW-expand-subgraph` |
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-graph-export-snapshot` | allocate | `MOD-projections` |
+| `FUNC-graph-export-snapshot` | io | `FLOW-graph-snapshot-file` |
 | `FUNC-graph-export-snapshot` | satisfy | `REQ-held-back-traces-named` |
 | `FUNC-graph-impact` | allocate | `MOD-kernel` |
 | `FUNC-graph-impact` | io | `FLOW-impact-slice` |
@@ -1672,6 +1710,7 @@
 | `FUNC-held-back-traces` | io | `FLOW-held-back-traces` |
 | `FUNC-held-back-traces` | satisfy | `REQ-held-back-traces-named` |
 | `FUNC-host-socket` | allocate | `MOD-surface` |
+| `FUNC-host-socket` | io | `FLOW-mutate-cmd-host-socket` |
 | `FUNC-host-socket` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-import` | allocate | `MOD-kernel` |
 | `FUNC-import` | io | `FLOW-imported-graph` |
@@ -1679,6 +1718,7 @@
 | `FUNC-import` | satisfy | `REQ-post-import` |
 | `FUNC-import` | satisfy | `REQ-pre-import` |
 | `FUNC-import-code` | allocate | `MOD-agent-surface` |
+| `FUNC-import-code` | io | `FLOW-cli-invocation-import-code` |
 | `FUNC-import-code-verb` | allocate | `MOD-surface` |
 | `FUNC-import-code-verb` | io | `FLOW-mutate-cmd-import-code-verb` |
 | `FUNC-import-code-verb` | satisfy | `REQ-model-exchange-pre` |
@@ -1719,6 +1759,7 @@
 | `FUNC-nd-similarity` | allocate | `MOD-kernel-measure` |
 | `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-kernel` |
+| `FUNC-own-kuzu-host` | io | `FLOW-harness-handle-host` |
 | `FUNC-own-kuzu-host` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-plan-code-lane` | allocate | `MOD-projections` |
 | `FUNC-plan-code-lane` | io | `FLOW-code-lane-plan` |
@@ -1730,8 +1771,10 @@
 | `FUNC-rank-candidates` | io | `FLOW-candidate-ranking` |
 | `FUNC-rank-candidates` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-read-anthropic-stream` | allocate | `MOD-loop` |
+| `FUNC-read-anthropic-stream` | io | `FLOW-model-answer-anthropic` |
 | `FUNC-read-anthropic-stream` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-read-openai-stream` | allocate | `MOD-loop` |
+| `FUNC-read-openai-stream` | io | `FLOW-model-answer-openai` |
 | `FUNC-read-openai-stream` | satisfy | `REQ-one-driver-local-and-frontier` |
 | `FUNC-read-tools` | allocate | `MOD-surface` |
 | `FUNC-read-tools` | io | `FLOW-formatE-artifact-read-tools` |
@@ -1742,11 +1785,13 @@
 | `FUNC-render-views` | io | `FLOW-rendered-views` |
 | `FUNC-render-views` | satisfy | `REQ-doc-export` |
 | `FUNC-reseed` | allocate | `MOD-kernel` |
+| `FUNC-reseed` | io | `FLOW-reseed-order` |
 | `FUNC-reseed` | satisfy | `REQ-graph-state-recall` |
 | `FUNC-resolve-tests-from-code` | allocate | `MOD-kernel` |
 | `FUNC-resolve-tests-from-code` | io | `FLOW-impacted-tests` |
 | `FUNC-resolve-tests-from-code` | satisfy | `REQ-graph-tests-operational` |
 | `FUNC-rewind` | allocate | `MOD-surface` |
+| `FUNC-rewind` | io | `FLOW-reseed-snapshot` |
 | `FUNC-rewind` | satisfy | `REQ-graph-state-recall` |
 | `FUNC-run-executor` | allocate | `MOD-loop` |
 | `FUNC-run-executor` | io | `FLOW-candidate-batch` |
@@ -1805,10 +1850,13 @@
 | `FUNC-seed-from-json` | satisfy | `REQ-bootstrap-through-gate` |
 | `FUNC-seed-from-json` | satisfy | `REQ-held-back-traces-named` |
 | `FUNC-serve-sse` | allocate | `MOD-surface` |
+| `FUNC-serve-sse` | io | `FLOW-live-event-host` |
 | `FUNC-serve-sse` | satisfy | `REQ-versioned-broadcast` |
 | `FUNC-serve-stdio` | allocate | `MOD-surface` |
+| `FUNC-serve-stdio` | io | `FLOW-tool-surface` |
 | `FUNC-serve-stdio` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-session-shutdown` | allocate | `MOD-surface` |
+| `FUNC-session-shutdown` | io | `FLOW-lock-release` |
 | `FUNC-session-shutdown` | satisfy | `REQ-session-leaves-nothing-behind` |
 | `FUNC-take-steering-snapshot` | allocate | `MOD-kernel-measure` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
@@ -1823,6 +1871,7 @@
 | `FUNC-target-profile-load` | io | `FLOW-target-profile` |
 | `FUNC-target-profile-load` | satisfy | `REQ-target-shifts-ranking` |
 | `FUNC-task-abschluss` | allocate | `MOD-loop` |
+| `FUNC-task-abschluss` | io | `FLOW-mutate-cmd-task-abschluss` |
 | `FUNC-task-abschluss` | satisfy | `REQ-analyse-artefakt-vor-stempel` |
 | `FUNC-test` | allocate | `MOD-agent-surface` |
 | `FUNC-test` | io | `FLOW-skill-report-test` |

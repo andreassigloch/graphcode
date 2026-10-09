@@ -4,30 +4,34 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 148 TEST — Pyramide nach Modell-Level (System/UC/Function). Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 148 TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.
 
 ```
               ╱╲
-             ╱E2╲          System level · SYS-graphcode
-            ╱ E  ╲         ✓ 54 E2E test(s)
-           ╱──────╲
-          ╱  UC /   ╲       Use-case level · 9 UC
-         ╱integration╲      ⚠ 9 / 9 UC exercised by a scenario test
-        ╱────────────╲      ✗ 42/147 FUNC↔FUNC connections tested  ← GAP
-       ╱  Function /   ╲     Function level · 127 FUNC
-      ╱      unit       ╲
-     ╱───────────────────╲
+             ╱SYS╲         System · SYS-graphcode
+            ╱      ╲        ✓ 54 test(s) of system requirements
+           ╱────────╲
+          ╱ use cases ╲      9 UC · 9 / 9 with a verified requirement
+         ╱────────────╲
+        ╱ integration  ╲     ✗ 49/161 FUNC↔FUNC connections tested  ← GAP
+       ╱────────────────╲
+      ╱ module · function ╲   7 MOD · 127 FUNC
+     ╱────────────────────╲
 ```
 
-| Level | Element | Test kind | Tests | Coverage | Verdict |
+| Level | Element | Verification | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
-| System | SYS (1) | E2E | 54 | 54 / 1 | ✓ |
-| Use-case | UC (9) | acceptance / integration | 105 | 9 / 9 scenario | ✓ |
-| Integration | FUNC↔FUNC (147 conn) | integration (chain) | 105 | 42 / 147 connections | ✗ 105 uncovered |
-| Function | FUNC (127) | unit | 86 | 127 / 127 | ✓ |
+| System | SYS (1) | system verification (SYS.5) | 54 | 41 / 41 system requirements | ✓ |
+| Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 103 | 9 / 9 use cases | ✓ |
+| Integration | FUNC↔FUNC (161 conn) | integration verification (SYS.4 · SWE.5) | 29 | 49 / 161 connections | ✗ 112 uncovered |
+| Interface | SCHEMA (57) | integration verification (SYS.4 · SWE.5) | 23 | 34 / 57 schemas | ⚠ 23 without a test |
+| Module | MOD (7) | component verification (SWE.5 · HWE.3) | 62 | 6 / 7 | ⚠ 1 without a verified requirement |
+| Function | FUNC (127) | unit verification (SWE.4 · HWE.3) | 86 | 104 / 127 | ⚠ 23 without a verified requirement |
+| (validation) | UC (9) | validation (VAL.1) | — | no position in the model | — |
 | (support) | — | conformance | 4 | codec round-trip | ✓ |
 
-> GENERATED — TEST level derived from the graph position of the REQ it verifies (SYS/UC/FUNC/FCHAIN),
-> not a testRef.level attribute; System, UC & Integration rows are DERIVED from coverage, so a missing
-> E2E run surfaces as ✗ (currently 54 E2E test(s)) and an untested FUNC↔FUNC connection (R-21)
-> surfaces as ✗ (42/147 covered) instead of being silently absent.
+> GENERATED — the level of a TEST is the graph position of what it verifies (a REQ under SYS/UC/FCHAIN/MOD/FUNC, or a SCHEMA):
+> it says WHAT is verified, not how the test is written. A test of a system requirement counts as system
+> verification even if it is a unit-style test — whether it plays the system through, this table cannot say.
+> Validation against the intended use has no position: a play-through of a use case is a test of its requirements.
+> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (49/161 covered).

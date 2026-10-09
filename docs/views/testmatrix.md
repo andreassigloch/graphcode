@@ -169,6 +169,7 @@ Belegt: 120/153 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 
 | Verbindung | via FLOW | FCHAIN | deckende TEST(s) | level | Ergebnis |
 |---|---|---|---|---|---|
+| `FUNC-apply-reseed` → `FUNC-graph-store` | `FLOW-reseeded-graph` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
 | `FUNC-arch-fitness` → `FUNC-fit-advisory` | `FLOW-arch-fitness` | `FCHAIN-apply-gate` · `FCHAIN-steering-loop` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-audit-stats` → `FUNC-se-retro` | `FLOW-audit-report` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-audit-trail` → `FUNC-se-retro` | `FLOW-audit-entries` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
@@ -178,15 +179,17 @@ Belegt: 120/153 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-bind-tools` → `FUNC-tool-profile` | `FLOW-mcp-tool-registry` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-build-round-injection` → `FUNC-run-executor` | `FLOW-round-injection` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-check-code-conformance` → `FUNC-compute-readiness` | `FLOW-conformance-findings` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
-| `FUNC-claim-store-lock` → `FUNC-create-harness` | `FLOW-store-ownership` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-claim-store-lock` → `FUNC-create-harness` | `FLOW-store-ownership` | `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-claim-store-lock` → `FUNC-graph-store` | `FLOW-store-ownership` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-claim-store-lock` → `FUNC-own-kuzu-host` | `FLOW-store-ownership` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-claim-store-lock` → `FUNC-session-shutdown` | `FLOW-store-ownership` | `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-cli-dispatch` → `FUNC-bootstrap` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-cli-dispatch` → `FUNC-claim-store-lock` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-cli-dispatch` → `FUNC-collect-status` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
+| `FUNC-cli-dispatch` → `FUNC-create-harness` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-cli-dispatch` → `FUNC-gve-supervise` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-cli-dispatch` → `FUNC-harness-cli` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
+| `FUNC-cli-dispatch` → `FUNC-import-code-verb` | `FLOW-cli-command` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
 | `FUNC-cli-dispatch` → `FUNC-run-verb` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-cli-dispatch` → `FUNC-upgrade` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-close-violations` → `FUNC-mutate` | `FLOW-mutate-cmd-close-violations` | `FCHAIN-skill-authoring` | ⚠ keine Abdeckung |  |  |
@@ -198,7 +201,10 @@ Belegt: 120/153 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-compute-readiness` → `FUNC-test` | `FLOW-dimension-readiness` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-compute-readiness` → `FUNC-test-ui` | `FLOW-dimension-readiness` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-compute-steering-delta` → `FUNC-rank-candidates` | `FLOW-steering-delta` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-create-harness` → `FUNC-bind-tools` | `FLOW-harness-handle` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
+| `FUNC-create-harness` → `FUNC-run-verb` | `FLOW-harness-handle` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-create-harness` → `FUNC-tool-context` | `FLOW-harness-handle` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-decode` → `FUNC-mutate` | `FLOW-mutate-cmd-decode` | `FCHAIN-capture` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-uc-authoring-style` | integration, unit | passed |
 | `FUNC-emit-update-event` → `FUNC-broadcast-diff` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
 | `FUNC-emit-update-event` → `FUNC-serve-sse` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
 | `FUNC-emit-update-event` → `FUNC-serve-stdio` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
@@ -213,6 +219,7 @@ Belegt: 120/153 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-generation-step` → `FUNC-build-round-injection` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-generation-step` → `FUNC-compose-faltung` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-generation-step` → `FUNC-fund-kontext` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-generation-step` → `FUNC-graph-suggest` | `FLOW-generation-step-suggest` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-generation-step` → `FUNC-inventory-channel` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-generation-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-generation-step` → `FUNC-run-executor` | `FLOW-round-prompt` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
@@ -228,8 +235,8 @@ Belegt: 120/153 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-graph-store` → `FUNC-fit-advisory` | `FLOW-graph-state` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-graph-store` → `FUNC-graph-export-snapshot` | `FLOW-graph-state` | `FCHAIN-snapshot-freshness` | `TEST-auto-export` · `TEST-graph-time-travel` | integration | passed |
 | `FUNC-graph-store` → `FUNC-graph-suggest` | `FLOW-graph-state` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance | passed |
-| `FUNC-graph-store` → `FUNC-mutate` | `FLOW-graph-state` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-snapshot-freshness` | `TEST-advisory-roundtrip-latency` · `TEST-auto-export` · `TEST-code-quality` · `TEST-create-harness-smoke` · `TEST-graph-time-travel` · `TEST-live-view` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
-| `FUNC-graph-store` → `FUNC-read-tools` | `FLOW-graph-state` | `FCHAIN-advisory-roundtrip` | `TEST-advisory-roundtrip-latency` | performance | passed |
+| `FUNC-graph-store` → `FUNC-mutate` | `FLOW-graph-state` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-snapshot-freshness` | `TEST-advisory-roundtrip-latency` · `TEST-auto-export` · `TEST-code-quality` · `TEST-create-harness-smoke` · `TEST-graph-time-travel` · `TEST-interface-escalation` · `TEST-live-view` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-graph-store` → `FUNC-read-tools` | `FLOW-graph-state` | `FCHAIN-advisory-roundtrip` · `FCHAIN-interface-escalation` | `TEST-advisory-roundtrip-latency` · `TEST-interface-escalation` | integration, performance | passed |
 | `FUNC-graph-store` → `FUNC-seed-from-json` | `FLOW-graph-state` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
 | `FUNC-graph-suggest` → `FUNC-build-round-injection` | `FLOW-channel-proposal-suggest` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-graph-suggest` → `FUNC-mutate` | `FLOW-mutate-cmd-graph-suggest` | `FCHAIN-advisory-roundtrip` · `FCHAIN-steering-loop` | `TEST-advisory-roundtrip-latency` | performance | passed |
@@ -237,27 +244,35 @@ Belegt: 120/153 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-gve-supervise` → `FUNC-gve-sessions` | `FLOW-session-entry` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-held-back-traces` → `FUNC-graph-export-snapshot` | `FLOW-held-back-traces` | `FCHAIN-snapshot-freshness` | `TEST-auto-export` · `TEST-graph-time-travel` | integration | passed |
 | `FUNC-held-back-traces` → `FUNC-graph-readiness` | `FLOW-held-back-traces` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-host-socket` → `FUNC-mutate` | `FLOW-mutate-cmd-host-socket` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-import` → `FUNC-graph-store` | `FLOW-imported-graph` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
+| `FUNC-import-code` → `FUNC-cli-dispatch` | `FLOW-cli-invocation-import-code` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
 | `FUNC-import-code-verb` → `FUNC-mutate` | `FLOW-mutate-cmd-import-code-verb` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
 | `FUNC-import-doc` → `FUNC-mutate` | `FLOW-mutate-cmd-import-doc` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
 | `FUNC-inventory-channel` → `FUNC-build-round-injection` | `FLOW-channel-inventory` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-list-elements` → `FUNC-gate-client` | `FLOW-element-slice` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-list-elements` → `FUNC-task-abschluss` | `FLOW-element-slice` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-load-config` → `FUNC-take-steering-snapshot` | `FLOW-metric-policy` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-module-metrics` → `FUNC-evaluate-rules` | `FLOW-module-metrics` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-mutate` → `FUNC-audit-stats` | `FLOW-audit-record` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-mutate` → `FUNC-audit-trail` | `FLOW-audit-record` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-mutate` → `FUNC-gate-client` | `FLOW-gate-verdict` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
-| `FUNC-mutate` → `FUNC-graph-store` | `FLOW-graph-delta` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-snapshot-freshness` | `TEST-advisory-roundtrip-latency` · `TEST-auto-export` · `TEST-code-quality` · `TEST-create-harness-smoke` · `TEST-graph-time-travel` · `TEST-live-view` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-mutate` → `FUNC-graph-store` | `FLOW-graph-delta` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-snapshot-freshness` | `TEST-advisory-roundtrip-latency` · `TEST-auto-export` · `TEST-code-quality` · `TEST-create-harness-smoke` · `TEST-graph-time-travel` · `TEST-interface-escalation` · `TEST-live-view` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-mutate` → `FUNC-graph-suggest` | `FLOW-gate-verdict` | `FCHAIN-advisory-roundtrip` · `FCHAIN-steering-loop` | `TEST-advisory-roundtrip-latency` | performance | passed |
 | `FUNC-mutate` → `FUNC-import-code-verb` | `FLOW-gate-verdict` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
 | `FUNC-mutate` → `FUNC-se-retro` | `FLOW-gate-verdict` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-mutate` → `FUNC-tool-context` | `FLOW-gate-verdict` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-own-kuzu-host` → `FUNC-serve-sse` | `FLOW-harness-handle-host` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
 | `FUNC-preflight` → `FUNC-gate-client` | `FLOW-preflight-outcome` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-rank-candidates` → `FUNC-run-executor` | `FLOW-candidate-ranking` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-read-anthropic-stream` → `FUNC-call-model` | `FLOW-model-answer-anthropic` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-read-openai-stream` → `FUNC-call-model` | `FLOW-model-answer-openai` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-render-views` → `FUNC-export-markdown` | `FLOW-query-request-render-views` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
+| `FUNC-reseed` → `FUNC-apply-reseed` | `FLOW-reseed-order` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
 | `FUNC-resolve-tests-from-code` → `FUNC-deduce-tests` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
 | `FUNC-resolve-tests-from-code` → `FUNC-measure-test-schlupf` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
 | `FUNC-resolve-tests-from-code` → `FUNC-plan-code-lane` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
+| `FUNC-rewind` → `FUNC-reseed` | `FLOW-reseed-snapshot` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-call-model` | `FLOW-model-request` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-gate-client` | `FLOW-candidate-batch` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-preflight` | `FLOW-candidate-batch` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
@@ -273,12 +288,15 @@ Belegt: 120/153 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-se-trade` → `FUNC-mutate` | `FLOW-mutate-cmd-se-trade` | `FCHAIN-skill-authoring` | ⚠ keine Abdeckung |  |  |
 | `FUNC-seed-from-json` → `FUNC-held-back-traces` | `FLOW-ontology-json` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
 | `FUNC-seed-from-json` → `FUNC-import` | `FLOW-ontology-json` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
+| `FUNC-serve-sse` → `FUNC-broadcast-diff` | `FLOW-live-event-host` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
+| `FUNC-session-shutdown` → `FUNC-claim-store-lock` | `FLOW-lock-release` | `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-compute-steering-delta` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-measurement-vector` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-steering-snapshot` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-target-profile` → `FUNC-target-profile-load` | `FLOW-target-profile-file` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-target-profile-load` → `FUNC-generation-step` | `FLOW-target-profile` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-target-profile-load` → `FUNC-graph-suggest` | `FLOW-target-profile` | `FCHAIN-advisory-roundtrip` · `FCHAIN-steering-loop` | `TEST-advisory-roundtrip-latency` | performance | passed |
+| `FUNC-task-abschluss` → `FUNC-mutate` | `FLOW-mutate-cmd-task-abschluss` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-view-changelog` → `FUNC-export-markdown` | `FLOW-query-request-view-changelog` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-view-conops` → `FUNC-export-markdown` | `FLOW-query-request-view-conops` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-view-fmea` → `FUNC-list-elements` | `FLOW-query-request-view-fmea` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
@@ -287,4 +305,4 @@ Belegt: 120/153 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-view-intplan` → `FUNC-export-markdown` | `FLOW-query-request-view-intplan` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-view-rtm` → `FUNC-export-markdown` | `FLOW-query-request-view-rtm` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 
-> 42/117 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 75 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 49/135 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 86 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
