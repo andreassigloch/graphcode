@@ -1,6 +1,6 @@
 # CR-GC-775: Executor im Host auslagern: Zugaenge entfernen (graph_delegate, graphcode run, Schalter, Config-Abschnitt)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-806 (idea)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-806.json (Lane: code)
