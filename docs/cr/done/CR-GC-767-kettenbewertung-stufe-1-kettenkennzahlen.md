@@ -1,6 +1,6 @@
 # CR-GC-767: Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-794 (idea)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-794.json (Lane: code)
@@ -19,14 +19,14 @@ Zahlen, kein Test hält sie, und die Kettenrechnung des Spikes steht neben der M
 `graph_metrics` beantwortet neben „welches Modul koppelt" auch **„wie läuft jede Wirkkette, und ist sie überhaupt
 bewertbar"** — deterministisch, mit der Reichweite daneben.
 
-- [ ] Je FCHAIN die fünf heute rechenbaren Kennzahlen: Gesamtlänge, Verzweigungsgrad, Modulgrenzen, Rückkopplungen,
+- [x] Je FCHAIN die fünf heute rechenbaren Kennzahlen: Gesamtlänge, Verzweigungsgrad, Modulgrenzen, Rückkopplungen,
       geteilte Knoten (dazu Engstellen als obere Schranke).
-- [ ] Eine nicht bewertbare Kette liefert **keine Zahl, sondern den Grund**: FC-05, loses Glied, kein Eingang, kein
+- [x] Eine nicht bewertbare Kette liefert **keine Zahl, sondern den Grund**: FC-05, loses Glied, kein Eingang, kein
       Ausgang.
-- [ ] Die **Bewertbarkeitsquote** (bewertbare Ketten / alle Ketten) steht neben den Werten — wie die Bindungsquote
+- [x] Die **Bewertbarkeitsquote** (bewertbare Ketten / alle Ketten) steht neben den Werten — wie die Bindungsquote
       bei RC-*.
-- [ ] Synchrone Tiefe und Fehlerpfad-Tiefe stehen als `null` mit dem Grund „braucht FLOW-Attribut" (CR-SM-364).
-- [ ] Der Spike rechnet nicht mehr selbst, er ruft dieselbe Funktion (kein paralleler Pfad).
+- [x] Synchrone Tiefe und Fehlerpfad-Tiefe stehen als `null` mit dem Grund „braucht FLOW-Attribut" (CR-SM-364).
+- [x] Der Spike rechnet nicht mehr selbst, er ruft dieselbe Funktion (kein paralleler Pfad).
 
 **Nicht in dieser Stufe:** Profil und Schwellen als NFR-REQ, Diagnose und Handlungsklassen (T-O2), Degradationsschutz
 (T-O3), sync/async am FLOW (CR-SM-364), Reduktion von ℝ⁶, Umstellung von `graph_suggest`.
@@ -58,11 +58,42 @@ graphcode (diese CR):
 
 ## Akzeptanzkriterien
 
-- [ ] Referenzkette „Zahlung auslösen": Länge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rückkopplungen, 1 geteilter Knoten.
-- [ ] Gegenprobe (Schleife und Ast): Rückkopplungen und Verzweigung schlagen um.
-- [ ] Eine Kette ohne Eingang ist nicht bewertbar und nennt den Grund; die Quote zählt sie im Nenner.
-- [ ] `graph_metrics` auf graphcode selbst zeigt 21 Ketten mit Quote; der Wert stimmt mit dem Spike überein.
-- [ ] `npm run build`, die ausgewählten Tests und `verify:full CR-GC-767` grün; RC-* kongruent oder benannt.
+- [x] Referenzkette „Zahlung auslösen": Länge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rückkopplungen, 1 geteilter Knoten.
+- [x] Gegenprobe (Schleife und Ast): Rückkopplungen und Verzweigung schlagen um.
+- [x] Eine Kette ohne Eingang ist nicht bewertbar und nennt den Grund; die Quote zählt sie im Nenner.
+- [x] `graph_metrics` auf graphcode selbst zeigt 21 Ketten mit Quote; der Wert stimmt mit dem Spike überein.
+- [x] `npm run build`, die ausgewählten Tests und `verify:full CR-GC-767` grün; RC-* kongruent oder benannt.
+
+## Ergebnis (2026-10-09)
+
+`graph_metrics` traegt die Bloecke `chains` und `measurability` aus `chainMetrics` (`@sigloch/contracts` 11.1.0,
+CR-SM-404). Auf graphcodes eigenem Modell (Graph v649): **24 Ketten, 22 bewertbar (92 %)** — am laufenden Werkzeug
+und im Spike gleich. Die Zahl „21 Ketten / 4 bewertbar" oben ist der Stand vor CR-GC-768.
+
+- Zielbild: alle fuenf Punkte erfuellt. Der Spike rechnet nicht mehr selbst; alt gegen neu ueber den Korpus verglichen:
+  0 Abweichungen an 79 Ketten (Kennzahlen, Bewertbarkeit, Diagnose).
+- Familie-Korpus (10 Graphen): 49 von 79 Ketten bewertbar (62 %). T-O1 steht in `docs/messung/stand.md` als
+  „nicht bestanden" (Kriterium >= 90 %).
+- Rot gesehen: die vier Tests am Werkzeug und der Eigenmodell-Test fielen vor dem Einbau am fehlenden Block.
+- `verify:full CR-GC-767`: 199 von 201 Dateien gruen, Schlupf 0. Rot sind `lockfile-sync` und `distribution`, beide
+  am Peer-Floor `>=11.1`: contracts 11.1.0 ist nicht veroeffentlicht, das Lock traegt noch `>=11` (Link-Modus).
+- Modell: `FUNC-chain-metrics`, `FLOW-chain-metrics`, `SCHEMA-chain-metrics`, `REQ-chain-metrics`; RC-* ohne neuen
+  Befund am Gate.
+
+**Abweichungen vom Auftrag oben**
+
+- Feldnamen englisch (`measurability` statt `bewertbarkeit`), Entscheidung D aus CR-SM-404.
+- Kein eigener TEST-Knoten: R-29 laesst eine Testdatei nur an EINER Abnahme zu. `TEST-graph-metrics` verifiziert
+  jetzt zusaetzlich `REQ-chain-metrics` und `SCHEMA-chain-metrics`. Die CR-Kante auf einen TEST ist nach R-18 illegal.
+- `tool-contract.ts` und `help-content.ts` unberuehrt: der Ergebnisvertrag von `graph_metrics` steht in `metrics.ts`,
+  sein Hilfetext in `tool-help.ts`. Die Werkzeugbeschreibung nennt den Block nur mit vier Woertern — das
+  `tools/list`-Budget (28 300 Zeichen, Ratsche) liess 30 Zeichen.
+- `scripts/model-test-set.mjs` dazu: `tests/metrics.test.ts` liest jetzt die SSOT und gehoert in die Modell-Spur.
+- T-O1 steht in `messung.mjs` unter `WEITERE`, nicht in `S1`: die S1-Zeile der Leitlinie §9.4 nennt T-O1 nicht, und
+  `tests/messung.test.ts` haelt `S1` wortgleich mit ihr.
+
+**Offen:** Veroeffentlichung von contracts 11.1.0, danach `npm install` fuer das Lock; T-O1 in die S1-Zeile der
+Leitlinie aufnehmen (dann entfaellt `WEITERE`); `syncDepth` und `errorPathDepth` bleiben `null`.
 
 ## Arbeitsweise
 
