@@ -1,19 +1,20 @@
 /**
- * CR-GC-413 — RC-04: modellierte SCHEMAs werden an ihrer Schnittstelle GEPARST.
+ * CR-GC-413 — RC-04: modellierte SCHEMAs sind Zod-Verträge, keine `interface`.
  *
  * Der Befund war nicht „ein `.parse()` fehlt", sondern: drei Datenverträge, die
- * die Prozessgrenze überqueren (MCP-Tool-Ergebnis → Executor), waren im Code
+ * die Prozessgrenze überqueren (MCP-Tool-Ergebnis → Client), waren im Code
  * `interface` und wurden am Empfang blank gecastet. Ein `as GenerationStep` auf
  * eine fremde Tool-Antwort ist keine Prüfung — es ist die Behauptung, geprüft
  * zu haben.
  *
- * Diese Suite prüft genau die drei Stellen, an denen der Vertrag jetzt gilt:
- *   SCHEMA-generation-step  → `GenerationStep.parse` in `runExecutor`
- *   SCHEMA-fit-advisory     → `FitAdvisory.safeParse` in `executor-rank`
- *   SCHEMA-steering-delta   → `SteeringDelta.safeParse` in `executor-rank`
+ * Der Empfänger im Host (der eingebettete Executor) ist mit CR-GC-775 ausgelagert;
+ * was bleibt, sind die Verträge selbst. Diese Suite prüft, dass sie die emittierte
+ * Form annehmen und die kaputte abweisen:
+ *   SCHEMA-generation-step  → `GenerationStep`
+ *   SCHEMA-fit-advisory     → `FitAdvisory`
+ *   SCHEMA-steering-delta   → `SteeringDelta`
  *
- * Echter Pfad: disk-Kuzu-Harness + echte Tool-Registry; simuliert wird nur die
- * kaputte Tool-Antwort, also genau der Fall, den der Cast verschluckt hat.
+ * Echter Pfad für den Schritt: disk-Kuzu-Harness + echte Tool-Registry.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync } from 'node:fs';
@@ -26,17 +27,11 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { GenerationStep } from '../src/loop/generate.js';
-import { runExecutor, ExecutorConfigSchema, type CallModel } from '../src/loop/executor.js';
-import {
-  fitAdvisoryOf,
-  steeringDeltaOf,
-  deltaSum,
-  focusDelta,
-  rankCandidates,
-} from '../src/loop/executor-rank.js';
+import { FitAdvisory } from '../src/kernel/measure/fit-advisory.js';
+import { SteeringDelta } from '../src/kernel/measure/steering-snapshot.js';
 
 // ---------------------------------------------------------------------------
-// SCHEMA-fit-advisory + SCHEMA-steering-delta — Ranking-Grenze (executor-rank)
+// SCHEMA-fit-advisory + SCHEMA-steering-delta — die Verträge am Verdict
 // ---------------------------------------------------------------------------
 
 /** Ein fitAdvisory, wie `harness.mutate()` es emittiert. */
@@ -56,84 +51,49 @@ const DELTA = {
   stages: { Anforderung: { before: 5, after: 3, delta: 2 }, Modul: { before: 1, after: 2, delta: -1 } },
 };
 
-const cand = (index: number, verdict: Record<string, unknown> | null) =>
-  ({ index, verdict }) as Parameters<typeof rankCandidates>[0][number];
-
-describe('SCHEMA-fit-advisory wird im Ranking geparst (RC-04)', () => {
-  it('vertragstreues Advisory kommt als Daten durch — Σ delta ist der Δm-Wert', () => {
-    expect(fitAdvisoryOf(cand(0, { success: true, fitAdvisory: FIT }).verdict)).toEqual(FIT);
-    expect(deltaSum(cand(0, { success: true, fitAdvisory: FIT }).verdict)).toBeCloseTo(0.25);
+describe('SCHEMA-fit-advisory ist ein geprüfter Vertrag (RC-04)', () => {
+  it('vertragstreues Advisory kommt als Daten durch', () => {
+    expect(FitAdvisory.parse(FIT)).toEqual(FIT);
   });
 
-  it('ein Advisory mit falsch typisiertem delta ist KEINE Messung — vorher warf reduce', () => {
-    // Genau die Antwort, die der `as MutateOutcome`-Cast in `runExecutor`
-    // durchgelassen hat: `delta` kein Zahlen-Array. Ohne safeParse lief das in
-    // `(...).reduce()` und riss den ganzen Best-of-N-Schritt mit.
-    const broken = cand(0, { success: true, fitAdvisory: { ...FIT, delta: 'kaputt' } });
-    expect(fitAdvisoryOf(broken.verdict)).toBeNull();
-    expect(() => deltaSum(broken.verdict)).not.toThrow();
-    expect(deltaSum(broken.verdict)).toBe(0);
+  it('ein Advisory mit falsch typisiertem delta ist KEINE Messung', () => {
+    // Genau die Antwort, die ein blanker Cast durchlässt: `delta` kein Zahlen-Array.
+    expect(FitAdvisory.safeParse({ ...FIT, delta: 'kaputt' }).success).toBe(false);
   });
 
   it('ein unvollständiges Advisory zählt nicht als Messung (Vertrag, nicht Teilform)', () => {
     // `{delta}` allein ist keine FitAdvisory: layer/dimensions/before/after/
     // regressions gehören zum Vertrag, das Gate liefert sie immer mit.
-    expect(fitAdvisoryOf(cand(0, { success: true, fitAdvisory: { delta: [9] } }).verdict)).toBeNull();
-    expect(deltaSum(cand(0, { success: true, fitAdvisory: { delta: [9] } }).verdict)).toBe(0);
+    expect(FitAdvisory.safeParse({ delta: [9] }).success).toBe(false);
   });
 });
 
-describe('SCHEMA-steering-delta wird im Ranking geparst (RC-04)', () => {
-  it('vertragstreues Delta steuert das Fokus-Delta — je Stufe, die es nennt', () => {
-    const c = cand(0, { success: true, steeringDelta: DELTA });
-    expect(steeringDeltaOf(c.verdict)).toEqual(DELTA);
-    expect(focusDelta(c.verdict, 'Anforderung')).toBe(2);
-    expect(focusDelta(c.verdict, 'Modul')).toBe(-1);
-    // Eine Stufe, die das Delta nicht nennt (kein Befund auf beiden Seiten), zaehlt 0.
-    expect(focusDelta(c.verdict, 'Schema')).toBe(0);
-    // CR-GC-758: ohne Fokus-Stufe gibt es kein Delta — eine Summe ueber die Stufen (hier 1) liest niemand.
-    expect(focusDelta(c.verdict, null)).toBe(0);
+describe('SCHEMA-steering-delta ist ein geprüfter Vertrag (RC-04)', () => {
+  it('vertragstreues Delta kommt als Daten durch — je Stufe, die es nennt', () => {
+    const delta = SteeringDelta.parse(DELTA);
+    expect(delta).toEqual(DELTA);
+    expect(delta.stages.Anforderung.delta).toBe(2);
+    expect(delta.stages.Modul.delta).toBe(-1);
   });
 
   it('die alte Form (`dimensions` statt `stages`) ist kein Delta mehr (CR-GC-757)', () => {
-    const alt = cand(0, {
-      success: true,
-      steeringDelta: { blockingErrors: DELTA.blockingErrors, dimensions: { req: { before: 0.5, after: 0.7, delta: 0.2 } } },
-    });
-    expect(steeringDeltaOf(alt.verdict)).toBeNull();
-    expect(focusDelta(alt.verdict, 'req')).toBe(0);
-    // … und rankt nicht als Fortschritt: gegen ein gueltiges Delta derselben Stufe verliert es.
-    const neu = cand(1, { success: true, steeringDelta: { blockingErrors: DELTA.blockingErrors, stages: { req: { before: 5, after: 4, delta: 1 } } } });
-    expect(rankCandidates([alt, neu], 'req')[0]).toBe(neu);
+    const alt = { blockingErrors: DELTA.blockingErrors, dimensions: { req: { before: 0.5, after: 0.7, delta: 0.2 } } };
+    expect(SteeringDelta.safeParse(alt).success).toBe(false);
   });
 
-  it('ein Delta ohne blockingErrors ist kein Delta — es rankt nicht als Fortschritt', () => {
-    // Der gefährliche Fall: ohne Prüfung hätte `stages` gezogen, während
-    // `blockingErrors` fehlt — ein Kandidat, der Gate-Fehler einführt, wäre als
-    // sauberer Fortschritt gerankt worden.
-    const broken = cand(0, { success: true, steeringDelta: { stages: DELTA.stages } });
-    expect(steeringDeltaOf(broken.verdict)).toBeNull();
-    // Keine Stufe des verworfenen Deltas zaehlt — weder die mit Gewinn noch die mit Verlust.
-    for (const stufe of Object.keys(DELTA.stages)) expect(focusDelta(broken.verdict, stufe)).toBe(0);
-  });
-
-  it('geprüftes Delta schlägt ungeprüftes: der Kandidat mit gültigem Vertrag gewinnt', () => {
-    const valid = cand(0, { success: true, tier: 'suggest', mutations: 1, steeringDelta: DELTA });
-    const garbage = cand(1, {
-      success: true,
-      tier: 'suggest',
-      mutations: 99,
-      steeringDelta: { blockingErrors: 'keine', stages: { Anforderung: { delta: 9 } } },
-    });
-    expect(rankCandidates([garbage, valid], 'Anforderung')[0]).toBe(valid);
+  it('ein Delta ohne blockingErrors ist kein Delta', () => {
+    // Der gefährliche Fall: ohne Prüfung zöge `stages`, während `blockingErrors` fehlt — ein Zug,
+    // der Gate-Fehler einführt, läse sich als sauberer Fortschritt.
+    expect(SteeringDelta.safeParse({ stages: DELTA.stages }).success).toBe(false);
+    expect(SteeringDelta.safeParse({ blockingErrors: 'keine', stages: { Anforderung: { delta: 9 } } }).success).toBe(false);
   });
 });
 
 // ---------------------------------------------------------------------------
-// SCHEMA-generation-step — Registry-Grenze (runExecutor)
+// SCHEMA-generation-step — Registry-Grenze
 // ---------------------------------------------------------------------------
 
-describe('SCHEMA-generation-step wird am Registry-Übergang geparst (RC-04)', () => {
+describe('SCHEMA-generation-step: die Tool-Antwort erfüllt den Vertrag (RC-04)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
   let registry: MCPToolRegistry;
@@ -144,18 +104,6 @@ describe('SCHEMA-generation-step wird am Registry-Übergang geparst (RC-04)', ()
     consumerType: 'system',
     preCommitTimeout: 5000,
   });
-
-  const execConfig = ExecutorConfigSchema.parse({
-    baseUrl: 'http://scripted.invalid',
-    model: 'scripted',
-    maxRounds: 1,
-    maxStepTurns: 1,
-  });
-
-  /** Das Modell darf nie drankommen: der Parse bricht vor dem ersten Turn ab. */
-  const neverCalled: CallModel = () => {
-    throw new Error('model must not be called — the contract broke before the first turn');
-  };
 
   beforeEach(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-schema-parse-'));
@@ -183,19 +131,12 @@ describe('SCHEMA-generation-step wird am Registry-Übergang geparst (RC-04)', ()
     expect(GenerationStep.safeParse(alt).success).toBe(false);
   });
 
-  it('eine gewanderte Tool-Antwort bricht laut ab, statt still auf undefined zu steuern', async () => {
-    // Vor CR-GC-413 stand hier `as GenerationStep`: `gen.phase`/`gen.focusKey`
-    // wären undefined gewesen, `gen.done` falsy — der Executor hätte die volle
-    // Rundenzahl gegen eine Antwort gefahren, die keine Instruktion enthält.
-    const broken = { ...registry.graph_generate, handler: () => Promise.resolve({ phase: 'seed', done: false }) };
-    await expect(
-      runExecutor({
-        registry: { ...registry, graph_generate: broken } as MCPToolRegistry,
-        workspaceDir: tmp,
-        config: execConfig,
-        callModel: neverCalled,
-      }),
-    ).rejects.toThrow(/prompt|readiness|invalid/i);
+  it('eine gewanderte Tool-Antwort erfüllt den Vertrag nicht, statt still auf undefined zu steuern', () => {
+    // Vor CR-GC-413 stand am Empfang `as GenerationStep`: `gen.phase`/`gen.focusKey` wären
+    // undefined gewesen, `gen.done` falsy — eine Antwort ohne Instruktion wäre durchgegangen.
+    const parsed = GenerationStep.safeParse({ phase: 'seed', done: false });
+    expect(parsed.success).toBe(false);
+    expect(parsed.error!.issues.map((i) => i.path.join('.'))).toEqual(expect.arrayContaining(['prompt', 'readiness']));
   });
 
   it('eine Antwort mit unbekannter phase wird abgewiesen (Enum, nicht freier String)', async () => {

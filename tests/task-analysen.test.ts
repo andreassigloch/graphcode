@@ -1,8 +1,9 @@
 /**
- * CR-GC-724 — Analysen über den Executor: der Task reist durch `graph_delegate`/`runExecutor`, das
- * Vorbild der Runde kommt aus `TASK_CLAUSE`, und den Stempel setzt der Executor, wenn das Artefakt steht.
+ * CR-GC-724 — Analyse-Tasks: das Vorbild der Runde kommt aus `TASK_CLAUSE`, und ob eine Analyse
+ * stattgefunden hat, sagt das Artefakt im Graphen (`task-artifact.ts`), nicht ein Stempel allein.
+ * Der eingebettete Executor, der den Task fuhr und den Stempel setzte, ist mit CR-GC-775 ausgelagert.
  *
- * Reale Persistenz (Disk-Kuzu im temp repoRoot), echtes Gate — simuliert ist nur der Modell-Endpunkt.
+ * Reale Persistenz (Disk-Kuzu im temp repoRoot), echtes Gate.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync, readFileSync } from 'node:fs';
@@ -11,12 +12,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, bindToolsToHarness } from '../src/index.js';
 import { DEFAULT_METRIC_POLICY, type OntologyGraph } from '@sigloch/contracts/se';
-import { runExecutor, ExecutorConfigSchema, type CallModel, type ModelResponse } from '../src/loop/executor.js';
 import { generationStep } from '../src/loop/generate.js';
-import { ohneStempelzeilen } from '../src/loop/executor-gate.js';
 import { TASK_CLAUSE, alsTaskGraph } from '../src/loop/task-clause.js';
-import { ANALYSE_TASKS, STEMPEL_ID, abschluss, artefakte, hatStempel, offen, stempelZug, type AnalyseTask, type TaskGraph } from '../src/loop/task-artifact.js';
-import { DelegateInputSchema } from '../src/surface/delegate.js';
+import { ANALYSE_TASKS, STEMPEL_ID, abschluss, artefakte, offen, type TaskGraph } from '../src/loop/task-artifact.js';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 
@@ -63,36 +61,7 @@ function vorbildAlsBatch(text: string): string {
   );
 }
 
-const usage = { in: 10, out: 10, reasoning: 0 };
-function mutateCall(id: string, formatE: string): ModelResponse {
-  const input = { formatE };
-  return {
-    text: '',
-    toolCalls: [{ id, name: 'graphcode_graph_mutate', input }],
-    stopReason: 'tool_use',
-    assistantMsg: {
-      role: 'assistant',
-      content: null,
-      tool_calls: [{ id, type: 'function', function: { name: 'graphcode_graph_mutate', arguments: JSON.stringify(input) } }],
-    },
-    usage,
-  };
-}
-function scripted(responses: ModelResponse[]): { callModel: CallModel; prompts: string[] } {
-  const prompts: string[] = [];
-  const queue = [...responses];
-  const callModel: CallModel = async (_system, messages) => {
-    prompts.push(JSON.stringify(messages));
-    const next = queue.shift();
-    if (!next) throw new Error('scripted model exhausted');
-    return next;
-  };
-  return { callModel, prompts };
-}
-
-const CONFIG = ExecutorConfigSchema.parse({ baseUrl: 'http://scripted.invalid', model: 'scripted', maxRounds: 1, maxStepTurns: 2 });
-
-describe('CR-GC-724: Analysen über den Executor', () => {
+describe('CR-GC-724: Analyse-Tasks', () => {
   let repoRoot: string;
   let harness: Awaited<ReturnType<typeof createHarness>>;
   let registry: MCPToolRegistry;
@@ -133,7 +102,7 @@ describe('CR-GC-724: Analysen über den Executor', () => {
       it(task, async () => {
         const vorher = new Set(artefakte(task, alsTaskGraph(og())));
         const text = TASK_CLAUSE[task].text(og());
-        // Form ohne Fachinhalt und ohne den Stempel — den setzt der Executor.
+        // Form ohne Fachinhalt und ohne den Stempel.
         expect(text).not.toMatch(/analysisFreshness|graphVersion|Stempel|graph_generate|Skill/);
         const res = await mutate(vorbildAlsBatch(text));
         expect(res.success, JSON.stringify(res.violations)).toBe(true);
@@ -143,7 +112,7 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     }
   });
 
-  it('Rundenprompt: im Executor trägt der Task-Eintritt die Klausel, beim Host den Verweis auf den Skill', () => {
+  it('Rundenprompt: im Treiber-Modus trägt der Task-Eintritt die Klausel, beim Host den Verweis auf den Skill', () => {
     const schritt = (selection: 'driver' | 'host') =>
       generationStep(harness.getGraph(), DEFAULT_METRIC_POLICY, undefined, 0.8, [], selection, null, 'fmea');
     const driver = schritt('driver');
@@ -190,37 +159,24 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     expect(abschluss('irr', annahme, bestand, 0).einheiten).toEqual(['REQ-alt']);
   });
 
-  it('Stempel-Zug: trägt die übrigen Stempel mit — der Vermerk ist nur die Graphversion, bei jeder Analyse', () => {
-    const bisher = { conops: { graphVersion: 3 } };
-    expect(stempelZug('fmea', 'SYS-app', bisher, 7)).toBe(
-      '## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"conops":{"graphVersion":3},"fmea":{"graphVersion":7}}\n',
-    );
-    expect(stempelZug('irr', 'SYS-app', {}, 7)).toContain('"assumption-review":{"graphVersion":7}}');
-    expect(stempelZug('trade', 'SYS-app', {}, 7)).toContain('"trade":{"graphVersion":7}}');
-  });
-
   // CR-GC-752 (contracts 11, CR-SM-395): der Bauplan ist die Menge der offenen Auftraege, kein Stempel.
   describe('CR-GC-752: der Bauplan setzt keinen Stempel — sein Ergebnis sind offene Auftraege', () => {
     const planFokus = () => generationStep(harness.getGraph(), DEFAULT_METRIC_POLICY, undefined, 0.8, [], 'driver', null, 'plan');
 
     it('es gibt fuer den Bauplan keinen Stempel-Schluessel; die vier Analysen behalten ihren', () => {
-      expect(hatStempel('plan')).toBe(false);
+      expect(STEMPEL_ID).not.toHaveProperty('plan');
       expect(Object.keys(STEMPEL_ID).sort()).toEqual(ANALYSE_TASKS.filter((t) => t !== 'plan').sort());
       expect(Object.values(STEMPEL_ID)).not.toContain('implplan');
     });
 
-    it('Executor: das Vorbild schreibt offene Auftraege — kein Stempel, der Eintritt ist damit geschlossen, der Task durch', async () => {
+    it('das Vorbild schreibt offene Auftraege — kein Stempel, der Eintritt ist damit geschlossen, der Task durch', async () => {
       // Vorher: es gibt Ungebautes ohne Auftrag — der Eintritt des Bauplans steht im Fokus.
       expect(planFokus().focusKey).toMatch(/:AF-05:/);
       const text = TASK_CLAUSE.plan.text(og());
       expect(text).toContain('@status open');
-      const { callModel } = scripted([mutateCall('c1', vorbildAlsBatch(text))]);
-      const traces: string[] = [];
-      const stats = await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel, task: 'plan', trace: (l) => traces.push(l) });
-      // Das Vorbild geht im Executor durch: die Meilenstein-Reihenfolge (`MS -relation-> MS [depends-on]`) wies der
-      // Preflight bis CR-GC-752 ab, weil er das Label nicht las.
-      expect(traces.join('\n')).not.toMatch(/preflight blocked/);
-      expect(stats.taskStempel).toBeUndefined();
+      // Das Vorbild geht durchs Gate — samt Meilenstein-Reihenfolge (`MS -relation-> MS [depends-on]`).
+      const res = await mutate(vorbildAlsBatch(text));
+      expect(res.success, JSON.stringify(res.violations)).toBe(true);
       expect(stempel()).not.toHaveProperty('implplan');
       const auftraege = harness.getGraph().nodes.filter((n) => n.type === 'CR');
       expect(auftraege.length).toBeGreaterThan(0);
@@ -246,36 +202,12 @@ describe('CR-GC-724: Analysen über den Executor', () => {
     });
   });
 
-  it('Executor: schreibt das Modell das Artefakt, setzt der Executor den Stempel — die übrigen bleiben', async () => {
-    const batch = vorbildAlsBatch(TASK_CLAUSE.fmea.text(og()));
-    const { callModel, prompts } = scripted([mutateCall('c1', batch)]);
-    const stats = await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel, task: 'fmea' });
-    // Der Task reiste bis in den Rundenprompt.
-    expect(prompts[0]).toContain('Task fmea');
-    expect(prompts[0]).toContain('REQ-risk-beispiel-a');
-    expect(stats.taskStempel?.einheiten).toEqual(['REQ-risk-echt-a']);
-    const s = stempel();
-    expect(s.fmea.graphVersion).toBe(stats.taskStempel!.graphVersion);
-    expect(s.fmea.graphVersion).toBe(harness.getGraph().nodes.length > 0 ? stats.taskStempel!.graphVersion : -1);
-    expect(s.trade, 'der Stempel aus dem Kern-Graphen überlebt').toEqual({ graphVersion: 1 });
-  });
-
-  it('Executor: ein Stempel des Modells erreicht das Gate nicht — ohne Artefakt bleibt der Task offen', async () => {
-    const schummel = '## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"fmea":{"graphVersion":99}}\n';
-    const { callModel } = scripted([mutateCall('c1', schummel), mutateCall('c2', schummel)]);
-    const traces: string[] = [];
-    const stats = await runExecutor({ registry, workspaceDir: repoRoot, config: CONFIG, callModel, task: 'fmea', trace: (l) => traces.push(l) });
-    expect(traces.join('\n')).toContain('@analysisFreshness aus dem Batch genommen');
-    expect(stats.taskStempel).toBeUndefined();
-    expect(stempel().fmea).toBeUndefined();
-  });
-
   it('CR-GC-735: ein Patch ersetzt analysisFreshness ganz — lesen, übernehmen, ganz schreiben hält alle', async () => {
     expect(Object.keys(stempel())).toEqual(['trade']);
     // Der Teil-Stempel, wie die Skills ihn bis CR-GC-735 nahelegten: trade geht verloren (todo-local, 2026-10-04).
     await mutate('## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"conops":{"graphVersion":2}}\n');
     expect(Object.keys(stempel())).toEqual(['conops']);
-    // Lesen, übernehmen, ganz schreiben — der Weg der Skills und von stempelZug.
+    // Lesen, übernehmen, ganz schreiben — der Weg der Skills.
     await mutate(`## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness ${JSON.stringify({ ...stempel(), fmea: { graphVersion: 3 } })}\n`);
     expect(Object.keys(stempel()).sort()).toEqual(['conops', 'fmea']);
   });
@@ -300,19 +232,5 @@ describe('CR-GC-724: Analysen über den Executor', () => {
       expect(text, skill).not.toMatch(/Write `docs\/records\//);
       expect(text, skill).not.toMatch(/superseded-by|label: ?decides|architectureOnly|commitRef/);
     }
-  });
-
-  it('ohneStempelzeilen nimmt nur die Stempelzeile', () => {
-    const r = ohneStempelzeilen({ formatE: '## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness {"fmea":{}}\n@role x\n' });
-    expect(r.entfernt).toBe(1);
-    expect((r.input as { formatE: string }).formatE).toBe('## Nodes\n### SYS\n~ SYS-app\n@role x\n');
-    expect(ohneStempelzeilen({ formatE: '## Edges\n+ A -io-> B\n' }).entfernt).toBe(0);
-  });
-
-  it('graph_delegate nimmt task allein oder mit auftrag — und nur die Analyse-Tasks', () => {
-    for (const task of ANALYSE_TASKS) expect(() => DelegateInputSchema.parse({ task })).not.toThrow();
-    expect(DelegateInputSchema.parse({ task: 'fmea', auftrag: 'nur die Zustellkette' }).task).toBe('fmea' satisfies AnalyseTask);
-    expect(() => DelegateInputSchema.parse({ task: 'implplan' })).toThrow();
-    expect(() => DelegateInputSchema.parse({ task: 'kern' })).toThrow();
   });
 });

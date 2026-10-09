@@ -1,6 +1,6 @@
 /**
- * CR-GC-668 — Smeagol-Check Stufe (b): Wertebereiche. Jeder in einem Skill, Rundenprompt,
- * Executor-Vorbild oder Hilfetext genannte `kinds`-Wert liegt in `ReqKind`, und jedes dort
+ * CR-GC-668 — Smeagol-Check Stufe (b): Wertebereiche. Jeder in einem Skill, Rundenprompt
+ * oder Hilfetext genannte `kinds`-Wert liegt in `ReqKind`, und jedes dort
  * gezeigte `-satisfy-> REQ`-Paar mit deklarierten kinds ist nach `isValidTrace` legal.
  *
  * Stufe (a) (tests/skill-rule-ids.test.ts) prueft nur, ob eine genannte Regel-ID existiert. Ein
@@ -19,7 +19,6 @@ import { join } from 'node:path';
 import { ReqKind, RULE_HELP, TRACE_PATTERNS, ElementType as ElementTypes, isValidTrace, type ElementType } from '@sigloch/contracts/se';
 import { attributesFor, formatEExampleFor } from '../src/projections/authoring-example.js';
 import { RULE_CLAUSE, GENERATION_TEMPLATE } from '../src/loop/generate.js';
-import { SYSTEM, IDLE_NUDGE } from '../src/loop/executor-prompt.js';
 
 const WERTE = new Set<string>(ReqKind.options);
 
@@ -83,7 +82,7 @@ function markdownDateien(dir: string): string[] {
   return out;
 }
 
-/** Alle Ratgeber-Texte: Skills, Rundenprompt, Executor-Vorbild, Regel-Hilfe (beide Adressaten). */
+/** Alle Ratgeber-Texte: Skills, Rundenprompt, Regel-Hilfe (beide Adressaten). */
 function ratgeber(): Array<[string, string]> {
   const skills = markdownDateien(new URL('../.claude/commands', import.meta.url).pathname)
     .map((f): [string, string] => [f.split('/.claude/')[1] ?? f, readFileSync(f, 'utf8')]);
@@ -94,8 +93,6 @@ function ratgeber(): Array<[string, string]> {
     // CR-GC-672: `text` ist eine Funktion — JSON.stringify liess die Klauseln samt Vorbild still weg.
     ...Object.entries(RULE_CLAUSE).map(([id, k]): [string, string] => [`generate RULE_CLAUSE ${id}`, k.text(['UC-x'])]),
     ['generate GENERATION_TEMPLATE', JSON.stringify(GENERATION_TEMPLATE)],
-    ['executor SYSTEM', SYSTEM],
-    ['executor IDLE_NUDGE', IDLE_NUDGE],
     ...hilfe,
   ];
 }
@@ -118,8 +115,12 @@ describe('TEST-skill-kinds-werte: genannte kinds-Werte und satisfy-Paare sind le
   });
 
   it('der Scan greift ueberhaupt — die Ratgeber nennen kinds-Werte', () => {
-    const alle = ratgeber().flatMap(([, t]) => genannteKinds(t));
-    expect(alle.length).toBeGreaterThan(10);
+    // Je Quelle, nicht als Summe: seit CR-GC-775 (Executor-Vorbild ausgelagert) tragen nur noch
+    // Skills und Klauseln Nennungen — faellt eine der beiden auf null, ist der Scan dort blind.
+    const nennungen = (praefix: string): number =>
+      ratgeber().filter(([quelle]) => quelle.startsWith(praefix)).flatMap(([, t]) => genannteKinds(t)).length;
+    expect(nennungen('commands/')).toBeGreaterThan(5);
+    expect(nennungen('generate RULE_CLAUSE')).toBeGreaterThan(0);
   });
 
   it('jeder genannte kinds-Wert liegt in ReqKind', () => {

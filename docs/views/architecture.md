@@ -21,7 +21,6 @@
 | `FUNC-bind-tools` | FUNC | bindToolsToHarness |
 | `FUNC-block-abfrage` | FUNC | Abfrage |
 | `FUNC-block-anleitung` | FUNC | Anleitung |
-| `FUNC-block-antrieb` | FUNC | Antrieb |
 | `FUNC-block-autorieren` | FUNC | Autorieren |
 | `FUNC-block-bedienung` | FUNC | Bedienung |
 | `FUNC-block-betrieb` | FUNC | Betrieb |
@@ -32,24 +31,19 @@
 | `FUNC-block-host-sitzung` | FUNC | Host & Sitzung |
 | `FUNC-block-live-dashboard` | FUNC | Live-Kanal |
 | `FUNC-block-messwerk` | FUNC | Messwerk |
-| `FUNC-block-modelldraht` | FUNC | Modell-Draht |
 | `FUNC-block-optimierung` | FUNC | Optimierung |
 | `FUNC-block-q-improvement` | FUNC | Fokus & Ziel |
 | `FUNC-block-ruestzeug` | FUNC | Werkzeug & Konfiguration |
-| `FUNC-block-rundenprompt` | FUNC | Runden-Prompt |
 | `FUNC-block-speicherwerk` | FUNC | Speicherwerk |
 | `FUNC-block-urteilsarbeit` | FUNC | Urteilsarbeit |
 | `FUNC-bootstrap` | FUNC | bootstrap |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
-| `FUNC-build-round-injection` | FUNC | buildRoundInjection |
-| `FUNC-call-model` | FUNC | buildCallModel(config) |
 | `FUNC-chain-metrics` | FUNC | chainMetrics(graph) |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
 | `FUNC-claim-store-lock` | FUNC | StoreLock |
 | `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-collect-status` | FUNC | collectStatus |
-| `FUNC-compose-faltung` | FUNC | Compose-Faltung |
 | `FUNC-compute-readiness` | FUNC | computeReadiness(graph) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
 | `FUNC-create-harness` | FUNC | createHarness |
@@ -60,14 +54,10 @@
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
 | `FUNC-export-marker` | FUNC | setExportPending |
-| `FUNC-extract-mutate` | FUNC | extractMutateFromText |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
 | `FUNC-function-criticality` | FUNC | functionCriticality(graph) |
-| `FUNC-fund-kontext` | FUNC | Fund-Kontext |
-| `FUNC-gate-client` | FUNC | bindGateClient(registry, stats, trace) |
 | `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
 | `FUNC-goal-steerer` | FUNC | Führung |
-| `FUNC-graph-delegate` | FUNC | graph_delegate |
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
@@ -84,7 +74,6 @@
 | `FUNC-import-code` | FUNC | Skill se:import-code |
 | `FUNC-import-code-verb` | FUNC | executeImportCode |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
-| `FUNC-inventory-channel` | FUNC | buildInventoryBlock |
 | `FUNC-list-elements` | FUNC | listElements(filter) |
 | `FUNC-load-config` | FUNC | loadGraphcodeConfig |
 | `FUNC-measure-test-schlupf` | FUNC | Testauswahl-Schlupf messen |
@@ -92,20 +81,13 @@
 | `FUNC-migrate-schema` | FUNC | migrateSchema(from, to) |
 | `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
-| `FUNC-nd-similarity` | FUNC | duplicateHits |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-plan-code-lane` | FUNC | Code-Spur planen |
-| `FUNC-preflight` | FUNC | preflightBatch |
-| `FUNC-rank-candidates` | FUNC | rankCandidates(probes, focus) |
-| `FUNC-read-anthropic-stream` | FUNC | leseAnthropicAntwort |
-| `FUNC-read-openai-stream` | FUNC | leseOpenAiAntwort |
 | `FUNC-read-tools` | FUNC | bindReadTools(ctx) |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
 | `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
-| `FUNC-run-executor` | FUNC | runExecutor |
-| `FUNC-run-verb` | FUNC | executeRun |
 | `FUNC-schema-guard` | FUNC | schemaFingerprint |
 | `FUNC-score-completeness` | FUNC | computeMarks(violations) |
 | `FUNC-se-conops` | FUNC | Skill se-conops |
@@ -127,12 +109,10 @@
 | `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
 | `FUNC-target-profile` | FUNC | Skill se:target-profile |
 | `FUNC-target-profile-load` | FUNC | loadTargetProfile |
-| `FUNC-task-abschluss` | FUNC | schliesseTaskWennErfuellt |
 | `FUNC-test` | FUNC | se-test (red-first test design) |
 | `FUNC-test-ingest` | FUNC | graph_test_ingest |
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
 | `FUNC-tool-context` | FUNC | createToolContext |
-| `FUNC-tool-profile` | FUNC | applyToolProfile(registry |
 | `FUNC-upgrade` | FUNC | executeUpgrade(opts) |
 | `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
 | `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
@@ -145,7 +125,7 @@
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
 | `MOD-kernel` | MOD | kernel — Store, Gate, Regeln, OpLog |
 | `MOD-kernel-measure` | MOD | measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot |
-| `MOD-loop` | MOD | loop — Autopilot und Executor |
+| `MOD-loop` | MOD | loop — Fokus |
 | `MOD-projections` | MOD | projections — Graph nach Artefakt |
 | `MOD-surface` | MOD | surface — MCP, CLI, Host-Socket, Viewer |
 | `SYS-graphcode` | SYS | GraphCode |
@@ -165,7 +145,6 @@
 | `FUNC-bind-tools` | `MOD-surface` |
 | `FUNC-block-abfrage` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-anleitung` | `MOD-agent-surface` |
-| `FUNC-block-antrieb` | `MOD-loop` |
 | `FUNC-block-autorieren` | `MOD-agent-surface` |
 | `FUNC-block-bedienung` | `MOD-surface` |
 | `FUNC-block-betrieb` | `MOD-surface` |
@@ -176,24 +155,19 @@
 | `FUNC-block-host-sitzung` | `MOD-surface` |
 | `FUNC-block-live-dashboard` | `MOD-surface` |
 | `FUNC-block-messwerk` | `MOD-projections` |
-| `FUNC-block-modelldraht` | `MOD-loop` |
 | `FUNC-block-optimierung` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-q-improvement` | `MOD-loop` |
 | `FUNC-block-ruestzeug` | `MOD-kernel` |
-| `FUNC-block-rundenprompt` | `MOD-loop` |
 | `FUNC-block-speicherwerk` | `MOD-kernel` |
 | `FUNC-block-urteilsarbeit` | `MOD-agent-surface` |
 | `FUNC-bootstrap` | `MOD-surface` |
 | `FUNC-broadcast-diff` | `MOD-surface` |
-| `FUNC-build-round-injection` | `MOD-loop` |
-| `FUNC-call-model` | `MOD-loop` |
 | `FUNC-chain-metrics` | `MOD-projections` |
 | `FUNC-check-code-conformance` | `MOD-kernel` |
 | `FUNC-claim-store-lock` | `MOD-kernel` |
 | `FUNC-cli-dispatch` | `MOD-surface` |
 | `FUNC-close-violations` | `MOD-agent-surface` |
 | `FUNC-collect-status` | `MOD-surface` |
-| `FUNC-compose-faltung` | `MOD-loop` |
 | `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
 | `FUNC-create-harness` | `MOD-surface` |
@@ -204,14 +178,10 @@
 | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `FUNC-export-markdown` | `MOD-projections` |
 | `FUNC-export-marker` | `MOD-kernel` |
-| `FUNC-extract-mutate` | `MOD-loop` |
 | `FUNC-fit-advisory` | `MOD-kernel-measure` |
 | `FUNC-function-criticality` | `MOD-projections` |
-| `FUNC-fund-kontext` | `MOD-loop` |
-| `FUNC-gate-client` | `MOD-loop` |
 | `FUNC-generation-step` | `MOD-loop` |
 | `FUNC-goal-steerer` | `MOD-loop` |
-| `FUNC-graph-delegate` | `MOD-surface` |
 | `FUNC-graph-expand` | `MOD-kernel` |
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |
@@ -228,7 +198,6 @@
 | `FUNC-import-code` | `MOD-agent-surface` |
 | `FUNC-import-code-verb` | `MOD-surface` |
 | `FUNC-import-doc` | `MOD-agent-surface` |
-| `FUNC-inventory-channel` | `MOD-loop` |
 | `FUNC-list-elements` | `MOD-kernel` |
 | `FUNC-load-config` | `MOD-kernel` |
 | `FUNC-measure-test-schlupf` | `MOD-projections` |
@@ -236,20 +205,13 @@
 | `FUNC-migrate-schema` | `MOD-kernel` |
 | `FUNC-module-metrics` | `MOD-projections` |
 | `FUNC-mutate` | `MOD-kernel` |
-| `FUNC-nd-similarity` | `MOD-kernel-measure` |
 | `FUNC-own-kuzu-host` | `MOD-kernel` |
 | `FUNC-plan-code-lane` | `MOD-projections` |
-| `FUNC-preflight` | `MOD-loop` |
-| `FUNC-rank-candidates` | `MOD-loop` |
-| `FUNC-read-anthropic-stream` | `MOD-loop` |
-| `FUNC-read-openai-stream` | `MOD-loop` |
 | `FUNC-read-tools` | `MOD-surface` |
 | `FUNC-render-views` | `MOD-agent-surface` |
 | `FUNC-reseed` | `MOD-kernel` |
 | `FUNC-resolve-tests-from-code` | `MOD-kernel` |
 | `FUNC-rewind` | `MOD-surface` |
-| `FUNC-run-executor` | `MOD-loop` |
-| `FUNC-run-verb` | `MOD-surface` |
 | `FUNC-schema-guard` | `MOD-kernel` |
 | `FUNC-score-completeness` | `MOD-projections` |
 | `FUNC-se-conops` | `MOD-agent-surface` |
@@ -271,12 +233,10 @@
 | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `FUNC-target-profile` | `MOD-agent-surface` |
 | `FUNC-target-profile-load` | `MOD-loop` |
-| `FUNC-task-abschluss` | `MOD-loop` |
 | `FUNC-test` | `MOD-agent-surface` |
 | `FUNC-test-ingest` | `MOD-projections` |
 | `FUNC-test-ui` | `MOD-agent-surface` |
 | `FUNC-tool-context` | `MOD-surface` |
-| `FUNC-tool-profile` | `MOD-surface` |
 | `FUNC-upgrade` | `MOD-surface` |
 | `FUNC-view-changelog` | `MOD-agent-surface` |
 | `FUNC-view-conops` | `MOD-agent-surface` |

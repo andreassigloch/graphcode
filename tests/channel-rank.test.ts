@@ -2,34 +2,28 @@
  * CR-GC-575 — die Rangfolge der Steuerungskanaele steht an EINER Stelle.
  *
  * Bis hierher entschied verstreuter Code, welcher Kanal gewinnt: zwei Ternaere in
- * `generate.ts` vierzig Zeilen auseinander, und die Blockreihenfolge in
- * `executor-prompt.ts`, die niemand erklaert hat. Jeder Konflikt musste durch einen
+ * `generate.ts` vierzig Zeilen auseinander. Jeder Konflikt musste durch einen
  * Lauf gefunden werden — viermal in der Serie CR-GC-560..568.
  *
- * Diese Abnahme haelt beides fest: die Ordnung selbst, und dass die beiden Stellen,
- * die sie anwenden, sie wirklich aus `channel-rank.ts` beziehen und nicht noch einmal
- * selbst entscheiden.
+ * Diese Abnahme haelt beides fest: die Ordnung selbst, und dass die Stelle, die sie
+ * anwendet (`generate.ts`), sie wirklich aus `channel-rank.ts` bezieht und nicht noch
+ * einmal selbst entscheidet. Die zweite anwendende Stelle, der Rundenprompt des
+ * eingebetteten Executors, ist mit CR-GC-775 ausgelagert.
  *
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { z } from 'zod/v4';
-import { CHANNEL_ORDER, CHANNEL_REASON, rankOf, outranks, winner, byRank, duplicateChannels } from '../src/loop/channel-rank.js';
-import { buildRoundChannels } from '../src/loop/executor-prompt.js';
-import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
+import { CHANNEL_ORDER, rankOf, outranks, winner } from '../src/loop/channel-rank.js';
 import { generationStep, RULE_CLAUSE, GENERATION_TEMPLATE, STAGE_FOCUS_TYPES } from '../src/loop/generate.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 
 describe('die Ordnung selbst (CR-GC-575)', () => {
-  it('ist absteigend nach Verbindlichkeit und vollstaendig begruendet', () => {
+  it('ist absteigend nach Verbindlichkeit', () => {
     expect([...CHANNEL_ORDER]).toEqual([
       'gate-truth', 'rule-clause', 'grammar', 'inventory', 'guidance', 'proposal',
     ]);
-    // Ein Rang ohne Begruendung ist Geschmack — genau das, was die CR ausschliesst.
-    for (const channel of CHANNEL_ORDER) expect(CHANNEL_REASON[channel]).toBeTruthy();
-    expect(Object.keys(CHANNEL_REASON).sort()).toEqual([...CHANNEL_ORDER].sort());
   });
 
   it('Gate-Wahrheit schlaegt alles, ein Vorschlag schlaegt nichts', () => {
@@ -56,16 +50,6 @@ describe('die Ordnung selbst (CR-GC-575)', () => {
       { channel: 'proposal', value: 'Vorschlag' },
     ])).toEqual({ channel: 'proposal', value: 'Vorschlag' });
     expect(winner([{ channel: 'rule-clause', value: undefined }])).toBeNull();
-  });
-
-  it('byRank sortiert stabil — zwei Bloecke desselben Kanals behalten ihre Folge', () => {
-    const sortiert = byRank([
-      { channel: 'proposal' as const, id: 'p1' },
-      { channel: 'guidance' as const, id: 'g' },
-      { channel: 'proposal' as const, id: 'p2' },
-      { channel: 'grammar' as const, id: 'gr' },
-    ]);
-    expect(sortiert.map((b) => b.id)).toEqual(['gr', 'g', 'p1', 'p2']);
   });
 });
 
@@ -107,112 +91,14 @@ describe('die Ordnung wird angewandt, nicht ein zweites Mal entschieden (CR-GC-5
     expect(step.focusTypes).not.toEqual(STAGE_FOCUS_TYPES[stufe]);
   });
 
-  it('die beiden anwendenden Stellen beziehen die Ordnung aus channel-rank, statt sie zu wiederholen', () => {
+  it('die anwendende Stelle bezieht die Ordnung aus channel-rank, statt sie zu wiederholen', () => {
     // Kriterium 1 der CR: "an genau einer Stelle im Code, nicht in fuenf Bedingungen".
-    // Prueflicher Stellvertreter: beide Stellen importieren die Ordnung, und keine von
-    // beiden traegt noch eine eigene Vorrang-Verzweigung auf `klausel`/Blockreihenfolge.
+    // Prueflicher Stellvertreter: `generate.ts` importiert die Ordnung und traegt keine
+    // eigene Vorrang-Verzweigung auf `klausel` mehr.
     const generate = readFileSync(new URL('../src/loop/generate.ts', import.meta.url), 'utf8');
-    const prompt = readFileSync(new URL('../src/loop/executor-prompt.ts', import.meta.url), 'utf8');
     expect(generate).toContain("from './channel-rank.js'");
-    expect(prompt).toContain("from './channel-rank.js'");
     // Der alte Ternaer: `klausel ? [...klausel.types] : ...` — die zweite Entscheidung
     // derselben Frage. Sie darf nicht zurueckkehren.
     expect(generate).not.toMatch(/klausel\s*\n?\s*\?\s*\[\.\.\.klausel\.types\]/);
-    expect(prompt).toContain('byRank(blocks)');
-  });
-});
-
-describe('sagen zwei Kanaele dieser Runde dasselbe? (CR-GC-573, Kriterium 2)', () => {
-  it('findet den Fall, der die Serie CR-GC-560..568 ausgeloest hat — Paraphrase, nicht Dublette', () => {
-    // Wortlaut aus CR-GC-358: R-15s Klausel und das uc-Template beschrieben dieselbe
-    // Arbeit gegensaetzlich, drei Zeilen auseinander, in JEDER uc-Runde. qwen3.8 hat den
-    // Widerspruch im Reasoning auseinandergenommen und danach 4347 Denk-Token ohne
-    // Tool-Call verbraucht. Wortgleich war daran nichts.
-    const echos = duplicateChannels([
-      {
-        channel: 'rule-clause',
-        text: 'Diese Funde sind BESTEHENDE, leere FCHAINs: haeng an jede davon 3 FUNC-Elemente, '
-          + 'die den Ablauf in Schritte zerlegen',
-      },
-      {
-        channel: 'proposal',
-        text: 'Haeng an jede bestehende leere FCHAIN 3 FUNC-Elemente an, die den Ablauf in '
-          + 'Schritte zerlegen',
-      },
-    ]);
-    expect(echos).toHaveLength(1);
-    expect(echos[0].a).toBe('rule-clause');
-    expect(echos[0].b).toBe('proposal');
-    expect(echos[0].overlap).toBeGreaterThanOrEqual(0.6);
-  });
-
-  it('haelt zwei Kanaele auseinander, die verschiedene Arbeit beschreiben', () => {
-    expect(duplicateChannels([
-      { channel: 'rule-clause', text: 'Diese UCs haben keine Anforderungen: schlage je UC drei REQ-Kandidaten vor' },
-      { channel: 'grammar', text: 'ACTOR: ausgehend io nach FLOW; eingehend FLOW io nach ACTOR' },
-    ])).toEqual([]);
-  });
-
-  it('dieselbe Format-E-Zeile in zwei Vorbildern ist Syntax, kein zweiter Imperativ (CR-GC-696C)', () => {
-    // Vorbild der Runde und Skill-Template zeigen beide eine REQ mit `@kinds ["non-functional"]`.
-    // Die Zeile ist Grammatik; verlangt wird in beiden Kanaelen verschiedene Arbeit.
-    const vorbild = '+ REQ-export-dauer|Das System muss 10.000 Zeilen in unter 5 s exportieren. [__name:Exportdauer]\n'
-      + '@kinds ["non-functional"]\n### TEST\n## Edges';
-    expect(duplicateChannels([
-      { channel: 'rule-clause', text: `Schlage je UC drei REQ-Kandidaten vor, Vorbild:\n${vorbild}` },
-      { channel: 'guidance', text: `Jede REQ traegt genau einen kinds-Wert, der den Erfueller bestimmt\n${vorbild}` },
-    ])).toEqual([]);
-    // Positivkontrolle: dieselbe Aussage als PROSA bleibt ein Fund.
-    const prosa = 'Das System muss zehntausend Zeilen in unter fuenf Sekunden exportieren';
-    expect(duplicateChannels([
-      { channel: 'rule-clause', text: prosa },
-      { channel: 'guidance', text: prosa },
-    ])).toHaveLength(1);
-  });
-
-  it('zwei Bloecke DESSELBEN Kanals sind kein zweiter Weg', () => {
-    const gleich = 'Schlage je UC drei REQ-Kandidaten vor, praezise und pruefbar formuliert';
-    expect(duplicateChannels([
-      { channel: 'proposal', text: gleich },
-      { channel: 'proposal', text: gleich },
-    ])).toEqual([]);
-  });
-
-  it('an einer ECHTEN Runde: der Imperativ steht genau einmal, nicht in zwei Kanaelen', async () => {
-    // Die Runde, wie der Executor sie baut — Fokus-Typen aus generationStep, Bloecke aus
-    // buildRoundChannels. Genau diese Paarung war bis CR-GC-564 die Doppelung.
-    const node = (uid: string, type: string, name: string, description = ''): unknown =>
-      ({ uid, type, name, description, attributes: {} });
-    const graph = {
-      nodes: [
-        node('SYS-shop', 'SYS', 'shop', 'Ein Bestellsystem fuer Ersatzteile.'),
-        node('ACTOR-kunde', 'ACTOR', 'Kunde'),
-        node('UC-bestellen', 'UC', 'bestellen', 'Kunde bestellt ein Ersatzteil.'),
-      ],
-      edges: [{ sourceId: 'SYS-shop', targetId: 'UC-bestellen', edgeType: 'compose', attributes: {} }],
-    } as unknown as Graph;
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
-
-    const tool = (schema: z.ZodType, handler: (i: unknown) => unknown): unknown =>
-      ({ name: 'x', description: '', inputSchema: schema, handler });
-    const registry = {
-      graph_authoring_guide: tool(z.object({ type: z.string() }), ({ type }: never) => ({
-        outgoing: [{ edgeType: 'compose', targetType: 'FUNC' }],
-        incoming: [{ edgeType: 'compose', sourceType: 'UC' }],
-        requiredAttrs: [],
-        type,
-      })),
-      graph_elements: tool(
-        z.object({ type: z.string().optional(), limit: z.number().default(100) }),
-        () => ({ nodes: [{ uid: 'UC-bestellen', type: 'UC', name: 'bestellen' }], total: 1 }),
-      ),
-    } as unknown as MCPToolRegistry;
-
-    const blocks = await buildRoundChannels(registry, step);
-    // Der Imperativ der Runde ist ein Kanal fuer sich — er steht NICHT in den Bloecken.
-    const alle = [{ channel: 'rule-clause' as const, text: step.prompt }, ...blocks];
-    expect(duplicateChannels(alle)).toEqual([]);
-    // Und die Bloecke kommen in Rangfolge: Grammatik vor Bestand vor Anleitung.
-    expect(blocks.map((b) => b.channel)).toEqual(byRank(blocks).map((b) => b.channel));
   });
 });

@@ -1,24 +1,19 @@
 /**
- * CR-GC-426 — zwei Flüsse bekommen einen prüfbaren Vertrag.
+ * CR-GC-426 — ein Fluss bekommt einen prüfbaren Vertrag: die Drift-Marke des Exports.
+ * (Der zweite Fluss des CR, die Roh-Antwort des Modells, ging mit dem eingebetteten
+ * Executor — CR-GC-775.)
  *
- * Keine Mocks: die Backend-Hälfte fährt einen echten HTTP-Server auf Loopback und
- * lässt `buildCallModel` real dagegen `fetch`en; die Marker-Hälfte schreibt und liest
- * echte Dateien auf Platte und lässt den echten `scripts/githooks/pre-commit`-Ausdruck
- * darüber laufen. Geprüft wird jeweils die GRENZE, nicht die Innenseite.
+ * Keine Mocks: der Test schreibt und liest echte Dateien auf Platte und lässt den echten
+ * `scripts/githooks/pre-commit`-Ausdruck darüber laufen. Geprüft wird die GRENZE, nicht
+ * die Innenseite.
  *
  * @author andreas@siglochconsulting
  */
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createServer, type Server } from 'node:http';
-import { AddressInfo } from 'node:net';
+import { describe, it, expect } from 'vitest';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
-import { ExecutorConfigSchema } from '../src/loop/executor.js';
-import { buildCallModel } from '../src/loop/executor-backend.js';
-import { ModelAnswer } from '../src/loop/model-answer-contract.js';
-import { extractMutateFromText } from '../src/loop/executor-parse.js';
 import {
   setExportPending,
   clearExportPending,
@@ -27,126 +22,6 @@ import {
   EXPORT_PENDING_REL,
 } from '../src/kernel/export-marker.js';
 import { ExportPending } from '../src/kernel/export-pending-contract.js';
-
-// ---------------------------------------------------------------------------
-// FLOW-model-answer — der Eingang von FUNC-extract-mutate (CR-GC-422 §3)
-// ---------------------------------------------------------------------------
-
-describe('SCHEMA-model-answer: die Roh-Antwort des Modells hat einen Vertrag', () => {
-  let server: Server;
-  let baseUrl: string;
-  /** Was der nächste Request zurückbekommt — je Fall gesetzt. */
-  let body: unknown = {};
-
-  beforeAll(async () => {
-    server = createServer((_req, res) => {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(body));
-    });
-    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-    baseUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  });
-  afterAll(async () => {
-    await new Promise<void>((resolve) => server.close(() => resolve()));
-  });
-
-  const call = (backend: 'openai' | 'anthropic'): Promise<unknown> => {
-    const config = ExecutorConfigSchema.parse({ backend, baseUrl, model: 'test-model' });
-    return buildCallModel(config)('sys', [], []);
-  };
-
-  it('openai: Text, Tool-Calls und Stop-Grund kommen normalisiert an', async () => {
-    body = {
-      choices: [
-        {
-          finish_reason: 'tool_calls',
-          message: {
-            content: 'ich lege los',
-            tool_calls: [
-              { id: 'c1', function: { name: 'graphcode_graph_mutate', arguments: '{"commands":[]}' } },
-            ],
-          },
-        },
-      ],
-      usage: { prompt_tokens: 11, completion_tokens: 22, completion_tokens_details: { reasoning_tokens: 3 } },
-    };
-    const answer = ModelAnswer.parse(await call('openai'));
-    expect(answer.text).toBe('ich lege los');
-    expect(answer.toolCalls).toEqual([
-      { id: 'c1', name: 'graphcode_graph_mutate', input: { commands: [] } },
-    ]);
-    expect(answer.stopReason).toBe('tool_calls');
-    expect(answer.usage).toEqual({ in: 11, out: 22, reasoning: 3 });
-  });
-
-  it('anthropic: dieselbe normalisierte Form, Stop-Grund inklusive', async () => {
-    body = {
-      stop_reason: 'max_tokens',
-      content: [
-        { type: 'text', text: 'abgeschnitten…' },
-        { type: 'tool_use', id: 'c9', name: 'graphcode_graph_mutate', input: { commands: [] } },
-      ],
-      usage: { input_tokens: 5, output_tokens: 7 },
-    };
-    const answer = ModelAnswer.parse(await call('anthropic'));
-    expect(answer.text).toBe('abgeschnitten…');
-    expect(answer.toolCalls[0]?.id).toBe('c9');
-    expect(answer.stopReason).toBe('max_tokens');
-  });
-
-  it('kein Stop-Grund im Körper heisst null, nicht geraten', async () => {
-    body = { choices: [{ message: { content: 'nur Text' } }] };
-    const answer = ModelAnswer.parse(await call('openai'));
-    expect(answer.stopReason).toBeNull();
-  });
-
-  /**
-   * Der Kern des CR: ein abweichendes Backend fällt HIER auf, nicht erst im Parser.
-   * Vor dem Vertrag las der Cast `j.choices?.[0]?.message ?? {}` — eine Antwort ohne
-   * `choices` wurde zu `{text:'', toolCalls:[]}` und lief als „Modell hat nichts
-   * gesagt" weiter. Diagnostiziert wurde dann die Prosa-Recovery, nicht der Anbieter.
-   */
-  it('openai: eine Antwort ohne choices ist ein Vertragsbruch, kein leerer Turn', async () => {
-    body = { output: [{ role: 'assistant', content: 'anderes Wire-Format' }] };
-    await expect(call('openai')).rejects.toThrow(/breaks SCHEMA-model-answer \(openai wire\)/);
-  });
-
-  it('openai: ein Tool-Call ohne function.name ist ein Vertragsbruch', async () => {
-    body = { choices: [{ message: { tool_calls: [{ id: 'c1', function: { arguments: '{}' } }] } }] };
-    await expect(call('openai')).rejects.toThrow(/breaks SCHEMA-model-answer/);
-  });
-
-  it('anthropic: fehlender content-Block ist ein Vertragsbruch', async () => {
-    body = { stop_reason: 'end_turn', usage: { input_tokens: 1 } };
-    await expect(call('anthropic')).rejects.toThrow(/breaks SCHEMA-model-answer \(anthropic wire\)/);
-  });
-
-  it('ein Fehlerkörper bleibt ein Backend-Fehler, kein Vertragsbruch', async () => {
-    body = { error: { type: 'invalid_request_error', message: 'model not found' } };
-    await expect(call('openai')).rejects.toThrow(/^backend: /);
-  });
-
-  /**
-   * Die modellierte Kante `FLOW-model-answer -io-> FUNC-extract-mutate`: was der
-   * Vertrag trägt, ist genau das, was die Prosa-Recovery liest — Text plus den
-   * Stop-Grund, der sie überhaupt erst rechtfertigt (`length` = am Budget
-   * abgeschnitten, deshalb kein Tool-Call).
-   */
-  it('der Vertrag trägt, was FUNC-extract-mutate braucht: Text plus Stop-Grund', async () => {
-    body = {
-      choices: [
-        {
-          finish_reason: 'length',
-          message: { content: 'Hier der Batch: {"commands":[{"op":"add-node"}]} …' },
-        },
-      ],
-    };
-    const answer = ModelAnswer.parse(await call('openai'));
-    expect(answer.toolCalls).toEqual([]);
-    expect(answer.stopReason).toBe('length');
-    expect(extractMutateFromText(answer.text)).toEqual({ commands: [{ op: 'add-node' }] });
-  });
-});
 
 // ---------------------------------------------------------------------------
 // FLOW-export-pending — der Ausgang von FUNC-export-marker (CR-GC-422 §2, Variante b)

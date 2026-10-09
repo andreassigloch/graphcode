@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 5 ACTOR, 9 UC, 26 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 4 ACTOR, 9 UC, 26 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -44,7 +44,7 @@
 > Systemweit bindende non-functional REQ (am SYS-Anker oder an einem ACTOR).
 > Eine REQ, die nur an einem FUNC/MOD haengt, ist Design und steht hier nicht.
 
-## 3  User classes & involved personnel (5)
+## 3  User classes & involved personnel (4)
 
 - **Gegateter Agent (MCP-stdio-Client)** (`ACTOR-agent`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
   - Ein Coding-Agent unter graphcode-Kontrolle: MCP-stdio-Client, nutzt den Graphen statt grep, jede Aenderung laeuft durch dasselbe Apply-Gate, der Autor wird nur protokolliert. Bewusst NICHT namentlich modelliert — agent-agnostisch ist eine verriegelte Zusage (CLAUDE.md), kein Ziel. Heute belegt durch Claude Code (interaktiv), OpenCode (headless BYOK-Runtime, treibt Spec/Impl autonom) und die Architektur-Rolle, die Interface-Aenderungen eskaliert: Impact-Analyse, Gate-Entscheidung, Dependents koordinieren. Diese Rollen unterscheiden sich in der Autoritaet, nicht in der Schnittstelle. (CR-GC-455)
@@ -52,8 +52,6 @@
   - SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)
 - **Learning-Engine** (`ACTOR-learning-engine`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-reduced-llm`
   - Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen als Lerneingang, beantwortet eine Lern-Frage von graph_suggest und nextStep und liefert je Kandidat ein Urteil zurueck. Sie schreibt KEINE Konfiguration: die Urteilsschwellen bleiben der Vertrag des Menschen. Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455, Andockpunkt CR-GC-465)
-- **Modell-Endpunkt** (`ACTOR-llm`) — triggert `UC-deterministic-steering`
-  - Der LLM-Dienst ausserhalb der Systemgrenze: graphcode schickt ihm die Anfrage und konsumiert seine Antwort, kontrolliert sie aber nicht. Agnostisch wie ACTOR-agent — Anbieter, Modellname und Transport sind Konfiguration in SCHEMA-executor-config, kein Knoten; heute belegt durch die OAuth-Sitzung von claude -p, einen Anthropic-Messages-Endpunkt, ein OpenAI-kompatibles lokales Gateway und sigllm. Der Knoten existiert, weil der Graph sonst behauptet, graphcode erzeuge die Modellantwort selbst. (CR-GC-569)
 - **Repo-Owner (Mensch am Repo)** (`ACTOR-owner`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
   - Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)
 
@@ -75,13 +73,12 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
 Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-llm` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-owner`
 
-- `FCHAIN-executor-loop` — Executor im Host (geparkt): `FUNC-authoring-guide` → `FUNC-build-round-injection` → `FUNC-call-model` → `FUNC-compose-faltung` → `FUNC-compute-steering-delta` → `FUNC-extract-mutate` → `FUNC-fit-advisory` → `FUNC-fund-kontext` → `FUNC-gate-client` → `FUNC-generation-step` → `FUNC-graph-delegate` → `FUNC-inventory-channel` → `FUNC-list-elements` → `FUNC-mutate` → `FUNC-nd-similarity` → `FUNC-preflight` → `FUNC-rank-candidates` → `FUNC-read-anthropic-stream` → `FUNC-read-openai-stream` → `FUNC-run-executor` → `FUNC-run-verb` → `FUNC-take-steering-snapshot` → `FUNC-task-abschluss`
 - `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
 - `FCHAIN-skill-help` — Skill erklaert: `FUNC-se-help`
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-module-metrics` → `FUNC-score-completeness` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
-- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-vorschlag`
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-arch-fitness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-generation-step` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-vorschlag`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -136,6 +133,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
 - `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-target-profile-load`
 - `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-list-elements` → `FUNC-read-tools` → `FUNC-view-fmea`
+- `FCHAIN-grammar-query` — Grammatik abfragen: `FUNC-authoring-guide`
 - `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb: `FUNC-evaluate-rules` → `FUNC-mutate`
 
 ### `UC-repo-lifecycle` — Repo einrichten und betreiben
@@ -144,7 +142,7 @@ Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
-- `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-create-harness` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-run-verb` → `FUNC-session-shutdown` → `FUNC-tool-profile` → `FUNC-upgrade`
+- `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-create-harness` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-session-shutdown` → `FUNC-upgrade`
 - `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-migrate-schema` → `FUNC-schema-guard`
 
 ## 5  Modes of operation
@@ -296,7 +294,6 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-317` | done | RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung | `FUNC-view-rtm` |
 | `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte | `FUNC-view-rtm` |
 | `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion | `MOD-surface` |
-| `CR-GC-320` | done | executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery) | `FUNC-rank-candidates` |
 | `CR-GC-321` | done | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen | `FUNC-decode` · `FUNC-mutate` |
 | `CR-GC-322` | done | GRAPHCODE-STEERING.md — die Anleitung fuer den Menschen (Steuerung und docs/views/) | `FUNC-harness-cli` · `MOD-projections` |
 | `CR-GC-330` | done | Der Learning-Feed zieht in den eigenen Workspace | `FUNC-emit-trajectory` · `REQ-post-emit-trajectory` · `REQ-trajectory-emit` |
@@ -304,7 +301,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-339` | done | Artikel-Claims belastbar machen | `FUNC-export-markdown` |
 | `CR-GC-340` | done | Steuerungsnachweis I: Messpfad und Architektur-Richtung | `FUNC-check-code-conformance` · `FUNC-graph-suggest` · `FUNC-take-steering-snapshot` · `REQ-applied-suggestion-moves-target` · `REQ-published-counts-match-code` · `REQ-single-measurement-path` · `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` |
 | `CR-GC-341` | done | Steuerungsnachweis II: Regel-Korrektheit und Prozess-Ratsche | `FUNC-mutate` · `REQ-monotone-convergence` · `REQ-phase-gate-not-skippable` · `REQ-single-write-door` |
-| `CR-GC-342` | done | Eigenes Modell: Ableitungskette der Anforderungen | `FUNC-mutate` · `REQ-graph-context-replaces-reading` · `REQ-one-driver-local-and-frontier` |
+| `CR-GC-342` | done | Eigenes Modell: Ableitungskette der Anforderungen | `FUNC-mutate` · `REQ-graph-context-replaces-reading` |
 | `CR-GC-343` | done | Nachdokumentation ausgelieferter Funktion | `FUNC-export-markdown` · `REQ-published-counts-match-code` |
 | `CR-GC-404` | done | Dashboard gehoert dem Repo, nicht dem ersten Fenster | `FUNC-gve-sessions` · `FUNC-gve-supervise` · `MOD-surface` |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern | `FUNC-check-code-conformance` |
@@ -315,13 +312,11 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-549` | done | Zugverlauf aus dem Audit-Log rekonstruieren | `REQ-audit-trail` |
 | `CR-GC-550` | done | se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter | `FUNC-se-plan` |
 | `CR-GC-551` | done | kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen "non-functional" statt ["non-functional"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert | `FUNC-mutate` |
-| `CR-GC-552` | done | graphcode run gegen sigllm statt direkt gegen die Runtime — drittes Backend sigllm im Executor | `FUNC-call-model` · `FUNC-run-verb` |
-| `CR-GC-569` | done | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration | `FUNC-call-model` · `FUNC-run-executor` · `UC-reduced-llm` |
+| `CR-GC-569` | done | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration | `UC-reduced-llm` |
 | `CR-GC-571` | done | Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden) | `FUNC-author-uc` · `FUNC-generation-step` · `FUNC-se-fmea` · `FUNC-view-fmea` · `REQ-published-counts-match-code` |
-| `CR-GC-572` | done | Executor-Arm auf backend=anthropic — der auto-Modus unterscheidet sich dann vom manuellen NUR im Treiber | `FUNC-call-model` · `REQ-one-driver-local-and-frontier` |
-| `CR-GC-573` | done | Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert | `FUNC-authoring-guide` · `FUNC-build-round-injection` · `FUNC-generation-step` |
+| `CR-GC-573` | done | Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert | `FUNC-authoring-guide` · `FUNC-generation-step` |
 | `CR-GC-574` | done | Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse | `UC-loop-closure` |
-| `CR-GC-575` | done | Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden | `FUNC-build-round-injection` · `FUNC-generation-step` |
+| `CR-GC-575` | done | Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden | `FUNC-generation-step` |
 | `CR-GC-578` | done | audit.trail-projection: Test misst gegen den LEBENDEN .graphcode/audit.jsonl des Repos — Schwellwert 11 Prozent reisst bei 20,8 von 165,2 KB, ohne Codeaenderung. Flaky per Konstruktion | `FUNC-audit-trail` |
 | `CR-GC-579` | done | mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument | `FUNC-serve-stdio` |
 | `CR-GC-605` | done | Schwere = Gate-Wirkung (gating entfaellt, 6 errors -> warning), Phase INCOSE-korrigiert (AF-01 SRR, AF-05 PDR, R-26 TRR), Smeagol Stufe (e) Empfehlungskonsistenz, Regel-Matrix ohne abgeleitete Spalten | `FUNC-generation-step` · `FUNC-mutate` |
@@ -329,7 +324,6 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-608` | done | Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15) | `FUNC-generation-step` · `FUNC-take-steering-snapshot` |
 | `CR-GC-612` | done | Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben | `FUNC-se-help` |
 | `CR-GC-613` | done | Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs | `FUNC-graph-readiness` · `FUNC-read-tools` |
-| `CR-GC-614` | done | Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15) | `FUNC-run-executor` |
 | `CR-GC-616` | done | ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte | `FUNC-author-uc` · `FUNC-generation-step` |
 | `CR-GC-625` | done | Kanten-Fan-out A->B,C,D ist im Codec da, aber nirgends gezeigt — 43 Prozent der Kantenschreibungen im Rig-Lauf unnoetig einzeln | `FUNC-authoring-guide` · `FUNC-bootstrap` · `MOD-surface` |
 | `CR-GC-627` | done | graph_mutate laesst nur das Plus-Viertel von Format-E durch: der Umweg ueber die Graph-Rekonstruktion wirft jedes Nicht-Add-Op, obwohl der Parser die vier Praefixe kennt und die Abbildung auf MutateCommand eins zu eins ist — Loeschen und Aendern kosten den dreifach teureren commands-Modus | `FUNC-authoring-guide` · `FUNC-mutate` · `MOD-surface` |
@@ -340,74 +334,53 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-641` | done | Format-E bekommt eine Zod-Tuer, SCHEMA-format-e bindet sie | `FUNC-decode` |
 | `CR-GC-642` | done | graphcode nutzt die Format-E-Tuer der Familie statt einer eigenen | `FUNC-decode` |
 | `CR-GC-646` | done | Gate nimmt kinds als String an - Element-Attribute werden am Schreibweg nicht gegen den Vertrag geprueft | `FUNC-mutate` · `FUNC-take-steering-snapshot` |
-| `CR-GC-647` | done | Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an | `FUNC-run-executor` · `FUNC-serve-stdio` |
-| `CR-GC-648` | done | Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta | `FUNC-build-round-injection` · `FUNC-generation-step` |
+| `CR-GC-647` | done | Executor: Modell-Werkzeugaufrufe laufen ohne Schema-Grenze, und gekappte Listen kommen leer an | `FUNC-serve-stdio` |
+| `CR-GC-648` | done | Executor-Runde: Folgeschritt-Imperativ, RD-01 ohne Klausel/Quelltypen, Null-Delta | `FUNC-generation-step` |
 | `CR-GC-649` | done | formatEToCommands nach loop — Voraussetzung fuer den Executor-Preflight auf Format-E | `FUNC-decode` |
-| `CR-GC-650` | done | Executor emittiert Format-E statt commands (Faktor 2,4-3,3 Ausgabe) — Rig-Messung zuerst | `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-preflight` · `FUNC-run-executor` |
-| `CR-GC-651` | done | Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1 | `FUNC-build-round-injection` · `FUNC-call-model` · `FUNC-generation-step` · `FUNC-run-executor` |
-| `CR-GC-652` | done | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung | `FUNC-build-round-injection` · `FUNC-fund-kontext` · `FUNC-generation-step` · `FUNC-inventory-channel` |
-| `CR-GC-653` | done | Executor: Nachfrage-Ausloeser im Prompt abstellen (Duplikat-Vorpruefung, SCHEMA-Abfrage im Skill, SYS-Wiederlesen) | `FUNC-build-round-injection` · `FUNC-inventory-channel` · `FUNC-run-executor` |
-| `CR-GC-654` | done | Executor Format-E: bestehende Knoten werden fuer Kanten neu deklariert (Upsert) — Beispiel ohne reinen Kanten-Batch | `FUNC-run-executor` |
-| `CR-GC-655` | done | Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req) | `FUNC-build-round-injection` · `FUNC-generation-step` |
-| `CR-GC-656` | done | Executor openai-Zweig: fetch bricht nach 300 s ab (undici headersTimeout) — Thinking-Modelle unbenutzbar | `FUNC-call-model` · `FUNC-read-openai-stream` |
-| `CR-GC-657` | done | REQ-Beispiele ohne kinds — FUNC satisfy REQ wird illegal (auch das SYSTEM-Beispiel selbst) | `FUNC-generation-step` · `FUNC-run-executor` |
+| `CR-GC-651` | done | Executor-Prompt entschlacken: Werkzeug-Projektion, readiness raus, Skill-Marker, Protokoll-Schritt 1 | `FUNC-generation-step` |
+| `CR-GC-652` | done | Element-Liste aus dem Fund-Kontext statt Typfilter — gerichteter Weg zum Besitzer und seiner Realisierung | `FUNC-generation-step` |
+| `CR-GC-655` | done | Skill der Runde folgt der Dimension statt der Regel-Klausel (UC-01 bekommt author-uc statt author-req) | `FUNC-generation-step` |
+| `CR-GC-657` | done | REQ-Beispiele ohne kinds — FUNC satisfy REQ wird illegal (auch das SYSTEM-Beispiel selbst) | `FUNC-generation-step` |
 | `CR-GC-658` | done | UC-02-Klausel beschreibt den ACTOR-Pfad nur halb — FLOW ohne SCHEMA, Platzhalter-uids | `FUNC-generation-step` |
-| `CR-GC-659` | done | Preflight-Meldung zu FUNC satisfy REQ nennt die kinds nicht — Widerspruch statt Reparaturhinweis | `FUNC-preflight` · `REQ-preflight-hygiene` |
-| `CR-GC-660` | done | Executor: '+' auf bestehende Knoten ueberschreibt Texte (26 von 45) — im Preflight verhindern, nicht im Prompt | `FUNC-preflight` |
 | `CR-GC-661` | done | UC-01: qwen schreibt je Batch 1 REQ fuer 1 UC (9 von 11) — das Beispiel setzt die Menge | `FUNC-generation-step` |
-| `CR-GC-662` | done | Executor anthropic-Zweig: dieselbe 300-s-fetch-Grenze wie CR-GC-656, ungestreamt | `FUNC-call-model` · `FUNC-read-anthropic-stream` |
-| `CR-GC-663` | done | Executor: Modell liest das Auftragsmaterial jede Runde neu — der Treiber vergisst gelesenes Material | `FUNC-run-executor` |
-| `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht | `FUNC-inventory-channel` |
 | `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten | `REQ-responsiveness` |
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich | `FUNC-take-steering-snapshot` |
-| `CR-GC-667` | open | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen | `FUNC-extract-mutate` · `FUNC-gate-client` · `FUNC-run-executor` · `FUNC-run-verb` · `REQ-open-point-asked` |
+| `CR-GC-667` | open | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen | `REQ-open-point-asked` |
 | `CR-GC-668` | done | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche | `FUNC-se-fmea` · `FUNC-view-fmea` · `REQ-published-counts-match-code` |
 | `CR-GC-669` | done | Migrationswerkzeug REQ-kinds auf zwei Werte | `FUNC-migrate-schema` |
 | `CR-GC-670` | done | graphcode-Eigenmodell auf zwei REQ-kinds migrieren | `FUNC-migrate-schema` |
 | `CR-GC-671` | done | graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor | `FUNC-evaluate-rules` · `FUNC-mutate` |
-| `CR-GC-672` | done | Executor und Preflight auf zwei REQ-kinds | `FUNC-build-round-injection` · `FUNC-generation-step` · `FUNC-inventory-channel` · `FUNC-preflight` |
-| `CR-GC-672B` | done | Executor zeigt Vorschlaege als Gate-Batch (Split aus CR-GC-672) | `FUNC-run-executor` |
+| `CR-GC-672` | done | Executor und Preflight auf zwei REQ-kinds | `FUNC-generation-step` |
 | `CR-GC-673` | done | Projektionen auf zwei REQ-kinds und Rollen-Attribut | `FUNC-authoring-guide` · `FUNC-export-markdown` · `FUNC-render-views` |
 | `CR-GC-674` | done | SE-Skills und Help auf zwei REQ-kinds | `FUNC-author-req` · `FUNC-se-help` |
-| `CR-GC-675` | done | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus | `FUNC-generation-step` · `FUNC-run-executor` |
+| `CR-GC-675` | done | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus | `FUNC-generation-step` |
 | `CR-GC-680` | open | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie | `FUNC-se-retro` |
 | `CR-GC-681` | open | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md | `REQ-published-counts-match-code` |
-| `CR-GC-682` | done | Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung | `FUNC-compose-faltung` · `FUNC-inventory-channel` · `REQ-inventory-switch` |
 | `CR-GC-683` | done | Konformanz-Extraktor sieht nur <repo>/src und relative Imports - im Monorepo sigloch-modules 0 Import-Endpunkte, RC-05 und RC-09 dort blind | `FUNC-check-code-conformance` |
 | `CR-GC-684` | done | Die Vorschlagsform kann keine Knoten anlegen - vier der fuenf feuernden Operator-Regeln ohne Vorlage brauchen genau das, und die Klassifikation sagt es selbst | `FUNC-graph-suggest` |
 | `CR-GC-685` | done | MCP-Schreibflaeche auf Format-E reduzieren: graph_realize und commands-Parameter raus, graph_merge-Beschreibung falsch (beschreibt Knoten-Merge statt Branch-Replay) | `FUNC-bind-tools` · `FUNC-mutate` |
 | `CR-GC-685B` | done | graph_realize von der MCP-Oberflaeche entfernen (Split aus CR-GC-685) | `FUNC-bind-tools` · `FUNC-mutate` |
 | `CR-GC-686` | done | Vorbilder und Werkzeugtexte auf Format-E: Skills, SCHEMA-01-fixHint, graph_merge-Beschreibung | `FUNC-close-violations` · `FUNC-import-doc` · `FUNC-mutate` · `FUNC-se-fmea` · `FUNC-se-optimize` |
 | `CR-GC-687` | done | intentCoverage nennt Stoppwoerter als fehlende Konzepte: der Rundenprompt fordert Use Cases fuer 'spezifiziere', 'bis', 'liegt' — Tokenisierung des Auftragstextes ohne Wortartfilter | `FUNC-target-profile-load` · `REQ-interactive-capture-suggest` |
-| `CR-GC-688` | done | seed:actor lieferte 8 Actors aus abgeschnittener Antwort | `FUNC-run-executor` · `REQ-one-driver-local-and-frontier` |
 | `CR-GC-689` | done | rules_get_violations ist mit 12.274 Zeichen je Aufruf der groesste Einzelposten des Prosa-Laufs opus5-17 (opus5-16 bei gleicher Eingabe: 2.042) — der Arbeitsmengen-Schnitt aus CR-GC-613 beisst nicht, wenn die Sitzung ueberall geschrieben hat, und genau das tut ein Spezifikationslauf | `FUNC-graph-readiness` · `FUNC-read-tools` · `FUNC-test-ingest` · `REQ-token-efficiency` |
 | `CR-GC-690` | done | Hausregel 'im headless-Lauf keine Rueckfrage' steht in GRAPHCODE.md, wird aber nicht durchgesetzt: opus5-0 rief AskUserQuestion zu einer selbst als Rauschen gemessenen Entscheidung | `FUNC-harness-cli` · `REQ-open-point-asked` |
-| `CR-GC-691` | done | Abgeschnittene Antwort im Ein-Kandidaten-Pfad verwerfen, executor.ts erkennt 'length' nicht (Rest CR-GC-688) | `FUNC-run-executor` · `REQ-one-driver-local-and-frontier` |
-| `CR-GC-692` | done | Executor meldet gekappten Werkzeugaufruf als INPUT-SCHEMA statt als Budget-Ueberlauf — Modell wiederholt denselben zu grossen Batch (runde7: 38/38 Ablehnungen, 6 Turns je Schritt verbrannt) | `FUNC-gate-client` · `FUNC-run-executor` |
-| `CR-GC-693` | done | Backend 'sigllm' in graphcode run spricht das entfernte sigllm-Format (/v1/inference, Profile, keine temperature) — löschen; sigllm = backend openai/anthropic + GRAPHCODE_LLM_API_KEY + NODE_EXTRA_CA_CERTS | `FUNC-call-model` · `FUNC-run-verb` · `REQ-one-driver-local-and-frontier` |
-| `CR-GC-694` | done | Executor lokal: Kontext ist nicht die Ursache der Saettigung; kinds-Satisfy ist die Hauptlast, Beispiel-Leck login, Stoppkriterium fehlt | `FUNC-run-executor` |
-| `CR-GC-696` | done | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren | `FUNC-run-executor` |
 | `CR-GC-697` | done | FCHAIN-skill-report: FUNC-test/-test-ui ohne REQ (R-21) - REQ Red-First mit Test | `REQ-test-skill-red-first` |
-| `CR-GC-714` | n/a | D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck | `FUNC-graph-delegate` · `FUNC-run-executor` · `REQ-delegate-in-host` |
+| `CR-GC-714` | n/a | D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck | `MOD-surface` |
 | `CR-GC-717` | n/a | rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD | `REQ-single-kuzu-owner` |
 | `CR-GC-718` | n/a | Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox | `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `REQ-full-run-on-probation` |
 | `CR-GC-719` | n/a | Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718) | `REQ-gate-only-writes` · `REQ-graceful-degradation` · `REQ-hook-extension-points` · `REQ-interface-schema` |
 | `CR-GC-720` | n/a | Schlupf in CR-GC-719: CODE-Spur ignoriert eine Modell-Aenderung im selben Diff (docs/graph) — 3 Tests des Modell-Satzes lagen ausserhalb der Auswahl; und schlupfFreieFolge zaehlt je CR nur die juengste Zeile, ein Nachlauf verdeckt den Schlupf | `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `REQ-full-run-on-probation` |
 | `CR-GC-721` | done | Fehlleitende Hinweise an das Modell (local-1): AF-01..05 fix_hint und Task-Prompt generate.ts nennen den Stempel als Handlung statt der Analysearbeit; Artefakt-id implplan/assumption-review weicht vom Task-Namen plan/irr ab (Fehlaufruf task implplan); die im Prompt genannten se-Skills liegen nur als .claude/commands vor, OpenCode findet sie nicht (liest .opencode/skills/<name>/SKILL.md, geprueft mit opencode debug skill 1.18.33). Hinweise nennen Task, Skill und ersten Arbeitsschritt als Vorbild; Skills zusaetzlich fuer OpenCode ausliefern. Erzwingung (684/685) bleibt eigener Schritt | `FUNC-generation-step` · `FUNC-harness-cli` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-plan` |
 | `CR-GC-722` | done | MCP-Werkzeugflaeche verkleinern: 23 Tools = 32.029 Zeichen tools/list, die OpenCode je Anfrage laedt (fester Sockel lokal ca. 21.500 Tokens). Gemessen 2026-08-29..09-30: Claude Code 2.745 Aufrufe, OpenCode/qwen 196. (1) Service-Operationen aus der MCP-Liste in CLI-Verben: graph_merge (0 Aufrufe, kein Aufrufer, kein Skill), graph_reseed (1), audit_trail (1), audit_stats (0) = -5.204 Zeichen. (2) Spike Zusammenfuehrung: rules_evaluate + rules_get_violations sind ein Werkzeug mit Umfang-Parameter (gleiche Form, nur Arbeitsmenge vs. Modell); graph_expand Tiefe 1 liefert dieselben Kanten wie graph_get_edges(uid) und wurde 4x gerufen; graph_get_node bleibt (einziger Prosa-Kanal, meistgerufenes Tool in OpenCode 68/196); graph_help/graph_authoring_guide und graph_test_report/ingest nicht deckungsgleich. (3) Werkzeugprofil am MCP-Server nach Vorbild Executor-toolset authoring: Kern 10 Tools = 15.411 Zeichen (48 %). (4) Texte: graph_mutate 4.685 Zeichen (formatE-Sprachdoku 2.441), detail-Parameter 1.400 Zeichen doppelt, Default full in 98 von 100 Aufrufen ueberschrieben. Offen: Token-Zahl ist geschaetzt, A/B mit opencode gegen qwen fehlt | `FUNC-bind-tools` · `REQ-mcp-tool-registry` |
-| `CR-GC-723` | done | Werkzeugprofil je LLM-Art am MCP-Server: Variable GRAPHCODE_LLM=local/cloud (Scaffold schreibt local in opencode.json, cloud in .mcp.json). local = graph_delegate + Leser graph_elements, graph_get_node, graph_context, Leser-Beschreibung auf den ersten Satz; kein graph_mutate (ein Schreibweg: der Executor im Host). cloud = volle Liste. Entscheid Autor 2026-10-01, Messung in ITEM-2026-687 (Liste heute 32.029 Zeichen, OpenCode laedt sie je Anfrage). Abnahme: A/B-Lauf OpenCode gegen qwen | `FUNC-harness-cli` · `FUNC-serve-stdio` · `FUNC-tool-profile` · `REQ-tool-profile-by-llm` |
-| `CR-GC-724` | done | Analysen ueber den Executor (lokaler Weg, Profil local): graph_delegate und graphcode run nehmen task (conops/trade/irr/fmea/plan) und reichen ihn an graph_generate; die fuenf Analyse-Skills bekommen einen inject-Ausschnitt mit gueltigem Format-E-Vorbild fuer ihr Artefakt (Test: jedes Vorbild geht durchs Gate); Werkzeugtext und AGENTS.md nennen die Tasks. IRR: Annahmen als Rueckfrage, offene als CR. Beleg: local-2 — mit Profil local hat der Client kein graph_generate/graph_mutate, der Executor kennt keinen task. Stempel durch den Code folgt als eigener Schritt (ITEM-2026-684) | `FUNC-generation-step` · `FUNC-graph-delegate` · `FUNC-run-executor` · `FUNC-task-abschluss` · `REQ-analyse-artefakt-vor-stempel` |
-| `CR-GC-725` | done | Executor verwirft Stempelzeilen des Modells: eine @analysisFreshness-Zeile verlaesst den Batch vor dem Gate (executor-gate.ts), den Stempel setzt allein der Executor, wenn das Artefakt steht (CR-GC-724). Executor-Teil von ITEM-2026-684; local-1 setzte fuenf Stempel ohne Artefakt | `FUNC-gate-client` · `REQ-analyse-artefakt-vor-stempel` |
-| `CR-GC-726` | done | graph_delegate wartet standardmaessig 120 s, OpenCode bricht MCP-Aufrufe nach 60 s ab: der Client sieht 'Request timed out', der Executor laeuft unbemerkt weiter (Lauf local-3, 2026-10-02: 5 Batches, 52 Befehle geschrieben, Client begann zu coden). Dazu: die Spur der Delegation steht nur im Speicher, nach einem Abbruch ist nicht feststellbar, woran der Lauf steht | `FUNC-graph-delegate` · `REQ-delegate-antwortet-vor-client-abbruch` |
-| `CR-GC-727` | done | D2 auf einer GPU: der wartende Client nimmt dem Executor die Rechenzeit. Probe todo 2026-10-02: jede graph_delegate({})-Abfrage des Clients kostet eine Inferenz mit 14-19 k Token ohne Cache; Executor-Runden dauern 2-5 min statt 15-85 s, qwen3.8 im Executor reisst den 300-s-Aufruf-Timeout. Das Warte-Budget muss je Repo einstellbar sein (executor.wartenSek), gepaart mit dem Abbruch des Clients (OpenCode experimental.mcp_timeout); die Obergrenze 55 s aus CR-GC-726 verhindert das | `FUNC-graph-delegate` · `REQ-delegate-wartebudget-je-repo` |
-| `CR-GC-728` | done | graph_delegate sagt dem Client nicht, warum ein Lauf endete und was als Naechstes geht. Probe todo B4 (2026-10-02): nach fertigem Kern meldete der Executor stopReason stalled, 0 Zuege, 0 Token — offen waren nur die Eintrittspunkte der Analysen. Der Client (qwen3.8) hielt das fuer einen Ausfall des Modells und schickte fuenf weitere Auftraege mit genauen Kantenanweisungen; jeder endete gleich. Dazu: ein auftrag bei bestehendem Modell wird still verworfen (Intent nur in der Seed-Phase), der Client erfaehrt es nicht | `FUNC-graph-delegate` · `REQ-delegate-schluss-in-worten` |
+| `CR-GC-723` | done | Werkzeugprofil je LLM-Art am MCP-Server: Variable GRAPHCODE_LLM=local/cloud (Scaffold schreibt local in opencode.json, cloud in .mcp.json). local = graph_delegate + Leser graph_elements, graph_get_node, graph_context, Leser-Beschreibung auf den ersten Satz; kein graph_mutate (ein Schreibweg: der Executor im Host). cloud = volle Liste. Entscheid Autor 2026-10-01, Messung in ITEM-2026-687 (Liste heute 32.029 Zeichen, OpenCode laedt sie je Anfrage). Abnahme: A/B-Lauf OpenCode gegen qwen | `FUNC-harness-cli` · `FUNC-serve-stdio` |
+| `CR-GC-724` | done | Analysen ueber den Executor (lokaler Weg, Profil local): graph_delegate und graphcode run nehmen task (conops/trade/irr/fmea/plan) und reichen ihn an graph_generate; die fuenf Analyse-Skills bekommen einen inject-Ausschnitt mit gueltigem Format-E-Vorbild fuer ihr Artefakt (Test: jedes Vorbild geht durchs Gate); Werkzeugtext und AGENTS.md nennen die Tasks. IRR: Annahmen als Rueckfrage, offene als CR. Beleg: local-2 — mit Profil local hat der Client kein graph_generate/graph_mutate, der Executor kennt keinen task. Stempel durch den Code folgt als eigener Schritt (ITEM-2026-684) | `FUNC-generation-step` · `REQ-analyse-artefakt-vor-stempel` |
+| `CR-GC-725` | done | Executor verwirft Stempelzeilen des Modells: eine @analysisFreshness-Zeile verlaesst den Batch vor dem Gate (executor-gate.ts), den Stempel setzt allein der Executor, wenn das Artefakt steht (CR-GC-724). Executor-Teil von ITEM-2026-684; local-1 setzte fuenf Stempel ohne Artefakt | `REQ-analyse-artefakt-vor-stempel` |
 | `CR-GC-729` | done | next an der Mutation wird Vorschlag an den Nutzer (Chat-Vorbefuellung), ohne Fix-Anleitung und Abnahme-Angebot | `FUNC-generation-step` |
 | `CR-GC-730` | done | Vorschlag je Dimension zu grob: ein Vorschlag soll einen Schritt benennen, daher je Regel formulieren (Probe G Zug 3: 38 min, zwei Plan-Schritte in einem Zug) | `FUNC-generation-step` |
 | `CR-GC-731` | done | Vorschlag zu UC-02 liest sich wie erledigt, wenn der Akteur angebunden ist, aber Funktionen fehlen (Probe H Zug 4) | `FUNC-generation-step` |
 | `CR-GC-732` | done | graphcode init liefert das OpenCode-Plugin aus, das den Vorschlag ins Eingabefeld legt (gemessen in Probe G/H) | `FUNC-generation-step` · `REQ-repo-install` |
 | `CR-GC-733` | done | Vorschlagssaetze aus RULE_HELP (contracts) lesen statt eigener Tabelle; Regelmatrix zeigt Spalte Vorschlag; Pruefung beim Hoststart | `FUNC-generation-step` |
 | `CR-GC-734` | done | Vorschlag wiederholt einen Analyse-Eintrittspunkt (AF-01..05) endlos, auch nachdem der Nutzer ihn beauftragt hat und der Zug ihn nicht schliessen konnte; Eintrittspunkte sind von der Zurueckstellung ausgenommen (CR-GC-604) — Handlauf todo-local 2026-10-03 | `FUNC-generation-step` |
-| `CR-GC-735` | done | Abschlussvermerk überschreibt die anderen: ~ SYS @analysisFreshness {x} ersetzt das ganze Objekt (2. Stempel löscht den 1.); Skills sagen 'analysisFreshness.<id> = …' — gemessen im Replay todo-local 2026-10-04 | `FUNC-task-abschluss` |
 | `CR-GC-736` | done | Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3) | `FUNC-generation-step` |
 | `CR-GC-743` | done | Nachzug contracts 10.15 - CR-R05 gestrichen und Bindungsregeln ab Realisierung | `FUNC-score-completeness` |
 | `CR-GC-744` | done | Nachzug contracts 10.15 - Attribut concept entfaellt | `FUNC-test` |
@@ -418,22 +391,23 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-749` | done | Schritt waehlt nach Stufe, Kaltstart aus den Existenz-Regeln | `FUNC-generation-step` |
 | `CR-GC-750` | done | Regelmatrix mit Stufe, Rolle, Marke - Skilltexte ohne Gates | `FUNC-se-help` |
 | `CR-GC-751` | done | rules_evaluate liefert die Arbeitsreihenfolge nach Stufe | `FUNC-evaluate-rules` |
-| `CR-GC-752` | done | Bauplan ohne Stempel - offene Auftraege sind das Ergebnis | `FUNC-run-executor` · `FUNC-se-plan` |
+| `CR-GC-752` | done | Bauplan ohne Stempel - offene Auftraege sind das Ergebnis | `FUNC-se-plan` |
 | `CR-GC-753` | done | Nachzug Regelkatalog 40 - die neun Entscheidungen zur Regelmatrix | `FUNC-generation-step` · `FUNC-score-completeness` |
-| `CR-GC-754` | done | Nachzug Regelkatalog 41 - Analysen hinterlassen keinen Bauauftrag | `FUNC-run-executor` · `FUNC-task-abschluss` |
 | `CR-GC-755` | n/a | Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43 | `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-trade` |
 | `CR-GC-756` | n/a | Sicht Variantenvergleich streichen | `FUNC-render-views` |
-| `CR-GC-757` | n/a | Stufe statt Dimension - Befunde zaehlen statt Prozent | `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-graph-readiness` · `FUNC-rank-candidates` · `FUNC-take-steering-snapshot` |
+| `CR-GC-757` | n/a | Stufe statt Dimension - Befunde zaehlen statt Prozent | `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-graph-readiness` · `FUNC-take-steering-snapshot` |
 | `CR-GC-762` | n/a | Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen | `FUNC-export-markdown` |
-| `CR-GC-763` | n/a | Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen | `FUNC-rank-candidates` |
+| `CR-GC-763` | n/a | Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen | `MOD-loop` |
 | `CR-GC-764` | n/a | Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte) | `REQ-benchmark-harness` · `UC-loop-closure` |
 | `CR-GC-765` | n/a | Leitlinie und Verweise nach dem Split auf graphanalyze umstellen | `REQ-benchmark-harness` |
 | `CR-GC-766` | n/a | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) | `FUNC-take-steering-snapshot` |
 | `CR-GC-767` | n/a | Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics | `FUNC-chain-metrics` · `REQ-chain-metrics` |
-| `CR-GC-769` | n/a | Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet | `FUNC-graph-delegate` · `FUNC-run-executor` · `FUNC-tool-profile` |
-| `CR-GC-770` | n/a | Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt | `FUNC-block-antrieb` · `FUNC-inventory-channel` · `FUNC-vorschlag` |
-| `CR-GC-772` | n/a | Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt | `FUNC-tool-profile` |
-| `CR-GC-773` | n/a | Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche | `FUNC-compose-faltung` · `FUNC-fund-kontext` · `FUNC-nd-similarity` |
+| `CR-GC-769` | n/a | Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet | `MOD-surface` |
+| `CR-GC-770` | n/a | Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt | `FUNC-vorschlag` |
+| `CR-GC-772` | n/a | Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt | `MOD-surface` |
+| `CR-GC-773` | n/a | Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche | `MOD-loop` |
+| `CR-GC-775` | n/a | Executor im Host auslagern: Zugaenge entfernen (graph_delegate, graphcode run, Schalter, Config-Abschnitt) | `MOD-loop` · `MOD-surface` |
+| `CR-GC-776` | n/a | Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen | `MOD-kernel-measure` · `MOD-loop` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

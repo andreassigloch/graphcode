@@ -3,12 +3,12 @@
  *
  * Zusage (REQ-graceful-degradation, REQ-post-modelfree-gate): bei nicht erreichbarem LLM bleibt
  * der Harness voll funktionsfähig — Apply, Regel-Evaluation und Readiness sind deterministisch
- * und machen keinen einzigen Modell-Call; nur die LLM-Zusatzfunktion (der eingebettete Executor)
- * degradiert.
+ * und machen keinen einzigen Modell-Call. Eine LLM-Zusatzfunktion trägt der Host seit CR-GC-775
+ * nicht mehr (der eingebettete Executor ist ausgelagert).
  *
- * „Nicht erreichbar" ist hier wörtlich: `fetch` — der einzige Netzweg des Executor-Backends — ist
- * für die Dauer des Tests eine Stolperfalle, die jeden Aufruf zählt und abweist. Das ersetzt kein
- * Stück graphcode, es nimmt ihm nur das Netz. Kuzu auf Platte in mkdtemp.
+ * „Nicht erreichbar" ist hier wörtlich: `fetch` ist für die Dauer des Tests eine Stolperfalle, die
+ * jeden Aufruf zählt und abweist. Das ersetzt kein Stück graphcode, es nimmt ihm nur das Netz.
+ * Kuzu auf Platte in mkdtemp.
  *
  * @author andreas@siglochconsulting
  */
@@ -21,8 +21,6 @@ import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 import { KuzuAdapter } from './helpers/store.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { ExecutorConfigSchema } from '../src/loop/executor.js';
-import { buildCallModel } from '../src/loop/executor-backend.js';
 
 const validSet: MutateCommand[] = [
   { op: 'add-node', node: { uid: 'REQ-m', type: 'REQ', name: 'm', description: '', attributes: {} } },
@@ -98,15 +96,5 @@ describe('TEST-reduced-llm: das Gate braucht kein Modell', () => {
     expect(b.regeln).toEqual(a.regeln);
     expect(b.readiness).toEqual(a.readiness);
     expect(netzAufrufe).toBe(0);
-  });
-
-  it('nur die LLM-Zusatzfunktion degradiert: der Executor-Aufruf scheitert, das Gate danach nicht', async () => {
-    const callModel = buildCallModel(ExecutorConfigSchema.parse({ baseUrl: 'http://127.0.0.1:9', model: 'lokal' }));
-    await expect(callModel('sys', [], [])).rejects.toThrow(/LLM nicht erreichbar/);
-    expect(netzAufrufe).toBe(1);
-
-    const danach = await lauf('nach-executor');
-    expect(danach.angewandt).toMatchObject({ success: true, mutations: 3 });
-    expect(netzAufrufe).toBe(1); // das Gate hat keinen weiteren Versuch gemacht
   });
 });

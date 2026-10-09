@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 384 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 386 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 384 CR · 338 done · 4 open.
+Total: 386 CR · 338 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -446,3 +446,5 @@ Total: 384 CR · 338 done · 4 open.
 | `CR-GC-772` | n/a | Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt |
 | `CR-GC-773` | n/a | Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche |
 | `CR-GC-774` | n/a | FMEA-Skill nimmt die Orte der Kettenkennzahlen als Eingang; Reichweite einer Funktion geht in die Bewertung |
+| `CR-GC-775` | n/a | Executor im Host auslagern: Zugaenge entfernen (graph_delegate, graphcode run, Schalter, Config-Abschnitt) |
+| `CR-GC-776` | n/a | Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen |

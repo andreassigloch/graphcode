@@ -112,7 +112,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
         graphcode: {
           command: 'node',
           args: [HOST_ENTRY, 'mcp'],
-          env: { GRAPHCODE_WRITE_PATH: 'direct', GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
+          env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
         },
       },
     });
@@ -432,7 +432,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(mcp.mcpServers.graphcode).toEqual({
       command: 'node',
       args: [HOST_ENTRY, 'mcp'],
-      env: { GRAPHCODE_WRITE_PATH: 'direct', GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
+      env: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
     });
     expect(mcp.mcpServers.context7).toEqual({ command: 'npx', args: ['-y', 'some-other-mcp'] });
     expect(res.updated).toEqual(expect.arrayContaining([MCP]));
@@ -467,7 +467,6 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(mcp.mcpServers.graphcode.env).toEqual({
       GRAPHCODE_NO_GVE: '1',
       GRAPHCODE_GVE_BIN: 'node ../graph-view-edit/bin/gve.mjs',
-      GRAPHCODE_WRITE_PATH: 'direct',
       GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)),
     });
   });
@@ -484,9 +483,34 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     const cfg = JSON.parse(readFileSync(join(repo, OPENCODE), 'utf8'));
     expect(cfg.mcp.graphcode.environment).toEqual({
       GRAPHCODE_NO_GVE: '1',
-      GRAPHCODE_WRITE_PATH: 'direct',
       GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)),
     });
+  });
+
+  it('update drops the two switches of the removed embedded executor, keeps the operator own ones (CR-GC-775)', async () => {
+    await scaffold('init', { repoRoot: repo });
+
+    // Hand-set (or left behind by an older scaffold) in both host files.
+    const mcpAlt = JSON.parse(readFileSync(join(repo, MCP), 'utf8'));
+    Object.assign(mcpAlt.mcpServers.graphcode.env, {
+      GRAPHCODE_CLIENT_LLM: 'local',
+      GRAPHCODE_WRITE_PATH: 'delegate',
+      GRAPHCODE_NO_GVE: '1',
+    });
+    writeFileSync(join(repo, MCP), JSON.stringify(mcpAlt, null, 2) + '\n', 'utf8');
+    const ocAlt = JSON.parse(readFileSync(join(repo, OPENCODE), 'utf8'));
+    Object.assign(ocAlt.mcp.graphcode.environment, {
+      GRAPHCODE_CLIENT_LLM: 'local',
+      GRAPHCODE_WRITE_PATH: 'delegate',
+      GRAPHCODE_NO_GVE: '1',
+    });
+    writeFileSync(join(repo, OPENCODE), JSON.stringify(ocAlt, null, 2) + '\n', 'utf8');
+
+    await scaffold('update', { repoRoot: repo });
+
+    const erwartet = { GRAPHCODE_NO_GVE: '1', GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) };
+    expect(JSON.parse(readFileSync(join(repo, MCP), 'utf8')).mcpServers.graphcode.env).toEqual(erwartet);
+    expect(JSON.parse(readFileSync(join(repo, OPENCODE), 'utf8')).mcp.graphcode.environment).toEqual(erwartet);
   });
 
   it('remove deletes every installed artifact, restlos (REQ-repo-uninstall)', async () => {
@@ -611,7 +635,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
           type: 'local',
           command: ['node', HOST_ENTRY, 'mcp'],
           enabled: true,
-          environment: { GRAPHCODE_WRITE_PATH: 'direct', GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
+          environment: { GRAPHCODE_HOST_PORT: String(deriveHostPort(repo)) },
         },
       },
     });

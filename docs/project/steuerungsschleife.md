@@ -150,10 +150,11 @@ Code: `src/loop/stagnation.ts`.
 Die Kopplung von Modell und Client ist eine Entscheidung des Autors (2026-09-28): Claude Code gegen
 ein lokales Modell kostet zu viel Kontext, OpenCode mit dem Claude-Abo ist nicht erlaubt.
 
-**Geparkt seit 2026-10-03:** der Executor im Host. Auf diesem Weg gab der lokale Client die
+**Ausgelagert am 2026-10-09:** der Executor im Host. Auf diesem Weg gab der lokale Client die
 Modellarbeit an eine eingebaute Treiberschleife ab, die selbst das Modell rief, mehrere Kandidaten
-bewertete und den besten ans Gate gab. Seit das Denk-Modell direkt durchs Gate schreibt, wird der
-Weg nicht mehr gemessen. Er ist über `GRAPHCODE_WRITE_PATH=delegate` je Client weiter wählbar (CR-GC-769, CR-GC-772).
+bewertete und den besten ans Gate gab. Seit das Denk-Modell direkt durchs Gate schreibt, wurde der
+Weg nicht mehr gemessen. Sein letzter Stand ist die Marke `executor-geparkt-2026-10-09`; im Kern gibt
+es ihn nicht mehr (CR-GC-775, CR-GC-776).
 
 ## Abgleich mit den älteren Darstellungen
 
@@ -168,13 +169,12 @@ angewandten Änderung.
 
 ## Die Schleife im eigenen Modell
 
-Seit CR-GC-770 steht die Schleife so im graphcode-Modell:
+Seit CR-GC-770 steht die Schleife als eine Kette im graphcode-Modell:
 
 - **`FCHAIN-steering-loop`, Führung von außen:** die fünf Schritte oben als eine Kette, mit Store und
   Regelprüfung als Gliedern und dem Vorschlag als eigener Funktion (`FUNC-vorschlag`). Bewertbar, eine
   Rückkopplung: Gate → Store → Messen.
-- **`FCHAIN-executor-loop`, Executor im Host:** der geparkte Treiber. Schritt, Gate, Fit-Bewertung und
-  Snapshot teilt er mit der ersten Kette.
+Die Kette des Executors ist mit ihm aus dem Modell gefallen (CR-GC-776).
 
 Was noch abweicht:
 
@@ -186,8 +186,7 @@ Was noch abweicht:
 
 - Die Führung von außen ist **eine** Kette.
 - Der Vorschlag trägt den Vertrag der Gate-Antwort.
-- Helfer bekommen einen eigenen Vertrag im Code und einen Fluss im Modell (CR-GC-773); beide Ketten sind bewertbar.
-- Der Schalter für den Executor gilt je Client und heißt `GRAPHCODE_WRITE_PATH` (CR-GC-772).
+- Der Executor im Host ist ausgelagert; Schalter, Werkzeug `graph_delegate` und Befehl `graphcode run` gibt es nicht mehr (CR-GC-775).
 
 ## Noch offen
 

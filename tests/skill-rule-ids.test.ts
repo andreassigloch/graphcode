@@ -26,7 +26,6 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { ALL_RULE_DEFS } from '@sigloch/contracts/se';
 import { RULE_CLAUSE, GENERATION_TEMPLATE } from '../src/loop/generate.js';
-import { SYSTEM, IDLE_NUDGE } from '../src/loop/executor-prompt.js';
 
 const KATALOG = new Set(ALL_RULE_DEFS.map((r) => r.id));
 
@@ -84,14 +83,12 @@ describe('TEST-skill-rule-ids: keine erfundenen Regeln in Skills und Prompts (CR
   });
 
   it('jede im Rundenprompt genannte Regel-ID steht im Katalog', () => {
-    // Der Weg, der das Modell WIRKLICH erreicht: Klausel-Schluessel, Klauseltexte,
-    // Stufen-Vorlagen und die beiden Konstanten des Executors.
+    // Der Weg, der das Modell WIRKLICH erreicht: Klausel-Schluessel, Klauseltexte
+    // und Stufen-Vorlagen.
     const texte = [
       ...Object.keys(RULE_CLAUSE),
       ...Object.entries(RULE_CLAUSE).map(([, k]) => k.text(['UID-1'])),
       ...Object.values(GENERATION_TEMPLATE),
-      SYSTEM,
-      IDLE_NUDGE,
     ];
     const erfunden = texte.flatMap(genannteIds).filter((id) => !KATALOG.has(id));
     expect([...new Set(erfunden)]).toEqual([]);

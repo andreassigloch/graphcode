@@ -4,7 +4,7 @@
  *
  * Gefunden in der Serie CR-GC-564..583: die Rangfolge der Verdicts stand an vier Stellen, drei
  * davon falsch — zuletzt CR-GC-583 selbst, das den Steuerwert VOR dem tier nannte, waehrend
- * `rankCandidates` tier vor Steuerwert sortiert. Tests prueften den Code; niemand die Texte.
+ * der Komparator tier vor Steuerwert sortierte. Tests prueften den Code; niemand die Texte.
  *
  * @author andreas@siglochconsulting
  */
@@ -14,9 +14,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DECISIONS, VERDICT_ORDER, decision } from '../src/loop/decisions.js';
 import { generationStep } from '../src/loop/generate.js';
-import { rankCandidates } from '../src/loop/executor-rank.js';
 import { guardrailsContent } from '../src/surface/scaffold-docs.js';
-import { headlessAnswer } from '../src/loop/executor-prompt.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -32,7 +30,7 @@ function ausgelieferteTexte(): { pfad: string; text: string }[] {
     }
   };
   walk(join(ROOT, '.claude', 'commands'));
-  for (const f of ['src/loop/generate.ts', 'src/loop/executor-prompt.ts', 'src/surface/scaffold-docs.ts']) {
+  for (const f of ['src/loop/generate.ts', 'src/surface/scaffold-docs.ts']) {
     out.push({ pfad: f, text: readFileSync(join(ROOT, f), 'utf8') });
   }
   return out;
@@ -89,10 +87,6 @@ describe('CR-GC-592: offene Punkte werden Annahmen, keine Rueckfragen ins Leere'
     expect(guard).toMatch(/as an assumption/);
     expect(guard).toMatch(/headless run/);
   });
-
-  it('CR-GC-667: der Executor beantwortet eine Frage headless mit demselben Registersatz', () => {
-    expect(headlessAnswer(['Welcher Kanal?'])).toContain(decision('openQuestions'));
-  });
 });
 
 describe('CR-GC-594: die Abnahme-Politik steht einmal und ueberall gleich', () => {
@@ -127,33 +121,15 @@ describe('CR-GC-594: die Abnahme-Politik steht einmal und ueberall gleich', () =
   });
 });
 
-describe('CR-GC-587: VERDICT_ORDER ist die Ordnung von rankCandidates, nicht eine zweite', () => {
-  const steer = (improvement: number) => ({
-    rules: ['RD-04'], before: 1, after: 1 - improvement, improvement, worstAt: null, removesElements: false,
-  });
-  const cand = (index: number, tier: string, improvement: number) => ({
-    index,
-    verdict: { success: true, tier, mutations: 3, steerAdvisory: steer(improvement) },
-  });
-
-  it('Steuerwert vor tier — tier ist das letzte Kriterium (CR-GC-763)', () => {
-    // A: schlechteres tier, besserer Steuerwert. B: besseres tier, kein Steuerwert-Gewinn.
-    const [erster] = rankCandidates([cand(1, 'auto-apply', 0), cand(0, 'suggest', 0.5)] as never);
-    expect(erster.index).toBe(0);
-    expect(VERDICT_ORDER.at(-1)?.key).toBe('tier');
+describe('CR-GC-587: der Registersatz der Rangfolge wird aus VERDICT_ORDER abgeleitet', () => {
+  it('tier ist das letzte Kriterium, der Steuerwert steht davor (CR-GC-763)', () => {
+    const keys = VERDICT_ORDER.map((v) => v.key as string);
+    expect(keys.at(-1)).toBe('tier');
+    expect(keys.indexOf('steerImprovement')).toBeGreaterThanOrEqual(0);
+    expect(keys.indexOf('steerImprovement')).toBeLessThan(keys.indexOf('tier'));
   });
 
-  it('bei sonst gleichem Verdict entscheidet tier', () => {
-    const [erster] = rankCandidates([cand(0, 'suggest', 0.5), cand(1, 'auto-apply', 0.5)] as never);
-    expect(erster.index).toBe(1);
-  });
-
-  it('bei gleichem tier entscheidet der Steuerwert — die Parse-Gegenprobe', () => {
-    const [erster] = rankCandidates([cand(0, 'suggest', 0), cand(1, 'suggest', 0.5)] as never);
-    expect(erster.index).toBe(1);
-  });
-
-  it('der Registersatz nennt die Kriterien in der Ordnung des Komparators', () => {
+  it('der Registersatz nennt die Kriterien in der Ordnung von VERDICT_ORDER', () => {
     const t = decision('verdictRank');
     const pos = VERDICT_ORDER.map((v) => t.indexOf(v.text));
     expect(pos.every((p) => p >= 0)).toBe(true);

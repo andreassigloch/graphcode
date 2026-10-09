@@ -99,7 +99,7 @@ it is ignored.
 
 ![The steering loop: measure, pick the focus, suggest, edit, gate](img/rule-kpi-loop.svg)
 
-## Comparing candidates: a principle for the host, a mechanism only in the parked driver
+## Comparing candidates: a principle for the host, a mechanism only in the removed driver
 
 A dry run (`dryRun: true`) returns the full verdict without saving anything: allowed or blocked,
 the findings per stage before and after, the fitness numbers, the coupling score. That makes several
@@ -113,8 +113,8 @@ drafts of the same step comparable before one of them lands.
 - **In the built-in driver it was a mechanism.** The driver asked the model for N independent
   answers to the same round prompt, probed each at the gate, ranked them deterministically — not
   blocked, then most findings closed in the focus stage, then no new blocking errors, then nothing
-  deleted, then the better coupling score — and applied only the winner. The driver is parked (see
-  below), and the mechanism with it.
+  deleted, then the better coupling score — and applied only the winner. The driver is gone from the core
+  (see below), and the mechanism with it.
 
 ## How fast is one round, really
 
@@ -144,13 +144,13 @@ What actually goes into a turn's context breaks into six pieces — and the two 
 loop from [Under the Hood](03-graphcode-harness-goal-and-concept.md) ("Two ways to run the loop")
 fill them very differently.
 
-**The driver column describes a parked path.** Since 2026-10-03 the built-in executor is frozen: a
-local model with a thinking level writes through the gate itself, exactly like a frontier model, and
-both are steered by the per-edit suggestion. The driver is still selectable
-(`GRAPHCODE_WRITE_PATH=delegate` plus an `executor` section) and still tested, but no longer measured
-or developed. The column stays as the record of what it does.
+**The driver column describes a path that is no longer in the core.** Since 2026-10-03 the built-in
+executor was frozen: a local model with a thinking level writes through the gate itself, exactly
+like a frontier model, and both are steered by the per-edit suggestion. On 2026-10-09 the driver was
+moved out of the core; its last state is the tag `executor-geparkt-2026-10-09`. The column stays as
+the record of what it did.
 
-| Piece | Driver (built-in executor, parked) | Host (Claude Code / OpenCode) |
+| Piece | Driver (built-in executor, removed 2026-10-09) | Host (Claude Code / OpenCode) |
 |---|---|---|
 | System prompt | graphcode's own, fixed, ~320 tokens, identical every round | the assistant's own system prompt — a different artifact, not graphcode's, not measurable from here |
 | Tool definitions | not applicable — the driver calls the gate directly | graphcode's 23 MCP tools, ~4,100 tokens of names + descriptions, loaded once per session |

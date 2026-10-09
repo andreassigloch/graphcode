@@ -739,14 +739,6 @@ describe('CR-GC-589: der Schritt nennt seine Anleitung — eine Zuordnung fuer b
     for (const stufe of ['Schema', 'Test', 'Plan', 'Bindung', 'Abgleich']) expect(SKILL_FOR_STAGE[stufe], stufe).toBeUndefined();
     expect(SKILL_FOR_STAGE['Anforderung']?.name).toBe('se:author-req');
   });
-
-  it('der Executor hat keine zweite Tabelle und keine zweite Entscheidung (CR-GC-655)', () => {
-    const src = readFileSync(fileURLToPath(new URL('../src/loop/executor-prompt.ts', import.meta.url)), 'utf8');
-    expect(src).not.toMatch(/const SKILL_FOR_(STAGE|DIMENSION)\s*[:=]/);
-    // Er liest den Skill, den der Schritt nennt — nicht die Stufe.
-    expect(src).not.toMatch(/SKILL_FOR_(STAGE|DIMENSION)\[/);
-    expect(src).toContain('skillDatei(step.skill)');
-  });
 });
 
 describe('GATE_PROTOCOL-Selektion (CR-GC-288)', () => {
