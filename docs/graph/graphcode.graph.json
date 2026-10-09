@@ -3203,6 +3203,12 @@
       "description": "docs/cr/open/CR-GC-773-drei-helfer-der-executor-kette-ohne-eige.md"
     },
     {
+      "id": "CR-GC-774",
+      "type": "CR",
+      "name": "FMEA-Skill nimmt die Orte der Kettenkennzahlen als Eingang; Reichweite einer Funktion geht in die Bewertung",
+      "description": "docs/cr/open/CR-GC-774-fmea-skill-nimmt-die-orte-der-kettenkenn.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -24321,5 +24327,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 662
+  "graphVersion": 663
 }
