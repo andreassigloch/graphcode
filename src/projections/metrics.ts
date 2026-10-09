@@ -22,6 +22,11 @@
  * eigene Rechnung: `archMetrics` (fit-advisory.ts) ist dieselbe Funktion, aus
  * der das Δm-Advisory seine Differenz bildet.
  *
+ * CR-GC-767: dazu `chains` und `measurability` — die Kennzahlen je FCHAIN und die
+ * Quote der bewertbaren Ketten. Wieder KEINE Rechnung hier: `chainMetrics()` aus
+ * contracts (CR-SM-404) liefert beides in einem Ergebnis, damit die Quote nie ohne
+ * die Werte reist und die Werte nie ohne die Quote.
+ *
  * @author andreas@siglochconsulting
  */
 
@@ -29,6 +34,8 @@ import { z } from 'zod/v4';
 import {
   moduleMetrics,
   functionCriticality,
+  chainMetrics,
+  type ChainMetrics,
   type ModuleMetrics,
   type FunctionCriticality,
   type MetricPolicy,
@@ -89,6 +96,13 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
        * Wertbaum, und sie spiegeln einander ausdruecklich nicht.
        */
       functions: FunctionCriticality[];
+      /**
+       * CR-GC-767: eine Zeile je FCHAIN — die Kennzahlen, oder `reasons` statt jeder Zahl, wenn
+       * die Kette nicht bewertbar ist. Graph-Reihenfolge, keine Rangfolge: die Zahl urteilt nicht.
+       */
+      chains: ChainMetrics['chains'];
+      /** Die Reichweite von `chains`: bewertbare / alle Ketten; `ratio` ist `null` ohne Ketten. */
+      measurability: ChainMetrics['measurability'];
       policy: MetricPolicy;
       policySource: PolicySource;
       fit: {
@@ -109,7 +123,8 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
       'Which module is the coupling problem? One row per MOD — fan-in/out, instability, LCOM4, ' +
       'cohesion — each next to the threshold it was judged against. Take it when graph_readiness says ' +
       'a dimension is weak and you need to know WHICH module; a value without its threshold is not a ' +
-      'statement. `graph_help({token:"graph_metrics"})` explains the figures. Read-only.',
+      'statement. Also `chains` per FCHAIN. ' +
+      '`graph_help({token:"graph_metrics"})` explains the figures. Read-only.',
     inputSchema: GraphMetricsInputSchema,
     async handler(_input) {
       // CR-GC-329: Wert UND Schwelle aus EINER Antwort. Ein Konsument, der „71 % /
@@ -130,9 +145,13 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
       const metrics = archMetrics(graph);
       const weights = profile?.profile.weights ?? {};
       const values = profile?.profile.values ?? {};
+      const ontology = toOntologyGraph(graph);
+      const chains = chainMetrics(ontology);
       return {
-        modules: moduleMetrics(toOntologyGraph(graph)),
-        functions: functionCriticality(toOntologyGraph(graph)),
+        modules: moduleMetrics(ontology),
+        functions: functionCriticality(ontology),
+        chains: chains.chains,
+        measurability: chains.measurability,
         policy: config.metricPolicy,
         policySource: source,
         fit: {

@@ -16,7 +16,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
@@ -26,7 +26,8 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { computeFitAdvisory } from '../src/kernel/measure/fit-advisory.js';
 import { METRIC_DIMENSIONS, toArray } from '@sigloch/se-engine';
-import { DEFAULT_METRIC_POLICY, type MetricPolicy } from '@sigloch/contracts/se';
+import { DEFAULT_METRIC_POLICY, chainMetrics, type MetricPolicy, type OntologyGraph } from '@sigloch/contracts/se';
+import { openMeasured } from '../src/surface/measured.js';
 import { CONFIG_FILENAME, DEFAULT_CONFIG } from '../src/kernel/config.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
@@ -342,5 +343,149 @@ describe('graph_metrics — Zielwerte je Dimension (CR-GC-457)', () => {
     writeProfile({ weights: { coherence: 1 }, values: { coherence: 4.5 } });
     const withValues = (await tools.graph_metrics.handler({})).fit.target.weights;
     expect(withValues).toEqual(withoutValues);
+  });
+});
+
+/**
+ * CR-GC-767 — Kettenkennzahlen je FCHAIN und die Bewertbarkeitsquote in DERSELBEN Antwort.
+ *
+ * Gerechnet wird in contracts (`chainMetrics`, CR-SM-404); hier steht, dass die Zahlen am echten
+ * Werkzeug ankommen: die Referenzkette „Zahlung ausloesen" aus dem Konzept durch das Gate in ein
+ * Disk-Kuzu, dann `graph_metrics`. Die Gegenprobe haengt Schleife und Ast an, und die Kennzahlen
+ * muessen umschlagen — ein Block, der immer dieselbe Zahl zeigt, bestuende sonst auch.
+ */
+describe('graph_metrics — Kettenkennzahlen und Bewertbarkeit (CR-GC-767)', () => {
+  let repoRoot: string;
+  let harness: GraphCodeHarness;
+  let tools: MCPToolRegistry;
+
+  const STEPS = ['validieren', 'deckung', 'betrug', 'buchung', 'audit', 'bestaetigung'];
+  const MOD_OF: Record<string, string> = {
+    validieren: 'MOD-ui', deckung: 'MOD-core', betrug: 'MOD-core', buchung: 'MOD-core', audit: 'MOD-core',
+    bestaetigung: 'MOD-ui',
+  };
+  /** Ein FLOW mit seinem Vertrag; `from: null` laesst den Erzeuger weg. */
+  const flow = (id: string, from: string | null, to: string): MutateCommand[] => [
+    node(`FLOW-${id}`, 'FLOW', `Flow ${id}`),
+    node(`SCHEMA-${id}`, 'SCHEMA', `Contract ${id}`),
+    edge(`FLOW-${id}`, 'relation', `SCHEMA-${id}`),
+    ...(from ? [edge(from, 'io', `FLOW-${id}`)] : []),
+    edge(`FLOW-${id}`, 'io', to),
+  ];
+  /** ACTOR, sechs Schritte linear, ACTOR; `FCHAIN-storno` teilt sich `FUNC-buchung`. */
+  const ZAHLUNG: MutateCommand[] = [
+    node('SYS-pay', 'SYS', 'Payment system'),
+    node('ACTOR-kunde', 'ACTOR', 'Kunde'),
+    node('FCHAIN-zahlung', 'FCHAIN', 'Zahlung ausloesen'),
+    node('FCHAIN-storno', 'FCHAIN', 'Storno'),
+    node('MOD-ui', 'MOD', 'UI'),
+    node('MOD-core', 'MOD', 'Core'),
+    ...STEPS.flatMap((s) => [
+      node(`FUNC-${s}`, 'FUNC', s),
+      edge(`FUNC-${s}`, 'allocate', MOD_OF[s]),
+      edge('FCHAIN-zahlung', 'compose', `FUNC-${s}`),
+    ]),
+    edge('FCHAIN-storno', 'compose', 'FUNC-buchung'),
+    ...flow('in', 'ACTOR-kunde', 'FUNC-validieren'),
+    ...STEPS.slice(0, -1).flatMap((s, i) => flow(`s${i}`, `FUNC-${s}`, `FUNC-${STEPS[i + 1]}`)),
+    ...flow('out', 'FUNC-bestaetigung', 'ACTOR-kunde'),
+  ];
+
+  beforeEach(async () => {
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-chain-metrics-'));
+    harness = makeHarness(repoRoot);
+    await harness.initialize();
+    const seeded = await harness.mutate(ZAHLUNG);
+    expect(seeded.success, JSON.stringify(seeded.violations ?? seeded)).toBe(true);
+    tools = bindToolsToHarness(harness);
+  });
+  afterEach(async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  const zahlung = async () =>
+    (await tools.graph_metrics.handler({})).chains.find((c) => c.chainId === 'FCHAIN-zahlung')!;
+
+  it('Referenzkette: Laenge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rueckkopplungen, 1 geteilter Knoten', async () => {
+    expect(await zahlung()).toEqual({
+      chainId: 'FCHAIN-zahlung',
+      chainName: 'Zahlung ausloesen',
+      measurable: true,
+      length: 6,
+      branching: 1,
+      moduleBoundaries: 2,
+      feedbackLoops: 0,
+      sharedFuncs: 1,
+      bottlenecks: 1,
+      // Stufe 1 rechnet sie nicht — `null` ist die Aussage, eine 0 waere eine Messung.
+      syncDepth: null,
+      errorPathDepth: null,
+    });
+  });
+
+  it('Gegenprobe: Schleife und Ast lassen Rueckkopplungen und Verzweigung umschlagen', async () => {
+    const more = await harness.mutate([
+      ...flow('retry', 'FUNC-betrug', 'FUNC-deckung'),
+      ...flow('branch', 'FUNC-buchung', 'FUNC-bestaetigung'),
+    ]);
+    expect(more.success).toBe(true);
+    // deckung und betrug fallen zu EINEM Schritt zusammen: 6 wird 5.
+    expect(await zahlung()).toMatchObject({ measurable: true, feedbackLoops: 1, branching: 2, length: 5 });
+  });
+
+  it('eine Kette ohne Eingang traegt den Grund statt einer Zahl und zaehlt im Nenner der Quote', async () => {
+    const before = (await tools.graph_metrics.handler({})).measurability;
+    // FCHAIN-storno hat nur FUNC-buchung: gespeist und entleert von Gliedern der ANDEREN Kette,
+    // also bewertbar. Ohne den Ausloeser verliert FCHAIN-zahlung ihren einzigen Eingang.
+    expect(before).toEqual({ chains: 2, measurable: 2, ratio: 1 });
+    const cut = await harness.mutate([{ op: 'delete-edge', edge: { sourceId: 'ACTOR-kunde', targetId: 'FLOW-in', edgeType: 'io' } }]);
+    expect(cut.success).toBe(true);
+
+    const res = await tools.graph_metrics.handler({});
+    const kette = res.chains.find((c) => c.chainId === 'FCHAIN-zahlung')!;
+    expect(kette).toEqual({ chainId: 'FCHAIN-zahlung', chainName: 'Zahlung ausloesen', measurable: false, reasons: ['no-entry'] });
+    expect(res.measurability).toEqual({ chains: 2, measurable: 1, ratio: 0.5 });
+  });
+
+  it('ohne FCHAIN: leere Liste und Quote `null` — kein erfundenes 100 %', async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-chain-metrics-none-'));
+    harness = makeHarness(repoRoot);
+    await harness.initialize();
+    expect((await harness.mutate(SEED)).success).toBe(true);
+    const res = await bindToolsToHarness(harness).graph_metrics.handler({});
+    expect(res.chains).toEqual([]);
+    expect(res.measurability).toEqual({ chains: 0, measurable: 0, ratio: null });
+  });
+});
+
+/**
+ * CR-GC-767 — graphcodes eigenes Modell: `graph_metrics` und der Spike zeigen DIESELBE Zahl.
+ *
+ * Der Spike (`scripts/spike-kettenkennzahlen.mjs`) gibt die committete SSOT-Datei roh an
+ * `chainMetrics`; das Werkzeug geht ueber Store und `toOntologyGraph`. Stimmen beide Wege je Kette
+ * ueberein, ist der Adapter verlustfrei. Keine harte Zahl: das Modell lebt, die Gleichheit nicht.
+ */
+describe('graph_metrics auf dem eigenen Modell (CR-GC-767)', () => {
+  it('zeigt jede FCHAIN der SSOT mit Quote — je Kette gleich dem direkten Aufruf des Spikes', async () => {
+    // Das Repo wird nur GELESEN: `openMeasured` legt Store und Lock in ein Wegwerf-Verzeichnis (CR-GC-496).
+    const repo = join(__dirname, '..');
+    const ssot = join(repo, 'docs', 'graph', 'graphcode.graph.json');
+    const roh = JSON.parse(readFileSync(ssot, 'utf8')) as OntologyGraph;
+    const direkt = chainMetrics(roh);
+    expect(direkt.measurability.chains, 'Praemisse: das eigene Modell traegt Ketten').toBeGreaterThan(0);
+
+    const measured = await openMeasured({ graph: ssot, repoRoot: repo, systemId: 'graphcode' });
+    try {
+      const res = await bindToolsToHarness(measured.harness).graph_metrics.handler({});
+      const nachId = <T extends { chainId: string }>(xs: T[]): T[] => [...xs].sort((a, b) => a.chainId.localeCompare(b.chainId));
+      expect(nachId(res.chains)).toEqual(nachId(direkt.chains));
+      expect(res.measurability).toEqual(direkt.measurability);
+      expect(res.measurability.chains).toBe(roh.elements.filter((e) => e.type === 'FCHAIN').length);
+    } finally {
+      await measured.close();
+    }
   });
 });

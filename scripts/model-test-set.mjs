@@ -33,6 +33,10 @@ export function isModelRelevant(source) {
 
 /** Die Menge, die `verify:model` fährt. */
 export const INCLUDED = [
+  // CR-GC-767: faehrt `graph_metrics` auf der committeten SSOT und vergleicht jede FCHAIN mit dem
+  // direkten Aufruf von `chainMetrics` — eine Kette, die der Store anders liest als die Datei, macht
+  // ihn rot, also gehoert er in die Spur.
+  'tests/metrics.test.ts',
   // CR-GC-679: liest die S1-Zeile der Leitlinie §9.4 und haelt `S1` in scripts/messung.mjs gleich —
   // eine reine Doku-Aenderung an S1 macht ihn rot, also gehoert er in die Spur.
   'tests/messung.test.ts',

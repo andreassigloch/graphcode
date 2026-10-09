@@ -41,6 +41,7 @@
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-build-round-injection` | FUNC | buildRoundInjection |
 | `FUNC-call-model` | FUNC | buildCallModel(config) |
+| `FUNC-chain-metrics` | FUNC | chainMetrics(graph) |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
 | `FUNC-claim-store-lock` | FUNC | StoreLock |
 | `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
@@ -181,6 +182,7 @@
 | `FUNC-broadcast-diff` | `MOD-surface` |
 | `FUNC-build-round-injection` | `MOD-loop` |
 | `FUNC-call-model` | `MOD-loop` |
+| `FUNC-chain-metrics` | `MOD-projections` |
 | `FUNC-check-code-conformance` | `MOD-kernel` |
 | `FUNC-claim-store-lock` | `MOD-kernel` |
 | `FUNC-cli-dispatch` | `MOD-surface` |

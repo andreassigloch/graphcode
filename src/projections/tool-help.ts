@@ -55,13 +55,24 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
     plain:
       'Welches Modul ist das Kopplungsproblem: Fan-in/Fan-out, Instabilität und Kohäsion je MOD, ' +
       'immer zusammen mit der Schwelle, gegen die geurteilt wurde. `graph_readiness` sagt "alloc ist ' +
-      '87 %", das hier sagt WELCHES Modul.',
+      '87 %", das hier sagt WELCHES Modul. Dazu je Wirkkette, wie sie läuft — oder warum sie sich ' +
+      'nicht bewerten lässt.',
     se:
       'Je MOD: `fanIn`/`fanOut` (allocate- und io-Kanten), `instability` I = fanOut/(fanIn+fanOut), ' +
       '`lcom4` (Zusammenhangskomponenten der FUNC-Whitebox) und `cohesion`. Die Schwellen stammen aus ' +
       'der Metrik-Policy des Repos, nicht aus Konstanten im Werkzeug — dieselben, gegen die MT-01/MT-02/' +
       'MT-04 urteilen. Ein Wert ohne seine Schwelle ist keine Aussage: derselbe LCOM4 ist in einem ' +
-      'Adapter normal und in einem Kern ein Befund.',
+      'Adapter normal und in einem Kern ein Befund.\n' +
+      'Je FCHAIN (`chains`, CR-GC-767): `length` (längster Pfad in FUNC-Schritten, eine Schleife ist ' +
+      'ein Schritt), `branching` (größter Ausgangsgrad in der Kette), `moduleBoundaries` (Kettenkanten ' +
+      'über eine MOD-Grenze; `null`, wenn ein Glied kein Modul hat), `feedbackLoops`, `sharedFuncs` ' +
+      '(Glieder in mehr als einer Kette) und `bottlenecks` (obere Schranke). `syncDepth` und ' +
+      '`errorPathDepth` sind immer `null`: das Modell trägt dafür kein Attribut. Eine Kette mit ' +
+      '`measurable: false` trägt KEINE Zahl, sondern `reasons` — `FC-05` (zerfallen), `loose-member` ' +
+      '(ein Glied ohne io-Eingang oder -Ausgang), `no-entry`, `no-exit`, `empty`. Ohne Schwelle: hier ' +
+      'wird gemessen, nicht geurteilt.\n' +
+      '`measurability` ist die Reichweite daneben: bewertbare / alle Ketten. Kennzahlen bei niedriger ' +
+      'Quote beschreiben nur die Ketten, die schon Ketten sind; `ratio` ist `null`, wenn es keine gibt.',
   },
   rules_evaluate: {
     plain:

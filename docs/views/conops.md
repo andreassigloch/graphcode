@@ -107,7 +107,7 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-owner`
 
-- `FCHAIN-dashboard-metrics` — Kennzahlen ans Dashboard: `FUNC-function-criticality` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-mutate`
+- `FCHAIN-dashboard-metrics` — Kennzahlen ans Dashboard: `FUNC-chain-metrics` → `FUNC-function-criticality` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-mutate`
 - `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-store` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-serve-sse` → `FUNC-serve-stdio`
 
 ### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
@@ -428,6 +428,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-764` | n/a | Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte) | `REQ-benchmark-harness` · `UC-loop-closure` |
 | `CR-GC-765` | n/a | Leitlinie und Verweise nach dem Split auf graphanalyze umstellen | `REQ-benchmark-harness` |
 | `CR-GC-766` | n/a | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) | `FUNC-take-steering-snapshot` |
+| `CR-GC-767` | n/a | Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics | `FUNC-chain-metrics` · `REQ-chain-metrics` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

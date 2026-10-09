@@ -2,7 +2,7 @@
 /**
  * messung.mjs — `npm run messung`: die Stufe S1 (Leitlinie §9.4) in EINE Datei (CR-GC-679).
  *
- * Je S1-Test-ID eine Zeile in `docs/messung/stand.md`: Wert, Kriterium, Urteil, Datum, Stempel.
+ * Je S1-Test-ID (und je ID in `WEITERE`) eine Zeile in `docs/messung/stand.md`: Wert, Kriterium, Urteil, Datum, Stempel.
  * Die Leitlinie traegt in der Spalte „Stand" dann keine Zahlen mehr, sondern verweist hierher.
  *
  * Urteile: bestanden · nicht bestanden · ohne Schwelle (die Leitlinie nennt bewusst keine, T-E1) ·
@@ -24,6 +24,13 @@ export const STAND = join(REPO, 'docs', 'messung', 'stand.md');
 
 /** Die S1-Test-IDs aus Leitlinie §9.4 — `tests/messung.test.ts` haelt die Liste gleich. */
 export const S1 = ['T-V1', 'T-V2', 'T-V4', 'T-M3', 'T-M4', 'T-E1', 'T-E2', 'T-E8', 'T-O4', 'T-O6', 'T-H2'];
+
+/**
+ * Zeilen im Messstand, die die Leitlinie §9.4 (noch) nicht in der S1-Zeile fuehrt (CR-GC-767).
+ * T-O1 ist deterministisch und wird hier erhoben; `S1` bleibt wortgleich die Liste der Leitlinie.
+ */
+export const WEITERE = ['T-O1'];
+const ZEILEN = [...S1, ...WEITERE];
 
 /** Noch ohne lesbaren Wert: die Quelle gibt nur Prosa aus (Folge-CR CR-GC-679B). */
 const NICHT_ERHOBEN = {
@@ -63,9 +70,27 @@ export function medianAusLog(text, label) {
   return m ? { knoten: Number(m[1]), ms: Number(m[2]) } : null;
 }
 
-/** Die Datei. Wirft, wenn eine S1-ID fehlt oder eine Zeile keinen Stempel traegt. */
+/**
+ * T-O1 (CR-GC-767): Referenzkette reproduziert UND >= 90 % der Ketten bewertbar. Die Zahlen kommen
+ * aus `chainMetrics` (contracts); hier steht nur das Urteil ueber sie. `nullKennzahlen` nennt, was
+ * die Funktion in dieser Stufe nicht rechnet — sonst laese sich „reproduziert" wie „alle acht".
+ */
+export function urteilT_O1({ posOk, negOk, chains, measurable, graphen, nullKennzahlen }) {
+  const referenz = posOk && negOk;
+  const quote = chains > 0 ? measurable / chains : null;
+  return {
+    wert: [
+      `Referenzkette ${referenz ? 'reproduziert' : 'NICHT reproduziert'}`,
+      quote === null ? 'keine Kette im Korpus' : `${measurable} von ${chains} Ketten bewertbar (${Math.round(quote * 100)} %, ${graphen} Graphen)`,
+      nullKennzahlen.length ? `nicht gerechnet: ${nullKennzahlen.join(', ')}` : null,
+    ].filter(Boolean).join('; '),
+    urteil: referenz && quote !== null && quote >= 0.9 ? 'bestanden' : 'nicht bestanden',
+  };
+}
+
+/** Die Datei. Wirft, wenn eine Test-ID fehlt oder eine Zeile keinen Stempel traegt. */
 export function renderStand(zeilen, stempel) {
-  const fehlt = S1.filter((id) => !zeilen.some((z) => z.id === id));
+  const fehlt = ZEILEN.filter((id) => !zeilen.some((z) => z.id === id));
   if (fehlt.length) throw new Error(`messung: keine Zeile fuer ${fehlt.join(', ')}`);
   const ohne = zeilen.filter((z) => !z.stempel).map((z) => z.id);
   if (ohne.length) throw new Error(`messung: ohne Stempel keine Zahl — ${ohne.join(', ')}`);
@@ -78,7 +103,7 @@ export function renderStand(zeilen, stempel) {
     '',
     '| Test | Kriterium | Wert | Urteil | Datum | Stempel |',
     '|---|---|---|---|---|---|',
-    ...S1.map((id) => zeilen.find((z) => z.id === id)).map((z) =>
+    ...ZEILEN.map((id) => zeilen.find((z) => z.id === id)).map((z) =>
       `| ${z.id} | ${zelle(z.kriterium)} | ${zelle(z.wert)} | ${z.urteil} | ${z.datum} | ${zelle(z.stempel)} |`),
     '',
   ].join('\n');
@@ -175,6 +200,18 @@ async function erhebe() {
   const wb = await whiteboxMessung(REPO);
   zeile('T-E2', '100 % der geänderten Knoten in W bei |W|/|G| ≤ 0,05 (jüngste 10 CR-Commits)', wb.wert, wb.urteil);
 
+  // T-O1: Kontrolle und Familie-Korpus aus dem Spike, gerechnet von `chainMetrics` (contracts).
+  const { kontrolle, messeKorpus } = await import(join(REPO, 'scripts', 'spike-kettenkennzahlen.mjs'));
+  const k = kontrolle();
+  const korpus = messeKorpus().filter((x) => !x.skipped);
+  const o1 = urteilT_O1({
+    posOk: k.posOk, negOk: k.negOk,
+    chains: korpus.reduce((n, x) => n + x.chains, 0), measurable: korpus.reduce((n, x) => n + x.measurable, 0),
+    graphen: korpus.length,
+    nullKennzahlen: Object.entries(k.pos).filter(([, v]) => v === null).map(([name]) => name),
+  });
+  zeile('T-O1', 'Referenzkette reproduziert; ≥ 90 % der Ketten auswertbar', o1.wert, o1.urteil);
+
   for (const [id, [kriterium, grund]] of Object.entries(NICHT_ERHOBEN)) zeile(id, kriterium, `— ${grund} (CR-GC-679B)`, 'nicht erhoben');
   return { zeilen, stempel };
 }
@@ -183,7 +220,7 @@ if (process.argv[1] && process.argv[1].endsWith('messung.mjs')) {
   const { zeilen, stempel } = await erhebe();
   mkdirSync(dirname(STAND), { recursive: true });
   writeFileSync(STAND, renderStand(zeilen, stempel));
-  for (const id of S1) {
+  for (const id of ZEILEN) {
     const z = zeilen.find((x) => x.id === id);
     console.log(`${id.padEnd(5)} ${z.urteil.padEnd(16)} ${z.wert}`);
   }

@@ -3388,6 +3388,12 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-chain-metrics",
+      "type": "FLOW",
+      "name": "Kennzahlen je Wirkkette",
+      "description": "Kennzahlen je Wirkkette und die Bewertbarkeitsquote, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss: die Grundgesamtheit ist die FCHAIN, nicht MOD und nicht FUNC. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahlen in der Antwort, rendert sie aber noch nicht."
+    },
+    {
       "id": "FLOW-channel-dimension-template",
       "type": "FLOW",
       "name": "Kanal: Dimensions-Vorlage",
@@ -4606,6 +4612,19 @@
       "realRef": {
         "file": "src/loop/executor-backend.ts",
         "symbol": "buildCallModel",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-chain-metrics",
+      "type": "FUNC",
+      "name": "chainMetrics(graph)",
+      "description": "Projiziert den Graphen auf die Kennzahlen je Wirkkette: Gesamtlaenge, Verzweigungsgrad, Modulgrenzen, Rueckkopplungen, geteilte Knoten und Engstellen als obere Schranke. Eine nicht bewertbare Kette traegt keine Zahl, sondern den Grund; die Bewertbarkeitsquote reist im selben Ergebnis. Synchrone Tiefe und Fehlerpfad-Tiefe sind in dieser Stufe immer null. Urteilt nie: keine Regel, keine Schwelle. Fremdpaket @sigloch/contracts, deshalb external.",
+      "external": true,
+      "status": "done",
+      "realRef": {
+        "file": "packages/contracts/src/se/chain-metrics.ts",
+        "symbol": "chainMetrics",
         "lang": "ts"
       }
     },
@@ -6027,6 +6046,16 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-chain-metrics",
+      "type": "REQ",
+      "name": "Kettenkennzahlen mit Bewertbarkeitsquote",
+      "description": "graph_metrics MUSS je Wirkkette die Kettenkennzahlen liefern oder, wenn die Kette nicht bewertbar ist, den Grund statt jeder Zahl; die Bewertbarkeitsquote, bewertbare durch alle Ketten, MUSS in derselben Antwort stehen. Gerechnet wird an EINER Stelle in contracts; das Werkzeug zeigt nur an.",
+      "status": "done",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -7556,6 +7585,19 @@
       "concept": true
     },
     {
+      "id": "SCHEMA-chain-metrics",
+      "type": "SCHEMA",
+      "name": "ChainMetrics",
+      "description": "chains: je FCHAIN chainId, chainName, measurable und entweder length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external.",
+      "external": true,
+      "status": "reviewed",
+      "realRef": {
+        "file": "packages/contracts/src/se/chain-metrics.ts",
+        "symbol": "ChainMetrics",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-cli-command",
       "type": "SCHEMA",
       "name": "CliCommand",
@@ -8948,7 +8990,7 @@
       "id": "TEST-graph-metrics",
       "type": "TEST",
       "name": "Modulkennzahlen je Modul",
-      "description": "Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen.",
+      "description": "Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen. Dazu die Kettenkennzahlen am echten Werkzeug (CR-GC-767): die Referenzkette Zahlung ausloesen ergibt Laenge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rueckkopplungen, 1 geteilten Knoten; die Gegenprobe mit Schleife und Ast laesst die Werte umschlagen; eine Kette ohne Eingang traegt den Grund und zaehlt im Nenner der Quote; auf dem eigenen Modell stimmt jede Kette mit dem direkten Aufruf der contracts-Funktion ueberein.",
       "testRefs": [
         {
           "file": "tests/metrics.test.ts",
@@ -14987,6 +15029,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-767",
+      "target": "FUNC-chain-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-767",
+      "target": "REQ-chain-metrics",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15238,6 +15290,11 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-chain-metrics",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-dashboard-metrics",
@@ -16087,6 +16144,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-chain-metrics",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-chain-metrics",
+      "target": "SCHEMA-chain-metrics",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-channel-dimension-template",
       "target": "FUNC-generation-step",
       "type": "io"
@@ -16624,6 +16691,11 @@
     {
       "source": "FLOW-graph-state",
       "target": "FUNC-auto-export",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-chain-metrics",
       "type": "io"
     },
     {
@@ -18693,6 +18765,11 @@
     },
     {
       "source": "FUNC-block-messwerk",
+      "target": "FUNC-chain-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
       "target": "FUNC-compute-readiness",
       "type": "compose"
     },
@@ -18943,6 +19020,21 @@
     {
       "source": "FUNC-call-model",
       "target": "REQ-one-driver-local-and-frontier",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-chain-metrics",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-chain-metrics",
+      "target": "FLOW-chain-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-chain-metrics",
+      "target": "REQ-chain-metrics",
       "type": "satisfy"
     },
     {
@@ -22005,12 +22097,22 @@
     },
     {
       "source": "TEST-graph-metrics",
+      "target": "REQ-chain-metrics",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-metrics",
       "target": "REQ-quality-metric",
       "type": "verify"
     },
     {
       "source": "TEST-graph-metrics",
       "target": "REQ-single-measurement-path",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-metrics",
+      "target": "SCHEMA-chain-metrics",
       "type": "verify"
     },
     {
@@ -23511,6 +23613,11 @@
     },
     {
       "source": "UC-live-graph-view",
+      "target": "REQ-chain-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-graph-view",
       "target": "REQ-completeness-actor-bounded",
       "type": "compose"
     },
@@ -23802,5 +23909,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 648
+  "graphVersion": 649
 }

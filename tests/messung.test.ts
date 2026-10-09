@@ -11,7 +11,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 // @ts-expect-error — Mess-Skript in .mjs, bewusst ohne Typdeklaration
-import { S1, regelMatrixAktuell, urteilT_H2, renderStand, medianAusLog } from '../scripts/messung.mjs';
+import { S1, WEITERE, regelMatrixAktuell, urteilT_H2, urteilT_O1, renderStand, medianAusLog } from '../scripts/messung.mjs';
 
 const zeile = (id: string) => ({ id, kriterium: 'k', wert: '1', urteil: 'bestanden', datum: '2026-09-27', stempel: 's' });
 
@@ -25,13 +25,34 @@ describe('messung: Runner-Kern', () => {
   });
 
   it('wirft, wenn eine S1-Test-ID keine Zeile hat', () => {
-    const alle = S1.map(zeile);
+    const alle = [...S1, ...WEITERE].map(zeile);
     expect(renderStand(alle, 'stempel')).toContain('| T-H2 |');
     expect(() => renderStand(alle.filter((z: { id: string }) => z.id !== 'T-H2'), 'stempel')).toThrow(/T-H2/);
   });
 
+  // CR-GC-767: T-O1 steht im Messstand, obwohl die S1-Zeile der Leitlinie es nicht nennt.
+  it('T-O1 hat eine Zeile im Messstand und fehlt nicht still', () => {
+    const alle = [...S1, ...WEITERE].map(zeile);
+    expect(WEITERE).toContain('T-O1');
+    expect(renderStand(alle, 'stempel')).toContain('| T-O1 |');
+    expect(() => renderStand(S1.map(zeile), 'stempel')).toThrow(/T-O1/);
+  });
+
+  it('T-O1: bestanden erst mit reproduzierter Referenzkette UND ≥ 90 % bewertbaren Ketten', () => {
+    const basis = { posOk: true, negOk: true, chains: 10, measurable: 9, graphen: 2, nullKennzahlen: ['syncDepth'] };
+    expect(urteilT_O1(basis)).toEqual({
+      wert: 'Referenzkette reproduziert; 9 von 10 Ketten bewertbar (90 %, 2 Graphen); nicht gerechnet: syncDepth',
+      urteil: 'bestanden',
+    });
+    expect(urteilT_O1({ ...basis, measurable: 8 }).urteil).toBe('nicht bestanden');
+    // Die Gegenprobe schlaegt nicht um: die Zahl stimmt dann nur zufaellig.
+    expect(urteilT_O1({ ...basis, negOk: false })).toMatchObject({ urteil: 'nicht bestanden', wert: expect.stringContaining('NICHT reproduziert') });
+    // Kein Korpus ist keine 100 %.
+    expect(urteilT_O1({ ...basis, chains: 0, measurable: 0 })).toMatchObject({ urteil: 'nicht bestanden', wert: expect.stringContaining('keine Kette') });
+  });
+
   it('wirft, wenn eine Zeile keinen Stempel traegt', () => {
-    const alle = S1.map(zeile);
+    const alle = [...S1, ...WEITERE].map(zeile);
     alle[0].stempel = '';
     expect(() => renderStand(alle, 'stempel')).toThrow(/Stempel/);
   });

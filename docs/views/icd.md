@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 57 SCHEMA · 145 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 58 SCHEMA · 146 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -15,6 +15,7 @@
 | `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit.ts#AuditStatsSchema | reviewed |
 | `SCHEMA-candidate-probe` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-chain-metrics` | packages/contracts/src/se/chain-metrics.ts#ChainMetrics | reviewed |
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMark | reviewed |
@@ -79,6 +80,7 @@
 | `FLOW-audit-report` | `FUNC-audit-stats` | `ACTOR-owner` · `FUNC-se-retro` |
 | `FLOW-candidate-batch` | `FUNC-run-executor` | `FUNC-gate-client` · `FUNC-preflight` |
 | `FLOW-candidate-ranking` | `FUNC-rank-candidates` | `FUNC-run-executor` |
+| `FLOW-chain-metrics` | `FUNC-chain-metrics` | `ACTOR-dashboard` |
 | `FLOW-channel-dimension-template` | `ACTOR-owner` | `FUNC-generation-step` |
 | `FLOW-channel-fit-advisory` | `FUNC-fit-advisory` | `ACTOR-agent` |
 | `FLOW-channel-gate-protocol` | `ACTOR-owner` | `FUNC-generation-step` |
@@ -117,7 +119,7 @@
 | `FLOW-generation-step-suggest` | `FUNC-generation-step` | `FUNC-graph-suggest` |
 | `FLOW-graph-delta` | `FUNC-mutate` | `FUNC-graph-store` |
 | `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-owner` |
-| `FLOW-graph-state` | `FUNC-graph-store` | `ACTOR-owner` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-check-code-conformance` · `FUNC-compute-readiness` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-read-tools` · `FUNC-score-completeness` · `FUNC-seed-from-json` · `FUNC-take-steering-snapshot` · `FUNC-test-ingest` |
+| `FLOW-graph-state` | `FUNC-graph-store` | `ACTOR-owner` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-check-code-conformance` · `FUNC-compute-readiness` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-nd-similarity` · `FUNC-read-tools` · `FUNC-score-completeness` · `FUNC-seed-from-json` · `FUNC-take-steering-snapshot` · `FUNC-test-ingest` |
 | `FLOW-harness-handle` | `FUNC-create-harness` | `FUNC-bind-tools` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-run-verb` · `FUNC-serve-stdio` · `FUNC-tool-context` |
 | `FLOW-harness-handle-host` | `FUNC-own-kuzu-host` | `FUNC-serve-sse` |
 | `FLOW-health-report` | `FUNC-health-endpoint` | `ACTOR-dashboard` |

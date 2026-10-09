@@ -806,6 +806,8 @@
 | `CR-GC-764` | relation | `UC-loop-closure` |
 | `CR-GC-765` | relation | `REQ-benchmark-harness` |
 | `CR-GC-766` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-767` | relation | `FUNC-chain-metrics` |
+| `CR-GC-767` | relation | `REQ-chain-metrics` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -848,6 +850,7 @@
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-post-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-pre-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-roundtrip-conformance` |
+| `FCHAIN-dashboard-metrics` | compose | `FUNC-chain-metrics` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-function-criticality` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-graph-store` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-module-metrics` |
@@ -1009,6 +1012,8 @@
 | `FLOW-candidate-batch` | relation | `SCHEMA-mutate-command` |
 | `FLOW-candidate-ranking` | io | `FUNC-run-executor` |
 | `FLOW-candidate-ranking` | relation | `SCHEMA-candidate-probe` |
+| `FLOW-chain-metrics` | io | `ACTOR-dashboard` |
+| `FLOW-chain-metrics` | relation | `SCHEMA-chain-metrics` |
 | `FLOW-channel-dimension-template` | io | `FUNC-generation-step` |
 | `FLOW-channel-dimension-template` | relation | `SCHEMA-steering-channel` |
 | `FLOW-channel-fit-advisory` | io | `ACTOR-agent` |
@@ -1115,6 +1120,7 @@
 | `FLOW-graph-state` | io | `ACTOR-owner` |
 | `FLOW-graph-state` | io | `FUNC-arch-fitness` |
 | `FLOW-graph-state` | io | `FUNC-auto-export` |
+| `FLOW-graph-state` | io | `FUNC-chain-metrics` |
 | `FLOW-graph-state` | io | `FUNC-check-code-conformance` |
 | `FLOW-graph-state` | io | `FUNC-compute-readiness` |
 | `FLOW-graph-state` | io | `FUNC-emit-trajectory` |
@@ -1521,6 +1527,7 @@
 | `FUNC-block-live-dashboard` | compose | `FUNC-serve-sse` |
 | `FUNC-block-messwerk` | allocate | `MOD-projections` |
 | `FUNC-block-messwerk` | compose | `FUNC-arch-fitness` |
+| `FUNC-block-messwerk` | compose | `FUNC-chain-metrics` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-steering-delta` |
 | `FUNC-block-messwerk` | compose | `FUNC-fit-advisory` |
@@ -1571,6 +1578,9 @@
 | `FUNC-call-model` | allocate | `MOD-loop` |
 | `FUNC-call-model` | io | `FLOW-model-wire-request` |
 | `FUNC-call-model` | satisfy | `REQ-one-driver-local-and-frontier` |
+| `FUNC-chain-metrics` | allocate | `MOD-projections` |
+| `FUNC-chain-metrics` | io | `FLOW-chain-metrics` |
+| `FUNC-chain-metrics` | satisfy | `REQ-chain-metrics` |
 | `FUNC-check-code-conformance` | allocate | `MOD-kernel` |
 | `FUNC-check-code-conformance` | io | `FLOW-conformance-findings` |
 | `FUNC-check-code-conformance` | satisfy | `REQ-graph-code-conformance` |
@@ -2139,8 +2149,10 @@
 | `TEST-graph-context-replaces-reading` | verify | `REQ-graph-context-replaces-reading` |
 | `TEST-graph-integrity` | verify | `REQ-graph-integrity` |
 | `TEST-graph-is-ssot` | verify | `REQ-graph-is-ssot` |
+| `TEST-graph-metrics` | verify | `REQ-chain-metrics` |
 | `TEST-graph-metrics` | verify | `REQ-quality-metric` |
 | `TEST-graph-metrics` | verify | `REQ-single-measurement-path` |
+| `TEST-graph-metrics` | verify | `SCHEMA-chain-metrics` |
 | `TEST-graph-realize` | verify | `REQ-frame-binding` |
 | `TEST-graph-realize` | verify | `REQ-gate-only-writes` |
 | `TEST-graph-realize` | verify | `REQ-test-runnable-binding` |
@@ -2423,6 +2435,7 @@
 | `UC-live-graph-view` | compose | `FCHAIN-dashboard-metrics` |
 | `UC-live-graph-view` | compose | `FCHAIN-live-update` |
 | `UC-live-graph-view` | compose | `REQ-artifact-freshness` |
+| `UC-live-graph-view` | compose | `REQ-chain-metrics` |
 | `UC-live-graph-view` | compose | `REQ-completeness-actor-bounded` |
 | `UC-live-graph-view` | compose | `REQ-completeness-single-value` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-ontology-sync` |
