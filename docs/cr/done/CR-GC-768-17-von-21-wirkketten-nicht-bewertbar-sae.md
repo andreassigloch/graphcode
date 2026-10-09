@@ -1,6 +1,6 @@
 # CR-GC-768: 17 von 21 Wirkketten nicht bewertbar: Saecke, lose Glieder, fehlende Glieder
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-796 (finding)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-796.json (Lane: graph)
