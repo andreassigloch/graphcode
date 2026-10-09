@@ -1,6 +1,6 @@
 # CR-GC-770: Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-800 (finding)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-800.json (Lane: code)
