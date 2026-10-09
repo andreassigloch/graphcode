@@ -1,6 +1,6 @@
 # CR-GC-773: Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-803 (finding)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-803.json (Lane: code)
