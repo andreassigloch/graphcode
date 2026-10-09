@@ -1,6 +1,6 @@
 # CR-GC-772: Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-802 (idea)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-802.json (Lane: code)
