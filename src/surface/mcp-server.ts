@@ -31,8 +31,6 @@ import { SessionLifecycle } from './session-lifecycle.js';
 import { attachGve } from './gve.js';
 import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from './host-shim.js';
 import { HostBridge } from './host.js';
-import { delegateBindingOf } from './delegate.js';
-import { applyToolProfile, assertProfileServable, writePathFromEnv } from './tool-profile.js';
 import { loadGraphcodeConfig } from '../kernel/config.js';
 import type { LiveUpdateEvent } from './emit.js';
 import { readPackageVersion } from '../kernel/package-version.js';
@@ -143,8 +141,7 @@ async function bootHost(
   // des Exports — deshalb der flush() beim Shutdown weiter unten. Die JSON wird oben nur
   // noch fuer den EINEN Fall gelesen, in dem sie die Quelle ist: ein frischer Clone ohne
   // Store (seed-on-empty).
-  // CR-GC-714: `graph_delegate` nur mit konfiguriertem lokalem Modell.
-  const registry = bindToolsToHarness(harness, undefined, { delegate: delegateBindingOf(harness.getGraphcodeConfig()) });
+  const registry = bindToolsToHarness(harness);
   // Der Export folgt der Mutation (CR-GC-323) — entprellt + single-flight. NUR hier, im
   // gewählten Host: er allein besitzt den Store und schreibt. Ein Proxy oder eine
   // Test-Registry bindet dieselben Tools, darf davon aber nichts ins Repo schreiben.
@@ -179,11 +176,6 @@ export async function serveStdio(opts?: {
   // repo-specific name (e.g. auth-service.graph.json), not the generic 'graphcode'.
   const member = deriveMemberName(repoRoot);
   const scope = opts?.scope ?? { workspaceId: member, systemId: member };
-  // CR-GC-723/772: das Werkzeugprofil folgt dem Schreibweg des Clients. VOR der Wahl geprueft —
-  // ein delegierender Client ohne Executor haette keinen Schreibweg, und der Fehler soll keinen
-  // Store-Lock hinterlassen.
-  const writePath = writePathFromEnv();
-  assertProfileServable(writePath, delegateBindingOf(loadGraphcodeConfig(repoRoot)) !== undefined);
 
   /**
    * One election attempt: win the lock and come up as a full host — incl. the
@@ -254,9 +246,7 @@ export async function serveStdio(opts?: {
     // Election lost → thin proxy to the live host. `promote` is the single
     // re-election attempt when the host dies mid-session (stale-lock reclaim).
     const socketPath = join(repoRoot, '.graphcode', HOST_SOCK_BASENAME);
-    // Dieselbe Werkzeugflaeche wie der Host — die Config des Repos entscheidet ueber graph_delegate.
-    const delegate = delegateBindingOf(loadGraphcodeConfig(repoRoot));
-    registry = buildProxyRegistry({ socketPath, promote: electAndBoot, delegate });
+    registry = buildProxyRegistry({ socketPath, promote: electAndBoot });
     process.stderr.write(
       `[graphcode] client: store owned by pid ${err.owner.pid} — proxying stdio to ${socketPath}\n`,
     );
@@ -267,8 +257,7 @@ export async function serveStdio(opts?: {
   // abgeraeumt: der Viewer geht vor dem Store-Lock, wie eh und je.
   const gve = await attachGve(repoRoot);
   if (gve) lifecycle.add({ name: 'gve dashboard', close: () => gve.stop() });
-  // Nur die stdio-Sicht dieses Clients wird geschnitten; host.sock traegt weiter die volle Registry.
-  const server = bindRegistryToMcpServer(applyToolProfile(registry, writePath));
+  const server = bindRegistryToMcpServer(registry);
   await server.connect(new StdioServerTransport());
 }
 

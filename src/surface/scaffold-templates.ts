@@ -17,7 +17,6 @@
 import { join } from 'node:path';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { readPackageVersion, packageRootDir } from '../kernel/package-version.js';
-import { ALTER_SCHALTER, ALTER_WERT, WRITE_PATH_ENV } from './tool-profile.js';
 
 /** The distribution package a member repo depends on. */
 export const PACKAGE_NAME = '@sigloch/graphcode';
@@ -319,19 +318,21 @@ function keptHostPort(servers: Record<string, unknown>): number | null {
 /**
  * The env block a previous scaffold left on the graphcode entry, minus the port
  * (that one is recomputed) — so `update` PRESERVES the operator's own switches:
- * `GRAPHCODE_NO_GVE`, `GRAPHCODE_GVE_BIN`, `GRAPHCODE_WRITE_PATH`, the `GRAPHCODE_LLM_*`
- * set for `graphcode run`. Before this, update rewrote `env` to the single port
+ * `GRAPHCODE_NO_GVE`, `GRAPHCODE_GVE_BIN`. Before this, update rewrote `env` to the single port
  * key, so an opt-out silently came back on at the next update — the same class
  * of surprise the kept port was introduced to avoid. `command`/`args` stay
  * canonical (npx + PACKAGE_NAME): the launch line is ours, the environment is
  * the repo's.
  */
 function keptEnv(servers: Record<string, unknown>, key: 'env' | 'environment'): Record<string, unknown> {
-  const { GRAPHCODE_HOST_PORT: _port, [ALTER_SCHALTER]: alt, ...rest } = objectAt(objectAt(servers, 'graphcode'), key);
-  // CR-GC-772: der alte Schalter wird umgeschrieben, nicht mitgeschleppt. Ein schon gesetzter
-  // neuer Wert gewinnt; ein alter Wert, den es nie gab, faellt weg (der Host nimmt dann direct).
-  const uebersetzt = typeof alt === 'string' ? ALTER_WERT[alt] : undefined;
-  return uebersetzt === undefined || WRITE_PATH_ENV in rest ? rest : { [WRITE_PATH_ENV]: uebersetzt, ...rest };
+  // CR-GC-775: die zwei Schalter des ausgelagerten Executors werden nicht mitgeschleppt.
+  const {
+    GRAPHCODE_HOST_PORT: _port,
+    GRAPHCODE_CLIENT_LLM: _alt,
+    GRAPHCODE_WRITE_PATH: _weg,
+    ...rest
+  } = objectAt(objectAt(servers, 'graphcode'), key);
+  return rest;
 }
 
 /**
@@ -354,8 +355,7 @@ export function mcpConfigContent(repoRoot: string, existingRaw: string | null): 
       graphcode: {
         command: 'node',
         args: [HOST_ENTRY, 'mcp'],
-        // CR-GC-723/772: Claude Code schreibt direkt. Vor keptEnv: ein von Hand gesetzter Wert bleibt.
-        env: { [WRITE_PATH_ENV]: 'direct', ...keptEnv(servers, 'env'), GRAPHCODE_HOST_PORT: String(port) },
+        env: { ...keptEnv(servers, 'env'), GRAPHCODE_HOST_PORT: String(port) },
       },
     },
   };
@@ -384,9 +384,7 @@ export function opencodeConfigContent(repoRoot: string, existingRaw: string | nu
         type: 'local',
         command: ['node', HOST_ENTRY, 'mcp'],
         enabled: true,
-        // CR-GC-769: auch OpenCode schreibt direkt durchs Gate. Das Profil delegate (Executor im Host,
-        // CR-GC-723) ist geparkt; ein von Hand gesetzter Wert bleibt (keptEnv).
-        environment: { [WRITE_PATH_ENV]: 'direct', ...keptEnv(mcp, 'environment'), GRAPHCODE_HOST_PORT: String(port) },
+        environment: { ...keptEnv(mcp, 'environment'), GRAPHCODE_HOST_PORT: String(port) },
       },
     },
   };

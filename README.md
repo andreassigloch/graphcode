@@ -22,16 +22,6 @@ npx @sigloch/graphcode status        # is my host up, and where is MY dashboard?
                                      # guessing a port. Exit 1 if either is missing.
 npx @sigloch/graphcode host          # FALLBACK only — the bridge alone, for a repo with no agent
                                      # session running. Alongside a live `mcp` it hits the store lock.
-npx @sigloch/graphcode run "<intent>" # author the graph via the embedded executor — a local LLM
-                                     # or Anthropic BYOK drives graph_generate/mutate directly, no
-                                     # coding-agent harness. Env: GRAPHCODE_LLM_BASE_URL +
-                                     # GRAPHCODE_LLM_MODEL (required), GRAPHCODE_LLM_BACKEND=
-                                     # openai|anthropic (default openai), GRAPHCODE_LLM_API_KEY.
-                                     # A SIG Local gateway speaks both: backend openai or anthropic,
-                                     # GRAPHCODE_LLM_API_KEY, trust its CA via NODE_EXTRA_CA_CERTS.
-                                     # Stops at handoff, at maxRounds, or when fewer than
-                                     # GRAPHCODE_LLM_SATURATION_MIN_NODES (10) new nodes landed in the
-                                     # last GRAPHCODE_LLM_SATURATION_WINDOW (20) rounds.
 npx @sigloch/graphcode rewind <ref>  # recall the graph state committed at <ref> — reads the snapshot
                                      # from git object storage, so the working tree is NOT touched.
                                      # Aborts while un-exported model edits are pending (--force drops them)
@@ -69,20 +59,13 @@ Both host configs are written every time and **merged**, never overwritten: a fo
 in `.mcp.json`, or your `provider` / `model` block in `opencode.json`, survives `init`, `update`
 and `remove` — only the `graphcode` entry is ours.
 
-Each config sets `GRAPHCODE_WRITE_PATH`, and both say `direct`: the client gets the full tool list
-and writes through the gate itself. That holds for a local model too — a local model with a
-thinking level follows the `vorschlag` each write returns.
+Both clients get the full tool list and write through the gate themselves. That holds for a local
+model too — a local model with a thinking level follows the `vorschlag` each write returns.
 
-The value `delegate` selects a **parked** path (since 2026-10-03): the client gets only
-`graph_delegate` plus the readers `graph_elements`, `graph_get_node`, `graph_context` and hands
-model work to the executor in the host. It needs the `executor` section in
-`graphcode.config.jsonc` and refuses to start without it. The path still works and is tested, but
-it is no longer measured or developed. The switch is per client, so Claude Code and OpenCode on
-the same repo can differ. `update` keeps whichever value a config already carries.
-
-Until 0.29 the switch was called `GRAPHCODE_CLIENT_LLM` (`cloud` | `local`). The host no longer
-reads it and refuses to start while it is set; `graphcode update` rewrites it (`cloud` → `direct`,
-`local` → `delegate`).
+The executor in the host (`graphcode run`, `graph_delegate`, the switches `GRAPHCODE_CLIENT_LLM` /
+`GRAPHCODE_WRITE_PATH`, the `executor` section in `graphcode.config.jsonc`) was moved out of the core
+on 2026-10-09; its last state is the tag `executor-geparkt-2026-10-09`. `update` drops the two
+switches from the host configs.
 
 **2. Add `.graphcode/` to `.gitignore` and reload your agent host.** Claude Code picks up
 `.mcp.json`, OpenCode picks up `opencode.json`. The agent then sees a `graphcode` MCP server

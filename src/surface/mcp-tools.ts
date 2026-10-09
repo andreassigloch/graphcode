@@ -39,7 +39,6 @@ import { bindExportTools } from '../projections/export.js';
 import { bindSuggestTools, batchFor, type GraphSuggestResult } from '../loop/suggest.js';
 import { bindMetricsTools } from '../projections/metrics.js';
 import { bindTestReportTools } from '../projections/testreport.js';
-import { bindDelegateTool, type DelegateBinding } from './delegate.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -126,8 +125,6 @@ export function bindToolsWithContext(
   auditLog?: AuditLog,
   opts?: {
     ownerPid?: string | null;
-    /** CR-GC-714: mit konfiguriertem lokalem Modell kommt `graph_delegate` dazu, sonst nicht. */
-    delegate?: DelegateBinding;
   },
 ): { registry: MCPToolRegistry; ctx: ToolContext } {
   // Exactly one context per registry — the whole reason the groups take `ctx`
@@ -155,17 +152,11 @@ export function bindToolsWithContext(
     },
     ctx,
   )) as MCPToolRegistry;
-  // Nach dem Binden, weil der Executor genau diese Registry treibt (CR-GC-714).
-  if (opts?.delegate) registry.graph_delegate = bindDelegateTool(registry, ctx, opts.delegate);
   return { ctx, registry };
 }
 
-export function bindToolsToHarness(
-  harness: GraphCodeHarness,
-  auditLog?: AuditLog,
-  opts?: { delegate?: DelegateBinding },
-): MCPToolRegistry {
-  return bindToolsWithContext(harness, auditLog, opts).registry;
+export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLog): MCPToolRegistry {
+  return bindToolsWithContext(harness, auditLog).registry;
 }
 
 

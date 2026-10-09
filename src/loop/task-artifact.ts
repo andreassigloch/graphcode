@@ -51,9 +51,6 @@ export const STEMPEL_ID: Readonly<Record<GestempelterTask, string>> = {
   fmea: 'fmea',
 };
 
-/** Schließt ein Stempel diese Analyse ab? Beim Bauplan nicht — dort ist es der offene Auftrag. */
-export const hatStempel = (task: AnalyseTask): task is GestempelterTask => task in STEMPEL_ID;
-
 /** Bei diesen Tasks zählt nur, was während des Tasks entstand. */
 export const NUR_NEUE: ReadonlySet<AnalyseTask> = new Set(['conops', 'irr', 'trade']);
 
@@ -174,18 +171,4 @@ export function abschluss(
   const rest = offen(task, g);
   const erschoepft = vorherGezaehlt !== undefined && einheiten.length === vorherGezaehlt;
   return { fertig: einheiten.length > 0 && (rest.length === 0 || erschoepft), einheiten, offen: rest };
-}
-
-/**
- * Der Zug, der den Stempel setzt: das ganze `analysisFreshness`-Objekt, weil ein Attribut-Patch den
- * Wert ersetzt und nicht in ihn hinein mischt — die übrigen Stempel reisen deshalb mit.
- */
-export function stempelZug(
-  task: GestempelterTask,
-  sysUid: string,
-  bisher: Record<string, unknown>,
-  graphVersion: number,
-): string {
-  const wert = { ...bisher, [STEMPEL_ID[task]]: { graphVersion } };
-  return `## Nodes\n### SYS\n~ ${sysUid}\n@analysisFreshness ${JSON.stringify(wert)}\n`;
 }

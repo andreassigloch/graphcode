@@ -67,7 +67,6 @@ export const INCLUDED = [
   // CR-GC-428: prüft die Differenz der beiden Regelkataloge gegen ALL_RULE_DEFS —
   // ein contracts-Bump, der eine Regel nur ins Steering legt, muss hier auffallen.
   'tests/evaluation.rule-catalog.test.ts',
-  'tests/executor.preflight.test.ts',
   'tests/export-graph-guard.test.ts',
   'tests/exporter.test.ts',
   'tests/gate.single-door.test.ts',
@@ -167,11 +166,6 @@ export const EXCLUDED = {
     'CR-GC-612: misst GRAPHCODE.md und die Laengen der Werkzeugbeschreibungen gegen den\n' +
     'Regelkatalog. Der Treffer ist der KATALOG, nie graphcodes eigene SSOT — eine Modellaenderung\n' +
     'kann ihn nicht rot machen; ein Werkzeug, das sich wieder selbst erklaert, sehr wohl.',
-  'tests/executor-gate.duplicate-index.test.ts':
-    'CR-GC-621: prueft, dass der ND-Index des Executor-Preflights weiter Beschreibungen traegt.\n' +
-    'Der Treffer ist ein FIXTURE-DATEINAME (`scheduler.graph.json` in einem Wegwerf-Repo), nie\n' +
-    'graphcodes eigene SSOT. Eine Modellaenderung kann ihn nicht rot machen; ein Schnitt an\n' +
-    '`graph_elements` oder an der Aehnlichkeitsrechnung sehr wohl.',
   'tests/git-env-isolation.test.ts':
     'CR-GC-626: prueft, dass ein Testlauf die git-Umgebung seines Aufrufers nicht erbt. Der\n' +
     'Treffer ist der DATEINAME im Befundtext (`docs/graph/fremd-anlage.graph.json`), nicht der\n' +
