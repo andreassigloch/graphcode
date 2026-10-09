@@ -462,9 +462,18 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // modifiability) aber nicht — die beiden Masse ziehen hier auseinander (CR-GC-483:
       // Chebyshev steuert, ℝ⁶ berichtet). Der erste Zug verlegt eine Anleitung-FUNC in den
       // Abfrage-Block; ob das fachlich stimmt, entscheidet ein Mensch — der Spike wendet nur an.
+      // CR-GC-768 (graphVersion 648, contracts 11.0 Link-Modus) — NEU GEMESSEN, nachdem 15 im Code
+      // belegte Fluesse ins Modell kamen. Der Autopilot nennt jetzt EINEN Zug:
+      //
+      //     1. CR-01 @ MOD-agent-surface   FUNC-mutate von MOD-kernel nach MOD-agent-surface
+      //                                                                     Steuerwert 4,001 -> 3,751
+      //
+      // Das ist fachlich falsch: das Gate gehoert in den Kern (verriegelte Abhaengigkeitsrichtung).
+      // Der Zug entsteht, weil jeder Skill einen eigenen Fluss zum Gate traegt und der Operator nur
+      // die Zahl der Vertraege an der Grenze senkt. Er steht hier als Messwert, nicht als Empfehlung;
+      // der Befund am Vorschlagswerkzeug ist ITEM-2026-798.
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
-        'FUNC-block-abfrage -compose-> FUNC-block-anleitung (retire FUNC-block-anleitung)',
-        'FUNC-list-elements -allocate-> MOD-agent-surface (retire MOD-kernel)',
+        'FUNC-mutate -allocate-> MOD-agent-surface (retire MOD-kernel)',
       ]);
       expect(
         rest
