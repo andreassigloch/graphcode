@@ -24,12 +24,14 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod';
 
-export interface KontextKnoten {
-  uid: string;
-  type: string;
-  name: string;
-}
+export const KontextKnoten = z.object({
+  uid: z.string(),
+  type: z.string(),
+  name: z.string(),
+});
+export type KontextKnoten = z.infer<typeof KontextKnoten>;
 
 export interface KontextKante {
   sourceId: string;
@@ -37,12 +39,14 @@ export interface KontextKante {
   edgeType: string;
 }
 
-export interface FundKontext {
+/** Der Vertrag der Auswahl — was der Inventar-Kanal vom Fund-Kontext bekommt (CR-GC-773). */
+export const FundKontext = z.object({
   /** Die Auswahl, gefiltert auf die Fokus-Typen, uid-sortiert. Der Fund selbst gehoert dazu. */
-  knoten: KontextKnoten[];
+  knoten: z.array(KontextKnoten),
   /** Fund-Knoten, deren Weg hinauf weder einen UC noch ein SYS erreicht. */
-  ohneBesitzer: string[];
-}
+  ohneBesitzer: z.array(z.string()),
+});
+export type FundKontext = z.infer<typeof FundKontext>;
 
 /** Besitzer: hier endet der Weg hinauf, hier beginnt der Weg hinunter. */
 const BESITZER = new Set(['UC', 'SYS']);

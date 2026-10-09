@@ -13,19 +13,22 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod';
 
-export interface FaltKnoten {
-  uid: string;
-  type: string;
-  name: string;
-  description?: string;
-}
+export const FaltKnoten = z.object({
+  uid: z.string(),
+  type: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+});
+export type FaltKnoten = z.infer<typeof FaltKnoten>;
 
-export interface FaltKante {
-  sourceId: string;
-  targetId: string;
-  edgeType: string;
-}
+export const FaltKante = z.object({
+  sourceId: z.string(),
+  targetId: z.string(),
+  edgeType: z.string(),
+});
+export type FaltKante = z.infer<typeof FaltKante>;
 
 export interface Baum {
   eltern: Map<string, string>;
@@ -114,13 +117,15 @@ export function falten(
   return { offen, box };
 }
 
-export interface Faltung {
-  offen: FaltKnoten[];
-  box: FaltKnoten[];
-  kanten: FaltKante[];
+/** Der Vertrag der gefalteten Sicht — was der Inventar-Kanal von der Faltung bekommt (CR-GC-773). */
+export const Faltung = z.object({
+  offen: z.array(FaltKnoten),
+  box: z.array(FaltKnoten),
+  kanten: z.array(FaltKante),
   /** uids der verborgenen Knoten — reicht, um sie als Kantenziel zu nennen. */
-  index: string[];
-}
+  index: z.array(z.string()),
+});
+export type Faltung = z.infer<typeof Faltung>;
 
 /** Die gefaltete Sicht fuer eine Saat. Unbekannte Saat-uids fallen weg. */
 export function faltung(knoten: readonly FaltKnoten[], kanten: readonly FaltKante[], saat: readonly string[]): Faltung {

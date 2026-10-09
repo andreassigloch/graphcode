@@ -36,6 +36,7 @@
 | `FUNC-block-optimierung` | FUNC | Optimierung |
 | `FUNC-block-q-improvement` | FUNC | Fokus & Ziel |
 | `FUNC-block-ruestzeug` | FUNC | Werkzeug & Konfiguration |
+| `FUNC-block-rundenprompt` | FUNC | Runden-Prompt |
 | `FUNC-block-speicherwerk` | FUNC | Speicherwerk |
 | `FUNC-block-urteilsarbeit` | FUNC | Urteilsarbeit |
 | `FUNC-bootstrap` | FUNC | bootstrap |
@@ -48,6 +49,7 @@
 | `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-collect-status` | FUNC | collectStatus |
+| `FUNC-compose-faltung` | FUNC | Compose-Faltung |
 | `FUNC-compute-readiness` | FUNC | computeReadiness(graph) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
 | `FUNC-create-harness` | FUNC | createHarness |
@@ -61,6 +63,7 @@
 | `FUNC-extract-mutate` | FUNC | extractMutateFromText |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
 | `FUNC-function-criticality` | FUNC | functionCriticality(graph) |
+| `FUNC-fund-kontext` | FUNC | Fund-Kontext |
 | `FUNC-gate-client` | FUNC | bindGateClient(registry, stats, trace) |
 | `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
 | `FUNC-goal-steerer` | FUNC | Führung |
@@ -177,6 +180,7 @@
 | `FUNC-block-optimierung` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-q-improvement` | `MOD-loop` |
 | `FUNC-block-ruestzeug` | `MOD-kernel` |
+| `FUNC-block-rundenprompt` | `MOD-loop` |
 | `FUNC-block-speicherwerk` | `MOD-kernel` |
 | `FUNC-block-urteilsarbeit` | `MOD-agent-surface` |
 | `FUNC-bootstrap` | `MOD-surface` |
@@ -189,6 +193,7 @@
 | `FUNC-cli-dispatch` | `MOD-surface` |
 | `FUNC-close-violations` | `MOD-agent-surface` |
 | `FUNC-collect-status` | `MOD-surface` |
+| `FUNC-compose-faltung` | `MOD-loop` |
 | `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
 | `FUNC-create-harness` | `MOD-surface` |
@@ -202,6 +207,7 @@
 | `FUNC-extract-mutate` | `MOD-loop` |
 | `FUNC-fit-advisory` | `MOD-kernel-measure` |
 | `FUNC-function-criticality` | `MOD-projections` |
+| `FUNC-fund-kontext` | `MOD-loop` |
 | `FUNC-gate-client` | `MOD-loop` |
 | `FUNC-generation-step` | `MOD-loop` |
 | `FUNC-goal-steerer` | `MOD-loop` |

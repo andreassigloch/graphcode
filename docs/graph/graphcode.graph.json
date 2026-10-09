@@ -3197,6 +3197,12 @@
       "description": "docs/cr/open/CR-GC-772-executor-schalter-in-die-repo-konfigurat.md"
     },
     {
+      "id": "CR-GC-773",
+      "type": "CR",
+      "name": "Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche",
+      "description": "docs/cr/open/CR-GC-773-drei-helfer-der-executor-kette-ohne-eige.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3639,6 +3645,12 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-duplicate-hits",
+      "type": "FLOW",
+      "name": "Duplikat-Treffer",
+      "description": "Die Beinahe-Duplikate eines Entwurfs, vollstaendig und absteigend nach Aehnlichkeit. Der Gate-Zugang rendert daraus die Hinweise und reicht die Treffer im Gate-Ausgang an die Rangfolge weiter. (CR-GC-773)"
+    },
+    {
       "id": "FLOW-element-slice",
       "type": "FLOW",
       "name": "Element-Scheibe",
@@ -3656,6 +3668,12 @@
       "type": "FLOW",
       "name": "Export-Rueckstand",
       "description": "Die Drift-Marke unter .graphcode: sagt, dass und wie weit der committete Snapshot dem lebenden Store nachlaeuft. Der pre-commit-Hook liest sie, ohne den Kuzu-Store zu oeffnen."
+    },
+    {
+      "id": "FLOW-faltung",
+      "type": "FLOW",
+      "name": "Gefaltete Sicht",
+      "description": "Die gefaltete Sicht um den Fund, aus der der Inventar-Kanal seinen Textblock rendert. (CR-GC-773)"
     },
     {
       "id": "FLOW-fit-advisory",
@@ -3683,6 +3701,12 @@
       "type": "FLOW",
       "name": "Kritikalitaet je FUNC",
       "description": "Ketten und Use Cases je Funktion, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss statt eines breiteren SCHEMA-module-metrics: MOD ist der Abhaengigkeitsbaum, FUNC der Wertbaum, sie spiegeln einander ausdruecklich nicht. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahl in der Antwort, rendert sie aber noch nicht."
+    },
+    {
+      "id": "FLOW-fund-kontext",
+      "type": "FLOW",
+      "name": "Kontext des Funds",
+      "description": "Die Knoten aus dem Kontext des Funds, aus denen der Inventar-Kanal seine Element-Liste rendert. (CR-GC-773)"
     },
     {
       "id": "FLOW-gate-outcome",
@@ -4601,6 +4625,12 @@
       "description": "Was den Lauf einrichtet, bevor er losgeht: Repo-Konfiguration, Zielprofil, Schema-Stand, Werkzeug-Registry und -Kontext."
     },
     {
+      "id": "FUNC-block-rundenprompt",
+      "type": "FUNC",
+      "name": "Runden-Prompt",
+      "description": "Der Rundenprompt im geparkten Executor: Kanaele zusammensetzen, das Inventar zuschneiden, dafuer den Kontext des Funds oder die gefaltete Sicht rechnen. (CR-GC-773)"
+    },
+    {
       "id": "FUNC-block-speicherwerk",
       "type": "FUNC",
       "name": "Speicherwerk",
@@ -4730,6 +4760,18 @@
       "realRef": {
         "file": "src/surface/status.ts",
         "symbol": "collectStatus",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-compose-faltung",
+      "type": "FUNC",
+      "name": "Compose-Faltung",
+      "description": "Der Graph als Blackbox-Baum um eine Saat: Baum aus compose, Knoten ausserhalb haengen an ihrem Eigner (verify, io, relation, satisfy, allocate); offen sind Saat, Teilbaum und Vorfahren, Box sind die Geschwister auf dem Weg und die Wurzeln, alle uebrigen als nackter uid-Index. Rein, ohne Store. (CR-GC-682, CR-GC-773)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/faltung.ts",
+        "symbol": "faltung",
         "lang": "ts"
       }
     },
@@ -4906,6 +4948,18 @@
       "realRef": {
         "file": "packages/contracts/src/se/function-criticality.ts",
         "symbol": "functionCriticality",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-fund-kontext",
+      "type": "FUNC",
+      "name": "Fund-Kontext",
+      "description": "Der gerichtete Weg vom Fund zu seinen Kandidaten: ueber compose hinauf bis zum Besitzer (UC oder SYS; ist der Fund selbst einer, nicht weiter), dann hinunter durch den Realisierungsbaum (compose und allocate nur zu FCHAIN, FUNC, MOD, SYS). Gefiltert auf die Fokus-Typen; nennt die Fund-Knoten ohne Besitzer. Rein, ohne Store. (CR-GC-652, CR-GC-773)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/fund-kontext.ts",
+        "symbol": "fundKontext",
         "lang": "ts"
       }
     },
@@ -5155,7 +5209,7 @@
       "id": "FUNC-inventory-channel",
       "type": "FUNC",
       "name": "buildInventoryBlock",
-      "description": "Der Inventar-Kanal der Rundeninjektion: welche vorhandenen Knoten das Modell mitbekommt. Zuschnitt per Mess-Schalter (CR-GC-682): fund = mit Fund aus dessen Kontext, dem gerichteten Weg vom Fund ueber seinen Besitzer in den Realisierungsbaum (src/loop/fund-kontext.ts); ohne Fund nach Fokus-Typ, reihum, gekappt; index = jeder Knoten als Identitaetszeile ohne Kappe; faltung = der Graph als Blackbox-Baum um den Fund gefaltet (src/loop/faltung.ts), ohne Fund der volle Index. Hat ein Fund keinen Besitzer, steht das ausdruecklich da statt einer Ersatzliste. Liest ueber graph_elements und graph_get_edges durch deren Schema-Schicht. Die beiden Helfer waren bis CR-GC-770 eigene Knoten ohne eigenen Vertrag. (CR-GC-652, CR-GC-682, CR-GC-770)",
+      "description": "Der Inventar-Kanal der Rundeninjektion: welche vorhandenen Knoten das Modell mitbekommt. Zuschnitt per Mess-Schalter (CR-GC-682): fund = mit Fund aus dessen Kontext (FUNC-fund-kontext), ohne Fund nach Fokus-Typ, reihum, gekappt; index = jeder Knoten als Identitaetszeile ohne Kappe; faltung = der Graph gefaltet um den Fund (FUNC-compose-faltung), ohne Fund der volle Index. Hat ein Fund keinen Besitzer, steht das ausdruecklich da statt einer Ersatzliste. Liest ueber graph_elements und graph_get_edges durch deren Schema-Schicht. (CR-GC-652, CR-GC-682, CR-GC-773)",
       "status": "done",
       "realRef": {
         "file": "src/loop/executor-inventory.ts",
@@ -5254,7 +5308,7 @@
       "id": "FUNC-nd-similarity",
       "type": "FUNC",
       "name": "duplicateHits",
-      "description": "Findet zu einem Entwurf die schon vorhandenen Elemente mit aehnlichem Namen und Text und rendert sie als Hinweis. Aufrufer ist der Executor vor dem Schreiben, nicht der Regellauf.",
+      "description": "Findet zu einem Entwurf die schon vorhandenen Anforderungen und Anwendungsfaelle mit aehnlichem Namen und Text und liefert sie als strukturierte Treffer. Aufrufer ist der Gate-Zugang des Executors vor dem Schreiben, nicht der Regellauf; Entwurf und Element-Index bekommt sie von ihm. (CR-GC-361, CR-GC-773)",
       "status": "done",
       "realRef": {
         "file": "src/kernel/measure/nd-similarity.ts",
@@ -6270,6 +6324,16 @@
       ]
     },
     {
+      "id": "REQ-duplicate-hint",
+      "type": "REQ",
+      "name": "Beinahe-Duplikate im Entwurf werden vor dem Schreiben gemeldet",
+      "description": "Bevor der Executor einen Entwurf ans Gate gibt, wird jede neue Anforderung und jeder neue Anwendungsfall des Entwurfs nach Name und Beschreibung mit den vorhandenen Elementen gleichen Typs verglichen. Ab einer Aehnlichkeit von 0,55 entsteht ein Treffer mit dem vorhandenen Element; die Treffer sind vollstaendig und absteigend sortiert, das Modell bekommt hoechstens drei davon als Hinweis. Der Entwurf geht immer unveraendert ans Gate: der Treffer ist eine Messung, kein Urteil.",
+      "status": "done",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-export-no-clobber",
       "type": "REQ",
       "name": "Export refuse-to-clobber",
@@ -6609,8 +6673,8 @@
     {
       "id": "REQ-near-duplicate-detection",
       "type": "REQ",
-      "name": "Near-Duplicates werden vor der vollen Katalog-Auswertung erkannt",
-      "description": "Vor jeder vollen Regelkatalog-Auswertung haengen Aehnlichkeitsmatrizen ueber FUNC und SCHEMA am Graphen, sodass ND-01 und ND-02 genau die Duplikat-Paare melden und ein verschiedenes Paar deutlich darunter bleibt. Ohne diese Injektion melden beide Regeln nichts. ND ist nie eine Gate-Regel: der Apply-Gate-Katalog enthaelt sie nicht.",
+      "name": "Near-Duplicates stehen in der vollen Katalog-Auswertung",
+      "description": "Die volle Regelkatalog-Auswertung meldet ueber ND-01 und ND-02 genau die Duplikat-Paare unter FUNC und SCHEMA; ein verschiedenes Paar bleibt deutlich unter der Schwelle. Die Aehnlichkeit rechnen die Regeln selbst, ohne Vorbereitung am Graphen. ND ist nie eine Gate-Regel: der Apply-Gate-Katalog enthaelt sie nicht.",
       "status": "done",
       "kinds": [
         "functional"
@@ -7684,6 +7748,18 @@
       }
     },
     {
+      "id": "SCHEMA-duplicate-hit",
+      "type": "SCHEMA",
+      "name": "Duplikat-Treffer",
+      "description": "Ein Beinahe-Duplikat: die uid des neuen Knotens, die uid und der Name des vorhandenen Elements, dem er gleicht, und die Aehnlichkeit. Quert die Modulgrenze vom Messwerk zur Schleife. (CR-GC-773)",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/kernel/measure/nd-similarity.ts",
+        "symbol": "DuplicateHit",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-executor-config",
       "type": "SCHEMA",
       "name": "ExecutorConfig",
@@ -7703,6 +7779,18 @@
       "realRef": {
         "file": "src/kernel/export-pending-contract.ts",
         "symbol": "ExportPending",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-faltung",
+      "type": "SCHEMA",
+      "name": "Faltung",
+      "description": "Die gefaltete Sicht: offene Knoten, zugeklappte Boxen, die Kanten zwischen dem Sichtbaren und die uids des verborgenen Rests. (CR-GC-773)",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/loop/faltung.ts",
+        "symbol": "Faltung",
         "lang": "ts"
       }
     },
@@ -7743,6 +7831,18 @@
       "realRef": {
         "file": "packages/contracts/src/se/function-criticality.ts",
         "symbol": "FunctionCriticality",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-fund-kontext",
+      "type": "SCHEMA",
+      "name": "Fund-Kontext",
+      "description": "Die Auswahl zu einem Fund: die Knoten auf dem Weg zum Besitzer und durch dessen Realisierung, dazu die Fund-Knoten ohne Besitzer. (CR-GC-773)",
+      "status": "reviewed",
+      "realRef": {
+        "file": "src/loop/fund-kontext.ts",
+        "symbol": "FundKontext",
         "lang": "ts"
       }
     },
@@ -9115,6 +9215,20 @@
       ]
     },
     {
+      "id": "TEST-helfer-vertraege",
+      "type": "TEST",
+      "name": "Vertraege der Executor-Helfer",
+      "description": "Vertragstest der drei Helfer-Vertraege: das Ergebnis der Faltung, des Fund-Kontexts und der Dublettensuche kommt durch sein Schema, ein Ergebnis mit fehlendem Feld wird abgewiesen. (CR-GC-773)",
+      "testRefs": [
+        {
+          "file": "tests/helfer-vertraege.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed"
+        }
+      ]
+    },
+    {
       "id": "TEST-help-content-coverage",
       "type": "TEST",
       "name": "Hilfe deckt jedes lebende Token",
@@ -9678,8 +9792,8 @@
     {
       "id": "TEST-nd-similarity",
       "type": "TEST",
-      "name": "Aehnlichkeits-Matrix fuer die ND-Regeln",
-      "description": "Abnahme der Datei tests/nd-similarity.test.ts: die Nah-Duplikat-Regeln der Contracts liefern erst mit injizierter Aehnlichkeits-Matrix Funde, und graphcode berechnet diese Matrizen deterministisch nach den dort dokumentierten Formeln.",
+      "name": "Nah-Duplikate: Regeln und Hinweis vor dem Schreiben",
+      "description": "Abnahme der Datei tests/nd-similarity.test.ts: die Nah-Duplikat-Regeln der Contracts melden genau die konstruierten Duplikat-Paare und sind nie Gate-Regel; die Dublettensuche des Executors findet die belegten Duplikate aus den Greenfield-Laeufen als strukturierte Treffer.",
       "testRefs": [
         {
           "file": "tests/nd-similarity.test.ts",
@@ -14205,6 +14319,11 @@
     },
     {
       "source": "CR-GC-652",
+      "target": "FUNC-fund-kontext",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-652",
       "target": "FUNC-generation-step",
       "type": "relation"
     },
@@ -14451,6 +14570,11 @@
     {
       "source": "CR-GC-681",
       "target": "REQ-published-counts-match-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-682",
+      "target": "FUNC-compose-faltung",
       "type": "relation"
     },
     {
@@ -15094,6 +15218,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-773",
+      "target": "FUNC-compose-faltung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-773",
+      "target": "FUNC-fund-kontext",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-773",
+      "target": "FUNC-nd-similarity",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15423,6 +15562,11 @@
     },
     {
       "source": "FCHAIN-executor-loop",
+      "target": "FUNC-compose-faltung",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
       "target": "FUNC-compute-steering-delta",
       "type": "compose"
     },
@@ -15434,6 +15578,11 @@
     {
       "source": "FCHAIN-executor-loop",
       "target": "FUNC-fit-advisory",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-executor-loop",
+      "target": "FUNC-fund-kontext",
       "type": "compose"
     },
     {
@@ -16199,6 +16348,11 @@
     },
     {
       "source": "FLOW-candidate-batch",
+      "target": "FUNC-nd-similarity",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-candidate-batch",
       "target": "FUNC-preflight",
       "type": "io"
     },
@@ -16574,6 +16728,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-duplicate-hits",
+      "target": "FUNC-gate-client",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-duplicate-hits",
+      "target": "SCHEMA-duplicate-hit",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-element-slice",
       "target": "ACTOR-agent",
       "type": "io"
@@ -16581,6 +16745,11 @@
     {
       "source": "FLOW-element-slice",
       "target": "FUNC-gate-client",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-element-slice",
+      "target": "FUNC-nd-similarity",
       "type": "io"
     },
     {
@@ -16611,6 +16780,16 @@
     {
       "source": "FLOW-export-pending",
       "target": "SCHEMA-export-pending",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-faltung",
+      "target": "FUNC-inventory-channel",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-faltung",
+      "target": "SCHEMA-faltung",
       "type": "relation"
     },
     {
@@ -16657,6 +16836,16 @@
     {
       "source": "FLOW-function-criticality",
       "target": "SCHEMA-function-criticality",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-fund-kontext",
+      "target": "FUNC-inventory-channel",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-fund-kontext",
+      "target": "SCHEMA-fund-kontext",
       "type": "relation"
     },
     {
@@ -16864,12 +17053,6 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-nd-similarity",
-      "type": "io",
-      "weight": "1"
     },
     {
       "source": "FLOW-graph-state",
@@ -17815,6 +17998,16 @@
     },
     {
       "source": "FLOW-round-prompt",
+      "target": "FUNC-compose-faltung",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-round-prompt",
+      "target": "FUNC-fund-kontext",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-round-prompt",
       "target": "FUNC-inventory-channel",
       "type": "io"
     },
@@ -18509,7 +18702,7 @@
     },
     {
       "source": "FUNC-block-antrieb",
-      "target": "FUNC-build-round-injection",
+      "target": "FUNC-block-rundenprompt",
       "type": "compose"
     },
     {
@@ -18520,11 +18713,6 @@
     {
       "source": "FUNC-block-antrieb",
       "target": "FUNC-graph-delegate",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-antrieb",
-      "target": "FUNC-inventory-channel",
       "type": "compose"
     },
     {
@@ -19003,6 +19191,31 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-block-rundenprompt",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-block-rundenprompt",
+      "target": "FUNC-build-round-injection",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-rundenprompt",
+      "target": "FUNC-compose-faltung",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-rundenprompt",
+      "target": "FUNC-fund-kontext",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-rundenprompt",
+      "target": "FUNC-inventory-channel",
+      "type": "compose"
+    },
+    {
       "source": "FUNC-block-speicherwerk",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -19238,6 +19451,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-compose-faltung",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-compose-faltung",
+      "target": "FLOW-faltung",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-compose-faltung",
+      "target": "REQ-inventory-switch",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-compute-readiness",
       "target": "MOD-kernel-measure",
       "type": "allocate"
@@ -19407,6 +19635,11 @@
     },
     {
       "source": "FUNC-evaluate-rules",
+      "target": "REQ-near-duplicate-detection",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-evaluate-rules",
       "target": "REQ-rule-enforcement",
       "type": "satisfy",
       "weight": 1,
@@ -19508,6 +19741,21 @@
     {
       "source": "FUNC-function-criticality",
       "target": "REQ-steering-from-metrics",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-fund-kontext",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-fund-kontext",
+      "target": "FLOW-fund-kontext",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-fund-kontext",
+      "target": "REQ-round-prompt-injection",
       "type": "satisfy"
     },
     {
@@ -20169,7 +20417,12 @@
     },
     {
       "source": "FUNC-nd-similarity",
-      "target": "REQ-near-duplicate-detection",
+      "target": "FLOW-duplicate-hits",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-nd-similarity",
+      "target": "REQ-duplicate-hint",
       "type": "satisfy"
     },
     {
@@ -22295,6 +22548,21 @@
       "type": "verify"
     },
     {
+      "source": "TEST-helfer-vertraege",
+      "target": "SCHEMA-duplicate-hit",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-helfer-vertraege",
+      "target": "SCHEMA-faltung",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-helfer-vertraege",
+      "target": "SCHEMA-fund-kontext",
+      "type": "verify"
+    },
+    {
       "source": "TEST-help-content-coverage",
       "target": "REQ-readiness-transparent",
       "type": "verify"
@@ -22743,6 +23011,11 @@
     {
       "source": "TEST-mvp-e2e",
       "target": "REQ-small-model-viable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-nd-similarity",
+      "target": "REQ-duplicate-hint",
       "type": "verify"
     },
     {
@@ -23913,6 +24186,11 @@
     },
     {
       "source": "UC-reduced-llm",
+      "target": "REQ-duplicate-hint",
+      "type": "compose"
+    },
+    {
+      "source": "UC-reduced-llm",
       "target": "REQ-graph-context-replaces-reading",
       "type": "compose"
     },
@@ -24038,5 +24316,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 657
+  "graphVersion": 661
 }

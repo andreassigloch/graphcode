@@ -634,6 +634,7 @@
 | `CR-GC-651` | relation | `FUNC-generation-step` |
 | `CR-GC-651` | relation | `FUNC-run-executor` |
 | `CR-GC-652` | relation | `FUNC-build-round-injection` |
+| `CR-GC-652` | relation | `FUNC-fund-kontext` |
 | `CR-GC-652` | relation | `FUNC-generation-step` |
 | `CR-GC-652` | relation | `FUNC-inventory-channel` |
 | `CR-GC-652` | relation | `SCHEMA-generation-step` |
@@ -684,6 +685,7 @@
 | `CR-GC-675` | relation | `FUNC-run-executor` |
 | `CR-GC-680` | relation | `FUNC-se-retro` |
 | `CR-GC-681` | relation | `REQ-published-counts-match-code` |
+| `CR-GC-682` | relation | `FUNC-compose-faltung` |
 | `CR-GC-682` | relation | `FUNC-inventory-channel` |
 | `CR-GC-682` | relation | `REQ-inventory-switch` |
 | `CR-GC-683` | relation | `FUNC-check-code-conformance` |
@@ -812,6 +814,9 @@
 | `CR-GC-770` | relation | `FUNC-block-antrieb` |
 | `CR-GC-770` | relation | `FUNC-inventory-channel` |
 | `CR-GC-770` | relation | `FUNC-vorschlag` |
+| `CR-GC-773` | relation | `FUNC-compose-faltung` |
+| `CR-GC-773` | relation | `FUNC-fund-kontext` |
+| `CR-GC-773` | relation | `FUNC-nd-similarity` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -869,9 +874,11 @@
 | `FCHAIN-executor-loop` | compose | `FUNC-authoring-guide` |
 | `FCHAIN-executor-loop` | compose | `FUNC-build-round-injection` |
 | `FCHAIN-executor-loop` | compose | `FUNC-call-model` |
+| `FCHAIN-executor-loop` | compose | `FUNC-compose-faltung` |
 | `FCHAIN-executor-loop` | compose | `FUNC-compute-steering-delta` |
 | `FCHAIN-executor-loop` | compose | `FUNC-extract-mutate` |
 | `FCHAIN-executor-loop` | compose | `FUNC-fit-advisory` |
+| `FCHAIN-executor-loop` | compose | `FUNC-fund-kontext` |
 | `FCHAIN-executor-loop` | compose | `FUNC-gate-client` |
 | `FCHAIN-executor-loop` | compose | `FUNC-generation-step` |
 | `FCHAIN-executor-loop` | compose | `FUNC-graph-delegate` |
@@ -1017,6 +1024,7 @@
 | `FLOW-audit-report` | io | `FUNC-se-retro` |
 | `FLOW-audit-report` | relation | `SCHEMA-audit-stats` |
 | `FLOW-candidate-batch` | io | `FUNC-gate-client` |
+| `FLOW-candidate-batch` | io | `FUNC-nd-similarity` |
 | `FLOW-candidate-batch` | io | `FUNC-preflight` |
 | `FLOW-candidate-batch` | relation | `SCHEMA-mutate-command` |
 | `FLOW-candidate-ranking` | io | `FUNC-run-executor` |
@@ -1091,14 +1099,19 @@
 | `FLOW-dimension-readiness` | io | `FUNC-test` |
 | `FLOW-dimension-readiness` | io | `FUNC-test-ui` |
 | `FLOW-dimension-readiness` | relation | `SCHEMA-readiness-report` |
+| `FLOW-duplicate-hits` | io | `FUNC-gate-client` |
+| `FLOW-duplicate-hits` | relation | `SCHEMA-duplicate-hit` |
 | `FLOW-element-slice` | io | `ACTOR-agent` |
 | `FLOW-element-slice` | io | `FUNC-gate-client` |
+| `FLOW-element-slice` | io | `FUNC-nd-similarity` |
 | `FLOW-element-slice` | io | `FUNC-task-abschluss` |
 | `FLOW-element-slice` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-expand-subgraph` | io | `FUNC-read-tools` |
 | `FLOW-expand-subgraph` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-export-pending` | io | `ACTOR-owner` |
 | `FLOW-export-pending` | relation | `SCHEMA-export-pending` |
+| `FLOW-faltung` | io | `FUNC-inventory-channel` |
+| `FLOW-faltung` | relation | `SCHEMA-faltung` |
 | `FLOW-fit-advisory` | io | `FUNC-mutate` |
 | `FLOW-fit-advisory` | io | `FUNC-rank-candidates` |
 | `FLOW-fit-advisory` | relation | `SCHEMA-fit-advisory` |
@@ -1108,6 +1121,8 @@
 | `FLOW-formatE-artifact-read-tools` | relation | `SCHEMA-format-e` |
 | `FLOW-function-criticality` | io | `ACTOR-dashboard` |
 | `FLOW-function-criticality` | relation | `SCHEMA-function-criticality` |
+| `FLOW-fund-kontext` | io | `FUNC-inventory-channel` |
+| `FLOW-fund-kontext` | relation | `SCHEMA-fund-kontext` |
 | `FLOW-gate-outcome` | io | `FUNC-rank-candidates` |
 | `FLOW-gate-outcome` | io | `FUNC-run-executor` |
 | `FLOW-gate-outcome` | relation | `SCHEMA-gate-outcome` |
@@ -1146,7 +1161,6 @@
 | `FLOW-graph-state` | io | `FUNC-merge-nodes` |
 | `FLOW-graph-state` | io | `FUNC-module-metrics` |
 | `FLOW-graph-state` | io | `FUNC-mutate` |
-| `FLOW-graph-state` | io | `FUNC-nd-similarity` |
 | `FLOW-graph-state` | io | `FUNC-read-tools` |
 | `FLOW-graph-state` | io | `FUNC-score-completeness` |
 | `FLOW-graph-state` | io | `FUNC-seed-from-json` |
@@ -1333,6 +1347,8 @@
 | `FLOW-round-injection` | io | `FUNC-run-executor` |
 | `FLOW-round-injection` | relation | `SCHEMA-round-injection` |
 | `FLOW-round-prompt` | io | `FUNC-build-round-injection` |
+| `FLOW-round-prompt` | io | `FUNC-compose-faltung` |
+| `FLOW-round-prompt` | io | `FUNC-fund-kontext` |
 | `FLOW-round-prompt` | io | `FUNC-inventory-channel` |
 | `FLOW-round-prompt` | io | `FUNC-rank-candidates` |
 | `FLOW-round-prompt` | io | `FUNC-run-executor` |
@@ -1470,10 +1486,9 @@
 | `FUNC-block-anleitung` | compose | `FUNC-test-ui` |
 | `FUNC-block-antrieb` | allocate | `MOD-loop` |
 | `FUNC-block-antrieb` | compose | `FUNC-block-modelldraht` |
-| `FUNC-block-antrieb` | compose | `FUNC-build-round-injection` |
+| `FUNC-block-antrieb` | compose | `FUNC-block-rundenprompt` |
 | `FUNC-block-antrieb` | compose | `FUNC-gate-client` |
 | `FUNC-block-antrieb` | compose | `FUNC-graph-delegate` |
-| `FUNC-block-antrieb` | compose | `FUNC-inventory-channel` |
 | `FUNC-block-antrieb` | compose | `FUNC-nd-similarity` |
 | `FUNC-block-antrieb` | compose | `FUNC-preflight` |
 | `FUNC-block-antrieb` | compose | `FUNC-run-executor` |
@@ -1569,6 +1584,11 @@
 | `FUNC-block-ruestzeug` | compose | `FUNC-schema-guard` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-tool-context` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-tool-profile` |
+| `FUNC-block-rundenprompt` | allocate | `MOD-loop` |
+| `FUNC-block-rundenprompt` | compose | `FUNC-build-round-injection` |
+| `FUNC-block-rundenprompt` | compose | `FUNC-compose-faltung` |
+| `FUNC-block-rundenprompt` | compose | `FUNC-fund-kontext` |
+| `FUNC-block-rundenprompt` | compose | `FUNC-inventory-channel` |
 | `FUNC-block-speicherwerk` | allocate | `MOD-kernel` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-apply-reseed` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-auto-export` |
@@ -1615,6 +1635,9 @@
 | `FUNC-collect-status` | allocate | `MOD-surface` |
 | `FUNC-collect-status` | io | `FLOW-install-result-collect-status` |
 | `FUNC-collect-status` | satisfy | `REQ-real-health-check` |
+| `FUNC-compose-faltung` | allocate | `MOD-loop` |
+| `FUNC-compose-faltung` | io | `FLOW-faltung` |
+| `FUNC-compose-faltung` | satisfy | `REQ-inventory-switch` |
 | `FUNC-compute-readiness` | allocate | `MOD-kernel-measure` |
 | `FUNC-compute-readiness` | io | `FLOW-dimension-readiness` |
 | `FUNC-compute-readiness` | satisfy | `REQ-readiness-model` |
@@ -1645,6 +1668,7 @@
 | `FUNC-emit-update-event` | satisfy | `REQ-versioned-broadcast` |
 | `FUNC-evaluate-rules` | allocate | `MOD-kernel` |
 | `FUNC-evaluate-rules` | io | `FLOW-rule-findings` |
+| `FUNC-evaluate-rules` | satisfy | `REQ-near-duplicate-detection` |
 | `FUNC-evaluate-rules` | satisfy | `REQ-rule-enforcement` |
 | `FUNC-export-markdown` | allocate | `MOD-projections` |
 | `FUNC-export-markdown` | io | `FLOW-markdown-docs` |
@@ -1664,6 +1688,9 @@
 | `FUNC-function-criticality` | allocate | `MOD-projections` |
 | `FUNC-function-criticality` | io | `FLOW-function-criticality` |
 | `FUNC-function-criticality` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-fund-kontext` | allocate | `MOD-loop` |
+| `FUNC-fund-kontext` | io | `FLOW-fund-kontext` |
+| `FUNC-fund-kontext` | satisfy | `REQ-round-prompt-injection` |
 | `FUNC-gate-client` | allocate | `MOD-loop` |
 | `FUNC-gate-client` | io | `FLOW-gate-outcome` |
 | `FUNC-gate-client` | io | `FLOW-mutate-cmd-gate-client` |
@@ -1786,7 +1813,8 @@
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-nd-similarity` | allocate | `MOD-kernel-measure` |
-| `FUNC-nd-similarity` | satisfy | `REQ-near-duplicate-detection` |
+| `FUNC-nd-similarity` | io | `FLOW-duplicate-hits` |
+| `FUNC-nd-similarity` | satisfy | `REQ-duplicate-hint` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | io | `FLOW-harness-handle-host` |
 | `FUNC-own-kuzu-host` | satisfy | `REQ-store-owner-lifecycle` |
@@ -2183,6 +2211,9 @@
 | `TEST-gve-supervision` | verify | `REQ-graceful-degradation` |
 | `TEST-gve-supervision` | verify | `REQ-viewer-owned-by-repo` |
 | `TEST-gve-supervision` | verify | `SCHEMA-session-registry` |
+| `TEST-helfer-vertraege` | verify | `SCHEMA-duplicate-hit` |
+| `TEST-helfer-vertraege` | verify | `SCHEMA-faltung` |
+| `TEST-helfer-vertraege` | verify | `SCHEMA-fund-kontext` |
 | `TEST-help-content-coverage` | verify | `REQ-readiness-transparent` |
 | `TEST-help-contextual-dedup` | verify | `REQ-token-efficiency` |
 | `TEST-help-projection` | verify | `REQ-readiness-transparent` |
@@ -2266,6 +2297,7 @@
 | `TEST-mvp-e2e` | verify | `REQ-single-kuzu-owner` |
 | `TEST-mvp-e2e` | verify | `REQ-single-store` |
 | `TEST-mvp-e2e` | verify | `REQ-small-model-viable` |
+| `TEST-nd-similarity` | verify | `REQ-duplicate-hint` |
 | `TEST-nd-similarity` | verify | `REQ-near-duplicate-detection` |
 | `TEST-nd-similarity` | verify | `REQ-rule-enforcement` |
 | `TEST-occ` | verify | `REQ-auto-persist-merge` |
@@ -2486,6 +2518,7 @@
 | `UC-reduced-llm` | compose | `REQ-delegate-in-host` |
 | `UC-reduced-llm` | compose | `REQ-delegate-schluss-in-worten` |
 | `UC-reduced-llm` | compose | `REQ-delegate-wartebudget-je-repo` |
+| `UC-reduced-llm` | compose | `REQ-duplicate-hint` |
 | `UC-reduced-llm` | compose | `REQ-graph-context-replaces-reading` |
 | `UC-reduced-llm` | compose | `REQ-inventory-switch` |
 | `UC-reduced-llm` | compose | `REQ-one-driver-local-and-frontier` |

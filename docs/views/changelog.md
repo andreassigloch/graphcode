@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 382 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 383 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 382 CR · 338 done · 4 open.
+Total: 383 CR · 338 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -444,3 +444,4 @@ Total: 382 CR · 338 done · 4 open.
 | `CR-GC-770` | n/a | Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt |
 | `CR-GC-771` | n/a | Kandidatenvergleich im Dialog: mehrere Entwuerfe per Trockenlauf vergleichen, auch fuer Frontier |
 | `CR-GC-772` | n/a | Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt |
+| `CR-GC-773` | n/a | Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche |

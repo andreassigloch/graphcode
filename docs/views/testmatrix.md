@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 154 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 155 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -39,6 +39,7 @@
 | `REQ-doc-export` | ✓ | ✓ passed | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-views-auditor` · `TEST-views-conformance` |
 | `REQ-docs-taxonomy` | ✓ | ⚠ nie gelaufen | `TEST-docs-taxonomy` |
 | `REQ-done-iff-no-focus` | ✓ | ⚠ nie gelaufen | `TEST-generation-statemachine` |
+| `REQ-duplicate-hint` | ✓ | ✓ passed | `TEST-nd-similarity` |
 | `REQ-export-no-clobber` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-mcp-export-guard` |
 | `REQ-formatE-diff-dialect` | ✓ | ✓ passed | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` |
 | `REQ-formatE-parity` | ✓ | ⚠ 4/5 passed | `TEST-formate-binding` · `TEST-formate-ops` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` |
@@ -163,8 +164,8 @@
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
-Coverage: 154/154 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 121/154 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 155/155 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 122/155 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -194,6 +195,7 @@ Belegt: 121/154 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-cli-dispatch` → `FUNC-run-verb` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-cli-dispatch` → `FUNC-upgrade` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-close-violations` → `FUNC-mutate` | `FLOW-mutate-cmd-close-violations` | `FCHAIN-skill-authoring` | ⚠ keine Abdeckung |  |  |
+| `FUNC-compose-faltung` → `FUNC-inventory-channel` | `FLOW-faltung` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-compute-readiness` → `FUNC-graph-readiness` | `FLOW-dimension-readiness` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-compute-readiness` → `FUNC-se-retro` | `FLOW-dimension-readiness` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-compute-readiness` → `FUNC-se-review` | `FLOW-dimension-readiness` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
@@ -217,10 +219,13 @@ Belegt: 121/154 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-extract-mutate` → `FUNC-run-executor` | `FLOW-recovered-batch` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-fit-advisory` → `FUNC-mutate` | `FLOW-fit-advisory` | `FCHAIN-apply-gate` · `FCHAIN-executor-loop` · `FCHAIN-steering-loop` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-fit-advisory` → `FUNC-rank-candidates` | `FLOW-fit-advisory` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-fund-kontext` → `FUNC-inventory-channel` | `FLOW-fund-kontext` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-gate-client` → `FUNC-mutate` | `FLOW-mutate-cmd-gate-client` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-gate-client` → `FUNC-rank-candidates` | `FLOW-gate-outcome` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-gate-client` → `FUNC-run-executor` | `FLOW-gate-outcome` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-generation-step` → `FUNC-build-round-injection` | `FLOW-round-prompt` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-generation-step` → `FUNC-compose-faltung` | `FLOW-round-prompt` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-generation-step` → `FUNC-fund-kontext` | `FLOW-round-prompt` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-generation-step` → `FUNC-graph-suggest` | `FLOW-generation-step-suggest` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-generation-step` → `FUNC-inventory-channel` | `FLOW-round-prompt` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-generation-step` → `FUNC-rank-candidates` | `FLOW-round-prompt` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
@@ -258,6 +263,7 @@ Belegt: 121/154 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-import-doc` → `FUNC-mutate` | `FLOW-mutate-cmd-import-doc` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
 | `FUNC-inventory-channel` → `FUNC-build-round-injection` | `FLOW-channel-inventory` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-list-elements` → `FUNC-gate-client` | `FLOW-element-slice` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-list-elements` → `FUNC-nd-similarity` | `FLOW-element-slice` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-list-elements` → `FUNC-task-abschluss` | `FLOW-element-slice` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-load-config` → `FUNC-evaluate-rules` | `FLOW-metric-policy` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-load-config` → `FUNC-take-steering-snapshot` | `FLOW-metric-policy` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
@@ -271,6 +277,7 @@ Belegt: 121/154 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-mutate` → `FUNC-se-retro` | `FLOW-gate-verdict` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-mutate` → `FUNC-test-ingest` | `FLOW-gate-verdict` | `FCHAIN-test-ingest` | ⚠ keine Abdeckung |  |  |
 | `FUNC-mutate` → `FUNC-tool-context` | `FLOW-gate-verdict` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
+| `FUNC-nd-similarity` → `FUNC-gate-client` | `FLOW-duplicate-hits` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-own-kuzu-host` → `FUNC-serve-sse` | `FLOW-harness-handle-host` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
 | `FUNC-preflight` → `FUNC-gate-client` | `FLOW-preflight-outcome` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-rank-candidates` → `FUNC-run-executor` | `FLOW-candidate-ranking` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
@@ -284,6 +291,7 @@ Belegt: 121/154 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-rewind` → `FUNC-reseed` | `FLOW-reseed-snapshot` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-call-model` | `FLOW-model-request` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-gate-client` | `FLOW-candidate-batch` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
+| `FUNC-run-executor` → `FUNC-nd-similarity` | `FLOW-candidate-batch` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-executor` → `FUNC-preflight` | `FLOW-candidate-batch` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-run-verb` → `FUNC-run-executor` | `FLOW-run-request` | `FCHAIN-executor-loop` | ⚠ keine Abdeckung |  |  |
 | `FUNC-score-completeness` → `FUNC-compute-readiness` | `FLOW-completeness` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
@@ -315,4 +323,4 @@ Belegt: 121/154 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-view-intplan` → `FUNC-export-markdown` | `FLOW-query-request-view-intplan` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-view-rtm` → `FUNC-export-markdown` | `FLOW-query-request-view-rtm` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 
-> 51/144 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 93 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 51/151 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 100 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

@@ -30,6 +30,7 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod';
 import { tokens, jaccard } from '@sigloch/contracts/se';
 
 /** Name/Beschreibungs-Ähnlichkeit für den REQ/UC-Hinweis: 0.5·name + 0.5·descr. */
@@ -61,17 +62,20 @@ export interface IndexedElement {
  *
  * CR-GC-361: strukturiert statt nur als Textzeile, damit das Ranking dieselbe
  * Messung sehen kann, die bisher nur ins Modell-Feedback lief.
+ *
+ * CR-GC-773: als Schema, weil der Treffer die Modulgrenze kernel/measure → loop quert.
  */
-export interface DuplicateHit {
+export const DuplicateHit = z.object({
   /** uid des NEUEN Knotens aus dem Batch. */
-  uid: string;
+  uid: z.string(),
   /** uid des vorhandenen Elements, dem er gleicht. */
-  matchedUid: string;
+  matchedUid: z.string(),
   /** Name des vorhandenen Elements — für die Hinweis-Zeile, kein zweiter Lookup. */
-  matchedName: string;
+  matchedName: z.string(),
   /** Name/Descr-Ähnlichkeit, ≥ HINT_SIMILARITY_THRESHOLD. */
-  score: number;
-}
+  score: z.number(),
+});
+export type DuplicateHit = z.infer<typeof DuplicateHit>;
 
 /**
  * Beinahe-Duplikate unter den neuen REQ/UC-add-nodes eines Batches, gemessen
