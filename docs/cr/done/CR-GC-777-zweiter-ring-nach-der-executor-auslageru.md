@@ -1,6 +1,6 @@
 # CR-GC-777: Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-09)
 **Typ:** aus Item ITEM-2026-808 (finding)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-808.json (Lane: code)
