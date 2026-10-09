@@ -70,22 +70,17 @@ graphVersion 653 → 656, drei Züge. `graph_metrics`: Kette A bewertbar, Länge
   die Funktion liegt im Messwerk, ihr Aufrufer in der Schleife). Sie bräuchte einen Fluss mit eigenem Vertrag;
   den gibt es im Code nur als TypeScript-Typ. Kette B bleibt deshalb nicht bewertbar (ein loses Glied).
 
-## Schnitt in zwei Teile (Dateigrenze)
+## Teil 2 abgetrennt
 
-- **Teil 1, Modell:** nur `graph_mutate`; Dateien: Graph, Sichten, `docs/project/steuerungsschleife.md`.
-- **Teil 2, Schalter:** `src/surface/tool-profile.ts`, `src/surface/mcp-server.ts`, `src/surface/scaffold-templates.ts`,
-  Konfigurationsvertrag, README, zwei Testdateien. Ändert, wie ein Repo den Executor wählt — bestehende
-  Host-Dateien mit der alten Variable müssen benannt behandelt werden (kein stilles Weiterlesen).
+Der Schalter für den Executor ist **CR-GC-772**. Grund: zusammen mit Teil 1 wären es zwölf Dateien, und beim
+Lesen des Codes zeigte sich eine Entscheidung, die vorher nicht auf dem Tisch lag (je Repo oder je Client).
 
-Werden es zusammen mehr als 10 Dateien, wird Teil 2 eine eigene CR.
+## Akzeptanz (Teil 1)
 
-## Akzeptanz
-
-- Kette A ist bewertbar (`graph_metrics`, `chains`) und trägt genau eine Rückkopplung: Gate → Store → Messen.
-- Jeder neue Fluss nennt seinen Code-Beleg; kein neuer Regelverstoß gegenüber dem Stand davor.
-- `docs/project/steuerungsschleife.md`: der Abschnitt „Wo das eigene Modell abweicht" ist leer oder nennt, was bleibt.
-- Teil 2: Rot zuerst; ein Repo mit alter Variable startet mit einer Meldung, die den neuen Schalter nennt.
-- `npm run verify:code`, vor dem Schließen `npm run verify:full CR-GC-770`.
+- Kette A ist bewertbar und trägt genau eine Rückkopplung: Gate → Store → Messen. **Erfüllt.**
+- Jeder neue Fluss nennt seinen Code-Beleg; kein neuer Regelverstoß gegenüber dem Stand davor. **Erfüllt.**
+- `docs/project/steuerungsschleife.md` nennt, was noch abweicht. **Erfüllt.**
+- `npm run verify:full CR-GC-770` vor dem Schließen.
 
 ---
 

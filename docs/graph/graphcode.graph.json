@@ -3191,6 +3191,12 @@
       "description": "docs/cr/open/CR-GC-771-kandidatenvergleich-im-dialog-mehrere-en.md"
     },
     {
+      "id": "CR-GC-772",
+      "type": "CR",
+      "name": "Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt",
+      "description": "docs/cr/open/CR-GC-772-executor-schalter-in-die-repo-konfigurat.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -24032,5 +24038,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 656
+  "graphVersion": 657
 }
