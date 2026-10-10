@@ -408,7 +408,7 @@ describe('graph_metrics — Kettenkennzahlen und Bewertbarkeit (CR-GC-767)', () 
     (await tools.graph_metrics.handler({})).chains.find((c) => c.chainId === 'FCHAIN-zahlung')!;
 
   it('Referenzkette: Laenge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rueckkopplungen, 1 geteilter Knoten', async () => {
-    expect(await zahlung()).toEqual({
+    expect(await zahlung()).toMatchObject({
       chainId: 'FCHAIN-zahlung',
       chainName: 'Zahlung ausloesen',
       measurable: true,
@@ -422,6 +422,16 @@ describe('graph_metrics — Kettenkennzahlen und Bewertbarkeit (CR-GC-767)', () 
       syncDepth: null,
       errorPathDepth: null,
     });
+  });
+
+  // CR-GC-774: die Orte reicht das Werkzeug durch, wie contracts sie rechnet (dort stehen die Werte unter Test).
+  // Hier zaehlt nur: sie kommen an, und die Zahlen sind die Laengen der Listen.
+  it('Orte der Referenzkette kommen durch: Zahl gleich Laenge der Liste', async () => {
+    const k = (await zahlung()) as Record<string, unknown> & { loops: unknown[]; shared: unknown[]; boundaries: { edges: number }[] };
+    expect(k).toMatchObject({ memberCount: 6, fanIn: 1, loops: [], imports: [], handovers: [] });
+    expect(k.loops).toHaveLength(k.feedbackLoops as number);
+    expect(k.shared).toHaveLength(k.sharedFuncs as number);
+    expect(k.boundaries.reduce((a, b) => a + b.edges, 0)).toBe(k.moduleBoundaries);
   });
 
   it('Gegenprobe: Schleife und Ast lassen Rueckkopplungen und Verzweigung umschlagen', async () => {

@@ -67,7 +67,13 @@ Nicht aus der Struktur findbar: das Innere einer Blatt-Funktion und die Betriebs
 4. **Reichweite:** Für eine geteilte Funktion zählt der Skill je betroffener Kette eine Fehlerfolge auf; die
    Schwere ist die der schwersten. Die Arbeitsreihenfolge je Kette geht nach Reichweite der Orte, nicht mehr
    nach Importgrad.
-5. Eine nicht bewertbare Kette (`measurable: false`) wird nicht analysiert; der Skill nennt den Grund.
+5. **Erster Schritt ist die Verdrahtung** (Regeln R-30, R-31, R-21, IO-01, FC-04, FC-05 — alle Warnungen).
+   Eine nicht bewertbare Kette (`measurable: false`) wird nicht analysiert; der Skill nennt den Grund. Eine
+   Kette der Länge 1 ist ein Hinweis an den Nutzer, kein Befund.
+6. **Ergebnisse c und d** nach `docs/graphcode_analyse_optimierungskonzept.md`: der Skill formuliert
+   Architekturvorschläge zur Kette (Zweck, Ort, Handlungsklasse, Prognose, Wirkung auf Modul- und
+   Funktionsbaum) und notiert Konflikte an der geteilten Funktion. Er wendet nichts davon an.
+7. Skill-Version 7 → 8, damit ausgerollte Kopien erneuert werden.
 
 **Code:** Hilfetext der neuen Felder in `src/projections/tool-help.ts`; Peer-Floor von `@sigloch/contracts`
 auf die Version mit CR-SM-406, im selben Commit wie der erste Leser.
@@ -94,9 +100,41 @@ Braucht CR-SM-406 und dessen Veröffentlichung.
 
 ---
 
-## Umfang laut `graph_impact`
+## Umfang laut Graph (2026-10-10, graphVersion 672)
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+- `graph_context(FUNC-se-fmea)`: Glied von `FCHAIN-skill-authoring` (UC-code-quality), liest
+  `FLOW-skill-request`, schreibt `FLOW-mutate-cmd-se-fmea`, erfüllt `REQ-skill-authors-through-gate`.
+- `graph_context(FUNC-chain-metrics)`: Glied von `FCHAIN-dashboard-metrics`, erzeugt `FLOW-chain-metrics`
+  (`SCHEMA-chain-metrics`), erfüllt `REQ-chain-metrics`.
+- `graph_tests`: `tests/metrics.test.ts`, `tests/mutate.schema-guard.test.ts`,
+  `tests/skill-authoring-gate.test.ts`; nichts ungebunden.
 
-- `graph_impact(FUNC-se-fmea)`, `graph_impact(FUNC-chain-metrics)`: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
+**Modell-Zug:** `REQ-fmea-reads-places` mit `TEST-fmea-reads-places` (`tests/skill-fmea-orte.test.ts`);
+`FUNC-se-fmea` liest `FLOW-chain-metrics`; `FUNC-chain-metrics` wird Glied von `FCHAIN-skill-authoring`
+(sonst meldet R-21 eine Übergabe ohne gemeinsame Kette — im Trockenlauf gesehen); Beschreibung von
+`SCHEMA-chain-metrics` und `FUNC-chain-metrics` um die Orte ergänzt.
+
+**Dateien:** `.claude/commands/se-fmea.md`, `src/projections/tool-help.ts`, `tests/skill-fmea-orte.test.ts`
+(neu), `tests/metrics.test.ts`, `tests/arch.optimization-dry-run.spike.test.ts`, `package.json`,
+`docs/graph/graphcode.graph.json`, diese CR; dazu die generierten Sichten unter `docs/views/` und die
+Messzeile in `docs/messung/testauswahl.jsonl`.
+
+## Ergebnis (2026-10-10)
+
+- **Skill `se-fmea` Version 8:** liest das Kettenprofil aus `graph_metrics`; Linearität, Importgrad und die
+  eigene Rechnung sind entfernt. Neu: erster Schritt Verdrahtung, Quellen E (Kreislauf) und F (geteilte
+  Funktion), Architekturvorschlag und Konflikt am Kreuzungspunkt, Reichweite geht nicht in die Schwere.
+- **Rot gesehen:** `tests/skill-fmea-orte.test.ts` gegen Skill 7 und contracts 11.1.0 — 5 von 5 rot
+  (Linearität im Text, `graph_metrics` nicht genannt, `chainMetrics ohne memberCount`).
+- **Verbrauchertest:** `tests/metrics.test.ts` verglich die Referenzzeile mit `toEqual` und sah sieben Felder
+  mehr; er prüft jetzt die Zahlen wie bisher und dazu, dass die Orte ankommen und die Zahlen ihre Längen sind.
+- **Neu gemessen:** `tests/arch.optimization-dry-run.spike.test.ts` — der Autopilot schlägt am Modell mit dem
+  neuen Fluss einen Zug vor statt zwei (derselbe, fachlich falsche Zug; ITEM-2026-798).
+- **Volllauf** (`verify:full`, 182 Dateien): 1495 von 1498 grün vor der Neumessung; rot waren der Spike-Test
+  oben (danach grün) sowie `distribution` und `lockfile-sync` — beide erwartet, solange contracts 11.2.0 nicht
+  veröffentlicht ist (Link-Modus). Schlupf 0.
+- **Kongruenz:** gedriftet, mit einer benannten neuen Ausnahme aus diesem CR: RC-04 an `SCHEMA-chain-metrics`
+  („Schema wird in keiner realisierten Funktion geparst"). Der neue Verbraucher ist ein Prompt-Skill und kann
+  kein Zod-Schema parsen; geprüft wird das Ergebnis beim Erzeuger in contracts. Die übrigen RC-Befunde des
+  Modells (RC-04: 16, RC-07: 41) bestanden vorher.
+- **Nicht gefahren:** ein FMEA-Lauf mit dem neuen Skill — das ist der nächste Schritt (eigener geschlossener CR).

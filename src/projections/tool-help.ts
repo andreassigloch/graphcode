@@ -71,6 +71,12 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       '`measurable: false` trägt KEINE Zahl, sondern `reasons` — `FC-05` (zerfallen), `loose-member` ' +
       '(ein Glied ohne io-Eingang oder -Ausgang), `no-entry`, `no-exit`, `empty`. Ohne Schwelle: hier ' +
       'wird gemessen, nicht geurteilt.\n' +
+      'Die Orte dazu (CR-GC-774): `memberCount`, `fanIn` (größter Eingangsgrad, Gegenstück zu ' +
+      '`branching`), `loops` (je Rückkopplung Kennung und Mitglieder; dieselbe Kennung in mehreren ' +
+      'Ketten ist dieselbe Rückkopplung), `shared` (die geteilten Funktionen), `boundaries` (je ' +
+      'gerichtetem Modulpaar Kanten und verschiedene Verträge), `imports` und `handovers` (Fluss und ' +
+      'Funktion; gezählt nur an Gliedern, die allein dieser Kette gehören — die Zuflüsse einer ' +
+      'geteilten Funktion stehen an ihr). Die Zahlen bleiben die Längen dieser Listen.\n' +
       '`measurability` ist die Reichweite daneben: bewertbare / alle Ketten. Kennzahlen bei niedriger ' +
       'Quote beschreiben nur die Ketten, die schon Ketten sind; `ratio` ist `null`, wenn es keine gibt.',
   },

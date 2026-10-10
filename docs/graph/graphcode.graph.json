@@ -4497,7 +4497,7 @@
       "id": "FUNC-chain-metrics",
       "type": "FUNC",
       "name": "chainMetrics(graph)",
-      "description": "Projiziert den Graphen auf die Kennzahlen je Wirkkette: Gesamtlaenge, Verzweigungsgrad, Modulgrenzen, Rueckkopplungen, geteilte Knoten und Engstellen als obere Schranke. Eine nicht bewertbare Kette traegt keine Zahl, sondern den Grund; die Bewertbarkeitsquote reist im selben Ergebnis. Synchrone Tiefe und Fehlerpfad-Tiefe sind in dieser Stufe immer null. Urteilt nie: keine Regel, keine Schwelle. Fremdpaket @sigloch/contracts, deshalb external.",
+      "description": "Projiziert den Graphen auf die Kennzahlen je Wirkkette: Gesamtlaenge, Verzweigungsgrad, Modulgrenzen, Rueckkopplungen, geteilte Knoten und Engstellen als obere Schranke. Dazu die Orte je Kette: Mitglieder der Rueckkopplungen, geteilte Funktionen, Importe und Uebergaben an eigenen Funktionen, Modulgrenzen je Modulpaar mit ihren Vertraegen, Zulauf. Eine nicht bewertbare Kette traegt keine Zahl, sondern den Grund; die Bewertbarkeitsquote reist im selben Ergebnis. Synchrone Tiefe und Fehlerpfad-Tiefe sind in dieser Stufe immer null. Urteilt nie: keine Regel, keine Schwelle. Fremdpaket @sigloch/contracts, deshalb external.",
       "external": true,
       "status": "done",
       "realRef": {
@@ -5161,7 +5161,7 @@
       "id": "FUNC-se-fmea",
       "type": "FUNC",
       "name": "Skill se-fmea",
-      "description": "Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA auf System/Subsystem, Befunde in Graph und Spec.",
+      "description": "Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA mit der Wirkkette als Einheit. Liest die Orte der Kette aus graph_metrics und rechnet keine Kennzahl selbst; Befunde gehen als Anforderung mit Test durchs Gate, Architekturvorschlaege und Konflikte an Kreuzungspunkten in den Text des CR.",
       "realRef": {
         "file": ".claude/commands/se-fmea.md"
       }
@@ -5940,6 +5940,15 @@
       "created_at": "2026-06-18T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-fmea-reads-places",
+      "type": "REQ",
+      "name": "FMEA liest die Orte der Kette",
+      "description": "Der Skill se-fmea MUSS das Kettenprofil und die Orte einer Wirkkette aus graph_metrics lesen und DARF keine Kettenkennzahl selbst rechnen. Eine nicht bewertbare Kette analysiert er nicht; die Reichweite einer Funktion geht nicht in die Schwere ein.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -7210,7 +7219,7 @@
       "id": "SCHEMA-chain-metrics",
       "type": "SCHEMA",
       "name": "ChainMetrics",
-      "description": "chains: je FCHAIN chainId, chainName, measurable und entweder length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external.",
+      "description": "chains: je FCHAIN chainId, chainName, measurable und entweder die Zahlen length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth mit den Orten memberCount, fanIn, loops, shared, boundaries, imports, handovers oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. Die Zahlen sind die Laengen der Ortslisten. measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external.",
       "external": true,
       "status": "reviewed",
       "realRef": {
@@ -8329,6 +8338,21 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-09-30T08:39:36.000Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-fmea-reads-places",
+      "type": "TEST",
+      "name": "FMEA-Skill liest Orte statt zu rechnen",
+      "description": "Der Skill-Text nennt die Ortsfelder, die chainMetrics an der bewertbaren Zeile liefert, und keine Rechenvorschrift fuer eine Kettenkennzahl.",
+      "testRefs": [
+        {
+          "file": "tests/skill-fmea-orte.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-10-10T12:00:00.000Z"
         }
       ]
     },
@@ -14025,6 +14049,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-774",
+      "target": "FUNC-chain-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-774",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-774",
+      "target": "REQ-fmea-reads-places",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-775",
       "target": "MOD-loop",
       "type": "relation"
@@ -14758,6 +14797,11 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-chain-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-close-violations",
       "type": "compose"
     },
@@ -15071,6 +15115,11 @@
     {
       "source": "FLOW-chain-metrics",
       "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-chain-metrics",
+      "target": "FUNC-se-fmea",
       "type": "io"
     },
     {
@@ -18695,6 +18744,11 @@
     },
     {
       "source": "FUNC-se-fmea",
+      "target": "REQ-fmea-reads-places",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-fmea",
       "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
     },
@@ -20308,6 +20362,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-fmea-reads-places",
+      "target": "REQ-fmea-reads-places",
+      "type": "verify"
+    },
+    {
       "source": "TEST-formate-binding",
       "target": "REQ-formatE-parity",
       "type": "verify"
@@ -21535,6 +21594,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-fmea-reads-places",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-formatE-diff-dialect",
       "type": "compose"
     },
@@ -22130,5 +22194,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 672
+  "graphVersion": 674
 }

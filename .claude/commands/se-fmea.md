@@ -1,6 +1,6 @@
 ---
 name: se-fmea
-version: 7
+version: 8
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
@@ -27,18 +27,31 @@ Walk the graph's `compose` hierarchy for the scoped target: `SYS → UC → FCHA
   - `graph_get_edges` `{ "uid": "<FCHAIN-uid>", "edgeType": "compose" }` for the chain's member FUNCs,
   - `graph_get_edges` `{ "edgeType": "io" }` for the FLOW wiring; deepen a single branch on demand with `graph_expand`.
 
-**For each in-scope FCHAIN, produce a chain profile before writing a single failure mode.** Four numbers, all computed from the queries above — they decide *where* to look, and a Step 4 that ignores them is a brainstorm, not an analysis:
+**For each in-scope FCHAIN, read the chain profile before writing a single failure mode — do not compute it.** Call `graph_metrics` once and take the chain's row from `chains` and the reach of its members from `functions`. Figures and places are computed in ONE place (`chainMetrics` in `@sigloch/contracts/se`); a number derived by hand from `graph_get_edges` is a second calculation, and it disagrees with the first at every chain that has a loop.
 
-| # | Kennzahl | Berechnung | Was sie für die FMEA bedeutet |
-|---|---|---|---|
-| 1 | **Linearität** | längster `FUNC→FLOW→FUNC`-Pfad unter den Mitgliedern ÷ Zahl der Mitglieder | < 0,8: die Kette ist kein Ablauf, sondern ein Stern. Ein Fehlermodus „Kette bricht bei Schritt n ab" ist dann nicht formulierbar — die Reihenfolge, die der Kettenname behauptet, steht nicht im Graphen |
-| 2 | **Importgrad** | Zahl der FLOWs, die ein Mitglied konsumiert, deren Erzeuger aber **kein** Mitglied ist (ACTOR-Eingänge zählen nicht) | jeder Import ist eine Schnittstelle zu einer fremden Kette und damit ein Pflicht-Fehlermodus (Step 4, Quelle A) |
-| 3 | **Übergaben** | FLOWs, die ein Mitglied erzeugt und eine FUNC **außerhalb** der Kette konsumiert | jede Übergabe ist der Eingang der nächsten Kette; die Fehlerwirkung endet nicht an der Kettengrenze (Step 4, Quelle B) |
-| 4 | **Akteursgrenze** | ACTOR→FLOW→Mitglied (Trigger) und Mitglied→FLOW→ACTOR (Ergebnis) | fehlt eine Seite, ist die Fehler**wirkung** (FE) nicht auf einen Menschen abbildbar. `FC-04` prüft das bereits — hol dir die Verstöße mit `rules_get_violations`, statt es nachzurechnen |
+**Erster Schritt: die Verdrahtung der Kette.** Die Regeln `R-30`, `R-31`, `R-21`, `IO-01`, `FC-04` und `FC-05` sind Warnungen, kein Fehler — das Gate hält eine unverbundene Kette nicht auf. Hol ihre Befunde für die Kette und ihre Glieder (`rules_get_violations`) und lies `measurable`:
 
-**Was der Regelsatz schon urteilt, und was nicht.** `FC-02` (Leaf-UC hat FCHAIN), `FC-03` (Kette ist flach) und `FC-04` (Akteursgrenze: Trigger **und** Konsument) liegen in `@sigloch/contracts/se` und laufen im Gate — lies sie über `rules_get_violations` und **wiederhole sie nicht als eigenen Befund**. Linearität und Importgrad (1 und 2) sind **keine** Regel; es gibt für sie keine Schwelle in `metricPolicy` und der Skill rechnet sie hier selbst. Schreib die Zahl mit ihrer Berechnung ins Protokoll, damit der Leser sie nachprüfen kann, und behandle sie als Befund des Analysten, nicht als Urteil des Werkzeugs.
+- `measurable: false` → die Kette wird **nicht** analysiert. Nenne die `reasons`; das Schließen dieser Befunde ist das Ergebnis dieses Laufs, nicht eine FMEA.
+- offene Verdrahtungsbefunde an einem Glied → erst schließen, oder der Nutzer bestätigt sie als bewusst offen.
+- `length` 1 → Hinweis an den Nutzer: eine Kette aus einem Glied hat keine Orte. Klär mit ihm, ob ein Glied fehlt — typisch der Speicher zwischen einer schreibenden und einer lesenden Funktion.
 
-Ergebnis von Step 2: der Strukturbaum (System → Subsystem → Funktionselement) **plus** eine Tabelle `FCHAIN | Mitglieder | Linearität | Importe | Übergaben | Akteursgrenze ✓/✗`, absteigend nach Importgrad. Diese Reihenfolge ist die Arbeitsreihenfolge für Step 4.
+**Die Orte der Kette.** Sie entscheiden, *wo* du suchst; ein Step 4, der sie übergeht, ist ein Brainstorming, keine Analyse. Die Kennzahlen finden den Ort, sie bewerten ihn nicht — das Urteil bleibt beim Nutzer.
+
+| Ort | Feld in der Zeile der Kette | Was er für die FMEA bedeutet |
+|---|---|---|
+| Kreislauf | `loops` — je Kreislauf Kennung und Mitglieder | ein Fehler klingt nicht ab, Ursache und Folge sind nicht mehr gerichtet. Dieselbe Kennung in mehreren Ketten ist derselbe Kreislauf: einmal analysieren, sonst zitieren (Step 4, Quelle E) |
+| Geteilte Funktion | `shared` — dazu ihre Reichweite in `functions` (`chains`, `useCases`) | gemeinsame Ursache: ein Fehler trifft jede Kette, in der sie liegt (Step 4, Quelle F) |
+| Import | `imports` — Fluss und empfangende Funktion | eine fremde Kette liefert an eine Funktion zu, die nur dieser Kette gehört (Step 4, Quelle A) |
+| Übergabe | `handovers` — Fluss und liefernde Funktion | die Fehlerwirkung tritt in einer anderen Kette auf (Step 4, Quelle B) |
+| Verzweiger, Zulauf | `branching`, `fanIn`, gelesen gegen `memberCount` | eine Stelle mit mehreren Folgen bzw. mehreren Ursachen |
+| Modulgrenze | `boundaries` — je Modulpaar Kanten und verschiedene Verträge | je **Vertrag** ein Schnittstellen-Fehlermodus, nicht je Kante: elf Flüsse mit demselben Schema sind eine Schnittstelle |
+| Akteursgrenze | `FC-04` über `rules_get_violations` | fehlt eine Seite, ist die Fehler**wirkung** (FE) nicht auf einen Menschen abbildbar |
+
+**Geteilte Funktionen gehören zur Analyse der Kette.** Ihre Zuflüsse stehen an ihnen selbst und erscheinen nicht als `imports` der Kette. Wer die Kette analysiert, analysiert ihre geteilten Funktionen mit; ist eine schon in einer früheren FMEA analysiert (CR in `docs/cr/done/`), zitiere sie und wiederhole sie nicht.
+
+**Was der Regelsatz schon urteilt.** `FC-02` (Leaf-UC hat FCHAIN), `FC-03` (Kette ist flach), `FC-04` und `FC-05` liegen in `@sigloch/contracts/se` und laufen im Gate — lies sie über `rules_get_violations` und **wiederhole sie nicht als eigenen Befund**.
+
+Ergebnis von Step 2: der Strukturbaum (System → Subsystem → Funktionselement) **plus** eine Tabelle `FCHAIN | Glieder | Kreisläufe | geteilte Funktionen | Importe | Übergaben | Modulgrenzen (Verträge) | Akteursgrenze ✓/✗`, alle Werte aus `graph_metrics` zitiert. Arbeitsreihenfolge für Step 4: erst die geteilten Funktionen, absteigend nach Reichweite, dann Kreisläufe, dann Importe und Übergaben.
 
 ### Step 3 — Function Analysis
 - For each FUNC/MOD in scope, state its intended function (what it must do, with measurable acceptance where the spec defines it).
@@ -48,15 +61,19 @@ Ergebnis von Step 2: der Strukturbaum (System → Subsystem → Funktionselement
 
 ### Step 4 — Failure Analysis
 
-**Walk these four graph-derived sources first — they are obligatory and each one names concrete elements. Free-form derivation comes after, and only for what they did not cover.** A finding from a source below cites the element ids it came from; that is what makes it auditable instead of plausible.
+**Walk these six graph-derived sources first — they are obligatory and each one names concrete elements. Free-form derivation comes after, and only for what they did not cover.** A finding from a source below cites the element ids it came from; that is what makes it auditable instead of plausible.
 
-**Quelle A — Importe (aus Kennzahl 2).** Für jeden importierten FLOW: er kommt aus einer fremden Kette, deren Takt, Ausfallverhalten und Betriebsmodus diese Kette nicht kontrolliert. Pflicht-Fehlermodi je Import: *bleibt aus*, *ist veraltet*, *widerspricht einer anderen Quelle derselben Größe*. Prüfe für jeden Import, ob ein REQ die Aktualität oder das Ausbleiben behandelt (`graph_get_edges` `{ "uid": "<FUNC>", "edgeType": "satisfy" }`) — fehlt es, ist die Lücke selbst der Befund.
+**Quelle A — Importe (`imports` aus `graph_metrics`).** Für jeden importierten FLOW: er kommt aus einer fremden Kette, deren Takt, Ausfallverhalten und Betriebsmodus diese Kette nicht kontrolliert. Pflicht-Fehlermodi je Import: *bleibt aus*, *ist veraltet*, *widerspricht einer anderen Quelle derselben Größe*. Prüfe für jeden Import, ob ein REQ die Aktualität oder das Ausbleiben behandelt (`graph_get_edges` `{ "uid": "<FUNC>", "edgeType": "satisfy" }`) — fehlt es, ist die Lücke selbst der Befund.
 
-**Quelle B — Übergaben (aus Kennzahl 3).** Für jeden FLOW, den eine fremde FUNC konsumiert: die Fehlerwirkung (FE) tritt **in der anderen Kette** auf. Trag sie dort ein, nicht hier — sonst bewertest du eine Severity gegen den falschen Akteur. Ein Fahrauftrag mit falschem Zeitfenster ist für den Fahrgast eine späte Kabine (S niedrig) und für die Streckenfahrt eine Blockverletzung (S hoch); die zweite ist die maßgebliche.
+**Quelle B — Übergaben (`handovers` aus `graph_metrics`).** Für jeden FLOW, den eine fremde FUNC konsumiert: die Fehlerwirkung (FE) tritt **in der anderen Kette** auf. Trag sie dort ein, nicht hier — sonst bewertest du eine Severity gegen den falschen Akteur. Ein Fahrauftrag mit falschem Zeitfenster ist für den Fahrgast eine späte Kabine (S niedrig) und für die Streckenfahrt eine Blockverletzung (S hoch); die zweite ist die maßgebliche.
 
 **Quelle C — doppelt geführte Zustandsgrößen.** Zieh die SCHEMAs der beteiligten FLOWs (`graph_get_edges` `{ "edgeType": "relation" }`) und vergleiche ihre Felder. Trägt **dieselbe** Zustandsgröße in zwei SCHEMAs (z.B. ein Türzustand in der Kabinenzustandsmeldung *und* im Türstatus), existieren zwei Kopien, die divergieren können. Fehlermodus: *die beiden Kopien widersprechen sich, und der Verbraucher liest die falsche*. Prüf, ob ein REQ ihre Konsistenz fordert — meist nicht, und dann ist genau das die abgeleitete Anforderung aus Step 6. Ist die Größe sicherheitsgerichtet (Spannungsfreiheit, Verriegelung, Freigabe), ist der Befund per Definition S 9–10.
 
 **Quelle D — Zustandsgrößen ohne aufgezählte Werte.** Nennt ein SCHEMA ein Zustands-/Statusfeld, ohne seine Werte zu enumerieren, gibt es kein prüfbares Übergangsverhalten: „unerwarteter Zustand" ist dann kein Fehlermodus, den ein Test erkennen könnte. Der Befund ist der fehlende Wertebereich, die Mitigation seine Festlegung. Hat das SCHEMA noch keinen `realRef` (kein Zod-Export), gilt das für **jedes** Feld — sag das einmal für den Scope und zähl nicht 30 Einzelbefunde.
+
+**Quelle E — Kreisläufe (`loops`).** Für jeden Kreislauf der Kette: die klassische FMEA nimmt Einzelfehler an, die voneinander unabhängig sind und in eine Richtung wirken — im Kreislauf gilt beides nicht. Pflicht-Fehlermodi: *ein Fehler läuft um und verstärkt sich*, *der Kreislauf endet nicht*, *ein Glied arbeitet auf dem Stand des vorigen Umlaufs*. Prüf, ob ein REQ den Abbruch oder die Begrenzung fordert.
+
+**Quelle F — geteilte Funktionen (`shared`).** Für jede geteilte Funktion: ein Fehlermodus an ihr ist eine gemeinsame Ursache für alle Ketten, in denen sie liegt. Zähl **je betroffener Kette eine Fehlerwirkung** auf und trag sie bei der Kette ein, deren Akteur sie trifft. Die Reichweite bestimmt, wie viele Wirkungen aufzuzählen sind und wo zuerst gearbeitet wird — die Reichweite erhöht nicht die Schwere (Severity): S ist die Schwere der schwersten Wirkung, nicht die Zahl der betroffenen Ketten.
 
 Danach, für jede Funktion:
 - Derive the **failure chain**: Failure Effect (FE, on system/user) ← Failure Mode (FM, how the function fails) ← Failure Cause (FC, root cause).
@@ -68,7 +85,7 @@ Danach, für jede Funktion:
   - **Spec-Bezug:** the FN/MD/RQ element the finding affects.
 
 ### Step 5 — Risk Analysis → **Action Priority (AP), not RPN**
-- Rate S, O, D on the 10-point scales.
+- Rate S, O, D on the 10-point scales. The user rates; you propose. A value you pre-fill is marked as a proposal, and nothing is written without the user's confirmation (headless run: see close-out step 1).
 - Assign **Action Priority** using the AIAG-VDA AP logic — **Severity first, then Occurrence, then Detection**:
   - **High AP** — action MUST be taken or a justification documented. (High severity of effect, esp. S 9–10, with any non-trivial occurrence; or high S+O combinations.)
   - **Medium AP** — action SHOULD be taken or a justification documented.
@@ -84,14 +101,16 @@ Danach, für jede Funktion:
   - **Firmware** (before commissioning) — table: `# | Massnahme | Betroffene FMs`.
   - **Software** (sirail backend) — table: `# | Massnahme | Betroffene FMs`.
 - State the **residual risk** intent: which mitigations lower O (prevention) vs. D (detection).
+- **Architekturvorschlag.** Zeigt ein Befund, dass die Kette selbst das Risiko trägt — ein Kreislauf ohne Abbruch, eine geteilte Funktion als einziger Weg, ein Import ohne Absicherung —, formuliere einen Vorschlag zum Umbau der Kette: Zweck (die REQ, der er dient), Kette, Ort, Handlungsklasse (Entkoppeln, Zusammenlegen, Verschieben, Aufteilen, Vorverlagern), Prognose (was besser werden soll, was gleich bleiben muss) und die erwartete Wirkung auf die Kennzahlen des Modul- und des Funktionsbaums. **Du wendest ihn nicht an** — er ist Eingang der Optimierung (`se:optimize`).
+- **Konflikt am Kreuzungspunkt.** Verlangt ein Vorschlag an einer geteilten Funktion etwas, das einer anderen Kette durch dieselbe Funktion schadet, notiere den Konflikt **an der geteilten Funktion** (uid, die beteiligten Ketten, was gegeneinander steht) — nicht in einer der Ketten.
 
 ### Step 7 — Documentation of Results
 - Write the analysis as the text of a closed change request: `docs/cr/done/<next CR id>-<slug>.md` — the next free number after the files in `docs/cr/open/` and `docs/cr/done/`, same prefix; `CR-001` in a repo without CRs. It is the only prose record; a new analysis is a new CR, never an edit of an old one. Sections:
   1. Zusammenfassung (count of FMs + Top-3 AP-High risks)
-  2. Kettenprofil (die Step-2-Tabelle: `FCHAIN | Mitglieder | Linearität | Importe | Übergaben | Akteursgrenze`) — sie begründet, warum die Fehlermodi dort sitzen, wo sie sitzen
-  3. Fehlermodi im Detail (`FM-NN`, the Step-4 entries) — jeder Eintrag nennt seine Quelle (A/B/C/D oder „frei abgeleitet") und die Element-uids, aus denen er stammt
+  2. Kettenprofil (die Step-2-Tabelle aus `graph_metrics`) — sie begründet, warum die Fehlermodi dort sitzen, wo sie sitzen
+  3. Fehlermodi im Detail (`FM-NN`, the Step-4 entries) — jeder Eintrag nennt seine Quelle (A bis F oder „frei abgeleitet") und die Element-uids, aus denen er stammt
   4. Risikomatrix (AP-sorted, Step 5)
-  5. Handlungsempfehlungen priorisiert (Step 6)
+  5. Handlungsempfehlungen priorisiert (Step 6), darunter eigene Abschnitte „Architekturvorschläge" und „Konflikte an Kreuzungspunkten" — auch wenn sie leer sind
   6. Auswirkung auf Spezifikation (Spec-Sektion → Aenderung table)
   7. Quellen (every external source actually used)
 - Header: `**Stand:** <today>`, `**Methodik:** AIAG-VDA 7-Step, Action Priority`, `**Bezug:** [specification.md](specification.md)`.
@@ -159,8 +178,9 @@ The FMEA is not done until findings live in the graph, not just the document.
 ## Rules
 - **So viele Tests wie nötig, der Rest ist Verlinkung (CR-GC-760).** Jede Risiko-REQ braucht ihren `verify` (R-01, FM-03) — das heißt nicht: einen eigenen Test. Entscheide je Risiko: belegt der Test der Gegenmaßnahme, dass das Risiko beherrscht ist, dann verweise auf ihn (`TEST -verify-> REQ-risiko, REQ-massnahme`). Nur wo er das nicht belegt, entsteht ein neuer Test. Kein wortgleicher zweiter Test.
 - **Die Wirkkette ist die Analyse-Einheit.** Ein Fehlermodus wird gegen das *Ergebnis der Kette* formuliert, nicht gegen ein Bauteil. Ohne Kettenprofil (Step 2) kein Step 4.
-- **Kennzahl vor Kreativität.** Importgrad und Linearität sagen, wo die Kette schwach ist; die frei abgeleiteten Fehlermodi kommen danach und füllen nur, was die vier Quellen nicht abgedeckt haben.
-- **Kein Doppelurteil mit dem Regelsatz.** Was `FC-02`…`FC-04`, `R-01`, `FM-01`…`FM-03` schon melden, wird zitiert, nicht neu behauptet. Was der Regelsatz *nicht* prüft (Linearität, Importgrad, doppelte Zustandsgrößen), wird als Analystenbefund gekennzeichnet — mit der Berechnung daneben.
+- **Ort vor Kreativität.** Die Orte aus `graph_metrics` sagen, wo die Kette schwach ist; die frei abgeleiteten Fehlermodi kommen danach und füllen nur, was die sechs Quellen nicht abgedeckt haben.
+- **Eine Rechnung.** Du rechnest keine Kettenkennzahl selbst. Fehlt dir ein Ort, ist das ein Befund an `chainMetrics`, kein Anlass für eine Nebenrechnung.
+- **Kein Doppelurteil mit dem Regelsatz.** Was `FC-02`…`FC-04`, `R-01`, `FM-01`…`FM-03` schon melden, wird zitiert, nicht neu behauptet. Was der Regelsatz *nicht* prüft (doppelte Zustandsgrößen, Zustandsgrößen ohne Werte), wird als Analystenbefund gekennzeichnet.
 - **Function-based, not part-based:** start from what each function must do, then how it fails — not from a parts list. (AIAG-VDA core principle.)
 - **Severity drives priority.** A safety-critical effect (S 9–10) is High/Medium AP even at low occurrence; do not let a good Detection score hide it.
 - **No symptom-fixes.** Mitigations address root causes (Step 4 FC), consistent with the project's Root-Cause-Debugging rule.

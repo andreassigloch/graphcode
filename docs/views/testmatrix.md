@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 145 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 146 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -37,6 +37,7 @@
 | `REQ-docs-taxonomy` | ✓ | ⚠ nie gelaufen | `TEST-docs-taxonomy` |
 | `REQ-done-iff-no-focus` | ✓ | ⚠ nie gelaufen | `TEST-generation-statemachine` |
 | `REQ-export-no-clobber` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-mcp-export-guard` |
+| `REQ-fmea-reads-places` | ✓ | ✓ passed | `TEST-fmea-reads-places` |
 | `REQ-formatE-diff-dialect` | ✓ | ✓ passed | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` |
 | `REQ-formatE-parity` | ✓ | ⚠ 4/5 passed | `TEST-formate-binding` · `TEST-formate-ops` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` |
 | `REQ-frame-binding` | ✓ | ⚠ 1/2 passed | `TEST-code-quality` · `TEST-graph-realize` |
@@ -154,8 +155,8 @@
 | `REQ-versioned-cache` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-viewer-owned-by-repo` | ✓ | ✓ passed | `TEST-gve-autostart` · `TEST-gve-supervision` |
 
-Coverage: 145/145 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 113/145 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 146/146 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 114/146 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -167,6 +168,7 @@ Belegt: 113/145 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-audit-trail` → `FUNC-se-retro` | `FLOW-audit-entries` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-author-req` → `FUNC-mutate` | `FLOW-mutate-cmd-author-req` | `FCHAIN-skill-authoring` | ⚠ keine Abdeckung |  |  |
 | `FUNC-author-uc` → `FUNC-mutate` | `FLOW-mutate-cmd-author-uc` | `FCHAIN-skill-authoring` | ⚠ keine Abdeckung |  |  |
+| `FUNC-chain-metrics` → `FUNC-se-fmea` | `FLOW-chain-metrics` | `FCHAIN-skill-authoring` | ⚠ keine Abdeckung |  |  |
 | `FUNC-check-code-conformance` → `FUNC-compute-readiness` | `FLOW-conformance-findings` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-claim-store-lock` → `FUNC-create-harness` | `FLOW-store-ownership` | `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-claim-store-lock` → `FUNC-graph-store` | `FLOW-store-ownership` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
@@ -279,4 +281,4 @@ Belegt: 113/145 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-view-rtm` → `FUNC-export-markdown` | `FLOW-query-request-view-rtm` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-zug-bericht` → `FUNC-graph-suggest` | `FLOW-zug-bericht` | `FCHAIN-steering-loop` | ⚠ keine Abdeckung |  |  |
 
-> 52/117 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 65 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 52/118 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 66 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

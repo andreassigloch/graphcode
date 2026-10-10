@@ -48,7 +48,7 @@
 
 - **Gegateter Agent (MCP-stdio-Client)** (`ACTOR-agent`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
   - Ein Coding-Agent unter graphcode-Kontrolle: MCP-stdio-Client, nutzt den Graphen statt grep, jede Aenderung laeuft durch dasselbe Apply-Gate, der Autor wird nur protokolliert. Bewusst NICHT namentlich modelliert — agent-agnostisch ist eine verriegelte Zusage (CLAUDE.md), kein Ziel. Heute belegt durch Claude Code (interaktiv), OpenCode (headless BYOK-Runtime, treibt Spec/Impl autonom) und die Architektur-Rolle, die Interface-Aenderungen eskaliert: Impact-Analyse, Gate-Entscheidung, Dependents koordinieren. Diese Rollen unterscheiden sich in der Autoritaet, nicht in der Schnittstelle. (CR-GC-455)
-- **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-deterministic-steering` · `UC-live-graph-view`
+- **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-live-graph-view`
   - SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)
 - **Learning-Engine** (`ACTOR-learning-engine`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-reduced-llm`
   - Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen als Lerneingang, beantwortet eine Lern-Frage von graph_suggest und nextStep und liefert je Kandidat ein Urteil zurueck. Sie schreibt KEINE Konfiguration: die Urteilsschwellen bleiben der Vertrag des Menschen. Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455, Andockpunkt CR-GC-465)
@@ -61,13 +61,13 @@
 
 Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch dasselbe Apply-Gate laeuft und gegen dieselben Regeln geprueft wird.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-owner`
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-arch-fitness` → `FUNC-claim-store-lock` → `FUNC-create-harness` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-session-shutdown` → `FUNC-tool-context` → `FUNC-zug-bericht`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (serialize∘parse): `FUNC-decode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-read-tools`
-- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade`
+- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 
@@ -406,6 +406,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-770` | n/a | Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt | `FUNC-vorschlag` |
 | `CR-GC-772` | n/a | Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt | `MOD-surface` |
 | `CR-GC-773` | n/a | Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche | `MOD-loop` |
+| `CR-GC-774` | n/a | FMEA-Skill nimmt die Orte der Kettenkennzahlen als Eingang; Reichweite einer Funktion geht in die Bewertung | `FUNC-chain-metrics` · `FUNC-se-fmea` · `REQ-fmea-reads-places` |
 | `CR-GC-775` | n/a | Executor im Host auslagern: Zugaenge entfernen (graph_delegate, graphcode run, Schalter, Config-Abschnitt) | `MOD-loop` · `MOD-surface` |
 | `CR-GC-776` | n/a | Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen | `MOD-kernel-measure` · `MOD-loop` |
 | `CR-GC-777` | n/a | Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen) | `FUNC-generation-step` · `FUNC-graph-suggest` |

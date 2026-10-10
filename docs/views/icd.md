@@ -70,7 +70,7 @@
 | `FLOW-audit-entries` | `FUNC-audit-trail` | `ACTOR-owner` · `FUNC-se-retro` |
 | `FLOW-audit-record` | `FUNC-mutate` | `FUNC-audit-stats` · `FUNC-audit-trail` |
 | `FLOW-audit-report` | `FUNC-audit-stats` | `ACTOR-owner` · `FUNC-se-retro` |
-| `FLOW-chain-metrics` | `FUNC-chain-metrics` | `ACTOR-dashboard` |
+| `FLOW-chain-metrics` | `FUNC-chain-metrics` | `ACTOR-dashboard` · `FUNC-se-fmea` |
 | `FLOW-channel-dimension-template` | `ACTOR-owner` | `FUNC-generation-step` |
 | `FLOW-channel-fit-advisory` | `FUNC-fit-advisory` | `ACTOR-agent` |
 | `FLOW-channel-gate-protocol` | `ACTOR-owner` | `FUNC-generation-step` |

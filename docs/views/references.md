@@ -722,6 +722,9 @@
 | `CR-GC-770` | relation | `FUNC-vorschlag` |
 | `CR-GC-772` | relation | `MOD-surface` |
 | `CR-GC-773` | relation | `MOD-loop` |
+| `CR-GC-774` | relation | `FUNC-chain-metrics` |
+| `CR-GC-774` | relation | `FUNC-se-fmea` |
+| `CR-GC-774` | relation | `REQ-fmea-reads-places` |
 | `CR-GC-775` | relation | `MOD-loop` |
 | `CR-GC-775` | relation | `MOD-surface` |
 | `CR-GC-776` | relation | `MOD-kernel-measure` |
@@ -854,6 +857,7 @@
 | `FCHAIN-schema-migration` | compose | `FUNC-schema-guard` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-uc` |
+| `FCHAIN-skill-authoring` | compose | `FUNC-chain-metrics` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-close-violations` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-mutate` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-conops` |
@@ -916,6 +920,7 @@
 | `FLOW-audit-report` | io | `FUNC-se-retro` |
 | `FLOW-audit-report` | relation | `SCHEMA-audit-stats` |
 | `FLOW-chain-metrics` | io | `ACTOR-dashboard` |
+| `FLOW-chain-metrics` | io | `FUNC-se-fmea` |
 | `FLOW-chain-metrics` | relation | `SCHEMA-chain-metrics` |
 | `FLOW-channel-dimension-template` | io | `FUNC-generation-step` |
 | `FLOW-channel-dimension-template` | relation | `SCHEMA-steering-channel` |
@@ -1616,6 +1621,7 @@
 | `FUNC-se-conops` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-fmea` | allocate | `MOD-agent-surface` |
 | `FUNC-se-fmea` | io | `FLOW-mutate-cmd-se-fmea` |
+| `FUNC-se-fmea` | satisfy | `REQ-fmea-reads-places` |
 | `FUNC-se-fmea` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-generate` | allocate | `MOD-agent-surface` |
 | `FUNC-se-generate` | io | `FLOW-mutate-cmd-se-generate` |
@@ -1912,6 +1918,7 @@
 | `TEST-fit-advisory` | verify | `REQ-quality-metric` |
 | `TEST-fit-advisory` | verify | `REQ-steering-from-metrics` |
 | `TEST-flow-contracts` | verify | `SCHEMA-export-pending` |
+| `TEST-fmea-reads-places` | verify | `REQ-fmea-reads-places` |
 | `TEST-formate-binding` | verify | `REQ-formatE-parity` |
 | `TEST-formate-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-formate-name` | verify | `REQ-formatE-diff-dialect` |
@@ -2142,6 +2149,7 @@
 | `UC-code-quality` | compose | `REQ-confidence-tier` |
 | `UC-code-quality` | compose | `REQ-dashboard-ontology-sync` |
 | `UC-code-quality` | compose | `REQ-deterministic-serialization` |
+| `UC-code-quality` | compose | `REQ-fmea-reads-places` |
 | `UC-code-quality` | compose | `REQ-formatE-diff-dialect` |
 | `UC-code-quality` | compose | `REQ-formatE-parity` |
 | `UC-code-quality` | compose | `REQ-interactive-capture-suggest` |

@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 145 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 146 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -728,7 +728,49 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.4  `FUNC-close-violations` — Skill se:close-violations
+##### 3.1.5.4  `FUNC-chain-metrics` — chainMetrics(graph)
+
+> auch in: `FCHAIN-dashboard-metrics` · `FUNC-block-messwerk`
+
+Projiziert den Graphen auf die Kennzahlen je Wirkkette: Gesamtlaenge, Verzweigungsgrad, Modulgrenzen, Rueckkopplungen, geteilte Knoten und Engstellen als obere Schranke. Dazu die Orte je Kette: Mitglieder der Rueckkopplungen, geteilte Funktionen, Importe und Uebergaben an eigenen Funktionen, Modulgrenzen je Modulpaar mit ihren Vertraegen, Zulauf. Eine nicht bewertbare Kette traegt keine Zahl, sondern den Grund; die Bewertbarkeitsquote reist im selben Ergebnis. Synchrone Tiefe und Fehlerpfad-Tiefe sind in dieser Stufe immer null. Urteilt nie: keine Regel, keine Schwelle. Fremdpaket @sigloch/contracts, deshalb external.
+
+io ◀ `FLOW-graph-state` · io ▶ `FLOW-chain-metrics` · allocate ▶ `MOD-projections`
+
+###### `REQ-chain-metrics` — Kettenkennzahlen mit Bewertbarkeitsquote
+
+graph_metrics MUSS je Wirkkette die Kettenkennzahlen liefern oder, wenn die Kette nicht bewertbar ist, den Grund statt jeder Zahl; die Bewertbarkeitsquote, bewertbare durch alle Ketten, MUSS in derselben Antwort stehen. Gerechnet wird an EINER Stelle in contracts; das Werkzeug zeigt nur an.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-chain-metrics` · allocate ▶ `MOD-projections`
+
+##### 3.1.5.5  `FUNC-se-fmea` — Skill se-fmea
+
+> auch in: `FUNC-block-urteilsarbeit`
+
+Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA mit der Wirkkette als Einheit. Liest die Orte der Kette aus graph_metrics und rechnet keine Kennzahl selbst; Befunde gehen als Anforderung mit Test durchs Gate, Architekturvorschlaege und Konflikte an Kreuzungspunkten in den Text des CR.
+
+io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-fmea` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-fmea-reads-places` — FMEA liest die Orte der Kette
+
+Der Skill se-fmea MUSS das Kettenprofil und die Orte einer Wirkkette aus graph_metrics lesen und DARF keine Kettenkennzahl selbst rechnen. Eine nicht bewertbare Kette analysiert er nicht; die Reichweite einer Funktion geht nicht in die Schwere ein.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-fmea-reads-places` (conformance) · satisfy ◀ `FUNC-se-fmea` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
+
+> auch unter: `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
+
+Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+
+##### 3.1.5.6  `FUNC-close-violations` — Skill se:close-violations
 
 > auch in: `FUNC-block-q-improvement`
 
@@ -746,7 +788,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.5  `FUNC-se-conops` — Skill se-conops
+##### 3.1.5.7  `FUNC-se-conops` — Skill se-conops
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -764,25 +806,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.6  `FUNC-se-fmea` — Skill se-fmea
-
-> auch in: `FUNC-block-urteilsarbeit`
-
-Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA auf System/Subsystem, Befunde in Graph und Spec.
-
-io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-fmea` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
-
-> auch unter: `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile`
-
-Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
-
-##### 3.1.5.7  `FUNC-se-generate` — Skill se:generate
+##### 3.1.5.8  `FUNC-se-generate` — Skill se:generate
 
 > auch in: `FUNC-block-autorieren`
 
@@ -808,7 +832,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.8  `FUNC-se-irr` — Skill se-irr
+##### 3.1.5.9  `FUNC-se-irr` — Skill se-irr
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -826,7 +850,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.9  `FUNC-se-optimize` — Skill se:optimize
+##### 3.1.5.10  `FUNC-se-optimize` — Skill se:optimize
 
 > auch in: `FUNC-block-optimierung`
 
@@ -844,7 +868,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.10  `FUNC-se-plan` — Skill se-plan
+##### 3.1.5.11  `FUNC-se-plan` — Skill se-plan
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -872,7 +896,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.11  `FUNC-se-top-level` — Skill se:top-level
+##### 3.1.5.12  `FUNC-se-top-level` — Skill se:top-level
 
 > auch in: `FUNC-block-autorieren`
 
@@ -890,7 +914,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.12  `FUNC-se-trade` — Skill se-trade
+##### 3.1.5.13  `FUNC-se-trade` — Skill se-trade
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -2160,9 +2184,9 @@ Nach einer Aenderung rechnet das Messwerk Modulmetrik und Funktionskritikalitaet
 
 ##### 3.5.1.1  `FUNC-chain-metrics` — chainMetrics(graph)
 
-> auch in: `FUNC-block-messwerk`
+> auch in: `FCHAIN-skill-authoring` · `FUNC-block-messwerk`
 
-Projiziert den Graphen auf die Kennzahlen je Wirkkette: Gesamtlaenge, Verzweigungsgrad, Modulgrenzen, Rueckkopplungen, geteilte Knoten und Engstellen als obere Schranke. Eine nicht bewertbare Kette traegt keine Zahl, sondern den Grund; die Bewertbarkeitsquote reist im selben Ergebnis. Synchrone Tiefe und Fehlerpfad-Tiefe sind in dieser Stufe immer null. Urteilt nie: keine Regel, keine Schwelle. Fremdpaket @sigloch/contracts, deshalb external.
+Projiziert den Graphen auf die Kennzahlen je Wirkkette: Gesamtlaenge, Verzweigungsgrad, Modulgrenzen, Rueckkopplungen, geteilte Knoten und Engstellen als obere Schranke. Dazu die Orte je Kette: Mitglieder der Rueckkopplungen, geteilte Funktionen, Importe und Uebergaben an eigenen Funktionen, Modulgrenzen je Modulpaar mit ihren Vertraegen, Zulauf. Eine nicht bewertbare Kette traegt keine Zahl, sondern den Grund; die Bewertbarkeitsquote reist im selben Ergebnis. Synchrone Tiefe und Fehlerpfad-Tiefe sind in dieser Stufe immer null. Urteilt nie: keine Regel, keine Schwelle. Fremdpaket @sigloch/contracts, deshalb external.
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-chain-metrics` · allocate ▶ `MOD-projections`
 
@@ -4730,9 +4754,9 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 ###### 3.10.2.6.2  `FUNC-chain-metrics` — chainMetrics(graph)
 
-> auch in: `FCHAIN-dashboard-metrics`
+> auch in: `FCHAIN-dashboard-metrics` · `FCHAIN-skill-authoring`
 
-Projiziert den Graphen auf die Kennzahlen je Wirkkette: Gesamtlaenge, Verzweigungsgrad, Modulgrenzen, Rueckkopplungen, geteilte Knoten und Engstellen als obere Schranke. Eine nicht bewertbare Kette traegt keine Zahl, sondern den Grund; die Bewertbarkeitsquote reist im selben Ergebnis. Synchrone Tiefe und Fehlerpfad-Tiefe sind in dieser Stufe immer null. Urteilt nie: keine Regel, keine Schwelle. Fremdpaket @sigloch/contracts, deshalb external.
+Projiziert den Graphen auf die Kennzahlen je Wirkkette: Gesamtlaenge, Verzweigungsgrad, Modulgrenzen, Rueckkopplungen, geteilte Knoten und Engstellen als obere Schranke. Dazu die Orte je Kette: Mitglieder der Rueckkopplungen, geteilte Funktionen, Importe und Uebergaben an eigenen Funktionen, Modulgrenzen je Modulpaar mit ihren Vertraegen, Zulauf. Eine nicht bewertbare Kette traegt keine Zahl, sondern den Grund; die Bewertbarkeitsquote reist im selben Ergebnis. Synchrone Tiefe und Fehlerpfad-Tiefe sind in dieser Stufe immer null. Urteilt nie: keine Regel, keine Schwelle. Fremdpaket @sigloch/contracts, deshalb external.
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-chain-metrics` · allocate ▶ `MOD-projections`
 
@@ -5122,9 +5146,17 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA auf System/Subsystem, Befunde in Graph und Spec.
+Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA mit der Wirkkette als Einheit. Liest die Orte der Kette aus graph_metrics und rechnet keine Kennzahl selbst; Befunde gehen als Anforderung mit Test durchs Gate, Architekturvorschlaege und Konflikte an Kreuzungspunkten in den Text des CR.
 
-io ◀ `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-fmea` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-fmea` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-fmea-reads-places` — FMEA liest die Orte der Kette
+
+Der Skill se-fmea MUSS das Kettenprofil und die Orte einer Wirkkette aus graph_metrics lesen und DARF keine Kettenkennzahl selbst rechnen. Eine nicht bewertbare Kette analysiert er nicht; die Reichweite einer Funktion geht nicht in die Schwere ein.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-fmea-reads-places` (conformance) · satisfy ◀ `FUNC-se-fmea` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
@@ -5626,7 +5658,7 @@ io ◀ `FUNC-audit-stats` · io ▶ `ACTOR-owner` · `FUNC-se-retro` · schema �
 
 Kennzahlen je Wirkkette und die Bewertbarkeitsquote, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss: die Grundgesamtheit ist die FCHAIN, nicht MOD und nicht FUNC. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahlen in der Antwort, rendert sie aber noch nicht.
 
-io ◀ `FUNC-chain-metrics` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-chain-metrics`
+io ◀ `FUNC-chain-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-se-fmea` · schema ▶ `SCHEMA-chain-metrics`
 
 ### 4.7  `FLOW-channel-dimension-template` — Kanal: Dimensions-Vorlage
 
@@ -6364,7 +6396,7 @@ schema ◀ `FLOW-audit-report`
 
 ### 5.4  `SCHEMA-chain-metrics` — ChainMetrics
 
-chains: je FCHAIN chainId, chainName, measurable und entweder length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external.
+chains: je FCHAIN chainId, chainName, measurable und entweder die Zahlen length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth mit den Orten memberCount, fanIn, loops, shared, boundaries, imports, handovers oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. Die Zahlen sind die Laengen der Ortslisten. measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-chain-metrics`
 
@@ -7266,625 +7298,631 @@ Vertragstest SCHEMA-model-answer (openai/anthropic normalisiert, abweichendes Wi
 
 verify ▶ `SCHEMA-export-pending` · testRefs: `tests/flow-contracts.test.ts`
 
-### 8.36  `TEST-formate-binding` — Bindung ueber Format-E kommt an
+### 8.36  `TEST-fmea-reads-places` — FMEA-Skill liest Orte statt zu rechnen
+
+Der Skill-Text nennt die Ortsfelder, die chainMetrics an der bewertbaren Zeile liefert, und keine Rechenvorschrift fuer eine Kettenkennzahl.
+
+verify ▶ `REQ-fmea-reads-places` · testRefs: `tests/skill-fmea-orte.test.ts`
+
+### 8.37  `TEST-formate-binding` — Bindung ueber Format-E kommt an
 
 Abnahme der Datei tests/mutate.formate-binding.test.ts: eine per Format-E gesetzte realRef oder testRefs erreicht das Gate wirklich. Der gemessene Schaden war das Gegenteil: der Batch kam mit Bindungs-Verstoessen fuer jeden Knoten zurueck, obwohl die Bindung im Text stand.
 
 verify ▶ `REQ-formatE-parity` · `REQ-test-runnable-binding` · testRefs: `tests/mutate.formate-binding.test.ts`
 
-### 8.37  `TEST-formate-name` — Name-Attribut ist entdeckbar
+### 8.38  `TEST-formate-name` — Name-Attribut ist entdeckbar
 
 Abnahme der Datei tests/mutate.formate-name.test.ts: der Name reist als eigenes Attribut, und der Rueckfall auf die uid als Namen meldet sich laut. Der gemessene Schaden in einem Fremdrepo waren 87 von 134 Knoten, die ihre uid als Namen trugen.
 
 verify ▶ `REQ-formatE-diff-dialect` · testRefs: `tests/mutate.formate-name.test.ts`
 
-### 8.38  `TEST-formate-ops` — Format-E-Operationen und ihre Beschreibung
+### 8.39  `TEST-formate-ops` — Format-E-Operationen und ihre Beschreibung
 
 Abnahme der Datei tests/mutate.formate-ops.test.ts: jedes Praefix der Operationssprache laeuft durch dasselbe Gate, und die formatE-Beschreibung am Werkzeug nennt genau die Praefixe, die der Code annimmt. Nachgetragen, weil die Datei ohne Knoten ausserhalb jeder Testauswahl lag (Schlupf CR-GC-722).
 
 verify ▶ `REQ-formatE-parity` · `REQ-mcp-tool-registry` · testRefs: `tests/mutate.formate-ops.test.ts`
 
-### 8.39  `TEST-gate-urteilt-und-speichert` — Das Gate urteilt und speichert
+### 8.40  `TEST-gate-urteilt-und-speichert` — Das Gate urteilt und speichert
 
 Die Antwort des Gates traegt keinen Bericht und das Gate importiert das Messwerk nicht; ein angenommener Zug gibt den Stand davor und danach heraus, ein geblockter nicht; der Bericht traegt seinen Vertrag; scheitert die Messung, bleibt der Zug angewandt und die Antwort nennt den fehlenden Bericht. (CR-GC-778)
 
 verify ▶ `REQ-bericht-ist-kein-urteil` · `SCHEMA-zug-bericht` · testRefs: `tests/gate.urteilt-und-speichert.test.ts`
 
-### 8.40  `TEST-generation-statemachine` — Zustandsmaschine ueber den Korpus
+### 8.41  `TEST-generation-statemachine` — Zustandsmaschine ueber den Korpus
 
 Eigenschaftstest: done = (focusKey == null) fuer fuenf Auto-Graphen, das sigllm-Golden und den Endstand seines Hand-Trails; jede Fokus-Regel ist im Gate-Katalog; nach defer aendert sich der Prompt; das Golden ist done mit genau den Abnahmen AF-05, BW-02, FM-03, MS-01, RD-05 und ohne sie nicht.
 
 verify ▶ `REQ-done-iff-no-focus` · testRefs: `tests/generate.statemachine.test.ts`
 
-### 8.41  `TEST-graph-authoring-guide` — Legale Kanten aus dem Meta-Modell
+### 8.42  `TEST-graph-authoring-guide` — Legale Kanten aus dem Meta-Modell
 
 Abnahme der Datei tests/mcp.authoring-guide.test.ts: der Autoren-Leitfaden nennt die legalen anliegenden Kanten aus den importierten TRACE_PATTERNS, nie aus einem lokalen Fork. Er ist der Schreib-Zwilling von graph_context und wird VOR dem Anlegen eines Knotens gefragt.
 
 verify ▶ `REQ-import-se-ontology` · `REQ-structural-rule-shared` · testRefs: `tests/mcp.authoring-guide.test.ts`
 
-### 8.42  `TEST-graph-context-replaces-reading` — Kontext-Slice als vollstaendige Definition-of-Done
+### 8.43  `TEST-graph-context-replaces-reading` — Kontext-Slice als vollstaendige Definition-of-Done
 
 Assertiert, dass der Kontext-Slice Spezifikation, verifizierenden Test, Datenfluesse und Modul-Zuordnung des Knotens enthaelt und begrenzt bleibt.
 
 verify ▶ `REQ-graph-context-replaces-reading` · testRefs: `tests/mcp.context.test.ts`
 
-### 8.43  `TEST-graph-integrity` — Graph-Integritaets-Test
+### 8.44  `TEST-graph-integrity` — Graph-Integritaets-Test
 
 Der committete Graph besteht den kanonischen Validator (Typen, referenzielle Integritaet, doppelte UIDs), ist kanonisch serialisiert und traegt keinen verschachtelten attributes-Schluessel. Paarlegalitaet prueft R-18, nicht dieser Validator. (CR-GC-200, CR-GC-531)
 
 verify ▶ `REQ-graph-integrity` · testRefs: `tests/graph-integrity.test.ts`
 
-### 8.44  `TEST-graph-is-ssot` — Graph-is-SSOT-Test
+### 8.45  `TEST-graph-is-ssot` — Graph-is-SSOT-Test
 
 Der committete graphcode.graph.json ist deterministischer Export des Kuzu-Stores; Hand-Edit wird erkannt und verworfen, Views tragen GENERATED-Header. (REQ-graph-is-ssot)
 
 verify ▶ `REQ-graph-is-ssot` · testRefs: `tests/harness.import.test.ts`
 
-### 8.45  `TEST-graph-metrics` — Modulkennzahlen je Modul
+### 8.46  `TEST-graph-metrics` — Modulkennzahlen je Modul
 
 Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen. Dazu die Kettenkennzahlen am echten Werkzeug (CR-GC-767): die Referenzkette Zahlung ausloesen ergibt Laenge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rueckkopplungen, 1 geteilten Knoten; die Gegenprobe mit Schleife und Ast laesst die Werte umschlagen; eine Kette ohne Eingang traegt den Grund und zaehlt im Nenner der Quote; auf dem eigenen Modell stimmt jede Kette mit dem direkten Aufruf der contracts-Funktion ueberein.
 
 verify ▶ `REQ-chain-metrics` · `REQ-quality-metric` · `REQ-single-measurement-path` · `SCHEMA-chain-metrics` · testRefs: `tests/metrics.test.ts`
 
-### 8.46  `TEST-graph-realize` — Flaches Binden ueber das Gate
+### 8.47  `TEST-graph-realize` — Flaches Binden ueber das Gate
 
 Abnahme der Datei tests/mcp.realize.test.ts: Binden ueber graph_mutate mit Format-E (~ FUNC-x und @realRef, optional @testRefs) setzt realRef und testRefs durch das Gate, und das Ergebnis traegt den Bindungsreport refs mit resolved, introduced und openRefs, sobald der Batch R-19, R-20 oder R-26 beruehrt. Ein ~ auf eine unbekannte uid wird abgelehnt statt einen Phantomknoten anzulegen. (CR-GC-685)
 
 verify ▶ `REQ-frame-binding` · `REQ-gate-only-writes` · `REQ-test-runnable-binding` · testRefs: `tests/mcp.realize.test.ts`
 
-### 8.47  `TEST-graph-tests-operational` — Selektiver Testset auf dem echten SSOT
+### 8.48  `TEST-graph-tests-operational` — Selektiver Testset auf dem echten SSOT
 
 Abnahme der Datei tests/mcp.tests-operational.test.ts: der reale committete Graph wird durchs Gate in einen Disk-Kuzu geseedet, ein CODE-ChangeSet loest ueber die gerichtete code-REQ-TEST-Traversierung die vollstaendige Menge betroffener Testdateien auf, jeder lauffaehige TEST zeigt auf eine existierende Datei, und konzeptionelle Knoten erscheinen unter unresolved. Eigenes Testobjekt neben TEST-test-runnable-binding, weil es einen eigenen Aufbau hat (CR-GC-383).
 
 verify ▶ `REQ-graph-tests-operational` · testRefs: `tests/mcp.tests-operational.test.ts`
 
-### 8.48  `TEST-graph-time-travel` — Time-Travel-Test: Snapshot-Freshness + Recall
+### 8.49  `TEST-graph-time-travel` — Time-Travel-Test: Snapshot-Freshness + Recall
 
 Realer Disk-Kuzu: mutate setzt den Drift-Marker, graph_export loescht ihn und materialisiert den Snapshot; Reseed eines aelteren Snapshots stellt exakt jenen Stand wieder her (git checkout + reseed = Recall) und hinterlaesst einen sauberen Working-State. (verifiziert REQ-graph-snapshot-per-commit, REQ-graph-state-recall)
 
 verify ▶ `REQ-graph-snapshot-per-commit` · `REQ-graph-state-recall` · testRefs: `tests/graph-timetravel.test.ts`
 
-### 8.49  `TEST-gve-autostart` — Autostart-Wachen des Viewers
+### 8.50  `TEST-gve-autostart` — Autostart-Wachen des Viewers
 
 Abnahme der Datei tests/gve-autostart.test.ts: der gewaehlte Host startet den Viewer nur, wenn die Wachen es erlauben. Geprueft werden Opt-out per Umgebung, Unterdrueckung im Testlauf und die Erkennung einer bereits laufenden Instanz ueber die erreichbare dashboard.url.
 
 verify ▶ `REQ-single-kuzu-owner` · `REQ-viewer-owned-by-repo` · testRefs: `tests/gve-autostart.test.ts`
 
-### 8.50  `TEST-gve-supervision` — Viewer wird am Leben gehalten
+### 8.51  `TEST-gve-supervision` — Viewer wird am Leben gehalten
 
 Abnahme der Datei tests/gve-supervision.test.ts: der Viewer gehoert dem Repo. Geprueft werden Neustart nach unbemerktem Tod samt Versuchsgrenze, dass zwei Sitzungen nur einen Viewer starten, dass das Ende einer Sitzung ihn stehen laesst solange eine zweite lebt, und dass erst die letzte ihn beendet — und nur den, den graphcode selbst gestartet hat.
 
 verify ▶ `REQ-graceful-degradation` · `REQ-viewer-owned-by-repo` · `SCHEMA-session-registry` · testRefs: `tests/gve-supervision.test.ts`
 
-### 8.51  `TEST-help-content-coverage` — Hilfe deckt jedes lebende Token
+### 8.52  `TEST-help-content-coverage` — Hilfe deckt jedes lebende Token
 
 Abnahme der Datei tests/help-content.test.ts: die verfasste Plain- und SE-Ebene deckt jedes im Dashboard lebende Token, geprueft gegen die Registries statt gegen eine Handzaehlung. Eine neue Regel oder ein neues Artefakt faellt nur auf, wenn ihr Hilfe-Eintrag fehlt.
 
 verify ▶ `REQ-readiness-transparent` · testRefs: `tests/help-content.test.ts`
 
-### 8.52  `TEST-help-contextual-dedup` — Eine Massnahme je Regel, nicht je Verstoss
+### 8.53  `TEST-help-contextual-dedup` — Eine Massnahme je Regel, nicht je Verstoss
 
 Abnahme der Datei tests/help.contextual-dedup.test.ts: graph_help ohne Token liefert eine Massnahme je Regel statt je Verstoss. Da jede Massnahme eine vollstaendige Kopie des Hilfe-Eintrags traegt, waere die Verstoss-Variante ein Vielfaches an Text fuer dieselbe Aussage.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/help.contextual-dedup.test.ts`
 
-### 8.53  `TEST-help-projection` — Hilfe ist reine Projektion
+### 8.54  `TEST-help-projection` — Hilfe ist reine Projektion
 
 Abnahme der Datei tests/help.test.ts: die Hilfe rechnet ohne Datenbank. Jeder Eintrag traegt alle drei Ebenen, die Regel-Hilfe deckt die lebenden V3_RULES, und die kontextuelle Hilfe rankt Regel- und Erstellungs-Blocker gemeinsam, Fehler zuerst.
 
 verify ▶ `REQ-readiness-transparent` · testRefs: `tests/help.test.ts`
 
-### 8.54  `TEST-help-tool` — graph_help ueber MCP
+### 8.55  `TEST-help-tool` — graph_help ueber MCP
 
 Abnahme der Datei tests/mcp.help.test.ts: graph_help erreicht die Hilfe-Datenschicht ueber MCP. Realer Disk-Kuzu auf einem Temp-Repo, ein Graph der eine Warnung ausloest, und der Nachweis, dass der Aufruf ohne Argument die kontextuellen Massnahmen liefert.
 
 verify ▶ `REQ-mcp-tool-registry` · `REQ-readiness-transparent` · testRefs: `tests/mcp.help.test.ts`
 
-### 8.55  `TEST-hooks` — Hook-Extension-Points-Test
+### 8.56  `TEST-hooks` — Hook-Extension-Points-Test
 
 registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102)
 
 verify ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · testRefs: `tests/hooks.extension-points.test.ts`
 
-### 8.56  `TEST-host-shim` — Ein Schreibkanal ueber zwei Prozesse
+### 8.57  `TEST-host-shim` — Ein Schreibkanal ueber zwei Prozesse
 
 Abnahme der Datei tests/host-shim.test.ts: die Zwei-Prozess-Topologie auf Socket-Ebene, ein echter Host mit Store und ein echter Proxy-Registry-Client. Der Verlierer der Wahl bedient dieselbe Oberflaeche ueber stdio, ohne einen zweiten Schreibkanal zu oeffnen.
 
 verify ▶ `REQ-single-kuzu-owner` · `REQ-single-write-door` · `REQ-store-owner-lifecycle` · testRefs: `tests/host-shim.test.ts`
 
-### 8.57  `TEST-impact-subgraph` — graph_impact Subgraph-Test
+### 8.58  `TEST-impact-subgraph` — graph_impact Subgraph-Test
 
 graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query)
 
 verify ▶ `REQ-post-agent-query` · `REQ-pre-agent-query` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-subgraph-slicing` · testRefs: `tests/mcp.impact.test.ts`
 
-### 8.58  `TEST-import-code-verb` — Abnahme des import-code-Verbs
+### 8.59  `TEST-import-code-verb` — Abnahme des import-code-Verbs
 
 Abnahme der Datei tests/import-code-verb.test.ts: graphcode import-code faehrt den deterministischen Code-Import mit Reseed-Semantik ueber denselben executeImportCode-Pfad wie die CLI. Realer Disk-Store, echte Fixture-Dateien, die Dateisuche laeuft mit.
 
 verify ▶ `REQ-model-exchange-post` · `REQ-model-exchange-pre` · `REQ-no-extraction` · `REQ-post-import` · testRefs: `tests/import-code-verb.test.ts`
 
-### 8.59  `TEST-import-invariant` — REQ-mit-Test-Invariante auf dem Import-Pfad
+### 8.60  `TEST-import-invariant` — REQ-mit-Test-Invariante auf dem Import-Pfad
 
 Abnahme der Datei tests/harness.import-invariant.test.ts: der Massen-Import meldet jede REQ ohne verifizierenden TEST und verweigert bei entsprechender Option den Import ganz. Der Bypass am Gate vorbei ist damit nie stumm, so waren die historischen unverifizierten REQ hereingekommen.
 
 verify ▶ `REQ-bootstrap-through-gate` · testRefs: `tests/harness.import-invariant.test.ts`
 
-### 8.60  `TEST-import-rejected-traces` — Seed mit musterfremder Kante
+### 8.61  `TEST-import-rejected-traces` — Seed mit musterfremder Kante
 
 Abnahme der Datei tests/harness.import-rejected-traces.test.ts: der Seed laedt einen Graphen mit ACTOR -io-> UC, haelt die Kante zurueck und nennt sie; graph_readiness fuehrt sie auch nach Neustart; graph_export verweigert mit Kante und Reparaturweg, bis delete-edge durchs Werkzeug sie annimmt; das Gate blockt dieselbe Kante als neue (R-18).
 
 verify ▶ `REQ-held-back-traces-named` · `SCHEMA-rejected-trace` · testRefs: `tests/harness.import-rejected-traces.test.ts`
 
-### 8.61  `TEST-import-sys-anchor` — Genau ein SYS-Anker nach jedem Import
+### 8.62  `TEST-import-sys-anchor` — Genau ein SYS-Anker nach jedem Import
 
 Abnahme der Datei tests/harness.import-sys-anchor.test.ts: jeder Import-Pfad hinterlaesst genau einen SYS-Knoten. An ihm haengen die Analyse-Frische-Stempel und die graphweiten Regeln, ein zweiter oder fehlender Anker macht sie unauswertbar.
 
 verify ▶ `REQ-graph-integrity` · testRefs: `tests/harness.import-sys-anchor.test.ts`
 
-### 8.62  `TEST-inject-graph-slice` — Task-Start-Scheibe im Agentenkontext
+### 8.63  `TEST-inject-graph-slice` — Task-Start-Scheibe im Agentenkontext
 
 Abnahme der Datei tests/hooks.inject-graph-slice.test.ts: der Bridge-Endpunkt liefert die Kontext-Scheibe zu einer uid, und der UserPromptSubmit-Hook schiebt sie in den Agentenkontext. Realer Disk-Kuzu, realer HTTP-Aufruf, echte Ground truth statt Stichprobe.
 
 verify ▶ `REQ-precise-context` · `REQ-subgraph-slicing` · testRefs: `tests/hooks.inject-graph-slice.test.ts`
 
-### 8.63  `TEST-intent-anchors-internal` — Intentions-Anker bleiben Interna
+### 8.64  `TEST-intent-anchors-internal` — Intentions-Anker bleiben Interna
 
 Abnahme der Datei tests/intent-anchors-internal.test.ts: die Anker sind ein Steuerungs-Interna und werden dem Menschen nicht zur Bestaetigung vorgelegt. Der Begriff ist unserer, nicht seiner; eine Rueckfrage danach verlangt Vokabular, das der Gegenueber nicht hat.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/intent-anchors-internal.test.ts`
 
-### 8.64  `TEST-intent-anchors-wortart` — Intentions-Anker nur aus Substantiven
+### 8.65  `TEST-intent-anchors-wortart` — Intentions-Anker nur aus Substantiven
 
 Aus einem deutschen Auftrag werden Intentions-Anker nur aus Substantiven und Eigennamen gebildet; Verben, Funktionswoerter und Pfadsplitter erscheinen nicht als fehlende Konzepte, ein englischer Text bleibt der Kontrast.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/intent-anchors.wortart.test.ts`
 
-### 8.65  `TEST-interface-escalation` — Interface-Eskalations-Test
+### 8.66  `TEST-interface-escalation` — Interface-Eskalations-Test
 
 Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)
 
 verify ▶ `REQ-interface-change-escalation` · `REQ-post-interface-escalation` · `REQ-pre-interface-escalation`
 
-### 8.66  `TEST-learning-emit` — Learning-Emission-Test
+### 8.67  `TEST-learning-emit` — Learning-Emission-Test
 
 post-apply schreibt Trajectory/Outcome append-only, Format stabil. (FUNC-emit-trajectory)
 
 verify ▶ `REQ-post-emit-trajectory` · `REQ-pre-emit-trajectory` · `REQ-trajectory-emit` · testRefs: `tests/hooks.learning-emit.test.ts`
 
-### 8.67  `TEST-live-event-contract` — Live-Event-Contract-Test
+### 8.68  `TEST-live-event-contract` — Live-Event-Contract-Test
 
 LiveUpdateEvent/UpdateDomain sind als Zod-Schema in @sigloch/contracts publiziert und werden von Dashboard und Bridge importiert (kein Fork). (REQ-live-event-in-contracts)
 
 verify ▶ `REQ-live-event-in-contracts` · `SCHEMA-update-event` · testRefs: `tests/contract.live-event.test.ts`
 
-### 8.68  `TEST-live-view` — Live-Update-Event-Test
+### 8.69  `TEST-live-view` — Live-Update-Event-Test
 
 Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event)
 
 verify ▶ `REQ-mutation-emits-event` · `REQ-post-emit-update-event` · `REQ-pre-emit-update-event` · `REQ-versioned-broadcast` · testRefs: `tests/hooks.live-view.test.ts`
 
-### 8.69  `TEST-mcp-export` — MCP-Export-Test
+### 8.70  `TEST-mcp-export` — MCP-Export-Test
 
 graph_export serialisiert den live In-Memory-Graphen via exportGraphJson/exportMarkdown und schreibt docs/graph + docs/views unter den Repo-Root — schließt die Agent-Loop ueber MCP. (CR-GC-127)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.export.test.ts`
 
-### 8.70  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
+### 8.71  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
 
 MCP graph_export-Guard, drei Faelle: (a) leerer Graph wird verweigert, (b) Drop eines committeten Elements wird verweigert und die Datei bleibt unangetastet, (c) force:true ueberschreibt; Fresh-File-Export bleibt gruen. (CR-GC-202)
 
 verify ▶ `REQ-export-no-clobber` · testRefs: `tests/mcp.export-guard.test.ts`
 
-### 8.71  `TEST-mcp-readiness` — MCP-Readiness-Test
+### 8.72  `TEST-mcp-readiness` — MCP-Readiness-Test
 
 graph_readiness bindet scoreReadiness(harness) an die Registry und liefert den ReadinessReport ueber die MCP-Surface — Familie-Compliance (R-/RD-, nie BQ-) ist fuer einen Agenten erreichbar. (CR-GC-129)
 
 verify ▶ `REQ-mcp-tool-registry` · `REQ-readiness-transparent` · testRefs: `tests/mcp.readiness.test.ts`
 
-### 8.72  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
+### 8.73  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
 
 Registry served over the real MCP protocol (linked transport + disk Kuzu): listTools enumerates all tools, graph_mutate==mutate() incl. R-01 BLOCK, graph_impact bounded slice. (CR-GC-111)
 
 verify ▶ `REQ-audit-trail` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` · testRefs: `tests/mcp.stdio-server.test.ts`
 
-### 8.73  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
+### 8.74  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
 
 MCP graph_mutate == in-process mutate(): identische Semantik/Violations. (FCHAIN-apply-gate, L2)
 
 verify ▶ `REQ-harness-schema-in-contracts` · `REQ-mcp-gate-symmetry` · `REQ-one-gate-per-repo` · testRefs: `tests/mcp.symmetry.test.ts`
 
-### 8.74  `TEST-member-name` — Member-Name-Derivation-Test
+### 8.75  `TEST-member-name` — Member-Name-Derivation-Test
 
 serveStdio leitet die Member-Identitaet aus dem Repo ab (package.json name unscoped, sonst Verzeichnisname) → graph_export schreibt docs/graph/<member>.graph.json. (CR-GC-128)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.member-name.test.ts`
 
-### 8.75  `TEST-merge` — Wiedereingliederung eines Zweigs
+### 8.76  `TEST-merge` — Wiedereingliederung eines Zweigs
 
 Abnahme der Datei tests/mcp.merge.test.ts: zwei Zweig-Aenderungen werden ohne Konflikt wieder zusammengefuehrt, ohne Knoten oder Kanten zu verlieren. Die Wiedereingliederung laeuft als Replay durchs Gate, nicht als Datei-Merge; echte Zwei-Store-Integration mit eigenem Disk-Kuzu und eigenem Audit-Log je Seite.
 
 verify ▶ `REQ-auto-persist-merge` · `REQ-conflict-free-merge` · `REQ-post-merge-nodes` · `REQ-pre-merge-nodes` · testRefs: `tests/mcp.merge.test.ts`
 
-### 8.76  `TEST-merge-no-duplicate-edge` — Keine Doppelkante nach dem Verschmelzen
+### 8.77  `TEST-merge-no-duplicate-edge` — Keine Doppelkante nach dem Verschmelzen
 
 Abnahme der Datei tests/mutate.merge-dedupe.test.ts: das Verschmelzen zweier Knoten fuehrt eine identische Kante nur einmal, unabhaengig von der Reihenfolge, und Speicher und Disk zaehlen danach dasselbe. Auch der kanonische Snapshot schreibt ein Tripel nie zweimal.
 
 verify ▶ `REQ-graph-integrity` · `REQ-post-merge-nodes` · testRefs: `tests/mutate.merge-dedupe.test.ts`
 
-### 8.77  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
+### 8.78  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
 
 Faehrt den Steuerungs-Loop mit einem skriptierten Aktor und assertiert Monotonie, Netto-Fortschritt und Nicht-Kreisen.
 
 verify ▶ `REQ-monotone-convergence` · testRefs: `tests/steering.process-ratchet.test.ts`
 
-### 8.78  `TEST-mutate-gate` — mutate()-Gate Unit-Test
+### 8.79  `TEST-mutate-gate` — mutate()-Gate Unit-Test
 
 mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate)
 
 verify ▶ `REQ-confidence-tier` · `REQ-one-gate-per-repo` · `REQ-post-apply-gate` · `REQ-pre-apply-gate` · `REQ-rule-enforcement` · `REQ-structural-rule-shared` · testRefs: `tests/harness.gate.test.ts`
 
-### 8.79  `TEST-mutate-input-formate` — Format-E als Eingabe am Gate
+### 8.80  `TEST-mutate-input-formate` — Format-E als Eingabe am Gate
 
 Abnahme der Datei tests/mcp.mutate-input.test.ts: ein Format-E-Block laeuft durch dieselbe Gate-Semantik wie Kommandos, ein Parse-Fehler wird zum Block-Verdikt statt zum Absturz, und der dryRun-Preview wird auditiert. Ein Eingabe-Codec, kein zweiter Schreibweg.
 
 verify ▶ `REQ-formatE-parity` · `REQ-single-write-door` · `SCHEMA-format-e` · testRefs: `tests/mcp.mutate-input.test.ts`
 
-### 8.80  `TEST-mutate-schema-guard` — Fehlgeformte Kommandos werden hart abgelehnt
+### 8.81  `TEST-mutate-schema-guard` — Fehlgeformte Kommandos werden hart abgelehnt
 
 Abnahme der Datei tests/mutate.schema-guard.test.ts: ein Batch mit falsch geschriebenen Operationen wird abgelehnt statt als Erfolg quittiert. Der Live-Befund war genau das: die Kommandos passierten das Gate mit success, ohne dass irgendetwas geschrieben wurde.
 
 verify ▶ `REQ-harness-schema-in-contracts` · `REQ-structure-driven` · `SCHEMA-mutate-command` · `SCHEMA-steering-snapshot` · testRefs: `tests/mutate.schema-guard.test.ts`
 
-### 8.81  `TEST-mutate-violations` — Verstoesse als Zusammenfassung
+### 8.82  `TEST-mutate-violations` — Verstoesse als Zusammenfassung
 
 Abnahme der Datei tests/mcp.mutate-violations.test.ts: graph_mutate antwortet standardmaessig mit einer Zusammenfassung statt dem vollstaendigen Ergebnis. Vorher trug jede Warnung ihren gesamten Kontext zurueck, was den Loewenanteil der Bytes ausmachte, ohne beim Reparieren zu helfen.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/mcp.mutate-violations.test.ts`
 
-### 8.82  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
+### 8.83  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
 
 End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123)
 
 verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-based-testing` · `REQ-post-impact-testing` · `REQ-pre-impact-testing` · `REQ-precise-context` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-small-model-viable` · testRefs: `tests/mvp-e2e.test.ts`
 
-### 8.83  `TEST-nd-similarity` — Nah-Duplikate: Regeln und Hinweis vor dem Schreiben
+### 8.84  `TEST-nd-similarity` — Nah-Duplikate: Regeln und Hinweis vor dem Schreiben
 
 Abnahme der Datei tests/nd-similarity.test.ts: die Nah-Duplikat-Regeln der Contracts melden genau die konstruierten Duplikat-Paare und sind nie Gate-Regel; die Dublettensuche des Executors findet die belegten Duplikate aus den Greenfield-Laeufen als strukturierte Treffer.
 
 verify ▶ `REQ-near-duplicate-detection` · `REQ-rule-enforcement` · testRefs: `tests/nd-similarity.test.ts`
 
-### 8.84  `TEST-occ` — Optimistische Nebenlaeufigkeit am Werkzeug
+### 8.85  `TEST-occ` — Optimistische Nebenlaeufigkeit am Werkzeug
 
 Abnahme der Datei tests/mcp.occ.test.ts: ein Schreibzugriff traegt die graphVersion, die sein Autor gelesen hat; eine veraltete Basis wird abgelehnt und meldet die seither angewandten Batches zurueck. Damit verliert kein nebenlaeufiger Schreiber still seine Aenderung.
 
 verify ▶ `REQ-auto-persist-merge` · `REQ-single-write-door` · testRefs: `tests/mcp.occ.test.ts`
 
-### 8.85  `TEST-opencode-plugin` — OpenCode-Plugin-Test
+### 8.86  `TEST-opencode-plugin` — OpenCode-Plugin-Test
 
 init und update legen das OpenCode-Plugin fuer den Vorschlag an den Nutzer byte-gleich zum Paket ab, remove nimmt nur dieses mit; der Hook nimmt den vorschlag aus einer echten graph_mutate-Antwort und legt ihn ins Eingabefeld (CR-GC-732).
 
 verify ▶ `REQ-repo-install` · `REQ-repo-uninstall` · testRefs: `tests/opencode-plugin.test.ts`
 
-### 8.86  `TEST-operations-log` — Dauerhaftes Betriebslog in graphcode
+### 8.87  `TEST-operations-log` — Dauerhaftes Betriebslog in graphcode
 
 Abnahme der Datei tests/operations-log.integration.test.ts: die graphcode-Seite des dauerhaften Logs. Das Verhalten des Logs selbst liegt im Store-Modul und wird dort geprueft; hier zaehlt, dass das Gate seine Eintraege wirklich schreibt und wiederfindet.
 
 verify ▶ `REQ-audit-trail` · testRefs: `tests/operations-log.integration.test.ts`
 
-### 8.87  `TEST-path-containment` — Pfade bleiben im Repo
+### 8.88  `TEST-path-containment` — Pfade bleiben im Repo
 
 Abnahme der Datei tests/security.path-containment.test.ts: die zwei im Audit reproduzierten Ausbrueche sind festgenagelt. Beide Senken hatten einen vom Graphen oder Agenten gelieferten Pfad ohne Eindaemmung an den Repo-Wurzelpfad geklebt. Realer Disk-Kuzu, echte Schreibversuche.
 
 verify ▶ `REQ-gate-only-writes` · `REQ-graph-is-ssot` · testRefs: `tests/security.path-containment.test.ts`
 
-### 8.88  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
+### 8.89  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
 
 Graph mit erreichter Schwelle, aber offener Gate-Luecke; assertiert, dass die Zustandsmaschine nicht auf handoff geht.
 
 verify ▶ `REQ-phase-gate-not-skippable` · testRefs: `tests/generate.test.ts`
 
-### 8.89  `TEST-prompt-provenance` — Prompt-Provenienz-Test
+### 8.90  `TEST-prompt-provenance` — Prompt-Provenienz-Test
 
 Ein Record traegt Session, Modell und den Prompt im Wortlaut; ueber der Kappungsgrenze wird gekuerzt und das gesagt. Abwesenheit bleibt Abwesenheit statt leerem Feld, und bei zwei gleichzeitigen Sessions wird lieber nichts aufgezeichnet als ein geratenes Paar. (REQ-prompt-provenance)
 
 verify ▶ `REQ-prompt-provenance` · testRefs: `tests/audit.origin.test.ts`, `tests/hooks.prompt-relay.test.ts`
 
-### 8.90  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
+### 8.91  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
 
 Liest die kanonischen Zahl-Phrasen aus den publizierten Dokumenten und assertiert sie gegen contracts und die gebundene Tool-Registry.
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/claims.conformance.test.ts`
 
-### 8.91  `TEST-read-format-param` — Ausgabeformat der Lese-Werkzeuge
+### 8.92  `TEST-read-format-param` — Ausgabeformat der Lese-Werkzeuge
 
 Abnahme der Datei tests/mcp.read-format.test.ts: die Lese-Werkzeuge liefern standardmaessig JSON fuer die Agentenlogik und auf Wunsch eine round-trip-stabile Format-E-Scheibe im selben Dialekt wie der committete Graph. Ein Vertrag, zwei Darstellungen.
 
 verify ▶ `REQ-formatE-parity` · `REQ-query-precision` · testRefs: `tests/mcp.read-format.test.ts`
 
-### 8.92  `TEST-readiness-completeness` — Readiness-Vollstaendigkeits-Abnahme
+### 8.93  `TEST-readiness-completeness` — Readiness-Vollstaendigkeits-Abnahme
 
 Abnahme der Datei tests/readiness.completeness.test.ts an echten Regellaeufen: der leere Graph erreicht keine Marke, ein Anwendungsfall ohne Wirkkette haelt SRR, eine Funktion ohne Modul PDR, ein Datenfluss ohne Schema CDR, eine Anforderung ohne Test TRR; Plan, Bindung und Abgleich halten Bau. Die Kurzform traegt einen Wert je Marke. Verifiziert REQ-readiness-completeness, REQ-completeness-actor-bounded und REQ-completeness-single-value zusammen (CR-GC-383, CR-GC-748).
 
 verify ▶ `REQ-completeness-actor-bounded` · `REQ-completeness-single-value` · `REQ-interface-schema` · `REQ-readiness-completeness` · testRefs: `tests/readiness.completeness.test.ts`
 
-### 8.93  `TEST-readiness-model` — Readiness-Modell-Test
+### 8.94  `TEST-readiness-model` — Readiness-Modell-Test
 
 Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125)
 
 verify ▶ `REQ-readiness-model` · testRefs: `tests/readiness.model.test.ts`
 
-### 8.94  `TEST-readonly-bridge` — Host-Bridge-Abnahme
+### 8.95  `TEST-readonly-bridge` — Host-Bridge-Abnahme
 
 Abnahme der Datei tests/host.bridge.test.ts: die Bridge akzeptiert keine Inbound-Mutation, Writes gehen nur durch MCP mutate(), und der Health-Endpunkt meldet den echten Zustand des Hosts statt einer Konstanten. Verifiziert REQ-readonly-bridge und REQ-real-health-check zusammen (CR-GC-383).
 
 verify ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · `SCHEMA-health-report` · testRefs: `tests/host.bridge.test.ts`
 
-### 8.95  `TEST-realref-materialize` — Kein Phantompfad hinter einer SCHEMA-Bindung
+### 8.96  `TEST-realref-materialize` — Kein Phantompfad hinter einer SCHEMA-Bindung
 
 Abnahme der Datei tests/export.realref-materialize.test.ts: der Export legt fuer jede gebundene SCHEMA ohne Datei einen z.unknown-Zod-Stub an, wie er es fuer eine gebundene TEST-Datei tut, und ueberschreibt nie eine vorhandene Datei. Ohne das bliebe im Graphen gebunden, was im Code nicht existiert.
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.realref-materialize.test.ts`
 
-### 8.96  `TEST-recommend-next-step` — Abnahme Empfehlen
+### 8.97  `TEST-recommend-next-step` — Abnahme Empfehlen
 
 Konzept: eine Empfehlung erscheint als solche gekennzeichnet und getrennt von Gate-Verdikt und Steuerung; ein ignorierter Vorschlag aendert weder Verdikt noch Kenngroessen.
 
 verify ▶ `REQ-recommend-next-step`
 
-### 8.97  `TEST-reduced-llm` — Modellfrei-Gate-Test
+### 8.98  `TEST-reduced-llm` — Modellfrei-Gate-Test
 
 Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren.
 
 verify ▶ `REQ-graceful-degradation` · `REQ-post-modelfree-gate` · `REQ-pre-modelfree-gate` · `REQ-small-model-viable` · testRefs: `tests/gate.modelfree.test.ts`
 
-### 8.98  `TEST-repo-lifecycle` — Repo-Lebenszyklus raeumt vollstaendig ab
+### 8.99  `TEST-repo-lifecycle` — Repo-Lebenszyklus raeumt vollstaendig ab
 
 Faehrt den Lebenszyklus auf echtem Disk-Kuzu: Lock nehmen, Sitzung eintragen, zweiter Owner scheitert, dann Abbau ueber SessionLifecycle. Danach ist der Lock frei und kein Sitzungseintrag uebrig.
 
 verify ▶ `REQ-session-leaves-nothing-behind` · testRefs: `tests/repo-lifecycle.integration.test.ts`
 
-### 8.99  `TEST-reseed` — Reseed auf den committeten Stand
+### 8.100  `TEST-reseed` — Reseed auf den committeten Stand
 
 Abnahme der Datei tests/mcp.reseed.test.ts: graph_reseed synchronisiert den lebenden Store in-process zurueck auf den committeten Snapshot, verwirft dabei eine nicht exportierte Gate-Mutation und stellt die committeten Zahlen ohne Korruption wieder her.
 
 verify ▶ `REQ-graph-state-recall` · `REQ-store-recovery` · testRefs: `tests/mcp.reseed.test.ts`
 
-### 8.100  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
+### 8.101  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
 
 Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)
 
 verify ▶ `REQ-responsiveness`
 
-### 8.101  `TEST-retro-kpi` — KPI-Auswertung nach dem Projekt
+### 8.102  `TEST-retro-kpi` — KPI-Auswertung nach dem Projekt
 
 Abnahme der Datei tests/retro-kpi.test.ts: die Auswertung liefert deterministische Werte aus einer Fixture-Sitzung, und das entscheidende Signal stimmt: eine bewusst graph-lose Sitzung ergibt ein Graph-zu-Grep-Verhaeltnis unter eins.
 
 verify ▶ `REQ-quality-metric` · testRefs: `tests/retro-kpi.test.ts`
 
-### 8.102  `TEST-rewind` — Rueckspulen auf einen Commit
+### 8.103  `TEST-rewind` — Rueckspulen auf einen Commit
 
 Abnahme der Datei tests/rewind.test.ts: graphcode rewind stellt den Graphstand her, der an einem Ref committet war. Der Mechanismus selbst ist anderswo bewiesen; hier zaehlt das Verb als Bedienweg der Rueckhol-Haelfte.
 
 verify ▶ `REQ-graph-state-recall` · testRefs: `tests/rewind.test.ts`
 
-### 8.103  `TEST-roundtrip` — Format-E Round-Trip Conformance
+### 8.104  `TEST-roundtrip` — Format-E Round-Trip Conformance
 
 decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)
 
 verify ▶ `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-post-codec-roundtrip` · `REQ-pre-codec-roundtrip` · `REQ-roundtrip-conformance` · testRefs: `tests/codec.roundtrip.test.ts`
 
-### 8.104  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
+### 8.105  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
 
 audit_stats aggregiert je Regel, je Modell und je Konsument; die Werte sind identisch zur jq-Zeile auf demselben Trail. Ein Record mit 20 Violations derselben Regel zaehlt eine Blockade und zwanzig Vorkommen; fehlendes rulesPassed liefert null statt einer Null. (REQ-rule-calibration)
 
 verify ▶ `REQ-rule-calibration` · testRefs: `tests/audit.stats.test.ts`
 
-### 8.105  `TEST-schema-migration` — Wache gegen Schema-Drift
+### 8.106  `TEST-schema-migration` — Wache gegen Schema-Drift
 
 Abnahme der Datei tests/schema-guard.test.ts: der Store friert seine Kanten-Tabellen beim Anlegen ein; bekommt das Meta-Modell ein neues Paar, weist das eingefrorene Schema die Kante ab. Die Wache erkennt den Versatz und setzt den Store aus dem committeten Stand neu auf, statt ihn kaputt weiterzubenutzen.
 
 verify ▶ `REQ-post-migrate-schema` · `REQ-pre-migrate-schema` · `REQ-schema-version-migration` · `REQ-store-recovery` · `SCHEMA-schema-fingerprint` · testRefs: `tests/schema-guard.test.ts`
 
-### 8.106  `TEST-schema-parse-at-interface` — Schema-Parse an der Schnittstelle
+### 8.107  `TEST-schema-parse-at-interface` — Schema-Parse an der Schnittstelle
 
 Vertragstest SCHEMA-fit-advisory, SCHEMA-steering-delta (Ranking-Grenze executor-rank) und SCHEMA-generation-step (Registry-Grenze runExecutor): vertragstreue Antwort kommt als Daten durch, formfremde wird abgewiesen statt still gerankt. (CR-GC-413)
 
 verify ▶ `SCHEMA-fit-advisory` · `SCHEMA-generation-step` · `SCHEMA-steering-delta` · testRefs: `tests/schema-parse-at-interface.test.ts`
 
-### 8.107  `TEST-se-plan-ordering` — Reihenfolge des Umsetzungsplans
+### 8.108  `TEST-se-plan-ordering` — Reihenfolge des Umsetzungsplans
 
 Abnahme der Datei tests/se-plan.ordering.test.ts: die Reihenfolge des Plans kommt aus der Abhaengigkeits-Topologie des Graphen, nicht aus dem Prompt-Text. Jede Voraussetzung steht vor dem, was sie braucht.
 
 verify ▶ `REQ-structure-driven` · testRefs: `tests/se-plan.ordering.test.ts`
 
-### 8.108  `TEST-selective-test-audit` — Auswahl-Resolver und Messinstrument
+### 8.109  `TEST-selective-test-audit` — Auswahl-Resolver und Messinstrument
 
 Abnahme der Datei tests/test-selection.audit.test.ts: die Kantensemantik der Auswahl, die Paritaet zwischen Store-Pfad und Snapshot-Pfad, und die Fallback-Regel. Eine nicht aufloesbare Datei fuehrt zum Volllauf, nie zur leeren Auswahl.
 
 verify ▶ `REQ-graph-tests-operational` · `REQ-impact-based-testing` · `REQ-selective-code-lane` · `SCHEMA-code-lane-plan` · `SCHEMA-impacted-tests` · `SCHEMA-test-selection` · testRefs: `tests/test-selection.audit.test.ts`
 
-### 8.109  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
+### 8.110  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
 
 Abnahme der Datei tests/session-lifecycle.test.ts: der Abbau laeuft in umgekehrter Reihenfolge mit dem Store-Lock zuletzt und laeuft nach einem Fehlschlag weiter. Ohne diese Eigenschaften kehrt der Zombie-Host zurueck.
 
 verify ▶ `REQ-single-kuzu-owner` · `REQ-store-owner-lifecycle` · testRefs: `tests/session-lifecycle.test.ts`
 
-### 8.110  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
+### 8.111  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
 
 Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork)
 
 verify ▶ `REQ-shared-views-no-fork` · testRefs: `tests/views.no-fork.test.ts`
 
-### 8.111  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
+### 8.112  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
 
 Fixture mit attributgetragenen Bindungen; assertiert identische Violations und Scores ueber alle drei Oberflaechen und faellt rot, sobald eine auf das flache Export-Encoding zurueckfaellt.
 
 verify ▶ `REQ-single-measurement-path` · `REQ-steering-post` · `REQ-steering-pre` · testRefs: `tests/steering.measurement-path.test.ts`
 
-### 8.112  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
+### 8.113  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
 
 Drei Assertionen in Folge: legale Mutation landet, illegale laesst den deterministischen Export identisch, Direktschreib-Versuch wird mit Exit-Code und Meldung abgewiesen.
 
 verify ▶ `REQ-gate-only-writes` · `REQ-single-write-door` · testRefs: `tests/gate.single-door.test.ts`
 
-### 8.113  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
+### 8.114  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
 
 Fuer jede FUNC der Kette FCHAIN-skill-authoring: die per realRef gebundene Command-Datei nennt ein Schreibwerkzeug der LIVE-Registry und weist keinen direkten Schreibzugriff auf docs/graph an. Die Atomizitaet eines abgelehnten Batches deckt harness.gate.test.ts ab, nicht dieser Test.
 
 verify ▶ `REQ-skill-authors-through-gate` · testRefs: `tests/skill-authoring-gate.test.ts`
 
-### 8.114  `TEST-skill-kinds-werte` — Genannte kinds-Werte sind legal
+### 8.115  `TEST-skill-kinds-werte` — Genannte kinds-Werte sind legal
 
 Jeder in Skills, Help und Executor-Vorbild genannte kinds-Wert liegt im Wertebereich der Ontologie, und jedes dort gezeigte satisfy-Paar mit kinds ist nach den Trace-Mustern legal; ein kuenstlich illegales Beispiel wird gemeldet.
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/skill-kinds-werte.test.ts`
 
-### 8.115  `TEST-skill-red-first` — Test-Skills lehren Red-First
+### 8.116  `TEST-skill-red-first` — Test-Skills lehren Red-First
 
 Abnahme der Datei tests/skill-red-first.test.ts: se-test und se-test-ui enthalten die Red-First-Regel mit ihren drei Teilen (rot sehen, aus genau diesem Grund, gegen kaputten Code), mit Positivkontrolle. (CR-GC-697)
 
 verify ▶ `REQ-test-skill-red-first` · testRefs: `tests/skill-red-first.test.ts`
 
-### 8.116  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
+### 8.117  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
 
 Fuer jede FUNC der Kette FCHAIN-skill-report: die per realRef gebundene Command-Datei nennt mindestens ein Messwerkzeug aus der LIVE-Registry und kein schreibendes. Grundgesamtheit und Werkzeugnamen kommen aus Graph und Registry, nicht aus einer Liste im Test.
 
 verify ▶ `REQ-skill-reads-only` · testRefs: `tests/skill-report-measured.test.ts`
 
-### 8.117  `TEST-skill-rule-ids` — Abnahme: keine erfundenen Regel-IDs in Skills und Prompts
+### 8.118  `TEST-skill-rule-ids` — Abnahme: keine erfundenen Regel-IDs in Skills und Prompts
 
 Prueft, dass jede Regel-ID, die ein Skill oder der Rundenprompt nennt, im Katalog ALL_RULE_DEFS steht — Skill-Dateien, RULE_CLAUSE-Schluessel, gerenderte Klauseltexte, Dimensions-Vorlagen, System-Prompt und Nachfass-Text. Praefixe und IDs kommen aus dem Katalog, nicht aus einer gepflegten Liste. Gefunden hat der erste Lauf drei erfundene Nennungen gestrichener Regeln. Prueft die EXISTENZ, nicht die Wahrheit der Aussage ueber die Regel. (CR-GC-571)
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/skill-rule-ids.test.ts`
 
-### 8.118  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
+### 8.119  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
 
 Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view/* → REQ-doc-export). (CR-GC-132)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/skills.mcp-conformance.test.ts`
 
-### 8.119  `TEST-status-verb` — Abnahme des status-Verbs
+### 8.120  `TEST-status-verb` — Abnahme des status-Verbs
 
 Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.
 
 verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/status.test.ts`
 
-### 8.120  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
+### 8.121  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
 
 Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.test.ts`
 
-### 8.121  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
+### 8.122  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
 verify ▶ `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `REQ-store-owner-lifecycle` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
 
-### 8.122  `TEST-store-recovery` — Store-Recovery-Test
+### 8.123  `TEST-store-recovery` — Store-Recovery-Test
 
 Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery)
 
 verify ▶ `REQ-store-recovery`
 
-### 8.123  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+### 8.124  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
 Abnahme der Datei tests/target-profile.test.ts: Schema, Laden und Konfliktpruefung des Zielprofils, dazu der Konfigurations-Default des Vorschlags-Werkzeugs gegen einen echten Disk-Kuzu. Die Konfliktpruefung ist ein Pfad, kein zweiter neben der Steuerung.
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · `SCHEMA-target-profile` · testRefs: `tests/target-profile.test.ts`
 
-### 8.124  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+### 8.125  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-### 8.125  `TEST-target-state` — Abnahme Zielbild
+### 8.126  `TEST-target-state` — Abnahme Zielbild
 
 Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.
 
 verify ▶ `REQ-target-state`
 
-### 8.126  `TEST-task-analysen` — Analyse-Tasks
+### 8.127  `TEST-task-analysen` — Analyse-Tasks
 
 Am Task-Eintritt verweist der Schritt auf den Skill des Tasks; ein Bauplan-Stempel von Hand schliesst den Eintritt nicht; ein Patch ersetzt die Stempel ganz, und jeder Analyse-Skill schliesst mit Lesen, Uebernehmen, ganz Schreiben.
 
 verify ▶ `REQ-analyse-artefakt-vor-stempel` · testRefs: `tests/task-analysen.test.ts`
 
-### 8.127  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+### 8.128  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-### 8.128  `TEST-test-schlupf` — Schlupf und Zusage
+### 8.129  `TEST-test-schlupf` — Schlupf und Zusage
 
 Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf bricht ab, je CR die juengste Zeile), Blackbox- und Schnittstellenbindung am synthetischen Graphen, gepruefte JSONL-Zeilen.
 
 verify ▶ `REQ-full-run-on-probation` · `SCHEMA-schlupf-zeile` · testRefs: `tests/test-schlupf.test.ts`
 
-### 8.129  `TEST-testref-materialize` — Export stub-materialization test
+### 8.130  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-### 8.130  `TEST-testreport` — Rueckweg des Testergebnisses
+### 8.131  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-### 8.131  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+### 8.132  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · `SCHEMA-metric-policy` · testRefs: `tests/config.test.ts`
 
-### 8.132  `TEST-token-efficiency` — Token-Budget-Test
+### 8.133  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-### 8.133  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+### 8.134  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-### 8.134  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+### 8.135  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-### 8.135  `TEST-upgrade` — Abnahme des upgrade-Verbs
+### 8.136  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
 
-### 8.136  `TEST-views-auditor` — Sichten fuer den Auditor
+### 8.137  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-### 8.137  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+### 8.138  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-### 8.138  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+### 8.139  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-### 8.139  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+### 8.140  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
@@ -7892,4 +7930,4 @@ verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.
 
 ## 9  Traceability summary
 
-145 REQ · 145 verified · 0 without a verifying TEST (R-01).
+146 REQ · 146 verified · 0 without a verifying TEST (R-01).
