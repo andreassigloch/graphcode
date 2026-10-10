@@ -1,6 +1,6 @@
 # Konzept: Modell- vs. Realisierungsarchitektur
 
-25. Sept. 2026 · @Andreas Sigloch · Fassung 2 (mit Korrekturen und Spike-Befund, siehe letzter Abschnitt)
+25. Sept. 2026 · @Andreas Sigloch · Fassung 3 vom 10. Okt. 2026 (Grundkonzeption Zweck, Orte, Analyse; Änderungen im letzten Abschnitt)
 
 ## Ziel und Kernthese
 
@@ -114,6 +114,73 @@ Jeder Schritt zählt zunächst gleich. Die Gewichtung über Skalierungsklassen f
 
 Die drei Vernetzungskennzahlen sind Eigenschaften über alle Ketten hinweg, nicht einer einzelnen.
 Ihre Schwellen stehen deshalb in einem NFR-REQ, das das SYS erfüllt, nicht an einer FCHAIN.
+
+## Grundkonzeption: Zweck, Orte, Analyse
+
+Festgehalten am 10.10.2026. Die Abschnitte davor sagen, was gemessen wird; dieser sagt, wofür und von wem
+es beurteilt wird.
+
+**1. Die Wirkkette steht für die Kundenfunktion.** Sie ist das Zusammenspiel ihrer Funktionen, nicht ihre
+Summe: eine Kette kann ihr Ergebnis verfehlen, ohne dass eine Einzelfunktion ausfällt.
+
+**2. Der Zweck hängt als Anforderung an der Kette.** Eine nicht-funktionale Anforderung an einen Use Case,
+die eine Eigenschaft von Auslöser bis Ergebnis beschreibt, erfüllt seine Wirkkette
+(`FCHAIN -satisfy-> REQ`). Funktionale Anforderungen erfüllt die Einzelfunktion, strukturelle Vorgaben das
+Modul oder das System.
+
+**3. Die Kennzahlen nennen die Orte, sie bewerten nicht.** Gerechnet wird an einer Stelle (`chainMetrics`
+in `@sigloch/contracts/se`, angezeigt über `graph_metrics`); kein Skill rechnet ein eigenes Profil.
+
+| Ort | Warum er für die Kette zählt |
+|---|---|
+| Eingang, Ausgang | hier beginnt und endet die Wirkung am Akteur |
+| Import | eine fremde Kette liefert zu, an einer Funktion, die nur dieser Kette gehört |
+| Übergabe | die Folge tritt in einer anderen Kette auf |
+| Verzweiger, Zulauf | eine Stelle mit mehreren Folgen oder mehreren Ursachen |
+| Kreislauf | Ursache und Folge sind nicht mehr gerichtet |
+| Geteilte Funktion | Kreuzungspunkt mehrerer Ketten; ihre Zuflüsse stehen an ihr, nicht an jeder Kette |
+| Modulgrenze | die Verantwortung wechselt; je Vertrag eine Schnittstelle |
+
+Nicht aus der Struktur findbar: das Innere einer Blatt-Funktion und die Betriebserfahrung.
+
+**4. Je Dimension beurteilt ein Analyse-Skill die Orte.** Katalog der Dimensionen ist ISO/IEC 25010:2023.
+
+| Merkmal der Norm | Zweck an der Kette | Analyse |
+|---|---|---|
+| Sicherheit (Safety) | Was geschieht, wenn ein Glied versagt? | FMEA (`se-fmea`, vorhanden) |
+| Zuverlässigkeit: Verfügbarkeit | Wie oft erreicht die Kette ihr Ergebnis? | FMEA, dieselben Orte |
+| Informationssicherheit | Wo kreuzen Daten eine Vertrauensgrenze? | Bedrohungsanalyse über die Flüsse (offen) |
+| Leistungseffizienz: Zeitverhalten, Kapazität, Ressourcennutzung | Laufzeit, Durchsatz, Kosten je Durchlauf | Budgetanalyse (offen; braucht Zeit- und Mengenangaben, siehe „Skalierungsklasse") |
+| Wartbarkeit: Modifizierbarkeit | — | keine Kettenanalyse: bleibt Modellseite und Gegengewicht (Blast-Radius) |
+| Wartbarkeit: Testbarkeit | — | abgedeckt durch die Sicht Testkonzept |
+
+Funktionale Eignung, Kompatibilität, Interaktionsfähigkeit und Flexibilität hängen nicht an der Kette.
+
+**5. Jede Analyse liefert vier Ergebnisse**, für die Kette und für einzelne Funktionen:
+
+| | Ergebnis | Wohin |
+|---|---|---|
+| a | Analyseergebnis | Text eines geschlossenen CR |
+| b | Anforderungsdefizit | neue Anforderung mit Test, durchs Gate |
+| c | Architekturoptimierung der Kette (Länge, Abhängigkeiten, Verortung) | Vorschlag einer Handlungsklasse, durchs Gate |
+| d | Konflikt an einem Kreuzungspunkt | an der geteilten Funktion, nicht in einer der Ketten |
+
+Zu d: an einer geteilten Funktion treffen sich Ketten mit verschiedenen Zwecken; dieselbe Änderung hilft der
+einen und schadet der anderen. Dieselbe Kennzahl hat je Zweck ein anderes Vorzeichen — optimiert wird deshalb
+gegen einen benannten Zweck je Kette, nie gegen die Kennzahl.
+
+**6. Attribute.** Ein Analyse-Skill darf Attribute an Knoten hängen, die nur er selbst und sein Dokument
+lesen. Liest eine Regel, eine Kennzahl oder eine Sicht das Attribut, gehört sein Name in
+`@sigloch/contracts/se` (Vorbild: `severity`, `occurrence`, `detection` der FMEA-Regeln; der Defekt aus
+CR-GC-308 entstand, als Skill und Regel verschiedene Namen benutzten). Kanten tragen keine Attribute; was an
+einer Kante hinge, steht am FLOW.
+
+**7. Verhältnis zu den Profilschwellen.** Schwelle und Analyse schließen sich nicht aus: die Schwelle prüft
+eine Kennzahl (nächster Abschnitt), der Skill beurteilt einen Ort.
+
+**8. Die Optimierung setzt darauf auf**, in zwei Teilen: (a) Vorschläge innerhalb einer Analysedimension
+(Abschnitt „Handlungsklassen"), (b) der Gesamt-Impact eines Vorschlags über alle Zwecke und Ketten —
+Konflikte an den Kreuzungspunkten und die Rangfolge aus „Gegengewicht Blast-Radius".
 
 ## Drei Beispielprofile
 
@@ -313,6 +380,13 @@ Bewertungsstufe — das ist trotzdem eine contracts-Änderung mit Familie-Review
   deshalb heute nicht berechenbar.
 - **Mehrwert gegenüber R⁶:** r(mittlere Kettenlänge, flowEfficiency) = −0,45 über n = 7 Graphen —
   zu wenige Punkte für ein Urteil; zwei Graphen haben flowEfficiency 0,00. Offen.
+
+## Änderungen gegenüber Fassung 2
+
+- Neuer Abschnitt „Grundkonzeption: Zweck, Orte, Analyse": Kette als Kundenfunktion, Orte statt Zahlen,
+  Analyse-Skills je Dimension nach ISO/IEC 25010:2023, vier Ergebnisse, Attributregel.
+- Eine Rechnung der Kettenkennzahlen; das eigene Profil des FMEA-Skills entfällt (CR-SM-406, CR-GC-774).
+- Die Reichweite einer Funktion geht nicht in die Schwere einer Fehlerart.
 
 ## Änderungen gegenüber Fassung 1
 
