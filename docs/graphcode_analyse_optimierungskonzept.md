@@ -177,8 +177,9 @@ ihrer Art ab:
 7. **Eine Entwurfsregel an einer geteilten Funktion steht als Anforderung an ihr im Modell.** Ein Vorschlag,
    der einer bestehenden Funktion einen Ausgang oder eine Aufgabe ergänzt, wird auf der Stufe Invarianten
    gegen jede Anforderung dieser Funktion beurteilt. Das ist zugleich der Ort des Konflikts (Ergebnis d).
+   Grenze (Fall 2): eine Regel, die am System oder an einer umgangenen Funktion hängt, findet das nicht.
 8. **Der Vergleich zählt keine Befunde aus dem Bau** (fehlende Bindung an Code, Schema ohne Bindung und
-   ohne Test: R-20, R-26, R-32). Sie wachsen mit der Zahl neuer Elemente und sagen nichts über den Entwurf.
+   ohne Test, Test ohne Bindung: R-20, R-26, R-32, R-19). Sie wachsen mit der Zahl neuer Elemente und sagen nichts über den Entwurf.
 
 ### CRs und Spikes
 
@@ -204,18 +205,24 @@ ihrer Art ab:
 | Bedrohungsanalyse, Budgetanalyse | nicht vorhanden; Budget braucht Zeit- und Mengenangaben im Modell |
 | Vorschlag aus einer Analyse (6a) | nicht vorhanden |
 | Gesamt-Impact (6b) | von Hand gemessen im Spike vom 2026-10-10 (drei Entwürfe an der Steuerungsschleife); kein Werkzeug rechnet ihn |
-| Nachweis, dass Vorschläge aus diesem Rahmen besser sind als ein Blindurteil | nicht erbracht. Ein Fall, zwei Läufe: erst gegen das Blindurteil, nach den Konventionen 7 und 8 gleich wie das Blindurteil |
+| Nachweis, dass Vorschläge aus diesem Rahmen besser sind als ein Blindurteil | nicht erbracht. Zwei Fälle: die feste Rangfolge ordnete in beiden gegen das Blindurteil, im ersten nach einer nachträglichen Ergänzung gleich |
 
 **Offen im Konzept:**
 
-- **Die feste Rangfolge trug den Gesamt-Impact im ersten Lauf nicht** (Spike vom 2026-10-10, graphanalyze
-  `docs/messung/gesamt-impact-2026-10-10/`): sie ordnete den bekannten schlechten Entwurf zuerst. Mit den
-  Konventionen 7 und 8 oben ordnet sie die drei Entwürfe wie Analyse und Blindurteil (Lauf 2, CR-GC-780).
-  Lauf 2 ist kein unabhängiger Nachweis: die Anforderung ist in Kenntnis von Lauf 1 angelegt, und ihre
-  Verletzung ist am Text beurteilt. Offen bleibt ein zweiter Fall, dessen Entwurfsregeln vor den Entwürfen im
-  Modell stehen, und ob die Stufe Invarianten gerechnet werden kann.
-- **Die Modellgüte zählt eine Modulkreuzung gegen den Entwurf, dessen Zweck sie verlangt** (derselbe Spike).
-  Im Fall entschied die Stufe davor; die Frage ist damit nicht beantwortet.
+- **Die feste Rangfolge trägt als Entscheidungsverfahren nicht** (zwei Spikes vom 2026-10-10, graphanalyze
+  `docs/messung/gesamt-impact-2026-10-10/` und `gesamt-impact-fall2-2026-10-10/`). Fall 1 (Steuerungsschleife,
+  graphcode): erst gegen Analyse und Blindurteil, nach den Konventionen 7 und 8 gleich; die Anforderung dazu
+  war in Kenntnis des Ergebnisses angelegt. Fall 2 (Ladezeit, energymanager, Regeln standen vorher im Modell):
+  gegen das Blindurteil, in jeder Lesart. Drei Ursachen aus Fall 2: die gebrochene Regel hing am System und
+  nicht an der berührten Funktion (Konvention 7 greift dann nicht, und ein weiterer Kreis umfasst 66 von 98
+  Anforderungen); die Kettenzahlen kennen den Zweck nicht (ein Glied mehr, das den Aufruf entlastet, zählt
+  als Verschlechterung, weil das Modell den Weg eines Aufrufs nicht trägt); die Modellgüte zählt gegen den
+  Entwurf, den der Zweck verlangt.
+- **Was in beiden Fällen hielt:** die Kettensicht zeigt die Orte des Eingriffs (Kreislauf, Länge, betroffene
+  Ketten, Reichweite), und zwar dieselben, die der Gutachter als Messgrößen der Schwächen nennt; die
+  Gegenprobe ist stabil. Das Urteil brauchte in beiden Fällen das Lesen der Anforderungen. Ob Abschnitt 6b
+  deshalb vom Verfahren zur Vorlage für ein Urteil wird (Orte und betroffene Anforderungen zeigen, nicht
+  ordnen), ist nicht entschieden.
 - **Eine Lücke der Verdrahtungsregeln.** Am Stand des Spikes zu CR-GC-771 (energymanager, 12 Ketten) meldet
   keine Regel etwas zur Verdrahtung, und alle 12 Ketten sind bewertbar — jede hat die Länge 1. Erfassen und
   Anzeigen hängen dort nur über den gespeicherten Datenbestand zusammen, und der steht nicht im Modell. Der
