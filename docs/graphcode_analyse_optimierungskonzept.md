@@ -198,11 +198,18 @@ ihrer Art ab:
 | Erster FMEA-Lauf auf den Orten | gefahren an der Steuerungsschleife (CR-GC-779): vier Risiken im Modell, ein Architekturvorschlag, ein Konflikt am Gate |
 | Bedrohungsanalyse, Budgetanalyse | nicht vorhanden; Budget braucht Zeit- und Mengenangaben im Modell |
 | Vorschlag aus einer Analyse (6a) | nicht vorhanden |
-| Gesamt-Impact (6b) | nicht vorhanden; die Reichweite eines Umbaus rechnet heute nichts |
-| Nachweis, dass Vorschläge aus diesem Rahmen besser sind als ein Blindurteil | nicht gemessen |
+| Gesamt-Impact (6b) | von Hand gemessen im Spike vom 2026-10-10 (drei Entwürfe an der Steuerungsschleife); kein Werkzeug rechnet ihn |
+| Nachweis, dass Vorschläge aus diesem Rahmen besser sind als ein Blindurteil | einmal gemessen, nicht erbracht: die feste Rangfolge ordnete den bekannten schlechten Entwurf zuerst, Analyse und Blindurteil ordneten ihn zuletzt |
 
 **Offen im Konzept:**
 
+- **Die feste Rangfolge trägt den Gesamt-Impact noch nicht** (Spike vom 2026-10-10, graphanalyze
+  `docs/messung/gesamt-impact-2026-10-10/`). Drei Ursachen: die Regel, die der schlechte Entwurf bricht, steht
+  nicht im Modell und greift deshalb nicht auf der Stufe Invarianten; die Modellgüte zählt die Modulkreuzung
+  gegen den Entwurf, dessen Zweck sie verlangt; die Reichweite steht zuletzt und wird nicht mehr befragt.
+  Die Kettensicht trennte den Entwurf mit dem größeren Kreislauf richtig. Vorschlag aus dem Spike: eine
+  Entwurfsregel an einer geteilten Funktion als Anforderung ins Modell, und Befunde aus dem Bau aus dem
+  Vergleich nehmen. Nicht entschieden.
 - Wo ein Konflikt (Ergebnis d) im Modell steht — als Anforderung an der geteilten Funktion oder nur im Text
   des CR.
 - **Eine Lücke der Verdrahtungsregeln.** Am Stand des Spikes zu CR-GC-771 (energymanager, 12 Ketten) meldet

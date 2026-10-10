@@ -105,6 +105,11 @@ die Funktionen und die Gruppen ohne Namen sah.
   Dazu: ein Fall, eine Stufe, ein Gutachter-Lauf.
 - **Ablage.** Skript, Urteile und Notiz: graphanalyze `docs/messung/kandidatenvergleich-2026-10-10/`.
 
+**Nachtrag zu Frage 4 (2026-10-10, Spike Gesamt-Impact, graphanalyze `docs/messung/gesamt-impact-2026-10-10/`).**
+An einem Stand mit verbundenen Funktionen (Steuerungsschleife des graphcode-Modells, drei Entwürfe für dieselbe
+Anforderung) ordnet die Zahl der Befunde die Entwürfe umgekehrt zu Analyse und Blindurteil: sie wächst mit der
+Zahl neuer Elemente. Für Strukturfragen taugt sie nicht. Ein Fall, ein Gutachter.
+
 **Zurückgestellt (Autor, 2026-10-10):** zuerst CR-GC-774; diese CR kommt danach wieder.
 
 ## Akzeptanz dieser CR
