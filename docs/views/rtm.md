@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 153 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 154 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 51 REQ
@@ -63,7 +63,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 103 REQ
+### funktional (SWE.1 · HWE.1) — 104 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -91,6 +91,7 @@
 | `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-decode` | `MOD-loop` |
 | `REQ-formatE-parity` | `TEST-formate-binding` · `TEST-formate-ops` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` | `MOD-projections` | — |
 | `REQ-full-run-on-probation` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
+| `REQ-gate-judges-and-stores` | `TEST-gate-urteilt-und-speichert` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-gate-only-writes` | `TEST-export-graph-guard` · `TEST-graph-realize` · `TEST-path-containment` · `TEST-single-write-door` | `MOD-agent-surface` · `MOD-kernel` · `MOD-loop` · `MOD-surface` | — |
 | `REQ-graph-context-replaces-reading` | `TEST-graph-context-replaces-reading` | `MOD-surface` | — |
 | `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` | — |
@@ -211,7 +212,7 @@
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 
-### Entwurf (SWE.3 · HWE.2) — 112 REQ
+### Entwurf (SWE.3 · HWE.2) — 113 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -244,6 +245,7 @@
 | `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-decode` | `MOD-loop` |
 | `REQ-formatE-parity` | `TEST-formate-binding` · `TEST-formate-ops` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` | `MOD-projections` | — |
 | `REQ-full-run-on-probation` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
+| `REQ-gate-judges-and-stores` | `TEST-gate-urteilt-und-speichert` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-gate-only-writes` | `TEST-export-graph-guard` · `TEST-graph-realize` · `TEST-path-containment` · `TEST-single-write-door` | `MOD-agent-surface` · `MOD-kernel` · `MOD-loop` · `MOD-surface` | — |
 | `REQ-gate-survives-rule-failure` | `TEST-gate-survives-rule-failure` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-graph-code-conformance` | `TEST-code-conformance` | `FUNC-check-code-conformance` | `MOD-kernel` |

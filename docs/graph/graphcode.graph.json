@@ -3234,6 +3234,13 @@
       "commitRef": "f32bb2f0"
     },
     {
+      "id": "CR-GC-780",
+      "type": "CR",
+      "name": "Entwurfsregel am geteilten Glied",
+      "description": "Entwurfsregel am geteilten Glied und Gesamt-Impact ohne Baubefunde",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5997,6 +6004,15 @@
       "type": "REQ",
       "name": "Volllauf auf Bewaehrung",
       "description": "Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-gate-judges-and-stores",
+      "type": "REQ",
+      "name": "Das Gate urteilt und speichert und sonst nichts",
+      "description": "Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.",
       "kinds": [
         "functional"
       ]
@@ -14265,6 +14281,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-780",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-780",
+      "target": "REQ-gate-judges-and-stores",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -18743,6 +18769,11 @@
     },
     {
       "source": "FUNC-mutate",
+      "target": "REQ-gate-judges-and-stores",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-mutate",
       "target": "REQ-gate-survives-rule-failure",
       "type": "satisfy"
     },
@@ -20629,6 +20660,11 @@
     },
     {
       "source": "TEST-gate-urteilt-und-speichert",
+      "target": "REQ-gate-judges-and-stores",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gate-urteilt-und-speichert",
       "target": "SCHEMA-zug-bericht",
       "type": "verify"
     },
@@ -21865,6 +21901,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-gate-judges-and-stores",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-interactive-capture-suggest",
       "type": "compose"
     },
@@ -22460,5 +22501,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 676
+  "graphVersion": 678
 }

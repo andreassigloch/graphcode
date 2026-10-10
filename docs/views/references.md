@@ -742,6 +742,8 @@
 | `CR-GC-779` | relation | `REQ-risk-loop-oscillation` |
 | `CR-GC-779` | relation | `REQ-risk-store-unreadable` |
 | `CR-GC-779` | relation | `UC-deterministic-steering` |
+| `CR-GC-780` | relation | `FUNC-mutate` |
+| `CR-GC-780` | relation | `REQ-gate-judges-and-stores` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1598,6 +1600,7 @@
 | `FUNC-mutate` | io | `FLOW-graph-delta` |
 | `FUNC-mutate` | io | `FLOW-zug-staende` |
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
+| `FUNC-mutate` | satisfy | `REQ-gate-judges-and-stores` |
 | `FUNC-mutate` | satisfy | `REQ-gate-survives-rule-failure` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-kernel` |
@@ -1948,6 +1951,7 @@
 | `TEST-gate-survives-rule-failure` | verify | `REQ-gate-survives-rule-failure` |
 | `TEST-gate-survives-rule-failure` | verify | `REQ-risk-gate-rule-eval-fails` |
 | `TEST-gate-urteilt-und-speichert` | verify | `REQ-bericht-ist-kein-urteil` |
+| `TEST-gate-urteilt-und-speichert` | verify | `REQ-gate-judges-and-stores` |
 | `TEST-gate-urteilt-und-speichert` | verify | `SCHEMA-zug-bericht` |
 | `TEST-generation-statemachine` | verify | `REQ-done-iff-no-focus` |
 | `TEST-graph-authoring-guide` | verify | `REQ-import-se-ontology` |
@@ -2180,6 +2184,7 @@
 | `UC-code-quality` | compose | `REQ-fmea-reads-places` |
 | `UC-code-quality` | compose | `REQ-formatE-diff-dialect` |
 | `UC-code-quality` | compose | `REQ-formatE-parity` |
+| `UC-code-quality` | compose | `REQ-gate-judges-and-stores` |
 | `UC-code-quality` | compose | `REQ-interactive-capture-suggest` |
 | `UC-code-quality` | compose | `REQ-interface-change-escalation` |
 | `UC-code-quality` | compose | `REQ-mcp-gate-symmetry` |

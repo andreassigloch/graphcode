@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 389 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 390 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 389 CR · 339 done · 4 open.
+Total: 390 CR · 340 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -451,3 +451,4 @@ Total: 389 CR · 339 done · 4 open.
 | `CR-GC-777` | n/a | Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen) |
 | `CR-GC-778` | n/a | Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht |
 | `CR-GC-779` | done | FMEA der Kenngroessen-Steuerungsschleife |
+| `CR-GC-780` | done | Entwurfsregel am geteilten Glied |

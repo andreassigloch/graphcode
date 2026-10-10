@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 153 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 154 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -145,6 +145,14 @@ MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Ga
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
@@ -462,6 +470,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
 Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benanntem Grund ablehnen, den Store unveraendert lassen und fuer den naechsten Zug bereit bleiben.
@@ -672,6 +688,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
 Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benanntem Grund ablehnen, den Store unveraendert lassen und fuer den naechsten Zug bereit bleiben.
@@ -725,6 +749,14 @@ MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Ga
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
@@ -1424,6 +1456,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
 Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benanntem Grund ablehnen, den Store unveraendert lassen und fuer den naechsten Zug bereit bleiben.
@@ -1846,6 +1886,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
 Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benanntem Grund ablehnen, den Store unveraendert lassen und fuer den naechsten Zug bereit bleiben.
@@ -2210,6 +2258,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
 Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benanntem Grund ablehnen, den Store unveraendert lassen und fuer den naechsten Zug bereit bleiben.
@@ -2381,6 +2437,14 @@ MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Ga
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
@@ -2574,6 +2638,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
 Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benanntem Grund ablehnen, den Store unveraendert lassen und fuer den naechsten Zug bereit bleiben.
@@ -2665,6 +2737,14 @@ MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Ga
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
@@ -2944,6 +3024,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
 Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benanntem Grund ablehnen, den Store unveraendert lassen und fuer den naechsten Zug bereit bleiben.
@@ -3107,6 +3195,14 @@ MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Ga
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
@@ -3427,6 +3523,14 @@ MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Ga
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
@@ -4561,6 +4665,14 @@ MutateResult trägt Confidence/Tier (auto-apply/suggest/block); speist 3-Tier-Ga
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-gate-judges-and-stores` — Das Gate urteilt und speichert und sonst nichts
+
+Das Gate urteilt nach Regeln und speichert und tut sonst nichts. Es rechnet keine Berichte, schreibt kein Protokoll einer Schleife und kennt keinen Client. Wer an dieser Funktion einen weiteren Ausgang oder eine weitere Aufgabe vorschlaegt, verletzt diese Anforderung.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-gate-survives-rule-failure` — Gate uebersteht einen Fehler der Regelauswertung
 
@@ -7508,7 +7620,7 @@ verify ▶ `REQ-gate-survives-rule-failure` · `REQ-risk-gate-rule-eval-fails`
 
 Die Antwort des Gates traegt keinen Bericht und das Gate importiert das Messwerk nicht; ein angenommener Zug gibt den Stand davor und danach heraus, ein geblockter nicht; der Bericht traegt seinen Vertrag; scheitert die Messung, bleibt der Zug angewandt und die Antwort nennt den fehlenden Bericht. (CR-GC-778)
 
-verify ▶ `REQ-bericht-ist-kein-urteil` · `SCHEMA-zug-bericht` · testRefs: `tests/gate.urteilt-und-speichert.test.ts`
+verify ▶ `REQ-bericht-ist-kein-urteil` · `REQ-gate-judges-and-stores` · `SCHEMA-zug-bericht` · testRefs: `tests/gate.urteilt-und-speichert.test.ts`
 
 ### 8.42  `TEST-generation-statemachine` — Zustandsmaschine ueber den Korpus
 
@@ -8124,4 +8236,4 @@ verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.
 
 ## 9  Traceability summary
 
-153 REQ · 153 verified · 0 without a verifying TEST (R-01).
+154 REQ · 154 verified · 0 without a verifying TEST (R-01).

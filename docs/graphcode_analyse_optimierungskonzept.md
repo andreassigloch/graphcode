@@ -174,6 +174,11 @@ ihrer Art ab:
 4. **Gewählt wird nach der festen Rangfolge**, nicht nach einer Summe.
 5. **Kein Auto-Apply.** Der Autor wählt; angewandt wird durchs Gate.
 6. **Nachmessung nach dem Zug** gegen die Prognose; das Ergebnis steht im CR.
+7. **Eine Entwurfsregel an einer geteilten Funktion steht als Anforderung an ihr im Modell.** Ein Vorschlag,
+   der einer bestehenden Funktion einen Ausgang oder eine Aufgabe ergänzt, wird auf der Stufe Invarianten
+   gegen jede Anforderung dieser Funktion beurteilt. Das ist zugleich der Ort des Konflikts (Ergebnis d).
+8. **Der Vergleich zählt keine Befunde aus dem Bau** (fehlende Bindung an Code, Schema ohne Bindung und
+   ohne Test: R-20, R-26, R-32). Sie wachsen mit der Zahl neuer Elemente und sagen nichts über den Entwurf.
 
 ### CRs und Spikes
 
@@ -199,19 +204,18 @@ ihrer Art ab:
 | Bedrohungsanalyse, Budgetanalyse | nicht vorhanden; Budget braucht Zeit- und Mengenangaben im Modell |
 | Vorschlag aus einer Analyse (6a) | nicht vorhanden |
 | Gesamt-Impact (6b) | von Hand gemessen im Spike vom 2026-10-10 (drei Entwürfe an der Steuerungsschleife); kein Werkzeug rechnet ihn |
-| Nachweis, dass Vorschläge aus diesem Rahmen besser sind als ein Blindurteil | einmal gemessen, nicht erbracht: die feste Rangfolge ordnete den bekannten schlechten Entwurf zuerst, Analyse und Blindurteil ordneten ihn zuletzt |
+| Nachweis, dass Vorschläge aus diesem Rahmen besser sind als ein Blindurteil | nicht erbracht. Ein Fall, zwei Läufe: erst gegen das Blindurteil, nach den Konventionen 7 und 8 gleich wie das Blindurteil |
 
 **Offen im Konzept:**
 
-- **Die feste Rangfolge trägt den Gesamt-Impact noch nicht** (Spike vom 2026-10-10, graphanalyze
-  `docs/messung/gesamt-impact-2026-10-10/`). Drei Ursachen: die Regel, die der schlechte Entwurf bricht, steht
-  nicht im Modell und greift deshalb nicht auf der Stufe Invarianten; die Modellgüte zählt die Modulkreuzung
-  gegen den Entwurf, dessen Zweck sie verlangt; die Reichweite steht zuletzt und wird nicht mehr befragt.
-  Die Kettensicht trennte den Entwurf mit dem größeren Kreislauf richtig. Vorschlag aus dem Spike: eine
-  Entwurfsregel an einer geteilten Funktion als Anforderung ins Modell, und Befunde aus dem Bau aus dem
-  Vergleich nehmen. Nicht entschieden.
-- Wo ein Konflikt (Ergebnis d) im Modell steht — als Anforderung an der geteilten Funktion oder nur im Text
-  des CR.
+- **Die feste Rangfolge trug den Gesamt-Impact im ersten Lauf nicht** (Spike vom 2026-10-10, graphanalyze
+  `docs/messung/gesamt-impact-2026-10-10/`): sie ordnete den bekannten schlechten Entwurf zuerst. Mit den
+  Konventionen 7 und 8 oben ordnet sie die drei Entwürfe wie Analyse und Blindurteil (Lauf 2, CR-GC-780).
+  Lauf 2 ist kein unabhängiger Nachweis: die Anforderung ist in Kenntnis von Lauf 1 angelegt, und ihre
+  Verletzung ist am Text beurteilt. Offen bleibt ein zweiter Fall, dessen Entwurfsregeln vor den Entwürfen im
+  Modell stehen, und ob die Stufe Invarianten gerechnet werden kann.
+- **Die Modellgüte zählt eine Modulkreuzung gegen den Entwurf, dessen Zweck sie verlangt** (derselbe Spike).
+  Im Fall entschied die Stufe davor; die Frage ist damit nicht beantwortet.
 - **Eine Lücke der Verdrahtungsregeln.** Am Stand des Spikes zu CR-GC-771 (energymanager, 12 Ketten) meldet
   keine Regel etwas zur Verdrahtung, und alle 12 Ketten sind bewertbar — jede hat die Länge 1. Erfassen und
   Anzeigen hängen dort nur über den gespeicherten Datenbestand zusammen, und der steht nicht im Modell. Der
