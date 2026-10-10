@@ -4,11 +4,14 @@
 
 # graphcode — FMEA (functional risk)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk (severity/occurrence/detection nach FM-01). 0 Risiken. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk (severity/occurrence/detection nach FM-01). 4 Risiken. Deterministisch generiert.
 
 | Failure mode (REQ role=risk) | S | O | D | RPN | Mitigation | verifiziert |
 |---|---|---|---|---|---|---|
-| — keine REQ role=risk im Graph (FMEA noch nicht durchgeführt) | — | — | — | — | — | — |
+| Die Regelauswertung wirft oder haengt im Gate. Kein Schreibvorgang kommt mehr durch, in keiner der Wirkketten durch das Gate. | 8 | 2 | 2 | 32 | `REQ-gate-survives-rule-failure` | ✗ |
+| Ein falscher Regelbefund laeuft im Kreislauf um: falscher Fokus, falscher Vorschlag, angewandt, weitere Befunde. Das Modell wird schlechter, waehrend jede einzelne Runde Fortschritt meldet. | 8 | 3 | 7 | 168 | `REQ-loop-convergence-monitor` | ✗ |
+| Die Steuerungsschleife pendelt ueber Sitzungen hinweg: ein angewandter Vorschlag erzeugt den Befund, den der naechste zuruecknimmt, und nach einem Neustart des Hosts beginnt die Zaehlung der Wiederholungen neu. Der Nutzer dreht Runden ohne Fortschritt. | 6 | 4 | 5 | 120 | `REQ-loop-round-log` | ✗ |
+| Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis. | 9 | 2 | 3 | 54 | `REQ-store-recovery` | ✗ |
 
 > RENDER der risk/mitigation-REQ, die `se-fmea` durchs Gate geschrieben hat.
 > Attribute + Kanten exakt wie FM-01/FM-02/FM-03 sie prüfen: `severity`/`occurrence`/

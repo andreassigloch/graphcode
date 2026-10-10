@@ -733,6 +733,15 @@
 | `CR-GC-777` | relation | `FUNC-graph-suggest` |
 | `CR-GC-778` | relation | `FUNC-fit-advisory` |
 | `CR-GC-778` | relation | `FUNC-mutate` |
+| `CR-GC-779` | relation | `REQ-gate-survives-rule-failure` |
+| `CR-GC-779` | relation | `REQ-loop-convergence-monitor` |
+| `CR-GC-779` | relation | `REQ-loop-round-log` |
+| `CR-GC-779` | relation | `REQ-monotone-convergence` |
+| `CR-GC-779` | relation | `REQ-risk-gate-rule-eval-fails` |
+| `CR-GC-779` | relation | `REQ-risk-loop-degradation` |
+| `CR-GC-779` | relation | `REQ-risk-loop-oscillation` |
+| `CR-GC-779` | relation | `REQ-risk-store-unreadable` |
+| `CR-GC-779` | relation | `UC-deterministic-steering` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -904,6 +913,9 @@
 | `FCHAIN-steering-loop` | compose | `FUNC-target-profile-load` |
 | `FCHAIN-steering-loop` | compose | `FUNC-vorschlag` |
 | `FCHAIN-steering-loop` | compose | `FUNC-zug-bericht` |
+| `FCHAIN-steering-loop` | satisfy | `REQ-monotone-convergence` |
+| `FCHAIN-steering-loop` | satisfy | `REQ-risk-loop-degradation` |
+| `FCHAIN-steering-loop` | satisfy | `REQ-risk-loop-oscillation` |
 | `FCHAIN-test-ingest` | compose | `FUNC-mutate` |
 | `FCHAIN-test-ingest` | compose | `FUNC-test-ingest` |
 | `FLOW-action` | io | `ACTOR-agent` |
@@ -1489,6 +1501,7 @@
 | `FUNC-generation-step` | io | `FLOW-next-step-advice` |
 | `FUNC-generation-step` | satisfy | `REQ-analyse-artefakt-vor-stempel` |
 | `FUNC-generation-step` | satisfy | `REQ-done-iff-no-focus` |
+| `FUNC-generation-step` | satisfy | `REQ-loop-round-log` |
 | `FUNC-generation-step` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-goal-steerer` | allocate | `MOD-loop` |
 | `FUNC-goal-steerer` | compose | `FUNC-block-anleitung` |
@@ -1585,6 +1598,7 @@
 | `FUNC-mutate` | io | `FLOW-graph-delta` |
 | `FUNC-mutate` | io | `FLOW-zug-staende` |
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
+| `FUNC-mutate` | satisfy | `REQ-gate-survives-rule-failure` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | io | `FLOW-harness-handle-host` |
@@ -1736,13 +1750,14 @@
 | `MOD-kernel` | satisfy | `REQ-precommit-timeout` |
 | `MOD-kernel` | satisfy | `REQ-prompt-provenance` |
 | `MOD-kernel` | satisfy | `REQ-quality-metric` |
+| `MOD-kernel` | satisfy | `REQ-risk-gate-rule-eval-fails` |
+| `MOD-kernel` | satisfy | `REQ-risk-store-unreadable` |
 | `MOD-kernel` | satisfy | `REQ-rule-calibration` |
 | `MOD-kernel` | satisfy | `REQ-single-kuzu-owner` |
 | `MOD-kernel` | satisfy | `REQ-single-store` |
 | `MOD-kernel` | satisfy | `REQ-store-recovery` |
 | `MOD-kernel` | satisfy | `REQ-structural-rule-shared` |
 | `MOD-loop` | satisfy | `REQ-gate-only-writes` |
-| `MOD-loop` | satisfy | `REQ-monotone-convergence` |
 | `MOD-loop` | satisfy | `REQ-phase-gate-not-skippable` |
 | `MOD-projections` | satisfy | `REQ-completeness-single-value` |
 | `MOD-projections` | satisfy | `REQ-deterministic-serialization` |
@@ -1786,6 +1801,10 @@
 | `REQ-graph-is-ssot` | compose | `REQ-graph-integrity` |
 | `REQ-graph-is-ssot` | compose | `REQ-held-back-traces-named` |
 | `REQ-one-gate-per-repo` | compose | `REQ-gate-only-writes` |
+| `REQ-risk-gate-rule-eval-fails` | compose | `REQ-gate-survives-rule-failure` |
+| `REQ-risk-loop-degradation` | compose | `REQ-loop-convergence-monitor` |
+| `REQ-risk-loop-oscillation` | compose | `REQ-loop-round-log` |
+| `REQ-risk-store-unreadable` | compose | `REQ-store-recovery` |
 | `REQ-single-kuzu-owner` | compose | `REQ-store-owner-lifecycle` |
 | `REQ-token-efficiency` | compose | `REQ-benchmark-harness` |
 | `REQ-token-efficiency` | compose | `REQ-precise-context` |
@@ -1827,6 +1846,8 @@
 | `SYS-graphcode` | compose | `REQ-repo-uninstall` |
 | `SYS-graphcode` | compose | `REQ-repo-update` |
 | `SYS-graphcode` | compose | `REQ-responsiveness` |
+| `SYS-graphcode` | compose | `REQ-risk-gate-rule-eval-fails` |
+| `SYS-graphcode` | compose | `REQ-risk-store-unreadable` |
 | `SYS-graphcode` | compose | `REQ-schema-version-migration` |
 | `SYS-graphcode` | compose | `REQ-self-contained-dist` |
 | `SYS-graphcode` | compose | `REQ-single-kuzu-owner` |
@@ -1924,6 +1945,8 @@
 | `TEST-formate-name` | verify | `REQ-formatE-diff-dialect` |
 | `TEST-formate-ops` | verify | `REQ-formatE-parity` |
 | `TEST-formate-ops` | verify | `REQ-mcp-tool-registry` |
+| `TEST-gate-survives-rule-failure` | verify | `REQ-gate-survives-rule-failure` |
+| `TEST-gate-survives-rule-failure` | verify | `REQ-risk-gate-rule-eval-fails` |
 | `TEST-gate-urteilt-und-speichert` | verify | `REQ-bericht-ist-kein-urteil` |
 | `TEST-gate-urteilt-und-speichert` | verify | `SCHEMA-zug-bericht` |
 | `TEST-generation-statemachine` | verify | `REQ-done-iff-no-focus` |
@@ -1987,6 +2010,10 @@
 | `TEST-live-view` | verify | `REQ-post-emit-update-event` |
 | `TEST-live-view` | verify | `REQ-pre-emit-update-event` |
 | `TEST-live-view` | verify | `REQ-versioned-broadcast` |
+| `TEST-loop-convergence-monitor` | verify | `REQ-loop-convergence-monitor` |
+| `TEST-loop-convergence-monitor` | verify | `REQ-risk-loop-degradation` |
+| `TEST-loop-round-log` | verify | `REQ-loop-round-log` |
+| `TEST-loop-round-log` | verify | `REQ-risk-loop-oscillation` |
 | `TEST-mcp-export` | verify | `REQ-doc-export` |
 | `TEST-mcp-export-guard` | verify | `REQ-export-no-clobber` |
 | `TEST-mcp-readiness` | verify | `REQ-mcp-tool-registry` |
@@ -2106,6 +2133,7 @@
 | `TEST-store-lock` | verify | `REQ-single-kuzu-owner` |
 | `TEST-store-lock` | verify | `REQ-store-owner-lifecycle` |
 | `TEST-store-lock` | verify | `SCHEMA-lock-owner` |
+| `TEST-store-recovery` | verify | `REQ-risk-store-unreadable` |
 | `TEST-store-recovery` | verify | `REQ-store-recovery` |
 | `TEST-target-profile` | verify | `REQ-target-shifts-ranking` |
 | `TEST-target-profile` | verify | `REQ-thresholds-from-config` |
@@ -2186,6 +2214,8 @@
 | `UC-deterministic-steering` | compose | `REQ-monotone-convergence` |
 | `UC-deterministic-steering` | compose | `REQ-near-duplicate-detection` |
 | `UC-deterministic-steering` | compose | `REQ-phase-gate-not-skippable` |
+| `UC-deterministic-steering` | compose | `REQ-risk-loop-degradation` |
+| `UC-deterministic-steering` | compose | `REQ-risk-loop-oscillation` |
 | `UC-deterministic-steering` | compose | `REQ-single-measurement-path` |
 | `UC-deterministic-steering` | compose | `REQ-skill-reads-only` |
 | `UC-deterministic-steering` | compose | `REQ-steering-from-metrics` |

@@ -4,7 +4,7 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 75 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 79 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
@@ -68,6 +68,10 @@
 | `REQ-readiness-transparent` | Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent. | ✓ |
 | `REQ-readonly-bridge` | Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS) | ✓ |
 | `REQ-responsiveness` | Bindende NFR (Familie §6b): erste Reaktion < 0,2s (UI+Transport+Store-Query+Onto-/Rule-Check, ohne LLM). Draft-Apply sofort + nur betroffener Subgraph geprüft; volle Konsistenz am Commit. End-to-end über FCHAIN-apply-gate. | ✓ |
+| `REQ-risk-gate-rule-eval-fails` | Die Regelauswertung wirft oder haengt im Gate. Kein Schreibvorgang kommt mehr durch, in keiner der Wirkketten durch das Gate. | ✓ |
+| `REQ-risk-loop-degradation` | Ein falscher Regelbefund laeuft im Kreislauf um: falscher Fokus, falscher Vorschlag, angewandt, weitere Befunde. Das Modell wird schlechter, waehrend jede einzelne Runde Fortschritt meldet. | ✓ |
+| `REQ-risk-loop-oscillation` | Die Steuerungsschleife pendelt ueber Sitzungen hinweg: ein angewandter Vorschlag erzeugt den Befund, den der naechste zuruecknimmt, und nach einem Neustart des Hosts beginnt die Zaehlung der Wiederholungen neu. Der Nutzer dreht Runden ohne Fortschritt. | ✓ |
+| `REQ-risk-store-unreadable` | Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis. | ✓ |
 | `REQ-roundtrip-conformance` | decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3) | ✓ |
 | `REQ-rule-calibration` | Die Aufzeichnung erlaubt es, je Regel, je Modell und je Konsument die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346) | ✓ |
 | `REQ-self-contained-dist` | Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103. | ✓ |

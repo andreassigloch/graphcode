@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 4 ACTOR, 9 UC, 26 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 4 ACTOR, 9 UC, 25 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -36,7 +36,6 @@
 | `REQ-single-kuzu-owner` | Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1) | done |
 | `REQ-single-store` | Genau ein Store = Kuzu (embedded native+WASM, Cypher). Kein Neo4j. (SPEC §0) | open |
 | `REQ-single-transport` | Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5) | done |
-| `REQ-store-recovery` | CONSTRAINT (ConOps): Recovery bei Kuzu Lock-Konflikt / abgestürztem Owner / korruptem Store — Lock-Erkennung + sicherer Re-Open. | open |
 | `REQ-structure-driven` | Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc. | open |
 | `REQ-token-efficiency` | Das System soll den Kontext einer Runde aus dem Graphen binden statt aus Datei-Dumps: eine typisierte Abfrage liefert den exakten Blast-Radius, Vertiefung geschieht on demand. Messgroesse ist tokens_in je Aufgabe gegenueber einem grep-basierten Lauf. | done |
 | `REQ-versioned-cache` | CR-GC-102 R11: version-keyed Response-Cache + Dirty-Flag → auf Kuzu-Version mappen. | open |
@@ -411,6 +410,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-776` | n/a | Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen | `MOD-kernel-measure` · `MOD-loop` |
 | `CR-GC-777` | n/a | Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen) | `FUNC-generation-step` · `FUNC-graph-suggest` |
 | `CR-GC-778` | n/a | Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht | `FUNC-fit-advisory` · `FUNC-mutate` |
+| `CR-GC-779` | done | FMEA der Kenngroessen-Steuerungsschleife | `REQ-gate-survives-rule-failure` · `REQ-loop-convergence-monitor` · `REQ-loop-round-log` · `REQ-monotone-convergence` · `REQ-risk-gate-rule-eval-fails` · `REQ-risk-loop-degradation` · `REQ-risk-loop-oscillation` · `REQ-risk-store-unreadable` · `UC-deterministic-steering` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

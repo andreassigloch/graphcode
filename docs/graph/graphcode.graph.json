@@ -3226,6 +3226,14 @@
       "description": "docs/cr/open/CR-GC-778-gate-entlasten-architekturmass-steuerwer.md"
     },
     {
+      "id": "CR-GC-779",
+      "type": "CR",
+      "name": "FMEA der Kenngroessen-Steuerungsschleife",
+      "description": "FMEA der Kenngroessen-Steuerungsschleife",
+      "status": "done",
+      "commitRef": "f32bb2f0"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6005,6 +6013,16 @@
       ]
     },
     {
+      "id": "REQ-gate-survives-rule-failure",
+      "type": "REQ",
+      "name": "Gate uebersteht einen Fehler der Regelauswertung",
+      "description": "Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benanntem Grund ablehnen, den Store unveraendert lassen und fuer den naechsten Zug bereit bleiben.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-graceful-degradation",
       "type": "REQ",
       "name": "Betrieb ohne LLM (Degraded-Modus)",
@@ -6203,6 +6221,26 @@
       "created_at": "2026-06-17T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-loop-convergence-monitor",
+      "type": "REQ",
+      "name": "Entdeckung ueber Runden",
+      "description": "Eine Auswertung ausserhalb des Kreislaufs MUSS aus dem Rundenprotokoll Pendeln, Plateau und Rueckschritt ueber Runden und Sitzungen erkennen und dem Nutzer melden. Sie liest nur und ist kein Glied des Kreislaufs.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-loop-round-log",
+      "type": "REQ",
+      "name": "Rundenprotokoll der Steuerungsschleife",
+      "description": "Jede Runde der Steuerungsschleife MUSS dauerhaft protokolliert werden: Messstand vor und nach dem Zug, gewaehlter Fokus, Vorschlag, Zug und Abbruchgrund. Das Protokoll schreibt die Schleifenseite und nicht das Gate. Kreis und Plateau bleiben damit ueber einen Neustart des Hosts erkennbar.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -6829,6 +6867,62 @@
       ]
     },
     {
+      "id": "REQ-risk-gate-rule-eval-fails",
+      "type": "REQ",
+      "name": "Risiko Regelauswertung faellt im Gate aus",
+      "description": "Die Regelauswertung wirft oder haengt im Gate. Kein Schreibvorgang kommt mehr durch, in keiner der Wirkketten durch das Gate.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-779 Quelle F geteilte Funktionen FUNC-mutate in dreizehn und FUNC-evaluate-rules in sieben Wirkketten.",
+      "severity": 8,
+      "occurrence": 2,
+      "detection": 2
+    },
+    {
+      "id": "REQ-risk-loop-degradation",
+      "type": "REQ",
+      "name": "Risiko falscher Befund laeuft um",
+      "description": "Ein falscher Regelbefund laeuft im Kreislauf um: falscher Fokus, falscher Vorschlag, angewandt, weitere Befunde. Das Modell wird schlechter, waehrend jede einzelne Runde Fortschritt meldet.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-779 Quelle E Kreislauf. Die Konvergenzanforderung zaehlt Befunde und die koennen fallen waehrend das Modell schlechter wird. Keine Stelle sieht ueber mehrere Runden.",
+      "severity": 8,
+      "occurrence": 3,
+      "detection": 7
+    },
+    {
+      "id": "REQ-risk-loop-oscillation",
+      "type": "REQ",
+      "name": "Risiko Schleife pendelt",
+      "description": "Die Steuerungsschleife pendelt ueber Sitzungen hinweg: ein angewandter Vorschlag erzeugt den Befund, den der naechste zuruecknimmt, und nach einem Neustart des Hosts beginnt die Zaehlung der Wiederholungen neu. Der Nutzer dreht Runden ohne Fortschritt.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-779 Quelle E Kreislauf der Steuerungsschleife mit zehn Gliedern. Kreis und Plateau erkennt die Schleife nur im Gedaechtnis des Prozesses.",
+      "severity": 6,
+      "occurrence": 4,
+      "detection": 5
+    },
+    {
+      "id": "REQ-risk-store-unreadable",
+      "type": "REQ",
+      "name": "Risiko Store nicht lesbar",
+      "description": "Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-779 Quelle F geteilte Funktion FUNC-graph-store in acht Wirkketten. Je Kette eine Fehlerwirkung und die Schwere ist die der schwersten.",
+      "severity": 9,
+      "occurrence": 2,
+      "detection": 3
+    },
+    {
       "id": "REQ-roundtrip-conformance",
       "type": "REQ",
       "name": "Round-Trip-Conformance",
@@ -7043,7 +7137,8 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
-      ]
+      ],
+      "role": "mitigation"
     },
     {
       "id": "REQ-structural-rule-shared",
@@ -7789,6 +7884,9 @@
         },
         "assumption-review": {
           "graphVersion": 0
+        },
+        "fmea": {
+          "graphVersion": 675
         }
       }
     },
@@ -8400,6 +8498,12 @@
       ]
     },
     {
+      "id": "TEST-gate-survives-rule-failure",
+      "type": "TEST",
+      "name": "Gate nach Regelfehler weiter bereit",
+      "description": "Eine werfende Regel fuehrt zur Ablehnung mit Grund. Der Store ist unveraendert und der naechste Zug geht durch."
+    },
+    {
       "id": "TEST-gate-urteilt-und-speichert",
       "type": "TEST",
       "name": "Das Gate urteilt und speichert",
@@ -8872,6 +8976,18 @@
           "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
+    },
+    {
+      "id": "TEST-loop-convergence-monitor",
+      "type": "TEST",
+      "name": "Entdeckung meldet Pendeln Plateau Rueckschritt",
+      "description": "Ein Protokoll mit Pendeln, eines mit Plateau und eines mit steigender Befundzahl werden je gemeldet. Ein konvergierender Verlauf bleibt stumm."
+    },
+    {
+      "id": "TEST-loop-round-log",
+      "type": "TEST",
+      "name": "Rundenprotokoll ueberlebt den Neustart",
+      "description": "Nach zwei Runden mit einem Neustart des Hosts dazwischen stehen beide Runden im Protokoll, mit Fokus, Vorschlag, Zug und Abbruchgrund."
     },
     {
       "id": "TEST-mcp-export",
@@ -14104,6 +14220,51 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-779",
+      "target": "REQ-gate-survives-rule-failure",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-779",
+      "target": "REQ-loop-convergence-monitor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-779",
+      "target": "REQ-loop-round-log",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-779",
+      "target": "REQ-monotone-convergence",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-779",
+      "target": "REQ-risk-gate-rule-eval-fails",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-779",
+      "target": "REQ-risk-loop-degradation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-779",
+      "target": "REQ-risk-loop-oscillation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-779",
+      "target": "REQ-risk-store-unreadable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-779",
+      "target": "UC-deterministic-steering",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15036,6 +15197,21 @@
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-zug-bericht",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "REQ-monotone-convergence",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "REQ-risk-loop-degradation",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "REQ-risk-loop-oscillation",
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-test-ingest",
@@ -18035,6 +18211,11 @@
     },
     {
       "source": "FUNC-generation-step",
+      "target": "REQ-loop-round-log",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-generation-step",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
@@ -18559,6 +18740,11 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-mutate",
+      "target": "REQ-gate-survives-rule-failure",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-mutate",
@@ -19332,6 +19518,16 @@
     },
     {
       "source": "MOD-kernel",
+      "target": "REQ-risk-gate-rule-eval-fails",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-kernel",
+      "target": "REQ-risk-store-unreadable",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-kernel",
       "target": "REQ-rule-calibration",
       "type": "satisfy"
     },
@@ -19358,11 +19554,6 @@
     {
       "source": "MOD-loop",
       "target": "REQ-gate-only-writes",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-loop",
-      "target": "REQ-monotone-convergence",
       "type": "satisfy"
     },
     {
@@ -19618,6 +19809,26 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "source": "REQ-risk-gate-rule-eval-fails",
+      "target": "REQ-gate-survives-rule-failure",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-loop-degradation",
+      "target": "REQ-loop-convergence-monitor",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-loop-oscillation",
+      "target": "REQ-loop-round-log",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-store-unreadable",
+      "target": "REQ-store-recovery",
+      "type": "compose"
+    },
+    {
       "source": "REQ-single-kuzu-owner",
       "target": "REQ-store-owner-lifecycle",
       "type": "compose"
@@ -19844,6 +20055,16 @@
     {
       "source": "SYS-graphcode",
       "target": "REQ-responsiveness",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-risk-gate-rule-eval-fails",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-risk-store-unreadable",
       "type": "compose"
     },
     {
@@ -20392,6 +20613,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-gate-survives-rule-failure",
+      "target": "REQ-gate-survives-rule-failure",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gate-survives-rule-failure",
+      "target": "REQ-risk-gate-rule-eval-fails",
+      "type": "verify"
+    },
+    {
       "source": "TEST-gate-urteilt-und-speichert",
       "target": "REQ-bericht-ist-kein-urteil",
       "type": "verify"
@@ -20721,6 +20952,26 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-loop-convergence-monitor",
+      "target": "REQ-loop-convergence-monitor",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-loop-convergence-monitor",
+      "target": "REQ-risk-loop-degradation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-loop-round-log",
+      "target": "REQ-loop-round-log",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-loop-round-log",
+      "target": "REQ-risk-loop-oscillation",
+      "type": "verify"
     },
     {
       "source": "TEST-mcp-export",
@@ -21361,6 +21612,11 @@
     },
     {
       "source": "TEST-store-recovery",
+      "target": "REQ-risk-store-unreadable",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-store-recovery",
       "target": "REQ-store-recovery",
       "type": "verify"
     },
@@ -21785,6 +22041,16 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "REQ-risk-loop-degradation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-risk-loop-oscillation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "REQ-single-measurement-path",
       "type": "compose"
     },
@@ -22194,5 +22460,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 674
+  "graphVersion": 676
 }
