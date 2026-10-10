@@ -182,6 +182,22 @@ eine Kennzahl (nächster Abschnitt), der Skill beurteilt einen Ort.
 (Abschnitt „Handlungsklassen"), (b) der Gesamt-Impact eines Vorschlags über alle Zwecke und Ketten —
 Konflikte an den Kreuzungspunkten und die Rangfolge aus „Gegengewicht Blast-Radius".
 
+**9. Vier Ebenen, eine Optimierung.** Die Zieldimensionen wirken auf verschiedenen Ebenen; jede Ebene hat
+ihre Kennzahlen, und alle ziehen an denselben Vorschlägen.
+
+| Ebene | Gegenstand | Kennzahlen heute | Rolle |
+|---|---|---|---|
+| Knoten | einzelne Funktion, Anforderung | Reichweite (Ketten, Anwendungsfälle), Zusammenhalt der Whitebox (MT-04), Bindung an Code und Test | Ort und Träger der Bewertung |
+| Abstraktion | Ebenen und Schnitte beider Bäume (Modul, Funktion) | Breite je Ebene (RD-04, RD-05), Zusammenhalt (MT-02), Schnittstellenbreite und Kreuzungen (BW-02, R-04, CR-01), Instabilität | Modellgüte, zweckneutral, mit Schwelle |
+| Wirkkette | Kundenfunktion von Auslöser bis Ergebnis | Kettenkennzahlen und ihre Orte | Zweck je Kette, beurteilt durch die Analysen |
+| Gesamtprojekt | alle Ketten und Module zusammen | Bewertbarkeitsquote, Bindungsquote, Marken, Blast-Radius, Kreuzungspunkte | Vorbedingung und Gegengewicht |
+
+- Der Steuerwert von `graph_suggest` liest heute nur Regeln der Abstraktionsebene (RD-04, BW-02, R-04, CR-01,
+  MT-02). Ein Vorschlag ohne die Ebene der Wirkkette kennt keinen Zweck.
+- Beleg aus dem Spike zu CR-GC-771 (2026-10-10): an zwölf unverbundenen Funktionen zog allein die
+  Abstraktionsebene, und ein bewusst unsinniger Modulschnitt gewann, weil er das Größenband traf.
+- Die Rangfolge aus „Gegengewicht Blast-Radius" ordnet die Ebenen, wenn sie gegeneinander ziehen.
+
 ## Drei Beispielprofile
 
 Ein Profil ist ein Satz von Schwellenwerten auf die Kennzahlen plus ein Leitsatz. Die Werte sind
