@@ -104,7 +104,7 @@ Werte sind objektive Realisierungseigenschaften; erst das Profil macht daraus ei
 | Kette | Gesamtlänge | Schritte zwischen Auslöser und Wirkung (längster Pfad, Schleifen zu einem Schritt zusammengefasst) | ja |
 | Kette | Synchrone Tiefe | Schritte, die zwingend nacheinander laufen (kritische Kette) | nein — braucht sync/async am FLOW; bis dahin = Gesamtlänge als obere Schranke |
 | Kette | Verzweigungsgrad | Anzahl paralleler Äste (Fan-out) | ja |
-| Kette | Modulgrenzen | Anzahl gekreuzter MOD-Grenzen (Modul über compose-Vorfahren geerbt) | ja |
+| Kette | Modulgrenzen | Anzahl gekreuzter MOD-Grenzen (Modul über die direkte `allocate`-Kante; Entscheidung CR-SM-404) | ja |
 | Kette | Rückkopplungen | Schleifen innerhalb der Kette (nicht-triviale starke Komponenten) | ja |
 | Vernetzung | Geteilte Knoten | Elemente, durch die mehrere Ketten laufen | ja |
 | Vernetzung | Engstellen-Grad | Geteilter Knoten, der synchron durchlaufen wird | nur obere Schranke (geteilter Durchgangsknoten) |
