@@ -1,6 +1,6 @@
 # CR-GC-779: FMEA der Kenngrößen-Steuerungsschleife
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-10)
 **Typ:** Analyse (Skill `se-fmea`, Version 8) — erster Lauf nach CR-GC-774
 **Erstellt:** 2026-10-10
 **Stand:** 2026-10-10 · **Methodik:** AIAG-VDA 7-Step, Action Priority
