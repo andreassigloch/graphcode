@@ -192,9 +192,10 @@ ihrer Art ab:
 |---|---|
 | Kennzahlen der Modul- und der Funktionssicht | vorhanden, ziehen an `graph_suggest` |
 | Kennzahlen der Anforderungssicht | erfüllt, geprüft und gebunden vorhanden; Bewertungen nur aus der FMEA, im graphcode-Modell null |
-| Kettenkennzahlen als Zahlen | gebaut (CR-SM-404), nicht veröffentlicht; graphcode 24 von 25 Ketten bewertbar |
-| Orte je Kette | offen (CR-SM-406) |
-| FMEA liest die Orte | offen (CR-GC-774); heute rechnet der Skill ein eigenes Profil |
+| Kettenkennzahlen als Zahlen | gebaut (CR-SM-404); graphcode 24 von 25 Ketten bewertbar |
+| Orte je Kette | gebaut (CR-SM-406, contracts 11.2.0) |
+| FMEA liest die Orte | gebaut (CR-GC-774, Skill Version 8) |
+| Erster FMEA-Lauf auf den Orten | gefahren an der Steuerungsschleife (CR-GC-779): vier Risiken im Modell, ein Architekturvorschlag, ein Konflikt am Gate |
 | Bedrohungsanalyse, Budgetanalyse | nicht vorhanden; Budget braucht Zeit- und Mengenangaben im Modell |
 | Vorschlag aus einer Analyse (6a) | nicht vorhanden |
 | Gesamt-Impact (6b) | nicht vorhanden; die Reichweite eines Umbaus rechnet heute nichts |
