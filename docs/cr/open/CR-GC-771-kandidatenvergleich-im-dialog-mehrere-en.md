@@ -75,6 +75,38 @@ Kandidaten, wie wird bewertet.**
    den ein Blindurteil vorzieht. Gegenprobe: drei gleichwertige Entwürfe dürfen nicht getrennt werden.
 2. Erst danach die Fragen 1 bis 3 entscheiden und die Umsetzung als eigene CR schneiden.
 
+## Ergebnis des Spikes (2026-10-10)
+
+**Aufbau.** Lauf `energymanager/frontier-1` (graphanalyze), nachgespielt bis vor den Modulschnitt (9 Züge, Fokus-Stufe
+Modul, 12 Funktionen ohne Modul). Im Wegwerf-Store fünf verschiedene Entwürfe und drei gleichwertige per
+`graph_mutate` mit `dryRun` geprobt, gerankt mit `rankCandidates` von der Marke `executor-geparkt-2026-10-09`.
+Stand: Regelkatalog 44.0.0, Code `7d1c0a08`. Blindurteil: ein Gutachter-Agent, der nur den Auftrag (`start.md`),
+die Funktionen und die Gruppen ohne Namen sah.
+
+| Entwurf | Rang der Rangfolge | Rang im Blindurteil | Befund-Delta Stufe Modul | Befunde danach |
+|---|---|---|---|---|
+| E — alphabetisch gedrittelt (Unsinn, Positivkontrolle) | 1 | 5 | 11 | — |
+| C — ein Modul für alles | 2 | 4 | 10 | RD-04 |
+| A — Schichten, 4 Module (Entwurf des Laufs) | 3 | 1 | 10 | RD-05 |
+| B — nach Gerät, 5 Module | 4 | 2 | 9 | 2 × RD-05 |
+| D — je Funktion ein Modul | 5 | 3 | −1 | RD-04, RD-05 |
+
+- **Die Rangfolge trennt — nach dem Falschen.** Ihr Gewinner ist der Entwurf, den das Blindurteil als schlechtesten
+  nennt; die zwei Entwürfe, die das Blindurteil vorn sieht, liegen auf Platz 3 und 4. Regelkandidat nicht erfüllt.
+- **Ursache.** Alle Entwürfe räumen dieselben 12 Befunde „Funktion ohne Modul" (R-22). Was sie unterscheidet, sind
+  allein die Größenregeln (RD-04 zu viele, RD-05 zu wenige Kinder je Ebene). Die fünf Kopplungsregeln des Steuerwerts
+  sehen nichts: das Modell hat an dieser Stelle keinen Fluss zwischen zwei Funktionen. Drei Module zu je vier
+  Funktionen treffen das Größenband, gleich was darin liegt.
+- **Gegenprobe bestanden.** Drei gleichwertige Entwürfe (gleiche Aufteilung, andere Kennungen, andere Reihenfolge)
+  sind in allen Kriterien gleich; nur der Index ordnet sie.
+- **Grenze (Autor, 2026-10-10): der Fall trägt die Frage nicht.** Zwölf unverbundene Funktionen geben einem
+  Modulschnitt nichts zu entscheiden, das eine Strukturkennzahl sehen könnte. Der Spike belegt nur: ohne Kopplung
+  ordnet die Rangfolge nach Größe. Frage 4 bleibt offen und braucht einen Stand mit Flüssen zwischen Funktionen.
+  Dazu: ein Fall, eine Stufe, ein Gutachter-Lauf.
+- **Ablage.** Skript, Urteile und Notiz: graphanalyze `docs/messung/kandidatenvergleich-2026-10-10/`.
+
+**Zurückgestellt (Autor, 2026-10-10):** zuerst CR-GC-774; diese CR kommt danach wieder.
+
 ## Akzeptanz dieser CR
 
 - Der Ist-Stand oben ist vom Autor gelesen und bestätigt oder korrigiert.
