@@ -1,6 +1,6 @@
 # CR-GC-774: FMEA-Skill nimmt die Orte der Kettenkennzahlen als Eingang; Reichweite einer Funktion ordnet die Arbeit
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-10)
 **Typ:** aus Item ITEM-2026-805 (idea)
 **Erstellt:** 2026-10-09 · **Umgeschrieben:** 2026-10-10 (Entscheidungen des Autors, unten)
 **Item:** bok/items/ITEM-2026-805.json (Lane: code)
