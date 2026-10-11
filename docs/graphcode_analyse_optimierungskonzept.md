@@ -146,6 +146,12 @@ ihrer Art ab:
    IO-01, FC-04, FC-05) sind Warnungen, kein Fehler; das Gate hält eine unverbundene Kette nicht auf. Der
    Skill liest ihre Befunde und `measurable` für die Kette; solange dort etwas offen ist, ist das
    Schließen dieser Befunde das Ergebnis, nicht die Analyse.
+   **Zweiter Schritt ist der Betrachtungsumfang:** die Glieder der Kette, ihre Module, alle Ketten durch
+   diese Glieder und das System, dazu jede Anforderung, die eines davon erfüllt. Er nennt, was die Analyse
+   lesen muss. Gemessen an drei Ketten (graphanalyze `docs/messung/flaechen-2026-10-11/`): 39 bis 48 Prozent
+   der Anforderungen, darin 22 von 24, die ein Gutachter als verletzt oder gefährdet nannte. Ein
+   Flussschritt mehr fasst alle 24, wächst an einer Drehscheibe aber auf rund 80 Prozent. Heute rechnet ihn
+   kein Werkzeug.
 3. **Der Skill liest die Orte aus `graph_metrics` und rechnet keine Kennzahl.** Was ihm fehlt, wird in
    `chainMetrics` ergänzt, nicht im Skill-Text.
 4. **Pflichtquellen vor freier Ableitung.** Der Skill geht die Ortsarten seiner Dimension ab (Tabelle
@@ -223,6 +229,14 @@ ihrer Art ab:
   Gegenprobe ist stabil. Das Urteil brauchte in beiden Fällen das Lesen der Anforderungen. Ob Abschnitt 6b
   deshalb vom Verfahren zur Vorlage für ein Urteil wird (Orte und betroffene Anforderungen zeigen, nicht
   ordnen), ist nicht entschieden.
+- **Flächenmaße** (Spike vom 2026-10-11, dieselbe Ablage). Sicherheitsrelevante Fläche: die Funktionen, die
+  eine Gegenmaßnahme eines Risikos erfüllen. Sie unterscheidet Modelle stark (energymanager: jedes Risiko an
+  genau einer Funktion; sigllm: Gegenmaßnahmen an Modul oder System, alle Funktionen in der Fläche) und
+  Entwürfe kaum. Ob ein Entwurf einer Funktion ein weiteres Risiko auflädt, zeigt erst die Zahl der Risiken
+  je Funktion, gewichtet mit den Ketten durch sie; diese Größe ist nachgetragen und nicht vorab festgelegt.
+  Laufzeitrelevante Fläche: Anfragepfad und Zulieferer lassen sich aus der Flussrichtung trennen, die
+  Ladezeit entscheidet das nicht; es fehlen Takt, Menge und die Angabe synchron oder asynchron am Fluss.
+  Nicht entschieden, ob eine der Größen in `chainMetrics` kommt.
 - **Eine Lücke der Verdrahtungsregeln.** Am Stand des Spikes zu CR-GC-771 (energymanager, 12 Ketten) meldet
   keine Regel etwas zur Verdrahtung, und alle 12 Ketten sind bewertbar — jede hat die Länge 1. Erfassen und
   Anzeigen hängen dort nur über den gespeicherten Datenbestand zusammen, und der steht nicht im Modell. Der
