@@ -103,6 +103,7 @@
 | `FUNC-se-status` | FUNC | Skill se-status |
 | `FUNC-se-top-level` | FUNC | Skill se:top-level |
 | `FUNC-se-trade` | FUNC | Skill se-trade |
+| `FUNC-se-vorbereitung` | FUNC | Skill se-vorbereitung |
 | `FUNC-seed-from-json` | FUNC | seedFromJson(relPath) |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
@@ -229,6 +230,7 @@
 | `FUNC-se-status` | `MOD-agent-surface` |
 | `FUNC-se-top-level` | `MOD-agent-surface` |
 | `FUNC-se-trade` | `MOD-agent-surface` |
+| `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `FUNC-seed-from-json` | `MOD-kernel` |
 | `FUNC-serve-sse` | `MOD-surface` |
 | `FUNC-serve-stdio` | `MOD-surface` |

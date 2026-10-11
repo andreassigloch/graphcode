@@ -749,6 +749,8 @@
 | `CR-GC-782` | relation | `FUNC-se-fmea` |
 | `CR-GC-783` | relation | `FUNC-chain-metrics` |
 | `CR-GC-784` | relation | `FUNC-chain-metrics` |
+| `CR-GC-784` | relation | `FUNC-se-vorbereitung` |
+| `CR-GC-784` | relation | `REQ-vorbereitung-reads-metrics` |
 | `CR-GC-785` | relation | `FUNC-graph-suggest` |
 | `CR-GC-785` | relation | `FUNC-se-optimize` |
 | `CR-GC-786` | relation | `FUNC-graph-readiness` |
@@ -895,6 +897,7 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-plan` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-top-level` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-trade` |
+| `FCHAIN-skill-authoring` | compose | `FUNC-se-vorbereitung` |
 | `FCHAIN-skill-help` | compose | `FUNC-se-help` |
 | `FCHAIN-skill-report` | compose | `FUNC-check-code-conformance` |
 | `FCHAIN-skill-report` | compose | `FUNC-compute-readiness` |
@@ -952,6 +955,7 @@
 | `FLOW-chain-metrics` | io | `ACTOR-dashboard` |
 | `FLOW-chain-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-chain-metrics` | io | `FUNC-se-fmea` |
+| `FLOW-chain-metrics` | io | `FUNC-se-vorbereitung` |
 | `FLOW-chain-metrics` | relation | `SCHEMA-chain-metrics` |
 | `FLOW-channel-dimension-template` | io | `FUNC-generation-step` |
 | `FLOW-channel-dimension-template` | relation | `SCHEMA-steering-channel` |
@@ -1158,6 +1162,8 @@
 | `FLOW-mutate-cmd-se-top-level` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-se-trade` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-se-trade` | relation | `SCHEMA-mutate-command` |
+| `FLOW-mutate-cmd-se-vorbereitung` | io | `FUNC-mutate` |
+| `FLOW-mutate-cmd-se-vorbereitung` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-test-ingest` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-test-ingest` | relation | `SCHEMA-mutate-command` |
 | `FLOW-next-step-advice` | io | `ACTOR-agent` |
@@ -1257,6 +1263,7 @@
 | `FLOW-skill-request` | io | `FUNC-se-status` |
 | `FLOW-skill-request` | io | `FUNC-se-top-level` |
 | `FLOW-skill-request` | io | `FUNC-se-trade` |
+| `FLOW-skill-request` | io | `FUNC-se-vorbereitung` |
 | `FLOW-skill-request` | io | `FUNC-target-profile` |
 | `FLOW-skill-request` | io | `FUNC-test` |
 | `FLOW-skill-request` | io | `FUNC-test-ui` |
@@ -1419,6 +1426,7 @@
 | `FUNC-block-optimierung` | compose | `FUNC-block-urteilsarbeit` |
 | `FUNC-block-optimierung` | compose | `FUNC-graph-suggest` |
 | `FUNC-block-optimierung` | compose | `FUNC-se-optimize` |
+| `FUNC-block-optimierung` | compose | `FUNC-se-vorbereitung` |
 | `FUNC-block-q-improvement` | allocate | `MOD-loop` |
 | `FUNC-block-q-improvement` | compose | `FUNC-close-violations` |
 | `FUNC-block-q-improvement` | compose | `FUNC-generation-step` |
@@ -1697,6 +1705,10 @@
 | `FUNC-se-trade` | allocate | `MOD-agent-surface` |
 | `FUNC-se-trade` | io | `FLOW-mutate-cmd-se-trade` |
 | `FUNC-se-trade` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-se-vorbereitung` | allocate | `MOD-agent-surface` |
+| `FUNC-se-vorbereitung` | io | `FLOW-mutate-cmd-se-vorbereitung` |
+| `FUNC-se-vorbereitung` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-se-vorbereitung` | satisfy | `REQ-vorbereitung-reads-metrics` |
 | `FUNC-seed-from-json` | allocate | `MOD-kernel` |
 | `FUNC-seed-from-json` | io | `FLOW-ontology-json` |
 | `FUNC-seed-from-json` | satisfy | `REQ-bootstrap-through-gate` |
@@ -2194,6 +2206,7 @@
 | `TEST-views-conformance` | verify | `REQ-shared-views-no-fork` |
 | `TEST-violation-context` | verify | `REQ-precise-context` |
 | `TEST-violation-context` | verify | `REQ-rule-enforcement` |
+| `TEST-vorbereitung-reads-metrics` | verify | `REQ-vorbereitung-reads-metrics` |
 | `TEST-working-set-spezlauf` | verify | `REQ-token-efficiency` |
 | `UC-code-quality` | compose | `FCHAIN-apply-gate` |
 | `UC-code-quality` | compose | `FCHAIN-capture` |
@@ -2235,6 +2248,7 @@
 | `UC-code-quality` | compose | `REQ-skill-authors-through-gate` |
 | `UC-code-quality` | compose | `REQ-structure-driven` |
 | `UC-code-quality` | compose | `REQ-trajectory-emit` |
+| `UC-code-quality` | compose | `REQ-vorbereitung-reads-metrics` |
 | `UC-deterministic-steering` | compose | `FCHAIN-generation-states` |
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-help` |
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-report` |

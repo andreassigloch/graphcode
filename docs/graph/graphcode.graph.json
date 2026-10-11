@@ -4032,6 +4032,12 @@
       "status": "reviewed"
     },
     {
+      "id": "FLOW-mutate-cmd-se-vorbereitung",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-vorbereitung)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch: die vom Autor gewaehlten Zuege der Vorbereitung. Verbindung von FUNC-se-vorbereitung zu FUNC-mutate. (CR-GC-784)"
+    },
+    {
       "id": "FLOW-mutate-cmd-test-ingest",
       "type": "FLOW",
       "name": "Mutate-Command (test-ingest)",
@@ -5336,6 +5342,15 @@
       "description": "Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, die Entscheidung als erledigten Auftrag festhalten (Text in docs/cr/done, schlanker Knoten, relation-Kanten auf das Entschiedene).",
       "realRef": {
         "file": ".claude/commands/se-trade.md"
+      }
+    },
+    {
+      "id": "FUNC-se-vorbereitung",
+      "type": "FUNC",
+      "name": "Skill se-vorbereitung",
+      "description": "Prompt-realisierter Skill se-vorbereitung: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Vier Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Bericht. Liest Bewertbarkeit, Traeger und Umfang aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784)",
+      "realRef": {
+        "file": ".claude/commands/se-vorbereitung.md"
       }
     },
     {
@@ -7370,6 +7385,15 @@
       "name": "Viewer gehoert dem Repo",
       "description": "Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)",
       "status": "done",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-vorbereitung-reads-metrics",
+      "type": "REQ",
+      "name": "Vorbereitung liest Kennzahlen und schlaegt vor",
+      "description": "Der Skill se-vorbereitung MUSS Bewertbarkeit, Traeger je Risiko und Betrachtungsumfang aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz lesen und DARF keine Kennzahl selbst rechnen. Eine nicht bewertbare Kette beendet den Lauf nach dem ersten Schritt. Jeden Zug schlaegt er vor; ohne Wahl des Autors schreibt er nichts.",
       "kinds": [
         "functional"
       ]
@@ -10201,6 +10225,21 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vorbereitung-reads-metrics",
+      "type": "TEST",
+      "name": "Vorbereitungs-Skill liest Felder statt zu rechnen",
+      "description": "Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift.",
+      "testRefs": [
+        {
+          "file": "tests/skill-vorbereitung-felder.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-10-11T16:53:00.000Z"
         }
       ]
     },
@@ -14392,6 +14431,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-784",
+      "target": "FUNC-se-vorbereitung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-784",
+      "target": "REQ-vorbereitung-reads-metrics",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-785",
       "target": "FUNC-graph-suggest",
       "type": "relation"
@@ -15194,6 +15243,11 @@
       "type": "compose"
     },
     {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-vorbereitung",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-skill-help",
       "target": "FUNC-se-help",
       "type": "compose"
@@ -15483,6 +15537,11 @@
     {
       "source": "FLOW-chain-metrics",
       "target": "FUNC-se-fmea",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-chain-metrics",
+      "target": "FUNC-se-vorbereitung",
       "type": "io"
     },
     {
@@ -16547,6 +16606,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-mutate-cmd-se-vorbereitung",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-vorbereitung",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-mutate-cmd-test-ingest",
       "target": "FUNC-mutate",
       "type": "io"
@@ -17039,6 +17108,11 @@
     {
       "source": "FLOW-skill-request",
       "target": "FUNC-se-trade",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-vorbereitung",
       "type": "io"
     },
     {
@@ -17857,6 +17931,11 @@
     {
       "source": "FUNC-block-optimierung",
       "target": "FUNC-se-optimize",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-optimierung",
+      "target": "FUNC-se-vorbereitung",
       "type": "compose"
     },
     {
@@ -19328,6 +19407,26 @@
     {
       "source": "FUNC-se-trade",
       "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-vorbereitung",
+      "target": "MOD-agent-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-vorbereitung",
+      "target": "FLOW-mutate-cmd-se-vorbereitung",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-vorbereitung",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-vorbereitung",
+      "target": "REQ-vorbereitung-reads-metrics",
       "type": "satisfy"
     },
     {
@@ -22014,6 +22113,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vorbereitung-reads-metrics",
+      "target": "REQ-vorbereitung-reads-metrics",
+      "type": "verify"
+    },
+    {
       "source": "TEST-working-set-spezlauf",
       "target": "REQ-token-efficiency",
       "type": "verify"
@@ -22234,6 +22338,11 @@
     {
       "source": "UC-code-quality",
       "target": "REQ-trajectory-emit",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-vorbereitung-reads-metrics",
       "type": "compose"
     },
     {
@@ -22712,5 +22821,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 691
+  "graphVersion": 692
 }
