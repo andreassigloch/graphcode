@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 396 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 397 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 396 CR · 341 done · 4 open.
+Total: 397 CR · 341 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -458,3 +458,4 @@ Total: 396 CR · 341 done · 4 open.
 | `CR-GC-784` | n/a | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen |
 | `CR-GC-785` | n/a | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse |
 | `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) |
+| `CR-GC-787` | n/a | graph_metrics reicht Betrachtungsumfang und Risikotraeger durch |

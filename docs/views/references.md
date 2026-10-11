@@ -753,6 +753,8 @@
 | `CR-GC-785` | relation | `FUNC-se-optimize` |
 | `CR-GC-786` | relation | `FUNC-graph-readiness` |
 | `CR-GC-786` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-787` | relation | `FUNC-chain-metrics` |
+| `CR-GC-787` | relation | `FUNC-module-metrics` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

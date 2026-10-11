@@ -3278,6 +3278,12 @@
       "description": "docs/cr/open/CR-GC-786-graph-readiness-bricht-an-anforderungen-.md"
     },
     {
+      "id": "CR-GC-787",
+      "type": "CR",
+      "name": "graph_metrics reicht Betrachtungsumfang und Risikotraeger durch",
+      "description": "docs/cr/open/CR-GC-787-graph-metrics-reicht-betrachtungsumfang-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14373,6 +14379,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-787",
+      "target": "FUNC-chain-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-787",
+      "target": "FUNC-module-metrics",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -22583,5 +22599,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 686
+  "graphVersion": 688
 }

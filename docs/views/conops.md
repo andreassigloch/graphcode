@@ -418,6 +418,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-784` | n/a | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen | `FUNC-chain-metrics` |
 | `CR-GC-785` | n/a | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse | `FUNC-graph-suggest` · `FUNC-se-optimize` |
 | `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) | `FUNC-graph-readiness` · `FUNC-take-steering-snapshot` |
+| `CR-GC-787` | n/a | graph_metrics reicht Betrachtungsumfang und Risikotraeger durch | `FUNC-chain-metrics` · `FUNC-module-metrics` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
