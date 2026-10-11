@@ -31,7 +31,8 @@ Dazu:
   ist, dass eine Gegenmaßnahme am System als quer geltend zählt und nicht in den Trägern steht.
 - `tests/metrics.test.ts`: Durchreichen beider Blöcke an einem Modell auf Disk; unbekannte Kennung in `scope`
   ergibt eine benannte Ablehnung, kein leeres Ergebnis.
-- Floor im selben Commit: `@sigloch/contracts` auf `>=12.1 <13` (der Floor folgt den Imports). Bis zum Publish
+- Floor im selben Commit: `@sigloch/contracts` auf `>=12.1 <13` (der Floor folgt den Imports; die zwei Ableitungen
+  gibt es seit 12.1.0). Gebaut und geprüft wird gegen die Arbeitskopie 12.2.0. Bis zum Publish
   ist das Repo im Link-Modus; `distribution` und `lockfile-sync` sind dann erwartet rot.
 - Modell: der Fluss `FLOW-chain-metrics` und sein Schema tragen die zwei neuen Blöcke in der Beschreibung.
   Befund beim Anlegen dieses CR: das Werkzeug `graph_metrics` (`src/projections/metrics.ts`) hat keinen eigenen
@@ -40,6 +41,18 @@ Dazu:
 
 Dateien: `src/projections/metrics.ts`, `src/projections/tool-help.ts`, `tests/metrics.test.ts`, `package.json`,
 `package-lock.json`, Modell und Sichten.
+
+## Nachzug zu sigloch-modules CR-SM-409 (im selben Zug, weil derselbe Stand von contracts)
+
+contracts 12.2.0 lässt die Regel FC-05 (Kette hängt zusammen) die Marke PDR halten; der Regelkatalog steht auf
+45.0.0. Am eigenen Modell meldet FC-05 nichts, keine Marke ändert sich. Nachzuziehen:
+
+- die erzeugte Sicht `docs/views/regel-matrix.md` (`scripts/regel-matrix.mjs`);
+- der Satz zu den Verdrahtungsregeln in `.claude/commands/se-fmea.md` und im Konzept, Abschnitt 7 („sind Warnungen,
+  kein Fehler" bleibt richtig; neu: FC-05 hält PDR);
+- prüfen, nicht ändern, solange sie grün sind: `tests/generate.stufen.test.ts`,
+  `tests/steering.process-ratchet.test.ts`, `tests/help.test.ts`, `tests/bootstrap.test.ts`,
+  `tests/readiness.completeness.test.ts` lesen die Rolle allgemein.
 
 ## Nicht im Umfang
 
