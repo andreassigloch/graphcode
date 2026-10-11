@@ -420,6 +420,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) | `FUNC-graph-readiness` · `FUNC-take-steering-snapshot` |
 | `CR-GC-787` | n/a | graph_metrics reicht Betrachtungsumfang und Risikotraeger durch | `FUNC-chain-metrics` · `FUNC-graph-metrics` · `FUNC-module-metrics` · `REQ-metrics-risk-scope` |
 | `CR-GC-788` | done | Modell: Block FUNC-goal-steerer erfuellt eine Anforderung | `FUNC-goal-steerer` · `REQ-steering-from-metrics` |
+| `CR-GC-789` | done | Merkmal sync an den Fluessen des Selbstmodells | `FUNC-generation-step` · `FUNC-graph-store` · `FUNC-graph-suggest` · `FUNC-mutate` · `FUNC-schema-guard` · `FUNC-seed-from-json` · `FUNC-take-steering-snapshot` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

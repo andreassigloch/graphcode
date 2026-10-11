@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 398 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 399 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 398 CR · 342 done · 4 open.
+Total: 399 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -460,3 +460,4 @@ Total: 398 CR · 342 done · 4 open.
 | `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) |
 | `CR-GC-787` | n/a | graph_metrics reicht Betrachtungsumfang und Risikotraeger durch |
 | `CR-GC-788` | done | Modell: Block FUNC-goal-steerer erfuellt eine Anforderung |
+| `CR-GC-789` | done | Merkmal sync an den Fluessen des Selbstmodells |

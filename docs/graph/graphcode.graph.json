@@ -3291,6 +3291,13 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-789",
+      "type": "CR",
+      "name": "Merkmal sync an den Fluessen des Selbstmodells",
+      "description": "docs/cr/open/CR-GC-789-merkmal-sync-an-den-fluessen-des-selbstm.md",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3475,33 +3482,38 @@
       "type": "FLOW",
       "name": "Architektur-Fitness (R^6)",
       "description": "Sechs Topologiewerte ueber den ganzen Teilgraphen. Das einzige Signal der Schleife, das nicht aus dem Regelstrom stammt, und deshalb der Tiebreaker im Ranking.",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-audit-entries",
       "type": "FLOW",
       "name": "Audit-Einzelsaetze",
-      "description": "Die Aufzeichnung Satz fuer Satz: was passiert ist, als schlanke Projektion, nicht als Replay. Traegt denselben Vertrag wie der geschriebene Satz."
+      "description": "Die Aufzeichnung Satz fuer Satz: was passiert ist, als schlanke Projektion, nicht als Replay. Traegt denselben Vertrag wie der geschriebene Satz.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-audit-record",
       "type": "FLOW",
       "name": "Aufgezeichnete Gate-Entscheidung",
       "description": "Was das Gate bei jeder Entscheidung ins Operations-Log schreibt — abgeleitet, nie vom Konsumenten deklariert. Abwesenheit heisst nicht aufgezeichnet, nie leerer Prompt. (CR-GC-462)",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "async"
     },
     {
       "id": "FLOW-audit-report",
       "type": "FLOW",
       "name": "Audit-Auswertung",
       "description": "Die Auswertung der Aufzeichnung im Aggregat: Haeufigkeiten je Regel, Konsument und Modell ueber die Zeit.",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-chain-metrics",
       "type": "FLOW",
       "name": "Kennzahlen je Wirkkette",
-      "description": "Kennzahlen je Wirkkette und die Bewertbarkeitsquote, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss: die Grundgesamtheit ist die FCHAIN, nicht MOD und nicht FUNC. In derselben Antwort reisen seit CR-GC-787 zwei weitere Bloecke: riskCarriers, immer, mit den Traegern je Risiko und den Risiken je Traeger, und scope, nur auf Anfrage, der Betrachtungsumfang der genannten Funktionen oder Ketten. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahlen in der Antwort, rendert sie aber noch nicht."
+      "description": "Kennzahlen je Wirkkette und die Bewertbarkeitsquote, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss: die Grundgesamtheit ist die FCHAIN, nicht MOD und nicht FUNC. In derselben Antwort reisen seit CR-GC-787 zwei weitere Bloecke: riskCarriers, immer, mit den Traegern je Risiko und den Risiken je Traeger, und scope, nur auf Anfrage, der Betrachtungsumfang der genannten Funktionen oder Ketten. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahlen in der Antwort, rendert sie aber noch nicht.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-channel-dimension-template",
@@ -3510,7 +3522,8 @@
       "description": "Rang 6 — der Vorschlagstext je Readiness-Dimension, wenn keine Regel-Klausel das Fenster stellt. Verliert seit CR-GC-564 jeden Konflikt gegen die Klausel; demoviert, nicht gestrichen (CR-GC-575).",
       "channelRank": "proposal",
       "zeitpunkt": "prompt",
-      "treiber": "host"
+      "treiber": "host",
+      "sync": "async"
     },
     {
       "id": "FLOW-channel-fit-advisory",
@@ -3520,7 +3533,8 @@
       "channelRank": "proposal",
       "zeitpunkt": "probe",
       "treiber": "host",
-      "concept": true
+      "concept": true,
+      "sync": "sync"
     },
     {
       "id": "FLOW-channel-gate-protocol",
@@ -3529,7 +3543,8 @@
       "description": "Die Verfahrensanweisung der Runde: Grammatik holen, Alternativen proben oder EINEN Batch emittieren, den naechsten Schritt anfordern. Zwei Fassungen, je nachdem ob der Host oder der Treiber die Auswahl faehrt. Rang: Anleitung — sie sagt, wie man vorgeht, nicht was in dieser Runde zu tun ist.",
       "channelRank": "guidance",
       "zeitpunkt": "prompt",
-      "treiber": "host"
+      "treiber": "host",
+      "sync": "async"
     },
     {
       "id": "FLOW-channel-gate-verdict",
@@ -3548,7 +3563,8 @@
       "description": "Die Kanten-Grammatik eines Elementtyps als Antwort von graph_authoring_guide an den Agenten: was legal ist, mit Pflicht-Attributen und einem Beispiel.",
       "channelRank": "grammar",
       "zeitpunkt": "probe",
-      "treiber": "host"
+      "treiber": "host",
+      "sync": "sync"
     },
     {
       "id": "FLOW-channel-guardrails",
@@ -3558,7 +3574,8 @@
       "channelRank": "guidance",
       "zeitpunkt": "prompt",
       "treiber": "host",
-      "concept": true
+      "concept": true,
+      "sync": "async"
     },
     {
       "id": "FLOW-channel-handoff",
@@ -3568,7 +3585,8 @@
       "channelRank": "rule-clause",
       "zeitpunkt": "prompt",
       "treiber": "host",
-      "concept": true
+      "concept": true,
+      "sync": "sync"
     },
     {
       "id": "FLOW-channel-next-step",
@@ -3578,7 +3596,8 @@
       "channelRank": "proposal",
       "zeitpunkt": "antwort",
       "treiber": "host",
-      "concept": true
+      "concept": true,
+      "sync": "sync"
     },
     {
       "id": "FLOW-channel-rule-clause",
@@ -3587,7 +3606,8 @@
       "description": "Rang 2 — der EINE Imperativ der Runde. Der vom Menschen gepflegte Zusatztext zu genau der Regel, die das Fund-Fenster stellt, gerendert mit den konkreten uids.",
       "channelRank": "rule-clause",
       "zeitpunkt": "prompt",
-      "treiber": "host"
+      "treiber": "host",
+      "sync": "async"
     },
     {
       "id": "FLOW-channel-skill-reference",
@@ -3597,7 +3617,8 @@
       "channelRank": "guidance",
       "zeitpunkt": "prompt",
       "treiber": "host",
-      "concept": true
+      "concept": true,
+      "sync": "sync"
     },
     {
       "id": "FLOW-channel-steer-advisory",
@@ -3607,7 +3628,8 @@
       "channelRank": "proposal",
       "zeitpunkt": "probe",
       "treiber": "host",
-      "concept": true
+      "concept": true,
+      "sync": "sync"
     },
     {
       "id": "FLOW-cli-command",
@@ -3615,97 +3637,112 @@
       "name": "CLI-Kommando",
       "description": "Das aufgeloeste Kommando, das der Einsprung an den zustaendigen Handler weitergibt: mcp | host | run | import-code | rewind | init | update | remove | skills sync.",
       "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "sync": "sync"
     },
     {
       "id": "FLOW-cli-invocation",
       "type": "FLOW",
       "name": "CLI-Aufruf (Rohform)",
-      "description": "Was der Mensch in die Schale tippt: Verb und Optionen als Argumentliste, noch nicht aufgeloest."
+      "description": "Was der Mensch in die Schale tippt: Verb und Optionen als Argumentliste, noch nicht aufgeloest.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-cli-invocation-import-code",
       "type": "FLOW",
       "name": "CLI-Aufruf (import-code)",
-      "description": "Der CLI-Aufruf, den der Skill se:import-code absetzt. Beleg: .claude/commands/se/import-code.md, npx @sigloch/graphcode import-code. (CR-GC-768)"
+      "description": "Der CLI-Aufruf, den der Skill se:import-code absetzt. Beleg: .claude/commands/se/import-code.md, npx @sigloch/graphcode import-code. (CR-GC-768)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-code-lane-plan",
       "type": "FLOW",
       "name": "Plan der Code-Spur",
-      "description": "Der Plan der lokalen Code-Spur: gewaehlte Spur, Dateien, Laufkommando, Grund, Bindungsquote und unaufgeloeste TESTs. Geht an den Menschen an der Schale und an den pre-commit-Hook."
+      "description": "Der Plan der lokalen Code-Spur: gewaehlte Spur, Dateien, Laufkommando, Grund, Bindungsquote und unaufgeloeste TESTs. Geht an den Menschen an der Schale und an den pre-commit-Hook.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-completeness",
       "type": "FLOW",
       "name": "Marken der Readiness",
       "description": "Je Marke: erreicht oder nicht, und die Befunde, die sie halten. Abwesenheit steht darin als Befund einer Existenz-Regel, nicht als eigene Zaehlung.",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-config-file",
       "type": "FLOW",
       "name": "Repo-Konfiguration (Rohform)",
-      "description": "Die Urteilsschwellen, wie der Mensch sie in graphcode.config.jsonc schreibt: vor dem Auffuellen mit DEFAULT_METRIC_POLICY, Felder duerfen fehlen. Gleicher Vertrag wie die geltende Policy, anderer Zustand."
+      "description": "Die Urteilsschwellen, wie der Mensch sie in graphcode.config.jsonc schreibt: vor dem Auffuellen mit DEFAULT_METRIC_POLICY, Felder duerfen fehlen. Gleicher Vertrag wie die geltende Policy, anderer Zustand.",
+      "sync": "async"
     },
     {
       "id": "FLOW-conformance-findings",
       "type": "FLOW",
       "name": "Konformanzbefunde",
-      "description": "Die RC-Befunde aus dem Abgleich Modell gegen Code (conformanceEvaluation). Sie gehen in die volle Auswertung und damit in die Readiness, nicht ins Gate. (CR-GC-501)"
+      "description": "Die RC-Befunde aus dem Abgleich Modell gegen Code (conformanceEvaluation). Sie gehen in die volle Auswertung und damit in die Readiness, nicht ins Gate. (CR-GC-501)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-dimension-readiness",
       "type": "FLOW",
       "name": "Dimensions-Readiness (8 Scores)",
       "description": "Die thematische Verdichtung des Regelstroms: je Dimension score, violations, applicable. Der Nenner reist mit, weil ein Score ohne ihn nicht lesbar ist.",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-element-slice",
       "type": "FLOW",
       "name": "Element-Scheibe",
-      "description": "Gefilterte Knotenmenge aus dem Store (type/search) — eine Scheibe statt eines Volldumps."
+      "description": "Gefilterte Knotenmenge aus dem Store (type/search) — eine Scheibe statt eines Volldumps.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-expand-subgraph",
       "type": "FLOW",
       "name": "Vertiefter Teilgraph",
       "description": "Rueckgabewert von harness.subgraph an das Lese-Werkzeug graph_expand (read.ts:402): ein Graph aus dem Store, den das Werkzeug nach Zweig filtert. (CR-GC-505)",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-export-pending",
       "type": "FLOW",
       "name": "Export-Rueckstand",
-      "description": "Die Drift-Marke unter .graphcode: sagt, dass und wie weit der committete Snapshot dem lebenden Store nachlaeuft. Der pre-commit-Hook liest sie, ohne den Kuzu-Store zu oeffnen."
+      "description": "Die Drift-Marke unter .graphcode: sagt, dass und wie weit der committete Snapshot dem lebenden Store nachlaeuft. Der pre-commit-Hook liest sie, ohne den Kuzu-Store zu oeffnen.",
+      "sync": "async"
     },
     {
       "id": "FLOW-fit-advisory",
       "type": "FLOW",
       "name": "Fit-Advisory (Richtung im Metrikraum)",
       "description": "Richtung und Regressionen eines Kandidaten im R^6-Metrikraum. Reine Messung: rankt, urteilt nicht.",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-formatE-artifact-agent",
       "type": "FLOW",
       "name": "Format-E-Artefakt (Agent)",
       "description": "Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung ACTOR-agent → FUNC-decode; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-formatE-artifact-read-tools",
       "type": "FLOW",
       "name": "Format-E-Artefakt (read-tools)",
       "description": "Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-read-tools → ACTOR-agent; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-function-criticality",
       "type": "FLOW",
       "name": "Kritikalitaet je FUNC",
-      "description": "Ketten und Use Cases je Funktion, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss statt eines breiteren SCHEMA-module-metrics: MOD ist der Abhaengigkeitsbaum, FUNC der Wertbaum, sie spiegeln einander ausdruecklich nicht. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahl in der Antwort, rendert sie aber noch nicht."
+      "description": "Ketten und Use Cases je Funktion, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss statt eines breiteren SCHEMA-module-metrics: MOD ist der Abhaengigkeitsbaum, FUNC der Wertbaum, sie spiegeln einander ausdruecklich nicht. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahl in der Antwort, rendert sie aber noch nicht.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-gate-verdict",
@@ -3718,25 +3755,29 @@
       "id": "FLOW-generation-step-suggest",
       "type": "FLOW",
       "name": "Generierungsschritt zum Vorschlag",
-      "description": "Der gerechnete naechste Schritt, wie ihn das Vorschlagswerkzeug als Grundlage nimmt. Beleg: src/loop/suggest.ts, graph_suggest ruft generationStep. (CR-GC-768)"
+      "description": "Der gerechnete naechste Schritt, wie ihn das Vorschlagswerkzeug als Grundlage nimmt. Beleg: src/loop/suggest.ts, graph_suggest ruft generationStep. (CR-GC-768)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-generation-step-vorschlag",
       "type": "FLOW",
       "name": "Generierungsschritt zum Vorschlag an den Nutzer",
-      "description": "Der gerechnete Schritt auf dem Weg zum Satz an den Nutzer. Beleg: src/loop/next-step.ts, vorschlagNachAnwendung ruft generationStep. (CR-GC-770)"
+      "description": "Der gerechnete Schritt auf dem Weg zum Satz an den Nutzer. Beleg: src/loop/next-step.ts, vorschlagNachAnwendung ruft generationStep. (CR-GC-770)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-graph-delta",
       "type": "FLOW",
       "name": "Angenommenes Delta",
-      "description": "Der Kandidat, den das Gate angenommen hat, samt Persistenz-Delta. Nur mutate liefert ihn, nur der GraphStore uebernimmt ihn: erst auf Platte, dann als Arbeitskopie. (CR-GC-503)"
+      "description": "Der Kandidat, den das Gate angenommen hat, samt Persistenz-Delta. Nur mutate liefert ihn, nur der GraphStore uebernimmt ihn: erst auf Platte, dann als Arbeitskopie. (CR-GC-503)",
+      "sync": "async"
     },
     {
       "id": "FLOW-graph-snapshot-file",
       "type": "FLOW",
       "name": "Graph-Snapshot-Datei",
-      "description": "Der kanonische Snapshot docs/graph als Datei im Repo, die der Owner committet. Beleg: src/projections/export.ts, graph_export schreibt die Datei. (CR-GC-768)"
+      "description": "Der kanonische Snapshot docs/graph als Datei im Repo, die der Owner committet. Beleg: src/projections/export.ts, graph_export schreibt die Datei. (CR-GC-768)",
+      "sync": "async"
     },
     {
       "id": "FLOW-graph-state",
@@ -3744,71 +3785,82 @@
       "name": "Graph-State",
       "description": "Der Graph als EIN Wert, in jedem seiner Zustaende: in-memory geladen, als Entwurf appliziert, persistiert samt Version-Counter, aus Format-E rekonstruiert, migriert, aus zwei Branch-Fassungen gemergt, aus dem Snapshot auf Platte wiederhergestellt. Der Zustand ist kein zweiter Datenvertrag.",
       "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "sync": "sync"
     },
     {
       "id": "FLOW-harness-handle",
       "type": "FLOW",
       "name": "Harness-Griff",
-      "description": "Der fertig verdrahtete Harness, den die Fabrik liefert: Store geoeffnet, Lock beansprucht, Regelwerk geladen. Alles, was auf dem Graphen arbeitet, holt ihn hier ab."
+      "description": "Der fertig verdrahtete Harness, den die Fabrik liefert: Store geoeffnet, Lock beansprucht, Regelwerk geladen. Alles, was auf dem Graphen arbeitet, holt ihn hier ab.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-harness-handle-host",
       "type": "FLOW",
       "name": "Harness-Griff (Host)",
-      "description": "Der Harness des Store-Besitzers, wie ihn der Host-Prozess fuer seine Routen haelt. Beleg: src/surface/host.ts, serveHost ruft ownKuzu und liest owned.harness. (CR-GC-768)"
+      "description": "Der Harness des Store-Besitzers, wie ihn der Host-Prozess fuer seine Routen haelt. Beleg: src/surface/host.ts, serveHost ruft ownKuzu und liest owned.harness. (CR-GC-768)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-health-report",
       "type": "FLOW",
       "name": "Health-Report",
-      "description": "Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer."
+      "description": "Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-held-back-traces",
       "type": "FLOW",
       "name": "Zurueckgehaltene Kanten",
-      "description": "Die Liste der committeten Kanten, die im Live-Graphen fehlen, weil kein Muster sie zulaesst. Geht in den Readiness-Report und in die Export-Verweigerung."
+      "description": "Die Liste der committeten Kanten, die im Live-Graphen fehlen, weil kein Muster sie zulaesst. Geht in den Readiness-Report und in die Export-Verweigerung.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-impact-slice",
       "type": "FLOW",
       "name": "Impact-Scheibe",
       "description": "Rueckgabewert von harness.impact an das Lese-Werkzeug graph_impact (read.ts:349): die Scheibe mit Rollen, noch kein Text. (CR-GC-505)",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-impacted-tests",
       "type": "FLOW",
       "name": "Betroffene Tests",
-      "description": "Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug."
+      "description": "Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-imported-graph",
       "type": "FLOW",
       "name": "Importierter Graph",
-      "description": "Ein vollstaendiger Graph aus dem Bulk-Import, der die Arbeitskopie ersetzt — am Gate vorbei, deshalb mit ausgewiesenen unverifizierten REQs. (CR-GC-503)"
+      "description": "Ein vollstaendiger Graph aus dem Bulk-Import, der die Arbeitskopie ersetzt — am Gate vorbei, deshalb mit ausgewiesenen unverifizierten REQs. (CR-GC-503)",
+      "sync": "async"
     },
     {
       "id": "FLOW-install-result-collect-status",
       "type": "FLOW",
       "name": "Lifecycle-Result (collect-status)",
       "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-collect-status → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-install-result-harness-cli",
       "type": "FLOW",
       "name": "Lifecycle-Result (harness-cli)",
       "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-harness-cli → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-install-result-upgrade",
       "type": "FLOW",
       "name": "Lifecycle-Result (upgrade)",
       "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-learning-advice",
@@ -3832,19 +3884,22 @@
       "name": "Live-Update-Event",
       "description": "Der versionierte Update-Event-Strom: SSE invalidate fuer graph, rules, readiness, suggestions, mit Late-Joiner-Cache und strikt read-only an die Live-Viewer.",
       "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "sync": "async"
     },
     {
       "id": "FLOW-live-event-host",
       "type": "FLOW",
       "name": "Live-Ereignis (Host)",
-      "description": "Das Aenderungsereignis, das der Host an seinen Verteiler reicht. Beleg: src/surface/host.ts, onUpdateEvent ruft this.broadcast. (CR-GC-768)"
+      "description": "Das Aenderungsereignis, das der Host an seinen Verteiler reicht. Beleg: src/surface/host.ts, onUpdateEvent ruft this.broadcast. (CR-GC-768)",
+      "sync": "async"
     },
     {
       "id": "FLOW-lock-release",
       "type": "FLOW",
       "name": "Lock-Freigabe",
-      "description": "Die Freigabe des Store-Locks am Sitzungsende, als letzter Abraeumschritt. Beleg: src/surface/mcp-server.ts, lifecycle.add store lock ruft harness.close. (CR-GC-768)"
+      "description": "Die Freigabe des Store-Locks am Sitzungsende, als letzter Abraeumschritt. Beleg: src/surface/mcp-server.ts, lifecycle.add store lock ruft harness.close. (CR-GC-768)",
+      "sync": "async"
     },
     {
       "id": "FLOW-markdown-docs",
@@ -3852,19 +3907,22 @@
       "name": "Exportierte Sichten",
       "description": "Die deterministisch nach docs/views exportierten Markdown-Sichten mit GENERATED-Header, erzeugt vom Exporter beim Re-Export des SSOT.",
       "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "sync": "async"
     },
     {
       "id": "FLOW-mcp-tool",
       "type": "FLOW",
       "name": "Werkzeug",
-      "description": "Traegt MCPTool ueber die Modulgrenze."
+      "description": "Traegt MCPTool ueber die Modulgrenze.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mcp-tool-registry",
       "type": "FLOW",
       "name": "Werkzeug-Register",
-      "description": "Traegt MCPToolRegistry ueber die Modulgrenze."
+      "description": "Traegt MCPToolRegistry ueber die Modulgrenze.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-measurement-vector",
@@ -3872,183 +3930,210 @@
       "name": "Messvektor",
       "description": "Der gemeinsame Eingang der vier Entscheidungen: der gemessene Zustand als Vektor, unabhaengig davon, welche Projektion ihn fuellt. Erst mit diesem Vertrag ist die Gleichheit der vier Signaturen geprueft statt behauptet.",
       "status": "reviewed",
-      "concept": true
+      "concept": true,
+      "sync": "sync"
     },
     {
       "id": "FLOW-metric-policy",
       "type": "FLOW",
       "name": "Urteils-Policy",
-      "description": "Die geltenden Urteilsschwellen, wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten: vollstaendig, jede Schwelle gesetzt. Erzeugt von load-config aus der Rohform. Keine Schwelle steht als Literal im Regelcode."
+      "description": "Die geltenden Urteilsschwellen, wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten: vollstaendig, jede Schwelle gesetzt. Erzeugt von load-config aus der Rohform. Keine Schwelle steht als Literal im Regelcode.",
+      "sync": "async"
     },
     {
       "id": "FLOW-metrics-answer",
       "type": "FLOW",
       "name": "Antwort von graph_metrics",
-      "description": "Die Antwort des Werkzeugs graph_metrics an den Agenten: Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, dazu seit CR-GC-787 die Bloecke riskCarriers, immer, und scope, nur auf Anfrage. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: FLOW-chain-metrics kommt aus der Rechnung in contracts, dieser aus dem Werkzeug, das sie durchreicht."
+      "description": "Die Antwort des Werkzeugs graph_metrics an den Agenten: Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, dazu seit CR-GC-787 die Bloecke riskCarriers, immer, und scope, nur auf Anfrage. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: FLOW-chain-metrics kommt aus der Rechnung in contracts, dieser aus dem Werkzeug, das sie durchreicht.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-module-metrics",
       "type": "FLOW",
       "name": "Modulkennzahlen je MOD",
       "description": "Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-agent",
       "type": "FLOW",
       "name": "Mutate-Command (Agent)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-agent → FUNC-mutate, FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-author-req",
       "type": "FLOW",
       "name": "Mutate-Command (author-req)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-author-req → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-author-uc",
       "type": "FLOW",
       "name": "Mutate-Command (author-uc)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-author-uc → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-bootstrap",
       "type": "FLOW",
       "name": "Mutate-Command (bootstrap)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-bootstrap → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-close-violations",
       "type": "FLOW",
       "name": "Mutate-Command (close-violations)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-close-violations → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-decode",
       "type": "FLOW",
       "name": "Mutate-Command (decode)",
-      "description": "Die aus Format-E gelesenen Kommandos auf dem Weg ans Gate. Beleg: src/surface/write.ts, graph_mutate ruft formatEToCommands und reicht das Ergebnis an harness.mutate, ebenso src/surface/bootstrap.ts. (CR-GC-768)"
+      "description": "Die aus Format-E gelesenen Kommandos auf dem Weg ans Gate. Beleg: src/surface/write.ts, graph_mutate ruft formatEToCommands und reicht das Ergebnis an harness.mutate, ebenso src/surface/bootstrap.ts. (CR-GC-768)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-graph-suggest",
       "type": "FLOW",
       "name": "Mutate-Command (graph-suggest)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-graph-suggest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-host-socket",
       "type": "FLOW",
       "name": "Mutate-Command (host-socket)",
-      "description": "Der Schreibaufruf eines zweiten Prozesses, vom Socket an das Werkzeug des Besitzers weitergereicht. Beleg: src/surface/host-shim.ts, startHostSocket ruft tool.handler mit der geparsten Eingabe. (CR-GC-768)"
+      "description": "Der Schreibaufruf eines zweiten Prozesses, vom Socket an das Werkzeug des Besitzers weitergereicht. Beleg: src/surface/host-shim.ts, startHostSocket ruft tool.handler mit der geparsten Eingabe. (CR-GC-768)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-import-code-verb",
       "type": "FLOW",
       "name": "Mutate-Command (import-code-verb)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-code-verb → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-import-doc",
       "type": "FLOW",
       "name": "Mutate-Command (import-doc)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-doc → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-merge-nodes",
       "type": "FLOW",
       "name": "Mutate-Command (merge-nodes)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-merge-nodes → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-owner",
       "type": "FLOW",
       "name": "Mutate-Command (Owner)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-owner → FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-se-conops",
       "type": "FLOW",
       "name": "Mutate-Command (se-conops)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-conops → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-se-fmea",
       "type": "FLOW",
       "name": "Mutate-Command (se-fmea)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-fmea → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-se-generate",
       "type": "FLOW",
       "name": "Mutate-Command (se-generate)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-generate → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-se-irr",
       "type": "FLOW",
       "name": "Mutate-Command (se-irr)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-irr → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-se-optimize",
       "type": "FLOW",
       "name": "Mutate-Command (se-optimize)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-optimize → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-se-plan",
       "type": "FLOW",
       "name": "Mutate-Command (se-plan)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-plan → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-se-top-level",
       "type": "FLOW",
       "name": "Mutate-Command (se-top-level)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-top-level → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-se-trade",
       "type": "FLOW",
       "name": "Mutate-Command (se-trade)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-trade → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-se-vorbereitung",
       "type": "FLOW",
       "name": "Mutate-Command (se-vorbereitung)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch: die vom Autor gewaehlten Zuege der Vorbereitung. Verbindung von FUNC-se-vorbereitung zu FUNC-mutate. (CR-GC-784)"
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch: die vom Autor gewaehlten Zuege der Vorbereitung. Verbindung von FUNC-se-vorbereitung zu FUNC-mutate. (CR-GC-784)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mutate-cmd-test-ingest",
       "type": "FLOW",
       "name": "Mutate-Command (test-ingest)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-test-ingest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-next-step-advice",
       "type": "FLOW",
       "name": "Naechster Schritt (Advisory)",
-      "description": "Der Rueckweg an den fragenden Agenten: aus dem Messzustand die Fokus-Dimension und das Fund-Fenster. Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger."
+      "description": "Der Rueckweg an den fragenden Agenten: aus dem Messzustand die Fokus-Dimension und das Fund-Fenster. Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-ontology-json",
@@ -4061,106 +4146,122 @@
       "type": "FLOW",
       "name": "Query-Request (Agent)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-agent → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-auto-export",
       "type": "FLOW",
       "name": "Query-Request (auto-export)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-auto-export → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-owner",
       "type": "FLOW",
       "name": "Query-Request (Owner)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-owner → FUNC-view-changelog, FUNC-view-conops, FUNC-view-fmea, FUNC-view-icd, FUNC-view-intplan, FUNC-view-rtm, FUNC-render-views, FUNC-export-markdown, FUNC-list-elements, FUNC-graph-expand; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-render-views",
       "type": "FLOW",
       "name": "Query-Request (render-views)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-render-views → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-view-changelog",
       "type": "FLOW",
       "name": "Query-Request (view-changelog)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-changelog → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-view-conops",
       "type": "FLOW",
       "name": "Query-Request (view-conops)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-conops → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-view-fmea",
       "type": "FLOW",
       "name": "Query-Request (view-fmea)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-fmea → FUNC-read-tools, FUNC-list-elements; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-view-icd",
       "type": "FLOW",
       "name": "Query-Request (view-icd)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-icd → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-view-intplan",
       "type": "FLOW",
       "name": "Query-Request (view-intplan)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-intplan → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-view-rtm",
       "type": "FLOW",
       "name": "Query-Request (view-rtm)",
       "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-rtm → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-readiness-report",
       "type": "FLOW",
       "name": "Readiness-Report (Agent)",
-      "description": "Der Bericht von graph_readiness an den Agenten: Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten."
+      "description": "Der Bericht von graph_readiness an den Agenten: Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-rendered-views",
       "type": "FLOW",
       "name": "Gerenderte Sicht (Skill)",
-      "description": "Die Markdown-Sicht, die ein se-view-Skill auf Zuruf rendert. Gleicher Vertrag wie der deterministische Export, anderer Erzeuger und anderer Anlass."
+      "description": "Die Markdown-Sicht, die ein se-view-Skill auf Zuruf rendert. Gleicher Vertrag wie der deterministische Export, anderer Erzeuger und anderer Anlass.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-reseed-order",
       "type": "FLOW",
       "name": "Reseed-Auftrag",
-      "description": "Der serialisierte Auftrag, den Store aus dem Snapshot neu aufzusetzen. Beleg: src/kernel/harness.ts, reseed ruft applyReseed hinter dem Single-Writer. (CR-GC-768)"
+      "description": "Der serialisierte Auftrag, den Store aus dem Snapshot neu aufzusetzen. Beleg: src/kernel/harness.ts, reseed ruft applyReseed hinter dem Single-Writer. (CR-GC-768)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-reseed-snapshot",
       "type": "FLOW",
       "name": "Snapshot zum Reseed",
-      "description": "Der bereitgestellte Snapshot eines Commits auf dem Weg zum Neuaufsetzen. Beleg: src/surface/rewind.ts, executeRewind ruft harness.reseed. (CR-GC-768)"
+      "description": "Der bereitgestellte Snapshot eines Commits auf dem Weg zum Neuaufsetzen. Beleg: src/surface/rewind.ts, executeRewind ruft harness.reseed. (CR-GC-768)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-reseeded-graph",
       "type": "FLOW",
       "name": "Neu aufgesetzter Bestand",
-      "description": "Der neu aufgesetzte Bestand auf dem Weg in den Store. Beleg: src/kernel/harness-import.ts, applyReseed schreibt in das importTarget des GraphStore. (CR-GC-768)"
+      "description": "Der neu aufgesetzte Bestand auf dem Weg in den Store. Beleg: src/kernel/harness-import.ts, applyReseed schreibt in das importTarget des GraphStore. (CR-GC-768)",
+      "sync": "async"
     },
     {
       "id": "FLOW-rule-findings",
       "type": "FLOW",
       "name": "Regelbefunde",
-      "description": "Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)"
+      "description": "Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-schema-fingerprint",
@@ -4172,81 +4273,94 @@
       "id": "FLOW-schlupf-zeile",
       "type": "FLOW",
       "name": "Schlupf-Zeile",
-      "description": "Eine Zeile je Volllauf in docs/messung/testauswahl.jsonl: CR, Spur, Auswahl, rote Dateien, Schlupf, Zusage der Bindung."
+      "description": "Eine Zeile je Volllauf in docs/messung/testauswahl.jsonl: CR, Spur, Auswahl, rote Dateien, Schlupf, Zusage der Bindung.",
+      "sync": "async"
     },
     {
       "id": "FLOW-session-entry",
       "type": "FLOW",
       "name": "Sitzungseintrag",
-      "description": "Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit."
+      "description": "Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit.",
+      "sync": "async"
     },
     {
       "id": "FLOW-session-registry",
       "type": "FLOW",
       "name": "Sitzungsregister",
-      "description": "Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird."
+      "description": "Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-skill-report-se-help",
       "type": "FLOW",
       "name": "Skill-Bericht (se-help)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-help → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-help → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
+      "sync": "sync"
     },
     {
       "id": "FLOW-skill-report-se-retro",
       "type": "FLOW",
       "name": "Skill-Bericht (se-retro)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-retro → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-retro → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
+      "sync": "sync"
     },
     {
       "id": "FLOW-skill-report-se-review",
       "type": "FLOW",
       "name": "Skill-Bericht (se-review)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-review → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-review → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
+      "sync": "sync"
     },
     {
       "id": "FLOW-skill-report-se-status",
       "type": "FLOW",
       "name": "Skill-Bericht (se-status)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-status → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-status → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
+      "sync": "sync"
     },
     {
       "id": "FLOW-skill-report-test",
       "type": "FLOW",
       "name": "Skill-Bericht (test)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
+      "sync": "sync"
     },
     {
       "id": "FLOW-skill-report-test-ui",
       "type": "FLOW",
       "name": "Skill-Bericht (test-ui)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test-ui → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510)."
+      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test-ui → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
+      "sync": "sync"
     },
     {
       "id": "FLOW-skill-request",
       "type": "FLOW",
       "name": "Skill-Aufruf",
-      "description": "Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen."
+      "description": "Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-sse-frame",
       "type": "FLOW",
       "name": "SSE-Frame (versioniert)",
-      "description": "Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501)"
+      "description": "Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501)",
+      "sync": "async"
     },
     {
       "id": "FLOW-steering-delta",
       "type": "FLOW",
       "name": "Steering-Delta (vor/nach Kandidat)",
       "description": "Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-steering-snapshot",
       "type": "FLOW",
       "name": "Steering-Snapshot",
       "description": "Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.",
-      "status": "reviewed"
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-steering-trigger-agent",
@@ -4254,49 +4368,57 @@
       "name": "Runden-Ausloeser (Agent)",
       "description": "Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Verbindung ACTOR-agent → FUNC-take-steering-snapshot; aufgetrennt aus FLOW-steering-trigger (CR-GC-510).",
       "status": "reviewed",
-      "concept": true
+      "concept": true,
+      "sync": "sync"
     },
     {
       "id": "FLOW-store-ownership",
       "type": "FLOW",
       "name": "Store-Besitzanspruch",
-      "description": "Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert."
+      "description": "Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-target-profile",
       "type": "FLOW",
       "name": "Zielprofil",
-      "description": "Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform."
+      "description": "Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-target-profile-file",
       "type": "FLOW",
       "name": "Zielprofil (Rohform)",
-      "description": "Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet."
+      "description": "Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet.",
+      "sync": "async"
     },
     {
       "id": "FLOW-test-selection",
       "type": "FLOW",
       "name": "Selektive Testauswahl",
-      "description": "Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb."
+      "description": "Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-tool-context",
       "type": "FLOW",
       "name": "Werkzeug-Kontext",
-      "description": "Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel."
+      "description": "Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-tool-registry",
       "type": "FLOW",
       "name": "Werkzeug-Register",
-      "description": "Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler."
+      "description": "Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-tool-surface",
       "type": "FLOW",
       "name": "Werkzeug-Oberflaeche am Agenten",
-      "description": "Die gebundenen Werkzeuge, wie der Agent sie ueber stdio sieht und ruft. Beleg: src/surface/mcp-server.ts, serveStdio verbindet den Server mit dem stdio-Transport. (CR-GC-768)"
+      "description": "Die gebundenen Werkzeuge, wie der Agent sie ueber stdio sieht und ruft. Beleg: src/surface/mcp-server.ts, serveStdio verbindet den Server mit dem stdio-Transport. (CR-GC-768)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-trajectory",
@@ -4304,7 +4426,8 @@
       "name": "Trajectory/Outcome",
       "description": "append-only Lern-Emission.",
       "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "created_at": "2026-06-16T00:00:00.000Z",
+      "sync": "async"
     },
     {
       "id": "FLOW-version-bump",
@@ -4318,19 +4441,22 @@
       "id": "FLOW-vorschlag",
       "type": "FLOW",
       "name": "Vorschlag an den Nutzer",
-      "description": "Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis. (CR-GC-770)"
+      "description": "Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis. (CR-GC-770)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-zug-bericht",
       "type": "FLOW",
       "name": "Bericht zum Zug",
-      "description": "Die Berichte zum Zug in der Antwort der zwei Werkzeuge, die berichten: graph_mutate an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)"
+      "description": "Die Berichte zum Zug in der Antwort der zwei Werkzeuge, die berichten: graph_mutate an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-zug-staende",
       "type": "FLOW",
       "name": "Stand davor und danach",
-      "description": "Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil herausgibt. Ein geblockter Zug hat kein Paar. (CR-GC-778)"
+      "description": "Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil herausgibt. Ein geblockter Zug hat kein Paar. (CR-GC-778)",
+      "sync": "sync"
     },
     {
       "id": "FUNC-apply-reseed",
@@ -14534,6 +14660,41 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-789",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-789",
+      "target": "FUNC-graph-store",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-789",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-789",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-789",
+      "target": "FUNC-schema-guard",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-789",
+      "target": "FUNC-seed-from-json",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-789",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -22899,5 +23060,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 694
+  "graphVersion": 698
 }

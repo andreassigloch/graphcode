@@ -763,6 +763,13 @@
 | `CR-GC-787` | relation | `REQ-metrics-risk-scope` |
 | `CR-GC-788` | relation | `FUNC-goal-steerer` |
 | `CR-GC-788` | relation | `REQ-steering-from-metrics` |
+| `CR-GC-789` | relation | `FUNC-generation-step` |
+| `CR-GC-789` | relation | `FUNC-graph-store` |
+| `CR-GC-789` | relation | `FUNC-graph-suggest` |
+| `CR-GC-789` | relation | `FUNC-mutate` |
+| `CR-GC-789` | relation | `FUNC-schema-guard` |
+| `CR-GC-789` | relation | `FUNC-seed-from-json` |
+| `CR-GC-789` | relation | `FUNC-take-steering-snapshot` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
