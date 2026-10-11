@@ -26,7 +26,7 @@
 | Integration | FUNC↔FUNC (138 conn) | integration verification (SYS.4 · SWE.5) | 31 | 66 / 138 connections | ✗ 72 uncovered |
 | Interface | SCHEMA (50) | integration verification (SYS.4 · SWE.5) | 22 | 32 / 50 schemas | ⚠ 18 without a test |
 | Module | MOD (7) | component verification (SWE.5 · HWE.3) | 62 | 6 / 7 | ⚠ 1 without a verified requirement |
-| Function | FUNC (113) | unit verification (SWE.4 · HWE.3) | 83 | 91 / 113 | ⚠ 22 without a verified requirement |
+| Function | FUNC (113) | unit verification (SWE.4 · HWE.3) | 83 | 90 / 113 | ⚠ 23 without a verified requirement |
 | (validation) | UC (9) | validation (VAL.1) | — | no position in the model | — |
 | (support) | — | conformance | 5 | codec round-trip | ✓ |
 

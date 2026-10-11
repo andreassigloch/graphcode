@@ -757,6 +757,8 @@
 | `CR-GC-787` | relation | `FUNC-graph-metrics` |
 | `CR-GC-787` | relation | `FUNC-module-metrics` |
 | `CR-GC-787` | relation | `REQ-metrics-risk-scope` |
+| `CR-GC-788` | relation | `FUNC-goal-steerer` |
+| `CR-GC-788` | relation | `REQ-steering-from-metrics` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1531,7 +1533,6 @@
 | `FUNC-goal-steerer` | compose | `FUNC-block-autorieren` |
 | `FUNC-goal-steerer` | compose | `FUNC-block-q-improvement` |
 | `FUNC-goal-steerer` | io | `FLOW-action` |
-| `FUNC-goal-steerer` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-graph-expand` | allocate | `MOD-kernel` |
 | `FUNC-graph-expand` | io | `FLOW-expand-subgraph` |
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |

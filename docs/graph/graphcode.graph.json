@@ -3284,6 +3284,13 @@
       "description": "docs/cr/open/CR-GC-787-graph-metrics-reicht-betrachtungsumfang-.md"
     },
     {
+      "id": "CR-GC-788",
+      "type": "CR",
+      "name": "Modell: Block FUNC-goal-steerer erfuellt eine Anforderung",
+      "description": "docs/cr/open/CR-GC-788-modell-block-func-goal-steerer-erfuellt-.md",
+      "status": "done"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14425,6 +14432,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-788",
+      "target": "FUNC-goal-steerer",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-788",
+      "target": "REQ-steering-from-metrics",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -18443,11 +18460,6 @@
       "source": "FUNC-goal-steerer",
       "target": "FLOW-action",
       "type": "io"
-    },
-    {
-      "source": "FUNC-goal-steerer",
-      "target": "REQ-steering-from-metrics",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-expand",
@@ -22700,5 +22712,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 689
+  "graphVersion": 691
 }
