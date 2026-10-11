@@ -3241,6 +3241,25 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-781",
+      "type": "CR",
+      "name": "Konzept Fassung 3: Schluss aus den Spikes und Leitfaden der Optimierung",
+      "description": "docs/cr/open/CR-GC-781-konzept-fassung-3-schluss-aus-den-spikes.md",
+      "status": "done"
+    },
+    {
+      "id": "CR-GC-782",
+      "type": "CR",
+      "name": "se-fmea Version 9: Umfang, Flaeche, Tieferlegen",
+      "description": "docs/cr/open/CR-GC-782-se-fmea-version-9-umfang-flaeche-tieferl.md"
+    },
+    {
+      "id": "CR-GC-783",
+      "type": "CR",
+      "name": "Skill Laufzeitanalyse einer Wirkkette",
+      "description": "docs/cr/open/CR-GC-783-skill-laufzeitanalyse-einer-wirkkette.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14291,6 +14310,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-781",
+      "target": "FUNC-chain-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-781",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-782",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-783",
+      "target": "FUNC-chain-metrics",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -22501,5 +22540,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 678
+  "graphVersion": 682
 }

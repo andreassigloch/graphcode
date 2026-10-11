@@ -744,6 +744,10 @@
 | `CR-GC-779` | relation | `UC-deterministic-steering` |
 | `CR-GC-780` | relation | `FUNC-mutate` |
 | `CR-GC-780` | relation | `REQ-gate-judges-and-stores` |
+| `CR-GC-781` | relation | `FUNC-chain-metrics` |
+| `CR-GC-781` | relation | `FUNC-se-fmea` |
+| `CR-GC-782` | relation | `FUNC-se-fmea` |
+| `CR-GC-783` | relation | `FUNC-chain-metrics` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

@@ -1,6 +1,6 @@
 # Analyse- und Optimierungskonzept
 
-10. Okt. 2026 · @Andreas Sigloch · Fassung 2 (Entwurf, nach Review des Autors vom selben Tag)
+11. Okt. 2026 · @Andreas Sigloch · Fassung 3 (Entwurf; Abschnitt 10 und die Neufassung von 6b nach den Spikes vom 10. und 11. Oktober)
 
 **Bezug:** Leitlinie §5 „Optimieren" (`docs/graphcode_leitlinie.md`) ist der Anker. Die Kennzahlen der
 Wirkkette, die Handlungsklassen und das Gegengewicht Blast-Radius definiert
@@ -12,8 +12,11 @@ gelesen werden, von wem und in welcher Form das Ergebnis ins Modell geht**.
 Jede Zieldimension einer Architektur (Sicherheit, Laufzeit, Informationssicherheit, …) hängt als
 Anforderung an einer Wirkkette. Kennzahlen nennen die Orte der Kette, an denen sich diese Dimension
 entscheidet. Ein Analyse-Skill je Dimension beurteilt die Orte und liefert Befunde, fehlende
-Anforderungen, Umbauvorschläge und Konflikte. Die Optimierung wählt unter den Vorschlägen nach ihrer
-Wirkung in allen vier Sichten des Modells.
+Anforderungen, Umbauvorschläge und Konflikte. Die Kennzahlen zeigen dem Autor, wo ein Vorschlag eingreift
+und was er dazu lesen muss; die Wahl trifft er.
+
+Grundlage von allem ist die Güte des Modells: geschlossene Wirkketten und Anforderungen am richtigen Träger
+auf der tiefsten möglichen Ebene. Wo sie fehlt, misst keine Analyse etwas (Abschnitt 10).
 
 Das verbindet zwei Teile der Leitlinie §5, die bisher nebeneinander standen: die
 Realisierungsarchitektur (Kennzahlen der Kette) und die inhaltliche Optimierung (FMEA, IRR).
@@ -116,16 +119,18 @@ Zwei Teile, in dieser Reihenfolge:
 nennt Zweck, Kette, Ort und Handlungsklasse (Entkoppeln, Zusammenlegen, Verschieben, Aufteilen,
 Vorverlagern — Architekturkonzept, „Handlungsklassen").
 
-**(b) Gesamt-Impact.** Der Vorschlag wird per Trockenlauf geprobt und in allen vier Sichten nachgemessen:
+**(b) Gesamt-Impact.** Der Vorschlag wird per Trockenlauf geprobt. Der Gesamt-Impact ist die Vorlage für
+das Urteil des Autors, kein Verfahren, das Vorschläge ordnet. Er zeigt davor und danach:
 
-1. Anforderung: bleibt jede Anforderung erfüllt und geprüft?
-2. Wirkkette: wie ändern sich die Orte **aller** Ketten, die durch die berührten Funktionen laufen — und
-   was sagen deren Zwecke dazu?
-3. Modul und Funktion: wie ändern sich die Kennzahlen beider Bäume, und halten ihre Schwellen?
+1. den Betrachtungsumfang: die Anforderungen an den berührten Funktionen, ihren Modulen, den Ketten durch
+   sie und am System;
+2. die Orte: jede Kette, deren Zeile sich ändert, mit der Zeile;
+3. die Flächen: sicherheitsrelevante und laufzeitrelevante Fläche (Abschnitt 10);
+4. die Kennzahlen der Modul- und der Funktionssicht mit ihren Schwellen.
 
-Die Reihenfolge der Abwägung ist die feste Rangfolge des Architekturkonzepts („Gegengewicht
-Blast-Radius"): Invarianten, Zwecke der Ketten, Modellgüte in ihren Schwellen, Reichweite der Änderung.
-Keine Gewichte zwischen den Stufen.
+Die frühere Fassung ordnete nach einer festen Rangfolge (Invarianten, Zwecke der Ketten, Modellgüte,
+Reichweite). Sie ist gestrichen: an drei Fällen mit neun Entwürfen widersprach jede Rangfolge aus den
+Kennzahlen mindestens einmal dem Blindurteil (Abschnitt 10, Belege).
 
 **Die Reichweite einer Änderung ist keine Kennzahl einer Sicht**, sie gehört zur Änderung und hängt von
 ihrer Art ab:
@@ -177,7 +182,7 @@ ihrer Art ab:
 2. **Prognose vor dem Zug:** was besser werden soll und was gleich bleiben muss. Eine Verbesserung, die
    das Gleichbleiben verletzt, zählt nicht.
 3. **Probe per Trockenlauf, Gesamt-Impact in allen vier Sichten** (Abschnitt 6b), bevor gewählt wird.
-4. **Gewählt wird nach der festen Rangfolge**, nicht nach einer Summe.
+4. **Gewählt wird vom Autor am Gesamt-Impact.** Keine Summe und keine Rangfolge aus Kennzahlen entscheidet.
 5. **Kein Auto-Apply.** Der Autor wählt; angewandt wird durchs Gate.
 6. **Nachmessung nach dem Zug** gegen die Prognose; das Ergebnis steht im CR.
 7. **Eine Entwurfsregel an einer geteilten Funktion steht als Anforderung an ihr im Modell.** Ein Vorschlag,
@@ -209,34 +214,22 @@ ihrer Art ab:
 | FMEA liest die Orte | gebaut (CR-GC-774, Skill Version 8) |
 | Erster FMEA-Lauf auf den Orten | gefahren an der Steuerungsschleife (CR-GC-779): vier Risiken im Modell, ein Architekturvorschlag, ein Konflikt am Gate |
 | Bedrohungsanalyse, Budgetanalyse | nicht vorhanden; Budget braucht Zeit- und Mengenangaben im Modell |
-| Vorschlag aus einer Analyse (6a) | nicht vorhanden |
-| Gesamt-Impact (6b) | von Hand gemessen im Spike vom 2026-10-10 (drei Entwürfe an der Steuerungsschleife); kein Werkzeug rechnet ihn |
-| Nachweis, dass Vorschläge aus diesem Rahmen besser sind als ein Blindurteil | nicht erbracht. Zwei Fälle: die feste Rangfolge ordnete in beiden gegen das Blindurteil, im ersten nach einer nachträglichen Ergänzung gleich |
+| Vorschlag aus einer Analyse (6a) | von Hand in drei Fällen; kein Skill liefert ihn |
+| Gesamt-Impact (6b) | von Hand gemessen an drei Fällen mit neun Entwürfen; kein Werkzeug rechnet ihn |
+| Nachweis, dass eine Rangfolge aus Kennzahlen Vorschläge richtig ordnet | widerlegt an drei Fällen; die Rangfolge ist gestrichen |
+| Betrachtungsumfang, Flächenmaße, Antwortweg | als Probe im Skript gerechnet (graphanalyze), nicht in `chainMetrics` |
+| Laufzeitanalyse | nicht vorhanden; das Merkmal synchron oder asynchron ist an keinem Fluss der Familie gesetzt |
 
 **Offen im Konzept:**
 
-- **Die feste Rangfolge trägt als Entscheidungsverfahren nicht** (zwei Spikes vom 2026-10-10, graphanalyze
-  `docs/messung/gesamt-impact-2026-10-10/` und `gesamt-impact-fall2-2026-10-10/`). Fall 1 (Steuerungsschleife,
-  graphcode): erst gegen Analyse und Blindurteil, nach den Konventionen 7 und 8 gleich; die Anforderung dazu
-  war in Kenntnis des Ergebnisses angelegt. Fall 2 (Ladezeit, energymanager, Regeln standen vorher im Modell):
-  gegen das Blindurteil, in jeder Lesart. Drei Ursachen aus Fall 2: die gebrochene Regel hing am System und
-  nicht an der berührten Funktion (Konvention 7 greift dann nicht, und ein weiterer Kreis umfasst 66 von 98
-  Anforderungen); die Kettenzahlen kennen den Zweck nicht (ein Glied mehr, das den Aufruf entlastet, zählt
-  als Verschlechterung, weil das Modell den Weg eines Aufrufs nicht trägt); die Modellgüte zählt gegen den
-  Entwurf, den der Zweck verlangt.
-- **Was in beiden Fällen hielt:** die Kettensicht zeigt die Orte des Eingriffs (Kreislauf, Länge, betroffene
-  Ketten, Reichweite), und zwar dieselben, die der Gutachter als Messgrößen der Schwächen nennt; die
-  Gegenprobe ist stabil. Das Urteil brauchte in beiden Fällen das Lesen der Anforderungen. Ob Abschnitt 6b
-  deshalb vom Verfahren zur Vorlage für ein Urteil wird (Orte und betroffene Anforderungen zeigen, nicht
-  ordnen), ist nicht entschieden.
-- **Flächenmaße** (Spike vom 2026-10-11, dieselbe Ablage). Sicherheitsrelevante Fläche: die Funktionen, die
-  eine Gegenmaßnahme eines Risikos erfüllen. Sie unterscheidet Modelle stark (energymanager: jedes Risiko an
-  genau einer Funktion; sigllm: Gegenmaßnahmen an Modul oder System, alle Funktionen in der Fläche) und
-  Entwürfe kaum. Ob ein Entwurf einer Funktion ein weiteres Risiko auflädt, zeigt erst die Zahl der Risiken
-  je Funktion, gewichtet mit den Ketten durch sie; diese Größe ist nachgetragen und nicht vorab festgelegt.
-  Laufzeitrelevante Fläche: Anfragepfad und Zulieferer lassen sich aus der Flussrichtung trennen, die
-  Ladezeit entscheidet das nicht; es fehlen Takt, Menge und die Angabe synchron oder asynchron am Fluss.
-  Nicht entschieden, ob eine der Größen in `chainMetrics` kommt.
+- **Entschieden in Abschnitt 10:** die feste Rangfolge ist gestrichen, der Gesamt-Impact ist Vorlage für das
+  Urteil; Umfang und Flächen stehen im Leitfaden.
+- **Der Umfang mit einem Flussschritt mehr** fasst alle genannten Anforderungen, wächst an einer Drehscheibe
+  aber auf rund 80 Prozent. Ob und wann der Schritt dazugehört, ist nicht entschieden.
+- **Menge und Takt** fehlen dem Modell. Ohne sie bleibt die Laufzeitanalyse bei der Frage stehen, auf wen die
+  Antwort wartet.
+- **Keine Regel meldet eine Gegenmaßnahme am Modul** oder ein Risiko, dessen Träger ein ganzes Modul ist. Ob
+  daraus eine Regel wird, entscheidet der Familien-Review.
 - **Eine Lücke der Verdrahtungsregeln.** Am Stand des Spikes zu CR-GC-771 (energymanager, 12 Ketten) meldet
   keine Regel etwas zur Verdrahtung, und alle 12 Ketten sind bewertbar — jede hat die Länge 1. Erfassen und
   Anzeigen hängen dort nur über den gespeicherten Datenbestand zusammen, und der steht nicht im Modell. Der
@@ -258,3 +251,91 @@ treibendem Knoten), T-O3 (Degradationsschutz), T-O7 (inhaltliche Analysen).
 | 6 | Spike: Gesamt-Impact desselben Vorschlags; zugleich Frage 4 aus CR-GC-771 an verbundenen Funktionen | Spike | T-O2, T-O3 |
 | 7 | Optimierung bauen (6a, 6b) | CR nach den Spikes | T-O2, T-O3 |
 | 8 | Bedrohungsanalyse; Budgetanalyse mit synchroner Tiefe und Zeitangabe | je ein Item | T-O2 |
+| 9 | Schluss und Leitfaden im Konzept (Abschnitt 10) | CR-GC-781, geschlossen | T-O2, T-O3 |
+| 10 | Maße des Leitfadens in der gemeinsamen Rechnung | CR-SM-407, sigloch-modules, Familien-Review | T-O1, T-O2 |
+| 11 | `se-fmea` Version 9: Umfang, Zuordnung, Fläche | CR-GC-782 | T-O7 |
+| 12 | Skill Laufzeitanalyse | CR-GC-783 | T-O2 |
+| 13 | Gegenmaßnahmen in sigllm auf die tragende Funktion legen | CR-SL-096, sigllm | T-O7 |
+
+## 10. Schluss aus den Spikes und Leitfaden der Optimierung
+
+### Schluss
+
+1. **Die Güte des Modells entscheidet vor jeder Analyse.** Zwei Dinge: die Wirkketten sind geschlossen
+   (jedes Glied hat Eingang und Ausgang, die Kette ist bewertbar), und jede Anforderung hängt am richtigen
+   Träger auf der tiefsten möglichen Ebene. Von acht geprüften Modellen der Familie waren zwei ohne Fehler
+   und voll bewertbar. Ein Modell hing alle Gegenmaßnahmen an Modul oder System; dort war jede Funktion
+   sicherheitsrelevant.
+2. **Kennzahlen finden Orte und spannen den Umfang.** In allen drei Fällen nannten die Gutachter von sich
+   aus Größen, die in den gemessenen Zeilen standen. Der Betrachtungsumfang einer Kette fasste 39 bis 48
+   Prozent der Anforderungen und darin 22 von 24, die ein Gutachter als verletzt oder gefährdet nannte.
+3. **Kennzahlen ordnen keine Entwürfe.** Gegen das Urteil liefen die Länge der Kette (in jedem Paar, das
+   sich unterschied), die Länge des Anfragepfads und die Zahl der Befunde. Die besser beurteilten Entwürfe
+   machen einen Schritt ausdrücklich und schneiden sauber; beides zählen diese Größen als Verschlechterung.
+4. **Was nie widersprach,** ist die Reichweite (Ketten durch die berührten Funktionen) und, nachgetragen und
+   nicht vorab festgelegt, das Gewicht: je Träger die Ketten durch ihn. Beide messen dasselbe: wie viel an
+   einer Funktion hängt, der man etwas auflädt.
+5. **Jede Dimension hat ihr eigenes Maß an der Kette.** Entdeckung über Runden: Glieder im Kreislauf.
+   Ladezeit: die Funktionen, auf die die Antwort wartet. Genau ein Endzustand: Schreiber auf denselben
+   Zustand. Ein gemeinsames Maß über die Dimensionen gibt es nicht.
+
+### Leitfaden
+
+Drei Stufen, in dieser Reihenfolge. Eine spätere Stufe beginnt erst, wenn die frühere nichts mehr meldet
+oder das Offene benannt ist.
+
+**Stufe 0: Güte des Modells.**
+
+| Prüfpunkt | Maß | Handlung |
+|---|---|---|
+| Ketten geschlossen | Bewertbarkeitsquote, Befunde der Verdrahtung | Flüsse und Glieder schließen; vorher keine Analyse |
+| Funktionale Anforderung an der Funktion, nicht-funktionale an Kette, Modul oder System | Grammatik (am Gate ein Fehler) | – |
+| Gegenmaßnahme am tiefsten Träger | Träger je Risiko, Ziel 1 | Tieferlegen: als funktionale Anforderung fassen und der einen Funktion zuordnen |
+| Gegenmaßnahme mit zwei Aussagen | – | Zerlegen |
+| Gegenmaßnahme ohne passende Funktion | – | fehlende Funktion anlegen; das ist ein Befund am Funktionsbaum |
+| Gegenmaßnahme, die quer gilt | Sockel: Gegenmaßnahmen am System | oben lassen und als Sockel ausweisen |
+| Risiko ohne Träger | Zahl | Gegenmaßnahme und Träger anlegen |
+
+**Stufe 1: Sicherheit und Verfügbarkeit (Skill `se-fmea`).**
+
+| Maß | Bedeutung | Besser ist |
+|---|---|---|
+| Sicherheitsrelevante Fläche ohne Sockel | Funktionen, die mindestens ein Risiko tragen | kleiner |
+| Träger je Risiko | wie scharf ein Risiko zugeordnet ist | 1 |
+| Gewicht | je Risiko und Träger die Ketten durch den Träger | kleiner |
+| Flüsse an den Trägern | Schnittstelle des kritischen Teils | kleiner |
+| Glieder im Kreislauf, geteilte Glieder | Orte aus `chainMetrics` | zu beurteilen, kein Zielwert |
+
+Handlungen: Tieferlegen; einer geteilten Funktion kein weiteres Risiko aufladen; Entdeckung außerhalb des
+Kreislaufs; ein Besitzer je Zustand.
+
+**Stufe 2: Laufzeit (Skill Laufzeitanalyse, noch nicht vorhanden).** Voraussetzung: an jedem Fluss der Kette
+steht, ob die Antwort auf ihn wartet (synchron) oder ob er vorab geliefert ist (asynchron).
+
+| Maß | Bedeutung | Besser ist |
+|---|---|---|
+| Antwortweg | Funktionen, auf die die Antwort an den Akteur wartet | weniger, und mit weniger Ketten durch sie |
+| Tiefe der Zulieferer | Seite Datenalter | zu beurteilen gegen die Anforderung an das Alter |
+| Zulauf und Verzweigung | wo auf mehrere gewartet wird | zu beurteilen |
+
+Handlungen: vorhalten statt beim Aufruf rechnen, mit eigenem Fluss für die Speisung (derselbe Inhalt einmal
+abgerufen und einmal vorab geliefert sind zwei Flüsse); eine geteilte Funktion vom Antwortweg nehmen. Jeder
+Vorschlag nennt seinen Preis: Datenalter und die Schnittstelle der Funktion, die speist. Nicht messbar bleibt,
+ob der Aufwand einer Funktion mit dem Bestand wächst, und der Takt der Zulieferer.
+
+### Belege
+
+| Spike | Ablage in graphanalyze `docs/messung/` | Ergebnis |
+|---|---|---|
+| Gesamt-Impact, Fall 1 (graphcode) | `gesamt-impact-2026-10-10/` | Rangfolge gegen Analyse und Blindurteil; nach Ergänzung in Kenntnis des Ergebnisses gleich |
+| Gesamt-Impact, Fall 2 (energymanager) | `gesamt-impact-fall2-2026-10-10/` | Rangfolge gegen das Blindurteil |
+| Gesamt-Impact, Fall 3 (sigllm) | `gesamt-impact-fall3-2026-10-10/` | fremd verfasste Entwürfe, Gutachter mit allen Anforderungen |
+| Kennzahlen der drei Fälle | `gesamt-impact-gegenueberstellung-2026-10-10.md` | Paare: stimmt, widerspricht, gleich |
+| Umfang und Flächen | `flaechen-2026-10-11/` | Umfang trägt; Fläche trennt Modelle, kaum Entwürfe |
+| Tieferlegen in sigllm | `flaechen-2026-10-11/`, Teil Tieferlegen | 11 von 18 Gegenmaßnahmen; Risiken mit einem Träger 2 auf 11 von 16 |
+| Fluss trennen im energymanager | `flaechen-2026-10-11/`, Teil Fluss trennen | fünf Ketten besser, keine schlechter; die heutigen Kennzahlen sehen es nicht |
+
+**Grenzen.** Neun Entwürfe, neun Paare, je ein Gutachter. In zwei Fällen stammen die Entwürfe vom Verfasser
+der Messung. Das Gewicht ist nachgetragen. Die Zuordnung beim Tieferlegen ist am Modelltext getroffen, nicht
+am Code. Alle Flächenmaße sind im Skript gerechnet und nicht in der gemeinsamen Rechnung.
+

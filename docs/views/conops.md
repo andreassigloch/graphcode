@@ -412,6 +412,9 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-778` | n/a | Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht | `FUNC-fit-advisory` · `FUNC-mutate` |
 | `CR-GC-779` | done | FMEA der Kenngroessen-Steuerungsschleife | `REQ-gate-survives-rule-failure` · `REQ-loop-convergence-monitor` · `REQ-loop-round-log` · `REQ-monotone-convergence` · `REQ-risk-gate-rule-eval-fails` · `REQ-risk-loop-degradation` · `REQ-risk-loop-oscillation` · `REQ-risk-store-unreadable` · `UC-deterministic-steering` |
 | `CR-GC-780` | done | Entwurfsregel am geteilten Glied | `FUNC-mutate` · `REQ-gate-judges-and-stores` |
+| `CR-GC-781` | done | Konzept Fassung 3: Schluss aus den Spikes und Leitfaden der Optimierung | `FUNC-chain-metrics` · `FUNC-se-fmea` |
+| `CR-GC-782` | n/a | se-fmea Version 9: Umfang, Flaeche, Tieferlegen | `FUNC-se-fmea` |
+| `CR-GC-783` | n/a | Skill Laufzeitanalyse einer Wirkkette | `FUNC-chain-metrics` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

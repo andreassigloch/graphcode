@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 390 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 393 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 390 CR · 340 done · 4 open.
+Total: 393 CR · 341 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -452,3 +452,6 @@ Total: 390 CR · 340 done · 4 open.
 | `CR-GC-778` | n/a | Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht |
 | `CR-GC-779` | done | FMEA der Kenngroessen-Steuerungsschleife |
 | `CR-GC-780` | done | Entwurfsregel am geteilten Glied |
+| `CR-GC-781` | done | Konzept Fassung 3: Schluss aus den Spikes und Leitfaden der Optimierung |
+| `CR-GC-782` | n/a | se-fmea Version 9: Umfang, Flaeche, Tieferlegen |
+| `CR-GC-783` | n/a | Skill Laufzeitanalyse einer Wirkkette |
