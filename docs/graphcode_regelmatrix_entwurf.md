@@ -101,7 +101,7 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | 4 Wirkkette | UC-03 | UC has scenario | UC | Warnung | Existenz | SRR | SRR |
 | 5 Funktion | R-15 | FCHAIN completeness | FCHAIN | Warnung | Existenz | PDR | PDR |
 | 5 Funktion | BW-02 | Whitebox boundary width | FUNC | Warnung |  | PDR | PDR |
-| 5 Funktion | FC-03 | FCHAIN is flat | FUNC | Warnung |  | PDR | PDR |
+| 5 Funktion | FC-03 | Block is neither chain member nor satisfier | FUNC | Fehler |  | PDR | PDR |
 | 5 Funktion | IO-01 | FuncPairIOCompleteness | FUNC | Warnung |  | PDR | PDR |
 | 5 Funktion | MT-04 | Whitebox cohesion (LCOM4) | FUNC | Hinweis |  | PDR | PDR |
 | 5 Funktion | ND-01 | FuncNearDuplicate | FUNC | Warnung |  | PDR | PDR |

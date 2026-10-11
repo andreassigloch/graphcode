@@ -49,7 +49,7 @@ Walk the graph's `compose` hierarchy for the scoped target: `SYS → UC → FCHA
 
 **Geteilte Funktionen gehören zur Analyse der Kette.** Ihre Zuflüsse stehen an ihnen selbst und erscheinen nicht als `imports` der Kette. Wer die Kette analysiert, analysiert ihre geteilten Funktionen mit; ist eine schon in einer früheren FMEA analysiert (CR in `docs/cr/done/`), zitiere sie und wiederhole sie nicht.
 
-**Was der Regelsatz schon urteilt.** `FC-02` (Leaf-UC hat FCHAIN), `FC-03` (Kette ist flach), `FC-04` und `FC-05` liegen in `@sigloch/contracts/se` und laufen im Gate — lies sie über `rules_get_violations` und **wiederhole sie nicht als eigenen Befund**.
+**Was der Regelsatz schon urteilt.** `FC-02` (Leaf-UC hat FCHAIN), `FC-03` (ein Block ist weder Glied einer Kette noch Erfüller einer Anforderung; Fehler), `FC-04` und `FC-05` liegen in `@sigloch/contracts/se` und laufen im Gate — lies sie über `rules_get_violations` und **wiederhole sie nicht als eigenen Befund**.
 
 Ergebnis von Step 2: der Strukturbaum (System → Subsystem → Funktionselement) **plus** eine Tabelle `FCHAIN | Glieder | Kreisläufe | geteilte Funktionen | Importe | Übergaben | Modulgrenzen (Verträge) | Akteursgrenze ✓/✗`, alle Werte aus `graph_metrics` zitiert. Arbeitsreihenfolge für Step 4: erst die geteilten Funktionen, absteigend nach Reichweite, dann Kreisläufe, dann Importe und Übergaben.
 

@@ -1,7 +1,7 @@
 # Regel-Matrix
 
 > GENERIERT von `scripts/regel-matrix.mjs` aus contracts, graph-api-core, se-engine und graphcode — nicht von Hand bearbeiten.
-> 76 Regeln · 59 im Gate-Katalog · 5 blocken (Schwere error) · 12 Existenz-Regeln · 4 Analysen · 7 abnehmbar · 2 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
+> 76 Regeln · 59 im Gate-Katalog · 6 blocken (Schwere error) · 12 Existenz-Regeln · 4 Analysen · 7 abnehmbar · 2 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
 > Fix-Vorlagen: 18 Regeln tragen eine · 17 schliessen den Fund · 1 Teil-Fix · 0 tot (CR-SM-357).
 
 ## Stufen und Marken
@@ -76,7 +76,7 @@
 | UC-03 | UC has scenario | 4 Wirkkette | existence | SRR | warning | Gate | kern |  |  | se:author-uc | Beschreibe die Abläufe {n} als Kette von Funktionen. | se:author-uc |  | se:author-uc |  |  |
 | R-15 | FCHAIN completeness | 5 Funktion | existence | PDR | warning | Gate | kern |  |  |  | Gib den Funktionsketten {n} ihre Funktionen und ordne sie ihrem Ablauf zu. | se:top-level |  |  |  |  |
 | BW-02 | Whitebox boundary width | 5 Funktion |  | PDR | warning | Gate | kern | ja |  |  | Bündle die Datenformate an der Grenze von {n} oder teile den Block. | se:top-level |  |  | schliesst |  |
-| FC-03 | FCHAIN is flat | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Hebe die inneren Schritte der Funktionen {n} auf die Ebene ihrer Kette. | se:top-level |  | se-fmea |  |  |
+| FC-03 | Block is neither chain member nor satisfier | 5 Funktion |  | PDR | error | Gate | kern |  |  |  | Nimm statt der Blöcke {n} ihre inneren Schritte in die Kette und hänge ihre Anforderung an den Schritt, der sie trägt. | se:top-level |  | se-fmea |  |  |
 | IO-01 | FuncPairIOCompleteness | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ergänze den Datenfluss zwischen den Schritten {n}. | se:top-level |  | se:top-level se-fmea | schliesst |  |
 | MT-04 | Whitebox cohesion (LCOM4) | 5 Funktion |  | PDR | info | Gate | kern |  |  |  |  | se:top-level |  |  |  |  |
 | ND-01 | FuncNearDuplicate | 5 Funktion |  | PDR | warning | Aehnlichkeit (ND) | kern |  |  |  | Führe die doppelten Funktionen {n} zusammen oder grenze sie ab. | se:top-level |  |  |  |  |
