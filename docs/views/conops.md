@@ -415,6 +415,9 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-781` | done | Konzept Fassung 3: Schluss aus den Spikes und Leitfaden der Optimierung | `FUNC-chain-metrics` · `FUNC-se-fmea` |
 | `CR-GC-782` | n/a | se-fmea Version 9: Umfang, Flaeche, Tieferlegen | `FUNC-se-fmea` |
 | `CR-GC-783` | n/a | Skill Laufzeitanalyse einer Wirkkette | `FUNC-chain-metrics` |
+| `CR-GC-784` | n/a | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen | `FUNC-chain-metrics` |
+| `CR-GC-785` | n/a | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse | `FUNC-graph-suggest` · `FUNC-se-optimize` |
+| `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) | `FUNC-graph-readiness` · `FUNC-take-steering-snapshot` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

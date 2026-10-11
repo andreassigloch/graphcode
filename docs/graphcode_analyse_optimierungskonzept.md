@@ -252,10 +252,19 @@ treibendem Knoten), T-O3 (Degradationsschutz), T-O7 (inhaltliche Analysen).
 | 7 | Optimierung bauen (6a, 6b) | CR nach den Spikes | T-O2, T-O3 |
 | 8 | Bedrohungsanalyse; Budgetanalyse mit synchroner Tiefe und Zeitangabe | je ein Item | T-O2 |
 | 9 | Schluss und Leitfaden im Konzept (Abschnitt 10) | CR-GC-781, geschlossen | T-O2, T-O3 |
-| 10 | Maße des Leitfadens in der gemeinsamen Rechnung | CR-SM-407, sigloch-modules, Familien-Review | T-O1, T-O2 |
-| 11 | `se-fmea` Version 9: Umfang, Zuordnung, Fläche | CR-GC-782 | T-O7 |
-| 12 | Skill Laufzeitanalyse | CR-GC-783 | T-O2 |
-| 13 | Gegenmaßnahmen in sigllm auf die tragende Funktion legen | CR-SL-096, sigllm | T-O7 |
+
+**Plan ab 2026-10-11.** Die gemeinsame Rechnung kommt zuerst; alle Skills lesen aus ihr.
+
+| Reihenfolge | Was | CR | Wartet auf | Bewegt |
+|---|---|---|---|---|
+| 1 | Maße des Leitfadens in der gemeinsamen Rechnung, mit Review des Hüters | CR-SM-407, sigloch-modules | – | T-O1, T-O8 |
+| 2 | Skill Modellvorbereitung | CR-GC-784 | 1 | T-O8 |
+| 3 | `se-fmea` Version 9 | CR-GC-782 | 1, 2 | T-O7 |
+| 3 | Skill Laufzeitanalyse | CR-GC-783 | 1, 2 | T-O2 |
+| 4 | `se:optimize` Version 3 | CR-GC-785 | 1, 3 | T-O3 |
+| daneben | sigllm: Gegenmaßnahmen auf die Funktion, zwei fehlende Funktionen | CR-SL-096, CR-SL-097, CR-SL-098; eigene Sitzung in sigllm | – | T-O7 |
+| daneben | `graph_readiness` bricht an alten Art-Werten ab | CR-GC-786 | – | Hygiene |
+| nach 1 | Release-Zug contracts und graphcode | – | 1 | – |
 
 ## 10. Schluss aus den Spikes und Leitfaden der Optimierung
 
@@ -284,7 +293,7 @@ treibendem Knoten), T-O3 (Degradationsschutz), T-O7 (inhaltliche Analysen).
 Drei Stufen, in dieser Reihenfolge. Eine spätere Stufe beginnt erst, wenn die frühere nichts mehr meldet
 oder das Offene benannt ist.
 
-**Stufe 0: Güte des Modells.**
+**Stufe 0: Güte des Modells (Skill `se-vorbereitung`, noch nicht vorhanden).**
 
 | Prüfpunkt | Maß | Handlung |
 |---|---|---|
@@ -322,6 +331,21 @@ Handlungen: vorhalten statt beim Aufruf rechnen, mit eigenem Fluss für die Spei
 abgerufen und einmal vorab geliefert sind zwei Flüsse); eine geteilte Funktion vom Antwortweg nehmen. Jeder
 Vorschlag nennt seinen Preis: Datenalter und die Schnittstelle der Funktion, die speist. Nicht messbar bleibt,
 ob der Aufwand einer Funktion mit dem Bestand wächst, und der Takt der Zulieferer.
+
+### Skills
+
+Die Vorbereitung des Modells ist ein eigener Skill und nicht Teil einer Analyse (Entscheidung des Autors,
+2026-10-11). Eigen je Analyse ist der Vorschlag, allgemein ist der Umgang mit ihm.
+
+| Skill | Stufe | Tut | Tut nicht |
+|---|---|---|---|
+| `se-vorbereitung` (neu, CR-GC-784) | 0 | Ketten schließen, Gegenmaßnahmen zuordnen, Flüsse kennzeichnen | beurteilt kein Risiko und keine Laufzeit |
+| `se-fmea` Version 9 (CR-GC-782) | 1 | bewertet Risiken an den Orten, nennt Umfang und Fläche, liefert Vorschläge in fester Form | legt nicht tiefer, wendet keinen Umbau an |
+| `se-laufzeit` (neu, CR-GC-783) | 2 | liest den Antwortweg, liefert Vorschläge mit Preis | setzt kein Merkmal, schätzt keine Zeit |
+| `se:optimize` Version 3 (CR-GC-785) | alle | probt einen Vorschlag, zeigt den Gesamt-Impact, wendet den gewählten an, misst nach | bildet keine Rangfolge, mischt die Quellen nicht |
+
+Ein Vorschlag hat immer dieselbe Form: Zweck, Kette, Ort, Handlungsklasse, Prognose (was besser wird, was gleich
+bleibt), Preis.
 
 ### Belege
 

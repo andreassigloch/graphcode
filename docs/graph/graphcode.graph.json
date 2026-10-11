@@ -3260,6 +3260,24 @@
       "description": "docs/cr/open/CR-GC-783-skill-laufzeitanalyse-einer-wirkkette.md"
     },
     {
+      "id": "CR-GC-784",
+      "type": "CR",
+      "name": "Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen",
+      "description": "docs/cr/open/CR-GC-784-skill-modellvorbereitung-ketten-schliess.md"
+    },
+    {
+      "id": "CR-GC-785",
+      "type": "CR",
+      "name": "se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse",
+      "description": "docs/cr/open/CR-GC-785-se-optimize-version-3-ein-optimierer-fue.md"
+    },
+    {
+      "id": "CR-GC-786",
+      "type": "CR",
+      "name": "graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer)",
+      "description": "docs/cr/open/CR-GC-786-graph-readiness-bricht-an-anforderungen-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -14330,6 +14348,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-784",
+      "target": "FUNC-chain-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-785",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-785",
+      "target": "FUNC-se-optimize",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-786",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-786",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -22540,5 +22583,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 682
+  "graphVersion": 686
 }

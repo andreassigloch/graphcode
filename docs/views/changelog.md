@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 393 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 396 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 393 CR · 341 done · 4 open.
+Total: 396 CR · 341 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -455,3 +455,6 @@ Total: 393 CR · 341 done · 4 open.
 | `CR-GC-781` | done | Konzept Fassung 3: Schluss aus den Spikes und Leitfaden der Optimierung |
 | `CR-GC-782` | n/a | se-fmea Version 9: Umfang, Flaeche, Tieferlegen |
 | `CR-GC-783` | n/a | Skill Laufzeitanalyse einer Wirkkette |
+| `CR-GC-784` | n/a | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen |
+| `CR-GC-785` | n/a | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse |
+| `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) |

@@ -748,6 +748,11 @@
 | `CR-GC-781` | relation | `FUNC-se-fmea` |
 | `CR-GC-782` | relation | `FUNC-se-fmea` |
 | `CR-GC-783` | relation | `FUNC-chain-metrics` |
+| `CR-GC-784` | relation | `FUNC-chain-metrics` |
+| `CR-GC-785` | relation | `FUNC-graph-suggest` |
+| `CR-GC-785` | relation | `FUNC-se-optimize` |
+| `CR-GC-786` | relation | `FUNC-graph-readiness` |
+| `CR-GC-786` | relation | `FUNC-take-steering-snapshot` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

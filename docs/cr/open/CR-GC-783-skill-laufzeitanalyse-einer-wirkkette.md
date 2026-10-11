@@ -7,51 +7,49 @@
 
 ---
 
-**Bezug:** graphcode `docs/graphcode_analyse_optimierungskonzept.md`, Abschnitt 10, Stufe 2. Sicht Wirkkette, Dimension Laufzeit, Ergebnisse a bis d. **Wartet auf CR-SM-407**
-(Teil C).
+**Bezug:** `docs/graphcode_analyse_optimierungskonzept.md`, Abschnitt 10, Stufe 2. Sicht Wirkkette, Dimension Laufzeit, Ergebnisse a bis d.
+**Wartet auf CR-SM-407 (Antwortweg) und CR-GC-784 (Merkmal an den Flüssen).**
 
 ## Anlass
 
 Für die Laufzeit einer Wirkkette gibt es keinen Analyse-Skill. Die Probe am energymanager-Modell zeigt, was er
-leisten kann und was nicht: mit dem Merkmal synchron oder asynchron an den Flüssen wird sichtbar, auf welche
-Funktionen eine Antwort wartet; ohne es lag bei allen drei Entwürfen genau eine Funktion auf dem Anfragepfad.
+leisten kann: mit dem Merkmal synchron oder asynchron an den Flüssen wird sichtbar, auf welche Funktionen eine
+Antwort wartet. Ohne es lag bei allen drei Entwürfen genau eine Funktion auf dem Anfragepfad.
 
 ## Umfang
 
-Neuer Skill `.claude/commands/se-laufzeit.md` (und die Fassung für OpenCode), Einheit ist eine Wirkkette mit
-einer Laufzeitanforderung:
+Neuer Skill `.claude/commands/se-laufzeit.md` (und die Fassung für OpenCode). Einheit ist eine Wirkkette mit einer
+Laufzeitanforderung.
 
-1. **Verdrahtung, Betrachtungsumfang** wie in jeder Analyse.
-2. **Vorbedingung Merkmal.** Trägt ein Fluss der Kette `sync` nicht, ist das Setzen das Ergebnis, nicht die
-   Analyse. Der Skill fragt je Fluss: wartet die Antwort auf diese Lieferung, oder ist sie vorab geliefert? Wird
-   derselbe Inhalt einmal abgerufen und einmal vorab geliefert, schlägt er zwei Flüsse vor.
-3. **Orte lesen** aus `graph_metrics`: Antwortweg (Funktionen und die Ketten durch sie), Tiefe der Zulieferer,
-   Zulauf, Verzweigung, Kreisläufe auf dem Antwortweg.
+1. **Vorbedingung.** Kette geschlossen, jeder Fluss der Kette trägt das Merkmal. Sonst endet der Skill mit dem
+   Verweis auf `se-vorbereitung`; er setzt das Merkmal nicht selbst.
+2. **Betrachtungsumfang** aus `graph_metrics`.
+3. **Orte lesen:** Antwortweg (Funktionen und die Ketten durch sie), Tiefe der Zulieferer, Zulauf, Verzweigung,
+   Kreisläufe auf dem Antwortweg.
 4. **Ergebnisse a bis d:** Befunde je Ort; fehlende Anforderungen (zu jeder Laufzeitanforderung die Anforderung
-   an das Datenalter); Umbauvorschläge der Klasse Vorverlagern (vorhalten statt beim Aufruf rechnen, mit eigenem
+   an das Datenalter); Vorschläge der Klassen Vorverlagern (vorhalten statt beim Aufruf rechnen, mit eigenem
    Fluss) und Entkoppeln (geteilte Funktion vom Antwortweg nehmen); Konflikte an geteilten Funktionen.
-5. **Jeder Vorschlag nennt seinen Preis:** Datenalter und die Schnittstelle der Funktion, die speist.
+5. **Vorschläge in derselben festen Form wie in der FMEA** (CR-GC-782, Punkt 6), mit dem Preis: Datenalter und
+   die Schnittstelle der Funktion, die speist. Der Skill wendet keinen Umbau an.
 
-Dazu ein Test wie `tests/skill-fmea-orte.test.ts`, Modell (`FUNC-se-laufzeit` mit Anforderung, Test, Fluss
-`FLOW-chain-metrics`, Kette `FCHAIN-skill-authoring`), Eintrag in der Skill-Liste.
+Dazu ein Test nach dem Muster `tests/skill-fmea-orte.test.ts`, Modell (`FUNC-se-laufzeit` mit Anforderung und
+Test, Abnehmer von `FLOW-chain-metrics`, Glied von `FCHAIN-skill-authoring`), Eintrag in der Skill-Liste.
 
 ## Umfang laut `graph_impact` (graphVersion 681)
 
-`FUNC-chain-metrics` hat heute einen Abnehmer unter den Skills (`FUNC-se-fmea`) und liegt in zwei Ketten
-(`FCHAIN-skill-authoring`, `FCHAIN-dashboard-metrics`). Der neue Skill wird ein zweiter Abnehmer von
-`FLOW-chain-metrics`; kein bestehender Knoten ändert sich.
+`FUNC-chain-metrics` hat heute einen Abnehmer unter den Skills und liegt in zwei Ketten. Der neue Skill wird ein
+weiterer Abnehmer von `FLOW-chain-metrics`; kein bestehender Knoten ändert sich.
 
 ## Nicht im Umfang
 
-Menge je Abruf und Takt der Zulieferer. Der Skill sagt, auf wen die Antwort wartet, nicht wie lange. Eine
-Schätzung der Zeit kommt erst mit einem Attribut dafür (eigener CR in sigloch-modules, Familien-Review).
+Menge je Abruf und Takt der Zulieferer. Der Skill sagt, auf wen die Antwort wartet, nicht wie lange.
 
 ## Abnahme
 
-- Ein Lauf an `FCHAIN-energiefluss-ansehen` (energymanager) liefert den Antwortweg der Probe (Dashboard und
-  Ablage) und nennt für einen Vorschlag „Momentanstand vorhalten" den eigenen Fluss und das Datenalter.
-- Der Skilltext rechnet keine Kennzahl.
+- Ein Lauf an `FCHAIN-energiefluss-ansehen` (energymanager, Merkmal gesetzt) liefert den Antwortweg der Probe
+  (Dashboard und Ablage) und einen Vorschlag „Momentanstand vorhalten" mit eigenem Fluss und Datenalter als Preis.
+- Ohne Merkmal endet derselbe Lauf mit dem Verweis auf die Vorbereitung.
 
 ## Grenzen
 
-Ein Fall in der Probe. Ob die Reihenfolge der Schritte trägt, zeigt erst der zweite Lauf an einem anderen Modell.
+Ein Fall in der Probe.
