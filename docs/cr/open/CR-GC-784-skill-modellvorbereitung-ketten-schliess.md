@@ -7,8 +7,10 @@
 
 ---
 
-**Bezug:** `docs/graphcode_analyse_optimierungskonzept.md`, Abschnitt 10, Stufe 0. Sicht Wirkkette und Anforderung. **Wartet auf CR-SM-407.**
-**Entscheidung des Autors (2026-10-11):** die Vorbereitung des Modells gehört nicht in die FMEA.
+**Bezug:** `docs/graphcode_analyse_optimierungskonzept.md`, Abschnitt 10, Schritt „Basis optimieren". Sicht Wirkkette und Anforderung. **Wartet auf CR-SM-407.**
+**Entscheidungen des Autors (2026-10-11):** die Vorbereitung des Modells gehört nicht in die FMEA. Der Schritt liegt am
+Abschluss von Stufe 7 der Regelmatrix, an der Marke PDR, vor den Kettenanalysen auf Stufe 8; er ist Hygiene und braucht
+Funktionen, Flüsse und Module als Basis.
 
 ## Anlass
 
@@ -21,13 +23,14 @@ Laufzeitanalyse setzen den Stand voraus und sollen ihn nicht selbst herstellen.
 
 Neuer Skill `.claude/commands/se-vorbereitung.md` (und die Fassung für OpenCode). Einheit ist eine Wirkkette;
 ohne benannte Kette geht der Skill die Ketten des Umfangs einzeln durch. Er liest aus `graph_metrics` und
-`rules_evaluate` und rechnet nichts.
+`rules_evaluate` und rechnet nichts. Er führt durch den Schritt und schlägt je Lücke den Zug vor; die Züge selbst
+sind ein gewöhnlicher CR im Zielrepo (Beispiel: sigllm CR-SL-096).
 
 | Schritt | Liest | Ergebnis |
 |---|---|---|
 | 1 Kette schließen | `measurable` und Gründe, Befunde der Verdrahtung (R-30, R-31, R-21, IO-01, FC-04, FC-05) | je Lücke ein Zug: Fluss, Glied oder Kante |
-| 2 Anforderungen zuordnen | Träger je Risiko, Sockel, Risiken ohne Träger (CR-SM-407) | je Gegenmaßnahme eine von vier Klassen: tieferlegen, zerlegen, Funktion fehlt, gilt quer |
-| 3 Flüsse kennzeichnen | Flüsse der Kette ohne Merkmal synchron oder asynchron | je Fluss die Frage „wartet die Antwort darauf?"; wird derselbe Inhalt abgerufen und vorab geliefert, zwei Flüsse |
+| 2 Anforderungen zuordnen | Träger und Erfüller je Risiko (`riskCarriers`, CR-SM-407); Risiken ohne Träger meldet die Matrix schon | je Gegenmaßnahme eine von vier Klassen: tieferlegen, zerlegen, Funktion fehlt, gilt quer |
+| 3 Flüsse kennzeichnen | Flüsse der Kette ohne Merkmal synchron oder asynchron; als Kennzahl erst mit CR-SM-408, bis dahin fragt der Skill je Fluss | je Fluss die Frage „wartet die Antwort darauf?"; wird derselbe Inhalt abgerufen und vorab geliefert, zwei Flüsse |
 | 4 Bericht | – | Stand der Kette: bewertbar, Träger je Risiko, Sockel, Flüsse ohne Merkmal; was offen bleibt, mit Grund |
 
 Regeln des Skills:

@@ -28,10 +28,11 @@ Zusammenhalt, also die Größen, die in den Spikes am häufigsten gegen das Urte
    Funktionsbaums. Der Skill zeigt sie getrennt und bildet keine gemeinsame Rangfolge.
 2. **Probe** per Trockenlauf durchs Gate.
 3. **Gesamt-Impact als Vorlage** (Konzept 6b), davor und danach: Betrachtungsumfang; jede Kette, deren Zeile
-   sich ändert; sicherheitsrelevante Fläche und Antwortweg; Kennzahlen von Modulbaum und Funktionsbaum mit
-   Schwellen. Der Skill ordnet nicht und empfiehlt nicht nach einer Summe.
+   sich ändert; Träger je Risiko und, sobald vorhanden, der Antwortweg (CR-SM-408); Kennzahlen von Modulbaum und
+   Funktionsbaum mit Schwellen. Der Skill ordnet nicht und empfiehlt nicht nach einer Summe.
 4. **Prüfung gegen die Prognose:** was gleich bleiben muss und nicht gleich bleibt, steht oben.
-5. **Wahl durch den Autor, Anwendung durchs Gate, Nachmessung** gegen die Prognose; das Ergebnis steht im CR.
+5. **Wahl durch den Autor.** Anwenden und Nachmessen gegen die Prognose gehören dem CR des Umbaus; der Skill
+   liefert dafür die Vorlage davor und danach. Lage: nach CDR, vor den Kettentests auf Stufe 9.
 
 Dazu ein Test, der den Skilltext an die Felder aus CR-SM-407 bindet und festhält, dass er keine Rangfolge
 bildet; Anforderung und Test am Knoten des Skills; Hilfetext.

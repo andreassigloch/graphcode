@@ -7,9 +7,10 @@
 
 ---
 
-**Bezug:** `docs/graphcode_analyse_optimierungskonzept.md`, Abschnitt 10, Stufe 1. Sicht Wirkkette und Anforderung, Dimension Sicherheit und Verfügbarkeit,
+**Bezug:** `docs/graphcode_analyse_optimierungskonzept.md`, Abschnitt 10, Schritt Kettenanalyse (Stufe 8 der Regelmatrix). Sicht Wirkkette und Anforderung, Dimension Sicherheit und Verfügbarkeit,
 Ergebnisse a bis d. **Wartet auf CR-SM-407 und CR-GC-784.**
-**Entscheidung des Autors (2026-10-11):** die Vorbereitung des Modells ist nicht Teil der FMEA (CR-GC-784).
+**Entscheidungen des Autors (2026-10-11):** die Vorbereitung des Modells ist nicht Teil der FMEA (CR-GC-784). Eine Analyse ist
+eine Schleife; ihr Ergebnis ist ein gewöhnlicher CR.
 
 ## Anlass
 
@@ -26,10 +27,13 @@ Betrachtungsumfang, die Fläche im Bericht und eine feste Form für Vorschläge.
    tiefer.
 2. **Betrachtungsumfang** aus `graph_metrics`: der Skill nennt die Anforderungen, die er für die Kette liest.
 3. **Bewertung** unverändert (AIAG-VDA, Schwere, Auftreten, Entdeckung an den Orten).
-4. **Regel:** einer geteilten Funktion wird kein weiteres Risiko aufgeladen, ohne dass der Bericht das Gewicht
-   davor und danach nennt.
-5. **Bericht** nennt die sicherheitsrelevante Fläche der Kette: Träger je Risiko, Fläche ohne Sockel, Flüsse an
-   den Trägern.
+4. **Regel:** einer geteilten Funktion wird kein weiteres Risiko aufgeladen, ohne dass der Bericht nennt, welche
+   Risiken sie schon trägt und wie viele Ketten durch sie laufen (`riskCarriers`, `functionCriticality`).
+5. **Bericht** nennt für die Kette die Träger je Risiko und die Funktionen, die mindestens ein Risiko tragen.
+   Eine Gegenmaßnahme am System gilt als quer geltend und zählt nicht in die Träger.
+5a. **Ergebnis ist ein CR.** Neue Risiken und Gegenmaßnahmen gehen durchs Gate; eine neue Gegenmaßnahme wird als
+   funktionale Anforderung der Funktion zugeordnet, die sie trägt. Das ist das Schreiben des Ergebnisses. Alten
+   Bestand am Modul räumt die FMEA nicht auf.
 6. **Vorschläge (Ergebnis c) in fester Form** für den Optimierer (CR-GC-785): Zweck, Kette, Ort,
    Handlungsklasse, Prognose (was besser wird, was gleich bleibt), Preis. Die FMEA wendet keinen Umbau an.
 
@@ -43,7 +47,7 @@ ein Block (`FUNC-block-urteilsarbeit`). Kein weiterer Abnehmer.
 
 ## Abnahme
 
-- Der Skilltext nennt keine Rechnung und keinen Zug des Tieferlegens; der Test hält beides fest.
+- Der Skilltext nennt keine Rechnung und legt keinen alten Bestand tiefer; der Test hält beides fest.
 - Ein Lauf an einer Kette mit einer Gegenmaßnahme am Modul endet mit dem Verweis auf `se-vorbereitung`.
 - Ein Lauf an `FCHAIN-steering-loop` nennt Umfang und Fläche und liefert den Vorschlag aus CR-GC-779 in der
   festen Form.

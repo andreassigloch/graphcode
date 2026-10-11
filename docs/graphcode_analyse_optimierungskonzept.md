@@ -155,8 +155,8 @@ ihrer Art ab:
    diese Glieder und das System, dazu jede Anforderung, die eines davon erfüllt. Er nennt, was die Analyse
    lesen muss. Gemessen an drei Ketten (graphanalyze `docs/messung/flaechen-2026-10-11/`): 39 bis 48 Prozent
    der Anforderungen, darin 22 von 24, die ein Gutachter als verletzt oder gefährdet nannte. Ein
-   Flussschritt mehr fasst alle 24, wächst an einer Drehscheibe aber auf rund 80 Prozent. Heute rechnet ihn
-   kein Werkzeug.
+   Flussschritt mehr fasst alle 24, wächst an einer Drehscheibe aber auf rund 80 Prozent. Gerechnet wird er
+   als Ableitung in contracts (`requirementScope`, CR-SM-407), nicht als Feld der Kettenzeile.
 3. **Der Skill liest die Orte aus `graph_metrics` und rechnet keine Kennzahl.** Was ihm fehlt, wird in
    `chainMetrics` ergänzt, nicht im Skill-Text.
 4. **Pflichtquellen vor freier Ableitung.** Der Skill geht die Ortsarten seiner Dimension ab (Tabelle
@@ -217,7 +217,8 @@ ihrer Art ab:
 | Vorschlag aus einer Analyse (6a) | von Hand in drei Fällen; kein Skill liefert ihn |
 | Gesamt-Impact (6b) | von Hand gemessen an drei Fällen mit neun Entwürfen; kein Werkzeug rechnet ihn |
 | Nachweis, dass eine Rangfolge aus Kennzahlen Vorschläge richtig ordnet | widerlegt an drei Fällen; die Rangfolge ist gestrichen |
-| Betrachtungsumfang, Flächenmaße, Antwortweg | als Probe im Skript gerechnet (graphanalyze), nicht in `chainMetrics` |
+| Betrachtungsumfang, Träger je Risiko | als Probe im Skript gerechnet; als Ableitungen in contracts im Bau (CR-SM-407) |
+| Antwortweg | als Probe im Skript gerechnet; CR-SM-408 wartet auf die Freigabe des Autors und auf ein Modell mit dem Merkmal |
 | Laufzeitanalyse | nicht vorhanden; das Merkmal synchron oder asynchron ist an keinem Fluss der Familie gesetzt |
 
 **Offen im Konzept:**
@@ -228,8 +229,9 @@ ihrer Art ab:
   aber auf rund 80 Prozent. Ob und wann der Schritt dazugehört, ist nicht entschieden.
 - **Menge und Takt** fehlen dem Modell. Ohne sie bleibt die Laufzeitanalyse bei der Frage stehen, auf wen die
   Antwort wartet.
-- **Keine Regel meldet eine Gegenmaßnahme am Modul** oder ein Risiko, dessen Träger ein ganzes Modul ist. Ob
-  daraus eine Regel wird, entscheidet der Familien-Review.
+- **Entschieden im Review des Hüters (CR-SM-407):** keine Regel für eine Gegenmaßnahme am Modul oder am
+  System; das wird ein Hinweis im Skill. Gezählt am Stand vom 2026-10-11 wären es 15 und 2 Befunde über drei
+  Modelle gewesen, 14 und 2 davon in sigllm.
 - **Eine Lücke der Verdrahtungsregeln.** Am Stand des Spikes zu CR-GC-771 (energymanager, 12 Ketten) meldet
   keine Regel etwas zur Verdrahtung, und alle 12 Ketten sind bewertbar — jede hat die Länge 1. Erfassen und
   Anzeigen hängen dort nur über den gespeicherten Datenbestand zusammen, und der steht nicht im Modell. Der
@@ -257,14 +259,16 @@ treibendem Knoten), T-O3 (Degradationsschutz), T-O7 (inhaltliche Analysen).
 
 | Reihenfolge | Was | CR | Wartet auf | Bewegt |
 |---|---|---|---|---|
-| 1 | Maße des Leitfadens in der gemeinsamen Rechnung, mit Review des Hüters | CR-SM-407, sigloch-modules | – | T-O1, T-O8 |
+| 1 | Betrachtungsumfang und Risikoträger als Ableitungen in contracts (Review des Hüters liegt vor, Bau läuft) | CR-SM-407, sigloch-modules | – | T-O1, T-O8 |
+| 1b | Zählung über die Familie: welche Verdrahtungsregeln PDR halten; später Fehler statt Warnung | CR-SM-409, sigloch-modules | – | T-O8 |
 | 2 | Skill Modellvorbereitung | CR-GC-784 | 1 | T-O8 |
 | 3 | `se-fmea` Version 9 | CR-GC-782 | 1, 2 | T-O7 |
-| 3 | Skill Laufzeitanalyse | CR-GC-783 | 1, 2 | T-O2 |
 | 4 | `se:optimize` Version 3 | CR-GC-785 | 1, 3 | T-O3 |
+| später | Antwortweg in der Kettenzeile | CR-SM-408 | wörtliche Freigabe des Autors; ein Modell, das das Merkmal trägt | T-O2 |
+| später | Skill Laufzeitanalyse | CR-GC-783 | CR-SM-408 | T-O2 |
 | daneben | sigllm: Gegenmaßnahmen auf die Funktion, zwei fehlende Funktionen | CR-SL-096, CR-SL-097, CR-SL-098; eigene Sitzung in sigllm | – | T-O7 |
 | daneben | `graph_readiness` bricht an alten Art-Werten ab | CR-GC-786 | – | Hygiene |
-| nach 1 | Release-Zug contracts und graphcode | – | 1 | – |
+| nach 1 | graphcode reicht die zwei Ableitungen in `graph_metrics` durch; Release-Zug contracts 12.1.0 und graphcode | noch kein CR | 1 | – |
 
 ## 10. Schluss aus den Spikes und Leitfaden der Optimierung
 
@@ -281,19 +285,38 @@ treibendem Knoten), T-O3 (Degradationsschutz), T-O7 (inhaltliche Analysen).
 3. **Kennzahlen ordnen keine Entwürfe.** Gegen das Urteil liefen die Länge der Kette (in jedem Paar, das
    sich unterschied), die Länge des Anfragepfads und die Zahl der Befunde. Die besser beurteilten Entwürfe
    machen einen Schritt ausdrücklich und schneiden sauber; beides zählen diese Größen als Verschlechterung.
-4. **Was nie widersprach,** ist die Reichweite (Ketten durch die berührten Funktionen) und, nachgetragen und
-   nicht vorab festgelegt, das Gewicht: je Träger die Ketten durch ihn. Beide messen dasselbe: wie viel an
-   einer Funktion hängt, der man etwas auflädt.
+4. **Was nie widersprach,** ist die Reichweite (Ketten durch die berührten Funktionen). In der Probe lief eine
+   nachgetragene Summe mit (je Träger die Ketten durch ihn); der Hüter des Regelkatalogs hat sie als Feld
+   verworfen, weil sie ableitbar ist und einen versteckten Boden hatte. Die Aussage bleibt lesbar: welche
+   Risiken an einer Funktion hängen und wie viele Ketten durch sie laufen.
 5. **Jede Dimension hat ihr eigenes Maß an der Kette.** Entdeckung über Runden: Glieder im Kreislauf.
    Ladezeit: die Funktionen, auf die die Antwort wartet. Genau ein Endzustand: Schreiber auf denselben
    Zustand. Ein gemeinsames Maß über die Dimensionen gibt es nicht.
 
 ### Leitfaden
 
-Drei Stufen, in dieser Reihenfolge. Eine spätere Stufe beginnt erst, wenn die frühere nichts mehr meldet
-oder das Offene benannt ist.
+Drei Schritte, in dieser Reihenfolge. Ein späterer beginnt erst, wenn der frühere nichts mehr meldet oder das
+Offene benannt ist.
 
-**Stufe 0: Güte des Modells (Skill `se-vorbereitung`, noch nicht vorhanden).**
+**Lage in der Regelmatrix** (Stufen 1 bis 12, Marken SRR nach 4, PDR nach 7, CDR nach 8, TRR nach 9):
+
+| Schritt | Lage | Begründung |
+|---|---|---|
+| Basis optimieren | Abschluss von Stufe 7 (Modul), an der Marke PDR | braucht Funktionen, Flüsse und Module; die Wahl „Funktion oder Modul als Träger" gibt es erst mit dem Modul |
+| Kettenanalysen (FMEA, Laufzeit) | Stufe 8 | dort liegt die FMEA heute |
+| Umbau der Kette | nach CDR, vor den Kettentests auf Stufe 9 | nach der Bindung auf Stufe 11 bewegt jeder Umbau Code |
+
+Die Matrix bleibt dafür unverändert. Die Regeln zur Verdrahtung liegen schon auf den Stufen 5 und 6; neu ist
+nur, dass sie am Ende von Stufe 7 zusammen als Eingang für Stufe 8 gelesen werden. Heute halten zwei der fünf
+die Marke PDR. Ob alle sie halten und ob eine unvollständige Kette später ein Fehler wird, entscheidet
+CR-SM-409 an einer Zählung über die Familie.
+
+**Eine Analyse ist eine Schleife.** Sie erzeugt Anforderungen, Funktionen und Flüsse, und ihr Ergebnis ist ein
+gewöhnlicher CR. Die neuen Elemente durchlaufen die Stufen wie jede Änderung; eine Regel wird fällig, sobald
+ihre Menge nicht leer ist. Deshalb braucht es keine Sonderregel dafür, dass Gegenmaßnahmen erst in der FMEA
+entstehen: der CR der Analyse ordnet sie zu, die Matrix meldet, was fehlt. Dasselbe gilt für einen Umbau.
+
+**Basis optimieren (Skill `se-vorbereitung`, noch nicht vorhanden).** Das ist Hygiene, keine Analyse.
 
 | Prüfpunkt | Maß | Handlung |
 |---|---|---|
@@ -302,29 +325,28 @@ oder das Offene benannt ist.
 | Gegenmaßnahme am tiefsten Träger | Träger je Risiko, Ziel 1 | Tieferlegen: als funktionale Anforderung fassen und der einen Funktion zuordnen |
 | Gegenmaßnahme mit zwei Aussagen | – | Zerlegen |
 | Gegenmaßnahme ohne passende Funktion | – | fehlende Funktion anlegen; das ist ein Befund am Funktionsbaum |
-| Gegenmaßnahme, die quer gilt | Sockel: Gegenmaßnahmen am System | oben lassen und als Sockel ausweisen |
-| Risiko ohne Träger | Zahl | Gegenmaßnahme und Träger anlegen |
+| Gegenmaßnahme, die quer gilt | Sockel: Gegenmaßnahmen am System | am System lassen; der Ort dort ist die Kennzeichnung, ein Attribut gibt es nicht |
+| Risiko ohne Träger | meldet die Matrix schon (FM-02, RD-01) | Gegenmaßnahme und Träger anlegen |
 
-**Stufe 1: Sicherheit und Verfügbarkeit (Skill `se-fmea`).**
+**Sicherheit und Verfügbarkeit (Skill `se-fmea`).**
 
 | Maß | Bedeutung | Besser ist |
 |---|---|---|
 | Sicherheitsrelevante Fläche ohne Sockel | Funktionen, die mindestens ein Risiko tragen | kleiner |
 | Träger je Risiko | wie scharf ein Risiko zugeordnet ist | 1 |
-| Gewicht | je Risiko und Träger die Ketten durch den Träger | kleiner |
-| Flüsse an den Trägern | Schnittstelle des kritischen Teils | kleiner |
+| Risiken an einer Funktion, mit den Ketten durch sie | wie viel an einer Funktion hängt, der man etwas auflädt | zu beurteilen, kein Zielwert |
 | Glieder im Kreislauf, geteilte Glieder | Orte aus `chainMetrics` | zu beurteilen, kein Zielwert |
 
 Handlungen: Tieferlegen; einer geteilten Funktion kein weiteres Risiko aufladen; Entdeckung außerhalb des
 Kreislaufs; ein Besitzer je Zustand.
 
-**Stufe 2: Laufzeit (Skill Laufzeitanalyse, noch nicht vorhanden).** Voraussetzung: an jedem Fluss der Kette
+**Laufzeit (Skill `se-laufzeit`, noch nicht vorhanden).** Voraussetzung: an jedem Fluss der Kette
 steht, ob die Antwort auf ihn wartet (synchron) oder ob er vorab geliefert ist (asynchron).
 
 | Maß | Bedeutung | Besser ist |
 |---|---|---|
-| Antwortweg | Funktionen, auf die die Antwort an den Akteur wartet | weniger, und mit weniger Ketten durch sie |
-| Tiefe der Zulieferer | Seite Datenalter | zu beurteilen gegen die Anforderung an das Alter |
+| Antwortweg | Funktionen, auf die die Antwort an den Akteur wartet; er darf die Kette verlassen | weniger, und mit weniger Ketten durch sie |
+| Zulieferer außerhalb des Antwortwegs | Seite Datenalter | zu beurteilen gegen die Anforderung an das Alter |
 | Zulauf und Verzweigung | wo auf mehrere gewartet wird | zu beurteilen |
 
 Handlungen: vorhalten statt beim Aufruf rechnen, mit eigenem Fluss für die Speisung (derselbe Inhalt einmal
@@ -337,12 +359,12 @@ ob der Aufwand einer Funktion mit dem Bestand wächst, und der Takt der Zuliefer
 Die Vorbereitung des Modells ist ein eigener Skill und nicht Teil einer Analyse (Entscheidung des Autors,
 2026-10-11). Eigen je Analyse ist der Vorschlag, allgemein ist der Umgang mit ihm.
 
-| Skill | Stufe | Tut | Tut nicht |
+| Skill | Schritt | Tut | Tut nicht |
 |---|---|---|---|
-| `se-vorbereitung` (neu, CR-GC-784) | 0 | Ketten schließen, Gegenmaßnahmen zuordnen, Flüsse kennzeichnen | beurteilt kein Risiko und keine Laufzeit |
-| `se-fmea` Version 9 (CR-GC-782) | 1 | bewertet Risiken an den Orten, nennt Umfang und Fläche, liefert Vorschläge in fester Form | legt nicht tiefer, wendet keinen Umbau an |
-| `se-laufzeit` (neu, CR-GC-783) | 2 | liest den Antwortweg, liefert Vorschläge mit Preis | setzt kein Merkmal, schätzt keine Zeit |
-| `se:optimize` Version 3 (CR-GC-785) | alle | probt einen Vorschlag, zeigt den Gesamt-Impact, wendet den gewählten an, misst nach | bildet keine Rangfolge, mischt die Quellen nicht |
+| `se-vorbereitung` (neu, CR-GC-784) | Basis optimieren | führt durch den Schritt: prüft Ketten, Zuordnung und Merkmal der Flüsse und schlägt je Lücke den Zug vor | baut nicht selbst um; die Züge sind ein gewöhnlicher CR. Beurteilt kein Risiko und keine Laufzeit |
+| `se-fmea` Version 9 (CR-GC-782) | Kettenanalyse | prüft den Eingang, bewertet Risiken an den Orten, nennt Umfang und Träger; endet mit einem CR, der neue Gegenmaßnahmen der tragenden Funktion zuordnet | räumt keinen Altbestand auf, wendet keinen Umbau an |
+| `se-laufzeit` (neu, CR-GC-783) | Kettenanalyse | prüft den Eingang, liest den Antwortweg, liefert Vorschläge mit Preis; endet mit einem CR | setzt kein Merkmal, schätzt keine Zeit |
+| `se:optimize` Version 3 (CR-GC-785) | Umbau | probt einen Vorschlag und zeigt den Gesamt-Impact als Vorlage | bildet keine Rangfolge, mischt die Quellen nicht; Anwenden und Nachmessen gehören dem CR |
 
 Ein Vorschlag hat immer dieselbe Form: Zweck, Kette, Ort, Handlungsklasse, Prognose (was besser wird, was gleich
 bleibt), Preis.
@@ -360,6 +382,6 @@ bleibt), Preis.
 | Fluss trennen im energymanager | `flaechen-2026-10-11/`, Teil Fluss trennen | fünf Ketten besser, keine schlechter; die heutigen Kennzahlen sehen es nicht |
 
 **Grenzen.** Neun Entwürfe, neun Paare, je ein Gutachter. In zwei Fällen stammen die Entwürfe vom Verfasser
-der Messung. Das Gewicht ist nachgetragen. Die Zuordnung beim Tieferlegen ist am Modelltext getroffen, nicht
+der Messung. Die Zuordnung beim Tieferlegen ist am Modelltext getroffen, nicht
 am Code. Alle Flächenmaße sind im Skript gerechnet und nicht in der gemeinsamen Rechnung.
 
