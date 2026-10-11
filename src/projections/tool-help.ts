@@ -64,6 +64,9 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'der Metrik-Policy des Repos, nicht aus Konstanten im Werkzeug — dieselben, gegen die MT-01/MT-02/' +
       'MT-04 urteilen. Ein Wert ohne seine Schwelle ist keine Aussage: derselbe LCOM4 ist in einem ' +
       'Adapter normal und in einem Kern ein Befund.\n' +
+      'Je FUNC (`functions`): `chains` (Wirkketten, die die Funktion direkt als Glied führen) und ' +
+      '`useCases` (Anwendungsfälle über diesen Ketten), die meistgeteilte zuerst. `0` ist eine Aussage: ' +
+      'ein Blatt ohne Kette meldet R-30, ein Block ist nie Glied. Die Zahl urteilt nicht.\n' +
       'Je FCHAIN (`chains`, CR-GC-767): `length` (längster Pfad in FUNC-Schritten, eine Schleife ist ' +
       'ein Schritt), `branching` (größter Ausgangsgrad in der Kette), `moduleBoundaries` (Kettenkanten ' +
       'über eine MOD-Grenze; `null`, wenn ein Glied kein Modul hat), `feedbackLoops`, `sharedFuncs` ' +

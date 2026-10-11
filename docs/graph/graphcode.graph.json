@@ -5249,7 +5249,7 @@
       "id": "FUNC-se-fmea",
       "type": "FUNC",
       "name": "Skill se-fmea",
-      "description": "Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA mit der Wirkkette als Einheit. Liest die Orte der Kette aus graph_metrics und rechnet keine Kennzahl selbst; Befunde gehen als Anforderung mit Test durchs Gate, Architekturvorschlaege und Konflikte an Kreuzungspunkten in den Text des CR.",
+      "description": "Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA mit der Wirkkette als Einheit. Prueft den Eingang und verweist bei einer Luecke auf se-vorbereitung. Liest Orte, Betrachtungsumfang und Traeger je Risiko aus graph_metrics und rechnet keine Kennzahl selbst. Das Ergebnis ist ein CR: Befunde gehen als Anforderung mit Test durchs Gate, eine neue Gegenmassnahme haengt an der Funktion, die sie traegt. Architekturvorschlaege in fester Form und Konflikte an Kreuzungspunkten stehen im Text des CR; angewandt wird kein Umbau.",
       "realRef": {
         "file": ".claude/commands/se-fmea.md"
       }
@@ -6037,6 +6037,15 @@
       "created_at": "2026-06-18T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-fmea-checks-entry",
+      "type": "REQ",
+      "name": "FMEA prueft den Eingang und endet mit einem CR",
+      "description": "Der Skill se-fmea MUSS vor der Analyse den Eingang pruefen und bei einer nicht geschlossenen Kette oder einer Gegenmassnahme am Modul auf se-vorbereitung verweisen; er DARF keinen alten Bestand tieferlegen und keine Kette schliessen oder umbauen. Betrachtungsumfang, Traeger je Risiko und die Ketten durch eine Funktion MUSS er aus graph_metrics lesen und im Bericht nennen. Eine neue Gegenmassnahme schreibt er als funktionale Anforderung an die Funktion, die sie traegt; was quer gilt, haengt am System. Einen Vorschlag zum Umbau gibt er in fester Form ab: Zweck, Kette, Ort, Handlungsklasse, Prognose, Preis.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -8559,14 +8568,14 @@
       "id": "TEST-fmea-reads-places",
       "type": "TEST",
       "name": "FMEA-Skill liest Orte statt zu rechnen",
-      "description": "Der Skill-Text nennt die Ortsfelder, die chainMetrics an der bewertbaren Zeile liefert, und keine Rechenvorschrift fuer eine Kettenkennzahl.",
+      "description": "Der Skill-Text nennt die Ortsfelder, die chainMetrics an der bewertbaren Zeile liefert, und keine Rechenvorschrift fuer eine Kettenkennzahl. Seit Version 9 des Skills bindet dieselbe Datei den Text auch an die Felder von RiskCarriers, RequirementScope und FunctionCriticality: er verweist bei einer Luecke auf se-vorbereitung, traegt keinen Zug des Tieferlegens und nennt die feste Form des Vorschlags; jedes genannte Feld erklaert die Hilfe zu graph_metrics.",
       "testRefs": [
         {
           "file": "tests/skill-fmea-orte.test.ts",
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-10T12:00:00.000Z"
+          "ranAt": "2026-10-11T17:12:00.000Z"
         }
       ]
     },
@@ -14421,6 +14430,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-782",
+      "target": "REQ-fmea-checks-entry",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-783",
       "target": "FUNC-chain-metrics",
       "type": "relation"
@@ -19241,6 +19255,11 @@
     },
     {
       "source": "FUNC-se-fmea",
+      "target": "REQ-fmea-checks-entry",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-fmea",
       "target": "REQ-fmea-reads-places",
       "type": "satisfy"
     },
@@ -20915,6 +20934,11 @@
     },
     {
       "source": "TEST-fmea-reads-places",
+      "target": "REQ-fmea-checks-entry",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-fmea-reads-places",
       "target": "REQ-fmea-reads-places",
       "type": "verify"
     },
@@ -22196,6 +22220,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-fmea-checks-entry",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-fmea-reads-places",
       "type": "compose"
     },
@@ -22821,5 +22850,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 692
+  "graphVersion": 693
 }

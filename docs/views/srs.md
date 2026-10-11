@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 156 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 157 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -812,9 +812,17 @@ Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-chain-metrics`
 
 > auch in: `FUNC-block-urteilsarbeit`
 
-Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA mit der Wirkkette als Einheit. Liest die Orte der Kette aus graph_metrics und rechnet keine Kennzahl selbst; Befunde gehen als Anforderung mit Test durchs Gate, Architekturvorschlaege und Konflikte an Kreuzungspunkten in den Text des CR.
+Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA mit der Wirkkette als Einheit. Prueft den Eingang und verweist bei einer Luecke auf se-vorbereitung. Liest Orte, Betrachtungsumfang und Traeger je Risiko aus graph_metrics und rechnet keine Kennzahl selbst. Das Ergebnis ist ein CR: Befunde gehen als Anforderung mit Test durchs Gate, eine neue Gegenmassnahme haengt an der Funktion, die sie traegt. Architekturvorschlaege in fester Form und Konflikte an Kreuzungspunkten stehen im Text des CR; angewandt wird kein Umbau.
 
 io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-fmea` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-fmea-checks-entry` — FMEA prueft den Eingang und endet mit einem CR
+
+Der Skill se-fmea MUSS vor der Analyse den Eingang pruefen und bei einer nicht geschlossenen Kette oder einer Gegenmassnahme am Modul auf se-vorbereitung verweisen; er DARF keinen alten Bestand tieferlegen und keine Kette schliessen oder umbauen. Betrachtungsumfang, Traeger je Risiko und die Ketten durch eine Funktion MUSS er aus graph_metrics lesen und im Bericht nennen. Eine neue Gegenmassnahme schreibt er als funktionale Anforderung an die Funktion, die sie traegt; was quer gilt, haengt am System. Einen Vorschlag zum Umbau gibt er in fester Form ab: Zweck, Kette, Ort, Handlungsklasse, Prognose, Preis.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-fmea-reads-places` (conformance) · satisfy ◀ `FUNC-se-fmea` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-fmea-reads-places` — FMEA liest die Orte der Kette
 
@@ -5468,9 +5476,17 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA mit der Wirkkette als Einheit. Liest die Orte der Kette aus graph_metrics und rechnet keine Kennzahl selbst; Befunde gehen als Anforderung mit Test durchs Gate, Architekturvorschlaege und Konflikte an Kreuzungspunkten in den Text des CR.
+Prompt-realisierter Skill se-fmea: AIAG-VDA-FMEA mit der Wirkkette als Einheit. Prueft den Eingang und verweist bei einer Luecke auf se-vorbereitung. Liest Orte, Betrachtungsumfang und Traeger je Risiko aus graph_metrics und rechnet keine Kennzahl selbst. Das Ergebnis ist ein CR: Befunde gehen als Anforderung mit Test durchs Gate, eine neue Gegenmassnahme haengt an der Funktion, die sie traegt. Architekturvorschlaege in fester Form und Konflikte an Kreuzungspunkten stehen im Text des CR; angewandt wird kein Umbau.
 
 io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-fmea` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-fmea-checks-entry` — FMEA prueft den Eingang und endet mit einem CR
+
+Der Skill se-fmea MUSS vor der Analyse den Eingang pruefen und bei einer nicht geschlossenen Kette oder einer Gegenmassnahme am Modul auf se-vorbereitung verweisen; er DARF keinen alten Bestand tieferlegen und keine Kette schliessen oder umbauen. Betrachtungsumfang, Traeger je Risiko und die Ketten durch eine Funktion MUSS er aus graph_metrics lesen und im Bericht nennen. Eine neue Gegenmassnahme schreibt er als funktionale Anforderung an die Funktion, die sie traegt; was quer gilt, haengt am System. Einen Vorschlag zum Umbau gibt er in fester Form ab: Zweck, Kette, Ort, Handlungsklasse, Prognose, Preis.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-fmea-reads-places` (conformance) · satisfy ◀ `FUNC-se-fmea` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-fmea-reads-places` — FMEA liest die Orte der Kette
 
@@ -7674,9 +7690,9 @@ verify ▶ `SCHEMA-export-pending` · testRefs: `tests/flow-contracts.test.ts`
 
 ### 8.36  `TEST-fmea-reads-places` — FMEA-Skill liest Orte statt zu rechnen
 
-Der Skill-Text nennt die Ortsfelder, die chainMetrics an der bewertbaren Zeile liefert, und keine Rechenvorschrift fuer eine Kettenkennzahl.
+Der Skill-Text nennt die Ortsfelder, die chainMetrics an der bewertbaren Zeile liefert, und keine Rechenvorschrift fuer eine Kettenkennzahl. Seit Version 9 des Skills bindet dieselbe Datei den Text auch an die Felder von RiskCarriers, RequirementScope und FunctionCriticality: er verweist bei einer Luecke auf se-vorbereitung, traegt keinen Zug des Tieferlegens und nennt die feste Form des Vorschlags; jedes genannte Feld erklaert die Hilfe zu graph_metrics.
 
-verify ▶ `REQ-fmea-reads-places` · testRefs: `tests/skill-fmea-orte.test.ts`
+verify ▶ `REQ-fmea-checks-entry` · `REQ-fmea-reads-places` · testRefs: `tests/skill-fmea-orte.test.ts`
 
 ### 8.37  `TEST-formate-binding` — Bindung ueber Format-E kommt an
 
@@ -8328,4 +8344,4 @@ verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.
 
 ## 9  Traceability summary
 
-156 REQ · 156 verified · 0 without a verifying TEST (R-01).
+157 REQ · 157 verified · 0 without a verifying TEST (R-01).

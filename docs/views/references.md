@@ -747,6 +747,7 @@
 | `CR-GC-781` | relation | `FUNC-chain-metrics` |
 | `CR-GC-781` | relation | `FUNC-se-fmea` |
 | `CR-GC-782` | relation | `FUNC-se-fmea` |
+| `CR-GC-782` | relation | `REQ-fmea-checks-entry` |
 | `CR-GC-783` | relation | `FUNC-chain-metrics` |
 | `CR-GC-784` | relation | `FUNC-chain-metrics` |
 | `CR-GC-784` | relation | `FUNC-se-vorbereitung` |
@@ -1671,6 +1672,7 @@
 | `FUNC-se-conops` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-fmea` | allocate | `MOD-agent-surface` |
 | `FUNC-se-fmea` | io | `FLOW-mutate-cmd-se-fmea` |
+| `FUNC-se-fmea` | satisfy | `REQ-fmea-checks-entry` |
 | `FUNC-se-fmea` | satisfy | `REQ-fmea-reads-places` |
 | `FUNC-se-fmea` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-generate` | allocate | `MOD-agent-surface` |
@@ -1979,6 +1981,7 @@
 | `TEST-fit-advisory` | verify | `REQ-quality-metric` |
 | `TEST-fit-advisory` | verify | `REQ-steering-from-metrics` |
 | `TEST-flow-contracts` | verify | `SCHEMA-export-pending` |
+| `TEST-fmea-reads-places` | verify | `REQ-fmea-checks-entry` |
 | `TEST-fmea-reads-places` | verify | `REQ-fmea-reads-places` |
 | `TEST-formate-binding` | verify | `REQ-formatE-parity` |
 | `TEST-formate-binding` | verify | `REQ-test-runnable-binding` |
@@ -2220,6 +2223,7 @@
 | `UC-code-quality` | compose | `REQ-confidence-tier` |
 | `UC-code-quality` | compose | `REQ-dashboard-ontology-sync` |
 | `UC-code-quality` | compose | `REQ-deterministic-serialization` |
+| `UC-code-quality` | compose | `REQ-fmea-checks-entry` |
 | `UC-code-quality` | compose | `REQ-fmea-reads-places` |
 | `UC-code-quality` | compose | `REQ-formatE-diff-dialect` |
 | `UC-code-quality` | compose | `REQ-formatE-parity` |

@@ -413,7 +413,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-779` | done | FMEA der Kenngroessen-Steuerungsschleife | `REQ-gate-survives-rule-failure` · `REQ-loop-convergence-monitor` · `REQ-loop-round-log` · `REQ-monotone-convergence` · `REQ-risk-gate-rule-eval-fails` · `REQ-risk-loop-degradation` · `REQ-risk-loop-oscillation` · `REQ-risk-store-unreadable` · `UC-deterministic-steering` |
 | `CR-GC-780` | done | Entwurfsregel am geteilten Glied | `FUNC-mutate` · `REQ-gate-judges-and-stores` |
 | `CR-GC-781` | done | Konzept Fassung 3: Schluss aus den Spikes und Leitfaden der Optimierung | `FUNC-chain-metrics` · `FUNC-se-fmea` |
-| `CR-GC-782` | n/a | se-fmea Version 9: Umfang, Flaeche, Tieferlegen | `FUNC-se-fmea` |
+| `CR-GC-782` | n/a | se-fmea Version 9: Umfang, Flaeche, Tieferlegen | `FUNC-se-fmea` · `REQ-fmea-checks-entry` |
 | `CR-GC-783` | n/a | Skill Laufzeitanalyse einer Wirkkette | `FUNC-chain-metrics` |
 | `CR-GC-784` | n/a | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen | `FUNC-chain-metrics` · `FUNC-se-vorbereitung` · `REQ-vorbereitung-reads-metrics` |
 | `CR-GC-785` | n/a | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse | `FUNC-graph-suggest` · `FUNC-se-optimize` |

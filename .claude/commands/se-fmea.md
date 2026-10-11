@@ -1,6 +1,6 @@
 ---
 name: se-fmea
-version: 8
+version: 9
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
@@ -9,6 +9,8 @@ Conduct a Failure Mode and Effects Analysis following the **AIAG-VDA FMEA Handbo
 **Scope argument:** the user names the analysis target. **The default and preferred unit is one `FCHAIN`** — a Wirkkette is a bounded end-to-end effect path with a named trigger and a named result, which is exactly what a failure mode needs to be stated against ("the chain does not reach its result because ..."). A `MOD` or a component (e.g. `ACS712`) is a legitimate but secondary scope: it cuts across chains, so its failure effects can only be stated per chain anyway. A whole-`SYS` scope means *every* chain, one profile each — say so and confirm the effort before starting.
 
 If unscoped, ask for it — do not guess. If the user names a `MOD` or a component, resolve it to the chains it participates in (`allocate` → FUNC → `compose` → FCHAIN) and run Step 2 per chain.
+
+**Eine Analyse ist eine Schleife.** Sie erzeugt Anforderungen, und ihr Ergebnis ist ein gewöhnlicher CR. Die Vorbereitung des Modells gehört nicht dazu: du prüfst den Eingang (Step 2) und verweist bei einer Lücke auf `se-vorbereitung`. Du schließt keine Kette, legst keine Gegenmaßnahme tiefer und baust die Kette nicht um.
 
 ---
 
@@ -29,18 +31,27 @@ Walk the graph's `compose` hierarchy for the scoped target: `SYS → UC → FCHA
 
 **For each in-scope FCHAIN, read the chain profile before writing a single failure mode — do not compute it.** Call `graph_metrics` once and take the chain's row from `chains` and the reach of its members from `functions`. Figures and places are computed in ONE place (`chainMetrics` in `@sigloch/contracts/se`); a number derived by hand from `graph_get_edges` is a second calculation, and it disagrees with the first at every chain that has a loop.
 
-**Erster Schritt: die Verdrahtung der Kette.** Die Regeln `R-30`, `R-31`, `R-21`, `IO-01`, `FC-04` und `FC-05` sind Warnungen, kein Fehler — das Gate hält eine unverbundene Kette nicht auf. Eine davon hält eine Marke: ein Befund von `FC-05` (Kette hängt nicht zusammen) hält PDR, die übrigen halten keine. Hol ihre Befunde für die Kette und ihre Glieder (`rules_get_violations`) und lies `measurable`:
+**Eingangsprüfung, erster Teil: die Verdrahtung der Kette.** Die Regeln `R-30`, `R-31`, `R-21`, `IO-01`, `FC-04` und `FC-05` sind Warnungen, kein Fehler — das Gate hält eine unverbundene Kette nicht auf. Eine davon hält eine Marke: ein Befund von `FC-05` (Kette hängt nicht zusammen) hält PDR, die übrigen halten keine. Hol ihre Befunde für die Kette und ihre Glieder (`rules_get_violations`) und lies `measurable`. Du liest den Stand und stellst ihn nicht her:
 
-- `measurable: false` → die Kette wird **nicht** analysiert. Nenne die `reasons`; das Schließen dieser Befunde ist das Ergebnis dieses Laufs, nicht eine FMEA.
-- offene Verdrahtungsbefunde an einem Glied → erst schließen, oder der Nutzer bestätigt sie als bewusst offen.
+- `measurable: false` → die Kette wird **nicht** analysiert. Nenne die `reasons`; der Lauf endet mit dem Verweis auf `se-vorbereitung`.
+- offene Verdrahtungsbefunde an einem Glied → Verweis auf `se-vorbereitung`, oder der Nutzer bestätigt sie als bewusst offen.
 - `length` 1 → Hinweis an den Nutzer: eine Kette aus einem Glied hat keine Orte. Klär mit ihm, ob ein Glied fehlt — typisch der Speicher zwischen einer schreibenden und einer lesenden Funktion.
+
+**Zweiter Teil: der Betrachtungsumfang.** `graph_metrics({ scope: ["<FCHAIN-uid>"] })` liefert zusätzlich den Block `scope`: `modules` (die Module der Glieder), `chains` (alle Ketten durch die Glieder) und `requirements` (jede Anforderung, die ein Glied, eines dieser Module, eine dieser Ketten oder das System erfüllt). Das ist, was diese Analyse liest. Nenne die `requirements` im Bericht; ihre Zahl ist die Länge der Liste.
+
+**Dritter Teil: die Träger je Risiko.** `riskCarriers` steht in derselben Antwort: `risks` mit `riskId`, `carriers` (die Blattfunktionen, die das Risiko tragen) und `satisfiers` (je Gegenmaßnahme `mitigation` und ihr Erfüller `by`, wie modelliert); `surface` nennt dieselben Paare je Funktion (`funcId`, `risks`). Ein Risiko gehört zum Umfang, wenn es selbst oder eine seiner Gegenmaßnahmen in `requirements` steht. Für jedes davon:
+
+- `by` ist eine Funktion → sie ist der Träger. Ziel ist ein Träger je Risiko.
+- `by` ist ein Modul → jede Blattfunktion des Moduls steht in `carriers`. Nenne Risiko, Gegenmaßnahme und Modul und verweise auf `se-vorbereitung`; du legst nicht selbst tiefer. Der Lauf endet hier, es sei denn, der Nutzer benennt den Stand als bewusst offen; dann steht er so im Bericht.
+- `by` ist das System → die Gegenmaßnahme am System gilt quer und zählt nicht in `carriers`. Kein Befund; sie steht im Bericht als Sockel.
+- leere `satisfiers` → das Risiko hat keinen Erfüller. `FM-02` (Risiko ohne Gegenmaßnahme) oder `RD-01` (Gegenmaßnahme ohne Erfüller) melden es schon: zitiere den Befund, verweise auf `se-vorbereitung`.
 
 **Die Orte der Kette.** Sie entscheiden, *wo* du suchst; ein Step 4, der sie übergeht, ist ein Brainstorming, keine Analyse. Die Kennzahlen finden den Ort, sie bewerten ihn nicht — das Urteil bleibt beim Nutzer.
 
 | Ort | Feld in der Zeile der Kette | Was er für die FMEA bedeutet |
 |---|---|---|
 | Kreislauf | `loops` — je Kreislauf Kennung und Mitglieder | ein Fehler klingt nicht ab, Ursache und Folge sind nicht mehr gerichtet. Dieselbe Kennung in mehreren Ketten ist derselbe Kreislauf: einmal analysieren, sonst zitieren (Step 4, Quelle E) |
-| Geteilte Funktion | `shared` — dazu ihre Reichweite in `functions` (`chains`, `useCases`) | gemeinsame Ursache: ein Fehler trifft jede Kette, in der sie liegt (Step 4, Quelle F) |
+| Geteilte Funktion | `shared` — dazu ihre Reichweite in `functions` (`chains`, `useCases`) und ihre Risiken in `surface` | gemeinsame Ursache: ein Fehler trifft jede Kette, in der sie liegt (Step 4, Quelle F) |
 | Import | `imports` — Fluss und empfangende Funktion | eine fremde Kette liefert an eine Funktion zu, die nur dieser Kette gehört (Step 4, Quelle A) |
 | Übergabe | `handovers` — Fluss und liefernde Funktion | die Fehlerwirkung tritt in einer anderen Kette auf (Step 4, Quelle B) |
 | Verzweiger, Zulauf | `branching`, `fanIn`, gelesen gegen `memberCount` | eine Stelle mit mehreren Folgen bzw. mehreren Ursachen |
@@ -51,7 +62,7 @@ Walk the graph's `compose` hierarchy for the scoped target: `SYS → UC → FCHA
 
 **Was der Regelsatz schon urteilt.** `FC-02` (Leaf-UC hat FCHAIN), `FC-03` (ein Block ist weder Glied einer Kette noch Erfüller einer Anforderung; Fehler), `FC-04` und `FC-05` liegen in `@sigloch/contracts/se` und laufen im Gate — lies sie über `rules_get_violations` und **wiederhole sie nicht als eigenen Befund**.
 
-Ergebnis von Step 2: der Strukturbaum (System → Subsystem → Funktionselement) **plus** eine Tabelle `FCHAIN | Glieder | Kreisläufe | geteilte Funktionen | Importe | Übergaben | Modulgrenzen (Verträge) | Akteursgrenze ✓/✗`, alle Werte aus `graph_metrics` zitiert. Arbeitsreihenfolge für Step 4: erst die geteilten Funktionen, absteigend nach Reichweite, dann Kreisläufe, dann Importe und Übergaben.
+Ergebnis von Step 2: der Strukturbaum (System → Subsystem → Funktionselement) **plus** eine Tabelle `FCHAIN | Glieder | Kreisläufe | geteilte Funktionen | Importe | Übergaben | Modulgrenzen (Verträge) | Akteursgrenze ✓/✗`, dazu der Umfang und die Träger je Risiko, alle Werte aus `graph_metrics` zitiert. Arbeitsreihenfolge für Step 4: erst die geteilten Funktionen, absteigend nach Reichweite, dann Kreisläufe, dann Importe und Übergaben.
 
 ### Step 3 — Function Analysis
 - For each FUNC/MOD in scope, state its intended function (what it must do, with measurable acceptance where the spec defines it).
@@ -101,18 +112,20 @@ Danach, für jede Funktion:
   - **Firmware** (before commissioning) — table: `# | Massnahme | Betroffene FMs`.
   - **Software** (sirail backend) — table: `# | Massnahme | Betroffene FMs`.
 - State the **residual risk** intent: which mitigations lower O (prevention) vs. D (detection).
-- **Architekturvorschlag.** Zeigt ein Befund, dass die Kette selbst das Risiko trägt — ein Kreislauf ohne Abbruch, eine geteilte Funktion als einziger Weg, ein Import ohne Absicherung —, formuliere einen Vorschlag zum Umbau der Kette: Zweck (die REQ, der er dient), Kette, Ort, Handlungsklasse (Entkoppeln, Zusammenlegen, Verschieben, Aufteilen, Vorverlagern), Prognose (was besser werden soll, was gleich bleiben muss) und die erwartete Wirkung auf die Kennzahlen des Modul- und des Funktionsbaums. **Du wendest ihn nicht an** — er ist Eingang der Optimierung (`se:optimize`).
+- **Architekturvorschlag (Ergebnis c), in fester Form.** Zeigt ein Befund, dass die Kette selbst das Risiko trägt — ein Kreislauf ohne Abbruch, eine geteilte Funktion als einziger Weg, ein Import ohne Absicherung, eine Gegenmaßnahme ohne Funktion, die sie ausführt —, formuliere einen Vorschlag zum Umbau der Kette, immer mit denselben sechs Angaben: Zweck (die REQ, der er dient), Kette, Ort, Handlungsklasse (Entkoppeln, Zusammenlegen, Verschieben, Aufteilen, Vorverlagern), Prognose (was besser wird, was gleich bleibt) und Preis (was der Umbau kostet: neue Elemente, neue Verträge, was eine andere Kette dafür trägt). **Du wendest ihn nicht an** — er ist Eingang der Optimierung (`se:optimize`).
+- **Geteilte Funktion.** Lade einer geteilten Funktion kein weiteres Risiko auf, ohne dass der Bericht nennt, welche Risiken sie schon trägt (`risks` in `surface`) und wie viele Ketten durch sie laufen (`chains` in `functions`). Ob sie es tragen soll, beurteilt der Nutzer; einen Zielwert gibt es nicht.
 - **Konflikt am Kreuzungspunkt.** Verlangt ein Vorschlag an einer geteilten Funktion etwas, das einer anderen Kette durch dieselbe Funktion schadet, notiere den Konflikt **an der geteilten Funktion** (uid, die beteiligten Ketten, was gegeneinander steht) — nicht in einer der Ketten.
 
 ### Step 7 — Documentation of Results
 - Write the analysis as the text of a closed change request: `docs/cr/done/<next CR id>-<slug>.md` — the next free number after the files in `docs/cr/open/` and `docs/cr/done/`, same prefix; `CR-001` in a repo without CRs. It is the only prose record; a new analysis is a new CR, never an edit of an old one. Sections:
   1. Zusammenfassung (count of FMs + Top-3 AP-High risks)
-  2. Kettenprofil (die Step-2-Tabelle aus `graph_metrics`) — sie begründet, warum die Fehlermodi dort sitzen, wo sie sitzen
-  3. Fehlermodi im Detail (`FM-NN`, the Step-4 entries) — jeder Eintrag nennt seine Quelle (A bis F oder „frei abgeleitet") und die Element-uids, aus denen er stammt
-  4. Risikomatrix (AP-sorted, Step 5)
-  5. Handlungsempfehlungen priorisiert (Step 6), darunter eigene Abschnitte „Architekturvorschläge" und „Konflikte an Kreuzungspunkten" — auch wenn sie leer sind
-  6. Auswirkung auf Spezifikation (Spec-Sektion → Aenderung table)
-  7. Quellen (every external source actually used)
+  2. Kettenprofil (die Step-2-Tabelle aus `graph_metrics`) — sie begründet, warum die Fehlermodi dort sitzen, wo sie sitzen — und der Betrachtungsumfang: die gelesenen `requirements`
+  3. Träger und Fläche: je Risiko des Umfangs seine `carriers`; die Funktionen der Kette, die mindestens ein Risiko tragen (aus `surface`); getrennt davon der Sockel, die Gegenmaßnahmen am System. Dazu, was die Eingangsprüfung an `se-vorbereitung` verwiesen hat
+  4. Fehlermodi im Detail (`FM-NN`, the Step-4 entries) — jeder Eintrag nennt seine Quelle (A bis F oder „frei abgeleitet") und die Element-uids, aus denen er stammt
+  5. Risikomatrix (AP-sorted, Step 5)
+  6. Handlungsempfehlungen priorisiert (Step 6), darunter eigene Abschnitte „Architekturvorschläge" (Tabelle `Zweck | Kette | Ort | Handlungsklasse | Prognose | Preis`) und „Konflikte an Kreuzungspunkten" — auch wenn sie leer sind
+  7. Auswirkung auf Spezifikation (Spec-Sektion → Aenderung table)
+  8. Quellen (every external source actually used)
 - Header: `**Stand:** <today>`, `**Methodik:** AIAG-VDA 7-Step, Action Priority`, `**Bezug:** [specification.md](specification.md)`.
 
 ---
@@ -142,7 +155,8 @@ The FMEA is not done until findings live in the graph, not just the document.
    For each new `REQ` add:
    - a `+ REQ-…` node line, with the FMEA finding in `attributes.rationale`, the S/O/D ratings under the names above, `attributes.role` and `attributes.kinds` (each as an `@key value` line below the node),
    - a **`compose`** edge from the risk `REQ` → the mitigation `REQ` (**FM-02**; `relation` between two REQs is *not* in `TRACE_PATTERNS` and `R-18` rejects it),
-   - a `satisfy` edge onto every leaf `REQ`, chosen by its kind: a `non-functional` REQ from the responsible `MOD` (or the `SYS`, or the `FCHAIN` for an end-to-end effect) — which module is RESPONSIBLE, not merely related; a `functional` REQ from the `FUNC` that performs the countermeasure (R-18, `kinds` where-predicate),
+   - a `satisfy` edge onto the risk `REQ` from the `FCHAIN` whose result it endangers (or the responsible `MOD`, or the `SYS`) — it is `non-functional`, and its satisfier does not count as a carrier,
+   - a `satisfy` edge onto every new mitigation `REQ` from the leaf `FUNC` that performs the countermeasure: write it as a `functional` REQ (R-18, `kinds` where-predicate), so the risk has one carrier. Only a countermeasure that binds every function and no single one stays `non-functional` and hangs at the `SYS`: eine Gegenmaßnahme am System gilt quer und zählt nicht in die Träger. Ein Block erfüllt keine Anforderung und ist kein Glied einer Kette (`FC-03`, Fehler). Führt keine Funktion des Modells die Gegenmaßnahme aus, bleibt sie ohne Erfüller (`RD-01` meldet sie), und die fehlende Funktion ist ein Architekturvorschlag aus Step 6,
    - a `verify` edge from a `TEST` → the `REQ` (R-01: every REQ must have ≥1 verify). Für ein Risiko mit **Action Priority High** verlangt **FM-03** zusätzlich, dass **jeder** Eintrag in `attributes.testRefs` ein `result: "passed"` trägt (CR-SM-231b) — „irgendeiner grün" zählt nicht, sonst verdeckte ein grüner Unit-Lauf einen roten Visual-Lauf. Ein Eintrag ohne Ergebnis ist nicht bestanden. Solange das nicht steht, zeigt die View das Risiko als unverifiziert, was der ehrliche Zustand ist.
 
    Example — ONE `graph_mutate` call, `formatE`:
@@ -163,10 +177,12 @@ The FMEA is not done until findings live in the graph, not just the document.
 
    ## Edges
    + REQ-NNN -compose-> REQ-MMM
-   + MOD-<responsible> -satisfy-> REQ-NNN
+   + FCHAIN-<analysed> -satisfy-> REQ-NNN
    + FUNC-<countermeasure> -satisfy-> REQ-MMM
    + TEST-<slug> -verify-> REQ-NNN, REQ-MMM
    ```
+
+   Das ist das Schreiben des Ergebnisses, kein Umbau: du schreibst, was dieser Lauf neu anlegt. Alten Bestand an einem Modul räumst du nicht auf — er ist in Step 2 genannt und an `se-vorbereitung` verwiesen.
 
 3. **Check the result.** `graph_mutate` returns `{ success, tier, appliedCommands, violations }`. The gate **BLOCKS the whole batch** if it would introduce a new **error-severity** violation (`tier: "block"`, `success: false`) — it does NOT silently drop nodes/edges. Read `violations`, fix the batch (e.g. add the missing `verify`), and re-apply.
 4. **Check violations:** `rules_get_violations` — resolve any new R-01/R-02 gaps.
@@ -179,11 +195,12 @@ The FMEA is not done until findings live in the graph, not just the document.
 - **So viele Tests wie nötig, der Rest ist Verlinkung (CR-GC-760).** Jede Risiko-REQ braucht ihren `verify` (R-01, FM-03) — das heißt nicht: einen eigenen Test. Entscheide je Risiko: belegt der Test der Gegenmaßnahme, dass das Risiko beherrscht ist, dann verweise auf ihn (`TEST -verify-> REQ-risiko, REQ-massnahme`). Nur wo er das nicht belegt, entsteht ein neuer Test. Kein wortgleicher zweiter Test.
 - **Die Wirkkette ist die Analyse-Einheit.** Ein Fehlermodus wird gegen das *Ergebnis der Kette* formuliert, nicht gegen ein Bauteil. Ohne Kettenprofil (Step 2) kein Step 4.
 - **Ort vor Kreativität.** Die Orte aus `graph_metrics` sagen, wo die Kette schwach ist; die frei abgeleiteten Fehlermodi kommen danach und füllen nur, was die sechs Quellen nicht abgedeckt haben.
-- **Eine Rechnung.** Du rechnest keine Kettenkennzahl selbst. Fehlt dir ein Ort, ist das ein Befund an `chainMetrics`, kein Anlass für eine Nebenrechnung.
+- **Eine Rechnung.** Du rechnest keine Kettenkennzahl selbst. Umfang, Träger und Fläche liest du aus `scope` und `riskCarriers`; eine Zahl ist die Länge der Liste. Fehlt dir ein Ort, ist das ein Befund an `chainMetrics`, kein Anlass für eine Nebenrechnung.
+- **Eingang prüfen, nicht herstellen.** Eine offene Kette, eine Gegenmaßnahme am Modul, ein Risiko ohne Erfüller: nennen und an `se-vorbereitung` verweisen.
 - **Kein Doppelurteil mit dem Regelsatz.** Was `FC-02`…`FC-04`, `R-01`, `FM-01`…`FM-03` schon melden, wird zitiert, nicht neu behauptet. Was der Regelsatz *nicht* prüft (doppelte Zustandsgrößen, Zustandsgrößen ohne Werte), wird als Analystenbefund gekennzeichnet.
 - **Function-based, not part-based:** start from what each function must do, then how it fails — not from a parts list. (AIAG-VDA core principle.)
 - **Severity drives priority.** A safety-critical effect (S 9–10) is High/Medium AP even at low occurrence; do not let a good Detection score hide it.
 - **No symptom-fixes.** Mitigations address root causes (Step 4 FC), consistent with the project's Root-Cause-Debugging rule.
 - **Real sources only.** Cite datasheets/measurements; mark engineering estimates as such. Never fabricate figures.
 - **NFRs are system-wide** — do not allocate a cross-cutting failure (EMV, brownout) to a single FN if it affects the whole system (see CLAUDE.md graph rules).
-- Every FM must trace to an in-graph FUNC/MOD; every derived REQ must end up in the graph with satisfy + verify.
+- Every FM must trace to an in-graph FUNC/MOD; every derived REQ must end up in the graph with satisfy + verify, or is named open in the CR with the rule that reports it.
