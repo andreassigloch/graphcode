@@ -217,7 +217,7 @@ ihrer Art ab:
 | Vorschlag aus einer Analyse (6a) | von Hand in drei Fällen; kein Skill liefert ihn |
 | Gesamt-Impact (6b) | von Hand gemessen an drei Fällen mit neun Entwürfen; kein Werkzeug rechnet ihn |
 | Nachweis, dass eine Rangfolge aus Kennzahlen Vorschläge richtig ordnet | widerlegt an drei Fällen; die Rangfolge ist gestrichen |
-| Betrachtungsumfang, Träger je Risiko | als Probe im Skript gerechnet; als Ableitungen in contracts im Bau (CR-SM-407) |
+| Betrachtungsumfang, Träger je Risiko | gebaut als Ableitungen in contracts 12.1.0 (CR-SM-407, `requirementScope`, `riskCarriers`), nicht veröffentlicht; `graph_metrics` reicht sie noch nicht durch |
 | Antwortweg | als Probe im Skript gerechnet; CR-SM-408 wartet auf die Freigabe des Autors und auf ein Modell mit dem Merkmal |
 | Laufzeitanalyse | nicht vorhanden; das Merkmal synchron oder asynchron ist an keinem Fluss der Familie gesetzt |
 
@@ -259,7 +259,7 @@ treibendem Knoten), T-O3 (Degradationsschutz), T-O7 (inhaltliche Analysen).
 
 | Reihenfolge | Was | CR | Wartet auf | Bewegt |
 |---|---|---|---|---|
-| 1 | Betrachtungsumfang und Risikoträger als Ableitungen in contracts (Review des Hüters liegt vor, Bau läuft) | CR-SM-407, sigloch-modules | – | T-O1, T-O8 |
+| 1 | Betrachtungsumfang und Risikoträger als Ableitungen in contracts | CR-SM-407, geschlossen 2026-10-11 | – | T-O1, T-O8 |
 | 1b | Zählung über die Familie: welche Verdrahtungsregeln PDR halten; später Fehler statt Warnung | CR-SM-409, sigloch-modules | – | T-O8 |
 | 2 | Skill Modellvorbereitung | CR-GC-784 | 1 | T-O8 |
 | 3 | `se-fmea` Version 9 | CR-GC-782 | 1, 2 | T-O7 |
