@@ -218,7 +218,7 @@ ihrer Art ab:
 | Gesamt-Impact (6b) | von Hand gemessen an drei Fällen mit neun Entwürfen; kein Werkzeug rechnet ihn |
 | Nachweis, dass eine Rangfolge aus Kennzahlen Vorschläge richtig ordnet | widerlegt an drei Fällen; die Rangfolge ist gestrichen |
 | Betrachtungsumfang, Träger je Risiko | gebaut als Ableitungen in contracts 12.1.0 (CR-SM-407, `requirementScope`, `riskCarriers`), nicht veröffentlicht; `graph_metrics` reicht sie noch nicht durch |
-| Antwortweg | als Probe im Skript gerechnet; CR-SM-408 wartet auf die Freigabe des Autors und auf ein Modell mit dem Merkmal |
+| Antwortweg | als Probe im Skript gerechnet; CR-SM-408 wartet auf ein Modell mit dem Merkmal |
 | Laufzeitanalyse | nicht vorhanden; das Merkmal synchron oder asynchron ist an keinem Fluss der Familie gesetzt |
 
 **Offen im Konzept:**
@@ -264,7 +264,7 @@ treibendem Knoten), T-O3 (Degradationsschutz), T-O7 (inhaltliche Analysen).
 | 2 | Skill Modellvorbereitung | CR-GC-784 | 1 | T-O8 |
 | 3 | `se-fmea` Version 9 | CR-GC-782 | 1, 2 | T-O7 |
 | 4 | `se:optimize` Version 3 | CR-GC-785 | 1, 3 | T-O3 |
-| später | Antwortweg in der Kettenzeile | CR-SM-408 | wörtliche Freigabe des Autors; ein Modell, das das Merkmal trägt | T-O2 |
+| später | Antwortweg in der Kettenzeile | CR-SM-408 (Freigabe des Autors erteilt 2026-10-11) | ein Modell, das das Merkmal trägt | T-O2 |
 | später | Skill Laufzeitanalyse | CR-GC-783 | CR-SM-408 | T-O2 |
 | daneben | sigllm: Gegenmaßnahmen auf die Funktion, zwei fehlende Funktionen | CR-SL-096, CR-SL-097, CR-SL-098; eigene Sitzung in sigllm | – | T-O7 |
 | daneben | `graph_readiness` bricht an alten Art-Werten ab | CR-GC-786 | – | Hygiene |
@@ -345,7 +345,7 @@ steht, ob die Antwort auf ihn wartet (synchron) oder ob er vorab geliefert ist (
 
 | Maß | Bedeutung | Besser ist |
 |---|---|---|
-| Antwortweg | Funktionen, auf die die Antwort an den Akteur wartet; er darf die Kette verlassen | weniger, und mit weniger Ketten durch sie |
+| Antwortweg | Glieder der Kette, auf die die Antwort an den Akteur wartet; er verlässt die Kette nicht. Wartet ein Glied synchron auf eine Funktion außerhalb, ist die Kette nicht vollständig | weniger, und mit weniger Ketten durch sie |
 | Zulieferer außerhalb des Antwortwegs | Seite Datenalter | zu beurteilen gegen die Anforderung an das Alter |
 | Zulauf und Verzweigung | wo auf mehrere gewartet wird | zu beurteilen |
 

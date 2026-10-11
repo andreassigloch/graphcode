@@ -8,7 +8,7 @@
 ---
 
 **Bezug:** `docs/graphcode_analyse_optimierungskonzept.md`, Abschnitt 10, Schritt Kettenanalyse (Stufe 8 der Regelmatrix). Sicht Wirkkette, Dimension Laufzeit, Ergebnisse a bis d.
-**Wartet auf CR-SM-408 (Antwortweg; dort steht die wörtliche Freigabe des Autors aus) und CR-GC-784 (Merkmal an den
+**Wartet auf CR-SM-408 (Antwortweg; Freigabe des Autors erteilt am 2026-10-11) und CR-GC-784 (Merkmal an den
 Flüssen).** Das Ergebnis eines Laufs ist ein gewöhnlicher CR.
 
 ## Anlass
@@ -25,7 +25,7 @@ Laufzeitanforderung.
 1. **Vorbedingung.** Kette geschlossen, jeder Fluss der Kette trägt das Merkmal. Sonst endet der Skill mit dem
    Verweis auf `se-vorbereitung`; er setzt das Merkmal nicht selbst.
 2. **Betrachtungsumfang** aus `graph_metrics`.
-3. **Orte lesen:** Antwortweg (Funktionen und die Ketten durch sie; er darf die Kette verlassen), Zulieferer
+3. **Orte lesen:** Antwortweg (Glieder der Kette und die Ketten durch sie; er verlässt die Kette nicht), Zulieferer
    außerhalb des Antwortwegs, Zulauf, Verzweigung, Kreisläufe auf dem Antwortweg.
 4. **Ergebnisse a bis d:** Befunde je Ort; fehlende Anforderungen (zu jeder Laufzeitanforderung die Anforderung
    an das Datenalter); Vorschläge der Klassen Vorverlagern (vorhalten statt beim Aufruf rechnen, mit eigenem
