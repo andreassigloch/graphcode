@@ -5285,7 +5285,7 @@
       "id": "FUNC-se-optimize",
       "type": "FUNC",
       "name": "Skill se:optimize",
-      "description": "Prompt-realisierter Skill se:optimize: Architektur-Vorschlaege aus graph_suggest gegen das Zielprofil ziehen, mit Delta-m und Anwendbarkeit zeigen, den gewaehlten Zug durchs Apply-Gate anwenden. Kein Auto-Apply.",
+      "description": "Prompt-realisierter Skill se:optimize, Version 3: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785)",
       "realRef": {
         "file": ".claude/commands/se/optimize.md"
       }
@@ -6470,6 +6470,15 @@
       "type": "REQ",
       "name": "Offene Punkte fragen statt erfinden",
       "description": "Ein offener Punkt des Auftrags muss als Frage an den Auftraggeber gehen und bis zur Antwort als Annahme mit offenem Wert im Modell stehen, nie als erfundener Wert.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-optimize-probes-and-presents",
+      "type": "REQ",
+      "name": "Optimierer probt, zeigt die Vorlage und wendet nicht an",
+      "description": "Der Skill se:optimize MUSS Vorschlaege aus einer Analyse in der festen Form Zweck, Kette, Ort, Handlungsklasse, Prognose, Preis und Vorschlaege von graph_suggest getrennt zeigen und DARF weder eine gemeinsame Rangfolge noch eine Summe ueber Kennzahlen bilden noch einen Sieger nennen. Er probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage vor: Betrachtungsumfang, die Zeilen der Ketten des Umfangs, Traeger je Risiko, Kennzahlen von Modulbaum und Funktionsbaum mit ihren Schwellen und die Befunde ohne die aus dem Bau. Jede Zahl liest er aus graph_metrics, dem Regelsatz oder dem Urteil des Trockenlaufs; er rechnet keine selbst. Was gleich bleiben muss und es nicht bleibt, steht in der Vorlage oben. Was der Trockenlauf nicht traegt, nennt er offen bis zum Nachmessen. Er wendet keinen Zug an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus.",
       "kinds": [
         "functional"
       ]
@@ -9423,6 +9432,21 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-optimize-presents-impact",
+      "type": "TEST",
+      "name": "Optimierer-Skill liest echte Felder und ordnet nichts",
+      "description": "Der Skill-Text nennt nur Felder, die graph_metrics, der Trockenlauf von graph_mutate und graph_suggest an einem Messaufbau auf Platte wirklich antworten, bildet keine Rangfolge und keine Summe, nennt die feste Form des Vorschlags wortgleich mit se-fmea und zeigt graph_mutate nur als Trockenlauf. Derselbe Lauf haelt fest, dass das Urteil des Trockenlaufs keine Kettenzeile und keine Traeger traegt.",
+      "testRefs": [
+        {
+          "file": "tests/skill-optimize-vorlage.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-10-11T18:10:00.000Z"
         }
       ]
     },
@@ -14465,6 +14489,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-785",
+      "target": "REQ-optimize-probes-and-presents",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-786",
       "target": "FUNC-graph-readiness",
       "type": "relation"
@@ -15551,6 +15580,11 @@
     {
       "source": "FLOW-chain-metrics",
       "target": "FUNC-se-fmea",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-chain-metrics",
+      "target": "FUNC-se-optimize",
       "type": "io"
     },
     {
@@ -19330,6 +19364,11 @@
     },
     {
       "source": "FUNC-se-optimize",
+      "target": "REQ-optimize-probes-and-presents",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-optimize",
       "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
     },
@@ -21608,6 +21647,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-optimize-presents-impact",
+      "target": "REQ-optimize-probes-and-presents",
+      "type": "verify"
+    },
+    {
       "source": "TEST-path-containment",
       "target": "REQ-gate-only-writes",
       "type": "verify"
@@ -22267,6 +22311,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-optimize-probes-and-presents",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-post-apply-gate",
       "type": "compose"
     },
@@ -22850,5 +22899,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 693
+  "graphVersion": 694
 }

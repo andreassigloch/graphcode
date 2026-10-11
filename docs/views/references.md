@@ -754,6 +754,7 @@
 | `CR-GC-784` | relation | `REQ-vorbereitung-reads-metrics` |
 | `CR-GC-785` | relation | `FUNC-graph-suggest` |
 | `CR-GC-785` | relation | `FUNC-se-optimize` |
+| `CR-GC-785` | relation | `REQ-optimize-probes-and-presents` |
 | `CR-GC-786` | relation | `FUNC-graph-readiness` |
 | `CR-GC-786` | relation | `FUNC-take-steering-snapshot` |
 | `CR-GC-787` | relation | `FUNC-chain-metrics` |
@@ -956,6 +957,7 @@
 | `FLOW-chain-metrics` | io | `ACTOR-dashboard` |
 | `FLOW-chain-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-chain-metrics` | io | `FUNC-se-fmea` |
+| `FLOW-chain-metrics` | io | `FUNC-se-optimize` |
 | `FLOW-chain-metrics` | io | `FUNC-se-vorbereitung` |
 | `FLOW-chain-metrics` | relation | `SCHEMA-chain-metrics` |
 | `FLOW-channel-dimension-template` | io | `FUNC-generation-step` |
@@ -1687,6 +1689,7 @@
 | `FUNC-se-irr` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-optimize` | allocate | `MOD-agent-surface` |
 | `FUNC-se-optimize` | io | `FLOW-mutate-cmd-se-optimize` |
+| `FUNC-se-optimize` | satisfy | `REQ-optimize-probes-and-presents` |
 | `FUNC-se-optimize` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-plan` | allocate | `MOD-agent-surface` |
 | `FUNC-se-plan` | io | `FLOW-mutate-cmd-se-plan` |
@@ -2108,6 +2111,7 @@
 | `TEST-opencode-plugin` | verify | `REQ-repo-install` |
 | `TEST-opencode-plugin` | verify | `REQ-repo-uninstall` |
 | `TEST-operations-log` | verify | `REQ-audit-trail` |
+| `TEST-optimize-presents-impact` | verify | `REQ-optimize-probes-and-presents` |
 | `TEST-path-containment` | verify | `REQ-gate-only-writes` |
 | `TEST-path-containment` | verify | `REQ-graph-is-ssot` |
 | `TEST-phase-gate-not-skippable` | verify | `REQ-phase-gate-not-skippable` |
@@ -2232,6 +2236,7 @@
 | `UC-code-quality` | compose | `REQ-interface-change-escalation` |
 | `UC-code-quality` | compose | `REQ-mcp-gate-symmetry` |
 | `UC-code-quality` | compose | `REQ-one-gate-per-repo` |
+| `UC-code-quality` | compose | `REQ-optimize-probes-and-presents` |
 | `UC-code-quality` | compose | `REQ-post-apply-gate` |
 | `UC-code-quality` | compose | `REQ-post-capture` |
 | `UC-code-quality` | compose | `REQ-post-codec-roundtrip` |
