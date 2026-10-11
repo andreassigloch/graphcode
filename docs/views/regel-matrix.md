@@ -1,7 +1,7 @@
 # Regel-Matrix
 
 > GENERIERT von `scripts/regel-matrix.mjs` aus contracts, graph-api-core, se-engine und graphcode — nicht von Hand bearbeiten.
-> 76 Regeln · 59 im Gate-Katalog · 5 blocken (Schwere error) · 11 Existenz-Regeln · 4 Analysen · 7 abnehmbar · 2 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
+> 76 Regeln · 59 im Gate-Katalog · 5 blocken (Schwere error) · 12 Existenz-Regeln · 4 Analysen · 7 abnehmbar · 2 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
 > Fix-Vorlagen: 18 Regeln tragen eine · 17 schliessen den Fund · 1 Teil-Fix · 0 tot (CR-SM-357).
 
 ## Stufen und Marken
@@ -16,7 +16,7 @@
 | 3 | Anforderung | UC-01 |  | 11 |
 | 4 | Wirkkette | UC-03 | SRR | 1 |
 | 5 | Funktion | R-15 |  | 9 |
-| 6 | Datenfluss | R-31 |  | 5 |
+| 6 | Datenfluss | R-31, FC-05 |  | 5 |
 | 7 | Modul | R-22 | PDR | 11 |
 | 8 | Schema |  | CDR | 3 |
 | 9 | Test | R-01, R-32 | TRR | 5 |
@@ -77,15 +77,15 @@
 | R-15 | FCHAIN completeness | 5 Funktion | existence | PDR | warning | Gate | kern |  |  |  | Gib den Funktionsketten {n} ihre Funktionen und ordne sie ihrem Ablauf zu. | se:top-level |  |  |  |  |
 | BW-02 | Whitebox boundary width | 5 Funktion |  | PDR | warning | Gate | kern | ja |  |  | Bündle die Datenformate an der Grenze von {n} oder teile den Block. | se:top-level |  |  | schliesst |  |
 | FC-03 | FCHAIN is flat | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Hebe die inneren Schritte der Funktionen {n} auf die Ebene ihrer Kette. | se:top-level |  | se-fmea |  |  |
-| IO-01 | FuncPairIOCompleteness | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ergänze den Datenfluss zwischen den Schritten {n}. | se:top-level |  | se:top-level | schliesst |  |
+| IO-01 | FuncPairIOCompleteness | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ergänze den Datenfluss zwischen den Schritten {n}. | se:top-level |  | se:top-level se-fmea | schliesst |  |
 | MT-04 | Whitebox cohesion (LCOM4) | 5 Funktion |  | PDR | info | Gate | kern |  |  |  |  | se:top-level |  |  |  |  |
 | ND-01 | FuncNearDuplicate | 5 Funktion |  | PDR | warning | Aehnlichkeit (ND) | kern |  |  |  | Führe die doppelten Funktionen {n} zusammen oder grenze sie ab. | se:top-level |  |  |  |  |
 | R-02 | FUNC must satisfy REQ | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ordne die Funktionen {n} den Anforderungen zu, die sie erfüllen. | se:top-level |  | se-fmea | schliesst |  |
 | R-12 | No circular dependencies | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Löse die zyklische Abhängigkeit um {n} auf. | se:top-level |  |  |  |  |
-| R-30 | FUNC leaf must belong to a function chain | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ordne die Funktionen {n} der Kette ihres Ablaufs zu. | se:top-level |  | se:top-level | schliesst |  |
-| R-31 | FUNC must be wired (io input + output) | 6 Datenfluss | existence | PDR | warning | Gate | kern |  |  |  | Verbinde die Funktionen {n} auf der fehlenden Seite mit einem Datenfluss. | se:top-level |  |  | Teil-Fix |  |
+| R-30 | FUNC leaf must belong to a function chain | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ordne die Funktionen {n} der Kette ihres Ablaufs zu. | se:top-level |  | se:top-level se-fmea | schliesst |  |
+| FC-05 | FCHAIN is connected (producer -> consumer) | 6 Datenfluss | existence | PDR | warning | Gate | kern |  |  |  | Verbinde die Schritte der Funktionsketten {n} über Datenflüsse. | se:top-level |  | se-fmea |  |  |
+| R-31 | FUNC must be wired (io input + output) | 6 Datenfluss | existence | PDR | warning | Gate | kern |  |  |  | Verbinde die Funktionen {n} auf der fehlenden Seite mit einem Datenfluss. | se:top-level |  | se-fmea | Teil-Fix |  |
 | FC-04 | FCHAIN actor-bounded (trigger+consumer) | 6 Datenfluss |  | PDR | warning | Gate | kern |  |  |  | Verbinde Anfang und Ende der Funktionsketten {n} mit dem Nutzer. | se:top-level |  | se:author-actor se-fmea |  |  |
-| FC-05 | FCHAIN is connected (producer -> consumer) | 6 Datenfluss |  | PDR | warning | Gate | kern |  |  |  | Verbinde die Schritte der Funktionsketten {n} über Datenflüsse. | se:top-level |  |  |  |  |
 | IO-02 | FLOW single producer | 6 Datenfluss |  | PDR | error | Gate | kern |  |  |  | Gib jeder Quelle der Datenflüsse {n} einen eigenen Datenfluss. | se:top-level |  |  |  |  |
 | R-10 | FLOW completeness | 6 Datenfluss |  | PDR | warning | Gate | kern |  |  |  | Vervollständige die Datenflüsse {n}: woher sie kommen und wohin sie gehen. | se:top-level |  |  |  |  |
 | R-22 | FUNC must be allocated to MOD | 7 Modul | existence | PDR | warning | Gate | kern |  |  |  | Ordne die Funktionen {n} Modulen zu. | se:top-level |  | se:top-level | schliesst | RD-05 |
@@ -106,7 +106,7 @@
 | R-32 | SCHEMA must have contract TEST | 9 Test | existence | TRR | warning | Gate | kern |  |  |  | Gib den Datenformaten {n} einen Vertragstest. |  |  |  | schliesst | R-19 |
 | FM-03 | HighRiskVerification | 9 Test |  | TRR | warning | Gate | kern |  | ja — Verlangt einen BESTANDENEN Testlauf (`result: passed`); den gibt es erst mit Code, die Regel ist aber faellig, sobald es ein hohes Risiko gibt. | se-fmea | Gib den hohen Risiken {n} einen Test. | se-fmea |  | se-fmea se-plan se-view:fmea |  |  |
 | R-05 | TEST must verify REQ | 9 Test |  | TRR | warning | Gate | kern |  |  |  | Ordne die Tests {n} den Anforderungen zu, die sie prüfen. |  |  |  |  |  |
-| R-21 | FUNC↔FUNC handover needs a shared chain covered by member REQs or an integration test | 9 Test |  | TRR | warning | Gate | kern |  |  |  | Bringe die Übergaben an {n} in eine Funktionskette, deren Funktionen Anforderungen erfüllen oder die ein Integrationstest prüft. |  |  | se:author-req se:author-uc | schliesst | R-19 |
+| R-21 | FUNC↔FUNC handover needs a shared chain covered by member REQs or an integration test | 9 Test |  | TRR | warning | Gate | kern |  |  |  | Bringe die Übergaben an {n} in eine Funktionskette, deren Funktionen Anforderungen erfüllen oder die ein Integrationstest prüft. |  |  | se:author-req se:author-uc se-fmea | schliesst | R-19 |
 | AF-05 | Unbuilt elements have an open CR | 10 Plan | existence | Bau | warning | Gate | kern, Eintritt fuer plan |  | ja (Eintritt einer Analyse) | se-plan |  | se-plan |  | se-plan |  |  |
 | CR-R01 | CR must track | 10 Plan |  | Bau | warning | Gate | kern |  |  |  | Verbinde die Änderungsaufträge {n} mit dem, was sie ändern. |  |  |  | schliesst |  |
 | CR-R02 | Done requires commit | 10 Plan |  | Bau | warning | Gate | kern |  |  |  | Trage bei den erledigten Änderungsaufträgen {n} den Commit nach. |  |  |  |  |  |

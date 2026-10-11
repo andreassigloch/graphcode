@@ -26,7 +26,15 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { computeFitAdvisory } from '../src/kernel/measure/fit-advisory.js';
 import { METRIC_DIMENSIONS, toArray } from '@sigloch/se-engine';
-import { DEFAULT_METRIC_POLICY, chainMetrics, type MetricPolicy, type OntologyGraph } from '@sigloch/contracts/se';
+import {
+  DEFAULT_METRIC_POLICY,
+  chainMetrics,
+  requirementScope,
+  riskCarriers,
+  type MetricPolicy,
+  type OntologyGraph,
+} from '@sigloch/contracts/se';
+import { toOntologyGraph } from '../src/kernel/conformance.js';
 import { openMeasured } from '../src/surface/measured.js';
 import { CONFIG_FILENAME, DEFAULT_CONFIG } from '../src/kernel/config.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
@@ -497,5 +505,138 @@ describe('graph_metrics auf dem eigenen Modell (CR-GC-767)', () => {
     } finally {
       await measured.close();
     }
+  });
+});
+
+/**
+ * CR-GC-787 — Risikotraeger und Betrachtungsumfang in der Antwort von `graph_metrics`.
+ *
+ * Gerechnet wird in contracts (`riskCarriers`, `requirementScope`, CR-SM-407; dort stehen die Werte
+ * unter Test). Hier steht, dass beide am echten Werkzeug ankommen: ein Modell durch das Gate in ein
+ * Disk-Kuzu, dann `graph_metrics`. Zwei Belege je Block: die erwarteten Kennungen der Fixture (ein
+ * leerer Block bestuende sonst auch) und die Gleichheit mit dem direkten Aufruf (das Werkzeug rechnet
+ * nichts dazu).
+ */
+describe('graph_metrics — Risikotraeger und Betrachtungsumfang (CR-GC-787)', () => {
+  let repoRoot: string;
+  let harness: GraphCodeHarness;
+  let tools: MCPToolRegistry;
+
+  /** Eine REQ mit ihrem Pruefer: ohne `verify` blockt R-01, ohne `kinds` R-18 an der satisfy-Kante. */
+  const req = (
+    uid: string,
+    name: string,
+    kind: 'functional' | 'non-functional',
+    role?: 'risk' | 'mitigation',
+  ): MutateCommand[] => [
+    {
+      op: 'add-node',
+      node: { uid, type: 'REQ', name, description: `${name}.`, attributes: { kinds: [kind], ...(role ? { role } : {}) } },
+    },
+    node(`TEST-${uid}`, 'TEST', `Test ${name}`),
+    edge(`TEST-${uid}`, 'verify', uid),
+  ];
+  /**
+   * Kette K mit zwei Gliedern in zwei Modulen; `FUNC-fern` liegt in keiner Kette. Das Risiko hat zwei
+   * Gegenmassnahmen: eine an `FUNC-eins`, eine am System (gilt quer, zaehlt nicht in die Traeger).
+   */
+  const MODELL: MutateCommand[] = [
+    node('SYS-r', 'SYS', 'Risk system'),
+    node('FCHAIN-k', 'FCHAIN', 'Kette K'),
+    node('MOD-a', 'MOD', 'Modul A'),
+    node('MOD-b', 'MOD', 'Modul B'),
+    node('FUNC-eins', 'FUNC', 'Eins'),
+    node('FUNC-zwei', 'FUNC', 'Zwei'),
+    node('FUNC-fern', 'FUNC', 'Fern'),
+    edge('FCHAIN-k', 'compose', 'FUNC-eins'),
+    edge('FCHAIN-k', 'compose', 'FUNC-zwei'),
+    edge('FUNC-eins', 'allocate', 'MOD-a'),
+    edge('FUNC-zwei', 'allocate', 'MOD-b'),
+    edge('FUNC-fern', 'allocate', 'MOD-b'),
+    ...req('REQ-risiko', 'Risiko', 'functional', 'risk'),
+    ...req('REQ-gegen-func', 'Gegenmassnahme an der Funktion', 'functional', 'mitigation'),
+    ...req('REQ-gegen-sys', 'Gegenmassnahme am System', 'non-functional', 'mitigation'),
+    ...req('REQ-zwei', 'Anforderung an Zwei', 'functional'),
+    ...req('REQ-modul', 'Anforderung an Modul A', 'non-functional'),
+    ...req('REQ-fern', 'Anforderung an Fern', 'functional'),
+    edge('REQ-risiko', 'compose', 'REQ-gegen-func'),
+    edge('REQ-risiko', 'compose', 'REQ-gegen-sys'),
+    edge('FUNC-eins', 'satisfy', 'REQ-gegen-func'),
+    edge('SYS-r', 'satisfy', 'REQ-gegen-sys'),
+    edge('FUNC-zwei', 'satisfy', 'REQ-zwei'),
+    edge('MOD-a', 'satisfy', 'REQ-modul'),
+    edge('FUNC-fern', 'satisfy', 'REQ-fern'),
+  ];
+
+  beforeEach(async () => {
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-risk-scope-'));
+    harness = makeHarness(repoRoot);
+    await harness.initialize();
+    const seeded = await harness.mutate(MODELL);
+    expect(seeded.success, JSON.stringify(seeded.violations ?? seeded)).toBe(true);
+    tools = bindToolsToHarness(harness);
+  });
+  afterEach(async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  it('riskCarriers steht immer in der Antwort: Traeger ohne das System, Erfueller wie modelliert', async () => {
+    const res = await tools.graph_metrics.handler({});
+    expect(res.riskCarriers).toEqual({
+      risks: [
+        {
+          riskId: 'REQ-risiko',
+          carriers: ['FUNC-eins'],
+          satisfiers: [
+            { mitigation: 'REQ-gegen-func', by: 'FUNC-eins' },
+            { mitigation: 'REQ-gegen-sys', by: 'SYS-r' },
+          ],
+        },
+      ],
+      surface: [{ funcId: 'FUNC-eins', risks: ['REQ-risiko'] }],
+    });
+    expect(res.riskCarriers).toEqual(riskCarriers(toOntologyGraph(harness.getGraph())));
+  });
+
+  it('ohne Risiko: zwei leere Listen, kein fehlender Block', async () => {
+    await harness.close();
+    rmSync(repoRoot, { recursive: true, force: true });
+    repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-risk-scope-none-'));
+    harness = makeHarness(repoRoot);
+    await harness.initialize();
+    expect((await harness.mutate(SEED)).success).toBe(true);
+    const res = await bindToolsToHarness(harness).graph_metrics.handler({});
+    expect(res.riskCarriers).toEqual({ risks: [], surface: [] });
+  });
+
+  it('scope kommt nur auf Anfrage', async () => {
+    const res = await tools.graph_metrics.handler({});
+    expect('scope' in res).toBe(false);
+  });
+
+  it('scope einer Kette: ihre Module, die Ketten durch ihre Glieder, jede Anforderung daran und am System', async () => {
+    const res = await tools.graph_metrics.handler({ scope: ['FCHAIN-k'] });
+    expect(res.scope).toEqual({
+      modules: ['MOD-a', 'MOD-b'],
+      chains: ['FCHAIN-k'],
+      requirements: ['REQ-gegen-func', 'REQ-gegen-sys', 'REQ-modul', 'REQ-zwei'],
+    });
+    expect(res.scope).toEqual(requirementScope(toOntologyGraph(harness.getGraph()), ['FCHAIN-k']));
+  });
+
+  it('scope einer Funktion ausserhalb der Kette nennt einen anderen Umfang', async () => {
+    const res = await tools.graph_metrics.handler({ scope: ['FUNC-fern'] });
+    expect(res.scope).toEqual({ modules: ['MOD-b'], chains: [], requirements: ['REQ-fern', 'REQ-gegen-sys'] });
+  });
+
+  it('eine unbekannte Kennung in scope wird benannt abgelehnt, kein leeres Ergebnis', async () => {
+    await expect(tools.graph_metrics.handler({ scope: ['FCHAIN-k', 'FCHAIN-gibt-es-nicht'] })).rejects.toThrow(
+      /graph_metrics: scope .*'FCHAIN-gibt-es-nicht' \(unknown\)/,
+    );
+  });
+
+  it('eine Kennung, die weder Funktion noch Kette ist, wird mit ihrem Typ abgelehnt', async () => {
+    await expect(tools.graph_metrics.handler({ scope: ['MOD-a'] })).rejects.toThrow(/graph_metrics: .*'MOD-a' \(MOD\)/);
   });
 });

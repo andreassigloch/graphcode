@@ -61,6 +61,7 @@
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
+| `FUNC-graph-metrics` | FUNC | graph_metrics(scope?) |
 | `FUNC-graph-readiness` | FUNC | graph_readiness(detail?) |
 | `FUNC-graph-store` | FUNC | GraphStore |
 | `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
@@ -186,6 +187,7 @@
 | `FUNC-graph-expand` | `MOD-kernel` |
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |
+| `FUNC-graph-metrics` | `MOD-projections` |
 | `FUNC-graph-readiness` | `MOD-projections` |
 | `FUNC-graph-store` | `MOD-kernel` |
 | `FUNC-graph-suggest` | `MOD-loop` |

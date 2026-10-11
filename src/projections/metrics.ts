@@ -27,6 +27,12 @@
  * contracts (CR-SM-404) liefert beides in einem Ergebnis, damit die Quote nie ohne
  * die Werte reist und die Werte nie ohne die Quote.
  *
+ * CR-GC-787: dazu `riskCarriers` (immer) und `scope` (nur auf Anfrage) — wer ein Risiko trägt und
+ * was eine Analyse einer Funktionsmenge lesen muss. Beides rechnet contracts (`riskCarriers`,
+ * `requirementScope`, CR-SM-407); hier steht nur die Prüfung, dass jede angefragte Kennung eine
+ * Funktion oder Kette des Modells ist. contracts lässt jeden anderen Seed still fallen, und ein
+ * Umfang, der dann nur die Systemanforderungen nennt, sähe aus wie eine Antwort.
+ *
  * @author andreas@siglochconsulting
  */
 
@@ -35,7 +41,11 @@ import {
   moduleMetrics,
   functionCriticality,
   chainMetrics,
+  requirementScope,
+  riskCarriers,
   type ChainMetrics,
+  type RequirementScope,
+  type RiskCarriers,
   type ModuleMetrics,
   type FunctionCriticality,
   type MetricPolicy,
@@ -48,7 +58,13 @@ import { loadTargetProfile } from '../loop/target-profile.js';
 import type { TargetWeights, TargetValues } from '../loop/target-profile-contract.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
-const GraphMetricsInputSchema = z.looseObject({});
+const GraphMetricsInputSchema = z.looseObject({
+  scope: z
+    .array(z.string())
+    .min(1)
+    .optional()
+    .describe('FUNC or FCHAIN ids; adds the block `scope` (what an analysis of them has to read).'),
+});
 
 /** Die Dimensionen, in denen Gewicht und Zielwert in verschiedene Richtungen zeigen. */
 type Dimension = keyof TargetWeights;
@@ -103,6 +119,13 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
       chains: ChainMetrics['chains'];
       /** Die Reichweite von `chains`: bewertbare / alle Ketten; `ratio` ist `null` ohne Ketten. */
       measurability: ChainMetrics['measurability'];
+      /**
+       * CR-GC-787: je Risiko seine Träger (Blattfunktionen) und Erfüller, je Träger seine Risiken.
+       * Immer da; ohne Risiken zwei leere Listen.
+       */
+      riskCarriers: RiskCarriers;
+      /** CR-GC-787: der Betrachtungsumfang der angefragten Funktionen und Ketten — nur mit Eingabe `scope`. */
+      scope?: RequirementScope;
       policy: MetricPolicy;
       policySource: PolicySource;
       fit: {
@@ -123,10 +146,11 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
       'Which module is the coupling problem? One row per MOD — fan-in/out, instability, LCOM4, ' +
       'cohesion — each next to the threshold it was judged against. Take it when graph_readiness says ' +
       'a dimension is weak and you need to know WHICH module; a value without its threshold is not a ' +
-      'statement. Also `chains` per FCHAIN. ' +
+      'statement. Also `chains` per FCHAIN, `riskCarriers` per risk, and with `scope` (FUNC/FCHAIN ' +
+      'ids) what an analysis of them has to read. ' +
       '`graph_help({token:"graph_metrics"})` explains the figures. Read-only.',
     inputSchema: GraphMetricsInputSchema,
-    async handler(_input) {
+    async handler(input) {
       // CR-GC-329: Wert UND Schwelle aus EINER Antwort. Ein Konsument, der „71 % /
       // Ziel <= 70 %" zeichnet, hat beide Zahlen von hier und keinen eigenen Zielwert;
       // `policySource` sagt, ob sie aus `graphcode.config.jsonc` stammt oder der
@@ -147,11 +171,26 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
       const values = profile?.profile.values ?? {};
       const ontology = toOntologyGraph(graph);
       const chains = chainMetrics(ontology);
+      // CR-GC-787: eine Kennung, die keine Funktion oder Kette dieses Modells ist, wird benannt
+      // abgelehnt — die ganze Anfrage, nicht nur der eine Seed.
+      if (input.scope) {
+        const typeOf = new Map(ontology.elements.map((e) => [e.id, e.type]));
+        const fremd = input.scope.filter((id) => typeOf.get(id) !== 'FUNC' && typeOf.get(id) !== 'FCHAIN');
+        if (fremd.length > 0) {
+          const benannt = fremd.map((id) => (typeOf.has(id) ? `'${id}' (${typeOf.get(id)})` : `'${id}' (unknown)`));
+          throw new Error(
+            `graph_metrics: scope takes ids of FUNC or FCHAIN elements of this model; rejected: ${benannt.join(', ')}. ` +
+              "`graph_elements({type:'FCHAIN'})` lists the chains.",
+          );
+        }
+      }
       return {
         modules: moduleMetrics(ontology),
         functions: functionCriticality(ontology),
         chains: chains.chains,
         measurability: chains.measurability,
+        riskCarriers: riskCarriers(ontology),
+        ...(input.scope ? { scope: requirementScope(ontology, input.scope) } : {}),
         policy: config.metricPolicy,
         policySource: source,
         fit: {

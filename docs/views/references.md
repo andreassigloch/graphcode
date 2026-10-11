@@ -754,7 +754,9 @@
 | `CR-GC-786` | relation | `FUNC-graph-readiness` |
 | `CR-GC-786` | relation | `FUNC-take-steering-snapshot` |
 | `CR-GC-787` | relation | `FUNC-chain-metrics` |
+| `CR-GC-787` | relation | `FUNC-graph-metrics` |
 | `CR-GC-787` | relation | `FUNC-module-metrics` |
+| `CR-GC-787` | relation | `REQ-metrics-risk-scope` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -800,6 +802,7 @@
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-roundtrip-conformance` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-chain-metrics` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-function-criticality` |
+| `FCHAIN-dashboard-metrics` | compose | `FUNC-graph-metrics` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-graph-store` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-module-metrics` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-mutate` |
@@ -945,6 +948,7 @@
 | `FLOW-audit-report` | io | `FUNC-se-retro` |
 | `FLOW-audit-report` | relation | `SCHEMA-audit-stats` |
 | `FLOW-chain-metrics` | io | `ACTOR-dashboard` |
+| `FLOW-chain-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-chain-metrics` | io | `FUNC-se-fmea` |
 | `FLOW-chain-metrics` | relation | `SCHEMA-chain-metrics` |
 | `FLOW-channel-dimension-template` | io | `FUNC-generation-step` |
@@ -1013,6 +1017,7 @@
 | `FLOW-formatE-artifact-read-tools` | io | `ACTOR-agent` |
 | `FLOW-formatE-artifact-read-tools` | relation | `SCHEMA-format-e` |
 | `FLOW-function-criticality` | io | `ACTOR-dashboard` |
+| `FLOW-function-criticality` | io | `FUNC-graph-metrics` |
 | `FLOW-function-criticality` | relation | `SCHEMA-function-criticality` |
 | `FLOW-gate-verdict` | io | `ACTOR-owner` |
 | `FLOW-gate-verdict` | io | `FUNC-bootstrap` |
@@ -1104,8 +1109,11 @@
 | `FLOW-metric-policy` | io | `FUNC-evaluate-rules` |
 | `FLOW-metric-policy` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-metric-policy` | relation | `SCHEMA-metric-policy` |
+| `FLOW-metrics-answer` | io | `ACTOR-agent` |
+| `FLOW-metrics-answer` | relation | `SCHEMA-chain-metrics` |
 | `FLOW-module-metrics` | io | `ACTOR-dashboard` |
 | `FLOW-module-metrics` | io | `FUNC-evaluate-rules` |
+| `FLOW-module-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-module-metrics` | relation | `SCHEMA-module-metrics` |
 | `FLOW-mutate-cmd-agent` | io | `FUNC-host-socket` |
 | `FLOW-mutate-cmd-agent` | io | `FUNC-mutate` |
@@ -1160,6 +1168,7 @@
 | `FLOW-query-request-agent` | io | `FUNC-export-markdown` |
 | `FLOW-query-request-agent` | io | `FUNC-graph-expand` |
 | `FLOW-query-request-agent` | io | `FUNC-graph-impact` |
+| `FLOW-query-request-agent` | io | `FUNC-graph-metrics` |
 | `FLOW-query-request-agent` | io | `FUNC-graph-readiness` |
 | `FLOW-query-request-agent` | io | `FUNC-list-elements` |
 | `FLOW-query-request-agent` | io | `FUNC-read-tools` |
@@ -1322,6 +1331,7 @@
 | `FUNC-block-abfrage` | compose | `FUNC-deduce-tests` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-expand` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-impact` |
+| `FUNC-block-abfrage` | compose | `FUNC-graph-metrics` |
 | `FUNC-block-abfrage` | compose | `FUNC-graph-readiness` |
 | `FUNC-block-abfrage` | compose | `FUNC-list-elements` |
 | `FUNC-block-abfrage` | compose | `FUNC-read-tools` |
@@ -1533,6 +1543,9 @@
 | `FUNC-graph-impact` | satisfy | `REQ-audit-trail` |
 | `FUNC-graph-impact` | satisfy | `REQ-query-precision` |
 | `FUNC-graph-impact` | satisfy | `REQ-subgraph-slicing` |
+| `FUNC-graph-metrics` | allocate | `MOD-projections` |
+| `FUNC-graph-metrics` | io | `FLOW-metrics-answer` |
+| `FUNC-graph-metrics` | satisfy | `REQ-metrics-risk-scope` |
 | `FUNC-graph-readiness` | allocate | `MOD-projections` |
 | `FUNC-graph-readiness` | io | `FLOW-readiness-report` |
 | `FUNC-graph-readiness` | satisfy | `REQ-held-back-traces-named` |
@@ -1971,6 +1984,7 @@
 | `TEST-graph-integrity` | verify | `REQ-graph-integrity` |
 | `TEST-graph-is-ssot` | verify | `REQ-graph-is-ssot` |
 | `TEST-graph-metrics` | verify | `REQ-chain-metrics` |
+| `TEST-graph-metrics` | verify | `REQ-metrics-risk-scope` |
 | `TEST-graph-metrics` | verify | `REQ-quality-metric` |
 | `TEST-graph-metrics` | verify | `REQ-single-measurement-path` |
 | `TEST-graph-metrics` | verify | `SCHEMA-chain-metrics` |
@@ -2266,6 +2280,7 @@
 | `UC-live-graph-view` | compose | `REQ-completeness-single-value` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-ontology-sync` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-readonly` |
+| `UC-live-graph-view` | compose | `REQ-metrics-risk-scope` |
 | `UC-live-graph-view` | compose | `REQ-mutation-emits-event` |
 | `UC-live-graph-view` | compose | `REQ-post-emit-update-event` |
 | `UC-live-graph-view` | compose | `REQ-pre-emit-update-event` |

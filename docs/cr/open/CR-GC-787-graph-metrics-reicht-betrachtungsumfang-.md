@@ -69,3 +69,58 @@ Der Antwortweg (wartet auf CR-SM-408). Eine Anzeige im Dashboard.
 ## Danach
 
 Release-Zug contracts 12.1.0 und graphcode (Peers zuerst, Trockenlauf beim Planen), dann Rollout.
+
+## Ergebnis
+
+Gebaut am 2026-10-11 gegen die Arbeitskopie contracts 12.2.0 (Link-Modus), CR bleibt offen bis zum Release-Zug.
+
+**Werkzeug.** `graph_metrics` trägt `riskCarriers` in jeder Antwort und `scope` nur mit der Eingabe
+`scope: string[]`. Beide Blöcke sind der unveränderte Rückgabewert von `riskCarriers(graph)` und
+`requirementScope(graph, seeds)` aus contracts. Hilfetext ergänzt, Floor auf `>=12.1 <13`.
+
+**Abnahme am eigenen Modell, über das Werkzeug am laufenden Host.**
+
+| Größe | Soll | Ist |
+|---|---|---|
+| `riskCarriers.risks` | 4 Zeilen | 4 |
+| davon mit genau einem Träger | 2 | 2 (`REQ-risk-gate-rule-eval-fails`, `REQ-risk-loop-oscillation`) |
+| `scope` für `FCHAIN-steering-loop`, Anforderungen | 74 | 74 |
+
+Gemessen bei graphVersion 688 (vor dem Modellzug) und 689 (danach), nicht 686; die Liste der 74
+Anforderungen ist an beiden Ständen dieselbe. Die übrigen zwei Risiken: `REQ-risk-loop-degradation`
+ohne Träger und ohne Erfüller, `REQ-risk-store-unreadable` mit 26 Trägern (Gegenmaßnahme an `MOD-kernel`).
+
+**Tests.** `verify:code` fiel wegen `package.json` im Diff auf den Volllauf zurück. `verify:full CR-GC-787`:
+182 Dateien, 1505 Tests, 1503 grün, rot 2, Schlupf 0. Rot sind `tests/distribution.test.ts` und
+`tests/lockfile-sync.test.ts`, beide erwartet im Link-Modus (Lock nennt noch `>=12 <13`). Die fünf Tests
+aus dem Nachzug zu CR-SM-409 sind grün und unverändert.
+
+**Modell (graphVersion 689).** Neu: `FUNC-graph-metrics` (gebunden an `src/projections/metrics.ts`, Block
+`FUNC-block-abfrage`, Modul `MOD-projections`, Kette `FCHAIN-dashboard-metrics`), `REQ-metrics-risk-scope`
+(funktional, unter `UC-live-graph-view`, geprüft von `TEST-graph-metrics`), `FLOW-metrics-answer`. Geändert:
+die Beschreibungen von `FLOW-chain-metrics`, `SCHEMA-chain-metrics`, `TEST-graph-metrics`. `CR-GC-787` zeigt
+auf Funktion und Anforderung.
+
+**Abweichungen vom Text oben.**
+
+1. *Eigener Fluss.* Der CR sah nur die Beschreibung von `FLOW-chain-metrics` vor. Das Gate lässt je Fluss
+   genau einen Erzeuger zu (IO-02), und den hat `FLOW-chain-metrics` in `FUNC-chain-metrics`. Das Werkzeug
+   liest deshalb die drei Kennzahl-Flüsse und gibt `FLOW-metrics-answer` an den Agenten ab. Kein neues Schema:
+   der Fluss hängt an `SCHEMA-chain-metrics`, dessen Beschreibung sagt, dass `riskCarriers` und `scope` eigene
+   Verträge aus contracts haben und nicht zum Symbol `ChainMetrics` gehören.
+2. *Ablehnung weiter gefasst.* Abgelehnt wird jede Kennung, die keine Funktion oder Kette des Modells ist,
+   also auch eine vorhandene Kennung anderen Typs (etwa ein Modul), mit Namen und Typ. contracts lässt einen
+   solchen Seed still fallen; der Umfang nennte dann nur die Systemanforderungen und sähe aus wie eine Antwort.
+3. *Skill unter `.opencode/`* gibt es in diesem Repo nicht; geändert ist nur `.claude/commands/se-fmea.md`.
+4. *Abnahme mit `scope` über einen eigenen MCP-Client.* Die laufende Claude-Code-Sitzung hält das
+   Eingabeschema des Werkzeugs vom Sitzungsstart und kann kein Feld `scope` senden. Der Aufruf lief über einen
+   stdio-Client am selben Host (Proxy auf `host.sock`); `riskCarriers` kam zusätzlich direkt über die Sitzung.
+
+**Benannte Ausnahme, Kongruenz.** `rules_evaluate` meldet einen neuen RC-Befund: RC-04 an
+`SCHEMA-function-criticality` (RC-04 gesamt 17 auf 18). Ursache: das Werkzeug ist jetzt als Abnehmer von
+`FLOW-function-criticality` modelliert, und `metrics.ts` ruft `FunctionCriticality.parse()` nicht selbst auf;
+den Vertrag prüft der Erzeuger in contracts. Dieselbe Lage besteht schon für `SCHEMA-chain-metrics` und
+`SCHEMA-module-metrics`. Offen gelassen, weil ein zweites Parsen im Durchreicher nichts prüft, was der
+Erzeuger nicht schon geprüft hat. Sonst kein neuer Befund; vier bestehende Befunde tragen höhere Zahlen
+(RD-04 an `FUNC-block-abfrage` 11 auf 12 und an `MOD-projections` auf 15, BW-02 an `FUNC-block-abfrage` 9 auf
+12 und an `FUNC-block-messwerk` auf 11). `importCoverage` unverändert: 88 von 89 Endpunkten zugeordnet, offen `src/index.ts`.

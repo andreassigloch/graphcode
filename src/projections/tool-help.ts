@@ -56,7 +56,8 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'Welches Modul ist das Kopplungsproblem: Fan-in/Fan-out, Instabilität und Kohäsion je MOD, ' +
       'immer zusammen mit der Schwelle, gegen die geurteilt wurde. `graph_readiness` sagt "alloc ist ' +
       '87 %", das hier sagt WELCHES Modul. Dazu je Wirkkette, wie sie läuft — oder warum sie sich ' +
-      'nicht bewerten lässt.',
+      'nicht bewerten lässt, je Risiko, welche Funktionen es tragen, und auf Anfrage, was eine Analyse ' +
+      'einer Kette oder Funktion lesen muss.',
     se:
       'Je MOD: `fanIn`/`fanOut` (allocate- und io-Kanten), `instability` I = fanOut/(fanIn+fanOut), ' +
       '`lcom4` (Zusammenhangskomponenten der FUNC-Whitebox) und `cohesion`. Die Schwellen stammen aus ' +
@@ -78,7 +79,20 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'Funktion; gezählt nur an Gliedern, die allein dieser Kette gehören — die Zuflüsse einer ' +
       'geteilten Funktion stehen an ihr). Die Zahlen bleiben die Längen dieser Listen.\n' +
       '`measurability` ist die Reichweite daneben: bewertbare / alle Ketten. Kennzahlen bei niedriger ' +
-      'Quote beschreiben nur die Ketten, die schon Ketten sind; `ratio` ist `null`, wenn es keine gibt.',
+      'Quote beschreiben nur die Ketten, die schon Ketten sind; `ratio` ist `null`, wenn es keine gibt.\n' +
+      '`riskCarriers` (CR-GC-787) steht immer da, zwei Listen über dieselben Paare: `risks` je Risiko ' +
+      '(REQ mit Rolle `risk`) mit `carriers` und `satisfiers`, `surface` je Träger mit seinen Risiken; ' +
+      'ohne Risiken sind beide leer. Ein Träger ist eine Blattfunktion: erfüllt ein Block, ein Modul ' +
+      'oder eine Kette die Gegenmaßnahme, stehen deren Blattfunktionen da. Eine Gegenmaßnahme am System ' +
+      'gilt quer und zählt nicht in die Träger; ihr Erfüller steht in `satisfiers`. Ein Risiko mit ' +
+      'leeren `carriers` ist deshalb nicht ohne Erfüller, erst leere `satisfiers` heißen das. Die ' +
+      'Fläche ist die Länge von `surface`.\n' +
+      '`scope` gibt es nur auf Anfrage: die Eingabe `scope` nimmt Kennungen von Funktionen oder Ketten ' +
+      '(eine Kette steht für ihre Glieder), der Antwortblock nennt `modules` (die Module der ' +
+      'Funktionen), `chains` (alle Ketten durch sie) und `requirements` (jede Anforderung, die eine ' +
+      'der Funktionen, eines der Module, eine der Ketten oder das System erfüllt). Die Zahl ist die ' +
+      'Länge der Liste. Eine Kennung, die keine Funktion oder Kette des Modells ist, lehnt das ' +
+      'Werkzeug mit ihrem Namen ab, statt einen Umfang zu liefern, der nur das System nennt.',
   },
   rules_evaluate: {
     plain:

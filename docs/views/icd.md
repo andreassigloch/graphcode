@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 50 SCHEMA · 125 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 50 SCHEMA · 126 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -70,7 +70,7 @@
 | `FLOW-audit-entries` | `FUNC-audit-trail` | `ACTOR-owner` · `FUNC-se-retro` |
 | `FLOW-audit-record` | `FUNC-mutate` | `FUNC-audit-stats` · `FUNC-audit-trail` |
 | `FLOW-audit-report` | `FUNC-audit-stats` | `ACTOR-owner` · `FUNC-se-retro` |
-| `FLOW-chain-metrics` | `FUNC-chain-metrics` | `ACTOR-dashboard` · `FUNC-se-fmea` |
+| `FLOW-chain-metrics` | `FUNC-chain-metrics` | `ACTOR-dashboard` · `FUNC-graph-metrics` · `FUNC-se-fmea` |
 | `FLOW-channel-dimension-template` | `ACTOR-owner` | `FUNC-generation-step` |
 | `FLOW-channel-fit-advisory` | `FUNC-fit-advisory` | `ACTOR-agent` |
 | `FLOW-channel-gate-protocol` | `ACTOR-owner` | `FUNC-generation-step` |
@@ -96,7 +96,7 @@
 | `FLOW-fit-advisory` | `FUNC-fit-advisory` | `FUNC-zug-bericht` |
 | `FLOW-formatE-artifact-agent` | `ACTOR-agent` | `FUNC-decode` |
 | `FLOW-formatE-artifact-read-tools` | `FUNC-read-tools` | `ACTOR-agent` |
-| `FLOW-function-criticality` | `FUNC-function-criticality` | `ACTOR-dashboard` |
+| `FLOW-function-criticality` | `FUNC-function-criticality` | `ACTOR-dashboard` · `FUNC-graph-metrics` |
 | `FLOW-gate-verdict` | `FUNC-mutate` | `ACTOR-owner` · `FUNC-bootstrap` · `FUNC-graph-suggest` · `FUNC-import-code-verb` · `FUNC-se-retro` · `FUNC-test-ingest` · `FUNC-tool-context` |
 | `FLOW-generation-step-suggest` | `FUNC-generation-step` | `FUNC-graph-suggest` |
 | `FLOW-generation-step-vorschlag` | `FUNC-generation-step` | `FUNC-vorschlag` |
@@ -123,7 +123,8 @@
 | `FLOW-mcp-tool-registry` | `FUNC-bind-tools` | `FUNC-serve-stdio` |
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-generation-step` |
 | `FLOW-metric-policy` | `FUNC-load-config` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` |
-| `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` |
+| `FLOW-metrics-answer` | `FUNC-graph-metrics` | `ACTOR-agent` |
+| `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` · `FUNC-graph-metrics` |
 | `FLOW-mutate-cmd-agent` | `ACTOR-agent` | `FUNC-host-socket` · `FUNC-mutate` |
 | `FLOW-mutate-cmd-author-req` | `FUNC-author-req` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-author-uc` | `FUNC-author-uc` | `FUNC-mutate` |
@@ -147,7 +148,7 @@
 | `FLOW-mutate-cmd-test-ingest` | `FUNC-test-ingest` | `FUNC-mutate` |
 | `FLOW-next-step-advice` | `FUNC-generation-step` | `ACTOR-agent` |
 | `FLOW-ontology-json` | `FUNC-seed-from-json` | `FUNC-held-back-traces` · `FUNC-import` |
-| `FLOW-query-request-agent` | `ACTOR-agent` | `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-readiness` · `FUNC-list-elements` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` |
+| `FLOW-query-request-agent` | `ACTOR-agent` | `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-list-elements` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` |
 | `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-export-markdown` |
 | `FLOW-query-request-owner` | `ACTOR-owner` | `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-list-elements` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` |
 | `FLOW-query-request-render-views` | `FUNC-render-views` | `FUNC-export-markdown` |

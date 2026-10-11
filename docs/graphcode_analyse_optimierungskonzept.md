@@ -148,8 +148,9 @@ ihrer Art ab:
 1. **Einheit ist eine Wirkkette.** Ohne benannte Kette fragt der Skill; ein Modul oder das System als
    Umfang wird auf seine Ketten aufgelöst.
 2. **Erster Schritt jeder Analyse ist die Verdrahtung der Kette.** Die Regeln dazu (R-30, R-31, R-21,
-   IO-01, FC-04, FC-05) sind Warnungen, kein Fehler; das Gate hält eine unverbundene Kette nicht auf. Der
-   Skill liest ihre Befunde und `measurable` für die Kette; solange dort etwas offen ist, ist das
+   IO-01, FC-04, FC-05) sind Warnungen, kein Fehler; das Gate hält eine unverbundene Kette nicht auf. Eine
+   davon hält eine Marke: ein Befund von FC-05 (Kette hängt nicht zusammen) hält PDR, die übrigen halten
+   keine. Der Skill liest ihre Befunde und `measurable` für die Kette; solange dort etwas offen ist, ist das
    Schließen dieser Befunde das Ergebnis, nicht die Analyse.
    **Zweiter Schritt ist der Betrachtungsumfang:** die Glieder der Kette, ihre Module, alle Ketten durch
    diese Glieder und das System, dazu jede Anforderung, die eines davon erfüllt. Er nennt, was die Analyse

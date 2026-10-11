@@ -104,7 +104,7 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 
 Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-owner`
 
-- `FCHAIN-dashboard-metrics` — Kennzahlen ans Dashboard: `FUNC-chain-metrics` → `FUNC-function-criticality` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-mutate`
+- `FCHAIN-dashboard-metrics` — Kennzahlen ans Dashboard: `FUNC-chain-metrics` → `FUNC-function-criticality` → `FUNC-graph-metrics` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-mutate`
 - `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-broadcast-diff` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-store` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-serve-sse` → `FUNC-serve-stdio`
 
 ### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
@@ -418,7 +418,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-784` | n/a | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen | `FUNC-chain-metrics` |
 | `CR-GC-785` | n/a | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse | `FUNC-graph-suggest` · `FUNC-se-optimize` |
 | `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) | `FUNC-graph-readiness` · `FUNC-take-steering-snapshot` |
-| `CR-GC-787` | n/a | graph_metrics reicht Betrachtungsumfang und Risikotraeger durch | `FUNC-chain-metrics` · `FUNC-module-metrics` |
+| `CR-GC-787` | n/a | graph_metrics reicht Betrachtungsumfang und Risikotraeger durch | `FUNC-chain-metrics` · `FUNC-graph-metrics` · `FUNC-module-metrics` · `REQ-metrics-risk-scope` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

@@ -29,7 +29,7 @@ Walk the graph's `compose` hierarchy for the scoped target: `SYS → UC → FCHA
 
 **For each in-scope FCHAIN, read the chain profile before writing a single failure mode — do not compute it.** Call `graph_metrics` once and take the chain's row from `chains` and the reach of its members from `functions`. Figures and places are computed in ONE place (`chainMetrics` in `@sigloch/contracts/se`); a number derived by hand from `graph_get_edges` is a second calculation, and it disagrees with the first at every chain that has a loop.
 
-**Erster Schritt: die Verdrahtung der Kette.** Die Regeln `R-30`, `R-31`, `R-21`, `IO-01`, `FC-04` und `FC-05` sind Warnungen, kein Fehler — das Gate hält eine unverbundene Kette nicht auf. Hol ihre Befunde für die Kette und ihre Glieder (`rules_get_violations`) und lies `measurable`:
+**Erster Schritt: die Verdrahtung der Kette.** Die Regeln `R-30`, `R-31`, `R-21`, `IO-01`, `FC-04` und `FC-05` sind Warnungen, kein Fehler — das Gate hält eine unverbundene Kette nicht auf. Eine davon hält eine Marke: ein Befund von `FC-05` (Kette hängt nicht zusammen) hält PDR, die übrigen halten keine. Hol ihre Befunde für die Kette und ihre Glieder (`rules_get_violations`) und lies `measurable`:
 
 - `measurable: false` → die Kette wird **nicht** analysiert. Nenne die `reasons`; das Schließen dieser Befunde ist das Ergebnis dieses Laufs, nicht eine FMEA.
 - offene Verdrahtungsbefunde an einem Glied → erst schließen, oder der Nutzer bestätigt sie als bewusst offen.

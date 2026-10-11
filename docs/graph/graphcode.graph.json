@@ -3494,7 +3494,7 @@
       "id": "FLOW-chain-metrics",
       "type": "FLOW",
       "name": "Kennzahlen je Wirkkette",
-      "description": "Kennzahlen je Wirkkette und die Bewertbarkeitsquote, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss: die Grundgesamtheit ist die FCHAIN, nicht MOD und nicht FUNC. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahlen in der Antwort, rendert sie aber noch nicht."
+      "description": "Kennzahlen je Wirkkette und die Bewertbarkeitsquote, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss: die Grundgesamtheit ist die FCHAIN, nicht MOD und nicht FUNC. In derselben Antwort reisen seit CR-GC-787 zwei weitere Bloecke: riskCarriers, immer, mit den Traegern je Risiko und den Risiken je Traeger, und scope, nur auf Anfrage, der Betrachtungsumfang der genannten Funktionen oder Ketten. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahlen in der Antwort, rendert sie aber noch nicht."
     },
     {
       "id": "FLOW-channel-dimension-template",
@@ -3872,6 +3872,12 @@
       "type": "FLOW",
       "name": "Urteils-Policy",
       "description": "Die geltenden Urteilsschwellen, wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten: vollstaendig, jede Schwelle gesetzt. Erzeugt von load-config aus der Rohform. Keine Schwelle steht als Literal im Regelcode."
+    },
+    {
+      "id": "FLOW-metrics-answer",
+      "type": "FLOW",
+      "name": "Antwort von graph_metrics",
+      "description": "Die Antwort des Werkzeugs graph_metrics an den Agenten: Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, dazu seit CR-GC-787 die Bloecke riskCarriers, immer, und scope, nur auf Anfrage. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: FLOW-chain-metrics kommt aus der Rechnung in contracts, dieser aus dem Werkzeug, das sie durchreicht."
     },
     {
       "id": "FLOW-module-metrics",
@@ -4844,6 +4850,17 @@
       "realRef": {
         "file": "src/kernel/harness.ts",
         "symbol": "impact",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-graph-metrics",
+      "type": "FUNC",
+      "name": "graph_metrics(scope?)",
+      "description": "MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787)",
+      "realRef": {
+        "file": "src/projections/metrics.ts",
+        "symbol": "graph_metrics",
         "lang": "ts"
       }
     },
@@ -6327,6 +6344,15 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "REQ-metrics-risk-scope",
+      "type": "REQ",
+      "name": "Risikotraeger und Betrachtungsumfang in graph_metrics",
+      "description": "graph_metrics MUSS in jeder Antwort die Risikotraeger liefern, je Risiko seine Traeger und Erfueller und je Traeger seine Risiken, und auf Anfrage den Betrachtungsumfang der genannten Funktionen oder Ketten: ihre Module, die Ketten durch sie und jede Anforderung daran und am System. Gerechnet wird an EINER Stelle in contracts; das Werkzeug reicht durch. Eine angefragte Kennung, die keine Funktion oder Kette des Modells ist, MUSS es mit ihrem Namen ablehnen statt einen Umfang zu liefern.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-model-exchange-post",
       "type": "REQ",
       "name": "Nachbedingung Modellaustausch",
@@ -7373,7 +7399,7 @@
       "id": "SCHEMA-chain-metrics",
       "type": "SCHEMA",
       "name": "ChainMetrics",
-      "description": "chains: je FCHAIN chainId, chainName, measurable und entweder die Zahlen length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth mit den Orten memberCount, fanIn, loops, shared, boundaries, imports, handovers oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. Die Zahlen sind die Laengen der Ortslisten. measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external.",
+      "description": "chains: je FCHAIN chainId, chainName, measurable und entweder die Zahlen length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth mit den Orten memberCount, fanIn, loops, shared, boundaries, imports, handovers oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. Die Zahlen sind die Laengen der Ortslisten. measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external. Neben diesem Vertrag reisen in der graph_metrics-Antwort seit CR-GC-787 zwei Bloecke mit je eigenem Vertrag aus contracts: riskCarriers nach RiskCarriers mit risks, je Risiko riskId, carriers, satisfiers, und surface, je Traeger funcId und risks; scope nach RequirementScope mit modules, chains, requirements. Beide gehoeren nicht zum Symbol ChainMetrics.",
       "external": true,
       "status": "reviewed",
       "realRef": {
@@ -8659,7 +8685,7 @@
       "id": "TEST-graph-metrics",
       "type": "TEST",
       "name": "Modulkennzahlen je Modul",
-      "description": "Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen. Dazu die Kettenkennzahlen am echten Werkzeug (CR-GC-767): die Referenzkette Zahlung ausloesen ergibt Laenge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rueckkopplungen, 1 geteilten Knoten; die Gegenprobe mit Schleife und Ast laesst die Werte umschlagen; eine Kette ohne Eingang traegt den Grund und zaehlt im Nenner der Quote; auf dem eigenen Modell stimmt jede Kette mit dem direkten Aufruf der contracts-Funktion ueberein.",
+      "description": "Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen. Dazu die Kettenkennzahlen am echten Werkzeug (CR-GC-767): die Referenzkette Zahlung ausloesen ergibt Laenge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rueckkopplungen, 1 geteilten Knoten; die Gegenprobe mit Schleife und Ast laesst die Werte umschlagen; eine Kette ohne Eingang traegt den Grund und zaehlt im Nenner der Quote; auf dem eigenen Modell stimmt jede Kette mit dem direkten Aufruf der contracts-Funktion ueberein. Dazu Risikotraeger und Betrachtungsumfang (CR-GC-787): ein Risiko mit einer Gegenmassnahme an einer Funktion und einer am System nennt genau die Funktion als Traeger und beide Erfueller; ohne Risiko zwei leere Listen; der Umfang fehlt ohne Anfrage, nennt fuer eine Kette ihre Module, Ketten und Anforderungen und fuer eine Funktion ausserhalb einen anderen; eine unbekannte Kennung und eine Kennung anderen Typs werden benannt abgelehnt.",
       "testRefs": [
         {
           "file": "tests/metrics.test.ts",
@@ -14385,7 +14411,17 @@
     },
     {
       "source": "CR-GC-787",
+      "target": "FUNC-graph-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-787",
       "target": "FUNC-module-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-787",
+      "target": "REQ-metrics-risk-scope",
       "type": "relation"
     },
     {
@@ -14654,6 +14690,11 @@
     {
       "source": "FCHAIN-dashboard-metrics",
       "target": "FUNC-function-criticality",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-graph-metrics",
       "type": "compose"
     },
     {
@@ -15419,6 +15460,11 @@
     },
     {
       "source": "FLOW-chain-metrics",
+      "target": "FUNC-graph-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-chain-metrics",
       "target": "FUNC-se-fmea",
       "type": "io"
     },
@@ -15760,6 +15806,11 @@
     {
       "source": "FLOW-function-criticality",
       "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-function-criticality",
+      "target": "FUNC-graph-metrics",
       "type": "io"
     },
     {
@@ -16243,6 +16294,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-metrics-answer",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-metrics-answer",
+      "target": "SCHEMA-chain-metrics",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-module-metrics",
       "target": "ACTOR-dashboard",
       "type": "io"
@@ -16252,6 +16313,11 @@
       "target": "FUNC-evaluate-rules",
       "type": "io",
       "weight": "1"
+    },
+    {
+      "source": "FLOW-module-metrics",
+      "target": "FUNC-graph-metrics",
+      "type": "io"
     },
     {
       "source": "FLOW-module-metrics",
@@ -16521,6 +16587,11 @@
     {
       "source": "FLOW-query-request-agent",
       "target": "FUNC-graph-impact",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-agent",
+      "target": "FUNC-graph-metrics",
       "type": "io"
     },
     {
@@ -17339,6 +17410,11 @@
     {
       "source": "FUNC-block-abfrage",
       "target": "FUNC-graph-impact",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-abfrage",
+      "target": "FUNC-graph-metrics",
       "type": "compose"
     },
     {
@@ -18435,6 +18511,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-graph-metrics",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-metrics",
+      "target": "FLOW-metrics-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-metrics",
+      "target": "REQ-metrics-risk-scope",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-readiness",
@@ -20807,6 +20898,11 @@
     },
     {
       "source": "TEST-graph-metrics",
+      "target": "REQ-metrics-risk-scope",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-metrics",
       "target": "REQ-quality-metric",
       "type": "verify"
     },
@@ -22372,6 +22468,11 @@
     },
     {
       "source": "UC-live-graph-view",
+      "target": "REQ-metrics-risk-scope",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-graph-view",
       "target": "REQ-mutation-emits-event",
       "type": "compose",
       "weight": 1,
@@ -22599,5 +22700,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 688
+  "graphVersion": 689
 }

@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 154 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 155 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 51 REQ
@@ -63,7 +63,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 104 REQ
+### funktional (SWE.1 · HWE.1) — 105 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -104,6 +104,7 @@
 | `REQ-loop-convergence-monitor` | `TEST-loop-convergence-monitor` | — | — |
 | `REQ-loop-round-log` | `TEST-loop-round-log` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` | — |
+| `REQ-metrics-risk-scope` | `TEST-graph-metrics` | `FUNC-graph-metrics` | `MOD-projections` |
 | `REQ-model-exchange-post` | `TEST-doc-export` · `TEST-import-code-verb` | `FCHAIN-model-import` | — |
 | `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-surface` |
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | `FCHAIN-steering-loop` | — |
@@ -212,7 +213,7 @@
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 
-### Entwurf (SWE.3 · HWE.2) — 113 REQ
+### Entwurf (SWE.3 · HWE.2) — 114 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -264,6 +265,7 @@
 | `REQ-live-event-in-contracts` | `TEST-live-event-contract` | `MOD-surface` | — |
 | `REQ-loop-round-log` | `TEST-loop-round-log` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-mcp-tool-registry` | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-surface` |
+| `REQ-metrics-risk-scope` | `TEST-graph-metrics` | `FUNC-graph-metrics` | `MOD-projections` |
 | `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-surface` |
 | `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-cli-dispatch` · `FUNC-harness-cli` | `MOD-surface` |

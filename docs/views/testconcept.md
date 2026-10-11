@@ -13,9 +13,9 @@
            ╱────────╲
           ╱ use cases ╲      9 UC · 9 / 9 with a verified requirement
          ╱────────────╲
-        ╱ integration  ╲     ✗ 66/135 FUNC↔FUNC connections tested  ← GAP
+        ╱ integration  ╲     ✗ 66/138 FUNC↔FUNC connections tested  ← GAP
        ╱────────────────╲
-      ╱ module · function ╲   7 MOD · 112 FUNC
+      ╱ module · function ╲   7 MOD · 113 FUNC
      ╱────────────────────╲
 ```
 
@@ -23,10 +23,10 @@
 |---|---|---|---|---|---|
 | System | SYS (1) | system verification (SYS.5) | 55 | 43 / 43 system requirements | ✓ |
 | Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 99 | 9 / 9 use cases | ✓ |
-| Integration | FUNC↔FUNC (135 conn) | integration verification (SYS.4 · SWE.5) | 31 | 66 / 135 connections | ✗ 69 uncovered |
+| Integration | FUNC↔FUNC (138 conn) | integration verification (SYS.4 · SWE.5) | 31 | 66 / 138 connections | ✗ 72 uncovered |
 | Interface | SCHEMA (50) | integration verification (SYS.4 · SWE.5) | 22 | 32 / 50 schemas | ⚠ 18 without a test |
 | Module | MOD (7) | component verification (SWE.5 · HWE.3) | 62 | 6 / 7 | ⚠ 1 without a verified requirement |
-| Function | FUNC (112) | unit verification (SWE.4 · HWE.3) | 83 | 90 / 112 | ⚠ 22 without a verified requirement |
+| Function | FUNC (113) | unit verification (SWE.4 · HWE.3) | 83 | 91 / 113 | ⚠ 22 without a verified requirement |
 | (validation) | UC (9) | validation (VAL.1) | — | no position in the model | — |
 | (support) | — | conformance | 5 | codec round-trip | ✓ |
 
@@ -34,4 +34,4 @@
 > it says WHAT is verified, not how the test is written. A test of a system requirement counts as system
 > verification even if it is a unit-style test — whether it plays the system through, this table cannot say.
 > Validation against the intended use has no position: a play-through of a use case is a test of its requirements.
-> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (66/135 covered).
+> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (66/138 covered).
