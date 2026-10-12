@@ -3322,6 +3322,12 @@
       "description": "docs/cr/open/CR-GC-793-start-lieferungen-tragen-sync-sperre-fae.md"
     },
     {
+      "id": "CR-GC-794",
+      "type": "CR",
+      "name": "Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger",
+      "description": "docs/cr/open/CR-GC-794-gegenmassnahme-store-recovery-haengt-am-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -7443,11 +7449,11 @@
       "id": "REQ-store-recovery",
       "type": "REQ",
       "name": "Store-Recovery (Recovery-Modus)",
-      "description": "CONSTRAINT (ConOps): Recovery bei Kuzu Lock-Konflikt / abgestürztem Owner / korruptem Store — Lock-Erkennung + sicherer Re-Open.",
+      "description": "Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "non-functional"
+        "functional"
       ],
       "role": "mitigation"
     },
@@ -14904,6 +14910,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-794",
+      "target": "FUNC-graph-store",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-794",
+      "target": "REQ-store-recovery",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -19152,6 +19168,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-graph-store",
+      "target": "REQ-store-recovery",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-graph-suggest",
       "target": "MOD-loop",
       "type": "allocate"
@@ -20408,11 +20429,6 @@
     {
       "source": "MOD-kernel",
       "target": "REQ-single-store",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-kernel",
-      "target": "REQ-store-recovery",
       "type": "satisfy"
     },
     {
@@ -23414,5 +23430,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 710
+  "graphVersion": 712
 }

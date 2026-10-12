@@ -425,6 +425,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-791` | n/a | Nachbarskills se:optimize und se-vorbereitung auf den Antwortweg nachziehen | `FUNC-se-optimize` · `FUNC-se-vorbereitung` |
 | `CR-GC-792` | n/a | Antwortweg lesbar machen: Gate-Urteil trennen, Store und Sperre als Glied | `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-mutate` · `FUNC-se-retro` |
 | `CR-GC-793` | n/a | Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten | `FUNC-bind-tools` · `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-schema-guard` |
+| `CR-GC-794` | n/a | Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger | `FUNC-graph-store` · `REQ-store-recovery` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

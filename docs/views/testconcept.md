@@ -25,8 +25,8 @@
 | Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 104 | 9 / 9 use cases | ✓ |
 | Integration | FUNC↔FUNC (143 conn) | integration verification (SYS.4 · SWE.5) | 31 | 67 / 143 connections | ✗ 76 uncovered |
 | Interface | SCHEMA (50) | integration verification (SYS.4 · SWE.5) | 22 | 32 / 50 schemas | ⚠ 18 without a test |
-| Module | MOD (7) | component verification (SWE.5 · HWE.3) | 62 | 6 / 7 | ⚠ 1 without a verified requirement |
-| Function | FUNC (115) | unit verification (SWE.4 · HWE.3) | 89 | 92 / 115 | ⚠ 23 without a verified requirement |
+| Module | MOD (7) | component verification (SWE.5 · HWE.3) | 60 | 6 / 7 | ⚠ 1 without a verified requirement |
+| Function | FUNC (115) | unit verification (SWE.4 · HWE.3) | 90 | 92 / 115 | ⚠ 23 without a verified requirement |
 | (validation) | UC (9) | validation (VAL.1) | — | no position in the model | — |
 | (support) | — | conformance | 8 | codec round-trip | ✓ |
 

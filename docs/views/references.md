@@ -789,6 +789,8 @@
 | `CR-GC-793` | relation | `FUNC-claim-store-lock` |
 | `CR-GC-793` | relation | `FUNC-graph-store` |
 | `CR-GC-793` | relation | `FUNC-schema-guard` |
+| `CR-GC-794` | relation | `FUNC-graph-store` |
+| `CR-GC-794` | relation | `REQ-store-recovery` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1607,6 +1609,7 @@
 | `FUNC-graph-store` | satisfy | `REQ-auto-persist-merge` |
 | `FUNC-graph-store` | satisfy | `REQ-steering-pre` |
 | `FUNC-graph-store` | satisfy | `REQ-store-owner-lifecycle` |
+| `FUNC-graph-store` | satisfy | `REQ-store-recovery` |
 | `FUNC-graph-suggest` | allocate | `MOD-loop` |
 | `FUNC-graph-suggest` | io | `FLOW-learning-query` |
 | `FUNC-graph-suggest` | io | `FLOW-mcp-tool` |
@@ -1848,7 +1851,6 @@
 | `MOD-kernel` | satisfy | `REQ-rule-calibration` |
 | `MOD-kernel` | satisfy | `REQ-single-kuzu-owner` |
 | `MOD-kernel` | satisfy | `REQ-single-store` |
-| `MOD-kernel` | satisfy | `REQ-store-recovery` |
 | `MOD-kernel` | satisfy | `REQ-structural-rule-shared` |
 | `MOD-loop` | satisfy | `REQ-gate-only-writes` |
 | `MOD-loop` | satisfy | `REQ-phase-gate-not-skippable` |
