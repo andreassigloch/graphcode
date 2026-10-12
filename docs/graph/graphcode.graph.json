@@ -3316,6 +3316,12 @@
       "description": "docs/cr/open/CR-GC-792-antwortweg-lesbar-machen-gate-urteil-tre.md"
     },
     {
+      "id": "CR-GC-793",
+      "type": "CR",
+      "name": "Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten",
+      "description": "docs/cr/open/CR-GC-793-start-lieferungen-tragen-sync-sperre-fae.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3941,7 +3947,7 @@
       "type": "FLOW",
       "name": "Werkzeug-Register",
       "description": "Traegt MCPToolRegistry ueber die Modulgrenze.",
-      "sync": "sync"
+      "sync": "async"
     },
     {
       "id": "FLOW-measurement-vector",
@@ -4293,7 +4299,8 @@
       "id": "FLOW-schema-fingerprint",
       "type": "FLOW",
       "name": "Schema-Fingerabdruck",
-      "description": "Der Fingerabdruck der generierten DDL als Marker neben dem Store: 16 Hex-Zeichen. Beim Anlegen gestempelt, beim naechsten Start gelesen - er entscheidet, ob der Store weggeworfen und neu befuellt wird."
+      "description": "Der Fingerabdruck der generierten DDL als Marker neben dem Store: 16 Hex-Zeichen. Beim Anlegen gestempelt, beim naechsten Start gelesen - er entscheidet, ob der Store weggeworfen und neu befuellt wird.",
+      "sync": "async"
     },
     {
       "id": "FLOW-schlupf-zeile",
@@ -4402,7 +4409,7 @@
       "type": "FLOW",
       "name": "Store-Besitzanspruch",
       "description": "Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.",
-      "sync": "sync"
+      "sync": "async"
     },
     {
       "id": "FLOW-target-profile",
@@ -4437,7 +4444,7 @@
       "type": "FLOW",
       "name": "Werkzeug-Register",
       "description": "Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.",
-      "sync": "sync"
+      "sync": "async"
     },
     {
       "id": "FLOW-tool-surface",
@@ -14877,9 +14884,24 @@
       "type": "relation"
     },
     {
-      "source": "FCHAIN-advisory-roundtrip",
+      "source": "CR-GC-793",
+      "target": "FUNC-bind-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-793",
       "target": "FUNC-claim-store-lock",
-      "type": "compose"
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-793",
+      "target": "FUNC-graph-store",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-793",
+      "target": "FUNC-schema-guard",
+      "type": "relation"
     },
     {
       "source": "FCHAIN-advisory-roundtrip",
@@ -14920,11 +14942,6 @@
       "source": "FCHAIN-advisory-roundtrip",
       "target": "REQ-advisory-roundtrip-latency",
       "type": "satisfy"
-    },
-    {
-      "source": "FCHAIN-agent-query",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
     },
     {
       "source": "FCHAIN-agent-query",
@@ -15090,11 +15107,6 @@
     },
     {
       "source": "FCHAIN-capture",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-capture",
       "target": "FUNC-decode",
       "type": "compose",
       "weight": 1,
@@ -15166,11 +15178,6 @@
     },
     {
       "source": "FCHAIN-dashboard-metrics",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-dashboard-metrics",
       "target": "FUNC-function-criticality",
       "type": "compose"
     },
@@ -15227,11 +15234,6 @@
     {
       "source": "FCHAIN-doc-export",
       "target": "FUNC-view-rtm",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-generation-states",
-      "target": "FUNC-claim-store-lock",
       "type": "compose"
     },
     {
@@ -15295,11 +15297,6 @@
     },
     {
       "source": "FCHAIN-interface-escalation",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-interface-escalation",
       "target": "FUNC-graph-impact",
       "type": "compose",
       "weight": 1,
@@ -15346,11 +15343,6 @@
     {
       "source": "FCHAIN-live-update",
       "target": "FUNC-broadcast-diff",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-live-update",
-      "target": "FUNC-claim-store-lock",
       "type": "compose"
     },
     {
@@ -15411,11 +15403,6 @@
     },
     {
       "source": "FCHAIN-loop-closure",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-loop-closure",
       "target": "FUNC-graph-store",
       "type": "compose"
     },
@@ -15442,11 +15429,6 @@
     {
       "source": "FCHAIN-merge-branches",
       "target": "FUNC-merge-nodes",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-model-import",
-      "target": "FUNC-claim-store-lock",
       "type": "compose"
     },
     {
@@ -15488,11 +15470,6 @@
       "source": "FCHAIN-model-import",
       "target": "REQ-no-extraction",
       "type": "satisfy"
-    },
-    {
-      "source": "FCHAIN-modelfree-gate",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
     },
     {
       "source": "FCHAIN-modelfree-gate",
@@ -15546,11 +15523,6 @@
       "target": "FUNC-apply-reseed",
       "type": "compose",
       "weight": "1"
-    },
-    {
-      "source": "FCHAIN-recall",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
     },
     {
       "source": "FCHAIN-recall",
@@ -15665,11 +15637,6 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-close-violations",
       "type": "compose"
     },
@@ -15746,11 +15713,6 @@
     },
     {
       "source": "FCHAIN-skill-report",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-skill-report",
       "target": "FUNC-compute-readiness",
       "type": "compose"
     },
@@ -15809,11 +15771,6 @@
     },
     {
       "source": "FCHAIN-snapshot-freshness",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-snapshot-freshness",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
     },
@@ -15853,11 +15810,6 @@
       "target": "FUNC-arch-fitness",
       "type": "compose",
       "weight": "1"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
     },
     {
       "source": "FCHAIN-steering-loop",
@@ -15954,11 +15906,6 @@
       "source": "FCHAIN-steering-loop",
       "target": "REQ-risk-loop-oscillation",
       "type": "satisfy"
-    },
-    {
-      "source": "FCHAIN-test-ingest",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
     },
     {
       "source": "FCHAIN-test-ingest",
@@ -23467,5 +23414,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 707
+  "graphVersion": 710
 }

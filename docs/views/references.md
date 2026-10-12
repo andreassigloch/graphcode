@@ -785,7 +785,10 @@
 | `CR-GC-792` | relation | `FUNC-graph-store` |
 | `CR-GC-792` | relation | `FUNC-mutate` |
 | `CR-GC-792` | relation | `FUNC-se-retro` |
-| `FCHAIN-advisory-roundtrip` | compose | `FUNC-claim-store-lock` |
+| `CR-GC-793` | relation | `FUNC-bind-tools` |
+| `CR-GC-793` | relation | `FUNC-claim-store-lock` |
+| `CR-GC-793` | relation | `FUNC-graph-store` |
+| `CR-GC-793` | relation | `FUNC-schema-guard` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -794,7 +797,6 @@
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-read-tools` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-target-profile-load` |
 | `FCHAIN-advisory-roundtrip` | satisfy | `REQ-advisory-roundtrip-latency` |
-| `FCHAIN-agent-query` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-expand` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-impact` |
 | `FCHAIN-agent-query` | compose | `FUNC-graph-store` |
@@ -822,7 +824,6 @@
 | `FCHAIN-apply-gate` | satisfy | `REQ-post-apply-gate` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-pre-apply-gate` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-responsiveness` |
-| `FCHAIN-capture` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-capture` | compose | `FUNC-decode` |
 | `FCHAIN-capture` | compose | `FUNC-graph-store` |
 | `FCHAIN-capture` | compose | `FUNC-mutate` |
@@ -834,7 +835,6 @@
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-pre-codec-roundtrip` |
 | `FCHAIN-codec-roundtrip` | satisfy | `REQ-roundtrip-conformance` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-chain-metrics` |
-| `FCHAIN-dashboard-metrics` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-function-criticality` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-graph-metrics` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-graph-store` |
@@ -847,7 +847,6 @@
 | `FCHAIN-doc-export` | compose | `FUNC-view-icd` |
 | `FCHAIN-doc-export` | compose | `FUNC-view-intplan` |
 | `FCHAIN-doc-export` | compose | `FUNC-view-rtm` |
-| `FCHAIN-generation-states` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-generation-states` | compose | `FUNC-generation-step` |
 | `FCHAIN-generation-states` | compose | `FUNC-graph-store` |
 | `FCHAIN-generation-states` | compose | `FUNC-graph-suggest` |
@@ -859,7 +858,6 @@
 | `FCHAIN-impact-testing` | compose | `FUNC-resolve-tests-from-code` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-post-impact-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-pre-impact-testing` |
-| `FCHAIN-interface-escalation` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-graph-impact` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-graph-store` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-mutate` |
@@ -868,7 +866,6 @@
 | `FCHAIN-interface-escalation` | satisfy | `REQ-post-interface-escalation` |
 | `FCHAIN-interface-escalation` | satisfy | `REQ-pre-interface-escalation` |
 | `FCHAIN-live-update` | compose | `FUNC-broadcast-diff` |
-| `FCHAIN-live-update` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-live-update` | compose | `FUNC-emit-update-event` |
 | `FCHAIN-live-update` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-live-update` | compose | `FUNC-graph-store` |
@@ -880,14 +877,12 @@
 | `FCHAIN-live-update` | satisfy | `REQ-mutation-emits-event` |
 | `FCHAIN-loop-closure` | compose | `FUNC-audit-stats` |
 | `FCHAIN-loop-closure` | compose | `FUNC-audit-trail` |
-| `FCHAIN-loop-closure` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-loop-closure` | compose | `FUNC-graph-store` |
 | `FCHAIN-loop-closure` | compose | `FUNC-mutate` |
 | `FCHAIN-loop-closure` | compose | `FUNC-se-retro` |
 | `FCHAIN-loop-closure` | satisfy | `REQ-prompt-provenance` |
 | `FCHAIN-loop-closure` | satisfy | `REQ-rule-calibration` |
 | `FCHAIN-merge-branches` | compose | `FUNC-merge-nodes` |
-| `FCHAIN-model-import` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-model-import` | compose | `FUNC-cli-dispatch` |
 | `FCHAIN-model-import` | compose | `FUNC-graph-store` |
 | `FCHAIN-model-import` | compose | `FUNC-import-code` |
@@ -896,7 +891,6 @@
 | `FCHAIN-model-import` | compose | `FUNC-mutate` |
 | `FCHAIN-model-import` | satisfy | `REQ-model-exchange-post` |
 | `FCHAIN-model-import` | satisfy | `REQ-no-extraction` |
-| `FCHAIN-modelfree-gate` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-modelfree-gate` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-modelfree-gate` | compose | `FUNC-graph-store` |
 | `FCHAIN-modelfree-gate` | compose | `FUNC-mutate` |
@@ -905,7 +899,6 @@
 | `FCHAIN-modelfree-gate` | satisfy | `REQ-pre-modelfree-gate` |
 | `FCHAIN-modelfree-gate` | satisfy | `REQ-small-model-viable` |
 | `FCHAIN-recall` | compose | `FUNC-apply-reseed` |
-| `FCHAIN-recall` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-recall` | compose | `FUNC-graph-store` |
 | `FCHAIN-recall` | compose | `FUNC-held-back-traces` |
 | `FCHAIN-recall` | compose | `FUNC-import` |
@@ -928,7 +921,6 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-uc` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-chain-metrics` |
-| `FCHAIN-skill-authoring` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-close-violations` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-graph-store` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-mutate` |
@@ -944,7 +936,6 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-vorbereitung` |
 | `FCHAIN-skill-help` | compose | `FUNC-se-help` |
 | `FCHAIN-skill-report` | compose | `FUNC-check-code-conformance` |
-| `FCHAIN-skill-report` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-skill-report` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-skill-report` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-skill-report` | compose | `FUNC-graph-store` |
@@ -956,7 +947,6 @@
 | `FCHAIN-skill-report` | compose | `FUNC-test` |
 | `FCHAIN-skill-report` | compose | `FUNC-test-ui` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-auto-export` |
-| `FCHAIN-snapshot-freshness` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-export-marker` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-graph-export-snapshot` |
@@ -965,7 +955,6 @@
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-mutate` |
 | `FCHAIN-snapshot-freshness` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FCHAIN-steering-loop` | compose | `FUNC-arch-fitness` |
-| `FCHAIN-steering-loop` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-steering-delta` |
 | `FCHAIN-steering-loop` | compose | `FUNC-evaluate-rules` |
@@ -985,7 +974,6 @@
 | `FCHAIN-steering-loop` | satisfy | `REQ-monotone-convergence` |
 | `FCHAIN-steering-loop` | satisfy | `REQ-risk-loop-degradation` |
 | `FCHAIN-steering-loop` | satisfy | `REQ-risk-loop-oscillation` |
-| `FCHAIN-test-ingest` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-test-ingest` | compose | `FUNC-graph-store` |
 | `FCHAIN-test-ingest` | compose | `FUNC-mutate` |
 | `FCHAIN-test-ingest` | compose | `FUNC-test-ingest` |

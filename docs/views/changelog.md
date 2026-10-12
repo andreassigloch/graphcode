@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 402 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 403 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 402 CR · 343 done · 4 open.
+Total: 403 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -464,3 +464,4 @@ Total: 402 CR · 343 done · 4 open.
 | `CR-GC-790` | n/a | Trockenlauf zeigt die Kennzahlen danach nicht: Gesamt-Impact vor der Wahl nur halb |
 | `CR-GC-791` | n/a | Nachbarskills se:optimize und se-vorbereitung auf den Antwortweg nachziehen |
 | `CR-GC-792` | n/a | Antwortweg lesbar machen: Gate-Urteil trennen, Store und Sperre als Glied |
+| `CR-GC-793` | n/a | Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten |
