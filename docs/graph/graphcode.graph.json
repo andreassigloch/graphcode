@@ -3346,6 +3346,12 @@
       "description": "docs/cr/open/CR-GC-797-vorbereitung-ganzes-modell-ketten-schlie.md"
     },
     {
+      "id": "CR-GC-798",
+      "type": "CR",
+      "name": "FMEA aller Wirkketten des Modells (se-fmea v9)",
+      "description": "docs/cr/open/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6510,6 +6516,16 @@
       ]
     },
     {
+      "id": "REQ-interface-change-names-dependents",
+      "type": "REQ",
+      "name": "Schnittstellenaenderung nennt die Abhaengigen",
+      "description": "Jede angenommene Aenderung an einem FLOW oder SCHEMA nennt in der Antwort des Gates die Funktionen und Tests, die an dieser Schnittstelle haengen.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-interface-schema",
       "type": "REQ",
       "name": "Interface trägt ein Datenformat (SCHEMA)",
@@ -7216,6 +7232,20 @@
       "detection": 2
     },
     {
+      "id": "REQ-risk-interface-change-unescalated",
+      "type": "REQ",
+      "name": "Risiko Schnittstellenaenderung ohne Eskalation",
+      "description": "Ein FLOW oder SCHEMA wird geaendert, ohne dass die abhaengigen Funktionen und Tests benannt und neu zugeschnitten werden; die zugesagte Eskalation laeuft nicht.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-12. REQ-interface-change-escalation wird nur von der Kette erfuellt, keine Funktion fuehrt die Eskalation aus, TEST-interface-escalation ist ungebunden, im Quellcode gibt es keinen Eskalationsweg.",
+      "severity": 7,
+      "occurrence": 4,
+      "detection": 5
+    },
+    {
       "id": "REQ-risk-loop-degradation",
       "type": "REQ",
       "name": "Risiko falscher Befund laeuft um",
@@ -7256,6 +7286,20 @@
       "severity": 6,
       "occurrence": 3,
       "detection": 6
+    },
+    {
+      "id": "REQ-risk-stale-test-result",
+      "type": "REQ",
+      "name": "Risiko veraltetes Testergebnis",
+      "description": "Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Testergebnis, das vor der letzten Aenderung am Test oder am geprueften Code entstand.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-11, Kreislauf aus FUNC-graph-store, FUNC-mutate und FUNC-test-ingest. Das Ergebnis traegt ranAt, kein Leser wertet es aus (src/projections/testreport.ts:119; kein Leser in contracts/se). FM-03 und VR-01 lesen nur result.",
+      "severity": 8,
+      "occurrence": 5,
+      "detection": 7
     },
     {
       "id": "REQ-risk-store-unreadable",
@@ -7545,6 +7589,16 @@
       "type": "REQ",
       "name": "Zielbild: Blackboxing, strukturierbare Fremdsysteme, Vertragsoptimum",
       "description": "Am Ziel ist graphcode, wenn FUNC- und MOD-View ein vernuenftiges Blackboxing zeigen, sich aus den Regeln ein Konstrukt wie moneyflow oder sirail strukturieren laesst und die resultierenden Datenstroeme ein Optimum an Vertraegen haben. Leitlinie Satz 10.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-test-result-withdrawn-on-change",
+      "type": "REQ",
+      "name": "Testergebnis wird bei Aenderung zurueckgenommen",
+      "description": "Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das Ergebnis an seinen testRefs zurueck; der Eintrag gilt bis zur naechsten Rueckmeldung eines Laufs als nicht bestanden. Die betroffenen Tests sind die Menge, die die Testauswahl fuer dieselbe Aenderung liefert.",
+      "role": "mitigation",
       "kinds": [
         "functional"
       ]
@@ -8263,7 +8317,7 @@
           "graphVersion": 0
         },
         "fmea": {
-          "graphVersion": 715
+          "graphVersion": 720
         }
       }
     },
@@ -9282,6 +9336,12 @@
           "ranAt": "2026-09-27T06:48:48Z"
         }
       ]
+    },
+    {
+      "id": "TEST-interface-change-names-dependents",
+      "type": "TEST",
+      "name": "Schnittstellenaenderung nennt die Abhaengigen",
+      "description": "Prueft, dass die Antwort auf eine angenommene Aenderung an einem FLOW die abhaengigen Funktionen und Tests nennt."
     },
     {
       "id": "TEST-interface-escalation",
@@ -10357,6 +10417,12 @@
           "level": "integration"
         }
       ]
+    },
+    {
+      "id": "TEST-test-result-withdrawn-on-change",
+      "type": "TEST",
+      "name": "Testergebnis wird bei Aenderung zurueckgenommen",
+      "description": "Prueft, dass nach einer gemeldeten Aenderung an der Datei eines gebundenen Tests der Eintrag kein Ergebnis mehr traegt und FM-03 das Risiko als unverifiziert meldet, bis ein neuer Lauf zurueckgemeldet ist."
     },
     {
       "id": "TEST-test-runnable-binding",
@@ -15028,6 +15094,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-798",
+      "target": "REQ-interface-change-names-dependents",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-798",
+      "target": "REQ-risk-interface-change-unescalated",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-798",
+      "target": "REQ-risk-stale-test-result",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-798",
+      "target": "REQ-test-result-withdrawn-on-change",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15463,6 +15549,11 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
+      "target": "REQ-risk-interface-change-unescalated",
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-live-update",
@@ -16100,6 +16191,11 @@
       "source": "FCHAIN-test-ingest",
       "target": "FUNC-test-ingest",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-test-ingest",
+      "target": "REQ-risk-stale-test-result",
+      "type": "satisfy"
     },
     {
       "source": "FLOW-action",
@@ -20307,6 +20403,11 @@
     },
     {
       "source": "FUNC-test-ingest",
+      "target": "REQ-test-result-withdrawn-on-change",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-test-ingest",
       "target": "REQ-test-runnable-binding",
       "type": "satisfy"
     },
@@ -20870,6 +20971,11 @@
       "type": "compose"
     },
     {
+      "source": "REQ-risk-interface-change-unescalated",
+      "target": "REQ-interface-change-names-dependents",
+      "type": "compose"
+    },
+    {
       "source": "REQ-risk-loop-degradation",
       "target": "REQ-loop-convergence-monitor",
       "type": "compose"
@@ -20882,6 +20988,11 @@
     {
       "source": "REQ-risk-shared-steering-promise",
       "target": "REQ-steering-promise-one-owner",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-stale-test-result",
+      "target": "REQ-test-result-withdrawn-on-change",
       "type": "compose"
     },
     {
@@ -21960,6 +22071,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-interface-change-names-dependents",
+      "target": "REQ-interface-change-names-dependents",
+      "type": "verify"
+    },
+    {
       "source": "TEST-interface-escalation",
       "target": "REQ-interface-change-escalation",
       "type": "verify",
@@ -21974,6 +22090,11 @@
     {
       "source": "TEST-interface-escalation",
       "target": "REQ-pre-interface-escalation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-interface-escalation",
+      "target": "REQ-risk-interface-change-unescalated",
       "type": "verify"
     },
     {
@@ -22757,6 +22878,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-test-result-withdrawn-on-change",
+      "target": "REQ-risk-stale-test-result",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-result-withdrawn-on-change",
+      "target": "REQ-test-result-withdrawn-on-change",
+      "type": "verify"
+    },
+    {
       "source": "TEST-test-runnable-binding",
       "target": "REQ-test-runnable-binding",
       "type": "verify",
@@ -23095,6 +23226,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-risk-interface-change-unescalated",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-roundtrip-conformance",
       "type": "compose"
     },
@@ -23282,6 +23418,11 @@
     {
       "source": "UC-efficient-testing",
       "target": "REQ-pre-impact-testing",
+      "type": "compose"
+    },
+    {
+      "source": "UC-efficient-testing",
+      "target": "REQ-risk-stale-test-result",
       "type": "compose"
     },
     {
@@ -23621,5 +23762,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 718
+  "graphVersion": 721
 }

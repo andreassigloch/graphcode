@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 163 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 167 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 51 REQ
@@ -63,7 +63,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 113 REQ
+### funktional (SWE.1 · HWE.1) — 117 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -103,6 +103,7 @@
 | `REQ-install-idempotent` | `TEST-cli-scaffold` · `TEST-upgrade` | `MOD-surface` | — |
 | `REQ-interactive-capture-suggest` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-uc-authoring-style` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
+| `REQ-interface-change-names-dependents` | `TEST-interface-change-names-dependents` | — | — |
 | `REQ-laufzeit-reads-answer-path` | `TEST-laufzeit-reads-answer-path` | `FUNC-se-laufzeit` | `MOD-agent-surface` |
 | `REQ-loop-convergence-monitor` | `TEST-loop-convergence-monitor` | — | — |
 | `REQ-loop-round-log` | `TEST-loop-round-log` | `FUNC-generation-step` | `MOD-loop` |
@@ -152,9 +153,11 @@
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `MOD-surface` | — |
 | `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-collect-status` · `FUNC-health-endpoint` | `MOD-surface` |
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-surface` |
+| `REQ-risk-interface-change-unescalated` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-risk-loop-degradation` | `TEST-loop-convergence-monitor` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-loop-oscillation` | `TEST-loop-round-log` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-shared-steering-promise` | `TEST-steering-promise-one-owner` | `FCHAIN-steering-loop` | — |
+| `REQ-risk-stale-test-result` | `TEST-test-result-withdrawn-on-change` | `FCHAIN-test-ingest` | — |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
@@ -172,6 +175,7 @@
 | `REQ-structure-driven` | `TEST-code-quality` · `TEST-mutate-schema-guard` · `TEST-se-plan-ordering` | `SYS-graphcode` | — |
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` | `FUNC-graph-impact` | `MOD-kernel` |
 | `REQ-target-shifts-ranking` | `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` · `FUNC-target-profile-load` | `MOD-loop` |
+| `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 | `REQ-test-runnable-binding` | `TEST-formate-binding` · `TEST-graph-realize` · `TEST-test-runnable-binding` · `TEST-testreport` | `FUNC-deduce-tests` · `FUNC-test-ingest` | `MOD-projections` |
 | `REQ-test-skill-red-first` | `TEST-skill-red-first` | `FUNC-test` · `FUNC-test-ui` | `MOD-agent-surface` |
 | `REQ-thresholds-from-config` | `TEST-target-profile` · `TEST-thresholds-from-config` | `FUNC-load-config` | `MOD-kernel` |
@@ -181,7 +185,7 @@
 | `REQ-vorbereitung-reads-metrics` | `TEST-vorbereitung-reads-metrics` | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `REQ-zug-zeigt-kennzahlen-danach` | `TEST-zug-kennzahlen-danach` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 
-### Architektur (SYS.3 · SWE.2) — 37 REQ
+### Architektur (SYS.3 · SWE.2) — 41 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -191,6 +195,7 @@
 | `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` | — |
 | `REQ-interactive-capture-suggest` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-uc-authoring-style` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
+| `REQ-interface-change-names-dependents` | `TEST-interface-change-names-dependents` | — | — |
 | `REQ-loop-convergence-monitor` | `TEST-loop-convergence-monitor` | — | — |
 | `REQ-loop-round-log` | `TEST-loop-round-log` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-mcp-gate-symmetry` | `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` | `FCHAIN-apply-gate` | — |
@@ -215,15 +220,18 @@
 | `REQ-precise-context` | `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | `FCHAIN-agent-query` | — |
 | `REQ-prompt-provenance` | `TEST-prompt-provenance` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
+| `REQ-risk-interface-change-unescalated` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-risk-loop-degradation` | `TEST-loop-convergence-monitor` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-loop-oscillation` | `TEST-loop-round-log` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-shared-steering-promise` | `TEST-steering-promise-one-owner` | `FCHAIN-steering-loop` | — |
+| `REQ-risk-stale-test-result` | `TEST-test-result-withdrawn-on-change` | `FCHAIN-test-ingest` | — |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 | `REQ-steering-promise-one-owner` | `TEST-steering-promise-one-owner` | `FUNC-generation-step` | `MOD-loop` |
+| `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 121 REQ
+### Entwurf (SWE.3 · HWE.2) — 122 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -338,6 +346,7 @@
 | `REQ-structural-rule-shared` | `TEST-graph-authoring-guide` · `TEST-mutate-gate` | `MOD-kernel` | — |
 | `REQ-subgraph-slicing` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` | `FUNC-graph-impact` | `MOD-kernel` |
 | `REQ-target-shifts-ranking` | `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` · `FUNC-target-profile-load` | `MOD-loop` |
+| `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 | `REQ-test-runnable-binding` | `TEST-formate-binding` · `TEST-graph-realize` · `TEST-test-runnable-binding` · `TEST-testreport` | `FUNC-deduce-tests` · `FUNC-test-ingest` | `MOD-projections` |
 | `REQ-test-skill-red-first` | `TEST-skill-red-first` | `FUNC-test` · `FUNC-test-ui` | `MOD-agent-surface` |
 | `REQ-testref-materialized` | `TEST-realref-materialize` · `TEST-testref-materialize` | `MOD-projections` | — |

@@ -4,14 +4,16 @@
 
 # graphcode — FMEA (functional risk)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk (severity/occurrence/detection nach FM-01). 5 Risiken. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk (severity/occurrence/detection nach FM-01). 7 Risiken. Deterministisch generiert.
 
 | Failure mode (REQ role=risk) | S | O | D | RPN | Mitigation | verifiziert |
 |---|---|---|---|---|---|---|
 | Die Regelauswertung wirft oder haengt im Gate. Kein Schreibvorgang kommt mehr durch, in keiner der Wirkketten durch das Gate. | 8 | 2 | 2 | 32 | `REQ-gate-survives-rule-failure` | ✗ |
+| Ein FLOW oder SCHEMA wird geaendert, ohne dass die abhaengigen Funktionen und Tests benannt und neu zugeschnitten werden; die zugesagte Eskalation laeuft nicht. | 7 | 4 | 5 | 140 | `REQ-interface-change-names-dependents` | ✗ |
 | Ein falscher Regelbefund laeuft im Kreislauf um: falscher Fokus, falscher Vorschlag, angewandt, weitere Befunde. Das Modell wird schlechter, waehrend jede einzelne Runde Fortschritt meldet. | 8 | 3 | 7 | 168 | `REQ-loop-convergence-monitor` | ✗ |
 | Die Steuerungsschleife pendelt ueber Sitzungen hinweg: ein angewandter Vorschlag erzeugt den Befund, den der naechste zuruecknimmt, und nach einem Neustart des Hosts beginnt die Zaehlung der Wiederholungen neu. Der Nutzer dreht Runden ohne Fortschritt. | 6 | 4 | 5 | 120 | `REQ-loop-round-log` | ✗ |
 | Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann verletzt sein, ohne dass eine der acht Funktionen ausfaellt, die sie gemeinsam erfuellen. | 6 | 3 | 6 | 108 | `REQ-steering-promise-one-owner` | ✗ |
+| Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Testergebnis, das vor der letzten Aenderung am Test oder am geprueften Code entstand. | 8 | 5 | 7 | 280 | `REQ-test-result-withdrawn-on-change` | ✗ |
 | Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis. | 9 | 3 | 3 | 81 | `REQ-store-recovery` | ✗ |
 
 > RENDER der risk/mitigation-REQ, die `se-fmea` durchs Gate geschrieben hat.

@@ -803,6 +803,10 @@
 | `CR-GC-797` | relation | `FUNC-serve-stdio` |
 | `CR-GC-797` | relation | `FUNC-tool-context` |
 | `CR-GC-797` | relation | `REQ-audit-trail` |
+| `CR-GC-798` | relation | `REQ-interface-change-names-dependents` |
+| `CR-GC-798` | relation | `REQ-risk-interface-change-unescalated` |
+| `CR-GC-798` | relation | `REQ-risk-stale-test-result` |
+| `CR-GC-798` | relation | `REQ-test-result-withdrawn-on-change` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -879,6 +883,7 @@
 | `FCHAIN-interface-escalation` | satisfy | `REQ-interface-change-escalation` |
 | `FCHAIN-interface-escalation` | satisfy | `REQ-post-interface-escalation` |
 | `FCHAIN-interface-escalation` | satisfy | `REQ-pre-interface-escalation` |
+| `FCHAIN-interface-escalation` | satisfy | `REQ-risk-interface-change-unescalated` |
 | `FCHAIN-live-update` | compose | `FUNC-broadcast-diff` |
 | `FCHAIN-live-update` | compose | `FUNC-emit-update-event` |
 | `FCHAIN-live-update` | compose | `FUNC-evaluate-rules` |
@@ -1002,6 +1007,7 @@
 | `FCHAIN-test-ingest` | compose | `FUNC-graph-store` |
 | `FCHAIN-test-ingest` | compose | `FUNC-mutate` |
 | `FCHAIN-test-ingest` | compose | `FUNC-test-ingest` |
+| `FCHAIN-test-ingest` | satisfy | `REQ-risk-stale-test-result` |
 | `FLOW-action` | io | `ACTOR-agent` |
 | `FLOW-action` | relation | `SCHEMA-action` |
 | `FLOW-arch-fitness` | io | `FUNC-fit-advisory` |
@@ -1819,6 +1825,7 @@
 | `FUNC-test` | satisfy | `REQ-test-skill-red-first` |
 | `FUNC-test-ingest` | allocate | `MOD-projections` |
 | `FUNC-test-ingest` | io | `FLOW-mutate-cmd-test-ingest` |
+| `FUNC-test-ingest` | satisfy | `REQ-test-result-withdrawn-on-change` |
 | `FUNC-test-ingest` | satisfy | `REQ-test-runnable-binding` |
 | `FUNC-test-ui` | allocate | `MOD-agent-surface` |
 | `FUNC-test-ui` | io | `FLOW-skill-report-test-ui` |
@@ -1922,9 +1929,11 @@
 | `REQ-graph-is-ssot` | compose | `REQ-held-back-traces-named` |
 | `REQ-one-gate-per-repo` | compose | `REQ-gate-only-writes` |
 | `REQ-risk-gate-rule-eval-fails` | compose | `REQ-gate-survives-rule-failure` |
+| `REQ-risk-interface-change-unescalated` | compose | `REQ-interface-change-names-dependents` |
 | `REQ-risk-loop-degradation` | compose | `REQ-loop-convergence-monitor` |
 | `REQ-risk-loop-oscillation` | compose | `REQ-loop-round-log` |
 | `REQ-risk-shared-steering-promise` | compose | `REQ-steering-promise-one-owner` |
+| `REQ-risk-stale-test-result` | compose | `REQ-test-result-withdrawn-on-change` |
 | `REQ-risk-store-unreadable` | compose | `REQ-store-recovery` |
 | `REQ-single-kuzu-owner` | compose | `REQ-store-owner-lifecycle` |
 | `REQ-token-efficiency` | compose | `REQ-benchmark-harness` |
@@ -2122,9 +2131,11 @@
 | `TEST-inject-graph-slice` | verify | `REQ-subgraph-slicing` |
 | `TEST-intent-anchors-internal` | verify | `REQ-interactive-capture-suggest` |
 | `TEST-intent-anchors-wortart` | verify | `REQ-interactive-capture-suggest` |
+| `TEST-interface-change-names-dependents` | verify | `REQ-interface-change-names-dependents` |
 | `TEST-interface-escalation` | verify | `REQ-interface-change-escalation` |
 | `TEST-interface-escalation` | verify | `REQ-post-interface-escalation` |
 | `TEST-interface-escalation` | verify | `REQ-pre-interface-escalation` |
+| `TEST-interface-escalation` | verify | `REQ-risk-interface-change-unescalated` |
 | `TEST-laufzeit-reads-answer-path` | verify | `REQ-laufzeit-reads-answer-path` |
 | `TEST-learning-emit` | verify | `REQ-post-emit-trajectory` |
 | `TEST-learning-emit` | verify | `REQ-pre-emit-trajectory` |
@@ -2271,6 +2282,8 @@
 | `TEST-target-shifts-ranking` | verify | `REQ-target-shifts-ranking` |
 | `TEST-target-state` | verify | `REQ-target-state` |
 | `TEST-task-analysen` | verify | `REQ-analyse-artefakt-vor-stempel` |
+| `TEST-test-result-withdrawn-on-change` | verify | `REQ-risk-stale-test-result` |
+| `TEST-test-result-withdrawn-on-change` | verify | `REQ-test-result-withdrawn-on-change` |
 | `TEST-test-runnable-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-test-schlupf` | verify | `REQ-full-run-on-probation` |
 | `TEST-test-schlupf` | verify | `SCHEMA-schlupf-zeile` |
@@ -2334,6 +2347,7 @@
 | `UC-code-quality` | compose | `REQ-pre-interface-escalation` |
 | `UC-code-quality` | compose | `REQ-published-counts-match-code` |
 | `UC-code-quality` | compose | `REQ-quality-metric` |
+| `UC-code-quality` | compose | `REQ-risk-interface-change-unescalated` |
 | `UC-code-quality` | compose | `REQ-roundtrip-conformance` |
 | `UC-code-quality` | compose | `REQ-rule-enforcement` |
 | `UC-code-quality` | compose | `REQ-single-write-door` |
@@ -2371,6 +2385,7 @@
 | `UC-efficient-testing` | compose | `REQ-impact-based-testing` |
 | `UC-efficient-testing` | compose | `REQ-post-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-pre-impact-testing` |
+| `UC-efficient-testing` | compose | `REQ-risk-stale-test-result` |
 | `UC-efficient-testing` | compose | `REQ-selective-code-lane` |
 | `UC-efficient-testing` | compose | `REQ-test-runnable-binding` |
 | `UC-graph-time-travel` | compose | `FCHAIN-merge-branches` |
