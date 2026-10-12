@@ -1,6 +1,6 @@
 # CR-GC-790: Trockenlauf zeigt die Kennzahlen danach nicht: Gesamt-Impact vor der Wahl nur halb
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-12)
 **Typ:** aus Item ITEM-2026-836 (finding)
 **Erstellt:** 2026-10-12
 **Item:** bok/items/ITEM-2026-836.json (Lane: code)
