@@ -239,6 +239,21 @@ ihrer Art ab:
   Fall „der Speicher fehlt als Glied" (Architekturkonzept, „Voraussetzung") wird so nicht erkannt. Ob eine
   Kette der Länge 1 ein Befund ist, ist nicht entschieden.
 
+- **Zusätzliche Merkmale aus dem Architekturkonzept** (dort Abschnitte „Skalierungsklasse und Volatilität" und
+  „Verhältnis zu R⁶"). Der Abgleich mit den Architekturregeln (`docs/project/architekturregeln-abgleich.md`,
+  2026-10-12) stuft ihren Mehrwert als gering ein:
+  - *Fehlerflüsse und Fehlerpfad-Tiefe:* die Kennzahl ist zur Streichung vorgeschlagen (ITEM-2026-882); die
+    Entscheidung, die sie stützen sollte, trifft die FMEA mit den Trägern je Risiko. Verloren ginge die
+    Bewertung von Kompensationsketten.
+  - *Volatilität und der damit gewichtete Blast-Radius:* Änderungskosten sind die getroffenen Ketten und
+    Anforderungen, die `graph_impact` vor jeder Änderung nennt; ein Vorhalt ist eine Anforderung, keine
+    Kennzahl.
+  - *Iteration:* Kreisläufe findet die Rechnung der Orte aus der Struktur; ein Merkmal am Fluss braucht es
+    dafür nicht.
+  - *Skalierungsklasse:* im Abgleich nicht beurteilt. Sie ist nicht gebaut, und kein Leser wartet auf sie.
+- **Prognose gegen Messung.** Ein Vorschlag trägt eine Prognose, der Probelauf zeigt die Kennzahlen danach;
+  niemand vergleicht beides nach dem Umbau (ITEM-2026-886).
+
 ## 9. Was daraus folgt
 
 Bewegt werden die Tests der Leitlinie §9: T-O1 (Kettenkennzahlen), T-O2 (Profil auf der Kette mit

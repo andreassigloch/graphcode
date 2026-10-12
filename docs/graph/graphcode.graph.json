@@ -3382,6 +3382,12 @@
       "description": "docs/cr/open/CR-GC-803-vorbereitung-nach-fmea-nachtrag-gegenmas.md"
     },
     {
+      "id": "CR-GC-804",
+      "type": "CR",
+      "name": "Zielprofil: als Anforderungen im Modell statt als Datei, und Bewertung von sechs auf zwei Dimensionen (Diskussion)",
+      "description": "docs/cr/open/CR-GC-804-zielprofil-als-anforderungen-im-modell-s.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -15611,6 +15617,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-804",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-804",
+      "target": "FUNC-target-profile",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-804",
+      "target": "FUNC-target-profile-load",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -24564,5 +24585,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 743
+  "graphVersion": 745
 }

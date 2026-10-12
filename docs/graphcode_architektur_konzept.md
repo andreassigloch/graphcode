@@ -272,33 +272,19 @@ Architekturteil stehen.
 
 ## Umsetzung in GraphCode
 
-Die Umsetzung braucht keine neuen Modellelementtypen. Sie ergänzt Attribute, eine Regel und eine
-Bewertungsstufe — das ist trotzdem eine contracts-Änderung mit Familie-Review und Versionssprung
-(neue Regel FC-05, neue Pflichtattribute, reduzierte R⁶ in se-engine).
+Die Checkliste dieses Abschnitts ist aufgelöst (2026-10-12). Gebaut oder überholt: die Regel FC-05 mit der
+Bewertbarkeitsquote (CR-SM-363), das Fluss-Merkmal `sync` (CR-SM-364), die Berechnung der Kettenkennzahlen
+(CR-SM-404), das Nachmessen der berührten Ketten im Probelauf (CR-GC-790); die feste Rangfolge aus Kennzahlen
+ist gestrichen (CR-GC-781).
 
-- [ ] FC-05 „Kette ist gerichtet zusammenhängend" + Bewertbarkeitsquote je Modell → CR-SM-363
-- [ ] FLOW-Attribute `sync` (sync/async) und `iterates`; Markierung von Fehler-/Kompensationsflüssen → CR-SM-364 (Review-Runde ausstehend)
-- [ ] REQ-Attribut `source` (Fachlogik / Regulierung / Fremdsystem) und Ableitungsregel für Volatilität
-- [ ] Element-Attribut Skalierungsklasse
-- [ ] Deterministische Berechnung der acht Kettenkennzahlen und der dominierenden Skalierungsklasse
-      pro FCHAIN (Spike-Referenz: `scripts/spike-kettenkennzahlen.mjs`)
-- [ ] Blast-Radius rückwärts (satisfy/verify) ergänzen, volatilitätsgewichtet
-- [ ] Profil als NFR-REQs (FCHAIN bzw. SYS erfüllt REQ); `target-profile.json` und Skill
-      `se:target-profile` umstellen
-- [ ] Bewertung Kette gegen Profil mit Diagnose (Kennzahl + treibender Knoten) und zulässigen
-      Handlungsklassen; `graph_suggest` auf die lexikographische Rangfolge umstellen
-- [ ] Fit-Advisory je Mutation: nur die Ketten durch die berührten FUNCs nachmessen
-- [ ] R⁶ auf die zwei Modellgüte-Dimensionen reduzieren; Realisierungsdimensionen löschen
-- [ ] Vorher/Nachher-Prognose in das Closed-Loop-Framework einhängen
+Was offen ist, steht nicht mehr hier:
 
-### Offene Fragen
-
-- Wie werden die Profilschwellen kalibriert, bevor Betriebsdaten vorliegen? (Vorschlag: Verteilung
-  der Kettenkennzahlen über den Familie-Korpus als Ausgangspunkt, sobald die Bewertbarkeitsquote
-  ≥ 0,8 ist.)
-- Wie wird ein asynchroner Übergang am FLOW markiert, wenn ein FLOW mehrere Verbraucher mit
-  unterschiedlicher Kopplung hat? (Ein Attribut je FLOW reicht dann nicht; ggf. FLOW aufteilen.)
-- Tragen die Kettenkennzahlen Information jenseits von R⁶? Im Spike nicht entscheidbar (siehe unten).
+- **Zielprofil als Anforderungen im Modell und die Kürzung der Bewertung auf zwei Dimensionen**, samt der
+  Fragen nach der Eichung der Schwellen und dem Mehrwert gegenüber R⁶: Diskussion in CR-GC-804.
+- **Die zusätzlichen Merkmale** (Volatilität, Skalierungsklasse, Fehlerflüsse, Iteration) und der Vergleich
+  von Prognose und Messung: `docs/graphcode_analyse_optimierungskonzept.md`, „Offen im Konzept".
+- **Ein Fluss mit Verbrauchern unterschiedlicher Kopplung** wird in zwei Flüsse getrennt (Entscheidung des
+  Autors, 2026-10-12; Skill `se-vorbereitung`, Schritt 3).
 
 ## Spike-Befund (25.09.2026)
 

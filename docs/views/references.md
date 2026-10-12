@@ -839,6 +839,9 @@
 | `CR-GC-803` | relation | `REQ-export-no-clobber` |
 | `CR-GC-803` | relation | `REQ-graph-snapshot-per-commit` |
 | `CR-GC-803` | relation | `REQ-single-measurement-path` |
+| `CR-GC-804` | relation | `FUNC-graph-suggest` |
+| `CR-GC-804` | relation | `FUNC-target-profile` |
+| `CR-GC-804` | relation | `FUNC-target-profile-load` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
