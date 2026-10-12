@@ -98,6 +98,30 @@ export function nodesForFile(file: string, byFile: Map<string, string[]>, mods: 
   return owner ? [owner.uid] : [];
 }
 
+/**
+ * Geänderte Dateien → die Knoten-uids, die `graph_test_ingest` als `changeSet` bekommt (CR-GC-800).
+ *
+ * Dieselbe Abbildung wie die Auswahl (`nodesForFile`), damit Rücknahme und Lauf über dieselbe
+ * Menge sprechen. Eine geänderte Testdatei meldet die TEST-Knoten, die sie binden: ihr Ergebnis
+ * stammt von der alten Fassung. Doku, Snapshot und Dateien ohne Knoten und ohne Modul melden nichts.
+ */
+export function changeSetFor(changedFiles: string[], ctx: AuditContext): string[] {
+  const uids = new Set<string>();
+  for (const file of changedFiles) {
+    if (ctx.allTests.includes(file)) {
+      for (const n of ctx.graph.nodes) {
+        if (n.type !== 'TEST') continue;
+        const refs = n.attributes?.testRefs as Array<{ file?: string }> | undefined;
+        if (Array.isArray(refs) && refs.some((r) => r.file === file)) uids.add(n.uid);
+      }
+      continue;
+    }
+    if (!isSourceFile(file)) continue;
+    for (const uid of nodesForFile(file, ctx.byFile, ctx.mods)) uids.add(uid);
+  }
+  return [...uids].sort();
+}
+
 /** TEST-Knoten → die Dateien, die sie als Evidenz-Adresse tragen. */
 export function testFilesOf(graph: Graph, testIds: string[]): { files: string[]; unresolved: string[] } {
   const byUid = new Map(graph.nodes.map((n) => [n.uid, n]));

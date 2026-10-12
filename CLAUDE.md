@@ -126,6 +126,10 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
   changeset and every impacted TEST without `testRefs`, and falls back to the FULL lane whenever a
   changed source file has no node, a build/dependency trigger is in the diff, or the selection would
   be empty. A lane that reports green because it saw less is worse than no lane.
+- **The lanes report back** (CR-GC-800). After the run, `verify:code` and `verify:full` send the changed
+  nodes and the run report to `graph_test_ingest`: an impacted TEST without a fresh result loses its
+  result, so `passed` never outlives the change. The model moves — commit `docs/graph` and `docs/views`
+  with the change. A failed report turns the lane red; `--plan` reports nothing.
 - **Read the `unresolved` list.** An unbound TEST has no run artifact; a selected run that
   skips it is not coverage, and `graph_tests` reports it rather than dropping it silently.
 - **Real tests, no mocks.** Persistence on disk, never `:memory:`.

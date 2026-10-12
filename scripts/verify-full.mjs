@@ -11,6 +11,10 @@
  * Arbeitsbaum. Auswahl und Zusage kommen aus denselben Funktionen wie `verify:code`
  * (`selectForChange`/`planCodeLane`) — kein zweiter Pfad. Setzt einen aktuellen Build voraus.
  *
+ * Nach dem Lauf meldet er zurück (CR-GC-800): die Änderung des CR und der Bericht gehen an
+ * `graph_test_ingest`. Betroffene Tests ohne frisches Ergebnis verlieren ihres. Scheitert die
+ * Meldung, endet der Lauf rot — ein grüner Lauf, dessen Ergebnis nicht ankommt, ist keiner.
+ *
  * Usage: node scripts/verify-full.mjs <CR-ID>
  *
  * @author andreas@siglochconsulting
@@ -19,7 +23,8 @@ import { spawnSync, execFileSync } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
-import { buildContext, planCodeLane, selectForChange } from '../dist/projections/test-selection-audit.js';
+import { buildContext, changeSetFor, planCodeLane, selectForChange } from '../dist/projections/test-selection-audit.js';
+import { meldeZurueck, meldungsZeile } from './aenderung-melden.mjs';
 import { INCLUDED as MODEL_TESTS } from './model-test-set.mjs';
 import { blackboxBindung, leseSchlupfZeilen, schlupfFreieFolge, schlupfVon, SchlupfZeileSchema, SCHLUPF_SCHWELLE } from '../dist/projections/test-schlupf.js';
 
@@ -52,6 +57,13 @@ if (existsSync(bericht)) {
   const json = JSON.parse(readFileSync(bericht, 'utf8'));
   gesamt = json.testResults.length;
   rot = json.testResults.filter((t) => t.status === 'failed').map((t) => relative(repoRoot, t.name)).sort();
+}
+let meldung = null;
+let meldungFehler = null;
+try {
+  meldung = await meldeZurueck({ repoRoot, changeSet: changeSetFor(files, ctx), berichtPfad: bericht });
+} catch (err) {
+  meldungFehler = err;
 }
 rmSync(tmp, { recursive: true, force: true });
 
@@ -88,4 +100,10 @@ console.error(
     ? `[verify:full] ${folge} CRs der CODE-Spur ohne Schlupf — der Volllauf je CR ist verzichtbar (CI + Publish bleiben).`
     : `[verify:full] Folge ohne Schlupf: ${folge}/${SCHLUPF_SCHWELLE} — bis dahin bleibt der Volllauf vor jedem CR-Abschluss.`,
 );
+if (meldungFehler) {
+  console.error(`[verify:full] Rueckmeldung GESCHEITERT: ${meldungFehler.message}`);
+  process.exit(1);
+}
+console.error(meldungsZeile('verify:full', meldung));
+if (meldung) console.error('[verify:full]   docs/graph und docs/views tragen jetzt die Ergebnisse — mit dem CR committen.');
 process.exit(res.status ?? 1);

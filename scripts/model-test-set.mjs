@@ -142,6 +142,10 @@ export const EXCLUDED = {
     'CR-GC-719: nennt `docs/graph/` nur als PFAD, unter dem der Test eine eigene formfremde bzw.\n' +
     'vertragstreue SSOT-Datei in ein TEMP-Repo schreibt (SCHEMA-ontology-json). graphcodes eigene SSOT\n' +
     'liest er nie — eine Modellaenderung kann ihn nicht rot machen; eine Aenderung am Vertrag sehr wohl.',
+  'tests/aenderungsmeldung.test.ts':
+    'CR-GC-800: nennt `docs/graph/` nur als PFAD, unter dem der Test einen eigenen Snapshot in ein TEMP-Repo\n' +
+    'schreibt, den ein echter Host einliest. graphcodes eigene SSOT liest er nie — eine Modellaenderung kann\n' +
+    'ihn nicht rot machen; eine Aenderung an der Rueckmeldung der Spur sehr wohl (Spur CODE).',
   'tests/attributvertraege.test.ts':
     'CR-GC-643: prueft das Leseverhalten von Code (graph_tests, Verifikationsbericht, Code-Fakten) auf einem Wegwerf-Store — eine Code-Aenderung bricht es, kein Modell-Zug. Der Modellteil (RC-09 am committeten Modell) steht in conformance.test.ts.',
   'tests/retro-kpi.test.ts':

@@ -811,6 +811,10 @@
 | `CR-GC-799` | relation | `FUNC-test-ingest` |
 | `CR-GC-799` | relation | `REQ-risk-stale-test-result` |
 | `CR-GC-799` | relation | `REQ-test-result-withdrawn-on-change` |
+| `CR-GC-800` | relation | `FUNC-measure-test-schlupf` |
+| `CR-GC-800` | relation | `FUNC-plan-code-lane` |
+| `CR-GC-800` | relation | `REQ-lane-reports-change` |
+| `CR-GC-800` | relation | `REQ-risk-stale-test-result` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1726,6 +1730,7 @@
 | `FUNC-own-kuzu-host` | satisfy | `REQ-store-owner-lifecycle` |
 | `FUNC-plan-code-lane` | allocate | `MOD-projections` |
 | `FUNC-plan-code-lane` | io | `FLOW-code-lane-plan` |
+| `FUNC-plan-code-lane` | satisfy | `REQ-lane-reports-change` |
 | `FUNC-plan-code-lane` | satisfy | `REQ-selective-code-lane` |
 | `FUNC-read-tools` | allocate | `MOD-surface` |
 | `FUNC-read-tools` | io | `FLOW-formatE-artifact-read-tools` |
@@ -1939,6 +1944,7 @@
 | `REQ-risk-loop-degradation` | compose | `REQ-loop-convergence-monitor` |
 | `REQ-risk-loop-oscillation` | compose | `REQ-loop-round-log` |
 | `REQ-risk-shared-steering-promise` | compose | `REQ-steering-promise-one-owner` |
+| `REQ-risk-stale-test-result` | compose | `REQ-lane-reports-change` |
 | `REQ-risk-stale-test-result` | compose | `REQ-test-result-withdrawn-on-change` |
 | `REQ-risk-store-unreadable` | compose | `REQ-store-recovery` |
 | `REQ-single-kuzu-owner` | compose | `REQ-store-owner-lifecycle` |
@@ -2142,6 +2148,8 @@
 | `TEST-interface-escalation` | verify | `REQ-post-interface-escalation` |
 | `TEST-interface-escalation` | verify | `REQ-pre-interface-escalation` |
 | `TEST-interface-escalation` | verify | `REQ-risk-interface-change-unescalated` |
+| `TEST-lane-reports-change` | verify | `REQ-lane-reports-change` |
+| `TEST-lane-reports-change` | verify | `REQ-risk-stale-test-result` |
 | `TEST-laufzeit-reads-answer-path` | verify | `REQ-laufzeit-reads-answer-path` |
 | `TEST-learning-emit` | verify | `REQ-post-emit-trajectory` |
 | `TEST-learning-emit` | verify | `REQ-pre-emit-trajectory` |

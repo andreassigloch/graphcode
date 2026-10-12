@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 167 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 168 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -66,6 +66,7 @@
 | `REQ-interface-change-escalation` | ✓ | ⚠ nie gelaufen | `TEST-interface-escalation` |
 | `REQ-interface-change-names-dependents` | ✓ | ⚠ nie gelaufen | `TEST-interface-change-names-dependents` |
 | `REQ-interface-schema` | ✓ | ✓ passed | `TEST-readiness-completeness` |
+| `REQ-lane-reports-change` | ✓ | ✓ passed | `TEST-lane-reports-change` |
 | `REQ-laufzeit-reads-answer-path` | ✓ | ✓ passed | `TEST-laufzeit-reads-answer-path` |
 | `REQ-live-event-in-contracts` | ✓ | ✓ passed | `TEST-live-event-contract` |
 | `REQ-loop-convergence-monitor` | ✓ | ⚠ nie gelaufen | `TEST-loop-convergence-monitor` |
@@ -134,7 +135,7 @@
 | `REQ-risk-loop-degradation` | ✓ | ⚠ nie gelaufen | `TEST-loop-convergence-monitor` |
 | `REQ-risk-loop-oscillation` | ✓ | ⚠ nie gelaufen | `TEST-loop-round-log` |
 | `REQ-risk-shared-steering-promise` | ✓ | ⚠ nie gelaufen | `TEST-steering-promise-one-owner` |
-| `REQ-risk-stale-test-result` | ✓ | ✓ passed | `TEST-test-result-withdrawn-on-change` |
+| `REQ-risk-stale-test-result` | ✓ | ✓ passed | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` |
 | `REQ-risk-store-unreadable` | ✓ | ⚠ nie gelaufen | `TEST-store-recovery` |
 | `REQ-roundtrip-conformance` | ✓ | ✓ passed | `TEST-roundtrip` |
 | `REQ-rule-calibration` | ✓ | ✓ passed | `TEST-audit-rules-passed` · `TEST-rule-calibration` |
@@ -176,8 +177,8 @@
 | `REQ-vorbereitung-reads-metrics` | ✓ | ✓ passed | `TEST-vorbereitung-reads-metrics` |
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 
-Coverage: 167/167 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 134/167 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 168/168 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 135/168 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -256,12 +257,12 @@ Belegt: 134/167 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-graph-store` → `FUNC-list-elements` | `FLOW-graph-state` | `FCHAIN-agent-query` | `TEST-impact-subgraph` · `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration | passed |
 | `FUNC-graph-store` → `FUNC-merge-nodes` | `FLOW-graph-state` | `FCHAIN-merge-branches` | ⚠ keine Abdeckung |  |  |
 | `FUNC-graph-store` → `FUNC-module-metrics` | `FLOW-graph-state` | `FCHAIN-dashboard-metrics` · `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
-| `FUNC-graph-store` → `FUNC-mutate` | `FLOW-graph-state` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` | `TEST-advisory-roundtrip-latency` · `TEST-audit-rules-passed` · `TEST-auto-export` · `TEST-capture` · `TEST-code-quality` · `TEST-create-harness-smoke` · `TEST-doc-export` · `TEST-graph-time-travel` · `TEST-gve-supervision` · `TEST-import-code-verb` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-interface-escalation` · `TEST-live-view` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-monotone-convergence` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-prompt-provenance` · `TEST-reduced-llm` · `TEST-responsiveness` · `TEST-rule-calibration` · `TEST-steering-promise-one-owner` · `TEST-test-result-withdrawn-on-change` · `TEST-uc-authoring-style` | acceptance, conformance, e2e, integration, performance, unit | passed |
+| `FUNC-graph-store` → `FUNC-mutate` | `FLOW-graph-state` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` | `TEST-advisory-roundtrip-latency` · `TEST-audit-rules-passed` · `TEST-auto-export` · `TEST-capture` · `TEST-code-quality` · `TEST-create-harness-smoke` · `TEST-doc-export` · `TEST-graph-time-travel` · `TEST-gve-supervision` · `TEST-import-code-verb` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-interface-escalation` · `TEST-lane-reports-change` · `TEST-live-view` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-monotone-convergence` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-prompt-provenance` · `TEST-reduced-llm` · `TEST-responsiveness` · `TEST-rule-calibration` · `TEST-steering-promise-one-owner` · `TEST-test-result-withdrawn-on-change` · `TEST-uc-authoring-style` | acceptance, conformance, e2e, integration, performance, unit | passed |
 | `FUNC-graph-store` → `FUNC-read-tools` | `FLOW-graph-state` | `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-interface-escalation` | `TEST-advisory-roundtrip-latency` · `TEST-impact-subgraph` · `TEST-inject-graph-slice` · `TEST-interface-escalation` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration, performance | passed |
 | `FUNC-graph-store` → `FUNC-score-completeness` | `FLOW-graph-state` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-graph-store` → `FUNC-seed-from-json` | `FLOW-graph-state` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
 | `FUNC-graph-store` → `FUNC-take-steering-snapshot` | `FLOW-graph-state` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-monotone-convergence` · `TEST-steering-promise-one-owner` | integration | passed |
-| `FUNC-graph-store` → `FUNC-test-ingest` | `FLOW-graph-state` | `FCHAIN-test-ingest` | `TEST-test-result-withdrawn-on-change` | integration | passed |
+| `FUNC-graph-store` → `FUNC-test-ingest` | `FLOW-graph-state` | `FCHAIN-test-ingest` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` | integration | passed |
 | `FUNC-graph-suggest` → `FUNC-mutate` | `FLOW-mutate-cmd-graph-suggest` | `FCHAIN-advisory-roundtrip` · `FCHAIN-steering-loop` | `TEST-advisory-roundtrip-latency` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-monotone-convergence` · `TEST-steering-promise-one-owner` | integration, performance | passed |
 | `FUNC-gve-sessions` → `FUNC-gve-supervise` | `FLOW-session-registry` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-gve-supervise` → `FUNC-gve-sessions` | `FLOW-session-entry` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
@@ -280,11 +281,11 @@ Belegt: 134/167 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-mutate` → `FUNC-audit-stats` | `FLOW-audit-record` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-mutate` → `FUNC-audit-trail` | `FLOW-audit-record` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
 | `FUNC-mutate` → `FUNC-bootstrap` | `FLOW-gate-verdict` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
-| `FUNC-mutate` → `FUNC-graph-store` | `FLOW-graph-delta` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` | `TEST-advisory-roundtrip-latency` · `TEST-audit-rules-passed` · `TEST-auto-export` · `TEST-capture` · `TEST-code-quality` · `TEST-create-harness-smoke` · `TEST-doc-export` · `TEST-graph-time-travel` · `TEST-gve-supervision` · `TEST-import-code-verb` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-interface-escalation` · `TEST-live-view` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-monotone-convergence` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-prompt-provenance` · `TEST-reduced-llm` · `TEST-responsiveness` · `TEST-rule-calibration` · `TEST-steering-promise-one-owner` · `TEST-test-result-withdrawn-on-change` · `TEST-uc-authoring-style` | acceptance, conformance, e2e, integration, performance, unit | passed |
+| `FUNC-mutate` → `FUNC-graph-store` | `FLOW-graph-delta` | `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` | `TEST-advisory-roundtrip-latency` · `TEST-audit-rules-passed` · `TEST-auto-export` · `TEST-capture` · `TEST-code-quality` · `TEST-create-harness-smoke` · `TEST-doc-export` · `TEST-graph-time-travel` · `TEST-gve-supervision` · `TEST-import-code-verb` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-interface-escalation` · `TEST-lane-reports-change` · `TEST-live-view` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-monotone-convergence` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-prompt-provenance` · `TEST-reduced-llm` · `TEST-responsiveness` · `TEST-rule-calibration` · `TEST-steering-promise-one-owner` · `TEST-test-result-withdrawn-on-change` · `TEST-uc-authoring-style` | acceptance, conformance, e2e, integration, performance, unit | passed |
 | `FUNC-mutate` → `FUNC-graph-suggest` | `FLOW-gate-verdict` | `FCHAIN-advisory-roundtrip` · `FCHAIN-steering-loop` | `TEST-advisory-roundtrip-latency` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-monotone-convergence` · `TEST-steering-promise-one-owner` | integration, performance | passed |
 | `FUNC-mutate` → `FUNC-import-code-verb` | `FLOW-gate-verdict` | `FCHAIN-model-import` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
 | `FUNC-mutate` → `FUNC-se-retro` | `FLOW-audit-record` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
-| `FUNC-mutate` → `FUNC-test-ingest` | `FLOW-gate-verdict` | `FCHAIN-test-ingest` | `TEST-test-result-withdrawn-on-change` | integration | passed |
+| `FUNC-mutate` → `FUNC-test-ingest` | `FLOW-gate-verdict` | `FCHAIN-test-ingest` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` | integration | passed |
 | `FUNC-mutate` → `FUNC-tool-context` | `FLOW-gate-verdict` | `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-mutate` → `FUNC-zug-bericht` | `FLOW-zug-staende` | `FCHAIN-apply-gate` · `FCHAIN-steering-loop` | `TEST-code-quality` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-monotone-convergence` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` · `TEST-steering-promise-one-owner` | acceptance, e2e, integration, performance | passed |
 | `FUNC-own-kuzu-host` → `FUNC-serve-sse` | `FLOW-harness-handle-host` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
@@ -293,7 +294,7 @@ Belegt: 134/167 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-resolve-tests-from-code` → `FUNC-deduce-tests` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
 | `FUNC-resolve-tests-from-code` → `FUNC-measure-test-schlupf` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
 | `FUNC-resolve-tests-from-code` → `FUNC-plan-code-lane` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | `TEST-mvp-e2e` | e2e | passed |
-| `FUNC-resolve-tests-from-code` → `FUNC-test-ingest` | `FLOW-impacted-tests` | `FCHAIN-test-ingest` | `TEST-test-result-withdrawn-on-change` | integration | passed |
+| `FUNC-resolve-tests-from-code` → `FUNC-test-ingest` | `FLOW-impacted-tests` | `FCHAIN-test-ingest` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` | integration | passed |
 | `FUNC-rewind` → `FUNC-reseed` | `FLOW-reseed-snapshot` | `FCHAIN-recall` | ⚠ keine Abdeckung |  |  |
 | `FUNC-score-completeness` → `FUNC-compute-readiness` | `FLOW-completeness` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-se-conops` → `FUNC-mutate` | `FLOW-mutate-cmd-se-conops` | `FCHAIN-skill-authoring` | ⚠ keine Abdeckung |  |  |
@@ -316,7 +317,7 @@ Belegt: 134/167 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-target-profile` → `FUNC-target-profile-load` | `FLOW-target-profile-file` | `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-monotone-convergence` · `TEST-steering-promise-one-owner` | integration | passed |
 | `FUNC-target-profile-load` → `FUNC-generation-step` | `FLOW-target-profile` | `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-monotone-convergence` · `TEST-steering-promise-one-owner` | integration | passed |
 | `FUNC-target-profile-load` → `FUNC-graph-suggest` | `FLOW-target-profile` | `FCHAIN-advisory-roundtrip` · `FCHAIN-steering-loop` | `TEST-advisory-roundtrip-latency` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-monotone-convergence` · `TEST-steering-promise-one-owner` | integration, performance | passed |
-| `FUNC-test-ingest` → `FUNC-mutate` | `FLOW-mutate-cmd-test-ingest` | `FCHAIN-test-ingest` | `TEST-test-result-withdrawn-on-change` | integration | passed |
+| `FUNC-test-ingest` → `FUNC-mutate` | `FLOW-mutate-cmd-test-ingest` | `FCHAIN-test-ingest` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` | integration | passed |
 | `FUNC-tool-context` → `FUNC-bind-tools` | `FLOW-tool-context` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-view-changelog` → `FUNC-export-markdown` | `FLOW-query-request-view-changelog` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-view-conops` → `FUNC-export-markdown` | `FLOW-query-request-view-conops` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |

@@ -22,6 +22,8 @@
  * `tests/test-selection.audit.test.ts`); dieser Runner ist dünn und setzt einen aktuellen
  * Build voraus (`npm run build`).
  *
+ * Nach dem Lauf meldet die Spur zurück (CR-GC-800); `--plan` meldet nichts.
+ *
  * Usage: node scripts/verify-code.mjs [--plan] [--staged] [datei ...]
  *   --plan    nur ansagen, nichts fahren (der pre-commit-Hook benutzt das)
  *   --staged  ChangeSet = der gestagte Diff statt des Arbeitsbaums
@@ -29,7 +31,11 @@
  * @author andreas@siglochconsulting
  */
 import { spawnSync, execFileSync } from 'node:child_process';
-import { buildContext, planCodeLane } from '../dist/projections/test-selection-audit.js';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { buildContext, changeSetFor, planCodeLane } from '../dist/projections/test-selection-audit.js';
+import { meldeZurueck, meldungsZeile } from './aenderung-melden.mjs';
 import { INCLUDED as MODEL_TESTS } from './model-test-set.mjs';
 
 const argv = process.argv.slice(2);
@@ -53,7 +59,8 @@ function changedFiles() {
 }
 
 const files = changedFiles();
-const result = planCodeLane(files, buildContext(repoRoot), { modelTests: MODEL_TESTS });
+const ctx = buildContext(repoRoot);
+const result = planCodeLane(files, ctx, { modelTests: MODEL_TESTS });
 for (const line of result.lines) console.error(line);
 
 if (result.command === null) {
@@ -67,6 +74,21 @@ if (plan) process.exit(0);
 // Menge öffnet den Repo-Store). Für eine BELIEBIGE Auswahl gilt dieser Beweis nicht —
 // Kuzu ist ein Schreiber pro Store, also fährt die CODE-Spur wie die volle Suite.
 // VOLLE Spur = die ganze Suite, also ohne Dateiargumente; CODE-Spur = genau ihre Dateien.
-const args = result.lane === 'VOLL' ? ['vitest', 'run'] : ['vitest', 'run', ...result.files];
+const tmp = mkdtempSync(join(tmpdir(), 'verify-code-'));
+const bericht = join(tmp, 'vitest.json');
+const reporter = ['--reporter=default', '--reporter=json', `--outputFile.json=${bericht}`];
+const args = result.lane === 'VOLL' ? ['vitest', 'run', ...reporter] : ['vitest', 'run', ...reporter, ...result.files];
 const res = spawnSync('npx', args, { stdio: 'inherit', cwd: repoRoot });
+
+// CR-GC-800: die Spur meldet zurück — Änderung und Lauf gehen an `graph_test_ingest`. Ein
+// betroffener Test ohne frisches Ergebnis verliert seines. Scheitert die Meldung, ist der Lauf rot.
+try {
+  const meldung = await meldeZurueck({ repoRoot, changeSet: changeSetFor(files, ctx), berichtPfad: bericht });
+  console.error(meldungsZeile('verify:code', meldung));
+} catch (err) {
+  console.error(`[verify:code] Rueckmeldung GESCHEITERT: ${err.message}`);
+  rmSync(tmp, { recursive: true, force: true });
+  process.exit(1);
+}
+rmSync(tmp, { recursive: true, force: true });
 process.exit(res.status ?? 1);
