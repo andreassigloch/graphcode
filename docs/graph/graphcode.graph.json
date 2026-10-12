@@ -5555,7 +5555,7 @@
       "id": "FUNC-take-steering-snapshot",
       "type": "FUNC",
       "name": "takeSteeringSnapshot(graph, policy)",
-      "description": "Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph, injiziert die ND-Matrizen und wertet den vollen Regelkatalog aus; liefert Regelstrom, blockierende Fehler und den Readiness-Report in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung.",
+      "description": "Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph und wertet den vollen Regelkatalog aus; liefert Regelstrom, Fokusmenge, blockierende Fehler und die Befunde je Stufe in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung. Er prueft den Bestand nicht selbst gegen das Schema und wirft nicht: ein Wert ausserhalb des Element-Vertrags ist ein Befund der Regel R-08 im Regelstrom. Auch die Probe in graph_mutate misst hierueber. (CR-GC-786)",
       "status": "done",
       "realRef": {
         "file": "src/kernel/measure/steering-snapshot.ts",
@@ -6172,6 +6172,15 @@
       "type": "REQ",
       "name": "Freigabe genau dann, wenn kein Fokus",
       "description": "Die Generierung muss done genau dann melden, wenn kein offener Fund einer Gate-Regel (ohne info, ohne Praesenzregeln bei Bindung 0, ohne abgenommene Funde) mehr existiert — und muss in jedem anderen Zustand genau einen Fokus nennen. Kein Zustand darf \"nichts zu tun\" und \"nicht fertig\" zugleich sagen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-element-contract-finding",
+      "type": "REQ",
+      "name": "Wert ausserhalb des Element-Vertrags ist ein Befund, kein Abbruch",
+      "description": "Ein Wert ausserhalb des Element-Vertrags MUSS als Befund der Regel R-08 erscheinen und darf keine Messung abbrechen: graph_readiness und graph_generate antworten an einem Modell mit solchem Altbestand und nennen den Befund; das Gate weist einen Zug ab, der einen solchen Wert neu einfuehrt, und laesst Altbestand an einem unberuehrten Element stehen. (CR-GC-786)",
       "kinds": [
         "functional"
       ]
@@ -8064,7 +8073,7 @@
       "id": "SCHEMA-steering-snapshot",
       "type": "SCHEMA",
       "name": "SteeringSnapshot",
-      "description": "Gemappter OntologyGraph mit injizierten ND-Matrizen, Violations des vollen Katalogs, Zahl der blockierenden Fehler, Readiness-Report.",
+      "description": "Gemappter OntologyGraph, Violations des vollen Katalogs, Fokusmenge, Zahl der blockierenden Fehler, Befunde je Stufe. Beschreibt die Form des Messpunkts; den Bestand prueft die Regel R-08, nicht dieses Schema. (CR-GC-786)",
       "status": "reviewed",
       "realRef": {
         "file": "src/kernel/measure/steering-snapshot.ts",
@@ -9714,6 +9723,21 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-08-21T07:52:28.796Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-readiness-altbestand",
+      "type": "TEST",
+      "name": "Bericht und Schritt antworten an Altbestand",
+      "description": "Abnahme der Datei tests/readiness.altbestand.test.ts: an einem Modell auf Platte mit einem Art-Wert aus der Zeit vor contracts 10 antworten graph_readiness und graph_generate; der Bericht nennt den R-08-Befund mit Element, Feld und Wert. Vor CR-GC-786 warfen beide Aufrufe.",
+      "testRefs": [
+        {
+          "file": "tests/readiness.altbestand.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-10-12T07:14:17.000Z"
         }
       ]
     },
@@ -14711,7 +14735,17 @@
     },
     {
       "source": "CR-GC-786",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-786",
       "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-786",
+      "target": "REQ-element-contract-finding",
       "type": "relation"
     },
     {
@@ -19393,6 +19427,11 @@
     },
     {
       "source": "FUNC-mutate",
+      "target": "REQ-element-contract-finding",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-mutate",
       "target": "REQ-gate-judges-and-stores",
       "type": "satisfy"
     },
@@ -19888,6 +19927,11 @@
       "target": "REQ-applied-suggestion-moves-target",
       "type": "satisfy",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
+      "target": "REQ-element-contract-finding",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-take-steering-snapshot",
@@ -21867,6 +21911,11 @@
     },
     {
       "source": "TEST-mutate-schema-guard",
+      "target": "REQ-element-contract-finding",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-schema-guard",
       "target": "REQ-harness-schema-in-contracts",
       "type": "verify"
     },
@@ -22010,6 +22059,11 @@
     {
       "source": "TEST-read-format-param",
       "target": "REQ-query-precision",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-readiness-altbestand",
+      "target": "REQ-element-contract-finding",
       "type": "verify"
     },
     {
@@ -22801,6 +22855,11 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "REQ-element-contract-finding",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "REQ-monotone-convergence",
       "type": "compose"
     },
@@ -23240,5 +23299,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 701
+  "graphVersion": 702
 }

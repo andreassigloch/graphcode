@@ -15,7 +15,6 @@
 import type { Graph, OntologyDescriptor, RuleViolation as CoreRuleViolation, DefaultRuleEngine } from '@sigloch/graph-api-core';
 import { z } from 'zod';
 import { MutateCommandSchema, type MutateCommand, type MutateResult, type RuleViolation } from '@sigloch/contracts/harness';
-import { OntologyElement, ReqKind, ReqRole, readReqRole } from '@sigloch/contracts/se';
 import type { HookSystem } from './hooks.js';
 import type { GraphStore } from './graph-store.js';
 import { applyCommands, cloneGraph } from './apply-commands.js';
@@ -85,28 +84,10 @@ export class Gate {
           "{op:'merge-nodes', sourceUid, targetUid}",
       });
     });
-    // Step 0b — element contract (CR-GC-646, ITEM-2026-537). `status`, `kinds` and `method`
-    // travel in the free attribute bag, but the rules read them as typed OntologyElement
-    // fields. Unchecked, `[kinds:functional]` landed as a STRING (294 of them in the rig
-    // corpora) and every `kinds.includes(x)` silently became a substring search. Only what
-    // THIS batch writes is judged — a legacy value on an untouched field never freezes a node.
-    const current = this.deps.store.current();
-    const typeOf = (uid: string): string | undefined => current.nodes.find((n) => n.uid === uid)?.type;
-    parsedCommands.forEach((cmd, i) => {
-      const issues = elementFieldIssues(cmd, typeOf);
-      if (issues.length === 0) return;
-      schemaViolations.push({
-        ruleId: 'SCHEMA-02',
-        severity: 'error',
-        elementId: cmd.op === 'add-node' || cmd.op === 'update-node' ? cmd.node.uid : undefined,
-        message: `command[${i}] violates the element contract — ${issues.join('; ')}`,
-        fixHint:
-          'status ∈ draft|reviewed|open|done (a dropped CR is done — the reason belongs in its text) · ' +
-          `kinds is a LIST with exactly one of ${ReqKind.options.join('|')} ` +
-          `(Format-E: @kinds ["functional"]) · role ∈ ${ReqRole.options.join('|')} is a REQ attribute, not a kind · ` +
-          'method ∈ test|inspection|analysis|demonstration',
-      });
-    });
+    // CR-GC-786: no local element-contract check here any more (was Step 0b, `SCHEMA-02`). A value
+    // outside the contract is a finding of rule R-08 (contracts 12.5, CR-SM-411), judged in step 3
+    // like every other rule: a move that introduces one is blocked, legacy data on an untouched
+    // element is not new and never freezes the node.
     if (schemaViolations.length > 0) {
       const result: MutateResult = {
         success: false,
@@ -285,34 +266,6 @@ function extraKeys(shape: z.ZodRawShape, value: unknown, path: string): string[]
     const field = shape[k];
     if (!field) out.push(at);
     else if (field instanceof z.ZodObject) out.push(...extraKeys(field.shape, v, at));
-  }
-  return out;
-}
-
-/** Attributes the rules read as typed OntologyElement fields — judged by the element contract (+ REQ `role`). */
-const ELEMENT_FIELDS = ['status', 'kinds', 'method'] as const;
-
-/**
- * Contract breaches in the element fields a node command WRITES. `null` is the attribute
- * tombstone (attributes merge, never delete) and always passes; so does an absent key.
- */
-function elementFieldIssues(cmd: MutateCommand, typeOf: (uid: string) => string | undefined): string[] {
-  if (cmd.op !== 'add-node' && cmd.op !== 'update-node') return [];
-  const attrs = cmd.node.attributes ?? {};
-  const out: string[] = [];
-  for (const key of ELEMENT_FIELDS) {
-    const value = attrs[key];
-    if (value === undefined || value === null) continue;
-    const parsed = OntologyElement.shape[key].safeParse(value);
-    if (!parsed.success) out.push(`${cmd.node.uid}.${key} = ${JSON.stringify(value)}: ${parsed.error.issues[0]?.message}`);
-  }
-  // CR-GC-671: `role` (CR-SM-365) ist keine Schema-Spalte, sondern ein Attribut mit EINEM Leser.
-  // Ungueltig ist nicht fehlend: `readReqRole` sagt `invalid`, und die FM-Regeln saehen die Rolle
-  // still nicht — also am Eintritt ablehnen, wie kinds. null bleibt der Grabstein. Nur an REQ:
-  // `role` ist dort definiert; ein Fremdknoten mit gleichnamigem Attribut ist nicht gemeint.
-  const type = cmd.node.type ?? typeOf(cmd.node.uid);
-  if (type === 'REQ' && readReqRole({ role: attrs.role }).state === 'invalid') {
-    out.push(`${cmd.node.uid}.role = ${JSON.stringify(attrs.role)}: expected one of ${ReqRole.options.join('|')}`);
   }
   return out;
 }

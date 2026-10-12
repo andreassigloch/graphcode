@@ -157,12 +157,14 @@ describe('TEST-mutate-schema-guard (CR-GC-239)', () => {
 });
 
 /**
- * CR-GC-646 (ITEM-2026-537): the element contract at the gate. `status`, `kinds`, `method`
- * live in the attribute bag but the rules read them as typed OntologyElement fields.
- * POSITIVKONTROLLE: without Step 0b the first two cases apply with success:true — the
- * dryRun in the item passed and only R-01 complained.
+ * The element contract at the gate (CR-GC-646, ITEM-2026-537; since CR-GC-786 judged by rule R-08).
+ * `status`, `kinds`, `method` live in the attribute bag but the rules read them as typed
+ * OntologyElement fields. Until CR-GC-786 a local check (`SCHEMA-02`) judged what a batch writes;
+ * now R-08 (contracts 12.5, CR-SM-411) judges the state, and the gate blocks what a move newly
+ * introduces. POSITIVKONTROLLE: against contracts < 12.5 (R-08 without the second case) every
+ * blocking case below applies with success:true.
  */
-describe('TEST-mutate-schema-guard: element contract (CR-GC-646)', () => {
+describe('TEST-mutate-schema-guard: element contract (CR-GC-646, R-08 since CR-GC-786)', () => {
   let repoRoot: string;
   let harness: GraphCodeHarness;
   let tools: MCPToolRegistry;
@@ -182,32 +184,37 @@ describe('TEST-mutate-schema-guard: element contract (CR-GC-646)', () => {
 
   const kindsOf = (uid: string) => harness.getGraph().nodes.find((n) => n.uid === uid)?.attributes?.kinds;
 
-  it('Format-E `[kinds:functional]` (a string) BLOCKS as SCHEMA-02 and names field + value', async () => {
+  const r08 = (violations: RuleViolation[]) => violations.filter((x) => x.ruleId === 'R-08');
+
+  // CR-GC-786, vom Auftraggeber so gewollt: `[kinds:functional]` ist die Schreibform von Format-E.
+  // Der Schreibpfad hebt sie zur Liste (apply-commands.ts, CR-GC-551); im Store steht nie ein String.
+  // Bis CR-GC-786 wies `SCHEMA-02` den Zug ab.
+  it('Format-E `[kinds:functional]` (a string) applies and lands as a LIST in the store', async () => {
     const res = (await tools.graph_mutate.handler({
-      formatE: '## Nodes\n### REQ\n+ REQ-str|Das System muss X. [kinds:functional]\n',
+      formatE:
+        '## Nodes\n### REQ\n+ REQ-str|Das System muss X. [kinds:functional]\n### TEST\n+ TEST-str|prueft X\n' +
+        '## Edges\n+ TEST-str -verify-> REQ-str\n',
       consumerId: 't',
     })) as { success: boolean; violations: RuleViolation[] };
-    expect(res.success).toBe(false);
-    const v = res.violations.find((x) => x.ruleId === 'SCHEMA-02');
-    expect(v?.severity).toBe('error');
-    // The tool output folds the elementId into `{el}` (evaluation.ts ELEMENT_PLACEHOLDER) and lists it.
-    expect(v?.message).toContain('.kinds = "functional"');
-    expect(JSON.stringify(v)).toContain('REQ-str');
-    expect(v?.fixHint).toContain('@kinds ["functional"]');
-    expect(harness.getGraph().nodes.some((n) => n.uid === 'REQ-str')).toBe(false);
+    expect(res.success, JSON.stringify(res.violations)).toBe(true);
+    expect(r08(res.violations)).toEqual([]);
+    expect(kindsOf('REQ-str')).toEqual(['functional']);
   });
 
-  it('a status outside the contract (dropped) BLOCKS the whole batch', async () => {
+  it('a status outside the contract (dropped) BLOCKS the whole batch with R-08', async () => {
     const result = await harness.mutate([
       { op: 'add-node', node: { uid: 'CR-x', type: 'CR', name: 'x', description: '', attributes: { status: 'dropped' } } },
       { op: 'update-node', node: { uid: 'REQ-ok', attributes: { status: 'approved' } } },
     ]);
     expect(result.success).toBe(false);
     expect(result.tier).toBe('block');
-    const messages = result.violations.filter((x) => x.ruleId === 'SCHEMA-02').map((x) => x.message);
+    const messages = r08(result.violations).map((x) => x.message);
     expect(messages).toHaveLength(2);
-    expect(messages[0]).toContain('CR-x.status = "dropped"');
-    expect(messages[1]).toContain('REQ-ok.status = "approved"');
+    expect(messages).toContain('CR-x.status = "dropped" is outside the element contract');
+    expect(messages).toContain('REQ-ok.status = "approved" is outside the element contract');
+    expect(r08(result.violations)[0].severity).toBe('error');
+    expect(harness.getGraph().nodes.some((n) => n.uid === 'CR-x')).toBe(false);
+    expect(harness.getGraph().nodes.find((n) => n.uid === 'REQ-ok')?.attributes?.status).toBeUndefined();
   });
 
   it('an unknown kind and an unknown method block too — the enum is the contract, not just the shape', async () => {
@@ -216,7 +223,7 @@ describe('TEST-mutate-schema-guard: element contract (CR-GC-646)', () => {
       { op: 'update-node', node: { uid: 'TEST-ok', attributes: { method: 'review' } } },
     ]);
     expect(result.success).toBe(false);
-    expect(result.violations.filter((x) => x.ruleId === 'SCHEMA-02')).toHaveLength(2);
+    expect(r08(result.violations).map((x) => x.elementId).sort()).toEqual(['REQ-ok', 'TEST-ok']);
   });
 
   it('the canonical Format-E list form applies; null is the tombstone and passes', async () => {
@@ -231,63 +238,62 @@ describe('TEST-mutate-schema-guard: element contract (CR-GC-646)', () => {
     expect(cleared.success, JSON.stringify(cleared.violations)).toBe(true);
   });
 
-  it('a legacy value on a field the batch does NOT write never freezes the node', async () => {
+  it('legacy data on an untouched element never freezes the node — nor its neighbours', async () => {
     // Legacy data enters through the import port (a load, not an edit) — exactly how old SSOTs arrive.
     await harness.importGraph({
-      elements: [{ id: 'REQ-leg', type: 'REQ', name: 'leg', description: '', kinds: 'functional' }],
+      elements: [{ id: 'REQ-leg', type: 'REQ', name: 'leg', description: '', kinds: ['risk'] }],
       traces: [],
-    });
-    expect(kindsOf('REQ-leg')).toBe('functional');
-    const result = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-leg', description: 'neu' } }]);
-    expect(result.success, JSON.stringify(result.violations)).toBe(true);
+    } as Parameters<typeof harness.importGraph>[0]);
+    expect(kindsOf('REQ-leg')).toEqual(['risk']);
+    // The legacy finding is there (R-08 reports the state) …
+    expect(harness.evaluateRules().filter((v) => v.ruleId === 'R-08').map((v) => v.message)).toEqual([
+      'REQ-leg.kinds = ["risk"] is outside the element contract',
+    ]);
+    // … and blocks neither a move on the node itself nor one elsewhere: it is not NEW.
+    const self = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-leg', description: 'neu' } }]);
+    expect(self.success, JSON.stringify(self.violations)).toBe(true);
+    // (the import replaced the state, so the neighbour move brings its own valid set)
+    const other = await harness.mutate(VALID);
+    expect(other.success, JSON.stringify(other.violations)).toBe(true);
   });
 
-  // ITEM-2026-570: die Probe einer Migration auf Altbestand wirft nicht — sie liefert das
-  // Gate-Verdict und sagt, dass der Steuerraum nicht messbar ist.
-  // POSITIVKONTROLLE: mit takeSteeringSnapshot im dryRun-Zweig wirft dieser Fall (ZodError).
-  it('dryRun on legacy data returns the verdict and names the steering space unmeasurable', async () => {
+  // ITEM-2026-570 / CR-GC-786: die Probe einer Migration auf Altbestand wirft nicht und der
+  // Steuerraum ist GERECHNET — das Delta zeigt den Befund, den die Migration schliesst.
+  // POSITIVKONTROLLE: mit `SteeringSnapshotSchema.parse` in der Messung wirft dieser Fall (ZodError).
+  it('dryRun on legacy data returns the verdict and a steering delta that shows the migration', async () => {
     await harness.importGraph({
       elements: [{ id: 'CR-leg', type: 'CR', name: 'leg', description: '', status: 'dropped' }],
       traces: [],
-    });
+    } as Parameters<typeof harness.importGraph>[0]);
     const res = (await tools.graph_mutate.handler({
       formatE: alsFormatE([{ op: 'update-node', node: { uid: 'CR-leg', attributes: { status: 'done' } } }], harness),
       consumerId: 't',
       dryRun: true,
-    })) as { success: boolean; steeringDelta?: unknown; steeringUnmeasurable?: string };
+    })) as { success: boolean; steeringDelta?: { blockingErrors: { before: number; after: number }; stages: Record<string, { before: number; after: number }> } };
     expect(res.success).toBe(true);
-    expect(res.steeringDelta).toBeUndefined();
-    expect(res.steeringUnmeasurable).toContain('Element-Vertrag');
-
-    // Nach der Migration ist der Steuerraum wieder messbar.
-    await harness.mutate([{ op: 'update-node', node: { uid: 'CR-leg', attributes: { status: 'done' } } }]);
-    const clean = (await tools.graph_mutate.handler({
-      formatE: alsFormatE([{ op: 'update-node', node: { uid: 'REQ-ok', description: 'x' } }], harness),
-      consumerId: 't',
-      dryRun: true,
-    })) as { steeringDelta?: unknown; steeringUnmeasurable?: string };
-    expect(clean.steeringUnmeasurable).toBeUndefined();
-    expect(clean.steeringDelta).toBeDefined();
+    expect(res.steeringDelta?.blockingErrors).toEqual({ before: 1, after: 0 });
+    expect(res.steeringDelta?.stages.immer).toMatchObject({ before: 1, after: 0 });
+    expect(res).not.toHaveProperty('steeringUnmeasurable');
   });
 
   // CR-GC-671: der Ontologie-Major (contracts 10.x, CR-SM-365/366). risk/mitigation/pre/post
   // sind keine kinds mehr; die Rolle ist ein REQ-Attribut mit EINEM Leser (readReqRole).
-  // POSITIVKONTROLLE: ohne den role-Zweig in elementFieldIssues geht `role:"hazard"` durch
+  // POSITIVKONTROLLE: ohne den role-Zweig in R-08 (contracts `elementContract`) geht `role:"hazard"` durch
   // (success:true) — die FM-Regeln saehen die Rolle dann still nicht.
   it('an old kind (risk) blocks, and the hint names role instead', async () => {
     const res = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-ok', attributes: { kinds: ['risk'] } } }]);
     expect(res.success).toBe(false);
-    const v = res.violations.find((x) => x.ruleId === 'SCHEMA-02');
-    expect(v?.message).toContain('REQ-ok.kinds = ["risk"]');
-    expect(v?.fixHint).toContain('exactly one of functional|non-functional');
-    expect(v?.fixHint).toContain('role ∈ risk|mitigation');
+    const v = r08(res.violations)[0];
+    expect(v?.message).toBe('REQ-ok.kinds = ["risk"] is outside the element contract');
+    expect(v?.fixHint).toContain('kinds ∈ functional|non-functional');
+    expect(v?.fixHint).toContain('risk|mitigation is REQ.attributes.role');
     expect(v?.fixHint).not.toMatch(/precondition|postcondition/);
   });
 
   it('a REQ role outside risk|mitigation blocks — on update-node without type, too', async () => {
     const res = await harness.mutate([{ op: 'update-node', node: { uid: 'REQ-ok', attributes: { role: 'hazard' } } }]);
     expect(res.success).toBe(false);
-    expect(res.violations.find((x) => x.ruleId === 'SCHEMA-02')?.message).toContain('REQ-ok.role = "hazard"');
+    expect(r08(res.violations)[0]?.message).toBe('REQ-ok.role = "hazard" is outside the element contract');
   });
 
   it('a valid role passes and persists; a foreign node with its own role attribute is not judged', async () => {

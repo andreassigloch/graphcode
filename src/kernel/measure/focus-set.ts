@@ -14,8 +14,10 @@
  *      ihm abnimmt; ein Arbeitsschritt sieht seine Regeln und seinen Eintrittspunkt.
  * Dazu ND-01/02: das Gate wertet Beinahe-Duplikate nie aus, CR-GC-287 hat sie aber ausdruecklich in den
  * Fokus gelegt (der Snapshot injiziert die Aehnlichkeit) — CR-GC-593 hatte das still zurueckgedreht.
- * `blockingErrors` = Fehler-Funde der Fokusmenge (ohne abgenommene). NICHT "blockt am Gate": das tun nur
- * R-01/R-08/IO-02/R-18/R-29, und deren Funde koennen im gespeicherten Graphen gar nicht stehen.
+ * `blockingErrors` = Fehler-Funde der Fokusmenge (ohne abgenommene). NICHT "blockt am Gate": das Gate
+ * weist nur ab, was ein Zug NEU einfuehrt. Ein Fehler kann trotzdem im gespeicherten Graphen stehen —
+ * als Altbestand, der ueber den Import-Port kam (ein Laden, kein Zug). Fuer Werte ausserhalb des
+ * Element-Vertrags nennt ihn R-08 (CR-GC-786); er zaehlt hier mit.
  *
  * CR-GC-748 (contracts 11, CR-SM-395) — was hier NICHT mehr steht:
  *   - „Praesenz von Code nur, wenn etwas gebunden ist": das ist die FAELLIGKEIT (`isDue`), und sie

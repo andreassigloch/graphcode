@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "@sigloch/contracts": ">=12.1 <13",
+    "@sigloch/contracts": ">=12.5 <13",
     "@sigloch/graph-api-core": "^5.10.3",
     "@sigloch/graph-view-edit": ">=0.16 <1",
     "@sigloch/graphcode-client": "^3.0.0",

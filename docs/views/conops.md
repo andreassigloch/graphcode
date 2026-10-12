@@ -417,7 +417,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-783` | n/a | Skill Laufzeitanalyse einer Wirkkette | `FUNC-chain-metrics` · `FUNC-se-laufzeit` · `REQ-laufzeit-reads-answer-path` |
 | `CR-GC-784` | n/a | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen | `FUNC-chain-metrics` · `FUNC-se-vorbereitung` · `REQ-vorbereitung-reads-metrics` |
 | `CR-GC-785` | n/a | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse | `FUNC-graph-suggest` · `FUNC-se-optimize` · `REQ-optimize-probes-and-presents` |
-| `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) | `FUNC-graph-readiness` · `FUNC-take-steering-snapshot` |
+| `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) | `FUNC-graph-readiness` · `FUNC-mutate` · `FUNC-take-steering-snapshot` · `REQ-element-contract-finding` |
 | `CR-GC-787` | n/a | graph_metrics reicht Betrachtungsumfang und Risikotraeger durch | `FUNC-chain-metrics` · `FUNC-graph-metrics` · `FUNC-module-metrics` · `REQ-metrics-risk-scope` |
 | `CR-GC-788` | done | Modell: Block FUNC-goal-steerer erfuellt eine Anforderung | `FUNC-goal-steerer` · `REQ-steering-from-metrics` |
 | `CR-GC-789` | done | Merkmal sync an den Fluessen des Selbstmodells | `FUNC-generation-step` · `FUNC-graph-store` · `FUNC-graph-suggest` · `FUNC-mutate` · `FUNC-schema-guard` · `FUNC-seed-from-json` · `FUNC-take-steering-snapshot` |

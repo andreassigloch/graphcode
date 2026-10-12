@@ -759,7 +759,9 @@
 | `CR-GC-785` | relation | `FUNC-se-optimize` |
 | `CR-GC-785` | relation | `REQ-optimize-probes-and-presents` |
 | `CR-GC-786` | relation | `FUNC-graph-readiness` |
+| `CR-GC-786` | relation | `FUNC-mutate` |
 | `CR-GC-786` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-786` | relation | `REQ-element-contract-finding` |
 | `CR-GC-787` | relation | `FUNC-chain-metrics` |
 | `CR-GC-787` | relation | `FUNC-graph-metrics` |
 | `CR-GC-787` | relation | `FUNC-module-metrics` |
@@ -1656,6 +1658,7 @@
 | `FUNC-mutate` | io | `FLOW-graph-delta` |
 | `FUNC-mutate` | io | `FLOW-zug-staende` |
 | `FUNC-mutate` | satisfy | `REQ-confidence-tier` |
+| `FUNC-mutate` | satisfy | `REQ-element-contract-finding` |
 | `FUNC-mutate` | satisfy | `REQ-gate-judges-and-stores` |
 | `FUNC-mutate` | satisfy | `REQ-gate-survives-rule-failure` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
@@ -1755,6 +1758,7 @@
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-steering-snapshot` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-applied-suggestion-moves-target` |
+| `FUNC-take-steering-snapshot` | satisfy | `REQ-element-contract-finding` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-post` |
 | `FUNC-target-profile` | allocate | `MOD-agent-surface` |
@@ -2116,6 +2120,7 @@
 | `TEST-mutate-input-formate` | verify | `REQ-formatE-parity` |
 | `TEST-mutate-input-formate` | verify | `REQ-single-write-door` |
 | `TEST-mutate-input-formate` | verify | `SCHEMA-format-e` |
+| `TEST-mutate-schema-guard` | verify | `REQ-element-contract-finding` |
 | `TEST-mutate-schema-guard` | verify | `REQ-harness-schema-in-contracts` |
 | `TEST-mutate-schema-guard` | verify | `REQ-structure-driven` |
 | `TEST-mutate-schema-guard` | verify | `SCHEMA-mutate-command` |
@@ -2145,6 +2150,7 @@
 | `TEST-published-counts-match-code` | verify | `REQ-published-counts-match-code` |
 | `TEST-read-format-param` | verify | `REQ-formatE-parity` |
 | `TEST-read-format-param` | verify | `REQ-query-precision` |
+| `TEST-readiness-altbestand` | verify | `REQ-element-contract-finding` |
 | `TEST-readiness-completeness` | verify | `REQ-completeness-actor-bounded` |
 | `TEST-readiness-completeness` | verify | `REQ-completeness-single-value` |
 | `TEST-readiness-completeness` | verify | `REQ-interface-schema` |
@@ -2294,6 +2300,7 @@
 | `UC-deterministic-steering` | compose | `REQ-applied-suggestion-moves-target` |
 | `UC-deterministic-steering` | compose | `REQ-bericht-ist-kein-urteil` |
 | `UC-deterministic-steering` | compose | `REQ-done-iff-no-focus` |
+| `UC-deterministic-steering` | compose | `REQ-element-contract-finding` |
 | `UC-deterministic-steering` | compose | `REQ-monotone-convergence` |
 | `UC-deterministic-steering` | compose | `REQ-near-duplicate-detection` |
 | `UC-deterministic-steering` | compose | `REQ-phase-gate-not-skippable` |
