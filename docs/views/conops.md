@@ -429,6 +429,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-795` | n/a | FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9) | `REQ-risk-shared-steering-promise` · `REQ-risk-store-unreadable` · `REQ-steering-promise-one-owner` |
 | `CR-GC-797` | n/a | Vorbereitung ganzes Modell: Ketten schliessen vor der FMEA aller Ketten | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-cli-dispatch` · `FUNC-create-harness` · `FUNC-export-markdown` · `FUNC-merge-nodes` · `FUNC-serve-stdio` · `FUNC-tool-context` · `REQ-audit-trail` |
 | `CR-GC-798` | n/a | FMEA aller Wirkketten des Modells (se-fmea v9) | `REQ-interface-change-names-dependents` · `REQ-risk-interface-change-unescalated` · `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` |
+| `CR-GC-799` | n/a | Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change) | `FUNC-resolve-tests-from-code` · `FUNC-test-ingest` · `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

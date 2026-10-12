@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 408 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 409 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 408 CR · 343 done · 4 open.
+Total: 409 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -470,3 +470,4 @@ Total: 408 CR · 343 done · 4 open.
 | `CR-GC-796` | n/a | Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9) |
 | `CR-GC-797` | n/a | Vorbereitung ganzes Modell: Ketten schliessen vor der FMEA aller Ketten |
 | `CR-GC-798` | n/a | FMEA aller Wirkketten des Modells (se-fmea v9) |
+| `CR-GC-799` | n/a | Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change) |

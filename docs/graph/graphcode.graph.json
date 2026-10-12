@@ -3352,6 +3352,12 @@
       "description": "docs/cr/open/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md"
     },
     {
+      "id": "CR-GC-799",
+      "type": "CR",
+      "name": "Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change)",
+      "description": "docs/cr/open/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -15114,6 +15120,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-799",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-799",
+      "target": "FUNC-test-ingest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-799",
+      "target": "REQ-risk-stale-test-result",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-799",
+      "target": "REQ-test-result-withdrawn-on-change",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -23762,5 +23788,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 721
+  "graphVersion": 723
 }

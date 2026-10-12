@@ -807,6 +807,10 @@
 | `CR-GC-798` | relation | `REQ-risk-interface-change-unescalated` |
 | `CR-GC-798` | relation | `REQ-risk-stale-test-result` |
 | `CR-GC-798` | relation | `REQ-test-result-withdrawn-on-change` |
+| `CR-GC-799` | relation | `FUNC-resolve-tests-from-code` |
+| `CR-GC-799` | relation | `FUNC-test-ingest` |
+| `CR-GC-799` | relation | `REQ-risk-stale-test-result` |
+| `CR-GC-799` | relation | `REQ-test-result-withdrawn-on-change` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
