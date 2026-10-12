@@ -3340,6 +3340,12 @@
       "description": "docs/cr/open/CR-GC-796-store-beschaedigte-datei-wird-beim-oeffn.md"
     },
     {
+      "id": "CR-GC-797",
+      "type": "CR",
+      "name": "Vorbereitung ganzes Modell: Ketten schliessen vor der FMEA aller Ketten",
+      "description": "docs/cr/open/CR-GC-797-vorbereitung-ganzes-modell-ketten-schlie.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3958,7 +3964,7 @@
       "type": "FLOW",
       "name": "Werkzeug",
       "description": "Traegt MCPTool ueber die Modulgrenze.",
-      "sync": "sync"
+      "sync": "async"
     },
     {
       "id": "FLOW-mcp-tool-registry",
@@ -14977,6 +14983,51 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-797",
+      "target": "FUNC-audit-stats",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-797",
+      "target": "FUNC-audit-trail",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-797",
+      "target": "FUNC-cli-dispatch",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-797",
+      "target": "FUNC-create-harness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-797",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-797",
+      "target": "FUNC-merge-nodes",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-797",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-797",
+      "target": "FUNC-tool-context",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-797",
+      "target": "REQ-audit-trail",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15501,12 +15552,27 @@
     },
     {
       "source": "FCHAIN-merge-branches",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-merge-branches",
       "target": "FUNC-merge-nodes",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-merge-branches",
+      "target": "FUNC-mutate",
       "type": "compose"
     },
     {
       "source": "FCHAIN-model-import",
       "target": "FUNC-cli-dispatch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-create-harness",
       "type": "compose"
     },
     {
@@ -15599,6 +15665,16 @@
     },
     {
       "source": "FCHAIN-recall",
+      "target": "FUNC-cli-dispatch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-recall",
+      "target": "FUNC-create-harness",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-recall",
       "target": "FUNC-graph-store",
       "type": "compose"
     },
@@ -15660,6 +15736,11 @@
     },
     {
       "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-gve-sessions",
       "type": "compose"
     },
@@ -15675,7 +15756,22 @@
     },
     {
       "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-serve-stdio",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-session-shutdown",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-tool-context",
       "type": "compose"
     },
     {
@@ -15845,6 +15941,11 @@
     {
       "source": "FCHAIN-snapshot-freshness",
       "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-export-markdown",
       "type": "compose"
     },
     {
@@ -17950,6 +18051,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-audit-stats",
+      "target": "REQ-audit-trail",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-audit-trail",
       "target": "MOD-surface",
       "type": "allocate"
@@ -17958,6 +18064,11 @@
       "source": "FUNC-audit-trail",
       "target": "FLOW-audit-entries",
       "type": "io"
+    },
+    {
+      "source": "FUNC-audit-trail",
+      "target": "REQ-audit-trail",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-author-req",
@@ -19157,13 +19268,6 @@
       "source": "FUNC-graph-impact",
       "target": "FLOW-impact-slice",
       "type": "io"
-    },
-    {
-      "source": "FUNC-graph-impact",
-      "target": "REQ-audit-trail",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FUNC-graph-impact",
@@ -23517,5 +23621,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 716
+  "graphVersion": 718
 }

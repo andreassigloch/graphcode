@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 406 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 407 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 406 CR · 343 done · 4 open.
+Total: 407 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -468,3 +468,4 @@ Total: 406 CR · 343 done · 4 open.
 | `CR-GC-794` | n/a | Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger |
 | `CR-GC-795` | n/a | FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9) |
 | `CR-GC-796` | n/a | Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9) |
+| `CR-GC-797` | n/a | Vorbereitung ganzes Modell: Ketten schliessen vor der FMEA aller Ketten |
