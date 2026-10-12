@@ -206,21 +206,21 @@ ihrer Art ab:
 
 ## 8. Stand
 
-| Baustein | Stand 2026-10-10 |
+| Baustein | Stand 2026-10-12 |
 |---|---|
 | Kennzahlen der Modul- und der Funktionssicht | vorhanden, ziehen an `graph_suggest` |
-| Kennzahlen der Anforderungssicht | erfüllt, geprüft und gebunden vorhanden; Bewertungen nur aus der FMEA, im graphcode-Modell null |
+| Kennzahlen der Anforderungssicht | erfüllt, geprüft und gebunden vorhanden; Bewertungen aus der FMEA, im graphcode-Modell 19 Risiken (`docs/views/fmea.md`) |
 | Kettenkennzahlen als Zahlen | gebaut (CR-SM-404); graphcode 24 von 25 Ketten bewertbar |
 | Orte je Kette | gebaut (CR-SM-406, contracts 11.2.0) |
-| FMEA liest die Orte | gebaut (CR-GC-774, Skill Version 8) |
-| Erster FMEA-Lauf auf den Orten | gefahren an der Steuerungsschleife (CR-GC-779): vier Risiken im Modell, ein Architekturvorschlag, ein Konflikt am Gate |
-| Bedrohungsanalyse, Budgetanalyse | nicht vorhanden; Budget braucht Zeit- und Mengenangaben im Modell |
-| Vorschlag aus einer Analyse (6a) | von Hand in drei Fällen; kein Skill liefert ihn |
-| Gesamt-Impact (6b) | von Hand gemessen an drei Fällen mit neun Entwürfen; kein Werkzeug rechnet ihn |
+| FMEA liest die Orte | gebaut (CR-GC-774; Skill Version 9 mit Eingangsprüfung, Umfang und Trägern, CR-GC-782) |
+| FMEA-Läufe auf den Orten | alle 24 bewertbaren Ketten analysiert (CR-GC-779, CR-GC-795, CR-GC-798, Nachtrag CR-GC-802): 19 Risiken im Modell, zwei Architekturvorschläge (ITEM-2026-879) |
+| Bedrohungsanalyse, Budgetanalyse | nicht vorhanden; Budget braucht Zeit- und Mengenangaben im Modell (ITEM-2026-885) |
+| Vorschlag aus einer Analyse (6a) | `se-fmea` und `se-laufzeit` liefern ihn in fester Form (CR-GC-782, CR-GC-783) |
+| Gesamt-Impact (6b) | der Probelauf von `graph_mutate` liefert die Kennzahlen danach (CR-GC-790); `se:optimize` zeigt sie als Vorlage (CR-GC-785) |
 | Nachweis, dass eine Rangfolge aus Kennzahlen Vorschläge richtig ordnet | widerlegt an drei Fällen; die Rangfolge ist gestrichen |
-| Betrachtungsumfang, Träger je Risiko | gebaut als Ableitungen in contracts 12.1.0 (CR-SM-407, `requirementScope`, `riskCarriers`), nicht veröffentlicht; `graph_metrics` reicht sie noch nicht durch |
-| Antwortweg | als Probe im Skript gerechnet; CR-SM-408 wartet auf ein Modell mit dem Merkmal |
-| Laufzeitanalyse | nicht vorhanden; das Merkmal synchron oder asynchron ist an keinem Fluss der Familie gesetzt |
+| Betrachtungsumfang, Träger je Risiko | gebaut als Ableitungen in contracts (CR-SM-407, `requirementScope`, `riskCarriers`), veröffentlicht mit contracts 12.6.0; `graph_metrics` reicht sie durch (CR-GC-787) |
+| Antwortweg | gebaut (CR-SM-408, contracts 12.6.0); im graphcode-Modell an 7 von 24 Ketten lesbar, Hindernis sind alternative Auslöser am Gate (ITEM-2026-843) |
+| Laufzeitanalyse | Skill `se-laufzeit` vorhanden (CR-GC-783), noch an keiner Kette gefahren; das Merkmal ist im graphcode-Modell gesetzt |
 
 **Offen im Konzept:**
 
@@ -256,20 +256,14 @@ treibendem Knoten), T-O3 (Degradationsschutz), T-O7 (inhaltliche Analysen).
 | 8 | Bedrohungsanalyse; Budgetanalyse mit synchroner Tiefe und Zeitangabe | je ein Item | T-O2 |
 | 9 | Schluss und Leitfaden im Konzept (Abschnitt 10) | CR-GC-781, geschlossen | T-O2, T-O3 |
 
-**Plan ab 2026-10-11.** Die gemeinsame Rechnung kommt zuerst; alle Skills lesen aus ihr.
+**Stand der Schritte (2026-10-12).** Schritte 1 bis 7 und 9 sind erledigt: CR-SM-404, CR-SM-406, CR-GC-774,
+die FMEA-Läufe (CR-GC-779, CR-GC-795, CR-GC-798), die Spikes mit ihrem Schluss (CR-GC-781) und die
+Optimierung (CR-GC-785, CR-GC-790). Schritt 8 ist offen (ITEM-2026-885).
 
-| Reihenfolge | Was | CR | Wartet auf | Bewegt |
-|---|---|---|---|---|
-| 1 | Betrachtungsumfang und Risikoträger als Ableitungen in contracts | CR-SM-407, geschlossen 2026-10-11 | – | T-O1, T-O8 |
-| 1b | Zählung über die Familie: welche Verdrahtungsregeln PDR halten; später Fehler statt Warnung | CR-SM-409, sigloch-modules | – | T-O8 |
-| 2 | Skill Modellvorbereitung | CR-GC-784 | 1 | T-O8 |
-| 3 | `se-fmea` Version 9 | CR-GC-782 | 1, 2 | T-O7 |
-| 4 | `se:optimize` Version 3 | CR-GC-785 | 1, 3 | T-O3 |
-| später | Antwortweg in der Kettenzeile | CR-SM-408 (Freigabe des Autors erteilt 2026-10-11) | ein Modell, das das Merkmal trägt | T-O2 |
-| später | Skill Laufzeitanalyse | CR-GC-783 | CR-SM-408 | T-O2 |
-| daneben | sigllm: Gegenmaßnahmen auf die Funktion, zwei fehlende Funktionen | CR-SL-096, CR-SL-097, CR-SL-098; eigene Sitzung in sigllm | – | T-O7 |
-| daneben | `graph_readiness` bricht an alten Art-Werten ab | CR-GC-786 | – | Hygiene |
-| nach 1 | graphcode reicht die zwei Ableitungen in `graph_metrics` durch; Release-Zug contracts 12.1.0 und graphcode | noch kein CR | 1 | – |
+**Der Plan ab 2026-10-11 ist gefahren** und steht nicht mehr als Tabelle hier; der Stand je CR ergibt sich aus
+`docs/cr/done/`. Geschlossen: CR-SM-407, CR-SM-408, CR-GC-782 bis CR-GC-787; veröffentlicht mit contracts 12.6.0
+und graphcode 0.31.0. Offen: CR-SM-409 (Verdrahtungsregeln als Fehler statt Warnung, sigloch-modules) und die
+sigllm-CRs CR-SL-096 bis CR-SL-098 in ihrer eigenen Sitzung.
 
 ## 10. Schluss aus den Spikes und Leitfaden der Optimierung
 
@@ -317,7 +311,7 @@ gewöhnlicher CR. Die neuen Elemente durchlaufen die Stufen wie jede Änderung; 
 ihre Menge nicht leer ist. Deshalb braucht es keine Sonderregel dafür, dass Gegenmaßnahmen erst in der FMEA
 entstehen: der CR der Analyse ordnet sie zu, die Matrix meldet, was fehlt. Dasselbe gilt für einen Umbau.
 
-**Basis optimieren (Skill `se-vorbereitung`, noch nicht vorhanden).** Das ist Hygiene, keine Analyse.
+**Basis optimieren (Skill `se-vorbereitung`, Version 2, CR-GC-784).** Das ist Hygiene, keine Analyse.
 
 | Prüfpunkt | Maß | Handlung |
 |---|---|---|
@@ -365,7 +359,7 @@ Die Vorbereitung des Modells ist ein eigener Skill und nicht Teil einer Analyse 
 | `se-vorbereitung` (neu, CR-GC-784) | Basis optimieren | führt durch den Schritt: prüft Ketten, Zuordnung und Merkmal der Flüsse und schlägt je Lücke den Zug vor | baut nicht selbst um; die Züge sind ein gewöhnlicher CR. Beurteilt kein Risiko und keine Laufzeit |
 | `se-fmea` Version 9 (CR-GC-782) | Kettenanalyse | prüft den Eingang, bewertet Risiken an den Orten, nennt Umfang und Träger; endet mit einem CR, der neue Gegenmaßnahmen der tragenden Funktion zuordnet | räumt keinen Altbestand auf, wendet keinen Umbau an |
 | `se-laufzeit` (neu, CR-GC-783) | Kettenanalyse | prüft den Eingang, liest den Antwortweg, liefert Vorschläge mit Preis; endet mit einem CR | setzt kein Merkmal, schätzt keine Zeit |
-| `se:optimize` Version 3 (CR-GC-785) | Umbau | probt einen Vorschlag und zeigt den Gesamt-Impact als Vorlage | bildet keine Rangfolge, mischt die Quellen nicht; Anwenden und Nachmessen gehören dem CR |
+| `se:optimize` (seit CR-GC-785, heute Version 5) | Umbau | probt einen Vorschlag und zeigt den Gesamt-Impact als Vorlage | bildet keine Rangfolge, mischt die Quellen nicht; Anwenden und Nachmessen gehören dem CR |
 
 Ein Vorschlag hat immer dieselbe Form: Zweck, Kette, Ort, Handlungsklasse, Prognose (was besser wird, was gleich
 bleibt), Preis.

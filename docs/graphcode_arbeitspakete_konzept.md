@@ -197,7 +197,7 @@ gilt für jeden Typ, nicht nur REQ/UC.
   R-30): ohne Ebenengrenze beantwortet das Modell Inhaltsbefunde mit Architektur.
 - „MOD + allocate" geht zu 36 % durchs Gate (4 Regeln für 95 %), Inhaltszüge zu 79–100 % (0–1 Regel).
 - Nicht gemessen: ob der Zyklus Runden und Dubletten tatsächlich senkt — das zeigt erst eine
-  S2-Runde, eingetragen in `docs/messung/verlauf.md`.
+  S2-Runde. Die Verlaufsdatei entfiel mit CR-GC-740; der erzeugte Stand steht in `docs/messung/stand.md`.
 
 ### Offen
 
