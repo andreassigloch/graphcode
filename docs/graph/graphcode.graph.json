@@ -3310,6 +3310,12 @@
       "description": "docs/cr/open/CR-GC-791-nachbarskills-se-optimize-und-se-vorbere.md"
     },
     {
+      "id": "CR-GC-792",
+      "type": "CR",
+      "name": "Antwortweg lesbar machen: Gate-Urteil trennen, Store und Sperre als Glied",
+      "description": "docs/cr/open/CR-GC-792-antwortweg-lesbar-machen-gate-urteil-tre.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3759,9 +3765,10 @@
     {
       "id": "FLOW-gate-verdict",
       "type": "FLOW",
-      "name": "Gate-Verdikt",
-      "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. bootstrap, import-code-verb und graph_test_ingest lesen es und reichen es weiter; der Gate-Zugang des Executors formt daraus seinen Gate-Ausgang (FLOW-gate-outcome), und erst den liest die Kandidaten-Rangfolge. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501, CR-GC-509, CR-GC-685)",
-      "status": "reviewed"
+      "name": "Gate-Verdikt (Antwort im Aufruf)",
+      "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation, als Antwort im Aufruf: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. Jeder Abnehmer wartet im Aufruf darauf: bootstrap, import-code-verb, graph_test_ingest und graph_suggest rufen das Gate und lesen das Ergebnis, der Werkzeug-Kontext bekommt es im selben Aufruf zur Aufzeichnung uebergeben, der Owner liest es als Antwort. Wer das Urteil spaeter aus dem Log liest, bezieht FLOW-audit-record. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501, CR-GC-509, CR-GC-685, CR-GC-792)",
+      "status": "reviewed",
+      "sync": "sync"
     },
     {
       "id": "FLOW-generation-step-suggest",
@@ -14850,6 +14857,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-792",
+      "target": "FUNC-claim-store-lock",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-792",
+      "target": "FUNC-graph-store",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-792",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-792",
+      "target": "FUNC-se-retro",
+      "type": "relation"
+    },
+    {
+      "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -14891,6 +14923,11 @@
     },
     {
       "source": "FCHAIN-agent-query",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-agent-query",
       "target": "FUNC-graph-expand",
       "type": "compose",
       "weight": 1,
@@ -14902,6 +14939,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-agent-query",
+      "target": "FUNC-graph-store",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-agent-query",
@@ -15048,10 +15090,20 @@
     },
     {
       "source": "FCHAIN-capture",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-capture",
       "target": "FUNC-decode",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-capture",
+      "target": "FUNC-graph-store",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-capture",
@@ -15110,6 +15162,11 @@
     {
       "source": "FCHAIN-dashboard-metrics",
       "target": "FUNC-chain-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-claim-store-lock",
       "type": "compose"
     },
     {
@@ -15174,7 +15231,17 @@
     },
     {
       "source": "FCHAIN-generation-states",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-generation-states",
       "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-generation-states",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
@@ -15228,6 +15295,11 @@
     },
     {
       "source": "FCHAIN-interface-escalation",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
       "target": "FUNC-graph-impact",
       "type": "compose",
       "weight": 1,
@@ -15274,6 +15346,11 @@
     {
       "source": "FCHAIN-live-update",
       "target": "FUNC-broadcast-diff",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "FUNC-claim-store-lock",
       "type": "compose"
     },
     {
@@ -15334,6 +15411,16 @@
     },
     {
       "source": "FCHAIN-loop-closure",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-loop-closure",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-loop-closure",
       "target": "FUNC-mutate",
       "type": "compose"
     },
@@ -15359,7 +15446,17 @@
     },
     {
       "source": "FCHAIN-model-import",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
       "target": "FUNC-cli-dispatch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
@@ -15394,10 +15491,20 @@
     },
     {
       "source": "FCHAIN-modelfree-gate",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
       "target": "FUNC-evaluate-rules",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
+      "target": "FUNC-graph-store",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-modelfree-gate",
@@ -15439,6 +15546,11 @@
       "target": "FUNC-apply-reseed",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-recall",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-recall",
@@ -15553,7 +15665,17 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-close-violations",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
@@ -15624,12 +15746,22 @@
     },
     {
       "source": "FCHAIN-skill-report",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
       "target": "FUNC-compute-readiness",
       "type": "compose"
     },
     {
       "source": "FCHAIN-skill-report",
       "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
@@ -15677,6 +15809,11 @@
     },
     {
       "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
     },
@@ -15716,6 +15853,11 @@
       "target": "FUNC-arch-fitness",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-steering-loop",
@@ -15815,6 +15957,16 @@
     },
     {
       "source": "FCHAIN-test-ingest",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-test-ingest",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-test-ingest",
       "target": "FUNC-mutate",
       "type": "compose"
     },
@@ -15866,6 +16018,11 @@
     {
       "source": "FLOW-audit-record",
       "target": "FUNC-audit-trail",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-audit-record",
+      "target": "FUNC-se-retro",
       "type": "io"
     },
     {
@@ -16288,11 +16445,6 @@
     {
       "source": "FLOW-gate-verdict",
       "target": "FUNC-import-code-verb",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-gate-verdict",
-      "target": "FUNC-se-retro",
       "type": "io"
     },
     {
@@ -23315,5 +23467,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 704
+  "graphVersion": 707
 }
