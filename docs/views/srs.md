@@ -920,7 +920,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FUNC-block-optimierung`
 
-Prompt-realisierter Skill se:optimize, Version 4: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Die Spalte danach liest er aus dem Bericht metricsAfter im Urteil des Trockenlaufs; offen bis zum Nachmessen bleibt der Betrachtungsumfang. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785, CR-GC-790)
+Prompt-realisierter Skill se:optimize, Version 5: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form (se-fmea, se-laufzeit) und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Die Spalte danach liest er aus dem Bericht metricsAfter im Urteil des Trockenlaufs, darunter den Antwortweg je Kette (answerPath); offen bis zum Nachmessen bleibt der Betrachtungsumfang. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785, CR-GC-790, CR-GC-791)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-optimize` · allocate ▶ `MOD-agent-surface`
 
@@ -946,7 +946,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FUNC-block-optimierung`
 
-Prompt-realisierter Skill se-vorbereitung: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Vier Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Bericht. Liest Bewertbarkeit, Traeger und Umfang aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784)
+Prompt-realisierter Skill se-vorbereitung, Version 2: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Vier Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Bericht. Liest Bewertbarkeit, Traeger, Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
@@ -5856,7 +5856,7 @@ Verification ◀ `TEST-target-profile` (integration) · `TEST-target-shifts-rank
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se:optimize, Version 4: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Die Spalte danach liest er aus dem Bericht metricsAfter im Urteil des Trockenlaufs; offen bis zum Nachmessen bleibt der Betrachtungsumfang. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785, CR-GC-790)
+Prompt-realisierter Skill se:optimize, Version 5: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form (se-fmea, se-laufzeit) und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Die Spalte danach liest er aus dem Bericht metricsAfter im Urteil des Trockenlaufs, darunter den Antwortweg je Kette (answerPath); offen bis zum Nachmessen bleibt der Betrachtungsumfang. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785, CR-GC-790, CR-GC-791)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-optimize` · allocate ▶ `MOD-agent-surface`
 
@@ -5882,7 +5882,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se-vorbereitung: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Vier Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Bericht. Liest Bewertbarkeit, Traeger und Umfang aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784)
+Prompt-realisierter Skill se-vorbereitung, Version 2: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Vier Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Bericht. Liest Bewertbarkeit, Traeger, Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
@@ -8294,7 +8294,7 @@ verify ▶ `REQ-audit-trail` · testRefs: `tests/operations-log.integration.test
 
 ### 8.92  `TEST-optimize-presents-impact` — Optimierer-Skill liest echte Felder und ordnet nichts
 
-Der Skill-Text nennt nur Felder, die graph_metrics, der Trockenlauf von graph_mutate und graph_suggest an einem Messaufbau auf Platte wirklich antworten, bildet keine Rangfolge und keine Summe, nennt die feste Form des Vorschlags wortgleich mit se-fmea und zeigt graph_mutate nur als Trockenlauf. Derselbe Lauf haelt fest, dass das Urteil des Trockenlaufs keine Kettenzeile und keine Traeger traegt.
+Der Skill-Text nennt nur Felder, die graph_metrics, der Trockenlauf von graph_mutate und graph_suggest an einem Messaufbau auf Platte wirklich antworten, bildet keine Rangfolge und keine Summe, nennt die feste Form des Vorschlags wortgleich mit se-fmea und se-laufzeit und zeigt graph_mutate nur als Trockenlauf. Derselbe Lauf haelt fest, dass die Spalte danach aus metricsAfter kommt, dass die Zeile der Kette dort den Antwortweg traegt und dass das Urteil keinen Betrachtungsumfang traegt.
 
 verify ▶ `REQ-optimize-probes-and-presents` · testRefs: `tests/skill-optimize-vorlage.test.ts`
 
@@ -8618,7 +8618,7 @@ verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/m
 
 ### 8.146  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
-Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift.
+Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 

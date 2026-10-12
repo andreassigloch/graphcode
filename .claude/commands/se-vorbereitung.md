@@ -1,6 +1,6 @@
 ---
 name: se-vorbereitung
-version: 1
+version: 2
 description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen dem tiefsten Träger zuordnen, Flüsse als synchron oder asynchron kennzeichnen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
@@ -100,9 +100,23 @@ Vorschlag vor und kennzeichnest sie so. Ein Risiko ohne Gegenmaßnahme oder ohne
 
 ## 3. Flüsse kennzeichnen
 
-Die Laufzeitanalyse braucht an jedem Fluss der Kette das Merkmal synchron oder asynchron. Es ist
-ein Attribut am Fluss; eine Kennzahl dafür gibt es noch nicht. Frag deshalb je Fluss der Kette
-ohne Merkmal (`graph_get_edges({ edgeType: "io" })`):
+Die Laufzeitanalyse (`se-laufzeit`) liest den Antwortweg der Kette: die Glieder, auf die die
+Antwort an den Akteur wartet. `graph_metrics` liefert ihn je Kette als `answerPath` und liest dafür
+das Merkmal `sync` an den Flüssen. Deine Arbeit ist die Liste daneben:
+
+```
+graph_metrics()    # Zeile der Kette in chains: answerPath, answerPathBlockedBy
+```
+
+- `answerPath` ist eine Liste, auch eine leere: der Weg ist lesbar, dieser Schritt meldet nichts.
+- `answerPath: null`: `answerPathBlockedBy` nennt die Flüsse, die ihn verhindern. Ein Fluss hindert aus einem von zwei Gründen; welcher es ist, zeigt `graph_get_node` am Fluss:
+  - er trägt das Merkmal nicht lesbar: frag den Autor und kennzeichne ihn (unten),
+  - er trägt `sync` und kommt von einer Funktion außerhalb der Kette: die Kette ist offen. Zurück zu Schritt 1: die Funktion wird Glied, oder der Fluss ist asynchron.
+
+Die Liste nennt die Hindernisse, auf die der Weg trifft, nicht jeden Fluss ohne Merkmal. Nach
+jedem angewandten Zug liest du neu, bis `answerPathBlockedBy` leer ist; es können weitere dahinter stehen.
+
+Die Frage je Fluss ohne lesbares Merkmal:
 
 > Wartet die Antwort des Abnehmers auf diese Lieferung?
 
@@ -118,8 +132,7 @@ Ja heißt synchron, nein heißt asynchron (vorab geliefert). Der Zug je Fluss:
 ```
 
 - Wird derselbe Inhalt von einem Abnehmer abgerufen und einem anderen vorab geliefert, sind das zwei Flüsse. Schlag die Trennung vor.
-- Wartet ein Glied synchron auf eine Funktion außerhalb der Kette, ist die Kette nicht vollständig. Zurück zu Schritt 1: die Funktion wird Glied, oder der Fluss ist asynchron.
-- Ohne Antwort des Autors bleibt der Fluss ohne Merkmal und steht im Bericht.
+- Ohne Antwort des Autors bleibt der Fluss ohne Merkmal, steht im Bericht, und `answerPath` bleibt `null`.
 
 ## 4. Bericht
 
@@ -130,7 +143,7 @@ Je Kette, alles zitiert und nichts gezählt, was `graph_metrics` nicht liefert:
 | bewertbar | `measurable`, sonst `reasons` |
 | Träger je Risiko | `carriers` je `riskId` |
 | Sockel | die `satisfiers`, deren `by` das System ist |
-| Flüsse ohne Merkmal | die Liste aus Schritt 3 |
+| Antwortweg | `answerPath`, sonst die Flüsse aus `answerPathBlockedBy`, je mit ihrem Grund |
 | Vorschläge | je Zug: Klasse, Elemente, Format-E, gewählt oder offen |
 | offen | was bleibt, mit Grund; je „Funktion fehlt" das Item |
 
@@ -143,5 +156,5 @@ Der Bericht ist der Eingang des CR, der die gewählten Züge anwendet.
 - [ ] jede Kette des Umfangs bewertbar, oder der Lauf endete in Schritt 1
 - [ ] je Gegenmaßnahme an Modul oder System eine der vier Klassen, als Vorschlag gekennzeichnet
 - [ ] vor jedem Tieferlegen die Bindung der Funktion gelesen
-- [ ] je Fluss der Kette ein Merkmal, oder im Bericht als offen
+- [ ] `answerPath` der Kette lesbar (`answerPathBlockedBy` leer), oder die hindernden Flüsse im Bericht als offen
 - [ ] kein Zug ohne Wahl des Autors; jeder gewählte durch `graph_mutate`

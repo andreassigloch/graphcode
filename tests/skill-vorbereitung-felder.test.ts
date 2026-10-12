@@ -8,6 +8,9 @@
  * der Text ein Feld, einen Grund oder eine Regel, die es dort nicht gibt, ist er rot. Muster:
  * `tests/skill-fmea-orte.test.ts`.
  *
+ * CR-GC-791 (Version 2): Schritt 3 liest den Antwortweg (`answerPath`) und arbeitet die Liste der
+ * hindernden Fluesse ab (`answerPathBlockedBy`), statt jeden Fluss der Kette abzufragen.
+ *
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
@@ -70,11 +73,18 @@ const VERDRAHTUNG = ['R-30', 'R-31', 'R-21', 'IO-01', 'FC-04', 'FC-05'];
 const KLASSEN = ['Tieferlegen', 'Zerlegen', 'Funktion fehlt', 'Gilt quer'];
 
 describe('se-vorbereitung liest Kennzahlen und Befunde, er rechnet nichts (CR-GC-784)', () => {
-  it('der Skill-Text traegt keine Rechnung und nennt keine Kennzahl fuer das Merkmal am Fluss', () => {
+  it('der Kopf traegt Version 2 und den Namen des Skills', () => {
+    expect(skill).toMatch(/^name: se-vorbereitung$/m);
+    expect(skill).toMatch(/^version: 2$/m);
+  });
+
+  it('der Skill-Text traegt keine Rechnung und keine Kennzahl, die es nicht gibt', () => {
     expect(skill).toMatch(/rechnest keine Kennzahl/);
     expect(skill, 'keine Rechenvorschrift').not.toMatch(/÷|Quotient|Durchschnitt|Mittelwert|Summe|Prozent|%/);
-    // Das Merkmal `sync` liest noch keine Kennzahl (CR-SM-408 wartet); `syncDepth` waere eine Behauptung.
+    // `syncDepth` bleibt `null`; wer es nennt, behauptet eine Tiefe. Der Antwortweg ist `answerPath`.
     expect(skill).not.toContain('syncDepth');
+    // CR-GC-791: der alte Wortlaut (der Antwortweg als kuenftige Kennzahl) ist weg.
+    expect(skill).not.toMatch(/eine Kennzahl dafür gibt es noch nicht|CR-SM-408/);
   });
 
   it('er liest aus graph_metrics und den Regelbefunden und schreibt nur durchs Gate', () => {
@@ -167,7 +177,38 @@ describe('se-vorbereitung liest Kennzahlen und Befunde, er rechnet nichts (CR-GC
     expect(skill).toContain('Wartet die Antwort des Abnehmers auf diese Lieferung?');
     for (const wert of FlowSync.options) expect(skill, wert).toMatch(new RegExp(`^@sync ${wert}$`, 'm'));
     expect(skill).toMatch(/zwei Flüsse/);
-    expect(skill).toMatch(/außerhalb[^\n]*nicht vollständig/);
+  });
+
+  it('Schritt 3: der Skill liest answerPathBlockedBy als die Liste seiner Arbeit, und der Vertrag rechnet so (CR-GC-791)', () => {
+    const zeile = (m: ReturnType<typeof modell>) =>
+      chainMetrics(alsGraph(m)).chains.find((c) => c.chainId === 'FCHAIN-x') as Record<string, unknown>;
+    const kennzeichne = (m: ReturnType<typeof modell>, id: string, wert: string) => {
+      m.elements.find((e) => e.id === id)!.attributes = { sync: wert };
+    };
+    for (const feld of ['answerPath', 'answerPathBlockedBy']) {
+      expect(skill, feld).toContain(`\`${feld}\``);
+      expect(zeile(modell()), feld).toHaveProperty(feld);
+    }
+    // Ohne Merkmal: der Weg ist verhindert, die Liste nennt den Fluss am Akteur.
+    expect(skill).toMatch(/`answerPath: null`[^\n]*`answerPathBlockedBy`[^\n]*verhindern/);
+    const m = modell();
+    expect(zeile(m).answerPath).toBeNull();
+    expect(zeile(m).answerPathBlockedBy).toEqual(['FLOW-out']);
+    // Die Liste nennt nur, worauf der Weg trifft: nach dem ersten Zug steht der naechste Fluss da.
+    expect(skill).toMatch(/nicht jeden Fluss ohne Merkmal/);
+    expect(skill).toMatch(/liest du neu[^\n]*`answerPathBlockedBy` leer/);
+    kennzeichne(m, 'FLOW-out', 'sync');
+    expect(zeile(m).answerPathBlockedBy).toEqual(['FLOW-ab']);
+    // Alle Fluesse des Wegs gekennzeichnet: der Weg ist lesbar, die Liste leer.
+    kennzeichne(m, 'FLOW-ab', 'sync');
+    kennzeichne(m, 'FLOW-in', 'async');
+    expect(zeile(m).answerPathBlockedBy).toEqual([]);
+    expect(zeile(m).answerPath).toEqual(['FUNC-a', 'FUNC-b']);
+    expect(skill).toMatch(/`answerPath` ist eine Liste[^\n]*meldet nichts/);
+    // Der zweite Grund: synchrones Warten auf eine Funktion ausserhalb der Kette, die Kette ist offen.
+    expect(skill).toMatch(/`sync`[^\n]*außerhalb der Kette[^\n]*offen[^\n]*Schritt 1/);
+    // Der Bericht fuehrt den Antwortweg, nicht mehr eine eigene Liste.
+    expect(skill).toMatch(/\| Antwortweg \| `answerPath`[^\n]*`answerPathBlockedBy`/);
   });
 
   it('er baut nicht selbst um und beurteilt weder Risiko noch Laufzeit', () => {

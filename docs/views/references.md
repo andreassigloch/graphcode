@@ -779,6 +779,8 @@
 | `CR-GC-790` | relation | `FUNC-zug-bericht` |
 | `CR-GC-790` | relation | `REQ-zug-zeigt-kennzahlen-danach` |
 | `CR-GC-790` | relation | `SCHEMA-zug-bericht` |
+| `CR-GC-791` | relation | `FUNC-se-optimize` |
+| `CR-GC-791` | relation | `FUNC-se-vorbereitung` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

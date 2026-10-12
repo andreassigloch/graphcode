@@ -11,6 +11,9 @@
  * Dieselbe Probe haelt fest, was offen bleibt: das Urteil traegt keinen Betrachtungsumfang, und
  * `graph_metrics` misst nach der Probe den unveraenderten Stand.
  *
+ * CR-GC-791 (Version 5): der Antwortweg ist eine Kennzahl (`answerPath`, CR-GC-783) und steht in
+ * der Vorlage davor und danach; `se-laufzeit` ist die zweite Analyse, die Vorschlaege abgibt.
+ *
  * Muster: `tests/skill-vorbereitung-felder.test.ts`, `tests/skill-fmea-orte.test.ts`.
  *
  * @author andreas@siglochconsulting
@@ -29,6 +32,7 @@ import { MetricsAfter } from '../src/kernel/measure/zug-bericht.js';
 const COMMANDS = join(__dirname, '..', '.claude', 'commands');
 const skill = readFileSync(join(COMMANDS, 'se', 'optimize.md'), 'utf8');
 const fmea = readFileSync(join(COMMANDS, 'se-fmea.md'), 'utf8');
+const laufzeit = readFileSync(join(COMMANDS, 'se-laufzeit.md'), 'utf8');
 
 type Zeile = Record<string, unknown>;
 type Antwort = Record<string, unknown>;
@@ -114,9 +118,18 @@ afterAll(async () => {
 });
 
 describe('se:optimize Version 3: zwei Quellen, getrennt, ohne Rangfolge (CR-GC-785)', () => {
-  it('der Kopf traegt Version 4 unter dem alten Namen', () => {
+  it('der Kopf traegt Version 5 unter dem alten Namen', () => {
     expect(skill).toMatch(/^name: se:optimize$/m);
-    expect(skill).toMatch(/^version: 4$/m);
+    expect(skill).toMatch(/^version: 5$/m);
+  });
+
+  it('Quelle (a) nennt beide Analysen, die Vorschlaege abgeben: se-fmea und se-laufzeit (CR-GC-791)', () => {
+    const quelle = skill.split('\n').find((z) => z.startsWith('| **(a) Analyse**'))!;
+    expect(quelle).toContain('`se-fmea`');
+    expect(quelle).toContain('`se-laufzeit`');
+    // Praemisse: se-laufzeit gibt in derselben festen Form ab und nennt den Optimierer als Abnehmer.
+    expect(laufzeit).toContain('`Zweck | Kette | Ort | Handlungsklasse | Prognose | Preis`');
+    expect(laufzeit).toContain('`se:optimize`');
   });
 
   it('Quelle (a) kommt in der festen Form, wortgleich mit dem, was se-fmea abgibt', () => {
@@ -220,12 +233,21 @@ describe('se:optimize Version 3: die Vorlage davor liest echte Felder (CR-GC-785
     expect(requirementScope(graph, ['FUNC-a']).requirements).toContain('REQ-a');
   });
 
-  it('der Antwortweg ist keine Kennzahl: der Skill nennt ihn nur als kuenftig', () => {
-    expect(skill).toMatch(/Antwortweg[^\n]*CR-SM-408/);
-    expect(skill).toMatch(/Antwortweg[^\n]*(noch keine Kennzahl|sobald)/);
+  it('der Antwortweg steht in der Vorlage davor: answerPath und answerPathBlockedBy traegt die Zeile der Kette (CR-GC-791)', () => {
+    // Der alte Wortlaut (kuenftige Kennzahl) ist weg.
+    expect(skill).not.toMatch(/noch keine Kennzahl|nicht gemessen|CR-SM-408/);
     expect(skill).not.toContain('syncDepth');
+    expect(skill).toMatch(/\| Antwortweg \|[^\n]*`answerPath`[^\n]*`answerPathBlockedBy`/);
     const zeile = (davor.chains as Zeile[]).find((c) => c.chainId === 'FCHAIN-x')!;
-    expect(zeile.syncDepth, 'Praemisse: die Zeile misst dafuer nichts').toBeNull();
+    for (const feld of ['answerPath', 'answerPathBlockedBy']) {
+      expect(skill, feld).toContain(`\`${feld}\``);
+      expect(zeile, feld).toHaveProperty(feld);
+    }
+    // Das Probemodell traegt kein Merkmal an den Fluessen: der Weg ist verhindert, die Liste nennt den Fluss.
+    expect(zeile.answerPath).toBeNull();
+    expect(zeile.answerPathBlockedBy).toEqual(['FLOW-out']);
+    // Dafuer sagt der Skill, was zu tun ist: keine Probe einer Prognose ueber den Antwortweg.
+    expect(skill).toMatch(/`answerPath: null`[^\n]*Antwortweg[^\n]*keine Probe[^\n]*`answerPathBlockedBy`[^\n]*`se-vorbereitung`/);
   });
 });
 
@@ -289,6 +311,9 @@ describe('se:optimize Version 3: die Probe verspricht nur, was der Trockenlauf t
     // Jede Zeile der Vorlage mit einer Spalte danach nennt die Liste, aus der sie kommt.
     expect(skill).toMatch(/\| Ketten des Umfangs[^\n]*`metricsAfter\.chains`/);
     expect(skill).toMatch(/\| Träger je Risiko[^\n]*`metricsAfter\.riskCarriers`/);
+    // CR-GC-791: der Antwortweg danach ist ein Feld derselben Zeile, kein Fall fuers Nachmessen.
+    expect(skill).toMatch(/\| Antwortweg \| `answerPath`[^\n]*`metricsAfter\.chains`/);
+    expect(skill).not.toMatch(/offen bis zum Nachmessen[^\n]*Antwortweg/);
     expect(skill).toMatch(/\| Modulbaum und Funktionsbaum[^\n]*`metricsAfter\.modules`[^\n]*`metricsAfter\.functions`/);
     // Der Zug der Probe schliesst einen Kreislauf in x: die Zeile danach steht im Urteil, und sie
     // ist eine andere als die, die graph_metrics davor und nach der Probe misst.
@@ -296,6 +321,7 @@ describe('se:optimize Version 3: die Probe verspricht nur, was der Trockenlauf t
     const xDavor = (davor.chains as Zeile[]).find((c) => c.chainId === 'FCHAIN-x')!;
     expect(x, 'Praemisse: der Zug der Probe aendert die Zeile der Kette x').toBeDefined();
     expect((x.loops as unknown[]).length).toBe((xDavor.loops as unknown[]).length + 1);
+    for (const feld of ['answerPath', 'answerPathBlockedBy']) expect(x, feld).toHaveProperty(feld);
     // Der Text sagt, wie eine nicht genannte Zeile zu lesen ist und dass der Bericht auch leer dasteht.
     expect(skill).toMatch(/nicht steht[^\n]*\n?[^\n]*unverändert/);
     expect(skill).toMatch(/`metricsAfter` steht bei jedem Trockenlauf da[^\n]*auch leer/);

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 400 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 401 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 400 CR · 343 done · 4 open.
+Total: 401 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -462,3 +462,4 @@ Total: 400 CR · 343 done · 4 open.
 | `CR-GC-788` | done | Modell: Block FUNC-goal-steerer erfuellt eine Anforderung |
 | `CR-GC-789` | done | Merkmal sync an den Fluessen des Selbstmodells |
 | `CR-GC-790` | n/a | Trockenlauf zeigt die Kennzahlen danach nicht: Gesamt-Impact vor der Wahl nur halb |
+| `CR-GC-791` | n/a | Nachbarskills se:optimize und se-vorbereitung auf den Antwortweg nachziehen |

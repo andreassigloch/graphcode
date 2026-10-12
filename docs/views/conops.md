@@ -422,6 +422,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-788` | done | Modell: Block FUNC-goal-steerer erfuellt eine Anforderung | `FUNC-goal-steerer` · `REQ-steering-from-metrics` |
 | `CR-GC-789` | done | Merkmal sync an den Fluessen des Selbstmodells | `FUNC-generation-step` · `FUNC-graph-store` · `FUNC-graph-suggest` · `FUNC-mutate` · `FUNC-schema-guard` · `FUNC-seed-from-json` · `FUNC-take-steering-snapshot` |
 | `CR-GC-790` | n/a | Trockenlauf zeigt die Kennzahlen danach nicht: Gesamt-Impact vor der Wahl nur halb | `FUNC-se-optimize` · `FUNC-zug-bericht` · `REQ-zug-zeigt-kennzahlen-danach` |
+| `CR-GC-791` | n/a | Nachbarskills se:optimize und se-vorbereitung auf den Antwortweg nachziehen | `FUNC-se-optimize` · `FUNC-se-vorbereitung` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

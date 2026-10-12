@@ -1,6 +1,6 @@
 ---
 name: se:optimize
-version: 4
+version: 5
 description: Einen Umbauvorschlag proben und seinen Gesamt-Impact als Vorlage zeigen — Vorschläge aus einer Analyse (feste Form) und Vorschläge von graph_suggest, getrennt. Trockenlauf durchs Gate, Vorlage davor und danach, Wahl durch den Autor. Nach CDR, vor den Kettentests. Kein Auto-Apply; Anwenden und Nachmessen gehören dem CR des Umbaus.
 ---
 
@@ -27,7 +27,7 @@ Du rechnest keine Kennzahl: die Vorlage liest du aus `graph_metrics`, aus den Be
 
 | Quelle | Woher | Was ein Vorschlag trägt |
 |---|---|---|
-| **(a) Analyse** | Abschnitt „Architekturvorschläge" im CR einer Analyse (`se-fmea`) | die feste Form `Zweck | Kette | Ort | Handlungsklasse | Prognose | Preis` |
+| **(a) Analyse** | der Abschnitt der Vorschläge im CR einer Analyse: „Architekturvorschläge" bei `se-fmea`, „Vorschläge" bei `se-laufzeit` | die feste Form `Zweck | Kette | Ort | Handlungsklasse | Prognose | Preis` |
 | **(b) Baumgüte** | `graph_suggest`, zur Güte von Modulbaum und Funktionsbaum | `ruleId`, `elementId`, `edit`, `score`, `delta`, `applicable`, `verdict` |
 
 Zeig sie in zwei Abschnitten. Es gibt keine gemeinsame Rangfolge und keinen Vergleich über die
@@ -61,6 +61,9 @@ in `chains` aus `graph_metrics()`. Bei (b) sind es die Ketten durch die Funktion
 
 `measurable: false`: keine Probe. Nenne die `reasons` und verweise auf `se-vorbereitung`.
 
+`answerPath: null` an einem Vorschlag, dessen Prognose etwas über den Antwortweg sagt: keine Probe. Nenne die Flüsse aus `answerPathBlockedBy` und verweise auf `se-vorbereitung`.
+Ohne Antwortweg davor ist die Prognose nicht prüfbar.
+
 ## 3. Vorlage davor
 
 ```
@@ -76,7 +79,7 @@ Fluss, eine Anforderung oder die Zuordnung zum Modul ändert. Merk dir `graphVer
 | Betrachtungsumfang | Block `scope`: `modules`, `chains`, `requirements`. Eine Zahl ist die Länge der Liste |
 | Ketten | je Kette aus `chains` des Umfangs ihre Zeile: `length`, `memberCount`, `branching`, `fanIn`, `moduleBoundaries`, `loops`, `shared`, `boundaries`, `imports`, `handovers` |
 | Träger je Risiko | `riskCarriers`: je Risiko des Umfangs `riskId`, `carriers`, `satisfiers`; aus `surface` die Risiken je berührter Funktion |
-| Antwortweg | noch keine Kennzahl (CR-SM-408). Steht in der Vorlage als „nicht gemessen" |
+| Antwortweg | je Kette des Umfangs `answerPath`: die Glieder, auf die die Antwort an den Akteur wartet. `[]` heißt, auf diese Kette wartet keine Antwort; `null` heißt verhindert, dann stehen die hindernden Flüsse in `answerPathBlockedBy` |
 | Funktionsbaum | `functions`: `chains` und `useCases` je berührter Funktion |
 | Modulbaum | je Modul des Umfangs `fanIn`, `fanOut`, `instability`, `lcom4`, `cohesion`, `uphillDependencies`, jede neben ihrer Schwelle aus `policy` (Herkunft: `policySource`) |
 | Befunde | je Regel die Zahl, ohne die aus dem Bau: `R-19`, `R-20`, `R-26`, `R-32` |
@@ -139,7 +142,7 @@ Je Vorschlag eine Vorlage, in der Reihenfolge, in der die Quelle sie lieferte.
 
 - **verletzt:** die Probe belegt es (neuer Befund, `blockingErrors`, `worstAt`, `regressions`, oder eine Zeile in `metricsAfter`, die gleich bleiben sollte). Eine Verbesserung, die das Gleichbleiben verletzt, zählt nicht.
 - **hält laut Probe:** die Probe prüft die Aussage und meldet nichts. Für eine Zeile oder einen Träger heißt das: sie steht nicht in `metricsAfter`.
-- **offen bis zum Nachmessen:** die Aussage betrifft den Betrachtungsumfang, den Antwortweg oder einen Befund, den der Zug schließen soll. Das trägt die Probe nicht.
+- **offen bis zum Nachmessen:** die Aussage betrifft den Betrachtungsumfang oder einen Befund, den der Zug schließen soll. Das trägt die Probe nicht.
 
 Dann die Tabelle, jede Zahl mit ihrem Feld:
 
@@ -147,12 +150,14 @@ Dann die Tabelle, jede Zahl mit ihrem Feld:
 |---|---|---|---|---|
 | Betrachtungsumfang | Schritt 3 | – | – | Nachmessen im CR |
 | Ketten des Umfangs | ihre Zeilen | welche Zeile sich ändert, und wie | – | `metricsAfter.chains`, sonst unverändert |
+| Antwortweg | `answerPath` je Kette | welche Glieder nicht mehr darin stehen | – | `answerPath` an der Zeile der Kette in `metricsAfter.chains`, sonst unverändert |
 | Träger je Risiko | `carriers` | aus dem Vorschlag | – | `metricsAfter.riskCarriers`, sonst unverändert |
 | Modulbaum und Funktionsbaum | Zeilen mit Schwelle | aus dem Preis | `steerAdvisory`, `fitAdvisory` | `metricsAfter.modules` und `metricsAfter.functions`, sonst unverändert |
 | Befunde ohne Bau | je Regel | – | neu aus `violations` | Nachmessen im CR |
 
 Jede Zahl der Spalte „danach" steht neben ihrer Zahl von davor, mit demselben Feldnamen. Eine Zeile
-unter `removed` zeigst du als entfallen.
+unter `removed` zeigst du als entfallen. Den Antwortweg zeigst du als Liste der Glieder davor und
+danach; ein `null` danach ist ein Ergebnis der Probe: nenne `answerPathBlockedBy` der Zeile.
 
 Darunter die zu beurteilenden Anforderungen (Schritt 3), der Preis, und aus `workOrder`, was an Code mitwandert.
 
@@ -185,5 +190,6 @@ Nach einem angewandten Umbau ist das Modell ein anderes: jeder weitere Vorschlag
 - [ ] die Kette bewertbar, sonst Verweis auf `se-vorbereitung` statt Probe
 - [ ] je Vorschlag die Prüfung gegen die Prognose oben, dann die Vorlage
 - [ ] die Spalte „danach" aus `metricsAfter`, jede Zeile unverändert übernommen
+- [ ] der Antwortweg je Kette davor und danach aus `answerPath`, nicht nachgegangen
 - [ ] was die Probe nicht trägt, steht als offen bis zum Nachmessen und ist nicht von Hand gerechnet
 - [ ] kein Zug angewandt; je Vorschlag die Wahl des Autors oder sein Grund dagegen

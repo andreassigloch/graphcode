@@ -79,6 +79,8 @@ erwähnt, wo es noch wirkt: `fitAdvisory` im Urteil des Trockenlaufs gibt es nur
 
 ### Offener Punkt: der Trockenlauf trägt die Vorlage „danach" nicht
 
+**Erledigt mit CR-GC-790** (nachgetragen 2026-10-12, CR-GC-791): das Urteil des Trockenlaufs trägt `metricsAfter`; der Antwortweg ist seit CR-GC-783 eine Kennzahl (`answerPath`). Der Text darunter ist der Stand vom Tag des CR.
+
 Der CR verlangt die Vorlage „davor und danach". Mit den heutigen Werkzeugen gibt es „danach" vor dem Anwenden
 nur zum Teil.
 
