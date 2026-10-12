@@ -180,7 +180,7 @@ darum genau zwei legale Antworten:
 Die Entscheidung betrifft 3–9 Elemente statt des ganzen FUNC-Baums. Eine Rechnung liefert dafür nur
 **Kandidaten**: CNM über die Kopplung der Kinder trifft den gezogenen Schnitt nicht (ARI ≤ 0,40 am
 Golden und an graphcode), die Cluster liegen aber zu 63–77 % in einem MOD
-([SPIKE-GC-inhalt-vs-architektur](spikes/SPIKE-GC-inhalt-vs-architektur.md)).
+([SPIKE-GC-inhalt-vs-architektur](archive/spikes/SPIKE-GC-inhalt-vs-architektur.md)).
 
 ### Was global bleibt
 

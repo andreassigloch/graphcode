@@ -39,4 +39,4 @@ doesn't just compress — it decides what the model can even go wrong on.
 ---
 
 *Repo: <https://github.com/andreassigloch/graphcode>. Full data:
-[`SPIKE-GC-context-sufficiency-RESULTS.md`](../spikes/SPIKE-GC-context-sufficiency-RESULTS.md).*
+[`SPIKE-GC-context-sufficiency-RESULTS.md`](../archive/spikes/SPIKE-GC-context-sufficiency-RESULTS.md).*

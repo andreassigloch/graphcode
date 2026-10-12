@@ -18,7 +18,7 @@ data/
 # internal process docs — gate-review records stay local. Change-requests (docs/cr/) are
 # tracked as of BOK-CR-027: they need a history, and `files:` in package.json never shipped
 # docs/ to npm anyway. The design narrative for outsiders lives in README.md +
-# docs/articles/ + docs/archive/ (ADR-001), the measurements in docs/spikes/ and
+# docs/articles/ + docs/archive/ (ADR-001), the measurements in docs/archive/spikes/ and
 # docs/graphcode_leitlinie.md §9.
 docs/records/
 docs/SPEC.md
