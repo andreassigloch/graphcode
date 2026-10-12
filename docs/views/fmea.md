@@ -4,19 +4,158 @@
 
 # graphcode — FMEA (functional risk)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk (severity/occurrence/detection nach FM-01). 7 Risiken. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk. 7 Risiken, 6 mit hoher Priorität, 1 verifiziert, 2 Gegenmaßnahmen ohne Funktion. Deterministisch generiert.
 
-| Failure mode (REQ role=risk) | S | O | D | RPN | Mitigation | verifiziert |
-|---|---|---|---|---|---|---|
-| Die Regelauswertung wirft oder haengt im Gate. Kein Schreibvorgang kommt mehr durch, in keiner der Wirkketten durch das Gate. | 8 | 2 | 2 | 32 | `REQ-gate-survives-rule-failure` | ✗ |
-| Ein FLOW oder SCHEMA wird geaendert, ohne dass die abhaengigen Funktionen und Tests benannt und neu zugeschnitten werden; die zugesagte Eskalation laeuft nicht. | 7 | 4 | 5 | 140 | `REQ-interface-change-names-dependents` | ✗ |
-| Ein falscher Regelbefund laeuft im Kreislauf um: falscher Fokus, falscher Vorschlag, angewandt, weitere Befunde. Das Modell wird schlechter, waehrend jede einzelne Runde Fortschritt meldet. | 8 | 3 | 7 | 168 | `REQ-loop-convergence-monitor` | ✗ |
-| Die Steuerungsschleife pendelt ueber Sitzungen hinweg: ein angewandter Vorschlag erzeugt den Befund, den der naechste zuruecknimmt, und nach einem Neustart des Hosts beginnt die Zaehlung der Wiederholungen neu. Der Nutzer dreht Runden ohne Fortschritt. | 6 | 4 | 5 | 120 | `REQ-loop-round-log` | ✗ |
-| Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann verletzt sein, ohne dass eine der acht Funktionen ausfaellt, die sie gemeinsam erfuellen. | 6 | 3 | 6 | 108 | `REQ-steering-promise-one-owner` | ✗ |
-| Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Testergebnis, das vor der letzten Aenderung am Test oder am geprueften Code entstand. | 8 | 5 | 7 | 280 | `REQ-lane-reports-change` · `REQ-test-result-withdrawn-on-change` | ✓ |
-| Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis. | 9 | 3 | 3 | 81 | `REQ-store-recovery` | ✗ |
+## Übersicht (nach Priorität)
 
-> RENDER der risk/mitigation-REQ, die `se-fmea` durchs Gate geschrieben hat.
-> Attribute + Kanten exakt wie FM-01/FM-02/FM-03 sie prüfen: `severity`/`occurrence`/
-> `detection`, Mitigation über `compose` → REQ[`role` = `mitigation`], „verifiziert" nur
-> bei einem TEST mit `testResult: passed`. RPN = S·O·D (die FM-03-Zahl).
+| # | Risiko | Kette | S | O | D | RPN | AP | Träger | verifiziert |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | Risiko veraltetes Testergebnis | `FCHAIN-test-ingest` | 8 | 5 | 7 | 280 | High | `FUNC-plan-code-lane` · `FUNC-test-ingest` | ✓ |
+| 2 | Risiko falscher Befund laeuft um | `FCHAIN-steering-loop` | 8 | 3 | 7 | 168 | High | — | ✗ |
+| 3 | Risiko Schnittstellenaenderung ohne Eskalation | `FCHAIN-interface-escalation` | 7 | 4 | 5 | 140 | High | — | ✗ |
+| 4 | Risiko Schleife pendelt | `FCHAIN-steering-loop` | 6 | 4 | 5 | 120 | High | `FUNC-generation-step` | ✗ |
+| 5 | Risiko geteilte Zusage ohne Traeger | `FCHAIN-steering-loop` | 6 | 3 | 6 | 108 | High | `FUNC-generation-step` | ✗ |
+| 6 | Risiko Store nicht lesbar | — | 9 | 3 | 3 | 81 | High | `FUNC-graph-store` | ✗ |
+| 7 | Risiko Regelauswertung faellt im Gate aus | — | 8 | 2 | 2 | 32 | Low | `FUNC-mutate` | ✗ |
+
+### 1. Risiko veraltetes Testergebnis (`REQ-risk-stale-test-result`)
+
+Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Testergebnis, das vor der letzten Aenderung am Test oder am geprueften Code entstand.
+
+- **Bewertung:** S 8 · O 5 · D 7 · RPN 280 · AP High
+- **Kette:** `FCHAIN-test-ingest`
+- **Anwendungsfall:** `UC-efficient-testing`
+- **Träger:** `FUNC-plan-code-lane` · `FUNC-test-ingest`
+- **Befund:** FMEA CR-GC-798 FM-11, Kreislauf aus FUNC-graph-store, FUNC-mutate und FUNC-test-ingest. Das Ergebnis traegt ranAt, kein Leser wertet es aus (src/projections/testreport.ts:119; kein Leser in contracts/se). FM-03 und VR-01 lesen nur result.
+- **Analyse:** `CR-GC-798` (docs/cr/open/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md) · `CR-GC-799` (docs/cr/open/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md) · `CR-GC-800` (docs/cr/open/CR-GC-800-spur-code-und-volllauf-melden-aenderung-.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-lane-reports-change` | Die Spur CODE und der Volllauf melden nach jedem Lauf die Knoten der geaenderten Dateien und den Bericht des Laufs an graph_test_ingest. Die Knoten kommen aus derselben Abbildung von Datei auf Knoten wie die Testauswahl. Scheitert die Meldung, endet der Lauf rot. Der Planmodus meldet nichts. | `FUNC-plan-code-lane` |
+| `REQ-test-result-withdrawn-on-change` | Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das Ergebnis an seinen testRefs zurueck; der Eintrag gilt bis zur naechsten Rueckmeldung eines Laufs als nicht bestanden. Die betroffenen Tests sind die Menge, die die Testauswahl fuer dieselbe Aenderung liefert. | `FUNC-test-ingest` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-10-12 |
+| `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-10-12 |
+
+### 2. Risiko falscher Befund laeuft um (`REQ-risk-loop-degradation`)
+
+Ein falscher Regelbefund laeuft im Kreislauf um: falscher Fokus, falscher Vorschlag, angewandt, weitere Befunde. Das Modell wird schlechter, waehrend jede einzelne Runde Fortschritt meldet.
+
+- **Bewertung:** S 8 · O 3 · D 7 · RPN 168 · AP High
+- **Kette:** `FCHAIN-steering-loop`
+- **Anwendungsfall:** `UC-deterministic-steering`
+- **Träger:** —
+- **Befund:** FMEA CR-GC-779 Quelle E Kreislauf. Die Konvergenzanforderung zaehlt Befunde und die koennen fallen waehrend das Modell schlechter wird. Keine Stelle sieht ueber mehrere Runden.
+- **Analyse:** `CR-GC-779` (FMEA der Kenngroessen-Steuerungsschleife)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-loop-convergence-monitor` | Eine Auswertung ausserhalb des Kreislaufs MUSS aus dem Rundenprotokoll Pendeln, Plateau und Rueckschritt ueber Runden und Sitzungen erkennen und dem Nutzer melden. Sie liest nur und ist kein Glied des Kreislaufs. | **Funktion fehlt** |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-loop-convergence-monitor` | ungebunden | — | — |
+
+### 3. Risiko Schnittstellenaenderung ohne Eskalation (`REQ-risk-interface-change-unescalated`)
+
+Ein FLOW oder SCHEMA wird geaendert, ohne dass die abhaengigen Funktionen und Tests benannt und neu zugeschnitten werden; die zugesagte Eskalation laeuft nicht.
+
+- **Bewertung:** S 7 · O 4 · D 5 · RPN 140 · AP High
+- **Kette:** `FCHAIN-interface-escalation`
+- **Anwendungsfall:** `UC-code-quality`
+- **Träger:** —
+- **Befund:** FMEA CR-GC-798 FM-12. REQ-interface-change-escalation wird nur von der Kette erfuellt, keine Funktion fuehrt die Eskalation aus, TEST-interface-escalation ist ungebunden, im Quellcode gibt es keinen Eskalationsweg.
+- **Analyse:** `CR-GC-798` (docs/cr/open/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-interface-change-names-dependents` | Jede angenommene Aenderung an einem FLOW oder SCHEMA nennt in der Antwort des Gates die Funktionen und Tests, die an dieser Schnittstelle haengen. | **Funktion fehlt** |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-interface-escalation` | ungebunden | — | — |
+
+### 4. Risiko Schleife pendelt (`REQ-risk-loop-oscillation`)
+
+Die Steuerungsschleife pendelt ueber Sitzungen hinweg: ein angewandter Vorschlag erzeugt den Befund, den der naechste zuruecknimmt, und nach einem Neustart des Hosts beginnt die Zaehlung der Wiederholungen neu. Der Nutzer dreht Runden ohne Fortschritt.
+
+- **Bewertung:** S 6 · O 4 · D 5 · RPN 120 · AP High
+- **Kette:** `FCHAIN-steering-loop`
+- **Anwendungsfall:** `UC-deterministic-steering`
+- **Träger:** `FUNC-generation-step`
+- **Befund:** FMEA CR-GC-779 Quelle E Kreislauf der Steuerungsschleife mit zehn Gliedern. Kreis und Plateau erkennt die Schleife nur im Gedaechtnis des Prozesses.
+- **Analyse:** `CR-GC-779` (FMEA der Kenngroessen-Steuerungsschleife)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-loop-round-log` | Jede Runde der Steuerungsschleife MUSS dauerhaft protokolliert werden: Messstand vor und nach dem Zug, gewaehlter Fokus, Vorschlag, Zug und Abbruchgrund. Das Protokoll schreibt die Schleifenseite und nicht das Gate. Kreis und Plateau bleiben damit ueber einen Neustart des Hosts erkennbar. | `FUNC-generation-step` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-loop-round-log` | ungebunden | — | — |
+
+### 5. Risiko geteilte Zusage ohne Traeger (`REQ-risk-shared-steering-promise`)
+
+Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann verletzt sein, ohne dass eine der acht Funktionen ausfaellt, die sie gemeinsam erfuellen.
+
+- **Bewertung:** S 6 · O 3 · D 6 · RPN 108 · AP High
+- **Kette:** `FCHAIN-steering-loop`
+- **Anwendungsfall:** `UC-deterministic-steering`
+- **Träger:** `FUNC-generation-step`
+- **Befund:** FMEA CR-GC-795 Step 3 geteilte Zusage. REQ-steering-from-metrics wird von acht Funktionen erfuellt, sechs davon Glieder der Kette. Keine traegt sie allein.
+- **Analyse:** `CR-GC-795` (docs/cr/open/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-steering-promise-one-owner` | Genau eine Funktion verantwortet die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, und das ist der Generierungsschritt. Jede andere Funktion erfuellt eine eigene Anforderung an ihre Zulieferung. | `FUNC-generation-step` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-steering-promise-one-owner` | ungebunden | — | — |
+
+### 6. Risiko Store nicht lesbar (`REQ-risk-store-unreadable`)
+
+Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis.
+
+- **Bewertung:** S 9 · O 3 · D 3 · RPN 81 · AP High
+- **Kette:** — · außerdem an `MOD-kernel`
+- **Anwendungsfall:** —
+- **Träger:** `FUNC-graph-store`
+- **Befund:** FMEA CR-GC-779 Quelle F geteilte Funktion FUNC-graph-store in acht Wirkketten. Je Kette eine Fehlerwirkung und die Schwere ist die der schwersten.
+- **Analyse:** `CR-GC-779` (FMEA der Kenngroessen-Steuerungsschleife) · `CR-GC-795` (docs/cr/open/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-store-recovery` | Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery) | `FUNC-graph-store` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-store-recovery` | ungebunden | — | — |
+
+### 7. Risiko Regelauswertung faellt im Gate aus (`REQ-risk-gate-rule-eval-fails`)
+
+Die Regelauswertung wirft oder haengt im Gate. Kein Schreibvorgang kommt mehr durch, in keiner der Wirkketten durch das Gate.
+
+- **Bewertung:** S 8 · O 2 · D 2 · RPN 32 · AP Low
+- **Kette:** — · außerdem an `MOD-kernel`
+- **Anwendungsfall:** —
+- **Träger:** `FUNC-mutate`
+- **Befund:** FMEA CR-GC-779 Quelle F geteilte Funktionen FUNC-mutate in dreizehn und FUNC-evaluate-rules in sieben Wirkketten.
+- **Analyse:** `CR-GC-779` (FMEA der Kenngroessen-Steuerungsschleife)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-gate-survives-rule-failure` | Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benanntem Grund ablehnen, den Store unveraendert lassen und fuer den naechsten Zug bereit bleiben. | `FUNC-mutate` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-gate-survives-rule-failure` | ungebunden | — | — |
+
+> RENDER der risk/mitigation-REQ, die `se-fmea` durchs Gate geschrieben hat. Bewertung aus
+> `severity`/`occurrence`/`detection` (FM-01), Gegenmaßnahme über `compose` (FM-02), RPN = S·O·D,
+> AP aus `actionPriority()` (Verfahren: rpn-interim, Schwelle des Katalogs),
+> Träger aus `riskCarriers()`. „Verifiziert" heißt: ein Test, dessen `testRefs` alle `passed` tragen (FM-03).
+> Die Sicht zeigt die Risiken, die als Anforderung im Modell stehen. Fehlerarten, die die Analyse bewertet und nicht als Anforderung geschrieben hat,
+> stehen mit Bewertung und Begründung im Analyse-CR.

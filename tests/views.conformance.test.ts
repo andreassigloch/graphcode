@@ -244,9 +244,10 @@ describe('CR-GC-673: FMEA und SRS lesen die Rolle, nicht kinds (CR-SM-365/366)',
         { sourceId: 'REQ-risiko', targetId: 'REQ-mass', edgeType: 'compose', attributes: {} },
       ],
     };
-    const row = exportMarkdown(g, 'fmea', 'x').split('\n').find((l) => l.includes('Risiko.'))!;
-    expect(row).toContain('REQ-mass');
-    expect(row).not.toContain('REQ-altmass');
+    // CR-GC-801: die Gegenmaßnahme steht in einer eigenen Tabelle je Risiko, nicht mehr in der Zeile.
+    const md = exportMarkdown(g, 'fmea', 'x');
+    expect(md).toContain('| `REQ-mass` |');
+    expect(md).not.toContain('REQ-altmass');
   });
 
   it('kein View-Code fragt kinds nach risk/mitigation/precondition/postcondition', () => {

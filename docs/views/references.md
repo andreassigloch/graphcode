@@ -815,6 +815,8 @@
 | `CR-GC-800` | relation | `FUNC-plan-code-lane` |
 | `CR-GC-800` | relation | `REQ-lane-reports-change` |
 | `CR-GC-800` | relation | `REQ-risk-stale-test-result` |
+| `CR-GC-801` | relation | `FUNC-view-fmea` |
+| `CR-GC-801` | relation | `REQ-doc-export` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -2315,6 +2317,7 @@
 | `TEST-uc-authoring-style` | verify | `REQ-interactive-capture-suggest` |
 | `TEST-upgrade` | verify | `REQ-install-idempotent` |
 | `TEST-upgrade` | verify | `REQ-repo-update` |
+| `TEST-view-fmea` | verify | `REQ-doc-export` |
 | `TEST-views-auditor` | verify | `REQ-doc-export` |
 | `TEST-views-auditor` | verify | `REQ-readiness-model` |
 | `TEST-views-conformance` | verify | `REQ-doc-export` |

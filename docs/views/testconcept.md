@@ -4,12 +4,12 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 152 TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 153 TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.
 
 ```
               ╱╲
              ╱SYS╲         System · SYS-graphcode
-            ╱      ╲        ✓ 55 test(s) of system requirements
+            ╱      ╲        ✓ 56 test(s) of system requirements
            ╱────────╲
           ╱ use cases ╲      9 UC · 9 / 9 with a verified requirement
          ╱────────────╲
@@ -21,12 +21,12 @@
 
 | Level | Element | Verification | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
-| System | SYS (1) | system verification (SYS.5) | 55 | 43 / 43 system requirements | ✓ |
+| System | SYS (1) | system verification (SYS.5) | 56 | 43 / 43 system requirements | ✓ |
 | Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 107 | 9 / 9 use cases | ✓ |
 | Integration | FUNC↔FUNC (144 conn) | integration verification (SYS.4 · SWE.5) | 34 | 74 / 144 connections | ✗ 70 uncovered |
 | Interface | SCHEMA (50) | integration verification (SYS.4 · SWE.5) | 22 | 32 / 50 schemas | ⚠ 18 without a test |
 | Module | MOD (7) | component verification (SWE.5 · HWE.3) | 60 | 6 / 7 | ⚠ 1 without a verified requirement |
-| Function | FUNC (115) | unit verification (SWE.4 · HWE.3) | 93 | 94 / 115 | ⚠ 21 without a verified requirement |
+| Function | FUNC (115) | unit verification (SWE.4 · HWE.3) | 94 | 94 / 115 | ⚠ 21 without a verified requirement |
 | (validation) | UC (9) | validation (VAL.1) | — | no position in the model | — |
 | (support) | — | conformance | 8 | codec round-trip | ✓ |
 
