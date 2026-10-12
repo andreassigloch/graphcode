@@ -1010,6 +1010,7 @@
 | `FCHAIN-steering-loop` | satisfy | `REQ-risk-shared-steering-promise` |
 | `FCHAIN-test-ingest` | compose | `FUNC-graph-store` |
 | `FCHAIN-test-ingest` | compose | `FUNC-mutate` |
+| `FCHAIN-test-ingest` | compose | `FUNC-resolve-tests-from-code` |
 | `FCHAIN-test-ingest` | compose | `FUNC-test-ingest` |
 | `FCHAIN-test-ingest` | satisfy | `REQ-risk-stale-test-result` |
 | `FLOW-action` | io | `ACTOR-agent` |
@@ -1158,6 +1159,7 @@
 | `FLOW-impacted-tests` | io | `FUNC-deduce-tests` |
 | `FLOW-impacted-tests` | io | `FUNC-measure-test-schlupf` |
 | `FLOW-impacted-tests` | io | `FUNC-plan-code-lane` |
+| `FLOW-impacted-tests` | io | `FUNC-test-ingest` |
 | `FLOW-impacted-tests` | relation | `SCHEMA-impacted-tests` |
 | `FLOW-imported-graph` | io | `FUNC-graph-store` |
 | `FLOW-imported-graph` | relation | `SCHEMA-ontology-graph` |

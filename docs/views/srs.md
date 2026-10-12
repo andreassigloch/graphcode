@@ -2176,7 +2176,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-impact-testing` · 
 
 ##### 3.3.1.1  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
 
-> auch in: `FUNC-block-abfrage`
+> auch in: `FCHAIN-test-ingest` · `FUNC-block-abfrage`
 
 graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.
 
@@ -2246,7 +2246,7 @@ Verification ◀ `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-
 
 #### 3.3.2  `FCHAIN-test-ingest` — Testergebnis zurueckschreiben
 
-Der Agent meldet die Ergebnisse eines Testlaufs zurueck; das Werkzeug ordnet sie den TEST-Knoten zu und schreibt sie durch das Gate. Aus FCHAIN-impact-testing geloest: der Rueckweg haengt an der Auswahl nur ueber den Agenten, nicht ueber einen Fluss. (CR-GC-768)
+Der Agent meldet die Ergebnisse eines Testlaufs oder eine Aenderung zurueck; das Werkzeug ordnet Ergebnisse den TEST-Knoten zu, nimmt die Ergebnisse der von der Aenderung betroffenen Tests zurueck und schreibt beides durch das Gate. Die betroffene Menge liefert die Testauswahl im selben Aufruf. (CR-GC-768, CR-GC-799)
 
 ##### `REQ-risk-stale-test-result` — Risiko veraltetes Testergebnis
 
@@ -2254,53 +2254,51 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 
 priority: should · status: n/a · kinds: non-functional · role: risk
 
-Verification ◀ `TEST-test-result-withdrawn-on-change` · satisfy ◀ `FCHAIN-test-ingest` · allocate ▶ —
+Verification ◀ `TEST-test-result-withdrawn-on-change` (integration) · satisfy ◀ `FCHAIN-test-ingest` · allocate ▶ —
 
-##### 3.3.2.1  `FUNC-graph-store` — GraphStore
+##### 3.3.2.1  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-impact-testing` · `FUNC-block-abfrage`
 
-Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
+graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · `FLOW-reseeded-graph` · `FLOW-schema-fingerprint` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-query-request-agent` · io ▶ `FLOW-impacted-tests` · allocate ▶ `MOD-kernel`
 
-###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
+###### `REQ-graph-tests-operational` — graph_tests liefert den korrekten selektiven Testset für einen Code-Change
 
-> auch unter: `FUNC-auto-export` · `FUNC-merge-nodes`
+Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.
 
-Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
+priority: must · status: done · kinds: functional
 
-priority: must · status: open · kinds: functional
+Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-kernel`
 
-Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+##### 3.3.2.2  `FUNC-test-ingest` — graph_test_ingest
 
-###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
+> auch in: `FUNC-block-abfrage`
 
-Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
+Das Werkzeug graph_test_ingest, der Rueckweg von graph_tests: ordnet die Ergebnisse eines Testlaufs ueber testRef.file den TEST-Knoten zu und schreibt je Knoten ein update-node mit result und ranAt durch das Apply-Gate. Mit einem changeSet nimmt es das Ergebnis an jedem betroffenen TEST zurueck, ausser derselbe Aufruf liefert ein frisches; die betroffene Menge bezieht es aus der Testauswahl. Den Lauf selbst startet der Aufrufer. (CR-GC-509, CR-GC-799)
 
-priority: must · status: reviewed · kinds: functional
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-impacted-tests` · io ▶ `FLOW-mutate-cmd-test-ingest` · allocate ▶ `MOD-projections`
 
-Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+###### `REQ-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das Ergebnis an seinen testRefs zurueck; der Eintrag gilt bis zur naechsten Rueckmeldung eines Laufs als nicht bestanden. Die betroffenen Tests sind die Menge, die die Testauswahl fuer dieselbe Aenderung liefert.
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+priority: must · status: n/a · kinds: functional · role: mitigation
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+Verification ◀ `TEST-test-result-withdrawn-on-change` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
-priority: must · status: reviewed · kinds: functional
+###### `REQ-test-runnable-binding` — TEST hat lauffaehige Bindung (testRef)
 
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+> auch unter: `FUNC-deduce-tests`
 
-###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
+Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ein impacted TEST-Knoten deterministisch zu einem lauffaehigen Artefakt aufgeloest werden kann. Familie-weit: testRef wird Teil des TEST-Element-Schemas in @sigloch/contracts/se (Minor-Version-Bump).
 
-Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
+priority: must · status: done · kinds: functional
 
-priority: must · status: open · kinds: functional · role: mitigation
+Verification ◀ `TEST-formate-binding` (integration) · `TEST-graph-realize` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-##### 3.3.2.2  `FUNC-mutate` — mutate(commands)
+##### 3.3.2.3  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -2350,31 +2348,49 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
-##### 3.3.2.3  `FUNC-test-ingest` — graph_test_ingest
+##### 3.3.2.4  `FUNC-graph-store` — GraphStore
 
-> auch in: `FUNC-block-abfrage`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-speicherwerk`
 
-Das Werkzeug graph_test_ingest, der Rueckweg von graph_tests: ordnet die Ergebnisse eines Testlaufs ueber testRef.file den TEST-Knoten zu (planIngest auf dem Store-Graphen, testreport.ts:93), baut je Knoten ein update-node mit result und ranAt (testreport.ts:122-141) und schickt den Batch durch das Apply-Gate (testreport.ts:142). Den Lauf selbst startet der Aufrufer. (CR-GC-509)
+Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-test-ingest` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · `FLOW-reseeded-graph` · `FLOW-schema-fingerprint` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
 
-###### `REQ-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
-Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das Ergebnis an seinen testRefs zurueck; der Eintrag gilt bis zur naechsten Rueckmeldung eines Laufs als nicht bestanden. Die betroffenen Tests sind die Menge, die die Testauswahl fuer dieselbe Aenderung liefert.
+> auch unter: `FUNC-auto-export` · `FUNC-merge-nodes`
 
-priority: must · status: n/a · kinds: functional · role: mitigation
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
 
-Verification ◀ `TEST-test-result-withdrawn-on-change` · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
+priority: must · status: open · kinds: functional
 
-###### `REQ-test-runnable-binding` — TEST hat lauffaehige Bindung (testRef)
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-> auch unter: `FUNC-deduce-tests`
+###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
-Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ein impacted TEST-Knoten deterministisch zu einem lauffaehigen Artefakt aufgeloest werden kann. Familie-weit: testRef wird Teil des TEST-Element-Schemas in @sigloch/contracts/se (Minor-Version-Bump).
+Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
 
-priority: must · status: done · kinds: functional
+priority: must · status: reviewed · kinds: functional
 
-Verification ◀ `TEST-formate-binding` (integration) · `TEST-graph-realize` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-deduce-tests` · `FUNC-test-ingest` · allocate ▶ `MOD-projections`
+Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
+###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+
+> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+
+Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+
+priority: must · status: reviewed · kinds: functional
+
+Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
+###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
+
+Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ### 3.4  `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -5500,7 +5516,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param
 
 ###### 3.10.2.1.11  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
 
-> auch in: `FCHAIN-impact-testing`
+> auch in: `FCHAIN-impact-testing` · `FCHAIN-test-ingest`
 
 graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.
 
@@ -5518,9 +5534,9 @@ Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective
 
 > auch in: `FCHAIN-test-ingest`
 
-Das Werkzeug graph_test_ingest, der Rueckweg von graph_tests: ordnet die Ergebnisse eines Testlaufs ueber testRef.file den TEST-Knoten zu (planIngest auf dem Store-Graphen, testreport.ts:93), baut je Knoten ein update-node mit result und ranAt (testreport.ts:122-141) und schickt den Batch durch das Apply-Gate (testreport.ts:142). Den Lauf selbst startet der Aufrufer. (CR-GC-509)
+Das Werkzeug graph_test_ingest, der Rueckweg von graph_tests: ordnet die Ergebnisse eines Testlaufs ueber testRef.file den TEST-Knoten zu und schreibt je Knoten ein update-node mit result und ranAt durch das Apply-Gate. Mit einem changeSet nimmt es das Ergebnis an jedem betroffenen TEST zurueck, ausser derselbe Aufruf liefert ein frisches; die betroffene Menge bezieht es aus der Testauswahl. Den Lauf selbst startet der Aufrufer. (CR-GC-509, CR-GC-799)
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-test-ingest` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-impacted-tests` · io ▶ `FLOW-mutate-cmd-test-ingest` · allocate ▶ `MOD-projections`
 
 ###### `REQ-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
 
@@ -5528,7 +5544,7 @@ Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das E
 
 priority: must · status: n/a · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-test-result-withdrawn-on-change` · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
+Verification ◀ `TEST-test-result-withdrawn-on-change` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
 ###### `REQ-test-runnable-binding` — TEST hat lauffaehige Bindung (testRef)
 
@@ -7362,7 +7378,7 @@ io ◀ `FUNC-graph-impact` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-imp
 
 Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug.
 
-io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-deduce-tests` · `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · schema ▶ `SCHEMA-impacted-tests`
+io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-deduce-tests` · `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `FUNC-test-ingest` · schema ▶ `SCHEMA-impacted-tests`
 
 ### 4.45  `FLOW-imported-graph` — Importierter Graph
 
@@ -9410,9 +9426,9 @@ verify ▶ `REQ-analyse-artefakt-vor-stempel` · testRefs: `tests/task-analysen.
 
 ### 8.136  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
 
-Prueft, dass nach einer gemeldeten Aenderung an der Datei eines gebundenen Tests der Eintrag kein Ergebnis mehr traegt und FM-03 das Risiko als unverifiziert meldet, bis ein neuer Lauf zurueckgemeldet ist.
+Abnahme der Datei tests/testreport.ruecknahme.test.ts: nach einer gemeldeten Aenderung traegt der Eintrag des betroffenen Tests kein Ergebnis mehr und FM-03 meldet das Risiko; ein nicht betroffener Test behaelt sein Ergebnis; ein frisches Ergebnis im selben Aufruf bleibt; eine unbekannte uid wird abgewiesen.
 
-verify ▶ `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change`
+verify ▶ `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` · testRefs: `tests/testreport.ruecknahme.test.ts`
 
 ### 8.137  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 

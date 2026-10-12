@@ -3527,7 +3527,7 @@
       "id": "FCHAIN-test-ingest",
       "type": "FCHAIN",
       "name": "Testergebnis zurueckschreiben",
-      "description": "Der Agent meldet die Ergebnisse eines Testlaufs zurueck; das Werkzeug ordnet sie den TEST-Knoten zu und schreibt sie durch das Gate. Aus FCHAIN-impact-testing geloest: der Rueckweg haengt an der Auswahl nur ueber den Agenten, nicht ueber einen Fluss. (CR-GC-768)"
+      "description": "Der Agent meldet die Ergebnisse eines Testlaufs oder eine Aenderung zurueck; das Werkzeug ordnet Ergebnisse den TEST-Knoten zu, nimmt die Ergebnisse der von der Aenderung betroffenen Tests zurueck und schreibt beides durch das Gate. Die betroffene Menge liefert die Testauswahl im selben Aufruf. (CR-GC-768, CR-GC-799)"
     },
     {
       "id": "FLOW-action",
@@ -5658,7 +5658,7 @@
       "id": "FUNC-test-ingest",
       "type": "FUNC",
       "name": "graph_test_ingest",
-      "description": "Das Werkzeug graph_test_ingest, der Rueckweg von graph_tests: ordnet die Ergebnisse eines Testlaufs ueber testRef.file den TEST-Knoten zu (planIngest auf dem Store-Graphen, testreport.ts:93), baut je Knoten ein update-node mit result und ranAt (testreport.ts:122-141) und schickt den Batch durch das Apply-Gate (testreport.ts:142). Den Lauf selbst startet der Aufrufer. (CR-GC-509)",
+      "description": "Das Werkzeug graph_test_ingest, der Rueckweg von graph_tests: ordnet die Ergebnisse eines Testlaufs ueber testRef.file den TEST-Knoten zu und schreibt je Knoten ein update-node mit result und ranAt durch das Apply-Gate. Mit einem changeSet nimmt es das Ergebnis an jedem betroffenen TEST zurueck, ausser derselbe Aufruf liefert ein frisches; die betroffene Menge bezieht es aus der Testauswahl. Den Lauf selbst startet der Aufrufer. (CR-GC-509, CR-GC-799)",
       "status": "done",
       "realRef": {
         "file": "src/projections/testreport.ts",
@@ -8370,7 +8370,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
+          "ranAt": "2026-10-12T14:56:51.920Z"
         }
       ]
     },
@@ -8662,7 +8662,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-09-30T08:39:36.000Z"
+          "ranAt": "2026-10-12T14:43:03.981Z"
         }
       ]
     },
@@ -8902,7 +8902,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
+          "ranAt": "2026-10-12T14:43:03.981Z"
         }
       ]
     },
@@ -9059,7 +9059,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
+          "ranAt": "2026-10-12T14:43:03.981Z"
         }
       ]
     },
@@ -9661,7 +9661,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
+          "ranAt": "2026-10-12T14:43:03.981Z"
         }
       ]
     },
@@ -10150,7 +10150,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
+          "ranAt": "2026-10-12T14:56:51.920Z"
         }
       ]
     },
@@ -10428,7 +10428,16 @@
       "id": "TEST-test-result-withdrawn-on-change",
       "type": "TEST",
       "name": "Testergebnis wird bei Aenderung zurueckgenommen",
-      "description": "Prueft, dass nach einer gemeldeten Aenderung an der Datei eines gebundenen Tests der Eintrag kein Ergebnis mehr traegt und FM-03 das Risiko als unverifiziert meldet, bis ein neuer Lauf zurueckgemeldet ist."
+      "description": "Abnahme der Datei tests/testreport.ruecknahme.test.ts: nach einer gemeldeten Aenderung traegt der Eintrag des betroffenen Tests kein Ergebnis mehr und FM-03 meldet das Risiko; ein nicht betroffener Test behaelt sein Ergebnis; ein frisches Ergebnis im selben Aufruf bleibt; eine unbekannte uid wird abgewiesen.",
+      "testRefs": [
+        {
+          "file": "tests/testreport.ruecknahme.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-10-12T14:43:03.981Z"
+        }
+      ]
     },
     {
       "id": "TEST-test-runnable-binding",
@@ -10444,7 +10453,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
+          "ranAt": "2026-10-12T14:43:03.981Z"
         }
       ]
     },
@@ -10490,7 +10499,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-08-21T07:52:28.796Z"
+          "ranAt": "2026-10-12T14:43:03.981Z"
         }
       ]
     },
@@ -16215,6 +16224,11 @@
     },
     {
       "source": "FCHAIN-test-ingest",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-test-ingest",
       "target": "FUNC-test-ingest",
       "type": "compose"
     },
@@ -16975,6 +16989,11 @@
     {
       "source": "FLOW-impacted-tests",
       "target": "FUNC-plan-code-lane",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-impacted-tests",
+      "target": "FUNC-test-ingest",
       "type": "io"
     },
     {
@@ -23788,5 +23807,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 723
+  "graphVersion": 726
 }

@@ -115,6 +115,35 @@ export function planIngest(graph: Graph, files: RunnerFileResult[]): IngestPlan 
   return { assignments, unresolved };
 }
 
+/** Ein `testRefs`-Eintrag, dessen Ergebnis zurückgenommen wird. */
+export interface TestResultWithdrawal {
+  testUid: string;
+  file: string;
+}
+
+/**
+ * Betroffene Tests → Rücknahmeplan (CR-GC-799).
+ *
+ * Zurückgenommen wird je `testRefs`-Eintrag, der ein Ergebnis trägt — außer `frisch` liefert im
+ * selben Aufruf eines für diese Datei. Ein Eintrag ohne Ergebnis gilt als nicht bestanden
+ * (FM-03, VR-01); die Rücknahme braucht deshalb keinen eigenen Zustand.
+ */
+export function planWithdrawal(graph: Graph, impactedTestUids: string[], frisch: RunnerFileResult[]): TestResultWithdrawal[] {
+  const betroffen = new Set(impactedTestUids);
+  const withdrawn: TestResultWithdrawal[] = [];
+  for (const t of graph.nodes) {
+    if (t.type !== 'TEST' || !betroffen.has(t.uid)) continue;
+    const read = readTestRefs(t.attributes);
+    if (read.state !== 'bound') continue;
+    for (const r of read.value) {
+      if (r.result === undefined) continue;
+      if (frisch.some((f) => samePath(f.file, r.file))) continue;
+      withdrawn.push({ testUid: t.uid, file: r.file });
+    }
+  }
+  return withdrawn;
+}
+
 /**
  * Der vitest-JSON-Report, auf die zwei Felder reduziert, die hier zählen.
  * `--reporter=json` liefert `testResults[] = {name, status, assertionResults[]}`.

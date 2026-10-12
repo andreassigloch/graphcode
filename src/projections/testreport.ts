@@ -23,10 +23,12 @@ import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 import { readTestRefs } from '@sigloch/contracts/se';
 import {
   planIngest,
+  planWithdrawal,
   parseVitestJson,
   samePath,
   verificationReport,
   type RunnerFileResult,
+  type TestResultWithdrawal,
   fasseZusammen,
   type VerificationReport,
 } from './verification-report.js';
@@ -38,25 +40,24 @@ const GraphTestIngestInputSchema = z
     report: z
       .string()
       .optional()
-      .describe(
-        'Raw vitest `--reporter=json` output (the whole JSON document). Files are matched to TEST ' +
-          'nodes via testRef.file — never by name guessing.',
-      ),
+      .describe('Raw vitest `--reporter=json` output.'),
     results: z
       .array(z.object({ file: z.string().min(1), result: TestResult }))
       .optional()
-      .describe(
-        'Pre-parsed alternative to `report` for runners other than vitest: [{file, result}]. ' +
-          'Exactly one of report/results.',
-      ),
+      .describe('Pre-parsed [{file, result}]; at most one of report/results.'),
+    changeSet: z
+      .array(z.string().min(1))
+      .min(1)
+      .optional()
+      .describe('Changed node uids, as for graph_tests.'),
     consumerId: z.string().default('test-ingest'),
-    dryRun: z
-      .boolean()
-      .default(false)
-      .describe('true = show the plan (assignments + unresolved) without writing anything.'),
+    dryRun: z.boolean().default(false).describe('true = the plan only, nothing written.'),
   })
-  .refine((i) => (i.report === undefined) !== (i.results === undefined), {
-    message: 'graph_test_ingest: supply exactly one of report or results.',
+  .refine((i) => i.report === undefined || i.results === undefined, {
+    message: 'graph_test_ingest: supply at most one of report or results.',
+  })
+  .refine((i) => i.report !== undefined || i.results !== undefined || i.changeSet !== undefined, {
+    message: 'graph_test_ingest: supply report, results or changeSet.',
   });
 
 const GraphTestReportInputSchema = z.looseObject({});
@@ -64,12 +65,34 @@ const GraphTestReportInputSchema = z.looseObject({});
 export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
   const { harness, graphVersion, recordAudit, serializeToolWrite, arbeitsmenge } = ctx;
 
+  /**
+   * CR-GC-799: die von einer Aenderung betroffenen Tests kommen aus `harness.testImpact` —
+   * derselben Auswahl wie `graph_tests` und `verify:code`, keine zweite. Ein TEST im changeSet
+   * ist selbst betroffen. Eine unbekannte uid wird abgewiesen: sie naehme still nichts zurueck.
+   */
+  async function planeRuecknahme(changeSet: string[] | undefined, frisch: RunnerFileResult[]): Promise<TestResultWithdrawal[]> {
+    if (!changeSet) return [];
+    const graph = harness.getGraph();
+    const bekannt = new Map(graph.nodes.map((n) => [n.uid, n.type]));
+    const fremd = changeSet.filter((id) => !bekannt.has(id));
+    if (fremd.length > 0) {
+      throw new Error(`graph_test_ingest: changeSet takes uids of this model; unknown: ${fremd.join(', ')}.`);
+    }
+    const impacted = await harness.testImpact(changeSet, 4);
+    const testUids = [
+      ...impacted.nodes.filter((n) => n.type === 'TEST').map((n) => n.uid),
+      ...changeSet.filter((id) => bekannt.get(id) === 'TEST'),
+    ];
+    return planWithdrawal(graph, testUids, frisch);
+  }
+
   const graph_test_ingest: MCPTool<
     z.infer<typeof GraphTestIngestInputSchema>,
     {
       applied: number;
       assignments: Array<{ testUid: string; file: string; result: string }>;
       unresolved: Array<{ file: string; reason: string }>;
+      withdrawn: TestResultWithdrawal[];
       success: boolean;
       tier: MutateResult['tier'];
       violations: MutateResult['violations'];
@@ -79,20 +102,22 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
     name: 'graph_test_ingest',
     description:
       'Feed a test run back into the model: vitest `--reporter=json` (or pre-parsed [{file,result}]) is ' +
-      'matched to TEST nodes via testRef.file — never by name guessing — and written through the gate. ' +
-      'Take it after running tests, so `passed` stops being an assumption. A runner file with no ' +
-      'matching testRef comes back as `unresolved`, never silently dropped. `dryRun` shows the plan.',
+      'matched to TEST nodes via testRef.file and written through the gate, so `passed` stops being an ' +
+      'assumption. A file without a matching testRef comes back as `unresolved`. `changeSet` withdraws ' +
+      'the result of every TEST the change impacts (`withdrawn`), unless this call brings a fresh one.',
     inputSchema: GraphTestIngestInputSchema,
     async handler(input) {
       const files: RunnerFileResult[] =
-        input.report !== undefined ? parseVitestJson(input.report) : (input.results as RunnerFileResult[]);
+        input.report !== undefined ? parseVitestJson(input.report) : ((input.results ?? []) as RunnerFileResult[]);
       const plan = planIngest(harness.getGraph(), files);
+      const withdrawn = await planeRuecknahme(input.changeSet, files);
 
-      if (input.dryRun || plan.assignments.length === 0) {
+      if (input.dryRun || (plan.assignments.length === 0 && withdrawn.length === 0)) {
         return {
           applied: 0,
           assignments: plan.assignments,
           unresolved: plan.unresolved,
+          withdrawn,
           success: true,
           tier: 'auto-apply' as const,
           violations: [],
@@ -110,12 +135,15 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
         // Ganzes ersetzt wird. Bei einer Abnahme aus zwei Dateien überschrieb das zweite
         // Kommando den Stempel des ersten — der Lauf war grün, die Evidenz für eine der
         // beiden Dateien blieb verschwunden und VR-01 meldete sie dauerhaft als pending.
+        // CR-GC-799: Zuordnung und Ruecknahme desselben Knotens gehen aus demselben Grund in EIN
+        // Kommando — das zweite ueberschriebe sonst das Array des ersten.
         const byNode = new Map<string, typeof plan.assignments>();
         for (const a of plan.assignments) {
           const bucket = byNode.get(a.testUid);
           if (bucket) bucket.push(a);
           else byNode.set(a.testUid, [a]);
         }
+        for (const w of withdrawn) if (!byNode.has(w.testUid)) byNode.set(w.testUid, []);
         const ranAt = new Date().toISOString();
         const commands: MutateCommand[] = [...byNode].map(([uid, assignments]) => {
           const node = nodes.find((n) => n.uid === uid)!;
@@ -129,7 +157,10 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
               attributes: {
                 testRefs: refs.map((r) => {
                   const hit = assignments.find((a) => samePath(r.file, a.file));
-                  return hit ? { ...r, result: hit.result, ranAt } : r;
+                  if (hit) return { ...r, result: hit.result, ranAt };
+                  if (!withdrawn.some((w) => w.testUid === uid && samePath(r.file, w.file))) return r;
+                  const { result: _result, ranAt: _ranAt, evidence: _evidence, ...ohneErgebnis } = r;
+                  return ohneErgebnis;
                 }),
               },
             },
@@ -142,6 +173,7 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
           applied: result.success ? plan.assignments.length : 0,
           assignments: plan.assignments,
           unresolved: plan.unresolved,
+          withdrawn: result.success ? withdrawn : [],
           success: result.success,
           tier: result.tier,
           violations: result.violations,

@@ -108,7 +108,7 @@
 | `FLOW-health-report` | `FUNC-health-endpoint` | `ACTOR-dashboard` |
 | `FLOW-held-back-traces` | `FUNC-held-back-traces` | `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` |
 | `FLOW-impact-slice` | `FUNC-graph-impact` | `FUNC-read-tools` |
-| `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` · `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` |
+| `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` · `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `FUNC-test-ingest` |
 | `FLOW-imported-graph` | `FUNC-import` | `FUNC-graph-store` |
 | `FLOW-install-result-collect-status` | `FUNC-collect-status` | `ACTOR-owner` |
 | `FLOW-install-result-harness-cli` | `FUNC-harness-cli` | `ACTOR-owner` |

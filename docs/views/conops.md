@@ -86,7 +86,7 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
 - `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-measure-test-schlupf` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code`
-- `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-graph-store` → `FUNC-mutate` → `FUNC-test-ingest`
+- `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-graph-store` → `FUNC-mutate` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
