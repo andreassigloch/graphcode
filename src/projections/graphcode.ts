@@ -121,6 +121,10 @@ export function renderFmea(graph: Graph, name: string): string {
     return n.attributes[k] !== undefined && Number.isFinite(v) ? v : null;
   };
   const show = (v: number | null): string => (v === null ? '—' : String(v));
+  // Die Übersicht nennt bis zu drei Träger beim Namen; darüber die Zahl. Viele Träger heißt, die
+  // Gegenmaßnahme hängt an einem Modul oder einer Kette — die Liste steht im Abschnitt des Risikos.
+  const traegerKurz = (uids: string[] | undefined): string =>
+    uids && uids.length > 3 ? `${uids.length} Funktionen` : refList(uids);
   const order = { High: 0, Medium: 1, Low: 2, '—': 3 } as const;
 
   const risks = nodesOfType(graph, 'REQ')
@@ -171,7 +175,7 @@ export function renderFmea(graph: Graph, name: string): string {
   risks.forEach((x, i) => {
     lines.push(
       `| ${i + 1} | ${cell(x.r.name)} | ${refList(ofType(satisfy.rev.get(x.r.uid), 'FCHAIN'))} | ${show(x.s)} | ${show(x.o)} | ` +
-        `${show(x.d)} | ${show(x.rpn)} | ${x.ap} | ${refList(carriers.get(x.r.uid))} | ${x.verifiziert ? '✓' : '✗'} |`,
+        `${show(x.d)} | ${show(x.rpn)} | ${x.ap} | ${traegerKurz(carriers.get(x.r.uid))} | ${x.verifiziert ? '✓' : '✗'} |`,
     );
   });
 

@@ -817,6 +817,21 @@
 | `CR-GC-800` | relation | `REQ-risk-stale-test-result` |
 | `CR-GC-801` | relation | `FUNC-view-fmea` |
 | `CR-GC-801` | relation | `REQ-doc-export` |
+| `CR-GC-802` | relation | `REQ-measurement-vector-contract-tested` |
+| `CR-GC-802` | relation | `REQ-risk-audit-evaluation-unowned` |
+| `CR-GC-802` | relation | `REQ-risk-auto-export-fails-silently` |
+| `CR-GC-802` | relation | `REQ-risk-client-holds-stale-tool-list` |
+| `CR-GC-802` | relation | `REQ-risk-edge-vanishes-silently` |
+| `CR-GC-802` | relation | `REQ-risk-measurement-vector-contract-unbound` |
+| `CR-GC-802` | relation | `REQ-risk-owner-ends-with-docked-sessions` |
+| `CR-GC-802` | relation | `REQ-risk-partial-store-after-reseed` |
+| `CR-GC-802` | relation | `REQ-risk-selection-misses-red-test` |
+| `CR-GC-802` | relation | `REQ-risk-skill-instructs-rejected-move` |
+| `CR-GC-802` | relation | `REQ-risk-stage-name-free-text` |
+| `CR-GC-802` | relation | `REQ-risk-stale-measurement` |
+| `CR-GC-802` | relation | `REQ-risk-steering-delta-missing` |
+| `CR-GC-802` | relation | `REQ-stage-names-enumerated` |
+| `CR-GC-802` | relation | `REQ-steering-delta-in-answer-tested` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -886,6 +901,7 @@
 | `FCHAIN-impact-testing` | compose | `FUNC-resolve-tests-from-code` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-post-impact-testing` |
 | `FCHAIN-impact-testing` | satisfy | `REQ-pre-impact-testing` |
+| `FCHAIN-impact-testing` | satisfy | `REQ-risk-selection-misses-red-test` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-graph-impact` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-graph-store` |
 | `FCHAIN-interface-escalation` | compose | `FUNC-mutate` |
@@ -910,6 +926,7 @@
 | `FCHAIN-loop-closure` | compose | `FUNC-mutate` |
 | `FCHAIN-loop-closure` | compose | `FUNC-se-retro` |
 | `FCHAIN-loop-closure` | satisfy | `REQ-prompt-provenance` |
+| `FCHAIN-loop-closure` | satisfy | `REQ-risk-audit-evaluation-unowned` |
 | `FCHAIN-loop-closure` | satisfy | `REQ-rule-calibration` |
 | `FCHAIN-merge-branches` | compose | `FUNC-graph-store` |
 | `FCHAIN-merge-branches` | compose | `FUNC-merge-nodes` |
@@ -939,6 +956,8 @@
 | `FCHAIN-recall` | compose | `FUNC-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-rewind` |
 | `FCHAIN-recall` | compose | `FUNC-seed-from-json` |
+| `FCHAIN-recall` | satisfy | `REQ-risk-edge-vanishes-silently` |
+| `FCHAIN-recall` | satisfy | `REQ-risk-partial-store-after-reseed` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-bind-tools` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-bootstrap` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-claim-store-lock` |
@@ -954,6 +973,8 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-session-shutdown` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-tool-context` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
+| `FCHAIN-repo-lifecycle` | satisfy | `REQ-risk-client-holds-stale-tool-list` |
+| `FCHAIN-repo-lifecycle` | satisfy | `REQ-risk-owner-ends-with-docked-sessions` |
 | `FCHAIN-schema-migration` | compose | `FUNC-migrate-schema` |
 | `FCHAIN-schema-migration` | compose | `FUNC-schema-guard` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
@@ -972,6 +993,7 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-top-level` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-trade` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-vorbereitung` |
+| `FCHAIN-skill-authoring` | satisfy | `REQ-risk-skill-instructs-rejected-move` |
 | `FCHAIN-skill-help` | compose | `FUNC-se-help` |
 | `FCHAIN-skill-report` | compose | `FUNC-check-code-conformance` |
 | `FCHAIN-skill-report` | compose | `FUNC-compute-readiness` |
@@ -993,6 +1015,7 @@
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-held-back-traces` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-mutate` |
 | `FCHAIN-snapshot-freshness` | satisfy | `REQ-graph-snapshot-per-commit` |
+| `FCHAIN-snapshot-freshness` | satisfy | `REQ-risk-auto-export-fails-silently` |
 | `FCHAIN-steering-loop` | compose | `FUNC-arch-fitness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-steering-delta` |
@@ -1013,7 +1036,11 @@
 | `FCHAIN-steering-loop` | satisfy | `REQ-monotone-convergence` |
 | `FCHAIN-steering-loop` | satisfy | `REQ-risk-loop-degradation` |
 | `FCHAIN-steering-loop` | satisfy | `REQ-risk-loop-oscillation` |
+| `FCHAIN-steering-loop` | satisfy | `REQ-risk-measurement-vector-contract-unbound` |
 | `FCHAIN-steering-loop` | satisfy | `REQ-risk-shared-steering-promise` |
+| `FCHAIN-steering-loop` | satisfy | `REQ-risk-stage-name-free-text` |
+| `FCHAIN-steering-loop` | satisfy | `REQ-risk-stale-measurement` |
+| `FCHAIN-steering-loop` | satisfy | `REQ-risk-steering-delta-missing` |
 | `FCHAIN-test-ingest` | compose | `FUNC-graph-store` |
 | `FCHAIN-test-ingest` | compose | `FUNC-mutate` |
 | `FCHAIN-test-ingest` | compose | `FUNC-resolve-tests-from-code` |
@@ -1573,6 +1600,7 @@
 | `FUNC-compute-readiness` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-compute-steering-delta` | allocate | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | io | `FLOW-steering-delta` |
+| `FUNC-compute-steering-delta` | satisfy | `REQ-steering-delta-in-answer-tested` |
 | `FUNC-compute-steering-delta` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-create-harness` | allocate | `MOD-surface` |
 | `FUNC-create-harness` | io | `FLOW-harness-handle` |
@@ -1825,6 +1853,8 @@
 | `FUNC-take-steering-snapshot` | io | `FLOW-steering-snapshot` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-applied-suggestion-moves-target` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-element-contract-finding` |
+| `FUNC-take-steering-snapshot` | satisfy | `REQ-measurement-vector-contract-tested` |
+| `FUNC-take-steering-snapshot` | satisfy | `REQ-stage-names-enumerated` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-post` |
 | `FUNC-target-profile` | allocate | `MOD-agent-surface` |
@@ -1941,13 +1971,23 @@
 | `REQ-graph-is-ssot` | compose | `REQ-graph-integrity` |
 | `REQ-graph-is-ssot` | compose | `REQ-held-back-traces-named` |
 | `REQ-one-gate-per-repo` | compose | `REQ-gate-only-writes` |
+| `REQ-risk-audit-evaluation-unowned` | compose | `REQ-audit-trail` |
+| `REQ-risk-auto-export-fails-silently` | compose | `REQ-graph-snapshot-per-commit` |
+| `REQ-risk-edge-vanishes-silently` | compose | `REQ-held-back-traces-named` |
 | `REQ-risk-gate-rule-eval-fails` | compose | `REQ-gate-survives-rule-failure` |
 | `REQ-risk-interface-change-unescalated` | compose | `REQ-interface-change-names-dependents` |
 | `REQ-risk-loop-degradation` | compose | `REQ-loop-convergence-monitor` |
 | `REQ-risk-loop-oscillation` | compose | `REQ-loop-round-log` |
+| `REQ-risk-measurement-vector-contract-unbound` | compose | `REQ-measurement-vector-contract-tested` |
+| `REQ-risk-owner-ends-with-docked-sessions` | compose | `REQ-store-owner-lifecycle` |
+| `REQ-risk-partial-store-after-reseed` | compose | `REQ-export-no-clobber` |
+| `REQ-risk-selection-misses-red-test` | compose | `REQ-full-run-on-probation` |
 | `REQ-risk-shared-steering-promise` | compose | `REQ-steering-promise-one-owner` |
+| `REQ-risk-stage-name-free-text` | compose | `REQ-stage-names-enumerated` |
+| `REQ-risk-stale-measurement` | compose | `REQ-single-measurement-path` |
 | `REQ-risk-stale-test-result` | compose | `REQ-lane-reports-change` |
 | `REQ-risk-stale-test-result` | compose | `REQ-test-result-withdrawn-on-change` |
+| `REQ-risk-steering-delta-missing` | compose | `REQ-steering-delta-in-answer-tested` |
 | `REQ-risk-store-unreadable` | compose | `REQ-store-recovery` |
 | `REQ-single-kuzu-owner` | compose | `REQ-store-owner-lifecycle` |
 | `REQ-token-efficiency` | compose | `REQ-benchmark-harness` |
@@ -2022,9 +2062,11 @@
 | `TEST-audit-rules-passed` | verify | `REQ-audit-trail` |
 | `TEST-audit-rules-passed` | verify | `REQ-rule-calibration` |
 | `TEST-audit-trail-projection` | verify | `REQ-audit-trail` |
+| `TEST-audit-trail-projection` | verify | `REQ-risk-audit-evaluation-unowned` |
 | `TEST-audit-trail-projection` | verify | `REQ-token-efficiency` |
 | `TEST-auto-export` | verify | `REQ-doc-export` |
 | `TEST-auto-export` | verify | `REQ-graph-snapshot-per-commit` |
+| `TEST-auto-export` | verify | `REQ-risk-auto-export-fails-silently` |
 | `TEST-batch-seed` | verify | `REQ-batch-seed-performance` |
 | `TEST-bootstrap` | verify | `REQ-bootstrap-through-gate` |
 | `TEST-bootstrap` | verify | `REQ-post-import` |
@@ -2079,6 +2121,7 @@
 | `TEST-export-graph-guard` | verify | `REQ-deterministic-serialization` |
 | `TEST-export-graph-guard` | verify | `REQ-export-no-clobber` |
 | `TEST-export-graph-guard` | verify | `REQ-gate-only-writes` |
+| `TEST-export-graph-guard` | verify | `REQ-risk-partial-store-after-reseed` |
 | `TEST-first-step` | verify | `REQ-steering-from-metrics` |
 | `TEST-fit-advisory` | verify | `REQ-quality-metric` |
 | `TEST-fit-advisory` | verify | `REQ-steering-from-metrics` |
@@ -2125,6 +2168,7 @@
 | `TEST-hooks` | verify | `REQ-hook-extension-points` |
 | `TEST-hooks` | verify | `REQ-hook-order-deterministic` |
 | `TEST-hooks` | verify | `REQ-precommit-timeout` |
+| `TEST-host-shim` | verify | `REQ-risk-owner-ends-with-docked-sessions` |
 | `TEST-host-shim` | verify | `REQ-single-kuzu-owner` |
 | `TEST-host-shim` | verify | `REQ-single-write-door` |
 | `TEST-host-shim` | verify | `REQ-store-owner-lifecycle` |
@@ -2139,6 +2183,7 @@
 | `TEST-import-code-verb` | verify | `REQ-post-import` |
 | `TEST-import-invariant` | verify | `REQ-bootstrap-through-gate` |
 | `TEST-import-rejected-traces` | verify | `REQ-held-back-traces-named` |
+| `TEST-import-rejected-traces` | verify | `REQ-risk-edge-vanishes-silently` |
 | `TEST-import-rejected-traces` | verify | `SCHEMA-rejected-trace` |
 | `TEST-import-sys-anchor` | verify | `REQ-graph-integrity` |
 | `TEST-inject-graph-slice` | verify | `REQ-precise-context` |
@@ -2177,6 +2222,8 @@
 | `TEST-mcp-symmetry` | verify | `REQ-harness-schema-in-contracts` |
 | `TEST-mcp-symmetry` | verify | `REQ-mcp-gate-symmetry` |
 | `TEST-mcp-symmetry` | verify | `REQ-one-gate-per-repo` |
+| `TEST-measurement-vector-contract` | verify | `REQ-measurement-vector-contract-tested` |
+| `TEST-measurement-vector-contract` | verify | `REQ-risk-measurement-vector-contract-unbound` |
 | `TEST-member-name` | verify | `REQ-doc-export` |
 | `TEST-merge` | verify | `REQ-auto-persist-merge` |
 | `TEST-merge` | verify | `REQ-conflict-free-merge` |
@@ -2271,6 +2318,7 @@
 | `TEST-session-lifecycle` | verify | `REQ-single-kuzu-owner` |
 | `TEST-session-lifecycle` | verify | `REQ-store-owner-lifecycle` |
 | `TEST-shared-views-no-fork` | verify | `REQ-shared-views-no-fork` |
+| `TEST-single-measurement-path` | verify | `REQ-risk-stale-measurement` |
 | `TEST-single-measurement-path` | verify | `REQ-single-measurement-path` |
 | `TEST-single-measurement-path` | verify | `REQ-steering-post` |
 | `TEST-single-measurement-path` | verify | `REQ-steering-pre` |
@@ -2278,11 +2326,16 @@
 | `TEST-single-write-door` | verify | `REQ-single-write-door` |
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
 | `TEST-skill-kinds-werte` | verify | `REQ-published-counts-match-code` |
+| `TEST-skill-moves-are-legal` | verify | `REQ-risk-skill-instructs-rejected-move` |
 | `TEST-skill-red-first` | verify | `REQ-test-skill-red-first` |
 | `TEST-skill-reports-measured-values` | verify | `REQ-skill-reads-only` |
 | `TEST-skill-rule-ids` | verify | `REQ-published-counts-match-code` |
 | `TEST-skills-mcp` | verify | `REQ-doc-export` |
+| `TEST-stage-names-enumerated` | verify | `REQ-risk-stage-name-free-text` |
+| `TEST-stage-names-enumerated` | verify | `REQ-stage-names-enumerated` |
 | `TEST-status-verb` | verify | `REQ-single-kuzu-owner` |
+| `TEST-steering-delta-in-answer` | verify | `REQ-risk-steering-delta-missing` |
+| `TEST-steering-delta-in-answer` | verify | `REQ-steering-delta-in-answer-tested` |
 | `TEST-steering-promise-one-owner` | verify | `REQ-risk-shared-steering-promise` |
 | `TEST-steering-promise-one-owner` | verify | `REQ-steering-promise-one-owner` |
 | `TEST-steering-snapshot` | verify | `REQ-single-measurement-path` |
@@ -2302,6 +2355,7 @@
 | `TEST-test-result-withdrawn-on-change` | verify | `REQ-test-result-withdrawn-on-change` |
 | `TEST-test-runnable-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-test-schlupf` | verify | `REQ-full-run-on-probation` |
+| `TEST-test-schlupf` | verify | `REQ-risk-selection-misses-red-test` |
 | `TEST-test-schlupf` | verify | `SCHEMA-schlupf-zeile` |
 | `TEST-testref-materialize` | verify | `REQ-testref-materialized` |
 | `TEST-testreport` | verify | `REQ-audit-trail` |
@@ -2314,6 +2368,7 @@
 | `TEST-tool-contract` | verify | `SCHEMA-mcp-tool` |
 | `TEST-tool-contract` | verify | `SCHEMA-mcp-tool-registry` |
 | `TEST-tool-contract` | verify | `SCHEMA-tool-context` |
+| `TEST-tool-list-change-announced` | verify | `REQ-risk-client-holds-stale-tool-list` |
 | `TEST-uc-authoring-style` | verify | `REQ-interactive-capture-suggest` |
 | `TEST-upgrade` | verify | `REQ-install-idempotent` |
 | `TEST-upgrade` | verify | `REQ-repo-update` |
@@ -2365,6 +2420,7 @@
 | `UC-code-quality` | compose | `REQ-published-counts-match-code` |
 | `UC-code-quality` | compose | `REQ-quality-metric` |
 | `UC-code-quality` | compose | `REQ-risk-interface-change-unescalated` |
+| `UC-code-quality` | compose | `REQ-risk-skill-instructs-rejected-move` |
 | `UC-code-quality` | compose | `REQ-roundtrip-conformance` |
 | `UC-code-quality` | compose | `REQ-rule-enforcement` |
 | `UC-code-quality` | compose | `REQ-single-write-door` |
@@ -2386,7 +2442,11 @@
 | `UC-deterministic-steering` | compose | `REQ-phase-gate-not-skippable` |
 | `UC-deterministic-steering` | compose | `REQ-risk-loop-degradation` |
 | `UC-deterministic-steering` | compose | `REQ-risk-loop-oscillation` |
+| `UC-deterministic-steering` | compose | `REQ-risk-measurement-vector-contract-unbound` |
 | `UC-deterministic-steering` | compose | `REQ-risk-shared-steering-promise` |
+| `UC-deterministic-steering` | compose | `REQ-risk-stage-name-free-text` |
+| `UC-deterministic-steering` | compose | `REQ-risk-stale-measurement` |
+| `UC-deterministic-steering` | compose | `REQ-risk-steering-delta-missing` |
 | `UC-deterministic-steering` | compose | `REQ-single-measurement-path` |
 | `UC-deterministic-steering` | compose | `REQ-skill-reads-only` |
 | `UC-deterministic-steering` | compose | `REQ-steering-from-metrics` |
@@ -2402,6 +2462,7 @@
 | `UC-efficient-testing` | compose | `REQ-impact-based-testing` |
 | `UC-efficient-testing` | compose | `REQ-post-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-pre-impact-testing` |
+| `UC-efficient-testing` | compose | `REQ-risk-selection-misses-red-test` |
 | `UC-efficient-testing` | compose | `REQ-risk-stale-test-result` |
 | `UC-efficient-testing` | compose | `REQ-selective-code-lane` |
 | `UC-efficient-testing` | compose | `REQ-test-runnable-binding` |
@@ -2414,6 +2475,9 @@
 | `UC-graph-time-travel` | compose | `REQ-graph-state-recall` |
 | `UC-graph-time-travel` | compose | `REQ-post-merge-nodes` |
 | `UC-graph-time-travel` | compose | `REQ-pre-merge-nodes` |
+| `UC-graph-time-travel` | compose | `REQ-risk-auto-export-fails-silently` |
+| `UC-graph-time-travel` | compose | `REQ-risk-edge-vanishes-silently` |
+| `UC-graph-time-travel` | compose | `REQ-risk-partial-store-after-reseed` |
 | `UC-live-graph-view` | compose | `FCHAIN-dashboard-metrics` |
 | `UC-live-graph-view` | compose | `FCHAIN-live-update` |
 | `UC-live-graph-view` | compose | `REQ-artifact-freshness` |
@@ -2433,6 +2497,7 @@
 | `UC-live-graph-view` | compose | `REQ-versioned-broadcast` |
 | `UC-loop-closure` | compose | `FCHAIN-loop-closure` |
 | `UC-loop-closure` | compose | `REQ-prompt-provenance` |
+| `UC-loop-closure` | compose | `REQ-risk-audit-evaluation-unowned` |
 | `UC-loop-closure` | compose | `REQ-rule-calibration` |
 | `UC-model-exchange` | compose | `FCHAIN-doc-export` |
 | `UC-model-exchange` | compose | `FCHAIN-model-import` |
@@ -2463,5 +2528,7 @@
 | `UC-repo-lifecycle` | compose | `REQ-post-harness-cli` |
 | `UC-repo-lifecycle` | compose | `REQ-pre-harness-cli` |
 | `UC-repo-lifecycle` | compose | `REQ-repo-update` |
+| `UC-repo-lifecycle` | compose | `REQ-risk-client-holds-stale-tool-list` |
+| `UC-repo-lifecycle` | compose | `REQ-risk-owner-ends-with-docked-sessions` |
 | `UC-repo-lifecycle` | compose | `REQ-session-leaves-nothing-behind` |
 | `UC-repo-lifecycle` | compose | `REQ-viewer-owned-by-repo` |

@@ -108,6 +108,26 @@ describe('TEST-view-fmea: die Sicht zeigt Ort, Prioritaet, Traeger und Nachweis 
     expect(md).not.toContain('testResult');
   });
 
+  it('viele Traeger stehen in der Uebersicht als Zahl, im Abschnitt des Risikos beim Namen', () => {
+    // Eine Gegenmassnahme am Modul macht jede seiner Blattfunktionen zum Traeger.
+    const breit: Graph = {
+      nodes: [
+        n('MOD-m', 'MOD', 'Modul'),
+        ...['a', 'b', 'c', 'd'].map((x) => n(`FUNC-${x}`, 'FUNC', x)),
+        n('REQ-risk-breit', 'REQ', 'Breites Risiko', { role: 'risk', kinds: ['non-functional'], severity: 5, occurrence: 5, detection: 5 }),
+        n('REQ-m-modul', 'REQ', 'Massnahme am Modul', { role: 'mitigation', kinds: ['non-functional'] }),
+      ],
+      edges: [
+        ...['a', 'b', 'c', 'd'].map((x) => e(`FUNC-${x}`, 'allocate', 'MOD-m')),
+        e('REQ-risk-breit', 'compose', 'REQ-m-modul'),
+        e('MOD-m', 'satisfy', 'REQ-m-modul'),
+      ],
+    };
+    const out = exportMarkdown(breit, 'fmea', 'x');
+    expect(out).toContain('| 125 | High | 4 Funktionen | ✗ |');
+    expect(out).toContain('- **Träger:** `FUNC-a` · `FUNC-b` · `FUNC-c` · `FUNC-d`');
+  });
+
   it('ohne Risiko im Modell steht das da (kein leeres Dokument)', () => {
     const leer = exportMarkdown({ nodes: [n('SYS-s', 'SYS', 'System')], edges: [] }, 'fmea', 'x');
     expect(leer).toContain('keine REQ role=risk im Graph');

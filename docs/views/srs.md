@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 168 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 183 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -126,7 +126,7 @@ io ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-owner` · io ▶ `FLOW-mutate
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -230,7 +230,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -372,7 +372,7 @@ io ◀ `FLOW-cli-command` · `FLOW-lock-release` · io ▶ `FLOW-store-ownership
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -390,7 +390,7 @@ io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-hand
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -408,7 +408,7 @@ io ◀ `FLOW-store-ownership` · io ▶ `FLOW-harness-handle-host` · allocate �
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -562,7 +562,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -748,7 +748,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -813,6 +813,14 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 #### 3.1.5  `FCHAIN-skill-authoring` — Skill legt Modellknoten an
 
 Ein Mensch beauftragt einen Autoren-Skill; der Skill legt Knoten und Kanten durch das Apply-Gate an.
+
+##### `REQ-risk-skill-instructs-rejected-move` — Risiko Skill weist abgelehnten Zug an
+
+Ein Skill weist einen Zug an, den das Gate ablehnt. Der Lauf stockt, der Nutzer muss eingreifen.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-skill-moves-are-legal` · satisfy ◀ `FCHAIN-skill-authoring` · allocate ▶ —
 
 ##### 3.1.5.1  `FUNC-author-req` — Skill se:author-req
 
@@ -914,7 +922,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -1256,7 +1264,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -1323,6 +1331,22 @@ Ein Wert ausserhalb des Element-Vertrags MUSS als Befund der Regel R-08 erschein
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-mutate-schema-guard` (integration) · `TEST-readiness-altbestand` (integration) · satisfy ◀ `FUNC-mutate` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-kernel-measure`
+
+###### `REQ-measurement-vector-contract-tested` — Messvektor nach gebundenem und geprueftem Vertrag
+
+Die Funktion, die den Messvektor liefert, liefert ihn nach einem an Code gebundenen Vertrag, und ein Vertragstest prueft jedes Feld, das die Schleife liest.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-measurement-vector-contract` · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+
+###### `REQ-stage-names-enumerated` — Stufennamen sind aufgezaehlt
+
+Der Stufenname im Steuerungs-Snapshot ist ein aufgezaehlter Wert aus der Regelmatrix, und ein unbekannter Name wird beim Bilden des Snapshots abgewiesen.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-stage-names-enumerated` · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
@@ -1452,7 +1476,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -1690,6 +1714,14 @@ priority: should · status: n/a · kinds: non-functional · role: risk
 
 Verification ◀ `TEST-loop-round-log` · satisfy ◀ `FCHAIN-steering-loop` · allocate ▶ —
 
+##### `REQ-risk-measurement-vector-contract-unbound` — Risiko Vertrag des Messvektors ungebunden
+
+Die Schleife liest ein Feld des Messvektors, das die Messung anders liefert. Der Vertrag des Messvektors ist nicht an Code gebunden und hat keinen Vertragstest.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-measurement-vector-contract` · satisfy ◀ `FCHAIN-steering-loop` · allocate ▶ —
+
 ##### `REQ-risk-shared-steering-promise` — Risiko geteilte Zusage ohne Traeger
 
 Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann verletzt sein, ohne dass eine der acht Funktionen ausfaellt, die sie gemeinsam erfuellen.
@@ -1697,6 +1729,30 @@ Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann ve
 priority: should · status: n/a · kinds: non-functional · role: risk
 
 Verification ◀ `TEST-steering-promise-one-owner` · satisfy ◀ `FCHAIN-steering-loop` · allocate ▶ —
+
+##### `REQ-risk-stage-name-free-text` — Risiko Stufenname ohne Wertebereich
+
+Ein umbenannter Stufenname faellt still aus dem Delta der Steuerung. Der Stufenname im Steuerungs-Snapshot ist freier Text ohne aufgezaehlten Wertebereich.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-stage-names-enumerated` · satisfy ◀ `FCHAIN-steering-loop` · allocate ▶ —
+
+##### `REQ-risk-stale-measurement` — Risiko Glied rechnet auf altem Stand
+
+Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die Empfehlung passt nicht zum Modell.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FCHAIN-steering-loop` · allocate ▶ —
+
+##### `REQ-risk-steering-delta-missing` — Risiko Delta fehlt in der Antwort
+
+Das Delta der Steuerung fehlt oder ist falsch in der Antwort auf einen Zug. Der Agent sieht einen falschen Fortschritt.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-steering-delta-in-answer` · satisfy ◀ `FCHAIN-steering-loop` · allocate ▶ —
 
 ##### 3.2.4.1  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
 
@@ -1712,7 +1768,7 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-held-back-traces` · allocate ▶ `M
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -1730,7 +1786,7 @@ io ◀ `FLOW-dimension-readiness` · `FLOW-held-back-traces` · `FLOW-query-requ
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -1884,7 +1940,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -2010,6 +2066,22 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-mutate-schema-guard` (integration) · `TEST-readiness-altbestand` (integration) · satisfy ◀ `FUNC-mutate` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-kernel-measure`
 
+###### `REQ-measurement-vector-contract-tested` — Messvektor nach gebundenem und geprueftem Vertrag
+
+Die Funktion, die den Messvektor liefert, liefert ihn nach einem an Code gebundenen Vertrag, und ein Vertragstest prueft jedes Feld, das die Schleife liest.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-measurement-vector-contract` · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+
+###### `REQ-stage-names-enumerated` — Stufennamen sind aufgezaehlt
+
+Der Stufenname im Steuerungs-Snapshot ist ein aufgezaehlter Wert aus der Regelmatrix, und ein unbekannter Name wird beim Bilden des Snapshots abgewiesen.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-stage-names-enumerated` · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
 > auch unter: `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-module-metrics`
@@ -2104,6 +2176,14 @@ Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-De
 
 io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-kernel-measure`
 
+###### `REQ-steering-delta-in-answer-tested` — Delta steht geprueft in der Antwort
+
+Die Antwort auf jeden angenommenen Zug traegt das Delta der Steuerung, berechnet aus dem Stand vor und nach genau diesem Zug, und ein Integrationstest prueft die Uebergabe bis in die Antwort.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-steering-delta-in-answer` · satisfy ◀ `FUNC-compute-steering-delta` · allocate ▶ `MOD-kernel-measure`
+
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
 > auch unter: `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-module-metrics` · `FUNC-take-steering-snapshot`
@@ -2174,6 +2254,14 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
 
+##### `REQ-risk-selection-misses-red-test` — Risiko Auswahl laesst roten Test aus
+
+Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
+
 ##### 3.3.1.1  `FUNC-resolve-tests-from-code` — Gerichtete code→REQ→TEST-Auflösung
 
 > auch in: `FCHAIN-test-ingest` · `FUNC-block-abfrage`
@@ -2226,7 +2314,7 @@ io ◀ `FLOW-impacted-tests` · io ▶ `FLOW-schlupf-zeile` · allocate ▶ `MOD
 
 Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-measure-test-schlupf` · allocate ▶ `MOD-projections`
 
@@ -2388,7 +2476,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -2440,7 +2528,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -2548,6 +2636,22 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Der Entwickler nennt einen Commit; rewind liest dessen Snapshot aus dem Git-Objektspeicher und reseed stellt den Store daraus her. Ergebnis: Modell und Code passen wieder zu demselben Commit.
 
+##### `REQ-risk-edge-vanishes-silently` — Risiko Kante verschwindet still
+
+Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell. Das Modell verliert Bezuege, ohne dass es jemand bemerkt.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FCHAIN-recall` · allocate ▶ —
+
+##### `REQ-risk-partial-store-after-reseed` — Risiko halb gefuellter Store nach Abbruch
+
+Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store. Das Modell ist unvollstaendig, bis erneut wiederhergestellt wird.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-export-graph-guard` (unit) · satisfy ◀ `FCHAIN-recall` · allocate ▶ —
+
 ##### 3.4.2.1  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
 
 > auch in: `FCHAIN-model-import` · `FCHAIN-repo-lifecycle` · `FUNC-block-bedienung`
@@ -2580,7 +2684,7 @@ io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-hand
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -2670,7 +2774,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -2706,7 +2810,7 @@ Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (inte
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -2724,7 +2828,7 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-held-back-traces` · allocate ▶ `M
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -2770,9 +2874,17 @@ Jede Modell-Mutation setzt den Drift-Marker, die Persistenz schreibt den Store, 
 
 Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217)
 
-priority: should · status: done · kinds: non-functional
+priority: should · status: done · kinds: non-functional · role: mitigation
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-graph-time-travel` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · allocate ▶ —
+
+##### `REQ-risk-auto-export-fails-silently` — Risiko Export scheitert still
+
+Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten Stand. Viewer und Leser der Dateien sehen ein Modell, das es so nicht mehr gibt.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-auto-export` (integration) · satisfy ◀ `FCHAIN-snapshot-freshness` · allocate ▶ —
 
 ##### 3.4.3.1  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
 
@@ -2788,7 +2900,7 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-held-back-traces` · allocate ▶ `M
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -2806,7 +2918,7 @@ io ◀ `FLOW-graph-state` · `FLOW-held-back-traces` · io ▶ `FLOW-graph-snaps
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -2968,7 +3080,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -3078,7 +3190,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -3184,7 +3296,7 @@ io ◀ `FLOW-store-ownership` · io ▶ `FLOW-harness-handle-host` · allocate �
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -3400,7 +3512,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -3428,6 +3540,14 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-prompt-provenance` (integration) · satisfy ◀ `FCHAIN-loop-closure` · `MOD-kernel` · allocate ▶ —
 
+##### `REQ-risk-audit-evaluation-unowned` — Risiko Auswertung ohne Verantwortlichen
+
+Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen werden an einer Zahl justiert, die niemand verantwortet.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-audit-trail-projection` (integration) · satisfy ◀ `FCHAIN-loop-closure` · allocate ▶ —
+
 ##### `REQ-rule-calibration` — Regel-Kalibrierung aus der Aufzeichnung
 
 Die Aufzeichnung erlaubt es, je Regel, je Modell und je Konsument die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346)
@@ -3450,7 +3570,7 @@ io ◀ `FLOW-audit-record` · io ▶ `FLOW-audit-report` · allocate ▶ `MOD-su
 
 CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 
-priority: must · status: open · kinds: functional
+priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · allocate ▶ `MOD-surface`
 
@@ -3486,7 +3606,7 @@ io ◀ `FLOW-audit-record` · io ▶ `FLOW-audit-entries` · allocate ▶ `MOD-s
 
 CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 
-priority: must · status: open · kinds: functional
+priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · allocate ▶ `MOD-surface`
 
@@ -3522,7 +3642,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -3794,7 +3914,7 @@ io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-hand
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -3896,7 +4016,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -4114,7 +4234,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -4282,7 +4402,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -4496,7 +4616,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -4515,6 +4635,22 @@ Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung
 #### 3.9.1  `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus
 
 Einrichten, erstbefuellen, Verb waehlen, Lauf fahren, aktualisieren, Sitzung beenden. Die Reihenfolge, die ein Entwickler an der Kommandozeile wirklich durchlaeuft.
+
+##### `REQ-risk-client-holds-stale-tool-list` — Risiko Werkzeugliste vom Sitzungsstart
+
+Der Client arbeitet mit der Werkzeugliste vom Sitzungsstart. Eine neue Eingabe eines Werkzeugs ist in der laufenden Sitzung nicht erreichbar.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-tool-list-change-announced` · satisfy ◀ `FCHAIN-repo-lifecycle` · allocate ▶ —
+
+##### `REQ-risk-owner-ends-with-docked-sessions` — Risiko Besitzer endet bei angedockten Sitzungen
+
+Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine angedockte Sitzung verliert das Schreiben.
+
+priority: should · status: n/a · kinds: non-functional · role: risk
+
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FCHAIN-repo-lifecycle` · allocate ▶ —
 
 ##### 3.9.1.1  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
 
@@ -4688,7 +4824,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -4714,7 +4850,7 @@ io ◀ `FLOW-cli-command` · `FLOW-lock-release` · io ▶ `FLOW-store-ownership
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -4732,7 +4868,7 @@ io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-hand
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -5158,7 +5294,7 @@ io ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-owner` · io ▶ `FLOW-mutate
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -5332,7 +5468,7 @@ io ◀ `FLOW-audit-record` · io ▶ `FLOW-audit-report` · allocate ▶ `MOD-su
 
 CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 
-priority: must · status: open · kinds: functional
+priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · allocate ▶ `MOD-surface`
 
@@ -5350,7 +5486,7 @@ io ◀ `FLOW-audit-record` · io ▶ `FLOW-audit-entries` · allocate ▶ `MOD-s
 
 CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.
 
-priority: must · status: open · kinds: functional
+priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passed` (integration) · `TEST-audit-trail-projection` (integration) · `TEST-mcp-stdio-server` (integration) · `TEST-operations-log` (integration) · `TEST-testreport` (unit) · satisfy ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · allocate ▶ `MOD-surface`
 
@@ -5472,7 +5608,7 @@ io ◀ `FLOW-dimension-readiness` · `FLOW-held-back-traces` · `FLOW-query-requ
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -5926,7 +6062,7 @@ io ◀ `FLOW-graph-state` · `FLOW-held-back-traces` · io ▶ `FLOW-graph-snaps
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -6020,7 +6156,7 @@ io ◀ `FLOW-store-ownership` · io ▶ `FLOW-harness-handle-host` · allocate �
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -6210,6 +6346,14 @@ Differenz zweier Snapshots: blockierende Fehler vorher und nachher plus Score-De
 
 io ◀ `FLOW-steering-snapshot` · io ▶ `FLOW-steering-delta` · allocate ▶ `MOD-kernel-measure`
 
+###### `REQ-steering-delta-in-answer-tested` — Delta steht geprueft in der Antwort
+
+Die Antwort auf jeden angenommenen Zug traegt das Delta der Steuerung, berechnet aus dem Stand vor und nach genau diesem Zug, und ein Integrationstest prueft die Uebergabe bis in die Antwort.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-steering-delta-in-answer` · satisfy ◀ `FUNC-compute-steering-delta` · allocate ▶ `MOD-kernel-measure`
+
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
 > auch unter: `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-module-metrics` · `FUNC-take-steering-snapshot`
@@ -6326,6 +6470,22 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-mutate-schema-guard` (integration) · `TEST-readiness-altbestand` (integration) · satisfy ◀ `FUNC-mutate` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel` · `MOD-kernel-measure`
 
+###### `REQ-measurement-vector-contract-tested` — Messvektor nach gebundenem und geprueftem Vertrag
+
+Die Funktion, die den Messvektor liefert, liefert ihn nach einem an Code gebundenen Vertrag, und ein Vertragstest prueft jedes Feld, das die Schleife liest.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-measurement-vector-contract` · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+
+###### `REQ-stage-names-enumerated` — Stufennamen sind aufgezaehlt
+
+Der Stufenname im Steuerungs-Snapshot ist ein aufgezaehlter Wert aus der Regelmatrix, und ein unbekannter Name wird beim Bilden des Snapshots abgewiesen.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-stage-names-enumerated` · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+
 ###### `REQ-steering-from-metrics` — Naechster Schritt folgt aus gemessenen Kenngroessen
 
 > auch unter: `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-module-metrics`
@@ -6418,7 +6578,7 @@ io ◀ `FLOW-cli-command` · `FLOW-lock-release` · io ▶ `FLOW-store-ownership
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -6436,7 +6596,7 @@ io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-hand
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -6480,7 +6640,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
 
-priority: must · status: reviewed · kinds: functional
+priority: must · status: reviewed · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
@@ -6506,7 +6666,7 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-held-back-traces` · allocate ▶ `M
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -6534,7 +6694,7 @@ Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (inte
 
 Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
 
-priority: must · status: n/a · kinds: functional
+priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
@@ -8344,7 +8504,7 @@ Verification ◀ `TEST-docs-taxonomy` (inspection) · satisfy ◀ `MOD-projectio
 
 graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)
 
-priority: should · status: done · kinds: non-functional
+priority: should · status: done · kinds: non-functional · role: mitigation
 
 Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `MOD-projections` · allocate ▶ —
 
@@ -8560,7 +8720,7 @@ Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart
 
 nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.
 
-priority: should · status: n/a · kinds: non-functional
+priority: should · status: n/a · kinds: non-functional · role: mitigation
 
 Verification ◀ `TEST-graph-metrics` (unit) · `TEST-single-measurement-path` (unit) · `TEST-steering-snapshot` (integration) · satisfy ◀ `MOD-projections` · allocate ▶ —
 
@@ -8674,13 +8834,13 @@ verify ▶ `REQ-audit-trail` · `REQ-rule-calibration` · testRefs: `tests/audit
 
 Abnahme der Datei tests/audit.trail-projection.test.ts: audit_trail liefert eine Projektion statt der Rohsaetze, sodass ein Standardaufruf den Agenten nicht mit vollstaendigen Mutations-Batches flutet. Der Ausloeser war messbar: ein Default-Aufruf trug 163 KB, davon 79 Prozent Batch-Inhalt.
 
-verify ▶ `REQ-audit-trail` · `REQ-token-efficiency` · testRefs: `tests/audit.trail-projection.test.ts`
+verify ▶ `REQ-audit-trail` · `REQ-risk-audit-evaluation-unowned` · `REQ-token-efficiency` · testRefs: `tests/audit.trail-projection.test.ts`
 
 ### 8.10  `TEST-auto-export` — Export folgt der Mutation
 
 Abnahme der Datei tests/auto-export.test.ts: nach einer angewandten Mutation entsteht der Snapshot-Export, ohne dass jemand graph_export ruft, und er schreibt weder bei blockierten Batches noch doppelt. Geprueft werden die Eigenschaften des Ausloesens, nicht die Dateiinhalte.
 
-verify ▶ `REQ-doc-export` · `REQ-graph-snapshot-per-commit` · testRefs: `tests/auto-export.test.ts`
+verify ▶ `REQ-doc-export` · `REQ-graph-snapshot-per-commit` · `REQ-risk-auto-export-fails-silently` · testRefs: `tests/auto-export.test.ts`
 
 ### 8.11  `TEST-batch-seed` — Batch-Seed UNWIND performance (automated)
 
@@ -8812,7 +8972,7 @@ verify ▶ `REQ-formatE-diff-dialect` · testRefs: `tests/mutate.edge-only-batch
 
 Abnahme der Datei tests/export-graph-guard.test.ts: die Wache hinter scripts/export-graph.mjs erkennt einen Hand-Edit am SSOT und verweigert das Rendern, bleibt aber blind gegen den graphVersion-Stempel. Beide Haelften zaehlen: eine durch Aufweichen reparierte Wache ist schlimmer als eine kaputte.
 
-verify ▶ `REQ-deterministic-serialization` · `REQ-export-no-clobber` · `REQ-gate-only-writes` · testRefs: `tests/export-graph-guard.test.ts`
+verify ▶ `REQ-deterministic-serialization` · `REQ-export-no-clobber` · `REQ-gate-only-writes` · `REQ-risk-partial-store-after-reseed` · testRefs: `tests/export-graph-guard.test.ts`
 
 ### 8.33  `TEST-first-step` — Eine naechste Aktion beim Start
 
@@ -8968,7 +9128,7 @@ verify ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ
 
 Abnahme der Datei tests/host-shim.test.ts: die Zwei-Prozess-Topologie auf Socket-Ebene, ein echter Host mit Store und ein echter Proxy-Registry-Client. Der Verlierer der Wahl bedient dieselbe Oberflaeche ueber stdio, ohne einen zweiten Schreibkanal zu oeffnen.
 
-verify ▶ `REQ-single-kuzu-owner` · `REQ-single-write-door` · `REQ-store-owner-lifecycle` · testRefs: `tests/host-shim.test.ts`
+verify ▶ `REQ-risk-owner-ends-with-docked-sessions` · `REQ-single-kuzu-owner` · `REQ-single-write-door` · `REQ-store-owner-lifecycle` · testRefs: `tests/host-shim.test.ts`
 
 ### 8.59  `TEST-impact-subgraph` — graph_impact Subgraph-Test
 
@@ -8992,7 +9152,7 @@ verify ▶ `REQ-bootstrap-through-gate` · testRefs: `tests/harness.import-invar
 
 Abnahme der Datei tests/harness.import-rejected-traces.test.ts: der Seed laedt einen Graphen mit ACTOR -io-> UC, haelt die Kante zurueck und nennt sie; graph_readiness fuehrt sie auch nach Neustart; graph_export verweigert mit Kante und Reparaturweg, bis delete-edge durchs Werkzeug sie annimmt; das Gate blockt dieselbe Kante als neue (R-18).
 
-verify ▶ `REQ-held-back-traces-named` · `SCHEMA-rejected-trace` · testRefs: `tests/harness.import-rejected-traces.test.ts`
+verify ▶ `REQ-held-back-traces-named` · `REQ-risk-edge-vanishes-silently` · `SCHEMA-rejected-trace` · testRefs: `tests/harness.import-rejected-traces.test.ts`
 
 ### 8.63  `TEST-import-sys-anchor` — Genau ein SYS-Anker nach jedem Import
 
@@ -9102,439 +9262,469 @@ MCP graph_mutate == in-process mutate(): identische Semantik/Violations. (FCHAIN
 
 verify ▶ `REQ-harness-schema-in-contracts` · `REQ-mcp-gate-symmetry` · `REQ-one-gate-per-repo` · testRefs: `tests/mcp.symmetry.test.ts`
 
-### 8.81  `TEST-member-name` — Member-Name-Derivation-Test
+### 8.81  `TEST-measurement-vector-contract` — Vertragstest des Messvektors
+
+Prueft, dass jedes Feld des Messvektors, das die Schleife liest, im gebundenen Vertrag steht und von der Messung so geliefert wird.
+
+verify ▶ `REQ-measurement-vector-contract-tested` · `REQ-risk-measurement-vector-contract-unbound`
+
+### 8.82  `TEST-member-name` — Member-Name-Derivation-Test
 
 serveStdio leitet die Member-Identitaet aus dem Repo ab (package.json name unscoped, sonst Verzeichnisname) → graph_export schreibt docs/graph/<member>.graph.json. (CR-GC-128)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.member-name.test.ts`
 
-### 8.82  `TEST-merge` — Wiedereingliederung eines Zweigs
+### 8.83  `TEST-merge` — Wiedereingliederung eines Zweigs
 
 Abnahme der Datei tests/mcp.merge.test.ts: zwei Zweig-Aenderungen werden ohne Konflikt wieder zusammengefuehrt, ohne Knoten oder Kanten zu verlieren. Die Wiedereingliederung laeuft als Replay durchs Gate, nicht als Datei-Merge; echte Zwei-Store-Integration mit eigenem Disk-Kuzu und eigenem Audit-Log je Seite.
 
 verify ▶ `REQ-auto-persist-merge` · `REQ-conflict-free-merge` · `REQ-post-merge-nodes` · `REQ-pre-merge-nodes` · testRefs: `tests/mcp.merge.test.ts`
 
-### 8.83  `TEST-merge-no-duplicate-edge` — Keine Doppelkante nach dem Verschmelzen
+### 8.84  `TEST-merge-no-duplicate-edge` — Keine Doppelkante nach dem Verschmelzen
 
 Abnahme der Datei tests/mutate.merge-dedupe.test.ts: das Verschmelzen zweier Knoten fuehrt eine identische Kante nur einmal, unabhaengig von der Reihenfolge, und Speicher und Disk zaehlen danach dasselbe. Auch der kanonische Snapshot schreibt ein Tripel nie zweimal.
 
 verify ▶ `REQ-graph-integrity` · `REQ-post-merge-nodes` · testRefs: `tests/mutate.merge-dedupe.test.ts`
 
-### 8.84  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
+### 8.85  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
 
 Faehrt den Steuerungs-Loop mit einem skriptierten Aktor und assertiert Monotonie, Netto-Fortschritt und Nicht-Kreisen.
 
 verify ▶ `REQ-monotone-convergence` · testRefs: `tests/steering.process-ratchet.test.ts`
 
-### 8.85  `TEST-mutate-gate` — mutate()-Gate Unit-Test
+### 8.86  `TEST-mutate-gate` — mutate()-Gate Unit-Test
 
 mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate)
 
 verify ▶ `REQ-confidence-tier` · `REQ-one-gate-per-repo` · `REQ-post-apply-gate` · `REQ-pre-apply-gate` · `REQ-rule-enforcement` · `REQ-structural-rule-shared` · testRefs: `tests/harness.gate.test.ts`
 
-### 8.86  `TEST-mutate-input-formate` — Format-E als Eingabe am Gate
+### 8.87  `TEST-mutate-input-formate` — Format-E als Eingabe am Gate
 
 Abnahme der Datei tests/mcp.mutate-input.test.ts: ein Format-E-Block laeuft durch dieselbe Gate-Semantik wie Kommandos, ein Parse-Fehler wird zum Block-Verdikt statt zum Absturz, und der dryRun-Preview wird auditiert. Ein Eingabe-Codec, kein zweiter Schreibweg.
 
 verify ▶ `REQ-formatE-parity` · `REQ-single-write-door` · `SCHEMA-format-e` · testRefs: `tests/mcp.mutate-input.test.ts`
 
-### 8.87  `TEST-mutate-schema-guard` — Fehlgeformte Kommandos werden hart abgelehnt
+### 8.88  `TEST-mutate-schema-guard` — Fehlgeformte Kommandos werden hart abgelehnt
 
 Abnahme der Datei tests/mutate.schema-guard.test.ts: ein Batch mit falsch geschriebenen Operationen wird abgelehnt statt als Erfolg quittiert. Der Live-Befund war genau das: die Kommandos passierten das Gate mit success, ohne dass irgendetwas geschrieben wurde.
 
 verify ▶ `REQ-element-contract-finding` · `REQ-harness-schema-in-contracts` · `REQ-structure-driven` · `SCHEMA-mutate-command` · `SCHEMA-steering-snapshot` · testRefs: `tests/mutate.schema-guard.test.ts`
 
-### 8.88  `TEST-mutate-violations` — Verstoesse als Zusammenfassung
+### 8.89  `TEST-mutate-violations` — Verstoesse als Zusammenfassung
 
 Abnahme der Datei tests/mcp.mutate-violations.test.ts: graph_mutate antwortet standardmaessig mit einer Zusammenfassung statt dem vollstaendigen Ergebnis. Vorher trug jede Warnung ihren gesamten Kontext zurueck, was den Loewenanteil der Bytes ausmachte, ohne beim Reparieren zu helfen.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/mcp.mutate-violations.test.ts`
 
-### 8.89  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
+### 8.90  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
 
 End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123)
 
 verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-based-testing` · `REQ-post-impact-testing` · `REQ-pre-impact-testing` · `REQ-precise-context` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-small-model-viable` · testRefs: `tests/mvp-e2e.test.ts`
 
-### 8.90  `TEST-nd-similarity` — Nah-Duplikate: Regeln und Hinweis vor dem Schreiben
+### 8.91  `TEST-nd-similarity` — Nah-Duplikate: Regeln und Hinweis vor dem Schreiben
 
 Abnahme der Datei tests/nd-similarity.test.ts: die Nah-Duplikat-Regeln der Contracts melden genau die konstruierten Duplikat-Paare und sind nie Gate-Regel; die Dublettensuche des Executors findet die belegten Duplikate aus den Greenfield-Laeufen als strukturierte Treffer.
 
 verify ▶ `REQ-near-duplicate-detection` · `REQ-rule-enforcement` · testRefs: `tests/nd-similarity.test.ts`
 
-### 8.91  `TEST-occ` — Optimistische Nebenlaeufigkeit am Werkzeug
+### 8.92  `TEST-occ` — Optimistische Nebenlaeufigkeit am Werkzeug
 
 Abnahme der Datei tests/mcp.occ.test.ts: ein Schreibzugriff traegt die graphVersion, die sein Autor gelesen hat; eine veraltete Basis wird abgelehnt und meldet die seither angewandten Batches zurueck. Damit verliert kein nebenlaeufiger Schreiber still seine Aenderung.
 
 verify ▶ `REQ-auto-persist-merge` · `REQ-single-write-door` · testRefs: `tests/mcp.occ.test.ts`
 
-### 8.92  `TEST-opencode-plugin` — OpenCode-Plugin-Test
+### 8.93  `TEST-opencode-plugin` — OpenCode-Plugin-Test
 
 init und update legen das OpenCode-Plugin fuer den Vorschlag an den Nutzer byte-gleich zum Paket ab, remove nimmt nur dieses mit; der Hook nimmt den vorschlag aus einer echten graph_mutate-Antwort und legt ihn ins Eingabefeld (CR-GC-732).
 
 verify ▶ `REQ-repo-install` · `REQ-repo-uninstall` · testRefs: `tests/opencode-plugin.test.ts`
 
-### 8.93  `TEST-operations-log` — Dauerhaftes Betriebslog in graphcode
+### 8.94  `TEST-operations-log` — Dauerhaftes Betriebslog in graphcode
 
 Abnahme der Datei tests/operations-log.integration.test.ts: die graphcode-Seite des dauerhaften Logs. Das Verhalten des Logs selbst liegt im Store-Modul und wird dort geprueft; hier zaehlt, dass das Gate seine Eintraege wirklich schreibt und wiederfindet.
 
 verify ▶ `REQ-audit-trail` · testRefs: `tests/operations-log.integration.test.ts`
 
-### 8.94  `TEST-optimize-presents-impact` — Optimierer-Skill liest echte Felder und ordnet nichts
+### 8.95  `TEST-optimize-presents-impact` — Optimierer-Skill liest echte Felder und ordnet nichts
 
 Der Skill-Text nennt nur Felder, die graph_metrics, der Trockenlauf von graph_mutate und graph_suggest an einem Messaufbau auf Platte wirklich antworten, bildet keine Rangfolge und keine Summe, nennt die feste Form des Vorschlags wortgleich mit se-fmea und se-laufzeit und zeigt graph_mutate nur als Trockenlauf. Derselbe Lauf haelt fest, dass die Spalte danach aus metricsAfter kommt, dass die Zeile der Kette dort den Antwortweg traegt und dass das Urteil keinen Betrachtungsumfang traegt.
 
 verify ▶ `REQ-optimize-probes-and-presents` · testRefs: `tests/skill-optimize-vorlage.test.ts`
 
-### 8.95  `TEST-path-containment` — Pfade bleiben im Repo
+### 8.96  `TEST-path-containment` — Pfade bleiben im Repo
 
 Abnahme der Datei tests/security.path-containment.test.ts: die zwei im Audit reproduzierten Ausbrueche sind festgenagelt. Beide Senken hatten einen vom Graphen oder Agenten gelieferten Pfad ohne Eindaemmung an den Repo-Wurzelpfad geklebt. Realer Disk-Kuzu, echte Schreibversuche.
 
 verify ▶ `REQ-gate-only-writes` · `REQ-graph-is-ssot` · testRefs: `tests/security.path-containment.test.ts`
 
-### 8.96  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
+### 8.97  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
 
 Graph mit erreichter Schwelle, aber offener Gate-Luecke; assertiert, dass die Zustandsmaschine nicht auf handoff geht.
 
 verify ▶ `REQ-phase-gate-not-skippable` · testRefs: `tests/generate.test.ts`
 
-### 8.97  `TEST-prompt-provenance` — Prompt-Provenienz-Test
+### 8.98  `TEST-prompt-provenance` — Prompt-Provenienz-Test
 
 Ein Record traegt Session, Modell und den Prompt im Wortlaut; ueber der Kappungsgrenze wird gekuerzt und das gesagt. Abwesenheit bleibt Abwesenheit statt leerem Feld, und bei zwei gleichzeitigen Sessions wird lieber nichts aufgezeichnet als ein geratenes Paar. (REQ-prompt-provenance)
 
 verify ▶ `REQ-prompt-provenance` · testRefs: `tests/audit.origin.test.ts`, `tests/hooks.prompt-relay.test.ts`
 
-### 8.98  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
+### 8.99  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
 
 Liest die kanonischen Zahl-Phrasen aus den publizierten Dokumenten und assertiert sie gegen contracts und die gebundene Tool-Registry.
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/claims.conformance.test.ts`
 
-### 8.99  `TEST-read-format-param` — Ausgabeformat der Lese-Werkzeuge
+### 8.100  `TEST-read-format-param` — Ausgabeformat der Lese-Werkzeuge
 
 Abnahme der Datei tests/mcp.read-format.test.ts: die Lese-Werkzeuge liefern standardmaessig JSON fuer die Agentenlogik und auf Wunsch eine round-trip-stabile Format-E-Scheibe im selben Dialekt wie der committete Graph. Ein Vertrag, zwei Darstellungen.
 
 verify ▶ `REQ-formatE-parity` · `REQ-query-precision` · testRefs: `tests/mcp.read-format.test.ts`
 
-### 8.100  `TEST-readiness-altbestand` — Bericht und Schritt antworten an Altbestand
+### 8.101  `TEST-readiness-altbestand` — Bericht und Schritt antworten an Altbestand
 
 Abnahme der Datei tests/readiness.altbestand.test.ts: an einem Modell auf Platte mit einem Art-Wert aus der Zeit vor contracts 10 antworten graph_readiness und graph_generate; der Bericht nennt den R-08-Befund mit Element, Feld und Wert. Vor CR-GC-786 warfen beide Aufrufe.
 
 verify ▶ `REQ-element-contract-finding` · testRefs: `tests/readiness.altbestand.test.ts`
 
-### 8.101  `TEST-readiness-completeness` — Readiness-Vollstaendigkeits-Abnahme
+### 8.102  `TEST-readiness-completeness` — Readiness-Vollstaendigkeits-Abnahme
 
 Abnahme der Datei tests/readiness.completeness.test.ts an echten Regellaeufen: der leere Graph erreicht keine Marke, ein Anwendungsfall ohne Wirkkette haelt SRR, eine Funktion ohne Modul PDR, ein Datenfluss ohne Schema CDR, eine Anforderung ohne Test TRR; Plan, Bindung und Abgleich halten Bau. Die Kurzform traegt einen Wert je Marke. Verifiziert REQ-readiness-completeness, REQ-completeness-actor-bounded und REQ-completeness-single-value zusammen (CR-GC-383, CR-GC-748).
 
 verify ▶ `REQ-completeness-actor-bounded` · `REQ-completeness-single-value` · `REQ-interface-schema` · `REQ-readiness-completeness` · testRefs: `tests/readiness.completeness.test.ts`
 
-### 8.102  `TEST-readiness-model` — Readiness-Modell-Test
+### 8.103  `TEST-readiness-model` — Readiness-Modell-Test
 
 Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125)
 
 verify ▶ `REQ-readiness-model` · testRefs: `tests/readiness.model.test.ts`
 
-### 8.103  `TEST-readonly-bridge` — Host-Bridge-Abnahme
+### 8.104  `TEST-readonly-bridge` — Host-Bridge-Abnahme
 
 Abnahme der Datei tests/host.bridge.test.ts: die Bridge akzeptiert keine Inbound-Mutation, Writes gehen nur durch MCP mutate(), und der Health-Endpunkt meldet den echten Zustand des Hosts statt einer Konstanten. Verifiziert REQ-readonly-bridge und REQ-real-health-check zusammen (CR-GC-383).
 
 verify ▶ `REQ-readonly-bridge` · `REQ-real-health-check` · `SCHEMA-health-report` · testRefs: `tests/host.bridge.test.ts`
 
-### 8.104  `TEST-realref-materialize` — Kein Phantompfad hinter einer SCHEMA-Bindung
+### 8.105  `TEST-realref-materialize` — Kein Phantompfad hinter einer SCHEMA-Bindung
 
 Abnahme der Datei tests/export.realref-materialize.test.ts: der Export legt fuer jede gebundene SCHEMA ohne Datei einen z.unknown-Zod-Stub an, wie er es fuer eine gebundene TEST-Datei tut, und ueberschreibt nie eine vorhandene Datei. Ohne das bliebe im Graphen gebunden, was im Code nicht existiert.
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.realref-materialize.test.ts`
 
-### 8.105  `TEST-recommend-next-step` — Abnahme Empfehlen
+### 8.106  `TEST-recommend-next-step` — Abnahme Empfehlen
 
 Konzept: eine Empfehlung erscheint als solche gekennzeichnet und getrennt von Gate-Verdikt und Steuerung; ein ignorierter Vorschlag aendert weder Verdikt noch Kenngroessen.
 
 verify ▶ `REQ-recommend-next-step`
 
-### 8.106  `TEST-reduced-llm` — Modellfrei-Gate-Test
+### 8.107  `TEST-reduced-llm` — Modellfrei-Gate-Test
 
 Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren.
 
 verify ▶ `REQ-graceful-degradation` · `REQ-post-modelfree-gate` · `REQ-pre-modelfree-gate` · `REQ-small-model-viable` · testRefs: `tests/gate.modelfree.test.ts`
 
-### 8.107  `TEST-repo-lifecycle` — Repo-Lebenszyklus raeumt vollstaendig ab
+### 8.108  `TEST-repo-lifecycle` — Repo-Lebenszyklus raeumt vollstaendig ab
 
 Faehrt den Lebenszyklus auf echtem Disk-Kuzu: Lock nehmen, Sitzung eintragen, zweiter Owner scheitert, dann Abbau ueber SessionLifecycle. Danach ist der Lock frei und kein Sitzungseintrag uebrig.
 
 verify ▶ `REQ-session-leaves-nothing-behind` · testRefs: `tests/repo-lifecycle.integration.test.ts`
 
-### 8.108  `TEST-reseed` — Reseed auf den committeten Stand
+### 8.109  `TEST-reseed` — Reseed auf den committeten Stand
 
 Abnahme der Datei tests/mcp.reseed.test.ts: graph_reseed synchronisiert den lebenden Store in-process zurueck auf den committeten Snapshot, verwirft dabei eine nicht exportierte Gate-Mutation und stellt die committeten Zahlen ohne Korruption wieder her.
 
 verify ▶ `REQ-graph-state-recall` · `REQ-store-recovery` · testRefs: `tests/mcp.reseed.test.ts`
 
-### 8.109  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
+### 8.110  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
 
 Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)
 
 verify ▶ `REQ-responsiveness`
 
-### 8.110  `TEST-retro-kpi` — KPI-Auswertung nach dem Projekt
+### 8.111  `TEST-retro-kpi` — KPI-Auswertung nach dem Projekt
 
 Abnahme der Datei tests/retro-kpi.test.ts: die Auswertung liefert deterministische Werte aus einer Fixture-Sitzung, und das entscheidende Signal stimmt: eine bewusst graph-lose Sitzung ergibt ein Graph-zu-Grep-Verhaeltnis unter eins.
 
 verify ▶ `REQ-quality-metric` · testRefs: `tests/retro-kpi.test.ts`
 
-### 8.111  `TEST-rewind` — Rueckspulen auf einen Commit
+### 8.112  `TEST-rewind` — Rueckspulen auf einen Commit
 
 Abnahme der Datei tests/rewind.test.ts: graphcode rewind stellt den Graphstand her, der an einem Ref committet war. Der Mechanismus selbst ist anderswo bewiesen; hier zaehlt das Verb als Bedienweg der Rueckhol-Haelfte.
 
 verify ▶ `REQ-graph-state-recall` · testRefs: `tests/rewind.test.ts`
 
-### 8.112  `TEST-roundtrip` — Format-E Round-Trip Conformance
+### 8.113  `TEST-roundtrip` — Format-E Round-Trip Conformance
 
 decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)
 
 verify ▶ `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-post-codec-roundtrip` · `REQ-pre-codec-roundtrip` · `REQ-roundtrip-conformance` · testRefs: `tests/codec.roundtrip.test.ts`
 
-### 8.113  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
+### 8.114  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
 
 audit_stats aggregiert je Regel, je Modell und je Konsument; die Werte sind identisch zur jq-Zeile auf demselben Trail. Ein Record mit 20 Violations derselben Regel zaehlt eine Blockade und zwanzig Vorkommen; fehlendes rulesPassed liefert null statt einer Null. (REQ-rule-calibration)
 
 verify ▶ `REQ-rule-calibration` · testRefs: `tests/audit.stats.test.ts`
 
-### 8.114  `TEST-schema-migration` — Wache gegen Schema-Drift
+### 8.115  `TEST-schema-migration` — Wache gegen Schema-Drift
 
 Abnahme der Datei tests/schema-guard.test.ts: der Store friert seine Kanten-Tabellen beim Anlegen ein; bekommt das Meta-Modell ein neues Paar, weist das eingefrorene Schema die Kante ab. Die Wache erkennt den Versatz und setzt den Store aus dem committeten Stand neu auf, statt ihn kaputt weiterzubenutzen.
 
 verify ▶ `REQ-post-migrate-schema` · `REQ-pre-migrate-schema` · `REQ-schema-version-migration` · `REQ-store-recovery` · `SCHEMA-schema-fingerprint` · testRefs: `tests/schema-guard.test.ts`
 
-### 8.115  `TEST-schema-parse-at-interface` — Schema-Parse an der Schnittstelle
+### 8.116  `TEST-schema-parse-at-interface` — Schema-Parse an der Schnittstelle
 
 Vertragstest SCHEMA-fit-advisory, SCHEMA-steering-delta (Ranking-Grenze executor-rank) und SCHEMA-generation-step (Registry-Grenze runExecutor): vertragstreue Antwort kommt als Daten durch, formfremde wird abgewiesen statt still gerankt. (CR-GC-413)
 
 verify ▶ `SCHEMA-fit-advisory` · `SCHEMA-generation-step` · `SCHEMA-steering-delta` · testRefs: `tests/schema-parse-at-interface.test.ts`
 
-### 8.116  `TEST-se-plan-ordering` — Reihenfolge des Umsetzungsplans
+### 8.117  `TEST-se-plan-ordering` — Reihenfolge des Umsetzungsplans
 
 Abnahme der Datei tests/se-plan.ordering.test.ts: die Reihenfolge des Plans kommt aus der Abhaengigkeits-Topologie des Graphen, nicht aus dem Prompt-Text. Jede Voraussetzung steht vor dem, was sie braucht.
 
 verify ▶ `REQ-structure-driven` · testRefs: `tests/se-plan.ordering.test.ts`
 
-### 8.117  `TEST-selective-test-audit` — Auswahl-Resolver und Messinstrument
+### 8.118  `TEST-selective-test-audit` — Auswahl-Resolver und Messinstrument
 
 Abnahme der Datei tests/test-selection.audit.test.ts: die Kantensemantik der Auswahl, die Paritaet zwischen Store-Pfad und Snapshot-Pfad, und die Fallback-Regel. Eine nicht aufloesbare Datei fuehrt zum Volllauf, nie zur leeren Auswahl.
 
 verify ▶ `REQ-graph-tests-operational` · `REQ-impact-based-testing` · `REQ-selective-code-lane` · `SCHEMA-code-lane-plan` · `SCHEMA-impacted-tests` · `SCHEMA-test-selection` · testRefs: `tests/test-selection.audit.test.ts`
 
-### 8.118  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
+### 8.119  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
 
 Abnahme der Datei tests/session-lifecycle.test.ts: der Abbau laeuft in umgekehrter Reihenfolge mit dem Store-Lock zuletzt und laeuft nach einem Fehlschlag weiter. Ohne diese Eigenschaften kehrt der Zombie-Host zurueck.
 
 verify ▶ `REQ-single-kuzu-owner` · `REQ-store-owner-lifecycle` · testRefs: `tests/session-lifecycle.test.ts`
 
-### 8.119  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
+### 8.120  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
 
 Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork)
 
 verify ▶ `REQ-shared-views-no-fork` · testRefs: `tests/views.no-fork.test.ts`
 
-### 8.120  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
+### 8.121  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
 
 Fixture mit attributgetragenen Bindungen; assertiert identische Violations und Scores ueber alle drei Oberflaechen und faellt rot, sobald eine auf das flache Export-Encoding zurueckfaellt.
 
-verify ▶ `REQ-single-measurement-path` · `REQ-steering-post` · `REQ-steering-pre` · testRefs: `tests/steering.measurement-path.test.ts`
+verify ▶ `REQ-risk-stale-measurement` · `REQ-single-measurement-path` · `REQ-steering-post` · `REQ-steering-pre` · testRefs: `tests/steering.measurement-path.test.ts`
 
-### 8.121  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
+### 8.122  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
 
 Drei Assertionen in Folge: legale Mutation landet, illegale laesst den deterministischen Export identisch, Direktschreib-Versuch wird mit Exit-Code und Meldung abgewiesen.
 
 verify ▶ `REQ-gate-only-writes` · `REQ-single-write-door` · testRefs: `tests/gate.single-door.test.ts`
 
-### 8.122  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
+### 8.123  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
 
 Fuer jede FUNC der Kette FCHAIN-skill-authoring: die per realRef gebundene Command-Datei nennt ein Schreibwerkzeug der LIVE-Registry und weist keinen direkten Schreibzugriff auf docs/graph an. Die Atomizitaet eines abgelehnten Batches deckt harness.gate.test.ts ab, nicht dieser Test.
 
 verify ▶ `REQ-skill-authors-through-gate` · testRefs: `tests/skill-authoring-gate.test.ts`
 
-### 8.123  `TEST-skill-kinds-werte` — Genannte kinds-Werte sind legal
+### 8.124  `TEST-skill-kinds-werte` — Genannte kinds-Werte sind legal
 
 Jeder in Skills, Help und Executor-Vorbild genannte kinds-Wert liegt im Wertebereich der Ontologie, und jedes dort gezeigte satisfy-Paar mit kinds ist nach den Trace-Mustern legal; ein kuenstlich illegales Beispiel wird gemeldet.
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/skill-kinds-werte.test.ts`
 
-### 8.124  `TEST-skill-red-first` — Test-Skills lehren Red-First
+### 8.125  `TEST-skill-moves-are-legal` — Skills weisen nur zulaessige Zuege an
+
+Prueft, dass kein Skilltext einen Zug anweist, den die Grammatik nicht zulaesst.
+
+verify ▶ `REQ-risk-skill-instructs-rejected-move`
+
+### 8.126  `TEST-skill-red-first` — Test-Skills lehren Red-First
 
 Abnahme der Datei tests/skill-red-first.test.ts: se-test und se-test-ui enthalten die Red-First-Regel mit ihren drei Teilen (rot sehen, aus genau diesem Grund, gegen kaputten Code), mit Positivkontrolle. (CR-GC-697)
 
 verify ▶ `REQ-test-skill-red-first` · testRefs: `tests/skill-red-first.test.ts`
 
-### 8.125  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
+### 8.127  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
 
 Fuer jede FUNC der Kette FCHAIN-skill-report: die per realRef gebundene Command-Datei nennt mindestens ein Messwerkzeug aus der LIVE-Registry und kein schreibendes. Grundgesamtheit und Werkzeugnamen kommen aus Graph und Registry, nicht aus einer Liste im Test.
 
 verify ▶ `REQ-skill-reads-only` · testRefs: `tests/skill-report-measured.test.ts`
 
-### 8.126  `TEST-skill-rule-ids` — Abnahme: keine erfundenen Regel-IDs in Skills und Prompts
+### 8.128  `TEST-skill-rule-ids` — Abnahme: keine erfundenen Regel-IDs in Skills und Prompts
 
 Prueft, dass jede Regel-ID, die ein Skill oder der Rundenprompt nennt, im Katalog ALL_RULE_DEFS steht — Skill-Dateien, RULE_CLAUSE-Schluessel, gerenderte Klauseltexte, Dimensions-Vorlagen, System-Prompt und Nachfass-Text. Praefixe und IDs kommen aus dem Katalog, nicht aus einer gepflegten Liste. Gefunden hat der erste Lauf drei erfundene Nennungen gestrichener Regeln. Prueft die EXISTENZ, nicht die Wahrheit der Aussage ueber die Regel. (CR-GC-571)
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/skill-rule-ids.test.ts`
 
-### 8.127  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
+### 8.129  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
 
 Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view/* → REQ-doc-export). (CR-GC-132)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/skills.mcp-conformance.test.ts`
 
-### 8.128  `TEST-status-verb` — Abnahme des status-Verbs
+### 8.130  `TEST-stage-names-enumerated` — Stufennamen sind aufgezaehlt
+
+Prueft, dass ein unbekannter Stufenname beim Bilden des Steuerungs-Snapshots abgewiesen wird.
+
+verify ▶ `REQ-risk-stage-name-free-text` · `REQ-stage-names-enumerated`
+
+### 8.131  `TEST-status-verb` — Abnahme des status-Verbs
 
 Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.
 
 verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/status.test.ts`
 
-### 8.129  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
+### 8.132  `TEST-steering-delta-in-answer` — Delta steht in der Antwort
+
+Prueft, dass die Antwort auf einen angenommenen Zug das Delta aus dem Stand vor und nach genau diesem Zug traegt.
+
+verify ▶ `REQ-risk-steering-delta-missing` · `REQ-steering-delta-in-answer-tested`
+
+### 8.133  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
 
 Prueft am Modell, dass REQ-steering-from-metrics genau einen Erfueller vom Typ FUNC hat und dass jede zuliefernde Funktion der Steuerungsschleife eine eigene Anforderung erfuellt.
 
 verify ▶ `REQ-risk-shared-steering-promise` · `REQ-steering-promise-one-owner`
 
-### 8.130  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
+### 8.134  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
 
 Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.test.ts`
 
-### 8.131  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
+### 8.135  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
 verify ▶ `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `REQ-store-owner-lifecycle` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
 
-### 8.132  `TEST-store-recovery` — Store-Recovery-Test
+### 8.136  `TEST-store-recovery` — Store-Recovery-Test
 
 Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery)
 
 verify ▶ `REQ-risk-store-unreadable` · `REQ-store-recovery`
 
-### 8.133  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+### 8.137  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
 Abnahme der Datei tests/target-profile.test.ts: Schema, Laden und Konfliktpruefung des Zielprofils, dazu der Konfigurations-Default des Vorschlags-Werkzeugs gegen einen echten Disk-Kuzu. Die Konfliktpruefung ist ein Pfad, kein zweiter neben der Steuerung.
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · `SCHEMA-target-profile` · testRefs: `tests/target-profile.test.ts`
 
-### 8.134  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+### 8.138  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-### 8.135  `TEST-target-state` — Abnahme Zielbild
+### 8.139  `TEST-target-state` — Abnahme Zielbild
 
 Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.
 
 verify ▶ `REQ-target-state`
 
-### 8.136  `TEST-task-analysen` — Analyse-Tasks
+### 8.140  `TEST-task-analysen` — Analyse-Tasks
 
 Am Task-Eintritt verweist der Schritt auf den Skill des Tasks; ein Bauplan-Stempel von Hand schliesst den Eintritt nicht; ein Patch ersetzt die Stempel ganz, und jeder Analyse-Skill schliesst mit Lesen, Uebernehmen, ganz Schreiben.
 
 verify ▶ `REQ-analyse-artefakt-vor-stempel` · testRefs: `tests/task-analysen.test.ts`
 
-### 8.137  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
+### 8.141  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
 
 Abnahme der Datei tests/testreport.ruecknahme.test.ts: nach einer gemeldeten Aenderung traegt der Eintrag des betroffenen Tests kein Ergebnis mehr und FM-03 meldet das Risiko; ein nicht betroffener Test behaelt sein Ergebnis; ein frisches Ergebnis im selben Aufruf bleibt; eine unbekannte uid wird abgewiesen.
 
 verify ▶ `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` · testRefs: `tests/testreport.ruecknahme.test.ts`
 
-### 8.138  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+### 8.142  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-### 8.139  `TEST-test-schlupf` — Schlupf und Zusage
+### 8.143  `TEST-test-schlupf` — Schlupf und Zusage
 
 Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf bricht ab, je CR die juengste Zeile), Blackbox- und Schnittstellenbindung am synthetischen Graphen, gepruefte JSONL-Zeilen.
 
-verify ▶ `REQ-full-run-on-probation` · `SCHEMA-schlupf-zeile` · testRefs: `tests/test-schlupf.test.ts`
+verify ▶ `REQ-full-run-on-probation` · `REQ-risk-selection-misses-red-test` · `SCHEMA-schlupf-zeile` · testRefs: `tests/test-schlupf.test.ts`
 
-### 8.140  `TEST-testref-materialize` — Export stub-materialization test
+### 8.144  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-### 8.141  `TEST-testreport` — Rueckweg des Testergebnisses
+### 8.145  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-### 8.142  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+### 8.146  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · `SCHEMA-metric-policy` · testRefs: `tests/config.test.ts`
 
-### 8.143  `TEST-token-efficiency` — Token-Budget-Test
+### 8.147  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-### 8.144  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+### 8.148  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-### 8.145  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+### 8.149  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
+
+Prueft, dass eine laufende Sitzung eine geaenderte Werkzeugliste des Hosts erfaehrt.
+
+verify ▶ `REQ-risk-client-holds-stale-tool-list`
+
+### 8.150  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-### 8.146  `TEST-upgrade` — Abnahme des upgrade-Verbs
+### 8.151  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
 
-### 8.147  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+### 8.152  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-### 8.148  `TEST-views-auditor` — Sichten fuer den Auditor
+### 8.153  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-### 8.149  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+### 8.154  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-### 8.150  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+### 8.155  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-### 8.151  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+### 8.156  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-### 8.152  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+### 8.157  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-### 8.153  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+### 8.158  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 
@@ -9542,4 +9732,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-168 REQ · 168 verified · 0 without a verifying TEST (R-01).
+183 REQ · 183 verified · 0 without a verifying TEST (R-01).

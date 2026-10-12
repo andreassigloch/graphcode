@@ -3370,6 +3370,12 @@
       "description": "docs/cr/open/CR-GC-801-sicht-fmea-md-ist-ein-risikoregister-ohn.md"
     },
     {
+      "id": "CR-GC-802",
+      "type": "CR",
+      "name": "FMEA-Nachtrag: die zwoelf bewerteten Fehlerarten als Risiken ins Modell",
+      "description": "docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6015,7 +6021,8 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "functional"
-      ]
+      ],
+      "role": "mitigation"
     },
     {
       "id": "REQ-auto-persist-merge",
@@ -6262,7 +6269,8 @@
       "created_at": "2026-06-18T00:00:00.000Z",
       "kinds": [
         "non-functional"
-      ]
+      ],
+      "role": "mitigation"
     },
     {
       "id": "REQ-fmea-checks-entry",
@@ -6322,7 +6330,8 @@
       "description": "Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter.",
       "kinds": [
         "functional"
-      ]
+      ],
+      "role": "mitigation"
     },
     {
       "id": "REQ-gate-judges-and-stores",
@@ -6414,7 +6423,8 @@
       "status": "done",
       "kinds": [
         "non-functional"
-      ]
+      ],
+      "role": "mitigation"
     },
     {
       "id": "REQ-graph-state-recall",
@@ -6454,7 +6464,8 @@
       "description": "Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.",
       "kinds": [
         "functional"
-      ]
+      ],
+      "role": "mitigation"
     },
     {
       "id": "REQ-hook-extension-points",
@@ -6627,6 +6638,16 @@
         "functional"
       ],
       "updated_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "REQ-measurement-vector-contract-tested",
+      "type": "REQ",
+      "name": "Messvektor nach gebundenem und geprueftem Vertrag",
+      "description": "Die Funktion, die den Messvektor liefert, liefert ihn nach einem an Code gebundenen Vertrag, und ein Vertragstest prueft jedes Feld, das die Schleife liest.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-metrics-risk-scope",
@@ -7246,6 +7267,62 @@
       ]
     },
     {
+      "id": "REQ-risk-audit-evaluation-unowned",
+      "type": "REQ",
+      "name": "Risiko Auswertung ohne Verantwortlichen",
+      "description": "Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen werden an einer Zahl justiert, die niemand verantwortet.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-15, Step 3. REQ-audit-trail hing an FUNC-graph-impact, die beiden Auswertungsfunktionen erfuellten keine Anforderung. Entscheidung: Zuordnung in CR-GC-797 gerichtet; gedeckt durch REQ-audit-trail.",
+      "severity": 5,
+      "occurrence": 3,
+      "detection": 6
+    },
+    {
+      "id": "REQ-risk-auto-export-fails-silently",
+      "type": "REQ",
+      "name": "Risiko Export scheitert still",
+      "description": "Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten Stand. Viewer und Leser der Dateien sehen ein Modell, das es so nicht mehr gibt.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-16, Quelle F geteilte Funktion FUNC-export-markdown. Der Fehler geht nur auf die Fehlerausgabe. Entscheidung: gedeckt, die Marke EXPORT_PENDING bleibt stehen und blockt den Commit (REQ-graph-snapshot-per-commit).",
+      "severity": 4,
+      "occurrence": 3,
+      "detection": 4
+    },
+    {
+      "id": "REQ-risk-client-holds-stale-tool-list",
+      "type": "REQ",
+      "name": "Risiko Werkzeugliste vom Sitzungsstart",
+      "description": "Der Client arbeitet mit der Werkzeugliste vom Sitzungsstart. Eine neue Eingabe eines Werkzeugs ist in der laufenden Sitzung nicht erreichbar.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-14, Quelle A Import FLOW-mcp-tool. Einmal beobachtet am 2026-10-12. Der Host meldet keine Aenderung der Liste. Entscheidung des Autors: gelassen, ohne Gegenmassnahme; ITEM-2026-862.",
+      "severity": 4,
+      "occurrence": 3,
+      "detection": 6
+    },
+    {
+      "id": "REQ-risk-edge-vanishes-silently",
+      "type": "REQ",
+      "name": "Risiko Kante verschwindet still",
+      "description": "Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell. Das Modell verliert Bezuege, ohne dass es jemand bemerkt.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-18, Quelle F geteilte Funktion FUNC-held-back-traces in drei Ketten. Entscheidung: gedeckt durch REQ-held-back-traces-named.",
+      "severity": 7,
+      "occurrence": 2,
+      "detection": 3
+    },
+    {
       "id": "REQ-risk-gate-rule-eval-fails",
       "type": "REQ",
       "name": "Risiko Regelauswertung faellt im Gate aus",
@@ -7302,6 +7379,62 @@
       "detection": 5
     },
     {
+      "id": "REQ-risk-measurement-vector-contract-unbound",
+      "type": "REQ",
+      "name": "Risiko Vertrag des Messvektors ungebunden",
+      "description": "Die Schleife liest ein Feld des Messvektors, das die Messung anders liefert. Der Vertrag des Messvektors ist nicht an Code gebunden und hat keinen Vertragstest.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-779 und CR-GC-795 FM-06, Modulgrenze MOD-kernel-measure zu MOD-loop. SCHEMA-measurement-vector ohne Bindung (R-26) und ohne Vertragstest (R-32). Entscheidung des ersten Laufs: bestehender Regelbefund; in CR-GC-802 mit Gegenmassnahme nachgetragen, Traeger ist Vorschlag des Skills.",
+      "severity": 6,
+      "occurrence": 3,
+      "detection": 7
+    },
+    {
+      "id": "REQ-risk-owner-ends-with-docked-sessions",
+      "type": "REQ",
+      "name": "Risiko Besitzer endet bei angedockten Sitzungen",
+      "description": "Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine angedockte Sitzung verliert das Schreiben.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-19, Quelle E Kreislauf aus FUNC-claim-store-lock und FUNC-session-shutdown. Genau ein Neuwahlversuch. Entscheidung: gedeckt durch REQ-store-owner-lifecycle, das fuenf Erfueller hat.",
+      "severity": 7,
+      "occurrence": 2,
+      "detection": 3
+    },
+    {
+      "id": "REQ-risk-partial-store-after-reseed",
+      "type": "REQ",
+      "name": "Risiko halb gefuellter Store nach Abbruch",
+      "description": "Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store. Das Modell ist unvollstaendig, bis erneut wiederhergestellt wird.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-13, Quelle E Kreislauf aus FUNC-graph-store, FUNC-import und FUNC-seed-from-json. applyReseed leert und fuellt in zwei Schritten; der Start vergleicht Store und Datei nicht (CR-GC-392). Entscheidung: gedeckt, der naechste Export verweigert bei fehlenden Elementen (REQ-export-no-clobber).",
+      "severity": 6,
+      "occurrence": 2,
+      "detection": 3
+    },
+    {
+      "id": "REQ-risk-selection-misses-red-test",
+      "type": "REQ",
+      "name": "Risiko Auswahl laesst roten Test aus",
+      "description": "Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-20, frei abgeleitet. Ursache ist ein Test ohne Bindung oder eine Quelldatei ohne Knoten. Entscheidung: gedeckt durch die Schlupfmessung je CR (REQ-full-run-on-probation).",
+      "severity": 7,
+      "occurrence": 3,
+      "detection": 3
+    },
+    {
       "id": "REQ-risk-shared-steering-promise",
       "type": "REQ",
       "name": "Risiko geteilte Zusage ohne Traeger",
@@ -7312,6 +7445,48 @@
       ],
       "rationale": "FMEA CR-GC-795 Step 3 geteilte Zusage. REQ-steering-from-metrics wird von acht Funktionen erfuellt, sechs davon Glieder der Kette. Keine traegt sie allein.",
       "severity": 6,
+      "occurrence": 3,
+      "detection": 6
+    },
+    {
+      "id": "REQ-risk-skill-instructs-rejected-move",
+      "type": "REQ",
+      "name": "Risiko Skill weist abgelehnten Zug an",
+      "description": "Ein Skill weist einen Zug an, den das Gate ablehnt. Der Lauf stockt, der Nutzer muss eingreifen.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-798 FM-17, Quelle E Kreislauf der Analyse-Skills. Zweimal belegt (se-fmea, se-trade). Das Gate entdeckt den Zug sofort. Entscheidung des Autors: gelassen, ohne Gegenmassnahme; ITEM-2026-856.",
+      "severity": 4,
+      "occurrence": 4,
+      "detection": 2
+    },
+    {
+      "id": "REQ-risk-stage-name-free-text",
+      "type": "REQ",
+      "name": "Risiko Stufenname ohne Wertebereich",
+      "description": "Ein umbenannter Stufenname faellt still aus dem Delta der Steuerung. Der Stufenname im Steuerungs-Snapshot ist freier Text ohne aufgezaehlten Wertebereich.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-795 FM-10, Quelle D Groesse ohne Wertebereich. SCHEMA-steering-snapshot fuehrt den Stufennamen als Text; neun Vertraege des Modells sind ohne Bindung. Entscheidung des Laufs: bestehende Regelbefunde (R-26, R-32); in CR-GC-802 mit Gegenmassnahme nachgetragen, Traeger ist Vorschlag des Skills.",
+      "severity": 5,
+      "occurrence": 3,
+      "detection": 6
+    },
+    {
+      "id": "REQ-risk-stale-measurement",
+      "type": "REQ",
+      "name": "Risiko Glied rechnet auf altem Stand",
+      "description": "Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die Empfehlung passt nicht zum Modell.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-779 und CR-GC-795 FM-02, Quelle E Kreislauf. Ursache waere ein zweiter Messpfad oder ein zwischengespeicherter Stand. Entscheidung: gedeckt durch REQ-single-measurement-path.",
+      "severity": 7,
       "occurrence": 3,
       "detection": 6
     },
@@ -7328,6 +7503,20 @@
       "severity": 8,
       "occurrence": 5,
       "detection": 7
+    },
+    {
+      "id": "REQ-risk-steering-delta-missing",
+      "type": "REQ",
+      "name": "Risiko Delta fehlt in der Antwort",
+      "description": "Das Delta der Steuerung fehlt oder ist falsch in der Antwort auf einen Zug. Der Agent sieht einen falschen Fortschritt.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-779 und CR-GC-795 FM-07, Quelle B Uebergabe FLOW-steering-delta ohne gemeinsame Kette (R-21). Entscheidung des ersten Laufs: bestehender Regelbefund; in CR-GC-802 mit Gegenmassnahme nachgetragen, Traeger ist Vorschlag des Skills.",
+      "severity": 5,
+      "occurrence": 3,
+      "detection": 5
     },
     {
       "id": "REQ-risk-store-unreadable",
@@ -7446,7 +7635,8 @@
       "description": "nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.",
       "kinds": [
         "non-functional"
-      ]
+      ],
+      "role": "mitigation"
     },
     {
       "id": "REQ-single-store",
@@ -7510,6 +7700,26 @@
       ]
     },
     {
+      "id": "REQ-stage-names-enumerated",
+      "type": "REQ",
+      "name": "Stufennamen sind aufgezaehlt",
+      "description": "Der Stufenname im Steuerungs-Snapshot ist ein aufgezaehlter Wert aus der Regelmatrix, und ein unbekannter Name wird beim Bilden des Snapshots abgewiesen.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-steering-delta-in-answer-tested",
+      "type": "REQ",
+      "name": "Delta steht geprueft in der Antwort",
+      "description": "Die Antwort auf jeden angenommenen Zug traegt das Delta der Steuerung, berechnet aus dem Stand vor und nach genau diesem Zug, und ein Integrationstest prueft die Uebergabe bis in die Antwort.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-steering-from-metrics",
       "type": "REQ",
       "name": "Naechster Schritt folgt aus gemessenen Kenngroessen",
@@ -7557,7 +7767,8 @@
       "kinds": [
         "functional"
       ],
-      "status": "reviewed"
+      "status": "reviewed",
+      "role": "mitigation"
     },
     {
       "id": "REQ-store-recovery",
@@ -8345,7 +8556,7 @@
           "graphVersion": 0
         },
         "fmea": {
-          "graphVersion": 720
+          "graphVersion": 738
         }
       }
     },
@@ -8374,7 +8585,7 @@
           "tool": "vitest",
           "level": "performance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8392,7 +8603,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8407,7 +8618,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8422,7 +8633,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8438,7 +8649,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8453,7 +8664,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8468,7 +8679,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8483,7 +8694,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8498,7 +8709,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8514,7 +8725,7 @@
           "tool": "vitest",
           "level": "performance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8534,7 +8745,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8549,7 +8760,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8587,7 +8798,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8607,7 +8818,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8624,7 +8835,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8654,7 +8865,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8669,7 +8880,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8684,7 +8895,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8699,7 +8910,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8721,7 +8932,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8740,7 +8951,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8755,7 +8966,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8770,7 +8981,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8788,7 +8999,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8808,7 +9019,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8834,7 +9045,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8849,7 +9060,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8864,7 +9075,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8879,7 +9090,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8894,7 +9105,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8909,7 +9120,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8924,7 +9135,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8939,7 +9150,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8954,7 +9165,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8975,7 +9186,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -8990,7 +9201,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9005,7 +9216,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9020,7 +9231,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9037,7 +9248,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9055,7 +9266,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9070,7 +9281,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9085,7 +9296,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9101,7 +9312,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9118,7 +9329,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9133,7 +9344,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9148,7 +9359,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9163,7 +9374,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9178,7 +9389,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9193,7 +9404,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9208,7 +9419,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9227,7 +9438,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9242,7 +9453,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9262,7 +9473,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9277,7 +9488,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9292,7 +9503,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9307,7 +9518,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9322,7 +9533,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9337,7 +9548,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9352,7 +9563,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9367,7 +9578,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9401,7 +9612,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9416,7 +9627,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9436,7 +9647,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9454,7 +9665,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9474,7 +9685,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9506,7 +9717,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9523,7 +9734,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9543,7 +9754,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9563,7 +9774,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9583,9 +9794,15 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
+    },
+    {
+      "id": "TEST-measurement-vector-contract",
+      "type": "TEST",
+      "name": "Vertragstest des Messvektors",
+      "description": "Prueft, dass jedes Feld des Messvektors, das die Schleife liest, im gebundenen Vertrag steht und von der Messung so geliefert wird."
     },
     {
       "id": "TEST-member-name",
@@ -9602,7 +9819,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9624,7 +9841,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9639,7 +9856,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9654,7 +9871,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9674,7 +9891,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9689,7 +9906,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9704,7 +9921,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9719,7 +9936,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9739,7 +9956,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9754,7 +9971,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9769,7 +9986,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9785,7 +10002,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9800,7 +10017,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9815,7 +10032,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9830,7 +10047,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9845,7 +10062,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9864,14 +10081,14 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         },
         {
           "file": "tests/hooks.prompt-relay.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9886,7 +10103,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9901,7 +10118,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9916,7 +10133,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9935,7 +10152,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9952,7 +10169,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9970,7 +10187,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -9985,7 +10202,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10014,7 +10231,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10031,7 +10248,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10046,7 +10263,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10074,7 +10291,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10089,7 +10306,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10109,7 +10326,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10128,7 +10345,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10150,7 +10367,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10165,7 +10382,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10180,7 +10397,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10195,7 +10412,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10210,7 +10427,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10228,7 +10445,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10243,7 +10460,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10258,7 +10475,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10273,7 +10490,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10288,9 +10505,15 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
+    },
+    {
+      "id": "TEST-skill-moves-are-legal",
+      "type": "TEST",
+      "name": "Skills weisen nur zulaessige Zuege an",
+      "description": "Prueft, dass kein Skilltext einen Zug anweist, den die Grammatik nicht zulaesst."
     },
     {
       "id": "TEST-skill-red-first",
@@ -10303,7 +10526,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10318,7 +10541,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10336,7 +10559,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10356,9 +10579,15 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
+    },
+    {
+      "id": "TEST-stage-names-enumerated",
+      "type": "TEST",
+      "name": "Stufennamen sind aufgezaehlt",
+      "description": "Prueft, dass ein unbekannter Stufenname beim Bilden des Steuerungs-Snapshots abgewiesen wird."
     },
     {
       "id": "TEST-status-verb",
@@ -10371,9 +10600,15 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
+    },
+    {
+      "id": "TEST-steering-delta-in-answer",
+      "type": "TEST",
+      "name": "Delta steht in der Antwort",
+      "description": "Prueft, dass die Antwort auf einen angenommenen Zug das Delta aus dem Stand vor und nach genau diesem Zug traegt."
     },
     {
       "id": "TEST-steering-promise-one-owner",
@@ -10392,7 +10627,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10407,7 +10642,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10432,7 +10667,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10447,7 +10682,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10469,7 +10704,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10484,7 +10719,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10502,7 +10737,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10517,7 +10752,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10534,7 +10769,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10549,7 +10784,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10564,7 +10799,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10592,9 +10827,15 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
+    },
+    {
+      "id": "TEST-tool-list-change-announced",
+      "type": "TEST",
+      "name": "Geaenderte Werkzeugliste wird gemeldet",
+      "description": "Prueft, dass eine laufende Sitzung eine geaenderte Werkzeugliste des Hosts erfaehrt."
     },
     {
       "id": "TEST-uc-authoring-style",
@@ -10607,7 +10848,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10622,7 +10863,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10637,7 +10878,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10652,7 +10893,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10667,7 +10908,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10682,7 +10923,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10697,7 +10938,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10712,7 +10953,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -10727,7 +10968,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T17:09:44.880Z"
+          "ranAt": "2026-10-12T18:26:38.767Z"
         }
       ]
     },
@@ -15244,6 +15485,81 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-802",
+      "target": "REQ-measurement-vector-contract-tested",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-audit-evaluation-unowned",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-auto-export-fails-silently",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-client-holds-stale-tool-list",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-edge-vanishes-silently",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-measurement-vector-contract-unbound",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-owner-ends-with-docked-sessions",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-partial-store-after-reseed",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-selection-misses-red-test",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-skill-instructs-rejected-move",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-stage-name-free-text",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-stale-measurement",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-risk-steering-delta-missing",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-stage-names-enumerated",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-802",
+      "target": "REQ-steering-delta-in-answer-tested",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15636,6 +15952,11 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FCHAIN-impact-testing",
+      "target": "REQ-risk-selection-misses-red-test",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-interface-escalation",
       "target": "FUNC-graph-impact",
       "type": "compose",
@@ -15764,6 +16085,11 @@
     {
       "source": "FCHAIN-loop-closure",
       "target": "REQ-prompt-provenance",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-loop-closure",
+      "target": "REQ-risk-audit-evaluation-unowned",
       "type": "satisfy"
     },
     {
@@ -15925,6 +16251,16 @@
       "type": "compose"
     },
     {
+      "source": "FCHAIN-recall",
+      "target": "REQ-risk-edge-vanishes-silently",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-recall",
+      "target": "REQ-risk-partial-store-after-reseed",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-bind-tools",
       "type": "compose"
@@ -15999,6 +16335,16 @@
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-upgrade",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "REQ-risk-client-holds-stale-tool-list",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "REQ-risk-owner-ends-with-docked-sessions",
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-schema-migration",
@@ -16089,6 +16435,11 @@
       "source": "FCHAIN-skill-authoring",
       "target": "FUNC-se-vorbereitung",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "REQ-risk-skill-instructs-rejected-move",
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-skill-help",
@@ -16201,6 +16552,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FCHAIN-snapshot-freshness",
+      "target": "REQ-risk-auto-export-fails-silently",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-arch-fitness",
       "type": "compose",
@@ -16304,7 +16660,27 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "REQ-risk-measurement-vector-contract-unbound",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "REQ-risk-shared-steering-promise",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "REQ-risk-stage-name-free-text",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "REQ-risk-stale-measurement",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "REQ-risk-steering-delta-missing",
       "type": "satisfy"
     },
     {
@@ -19147,6 +19523,11 @@
     },
     {
       "source": "FUNC-compute-steering-delta",
+      "target": "REQ-steering-delta-in-answer-tested",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-compute-steering-delta",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
@@ -20483,6 +20864,16 @@
     },
     {
       "source": "FUNC-take-steering-snapshot",
+      "target": "REQ-measurement-vector-contract-tested",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
+      "target": "REQ-stage-names-enumerated",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
       "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
@@ -21111,6 +21502,21 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "source": "REQ-risk-audit-evaluation-unowned",
+      "target": "REQ-audit-trail",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-auto-export-fails-silently",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-edge-vanishes-silently",
+      "target": "REQ-held-back-traces-named",
+      "type": "compose"
+    },
+    {
       "source": "REQ-risk-gate-rule-eval-fails",
       "target": "REQ-gate-survives-rule-failure",
       "type": "compose"
@@ -21131,8 +21537,38 @@
       "type": "compose"
     },
     {
+      "source": "REQ-risk-measurement-vector-contract-unbound",
+      "target": "REQ-measurement-vector-contract-tested",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-owner-ends-with-docked-sessions",
+      "target": "REQ-store-owner-lifecycle",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-partial-store-after-reseed",
+      "target": "REQ-export-no-clobber",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-selection-misses-red-test",
+      "target": "REQ-full-run-on-probation",
+      "type": "compose"
+    },
+    {
       "source": "REQ-risk-shared-steering-promise",
       "target": "REQ-steering-promise-one-owner",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-stage-name-free-text",
+      "target": "REQ-stage-names-enumerated",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-stale-measurement",
+      "target": "REQ-single-measurement-path",
       "type": "compose"
     },
     {
@@ -21143,6 +21579,11 @@
     {
       "source": "REQ-risk-stale-test-result",
       "target": "REQ-test-result-withdrawn-on-change",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-steering-delta-missing",
+      "target": "REQ-steering-delta-in-answer-tested",
       "type": "compose"
     },
     {
@@ -21561,6 +22002,11 @@
     },
     {
       "source": "TEST-audit-trail-projection",
+      "target": "REQ-risk-audit-evaluation-unowned",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-audit-trail-projection",
       "target": "REQ-token-efficiency",
       "type": "verify"
     },
@@ -21572,6 +22018,11 @@
     {
       "source": "TEST-auto-export",
       "target": "REQ-graph-snapshot-per-commit",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-auto-export",
+      "target": "REQ-risk-auto-export-fails-silently",
       "type": "verify"
     },
     {
@@ -21885,6 +22336,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-export-graph-guard",
+      "target": "REQ-risk-partial-store-after-reseed",
+      "type": "verify"
+    },
+    {
       "source": "TEST-first-step",
       "target": "REQ-steering-from-metrics",
       "type": "verify"
@@ -22120,6 +22576,11 @@
     },
     {
       "source": "TEST-host-shim",
+      "target": "REQ-risk-owner-ends-with-docked-sessions",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-shim",
       "target": "REQ-single-kuzu-owner",
       "type": "verify"
     },
@@ -22188,6 +22649,11 @@
     {
       "source": "TEST-import-rejected-traces",
       "target": "REQ-held-back-traces-named",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-rejected-traces",
+      "target": "REQ-risk-edge-vanishes-silently",
       "type": "verify"
     },
     {
@@ -22405,6 +22871,16 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-measurement-vector-contract",
+      "target": "REQ-measurement-vector-contract-tested",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-measurement-vector-contract",
+      "target": "REQ-risk-measurement-vector-contract-unbound",
+      "type": "verify"
     },
     {
       "source": "TEST-member-name",
@@ -22902,6 +23378,11 @@
     },
     {
       "source": "TEST-single-measurement-path",
+      "target": "REQ-risk-stale-measurement",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-single-measurement-path",
       "target": "REQ-single-measurement-path",
       "type": "verify"
     },
@@ -22936,6 +23417,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-skill-moves-are-legal",
+      "target": "REQ-risk-skill-instructs-rejected-move",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skill-red-first",
       "target": "REQ-test-skill-red-first",
       "type": "verify"
@@ -22958,8 +23444,28 @@
       "created_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "source": "TEST-stage-names-enumerated",
+      "target": "REQ-risk-stage-name-free-text",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-stage-names-enumerated",
+      "target": "REQ-stage-names-enumerated",
+      "type": "verify"
+    },
+    {
       "source": "TEST-status-verb",
       "target": "REQ-single-kuzu-owner",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-steering-delta-in-answer",
+      "target": "REQ-risk-steering-delta-missing",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-steering-delta-in-answer",
+      "target": "REQ-steering-delta-in-answer-tested",
       "type": "verify"
     },
     {
@@ -23061,6 +23567,11 @@
     },
     {
       "source": "TEST-test-schlupf",
+      "target": "REQ-risk-selection-misses-red-test",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-schlupf",
       "target": "SCHEMA-schlupf-zeile",
       "type": "verify"
     },
@@ -23121,6 +23632,11 @@
     {
       "source": "TEST-tool-contract",
       "target": "SCHEMA-tool-context",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-tool-list-change-announced",
+      "target": "REQ-risk-client-holds-stale-tool-list",
       "type": "verify"
     },
     {
@@ -23396,6 +23912,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-risk-skill-instructs-rejected-move",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-roundtrip-conformance",
       "type": "compose"
     },
@@ -23503,7 +24024,27 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "REQ-risk-measurement-vector-contract-unbound",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "REQ-risk-shared-steering-promise",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-risk-stage-name-free-text",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-risk-stale-measurement",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
+      "target": "REQ-risk-steering-delta-missing",
       "type": "compose"
     },
     {
@@ -23587,6 +24128,11 @@
     },
     {
       "source": "UC-efficient-testing",
+      "target": "REQ-risk-selection-misses-red-test",
+      "type": "compose"
+    },
+    {
+      "source": "UC-efficient-testing",
       "target": "REQ-risk-stale-test-result",
       "type": "compose"
     },
@@ -23645,6 +24191,21 @@
     {
       "source": "UC-graph-time-travel",
       "target": "REQ-pre-merge-nodes",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
+      "target": "REQ-risk-auto-export-fails-silently",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
+      "target": "REQ-risk-edge-vanishes-silently",
+      "type": "compose"
+    },
+    {
+      "source": "UC-graph-time-travel",
+      "target": "REQ-risk-partial-store-after-reseed",
       "type": "compose"
     },
     {
@@ -23756,6 +24317,11 @@
     {
       "source": "UC-loop-closure",
       "target": "REQ-prompt-provenance",
+      "type": "compose"
+    },
+    {
+      "source": "UC-loop-closure",
+      "target": "REQ-risk-audit-evaluation-unowned",
       "type": "compose"
     },
     {
@@ -23918,6 +24484,16 @@
     },
     {
       "source": "UC-repo-lifecycle",
+      "target": "REQ-risk-client-holds-stale-tool-list",
+      "type": "compose"
+    },
+    {
+      "source": "UC-repo-lifecycle",
+      "target": "REQ-risk-owner-ends-with-docked-sessions",
+      "type": "compose"
+    },
+    {
+      "source": "UC-repo-lifecycle",
       "target": "REQ-session-leaves-nothing-behind",
       "type": "compose"
     },
@@ -23927,5 +24503,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 737
+  "graphVersion": 740
 }

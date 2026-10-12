@@ -4,7 +4,7 @@
 
 # graphcode — FMEA (functional risk)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk. 7 Risiken, 6 mit hoher Priorität, 1 verifiziert, 2 Gegenmaßnahmen ohne Funktion. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk. 19 Risiken, 8 mit hoher Priorität, 8 verifiziert, 2 Gegenmaßnahmen ohne Funktion. Deterministisch generiert.
 
 ## Übersicht (nach Priorität)
 
@@ -13,10 +13,22 @@
 | 1 | Risiko veraltetes Testergebnis | `FCHAIN-test-ingest` | 8 | 5 | 7 | 280 | High | `FUNC-plan-code-lane` · `FUNC-test-ingest` | ✓ |
 | 2 | Risiko falscher Befund laeuft um | `FCHAIN-steering-loop` | 8 | 3 | 7 | 168 | High | — | ✗ |
 | 3 | Risiko Schnittstellenaenderung ohne Eskalation | `FCHAIN-interface-escalation` | 7 | 4 | 5 | 140 | High | — | ✗ |
-| 4 | Risiko Schleife pendelt | `FCHAIN-steering-loop` | 6 | 4 | 5 | 120 | High | `FUNC-generation-step` | ✗ |
-| 5 | Risiko geteilte Zusage ohne Traeger | `FCHAIN-steering-loop` | 6 | 3 | 6 | 108 | High | `FUNC-generation-step` | ✗ |
-| 6 | Risiko Store nicht lesbar | — | 9 | 3 | 3 | 81 | High | `FUNC-graph-store` | ✗ |
-| 7 | Risiko Regelauswertung faellt im Gate aus | — | 8 | 2 | 2 | 32 | Low | `FUNC-mutate` | ✗ |
+| 4 | Risiko Vertrag des Messvektors ungebunden | `FCHAIN-steering-loop` | 6 | 3 | 7 | 126 | High | `FUNC-take-steering-snapshot` | ✗ |
+| 5 | Risiko Glied rechnet auf altem Stand | `FCHAIN-steering-loop` | 7 | 3 | 6 | 126 | High | 15 Funktionen | ✓ |
+| 6 | Risiko Schleife pendelt | `FCHAIN-steering-loop` | 6 | 4 | 5 | 120 | High | `FUNC-generation-step` | ✗ |
+| 7 | Risiko geteilte Zusage ohne Traeger | `FCHAIN-steering-loop` | 6 | 3 | 6 | 108 | High | `FUNC-generation-step` | ✗ |
+| 8 | Risiko Store nicht lesbar | — | 9 | 3 | 3 | 81 | High | `FUNC-graph-store` | ✗ |
+| 9 | Risiko Auswertung ohne Verantwortlichen | `FCHAIN-loop-closure` | 5 | 3 | 6 | 90 | Medium | `FUNC-audit-stats` · `FUNC-audit-trail` | ✓ |
+| 10 | Risiko Stufenname ohne Wertebereich | `FCHAIN-steering-loop` | 5 | 3 | 6 | 90 | Medium | `FUNC-take-steering-snapshot` | ✗ |
+| 11 | Risiko Delta fehlt in der Antwort | `FCHAIN-steering-loop` | 5 | 3 | 5 | 75 | Medium | `FUNC-compute-steering-delta` | ✗ |
+| 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-repo-lifecycle` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
+| 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-impact-testing` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` | ✓ |
+| 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | 8 Funktionen | ✓ |
+| 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | 4 Funktionen | ✓ |
+| 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-repo-lifecycle` | 7 | 2 | 3 | 42 | Medium | 5 Funktionen | ✓ |
+| 17 | Risiko halb gefuellter Store nach Abbruch | `FCHAIN-recall` | 6 | 2 | 3 | 36 | Low | 15 Funktionen | ✓ |
+| 18 | Risiko Regelauswertung faellt im Gate aus | — | 8 | 2 | 2 | 32 | Low | `FUNC-mutate` | ✗ |
+| 19 | Risiko Skill weist abgelehnten Zug an | `FCHAIN-skill-authoring` | 4 | 4 | 2 | 32 | Low | — | ✗ |
 
 ### 1. Risiko veraltetes Testergebnis (`REQ-risk-stale-test-result`)
 
@@ -77,7 +89,45 @@ Ein FLOW oder SCHEMA wird geaendert, ohne dass die abhaengigen Funktionen und Te
 |---|---|---|---|
 | `TEST-interface-escalation` | ungebunden | — | — |
 
-### 4. Risiko Schleife pendelt (`REQ-risk-loop-oscillation`)
+### 4. Risiko Vertrag des Messvektors ungebunden (`REQ-risk-measurement-vector-contract-unbound`)
+
+Die Schleife liest ein Feld des Messvektors, das die Messung anders liefert. Der Vertrag des Messvektors ist nicht an Code gebunden und hat keinen Vertragstest.
+
+- **Bewertung:** S 6 · O 3 · D 7 · RPN 126 · AP High
+- **Kette:** `FCHAIN-steering-loop`
+- **Anwendungsfall:** `UC-deterministic-steering`
+- **Träger:** `FUNC-take-steering-snapshot`
+- **Befund:** FMEA CR-GC-779 und CR-GC-795 FM-06, Modulgrenze MOD-kernel-measure zu MOD-loop. SCHEMA-measurement-vector ohne Bindung (R-26) und ohne Vertragstest (R-32). Entscheidung des ersten Laufs: bestehender Regelbefund; in CR-GC-802 mit Gegenmassnahme nachgetragen, Traeger ist Vorschlag des Skills.
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-measurement-vector-contract-tested` | Die Funktion, die den Messvektor liefert, liefert ihn nach einem an Code gebundenen Vertrag, und ein Vertragstest prueft jedes Feld, das die Schleife liest. | `FUNC-take-steering-snapshot` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-measurement-vector-contract` | ungebunden | — | — |
+
+### 5. Risiko Glied rechnet auf altem Stand (`REQ-risk-stale-measurement`)
+
+Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die Empfehlung passt nicht zum Modell.
+
+- **Bewertung:** S 7 · O 3 · D 6 · RPN 126 · AP High
+- **Kette:** `FCHAIN-steering-loop`
+- **Anwendungsfall:** `UC-deterministic-steering`
+- **Träger:** `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest`
+- **Befund:** FMEA CR-GC-779 und CR-GC-795 FM-02, Quelle E Kreislauf. Ursache waere ein zweiter Messpfad oder ein zwischengespeicherter Stand. Entscheidung: gedeckt durch REQ-single-measurement-path.
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-single-measurement-path` | nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse. | `MOD-projections` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-single-measurement-path` | tests/steering.measurement-path.test.ts | passed | 2026-10-12 |
+
+### 6. Risiko Schleife pendelt (`REQ-risk-loop-oscillation`)
 
 Die Steuerungsschleife pendelt ueber Sitzungen hinweg: ein angewandter Vorschlag erzeugt den Befund, den der naechste zuruecknimmt, und nach einem Neustart des Hosts beginnt die Zaehlung der Wiederholungen neu. Der Nutzer dreht Runden ohne Fortschritt.
 
@@ -96,7 +146,7 @@ Die Steuerungsschleife pendelt ueber Sitzungen hinweg: ein angewandter Vorschlag
 |---|---|---|---|
 | `TEST-loop-round-log` | ungebunden | — | — |
 
-### 5. Risiko geteilte Zusage ohne Traeger (`REQ-risk-shared-steering-promise`)
+### 7. Risiko geteilte Zusage ohne Traeger (`REQ-risk-shared-steering-promise`)
 
 Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann verletzt sein, ohne dass eine der acht Funktionen ausfaellt, die sie gemeinsam erfuellen.
 
@@ -115,7 +165,7 @@ Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann ve
 |---|---|---|---|
 | `TEST-steering-promise-one-owner` | ungebunden | — | — |
 
-### 6. Risiko Store nicht lesbar (`REQ-risk-store-unreadable`)
+### 8. Risiko Store nicht lesbar (`REQ-risk-store-unreadable`)
 
 Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis.
 
@@ -134,7 +184,178 @@ Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette 
 |---|---|---|---|
 | `TEST-store-recovery` | ungebunden | — | — |
 
-### 7. Risiko Regelauswertung faellt im Gate aus (`REQ-risk-gate-rule-eval-fails`)
+### 9. Risiko Auswertung ohne Verantwortlichen (`REQ-risk-audit-evaluation-unowned`)
+
+Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen werden an einer Zahl justiert, die niemand verantwortet.
+
+- **Bewertung:** S 5 · O 3 · D 6 · RPN 90 · AP Medium
+- **Kette:** `FCHAIN-loop-closure`
+- **Anwendungsfall:** `UC-loop-closure`
+- **Träger:** `FUNC-audit-stats` · `FUNC-audit-trail`
+- **Befund:** FMEA CR-GC-798 FM-15, Step 3. REQ-audit-trail hing an FUNC-graph-impact, die beiden Auswertungsfunktionen erfuellten keine Anforderung. Entscheidung: Zuordnung in CR-GC-797 gerichtet; gedeckt durch REQ-audit-trail.
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-audit-trail` | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. | `FUNC-audit-stats` · `FUNC-audit-trail` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-audit-trail-projection` | tests/audit.trail-projection.test.ts | passed | 2026-10-12 |
+
+### 10. Risiko Stufenname ohne Wertebereich (`REQ-risk-stage-name-free-text`)
+
+Ein umbenannter Stufenname faellt still aus dem Delta der Steuerung. Der Stufenname im Steuerungs-Snapshot ist freier Text ohne aufgezaehlten Wertebereich.
+
+- **Bewertung:** S 5 · O 3 · D 6 · RPN 90 · AP Medium
+- **Kette:** `FCHAIN-steering-loop`
+- **Anwendungsfall:** `UC-deterministic-steering`
+- **Träger:** `FUNC-take-steering-snapshot`
+- **Befund:** FMEA CR-GC-795 FM-10, Quelle D Groesse ohne Wertebereich. SCHEMA-steering-snapshot fuehrt den Stufennamen als Text; neun Vertraege des Modells sind ohne Bindung. Entscheidung des Laufs: bestehende Regelbefunde (R-26, R-32); in CR-GC-802 mit Gegenmassnahme nachgetragen, Traeger ist Vorschlag des Skills.
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-stage-names-enumerated` | Der Stufenname im Steuerungs-Snapshot ist ein aufgezaehlter Wert aus der Regelmatrix, und ein unbekannter Name wird beim Bilden des Snapshots abgewiesen. | `FUNC-take-steering-snapshot` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-stage-names-enumerated` | ungebunden | — | — |
+
+### 11. Risiko Delta fehlt in der Antwort (`REQ-risk-steering-delta-missing`)
+
+Das Delta der Steuerung fehlt oder ist falsch in der Antwort auf einen Zug. Der Agent sieht einen falschen Fortschritt.
+
+- **Bewertung:** S 5 · O 3 · D 5 · RPN 75 · AP Medium
+- **Kette:** `FCHAIN-steering-loop`
+- **Anwendungsfall:** `UC-deterministic-steering`
+- **Träger:** `FUNC-compute-steering-delta`
+- **Befund:** FMEA CR-GC-779 und CR-GC-795 FM-07, Quelle B Uebergabe FLOW-steering-delta ohne gemeinsame Kette (R-21). Entscheidung des ersten Laufs: bestehender Regelbefund; in CR-GC-802 mit Gegenmassnahme nachgetragen, Traeger ist Vorschlag des Skills.
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-steering-delta-in-answer-tested` | Die Antwort auf jeden angenommenen Zug traegt das Delta der Steuerung, berechnet aus dem Stand vor und nach genau diesem Zug, und ein Integrationstest prueft die Uebergabe bis in die Antwort. | `FUNC-compute-steering-delta` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-steering-delta-in-answer` | ungebunden | — | — |
+
+### 12. Risiko Werkzeugliste vom Sitzungsstart (`REQ-risk-client-holds-stale-tool-list`)
+
+Der Client arbeitet mit der Werkzeugliste vom Sitzungsstart. Eine neue Eingabe eines Werkzeugs ist in der laufenden Sitzung nicht erreichbar.
+
+- **Bewertung:** S 4 · O 3 · D 6 · RPN 72 · AP Medium
+- **Kette:** `FCHAIN-repo-lifecycle`
+- **Anwendungsfall:** `UC-repo-lifecycle`
+- **Träger:** —
+- **Befund:** FMEA CR-GC-798 FM-14, Quelle A Import FLOW-mcp-tool. Einmal beobachtet am 2026-10-12. Der Host meldet keine Aenderung der Liste. Entscheidung des Autors: gelassen, ohne Gegenmassnahme; ITEM-2026-862.
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| — keine Gegenmaßnahme (FM-02) | — | — |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-tool-list-change-announced` | ungebunden | — | — |
+
+### 13. Risiko Auswahl laesst roten Test aus (`REQ-risk-selection-misses-red-test`)
+
+Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
+
+- **Bewertung:** S 7 · O 3 · D 3 · RPN 63 · AP Medium
+- **Kette:** `FCHAIN-impact-testing`
+- **Anwendungsfall:** `UC-efficient-testing`
+- **Träger:** `FUNC-measure-test-schlupf`
+- **Befund:** FMEA CR-GC-798 FM-20, frei abgeleitet. Ursache ist ein Test ohne Bindung oder eine Quelldatei ohne Knoten. Entscheidung: gedeckt durch die Schlupfmessung je CR (REQ-full-run-on-probation).
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-full-run-on-probation` | Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter. | `FUNC-measure-test-schlupf` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-test-schlupf` | tests/test-schlupf.test.ts | passed | 2026-10-12 |
+
+### 14. Risiko Export scheitert still (`REQ-risk-auto-export-fails-silently`)
+
+Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten Stand. Viewer und Leser der Dateien sehen ein Modell, das es so nicht mehr gibt.
+
+- **Bewertung:** S 4 · O 3 · D 4 · RPN 48 · AP Medium
+- **Kette:** `FCHAIN-snapshot-freshness`
+- **Anwendungsfall:** `UC-graph-time-travel`
+- **Träger:** `FUNC-auto-export` · `FUNC-evaluate-rules` · `FUNC-export-markdown` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-graph-store` · `FUNC-held-back-traces` · `FUNC-mutate`
+- **Befund:** FMEA CR-GC-798 FM-16, Quelle F geteilte Funktion FUNC-export-markdown. Der Fehler geht nur auf die Fehlerausgabe. Entscheidung: gedeckt, die Marke EXPORT_PENDING bleibt stehen und blockt den Commit (REQ-graph-snapshot-per-commit).
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-graph-snapshot-per-commit` | Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217) | `FCHAIN-snapshot-freshness` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-10-12 |
+
+### 15. Risiko Kante verschwindet still (`REQ-risk-edge-vanishes-silently`)
+
+Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell. Das Modell verliert Bezuege, ohne dass es jemand bemerkt.
+
+- **Bewertung:** S 7 · O 2 · D 3 · RPN 42 · AP Medium
+- **Kette:** `FCHAIN-recall`
+- **Anwendungsfall:** `UC-graph-time-travel`
+- **Träger:** `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json`
+- **Befund:** FMEA CR-GC-798 FM-18, Quelle F geteilte Funktion FUNC-held-back-traces in drei Ketten. Entscheidung: gedeckt durch REQ-held-back-traces-named.
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-held-back-traces-named` | Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt. | `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-10-12 |
+
+### 16. Risiko Besitzer endet bei angedockten Sitzungen (`REQ-risk-owner-ends-with-docked-sessions`)
+
+Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine angedockte Sitzung verliert das Schreiben.
+
+- **Bewertung:** S 7 · O 2 · D 3 · RPN 42 · AP Medium
+- **Kette:** `FCHAIN-repo-lifecycle`
+- **Anwendungsfall:** `UC-repo-lifecycle`
+- **Träger:** `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+- **Befund:** FMEA CR-GC-798 FM-19, Quelle E Kreislauf aus FUNC-claim-store-lock und FUNC-session-shutdown. Genau ein Neuwahlversuch. Entscheidung: gedeckt durch REQ-store-owner-lifecycle, das fuenf Erfueller hat.
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-store-owner-lifecycle` | Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt. | `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-host-shim` | tests/host-shim.test.ts | passed | 2026-10-12 |
+
+### 17. Risiko halb gefuellter Store nach Abbruch (`REQ-risk-partial-store-after-reseed`)
+
+Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store. Das Modell ist unvollstaendig, bis erneut wiederhergestellt wird.
+
+- **Bewertung:** S 6 · O 2 · D 3 · RPN 36 · AP Low
+- **Kette:** `FCHAIN-recall`
+- **Anwendungsfall:** `UC-graph-time-travel`
+- **Träger:** `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest`
+- **Befund:** FMEA CR-GC-798 FM-13, Quelle E Kreislauf aus FUNC-graph-store, FUNC-import und FUNC-seed-from-json. applyReseed leert und fuellt in zwei Schritten; der Start vergleicht Store und Datei nicht (CR-GC-392). Entscheidung: gedeckt, der naechste Export verweigert bei fehlenden Elementen (REQ-export-no-clobber).
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| `REQ-export-no-clobber` | graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202) | `MOD-projections` |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-10-12 |
+
+### 18. Risiko Regelauswertung faellt im Gate aus (`REQ-risk-gate-rule-eval-fails`)
 
 Die Regelauswertung wirft oder haengt im Gate. Kein Schreibvorgang kommt mehr durch, in keiner der Wirkketten durch das Gate.
 
@@ -152,6 +373,25 @@ Die Regelauswertung wirft oder haengt im Gate. Kein Schreibvorgang kommt mehr du
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
 | `TEST-gate-survives-rule-failure` | ungebunden | — | — |
+
+### 19. Risiko Skill weist abgelehnten Zug an (`REQ-risk-skill-instructs-rejected-move`)
+
+Ein Skill weist einen Zug an, den das Gate ablehnt. Der Lauf stockt, der Nutzer muss eingreifen.
+
+- **Bewertung:** S 4 · O 4 · D 2 · RPN 32 · AP Low
+- **Kette:** `FCHAIN-skill-authoring`
+- **Anwendungsfall:** `UC-code-quality`
+- **Träger:** —
+- **Befund:** FMEA CR-GC-798 FM-17, Quelle E Kreislauf der Analyse-Skills. Zweimal belegt (se-fmea, se-trade). Das Gate entdeckt den Zug sofort. Entscheidung des Autors: gelassen, ohne Gegenmassnahme; ITEM-2026-856.
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+
+| Gegenmaßnahme | Wortlaut | Erfüller |
+|---|---|---|
+| — keine Gegenmaßnahme (FM-02) | — | — |
+
+| Nachweis | Datei | Ergebnis | gelaufen am |
+|---|---|---|---|
+| `TEST-skill-moves-are-legal` | ungebunden | — | — |
 
 > RENDER der risk/mitigation-REQ, die `se-fmea` durchs Gate geschrieben hat. Bewertung aus
 > `severity`/`occurrence`/`detection` (FM-01), Gegenmaßnahme über `compose` (FM-02), RPN = S·O·D,

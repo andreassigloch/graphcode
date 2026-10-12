@@ -432,6 +432,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-799` | n/a | Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change) | `FUNC-resolve-tests-from-code` · `FUNC-test-ingest` · `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` |
 | `CR-GC-800` | n/a | Spur CODE und Volllauf melden Aenderung und Lauf an graph_test_ingest zurueck (offen aus CR-GC-799) | `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `REQ-lane-reports-change` · `REQ-risk-stale-test-result` |
 | `CR-GC-801` | n/a | Sicht fmea.md ist ein Risikoregister: ohne Kette, Traeger, Prioritaet, Nachweis und Massnahmenstand | `FUNC-view-fmea` · `REQ-doc-export` |
+| `CR-GC-802` | n/a | FMEA-Nachtrag: die zwoelf bewerteten Fehlerarten als Risiken ins Modell | `REQ-measurement-vector-contract-tested` · `REQ-risk-audit-evaluation-unowned` · `REQ-risk-auto-export-fails-silently` · `REQ-risk-client-holds-stale-tool-list` · `REQ-risk-edge-vanishes-silently` · `REQ-risk-measurement-vector-contract-unbound` · `REQ-risk-owner-ends-with-docked-sessions` · `REQ-risk-partial-store-after-reseed` · `REQ-risk-selection-misses-red-test` · `REQ-risk-skill-instructs-rejected-move` · `REQ-risk-stage-name-free-text` · `REQ-risk-stale-measurement` · `REQ-risk-steering-delta-missing` · `REQ-stage-names-enumerated` · `REQ-steering-delta-in-answer-tested` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

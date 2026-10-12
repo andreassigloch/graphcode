@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 411 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 412 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 411 CR · 343 done · 4 open.
+Total: 412 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -473,3 +473,4 @@ Total: 411 CR · 343 done · 4 open.
 | `CR-GC-799` | n/a | Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change) |
 | `CR-GC-800` | n/a | Spur CODE und Volllauf melden Aenderung und Lauf an graph_test_ingest zurueck (offen aus CR-GC-799) |
 | `CR-GC-801` | n/a | Sicht fmea.md ist ein Risikoregister: ohne Kette, Traeger, Prioritaet, Nachweis und Massnahmenstand |
+| `CR-GC-802` | n/a | FMEA-Nachtrag: die zwoelf bewerteten Fehlerarten als Risiken ins Modell |

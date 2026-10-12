@@ -4,7 +4,7 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 81 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 93 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
@@ -68,12 +68,24 @@
 | `REQ-readiness-transparent` | Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests, UCs, Violations den Score druecken), sodass der Score auditierbar ist und keine Black-Box. In aimprove waren die Impl-Gates nie verdrahtet (0/9, 0/20, 0/4); graphcode macht die Herleitung transparent. | ✓ |
 | `REQ-readonly-bridge` | Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS) | ✓ |
 | `REQ-responsiveness` | Bindende NFR (Familie §6b): erste Reaktion < 0,2s (UI+Transport+Store-Query+Onto-/Rule-Check, ohne LLM). Draft-Apply sofort + nur betroffener Subgraph geprüft; volle Konsistenz am Commit. End-to-end über FCHAIN-apply-gate. | ✓ |
+| `REQ-risk-audit-evaluation-unowned` | Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen werden an einer Zahl justiert, die niemand verantwortet. | ✓ |
+| `REQ-risk-auto-export-fails-silently` | Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten Stand. Viewer und Leser der Dateien sehen ein Modell, das es so nicht mehr gibt. | ✓ |
+| `REQ-risk-client-holds-stale-tool-list` | Der Client arbeitet mit der Werkzeugliste vom Sitzungsstart. Eine neue Eingabe eines Werkzeugs ist in der laufenden Sitzung nicht erreichbar. | ✓ |
+| `REQ-risk-edge-vanishes-silently` | Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell. Das Modell verliert Bezuege, ohne dass es jemand bemerkt. | ✓ |
 | `REQ-risk-gate-rule-eval-fails` | Die Regelauswertung wirft oder haengt im Gate. Kein Schreibvorgang kommt mehr durch, in keiner der Wirkketten durch das Gate. | ✓ |
 | `REQ-risk-interface-change-unescalated` | Ein FLOW oder SCHEMA wird geaendert, ohne dass die abhaengigen Funktionen und Tests benannt und neu zugeschnitten werden; die zugesagte Eskalation laeuft nicht. | ✓ |
 | `REQ-risk-loop-degradation` | Ein falscher Regelbefund laeuft im Kreislauf um: falscher Fokus, falscher Vorschlag, angewandt, weitere Befunde. Das Modell wird schlechter, waehrend jede einzelne Runde Fortschritt meldet. | ✓ |
 | `REQ-risk-loop-oscillation` | Die Steuerungsschleife pendelt ueber Sitzungen hinweg: ein angewandter Vorschlag erzeugt den Befund, den der naechste zuruecknimmt, und nach einem Neustart des Hosts beginnt die Zaehlung der Wiederholungen neu. Der Nutzer dreht Runden ohne Fortschritt. | ✓ |
+| `REQ-risk-measurement-vector-contract-unbound` | Die Schleife liest ein Feld des Messvektors, das die Messung anders liefert. Der Vertrag des Messvektors ist nicht an Code gebunden und hat keinen Vertragstest. | ✓ |
+| `REQ-risk-owner-ends-with-docked-sessions` | Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine angedockte Sitzung verliert das Schreiben. | ✓ |
+| `REQ-risk-partial-store-after-reseed` | Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store. Das Modell ist unvollstaendig, bis erneut wiederhergestellt wird. | ✓ |
+| `REQ-risk-selection-misses-red-test` | Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit. | ✓ |
 | `REQ-risk-shared-steering-promise` | Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann verletzt sein, ohne dass eine der acht Funktionen ausfaellt, die sie gemeinsam erfuellen. | ✓ |
+| `REQ-risk-skill-instructs-rejected-move` | Ein Skill weist einen Zug an, den das Gate ablehnt. Der Lauf stockt, der Nutzer muss eingreifen. | ✓ |
+| `REQ-risk-stage-name-free-text` | Ein umbenannter Stufenname faellt still aus dem Delta der Steuerung. Der Stufenname im Steuerungs-Snapshot ist freier Text ohne aufgezaehlten Wertebereich. | ✓ |
+| `REQ-risk-stale-measurement` | Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die Empfehlung passt nicht zum Modell. | ✓ |
 | `REQ-risk-stale-test-result` | Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Testergebnis, das vor der letzten Aenderung am Test oder am geprueften Code entstand. | ✓ |
+| `REQ-risk-steering-delta-missing` | Das Delta der Steuerung fehlt oder ist falsch in der Antwort auf einen Zug. Der Agent sieht einen falschen Fortschritt. | ✓ |
 | `REQ-risk-store-unreadable` | Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis. | ✓ |
 | `REQ-roundtrip-conformance` | decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3) | ✓ |
 | `REQ-rule-calibration` | Die Aufzeichnung erlaubt es, je Regel, je Modell und je Konsument die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346) | ✓ |
