@@ -1,6 +1,6 @@
 # CR-GC-783: Skill Laufzeitanalyse einer Wirkkette
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-12)
 **Typ:** aus Item ITEM-2026-819 (idea)
 **Erstellt:** 2026-10-11
 **Item:** bok/items/ITEM-2026-819.json (Lane: code)
