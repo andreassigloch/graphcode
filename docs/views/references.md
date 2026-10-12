@@ -770,6 +770,10 @@
 | `CR-GC-789` | relation | `FUNC-schema-guard` |
 | `CR-GC-789` | relation | `FUNC-seed-from-json` |
 | `CR-GC-789` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-790` | relation | `FUNC-se-optimize` |
+| `CR-GC-790` | relation | `FUNC-zug-bericht` |
+| `CR-GC-790` | relation | `REQ-zug-zeigt-kennzahlen-danach` |
+| `CR-GC-790` | relation | `SCHEMA-zug-bericht` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1785,6 +1789,7 @@
 | `FUNC-zug-bericht` | allocate | `MOD-kernel-measure` |
 | `FUNC-zug-bericht` | io | `FLOW-zug-bericht` |
 | `FUNC-zug-bericht` | satisfy | `REQ-bericht-ist-kein-urteil` |
+| `FUNC-zug-bericht` | satisfy | `REQ-zug-zeigt-kennzahlen-danach` |
 | `MOD-agent-surface` | satisfy | `REQ-gate-only-writes` |
 | `MOD-dashboard` | satisfy | `REQ-artifact-freshness` |
 | `MOD-dashboard` | satisfy | `REQ-dashboard-ontology-sync` |
@@ -2222,6 +2227,7 @@
 | `TEST-violation-context` | verify | `REQ-rule-enforcement` |
 | `TEST-vorbereitung-reads-metrics` | verify | `REQ-vorbereitung-reads-metrics` |
 | `TEST-working-set-spezlauf` | verify | `REQ-token-efficiency` |
+| `TEST-zug-kennzahlen-danach` | verify | `REQ-zug-zeigt-kennzahlen-danach` |
 | `UC-code-quality` | compose | `FCHAIN-apply-gate` |
 | `UC-code-quality` | compose | `FCHAIN-capture` |
 | `UC-code-quality` | compose | `FCHAIN-codec-roundtrip` |
@@ -2265,6 +2271,7 @@
 | `UC-code-quality` | compose | `REQ-structure-driven` |
 | `UC-code-quality` | compose | `REQ-trajectory-emit` |
 | `UC-code-quality` | compose | `REQ-vorbereitung-reads-metrics` |
+| `UC-code-quality` | compose | `REQ-zug-zeigt-kennzahlen-danach` |
 | `UC-deterministic-steering` | compose | `FCHAIN-generation-states` |
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-help` |
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-report` |

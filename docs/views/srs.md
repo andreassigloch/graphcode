@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 158 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 159 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -264,7 +264,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 > auch in: `FCHAIN-steering-loop` · `FUNC-block-gate`
 
-Rechnet aus dem Stand vor und nach einem Zug die Berichte: Steuerwert und Dateiliste, auf Wunsch das Architekturmass. Scheitert die Rechnung, nennt das Ergebnis den fehlenden Bericht, statt zu werfen. Rein, ohne Store. (CR-GC-778)
+Rechnet aus dem Stand vor und nach einem Zug die Berichte: Steuerwert und Dateiliste, im Probelauf dazu das Architekturmass und die geaenderten Zeilen der Kennzahlen im Stand danach. Die Kennzahlen kommen aus denselben Funktionen aus contracts, die graph_metrics aufruft. Scheitert die Rechnung, nennt das Ergebnis den fehlenden Bericht, statt zu werfen. Rein, ohne Store. (CR-GC-778, CR-GC-790)
 
 io ◀ `FLOW-fit-advisory` · `FLOW-zug-staende` · io ▶ `FLOW-zug-bericht` · allocate ▶ `MOD-kernel-measure`
 
@@ -275,6 +275,14 @@ Das Gate urteilt und speichert; die Berichte zu einem Zug rechnet es nicht. Wer 
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-zug-bericht` · allocate ▶ `MOD-kernel-measure`
+
+###### `REQ-zug-zeigt-kennzahlen-danach` — Urteil eines Probelaufs traegt die Kennzahlen danach
+
+Das Urteil eines Probelaufs von graph_mutate MUSS die Zeilen der Kennzahlen tragen, die der Zug aendert oder neu anlegt, im Stand danach: je Wirkkette, je Modul, je Funktion und je Risiko mit seinen Traegern, dazu die Kennungen der Zeilen, die entfallen. Es sind dieselben Zeilen, die graph_metrics nach dem Anwenden liefert, gerechnet mit denselben Funktionen aus contracts und aus dem Stand davor und danach, den das Gate herausgibt. Aendert der Zug keine Kennzahl, steht der Bericht mit leeren Listen da und fehlt nicht. Ein abgelehnter Zug traegt ihn nicht. Die Antwort auf einen geschriebenen Zug traegt ihn nicht, dort misst graph_metrics den Stand danach. (CR-GC-790)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-zug-kennzahlen-danach` (integration) · satisfy ◀ `FUNC-zug-bericht` · allocate ▶ `MOD-kernel-measure`
 
 ##### 3.1.1.8  `FUNC-emit-trajectory` — materializeTrajectory()
 
@@ -846,7 +854,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FUNC-block-optimierung`
 
-Prompt-realisierter Skill se:optimize, Version 3: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785)
+Prompt-realisierter Skill se:optimize, Version 4: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Die Spalte danach liest er aus dem Bericht metricsAfter im Urteil des Trockenlaufs; offen bis zum Nachmessen bleibt der Betrachtungsumfang. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785, CR-GC-790)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-optimize` · allocate ▶ `MOD-agent-surface`
 
@@ -1626,7 +1634,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 > auch in: `FCHAIN-apply-gate` · `FUNC-block-gate`
 
-Rechnet aus dem Stand vor und nach einem Zug die Berichte: Steuerwert und Dateiliste, auf Wunsch das Architekturmass. Scheitert die Rechnung, nennt das Ergebnis den fehlenden Bericht, statt zu werfen. Rein, ohne Store. (CR-GC-778)
+Rechnet aus dem Stand vor und nach einem Zug die Berichte: Steuerwert und Dateiliste, im Probelauf dazu das Architekturmass und die geaenderten Zeilen der Kennzahlen im Stand danach. Die Kennzahlen kommen aus denselben Funktionen aus contracts, die graph_metrics aufruft. Scheitert die Rechnung, nennt das Ergebnis den fehlenden Bericht, statt zu werfen. Rein, ohne Store. (CR-GC-778, CR-GC-790)
 
 io ◀ `FLOW-fit-advisory` · `FLOW-zug-staende` · io ▶ `FLOW-zug-bericht` · allocate ▶ `MOD-kernel-measure`
 
@@ -1637,6 +1645,14 @@ Das Gate urteilt und speichert; die Berichte zu einem Zug rechnet es nicht. Wer 
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-zug-bericht` · allocate ▶ `MOD-kernel-measure`
+
+###### `REQ-zug-zeigt-kennzahlen-danach` — Urteil eines Probelaufs traegt die Kennzahlen danach
+
+Das Urteil eines Probelaufs von graph_mutate MUSS die Zeilen der Kennzahlen tragen, die der Zug aendert oder neu anlegt, im Stand danach: je Wirkkette, je Modul, je Funktion und je Risiko mit seinen Traegern, dazu die Kennungen der Zeilen, die entfallen. Es sind dieselben Zeilen, die graph_metrics nach dem Anwenden liefert, gerechnet mit denselben Funktionen aus contracts und aus dem Stand davor und danach, den das Gate herausgibt. Aendert der Zug keine Kennzahl, steht der Bericht mit leeren Listen da und fehlt nicht. Ein abgelehnter Zug traegt ihn nicht. Die Antwort auf einen geschriebenen Zug traegt ihn nicht, dort misst graph_metrics den Stand danach. (CR-GC-790)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-zug-kennzahlen-danach` (integration) · satisfy ◀ `FUNC-zug-bericht` · allocate ▶ `MOD-kernel-measure`
 
 ##### 3.2.4.11  `FUNC-compute-readiness` — computeReadiness(graph)
 
@@ -4768,7 +4784,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-steering-loop`
 
-Rechnet aus dem Stand vor und nach einem Zug die Berichte: Steuerwert und Dateiliste, auf Wunsch das Architekturmass. Scheitert die Rechnung, nennt das Ergebnis den fehlenden Bericht, statt zu werfen. Rein, ohne Store. (CR-GC-778)
+Rechnet aus dem Stand vor und nach einem Zug die Berichte: Steuerwert und Dateiliste, im Probelauf dazu das Architekturmass und die geaenderten Zeilen der Kennzahlen im Stand danach. Die Kennzahlen kommen aus denselben Funktionen aus contracts, die graph_metrics aufruft. Scheitert die Rechnung, nennt das Ergebnis den fehlenden Bericht, statt zu werfen. Rein, ohne Store. (CR-GC-778, CR-GC-790)
 
 io ◀ `FLOW-fit-advisory` · `FLOW-zug-staende` · io ▶ `FLOW-zug-bericht` · allocate ▶ `MOD-kernel-measure`
 
@@ -4779,6 +4795,14 @@ Das Gate urteilt und speichert; die Berichte zu einem Zug rechnet es nicht. Wer 
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-gate-urteilt-und-speichert` (integration) · satisfy ◀ `FUNC-zug-bericht` · allocate ▶ `MOD-kernel-measure`
+
+###### `REQ-zug-zeigt-kennzahlen-danach` — Urteil eines Probelaufs traegt die Kennzahlen danach
+
+Das Urteil eines Probelaufs von graph_mutate MUSS die Zeilen der Kennzahlen tragen, die der Zug aendert oder neu anlegt, im Stand danach: je Wirkkette, je Modul, je Funktion und je Risiko mit seinen Traegern, dazu die Kennungen der Zeilen, die entfallen. Es sind dieselben Zeilen, die graph_metrics nach dem Anwenden liefert, gerechnet mit denselben Funktionen aus contracts und aus dem Stand davor und danach, den das Gate herausgibt. Aendert der Zug keine Kennzahl, steht der Bericht mit leeren Listen da und fehlt nicht. Ein abgelehnter Zug traegt ihn nicht. Die Antwort auf einen geschriebenen Zug traegt ihn nicht, dort misst graph_metrics den Stand danach. (CR-GC-790)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-zug-kennzahlen-danach` (integration) · satisfy ◀ `FUNC-zug-bericht` · allocate ▶ `MOD-kernel-measure`
 
 ##### 3.10.2.4  `FUNC-block-gedaechtnis` — Gedächtnis
 
@@ -5610,7 +5634,7 @@ Verification ◀ `TEST-target-profile` (integration) · `TEST-target-shifts-rank
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se:optimize, Version 3: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785)
+Prompt-realisierter Skill se:optimize, Version 4: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Die Spalte danach liest er aus dem Bericht metricsAfter im Urteil des Trockenlaufs; offen bis zum Nachmessen bleibt der Betrachtungsumfang. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785, CR-GC-790)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-skill-request` · io ▶ `FLOW-mutate-cmd-se-optimize` · allocate ▶ `MOD-agent-surface`
 
@@ -7058,7 +7082,7 @@ schema ◀ `FLOW-live-event` · `FLOW-live-event-host` · `FLOW-sse-frame`
 
 ### 5.50  `SCHEMA-zug-bericht` — Bericht zum Zug
 
-Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass nur auf Wunsch. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778)
+Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass und metricsAfter nur im Probelauf. metricsAfter traegt die geaenderten Zeilen im Stand danach in chains, modules, functions und riskCarriers mit risks und surface, dazu removed mit den entfallenen Kennungen je Liste; leere Listen heissen keine Kennzahl geaendert. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778, CR-GC-790)
 
 schema ◀ `FLOW-zug-bericht`
 
@@ -8364,6 +8388,12 @@ Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfa
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
+### 8.146  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+
+Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
+
+verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
+
 ## 9  Traceability summary
 
-158 REQ · 158 verified · 0 without a verifying TEST (R-01).
+159 REQ · 159 verified · 0 without a verifying TEST (R-01).

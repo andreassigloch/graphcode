@@ -298,7 +298,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     description:
       'The ONE write path: apply a `formatE` block through the Apply-Gate. It carries adds, ' +
       'deletes, updates and merges alike (CR-GC-627). `dryRun:true` returns the full verdict ' +
-      'without applying. Pass the `graphVersion` of your last read as `baseVersion` — a stale base is ' +
+      'without applying (see `graph_help({token:"graph_mutate"})`). Pass the `graphVersion` of your last read as `baseVersion` — a stale base is ' +
       'rejected with the delta since. The full command signatures come back in the SCHEMA-01 error ' +
       'text, so they need not be carried here. `vorschlag` in the result is for the user, not for you (CR-GC-732).',
     inputSchema: GraphMutateInputSchema,
@@ -383,7 +383,8 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
         // validates internally via MutateCommandSchema.
         // CR-GC-778: die Berichte zum Zug rechnet diese Schicht aus dem Paar, das das Gate herausgibt.
         // Das Architekturmass nur im Probelauf — beim echten Schreiben blockt, waehlt und rankt es
-        // nichts; den Stand danach zeigt `graph_metrics`.
+        // nichts. CR-GC-790: ebenso `metricsAfter`, die geaenderten Zeilen der Kennzahlen danach —
+        // im Probelauf der einzige Ort dafuer, nach dem Schreiben zeigt sie `graph_metrics`.
         const result = mitBericht(
           await harness.mutateWithStates(commands, { dryRun: input.dryRun }),
           harness.getMetricPolicy(),

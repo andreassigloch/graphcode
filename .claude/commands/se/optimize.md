@@ -1,6 +1,6 @@
 ---
 name: se:optimize
-version: 3
+version: 4
 description: Einen Umbauvorschlag proben und seinen Gesamt-Impact als Vorlage zeigen — Vorschläge aus einer Analyse (feste Form) und Vorschläge von graph_suggest, getrennt. Trockenlauf durchs Gate, Vorlage davor und danach, Wahl durch den Autor. Nach CDR, vor den Kettentests. Kein Auto-Apply; Anwenden und Nachmessen gehören dem CR des Umbaus.
 ---
 
@@ -116,13 +116,20 @@ Der Trockenlauf schreibt nichts. Was sein Urteil trägt:
 | `steerAdvisory` | der Steuerwert `before` und `after`, `improvement`, die schlimmste Stelle danach in `worstAt`, und `removesElements` |
 | `fitAdvisory` | das Δm je Dimension und `regressions`. Nur mit einem Zielprofil mit Gewichten; erhoben wird es in `se:target-profile`, nicht hier |
 | `workOrder` | `moves`: Dateien, die mit einer umgehängten Funktion wandern; `blind`: Funktionen ohne Bindung |
+| `metricsAfter` | die Zeilen von `graph_metrics`, die der Zug ändert oder neu anlegt, im Stand danach: `chains`, `modules`, `functions` und `riskCarriers` mit `risks` und `surface`. `removed` nennt je Liste die Kennungen der Zeilen, die entfallen. Leere Listen heißen: der Zug ändert keine Kennzahl |
 
-Die drei letzten fehlen in der Antwort, wenn sie nichts melden.
+`steerAdvisory`, `fitAdvisory` und `workOrder` fehlen in der Antwort, wenn sie nichts melden.
+`metricsAfter` steht bei jedem Trockenlauf da, den das Gate durchlässt, auch leer. Fehlt es dort, nennt
+`berichtFehlt` den Grund, und die Spalte „danach" bleibt für diesen Vorschlag offen.
 
-**Was das Urteil nicht trägt.** Die Zeilen der Ketten, die Träger je Risiko und die Zeilen von Modulbaum und Funktionsbaum nach dem Zug.
-`graph_metrics` misst das geschriebene Modell, und geschrieben ist nichts. Für diese Teile hat die
-Vorlage vor dem Anwenden die Prognose des Vorschlags; gemessen werden sie erst im CR. Rechne sie
-nicht von Hand aus dem Zug nach: das wäre eine zweite Rechnung neben der einen in `graph_metrics`.
+**Die Spalte „danach".** `graph_metrics` misst das geschriebene Modell, und geschrieben ist nichts; den Stand nach dem Zug trägt nur `metricsAfter`.
+Eine Zeile, die dort steht, ist die Zeile danach, wortgleich die, die `graph_metrics` nach dem
+Anwenden liefert. Eine Zeile aus Schritt 3, die dort nicht steht und nicht unter `removed`, ist
+unverändert. Legt der Zug eine Kette, ein Modul oder eine Funktion neu an, steht ihre Zeile nur hier.
+
+**Was das Urteil nicht trägt.** Den Betrachtungsumfang nach dem Zug (`scope`) und die Befunde, die der Zug schließt.
+Sie bleiben offen bis zum Nachmessen im CR. Rechne nichts davon von Hand aus dem Zug nach: das
+wäre eine zweite Rechnung neben der einen in `graph_metrics`.
 
 ## 5. Vorlage zeigen
 
@@ -130,19 +137,22 @@ Je Vorschlag eine Vorlage, in der Reihenfolge, in der die Quelle sie lieferte.
 
 **Zuerst die Prüfung gegen die Prognose.** Was gleich bleiben muss und es nicht bleibt, steht oben. Je Aussage „bleibt gleich" eine von drei Antworten:
 
-- **verletzt:** die Probe belegt es (neuer Befund, `blockingErrors`, `worstAt`, `regressions`). Eine Verbesserung, die das Gleichbleiben verletzt, zählt nicht.
-- **hält laut Probe:** die Probe prüft die Aussage und meldet nichts.
-- **offen bis zum Nachmessen:** die Aussage betrifft eine Zeile oder einen Träger. Das trägt die Probe nicht.
+- **verletzt:** die Probe belegt es (neuer Befund, `blockingErrors`, `worstAt`, `regressions`, oder eine Zeile in `metricsAfter`, die gleich bleiben sollte). Eine Verbesserung, die das Gleichbleiben verletzt, zählt nicht.
+- **hält laut Probe:** die Probe prüft die Aussage und meldet nichts. Für eine Zeile oder einen Träger heißt das: sie steht nicht in `metricsAfter`.
+- **offen bis zum Nachmessen:** die Aussage betrifft den Betrachtungsumfang, den Antwortweg oder einen Befund, den der Zug schließen soll. Das trägt die Probe nicht.
 
 Dann die Tabelle, jede Zahl mit ihrem Feld:
 
 | Teil | davor | Prognose | Probe | danach |
 |---|---|---|---|---|
 | Betrachtungsumfang | Schritt 3 | – | – | Nachmessen im CR |
-| Ketten des Umfangs | ihre Zeilen | welche Zeile sich ändert, und wie | – | Nachmessen im CR |
-| Träger je Risiko | `carriers` | aus dem Vorschlag | – | Nachmessen im CR |
-| Modulbaum und Funktionsbaum | Zeilen mit Schwelle | aus dem Preis | `steerAdvisory`, `fitAdvisory` | Nachmessen im CR |
+| Ketten des Umfangs | ihre Zeilen | welche Zeile sich ändert, und wie | – | `metricsAfter.chains`, sonst unverändert |
+| Träger je Risiko | `carriers` | aus dem Vorschlag | – | `metricsAfter.riskCarriers`, sonst unverändert |
+| Modulbaum und Funktionsbaum | Zeilen mit Schwelle | aus dem Preis | `steerAdvisory`, `fitAdvisory` | `metricsAfter.modules` und `metricsAfter.functions`, sonst unverändert |
 | Befunde ohne Bau | je Regel | – | neu aus `violations` | Nachmessen im CR |
+
+Jede Zahl der Spalte „danach" steht neben ihrer Zahl von davor, mit demselben Feldnamen. Eine Zeile
+unter `removed` zeigst du als entfallen.
 
 Darunter die zu beurteilenden Anforderungen (Schritt 3), der Preis, und aus `workOrder`, was an Code mitwandert.
 
@@ -157,7 +167,7 @@ Format-E, die Vorlage aus Schritt 5 und die Prüfung gegen die Prognose; dazu je
 Vorschlag mit dem Grund des Autors. Der CR des Umbaus
 
 1. wendet den Zug an, über `graph_mutate` und als denselben Batch, den die Probe beurteilt hat,
-2. misst nach: dieselben Aufrufe wie in Schritt 3 am geschriebenen Modell füllen die Spalte „danach",
+2. misst nach: dieselben Aufrufe wie in Schritt 3 am geschriebenen Modell bestätigen die Spalte „danach" und füllen, was offen blieb,
 3. prüft das Gemessene gegen die Prognose und hält das Ergebnis fest.
 
 Erledigt liegt sein Text unter `docs/cr/done/`, sein Knoten trägt `status: "done"` und je eine
@@ -174,5 +184,6 @@ Nach einem angewandten Umbau ist das Modell ein anderes: jeder weitere Vorschlag
 - [ ] jeder Vorschlag aus (a) mit allen sechs Angaben, sonst zurück an die Analyse
 - [ ] die Kette bewertbar, sonst Verweis auf `se-vorbereitung` statt Probe
 - [ ] je Vorschlag die Prüfung gegen die Prognose oben, dann die Vorlage
+- [ ] die Spalte „danach" aus `metricsAfter`, jede Zeile unverändert übernommen
 - [ ] was die Probe nicht trägt, steht als offen bis zum Nachmessen und ist nicht von Hand gerechnet
 - [ ] kein Zug angewandt; je Vorschlag die Wahl des Autors oder sein Grund dagegen

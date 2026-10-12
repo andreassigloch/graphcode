@@ -3298,6 +3298,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-790",
+      "type": "CR",
+      "name": "Trockenlauf zeigt die Kennzahlen danach nicht: Gesamt-Impact vor der Wahl nur halb",
+      "description": "docs/cr/open/CR-GC-790-trockenlauf-zeigt-die-kennzahlen-danach-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5411,7 +5417,7 @@
       "id": "FUNC-se-optimize",
       "type": "FUNC",
       "name": "Skill se:optimize",
-      "description": "Prompt-realisierter Skill se:optimize, Version 3: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785)",
+      "description": "Prompt-realisierter Skill se:optimize, Version 4: der eine Optimierer fuer Vorschlaege aus jeder Analyse. Zwei Quellen, getrennt gezeigt und nie gemeinsam gereiht: Vorschlaege aus einer Analyse in fester Form und Vorschlaege von graph_suggest zur Guete von Modulbaum und Funktionsbaum. Probt einen Vorschlag per Trockenlauf durchs Gate und legt den Gesamt-Impact als Vorlage fuer das Urteil des Autors vor; liest dafuer graph_metrics, die Befunde und das Urteil des Trockenlaufs und rechnet keine Kennzahl. Die Spalte danach liest er aus dem Bericht metricsAfter im Urteil des Trockenlaufs; offen bis zum Nachmessen bleibt der Betrachtungsumfang. Wendet nicht an: der Autor waehlt, Anwenden und Nachmessen gehoeren dem CR des Umbaus. Lage nach CDR, vor den Kettentests auf Stufe 9. (CR-GC-785, CR-GC-790)",
       "realRef": {
         "file": ".claude/commands/se/optimize.md"
       }
@@ -5716,7 +5722,7 @@
       "id": "FUNC-zug-bericht",
       "type": "FUNC",
       "name": "zugBericht(before",
-      "description": "Rechnet aus dem Stand vor und nach einem Zug die Berichte: Steuerwert und Dateiliste, auf Wunsch das Architekturmass. Scheitert die Rechnung, nennt das Ergebnis den fehlenden Bericht, statt zu werfen. Rein, ohne Store. (CR-GC-778)",
+      "description": "Rechnet aus dem Stand vor und nach einem Zug die Berichte: Steuerwert und Dateiliste, im Probelauf dazu das Architekturmass und die geaenderten Zeilen der Kennzahlen im Stand danach. Die Kennzahlen kommen aus denselben Funktionen aus contracts, die graph_metrics aufruft. Scheitert die Rechnung, nennt das Ergebnis den fehlenden Bericht, statt zu werfen. Rein, ohne Store. (CR-GC-778, CR-GC-790)",
       "status": "done",
       "realRef": {
         "file": "src/kernel/measure/zug-bericht.ts",
@@ -7543,6 +7549,15 @@
       ]
     },
     {
+      "id": "REQ-zug-zeigt-kennzahlen-danach",
+      "type": "REQ",
+      "name": "Urteil eines Probelaufs traegt die Kennzahlen danach",
+      "description": "Das Urteil eines Probelaufs von graph_mutate MUSS die Zeilen der Kennzahlen tragen, die der Zug aendert oder neu anlegt, im Stand danach: je Wirkkette, je Modul, je Funktion und je Risiko mit seinen Traegern, dazu die Kennungen der Zeilen, die entfallen. Es sind dieselben Zeilen, die graph_metrics nach dem Anwenden liefert, gerechnet mit denselben Funktionen aus contracts und aus dem Stand davor und danach, den das Gate herausgibt. Aendert der Zug keine Kennzahl, steht der Bericht mit leeren Listen da und fehlt nicht. Ein abgelehnter Zug traegt ihn nicht. Die Antwort auf einen geschriebenen Zug traegt ihn nicht, dort misst graph_metrics den Stand danach. (CR-GC-790)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "SCHEMA-action",
       "type": "SCHEMA",
       "name": "Handlung (Vertrag der vier Entscheidungen)",
@@ -8120,7 +8135,7 @@
       "id": "SCHEMA-zug-bericht",
       "type": "SCHEMA",
       "name": "Bericht zum Zug",
-      "description": "Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass nur auf Wunsch. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778)",
+      "description": "Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass und metricsAfter nur im Probelauf. metricsAfter traegt die geaenderten Zeilen im Stand danach in chains, modules, functions und riskCarriers mit risks und surface, dazu removed mit den entfallenen Kennungen je Liste; leere Listen heissen keine Kennzahl geaendert. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778, CR-GC-790)",
       "status": "reviewed",
       "realRef": {
         "file": "src/kernel/measure/zug-bericht.ts",
@@ -10414,6 +10429,21 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-09-27T06:48:48Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-zug-kennzahlen-danach",
+      "type": "TEST",
+      "name": "Kennzahlen danach im Urteil gegen graph_metrics geprueft",
+      "description": "Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)",
+      "testRefs": [
+        {
+          "file": "tests/zug-kennzahlen-danach.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-10-12T06:45:00.000Z"
         }
       ]
     },
@@ -14692,6 +14722,26 @@
     {
       "source": "CR-GC-789",
       "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-790",
+      "target": "FUNC-se-optimize",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-790",
+      "target": "FUNC-zug-bericht",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-790",
+      "target": "REQ-zug-zeigt-kennzahlen-danach",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-790",
+      "target": "SCHEMA-zug-bericht",
       "type": "relation"
     },
     {
@@ -19982,6 +20032,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-zug-bericht",
+      "target": "REQ-zug-zeigt-kennzahlen-danach",
+      "type": "satisfy"
+    },
+    {
       "source": "MOD-agent-surface",
       "target": "REQ-gate-only-writes",
       "type": "satisfy"
@@ -22352,6 +22407,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-zug-kennzahlen-danach",
+      "target": "REQ-zug-zeigt-kennzahlen-danach",
+      "type": "verify"
+    },
+    {
       "source": "UC-code-quality",
       "target": "FCHAIN-apply-gate",
       "type": "compose",
@@ -22582,6 +22642,11 @@
     {
       "source": "UC-code-quality",
       "target": "REQ-vorbereitung-reads-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-zug-zeigt-kennzahlen-danach",
       "type": "compose"
     },
     {
@@ -23060,5 +23125,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 698
+  "graphVersion": 700
 }

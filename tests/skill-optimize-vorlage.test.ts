@@ -5,10 +5,11 @@
  *
  * Der Test bindet den Skill-Text an das, was die Werkzeuge wirklich antworten: ein Messaufbau auf
  * Platte (`openMeasured`), darin `graph_metrics` mit `scope`, ein Trockenlauf von `graph_mutate` und
- * `graph_suggest`. Nennt der Text ein Feld, das die Antwort nicht traegt, ist er rot. Dieselbe Probe
- * haelt die Luecke fest, die der Skill benennt: das Urteil des Trockenlaufs traegt keine Zeile einer
- * Kette und keine Traeger, und `graph_metrics` misst danach den unveraenderten Stand. Schliesst ein
- * Werkzeug die Luecke, wird dieser Fall rot und der Skill ist nachzuziehen.
+ * `graph_suggest`. Nennt der Text ein Feld, das die Antwort nicht traegt, ist er rot.
+ *
+ * CR-GC-790: die Spalte „danach" liest der Skill aus `metricsAfter` im Urteil des Trockenlaufs.
+ * Dieselbe Probe haelt fest, was offen bleibt: das Urteil traegt keinen Betrachtungsumfang, und
+ * `graph_metrics` misst nach der Probe den unveraenderten Stand.
  *
  * Muster: `tests/skill-vorbereitung-felder.test.ts`, `tests/skill-fmea-orte.test.ts`.
  *
@@ -23,6 +24,7 @@ import { openMeasured, type Measured } from '../src/surface/measured.js';
 import { FitAdvisory, SteerAdvisory } from '../src/kernel/measure/fit-advisory.js';
 import { SteeringDelta, SteeringStageDelta } from '../src/kernel/measure/steering-snapshot.js';
 import { WorkOrder } from '../src/kernel/measure/work-order.js';
+import { MetricsAfter } from '../src/kernel/measure/zug-bericht.js';
 
 const COMMANDS = join(__dirname, '..', '.claude', 'commands');
 const skill = readFileSync(join(COMMANDS, 'se', 'optimize.md'), 'utf8');
@@ -112,9 +114,9 @@ afterAll(async () => {
 });
 
 describe('se:optimize Version 3: zwei Quellen, getrennt, ohne Rangfolge (CR-GC-785)', () => {
-  it('der Kopf traegt Version 3 unter dem alten Namen', () => {
+  it('der Kopf traegt Version 4 unter dem alten Namen', () => {
     expect(skill).toMatch(/^name: se:optimize$/m);
-    expect(skill).toMatch(/^version: 3$/m);
+    expect(skill).toMatch(/^version: 4$/m);
   });
 
   it('Quelle (a) kommt in der festen Form, wortgleich mit dem, was se-fmea abgibt', () => {
@@ -273,15 +275,45 @@ describe('se:optimize Version 3: die Probe verspricht nur, was der Trockenlauf t
     expect(skill).toMatch(/Trockenlauf schreibt nichts/);
   });
 
-  it('die Luecke steht im Skill: das Urteil traegt keine Kettenzeile, keine Traeger, keine Modulzeile', () => {
-    for (const feld of ['chains', 'riskCarriers', 'modules', 'functions', 'scope']) {
-      expect(probe, `das Urteil des Trockenlaufs traegt ${feld}: Luecke geschlossen, Skill nachziehen`).not.toHaveProperty(feld);
+  it('die Spalte danach kommt aus metricsAfter: jede Liste, die der Skill nennt, traegt das Urteil (CR-GC-790)', () => {
+    expect(skill).toContain('`metricsAfter`');
+    const bericht = MetricsAfter.parse(probe.metricsAfter);
+    for (const feld of ['chains', 'modules', 'functions', 'riskCarriers', 'removed']) {
+      expect(skill, feld).toContain(`\`${feld}\``);
+      expect(bericht, feld).toHaveProperty(feld);
     }
+    for (const feld of ['risks', 'surface']) {
+      expect(skill, feld).toContain(`\`${feld}\``);
+      expect(bericht.riskCarriers, feld).toHaveProperty(feld);
+    }
+    // Jede Zeile der Vorlage mit einer Spalte danach nennt die Liste, aus der sie kommt.
+    expect(skill).toMatch(/\| Ketten des Umfangs[^\n]*`metricsAfter\.chains`/);
+    expect(skill).toMatch(/\| Träger je Risiko[^\n]*`metricsAfter\.riskCarriers`/);
+    expect(skill).toMatch(/\| Modulbaum und Funktionsbaum[^\n]*`metricsAfter\.modules`[^\n]*`metricsAfter\.functions`/);
+    // Der Zug der Probe schliesst einen Kreislauf in x: die Zeile danach steht im Urteil, und sie
+    // ist eine andere als die, die graph_metrics davor und nach der Probe misst.
+    const x = bericht.chains.find((c) => c.chainId === 'FCHAIN-x') as Zeile;
+    const xDavor = (davor.chains as Zeile[]).find((c) => c.chainId === 'FCHAIN-x')!;
+    expect(x, 'Praemisse: der Zug der Probe aendert die Zeile der Kette x').toBeDefined();
+    expect((x.loops as unknown[]).length).toBe((xDavor.loops as unknown[]).length + 1);
+    // Der Text sagt, wie eine nicht genannte Zeile zu lesen ist und dass der Bericht auch leer dasteht.
+    expect(skill).toMatch(/nicht steht[^\n]*\n?[^\n]*unverändert/);
+    expect(skill).toMatch(/`metricsAfter` steht bei jedem Trockenlauf da[^\n]*auch leer/);
+    expect(skill).toMatch(/Leere Listen heißen/);
+    expect(skill).toContain('`berichtFehlt`');
+  });
+
+  it('was offen bleibt, steht im Skill: das Urteil traegt keinen Betrachtungsumfang', () => {
+    expect(probe).not.toHaveProperty('scope');
+    expect(probe.metricsAfter).not.toHaveProperty('scope');
     expect(skill).toMatch(/Was das Urteil nicht trägt/);
-    expect(skill).toMatch(/nicht trägt[^\n]*(Zeilen der Ketten|Kette)[^\n]*Träger/);
-    expect(skill).toMatch(/nicht von Hand/);
-    // Die Spalte „danach" dieser Teile fuellt erst das Nachmessen im CR.
-    expect(skill).toMatch(/danach[^\n]*Nachmessen/);
+    expect(skill).toMatch(/nicht trägt[^\n]*Betrachtungsumfang/);
+    expect(skill).toMatch(/von Hand/);
+    // Betrachtungsumfang und Befunde ohne Bau fuellt erst das Nachmessen im CR.
+    expect(skill).toMatch(/\| Betrachtungsumfang[^\n]*Nachmessen im CR/);
+    expect(skill).toMatch(/\| Befunde ohne Bau[^\n]*Nachmessen im CR/);
+    // Die Zeilen, die der Bericht traegt, verweist der Skill nicht mehr ans Nachmessen.
+    expect(skill).not.toMatch(/\| (Ketten des Umfangs|Träger je Risiko|Modulbaum und Funktionsbaum)[^\n]*Nachmessen im CR/);
   });
 
   it('der Vergleich zaehlt keine Befunde aus dem Bau, und die vier Regeln gibt es', () => {

@@ -97,6 +97,35 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'Länge der Liste. Eine Kennung, die keine Funktion oder Kette des Modells ist, lehnt das ' +
       'Werkzeug mit ihrem Namen ab, statt einen Umfang zu liefern, der nur das System nennt.',
   },
+  graph_mutate: {
+    plain:
+      'Der eine Schreibweg, und mit `dryRun: true` die Probe: was das Gate zu einem Zug sagt, welche ' +
+      'Befunde er neu einführt und welche Kennzahlen er ändert. Die Probe schreibt nichts.',
+    se:
+      'Das Urteil: `success`, `tier`, `violations` (nur die Befunde, die der Zug NEU einführt). Dazu ' +
+      'die Berichte, gerechnet aus dem Stand davor und danach, den das Gate herausgibt; ein ' +
+      'abgelehnter Zug hat kein Paar und trägt keinen.\n' +
+      '• `metricsAfter` (CR-GC-790) — die Zeilen von `graph_metrics`, die der Zug ändert oder neu ' +
+      'anlegt, im Stand DANACH: `chains` (Schlüssel `chainId`), `modules` (`moduleId`), `functions` ' +
+      '(`funcId`), `riskCarriers.risks` (`riskId`) und `riskCarriers.surface` (`funcId`). `removed` ' +
+      'nennt je Liste (`chains`, `modules`, `functions`, `risks`, `surface`) die Kennungen der Zeilen, ' +
+      'die es danach nicht mehr gibt. Dieselben contracts-Funktionen wie `graph_metrics`, also ' +
+      'dieselben Zeilen, die `graph_metrics` nach dem Anwenden liefert; die Zeile davor steht in ' +
+      '`graph_metrics` vor dem Zug. Nur im Probelauf, dort bei jedem Zug, den das Gate durchlässt: ' +
+      'lauter leere Listen heißen, der Zug ändert keine Kennzahl. Der Probelauf ist der einzige Ort ' +
+      'für den Stand danach, denn `graph_metrics` misst das geschriebene Modell; nach dem Schreiben ' +
+      'liefert `graph_metrics` die Zeilen selbst. Nicht darin: der Betrachtungsumfang (`scope`) und ' +
+      '`measurability`.\n' +
+      '• `steerAdvisory` — der Steuerwert `before`/`after`, `improvement`, die schlimmste Stelle ' +
+      'danach in `worstAt`. `workOrder` — `moves` (Dateien, die mit einer umgehängten Funktion ' +
+      'wandern) und `blind` (Funktionen ohne Bindung). `fitAdvisory` — das Δm je Dimension, nur im ' +
+      'Probelauf und nur mit Zielprofil. Diese drei fehlen, wenn sie nichts melden.\n' +
+      '• Nur im Probelauf: `steeringDelta` (`blockingErrors` und je Stufe in `stages` die Zahl der ' +
+      'Befunde davor und danach). Nur beim Schreiben: `refs` (Bindungen, die der Zug schließt oder ' +
+      'öffnet) und `vorschlag` (ein Satz für den Nutzer).\n' +
+      '• `berichtFehlt` — die Berichte ließen sich nicht rechnen; der Zug bleibt, was das Gate aus ' +
+      'ihm gemacht hat.',
+  },
   rules_evaluate: {
     plain:
       'Das ganze Bild: welche Regeln feuern, welche nicht ausgewertet werden konnten und welche der ' +
