@@ -341,7 +341,7 @@ entstehen: der CR der Analyse ordnet sie zu, die Matrix meldet, was fehlt. Dasse
 Handlungen: Tieferlegen; einer geteilten Funktion kein weiteres Risiko aufladen; Entdeckung außerhalb des
 Kreislaufs; ein Besitzer je Zustand.
 
-**Laufzeit (Skill `se-laufzeit`, noch nicht vorhanden).** Voraussetzung: an jedem Fluss der Kette
+**Laufzeit (Skill `se-laufzeit`, CR-GC-783).** Voraussetzung: an jedem Fluss der Kette
 steht, ob die Antwort auf ihn wartet (synchron) oder ob er vorab geliefert ist (asynchron).
 
 | Maß | Bedeutung | Besser ist |

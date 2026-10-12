@@ -4088,6 +4088,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-mutate-cmd-se-laufzeit",
+      "type": "FLOW",
+      "name": "Mutate-Command (se-laufzeit)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch: die vom Autor gewaehlten Anforderungen an Laufzeit und Datenalter mit ihrem Test und der CR-Knoten der Analyse. Verbindung von FUNC-se-laufzeit zu FUNC-mutate. (CR-GC-783)",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-mutate-cmd-se-optimize",
       "type": "FLOW",
       "name": "Mutate-Command (se-optimize)",
@@ -5414,6 +5421,15 @@
       }
     },
     {
+      "id": "FUNC-se-laufzeit",
+      "type": "FUNC",
+      "name": "Skill se-laufzeit",
+      "description": "Prompt-realisierter Skill se-laufzeit: Laufzeitanalyse einer Wirkkette mit einer Laufzeitanforderung. Prueft den Eingang und verweist bei einer nicht bewertbaren Kette oder einem verhinderten Antwortweg auf se-vorbereitung. Liest den Antwortweg, die hindernden Fluesse, die Orte und den Betrachtungsumfang aus graph_metrics und rechnet keine Kennzahl selbst. Das Ergebnis ist ein CR: Befunde je Ort, fehlende Anforderungen an das Datenalter, Vorschlaege der Klassen Vorverlagern und Entkoppeln in fester Form mit Preis, Konflikte an geteilten Funktionen. Gewaehlte Anforderungen gehen mit Test durchs Gate. Setzt kein Merkmal, schaetzt keine Zeit, wendet keinen Umbau an. (CR-GC-783)",
+      "realRef": {
+        "file": ".claude/commands/se-laufzeit.md"
+      }
+    },
+    {
       "id": "FUNC-se-optimize",
       "type": "FUNC",
       "name": "Skill se:optimize",
@@ -6449,6 +6465,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-laufzeit-reads-answer-path",
+      "type": "REQ",
+      "name": "Laufzeitanalyse liest den Antwortweg und schlaegt vor",
+      "description": "Der Skill se-laufzeit MUSS den Antwortweg einer Wirkkette, die hindernden Fluesse, die Orte und den Betrachtungsumfang aus graph_metrics lesen und DARF keine Kennzahl selbst rechnen. Eine nicht bewertbare Kette und ein verhinderter Antwortweg beenden den Lauf mit dem Verweis auf se-vorbereitung; der Skill setzt kein Merkmal an einem Fluss und schaetzt keine Zeit. Einen Vorschlag gibt er in fester Form ab: Zweck, Kette, Ort, Handlungsklasse, Prognose, Preis; der Preis nennt das Datenalter und die Schnittstelle der Funktion, die speist. Er wendet keinen Umbau an.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -7589,7 +7614,7 @@
       "id": "SCHEMA-chain-metrics",
       "type": "SCHEMA",
       "name": "ChainMetrics",
-      "description": "chains: je FCHAIN chainId, chainName, measurable und entweder die Zahlen length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth mit den Orten memberCount, fanIn, loops, shared, boundaries, imports, handovers oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. Die Zahlen sind die Laengen der Ortslisten. measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external. Neben diesem Vertrag reisen in der graph_metrics-Antwort seit CR-GC-787 zwei Bloecke mit je eigenem Vertrag aus contracts: riskCarriers nach RiskCarriers mit risks, je Risiko riskId, carriers, satisfiers, und surface, je Traeger funcId und risks; scope nach RequirementScope mit modules, chains, requirements. Beide gehoeren nicht zum Symbol ChainMetrics.",
+      "description": "chains: je FCHAIN chainId, chainName, measurable und entweder die Zahlen length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth mit den Orten memberCount, fanIn, loops, shared, boundaries, imports, handovers und dem Antwortweg answerPath mit answerPathBlockedBy oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. Die Zahlen sind die Laengen der Ortslisten. answerPath nennt die Glieder, auf die die Antwort an einen Akteur wartet, und ist null, wenn answerPathBlockedBy hindernde Fluesse nennt (CR-SM-408, contracts 12.4). measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external. Neben diesem Vertrag reisen in der graph_metrics-Antwort seit CR-GC-787 zwei Bloecke mit je eigenem Vertrag aus contracts: riskCarriers nach RiskCarriers mit risks, je Risiko riskId, carriers, satisfiers, und surface, je Traeger funcId und risks; scope nach RequirementScope mit modules, chains, requirements. Beide gehoeren nicht zum Symbol ChainMetrics.",
       "external": true,
       "status": "reviewed",
       "realRef": {
@@ -9193,6 +9218,21 @@
       "level": "integration",
       "tool": "vitest",
       "constraint": "direct FLOW mutation rejected"
+    },
+    {
+      "id": "TEST-laufzeit-reads-answer-path",
+      "type": "TEST",
+      "name": "Laufzeit-Skill liest den Antwortweg statt zu rechnen",
+      "description": "Der Skill-Text nennt die Felder des Antwortwegs, die chainMetrics an der bewertbaren Zeile liefert und die Hilfe zu graph_metrics erklaert, und keine Rechenvorschrift. Am Probemodell nachgerechnet: der Weg ist ohne Merkmal und bei synchronem Warten auf eine Funktion ausserhalb der Kette verhindert, und nach dem Vorverlagern verlaesst das speisende Glied den Weg. Der Text traegt keinen Zug, der das Merkmal setzt, und die feste Form des Vorschlags.",
+      "testRefs": [
+        {
+          "file": "tests/skill-laufzeit-antwortweg.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-10-12T06:53:44.000Z"
+        }
+      ]
     },
     {
       "id": "TEST-learning-emit",
@@ -14620,6 +14660,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-783",
+      "target": "FUNC-se-laufzeit",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-783",
+      "target": "REQ-laufzeit-reads-answer-path",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-783",
+      "target": "SCHEMA-chain-metrics",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-784",
       "target": "FUNC-chain-metrics",
       "type": "relation"
@@ -15478,6 +15533,11 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-laufzeit",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-se-optimize",
       "type": "compose"
     },
@@ -15791,6 +15851,11 @@
     {
       "source": "FLOW-chain-metrics",
       "target": "FUNC-se-fmea",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-chain-metrics",
+      "target": "FUNC-se-laufzeit",
       "type": "io"
     },
     {
@@ -16825,6 +16890,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-mutate-cmd-se-laufzeit",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-se-laufzeit",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-mutate-cmd-se-optimize",
       "target": "FUNC-mutate",
       "type": "io"
@@ -17332,6 +17407,11 @@
     {
       "source": "FLOW-skill-request",
       "target": "FUNC-se-irr",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-laufzeit",
       "type": "io"
     },
     {
@@ -18320,6 +18400,11 @@
     {
       "source": "FUNC-block-urteilsarbeit",
       "target": "FUNC-se-irr",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-urteilsarbeit",
+      "target": "FUNC-se-laufzeit",
       "type": "compose"
     },
     {
@@ -19560,6 +19645,26 @@
     },
     {
       "source": "FUNC-se-irr",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-laufzeit",
+      "target": "MOD-agent-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-laufzeit",
+      "target": "FLOW-mutate-cmd-se-laufzeit",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-laufzeit",
+      "target": "REQ-laufzeit-reads-answer-path",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-laufzeit",
       "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
     },
@@ -21521,6 +21626,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-laufzeit-reads-answer-path",
+      "target": "REQ-laufzeit-reads-answer-path",
+      "type": "verify"
+    },
+    {
       "source": "TEST-learning-emit",
       "target": "REQ-post-emit-trajectory",
       "type": "verify"
@@ -22522,6 +22632,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-laufzeit-reads-answer-path",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-mcp-gate-symmetry",
       "type": "compose"
     },
@@ -23125,5 +23240,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 700
+  "graphVersion": 701
 }

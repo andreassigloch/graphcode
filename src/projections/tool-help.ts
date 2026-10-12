@@ -71,7 +71,7 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'ein Schritt), `branching` (größter Ausgangsgrad in der Kette), `moduleBoundaries` (Kettenkanten ' +
       'über eine MOD-Grenze; `null`, wenn ein Glied kein Modul hat), `feedbackLoops`, `sharedFuncs` ' +
       '(Glieder in mehr als einer Kette) und `bottlenecks` (obere Schranke). `syncDepth` und ' +
-      '`errorPathDepth` sind immer `null`: das Modell trägt dafür kein Attribut. Eine Kette mit ' +
+      '`errorPathDepth` sind immer `null`: beide werden nicht gerechnet. Eine Kette mit ' +
       '`measurable: false` trägt KEINE Zahl, sondern `reasons` — `FC-05` (zerfallen), `loose-member` ' +
       '(ein Glied ohne io-Eingang oder -Ausgang), `no-entry`, `no-exit`, `empty`. Ohne Schwelle: hier ' +
       'wird gemessen, nicht geurteilt.\n' +
@@ -81,6 +81,14 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'gerichtetem Modulpaar Kanten und verschiedene Verträge), `imports` und `handovers` (Fluss und ' +
       'Funktion; gezählt nur an Gliedern, die allein dieser Kette gehören — die Zuflüsse einer ' +
       'geteilten Funktion stehen an ihr). Die Zahlen bleiben die Längen dieser Listen.\n' +
+      'Der Antwortweg (CR-GC-783) liest das Merkmal `sync` an den Flüssen: `sync` heißt, der Abnehmer ' +
+      'wartet beim Aufruf auf diese Lieferung, `async` heißt vorab geliefert. `answerPath` nennt die ' +
+      'Glieder, auf die die Antwort an einen Akteur wartet, vom Akteur rückwärts über die Flüsse mit ' +
+      '`sync`; er verlässt die Kette nicht. `[]` heißt, kein Glied liefert einem Akteur synchron; ' +
+      '`null` heißt, die Aussage ist verhindert. `answerPathBlockedBy` nennt dann die hindernden ' +
+      'Flüsse und ist sonst leer: ein Fluss hindert, wenn er das Merkmal nicht lesbar trägt oder ' +
+      '`sync` trägt und von einer Funktion außerhalb der Kette kommt. Gelesen wird nur entlang des ' +
+      'Wegs: die Liste nennt die Hindernisse, auf die er trifft, nicht jeden Fluss ohne Merkmal.\n' +
       '`measurability` ist die Reichweite daneben: bewertbare / alle Ketten. Kennzahlen bei niedriger ' +
       'Quote beschreiben nur die Ketten, die schon Ketten sind; `ratio` ist `null`, wenn es keine gibt.\n' +
       '`riskCarriers` (CR-GC-787) steht immer da, zwei Listen über dieselben Paare: `risks` je Risiko ' +

@@ -66,7 +66,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` ·
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-decode` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (serialize∘parse): `FUNC-decode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-read-tools`
-- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-se-vorbereitung`
+- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-laufzeit` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-se-vorbereitung`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 
@@ -414,7 +414,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-780` | done | Entwurfsregel am geteilten Glied | `FUNC-mutate` · `REQ-gate-judges-and-stores` |
 | `CR-GC-781` | done | Konzept Fassung 3: Schluss aus den Spikes und Leitfaden der Optimierung | `FUNC-chain-metrics` · `FUNC-se-fmea` |
 | `CR-GC-782` | n/a | se-fmea Version 9: Umfang, Flaeche, Tieferlegen | `FUNC-se-fmea` · `REQ-fmea-checks-entry` |
-| `CR-GC-783` | n/a | Skill Laufzeitanalyse einer Wirkkette | `FUNC-chain-metrics` |
+| `CR-GC-783` | n/a | Skill Laufzeitanalyse einer Wirkkette | `FUNC-chain-metrics` · `FUNC-se-laufzeit` · `REQ-laufzeit-reads-answer-path` |
 | `CR-GC-784` | n/a | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen | `FUNC-chain-metrics` · `FUNC-se-vorbereitung` · `REQ-vorbereitung-reads-metrics` |
 | `CR-GC-785` | n/a | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse | `FUNC-graph-suggest` · `FUNC-se-optimize` · `REQ-optimize-probes-and-presents` |
 | `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) | `FUNC-graph-readiness` · `FUNC-take-steering-snapshot` |

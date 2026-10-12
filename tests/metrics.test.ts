@@ -32,7 +32,6 @@ import {
   requirementScope,
   riskCarriers,
   type MetricPolicy,
-  type OntologyGraph,
 } from '@sigloch/contracts/se';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
 import { openMeasured } from '../src/surface/measured.js';
@@ -480,28 +479,42 @@ describe('graph_metrics — Kettenkennzahlen und Bewertbarkeit (CR-GC-767)', () 
 });
 
 /**
- * CR-GC-767 — graphcodes eigenes Modell: `graph_metrics` und der Spike zeigen DIESELBE Zahl.
+ * CR-GC-767 — graphcodes eigenes Modell: `graph_metrics` zeigt je Kette, was `chainMetrics` rechnet.
  *
- * Der Spike (`scripts/spike-kettenkennzahlen.mjs`) gibt die committete SSOT-Datei roh an
- * `chainMetrics`; das Werkzeug geht ueber Store und `toOntologyGraph`. Stimmen beide Wege je Kette
- * ueberein, ist der Adapter verlustfrei. Keine harte Zahl: das Modell lebt, die Gleichheit nicht.
+ * CR-GC-783: der direkte Aufruf rechnet auf `toOntologyGraph(getGraph())`, nicht auf der roh
+ * geparsten SSOT-Datei. Die Datei legt Attribute flach ans Element (`"sync": "sync"`), die Rechnung
+ * liest `attributes.sync`: roh gelesen traegt kein Fluss das Merkmal, und der Antwortweg jeder Kette
+ * ist verhindert (Export-Kodierung als Regel-Eingang, CR-GC-303). Bis contracts 12.4 las
+ * `chainMetrics` kein Attribut, deshalb fiel die rohe Lesart nicht auf. Keine harte Zahl: das
+ * Modell lebt, die Gleichheit nicht.
  */
 describe('graph_metrics auf dem eigenen Modell (CR-GC-767)', () => {
-  it('zeigt jede FCHAIN der SSOT mit Quote — je Kette gleich dem direkten Aufruf des Spikes', async () => {
+  it('zeigt jede FCHAIN der SSOT mit Quote — je Kette gleich dem direkten Aufruf, das Merkmal am Fluss kommt an', async () => {
     // Das Repo wird nur GELESEN: `openMeasured` legt Store und Lock in ein Wegwerf-Verzeichnis (CR-GC-496).
     const repo = join(__dirname, '..');
     const ssot = join(repo, 'docs', 'graph', 'graphcode.graph.json');
-    const roh = JSON.parse(readFileSync(ssot, 'utf8')) as OntologyGraph;
-    const direkt = chainMetrics(roh);
-    expect(direkt.measurability.chains, 'Praemisse: das eigene Modell traegt Ketten').toBeGreaterThan(0);
+    const datei = JSON.parse(readFileSync(ssot, 'utf8')) as { elements: Array<{ type: string; sync?: unknown }> };
+    expect(
+      datei.elements.some((e) => e.type === 'FLOW' && e.sync !== undefined),
+      'Praemisse: die SSOT traegt das Merkmal an mindestens einem Fluss',
+    ).toBe(true);
 
     const measured = await openMeasured({ graph: ssot, repoRoot: repo, systemId: 'graphcode' });
     try {
+      const direkt = chainMetrics(toOntologyGraph(measured.harness.getGraph()));
+      expect(direkt.measurability.chains, 'Praemisse: das eigene Modell traegt Ketten').toBeGreaterThan(0);
+
       const res = await bindToolsToHarness(measured.harness).graph_metrics.handler({});
       const nachId = <T extends { chainId: string }>(xs: T[]): T[] => [...xs].sort((a, b) => a.chainId.localeCompare(b.chainId));
       expect(nachId(res.chains)).toEqual(nachId(direkt.chains));
       expect(res.measurability).toEqual(direkt.measurability);
-      expect(res.measurability.chains).toBe(roh.elements.filter((e) => e.type === 'FCHAIN').length);
+      expect(res.measurability.chains).toBe(datei.elements.filter((e) => e.type === 'FCHAIN').length);
+
+      // Das Merkmal kommt am Werkzeug an: mindestens eine Kette nennt ein Glied auf ihrem Antwortweg.
+      // Der leere Weg `[]` belegt das nicht: ihn gibt es auch roh gelesen, an einer Kette ohne Antwort
+      // an einen Akteur wird kein Fluss gelesen. Ein Glied steht nur da, wenn `sync` gelesen wurde.
+      const mitGlied = res.chains.filter((c) => ((c as { answerPath?: string[] | null }).answerPath ?? []).length > 0);
+      expect(mitGlied.map((c) => c.chainId), 'keine Kette mit einem Glied auf dem Antwortweg').not.toEqual([]);
     } finally {
       await measured.close();
     }

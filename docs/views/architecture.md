@@ -96,6 +96,7 @@
 | `FUNC-se-generate` | FUNC | Skill se:generate |
 | `FUNC-se-help` | FUNC | Skill se:help |
 | `FUNC-se-irr` | FUNC | Skill se-irr |
+| `FUNC-se-laufzeit` | FUNC | Skill se-laufzeit |
 | `FUNC-se-optimize` | FUNC | Skill se:optimize |
 | `FUNC-se-plan` | FUNC | Skill se-plan |
 | `FUNC-se-retro` | FUNC | Skill se-retro |
@@ -223,6 +224,7 @@
 | `FUNC-se-generate` | `MOD-agent-surface` |
 | `FUNC-se-help` | `MOD-agent-surface` |
 | `FUNC-se-irr` | `MOD-agent-surface` |
+| `FUNC-se-laufzeit` | `MOD-agent-surface` |
 | `FUNC-se-optimize` | `MOD-agent-surface` |
 | `FUNC-se-plan` | `MOD-agent-surface` |
 | `FUNC-se-retro` | `MOD-agent-surface` |

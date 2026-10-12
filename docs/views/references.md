@@ -749,6 +749,9 @@
 | `CR-GC-782` | relation | `FUNC-se-fmea` |
 | `CR-GC-782` | relation | `REQ-fmea-checks-entry` |
 | `CR-GC-783` | relation | `FUNC-chain-metrics` |
+| `CR-GC-783` | relation | `FUNC-se-laufzeit` |
+| `CR-GC-783` | relation | `REQ-laufzeit-reads-answer-path` |
+| `CR-GC-783` | relation | `SCHEMA-chain-metrics` |
 | `CR-GC-784` | relation | `FUNC-chain-metrics` |
 | `CR-GC-784` | relation | `FUNC-se-vorbereitung` |
 | `CR-GC-784` | relation | `REQ-vorbereitung-reads-metrics` |
@@ -906,6 +909,7 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-fmea` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-generate` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-irr` |
+| `FCHAIN-skill-authoring` | compose | `FUNC-se-laufzeit` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-optimize` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-plan` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-top-level` |
@@ -968,6 +972,7 @@
 | `FLOW-chain-metrics` | io | `ACTOR-dashboard` |
 | `FLOW-chain-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-chain-metrics` | io | `FUNC-se-fmea` |
+| `FLOW-chain-metrics` | io | `FUNC-se-laufzeit` |
 | `FLOW-chain-metrics` | io | `FUNC-se-optimize` |
 | `FLOW-chain-metrics` | io | `FUNC-se-vorbereitung` |
 | `FLOW-chain-metrics` | relation | `SCHEMA-chain-metrics` |
@@ -1168,6 +1173,8 @@
 | `FLOW-mutate-cmd-se-generate` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-se-irr` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-se-irr` | relation | `SCHEMA-mutate-command` |
+| `FLOW-mutate-cmd-se-laufzeit` | io | `FUNC-mutate` |
+| `FLOW-mutate-cmd-se-laufzeit` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-se-optimize` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-se-optimize` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-se-plan` | io | `FUNC-mutate` |
@@ -1270,6 +1277,7 @@
 | `FLOW-skill-request` | io | `FUNC-se-generate` |
 | `FLOW-skill-request` | io | `FUNC-se-help` |
 | `FLOW-skill-request` | io | `FUNC-se-irr` |
+| `FLOW-skill-request` | io | `FUNC-se-laufzeit` |
 | `FLOW-skill-request` | io | `FUNC-se-optimize` |
 | `FLOW-skill-request` | io | `FUNC-se-plan` |
 | `FLOW-skill-request` | io | `FUNC-se-retro` |
@@ -1466,6 +1474,7 @@
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-conops` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-fmea` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-irr` |
+| `FUNC-block-urteilsarbeit` | compose | `FUNC-se-laufzeit` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-plan` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-trade` |
 | `FUNC-bootstrap` | allocate | `MOD-surface` |
@@ -1698,6 +1707,10 @@
 | `FUNC-se-irr` | allocate | `MOD-agent-surface` |
 | `FUNC-se-irr` | io | `FLOW-mutate-cmd-se-irr` |
 | `FUNC-se-irr` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-se-laufzeit` | allocate | `MOD-agent-surface` |
+| `FUNC-se-laufzeit` | io | `FLOW-mutate-cmd-se-laufzeit` |
+| `FUNC-se-laufzeit` | satisfy | `REQ-laufzeit-reads-answer-path` |
+| `FUNC-se-laufzeit` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-optimize` | allocate | `MOD-agent-surface` |
 | `FUNC-se-optimize` | io | `FLOW-mutate-cmd-se-optimize` |
 | `FUNC-se-optimize` | satisfy | `REQ-optimize-probes-and-presents` |
@@ -2061,6 +2074,7 @@
 | `TEST-interface-escalation` | verify | `REQ-interface-change-escalation` |
 | `TEST-interface-escalation` | verify | `REQ-post-interface-escalation` |
 | `TEST-interface-escalation` | verify | `REQ-pre-interface-escalation` |
+| `TEST-laufzeit-reads-answer-path` | verify | `REQ-laufzeit-reads-answer-path` |
 | `TEST-learning-emit` | verify | `REQ-post-emit-trajectory` |
 | `TEST-learning-emit` | verify | `REQ-pre-emit-trajectory` |
 | `TEST-learning-emit` | verify | `REQ-trajectory-emit` |
@@ -2247,6 +2261,7 @@
 | `UC-code-quality` | compose | `REQ-gate-judges-and-stores` |
 | `UC-code-quality` | compose | `REQ-interactive-capture-suggest` |
 | `UC-code-quality` | compose | `REQ-interface-change-escalation` |
+| `UC-code-quality` | compose | `REQ-laufzeit-reads-answer-path` |
 | `UC-code-quality` | compose | `REQ-mcp-gate-symmetry` |
 | `UC-code-quality` | compose | `REQ-one-gate-per-repo` |
 | `UC-code-quality` | compose | `REQ-optimize-probes-and-presents` |
