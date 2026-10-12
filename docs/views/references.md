@@ -832,6 +832,13 @@
 | `CR-GC-802` | relation | `REQ-risk-steering-delta-missing` |
 | `CR-GC-802` | relation | `REQ-stage-names-enumerated` |
 | `CR-GC-802` | relation | `REQ-steering-delta-in-answer-tested` |
+| `CR-GC-803` | relation | `FUNC-export-marker` |
+| `CR-GC-803` | relation | `FUNC-graph-export-snapshot` |
+| `CR-GC-803` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-803` | relation | `REQ-export-marker-tracks-drift` |
+| `CR-GC-803` | relation | `REQ-export-no-clobber` |
+| `CR-GC-803` | relation | `REQ-graph-snapshot-per-commit` |
+| `CR-GC-803` | relation | `REQ-single-measurement-path` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1634,6 +1641,7 @@
 | `FUNC-export-markdown` | satisfy | `REQ-pre-export-markdown` |
 | `FUNC-export-marker` | allocate | `MOD-kernel` |
 | `FUNC-export-marker` | io | `FLOW-export-pending` |
+| `FUNC-export-marker` | satisfy | `REQ-export-marker-tracks-drift` |
 | `FUNC-fit-advisory` | allocate | `MOD-kernel-measure` |
 | `FUNC-fit-advisory` | io | `FLOW-channel-fit-advisory` |
 | `FUNC-fit-advisory` | io | `FLOW-channel-steer-advisory` |
@@ -1664,6 +1672,7 @@
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-graph-export-snapshot` | allocate | `MOD-projections` |
 | `FUNC-graph-export-snapshot` | io | `FLOW-graph-snapshot-file` |
+| `FUNC-graph-export-snapshot` | satisfy | `REQ-export-no-clobber` |
 | `FUNC-graph-export-snapshot` | satisfy | `REQ-held-back-traces-named` |
 | `FUNC-graph-impact` | allocate | `MOD-kernel` |
 | `FUNC-graph-impact` | io | `FLOW-impact-slice` |
@@ -1854,6 +1863,7 @@
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-applied-suggestion-moves-target` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-element-contract-finding` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-measurement-vector-contract-tested` |
+| `FUNC-take-steering-snapshot` | satisfy | `REQ-single-measurement-path` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-stage-names-enumerated` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-post` |
@@ -1932,11 +1942,9 @@
 | `MOD-projections` | satisfy | `REQ-completeness-single-value` |
 | `MOD-projections` | satisfy | `REQ-deterministic-serialization` |
 | `MOD-projections` | satisfy | `REQ-docs-taxonomy` |
-| `MOD-projections` | satisfy | `REQ-export-no-clobber` |
 | `MOD-projections` | satisfy | `REQ-formatE-parity` |
 | `MOD-projections` | satisfy | `REQ-graph-integrity` |
 | `MOD-projections` | satisfy | `REQ-interface-schema` |
-| `MOD-projections` | satisfy | `REQ-single-measurement-path` |
 | `MOD-projections` | satisfy | `REQ-testref-materialized` |
 | `MOD-surface` | satisfy | `REQ-agent-agnostic` |
 | `MOD-surface` | satisfy | `REQ-buildable-standalone` |
@@ -1972,7 +1980,7 @@
 | `REQ-graph-is-ssot` | compose | `REQ-held-back-traces-named` |
 | `REQ-one-gate-per-repo` | compose | `REQ-gate-only-writes` |
 | `REQ-risk-audit-evaluation-unowned` | compose | `REQ-audit-trail` |
-| `REQ-risk-auto-export-fails-silently` | compose | `REQ-graph-snapshot-per-commit` |
+| `REQ-risk-auto-export-fails-silently` | compose | `REQ-export-marker-tracks-drift` |
 | `REQ-risk-edge-vanishes-silently` | compose | `REQ-held-back-traces-named` |
 | `REQ-risk-gate-rule-eval-fails` | compose | `REQ-gate-survives-rule-failure` |
 | `REQ-risk-interface-change-unescalated` | compose | `REQ-interface-change-names-dependents` |
@@ -2153,6 +2161,7 @@
 | `TEST-graph-realize` | verify | `REQ-gate-only-writes` |
 | `TEST-graph-realize` | verify | `REQ-test-runnable-binding` |
 | `TEST-graph-tests-operational` | verify | `REQ-graph-tests-operational` |
+| `TEST-graph-time-travel` | verify | `REQ-export-marker-tracks-drift` |
 | `TEST-graph-time-travel` | verify | `REQ-graph-snapshot-per-commit` |
 | `TEST-graph-time-travel` | verify | `REQ-graph-state-recall` |
 | `TEST-gve-autostart` | verify | `REQ-single-kuzu-owner` |

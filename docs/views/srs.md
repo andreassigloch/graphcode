@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 183 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 184 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -1340,6 +1340,14 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-measurement-vector-contract` · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
+###### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
+
+nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-graph-metrics` (unit) · `TEST-single-measurement-path` (unit) · `TEST-steering-snapshot` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+
 ###### `REQ-stage-names-enumerated` — Stufennamen sind aufgezaehlt
 
 Der Stufenname im Steuerungs-Snapshot ist ein aufgezaehlter Wert aus der Regelmatrix, und ein unbekannter Name wird beim Bilden des Snapshots abgewiesen.
@@ -2073,6 +2081,14 @@ Die Funktion, die den Messvektor liefert, liefert ihn nach einem an Code gebunde
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-measurement-vector-contract` · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+
+###### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
+
+nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-graph-metrics` (unit) · `TEST-single-measurement-path` (unit) · `TEST-steering-snapshot` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-stage-names-enumerated` — Stufennamen sind aufgezaehlt
 
@@ -2912,6 +2928,14 @@ Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<sys
 
 io ◀ `FLOW-graph-state` · `FLOW-held-back-traces` · io ▶ `FLOW-graph-snapshot-file` · allocate ▶ `MOD-projections`
 
+###### `REQ-export-no-clobber` — Export refuse-to-clobber
+
+graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)
+
+priority: must · status: done · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
+
 ###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
 
 > auch unter: `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json`
@@ -3099,6 +3123,14 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 Markiert nach einer Mutation, dass der Export dem Store hinterherhaengt, und raeumt die Marke wieder ab. Die Marke ist der einzige Hinweis darauf, dass Datei und Store auseinanderlaufen.
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-export-pending` · allocate ▶ `MOD-kernel`
+
+###### `REQ-export-marker-tracks-drift` — Marke haelt den Rueckstand des Exports fest
+
+Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-export-marker` · allocate ▶ `MOD-kernel`
 
 ### 3.5  `UC-live-graph-view` — Modellstand live mitlesen
 
@@ -6056,6 +6088,14 @@ Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<sys
 
 io ◀ `FLOW-graph-state` · `FLOW-held-back-traces` · io ▶ `FLOW-graph-snapshot-file` · allocate ▶ `MOD-projections`
 
+###### `REQ-export-no-clobber` — Export refuse-to-clobber
+
+graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)
+
+priority: must · status: done · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
+
 ###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
 
 > auch unter: `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json`
@@ -6478,6 +6518,14 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-measurement-vector-contract` · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
+###### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
+
+nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-graph-metrics` (unit) · `TEST-single-measurement-path` (unit) · `TEST-steering-snapshot` (integration) · satisfy ◀ `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+
 ###### `REQ-stage-names-enumerated` — Stufennamen sind aufgezaehlt
 
 Der Stufenname im Steuerungs-Snapshot ist ein aufgezaehlter Wert aus der Regelmatrix, und ein unbekannter Name wird beim Bilden des Snapshots abgewiesen.
@@ -6607,6 +6655,14 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (int
 Markiert nach einer Mutation, dass der Export dem Store hinterherhaengt, und raeumt die Marke wieder ab. Die Marke ist der einzige Hinweis darauf, dass Datei und Store auseinanderlaufen.
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-export-pending` · allocate ▶ `MOD-kernel`
+
+###### `REQ-export-marker-tracks-drift` — Marke haelt den Rueckstand des Exports fest
+
+Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-export-marker` · allocate ▶ `MOD-kernel`
 
 ###### 3.10.2.7.7  `FUNC-graph-store` — GraphStore
 
@@ -8386,7 +8442,7 @@ allocate ◀ `FUNC-block-q-improvement` · `FUNC-decode` · `FUNC-generation-ste
 
 Reine Projektionen des Graphen: Messung, Readiness, Codec, Export, Markdown-Views, Trajektorie. Liest den Graphen ueber die kernel-Abfrage und schreibt nie in ihn zurueck. (CR-GC-446)
 
-allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest` · satisfy ▶ `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-export-no-clobber` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-single-measurement-path` · `REQ-testref-materialized`
+allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest` · satisfy ▶ `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-testref-materialized`
 
 ### 6.6  `MOD-surface` — surface — MCP, CLI, Host-Socket, Viewer
 
@@ -8499,14 +8555,6 @@ CONSTRAINT (non-functional): Aus dem Graphen reproduzierbar → VIEW (generiert,
 priority: should · status: reviewed · kinds: non-functional
 
 Verification ◀ `TEST-docs-taxonomy` (inspection) · satisfy ◀ `MOD-projections` · allocate ▶ —
-
-### `REQ-export-no-clobber` — Export refuse-to-clobber
-
-graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)
-
-priority: should · status: done · kinds: non-functional · role: mitigation
-
-Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `MOD-projections` · allocate ▶ —
 
 ### `REQ-formatE-parity` — Format-E-Parity = contracts (L1)
 
@@ -8715,14 +8763,6 @@ Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle
 priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-bridge-follows-lock` (integration) · `TEST-gve-autostart` (unit) · `TEST-host-shim` (integration) · `TEST-mvp-e2e` (e2e) · `TEST-session-lifecycle` (integration) · `TEST-status-verb` (unit) · `TEST-store-lock` (integration) · satisfy ◀ `MOD-kernel` · allocate ▶ —
-
-### `REQ-single-measurement-path` — Ein Messpfad fuer alle Steuerungs-Oberflaechen
-
-nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.
-
-priority: should · status: n/a · kinds: non-functional · role: mitigation
-
-Verification ◀ `TEST-graph-metrics` (unit) · `TEST-single-measurement-path` (unit) · `TEST-steering-snapshot` (integration) · satisfy ◀ `MOD-projections` · allocate ▶ —
 
 ### `REQ-single-store` — Ein Store: Kuzu
 
@@ -9080,7 +9120,7 @@ verify ▶ `REQ-graph-tests-operational` · testRefs: `tests/mcp.tests-operation
 
 Realer Disk-Kuzu: mutate setzt den Drift-Marker, graph_export loescht ihn und materialisiert den Snapshot; Reseed eines aelteren Snapshots stellt exakt jenen Stand wieder her (git checkout + reseed = Recall) und hinterlaesst einen sauberen Working-State. (verifiziert REQ-graph-snapshot-per-commit, REQ-graph-state-recall)
 
-verify ▶ `REQ-graph-snapshot-per-commit` · `REQ-graph-state-recall` · testRefs: `tests/graph-timetravel.test.ts`
+verify ▶ `REQ-export-marker-tracks-drift` · `REQ-graph-snapshot-per-commit` · `REQ-graph-state-recall` · testRefs: `tests/graph-timetravel.test.ts`
 
 ### 8.51  `TEST-gve-autostart` — Autostart-Wachen des Viewers
 
@@ -9732,4 +9772,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-183 REQ · 183 verified · 0 without a verifying TEST (R-01).
+184 REQ · 184 verified · 0 without a verifying TEST (R-01).

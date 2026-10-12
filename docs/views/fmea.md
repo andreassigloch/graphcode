@@ -14,7 +14,7 @@
 | 2 | Risiko falscher Befund laeuft um | `FCHAIN-steering-loop` | 8 | 3 | 7 | 168 | High | — | ✗ |
 | 3 | Risiko Schnittstellenaenderung ohne Eskalation | `FCHAIN-interface-escalation` | 7 | 4 | 5 | 140 | High | — | ✗ |
 | 4 | Risiko Vertrag des Messvektors ungebunden | `FCHAIN-steering-loop` | 6 | 3 | 7 | 126 | High | `FUNC-take-steering-snapshot` | ✗ |
-| 5 | Risiko Glied rechnet auf altem Stand | `FCHAIN-steering-loop` | 7 | 3 | 6 | 126 | High | 15 Funktionen | ✓ |
+| 5 | Risiko Glied rechnet auf altem Stand | `FCHAIN-steering-loop` | 7 | 3 | 6 | 126 | High | `FUNC-take-steering-snapshot` | ✓ |
 | 6 | Risiko Schleife pendelt | `FCHAIN-steering-loop` | 6 | 4 | 5 | 120 | High | `FUNC-generation-step` | ✗ |
 | 7 | Risiko geteilte Zusage ohne Traeger | `FCHAIN-steering-loop` | 6 | 3 | 6 | 108 | High | `FUNC-generation-step` | ✗ |
 | 8 | Risiko Store nicht lesbar | — | 9 | 3 | 3 | 81 | High | `FUNC-graph-store` | ✗ |
@@ -23,10 +23,10 @@
 | 11 | Risiko Delta fehlt in der Antwort | `FCHAIN-steering-loop` | 5 | 3 | 5 | 75 | Medium | `FUNC-compute-steering-delta` | ✗ |
 | 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-repo-lifecycle` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
 | 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-impact-testing` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` | ✓ |
-| 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | 8 Funktionen | ✓ |
+| 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | `FUNC-export-marker` | ✓ |
 | 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | 4 Funktionen | ✓ |
 | 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-repo-lifecycle` | 7 | 2 | 3 | 42 | Medium | 5 Funktionen | ✓ |
-| 17 | Risiko halb gefuellter Store nach Abbruch | `FCHAIN-recall` | 6 | 2 | 3 | 36 | Low | 15 Funktionen | ✓ |
+| 17 | Risiko halb gefuellter Store nach Abbruch | `FCHAIN-recall` | 6 | 2 | 3 | 36 | Low | `FUNC-graph-export-snapshot` | ✓ |
 | 18 | Risiko Regelauswertung faellt im Gate aus | — | 8 | 2 | 2 | 32 | Low | `FUNC-mutate` | ✗ |
 | 19 | Risiko Skill weist abgelehnten Zug an | `FCHAIN-skill-authoring` | 4 | 4 | 2 | 32 | Low | — | ✗ |
 
@@ -115,13 +115,13 @@ Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die 
 - **Bewertung:** S 7 · O 3 · D 6 · RPN 126 · AP High
 - **Kette:** `FCHAIN-steering-loop`
 - **Anwendungsfall:** `UC-deterministic-steering`
-- **Träger:** `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest`
+- **Träger:** `FUNC-take-steering-snapshot`
 - **Befund:** FMEA CR-GC-779 und CR-GC-795 FM-02, Quelle E Kreislauf. Ursache waere ein zweiter Messpfad oder ein zwischengespeicherter Stand. Entscheidung: gedeckt durch REQ-single-measurement-path.
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-single-measurement-path` | nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse. | `MOD-projections` |
+| `REQ-single-measurement-path` | nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse. | `FUNC-take-steering-snapshot` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -286,13 +286,13 @@ Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten
 - **Bewertung:** S 4 · O 3 · D 4 · RPN 48 · AP Medium
 - **Kette:** `FCHAIN-snapshot-freshness`
 - **Anwendungsfall:** `UC-graph-time-travel`
-- **Träger:** `FUNC-auto-export` · `FUNC-evaluate-rules` · `FUNC-export-markdown` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-graph-store` · `FUNC-held-back-traces` · `FUNC-mutate`
+- **Träger:** `FUNC-export-marker`
 - **Befund:** FMEA CR-GC-798 FM-16, Quelle F geteilte Funktion FUNC-export-markdown. Der Fehler geht nur auf die Fehlerausgabe. Entscheidung: gedeckt, die Marke EXPORT_PENDING bleibt stehen und blockt den Commit (REQ-graph-snapshot-per-commit).
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-graph-snapshot-per-commit` | Jeder Commit traegt einen kanonischen, deterministischen Graph-Snapshot (docs/graph/*.graph.json), der zum Code dieses Commits passt. Un-exportierte Modell-Mutationen blockieren den Commit ueber den single-writer-sicheren Drift-Marker .graphcode/EXPORT_PENDING (vom Gate auf mutate gesetzt, von graph_export/graph_reseed geloescht); der pre-commit-Hook staged die generierten Artefakte automatisch. (CR-GC-217) | `FCHAIN-snapshot-freshness` |
+| `REQ-export-marker-tracks-drift` | Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen. | `FUNC-export-marker` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -343,13 +343,13 @@ Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store
 - **Bewertung:** S 6 · O 2 · D 3 · RPN 36 · AP Low
 - **Kette:** `FCHAIN-recall`
 - **Anwendungsfall:** `UC-graph-time-travel`
-- **Träger:** `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest`
+- **Träger:** `FUNC-graph-export-snapshot`
 - **Befund:** FMEA CR-GC-798 FM-13, Quelle E Kreislauf aus FUNC-graph-store, FUNC-import und FUNC-seed-from-json. applyReseed leert und fuellt in zwei Schritten; der Start vergleicht Store und Datei nicht (CR-GC-392). Entscheidung: gedeckt, der naechste Export verweigert bei fehlenden Elementen (REQ-export-no-clobber).
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-export-no-clobber` | graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202) | `MOD-projections` |
+| `REQ-export-no-clobber` | graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202) | `FUNC-graph-export-snapshot` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|

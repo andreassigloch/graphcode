@@ -4,7 +4,7 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 93 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 91 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
@@ -22,7 +22,6 @@
 | `REQ-deterministic-serialization` | Stabile Sortierung → commit-/merge-arm; zwei Encodes byte-identisch. (R3) | ✓ |
 | `REQ-disk-persistence` | Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4) | ✓ |
 | `REQ-docs-taxonomy` | CONSTRAINT (non-functional): Aus dem Graphen reproduzierbar → VIEW (generiert, disposable, byte-deterministisch); friert datiertes Urteil/externen Input ein → RECORD (immutable Nachweis). Verfeinert REQ-graph-is-ssot. Ziel-Layout docs/{graph,views,records,adr,cr}. (CR-GC-119) | ✓ |
-| `REQ-export-no-clobber` | graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202) | ✓ |
 | `REQ-formatE-parity` | CR-GC-103 L1: Format-E-Parität = contracts-Baseline; genau EIN Codec. | ✓ |
 | `REQ-frame-binding` | Die in diesem Graph definierte Struktur und ihre Schnittstellen (FUNC/FCHAIN/FLOW/REQ auf SE-Ontologie und TRACE_PATTERNS) sind bindend fuer die Realisierung. Ergaenzungen passen in die bestehenden Boxen und laufen durchs Gate; ein neuer Element- oder Kantentyp, ein neues geteiltes Paket, ein neuer Top-Level-UC oder -MOD braucht Familien-Review. (Beschluss 2026-06-16, Zahlen entfernt 2026-09-15) | ✓ |
 | `REQ-gate-only-writes` | Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201) | ✓ |
@@ -92,7 +91,6 @@
 | `REQ-self-contained-dist` | Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103. | ✓ |
 | `REQ-shared-views-no-fork` | views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2). | ✓ |
 | `REQ-single-kuzu-owner` | Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1) | ✓ |
-| `REQ-single-measurement-path` | nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse. | ✓ |
 | `REQ-single-store` | Genau ein Store = Kuzu (embedded native+WASM, Cypher). Kein Neo4j. (SPEC §0) | ✓ |
 | `REQ-single-transport` | Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5) | ✓ |
 | `REQ-small-model-viable` | Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded). | ✓ |

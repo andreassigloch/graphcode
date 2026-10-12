@@ -3376,6 +3376,12 @@
       "description": "docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md"
     },
     {
+      "id": "CR-GC-803",
+      "type": "CR",
+      "name": "Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen)",
+      "description": "docs/cr/open/CR-GC-803-vorbereitung-nach-fmea-nachtrag-gegenmas.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6261,6 +6267,16 @@
       ]
     },
     {
+      "id": "REQ-export-marker-tracks-drift",
+      "type": "REQ",
+      "name": "Marke haelt den Rueckstand des Exports fest",
+      "description": "Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-export-no-clobber",
       "type": "REQ",
       "name": "Export refuse-to-clobber",
@@ -6268,7 +6284,7 @@
       "status": "done",
       "created_at": "2026-06-18T00:00:00.000Z",
       "kinds": [
-        "non-functional"
+        "functional"
       ],
       "role": "mitigation"
     },
@@ -7634,7 +7650,7 @@
       "name": "Ein Messpfad fuer alle Steuerungs-Oberflaechen",
       "description": "nextStep, generationStep und der steeringDelta-Zweig des dryRun-Verdicts liefern fuer denselben Graphen dieselbe Violation-Menge, dieselben Dimensions-Scores und dieselbe Zahl blockierender Verstoesse.",
       "kinds": [
-        "non-functional"
+        "functional"
       ],
       "role": "mitigation"
     },
@@ -15560,6 +15576,41 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-803",
+      "target": "FUNC-export-marker",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-803",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-803",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-803",
+      "target": "REQ-export-marker-tracks-drift",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-803",
+      "target": "REQ-export-no-clobber",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-803",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-803",
+      "target": "REQ-single-measurement-path",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -19720,6 +19771,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-export-marker",
+      "target": "REQ-export-marker-tracks-drift",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-fit-advisory",
       "target": "MOD-kernel-measure",
       "type": "allocate"
@@ -19870,6 +19926,11 @@
       "source": "FUNC-graph-export-snapshot",
       "target": "FLOW-graph-snapshot-file",
       "type": "io"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
+      "target": "REQ-export-no-clobber",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-export-snapshot",
@@ -20869,6 +20930,11 @@
     },
     {
       "source": "FUNC-take-steering-snapshot",
+      "target": "REQ-single-measurement-path",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
       "target": "REQ-stage-names-enumerated",
       "type": "satisfy"
     },
@@ -21271,11 +21337,6 @@
     },
     {
       "source": "MOD-projections",
-      "target": "REQ-export-no-clobber",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-projections",
       "target": "REQ-formatE-parity",
       "type": "satisfy"
     },
@@ -21287,11 +21348,6 @@
     {
       "source": "MOD-projections",
       "target": "REQ-interface-schema",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-projections",
-      "target": "REQ-single-measurement-path",
       "type": "satisfy"
     },
     {
@@ -21508,7 +21564,7 @@
     },
     {
       "source": "REQ-risk-auto-export-fails-silently",
-      "target": "REQ-graph-snapshot-per-commit",
+      "target": "REQ-export-marker-tracks-drift",
       "type": "compose"
     },
     {
@@ -22497,6 +22553,11 @@
     {
       "source": "TEST-graph-tests-operational",
       "target": "REQ-graph-tests-operational",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-time-travel",
+      "target": "REQ-export-marker-tracks-drift",
       "type": "verify"
     },
     {
@@ -24503,5 +24564,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 740
+  "graphVersion": 743
 }
