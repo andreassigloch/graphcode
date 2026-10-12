@@ -1,6 +1,6 @@
 # CR-GC-785: se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-12, veröffentlicht mit graphcode 0.31.0, contracts 12.6.0)
 **Typ:** aus Item ITEM-2026-825 (idea)
 **Erstellt:** 2026-10-11
 **Item:** bok/items/ITEM-2026-825.json (Lane: code)

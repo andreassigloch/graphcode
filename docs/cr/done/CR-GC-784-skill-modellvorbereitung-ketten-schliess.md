@@ -1,6 +1,6 @@
 # CR-GC-784: Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-12, veröffentlicht mit graphcode 0.31.0, contracts 12.6.0)
 **Typ:** aus Item ITEM-2026-824 (idea)
 **Erstellt:** 2026-10-11
 **Item:** bok/items/ITEM-2026-824.json (Lane: code)
