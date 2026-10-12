@@ -1,6 +1,6 @@
 # CR-GC-791: Nachbarskills se:optimize und se-vorbereitung auf den Antwortweg nachziehen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-12)
 **Typ:** aus Item ITEM-2026-842 (finding)
 **Erstellt:** 2026-10-12
 **Item:** bok/items/ITEM-2026-842.json (Lane: code)
