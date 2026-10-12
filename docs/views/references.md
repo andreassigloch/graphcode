@@ -791,6 +791,9 @@
 | `CR-GC-793` | relation | `FUNC-schema-guard` |
 | `CR-GC-794` | relation | `FUNC-graph-store` |
 | `CR-GC-794` | relation | `REQ-store-recovery` |
+| `CR-GC-795` | relation | `REQ-risk-shared-steering-promise` |
+| `CR-GC-795` | relation | `REQ-risk-store-unreadable` |
+| `CR-GC-795` | relation | `REQ-steering-promise-one-owner` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -976,6 +979,7 @@
 | `FCHAIN-steering-loop` | satisfy | `REQ-monotone-convergence` |
 | `FCHAIN-steering-loop` | satisfy | `REQ-risk-loop-degradation` |
 | `FCHAIN-steering-loop` | satisfy | `REQ-risk-loop-oscillation` |
+| `FCHAIN-steering-loop` | satisfy | `REQ-risk-shared-steering-promise` |
 | `FCHAIN-test-ingest` | compose | `FUNC-graph-store` |
 | `FCHAIN-test-ingest` | compose | `FUNC-mutate` |
 | `FCHAIN-test-ingest` | compose | `FUNC-test-ingest` |
@@ -1582,6 +1586,7 @@
 | `FUNC-generation-step` | satisfy | `REQ-done-iff-no-focus` |
 | `FUNC-generation-step` | satisfy | `REQ-loop-round-log` |
 | `FUNC-generation-step` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-generation-step` | satisfy | `REQ-steering-promise-one-owner` |
 | `FUNC-goal-steerer` | allocate | `MOD-loop` |
 | `FUNC-goal-steerer` | compose | `FUNC-block-anleitung` |
 | `FUNC-goal-steerer` | compose | `FUNC-block-autorieren` |
@@ -1899,6 +1904,7 @@
 | `REQ-risk-gate-rule-eval-fails` | compose | `REQ-gate-survives-rule-failure` |
 | `REQ-risk-loop-degradation` | compose | `REQ-loop-convergence-monitor` |
 | `REQ-risk-loop-oscillation` | compose | `REQ-loop-round-log` |
+| `REQ-risk-shared-steering-promise` | compose | `REQ-steering-promise-one-owner` |
 | `REQ-risk-store-unreadable` | compose | `REQ-store-recovery` |
 | `REQ-single-kuzu-owner` | compose | `REQ-store-owner-lifecycle` |
 | `REQ-token-efficiency` | compose | `REQ-benchmark-harness` |
@@ -2230,6 +2236,8 @@
 | `TEST-skill-rule-ids` | verify | `REQ-published-counts-match-code` |
 | `TEST-skills-mcp` | verify | `REQ-doc-export` |
 | `TEST-status-verb` | verify | `REQ-single-kuzu-owner` |
+| `TEST-steering-promise-one-owner` | verify | `REQ-risk-shared-steering-promise` |
+| `TEST-steering-promise-one-owner` | verify | `REQ-steering-promise-one-owner` |
 | `TEST-steering-snapshot` | verify | `REQ-single-measurement-path` |
 | `TEST-store-lock` | verify | `REQ-one-gate-per-repo` |
 | `TEST-store-lock` | verify | `REQ-single-kuzu-owner` |
@@ -2327,6 +2335,7 @@
 | `UC-deterministic-steering` | compose | `REQ-phase-gate-not-skippable` |
 | `UC-deterministic-steering` | compose | `REQ-risk-loop-degradation` |
 | `UC-deterministic-steering` | compose | `REQ-risk-loop-oscillation` |
+| `UC-deterministic-steering` | compose | `REQ-risk-shared-steering-promise` |
 | `UC-deterministic-steering` | compose | `REQ-single-measurement-path` |
 | `UC-deterministic-steering` | compose | `REQ-skill-reads-only` |
 | `UC-deterministic-steering` | compose | `REQ-steering-from-metrics` |

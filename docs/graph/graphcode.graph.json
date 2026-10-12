@@ -3328,6 +3328,18 @@
       "description": "docs/cr/open/CR-GC-794-gegenmassnahme-store-recovery-haengt-am-.md"
     },
     {
+      "id": "CR-GC-795",
+      "type": "CR",
+      "name": "FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9)",
+      "description": "docs/cr/open/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md"
+    },
+    {
+      "id": "CR-GC-796",
+      "type": "CR",
+      "name": "Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9)",
+      "description": "docs/cr/open/CR-GC-796-store-beschaedigte-datei-wird-beim-oeffn.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -7226,6 +7238,20 @@
       "detection": 5
     },
     {
+      "id": "REQ-risk-shared-steering-promise",
+      "type": "REQ",
+      "name": "Risiko geteilte Zusage ohne Traeger",
+      "description": "Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann verletzt sein, ohne dass eine der acht Funktionen ausfaellt, die sie gemeinsam erfuellen.",
+      "role": "risk",
+      "kinds": [
+        "non-functional"
+      ],
+      "rationale": "FMEA CR-GC-795 Step 3 geteilte Zusage. REQ-steering-from-metrics wird von acht Funktionen erfuellt, sechs davon Glieder der Kette. Keine traegt sie allein.",
+      "severity": 6,
+      "occurrence": 3,
+      "detection": 6
+    },
+    {
       "id": "REQ-risk-store-unreadable",
       "type": "REQ",
       "name": "Risiko Store nicht lesbar",
@@ -7236,7 +7262,7 @@
       ],
       "rationale": "FMEA CR-GC-779 Quelle F geteilte Funktion FUNC-graph-store in acht Wirkketten. Je Kette eine Fehlerwirkung und die Schwere ist die der schwersten.",
       "severity": 9,
-      "occurrence": 2,
+      "occurrence": 3,
       "detection": 3
     },
     {
@@ -7431,6 +7457,16 @@
       "name": "Vorbedingung Steuerungsrunde",
       "description": "Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.",
       "status": "reviewed",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-steering-promise-one-owner",
+      "type": "REQ",
+      "name": "Steuerungszusage hat einen Verantwortlichen",
+      "description": "Genau eine Funktion verantwortet die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, und das ist der Generierungsschritt. Jede andere Funktion erfuellt eine eigene Anforderung an ihre Zulieferung.",
+      "role": "mitigation",
       "kinds": [
         "functional"
       ]
@@ -8221,7 +8257,7 @@
           "graphVersion": 0
         },
         "fmea": {
-          "graphVersion": 675
+          "graphVersion": 715
         }
       }
     },
@@ -10219,6 +10255,12 @@
           "ranAt": "2026-08-21T07:52:28.796Z"
         }
       ]
+    },
+    {
+      "id": "TEST-steering-promise-one-owner",
+      "type": "TEST",
+      "name": "Steuerungszusage hat einen Verantwortlichen",
+      "description": "Prueft am Modell, dass REQ-steering-from-metrics genau einen Erfueller vom Typ FUNC hat und dass jede zuliefernde Funktion der Steuerungsschleife eine eigene Anforderung erfuellt."
     },
     {
       "id": "TEST-steering-snapshot",
@@ -14920,6 +14962,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-795",
+      "target": "REQ-risk-shared-steering-promise",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-795",
+      "target": "REQ-risk-store-unreadable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-795",
+      "target": "REQ-steering-promise-one-owner",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15921,6 +15978,11 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "REQ-risk-loop-oscillation",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "REQ-risk-shared-steering-promise",
       "type": "satisfy"
     },
     {
@@ -19025,6 +19087,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-generation-step",
+      "target": "REQ-steering-promise-one-owner",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-goal-steerer",
       "target": "MOD-loop",
       "type": "allocate"
@@ -20706,6 +20773,11 @@
     {
       "source": "REQ-risk-loop-oscillation",
       "target": "REQ-loop-round-log",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-risk-shared-steering-promise",
+      "target": "REQ-steering-promise-one-owner",
       "type": "compose"
     },
     {
@@ -22506,6 +22578,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-steering-promise-one-owner",
+      "target": "REQ-risk-shared-steering-promise",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-steering-promise-one-owner",
+      "target": "REQ-steering-promise-one-owner",
+      "type": "verify"
+    },
+    {
       "source": "TEST-steering-snapshot",
       "target": "REQ-single-measurement-path",
       "type": "verify"
@@ -23016,6 +23098,11 @@
     },
     {
       "source": "UC-deterministic-steering",
+      "target": "REQ-risk-shared-steering-promise",
+      "type": "compose"
+    },
+    {
+      "source": "UC-deterministic-steering",
       "target": "REQ-single-measurement-path",
       "type": "compose"
     },
@@ -23430,5 +23517,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 712
+  "graphVersion": 716
 }

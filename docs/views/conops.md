@@ -426,6 +426,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-792` | n/a | Antwortweg lesbar machen: Gate-Urteil trennen, Store und Sperre als Glied | `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-mutate` · `FUNC-se-retro` |
 | `CR-GC-793` | n/a | Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten | `FUNC-bind-tools` · `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-schema-guard` |
 | `CR-GC-794` | n/a | Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger | `FUNC-graph-store` · `REQ-store-recovery` |
+| `CR-GC-795` | n/a | FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9) | `REQ-risk-shared-steering-promise` · `REQ-risk-store-unreadable` · `REQ-steering-promise-one-owner` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

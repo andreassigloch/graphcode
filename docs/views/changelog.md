@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 404 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 406 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 404 CR · 343 done · 4 open.
+Total: 406 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -466,3 +466,5 @@ Total: 404 CR · 343 done · 4 open.
 | `CR-GC-792` | n/a | Antwortweg lesbar machen: Gate-Urteil trennen, Store und Sperre als Glied |
 | `CR-GC-793` | n/a | Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten |
 | `CR-GC-794` | n/a | Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger |
+| `CR-GC-795` | n/a | FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9) |
+| `CR-GC-796` | n/a | Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9) |
