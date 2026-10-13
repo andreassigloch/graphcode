@@ -166,11 +166,13 @@ Prüfliste, keine Festlegung.
 3. Herunterdeklinieren über `se-vorbereitung` §2; Konflikte in der Lane, Vorschläge auf Anforderung — nichts
    online. (Vorschlag dieses CR, vom Autor als offen benannt; die Fassung oben ist die Antwort.)
 4. Rückbau des Zielprofils als eigener CR, wenn dieser abgeschlossen ist.
+5. Lücke der Testauswahl: Weg A. Ein Constraint-Test liest den committeten Snapshot und fällt damit unter das
+   Muster `graph.json` in `scripts/model-test-set.mjs`; der Vollständigkeits-Test zwingt ihn in den Satz.
+6. Trägerableitung in contracts: `riskCarriers` wird auf alle nicht-funktionalen Anforderungen an Modul, Kette
+   oder System verallgemeinert (Hüter, Version-Bump).
 
-## Offen
-
-- Lücke der Testauswahl: Weg A (Modell-Lane) oder B (Walk erweitern). Vorschlag: A.
-- Trägerableitung für Constraints ohne Rolle: im Skill oder in contracts.
+Sprachregelung: die drei Prüfläufe (`verify:model`, `verify:code`, `verify:full`) heißen **Test-Lanes**, zur
+Unterscheidung von der Lane eines Arbeitszugs (`aise dispatch prepare --lane graph|code`).
 
 ## Umfang, falls gebaut wird
 
