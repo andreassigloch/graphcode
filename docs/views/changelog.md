@@ -475,5 +475,5 @@ Total: 415 CR · 343 done · 4 open.
 | `CR-GC-801` | n/a | Sicht fmea.md ist ein Risikoregister: ohne Kette, Traeger, Prioritaet, Nachweis und Massnahmenstand |
 | `CR-GC-802` | n/a | FMEA-Nachtrag: die zwoelf bewerteten Fehlerarten als Risiken ins Modell |
 | `CR-GC-803` | n/a | Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen) |
-| `CR-GC-804` | n/a | Zielprofil: als Anforderungen im Modell statt als Datei, und Bewertung von sechs auf zwei Dimensionen (Diskussion) |
+| `CR-GC-804` | n/a | Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion) |
 | `CR-GC-805` | n/a | Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion |

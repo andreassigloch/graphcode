@@ -3384,7 +3384,7 @@
     {
       "id": "CR-GC-804",
       "type": "CR",
-      "name": "Zielprofil: als Anforderungen im Modell statt als Datei, und Bewertung von sechs auf zwei Dimensionen (Diskussion)",
+      "name": "Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion)",
       "description": "docs/cr/open/CR-GC-804-zielprofil-als-anforderungen-im-modell-s.md"
     },
     {
@@ -24851,5 +24851,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 747
+  "graphVersion": 748
 }
