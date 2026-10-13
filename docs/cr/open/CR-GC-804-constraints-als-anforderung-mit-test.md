@@ -81,6 +81,8 @@ Die Constraints spannen die projektlokale Regelfläche über den Familien-Boden.
 zur Familien-Regel befördert, wenn sie in mehreren Repos gebraucht wird **und** im Gate blocken soll statt
 erst in der Lane. Nicht vorher.
 
+Die Ebenen-Tabelle hat der Autor am 2026-10-13 bestätigt.
+
 ## Gemessene Lücke: die Testauswahl erreicht den Block nicht
 
 `impactedTests` (`src/kernel/measure/test-selection.ts`, Zeile 161) folgt `allocate` nur einwärts (ein
@@ -110,26 +112,69 @@ Elemente; 2) die Realisierungsdimensionen entfallen ersatzlos als Gewichte; 3) k
 die Schwelle je Element, Betriebsdaten korrigieren sie; 4) „Information jenseits der sechs Dimensionen" ist
 gegenstandslos.
 
-## Erster Schritt, falls der Autor zustimmt
+## Herunterdeklinieren: `se-vorbereitung` §2, für jede Anforderung oben
 
-Zwei Klassen an je einem echten Fall im eigenen Modell, ohne neue Kennzahl, nur mit vorhandenen Kanten:
+Ein Constraint wird oben gesetzt (System, Kette, Modul) und wandert in seine funktionalen Teile auf die
+tiefste Ebene. Das ist der Schritt 2 der FMEA-Vorbereitung (`se-vorbereitung`), nur mit anderem Eingang: dort
+die Gegenmaßnahme mit `by` = Modul oder System, hier jede nicht-funktionale Anforderung an Modul, Kette oder
+System. Die vier Klassen tragen unverändert:
 
-1. **Modul gesichert** — Kandidat aus der Bedrohungsanalyse (ITEM-2026-885) oder dem Kern (`MOD-kernel`).
-2. **Kette in einem Modul** — Kandidat aus den Architekturvorschlägen der FMEA (ITEM-2026-879).
+| Klasse | für einen Constraint | bleibt oben? |
+|---|---|---|
+| Tieferlegen | genau eine Funktion führt den Teil aus → funktionale REQ an der Blattfunktion, mit Test | nein |
+| Zerlegen | „Modul gesichert" = *jeder Eingang passiert f mit Vertrag s* (funktional, an f) + *kein anderer Eingang existiert* (strukturell, am Modul, Snapshot-Test) | der strukturelle Teil |
+| Funktion fehlt | kein Glied kann den Teil ausführen → Item; der Constraint bleibt oben, Readiness zeigt ihn unverifiziert | ja |
+| Gilt quer | bindet jede Funktion (Vertrauensgrenze an allen Flüssen) → ein Snapshot-Test am System | ja |
 
-Je Fall: REQ am Adressaten, TEST mit Testdatei über den Snapshot, Lauf über die gewählte Lane, Nachweis, dass
-ein verletzender Zug rot wird (Positivkontrolle). Danach erst der Rückbau des Zielprofils als eigener CR.
+Lesehilfe wie heute: `graph_metrics({ scope })` für Module, Ketten und Anforderungen des Umfangs. `riskCarriers`
+liest nur Anforderungen mit `role: risk`; für einen Constraint ohne Rolle sammelt der Skill die Blattfunktionen
+über Kette und Allokation selbst, oder die Ableitung in contracts wird auf alle nicht-funktionalen Anforderungen
+verallgemeinert (klein; Hüter). **Budgets** sind der Sonderfall: ihr Herunterdeklinieren ist die Aufteilung
+entlang des Antwortwegs — das ist die offene Budgetanalyse (ITEM-2026-885), nicht dieser CR.
 
-## Fragen an den Autor
+## Konflikte und Vorschläge: nichts läuft online
 
-1. Trägt die Ebenen-Tabelle, oder fehlt eine Ebene (Fluss? Anwendungsfall?)?
-2. Welche zwei Fälle zuerst — die Kandidaten oben oder andere?
-3. Lücke der Testauswahl: Weg A (Modell-Lane) oder B (Walk erweitern)?
-4. Rückbau des Zielprofils: sofort nach den zwei Fällen, oder erst wenn eine dritte Sicht (Audit) Constraints
-   gesetzt hat?
+Drei Momente, keiner pro Mutation:
+
+1. **Beim Setzen** — der Skill fragt, verortet, schlägt das Herunterdeklinieren vor; der Autor wählt.
+2. **An der Marke PDR** — `se-vorbereitung`, vor den Analysen, wie heute.
+3. **In der Lane** — der Constraint-Test wird rot. Das einzige laufende Signal; es kostet den Testlauf, der
+   ohnehin läuft.
+
+Das Gate prüft weiter nur die Familien-Regeln. FMEA, ConOps und Constraints-Walk laufen auf Anforderung, mit
+Stempel (AF-01…04). **Ein Konflikt** zwischen zwei Constraints heißt: kein Zug macht beide Tests grün. Das ist
+nicht vorab berechenbar — der Probelauf von `graph_mutate` liefert Kennzahlen, keine Testergebnisse. Der Konflikt
+zeigt sich nach dem Zug in der Lane (wie `import-boundaries` heute); die Analyse dazu ist `se:optimize` auf
+Anforderung: rote Constraint-Tests sind die schwächsten Orte, der Gesamt-Impact ist die Vorlage (CR-GC-785,
+CR-GC-790). `graph_suggest` liest rote Constraint-Tests statt des Gewichtsvektors. Eine Rangfolge unter
+Constraints gibt es nicht — rot ist rot, die Reihenfolge entscheidet der Autor; nur Risiken tragen S/O/D.
+
+## Der Skill: `se:target-profile` wird `se-constraints`
+
+Ein CREATE-Skill nach dem Muster von `se-conops`: eine Prüfliste je Ebene — welche Ketten sind
+performance-kritisch, welches Modul ist gesichert, welche Kette bleibt in einem Modul, welche Flüsse kreuzen
+eine Vertrauensgrenze —, liest den Umfang (`graph_metrics`, `graph_elements`), schreibt REQ + TEST durch das
+Gate (`se:author-req`), schlägt das Herunterdeklinieren vor, hält den Walk als geschlossenen CR fest und
+stempelt. Die sechs Gewichte und ihre Fragen entfallen. Ein eigener Constraint entsteht jederzeit ohne den Skill
+über `se:author-req`. Die zwei Klassen „Modul gesichert" und „Kette in einem Modul" sind Beispiele der
+Prüfliste, keine Festlegung.
+
+## Entschieden (Autor, 2026-10-13)
+
+1. Die vier Ebenen tragen.
+2. Skill-Umbau wie oben; die zwei Klassen sind Beispiele.
+3. Herunterdeklinieren über `se-vorbereitung` §2; Konflikte in der Lane, Vorschläge auf Anforderung — nichts
+   online. (Vorschlag dieses CR, vom Autor als offen benannt; die Fassung oben ist die Antwort.)
+4. Rückbau des Zielprofils als eigener CR, wenn dieser abgeschlossen ist.
+
+## Offen
+
+- Lücke der Testauswahl: Weg A (Modell-Lane) oder B (Walk erweitern). Vorschlag: A.
+- Trägerableitung für Constraints ohne Rolle: im Skill oder in contracts.
 
 ## Umfang, falls gebaut wird
 
-Erster Schritt: zwei REQ, zwei TEST, zwei Testdateien, je nach Weg A ein Eintrag in `scripts/model-test-set.mjs`
-oder ein Umbau in `test-selection.ts` mit Test. Rückbau Zielprofil: `src/loop/target-profile*.ts`,
-`graph_suggest`, Skill `se:target-profile`, jedes Repo mit Profildatei — eigener CR.
+Skill `se-constraints` (ersetzt `.claude/commands/se/target-profile.md`), `se-vorbereitung` §2 mit dem weiteren
+Eingang, erster Walk am eigenen Modell mit Positivkontrolle (ein verletzender Zug wird rot), je nach Weg A ein
+Eintrag in `scripts/model-test-set.mjs` oder ein Umbau in `test-selection.ts` mit Test. Rückbau Zielprofil
+(`src/loop/target-profile*.ts`, `graph_suggest`, jedes Repo mit Profildatei): eigener CR.
