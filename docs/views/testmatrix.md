@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 184 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 191 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -34,17 +34,21 @@
 | `REQ-deterministic-serialization` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-roundtrip` |
 | `REQ-disk-persistence` | ✓ | ✓ passed | `TEST-mvp-e2e` |
 | `REQ-doc-export` | ✓ | ✓ passed | `TEST-auto-export` · `TEST-doc-export` · `TEST-mcp-export` · `TEST-member-name` · `TEST-skills-mcp` · `TEST-view-fmea` · `TEST-views-auditor` · `TEST-views-conformance` |
+| `REQ-docked-session-reelects-once` | ✓ | ✓ passed | `TEST-host-shim` |
 | `REQ-docs-taxonomy` | ✓ | ⚠ nie gelaufen | `TEST-docs-taxonomy` |
 | `REQ-done-iff-no-focus` | ✓ | ✓ passed | `TEST-generation-statemachine` |
 | `REQ-element-contract-finding` | ✓ | ✓ passed | `TEST-mutate-schema-guard` · `TEST-readiness-altbestand` |
 | `REQ-export-marker-tracks-drift` | ✓ | ✓ passed | `TEST-graph-time-travel` |
 | `REQ-export-no-clobber` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-mcp-export-guard` |
+| `REQ-export-refuses-until-held-back-repaired` | ✓ | ✓ passed | `TEST-import-rejected-traces` |
+| `REQ-first-session-claims-store-lock` | ✓ | ✓ passed | `TEST-store-lock` |
 | `REQ-fmea-checks-entry` | ✓ | ✓ passed | `TEST-fmea-reads-places` |
 | `REQ-fmea-reads-places` | ✓ | ✓ passed | `TEST-fmea-reads-places` |
 | `REQ-formatE-diff-dialect` | ✓ | ✓ passed | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` |
 | `REQ-formatE-parity` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-formate-ops` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` |
 | `REQ-frame-binding` | ✓ | ⚠ 1/2 passed | `TEST-code-quality` · `TEST-graph-realize` |
 | `REQ-full-run-on-probation` | ✓ | ✓ passed | `TEST-test-schlupf` |
+| `REQ-further-session-docks-via-socket` | ✓ | ✓ passed | `TEST-host-shim` |
 | `REQ-gate-judges-and-stores` | ✓ | ✓ passed | `TEST-gate-urteilt-und-speichert` |
 | `REQ-gate-only-writes` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-graph-realize` · `TEST-path-containment` · `TEST-single-write-door` |
 | `REQ-gate-survives-rule-failure` | ✓ | ⚠ nie gelaufen | `TEST-gate-survives-rule-failure` |
@@ -56,10 +60,14 @@
 | `REQ-graph-snapshot-per-commit` | ✓ | ✓ passed | `TEST-auto-export` · `TEST-graph-time-travel` |
 | `REQ-graph-state-recall` | ✓ | ✓ passed | `TEST-graph-time-travel` · `TEST-reseed` · `TEST-rewind` |
 | `REQ-graph-tests-operational` | ✓ | ✓ passed | `TEST-graph-tests-operational` · `TEST-selective-test-audit` |
+| `REQ-harness-factory-returns-one-owner` | ✓ | ✓ passed | `TEST-store-lock` |
 | `REQ-harness-schema-in-contracts` | ✓ | ✓ passed | `TEST-mcp-symmetry` · `TEST-mutate-schema-guard` |
-| `REQ-held-back-traces-named` | ✓ | ✓ passed | `TEST-import-rejected-traces` |
+| `REQ-held-back-edge-does-not-abort-load` | ✓ | ✓ passed | `TEST-import-rejected-traces` |
+| `REQ-held-back-edges-derived-every-call` | ✓ | ✓ passed | `TEST-import-rejected-traces` |
+| `REQ-held-back-edges-in-readiness` | ✓ | ✓ passed | `TEST-import-rejected-traces` |
 | `REQ-hook-extension-points` | ✓ | ✓ passed | `TEST-hooks` |
 | `REQ-hook-order-deterministic` | ✓ | ✓ passed | `TEST-hooks` |
+| `REQ-host-holds-only-kuzu-handle` | ✓ | ✓ passed | `TEST-host-shim` |
 | `REQ-impact-based-testing` | ✓ | ✓ passed | `TEST-mvp-e2e` · `TEST-selective-test-audit` |
 | `REQ-import-se-ontology` | ✓ | ✓ passed | `TEST-dashboard-ontology-sync` · `TEST-graph-authoring-guide` |
 | `REQ-install-idempotent` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
@@ -157,7 +165,7 @@
 | `REQ-schema-version-migration` | ✓ | ✓ passed | `TEST-schema-migration` |
 | `REQ-selective-code-lane` | ✓ | ✓ passed | `TEST-selective-test-audit` |
 | `REQ-self-contained-dist` | ✓ | ✓ passed | `TEST-distribution` |
-| `REQ-session-leaves-nothing-behind` | ✓ | ✓ passed | `TEST-repo-lifecycle` |
+| `REQ-session-leaves-nothing-behind` | ✓ | ✓ passed | `TEST-repo-lifecycle` · `TEST-session-lifecycle` |
 | `REQ-shared-views-no-fork` | ✓ | ✓ passed | `TEST-shared-views-no-fork` · `TEST-views-conformance` |
 | `REQ-single-kuzu-owner` | ✓ | ✓ passed | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` |
 | `REQ-single-measurement-path` | ✓ | ✓ passed | `TEST-graph-metrics` · `TEST-single-measurement-path` · `TEST-steering-snapshot` |
@@ -173,7 +181,6 @@
 | `REQ-steering-post` | ✓ | ✓ passed | `TEST-single-measurement-path` |
 | `REQ-steering-pre` | ✓ | ✓ passed | `TEST-single-measurement-path` |
 | `REQ-steering-promise-one-owner` | ✓ | ⚠ nie gelaufen | `TEST-steering-promise-one-owner` |
-| `REQ-store-owner-lifecycle` | ✓ | ✓ passed | `TEST-host-shim` · `TEST-session-lifecycle` · `TEST-store-lock` |
 | `REQ-store-recovery` | ✓ | ⚠ 2/3 passed | `TEST-reseed` · `TEST-schema-migration` · `TEST-store-recovery` |
 | `REQ-structural-rule-shared` | ✓ | ✓ passed | `TEST-graph-authoring-guide` · `TEST-mutate-gate` |
 | `REQ-structure-driven` | ✓ | ⚠ 2/3 passed | `TEST-code-quality` · `TEST-mutate-schema-guard` · `TEST-se-plan-ordering` |
@@ -193,8 +200,8 @@
 | `REQ-vorbereitung-reads-metrics` | ✓ | ✓ passed | `TEST-vorbereitung-reads-metrics` |
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 
-Coverage: 184/184 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 143/184 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 191/191 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 150/191 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -243,6 +250,7 @@ Belegt: 143/184 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-create-harness` → `FUNC-serve-stdio` | `FLOW-harness-handle` | `FCHAIN-repo-lifecycle` | `TEST-host-shim` · `TEST-tool-list-change-announced` | integration | passed |
 | `FUNC-create-harness` → `FUNC-tool-context` | `FLOW-harness-handle` | `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle` | `TEST-code-quality` · `TEST-host-shim` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` · `TEST-tool-list-change-announced` | acceptance, e2e, integration, performance | passed |
 | `FUNC-decode` → `FUNC-mutate` | `FLOW-mutate-cmd-decode` | `FCHAIN-capture` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-uc-authoring-style` | integration, unit | passed |
+| `FUNC-docked-session` → `FUNC-host-socket` | `FLOW-mutate-cmd-docked-session` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-mvp-e2e` · `TEST-responsiveness` | acceptance, e2e, integration, performance | passed |
 | `FUNC-emit-update-event` → `FUNC-broadcast-diff` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
 | `FUNC-emit-update-event` → `FUNC-serve-sse` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
 | `FUNC-emit-update-event` → `FUNC-serve-stdio` | `FLOW-live-event` | `FCHAIN-live-update` | `TEST-create-harness-smoke` · `TEST-live-view` | integration | passed |
@@ -344,4 +352,4 @@ Belegt: 143/184 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-view-rtm` → `FUNC-export-markdown` | `FLOW-query-request-view-rtm` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-zug-bericht` → `FUNC-graph-suggest` | `FLOW-zug-bericht` | `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | integration, unit | passed |
 
-> 117/143 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 26 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 118/144 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 26 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

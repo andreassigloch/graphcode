@@ -176,7 +176,9 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
         // CR-GC-429 §3: die host-bridge-FUNCs erfuellen jetzt das Verhaltens-Kind
         // REQ-store-owner-lifecycle; der nf-Constraint REQ-single-kuzu-owner haengt
         // nur noch ueber MOD-harness am Modell und liegt ausserhalb der Scheibe.
-        'REQ-real-health-check', 'REQ-store-owner-lifecycle', 'REQ-versioned-broadcast',
+        // CR-GC-805: REQ-store-owner-lifecycle ist in fuenf Anforderungen zerlegt; FUNC-own-kuzu-host
+        // erfuellt davon REQ-host-holds-only-kuzu-handle.
+        'REQ-real-health-check', 'REQ-host-holds-only-kuzu-handle', 'REQ-versioned-broadcast',
         // CR-GC-383: eine Datei, eine Abnahme — TEST-real-health-check ist in
         // TEST-readonly-bridge aufgegangen (beide banden tests/host.bridge.test.ts).
         'TEST-readonly-bridge',

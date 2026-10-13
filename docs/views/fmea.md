@@ -24,8 +24,8 @@
 | 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-repo-lifecycle` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
 | 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-impact-testing` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` | ✓ |
 | 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | `FUNC-export-marker` | ✓ |
-| 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | 4 Funktionen | ✓ |
-| 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-repo-lifecycle` | 7 | 2 | 3 | 42 | Medium | 5 Funktionen | ✓ |
+| 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | `FUNC-held-back-traces` | ✓ |
+| 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-repo-lifecycle` | 7 | 2 | 3 | 42 | Medium | `FUNC-docked-session` | ✓ |
 | 17 | Risiko halb gefuellter Store nach Abbruch | `FCHAIN-recall` | 6 | 2 | 3 | 36 | Low | `FUNC-graph-export-snapshot` | ✓ |
 | 18 | Risiko Regelauswertung faellt im Gate aus | — | 8 | 2 | 2 | 32 | Low | `FUNC-mutate` | ✗ |
 | 19 | Risiko Skill weist abgelehnten Zug an | `FCHAIN-skill-authoring` | 4 | 4 | 2 | 32 | Low | — | ✗ |
@@ -296,7 +296,7 @@ Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-10-12 |
+| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-10-13 |
 
 ### 15. Risiko Kante verschwindet still (`REQ-risk-edge-vanishes-silently`)
 
@@ -305,17 +305,17 @@ Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell.
 - **Bewertung:** S 7 · O 2 · D 3 · RPN 42 · AP Medium
 - **Kette:** `FCHAIN-recall`
 - **Anwendungsfall:** `UC-graph-time-travel`
-- **Träger:** `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json`
+- **Träger:** `FUNC-held-back-traces`
 - **Befund:** FMEA CR-GC-798 FM-18, Quelle F geteilte Funktion FUNC-held-back-traces in drei Ketten. Entscheidung: gedeckt durch REQ-held-back-traces-named.
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-held-back-traces-named` | Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt. | `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` |
+| `REQ-held-back-edges-derived-every-call` | Bei jedem Aufruf leitet das Werkzeug aus der committeten Graph-Datei ab, welche Kanten im Live-Graphen fehlen, weil kein Muster sie zulaesst, und nennt jede mit ihrem Grund; das gilt auch nach einem Neustart ohne erneutes Laden. | `FUNC-held-back-traces` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-10-12 |
+| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-10-13 |
 
 ### 16. Risiko Besitzer endet bei angedockten Sitzungen (`REQ-risk-owner-ends-with-docked-sessions`)
 
@@ -324,13 +324,13 @@ Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine an
 - **Bewertung:** S 7 · O 2 · D 3 · RPN 42 · AP Medium
 - **Kette:** `FCHAIN-repo-lifecycle`
 - **Anwendungsfall:** `UC-repo-lifecycle`
-- **Träger:** `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+- **Träger:** `FUNC-docked-session`
 - **Befund:** FMEA CR-GC-798 FM-19, Quelle E Kreislauf aus FUNC-claim-store-lock und FUNC-session-shutdown. Genau ein Neuwahlversuch. Entscheidung: gedeckt durch REQ-store-owner-lifecycle, das fuenf Erfueller hat.
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-store-owner-lifecycle` | Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt. | `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` |
+| `REQ-docked-session-reelects-once` | Endet der Besitzer des Stores, waehrend eine Sitzung angedockt ist, versucht diese Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach als Host weiter. Gelingt das nicht, endet der Aufruf mit einem benannten Fehler statt mit einem Haenger oder einem leeren Ergebnis. | `FUNC-docked-session` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -353,7 +353,7 @@ Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-10-12 |
+| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-10-13 |
 
 ### 18. Risiko Regelauswertung faellt im Gate aus (`REQ-risk-gate-rule-eval-fails`)
 

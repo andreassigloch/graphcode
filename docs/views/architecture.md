@@ -49,6 +49,7 @@
 | `FUNC-create-harness` | FUNC | createHarness |
 | `FUNC-decode` | FUNC | formatEToCommands(harness, text) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
+| `FUNC-docked-session` | FUNC | Angedockte Sitzung |
 | `FUNC-emit-trajectory` | FUNC | materializeTrajectory() |
 | `FUNC-emit-update-event` | FUNC | emitUpdateEvent(domains) |
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
@@ -177,6 +178,7 @@
 | `FUNC-create-harness` | `MOD-surface` |
 | `FUNC-decode` | `MOD-loop` |
 | `FUNC-deduce-tests` | `MOD-projections` |
+| `FUNC-docked-session` | `MOD-surface` |
 | `FUNC-emit-trajectory` | `MOD-projections` |
 | `FUNC-emit-update-event` | `MOD-surface` |
 | `FUNC-evaluate-rules` | `MOD-kernel` |

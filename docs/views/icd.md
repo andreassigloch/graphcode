@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 50 SCHEMA · 128 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 50 SCHEMA · 129 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -125,18 +125,19 @@
 | `FLOW-metric-policy` | `FUNC-load-config` | `FUNC-evaluate-rules` · `FUNC-take-steering-snapshot` |
 | `FLOW-metrics-answer` | `FUNC-graph-metrics` | `ACTOR-agent` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `ACTOR-dashboard` · `FUNC-evaluate-rules` · `FUNC-graph-metrics` |
-| `FLOW-mutate-cmd-agent` | `ACTOR-agent` | `FUNC-host-socket` · `FUNC-mutate` |
+| `FLOW-mutate-cmd-agent` | `ACTOR-agent` | `FUNC-docked-session` · `FUNC-mutate` |
 | `FLOW-mutate-cmd-author-req` | `FUNC-author-req` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-author-uc` | `FUNC-author-uc` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-bootstrap` | `FUNC-bootstrap` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-close-violations` | `FUNC-close-violations` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-decode` | `FUNC-decode` | `FUNC-mutate` |
+| `FLOW-mutate-cmd-docked-session` | `FUNC-docked-session` | `FUNC-host-socket` |
 | `FLOW-mutate-cmd-graph-suggest` | `FUNC-graph-suggest` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-host-socket` | `FUNC-host-socket` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-import-code-verb` | `FUNC-import-code-verb` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-import-doc` | `FUNC-import-doc` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-merge-nodes` | `FUNC-merge-nodes` | `FUNC-mutate` |
-| `FLOW-mutate-cmd-owner` | `ACTOR-owner` | `FUNC-host-socket` |
+| `FLOW-mutate-cmd-owner` | `ACTOR-owner` | `FUNC-docked-session` |
 | `FLOW-mutate-cmd-se-conops` | `FUNC-se-conops` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-se-fmea` | `FUNC-se-fmea` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-se-generate` | `FUNC-se-generate` | `FUNC-mutate` |

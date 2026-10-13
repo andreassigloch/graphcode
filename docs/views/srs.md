@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 184 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 191 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -112,25 +112,39 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-responsiveness` (performance) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
 
-##### 3.1.1.1  `FUNC-host-socket` — startHostSocket
+##### 3.1.1.1  `FUNC-docked-session` — Angedockte Sitzung
+
+> auch in: `FUNC-block-host-sitzung`
+
+Die Werkzeugflaeche einer angedockten Sitzung: dieselbe Registry wie beim Besitzer, jeder Aufruf wird ueber den Socket an ihn weitergereicht. Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
+
+io ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-owner` · io ▶ `FLOW-mutate-cmd-docked-session` · allocate ▶ `MOD-surface`
+
+###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
+
+Endet der Besitzer des Stores, waehrend eine Sitzung angedockt ist, versucht diese Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach als Host weiter. Gelingt das nicht, endet der Aufruf mit einem benannten Fehler statt mit einem Haenger oder einem leeren Ergebnis.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-docked-session` · allocate ▶ `MOD-surface`
+
+##### 3.1.1.2  `FUNC-host-socket` — startHostSocket
 
 > auch in: `FUNC-block-host-sitzung`
 
 Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.
 
-io ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-owner` · io ▶ `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-mutate-cmd-docked-session` · io ▶ `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-further-session-docks-via-socket` — Weitere Sitzung dockt ueber den Socket an
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host`
+Der Besitzer oeffnet einen lokalen Socket, ueber den jede weitere Sitzung ihre Aufrufe an ihn reicht; Werkzeugflaeche und Urteil des Gates sind dieselben wie im Besitzerprozess.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket` · allocate ▶ `MOD-surface`
 
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
-##### 3.1.1.2  `FUNC-mutate` — mutate(commands)
+##### 3.1.1.3  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-gate`
 
@@ -180,7 +194,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
-##### 3.1.1.3  `FUNC-tool-context` — createToolContext
+##### 3.1.1.4  `FUNC-tool-context` — createToolContext
 
 > auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-ruestzeug`
 
@@ -198,7 +212,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-surface`
 
-##### 3.1.1.4  `FUNC-graph-store` — GraphStore
+##### 3.1.1.5  `FUNC-graph-store` — GraphStore
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
@@ -224,16 +238,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -242,7 +246,7 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-##### 3.1.1.5  `FUNC-arch-fitness` — metrics(graph, layer arch)
+##### 3.1.1.6  `FUNC-arch-fitness` — metrics(graph, layer arch)
 
 > auch in: `FCHAIN-steering-loop` · `FUNC-block-messwerk`
 
@@ -260,7 +264,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · satisfy ◀ `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-module-metrics` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-##### 3.1.1.6  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
+##### 3.1.1.7  `FUNC-fit-advisory` — computeFitAdvisory(before, after)
 
 > auch in: `FCHAIN-steering-loop` · `FUNC-block-messwerk`
 
@@ -278,7 +282,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (integration) · `TEST-fit-advisory` (integration) · satisfy ◀ `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-generation-step` · `FUNC-module-metrics` · `FUNC-take-steering-snapshot` · allocate ▶ `MOD-kernel-measure` · `MOD-loop` · `MOD-projections`
 
-##### 3.1.1.7  `FUNC-zug-bericht` — zugBericht(before
+##### 3.1.1.8  `FUNC-zug-bericht` — zugBericht(before
 
 > auch in: `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -302,7 +306,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-zug-kennzahlen-danach` (integration) · satisfy ◀ `FUNC-zug-bericht` · allocate ▶ `MOD-kernel-measure`
 
-##### 3.1.1.8  `FUNC-emit-trajectory` — materializeTrajectory()
+##### 3.1.1.9  `FUNC-emit-trajectory` — materializeTrajectory()
 
 > auch in: `FUNC-block-gedaechtnis`
 
@@ -334,7 +338,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-projections`
 
-##### 3.1.1.9  `FUNC-evaluate-rules` — evaluateRules()
+##### 3.1.1.10  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -358,7 +362,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
 
-##### 3.1.1.10  `FUNC-claim-store-lock` — StoreLock
+##### 3.1.1.11  `FUNC-claim-store-lock` — StoreLock
 
 > auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
 
@@ -366,17 +370,15 @@ Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ih
 
 io ◀ `FLOW-cli-command` · `FLOW-lock-release` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-first-session-claims-store-lock` — Erste Sitzung erwirbt den Store-Lock
 
-> auch unter: `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+Die erste Sitzung eines Repos erwirbt den Store-Lock atomar; ein zweiter Erwerb wird laut und mit Nennung des Besitzers abgewiesen.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
+Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · allocate ▶ `MOD-kernel`
 
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
-##### 3.1.1.11  `FUNC-create-harness` — createHarness
+##### 3.1.1.12  `FUNC-create-harness` — createHarness
 
 > auch in: `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
 
@@ -384,17 +386,15 @@ Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Stor
 
 io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-handle` · allocate ▶ `MOD-surface`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-harness-factory-returns-one-owner` — Fabrik liefert genau einen Besitzer
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+Die Fabrik baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck; ein zweiter Harness auf demselben Store wird beim Initialisieren abgewiesen.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
+Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-create-harness` · allocate ▶ `MOD-surface`
 
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
-##### 3.1.1.12  `FUNC-own-kuzu-host` — ownKuzu()
+##### 3.1.1.13  `FUNC-own-kuzu-host` — ownKuzu()
 
 > auch in: `FCHAIN-live-update` · `FUNC-block-gedaechtnis`
 
@@ -402,17 +402,15 @@ Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zwei
 
 io ◀ `FLOW-store-ownership` · io ▶ `FLOW-harness-handle-host` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-host-holds-only-kuzu-handle` — Host haelt das einzige Kuzu-Handle
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket`
+Der Host-Prozess haelt das einzige Kuzu-Handle des Repos; weder die Bridge noch eine weitere Sitzung oeffnet ein zweites.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel`
 
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
-##### 3.1.1.13  `FUNC-session-shutdown` — SessionLifecycle
+##### 3.1.1.14  `FUNC-session-shutdown` — SessionLifecycle
 
 > auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-host-sitzung`
 
@@ -426,7 +424,7 @@ Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseint
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-repo-lifecycle` (integration) · `TEST-session-lifecycle` (integration) · satisfy ◀ `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
 
 #### 3.1.2  `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier)
 
@@ -555,16 +553,6 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -742,16 +730,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -915,16 +893,6 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -1258,16 +1226,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -1477,16 +1435,6 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -1770,15 +1718,13 @@ Leitet bei jedem Aufruf ab, welche Kanten der committeten Graph-Datei im Live-Gr
 
 io ◀ `FLOW-ontology-json` · io ▶ `FLOW-held-back-traces` · allocate ▶ `MOD-kernel`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-held-back-edges-derived-every-call` — Zurueckgehaltene Kanten werden bei jedem Aufruf abgeleitet
 
-> auch unter: `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-seed-from-json`
-
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+Bei jedem Aufruf leitet das Werkzeug aus der committeten Graph-Datei ab, welche Kanten im Live-Graphen fehlen, weil kein Muster sie zulaesst, und nennt jede mit ihrem Grund; das gilt auch nach einem Neustart ohne erneutes Laden.
 
 priority: must · status: n/a · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-held-back-traces` · allocate ▶ `MOD-kernel`
 
 ##### 3.2.4.2  `FUNC-graph-readiness` — graph_readiness(detail?)
 
@@ -1788,15 +1734,13 @@ MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoess
 
 io ◀ `FLOW-dimension-readiness` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · io ▶ `FLOW-readiness-report` · allocate ▶ `MOD-projections`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
-> auch unter: `FUNC-graph-export-snapshot` · `FUNC-held-back-traces` · `FUNC-seed-from-json`
+graph_readiness nennt jede zurueckgehaltene Kante, nach jedem Neustart erneut.
 
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: n/a · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-readiness` · allocate ▶ `MOD-projections`
 
 ##### 3.2.4.3  `FUNC-load-config` — loadGraphcodeConfig
 
@@ -1941,16 +1885,6 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -2486,16 +2420,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -2537,16 +2461,6 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -2694,15 +2608,13 @@ Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Stor
 
 io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-handle` · allocate ▶ `MOD-surface`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-harness-factory-returns-one-owner` — Fabrik liefert genau einen Besitzer
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+Die Fabrik baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck; ein zweiter Harness auf demselben Store wird beim Initialisieren abgewiesen.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-create-harness` · allocate ▶ `MOD-surface`
 
 ##### 3.4.2.3  `FUNC-rewind` — graphcode rewind <ref>
 
@@ -2784,16 +2696,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -2820,15 +2722,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-held-back-edge-does-not-abort-load` — Musterfremde Kante bricht das Laden nicht ab
 
-> auch unter: `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces`
+Eine committete Kante, die kein Muster mehr zulaesst, bricht das Laden aus dem Snapshot nicht ab: sie wird zurueckgehalten, der uebrige Graph wird geladen.
 
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: n/a · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-seed-from-json` · allocate ▶ `MOD-kernel`
 
 ##### 3.4.2.8  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
 
@@ -2838,15 +2738,13 @@ Leitet bei jedem Aufruf ab, welche Kanten der committeten Graph-Datei im Live-Gr
 
 io ◀ `FLOW-ontology-json` · io ▶ `FLOW-held-back-traces` · allocate ▶ `MOD-kernel`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-held-back-edges-derived-every-call` — Zurueckgehaltene Kanten werden bei jedem Aufruf abgeleitet
 
-> auch unter: `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-seed-from-json`
-
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+Bei jedem Aufruf leitet das Werkzeug aus der committeten Graph-Datei ab, welche Kanten im Live-Graphen fehlen, weil kein Muster sie zulaesst, und nennt jede mit ihrem Grund; das gilt auch nach einem Neustart ohne erneutes Laden.
 
 priority: must · status: n/a · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-held-back-traces` · allocate ▶ `MOD-kernel`
 
 ##### 3.4.2.9  `FUNC-import` — importGraph(ontology, opts)
 
@@ -2910,15 +2808,13 @@ Leitet bei jedem Aufruf ab, welche Kanten der committeten Graph-Datei im Live-Gr
 
 io ◀ `FLOW-ontology-json` · io ▶ `FLOW-held-back-traces` · allocate ▶ `MOD-kernel`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-held-back-edges-derived-every-call` — Zurueckgehaltene Kanten werden bei jedem Aufruf abgeleitet
 
-> auch unter: `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-seed-from-json`
-
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+Bei jedem Aufruf leitet das Werkzeug aus der committeten Graph-Datei ab, welche Kanten im Live-Graphen fehlen, weil kein Muster sie zulaesst, und nennt jede mit ihrem Grund; das gilt auch nach einem Neustart ohne erneutes Laden.
 
 priority: must · status: n/a · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-held-back-traces` · allocate ▶ `MOD-kernel`
 
 ##### 3.4.3.2  `FUNC-graph-export-snapshot` — graph_export(views?)
 
@@ -2936,15 +2832,13 @@ priority: must · status: done · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-export-refuses-until-held-back-repaired` — Export verweigert bis zur Reparatur
 
-> auch unter: `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json`
+graph_export verweigert, solange eine Kante zurueckgehalten ist, und nennt die Kante und den Reparaturweg; nach einem delete-edge durchs Gate laeuft der Export wieder.
 
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: n/a · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
 
 ##### 3.4.3.3  `FUNC-auto-export` — registerAutoExport
 
@@ -3098,16 +2992,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -3216,16 +3100,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -3322,15 +3196,13 @@ Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zwei
 
 io ◀ `FLOW-store-ownership` · io ▶ `FLOW-harness-handle-host` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-host-holds-only-kuzu-handle` — Host haelt das einzige Kuzu-Handle
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket`
+Der Host-Prozess haelt das einzige Kuzu-Handle des Repos; weder die Bridge noch eine weitere Sitzung oeffnet ein zweites.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel`
 
 ##### 3.5.2.2  `FUNC-serve-sse` — serveSSE()
 
@@ -3538,16 +3410,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -3667,16 +3529,6 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -3940,15 +3792,13 @@ Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Stor
 
 io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-handle` · allocate ▶ `MOD-surface`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-harness-factory-returns-one-owner` — Fabrik liefert genau einen Besitzer
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+Die Fabrik baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck; ein zweiter Harness auf demselben Store wird beim Initialisieren abgewiesen.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-create-harness` · allocate ▶ `MOD-surface`
 
 ##### 3.7.2.4  `FUNC-import-code-verb` — executeImportCode
 
@@ -4041,16 +3891,6 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -4260,16 +4100,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -4427,16 +4257,6 @@ Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der
 priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
@@ -4642,16 +4462,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -4850,16 +4660,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -4876,15 +4676,13 @@ Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ih
 
 io ◀ `FLOW-cli-command` · `FLOW-lock-release` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-first-session-claims-store-lock` — Erste Sitzung erwirbt den Store-Lock
 
-> auch unter: `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+Die erste Sitzung eines Repos erwirbt den Store-Lock atomar; ein zweiter Erwerb wird laut und mit Nennung des Besitzers abgewiesen.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · allocate ▶ `MOD-kernel`
 
 ##### 3.9.1.9  `FUNC-create-harness` — createHarness
 
@@ -4894,15 +4692,13 @@ Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Stor
 
 io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-handle` · allocate ▶ `MOD-surface`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-harness-factory-returns-one-owner` — Fabrik liefert genau einen Besitzer
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+Die Fabrik baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck; ein zweiter Harness auf demselben Store wird beim Initialisieren abgewiesen.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-create-harness` · allocate ▶ `MOD-surface`
 
 ##### 3.9.1.10  `FUNC-session-shutdown` — SessionLifecycle
 
@@ -4918,7 +4714,7 @@ Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseint
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-repo-lifecycle` (integration) · `TEST-session-lifecycle` (integration) · satisfy ◀ `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
 
 ##### 3.9.1.11  `FUNC-collect-status` — collectStatus
 
@@ -5258,7 +5054,23 @@ Ebene-1-Block im Betrieb: der laufende Host einer Sitzung — MCP-Transport, Hos
 
 io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
 
-###### 3.10.1.2.1  `FUNC-gve-sessions` — liveSessions
+###### 3.10.1.2.1  `FUNC-docked-session` — Angedockte Sitzung
+
+> auch in: `FCHAIN-apply-gate`
+
+Die Werkzeugflaeche einer angedockten Sitzung: dieselbe Registry wie beim Besitzer, jeder Aufruf wird ueber den Socket an ihn weitergereicht. Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
+
+io ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-owner` · io ▶ `FLOW-mutate-cmd-docked-session` · allocate ▶ `MOD-surface`
+
+###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
+
+Endet der Besitzer des Stores, waehrend eine Sitzung angedockt ist, versucht diese Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach als Host weiter. Gelingt das nicht, endet der Aufruf mit einem benannten Fehler statt mit einem Haenger oder einem leeren Ergebnis.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-docked-session` · allocate ▶ `MOD-surface`
+
+###### 3.10.1.2.2  `FUNC-gve-sessions` — liveSessions
 
 > auch in: `FCHAIN-repo-lifecycle`
 
@@ -5276,7 +5088,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-surface`
 
-###### 3.10.1.2.2  `FUNC-gve-supervise` — attachGve
+###### 3.10.1.2.3  `FUNC-gve-supervise` — attachGve
 
 > auch in: `FCHAIN-repo-lifecycle`
 
@@ -5294,7 +5106,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-sessions` · `FUNC-gve-supervise` · allocate ▶ `MOD-surface`
 
-###### 3.10.1.2.3  `FUNC-health-endpoint` — healthEndpoint()
+###### 3.10.1.2.4  `FUNC-health-endpoint` — healthEndpoint()
 
 > auch in: `FCHAIN-live-update`
 
@@ -5312,25 +5124,23 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-collect-status` · `FUNC-health-endpoint` · allocate ▶ `MOD-surface`
 
-###### 3.10.1.2.4  `FUNC-host-socket` — startHostSocket
+###### 3.10.1.2.5  `FUNC-host-socket` — startHostSocket
 
 > auch in: `FCHAIN-apply-gate`
 
 Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.
 
-io ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-owner` · io ▶ `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-mutate-cmd-docked-session` · io ▶ `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-further-session-docks-via-socket` — Weitere Sitzung dockt ueber den Socket an
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host`
+Der Besitzer oeffnet einen lokalen Socket, ueber den jede weitere Sitzung ihre Aufrufe an ihn reicht; Werkzeugflaeche und Urteil des Gates sind dieselben wie im Besitzerprozess.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket` · allocate ▶ `MOD-surface`
 
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
-###### 3.10.1.2.5  `FUNC-serve-stdio` — serveStdio()
+###### 3.10.1.2.6  `FUNC-serve-stdio` — serveStdio()
 
 > auch in: `FCHAIN-live-update` · `FCHAIN-repo-lifecycle`
 
@@ -5348,7 +5158,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-surface`
 
-###### 3.10.1.2.6  `FUNC-session-shutdown` — SessionLifecycle
+###### 3.10.1.2.7  `FUNC-session-shutdown` — SessionLifecycle
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle`
 
@@ -5362,7 +5172,7 @@ Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseint
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-repo-lifecycle` (integration) · satisfy ◀ `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-repo-lifecycle` (integration) · `TEST-session-lifecycle` (integration) · satisfy ◀ `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
 
 ##### 3.10.1.3  `FUNC-block-ruestzeug` — Werkzeug & Konfiguration
 
@@ -5634,15 +5444,13 @@ MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoess
 
 io ◀ `FLOW-dimension-readiness` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · io ▶ `FLOW-readiness-report` · allocate ▶ `MOD-projections`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
-> auch unter: `FUNC-graph-export-snapshot` · `FUNC-held-back-traces` · `FUNC-seed-from-json`
+graph_readiness nennt jede zurueckgehaltene Kante, nach jedem Neustart erneut.
 
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: n/a · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-readiness` · allocate ▶ `MOD-projections`
 
 ###### 3.10.2.1.9  `FUNC-list-elements` — listElements(filter)
 
@@ -6096,15 +5904,13 @@ priority: must · status: done · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-export-refuses-until-held-back-repaired` — Export verweigert bis zur Reparatur
 
-> auch unter: `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json`
+graph_export verweigert, solange eine Kante zurueckgehalten ist, und nennt die Kante und den Reparaturweg; nach einem delete-edge durchs Gate laeuft der Export wieder.
 
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: n/a · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
 
 ###### 3.10.2.4.4  `FUNC-import` — importGraph(ontology, opts)
 
@@ -6190,15 +5996,13 @@ Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zwei
 
 io ◀ `FLOW-store-ownership` · io ▶ `FLOW-harness-handle-host` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-host-holds-only-kuzu-handle` — Host haelt das einzige Kuzu-Handle
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket`
+Der Host-Prozess haelt das einzige Kuzu-Handle des Repos; weder die Bridge noch eine weitere Sitzung oeffnet ein zweites.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel`
 
 ###### 3.10.2.4.7  `FUNC-reseed` — reseed(relPath)
 
@@ -6620,15 +6424,13 @@ Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ih
 
 io ◀ `FLOW-cli-command` · `FLOW-lock-release` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-first-session-claims-store-lock` — Erste Sitzung erwirbt den Store-Lock
 
-> auch unter: `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+Die erste Sitzung eines Repos erwirbt den Store-Lock atomar; ein zweiter Erwerb wird laut und mit Nennung des Besitzers abgewiesen.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · allocate ▶ `MOD-kernel`
 
 ###### 3.10.2.7.5  `FUNC-create-harness` — createHarness
 
@@ -6638,15 +6440,13 @@ Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Stor
 
 io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-handle` · allocate ▶ `MOD-surface`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
+###### `REQ-harness-factory-returns-one-owner` — Fabrik liefert genau einen Besitzer
 
-> auch unter: `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
+Die Fabrik baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck; ein zweiter Harness auf demselben Store wird beim Initialisieren abgewiesen.
 
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-create-harness` · allocate ▶ `MOD-surface`
 
 ###### 3.10.2.7.6  `FUNC-export-marker` — setExportPending
 
@@ -6690,16 +6490,6 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### `REQ-store-owner-lifecycle` — Store-Besitz als Protokoll
-
-> auch unter: `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-host-socket` · `FUNC-own-kuzu-host`
-
-Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.
-
-priority: must · status: reviewed · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · `TEST-session-lifecycle` (integration) · `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
@@ -6716,15 +6506,13 @@ Leitet bei jedem Aufruf ab, welche Kanten der committeten Graph-Datei im Live-Gr
 
 io ◀ `FLOW-ontology-json` · io ▶ `FLOW-held-back-traces` · allocate ▶ `MOD-kernel`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-held-back-edges-derived-every-call` — Zurueckgehaltene Kanten werden bei jedem Aufruf abgeleitet
 
-> auch unter: `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-seed-from-json`
-
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+Bei jedem Aufruf leitet das Werkzeug aus der committeten Graph-Datei ab, welche Kanten im Live-Graphen fehlen, weil kein Muster sie zulaesst, und nennt jede mit ihrem Grund; das gilt auch nach einem Neustart ohne erneutes Laden.
 
 priority: must · status: n/a · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-held-back-traces` · allocate ▶ `MOD-kernel`
 
 ###### 3.10.2.7.9  `FUNC-seed-from-json` — seedFromJson(relPath)
 
@@ -6744,15 +6532,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### `REQ-held-back-traces-named` — Zurueckgehaltene Kanten werden benannt
+###### `REQ-held-back-edge-does-not-abort-load` — Musterfremde Kante bricht das Laden nicht ab
 
-> auch unter: `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces`
+Eine committete Kante, die kein Muster mehr zulaesst, bricht das Laden aus dem Snapshot nicht ab: sie wird zurueckgehalten, der uebrige Graph wird geladen.
 
-Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.
+priority: must · status: n/a · kinds: functional
 
-priority: must · status: n/a · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-held-back-traces` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-projections`
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-seed-from-json` · allocate ▶ `MOD-kernel`
 
 #### 3.10.3  `FUNC-block-optimierung` — Optimierung
 
@@ -7704,7 +7490,7 @@ io ◀ `FUNC-module-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-evaluate-rules
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-agent → FUNC-mutate, FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
-io ◀ `ACTOR-agent` · io ▶ `FUNC-host-socket` · `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
+io ◀ `ACTOR-agent` · io ▶ `FUNC-docked-session` · `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
 ### 4.62  `FLOW-mutate-cmd-author-req` — Mutate-Command (author-req)
 
@@ -7736,373 +7522,379 @@ Die aus Format-E gelesenen Kommandos auf dem Weg ans Gate. Beleg: src/surface/wr
 
 io ◀ `FUNC-decode` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.67  `FLOW-mutate-cmd-graph-suggest` — Mutate-Command (graph-suggest)
+### 4.67  `FLOW-mutate-cmd-docked-session` — Schreibaufruf der angedockten Sitzung
+
+Der Schreibaufruf einer angedockten Sitzung, ueber den Socket an den Besitzer des Stores gereicht. Die Sitzung wartet im Aufruf auf die Antwort. Beleg: src/surface/host-shim.ts, dispatch ruft callHost.
+
+io ◀ `FUNC-docked-session` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-command`
+
+### 4.68  `FLOW-mutate-cmd-graph-suggest` — Mutate-Command (graph-suggest)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-graph-suggest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.68  `FLOW-mutate-cmd-host-socket` — Mutate-Command (host-socket)
+### 4.69  `FLOW-mutate-cmd-host-socket` — Mutate-Command (host-socket)
 
 Der Schreibaufruf eines zweiten Prozesses, vom Socket an das Werkzeug des Besitzers weitergereicht. Beleg: src/surface/host-shim.ts, startHostSocket ruft tool.handler mit der geparsten Eingabe. (CR-GC-768)
 
 io ◀ `FUNC-host-socket` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.69  `FLOW-mutate-cmd-import-code-verb` — Mutate-Command (import-code-verb)
+### 4.70  `FLOW-mutate-cmd-import-code-verb` — Mutate-Command (import-code-verb)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-code-verb → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.70  `FLOW-mutate-cmd-import-doc` — Mutate-Command (import-doc)
+### 4.71  `FLOW-mutate-cmd-import-doc` — Mutate-Command (import-doc)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-doc → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-import-doc` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.71  `FLOW-mutate-cmd-merge-nodes` — Mutate-Command (merge-nodes)
+### 4.72  `FLOW-mutate-cmd-merge-nodes` — Mutate-Command (merge-nodes)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-merge-nodes → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-merge-nodes` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.72  `FLOW-mutate-cmd-owner` — Mutate-Command (Owner)
+### 4.73  `FLOW-mutate-cmd-owner` — Mutate-Command (Owner)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-owner → FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
-io ◀ `ACTOR-owner` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-command`
+io ◀ `ACTOR-owner` · io ▶ `FUNC-docked-session` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.73  `FLOW-mutate-cmd-se-conops` — Mutate-Command (se-conops)
+### 4.74  `FLOW-mutate-cmd-se-conops` — Mutate-Command (se-conops)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-conops → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-se-conops` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.74  `FLOW-mutate-cmd-se-fmea` — Mutate-Command (se-fmea)
+### 4.75  `FLOW-mutate-cmd-se-fmea` — Mutate-Command (se-fmea)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-fmea → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-se-fmea` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.75  `FLOW-mutate-cmd-se-generate` — Mutate-Command (se-generate)
+### 4.76  `FLOW-mutate-cmd-se-generate` — Mutate-Command (se-generate)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-generate → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-se-generate` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.76  `FLOW-mutate-cmd-se-irr` — Mutate-Command (se-irr)
+### 4.77  `FLOW-mutate-cmd-se-irr` — Mutate-Command (se-irr)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-irr → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-se-irr` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.77  `FLOW-mutate-cmd-se-laufzeit` — Mutate-Command (se-laufzeit)
+### 4.78  `FLOW-mutate-cmd-se-laufzeit` — Mutate-Command (se-laufzeit)
 
 Schreibabsicht am Gate als MutateCommand-Batch: die vom Autor gewaehlten Anforderungen an Laufzeit und Datenalter mit ihrem Test und der CR-Knoten der Analyse. Verbindung von FUNC-se-laufzeit zu FUNC-mutate. (CR-GC-783)
 
 io ◀ `FUNC-se-laufzeit` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.78  `FLOW-mutate-cmd-se-optimize` — Mutate-Command (se-optimize)
+### 4.79  `FLOW-mutate-cmd-se-optimize` — Mutate-Command (se-optimize)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-optimize → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-se-optimize` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.79  `FLOW-mutate-cmd-se-plan` — Mutate-Command (se-plan)
+### 4.80  `FLOW-mutate-cmd-se-plan` — Mutate-Command (se-plan)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-plan → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-se-plan` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.80  `FLOW-mutate-cmd-se-top-level` — Mutate-Command (se-top-level)
+### 4.81  `FLOW-mutate-cmd-se-top-level` — Mutate-Command (se-top-level)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-top-level → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-se-top-level` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.81  `FLOW-mutate-cmd-se-trade` — Mutate-Command (se-trade)
+### 4.82  `FLOW-mutate-cmd-se-trade` — Mutate-Command (se-trade)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-trade → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-se-trade` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.82  `FLOW-mutate-cmd-se-vorbereitung` — Mutate-Command (se-vorbereitung)
+### 4.83  `FLOW-mutate-cmd-se-vorbereitung` — Mutate-Command (se-vorbereitung)
 
 Schreibabsicht am Gate als MutateCommand-Batch: die vom Autor gewaehlten Zuege der Vorbereitung. Verbindung von FUNC-se-vorbereitung zu FUNC-mutate. (CR-GC-784)
 
 io ◀ `FUNC-se-vorbereitung` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.83  `FLOW-mutate-cmd-test-ingest` — Mutate-Command (test-ingest)
+### 4.84  `FLOW-mutate-cmd-test-ingest` — Mutate-Command (test-ingest)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-test-ingest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.84  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
+### 4.85  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
 
 Der Rueckweg an den fragenden Agenten: aus dem Messzustand die Fokus-Dimension und das Fund-Fenster. Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger.
 
 io ◀ `FUNC-generation-step` · io ▶ `ACTOR-agent` · schema ▶ `SCHEMA-generation-step`
 
-### 4.85  `FLOW-ontology-json` — Graph-Datei (Snapshot)
+### 4.86  `FLOW-ontology-json` — Graph-Datei (Snapshot)
 
 Der Inhalt der committeten Graph-Datei, gelesen fuer Seed und Reseed und an den Import uebergeben. (CR-GC-503)
 
 io ◀ `FUNC-seed-from-json` · io ▶ `FUNC-held-back-traces` · `FUNC-import` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.86  `FLOW-query-request-agent` — Query-Request (Agent)
+### 4.87  `FLOW-query-request-agent` — Query-Request (Agent)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-agent → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `ACTOR-agent` · io ▶ `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-list-elements` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-### 4.87  `FLOW-query-request-auto-export` — Query-Request (auto-export)
+### 4.88  `FLOW-query-request-auto-export` — Query-Request (auto-export)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-auto-export → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `FUNC-auto-export` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.88  `FLOW-query-request-owner` — Query-Request (Owner)
+### 4.89  `FLOW-query-request-owner` — Query-Request (Owner)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-owner → FUNC-view-changelog, FUNC-view-conops, FUNC-view-fmea, FUNC-view-icd, FUNC-view-intplan, FUNC-view-rtm, FUNC-render-views, FUNC-export-markdown, FUNC-list-elements, FUNC-graph-expand; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `ACTOR-owner` · io ▶ `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-list-elements` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
-### 4.89  `FLOW-query-request-render-views` — Query-Request (render-views)
+### 4.90  `FLOW-query-request-render-views` — Query-Request (render-views)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-render-views → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `FUNC-render-views` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.90  `FLOW-query-request-view-changelog` — Query-Request (view-changelog)
+### 4.91  `FLOW-query-request-view-changelog` — Query-Request (view-changelog)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-changelog → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `FUNC-view-changelog` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.91  `FLOW-query-request-view-conops` — Query-Request (view-conops)
+### 4.92  `FLOW-query-request-view-conops` — Query-Request (view-conops)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-conops → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `FUNC-view-conops` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.92  `FLOW-query-request-view-fmea` — Query-Request (view-fmea)
+### 4.93  `FLOW-query-request-view-fmea` — Query-Request (view-fmea)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-fmea → FUNC-read-tools, FUNC-list-elements; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `FUNC-view-fmea` · io ▶ `FUNC-list-elements` · `FUNC-read-tools` · schema ▶ `SCHEMA-query-params`
 
-### 4.93  `FLOW-query-request-view-icd` — Query-Request (view-icd)
+### 4.94  `FLOW-query-request-view-icd` — Query-Request (view-icd)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-icd → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `FUNC-view-icd` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.94  `FLOW-query-request-view-intplan` — Query-Request (view-intplan)
+### 4.95  `FLOW-query-request-view-intplan` — Query-Request (view-intplan)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-intplan → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `FUNC-view-intplan` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.95  `FLOW-query-request-view-rtm` — Query-Request (view-rtm)
+### 4.96  `FLOW-query-request-view-rtm` — Query-Request (view-rtm)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-rtm → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).
 
 io ◀ `FUNC-view-rtm` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.96  `FLOW-readiness-report` — Readiness-Report (Agent)
+### 4.97  `FLOW-readiness-report` — Readiness-Report (Agent)
 
 Der Bericht von graph_readiness an den Agenten: Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `ACTOR-agent` · schema ▶ `SCHEMA-readiness-report`
 
-### 4.97  `FLOW-rendered-views` — Gerenderte Sicht (Skill)
+### 4.98  `FLOW-rendered-views` — Gerenderte Sicht (Skill)
 
 Die Markdown-Sicht, die ein se-view-Skill auf Zuruf rendert. Gleicher Vertrag wie der deterministische Export, anderer Erzeuger und anderer Anlass.
 
 io ◀ `FUNC-render-views` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.98  `FLOW-reseed-order` — Reseed-Auftrag
+### 4.99  `FLOW-reseed-order` — Reseed-Auftrag
 
 Der serialisierte Auftrag, den Store aus dem Snapshot neu aufzusetzen. Beleg: src/kernel/harness.ts, reseed ruft applyReseed hinter dem Single-Writer. (CR-GC-768)
 
 io ◀ `FUNC-reseed` · io ▶ `FUNC-apply-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.99  `FLOW-reseed-snapshot` — Snapshot zum Reseed
+### 4.100  `FLOW-reseed-snapshot` — Snapshot zum Reseed
 
 Der bereitgestellte Snapshot eines Commits auf dem Weg zum Neuaufsetzen. Beleg: src/surface/rewind.ts, executeRewind ruft harness.reseed. (CR-GC-768)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.100  `FLOW-reseeded-graph` — Neu aufgesetzter Bestand
+### 4.101  `FLOW-reseeded-graph` — Neu aufgesetzter Bestand
 
 Der neu aufgesetzte Bestand auf dem Weg in den Store. Beleg: src/kernel/harness-import.ts, applyReseed schreibt in das importTarget des GraphStore. (CR-GC-768)
 
 io ◀ `FUNC-apply-reseed` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.101  `FLOW-rule-findings` — Regelbefunde
+### 4.102  `FLOW-rule-findings` — Regelbefunde
 
 Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)
 
 io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · schema ▶ `SCHEMA-rule-violation`
 
-### 4.102  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
+### 4.103  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
 
 Der Fingerabdruck der generierten DDL als Marker neben dem Store: 16 Hex-Zeichen. Beim Anlegen gestempelt, beim naechsten Start gelesen - er entscheidet, ob der Store weggeworfen und neu befuellt wird.
 
 io ◀ `FUNC-schema-guard` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-schema-fingerprint`
 
-### 4.103  `FLOW-schlupf-zeile` — Schlupf-Zeile
+### 4.104  `FLOW-schlupf-zeile` — Schlupf-Zeile
 
 Eine Zeile je Volllauf in docs/messung/testauswahl.jsonl: CR, Spur, Auswahl, rote Dateien, Schlupf, Zusage der Bindung.
 
 io ◀ `FUNC-measure-test-schlupf` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-schlupf-zeile`
 
-### 4.104  `FLOW-session-entry` — Sitzungseintrag
+### 4.105  `FLOW-session-entry` — Sitzungseintrag
 
 Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
 
-### 4.105  `FLOW-session-registry` — Sitzungsregister
+### 4.106  `FLOW-session-registry` — Sitzungsregister
 
 Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird.
 
 io ◀ `FUNC-gve-sessions` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-session-registry`
 
-### 4.106  `FLOW-skill-report-se-help` — Skill-Bericht (se-help)
+### 4.107  `FLOW-skill-report-se-help` — Skill-Bericht (se-help)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-help → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-se-help` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.107  `FLOW-skill-report-se-retro` — Skill-Bericht (se-retro)
+### 4.108  `FLOW-skill-report-se-retro` — Skill-Bericht (se-retro)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-retro → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-se-retro` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.108  `FLOW-skill-report-se-review` — Skill-Bericht (se-review)
+### 4.109  `FLOW-skill-report-se-review` — Skill-Bericht (se-review)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-review → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-se-review` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.109  `FLOW-skill-report-se-status` — Skill-Bericht (se-status)
+### 4.110  `FLOW-skill-report-se-status` — Skill-Bericht (se-status)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-status → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-se-status` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.110  `FLOW-skill-report-test` — Skill-Bericht (test)
+### 4.111  `FLOW-skill-report-test` — Skill-Bericht (test)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-test` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.111  `FLOW-skill-report-test-ui` — Skill-Bericht (test-ui)
+### 4.112  `FLOW-skill-report-test-ui` — Skill-Bericht (test-ui)
 
 Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test-ui → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).
 
 io ◀ `FUNC-test-ui` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.112  `FLOW-skill-request` — Skill-Aufruf
+### 4.113  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
 io ◀ `ACTOR-agent` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-### 4.113  `FLOW-sse-frame` — SSE-Frame (versioniert)
+### 4.114  `FLOW-sse-frame` — SSE-Frame (versioniert)
 
 Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501)
 
 io ◀ `FUNC-broadcast-diff` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-### 4.114  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.115  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.115  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.116  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-steering-delta` · `FUNC-generation-step` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.116  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
+### 4.117  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
 
 Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Verbindung ACTOR-agent → FUNC-take-steering-snapshot; aufgetrennt aus FLOW-steering-trigger (CR-GC-510).
 
 io ◀ `ACTOR-agent` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.117  `FLOW-store-ownership` — Store-Besitzanspruch
+### 4.118  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.118  `FLOW-target-profile` — Zielprofil
+### 4.119  `FLOW-target-profile` — Zielprofil
 
 Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform.
 
 io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-generation-step` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-target-profile`
 
-### 4.119  `FLOW-target-profile-file` — Zielprofil (Rohform)
+### 4.120  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
 Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet.
 
 io ◀ `FUNC-target-profile` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-### 4.120  `FLOW-test-selection` — Selektive Testauswahl
+### 4.121  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-agent` · `ACTOR-owner` · schema ▶ `SCHEMA-test-selection`
 
-### 4.121  `FLOW-tool-context` — Werkzeug-Kontext
+### 4.122  `FLOW-tool-context` — Werkzeug-Kontext
 
 Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-### 4.122  `FLOW-tool-registry` — Werkzeug-Register
+### 4.123  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-tool-registry`
 
-### 4.123  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
+### 4.124  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
 
 Die gebundenen Werkzeuge, wie der Agent sie ueber stdio sieht und ruft. Beleg: src/surface/mcp-server.ts, serveStdio verbindet den Server mit dem stdio-Transport. (CR-GC-768)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `ACTOR-agent` · schema ▶ `SCHEMA-tool-registry`
 
-### 4.124  `FLOW-trajectory` — Trajectory/Outcome
+### 4.125  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.125  `FLOW-version-bump` — Version-Bump
+### 4.126  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
 io ◀ `ACTOR-owner` · io ▶ `FUNC-migrate-schema` · `FUNC-schema-guard` · schema ▶ `SCHEMA-query-params`
 
-### 4.126  `FLOW-vorschlag` — Vorschlag an den Nutzer
+### 4.127  `FLOW-vorschlag` — Vorschlag an den Nutzer
 
 Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis. (CR-GC-770)
 
 io ◀ `FUNC-vorschlag` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.127  `FLOW-zug-bericht` — Bericht zum Zug
+### 4.128  `FLOW-zug-bericht` — Bericht zum Zug
 
 Die Berichte zum Zug in der Antwort der zwei Werkzeuge, die berichten: graph_mutate an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)
 
 io ◀ `FUNC-zug-bericht` · io ▶ `ACTOR-agent` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-zug-bericht`
 
-### 4.128  `FLOW-zug-staende` — Stand davor und danach
+### 4.129  `FLOW-zug-staende` — Stand davor und danach
 
 Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil herausgibt. Ein geblockter Zug hat kein Paar. (CR-GC-778)
 
@@ -8276,7 +8068,7 @@ schema ◀ `FLOW-module-metrics`
 
 Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
-schema ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-author-req` · `FLOW-mutate-cmd-author-uc` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-close-violations` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-import-doc` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-owner` · `FLOW-mutate-cmd-se-conops` · `FLOW-mutate-cmd-se-fmea` · `FLOW-mutate-cmd-se-generate` · `FLOW-mutate-cmd-se-irr` · `FLOW-mutate-cmd-se-laufzeit` · `FLOW-mutate-cmd-se-optimize` · `FLOW-mutate-cmd-se-plan` · `FLOW-mutate-cmd-se-top-level` · `FLOW-mutate-cmd-se-trade` · `FLOW-mutate-cmd-se-vorbereitung` · `FLOW-mutate-cmd-test-ingest`
+schema ◀ `FLOW-mutate-cmd-agent` · `FLOW-mutate-cmd-author-req` · `FLOW-mutate-cmd-author-uc` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-close-violations` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-docked-session` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-import-doc` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-owner` · `FLOW-mutate-cmd-se-conops` · `FLOW-mutate-cmd-se-fmea` · `FLOW-mutate-cmd-se-generate` · `FLOW-mutate-cmd-se-irr` · `FLOW-mutate-cmd-se-laufzeit` · `FLOW-mutate-cmd-se-optimize` · `FLOW-mutate-cmd-se-plan` · `FLOW-mutate-cmd-se-top-level` · `FLOW-mutate-cmd-se-trade` · `FLOW-mutate-cmd-se-vorbereitung` · `FLOW-mutate-cmd-test-ingest`
 
 ### 5.29  `SCHEMA-mutate-result` — MutateResult
 
@@ -8448,7 +8240,7 @@ allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-block-dokumen
 
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
-allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-host-sitzung` · `FUNC-block-live-dashboard` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-host-sitzung` · `FUNC-block-live-dashboard` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-docked-session` · `FUNC-emit-update-event` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
 
 ## 7  Cross-cutting Requirements
 
@@ -9168,7 +8960,7 @@ verify ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ
 
 Abnahme der Datei tests/host-shim.test.ts: die Zwei-Prozess-Topologie auf Socket-Ebene, ein echter Host mit Store und ein echter Proxy-Registry-Client. Der Verlierer der Wahl bedient dieselbe Oberflaeche ueber stdio, ohne einen zweiten Schreibkanal zu oeffnen.
 
-verify ▶ `REQ-risk-owner-ends-with-docked-sessions` · `REQ-single-kuzu-owner` · `REQ-single-write-door` · `REQ-store-owner-lifecycle` · testRefs: `tests/host-shim.test.ts`
+verify ▶ `REQ-docked-session-reelects-once` · `REQ-further-session-docks-via-socket` · `REQ-host-holds-only-kuzu-handle` · `REQ-risk-owner-ends-with-docked-sessions` · `REQ-single-kuzu-owner` · `REQ-single-write-door` · testRefs: `tests/host-shim.test.ts`
 
 ### 8.59  `TEST-impact-subgraph` — graph_impact Subgraph-Test
 
@@ -9192,7 +8984,7 @@ verify ▶ `REQ-bootstrap-through-gate` · testRefs: `tests/harness.import-invar
 
 Abnahme der Datei tests/harness.import-rejected-traces.test.ts: der Seed laedt einen Graphen mit ACTOR -io-> UC, haelt die Kante zurueck und nennt sie; graph_readiness fuehrt sie auch nach Neustart; graph_export verweigert mit Kante und Reparaturweg, bis delete-edge durchs Werkzeug sie annimmt; das Gate blockt dieselbe Kante als neue (R-18).
 
-verify ▶ `REQ-held-back-traces-named` · `REQ-risk-edge-vanishes-silently` · `SCHEMA-rejected-trace` · testRefs: `tests/harness.import-rejected-traces.test.ts`
+verify ▶ `REQ-export-refuses-until-held-back-repaired` · `REQ-held-back-edge-does-not-abort-load` · `REQ-held-back-edges-derived-every-call` · `REQ-held-back-edges-in-readiness` · `REQ-risk-edge-vanishes-silently` · `SCHEMA-rejected-trace` · testRefs: `tests/harness.import-rejected-traces.test.ts`
 
 ### 8.63  `TEST-import-sys-anchor` — Genau ein SYS-Anker nach jedem Import
 
@@ -9534,7 +9326,7 @@ verify ▶ `REQ-graph-tests-operational` · `REQ-impact-based-testing` · `REQ-s
 
 Abnahme der Datei tests/session-lifecycle.test.ts: der Abbau laeuft in umgekehrter Reihenfolge mit dem Store-Lock zuletzt und laeuft nach einem Fehlschlag weiter. Ohne diese Eigenschaften kehrt der Zombie-Host zurueck.
 
-verify ▶ `REQ-single-kuzu-owner` · `REQ-store-owner-lifecycle` · testRefs: `tests/session-lifecycle.test.ts`
+verify ▶ `REQ-session-leaves-nothing-behind` · `REQ-single-kuzu-owner` · testRefs: `tests/session-lifecycle.test.ts`
 
 ### 8.120  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
 
@@ -9630,7 +9422,7 @@ verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.t
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
-verify ▶ `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `REQ-store-owner-lifecycle` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
+verify ▶ `REQ-first-session-claims-store-lock` · `REQ-harness-factory-returns-one-owner` · `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
 
 ### 8.136  `TEST-store-recovery` — Store-Recovery-Test
 
@@ -9772,4 +9564,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-184 REQ · 184 verified · 0 without a verifying TEST (R-01).
+191 REQ · 191 verified · 0 without a verifying TEST (R-01).

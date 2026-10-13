@@ -3388,6 +3388,12 @@
       "description": "docs/cr/open/CR-GC-804-zielprofil-als-anforderungen-im-modell-s.md"
     },
     {
+      "id": "CR-GC-805",
+      "type": "CR",
+      "name": "Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion",
+      "description": "docs/cr/done/CR-GC-805-zwei-zusagen-mit-mehreren-erfuellern-zer.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -4091,6 +4097,13 @@
       "type": "FLOW",
       "name": "Mutate-Command (decode)",
       "description": "Die aus Format-E gelesenen Kommandos auf dem Weg ans Gate. Beleg: src/surface/write.ts, graph_mutate ruft formatEToCommands und reicht das Ergebnis an harness.mutate, ebenso src/surface/bootstrap.ts. (CR-GC-768)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-mutate-cmd-docked-session",
+      "type": "FLOW",
+      "name": "Schreibaufruf der angedockten Sitzung",
+      "description": "Der Schreibaufruf einer angedockten Sitzung, ueber den Socket an den Besitzer des Stores gereicht. Die Sitzung wartet im Aufruf auf die Antwort. Beleg: src/surface/host-shim.ts, dispatch ruft callHost.",
       "sync": "sync"
     },
     {
@@ -4928,6 +4941,17 @@
       "realRef": {
         "file": "src/projections/report.ts",
         "symbol": "graph_tests",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-docked-session",
+      "type": "FUNC",
+      "name": "Angedockte Sitzung",
+      "description": "Die Werkzeugflaeche einer angedockten Sitzung: dieselbe Registry wie beim Besitzer, jeder Aufruf wird ueber den Socket an ihn weitergereicht. Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "buildProxyRegistry",
         "lang": "ts"
       }
     },
@@ -6244,6 +6268,16 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "REQ-docked-session-reelects-once",
+      "type": "REQ",
+      "name": "Angedockte Sitzung versucht genau eine Neuwahl",
+      "description": "Endet der Besitzer des Stores, waehrend eine Sitzung angedockt ist, versucht diese Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach als Host weiter. Gelingt das nicht, endet der Aufruf mit einem benannten Fehler statt mit einem Haenger oder einem leeren Ergebnis.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-docs-taxonomy",
       "type": "REQ",
       "name": "Docs-Taxonomie: Views vs Records (Litmus-Test)",
@@ -6293,6 +6327,24 @@
         "functional"
       ],
       "role": "mitigation"
+    },
+    {
+      "id": "REQ-export-refuses-until-held-back-repaired",
+      "type": "REQ",
+      "name": "Export verweigert bis zur Reparatur",
+      "description": "graph_export verweigert, solange eine Kante zurueckgehalten ist, und nennt die Kante und den Reparaturweg; nach einem delete-edge durchs Gate laeuft der Export wieder.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-first-session-claims-store-lock",
+      "type": "REQ",
+      "name": "Erste Sitzung erwirbt den Store-Lock",
+      "description": "Die erste Sitzung eines Repos erwirbt den Store-Lock atomar; ein zweiter Erwerb wird laut und mit Nennung des Besitzers abgewiesen.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-fmea-checks-entry",
@@ -6354,6 +6406,15 @@
         "functional"
       ],
       "role": "mitigation"
+    },
+    {
+      "id": "REQ-further-session-docks-via-socket",
+      "type": "REQ",
+      "name": "Weitere Sitzung dockt ueber den Socket an",
+      "description": "Der Besitzer oeffnet einen lokalen Socket, ueber den jede weitere Sitzung ihre Aufrufe an ihn reicht; Werkzeugflaeche und Urteil des Gates sind dieselben wie im Besitzerprozess.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-gate-judges-and-stores",
@@ -6469,6 +6530,15 @@
       ]
     },
     {
+      "id": "REQ-harness-factory-returns-one-owner",
+      "type": "REQ",
+      "name": "Fabrik liefert genau einen Besitzer",
+      "description": "Die Fabrik baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck; ein zweiter Harness auf demselben Store wird beim Initialisieren abgewiesen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-harness-schema-in-contracts",
       "type": "REQ",
       "name": "Harness-Schemas in contracts (D1)",
@@ -6480,14 +6550,32 @@
       ]
     },
     {
-      "id": "REQ-held-back-traces-named",
+      "id": "REQ-held-back-edge-does-not-abort-load",
       "type": "REQ",
-      "name": "Zurueckgehaltene Kanten werden benannt",
-      "description": "Eine committete Kante, die kein Muster mehr zulaesst, bricht den Seed nicht ab und verschwindet nie still: sie steht in graph_readiness, nach jedem Neustart erneut, und graph_export verweigert, bis ein delete-edge durchs Gate die Reparatur annimmt.",
+      "name": "Musterfremde Kante bricht das Laden nicht ab",
+      "description": "Eine committete Kante, die kein Muster mehr zulaesst, bricht das Laden aus dem Snapshot nicht ab: sie wird zurueckgehalten, der uebrige Graph wird geladen.",
       "kinds": [
         "functional"
-      ],
-      "role": "mitigation"
+      ]
+    },
+    {
+      "id": "REQ-held-back-edges-derived-every-call",
+      "type": "REQ",
+      "name": "Zurueckgehaltene Kanten werden bei jedem Aufruf abgeleitet",
+      "description": "Bei jedem Aufruf leitet das Werkzeug aus der committeten Graph-Datei ab, welche Kanten im Live-Graphen fehlen, weil kein Muster sie zulaesst, und nennt jede mit ihrem Grund; das gilt auch nach einem Neustart ohne erneutes Laden.",
+      "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-held-back-edges-in-readiness",
+      "type": "REQ",
+      "name": "Zurueckgehaltene Kanten stehen im Stand-Bericht",
+      "description": "graph_readiness nennt jede zurueckgehaltene Kante, nach jedem Neustart erneut.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-hook-extension-points",
@@ -6509,6 +6597,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-host-holds-only-kuzu-handle",
+      "type": "REQ",
+      "name": "Host haelt das einzige Kuzu-Handle",
+      "description": "Der Host-Prozess haelt das einzige Kuzu-Handle des Repos; weder die Bridge noch eine weitere Sitzung oeffnet ein zweites.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -7782,17 +7879,6 @@
       ]
     },
     {
-      "id": "REQ-store-owner-lifecycle",
-      "type": "REQ",
-      "name": "Store-Besitz als Protokoll",
-      "description": "Die erste Session eines Repos erwirbt den Store-Lock und erzeugt die eine Harness; jede weitere Session dockt ueber den Host-Socket am laufenden Besitzer an statt einen zweiten Kuzu-Handle zu oeffnen; beim Schliessen wird der Store sauber freigegeben. Verhaltens-Kind des Constraints REQ-single-kuzu-owner: dort steht die Eigenschaft (genau ein Besitzer), hier das pruefbare Protokoll, das sie herstellt.",
-      "kinds": [
-        "functional"
-      ],
-      "status": "reviewed",
-      "role": "mitigation"
-    },
-    {
       "id": "REQ-store-recovery",
       "type": "REQ",
       "name": "Store-Recovery (Recovery-Modus)",
@@ -8701,7 +8787,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -8731,7 +8817,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -8857,7 +8943,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -8932,7 +9018,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -8954,7 +9040,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9041,7 +9127,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9082,7 +9168,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9270,7 +9356,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9288,7 +9374,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9303,7 +9389,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9334,7 +9420,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9351,7 +9437,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9396,7 +9482,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9426,7 +9512,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9495,7 +9581,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9540,7 +9626,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9555,7 +9641,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9570,7 +9656,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9739,7 +9825,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9756,7 +9842,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9841,7 +9927,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9978,7 +10064,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -9993,7 +10079,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10069,7 +10155,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10191,7 +10277,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10209,7 +10295,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10328,7 +10414,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10348,7 +10434,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10389,7 +10475,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10434,7 +10520,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10467,7 +10553,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10497,7 +10583,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10512,7 +10598,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10563,7 +10649,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10870,7 +10956,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -10915,7 +11001,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-12T18:26:38.767Z"
+          "ranAt": "2026-10-13T08:05:46.881Z"
         }
       ]
     },
@@ -15632,6 +15718,101 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-805",
+      "target": "FUNC-claim-store-lock",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "FUNC-create-harness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "FUNC-docked-session",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "FUNC-graph-store",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "FUNC-held-back-traces",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "FUNC-host-socket",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "FUNC-own-kuzu-host",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "FUNC-seed-from-json",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "REQ-docked-session-reelects-once",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "REQ-export-refuses-until-held-back-repaired",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "REQ-first-session-claims-store-lock",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "REQ-further-session-docks-via-socket",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "REQ-harness-factory-returns-one-owner",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "REQ-held-back-edge-does-not-abort-load",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "REQ-held-back-edges-derived-every-call",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "REQ-held-back-edges-in-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-805",
+      "target": "REQ-host-holds-only-kuzu-handle",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15741,6 +15922,11 @@
       "target": "FUNC-create-harness",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
+      "target": "FUNC-docked-session",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -17738,66 +17924,76 @@
     },
     {
       "source": "FLOW-mutate-cmd-agent",
+      "target": "FUNC-docked-session",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-agent",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-agent",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-author-req",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-author-req",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-author-uc",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-author-uc",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-bootstrap",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-bootstrap",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-close-violations",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-close-violations",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-decode",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-decode",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-docked-session",
       "target": "FUNC-host-socket",
       "type": "io"
     },
     {
-      "source": "FLOW-mutate-cmd-agent",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-agent",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-author-req",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-author-req",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-author-uc",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-author-uc",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-bootstrap",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-bootstrap",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-close-violations",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-close-violations",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-decode",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-decode",
+      "source": "FLOW-mutate-cmd-docked-session",
       "target": "SCHEMA-mutate-command",
       "type": "relation"
     },
@@ -17853,7 +18049,7 @@
     },
     {
       "source": "FLOW-mutate-cmd-owner",
-      "target": "FUNC-host-socket",
+      "target": "FUNC-docked-session",
       "type": "io"
     },
     {
@@ -19181,6 +19377,11 @@
     },
     {
       "source": "FUNC-block-host-sitzung",
+      "target": "FUNC-docked-session",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-host-sitzung",
       "target": "FUNC-gve-sessions",
       "type": "compose"
     },
@@ -19514,7 +19715,7 @@
     },
     {
       "source": "FUNC-claim-store-lock",
-      "target": "REQ-store-owner-lifecycle",
+      "target": "REQ-first-session-claims-store-lock",
       "type": "satisfy"
     },
     {
@@ -19615,7 +19816,7 @@
     },
     {
       "source": "FUNC-create-harness",
-      "target": "REQ-store-owner-lifecycle",
+      "target": "REQ-harness-factory-returns-one-owner",
       "type": "satisfy"
     },
     {
@@ -19658,6 +19859,21 @@
     {
       "source": "FUNC-deduce-tests",
       "target": "REQ-test-runnable-binding",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-docked-session",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-docked-session",
+      "target": "FLOW-mutate-cmd-docked-session",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-docked-session",
+      "target": "REQ-docked-session-reelects-once",
       "type": "satisfy"
     },
     {
@@ -19955,7 +20171,7 @@
     },
     {
       "source": "FUNC-graph-export-snapshot",
-      "target": "REQ-held-back-traces-named",
+      "target": "REQ-export-refuses-until-held-back-repaired",
       "type": "satisfy"
     },
     {
@@ -20009,7 +20225,7 @@
     },
     {
       "source": "FUNC-graph-readiness",
-      "target": "REQ-held-back-traces-named",
+      "target": "REQ-held-back-edges-in-readiness",
       "type": "satisfy"
     },
     {
@@ -20030,11 +20246,6 @@
     {
       "source": "FUNC-graph-store",
       "target": "REQ-steering-pre",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-graph-store",
-      "target": "REQ-store-owner-lifecycle",
       "type": "satisfy"
     },
     {
@@ -20190,7 +20401,7 @@
     },
     {
       "source": "FUNC-held-back-traces",
-      "target": "REQ-held-back-traces-named",
+      "target": "REQ-held-back-edges-derived-every-call",
       "type": "satisfy"
     },
     {
@@ -20205,7 +20416,7 @@
     },
     {
       "source": "FUNC-host-socket",
-      "target": "REQ-store-owner-lifecycle",
+      "target": "REQ-further-session-docks-via-socket",
       "type": "satisfy"
     },
     {
@@ -20463,7 +20674,7 @@
     },
     {
       "source": "FUNC-own-kuzu-host",
-      "target": "REQ-store-owner-lifecycle",
+      "target": "REQ-host-holds-only-kuzu-handle",
       "type": "satisfy"
     },
     {
@@ -20870,7 +21081,7 @@
     },
     {
       "source": "FUNC-seed-from-json",
-      "target": "REQ-held-back-traces-named",
+      "target": "REQ-held-back-edge-does-not-abort-load",
       "type": "satisfy"
     },
     {
@@ -21561,6 +21772,11 @@
     },
     {
       "source": "REQ-graph-is-ssot",
+      "target": "REQ-export-refuses-until-held-back-repaired",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-graph-is-ssot",
       "target": "REQ-graph-integrity",
       "type": "compose",
       "weight": 1,
@@ -21568,7 +21784,12 @@
     },
     {
       "source": "REQ-graph-is-ssot",
-      "target": "REQ-held-back-traces-named",
+      "target": "REQ-held-back-edge-does-not-abort-load",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-graph-is-ssot",
+      "target": "REQ-held-back-edges-in-readiness",
       "type": "compose"
     },
     {
@@ -21590,7 +21811,7 @@
     },
     {
       "source": "REQ-risk-edge-vanishes-silently",
-      "target": "REQ-held-back-traces-named",
+      "target": "REQ-held-back-edges-derived-every-call",
       "type": "compose"
     },
     {
@@ -21620,7 +21841,7 @@
     },
     {
       "source": "REQ-risk-owner-ends-with-docked-sessions",
-      "target": "REQ-store-owner-lifecycle",
+      "target": "REQ-docked-session-reelects-once",
       "type": "compose"
     },
     {
@@ -21670,7 +21891,22 @@
     },
     {
       "source": "REQ-single-kuzu-owner",
-      "target": "REQ-store-owner-lifecycle",
+      "target": "REQ-first-session-claims-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-single-kuzu-owner",
+      "target": "REQ-further-session-docks-via-socket",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-single-kuzu-owner",
+      "target": "REQ-harness-factory-returns-one-owner",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-single-kuzu-owner",
+      "target": "REQ-host-holds-only-kuzu-handle",
       "type": "compose"
     },
     {
@@ -22658,6 +22894,21 @@
     },
     {
       "source": "TEST-host-shim",
+      "target": "REQ-docked-session-reelects-once",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-shim",
+      "target": "REQ-further-session-docks-via-socket",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-shim",
+      "target": "REQ-host-holds-only-kuzu-handle",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-shim",
       "target": "REQ-risk-owner-ends-with-docked-sessions",
       "type": "verify"
     },
@@ -22669,11 +22920,6 @@
     {
       "source": "TEST-host-shim",
       "target": "REQ-single-write-door",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-host-shim",
-      "target": "REQ-store-owner-lifecycle",
       "type": "verify"
     },
     {
@@ -22730,7 +22976,22 @@
     },
     {
       "source": "TEST-import-rejected-traces",
-      "target": "REQ-held-back-traces-named",
+      "target": "REQ-export-refuses-until-held-back-repaired",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-rejected-traces",
+      "target": "REQ-held-back-edge-does-not-abort-load",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-rejected-traces",
+      "target": "REQ-held-back-edges-derived-every-call",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-rejected-traces",
+      "target": "REQ-held-back-edges-in-readiness",
       "type": "verify"
     },
     {
@@ -23443,12 +23704,12 @@
     },
     {
       "source": "TEST-session-lifecycle",
-      "target": "REQ-single-kuzu-owner",
+      "target": "REQ-session-leaves-nothing-behind",
       "type": "verify"
     },
     {
       "source": "TEST-session-lifecycle",
-      "target": "REQ-store-owner-lifecycle",
+      "target": "REQ-single-kuzu-owner",
       "type": "verify"
     },
     {
@@ -23567,17 +23828,22 @@
     },
     {
       "source": "TEST-store-lock",
+      "target": "REQ-first-session-claims-store-lock",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-store-lock",
+      "target": "REQ-harness-factory-returns-one-owner",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-store-lock",
       "target": "REQ-one-gate-per-repo",
       "type": "verify"
     },
     {
       "source": "TEST-store-lock",
       "target": "REQ-single-kuzu-owner",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-store-lock",
-      "target": "REQ-store-owner-lifecycle",
       "type": "verify"
     },
     {
@@ -24585,5 +24851,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 745
+  "graphVersion": 747
 }
