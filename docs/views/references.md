@@ -861,6 +861,11 @@
 | `CR-GC-805` | relation | `REQ-held-back-edges-derived-every-call` |
 | `CR-GC-805` | relation | `REQ-held-back-edges-in-readiness` |
 | `CR-GC-805` | relation | `REQ-host-holds-only-kuzu-handle` |
+| `CR-GC-806` | relation | `UC-code-quality` |
+| `CR-GC-806` | relation | `UC-live-graph-view` |
+| `CR-GC-807` | relation | `UC-code-quality` |
+| `CR-GC-807` | relation | `UC-deterministic-steering` |
+| `CR-GC-807` | relation | `UC-reduced-llm` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |

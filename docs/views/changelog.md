@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 415 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 417 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 415 CR · 343 done · 4 open.
+Total: 417 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -477,3 +477,5 @@ Total: 415 CR · 343 done · 4 open.
 | `CR-GC-803` | n/a | Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen) |
 | `CR-GC-804` | n/a | Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion) |
 | `CR-GC-805` | n/a | Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion |
+| `CR-GC-806` | n/a | Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft |
+| `CR-GC-807` | n/a | Impact-Check: UCs code-quality, reduced-llm, deterministic-steering lesen sich als Anforderungen an den Kern-UC - Herabstufen zu REQ pruefen |

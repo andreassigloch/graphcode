@@ -3394,6 +3394,18 @@
       "description": "docs/cr/done/CR-GC-805-zwei-zusagen-mit-mehreren-erfuellern-zer.md"
     },
     {
+      "id": "CR-GC-806",
+      "type": "CR",
+      "name": "Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft",
+      "description": "docs/cr/open/CR-GC-806-kern-uc-fehlt-entwickler-mensch-oder-ki-.md"
+    },
+    {
+      "id": "CR-GC-807",
+      "type": "CR",
+      "name": "Impact-Check: UCs code-quality, reduced-llm, deterministic-steering lesen sich als Anforderungen an den Kern-UC - Herabstufen zu REQ pruefen",
+      "description": "docs/cr/open/CR-GC-807-impact-check-ucs-code-quality-reduced-ll.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -15813,6 +15825,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-806",
+      "target": "UC-code-quality",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-806",
+      "target": "UC-live-graph-view",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-807",
+      "target": "UC-code-quality",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-807",
+      "target": "UC-deterministic-steering",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-807",
+      "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -24851,5 +24888,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 748
+  "graphVersion": 751
 }
