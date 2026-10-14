@@ -42,9 +42,10 @@ Leaf-Logik in UC-01/02/03 und CL-01, Single-Parent für UC, Existenzregel, RULES
 mehreren Ketten entfällt der Bedarf — `UC -compose-> FCHAIN` ist 1..*, und eine FCHAIN darf mehrere
 UC-Eltern haben (single-compose-parent gilt nur FUNC/MOD).
 
-## Offene Entscheidung vor dem Zug
+## Entscheidung Kettenbau: (b) (Auftraggeber 2026-10-14)
 
-Wie die zwei Ketten gebaut werden:
+Der UC komponiert die bestehenden feinen Ketten; „Spec" und „Code" sind eine Lesart, keine neuen
+FCHAIN. Die Kettenliste wird im Zug mit dem Auftraggeber bestätigt. Abgewogen waren:
 - **(a) neue grobe Ketten** `FCHAIN-spec` / `FCHAIN-code`, die die Blatt-FUNCs der beteiligten feinen
   Ketten Ende-zu-Ende komponieren. Vorteil: Die Wirkkette-View zeigt den ganzen Ablauf auf einen Klick.
   Preis: FC-03 verbietet Blöcke als Glieder, also ~20–30 Blatt-FUNCs je Kette, die doppelt zu den
