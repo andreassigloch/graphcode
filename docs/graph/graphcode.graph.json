@@ -19129,11 +19129,6 @@
     },
     {
       "source": "FUNC-block-anleitung",
-      "target": "MOD-agent-surface",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-anleitung",
       "target": "FUNC-se-help",
       "type": "compose"
     },
@@ -19161,11 +19156,6 @@
       "source": "FUNC-block-anleitung",
       "target": "FUNC-test-ui",
       "type": "compose"
-    },
-    {
-      "source": "FUNC-block-autorieren",
-      "target": "MOD-agent-surface",
-      "type": "allocate"
     },
     {
       "source": "FUNC-block-autorieren",
@@ -19204,11 +19194,6 @@
     },
     {
       "source": "FUNC-block-bedienung",
-      "target": "MOD-surface",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-bedienung",
       "target": "FUNC-cli-dispatch",
       "type": "compose"
     },
@@ -19244,11 +19229,6 @@
     },
     {
       "source": "FUNC-block-betrieb",
-      "target": "MOD-surface",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-betrieb",
       "target": "FUNC-block-bedienung",
       "type": "compose"
     },
@@ -19261,11 +19241,6 @@
       "source": "FUNC-block-betrieb",
       "target": "FUNC-block-ruestzeug",
       "type": "compose"
-    },
-    {
-      "source": "FUNC-block-dokumentenwerk",
-      "target": "MOD-projections",
-      "type": "allocate"
     },
     {
       "source": "FUNC-block-dokumentenwerk",
@@ -19309,11 +19284,6 @@
     },
     {
       "source": "FUNC-block-gate",
-      "target": "MOD-kernel",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-gate",
       "target": "FUNC-check-code-conformance",
       "type": "compose"
     },
@@ -19336,11 +19306,6 @@
       "source": "FUNC-block-gate",
       "target": "FLOW-channel-gate-verdict",
       "type": "io"
-    },
-    {
-      "source": "FUNC-block-gedaechtnis",
-      "target": "MOD-projections",
-      "type": "allocate"
     },
     {
       "source": "FUNC-block-gedaechtnis",
@@ -19419,11 +19384,6 @@
     },
     {
       "source": "FUNC-block-host-sitzung",
-      "target": "MOD-surface",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-host-sitzung",
       "target": "FUNC-docked-session",
       "type": "compose"
     },
@@ -19459,11 +19419,6 @@
     },
     {
       "source": "FUNC-block-live-dashboard",
-      "target": "MOD-surface",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-live-dashboard",
       "target": "FUNC-broadcast-diff",
       "type": "compose"
     },
@@ -19476,11 +19431,6 @@
       "source": "FUNC-block-live-dashboard",
       "target": "FUNC-serve-sse",
       "type": "compose"
-    },
-    {
-      "source": "FUNC-block-messwerk",
-      "target": "MOD-projections",
-      "type": "allocate"
     },
     {
       "source": "FUNC-block-messwerk",
@@ -19549,11 +19499,6 @@
     },
     {
       "source": "FUNC-block-q-improvement",
-      "target": "MOD-loop",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-block-q-improvement",
       "target": "FUNC-close-violations",
       "type": "compose"
     },
@@ -19571,11 +19516,6 @@
       "source": "FUNC-block-q-improvement",
       "target": "FUNC-vorschlag",
       "type": "compose"
-    },
-    {
-      "source": "FUNC-block-ruestzeug",
-      "target": "MOD-kernel",
-      "type": "allocate"
     },
     {
       "source": "FUNC-block-ruestzeug",
@@ -19601,11 +19541,6 @@
       "source": "FUNC-block-ruestzeug",
       "target": "FUNC-tool-context",
       "type": "compose"
-    },
-    {
-      "source": "FUNC-block-speicherwerk",
-      "target": "MOD-kernel",
-      "type": "allocate"
     },
     {
       "source": "FUNC-block-speicherwerk",
@@ -19651,11 +19586,6 @@
       "source": "FUNC-block-speicherwerk",
       "target": "FUNC-seed-from-json",
       "type": "compose"
-    },
-    {
-      "source": "FUNC-block-urteilsarbeit",
-      "target": "MOD-agent-surface",
-      "type": "allocate"
     },
     {
       "source": "FUNC-block-urteilsarbeit",
@@ -20158,11 +20088,6 @@
       "source": "FUNC-generation-step",
       "target": "REQ-steering-promise-one-owner",
       "type": "satisfy"
-    },
-    {
-      "source": "FUNC-goal-steerer",
-      "target": "MOD-loop",
-      "type": "allocate"
     },
     {
       "source": "FUNC-goal-steerer",
@@ -24908,5 +24833,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 752
+  "graphVersion": 753
 }

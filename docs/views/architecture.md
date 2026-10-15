@@ -149,22 +149,22 @@
 | `FUNC-auto-export` | `MOD-projections` |
 | `FUNC-bind-tools` | `MOD-surface` |
 | `FUNC-block-abfrage` | ⚠ nicht alloziert (R-22) |
-| `FUNC-block-anleitung` | `MOD-agent-surface` |
-| `FUNC-block-autorieren` | `MOD-agent-surface` |
-| `FUNC-block-bedienung` | `MOD-surface` |
-| `FUNC-block-betrieb` | `MOD-surface` |
-| `FUNC-block-dokumentenwerk` | `MOD-projections` |
-| `FUNC-block-gate` | `MOD-kernel` |
-| `FUNC-block-gedaechtnis` | `MOD-projections` |
+| `FUNC-block-anleitung` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-autorieren` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-bedienung` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-betrieb` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-dokumentenwerk` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-gate` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-gedaechtnis` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-grounding` | ⚠ nicht alloziert (R-22) |
-| `FUNC-block-host-sitzung` | `MOD-surface` |
-| `FUNC-block-live-dashboard` | `MOD-surface` |
-| `FUNC-block-messwerk` | `MOD-projections` |
+| `FUNC-block-host-sitzung` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-live-dashboard` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-messwerk` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-optimierung` | ⚠ nicht alloziert (R-22) |
-| `FUNC-block-q-improvement` | `MOD-loop` |
-| `FUNC-block-ruestzeug` | `MOD-kernel` |
-| `FUNC-block-speicherwerk` | `MOD-kernel` |
-| `FUNC-block-urteilsarbeit` | `MOD-agent-surface` |
+| `FUNC-block-q-improvement` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-ruestzeug` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-speicherwerk` | ⚠ nicht alloziert (R-22) |
+| `FUNC-block-urteilsarbeit` | ⚠ nicht alloziert (R-22) |
 | `FUNC-bootstrap` | `MOD-surface` |
 | `FUNC-broadcast-diff` | `MOD-surface` |
 | `FUNC-chain-metrics` | `MOD-projections` |
@@ -187,7 +187,7 @@
 | `FUNC-fit-advisory` | `MOD-kernel-measure` |
 | `FUNC-function-criticality` | `MOD-projections` |
 | `FUNC-generation-step` | `MOD-loop` |
-| `FUNC-goal-steerer` | `MOD-loop` |
+| `FUNC-goal-steerer` | ⚠ nicht alloziert (R-22) |
 | `FUNC-graph-expand` | `MOD-kernel` |
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |

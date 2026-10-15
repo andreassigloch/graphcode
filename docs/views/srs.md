@@ -4914,13 +4914,13 @@ Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-migr
 
 Ebene-0-Block, bewusst NICHT im Pitch: Bedienung und Lebensdauer einer Installation — CLI-Verben, Sitzungsverwaltung, Host-Socket, MCP-Transport, Gesundheitsabfrage und das Ruestzeug (Repo-Konfiguration, Schema-Stand, Werkzeug-Registry). Man verkauft ihn nicht, man braucht ihn. Der begruendete sechste Slot der se:top-level-Regel: Betrieb kommt zuletzt und braucht einen eigenen Platz. (CR-GC-459)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ##### 3.10.1.1  `FUNC-block-bedienung` — Bedienung
 
 Ebene-1-Block im Betrieb: die Verben, mit denen ein Mensch das Repo einrichtet, aktualisiert und Laeufe faehrt — CLI-Dispatch, Lebenszyklus-Verben, Status, Upgrade, import-code und run. Ein Verb laeuft einmal und endet; der laufende Host der Sitzung steht daneben in Host & Sitzung. (CR-GC-459, Z3-Spike ITEM-2026-053)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.1.1.1  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
 
@@ -5096,7 +5096,7 @@ Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integratio
 
 Ebene-1-Block im Betrieb: der laufende Host einer Sitzung — MCP-Transport, Host-Socket zum Store-Besitzer, Viewer-Aufsicht, Gesundheitsabfrage und der geordnete Abbau am Sessionende. Getrennt von den Verben, weil er lebt, solange die Sitzung lebt, waehrend ein Verb einmal laeuft und endet. (Z3-Spike ITEM-2026-053)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.1.2.1  `FUNC-docked-session` — Angedockte Sitzung
 
@@ -5222,7 +5222,7 @@ Verification ◀ `TEST-repo-lifecycle` (integration) · `TEST-session-lifecycle`
 
 Was den Lauf einrichtet, bevor er losgeht: Repo-Konfiguration, Zielprofil, Schema-Stand, Werkzeug-Registry und -Kontext.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-kernel`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.1.3.1  `FUNC-bind-tools` — bindToolsToHarness
 
@@ -5588,7 +5588,7 @@ Verification ◀ `TEST-formate-binding` (integration) · `TEST-graph-realize` (i
 
 Ebene-1-Block im Schaufenster: deterministische Dokument-Renders — Markdown-Export und die se-view-Sichten.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.2.2.1  `FUNC-export-markdown` — exportMarkdown(graph, view)
 
@@ -5754,7 +5754,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conforma
 
 Ebene-0-Block Sales-Sicht: jede Aenderung — von Mensch oder KI — geht durch dieselbe Pruefung; illegal wird nie gespeichert. Realisiert durch seine Kinder.
 
-io ◀ — · io ▶ `FLOW-channel-gate-verdict` · allocate ▶ `MOD-kernel`
+io ◀ — · io ▶ `FLOW-channel-gate-verdict` · allocate ▶ —
 
 ###### 3.10.2.3.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
 
@@ -5874,7 +5874,7 @@ Verification ◀ `TEST-zug-kennzahlen-danach` (integration) · satisfy ◀ `FUNC
 
 Ebene-0-Block Sales-Sicht: das Modell als Text-Artefakt — versioniert, wiederherstellbar, zusammenfuehrbar. Realisiert durch seine Kinder.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.2.4.1  `FUNC-decode` — formatEToCommands(harness, text)
 
@@ -6088,7 +6088,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integr
 
 Ebene-1-Block im Viewer: der Live-Transport — Update-Events, Diff-Broadcast, SSE-Verteilung an die Panels.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-surface`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.2.5.1  `FUNC-broadcast-diff` — broadcastDiff(version)
 
@@ -6164,7 +6164,7 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 
 Ebene-0-Block Sales-Sicht: Kennzahlen aus dem Modell selbst — Reifegrad, Phasen-Gates, Architektur-Fitness — live, ohne KI. Realisiert durch seine Kinder.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-projections`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.2.6.1  `FUNC-arch-fitness` — metrics(graph, layer arch)
 
@@ -6404,7 +6404,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-take
 
 Der Lebenszyklus des Stores: Ownership beanspruchen und freigeben, laden, erstbefuellen, neu aufsetzen und den Export anstossen.
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-kernel`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.2.7.1  `FUNC-apply-reseed` — applyReseed
 
@@ -6594,7 +6594,7 @@ io ◀ — · io ▶ — · allocate ▶ —
 
 Ebene-1-Block in der Optimierung: die inhaltliche Haelfte — fuenf gefuehrte Urteilssitzungen (Betriebskonzept, Annahmen-Review, FMEA, Trade Study, Implementierungsplan) fuer Fehler, die technisch fehlerfreie Modelle trotzdem haben: eine Anforderung, die Formate erfindet, die ihr eigener Anwendungsfall ausschliesst; eine Fehlermeldung als Anwendungsfall; ein System fuer gemeinsames Bearbeiten ohne Nebenlaeufigkeit. Das Werkzeug automatisiert das Urteil BEWUSST NICHT — es prueft nur, dass die Sitzung stattgefunden hat und zum aktuellen Umfang passt (AF-01..05, Warnung, kein Blocker). Das Urteil bleibt beim Menschen. (CR-GC-459)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-agent-surface`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.3.1.1  `FUNC-se-conops` — Skill se-conops
 
@@ -6822,13 +6822,13 @@ Verification ◀ `TEST-vorbereitung-reads-metrics` (conformance) · satisfy ◀ 
 
 Ebene-0-Block, Feature 2 von drei: adaptive Fuehrung zur guten Spezifikation. Der schwaechste der acht Reifegrade benennt den naechsten sinnvollen Schritt — aus gemessenen Kenngroessen, nicht aus einer Modellmeinung und nicht aus Statistik. Fuehrung heisst hier ausdruecklich NICHT Zwang: kein Score blockiert je etwas, blockieren kann allein eine Regel und nur bei unzulaessig, nie bei suboptimal. Der Anwender kann jederzeit abbiegen, und die Schleife rechnet ab da mit seinem Weg weiter. Realisiert durch seine Kinder. (umbenannt von Autopilot, CR-GC-459)
 
-io ◀ — · io ▶ `FLOW-action` · allocate ▶ `MOD-loop`
+io ◀ — · io ▶ `FLOW-action` · allocate ▶ —
 
 ##### 3.10.4.1  `FUNC-block-anleitung` — Anleitung
 
 Ebene-1-Block in der Fuehrung: erklaert den Stand und die naechsten Schritte in der Sprache des Lesers — Status, Reife-Review, Rueckschau auf die Kenngroessen, Erklaerung jedes Regel- und Dashboard-Begriffs, und die Testentwurfs-Methode. (CR-GC-459)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-agent-surface`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.4.1.1  `FUNC-se-help` — Skill se:help
 
@@ -6942,7 +6942,7 @@ Verification ◀ `TEST-skill-red-first` (unit) · satisfy ◀ `FUNC-test` · `FU
 
 Ebene-1-Block in der Fuehrung: gefuehrtes Anlegen und Einlesen von Modellinhalt — Anwendungsfall und Anforderung mit ihrer Testzusage, Kaltstart aus Prosa, Import von bestehendem Code und Dokumenten. Gefuehrt, weil jeder dieser Wege den Anwender durch die Reihenfolge traegt, die eine pruefbare Spezifikation braucht. (CR-GC-459)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-agent-surface`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.4.2.1  `FUNC-author-req` — Skill se:author-req
 
@@ -7062,7 +7062,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Ebene-1-Block in der Fuehrung: waehlt die Fokus-Dimension aus dem schwaechsten Reifegrad, haelt das vom Menschen gewaehlte Zielprofil, baut den Rundenschritt und rankt die Kandidaten. Der Ort, an dem aus Messwerten ein naechster Schritt wird. (umbenannt von Q-Improvement, CR-GC-459)
 
-io ◀ — · io ▶ — · allocate ▶ `MOD-loop`
+io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.4.3.1  `FUNC-close-violations` — Skill se:close-violations
 
@@ -8248,7 +8248,7 @@ schema ◀ `FLOW-zug-bericht`
 
 Die Bedienschicht des Menschen: die Skill-/Prompt-Definitionen unter .claude/commands, agent-ausgefuehrt statt code-realisiert. Null modulinterne Fluesse ist hier Kategorie, kein Defekt. (CR-GC-446)
 
-allocate ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-block-anleitung` · `FUNC-block-autorieren` · `FUNC-block-urteilsarbeit` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · satisfy ▶ `REQ-gate-only-writes`
+allocate ◀ `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · satisfy ▶ `REQ-gate-only-writes`
 
 ### 6.2  `MOD-dashboard` — dashboard — Live-Viewer-App
 
@@ -8260,7 +8260,7 @@ allocate ◀ — · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontol
 
 Der einzige Kuzu-Owner. Zwei Tueren nach aussen: apply(Command[]) liefert ein Verdict, query(TypedQuery) liefert eine Scheibe. Ausserhalb dieses Moduls sieht niemand den Graphen; Lifecycle, Sperre, Regel-Lauf, Konformitaets-Fakten, Migration und das Operations-Log liegen hier. (CR-GC-446)
 
-allocate ◀ `FUNC-apply-reseed` · `FUNC-block-gate` · `FUNC-block-ruestzeug` · `FUNC-block-speicherwerk` · `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-store` · `FUNC-held-back-traces` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-config` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-resolve-tests-from-code` · `FUNC-schema-guard` · `FUNC-seed-from-json` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-import-se-ontology` · `REQ-precommit-timeout` · `REQ-prompt-provenance` · `REQ-quality-metric` · `REQ-risk-gate-rule-eval-fails` · `REQ-risk-store-unreadable` · `REQ-rule-calibration` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-apply-reseed` · `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-store` · `FUNC-held-back-traces` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-config` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-resolve-tests-from-code` · `FUNC-schema-guard` · `FUNC-seed-from-json` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-import-se-ontology` · `REQ-precommit-timeout` · `REQ-prompt-provenance` · `REQ-quality-metric` · `REQ-risk-gate-rule-eval-fails` · `REQ-risk-store-unreadable` · `REQ-rule-calibration` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-structural-rule-shared`
 
 #### 6.3.1  `MOD-kernel-measure` — measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot
 
@@ -8272,19 +8272,19 @@ allocate ◀ `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-st
 
 Die Schleife, die den Graphen bewegt: Fokuswahl, Zielprofil, Vorschlaege, Runden-Prompt, Modellaufruf, Kandidaten-Ranking. Ein Client des Gates wie jeder andere — sie schreibt ausschliesslich durch apply(). (CR-GC-446)
 
-allocate ◀ `FUNC-block-q-improvement` · `FUNC-decode` · `FUNC-generation-step` · `FUNC-goal-steerer` · `FUNC-graph-suggest` · `FUNC-target-profile-load` · `FUNC-vorschlag` · satisfy ▶ `REQ-gate-only-writes` · `REQ-phase-gate-not-skippable`
+allocate ◀ `FUNC-decode` · `FUNC-generation-step` · `FUNC-graph-suggest` · `FUNC-target-profile-load` · `FUNC-vorschlag` · satisfy ▶ `REQ-gate-only-writes` · `REQ-phase-gate-not-skippable`
 
 ### 6.5  `MOD-projections` — projections — Graph nach Artefakt
 
 Reine Projektionen des Graphen: Messung, Readiness, Codec, Export, Markdown-Views, Trajektorie. Liest den Graphen ueber die kernel-Abfrage und schreibt nie in ihn zurueck. (CR-GC-446)
 
-allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-block-dokumentenwerk` · `FUNC-block-gedaechtnis` · `FUNC-block-messwerk` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest` · satisfy ▶ `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-testref-materialized`
+allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-score-completeness` · `FUNC-test-ingest` · satisfy ▶ `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-testref-materialized`
 
 ### 6.6  `MOD-surface` — surface — MCP, CLI, Host-Socket, Viewer
 
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
-allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-block-bedienung` · `FUNC-block-betrieb` · `FUNC-block-host-sitzung` · `FUNC-block-live-dashboard` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-docked-session` · `FUNC-emit-update-event` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-docked-session` · `FUNC-emit-update-event` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
 
 ## 7  Cross-cutting Requirements
 
