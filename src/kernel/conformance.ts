@@ -281,10 +281,17 @@ function walkSourceFiles(root: string): string[] {
   return out;
 }
 
+// ITEM-2026-948: the import graph is the architecture between modules. A test file next to the
+// code and a non-code target (`import './x.css'`) are no module's endpoint — counted, they land
+// in `importCoverage.unassigned` where no model edit can fix them. Only the edges are narrowed:
+// the file scan above keeps the test files, RC-02 resolves testRefs against them.
+const TEST_FILE = /\.(test|spec)\.[^/]+$/;
+
 export function extractImportEdges(repoRoot: string, layout: SourceLayout = sourceLayout(repoRoot)): ImportEdge[] {
   const seen = new Set<string>();
   const edges: ImportEdge[] = [];
   for (const abs of layout.roots.flatMap(walkSourceFiles)) {
+    if (TEST_FILE.test(abs)) continue;
     let source: string;
     try {
       source = readFileSync(abs, 'utf8');
@@ -303,7 +310,7 @@ export function extractImportEdges(repoRoot: string, layout: SourceLayout = sour
           : undefined;
       if (!spec) continue;
       const to = resolveImport(abs, spec, layout, repoRoot);
-      if (!to || to === from) continue;
+      if (!to || to === from || !SRC_EXTS.some((x) => to.endsWith(x))) continue;
       const key = `${from}\u0000${to}`;
       if (seen.has(key)) continue;
       seen.add(key);

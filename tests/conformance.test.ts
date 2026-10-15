@@ -395,6 +395,18 @@ describe('TEST-import-drift: extractImportEdges + RC-05 (CR-212)', () => {
     expect(edges.some((e) => /node_modules|zod/.test(e.to))).toBe(false);
   });
 
+  it('ITEM-2026-948: no edge from a co-located test file, no edge to a non-code target', () => {
+    writeFileSync(join(dir, 'src', 'a', 'x.test.ts'), "import { x } from './x.js';\nimport { y } from '../b/y.js';\n");
+    writeFileSync(join(dir, 'src', 'b', 'y.spec.ts'), "import { y } from './y.js';\n");
+    writeFileSync(join(dir, 'src', 'a', 'x.css'), '.x {}\n');
+    writeFileSync(join(dir, 'src', 'a', 'w.ts'), "import './x.css';\nexport const w = 1;\n");
+    const edges = extractImportEdges(dir);
+    expect(edges.some((e) => /\.(test|spec)\./.test(e.from))).toBe(false);
+    expect(edges.some((e) => e.to.endsWith('.css'))).toBe(false);
+    // RC-02 still sees the test file: the file scan is not narrowed, only the import graph.
+    expect(Object.keys(extractCodeFacts({ nodes: [], edges: [] } as never, dir).files)).toContain('src/a/x.test.ts');
+  });
+
   it('undocumented cross-MOD import → RC-05 warning with evidence', () => {
     const v = conformanceViolations({ getGraph: () => driftGraph(false), getRepoRoot: () => dir });
     const rc05 = v.filter((x) => x.ruleId === 'RC-05');
