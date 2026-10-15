@@ -19229,6 +19229,16 @@
     },
     {
       "source": "FUNC-block-bedienung",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-bedienung",
+      "target": "FUNC-plan-code-lane",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-bedienung",
       "target": "FUNC-upgrade",
       "type": "compose"
     },
@@ -22271,10 +22281,20 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "UC-model-exchange",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "UC-reduced-llm",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "UC-repo-lifecycle",
+      "type": "compose"
     },
     {
       "source": "SYS-graphcode",
@@ -24888,5 +24908,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 751
+  "graphVersion": 752
 }

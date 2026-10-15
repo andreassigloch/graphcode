@@ -2256,6 +2256,8 @@ Verification ◀ `TEST-formate-binding` (integration) · `TEST-graph-realize` (i
 
 ##### 3.3.1.3  `FUNC-measure-test-schlupf` — Testauswahl-Schlupf messen
 
+> auch in: `FUNC-block-bedienung`
+
 Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Getragen von scripts/verify-full.mjs. (CR-GC-718)
 
 io ◀ `FLOW-impacted-tests` · io ▶ `FLOW-schlupf-zeile` · allocate ▶ `MOD-projections`
@@ -2269,6 +2271,8 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-measure-test-schlupf` · allocate ▶ `MOD-projections`
 
 ##### 3.3.1.4  `FUNC-plan-code-lane` — Code-Spur planen
+
+> auch in: `FUNC-block-bedienung`
 
 Plant die Testspur einer Code-Aenderung gegen den committeten Snapshot: aufgeloeste Dateien aus impactedTests, Entscheidung zwischen CODE, VOLL und KEINE, das Laufkommando und der Bericht mit Bindungsquote und unaufgeloesten TESTs. Getragen vom Runner scripts/verify-code.mjs und vom pre-commit-Hook. (CR-GC-541)
 
@@ -5030,7 +5034,47 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import-code-verb` · allocate ▶ `MOD-surface`
 
-###### 3.10.1.1.5  `FUNC-upgrade` — executeUpgrade(opts)
+###### 3.10.1.1.5  `FUNC-measure-test-schlupf` — Testauswahl-Schlupf messen
+
+> auch in: `FCHAIN-impact-testing`
+
+Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Getragen von scripts/verify-full.mjs. (CR-GC-718)
+
+io ◀ `FLOW-impacted-tests` · io ▶ `FLOW-schlupf-zeile` · allocate ▶ `MOD-projections`
+
+###### `REQ-full-run-on-probation` — Volllauf auf Bewaehrung
+
+Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-measure-test-schlupf` · allocate ▶ `MOD-projections`
+
+###### 3.10.1.1.6  `FUNC-plan-code-lane` — Code-Spur planen
+
+> auch in: `FCHAIN-impact-testing`
+
+Plant die Testspur einer Code-Aenderung gegen den committeten Snapshot: aufgeloeste Dateien aus impactedTests, Entscheidung zwischen CODE, VOLL und KEINE, das Laufkommando und der Bericht mit Bindungsquote und unaufgeloesten TESTs. Getragen vom Runner scripts/verify-code.mjs und vom pre-commit-Hook. (CR-GC-541)
+
+io ◀ `FLOW-cli-invocation` · `FLOW-impacted-tests` · io ▶ `FLOW-code-lane-plan` · allocate ▶ `MOD-projections`
+
+###### `REQ-lane-reports-change` — Die Spur meldet Aenderung und Lauf zurueck
+
+Die Spur CODE und der Volllauf melden nach jedem Lauf die Knoten der geaenderten Dateien und den Bericht des Laufs an graph_test_ingest. Die Knoten kommen aus derselben Abbildung von Datei auf Knoten wie die Testauswahl. Scheitert die Meldung, endet der Lauf rot. Der Planmodus meldet nichts.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-lane-reports-change` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
+
+###### `REQ-selective-code-lane` — Abgeleitete Code-Testspur mit ehrlicher Reichweite
+
+Die lokale Testspur einer Code-Aenderung wird aus dem Modell abgeleitet statt als volle Suite gefahren. Sie faellt auf die volle Suite zurueck, sobald eine geaenderte Quelldatei keinen Knoten hat, ein Volllauf-Ausloeser im Diff liegt oder die Auswahl leer bliebe, und sie nennt in jeder Ausgabe die Bindungsquote des Changesets sowie jeden betroffenen TEST ohne Laufadresse.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
+
+###### 3.10.1.1.7  `FUNC-upgrade` — executeUpgrade(opts)
 
 > auch in: `FCHAIN-repo-lifecycle`
 

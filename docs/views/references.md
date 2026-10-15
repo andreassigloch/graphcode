@@ -1518,6 +1518,8 @@
 | `FUNC-block-bedienung` | compose | `FUNC-collect-status` |
 | `FUNC-block-bedienung` | compose | `FUNC-harness-cli` |
 | `FUNC-block-bedienung` | compose | `FUNC-import-code-verb` |
+| `FUNC-block-bedienung` | compose | `FUNC-measure-test-schlupf` |
+| `FUNC-block-bedienung` | compose | `FUNC-plan-code-lane` |
 | `FUNC-block-bedienung` | compose | `FUNC-upgrade` |
 | `FUNC-block-betrieb` | allocate | `MOD-surface` |
 | `FUNC-block-betrieb` | compose | `FUNC-block-bedienung` |
@@ -2093,7 +2095,9 @@
 | `SYS-graphcode` | compose | `UC-graph-time-travel` |
 | `SYS-graphcode` | compose | `UC-live-graph-view` |
 | `SYS-graphcode` | compose | `UC-loop-closure` |
+| `SYS-graphcode` | compose | `UC-model-exchange` |
 | `SYS-graphcode` | compose | `UC-reduced-llm` |
+| `SYS-graphcode` | compose | `UC-repo-lifecycle` |
 | `SYS-graphcode` | satisfy | `REQ-frame-binding` |
 | `SYS-graphcode` | satisfy | `REQ-graceful-degradation` |
 | `SYS-graphcode` | satisfy | `REQ-structure-driven` |
