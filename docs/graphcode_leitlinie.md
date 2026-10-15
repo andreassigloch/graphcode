@@ -1,11 +1,11 @@
 # graphcode-Leitlinie
 
-> **SSOT ist dieses Dokument.** Der Systemknoten `SYS-graphcode` trägt nur den Verweis hierher — Format-E kennt keine mehrzeiligen Beschreibungen (ITEM-2026-183).
+> **SSOT ist dieses Dokument.** Der Systemknoten `SYS-graphcode` trägt nur den Verweis hierher 
 > Änderung nur durch den Autor, nicht durch Agenten — im Knoten und hier im selben Zug.
 
 **Zweck:** Der Anker für jede Konzept-, Architektur- und Regel-Diskussion. Verläuft sich eine
 Diskussion, wird sie gegen den Kern-Claim (§1) und die Definition of Done des betroffenen
-Abschnitts geprüft. Stand 2026-10-08. Der Verlauf steht in `git log`, Herleitungen und ältere Messreihen in
+Abschnitts geprüft. Stand 2026-10-15. Der Verlauf steht in `git log`, Herleitungen und ältere Messreihen in
 [`archive/leitlinie-staende-2026-10-08.md`](archive/leitlinie-staende-2026-10-08.md).
 
 **Übergeordnetes Ziel:** Gute Architektur erzeugt guten Code durch MBSE.
@@ -121,9 +121,9 @@ Architektur und Optimierer stehen ab dem ersten Zug offen.
 Agent arbeitet auf der need-to-know-Whitebox, statt auf dem ganzen Repo zu raten.
 Kontextmanagement *ist* Abstraktion. Der Hauptfall ist **interaktiv**: der Nutzer
 führt Zug für Zug, der Agent — lokal (qwen3.8 in OpenCode) oder Frontier (Opus in Claude Code) —
-fragt, baut einen kleinen Schritt, berichtet, endet. Der Automodus (`graph_generate`-Schleife,
-Executor) ist Testmodus, nicht Zielbild. Das Vorgehen ist für jeden Ausführenden dasselbe — Mensch,
-Frontier- oder lokales Modell, Executor: vom Groben ins Feine, geführt vom schon
+fragt, baut einen kleinen Schritt, berichtet, endet. Der Automodus (`graph_generate`-Schleife) ist
+Testmodus, nicht Zielbild. Das Vorgehen ist für jeden Ausführenden dasselbe — Mensch, Frontier- oder
+lokales Modell: vom Groben ins Feine, geführt vom schon
 erzeugten Graphen. Verschieden sind nur zwei Stellgrößen:
 
 - die **Schnittgröße** — wie viel Arbeit ein Paket umfasst. Die untere Grenze gibt die Ontologie
@@ -185,8 +185,8 @@ Belege: `docs/graphcode_analyse_optimierungskonzept.md`, Abschnitt 10.
 zuordnen, Flüsse als abgerufen oder vorab geliefert kennzeichnen), dann je Dimension analysieren (Sicherheit
 mit der FMEA, Laufzeit am Antwortweg), dann Vorschläge einzeln proben und wählen. Die Basis zu optimieren
 ist Hygiene und ein eigener Schritt, nicht Teil einer Analyse; er liegt am Abschluss von Stufe 7 der
-Regelmatrix, an der Marke PDR, vor den Kettenanalysen auf Stufe 8. Perspektivisch ist eine unvollständige
-Kette ein Fehler und keine Warnung. Eine Analyse ist eine Schleife: sie erzeugt Anforderungen, Funktionen
+Regelmatrix, an der Marke PDR, vor den Kettenanalysen auf Stufe 8: eine offene Kette hält die Marke PDR
+(CR-SM-409). Perspektivisch ist eine unvollständige Kette ein Fehler und keine Warnung. Eine Analyse ist eine Schleife: sie erzeugt Anforderungen, Funktionen
 und Flüsse, und ihr Ergebnis ist ein gewöhnlicher CR, dessen Elemente die Stufen wie jede Änderung
 durchlaufen. Eigen je Analyse ist der Vorschlag, allgemein der Umgang mit ihm.
 
@@ -259,16 +259,19 @@ Optimum an Verträgen haben.
 **DoD Ziel:** T-V1 bis T-V4, T-O4 und T-C1 sind an moneyflow **oder** sirail erfüllt, und alle
 Tests aus §9 stehen auf „bestanden" oder tragen eine benannte Ausnahme.
 
-**Offene Punkte auf dem Weg dorthin** (Stand 2026-10-08):
+**Offene Punkte auf dem Weg dorthin** (Stand 2026-10-15):
 - **Optimieren:** Keine Architektur-Kennzahl rankt bekannt bessere Zustände richtig (T-O4), und keine Rangfolge
-  aus Kennzahlen ordnet Umbauvorschläge (T-O3). Die Kettenkennzahlen sind Produktcode, Antwortweg und Träger je
-  Risiko noch nicht (T-O1, T-O2, T-O8). Die Vorbereitung des Modells fehlt als Schritt (Stand 2026-10-11).
+  aus Kennzahlen ordnet Umbauvorschläge (T-O3). Kettenkennzahlen, Antwortweg und Träger je Risiko sind Produktcode,
+  Vorbereitung, Laufzeitanalyse und Optimierer sind Skills (T-O1, T-O2, T-O3, T-O8). Offen: synchrone Tiefe und
+  Fehlerpfad-Tiefe, die Bewertung gegen Profil-NFR mit Diagnose, IRR und die Risiken als Prüffragen am Code (T-O7).
 - **Steuerung bei CR-Arbeit:** Sie wirkt bei Greenfield und über die Historie, nicht am Bestand (T-E1, T-C3).
 - **Empfehlen:** `graph_suggest` wird nicht abgerufen; keine Fix-Vorlage deckt die fünf Steuerregeln (T-M5).
 - **Code-Beweis:** Kein ausgewerteter Lauf bis zum gebundenen Code (T-C2). Geführt ist ≈ 3,5× teurer als frei (T-E5).
 - **Lokal gegen Frontier:** An der kleinen Aufgabe erfüllt bis auf die Geschwindigkeit (Faktor 2,6); am echten
   Auftrag und bis zum Code offen (T-E3, T-E4).
 - **Selbstanwendung:** graphcode erreicht SRR, nicht PDR; Vertragsrand und Kopplung bestehen nicht (T-V2, T-V4, T-F2).
+  Der Kern-Anwendungsfall — Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum Code — fehlt im
+  eigenen Modell (CR-GC-806, CR-GC-807).
 - **Rig-Betrieb:** Ohne Aufbau sind T-C1, T-C3, T-E5 und T-E9 (T-F1).
 - **Vorführbarkeit:** Für keinen Test ist eine Demo benannt (§9.1). Demo-Träger ist der Energy Manager.
 
@@ -324,9 +327,9 @@ Graph-Turns, kleinerer Dauerkontext, weniger Reparaturschleifen im Code.
 
 | Test | Frage | Aufbau | Kriterium | Stand |
 |---|---|---|---|---|
-| **T-V1** Blackbox-Breite | Hat jede Ebene 7 ± 2 Kinder? | `rules_evaluate` RD-04/RD-05, Band 3–9 | 0 Befunde auf allen Ebenen | graphcode: 7 Befunde RD-04 (2026-10-08) |
-| **T-V2** Vertragsrand | Ist der Rand jeder Blackbox schmal? | BW-02, R-04, CR-01; `scripts/randbreiten.mjs` | 0 Befunde über Schwelle | nicht bestanden: BW-02 15 bei 19 Whiteboxes (2026-10-05) |
-| **T-V3** Vier Fragen | Ist jede der vier Fragen beantwortet? | `graph_readiness`: Stufen und Marken; im Rig am Nachbau aus dem Audit | die Marken SRR, PDR, CDR und TRR sind erreicht | graphcode: SRR ja, PDR nein (2026-10-08) |
+| **T-V1** Blackbox-Breite | Hat jede Ebene 7 ± 2 Kinder? | `rules_evaluate` RD-04/RD-05, Band 3–9 | 0 Befunde auf allen Ebenen | graphcode: 5 Befunde RD-04 (2026-10-15) |
+| **T-V2** Vertragsrand | Ist der Rand jeder Blackbox schmal? | BW-02, R-04, CR-01; `scripts/randbreiten.mjs` | 0 Befunde über Schwelle | nicht bestanden: BW-02 14, R-04 6, CR-01 13 (2026-10-15) |
+| **T-V3** Vier Fragen | Ist jede der vier Fragen beantwortet? | `graph_readiness`: Stufen und Marken; im Rig am Nachbau aus dem Audit | die Marken SRR, PDR, CDR und TRR sind erreicht | graphcode: SRR ja, PDR nein (2026-10-15) |
 | **T-V4** Kopplung Modell ↔ Code | Ist das Modell zu 100 % gekoppelt, ohne ein Abbild des ganzen Codes zu sein? | RC-01…RC-09, R-19/R-20/R-26/R-32; `scripts/grenzmenge.mjs` | Marke Bau erreicht, Bindungsquote 100 %, Grenzmenge 100 % modelliert | nicht bestanden: gedriftet, Bindung 114/115, Grenzmenge FUNC 15/63 (2026-10-05) |
 | **T-V5** Struktur gegen die Referenz | Trägt ein Greenfield-Lauf alle Ebenen, die die Referenz trägt? | graphanalyze `auswertung/verhalten.mjs` (`struktur`) | kein tragendes Muster des Golden fehlt in allen Läufen; Wirkketten mit genau einer FUNC ≤ 20 % | nicht bestanden: 23 von 43 Ketten mit einer FUNC (2026-09-27) |
 
@@ -335,7 +338,7 @@ Graph-Turns, kleinerer Dauerkontext, weniger Reparaturschleifen im Code.
 | Test | Frage | Aufbau | Kriterium | Stand |
 |---|---|---|---|---|
 | **T-N1** Dokumentanteil der Normen | Welche Norm-Anforderungen sind dokument-belegbar, und deckt graphcode sie? | [`SPIKE-GC-norm-dokumentanteil-RESULTS`](spikes/SPIKE-GC-norm-dokumentanteil-RESULTS.md) | jede der 10 Anforderungsklassen ist `ja` oder als Lücke benannt | 3 von 10 ja, 6 teilweise, 1 nein (2026-09-26) |
-| **T-N2** Nachweis deterministisch | Werden Traceability und Konsistenz aus dem Modell geprüft statt behauptet? | R-18, R-02/R-05/UC-01/R-21, R-19/R-20, RC-01…09, `graph_test_ingest` | RTM und VCRM ohne Lücke; Bindung 100 %; Ergebnisse aus echten Läufen | 118 von 134 TEST gebunden (Datum nicht festgehalten) |
+| **T-N2** Nachweis deterministisch | Werden Traceability und Konsistenz aus dem Modell geprüft statt behauptet? | R-18, R-02/R-05/UC-01/R-21, R-19/R-20, RC-01…09, `graph_test_ingest` | RTM und VCRM ohne Lücke; Bindung 100 %; Ergebnisse aus echten Läufen | 137 von 158 TEST gebunden; die Spuren CODE und VOLL melden ihre Ergebnisse zurück, eine Änderung nimmt das alte Ergebnis zurück (CR-GC-799, CR-GC-800) (2026-10-15) |
 | **T-N3** Gegenprobe freies Frontier-Modell | Kann ein frei laufendes Modell dieselben Nachweise erbringen? | freier Arm mit Auftrag RTM und VCRM, per `se:import-doc` gegen dieselben Regeln | Traceability und Konsistenz sind aus seinen Artefakten deterministisch prüfbar | nicht gemessen |
 
 #### Managen (§3)
@@ -374,14 +377,14 @@ Readiness trennt die Arme nicht.
 
 | Test | Frage | Aufbau | Kriterium | Stand |
 |---|---|---|---|---|
-| **T-O1** Kettenkennzahlen | Lassen sich die acht Kennzahlen deterministisch richtig rechnen? | `scripts/spike-kettenkennzahlen.mjs`, Referenzkette „Zahlung auslösen" | Referenzkette reproduziert; ≥ 90 % der Ketten auswertbar | nicht bestanden: 6 von 8 Kennzahlen in `chainMetrics` (synchrone Tiefe und Fehlerpfad-Tiefe leer), Referenzkette reproduziert; graphcode 24 von 25 Ketten bewertbar; von acht geprüften Modellen der Familie zwei ohne Fehler und voll bewertbar (2026-10-11) |
-| **T-O2** Profil auf der Kette | Wird jede profilierte FCHAIN bewertet und diagnostiziert? | NFR-REQ an FCHAIN; Bewertung mit Diagnose und Handlungsklasse | 100 % der profilierten FCHAINs bewertet; jede Verletzung mit treibendem Knoten | nicht implementiert. Probe am energymanager: mit dem Merkmal synchron oder asynchron an den Flüssen ist der Antwortweg lesbar; das Merkmal ist an keinem Fluss der Familie gesetzt. Bau: CR-SM-407, CR-GC-783 (2026-10-11) |
-| **T-O3** Degradationsschutz | Hält ein Optimierungszug die Invarianten? | Gate-dryRun vor und nach dem Zug; Prognose im CR | jede REQ behält `satisfy`; Schwellen halten; Prognose erfüllt | nicht implementiert. Von Hand an drei Fällen mit neun Entwürfen geprobt: die Invarianten hielten, eine Rangfolge aus Kennzahlen ordnete gegen das Blindurteil. Bau: CR-GC-785 (2026-10-11) |
+| **T-O1** Kettenkennzahlen | Lassen sich die acht Kennzahlen deterministisch richtig rechnen? | `graph_metrics` (`chains`, Rechnung in contracts); `scripts/spike-kettenkennzahlen.mjs`, Referenzkette „Zahlung auslösen" | Referenzkette reproduziert; ≥ 90 % der Ketten auswertbar | nicht bestanden: 6 von 8 Kennzahlen in `chainMetrics` (synchrone Tiefe und Fehlerpfad-Tiefe leer), Referenzkette reproduziert; graphcode 24 von 25 Ketten bewertbar (2026-10-15) |
+| **T-O2** Profil auf der Kette | Wird jede profilierte FCHAIN bewertet und diagnostiziert? | NFR-REQ an FCHAIN; Antwortweg aus `graph_metrics` (`answerPath`, CR-SM-408); Skill `se-laufzeit` (CR-GC-783) | 100 % der profilierten FCHAINs bewertet; jede Verletzung mit treibendem Knoten | nicht bestanden: Antwortweg und Skill gebaut, das Merkmal synchron oder asynchron ist an den Flüssen von graphcode gesetzt (CR-GC-789, CR-GC-793); Antwortweg lesbar an 7 von 24 Ketten. Die Bewertung gegen Profil-NFR mit Diagnose fehlt (2026-10-15) |
+| **T-O3** Degradationsschutz | Hält ein Optimierungszug die Invarianten? | Skill `se:optimize` Version 3: Trockenlauf durchs Gate, Kennzahlen davor und danach (`metricsAfter`, CR-GC-785, CR-GC-790); Prognose im CR | jede REQ behält `satisfy`; Schwellen halten; Prognose erfüllt | nicht bestanden: die Vorlage davor und danach ist gebaut; ob ein angewandter Zug seine Prognose hält, prüft nichts. Von Hand an drei Fällen mit neun Entwürfen: die Invarianten hielten, eine Rangfolge aus Kennzahlen ordnete gegen das Blindurteil (2026-10-12) |
 | **T-O4** Vorzeichen der Architekturkennzahl | Rankt die Kennzahl bekannt bessere Zustände höher? | `scripts/known-answer-set.mjs`; graphanalyze `rig/moneyflow-struktur` | Known-Answer-Set richtig gerankt | No-Go: moneyflow 5,33 > graphcode 5,24 |
 | **T-O5** Umbauzüge | Verbessert ein Umbauzug den Schnitt messbar? | `tests/arch.optimization-dry-run.spike.test.ts` | Modularität Q und Innenanteil steigen | Verschieben No-Go, Verträge konsolidieren GO (2026-08-26) |
 | **T-O6** Parallele Pfade finden | Findet das System Duplikate zum Zusammenlegen? | `scripts/spike-nd-known-answer.mjs`, `scripts/spike-engpass-known-answer.mjs` | ≥ 6 von 7 bekannten Paaren gefunden | Ähnlichkeit 0/7, Engpass auf Dateiebene 6/7 (2026-09-24) |
-| **T-O7** Inhaltliche Analysen | Sind IRR/FMEA gelaufen und in Modell und Code wirksam? | Skills `se-irr`, `se-fmea`; Prüfliste im Rig | jeder Befund als REQ/TEST oder benannte Ausnahme; Risiken als Prüffragen am Code | FMEA: ein Lauf an einer Kette von graphcode, vier Risiken mit Gegenmaßnahme im Modell, Tests ungebunden (CR-GC-779, 2026-10-10). IRR und die übrigen Analysen: nicht gelaufen |
-| **T-O8** Güte des Modells | Ist das Modell vor der Analyse vorbereitet? | Bewertbarkeit und Träger je Risiko aus `graph_metrics` (CR-SM-407); Skill `se-vorbereitung` (CR-GC-784) | 100 % der Ketten bewertbar; jedes Risiko hat einen Träger; Träger ist eine Funktion oder die Gegenmaßnahme ist als quer geltend benannt | nicht bestanden. Die Rechnung steht in contracts 12.1.0 (CR-SM-407, nicht veröffentlicht); Skill und Marke fehlen (CR-GC-784, CR-SM-409). Gezählt am 2026-10-11: energymanager 8 von 8 Risiken an genau einer Funktion, sigllm 2 von 16, graphcode 2 von 4 |
+| **T-O7** Inhaltliche Analysen | Sind IRR/FMEA gelaufen und in Modell und Code wirksam? | Skills `se-irr`, `se-fmea`; Prüfliste im Rig | jeder Befund als REQ/TEST oder benannte Ausnahme; Risiken als Prüffragen am Code | FMEA an allen Ketten von graphcode (CR-GC-795, CR-GC-798, CR-GC-802), Sicht `docs/views/fmea.md` (CR-GC-801): 19 Risiken, 8 mit hoher Priorität, 8 verifiziert, 2 Gegenmaßnahmen ohne Funktion (2026-10-12). IRR und Risiken als Prüffragen am Code: nicht gelaufen |
+| **T-O8** Güte des Modells | Ist das Modell vor der Analyse vorbereitet? | Bewertbarkeit und Träger je Risiko aus `graph_metrics` (CR-SM-407); Skill `se-vorbereitung` (CR-GC-784); offene Kette hält PDR (CR-SM-409) | 100 % der Ketten bewertbar; jedes Risiko hat einen Träger; Träger ist eine Funktion oder die Gegenmaßnahme ist als quer geltend benannt | nicht bestanden: graphcode 24 von 25 Ketten bewertbar, 15 von 19 Risiken mit Träger, jeder Träger eine Funktion, Fläche 14 Funktionen (nach CR-GC-797, CR-GC-803, CR-GC-805; 2026-10-15). Ohne Träger: 2 Risiken bewusst ohne Gegenmaßnahme, 2 mit fehlender Funktion |
 
 #### Code (§6)
 
@@ -435,8 +438,7 @@ dann eine Wirkung der Änderung.
 | **S2 lokal** | jede Änderung an Prompt, `vorschlag`, Werkzeugangebot oder Steuerung | `node rig/treiber.mjs serie` in graphanalyze, Aufgabe todo, Arm `lokal` | T-V3, T-V5, T-M1, T-M2, T-M5, T-E3, T-E4, T-E6, T-E10, T-E11, T-E12, T-C2 |
 | **S3 Frontier** | Release, Claim-Aussage nach außen, Richtungsentscheidung | dieselbe Serie, Arm `frontier` | T-E3, T-E4, T-M5, T-C2 |
 
-Der Executor (`graph_delegate`, `graphcode run`) ist eingefroren: kein Ausbau; er bleibt für headless und
-schwächere Modelle.
+Den Executor gibt es im Kern nicht mehr (entfernt 2026-10-09, CR-GC-777).
 
 ### 9.5 Bestand der Messaufbauten
 
@@ -456,7 +458,8 @@ Kandidaten zum Entfernen.
 | Steuer-Kausalität | `tests/steering.steer-causality.test.ts` | T-M4 | grün |
 | Testauswahl-Audit | `scripts/test-selection-audit.mjs` | T-E7 | aktuelle Zahl fehlt |
 | Advisory-Latenz | `tests/perf.advisory-roundtrip.spike.test.ts` | T-E8 | läuft |
-| Kettenkennzahlen | `scripts/spike-kettenkennzahlen.mjs` | T-O1 | Spike |
+| Kettenkennzahlen, Antwortweg, Träger je Risiko | `graph_metrics` (Rechnung in contracts); `scripts/spike-kettenkennzahlen.mjs` für die Referenzkette | T-O1, T-O2, T-O8 | Produktcode |
+| Analyse- und Optimierungs-Skills | `se-vorbereitung`, `se-fmea`, `se-laufzeit`, `se:optimize` | T-O2, T-O3, T-O7, T-O8 | gebaut |
 | Known-Answer-Sets | `scripts/known-answer-set.mjs`, `spike-nd-known-answer.mjs`, `spike-engpass-known-answer.mjs` | T-O4, T-O6 | No-Go / 6 von 7 |
 | Architektur-Trockenübung | `tests/arch.optimization-dry-run.spike.test.ts` | T-O5 | Spike-Test |
 | Norm-Dokumentanteil | `docs/spikes/SPIKE-GC-norm-dokumentanteil*.md` | T-N1, T-N2 | ausgewertet |
