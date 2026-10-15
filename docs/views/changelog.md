@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 417 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 422 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 417 CR · 343 done · 4 open.
+Total: 422 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -479,3 +479,8 @@ Total: 417 CR · 343 done · 4 open.
 | `CR-GC-805` | n/a | Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion |
 | `CR-GC-806` | n/a | Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft |
 | `CR-GC-807` | n/a | Impact-Check: UCs code-quality, reduced-llm, deterministic-steering lesen sich als Anforderungen an den Kern-UC - Herabstufen zu REQ pruefen |
+| `CR-GC-808` | n/a | Ein-Schreiber-Modus: Gate lehnt Schreibzugriffe nicht erlaubter Clients ab |
+| `CR-GC-809` | n/a | GVE haengt an der HostBridge statt am Export-Datei-Watcher |
+| `CR-GC-810` | n/a | viewer_show: Agent setzt Ansicht, Fokus und Vorschau-Overlay im Viewer |
+| `CR-GC-811` | n/a | OCC je Element statt je Graph (Voraussetzung fuer ITEM-2026-958, Mehr-Schreiber spaeter) |
+| `CR-GC-812` | n/a | Offline vorberechnete REQ-Vorschlaege gegen Review-Latenz |

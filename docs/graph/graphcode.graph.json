@@ -3406,6 +3406,36 @@
       "description": "docs/cr/open/CR-GC-807-impact-check-ucs-code-quality-reduced-ll.md"
     },
     {
+      "id": "CR-GC-808",
+      "type": "CR",
+      "name": "Ein-Schreiber-Modus: Gate lehnt Schreibzugriffe nicht erlaubter Clients ab",
+      "description": "docs/cr/open/CR-GC-808-ein-schreiber-modus-gate-lehnt-schreibzu.md"
+    },
+    {
+      "id": "CR-GC-809",
+      "type": "CR",
+      "name": "GVE haengt an der HostBridge statt am Export-Datei-Watcher",
+      "description": "docs/cr/open/CR-GC-809-gve-haengt-an-der-hostbridge-statt-am-ex.md"
+    },
+    {
+      "id": "CR-GC-810",
+      "type": "CR",
+      "name": "viewer_show: Agent setzt Ansicht, Fokus und Vorschau-Overlay im Viewer",
+      "description": "docs/cr/open/CR-GC-810-viewer-show-agent-setzt-ansicht-fokus-un.md"
+    },
+    {
+      "id": "CR-GC-811",
+      "type": "CR",
+      "name": "OCC je Element statt je Graph (Voraussetzung fuer ITEM-2026-958, Mehr-Schreiber spaeter)",
+      "description": "docs/cr/open/CR-GC-811-occ-je-element-statt-je-graph-voraussetz.md"
+    },
+    {
+      "id": "CR-GC-812",
+      "type": "CR",
+      "name": "Offline vorberechnete REQ-Vorschlaege gegen Review-Latenz",
+      "description": "docs/cr/open/CR-GC-812-offline-vorberechnete-req-vorschlaege-ge.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -24833,5 +24863,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 754
+  "graphVersion": 759
 }
