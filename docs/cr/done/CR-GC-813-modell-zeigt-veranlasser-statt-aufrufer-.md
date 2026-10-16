@@ -102,7 +102,9 @@ graph_readiness / graph_metrics / rules_* ─Antwort─▶ Agent-Ablaufsteuerung
 
 Ein Batch durchs Gate, v760 → v761, ohne neue Fehler. Abnahme: `mutate` hat 7 Eingänge (vorher 24); keine io-Kante
 zwischen Skill-FUNC und einer anderen FUNC als der Ablaufsteuerung; Kreuzungen am Export nachgemessen (Tabelle).
-CODE-Spur grün (50 Dateien, 439 Tests); Typprüfung grün.
+CODE-Spur grün (50 Dateien, 439 Tests); Typprüfung grün. Volllauf: 1 rot außerhalb der Auswahl (Schlupf) —
+`tests/arch.optimization-dry-run.spike.test.ts` hält die Züge des Autopiloten am echten Graphen fest; neu gemessen:
+der falsche Zug „Gate nach MOD-agent-surface“ (ITEM-2026-798) ist entfallen, an seiner Stelle drei Block-Umhängungen.
 
 ## Nicht in diesem CR
 

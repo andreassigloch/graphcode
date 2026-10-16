@@ -481,8 +481,13 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // wieder zwei Zuege statt drei.
       // CR-GC-774 (graphVersion 674) — NEU GEMESSEN, nachdem der Skill se-fmea die Kettenkennzahlen liest
       // (ein Fluss mehr von MOD-projections nach MOD-agent-surface): ein Zug statt zwei, weiter derselbe.
+      // CR-GC-813 (graphVersion 761) — NEU GEMESSEN, nachdem die Agent-Ablaufsteuerung FUNC wurde und die
+      // Schreibfluesse je Skill entfielen: der falsche Zug (Gate nach MOD-agent-surface, ITEM-2026-798) ist
+      // weg. Der Autopilot nennt jetzt drei Block-Umhaengungen; ob sie fachlich stimmen, entscheidet ein Mensch.
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
-        'FUNC-mutate -allocate-> MOD-agent-surface (retire MOD-kernel)',
+        'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
+        'FUNC-block-abfrage -compose-> FUNC-agent-loop',
+        'FUNC-block-bedienung -compose-> FUNC-host-socket (retire FUNC-host-socket)',
       ]);
       expect(
         rest
