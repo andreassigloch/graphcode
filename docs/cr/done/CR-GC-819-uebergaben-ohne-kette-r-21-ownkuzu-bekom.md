@@ -1,6 +1,6 @@
 # CR-GC-819: Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-16)
 **Typ:** aus Item ITEM-2026-976 (finding)
 **Erstellt:** 2026-10-16
 **Item:** bok/items/ITEM-2026-976.json (Lane: graph)
