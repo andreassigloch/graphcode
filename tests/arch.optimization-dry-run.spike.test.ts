@@ -484,10 +484,10 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-813 (graphVersion 761) — NEU GEMESSEN, nachdem die Agent-Ablaufsteuerung FUNC wurde und die
       // Schreibfluesse je Skill entfielen: der falsche Zug (Gate nach MOD-agent-surface, ITEM-2026-798) ist
       // weg. Der Autopilot nennt jetzt drei Block-Umhaengungen; ob sie fachlich stimmen, entscheidet ein Mensch.
+      // CR-GC-814 (graphVersion 777) — NEU GEMESSEN, nachdem Recall, merge-branches und die Sackgassen nach dem Code
+      // verdrahtet wurden: nur noch ein Zug, Abfrage nimmt Bedienung auf.
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
-        'FUNC-block-abfrage -compose-> FUNC-agent-loop',
-        'FUNC-block-bedienung -compose-> FUNC-host-socket (retire FUNC-host-socket)',
       ]);
       expect(
         rest
@@ -519,9 +519,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-696D: `dominant` ist der Engpass NACH der Kette (letzter graph_suggest-Aufruf). Am Start
       // steht er weiter bei BW-02 (Steuerwert 3,751); die zwei Zuege oben tragen ihn auf
       // R-04 @ MOD-kernel (3,251) — dort, wo er vor CR-GC-573 schon stand.
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-kernel — bitte neu messen').toEqual({
-        ruleId: 'R-04',
-        elementId: 'MOD-kernel',
+      // CR-GC-814 (graphVersion 777) — NEU GEMESSEN: die Agent-Ablaufsteuerung ist FUNC (CR-GC-813), ihre Vertraege
+      // zaehlen an den Blockgrenzen, und CR-GC-814 brachte belegte Fluesse dazu. BW-02 @ Grounding (25 Vertraege)
+      // ist jetzt der Engpass, und der eine verbleibende Zug senkt ihn nicht.
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
+        ruleId: 'BW-02',
+        elementId: 'FUNC-block-grounding',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

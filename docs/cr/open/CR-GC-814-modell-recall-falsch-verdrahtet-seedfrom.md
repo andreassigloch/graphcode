@@ -100,3 +100,6 @@ Regelhalter). Offen war `merge-branches`:
   (RC-08 verlangt Zod) — Zod-Schema als eigenes Item (ITEM-2026-973).
 - Außerhalb des Befunds, nicht angefasst: `codec-roundtrip` (ein Glied, ohne Senke), `schema-migration`
   (`migrate-schema` ohne Code-Bindung).
+
+Volllauf: 1 rot (`tests/arch.optimization-dry-run.spike.test.ts`, hält die Autopilot-Züge fest) — neu gemessen:
+ein Zug statt drei, Engpass nach der Kette BW-02 @ Grounding statt R-04 @ MOD-kernel. Kein Schlupf.
