@@ -443,6 +443,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-815` | n/a | Akteure nach Kanal statt nach Rolle geschnitten: Auftraggeber und Regelhalter | `FUNC-agent-loop` · `FUNC-mutate` |
 | `CR-GC-816` | n/a | Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk | `FUNC-block-gedaechtnis` · `FUNC-block-speicherwerk` · `FUNC-graph-export-snapshot` |
 | `CR-GC-817` | n/a | Dashboard bekommt Kennzahlen als drei Fluesse statt der einen graph_metrics-Antwort | `FUNC-graph-metrics` |
+| `CR-GC-818` | n/a | MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08) | `FUNC-merge-nodes` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

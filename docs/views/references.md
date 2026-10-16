@@ -878,6 +878,7 @@
 | `CR-GC-816` | relation | `FUNC-block-speicherwerk` |
 | `CR-GC-816` | relation | `FUNC-graph-export-snapshot` |
 | `CR-GC-817` | relation | `FUNC-graph-metrics` |
+| `CR-GC-818` | relation | `FUNC-merge-nodes` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

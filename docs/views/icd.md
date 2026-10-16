@@ -13,7 +13,7 @@
 | `SCHEMA-action` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit.ts#AuditStatsSchema | reviewed |
-| `SCHEMA-branch-merge-report` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-branch-merge-report` | src/kernel/merge.ts#MergeReportSchema | n/a |
 | `SCHEMA-chain-metrics` | packages/contracts/src/se/chain-metrics.ts#ChainMetrics | reviewed |
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |

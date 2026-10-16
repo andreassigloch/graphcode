@@ -25,36 +25,47 @@
  * @author andreas@siglochconsulting
  */
 import { readFileSync } from 'node:fs';
+import { z } from 'zod';
 import type { Graph } from '@sigloch/graph-api-core';
-import type { MutateCommand, MutateResult, RuleViolation } from '@sigloch/contracts/harness';
+import {
+  MutateCommandSchema,
+  RuleViolationSchema,
+  type MutateCommand,
+  type MutateResult,
+  type RuleViolation,
+} from '@sigloch/contracts/harness';
 import type { GraphCodeHarness } from './harness.js';
 import type { AuditEntry } from '@sigloch/graph-api-core';
 
 /** One replayed batch in the report — enough context to resolve it machine-side. */
-export interface MergeBatch {
+export const MergeBatchSchema = z.object({
   /** Audit entry id in the branch log. */
-  id: string;
+  id: z.string(),
   /** The graphVersion the batch had ON THE BRANCH (its log position, not the target's). */
-  branchVersion: number;
-  consumerId: string;
-  commands: MutateCommand[];
-}
+  branchVersion: z.number().int(),
+  consumerId: z.string(),
+  commands: z.array(MutateCommandSchema),
+});
+export type MergeBatch = z.infer<typeof MergeBatchSchema>;
 
-export interface MergeConflict extends MergeBatch {
+export const MergeConflictSchema = MergeBatchSchema.extend({
   /** Gate violations (incl. fixHint/context) — the machine-resolvable conflict report. */
-  violations: RuleViolation[];
-}
+  violations: z.array(RuleViolationSchema),
+});
+export type MergeConflict = z.infer<typeof MergeConflictSchema>;
 
-export interface MergeReport {
-  sinceVersion: number;
-  dryRun: boolean;
+/** CR-GC-818: der Bericht an den Aufrufer von graph_merge — als Zod-Vertrag, damit er pruefbar ist (RC-08). */
+export const MergeReportSchema = z.object({
+  sinceVersion: z.number().int(),
+  dryRun: z.boolean(),
   /** Batches found in the branch log after the fork point. */
-  replayed: number;
-  applied: MergeBatch[];
-  conflicted: MergeConflict[];
+  replayed: z.number().int(),
+  applied: z.array(MergeBatchSchema),
+  conflicted: z.array(MergeConflictSchema),
   /** Idempotent batches — their effect is already contained in the base. */
-  skipped: Array<MergeBatch & { reason: string }>;
-}
+  skipped: z.array(MergeBatchSchema.extend({ reason: z.string() })),
+});
+export type MergeReport = z.infer<typeof MergeReportSchema>;
 
 /**
  * Read the replayable batches of a branch command log: applied entries with a
@@ -230,5 +241,6 @@ export async function replayBranchLog(
     }
   }
 
-  return report;
+  // CR-GC-818: der Erzeuger prueft seinen Vertrag, bevor der Bericht die Schicht verlaesst.
+  return MergeReportSchema.parse(report);
 }

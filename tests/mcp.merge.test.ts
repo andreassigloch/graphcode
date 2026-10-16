@@ -16,7 +16,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { exportGraphJson } from '../src/projections/exporter.js';
-import type { MergeReport } from '../src/kernel/merge.js';
+import { MergeReportSchema, type MergeReport } from '../src/kernel/merge.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 import { alsFormatE } from './helpers/format-e.js';
 
@@ -101,6 +101,9 @@ describe('TEST-merge (CR-GC-234): graph_merge replays a branch log through the g
     expect(report.applied).toHaveLength(2);
     expect(report.conflicted).toHaveLength(0);
     expect(report.skipped).toHaveLength(0);
+    // CR-GC-818: der Bericht erfuellt seinen Zod-Vertrag, und die Pruefung verliert die Kommandos nicht.
+    expect(MergeReportSchema.safeParse(report).success).toBe(true);
+    expect(report.applied[0].commands.length).toBeGreaterThan(0);
 
     // Both branch elements are now in the target store; the merge writes counted as versions.
     const b1 = (await targetTools.graph_get_node.handler({ uid: 'REQ-b1' })) as { node: { uid: string } | null };
@@ -139,6 +142,10 @@ describe('TEST-merge (CR-GC-234): graph_merge replays a branch log through the g
     // The report names the violation AND the element — machine-resolvable.
     expect(report.conflicted[0].violations.some((v) => v.elementId === 'FN-base' && v.severity === 'error')).toBe(true);
     expect(report.conflicted[0].violations[0].fixHint).toBeTruthy();
+    expect(MergeReportSchema.safeParse(report).success).toBe(true);
+    // Ablehnung: ein Konflikt ohne Gate-Urteil ist kein gueltiger Bericht.
+    const ohneUrteil = { ...report, conflicted: [{ ...report.conflicted[0], violations: undefined }] };
+    expect(MergeReportSchema.safeParse(ohneUrteil).success).toBe(false);
 
     // Nothing was silently applied: the node stays deleted.
     const gone = (await targetTools.graph_get_node.handler({ uid: 'FN-base' })) as { node: unknown };

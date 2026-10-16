@@ -8842,7 +8842,7 @@ schema ◀ `FLOW-audit-report`
 
 ### 5.4  `SCHEMA-branch-merge-report` — MergeReport
 
-Bericht eines Branch-Merges: Fork-Punkt, Probelauf ja/nein, wieder angewendete, in Konflikt geratene und uebersprungene Chargen, Konflikte in Gate-Sprache. Im Code ein TypeScript-Interface (src/kernel/merge.ts:48), noch kein Zod-Schema.
+Bericht eines Branch-Merges: Fork-Punkt, Probelauf ja/nein, wieder angewendete, in Konflikt geratene und uebersprungene Chargen, Konflikte in Gate-Sprache. Der Erzeuger replayBranchLog prueft ihn vor der Rueckgabe (CR-GC-818).
 
 schema ◀ `FLOW-merge-report`
 

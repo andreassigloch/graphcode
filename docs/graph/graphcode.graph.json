@@ -3466,6 +3466,12 @@
       "description": "docs/cr/open/CR-GC-817-dashboard-bekommt-kennzahlen-als-drei-fl.md"
     },
     {
+      "id": "CR-GC-818",
+      "type": "CR",
+      "name": "MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08)",
+      "description": "docs/cr/open/CR-GC-818-mergereport-src-kernel-merge-ts-48-als-z.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -8189,8 +8195,13 @@
       "id": "SCHEMA-branch-merge-report",
       "type": "SCHEMA",
       "name": "MergeReport",
-      "description": "Bericht eines Branch-Merges: Fork-Punkt, Probelauf ja/nein, wieder angewendete, in Konflikt geratene und uebersprungene Chargen, Konflikte in Gate-Sprache. Im Code ein TypeScript-Interface (src/kernel/merge.ts:48), noch kein Zod-Schema.",
-      "concept": "true"
+      "description": "Bericht eines Branch-Merges: Fork-Punkt, Probelauf ja/nein, wieder angewendete, in Konflikt geratene und uebersprungene Chargen, Konflikte in Gate-Sprache. Der Erzeuger replayBranchLog prueft ihn vor der Rueckgabe (CR-GC-818).",
+      "concept": "false",
+      "realRef": {
+        "file": "src/kernel/merge.ts",
+        "symbol": "MergeReportSchema",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-chain-metrics",
@@ -16010,6 +16021,11 @@
     {
       "source": "CR-GC-817",
       "target": "FUNC-graph-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-818",
+      "target": "FUNC-merge-nodes",
       "type": "relation"
     },
     {
@@ -25285,5 +25301,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 778
+  "graphVersion": 780
 }
