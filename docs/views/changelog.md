@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 428 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 429 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 428 CR · 343 done · 4 open.
+Total: 429 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -490,3 +490,4 @@ Total: 428 CR · 343 done · 4 open.
 | `CR-GC-816` | n/a | Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk |
 | `CR-GC-817` | n/a | Dashboard bekommt Kennzahlen als drei Fluesse statt der einen graph_metrics-Antwort |
 | `CR-GC-818` | n/a | MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08) |
+| `CR-GC-819` | n/a | Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette |

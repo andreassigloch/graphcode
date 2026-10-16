@@ -27,7 +27,7 @@
 | `REQ-gate-survives-rule-failure` | `TEST-gate-survives-rule-failure` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-graceful-degradation` | `TEST-gve-supervision` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `SYS-graphcode` | — |
 | `REQ-graph-integrity` | `TEST-codec-validation` · `TEST-graph-integrity` · `TEST-import-sys-anchor` · `TEST-merge-no-duplicate-edge` | `MOD-projections` | — |
-| `REQ-graph-is-ssot` | `TEST-deny-stale-read` · `TEST-graph-is-ssot` · `TEST-path-containment` | — | — |
+| `REQ-graph-is-ssot` | `TEST-deny-stale-read` · `TEST-graph-is-ssot` · `TEST-path-containment` | `FCHAIN-snapshot-roundtrip` | — |
 | `REQ-harness-factory-returns-one-owner` | `TEST-store-lock` | `FUNC-create-harness` | `MOD-surface` |
 | `REQ-harness-schema-in-contracts` | `TEST-mcp-symmetry` · `TEST-mutate-schema-guard` | `MOD-kernel` | — |
 | `REQ-held-back-edge-does-not-abort-load` | `TEST-import-rejected-traces` | `FUNC-seed-from-json` | `MOD-kernel` |
@@ -211,7 +211,7 @@
 | `REQ-vorbereitung-reads-metrics` | `TEST-vorbereitung-reads-metrics` | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `REQ-zug-zeigt-kennzahlen-danach` | `TEST-zug-kennzahlen-danach` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 
-### Architektur (SYS.3 · SWE.2) — 64 REQ
+### Architektur (SYS.3 · SWE.2) — 70 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -219,12 +219,18 @@
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-audit-stats` · `FUNC-audit-trail` | `MOD-surface` |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` | — |
 | `REQ-docked-session-reelects-once` | `TEST-host-shim` | `FUNC-host-socket` | `MOD-surface` |
+| `REQ-docs-taxonomy` | `TEST-docs-taxonomy` | `MOD-projections` | — |
 | `REQ-export-marker-tracks-drift` | `TEST-graph-time-travel` | `FUNC-export-marker` | `MOD-kernel` |
 | `REQ-export-no-clobber` | `TEST-export-graph-guard` · `TEST-mcp-export-guard` | `FUNC-graph-export-snapshot` | `MOD-projections` |
+| `REQ-export-refuses-until-held-back-repaired` | `TEST-import-rejected-traces` | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `REQ-full-run-on-probation` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 | `REQ-graceful-degradation` | `TEST-gve-supervision` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` · `SYS-graphcode` | — |
+| `REQ-graph-integrity` | `TEST-codec-validation` · `TEST-graph-integrity` · `TEST-import-sys-anchor` · `TEST-merge-no-duplicate-edge` | `MOD-projections` | — |
+| `REQ-graph-is-ssot` | `TEST-deny-stale-read` · `TEST-graph-is-ssot` · `TEST-path-containment` | `FCHAIN-snapshot-roundtrip` | — |
 | `REQ-graph-snapshot-per-commit` | `TEST-auto-export` · `TEST-graph-time-travel` | `FCHAIN-snapshot-freshness` | — |
+| `REQ-held-back-edge-does-not-abort-load` | `TEST-import-rejected-traces` | `FUNC-seed-from-json` | `MOD-kernel` |
 | `REQ-held-back-edges-derived-every-call` | `TEST-import-rejected-traces` | `FUNC-held-back-traces` | `MOD-kernel` |
+| `REQ-held-back-edges-in-readiness` | `TEST-import-rejected-traces` | `FUNC-graph-readiness` | `MOD-projections` |
 | `REQ-interactive-capture-suggest` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-uc-authoring-style` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-interface-change-names-dependents` | `TEST-interface-change-names-dependents` | — | — |

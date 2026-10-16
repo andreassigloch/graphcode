@@ -138,7 +138,7 @@
 | `FLOW-graph-delta` | `FUNC-mutate` | `FUNC-graph-store` |
 | `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-held-back-traces` · `FUNC-seed-from-json` |
 | `FLOW-graph-state` | `FUNC-graph-store` | `ACTOR-auftraggeber` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-check-code-conformance` · `FUNC-compute-readiness` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-held-back-traces` · `FUNC-list-elements` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-score-completeness` · `FUNC-take-steering-snapshot` · `FUNC-test-ingest` |
-| `FLOW-harness-handle` | `FUNC-create-harness` | `FUNC-bind-tools` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-serve-stdio` · `FUNC-tool-context` |
+| `FLOW-harness-handle` | `FUNC-create-harness` | `FUNC-bind-tools` · `FUNC-import-code-verb` · `FUNC-own-kuzu-host` · `FUNC-rewind` · `FUNC-serve-stdio` · `FUNC-tool-context` |
 | `FLOW-harness-handle-host` | `FUNC-own-kuzu-host` | `FUNC-serve-sse` |
 | `FLOW-health-report` | `FUNC-health-endpoint` | `ACTOR-dashboard` |
 | `FLOW-held-back-traces` | `FUNC-held-back-traces` | `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` |
@@ -191,7 +191,7 @@
 | `FLOW-steering-delta` | `FUNC-compute-steering-delta` | `FUNC-graph-mutate-tool` |
 | `FLOW-steering-snapshot` | `FUNC-take-steering-snapshot` | `FUNC-compute-steering-delta` · `FUNC-generation-step` |
 | `FLOW-steering-trigger-agent` | `FUNC-agent-loop` | `FUNC-take-steering-snapshot` |
-| `FLOW-store-ownership` | `FUNC-claim-store-lock` | `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` |
+| `FLOW-store-ownership` | `FUNC-claim-store-lock` | `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-session-shutdown` |
 | `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-generation-step` · `FUNC-graph-suggest` |
 | `FLOW-target-profile-file` | `FUNC-agent-loop` | `FUNC-target-profile-load` |
 | `FLOW-test-selection` | `FUNC-deduce-tests` | `ACTOR-auftraggeber` · `FUNC-agent-loop` |

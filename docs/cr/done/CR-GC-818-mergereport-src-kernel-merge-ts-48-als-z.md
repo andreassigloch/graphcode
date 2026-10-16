@@ -1,6 +1,6 @@
 # CR-GC-818: MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-16)
 **Typ:** aus Item ITEM-2026-973 (idea)
 **Erstellt:** 2026-10-16
 **Item:** bok/items/ITEM-2026-973.json (Lane: graph)

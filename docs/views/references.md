@@ -879,6 +879,10 @@
 | `CR-GC-816` | relation | `FUNC-graph-export-snapshot` |
 | `CR-GC-817` | relation | `FUNC-graph-metrics` |
 | `CR-GC-818` | relation | `FUNC-merge-nodes` |
+| `CR-GC-819` | relation | `FUNC-create-harness` |
+| `CR-GC-819` | relation | `FUNC-graph-export-snapshot` |
+| `CR-GC-819` | relation | `FUNC-own-kuzu-host` |
+| `CR-GC-819` | relation | `FUNC-seed-from-json` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -968,6 +972,7 @@
 | `FCHAIN-interface-escalation` | satisfy | `REQ-risk-interface-change-unescalated` |
 | `FCHAIN-live-update` | compose | `FUNC-agent-loop` |
 | `FCHAIN-live-update` | compose | `FUNC-broadcast-diff` |
+| `FCHAIN-live-update` | compose | `FUNC-create-harness` |
 | `FCHAIN-live-update` | compose | `FUNC-decode` |
 | `FCHAIN-live-update` | compose | `FUNC-emit-update-event` |
 | `FCHAIN-live-update` | compose | `FUNC-evaluate-rules` |
@@ -1093,6 +1098,12 @@
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-mutate` |
 | `FCHAIN-snapshot-freshness` | satisfy | `REQ-graph-snapshot-per-commit` |
 | `FCHAIN-snapshot-freshness` | satisfy | `REQ-risk-auto-export-fails-silently` |
+| `FCHAIN-snapshot-roundtrip` | compose | `FUNC-agent-loop` |
+| `FCHAIN-snapshot-roundtrip` | compose | `FUNC-graph-export-snapshot` |
+| `FCHAIN-snapshot-roundtrip` | compose | `FUNC-graph-store` |
+| `FCHAIN-snapshot-roundtrip` | compose | `FUNC-import` |
+| `FCHAIN-snapshot-roundtrip` | compose | `FUNC-seed-from-json` |
+| `FCHAIN-snapshot-roundtrip` | satisfy | `REQ-graph-is-ssot` |
 | `FCHAIN-steering-loop` | compose | `FUNC-agent-loop` |
 | `FCHAIN-steering-loop` | compose | `FUNC-arch-fitness` |
 | `FCHAIN-steering-loop` | compose | `FUNC-compute-readiness` |
@@ -1314,6 +1325,7 @@
 | `FLOW-graph-state` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-harness-handle` | io | `FUNC-bind-tools` |
 | `FLOW-harness-handle` | io | `FUNC-import-code-verb` |
+| `FLOW-harness-handle` | io | `FUNC-own-kuzu-host` |
 | `FLOW-harness-handle` | io | `FUNC-rewind` |
 | `FLOW-harness-handle` | io | `FUNC-serve-stdio` |
 | `FLOW-harness-handle` | io | `FUNC-tool-context` |
@@ -1477,7 +1489,6 @@
 | `FLOW-steering-trigger-agent` | relation | `SCHEMA-query-params` |
 | `FLOW-store-ownership` | io | `FUNC-create-harness` |
 | `FLOW-store-ownership` | io | `FUNC-graph-store` |
-| `FLOW-store-ownership` | io | `FUNC-own-kuzu-host` |
 | `FLOW-store-ownership` | io | `FUNC-session-shutdown` |
 | `FLOW-store-ownership` | relation | `SCHEMA-lock-owner` |
 | `FLOW-target-profile` | io | `FUNC-generation-step` |
@@ -2583,6 +2594,7 @@
 | `UC-graph-time-travel` | compose | `FCHAIN-merge-branches` |
 | `UC-graph-time-travel` | compose | `FCHAIN-recall` |
 | `UC-graph-time-travel` | compose | `FCHAIN-snapshot-freshness` |
+| `UC-graph-time-travel` | compose | `FCHAIN-snapshot-roundtrip` |
 | `UC-graph-time-travel` | compose | `REQ-auto-persist-merge` |
 | `UC-graph-time-travel` | compose | `REQ-conflict-free-merge` |
 | `UC-graph-time-travel` | compose | `REQ-graph-snapshot-per-commit` |

@@ -97,6 +97,7 @@ Ausgeloest von: `ACTOR-auftraggeber`
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-merge-nodes` → `FUNC-mutate`
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-import` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
 - `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
+- `FCHAIN-snapshot-roundtrip` — Snapshot-Rundreise: `FUNC-agent-loop` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-import` → `FUNC-seed-from-json`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
 
@@ -105,7 +106,7 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard`
 
 - `FCHAIN-dashboard-metrics` — Kennzahlen ans Dashboard: `FUNC-agent-loop` → `FUNC-chain-metrics` → `FUNC-function-criticality` → `FUNC-graph-metrics` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-mutate`
-- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-agent-loop` → `FUNC-broadcast-diff` → `FUNC-decode` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-serve-sse` → `FUNC-serve-stdio`
+- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-agent-loop` → `FUNC-broadcast-diff` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-serve-sse` → `FUNC-serve-stdio`
 
 ### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
 
@@ -444,6 +445,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-816` | n/a | Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk | `FUNC-block-gedaechtnis` · `FUNC-block-speicherwerk` · `FUNC-graph-export-snapshot` |
 | `CR-GC-817` | n/a | Dashboard bekommt Kennzahlen als drei Fluesse statt der einen graph_metrics-Antwort | `FUNC-graph-metrics` |
 | `CR-GC-818` | n/a | MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08) | `FUNC-merge-nodes` |
+| `CR-GC-819` | n/a | Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette | `FUNC-create-harness` · `FUNC-graph-export-snapshot` · `FUNC-own-kuzu-host` · `FUNC-seed-from-json` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

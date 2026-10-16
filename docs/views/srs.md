@@ -114,7 +114,7 @@ Verification ◀ `TEST-responsiveness` (performance) · satisfy ◀ `FCHAIN-appl
 
 ##### 3.1.1.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -232,7 +232,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.1.1.5  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -466,7 +466,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FCHAIN-capture` ·
 
 ##### 3.1.2.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -584,7 +584,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.1.2.5  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -706,7 +706,7 @@ Verification ◀ `TEST-interface-escalation` (integration) · satisfy ◀ `FCHAI
 
 ##### 3.1.4.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -786,7 +786,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param
 
 ##### 3.1.4.4  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -882,7 +882,7 @@ Verification ◀ `TEST-skill-moves-are-legal` · satisfy ◀ `FCHAIN-skill-autho
 
 ##### 3.1.5.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -1000,7 +1000,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.1.5.5  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -1366,7 +1366,7 @@ Die Wirkkette der Zustandsmaschine: Steuerungs-Snapshot -> Schritt (seed / expan
 
 ##### 3.2.1.1  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -1554,7 +1554,7 @@ Ein Mensch ruft den Hilfe-Skill und bekommt die Erklaerung zurueck. Aus FCHAIN-s
 
 ##### 3.2.2.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -1602,7 +1602,7 @@ Ein Mensch ruft einen lesenden Skill; der Skill zieht die Messung aus den Lesewe
 
 ##### 3.2.3.1  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -1694,7 +1694,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 ##### 3.2.3.5  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -2070,7 +2070,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 ##### 3.2.4.5  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -2340,7 +2340,7 @@ Verification ◀ `TEST-target-profile` (integration) · `TEST-target-shifts-rank
 
 ##### 3.2.4.14  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -2602,7 +2602,7 @@ Verification ◀ `TEST-lane-reports-change` (integration) · `TEST-test-result-w
 
 ##### 3.3.2.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -2720,7 +2720,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.3.2.5  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -2762,7 +2762,7 @@ Entwickler bringt zwei Zweig-Graphen ein, mergeNodes fuehrt sie regelbasiert zus
 
 ##### 3.4.1.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -2880,7 +2880,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.4.1.4  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -2952,7 +2952,7 @@ Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-cli-dispatch` ·
 
 ##### 3.4.2.2  `FUNC-create-harness` — createHarness
 
-> auch in: `FCHAIN-model-import` · `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
 
 Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.
 
@@ -3022,7 +3022,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integr
 
 ##### 3.4.2.6  `FUNC-seed-from-json` — seedFromJson(relPath)
 
-> auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-repo-lifecycle` · `FCHAIN-snapshot-roundtrip` · `FUNC-block-speicherwerk`
 
 Erstbefuellung des Stores aus dem committeten Snapshot ueber den Import-Port — eine Operation, kein Edit, deshalb ohne Gate. Prueft jede Kante mit derselben Routine wie R-18 und haelt Kanten ohne Muster zurueck, statt den Boot abbrechen zu lassen; das Ergebnis nennt sie (rejectedTraces), der Host warnt beim Boot. (CR-GC-467, CR-GC-530)
 
@@ -3048,7 +3048,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 ##### 3.4.2.7  `FUNC-import` — importGraph(ontology, opts)
 
-> auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-repo-lifecycle` · `FCHAIN-snapshot-roundtrip` · `FUNC-block-gedaechtnis`
 
 Laedt einen materialisierten OntologyGraph (elements/traces) per Import-Port in den Store (replace) — direkte Ladung eines governten Bestands, kein Gate. Meldet REQ ohne verifizierenden TEST (auf Wunsch Abbruch) und haelt Kanten ohne Muster zurueck (rejectedTraces). Ungeprueftes Format-E laeuft ueber bootstrap durchs Gate. (CR-GC-260, CR-GC-530)
 
@@ -3082,7 +3082,7 @@ Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · 
 
 ##### 3.4.2.8  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -3154,7 +3154,7 @@ Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satis
 
 ##### 3.4.3.2  `FUNC-graph-export-snapshot` — graph_export(views?)
 
-> auch in: `FCHAIN-doc-export` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-doc-export` · `FCHAIN-snapshot-roundtrip` · `FUNC-block-speicherwerk`
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
@@ -3302,7 +3302,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.4.3.7  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -3350,6 +3350,162 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-export-marker` · allocate ▶ `MOD-kernel`
 
+#### 3.4.4  `FCHAIN-snapshot-roundtrip` — Snapshot-Rundreise
+
+Was graph_export als committete Datei schreibt, laedt seedFromJson beim naechsten Start oder Reseed zurueck in den Store: export, Datei, seed, import, Store. Ergebnis: der Store gleicht dem committeten Snapshot.
+
+##### `REQ-graph-is-ssot` — Graph ist Single Point of Truth
+
+Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14)
+
+priority: should · status: done · kinds: non-functional
+
+Verification ◀ `TEST-deny-stale-read` (integration) · `TEST-graph-is-ssot` (integration) · `TEST-path-containment` (integration) · satisfy ◀ `FCHAIN-snapshot-roundtrip` · allocate ▶ —
+
+##### 3.4.4.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
+
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+
+Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
+
+io ◀ `FLOW-action` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-element-slice` · `FLOW-formatE-artifact-read-tools` · `FLOW-merge-report` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-next-step-advice` · `FLOW-query-request-owner` · `FLOW-readiness-report` · `FLOW-rules-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · `FLOW-zug-bericht` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
+
+Die Ablaufsteuerung fuehrt eine Skill-Anleitung aus, indem sie die dort genannten Werkzeuge ruft; jede Aenderung am Modell geht ueber graph_mutate, der Skill selbst ruft nichts.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loop` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
+
+> auch unter: `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+
+Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+
+##### 3.4.4.2  `FUNC-graph-export-snapshot` — graph_export(views?)
+
+> auch in: `FCHAIN-doc-export` · `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
+
+Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
+
+io ◀ `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-graph-snapshot-file` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+
+###### `REQ-export-no-clobber` — Export refuse-to-clobber
+
+graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)
+
+priority: must · status: done · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
+
+###### `REQ-export-refuses-until-held-back-repaired` — Export verweigert bis zur Reparatur
+
+graph_export verweigert, solange eine Kante zurueckgehalten ist, und nennt die Kante und den Reparaturweg; nach einem delete-edge durchs Gate laeuft der Export wieder.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
+
+##### 3.4.4.3  `FUNC-seed-from-json` — seedFromJson(relPath)
+
+> auch in: `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
+
+Erstbefuellung des Stores aus dem committeten Snapshot ueber den Import-Port — eine Operation, kein Edit, deshalb ohne Gate. Prueft jede Kante mit derselben Routine wie R-18 und haelt Kanten ohne Muster zurueck, statt den Boot abbrechen zu lassen; das Ergebnis nennt sie (rejectedTraces), der Host warnt beim Boot. (CR-GC-467, CR-GC-530)
+
+io ◀ `FLOW-graph-snapshot-file` · `FLOW-reseeded-graph` · io ▶ `FLOW-ontology-json` · allocate ▶ `MOD-kernel`
+
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-bootstrap` · `FUNC-import`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
+###### `REQ-held-back-edge-does-not-abort-load` — Musterfremde Kante bricht das Laden nicht ab
+
+Eine committete Kante, die kein Muster mehr zulaesst, bricht das Laden aus dem Snapshot nicht ab: sie wird zurueckgehalten, der uebrige Graph wird geladen.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-seed-from-json` · allocate ▶ `MOD-kernel`
+
+##### 3.4.4.4  `FUNC-import` — importGraph(ontology, opts)
+
+> auch in: `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FUNC-block-gedaechtnis`
+
+Laedt einen materialisierten OntologyGraph (elements/traces) per Import-Port in den Store (replace) — direkte Ladung eines governten Bestands, kein Gate. Meldet REQ ohne verifizierenden TEST (auf Wunsch Abbruch) und haelt Kanten ohne Muster zurueck (rejectedTraces). Ungeprueftes Format-E laeuft ueber bootstrap durchs Gate. (CR-GC-260, CR-GC-530)
+
+io ◀ `FLOW-ontology-json` · io ▶ `FLOW-imported-graph` · allocate ▶ `MOD-kernel`
+
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-bootstrap` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
+###### `REQ-post-import` — Postcondition: importGraph(ontology, opts)
+
+Der Store traegt den Bestand; jede REQ ohne verifizierenden TEST ist gemeldet (oder der Import verweigert), jede Kante ohne Muster zurueckgehalten und benannt — nichts verschwindet still.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
+
+###### `REQ-pre-import` — Precondition: importGraph(ontology, opts)
+
+Ein materialisierter OntologyGraph (elements/traces) liegt vor — typischerweise der committete Snapshot docs/graph/<system>.graph.json.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
+
+##### 3.4.4.5  `FUNC-graph-store` — GraphStore
+
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+
+Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
+
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · `FLOW-schema-fingerprint` · `FLOW-store-ownership` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+
+###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
+
+> auch unter: `FUNC-auto-export` · `FUNC-merge-nodes`
+
+Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
+
+Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
+
+priority: must · status: reviewed · kinds: functional
+
+Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
+###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
+
+Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ### 3.5  `UC-live-graph-view` — Modellstand live mitlesen
 
 Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansicht neu zu laden, damit ich die Wirkung jeder Aenderung sofort sehe.
@@ -3360,7 +3516,7 @@ Nach einer Aenderung rechnet das Messwerk Modulmetrik und Funktionskritikalitaet
 
 ##### 3.5.1.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -3436,7 +3592,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 ##### 3.5.1.5  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -3548,13 +3704,29 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (integration) · satisfy ◀ `FCHAIN-live-update` · allocate ▶ —
 
-##### 3.5.2.1  `FUNC-own-kuzu-host` — ownKuzu()
+##### 3.5.2.1  `FUNC-create-harness` — createHarness
+
+> auch in: `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
+
+Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.
+
+io ◀ `FLOW-cli-command` · `FLOW-store-ownership` · io ▶ `FLOW-harness-handle` · allocate ▶ `MOD-surface`
+
+###### `REQ-harness-factory-returns-one-owner` — Fabrik liefert genau einen Besitzer
+
+Die Fabrik baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck; ein zweiter Harness auf demselben Store wird beim Initialisieren abgewiesen.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-create-harness` · allocate ▶ `MOD-surface`
+
+##### 3.5.2.2  `FUNC-own-kuzu-host` — ownKuzu()
 
 > auch in: `FUNC-block-gedaechtnis`
 
 Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)
 
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-harness-handle-host` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-harness-handle` · io ▶ `FLOW-harness-handle-host` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-host-holds-only-kuzu-handle` — Host haelt das einzige Kuzu-Handle
 
@@ -3564,7 +3736,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel`
 
-##### 3.5.2.2  `FUNC-serve-sse` — serveSSE()
+##### 3.5.2.3  `FUNC-serve-sse` — serveSSE()
 
 > auch in: `FUNC-block-live-dashboard`
 
@@ -3582,7 +3754,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-surface`
 
-##### 3.5.2.3  `FUNC-broadcast-diff` — broadcastDiff(version)
+##### 3.5.2.4  `FUNC-broadcast-diff` — broadcastDiff(version)
 
 > auch in: `FUNC-block-live-dashboard`
 
@@ -3600,9 +3772,27 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-surface`
 
-##### 3.5.2.4  `FUNC-agent-loop` — Agent-Ablaufsteuerung
+##### 3.5.2.5  `FUNC-serve-stdio` — serveStdio()
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-host-sitzung`
+
+Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
+
+io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ `FLOW-tool-surface` · allocate ▶ `MOD-surface`
+
+###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
+
+> auch unter: `FUNC-bind-tools` · `FUNC-graph-mutate-tool` · `FUNC-rules-tool` · `FUNC-tool-context`
+
+CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-mutate-tool` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-projections` · `MOD-surface`
+
+##### 3.5.2.6  `FUNC-agent-loop` — Agent-Ablaufsteuerung
+
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -3626,7 +3816,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.5.2.5  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
+##### 3.5.2.7  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-steering-loop` · `FUNC-block-bedienung`
 
@@ -3644,7 +3834,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-mutate-tool` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-projections` · `MOD-surface`
 
-##### 3.5.2.6  `FUNC-decode` — formatEToCommands(harness, text)
+##### 3.5.2.8  `FUNC-decode` — formatEToCommands(harness, text)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-codec-roundtrip` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
 
@@ -3668,7 +3858,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
 
-##### 3.5.2.7  `FUNC-mutate` — mutate(commands)
+##### 3.5.2.9  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-gate`
 
@@ -3718,9 +3908,9 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
-##### 3.5.2.8  `FUNC-graph-store` — GraphStore
+##### 3.5.2.10  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -3752,7 +3942,7 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-##### 3.5.2.9  `FUNC-emit-update-event` — emitUpdateEvent(domains)
+##### 3.5.2.11  `FUNC-emit-update-event` — emitUpdateEvent(domains)
 
 > auch in: `FUNC-block-live-dashboard`
 
@@ -3786,25 +3976,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-diff` · `FUNC-emit-update-event` · `FUNC-serve-sse` · allocate ▶ `MOD-surface`
 
-##### 3.5.2.10  `FUNC-serve-stdio` — serveStdio()
-
-> auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-host-sitzung`
-
-Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
-
-io ◀ `FLOW-harness-handle` · `FLOW-live-event` · `FLOW-mcp-tool-registry` · `FLOW-tool-registry` · io ▶ `FLOW-tool-surface` · allocate ▶ `MOD-surface`
-
-###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
-
-> auch unter: `FUNC-bind-tools` · `FUNC-graph-mutate-tool` · `FUNC-rules-tool` · `FUNC-tool-context`
-
-CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-mutate-tool` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-projections` · `MOD-surface`
-
-##### 3.5.2.11  `FUNC-evaluate-rules` — evaluateRules()
+##### 3.5.2.12  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -3828,7 +4000,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
 
-##### 3.5.2.12  `FUNC-health-endpoint` — healthEndpoint()
+##### 3.5.2.13  `FUNC-health-endpoint` — healthEndpoint()
 
 > auch in: `FUNC-block-host-sitzung`
 
@@ -3880,7 +4052,7 @@ Verification ◀ `TEST-audit-rules-passed` (integration) · `TEST-rule-calibrati
 
 ##### 3.6.1.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -3960,7 +4132,7 @@ Verification ◀ `TEST-audit-retention` (integration) · `TEST-audit-rules-passe
 
 ##### 3.6.1.5  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -4052,7 +4224,7 @@ graph_export ueber MCP-stdio: serveStdio nimmt die View-Auswahl (FLOW-export-req
 
 ##### 3.7.1.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -4078,7 +4250,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 ##### 3.7.1.2  `FUNC-graph-export-snapshot` — graph_export(views?)
 
-> auch in: `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FUNC-block-speicherwerk`
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
@@ -4264,7 +4436,7 @@ Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integr
 
 ##### 3.7.2.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -4308,7 +4480,7 @@ Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-cli-dispatch` ·
 
 ##### 3.7.2.3  `FUNC-create-harness` — createHarness
 
-> auch in: `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-live-update` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
 
 Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.
 
@@ -4432,7 +4604,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.7.2.8  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -4498,7 +4670,7 @@ Verification ◀ `TEST-advisory-roundtrip-latency` (performance) · satisfy ◀ 
 
 ##### 3.8.1.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -4674,7 +4846,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.8.1.7  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -4760,7 +4932,7 @@ Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e)
 
 ##### 3.8.2.1  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -4812,7 +4984,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param
 
 ##### 3.8.2.3  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -4932,7 +5104,7 @@ Der Agent fragt die Kanten-Grammatik eines Elementtyps ab und bekommt sie zuruec
 
 ##### 3.8.3.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -5014,7 +5186,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (integration) · sat
 
 ##### 3.8.4.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -5132,7 +5304,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ##### 3.8.4.5  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -5214,7 +5386,7 @@ Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FCHAIN-repo-life
 
 ##### 3.9.1.1  `FUNC-seed-from-json` — seedFromJson(relPath)
 
-> auch in: `FCHAIN-recall` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-recall` · `FCHAIN-snapshot-roundtrip` · `FUNC-block-speicherwerk`
 
 Erstbefuellung des Stores aus dem committeten Snapshot ueber den Import-Port — eine Operation, kein Edit, deshalb ohne Gate. Prueft jede Kante mit derselben Routine wie R-18 und haelt Kanten ohne Muster zurueck, statt den Boot abbrechen zu lassen; das Ergebnis nennt sie (rejectedTraces), der Host warnt beim Boot. (CR-GC-467, CR-GC-530)
 
@@ -5240,7 +5412,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 ##### 3.9.1.2  `FUNC-import` — importGraph(ontology, opts)
 
-> auch in: `FCHAIN-recall` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-recall` · `FCHAIN-snapshot-roundtrip` · `FUNC-block-gedaechtnis`
 
 Laedt einen materialisierten OntologyGraph (elements/traces) per Import-Port in den Store (replace) — direkte Ladung eines governten Bestands, kein Gate. Meldet REQ ohne verifizierenden TEST (auf Wunsch Abbruch) und haelt Kanten ohne Muster zurueck (rejectedTraces). Ungeprueftes Format-E laeuft ueber bootstrap durchs Gate. (CR-GC-260, CR-GC-530)
 
@@ -5274,7 +5446,7 @@ Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · 
 
 ##### 3.9.1.3  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -5430,7 +5602,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 ##### 3.9.1.9  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
@@ -5490,7 +5662,7 @@ Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-stor
 
 ##### 3.9.1.12  `FUNC-create-harness` — createHarness
 
-> auch in: `FCHAIN-model-import` · `FCHAIN-recall` · `FUNC-block-speicherwerk`
+> auch in: `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-recall` · `FUNC-block-speicherwerk`
 
 Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.
 
@@ -6762,7 +6934,7 @@ Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emi
 
 ###### 3.10.2.4.3  `FUNC-import` — importGraph(ontology, opts)
 
-> auch in: `FCHAIN-recall` · `FCHAIN-repo-lifecycle`
+> auch in: `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-snapshot-roundtrip`
 
 Laedt einen materialisierten OntologyGraph (elements/traces) per Import-Port in den Store (replace) — direkte Ladung eines governten Bestands, kein Gate. Meldet REQ ohne verifizierenden TEST (auf Wunsch Abbruch) und haelt Kanten ohne Muster zurueck (rejectedTraces). Ungeprueftes Format-E laeuft ueber bootstrap durchs Gate. (CR-GC-260, CR-GC-530)
 
@@ -6842,7 +7014,7 @@ Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` ·
 
 Der Host-Prozess ist der einzige Kuzu-Owner pro Repo; die Bridge haelt kein zweites DB-Handle. (CR-GC-114)
 
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-harness-handle-host` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-harness-handle` · io ▶ `FLOW-harness-handle-host` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-host-holds-only-kuzu-handle` — Host haelt das einzige Kuzu-Handle
 
@@ -7282,7 +7454,7 @@ Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-stor
 
 ###### 3.10.2.7.5  `FUNC-create-harness` — createHarness
 
-> auch in: `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle`
+> auch in: `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle`
 
 Die Fabrik der oeffentlichen Programmierschnittstelle: baut den Harness mit Store, Regeln und Hooks und gibt genau einen Besitzer des Stores zurueck.
 
@@ -7314,7 +7486,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-exp
 
 ###### 3.10.2.7.7  `FUNC-graph-export-snapshot` — graph_export(views?)
 
-> auch in: `FCHAIN-doc-export` · `FCHAIN-snapshot-freshness`
+> auch in: `FCHAIN-doc-export` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip`
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
@@ -7338,7 +7510,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 ###### 3.10.2.7.8  `FUNC-graph-store` — GraphStore
 
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
@@ -7388,7 +7560,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 ###### 3.10.2.7.10  `FUNC-seed-from-json` — seedFromJson(relPath)
 
-> auch in: `FCHAIN-recall` · `FCHAIN-repo-lifecycle`
+> auch in: `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-snapshot-roundtrip`
 
 Erstbefuellung des Stores aus dem committeten Snapshot ueber den Import-Port — eine Operation, kein Edit, deshalb ohne Gate. Prueft jede Kante mit derselben Routine wie R-18 und haelt Kanten ohne Muster zurueck, statt den Boot abbrechen zu lassen; das Ergebnis nennt sie (rejectedTraces), der Host warnt beim Boot. (CR-GC-467, CR-GC-530)
 
@@ -8428,7 +8600,7 @@ io ◀ `FUNC-graph-store` · io ▶ `ACTOR-auftraggeber` · `FUNC-arch-fitness` 
 
 Der fertig verdrahtete Harness, den die Fabrik liefert: Store geoeffnet, Lock beansprucht, Regelwerk geladen. Alles, was auf dem Graphen arbeitet, holt ihn hier ab.
 
-io ◀ `FUNC-create-harness` · io ▶ `FUNC-bind-tools` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-serve-stdio` · `FUNC-tool-context` · schema ▶ `SCHEMA-harness-handle`
+io ◀ `FUNC-create-harness` · io ▶ `FUNC-bind-tools` · `FUNC-import-code-verb` · `FUNC-own-kuzu-host` · `FUNC-rewind` · `FUNC-serve-stdio` · `FUNC-tool-context` · schema ▶ `SCHEMA-harness-handle`
 
 ### 4.73  `FLOW-harness-handle-host` — Harness-Griff (Host)
 
@@ -8746,7 +8918,7 @@ io ◀ `FUNC-agent-loop` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `
 
 Der Anspruch auf den Kuzu-Store eines Repos: gehalten, uebernommen oder verweigert.
 
-io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-own-kuzu-host` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
+io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
 ### 4.126  `FLOW-target-profile` — Zielprofil
 
@@ -9311,14 +9483,6 @@ Strukturelle Integritaet an einem Punkt: GraphCodeCodec.validate() erkennt unbek
 priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-codec-validation` (integration) · `TEST-graph-integrity` (integration) · `TEST-import-sys-anchor` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `MOD-projections` · allocate ▶ —
-
-### `REQ-graph-is-ssot` — Graph ist Single Point of Truth
-
-Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14)
-
-priority: should · status: done · kinds: non-functional
-
-Verification ◀ `TEST-deny-stale-read` (integration) · `TEST-graph-is-ssot` (integration) · `TEST-path-containment` (integration) · satisfy ◀ — · allocate ▶ —
 
 ### `REQ-harness-schema-in-contracts` — Harness-Schemas in contracts (D1)
 
