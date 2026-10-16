@@ -12,7 +12,7 @@
  * zweiter Pfad zu einer schon geprueften Zusicherung.
  *
  * Grundgesamtheit kommt aus dem Graphen (compose-Glieder von
- * `FCHAIN-skill-authoring`, auf MOD-skills alloziert), die Datei aus der
+ * `FCHAIN-skill-authoring`, auf MOD-skills alloziert, ohne die externe Ablaufsteuerung), die Datei aus der
  * `realRef` des Knotens, die Werkzeugnamen aus der LIVE-Registry.
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
@@ -40,7 +40,7 @@ const GATE_TOOLS = ['graph_mutate'];
  */
 const DIRECT_SSOT_WRITE = /(?:\b(?:Write|Edit|MultiEdit)\b[^\n]*|>>?\s*)docs\/graph\/[^\s`)]*\.graph\.json/;
 
-type Element = { id: string; type: string; realRef?: { file?: string } | null };
+type Element = { id: string; type: string; external?: boolean; realRef?: { file?: string } | null };
 type Trace = { source: string; target: string; type: string };
 
 function graph(): { elements: Element[]; traces: Trace[] } {
@@ -56,7 +56,7 @@ function skillMembers(chainUid: string): Element[] {
   return g.traces
     .filter((t) => t.type === 'compose' && t.source === chainUid)
     .map((t) => byId.get(t.target))
-    .filter((e): e is Element => !!e && e.type === 'FUNC' && inSkills.has(e.id));
+    .filter((e): e is Element => !!e && e.type === 'FUNC' && inSkills.has(e.id) && !e.external);
 }
 
 describe('TEST-skill-authors-through-gate: Autoren-Skills liegen auf dem Apply-Gate', () => {

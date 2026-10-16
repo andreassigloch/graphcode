@@ -10,6 +10,7 @@
 
 | uid | type | name |
 |---|---|---|
+| `FUNC-agent-loop` | FUNC | Agent-Ablaufsteuerung |
 | `FUNC-apply-reseed` | FUNC | applyReseed |
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
 | `FUNC-audit-stats` | FUNC | aggregateAuditEntries(entries) |
@@ -49,7 +50,6 @@
 | `FUNC-create-harness` | FUNC | createHarness |
 | `FUNC-decode` | FUNC | formatEToCommands(harness, text) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
-| `FUNC-docked-session` | FUNC | Angedockte Sitzung |
 | `FUNC-emit-trajectory` | FUNC | materializeTrajectory() |
 | `FUNC-emit-update-event` | FUNC | emitUpdateEvent(domains) |
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
@@ -63,6 +63,7 @@
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
 | `FUNC-graph-metrics` | FUNC | graph_metrics(scope?) |
+| `FUNC-graph-mutate-tool` | FUNC | graph_mutate (Werkzeug) |
 | `FUNC-graph-readiness` | FUNC | graph_readiness(detail?) |
 | `FUNC-graph-store` | FUNC | GraphStore |
 | `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
@@ -71,7 +72,7 @@
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
 | `FUNC-held-back-traces` | FUNC | heldBackTraces(repoRoot, systemId, live) |
-| `FUNC-host-socket` | FUNC | startHostSocket |
+| `FUNC-host-socket` | FUNC | Host-Socket (angedockte Sitzung) |
 | `FUNC-import` | FUNC | importGraph(ontology, opts) |
 | `FUNC-import-code` | FUNC | Skill se:import-code |
 | `FUNC-import-code-verb` | FUNC | executeImportCode |
@@ -90,6 +91,7 @@
 | `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
+| `FUNC-rules-tool` | FUNC | rules_evaluate / rules_get_violations |
 | `FUNC-schema-guard` | FUNC | schemaFingerprint |
 | `FUNC-score-completeness` | FUNC | computeMarks(violations) |
 | `FUNC-se-conops` | FUNC | Skill se-conops |
@@ -139,6 +141,7 @@
 
 | function | module |
 |---|---|
+| `FUNC-agent-loop` | `MOD-agent-surface` |
 | `FUNC-apply-reseed` | `MOD-kernel` |
 | `FUNC-arch-fitness` | `MOD-kernel-measure` |
 | `FUNC-audit-stats` | `MOD-surface` |
@@ -178,7 +181,6 @@
 | `FUNC-create-harness` | `MOD-surface` |
 | `FUNC-decode` | `MOD-loop` |
 | `FUNC-deduce-tests` | `MOD-projections` |
-| `FUNC-docked-session` | `MOD-surface` |
 | `FUNC-emit-trajectory` | `MOD-projections` |
 | `FUNC-emit-update-event` | `MOD-surface` |
 | `FUNC-evaluate-rules` | `MOD-kernel` |
@@ -192,6 +194,7 @@
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |
 | `FUNC-graph-metrics` | `MOD-projections` |
+| `FUNC-graph-mutate-tool` | `MOD-surface` |
 | `FUNC-graph-readiness` | `MOD-projections` |
 | `FUNC-graph-store` | `MOD-kernel` |
 | `FUNC-graph-suggest` | `MOD-loop` |
@@ -219,6 +222,7 @@
 | `FUNC-reseed` | `MOD-kernel` |
 | `FUNC-resolve-tests-from-code` | `MOD-kernel` |
 | `FUNC-rewind` | `MOD-surface` |
+| `FUNC-rules-tool` | `MOD-projections` |
 | `FUNC-schema-guard` | `MOD-kernel` |
 | `FUNC-score-completeness` | `MOD-projections` |
 | `FUNC-se-conops` | `MOD-agent-surface` |

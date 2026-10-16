@@ -25,7 +25,7 @@
 | 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-impact-testing` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` | ✓ |
 | 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | `FUNC-export-marker` | ✓ |
 | 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | `FUNC-held-back-traces` | ✓ |
-| 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-repo-lifecycle` | 7 | 2 | 3 | 42 | Medium | `FUNC-docked-session` | ✓ |
+| 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-repo-lifecycle` | 7 | 2 | 3 | 42 | Medium | `FUNC-host-socket` | ✓ |
 | 17 | Risiko halb gefuellter Store nach Abbruch | `FCHAIN-recall` | 6 | 2 | 3 | 36 | Low | `FUNC-graph-export-snapshot` | ✓ |
 | 18 | Risiko Regelauswertung faellt im Gate aus | — | 8 | 2 | 2 | 32 | Low | `FUNC-mutate` | ✗ |
 | 19 | Risiko Skill weist abgelehnten Zug an | `FCHAIN-skill-authoring` | 4 | 4 | 2 | 32 | Low | — | ✗ |
@@ -296,7 +296,7 @@ Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-10-13 |
+| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-10-16 |
 
 ### 15. Risiko Kante verschwindet still (`REQ-risk-edge-vanishes-silently`)
 
@@ -315,7 +315,7 @@ Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell.
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-10-13 |
+| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-10-16 |
 
 ### 16. Risiko Besitzer endet bei angedockten Sitzungen (`REQ-risk-owner-ends-with-docked-sessions`)
 
@@ -324,13 +324,13 @@ Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine an
 - **Bewertung:** S 7 · O 2 · D 3 · RPN 42 · AP Medium
 - **Kette:** `FCHAIN-repo-lifecycle`
 - **Anwendungsfall:** `UC-repo-lifecycle`
-- **Träger:** `FUNC-docked-session`
+- **Träger:** `FUNC-host-socket`
 - **Befund:** FMEA CR-GC-798 FM-19, Quelle E Kreislauf aus FUNC-claim-store-lock und FUNC-session-shutdown. Genau ein Neuwahlversuch. Entscheidung: gedeckt durch REQ-store-owner-lifecycle, das fuenf Erfueller hat.
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-docked-session-reelects-once` | Endet der Besitzer des Stores, waehrend eine Sitzung angedockt ist, versucht diese Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach als Host weiter. Gelingt das nicht, endet der Aufruf mit einem benannten Fehler statt mit einem Haenger oder einem leeren Ergebnis. | `FUNC-docked-session` |
+| `REQ-docked-session-reelects-once` | Endet der Besitzer des Stores, waehrend eine Sitzung angedockt ist, versucht diese Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach als Host weiter. Gelingt das nicht, endet der Aufruf mit einem benannten Fehler statt mit einem Haenger oder einem leeren Ergebnis. | `FUNC-host-socket` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -353,7 +353,7 @@ Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-10-13 |
+| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-10-16 |
 
 ### 18. Risiko Regelauswertung faellt im Gate aus (`REQ-risk-gate-rule-eval-fails`)
 

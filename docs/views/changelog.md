@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 422 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 423 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 422 CR · 343 done · 4 open.
+Total: 423 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -484,3 +484,4 @@ Total: 422 CR · 343 done · 4 open.
 | `CR-GC-810` | n/a | viewer_show: Agent setzt Ansicht, Fokus und Vorschau-Overlay im Viewer |
 | `CR-GC-811` | n/a | OCC je Element statt je Graph (Voraussetzung fuer ITEM-2026-958, Mehr-Schreiber spaeter) |
 | `CR-GC-812` | n/a | Offline vorberechnete REQ-Vorschlaege gegen Review-Latenz |
+| `CR-GC-813` | n/a | Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code |

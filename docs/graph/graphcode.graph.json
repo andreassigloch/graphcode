@@ -3,8 +3,8 @@
     {
       "id": "ACTOR-agent",
       "type": "ACTOR",
-      "name": "Gegateter Agent (MCP-stdio-Client)",
-      "description": "Ein Coding-Agent unter graphcode-Kontrolle: MCP-stdio-Client, nutzt den Graphen statt grep, jede Aenderung laeuft durch dasselbe Apply-Gate, der Autor wird nur protokolliert. Bewusst NICHT namentlich modelliert — agent-agnostisch ist eine verriegelte Zusage (CLAUDE.md), kein Ziel. Heute belegt durch Claude Code (interaktiv), OpenCode (headless BYOK-Runtime, treibt Spec/Impl autonom) und die Architektur-Rolle, die Interface-Aenderungen eskaliert: Impact-Analyse, Gate-Entscheidung, Dependents koordinieren. Diese Rollen unterscheiden sich in der Autoritaet, nicht in der Schnittstelle. (CR-GC-455)",
+      "name": "Auftraggeber",
+      "description": "Wer der Ablaufsteuerung einen Auftrag gibt und das Ergebnis bekommt: der Mensch im Prompt oder ein Orchestrator. Bewusst nicht namentlich modelliert. Die Ablaufsteuerung selbst ist FUNC-agent-loop (CR-GC-813).",
       "status": "reviewed"
     },
     {
@@ -3436,6 +3436,12 @@
       "description": "docs/cr/open/CR-GC-812-offline-vorberechnete-req-vorschlaege-ge.md"
     },
     {
+      "id": "CR-GC-813",
+      "type": "CR",
+      "name": "Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code",
+      "description": "docs/cr/open/CR-GC-813-modell-zeigt-veranlasser-statt-aufrufer-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3616,6 +3622,180 @@
       "concept": true
     },
     {
+      "id": "FLOW-anleitung-author-req",
+      "type": "FLOW",
+      "name": "Anleitung (author-req)",
+      "description": "Text des Skills author-req, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-author-uc",
+      "type": "FLOW",
+      "name": "Anleitung (author-uc)",
+      "description": "Text des Skills author-uc, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-close-violations",
+      "type": "FLOW",
+      "name": "Anleitung (close-violations)",
+      "description": "Text des Skills close-violations, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-import-code",
+      "type": "FLOW",
+      "name": "Anleitung (import-code)",
+      "description": "Text des Skills import-code, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-import-doc",
+      "type": "FLOW",
+      "name": "Anleitung (import-doc)",
+      "description": "Text des Skills import-doc, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-render-views",
+      "type": "FLOW",
+      "name": "Anleitung (render-views)",
+      "description": "Text des Skills render-views, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-conops",
+      "type": "FLOW",
+      "name": "Anleitung (se-conops)",
+      "description": "Text des Skills se-conops, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-fmea",
+      "type": "FLOW",
+      "name": "Anleitung (se-fmea)",
+      "description": "Text des Skills se-fmea, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-generate",
+      "type": "FLOW",
+      "name": "Anleitung (se-generate)",
+      "description": "Text des Skills se-generate, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-help",
+      "type": "FLOW",
+      "name": "Anleitung (se-help)",
+      "description": "Text des Skills se-help, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-irr",
+      "type": "FLOW",
+      "name": "Anleitung (se-irr)",
+      "description": "Text des Skills se-irr, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-laufzeit",
+      "type": "FLOW",
+      "name": "Anleitung (se-laufzeit)",
+      "description": "Text des Skills se-laufzeit, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-optimize",
+      "type": "FLOW",
+      "name": "Anleitung (se-optimize)",
+      "description": "Text des Skills se-optimize, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-plan",
+      "type": "FLOW",
+      "name": "Anleitung (se-plan)",
+      "description": "Text des Skills se-plan, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-retro",
+      "type": "FLOW",
+      "name": "Anleitung (se-retro)",
+      "description": "Text des Skills se-retro, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-review",
+      "type": "FLOW",
+      "name": "Anleitung (se-review)",
+      "description": "Text des Skills se-review, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-status",
+      "type": "FLOW",
+      "name": "Anleitung (se-status)",
+      "description": "Text des Skills se-status, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-top-level",
+      "type": "FLOW",
+      "name": "Anleitung (se-top-level)",
+      "description": "Text des Skills se-top-level, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-trade",
+      "type": "FLOW",
+      "name": "Anleitung (se-trade)",
+      "description": "Text des Skills se-trade, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-se-vorbereitung",
+      "type": "FLOW",
+      "name": "Anleitung (se-vorbereitung)",
+      "description": "Text des Skills se-vorbereitung, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-target-profile",
+      "type": "FLOW",
+      "name": "Anleitung (target-profile)",
+      "description": "Text des Skills target-profile, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-test",
+      "type": "FLOW",
+      "name": "Anleitung (test)",
+      "description": "Text des Skills test, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-test-ui",
+      "type": "FLOW",
+      "name": "Anleitung (test-ui)",
+      "description": "Text des Skills test-ui, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-view-changelog",
+      "type": "FLOW",
+      "name": "Anleitung (view-changelog)",
+      "description": "Text des Skills view-changelog, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-view-conops",
+      "type": "FLOW",
+      "name": "Anleitung (view-conops)",
+      "description": "Text des Skills view-conops, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-view-fmea",
+      "type": "FLOW",
+      "name": "Anleitung (view-fmea)",
+      "description": "Text des Skills view-fmea, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-view-icd",
+      "type": "FLOW",
+      "name": "Anleitung (view-icd)",
+      "description": "Text des Skills view-icd, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-view-intplan",
+      "type": "FLOW",
+      "name": "Anleitung (view-intplan)",
+      "description": "Text des Skills view-intplan, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
+      "id": "FLOW-anleitung-view-rtm",
+      "type": "FLOW",
+      "name": "Anleitung (view-rtm)",
+      "description": "Text des Skills view-rtm, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+    },
+    {
       "id": "FLOW-arch-fitness",
       "type": "FLOW",
       "name": "Architektur-Fitness (R^6)",
@@ -3645,6 +3825,12 @@
       "description": "Die Auswertung der Aufzeichnung im Aggregat: Haeufigkeiten je Regel, Konsument und Modell ueber die Zeit.",
       "status": "reviewed",
       "sync": "sync"
+    },
+    {
+      "id": "FLOW-auftrag",
+      "type": "FLOW",
+      "name": "Auftrag",
+      "description": "Der Auftrag an die Ablaufsteuerung: Absicht, Zielausschnitt, Optionen, als Prompt oder vom Orchestrator."
     },
     {
       "id": "FLOW-chain-metrics",
@@ -3837,6 +4023,12 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-ergebnis",
+      "type": "FLOW",
+      "name": "Ergebnis",
+      "description": "Das Ergebnis eines Auftrags an den Auftraggeber: Bericht, gerenderte Sicht oder Zugbericht als Text."
+    },
+    {
       "id": "FLOW-expand-subgraph",
       "type": "FLOW",
       "name": "Vertiefter Teilgraph",
@@ -3874,6 +4066,12 @@
       "description": "Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-read-tools → ACTOR-agent; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510).",
       "status": "reviewed",
       "sync": "sync"
+    },
+    {
+      "id": "FLOW-formatE-tool",
+      "type": "FLOW",
+      "name": "Format-E an den Decoder",
+      "description": "Der Format-E-Text, den die Werkzeugschicht an den Decoder gibt."
     },
     {
       "id": "FLOW-function-criticality",
@@ -4095,30 +4293,6 @@
       "sync": "sync"
     },
     {
-      "id": "FLOW-mutate-cmd-agent",
-      "type": "FLOW",
-      "name": "Mutate-Command (Agent)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-agent → FUNC-mutate, FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-author-req",
-      "type": "FLOW",
-      "name": "Mutate-Command (author-req)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-author-req → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-author-uc",
-      "type": "FLOW",
-      "name": "Mutate-Command (author-uc)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-author-uc → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
       "id": "FLOW-mutate-cmd-bootstrap",
       "type": "FLOW",
       "name": "Mutate-Command (bootstrap)",
@@ -4127,25 +4301,10 @@
       "sync": "sync"
     },
     {
-      "id": "FLOW-mutate-cmd-close-violations",
-      "type": "FLOW",
-      "name": "Mutate-Command (close-violations)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-close-violations → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
       "id": "FLOW-mutate-cmd-decode",
       "type": "FLOW",
       "name": "Mutate-Command (decode)",
       "description": "Die aus Format-E gelesenen Kommandos auf dem Weg ans Gate. Beleg: src/surface/write.ts, graph_mutate ruft formatEToCommands und reicht das Ergebnis an harness.mutate, ebenso src/surface/bootstrap.ts. (CR-GC-768)",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-docked-session",
-      "type": "FLOW",
-      "name": "Schreibaufruf der angedockten Sitzung",
-      "description": "Der Schreibaufruf einer angedockten Sitzung, ueber den Socket an den Besitzer des Stores gereicht. Die Sitzung wartet im Aufruf auf die Antwort. Beleg: src/surface/host-shim.ts, dispatch ruft callHost.",
       "sync": "sync"
     },
     {
@@ -4172,14 +4331,6 @@
       "sync": "sync"
     },
     {
-      "id": "FLOW-mutate-cmd-import-doc",
-      "type": "FLOW",
-      "name": "Mutate-Command (import-doc)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-doc → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
       "id": "FLOW-mutate-cmd-merge-nodes",
       "type": "FLOW",
       "name": "Mutate-Command (merge-nodes)",
@@ -4193,84 +4344,6 @@
       "name": "Mutate-Command (Owner)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-owner → FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
       "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-conops",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-conops)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-conops → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-fmea",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-fmea)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-fmea → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-generate",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-generate)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-generate → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-irr",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-irr)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-irr → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-laufzeit",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-laufzeit)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch: die vom Autor gewaehlten Anforderungen an Laufzeit und Datenalter mit ihrem Test und der CR-Knoten der Analyse. Verbindung von FUNC-se-laufzeit zu FUNC-mutate. (CR-GC-783)",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-optimize",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-optimize)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-optimize → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-plan",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-plan)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-plan → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-top-level",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-top-level)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-top-level → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-trade",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-trade)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-se-trade → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-mutate-cmd-se-vorbereitung",
-      "type": "FLOW",
-      "name": "Mutate-Command (se-vorbereitung)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch: die vom Autor gewaehlten Zuege der Vorbereitung. Verbindung von FUNC-se-vorbereitung zu FUNC-mutate. (CR-GC-784)",
       "sync": "sync"
     },
     {
@@ -4293,6 +4366,12 @@
       "type": "FLOW",
       "name": "Graph-Datei (Snapshot)",
       "description": "Der Inhalt der committeten Graph-Datei, gelesen fuer Seed und Reseed und an den Import uebergeben. (CR-GC-503)"
+    },
+    {
+      "id": "FLOW-query-export",
+      "type": "FLOW",
+      "name": "Sichtauftrag an den Renderer",
+      "description": "Die Sichtliste, fuer die graph_export das Markdown rendern laesst."
     },
     {
       "id": "FLOW-query-request-agent",
@@ -4319,73 +4398,10 @@
       "sync": "sync"
     },
     {
-      "id": "FLOW-query-request-render-views",
-      "type": "FLOW",
-      "name": "Query-Request (render-views)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-render-views → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-query-request-view-changelog",
-      "type": "FLOW",
-      "name": "Query-Request (view-changelog)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-changelog → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-query-request-view-conops",
-      "type": "FLOW",
-      "name": "Query-Request (view-conops)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-conops → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-query-request-view-fmea",
-      "type": "FLOW",
-      "name": "Query-Request (view-fmea)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-fmea → FUNC-read-tools, FUNC-list-elements; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-query-request-view-icd",
-      "type": "FLOW",
-      "name": "Query-Request (view-icd)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-icd → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-query-request-view-intplan",
-      "type": "FLOW",
-      "name": "Query-Request (view-intplan)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-intplan → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-query-request-view-rtm",
-      "type": "FLOW",
-      "name": "Query-Request (view-rtm)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-view-rtm → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
-      "status": "reviewed",
-      "sync": "sync"
-    },
-    {
       "id": "FLOW-readiness-report",
       "type": "FLOW",
       "name": "Readiness-Report (Agent)",
       "description": "Der Bericht von graph_readiness an den Agenten: Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten.",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-rendered-views",
-      "type": "FLOW",
-      "name": "Gerenderte Sicht (Skill)",
-      "description": "Die Markdown-Sicht, die ein se-view-Skill auf Zuruf rendert. Gleicher Vertrag wie der deterministische Export, anderer Erzeuger und anderer Anlass.",
       "sync": "sync"
     },
     {
@@ -4417,6 +4433,12 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-rules-answer",
+      "type": "FLOW",
+      "name": "Regelbefunde (Antwort)",
+      "description": "Die Regelbefunde, wie rules_evaluate oder rules_get_violations sie der Ablaufsteuerung geben."
+    },
+    {
       "id": "FLOW-schema-fingerprint",
       "type": "FLOW",
       "name": "Schema-Fingerabdruck",
@@ -4442,48 +4464,6 @@
       "type": "FLOW",
       "name": "Sitzungsregister",
       "description": "Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird.",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-skill-report-se-help",
-      "type": "FLOW",
-      "name": "Skill-Bericht (se-help)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-help → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-skill-report-se-retro",
-      "type": "FLOW",
-      "name": "Skill-Bericht (se-retro)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-retro → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-skill-report-se-review",
-      "type": "FLOW",
-      "name": "Skill-Bericht (se-review)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-review → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-skill-report-se-status",
-      "type": "FLOW",
-      "name": "Skill-Bericht (se-status)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-se-status → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-skill-report-test",
-      "type": "FLOW",
-      "name": "Skill-Bericht (test)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-skill-report-test-ui",
-      "type": "FLOW",
-      "name": "Skill-Bericht (test-ui)",
-      "description": "Der gemessene Stand als Text zurueck an den Menschen. Verbindung FUNC-test-ui → ACTOR-owner; aufgetrennt aus FLOW-skill-report (CR-GC-510).",
       "sync": "sync"
     },
     {
@@ -4611,6 +4591,13 @@
       "name": "Stand davor und danach",
       "description": "Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil herausgibt. Ein geblockter Zug hat kein Paar. (CR-GC-778)",
       "sync": "sync"
+    },
+    {
+      "id": "FUNC-agent-loop",
+      "type": "FUNC",
+      "name": "Agent-Ablaufsteuerung",
+      "description": "Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).",
+      "external": true
     },
     {
       "id": "FUNC-apply-reseed",
@@ -4987,17 +4974,6 @@
       }
     },
     {
-      "id": "FUNC-docked-session",
-      "type": "FUNC",
-      "name": "Angedockte Sitzung",
-      "description": "Die Werkzeugflaeche einer angedockten Sitzung: dieselbe Registry wie beim Besitzer, jeder Aufruf wird ueber den Socket an ihn weitergereicht. Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.",
-      "realRef": {
-        "file": "src/surface/host-shim.ts",
-        "symbol": "buildProxyRegistry",
-        "lang": "ts"
-      }
-    },
-    {
       "id": "FUNC-emit-trajectory",
       "type": "FUNC",
       "name": "materializeTrajectory()",
@@ -5169,6 +5145,17 @@
       }
     },
     {
+      "id": "FUNC-graph-mutate-tool",
+      "type": "FUNC",
+      "name": "graph_mutate (Werkzeug)",
+      "description": "Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.",
+      "realRef": {
+        "file": "src/surface/write.ts",
+        "symbol": "graph_mutate",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-graph-readiness",
       "type": "FUNC",
       "name": "graph_readiness(detail?)",
@@ -5270,8 +5257,8 @@
     {
       "id": "FUNC-host-socket",
       "type": "FUNC",
-      "name": "startHostSocket",
-      "description": "Oeffnet den Socket, ueber den ein zweiter Prozess Schreibaufrufe an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen.",
+      "name": "Host-Socket (angedockte Sitzung)",
+      "description": "Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.",
       "status": "done",
       "realRef": {
         "file": "src/surface/host-shim.ts",
@@ -5497,6 +5484,17 @@
       "realRef": {
         "file": "src/surface/rewind.ts",
         "symbol": "executeRewind",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-rules-tool",
+      "type": "FUNC",
+      "name": "rules_evaluate / rules_get_violations",
+      "description": "Die Regelwerkzeuge rules_evaluate und rules_get_violations: reichen die Befunde des Gate-Katalogs an die Ablaufsteuerung, als ganzes Bild oder als Arbeitsliste. Rechnen nicht selbst.",
+      "realRef": {
+        "file": "src/projections/report.ts",
+        "symbol": "rules_evaluate",
         "lang": "ts"
       }
     },
@@ -6059,6 +6057,15 @@
       "created_at": "2026-06-17T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-agent-loop-executes-skill",
+      "type": "REQ",
+      "name": "Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus",
+      "description": "Die Ablaufsteuerung fuehrt eine Skill-Anleitung aus, indem sie die dort genannten Werkzeuge ruft; jede Aenderung am Modell geht ueber graph_mutate, der Skill selbst ruft nichts.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -7835,7 +7842,7 @@
       "id": "REQ-skill-authors-through-gate",
       "type": "REQ",
       "name": "Autoren-Skill schreibt nur durchs Gate",
-      "description": "Ein Autoren-Skill erzeugt Knoten und Kanten ausschliesslich ueber graph_mutate und weist an keiner Stelle einen direkten Schreibzugriff auf die Graph-SSOT an.",
+      "description": "Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.",
       "kinds": [
         "functional"
       ]
@@ -8561,6 +8568,13 @@
       }
     },
     {
+      "id": "SCHEMA-skill-text",
+      "type": "SCHEMA",
+      "name": "Skill-Text",
+      "description": "Text einer Skill-Datei (Markdown mit Frontmatter), den der Agent-Host beim Skill-Aufruf an die Ablaufsteuerung gibt. Ohne Zod-Symbol: Prompt-Inhalt, kein Wire-Format; das Format legt der Agent-Host fest.",
+      "external": true
+    },
+    {
       "id": "SCHEMA-steering-channel",
       "type": "SCHEMA",
       "name": "Kanalbeitrag zum Rundenprompt",
@@ -8758,6 +8772,12 @@
       ]
     },
     {
+      "id": "TEST-agent-loop-executes-skill",
+      "type": "TEST",
+      "name": "Ablaufsteuerung fuehrt Anleitung aus (Messlauf)",
+      "description": "Messlauf: die Ablaufsteuerung bekommt einen Auftrag, ruft den Skill auf und fuehrt ihn aus; geprueft wird am Audit, dass jede Aenderung ueber graph_mutate lief und die gerufenen Werkzeuge in der Anleitung stehen. Realisierungsunabhaengig: dieselbe Pruefung fuer LLM- und Code-Schleife."
+    },
+    {
       "id": "TEST-applied-suggestion-moves-target",
       "type": "TEST",
       "name": "Angewandtes Delta gegen die Zielrichtung",
@@ -8829,7 +8849,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -8859,7 +8879,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -8985,7 +9005,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-15T14:25:55.359Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9060,7 +9080,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9082,7 +9102,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9169,7 +9189,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9210,7 +9230,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9398,7 +9418,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9416,7 +9436,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9431,7 +9451,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-15T14:25:55.359Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9462,7 +9482,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9479,7 +9499,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9524,7 +9544,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9554,7 +9574,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9623,7 +9643,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9668,7 +9688,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9683,7 +9703,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9698,7 +9718,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9867,7 +9887,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9884,7 +9904,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -9969,7 +9989,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10106,7 +10126,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10121,7 +10141,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10197,7 +10217,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10319,7 +10339,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10337,7 +10357,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10456,7 +10476,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10476,7 +10496,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10517,7 +10537,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10562,7 +10582,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10595,7 +10615,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10625,7 +10645,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10640,7 +10660,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10691,7 +10711,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -10998,7 +11018,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -11043,7 +11063,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-10-13T08:05:46.881Z"
+          "ranAt": "2026-10-16T15:24:53.524Z"
         }
       ]
     },
@@ -11196,27 +11216,7 @@
   "traces": [
     {
       "source": "ACTOR-agent",
-      "target": "FLOW-formatE-artifact-agent",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-agent",
-      "target": "FLOW-mutate-cmd-agent",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-agent",
-      "target": "FLOW-query-request-agent",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-agent",
-      "target": "FLOW-skill-request",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-agent",
-      "target": "FLOW-steering-trigger-agent",
+      "target": "FLOW-auftrag",
       "type": "io"
     },
     {
@@ -15771,11 +15771,6 @@
     },
     {
       "source": "CR-GC-805",
-      "target": "FUNC-docked-session",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-805",
       "target": "FUNC-graph-export-snapshot",
       "type": "relation"
     },
@@ -15880,6 +15875,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-813",
+      "target": "FUNC-agent-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-813",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-813",
+      "target": "FUNC-host-socket",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-813",
+      "target": "FUNC-rules-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-813",
+      "target": "REQ-agent-loop-executes-skill",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -15918,6 +15938,11 @@
       "source": "FCHAIN-advisory-roundtrip",
       "target": "REQ-advisory-roundtrip-latency",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-agent-query",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-agent-query",
@@ -15992,7 +16017,7 @@
     },
     {
       "source": "FCHAIN-apply-gate",
-      "target": "FUNC-docked-session",
+      "target": "FUNC-decode",
       "type": "compose"
     },
     {
@@ -16014,6 +16039,11 @@
       "target": "FUNC-fit-advisory",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -16088,10 +16118,20 @@
     },
     {
       "source": "FCHAIN-capture",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-capture",
       "target": "FUNC-decode",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-capture",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-capture",
@@ -16154,6 +16194,11 @@
     },
     {
       "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
       "target": "FUNC-chain-metrics",
       "type": "compose"
     },
@@ -16184,7 +16229,17 @@
     },
     {
       "source": "FCHAIN-doc-export",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
       "target": "FUNC-export-markdown",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-graph-export-snapshot",
       "type": "compose"
     },
     {
@@ -16239,6 +16294,11 @@
     },
     {
       "source": "FCHAIN-grammar-query",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-grammar-query",
       "target": "FUNC-authoring-guide",
       "type": "compose"
     },
@@ -16280,6 +16340,11 @@
       "source": "FCHAIN-impact-testing",
       "target": "REQ-risk-selection-misses-red-test",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-interface-escalation",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-interface-escalation",
@@ -16333,7 +16398,17 @@
     },
     {
       "source": "FCHAIN-live-update",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
       "target": "FUNC-broadcast-diff",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "FUNC-decode",
       "type": "compose"
     },
     {
@@ -16344,6 +16419,11 @@
     {
       "source": "FCHAIN-live-update",
       "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-live-update",
+      "target": "FUNC-graph-mutate-tool",
       "type": "compose"
     },
     {
@@ -16381,6 +16461,11 @@
       "source": "FCHAIN-live-update",
       "target": "REQ-mutation-emits-event",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-loop-closure",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-loop-closure",
@@ -16439,12 +16524,22 @@
     },
     {
       "source": "FCHAIN-model-import",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
       "target": "FUNC-cli-dispatch",
       "type": "compose"
     },
     {
       "source": "FCHAIN-model-import",
       "target": "FUNC-create-harness",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-graph-mutate-tool",
       "type": "compose"
     },
     {
@@ -16484,10 +16579,25 @@
     },
     {
       "source": "FCHAIN-modelfree-gate",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
+      "target": "FUNC-decode",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
       "target": "FUNC-evaluate-rules",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FCHAIN-modelfree-gate",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-modelfree-gate",
@@ -16587,6 +16697,11 @@
     },
     {
       "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-bind-tools",
       "type": "compose"
     },
@@ -16683,6 +16798,11 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-author-req",
       "type": "compose"
     },
@@ -16699,6 +16819,21 @@
     {
       "source": "FCHAIN-skill-authoring",
       "target": "FUNC-close-violations",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-decode",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-graph-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-graph-mutate-tool",
       "type": "compose"
     },
     {
@@ -16768,7 +16903,17 @@
     },
     {
       "source": "FCHAIN-skill-help",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-help",
       "target": "FUNC-se-help",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-agent-loop",
       "type": "compose"
     },
     {
@@ -16797,6 +16942,11 @@
       "target": "FUNC-module-metrics",
       "type": "compose",
       "weight": "1"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-rules-tool",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-skill-report",
@@ -16880,6 +17030,11 @@
       "source": "FCHAIN-snapshot-freshness",
       "target": "REQ-risk-auto-export-fails-silently",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-steering-loop",
@@ -17010,6 +17165,11 @@
     },
     {
       "source": "FCHAIN-test-ingest",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-test-ingest",
       "target": "FUNC-graph-store",
       "type": "compose"
     },
@@ -17035,12 +17195,302 @@
     },
     {
       "source": "FLOW-action",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
       "source": "FLOW-action",
       "target": "SCHEMA-action",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-author-req",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-author-req",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-author-uc",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-author-uc",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-close-violations",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-close-violations",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-import-code",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-import-code",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-import-doc",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-import-doc",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-render-views",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-render-views",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-conops",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-conops",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-fmea",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-fmea",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-generate",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-generate",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-help",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-help",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-irr",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-irr",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-laufzeit",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-laufzeit",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-optimize",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-optimize",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-plan",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-plan",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-retro",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-retro",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-review",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-review",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-status",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-status",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-top-level",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-top-level",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-trade",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-trade",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-vorbereitung",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-vorbereitung",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-target-profile",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-target-profile",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-test",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-test",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-test-ui",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-test-ui",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-view-changelog",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-view-changelog",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-view-conops",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-view-conops",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-view-fmea",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-view-fmea",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-view-icd",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-view-icd",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-view-intplan",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-view-intplan",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-view-rtm",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-view-rtm",
+      "target": "SCHEMA-skill-text",
       "type": "relation"
     },
     {
@@ -17060,7 +17510,7 @@
     },
     {
       "source": "FLOW-audit-entries",
-      "target": "FUNC-se-retro",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17080,11 +17530,6 @@
     },
     {
       "source": "FLOW-audit-record",
-      "target": "FUNC-se-retro",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-audit-record",
       "target": "SCHEMA-audit-record",
       "type": "relation"
     },
@@ -17095,12 +17540,22 @@
     },
     {
       "source": "FLOW-audit-report",
-      "target": "FUNC-se-retro",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
       "source": "FLOW-audit-report",
       "target": "SCHEMA-audit-stats",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-auftrag",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-auftrag",
+      "target": "SCHEMA-query-params",
       "type": "relation"
     },
     {
@@ -17111,26 +17566,6 @@
     {
       "source": "FLOW-chain-metrics",
       "target": "FUNC-graph-metrics",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-chain-metrics",
-      "target": "FUNC-se-fmea",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-chain-metrics",
-      "target": "FUNC-se-laufzeit",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-chain-metrics",
-      "target": "FUNC-se-optimize",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-chain-metrics",
-      "target": "FUNC-se-vorbereitung",
       "type": "io"
     },
     {
@@ -17150,7 +17585,7 @@
     },
     {
       "source": "FLOW-channel-fit-advisory",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17170,7 +17605,7 @@
     },
     {
       "source": "FLOW-channel-gate-verdict",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17180,7 +17615,7 @@
     },
     {
       "source": "FLOW-channel-grammar",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17190,7 +17625,7 @@
     },
     {
       "source": "FLOW-channel-guardrails",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17200,7 +17635,7 @@
     },
     {
       "source": "FLOW-channel-handoff",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17210,7 +17645,7 @@
     },
     {
       "source": "FLOW-channel-next-step",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17230,7 +17665,7 @@
     },
     {
       "source": "FLOW-channel-skill-reference",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17240,7 +17675,7 @@
     },
     {
       "source": "FLOW-channel-steer-advisory",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17375,32 +17810,7 @@
     },
     {
       "source": "FLOW-dimension-readiness",
-      "target": "FUNC-se-retro",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-dimension-readiness",
-      "target": "FUNC-se-review",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-dimension-readiness",
-      "target": "FUNC-se-status",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-dimension-readiness",
       "target": "FUNC-take-steering-snapshot",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-dimension-readiness",
-      "target": "FUNC-test",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-dimension-readiness",
-      "target": "FUNC-test-ui",
       "type": "io"
     },
     {
@@ -17410,12 +17820,27 @@
     },
     {
       "source": "FLOW-element-slice",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
       "source": "FLOW-element-slice",
       "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-ergebnis",
+      "target": "ACTOR-agent",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ergebnis",
+      "target": "ACTOR-owner",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-ergebnis",
+      "target": "SCHEMA-markdown-view",
       "type": "relation"
     },
     {
@@ -17450,7 +17875,12 @@
     },
     {
       "source": "FLOW-formatE-artifact-agent",
-      "target": "FUNC-decode",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-formatE-artifact-agent",
+      "target": "FUNC-host-socket",
       "type": "io"
     },
     {
@@ -17460,11 +17890,21 @@
     },
     {
       "source": "FLOW-formatE-artifact-read-tools",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
       "source": "FLOW-formatE-artifact-read-tools",
+      "target": "SCHEMA-format-e",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-formatE-tool",
+      "target": "FUNC-decode",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-formatE-tool",
       "target": "SCHEMA-format-e",
       "type": "relation"
     },
@@ -17960,7 +18400,7 @@
     },
     {
       "source": "FLOW-metrics-answer",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -17990,57 +18430,12 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-mutate-cmd-agent",
-      "target": "FUNC-docked-session",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-agent",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-agent",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-author-req",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-author-req",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-author-uc",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-author-uc",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-mutate-cmd-bootstrap",
       "target": "FUNC-mutate",
       "type": "io"
     },
     {
       "source": "FLOW-mutate-cmd-bootstrap",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-close-violations",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-close-violations",
       "target": "SCHEMA-mutate-command",
       "type": "relation"
     },
@@ -18055,172 +18450,52 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-mutate-cmd-docked-session",
+      "source": "FLOW-mutate-cmd-graph-suggest",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-graph-suggest",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-host-socket",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-host-socket",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-import-code-verb",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-import-code-verb",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-merge-nodes",
+      "target": "FUNC-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-cmd-merge-nodes",
+      "target": "SCHEMA-mutate-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-cmd-owner",
       "target": "FUNC-host-socket",
       "type": "io"
     },
     {
-      "source": "FLOW-mutate-cmd-docked-session",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-graph-suggest",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-graph-suggest",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-host-socket",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-host-socket",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-import-code-verb",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-import-code-verb",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-import-doc",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-import-doc",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-merge-nodes",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-merge-nodes",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-mutate-cmd-owner",
-      "target": "FUNC-docked-session",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-owner",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-conops",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-conops",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-fmea",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-fmea",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-generate",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-generate",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-irr",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-irr",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-laufzeit",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-laufzeit",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-optimize",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-optimize",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-plan",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-plan",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-top-level",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-top-level",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-trade",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-trade",
-      "target": "SCHEMA-mutate-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-vorbereitung",
-      "target": "FUNC-mutate",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-mutate-cmd-se-vorbereitung",
       "target": "SCHEMA-mutate-command",
       "type": "relation"
     },
@@ -18236,7 +18511,7 @@
     },
     {
       "source": "FLOW-next-step-advice",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -18260,6 +18535,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-query-export",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-export",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-query-request-agent",
       "target": "FUNC-authoring-guide",
       "type": "io"
@@ -18271,12 +18556,12 @@
     },
     {
       "source": "FLOW-query-request-agent",
-      "target": "FUNC-export-markdown",
+      "target": "FUNC-graph-expand",
       "type": "io"
     },
     {
       "source": "FLOW-query-request-agent",
-      "target": "FUNC-graph-expand",
+      "target": "FUNC-graph-export-snapshot",
       "type": "io"
     },
     {
@@ -18311,18 +18596,28 @@
     },
     {
       "source": "FLOW-query-request-agent",
+      "target": "FUNC-rules-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-agent",
       "target": "SCHEMA-query-params",
       "type": "relation"
     },
     {
       "source": "FLOW-query-request-auto-export",
-      "target": "FUNC-export-markdown",
+      "target": "FUNC-graph-export-snapshot",
       "type": "io"
     },
     {
       "source": "FLOW-query-request-auto-export",
       "target": "SCHEMA-query-params",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-query-request-owner",
+      "target": "FUNC-agent-loop",
+      "type": "io"
     },
     {
       "source": "FLOW-query-request-owner",
@@ -18341,137 +18636,17 @@
     },
     {
       "source": "FLOW-query-request-owner",
-      "target": "FUNC-render-views",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-owner",
-      "target": "FUNC-view-changelog",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-owner",
-      "target": "FUNC-view-conops",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-owner",
-      "target": "FUNC-view-fmea",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-owner",
-      "target": "FUNC-view-icd",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-owner",
-      "target": "FUNC-view-intplan",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-owner",
-      "target": "FUNC-view-rtm",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-owner",
-      "target": "SCHEMA-query-params",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-query-request-render-views",
-      "target": "FUNC-export-markdown",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-render-views",
-      "target": "SCHEMA-query-params",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-query-request-view-changelog",
-      "target": "FUNC-export-markdown",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-view-changelog",
-      "target": "SCHEMA-query-params",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-query-request-view-conops",
-      "target": "FUNC-export-markdown",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-view-conops",
-      "target": "SCHEMA-query-params",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-query-request-view-fmea",
-      "target": "FUNC-list-elements",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-view-fmea",
-      "target": "FUNC-read-tools",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-view-fmea",
-      "target": "SCHEMA-query-params",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-query-request-view-icd",
-      "target": "FUNC-export-markdown",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-view-icd",
-      "target": "SCHEMA-query-params",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-query-request-view-intplan",
-      "target": "FUNC-export-markdown",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-view-intplan",
-      "target": "SCHEMA-query-params",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-query-request-view-rtm",
-      "target": "FUNC-export-markdown",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-view-rtm",
       "target": "SCHEMA-query-params",
       "type": "relation"
     },
     {
       "source": "FLOW-readiness-report",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
       "source": "FLOW-readiness-report",
       "target": "SCHEMA-readiness-report",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-rendered-views",
-      "target": "ACTOR-owner",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-rendered-views",
-      "target": "SCHEMA-markdown-view",
       "type": "relation"
     },
     {
@@ -18516,21 +18691,21 @@
     },
     {
       "source": "FLOW-rule-findings",
-      "target": "FUNC-se-retro",
+      "target": "FUNC-rules-tool",
       "type": "io"
     },
     {
       "source": "FLOW-rule-findings",
-      "target": "FUNC-se-review",
+      "target": "SCHEMA-rule-violation",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-rules-answer",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
-      "source": "FLOW-rule-findings",
-      "target": "FUNC-se-status",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-rule-findings",
+      "source": "FLOW-rules-answer",
       "target": "SCHEMA-rule-violation",
       "type": "relation"
     },
@@ -18575,66 +18750,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-skill-report-se-help",
-      "target": "ACTOR-owner",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-skill-report-se-help",
-      "target": "SCHEMA-markdown-view",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-skill-report-se-retro",
-      "target": "ACTOR-owner",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-skill-report-se-retro",
-      "target": "SCHEMA-markdown-view",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-skill-report-se-review",
-      "target": "ACTOR-owner",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-skill-report-se-review",
-      "target": "SCHEMA-markdown-view",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-skill-report-se-status",
-      "target": "ACTOR-owner",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-skill-report-se-status",
-      "target": "SCHEMA-markdown-view",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-skill-report-test",
-      "target": "ACTOR-owner",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-skill-report-test",
-      "target": "SCHEMA-markdown-view",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-skill-report-test-ui",
-      "target": "ACTOR-owner",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-skill-report-test-ui",
-      "target": "SCHEMA-markdown-view",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-skill-request",
       "target": "FUNC-author-req",
       "type": "io"
@@ -18657,6 +18772,11 @@
     {
       "source": "FLOW-skill-request",
       "target": "FUNC-import-doc",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-render-views",
       "type": "io"
     },
     {
@@ -18742,6 +18862,36 @@
     {
       "source": "FLOW-skill-request",
       "target": "FUNC-test-ui",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-view-changelog",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-view-conops",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-view-fmea",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-view-icd",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-view-intplan",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-view-rtm",
       "type": "io"
     },
     {
@@ -18846,12 +18996,12 @@
     },
     {
       "source": "FLOW-test-selection",
-      "target": "ACTOR-agent",
+      "target": "ACTOR-owner",
       "type": "io"
     },
     {
       "source": "FLOW-test-selection",
-      "target": "ACTOR-owner",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -18881,7 +19031,7 @@
     },
     {
       "source": "FLOW-tool-surface",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -18934,7 +19084,7 @@
     },
     {
       "source": "FLOW-zug-bericht",
-      "target": "ACTOR-agent",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
@@ -18956,6 +19106,56 @@
       "source": "FLOW-zug-staende",
       "target": "SCHEMA-ontology-graph",
       "type": "relation"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "MOD-agent-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-cli-invocation-import-code",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-ergebnis",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-formatE-artifact-agent",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-query-request-agent",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-skill-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-steering-trigger-agent",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-target-profile-file",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "REQ-agent-loop-executes-skill",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-apply-reseed",
@@ -19024,7 +19224,7 @@
     },
     {
       "source": "FUNC-author-req",
-      "target": "FLOW-mutate-cmd-author-req",
+      "target": "FLOW-anleitung-author-req",
       "type": "io"
     },
     {
@@ -19039,7 +19239,7 @@
     },
     {
       "source": "FUNC-author-uc",
-      "target": "FLOW-mutate-cmd-author-uc",
+      "target": "FLOW-anleitung-author-uc",
       "type": "io"
     },
     {
@@ -19154,6 +19354,11 @@
     },
     {
       "source": "FUNC-block-abfrage",
+      "target": "FUNC-rules-tool",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-abfrage",
       "target": "FUNC-test-ingest",
       "type": "compose"
     },
@@ -19230,6 +19435,11 @@
     {
       "source": "FUNC-block-bedienung",
       "target": "FUNC-collect-status",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-bedienung",
+      "target": "FUNC-graph-mutate-tool",
       "type": "compose"
     },
     {
@@ -19410,11 +19620,6 @@
     {
       "source": "FUNC-block-grounding",
       "target": "FUNC-block-speicherwerk",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-host-sitzung",
-      "target": "FUNC-docked-session",
       "type": "compose"
     },
     {
@@ -19748,7 +19953,7 @@
     },
     {
       "source": "FUNC-close-violations",
-      "target": "FLOW-mutate-cmd-close-violations",
+      "target": "FLOW-anleitung-close-violations",
       "type": "io"
     },
     {
@@ -19866,21 +20071,6 @@
     {
       "source": "FUNC-deduce-tests",
       "target": "REQ-test-runnable-binding",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-docked-session",
-      "target": "MOD-surface",
-      "type": "allocate"
-    },
-    {
-      "source": "FUNC-docked-session",
-      "target": "FLOW-mutate-cmd-docked-session",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-docked-session",
-      "target": "REQ-docked-session-reelects-once",
       "type": "satisfy"
     },
     {
@@ -20168,6 +20358,11 @@
     },
     {
       "source": "FUNC-graph-export-snapshot",
+      "target": "FLOW-query-export",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
       "target": "REQ-export-no-clobber",
       "type": "satisfy"
     },
@@ -20213,6 +20408,21 @@
     {
       "source": "FUNC-graph-metrics",
       "target": "REQ-metrics-risk-scope",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-mutate-tool",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-mutate-tool",
+      "target": "FLOW-formatE-tool",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-mutate-tool",
+      "target": "REQ-mcp-tool-registry",
       "type": "satisfy"
     },
     {
@@ -20418,6 +20628,11 @@
     },
     {
       "source": "FUNC-host-socket",
+      "target": "REQ-docked-session-reelects-once",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-host-socket",
       "target": "REQ-further-session-docks-via-socket",
       "type": "satisfy"
     },
@@ -20459,7 +20674,7 @@
     },
     {
       "source": "FUNC-import-code",
-      "target": "FLOW-cli-invocation-import-code",
+      "target": "FLOW-anleitung-import-code",
       "type": "io"
     },
     {
@@ -20484,7 +20699,7 @@
     },
     {
       "source": "FUNC-import-doc",
-      "target": "FLOW-mutate-cmd-import-doc",
+      "target": "FLOW-anleitung-import-doc",
       "type": "io"
     },
     {
@@ -20726,12 +20941,7 @@
     },
     {
       "source": "FUNC-render-views",
-      "target": "FLOW-query-request-render-views",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-render-views",
-      "target": "FLOW-rendered-views",
+      "target": "FLOW-anleitung-render-views",
       "type": "io"
     },
     {
@@ -20787,6 +20997,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-rules-tool",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-rules-tool",
+      "target": "FLOW-rules-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-rules-tool",
+      "target": "REQ-mcp-tool-registry",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-schema-guard",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -20828,7 +21053,7 @@
     },
     {
       "source": "FUNC-se-conops",
-      "target": "FLOW-mutate-cmd-se-conops",
+      "target": "FLOW-anleitung-se-conops",
       "type": "io"
     },
     {
@@ -20843,7 +21068,7 @@
     },
     {
       "source": "FUNC-se-fmea",
-      "target": "FLOW-mutate-cmd-se-fmea",
+      "target": "FLOW-anleitung-se-fmea",
       "type": "io"
     },
     {
@@ -20868,7 +21093,7 @@
     },
     {
       "source": "FUNC-se-generate",
-      "target": "FLOW-mutate-cmd-se-generate",
+      "target": "FLOW-anleitung-se-generate",
       "type": "io"
     },
     {
@@ -20888,7 +21113,7 @@
     },
     {
       "source": "FUNC-se-help",
-      "target": "FLOW-skill-report-se-help",
+      "target": "FLOW-anleitung-se-help",
       "type": "io"
     },
     {
@@ -20903,7 +21128,7 @@
     },
     {
       "source": "FUNC-se-irr",
-      "target": "FLOW-mutate-cmd-se-irr",
+      "target": "FLOW-anleitung-se-irr",
       "type": "io"
     },
     {
@@ -20918,7 +21143,7 @@
     },
     {
       "source": "FUNC-se-laufzeit",
-      "target": "FLOW-mutate-cmd-se-laufzeit",
+      "target": "FLOW-anleitung-se-laufzeit",
       "type": "io"
     },
     {
@@ -20938,7 +21163,7 @@
     },
     {
       "source": "FUNC-se-optimize",
-      "target": "FLOW-mutate-cmd-se-optimize",
+      "target": "FLOW-anleitung-se-optimize",
       "type": "io"
     },
     {
@@ -20958,7 +21183,7 @@
     },
     {
       "source": "FUNC-se-plan",
-      "target": "FLOW-mutate-cmd-se-plan",
+      "target": "FLOW-anleitung-se-plan",
       "type": "io"
     },
     {
@@ -20978,7 +21203,7 @@
     },
     {
       "source": "FUNC-se-retro",
-      "target": "FLOW-skill-report-se-retro",
+      "target": "FLOW-anleitung-se-retro",
       "type": "io"
     },
     {
@@ -20993,7 +21218,7 @@
     },
     {
       "source": "FUNC-se-review",
-      "target": "FLOW-skill-report-se-review",
+      "target": "FLOW-anleitung-se-review",
       "type": "io"
     },
     {
@@ -21008,7 +21233,7 @@
     },
     {
       "source": "FUNC-se-status",
-      "target": "FLOW-skill-report-se-status",
+      "target": "FLOW-anleitung-se-status",
       "type": "io"
     },
     {
@@ -21023,7 +21248,7 @@
     },
     {
       "source": "FUNC-se-top-level",
-      "target": "FLOW-mutate-cmd-se-top-level",
+      "target": "FLOW-anleitung-se-top-level",
       "type": "io"
     },
     {
@@ -21038,7 +21263,7 @@
     },
     {
       "source": "FUNC-se-trade",
-      "target": "FLOW-mutate-cmd-se-trade",
+      "target": "FLOW-anleitung-se-trade",
       "type": "io"
     },
     {
@@ -21053,7 +21278,7 @@
     },
     {
       "source": "FUNC-se-vorbereitung",
-      "target": "FLOW-mutate-cmd-se-vorbereitung",
+      "target": "FLOW-anleitung-se-vorbereitung",
       "type": "io"
     },
     {
@@ -21189,7 +21414,7 @@
     },
     {
       "source": "FUNC-target-profile",
-      "target": "FLOW-target-profile-file",
+      "target": "FLOW-anleitung-target-profile",
       "type": "io"
     },
     {
@@ -21219,7 +21444,7 @@
     },
     {
       "source": "FUNC-test",
-      "target": "FLOW-skill-report-test",
+      "target": "FLOW-anleitung-test",
       "type": "io"
     },
     {
@@ -21254,7 +21479,7 @@
     },
     {
       "source": "FUNC-test-ui",
-      "target": "FLOW-skill-report-test-ui",
+      "target": "FLOW-anleitung-test-ui",
       "type": "io"
     },
     {
@@ -21299,7 +21524,7 @@
     },
     {
       "source": "FUNC-view-changelog",
-      "target": "FLOW-query-request-view-changelog",
+      "target": "FLOW-anleitung-view-changelog",
       "type": "io"
     },
     {
@@ -21316,7 +21541,7 @@
     },
     {
       "source": "FUNC-view-conops",
-      "target": "FLOW-query-request-view-conops",
+      "target": "FLOW-anleitung-view-conops",
       "type": "io"
     },
     {
@@ -21333,7 +21558,7 @@
     },
     {
       "source": "FUNC-view-fmea",
-      "target": "FLOW-query-request-view-fmea",
+      "target": "FLOW-anleitung-view-fmea",
       "type": "io"
     },
     {
@@ -21350,7 +21575,7 @@
     },
     {
       "source": "FUNC-view-icd",
-      "target": "FLOW-query-request-view-icd",
+      "target": "FLOW-anleitung-view-icd",
       "type": "io"
     },
     {
@@ -21367,7 +21592,7 @@
     },
     {
       "source": "FUNC-view-intplan",
-      "target": "FLOW-query-request-view-intplan",
+      "target": "FLOW-anleitung-view-intplan",
       "type": "io"
     },
     {
@@ -21384,7 +21609,7 @@
     },
     {
       "source": "FUNC-view-rtm",
-      "target": "FLOW-query-request-view-rtm",
+      "target": "FLOW-anleitung-view-rtm",
       "type": "io"
     },
     {
@@ -22284,6 +22509,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-agent-loop-executes-skill",
+      "target": "REQ-agent-loop-executes-skill",
+      "type": "verify"
     },
     {
       "source": "TEST-applied-suggestion-moves-target",
@@ -24099,6 +24329,11 @@
     },
     {
       "source": "UC-code-quality",
+      "target": "REQ-agent-loop-executes-skill",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
       "target": "REQ-audit-trail",
       "type": "compose"
     },
@@ -24863,5 +25098,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 759
+  "graphVersion": 762
 }

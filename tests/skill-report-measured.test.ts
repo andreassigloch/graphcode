@@ -40,7 +40,7 @@ const WRITE_TOOLS = [
   'graph_generate',
 ];
 
-type Element = { id: string; type: string; realRef?: { file?: string } | null };
+type Element = { id: string; type: string; external?: boolean; realRef?: { file?: string } | null };
 type Trace = { source: string; target: string; type: string };
 
 function graph(): { elements: Element[]; traces: Trace[] } {
@@ -57,13 +57,13 @@ function chainMembers(chainUid: string): Element[] {
     .filter((e): e is Element => !!e && e.type === 'FUNC');
 }
 
-/** Nur die prompt-realisierten Glieder: die dem Skill-Modul zugeteilten FUNCs. */
+/** Nur die prompt-realisierten Glieder: die dem Skill-Modul zugeteilten FUNCs, ohne die externe Ablaufsteuerung. */
 function skillMembers(chainUid: string): Element[] {
   const g = graph();
   const inSkills = new Set(
     g.traces.filter((t) => t.type === 'allocate' && t.target === 'MOD-agent-surface').map((t) => t.source),
   );
-  return chainMembers(chainUid).filter((e) => inSkills.has(e.id));
+  return chainMembers(chainUid).filter((e) => inSkills.has(e.id) && !e.external);
 }
 
 function toolsNamedIn(text: string, tools: string[]): string[] {
