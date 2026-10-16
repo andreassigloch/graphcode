@@ -3460,6 +3460,12 @@
       "description": "docs/cr/open/CR-GC-816-block-umverteilung-nach-cr-gc-813-graph-.md"
     },
     {
+      "id": "CR-GC-817",
+      "type": "CR",
+      "name": "Dashboard bekommt Kennzahlen als drei Fluesse statt der einen graph_metrics-Antwort",
+      "description": "docs/cr/open/CR-GC-817-dashboard-bekommt-kennzahlen-als-drei-fl.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3851,10 +3857,16 @@
       "description": "Der Auftrag an die Ablaufsteuerung: Absicht, Zielausschnitt, Optionen, als Prompt oder vom Orchestrator."
     },
     {
+      "id": "FLOW-branch-log",
+      "type": "FLOW",
+      "name": "Branch-Log",
+      "description": "Das Kommando-Log eines Branch-Worktrees ab dem Fork-Punkt, das die Ablaufsteuerung graph_merge uebergibt; graph_merge liest es und reicht die Chargen an replayBranchLog. Beleg: src/surface/write.ts:457-465."
+    },
+    {
       "id": "FLOW-chain-metrics",
       "type": "FLOW",
       "name": "Kennzahlen je Wirkkette",
-      "description": "Kennzahlen je Wirkkette und die Bewertbarkeitsquote, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss: die Grundgesamtheit ist die FCHAIN, nicht MOD und nicht FUNC. In derselben Antwort reisen seit CR-GC-787 zwei weitere Bloecke: riskCarriers, immer, mit den Traegern je Risiko und den Risiken je Traeger, und scope, nur auf Anfrage, der Betrachtungsumfang der genannten Funktionen oder Ketten. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahlen in der Antwort, rendert sie aber noch nicht.",
+      "description": "Kennzahlen je Wirkkette und die Bewertbarkeitsquote, von der Rechnung in contracts an graph_metrics, das sie in seine Antwort FLOW-metrics-answer legt. EIGENER Fluss: die Grundgesamtheit ist die FCHAIN, nicht MOD und nicht FUNC. In derselben Antwort reisen seit CR-GC-787 zwei weitere Bloecke: riskCarriers, immer, mit den Traegern je Risiko und den Risiken je Traeger, und scope, nur auf Anfrage, der Betrachtungsumfang der genannten Funktionen oder Ketten. (CR-GC-817)",
       "sync": "sync"
     },
     {
@@ -4095,7 +4107,7 @@
       "id": "FLOW-function-criticality",
       "type": "FLOW",
       "name": "Kritikalitaet je FUNC",
-      "description": "Ketten und Use Cases je Funktion, in derselben graph_metrics-Antwort wie die Modulkennzahlen. EIGENER Fluss statt eines breiteren SCHEMA-module-metrics: MOD ist der Abhaengigkeitsbaum, FUNC der Wertbaum, sie spiegeln einander ausdruecklich nicht. BENANNTE OFFENE DIFFERENZ: das Dashboard bekommt die Zahl in der Antwort, rendert sie aber noch nicht.",
+      "description": "Ketten und Use Cases je Funktion, von der Rechnung in contracts an graph_metrics, das sie in seine Antwort FLOW-metrics-answer legt. EIGENER Fluss statt eines breiteren SCHEMA-module-metrics: MOD ist der Abhaengigkeitsbaum, FUNC der Wertbaum, sie spiegeln einander ausdruecklich nicht. (CR-GC-817)",
       "sync": "sync"
     },
     {
@@ -4289,6 +4301,12 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-merge-report",
+      "type": "FLOW",
+      "name": "Merge-Bericht",
+      "description": "Der Bericht des Branch-Merges an die Ablaufsteuerung. Beleg: src/surface/write.ts:465, src/kernel/merge.ts:48."
+    },
+    {
       "id": "FLOW-metric-policy",
       "type": "FLOW",
       "name": "Urteils-Policy",
@@ -4299,7 +4317,7 @@
       "id": "FLOW-metrics-answer",
       "type": "FLOW",
       "name": "Antwort von graph_metrics",
-      "description": "Die Antwort des Werkzeugs graph_metrics an den Agenten: Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, dazu seit CR-GC-787 die Bloecke riskCarriers, immer, und scope, nur auf Anfrage. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: FLOW-chain-metrics kommt aus der Rechnung in contracts, dieser aus dem Werkzeug, das sie durchreicht.",
+      "description": "Die Antwort des Werkzeugs graph_metrics an jeden, der es aufruft: die Ablaufsteuerung und das Dashboard ueber host.sock. Ein Aufruf, eine Antwort mit Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, riskCarriers und scope. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: die Teilfluesse kommen aus den Rechnungen in contracts, dieser aus dem Werkzeug, das sie buendelt. BENANNTE OFFENE DIFFERENZEN: der Vertrag ist nur SCHEMA-chain-metrics, weil die Antwort als Ganzes kein pruefbares Zod-Schema hat (contracts liefert keines fuer modules, functions, chains); das Dashboard rendert modules und functions, chains noch nicht. (CR-GC-817)",
       "sync": "sync"
     },
     {
@@ -4309,6 +4327,12 @@
       "description": "Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).",
       "status": "reviewed",
       "sync": "sync"
+    },
+    {
+      "id": "FLOW-mutate-answer",
+      "type": "FLOW",
+      "name": "graph_mutate-Antwort",
+      "description": "Die Antwort von graph_mutate an die Ablaufsteuerung: Gate-Urteil, im Probelauf mit Steuerungsdelta und Berichten zum Zug. Beleg: src/surface/write.ts:388-410."
     },
     {
       "id": "FLOW-mutate-cmd-bootstrap",
@@ -4439,8 +4463,8 @@
     {
       "id": "FLOW-reseeded-graph",
       "type": "FLOW",
-      "name": "Neu aufgesetzter Bestand",
-      "description": "Der neu aufgesetzte Bestand auf dem Weg in den Store. Beleg: src/kernel/harness-import.ts, applyReseed schreibt in das importTarget des GraphStore. (CR-GC-768)",
+      "name": "Snapshot zum Neuaufsetzen",
+      "description": "Der Pfad des bereitgestellten Snapshots, den applyReseed nach dem Leeren des Stores an seedFromJsonFile gibt. Beleg: src/kernel/harness-import.ts:240-241.",
       "sync": "async"
     },
     {
@@ -4588,6 +4612,12 @@
       "description": "Neue ONTOLOGY/RULES_VERSION aus contracts/se.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FLOW-viewer-start",
+      "type": "FLOW",
+      "name": "Viewer-Start",
+      "description": "Der Start des Viewers fuer das Repo, wenn unter der vermerkten Adresse keiner antwortet. Beleg: src/surface/gve.ts:163."
     },
     {
       "id": "FLOW-vorschlag",
@@ -8154,6 +8184,13 @@
         "symbol": "AuditStatsSchema",
         "lang": "ts"
       }
+    },
+    {
+      "id": "SCHEMA-branch-merge-report",
+      "type": "SCHEMA",
+      "name": "MergeReport",
+      "description": "Bericht eines Branch-Merges: Fork-Punkt, Probelauf ja/nein, wieder angewendete, in Konflikt geratene und uebersprungene Chargen, Konflikte in Gate-Sprache. Im Code ein TypeScript-Interface (src/kernel/merge.ts:48), noch kein Zod-Schema.",
+      "concept": "true"
     },
     {
       "id": "SCHEMA-chain-metrics",
@@ -15916,6 +15953,36 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-814",
+      "target": "FUNC-apply-reseed",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-814",
+      "target": "FUNC-compute-steering-delta",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-814",
+      "target": "FUNC-gve-supervise",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-814",
+      "target": "FUNC-held-back-traces",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-814",
+      "target": "FUNC-merge-nodes",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-814",
+      "target": "FUNC-seed-from-json",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-815",
       "target": "FUNC-agent-loop",
       "type": "relation"
@@ -15939,6 +16006,16 @@
       "source": "CR-GC-816",
       "target": "FUNC-graph-export-snapshot",
       "type": "relation"
+    },
+    {
+      "source": "CR-GC-817",
+      "target": "FUNC-graph-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-advisory-roundtrip",
@@ -16042,6 +16119,11 @@
     },
     {
       "source": "FCHAIN-apply-gate",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-apply-gate",
       "target": "FUNC-arch-fitness",
       "type": "compose"
     },
@@ -16049,12 +16131,6 @@
       "source": "FCHAIN-apply-gate",
       "target": "FUNC-claim-store-lock",
       "type": "compose"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
-      "target": "FUNC-create-harness",
-      "type": "compose",
-      "weight": "1"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -16105,18 +16181,7 @@
     },
     {
       "source": "FCHAIN-apply-gate",
-      "target": "FUNC-own-kuzu-host",
-      "type": "compose",
-      "weight": "1"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
       "target": "FUNC-session-shutdown",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
-      "target": "FUNC-tool-context",
       "type": "compose"
     },
     {
@@ -16550,6 +16615,11 @@
     },
     {
       "source": "FCHAIN-merge-branches",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-merge-branches",
       "target": "FUNC-graph-store",
       "type": "compose"
     },
@@ -16576,6 +16646,11 @@
     {
       "source": "FCHAIN-model-import",
       "target": "FUNC-create-harness",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-decode",
       "type": "compose"
     },
     {
@@ -16703,11 +16778,6 @@
     },
     {
       "source": "FCHAIN-recall",
-      "target": "FUNC-held-back-traces",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-recall",
       "target": "FUNC-import",
       "type": "compose"
     },
@@ -16794,7 +16864,17 @@
     },
     {
       "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-import",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-seed-from-json",
       "type": "compose"
     },
     {
@@ -16975,6 +17055,11 @@
     },
     {
       "source": "FCHAIN-skill-report",
+      "target": "FUNC-graph-readiness",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
       "target": "FUNC-graph-store",
       "type": "compose"
     },
@@ -17106,6 +17191,11 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-graph-mutate-tool",
       "type": "compose"
     },
     {
@@ -17600,9 +17690,14 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-chain-metrics",
-      "target": "ACTOR-dashboard",
+      "source": "FLOW-branch-log",
+      "target": "FUNC-merge-nodes",
       "type": "io"
+    },
+    {
+      "source": "FLOW-branch-log",
+      "target": "SCHEMA-audit-record",
+      "type": "relation"
     },
     {
       "source": "FLOW-chain-metrics",
@@ -17946,11 +18041,6 @@
     },
     {
       "source": "FLOW-function-criticality",
-      "target": "ACTOR-dashboard",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-function-criticality",
       "target": "FUNC-graph-metrics",
       "type": "io"
     },
@@ -17967,6 +18057,11 @@
     {
       "source": "FLOW-gate-verdict",
       "target": "FUNC-bootstrap",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
+      "target": "FUNC-graph-mutate-tool",
       "type": "io"
     },
     {
@@ -18027,6 +18122,16 @@
     {
       "source": "FLOW-graph-snapshot-file",
       "target": "ACTOR-auftraggeber",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot-file",
+      "target": "FUNC-held-back-traces",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot-file",
+      "target": "FUNC-seed-from-json",
       "type": "io"
     },
     {
@@ -18115,6 +18220,11 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-held-back-traces",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-list-elements",
       "type": "io"
     },
@@ -18148,11 +18258,6 @@
       "target": "FUNC-score-completeness",
       "type": "io",
       "weight": "1"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-seed-from-json",
-      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -18416,6 +18521,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-merge-report",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-merge-report",
+      "target": "SCHEMA-branch-merge-report",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-metric-policy",
       "target": "FUNC-evaluate-rules",
       "type": "io"
@@ -18432,6 +18547,11 @@
     },
     {
       "source": "FLOW-metrics-answer",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-metrics-answer",
       "target": "FUNC-agent-loop",
       "type": "io"
     },
@@ -18439,11 +18559,6 @@
       "source": "FLOW-metrics-answer",
       "target": "SCHEMA-chain-metrics",
       "type": "relation"
-    },
-    {
-      "source": "FLOW-module-metrics",
-      "target": "ACTOR-dashboard",
-      "type": "io"
     },
     {
       "source": "FLOW-module-metrics",
@@ -18459,6 +18574,16 @@
     {
       "source": "FLOW-module-metrics",
       "target": "SCHEMA-module-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-answer",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-answer",
+      "target": "SCHEMA-mutate-result",
       "type": "relation"
     },
     {
@@ -18550,11 +18675,6 @@
       "source": "FLOW-next-step-advice",
       "target": "SCHEMA-generation-step",
       "type": "relation"
-    },
-    {
-      "source": "FLOW-ontology-json",
-      "target": "FUNC-held-back-traces",
-      "type": "io"
     },
     {
       "source": "FLOW-ontology-json",
@@ -18703,12 +18823,12 @@
     },
     {
       "source": "FLOW-reseeded-graph",
-      "target": "FUNC-graph-store",
+      "target": "FUNC-seed-from-json",
       "type": "io"
     },
     {
       "source": "FLOW-reseeded-graph",
-      "target": "SCHEMA-ontology-graph",
+      "target": "SCHEMA-ontology-json",
       "type": "relation"
     },
     {
@@ -18943,7 +19063,7 @@
     },
     {
       "source": "FLOW-steering-delta",
-      "target": "FUNC-bind-tools",
+      "target": "FUNC-graph-mutate-tool",
       "type": "io"
     },
     {
@@ -19105,6 +19225,16 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-viewer-start",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-viewer-start",
+      "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-vorschlag",
       "target": "ACTOR-auftraggeber",
       "type": "io"
@@ -19143,6 +19273,11 @@
       "source": "FUNC-agent-loop",
       "target": "MOD-agent-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-branch-log",
+      "type": "io"
     },
     {
       "source": "FUNC-agent-loop",
@@ -20454,6 +20589,11 @@
     },
     {
       "source": "FUNC-graph-mutate-tool",
+      "target": "FLOW-mutate-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-mutate-tool",
       "target": "REQ-mcp-tool-registry",
       "type": "satisfy"
     },
@@ -20552,6 +20692,11 @@
     {
       "source": "FUNC-gve-supervise",
       "target": "FLOW-session-entry",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-gve-supervise",
+      "target": "FLOW-viewer-start",
       "type": "io"
     },
     {
@@ -20784,6 +20929,11 @@
       "source": "FUNC-merge-nodes",
       "target": "MOD-kernel",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-merge-nodes",
+      "target": "FLOW-merge-report",
+      "type": "io"
     },
     {
       "source": "FUNC-merge-nodes",
@@ -23527,6 +23677,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-merge",
+      "target": "SCHEMA-branch-merge-report",
+      "type": "verify"
+    },
+    {
       "source": "TEST-merge-no-duplicate-edge",
       "target": "REQ-graph-integrity",
       "type": "verify"
@@ -25130,5 +25285,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 771
+  "graphVersion": 777
 }

@@ -52,3 +52,51 @@ io-Flüssen der Kette ab; zwei Modellfehler machen das Bild falsch:
 
 - `graph_impact` auf FUNC-seed-from-json, FUNC-import, FUNC-apply-reseed, FUNC-graph-store und die sieben FCHAIN
   vor dem Zug. Nur Modell (`docs/graph`, `docs/views`) + CR-Dokument.
+
+## Umsetzung (2026-10-16, v774 → v775)
+
+Ein Batch durchs Gate, ohne Fehler. Je Kante der Code-Beleg:
+
+**1. Recall** — jetzt geradlinig: CLI → rewind → reseed → applyReseed → seedFromJson → importGraph → GraphStore.
+
+| Kante | Beleg |
+|---|---|
+| `− graph-state → seedFromJson` | `seedFromJsonFile` liest die Datei, nicht den Store (`src/kernel/harness-import.ts:232`) |
+| `+ graph-snapshot-file → seedFromJson` | ebd., `readFile(abs)` |
+| `reseeded-graph`: Abnehmer GraphStore → seedFromJson, Vertrag ontology-graph → ontology-json | `applyReseed` leert den Store und ruft `seedFromJsonFile(target, relPath)` (`harness-import.ts:240-241`); das Leeren ist ein Befehl, kein Datenfluss |
+| `− ontology-json → heldBackTraces`, `+ graph-snapshot-file → heldBackTraces`, `+ graph-state → heldBackTraces` | `heldBackTraces` liest die committete Datei selbst und bekommt den Live-Graphen (`harness-import.ts:205-208`) |
+| `− recall ∋ heldBackTraces` | Aufrufer sind `graph_export` und `graph_readiness`, nicht der Recall-Pfad |
+| `+ repo-lifecycle ∋ seedFromJson, importGraph` | Seed beim Start: `src/surface/mcp-server.ts:111`, `src/surface/import-code-verb.ts:126` |
+
+**2. Ketten ohne Auslöser** — nach CR-GC-813/815 hatten sechs der sieben bereits eine Quelle (Ablaufsteuerung, Auftraggeber,
+Regelhalter). Offen war `merge-branches`:
+
+| Kante | Beleg |
+|---|---|
+| `+ Ablaufsteuerung → branch-log → replayBranchLog` | MCP-Werkzeug `graph_merge` liest das Branch-Log und ruft `replayBranchLog` (`src/surface/write.ts:443-465`) |
+| `+ replayBranchLog → merge-report → Ablaufsteuerung`, `SCHEMA-branch-merge-report` (verify: TEST-merge) | `MergeReport` (`src/kernel/merge.ts:48`) |
+| `+ merge-branches ∋ Ablaufsteuerung` | Auslöser der Kette |
+
+**3. Sackgassen** (Stand nach 813/815, eigene Auswertung entlang der io-Flüsse zur Senke):
+
+| Kette · Glied | Zug | Beleg |
+|---|---|---|
+| advisory-roundtrip · graph_impact, bindReadTools | `+ ∋ Ablaufsteuerung` | Lesewerkzeuge antworten der Ablaufsteuerung |
+| apply-gate · computeFitAdvisory, archFitness, zugBericht | `+ ∋ Ablaufsteuerung` | Berichte zum Zug gehen an den Aufrufer (CR-GC-778) |
+| apply-gate · createHarness, ownKuzu, createToolContext | `− compose` | Aufbau, kein Schritt des Schreibablaufs (pre-commit → apply → evaluate → save → emit) |
+| model-import · CLI-Dispatch, createHarness, graph_mutate, executeImportCode | `+ ∋ formatEToCommands` | graph_mutate → Decoder → Gate |
+| skill-report · conformance, computeReadiness, completeness | `+ ∋ graph_readiness` | Skills lesen über das Werkzeug (CR-GC-813) |
+| steering-loop · computeSteeringDelta | `steering-delta`: Abnehmer bindTools → graph_mutate; `+ gate-verdict → graph_mutate`; `+ graph_mutate → mutate-answer → Ablaufsteuerung`; `+ ∋ graph_mutate` | einziger Aufruf `src/surface/write.ts:400`; Antwort `write.ts:388-410` |
+| repo-lifecycle · liveSessions, attachGve | `+ attachGve → viewer-start → Browser-Dashboard` | `src/surface/gve.ts:163` |
+| recall · heldBackTraces | `− compose` | s. Teil 1 |
+
+## Benannte Abweichungen
+
+- R-21 `claim-store-lock → own-kuzu-host`: Übergabe beim Start, außerhalb des Schreibablaufs; beide nicht mehr in
+  einer gemeinsamen Kette.
+- R-21 `graph_export → seedFromJson`: Übergabe über die committete Datei, bewusst zeitversetzt.
+- Steuerungsmaß 5,0 → 5,25 (BW-02 Grounding 24 → 25): neue, im Code belegte Verträge an der Blockgrenze.
+- `SCHEMA-branch-merge-report` als Konzept ohne realRef (R-26): `MergeReport` ist ein TS-Interface, kein Zod-Schema
+  (RC-08 verlangt Zod) — Zod-Schema als eigenes Item (ITEM-2026-973).
+- Außerhalb des Befunds, nicht angefasst: `codec-roundtrip` (ein Glied, ohne Senke), `schema-migration`
+  (`migrate-schema` ohne Code-Bindung).
