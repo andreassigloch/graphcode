@@ -1,6 +1,6 @@
 # CR-GC-814: Modell: Recall falsch verdrahtet (seedFromJson an GraphStore statt applyReseed), sieben Wirkketten ohne Ausloeser
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-16)
 **Typ:** aus Item ITEM-2026-965 (bug)
 **Erstellt:** 2026-10-16
 **Item:** bok/items/ITEM-2026-965.json (Lane: graph)
