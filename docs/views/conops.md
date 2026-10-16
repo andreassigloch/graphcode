@@ -45,14 +45,14 @@
 
 ## 3  User classes & involved personnel (4)
 
-- **Auftraggeber** (`ACTOR-agent`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
-  - Wer der Ablaufsteuerung einen Auftrag gibt und das Ergebnis bekommt: der Mensch im Prompt oder ein Orchestrator. Bewusst nicht namentlich modelliert. Die Ablaufsteuerung selbst ist FUNC-agent-loop (CR-GC-813).
+- **Auftraggeber** (`ACTOR-auftraggeber`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
+  - Gibt Auftraege und nimmt Ergebnisse ab, ueber jeden Kanal: Prompt an die Ablaufsteuerung, CLI-Verb, MCP-Aufruf. Mensch oder Orchestrator, gleichwertig; das Gate unterscheidet sie nicht, es loggt nur den Autor. Nutzerklassen (ISO 29148 5.2.4): Entwickler/Repo-Owner, Systems Engineer auf der WAS-Ebene, Vibe Coder ohne eigenen Code, Orchestrator. Ein Auftrag aendert nie das Regelwerk, nach dem das Gate urteilt, das setzt ACTOR-regelhalter. (CR-GC-455, CR-GC-813, CR-GC-815)
 - **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-live-graph-view`
   - SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)
 - **Learning-Engine** (`ACTOR-learning-engine`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-reduced-llm`
   - Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen als Lerneingang, beantwortet eine Lern-Frage von graph_suggest und nextStep und liefert je Kandidat ein Urteil zurueck. Sie schreibt KEINE Konfiguration: die Urteilsschwellen bleiben der Vertrag des Menschen. Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455, Andockpunkt CR-GC-465)
-- **Repo-Owner (Mensch am Repo)** (`ACTOR-owner`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
-  - Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)
+- **Regelhalter** (`ACTOR-regelhalter`) — triggert `UC-deterministic-steering` · `UC-repo-lifecycle`
+  - Setzt das Regelwerk, nach dem das Gate urteilt und die Runde fuehrt: Urteilsschwellen in der Config, Regelklauseln, Vorlagen je Readiness-Dimension, das Gate-Protokoll, die Ontologie-Version aus contracts. Eine Rolle, kein Personentyp; getrennt vom Auftraggeber, weil ein Auftrag das Regelwerk nicht aendern darf. (CR-GC-815)
 
 ## 4  Operational scenarios (9 UC)
 
@@ -60,7 +60,7 @@
 
 Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch dasselbe Apply-Gate laeuft und gegen dieselben Regeln geprueft wird.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine`
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-arch-fitness` → `FUNC-claim-store-lock` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-session-shutdown` → `FUNC-tool-context` → `FUNC-zug-bericht`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-agent-loop` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
@@ -72,7 +72,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` ·
 
 Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-regelhalter`
 
 - `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
 - `FCHAIN-skill-help` — Skill erklaert: `FUNC-agent-loop` → `FUNC-se-help`
@@ -83,7 +83,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-learning-engine` ·
 
 Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhängigkeitsgraph bestimmt das selektive Testset; „erledigt" = „nachgewiesen".
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-measure-test-schlupf` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code`
 - `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
@@ -92,7 +92,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
 Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstellen, damit Modell und Code zu jedem Zeitpunkt zusammenpassen.
 
-Ausgeloest von: `ACTOR-owner`
+Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-graph-store` → `FUNC-merge-nodes` → `FUNC-mutate`
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-import` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
@@ -102,7 +102,7 @@ Ausgeloest von: `ACTOR-owner`
 
 Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansicht neu zu laden, damit ich die Wirkung jeder Aenderung sofort sehe.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard`
 
 - `FCHAIN-dashboard-metrics` — Kennzahlen ans Dashboard: `FUNC-agent-loop` → `FUNC-chain-metrics` → `FUNC-function-criticality` → `FUNC-graph-metrics` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-mutate`
 - `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-agent-loop` → `FUNC-broadcast-diff` → `FUNC-decode` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-serve-sse` → `FUNC-serve-stdio`
@@ -111,7 +111,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-dashboard` · `ACTOR-owner`
 
 Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen ablesen, welche Regel bei wem wie oft blockt, damit ich Schwellen und Prompt-Vorlagen an Messwerten justiere statt an Vermutungen.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-loop-closure` — Schleifenschluss (aufzeichnen → auswerten → justieren): `FUNC-agent-loop` → `FUNC-audit-stats` → `FUNC-audit-trail` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-se-retro`
 
@@ -119,16 +119,16 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
 
 Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehiges Dokument herausgeben, damit Graph, Code und Dokumentation eine Quelle haben.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-render-views` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
 - `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-agent-loop` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc` → `FUNC-mutate`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
-Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren und dieselbe Strukturqualitaet erreichen wie mit einem Frontier-Modell. Die Achse dieses UC ist die MODELLGROESSE. Wer die Schleife treibt, ist keine Eigenschaft dieses UC, sondern eine Grenzfrage und steht an den Akteuren ACTOR-agent und ACTOR-llm. (geschaerft CR-GC-569)
+Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren und dieselbe Strukturqualitaet erreichen wie mit einem Frontier-Modell. Die Achse dieses UC ist die MODELLGROESSE. Wer die Schleife treibt, ist keine Eigenschaft dieses UC, sondern Realisierung der Ablaufsteuerung FUNC-agent-loop. (geschaerft CR-GC-569, CR-GC-815)
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-learning-engine`
 
 - `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-target-profile-load`
 - `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-agent-loop` → `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-list-elements` → `FUNC-read-tools` → `FUNC-view-fmea`
@@ -139,7 +139,7 @@ Ausgeloest von: `ACTOR-agent` · `ACTOR-learning-engine` · `ACTOR-owner`
 
 Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung; danach ist das Repo arbeitsfaehig und kein Prozess bleibt zurueck.
 
-Ausgeloest von: `ACTOR-agent` · `ACTOR-owner`
+Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-regelhalter`
 
 - `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-mutate` → `FUNC-serve-stdio` → `FUNC-session-shutdown` → `FUNC-tool-context` → `FUNC-upgrade`
 - `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-migrate-schema` → `FUNC-schema-guard`
@@ -439,6 +439,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-806` | n/a | Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft | `UC-code-quality` · `UC-live-graph-view` |
 | `CR-GC-807` | n/a | Impact-Check: UCs code-quality, reduced-llm, deterministic-steering lesen sich als Anforderungen an den Kern-UC - Herabstufen zu REQ pruefen | `UC-code-quality` · `UC-deterministic-steering` · `UC-reduced-llm` |
 | `CR-GC-813` | n/a | Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code | `FUNC-agent-loop` · `FUNC-graph-mutate-tool` · `FUNC-host-socket` · `FUNC-rules-tool` · `REQ-agent-loop-executes-skill` |
+| `CR-GC-815` | n/a | Akteure nach Kanal statt nach Rolle geschnitten: Auftraggeber und Regelhalter | `FUNC-agent-loop` · `FUNC-mutate` |
+| `CR-GC-816` | n/a | Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk | `FUNC-block-gedaechtnis` · `FUNC-block-speicherwerk` · `FUNC-graph-export-snapshot` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

@@ -38,11 +38,11 @@ Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mutate-schema-guard` 
 
 ## 2  Akteure
 
-### 2.1  `ACTOR-agent` — Auftraggeber
+### 2.1  `ACTOR-auftraggeber` — Auftraggeber
 
-Wer der Ablaufsteuerung einen Auftrag gibt und das Ergebnis bekommt: der Mensch im Prompt oder ein Orchestrator. Bewusst nicht namentlich modelliert. Die Ablaufsteuerung selbst ist FUNC-agent-loop (CR-GC-813).
+Gibt Auftraege und nimmt Ergebnisse ab, ueber jeden Kanal: Prompt an die Ablaufsteuerung, CLI-Verb, MCP-Aufruf. Mensch oder Orchestrator, gleichwertig; das Gate unterscheidet sie nicht, es loggt nur den Autor. Nutzerklassen (ISO 29148 5.2.4): Entwickler/Repo-Owner, Systems Engineer auf der WAS-Ebene, Vibe Coder ohne eigenen Code, Orchestrator. Ein Auftrag aendert nie das Regelwerk, nach dem das Gate urteilt, das setzt ACTOR-regelhalter. (CR-GC-455, CR-GC-813, CR-GC-815)
 
-io ▶ `FLOW-auftrag` · io ◀ `FLOW-ergebnis`
+io ▶ `FLOW-auftrag` · `FLOW-cli-invocation` · `FLOW-mutate-cmd-owner` · `FLOW-query-request-owner` · io ◀ `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-code-lane-plan` · `FLOW-ergebnis` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-snapshot-file` · `FLOW-graph-state` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-markdown-docs` · `FLOW-schlupf-zeile` · `FLOW-test-selection` · `FLOW-vorschlag`
 
 ### 2.2  `ACTOR-dashboard` — Browser-Dashboard
 
@@ -56,11 +56,11 @@ Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-
 
 io ▶ `FLOW-learning-advice` · io ◀ `FLOW-learning-query` · `FLOW-trajectory`
 
-### 2.4  `ACTOR-owner` — Repo-Owner (Mensch am Repo)
+### 2.4  `ACTOR-regelhalter` — Regelhalter
 
-Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)
+Setzt das Regelwerk, nach dem das Gate urteilt und die Runde fuehrt: Urteilsschwellen in der Config, Regelklauseln, Vorlagen je Readiness-Dimension, das Gate-Protokoll, die Ontologie-Version aus contracts. Eine Rolle, kein Personentyp; getrennt vom Auftraggeber, weil ein Auftrag das Regelwerk nicht aendern darf. (CR-GC-815)
 
-io ▶ `FLOW-channel-dimension-template` · `FLOW-channel-gate-protocol` · `FLOW-channel-rule-clause` · `FLOW-cli-invocation` · `FLOW-config-file` · `FLOW-mutate-cmd-owner` · `FLOW-query-request-owner` · `FLOW-version-bump` · io ◀ `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-code-lane-plan` · `FLOW-ergebnis` · `FLOW-export-pending` · `FLOW-gate-verdict` · `FLOW-graph-snapshot-file` · `FLOW-graph-state` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-markdown-docs` · `FLOW-schlupf-zeile` · `FLOW-test-selection` · `FLOW-vorschlag`
+io ▶ `FLOW-channel-dimension-template` · `FLOW-channel-gate-protocol` · `FLOW-channel-rule-clause` · `FLOW-config-file` · `FLOW-version-bump` · io ◀ —
 
 ## 3  Use Cases & Verhalten
 
@@ -3132,7 +3132,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 ##### 3.4.3.2  `FUNC-graph-export-snapshot` — graph_export(views?)
 
-> auch in: `FCHAIN-doc-export` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-doc-export` · `FUNC-block-speicherwerk`
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
@@ -4058,7 +4058,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 ##### 3.7.1.2  `FUNC-graph-export-snapshot` — graph_export(views?)
 
-> auch in: `FCHAIN-snapshot-freshness` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-snapshot-freshness` · `FUNC-block-speicherwerk`
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
@@ -4438,7 +4438,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 ### 3.8  `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
-Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren und dieselbe Strukturqualitaet erreichen wie mit einem Frontier-Modell. Die Achse dieses UC ist die MODELLGROESSE. Wer die Schleife treibt, ist keine Eigenschaft dieses UC, sondern eine Grenzfrage und steht an den Akteuren ACTOR-agent und ACTOR-llm. (geschaerft CR-GC-569)
+Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren und dieselbe Strukturqualitaet erreichen wie mit einem Frontier-Modell. Die Achse dieses UC ist die MODELLGROESSE. Wer die Schleife treibt, ist keine Eigenschaft dieses UC, sondern Realisierung der Ablaufsteuerung FUNC-agent-loop. (geschaerft CR-GC-569, CR-GC-815)
 
 #### 3.8.1  `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply)
 
@@ -6630,31 +6630,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-projections`
 
-###### 3.10.2.4.3  `FUNC-graph-export-snapshot` — graph_export(views?)
-
-> auch in: `FCHAIN-doc-export` · `FCHAIN-snapshot-freshness`
-
-Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
-
-io ◀ `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-graph-snapshot-file` · `FLOW-query-export` · allocate ▶ `MOD-projections`
-
-###### `REQ-export-no-clobber` — Export refuse-to-clobber
-
-graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)
-
-priority: must · status: done · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
-
-###### `REQ-export-refuses-until-held-back-repaired` — Export verweigert bis zur Reparatur
-
-graph_export verweigert, solange eine Kante zurueckgehalten ist, und nennt die Kante und den Reparaturweg; nach einem delete-edge durchs Gate laeuft der Export wieder.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
-
-###### 3.10.2.4.4  `FUNC-import` — importGraph(ontology, opts)
+###### 3.10.2.4.3  `FUNC-import` — importGraph(ontology, opts)
 
 > auch in: `FCHAIN-recall`
 
@@ -6688,7 +6664,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.4.5  `FUNC-merge-nodes` — replayBranchLog(log, sinceVersion)
+###### 3.10.2.4.4  `FUNC-merge-nodes` — replayBranchLog(log, sinceVersion)
 
 > auch in: `FCHAIN-merge-branches`
 
@@ -6730,7 +6706,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.4.6  `FUNC-own-kuzu-host` — ownKuzu()
+###### 3.10.2.4.5  `FUNC-own-kuzu-host` — ownKuzu()
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update`
 
@@ -6746,7 +6722,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-own-kuzu-host` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.4.7  `FUNC-reseed` — reseed(relPath)
+###### 3.10.2.4.6  `FUNC-reseed` — reseed(relPath)
 
 > auch in: `FCHAIN-recall`
 
@@ -6764,7 +6740,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-reseed` (integration) · `TEST-rewind` (integration) · satisfy ◀ `FUNC-apply-reseed` · `FUNC-reseed` · `FUNC-rewind` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### 3.10.2.4.8  `FUNC-rewind` — graphcode rewind <ref>
+###### 3.10.2.4.7  `FUNC-rewind` — graphcode rewind <ref>
 
 > auch in: `FCHAIN-recall`
 
@@ -7206,7 +7182,31 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-export-marker` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.7.7  `FUNC-graph-store` — GraphStore
+###### 3.10.2.7.7  `FUNC-graph-export-snapshot` — graph_export(views?)
+
+> auch in: `FCHAIN-doc-export` · `FCHAIN-snapshot-freshness`
+
+Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
+
+io ◀ `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-graph-snapshot-file` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+
+###### `REQ-export-no-clobber` — Export refuse-to-clobber
+
+graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)
+
+priority: must · status: done · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
+
+###### `REQ-export-refuses-until-held-back-repaired` — Export verweigert bis zur Reparatur
+
+graph_export verweigert, solange eine Kante zurueckgehalten ist, und nennt die Kante und den Reparaturweg; nach einem delete-edge durchs Gate laeuft der Export wieder.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
+
+###### 3.10.2.7.8  `FUNC-graph-store` — GraphStore
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
@@ -7240,7 +7240,7 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.7.8  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
+###### 3.10.2.7.9  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
 
 > auch in: `FCHAIN-recall` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop`
 
@@ -7256,7 +7256,7 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-held-back-traces` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.7.9  `FUNC-seed-from-json` — seedFromJson(relPath)
+###### 3.10.2.7.10  `FUNC-seed-from-json` — seedFromJson(relPath)
 
 > auch in: `FCHAIN-recall`
 
@@ -8058,7 +8058,7 @@ io ◀ `FUNC-arch-fitness` · io ▶ `FUNC-fit-advisory` · schema ▶ `SCHEMA-m
 
 Die Aufzeichnung Satz fuer Satz: was passiert ist, als schlanke Projektion, nicht als Replay. Traegt denselben Vertrag wie der geschriebene Satz.
 
-io ◀ `FUNC-audit-trail` · io ▶ `ACTOR-owner` · `FUNC-agent-loop` · schema ▶ `SCHEMA-audit-record`
+io ◀ `FUNC-audit-trail` · io ▶ `ACTOR-auftraggeber` · `FUNC-agent-loop` · schema ▶ `SCHEMA-audit-record`
 
 ### 4.33  `FLOW-audit-record` — Aufgezeichnete Gate-Entscheidung
 
@@ -8070,13 +8070,13 @@ io ◀ `FUNC-mutate` · io ▶ `FUNC-audit-stats` · `FUNC-audit-trail` · schem
 
 Die Auswertung der Aufzeichnung im Aggregat: Haeufigkeiten je Regel, Konsument und Modell ueber die Zeit.
 
-io ◀ `FUNC-audit-stats` · io ▶ `ACTOR-owner` · `FUNC-agent-loop` · schema ▶ `SCHEMA-audit-stats`
+io ◀ `FUNC-audit-stats` · io ▶ `ACTOR-auftraggeber` · `FUNC-agent-loop` · schema ▶ `SCHEMA-audit-stats`
 
 ### 4.35  `FLOW-auftrag` — Auftrag
 
 Der Auftrag an die Ablaufsteuerung: Absicht, Zielausschnitt, Optionen, als Prompt oder vom Orchestrator.
 
-io ◀ `ACTOR-agent` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-query-params`
 
 ### 4.36  `FLOW-chain-metrics` — Kennzahlen je Wirkkette
 
@@ -8088,7 +8088,7 @@ io ◀ `FUNC-chain-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-graph-metrics` 
 
 Rang 6 — der Vorschlagstext je Readiness-Dimension, wenn keine Regel-Klausel das Fenster stellt. Verliert seit CR-GC-564 jeden Konflikt gegen die Klausel; demoviert, nicht gestrichen (CR-GC-575).
 
-io ◀ `ACTOR-owner` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-steering-channel`
+io ◀ `ACTOR-regelhalter` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-steering-channel`
 
 ### 4.38  `FLOW-channel-fit-advisory` — Kanal: Fit-Advisory (R6)
 
@@ -8100,7 +8100,7 @@ io ◀ `FUNC-fit-advisory` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-ste
 
 Die Verfahrensanweisung der Runde: Grammatik holen, Alternativen proben oder EINEN Batch emittieren, den naechsten Schritt anfordern. Zwei Fassungen, je nachdem ob der Host oder der Treiber die Auswahl faehrt. Rang: Anleitung — sie sagt, wie man vorgeht, nicht was in dieser Runde zu tun ist.
 
-io ◀ `ACTOR-owner` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-steering-channel`
+io ◀ `ACTOR-regelhalter` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-steering-channel`
 
 ### 4.40  `FLOW-channel-gate-verdict` — Kanal: Gate-Verdict
 
@@ -8136,7 +8136,7 @@ io ◀ `FUNC-generation-step` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-
 
 Rang 2 — der EINE Imperativ der Runde. Der vom Menschen gepflegte Zusatztext zu genau der Regel, die das Fund-Fenster stellt, gerendert mit den konkreten uids.
 
-io ◀ `ACTOR-owner` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-steering-channel`
+io ◀ `ACTOR-regelhalter` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-steering-channel`
 
 ### 4.46  `FLOW-channel-skill-reference` — Kanal: Skill-Verweis
 
@@ -8158,9 +8158,9 @@ io ◀ `FUNC-cli-dispatch` · io ▶ `FUNC-bootstrap` · `FUNC-claim-store-lock`
 
 ### 4.49  `FLOW-cli-invocation` — CLI-Aufruf (Rohform)
 
-Was der Mensch in die Schale tippt: Verb und Optionen als Argumentliste, noch nicht aufgeloest.
+Was der Auftraggeber in die Schale gibt: Verb und Optionen als Argumentliste, noch nicht aufgeloest.
 
-io ◀ `ACTOR-owner` · io ▶ `FUNC-cli-dispatch` · `FUNC-plan-code-lane` · schema ▶ `SCHEMA-cli-command`
+io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-cli-dispatch` · `FUNC-plan-code-lane` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.50  `FLOW-cli-invocation-import-code` — CLI-Aufruf (import-code)
 
@@ -8172,7 +8172,7 @@ io ◀ `FUNC-agent-loop` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-cli
 
 Der Plan der lokalen Code-Spur: gewaehlte Spur, Dateien, Laufkommando, Grund, Bindungsquote und unaufgeloeste TESTs. Geht an den Menschen an der Schale und an den pre-commit-Hook.
 
-io ◀ `FUNC-plan-code-lane` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-code-lane-plan`
+io ◀ `FUNC-plan-code-lane` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-code-lane-plan`
 
 ### 4.52  `FLOW-completeness` — Marken der Readiness
 
@@ -8182,9 +8182,9 @@ io ◀ `FUNC-score-completeness` · io ▶ `FUNC-compute-readiness` · schema �
 
 ### 4.53  `FLOW-config-file` — Repo-Konfiguration (Rohform)
 
-Die Urteilsschwellen, wie der Mensch sie in graphcode.config.jsonc schreibt: vor dem Auffuellen mit DEFAULT_METRIC_POLICY, Felder duerfen fehlen. Gleicher Vertrag wie die geltende Policy, anderer Zustand.
+Die Urteilsschwellen, wie der Regelhalter sie in graphcode.config.jsonc schreibt: vor dem Auffuellen mit DEFAULT_METRIC_POLICY, Felder duerfen fehlen. Gleicher Vertrag wie die geltende Policy, anderer Zustand.
 
-io ◀ `ACTOR-owner` · io ▶ `FUNC-load-config` · schema ▶ `SCHEMA-metric-policy`
+io ◀ `ACTOR-regelhalter` · io ▶ `FUNC-load-config` · schema ▶ `SCHEMA-metric-policy`
 
 ### 4.54  `FLOW-conformance-findings` — Konformanzbefunde
 
@@ -8208,7 +8208,7 @@ io ◀ `FUNC-list-elements` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-on
 
 Das Ergebnis eines Auftrags an den Auftraggeber: Bericht, gerenderte Sicht oder Zugbericht als Text.
 
-io ◀ `FUNC-agent-loop` · io ▶ `ACTOR-agent` · `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
+io ◀ `FUNC-agent-loop` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-markdown-view`
 
 ### 4.58  `FLOW-expand-subgraph` — Vertiefter Teilgraph
 
@@ -8220,7 +8220,7 @@ io ◀ `FUNC-graph-expand` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-ont
 
 Die Drift-Marke unter .graphcode: sagt, dass und wie weit der committete Snapshot dem lebenden Store nachlaeuft. Der pre-commit-Hook liest sie, ohne den Kuzu-Store zu oeffnen.
 
-io ◀ `FUNC-export-marker` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-export-pending`
+io ◀ `FUNC-export-marker` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-export-pending`
 
 ### 4.60  `FLOW-fit-advisory` — Fit-Advisory (Richtung im Metrikraum)
 
@@ -8230,13 +8230,13 @@ io ◀ `FUNC-fit-advisory` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-fi
 
 ### 4.61  `FLOW-formatE-artifact-agent` — Format-E-Artefakt (Agent)
 
-Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung ACTOR-agent → FUNC-decode; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510).
+Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-agent-loop → FUNC-graph-mutate-tool, FUNC-host-socket; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510, Quelle korrigiert CR-GC-815).
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-mutate-tool` · `FUNC-host-socket` · schema ▶ `SCHEMA-format-e`
 
 ### 4.62  `FLOW-formatE-artifact-read-tools` — Format-E-Artefakt (read-tools)
 
-Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-read-tools → ACTOR-agent; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510).
+Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-read-tools → FUNC-agent-loop; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510, Ziel korrigiert CR-GC-815).
 
 io ◀ `FUNC-read-tools` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-format-e`
 
@@ -8256,7 +8256,7 @@ io ◀ `FUNC-function-criticality` · io ▶ `ACTOR-dashboard` · `FUNC-graph-me
 
 Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation, als Antwort im Aufruf: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. Jeder Abnehmer wartet im Aufruf darauf: bootstrap, import-code-verb, graph_test_ingest und graph_suggest rufen das Gate und lesen das Ergebnis, der Werkzeug-Kontext bekommt es im selben Aufruf zur Aufzeichnung uebergeben, der Owner liest es als Antwort. Wer das Urteil spaeter aus dem Log liest, bezieht FLOW-audit-record. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501, CR-GC-509, CR-GC-685, CR-GC-792)
 
-io ◀ `FUNC-mutate` · io ▶ `ACTOR-owner` · `FUNC-bootstrap` · `FUNC-graph-suggest` · `FUNC-import-code-verb` · `FUNC-test-ingest` · `FUNC-tool-context` · schema ▶ `SCHEMA-mutate-result`
+io ◀ `FUNC-mutate` · io ▶ `ACTOR-auftraggeber` · `FUNC-bootstrap` · `FUNC-graph-suggest` · `FUNC-import-code-verb` · `FUNC-test-ingest` · `FUNC-tool-context` · schema ▶ `SCHEMA-mutate-result`
 
 ### 4.66  `FLOW-generation-step-suggest` — Generierungsschritt zum Vorschlag
 
@@ -8280,13 +8280,13 @@ io ◀ `FUNC-mutate` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-graph-de
 
 Der kanonische Snapshot docs/graph als Datei im Repo, die der Owner committet. Beleg: src/projections/export.ts, graph_export schreibt die Datei. (CR-GC-768)
 
-io ◀ `FUNC-graph-export-snapshot` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-ontology-json`
+io ◀ `FUNC-graph-export-snapshot` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-ontology-json`
 
 ### 4.70  `FLOW-graph-state` — Graph-State
 
 Der Graph als EIN Wert, in jedem seiner Zustaende: in-memory geladen, als Entwurf appliziert, persistiert samt Version-Counter, aus Format-E rekonstruiert, migriert, aus zwei Branch-Fassungen gemergt, aus dem Snapshot auf Platte wiederhergestellt. Der Zustand ist kein zweiter Datenvertrag.
 
-io ◀ `FUNC-graph-store` · io ▶ `ACTOR-owner` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-check-code-conformance` · `FUNC-compute-readiness` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-score-completeness` · `FUNC-seed-from-json` · `FUNC-take-steering-snapshot` · `FUNC-test-ingest` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-graph-store` · io ▶ `ACTOR-auftraggeber` · `FUNC-arch-fitness` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-check-code-conformance` · `FUNC-compute-readiness` · `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-fit-advisory` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-score-completeness` · `FUNC-seed-from-json` · `FUNC-take-steering-snapshot` · `FUNC-test-ingest` · schema ▶ `SCHEMA-ontology-graph`
 
 ### 4.71  `FLOW-harness-handle` — Harness-Griff
 
@@ -8332,21 +8332,21 @@ io ◀ `FUNC-import` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-ontology
 
 ### 4.78  `FLOW-install-result-collect-status` — Lifecycle-Result (collect-status)
 
-Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-collect-status → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).
+Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-collect-status → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).
 
-io ◀ `FUNC-collect-status` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-cli-command`
+io ◀ `FUNC-collect-status` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.79  `FLOW-install-result-harness-cli` — Lifecycle-Result (harness-cli)
 
-Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-harness-cli → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).
+Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-harness-cli → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).
 
-io ◀ `FUNC-harness-cli` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-cli-command`
+io ◀ `FUNC-harness-cli` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.80  `FLOW-install-result-upgrade` — Lifecycle-Result (upgrade)
 
-Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).
+Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).
 
-io ◀ `FUNC-upgrade` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-cli-command`
+io ◀ `FUNC-upgrade` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-cli-command`
 
 ### 4.81  `FLOW-learning-advice` — Lern-Empfehlung
 
@@ -8382,7 +8382,7 @@ io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-claim-store-lock` · schema ▶ `
 
 Die deterministisch nach docs/views exportierten Markdown-Sichten mit GENERATED-Header, erzeugt vom Exporter beim Re-Export des SSOT.
 
-io ◀ `FUNC-export-markdown` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-markdown-view`
+io ◀ `FUNC-export-markdown` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-markdown-view`
 
 ### 4.87  `FLOW-mcp-tool` — Werkzeug
 
@@ -8456,11 +8456,11 @@ Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-merge-nodes → 
 
 io ◀ `FUNC-merge-nodes` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.99  `FLOW-mutate-cmd-owner` — Mutate-Command (Owner)
+### 4.99  `FLOW-mutate-cmd-owner` — Mutate-Command (Auftraggeber)
 
-Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-owner → FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
+Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-auftraggeber → FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510, CR-GC-815).
 
-io ◀ `ACTOR-owner` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-command`
+io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-command`
 
 ### 4.100  `FLOW-mutate-cmd-test-ingest` — Mutate-Command (test-ingest)
 
@@ -8488,7 +8488,7 @@ io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-export-markdown` · schema �
 
 ### 4.104  `FLOW-query-request-agent` — Query-Request (Agent)
 
-Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-agent → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).
+Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-agent-loop → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-graph-readiness, FUNC-graph-metrics, FUNC-rules-tool, FUNC-authoring-guide, FUNC-graph-export-snapshot; aufgetrennt aus FLOW-query-request (CR-GC-510, Quelle korrigiert CR-GC-815).
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-list-elements` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` · `FUNC-rules-tool` · schema ▶ `SCHEMA-query-params`
 
@@ -8498,11 +8498,11 @@ Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zw
 
 io ◀ `FUNC-auto-export` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.106  `FLOW-query-request-owner` — Query-Request (Owner)
+### 4.106  `FLOW-query-request-owner` — Query-Request (Auftraggeber)
 
-Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-owner → FUNC-view-changelog, FUNC-view-conops, FUNC-view-fmea, FUNC-view-icd, FUNC-view-intplan, FUNC-view-rtm, FUNC-render-views, FUNC-export-markdown, FUNC-list-elements, FUNC-graph-expand; aufgetrennt aus FLOW-query-request (CR-GC-510).
+Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-auftraggeber → FUNC-view-changelog, FUNC-view-conops, FUNC-view-fmea, FUNC-view-icd, FUNC-view-intplan, FUNC-view-rtm, FUNC-render-views, FUNC-export-markdown, FUNC-list-elements, FUNC-graph-expand; aufgetrennt aus FLOW-query-request (CR-GC-510, CR-GC-815).
 
-io ◀ `ACTOR-owner` · io ▶ `FUNC-agent-loop` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-list-elements` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-agent-loop` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-list-elements` · schema ▶ `SCHEMA-query-params`
 
 ### 4.107  `FLOW-readiness-report` — Readiness-Report (Agent)
 
@@ -8550,7 +8550,7 @@ io ◀ `FUNC-schema-guard` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-sc
 
 Eine Zeile je Volllauf in docs/messung/testauswahl.jsonl: CR, Spur, Auswahl, rote Dateien, Schlupf, Zusage der Bindung.
 
-io ◀ `FUNC-measure-test-schlupf` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-schlupf-zeile`
+io ◀ `FUNC-measure-test-schlupf` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-schlupf-zeile`
 
 ### 4.115  `FLOW-session-entry` — Sitzungseintrag
 
@@ -8590,7 +8590,7 @@ io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-compute-steering-delta` · 
 
 ### 4.121  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
 
-Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Verbindung ACTOR-agent → FUNC-take-steering-snapshot; aufgetrennt aus FLOW-steering-trigger (CR-GC-510).
+Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Verbindung FUNC-agent-loop → FUNC-take-steering-snapshot; aufgetrennt aus FLOW-steering-trigger (CR-GC-510, Quelle korrigiert CR-GC-815).
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-query-params`
 
@@ -8616,7 +8616,7 @@ io ◀ `FUNC-agent-loop` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCH
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
-io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-owner` · `FUNC-agent-loop` · schema ▶ `SCHEMA-test-selection`
+io ◀ `FUNC-deduce-tests` · io ▶ `ACTOR-auftraggeber` · `FUNC-agent-loop` · schema ▶ `SCHEMA-test-selection`
 
 ### 4.126  `FLOW-tool-context` — Werkzeug-Kontext
 
@@ -8646,13 +8646,13 @@ io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `S
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
-io ◀ `ACTOR-owner` · io ▶ `FUNC-migrate-schema` · `FUNC-schema-guard` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-regelhalter` · io ▶ `FUNC-migrate-schema` · `FUNC-schema-guard` · schema ▶ `SCHEMA-query-params`
 
 ### 4.131  `FLOW-vorschlag` — Vorschlag an den Nutzer
 
 Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis. (CR-GC-770)
 
-io ◀ `FUNC-vorschlag` · io ▶ `ACTOR-owner` · schema ▶ `SCHEMA-mutate-result`
+io ◀ `FUNC-vorschlag` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-mutate-result`
 
 ### 4.132  `FLOW-zug-bericht` — Bericht zum Zug
 

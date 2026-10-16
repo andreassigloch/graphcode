@@ -428,7 +428,7 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // Der Optimierer hat STRUKTURELL recht und SEMANTISCH unrecht, und beides ist wichtig:
       //
       //  - Strukturell: `mergeCandidates` gruppiert nach Vertrag UND Endpunkt-Signatur. Beide
-      //    FLOWs laufen von `ACTOR-owner` nach `FUNC-generation-step` und tragen
+      //    FLOWs laufen von `ACTOR-regelhalter` nach `FUNC-generation-step` und tragen
       //    `SCHEMA-steering-channel`. Im Graphen sind sie damit dasselbe — das ist die
       //    Definition eines Duplikats, und die Regel ist richtig.
       //  - Semantisch: sie unterscheiden sich im RANG (Anleitung gegen Vorschlag,

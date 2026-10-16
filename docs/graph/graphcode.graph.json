@@ -1,10 +1,10 @@
 {
   "elements": [
     {
-      "id": "ACTOR-agent",
+      "id": "ACTOR-auftraggeber",
       "type": "ACTOR",
       "name": "Auftraggeber",
-      "description": "Wer der Ablaufsteuerung einen Auftrag gibt und das Ergebnis bekommt: der Mensch im Prompt oder ein Orchestrator. Bewusst nicht namentlich modelliert. Die Ablaufsteuerung selbst ist FUNC-agent-loop (CR-GC-813).",
+      "description": "Gibt Auftraege und nimmt Ergebnisse ab, ueber jeden Kanal: Prompt an die Ablaufsteuerung, CLI-Verb, MCP-Aufruf. Mensch oder Orchestrator, gleichwertig; das Gate unterscheidet sie nicht, es loggt nur den Autor. Nutzerklassen (ISO 29148 5.2.4): Entwickler/Repo-Owner, Systems Engineer auf der WAS-Ebene, Vibe Coder ohne eigenen Code, Orchestrator. Ein Auftrag aendert nie das Regelwerk, nach dem das Gate urteilt, das setzt ACTOR-regelhalter. (CR-GC-455, CR-GC-813, CR-GC-815)",
       "status": "reviewed"
     },
     {
@@ -24,10 +24,10 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "id": "ACTOR-owner",
+      "id": "ACTOR-regelhalter",
       "type": "ACTOR",
-      "name": "Repo-Owner (Mensch am Repo)",
-      "description": "Der Mensch, dem das Repo gehoert: setzt das Ziel, entscheidet, delegiert die Realisierung an gegatete Agenten. Er will exzellente Codequalitaet bei effizientem Testen und minimalem Token-/LLM-Aufwand. Drei Nutzerklassen, EINE Schnittstelle (ISO 29148 5.2.4 — die Klasse steht hier, nicht in der Topologie): (a) Entwickler/Repo-Owner — betreibt das Repo, faehrt CLI und Gate; (b) Systems Engineer — arbeitet auf der WAS-Ebene (UC/REQ/FUNC/FCHAIN) und delegiert die HOW-Ebene; (c) Vibe Coder — denkt in Architektur und Kundennutzen, schreibt selbst keinen Code. Alle drei reden ueber CLI-Verben, Skill-Aufrufe und dasselbe Apply-Gate; eine eigene Topologie-Rolle hatte keine von ihnen. (CR-GC-455)",
+      "name": "Regelhalter",
+      "description": "Setzt das Regelwerk, nach dem das Gate urteilt und die Runde fuehrt: Urteilsschwellen in der Config, Regelklauseln, Vorlagen je Readiness-Dimension, das Gate-Protokoll, die Ontologie-Version aus contracts. Eine Rolle, kein Personentyp; getrennt vom Auftraggeber, weil ein Auftrag das Regelwerk nicht aendern darf. (CR-GC-815)",
       "status": "reviewed"
     },
     {
@@ -3448,6 +3448,18 @@
       "description": "docs/cr/open/CR-GC-814-modell-recall-falsch-verdrahtet-seedfrom.md"
     },
     {
+      "id": "CR-GC-815",
+      "type": "CR",
+      "name": "Akteure nach Kanal statt nach Rolle geschnitten: Auftraggeber und Regelhalter",
+      "description": "docs/cr/open/CR-GC-815-akteure-nach-kanal-statt-nach-rolle-gesc.md"
+    },
+    {
+      "id": "CR-GC-816",
+      "type": "CR",
+      "name": "Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk",
+      "description": "docs/cr/open/CR-GC-816-block-umverteilung-nach-cr-gc-813-graph-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3974,7 +3986,7 @@
       "id": "FLOW-cli-invocation",
       "type": "FLOW",
       "name": "CLI-Aufruf (Rohform)",
-      "description": "Was der Mensch in die Schale tippt: Verb und Optionen als Argumentliste, noch nicht aufgeloest.",
+      "description": "Was der Auftraggeber in die Schale gibt: Verb und Optionen als Argumentliste, noch nicht aufgeloest.",
       "sync": "sync"
     },
     {
@@ -4003,7 +4015,7 @@
       "id": "FLOW-config-file",
       "type": "FLOW",
       "name": "Repo-Konfiguration (Rohform)",
-      "description": "Die Urteilsschwellen, wie der Mensch sie in graphcode.config.jsonc schreibt: vor dem Auffuellen mit DEFAULT_METRIC_POLICY, Felder duerfen fehlen. Gleicher Vertrag wie die geltende Policy, anderer Zustand.",
+      "description": "Die Urteilsschwellen, wie der Regelhalter sie in graphcode.config.jsonc schreibt: vor dem Auffuellen mit DEFAULT_METRIC_POLICY, Felder duerfen fehlen. Gleicher Vertrag wie die geltende Policy, anderer Zustand.",
       "sync": "async"
     },
     {
@@ -4061,7 +4073,7 @@
       "id": "FLOW-formatE-artifact-agent",
       "type": "FLOW",
       "name": "Format-E-Artefakt (Agent)",
-      "description": "Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung ACTOR-agent → FUNC-decode; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510).",
+      "description": "Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-agent-loop → FUNC-graph-mutate-tool, FUNC-host-socket; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510, Quelle korrigiert CR-GC-815).",
       "status": "reviewed",
       "sync": "sync"
     },
@@ -4069,7 +4081,7 @@
       "id": "FLOW-formatE-artifact-read-tools",
       "type": "FLOW",
       "name": "Format-E-Artefakt (read-tools)",
-      "description": "Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-read-tools → ACTOR-agent; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510).",
+      "description": "Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-read-tools → FUNC-agent-loop; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510, Ziel korrigiert CR-GC-815).",
       "status": "reviewed",
       "sync": "sync"
     },
@@ -4185,7 +4197,7 @@
       "id": "FLOW-install-result-collect-status",
       "type": "FLOW",
       "name": "Lifecycle-Result (collect-status)",
-      "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-collect-status → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
+      "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-collect-status → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).",
       "status": "reviewed",
       "sync": "sync"
     },
@@ -4193,7 +4205,7 @@
       "id": "FLOW-install-result-harness-cli",
       "type": "FLOW",
       "name": "Lifecycle-Result (harness-cli)",
-      "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-harness-cli → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
+      "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-harness-cli → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).",
       "status": "reviewed",
       "sync": "sync"
     },
@@ -4201,7 +4213,7 @@
       "id": "FLOW-install-result-upgrade",
       "type": "FLOW",
       "name": "Lifecycle-Result (upgrade)",
-      "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Entwickler: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-owner; aufgetrennt aus FLOW-install-result (CR-GC-510).",
+      "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).",
       "status": "reviewed",
       "sync": "sync"
     },
@@ -4347,8 +4359,8 @@
     {
       "id": "FLOW-mutate-cmd-owner",
       "type": "FLOW",
-      "name": "Mutate-Command (Owner)",
-      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-owner → FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
+      "name": "Mutate-Command (Auftraggeber)",
+      "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung ACTOR-auftraggeber → FUNC-host-socket; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510, CR-GC-815).",
       "status": "reviewed",
       "sync": "sync"
     },
@@ -4383,7 +4395,7 @@
       "id": "FLOW-query-request-agent",
       "type": "FLOW",
       "name": "Query-Request (Agent)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-agent → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-agent-loop → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-graph-readiness, FUNC-graph-metrics, FUNC-rules-tool, FUNC-authoring-guide, FUNC-graph-export-snapshot; aufgetrennt aus FLOW-query-request (CR-GC-510, Quelle korrigiert CR-GC-815).",
       "status": "reviewed",
       "sync": "sync"
     },
@@ -4398,8 +4410,8 @@
     {
       "id": "FLOW-query-request-owner",
       "type": "FLOW",
-      "name": "Query-Request (Owner)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-owner → FUNC-view-changelog, FUNC-view-conops, FUNC-view-fmea, FUNC-view-icd, FUNC-view-intplan, FUNC-view-rtm, FUNC-render-views, FUNC-export-markdown, FUNC-list-elements, FUNC-graph-expand; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "name": "Query-Request (Auftraggeber)",
+      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung ACTOR-auftraggeber → FUNC-view-changelog, FUNC-view-conops, FUNC-view-fmea, FUNC-view-icd, FUNC-view-intplan, FUNC-view-rtm, FUNC-render-views, FUNC-export-markdown, FUNC-list-elements, FUNC-graph-expand; aufgetrennt aus FLOW-query-request (CR-GC-510, CR-GC-815).",
       "status": "reviewed",
       "sync": "sync"
     },
@@ -4506,7 +4518,7 @@
       "id": "FLOW-steering-trigger-agent",
       "type": "FLOW",
       "name": "Runden-Ausloeser (Agent)",
-      "description": "Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Verbindung ACTOR-agent → FUNC-take-steering-snapshot; aufgetrennt aus FLOW-steering-trigger (CR-GC-510).",
+      "description": "Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Verbindung FUNC-agent-loop → FUNC-take-steering-snapshot; aufgetrennt aus FLOW-steering-trigger (CR-GC-510, Quelle korrigiert CR-GC-815).",
       "status": "reviewed",
       "concept": true,
       "sync": "sync"
@@ -11206,7 +11218,7 @@
       "id": "UC-reduced-llm",
       "type": "UC",
       "name": "Mit kleinem oder lokalem Modell arbeiten",
-      "description": "Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren und dieselbe Strukturqualitaet erreichen wie mit einem Frontier-Modell. Die Achse dieses UC ist die MODELLGROESSE. Wer die Schleife treibt, ist keine Eigenschaft dieses UC, sondern eine Grenzfrage und steht an den Akteuren ACTOR-agent und ACTOR-llm. (geschaerft CR-GC-569)",
+      "description": "Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokalen Modell fahren und dieselbe Strukturqualitaet erreichen wie mit einem Frontier-Modell. Die Achse dieses UC ist die MODELLGROESSE. Wer die Schleife treibt, ist keine Eigenschaft dieses UC, sondern Realisierung der Ablaufsteuerung FUNC-agent-loop. (geschaerft CR-GC-569, CR-GC-815)",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z"
@@ -11221,8 +11233,23 @@
   ],
   "traces": [
     {
-      "source": "ACTOR-agent",
+      "source": "ACTOR-auftraggeber",
       "target": "FLOW-auftrag",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-auftraggeber",
+      "target": "FLOW-cli-invocation",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-auftraggeber",
+      "target": "FLOW-mutate-cmd-owner",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-auftraggeber",
+      "target": "FLOW-query-request-owner",
       "type": "io"
     },
     {
@@ -11231,46 +11258,29 @@
       "type": "io"
     },
     {
-      "source": "ACTOR-owner",
+      "source": "ACTOR-regelhalter",
       "target": "FLOW-channel-dimension-template",
       "type": "io"
     },
     {
-      "source": "ACTOR-owner",
+      "source": "ACTOR-regelhalter",
       "target": "FLOW-channel-gate-protocol",
       "type": "io"
     },
     {
-      "source": "ACTOR-owner",
+      "source": "ACTOR-regelhalter",
       "target": "FLOW-channel-rule-clause",
       "type": "io"
     },
     {
-      "source": "ACTOR-owner",
-      "target": "FLOW-cli-invocation",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-owner",
+      "source": "ACTOR-regelhalter",
       "target": "FLOW-config-file",
       "type": "io"
     },
     {
-      "source": "ACTOR-owner",
-      "target": "FLOW-mutate-cmd-owner",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-owner",
-      "target": "FLOW-query-request-owner",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-owner",
+      "source": "ACTOR-regelhalter",
       "target": "FLOW-version-bump",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "type": "io"
     },
     {
       "source": "CR-GC-100",
@@ -15906,6 +15916,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-815",
+      "target": "FUNC-agent-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-815",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-816",
+      "target": "FUNC-block-gedaechtnis",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-816",
+      "target": "FUNC-block-speicherwerk",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-816",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
@@ -17511,7 +17546,7 @@
     },
     {
       "source": "FLOW-audit-entries",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -17541,7 +17576,7 @@
     },
     {
       "source": "FLOW-audit-report",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -17771,7 +17806,7 @@
     },
     {
       "source": "FLOW-code-lane-plan",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -17836,12 +17871,7 @@
     },
     {
       "source": "FLOW-ergebnis",
-      "target": "ACTOR-agent",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-ergebnis",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -17861,7 +17891,7 @@
     },
     {
       "source": "FLOW-export-pending",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -17931,10 +17961,8 @@
     },
     {
       "source": "FLOW-gate-verdict",
-      "target": "ACTOR-owner",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "ACTOR-auftraggeber",
+      "type": "io"
     },
     {
       "source": "FLOW-gate-verdict",
@@ -17998,7 +18026,7 @@
     },
     {
       "source": "FLOW-graph-snapshot-file",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -18008,7 +18036,7 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -18255,7 +18283,7 @@
     },
     {
       "source": "FLOW-install-result-collect-status",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -18265,7 +18293,7 @@
     },
     {
       "source": "FLOW-install-result-harness-cli",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -18275,7 +18303,7 @@
     },
     {
       "source": "FLOW-install-result-upgrade",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -18347,10 +18375,8 @@
     },
     {
       "source": "FLOW-markdown-docs",
-      "target": "ACTOR-owner",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "ACTOR-auftraggeber",
+      "type": "io"
     },
     {
       "source": "FLOW-markdown-docs",
@@ -18727,7 +18753,7 @@
     },
     {
       "source": "FLOW-schlupf-zeile",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -19002,7 +19028,7 @@
     },
     {
       "source": "FLOW-test-selection",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -19080,7 +19106,7 @@
     },
     {
       "source": "FLOW-vorschlag",
-      "target": "ACTOR-owner",
+      "target": "ACTOR-auftraggeber",
       "type": "io"
     },
     {
@@ -19565,11 +19591,6 @@
     },
     {
       "source": "FUNC-block-gedaechtnis",
-      "target": "FUNC-graph-export-snapshot",
-      "type": "compose"
-    },
-    {
-      "source": "FUNC-block-gedaechtnis",
       "target": "FUNC-import",
       "type": "compose"
     },
@@ -19811,6 +19832,11 @@
     {
       "source": "FUNC-block-speicherwerk",
       "target": "FUNC-export-marker",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-speicherwerk",
+      "target": "FUNC-graph-export-snapshot",
       "type": "compose"
     },
     {
@@ -25104,5 +25130,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 764
+  "graphVersion": 769
 }

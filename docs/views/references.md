@@ -8,16 +8,16 @@
 
 | source | type | target |
 |---|---|---|
-| `ACTOR-agent` | io | `FLOW-auftrag` |
+| `ACTOR-auftraggeber` | io | `FLOW-auftrag` |
+| `ACTOR-auftraggeber` | io | `FLOW-cli-invocation` |
+| `ACTOR-auftraggeber` | io | `FLOW-mutate-cmd-owner` |
+| `ACTOR-auftraggeber` | io | `FLOW-query-request-owner` |
 | `ACTOR-learning-engine` | io | `FLOW-learning-advice` |
-| `ACTOR-owner` | io | `FLOW-channel-dimension-template` |
-| `ACTOR-owner` | io | `FLOW-channel-gate-protocol` |
-| `ACTOR-owner` | io | `FLOW-channel-rule-clause` |
-| `ACTOR-owner` | io | `FLOW-cli-invocation` |
-| `ACTOR-owner` | io | `FLOW-config-file` |
-| `ACTOR-owner` | io | `FLOW-mutate-cmd-owner` |
-| `ACTOR-owner` | io | `FLOW-query-request-owner` |
-| `ACTOR-owner` | io | `FLOW-version-bump` |
+| `ACTOR-regelhalter` | io | `FLOW-channel-dimension-template` |
+| `ACTOR-regelhalter` | io | `FLOW-channel-gate-protocol` |
+| `ACTOR-regelhalter` | io | `FLOW-channel-rule-clause` |
+| `ACTOR-regelhalter` | io | `FLOW-config-file` |
+| `ACTOR-regelhalter` | io | `FLOW-version-bump` |
 | `CR-GC-100` | relation | `FUNC-evaluate-rules` |
 | `CR-GC-100` | relation | `FUNC-graph-store` |
 | `CR-GC-100` | relation | `FUNC-import` |
@@ -866,6 +866,11 @@
 | `CR-GC-813` | relation | `FUNC-host-socket` |
 | `CR-GC-813` | relation | `FUNC-rules-tool` |
 | `CR-GC-813` | relation | `REQ-agent-loop-executes-skill` |
+| `CR-GC-815` | relation | `FUNC-agent-loop` |
+| `CR-GC-815` | relation | `FUNC-mutate` |
+| `CR-GC-816` | relation | `FUNC-block-gedaechtnis` |
+| `CR-GC-816` | relation | `FUNC-block-speicherwerk` |
+| `CR-GC-816` | relation | `FUNC-graph-export-snapshot` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-store` |
@@ -1171,13 +1176,13 @@
 | `FLOW-anleitung-view-rtm` | relation | `SCHEMA-skill-text` |
 | `FLOW-arch-fitness` | io | `FUNC-fit-advisory` |
 | `FLOW-arch-fitness` | relation | `SCHEMA-metric-vector` |
-| `FLOW-audit-entries` | io | `ACTOR-owner` |
+| `FLOW-audit-entries` | io | `ACTOR-auftraggeber` |
 | `FLOW-audit-entries` | io | `FUNC-agent-loop` |
 | `FLOW-audit-entries` | relation | `SCHEMA-audit-record` |
 | `FLOW-audit-record` | io | `FUNC-audit-stats` |
 | `FLOW-audit-record` | io | `FUNC-audit-trail` |
 | `FLOW-audit-record` | relation | `SCHEMA-audit-record` |
-| `FLOW-audit-report` | io | `ACTOR-owner` |
+| `FLOW-audit-report` | io | `ACTOR-auftraggeber` |
 | `FLOW-audit-report` | io | `FUNC-agent-loop` |
 | `FLOW-audit-report` | relation | `SCHEMA-audit-stats` |
 | `FLOW-auftrag` | io | `FUNC-agent-loop` |
@@ -1222,7 +1227,7 @@
 | `FLOW-cli-invocation` | relation | `SCHEMA-cli-command` |
 | `FLOW-cli-invocation-import-code` | io | `FUNC-cli-dispatch` |
 | `FLOW-cli-invocation-import-code` | relation | `SCHEMA-cli-command` |
-| `FLOW-code-lane-plan` | io | `ACTOR-owner` |
+| `FLOW-code-lane-plan` | io | `ACTOR-auftraggeber` |
 | `FLOW-code-lane-plan` | relation | `SCHEMA-code-lane-plan` |
 | `FLOW-completeness` | io | `FUNC-compute-readiness` |
 | `FLOW-completeness` | relation | `SCHEMA-completeness` |
@@ -1235,12 +1240,11 @@
 | `FLOW-dimension-readiness` | relation | `SCHEMA-readiness-report` |
 | `FLOW-element-slice` | io | `FUNC-agent-loop` |
 | `FLOW-element-slice` | relation | `SCHEMA-ontology-graph` |
-| `FLOW-ergebnis` | io | `ACTOR-agent` |
-| `FLOW-ergebnis` | io | `ACTOR-owner` |
+| `FLOW-ergebnis` | io | `ACTOR-auftraggeber` |
 | `FLOW-ergebnis` | relation | `SCHEMA-markdown-view` |
 | `FLOW-expand-subgraph` | io | `FUNC-read-tools` |
 | `FLOW-expand-subgraph` | relation | `SCHEMA-ontology-graph` |
-| `FLOW-export-pending` | io | `ACTOR-owner` |
+| `FLOW-export-pending` | io | `ACTOR-auftraggeber` |
 | `FLOW-export-pending` | relation | `SCHEMA-export-pending` |
 | `FLOW-fit-advisory` | io | `FUNC-zug-bericht` |
 | `FLOW-fit-advisory` | relation | `SCHEMA-fit-advisory` |
@@ -1254,7 +1258,7 @@
 | `FLOW-function-criticality` | io | `ACTOR-dashboard` |
 | `FLOW-function-criticality` | io | `FUNC-graph-metrics` |
 | `FLOW-function-criticality` | relation | `SCHEMA-function-criticality` |
-| `FLOW-gate-verdict` | io | `ACTOR-owner` |
+| `FLOW-gate-verdict` | io | `ACTOR-auftraggeber` |
 | `FLOW-gate-verdict` | io | `FUNC-bootstrap` |
 | `FLOW-gate-verdict` | io | `FUNC-graph-suggest` |
 | `FLOW-gate-verdict` | io | `FUNC-import-code-verb` |
@@ -1267,9 +1271,9 @@
 | `FLOW-generation-step-vorschlag` | relation | `SCHEMA-generation-step` |
 | `FLOW-graph-delta` | io | `FUNC-graph-store` |
 | `FLOW-graph-delta` | relation | `SCHEMA-graph-delta` |
-| `FLOW-graph-snapshot-file` | io | `ACTOR-owner` |
+| `FLOW-graph-snapshot-file` | io | `ACTOR-auftraggeber` |
 | `FLOW-graph-snapshot-file` | relation | `SCHEMA-ontology-json` |
-| `FLOW-graph-state` | io | `ACTOR-owner` |
+| `FLOW-graph-state` | io | `ACTOR-auftraggeber` |
 | `FLOW-graph-state` | io | `FUNC-arch-fitness` |
 | `FLOW-graph-state` | io | `FUNC-auto-export` |
 | `FLOW-graph-state` | io | `FUNC-chain-metrics` |
@@ -1315,11 +1319,11 @@
 | `FLOW-impacted-tests` | relation | `SCHEMA-impacted-tests` |
 | `FLOW-imported-graph` | io | `FUNC-graph-store` |
 | `FLOW-imported-graph` | relation | `SCHEMA-ontology-graph` |
-| `FLOW-install-result-collect-status` | io | `ACTOR-owner` |
+| `FLOW-install-result-collect-status` | io | `ACTOR-auftraggeber` |
 | `FLOW-install-result-collect-status` | relation | `SCHEMA-cli-command` |
-| `FLOW-install-result-harness-cli` | io | `ACTOR-owner` |
+| `FLOW-install-result-harness-cli` | io | `ACTOR-auftraggeber` |
 | `FLOW-install-result-harness-cli` | relation | `SCHEMA-cli-command` |
-| `FLOW-install-result-upgrade` | io | `ACTOR-owner` |
+| `FLOW-install-result-upgrade` | io | `ACTOR-auftraggeber` |
 | `FLOW-install-result-upgrade` | relation | `SCHEMA-cli-command` |
 | `FLOW-learning-advice` | io | `FUNC-graph-suggest` |
 | `FLOW-learning-advice` | relation | `SCHEMA-learning-advice` |
@@ -1333,7 +1337,7 @@
 | `FLOW-live-event-host` | relation | `SCHEMA-update-event` |
 | `FLOW-lock-release` | io | `FUNC-claim-store-lock` |
 | `FLOW-lock-release` | relation | `SCHEMA-lock-owner` |
-| `FLOW-markdown-docs` | io | `ACTOR-owner` |
+| `FLOW-markdown-docs` | io | `ACTOR-auftraggeber` |
 | `FLOW-markdown-docs` | relation | `SCHEMA-markdown-view` |
 | `FLOW-mcp-tool` | io | `FUNC-bind-tools` |
 | `FLOW-mcp-tool` | relation | `SCHEMA-mcp-tool` |
@@ -1408,7 +1412,7 @@
 | `FLOW-rules-answer` | relation | `SCHEMA-rule-violation` |
 | `FLOW-schema-fingerprint` | io | `FUNC-graph-store` |
 | `FLOW-schema-fingerprint` | relation | `SCHEMA-schema-fingerprint` |
-| `FLOW-schlupf-zeile` | io | `ACTOR-owner` |
+| `FLOW-schlupf-zeile` | io | `ACTOR-auftraggeber` |
 | `FLOW-schlupf-zeile` | relation | `SCHEMA-schlupf-zeile` |
 | `FLOW-session-entry` | io | `FUNC-gve-sessions` |
 | `FLOW-session-entry` | relation | `SCHEMA-session-registry` |
@@ -1463,7 +1467,7 @@
 | `FLOW-target-profile` | relation | `SCHEMA-target-profile` |
 | `FLOW-target-profile-file` | io | `FUNC-target-profile-load` |
 | `FLOW-target-profile-file` | relation | `SCHEMA-target-profile` |
-| `FLOW-test-selection` | io | `ACTOR-owner` |
+| `FLOW-test-selection` | io | `ACTOR-auftraggeber` |
 | `FLOW-test-selection` | io | `FUNC-agent-loop` |
 | `FLOW-test-selection` | relation | `SCHEMA-test-selection` |
 | `FLOW-tool-context` | io | `FUNC-bind-tools` |
@@ -1477,7 +1481,7 @@
 | `FLOW-version-bump` | io | `FUNC-migrate-schema` |
 | `FLOW-version-bump` | io | `FUNC-schema-guard` |
 | `FLOW-version-bump` | relation | `SCHEMA-query-params` |
-| `FLOW-vorschlag` | io | `ACTOR-owner` |
+| `FLOW-vorschlag` | io | `ACTOR-auftraggeber` |
 | `FLOW-vorschlag` | relation | `SCHEMA-mutate-result` |
 | `FLOW-zug-bericht` | io | `FUNC-agent-loop` |
 | `FLOW-zug-bericht` | io | `FUNC-graph-suggest` |
@@ -1574,7 +1578,6 @@
 | `FUNC-block-gate` | io | `FLOW-channel-gate-verdict` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-decode` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-emit-trajectory` |
-| `FUNC-block-gedaechtnis` | compose | `FUNC-graph-export-snapshot` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-import` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-merge-nodes` |
 | `FUNC-block-gedaechtnis` | compose | `FUNC-own-kuzu-host` |
@@ -1624,6 +1627,7 @@
 | `FUNC-block-speicherwerk` | compose | `FUNC-claim-store-lock` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-create-harness` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-export-marker` |
+| `FUNC-block-speicherwerk` | compose | `FUNC-graph-export-snapshot` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-graph-store` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-held-back-traces` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-seed-from-json` |
