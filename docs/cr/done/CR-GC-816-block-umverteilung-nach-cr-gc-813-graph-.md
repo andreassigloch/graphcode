@@ -1,6 +1,6 @@
 # CR-GC-816: Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-16)
 **Typ:** aus Item ITEM-2026-967 (idea)
 **Erstellt:** 2026-10-16
 **Item:** bok/items/ITEM-2026-967.json (Lane: graph)
