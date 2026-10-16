@@ -22,6 +22,13 @@ io-Flüssen der Kette ab; zwei Modellfehler machen das Bild falsch:
    merge-branches, dashboard-metrics, snapshot-freshness, loop-closure, impact-testing, interface-escalation,
    generation-states (Messung GVE 2026-10-16 am Live-Modell). Ohne Quelle hat die Kette keinen Anfang.
 
+3. **Sackgassen im Kettenfokus** (GVE CR-GVE-368, live 2026-10-16: Glieder, die keine Senke erreichen): Apply-Gate
+   metrics, createHarness, computeFitAdvisory, ownKuzu, createToolContext, zugBericht; Bestand einlesen CLI-Dispatch,
+   createHarness, graph_mutate, executeImportCode; Skill berichtet conformanceViolations, computeReadiness,
+   computeMarks; Advisory Roundtrip graph_impact, bindReadTools; Repo-Lebenszyklus liveSessions, attachGve;
+   Steuerungsschleife computeSteeringDelta; Recall heldBackTraces. Je Glied klären: fehlt der Ausgang im Modell
+   (Code-Beleg) oder gehört das Glied nicht in die Kette (compose entfernen).
+
 ## Zielbild
 
 - Recall: `applyReseed` liefert an `seedFromJson` (Fluss neu benennen, z. B. reseed-snapshot-path, oder den
