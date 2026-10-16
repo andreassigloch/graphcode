@@ -1,6 +1,6 @@
 # CR-GC-815: Akteure nach Kanal statt nach Rolle geschnitten: Auftraggeber und Regelhalter
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-16)
 **Typ:** aus Item ITEM-2026-966 (finding)
 **Erstellt:** 2026-10-16
 **Item:** bok/items/ITEM-2026-966.json (Lane: graph)
