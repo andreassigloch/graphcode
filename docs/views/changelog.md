@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 423 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 424 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 423 CR · 343 done · 4 open.
+Total: 424 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -485,3 +485,4 @@ Total: 423 CR · 343 done · 4 open.
 | `CR-GC-811` | n/a | OCC je Element statt je Graph (Voraussetzung fuer ITEM-2026-958, Mehr-Schreiber spaeter) |
 | `CR-GC-812` | n/a | Offline vorberechnete REQ-Vorschlaege gegen Review-Latenz |
 | `CR-GC-813` | n/a | Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code |
+| `CR-GC-814` | n/a | Modell: Recall falsch verdrahtet (seedFromJson an GraphStore statt applyReseed), sieben Wirkketten ohne Ausloeser |

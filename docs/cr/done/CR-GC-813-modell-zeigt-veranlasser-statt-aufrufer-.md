@@ -1,6 +1,6 @@
 # CR-GC-813: Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-16)
 **Typ:** aus Item ITEM-2026-959 (finding)
 **Erstellt:** 2026-10-16
 **Item:** bok/items/ITEM-2026-959.json (Lane: graph)
