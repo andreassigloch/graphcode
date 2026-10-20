@@ -5,8 +5,8 @@ Read `README.md` first for what graphcode is and how to run it. This file is the
 rules live in the user's global instructions; only what is specific to this repo is here.
 
 **CR-Modus: graph** — CR text in `docs/cr/`, a lean CR node (id, title, scope edges) in the graph;
-status derives from `open/`/`done/`. Node and status are set by `aise dispatch prepare` /
-`aise cr close`; the scope edges go through `graph_mutate`. Family rule: `bok/docs/governance/CR-GRAPH-REPOS.md`.
+status derives from `open/`/`done/`, the node stores none. `aise dispatch prepare` creates the node;
+the scope edges go through `graph_mutate`. Family rule: `bok/docs/governance/CR-GRAPH-REPOS.md`.
 
 ## What graphcode is / is not
 
