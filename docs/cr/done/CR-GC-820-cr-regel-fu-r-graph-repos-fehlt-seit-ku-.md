@@ -1,6 +1,6 @@
 # CR-GC-820: CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-20)
 **Typ:** aus Item ITEM-2026-980 (finding)
 **Erstellt:** 2026-10-20
 **Item:** bok/items/ITEM-2026-980.json (Lane: graph)
