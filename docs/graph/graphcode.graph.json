@@ -3478,6 +3478,12 @@
       "description": "docs/cr/open/CR-GC-819-uebergaben-ohne-kette-r-21-ownkuzu-bekom.md"
     },
     {
+      "id": "CR-GC-820",
+      "type": "CR",
+      "name": "CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md",
+      "description": "docs/cr/open/CR-GC-820-cr-regel-fu-r-graph-repos-fehlt-seit-ku-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -16061,6 +16067,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-820",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -25373,5 +25384,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 784
+  "graphVersion": 786
 }

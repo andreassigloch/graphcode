@@ -883,6 +883,7 @@
 | `CR-GC-819` | relation | `FUNC-graph-export-snapshot` |
 | `CR-GC-819` | relation | `FUNC-own-kuzu-host` |
 | `CR-GC-819` | relation | `FUNC-seed-from-json` |
+| `CR-GC-820` | relation | `FUNC-graph-readiness` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

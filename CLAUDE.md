@@ -5,7 +5,8 @@ Read `README.md` first for what graphcode is and how to run it. This file is the
 rules live in the user's global instructions; only what is specific to this repo is here.
 
 **CR-Modus: graph** — CR text in `docs/cr/`, a lean CR node (id, title, scope edges) in the graph;
-status derives from `open/`/`done/` (global rule "CR-Verwaltung in Graph-Repos").
+status derives from `open/`/`done/`. Node and status are set by `aise dispatch prepare` /
+`aise cr close`; the scope edges go through `graph_mutate`. Family rule: `bok/docs/governance/CR-GRAPH-REPOS.md`.
 
 ## What graphcode is / is not
 
@@ -84,7 +85,6 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
   order fails the suite unless it is listed as known debt, and listed debt that no longer exists
   fails it too.
 - **No binary / NUL corruption in source** — PreToolUse hook `.claude/hooks/deny-binary-source.sh`.
-- **Read-before-edit** — harness built-in (Edit requires a prior Read).
 
 ## Working on the model
 
@@ -120,7 +120,7 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
   |---|---|---|---|
   | MODELL | `npm run verify:model` | only `docs/` in the diff | the fixed set in `scripts/model-test-set.mjs` (~46 files, ~45 s), kept complete by `tests/verify-model.completeness.test.ts` |
   | CODE | `npm run verify:code` | source files changed | derived per changeset from the committed snapshot via `impactedTests()` — the same function `graph_tests` uses |
-  | VOLL | `npm run verify:full <CR>` · `npm test` | before closing a CR (until 10 CRs without Schlupf), before publish, in CI | all 142 files (~280 s) — the only lane that catches the clean-machine class |
+  | VOLL | `npm run verify:full <CR>` · `npm test` | before closing a CR (until 10 CRs without Schlupf), before publish, in CI | the whole suite — the only lane that catches the clean-machine class |
 
 - **A derived set is only as good as its binding.** `verify:code` prints the binding ratio of the
   changeset and every impacted TEST without `testRefs`, and falls back to the FULL lane whenever a
@@ -132,8 +132,7 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
   with the change. A failed report turns the lane red; `--plan` reports nothing.
 - **Read the `unresolved` list.** An unbound TEST has no run artifact; a selected run that
   skips it is not coverage, and `graph_tests` reports it rather than dropping it silently.
-- **Real tests, no mocks.** Persistence on disk, never `:memory:`.
+- **Real tests, no mocks.**
 - Unit (gate / rule-eval) · integration (MCP + local Kuzu) · conformance (Format-E round-trip).
-- Root-cause over symptom-fix: reproduce the bug in a unit test first, then fix the root cause.
 - A permanently red test file is not a parking spot — it is a blind spot. Two dead `exports`
   subpaths hid behind one for weeks.

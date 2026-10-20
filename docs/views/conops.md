@@ -446,6 +446,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-817` | n/a | Dashboard bekommt Kennzahlen als drei Fluesse statt der einen graph_metrics-Antwort | `FUNC-graph-metrics` |
 | `CR-GC-818` | n/a | MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08) | `FUNC-merge-nodes` |
 | `CR-GC-819` | n/a | Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette | `FUNC-create-harness` · `FUNC-graph-export-snapshot` · `FUNC-own-kuzu-host` · `FUNC-seed-from-json` |
+| `CR-GC-820` | n/a | CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md | `FUNC-graph-readiness` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
