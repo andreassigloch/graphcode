@@ -6,7 +6,7 @@ rules live in the user's global instructions; only what is specific to this repo
 
 **CR-Modus: graph** — CR text in `docs/cr/`, a lean CR node (id, title, scope edges) in the graph;
 status derives from `open/`/`done/`, the node stores none. `aise dispatch prepare` creates the node;
-the scope edges go through `graph_mutate`. Family rule: `bok/docs/governance/CR-GRAPH-REPOS.md`.
+the scope edges go through `graph_mutate`. Family rule for items and CRs: `bok/docs/governance/ITEM-UND-CR.md`.
 
 ## What graphcode is / is not
 
