@@ -1,6 +1,6 @@
 # CR-GC-821: graph_metrics-Antwort ohne pruefbaren Vertrag
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-20)
 **Typ:** aus Item ITEM-2026-972 (finding)
 **Erstellt:** 2026-10-20
 **Item:** bok/items/ITEM-2026-972.json (Lane: code)
