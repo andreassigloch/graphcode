@@ -47,8 +47,8 @@
 
 - **Auftraggeber** (`ACTOR-auftraggeber`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
   - Gibt Auftraege und nimmt Ergebnisse ab, ueber jeden Kanal: Prompt an die Ablaufsteuerung, CLI-Verb, MCP-Aufruf. Mensch oder Orchestrator, gleichwertig; das Gate unterscheidet sie nicht, es loggt nur den Autor. Nutzerklassen (ISO 29148 5.2.4): Entwickler/Repo-Owner, Systems Engineer auf der WAS-Ebene, Vibe Coder ohne eigenen Code, Orchestrator. Ein Auftrag aendert nie das Regelwerk, nach dem das Gate urteilt, das setzt ACTOR-regelhalter. (CR-GC-455, CR-GC-813, CR-GC-815)
-- **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-code-quality` · `UC-live-graph-view` · `UC-repo-lifecycle`
-  - SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)
+- **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-live-graph-view` · `UC-repo-lifecycle`
+  - Browser-Viewer (graph-view-edit). Liest ueber host.sock die Antworten von graph_metrics, graph_readiness und graph_generate (peek); Live-Updates und Health sind Ziel von CR-GC-809. Im Edit-Modus schreibt er heute ueber graph_mutate und graph_export; ob er das darf, entscheidet CR-GC-808 (Ein-Schreiber-Modus). (SPEC §5 Kanal 2, CR-GC-822)
 - **Learning-Engine** (`ACTOR-learning-engine`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-reduced-llm`
   - Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen als Lerneingang, beantwortet eine Lern-Frage von graph_suggest und nextStep und liefert je Kandidat ein Urteil zurueck. Sie schreibt KEINE Konfiguration: die Urteilsschwellen bleiben der Vertrag des Menschen. Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455, Andockpunkt CR-GC-465)
 - **Regelhalter** (`ACTOR-regelhalter`) — triggert `UC-deterministic-steering` · `UC-repo-lifecycle`
@@ -72,7 +72,7 @@ Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-eng
 
 Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.
 
-Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-learning-engine` · `ACTOR-regelhalter`
+Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-regelhalter`
 
 - `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
 - `FCHAIN-skill-help` — Skill erklaert: `FUNC-agent-loop` → `FUNC-se-help`
@@ -448,6 +448,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-819` | n/a | Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette | `FUNC-create-harness` · `FUNC-graph-export-snapshot` · `FUNC-own-kuzu-host` · `FUNC-seed-from-json` |
 | `CR-GC-820` | n/a | CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md | `FUNC-graph-readiness` |
 | `CR-GC-821` | n/a | graph_metrics-Antwort ohne pruefbaren Vertrag | `FUNC-graph-metrics` |
+| `CR-GC-822` | n/a | Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell | `FUNC-generation-step` · `FUNC-graph-readiness` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

@@ -171,13 +171,13 @@
 | `FLOW-mutate-cmd-merge-nodes` | `FUNC-merge-nodes` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-owner` | `ACTOR-auftraggeber` | `FUNC-host-socket` |
 | `FLOW-mutate-cmd-test-ingest` | `FUNC-test-ingest` | `FUNC-mutate` |
-| `FLOW-next-step-advice` | `FUNC-generation-step` | `FUNC-agent-loop` |
+| `FLOW-next-step-advice` | `FUNC-generation-step` | `ACTOR-dashboard` · `FUNC-agent-loop` |
 | `FLOW-ontology-json` | `FUNC-seed-from-json` | `FUNC-import` |
 | `FLOW-query-export` | `FUNC-graph-export-snapshot` | `FUNC-export-markdown` |
 | `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-impact` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-list-elements` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` · `FUNC-rules-tool` |
 | `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-graph-export-snapshot` |
 | `FLOW-query-request-owner` | `ACTOR-auftraggeber` | `FUNC-agent-loop` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-list-elements` |
-| `FLOW-readiness-report` | `FUNC-graph-readiness` | `FUNC-agent-loop` |
+| `FLOW-readiness-report` | `FUNC-graph-readiness` | `ACTOR-dashboard` · `FUNC-agent-loop` |
 | `FLOW-reseed-order` | `FUNC-reseed` | `FUNC-apply-reseed` |
 | `FLOW-reseed-snapshot` | `FUNC-rewind` | `FUNC-reseed` |
 | `FLOW-reseeded-graph` | `FUNC-apply-reseed` | `FUNC-seed-from-json` |

@@ -46,9 +46,9 @@ io ▶ `FLOW-auftrag` · `FLOW-cli-invocation` · `FLOW-mutate-cmd-owner` · `FL
 
 ### 2.2  `ACTOR-dashboard` — Browser-Dashboard
 
-SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)
+Browser-Viewer (graph-view-edit). Liest ueber host.sock die Antworten von graph_metrics, graph_readiness und graph_generate (peek); Live-Updates und Health sind Ziel von CR-GC-809. Im Edit-Modus schreibt er heute ueber graph_mutate und graph_export; ob er das darf, entscheidet CR-GC-808 (Ein-Schreiber-Modus). (SPEC §5 Kanal 2, CR-GC-822)
 
-io ▶ — · io ◀ `FLOW-health-report` · `FLOW-metrics-answer` · `FLOW-sse-frame` · `FLOW-viewer-start`
+io ▶ — · io ◀ `FLOW-health-report` · `FLOW-metrics-answer` · `FLOW-next-step-advice` · `FLOW-readiness-report` · `FLOW-sse-frame` · `FLOW-viewer-start`
 
 ### 2.3  `ACTOR-learning-engine` — Learning-Engine
 
@@ -8610,7 +8610,7 @@ io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-serve-sse` · schema ▶ `SCHEMA-har
 
 ### 4.74  `FLOW-health-report` — Health-Report
 
-Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer.
+Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer. BENANNTE OFFENE DIFFERENZ: graph-view-edit liest /health heute nicht, es rechnet den Zustand aus der Snapshot-Datei; Ziel von CR-GC-809. (CR-GC-822)
 
 io ◀ `FUNC-health-endpoint` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-health-report`
 
@@ -8790,9 +8790,9 @@ io ◀ `FUNC-test-ingest` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-c
 
 ### 4.104  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
 
-Der Rueckweg an den fragenden Agenten: aus dem Messzustand die Fokus-Dimension und das Fund-Fenster. Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger.
+Der naechste Schritt aus dem Messzustand, die Fokus-Dimension und das Fund-Fenster: an die Ablaufsteuerung als Auftrag, an das Dashboard als Vorschau (graph_generate peek ueber host.sock). Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger. (CR-GC-822)
 
-io ◀ `FUNC-generation-step` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-generation-step`
+io ◀ `FUNC-generation-step` · io ▶ `ACTOR-dashboard` · `FUNC-agent-loop` · schema ▶ `SCHEMA-generation-step`
 
 ### 4.105  `FLOW-ontology-json` — Graph-Datei (Snapshot)
 
@@ -8824,11 +8824,11 @@ Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zw
 
 io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-agent-loop` · `FUNC-export-markdown` · `FUNC-graph-expand` · `FUNC-list-elements` · schema ▶ `SCHEMA-query-params`
 
-### 4.110  `FLOW-readiness-report` — Readiness-Report (Agent)
+### 4.110  `FLOW-readiness-report` — Readiness-Report
 
-Der Bericht von graph_readiness an den Agenten: Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten.
+Der Bericht von graph_readiness an jeden, der ihn ueber das Werkzeug abfragt: die Ablaufsteuerung und das Dashboard ueber host.sock (detail:true, mit den rohen Verstoessen). Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten. (CR-GC-822)
 
-io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-readiness-report`
+io ◀ `FUNC-graph-readiness` · io ▶ `ACTOR-dashboard` · `FUNC-agent-loop` · schema ▶ `SCHEMA-readiness-report`
 
 ### 4.111  `FLOW-reseed-order` — Reseed-Auftrag
 
@@ -8892,7 +8892,7 @@ io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-req` · `FUNC-author-uc` · `FUN
 
 ### 4.121  `FLOW-sse-frame` — SSE-Frame (versioniert)
 
-Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501)
+Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501) BENANNTE OFFENE DIFFERENZ: graph-view-edit abonniert /events heute nicht, es beobachtet die Snapshot-Datei; das Abo ist Ziel von CR-GC-809. (CR-GC-822)
 
 io ◀ `FUNC-broadcast-diff` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 

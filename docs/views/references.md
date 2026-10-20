@@ -885,6 +885,8 @@
 | `CR-GC-819` | relation | `FUNC-seed-from-json` |
 | `CR-GC-820` | relation | `FUNC-graph-readiness` |
 | `CR-GC-821` | relation | `FUNC-graph-metrics` |
+| `CR-GC-822` | relation | `FUNC-generation-step` |
+| `CR-GC-822` | relation | `FUNC-graph-readiness` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1403,6 +1405,7 @@
 | `FLOW-mutate-cmd-owner` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-test-ingest` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-test-ingest` | relation | `SCHEMA-mutate-command` |
+| `FLOW-next-step-advice` | io | `ACTOR-dashboard` |
 | `FLOW-next-step-advice` | io | `FUNC-agent-loop` |
 | `FLOW-next-step-advice` | relation | `SCHEMA-generation-step` |
 | `FLOW-ontology-json` | io | `FUNC-import` |
@@ -1428,6 +1431,7 @@
 | `FLOW-query-request-owner` | io | `FUNC-graph-expand` |
 | `FLOW-query-request-owner` | io | `FUNC-list-elements` |
 | `FLOW-query-request-owner` | relation | `SCHEMA-query-params` |
+| `FLOW-readiness-report` | io | `ACTOR-dashboard` |
 | `FLOW-readiness-report` | io | `FUNC-agent-loop` |
 | `FLOW-readiness-report` | relation | `SCHEMA-readiness-report` |
 | `FLOW-reseed-order` | io | `FUNC-apply-reseed` |

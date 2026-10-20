@@ -11,7 +11,7 @@
       "id": "ACTOR-dashboard",
       "type": "ACTOR",
       "name": "Browser-Dashboard",
-      "description": "SSE/WS read-only Viewer; Live-Q-Status-Visualisierung (Ziel b). (SPEC §5 Kanal 2)",
+      "description": "Browser-Viewer (graph-view-edit). Liest ueber host.sock die Antworten von graph_metrics, graph_readiness und graph_generate (peek); Live-Updates und Health sind Ziel von CR-GC-809. Im Edit-Modus schreibt er heute ueber graph_mutate und graph_export; ob er das darf, entscheidet CR-GC-808 (Ein-Schreiber-Modus). (SPEC §5 Kanal 2, CR-GC-822)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -3490,6 +3490,12 @@
       "description": "docs/cr/open/CR-GC-821-graph-metrics-antwort-ohne-pruefbaren-ve.md"
     },
     {
+      "id": "CR-GC-822",
+      "type": "CR",
+      "name": "Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell",
+      "description": "docs/cr/open/CR-GC-822-dashboard-wege-rules-evaluate-und-graph-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -4203,7 +4209,7 @@
       "id": "FLOW-health-report",
       "type": "FLOW",
       "name": "Health-Report",
-      "description": "Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer.",
+      "description": "Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer. BENANNTE OFFENE DIFFERENZ: graph-view-edit liest /health heute nicht, es rechnet den Zustand aus der Snapshot-Datei; Ziel von CR-GC-809. (CR-GC-822)",
       "sync": "sync"
     },
     {
@@ -4430,7 +4436,7 @@
       "id": "FLOW-next-step-advice",
       "type": "FLOW",
       "name": "Naechster Schritt (Advisory)",
-      "description": "Der Rueckweg an den fragenden Agenten: aus dem Messzustand die Fokus-Dimension und das Fund-Fenster. Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger.",
+      "description": "Der naechste Schritt aus dem Messzustand, die Fokus-Dimension und das Fund-Fenster: an die Ablaufsteuerung als Auftrag, an das Dashboard als Vorschau (graph_generate peek ueber host.sock). Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger. (CR-GC-822)",
       "sync": "sync"
     },
     {
@@ -4472,8 +4478,8 @@
     {
       "id": "FLOW-readiness-report",
       "type": "FLOW",
-      "name": "Readiness-Report (Agent)",
-      "description": "Der Bericht von graph_readiness an den Agenten: Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten.",
+      "name": "Readiness-Report",
+      "description": "Der Bericht von graph_readiness an jeden, der ihn ueber das Werkzeug abfragt: die Ablaufsteuerung und das Dashboard ueber host.sock (detail:true, mit den rohen Verstoessen). Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten. (CR-GC-822)",
       "sync": "sync"
     },
     {
@@ -4549,7 +4555,7 @@
       "id": "FLOW-sse-frame",
       "type": "FLOW",
       "name": "SSE-Frame (versioniert)",
-      "description": "Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501)",
+      "description": "Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501) BENANNTE OFFENE DIFFERENZ: graph-view-edit abonniert /events heute nicht, es beobachtet die Snapshot-Datei; das Abo ist Ziel von CR-GC-809. (CR-GC-822)",
       "sync": "async"
     },
     {
@@ -16095,6 +16101,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-822",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-822",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -18790,6 +18806,11 @@
     },
     {
       "source": "FLOW-next-step-advice",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-next-step-advice",
       "target": "FUNC-agent-loop",
       "type": "io"
     },
@@ -18912,6 +18933,11 @@
       "source": "FLOW-query-request-owner",
       "target": "SCHEMA-query-params",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-readiness-report",
+      "target": "ACTOR-dashboard",
+      "type": "io"
     },
     {
       "source": "FLOW-readiness-report",
@@ -25412,5 +25438,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 788
+  "graphVersion": 790
 }
