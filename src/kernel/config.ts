@@ -53,7 +53,8 @@ export const GraphcodeConfigSchema = z.object({
 export type GraphcodeConfig = z.infer<typeof GraphcodeConfigSchema>;
 
 /** Woher die geltenden Werte stammen — geht mit den Kennzahlen an den Konsumenten. */
-export type PolicySource = 'config' | 'default';
+export const PolicySourceSchema = z.enum(['config', 'default']);
+export type PolicySource = z.infer<typeof PolicySourceSchema>;
 
 export interface LoadedConfig {
   config: GraphcodeConfig;

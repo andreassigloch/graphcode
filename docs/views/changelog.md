@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 430 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 431 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 430 CR · 343 done · 4 open.
+Total: 431 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -492,3 +492,4 @@ Total: 430 CR · 343 done · 4 open.
 | `CR-GC-818` | n/a | MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08) |
 | `CR-GC-819` | n/a | Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette |
 | `CR-GC-820` | n/a | CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md |
+| `CR-GC-821` | n/a | graph_metrics-Antwort ohne pruefbaren Vertrag |

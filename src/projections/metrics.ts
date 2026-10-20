@@ -43,19 +43,24 @@ import {
   chainMetrics,
   requirementScope,
   riskCarriers,
-  type ChainMetrics,
-  type RequirementScope,
-  type RiskCarriers,
-  type ModuleMetrics,
-  type FunctionCriticality,
-  type MetricPolicy,
+  ChainMetrics,
+  RequirementScope,
+  RiskCarriers,
+  ModuleMetrics,
+  FunctionCriticality,
+  MetricPolicySchema,
 } from '@sigloch/contracts/se';
-import type { MetricVector } from '@sigloch/se-engine';
-import type { PolicySource } from '../kernel/config.js';
+import { MetricVector } from '@sigloch/se-engine';
+import { PolicySourceSchema } from '../kernel/config.js';
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { archMetrics } from '../kernel/measure/fit-advisory.js';
 import { loadTargetProfile } from '../loop/target-profile.js';
-import type { TargetWeights, TargetValues } from '../loop/target-profile-contract.js';
+import {
+  TargetWeightsSchema,
+  TargetValuesSchema,
+  type TargetWeights,
+  type TargetValues,
+} from '../loop/target-profile-contract.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
 const GraphMetricsInputSchema = z.looseObject({
@@ -68,6 +73,51 @@ const GraphMetricsInputSchema = z.looseObject({
 
 /** Die Dimensionen, in denen Gewicht und Zielwert in verschiedene Richtungen zeigen. */
 type Dimension = keyof TargetWeights;
+
+/**
+ * CR-GC-821: die Antwort von graph_metrics als EIN pruefbarer Vertrag (SCHEMA-metrics-answer).
+ * Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut: jede Grundgesamtheit
+ * behaelt ihren eigenen Vertrag aus contracts, se-engine oder dem Zielprofil.
+ */
+export const GraphMetricsAnswerSchema = z.object({
+  modules: z.array(ModuleMetrics),
+  /**
+   * CR-GC-518: Kritikalitaet je FUNC — Wirkketten und Use Cases darueber (CR-SM-314).
+   *
+   * EIGENER Vertrag neben "modules", nicht dieselbe Liste breiter: es ist eine andere
+   * Grundgesamtheit auf einem anderen Baum. MOD ist der Abhaengigkeitsbaum, FUNC der
+   * Wertbaum, und sie spiegeln einander ausdruecklich nicht.
+   */
+  functions: z.array(FunctionCriticality),
+  /**
+   * CR-GC-767: eine Zeile je FCHAIN — die Kennzahlen, oder `reasons` statt jeder Zahl, wenn
+   * die Kette nicht bewertbar ist. Graph-Reihenfolge, keine Rangfolge: die Zahl urteilt nicht.
+   */
+  chains: ChainMetrics.shape.chains,
+  /** Die Reichweite von `chains`: bewertbare / alle Ketten; `ratio` ist `null` ohne Ketten. */
+  measurability: ChainMetrics.shape.measurability,
+  /**
+   * CR-GC-787: je Risiko seine Träger (Blattfunktionen) und Erfüller, je Träger seine Risiken.
+   * Immer da; ohne Risiken zwei leere Listen.
+   */
+  riskCarriers: RiskCarriers,
+  /** CR-GC-787: der Betrachtungsumfang der angefragten Funktionen und Ketten — nur mit Eingabe `scope`. */
+  scope: RequirementScope.optional(),
+  policy: MetricPolicySchema,
+  policySource: PolicySourceSchema,
+  fit: z.object({
+    layer: z.literal('arch'),
+    metrics: MetricVector,
+    target: z.object({
+      weights: TargetWeightsSchema,
+      values: TargetValuesSchema,
+      source: z.enum(['profile', 'none']),
+      inconsistent: z.array(TargetWeightsSchema.keyof()),
+    }),
+  }),
+  graphVersion: z.number().int(),
+});
+export type GraphMetricsAnswer = z.infer<typeof GraphMetricsAnswerSchema>;
 
 /**
  * CR-GC-457: Gewicht und Zielwert sind zwei Felder mit zwei Aufgaben — und können
@@ -100,47 +150,7 @@ function inconsistentDimensions(
 export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
   const { harness, graphVersion } = ctx;
 
-  const graph_metrics: MCPTool<
-    z.infer<typeof GraphMetricsInputSchema>,
-    {
-      modules: ModuleMetrics[];
-      /**
-       * CR-GC-518: Kritikalitaet je FUNC — Wirkketten und Use Cases darueber (CR-SM-314).
-       *
-       * EIGENER Vertrag neben "modules", nicht dieselbe Liste breiter: es ist eine andere
-       * Grundgesamtheit auf einem anderen Baum. MOD ist der Abhaengigkeitsbaum, FUNC der
-       * Wertbaum, und sie spiegeln einander ausdruecklich nicht.
-       */
-      functions: FunctionCriticality[];
-      /**
-       * CR-GC-767: eine Zeile je FCHAIN — die Kennzahlen, oder `reasons` statt jeder Zahl, wenn
-       * die Kette nicht bewertbar ist. Graph-Reihenfolge, keine Rangfolge: die Zahl urteilt nicht.
-       */
-      chains: ChainMetrics['chains'];
-      /** Die Reichweite von `chains`: bewertbare / alle Ketten; `ratio` ist `null` ohne Ketten. */
-      measurability: ChainMetrics['measurability'];
-      /**
-       * CR-GC-787: je Risiko seine Träger (Blattfunktionen) und Erfüller, je Träger seine Risiken.
-       * Immer da; ohne Risiken zwei leere Listen.
-       */
-      riskCarriers: RiskCarriers;
-      /** CR-GC-787: der Betrachtungsumfang der angefragten Funktionen und Ketten — nur mit Eingabe `scope`. */
-      scope?: RequirementScope;
-      policy: MetricPolicy;
-      policySource: PolicySource;
-      fit: {
-        layer: 'arch';
-        metrics: MetricVector;
-        target: {
-          weights: TargetWeights;
-          values: TargetValues;
-          source: 'profile' | 'none';
-          inconsistent: Dimension[];
-        };
-      };
-      graphVersion: number;
-    }
-  > = {
+  const graph_metrics: MCPTool<z.infer<typeof GraphMetricsInputSchema>, GraphMetricsAnswer> = {
     name: 'graph_metrics',
     description:
       'Which module is the coupling problem? One row per MOD — fan-in/out, instability, LCOM4, ' +
@@ -184,7 +194,7 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
           );
         }
       }
-      return {
+      return GraphMetricsAnswerSchema.parse({
         modules: moduleMetrics(ontology),
         functions: functionCriticality(ontology),
         chains: chains.chains,
@@ -204,7 +214,7 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
           },
         },
         graphVersion: graphVersion(),
-      };
+      });
     },
   };
 

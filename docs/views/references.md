@@ -884,6 +884,7 @@
 | `CR-GC-819` | relation | `FUNC-own-kuzu-host` |
 | `CR-GC-819` | relation | `FUNC-seed-from-json` |
 | `CR-GC-820` | relation | `FUNC-graph-readiness` |
+| `CR-GC-821` | relation | `FUNC-graph-metrics` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1380,7 +1381,7 @@
 | `FLOW-metric-policy` | relation | `SCHEMA-metric-policy` |
 | `FLOW-metrics-answer` | io | `ACTOR-dashboard` |
 | `FLOW-metrics-answer` | io | `FUNC-agent-loop` |
-| `FLOW-metrics-answer` | relation | `SCHEMA-chain-metrics` |
+| `FLOW-metrics-answer` | relation | `SCHEMA-metrics-answer` |
 | `FLOW-module-metrics` | io | `FUNC-evaluate-rules` |
 | `FLOW-module-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-module-metrics` | relation | `SCHEMA-module-metrics` |
@@ -2266,6 +2267,7 @@
 | `TEST-graph-metrics` | verify | `REQ-quality-metric` |
 | `TEST-graph-metrics` | verify | `REQ-single-measurement-path` |
 | `TEST-graph-metrics` | verify | `SCHEMA-chain-metrics` |
+| `TEST-graph-metrics` | verify | `SCHEMA-metrics-answer` |
 | `TEST-graph-realize` | verify | `REQ-frame-binding` |
 | `TEST-graph-realize` | verify | `REQ-gate-only-writes` |
 | `TEST-graph-realize` | verify | `REQ-test-runnable-binding` |

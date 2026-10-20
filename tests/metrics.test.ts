@@ -29,10 +29,13 @@ import { METRIC_DIMENSIONS, toArray } from '@sigloch/se-engine';
 import {
   DEFAULT_METRIC_POLICY,
   chainMetrics,
+  functionCriticality,
+  moduleMetrics,
   requirementScope,
   riskCarriers,
   type MetricPolicy,
 } from '@sigloch/contracts/se';
+import { GraphMetricsAnswerSchema } from '../src/projections/metrics.js';
 import { toOntologyGraph } from '../src/kernel/conformance.js';
 import { openMeasured } from '../src/surface/measured.js';
 import { CONFIG_FILENAME, DEFAULT_CONFIG } from '../src/kernel/config.js';
@@ -651,5 +654,45 @@ describe('graph_metrics — Risikotraeger und Betrachtungsumfang (CR-GC-787)', (
 
   it('eine Kennung, die weder Funktion noch Kette ist, wird mit ihrem Typ abgelehnt', async () => {
     await expect(tools.graph_metrics.handler({ scope: ['MOD-a'] })).rejects.toThrow(/graph_metrics: .*'MOD-a' \(MOD\)/);
+  });
+});
+
+/**
+ * CR-GC-821 — die Antwort ist EIN pruefbarer Vertrag (SCHEMA-metrics-answer), zusammengesetzt aus
+ * den Vertraegen der Bloecke. Zwei Belege: auf dem eigenen Modell verliert die Antwort durch das
+ * Parsen nichts (je Block gleich dem direkten contracts-Aufruf — `z.object` wuerde unbekannte
+ * Schluessel still streichen), und eine Antwort ohne Pflichtblock wird abgelehnt.
+ */
+describe('graph_metrics — die Antwort als Vertrag (CR-GC-821)', () => {
+  it('besteht das Schema auf dem eigenen Modell und verliert beim Parsen keinen Block', async () => {
+    const repo = join(__dirname, '..');
+    const ssot = join(repo, 'docs', 'graph', 'graphcode.graph.json');
+    const measured = await openMeasured({ graph: ssot, repoRoot: repo, systemId: 'graphcode' });
+    try {
+      const ontology = toOntologyGraph(measured.harness.getGraph());
+      const res = await bindToolsToHarness(measured.harness).graph_metrics.handler({});
+      expect(GraphMetricsAnswerSchema.safeParse(res).success).toBe(true);
+      expect(res.modules).toEqual(moduleMetrics(ontology));
+      expect(res.functions).toEqual(functionCriticality(ontology));
+      expect(res.riskCarriers).toEqual(riskCarriers(ontology));
+    } finally {
+      await measured.close();
+    }
+  });
+
+  it('lehnt eine Antwort ohne Pflichtblock ab', async () => {
+    const repo = join(__dirname, '..');
+    const ssot = join(repo, 'docs', 'graph', 'graphcode.graph.json');
+    const measured = await openMeasured({ graph: ssot, repoRoot: repo, systemId: 'graphcode' });
+    try {
+      const res = await bindToolsToHarness(measured.harness).graph_metrics.handler({});
+      const { modules: _weg, ...ohneModule } = res;
+      const verdict = GraphMetricsAnswerSchema.safeParse(ohneModule);
+      expect(verdict.success).toBe(false);
+      expect(verdict.error?.issues.map((i) => i.path.join('.'))).toContain('modules');
+      expect(GraphMetricsAnswerSchema.safeParse({ ...res, policySource: 'erfunden' }).success).toBe(false);
+    } finally {
+      await measured.close();
+    }
   });
 });

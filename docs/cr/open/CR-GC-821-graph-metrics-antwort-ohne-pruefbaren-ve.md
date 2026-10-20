@@ -31,3 +31,15 @@ mit dem Typ, ohne Suffix `Schema`); `MetricPolicySchema` (contracts), `MetricVec
   statt `SCHEMA-chain-metrics`; `TEST-graph-metrics -verify-> SCHEMA-metrics-answer`; offene Differenz
   „Vertrag nur chain-metrics" aus der Flussbeschreibung gestrichen.
 - Test: die Antwort von `graph_metrics` besteht das Schema; eine Antwort ohne `modules` wird abgelehnt.
+
+## Benannte Ausnahme
+
+BW-02 (Warnung): `FUNC-block-abfrage` zeigt 17 statt 16 Verträge an seiner Grenze — der Antwort-Vertrag ist
+dort jetzt sichtbar. Hingenommen: er existiert im Code und wird geparst, das Modell bildet ihn ab.
+
+## Nachweis
+
+- `tests/metrics.test.ts` „die Antwort als Vertrag": eigenes Modell besteht das Schema, modules/functions/
+  riskCarriers gleich dem direkten contracts-Aufruf (nichts gestrichen); Antwort ohne `modules` und mit
+  erfundener `policySource` abgelehnt. Rot gesehen: mit auf `moduleId` gekürztem Modul-Schema schlägt er an.
+- `tests/conformance.test.ts`: RC-08 = 0, RC-09 = 0.

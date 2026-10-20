@@ -8724,9 +8724,9 @@ io ◀ `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · `FUNC-take-steering
 
 ### 4.93  `FLOW-metrics-answer` — Antwort von graph_metrics
 
-Die Antwort des Werkzeugs graph_metrics an jeden, der es aufruft: die Ablaufsteuerung und das Dashboard ueber host.sock. Ein Aufruf, eine Antwort mit Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, riskCarriers und scope. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: die Teilfluesse kommen aus den Rechnungen in contracts, dieser aus dem Werkzeug, das sie buendelt. BENANNTE OFFENE DIFFERENZEN: der Vertrag ist nur SCHEMA-chain-metrics, weil die Antwort als Ganzes kein pruefbares Zod-Schema hat (contracts liefert keines fuer modules, functions, chains); das Dashboard rendert modules und functions, chains noch nicht. (CR-GC-817)
+Die Antwort des Werkzeugs graph_metrics an jeden, der es aufruft: die Ablaufsteuerung und das Dashboard ueber host.sock. Ein Aufruf, eine Antwort mit Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, riskCarriers und scope. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: die Teilfluesse kommen aus den Rechnungen in contracts, dieser aus dem Werkzeug, das sie buendelt. BENANNTE OFFENE DIFFERENZ: das Dashboard rendert modules und functions, chains noch nicht. (CR-GC-817, CR-GC-821)
 
-io ◀ `FUNC-graph-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-agent-loop` · schema ▶ `SCHEMA-chain-metrics`
+io ◀ `FUNC-graph-metrics` · io ▶ `ACTOR-dashboard` · `FUNC-agent-loop` · schema ▶ `SCHEMA-metrics-answer`
 
 ### 4.94  `FLOW-module-metrics` — Modulkennzahlen je MOD
 
@@ -9022,7 +9022,7 @@ schema ◀ `FLOW-merge-report`
 
 chains: je FCHAIN chainId, chainName, measurable und entweder die Zahlen length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth mit den Orten memberCount, fanIn, loops, shared, boundaries, imports, handovers und dem Antwortweg answerPath mit answerPathBlockedBy oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. Die Zahlen sind die Laengen der Ortslisten. answerPath nennt die Glieder, auf die die Antwort an einen Akteur wartet, und ist null, wenn answerPathBlockedBy hindernde Fluesse nennt (CR-SM-408, contracts 12.4). measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external. Neben diesem Vertrag reisen in der graph_metrics-Antwort seit CR-GC-787 zwei Bloecke mit je eigenem Vertrag aus contracts: riskCarriers nach RiskCarriers mit risks, je Risiko riskId, carriers, satisfiers, und surface, je Traeger funcId und risks; scope nach RequirementScope mit modules, chains, requirements. Beide gehoeren nicht zum Symbol ChainMetrics.
 
-schema ◀ `FLOW-chain-metrics` · `FLOW-metrics-answer`
+schema ◀ `FLOW-chain-metrics`
 
 ### 5.6  `SCHEMA-cli-command` — CliCommand
 
@@ -9156,147 +9156,153 @@ Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coher
 
 schema ◀ `FLOW-arch-fitness`
 
-### 5.28  `SCHEMA-module-metrics` — ModuleMetrics
+### 5.28  `SCHEMA-metrics-answer` — graph_metrics-Antwort
+
+Die Antwort von graph_metrics als EIN Vertrag: modules nach ModuleMetrics, functions nach FunctionCriticality, chains und measurability nach ChainMetrics, riskCarriers nach RiskCarriers, scope nur auf Anfrage nach RequirementScope, policy nach MetricPolicySchema mit policySource, fit mit MetricVector und Zielprofil, graphVersion. Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut; die Grundgesamtheiten MOD, FUNC und FCHAIN bleiben getrennte Bloecke. Der Handler parst seine Antwort vor der Rueckgabe. (CR-GC-821)
+
+schema ◀ `FLOW-metrics-answer`
+
+### 5.29  `SCHEMA-module-metrics` — ModuleMetrics
 
 Je MOD allocatedFuncs, fanIn, fanOut, instability, lcom4, cohesion; null heisst nicht messbar, nie null Prozent. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-module-metrics`
 
-### 5.29  `SCHEMA-mutate-command` — MutateCommand
+### 5.30  `SCHEMA-mutate-command` — MutateCommand
 
 Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-owner` · `FLOW-mutate-cmd-test-ingest`
 
-### 5.30  `SCHEMA-mutate-result` — MutateResult
+### 5.31  `SCHEMA-mutate-result` — MutateResult
 
 Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-gate-verdict` · `FLOW-mutate-answer` · `FLOW-vorschlag`
 
-### 5.31  `SCHEMA-ontology-graph` — OntologyGraph
+### 5.32  `SCHEMA-ontology-graph` — OntologyGraph
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
 
 schema ◀ `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-imported-graph` · `FLOW-zug-staende`
 
-### 5.32  `SCHEMA-ontology-json` — OntologyJson
+### 5.33  `SCHEMA-ontology-json` — OntologyJson
 
 Die materialisierte Graph-Datei docs/graph/<systemId>.graph.json: elements und traces. Eingang von Seed und Reseed. (CR-GC-503)
 
 schema ◀ `FLOW-graph-snapshot-file` · `FLOW-ontology-json` · `FLOW-reseed-order` · `FLOW-reseed-snapshot` · `FLOW-reseeded-graph`
 
-### 5.33  `SCHEMA-query-params` — QueryParams
+### 5.34  `SCHEMA-query-params` — QueryParams
 
 Der gemeinsame Nenner der Leseanfragen: elementId, depth, branch, cursor, view. Bewusst ohne Zod-Symbol — im Code traegt JEDES MCP-Tool sein eigenes Input-Schema, ein zusammengefasstes QueryParams gibt es nicht und soll es nicht geben (ein Sammel-Schema waere ein paralleler Pfad zu den Tool-Signaturen). Der Knoten steht fuer den Kanal, nicht fuer einen Code-Datenvertrag; concept-only. (Begruendung nachgetragen CR-GC-454)
 
 schema ◀ `FLOW-auftrag` · `FLOW-query-export` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · `FLOW-query-request-owner` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-version-bump`
 
-### 5.34  `SCHEMA-readiness-report` — ReadinessReportType
+### 5.35  `SCHEMA-readiness-report` — ReadinessReportType
 
 Je Dimension score, violations, applicable, coreApplicable — eine reine Messung ohne Urteil (kein ready seit CR-SM-310). Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-dimension-readiness` · `FLOW-readiness-report`
 
-### 5.35  `SCHEMA-real-ref` — realRef (Realisierungsbindung)
+### 5.36  `SCHEMA-real-ref` — realRef (Realisierungsbindung)
 
 Attributvertrag realRef an FUNC, SCHEMA und MOD: Realisierungsdatei, Symbol, Sprache. Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readRealRef (absent, invalid, bound; CR-SM-360).
 
-### 5.36  `SCHEMA-rejected-trace` — RejectedTrace
+### 5.37  `SCHEMA-rejected-trace` — RejectedTrace
 
 Eine am Seed zurueckgehaltene Kante: source, target, type und der Grund no-pattern. Traeger zwischen Seed-Pruefung, Readiness-Report und Export-Verweigerung. (CR-GC-530)
 
 schema ◀ `FLOW-held-back-traces`
 
-### 5.37  `SCHEMA-rule-violation` — RuleViolation
+### 5.38  `SCHEMA-rule-violation` — RuleViolation
 
 Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. (CR-GC-501)
 
 schema ◀ `FLOW-conformance-findings` · `FLOW-rule-findings` · `FLOW-rules-answer`
 
-### 5.38  `SCHEMA-schema-fingerprint` — SchemaFingerprint
+### 5.39  `SCHEMA-schema-fingerprint` — SchemaFingerprint
 
 Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist Teil des Vertrags: sie unterscheidet einen aelteren Schemastand von einer kaputten Datei.
 
 schema ◀ `FLOW-schema-fingerprint`
 
-### 5.39  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
+### 5.40  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
 
 Vertrag der Schlupf-Zeile: cr, at, code, spur, ausgewaehlt, ausGraph, gesamt, rot, schlupf, schlupfNurGraph, zusage (blackbox, schnittstelle).
 
 schema ◀ `FLOW-schlupf-zeile`
 
-### 5.40  `SCHEMA-session-registry` — SessionEntry
+### 5.41  `SCHEMA-session-registry` — SessionEntry
 
 pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
 
 schema ◀ `FLOW-session-entry` · `FLOW-session-registry`
 
-### 5.41  `SCHEMA-skill-text` — Skill-Text
+### 5.42  `SCHEMA-skill-text` — Skill-Text
 
 Text einer Skill-Datei (Markdown mit Frontmatter), den der Agent-Host beim Skill-Aufruf an die Ablaufsteuerung gibt. Ohne Zod-Symbol: Prompt-Inhalt, kein Wire-Format; das Format legt der Agent-Host fest.
 
 schema ◀ `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm`
 
-### 5.42  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
+### 5.43  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
 
 Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts, am FLOW als Attribut channelRank gespiegelt — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht, und neun statt einem Vertrag an jeder Modulgrenze. Der Rang steht deshalb am Knoten: ohne ihn sind zwei Kanaele mit gleichem Produzenten und Konsumenten im Graphen ununterscheidbar, und der Optimizer schlaegt sie zum Merge vor. Bewusst ohne Zod-Symbol: informationeller Prompt-Kontext, kein Wire-Format. (CR-GC-573)
 
 schema ◀ `FLOW-channel-dimension-template` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-protocol` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-rule-clause` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory`
 
-### 5.43  `SCHEMA-steering-delta` — SteeringDelta
+### 5.44  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-### 5.44  `SCHEMA-steering-snapshot` — SteeringSnapshot
+### 5.45  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph, Violations des vollen Katalogs, Fokusmenge, Zahl der blockierenden Fehler, Befunde je Stufe. Beschreibt die Form des Messpunkts; den Bestand prueft die Regel R-08, nicht dieses Schema. (CR-GC-786)
 
 schema ◀ `FLOW-steering-snapshot`
 
-### 5.45  `SCHEMA-target-profile` — TargetProfile
+### 5.46  `SCHEMA-target-profile` — TargetProfile
 
 weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.
 
 schema ◀ `FLOW-target-profile` · `FLOW-target-profile-file`
 
-### 5.46  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
+### 5.47  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
 
 Attributvertrag testRefs am TEST: Liste der Laufdateien (file, case, tool, level, result). Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readTestRefs (absent, invalid, bound; CR-SM-360).
 
-### 5.47  `SCHEMA-test-selection` — TestSelection
+### 5.48  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-### 5.48  `SCHEMA-tool-context` — Werkzeug-Kontext
+### 5.49  `SCHEMA-tool-context` — Werkzeug-Kontext
 
 Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Codecs, Graphversion, Sitzung, Aufrufer. Zod-Vertrag, geparst in createToolContext; ToolPort ist die segregierte Sicht darauf, erzwungen beim Kompilieren (_portCheck).
 
 schema ◀ `FLOW-tool-context`
 
-### 5.49  `SCHEMA-tool-registry` — Werkzeug-Register
+### 5.50  `SCHEMA-tool-registry` — Werkzeug-Register
 
 Die gebundenen MCP-Werkzeuge mit Namen und Eingabeschema. Spec-only — ein Objekt mit Verhalten, kein Zod-Datenvertrag.
 
 schema ◀ `FLOW-tool-registry` · `FLOW-tool-surface`
 
-### 5.50  `SCHEMA-trajectory` — Trajectory/Outcome
+### 5.51  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-trajectory`
 
-### 5.51  `SCHEMA-update-event` — UpdateEvent
+### 5.52  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-live-event` · `FLOW-live-event-host` · `FLOW-sse-frame`
 
-### 5.52  `SCHEMA-zug-bericht` — Bericht zum Zug
+### 5.53  `SCHEMA-zug-bericht` — Bericht zum Zug
 
 Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass und metricsAfter nur im Probelauf. metricsAfter traegt die geaenderten Zeilen im Stand danach in chains, modules, functions und riskCarriers mit risks und surface, dazu removed mit den entfallenen Kennungen je Liste; leere Listen heissen keine Kennzahl geaendert. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778, CR-GC-790)
 
@@ -9996,7 +10002,7 @@ verify ▶ `REQ-graph-is-ssot` · testRefs: `tests/harness.import.test.ts`
 
 Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen. Dazu die Kettenkennzahlen am echten Werkzeug (CR-GC-767): die Referenzkette Zahlung ausloesen ergibt Laenge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rueckkopplungen, 1 geteilten Knoten; die Gegenprobe mit Schleife und Ast laesst die Werte umschlagen; eine Kette ohne Eingang traegt den Grund und zaehlt im Nenner der Quote; auf dem eigenen Modell stimmt jede Kette mit dem direkten Aufruf der contracts-Funktion ueberein. Dazu Risikotraeger und Betrachtungsumfang (CR-GC-787): ein Risiko mit einer Gegenmassnahme an einer Funktion und einer am System nennt genau die Funktion als Traeger und beide Erfueller; ohne Risiko zwei leere Listen; der Umfang fehlt ohne Anfrage, nennt fuer eine Kette ihre Module, Ketten und Anforderungen und fuer eine Funktion ausserhalb einen anderen; eine unbekannte Kennung und eine Kennung anderen Typs werden benannt abgelehnt.
 
-verify ▶ `REQ-chain-metrics` · `REQ-metrics-risk-scope` · `REQ-quality-metric` · `REQ-single-measurement-path` · `SCHEMA-chain-metrics` · testRefs: `tests/metrics.test.ts`
+verify ▶ `REQ-chain-metrics` · `REQ-metrics-risk-scope` · `REQ-quality-metric` · `REQ-single-measurement-path` · `SCHEMA-chain-metrics` · `SCHEMA-metrics-answer` · testRefs: `tests/metrics.test.ts`
 
 ### 8.49  `TEST-graph-realize` — Flaches Binden ueber das Gate
 
