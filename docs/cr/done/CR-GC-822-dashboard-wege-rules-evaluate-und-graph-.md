@@ -1,6 +1,6 @@
 # CR-GC-822: Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-20)
 **Typ:** aus Item ITEM-2026-971 (finding)
 **Erstellt:** 2026-10-20
 **Item:** bok/items/ITEM-2026-971.json (Lane: graph)
