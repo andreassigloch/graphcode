@@ -1,6 +1,6 @@
 # CR-GC-825: FUNC-decode von loop nach kernel: einzige Grounding-FUNC in loop, Geschwister import/reseed/merge liegen in kernel; Linie loop-surface 2 -> 1 Flow
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-21)
 **Typ:** aus Item ITEM-2026-984 (idea)
 **Erstellt:** 2026-10-21
 **Item:** bok/items/ITEM-2026-984.json (Lane: code)
