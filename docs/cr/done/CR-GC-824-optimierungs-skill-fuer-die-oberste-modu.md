@@ -1,6 +1,6 @@
 # CR-GC-824: Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-21)
 **Typ:** aus Item ITEM-2026-985 (idea)
 **Erstellt:** 2026-10-21
 **Item:** bok/items/ITEM-2026-985.json (Lane: code)
