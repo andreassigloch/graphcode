@@ -117,7 +117,9 @@ export function packagedSkillsDir(): string {
 /**
  * The skill files this package ships, as paths RELATIVE to the commands dir
  * (`se/generate.md`, `se-view/arch.md`, `se-conops.md`). Only `se*`-owned
- * entries — a member's own commands are never ours to touch.
+ * entries — a member's own commands are never ours to touch. A skill at
+ * `version: 0` is a draft (CR-GC-824): it runs in this repo and ships once it
+ * reaches version 1.
  */
 export function shippedSkillFiles(): string[] {
   const dir = packagedSkillsDir();
@@ -132,7 +134,7 @@ export function shippedSkillFiles(): string[] {
       }
     }
   }
-  return out.sort();
+  return out.filter((f) => parseSkillFrontmatter(readFileSync(join(dir, f), 'utf8')).version > 0).sort();
 }
 
 /** The frontmatter fields a skill carries (CR-GC-208): identity, purpose, sync-version. */

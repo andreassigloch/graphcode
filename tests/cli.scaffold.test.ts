@@ -31,7 +31,7 @@ import {
   CliCommandSchema,
   SkillSyncResultSchema,
 } from '../src/surface/scaffold.js';
-import { deriveHostPort, HOST_ENTRY } from '../src/surface/scaffold-templates.js';
+import { deriveHostPort, HOST_ENTRY, shippedSkillFiles } from '../src/surface/scaffold-templates.js';
 import { MARKDOWN_VIEWS, VIEW_FILENAMES } from '@sigloch/graphcode-client';
 import { KUZU_DIR } from '../src/index.js';
 
@@ -75,7 +75,8 @@ function listSkillTree(dir: string): string[] {
   }
   return out.sort();
 }
-const SHIPPED_SKILLS = listSkillTree(join(__dirname, '..', '.claude', 'commands'));
+// Was ausgeliefert wird, entscheidet EINE Stelle: ohne die Entwuerfe (`version: 0`, CR-GC-824).
+const SHIPPED_SKILLS = shippedSkillFiles();
 /** Der Ziel-Pfad eines ausgelieferten Skills fuer OpenCode: `se/generate.md` → `.opencode/skills/se-generate/SKILL.md`. */
 const opencodePath = (f: string): string =>
   join(OPENCODE_SKILLS_DIR, f.replace(/\.md$/, '').replace(/[\\/]/g, '-'), 'SKILL.md');

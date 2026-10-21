@@ -161,6 +161,10 @@ export const EXCLUDED = {
     'Eigentuemer-Spalte (contracts). Liest weder graphcodes Modell noch dessen SSOT; der Treffer ist\n' +
     'der Regelkatalog. Eine Modellaenderung kann ihn nicht rot machen; eine neue Regel-ID im Skill\n' +
     'oder eine Klausel an einer Task-Regel sehr wohl.',
+  'tests/skill-modulebene-felder.test.ts':
+    'CR-GC-824: prueft den Skill-Text gegen Regelkatalog, Werkzeug-Registry und die Vertraege in contracts.\n' +
+    'Die SSOT oeffnet er nur, um die Registry zu binden; deren Namen haengen nicht am Modell. Eine\n' +
+    'Modellaenderung kann ihn nicht rot machen; eine Aenderung am Skill-Text oder an der Registry sehr wohl.',
   'tests/cli.scaffold.test.ts':
     'Scaffold-Verben (init | update | remove) gegen ein TEMP-Repo. Seit CR-GC-612 prueft er, dass\n' +
     'GRAPHCODE.md die Rohdateien als AUSGABEN benennt — daher der Treffer auf `docs/graph/`. Gelesen\n' +
