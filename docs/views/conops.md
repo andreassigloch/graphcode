@@ -76,7 +76,7 @@ Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-eng
 
 - `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
 - `FCHAIN-skill-help` — Skill erklaert: `FUNC-agent-loop` → `FUNC-se-help`
-- `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-agent-loop` → `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-rules-tool` → `FUNC-score-completeness` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
+- `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-agent-loop` → `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-rules-tool` → `FUNC-score-completeness` → `FUNC-se-modulebene` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
 - `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-generation-step` → `FUNC-graph-mutate-tool` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-vorschlag` → `FUNC-zug-bericht`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
@@ -86,7 +86,7 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-measure-test-schlupf` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code`
-- `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
+- `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-measure-test-schlupf` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -96,7 +96,7 @@ Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-merge-nodes` → `FUNC-mutate`
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-import` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
-- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
+- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-agent-loop` → `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
 - `FCHAIN-snapshot-roundtrip` — Snapshot-Rundreise: `FUNC-agent-loop` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-import` → `FUNC-seed-from-json`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
@@ -449,6 +449,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-820` | n/a | CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md | `FUNC-graph-readiness` |
 | `CR-GC-821` | n/a | graph_metrics-Antwort ohne pruefbaren Vertrag | `FUNC-graph-metrics` |
 | `CR-GC-822` | n/a | Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell | `FUNC-generation-step` · `FUNC-graph-readiness` |
+| `CR-GC-823` | n/a | Actor-Flows aus kernel ohne surface: gate-verdict (apply), graph-state (GraphStore), export-pending (setExportPending) erreichen den Auftraggeber im Code nur ueber surface | `FUNC-graph-mutate-tool` · `FUNC-host-socket` · `FUNC-rewind` · `FUNC-score-completeness` · `FUNC-test-ingest` |
+| `CR-GC-824` | n/a | Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum | `FUNC-se-modulebene` · `REQ-modulebene-reads-and-separates` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

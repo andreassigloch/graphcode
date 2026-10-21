@@ -513,11 +513,19 @@ describe('graph_metrics auf dem eigenen Modell (CR-GC-767)', () => {
       expect(res.measurability).toEqual(direkt.measurability);
       expect(res.measurability.chains).toBe(datei.elements.filter((e) => e.type === 'FCHAIN').length);
 
-      // Das Merkmal kommt am Werkzeug an: mindestens eine Kette nennt ein Glied auf ihrem Antwortweg.
-      // Der leere Weg `[]` belegt das nicht: ihn gibt es auch roh gelesen, an einer Kette ohne Antwort
-      // an einen Akteur wird kein Fluss gelesen. Ein Glied steht nur da, wenn `sync` gelesen wurde.
-      const mitGlied = res.chains.filter((c) => ((c as { answerPath?: string[] | null }).answerPath ?? []).length > 0);
-      expect(mitGlied.map((c) => c.chainId), 'keine Kette mit einem Glied auf dem Antwortweg').not.toEqual([]);
+      // Das Merkmal kommt am Werkzeug an: dieselbe Rechnung ohne `sync` (die rohe Lesart aus CR-GC-783)
+      // nennt andere Antwortwege. Der Beleg haengt nicht am Modellstand — bis CR-GC-823 hing er an einer
+      // Kette mit Glied, und deren Antwortweg lief ueber eine Kante, die es im Code nicht gibt.
+      const ohneMerkmal = toOntologyGraph(measured.harness.getGraph());
+      ohneMerkmal.elements = ohneMerkmal.elements.map((e) => {
+        if (e.type !== 'FLOW' || e.attributes === undefined) return e;
+        const { sync: _sync, ...rest } = e.attributes as Record<string, unknown>;
+        return { ...e, attributes: rest };
+      });
+      const weg = (cs: ReturnType<typeof chainMetrics>['chains']) =>
+        nachId(cs).map((c) => ({ id: c.chainId, ...(c.measurable ? { path: c.answerPath, blocked: c.answerPathBlockedBy } : {}) }));
+      expect(weg(res.chains as ReturnType<typeof chainMetrics>['chains']), 'die Antwortwege haengen nicht am Merkmal sync')
+        .not.toEqual(weg(chainMetrics(ohneMerkmal).chains));
     } finally {
       await measured.close();
     }

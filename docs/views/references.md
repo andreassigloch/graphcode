@@ -11,7 +11,6 @@
 | `ACTOR-auftraggeber` | io | `FLOW-auftrag` |
 | `ACTOR-auftraggeber` | io | `FLOW-cli-invocation` |
 | `ACTOR-auftraggeber` | io | `FLOW-mutate-cmd-owner` |
-| `ACTOR-auftraggeber` | io | `FLOW-query-request-owner` |
 | `ACTOR-learning-engine` | io | `FLOW-learning-advice` |
 | `ACTOR-regelhalter` | io | `FLOW-channel-dimension-template` |
 | `ACTOR-regelhalter` | io | `FLOW-channel-gate-protocol` |
@@ -887,6 +886,17 @@
 | `CR-GC-821` | relation | `FUNC-graph-metrics` |
 | `CR-GC-822` | relation | `FUNC-generation-step` |
 | `CR-GC-822` | relation | `FUNC-graph-readiness` |
+| `CR-GC-823` | relation | `FUNC-graph-mutate-tool` |
+| `CR-GC-823` | relation | `FUNC-host-socket` |
+| `CR-GC-823` | relation | `FUNC-rewind` |
+| `CR-GC-823` | relation | `FUNC-score-completeness` |
+| `CR-GC-823` | relation | `FUNC-test-ingest` |
+| `CR-GC-823` | relation | `SCHEMA-mutate-result` |
+| `CR-GC-823` | relation | `SCHEMA-rewind-summary` |
+| `CR-GC-823` | relation | `SCHEMA-test-ingest-answer` |
+| `CR-GC-823` | relation | `SCHEMA-test-ingest-input` |
+| `CR-GC-824` | relation | `FUNC-se-modulebene` |
+| `CR-GC-824` | relation | `REQ-modulebene-reads-and-separates` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1087,11 +1097,13 @@
 | `FCHAIN-skill-report` | compose | `FUNC-module-metrics` |
 | `FCHAIN-skill-report` | compose | `FUNC-rules-tool` |
 | `FCHAIN-skill-report` | compose | `FUNC-score-completeness` |
+| `FCHAIN-skill-report` | compose | `FUNC-se-modulebene` |
 | `FCHAIN-skill-report` | compose | `FUNC-se-retro` |
 | `FCHAIN-skill-report` | compose | `FUNC-se-review` |
 | `FCHAIN-skill-report` | compose | `FUNC-se-status` |
 | `FCHAIN-skill-report` | compose | `FUNC-test` |
 | `FCHAIN-skill-report` | compose | `FUNC-test-ui` |
+| `FCHAIN-snapshot-freshness` | compose | `FUNC-agent-loop` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-auto-export` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-export-markdown` |
@@ -1137,7 +1149,9 @@
 | `FCHAIN-steering-loop` | satisfy | `REQ-risk-steering-delta-missing` |
 | `FCHAIN-test-ingest` | compose | `FUNC-agent-loop` |
 | `FCHAIN-test-ingest` | compose | `FUNC-graph-store` |
+| `FCHAIN-test-ingest` | compose | `FUNC-measure-test-schlupf` |
 | `FCHAIN-test-ingest` | compose | `FUNC-mutate` |
+| `FCHAIN-test-ingest` | compose | `FUNC-plan-code-lane` |
 | `FCHAIN-test-ingest` | compose | `FUNC-resolve-tests-from-code` |
 | `FCHAIN-test-ingest` | compose | `FUNC-test-ingest` |
 | `FCHAIN-test-ingest` | satisfy | `REQ-risk-stale-test-result` |
@@ -1167,6 +1181,8 @@
 | `FLOW-anleitung-se-irr` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-se-laufzeit` | io | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-laufzeit` | relation | `SCHEMA-skill-text` |
+| `FLOW-anleitung-se-modulebene` | io | `FUNC-agent-loop` |
+| `FLOW-anleitung-se-modulebene` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-se-optimize` | io | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-optimize` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-se-plan` | io | `FUNC-agent-loop` |
@@ -1285,7 +1301,6 @@
 | `FLOW-formatE-tool` | relation | `SCHEMA-format-e` |
 | `FLOW-function-criticality` | io | `FUNC-graph-metrics` |
 | `FLOW-function-criticality` | relation | `SCHEMA-function-criticality` |
-| `FLOW-gate-verdict` | io | `ACTOR-auftraggeber` |
 | `FLOW-gate-verdict` | io | `FUNC-bootstrap` |
 | `FLOW-gate-verdict` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-gate-verdict` | io | `FUNC-graph-suggest` |
@@ -1303,7 +1318,6 @@
 | `FLOW-graph-snapshot-file` | io | `FUNC-held-back-traces` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-seed-from-json` |
 | `FLOW-graph-snapshot-file` | relation | `SCHEMA-ontology-json` |
-| `FLOW-graph-state` | io | `ACTOR-auftraggeber` |
 | `FLOW-graph-state` | io | `FUNC-arch-fitness` |
 | `FLOW-graph-state` | io | `FUNC-auto-export` |
 | `FLOW-graph-state` | io | `FUNC-chain-metrics` |
@@ -1323,7 +1337,6 @@
 | `FLOW-graph-state` | io | `FUNC-module-metrics` |
 | `FLOW-graph-state` | io | `FUNC-mutate` |
 | `FLOW-graph-state` | io | `FUNC-read-tools` |
-| `FLOW-graph-state` | io | `FUNC-score-completeness` |
 | `FLOW-graph-state` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-graph-state` | io | `FUNC-test-ingest` |
 | `FLOW-graph-state` | relation | `SCHEMA-ontology-graph` |
@@ -1388,7 +1401,10 @@
 | `FLOW-module-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-module-metrics` | relation | `SCHEMA-module-metrics` |
 | `FLOW-mutate-answer` | io | `FUNC-agent-loop` |
+| `FLOW-mutate-answer` | io | `FUNC-host-socket` |
 | `FLOW-mutate-answer` | relation | `SCHEMA-mutate-result` |
+| `FLOW-mutate-answer-owner` | io | `ACTOR-auftraggeber` |
+| `FLOW-mutate-answer-owner` | relation | `SCHEMA-mutate-result` |
 | `FLOW-mutate-cmd-bootstrap` | io | `FUNC-mutate` |
 | `FLOW-mutate-cmd-bootstrap` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-decode` | io | `FUNC-mutate` |
@@ -1426,11 +1442,6 @@
 | `FLOW-query-request-agent` | relation | `SCHEMA-query-params` |
 | `FLOW-query-request-auto-export` | io | `FUNC-graph-export-snapshot` |
 | `FLOW-query-request-auto-export` | relation | `SCHEMA-query-params` |
-| `FLOW-query-request-owner` | io | `FUNC-agent-loop` |
-| `FLOW-query-request-owner` | io | `FUNC-export-markdown` |
-| `FLOW-query-request-owner` | io | `FUNC-graph-expand` |
-| `FLOW-query-request-owner` | io | `FUNC-list-elements` |
-| `FLOW-query-request-owner` | relation | `SCHEMA-query-params` |
 | `FLOW-readiness-report` | io | `ACTOR-dashboard` |
 | `FLOW-readiness-report` | io | `FUNC-agent-loop` |
 | `FLOW-readiness-report` | relation | `SCHEMA-readiness-report` |
@@ -1440,9 +1451,12 @@
 | `FLOW-reseed-snapshot` | relation | `SCHEMA-ontology-json` |
 | `FLOW-reseeded-graph` | io | `FUNC-seed-from-json` |
 | `FLOW-reseeded-graph` | relation | `SCHEMA-ontology-json` |
+| `FLOW-rewind-summary` | io | `ACTOR-auftraggeber` |
+| `FLOW-rewind-summary` | relation | `SCHEMA-rewind-summary` |
 | `FLOW-rule-findings` | io | `FUNC-health-endpoint` |
 | `FLOW-rule-findings` | io | `FUNC-mutate` |
 | `FLOW-rule-findings` | io | `FUNC-rules-tool` |
+| `FLOW-rule-findings` | io | `FUNC-score-completeness` |
 | `FLOW-rule-findings` | relation | `SCHEMA-rule-violation` |
 | `FLOW-rules-answer` | io | `FUNC-agent-loop` |
 | `FLOW-rules-answer` | relation | `SCHEMA-rule-violation` |
@@ -1466,6 +1480,7 @@
 | `FLOW-skill-request` | io | `FUNC-se-help` |
 | `FLOW-skill-request` | io | `FUNC-se-irr` |
 | `FLOW-skill-request` | io | `FUNC-se-laufzeit` |
+| `FLOW-skill-request` | io | `FUNC-se-modulebene` |
 | `FLOW-skill-request` | io | `FUNC-se-optimize` |
 | `FLOW-skill-request` | io | `FUNC-se-plan` |
 | `FLOW-skill-request` | io | `FUNC-se-retro` |
@@ -1502,7 +1517,13 @@
 | `FLOW-target-profile` | relation | `SCHEMA-target-profile` |
 | `FLOW-target-profile-file` | io | `FUNC-target-profile-load` |
 | `FLOW-target-profile-file` | relation | `SCHEMA-target-profile` |
-| `FLOW-test-selection` | io | `ACTOR-auftraggeber` |
+| `FLOW-test-ingest-answer` | io | `FUNC-measure-test-schlupf` |
+| `FLOW-test-ingest-answer` | io | `FUNC-plan-code-lane` |
+| `FLOW-test-ingest-answer` | relation | `SCHEMA-test-ingest-answer` |
+| `FLOW-test-run-report-code` | io | `FUNC-test-ingest` |
+| `FLOW-test-run-report-code` | relation | `SCHEMA-test-ingest-input` |
+| `FLOW-test-run-report-full` | io | `FUNC-test-ingest` |
+| `FLOW-test-run-report-full` | relation | `SCHEMA-test-ingest-input` |
 | `FLOW-test-selection` | io | `FUNC-agent-loop` |
 | `FLOW-test-selection` | relation | `SCHEMA-test-selection` |
 | `FLOW-tool-context` | io | `FUNC-bind-tools` |
@@ -1518,7 +1539,7 @@
 | `FLOW-version-bump` | relation | `SCHEMA-query-params` |
 | `FLOW-viewer-start` | io | `ACTOR-dashboard` |
 | `FLOW-viewer-start` | relation | `SCHEMA-cli-command` |
-| `FLOW-vorschlag` | io | `ACTOR-auftraggeber` |
+| `FLOW-vorschlag` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-vorschlag` | relation | `SCHEMA-mutate-result` |
 | `FLOW-zug-bericht` | io | `FUNC-agent-loop` |
 | `FLOW-zug-bericht` | io | `FUNC-graph-suggest` |
@@ -1673,6 +1694,7 @@
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-fmea` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-irr` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-laufzeit` |
+| `FUNC-block-urteilsarbeit` | compose | `FUNC-se-modulebene` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-plan` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-trade` |
 | `FUNC-bootstrap` | allocate | `MOD-surface` |
@@ -1820,6 +1842,7 @@
 | `FUNC-held-back-traces` | io | `FLOW-held-back-traces` |
 | `FUNC-held-back-traces` | satisfy | `REQ-held-back-edges-derived-every-call` |
 | `FUNC-host-socket` | allocate | `MOD-surface` |
+| `FUNC-host-socket` | io | `FLOW-mutate-answer-owner` |
 | `FUNC-host-socket` | io | `FLOW-mutate-cmd-host-socket` |
 | `FUNC-host-socket` | satisfy | `REQ-docked-session-reelects-once` |
 | `FUNC-host-socket` | satisfy | `REQ-further-session-docks-via-socket` |
@@ -1843,6 +1866,7 @@
 | `FUNC-load-config` | satisfy | `REQ-thresholds-from-config` |
 | `FUNC-measure-test-schlupf` | allocate | `MOD-projections` |
 | `FUNC-measure-test-schlupf` | io | `FLOW-schlupf-zeile` |
+| `FUNC-measure-test-schlupf` | io | `FLOW-test-run-report-full` |
 | `FUNC-measure-test-schlupf` | satisfy | `REQ-full-run-on-probation` |
 | `FUNC-merge-nodes` | allocate | `MOD-kernel` |
 | `FUNC-merge-nodes` | io | `FLOW-merge-report` |
@@ -1873,6 +1897,7 @@
 | `FUNC-own-kuzu-host` | satisfy | `REQ-host-holds-only-kuzu-handle` |
 | `FUNC-plan-code-lane` | allocate | `MOD-projections` |
 | `FUNC-plan-code-lane` | io | `FLOW-code-lane-plan` |
+| `FUNC-plan-code-lane` | io | `FLOW-test-run-report-code` |
 | `FUNC-plan-code-lane` | satisfy | `REQ-lane-reports-change` |
 | `FUNC-plan-code-lane` | satisfy | `REQ-selective-code-lane` |
 | `FUNC-read-tools` | allocate | `MOD-surface` |
@@ -1890,6 +1915,7 @@
 | `FUNC-resolve-tests-from-code` | satisfy | `REQ-graph-tests-operational` |
 | `FUNC-rewind` | allocate | `MOD-surface` |
 | `FUNC-rewind` | io | `FLOW-reseed-snapshot` |
+| `FUNC-rewind` | io | `FLOW-rewind-summary` |
 | `FUNC-rewind` | satisfy | `REQ-graph-state-recall` |
 | `FUNC-rules-tool` | allocate | `MOD-projections` |
 | `FUNC-rules-tool` | io | `FLOW-rules-answer` |
@@ -1923,6 +1949,9 @@
 | `FUNC-se-laufzeit` | io | `FLOW-anleitung-se-laufzeit` |
 | `FUNC-se-laufzeit` | satisfy | `REQ-laufzeit-reads-answer-path` |
 | `FUNC-se-laufzeit` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-se-modulebene` | allocate | `MOD-agent-surface` |
+| `FUNC-se-modulebene` | io | `FLOW-anleitung-se-modulebene` |
+| `FUNC-se-modulebene` | satisfy | `REQ-modulebene-reads-and-separates` |
 | `FUNC-se-optimize` | allocate | `MOD-agent-surface` |
 | `FUNC-se-optimize` | io | `FLOW-anleitung-se-optimize` |
 | `FUNC-se-optimize` | satisfy | `REQ-optimize-probes-and-presents` |
@@ -1984,6 +2013,7 @@
 | `FUNC-test` | satisfy | `REQ-test-skill-red-first` |
 | `FUNC-test-ingest` | allocate | `MOD-projections` |
 | `FUNC-test-ingest` | io | `FLOW-mutate-cmd-test-ingest` |
+| `FUNC-test-ingest` | io | `FLOW-test-ingest-answer` |
 | `FUNC-test-ingest` | satisfy | `REQ-test-result-withdrawn-on-change` |
 | `FUNC-test-ingest` | satisfy | `REQ-test-runnable-binding` |
 | `FUNC-test-ui` | allocate | `MOD-agent-surface` |
@@ -2361,6 +2391,7 @@
 | `TEST-merge` | verify | `SCHEMA-branch-merge-report` |
 | `TEST-merge-no-duplicate-edge` | verify | `REQ-graph-integrity` |
 | `TEST-merge-no-duplicate-edge` | verify | `REQ-post-merge-nodes` |
+| `TEST-modulebene-reads-and-separates` | verify | `REQ-modulebene-reads-and-separates` |
 | `TEST-monotone-convergence` | verify | `REQ-monotone-convergence` |
 | `TEST-mutate-gate` | verify | `REQ-confidence-tier` |
 | `TEST-mutate-gate` | verify | `REQ-one-gate-per-repo` |
@@ -2535,6 +2566,7 @@
 | `UC-code-quality` | compose | `REQ-interface-change-escalation` |
 | `UC-code-quality` | compose | `REQ-laufzeit-reads-answer-path` |
 | `UC-code-quality` | compose | `REQ-mcp-gate-symmetry` |
+| `UC-code-quality` | compose | `REQ-modulebene-reads-and-separates` |
 | `UC-code-quality` | compose | `REQ-one-gate-per-repo` |
 | `UC-code-quality` | compose | `REQ-optimize-probes-and-presents` |
 | `UC-code-quality` | compose | `REQ-post-apply-gate` |

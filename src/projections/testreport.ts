@@ -35,7 +35,7 @@ import {
 import { mitGetragenenReq, schneide, type Umfang } from '../kernel/measure/working-set.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
-const GraphTestIngestInputSchema = z
+export const GraphTestIngestInputSchema = z
   .object({
     report: z
       .string()

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 432 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 434 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 432 CR · 343 done · 4 open.
+Total: 434 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -494,3 +494,5 @@ Total: 432 CR · 343 done · 4 open.
 | `CR-GC-820` | n/a | CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md |
 | `CR-GC-821` | n/a | graph_metrics-Antwort ohne pruefbaren Vertrag |
 | `CR-GC-822` | n/a | Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell |
+| `CR-GC-823` | n/a | Actor-Flows aus kernel ohne surface: gate-verdict (apply), graph-state (GraphStore), export-pending (setExportPending) erreichen den Auftraggeber im Code nur ueber surface |
+| `CR-GC-824` | n/a | Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum |

@@ -25,6 +25,7 @@
  * @author andreas@siglochconsulting
  */
 import { execFileSync } from 'node:child_process';
+import { z } from 'zod/v4';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createHarness } from './create-harness.js';
@@ -32,18 +33,19 @@ import { deriveMemberName } from './mcp-server.js';
 import { graphSnapshotRel } from '../kernel/harness-import.js';
 import { isExportPending, EXPORT_PENDING_REL } from '../kernel/export-marker.js';
 
-export interface RewindSummary {
+export const RewindSummarySchema = z.object({
   /** The git ref that was recalled, verbatim as given. */
-  ref: string;
+  ref: z.string(),
   /** The resolved commit sha the snapshot was read from. */
-  commit: string;
+  commit: z.string(),
   /** Repo-relative snapshot path inside that commit. */
-  snapshot: string;
+  snapshot: z.string(),
   /** Element/trace counts after the reseed. */
-  restored: { nodes: number; edges: number };
+  restored: z.object({ nodes: z.number().int(), edges: z.number().int() }),
   /** True when a set EXPORT_PENDING marker was overridden via `force`. */
-  forced: boolean;
-}
+  forced: z.boolean(),
+});
+export type RewindSummary = z.infer<typeof RewindSummarySchema>;
 
 /** Raised for every expected failure — the CLI renders these without a stack. */
 export class RewindError extends Error {
@@ -147,7 +149,7 @@ export async function executeRewind(opts: {
     // which is exactly the post-state a recall promises.
     const restored = await harness.reseed(stageRel);
     trace(`rewind: restored ${restored.nodes} nodes, ${restored.edges} edges`);
-    return { ref: opts.ref, commit, snapshot, restored, forced: pending };
+    return RewindSummarySchema.parse({ ref: opts.ref, commit, snapshot, restored, forced: pending });
   } finally {
     await harness.close();
     rmSync(stageAbs, { force: true });
