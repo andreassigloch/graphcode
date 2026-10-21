@@ -84,7 +84,7 @@
 | `REQ-cache-layering` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-chain-metrics` | `TEST-graph-metrics` | `FUNC-chain-metrics` | `MOD-projections` |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` | — |
-| `REQ-codec-validation` | `TEST-codec-validation` · `TEST-roundtrip` | `FUNC-decode` | `MOD-loop` |
+| `REQ-codec-validation` | `TEST-codec-validation` · `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
 | `REQ-completeness-actor-bounded` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-projections` |
 | `REQ-completeness-single-value` | `TEST-readiness-completeness` | `MOD-projections` | — |
 | `REQ-confidence-tier` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
@@ -99,7 +99,7 @@
 | `REQ-export-no-clobber` | `TEST-export-graph-guard` · `TEST-mcp-export-guard` | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `REQ-fmea-checks-entry` | `TEST-fmea-reads-places` | `FUNC-se-fmea` | `MOD-agent-surface` |
 | `REQ-fmea-reads-places` | `TEST-fmea-reads-places` | `FUNC-se-fmea` | `MOD-agent-surface` |
-| `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-decode` | `MOD-loop` |
+| `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
 | `REQ-formatE-parity` | `TEST-formate-binding` · `TEST-formate-ops` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` | `MOD-projections` | — |
 | `REQ-full-run-on-probation` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 | `REQ-gate-judges-and-stores` | `TEST-gate-urteilt-und-speichert` | `FUNC-mutate` | `MOD-kernel` |
@@ -304,7 +304,7 @@
 | `REQ-buildable-standalone` | `TEST-distribution` | `MOD-surface` | — |
 | `REQ-cache-layering` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-chain-metrics` | `TEST-graph-metrics` | `FUNC-chain-metrics` | `MOD-projections` |
-| `REQ-codec-validation` | `TEST-codec-validation` · `TEST-roundtrip` | `FUNC-decode` | `MOD-loop` |
+| `REQ-codec-validation` | `TEST-codec-validation` · `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
 | `REQ-completeness-actor-bounded` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-projections` |
 | `REQ-completeness-single-value` | `TEST-readiness-completeness` | `MOD-projections` | — |
 | `REQ-confidence-tier` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
@@ -324,7 +324,7 @@
 | `REQ-first-session-claims-store-lock` | `TEST-store-lock` | `FUNC-claim-store-lock` | `MOD-kernel` |
 | `REQ-fmea-checks-entry` | `TEST-fmea-reads-places` | `FUNC-se-fmea` | `MOD-agent-surface` |
 | `REQ-fmea-reads-places` | `TEST-fmea-reads-places` | `FUNC-se-fmea` | `MOD-agent-surface` |
-| `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-decode` | `MOD-loop` |
+| `REQ-formatE-diff-dialect` | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
 | `REQ-formatE-parity` | `TEST-formate-binding` · `TEST-formate-ops` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` | `MOD-projections` | — |
 | `REQ-full-run-on-probation` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 | `REQ-further-session-docks-via-socket` | `TEST-host-shim` | `FUNC-host-socket` | `MOD-surface` |

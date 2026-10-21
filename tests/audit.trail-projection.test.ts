@@ -26,7 +26,7 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import { projectAuditEntries, type AuditStats } from '../src/surface/audit.js';
 import { alsFormatE } from './helpers/format-e.js';
-import { formatEToCommands } from '../src/loop/format-e-commands.js';
+import { formatEToCommands } from '../src/kernel/format-e-commands.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {

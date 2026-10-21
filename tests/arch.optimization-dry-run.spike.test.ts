@@ -522,9 +522,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-814 (graphVersion 777) — NEU GEMESSEN: die Agent-Ablaufsteuerung ist FUNC (CR-GC-813), ihre Vertraege
       // zaehlen an den Blockgrenzen, und CR-GC-814 brachte belegte Fluesse dazu. BW-02 @ Grounding (25 Vertraege)
       // ist jetzt der Engpass, und der eine verbleibende Zug senkt ihn nicht.
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
-        ruleId: 'BW-02',
-        elementId: 'FUNC-block-grounding',
+      // CR-GC-825 (graphVersion 803) — NEU GEMESSEN: `decode` liegt in MOD-kernel; dessen Grenze traegt jetzt
+      // 23 Vertraege (SCHEMA-format-e kam dazu), Ueberschuss 4,75. Nach dem einen Zug an FUNC-block-abfrage
+      // (Steuerwert 5,752 → 4,752) steht R-04 @ MOD-kernel vorn — es ist wieder dort, wo er vor CR-GC-573 stand.
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-kernel — bitte neu messen').toEqual({
+        ruleId: 'R-04',
+        elementId: 'MOD-kernel',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

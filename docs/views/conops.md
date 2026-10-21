@@ -451,6 +451,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-822` | n/a | Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell | `FUNC-generation-step` · `FUNC-graph-readiness` |
 | `CR-GC-823` | n/a | Actor-Flows aus kernel ohne surface: gate-verdict (apply), graph-state (GraphStore), export-pending (setExportPending) erreichen den Auftraggeber im Code nur ueber surface | `FUNC-graph-mutate-tool` · `FUNC-host-socket` · `FUNC-rewind` · `FUNC-score-completeness` · `FUNC-test-ingest` |
 | `CR-GC-824` | n/a | Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum | `FUNC-se-modulebene` · `REQ-modulebene-reads-and-separates` |
+| `CR-GC-825` | n/a | FUNC-decode von loop nach kernel: einzige Grounding-FUNC in loop, Geschwister import/reseed/merge liegen in kernel; Linie loop-surface 2 -> 1 Flow | `FUNC-decode` · `MOD-kernel` · `MOD-loop` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

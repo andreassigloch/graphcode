@@ -18,7 +18,7 @@ import { ALL_RULE_DEFS } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { bootstrap, TEMPLATE_FORMAT_E } from '../src/surface/bootstrap.js';
-import { formatEToCommands } from '../src/loop/format-e-commands.js';
+import { formatEToCommands } from '../src/kernel/format-e-commands.js';
 import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 

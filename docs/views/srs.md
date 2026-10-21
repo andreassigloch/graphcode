@@ -162,7 +162,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -170,7 +170,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -178,7 +178,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.1.1.4  `FUNC-mutate` — mutate(commands)
 
@@ -514,7 +514,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -522,7 +522,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -530,7 +530,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.1.2.4  `FUNC-mutate` — mutate(commands)
 
@@ -650,7 +650,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-rou
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -658,7 +658,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -666,7 +666,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 #### 3.1.4  `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation
 
@@ -930,7 +930,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -938,7 +938,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -946,7 +946,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.1.5.4  `FUNC-mutate` — mutate(commands)
 
@@ -3922,7 +3922,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -3930,7 +3930,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -3938,7 +3938,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.5.2.9  `FUNC-mutate` — mutate(commands)
 
@@ -4616,7 +4616,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -4624,7 +4624,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -4632,7 +4632,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.7.2.7  `FUNC-mutate` — mutate(commands)
 
@@ -5316,7 +5316,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -5324,7 +5324,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -5332,7 +5332,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.8.4.4  `FUNC-mutate` — mutate(commands)
 
@@ -6964,7 +6964,7 @@ io ◀ — · io ▶ — · allocate ▶ —
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -6972,7 +6972,7 @@ CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → V
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
 
@@ -6980,7 +6980,7 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 
 priority: must · status: open · kinds: functional
 
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-loop`
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### 3.10.2.4.2  `FUNC-emit-trajectory` — materializeTrajectory()
 
@@ -9472,7 +9472,7 @@ allocate ◀ — · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontol
 
 Der einzige Kuzu-Owner. Zwei Tueren nach aussen: apply(Command[]) liefert ein Verdict, query(TypedQuery) liefert eine Scheibe. Ausserhalb dieses Moduls sieht niemand den Graphen; Lifecycle, Sperre, Regel-Lauf, Konformitaets-Fakten, Migration und das Operations-Log liegen hier. (CR-GC-446)
 
-allocate ◀ `FUNC-apply-reseed` · `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-store` · `FUNC-held-back-traces` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-config` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-resolve-tests-from-code` · `FUNC-schema-guard` · `FUNC-seed-from-json` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-import-se-ontology` · `REQ-precommit-timeout` · `REQ-prompt-provenance` · `REQ-quality-metric` · `REQ-risk-gate-rule-eval-fails` · `REQ-risk-store-unreadable` · `REQ-rule-calibration` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-structural-rule-shared`
+allocate ◀ `FUNC-apply-reseed` · `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-decode` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-store` · `FUNC-held-back-traces` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-config` · `FUNC-merge-nodes` · `FUNC-migrate-schema` · `FUNC-mutate` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-resolve-tests-from-code` · `FUNC-schema-guard` · `FUNC-seed-from-json` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-import-se-ontology` · `REQ-precommit-timeout` · `REQ-prompt-provenance` · `REQ-quality-metric` · `REQ-risk-gate-rule-eval-fails` · `REQ-risk-store-unreadable` · `REQ-rule-calibration` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-structural-rule-shared`
 
 #### 6.3.1  `MOD-kernel-measure` — measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot
 
@@ -9484,7 +9484,7 @@ allocate ◀ `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-st
 
 Die Schleife, die den Graphen bewegt: Fokuswahl, Zielprofil, Vorschlaege, Runden-Prompt, Modellaufruf, Kandidaten-Ranking. Ein Client des Gates wie jeder andere — sie schreibt ausschliesslich durch apply(). (CR-GC-446)
 
-allocate ◀ `FUNC-decode` · `FUNC-generation-step` · `FUNC-graph-suggest` · `FUNC-target-profile-load` · `FUNC-vorschlag` · satisfy ▶ `REQ-gate-only-writes` · `REQ-phase-gate-not-skippable`
+allocate ◀ `FUNC-generation-step` · `FUNC-graph-suggest` · `FUNC-target-profile-load` · `FUNC-vorschlag` · satisfy ▶ `REQ-gate-only-writes` · `REQ-phase-gate-not-skippable`
 
 ### 6.5  `MOD-projections` — projections — Graph nach Artefakt
 

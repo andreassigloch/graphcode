@@ -372,14 +372,14 @@ describe('CODE-Spur: die Auswahl, ihre Reichweite und ihr Fallback (CR-GC-541)',
     ctx = buildContext(REPO_ROOT);
   });
 
-  // CR-GC-631/649: die Datei heisst jetzt `src/loop/format-e-commands.ts` — der Handschnitt
+  // CR-GC-631/649/825: die Datei heisst jetzt `src/kernel/format-e-commands.ts` — der Handschnitt
   // aus CR-GC-536 ist derselbe geblieben, gemessen: dieselben vier Dateien.
   // CR-GC-719: plus der Vertragstest von SCHEMA-format-e (TEST-mutate-input-formate) — der
   // Uebersetzer parst genau diesen Vertrag, also gehoert sein Test in die Auswahl.
   // CR-GC-768: plus der Vertragstest von SCHEMA-mutate-command — das Modell fuehrt jetzt den Fluss
   // decode → mutate (FLOW-mutate-cmd-decode), der Uebersetzer erzeugt genau diesen Vertrag.
-  it('src/loop/format-e-commands.ts waehlt aus dem Graphen genau den Handschnitt aus CR-GC-536', () => {
-    const result = selectForChange(['src/loop/format-e-commands.ts'], ctx);
+  it('src/kernel/format-e-commands.ts waehlt aus dem Graphen genau den Handschnitt aus CR-GC-536', () => {
+    const result = selectForChange(['src/kernel/format-e-commands.ts'], ctx);
 
     expect(result.graphOnly).toEqual([
       'tests/codec.roundtrip.test.ts',
@@ -394,7 +394,7 @@ describe('CODE-Spur: die Auswahl, ihre Reichweite und ihr Fallback (CR-GC-541)',
   });
 
   it('nennt die Bindungsquote des ChangeSets, nicht nur das Urteil', () => {
-    const result = selectForChange(['src/loop/format-e-commands.ts', 'src/__gibt-es-nicht__.ts'], ctx);
+    const result = selectForChange(['src/kernel/format-e-commands.ts', 'src/__gibt-es-nicht__.ts'], ctx);
 
     expect(result.binding).toEqual({ sources: 2, bound: 1 });
     expect(result.complete).toBe(false); // eine ungebundene Datei genuegt fuer den Volllauf
@@ -459,16 +459,16 @@ describe('CODE-Spur: die Auswahl, ihre Reichweite und ihr Fallback (CR-GC-541)',
     // CR-GC-719: Quelle + docs/graph im Diff, CODE waehlte 4 Dateien — drei Tests des Modell-Satzes
     // wurden im Volllauf rot und lagen ausserhalb der Auswahl (Schlupf).
     const modelTests = ['tests/verify-model.completeness.test.ts', 'tests/mcp.tests-operational.test.ts'];
-    const mit = planCodeLane(['src/loop/format-e-commands.ts', 'docs/graph/graphcode.graph.json'], ctx, { modelTests });
+    const mit = planCodeLane(['src/kernel/format-e-commands.ts', 'docs/graph/graphcode.graph.json'], ctx, { modelTests });
     expect(mit.lane).toBe('CODE');
     for (const t of modelTests) expect(mit.files).toContain(t);
     expect(mit.lines.join('\n')).toMatch(/Modell-Satz/);
-    const ohne = planCodeLane(['src/loop/format-e-commands.ts'], ctx, { modelTests });
+    const ohne = planCodeLane(['src/kernel/format-e-commands.ts'], ctx, { modelTests });
     expect(ohne.files).not.toContain('tests/verify-model.completeness.test.ts');
   });
 
   it('der Plan sagt die Spur, den Befehl und die Reichweite an — und nie einen Befehl ohne Dateien', () => {
-    const code = planCodeLane(['src/loop/format-e-commands.ts'], ctx);
+    const code = planCodeLane(['src/kernel/format-e-commands.ts'], ctx);
     expect(code.lane).toBe('CODE');
     expect(code.command).toMatch(/^npx vitest run tests\//);
     expect(code.command).toContain('tests/codec.roundtrip.test.ts');
@@ -490,7 +490,7 @@ describe('CODE-Spur: die Auswahl, ihre Reichweite und ihr Fallback (CR-GC-541)',
   it('FLOW-code-lane-plan: der Plan erfuellt SCHEMA-code-lane-plan an seiner Modulgrenze', () => {
     // Der Runner und der pre-commit-Hook lesen diesen Plan aus `dist/` — ohne Typpruefung.
     // Eine formfremde Antwort faellt dort erst als leerer oder falscher Lauf auf.
-    expect(CodeLanePlanSchema.safeParse(planCodeLane(['src/loop/format-e-commands.ts'], ctx)).success).toBe(true);
+    expect(CodeLanePlanSchema.safeParse(planCodeLane(['src/kernel/format-e-commands.ts'], ctx)).success).toBe(true);
 
     // Eine Spur OHNE die Reichweitenangabe passiert den Vertrag NICHT: `binding` und
     // `unresolvedTests` sind Teil der Antwort, nicht Beiwerk der Ausgabe.

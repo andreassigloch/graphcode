@@ -897,6 +897,9 @@
 | `CR-GC-823` | relation | `SCHEMA-test-ingest-input` |
 | `CR-GC-824` | relation | `FUNC-se-modulebene` |
 | `CR-GC-824` | relation | `REQ-modulebene-reads-and-separates` |
+| `CR-GC-825` | relation | `FUNC-decode` |
+| `CR-GC-825` | relation | `MOD-kernel` |
+| `CR-GC-825` | relation | `MOD-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1732,7 +1735,7 @@
 | `FUNC-create-harness` | allocate | `MOD-surface` |
 | `FUNC-create-harness` | io | `FLOW-harness-handle` |
 | `FUNC-create-harness` | satisfy | `REQ-harness-factory-returns-one-owner` |
-| `FUNC-decode` | allocate | `MOD-loop` |
+| `FUNC-decode` | allocate | `MOD-kernel` |
 | `FUNC-decode` | io | `FLOW-mutate-cmd-decode` |
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
 | `FUNC-decode` | satisfy | `REQ-formatE-diff-dialect` |
