@@ -1,6 +1,6 @@
 # CR-GC-823: Actor-Flows aus kernel ohne surface: gate-verdict (apply), graph-state (GraphStore), export-pending (setExportPending) erreichen den Auftraggeber im Code nur ueber surface
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-21)
 **Typ:** aus Item ITEM-2026-986 (finding)
 **Erstellt:** 2026-10-21
 **Item:** bok/items/ITEM-2026-986.json (Lane: graph)
