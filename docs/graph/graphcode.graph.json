@@ -3568,6 +3568,12 @@
       "description": "docs/cr/open/CR-GC-834-start-sitzungsende-und-store-oeffnen-im-.md"
     },
     {
+      "id": "CR-GC-835",
+      "type": "CR",
+      "name": "Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC",
+      "description": "docs/cr/open/CR-GC-835-export-import-und-snapshot-ketten-im-mod.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3609,7 +3615,7 @@
       "id": "FCHAIN-doc-export",
       "type": "FCHAIN",
       "name": "Doc-Export (stdio → exporter)",
-      "description": "graph_export ueber MCP-stdio: serveStdio nimmt die View-Auswahl (FLOW-export-request) entgegen, exportMarkdown rendert deterministisch docs/views + docs/graph. Integrationstest: TEST-mcp-export via REQ-doc-export.",
+      "description": "Der Agent ruft graph_export (meist aus einem se-view-Skill); das Werkzeug liest den Graphen, schreibt docs/graph und je Sicht den Markdown-Text, den exportMarkdown rendert, und antwortet mit den Pfaden.",
       "status": "reviewed"
     },
     {
@@ -3669,7 +3675,7 @@
       "id": "FCHAIN-model-import",
       "type": "FCHAIN",
       "name": "Bestehenden Bestand einlesen",
-      "description": "Ein Mensch laesst eine bestehende Codebasis oder ein Dokument einlesen; der Slicer liefert Format-E, der Import legt den Bestand an."
+      "description": "Ein Mensch laesst eine bestehende Codebasis einlesen: der Skill se:import-code leitet den Agenten an, graphcode import-code zu fahren; das Verb legt einen eigenen Harness an, befuellt einen leeren Store, gibt den Format-E-Bestand an graph_mutate, exportiert und meldet die Zusammenfassung ueber die CLI."
     },
     {
       "id": "FCHAIN-recall",
@@ -3718,13 +3724,13 @@
       "id": "FCHAIN-snapshot-freshness",
       "type": "FCHAIN",
       "name": "Snapshot-Freshness (Aufzeichnen)",
-      "description": "Jede Modell-Mutation setzt den Drift-Marker, die Persistenz schreibt den Store, der Export materialisiert den kanonischen Snapshot und loescht den Marker. Ergebnis: kein Commit traegt einen Snapshot, der dem Live-Modell nachlaeuft."
+      "description": "Der Agent schreibt ueber graph_mutate; das Gate setzt nach jeder angenommenen Mutation den Drift-Marker und ruft die Post-Apply-Hooks, darunter den Auto-Export. Der fuehrt entprellt graph_export, das den Snapshot schreibt und den Marker loescht. Der pre-commit-Hook liest den Marker."
     },
     {
       "id": "FCHAIN-snapshot-roundtrip",
       "type": "FCHAIN",
       "name": "Snapshot-Rundreise",
-      "description": "Was graph_export als committete Datei schreibt, laedt seedFromJson beim naechsten Start oder Reseed zurueck in den Store: export, Datei, seed, import, Store. Ergebnis: der Store gleicht dem committeten Snapshot."
+      "description": "Der Agent exportiert ueber graph_export die committete Datei; spaeter laedt graph_reseed sie zurueck: reseed, applyReseed, seedFromJsonFile, importOntologyGraph, Store. Ergebnis: der Store gleicht der committeten Datei."
     },
     {
       "id": "FCHAIN-steering-loop",
@@ -4246,6 +4252,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-export-answer",
+      "type": "FLOW",
+      "name": "Antwort graph_export",
+      "description": "Die Antwort von graph_export: Pfade und Groessen der geschriebenen Dateien, Platzhalter, ungefuetterte Mutationen. Beleg: src/projections/export.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-export-flush",
       "type": "FLOW",
       "name": "Export nachziehen",
@@ -4258,6 +4271,13 @@
       "name": "Export-Rueckstand",
       "description": "Die Drift-Marke unter .graphcode: sagt, dass und wie weit der committete Snapshot dem lebenden Store nachlaeuft. Der pre-commit-Hook liest sie, ohne den Kuzu-Store zu oeffnen.",
       "sync": "async"
+    },
+    {
+      "id": "FLOW-export-request-import-code",
+      "type": "FLOW",
+      "name": "Export-Anfrage (import-code)",
+      "description": "Der Export nach dem Code-Import (graph_export-Werkzeug). Beleg: src/surface/import-code-verb.ts.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-fingerprint-request",
@@ -4441,6 +4461,20 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-held-back-request",
+      "type": "FLOW",
+      "name": "Anfrage zurueckgehaltene Kanten (graph_export)",
+      "description": "Repo-Wurzel, Systemname und Live-Graph, mit denen graph_export die zurueckgehaltenen Kanten erfragt. Beleg: src/projections/export.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-held-back-request-readiness",
+      "type": "FLOW",
+      "name": "Anfrage zurueckgehaltene Kanten (graph_readiness)",
+      "description": "Repo-Wurzel, Systemname und Live-Graph, mit denen graph_readiness die zurueckgehaltenen Kanten erfragt. Beleg: src/projections/report.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-held-back-traces",
       "type": "FLOW",
       "name": "Zurueckgehaltene Kanten",
@@ -4460,6 +4494,13 @@
       "type": "FLOW",
       "name": "Betroffene Tests",
       "description": "Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-import-summary",
+      "type": "FLOW",
+      "name": "Import-Zusammenfassung",
+      "description": "Die Zusammenfassung des Code-Imports an die CLI. Beleg: src/surface/import-code-verb.ts, src/cli.ts.",
       "sync": "sync"
     },
     {
@@ -4534,10 +4575,31 @@
       "id": "FLOW-markdown-docs",
       "type": "FLOW",
       "name": "Exportierte Sichten",
-      "description": "Die deterministisch nach docs/views exportierten Markdown-Sichten mit GENERATED-Header, erzeugt vom Exporter beim Re-Export des SSOT.",
+      "description": "Die Markdown-Sichten unter docs/views, die graph_export schreibt.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "sync": "async"
+    },
+    {
+      "id": "FLOW-markdown-text",
+      "type": "FLOW",
+      "name": "Markdown einer Sicht",
+      "description": "Der gerenderte Markdown-Text einer Sicht, den exportMarkdown an graph_export zurueckgibt. Beleg: src/projections/export.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-marker-clear",
+      "type": "FLOW",
+      "name": "Marker loeschen",
+      "description": "Der Auftrag von graph_export, nach dem Schreiben den Drift-Marker zu loeschen (clearExportPending). Beleg: src/projections/export.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-marker-set",
+      "type": "FLOW",
+      "name": "Marker setzen",
+      "description": "Der Auftrag des Gates, nach einer angenommenen Mutation den Drift-Marker zu setzen (setExportPending). Beleg: src/kernel/gate.ts.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-mcp-tool",
@@ -4698,7 +4760,8 @@
       "id": "FLOW-query-export",
       "type": "FLOW",
       "name": "Sichtauftrag an den Renderer",
-      "description": "Die Sichtliste, fuer die graph_export das Markdown rendern laesst."
+      "description": "Graph, Sicht und Systemname, mit denen graph_export je Sicht exportMarkdown ruft.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-query-request-agent",
@@ -4712,9 +4775,9 @@
       "id": "FLOW-query-request-auto-export",
       "type": "FLOW",
       "name": "Query-Request (auto-export)",
-      "description": "Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-auto-export → FUNC-export-markdown; aufgetrennt aus FLOW-query-request (CR-GC-510).",
+      "description": "Der entprellte Aufruf des graph_export-Werkzeugs nach einer angenommenen Mutation (250 ms, single-flight).",
       "status": "reviewed",
-      "sync": "sync"
+      "sync": "async"
     },
     {
       "id": "FLOW-read-request",
@@ -4738,6 +4801,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-reseed-answer",
+      "type": "FLOW",
+      "name": "Antwort graph_reseed",
+      "description": "Die Antwort von graph_reseed: Zahl der Knoten und Kanten nach dem Neuaufbau. Beleg: src/surface/write.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-reseed-order",
       "type": "FLOW",
       "name": "Reseed-Auftrag",
@@ -4749,6 +4819,13 @@
       "type": "FLOW",
       "name": "Neuaufbau-Auftrag (Store oeffnen)",
       "description": "Der Neuaufbau aus der committeten SSOT, den GraphStore.open bei Schema-Abweichung anstoesst (applyReseed). Beleg: src/kernel/graph-store.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-reseed-request",
+      "type": "FLOW",
+      "name": "Reseed-Anfrage (Werkzeug)",
+      "description": "Der Aufruf harness.reseed aus dem Werkzeug graph_reseed, mit optionalem Pfad. Beleg: src/surface/write.ts.",
       "sync": "sync"
     },
     {
@@ -4804,6 +4881,13 @@
       "type": "FLOW",
       "name": "Erstbefuellung (Hoststart)",
       "description": "Die Erstbefuellung eines leeren Stores beim Hoststart (harness.seedFromJson). Beleg: src/surface/mcp-server.ts, bootHost.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-seed-request-import-code",
+      "type": "FLOW",
+      "name": "Erstbefuellung (import-code)",
+      "description": "Die Erstbefuellung eines leeren Stores vor dem Code-Import. Beleg: src/surface/import-code-verb.ts.",
       "sync": "sync"
     },
     {
@@ -5533,7 +5617,7 @@
       "id": "FUNC-export-marker",
       "type": "FUNC",
       "name": "setExportPending",
-      "description": "Markiert nach einer Mutation, dass der Export dem Store hinterherhaengt, und raeumt die Marke wieder ab. Die Marke ist der einzige Hinweis darauf, dass Datei und Store auseinanderlaufen.",
+      "description": "Fuehrt den Drift-Marker EXPORT_PENDING: das Gate setzt ihn nach jeder angenommenen Mutation, graph_export loescht ihn nach dem Schreiben. Der pre-commit-Hook liest die Datei. Beleg: src/kernel/export-marker.ts.",
       "status": "done",
       "realRef": {
         "file": "src/kernel/export-marker.ts",
@@ -5680,6 +5764,17 @@
       "realRef": {
         "file": "src/projections/report.ts",
         "symbol": "graph_readiness",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-graph-reseed-tool",
+      "type": "FUNC",
+      "name": "graph_reseed (Werkzeug)",
+      "description": "Die Werkzeugschicht des Reseed: der Agent ruft graph_reseed, das Werkzeug ruft harness.reseed und antwortet mit der Zahl der Knoten und Kanten. Verwirft nicht exportierte Gate-Aenderungen. Beleg: src/surface/write.ts, graph_reseed.",
+      "realRef": {
+        "file": "src/surface/write.ts",
+        "symbol": "graph_reseed",
         "lang": "ts"
       }
     },
@@ -8671,6 +8766,12 @@
         "symbol": "ReadinessMark",
         "lang": "ts"
       }
+    },
+    {
+      "id": "SCHEMA-export-answer",
+      "type": "SCHEMA",
+      "name": "Antwort graph_export",
+      "description": "Die Antwort von graph_export. Im Code ohne Zod-Schema: der Handler gibt ein typisiertes Objekt zurueck."
     },
     {
       "id": "SCHEMA-export-pending",
@@ -16807,6 +16908,46 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-835",
+      "target": "FUNC-auto-export",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-835",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-835",
+      "target": "FUNC-export-marker",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-835",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-835",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-835",
+      "target": "FUNC-held-back-traces",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-835",
+      "target": "FUNC-import-code-verb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-835",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -17117,6 +17258,11 @@
     {
       "source": "FCHAIN-doc-export",
       "target": "FUNC-graph-export-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
@@ -17495,6 +17641,11 @@
     },
     {
       "source": "FCHAIN-model-import",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
       "target": "FUNC-cli-dispatch",
       "type": "compose"
     },
@@ -17510,12 +17661,22 @@
     },
     {
       "source": "FCHAIN-model-import",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
       "target": "FUNC-graph-mutate-tool",
       "type": "compose"
     },
     {
       "source": "FCHAIN-model-import",
       "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-import",
       "type": "compose"
     },
     {
@@ -17536,6 +17697,16 @@
     {
       "source": "FCHAIN-model-import",
       "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-open-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-seed-from-json",
       "type": "compose"
     },
     {
@@ -17936,6 +18107,11 @@
     },
     {
       "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-decode",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
     },
@@ -17953,6 +18129,11 @@
     {
       "source": "FCHAIN-snapshot-freshness",
       "target": "FUNC-graph-export-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-graph-mutate-tool",
       "type": "compose"
     },
     {
@@ -17987,7 +18168,17 @@
     },
     {
       "source": "FCHAIN-snapshot-roundtrip",
+      "target": "FUNC-apply-reseed",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-roundtrip",
       "target": "FUNC-graph-export-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-roundtrip",
+      "target": "FUNC-graph-reseed-tool",
       "type": "compose"
     },
     {
@@ -17998,6 +18189,11 @@
     {
       "source": "FCHAIN-snapshot-roundtrip",
       "target": "FUNC-import",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-roundtrip",
+      "target": "FUNC-reseed",
       "type": "compose"
     },
     {
@@ -18933,6 +19129,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-export-answer",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-answer",
+      "target": "SCHEMA-export-answer",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-export-flush",
       "target": "FUNC-auto-export",
       "type": "io"
@@ -18950,6 +19156,16 @@
     {
       "source": "FLOW-export-pending",
       "target": "SCHEMA-export-pending",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-export-request-import-code",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-request-import-code",
+      "target": "SCHEMA-query-params",
       "type": "relation"
     },
     {
@@ -19049,6 +19265,11 @@
     },
     {
       "source": "FLOW-gate-verdict",
+      "target": "FUNC-auto-export",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-verdict",
       "target": "FUNC-bootstrap",
       "type": "io"
     },
@@ -19065,11 +19286,6 @@
     {
       "source": "FLOW-gate-verdict",
       "target": "FUNC-graph-suggest",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-gate-verdict",
-      "target": "FUNC-import-code-verb",
       "type": "io"
     },
     {
@@ -19154,11 +19370,6 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-auto-export",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
       "target": "FUNC-chain-metrics",
       "type": "io"
     },
@@ -19179,11 +19390,6 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-export-marker",
-      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -19213,11 +19419,6 @@
     {
       "source": "FLOW-graph-state",
       "target": "FUNC-graph-suggest",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-held-back-traces",
       "type": "io"
     },
     {
@@ -19368,6 +19569,26 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-held-back-request",
+      "target": "FUNC-held-back-traces",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-held-back-request",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-held-back-request-readiness",
+      "target": "FUNC-held-back-traces",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-held-back-request-readiness",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-held-back-traces",
       "target": "FUNC-graph-export-snapshot",
       "type": "io"
@@ -19415,6 +19636,16 @@
     {
       "source": "FLOW-impacted-tests",
       "target": "SCHEMA-impacted-tests",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-import-summary",
+      "target": "FUNC-cli-dispatch",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-import-summary",
+      "target": "SCHEMA-cli-command",
       "type": "relation"
     },
     {
@@ -19522,6 +19753,36 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-markdown-text",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-markdown-text",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-marker-clear",
+      "target": "FUNC-export-marker",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-marker-clear",
+      "target": "SCHEMA-export-pending",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-marker-set",
+      "target": "FUNC-export-marker",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-marker-set",
+      "target": "SCHEMA-export-pending",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-mcp-tool",
       "target": "FUNC-bind-tools",
       "type": "io"
@@ -19610,6 +19871,11 @@
     {
       "source": "FLOW-mutate-answer",
       "target": "FUNC-host-socket",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-mutate-answer",
+      "target": "FUNC-import-code-verb",
       "type": "io"
     },
     {
@@ -19794,6 +20060,11 @@
     },
     {
       "source": "FLOW-query-request-agent",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-graph-suggest",
       "type": "io"
     },
@@ -19873,6 +20144,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-reseed-answer",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-reseed-answer",
+      "target": "SCHEMA-ontology-json",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-reseed-order",
       "target": "FUNC-apply-reseed",
       "type": "io"
@@ -19889,6 +20170,16 @@
     },
     {
       "source": "FLOW-reseed-order-open",
+      "target": "SCHEMA-ontology-json",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-reseed-request",
+      "target": "FUNC-reseed",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-reseed-request",
       "target": "SCHEMA-ontology-json",
       "type": "relation"
     },
@@ -19994,6 +20285,16 @@
     },
     {
       "source": "FLOW-seed-request",
+      "target": "SCHEMA-ontology-json",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-seed-request-import-code",
+      "target": "FUNC-seed-from-json",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-seed-request-import-code",
       "target": "SCHEMA-ontology-json",
       "type": "relation"
     },
@@ -20910,6 +21211,11 @@
     },
     {
       "source": "FUNC-block-bedienung",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-bedienung",
       "target": "FUNC-harness-cli",
       "type": "compose"
     },
@@ -21674,10 +21980,8 @@
     },
     {
       "source": "FUNC-export-markdown",
-      "target": "FLOW-markdown-docs",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "FLOW-markdown-text",
+      "type": "io"
     },
     {
       "source": "FUNC-export-markdown",
@@ -21839,7 +22143,27 @@
     },
     {
       "source": "FUNC-graph-export-snapshot",
+      "target": "FLOW-export-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
       "target": "FLOW-graph-snapshot-file",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
+      "target": "FLOW-held-back-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
+      "target": "FLOW-markdown-docs",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-export-snapshot",
+      "target": "FLOW-marker-clear",
       "type": "io"
     },
     {
@@ -22023,6 +22347,11 @@
     },
     {
       "source": "FUNC-graph-readiness",
+      "target": "FLOW-held-back-request-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-readiness",
       "target": "FLOW-readiness-report",
       "type": "io"
     },
@@ -22039,6 +22368,26 @@
     {
       "source": "FUNC-graph-readiness",
       "target": "REQ-held-back-edges-in-readiness",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-reseed-tool",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-reseed-tool",
+      "target": "FLOW-reseed-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-reseed-tool",
+      "target": "FLOW-reseed-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-reseed-tool",
+      "target": "REQ-mcp-tool-registry",
       "type": "satisfy"
     },
     {
@@ -22325,12 +22674,27 @@
     },
     {
       "source": "FUNC-import-code-verb",
+      "target": "FLOW-export-request-import-code",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-import-code-verb",
       "target": "FLOW-harness-request-import-code",
       "type": "io"
     },
     {
       "source": "FUNC-import-code-verb",
+      "target": "FLOW-import-summary",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-import-code-verb",
       "target": "FLOW-mutate-cmd-import-code-verb",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-import-code-verb",
+      "target": "FLOW-seed-request-import-code",
       "type": "io"
     },
     {
@@ -22480,6 +22844,11 @@
     {
       "source": "FUNC-mutate",
       "target": "FLOW-graph-delta",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-mutate",
+      "target": "FLOW-marker-set",
       "type": "io"
     },
     {
@@ -26837,5 +27206,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 824
+  "graphVersion": 826
 }

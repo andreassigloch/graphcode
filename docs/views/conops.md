@@ -94,8 +94,8 @@ Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-agent-loop` → `FUNC-evaluate-rules` → `FUNC-graph-merge-tool` → `FUNC-graph-store` → `FUNC-merge-nodes` → `FUNC-mutate` → `FUNC-tool-context`
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-import` → `FUNC-open-store` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
-- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-agent-loop` → `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
-- `FCHAIN-snapshot-roundtrip` — Snapshot-Rundreise: `FUNC-agent-loop` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-import` → `FUNC-seed-from-json`
+- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-agent-loop` → `FUNC-auto-export` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
+- `FCHAIN-snapshot-roundtrip` — Snapshot-Rundreise: `FUNC-agent-loop` → `FUNC-apply-reseed` → `FUNC-graph-export-snapshot` → `FUNC-graph-reseed-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-reseed` → `FUNC-seed-from-json`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
 
@@ -120,8 +120,8 @@ Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehi
 
 Ausgeloest von: `ACTOR-auftraggeber`
 
-- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-render-views` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
-- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-agent-loop` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc` → `FUNC-mutate`
+- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-render-views` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
+- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-agent-loop` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
@@ -460,6 +460,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-832` | n/a | Schreibweg im Modell umgeht das graph_mutate-Werkzeug; Ketten modelfree-gate und interface-escalation sind Eigenschaften, kein Ablauf | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-decode` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-tool-context` · `FUNC-zug-bericht` |
 | `CR-GC-833` | n/a | Leseweg und Fuehrung im Modell umgehen die MCP-Werkzeuge; graph_generate ohne FUNC; Learning-Engine nicht gebaut | `FUNC-compute-readiness` · `FUNC-generation-step` · `FUNC-graph-generate-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-take-steering-snapshot` |
 | `CR-GC-834` | n/a | Start, Sitzungsende und Store-Oeffnen im Modell: repo-lifecycle mischt fuenf Ablaeufe, Startmeldung haengt am GraphStore in 18 Ketten | `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-proxy` · `FUNC-import` · `FUNC-open-store` · `FUNC-seed-from-json` · `FUNC-serve-stdio` · `FUNC-session-shutdown` |
+| `CR-GC-835` | n/a | Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC | `FUNC-auto-export` · `FUNC-export-markdown` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-graph-reseed-tool` · `FUNC-held-back-traces` · `FUNC-import-code-verb` · `FUNC-mutate` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

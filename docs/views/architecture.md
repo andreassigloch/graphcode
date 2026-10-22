@@ -67,6 +67,7 @@
 | `FUNC-graph-metrics` | FUNC | graph_metrics(scope?) |
 | `FUNC-graph-mutate-tool` | FUNC | graph_mutate (Werkzeug) |
 | `FUNC-graph-readiness` | FUNC | graph_readiness(detail?) |
+| `FUNC-graph-reseed-tool` | FUNC | graph_reseed (Werkzeug) |
 | `FUNC-graph-store` | FUNC | GraphStore |
 | `FUNC-graph-suggest` | FUNC | graph_suggest (Werkzeug) |
 | `FUNC-gve-sessions` | FUNC | liveSessions |
@@ -202,6 +203,7 @@
 | `FUNC-graph-metrics` | `MOD-projections` |
 | `FUNC-graph-mutate-tool` | `MOD-surface` |
 | `FUNC-graph-readiness` | `MOD-projections` |
+| `FUNC-graph-reseed-tool` | `MOD-surface` |
 | `FUNC-graph-store` | `MOD-kernel` |
 | `FUNC-graph-suggest` | `MOD-loop` |
 | `FUNC-gve-sessions` | `MOD-surface` |

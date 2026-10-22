@@ -13,9 +13,9 @@
            ╱────────╲
           ╱ use cases ╲      9 UC · 9 / 9 with a verified requirement
          ╱────────────╲
-        ╱ integration  ╲     ✗ 176/250 FUNC↔FUNC connections tested  ← GAP
+        ╱ integration  ╲     ✗ 186/259 FUNC↔FUNC connections tested  ← GAP
        ╱────────────────╲
-      ╱ module · function ╲   7 MOD · 122 FUNC
+      ╱ module · function ╲   7 MOD · 123 FUNC
      ╱────────────────────╲
 ```
 
@@ -23,10 +23,10 @@
 |---|---|---|---|---|---|
 | System | SYS (1) | system verification (SYS.5) | 56 | 41 / 41 system requirements | ✓ |
 | Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 116 | 9 / 9 use cases | ✓ |
-| Integration | FUNC↔FUNC (250 conn) | integration verification (SYS.4 · SWE.5) | 46 | 176 / 250 connections | ✗ 74 uncovered |
-| Interface | SCHEMA (55) | integration verification (SYS.4 · SWE.5) | 23 | 35 / 55 schemas | ⚠ 20 without a test |
+| Integration | FUNC↔FUNC (259 conn) | integration verification (SYS.4 · SWE.5) | 46 | 186 / 259 connections | ✗ 73 uncovered |
+| Interface | SCHEMA (56) | integration verification (SYS.4 · SWE.5) | 23 | 35 / 56 schemas | ⚠ 21 without a test |
 | Module | MOD (7) | component verification (SWE.5 · HWE.3) | 57 | 6 / 7 | ⚠ 1 without a verified requirement |
-| Function | FUNC (122) | unit verification (SWE.4 · HWE.3) | 102 | 102 / 122 | ⚠ 20 without a verified requirement |
+| Function | FUNC (123) | unit verification (SWE.4 · HWE.3) | 102 | 103 / 123 | ⚠ 20 without a verified requirement |
 | (validation) | UC (9) | validation (VAL.1) | — | no position in the model | — |
 | (support) | — | conformance | 9 | codec round-trip | ✓ |
 
@@ -34,4 +34,4 @@
 > it says WHAT is verified, not how the test is written. A test of a system requirement counts as system
 > verification even if it is a unit-style test — whether it plays the system through, this table cannot say.
 > Validation against the intended use has no position: a play-through of a use case is a test of its requirements.
-> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (176/250 covered).
+> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (186/259 covered).
