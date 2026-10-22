@@ -1,6 +1,6 @@
 # CR-GC-835: Export-, Import- und Snapshot-Ketten nach dem Code
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1014 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1014.json (Lane: graph)
