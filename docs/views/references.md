@@ -908,6 +908,8 @@
 | `CR-GC-827` | relation | `SCHEMA-ontology-graph` |
 | `CR-GC-828` | relation | `FUNC-evaluate-rules` |
 | `CR-GC-828` | relation | `FUNC-graph-mutate-tool` |
+| `CR-GC-829` | relation | `FUNC-decode` |
+| `CR-GC-829` | relation | `REQ-roundtrip-conformance` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -950,10 +952,6 @@
 | `FCHAIN-capture` | satisfy | `REQ-interactive-capture-suggest` |
 | `FCHAIN-capture` | satisfy | `REQ-post-capture` |
 | `FCHAIN-capture` | satisfy | `REQ-pre-capture` |
-| `FCHAIN-codec-roundtrip` | compose | `FUNC-decode` |
-| `FCHAIN-codec-roundtrip` | satisfy | `REQ-post-codec-roundtrip` |
-| `FCHAIN-codec-roundtrip` | satisfy | `REQ-pre-codec-roundtrip` |
-| `FCHAIN-codec-roundtrip` | satisfy | `REQ-roundtrip-conformance` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-agent-loop` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-chain-metrics` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-function-criticality` |
@@ -1748,6 +1746,7 @@
 | `FUNC-decode` | io | `FLOW-mutate-cmd-decode` |
 | `FUNC-decode` | satisfy | `REQ-codec-validation` |
 | `FUNC-decode` | satisfy | `REQ-formatE-diff-dialect` |
+| `FUNC-decode` | satisfy | `REQ-roundtrip-conformance` |
 | `FUNC-deduce-tests` | allocate | `MOD-projections` |
 | `FUNC-deduce-tests` | io | `FLOW-test-selection` |
 | `FUNC-deduce-tests` | satisfy | `REQ-impact-based-testing` |
@@ -2470,8 +2469,6 @@
 | `TEST-roundtrip` | verify | `REQ-deterministic-serialization` |
 | `TEST-roundtrip` | verify | `REQ-formatE-diff-dialect` |
 | `TEST-roundtrip` | verify | `REQ-formatE-parity` |
-| `TEST-roundtrip` | verify | `REQ-post-codec-roundtrip` |
-| `TEST-roundtrip` | verify | `REQ-pre-codec-roundtrip` |
 | `TEST-roundtrip` | verify | `REQ-roundtrip-conformance` |
 | `TEST-rule-calibration` | verify | `REQ-rule-calibration` |
 | `TEST-schema-migration` | verify | `REQ-post-migrate-schema` |
@@ -2559,7 +2556,6 @@
 | `TEST-zug-kennzahlen-danach` | verify | `REQ-zug-zeigt-kennzahlen-danach` |
 | `UC-code-quality` | compose | `FCHAIN-apply-gate` |
 | `UC-code-quality` | compose | `FCHAIN-capture` |
-| `UC-code-quality` | compose | `FCHAIN-codec-roundtrip` |
 | `UC-code-quality` | compose | `FCHAIN-interface-escalation` |
 | `UC-code-quality` | compose | `FCHAIN-skill-authoring` |
 | `UC-code-quality` | compose | `REQ-agent-loop-executes-skill` |
@@ -2584,13 +2580,11 @@
 | `UC-code-quality` | compose | `REQ-optimize-probes-and-presents` |
 | `UC-code-quality` | compose | `REQ-post-apply-gate` |
 | `UC-code-quality` | compose | `REQ-post-capture` |
-| `UC-code-quality` | compose | `REQ-post-codec-roundtrip` |
 | `UC-code-quality` | compose | `REQ-post-emit-trajectory` |
 | `UC-code-quality` | compose | `REQ-post-import` |
 | `UC-code-quality` | compose | `REQ-post-interface-escalation` |
 | `UC-code-quality` | compose | `REQ-pre-apply-gate` |
 | `UC-code-quality` | compose | `REQ-pre-capture` |
-| `UC-code-quality` | compose | `REQ-pre-codec-roundtrip` |
 | `UC-code-quality` | compose | `REQ-pre-emit-trajectory` |
 | `UC-code-quality` | compose | `REQ-pre-import` |
 | `UC-code-quality` | compose | `REQ-pre-interface-escalation` |

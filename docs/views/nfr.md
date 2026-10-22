@@ -4,7 +4,7 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 91 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 88 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
@@ -48,14 +48,12 @@
 | `REQ-post-agent-query` | Exakter Subgraph als Format-E; on-demand vertieft; Graph read-only unverändert. | ✓ |
 | `REQ-post-apply-gate` | Gültige Ops persistiert oder bei error-Severity geblockt; consumerType geloggt; Live-Event + Trajectory emittiert. | ✓ |
 | `REQ-post-capture` | Format-E-Kandidaten im suggest-Tier durchs Gate; kein auto-apply; Review vor Persist. | ✓ |
-| `REQ-post-codec-roundtrip` | decode(encode(g))==g; byte-identisch; ungültige Typen → Validierungsfehler. | ✓ |
 | `REQ-post-impact-testing` | Genau die betroffenen Tests ausgewählt (bottom-up); nicht betroffene ausgelassen. | ✓ |
 | `REQ-post-interface-escalation` | Interface NICHT direkt mutiert; eskaliert, impact-analysiert, gegatet, Dependents sequenziert — oder verworfen (im Vertrag bleiben). | ✓ |
 | `REQ-post-modelfree-gate` | Apply + Regelprüfung deterministisch, kein Modell-Call; nur LLM-Zusatzfeatures degradieren. | ✓ |
 | `REQ-pre-agent-query` | Graph geladen, MCP-Tools gebunden, elementId existiert. | ✓ |
 | `REQ-pre-apply-gate` | Harness initialisiert, Graph geladen, gültige MutateCommands liegen vor. | ✓ |
 | `REQ-pre-capture` | NL/Text-Eingang (chat-tauglich) + Agent verfügbar. | ✓ |
-| `REQ-pre-codec-roundtrip` | Gültiger OntologyGraph (encode) bzw. Format-E-JSON (decode). | ✓ |
 | `REQ-pre-impact-testing` | Geändertes Element bekannt; Graph geladen. | ✓ |
 | `REQ-pre-interface-escalation` | Realisierungs-Agent stellt fest: bestehender FLOW-Vertrag reicht nicht. | ✓ |
 | `REQ-pre-modelfree-gate` | MutateCommands liegen vor; LLM-Sidecar evtl. nicht erreichbar. | ✓ |
@@ -86,7 +84,6 @@
 | `REQ-risk-stale-test-result` | Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Testergebnis, das vor der letzten Aenderung am Test oder am geprueften Code entstand. | ✓ |
 | `REQ-risk-steering-delta-missing` | Das Delta der Steuerung fehlt oder ist falsch in der Antwort auf einen Zug. Der Agent sieht einen falschen Fortschritt. | ✓ |
 | `REQ-risk-store-unreadable` | Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis. | ✓ |
-| `REQ-roundtrip-conformance` | decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3) | ✓ |
 | `REQ-rule-calibration` | Die Aufzeichnung erlaubt es, je Regel, je Modell und je Konsument die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346) | ✓ |
 | `REQ-self-contained-dist` | Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103. | ✓ |
 | `REQ-shared-views-no-fork` | views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2). | ✓ |

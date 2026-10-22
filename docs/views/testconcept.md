@@ -23,7 +23,7 @@
 |---|---|---|---|---|---|
 | System | SYS (1) | system verification (SYS.5) | 56 | 43 / 43 system requirements | ✓ |
 | Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 116 | 9 / 9 use cases | ✓ |
-| Integration | FUNC↔FUNC (213 conn) | integration verification (SYS.4 · SWE.5) | 48 | 163 / 213 connections | ✗ 50 uncovered |
+| Integration | FUNC↔FUNC (213 conn) | integration verification (SYS.4 · SWE.5) | 47 | 163 / 213 connections | ✗ 50 uncovered |
 | Interface | SCHEMA (56) | integration verification (SYS.4 · SWE.5) | 23 | 34 / 56 schemas | ⚠ 22 without a test |
 | Module | MOD (7) | component verification (SWE.5 · HWE.3) | 57 | 6 / 7 | ⚠ 1 without a verified requirement |
 | Function | FUNC (119) | unit verification (SWE.4 · HWE.3) | 102 | 99 / 119 | ⚠ 20 without a verified requirement |

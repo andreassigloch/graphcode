@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 193 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 191 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 56 REQ
@@ -68,7 +68,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 139 REQ
+### funktional (SWE.1 · HWE.1) — 137 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -135,7 +135,6 @@
 | `REQ-post-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
 | `REQ-post-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
 | `REQ-post-capture` | `TEST-capture` | `FCHAIN-capture` | — |
-| `REQ-post-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-post-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |
 | `REQ-post-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-surface` |
 | `REQ-post-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
@@ -147,7 +146,6 @@
 | `REQ-pre-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
 | `REQ-pre-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
 | `REQ-pre-capture` | `TEST-capture` | `FCHAIN-capture` | — |
-| `REQ-pre-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-pre-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |
 | `REQ-pre-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-surface` |
 | `REQ-pre-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
@@ -183,7 +181,7 @@
 | `REQ-risk-stale-measurement` | `TEST-single-measurement-path` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-stale-test-result` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` | `FCHAIN-test-ingest` | — |
 | `REQ-risk-steering-delta-missing` | `TEST-steering-delta-in-answer` | `FCHAIN-steering-loop` | — |
-| `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
+| `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `REQ-selective-code-lane` | `TEST-selective-test-audit` | `FUNC-plan-code-lane` | `MOD-projections` |
@@ -212,7 +210,7 @@
 | `REQ-vorbereitung-reads-metrics` | `TEST-vorbereitung-reads-metrics` | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `REQ-zug-zeigt-kennzahlen-danach` | `TEST-zug-kennzahlen-danach` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 
-### Architektur (SYS.3 · SWE.2) — 70 REQ
+### Architektur (SYS.3 · SWE.2) — 67 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -247,14 +245,12 @@
 | `REQ-post-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
 | `REQ-post-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
 | `REQ-post-capture` | `TEST-capture` | `FCHAIN-capture` | — |
-| `REQ-post-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-post-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-post-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-post-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
 | `REQ-pre-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
 | `REQ-pre-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
 | `REQ-pre-capture` | `TEST-capture` | `FCHAIN-capture` | — |
-| `REQ-pre-codec-roundtrip` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-pre-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-pre-interface-escalation` | `TEST-interface-escalation` | `FCHAIN-interface-escalation` | — |
 | `REQ-pre-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
@@ -278,7 +274,6 @@
 | `REQ-risk-stale-measurement` | `TEST-single-measurement-path` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-stale-test-result` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` | `FCHAIN-test-ingest` | — |
 | `REQ-risk-steering-delta-missing` | `TEST-steering-delta-in-answer` | `FCHAIN-steering-loop` | — |
-| `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FCHAIN-codec-roundtrip` | — |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-single-measurement-path` | `TEST-graph-metrics` · `TEST-single-measurement-path` · `TEST-steering-snapshot` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-modelfree-gate` | — |
@@ -287,7 +282,7 @@
 | `REQ-steering-promise-one-owner` | `TEST-steering-promise-one-owner` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 136 REQ
+### Entwurf (SWE.3 · HWE.2) — 137 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -392,6 +387,7 @@
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-surface` |
 | `REQ-risk-gate-rule-eval-fails` | `TEST-gate-survives-rule-failure` | `MOD-kernel` | — |
 | `REQ-risk-store-unreadable` | `TEST-store-recovery` | `MOD-kernel` | — |
+| `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-migrate-schema` · `FUNC-schema-guard` | `MOD-kernel` |

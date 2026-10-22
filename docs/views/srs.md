@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 193 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 191 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -158,7 +158,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 ##### 3.1.1.3  `FUNC-decode` — formatEToCommands(harness, text)
 
-> auch in: `FCHAIN-capture` · `FCHAIN-codec-roundtrip` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-capture` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
@@ -179,6 +179,14 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
+
+###### `REQ-roundtrip-conformance` — Format-E-Rundlauf
+
+Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.1.1.4  `FUNC-mutate` — mutate(commands)
 
@@ -454,7 +462,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 ##### 3.1.2.3  `FUNC-decode` — formatEToCommands(harness, text)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-codec-roundtrip` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
@@ -475,6 +483,14 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
+
+###### `REQ-roundtrip-conformance` — Format-E-Rundlauf
+
+Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.1.2.4  `FUNC-mutate` — mutate(commands)
 
@@ -560,59 +576,7 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-#### 3.1.3  `FCHAIN-codec-roundtrip` — Format-E Round-Trip (serialize∘parse)
-
-serialize → parse → Vergleich; deterministisch, validiert; commit-/merge-arm. (SPEC §2.4, L3) Die Schreibhaelfte ist seit CR-GC-631 keine eigene Funktion mehr: die Schnitt-Werkzeuge rufen FormatECodec.serialize aus @sigloch/graph-api-core direkt, graphcode fuehrt dafuer keinen zweiten Codec.
-
-##### `REQ-post-codec-roundtrip` — Postcondition: Format-E Round-Trip (encode∘decode)
-
-decode(encode(g))==g; byte-identisch; ungültige Typen → Validierungsfehler.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · allocate ▶ —
-
-##### `REQ-pre-codec-roundtrip` — Precondition: Format-E Round-Trip (encode∘decode)
-
-Gültiger OntologyGraph (encode) bzw. Format-E-JSON (decode).
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · allocate ▶ —
-
-##### `REQ-roundtrip-conformance` — Round-Trip-Conformance
-
-decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3)
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FCHAIN-codec-roundtrip` · allocate ▶ —
-
-##### 3.1.3.1  `FUNC-decode` — formatEToCommands(harness, text)
-
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
-
-Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
-
-io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
-
-###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
-
-CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → Validierungsfehler, kein silent pass.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
-
-###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
-
-CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1:N-Grouping; implicit-add VERWERFEN.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
-
-#### 3.1.4  `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation
+#### 3.1.3  `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation
 
 Agent erkennt nötige Interface-Änderung → Notwendigkeitsprüfung → CR an Facilitating-Agent → graph_impact(FLOW) → Gate-Entscheidung → Dependents re-scopen. Interface = FLOW ist bindend.
 
@@ -648,7 +612,7 @@ priority: should · status: n/a · kinds: non-functional · role: risk
 
 Verification ◀ `TEST-interface-escalation` (integration) · satisfy ◀ `FCHAIN-interface-escalation` · allocate ▶ —
 
-##### 3.1.4.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
+##### 3.1.3.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
@@ -674,7 +638,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.4.2  `FUNC-graph-impact` — graph_impact(id, depth?)
+##### 3.1.3.2  `FUNC-graph-impact` — graph_impact(id, depth?)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FUNC-block-abfrage`
 
@@ -700,7 +664,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-kernel`
 
-##### 3.1.4.3  `FUNC-read-tools` — bindReadTools(ctx)
+##### 3.1.3.3  `FUNC-read-tools` — bindReadTools(ctx)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FUNC-block-abfrage`
 
@@ -728,7 +692,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-projections` · `MOD-surface`
 
-##### 3.1.4.4  `FUNC-graph-store` — GraphStore
+##### 3.1.3.4  `FUNC-graph-store` — GraphStore
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
@@ -762,7 +726,7 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-##### 3.1.4.5  `FUNC-mutate` — mutate(commands)
+##### 3.1.3.5  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-gate`
 
@@ -812,7 +776,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
-#### 3.1.5  `FCHAIN-skill-authoring` — Skill legt Modellknoten an
+#### 3.1.4  `FCHAIN-skill-authoring` — Skill legt Modellknoten an
 
 Ein Mensch beauftragt einen Autoren-Skill; der Skill legt Knoten und Kanten durch das Apply-Gate an.
 
@@ -824,7 +788,7 @@ priority: should · status: n/a · kinds: non-functional · role: risk
 
 Verification ◀ `TEST-skill-moves-are-legal` · satisfy ◀ `FCHAIN-skill-authoring` · allocate ▶ —
 
-##### 3.1.5.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
+##### 3.1.4.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-grammar-query` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
@@ -850,7 +814,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
+##### 3.1.4.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-steering-loop` · `FUNC-block-bedienung`
 
@@ -868,9 +832,9 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-mutate-tool` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-projections` · `MOD-surface`
 
-##### 3.1.5.3  `FUNC-decode` — formatEToCommands(harness, text)
+##### 3.1.4.3  `FUNC-decode` — formatEToCommands(harness, text)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-codec-roundtrip` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FUNC-block-gedaechtnis`
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
@@ -892,7 +856,15 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
-##### 3.1.5.4  `FUNC-mutate` — mutate(commands)
+###### `REQ-roundtrip-conformance` — Format-E-Rundlauf
+
+Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
+
+##### 3.1.4.4  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-repo-lifecycle` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-gate`
 
@@ -942,7 +914,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
-##### 3.1.5.5  `FUNC-graph-store` — GraphStore
+##### 3.1.4.5  `FUNC-graph-store` — GraphStore
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-interface-escalation` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FUNC-block-speicherwerk`
 
@@ -976,7 +948,7 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-##### 3.1.5.6  `FUNC-chain-metrics` — chainMetrics(graph)
+##### 3.1.4.6  `FUNC-chain-metrics` — chainMetrics(graph)
 
 > auch in: `FCHAIN-dashboard-metrics` · `FUNC-block-messwerk`
 
@@ -992,7 +964,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-chain-metrics` · allocate ▶ `MOD-projections`
 
-##### 3.1.5.7  `FUNC-graph-metrics` — graph_metrics(scope?)
+##### 3.1.4.7  `FUNC-graph-metrics` — graph_metrics(scope?)
 
 > auch in: `FCHAIN-dashboard-metrics` · `FUNC-block-abfrage`
 
@@ -1008,7 +980,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-graph-metrics` · allocate ▶ `MOD-projections`
 
-##### 3.1.5.8  `FUNC-author-req` — Skill se:author-req
+##### 3.1.4.8  `FUNC-author-req` — Skill se:author-req
 
 > auch in: `FUNC-block-autorieren`
 
@@ -1026,7 +998,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.9  `FUNC-author-uc` — Skill se:author-uc
+##### 3.1.4.9  `FUNC-author-uc` — Skill se:author-uc
 
 > auch in: `FUNC-block-autorieren`
 
@@ -1044,7 +1016,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.10  `FUNC-close-violations` — Skill se:close-violations
+##### 3.1.4.10  `FUNC-close-violations` — Skill se:close-violations
 
 > auch in: `FUNC-block-q-improvement`
 
@@ -1062,7 +1034,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.11  `FUNC-se-conops` — Skill se-conops
+##### 3.1.4.11  `FUNC-se-conops` — Skill se-conops
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1080,7 +1052,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.12  `FUNC-se-fmea` — Skill se-fmea
+##### 3.1.4.12  `FUNC-se-fmea` — Skill se-fmea
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1114,7 +1086,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.13  `FUNC-se-generate` — Skill se:generate
+##### 3.1.4.13  `FUNC-se-generate` — Skill se:generate
 
 > auch in: `FUNC-block-autorieren`
 
@@ -1140,7 +1112,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.14  `FUNC-se-irr` — Skill se-irr
+##### 3.1.4.14  `FUNC-se-irr` — Skill se-irr
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1158,7 +1130,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.15  `FUNC-se-laufzeit` — Skill se-laufzeit
+##### 3.1.4.15  `FUNC-se-laufzeit` — Skill se-laufzeit
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1184,7 +1156,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.16  `FUNC-se-optimize` — Skill se:optimize
+##### 3.1.4.16  `FUNC-se-optimize` — Skill se:optimize
 
 > auch in: `FUNC-block-optimierung`
 
@@ -1210,7 +1182,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.17  `FUNC-se-plan` — Skill se-plan
+##### 3.1.4.17  `FUNC-se-plan` — Skill se-plan
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1238,7 +1210,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.18  `FUNC-se-top-level` — Skill se:top-level
+##### 3.1.4.18  `FUNC-se-top-level` — Skill se:top-level
 
 > auch in: `FUNC-block-autorieren`
 
@@ -1256,7 +1228,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.19  `FUNC-se-trade` — Skill se-trade
+##### 3.1.4.19  `FUNC-se-trade` — Skill se-trade
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1274,7 +1246,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.5.20  `FUNC-se-vorbereitung` — Skill se-vorbereitung
+##### 3.1.4.20  `FUNC-se-vorbereitung` — Skill se-vorbereitung
 
 > auch in: `FUNC-block-optimierung`
 
@@ -3862,7 +3834,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 ##### 3.5.2.8  `FUNC-decode` — formatEToCommands(harness, text)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-codec-roundtrip` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
@@ -3883,6 +3855,14 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
+
+###### `REQ-roundtrip-conformance` — Format-E-Rundlauf
+
+Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.5.2.9  `FUNC-mutate` — mutate(commands)
 
@@ -4556,7 +4536,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 ##### 3.7.2.6  `FUNC-decode` — formatEToCommands(harness, text)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-codec-roundtrip` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-live-update` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
@@ -4577,6 +4557,14 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
+
+###### `REQ-roundtrip-conformance` — Format-E-Rundlauf
+
+Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.7.2.7  `FUNC-mutate` — mutate(commands)
 
@@ -5256,7 +5244,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 ##### 3.8.4.3  `FUNC-decode` — formatEToCommands(harness, text)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-codec-roundtrip` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FUNC-block-gedaechtnis`
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
@@ -5277,6 +5265,14 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
+
+###### `REQ-roundtrip-conformance` — Format-E-Rundlauf
+
+Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.8.4.4  `FUNC-mutate` — mutate(commands)
 
@@ -6928,7 +6924,7 @@ io ◀ — · io ▶ — · allocate ▶ —
 
 ###### 3.10.2.4.1  `FUNC-decode` — formatEToCommands(harness, text)
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-codec-roundtrip` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring`
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-modelfree-gate` · `FCHAIN-skill-authoring`
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
@@ -6949,6 +6945,14 @@ CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
+
+###### `REQ-roundtrip-conformance` — Format-E-Rundlauf
+
+Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ###### 3.10.2.4.2  `FUNC-emit-trajectory` — materializeTrajectory()
 
@@ -10524,7 +10528,7 @@ verify ▶ `REQ-graph-state-recall` · testRefs: `tests/rewind.test.ts`
 
 decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)
 
-verify ▶ `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-post-codec-roundtrip` · `REQ-pre-codec-roundtrip` · `REQ-roundtrip-conformance` · testRefs: `tests/codec.roundtrip.test.ts`
+verify ▶ `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` · testRefs: `tests/codec.roundtrip.test.ts`
 
 ### 8.116  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
 
@@ -10798,4 +10802,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-193 REQ · 193 verified · 0 without a verifying TEST (R-01).
+191 REQ · 191 verified · 0 without a verifying TEST (R-01).

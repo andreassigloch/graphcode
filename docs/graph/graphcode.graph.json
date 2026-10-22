@@ -3532,6 +3532,12 @@
       "description": "docs/cr/open/CR-GC-828-graph-mutate-liest-regelbefunde-vor-und-.md"
     },
     {
+      "id": "CR-GC-829",
+      "type": "CR",
+      "name": "FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec",
+      "description": "docs/cr/open/CR-GC-829-fchain-codec-roundtrip-ist-keine-kette-m.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3560,14 +3566,6 @@
       "type": "FCHAIN",
       "name": "Interaktive Erfassung (Text → suggest-Tier)",
       "description": "Agent erzeugt Format-E-Kandidaten (agent-seitig); decode → mutate(suggest-Tier), Review vor Persist. Keine Eigen-Extraktion.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "id": "FCHAIN-codec-roundtrip",
-      "type": "FCHAIN",
-      "name": "Format-E Round-Trip (serialize∘parse)",
-      "description": "serialize → parse → Vergleich; deterministisch, validiert; commit-/merge-arm. (SPEC §2.4, L3) Die Schreibhaelfte ist seit CR-GC-631 keine eigene Funktion mehr: die Schnitt-Werkzeuge rufen FormatECodec.serialize aus @sigloch/graph-api-core direkt, graphcode fuehrt dafuer keinen zweiten Codec.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -7149,17 +7147,6 @@
       ]
     },
     {
-      "id": "REQ-post-codec-roundtrip",
-      "type": "REQ",
-      "name": "Postcondition: Format-E Round-Trip (encode∘decode)",
-      "description": "decode(encode(g))==g; byte-identisch; ungültige Typen → Validierungsfehler.",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "non-functional"
-      ]
-    },
-    {
       "id": "REQ-post-emit-trajectory",
       "type": "REQ",
       "name": "Postcondition: FUNC-emit-trajectory",
@@ -7299,17 +7286,6 @@
       "type": "REQ",
       "name": "Precondition: Interaktive Erfassung (Text → suggest-Tier)",
       "description": "NL/Text-Eingang (chat-tauglich) + Agent verfügbar.",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "non-functional"
-      ]
-    },
-    {
-      "id": "REQ-pre-codec-roundtrip",
-      "type": "REQ",
-      "name": "Precondition: Format-E Round-Trip (encode∘decode)",
-      "description": "Gültiger OntologyGraph (encode) bzw. Format-E-JSON (decode).",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -7883,12 +7859,12 @@
     {
       "id": "REQ-roundtrip-conformance",
       "type": "REQ",
-      "name": "Round-Trip-Conformance",
-      "description": "decode(encode(g)) == g modulo Whitespace (rasentraktor-Fixture). (L3)",
+      "name": "Format-E-Rundlauf",
+      "description": "Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "non-functional"
+        "functional"
       ]
     },
     {
@@ -16355,6 +16331,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-829",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-829",
+      "target": "REQ-roundtrip-conformance",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -16593,34 +16579,6 @@
     {
       "source": "FCHAIN-capture",
       "target": "REQ-pre-capture",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-codec-roundtrip",
-      "target": "FUNC-decode",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-codec-roundtrip",
-      "target": "REQ-post-codec-roundtrip",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-codec-roundtrip",
-      "target": "REQ-pre-codec-roundtrip",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-codec-roundtrip",
-      "target": "REQ-roundtrip-conformance",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -20672,6 +20630,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-decode",
+      "target": "REQ-roundtrip-conformance",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-deduce-tests",
       "target": "MOD-projections",
       "type": "allocate"
@@ -24542,16 +24505,6 @@
     },
     {
       "source": "TEST-roundtrip",
-      "target": "REQ-post-codec-roundtrip",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-roundtrip",
-      "target": "REQ-pre-codec-roundtrip",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-roundtrip",
       "target": "REQ-roundtrip-conformance",
       "type": "verify",
       "weight": 1,
@@ -25003,13 +24956,6 @@
     },
     {
       "source": "UC-code-quality",
-      "target": "FCHAIN-codec-roundtrip",
-      "type": "compose",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "UC-code-quality",
       "target": "FCHAIN-interface-escalation",
       "type": "compose",
       "weight": 1,
@@ -25138,11 +25084,6 @@
     },
     {
       "source": "UC-code-quality",
-      "target": "REQ-post-codec-roundtrip",
-      "type": "compose"
-    },
-    {
-      "source": "UC-code-quality",
       "target": "REQ-post-emit-trajectory",
       "type": "compose"
     },
@@ -25164,11 +25105,6 @@
     {
       "source": "UC-code-quality",
       "target": "REQ-pre-capture",
-      "type": "compose"
-    },
-    {
-      "source": "UC-code-quality",
-      "target": "REQ-pre-codec-roundtrip",
       "type": "compose"
     },
     {
@@ -25801,5 +25737,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 810
+  "graphVersion": 812
 }

@@ -64,7 +64,6 @@ Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-eng
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-zug-bericht`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-agent-loop` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
-- `FCHAIN-codec-roundtrip` — Format-E Round-Trip (serialize∘parse): `FUNC-decode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-agent-loop` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-read-tools`
 - `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-agent-loop` → `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-decode` → `FUNC-graph-metrics` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-laufzeit` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-se-vorbereitung`
 
@@ -455,6 +454,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-826` | n/a | FCHAIN-apply-gate: Host-Socket, StoreLock, SessionLifecycle gehoeren nicht in den Ablauf einer Aenderung | `FUNC-claim-store-lock` · `FUNC-host-socket` · `FUNC-session-shutdown` |
 | `CR-GC-827` | n/a | Regelpruefung liest den Kandidaten von mutate, nicht den Store | `FUNC-evaluate-rules` · `FUNC-mutate` |
 | `CR-GC-828` | n/a | graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht | `FUNC-evaluate-rules` · `FUNC-graph-mutate-tool` |
+| `CR-GC-829` | n/a | FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec | `FUNC-decode` · `REQ-roundtrip-conformance` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

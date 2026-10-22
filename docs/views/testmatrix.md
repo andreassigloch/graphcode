@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 193 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 191 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -100,7 +100,6 @@
 | `REQ-post-agent-query` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-post-apply-gate` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-post-capture` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
-| `REQ-post-codec-roundtrip` | ✓ | ✓ passed | `TEST-roundtrip` |
 | `REQ-post-emit-trajectory` | ✓ | ✓ passed | `TEST-learning-emit` |
 | `REQ-post-emit-update-event` | ✓ | ✓ passed | `TEST-live-view` |
 | `REQ-post-export-markdown` | ✓ | ✓ passed | `TEST-doc-export` |
@@ -114,7 +113,6 @@
 | `REQ-pre-agent-query` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-pre-apply-gate` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-pre-capture` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
-| `REQ-pre-codec-roundtrip` | ✓ | ✓ passed | `TEST-roundtrip` |
 | `REQ-pre-emit-trajectory` | ✓ | ✓ passed | `TEST-learning-emit` |
 | `REQ-pre-emit-update-event` | ✓ | ✓ passed | `TEST-live-view` |
 | `REQ-pre-export-markdown` | ✓ | ✓ passed | `TEST-doc-export` |
@@ -202,8 +200,8 @@
 | `REQ-vorbereitung-reads-metrics` | ✓ | ✓ passed | `TEST-vorbereitung-reads-metrics` |
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 
-Coverage: 193/193 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 151/193 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 191/191 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 149/191 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
