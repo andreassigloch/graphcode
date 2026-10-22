@@ -131,6 +131,7 @@
 | `FUNC-upgrade` | FUNC | executeUpgrade(opts) |
 | `FUNC-verify-lane-code` | FUNC | npm run verify:code |
 | `FUNC-verify-lane-full` | FUNC | npm run verify:full |
+| `FUNC-verify-lane-model` | FUNC | npm run verify:model |
 | `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
 | `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
 | `FUNC-view-fmea` | FUNC | View se-view:fmea |
@@ -141,6 +142,7 @@
 | `FUNC-zug-bericht` | FUNC | zugBericht(before |
 | `MOD-agent-surface` | MOD | agent-surface — Skill-Treiber |
 | `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
+| `MOD-dev-scripts` | MOD | dev-scripts — Entwicklerskripte |
 | `MOD-kernel` | MOD | kernel — Store, Gate, Regeln, OpLog |
 | `MOD-kernel-measure` | MOD | measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot |
 | `MOD-loop` | MOD | loop — Fokus |
@@ -271,8 +273,9 @@
 | `FUNC-test-ui` | `MOD-agent-surface` |
 | `FUNC-tool-context` | `MOD-surface` |
 | `FUNC-upgrade` | `MOD-surface` |
-| `FUNC-verify-lane-code` | ⚠ nicht alloziert (R-22) |
-| `FUNC-verify-lane-full` | ⚠ nicht alloziert (R-22) |
+| `FUNC-verify-lane-code` | `MOD-dev-scripts` |
+| `FUNC-verify-lane-full` | `MOD-dev-scripts` |
+| `FUNC-verify-lane-model` | `MOD-dev-scripts` |
 | `FUNC-view-changelog` | `MOD-agent-surface` |
 | `FUNC-view-conops` | `MOD-agent-surface` |
 | `FUNC-view-fmea` | `MOD-agent-surface` |

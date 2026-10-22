@@ -39,7 +39,7 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 - **Anwendungsfall:** `UC-efficient-testing`
 - **Träger:** `FUNC-plan-code-lane` · `FUNC-test-ingest` · `FUNC-verify-lane-code`
 - **Befund:** FMEA CR-GC-798 FM-11, Kreislauf aus FUNC-graph-store, FUNC-mutate und FUNC-test-ingest. Das Ergebnis traegt ranAt, kein Leser wertet es aus (src/projections/testreport.ts:119; kein Leser in contracts/se). FM-03 und VR-01 lesen nur result.
-- **Analyse:** `CR-GC-798` (docs/cr/open/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md) · `CR-GC-799` (docs/cr/open/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md) · `CR-GC-800` (docs/cr/open/CR-GC-800-spur-code-und-volllauf-melden-aenderung-.md)
+- **Analyse:** `CR-GC-798` (docs/cr/done/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md) · `CR-GC-799` (docs/cr/done/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md) · `CR-GC-800` (docs/cr/done/CR-GC-800-spur-code-und-volllauf-melden-aenderung-.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
@@ -79,7 +79,7 @@ Ein FLOW oder SCHEMA wird geaendert, ohne dass die abhaengigen Funktionen und Te
 - **Anwendungsfall:** `UC-code-quality`
 - **Träger:** —
 - **Befund:** FMEA CR-GC-798 FM-12. REQ-interface-change-escalation wird nur von der Kette erfuellt, keine Funktion fuehrt die Eskalation aus, TEST-interface-escalation ist ungebunden, im Quellcode gibt es keinen Eskalationsweg.
-- **Analyse:** `CR-GC-798` (docs/cr/open/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md)
+- **Analyse:** `CR-GC-798` (docs/cr/done/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
@@ -117,7 +117,7 @@ Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die 
 - **Anwendungsfall:** `UC-deterministic-steering`
 - **Träger:** `FUNC-take-steering-snapshot`
 - **Befund:** FMEA CR-GC-779 und CR-GC-795 FM-02, Quelle E Kreislauf. Ursache waere ein zweiter Messpfad oder ein zwischengespeicherter Stand. Entscheidung: gedeckt durch REQ-single-measurement-path.
-- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+- **Analyse:** `CR-GC-562` (docs/cr/done/CR-GC-562-src-loop-steering-ts-loeschen-toter-steu.md) · `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
@@ -155,7 +155,7 @@ Die Zusage, dass der naechste Schritt aus gemessenen Kenngroessen folgt, kann ve
 - **Anwendungsfall:** `UC-deterministic-steering`
 - **Träger:** `FUNC-generation-step`
 - **Befund:** FMEA CR-GC-795 Step 3 geteilte Zusage. REQ-steering-from-metrics wird von acht Funktionen erfuellt, sechs davon Glieder der Kette. Keine traegt sie allein.
-- **Analyse:** `CR-GC-795` (docs/cr/open/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md)
+- **Analyse:** `CR-GC-795` (docs/cr/done/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
@@ -174,7 +174,7 @@ Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette 
 - **Anwendungsfall:** —
 - **Träger:** `FUNC-graph-store`
 - **Befund:** FMEA CR-GC-779 Quelle F geteilte Funktion FUNC-graph-store in acht Wirkketten. Je Kette eine Fehlerwirkung und die Schwere ist die der schwersten.
-- **Analyse:** `CR-GC-779` (FMEA der Kenngroessen-Steuerungsschleife) · `CR-GC-795` (docs/cr/open/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md)
+- **Analyse:** `CR-GC-779` (FMEA der Kenngroessen-Steuerungsschleife) · `CR-GC-795` (docs/cr/done/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md) · `CR-GC-796` (docs/cr/open/CR-GC-796-store-beschaedigte-datei-wird-beim-oeffn.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|

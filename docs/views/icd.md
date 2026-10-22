@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 219 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 220 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -129,7 +129,7 @@
 | `FLOW-channel-skill-reference` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-steer-advisory` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
 | `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` |
-| `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
+| `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model` |
 | `FLOW-cli-invocation-import-code` | `FUNC-agent-loop` | `FUNC-cli-dispatch` |
 | `FLOW-cli-output` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-code-lane-plan` | `FUNC-plan-code-lane` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
@@ -191,6 +191,7 @@
 | `FLOW-install-result-upgrade` | `FUNC-upgrade` | `FUNC-cli-dispatch` |
 | `FLOW-lane-output` | `FUNC-verify-lane-code` | `ACTOR-auftraggeber` |
 | `FLOW-lane-output-full` | `FUNC-verify-lane-full` | `ACTOR-auftraggeber` |
+| `FLOW-lane-output-model` | `FUNC-verify-lane-model` | `ACTOR-auftraggeber` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `FUNC-broadcast-diff` |
 | `FLOW-lock-file` | `FUNC-claim-store-lock` | `FUNC-upgrade` |
 | `FLOW-lock-lost` | `FUNC-claim-store-lock` | `FUNC-session-shutdown` |

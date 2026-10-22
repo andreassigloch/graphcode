@@ -1516,7 +1516,7 @@
       "id": "CR-GC-535",
       "type": "CR",
       "name": "Pre-Commit faehrt verify:model bei Snapshot im Diff",
-      "description": "docs/cr/done/CR-GC-535-*.md",
+      "description": "docs/cr/done/CR-GC-535-pre-commit-spur-docs-only-commit-an-docs.md",
       "status": "done",
       "commitRef": "2f7fd98"
     },
@@ -1588,7 +1588,7 @@
       "id": "CR-GC-550",
       "type": "CR",
       "name": "se-plan leitet ueber REQ ab, nicht ueber FUNC-Blaetter",
-      "description": "docs/cr/open/CR-GC-550-se-plan-leitet-bauauftraege-aus-func-bla.md",
+      "description": "docs/cr/done/CR-GC-550-se-plan-leitet-bauauftraege-aus-func-bla.md",
       "status": "done",
       "commitRef": "4187fe26309f738f3d97a48781cfb87db35b7745"
     },
@@ -1596,7 +1596,7 @@
       "id": "CR-GC-551",
       "type": "CR",
       "name": "kinds als Zeichenkette ueber den commands-Pfad: 49 von 49 REQ eines Auto-Laufs tragen \"non-functional\" statt [\"non-functional\"] - die in CR-SM-320 par. 4 als offen benannte Haelfte ist die, die in der Praxis feuert",
-      "description": "docs/cr/open/CR-GC-551-kinds-als-zeichenkette-ueber-den-command.md",
+      "description": "docs/cr/done/CR-GC-551-kinds-als-zeichenkette-ueber-den-command.md",
       "status": "done",
       "commitRef": "94692ffbcd21289c824dbebeeebabade9e362c56"
     },
@@ -1724,7 +1724,7 @@
       "id": "CR-GC-569",
       "type": "CR",
       "name": "Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration",
-      "description": "docs/cr/open/CR-GC-569-betriebsmodi-sind-nicht-modelliert-ein-a.md",
+      "description": "docs/cr/done/CR-GC-569-betriebsmodi-sind-nicht-modelliert-ein-a.md",
       "status": "done",
       "commitRef": "0aef8f2"
     },
@@ -1732,7 +1732,7 @@
       "id": "CR-GC-570",
       "type": "CR",
       "name": "Gate-Antwort ist 70% des Werkzeug-Payloads: 487 Violations in 23 Antworten, 51% Wiederholung, 0 davon gating",
-      "description": "docs/cr/open/CR-GC-570-gate-antwort-ist-70-des-werkzeug-payload.md",
+      "description": "docs/cr/done/CR-GC-570-gate-antwort-ist-70-des-werkzeug-payload.md",
       "status": "done",
       "commitRef": "e32dfb1"
     },
@@ -1740,7 +1740,7 @@
       "id": "CR-GC-571",
       "type": "CR",
       "name": "Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden)",
-      "description": "docs/cr/open/CR-GC-571-smeagol-check-jede-in-einem-skill-genann.md",
+      "description": "docs/cr/done/CR-GC-571-smeagol-check-jede-in-einem-skill-genann.md",
       "status": "done",
       "commitRef": "e1514d1"
     },
@@ -1756,7 +1756,7 @@
       "id": "CR-GC-573",
       "type": "CR",
       "name": "Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert",
-      "description": "docs/cr/open/CR-GC-573-fuenf-prompt-autoritaeten-in-einem-func-.md",
+      "description": "docs/cr/done/CR-GC-573-fuenf-prompt-autoritaeten-in-einem-func-.md",
       "status": "done",
       "commitRef": "ddab68b"
     },
@@ -1764,7 +1764,7 @@
       "id": "CR-GC-574",
       "type": "CR",
       "name": "Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse",
-      "description": "docs/cr/open/CR-GC-574-das-rig-ist-der-systemtest-und-fehlt-im-.md",
+      "description": "docs/cr/done/CR-GC-574-das-rig-ist-der-systemtest-und-fehlt-im-.md",
       "commitRef": "9ad4f8d",
       "status": "done"
     },
@@ -1780,7 +1780,7 @@
       "id": "CR-GC-576",
       "type": "CR",
       "name": "Advisory-Rauschen in der Gate-Antwort: steerAdvisory 21/21 null, workOrder 18/21 leer, fitAdvisory 12/21 Null-Delta — 16 Prozent der Antwort",
-      "description": "docs/cr/open/CR-GC-576-advisory-rauschen-in-der-gate-antwort-st.md",
+      "description": "docs/cr/done/CR-GC-576-advisory-rauschen-in-der-gate-antwort-st.md",
       "commitRef": "280d414",
       "status": "done"
     },
@@ -1796,7 +1796,7 @@
       "id": "CR-GC-578",
       "type": "CR",
       "name": "audit.trail-projection: Test misst gegen den LEBENDEN .graphcode/audit.jsonl des Repos — Schwellwert 11 Prozent reisst bei 20,8 von 165,2 KB, ohne Codeaenderung. Flaky per Konstruktion",
-      "description": "docs/cr/open/CR-GC-578-audit-trail-projection-test-misst-gegen-.md",
+      "description": "docs/cr/done/CR-GC-578-audit-trail-projection-test-misst-gegen-.md",
       "status": "done",
       "commitRef": "3898017"
     },
@@ -1804,7 +1804,7 @@
       "id": "CR-GC-579",
       "type": "CR",
       "name": "mcp-server.ts serialisiert JEDE Werkzeugantwort mit Einrueckung 2 — 18,3 Prozent des gesamten Werkzeug-Payloads, graph_readiness 38 Prozent. Ein Argument",
-      "description": "docs/cr/open/CR-GC-579-mcp-server-ts-serialisiert-jede-werkzeug.md",
+      "description": "docs/cr/done/CR-GC-579-mcp-server-ts-serialisiert-jede-werkzeug.md",
       "status": "done",
       "commitRef": "a6e8aff"
     },
@@ -1940,7 +1940,7 @@
       "id": "CR-GC-608",
       "type": "CR",
       "name": "Fertig-Kriterium der Steuerregeln: lokales Optimum bei Kreis oder Plateau ueber 3 Steuerzuege (opus5-11/13/15)",
-      "description": "docs/cr/open/CR-GC-608-fertig-kriterium-der-steuerregeln-lokale.md",
+      "description": "docs/cr/done/CR-GC-608-fertig-kriterium-der-steuerregeln-lokale.md",
       "status": "done",
       "commitRef": "a5c5215c5522d41ace969c66faeecb2fb981d480"
     },
@@ -1956,7 +1956,7 @@
       "id": "CR-GC-610",
       "type": "CR",
       "name": "Code-Test (Leitlinie Satz 7): Scheduler-Scheibe aus sigllm, gefuehrt (Modell + graphcode) gegen frei laufendes Claude Code — Aufgabe, Vertrag, verdeckte Abnahme, Messung",
-      "description": "docs/cr/open/CR-GC-610-code-test-leitlinie-satz-7-scheduler-sch.md",
+      "description": "docs/cr/done/CR-GC-610-code-test-leitlinie-satz-7-scheduler-sch.md",
       "status": "done",
       "commitRef": "8ba06ed9f07241cc30d0e91e280956fc08fc7aa8"
     },
@@ -1972,7 +1972,7 @@
       "id": "CR-GC-612",
       "type": "CR",
       "name": "Fester Vorspann je Lauf entflechten: GRAPHCODE.md, Werkzeugbeschreibungen, Skills und Antworten haben doppelte Zustaendigkeit — jede Frage soll genau einen Ort haben",
-      "description": "docs/cr/open/CR-GC-612-fester-vorspann-je-lauf-entflechten-grap.md",
+      "description": "docs/cr/done/CR-GC-612-fester-vorspann-je-lauf-entflechten-grap.md",
       "status": "done",
       "commitRef": "ecd0c00cac5cbfe73dcf4b1ff1bce40d22267ac1"
     },
@@ -1980,7 +1980,7 @@
       "id": "CR-GC-613",
       "type": "CR",
       "name": "Lesewerkzeuge antworten ueber das ganze Modell statt ueber die Scheibe: rules_get_violations 32.630, graph_test_report 25.602, graph_context je 9.300 Zeichen — 62% der graphcode-Antworten eines Laufs",
-      "description": "docs/cr/open/CR-GC-613-lesewerkzeuge-antworten-ueber-das-ganze-.md",
+      "description": "docs/cr/done/CR-GC-613-lesewerkzeuge-antworten-ueber-das-ganze-.md",
       "status": "done",
       "commitRef": "8a1de64f2ca7101a26633de270214bd8c7ef0bf1"
     },
@@ -1988,7 +1988,7 @@
       "id": "CR-GC-614",
       "type": "CR",
       "name": "Executor verwirft alte Denkbloecke nach jedem Zug — der Graph ist das Gedaechtnis, nicht der Gespraechsverlauf (gemessen: ~58% des Kontexts in Lauf 15)",
-      "description": "docs/cr/open/CR-GC-614-executor-verwirft-alte-denkbloecke-nach-.md",
+      "description": "docs/cr/done/CR-GC-614-executor-verwirft-alte-denkbloecke-nach-.md",
       "status": "done",
       "commitRef": "dbd5778bced185f3c058f0439fa77c0fe81bfe02"
     },
@@ -1996,7 +1996,7 @@
       "id": "CR-GC-615",
       "type": "CR",
       "name": "Rig captureArtifacts scheitert nach Git-Aktionen des Agenten an Export-Drift (opus5-16: graph_export refused, Ergebniszeile fehlt)",
-      "description": "docs/cr/open/CR-GC-615-rig-captureartifacts-scheitert-nach-git-.md",
+      "description": "docs/cr/done/CR-GC-615-rig-captureartifacts-scheitert-nach-git-.md",
       "status": "done",
       "commitRef": "9be739160f88ea0a641c365f45652f6e1a57edd2"
     },
@@ -2004,7 +2004,7 @@
       "id": "CR-GC-616",
       "type": "CR",
       "name": "ITEM-462 umgesetzt: UC-05/06/RD-03 gestrichen (UC-Schreibregel), MT-02 warning, Fix-Roundtrip-Test, Folge-Regel-Spalte",
-      "description": "docs/cr/open/CR-GC-616-item-462-umgesetzt-uc-05-06-rd-03-gestri.md",
+      "description": "docs/cr/done/CR-GC-616-item-462-umgesetzt-uc-05-06-rd-03-gestri.md",
       "status": "done",
       "commitRef": "1a50060b4d6c120a4c68e86e1e1adb9c54a69605"
     },
@@ -2044,7 +2044,7 @@
       "id": "CR-GC-621",
       "type": "CR",
       "name": "Neuer groesster Antwortgeber nach CR-GC-613: graph_elements 7.143 Zeichen je Aufruf und graph_expand 4.224 — beide ohne Scheibenschnitt, gemessen am Code-Test gefuehrt-0",
-      "description": "docs/cr/open/CR-GC-621-neuer-groesster-antwortgeber-nach-cr-gc-.md",
+      "description": "docs/cr/done/CR-GC-621-neuer-groesster-antwortgeber-nach-cr-gc-.md",
       "status": "done",
       "commitRef": "9e0ea8098498e213a01517ead04a7f3f285f1b5f"
     },
@@ -2052,7 +2052,7 @@
       "id": "CR-GC-622",
       "type": "CR",
       "name": "graph_authoring_guide wird trotz 'einmal genuegt' 4x gerufen (7.711 Zeichen je Lauf) — derselbe Leitfaden braucht Idempotenz im Werkzeug, nicht einen Satz in der Beschreibung",
-      "description": "docs/cr/open/CR-GC-622-graph-authoring-guide-wird-trotz-einmal-.md",
+      "description": "docs/cr/done/CR-GC-622-graph-authoring-guide-wird-trotz-einmal-.md",
       "status": "done",
       "commitRef": "ff9147ba60fb0cc3713739aa0c1509c07b1344d9"
     },
@@ -2060,7 +2060,7 @@
       "id": "CR-GC-623",
       "type": "CR",
       "name": "Werkzeugbeschreibungen nennen einen Parameter, den es nicht gibt: vier Beschreibungen sagen graph_help({id:...}), der Parameter heisst token — zod non-strict schluckt den Fehlaufruf still und liefert die Massnahmenliste statt der Erklaerung (gemessen: sieben graph_help hintereinander in gefuehrt-0)",
-      "description": "docs/cr/open/CR-GC-623-werkzeugbeschreibungen-nennen-einen-para.md",
+      "description": "docs/cr/done/CR-GC-623-werkzeugbeschreibungen-nennen-einen-para.md",
       "status": "done",
       "commitRef": "ff9147ba60fb0cc3713739aa0c1509c07b1344d9"
     },
@@ -2068,7 +2068,7 @@
       "id": "CR-GC-624",
       "type": "CR",
       "name": "Strukturboden von graph_context: depth 2 kostet im Mittel 9.876 Zeichen ueber alle 125 FUNC-Anker des eigenen Modells, davon 72 Prozent reine Struktur (Kanten 2.801, Attributzeilen 2.593, Identitaetszeilen 1.730) — 42 der 54 Knoten sind Ring-2-Fan-out ueber Hub-FLOWs",
-      "description": "docs/cr/open/CR-GC-624-strukturboden-von-graph-context-depth-2-.md",
+      "description": "docs/cr/done/CR-GC-624-strukturboden-von-graph-context-depth-2-.md",
       "status": "done",
       "commitRef": "9e0ea8098498e213a01517ead04a7f3f285f1b5f"
     },
@@ -2076,7 +2076,7 @@
       "id": "CR-GC-625",
       "type": "CR",
       "name": "Kanten-Fan-out A->B,C,D ist im Codec da, aber nirgends gezeigt — 43 Prozent der Kantenschreibungen im Rig-Lauf unnoetig einzeln",
-      "description": "docs/cr/open/CR-GC-625-kanten-fan-out-a-b-c-d-ist-im-codec-da-a.md",
+      "description": "docs/cr/done/CR-GC-625-kanten-fan-out-a-b-c-d-ist-im-codec-da-a.md",
       "status": "done",
       "commitRef": "b67b8b20b9bec3e1a93b184bf92f6204205e069c"
     },
@@ -2084,7 +2084,7 @@
       "id": "CR-GC-626",
       "type": "CR",
       "name": "Testhelfer erben GIT_INDEX_FILE/GIT_DIR des pre-commit-Hooks: rewind.test.ts (Modell-Spur) schreibt per 'git -C tmp add -A' den Pfad docs/graph/fremd-anlage.graph.json in den UMGEBENDEN Index, der Blob liegt im Temp-Repo — jeder docs-Commit bricht danach mit 'invalid object / Error building trees' ab",
-      "description": "docs/cr/open/CR-GC-626-testhelfer-erben-git-index-file-git-dir-.md",
+      "description": "docs/cr/done/CR-GC-626-testhelfer-erben-git-index-file-git-dir-.md",
       "status": "done",
       "commitRef": "ecdeeed"
     },
@@ -2092,7 +2092,7 @@
       "id": "CR-GC-627",
       "type": "CR",
       "name": "graph_mutate laesst nur das Plus-Viertel von Format-E durch: der Umweg ueber die Graph-Rekonstruktion wirft jedes Nicht-Add-Op, obwohl der Parser die vier Praefixe kennt und die Abbildung auf MutateCommand eins zu eins ist — Loeschen und Aendern kosten den dreifach teureren commands-Modus",
-      "description": "docs/cr/open/CR-GC-627-graph-mutate-laesst-nur-das-plus-viertel.md",
+      "description": "docs/cr/done/CR-GC-627-graph-mutate-laesst-nur-das-plus-viertel.md",
       "status": "done",
       "commitRef": "5beb5bb"
     },
@@ -2100,7 +2100,7 @@
       "id": "CR-GC-628",
       "type": "CR",
       "name": "graph_get_edges ist der zweitgroesste Antwortgeber, und sein sparsamer Modus ist die teurere Falle: format formatE serialisiert die Endpunkt-Knoten mit voller Prosa und allen Attributen, am Golden 49.431 Zeichen gegen 18.001 als JSON",
-      "description": "docs/cr/open/CR-GC-628-graph-get-edges-ist-der-zweitgroesste-an.md",
+      "description": "docs/cr/done/CR-GC-628-graph-get-edges-ist-der-zweitgroesste-an.md",
       "status": "done",
       "commitRef": "72e186b"
     },
@@ -2108,7 +2108,7 @@
       "id": "CR-GC-629",
       "type": "CR",
       "name": "Die Urteilsschwelle boundaryWidth steht zweimal (contracts-Startwert und graphcode.config.jsonc), ein Knopf treibt zwei Verteilungen (BW-02 am FUNC-Rand, R-04 am MOD-Rand), und niemand misst sie laufend",
-      "description": "docs/cr/open/CR-GC-629-urteilsschwellen-boundarywidth-steht-zwe.md",
+      "description": "docs/cr/done/CR-GC-629-urteilsschwellen-boundarywidth-steht-zwe.md",
       "status": "done",
       "commitRef": "ac5bab2"
     },
@@ -2236,7 +2236,7 @@
       "id": "CR-GC-645",
       "type": "CR",
       "name": "Letzte Bindungen: Familienvertraege auf Schemas, Codec nicht ueber ctx",
-      "description": "docs/cr/open/CR-GC-645-letzte-bindungen-familienvertraege-auf-s.md",
+      "description": "docs/cr/done/CR-GC-645-letzte-bindungen-familienvertraege-auf-s.md",
       "status": "done",
       "commitRef": "2500e0f"
     },
@@ -2428,7 +2428,7 @@
       "id": "CR-GC-669",
       "type": "CR",
       "name": "Migrationswerkzeug REQ-kinds auf zwei Werte",
-      "description": "docs/cr/done/CR-GC-669-migrationswerkzeug-req-kinds-auf-zwei-we.md",
+      "description": "docs/cr/done/CR-GC-669-probelauf.json",
       "status": "done",
       "commitRef": "1c84c66"
     },
@@ -2516,14 +2516,14 @@
       "id": "CR-GC-679",
       "type": "CR",
       "name": "Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID",
-      "description": "docs/cr/open/CR-GC-679-standard-auswertung-npm-run-messung-schr.md",
+      "description": "docs/cr/done/CR-GC-679-standard-auswertung-npm-run-messung-schr.md",
       "status": "open"
     },
     {
       "id": "CR-GC-680",
       "type": "CR",
       "name": "Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie",
-      "description": "docs/cr/open/CR-GC-680-mess-doku-konsolidieren-kpi-md-messgroes.md",
+      "description": "docs/cr/done/CR-GC-680-mess-doku-konsolidieren-kpi-md-messgroes.md",
       "status": "open"
     },
     {
@@ -2569,7 +2569,7 @@
       "id": "CR-GC-685B",
       "type": "CR",
       "name": "graph_realize von der MCP-Oberflaeche entfernen (Split aus CR-GC-685)",
-      "description": "docs/cr/done/CR-GC-685B-graph-realize-von-der-oberflaeche.md",
+      "description": "docs/cr/done/CR-GC-685B-graph-realize-von-der-oberflaeche-nehmen.md",
       "status": "done",
       "commitRef": "1a70de6"
     },
@@ -2673,73 +2673,73 @@
       "id": "CR-GC-698",
       "type": "CR",
       "name": "messen.mjs des Code-Tests misst die Setup-Saat statt des Laufergebnisses: es liest docs/graph/<laufname>.graph.json, waehrend der Export unter dem Mitgliedsnamen <package.name>.graph.json landet — fuer gefuehrt-2 meldete es 0 Prozent Bindung, tatsaechlich sind es 4 von 4 (100 Prozent)",
-      "description": "docs/cr/open/CR-GC-698-messen-mjs-des-code-tests-misst-die-setu.md"
+      "description": "docs/cr/done/CR-GC-698-messen-mjs-des-code-tests-misst-die-setu.md"
     },
     {
       "id": "CR-GC-699",
       "type": "CR",
       "name": "CI rot: tests/rig-measured.test.ts (CR-GC-496) stat .graphcode/kuzu ENOENT auf dem Runner — Test setzt lokalen Store voraus (Clean-Machine-Klasse)",
-      "description": "docs/cr/open/CR-GC-699-ci-rot-tests-rig-measured-test-ts-cr-gc-.md"
+      "description": "docs/cr/done/CR-GC-699-ci-rot-tests-rig-measured-test-ts-cr-gc-.md"
     },
     {
       "id": "CR-GC-700",
       "type": "CR",
       "name": "Der Subagent-Kanal ist ungemessen: ein einziger Agent/Explore-Aufruf lieferte im Lauf vom 2026-09-23 32.054 Zeichen = 18 Prozent aller Werkzeugantworten, und weder steuerung.mjs noch die Antwort-Diaet-CRs kennen ihn",
-      "description": "docs/cr/open/CR-GC-700-der-subagent-kanal-ist-ungemessen-ein-ei.md"
+      "description": "docs/cr/done/CR-GC-700-der-subagent-kanal-ist-ungemessen-ein-ei.md"
     },
     {
       "id": "CR-GC-701",
       "type": "CR",
       "name": "Die Auftrags-Pruefliste misst Wortlaut gegen die strukturierte Projektdefinition und ist damit zwischen strukturiertem und prosaischem Lauf nicht vergleichbar: 42/42 vs 1/42 bei mehr Elementen",
-      "description": "docs/cr/open/CR-GC-701-die-auftrags-pruefliste-misst-wortlaut-g.md"
+      "description": "docs/cr/done/CR-GC-701-die-auftrags-pruefliste-misst-wortlaut-g.md"
     },
     {
       "id": "CR-GC-702",
       "type": "CR",
       "name": "arch-Phase fordert 2 alternative Zerlegungen, bei candidates=1 landen beide: decompose-n-altM-Kaskade",
-      "description": "docs/cr/open/CR-GC-702-arch-phase-fordert-2-alternative-zerlegu.md"
+      "description": "docs/cr/done/CR-GC-702-arch-phase-fordert-2-alternative-zerlegu.md"
     },
     {
       "id": "CR-GC-703",
       "type": "CR",
       "name": "Executor-Prompt-Vorbilder lecken als Inhalt: REQ-login-* in 9 von 9 Laeufen eines Auftrags ohne Login",
-      "description": "docs/cr/open/CR-GC-703-executor-prompt-vorbilder-lecken-als-inh.md"
+      "description": "docs/cr/done/CR-GC-703-executor-prompt-vorbilder-lecken-als-inh.md"
     },
     {
       "id": "CR-GC-704",
       "type": "CR",
       "name": "qwen3-coder instanziiert das Platzhalter-Vorbild von UC-02 nicht: S2 gcrun-333..335 (nach CR-GC-703) uebernimmt FLOW/SCHEMA/FUNC-beispiel-* woertlich 4-8x je Lauf, Preflight blockt jedes Mal, die Runden verfallen; Kandidat: Skelett-uids aus dem UC des Funds vorbelegen, Modell schreibt nur Texte",
-      "description": "docs/cr/open/CR-GC-704-qwen3-coder-instanziiert-das-platzhalter.md"
+      "description": "docs/cr/done/CR-GC-704-qwen3-coder-instanziiert-das-platzhalter.md"
     },
     {
       "id": "CR-GC-705",
       "type": "CR",
       "name": "Executor: FC-04 ohne Klausel — S2 gcrun-336..338 stagnieren je Lauf ~16 von 40 Runden an FC-04/R-16/AF-04, arch nie erreicht; Ausgang FUNC->FLOW->ACTOR fehlt in allen Laeufen. Klausel mit Skelett-uids aus dem Bestand",
-      "description": "docs/cr/open/CR-GC-705-executor-fc-04-ohne-klausel-s2-gcrun-336.md"
+      "description": "docs/cr/done/CR-GC-705-executor-fc-04-ohne-klausel-s2-gcrun-336.md"
     },
     {
       "id": "CR-GC-706",
       "type": "CR",
       "name": "graph_mutate: commands-Parameter entfernen (67 Dateien, Konsumenten zuerst)",
-      "description": "docs/cr/open/CR-GC-706-graph-mutate-commands-parameter-entferne.md"
+      "description": "docs/cr/done/CR-GC-706-graph-mutate-commands-parameter-entferne.md"
     },
     {
       "id": "CR-GC-707",
       "type": "CR",
       "name": "Executor: Stillstand an AF-01..04 (Analyse-Stempel conops/trade/irr) — S2 gcrun-339..341 je Lauf mehrere 3-Runden-Stillstaende, der Executor kann die Analyse-Skills nicht fahren; Klausel oder gezieltes Zurueckstellen",
-      "description": "docs/cr/open/CR-GC-707-executor-stillstand-an-af-01-04-analyse-.md"
+      "description": "docs/cr/done/CR-GC-707-executor-stillstand-an-af-01-04-analyse-.md"
     },
     {
       "id": "CR-GC-708",
       "type": "CR",
       "name": "S2-Standardmessung: Zug-Analyse je Runde (Fokus→Zug→Gate→Fundänderung) und Regel-Pareto je Zugtyp als KVP-Instrument",
-      "description": "docs/cr/open/CR-GC-708-s2-standardmessung-zug-analyse-je-runde-.md"
+      "description": "docs/cr/done/CR-GC-708-s2-standardmessung-zug-analyse-je-runde-.md"
     },
     {
       "id": "CR-GC-709",
       "type": "CR",
       "name": "Kennzahlverlauf je S2-Runde mitschreiben (docs/messung/verlauf.md), damit jede Änderung am Executor ihre Wirkung belegt",
-      "description": "docs/cr/open/CR-GC-709-kennzahlverlauf-je-s2-runde-mitschreiben.md"
+      "description": "docs/cr/done/CR-GC-709-kennzahlverlauf-je-s2-runde-mitschreiben.md"
     },
     {
       "id": "CR-GC-710",
@@ -2769,13 +2769,13 @@
       "id": "CR-GC-714",
       "type": "CR",
       "name": "D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck",
-      "description": "docs/cr/open/CR-GC-714-d2-delegation-client-gibt-modellarbeit-u.md"
+      "description": "docs/cr/done/CR-GC-714-d2-delegation-client-gibt-modellarbeit-u.md"
     },
     {
       "id": "CR-GC-715",
       "type": "CR",
       "name": "Nutzer-Simulator: EIN Testtreiber fuer das interaktive Rig — Enter auf jeden vorschlag",
-      "description": "docs/cr/open/CR-GC-715-nutzer-simulator-ein-testtreiber-fuer-al.md",
+      "description": "docs/cr/done/CR-GC-715-nutzer-simulator-ein-testtreiber-fuer-al.md",
       "status": "done",
       "commitRef": "0f00973"
     },
@@ -2783,31 +2783,31 @@
       "id": "CR-GC-716",
       "type": "CR",
       "name": "steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210)",
-      "description": "docs/cr/open/CR-GC-716-steuerung-mjs-auf-claude-code-sitzungs-t.md"
+      "description": "docs/cr/done/CR-GC-716-steuerung-mjs-auf-claude-code-sitzungs-t.md"
     },
     {
       "id": "CR-GC-717",
       "type": "CR",
       "name": "rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD",
-      "description": "docs/cr/open/CR-GC-717-rig-code-test-messen-mjs-kongruenz-oeffn.md"
+      "description": "docs/cr/done/CR-GC-717-rig-code-test-messen-mjs-kongruenz-oeffn.md"
     },
     {
       "id": "CR-GC-718",
       "type": "CR",
       "name": "Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox",
-      "description": "docs/cr/open/CR-GC-718-volllauf-je-cr-an-messung-binden-verify-.md"
+      "description": "docs/cr/done/CR-GC-718-volllauf-je-cr-an-messung-binden-verify-.md"
     },
     {
       "id": "CR-GC-719",
       "type": "CR",
       "name": "Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718)",
-      "description": "docs/cr/open/CR-GC-719-zusage-blackbox-schnittstellentests-100-.md"
+      "description": "docs/cr/done/CR-GC-719-zusage-blackbox-schnittstellentests-100-.md"
     },
     {
       "id": "CR-GC-720",
       "type": "CR",
       "name": "Schlupf in CR-GC-719: CODE-Spur ignoriert eine Modell-Aenderung im selben Diff (docs/graph) — 3 Tests des Modell-Satzes lagen ausserhalb der Auswahl; und schlupfFreieFolge zaehlt je CR nur die juengste Zeile, ein Nachlauf verdeckt den Schlupf",
-      "description": "docs/cr/open/CR-GC-720-schlupf-in-cr-gc-719-code-spur-ignoriert.md"
+      "description": "docs/cr/done/CR-GC-720-schlupf-in-cr-gc-719-code-spur-ignoriert.md"
     },
     {
       "id": "CR-GC-721",
@@ -2853,7 +2853,7 @@
       "id": "CR-GC-726",
       "type": "CR",
       "name": "graph_delegate wartet standardmaessig 120 s, OpenCode bricht MCP-Aufrufe nach 60 s ab: der Client sieht 'Request timed out', der Executor laeuft unbemerkt weiter (Lauf local-3, 2026-10-02: 5 Batches, 52 Befehle geschrieben, Client begann zu coden). Dazu: die Spur der Delegation steht nur im Speicher, nach einem Abbruch ist nicht feststellbar, woran der Lauf steht",
-      "description": "docs/cr/open/CR-GC-726-graph-delegate-wartet-standardmaessig-12.md",
+      "description": "docs/cr/done/CR-GC-726-graph-delegate-wartet-standardmaessig-12.md",
       "status": "done",
       "commitRef": "51bbdd1"
     },
@@ -2861,7 +2861,7 @@
       "id": "CR-GC-727",
       "type": "CR",
       "name": "D2 auf einer GPU: der wartende Client nimmt dem Executor die Rechenzeit. Probe todo 2026-10-02: jede graph_delegate({})-Abfrage des Clients kostet eine Inferenz mit 14-19 k Token ohne Cache; Executor-Runden dauern 2-5 min statt 15-85 s, qwen3.8 im Executor reisst den 300-s-Aufruf-Timeout. Das Warte-Budget muss je Repo einstellbar sein (executor.wartenSek), gepaart mit dem Abbruch des Clients (OpenCode experimental.mcp_timeout); die Obergrenze 55 s aus CR-GC-726 verhindert das",
-      "description": "docs/cr/open/CR-GC-727-d2-auf-einer-gpu-der-wartende-client-nim.md",
+      "description": "docs/cr/done/CR-GC-727-d2-auf-einer-gpu-der-wartende-client-nim.md",
       "status": "done",
       "commitRef": "f4e806d"
     },
@@ -2869,7 +2869,7 @@
       "id": "CR-GC-728",
       "type": "CR",
       "name": "graph_delegate sagt dem Client nicht, warum ein Lauf endete und was als Naechstes geht. Probe todo B4 (2026-10-02): nach fertigem Kern meldete der Executor stopReason stalled, 0 Zuege, 0 Token — offen waren nur die Eintrittspunkte der Analysen. Der Client (qwen3.8) hielt das fuer einen Ausfall des Modells und schickte fuenf weitere Auftraege mit genauen Kantenanweisungen; jeder endete gleich. Dazu: ein auftrag bei bestehendem Modell wird still verworfen (Intent nur in der Seed-Phase), der Client erfaehrt es nicht",
-      "description": "docs/cr/open/CR-GC-728-graph-delegate-sagt-dem-client-nicht-war.md",
+      "description": "docs/cr/done/CR-GC-728-graph-delegate-sagt-dem-client-nicht-war.md",
       "status": "done",
       "commitRef": "c70dd0b"
     },
@@ -2877,7 +2877,7 @@
       "id": "CR-GC-729",
       "type": "CR",
       "name": "next an der Mutation wird Vorschlag an den Nutzer (Chat-Vorbefuellung), ohne Fix-Anleitung und Abnahme-Angebot",
-      "description": "docs/cr/open/CR-GC-729-next-an-der-mutation-wird-vorschlag-an-d.md",
+      "description": "docs/cr/done/CR-GC-729-next-an-der-mutation-wird-vorschlag-an-d.md",
       "status": "done",
       "commitRef": "887a206"
     },
@@ -2885,7 +2885,7 @@
       "id": "CR-GC-730",
       "type": "CR",
       "name": "Vorschlag je Dimension zu grob: ein Vorschlag soll einen Schritt benennen, daher je Regel formulieren (Probe G Zug 3: 38 min, zwei Plan-Schritte in einem Zug)",
-      "description": "docs/cr/open/CR-GC-730-vorschlag-je-dimension-zu-grob-ein-vorsc.md",
+      "description": "docs/cr/done/CR-GC-730-vorschlag-je-dimension-zu-grob-ein-vorsc.md",
       "status": "done",
       "commitRef": "3ace5c1"
     },
@@ -2893,7 +2893,7 @@
       "id": "CR-GC-731",
       "type": "CR",
       "name": "Vorschlag zu UC-02 liest sich wie erledigt, wenn der Akteur angebunden ist, aber Funktionen fehlen (Probe H Zug 4)",
-      "description": "docs/cr/open/CR-GC-731-vorschlag-zu-uc-02-liest-sich-wie-erledi.md",
+      "description": "docs/cr/done/CR-GC-731-vorschlag-zu-uc-02-liest-sich-wie-erledi.md",
       "status": "done",
       "commitRef": "71e8f3c"
     },
@@ -2901,7 +2901,7 @@
       "id": "CR-GC-732",
       "type": "CR",
       "name": "graphcode init liefert das OpenCode-Plugin aus, das den Vorschlag ins Eingabefeld legt (gemessen in Probe G/H)",
-      "description": "docs/cr/open/CR-GC-732-graphcode-init-liefert-das-opencode-plug.md",
+      "description": "docs/cr/done/CR-GC-732-graphcode-init-liefert-das-opencode-plug.md",
       "status": "done",
       "commitRef": "2b5ce74"
     },
@@ -2909,7 +2909,7 @@
       "id": "CR-GC-733",
       "type": "CR",
       "name": "Vorschlagssaetze aus RULE_HELP (contracts) lesen statt eigener Tabelle; Regelmatrix zeigt Spalte Vorschlag; Pruefung beim Hoststart",
-      "description": "docs/cr/open/CR-GC-733-vorschlagssaetze-aus-rule-help-contracts.md",
+      "description": "docs/cr/done/CR-GC-733-vorschlagssaetze-aus-rule-help-contracts.md",
       "status": "done",
       "commitRef": "9ae910e"
     },
@@ -2917,7 +2917,7 @@
       "id": "CR-GC-734",
       "type": "CR",
       "name": "Vorschlag wiederholt einen Analyse-Eintrittspunkt (AF-01..05) endlos, auch nachdem der Nutzer ihn beauftragt hat und der Zug ihn nicht schliessen konnte; Eintrittspunkte sind von der Zurueckstellung ausgenommen (CR-GC-604) — Handlauf todo-local 2026-10-03",
-      "description": "docs/cr/open/CR-GC-734-vorschlag-wiederholt-einen-analyse-eintr.md",
+      "description": "docs/cr/done/CR-GC-734-vorschlag-wiederholt-einen-analyse-eintr.md",
       "status": "done",
       "commitRef": "d1276e6"
     },
@@ -2925,7 +2925,7 @@
       "id": "CR-GC-735",
       "type": "CR",
       "name": "Abschlussvermerk überschreibt die anderen: ~ SYS @analysisFreshness {x} ersetzt das ganze Objekt (2. Stempel löscht den 1.); Skills sagen 'analysisFreshness.<id> = …' — gemessen im Replay todo-local 2026-10-04",
-      "description": "docs/cr/open/CR-GC-735-abschlussvermerk-u-berschreibt-die-ander.md",
+      "description": "docs/cr/done/CR-GC-735-abschlussvermerk-u-berschreibt-die-ander.md",
       "status": "done",
       "commitRef": "bf18b17"
     },
@@ -2933,7 +2933,7 @@
       "id": "CR-GC-736",
       "type": "CR",
       "name": "Vorschlag 'Den Variantenvergleich ... ist noch nicht abgeschlossen' — Satz 2 aus CR-GC-734 nimmt den Akkusativ der Analyse (Rig interaktiv frontier-1/3)",
-      "description": "docs/cr/open/CR-GC-736-vorschlag-den-variantenvergleich-ist-noc.md",
+      "description": "docs/cr/done/CR-GC-736-vorschlag-den-variantenvergleich-ist-noc.md",
       "status": "done",
       "commitRef": "5988277"
     },
@@ -2941,7 +2941,7 @@
       "id": "CR-GC-737",
       "type": "CR",
       "name": "Beispielgraphen in ein eigenes Verzeichnis: rig/graphs, Fixture-Graphen und sigllm-Golden eingefroren unter beispielgraphen/",
-      "description": "docs/cr/open/CR-GC-737-beispielgraphen-in-ein-eigenes-verzeichn.md",
+      "description": "docs/cr/done/CR-GC-737-beispielgraphen-in-ein-eigenes-verzeichn.md",
       "status": "done",
       "commitRef": "1793e6c"
     },
@@ -2949,7 +2949,7 @@
       "id": "CR-GC-738",
       "type": "CR",
       "name": "rig/ ist das eine Rig: Treiber mit Sequenz, Aufgaben (todo, sigllm-prosa), serie.json, Referenzlauf je Standardfall",
-      "description": "docs/cr/open/CR-GC-738-rig-ist-das-eine-rig-treiber-mit-sequenz.md",
+      "description": "docs/cr/done/CR-GC-738-rig-ist-das-eine-rig-treiber-mit-sequenz.md",
       "status": "done",
       "commitRef": "cd46729"
     },
@@ -2957,7 +2957,7 @@
       "id": "CR-GC-739",
       "type": "CR",
       "name": "auswertung/: konfigurierbarer Runner über Lauf-Artefakte, benchmark.jsonl als Gedächtnis, benchmark.md generiert",
-      "description": "docs/cr/open/CR-GC-739-auswertung-konfigurierbarer-runner-u-ber.md",
+      "description": "docs/cr/done/CR-GC-739-auswertung-konfigurierbarer-runner-u-ber.md",
       "status": "done",
       "commitRef": "2c38665"
     },
@@ -2965,7 +2965,7 @@
       "id": "CR-GC-740",
       "type": "CR",
       "name": "Messaufbauten alter Definition löschen: greenfield-systemtest, code-test, referenz-change, dummy-slicer, Executor-Teile; Texte ins Archiv",
-      "description": "docs/cr/open/CR-GC-740-messaufbauten-alter-definition-lo-schen-.md",
+      "description": "docs/cr/done/CR-GC-740-messaufbauten-alter-definition-lo-schen-.md",
       "status": "done",
       "commitRef": "dfe8e26"
     },
@@ -2973,7 +2973,7 @@
       "id": "CR-GC-741",
       "type": "CR",
       "name": "Whitebox-Messung (minimal-whitebox Phase 1) als S1-Messung in npm run messung (T-E2)",
-      "description": "docs/cr/open/CR-GC-741-whitebox-messung-minimal-whitebox-phase-.md",
+      "description": "docs/cr/done/CR-GC-741-whitebox-messung-minimal-whitebox-phase-.md",
       "status": "done",
       "commitRef": "7664c59"
     },
@@ -2981,7 +2981,7 @@
       "id": "CR-GC-742",
       "type": "CR",
       "name": "Rig-Simulator beantwortet eine Entscheidungsfrage des Agenten mit dem ganzen Antwortblatt plus Vorschlag - Widerspruch, 66k Zeichen Denken bis Ausgabelimit (lokal-1 Zug 2); Regel: Frage mit Optionen bekommt eine Antwort",
-      "description": "docs/cr/open/CR-GC-742-rig-simulator-beantwortet-eine-entscheid.md",
+      "description": "docs/cr/done/CR-GC-742-rig-simulator-beantwortet-eine-entscheid.md",
       "status": "done",
       "commitRef": "1365c4e"
     },
@@ -3021,7 +3021,7 @@
       "id": "CR-GC-747",
       "type": "CR",
       "name": "Skill zum Abarbeiten der Warnungen: se:close-violations deckt heute nur Fehler (R-01, RD-01); erweitern auf alle offenen Befunde, Regel fuer Regel, mit den drei Auswegen beheben, abnehmen mit Grund, fragen - Vorlage ist der in 8 Rig-Laeufen gemessene Auftrag der Stufe warnungsfrei",
-      "description": "docs/cr/open/CR-GC-747-skill-zum-abarbeiten-der-warnungen-se-cl.md",
+      "description": "docs/cr/done/CR-GC-747-skill-zum-abarbeiten-der-warnungen-se-cl.md",
       "status": "done",
       "commitRef": "93c010a"
     },
@@ -3085,37 +3085,37 @@
       "id": "CR-GC-755",
       "type": "CR",
       "name": "Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43",
-      "description": "docs/cr/open/CR-GC-755-entscheidung-ist-ein-erledigter-auftrag-.md"
+      "description": "docs/cr/done/CR-GC-755-entscheidung-ist-ein-erledigter-auftrag-.md"
     },
     {
       "id": "CR-GC-756",
       "type": "CR",
       "name": "Sicht Variantenvergleich streichen",
-      "description": "docs/cr/open/CR-GC-756-sicht-variantenvergleich-streichen.md"
+      "description": "docs/cr/done/CR-GC-756-sicht-variantenvergleich-streichen.md"
     },
     {
       "id": "CR-GC-757",
       "type": "CR",
       "name": "Stufe statt Dimension - Befunde zaehlen statt Prozent",
-      "description": "docs/cr/open/CR-GC-757-stufe-statt-dimension-befunde-zaehlen-st.md"
+      "description": "docs/cr/done/CR-GC-757-stufe-statt-dimension-befunde-zaehlen-st.md"
     },
     {
       "id": "CR-GC-758",
       "type": "CR",
       "name": "Rang ohne Gesamt-Delta, Stufen im Bericht wie die Marken, lesender Schritt",
-      "description": "docs/cr/open/CR-GC-758-rang-ohne-gesamt-delta-stufen-im-bericht.md"
+      "description": "docs/cr/done/CR-GC-758-rang-ohne-gesamt-delta-stufen-im-bericht.md"
     },
     {
       "id": "CR-GC-759",
       "type": "CR",
       "name": "Werteklassen Laufzeit-Parameter, Start-Konfiguration, Invariante als Allgemeinvorgabe prüfen",
-      "description": "docs/cr/open/CR-GC-759-werteklassen-laufzeit-parameter-start-ko.md"
+      "description": "docs/cr/done/CR-GC-759-werteklassen-laufzeit-parameter-start-ko.md"
     },
     {
       "id": "CR-GC-760",
       "type": "CR",
       "name": "Testvorgehen als Allgemeinvorgabe prüfen: Abnahme je Use Case, Smoke-Test, Risiko-Tests, Prüfaufbau",
-      "description": "docs/cr/open/CR-GC-760-testvorgehen-als-allgemeinvorgabe-pru-fe.md"
+      "description": "docs/cr/done/CR-GC-760-testvorgehen-als-allgemeinvorgabe-pru-fe.md"
     },
     {
       "id": "CR-GC-761",
@@ -3127,55 +3127,55 @@
       "id": "CR-GC-762",
       "type": "CR",
       "name": "Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen",
-      "description": "docs/cr/open/CR-GC-762-teststufen-und-anforderungsebenen-nach-a.md"
+      "description": "docs/cr/done/CR-GC-762-teststufen-und-anforderungsebenen-nach-a.md"
     },
     {
       "id": "CR-GC-763",
       "type": "CR",
       "name": "Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen",
-      "description": "docs/cr/open/CR-GC-763-kandidatenwahl-gate-einstufung-hinter-di.md"
+      "description": "docs/cr/done/CR-GC-763-kandidatenwahl-gate-einstufung-hinter-di.md"
     },
     {
       "id": "CR-GC-764",
       "type": "CR",
       "name": "Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte)",
-      "description": "docs/cr/open/CR-GC-764-rig-und-auswertung-aus-graphcode-entfern.md"
+      "description": "docs/cr/done/CR-GC-764-rig-und-auswertung-aus-graphcode-entfern.md"
     },
     {
       "id": "CR-GC-765",
       "type": "CR",
       "name": "Leitlinie und Verweise nach dem Split auf graphanalyze umstellen",
-      "description": "docs/cr/open/CR-GC-765-leitlinie-und-verweise-nach-dem-split-au.md"
+      "description": "docs/cr/done/CR-GC-765-leitlinie-und-verweise-nach-dem-split-au.md"
     },
     {
       "id": "CR-GC-766",
       "type": "CR",
       "name": "Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge)",
-      "description": "docs/cr/open/CR-GC-766-marken-bericht-und-viewer-zaehlen-wie-de.md"
+      "description": "docs/cr/done/CR-GC-766-marken-bericht-und-viewer-zaehlen-wie-de.md"
     },
     {
       "id": "CR-GC-767",
       "type": "CR",
       "name": "Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics",
-      "description": "docs/cr/open/CR-GC-767-kettenbewertung-stufe-1-kettenkennzahlen.md"
+      "description": "docs/cr/done/CR-GC-767-kettenbewertung-stufe-1-kettenkennzahlen.md"
     },
     {
       "id": "CR-GC-768",
       "type": "CR",
       "name": "17 von 21 Wirkketten nicht bewertbar: Saecke, lose Glieder, fehlende Glieder",
-      "description": "docs/cr/open/CR-GC-768-17-von-21-wirkketten-nicht-bewertbar-sae.md"
+      "description": "docs/cr/done/CR-GC-768-17-von-21-wirkketten-nicht-bewertbar-sae.md"
     },
     {
       "id": "CR-GC-769",
       "type": "CR",
       "name": "Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet",
-      "description": "docs/cr/open/CR-GC-769-scaffold-stellt-opencode-auf-den-eingefr.md"
+      "description": "docs/cr/done/CR-GC-769-scaffold-stellt-opencode-auf-den-eingefr.md"
     },
     {
       "id": "CR-GC-770",
       "type": "CR",
       "name": "Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt",
-      "description": "docs/cr/open/CR-GC-770-steuerungsschleife-im-modell-schliesst-n.md"
+      "description": "docs/cr/done/CR-GC-770-steuerungsschleife-im-modell-schliesst-n.md"
     },
     {
       "id": "CR-GC-771",
@@ -3187,43 +3187,43 @@
       "id": "CR-GC-772",
       "type": "CR",
       "name": "Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt",
-      "description": "docs/cr/open/CR-GC-772-executor-schalter-in-die-repo-konfigurat.md"
+      "description": "docs/cr/done/CR-GC-772-executor-schalter-in-die-repo-konfigurat.md"
     },
     {
       "id": "CR-GC-773",
       "type": "CR",
       "name": "Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche",
-      "description": "docs/cr/open/CR-GC-773-drei-helfer-der-executor-kette-ohne-eige.md"
+      "description": "docs/cr/done/CR-GC-773-drei-helfer-der-executor-kette-ohne-eige.md"
     },
     {
       "id": "CR-GC-774",
       "type": "CR",
       "name": "FMEA-Skill nimmt die Orte der Kettenkennzahlen als Eingang; Reichweite einer Funktion geht in die Bewertung",
-      "description": "docs/cr/open/CR-GC-774-fmea-skill-nimmt-die-orte-der-kettenkenn.md"
+      "description": "docs/cr/done/CR-GC-774-fmea-skill-nimmt-die-orte-der-kettenkenn.md"
     },
     {
       "id": "CR-GC-775",
       "type": "CR",
       "name": "Executor im Host auslagern: Zugaenge entfernen (graph_delegate, graphcode run, Schalter, Config-Abschnitt)",
-      "description": "docs/cr/open/CR-GC-775-executor-im-host-auslagern-zugaenge-entf.md"
+      "description": "docs/cr/done/CR-GC-775-executor-im-host-auslagern-zugaenge-entf.md"
     },
     {
       "id": "CR-GC-776",
       "type": "CR",
       "name": "Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen",
-      "description": "docs/cr/open/CR-GC-776-executor-im-host-auslagern-toten-code-te.md"
+      "description": "docs/cr/done/CR-GC-776-executor-im-host-auslagern-toten-code-te.md"
     },
     {
       "id": "CR-GC-777",
       "type": "CR",
       "name": "Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen)",
-      "description": "docs/cr/open/CR-GC-777-zweiter-ring-nach-der-executor-auslageru.md"
+      "description": "docs/cr/done/CR-GC-777-zweiter-ring-nach-der-executor-auslageru.md"
     },
     {
       "id": "CR-GC-778",
       "type": "CR",
       "name": "Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht",
-      "description": "docs/cr/open/CR-GC-778-gate-entlasten-architekturmass-steuerwer.md"
+      "description": "docs/cr/done/CR-GC-778-gate-entlasten-architekturmass-steuerwer.md"
     },
     {
       "id": "CR-GC-779",
@@ -3244,94 +3244,94 @@
       "id": "CR-GC-781",
       "type": "CR",
       "name": "Konzept Fassung 3: Schluss aus den Spikes und Leitfaden der Optimierung",
-      "description": "docs/cr/open/CR-GC-781-konzept-fassung-3-schluss-aus-den-spikes.md",
+      "description": "docs/cr/done/CR-GC-781-konzept-fassung-3-schluss-aus-den-spikes.md",
       "status": "done"
     },
     {
       "id": "CR-GC-782",
       "type": "CR",
       "name": "se-fmea Version 9: Umfang, Flaeche, Tieferlegen",
-      "description": "docs/cr/open/CR-GC-782-se-fmea-version-9-umfang-flaeche-tieferl.md"
+      "description": "docs/cr/done/CR-GC-782-se-fmea-version-9-umfang-flaeche-tieferl.md"
     },
     {
       "id": "CR-GC-783",
       "type": "CR",
       "name": "Skill Laufzeitanalyse einer Wirkkette",
-      "description": "docs/cr/open/CR-GC-783-skill-laufzeitanalyse-einer-wirkkette.md"
+      "description": "docs/cr/done/CR-GC-783-skill-laufzeitanalyse-einer-wirkkette.md"
     },
     {
       "id": "CR-GC-784",
       "type": "CR",
       "name": "Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen",
-      "description": "docs/cr/open/CR-GC-784-skill-modellvorbereitung-ketten-schliess.md"
+      "description": "docs/cr/done/CR-GC-784-skill-modellvorbereitung-ketten-schliess.md"
     },
     {
       "id": "CR-GC-785",
       "type": "CR",
       "name": "se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse",
-      "description": "docs/cr/open/CR-GC-785-se-optimize-version-3-ein-optimierer-fue.md"
+      "description": "docs/cr/done/CR-GC-785-se-optimize-version-3-ein-optimierer-fue.md"
     },
     {
       "id": "CR-GC-786",
       "type": "CR",
       "name": "graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer)",
-      "description": "docs/cr/open/CR-GC-786-graph-readiness-bricht-an-anforderungen-.md"
+      "description": "docs/cr/done/CR-GC-786-graph-readiness-bricht-an-anforderungen-.md"
     },
     {
       "id": "CR-GC-787",
       "type": "CR",
       "name": "graph_metrics reicht Betrachtungsumfang und Risikotraeger durch",
-      "description": "docs/cr/open/CR-GC-787-graph-metrics-reicht-betrachtungsumfang-.md"
+      "description": "docs/cr/done/CR-GC-787-graph-metrics-reicht-betrachtungsumfang-.md"
     },
     {
       "id": "CR-GC-788",
       "type": "CR",
       "name": "Modell: Block FUNC-goal-steerer erfuellt eine Anforderung",
-      "description": "docs/cr/open/CR-GC-788-modell-block-func-goal-steerer-erfuellt-.md",
+      "description": "docs/cr/done/CR-GC-788-modell-block-func-goal-steerer-erfuellt-.md",
       "status": "done"
     },
     {
       "id": "CR-GC-789",
       "type": "CR",
       "name": "Merkmal sync an den Fluessen des Selbstmodells",
-      "description": "docs/cr/open/CR-GC-789-merkmal-sync-an-den-fluessen-des-selbstm.md",
+      "description": "docs/cr/done/CR-GC-789-merkmal-sync-an-den-fluessen-des-selbstm.md",
       "status": "done"
     },
     {
       "id": "CR-GC-790",
       "type": "CR",
       "name": "Trockenlauf zeigt die Kennzahlen danach nicht: Gesamt-Impact vor der Wahl nur halb",
-      "description": "docs/cr/open/CR-GC-790-trockenlauf-zeigt-die-kennzahlen-danach-.md"
+      "description": "docs/cr/done/CR-GC-790-trockenlauf-zeigt-die-kennzahlen-danach-.md"
     },
     {
       "id": "CR-GC-791",
       "type": "CR",
       "name": "Nachbarskills se:optimize und se-vorbereitung auf den Antwortweg nachziehen",
-      "description": "docs/cr/open/CR-GC-791-nachbarskills-se-optimize-und-se-vorbere.md"
+      "description": "docs/cr/done/CR-GC-791-nachbarskills-se-optimize-und-se-vorbere.md"
     },
     {
       "id": "CR-GC-792",
       "type": "CR",
       "name": "Antwortweg lesbar machen: Gate-Urteil trennen, Store und Sperre als Glied",
-      "description": "docs/cr/open/CR-GC-792-antwortweg-lesbar-machen-gate-urteil-tre.md"
+      "description": "docs/cr/done/CR-GC-792-antwortweg-lesbar-machen-gate-urteil-tre.md"
     },
     {
       "id": "CR-GC-793",
       "type": "CR",
       "name": "Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten",
-      "description": "docs/cr/open/CR-GC-793-start-lieferungen-tragen-sync-sperre-fae.md"
+      "description": "docs/cr/done/CR-GC-793-start-lieferungen-tragen-sync-sperre-fae.md"
     },
     {
       "id": "CR-GC-794",
       "type": "CR",
       "name": "Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger",
-      "description": "docs/cr/open/CR-GC-794-gegenmassnahme-store-recovery-haengt-am-.md"
+      "description": "docs/cr/done/CR-GC-794-gegenmassnahme-store-recovery-haengt-am-.md"
     },
     {
       "id": "CR-GC-795",
       "type": "CR",
       "name": "FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9)",
-      "description": "docs/cr/open/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md"
+      "description": "docs/cr/done/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md"
     },
     {
       "id": "CR-GC-796",
@@ -3343,31 +3343,31 @@
       "id": "CR-GC-797",
       "type": "CR",
       "name": "Vorbereitung ganzes Modell: Ketten schliessen vor der FMEA aller Ketten",
-      "description": "docs/cr/open/CR-GC-797-vorbereitung-ganzes-modell-ketten-schlie.md"
+      "description": "docs/cr/done/CR-GC-797-vorbereitung-ganzes-modell-ketten-schlie.md"
     },
     {
       "id": "CR-GC-798",
       "type": "CR",
       "name": "FMEA aller Wirkketten des Modells (se-fmea v9)",
-      "description": "docs/cr/open/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md"
+      "description": "docs/cr/done/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md"
     },
     {
       "id": "CR-GC-799",
       "type": "CR",
       "name": "Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change)",
-      "description": "docs/cr/open/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md"
+      "description": "docs/cr/done/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md"
     },
     {
       "id": "CR-GC-800",
       "type": "CR",
       "name": "Spur CODE und Volllauf melden Aenderung und Lauf an graph_test_ingest zurueck (offen aus CR-GC-799)",
-      "description": "docs/cr/open/CR-GC-800-spur-code-und-volllauf-melden-aenderung-.md"
+      "description": "docs/cr/done/CR-GC-800-spur-code-und-volllauf-melden-aenderung-.md"
     },
     {
       "id": "CR-GC-801",
       "type": "CR",
       "name": "Sicht fmea.md ist ein Risikoregister: ohne Kette, Traeger, Prioritaet, Nachweis und Massnahmenstand",
-      "description": "docs/cr/open/CR-GC-801-sicht-fmea-md-ist-ein-risikoregister-ohn.md"
+      "description": "docs/cr/done/CR-GC-801-sicht-fmea-md-ist-ein-risikoregister-ohn.md"
     },
     {
       "id": "CR-GC-802",
@@ -3379,13 +3379,13 @@
       "id": "CR-GC-803",
       "type": "CR",
       "name": "Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen)",
-      "description": "docs/cr/open/CR-GC-803-vorbereitung-nach-fmea-nachtrag-gegenmas.md"
+      "description": "docs/cr/done/CR-GC-803-vorbereitung-nach-fmea-nachtrag-gegenmas.md"
     },
     {
       "id": "CR-GC-804",
       "type": "CR",
       "name": "Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion)",
-      "description": "docs/cr/open/CR-GC-804-zielprofil-als-anforderungen-im-modell-s.md"
+      "description": "docs/cr/open/CR-GC-804-constraints-als-anforderung-mit-test.md"
     },
     {
       "id": "CR-GC-805",
@@ -3439,157 +3439,163 @@
       "id": "CR-GC-813",
       "type": "CR",
       "name": "Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code",
-      "description": "docs/cr/open/CR-GC-813-modell-zeigt-veranlasser-statt-aufrufer-.md"
+      "description": "docs/cr/done/CR-GC-813-modell-zeigt-veranlasser-statt-aufrufer-.md"
     },
     {
       "id": "CR-GC-814",
       "type": "CR",
       "name": "Modell: Recall falsch verdrahtet (seedFromJson an GraphStore statt applyReseed), sieben Wirkketten ohne Ausloeser",
-      "description": "docs/cr/open/CR-GC-814-modell-recall-falsch-verdrahtet-seedfrom.md"
+      "description": "docs/cr/done/CR-GC-814-modell-recall-falsch-verdrahtet-seedfrom.md"
     },
     {
       "id": "CR-GC-815",
       "type": "CR",
       "name": "Akteure nach Kanal statt nach Rolle geschnitten: Auftraggeber und Regelhalter",
-      "description": "docs/cr/open/CR-GC-815-akteure-nach-kanal-statt-nach-rolle-gesc.md"
+      "description": "docs/cr/done/CR-GC-815-akteure-nach-kanal-statt-nach-rolle-gesc.md"
     },
     {
       "id": "CR-GC-816",
       "type": "CR",
       "name": "Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk",
-      "description": "docs/cr/open/CR-GC-816-block-umverteilung-nach-cr-gc-813-graph-.md"
+      "description": "docs/cr/done/CR-GC-816-block-umverteilung-nach-cr-gc-813-graph-.md"
     },
     {
       "id": "CR-GC-817",
       "type": "CR",
       "name": "Dashboard bekommt Kennzahlen als drei Fluesse statt der einen graph_metrics-Antwort",
-      "description": "docs/cr/open/CR-GC-817-dashboard-bekommt-kennzahlen-als-drei-fl.md"
+      "description": "docs/cr/done/CR-GC-817-dashboard-bekommt-kennzahlen-als-drei-fl.md"
     },
     {
       "id": "CR-GC-818",
       "type": "CR",
       "name": "MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08)",
-      "description": "docs/cr/open/CR-GC-818-mergereport-src-kernel-merge-ts-48-als-z.md"
+      "description": "docs/cr/done/CR-GC-818-mergereport-src-kernel-merge-ts-48-als-z.md"
     },
     {
       "id": "CR-GC-819",
       "type": "CR",
       "name": "Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette",
-      "description": "docs/cr/open/CR-GC-819-uebergaben-ohne-kette-r-21-ownkuzu-bekom.md"
+      "description": "docs/cr/done/CR-GC-819-uebergaben-ohne-kette-r-21-ownkuzu-bekom.md"
     },
     {
       "id": "CR-GC-820",
       "type": "CR",
       "name": "CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md",
-      "description": "docs/cr/open/CR-GC-820-cr-regel-fu-r-graph-repos-fehlt-seit-ku-.md"
+      "description": "docs/cr/done/CR-GC-820-cr-regel-fu-r-graph-repos-fehlt-seit-ku-.md"
     },
     {
       "id": "CR-GC-821",
       "type": "CR",
       "name": "graph_metrics-Antwort ohne pruefbaren Vertrag",
-      "description": "docs/cr/open/CR-GC-821-graph-metrics-antwort-ohne-pruefbaren-ve.md"
+      "description": "docs/cr/done/CR-GC-821-graph-metrics-antwort-ohne-pruefbaren-ve.md"
     },
     {
       "id": "CR-GC-822",
       "type": "CR",
       "name": "Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell",
-      "description": "docs/cr/open/CR-GC-822-dashboard-wege-rules-evaluate-und-graph-.md"
+      "description": "docs/cr/done/CR-GC-822-dashboard-wege-rules-evaluate-und-graph-.md"
     },
     {
       "id": "CR-GC-823",
       "type": "CR",
       "name": "Actor-Flows aus kernel ohne surface: gate-verdict (apply), graph-state (GraphStore), export-pending (setExportPending) erreichen den Auftraggeber im Code nur ueber surface",
-      "description": "docs/cr/open/CR-GC-823-actor-flows-aus-kernel-ohne-surface-gate.md"
+      "description": "docs/cr/done/CR-GC-823-actor-flows-aus-kernel-ohne-surface-gate.md"
     },
     {
       "id": "CR-GC-824",
       "type": "CR",
       "name": "Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum",
-      "description": "docs/cr/open/CR-GC-824-optimierungs-skill-fuer-die-oberste-modu.md"
+      "description": "docs/cr/done/CR-GC-824-optimierungs-skill-fuer-die-oberste-modu.md"
     },
     {
       "id": "CR-GC-825",
       "type": "CR",
       "name": "FUNC-decode von loop nach kernel: einzige Grounding-FUNC in loop, Geschwister import/reseed/merge liegen in kernel; Linie loop-surface 2 -> 1 Flow",
-      "description": "docs/cr/open/CR-GC-825-func-decode-von-loop-nach-kernel-einzige.md"
+      "description": "docs/cr/done/CR-GC-825-func-decode-von-loop-nach-kernel-einzige.md"
     },
     {
       "id": "CR-GC-826",
       "type": "CR",
       "name": "FCHAIN-apply-gate: Host-Socket, StoreLock, SessionLifecycle gehoeren nicht in den Ablauf einer Aenderung",
-      "description": "docs/cr/open/CR-GC-826-fchain-apply-gate-host-socket-storelock-.md"
+      "description": "docs/cr/done/CR-GC-826-fchain-apply-gate-host-socket-storelock-.md"
     },
     {
       "id": "CR-GC-827",
       "type": "CR",
       "name": "Regelpruefung liest den Kandidaten von mutate, nicht den Store",
-      "description": "docs/cr/open/CR-GC-827-regelpruefung-liest-den-kandidaten-von-m.md"
+      "description": "docs/cr/done/CR-GC-827-regelpruefung-liest-den-kandidaten-von-m.md"
     },
     {
       "id": "CR-GC-828",
       "type": "CR",
       "name": "graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht",
-      "description": "docs/cr/open/CR-GC-828-graph-mutate-liest-regelbefunde-vor-und-.md"
+      "description": "docs/cr/done/CR-GC-828-graph-mutate-liest-regelbefunde-vor-und-.md"
     },
     {
       "id": "CR-GC-829",
       "type": "CR",
       "name": "FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec",
-      "description": "docs/cr/open/CR-GC-829-fchain-codec-roundtrip-ist-keine-kette-m.md"
+      "description": "docs/cr/done/CR-GC-829-fchain-codec-roundtrip-ist-keine-kette-m.md"
     },
     {
       "id": "CR-GC-830",
       "type": "CR",
       "name": "FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht",
-      "description": "docs/cr/open/CR-GC-830-fchain-generation-states-mischt-graph-ge.md"
+      "description": "docs/cr/done/CR-GC-830-fchain-generation-states-mischt-graph-ge.md"
     },
     {
       "id": "CR-GC-831",
       "type": "CR",
       "name": "Schema-Migration: Store-Neuaufbau ist still, migrateSchema gibt es nicht",
-      "description": "docs/cr/open/CR-GC-831-schema-migration-store-neuaufbau-ist-sti.md"
+      "description": "docs/cr/done/CR-GC-831-schema-migration-store-neuaufbau-ist-sti.md"
     },
     {
       "id": "CR-GC-832",
       "type": "CR",
       "name": "Schreibweg im Modell umgeht das graph_mutate-Werkzeug; Ketten modelfree-gate und interface-escalation sind Eigenschaften, kein Ablauf",
-      "description": "docs/cr/open/CR-GC-832-schreibweg-im-modell-umgeht-das-graph-mu.md"
+      "description": "docs/cr/done/CR-GC-832-schreibweg-im-modell-umgeht-das-graph-mu.md"
     },
     {
       "id": "CR-GC-833",
       "type": "CR",
       "name": "Leseweg und Fuehrung im Modell umgehen die MCP-Werkzeuge; graph_generate ohne FUNC; Learning-Engine nicht gebaut",
-      "description": "docs/cr/open/CR-GC-833-leseweg-und-fuehrung-im-modell-umgehen-d.md"
+      "description": "docs/cr/done/CR-GC-833-leseweg-und-fuehrung-im-modell-umgehen-d.md"
     },
     {
       "id": "CR-GC-834",
       "type": "CR",
       "name": "Start, Sitzungsende und Store-Oeffnen im Modell: repo-lifecycle mischt fuenf Ablaeufe, Startmeldung haengt am GraphStore in 18 Ketten",
-      "description": "docs/cr/open/CR-GC-834-start-sitzungsende-und-store-oeffnen-im-.md"
+      "description": "docs/cr/done/CR-GC-834-start-sitzungsende-und-store-oeffnen-im-.md"
     },
     {
       "id": "CR-GC-835",
       "type": "CR",
       "name": "Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC",
-      "description": "docs/cr/open/CR-GC-835-export-import-und-snapshot-ketten-im-mod.md"
+      "description": "docs/cr/done/CR-GC-835-export-import-und-snapshot-ketten-im-mod.md"
     },
     {
       "id": "CR-GC-836",
       "type": "CR",
       "name": "Test-Ketten im Modell: graph_tests, graph_test_ingest und die npm-Spuren verify:code/verify:full in zwei Ketten vermischt; Skripte ohne FUNC",
-      "description": "docs/cr/open/CR-GC-836-test-ketten-im-modell-graph-tests-graph-.md"
+      "description": "docs/cr/done/CR-GC-836-test-ketten-im-modell-graph-tests-graph-.md"
     },
     {
       "id": "CR-GC-837",
       "type": "CR",
       "name": "Skill-, Dashboard- und HTTP-Host-Ketten im Modell: graph_help ohne FUNC, Dashboard ohne Ausloeser, serveHost/ownKuzu/health ohne Kette",
-      "description": "docs/cr/open/CR-GC-837-skill-dashboard-und-http-host-ketten-im-.md"
+      "description": "docs/cr/done/CR-GC-837-skill-dashboard-und-http-host-ketten-im-.md"
     },
     {
       "id": "CR-GC-838",
       "type": "CR",
       "name": "Zehn Pre/Post-REQ-Paare: Vorbedingung ist der Eingangsfluss, Nachbedingung die Anforderung; zusammenlegen, an die tragende FUNC haengen, Text an den Test",
-      "description": "docs/cr/open/CR-GC-838-zehn-pre-post-req-paare-vorbedingung-ist.md"
+      "description": "docs/cr/done/CR-GC-838-zehn-pre-post-req-paare-vorbedingung-ist.md"
+    },
+    {
+      "id": "CR-GC-839",
+      "type": "CR",
+      "name": "Altbestand CR-Knoten (Dateizeiger veraltet, kein Umfang) und Skripte ohne MOD",
+      "description": "docs/cr/open/CR-GC-839-altbestand-cr-knoten-dateizeiger-veralte.md"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -3706,6 +3712,12 @@
       "type": "FCHAIN",
       "name": "Bestehenden Bestand einlesen",
       "description": "Ein Mensch laesst eine bestehende Codebasis einlesen: der Skill se:import-code leitet den Agenten an, graphcode import-code zu fahren; das Verb legt einen eigenen Harness an, befuellt einen leeren Store, gibt den Format-E-Bestand an graph_mutate, exportiert und meldet die Zusammenfassung ueber die CLI."
+    },
+    {
+      "id": "FCHAIN-model-lane",
+      "type": "FCHAIN",
+      "name": "Modell-Spur fahren (npm)",
+      "description": "Der pre-commit-Hook oder der Entwickler faehrt npm run verify:model bei einer reinen Modellaenderung; die Spur faehrt die feste Testmenge und gibt aus, was lief und was ausgelassen ist."
     },
     {
       "id": "FCHAIN-recall",
@@ -4676,6 +4688,13 @@
       "type": "FLOW",
       "name": "Spur-Ausgabe (verify:full)",
       "description": "Plan, Bindungsgrad, Ergebnis und Schlupf der vollen Spur auf stderr. Beleg: scripts/verify-full.mjs.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-lane-output-model",
+      "type": "FLOW",
+      "name": "Spur-Ausgabe (verify:model)",
+      "description": "Zahl der Testdateien, die ausgelassenen mit Grund und das Ergebnis der Modell-Spur auf stderr. Beleg: scripts/verify-model.mjs.",
       "sync": "sync"
     },
     {
@@ -6713,6 +6732,15 @@
       }
     },
     {
+      "id": "FUNC-verify-lane-model",
+      "type": "FUNC",
+      "name": "npm run verify:model",
+      "description": "Die npm-Spur verify:model: faehrt die feste Testmenge aus model-test-set.mjs und nennt jede ausgelassene Datei mit Grund. Der pre-commit-Hook faehrt sie bei einer reinen Modellaenderung. Beleg: scripts/verify-model.mjs.",
+      "realRef": {
+        "file": "scripts/verify-model.mjs"
+      }
+    },
+    {
       "id": "FUNC-view-changelog",
       "type": "FUNC",
       "name": "se-view-changelog (Change Log)",
@@ -6826,6 +6854,12 @@
       "created_at": "2026-06-17T00:00:00.000Z",
       "path": null,
       "external": true
+    },
+    {
+      "id": "MOD-dev-scripts",
+      "type": "MOD",
+      "name": "dev-scripts — Entwicklerskripte",
+      "description": "Die Node-Skripte unter scripts/: die npm-Spuren verify:code und verify:full, der Export, die Messungen. Vom Entwickler oder vom pre-commit-Hook gefahren, nicht im Paket ausgeliefert; sie rufen graphcode ueber dist/ und den MCP-Host."
     },
     {
       "id": "MOD-kernel",
@@ -7753,6 +7787,15 @@
       "type": "REQ",
       "name": "Vorbedingung Modellaustausch",
       "description": "Vor einem Ein- oder Auslesevorgang liegt ein Repo mit initialisiertem Store vor sowie ein lesbarer Fremdbestand: ein Format-E-Artefakt, ein TypeScript-Quellbaum oder ein Dokument.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-model-lane-fixed-set",
+      "type": "REQ",
+      "name": "Modell-Spur mit vollstaendiger fester Menge",
+      "description": "verify:model faehrt genau die Testmenge aus model-test-set.mjs; jede Testdatei unter tests/ steht dort drin oder ist mit Grund ausgelassen, und die Spur nennt jede ausgelassene.",
       "kinds": [
         "functional"
       ]
@@ -11835,6 +11878,19 @@
       ]
     },
     {
+      "id": "TEST-verify-model-set",
+      "type": "TEST",
+      "name": "Modell-Testmenge vollstaendig",
+      "description": "Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.",
+      "testRefs": [
+        {
+          "file": "tests/verify-model.completeness.test.ts",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
+    },
+    {
       "id": "TEST-view-fmea",
       "type": "TEST",
       "name": "Sicht FMEA zeigt Ort",
@@ -13509,6 +13565,11 @@
     },
     {
       "source": "CR-GC-220",
+      "target": "FUNC-render-views",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-220",
       "target": "MS-6-adoption",
       "type": "relation"
     },
@@ -13640,6 +13701,16 @@
     {
       "source": "CR-GC-237",
       "target": "MS-7-concurrency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-237",
+      "target": "REQ-readonly-bridge",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-237",
+      "target": "REQ-single-kuzu-owner",
       "type": "relation"
     },
     {
@@ -14823,6 +14894,16 @@
     },
     {
       "source": "CR-GC-320",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-320",
+      "target": "FUNC-reseed",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-320",
       "target": "MS-10-steering-views",
       "type": "relation",
       "weight": "1"
@@ -15036,6 +15117,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-540",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-540",
+      "target": "SCHEMA-format-e",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-541",
       "target": "FUNC-plan-code-lane",
       "type": "relation"
@@ -15071,8 +15162,253 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-556",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-558",
+      "target": "FUNC-author-actor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-558",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-558",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-558",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-559",
+      "target": "FUNC-author-actor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-559",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-559",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-559",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-560",
+      "target": "FUNC-se-optimize",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-560",
+      "target": "REQ-mcp-tool-registry",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-560",
+      "target": "REQ-readiness-transparent",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-561",
+      "target": "FUNC-authoring-guide",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-561",
+      "target": "FUNC-bind-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-561",
+      "target": "FUNC-deduce-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-561",
+      "target": "FUNC-graph-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-561",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-561",
+      "target": "FUNC-rules-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-561",
+      "target": "REQ-agent-agnostic",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-561",
+      "target": "REQ-published-counts-match-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "REQ-install-idempotent",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "REQ-post-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "REQ-repo-install",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "REQ-repo-uninstall",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "REQ-repo-update",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "REQ-risk-stale-measurement",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "REQ-single-measurement-path",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "REQ-steering-post",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "REQ-steering-pre",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-562",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-566",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-566",
+      "target": "REQ-monotone-convergence",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-566",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-566",
+      "target": "REQ-steering-from-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-567",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-567",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-568",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-568",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-569",
       "target": "UC-reduced-llm",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "FUNC-compute-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "FUNC-graph-merge-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "REQ-formatE-parity",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "REQ-harness-schema-in-contracts",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "REQ-mcp-gate-symmetry",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "REQ-one-gate-per-repo",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "REQ-single-write-door",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-570",
+      "target": "REQ-token-efficiency",
       "type": "relation"
     },
     {
@@ -15121,6 +15457,46 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-576",
+      "target": "FUNC-fit-advisory",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-576",
+      "target": "FUNC-graph-merge-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-576",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-576",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-576",
+      "target": "REQ-formatE-parity",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-576",
+      "target": "REQ-single-write-door",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-577",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-577",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-578",
       "target": "FUNC-audit-trail",
       "type": "relation"
@@ -15131,6 +15507,196 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-581",
+      "target": "FUNC-authoring-guide",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-581",
+      "target": "FUNC-deduce-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-581",
+      "target": "FUNC-graph-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-581",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-581",
+      "target": "FUNC-rules-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-581",
+      "target": "REQ-formatE-diff-dialect",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-582",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-582",
+      "target": "FUNC-se-generate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-582",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-582",
+      "target": "REQ-readiness-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-583",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-583",
+      "target": "FUNC-se-generate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-583",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-583",
+      "target": "REQ-readiness-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-587",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-587",
+      "target": "FUNC-se-generate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-587",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-587",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-588",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-588",
+      "target": "FUNC-graph-merge-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-588",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-588",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-588",
+      "target": "FUNC-vorschlag",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-589",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-589",
+      "target": "FUNC-se-generate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-589",
+      "target": "FUNC-vorschlag",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-589",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-590",
+      "target": "FUNC-graph-merge-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-590",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-590",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-590",
+      "target": "REQ-formatE-parity",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-590",
+      "target": "REQ-single-write-door",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-591",
+      "target": "FUNC-block-gate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-591",
+      "target": "FUNC-fit-advisory",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-591",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-591",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-591",
+      "target": "SCHEMA-steering-channel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-592",
+      "target": "FUNC-se-generate",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-605",
       "target": "FUNC-generation-step",
       "type": "relation"
@@ -15138,6 +15704,16 @@
     {
       "source": "CR-GC-605",
       "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-606",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-606",
+      "target": "FUNC-se-generate",
       "type": "relation"
     },
     {
@@ -15166,6 +15742,66 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-610",
+      "target": "FUNC-graph-merge-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-610",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-610",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-610",
+      "target": "REQ-frame-binding",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-610",
+      "target": "REQ-gate-only-writes",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-610",
+      "target": "REQ-test-runnable-binding",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-611",
+      "target": "FUNC-graph-merge-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-611",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-611",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-611",
+      "target": "REQ-frame-binding",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-611",
+      "target": "REQ-gate-only-writes",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-611",
+      "target": "REQ-test-runnable-binding",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-612",
       "target": "FUNC-se-help",
       "type": "relation"
@@ -15188,6 +15824,246 @@
     {
       "source": "CR-GC-616",
       "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-617",
+      "target": "REQ-buildable-standalone",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-617",
+      "target": "REQ-npx-distribution",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-617",
+      "target": "REQ-repo-install",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-617",
+      "target": "REQ-self-contained-dist",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-617",
+      "target": "REQ-single-kuzu-owner",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-620",
+      "target": "FUNC-claim-store-lock",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-620",
+      "target": "FUNC-collect-status",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-620",
+      "target": "REQ-first-session-claims-store-lock",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-620",
+      "target": "REQ-harness-factory-returns-one-owner",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-620",
+      "target": "REQ-one-gate-per-repo",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-620",
+      "target": "REQ-single-kuzu-owner",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-620",
+      "target": "SCHEMA-lock-owner",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-621",
+      "target": "FUNC-read-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-621",
+      "target": "REQ-graph-context-replaces-reading",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "FUNC-authoring-guide",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "FUNC-deduce-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "FUNC-graph-generate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "FUNC-graph-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "FUNC-graph-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "FUNC-rules-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "REQ-audit-trail",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "REQ-import-se-ontology",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "REQ-mcp-gate-symmetry",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "REQ-mcp-tool-registry",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "REQ-single-transport",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-622",
+      "target": "REQ-structural-rule-shared",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "FUNC-authoring-guide",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "FUNC-deduce-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "FUNC-graph-generate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "FUNC-graph-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "FUNC-graph-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "FUNC-rules-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "REQ-audit-trail",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "REQ-import-se-ontology",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "REQ-mcp-gate-symmetry",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "REQ-mcp-tool-registry",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "REQ-single-transport",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-623",
+      "target": "REQ-structural-rule-shared",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-624",
+      "target": "FUNC-auto-export",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-624",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-624",
+      "target": "FUNC-read-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-624",
+      "target": "REQ-graph-context-replaces-reading",
       "type": "relation"
     },
     {
@@ -15241,6 +16117,191 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-630",
+      "target": "FUNC-bootstrap",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-630",
+      "target": "FUNC-graph-merge-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-630",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-630",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-630",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "FUNC-read-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "FUNC-tool-context",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "MOD-projections",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "MOD-surface",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-codec-validation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-deterministic-serialization",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-formatE-diff-dialect",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-formatE-parity",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-graph-integrity",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-graph-tests-operational",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-impact-based-testing",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-mcp-tool-registry",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-query-precision",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-roundtrip-conformance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-631",
+      "target": "REQ-selective-code-lane",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "FUNC-bootstrap",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "FUNC-graph-merge-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "FUNC-graph-reseed-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "REQ-codec-validation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "REQ-deterministic-serialization",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "REQ-formatE-diff-dialect",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "REQ-formatE-parity",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-632",
+      "target": "REQ-roundtrip-conformance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-634",
+      "target": "FUNC-broadcast-diff",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-634",
+      "target": "FUNC-health-endpoint",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-634",
+      "target": "FUNC-serve-sse",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-635",
+      "target": "FUNC-se-umbau",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-637",
+      "target": "FUNC-bootstrap",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-637",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-638",
       "target": "FUNC-bind-tools",
       "type": "relation"
@@ -15248,6 +16309,16 @@
     {
       "source": "CR-GC-638",
       "target": "REQ-published-counts-match-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-639",
+      "target": "FUNC-se-umbau",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-639",
+      "target": "REQ-quality-metric",
       "type": "relation"
     },
     {
@@ -15376,6 +16447,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-653",
+      "target": "FUNC-author-uc",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-655",
       "target": "FUNC-generation-step",
       "type": "relation"
@@ -15388,6 +16464,11 @@
     {
       "source": "CR-GC-658",
       "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-660",
+      "target": "REQ-small-model-viable",
       "type": "relation"
     },
     {
@@ -15426,6 +16507,151 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-669",
+      "target": "MOD-agent-surface",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-669",
+      "target": "MOD-kernel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-669",
+      "target": "MOD-kernel-measure",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-669",
+      "target": "MOD-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-669",
+      "target": "MOD-projections",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-669",
+      "target": "MOD-surface",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "FUNC-decode",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "FUNC-deduce-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "FUNC-export-marker",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "FUNC-import-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "FUNC-rewind",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "FUNC-test",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-code-governed-quality",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-conflict-free-merge",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-doc-export",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-graph-snapshot-per-commit",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-graph-state-recall",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-impact-based-testing",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-interactive-capture-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-interface-change-escalation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-model-exchange-post",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-model-exchange-pre",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-no-extraction",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-session-leaves-nothing-behind",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-skill-reads-only",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-steering-from-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-670",
+      "target": "REQ-steering-pre",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-671",
       "target": "FUNC-evaluate-rules",
       "type": "relation"
@@ -15438,6 +16664,21 @@
     {
       "source": "CR-GC-672",
       "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-672B",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-672B",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-672B",
+      "target": "REQ-published-counts-match-code",
       "type": "relation"
     },
     {
@@ -15478,6 +16719,16 @@
     {
       "source": "CR-GC-681",
       "target": "REQ-published-counts-match-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-682",
+      "target": "MOD-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-682",
+      "target": "UC-reduced-llm",
       "type": "relation"
     },
     {
@@ -15576,8 +16827,128 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-695",
+      "target": "FUNC-author-actor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "FUNC-authoring-guide",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "FUNC-compute-steering-delta",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "FUNC-deduce-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "FUNC-graph-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "FUNC-rules-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "REQ-monotone-convergence",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "REQ-readiness-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "REQ-single-measurement-path",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-695",
+      "target": "REQ-steering-from-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-696",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-696",
+      "target": "REQ-done-iff-no-focus",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-696",
+      "target": "REQ-published-counts-match-code",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-697",
       "target": "REQ-test-skill-red-first",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-702",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-702",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-703",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-703",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-704",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-704",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-705",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-705",
+      "target": "REQ-phase-gate-not-skippable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-707",
+      "target": "FUNC-generation-step",
       "type": "relation"
     },
     {
@@ -15741,8 +17112,88 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-735",
+      "target": "FUNC-se-conops",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-735",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-735",
+      "target": "FUNC-se-irr",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-735",
+      "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-735",
+      "target": "FUNC-se-trade",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-735",
+      "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-736",
       "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-737",
+      "target": "REQ-done-iff-no-focus",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-737",
+      "target": "REQ-near-duplicate-detection",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-737",
+      "target": "REQ-rule-enforcement",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-737",
+      "target": "REQ-token-efficiency",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-740",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-740",
+      "target": "REQ-done-iff-no-focus",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-740",
+      "target": "UC-loop-closure",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-741",
+      "target": "FUNC-block-ruestzeug",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-741",
+      "target": "REQ-repo-uninstall",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-741",
+      "target": "UC-reduced-llm",
       "type": "relation"
     },
     {
@@ -15811,6 +17262,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-754",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-754",
+      "target": "FUNC-se-irr",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-754",
+      "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-755",
       "target": "FUNC-se-conops",
       "type": "relation"
@@ -15871,6 +17337,96 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-758",
+      "target": "MOD-agent-surface",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-758",
+      "target": "MOD-kernel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-758",
+      "target": "MOD-kernel-measure",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-758",
+      "target": "MOD-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-758",
+      "target": "MOD-projections",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-759",
+      "target": "FUNC-author-req",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-759",
+      "target": "FUNC-se-conops",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-759",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-759",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-759",
+      "target": "FUNC-test",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-759",
+      "target": "FUNC-test-ui",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-760",
+      "target": "FUNC-author-req",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-760",
+      "target": "FUNC-se-conops",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-760",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-760",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-760",
+      "target": "FUNC-test",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-760",
+      "target": "FUNC-test-ui",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-761",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-762",
       "target": "FUNC-export-markdown",
       "type": "relation"
@@ -15908,6 +17464,26 @@
     {
       "source": "CR-GC-767",
       "target": "REQ-chain-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-768",
+      "target": "REQ-graph-tests-operational",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-768",
+      "target": "REQ-impact-based-testing",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-768",
+      "target": "REQ-selective-code-lane",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-768",
+      "target": "SCHEMA-mutate-command",
       "type": "relation"
     },
     {
@@ -16288,6 +17864,16 @@
     {
       "source": "CR-GC-795",
       "target": "REQ-steering-promise-one-owner",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-796",
+      "target": "REQ-risk-store-unreadable",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-796",
+      "target": "REQ-store-recovery",
       "type": "relation"
     },
     {
@@ -17241,6 +18827,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-839",
+      "target": "FUNC-verify-lane-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-839",
+      "target": "FUNC-verify-lane-full",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-839",
+      "target": "FUNC-verify-lane-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-839",
+      "target": "MOD-dev-scripts",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-839",
+      "target": "REQ-model-lane-fixed-set",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -18030,6 +19641,11 @@
       "source": "FCHAIN-model-import",
       "target": "REQ-no-extraction",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-model-lane",
+      "target": "FUNC-verify-lane-model",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-recall",
@@ -19462,6 +21078,11 @@
     },
     {
       "source": "FLOW-cli-invocation",
+      "target": "FUNC-verify-lane-model",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-invocation",
       "target": "SCHEMA-cli-command",
       "type": "relation"
     },
@@ -20251,6 +21872,16 @@
     },
     {
       "source": "FLOW-lane-output-full",
+      "target": "SCHEMA-code-lane-plan",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-lane-output-model",
+      "target": "ACTOR-auftraggeber",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lane-output-model",
       "target": "SCHEMA-code-lane-plan",
       "type": "relation"
     },
@@ -21987,6 +23618,11 @@
     {
       "source": "FUNC-block-bedienung",
       "target": "FUNC-verify-lane-full",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-bedienung",
+      "target": "FUNC-verify-lane-model",
       "type": "compose"
     },
     {
@@ -24481,6 +26117,11 @@
     },
     {
       "source": "FUNC-verify-lane-code",
+      "target": "MOD-dev-scripts",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-verify-lane-code",
       "target": "FLOW-lane-output",
       "type": "io"
     },
@@ -24498,6 +26139,11 @@
       "source": "FUNC-verify-lane-code",
       "target": "REQ-lane-reports-change",
       "type": "satisfy"
+    },
+    {
+      "source": "FUNC-verify-lane-full",
+      "target": "MOD-dev-scripts",
+      "type": "allocate"
     },
     {
       "source": "FUNC-verify-lane-full",
@@ -24527,6 +26173,21 @@
     {
       "source": "FUNC-verify-lane-full",
       "target": "REQ-full-run-on-probation",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-verify-lane-model",
+      "target": "MOD-dev-scripts",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-verify-lane-model",
+      "target": "FLOW-lane-output-model",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-verify-lane-model",
+      "target": "REQ-model-lane-fixed-set",
       "type": "satisfy"
     },
     {
@@ -25171,6 +26832,11 @@
     {
       "source": "SYS-graphcode",
       "target": "MOD-dashboard",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "MOD-dev-scripts",
       "type": "compose"
     },
     {
@@ -27165,6 +28831,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-verify-model-set",
+      "target": "REQ-model-lane-fixed-set",
+      "type": "verify"
+    },
+    {
       "source": "TEST-view-fmea",
       "target": "REQ-doc-export",
       "type": "verify"
@@ -27562,6 +29233,11 @@
     },
     {
       "source": "UC-efficient-testing",
+      "target": "FCHAIN-model-lane",
+      "type": "compose"
+    },
+    {
+      "source": "UC-efficient-testing",
       "target": "FCHAIN-test-ingest",
       "type": "compose"
     },
@@ -27586,6 +29262,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-efficient-testing",
+      "target": "REQ-model-lane-fixed-set",
+      "type": "compose"
     },
     {
       "source": "UC-efficient-testing",
@@ -27972,5 +29653,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 834
+  "graphVersion": 836
 }
