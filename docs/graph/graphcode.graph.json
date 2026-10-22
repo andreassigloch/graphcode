@@ -3526,6 +3526,12 @@
       "description": "docs/cr/open/CR-GC-827-regelpruefung-liest-den-kandidaten-von-m.md"
     },
     {
+      "id": "CR-GC-828",
+      "type": "CR",
+      "name": "graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht",
+      "description": "docs/cr/open/CR-GC-828-graph-mutate-liest-regelbefunde-vor-und-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -16339,6 +16345,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-828",
+      "target": "FUNC-evaluate-rules",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-828",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -19220,6 +19236,11 @@
       "source": "FLOW-rewind-summary",
       "target": "SCHEMA-rewind-summary",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-rule-findings",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "io"
     },
     {
       "source": "FLOW-rule-findings",
@@ -25780,5 +25801,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 808
+  "graphVersion": 810
 }

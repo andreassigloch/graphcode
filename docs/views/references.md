@@ -906,6 +906,8 @@
 | `CR-GC-827` | relation | `FUNC-evaluate-rules` |
 | `CR-GC-827` | relation | `FUNC-mutate` |
 | `CR-GC-827` | relation | `SCHEMA-ontology-graph` |
+| `CR-GC-828` | relation | `FUNC-evaluate-rules` |
+| `CR-GC-828` | relation | `FUNC-graph-mutate-tool` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1462,6 +1464,7 @@
 | `FLOW-reseeded-graph` | relation | `SCHEMA-ontology-json` |
 | `FLOW-rewind-summary` | io | `ACTOR-auftraggeber` |
 | `FLOW-rewind-summary` | relation | `SCHEMA-rewind-summary` |
+| `FLOW-rule-findings` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-rule-findings` | io | `FUNC-health-endpoint` |
 | `FLOW-rule-findings` | io | `FUNC-mutate` |
 | `FLOW-rule-findings` | io | `FUNC-rules-tool` |

@@ -187,7 +187,7 @@
 | `FLOW-reseed-snapshot` | `FUNC-rewind` | `FUNC-reseed` |
 | `FLOW-reseeded-graph` | `FUNC-apply-reseed` | `FUNC-seed-from-json` |
 | `FLOW-rewind-summary` | `FUNC-rewind` | `ACTOR-auftraggeber` |
-| `FLOW-rule-findings` | `FUNC-evaluate-rules` | `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` · `FUNC-score-completeness` |
+| `FLOW-rule-findings` | `FUNC-evaluate-rules` | `FUNC-graph-mutate-tool` · `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` · `FUNC-score-completeness` |
 | `FLOW-rules-answer` | `FUNC-rules-tool` | `FUNC-agent-loop` |
 | `FLOW-schema-fingerprint` | `FUNC-schema-guard` | `FUNC-graph-store` |
 | `FLOW-schlupf-zeile` | `FUNC-measure-test-schlupf` | `ACTOR-auftraggeber` |

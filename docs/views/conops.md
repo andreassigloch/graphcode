@@ -454,6 +454,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-825` | n/a | FUNC-decode von loop nach kernel: einzige Grounding-FUNC in loop, Geschwister import/reseed/merge liegen in kernel; Linie loop-surface 2 -> 1 Flow | `FUNC-decode` · `MOD-kernel` · `MOD-loop` |
 | `CR-GC-826` | n/a | FCHAIN-apply-gate: Host-Socket, StoreLock, SessionLifecycle gehoeren nicht in den Ablauf einer Aenderung | `FUNC-claim-store-lock` · `FUNC-host-socket` · `FUNC-session-shutdown` |
 | `CR-GC-827` | n/a | Regelpruefung liest den Kandidaten von mutate, nicht den Store | `FUNC-evaluate-rules` · `FUNC-mutate` |
+| `CR-GC-828` | n/a | graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht | `FUNC-evaluate-rules` · `FUNC-graph-mutate-tool` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
