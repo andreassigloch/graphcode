@@ -614,8 +614,6 @@
 | `CR-GC-668` | relation | `FUNC-se-fmea` |
 | `CR-GC-668` | relation | `FUNC-view-fmea` |
 | `CR-GC-668` | relation | `REQ-published-counts-match-code` |
-| `CR-GC-669` | relation | `FUNC-migrate-schema` |
-| `CR-GC-670` | relation | `FUNC-migrate-schema` |
 | `CR-GC-671` | relation | `FUNC-evaluate-rules` |
 | `CR-GC-671` | relation | `FUNC-mutate` |
 | `CR-GC-672` | relation | `FUNC-generation-step` |
@@ -913,6 +911,10 @@
 | `CR-GC-830` | relation | `FUNC-agent-loop` |
 | `CR-GC-830` | relation | `FUNC-generation-step` |
 | `CR-GC-830` | relation | `FUNC-graph-suggest` |
+| `CR-GC-831` | relation | `FUNC-graph-store` |
+| `CR-GC-831` | relation | `FUNC-schema-guard` |
+| `CR-GC-831` | relation | `REQ-schema-version-migration` |
+| `CR-GC-831` | relation | `SCHEMA-store-rebuild-notice` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1073,7 +1075,7 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
 | `FCHAIN-repo-lifecycle` | satisfy | `REQ-risk-client-holds-stale-tool-list` |
 | `FCHAIN-repo-lifecycle` | satisfy | `REQ-risk-owner-ends-with-docked-sessions` |
-| `FCHAIN-schema-migration` | compose | `FUNC-migrate-schema` |
+| `FCHAIN-schema-migration` | compose | `FUNC-graph-store` |
 | `FCHAIN-schema-migration` | compose | `FUNC-schema-guard` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-agent-loop` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-author-req` |
@@ -1523,6 +1525,8 @@
 | `FLOW-store-ownership` | io | `FUNC-graph-store` |
 | `FLOW-store-ownership` | io | `FUNC-session-shutdown` |
 | `FLOW-store-ownership` | relation | `SCHEMA-lock-owner` |
+| `FLOW-store-rebuild-notice` | io | `ACTOR-auftraggeber` |
+| `FLOW-store-rebuild-notice` | relation | `SCHEMA-store-rebuild-notice` |
 | `FLOW-target-profile` | io | `FUNC-generation-step` |
 | `FLOW-target-profile` | io | `FUNC-graph-suggest` |
 | `FLOW-target-profile` | relation | `SCHEMA-target-profile` |
@@ -1545,7 +1549,6 @@
 | `FLOW-tool-surface` | relation | `SCHEMA-tool-registry` |
 | `FLOW-trajectory` | io | `ACTOR-learning-engine` |
 | `FLOW-trajectory` | relation | `SCHEMA-trajectory` |
-| `FLOW-version-bump` | io | `FUNC-migrate-schema` |
 | `FLOW-version-bump` | io | `FUNC-schema-guard` |
 | `FLOW-version-bump` | relation | `SCHEMA-query-params` |
 | `FLOW-viewer-start` | io | `ACTOR-dashboard` |
@@ -1688,7 +1691,6 @@
 | `FUNC-block-q-improvement` | compose | `FUNC-vorschlag` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-bind-tools` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-load-config` |
-| `FUNC-block-ruestzeug` | compose | `FUNC-migrate-schema` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-schema-guard` |
 | `FUNC-block-ruestzeug` | compose | `FUNC-tool-context` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-apply-reseed` |
@@ -1821,7 +1823,9 @@
 | `FUNC-graph-readiness` | satisfy | `REQ-held-back-edges-in-readiness` |
 | `FUNC-graph-store` | allocate | `MOD-kernel` |
 | `FUNC-graph-store` | io | `FLOW-graph-state` |
+| `FUNC-graph-store` | io | `FLOW-store-rebuild-notice` |
 | `FUNC-graph-store` | satisfy | `REQ-auto-persist-merge` |
+| `FUNC-graph-store` | satisfy | `REQ-schema-version-migration` |
 | `FUNC-graph-store` | satisfy | `REQ-steering-pre` |
 | `FUNC-graph-store` | satisfy | `REQ-store-recovery` |
 | `FUNC-graph-suggest` | allocate | `MOD-loop` |
@@ -1886,10 +1890,6 @@
 | `FUNC-merge-nodes` | satisfy | `REQ-conflict-free-merge` |
 | `FUNC-merge-nodes` | satisfy | `REQ-post-merge-nodes` |
 | `FUNC-merge-nodes` | satisfy | `REQ-pre-merge-nodes` |
-| `FUNC-migrate-schema` | allocate | `MOD-kernel` |
-| `FUNC-migrate-schema` | satisfy | `REQ-post-migrate-schema` |
-| `FUNC-migrate-schema` | satisfy | `REQ-pre-migrate-schema` |
-| `FUNC-migrate-schema` | satisfy | `REQ-schema-version-migration` |
 | `FUNC-module-metrics` | allocate | `MOD-projections` |
 | `FUNC-module-metrics` | io | `FLOW-module-metrics` |
 | `FUNC-module-metrics` | satisfy | `REQ-steering-from-metrics` |
@@ -2179,10 +2179,8 @@
 | `SYS-graphcode` | compose | `REQ-npx-distribution` |
 | `SYS-graphcode` | compose | `REQ-post-export-markdown` |
 | `SYS-graphcode` | compose | `REQ-post-harness-cli` |
-| `SYS-graphcode` | compose | `REQ-post-migrate-schema` |
 | `SYS-graphcode` | compose | `REQ-pre-export-markdown` |
 | `SYS-graphcode` | compose | `REQ-pre-harness-cli` |
-| `SYS-graphcode` | compose | `REQ-pre-migrate-schema` |
 | `SYS-graphcode` | compose | `REQ-precommit-timeout` |
 | `SYS-graphcode` | compose | `REQ-readiness-model` |
 | `SYS-graphcode` | compose | `REQ-readonly-bridge` |
@@ -2471,11 +2469,10 @@
 | `TEST-roundtrip` | verify | `REQ-formatE-parity` |
 | `TEST-roundtrip` | verify | `REQ-roundtrip-conformance` |
 | `TEST-rule-calibration` | verify | `REQ-rule-calibration` |
-| `TEST-schema-migration` | verify | `REQ-post-migrate-schema` |
-| `TEST-schema-migration` | verify | `REQ-pre-migrate-schema` |
 | `TEST-schema-migration` | verify | `REQ-schema-version-migration` |
 | `TEST-schema-migration` | verify | `REQ-store-recovery` |
 | `TEST-schema-migration` | verify | `SCHEMA-schema-fingerprint` |
+| `TEST-schema-migration` | verify | `SCHEMA-store-rebuild-notice` |
 | `TEST-schema-parse-at-interface` | verify | `SCHEMA-fit-advisory` |
 | `TEST-schema-parse-at-interface` | verify | `SCHEMA-generation-step` |
 | `TEST-schema-parse-at-interface` | verify | `SCHEMA-steering-delta` |

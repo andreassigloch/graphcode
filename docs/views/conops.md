@@ -142,7 +142,7 @@ Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-regelhalter`
 
 - `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-host-socket` → `FUNC-import` → `FUNC-mutate` → `FUNC-seed-from-json` → `FUNC-serve-stdio` → `FUNC-session-shutdown` → `FUNC-tool-context` → `FUNC-upgrade`
-- `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-migrate-schema` → `FUNC-schema-guard`
+- `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-graph-store` → `FUNC-schema-guard`
 
 ## 5  Modes of operation
 
@@ -346,8 +346,6 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich | `FUNC-take-steering-snapshot` |
 | `CR-GC-667` | open | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen | `REQ-open-point-asked` |
 | `CR-GC-668` | done | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche | `FUNC-se-fmea` · `FUNC-view-fmea` · `REQ-published-counts-match-code` |
-| `CR-GC-669` | done | Migrationswerkzeug REQ-kinds auf zwei Werte | `FUNC-migrate-schema` |
-| `CR-GC-670` | done | graphcode-Eigenmodell auf zwei REQ-kinds migrieren | `FUNC-migrate-schema` |
 | `CR-GC-671` | done | graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor | `FUNC-evaluate-rules` · `FUNC-mutate` |
 | `CR-GC-672` | done | Executor und Preflight auf zwei REQ-kinds | `FUNC-generation-step` |
 | `CR-GC-673` | done | Projektionen auf zwei REQ-kinds und Rollen-Attribut | `FUNC-authoring-guide` · `FUNC-export-markdown` · `FUNC-render-views` |
@@ -456,6 +454,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-828` | n/a | graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht | `FUNC-evaluate-rules` · `FUNC-graph-mutate-tool` |
 | `CR-GC-829` | n/a | FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec | `FUNC-decode` · `REQ-roundtrip-conformance` |
 | `CR-GC-830` | n/a | FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht | `FUNC-agent-loop` · `FUNC-generation-step` · `FUNC-graph-suggest` |
+| `CR-GC-831` | n/a | Schema-Migration: Store-Neuaufbau ist still, migrateSchema gibt es nicht | `FUNC-graph-store` · `FUNC-schema-guard` · `REQ-schema-version-migration` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

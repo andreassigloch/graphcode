@@ -27,6 +27,7 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { StoreLock } from './store-lock.js';
 import { graphSnapshotRel, applyReseed, type ImportTarget } from './harness-import.js';
 import { schemaFingerprint, readStoredFingerprint, writeStoredFingerprint, resetKuzuStore } from './schema-guard.js';
+import { formatStoreRebuildNotice } from './store-rebuild-notice.js';
 
 /**
  * Was ein angenommener Batch im Store aendert — ein Zod-Schema, kein Typ (CR-GC-644). Knoten und
@@ -99,7 +100,11 @@ export class GraphStore {
       await storage.initialize();
       await this.load();
 
-      if (staleSchema) await applyReseed(this.importTarget(), snapshotRel);
+      if (staleSchema) {
+        await applyReseed(this.importTarget(), snapshotRel);
+        // CR-GC-831: der Neuaufbau ist für den Nutzer sichtbar — vorher geschah er still.
+        process.stderr.write(formatStoreRebuildNotice({ from: stored!, to: current, source: snapshotRel }));
+      }
       if (markerDir && stored !== current) writeStoredFingerprint(markerDir, current);
     } catch (err) {
       lock.release();

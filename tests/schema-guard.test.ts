@@ -23,6 +23,7 @@ import {
   SCHEMA_FINGERPRINT_BASENAME,
 } from '../src/kernel/schema-guard.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { formatStoreRebuildNotice, StoreRebuildNoticeSchema } from '../src/kernel/store-rebuild-notice.js';
 
 const SSOT = join(__dirname, '..', 'docs', 'graph', 'graphcode.graph.json');
 
@@ -96,6 +97,18 @@ describe('schemaFingerprint / marker (CR-GC-249 unit)', () => {
   });
 });
 
+describe('SCHEMA-store-rebuild-notice (CR-GC-831 Vertrag)', () => {
+  it('nennt alten und neuen Fingerabdruck und die Quelle', () => {
+    expect(formatStoreRebuildNotice({ from: '0123456789abcdef', to: 'fedcba9876543210', source: 'docs/graph/x.graph.json' }))
+      .toBe('[graphcode] store: schema changed (0123456789abcdef -> fedcba9876543210) — store rebuilt from docs/graph/x.graph.json; changes not exported before are gone\n');
+  });
+
+  it('lehnt einen formfremden Fingerabdruck und eine leere Quelle ab', () => {
+    expect(StoreRebuildNoticeSchema.safeParse({ from: 'kaputt', to: 'fedcba9876543210', source: 'a' }).success).toBe(false);
+    expect(StoreRebuildNoticeSchema.safeParse({ from: '0123456789abcdef', to: 'fedcba9876543210', source: '' }).success).toBe(false);
+  });
+});
+
 describe('harness schema-drift guard (CR-GC-249 integration)', () => {
   let tmp: string;
   let kuzuPath: string;
@@ -113,6 +126,22 @@ describe('harness schema-drift guard (CR-GC-249 integration)', () => {
   afterEach(() => {
     rmSync(tmp, { recursive: true, force: true });
   });
+
+  /** Was ein Start auf stderr schreibt — die Ausgabe geht weiter durch, sie wird nur mitgelesen. */
+  async function stderrOf(run: () => Promise<void>): Promise<string> {
+    const lines: string[] = [];
+    const write = process.stderr.write.bind(process.stderr);
+    process.stderr.write = ((chunk: string | Uint8Array, ...rest: unknown[]) => {
+      lines.push(String(chunk));
+      return (write as (...a: unknown[]) => boolean)(chunk, ...rest);
+    }) as typeof process.stderr.write;
+    try {
+      await run();
+    } finally {
+      process.stderr.write = write;
+    }
+    return lines.join('');
+  }
 
   function newHarness(systemId?: string): GraphCodeHarness {
     const storage = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: kuzuPath });
@@ -143,8 +172,11 @@ describe('harness schema-drift guard (CR-GC-249 integration)', () => {
     writeFileSync(join(markerDir, SCHEMA_FINGERPRINT_BASENAME), '0123456789abcdef\n');
 
     const h2 = newHarness();
-    await h2.initialize();
+    const err = await stderrOf(() => h2.initialize());
     try {
+      // CR-GC-831: der Neuaufbau meldet sich — alter und neuer Fingerabdruck, Quelle.
+      expect(err).toContain(`schema changed (0123456789abcdef -> ${schemaFingerprint(SE_DESCRIPTOR)})`);
+      expect(err).toContain('store rebuilt from docs/graph/graphcode.graph.json');
       // Reseeded from the committed SSOT → the store is now the full graph.
       expect(h2.getGraph().nodes.length).toBeGreaterThan(0);
       // Marker rewritten to the current schema fingerprint.
@@ -186,8 +218,9 @@ describe('harness schema-drift guard (CR-GC-249 integration)', () => {
     // marker already == current from h1's first run.
 
     const h2 = newHarness();
-    await h2.initialize();
+    const err = await stderrOf(() => h2.initialize());
     try {
+      expect(err).not.toContain('store rebuilt');
       // No drift → no reseed → the empty store from h1 stays empty.
       expect(h2.getGraph().nodes.length).toBe(0);
       expect(existsSync(join(markerDir, SCHEMA_FINGERPRINT_BASENAME))).toBe(true);

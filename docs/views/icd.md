@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 142 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 57 SCHEMA · 143 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -56,6 +56,7 @@
 | `SCHEMA-steering-channel` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
 | `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshotSchema | reviewed |
+| `SCHEMA-store-rebuild-notice` | src/kernel/store-rebuild-notice.ts#StoreRebuildNoticeSchema | n/a |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
 | `SCHEMA-test-ingest-answer` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-test-ingest-input` | src/projections/testreport.ts#GraphTestIngestInputSchema | n/a |
@@ -198,6 +199,7 @@
 | `FLOW-steering-snapshot` | `FUNC-take-steering-snapshot` | `FUNC-compute-steering-delta` · `FUNC-generation-step` |
 | `FLOW-steering-trigger-agent` | `FUNC-agent-loop` | `FUNC-take-steering-snapshot` |
 | `FLOW-store-ownership` | `FUNC-claim-store-lock` | `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-session-shutdown` |
+| `FLOW-store-rebuild-notice` | `FUNC-graph-store` | `ACTOR-auftraggeber` |
 | `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-generation-step` · `FUNC-graph-suggest` |
 | `FLOW-target-profile-file` | `FUNC-agent-loop` | `FUNC-target-profile-load` |
 | `FLOW-test-ingest-answer` | `FUNC-test-ingest` | `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` |
@@ -208,7 +210,7 @@
 | `FLOW-tool-registry` | `FUNC-bind-tools` | `FUNC-serve-stdio` |
 | `FLOW-tool-surface` | `FUNC-serve-stdio` | `FUNC-agent-loop` |
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
-| `FLOW-version-bump` | `ACTOR-regelhalter` | `FUNC-migrate-schema` · `FUNC-schema-guard` |
+| `FLOW-version-bump` | `ACTOR-regelhalter` | `FUNC-schema-guard` |
 | `FLOW-viewer-start` | `FUNC-gve-supervise` | `ACTOR-dashboard` |
 | `FLOW-vorschlag` | `FUNC-vorschlag` | `FUNC-graph-mutate-tool` |
 | `FLOW-zug-bericht` | `FUNC-zug-bericht` | `FUNC-agent-loop` · `FUNC-graph-suggest` |
