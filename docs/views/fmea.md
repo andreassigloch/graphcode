@@ -12,7 +12,7 @@
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | Risiko veraltetes Testergebnis | `FCHAIN-test-ingest` | 8 | 5 | 7 | 280 | High | `FUNC-plan-code-lane` · `FUNC-test-ingest` | ✓ |
 | 2 | Risiko falscher Befund laeuft um | `FCHAIN-steering-loop` | 8 | 3 | 7 | 168 | High | — | ✗ |
-| 3 | Risiko Schnittstellenaenderung ohne Eskalation | `FCHAIN-interface-escalation` | 7 | 4 | 5 | 140 | High | — | ✗ |
+| 3 | Risiko Schnittstellenaenderung ohne Eskalation | — | 7 | 4 | 5 | 140 | High | — | ✗ |
 | 4 | Risiko Vertrag des Messvektors ungebunden | `FCHAIN-steering-loop` | 6 | 3 | 7 | 126 | High | `FUNC-take-steering-snapshot` | ✗ |
 | 5 | Risiko Glied rechnet auf altem Stand | `FCHAIN-steering-loop` | 7 | 3 | 6 | 126 | High | `FUNC-take-steering-snapshot` | ✓ |
 | 6 | Risiko Schleife pendelt | `FCHAIN-steering-loop` | 6 | 4 | 5 | 120 | High | `FUNC-generation-step` | ✗ |
@@ -75,7 +75,7 @@ Ein falscher Regelbefund laeuft im Kreislauf um: falscher Fokus, falscher Vorsch
 Ein FLOW oder SCHEMA wird geaendert, ohne dass die abhaengigen Funktionen und Tests benannt und neu zugeschnitten werden; die zugesagte Eskalation laeuft nicht.
 
 - **Bewertung:** S 7 · O 4 · D 5 · RPN 140 · AP High
-- **Kette:** `FCHAIN-interface-escalation`
+- **Kette:** —
 - **Anwendungsfall:** `UC-code-quality`
 - **Träger:** —
 - **Befund:** FMEA CR-GC-798 FM-12. REQ-interface-change-escalation wird nur von der Kette erfuellt, keine Funktion fuehrt die Eskalation aus, TEST-interface-escalation ist ungebunden, im Quellcode gibt es keinen Eskalationsweg.

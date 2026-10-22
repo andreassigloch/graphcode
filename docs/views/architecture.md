@@ -62,6 +62,7 @@
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
+| `FUNC-graph-merge-tool` | FUNC | graph_merge (Werkzeug) |
 | `FUNC-graph-metrics` | FUNC | graph_metrics(scope?) |
 | `FUNC-graph-mutate-tool` | FUNC | graph_mutate (Werkzeug) |
 | `FUNC-graph-readiness` | FUNC | graph_readiness(detail?) |
@@ -193,6 +194,7 @@
 | `FUNC-graph-expand` | `MOD-kernel` |
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |
+| `FUNC-graph-merge-tool` | `MOD-surface` |
 | `FUNC-graph-metrics` | `MOD-projections` |
 | `FUNC-graph-mutate-tool` | `MOD-surface` |
 | `FUNC-graph-readiness` | `MOD-projections` |

@@ -62,9 +62,8 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine`
 
-- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-zug-bericht`
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-tool-context` → `FUNC-zug-bericht`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-agent-loop` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
-- `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-agent-loop` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-read-tools`
 - `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-agent-loop` → `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-decode` → `FUNC-graph-metrics` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-laufzeit` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-se-vorbereitung`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
@@ -93,7 +92,7 @@ Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstelle
 
 Ausgeloest von: `ACTOR-auftraggeber`
 
-- `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-merge-nodes` → `FUNC-mutate`
+- `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-agent-loop` → `FUNC-evaluate-rules` → `FUNC-graph-merge-tool` → `FUNC-graph-store` → `FUNC-merge-nodes` → `FUNC-mutate` → `FUNC-tool-context`
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-import` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
 - `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-agent-loop` → `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
 - `FCHAIN-snapshot-roundtrip` — Snapshot-Rundreise: `FUNC-agent-loop` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-import` → `FUNC-seed-from-json`
@@ -105,7 +104,7 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard`
 
 - `FCHAIN-dashboard-metrics` — Kennzahlen ans Dashboard: `FUNC-agent-loop` → `FUNC-chain-metrics` → `FUNC-function-criticality` → `FUNC-graph-metrics` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-mutate`
-- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-agent-loop` → `FUNC-broadcast-diff` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-health-endpoint` → `FUNC-mutate` → `FUNC-own-kuzu-host` → `FUNC-serve-sse` → `FUNC-serve-stdio`
+- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-agent-loop` → `FUNC-broadcast-diff` → `FUNC-decode` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
 
 ### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
 
@@ -113,7 +112,7 @@ Als Betreiber des Regelwerks will ich an den aufgezeichneten Gate-Entscheidungen
 
 Ausgeloest von: `ACTOR-auftraggeber`
 
-- `FCHAIN-loop-closure` — Schleifenschluss (aufzeichnen → auswerten → justieren): `FUNC-agent-loop` → `FUNC-audit-stats` → `FUNC-audit-trail` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-se-retro`
+- `FCHAIN-loop-closure` — Schleifenschluss (aufzeichnen → auswerten → justieren): `FUNC-agent-loop` → `FUNC-audit-stats` → `FUNC-audit-trail` → `FUNC-se-retro` → `FUNC-tool-context`
 
 ### `UC-model-exchange` — Modell ein- und ausgeben
 
@@ -132,8 +131,8 @@ Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-learning-engine`
 
 - `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-agent-loop` → `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-target-profile-load`
 - `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-agent-loop` → `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-list-elements` → `FUNC-read-tools` → `FUNC-view-fmea`
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-tool-context` → `FUNC-zug-bericht`
 - `FCHAIN-grammar-query` — Grammatik abfragen: `FUNC-agent-loop` → `FUNC-authoring-guide`
-- `FCHAIN-modelfree-gate` — Modellfreier Gate-Betrieb: `FUNC-agent-loop` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
 
 ### `UC-repo-lifecycle` — Repo einrichten und betreiben
 
@@ -455,6 +454,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-829` | n/a | FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec | `FUNC-decode` · `REQ-roundtrip-conformance` |
 | `CR-GC-830` | n/a | FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht | `FUNC-agent-loop` · `FUNC-generation-step` · `FUNC-graph-suggest` |
 | `CR-GC-831` | n/a | Schema-Migration: Store-Neuaufbau ist still, migrateSchema gibt es nicht | `FUNC-graph-store` · `FUNC-schema-guard` · `REQ-schema-version-migration` |
+| `CR-GC-832` | n/a | Schreibweg im Modell umgeht das graph_mutate-Werkzeug; Ketten modelfree-gate und interface-escalation sind Eigenschaften, kein Ablauf | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-decode` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-tool-context` · `FUNC-zug-bericht` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

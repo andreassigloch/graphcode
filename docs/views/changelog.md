@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 441 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 442 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 441 CR · 343 done · 4 open.
+Total: 442 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -503,3 +503,4 @@ Total: 441 CR · 343 done · 4 open.
 | `CR-GC-829` | n/a | FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec |
 | `CR-GC-830` | n/a | FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht |
 | `CR-GC-831` | n/a | Schema-Migration: Store-Neuaufbau ist still, migrateSchema gibt es nicht |
+| `CR-GC-832` | n/a | Schreibweg im Modell umgeht das graph_mutate-Werkzeug; Ketten modelfree-gate und interface-escalation sind Eigenschaften, kein Ablauf |
