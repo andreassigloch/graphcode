@@ -99,13 +99,11 @@
 | `CR-GC-112` | relation | `MOD-surface` |
 | `CR-GC-112` | relation | `MS-3-mvp-readiness` |
 | `CR-GC-112` | relation | `REQ-post-harness-cli` |
-| `CR-GC-112` | relation | `REQ-pre-harness-cli` |
 | `CR-GC-113` | relation | `FUNC-export-markdown` |
 | `CR-GC-113` | relation | `MOD-projections` |
 | `CR-GC-113` | relation | `MS-3-mvp-readiness` |
 | `CR-GC-113` | relation | `REQ-doc-export` |
 | `CR-GC-113` | relation | `REQ-post-export-markdown` |
-| `CR-GC-113` | relation | `REQ-pre-export-markdown` |
 | `CR-GC-114` | relation | `FUNC-broadcast-diff` |
 | `CR-GC-114` | relation | `FUNC-health-endpoint` |
 | `CR-GC-114` | relation | `FUNC-own-kuzu-host` |
@@ -968,6 +966,16 @@
 | `CR-GC-837` | relation | `FUNC-own-kuzu-host` |
 | `CR-GC-837` | relation | `FUNC-se-umbau` |
 | `CR-GC-837` | relation | `FUNC-serve-sse` |
+| `CR-GC-838` | relation | `REQ-post-agent-query` |
+| `CR-GC-838` | relation | `REQ-post-apply-gate` |
+| `CR-GC-838` | relation | `REQ-post-capture` |
+| `CR-GC-838` | relation | `REQ-post-emit-trajectory` |
+| `CR-GC-838` | relation | `REQ-post-emit-update-event` |
+| `CR-GC-838` | relation | `REQ-post-export-markdown` |
+| `CR-GC-838` | relation | `REQ-post-harness-cli` |
+| `CR-GC-838` | relation | `REQ-post-impact-testing` |
+| `CR-GC-838` | relation | `REQ-post-import` |
+| `CR-GC-838` | relation | `REQ-post-merge-nodes` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -984,8 +992,6 @@
 | `FCHAIN-agent-query` | compose | `FUNC-graph-store` |
 | `FCHAIN-agent-query` | compose | `FUNC-list-elements` |
 | `FCHAIN-agent-query` | compose | `FUNC-read-tools` |
-| `FCHAIN-agent-query` | satisfy | `REQ-post-agent-query` |
-| `FCHAIN-agent-query` | satisfy | `REQ-pre-agent-query` |
 | `FCHAIN-agent-query` | satisfy | `REQ-precise-context` |
 | `FCHAIN-apply-gate` | compose | `FUNC-agent-loop` |
 | `FCHAIN-apply-gate` | compose | `FUNC-arch-fitness` |
@@ -1001,9 +1007,7 @@
 | `FCHAIN-apply-gate` | satisfy | `REQ-code-governed-quality` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-graceful-degradation` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-mcp-gate-symmetry` |
-| `FCHAIN-apply-gate` | satisfy | `REQ-post-apply-gate` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-post-modelfree-gate` |
-| `FCHAIN-apply-gate` | satisfy | `REQ-pre-apply-gate` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-responsiveness` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-small-model-viable` |
 | `FCHAIN-capture` | compose | `FUNC-agent-loop` |
@@ -1012,8 +1016,6 @@
 | `FCHAIN-capture` | compose | `FUNC-graph-store` |
 | `FCHAIN-capture` | compose | `FUNC-mutate` |
 | `FCHAIN-capture` | satisfy | `REQ-interactive-capture-suggest` |
-| `FCHAIN-capture` | satisfy | `REQ-post-capture` |
-| `FCHAIN-capture` | satisfy | `REQ-pre-capture` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-chain-metrics` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-function-criticality` |
@@ -1087,8 +1089,6 @@
 | `FCHAIN-impact-testing` | compose | `FUNC-graph-store` |
 | `FCHAIN-impact-testing` | compose | `FUNC-resolve-tests-from-code` |
 | `FCHAIN-impact-testing` | compose | `FUNC-select-tests` |
-| `FCHAIN-impact-testing` | satisfy | `REQ-post-impact-testing` |
-| `FCHAIN-impact-testing` | satisfy | `REQ-pre-impact-testing` |
 | `FCHAIN-live-update` | compose | `FUNC-agent-loop` |
 | `FCHAIN-live-update` | compose | `FUNC-broadcast-diff` |
 | `FCHAIN-live-update` | compose | `FUNC-decode` |
@@ -2048,12 +2048,10 @@
 | `FUNC-emit-trajectory` | allocate | `MOD-projections` |
 | `FUNC-emit-trajectory` | io | `FLOW-trajectory` |
 | `FUNC-emit-trajectory` | satisfy | `REQ-post-emit-trajectory` |
-| `FUNC-emit-trajectory` | satisfy | `REQ-pre-emit-trajectory` |
 | `FUNC-emit-trajectory` | satisfy | `REQ-trajectory-emit` |
 | `FUNC-emit-update-event` | allocate | `MOD-surface` |
 | `FUNC-emit-update-event` | io | `FLOW-live-event` |
 | `FUNC-emit-update-event` | satisfy | `REQ-post-emit-update-event` |
-| `FUNC-emit-update-event` | satisfy | `REQ-pre-emit-update-event` |
 | `FUNC-emit-update-event` | satisfy | `REQ-versioned-broadcast` |
 | `FUNC-evaluate-rules` | allocate | `MOD-kernel` |
 | `FUNC-evaluate-rules` | io | `FLOW-rule-findings` |
@@ -2063,7 +2061,6 @@
 | `FUNC-export-markdown` | io | `FLOW-markdown-text` |
 | `FUNC-export-markdown` | satisfy | `REQ-doc-export` |
 | `FUNC-export-markdown` | satisfy | `REQ-post-export-markdown` |
-| `FUNC-export-markdown` | satisfy | `REQ-pre-export-markdown` |
 | `FUNC-export-marker` | allocate | `MOD-kernel` |
 | `FUNC-export-marker` | io | `FLOW-export-pending` |
 | `FUNC-export-marker` | satisfy | `REQ-export-marker-tracks-drift` |
@@ -2134,6 +2131,7 @@
 | `FUNC-graph-mutate-tool` | io | `FLOW-steering-pair` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-zug-anfrage` |
 | `FUNC-graph-mutate-tool` | satisfy | `REQ-mcp-tool-registry` |
+| `FUNC-graph-mutate-tool` | satisfy | `REQ-post-capture` |
 | `FUNC-graph-readiness` | allocate | `MOD-projections` |
 | `FUNC-graph-readiness` | io | `FLOW-held-back-request-readiness` |
 | `FUNC-graph-readiness` | io | `FLOW-readiness-report` |
@@ -2169,7 +2167,6 @@
 | `FUNC-harness-cli` | io | `FLOW-install-result-harness-cli` |
 | `FUNC-harness-cli` | satisfy | `REQ-npx-distribution` |
 | `FUNC-harness-cli` | satisfy | `REQ-post-harness-cli` |
-| `FUNC-harness-cli` | satisfy | `REQ-pre-harness-cli` |
 | `FUNC-harness-cli` | satisfy | `REQ-repo-install` |
 | `FUNC-harness-cli` | satisfy | `REQ-repo-uninstall` |
 | `FUNC-harness-cli` | satisfy | `REQ-repo-update` |
@@ -2195,7 +2192,6 @@
 | `FUNC-import` | io | `FLOW-imported-graph` |
 | `FUNC-import` | satisfy | `REQ-bootstrap-through-gate` |
 | `FUNC-import` | satisfy | `REQ-post-import` |
-| `FUNC-import` | satisfy | `REQ-pre-import` |
 | `FUNC-import-code` | allocate | `MOD-agent-surface` |
 | `FUNC-import-code` | io | `FLOW-anleitung-import-code` |
 | `FUNC-import-code-verb` | allocate | `MOD-surface` |
@@ -2223,7 +2219,6 @@
 | `FUNC-merge-nodes` | satisfy | `REQ-auto-persist-merge` |
 | `FUNC-merge-nodes` | satisfy | `REQ-conflict-free-merge` |
 | `FUNC-merge-nodes` | satisfy | `REQ-post-merge-nodes` |
-| `FUNC-merge-nodes` | satisfy | `REQ-pre-merge-nodes` |
 | `FUNC-module-metrics` | allocate | `MOD-projections` |
 | `FUNC-module-metrics` | io | `FLOW-module-metrics` |
 | `FUNC-module-metrics` | satisfy | `REQ-steering-from-metrics` |
@@ -2237,6 +2232,7 @@
 | `FUNC-mutate` | satisfy | `REQ-element-contract-finding` |
 | `FUNC-mutate` | satisfy | `REQ-gate-judges-and-stores` |
 | `FUNC-mutate` | satisfy | `REQ-gate-survives-rule-failure` |
+| `FUNC-mutate` | satisfy | `REQ-post-apply-gate` |
 | `FUNC-mutate` | satisfy | `REQ-single-write-door` |
 | `FUNC-open-store` | allocate | `MOD-kernel` |
 | `FUNC-open-store` | io | `FLOW-fingerprint-request` |
@@ -2257,6 +2253,7 @@
 | `FUNC-read-tools` | allocate | `MOD-surface` |
 | `FUNC-read-tools` | io | `FLOW-formatE-artifact-read-tools` |
 | `FUNC-read-tools` | io | `FLOW-read-request` |
+| `FUNC-read-tools` | satisfy | `REQ-post-agent-query` |
 | `FUNC-read-tools` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-read-tools` | satisfy | `REQ-query-precision` |
 | `FUNC-render-views` | allocate | `MOD-agent-surface` |
@@ -2347,6 +2344,7 @@
 | `FUNC-select-tests` | allocate | `MOD-kernel-measure` |
 | `FUNC-select-tests` | io | `FLOW-selected-tests` |
 | `FUNC-select-tests` | satisfy | `REQ-graph-tests-operational` |
+| `FUNC-select-tests` | satisfy | `REQ-post-impact-testing` |
 | `FUNC-serve-sse` | allocate | `MOD-surface` |
 | `FUNC-serve-sse` | io | `FLOW-host-ready` |
 | `FUNC-serve-sse` | io | `FLOW-own-kuzu-request` |
@@ -2556,8 +2554,6 @@
 | `SYS-graphcode` | compose | `REQ-npx-distribution` |
 | `SYS-graphcode` | compose | `REQ-post-export-markdown` |
 | `SYS-graphcode` | compose | `REQ-post-harness-cli` |
-| `SYS-graphcode` | compose | `REQ-pre-export-markdown` |
-| `SYS-graphcode` | compose | `REQ-pre-harness-cli` |
 | `SYS-graphcode` | compose | `REQ-precommit-timeout` |
 | `SYS-graphcode` | compose | `REQ-readiness-model` |
 | `SYS-graphcode` | compose | `REQ-readonly-bridge` |
@@ -2608,8 +2604,6 @@
 | `TEST-auto-export` | verify | `REQ-risk-auto-export-fails-silently` |
 | `TEST-batch-seed` | verify | `REQ-batch-seed-performance` |
 | `TEST-bootstrap` | verify | `REQ-bootstrap-through-gate` |
-| `TEST-bootstrap` | verify | `REQ-post-import` |
-| `TEST-bootstrap` | verify | `REQ-pre-import` |
 | `TEST-bridge-follows-lock` | verify | `REQ-readonly-bridge` |
 | `TEST-bridge-follows-lock` | verify | `REQ-single-kuzu-owner` |
 | `TEST-cache` | verify | `REQ-cache-layering` |
@@ -2617,11 +2611,9 @@
 | `TEST-capture` | verify | `REQ-interactive-capture-suggest` |
 | `TEST-capture` | verify | `REQ-no-extraction` |
 | `TEST-capture` | verify | `REQ-post-capture` |
-| `TEST-capture` | verify | `REQ-pre-capture` |
 | `TEST-claude-md-toolsearch` | verify | `REQ-published-counts-match-code` |
 | `TEST-cli-scaffold` | verify | `REQ-install-idempotent` |
 | `TEST-cli-scaffold` | verify | `REQ-post-harness-cli` |
-| `TEST-cli-scaffold` | verify | `REQ-pre-harness-cli` |
 | `TEST-cli-scaffold` | verify | `REQ-repo-install` |
 | `TEST-cli-scaffold` | verify | `REQ-repo-uninstall` |
 | `TEST-cli-scaffold` | verify | `REQ-repo-update` |
@@ -2653,7 +2645,6 @@
 | `TEST-doc-export` | verify | `REQ-doc-export` |
 | `TEST-doc-export` | verify | `REQ-model-exchange-post` |
 | `TEST-doc-export` | verify | `REQ-post-export-markdown` |
-| `TEST-doc-export` | verify | `REQ-pre-export-markdown` |
 | `TEST-doc-export` | verify | `SCHEMA-markdown-view` |
 | `TEST-docs-taxonomy` | verify | `REQ-docs-taxonomy` |
 | `TEST-edge-only-batch` | verify | `REQ-formatE-diff-dialect` |
@@ -2716,7 +2707,6 @@
 | `TEST-host-shim` | verify | `REQ-single-kuzu-owner` |
 | `TEST-host-shim` | verify | `REQ-single-write-door` |
 | `TEST-impact-subgraph` | verify | `REQ-post-agent-query` |
-| `TEST-impact-subgraph` | verify | `REQ-pre-agent-query` |
 | `TEST-impact-subgraph` | verify | `REQ-progressive-expansion` |
 | `TEST-impact-subgraph` | verify | `REQ-query-precision` |
 | `TEST-impact-subgraph` | verify | `REQ-subgraph-slicing` |
@@ -2743,13 +2733,11 @@
 | `TEST-lane-reports-change` | verify | `REQ-risk-stale-test-result` |
 | `TEST-laufzeit-reads-answer-path` | verify | `REQ-laufzeit-reads-answer-path` |
 | `TEST-learning-emit` | verify | `REQ-post-emit-trajectory` |
-| `TEST-learning-emit` | verify | `REQ-pre-emit-trajectory` |
 | `TEST-learning-emit` | verify | `REQ-trajectory-emit` |
 | `TEST-live-event-contract` | verify | `REQ-live-event-in-contracts` |
 | `TEST-live-event-contract` | verify | `SCHEMA-update-event` |
 | `TEST-live-view` | verify | `REQ-mutation-emits-event` |
 | `TEST-live-view` | verify | `REQ-post-emit-update-event` |
-| `TEST-live-view` | verify | `REQ-pre-emit-update-event` |
 | `TEST-live-view` | verify | `REQ-versioned-broadcast` |
 | `TEST-loop-convergence-monitor` | verify | `REQ-loop-convergence-monitor` |
 | `TEST-loop-convergence-monitor` | verify | `REQ-risk-loop-degradation` |
@@ -2772,16 +2760,13 @@
 | `TEST-merge` | verify | `REQ-auto-persist-merge` |
 | `TEST-merge` | verify | `REQ-conflict-free-merge` |
 | `TEST-merge` | verify | `REQ-post-merge-nodes` |
-| `TEST-merge` | verify | `REQ-pre-merge-nodes` |
 | `TEST-merge` | verify | `SCHEMA-branch-merge-report` |
 | `TEST-merge-no-duplicate-edge` | verify | `REQ-graph-integrity` |
-| `TEST-merge-no-duplicate-edge` | verify | `REQ-post-merge-nodes` |
 | `TEST-modulebene-reads-and-separates` | verify | `REQ-modulebene-reads-and-separates` |
 | `TEST-monotone-convergence` | verify | `REQ-monotone-convergence` |
 | `TEST-mutate-gate` | verify | `REQ-confidence-tier` |
 | `TEST-mutate-gate` | verify | `REQ-one-gate-per-repo` |
 | `TEST-mutate-gate` | verify | `REQ-post-apply-gate` |
-| `TEST-mutate-gate` | verify | `REQ-pre-apply-gate` |
 | `TEST-mutate-gate` | verify | `REQ-rule-enforcement` |
 | `TEST-mutate-gate` | verify | `REQ-structural-rule-shared` |
 | `TEST-mutate-input-formate` | verify | `REQ-formatE-parity` |
@@ -2797,7 +2782,6 @@
 | `TEST-mvp-e2e` | verify | `REQ-disk-persistence` |
 | `TEST-mvp-e2e` | verify | `REQ-impact-based-testing` |
 | `TEST-mvp-e2e` | verify | `REQ-post-impact-testing` |
-| `TEST-mvp-e2e` | verify | `REQ-pre-impact-testing` |
 | `TEST-mvp-e2e` | verify | `REQ-precise-context` |
 | `TEST-mvp-e2e` | verify | `REQ-single-kuzu-owner` |
 | `TEST-mvp-e2e` | verify | `REQ-single-store` |
@@ -2952,10 +2936,6 @@
 | `UC-code-quality` | compose | `REQ-post-capture` |
 | `UC-code-quality` | compose | `REQ-post-emit-trajectory` |
 | `UC-code-quality` | compose | `REQ-post-import` |
-| `UC-code-quality` | compose | `REQ-pre-apply-gate` |
-| `UC-code-quality` | compose | `REQ-pre-capture` |
-| `UC-code-quality` | compose | `REQ-pre-emit-trajectory` |
-| `UC-code-quality` | compose | `REQ-pre-import` |
 | `UC-code-quality` | compose | `REQ-published-counts-match-code` |
 | `UC-code-quality` | compose | `REQ-quality-metric` |
 | `UC-code-quality` | compose | `REQ-risk-interface-change-unescalated` |
@@ -3001,7 +2981,6 @@
 | `UC-efficient-testing` | compose | `REQ-graph-tests-operational` |
 | `UC-efficient-testing` | compose | `REQ-impact-based-testing` |
 | `UC-efficient-testing` | compose | `REQ-post-impact-testing` |
-| `UC-efficient-testing` | compose | `REQ-pre-impact-testing` |
 | `UC-efficient-testing` | compose | `REQ-risk-selection-misses-red-test` |
 | `UC-efficient-testing` | compose | `REQ-risk-stale-test-result` |
 | `UC-efficient-testing` | compose | `REQ-selective-code-lane` |
@@ -3015,7 +2994,6 @@
 | `UC-graph-time-travel` | compose | `REQ-graph-snapshot-per-commit` |
 | `UC-graph-time-travel` | compose | `REQ-graph-state-recall` |
 | `UC-graph-time-travel` | compose | `REQ-post-merge-nodes` |
-| `UC-graph-time-travel` | compose | `REQ-pre-merge-nodes` |
 | `UC-graph-time-travel` | compose | `REQ-risk-auto-export-fails-silently` |
 | `UC-graph-time-travel` | compose | `REQ-risk-edge-vanishes-silently` |
 | `UC-graph-time-travel` | compose | `REQ-risk-partial-store-after-reseed` |
@@ -3032,7 +3010,6 @@
 | `UC-live-graph-view` | compose | `REQ-metrics-risk-scope` |
 | `UC-live-graph-view` | compose | `REQ-mutation-emits-event` |
 | `UC-live-graph-view` | compose | `REQ-post-emit-update-event` |
-| `UC-live-graph-view` | compose | `REQ-pre-emit-update-event` |
 | `UC-live-graph-view` | compose | `REQ-readiness-completeness` |
 | `UC-live-graph-view` | compose | `REQ-readiness-transparent` |
 | `UC-live-graph-view` | compose | `REQ-readonly-bridge` |
@@ -3057,7 +3034,6 @@
 | `UC-reduced-llm` | compose | `REQ-graph-context-replaces-reading` |
 | `UC-reduced-llm` | compose | `REQ-post-agent-query` |
 | `UC-reduced-llm` | compose | `REQ-post-modelfree-gate` |
-| `UC-reduced-llm` | compose | `REQ-pre-agent-query` |
 | `UC-reduced-llm` | compose | `REQ-progressive-expansion` |
 | `UC-reduced-llm` | compose | `REQ-query-precision` |
 | `UC-reduced-llm` | compose | `REQ-small-model-viable` |
@@ -3071,7 +3047,6 @@
 | `UC-repo-lifecycle` | compose | `REQ-install-idempotent` |
 | `UC-repo-lifecycle` | compose | `REQ-npx-distribution` |
 | `UC-repo-lifecycle` | compose | `REQ-post-harness-cli` |
-| `UC-repo-lifecycle` | compose | `REQ-pre-harness-cli` |
 | `UC-repo-lifecycle` | compose | `REQ-repo-update` |
 | `UC-repo-lifecycle` | compose | `REQ-risk-client-holds-stale-tool-list` |
 | `UC-repo-lifecycle` | compose | `REQ-risk-owner-ends-with-docked-sessions` |

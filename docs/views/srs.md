@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 186 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 176 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -100,14 +100,6 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
 
-##### `REQ-post-apply-gate` — Postcondition: Apply-Gate-Ablauf (Governed Mutation)
-
-Gültige Ops persistiert oder bei error-Severity geblockt; consumerType geloggt; Live-Event + Trajectory emittiert.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
-
 ##### `REQ-post-modelfree-gate` — Gate ohne Modellaufruf
 
 Apply, Block, Regelpruefung und Readiness laufen ohne Netzwerk- oder Modellaufruf und geben bei gleichem Graphen und gleichem Batch in zwei Laeufen dasselbe Urteil.
@@ -115,14 +107,6 @@ Apply, Block, Regelpruefung und Readiness laufen ohne Netzwerk- oder Modellaufru
 priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-reduced-llm` (integration) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
-
-##### `REQ-pre-apply-gate` — Precondition: Apply-Gate-Ablauf (Governed Mutation)
-
-Harness initialisiert, Graph geladen, gültige MutateCommands liegen vor.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
 
 ##### `REQ-responsiveness` — Erste Reaktion < 0,2 s
 
@@ -184,6 +168,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
 ##### 3.1.1.3  `FUNC-tool-context` — createToolContext
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-skill-report` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FUNC-block-ruestzeug`
@@ -210,17 +202,9 @@ Projiziert .graphcode/trajectory.jsonl als reine Projektion des Operations-Logs 
 
 io ◀ `FLOW-audit-record` · io ▶ `FLOW-trajectory` · allocate ▶ `MOD-projections`
 
-###### `REQ-post-emit-trajectory` — Postcondition: FUNC-emit-trajectory
+###### `REQ-post-emit-trajectory` — Trajektorie gleich dem Operations-Log
 
-Trajectory/Outcome append-only nach .graphcode/*.jsonl, Format stabil. (CR-GC-330)
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-projections`
-
-###### `REQ-pre-emit-trajectory` — Precondition: FUNC-emit-trajectory
-
-Mutation erfolgreich applied (post-apply-Phase).
+trajectory.jsonl haelt je Eintrag des Operations-Logs genau eine schemagueltige Zeile, auch fuer abgelehnte Batches mit der Zahl ihrer Befunde, und nach einem Neustart dieselben Zeilen.
 
 priority: must · status: open · kinds: functional
 
@@ -307,6 +291,14 @@ Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benannt
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
@@ -446,22 +438,6 @@ priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-capture` (integration) · `TEST-intent-anchors-internal` (unit) · `TEST-intent-anchors-wortart` (unit) · `TEST-uc-authoring-style` (unit) · satisfy ◀ `FCHAIN-capture` · allocate ▶ —
 
-##### `REQ-post-capture` — Postcondition: Interaktive Erfassung (Text → suggest-Tier)
-
-Format-E-Kandidaten im suggest-Tier durchs Gate; kein auto-apply; Review vor Persist.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FCHAIN-capture` · allocate ▶ —
-
-##### `REQ-pre-capture` — Precondition: Interaktive Erfassung (Text → suggest-Tier)
-
-NL/Text-Eingang (chat-tauglich) + Agent verfügbar.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FCHAIN-capture` · allocate ▶ —
-
 ##### 3.1.2.1  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-doc-export` · `FCHAIN-docked-session` · `FCHAIN-generation-states` · `FCHAIN-grammar-query` · `FCHAIN-host-start` · `FCHAIN-impact-testing` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
@@ -505,6 +481,14 @@ CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (writ
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
+
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
 
 ##### 3.1.2.3  `FUNC-decode` — formatEToCommands(harness, text)
 
@@ -579,6 +563,14 @@ Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benannt
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
@@ -678,6 +670,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
 ##### 3.1.3.3  `FUNC-decode` — formatEToCommands(harness, text)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gedaechtnis`
@@ -751,6 +751,14 @@ Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benannt
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
@@ -875,6 +883,14 @@ Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-chain-metrics`
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
 io ◀ `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · io ▶ `FLOW-formatE-artifact-read-tools` · `FLOW-read-request` · allocate ▶ `MOD-surface`
+
+###### `REQ-post-agent-query` — Blast-Radius und Vertiefung
+
+graph_impact gibt genau die Abhaengigen eines Knotens (eingehende Kanten bis zur Tiefe) als gueltiges Format-E zurueck, kleiner als der ganze Graph; graph_expand vertieft auf Anfrage; Lesen aendert den Graphen nicht.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -2118,6 +2134,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
 ##### 3.2.4.3  `FUNC-decode` — formatEToCommands(harness, text)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FUNC-block-gedaechtnis`
@@ -2191,6 +2215,14 @@ Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benannt
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
@@ -2612,22 +2644,6 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 
 Der Agent ruft graph_tests mit der Aenderungsmenge; das Werkzeug fragt harness.testImpact, das den gespeicherten Graphen liest und impactedTests waehlen laesst, und antwortet mit dem minimalen vitest-Aufruf.
 
-##### `REQ-post-impact-testing` — Postcondition: Impact-basierte Testauswahl
-
-Genau die betroffenen Tests ausgewählt (bottom-up); nicht betroffene ausgelassen.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
-
-##### `REQ-pre-impact-testing` — Precondition: Impact-basierte Testauswahl
-
-Geändertes Element bekannt; Graph geladen.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FCHAIN-impact-testing` · allocate ▶ —
-
 ##### 3.3.1.1  `FUNC-graph-store` — GraphStore
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-docked-session` · `FCHAIN-generation-states` · `FCHAIN-health` · `FCHAIN-host-start` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FCHAIN-session-end` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FUNC-block-speicherwerk`
@@ -2749,6 +2765,14 @@ Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run n
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · `FUNC-select-tests` · allocate ▶ `MOD-kernel` · `MOD-kernel-measure`
+
+###### `REQ-post-impact-testing` — Testauswahl nach Impact
+
+Die Testauswahl zu einer geaenderten Anforderung enthaelt deren verifizierenden TEST; ausgewaehlt wird nur, was die Aenderung im Graphen erreicht.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-select-tests` · allocate ▶ `MOD-kernel-measure`
 
 #### 3.3.2  `FCHAIN-test-ingest` — Testergebnis zurueckschreiben
 
@@ -2874,6 +2898,14 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
@@ -2951,6 +2983,14 @@ Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run n
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · `FUNC-select-tests` · allocate ▶ `MOD-kernel` · `MOD-kernel-measure`
+
+###### `REQ-post-impact-testing` — Testauswahl nach Impact
+
+Die Testauswahl zu einer geaenderten Anforderung enthaelt deren verifizierenden TEST; ausgewaehlt wird nur, was die Aenderung im Graphen erreicht.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-select-tests` · allocate ▶ `MOD-kernel-measure`
 
 #### 3.3.3  `FCHAIN-verify-lane` — Test-Spur fahren (npm)
 
@@ -3040,6 +3080,14 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
@@ -3127,6 +3175,14 @@ Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run n
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · `FUNC-select-tests` · allocate ▶ `MOD-kernel` · `MOD-kernel-measure`
+
+###### `REQ-post-impact-testing` — Testauswahl nach Impact
+
+Die Testauswahl zu einer geaenderten Anforderung enthaelt deren verifizierenden TEST; ausgewaehlt wird nur, was die Aenderung im Graphen erreicht.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-select-tests` · allocate ▶ `MOD-kernel-measure`
 
 ##### 3.3.3.7  `FUNC-plan-code-lane` — Code-Spur planen
 
@@ -3304,17 +3360,9 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-kernel`
 
-###### `REQ-post-merge-nodes` — Postcondition: mergeNodes(graph)
+###### `REQ-post-merge-nodes` — Branch-Merge durch das Gate
 
-Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-merge` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-kernel`
-
-###### `REQ-pre-merge-nodes` — Precondition: mergeNodes(graph)
-
-Zwei (oder mehr) Branch-Versionen des committed Graph-Artefakts.
+graph_merge spielt ein Branch-Log durch das Gate: disjunkte Chargen werden angewendet, eine Charge im Konflikt uebersprungen und berichtet, ein Probelauf aendert nichts, ein zweiter Merge ist idempotent.
 
 priority: must · status: open · kinds: functional
 
@@ -3361,6 +3409,14 @@ Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benannt
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
@@ -3510,21 +3566,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### `REQ-post-import` — Postcondition: importGraph(ontology, opts)
+###### `REQ-post-import` — Import mit Meldung
 
-Der Store traegt den Bestand; jede REQ ohne verifizierenden TEST ist gemeldet (oder der Import verweigert), jede Kante ohne Muster zurueckgehalten und benannt — nichts verschwindet still.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
-
-###### `REQ-pre-import` — Precondition: importGraph(ontology, opts)
-
-Ein materialisierter OntologyGraph (elements/traces) liegt vor — typischerweise der committete Snapshot docs/graph/<system>.graph.json.
+importOntologyGraph schreibt den Bestand in den Store, meldet jede REQ ohne verifizierenden TEST und haelt jede Kante zurueck, die kein Muster mehr zulaesst.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
 
 ##### 3.4.2.4  `FUNC-graph-store` — GraphStore
 
@@ -3728,6 +3776,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
 ##### 3.4.3.3  `FUNC-decode` — formatEToCommands(harness, text)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-steering-loop` · `FUNC-block-gedaechtnis`
@@ -3801,6 +3857,14 @@ Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benannt
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
@@ -3926,17 +3990,9 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-view-fmea` (unit) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
 
-###### `REQ-post-export-markdown` — Postcondition: exportMarkdown(graph, view)
+###### `REQ-post-export-markdown` — Sichten deterministisch
 
-Deterministische Markdown-Views mit GENERATED-Header; nie hand-editiert.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
-
-###### `REQ-pre-export-markdown` — Precondition: exportMarkdown(graph, view)
-
-Aktueller Graph (SSOT) geladen; View gewählt.
+exportMarkdown rendert jede Sicht nicht leer, mit GENERATED-Kopf und Systemname, ueber zwei Laeufe byte-gleich; der JSON-Rundlauf ist byte-gleich.
 
 priority: must · status: done · kinds: functional
 
@@ -4082,21 +4138,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### `REQ-post-import` — Postcondition: importGraph(ontology, opts)
+###### `REQ-post-import` — Import mit Meldung
 
-Der Store traegt den Bestand; jede REQ ohne verifizierenden TEST ist gemeldet (oder der Import verweigert), jede Kante ohne Muster zurueckgehalten und benannt — nichts verschwindet still.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
-
-###### `REQ-pre-import` — Precondition: importGraph(ontology, opts)
-
-Ein materialisierter OntologyGraph (elements/traces) liegt vor — typischerweise der committete Snapshot docs/graph/<system>.graph.json.
+importOntologyGraph schreibt den Bestand in den Store, meldet jede REQ ohne verifizierenden TEST und haelt jede Kante zurueck, die kein Muster mehr zulaesst.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
 
 ##### 3.4.4.5  `FUNC-graph-store` — GraphStore
 
@@ -4778,6 +4826,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
 ##### 3.5.4.3  `FUNC-decode` — formatEToCommands(harness, text)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gedaechtnis`
@@ -4852,6 +4908,14 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
@@ -4892,17 +4956,9 @@ Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashb
 
 io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-live-event` · allocate ▶ `MOD-surface`
 
-###### `REQ-post-emit-update-event` — Postcondition: FUNC-emit-update-event
+###### `REQ-post-emit-update-event` — Ein Live-Ereignis je Mutation
 
-Genau ein Live-Update-Event mit korrekten domains; ausschließlich read-only.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-surface`
-
-###### `REQ-pre-emit-update-event` — Precondition: FUNC-emit-update-event
-
-Mutation committed; SSE/WS-Bridge verbunden.
+Jede Mutation, auch eine geblockte, loest genau ein Live-Ereignis aus; seine Bereiche enthalten graph und readiness, bei einem Befund auch rules.
 
 priority: must · status: open · kinds: functional
 
@@ -5336,17 +5392,9 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-view-fmea` (unit) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
 
-###### `REQ-post-export-markdown` — Postcondition: exportMarkdown(graph, view)
+###### `REQ-post-export-markdown` — Sichten deterministisch
 
-Deterministische Markdown-Views mit GENERATED-Header; nie hand-editiert.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
-
-###### `REQ-pre-export-markdown` — Precondition: exportMarkdown(graph, view)
-
-Aktueller Graph (SSOT) geladen; View gewählt.
+exportMarkdown rendert jede Sicht nicht leer, mit GENERATED-Kopf und Systemname, ueber zwei Laeufe byte-gleich; der JSON-Rundlauf ist byte-gleich.
 
 priority: must · status: done · kinds: functional
 
@@ -5500,21 +5548,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### `REQ-post-import` — Postcondition: importGraph(ontology, opts)
+###### `REQ-post-import` — Import mit Meldung
 
-Der Store traegt den Bestand; jede REQ ohne verifizierenden TEST ist gemeldet (oder der Import verweigert), jede Kante ohne Muster zurueckgehalten und benannt — nichts verschwindet still.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
-
-###### `REQ-pre-import` — Precondition: importGraph(ontology, opts)
-
-Ein materialisierter OntologyGraph (elements/traces) liegt vor — typischerweise der committete Snapshot docs/graph/<system>.graph.json.
+importOntologyGraph schreibt den Bestand in den Store, meldet jede REQ ohne verifizierenden TEST und haelt jede Kante zurueck, die kein Muster mehr zulaesst.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
 
 ##### 3.7.2.7  `FUNC-graph-store` — GraphStore
 
@@ -5600,6 +5640,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
 ##### 3.7.2.10  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FUNC-block-gate`
@@ -5641,6 +5689,14 @@ Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benannt
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
@@ -5828,6 +5884,14 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
@@ -5946,6 +6010,14 @@ Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen di
 
 io ◀ `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · io ▶ `FLOW-formatE-artifact-read-tools` · `FLOW-read-request` · allocate ▶ `MOD-surface`
 
+###### `REQ-post-agent-query` — Blast-Radius und Vertiefung
+
+graph_impact gibt genau die Abhaengigen eines Knotens (eingehende Kanten bis zur Tiefe) als gueltiges Format-E zurueck, kleiner als der ganze Graph; graph_expand vertieft auf Anfrage; Lesen aendert den Graphen nicht.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-read-tools` · allocate ▶ `MOD-surface`
+
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
 > auch unter: `FUNC-graph-expand`
@@ -5993,22 +6065,6 @@ Verification ◀ `TEST-zug-kennzahlen-danach` (integration) · satisfy ◀ `FUNC
 #### 3.8.2  `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion)
 
 Der Agent fragt graph_impact, graph_expand oder graph_elements; das Werkzeug gibt die Leseanfrage an den Kern (impact, subgraph, listElements), der den Graphen liest, und antwortet als Format-E-Scheibe.
-
-##### `REQ-post-agent-query` — Postcondition: Agent-Graph-Query (Impact + progressive Expansion)
-
-Exakter Subgraph als Format-E; on-demand vertieft; Graph read-only unverändert.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FCHAIN-agent-query` · allocate ▶ —
-
-##### `REQ-pre-agent-query` — Precondition: Agent-Graph-Query (Impact + progressive Expansion)
-
-Graph geladen, MCP-Tools gebunden, elementId existiert.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FCHAIN-agent-query` · allocate ▶ —
 
 ##### `REQ-precise-context` — Präziser Kontext statt grep-Dump
 
@@ -6077,6 +6133,14 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph
 Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen die Abfrage im Kern und formen die Antwort. graph_impact und graph_expand serialisieren die Scheibe hier zu Format-E (FormatECodec.serialize, read.ts:358 und 405); graph_impact haengt die Blackbox-Front und das Freshness-Banner an. Der Kern liefert nur Graph bzw. Scheibe. (CR-GC-505)
 
 io ◀ `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · io ▶ `FLOW-formatE-artifact-read-tools` · `FLOW-read-request` · allocate ▶ `MOD-surface`
+
+###### `REQ-post-agent-query` — Blast-Radius und Vertiefung
+
+graph_impact gibt genau die Abhaengigen eines Knotens (eingehende Kanten bis zur Tiefe) als gueltiges Format-E zurueck, kleiner als der ganze Graph; graph_expand vertieft auf Anfrage; Lesen aendert den Graphen nicht.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-read-tools` · allocate ▶ `MOD-surface`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -6200,14 +6264,6 @@ priority: should · status: done · kinds: non-functional
 
 Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-mcp-symmetry` (integration) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
 
-##### `REQ-post-apply-gate` — Postcondition: Apply-Gate-Ablauf (Governed Mutation)
-
-Gültige Ops persistiert oder bei error-Severity geblockt; consumerType geloggt; Live-Event + Trajectory emittiert.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
-
 ##### `REQ-post-modelfree-gate` — Gate ohne Modellaufruf
 
 Apply, Block, Regelpruefung und Readiness laufen ohne Netzwerk- oder Modellaufruf und geben bei gleichem Graphen und gleichem Batch in zwei Laeufen dasselbe Urteil.
@@ -6215,14 +6271,6 @@ Apply, Block, Regelpruefung und Readiness laufen ohne Netzwerk- oder Modellaufru
 priority: should · status: open · kinds: non-functional
 
 Verification ◀ `TEST-reduced-llm` (integration) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
-
-##### `REQ-pre-apply-gate` — Precondition: Apply-Gate-Ablauf (Governed Mutation)
-
-Harness initialisiert, Graph geladen, gültige MutateCommands liegen vor.
-
-priority: should · status: open · kinds: non-functional
-
-Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FCHAIN-apply-gate` · allocate ▶ —
 
 ##### `REQ-responsiveness` — Erste Reaktion < 0,2 s
 
@@ -6284,6 +6332,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
 ##### 3.8.3.3  `FUNC-tool-context` — createToolContext
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-skill-report` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FUNC-block-ruestzeug`
@@ -6310,17 +6366,9 @@ Projiziert .graphcode/trajectory.jsonl als reine Projektion des Operations-Logs 
 
 io ◀ `FLOW-audit-record` · io ▶ `FLOW-trajectory` · allocate ▶ `MOD-projections`
 
-###### `REQ-post-emit-trajectory` — Postcondition: FUNC-emit-trajectory
+###### `REQ-post-emit-trajectory` — Trajektorie gleich dem Operations-Log
 
-Trajectory/Outcome append-only nach .graphcode/*.jsonl, Format stabil. (CR-GC-330)
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-projections`
-
-###### `REQ-pre-emit-trajectory` — Precondition: FUNC-emit-trajectory
-
-Mutation erfolgreich applied (post-apply-Phase).
+trajectory.jsonl haelt je Eintrag des Operations-Logs genau eine schemagueltige Zeile, auch fuer abgelehnte Batches mit der Zahl ihrer Befunde, und nach einem Neustart dieselben Zeilen.
 
 priority: must · status: open · kinds: functional
 
@@ -6407,6 +6455,14 @@ Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benannt
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
@@ -6634,6 +6690,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
 ##### 3.9.1.3  `FUNC-decode` — formatEToCommands(harness, text)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gedaechtnis`
@@ -6749,6 +6813,14 @@ Wirft die Regelauswertung waehrend eines Zugs, MUSS das Gate den Zug mit benannt
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
@@ -7056,21 +7128,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### `REQ-post-import` — Postcondition: importGraph(ontology, opts)
+###### `REQ-post-import` — Import mit Meldung
 
-Der Store traegt den Bestand; jede REQ ohne verifizierenden TEST ist gemeldet (oder der Import verweigert), jede Kante ohne Muster zurueckgehalten und benannt — nichts verschwindet still.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
-
-###### `REQ-pre-import` — Precondition: importGraph(ontology, opts)
-
-Ein materialisierter OntologyGraph (elements/traces) liegt vor — typischerweise der committete Snapshot docs/graph/<system>.graph.json.
+importOntologyGraph schreibt den Bestand in den Store, meldet jede REQ ohne verifizierenden TEST und haelt jede Kante zurueck, die kein Muster mehr zulaesst.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
 
 ##### 3.9.2.13  `FUNC-graph-store` — GraphStore
 
@@ -7292,17 +7356,9 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-cli-dispatch` · `FUNC-harness-cli` · allocate ▶ `MOD-surface`
 
-###### `REQ-post-harness-cli` — Postcondition: graphcode init/update/remove
+###### `REQ-post-harness-cli` — Einrichten, Erneuern, Entfernen
 
-Artefakte installiert/aktualisiert/restlos entfernt; idempotent; Store bei Update erhalten.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
-
-###### `REQ-pre-harness-cli` — Precondition: graphcode init/update/remove
-
-Repo vorhanden, npx/Node verfügbar.
+init, update und remove installieren, erneuern bzw. entfernen MCP-Konfiguration, Skills fuer Claude und OpenCode, Hooks und GRAPHCODE.md vollstaendig und lassen fremde Dateien stehen.
 
 priority: must · status: done · kinds: functional
 
@@ -7418,21 +7474,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### `REQ-post-import` — Postcondition: importGraph(ontology, opts)
+###### `REQ-post-import` — Import mit Meldung
 
-Der Store traegt den Bestand; jede REQ ohne verifizierenden TEST ist gemeldet (oder der Import verweigert), jede Kante ohne Muster zurueckgehalten und benannt — nichts verschwindet still.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
-
-###### `REQ-pre-import` — Precondition: importGraph(ontology, opts)
-
-Ein materialisierter OntologyGraph (elements/traces) liegt vor — typischerweise der committete Snapshot docs/graph/<system>.graph.json.
+importOntologyGraph schreibt den Bestand in den Store, meldet jede REQ ohne verifizierenden TEST und haelt jede Kante zurueck, die kein Muster mehr zulaesst.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
 
 ##### 3.9.4.5  `FUNC-graph-store` — GraphStore
 
@@ -7804,6 +7852,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-post-capture` — Erfassung nur durch das Gate
+
+Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
 ###### 3.10.1.1.5  `FUNC-graph-reseed-tool` — graph_reseed (Werkzeug)
 
 > auch in: `FCHAIN-snapshot-roundtrip`
@@ -7840,17 +7896,9 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-cli-dispatch` · `FUNC-harness-cli` · allocate ▶ `MOD-surface`
 
-###### `REQ-post-harness-cli` — Postcondition: graphcode init/update/remove
+###### `REQ-post-harness-cli` — Einrichten, Erneuern, Entfernen
 
-Artefakte installiert/aktualisiert/restlos entfernt; idempotent; Store bei Update erhalten.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
-
-###### `REQ-pre-harness-cli` — Precondition: graphcode init/update/remove
-
-Repo vorhanden, npx/Node verfügbar.
+init, update und remove installieren, erneuern bzw. entfernen MCP-Konfiguration, Skills fuer Claude und OpenCode, Hooks und GRAPHCODE.md vollstaendig und lassen fremde Dateien stehen.
 
 priority: must · status: done · kinds: functional
 
@@ -8420,6 +8468,14 @@ Die Lese-Werkzeuge der MCP-Oberflaeche: nehmen die Anfrage des Agenten, rufen di
 
 io ◀ `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-graph-state` · `FLOW-impact-slice` · `FLOW-query-request-agent` · io ▶ `FLOW-formatE-artifact-read-tools` · `FLOW-read-request` · allocate ▶ `MOD-surface`
 
+###### `REQ-post-agent-query` — Blast-Radius und Vertiefung
+
+graph_impact gibt genau die Abhaengigen eines Knotens (eingehende Kanten bis zur Tiefe) als gueltiges Format-E zurueck, kleiner als der ganze Graph; graph_expand vertieft auf Anfrage; Lesen aendert den Graphen nicht.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-read-tools` · allocate ▶ `MOD-surface`
+
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
 > auch unter: `FUNC-graph-expand`
@@ -8526,17 +8582,9 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-skills-mcp` (integration) · `TEST-view-fmea` (unit) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FUNC-export-markdown` · `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · allocate ▶ `MOD-agent-surface` · `MOD-projections`
 
-###### `REQ-post-export-markdown` — Postcondition: exportMarkdown(graph, view)
+###### `REQ-post-export-markdown` — Sichten deterministisch
 
-Deterministische Markdown-Views mit GENERATED-Header; nie hand-editiert.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
-
-###### `REQ-pre-export-markdown` — Precondition: exportMarkdown(graph, view)
-
-Aktueller Graph (SSOT) geladen; View gewählt.
+exportMarkdown rendert jede Sicht nicht leer, mit GENERATED-Kopf und Systemname, ueber zwei Laeufe byte-gleich; der JSON-Rundlauf ist byte-gleich.
 
 priority: must · status: done · kinds: functional
 
@@ -8756,6 +8804,14 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-gate-survives-rule-failure` · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
+###### `REQ-post-apply-gate` — Gate persistiert oder blockt atomar
+
+Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mutate-gate` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-single-write-door` — Genau eine Tuer in den Graphen
 
 Eine legale Mutation persistiert samt Attributen, eine Mutation ohne ihre Pflichtkante wird blockiert und laesst den Store unveraendert, und ein direkter Schreibversuch am Gate vorbei wird abgewiesen.
@@ -8834,17 +8890,9 @@ Projiziert .graphcode/trajectory.jsonl als reine Projektion des Operations-Logs 
 
 io ◀ `FLOW-audit-record` · io ▶ `FLOW-trajectory` · allocate ▶ `MOD-projections`
 
-###### `REQ-post-emit-trajectory` — Postcondition: FUNC-emit-trajectory
+###### `REQ-post-emit-trajectory` — Trajektorie gleich dem Operations-Log
 
-Trajectory/Outcome append-only nach .graphcode/*.jsonl, Format stabil. (CR-GC-330)
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-learning-emit` (integration) · satisfy ◀ `FUNC-emit-trajectory` · allocate ▶ `MOD-projections`
-
-###### `REQ-pre-emit-trajectory` — Precondition: FUNC-emit-trajectory
-
-Mutation erfolgreich applied (post-apply-Phase).
+trajectory.jsonl haelt je Eintrag des Operations-Logs genau eine schemagueltige Zeile, auch fuer abgelehnte Batches mit der Zahl ihrer Befunde, und nach einem Neustart dieselben Zeilen.
 
 priority: must · status: open · kinds: functional
 
@@ -8876,21 +8924,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
-###### `REQ-post-import` — Postcondition: importGraph(ontology, opts)
+###### `REQ-post-import` — Import mit Meldung
 
-Der Store traegt den Bestand; jede REQ ohne verifizierenden TEST ist gemeldet (oder der Import verweigert), jede Kante ohne Muster zurueckgehalten und benannt — nichts verschwindet still.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
-
-###### `REQ-pre-import` — Precondition: importGraph(ontology, opts)
-
-Ein materialisierter OntologyGraph (elements/traces) liegt vor — typischerweise der committete Snapshot docs/graph/<system>.graph.json.
+importOntologyGraph schreibt den Bestand in den Store, meldet jede REQ ohne verifizierenden TEST und haelt jede Kante zurueck, die kein Muster mehr zulaesst.
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-import` · allocate ▶ `MOD-kernel`
 
 ###### 3.10.2.4.4  `FUNC-merge-nodes` — replayBranchLog(log, sinceVersion)
 
@@ -8918,17 +8958,9 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-kernel`
 
-###### `REQ-post-merge-nodes` — Postcondition: mergeNodes(graph)
+###### `REQ-post-merge-nodes` — Branch-Merge durch das Gate
 
-Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-merge` (integration) · `TEST-merge-no-duplicate-edge` (integration) · satisfy ◀ `FUNC-merge-nodes` · allocate ▶ `MOD-kernel`
-
-###### `REQ-pre-merge-nodes` — Precondition: mergeNodes(graph)
-
-Zwei (oder mehr) Branch-Versionen des committed Graph-Artefakts.
+graph_merge spielt ein Branch-Log durch das Gate: disjunkte Chargen werden angewendet, eine Charge im Konflikt uebersprungen und berichtet, ein Probelauf aendert nichts, ein zweiter Merge ist idempotent.
 
 priority: must · status: open · kinds: functional
 
@@ -9018,17 +9050,9 @@ Live-Update-Event (SSE invalidate) bei jeder Mutation; Basis des read-only Dashb
 
 io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-live-event` · allocate ▶ `MOD-surface`
 
-###### `REQ-post-emit-update-event` — Postcondition: FUNC-emit-update-event
+###### `REQ-post-emit-update-event` — Ein Live-Ereignis je Mutation
 
-Genau ein Live-Update-Event mit korrekten domains; ausschließlich read-only.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-emit-update-event` · allocate ▶ `MOD-surface`
-
-###### `REQ-pre-emit-update-event` — Precondition: FUNC-emit-update-event
-
-Mutation committed; SSE/WS-Bridge verbunden.
+Jede Mutation, auch eine geblockte, loest genau ein Live-Ereignis aus; seine Bereiche enthalten graph und readiness, bei einem Befund auch rules.
 
 priority: must · status: open · kinds: functional
 
@@ -9249,6 +9273,14 @@ Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run n
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · `FUNC-select-tests` · allocate ▶ `MOD-kernel` · `MOD-kernel-measure`
+
+###### `REQ-post-impact-testing` — Testauswahl nach Impact
+
+Die Testauswahl zu einer geaenderten Anforderung enthaelt deren verifizierenden TEST; ausgewaehlt wird nur, was die Aenderung im Graphen erreicht.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-select-tests` · allocate ▶ `MOD-kernel-measure`
 
 ###### 3.10.2.6.10  `FUNC-take-steering-snapshot` — takeSteeringSnapshot(graph, policy)
 
@@ -12348,7 +12380,7 @@ verify ▶ `REQ-batch-seed-performance` · testRefs: `tests/perf.batch-seed.test
 
 Format-E-Import befüllt leeren Graphen ausschließlich durchs Gate; Direct-Write schlägt fehl. (FUNC-import)
 
-verify ▶ `REQ-bootstrap-through-gate` · `REQ-post-import` · `REQ-pre-import` · testRefs: `tests/bootstrap.test.ts`
+verify ▶ `REQ-bootstrap-through-gate` · testRefs: `tests/bootstrap.test.ts`
 
 ### 8.14  `TEST-bridge-follows-lock` — Bridge folgt dem Lock
 
@@ -12366,7 +12398,7 @@ verify ▶ `REQ-cache-layering` · `REQ-versioned-cache`
 
 Agent-Kandidaten laufen im suggest-Tier durchs Gate (kein auto-apply). (FCHAIN-capture)
 
-verify ▶ `REQ-interactive-capture-suggest` · `REQ-no-extraction` · `REQ-post-capture` · `REQ-pre-capture`
+verify ▶ `REQ-interactive-capture-suggest` · `REQ-no-extraction` · `REQ-post-capture`
 
 ### 8.17  `TEST-claude-md-toolsearch` — CLAUDE.md laedt die Lese-Werkzeuge in einem Zug
 
@@ -12378,7 +12410,7 @@ verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/claude-md.tools
 
 graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112)
 
-verify ▶ `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-pre-harness-cli` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`
+verify ▶ `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`
 
 ### 8.19  `TEST-code-conformance` — Graph-code conformance test
 
@@ -12450,7 +12482,7 @@ verify ▶ `REQ-buildable-standalone` · `REQ-npx-distribution` · `REQ-repo-ins
 
 exportMarkdown deterministisch (byte-identisch) + spiegelt Graph; GENERATED-Header. (FUNC-export-markdown)
 
-verify ▶ `REQ-doc-export` · `REQ-model-exchange-post` · `REQ-post-export-markdown` · `REQ-pre-export-markdown` · `SCHEMA-markdown-view` · testRefs: `tests/exporter.test.ts`
+verify ▶ `REQ-doc-export` · `REQ-model-exchange-post` · `REQ-post-export-markdown` · `SCHEMA-markdown-view` · testRefs: `tests/exporter.test.ts`
 
 ### 8.31  `TEST-docs-taxonomy` — Docs-Taxonomie-Inspektion
 
@@ -12630,7 +12662,7 @@ verify ▶ `REQ-docked-session-reelects-once` · `REQ-further-session-docks-via-
 
 graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query)
 
-verify ▶ `REQ-post-agent-query` · `REQ-pre-agent-query` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-subgraph-slicing` · testRefs: `tests/mcp.impact.test.ts`
+verify ▶ `REQ-post-agent-query` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-subgraph-slicing` · testRefs: `tests/mcp.impact.test.ts`
 
 ### 8.61  `TEST-import-code-verb` — Abnahme des import-code-Verbs
 
@@ -12702,7 +12734,7 @@ verify ▶ `REQ-laufzeit-reads-answer-path` · testRefs: `tests/skill-laufzeit-a
 
 post-apply schreibt Trajectory/Outcome append-only, Format stabil. (FUNC-emit-trajectory)
 
-verify ▶ `REQ-post-emit-trajectory` · `REQ-pre-emit-trajectory` · `REQ-trajectory-emit` · testRefs: `tests/hooks.learning-emit.test.ts`
+verify ▶ `REQ-post-emit-trajectory` · `REQ-trajectory-emit` · testRefs: `tests/hooks.learning-emit.test.ts`
 
 ### 8.73  `TEST-live-event-contract` — Live-Event-Contract-Test
 
@@ -12714,7 +12746,7 @@ verify ▶ `REQ-live-event-in-contracts` · `SCHEMA-update-event` · testRefs: `
 
 Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event)
 
-verify ▶ `REQ-mutation-emits-event` · `REQ-post-emit-update-event` · `REQ-pre-emit-update-event` · `REQ-versioned-broadcast` · testRefs: `tests/hooks.live-view.test.ts`
+verify ▶ `REQ-mutation-emits-event` · `REQ-post-emit-update-event` · `REQ-versioned-broadcast` · testRefs: `tests/hooks.live-view.test.ts`
 
 ### 8.75  `TEST-loop-convergence-monitor` — Entdeckung meldet Pendeln Plateau Rueckschritt
 
@@ -12774,13 +12806,13 @@ verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.member-name.test.ts`
 
 Abnahme der Datei tests/mcp.merge.test.ts: zwei Zweig-Aenderungen werden ohne Konflikt wieder zusammengefuehrt, ohne Knoten oder Kanten zu verlieren. Die Wiedereingliederung laeuft als Replay durchs Gate, nicht als Datei-Merge; echte Zwei-Store-Integration mit eigenem Disk-Kuzu und eigenem Audit-Log je Seite.
 
-verify ▶ `REQ-auto-persist-merge` · `REQ-conflict-free-merge` · `REQ-post-merge-nodes` · `REQ-pre-merge-nodes` · `SCHEMA-branch-merge-report` · testRefs: `tests/mcp.merge.test.ts`
+verify ▶ `REQ-auto-persist-merge` · `REQ-conflict-free-merge` · `REQ-post-merge-nodes` · `SCHEMA-branch-merge-report` · testRefs: `tests/mcp.merge.test.ts`
 
 ### 8.85  `TEST-merge-no-duplicate-edge` — Keine Doppelkante nach dem Verschmelzen
 
 Abnahme der Datei tests/mutate.merge-dedupe.test.ts: das Verschmelzen zweier Knoten fuehrt eine identische Kante nur einmal, unabhaengig von der Reihenfolge, und Speicher und Disk zaehlen danach dasselbe. Auch der kanonische Snapshot schreibt ein Tripel nie zweimal.
 
-verify ▶ `REQ-graph-integrity` · `REQ-post-merge-nodes` · testRefs: `tests/mutate.merge-dedupe.test.ts`
+verify ▶ `REQ-graph-integrity` · testRefs: `tests/mutate.merge-dedupe.test.ts`
 
 ### 8.86  `TEST-modulebene-reads-and-separates` — Modulebene-Skill nennt nur
 
@@ -12798,7 +12830,7 @@ verify ▶ `REQ-monotone-convergence` · testRefs: `tests/steering.process-ratch
 
 mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate)
 
-verify ▶ `REQ-confidence-tier` · `REQ-one-gate-per-repo` · `REQ-post-apply-gate` · `REQ-pre-apply-gate` · `REQ-rule-enforcement` · `REQ-structural-rule-shared` · testRefs: `tests/harness.gate.test.ts`
+verify ▶ `REQ-confidence-tier` · `REQ-one-gate-per-repo` · `REQ-post-apply-gate` · `REQ-rule-enforcement` · `REQ-structural-rule-shared` · testRefs: `tests/harness.gate.test.ts`
 
 ### 8.89  `TEST-mutate-input-formate` — Format-E als Eingabe am Gate
 
@@ -12822,7 +12854,7 @@ verify ▶ `REQ-token-efficiency` · testRefs: `tests/mcp.mutate-violations.test
 
 End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123)
 
-verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-based-testing` · `REQ-post-impact-testing` · `REQ-pre-impact-testing` · `REQ-precise-context` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-small-model-viable` · testRefs: `tests/mvp-e2e.test.ts`
+verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-based-testing` · `REQ-post-impact-testing` · `REQ-precise-context` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-small-model-viable` · testRefs: `tests/mvp-e2e.test.ts`
 
 ### 8.93  `TEST-nd-similarity` — Nah-Duplikate: Regeln und Hinweis vor dem Schreiben
 
@@ -13234,4 +13266,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-186 REQ · 186 verified · 0 without a verifying TEST (R-01).
+176 REQ · 176 verified · 0 without a verifying TEST (R-01).

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 447 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 448 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 447 CR · 343 done · 4 open.
+Total: 448 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -509,3 +509,4 @@ Total: 447 CR · 343 done · 4 open.
 | `CR-GC-835` | n/a | Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC |
 | `CR-GC-836` | n/a | Test-Ketten im Modell: graph_tests, graph_test_ingest und die npm-Spuren verify:code/verify:full in zwei Ketten vermischt; Skripte ohne FUNC |
 | `CR-GC-837` | n/a | Skill-, Dashboard- und HTTP-Host-Ketten im Modell: graph_help ohne FUNC, Dashboard ohne Ausloeser, serveHost/ownKuzu/health ohne Kette |
+| `CR-GC-838` | n/a | Zehn Pre/Post-REQ-Paare: Vorbedingung ist der Eingangsfluss, Nachbedingung die Anforderung; zusammenlegen, an die tragende FUNC haengen, Text an den Test |

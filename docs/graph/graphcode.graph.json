@@ -3586,6 +3586,12 @@
       "description": "docs/cr/open/CR-GC-837-skill-dashboard-und-http-host-ketten-im-.md"
     },
     {
+      "id": "CR-GC-838",
+      "type": "CR",
+      "name": "Zehn Pre/Post-REQ-Paare: Vorbedingung ist der Eingangsfluss, Nachbedingung die Anforderung; zusammenlegen, an die tragende FUNC haengen, Text an den Test",
+      "description": "docs/cr/open/CR-GC-838-zehn-pre-post-req-paare-vorbedingung-ist.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -7854,41 +7860,41 @@
     {
       "id": "REQ-post-agent-query",
       "type": "REQ",
-      "name": "Postcondition: Agent-Graph-Query (Impact + progressive Expansion)",
-      "description": "Exakter Subgraph als Format-E; on-demand vertieft; Graph read-only unverändert.",
+      "name": "Blast-Radius und Vertiefung",
+      "description": "graph_impact gibt genau die Abhaengigen eines Knotens (eingehende Kanten bis zur Tiefe) als gueltiges Format-E zurueck, kleiner als der ganze Graph; graph_expand vertieft auf Anfrage; Lesen aendert den Graphen nicht.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "non-functional"
+        "functional"
       ]
     },
     {
       "id": "REQ-post-apply-gate",
       "type": "REQ",
-      "name": "Postcondition: Apply-Gate-Ablauf (Governed Mutation)",
-      "description": "Gültige Ops persistiert oder bei error-Severity geblockt; consumerType geloggt; Live-Event + Trajectory emittiert.",
+      "name": "Gate persistiert oder blockt atomar",
+      "description": "Das Gate persistiert einen gueltigen Batch und blockt einen Batch mit Fehler oder strukturell unzulaessiger Kante atomar, ohne Teilpersistenz; das gilt auch fuer update-edge und merge-nodes.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "non-functional"
+        "functional"
       ]
     },
     {
       "id": "REQ-post-capture",
       "type": "REQ",
-      "name": "Postcondition: Interaktive Erfassung (Text → suggest-Tier)",
-      "description": "Format-E-Kandidaten im suggest-Tier durchs Gate; kein auto-apply; Review vor Persist.",
+      "name": "Erfassung nur durch das Gate",
+      "description": "Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate und dasselbe Gate wie jede andere Aenderung; graphcode extrahiert selbst nichts.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "non-functional"
+        "functional"
       ]
     },
     {
       "id": "REQ-post-emit-trajectory",
       "type": "REQ",
-      "name": "Postcondition: FUNC-emit-trajectory",
-      "description": "Trajectory/Outcome append-only nach .graphcode/*.jsonl, Format stabil. (CR-GC-330)",
+      "name": "Trajektorie gleich dem Operations-Log",
+      "description": "trajectory.jsonl haelt je Eintrag des Operations-Logs genau eine schemagueltige Zeile, auch fuer abgelehnte Batches mit der Zahl ihrer Befunde, und nach einem Neustart dieselben Zeilen.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -7898,8 +7904,8 @@
     {
       "id": "REQ-post-emit-update-event",
       "type": "REQ",
-      "name": "Postcondition: FUNC-emit-update-event",
-      "description": "Genau ein Live-Update-Event mit korrekten domains; ausschließlich read-only.",
+      "name": "Ein Live-Ereignis je Mutation",
+      "description": "Jede Mutation, auch eine geblockte, loest genau ein Live-Ereignis aus; seine Bereiche enthalten graph und readiness, bei einem Befund auch rules.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -7909,8 +7915,8 @@
     {
       "id": "REQ-post-export-markdown",
       "type": "REQ",
-      "name": "Postcondition: exportMarkdown(graph, view)",
-      "description": "Deterministische Markdown-Views mit GENERATED-Header; nie hand-editiert.",
+      "name": "Sichten deterministisch",
+      "description": "exportMarkdown rendert jede Sicht nicht leer, mit GENERATED-Kopf und Systemname, ueber zwei Laeufe byte-gleich; der JSON-Rundlauf ist byte-gleich.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -7921,8 +7927,8 @@
     {
       "id": "REQ-post-harness-cli",
       "type": "REQ",
-      "name": "Postcondition: graphcode init|update|remove",
-      "description": "Artefakte installiert/aktualisiert/restlos entfernt; idempotent; Store bei Update erhalten.",
+      "name": "Einrichten, Erneuern, Entfernen",
+      "description": "init, update und remove installieren, erneuern bzw. entfernen MCP-Konfiguration, Skills fuer Claude und OpenCode, Hooks und GRAPHCODE.md vollstaendig und lassen fremde Dateien stehen.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -7933,19 +7939,19 @@
     {
       "id": "REQ-post-impact-testing",
       "type": "REQ",
-      "name": "Postcondition: Impact-basierte Testauswahl",
-      "description": "Genau die betroffenen Tests ausgewählt (bottom-up); nicht betroffene ausgelassen.",
+      "name": "Testauswahl nach Impact",
+      "description": "Die Testauswahl zu einer geaenderten Anforderung enthaelt deren verifizierenden TEST; ausgewaehlt wird nur, was die Aenderung im Graphen erreicht.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "non-functional"
+        "functional"
       ]
     },
     {
       "id": "REQ-post-import",
       "type": "REQ",
-      "name": "Postcondition: importGraph(ontology, opts)",
-      "description": "Der Store traegt den Bestand; jede REQ ohne verifizierenden TEST ist gemeldet (oder der Import verweigert), jede Kante ohne Muster zurueckgehalten und benannt — nichts verschwindet still.",
+      "name": "Import mit Meldung",
+      "description": "importOntologyGraph schreibt den Bestand in den Store, meldet jede REQ ohne verifizierenden TEST und haelt jede Kante zurueck, die kein Muster mehr zulaesst.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -7956,8 +7962,8 @@
     {
       "id": "REQ-post-merge-nodes",
       "type": "REQ",
-      "name": "Postcondition: mergeNodes(graph)",
-      "description": "Conflict-free gemerged; keine verlorenen Knoten/Traces; deterministisch sortiert.",
+      "name": "Branch-Merge durch das Gate",
+      "description": "graph_merge spielt ein Branch-Log durch das Gate: disjunkte Chargen werden angewendet, eine Charge im Konflikt uebersprungen und berichtet, ein Probelauf aendert nichts, ein zweiter Merge ist idempotent.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -7973,119 +7979,6 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
-      ]
-    },
-    {
-      "id": "REQ-pre-agent-query",
-      "type": "REQ",
-      "name": "Precondition: Agent-Graph-Query (Impact + progressive Expansion)",
-      "description": "Graph geladen, MCP-Tools gebunden, elementId existiert.",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "non-functional"
-      ]
-    },
-    {
-      "id": "REQ-pre-apply-gate",
-      "type": "REQ",
-      "name": "Precondition: Apply-Gate-Ablauf (Governed Mutation)",
-      "description": "Harness initialisiert, Graph geladen, gültige MutateCommands liegen vor.",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "non-functional"
-      ]
-    },
-    {
-      "id": "REQ-pre-capture",
-      "type": "REQ",
-      "name": "Precondition: Interaktive Erfassung (Text → suggest-Tier)",
-      "description": "NL/Text-Eingang (chat-tauglich) + Agent verfügbar.",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "non-functional"
-      ]
-    },
-    {
-      "id": "REQ-pre-emit-trajectory",
-      "type": "REQ",
-      "name": "Precondition: FUNC-emit-trajectory",
-      "description": "Mutation erfolgreich applied (post-apply-Phase).",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "functional"
-      ]
-    },
-    {
-      "id": "REQ-pre-emit-update-event",
-      "type": "REQ",
-      "name": "Precondition: FUNC-emit-update-event",
-      "description": "Mutation committed; SSE/WS-Bridge verbunden.",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "functional"
-      ]
-    },
-    {
-      "id": "REQ-pre-export-markdown",
-      "type": "REQ",
-      "name": "Precondition: exportMarkdown(graph, view)",
-      "description": "Aktueller Graph (SSOT) geladen; View gewählt.",
-      "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "functional"
-      ],
-      "updated_at": "2026-06-18T00:00:00.000Z"
-    },
-    {
-      "id": "REQ-pre-harness-cli",
-      "type": "REQ",
-      "name": "Precondition: graphcode init|update|remove",
-      "description": "Repo vorhanden, npx/Node verfügbar.",
-      "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "functional"
-      ],
-      "updated_at": "2026-06-18T00:00:00.000Z"
-    },
-    {
-      "id": "REQ-pre-impact-testing",
-      "type": "REQ",
-      "name": "Precondition: Impact-basierte Testauswahl",
-      "description": "Geändertes Element bekannt; Graph geladen.",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "non-functional"
-      ]
-    },
-    {
-      "id": "REQ-pre-import",
-      "type": "REQ",
-      "name": "Precondition: importGraph(ontology, opts)",
-      "description": "Ein materialisierter OntologyGraph (elements/traces) liegt vor — typischerweise der committete Snapshot docs/graph/<system>.graph.json.",
-      "status": "done",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "functional"
-      ],
-      "updated_at": "2026-06-18T00:00:00.000Z"
-    },
-    {
-      "id": "REQ-pre-merge-nodes",
-      "type": "REQ",
-      "name": "Precondition: mergeNodes(graph)",
-      "description": "Zwei (oder mehr) Branch-Versionen des committed Graph-Artefakts.",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "functional"
       ]
     },
     {
@@ -12709,13 +12602,6 @@
       "created_at": "2026-06-17T00:00:00.000Z"
     },
     {
-      "source": "CR-GC-112",
-      "target": "REQ-pre-harness-cli",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
       "source": "CR-GC-113",
       "target": "FUNC-export-markdown",
       "type": "relation",
@@ -12744,13 +12630,6 @@
     {
       "source": "CR-GC-113",
       "target": "REQ-post-export-markdown",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-17T00:00:00.000Z"
-    },
-    {
-      "source": "CR-GC-113",
-      "target": "REQ-pre-export-markdown",
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-17T00:00:00.000Z"
@@ -17312,6 +17191,56 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-838",
+      "target": "REQ-post-agent-query",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-838",
+      "target": "REQ-post-apply-gate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-838",
+      "target": "REQ-post-capture",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-838",
+      "target": "REQ-post-emit-trajectory",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-838",
+      "target": "REQ-post-emit-update-event",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-838",
+      "target": "REQ-post-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-838",
+      "target": "REQ-post-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-838",
+      "target": "REQ-post-impact-testing",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-838",
+      "target": "REQ-post-import",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-838",
+      "target": "REQ-post-merge-nodes",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -17394,20 +17323,6 @@
       "source": "FCHAIN-agent-query",
       "target": "FUNC-read-tools",
       "type": "compose"
-    },
-    {
-      "source": "FCHAIN-agent-query",
-      "target": "REQ-post-agent-query",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-agent-query",
-      "target": "REQ-pre-agent-query",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FCHAIN-agent-query",
@@ -17497,22 +17412,8 @@
     },
     {
       "source": "FCHAIN-apply-gate",
-      "target": "REQ-post-apply-gate",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
       "target": "REQ-post-modelfree-gate",
       "type": "satisfy"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
-      "target": "REQ-pre-apply-gate",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -17559,20 +17460,6 @@
       "source": "FCHAIN-capture",
       "target": "REQ-interactive-capture-suggest",
       "type": "satisfy"
-    },
-    {
-      "source": "FCHAIN-capture",
-      "target": "REQ-post-capture",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-capture",
-      "target": "REQ-pre-capture",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FCHAIN-dashboard-metrics",
@@ -17938,20 +17825,6 @@
       "source": "FCHAIN-impact-testing",
       "target": "FUNC-select-tests",
       "type": "compose"
-    },
-    {
-      "source": "FCHAIN-impact-testing",
-      "target": "REQ-post-impact-testing",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-impact-testing",
-      "target": "REQ-pre-impact-testing",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FCHAIN-live-update",
@@ -22793,13 +22666,6 @@
     },
     {
       "source": "FUNC-emit-trajectory",
-      "target": "REQ-pre-emit-trajectory",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-emit-trajectory",
       "target": "REQ-trajectory-emit",
       "type": "satisfy",
       "weight": 1,
@@ -22820,13 +22686,6 @@
     {
       "source": "FUNC-emit-update-event",
       "target": "REQ-post-emit-update-event",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-emit-update-event",
-      "target": "REQ-pre-emit-update-event",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -22880,13 +22739,6 @@
     {
       "source": "FUNC-export-markdown",
       "target": "REQ-post-export-markdown",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-export-markdown",
-      "target": "REQ-pre-export-markdown",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -23248,6 +23100,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-graph-mutate-tool",
+      "target": "REQ-post-capture",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-graph-readiness",
       "target": "MOD-projections",
       "type": "allocate"
@@ -23430,13 +23287,6 @@
     },
     {
       "source": "FUNC-harness-cli",
-      "target": "REQ-pre-harness-cli",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-harness-cli",
       "target": "REQ-repo-install",
       "type": "satisfy",
       "weight": 1,
@@ -23568,13 +23418,6 @@
     {
       "source": "FUNC-import",
       "target": "REQ-post-import",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-import",
-      "target": "REQ-pre-import",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -23722,13 +23565,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "FUNC-merge-nodes",
-      "target": "REQ-pre-merge-nodes",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
       "source": "FUNC-module-metrics",
       "target": "MOD-projections",
       "type": "allocate"
@@ -23793,6 +23629,11 @@
     {
       "source": "FUNC-mutate",
       "target": "REQ-gate-survives-rule-failure",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-mutate",
+      "target": "REQ-post-apply-gate",
       "type": "satisfy"
     },
     {
@@ -23894,6 +23735,11 @@
       "source": "FUNC-read-tools",
       "target": "FLOW-read-request",
       "type": "io"
+    },
+    {
+      "source": "FUNC-read-tools",
+      "target": "REQ-post-agent-query",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-read-tools",
@@ -24345,6 +24191,11 @@
     {
       "source": "FUNC-select-tests",
       "target": "REQ-graph-tests-operational",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-select-tests",
+      "target": "REQ-post-impact-testing",
       "type": "satisfy"
     },
     {
@@ -25464,16 +25315,6 @@
     },
     {
       "source": "SYS-graphcode",
-      "target": "REQ-pre-export-markdown",
-      "type": "compose"
-    },
-    {
-      "source": "SYS-graphcode",
-      "target": "REQ-pre-harness-cli",
-      "type": "compose"
-    },
-    {
-      "source": "SYS-graphcode",
       "target": "REQ-precommit-timeout",
       "type": "compose"
     },
@@ -25749,16 +25590,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "source": "TEST-bootstrap",
-      "target": "REQ-post-import",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-bootstrap",
-      "target": "REQ-pre-import",
-      "type": "verify"
-    },
-    {
       "source": "TEST-bridge-follows-lock",
       "target": "REQ-readonly-bridge",
       "type": "verify"
@@ -25796,11 +25627,6 @@
       "type": "verify"
     },
     {
-      "source": "TEST-capture",
-      "target": "REQ-pre-capture",
-      "type": "verify"
-    },
-    {
       "source": "TEST-claude-md-toolsearch",
       "target": "REQ-published-counts-match-code",
       "type": "verify"
@@ -25815,13 +25641,6 @@
     {
       "source": "TEST-cli-scaffold",
       "target": "REQ-post-harness-cli",
-      "type": "verify",
-      "weight": 1,
-      "created_at": "2026-06-18T00:00:00.000Z"
-    },
-    {
-      "source": "TEST-cli-scaffold",
-      "target": "REQ-pre-harness-cli",
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
@@ -26007,11 +25826,6 @@
     {
       "source": "TEST-doc-export",
       "target": "REQ-post-export-markdown",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-doc-export",
-      "target": "REQ-pre-export-markdown",
       "type": "verify"
     },
     {
@@ -26332,11 +26146,6 @@
     },
     {
       "source": "TEST-impact-subgraph",
-      "target": "REQ-pre-agent-query",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-impact-subgraph",
       "target": "REQ-progressive-expansion",
       "type": "verify"
     },
@@ -26471,11 +26280,6 @@
     },
     {
       "source": "TEST-learning-emit",
-      "target": "REQ-pre-emit-trajectory",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-learning-emit",
       "target": "REQ-trajectory-emit",
       "type": "verify",
       "weight": 1,
@@ -26503,11 +26307,6 @@
     {
       "source": "TEST-live-view",
       "target": "REQ-post-emit-update-event",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-live-view",
-      "target": "REQ-pre-emit-update-event",
       "type": "verify"
     },
     {
@@ -26642,22 +26441,12 @@
     },
     {
       "source": "TEST-merge",
-      "target": "REQ-pre-merge-nodes",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-merge",
       "target": "SCHEMA-branch-merge-report",
       "type": "verify"
     },
     {
       "source": "TEST-merge-no-duplicate-edge",
       "target": "REQ-graph-integrity",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-merge-no-duplicate-edge",
-      "target": "REQ-post-merge-nodes",
       "type": "verify"
     },
     {
@@ -26685,11 +26474,6 @@
     {
       "source": "TEST-mutate-gate",
       "target": "REQ-post-apply-gate",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-mutate-gate",
-      "target": "REQ-pre-apply-gate",
       "type": "verify"
     },
     {
@@ -26769,11 +26553,6 @@
     {
       "source": "TEST-mvp-e2e",
       "target": "REQ-post-impact-testing",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-mvp-e2e",
-      "target": "REQ-pre-impact-testing",
       "type": "verify"
     },
     {
@@ -27582,26 +27361,6 @@
     },
     {
       "source": "UC-code-quality",
-      "target": "REQ-pre-apply-gate",
-      "type": "compose"
-    },
-    {
-      "source": "UC-code-quality",
-      "target": "REQ-pre-capture",
-      "type": "compose"
-    },
-    {
-      "source": "UC-code-quality",
-      "target": "REQ-pre-emit-trajectory",
-      "type": "compose"
-    },
-    {
-      "source": "UC-code-quality",
-      "target": "REQ-pre-import",
-      "type": "compose"
-    },
-    {
-      "source": "UC-code-quality",
       "target": "REQ-published-counts-match-code",
       "type": "compose"
     },
@@ -27835,11 +27594,6 @@
     },
     {
       "source": "UC-efficient-testing",
-      "target": "REQ-pre-impact-testing",
-      "type": "compose"
-    },
-    {
-      "source": "UC-efficient-testing",
       "target": "REQ-risk-selection-misses-red-test",
       "type": "compose"
     },
@@ -27903,11 +27657,6 @@
     {
       "source": "UC-graph-time-travel",
       "target": "REQ-post-merge-nodes",
-      "type": "compose"
-    },
-    {
-      "source": "UC-graph-time-travel",
-      "target": "REQ-pre-merge-nodes",
       "type": "compose"
     },
     {
@@ -27996,11 +27745,6 @@
     {
       "source": "UC-live-graph-view",
       "target": "REQ-post-emit-update-event",
-      "type": "compose"
-    },
-    {
-      "source": "UC-live-graph-view",
-      "target": "REQ-pre-emit-update-event",
       "type": "compose"
     },
     {
@@ -28133,11 +27877,6 @@
     },
     {
       "source": "UC-reduced-llm",
-      "target": "REQ-pre-agent-query",
-      "type": "compose"
-    },
-    {
-      "source": "UC-reduced-llm",
       "target": "REQ-progressive-expansion",
       "type": "compose"
     },
@@ -28208,11 +27947,6 @@
     },
     {
       "source": "UC-repo-lifecycle",
-      "target": "REQ-pre-harness-cli",
-      "type": "compose"
-    },
-    {
-      "source": "UC-repo-lifecycle",
       "target": "REQ-repo-update",
       "type": "compose",
       "weight": "1"
@@ -28238,5 +27972,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 830
+  "graphVersion": 834
 }

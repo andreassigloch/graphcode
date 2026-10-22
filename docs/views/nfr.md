@@ -4,7 +4,7 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 85 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 77 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
@@ -45,15 +45,7 @@
 | `REQ-mutation-emits-event` | CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich. | ✓ |
 | `REQ-no-extraction` | Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS) | ✓ |
 | `REQ-phase-gate-not-skippable` | Das aktuelle Phasen-Gate benennt, was bis zur Regel-Vollstaendigkeit fehlt. Die Reihenfolge blockt nie: Ebenen und Phasen darf der Nutzer ueberspringen, Architektur und Optimizer stehen ab dem ersten Zug offen (Leitlinie Satz 5). Blocken kann allein eine Regel an der Schreiboperation. Modell dem Code voraus: heute haelt der Handoff noch an (ITEM-2026-140). | ✓ |
-| `REQ-post-agent-query` | Exakter Subgraph als Format-E; on-demand vertieft; Graph read-only unverändert. | ✓ |
-| `REQ-post-apply-gate` | Gültige Ops persistiert oder bei error-Severity geblockt; consumerType geloggt; Live-Event + Trajectory emittiert. | ✓ |
-| `REQ-post-capture` | Format-E-Kandidaten im suggest-Tier durchs Gate; kein auto-apply; Review vor Persist. | ✓ |
-| `REQ-post-impact-testing` | Genau die betroffenen Tests ausgewählt (bottom-up); nicht betroffene ausgelassen. | ✓ |
 | `REQ-post-modelfree-gate` | Apply, Block, Regelpruefung und Readiness laufen ohne Netzwerk- oder Modellaufruf und geben bei gleichem Graphen und gleichem Batch in zwei Laeufen dasselbe Urteil. | ✓ |
-| `REQ-pre-agent-query` | Graph geladen, MCP-Tools gebunden, elementId existiert. | ✓ |
-| `REQ-pre-apply-gate` | Harness initialisiert, Graph geladen, gültige MutateCommands liegen vor. | ✓ |
-| `REQ-pre-capture` | NL/Text-Eingang (chat-tauglich) + Agent verfügbar. | ✓ |
-| `REQ-pre-impact-testing` | Geändertes Element bekannt; Graph geladen. | ✓ |
 | `REQ-precise-context` | Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression. | ✓ |
 | `REQ-precommit-timeout` | CR-GC-102: pre-commit-Hook kann eine Mutation blocken; preCommitTimeout (default 5000ms). | ✓ |
 | `REQ-prompt-provenance` | Jede Gate-Entscheidung ist ihrem Urheber, also Session und Modell, und ihrem ausloesenden Prompt im Wortlaut zuordenbar. Die Aufzeichnung ist abgeleitet, nie vom Konsumenten deklariert, und Abwesenheit bedeutet nicht aufgezeichnet, nie leerer Prompt. (CR-GC-354) | ✓ |

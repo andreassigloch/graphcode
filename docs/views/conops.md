@@ -173,8 +173,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-109` | done | Live-Event + View-Contract → contracts | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `REQ-live-event-in-contracts` · `REQ-versioned-broadcast` |
 | `CR-GC-110` | done | views.ts → graph-api-core; BQ-Fork retiren | `FUNC-render-views` · `MOD-projections` · `REQ-shared-views-no-fork` |
 | `CR-GC-111` | done | MCP-stdio-Server + bin (graphcode mcp) | `FUNC-serve-stdio` · `MOD-surface` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` |
-| `CR-GC-112` | done | CLI graphcode init/update/remove | `FUNC-harness-cli` · `MOD-surface` · `REQ-post-harness-cli` · `REQ-pre-harness-cli` |
-| `CR-GC-113` | done | Graph→Markdown Re-Exporter | `FUNC-export-markdown` · `MOD-projections` · `REQ-doc-export` · `REQ-post-export-markdown` · `REQ-pre-export-markdown` |
+| `CR-GC-112` | done | CLI graphcode init/update/remove | `FUNC-harness-cli` · `MOD-surface` · `REQ-post-harness-cli` |
+| `CR-GC-113` | done | Graph→Markdown Re-Exporter | `FUNC-export-markdown` · `MOD-projections` · `REQ-doc-export` · `REQ-post-export-markdown` |
 | `CR-GC-114` | done | Host + SSE/WS-Bridge | `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · `MOD-surface` · `REQ-mutation-emits-event` · `REQ-readonly-bridge` · `REQ-versioned-broadcast` |
 | `CR-GC-115` | done | Dashboard-Viewer-App (Hybrid) | `MOD-dashboard` · `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-real-health-check` · `UC-live-graph-view` |
 | `CR-GC-116` | done | Views/Skills an Live-Graph verdrahten | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · `MOD-agent-surface` |
@@ -466,6 +466,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-835` | n/a | Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC | `FUNC-auto-export` · `FUNC-export-markdown` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-graph-reseed-tool` · `FUNC-held-back-traces` · `FUNC-import-code-verb` · `FUNC-mutate` |
 | `CR-GC-836` | n/a | Test-Ketten im Modell: graph_tests, graph_test_ingest und die npm-Spuren verify:code/verify:full in zwei Ketten vermischt; Skripte ohne FUNC | `FUNC-deduce-tests` · `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `FUNC-resolve-tests-from-code` · `FUNC-select-tests` · `FUNC-test-ingest` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
 | `CR-GC-837` | n/a | Skill-, Dashboard- und HTTP-Host-Ketten im Modell: graph_help ohne FUNC, Dashboard ohne Ausloeser, serveHost/ownKuzu/health ohne Kette | `FUNC-author-actor` · `FUNC-graph-help` · `FUNC-graph-metrics` · `FUNC-health-endpoint` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · `FUNC-se-umbau` · `FUNC-serve-sse` |
+| `CR-GC-838` | n/a | Zehn Pre/Post-REQ-Paare: Vorbedingung ist der Eingangsfluss, Nachbedingung die Anforderung; zusammenlegen, an die tragende FUNC haengen, Text an den Test | `REQ-post-agent-query` · `REQ-post-apply-gate` · `REQ-post-capture` · `REQ-post-emit-trajectory` · `REQ-post-emit-update-event` · `REQ-post-export-markdown` · `REQ-post-harness-cli` · `REQ-post-impact-testing` · `REQ-post-import` · `REQ-post-merge-nodes` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

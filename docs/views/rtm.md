@@ -4,10 +4,10 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 186 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 176 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
-### System (SYS.2) — 54 REQ
+### System (SYS.2) — 52 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -43,8 +43,6 @@
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-cli-dispatch` · `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-post-export-markdown` | `TEST-doc-export` | `FUNC-export-markdown` | `MOD-projections` |
 | `REQ-post-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
-| `REQ-pre-export-markdown` | `TEST-doc-export` | `FUNC-export-markdown` | `MOD-projections` |
-| `REQ-pre-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-precise-context` | `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | `FCHAIN-agent-query` | — |
 | `REQ-precommit-timeout` | `TEST-hooks` | `MOD-kernel` | — |
 | `REQ-readiness-model` | `TEST-readiness-model` · `TEST-views-auditor` | `FUNC-compute-readiness` | `MOD-kernel-measure` |
@@ -66,7 +64,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-help-contextual-dedup` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 134 REQ
+### funktional (SWE.1 · HWE.1) — 125 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -130,25 +128,16 @@
 | `REQ-one-gate-per-repo` | `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-store-lock` | — | — |
 | `REQ-optimize-probes-and-presents` | `TEST-optimize-presents-impact` | `FUNC-se-optimize` | `MOD-agent-surface` |
 | `REQ-phase-gate-not-skippable` | `TEST-phase-gate-not-skippable` | `MOD-loop` | — |
-| `REQ-post-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
-| `REQ-post-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
-| `REQ-post-capture` | `TEST-capture` | `FCHAIN-capture` | — |
+| `REQ-post-agent-query` | `TEST-impact-subgraph` | `FUNC-read-tools` | `MOD-surface` |
+| `REQ-post-apply-gate` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
+| `REQ-post-capture` | `TEST-capture` | `FUNC-graph-mutate-tool` | `MOD-surface` |
 | `REQ-post-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |
 | `REQ-post-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-surface` |
 | `REQ-post-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
-| `REQ-post-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
-| `REQ-post-import` | `TEST-bootstrap` · `TEST-import-code-verb` | `FUNC-import` | `MOD-kernel` |
-| `REQ-post-merge-nodes` | `TEST-merge` · `TEST-merge-no-duplicate-edge` | `FUNC-merge-nodes` | `MOD-kernel` |
+| `REQ-post-impact-testing` | `TEST-mvp-e2e` | `FUNC-select-tests` | `MOD-kernel-measure` |
+| `REQ-post-import` | `TEST-import-code-verb` | `FUNC-import` | `MOD-kernel` |
+| `REQ-post-merge-nodes` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-kernel` |
 | `REQ-post-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-apply-gate` | — |
-| `REQ-pre-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
-| `REQ-pre-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
-| `REQ-pre-capture` | `TEST-capture` | `FCHAIN-capture` | — |
-| `REQ-pre-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |
-| `REQ-pre-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-surface` |
-| `REQ-pre-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
-| `REQ-pre-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
-| `REQ-pre-import` | `TEST-bootstrap` | `FUNC-import` | `MOD-kernel` |
-| `REQ-pre-merge-nodes` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-kernel` |
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` · `FUNC-read-tools` | `MOD-kernel` · `MOD-surface` |
 | `REQ-prompt-provenance` | `TEST-prompt-provenance` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-published-counts-match-code` | `TEST-claude-md-toolsearch` · `TEST-published-counts-match-code` · `TEST-skill-kinds-werte` · `TEST-skill-rule-ids` | — | — |
@@ -205,7 +194,7 @@
 | `REQ-vorbereitung-reads-metrics` | `TEST-vorbereitung-reads-metrics` | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `REQ-zug-zeigt-kennzahlen-danach` | `TEST-zug-kennzahlen-danach` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 
-### Architektur (SYS.3 · SWE.2) — 61 REQ
+### Architektur (SYS.3 · SWE.2) — 53 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -235,15 +224,7 @@
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | `FCHAIN-steering-loop` | — |
 | `REQ-mutation-emits-event` | `TEST-create-harness-smoke` · `TEST-live-view` | `FCHAIN-live-update` | — |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` | — |
-| `REQ-post-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
-| `REQ-post-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
-| `REQ-post-capture` | `TEST-capture` | `FCHAIN-capture` | — |
-| `REQ-post-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-post-modelfree-gate` | `TEST-reduced-llm` | `FCHAIN-apply-gate` | — |
-| `REQ-pre-agent-query` | `TEST-impact-subgraph` | `FCHAIN-agent-query` | — |
-| `REQ-pre-apply-gate` | `TEST-mutate-gate` | `FCHAIN-apply-gate` | — |
-| `REQ-pre-capture` | `TEST-capture` | `FCHAIN-capture` | — |
-| `REQ-pre-impact-testing` | `TEST-mvp-e2e` | `FCHAIN-impact-testing` | — |
 | `REQ-precise-context` | `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | `FCHAIN-agent-query` | — |
 | `REQ-prompt-provenance` | `TEST-prompt-provenance` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
@@ -271,7 +252,7 @@
 | `REQ-steering-promise-one-owner` | `TEST-steering-promise-one-owner` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 135 REQ
+### Entwurf (SWE.3 · HWE.2) — 133 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -346,18 +327,16 @@
 | `REQ-open-point-asked` | `TEST-deny-headless-question` | `FUNC-se-generate` | `MOD-agent-surface` |
 | `REQ-optimize-probes-and-presents` | `TEST-optimize-presents-impact` | `FUNC-se-optimize` | `MOD-agent-surface` |
 | `REQ-phase-gate-not-skippable` | `TEST-phase-gate-not-skippable` | `MOD-loop` | — |
+| `REQ-post-agent-query` | `TEST-impact-subgraph` | `FUNC-read-tools` | `MOD-surface` |
+| `REQ-post-apply-gate` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
+| `REQ-post-capture` | `TEST-capture` | `FUNC-graph-mutate-tool` | `MOD-surface` |
 | `REQ-post-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |
 | `REQ-post-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-surface` |
 | `REQ-post-export-markdown` | `TEST-doc-export` | `FUNC-export-markdown` | `MOD-projections` |
 | `REQ-post-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
-| `REQ-post-import` | `TEST-bootstrap` · `TEST-import-code-verb` | `FUNC-import` | `MOD-kernel` |
-| `REQ-post-merge-nodes` | `TEST-merge` · `TEST-merge-no-duplicate-edge` | `FUNC-merge-nodes` | `MOD-kernel` |
-| `REQ-pre-emit-trajectory` | `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |
-| `REQ-pre-emit-update-event` | `TEST-live-view` | `FUNC-emit-update-event` | `MOD-surface` |
-| `REQ-pre-export-markdown` | `TEST-doc-export` | `FUNC-export-markdown` | `MOD-projections` |
-| `REQ-pre-harness-cli` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
-| `REQ-pre-import` | `TEST-bootstrap` | `FUNC-import` | `MOD-kernel` |
-| `REQ-pre-merge-nodes` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-kernel` |
+| `REQ-post-impact-testing` | `TEST-mvp-e2e` | `FUNC-select-tests` | `MOD-kernel-measure` |
+| `REQ-post-import` | `TEST-import-code-verb` | `FUNC-import` | `MOD-kernel` |
+| `REQ-post-merge-nodes` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-kernel` |
 | `REQ-precommit-timeout` | `TEST-hooks` | `MOD-kernel` | — |
 | `REQ-progressive-expansion` | `TEST-impact-subgraph` | `FUNC-graph-expand` · `FUNC-read-tools` | `MOD-kernel` · `MOD-surface` |
 | `REQ-prompt-provenance` | `TEST-prompt-provenance` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
