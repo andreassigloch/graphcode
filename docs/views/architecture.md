@@ -74,8 +74,9 @@
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
 | `FUNC-health-endpoint` | FUNC | healthEndpoint() |
 | `FUNC-held-back-traces` | FUNC | heldBackTraces(repoRoot, systemId, live) |
+| `FUNC-host-proxy` | FUNC | buildProxyRegistry (Stellvertreter) |
 | `FUNC-host-socket` | FUNC | Host-Socket (angedockte Sitzung) |
-| `FUNC-import` | FUNC | importGraph(ontology, opts) |
+| `FUNC-import` | FUNC | importOntologyGraph(target, ontology) |
 | `FUNC-import-code` | FUNC | Skill se:import-code |
 | `FUNC-import-code-verb` | FUNC | executeImportCode |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
@@ -85,6 +86,7 @@
 | `FUNC-merge-nodes` | FUNC | replayBranchLog(log, sinceVersion) |
 | `FUNC-module-metrics` | FUNC | moduleMetrics(graph) |
 | `FUNC-mutate` | FUNC | mutate(commands) |
+| `FUNC-open-store` | FUNC | GraphStore.open() |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-plan-code-lane` | FUNC | Code-Spur planen |
 | `FUNC-read-tools` | FUNC | bindReadTools(ctx) |
@@ -110,7 +112,7 @@
 | `FUNC-se-top-level` | FUNC | Skill se:top-level |
 | `FUNC-se-trade` | FUNC | Skill se-trade |
 | `FUNC-se-vorbereitung` | FUNC | Skill se-vorbereitung |
-| `FUNC-seed-from-json` | FUNC | seedFromJson(relPath) |
+| `FUNC-seed-from-json` | FUNC | seedFromJsonFile(target, relPath) |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-session-shutdown` | FUNC | SessionLifecycle |
@@ -207,6 +209,7 @@
 | `FUNC-harness-cli` | `MOD-surface` |
 | `FUNC-health-endpoint` | `MOD-surface` |
 | `FUNC-held-back-traces` | `MOD-kernel` |
+| `FUNC-host-proxy` | `MOD-surface` |
 | `FUNC-host-socket` | `MOD-surface` |
 | `FUNC-import` | `MOD-kernel` |
 | `FUNC-import-code` | `MOD-agent-surface` |
@@ -218,6 +221,7 @@
 | `FUNC-merge-nodes` | `MOD-kernel` |
 | `FUNC-module-metrics` | `MOD-projections` |
 | `FUNC-mutate` | `MOD-kernel` |
+| `FUNC-open-store` | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | `MOD-kernel` |
 | `FUNC-plan-code-lane` | `MOD-projections` |
 | `FUNC-read-tools` | `MOD-surface` |

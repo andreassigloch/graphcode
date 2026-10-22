@@ -93,7 +93,7 @@ Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstelle
 Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-agent-loop` → `FUNC-evaluate-rules` → `FUNC-graph-merge-tool` → `FUNC-graph-store` → `FUNC-merge-nodes` → `FUNC-mutate` → `FUNC-tool-context`
-- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-import` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
+- `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-import` → `FUNC-open-store` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
 - `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-agent-loop` → `FUNC-auto-export` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
 - `FCHAIN-snapshot-roundtrip` — Snapshot-Rundreise: `FUNC-agent-loop` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-import` → `FUNC-seed-from-json`
 
@@ -140,8 +140,11 @@ Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung
 
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-regelhalter`
 
-- `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-host-socket` → `FUNC-import` → `FUNC-mutate` → `FUNC-seed-from-json` → `FUNC-serve-stdio` → `FUNC-session-shutdown` → `FUNC-tool-context` → `FUNC-upgrade`
-- `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-graph-store` → `FUNC-schema-guard`
+- `FCHAIN-docked-session` — Angedockte Sitzung: `FUNC-agent-loop` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-host-proxy` → `FUNC-host-socket` → `FUNC-mutate`
+- `FCHAIN-host-start` — Host starten: `FUNC-agent-loop` → `FUNC-apply-reseed` → `FUNC-auto-export` → `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-host-socket` → `FUNC-import` → `FUNC-load-config` → `FUNC-open-store` → `FUNC-schema-guard` → `FUNC-seed-from-json` → `FUNC-serve-stdio` → `FUNC-tool-context`
+- `FCHAIN-repo-lifecycle` — Repo einrichten und aktualisieren: `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-harness-cli` → `FUNC-upgrade`
+- `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-apply-reseed` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-graph-store` → `FUNC-import` → `FUNC-open-store` → `FUNC-schema-guard` → `FUNC-seed-from-json` → `FUNC-serve-stdio`
+- `FCHAIN-session-end` — Sitzung beenden: `FUNC-auto-export` → `FUNC-claim-store-lock` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-host-socket` → `FUNC-session-shutdown`
 
 ## 5  Modes of operation
 
@@ -456,6 +459,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-831` | n/a | Schema-Migration: Store-Neuaufbau ist still, migrateSchema gibt es nicht | `FUNC-graph-store` · `FUNC-schema-guard` · `REQ-schema-version-migration` |
 | `CR-GC-832` | n/a | Schreibweg im Modell umgeht das graph_mutate-Werkzeug; Ketten modelfree-gate und interface-escalation sind Eigenschaften, kein Ablauf | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-decode` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-tool-context` · `FUNC-zug-bericht` |
 | `CR-GC-833` | n/a | Leseweg und Fuehrung im Modell umgehen die MCP-Werkzeuge; graph_generate ohne FUNC; Learning-Engine nicht gebaut | `FUNC-compute-readiness` · `FUNC-generation-step` · `FUNC-graph-generate-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-take-steering-snapshot` |
+| `CR-GC-834` | n/a | Start, Sitzungsende und Store-Oeffnen im Modell: repo-lifecycle mischt fuenf Ablaeufe, Startmeldung haengt am GraphStore in 18 Ketten | `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-proxy` · `FUNC-import` · `FUNC-open-store` · `FUNC-seed-from-json` · `FUNC-serve-stdio` · `FUNC-session-shutdown` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

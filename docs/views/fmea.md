@@ -21,11 +21,11 @@
 | 9 | Risiko Auswertung ohne Verantwortlichen | `FCHAIN-loop-closure` | 5 | 3 | 6 | 90 | Medium | `FUNC-audit-stats` · `FUNC-audit-trail` | ✓ |
 | 10 | Risiko Stufenname ohne Wertebereich | `FCHAIN-steering-loop` | 5 | 3 | 6 | 90 | Medium | `FUNC-take-steering-snapshot` | ✗ |
 | 11 | Risiko Delta fehlt in der Antwort | `FCHAIN-steering-loop` | 5 | 3 | 5 | 75 | Medium | `FUNC-compute-steering-delta` | ✗ |
-| 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-repo-lifecycle` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
+| 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-host-start` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
 | 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-impact-testing` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` | ✓ |
 | 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | `FUNC-export-marker` | ✓ |
 | 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | `FUNC-held-back-traces` | ✓ |
-| 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-repo-lifecycle` | 7 | 2 | 3 | 42 | Medium | `FUNC-host-socket` | ✓ |
+| 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-session-end` | 7 | 2 | 3 | 42 | Medium | `FUNC-host-socket` | ✓ |
 | 17 | Risiko halb gefuellter Store nach Abbruch | `FCHAIN-recall` | 6 | 2 | 3 | 36 | Low | `FUNC-graph-export-snapshot` | ✓ |
 | 18 | Risiko Regelauswertung faellt im Gate aus | — | 8 | 2 | 2 | 32 | Low | `FUNC-mutate` | ✗ |
 | 19 | Risiko Skill weist abgelehnten Zug an | `FCHAIN-skill-authoring` | 4 | 4 | 2 | 32 | Low | — | ✗ |
@@ -246,7 +246,7 @@ Das Delta der Steuerung fehlt oder ist falsch in der Antwort auf einen Zug. Der 
 Der Client arbeitet mit der Werkzeugliste vom Sitzungsstart. Eine neue Eingabe eines Werkzeugs ist in der laufenden Sitzung nicht erreichbar.
 
 - **Bewertung:** S 4 · O 3 · D 6 · RPN 72 · AP Medium
-- **Kette:** `FCHAIN-repo-lifecycle`
+- **Kette:** `FCHAIN-host-start`
 - **Anwendungsfall:** `UC-repo-lifecycle`
 - **Träger:** —
 - **Befund:** FMEA CR-GC-798 FM-14, Quelle A Import FLOW-mcp-tool. Einmal beobachtet am 2026-10-12. Der Host meldet keine Aenderung der Liste. Entscheidung des Autors: gelassen, ohne Gegenmassnahme; ITEM-2026-862.
@@ -322,7 +322,7 @@ Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell.
 Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine angedockte Sitzung verliert das Schreiben.
 
 - **Bewertung:** S 7 · O 2 · D 3 · RPN 42 · AP Medium
-- **Kette:** `FCHAIN-repo-lifecycle`
+- **Kette:** `FCHAIN-session-end`
 - **Anwendungsfall:** `UC-repo-lifecycle`
 - **Träger:** `FUNC-host-socket`
 - **Befund:** FMEA CR-GC-798 FM-19, Quelle E Kreislauf aus FUNC-claim-store-lock und FUNC-session-shutdown. Genau ein Neuwahlversuch. Entscheidung: gedeckt durch REQ-store-owner-lifecycle, das fuenf Erfueller hat.

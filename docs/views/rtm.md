@@ -38,7 +38,7 @@
 | `REQ-import-se-ontology` | `TEST-dashboard-ontology-sync` · `TEST-graph-authoring-guide` | `MOD-kernel` | — |
 | `REQ-install-idempotent` | `TEST-cli-scaffold` · `TEST-upgrade` | `MOD-surface` | — |
 | `REQ-interface-schema` | `TEST-readiness-completeness` | `MOD-projections` | — |
-| `REQ-mcp-tool-registry` | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-loop` · `MOD-projections` · `MOD-surface` |
+| `REQ-mcp-tool-registry` | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-loop` · `MOD-projections` · `MOD-surface` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` | — |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-cli-dispatch` · `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-post-export-markdown` | `TEST-doc-export` | `FUNC-export-markdown` | `MOD-projections` |
@@ -56,7 +56,7 @@
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
 | `REQ-risk-gate-rule-eval-fails` | `TEST-gate-survives-rule-failure` | `MOD-kernel` | — |
 | `REQ-risk-store-unreadable` | `TEST-store-recovery` | `MOD-kernel` | — |
-| `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-graph-store` · `FUNC-schema-guard` | `MOD-kernel` |
+| `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-open-store` · `FUNC-schema-guard` | `MOD-kernel` |
 | `REQ-self-contained-dist` | `TEST-distribution` | `MOD-surface` | — |
 | `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `MOD-kernel` | — |
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-kernel` | — |
@@ -161,13 +161,13 @@
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-surface` |
 | `REQ-risk-audit-evaluation-unowned` | `TEST-audit-trail-projection` | `FCHAIN-loop-closure` | — |
 | `REQ-risk-auto-export-fails-silently` | `TEST-auto-export` | `FCHAIN-snapshot-freshness` | — |
-| `REQ-risk-client-holds-stale-tool-list` | `TEST-tool-list-change-announced` | `FCHAIN-repo-lifecycle` | — |
+| `REQ-risk-client-holds-stale-tool-list` | `TEST-tool-list-change-announced` | `FCHAIN-host-start` | — |
 | `REQ-risk-edge-vanishes-silently` | `TEST-import-rejected-traces` | `FCHAIN-recall` | — |
 | `REQ-risk-interface-change-unescalated` | `TEST-interface-escalation` | — | — |
 | `REQ-risk-loop-degradation` | `TEST-loop-convergence-monitor` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-loop-oscillation` | `TEST-loop-round-log` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-measurement-vector-contract-unbound` | `TEST-measurement-vector-contract` | `FCHAIN-steering-loop` | — |
-| `REQ-risk-owner-ends-with-docked-sessions` | `TEST-host-shim` | `FCHAIN-repo-lifecycle` | — |
+| `REQ-risk-owner-ends-with-docked-sessions` | `TEST-host-shim` | `FCHAIN-session-end` | — |
 | `REQ-risk-partial-store-after-reseed` | `TEST-export-graph-guard` | `FCHAIN-recall` | — |
 | `REQ-risk-selection-misses-red-test` | `TEST-test-schlupf` | `FCHAIN-impact-testing` | — |
 | `REQ-risk-shared-steering-promise` | `TEST-steering-promise-one-owner` | `FCHAIN-steering-loop` | — |
@@ -249,12 +249,12 @@
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
 | `REQ-risk-audit-evaluation-unowned` | `TEST-audit-trail-projection` | `FCHAIN-loop-closure` | — |
 | `REQ-risk-auto-export-fails-silently` | `TEST-auto-export` | `FCHAIN-snapshot-freshness` | — |
-| `REQ-risk-client-holds-stale-tool-list` | `TEST-tool-list-change-announced` | `FCHAIN-repo-lifecycle` | — |
+| `REQ-risk-client-holds-stale-tool-list` | `TEST-tool-list-change-announced` | `FCHAIN-host-start` | — |
 | `REQ-risk-edge-vanishes-silently` | `TEST-import-rejected-traces` | `FCHAIN-recall` | — |
 | `REQ-risk-loop-degradation` | `TEST-loop-convergence-monitor` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-loop-oscillation` | `TEST-loop-round-log` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-measurement-vector-contract-unbound` | `TEST-measurement-vector-contract` | `FCHAIN-steering-loop` | — |
-| `REQ-risk-owner-ends-with-docked-sessions` | `TEST-host-shim` | `FCHAIN-repo-lifecycle` | — |
+| `REQ-risk-owner-ends-with-docked-sessions` | `TEST-host-shim` | `FCHAIN-session-end` | — |
 | `REQ-risk-partial-store-after-reseed` | `TEST-export-graph-guard` | `FCHAIN-recall` | — |
 | `REQ-risk-selection-misses-red-test` | `TEST-test-schlupf` | `FCHAIN-impact-testing` | — |
 | `REQ-risk-shared-steering-promise` | `TEST-steering-promise-one-owner` | `FCHAIN-steering-loop` | — |
@@ -336,7 +336,7 @@
 | `REQ-laufzeit-reads-answer-path` | `TEST-laufzeit-reads-answer-path` | `FUNC-se-laufzeit` | `MOD-agent-surface` |
 | `REQ-live-event-in-contracts` | `TEST-live-event-contract` | `MOD-surface` | — |
 | `REQ-loop-round-log` | `TEST-loop-round-log` | `FUNC-generation-step` | `MOD-loop` |
-| `REQ-mcp-tool-registry` | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-loop` · `MOD-projections` · `MOD-surface` |
+| `REQ-mcp-tool-registry` | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-loop` · `MOD-projections` · `MOD-surface` |
 | `REQ-measurement-vector-contract-tested` | `TEST-measurement-vector-contract` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-metrics-risk-scope` | `TEST-graph-metrics` | `FUNC-graph-metrics` | `MOD-projections` |
 | `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-surface` |
@@ -377,7 +377,7 @@
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
 | `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
-| `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-graph-store` · `FUNC-schema-guard` | `MOD-kernel` |
+| `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-open-store` · `FUNC-schema-guard` | `MOD-kernel` |
 | `REQ-selective-code-lane` | `TEST-selective-test-audit` | `FUNC-plan-code-lane` | `MOD-projections` |
 | `REQ-self-contained-dist` | `TEST-distribution` | `MOD-surface` | — |
 | `REQ-session-leaves-nothing-behind` | `TEST-repo-lifecycle` · `TEST-session-lifecycle` | `FUNC-session-shutdown` | `MOD-surface` |
