@@ -3604,6 +3604,24 @@
       "description": "docs/cr/open/CR-GC-840-bootstrap-ohne-aufrufer-zweiter-schreibw.md"
     },
     {
+      "id": "CR-GC-841",
+      "type": "CR",
+      "name": "Modellierregeln aus dem Modell-Code-Abgleich in die Skills",
+      "description": "docs/cr/open/CR-GC-841-modellierregeln-aus-dem-modell-code-abgl.md"
+    },
+    {
+      "id": "CR-GC-842",
+      "type": "CR",
+      "name": "Arch-Spike gehoert in die Modell-Spur",
+      "description": "docs/cr/open/CR-GC-842-arch-spike-gehoert-in-die-modell-spur.md"
+    },
+    {
+      "id": "CR-GC-843",
+      "type": "CR",
+      "name": "Fluss gegen Aufruf pruefen: Abgleich Modell und Code",
+      "description": "docs/cr/open/CR-GC-843-fluss-gegen-aufruf-pruefen-abgleich-mode.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -18828,6 +18846,41 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-841",
+      "target": "FUNC-author-req",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-841",
+      "target": "FUNC-import-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-841",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-841",
+      "target": "FUNC-se-umbau",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-841",
+      "target": "FUNC-se-vorbereitung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-842",
+      "target": "FUNC-verify-lane-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-842",
+      "target": "REQ-model-lane-fixed-set",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -29583,5 +29636,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 841
+  "graphVersion": 846
 }

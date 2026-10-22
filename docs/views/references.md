@@ -1286,6 +1286,13 @@
 | `CR-GC-840` | relation | `FUNC-graph-mutate-tool` |
 | `CR-GC-840` | relation | `FUNC-gve-supervise` |
 | `CR-GC-840` | relation | `REQ-bootstrap-through-gate` |
+| `CR-GC-841` | relation | `FUNC-author-req` |
+| `CR-GC-841` | relation | `FUNC-import-code` |
+| `CR-GC-841` | relation | `FUNC-se-top-level` |
+| `CR-GC-841` | relation | `FUNC-se-umbau` |
+| `CR-GC-841` | relation | `FUNC-se-vorbereitung` |
+| `CR-GC-842` | relation | `FUNC-verify-lane-model` |
+| `CR-GC-842` | relation | `REQ-model-lane-fixed-set` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

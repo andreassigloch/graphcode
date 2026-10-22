@@ -125,6 +125,10 @@ export const INCLUDED = [
   // herum, aendert sich genau diese Menge — eine Modellaenderung kann ihn rot machen,
   // also gehoert er in die Spur.
   'tests/test-selection.audit.test.ts',
+  // CR-GC-842: pinnt den Zug am Engpass (`FUNC-block-bedienung -compose-> FUNC-test-ingest`) und den
+  // Engpass danach (BW-02 @ FUNC-block-grounding) an der committeten SSOT. CR-GC-840 hat das gezeigt:
+  // eine reine Modellaenderung machte ihn rot, und nur die volle Suite sah es. ~12 s.
+  'tests/arch.optimization-dry-run.spike.test.ts',
   'tests/skill-authoring-gate.test.ts',
   'tests/skill-report-measured.test.ts',
 ];
@@ -226,11 +230,6 @@ export const EXCLUDED = {
     'Der Graph ist eine synthetische Zwei-Knoten-Fixture, nicht die committete SSOT — ' +
     'eine Modellaenderung kann ihn nicht rot machen. Was er prueft, ist die Verdrahtung ' +
     '(Config-Herkunft, Store/Lock, Blindheitsausgang), und die haengt an keinem Modellinhalt.',
-  'tests/arch.optimization-dry-run.spike.test.ts':
-    'Arch-Optimierungs-Spike (CR-GC-436, abgeschlossen No-Go). Liest die SSOT nur als ' +
-    'Startzustand in einen eigenen Temp-Store und assertiert Spike-Messwerte (Kohaesion, ' +
-    'Q, Befund-Bilanz) plus den Unveraendert-Hash der SSOT — kein Modellinhalt, den die ' +
-    'Modell-Spur decken muesste; kostet zwei volle Gate-Laeufe.',
   'tests/steering.convergence-witness.spike.test.ts':
     'Konvergenz-Zeugen-Spike (CR-GC-407). Liest die SSOT nur als realistisch grosses ' +
     'Fixture (degradierte Kopie in einem Temp-Store); assertiert werden Zeugen-/Archiv-' +

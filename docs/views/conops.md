@@ -535,6 +535,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-838` | n/a | Zehn Pre/Post-REQ-Paare: Vorbedingung ist der Eingangsfluss, Nachbedingung die Anforderung; zusammenlegen, an die tragende FUNC haengen, Text an den Test | `REQ-post-agent-query` · `REQ-post-apply-gate` · `REQ-post-capture` · `REQ-post-emit-trajectory` · `REQ-post-emit-update-event` · `REQ-post-export-markdown` · `REQ-post-harness-cli` · `REQ-post-impact-testing` · `REQ-post-import` · `REQ-post-merge-nodes` |
 | `CR-GC-839` | n/a | Altbestand CR-Knoten (Dateizeiger veraltet, kein Umfang) und Skripte ohne MOD | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model` · `MOD-dev-scripts` · `REQ-model-lane-fixed-set` |
 | `CR-GC-840` | n/a | bootstrap() ohne Aufrufer: zweiter Schreibweg am Werkzeug vorbei (kein Audit, keine Trajektorie); loeschen, Kaltstart ueber graph_mutate | `FUNC-graph-mutate-tool` · `FUNC-gve-supervise` · `REQ-bootstrap-through-gate` |
+| `CR-GC-841` | n/a | Modellierregeln aus dem Modell-Code-Abgleich in die Skills | `FUNC-author-req` · `FUNC-import-code` · `FUNC-se-top-level` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` |
+| `CR-GC-842` | n/a | Arch-Spike gehoert in die Modell-Spur | `FUNC-verify-lane-model` · `REQ-model-lane-fixed-set` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
