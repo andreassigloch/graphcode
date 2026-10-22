@@ -1,6 +1,6 @@
 # CR-GC-826: FCHAIN-apply-gate ohne Host-Socket, StoreLock und SessionLifecycle
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-998 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-998.json (Lane: graph)
