@@ -1,6 +1,6 @@
 # CR-GC-837: Skill-, Dashboard-, HTTP-Host- und Health-Ketten nach dem Code
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1016 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1016.json (Lane: graph)
