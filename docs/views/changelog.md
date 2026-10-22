@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 446 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 447 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 446 CR · 343 done · 4 open.
+Total: 447 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -508,3 +508,4 @@ Total: 446 CR · 343 done · 4 open.
 | `CR-GC-834` | n/a | Start, Sitzungsende und Store-Oeffnen im Modell: repo-lifecycle mischt fuenf Ablaeufe, Startmeldung haengt am GraphStore in 18 Ketten |
 | `CR-GC-835` | n/a | Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC |
 | `CR-GC-836` | n/a | Test-Ketten im Modell: graph_tests, graph_test_ingest und die npm-Spuren verify:code/verify:full in zwei Ketten vermischt; Skripte ohne FUNC |
+| `CR-GC-837` | n/a | Skill-, Dashboard- und HTTP-Host-Ketten im Modell: graph_help ohne FUNC, Dashboard ohne Ausloeser, serveHost/ownKuzu/health ohne Kette |

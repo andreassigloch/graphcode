@@ -38,7 +38,7 @@
 | `REQ-import-se-ontology` | `TEST-dashboard-ontology-sync` · `TEST-graph-authoring-guide` | `MOD-kernel` | — |
 | `REQ-install-idempotent` | `TEST-cli-scaffold` · `TEST-upgrade` | `MOD-surface` | — |
 | `REQ-interface-schema` | `TEST-readiness-completeness` | `MOD-projections` | — |
-| `REQ-mcp-tool-registry` | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-loop` · `MOD-projections` · `MOD-surface` |
+| `REQ-mcp-tool-registry` | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-loop` · `MOD-projections` · `MOD-surface` |
 | `REQ-no-extraction` | `TEST-capture` · `TEST-import-code-verb` | `FCHAIN-model-import` | — |
 | `REQ-npx-distribution` | `TEST-distribution` | `FUNC-cli-dispatch` · `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-post-export-markdown` | `TEST-doc-export` | `FUNC-export-markdown` | `MOD-projections` |
@@ -183,7 +183,7 @@
 | `REQ-session-leaves-nothing-behind` | `TEST-repo-lifecycle` · `TEST-session-lifecycle` | `FUNC-session-shutdown` | `MOD-surface` |
 | `REQ-single-measurement-path` | `TEST-graph-metrics` · `TEST-single-measurement-path` · `TEST-steering-snapshot` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-single-write-door` | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` | `FUNC-mutate` | `MOD-kernel` |
-| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` | `MOD-agent-surface` |
+| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-agent-surface` |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-apply-gate` | — |
 | `REQ-stage-names-enumerated` | `TEST-stage-names-enumerated` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
@@ -336,7 +336,7 @@
 | `REQ-laufzeit-reads-answer-path` | `TEST-laufzeit-reads-answer-path` | `FUNC-se-laufzeit` | `MOD-agent-surface` |
 | `REQ-live-event-in-contracts` | `TEST-live-event-contract` | `MOD-surface` | — |
 | `REQ-loop-round-log` | `TEST-loop-round-log` | `FUNC-generation-step` | `MOD-loop` |
-| `REQ-mcp-tool-registry` | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-loop` · `MOD-projections` · `MOD-surface` |
+| `REQ-mcp-tool-registry` | `TEST-formate-ops` · `TEST-help-tool` · `TEST-mcp-readiness` · `TEST-mcp-stdio-server` | `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` | `MOD-loop` · `MOD-projections` · `MOD-surface` |
 | `REQ-measurement-vector-contract-tested` | `TEST-measurement-vector-contract` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-metrics-risk-scope` | `TEST-graph-metrics` | `FUNC-graph-metrics` | `MOD-projections` |
 | `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-surface` |
@@ -387,7 +387,7 @@
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-kernel` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `MOD-surface` | — |
 | `REQ-single-write-door` | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` | `FUNC-mutate` | `MOD-kernel` |
-| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile` | `MOD-agent-surface` |
+| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-agent-surface` |
 | `REQ-stage-names-enumerated` | `TEST-stage-names-enumerated` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-steering-delta-in-answer-tested` | `TEST-steering-delta-in-answer` | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |

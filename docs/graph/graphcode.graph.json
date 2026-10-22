@@ -3580,6 +3580,12 @@
       "description": "docs/cr/open/CR-GC-836-test-ketten-im-modell-graph-tests-graph-.md"
     },
     {
+      "id": "CR-GC-837",
+      "type": "CR",
+      "name": "Skill-, Dashboard- und HTTP-Host-Ketten im Modell: graph_help ohne FUNC, Dashboard ohne Ausloeser, serveHost/ownKuzu/health ohne Kette",
+      "description": "docs/cr/open/CR-GC-837-skill-dashboard-und-http-host-ketten-im-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3615,7 +3621,7 @@
       "id": "FCHAIN-dashboard-metrics",
       "type": "FCHAIN",
       "name": "Kennzahlen ans Dashboard",
-      "description": "Nach einer Aenderung rechnet das Messwerk Modulmetrik und Funktionskritikalitaet aus dem Store-Zustand und liefert sie ans Dashboard. Aus FCHAIN-skill-report geloest: kein Berichts-Skill liest die Kritikalitaet. (CR-GC-768)"
+      "description": "Das Dashboard fragt ueber host.sock graph_metrics, graph_readiness oder graph_generate (peek); das Werkzeug liest den Graphen der Arbeitskopie, rechnet und antwortet ueber den Socket. Nichts schiebt Kennzahlen nach einer Aenderung; das Dashboard holt sie."
     },
     {
       "id": "FCHAIN-doc-export",
@@ -3644,10 +3650,22 @@
       "description": "Der Agent fragt die Kanten-Grammatik eines Elementtyps ab und bekommt sie zurueck. Bis CR-GC-776 Glied der Executor-Kette."
     },
     {
+      "id": "FCHAIN-health",
+      "type": "FCHAIN",
+      "name": "Health-Check",
+      "description": "Das Dashboard fragt GET /health; die Bruecke laesst die Regeln einmal laufen und antwortet, ob der Host gesund ist."
+    },
+    {
       "id": "FCHAIN-host-start",
       "type": "FCHAIN",
       "name": "Host starten",
       "description": "Der MCP-Client startet graphcode mcp; serveStdio legt den Harness an (Konfiguration), oeffnet den Store (Lock, Schema-Guard, ggf. Neuaufbau mit Meldung), befuellt einen leeren Store aus der SSOT, bindet die Werkzeuge, registriert den Auto-Export, startet den Host-Socket, haengt das Dashboard an und bedient die Ablaufsteuerung ueber stdio."
+    },
+    {
+      "id": "FCHAIN-http-host",
+      "type": "FCHAIN",
+      "name": "HTTP-Host starten",
+      "description": "Der Entwickler startet graphcode host; serveHost holt ueber ownKuzu einen eigenen Harness auf dem Store, oeffnet die read-only-Bruecke und meldet den Port ueber die CLI."
     },
     {
       "id": "FCHAIN-impact-testing",
@@ -3717,14 +3735,14 @@
     {
       "id": "FCHAIN-skill-help",
       "type": "FCHAIN",
-      "name": "Skill erklaert",
-      "description": "Ein Mensch ruft den Hilfe-Skill und bekommt die Erklaerung zurueck. Aus FCHAIN-skill-report geloest: die Hilfe zieht keine Messung. (CR-GC-768)"
+      "name": "Hilfe und Anleitung",
+      "description": "Ein Mensch ruft einen anleitenden Skill (se:help, se-test, se-test-ui) und bekommt die Erklaerung zurueck; se:help fragt dafuer graph_help, das ohne Token eine volle Erhebung rechnet."
     },
     {
       "id": "FCHAIN-skill-report",
       "type": "FCHAIN",
       "name": "Skill berichtet gemessenen Stand",
-      "description": "Ein Mensch ruft einen lesenden Skill; der Skill zieht die Messung aus den Lesewerkzeugen und gibt sie als Bericht zurueck."
+      "description": "Ein Mensch ruft einen lesenden Skill; der Skill zieht die Messung aus den Lesewerkzeugen (graph_readiness, rules_evaluate, graph_metrics, audit_stats) und gibt sie als Bericht zurueck."
     },
     {
       "id": "FCHAIN-snapshot-freshness",
@@ -3763,187 +3781,232 @@
       "name": "Handlung",
       "description": "Der gemeinsame Ausgang der vier Entscheidungen: blocken, Fokus setzen, Kandidat waehlen, uebergeben. Vier Auspraegungen einer Form.",
       "status": "reviewed",
-      "concept": true
+      "concept": true,
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-anleitung-author-actor",
+      "type": "FLOW",
+      "name": "Anleitung se:author-actor",
+      "description": "Der Text des Skills se:author-actor an die Ablaufsteuerung.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-author-req",
       "type": "FLOW",
       "name": "Anleitung (author-req)",
-      "description": "Text des Skills author-req, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills author-req, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-author-uc",
       "type": "FLOW",
       "name": "Anleitung (author-uc)",
-      "description": "Text des Skills author-uc, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills author-uc, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-close-violations",
       "type": "FLOW",
       "name": "Anleitung (close-violations)",
-      "description": "Text des Skills close-violations, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills close-violations, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-import-code",
       "type": "FLOW",
       "name": "Anleitung (import-code)",
-      "description": "Text des Skills import-code, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills import-code, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-import-doc",
       "type": "FLOW",
       "name": "Anleitung (import-doc)",
-      "description": "Text des Skills import-doc, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills import-doc, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-render-views",
       "type": "FLOW",
       "name": "Anleitung (render-views)",
-      "description": "Text des Skills render-views, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills render-views, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-conops",
       "type": "FLOW",
       "name": "Anleitung (se-conops)",
-      "description": "Text des Skills se-conops, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-conops, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-fmea",
       "type": "FLOW",
       "name": "Anleitung (se-fmea)",
-      "description": "Text des Skills se-fmea, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-fmea, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-generate",
       "type": "FLOW",
       "name": "Anleitung (se-generate)",
-      "description": "Text des Skills se-generate, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-generate, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-help",
       "type": "FLOW",
       "name": "Anleitung (se-help)",
-      "description": "Text des Skills se-help, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-help, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-irr",
       "type": "FLOW",
       "name": "Anleitung (se-irr)",
-      "description": "Text des Skills se-irr, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-irr, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-laufzeit",
       "type": "FLOW",
       "name": "Anleitung (se-laufzeit)",
-      "description": "Text des Skills se-laufzeit, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-laufzeit, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-modulebene",
       "type": "FLOW",
       "name": "Anleitung (se-modulebene)",
-      "description": "Text des Skills se-modulebene, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-modulebene, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-optimize",
       "type": "FLOW",
       "name": "Anleitung (se-optimize)",
-      "description": "Text des Skills se-optimize, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-optimize, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-plan",
       "type": "FLOW",
       "name": "Anleitung (se-plan)",
-      "description": "Text des Skills se-plan, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-plan, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-retro",
       "type": "FLOW",
       "name": "Anleitung (se-retro)",
-      "description": "Text des Skills se-retro, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-retro, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-review",
       "type": "FLOW",
       "name": "Anleitung (se-review)",
-      "description": "Text des Skills se-review, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-review, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-status",
       "type": "FLOW",
       "name": "Anleitung (se-status)",
-      "description": "Text des Skills se-status, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-status, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-top-level",
       "type": "FLOW",
       "name": "Anleitung (se-top-level)",
-      "description": "Text des Skills se-top-level, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-top-level, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-trade",
       "type": "FLOW",
       "name": "Anleitung (se-trade)",
-      "description": "Text des Skills se-trade, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-trade, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-anleitung-se-umbau",
+      "type": "FLOW",
+      "name": "Anleitung se-umbau",
+      "description": "Der Text des Skills se-umbau an die Ablaufsteuerung.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-se-vorbereitung",
       "type": "FLOW",
       "name": "Anleitung (se-vorbereitung)",
-      "description": "Text des Skills se-vorbereitung, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills se-vorbereitung, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-target-profile",
       "type": "FLOW",
       "name": "Anleitung (target-profile)",
-      "description": "Text des Skills target-profile, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills target-profile, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-test",
       "type": "FLOW",
       "name": "Anleitung (test)",
-      "description": "Text des Skills test, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills test, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-test-ui",
       "type": "FLOW",
       "name": "Anleitung (test-ui)",
-      "description": "Text des Skills test-ui, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills test-ui, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-view-changelog",
       "type": "FLOW",
       "name": "Anleitung (view-changelog)",
-      "description": "Text des Skills view-changelog, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills view-changelog, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-view-conops",
       "type": "FLOW",
       "name": "Anleitung (view-conops)",
-      "description": "Text des Skills view-conops, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills view-conops, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-view-fmea",
       "type": "FLOW",
       "name": "Anleitung (view-fmea)",
-      "description": "Text des Skills view-fmea, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills view-fmea, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-view-icd",
       "type": "FLOW",
       "name": "Anleitung (view-icd)",
-      "description": "Text des Skills view-icd, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills view-icd, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-view-intplan",
       "type": "FLOW",
       "name": "Anleitung (view-intplan)",
-      "description": "Text des Skills view-intplan, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills view-intplan, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-anleitung-view-rtm",
       "type": "FLOW",
       "name": "Anleitung (view-rtm)",
-      "description": "Text des Skills view-rtm, beim Aufruf an die Ablaufsteuerung zurueckgegeben."
+      "description": "Text des Skills view-rtm, beim Aufruf an die Ablaufsteuerung zurueckgegeben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-arch-fitness",
@@ -4234,6 +4297,27 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-dashboard-answer",
+      "type": "FLOW",
+      "name": "Werkzeugantwort (an das Dashboard)",
+      "description": "Die Werkzeugantwort, die der Host-Socket an das Dashboard zurueckgibt. Beleg: src/surface/host-shim.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-dashboard-call",
+      "type": "FLOW",
+      "name": "Werkzeugaufruf (Dashboard)",
+      "description": "Ein Werkzeugaufruf des Dashboards ueber host.sock: graph_metrics, graph_readiness, graph_generate mit peek. Beleg: src/surface/host-shim.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-dashboard-tool-call",
+      "type": "FLOW",
+      "name": "Werkzeugaufruf (Socket an Werkzeug)",
+      "description": "Der Werkzeugaufruf des Dashboards, den der Host-Socket an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-dimension-readiness",
       "type": "FLOW",
       "name": "Dimensions-Readiness (8 Scores)",
@@ -4466,10 +4550,24 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-health-eval-request",
+      "type": "FLOW",
+      "name": "Regellauf (Health)",
+      "description": "Der Regellauf, mit dem der Health-Check prueft, ob die Regeln laufen. Beleg: src/surface/host.ts, health.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-health-report",
       "type": "FLOW",
       "name": "Health-Report",
       "description": "Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer. BENANNTE OFFENE DIFFERENZ: graph-view-edit liest /health heute nicht, es rechnet den Zustand aus der Snapshot-Datei; Ziel von CR-GC-809. (CR-GC-822)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-health-request",
+      "type": "FLOW",
+      "name": "Health-Anfrage",
+      "description": "Die Anfrage GET /health an die read-only-Bruecke. Beleg: src/surface/host.ts, route.",
       "sync": "sync"
     },
     {
@@ -4491,6 +4589,20 @@
       "type": "FLOW",
       "name": "Zurueckgehaltene Kanten",
       "description": "Die Liste der committeten Kanten, die im Live-Graphen fehlen, weil kein Muster sie zulaesst. Geht in den Readiness-Report und in die Export-Verweigerung.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-help-answer",
+      "type": "FLOW",
+      "name": "Antwort graph_help",
+      "description": "Die Antwort von graph_help: Erklaerung des Tokens oder die naechsten Schritte. Beleg: src/projections/report.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-host-ready",
+      "type": "FLOW",
+      "name": "Host bereit",
+      "description": "Die laufende Bruecke mit Port, die serveHost an die CLI zurueckgibt. Beleg: src/cli.ts, src/surface/host.ts.",
       "sync": "sync"
     },
     {
@@ -4672,6 +4784,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-metrics-request",
+      "type": "FLOW",
+      "name": "Kennzahl-Anfrage",
+      "description": "Der Graph der Arbeitskopie, den graph_metrics an die Kennzahl-Rechnungen gibt. Beleg: src/projections/metrics.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-module-metrics",
       "type": "FLOW",
       "name": "Modulkennzahlen je MOD",
@@ -4759,6 +4878,13 @@
       "type": "FLOW",
       "name": "Graph-Datei (Snapshot)",
       "description": "Der Inhalt der committeten Graph-Datei, gelesen fuer Seed und Reseed und an den Import uebergeben. (CR-GC-503)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-own-kuzu-request",
+      "type": "FLOW",
+      "name": "Kuzu-Besitz anfordern",
+      "description": "Repo-Wurzel und Ereignis-Senke, mit denen serveHost ownKuzu ruft. Beleg: src/surface/host.ts.",
       "sync": "sync"
     },
     {
@@ -4900,7 +5026,8 @@
       "id": "FLOW-rules-answer",
       "type": "FLOW",
       "name": "Regelbefunde (Antwort)",
-      "description": "Die Regelbefunde, wie rules_evaluate oder rules_get_violations sie der Ablaufsteuerung geben."
+      "description": "Die Regelbefunde, wie rules_evaluate oder rules_get_violations sie der Ablaufsteuerung geben.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-schema-fingerprint",
@@ -5314,6 +5441,15 @@
         "file": "src/surface/audit.ts",
         "symbol": "projectAuditEntries",
         "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-author-actor",
+      "type": "FUNC",
+      "name": "Skill se:author-actor",
+      "description": "Prompt-realisierter Skill se:author-actor: die kleinste Akteurmenge, die die Systemgrenze eindeutig macht, verdrahtet nur ueber ACTOR io FLOW io FUNC.",
+      "realRef": {
+        "file": ".claude/commands/se/author-actor.md"
       }
     },
     {
@@ -5794,6 +5930,17 @@
       "realRef": {
         "file": "src/loop/suggest.ts",
         "symbol": "graph_generate",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-graph-help",
+      "type": "FUNC",
+      "name": "graph_help (Werkzeug)",
+      "description": "Die Werkzeugschicht der Hilfe: erklaert ein Token (Regel, Werkzeug, Panel) fuer beide Zielgruppen; ohne Token rechnet es eine volle Erhebung (evaluateAll) und nennt die naechsten Schritte. Beleg: src/projections/report.ts, graph_help.",
+      "realRef": {
+        "file": "src/projections/report.ts",
+        "symbol": "graph_help",
         "lang": "ts"
       }
     },
@@ -6362,6 +6509,15 @@
       "description": "Prompt-realisierter Skill se-trade: Trade Study — Optionen bewerten, die Entscheidung als erledigten Auftrag festhalten (Text in docs/cr/done, schlanker Knoten, relation-Kanten auf das Entschiedene).",
       "realRef": {
         "file": ".claude/commands/se-trade.md"
+      }
+    },
+    {
+      "id": "FUNC-se-umbau",
+      "type": "FUNC",
+      "name": "Skill se-umbau",
+      "description": "Prompt-realisierter Skill se-umbau: Bestehendes aendern, ersetzen, entfernen; graph_impact und graph_tests vor dem Loeschzug, Modellzug im selben CR.",
+      "realRef": {
+        "file": ".claude/commands/se-umbau.md"
       }
     },
     {
@@ -11978,6 +12134,16 @@
       "type": "io"
     },
     {
+      "source": "ACTOR-dashboard",
+      "target": "FLOW-dashboard-call",
+      "type": "io"
+    },
+    {
+      "source": "ACTOR-dashboard",
+      "target": "FLOW-health-request",
+      "type": "io"
+    },
+    {
       "source": "ACTOR-regelhalter",
       "target": "FLOW-channel-dimension-template",
       "type": "io"
@@ -17106,6 +17272,46 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-837",
+      "target": "FUNC-author-actor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-837",
+      "target": "FUNC-graph-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-837",
+      "target": "FUNC-graph-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-837",
+      "target": "FUNC-health-endpoint",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-837",
+      "target": "FUNC-host-socket",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-837",
+      "target": "FUNC-own-kuzu-host",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-837",
+      "target": "FUNC-se-umbau",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-837",
+      "target": "FUNC-serve-sse",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -17370,12 +17576,12 @@
     },
     {
       "source": "FCHAIN-dashboard-metrics",
-      "target": "FUNC-agent-loop",
+      "target": "FUNC-chain-metrics",
       "type": "compose"
     },
     {
       "source": "FCHAIN-dashboard-metrics",
-      "target": "FUNC-chain-metrics",
+      "target": "FUNC-compute-readiness",
       "type": "compose"
     },
     {
@@ -17385,7 +17591,22 @@
     },
     {
       "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-graph-generate-tool",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
       "target": "FUNC-graph-metrics",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-graph-readiness",
       "type": "compose"
     },
     {
@@ -17395,12 +17616,17 @@
     },
     {
       "source": "FCHAIN-dashboard-metrics",
+      "target": "FUNC-host-socket",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-dashboard-metrics",
       "target": "FUNC-module-metrics",
       "type": "compose"
     },
     {
       "source": "FCHAIN-dashboard-metrics",
-      "target": "FUNC-mutate",
+      "target": "FUNC-take-steering-snapshot",
       "type": "compose"
     },
     {
@@ -17539,6 +17765,21 @@
       "type": "compose"
     },
     {
+      "source": "FCHAIN-health",
+      "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-health",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-health",
+      "target": "FUNC-health-endpoint",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-host-start",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -17632,6 +17873,46 @@
       "source": "FCHAIN-host-start",
       "target": "REQ-risk-client-holds-stale-tool-list",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-http-host",
+      "target": "FUNC-claim-store-lock",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-http-host",
+      "target": "FUNC-cli-dispatch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-http-host",
+      "target": "FUNC-create-harness",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-http-host",
+      "target": "FUNC-load-config",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-http-host",
+      "target": "FUNC-open-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-http-host",
+      "target": "FUNC-own-kuzu-host",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-http-host",
+      "target": "FUNC-schema-guard",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-http-host",
+      "target": "FUNC-serve-sse",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-impact-testing",
@@ -18061,6 +18342,11 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-author-actor",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-author-req",
       "type": "compose"
     },
@@ -18086,6 +18372,11 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-graph-metrics",
       "type": "compose"
     },
@@ -18102,6 +18393,16 @@
     {
       "source": "FCHAIN-skill-authoring",
       "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-read-tools",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-rules-tool",
       "type": "compose"
     },
     {
@@ -18151,6 +18452,11 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-se-umbau",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "FUNC-se-vorbereitung",
       "type": "compose"
     },
@@ -18171,12 +18477,52 @@
     },
     {
       "source": "FCHAIN-skill-help",
+      "target": "FUNC-check-code-conformance",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-help",
+      "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-help",
+      "target": "FUNC-graph-help",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-help",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-help",
       "target": "FUNC-se-help",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-help",
+      "target": "FUNC-test",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-help",
+      "target": "FUNC-test-ui",
       "type": "compose"
     },
     {
       "source": "FCHAIN-skill-report",
       "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-audit-stats",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-chain-metrics",
       "type": "compose"
     },
     {
@@ -18193,6 +18539,16 @@
     {
       "source": "FCHAIN-skill-report",
       "target": "FUNC-evaluate-rules",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-function-criticality",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-report",
+      "target": "FUNC-graph-metrics",
       "type": "compose"
     },
     {
@@ -18244,12 +18600,7 @@
     },
     {
       "source": "FCHAIN-skill-report",
-      "target": "FUNC-test",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-skill-report",
-      "target": "FUNC-test-ui",
+      "target": "FUNC-tool-context",
       "type": "compose"
     },
     {
@@ -18607,6 +18958,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-anleitung-author-actor",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-author-actor",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-anleitung-author-req",
       "target": "FUNC-agent-loop",
       "type": "io"
@@ -18803,6 +19164,16 @@
     },
     {
       "source": "FLOW-anleitung-se-trade",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-anleitung-se-umbau",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-anleitung-se-umbau",
       "target": "SCHEMA-skill-text",
       "type": "relation"
     },
@@ -19181,6 +19552,11 @@
     },
     {
       "source": "FLOW-cli-command",
+      "target": "FUNC-serve-sse",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-command",
       "target": "FUNC-serve-stdio",
       "type": "io"
     },
@@ -19293,6 +19669,11 @@
     },
     {
       "source": "FLOW-conformance-findings",
+      "target": "FUNC-graph-help",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-conformance-findings",
       "target": "FUNC-graph-readiness",
       "type": "io"
     },
@@ -19309,6 +19690,46 @@
     {
       "source": "FLOW-context-request",
       "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-dashboard-answer",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dashboard-answer",
+      "target": "SCHEMA-metrics-answer",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-dashboard-call",
+      "target": "FUNC-host-socket",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dashboard-call",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-dashboard-tool-call",
+      "target": "FUNC-graph-generate-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dashboard-tool-call",
+      "target": "FUNC-graph-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dashboard-tool-call",
+      "target": "FUNC-graph-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-dashboard-tool-call",
+      "target": "SCHEMA-query-params",
       "type": "relation"
     },
     {
@@ -19528,12 +19949,12 @@
     },
     {
       "source": "FLOW-generate-answer",
-      "target": "ACTOR-dashboard",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
       "source": "FLOW-generate-answer",
-      "target": "FUNC-agent-loop",
+      "target": "FUNC-host-socket",
       "type": "io"
     },
     {
@@ -19598,11 +20019,6 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-chain-metrics",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
       "target": "FUNC-check-code-conformance",
       "type": "io",
       "weight": "1"
@@ -19618,11 +20034,6 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-function-criticality",
-      "type": "io"
     },
     {
       "source": "FLOW-graph-state",
@@ -19646,6 +20057,11 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-graph-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-graph-suggest",
       "type": "io"
     },
@@ -19660,12 +20076,6 @@
       "type": "io",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-module-metrics",
-      "type": "io",
-      "weight": "1"
     },
     {
       "source": "FLOW-graph-state",
@@ -19792,6 +20202,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-health-eval-request",
+      "target": "FUNC-evaluate-rules",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-health-eval-request",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-health-report",
       "target": "ACTOR-dashboard",
       "type": "io"
@@ -19799,6 +20219,16 @@
     {
       "source": "FLOW-health-report",
       "target": "SCHEMA-health-report",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-health-request",
+      "target": "FUNC-health-endpoint",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-health-request",
+      "target": "SCHEMA-query-params",
       "type": "relation"
     },
     {
@@ -19834,6 +20264,26 @@
     {
       "source": "FLOW-held-back-traces",
       "target": "SCHEMA-rejected-trace",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-help-answer",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-help-answer",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-host-ready",
+      "target": "FUNC-cli-dispatch",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-host-ready",
+      "target": "SCHEMA-health-report",
       "type": "relation"
     },
     {
@@ -20077,12 +20527,12 @@
     },
     {
       "source": "FLOW-metrics-answer",
-      "target": "ACTOR-dashboard",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
       "source": "FLOW-metrics-answer",
-      "target": "FUNC-agent-loop",
+      "target": "FUNC-host-socket",
       "type": "io"
     },
     {
@@ -20091,10 +20541,24 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-module-metrics",
-      "target": "FUNC-evaluate-rules",
-      "type": "io",
-      "weight": "1"
+      "source": "FLOW-metrics-request",
+      "target": "FUNC-chain-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-metrics-request",
+      "target": "FUNC-function-criticality",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-metrics-request",
+      "target": "FUNC-module-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-metrics-request",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
     },
     {
       "source": "FLOW-module-metrics",
@@ -20227,6 +20691,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-own-kuzu-request",
+      "target": "FUNC-own-kuzu-host",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-own-kuzu-request",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-plan-request",
       "target": "FUNC-plan-code-lane",
       "type": "io"
@@ -20313,6 +20787,11 @@
     },
     {
       "source": "FLOW-query-request-agent",
+      "target": "FUNC-graph-help",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-query-request-agent",
       "target": "FUNC-graph-metrics",
       "type": "io"
     },
@@ -20383,12 +20862,12 @@
     },
     {
       "source": "FLOW-readiness-report",
-      "target": "ACTOR-dashboard",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
       "source": "FLOW-readiness-report",
-      "target": "FUNC-agent-loop",
+      "target": "FUNC-host-socket",
       "type": "io"
     },
     {
@@ -20475,6 +20954,11 @@
       "source": "FLOW-rewind-summary",
       "target": "SCHEMA-rewind-summary",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-rule-findings",
+      "target": "FUNC-graph-help",
+      "type": "io"
     },
     {
       "source": "FLOW-rule-findings",
@@ -20648,6 +21132,11 @@
     },
     {
       "source": "FLOW-skill-request",
+      "target": "FUNC-author-actor",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
       "target": "FUNC-author-req",
       "type": "io"
     },
@@ -20744,6 +21233,11 @@
     {
       "source": "FLOW-skill-request",
       "target": "FUNC-se-trade",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-skill-request",
+      "target": "FUNC-se-umbau",
       "type": "io"
     },
     {
@@ -21323,6 +21817,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-author-actor",
+      "target": "MOD-agent-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-author-actor",
+      "target": "FLOW-anleitung-author-actor",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-author-actor",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-author-req",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -21429,6 +21938,11 @@
     },
     {
       "source": "FUNC-block-abfrage",
+      "target": "FUNC-graph-help",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-abfrage",
       "target": "FUNC-graph-impact",
       "type": "compose"
     },
@@ -21499,6 +22013,11 @@
     },
     {
       "source": "FUNC-block-autorieren",
+      "target": "FUNC-author-actor",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-autorieren",
       "target": "FUNC-author-req",
       "type": "compose"
     },
@@ -21525,6 +22044,11 @@
     {
       "source": "FUNC-block-autorieren",
       "target": "FUNC-se-top-level",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-autorieren",
+      "target": "FUNC-se-umbau",
       "type": "compose"
     },
     {
@@ -22580,6 +23104,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-graph-help",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-help",
+      "target": "FLOW-help-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-help",
+      "target": "REQ-mcp-tool-registry",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-graph-impact",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -22636,6 +23175,11 @@
     {
       "source": "FUNC-graph-metrics",
       "target": "FLOW-metrics-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-metrics",
+      "target": "FLOW-metrics-request",
       "type": "io"
     },
     {
@@ -22919,6 +23463,11 @@
     },
     {
       "source": "FUNC-health-endpoint",
+      "target": "FLOW-health-eval-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-health-endpoint",
       "target": "FLOW-health-report",
       "type": "io"
     },
@@ -22968,6 +23517,16 @@
       "source": "FUNC-host-socket",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-host-socket",
+      "target": "FLOW-dashboard-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-host-socket",
+      "target": "FLOW-dashboard-tool-call",
+      "type": "io"
     },
     {
       "source": "FUNC-host-socket",
@@ -23719,6 +24278,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-se-umbau",
+      "target": "MOD-agent-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-se-umbau",
+      "target": "FLOW-anleitung-se-umbau",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-se-umbau",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-vorbereitung",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -23777,6 +24351,16 @@
       "source": "FUNC-serve-sse",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-serve-sse",
+      "target": "FLOW-host-ready",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-sse",
+      "target": "FLOW-own-kuzu-request",
+      "type": "io"
     },
     {
       "source": "FUNC-serve-sse",
@@ -27348,6 +27932,16 @@
     },
     {
       "source": "UC-live-graph-view",
+      "target": "FCHAIN-health",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-graph-view",
+      "target": "FCHAIN-http-host",
+      "type": "compose"
+    },
+    {
+      "source": "UC-live-graph-view",
       "target": "FCHAIN-live-update",
       "type": "compose"
     },
@@ -27644,5 +28238,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 828
+  "graphVersion": 830
 }

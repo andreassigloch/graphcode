@@ -15,6 +15,7 @@
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
 | `FUNC-audit-stats` | FUNC | aggregateAuditEntries(entries) |
 | `FUNC-audit-trail` | FUNC | projectAuditEntries(entries, opts) |
+| `FUNC-author-actor` | FUNC | Skill se:author-actor |
 | `FUNC-author-req` | FUNC | Skill se:author-req |
 | `FUNC-author-uc` | FUNC | Skill se:author-uc |
 | `FUNC-authoring-guide` | FUNC | graph_authoring_guide(type) |
@@ -62,6 +63,7 @@
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
 | `FUNC-graph-generate-tool` | FUNC | graph_generate (Werkzeug) |
+| `FUNC-graph-help` | FUNC | graph_help (Werkzeug) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
 | `FUNC-graph-merge-tool` | FUNC | graph_merge (Werkzeug) |
 | `FUNC-graph-metrics` | FUNC | graph_metrics(scope?) |
@@ -112,6 +114,7 @@
 | `FUNC-se-status` | FUNC | Skill se-status |
 | `FUNC-se-top-level` | FUNC | Skill se:top-level |
 | `FUNC-se-trade` | FUNC | Skill se-trade |
+| `FUNC-se-umbau` | FUNC | Skill se-umbau |
 | `FUNC-se-vorbereitung` | FUNC | Skill se-vorbereitung |
 | `FUNC-seed-from-json` | FUNC | seedFromJsonFile(target, relPath) |
 | `FUNC-select-tests` | FUNC | impactedTests(graph, changeSet) |
@@ -154,6 +157,7 @@
 | `FUNC-arch-fitness` | `MOD-kernel-measure` |
 | `FUNC-audit-stats` | `MOD-surface` |
 | `FUNC-audit-trail` | `MOD-surface` |
+| `FUNC-author-actor` | `MOD-agent-surface` |
 | `FUNC-author-req` | `MOD-agent-surface` |
 | `FUNC-author-uc` | `MOD-agent-surface` |
 | `FUNC-authoring-guide` | `MOD-projections` |
@@ -201,6 +205,7 @@
 | `FUNC-graph-expand` | `MOD-kernel` |
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `FUNC-graph-generate-tool` | `MOD-loop` |
+| `FUNC-graph-help` | `MOD-projections` |
 | `FUNC-graph-impact` | `MOD-kernel` |
 | `FUNC-graph-merge-tool` | `MOD-surface` |
 | `FUNC-graph-metrics` | `MOD-projections` |
@@ -251,6 +256,7 @@
 | `FUNC-se-status` | `MOD-agent-surface` |
 | `FUNC-se-top-level` | `MOD-agent-surface` |
 | `FUNC-se-trade` | `MOD-agent-surface` |
+| `FUNC-se-umbau` | `MOD-agent-surface` |
 | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `FUNC-seed-from-json` | `MOD-kernel` |
 | `FUNC-select-tests` | `MOD-kernel-measure` |
