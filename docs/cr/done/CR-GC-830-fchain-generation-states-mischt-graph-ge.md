@@ -1,6 +1,6 @@
 # CR-GC-830: FCHAIN-generation-states — ein Werkzeug, ein Auslöser
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1009 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1009.json (Lane: graph)
