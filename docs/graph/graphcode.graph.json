@@ -3520,6 +3520,12 @@
       "description": "docs/cr/open/CR-GC-826-fchain-apply-gate-host-socket-storelock-.md"
     },
     {
+      "id": "CR-GC-827",
+      "type": "CR",
+      "name": "Regelpruefung liest den Kandidaten von mutate, nicht den Store",
+      "description": "docs/cr/open/CR-GC-827-regelpruefung-liest-den-kandidaten-von-m.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -4175,6 +4181,13 @@
       "type": "FLOW",
       "name": "Kritikalitaet je FUNC",
       "description": "Ketten und Use Cases je Funktion, von der Rechnung in contracts an graph_metrics, das sie in seine Antwort FLOW-metrics-answer legt. EIGENER Fluss statt eines breiteren SCHEMA-module-metrics: MOD ist der Abhaengigkeitsbaum, FUNC der Wertbaum, sie spiegeln einander ausdruecklich nicht. (CR-GC-817)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-gate-candidate",
+      "type": "FLOW",
+      "name": "Kandidat (im Speicher)",
+      "description": "Der Kandidat des Gates: der Graph nach den Befehlen, nur im Speicher. mutate gibt ihn an die Regelpruefung und wartet auf deren Befunde, bevor es das Delta an den Store gibt. Beleg: src/kernel/gate.ts, apply ruft this.evaluate(candidate). CR-GC-827.",
       "sync": "sync"
     },
     {
@@ -16311,6 +16324,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-827",
+      "target": "FUNC-evaluate-rules",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-827",
+      "target": "FUNC-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-827",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -18400,6 +18428,16 @@
     {
       "source": "FLOW-function-criticality",
       "target": "SCHEMA-function-criticality",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-gate-candidate",
+      "target": "FUNC-evaluate-rules",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-gate-candidate",
+      "target": "SCHEMA-ontology-graph",
       "type": "relation"
     },
     {
@@ -21419,6 +21457,11 @@
     {
       "source": "FUNC-mutate",
       "target": "FLOW-audit-record",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-mutate",
+      "target": "FLOW-gate-candidate",
       "type": "io"
     },
     {
@@ -25737,5 +25780,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 806
+  "graphVersion": 808
 }

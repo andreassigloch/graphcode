@@ -903,6 +903,9 @@
 | `CR-GC-826` | relation | `FUNC-claim-store-lock` |
 | `CR-GC-826` | relation | `FUNC-host-socket` |
 | `CR-GC-826` | relation | `FUNC-session-shutdown` |
+| `CR-GC-827` | relation | `FUNC-evaluate-rules` |
+| `CR-GC-827` | relation | `FUNC-mutate` |
+| `CR-GC-827` | relation | `SCHEMA-ontology-graph` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1305,6 +1308,8 @@
 | `FLOW-formatE-tool` | relation | `SCHEMA-format-e` |
 | `FLOW-function-criticality` | io | `FUNC-graph-metrics` |
 | `FLOW-function-criticality` | relation | `SCHEMA-function-criticality` |
+| `FLOW-gate-candidate` | io | `FUNC-evaluate-rules` |
+| `FLOW-gate-candidate` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-gate-verdict` | io | `FUNC-bootstrap` |
 | `FLOW-gate-verdict` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-gate-verdict` | io | `FUNC-graph-suggest` |
@@ -1888,6 +1893,7 @@
 | `FUNC-module-metrics` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-mutate` | allocate | `MOD-kernel` |
 | `FUNC-mutate` | io | `FLOW-audit-record` |
+| `FUNC-mutate` | io | `FLOW-gate-candidate` |
 | `FUNC-mutate` | io | `FLOW-gate-verdict` |
 | `FUNC-mutate` | io | `FLOW-graph-delta` |
 | `FUNC-mutate` | io | `FLOW-zug-staende` |

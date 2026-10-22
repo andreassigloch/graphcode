@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 436 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 437 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 436 CR · 343 done · 4 open.
+Total: 437 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -498,3 +498,4 @@ Total: 436 CR · 343 done · 4 open.
 | `CR-GC-824` | n/a | Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum |
 | `CR-GC-825` | n/a | FUNC-decode von loop nach kernel: einzige Grounding-FUNC in loop, Geschwister import/reseed/merge liegen in kernel; Linie loop-surface 2 -> 1 Flow |
 | `CR-GC-826` | n/a | FCHAIN-apply-gate: Host-Socket, StoreLock, SessionLifecycle gehoeren nicht in den Ablauf einer Aenderung |
+| `CR-GC-827` | n/a | Regelpruefung liest den Kandidaten von mutate, nicht den Store |
