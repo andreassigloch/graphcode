@@ -3556,10 +3556,16 @@
       "description": "docs/cr/open/CR-GC-832-schreibweg-im-modell-umgeht-das-graph-mu.md"
     },
     {
+      "id": "CR-GC-833",
+      "type": "CR",
+      "name": "Leseweg und Fuehrung im Modell umgehen die MCP-Werkzeuge; graph_generate ohne FUNC; Learning-Engine nicht gebaut",
+      "description": "docs/cr/open/CR-GC-833-leseweg-und-fuehrung-im-modell-umgehen-d.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
-      "description": "Ein Runden-Durchlauf eines Chat-Turns: (1) read (graph_impact/graph_expand) liest den gebundenen Blast-Radius; (2) status (evaluateRules) prueft offene Regelverletzungen; (3) propose (graph_suggest) rankt Kandidaten-Fixes im R^6-Metrikraum, nie auto-apply; (4) apply (mutate) ist das eine Apply-Gate. Treiber (built-in executor) und Host (Claude Code/OpenCode) durchlaufen dieselbe Kette, nur die Taktung unterscheidet sich. (Articles 05/07 - Design in progress: measure/Architecture-Fitness-Delta ist noch nicht gebaut, deshalb hier nicht Teil der Kette.)",
+      "description": "Ein Runden-Durchlauf eines Chat-Turns: der Agent liest den Blast-Radius (graph_impact), prueft offene Befunde (rules_evaluate) und laesst Umbauten ranken (graph_suggest: Probelauf je Kandidat durch das Gate, Bericht zum Zug). Das Anwenden ist FCHAIN-apply-gate.",
       "status": "reviewed",
       "created_at": "2026-08-05T00:00:00.000Z"
     },
@@ -3567,7 +3573,7 @@
       "id": "FCHAIN-agent-query",
       "type": "FCHAIN",
       "name": "Agent-Graph-Query (Impact + progressive Expansion)",
-      "description": "graph_impact liefert exakten Blast-Radius; graph_expand vertieft on-demand statt zu greppen. (Ziel a, R12/R13)",
+      "description": "Der Agent fragt graph_impact, graph_expand oder graph_elements; das Werkzeug gibt die Leseanfrage an den Kern (impact, subgraph, listElements), der den Graphen liest, und antwortet als Format-E-Scheibe.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -3604,7 +3610,7 @@
       "id": "FCHAIN-generation-states",
       "type": "FCHAIN",
       "name": "Generierung: von der Saat zur Freigabe",
-      "description": "Die Wirkkette der Zustandsmaschine: die Ablaufsteuerung ruft graph_generate, der Steuerungs-Snapshot liest den Stand, generationStep bestimmt den Schritt (seed | expand | handoff) und gibt die Anweisung an die Ablaufsteuerung zurueck. handoff heisst: als Naechstes graph_suggest rufen — ein eigenes Werkzeug mit eigenen Ketten, kein Datenfluss aus dieser. Jeder Uebergang haengt am Fokus: solange die Maschine etwas zu sagen hat, bleibt sie in expand; hat sie nichts mehr, ist sie done (CR-GC-593, CR-GC-830).",
+      "description": "Die Ablaufsteuerung ruft graph_generate; das Werkzeug laedt das Zielprofil und gibt Graph und Zustand an generationStep, das den Stand ueber takeSteeringSnapshot misst und den Schritt (seed, expand, handoff) bestimmt. Die Antwort geht ueber das Werkzeug zurueck.",
       "concept": true
     },
     {
@@ -4130,6 +4136,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-completeness-request",
+      "type": "FLOW",
+      "name": "Befunde (an die Vollstaendigkeit)",
+      "description": "Die Befunde, die computeReadiness an die Vollstaendigkeitswertung gibt. Beleg: @sigloch/graphcode-client readiness.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-config-file",
       "type": "FLOW",
       "name": "Repo-Konfiguration (Rohform)",
@@ -4147,7 +4160,7 @@
       "id": "FLOW-dimension-readiness",
       "type": "FLOW",
       "name": "Dimensions-Readiness (8 Scores)",
-      "description": "Die thematische Verdichtung des Regelstroms: je Dimension score, violations, applicable. Der Nenner reist mit, weil ein Score ohne ihn nicht lesbar ist.",
+      "description": "Marken und Befunde je Regel aus readinessOf, an graph_readiness.",
       "status": "reviewed",
       "sync": "sync"
     },
@@ -4155,7 +4168,7 @@
       "id": "FLOW-element-slice",
       "type": "FLOW",
       "name": "Element-Scheibe",
-      "description": "Gefilterte Knotenmenge aus dem Store (type/search) — eine Scheibe statt eines Volldumps.",
+      "description": "Die Elemente, die listElements an graph_elements zurueckgibt.",
       "sync": "sync"
     },
     {
@@ -4245,6 +4258,20 @@
       "name": "Gate-Verdikt (Antwort im Aufruf)",
       "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation, als Antwort im Aufruf: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. Jeder Abnehmer wartet im Aufruf darauf: bootstrap, import-code-verb, graph_test_ingest und graph_suggest rufen das Gate und lesen das Ergebnis, der Werkzeug-Kontext bekommt es im selben Aufruf zur Aufzeichnung uebergeben. Den Auftraggeber erreicht es nur ueber graph_mutate (FLOW-mutate-answer, FLOW-mutate-answer-owner). Wer das Urteil spaeter aus dem Log liest, bezieht FLOW-audit-record. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501, CR-GC-509, CR-GC-685, CR-GC-792, CR-GC-823)",
       "status": "reviewed",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-generate-answer",
+      "type": "FLOW",
+      "name": "Antwort graph_generate",
+      "description": "Die Antwort von graph_generate: der naechste Schritt (seed, expand, handoff) mit Anweisung, an die Ablaufsteuerung oder ueber den Host-Socket an das Dashboard (peek). Beleg: src/loop/suggest.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-generation-request",
+      "type": "FLOW",
+      "name": "Generierungsanfrage",
+      "description": "Was graph_generate an generationStep gibt: Graph der Arbeitskopie, Metrikpolitik, Intention, Schwelle, Zurueckgestelltes, Zielprofil, Task. Beleg: src/loop/suggest.ts.",
       "sync": "sync"
     },
     {
@@ -4350,22 +4377,6 @@
       "description": "Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).",
       "status": "reviewed",
       "sync": "sync"
-    },
-    {
-      "id": "FLOW-learning-advice",
-      "type": "FLOW",
-      "name": "Lern-Empfehlung",
-      "description": "Die Antwort des Nachbarsystems: je Kandidat ein Urteil. Advisory wie graph_suggest selbst, nie Auto-Apply. Geplant, nicht realisiert (CR-GC-465).",
-      "status": "draft",
-      "external": true
-    },
-    {
-      "id": "FLOW-learning-query",
-      "type": "FLOW",
-      "name": "Lern-Frage",
-      "description": "Die Frage an das Nachbarsystem: die Lage (Metrikvektor und Zielrichtung im R^6) plus die Kandidaten, die der Fragende bereits gebildet hat. graphcode behaelt die Kandidatenbildung. Geplant, nicht realisiert (CR-GC-465).",
-      "status": "draft",
-      "external": true
     },
     {
       "id": "FLOW-live-event",
@@ -4538,7 +4549,7 @@
       "id": "FLOW-next-step-advice",
       "type": "FLOW",
       "name": "Naechster Schritt (Advisory)",
-      "description": "Der naechste Schritt aus dem Messzustand, die Fokus-Dimension und das Fund-Fenster: an die Ablaufsteuerung als Auftrag, an das Dashboard als Vorschau (graph_generate peek ueber host.sock). Gleicher Vertrag wie die Executor-Runde, anderer Empfaenger. (CR-GC-822)",
+      "description": "Der Schritt, den generationStep an graph_generate zurueckgibt.",
       "sync": "sync"
     },
     {
@@ -4570,10 +4581,24 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-read-request",
+      "type": "FLOW",
+      "name": "Leseanfrage (Werkzeug an Kern)",
+      "description": "Die Leseanfrage, die ein Lesewerkzeug (graph_impact, graph_expand, graph_elements) an den Kern gibt: Knoten, Tiefe, Filter. Beleg: src/surface/read.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-readiness-report",
       "type": "FLOW",
       "name": "Readiness-Report",
       "description": "Der Bericht von graph_readiness an jeden, der ihn ueber das Werkzeug abfragt: die Ablaufsteuerung und das Dashboard ueber host.sock (detail:true, mit den rohen Verstoessen). Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten. (CR-GC-822)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-readiness-request",
+      "type": "FLOW",
+      "name": "Befunde (an die Marken)",
+      "description": "Die Befunde einer Erhebung (evaluateAll), die graph_readiness an readinessOf gibt. Beleg: src/projections/report.ts.",
       "sync": "sync"
     },
     {
@@ -4653,6 +4678,27 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-snapshot-request",
+      "type": "FLOW",
+      "name": "Messanfrage (generationStep)",
+      "description": "Graph und Metrikpolitik, die generationStep an takeSteeringSnapshot gibt. Beleg: src/loop/generate.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-snapshot-request-mutate",
+      "type": "FLOW",
+      "name": "Messanfrage (graph_mutate)",
+      "description": "Graph und Metrikpolitik, die graph_mutate im Probelauf vor und nach dem Zug an takeSteeringSnapshot gibt. Beleg: src/surface/write.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-snapshot-request-readiness",
+      "type": "FLOW",
+      "name": "Messanfrage (graph_readiness)",
+      "description": "Graph und Metrikpolitik, die graph_readiness an takeSteeringSnapshot gibt. Beleg: src/projections/report.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-sse-frame",
       "type": "FLOW",
       "name": "SSE-Frame (versioniert)",
@@ -4668,6 +4714,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-steering-pair",
+      "type": "FLOW",
+      "name": "Snapshot-Paar",
+      "description": "Die zwei Steuerungs-Snapshots vor und nach dem Probelauf, die graph_mutate an computeSteeringDelta gibt. Beleg: src/surface/write.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-steering-snapshot",
       "type": "FLOW",
       "name": "Steering-Snapshot",
@@ -4679,7 +4732,7 @@
       "id": "FLOW-steering-trigger-agent",
       "type": "FLOW",
       "name": "Runden-Ausloeser (Agent)",
-      "description": "Der Wunsch, eine Steuerungsrunde zu fahren, mit ihren Parametern: Intent, zurueckgestellte Fokus-Schluessel, Auswahlmodus. Verbindung FUNC-agent-loop → FUNC-take-steering-snapshot; aufgetrennt aus FLOW-steering-trigger (CR-GC-510, Quelle korrigiert CR-GC-815).",
+      "description": "Der Aufruf von graph_generate durch die Ablaufsteuerung: Intention, defer, task, peek.",
       "status": "reviewed",
       "concept": true,
       "sync": "sync"
@@ -4697,6 +4750,13 @@
       "name": "Store-Neuaufbau-Meldung",
       "description": "Der GraphStore meldet beim Start, dass er den Store nach einem Schemawechsel aus der SSOT neu befuellt hat; was vorher nur im Store stand und nicht exportiert war, ist fort. Beleg: src/kernel/graph-store.ts, open schreibt formatStoreRebuildNotice auf stderr (CR-GC-831).",
       "sync": "async"
+    },
+    {
+      "id": "FLOW-suggest-answer",
+      "type": "FLOW",
+      "name": "Antwort graph_suggest",
+      "description": "Die Antwort von graph_suggest an die Ablaufsteuerung: die gerankten Kandidaten mit Urteil und Bericht je Probelauf. Beleg: src/loop/suggest.ts.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-target-profile",
@@ -5137,13 +5197,13 @@
     {
       "id": "FUNC-compute-readiness",
       "type": "FUNC",
-      "name": "computeReadiness(graph)",
-      "description": "Projiziert den Regelstrom auf die acht Dimensionsscores (score = 1 minus Verstoesse durch applicable). Fremdpaket @sigloch/se-steering, deshalb external.",
+      "name": "readinessOf(evaluation)",
+      "description": "Leitet aus den Befunden einer Erhebung (evaluateAll) die Marken und die Befunde je Regel ab; ruft computeReadiness aus @sigloch/graphcode-client. Bekommt die Befunde, nie den Graphen.",
       "status": "done",
       "external": true,
       "realRef": {
-        "file": "packages/se-engine/src/readiness-compute.ts",
-        "symbol": "computeReadiness",
+        "file": "src/kernel/evaluation.ts",
+        "symbol": "readinessOf",
         "lang": "ts"
       }
     },
@@ -5346,6 +5406,17 @@
       }
     },
     {
+      "id": "FUNC-graph-generate-tool",
+      "type": "FUNC",
+      "name": "graph_generate (Werkzeug)",
+      "description": "Die Werkzeugschicht des Generierungstreibers: laedt das Zielprofil, setzt beim ersten Aufruf die Intent-Anker (Datei-Write in target-profile.json), fuehrt das Fokus-Gedaechtnis der Sitzung und ruft generationStep mit dem Graphen der Arbeitskopie. Beleg: src/loop/suggest.ts, graph_generate.",
+      "realRef": {
+        "file": "src/loop/suggest.ts",
+        "symbol": "graph_generate",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-graph-impact",
       "type": "FUNC",
       "name": "graph_impact(id, depth?)",
@@ -5418,12 +5489,12 @@
     {
       "id": "FUNC-graph-suggest",
       "type": "FUNC",
-      "name": "graph_suggest(weights)",
-      "description": "Duennes Binding auf @sigloch/se-engine (targetFor/suggestEdits): rankt die feuernden Operator-Regeln nach dem Skalarprodukt aus Metrik-Delta und Zielrichtung im R^6-Metrikraum; liefert die Fund-Ebene, Template-Edits laufen als dryRun durchs Gate. Nie auto-apply. (CR-GC-273, Herkunft korrigiert CR-GC-453)",
+      "name": "graph_suggest (Werkzeug)",
+      "description": "Rangt die Umbau-Kandidaten aus suggestEdits: je Kandidat ein Probelauf durch das Gate (mutateWithStates), der Bericht zum Zug aus mitBericht, danach zurueck auf den gespeicherten Stand. Das Zielprofil rankt seit CR-GC-483 nichts mehr. Beleg: src/loop/suggest.ts, graph_suggest.",
       "status": "done",
       "realRef": {
         "file": "src/loop/suggest.ts",
-        "symbol": "bindSuggestTools",
+        "symbol": "graph_suggest",
         "lang": "ts"
       }
     },
@@ -8488,24 +8559,6 @@
       }
     },
     {
-      "id": "SCHEMA-learning-advice",
-      "type": "SCHEMA",
-      "name": "Lern-Empfehlung",
-      "description": "Vertrag der Antwort: je Kandidat uid, score, confidence und Evidenz-Pointer auf Log-Eintraege. Wie der score in die Rangfolge eingeht, entscheidet der Konsument und steht nicht im Vertrag. Offen bis zur Implementierung: ob die Antwort auch inhaltliche Vorschlaege traegt (CR-GC-465).",
-      "status": "draft",
-      "external": true,
-      "zodDefinition": null
-    },
-    {
-      "id": "SCHEMA-learning-query",
-      "type": "SCHEMA",
-      "name": "Lern-Frage",
-      "description": "Vertrag der Frage: Metrikvektor, Zielrichtung und die Kandidatenliste mit uid je Zug. Gehoert dem Nachbarsystem (@sigloch/learning-core), deshalb external. Vor der Implementierung erneut zu entscheiden (CR-GC-465).",
-      "status": "draft",
-      "external": true,
-      "zodDefinition": null
-    },
-    {
       "id": "SCHEMA-lock-owner",
       "type": "SCHEMA",
       "name": "LockOwner",
@@ -8820,6 +8873,12 @@
         "symbol": "StoreRebuildNoticeSchema",
         "lang": "ts"
       }
+    },
+    {
+      "id": "SCHEMA-suggest-answer",
+      "type": "SCHEMA",
+      "name": "Antwort graph_suggest",
+      "description": "Die Antwort von graph_suggest. Im Code ohne Zod-Schema: der Handler gibt ein freies Objekt zurueck."
     },
     {
       "id": "SCHEMA-target-profile",
@@ -11474,11 +11533,6 @@
     {
       "source": "ACTOR-auftraggeber",
       "target": "FLOW-mutate-cmd-owner",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-learning-engine",
-      "target": "FLOW-learning-advice",
       "type": "io"
     },
     {
@@ -16440,6 +16494,46 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-833",
+      "target": "FUNC-compute-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-833",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-833",
+      "target": "FUNC-graph-generate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-833",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-833",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-833",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-833",
+      "target": "FUNC-read-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-833",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -16476,7 +16570,12 @@
     },
     {
       "source": "FCHAIN-advisory-roundtrip",
-      "target": "FUNC-target-profile-load",
+      "target": "FUNC-rules-tool",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-advisory-roundtrip",
+      "target": "FUNC-zug-bericht",
       "type": "compose"
     },
     {
@@ -16516,11 +16615,6 @@
     {
       "source": "FCHAIN-agent-query",
       "target": "FUNC-read-tools",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-agent-query",
-      "target": "FUNC-view-fmea",
       "type": "compose"
     },
     {
@@ -16769,6 +16863,11 @@
     },
     {
       "source": "FCHAIN-doc-export",
+      "target": "FUNC-view-fmea",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
       "target": "FUNC-view-icd",
       "type": "compose"
     },
@@ -16794,12 +16893,22 @@
     },
     {
       "source": "FCHAIN-generation-states",
+      "target": "FUNC-graph-generate-tool",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-generation-states",
       "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
       "source": "FCHAIN-generation-states",
       "target": "FUNC-take-steering-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-generation-states",
+      "target": "FUNC-target-profile-load",
       "type": "compose"
     },
     {
@@ -17300,6 +17409,11 @@
     },
     {
       "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-target-profile",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
       "target": "REQ-risk-skill-instructs-rejected-move",
       "type": "satisfy"
     },
@@ -17501,6 +17615,11 @@
     },
     {
       "source": "FCHAIN-steering-loop",
+      "target": "FUNC-decode",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
       "target": "FUNC-evaluate-rules",
       "type": "compose"
     },
@@ -17512,6 +17631,11 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-generation-step",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-steering-loop",
+      "target": "FUNC-graph-generate-tool",
       "type": "compose"
     },
     {
@@ -17541,22 +17665,12 @@
     },
     {
       "source": "FCHAIN-steering-loop",
-      "target": "FUNC-load-config",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
       "target": "FUNC-mutate",
       "type": "compose"
     },
     {
       "source": "FCHAIN-steering-loop",
       "target": "FUNC-take-steering-snapshot",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "FUNC-target-profile",
       "type": "compose"
     },
     {
@@ -18296,6 +18410,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-completeness-request",
+      "target": "FUNC-score-completeness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-completeness-request",
+      "target": "SCHEMA-rule-violation",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-config-file",
       "target": "FUNC-load-config",
       "type": "io"
@@ -18307,7 +18431,7 @@
     },
     {
       "source": "FLOW-conformance-findings",
-      "target": "FUNC-compute-readiness",
+      "target": "FUNC-graph-readiness",
       "type": "io"
     },
     {
@@ -18322,17 +18446,12 @@
     },
     {
       "source": "FLOW-dimension-readiness",
-      "target": "FUNC-take-steering-snapshot",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-dimension-readiness",
       "target": "SCHEMA-readiness-report",
       "type": "relation"
     },
     {
       "source": "FLOW-element-slice",
-      "target": "FUNC-agent-loop",
+      "target": "FUNC-read-tools",
       "type": "io"
     },
     {
@@ -18496,6 +18615,31 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-generate-answer",
+      "target": "ACTOR-dashboard",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-generate-answer",
+      "target": "FUNC-agent-loop",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-generate-answer",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-generation-request",
+      "target": "FUNC-generation-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-generation-request",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-generation-step-vorschlag",
       "target": "FUNC-vorschlag",
       "type": "io"
@@ -18553,11 +18697,6 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-compute-readiness",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
       "target": "FUNC-decode",
       "type": "io"
     },
@@ -18580,7 +18719,22 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-graph-expand",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-graph-export-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-graph-generate-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-graph-impact",
       "type": "io"
     },
     {
@@ -18621,11 +18775,6 @@
     {
       "source": "FLOW-graph-state",
       "target": "FUNC-read-tools",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-take-steering-snapshot",
       "type": "io"
     },
     {
@@ -18783,26 +18932,6 @@
     {
       "source": "FLOW-install-result-upgrade",
       "target": "SCHEMA-cli-command",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-learning-advice",
-      "target": "FUNC-graph-suggest",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-learning-advice",
-      "target": "SCHEMA-learning-advice",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-learning-query",
-      "target": "ACTOR-learning-engine",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-learning-query",
-      "target": "SCHEMA-learning-query",
       "type": "relation"
     },
     {
@@ -19052,12 +19181,7 @@
     },
     {
       "source": "FLOW-next-step-advice",
-      "target": "ACTOR-dashboard",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-next-step-advice",
-      "target": "FUNC-agent-loop",
+      "target": "FUNC-graph-generate-tool",
       "type": "io"
     },
     {
@@ -19107,17 +19231,7 @@
     },
     {
       "source": "FLOW-query-request-agent",
-      "target": "FUNC-graph-expand",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-agent",
       "target": "FUNC-graph-export-snapshot",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-agent",
-      "target": "FUNC-graph-impact",
       "type": "io"
     },
     {
@@ -19132,7 +19246,7 @@
     },
     {
       "source": "FLOW-query-request-agent",
-      "target": "FUNC-list-elements",
+      "target": "FUNC-graph-suggest",
       "type": "io"
     },
     {
@@ -19166,6 +19280,26 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-read-request",
+      "target": "FUNC-graph-expand",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-read-request",
+      "target": "FUNC-graph-impact",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-read-request",
+      "target": "FUNC-list-elements",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-read-request",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-readiness-report",
       "target": "ACTOR-dashboard",
       "type": "io"
@@ -19178,6 +19312,16 @@
     {
       "source": "FLOW-readiness-report",
       "target": "SCHEMA-readiness-report",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-readiness-request",
+      "target": "FUNC-compute-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-readiness-request",
+      "target": "SCHEMA-rule-violation",
       "type": "relation"
     },
     {
@@ -19232,6 +19376,11 @@
     },
     {
       "source": "FLOW-rule-findings",
+      "target": "FUNC-graph-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-rule-findings",
       "target": "FUNC-health-endpoint",
       "type": "io"
     },
@@ -19243,11 +19392,6 @@
     {
       "source": "FLOW-rule-findings",
       "target": "FUNC-rules-tool",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-rule-findings",
-      "target": "FUNC-score-completeness",
       "type": "io"
     },
     {
@@ -19461,6 +19605,36 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-snapshot-request",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-snapshot-request",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-snapshot-request-mutate",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-snapshot-request-mutate",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-snapshot-request-readiness",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-snapshot-request-readiness",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-sse-frame",
       "target": "ACTOR-dashboard",
       "type": "io"
@@ -19481,13 +19655,28 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-steering-snapshot",
+      "source": "FLOW-steering-pair",
       "target": "FUNC-compute-steering-delta",
       "type": "io"
     },
     {
+      "source": "FLOW-steering-pair",
+      "target": "SCHEMA-steering-snapshot",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-steering-snapshot",
       "target": "FUNC-generation-step",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-steering-snapshot",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-steering-snapshot",
+      "target": "FUNC-graph-readiness",
       "type": "io"
     },
     {
@@ -19497,7 +19686,7 @@
     },
     {
       "source": "FLOW-steering-trigger-agent",
-      "target": "FUNC-take-steering-snapshot",
+      "target": "FUNC-graph-generate-tool",
       "type": "io"
     },
     {
@@ -19536,13 +19725,18 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-target-profile",
-      "target": "FUNC-generation-step",
+      "source": "FLOW-suggest-answer",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
+      "source": "FLOW-suggest-answer",
+      "target": "SCHEMA-suggest-answer",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-target-profile",
-      "target": "FUNC-graph-suggest",
+      "target": "FUNC-graph-generate-tool",
       "type": "io"
     },
     {
@@ -20368,6 +20562,11 @@
     },
     {
       "source": "FUNC-block-q-improvement",
+      "target": "FUNC-graph-generate-tool",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-q-improvement",
       "target": "FUNC-target-profile-load",
       "type": "compose"
     },
@@ -20609,6 +20808,11 @@
       "source": "FUNC-compute-readiness",
       "target": "MOD-kernel-measure",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-compute-readiness",
+      "target": "FLOW-completeness-request",
+      "type": "io"
     },
     {
       "source": "FUNC-compute-readiness",
@@ -20885,27 +21089,17 @@
     },
     {
       "source": "FUNC-generation-step",
-      "target": "FLOW-channel-handoff",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-generation-step",
-      "target": "FLOW-channel-next-step",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-generation-step",
-      "target": "FLOW-channel-skill-reference",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-generation-step",
       "target": "FLOW-generation-step-vorschlag",
       "type": "io"
     },
     {
       "source": "FUNC-generation-step",
       "target": "FLOW-next-step-advice",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-generation-step",
+      "target": "FLOW-snapshot-request",
       "type": "io"
     },
     {
@@ -20993,6 +21187,41 @@
     {
       "source": "FUNC-graph-export-snapshot",
       "target": "REQ-export-refuses-until-held-back-repaired",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-generate-tool",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-graph-generate-tool",
+      "target": "FLOW-channel-handoff",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-generate-tool",
+      "target": "FLOW-channel-next-step",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-generate-tool",
+      "target": "FLOW-channel-skill-reference",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-generate-tool",
+      "target": "FLOW-generate-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-generate-tool",
+      "target": "FLOW-generation-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-generate-tool",
+      "target": "REQ-mcp-tool-registry",
       "type": "satisfy"
     },
     {
@@ -21101,6 +21330,16 @@
     },
     {
       "source": "FUNC-graph-mutate-tool",
+      "target": "FLOW-snapshot-request-mutate",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-mutate-tool",
+      "target": "FLOW-steering-pair",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-mutate-tool",
       "target": "FLOW-zug-anfrage",
       "type": "io"
     },
@@ -21117,6 +21356,16 @@
     {
       "source": "FUNC-graph-readiness",
       "target": "FLOW-readiness-report",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-readiness",
+      "target": "FLOW-readiness-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-readiness",
+      "target": "FLOW-snapshot-request-readiness",
       "type": "io"
     },
     {
@@ -21166,17 +21415,17 @@
     },
     {
       "source": "FUNC-graph-suggest",
-      "target": "FLOW-learning-query",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-graph-suggest",
       "target": "FLOW-mcp-tool",
       "type": "io"
     },
     {
       "source": "FUNC-graph-suggest",
       "target": "FLOW-mutate-cmd-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-suggest",
+      "target": "FLOW-suggest-answer",
       "type": "io"
     },
     {
@@ -21620,6 +21869,11 @@
     {
       "source": "FUNC-read-tools",
       "target": "FLOW-formatE-artifact-read-tools",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-read-tools",
+      "target": "FLOW-read-request",
       "type": "io"
     },
     {
@@ -25775,5 +26029,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 820
+  "graphVersion": 822
 }

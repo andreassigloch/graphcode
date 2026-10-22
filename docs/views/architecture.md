@@ -45,7 +45,7 @@
 | `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-collect-status` | FUNC | collectStatus |
-| `FUNC-compute-readiness` | FUNC | computeReadiness(graph) |
+| `FUNC-compute-readiness` | FUNC | readinessOf(evaluation) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
 | `FUNC-create-harness` | FUNC | createHarness |
 | `FUNC-decode` | FUNC | formatEToCommands(harness, text) |
@@ -61,13 +61,14 @@
 | `FUNC-goal-steerer` | FUNC | Führung |
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |
+| `FUNC-graph-generate-tool` | FUNC | graph_generate (Werkzeug) |
 | `FUNC-graph-impact` | FUNC | graph_impact(id, depth?) |
 | `FUNC-graph-merge-tool` | FUNC | graph_merge (Werkzeug) |
 | `FUNC-graph-metrics` | FUNC | graph_metrics(scope?) |
 | `FUNC-graph-mutate-tool` | FUNC | graph_mutate (Werkzeug) |
 | `FUNC-graph-readiness` | FUNC | graph_readiness(detail?) |
 | `FUNC-graph-store` | FUNC | GraphStore |
-| `FUNC-graph-suggest` | FUNC | graph_suggest(weights) |
+| `FUNC-graph-suggest` | FUNC | graph_suggest (Werkzeug) |
 | `FUNC-gve-sessions` | FUNC | liveSessions |
 | `FUNC-gve-supervise` | FUNC | attachGve |
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
@@ -193,6 +194,7 @@
 | `FUNC-goal-steerer` | ⚠ nicht alloziert (R-22) |
 | `FUNC-graph-expand` | `MOD-kernel` |
 | `FUNC-graph-export-snapshot` | `MOD-projections` |
+| `FUNC-graph-generate-tool` | `MOD-loop` |
 | `FUNC-graph-impact` | `MOD-kernel` |
 | `FUNC-graph-merge-tool` | `MOD-surface` |
 | `FUNC-graph-metrics` | `MOD-projections` |

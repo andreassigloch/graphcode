@@ -49,7 +49,7 @@
   - Gibt Auftraege und nimmt Ergebnisse ab, ueber jeden Kanal: Prompt an die Ablaufsteuerung, CLI-Verb, MCP-Aufruf. Mensch oder Orchestrator, gleichwertig; das Gate unterscheidet sie nicht, es loggt nur den Autor. Nutzerklassen (ISO 29148 5.2.4): Entwickler/Repo-Owner, Systems Engineer auf der WAS-Ebene, Vibe Coder ohne eigenen Code, Orchestrator. Ein Auftrag aendert nie das Regelwerk, nach dem das Gate urteilt, das setzt ACTOR-regelhalter. (CR-GC-455, CR-GC-813, CR-GC-815)
 - **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-live-graph-view` · `UC-repo-lifecycle`
   - Browser-Viewer (graph-view-edit). Liest ueber host.sock die Antworten von graph_metrics, graph_readiness und graph_generate (peek); Live-Updates und Health sind Ziel von CR-GC-809. Im Edit-Modus schreibt er heute ueber graph_mutate und graph_export; ob er das darf, entscheidet CR-GC-808 (Ein-Schreiber-Modus). (SPEC §5 Kanal 2, CR-GC-822)
-- **Learning-Engine** (`ACTOR-learning-engine`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-reduced-llm`
+- **Learning-Engine** (`ACTOR-learning-engine`) — triggert `UC-code-quality` · `UC-reduced-llm`
   - Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen als Lerneingang, beantwortet eine Lern-Frage von graph_suggest und nextStep und liefert je Kandidat ein Urteil zurueck. Sie schreibt KEINE Konfiguration: die Urteilsschwellen bleiben der Vertrag des Menschen. Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455, Andockpunkt CR-GC-465)
 - **Regelhalter** (`ACTOR-regelhalter`) — triggert `UC-deterministic-steering` · `UC-repo-lifecycle`
   - Setzt das Regelwerk, nach dem das Gate urteilt und die Runde fuehrt: Urteilsschwellen in der Config, Regelklauseln, Vorlagen je Readiness-Dimension, das Gate-Protokoll, die Ontologie-Version aus contracts. Eine Rolle, kein Personentyp; getrennt vom Auftraggeber, weil ein Auftrag das Regelwerk nicht aendern darf. (CR-GC-815)
@@ -64,18 +64,18 @@ Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-eng
 
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-tool-context` → `FUNC-zug-bericht`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-agent-loop` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
-- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-agent-loop` → `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-decode` → `FUNC-graph-metrics` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-laufzeit` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-se-vorbereitung`
+- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-agent-loop` → `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-decode` → `FUNC-graph-metrics` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-se-conops` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-laufzeit` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-se-vorbereitung` → `FUNC-target-profile`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 
 Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessenen Kenngroessen folgt und nicht aus einer Modell-Meinung, sodass jede Runde nachvollziehbar auf ein mehrdimensionales Ziel zulaeuft.
 
-Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-regelhalter`
+Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-regelhalter`
 
-- `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-agent-loop` → `FUNC-generation-step` → `FUNC-graph-store` → `FUNC-take-steering-snapshot`
+- `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-agent-loop` → `FUNC-generation-step` → `FUNC-graph-generate-tool` → `FUNC-graph-store` → `FUNC-take-steering-snapshot` → `FUNC-target-profile-load`
 - `FCHAIN-skill-help` — Skill erklaert: `FUNC-agent-loop` → `FUNC-se-help`
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-agent-loop` → `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-rules-tool` → `FUNC-score-completeness` → `FUNC-se-modulebene` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
-- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-generation-step` → `FUNC-graph-mutate-tool` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-vorschlag` → `FUNC-zug-bericht`
+- `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-generation-step` → `FUNC-graph-generate-tool` → `FUNC-graph-mutate-tool` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-mutate` → `FUNC-take-steering-snapshot` → `FUNC-target-profile-load` → `FUNC-vorschlag` → `FUNC-zug-bericht`
 
 ### `UC-efficient-testing` — Effizientes, impact-basiertes Testen
 
@@ -120,7 +120,7 @@ Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehi
 
 Ausgeloest von: `ACTOR-auftraggeber`
 
-- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-render-views` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
+- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-render-views` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
 - `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-agent-loop` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc` → `FUNC-mutate`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
@@ -129,8 +129,8 @@ Als Entwickler will ich anspruchsvolle Aenderungen mit einem kleinen oder lokale
 
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-learning-engine`
 
-- `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-agent-loop` → `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-target-profile-load`
-- `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-agent-loop` → `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-list-elements` → `FUNC-read-tools` → `FUNC-view-fmea`
+- `FCHAIN-advisory-roundtrip` — Advisory Roundtrip (Read -> Status -> Propose -> Apply): `FUNC-agent-loop` → `FUNC-evaluate-rules` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-rules-tool` → `FUNC-zug-bericht`
+- `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-agent-loop` → `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-list-elements` → `FUNC-read-tools`
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-tool-context` → `FUNC-zug-bericht`
 - `FCHAIN-grammar-query` — Grammatik abfragen: `FUNC-agent-loop` → `FUNC-authoring-guide`
 
@@ -455,6 +455,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-830` | n/a | FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht | `FUNC-agent-loop` · `FUNC-generation-step` · `FUNC-graph-suggest` |
 | `CR-GC-831` | n/a | Schema-Migration: Store-Neuaufbau ist still, migrateSchema gibt es nicht | `FUNC-graph-store` · `FUNC-schema-guard` · `REQ-schema-version-migration` |
 | `CR-GC-832` | n/a | Schreibweg im Modell umgeht das graph_mutate-Werkzeug; Ketten modelfree-gate und interface-escalation sind Eigenschaften, kein Ablauf | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-decode` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-tool-context` · `FUNC-zug-bericht` |
+| `CR-GC-833` | n/a | Leseweg und Fuehrung im Modell umgehen die MCP-Werkzeuge; graph_generate ohne FUNC; Learning-Engine nicht gebaut | `FUNC-compute-readiness` · `FUNC-generation-step` · `FUNC-graph-generate-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-take-steering-snapshot` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
