@@ -1,6 +1,6 @@
 # CR-GC-839: Altbestand CR-Knoten — Dateizeiger und Umfang; Skripte in ein MOD
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1022 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1022.json (Lane: graph)
