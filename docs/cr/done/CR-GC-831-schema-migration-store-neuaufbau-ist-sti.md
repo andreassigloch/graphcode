@@ -1,6 +1,6 @@
 # CR-GC-831: Schema-Migration — Store-Neuaufbau meldet sich; migrateSchema entfällt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1010 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1010.json (Lane: code)
