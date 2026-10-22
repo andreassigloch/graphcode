@@ -900,6 +900,9 @@
 | `CR-GC-825` | relation | `FUNC-decode` |
 | `CR-GC-825` | relation | `MOD-kernel` |
 | `CR-GC-825` | relation | `MOD-loop` |
+| `CR-GC-826` | relation | `FUNC-claim-store-lock` |
+| `CR-GC-826` | relation | `FUNC-host-socket` |
+| `CR-GC-826` | relation | `FUNC-session-shutdown` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -921,16 +924,13 @@
 | `FCHAIN-agent-query` | satisfy | `REQ-precise-context` |
 | `FCHAIN-apply-gate` | compose | `FUNC-agent-loop` |
 | `FCHAIN-apply-gate` | compose | `FUNC-arch-fitness` |
-| `FCHAIN-apply-gate` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-apply-gate` | compose | `FUNC-decode` |
 | `FCHAIN-apply-gate` | compose | `FUNC-emit-trajectory` |
 | `FCHAIN-apply-gate` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-apply-gate` | compose | `FUNC-fit-advisory` |
 | `FCHAIN-apply-gate` | compose | `FUNC-graph-mutate-tool` |
 | `FCHAIN-apply-gate` | compose | `FUNC-graph-store` |
-| `FCHAIN-apply-gate` | compose | `FUNC-host-socket` |
 | `FCHAIN-apply-gate` | compose | `FUNC-mutate` |
-| `FCHAIN-apply-gate` | compose | `FUNC-session-shutdown` |
 | `FCHAIN-apply-gate` | compose | `FUNC-zug-bericht` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-code-governed-quality` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-mcp-gate-symmetry` |
@@ -1057,6 +1057,7 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-gve-sessions` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-gve-supervise` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-host-socket` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-import` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-mutate` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-seed-from-json` |

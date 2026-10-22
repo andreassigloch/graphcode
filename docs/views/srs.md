@@ -380,62 +380,6 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
 
-##### 3.1.1.11  `FUNC-host-socket` — Host-Socket (angedockte Sitzung)
-
-> auch in: `FUNC-block-host-sitzung`
-
-Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
-
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-owner` · io ▶ `FLOW-mutate-answer-owner` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
-
-###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
-
-Endet der Besitzer des Stores, waehrend eine Sitzung angedockt ist, versucht diese Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach als Host weiter. Gelingt das nicht, endet der Aufruf mit einem benannten Fehler statt mit einem Haenger oder einem leeren Ergebnis.
-
-priority: must · status: n/a · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket` · allocate ▶ `MOD-surface`
-
-###### `REQ-further-session-docks-via-socket` — Weitere Sitzung dockt ueber den Socket an
-
-Der Besitzer oeffnet einen lokalen Socket, ueber den jede weitere Sitzung ihre Aufrufe an ihn reicht; Werkzeugflaeche und Urteil des Gates sind dieselben wie im Besitzerprozess.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket` · allocate ▶ `MOD-surface`
-
-##### 3.1.1.12  `FUNC-claim-store-lock` — StoreLock
-
-> auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-speicherwerk`
-
-Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ihn still zu ueberschreiben.
-
-io ◀ `FLOW-cli-command` · `FLOW-lock-release` · io ▶ `FLOW-store-ownership` · allocate ▶ `MOD-kernel`
-
-###### `REQ-first-session-claims-store-lock` — Erste Sitzung erwirbt den Store-Lock
-
-Die erste Sitzung eines Repos erwirbt den Store-Lock atomar; ein zweiter Erwerb wird laut und mit Nennung des Besitzers abgewiesen.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · allocate ▶ `MOD-kernel`
-
-##### 3.1.1.13  `FUNC-session-shutdown` — SessionLifecycle
-
-> auch in: `FCHAIN-repo-lifecycle` · `FUNC-block-host-sitzung`
-
-Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
-
-io ◀ `FLOW-store-ownership` · io ▶ `FLOW-lock-release` · allocate ▶ `MOD-surface`
-
-###### `REQ-session-leaves-nothing-behind` — Sitzungsende hinterlaesst nichts
-
-Nach dem Ende einer Sitzung muss der Store-Lock freigegeben und der Sitzungseintrag entfernt sein; abgeraeumt wird genau einmal und in umgekehrter Aufbaureihenfolge, der Store-Lock zuletzt.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-repo-lifecycle` (integration) · `TEST-session-lifecycle` (integration) · satisfy ◀ `FUNC-session-shutdown` · allocate ▶ `MOD-surface`
-
 #### 3.1.2  `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier)
 
 Agent erzeugt Format-E-Kandidaten (agent-seitig); decode → mutate(suggest-Tier), Review vor Persist. Keine Eigen-Extraktion.
@@ -5728,7 +5672,7 @@ Verification ◀ `TEST-distribution` (e2e) · satisfy ◀ `FUNC-cli-dispatch` ·
 
 ##### 3.9.1.11  `FUNC-claim-store-lock` — StoreLock
 
-> auch in: `FCHAIN-apply-gate` · `FUNC-block-speicherwerk`
+> auch in: `FUNC-block-speicherwerk`
 
 Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ihn still zu ueberschreiben.
 
@@ -5760,7 +5704,7 @@ Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-create-har
 
 ##### 3.9.1.13  `FUNC-session-shutdown` — SessionLifecycle
 
-> auch in: `FCHAIN-apply-gate` · `FUNC-block-host-sitzung`
+> auch in: `FUNC-block-host-sitzung`
 
 Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
 
@@ -5905,6 +5849,30 @@ Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-harness-cli` · `FUNC-upgrade` · allocate ▶ `MOD-surface`
+
+##### 3.9.1.19  `FUNC-host-socket` — Host-Socket (angedockte Sitzung)
+
+> auch in: `FUNC-block-host-sitzung`
+
+Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
+
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-owner` · io ▶ `FLOW-mutate-answer-owner` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
+
+###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
+
+Endet der Besitzer des Stores, waehrend eine Sitzung angedockt ist, versucht diese Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach als Host weiter. Gelingt das nicht, endet der Aufruf mit einem benannten Fehler statt mit einem Haenger oder einem leeren Ergebnis.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket` · allocate ▶ `MOD-surface`
+
+###### `REQ-further-session-docks-via-socket` — Weitere Sitzung dockt ueber den Socket an
+
+Der Besitzer oeffnet einen lokalen Socket, ueber den jede weitere Sitzung ihre Aufrufe an ihn reicht; Werkzeugflaeche und Urteil des Gates sind dieselben wie im Besitzerprozess.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket` · allocate ▶ `MOD-surface`
 
 #### 3.9.2  `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump
 
@@ -6226,7 +6194,7 @@ Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-colle
 
 ###### 3.10.1.2.4  `FUNC-host-socket` — Host-Socket (angedockte Sitzung)
 
-> auch in: `FCHAIN-apply-gate`
+> auch in: `FCHAIN-repo-lifecycle`
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
@@ -6268,7 +6236,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 ###### 3.10.1.2.6  `FUNC-session-shutdown` — SessionLifecycle
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle`
+> auch in: `FCHAIN-repo-lifecycle`
 
 Raeumt am Sessionende alle Ressourcen in umgekehrter Reihenfolge ab, den Store-Lock zuletzt.
 
@@ -7520,7 +7488,7 @@ Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (inte
 
 ###### 3.10.2.7.4  `FUNC-claim-store-lock` — StoreLock
 
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-repo-lifecycle`
+> auch in: `FCHAIN-repo-lifecycle`
 
 Beansprucht den Store atomar und weist einen zweiten Schreiber laut ab, statt ihn still zu ueberschreiben.
 

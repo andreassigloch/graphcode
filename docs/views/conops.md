@@ -62,7 +62,7 @@ Als Entwickler will ich, dass jede Aenderung, meine wie die eines Agenten, durch
 
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine`
 
-- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-claim-store-lock` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-session-shutdown` → `FUNC-zug-bericht`
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-zug-bericht`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-agent-loop` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
 - `FCHAIN-codec-roundtrip` — Format-E Round-Trip (serialize∘parse): `FUNC-decode`
 - `FCHAIN-interface-escalation` — Interface-Änderungs-Eskalation: `FUNC-agent-loop` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-read-tools`
@@ -142,7 +142,7 @@ Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung
 
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-regelhalter`
 
-- `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-import` → `FUNC-mutate` → `FUNC-seed-from-json` → `FUNC-serve-stdio` → `FUNC-session-shutdown` → `FUNC-tool-context` → `FUNC-upgrade`
+- `FCHAIN-repo-lifecycle` — Repo-Lebenszyklus: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-bootstrap` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-harness-cli` → `FUNC-host-socket` → `FUNC-import` → `FUNC-mutate` → `FUNC-seed-from-json` → `FUNC-serve-stdio` → `FUNC-session-shutdown` → `FUNC-tool-context` → `FUNC-upgrade`
 - `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-migrate-schema` → `FUNC-schema-guard`
 
 ## 5  Modes of operation
@@ -452,6 +452,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-823` | n/a | Actor-Flows aus kernel ohne surface: gate-verdict (apply), graph-state (GraphStore), export-pending (setExportPending) erreichen den Auftraggeber im Code nur ueber surface | `FUNC-graph-mutate-tool` · `FUNC-host-socket` · `FUNC-rewind` · `FUNC-score-completeness` · `FUNC-test-ingest` |
 | `CR-GC-824` | n/a | Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum | `FUNC-se-modulebene` · `REQ-modulebene-reads-and-separates` |
 | `CR-GC-825` | n/a | FUNC-decode von loop nach kernel: einzige Grounding-FUNC in loop, Geschwister import/reseed/merge liegen in kernel; Linie loop-surface 2 -> 1 Flow | `FUNC-decode` · `MOD-kernel` · `MOD-loop` |
+| `CR-GC-826` | n/a | FCHAIN-apply-gate: Host-Socket, StoreLock, SessionLifecycle gehoeren nicht in den Ablauf einer Aenderung | `FUNC-claim-store-lock` · `FUNC-host-socket` · `FUNC-session-shutdown` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

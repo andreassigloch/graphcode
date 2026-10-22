@@ -3514,6 +3514,12 @@
       "description": "docs/cr/open/CR-GC-825-func-decode-von-loop-nach-kernel-einzige.md"
     },
     {
+      "id": "CR-GC-826",
+      "type": "CR",
+      "name": "FCHAIN-apply-gate: Host-Socket, StoreLock, SessionLifecycle gehoeren nicht in den Ablauf einer Aenderung",
+      "description": "docs/cr/open/CR-GC-826-fchain-apply-gate-host-socket-storelock-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -16290,6 +16296,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-826",
+      "target": "FUNC-claim-store-lock",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-826",
+      "target": "FUNC-host-socket",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-826",
+      "target": "FUNC-session-shutdown",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -16406,11 +16427,6 @@
     },
     {
       "source": "FCHAIN-apply-gate",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
       "target": "FUNC-decode",
       "type": "compose"
     },
@@ -16446,20 +16462,10 @@
     },
     {
       "source": "FCHAIN-apply-gate",
-      "target": "FUNC-host-socket",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
       "target": "FUNC-mutate",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-apply-gate",
-      "target": "FUNC-session-shutdown",
-      "type": "compose"
     },
     {
       "source": "FCHAIN-apply-gate",
@@ -17142,6 +17148,11 @@
     {
       "source": "FCHAIN-repo-lifecycle",
       "target": "FUNC-harness-cli",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-repo-lifecycle",
+      "target": "FUNC-host-socket",
       "type": "compose"
     },
     {
@@ -25726,5 +25737,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 804
+  "graphVersion": 806
 }
