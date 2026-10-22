@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 197 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 208 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -127,10 +127,10 @@
 | `FLOW-channel-skill-reference` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-steer-advisory` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
 | `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-serve-stdio` · `FUNC-upgrade` |
-| `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-plan-code-lane` |
+| `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
 | `FLOW-cli-invocation-import-code` | `FUNC-agent-loop` | `FUNC-cli-dispatch` |
 | `FLOW-cli-output` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
-| `FLOW-code-lane-plan` | `FUNC-plan-code-lane` | `ACTOR-auftraggeber` |
+| `FLOW-code-lane-plan` | `FUNC-plan-code-lane` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-readiness` |
 | `FLOW-completeness-request` | `FUNC-compute-readiness` | `FUNC-score-completeness` |
 | `FLOW-config-file` | `ACTOR-regelhalter` | `FUNC-load-config` |
@@ -159,8 +159,8 @@
 | `FLOW-generation-request` | `FUNC-graph-generate-tool` | `FUNC-generation-step` |
 | `FLOW-generation-step-vorschlag` | `FUNC-generation-step` | `FUNC-vorschlag` |
 | `FLOW-graph-delta` | `FUNC-mutate` | `FUNC-graph-store` |
-| `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-held-back-traces` · `FUNC-seed-from-json` |
-| `FLOW-graph-state` | `FUNC-graph-store` | `FUNC-chain-metrics` · `FUNC-check-code-conformance` · `FUNC-decode` · `FUNC-evaluate-rules` · `FUNC-function-criticality` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-test-ingest` |
+| `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` |
+| `FLOW-graph-state` | `FUNC-graph-store` | `FUNC-chain-metrics` · `FUNC-check-code-conformance` · `FUNC-decode` · `FUNC-evaluate-rules` · `FUNC-function-criticality` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-impact` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-merge-nodes` · `FUNC-module-metrics` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` · `FUNC-test-ingest` |
 | `FLOW-gve-attach` | `FUNC-serve-stdio` | `FUNC-gve-supervise` |
 | `FLOW-gve-stop` | `FUNC-session-shutdown` | `FUNC-gve-supervise` |
 | `FLOW-harness-handle` | `FUNC-create-harness` | `FUNC-import-code-verb` · `FUNC-own-kuzu-host` · `FUNC-rewind` · `FUNC-serve-stdio` |
@@ -174,12 +174,14 @@
 | `FLOW-held-back-request-readiness` | `FUNC-graph-readiness` | `FUNC-held-back-traces` |
 | `FLOW-held-back-traces` | `FUNC-held-back-traces` | `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` |
 | `FLOW-impact-slice` | `FUNC-graph-impact` | `FUNC-read-tools` |
-| `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` · `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `FUNC-test-ingest` |
+| `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` · `FUNC-test-ingest` |
 | `FLOW-import-summary` | `FUNC-import-code-verb` | `FUNC-cli-dispatch` |
 | `FLOW-imported-graph` | `FUNC-import` | `FUNC-graph-store` |
 | `FLOW-install-result-collect-status` | `FUNC-collect-status` | `FUNC-cli-dispatch` |
 | `FLOW-install-result-harness-cli` | `FUNC-harness-cli` | `FUNC-cli-dispatch` |
 | `FLOW-install-result-upgrade` | `FUNC-upgrade` | `FUNC-cli-dispatch` |
+| `FLOW-lane-output` | `FUNC-verify-lane-code` | `ACTOR-auftraggeber` |
+| `FLOW-lane-output-full` | `FUNC-verify-lane-full` | `ACTOR-auftraggeber` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `FUNC-broadcast-diff` |
 | `FLOW-lock-file` | `FUNC-claim-store-lock` | `FUNC-upgrade` |
 | `FLOW-lock-lost` | `FUNC-claim-store-lock` | `FUNC-session-shutdown` |
@@ -207,11 +209,13 @@
 | `FLOW-mutate-cmd-tool` | `FUNC-graph-mutate-tool` | `FUNC-mutate` |
 | `FLOW-next-step-advice` | `FUNC-generation-step` | `FUNC-graph-generate-tool` |
 | `FLOW-ontology-json` | `FUNC-seed-from-json` | `FUNC-import` |
+| `FLOW-plan-request` | `FUNC-verify-lane-code` | `FUNC-plan-code-lane` |
+| `FLOW-plan-request-full` | `FUNC-verify-lane-full` | `FUNC-plan-code-lane` |
 | `FLOW-proxy-answer` | `FUNC-host-socket` | `FUNC-host-proxy` |
 | `FLOW-proxy-answer-agent` | `FUNC-host-proxy` | `FUNC-agent-loop` |
 | `FLOW-proxy-call` | `FUNC-host-proxy` | `FUNC-host-socket` |
 | `FLOW-query-export` | `FUNC-graph-export-snapshot` | `FUNC-export-markdown` |
-| `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` · `FUNC-rules-tool` |
+| `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` |
 | `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-graph-export-snapshot` |
 | `FLOW-read-request` | `FUNC-read-tools` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` |
 | `FLOW-readiness-report` | `FUNC-graph-readiness` | `ACTOR-dashboard` · `FUNC-agent-loop` |
@@ -226,9 +230,14 @@
 | `FLOW-rule-findings` | `FUNC-evaluate-rules` | `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` |
 | `FLOW-rules-answer` | `FUNC-rules-tool` | `FUNC-agent-loop` |
 | `FLOW-schema-fingerprint` | `FUNC-schema-guard` | `FUNC-open-store` |
-| `FLOW-schlupf-zeile` | `FUNC-measure-test-schlupf` | `ACTOR-auftraggeber` |
+| `FLOW-schlupf-request` | `FUNC-verify-lane-full` | `FUNC-measure-test-schlupf` |
+| `FLOW-schlupf-result` | `FUNC-measure-test-schlupf` | `FUNC-verify-lane-full` |
+| `FLOW-schlupf-zeile` | `FUNC-verify-lane-full` | `ACTOR-auftraggeber` |
 | `FLOW-seed-request` | `FUNC-serve-stdio` | `FUNC-seed-from-json` |
 | `FLOW-seed-request-import-code` | `FUNC-import-code-verb` | `FUNC-seed-from-json` |
+| `FLOW-select-request` | `FUNC-resolve-tests-from-code` | `FUNC-select-tests` |
+| `FLOW-select-request-lane` | `FUNC-plan-code-lane` | `FUNC-select-tests` |
+| `FLOW-selected-tests` | `FUNC-select-tests` | `FUNC-plan-code-lane` · `FUNC-resolve-tests-from-code` |
 | `FLOW-session-end` | `ACTOR-auftraggeber` | `FUNC-session-shutdown` |
 | `FLOW-session-entry` | `FUNC-gve-supervise` | `FUNC-gve-sessions` |
 | `FLOW-session-registry` | `FUNC-gve-sessions` | `FUNC-gve-supervise` |
@@ -252,9 +261,11 @@
 | `FLOW-suggest-answer` | `FUNC-graph-suggest` | `FUNC-agent-loop` |
 | `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-graph-generate-tool` |
 | `FLOW-target-profile-file` | `FUNC-agent-loop` | `FUNC-target-profile-load` |
-| `FLOW-test-ingest-answer` | `FUNC-test-ingest` | `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` |
-| `FLOW-test-run-report-code` | `FUNC-plan-code-lane` | `FUNC-test-ingest` |
-| `FLOW-test-run-report-full` | `FUNC-measure-test-schlupf` | `FUNC-test-ingest` |
+| `FLOW-test-impact-request` | `FUNC-deduce-tests` | `FUNC-resolve-tests-from-code` |
+| `FLOW-test-impact-request-ingest` | `FUNC-test-ingest` | `FUNC-resolve-tests-from-code` |
+| `FLOW-test-ingest-answer` | `FUNC-test-ingest` | `FUNC-agent-loop` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
+| `FLOW-test-run-report-code` | `FUNC-verify-lane-code` | `FUNC-test-ingest` |
+| `FLOW-test-run-report-full` | `FUNC-verify-lane-full` | `FUNC-test-ingest` |
 | `FLOW-test-selection` | `FUNC-deduce-tests` | `FUNC-agent-loop` |
 | `FLOW-tool-context` | `FUNC-tool-context` | `FUNC-bind-tools` |
 | `FLOW-tool-registry` | `FUNC-bind-tools` | `FUNC-serve-stdio` |

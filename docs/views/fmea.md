@@ -10,7 +10,7 @@
 
 | # | Risiko | Kette | S | O | D | RPN | AP | Träger | verifiziert |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | Risiko veraltetes Testergebnis | `FCHAIN-test-ingest` | 8 | 5 | 7 | 280 | High | `FUNC-plan-code-lane` · `FUNC-test-ingest` | ✓ |
+| 1 | Risiko veraltetes Testergebnis | `FCHAIN-test-ingest` | 8 | 5 | 7 | 280 | High | `FUNC-plan-code-lane` · `FUNC-test-ingest` · `FUNC-verify-lane-code` | ✓ |
 | 2 | Risiko falscher Befund laeuft um | `FCHAIN-steering-loop` | 8 | 3 | 7 | 168 | High | — | ✗ |
 | 3 | Risiko Schnittstellenaenderung ohne Eskalation | — | 7 | 4 | 5 | 140 | High | — | ✗ |
 | 4 | Risiko Vertrag des Messvektors ungebunden | `FCHAIN-steering-loop` | 6 | 3 | 7 | 126 | High | `FUNC-take-steering-snapshot` | ✗ |
@@ -22,7 +22,7 @@
 | 10 | Risiko Stufenname ohne Wertebereich | `FCHAIN-steering-loop` | 5 | 3 | 6 | 90 | Medium | `FUNC-take-steering-snapshot` | ✗ |
 | 11 | Risiko Delta fehlt in der Antwort | `FCHAIN-steering-loop` | 5 | 3 | 5 | 75 | Medium | `FUNC-compute-steering-delta` | ✗ |
 | 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-host-start` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
-| 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-impact-testing` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` | ✓ |
+| 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-verify-lane` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` | ✓ |
 | 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | `FUNC-export-marker` | ✓ |
 | 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | `FUNC-held-back-traces` | ✓ |
 | 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-session-end` | 7 | 2 | 3 | 42 | Medium | `FUNC-host-socket` | ✓ |
@@ -37,13 +37,13 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 - **Bewertung:** S 8 · O 5 · D 7 · RPN 280 · AP High
 - **Kette:** `FCHAIN-test-ingest`
 - **Anwendungsfall:** `UC-efficient-testing`
-- **Träger:** `FUNC-plan-code-lane` · `FUNC-test-ingest`
+- **Träger:** `FUNC-plan-code-lane` · `FUNC-test-ingest` · `FUNC-verify-lane-code`
 - **Befund:** FMEA CR-GC-798 FM-11, Kreislauf aus FUNC-graph-store, FUNC-mutate und FUNC-test-ingest. Das Ergebnis traegt ranAt, kein Leser wertet es aus (src/projections/testreport.ts:119; kein Leser in contracts/se). FM-03 und VR-01 lesen nur result.
 - **Analyse:** `CR-GC-798` (docs/cr/open/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md) · `CR-GC-799` (docs/cr/open/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md) · `CR-GC-800` (docs/cr/open/CR-GC-800-spur-code-und-volllauf-melden-aenderung-.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-lane-reports-change` | Die Spur CODE und der Volllauf melden nach jedem Lauf die Knoten der geaenderten Dateien und den Bericht des Laufs an graph_test_ingest. Die Knoten kommen aus derselben Abbildung von Datei auf Knoten wie die Testauswahl. Scheitert die Meldung, endet der Lauf rot. Der Planmodus meldet nichts. | `FUNC-plan-code-lane` |
+| `REQ-lane-reports-change` | Die Spur CODE und der Volllauf melden nach jedem Lauf die Knoten der geaenderten Dateien und den Bericht des Laufs an graph_test_ingest. Die Knoten kommen aus derselben Abbildung von Datei auf Knoten wie die Testauswahl. Scheitert die Meldung, endet der Lauf rot. Der Planmodus meldet nichts. | `FUNC-plan-code-lane` · `FUNC-verify-lane-code` |
 | `REQ-test-result-withdrawn-on-change` | Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das Ergebnis an seinen testRefs zurueck; der Eintrag gilt bis zur naechsten Rueckmeldung eines Laufs als nicht bestanden. Die betroffenen Tests sind die Menge, die die Testauswahl fuer dieselbe Aenderung liefert. | `FUNC-test-ingest` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
@@ -265,15 +265,15 @@ Der Client arbeitet mit der Werkzeugliste vom Sitzungsstart. Eine neue Eingabe e
 Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
 
 - **Bewertung:** S 7 · O 3 · D 3 · RPN 63 · AP Medium
-- **Kette:** `FCHAIN-impact-testing`
+- **Kette:** `FCHAIN-verify-lane`
 - **Anwendungsfall:** `UC-efficient-testing`
-- **Träger:** `FUNC-measure-test-schlupf`
+- **Träger:** `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full`
 - **Befund:** FMEA CR-GC-798 FM-20, frei abgeleitet. Ursache ist ein Test ohne Bindung oder eine Quelldatei ohne Knoten. Entscheidung: gedeckt durch die Schlupfmessung je CR (REQ-full-run-on-probation).
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-full-run-on-probation` | Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter. | `FUNC-measure-test-schlupf` |
+| `REQ-full-run-on-probation` | Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter. | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|

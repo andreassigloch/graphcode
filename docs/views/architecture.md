@@ -93,7 +93,7 @@
 | `FUNC-read-tools` | FUNC | bindReadTools(ctx) |
 | `FUNC-render-views` | FUNC | render graph→markdown views |
 | `FUNC-reseed` | FUNC | reseed(relPath) |
-| `FUNC-resolve-tests-from-code` | FUNC | Gerichtete code→REQ→TEST-Auflösung |
+| `FUNC-resolve-tests-from-code` | FUNC | harness.testImpact(changeSet, depth) |
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
 | `FUNC-rules-tool` | FUNC | rules_evaluate / rules_get_violations |
 | `FUNC-schema-guard` | FUNC | schemaFingerprint |
@@ -114,6 +114,7 @@
 | `FUNC-se-trade` | FUNC | Skill se-trade |
 | `FUNC-se-vorbereitung` | FUNC | Skill se-vorbereitung |
 | `FUNC-seed-from-json` | FUNC | seedFromJsonFile(target, relPath) |
+| `FUNC-select-tests` | FUNC | impactedTests(graph, changeSet) |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-session-shutdown` | FUNC | SessionLifecycle |
@@ -125,6 +126,8 @@
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
 | `FUNC-tool-context` | FUNC | createToolContext |
 | `FUNC-upgrade` | FUNC | executeUpgrade(opts) |
+| `FUNC-verify-lane-code` | FUNC | npm run verify:code |
+| `FUNC-verify-lane-full` | FUNC | npm run verify:full |
 | `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
 | `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
 | `FUNC-view-fmea` | FUNC | View se-view:fmea |
@@ -250,6 +253,7 @@
 | `FUNC-se-trade` | `MOD-agent-surface` |
 | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `FUNC-seed-from-json` | `MOD-kernel` |
+| `FUNC-select-tests` | `MOD-kernel-measure` |
 | `FUNC-serve-sse` | `MOD-surface` |
 | `FUNC-serve-stdio` | `MOD-surface` |
 | `FUNC-session-shutdown` | `MOD-surface` |
@@ -261,6 +265,8 @@
 | `FUNC-test-ui` | `MOD-agent-surface` |
 | `FUNC-tool-context` | `MOD-surface` |
 | `FUNC-upgrade` | `MOD-surface` |
+| `FUNC-verify-lane-code` | ⚠ nicht alloziert (R-22) |
+| `FUNC-verify-lane-full` | ⚠ nicht alloziert (R-22) |
 | `FUNC-view-changelog` | `MOD-agent-surface` |
 | `FUNC-view-conops` | `MOD-agent-surface` |
 | `FUNC-view-fmea` | `MOD-agent-surface` |

@@ -83,8 +83,9 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 
 Ausgeloest von: `ACTOR-auftraggeber`
 
-- `FCHAIN-impact-testing` — Impact-basierte Testauswahl: `FUNC-deduce-tests` → `FUNC-measure-test-schlupf` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code`
-- `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-measure-test-schlupf` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-test-ingest`
+- `FCHAIN-impact-testing` — Tests zu einer Aenderung waehlen: `FUNC-agent-loop` → `FUNC-deduce-tests` → `FUNC-graph-store` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests`
+- `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context`
+- `FCHAIN-verify-lane` — Test-Spur fahren (npm): `FUNC-graph-store` → `FUNC-measure-test-schlupf` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context` → `FUNC-verify-lane-code` → `FUNC-verify-lane-full`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -461,6 +462,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-833` | n/a | Leseweg und Fuehrung im Modell umgehen die MCP-Werkzeuge; graph_generate ohne FUNC; Learning-Engine nicht gebaut | `FUNC-compute-readiness` · `FUNC-generation-step` · `FUNC-graph-generate-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-take-steering-snapshot` |
 | `CR-GC-834` | n/a | Start, Sitzungsende und Store-Oeffnen im Modell: repo-lifecycle mischt fuenf Ablaeufe, Startmeldung haengt am GraphStore in 18 Ketten | `FUNC-claim-store-lock` · `FUNC-cli-dispatch` · `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-host-proxy` · `FUNC-import` · `FUNC-open-store` · `FUNC-seed-from-json` · `FUNC-serve-stdio` · `FUNC-session-shutdown` |
 | `CR-GC-835` | n/a | Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC | `FUNC-auto-export` · `FUNC-export-markdown` · `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-graph-reseed-tool` · `FUNC-held-back-traces` · `FUNC-import-code-verb` · `FUNC-mutate` |
+| `CR-GC-836` | n/a | Test-Ketten im Modell: graph_tests, graph_test_ingest und die npm-Spuren verify:code/verify:full in zwei Ketten vermischt; Skripte ohne FUNC | `FUNC-deduce-tests` · `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `FUNC-resolve-tests-from-code` · `FUNC-select-tests` · `FUNC-test-ingest` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

@@ -3574,6 +3574,12 @@
       "description": "docs/cr/open/CR-GC-835-export-import-und-snapshot-ketten-im-mod.md"
     },
     {
+      "id": "CR-GC-836",
+      "type": "CR",
+      "name": "Test-Ketten im Modell: graph_tests, graph_test_ingest und die npm-Spuren verify:code/verify:full in zwei Ketten vermischt; Skripte ohne FUNC",
+      "description": "docs/cr/open/CR-GC-836-test-ketten-im-modell-graph-tests-graph-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3646,8 +3652,8 @@
     {
       "id": "FCHAIN-impact-testing",
       "type": "FCHAIN",
-      "name": "Impact-basierte Testauswahl",
-      "description": "Geändertes Element → graph_impact → exakt betroffene TEST-Knoten → bottom-up ausführen (REQ-Tests → FCHAIN → UC).",
+      "name": "Tests zu einer Aenderung waehlen",
+      "description": "Der Agent ruft graph_tests mit der Aenderungsmenge; das Werkzeug fragt harness.testImpact, das den gespeicherten Graphen liest und impactedTests waehlen laesst, und antwortet mit dem minimalen vitest-Aufruf.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
     },
@@ -3743,7 +3749,13 @@
       "id": "FCHAIN-test-ingest",
       "type": "FCHAIN",
       "name": "Testergebnis zurueckschreiben",
-      "description": "Der Agent meldet die Ergebnisse eines Testlaufs oder eine Aenderung zurueck; das Werkzeug ordnet Ergebnisse den TEST-Knoten zu, nimmt die Ergebnisse der von der Aenderung betroffenen Tests zurueck und schreibt beides durch das Gate. Die betroffene Menge liefert die Testauswahl im selben Aufruf. (CR-GC-768, CR-GC-799)"
+      "description": "Der Agent meldet einen Testlauf oder eine Aenderung an graph_test_ingest; das Werkzeug fragt die betroffenen Tests ab, ordnet Ergebnisse den TEST-Knoten zu, nimmt veraltete zurueck, schreibt durch das Gate und antwortet."
+    },
+    {
+      "id": "FCHAIN-verify-lane",
+      "type": "FCHAIN",
+      "name": "Test-Spur fahren (npm)",
+      "description": "Der Entwickler oder der pre-commit-Hook faehrt npm run verify:code oder verify:full; die Spur plant ueber planCodeLane aus dem committeten Snapshot, faehrt vitest, meldet das Ergebnis ueber graph_test_ingest zurueck und gibt Plan, Ergebnis und bei verify:full die Schlupf-Zeile aus."
     },
     {
       "id": "FLOW-action",
@@ -4175,7 +4187,7 @@
       "id": "FLOW-code-lane-plan",
       "type": "FLOW",
       "name": "Plan der Code-Spur",
-      "description": "Der Plan der lokalen Code-Spur: gewaehlte Spur, Dateien, Laufkommando, Grund, Bindungsquote und unaufgeloeste TESTs. Geht an den Menschen an der Schale und an den pre-commit-Hook.",
+      "description": "Der Plan der Code-Spur (Spur, Dateien, Bindung), den planCodeLane an die npm-Spur zurueckgibt.",
       "sync": "sync"
     },
     {
@@ -4535,6 +4547,20 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-lane-output",
+      "type": "FLOW",
+      "name": "Spur-Ausgabe (verify:code)",
+      "description": "Plan, Bindungsgrad und Ergebnis der Code-Spur auf stderr. Beleg: scripts/verify-code.mjs.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-lane-output-full",
+      "type": "FLOW",
+      "name": "Spur-Ausgabe (verify:full)",
+      "description": "Plan, Bindungsgrad, Ergebnis und Schlupf der vollen Spur auf stderr. Beleg: scripts/verify-full.mjs.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-live-event",
       "type": "FLOW",
       "name": "Live-Update-Event",
@@ -4736,6 +4762,20 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-plan-request",
+      "type": "FLOW",
+      "name": "Spur-Anfrage (verify:code)",
+      "description": "Die geaenderten Dateien und der Kontext, mit denen verify:code planCodeLane ruft. Beleg: scripts/verify-code.mjs.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-plan-request-full",
+      "type": "FLOW",
+      "name": "Spur-Anfrage (verify:full)",
+      "description": "Die geaenderten Dateien und der Kontext, mit denen verify:full planCodeLane ruft. Beleg: scripts/verify-full.mjs.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-proxy-answer",
       "type": "FLOW",
       "name": "Werkzeugantwort (Host an Stellvertreter)",
@@ -4870,10 +4910,24 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-schlupf-request",
+      "type": "FLOW",
+      "name": "Schlupf-Anfrage",
+      "description": "Rote Tests, Auswahl und reine Graph-Treffer, die verify:full an schlupfVon gibt. Beleg: scripts/verify-full.mjs.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-schlupf-result",
+      "type": "FLOW",
+      "name": "Schlupf",
+      "description": "Der Schlupf, den schlupfVon an verify:full zurueckgibt. Beleg: src/projections/test-schlupf.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-schlupf-zeile",
       "type": "FLOW",
       "name": "Schlupf-Zeile",
-      "description": "Eine Zeile je Volllauf in docs/messung/testauswahl.jsonl: CR, Spur, Auswahl, rote Dateien, Schlupf, Zusage der Bindung.",
+      "description": "Die Zeile in docs/messung/testauswahl.jsonl und auf stderr, die verify:full je Lauf schreibt.",
       "sync": "async"
     },
     {
@@ -4888,6 +4942,27 @@
       "type": "FLOW",
       "name": "Erstbefuellung (import-code)",
       "description": "Die Erstbefuellung eines leeren Stores vor dem Code-Import. Beleg: src/surface/import-code-verb.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-select-request",
+      "type": "FLOW",
+      "name": "Auswahl-Anfrage (testImpact)",
+      "description": "Graph und Aenderungsmenge, die testImpact an impactedTests gibt. Beleg: src/kernel/harness.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-select-request-lane",
+      "type": "FLOW",
+      "name": "Auswahl-Anfrage (Code-Spur)",
+      "description": "Committeter Graph und Knoten der Aenderung, die planCodeLane an impactedTests gibt. Beleg: src/projections/test-selection-audit.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-selected-tests",
+      "type": "FLOW",
+      "name": "Gewaehlte Tests",
+      "description": "Die betroffenen TEST-Knoten, die impactedTests an den Aufrufer zurueckgibt. Beleg: src/kernel/measure/test-selection.ts.",
       "sync": "sync"
     },
     {
@@ -5056,24 +5131,38 @@
       "sync": "async"
     },
     {
+      "id": "FLOW-test-impact-request",
+      "type": "FLOW",
+      "name": "Testauswahl-Anfrage (graph_tests)",
+      "description": "Die Aenderungsmenge und Tiefe, mit denen graph_tests harness.testImpact ruft. Beleg: src/projections/report.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-test-impact-request-ingest",
+      "type": "FLOW",
+      "name": "Testauswahl-Anfrage (graph_test_ingest)",
+      "description": "Die Aenderungsmenge, mit der graph_test_ingest harness.testImpact ruft. Beleg: src/projections/testreport.ts.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-test-ingest-answer",
       "type": "FLOW",
       "name": "graph_test_ingest-Antwort",
-      "description": "Die Antwort von graph_test_ingest an die Spur: angewendete Zuordnungen, unaufgeloeste Dateien, zurueckgenommene Ergebnisse, Gate-Urteil. Eine gescheiterte Antwort macht die Spur rot. Beleg: src/projections/testreport.ts (CR-GC-800, CR-GC-823)",
+      "description": "Die Antwort von graph_test_ingest: zugeordnete Ergebnisse, zurueckgenommene Ergebnisse, Knoten ohne Lauf.",
       "sync": "sync"
     },
     {
       "id": "FLOW-test-run-report-code",
       "type": "FLOW",
       "name": "Testlauf-Bericht (Spur CODE)",
-      "description": "Der Laufbericht der Spur CODE an graph_test_ingest: roher vitest-JSON-Bericht und die geaenderten Knoten. Beleg: scripts/verify-code.mjs ueber scripts/aenderung-melden.mjs (CR-GC-800, CR-GC-823)",
+      "description": "Der vitest-Bericht der Code-Spur mit der Aenderungsmenge, den verify:code ueber graph_test_ingest zurueckmeldet (meldeZurueck).",
       "sync": "sync"
     },
     {
       "id": "FLOW-test-run-report-full",
       "type": "FLOW",
       "name": "Testlauf-Bericht (Spur VOLL)",
-      "description": "Der Laufbericht der Spur VOLL an graph_test_ingest: roher vitest-JSON-Bericht des ganzen Laufs und die geaenderten Knoten. Beleg: scripts/verify-full.mjs ueber scripts/aenderung-melden.mjs (CR-GC-800, CR-GC-823)",
+      "description": "Der vitest-Bericht der vollen Suite mit der Aenderungsmenge, den verify:full ueber graph_test_ingest zurueckmeldet (meldeZurueck).",
       "sync": "sync"
     },
     {
@@ -6089,8 +6178,8 @@
     {
       "id": "FUNC-resolve-tests-from-code",
       "type": "FUNC",
-      "name": "Gerichtete code→REQ→TEST-Auflösung",
-      "description": "graph_tests akzeptiert ein Code-Changeset und traversiert gerichtet (geaenderter Knoten →satisfy/allocate→ REQ →verify→ TEST), nicht nur reines incoming-graph_impact. Wrappt EINEN Impact-/Traversal-Pfad, kein zweiter Blast-Radius.",
+      "name": "harness.testImpact(changeSet, depth)",
+      "description": "Liest den gespeicherten Graphen und gibt die von einer Aenderung betroffenen Tests als Teilgraph zurueck (impactedTests, Vertrag SCHEMA-impacted-tests). Beleg: src/kernel/harness.ts.",
       "status": "done",
       "codeRef": null,
       "realRef": {
@@ -6296,6 +6385,17 @@
       }
     },
     {
+      "id": "FUNC-select-tests",
+      "type": "FUNC",
+      "name": "impactedTests(graph, changeSet)",
+      "description": "Waehlt zu einer Aenderungsmenge die betroffenen TEST-Knoten: Code-Knoten, satisfy oder allocate, REQ, verify, TEST. Reine Funktion; graph_tests, graph_test_ingest und die Code-Spur benutzen dieselbe. Beleg: src/kernel/measure/test-selection.ts.",
+      "realRef": {
+        "file": "src/kernel/measure/test-selection.ts",
+        "symbol": "impactedTests",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-serve-sse",
       "type": "FUNC",
       "name": "serveSSE()",
@@ -6431,6 +6531,24 @@
         "lang": "ts"
       },
       "testRefs": null
+    },
+    {
+      "id": "FUNC-verify-lane-code",
+      "type": "FUNC",
+      "name": "npm run verify:code",
+      "description": "Die npm-Spur verify:code: plant die Code-Spur, faehrt vitest auf der Auswahl oder der vollen Suite und meldet das Ergebnis ueber graph_test_ingest zurueck (meldeZurueck). Beleg: scripts/verify-code.mjs.",
+      "realRef": {
+        "file": "scripts/verify-code.mjs"
+      }
+    },
+    {
+      "id": "FUNC-verify-lane-full",
+      "type": "FUNC",
+      "name": "npm run verify:full",
+      "description": "Die npm-Spur verify:full: plant die Code-Spur, faehrt die volle Suite, meldet das Ergebnis ueber graph_test_ingest zurueck und schreibt die Schlupf-Zeile. Beleg: scripts/verify-full.mjs.",
+      "realRef": {
+        "file": "scripts/verify-full.mjs"
+      }
     },
     {
       "id": "FUNC-view-changelog",
@@ -16948,6 +17066,46 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-836",
+      "target": "FUNC-deduce-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-836",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-836",
+      "target": "FUNC-plan-code-lane",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-836",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-836",
+      "target": "FUNC-select-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-836",
+      "target": "FUNC-test-ingest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-836",
+      "target": "FUNC-verify-lane-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-836",
+      "target": "FUNC-verify-lane-full",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -17477,22 +17635,27 @@
     },
     {
       "source": "FCHAIN-impact-testing",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-impact-testing",
       "target": "FUNC-deduce-tests",
       "type": "compose"
     },
     {
       "source": "FCHAIN-impact-testing",
-      "target": "FUNC-measure-test-schlupf",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-impact-testing",
-      "target": "FUNC-plan-code-lane",
+      "target": "FUNC-graph-store",
       "type": "compose"
     },
     {
       "source": "FCHAIN-impact-testing",
       "target": "FUNC-resolve-tests-from-code",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-impact-testing",
+      "target": "FUNC-select-tests",
       "type": "compose"
     },
     {
@@ -17508,11 +17671,6 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FCHAIN-impact-testing",
-      "target": "REQ-risk-selection-misses-red-test",
-      "type": "satisfy"
     },
     {
       "source": "FCHAIN-live-update",
@@ -18355,17 +18513,7 @@
     },
     {
       "source": "FCHAIN-test-ingest",
-      "target": "FUNC-measure-test-schlupf",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-test-ingest",
       "target": "FUNC-mutate",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-test-ingest",
-      "target": "FUNC-plan-code-lane",
       "type": "compose"
     },
     {
@@ -18375,12 +18523,77 @@
     },
     {
       "source": "FCHAIN-test-ingest",
+      "target": "FUNC-select-tests",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-test-ingest",
       "target": "FUNC-test-ingest",
       "type": "compose"
     },
     {
       "source": "FCHAIN-test-ingest",
+      "target": "FUNC-tool-context",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-test-ingest",
       "target": "REQ-risk-stale-test-result",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-plan-code-lane",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-select-tests",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-test-ingest",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-tool-context",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-verify-lane-code",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-verify-lane-full",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "REQ-risk-selection-misses-red-test",
       "type": "satisfy"
     },
     {
@@ -18990,7 +19203,12 @@
     },
     {
       "source": "FLOW-cli-invocation",
-      "target": "FUNC-plan-code-lane",
+      "target": "FUNC-verify-lane-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-invocation",
+      "target": "FUNC-verify-lane-full",
       "type": "io"
     },
     {
@@ -19020,7 +19238,12 @@
     },
     {
       "source": "FLOW-code-lane-plan",
-      "target": "ACTOR-auftraggeber",
+      "target": "FUNC-verify-lane-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-code-lane-plan",
+      "target": "FUNC-verify-lane-full",
       "type": "io"
     },
     {
@@ -19360,6 +19583,11 @@
     },
     {
       "source": "FLOW-graph-snapshot-file",
+      "target": "FUNC-plan-code-lane",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot-file",
       "target": "FUNC-seed-from-json",
       "type": "io"
     },
@@ -19449,6 +19677,11 @@
     {
       "source": "FLOW-graph-state",
       "target": "FUNC-read-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-resolve-tests-from-code",
       "type": "io"
     },
     {
@@ -19620,16 +19853,6 @@
     },
     {
       "source": "FLOW-impacted-tests",
-      "target": "FUNC-measure-test-schlupf",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-impacted-tests",
-      "target": "FUNC-plan-code-lane",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-impacted-tests",
       "target": "FUNC-test-ingest",
       "type": "io"
     },
@@ -19686,6 +19909,26 @@
     {
       "source": "FLOW-install-result-upgrade",
       "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-lane-output",
+      "target": "ACTOR-auftraggeber",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lane-output",
+      "target": "SCHEMA-code-lane-plan",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-lane-output-full",
+      "target": "ACTOR-auftraggeber",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lane-output-full",
+      "target": "SCHEMA-code-lane-plan",
       "type": "relation"
     },
     {
@@ -19984,6 +20227,26 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-plan-request",
+      "target": "FUNC-plan-code-lane",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-plan-request",
+      "target": "SCHEMA-code-lane-plan",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-plan-request-full",
+      "target": "FUNC-plan-code-lane",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-plan-request-full",
+      "target": "SCHEMA-code-lane-plan",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-proxy-answer",
       "target": "FUNC-host-proxy",
       "type": "io"
@@ -20075,12 +20338,12 @@
     },
     {
       "source": "FLOW-query-request-agent",
-      "target": "FUNC-resolve-tests-from-code",
+      "target": "FUNC-rules-tool",
       "type": "io"
     },
     {
       "source": "FLOW-query-request-agent",
-      "target": "FUNC-rules-tool",
+      "target": "FUNC-test-ingest",
       "type": "io"
     },
     {
@@ -20269,6 +20532,26 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-schlupf-request",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-schlupf-request",
+      "target": "SCHEMA-schlupf-zeile",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-schlupf-result",
+      "target": "FUNC-verify-lane-full",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-schlupf-result",
+      "target": "SCHEMA-schlupf-zeile",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-schlupf-zeile",
       "target": "ACTOR-auftraggeber",
       "type": "io"
@@ -20296,6 +20579,41 @@
     {
       "source": "FLOW-seed-request-import-code",
       "target": "SCHEMA-ontology-json",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-select-request",
+      "target": "FUNC-select-tests",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-select-request",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-select-request-lane",
+      "target": "FUNC-select-tests",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-select-request-lane",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-selected-tests",
+      "target": "FUNC-plan-code-lane",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-selected-tests",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-selected-tests",
+      "target": "SCHEMA-impacted-tests",
       "type": "relation"
     },
     {
@@ -20684,13 +21002,38 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-test-impact-request",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-test-impact-request",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-test-impact-request-ingest",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-test-impact-request-ingest",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-test-ingest-answer",
-      "target": "FUNC-measure-test-schlupf",
+      "target": "FUNC-agent-loop",
       "type": "io"
     },
     {
       "source": "FLOW-test-ingest-answer",
-      "target": "FUNC-plan-code-lane",
+      "target": "FUNC-verify-lane-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-test-ingest-answer",
+      "target": "FUNC-verify-lane-full",
       "type": "io"
     },
     {
@@ -21240,6 +21583,16 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-block-bedienung",
+      "target": "FUNC-verify-lane-code",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-bedienung",
+      "target": "FUNC-verify-lane-full",
+      "type": "compose"
+    },
+    {
       "source": "FUNC-block-betrieb",
       "target": "FUNC-block-bedienung",
       "type": "compose"
@@ -21472,6 +21825,11 @@
     {
       "source": "FUNC-block-messwerk",
       "target": "FUNC-score-completeness",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-select-tests",
       "type": "compose"
     },
     {
@@ -21869,6 +22227,11 @@
       "source": "FUNC-deduce-tests",
       "target": "MOD-projections",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-deduce-tests",
+      "target": "FLOW-test-impact-request",
+      "type": "io"
     },
     {
       "source": "FUNC-deduce-tests",
@@ -22755,12 +23118,7 @@
     },
     {
       "source": "FUNC-measure-test-schlupf",
-      "target": "FLOW-schlupf-zeile",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-measure-test-schlupf",
-      "target": "FLOW-test-run-report-full",
+      "target": "FLOW-schlupf-result",
       "type": "io"
     },
     {
@@ -22950,7 +23308,7 @@
     },
     {
       "source": "FUNC-plan-code-lane",
-      "target": "FLOW-test-run-report-code",
+      "target": "FLOW-select-request-lane",
       "type": "io"
     },
     {
@@ -23028,6 +23386,11 @@
     {
       "source": "FUNC-resolve-tests-from-code",
       "target": "FLOW-impacted-tests",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-resolve-tests-from-code",
+      "target": "FLOW-select-request",
       "type": "io"
     },
     {
@@ -23396,6 +23759,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-select-tests",
+      "target": "MOD-kernel-measure",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-select-tests",
+      "target": "FLOW-selected-tests",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-select-tests",
+      "target": "REQ-graph-tests-operational",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-serve-sse",
       "target": "MOD-surface",
       "type": "allocate"
@@ -23598,6 +23976,11 @@
     },
     {
       "source": "FUNC-test-ingest",
+      "target": "FLOW-test-impact-request-ingest",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-test-ingest",
       "target": "FLOW-test-ingest-answer",
       "type": "io"
     },
@@ -23659,6 +24042,56 @@
     {
       "source": "FUNC-upgrade",
       "target": "REQ-repo-update",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-verify-lane-code",
+      "target": "FLOW-lane-output",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-verify-lane-code",
+      "target": "FLOW-plan-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-verify-lane-code",
+      "target": "FLOW-test-run-report-code",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-verify-lane-code",
+      "target": "REQ-lane-reports-change",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-verify-lane-full",
+      "target": "FLOW-lane-output-full",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-verify-lane-full",
+      "target": "FLOW-plan-request-full",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-verify-lane-full",
+      "target": "FLOW-schlupf-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-verify-lane-full",
+      "target": "FLOW-schlupf-zeile",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-verify-lane-full",
+      "target": "FLOW-test-run-report-full",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-verify-lane-full",
+      "target": "REQ-full-run-on-probation",
       "type": "satisfy"
     },
     {
@@ -26791,6 +27224,11 @@
     },
     {
       "source": "UC-efficient-testing",
+      "target": "FCHAIN-verify-lane",
+      "type": "compose"
+    },
+    {
+      "source": "UC-efficient-testing",
       "target": "REQ-full-run-on-probation",
       "type": "compose"
     },
@@ -27206,5 +27644,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 826
+  "graphVersion": 828
 }
