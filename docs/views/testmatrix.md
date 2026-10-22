@@ -87,7 +87,7 @@
 | `REQ-metrics-risk-scope` | ✓ | ✓ passed | `TEST-graph-metrics` |
 | `REQ-model-exchange-post` | ✓ | ✓ passed | `TEST-doc-export` · `TEST-import-code-verb` |
 | `REQ-model-exchange-pre` | ✓ | ✓ passed | `TEST-import-code-verb` |
-| `REQ-model-lane-fixed-set` | ✓ | ⚠ nie gelaufen | `TEST-verify-model-set` |
+| `REQ-model-lane-fixed-set` | ✓ | ✓ passed | `TEST-verify-model-set` |
 | `REQ-modulebene-reads-and-separates` | ✓ | ✓ passed | `TEST-modulebene-reads-and-separates` |
 | `REQ-monotone-convergence` | ✓ | ✓ passed | `TEST-monotone-convergence` |
 | `REQ-mutation-emits-event` | ✓ | ✓ passed | `TEST-create-harness-smoke` · `TEST-live-view` |
@@ -187,7 +187,7 @@
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 
 Coverage: 177/177 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 137/177 REQ bestanden (77%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 138/177 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

@@ -40,11 +40,6 @@ export {
 } from './projections/exporter.js';
 export type { MarkdownView } from './projections/exporter.js';
 
-// New-member bootstrap (CR-GC-122) — fill an EMPTY member graph from ungoverned
-// Format-E THROUGH the gate (FUNC-import / REQ-bootstrap-through-gate). Distinct
-// from harness.seedFromJson() (a direct load of the already-governed SSOT).
-export { bootstrap, TEMPLATE_FORMAT_E, BootstrapResultSchema } from './surface/bootstrap.js';
-export type { BootstrapResult, BootstrapMode } from './surface/bootstrap.js';
 
 // Readiness scorer (CR-GC-107) — family compliance from contracts V3_RULES (L2), no foreign BQ rules.
 export { scoreReadiness, computeReadiness, getFamilyRuleIds } from './kernel/measure/readiness.js';

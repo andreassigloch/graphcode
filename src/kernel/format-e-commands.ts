@@ -1,15 +1,14 @@
 /**
  * format-e-commands.ts — der EINE Weg von Format-E-Text zu `MutateCommand[]` (CR-GC-630).
  *
- * Liegt seit CR-GC-649 in `loop`, nicht mehr in `surface`: der Executor-Preflight braucht dieselbe
- * Abbildung, und `loop` darf nicht nach oben importieren. `loop` ist die tiefste Schicht, die alle
- * drei Verbraucher erreichen (graph_mutate, bootstrap, Preflight) — der Kernel braucht sie nicht.
+ * Einziger Verbraucher ist graph_mutate. Der Kaltstart eines neuen Mitglieds faehrt seit
+ * CR-GC-840 ebenfalls ueber graph_mutate; die eigene Funktion `bootstrap()` ist entfallen.
  *
  * Bis hierher war diese Abbildung eine Closure in `bindWriteTools`. Genau deshalb konnte
  * `bootstrap()` sie nicht rufen und trug bis CR-GC-630 ihren Vorgaenger weiter:
  * `decode() → Graph → add-node/add-edge`. Ein Graph kann „diese Knoten existieren"
  * ausdruecken, nicht „diesen loeschen" — der Kaltstart kannte die Sprache deshalb nur halb.
- * Als gewoehnliche Funktion hat sie zwei Aufrufer und keinen Zwilling.
+ * Als gewoehnliche Funktion hat sie keinen Zwilling.
  *
  * @author andreas@siglochconsulting
  */
@@ -39,8 +38,8 @@ function typeResolver(bestand: Graph): (uid: string) => string | undefined {
  * graphcodes eigene, keine Eigenschaft der Sprache: bis auf `update-edge` ist die Abbildung
  * Präfix → `MutateCommand` eins zu eins.
  *
- * CR-GC-630 — `bootstrap()` ruft dieselbe Funktion. Damit hatte die Rekonstruktion keinen
- * Aufrufer mehr, und CR-GC-631 hat sie samt ihrer Wrapper-Klasse geloescht.
+ * CR-GC-630 — der damalige `bootstrap()` rief dieselbe Funktion. Damit hatte die Rekonstruktion
+ * keinen Aufrufer mehr, und CR-GC-631 hat sie samt ihrer Wrapper-Klasse geloescht.
  *
  * Was hier geprüft wird, weil `decode()` es prüfte:
  *   - Knotentyp vorhanden (`### <TYPE>`-Sektion) und NICHT im Widerspruch zum Speicher,

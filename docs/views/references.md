@@ -731,7 +731,6 @@
 | `CR-GC-624` | relation | `FUNC-read-tools` |
 | `CR-GC-624` | relation | `REQ-graph-context-replaces-reading` |
 | `CR-GC-625` | relation | `FUNC-authoring-guide` |
-| `CR-GC-625` | relation | `FUNC-bootstrap` |
 | `CR-GC-625` | relation | `MOD-surface` |
 | `CR-GC-627` | relation | `FUNC-authoring-guide` |
 | `CR-GC-627` | relation | `FUNC-mutate` |
@@ -740,7 +739,6 @@
 | `CR-GC-628` | relation | `MOD-surface` |
 | `CR-GC-629` | relation | `FUNC-load-config` |
 | `CR-GC-629` | relation | `MOD-kernel-measure` |
-| `CR-GC-630` | relation | `FUNC-bootstrap` |
 | `CR-GC-630` | relation | `FUNC-graph-merge-tool` |
 | `CR-GC-630` | relation | `FUNC-graph-mutate-tool` |
 | `CR-GC-630` | relation | `FUNC-graph-reseed-tool` |
@@ -761,7 +759,6 @@
 | `CR-GC-631` | relation | `REQ-query-precision` |
 | `CR-GC-631` | relation | `REQ-roundtrip-conformance` |
 | `CR-GC-631` | relation | `REQ-selective-code-lane` |
-| `CR-GC-632` | relation | `FUNC-bootstrap` |
 | `CR-GC-632` | relation | `FUNC-graph-merge-tool` |
 | `CR-GC-632` | relation | `FUNC-graph-mutate-tool` |
 | `CR-GC-632` | relation | `FUNC-graph-reseed-tool` |
@@ -775,7 +772,6 @@
 | `CR-GC-634` | relation | `FUNC-health-endpoint` |
 | `CR-GC-634` | relation | `FUNC-serve-sse` |
 | `CR-GC-635` | relation | `FUNC-se-umbau` |
-| `CR-GC-637` | relation | `FUNC-bootstrap` |
 | `CR-GC-637` | relation | `FUNC-decode` |
 | `CR-GC-638` | relation | `FUNC-bind-tools` |
 | `CR-GC-638` | relation | `REQ-published-counts-match-code` |
@@ -1287,6 +1283,9 @@
 | `CR-GC-839` | relation | `FUNC-verify-lane-model` |
 | `CR-GC-839` | relation | `MOD-dev-scripts` |
 | `CR-GC-839` | relation | `REQ-model-lane-fixed-set` |
+| `CR-GC-840` | relation | `FUNC-graph-mutate-tool` |
+| `CR-GC-840` | relation | `FUNC-gve-supervise` |
+| `CR-GC-840` | relation | `REQ-bootstrap-through-gate` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1791,7 +1790,6 @@
 | `FLOW-gate-candidate` | io | `FUNC-evaluate-rules` |
 | `FLOW-gate-candidate` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-gate-verdict` | io | `FUNC-auto-export` |
-| `FLOW-gate-verdict` | io | `FUNC-bootstrap` |
 | `FLOW-gate-verdict` | io | `FUNC-emit-update-event` |
 | `FLOW-gate-verdict` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-gate-verdict` | io | `FUNC-graph-suggest` |
@@ -1926,8 +1924,6 @@
 | `FLOW-mutate-answer` | io | `FUNC-host-socket` |
 | `FLOW-mutate-answer` | io | `FUNC-import-code-verb` |
 | `FLOW-mutate-answer` | relation | `SCHEMA-mutate-result` |
-| `FLOW-mutate-cmd-bootstrap` | io | `FUNC-mutate` |
-| `FLOW-mutate-cmd-bootstrap` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-decode` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-mutate-cmd-decode` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-graph-suggest` | io | `FUNC-mutate` |
@@ -2133,8 +2129,6 @@
 | `FLOW-version-bump` | relation | `SCHEMA-query-params` |
 | `FLOW-viewer-start` | io | `ACTOR-dashboard` |
 | `FLOW-viewer-start` | relation | `SCHEMA-cli-command` |
-| `FLOW-viewer-stop` | io | `ACTOR-dashboard` |
-| `FLOW-viewer-stop` | relation | `SCHEMA-cli-command` |
 | `FLOW-vorschlag` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-vorschlag` | relation | `SCHEMA-mutate-result` |
 | `FLOW-zug-anfrage` | io | `FUNC-zug-bericht` |
@@ -2295,7 +2289,6 @@
 | `FUNC-block-ruestzeug` | compose | `FUNC-tool-context` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-apply-reseed` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-auto-export` |
-| `FUNC-block-speicherwerk` | compose | `FUNC-bootstrap` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-claim-store-lock` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-create-harness` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-export-marker` |
@@ -2311,9 +2304,6 @@
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-modulebene` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-plan` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-trade` |
-| `FUNC-bootstrap` | allocate | `MOD-surface` |
-| `FUNC-bootstrap` | io | `FLOW-mutate-cmd-bootstrap` |
-| `FUNC-bootstrap` | satisfy | `REQ-bootstrap-through-gate` |
 | `FUNC-broadcast-diff` | allocate | `MOD-surface` |
 | `FUNC-broadcast-diff` | io | `FLOW-sse-frame` |
 | `FUNC-broadcast-diff` | satisfy | `REQ-versioned-broadcast` |
@@ -2446,6 +2436,7 @@
 | `FUNC-graph-mutate-tool` | io | `FLOW-snapshot-request-mutate` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-steering-pair` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-zug-anfrage` |
+| `FUNC-graph-mutate-tool` | satisfy | `REQ-bootstrap-through-gate` |
 | `FUNC-graph-mutate-tool` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-graph-mutate-tool` | satisfy | `REQ-post-capture` |
 | `FUNC-graph-readiness` | allocate | `MOD-projections` |
@@ -2476,7 +2467,6 @@
 | `FUNC-gve-supervise` | allocate | `MOD-surface` |
 | `FUNC-gve-supervise` | io | `FLOW-session-entry` |
 | `FUNC-gve-supervise` | io | `FLOW-viewer-start` |
-| `FUNC-gve-supervise` | io | `FLOW-viewer-stop` |
 | `FUNC-gve-supervise` | satisfy | `REQ-viewer-owned-by-repo` |
 | `FUNC-harness-cli` | allocate | `MOD-surface` |
 | `FUNC-harness-cli` | io | `FLOW-channel-guardrails` |

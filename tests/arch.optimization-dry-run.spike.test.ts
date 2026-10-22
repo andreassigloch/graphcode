@@ -486,8 +486,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // weg. Der Autopilot nennt jetzt drei Block-Umhaengungen; ob sie fachlich stimmen, entscheidet ein Mensch.
       // CR-GC-814 (graphVersion 777) — NEU GEMESSEN, nachdem Recall, merge-branches und die Sackgassen nach dem Code
       // verdrahtet wurden: nur noch ein Zug, Abfrage nimmt Bedienung auf.
+      // CR-GC-840 (graphVersion 839) — NEU GEMESSEN nach dem Modell-Audit CR-GC-832..839 (Fluesse ueber die
+      // Werkzeuge, je Ausloeser eine Kette, jedes MCP-Werkzeug eine FUNC): weiter ein Zug, jetzt nimmt der Block
+      // Bedienung graph_test_ingest auf. Fachlich falsch — ein Werkzeug ist ein Blatt, kein Block; der Operator
+      // senkt nur die Vertraege an der Grenze. Messwert, keine Empfehlung (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
-        'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
+        'FUNC-block-bedienung -compose-> FUNC-test-ingest (retire FUNC-test-ingest)',
       ]);
       expect(
         rest
@@ -525,9 +529,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-825 (graphVersion 803) — NEU GEMESSEN: `decode` liegt in MOD-kernel; dessen Grenze traegt jetzt
       // 23 Vertraege (SCHEMA-format-e kam dazu), Ueberschuss 4,75. Nach dem einen Zug an FUNC-block-abfrage
       // (Steuerwert 5,752 → 4,752) steht R-04 @ MOD-kernel vorn — es ist wieder dort, wo er vor CR-GC-573 stand.
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-kernel — bitte neu messen').toEqual({
-        ruleId: 'R-04',
-        elementId: 'MOD-kernel',
+      // CR-GC-840 (graphVersion 840) — NEU GEMESSEN nach dem Modell-Audit CR-GC-832..839: jedes MCP-Werkzeug ist
+      // eine FUNC mit eigenem Anfrage- und Antwortfluss; die Grenze von Grounding traegt 30 Vertraege, und der eine
+      // Zug an Bedienung senkt sie nicht. BW-02 @ Grounding ist wieder der Engpass, wie nach CR-GC-814.
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
+        ruleId: 'BW-02',
+        elementId: 'FUNC-block-grounding',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

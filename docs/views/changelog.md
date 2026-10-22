@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 449 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 450 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 449 CR · 343 done · 4 open.
+Total: 450 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -511,3 +511,4 @@ Total: 449 CR · 343 done · 4 open.
 | `CR-GC-837` | n/a | Skill-, Dashboard- und HTTP-Host-Ketten im Modell: graph_help ohne FUNC, Dashboard ohne Ausloeser, serveHost/ownKuzu/health ohne Kette |
 | `CR-GC-838` | n/a | Zehn Pre/Post-REQ-Paare: Vorbedingung ist der Eingangsfluss, Nachbedingung die Anforderung; zusammenlegen, an die tragende FUNC haengen, Text an den Test |
 | `CR-GC-839` | n/a | Altbestand CR-Knoten (Dateizeiger veraltet, kein Umfang) und Skripte ohne MOD |
+| `CR-GC-840` | n/a | bootstrap() ohne Aufrufer: zweiter Schreibweg am Werkzeug vorbei (kein Audit, keine Trajektorie); loeschen, Kaltstart ueber graph_mutate |

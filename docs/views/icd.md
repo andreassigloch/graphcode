@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 220 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 218 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -159,7 +159,7 @@
 | `FLOW-formatE-tool` | `FUNC-graph-mutate-tool` | `FUNC-decode` |
 | `FLOW-function-criticality` | `FUNC-function-criticality` | `FUNC-graph-metrics` |
 | `FLOW-gate-candidate` | `FUNC-mutate` | `FUNC-evaluate-rules` |
-| `FLOW-gate-verdict` | `FUNC-mutate` | `FUNC-auto-export` · `FUNC-bootstrap` · `FUNC-emit-update-event` · `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · `FUNC-merge-nodes` · `FUNC-test-ingest` |
+| `FLOW-gate-verdict` | `FUNC-mutate` | `FUNC-auto-export` · `FUNC-emit-update-event` · `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · `FUNC-merge-nodes` · `FUNC-test-ingest` |
 | `FLOW-generate-answer` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` · `FUNC-host-socket` |
 | `FLOW-generation-request` | `FUNC-graph-generate-tool` | `FUNC-generation-step` |
 | `FLOW-generation-step-vorschlag` | `FUNC-generation-step` | `FUNC-vorschlag` |
@@ -210,7 +210,6 @@
 | `FLOW-metrics-request` | `FUNC-graph-metrics` | `FUNC-chain-metrics` · `FUNC-function-criticality` · `FUNC-module-metrics` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `FUNC-graph-metrics` |
 | `FLOW-mutate-answer` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` · `FUNC-host-socket` · `FUNC-import-code-verb` |
-| `FLOW-mutate-cmd-bootstrap` | `FUNC-bootstrap` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-decode` | `FUNC-decode` | `FUNC-graph-mutate-tool` |
 | `FLOW-mutate-cmd-graph-suggest` | `FUNC-graph-suggest` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-host-socket` | `FUNC-host-socket` | `FUNC-graph-mutate-tool` |
@@ -285,7 +284,6 @@
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-version-bump` | `ACTOR-regelhalter` | `FUNC-schema-guard` |
 | `FLOW-viewer-start` | `FUNC-gve-supervise` | `ACTOR-dashboard` |
-| `FLOW-viewer-stop` | `FUNC-gve-supervise` | `ACTOR-dashboard` |
 | `FLOW-vorschlag` | `FUNC-vorschlag` | `FUNC-graph-mutate-tool` |
 | `FLOW-zug-anfrage` | `FUNC-graph-mutate-tool` | `FUNC-zug-bericht` |
 | `FLOW-zug-anfrage-suggest` | `FUNC-graph-suggest` | `FUNC-zug-bericht` |

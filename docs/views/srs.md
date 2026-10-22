@@ -48,7 +48,7 @@ io ▶ `FLOW-auftrag` · `FLOW-cli-invocation` · `FLOW-session-end` · io ◀ `
 
 Browser-Viewer (graph-view-edit). Liest ueber host.sock die Antworten von graph_metrics, graph_readiness und graph_generate (peek); Live-Updates und Health sind Ziel von CR-GC-809. Im Edit-Modus schreibt er heute ueber graph_mutate und graph_export; ob er das darf, entscheidet CR-GC-808 (Ein-Schreiber-Modus). (SPEC §5 Kanal 2, CR-GC-822)
 
-io ▶ `FLOW-dashboard-call` · `FLOW-health-request` · io ◀ `FLOW-dashboard-answer` · `FLOW-health-report` · `FLOW-sse-frame` · `FLOW-viewer-start` · `FLOW-viewer-stop`
+io ▶ `FLOW-dashboard-call` · `FLOW-health-request` · io ◀ `FLOW-dashboard-answer` · `FLOW-health-report` · `FLOW-sse-frame` · `FLOW-viewer-start`
 
 ### 2.3  `ACTOR-learning-engine` — Learning-Engine
 
@@ -158,6 +158,16 @@ Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerun
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
 > auch unter: `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context`
@@ -256,7 +266,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · 
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -472,6 +482,16 @@ Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerun
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
 > auch unter: `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context`
@@ -528,7 +548,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · 
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -660,6 +680,16 @@ Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerun
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
 > auch unter: `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context`
@@ -716,7 +746,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · 
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -2124,6 +2154,16 @@ Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerun
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
 > auch unter: `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context`
@@ -2180,7 +2220,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · 
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -2882,7 +2922,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -3064,7 +3104,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -3394,7 +3434,7 @@ Verification ◀ `TEST-merge` (integration) · satisfy ◀ `FUNC-merge-nodes` ·
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -3552,13 +3592,13 @@ io ◀ `FLOW-graph-snapshot-file` · `FLOW-reseeded-graph` · `FLOW-seed-request
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-import`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-import`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-held-back-edge-does-not-abort-load` — Musterfremde Kante bricht das Laden nicht ab
 
@@ -3578,13 +3618,13 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-imported-graph` · allocate ▶ `MOD
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-seed-from-json`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-seed-from-json`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-post-import` — Import mit Meldung
 
@@ -3786,6 +3826,16 @@ Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerun
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
 > auch unter: `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context`
@@ -3842,7 +3892,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · 
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -4124,13 +4174,13 @@ io ◀ `FLOW-graph-snapshot-file` · `FLOW-reseeded-graph` · `FLOW-seed-request
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-import`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-import`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-held-back-edge-does-not-abort-load` — Musterfremde Kante bricht das Laden nicht ab
 
@@ -4150,13 +4200,13 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-imported-graph` · allocate ▶ `MOD
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-seed-from-json`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-seed-from-json`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-post-import` — Import mit Meldung
 
@@ -4836,6 +4886,16 @@ Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerun
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
 > auch unter: `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context`
@@ -4892,7 +4952,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · 
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -5534,13 +5594,13 @@ io ◀ `FLOW-graph-snapshot-file` · `FLOW-reseeded-graph` · `FLOW-seed-request
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-import`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-import`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-held-back-edge-does-not-abort-load` — Musterfremde Kante bricht das Laden nicht ab
 
@@ -5560,13 +5620,13 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-imported-graph` · allocate ▶ `MOD
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-seed-from-json`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-seed-from-json`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-post-import` — Import mit Meldung
 
@@ -5650,6 +5710,16 @@ Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerun
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
 > auch unter: `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context`
@@ -5674,7 +5744,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -5868,7 +5938,7 @@ Verification ◀ `TEST-target-profile` (integration) · `TEST-target-shifts-rank
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -6342,6 +6412,16 @@ Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerun
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
 > auch unter: `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context`
@@ -6440,7 +6520,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · 
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -6700,6 +6780,16 @@ Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerun
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
 > auch unter: `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context`
@@ -6798,7 +6888,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -7042,7 +7132,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
 
-io ◀ `FLOW-gve-attach` · `FLOW-gve-stop` · `FLOW-session-registry` · io ▶ `FLOW-session-entry` · `FLOW-viewer-start` · `FLOW-viewer-stop` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-gve-attach` · `FLOW-gve-stop` · `FLOW-session-registry` · io ▶ `FLOW-session-entry` · `FLOW-viewer-start` · allocate ▶ `MOD-surface`
 
 ###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
 
@@ -7114,13 +7204,13 @@ io ◀ `FLOW-graph-snapshot-file` · `FLOW-reseeded-graph` · `FLOW-seed-request
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-import`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-import`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-held-back-edge-does-not-abort-load` — Musterfremde Kante bricht das Laden nicht ab
 
@@ -7140,13 +7230,13 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-imported-graph` · allocate ▶ `MOD
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-seed-from-json`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-seed-from-json`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-post-import` — Import mit Meldung
 
@@ -7460,13 +7550,13 @@ io ◀ `FLOW-graph-snapshot-file` · `FLOW-reseeded-graph` · `FLOW-seed-request
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-import`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-import`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-held-back-edge-does-not-abort-load` — Musterfremde Kante bricht das Laden nicht ab
 
@@ -7486,13 +7576,13 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-imported-graph` · allocate ▶ `MOD
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-seed-from-json`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-seed-from-json`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-post-import` — Import mit Meldung
 
@@ -7732,7 +7822,7 @@ Verification ◀ `TEST-repo-lifecycle` (integration) · `TEST-session-lifecycle`
 
 Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
 
-io ◀ `FLOW-gve-attach` · `FLOW-gve-stop` · `FLOW-session-registry` · io ▶ `FLOW-session-entry` · `FLOW-viewer-start` · `FLOW-viewer-stop` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-gve-attach` · `FLOW-gve-stop` · `FLOW-session-registry` · io ▶ `FLOW-session-entry` · `FLOW-viewer-start` · allocate ▶ `MOD-surface`
 
 ###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
 
@@ -7861,6 +7951,16 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
 io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+
+###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
+
+> auch unter: `FUNC-import` · `FUNC-seed-from-json`
+
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
 
@@ -8110,7 +8210,7 @@ Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integrat
 
 Haengt eine Sitzung an das Dashboard des Repos: sorgt dafuer, dass genau ein Viewer laeuft, haelt ihn per Umfrage am Leben und beendet ihn erst, wenn die letzte Sitzung des Repos geht. Aufrufer ist der MCP-Server beim Hochfahren, in beiden Zweigen (Wahlgewinner wie Proxy).
 
-io ◀ `FLOW-gve-attach` · `FLOW-gve-stop` · `FLOW-session-registry` · io ▶ `FLOW-session-entry` · `FLOW-viewer-start` · `FLOW-viewer-stop` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-gve-attach` · `FLOW-gve-stop` · `FLOW-session-registry` · io ▶ `FLOW-session-entry` · `FLOW-viewer-start` · allocate ▶ `MOD-surface`
 
 ###### `REQ-viewer-owned-by-repo` — Viewer gehoert dem Repo
 
@@ -8804,7 +8904,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 Apply-Gate-Einstieg: wendet Commands in-memory an, orchestriert den 6-Schritt-Ablauf. (SPEC §3)
 
-io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-state` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-rule-findings` · io ▶ `FLOW-gate-candidate` · `FLOW-gate-verdict` · `FLOW-graph-delta` · `FLOW-marker-set` · `FLOW-zug-staende` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-confidence-tier` — Confidence/Tier am MutateResult
 
@@ -8952,13 +9052,13 @@ io ◀ `FLOW-ontology-json` · io ▶ `FLOW-imported-graph` · allocate ▶ `MOD
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-seed-from-json`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-seed-from-json`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-post-import` — Import mit Meldung
 
@@ -9430,23 +9530,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
-###### 3.10.2.7.3  `FUNC-bootstrap` — bootstrap
-
-Kaltstart-Erstbefuellung: nimmt einen Format-E-Bestand und legt ihn ausschliesslich ueber das Apply-Gate an, nie per Direktschreiben. Liefert das Bootstrap-Ergebnis zurueck.
-
-io ◀ `FLOW-gate-verdict` · io ▶ `FLOW-mutate-cmd-bootstrap` · allocate ▶ `MOD-surface`
-
-###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
-
-> auch unter: `FUNC-import` · `FUNC-seed-from-json`
-
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
-###### 3.10.2.7.4  `FUNC-claim-store-lock` — StoreLock
+###### 3.10.2.7.3  `FUNC-claim-store-lock` — StoreLock
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-http-host` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-repo-lifecycle` · `FCHAIN-schema-migration` · `FCHAIN-session-end`
 
@@ -9462,7 +9546,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-store-lock` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.7.5  `FUNC-create-harness` — createHarness
+###### 3.10.2.7.4  `FUNC-create-harness` — createHarness
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-http-host` · `FCHAIN-model-import` · `FCHAIN-recall`
 
@@ -9478,7 +9562,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-create-harness` · allocate ▶ `MOD-surface`
 
-###### 3.10.2.7.6  `FUNC-export-marker` — setExportPending
+###### 3.10.2.7.5  `FUNC-export-marker` — setExportPending
 
 > auch in: `FCHAIN-snapshot-freshness`
 
@@ -9494,7 +9578,7 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-export-marker` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.7.7  `FUNC-graph-export-snapshot` — graph_export(views?)
+###### 3.10.2.7.6  `FUNC-graph-export-snapshot` — graph_export(views?)
 
 > auch in: `FCHAIN-doc-export` · `FCHAIN-model-import` · `FCHAIN-session-end` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip`
 
@@ -9518,7 +9602,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
 
-###### 3.10.2.7.8  `FUNC-graph-store` — GraphStore
+###### 3.10.2.7.7  `FUNC-graph-store` — GraphStore
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-docked-session` · `FCHAIN-generation-states` · `FCHAIN-health` · `FCHAIN-host-start` · `FCHAIN-impact-testing` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FCHAIN-session-end` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane`
 
@@ -9552,7 +9636,7 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.7.9  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
+###### 3.10.2.7.8  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
 
 > auch in: `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop`
 
@@ -9568,7 +9652,7 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-held-back-traces` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.7.10  `FUNC-open-store` — GraphStore.open()
+###### 3.10.2.7.9  `FUNC-open-store` — GraphStore.open()
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-http-host` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration`
 
@@ -9586,7 +9670,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-open-store` · `FUNC-schema-guard` · allocate ▶ `MOD-kernel`
 
-###### 3.10.2.7.11  `FUNC-seed-from-json` — seedFromJsonFile(target, relPath)
+###### 3.10.2.7.10  `FUNC-seed-from-json` — seedFromJsonFile(target, relPath)
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FCHAIN-snapshot-roundtrip`
 
@@ -9596,13 +9680,13 @@ io ◀ `FLOW-graph-snapshot-file` · `FLOW-reseeded-graph` · `FLOW-seed-request
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
-> auch unter: `FUNC-bootstrap` · `FUNC-import`
+> auch unter: `FUNC-graph-mutate-tool` · `FUNC-import`
 
-Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer oder Dokument), gelangt ausschliesslich ueber mutate() in den Store (bootstrap). Das Laden eines schon governten, committeten Snapshots (seedFromJson, importGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST — nie still. (CR-GC-122, CR-GC-467, CR-GC-530)
+Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)
 
 priority: must · status: done · kinds: functional
 
-Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
+Verification ◀ `TEST-bootstrap` (integration) · `TEST-import-invariant` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` · allocate ▶ `MOD-kernel` · `MOD-surface`
 
 ###### `REQ-held-back-edge-does-not-abort-load` — Musterfremde Kante bricht das Laden nicht ab
 
@@ -10798,9 +10882,9 @@ io ◀ `FUNC-mutate` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-ontol
 
 ### 4.89  `FLOW-gate-verdict` — Gate-Verdikt (Antwort im Aufruf)
 
-Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation, als Antwort im Aufruf: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. Jeder Abnehmer wartet im Aufruf darauf: bootstrap, import-code-verb, graph_test_ingest und graph_suggest rufen das Gate und lesen das Ergebnis, der Werkzeug-Kontext bekommt es im selben Aufruf zur Aufzeichnung uebergeben. Den Auftraggeber erreicht es nur ueber graph_mutate (FLOW-mutate-answer, FLOW-mutate-answer-owner). Wer das Urteil spaeter aus dem Log liest, bezieht FLOW-audit-record. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501, CR-GC-509, CR-GC-685, CR-GC-792, CR-GC-823)
+Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation, als Antwort im Aufruf: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. Abnehmer sind die Werkzeuge, die das Gate rufen (graph_mutate, graph_suggest, graph_test_ingest, replayBranchLog) und die Post-Apply-Hooks (Live-Ereignis, Auto-Export). Den Auftraggeber erreicht es nur ueber die Antwort von graph_mutate. Wer das Urteil spaeter aus dem Log liest, bezieht FLOW-audit-record. (CR-GC-501, CR-GC-823, CR-GC-840)
 
-io ◀ `FUNC-mutate` · io ▶ `FUNC-auto-export` · `FUNC-bootstrap` · `FUNC-emit-update-event` · `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · `FUNC-merge-nodes` · `FUNC-test-ingest` · schema ▶ `SCHEMA-mutate-result`
+io ◀ `FUNC-mutate` · io ▶ `FUNC-auto-export` · `FUNC-emit-update-event` · `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · `FUNC-merge-nodes` · `FUNC-test-ingest` · schema ▶ `SCHEMA-mutate-result`
 
 ### 4.90  `FLOW-generate-answer` — Antwort graph_generate
 
@@ -11102,487 +11186,475 @@ Die Antwort von graph_mutate: Gate-Urteil, im Probelauf mit Steuerungsdelta und 
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-agent-loop` · `FUNC-host-socket` · `FUNC-import-code-verb` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.140  `FLOW-mutate-cmd-bootstrap` — Mutate-Command (bootstrap)
-
-Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-bootstrap → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
-
-io ◀ `FUNC-bootstrap` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
-
-### 4.141  `FLOW-mutate-cmd-decode` — Mutate-Command (decode)
+### 4.140  `FLOW-mutate-cmd-decode` — Mutate-Command (decode)
 
 Die aus Format-E gelesenen Kommandos, zurueck an das graph_mutate-Werkzeug, das sie dem Gate gibt. Beleg: src/surface/write.ts, graph_mutate ruft formatEToCommands.
 
 io ◀ `FUNC-decode` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.142  `FLOW-mutate-cmd-graph-suggest` — Mutate-Command (graph-suggest)
+### 4.141  `FLOW-mutate-cmd-graph-suggest` — Mutate-Command (graph-suggest)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-graph-suggest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.143  `FLOW-mutate-cmd-host-socket` — Mutate-Command (host-socket)
+### 4.142  `FLOW-mutate-cmd-host-socket` — Mutate-Command (host-socket)
 
 Der Schreibaufruf eines zweiten Prozesses, vom Socket an das Werkzeug des Besitzers weitergereicht. Beleg: src/surface/host-shim.ts, startHostSocket ruft tool.handler mit der geparsten Eingabe. (CR-GC-768)
 
 io ◀ `FUNC-host-socket` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.144  `FLOW-mutate-cmd-import-code-verb` — Mutate-Command (import-code-verb)
+### 4.143  `FLOW-mutate-cmd-import-code-verb` — Mutate-Command (import-code-verb)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-code-verb → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.145  `FLOW-mutate-cmd-merge-nodes` — Mutate-Command (merge-nodes)
+### 4.144  `FLOW-mutate-cmd-merge-nodes` — Mutate-Command (merge-nodes)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-merge-nodes → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-merge-nodes` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.146  `FLOW-mutate-cmd-test-ingest` — Mutate-Command (test-ingest)
+### 4.145  `FLOW-mutate-cmd-test-ingest` — Mutate-Command (test-ingest)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-test-ingest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.147  `FLOW-mutate-cmd-tool` — Mutate-Commands (Werkzeug an Gate)
+### 4.146  `FLOW-mutate-cmd-tool` — Mutate-Commands (Werkzeug an Gate)
 
 Die Kommandos, die das graph_mutate-Werkzeug nach dem Lesen an das Gate gibt (harness.mutateWithStates). Beleg: src/surface/write.ts, graph_mutate.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.148  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
+### 4.147  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
 
 Der Schritt, den generationStep an graph_generate zurueckgibt.
 
 io ◀ `FUNC-generation-step` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-generation-step`
 
-### 4.149  `FLOW-ontology-json` — Graph-Datei (Snapshot)
+### 4.148  `FLOW-ontology-json` — Graph-Datei (Snapshot)
 
 Der Inhalt der committeten Graph-Datei, gelesen fuer Seed und Reseed und an den Import uebergeben. (CR-GC-503)
 
 io ◀ `FUNC-seed-from-json` · io ▶ `FUNC-import` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.150  `FLOW-own-kuzu-request` — Kuzu-Besitz anfordern
+### 4.149  `FLOW-own-kuzu-request` — Kuzu-Besitz anfordern
 
 Repo-Wurzel und Ereignis-Senke, mit denen serveHost ownKuzu ruft. Beleg: src/surface/host.ts.
 
 io ◀ `FUNC-serve-sse` · io ▶ `FUNC-own-kuzu-host` · schema ▶ `SCHEMA-query-params`
 
-### 4.151  `FLOW-plan-request` — Spur-Anfrage (verify:code)
+### 4.150  `FLOW-plan-request` — Spur-Anfrage (verify:code)
 
 Die geaenderten Dateien und der Kontext, mit denen verify:code planCodeLane ruft. Beleg: scripts/verify-code.mjs.
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-plan-code-lane` · schema ▶ `SCHEMA-code-lane-plan`
 
-### 4.152  `FLOW-plan-request-full` — Spur-Anfrage (verify:full)
+### 4.151  `FLOW-plan-request-full` — Spur-Anfrage (verify:full)
 
 Die geaenderten Dateien und der Kontext, mit denen verify:full planCodeLane ruft. Beleg: scripts/verify-full.mjs.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-plan-code-lane` · schema ▶ `SCHEMA-code-lane-plan`
 
-### 4.153  `FLOW-proxy-answer` — Werkzeugantwort (Host an Stellvertreter)
+### 4.152  `FLOW-proxy-answer` — Werkzeugantwort (Host an Stellvertreter)
 
 Die Antwort des Hosts an die angedockte Sitzung, ueber host.sock. Beleg: src/surface/host-shim.ts.
 
 io ◀ `FUNC-host-socket` · io ▶ `FUNC-host-proxy` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.154  `FLOW-proxy-answer-agent` — Werkzeugantwort (an die angedockte Ablaufsteuerung)
+### 4.153  `FLOW-proxy-answer-agent` — Werkzeugantwort (an die angedockte Ablaufsteuerung)
 
 Die Werkzeugantwort, die der Stellvertreter an die Ablaufsteuerung seiner Sitzung gibt. Beleg: src/surface/host-shim.ts.
 
 io ◀ `FUNC-host-proxy` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.155  `FLOW-proxy-call` — Werkzeugaufruf (Stellvertreter an Host)
+### 4.154  `FLOW-proxy-call` — Werkzeugaufruf (Stellvertreter an Host)
 
 Ein Werkzeugaufruf einer angedockten Sitzung an den Host, ueber host.sock (callHost). Traegt jeden Werkzeugaufruf, nicht nur graph_mutate. Beleg: src/surface/host-shim.ts.
 
 io ◀ `FUNC-host-proxy` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.156  `FLOW-query-export` — Sichtauftrag an den Renderer
+### 4.155  `FLOW-query-export` — Sichtauftrag an den Renderer
 
 Graph, Sicht und Systemname, mit denen graph_export je Sicht exportMarkdown ruft.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.157  `FLOW-query-request-agent` — Query-Request (Agent)
+### 4.156  `FLOW-query-request-agent` — Query-Request (Agent)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-agent-loop → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-graph-readiness, FUNC-graph-metrics, FUNC-rules-tool, FUNC-authoring-guide, FUNC-graph-export-snapshot; aufgetrennt aus FLOW-query-request (CR-GC-510, Quelle korrigiert CR-GC-815).
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-graph-export-snapshot` · `FUNC-graph-help` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` · schema ▶ `SCHEMA-query-params`
 
-### 4.158  `FLOW-query-request-auto-export` — Query-Request (auto-export)
+### 4.157  `FLOW-query-request-auto-export` — Query-Request (auto-export)
 
 Der entprellte Aufruf des graph_export-Werkzeugs nach einer angenommenen Mutation (250 ms, single-flight).
 
 io ◀ `FUNC-auto-export` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.159  `FLOW-read-request` — Leseanfrage (Werkzeug an Kern)
+### 4.158  `FLOW-read-request` — Leseanfrage (Werkzeug an Kern)
 
 Die Leseanfrage, die ein Lesewerkzeug (graph_impact, graph_expand, graph_elements) an den Kern gibt: Knoten, Tiefe, Filter. Beleg: src/surface/read.ts.
 
 io ◀ `FUNC-read-tools` · io ▶ `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · schema ▶ `SCHEMA-query-params`
 
-### 4.160  `FLOW-readiness-report` — Readiness-Report
+### 4.159  `FLOW-readiness-report` — Readiness-Report
 
 Der Bericht von graph_readiness an jeden, der ihn ueber das Werkzeug abfragt: die Ablaufsteuerung und das Dashboard ueber host.sock (detail:true, mit den rohen Verstoessen). Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten. (CR-GC-822)
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-agent-loop` · `FUNC-host-socket` · schema ▶ `SCHEMA-readiness-report`
 
-### 4.161  `FLOW-readiness-request` — Befunde (an die Marken)
+### 4.160  `FLOW-readiness-request` — Befunde (an die Marken)
 
 Die Befunde einer Erhebung (evaluateAll), die graph_readiness an readinessOf gibt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-compute-readiness` · schema ▶ `SCHEMA-rule-violation`
 
-### 4.162  `FLOW-reseed-answer` — Antwort graph_reseed
+### 4.161  `FLOW-reseed-answer` — Antwort graph_reseed
 
 Die Antwort von graph_reseed: Zahl der Knoten und Kanten nach dem Neuaufbau. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-reseed-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.163  `FLOW-reseed-order` — Reseed-Auftrag
+### 4.162  `FLOW-reseed-order` — Reseed-Auftrag
 
 Der serialisierte Auftrag, den Store aus dem Snapshot neu aufzusetzen. Beleg: src/kernel/harness.ts, reseed ruft applyReseed hinter dem Single-Writer. (CR-GC-768)
 
 io ◀ `FUNC-reseed` · io ▶ `FUNC-apply-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.164  `FLOW-reseed-order-open` — Neuaufbau-Auftrag (Store oeffnen)
+### 4.163  `FLOW-reseed-order-open` — Neuaufbau-Auftrag (Store oeffnen)
 
 Der Neuaufbau aus der committeten SSOT, den GraphStore.open bei Schema-Abweichung anstoesst (applyReseed). Beleg: src/kernel/graph-store.ts.
 
 io ◀ `FUNC-open-store` · io ▶ `FUNC-apply-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.165  `FLOW-reseed-request` — Reseed-Anfrage (Werkzeug)
+### 4.164  `FLOW-reseed-request` — Reseed-Anfrage (Werkzeug)
 
 Der Aufruf harness.reseed aus dem Werkzeug graph_reseed, mit optionalem Pfad. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-reseed-tool` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.166  `FLOW-reseed-snapshot` — Snapshot zum Reseed
+### 4.165  `FLOW-reseed-snapshot` — Snapshot zum Reseed
 
 Der bereitgestellte Snapshot eines Commits auf dem Weg zum Neuaufsetzen. Beleg: src/surface/rewind.ts, executeRewind ruft harness.reseed. (CR-GC-768)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.167  `FLOW-reseeded-graph` — Snapshot zum Neuaufsetzen
+### 4.166  `FLOW-reseeded-graph` — Snapshot zum Neuaufsetzen
 
 Der Pfad des bereitgestellten Snapshots, den applyReseed nach dem Leeren des Stores an seedFromJsonFile gibt. Beleg: src/kernel/harness-import.ts:240-241.
 
 io ◀ `FUNC-apply-reseed` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.168  `FLOW-rewind-summary` — Rewind-Zusammenfassung
+### 4.167  `FLOW-rewind-summary` — Rewind-Zusammenfassung
 
 Die Zusammenfassung von graphcode rewind auf der Schale: Ref, Snapshot, wiederhergestellter Stand. Beleg: src/cli.ts schreibt executeRewind nach stderr (CR-GC-311, CR-GC-823)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-rewind-summary`
 
-### 4.169  `FLOW-rule-findings` — Regelbefunde
+### 4.168  `FLOW-rule-findings` — Regelbefunde
 
 Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)
 
 io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` · schema ▶ `SCHEMA-rule-violation`
 
-### 4.170  `FLOW-rules-answer` — Regelbefunde (Antwort)
+### 4.169  `FLOW-rules-answer` — Regelbefunde (Antwort)
 
 Die Regelbefunde, wie rules_evaluate oder rules_get_violations sie der Ablaufsteuerung geben.
 
 io ◀ `FUNC-rules-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-rule-violation`
 
-### 4.171  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
+### 4.170  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
 
 Der aktuelle und der gespeicherte Fingerabdruck der DDL, an GraphStore.open.
 
 io ◀ `FUNC-schema-guard` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-schema-fingerprint`
 
-### 4.172  `FLOW-schlupf-request` — Schlupf-Anfrage
+### 4.171  `FLOW-schlupf-request` — Schlupf-Anfrage
 
 Rote Tests, Auswahl und reine Graph-Treffer, die verify:full an schlupfVon gibt. Beleg: scripts/verify-full.mjs.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-measure-test-schlupf` · schema ▶ `SCHEMA-schlupf-zeile`
 
-### 4.173  `FLOW-schlupf-result` — Schlupf
+### 4.172  `FLOW-schlupf-result` — Schlupf
 
 Der Schlupf, den schlupfVon an verify:full zurueckgibt. Beleg: src/projections/test-schlupf.ts.
 
 io ◀ `FUNC-measure-test-schlupf` · io ▶ `FUNC-verify-lane-full` · schema ▶ `SCHEMA-schlupf-zeile`
 
-### 4.174  `FLOW-schlupf-zeile` — Schlupf-Zeile
+### 4.173  `FLOW-schlupf-zeile` — Schlupf-Zeile
 
 Die Zeile in docs/messung/testauswahl.jsonl und auf stderr, die verify:full je Lauf schreibt.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-schlupf-zeile`
 
-### 4.175  `FLOW-seed-request` — Erstbefuellung (Hoststart)
+### 4.174  `FLOW-seed-request` — Erstbefuellung (Hoststart)
 
 Die Erstbefuellung eines leeren Stores beim Hoststart (harness.seedFromJson). Beleg: src/surface/mcp-server.ts, bootHost.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.176  `FLOW-seed-request-import-code` — Erstbefuellung (import-code)
+### 4.175  `FLOW-seed-request-import-code` — Erstbefuellung (import-code)
 
 Die Erstbefuellung eines leeren Stores vor dem Code-Import. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.177  `FLOW-select-request` — Auswahl-Anfrage (testImpact)
+### 4.176  `FLOW-select-request` — Auswahl-Anfrage (testImpact)
 
 Graph und Aenderungsmenge, die testImpact an impactedTests gibt. Beleg: src/kernel/harness.ts.
 
 io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.178  `FLOW-select-request-lane` — Auswahl-Anfrage (Code-Spur)
+### 4.177  `FLOW-select-request-lane` — Auswahl-Anfrage (Code-Spur)
 
 Committeter Graph und Knoten der Aenderung, die planCodeLane an impactedTests gibt. Beleg: src/projections/test-selection-audit.ts.
 
 io ◀ `FUNC-plan-code-lane` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.179  `FLOW-selected-tests` — Gewaehlte Tests
+### 4.178  `FLOW-selected-tests` — Gewaehlte Tests
 
 Die betroffenen TEST-Knoten, die impactedTests an den Aufrufer zurueckgibt. Beleg: src/kernel/measure/test-selection.ts.
 
 io ◀ `FUNC-select-tests` · io ▶ `FUNC-plan-code-lane` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-impacted-tests`
 
-### 4.180  `FLOW-session-end` — Sitzungsende
+### 4.179  `FLOW-session-end` — Sitzungsende
 
 Das Ende der Sitzung: der stdio-Client schliesst oder ein Signal kommt. Beleg: src/surface/session-lifecycle.ts, installTriggers.
 
 io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-session-shutdown` · schema ▶ `SCHEMA-cli-command`
 
-### 4.181  `FLOW-session-entry` — Sitzungseintrag
+### 4.180  `FLOW-session-entry` — Sitzungseintrag
 
 Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
 
-### 4.182  `FLOW-session-registry` — Sitzungsregister
+### 4.181  `FLOW-session-registry` — Sitzungsregister
 
 Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird.
 
 io ◀ `FUNC-gve-sessions` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-session-registry`
 
-### 4.183  `FLOW-skill-request` — Skill-Aufruf
+### 4.182  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
-### 4.184  `FLOW-snapshot-request` — Messanfrage (generationStep)
+### 4.183  `FLOW-snapshot-request` — Messanfrage (generationStep)
 
 Graph und Metrikpolitik, die generationStep an takeSteeringSnapshot gibt. Beleg: src/loop/generate.ts.
 
 io ◀ `FUNC-generation-step` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.185  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
+### 4.184  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
 
 Graph und Metrikpolitik, die graph_mutate im Probelauf vor und nach dem Zug an takeSteeringSnapshot gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.186  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
+### 4.185  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
 
 Graph und Metrikpolitik, die graph_readiness an takeSteeringSnapshot gibt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.187  `FLOW-socket-close` — Host-Socket schliessen
+### 4.186  `FLOW-socket-close` — Host-Socket schliessen
 
 Der Auftrag beim Sitzungsende, den Host-Socket zu schliessen und die Socket-Datei zu entfernen. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-### 4.188  `FLOW-socket-start` — Host-Socket starten
+### 4.187  `FLOW-socket-start` — Host-Socket starten
 
 Die Werkzeug-Registry, mit der bootHost den Host-Socket startet. Beleg: src/surface/mcp-server.ts, bootHost.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-### 4.189  `FLOW-sse-frame` — SSE-Frame (versioniert)
+### 4.188  `FLOW-sse-frame` — SSE-Frame (versioniert)
 
 Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501) BENANNTE OFFENE DIFFERENZ: graph-view-edit abonniert /events heute nicht, es beobachtet die Snapshot-Datei; das Abo ist Ziel von CR-GC-809. (CR-GC-822)
 
 io ◀ `FUNC-broadcast-diff` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-### 4.190  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.189  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.191  `FLOW-steering-pair` — Snapshot-Paar
+### 4.190  `FLOW-steering-pair` — Snapshot-Paar
 
 Die zwei Steuerungs-Snapshots vor und nach dem Probelauf, die graph_mutate an computeSteeringDelta gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-compute-steering-delta` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.192  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.191  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-generation-step` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.193  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
+### 4.192  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
 
 Der Aufruf von graph_generate durch die Ablaufsteuerung: Intention, defer, task, peek.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-query-params`
 
-### 4.194  `FLOW-store-open` — Store oeffnen (serveStdio)
+### 4.193  `FLOW-store-open` — Store oeffnen (serveStdio)
 
 Der Aufruf harness.initialize, der den Store oeffnet; serveStdio wartet darauf, er ist die Store-Wahl (CR-GC-218). Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.195  `FLOW-store-open-import-code` — Store oeffnen (import-code)
+### 4.194  `FLOW-store-open-import-code` — Store oeffnen (import-code)
 
 Der Aufruf harness.initialize aus import-code. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.196  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
+### 4.195  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
 
 Der Aufruf harness.initialize aus ownKuzu. Beleg: src/kernel/own-kuzu.ts.
 
 io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.197  `FLOW-store-open-rewind` — Store oeffnen (rewind)
+### 4.196  `FLOW-store-open-rewind` — Store oeffnen (rewind)
 
 Der Aufruf harness.initialize aus rewind. Beleg: src/surface/rewind.ts.
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.198  `FLOW-store-ownership` — Store-Besitzanspruch
+### 4.197  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der zugesprochene Store-Besitz an GraphStore.open; ohne ihn wirft open StoreOwnershipError (Wahl verloren).
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.199  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
+### 4.198  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
 
 Der GraphStore meldet beim Start, dass er den Store nach einem Schemawechsel aus der SSOT neu befuellt hat; was vorher nur im Store stand und nicht exportiert war, ist fort. Beleg: src/kernel/graph-store.ts, open schreibt formatStoreRebuildNotice auf stderr (CR-GC-831).
 
 io ◀ `FUNC-open-store` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-store-rebuild-notice`
 
-### 4.200  `FLOW-suggest-answer` — Antwort graph_suggest
+### 4.199  `FLOW-suggest-answer` — Antwort graph_suggest
 
 Die Antwort von graph_suggest an die Ablaufsteuerung: die gerankten Kandidaten mit Urteil und Bericht je Probelauf. Beleg: src/loop/suggest.ts.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-suggest-answer`
 
-### 4.201  `FLOW-target-profile` — Zielprofil
+### 4.200  `FLOW-target-profile` — Zielprofil
 
 Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform.
 
 io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-target-profile`
 
-### 4.202  `FLOW-target-profile-file` — Zielprofil (Rohform)
+### 4.201  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
 Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-### 4.203  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
+### 4.202  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
 
 Die Aenderungsmenge und Tiefe, mit denen graph_tests harness.testImpact ruft. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-### 4.204  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
+### 4.203  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
 
 Die Aenderungsmenge, mit der graph_test_ingest harness.testImpact ruft. Beleg: src/projections/testreport.ts.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-### 4.205  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
+### 4.204  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
 
 Die Antwort von graph_test_ingest: zugeordnete Ergebnisse, zurueckgenommene Ergebnisse, Knoten ohne Lauf.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-agent-loop` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · schema ▶ `SCHEMA-test-ingest-answer`
 
-### 4.206  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
+### 4.205  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
 
 Der vitest-Bericht der Code-Spur mit der Aenderungsmenge, den verify:code ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-test-ingest` · schema ▶ `SCHEMA-test-ingest-input`
 
-### 4.207  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
+### 4.206  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
 
 Der vitest-Bericht der vollen Suite mit der Aenderungsmenge, den verify:full ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-test-ingest` · schema ▶ `SCHEMA-test-ingest-input`
 
-### 4.208  `FLOW-test-selection` — Selektive Testauswahl
+### 4.207  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-test-selection`
 
-### 4.209  `FLOW-tool-context` — Werkzeug-Kontext
+### 4.208  `FLOW-tool-context` — Werkzeug-Kontext
 
 Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-### 4.210  `FLOW-tool-registry` — Werkzeug-Register
+### 4.209  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-### 4.211  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
+### 4.210  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
 
 Die gebundenen Werkzeuge, wie der Agent sie ueber stdio sieht und ruft. Beleg: src/surface/mcp-server.ts, serveStdio verbindet den Server mit dem stdio-Transport. (CR-GC-768)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-### 4.212  `FLOW-trajectory` — Trajectory/Outcome
+### 4.211  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.213  `FLOW-version-bump` — Version-Bump
+### 4.212  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
 io ◀ `ACTOR-regelhalter` · io ▶ `FUNC-schema-guard` · schema ▶ `SCHEMA-query-params`
 
-### 4.214  `FLOW-viewer-start` — Viewer-Start
+### 4.213  `FLOW-viewer-start` — Viewer steuern (starten, beenden)
 
-Der Start des Viewers fuer das Repo, wenn unter der vermerkten Adresse keiner antwortet. Beleg: src/surface/gve.ts:163.
-
-io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-cli-command`
-
-### 4.215  `FLOW-viewer-stop` — Viewer beenden
-
-Das Ende des Viewers, wenn die letzte Sitzung des Repos ihn abmeldet. Beleg: src/surface/gve.ts.
+Die Steuerung des Viewer-Prozesses durch attachGve: starten, wenn die erste Sitzung des Repos ihn anhaengt, beenden, wenn die letzte ihn abmeldet. Beleg: src/surface/gve.ts.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-cli-command`
 
-### 4.216  `FLOW-vorschlag` — Vorschlag an den Nutzer
+### 4.214  `FLOW-vorschlag` — Vorschlag an den Nutzer
 
 Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis; den Nutzer erreicht er mit FLOW-mutate-answer. (CR-GC-770, CR-GC-823)
 
 io ◀ `FUNC-vorschlag` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.217  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
+### 4.215  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_mutate an mitBericht gibt. Beleg: src/surface/write.ts, graph_mutate.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.218  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
+### 4.216  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_suggest je Kandidat an mitBericht gibt. Beleg: src/loop/suggest.ts, graph_suggest.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.219  `FLOW-zug-bericht` — Bericht zum Zug
+### 4.217  `FLOW-zug-bericht` — Bericht zum Zug
 
 Die Berichte zum Zug, zurueck an das Werkzeug, das mitBericht gerufen hat: graph_mutate fuer seine Antwort an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)
 
 io ◀ `FUNC-zug-bericht` · io ▶ `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-zug-bericht`
 
-### 4.220  `FLOW-zug-staende` — Stand davor und danach
+### 4.218  `FLOW-zug-staende` — Stand davor und danach
 
 Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil an das aufrufende Werkzeug zurueckgibt (mutateWithStates). Ein geblockter Zug hat kein Paar. (CR-GC-778)
 
@@ -11624,7 +11696,7 @@ schema ◀ `FLOW-chain-metrics`
 
 Vertrag der Lebenszyklus-Verben (init/update/remove) samt Ergebnis. Bindung statt Kopie — der Zod-Koerper steht im Code, nicht im Graphen. (CR-GC-454)
 
-schema ◀ `FLOW-cli-command` · `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-output` · `FLOW-gve-attach` · `FLOW-gve-stop` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-session-end` · `FLOW-viewer-start` · `FLOW-viewer-stop`
+schema ◀ `FLOW-cli-command` · `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-output` · `FLOW-gve-attach` · `FLOW-gve-stop` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-session-end` · `FLOW-viewer-start`
 
 ### 5.7  `SCHEMA-code-lane-plan` — CodeLanePlan
 
@@ -11762,7 +11834,7 @@ schema ◀ `FLOW-module-metrics`
 
 Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
-schema ◀ `FLOW-mutate-cmd-bootstrap` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-proxy-call`
+schema ◀ `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-proxy-call`
 
 ### 5.30  `SCHEMA-mutate-result` — MutateResult
 
@@ -11970,7 +12042,7 @@ allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics
 
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
-allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-bootstrap` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-proxy` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-proxy` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
 
 ## 7  Cross-cutting Requirements
 

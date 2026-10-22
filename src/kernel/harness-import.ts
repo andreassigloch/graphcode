@@ -157,8 +157,8 @@ export async function importOntologyGraph(
   // the historical unverified REQs landed). SURFACE every such REQ here so the
   // bypass is never silent; `rejectUnverifiedReqs` makes it a hard refusal for
   // untrusted imports. The self-seed loads the already-governed committed graph
-  // (spec-green) so it flags nothing — and must NOT reject, or bootstrap would
-  // deadlock on any future accrued debt (see bootstrap.ts).
+  // (spec-green) so it flags nothing — and must NOT reject, or the host start would
+  // deadlock on any future accrued debt.
   const verifiedReqs = new Set(edges.filter((e) => e.edgeType === 'verify').map((e) => e.targetId));
   const unverifiedReqs = nodes.filter((n) => n.type === 'REQ' && !verifiedReqs.has(n.uid)).map((n) => n.uid);
   if (opts?.rejectUnverifiedReqs && unverifiedReqs.length > 0) {

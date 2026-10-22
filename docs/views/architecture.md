@@ -38,7 +38,6 @@
 | `FUNC-block-ruestzeug` | FUNC | Werkzeug & Konfiguration |
 | `FUNC-block-speicherwerk` | FUNC | Speicherwerk |
 | `FUNC-block-urteilsarbeit` | FUNC | Urteilsarbeit |
-| `FUNC-bootstrap` | FUNC | bootstrap |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-chain-metrics` | FUNC | chainMetrics(graph) |
 | `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
@@ -182,7 +181,6 @@
 | `FUNC-block-ruestzeug` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-speicherwerk` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-urteilsarbeit` | ⚠ nicht alloziert (R-22) |
-| `FUNC-bootstrap` | `MOD-surface` |
 | `FUNC-broadcast-diff` | `MOD-surface` |
 | `FUNC-chain-metrics` | `MOD-projections` |
 | `FUNC-check-code-conformance` | `MOD-kernel` |

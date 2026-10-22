@@ -6,7 +6,7 @@
  * names the Use-Case (graph node) it validates:
  *
  *   1. NEW MEMBER REPO        — scaffold('init')                  (headline: create a repo)
- *   2. BOOTSTRAP THROUGH GATE — bootstrap(harness, Format-E)      (UC-code-quality)
+ *   2. FIRST FILL THROUGH GATE — graph_mutate(Format-E)            (UC-code-quality)
  *   3. SPEC + GOVERNANCE      — mutate(valid) ✓ / mutate(orphan) ✗ (UC-code-quality)
  *   4. KNOW-NOT-GREP          — graph_impact = exact blast-radius  (UC-reduced-llm)
  *   5. IMPACT-BASED TESTING   — impact slice selects the test set  (UC-efficient-testing)
@@ -23,7 +23,7 @@
  * Only use cases that EXIST in the graph may be named here (CR-GC-342): a header
  * claiming an acceptance nobody modelled is a claim with no owner.
  *
- * Composes ONLY the public surface (createHarness/scaffold/bootstrap/mutate/
+ * Composes ONLY the public surface (createHarness/scaffold/graph_mutate/mutate/
  * impact/getGraph/bindToolsToHarness/exportGraphJson/exportMarkdown) — no src
  * changes. Real KuzuAdapter on a mkdtemp disk path; cleaned up in afterAll.
  *
@@ -39,7 +39,6 @@ import type { Graph } from '@sigloch/graph-api-core';
 import {
   createHarness,
   scaffold,
-  bootstrap,
   bindToolsToHarness,
   exportGraphJson,
   exportMarkdown,
@@ -126,14 +125,15 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     await harness.initialize();
     expect(harness.getGraph().nodes).toHaveLength(0); // genuinely empty cold start
 
-    const { result, nodes, edges } = await bootstrap(harness, MEMBER_FORMAT_E);
+    // CR-GC-840: der Kaltstart faehrt den einen Schreibweg, graph_mutate — kein eigenes bootstrap().
+    const result = await bindToolsToHarness(harness)['graph_mutate'].handler({ formatE: MEMBER_FORMAT_E, consumerId: 'mvp-e2e' });
 
     // Gate verdict: clean apply (no NEWLY-introduced error against the empty baseline).
     expect(result.success).toBe(true);
     expect(result.tier).not.toBe('block');
-    expect(result.violations.filter((v) => v.severity === 'error')).toHaveLength(0);
-    expect(nodes).toBe(4);
-    expect(edges).toBe(3);
+    expect(result.violations.filter((v: { severity: string }) => v.severity === 'error')).toHaveLength(0);
+    // 4 nodes + 3 edges in one batch.
+    expect(result.appliedCommands).toBe(7);
 
     // The member's nodes are present in the governed graph.
     const g = harness.getGraph();

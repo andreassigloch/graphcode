@@ -76,7 +76,7 @@
 | `REQ-audit-trail` | `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` | `FUNC-audit-stats` · `FUNC-audit-trail` | `MOD-surface` |
 | `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` | `MOD-kernel` · `MOD-projections` |
 | `REQ-bericht-ist-kein-urteil` | `TEST-gate-urteilt-und-speichert` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
-| `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` | `MOD-kernel` · `MOD-surface` |
+| `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` | `MOD-kernel` · `MOD-surface` |
 | `REQ-cache-layering` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-chain-metrics` | `TEST-graph-metrics` | `FUNC-chain-metrics` | `MOD-projections` |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` | — |
@@ -266,7 +266,7 @@
 | `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` | `MOD-kernel` · `MOD-projections` |
 | `REQ-batch-seed-performance` | `TEST-batch-seed` | `MOD-kernel` | — |
 | `REQ-bericht-ist-kein-urteil` | `TEST-gate-urteilt-und-speichert` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
-| `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | `FUNC-bootstrap` · `FUNC-import` · `FUNC-seed-from-json` | `MOD-kernel` · `MOD-surface` |
+| `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | `FUNC-graph-mutate-tool` · `FUNC-import` · `FUNC-seed-from-json` | `MOD-kernel` · `MOD-surface` |
 | `REQ-buildable-standalone` | `TEST-distribution` | `MOD-surface` | — |
 | `REQ-cache-layering` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-chain-metrics` | `TEST-graph-metrics` | `FUNC-chain-metrics` | `MOD-projections` |

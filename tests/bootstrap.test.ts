@@ -1,10 +1,10 @@
 /**
- * TEST-bootstrap — REQ-bootstrap-through-gate (CR-GC-122).
+ * TEST-bootstrap — REQ-bootstrap-through-gate (CR-GC-122, CR-GC-840).
  *
- * Format-E-Import befüllt einen LEEREN Member-Graphen ausschließlich durchs
- * mutate()-Gate (kein Direct-Write); rule-verletzender Format-E wird vom Gate
- * GEBLOCKT und nichts persistiert. Beweist: der Cold-Start geht durchs Gate,
- * nicht an ihm vorbei.
+ * Der Kaltstart eines neuen Mitglieds: Format-E fuellt einen LEEREN Graphen ausschliesslich
+ * ueber graph_mutate und damit durchs Gate (kein Direct-Write); rule-verletzender Format-E
+ * wird GEBLOCKT und nichts persistiert. Bis CR-GC-840 lief das ueber eine eigene Funktion
+ * `bootstrap()`, die das Gate ohne Werkzeugschicht rief — ohne Audit und ohne Trajektorie.
  *
  * Disk-Kuzu auf mkdtemp-Tempdir, echter KuzuAdapter, keine Mocks, nie :memory:.
  */
@@ -17,10 +17,29 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { ALL_RULE_DEFS } from '@sigloch/contracts/se';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { bootstrap, TEMPLATE_FORMAT_E } from '../src/surface/bootstrap.js';
 import { formatEToCommands } from '../src/kernel/format-e-commands.js';
-import { alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
+
+/** Ein gate-gueltiger Kaltstart: SYS, eine verifizierte REQ, ein erfuellendes MOD. */
+const KALTSTART = [
+  '## Nodes',
+  '### MOD',
+  '+ MOD-template|Module that satisfies the template requirement [__name:Template module]',
+  '### REQ',
+  '+ REQ-template-root|First requirement of the new member graph [__name:Template root requirement]',
+  '@kinds ["non-functional"]',
+  '### SYS',
+  '+ SYS-template|Cold-start system of a new family member [__name:Template system]',
+  '### TEST',
+  '+ TEST-template-root|Verifies the template root requirement [__name:Template root test]',
+  '',
+  '## Edges',
+  '+ SYS-template -compose-> REQ-template-root, MOD-template',
+  '+ MOD-template -satisfy-> REQ-template-root',
+  '+ TEST-template-root -verify-> REQ-template-root',
+].join('\n');
+
+type Verdict = { success: boolean; tier: string; mutations: number; appliedCommands: number; violations: Array<{ ruleId: string; severity: string }>; nameWarning?: string };
 
 function makeConfig(repoRoot: string): HarnessConfig {
   return {
@@ -31,10 +50,12 @@ function makeConfig(repoRoot: string): HarnessConfig {
   };
 }
 
-describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
+describe('TEST-bootstrap: new-member fill THROUGH graph_mutate', () => {
   let tmp: string;
   let kuzuPath: string;
   let harness: GraphCodeHarness;
+  const mutate = (formatE: string): Promise<Verdict> =>
+    bindToolsToHarness(harness)['graph_mutate'].handler({ formatE, consumerId: 'kaltstart' });
 
   beforeEach(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-bootstrap-'));
@@ -55,52 +76,38 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
     expect(g.edges).toHaveLength(0);
     // Empty baseline → no error, so ANY new error in a batch would block. The one finding an empty
     // graph carries since contracts 11 (CR-SM-395) is the existence rule that demands the system —
-    // a warning, and exactly what the bootstrap below closes.
+    // a warning, and exactly what the first fill below closes.
     const leer = harness.evaluateRules();
     expect(leer.filter((v) => v.severity === 'error')).toEqual([]);
     expect(leer.map((v) => ALL_RULE_DEFS.find((r) => r.id === v.ruleId)?.role)).toEqual(['existence']);
   });
 
-  it('fills the empty graph from the template Format-E THROUGH the gate', async () => {
-    // The template parses to exactly the SYS + REQ + verifying TEST it declares —
-    // gemessen ueber DENSELBEN Weg, den bootstrap faehrt (CR-GC-630).
-    const erwartet = formatEToCommands(harness.getGraph(), TEMPLATE_FORMAT_E).commands;
-    const erwarteteKnoten = erwartet.filter((c) => c.op === 'add-node').length;
-    const erwarteteKanten = erwartet.filter((c) => c.op === 'add-edge').length;
+  it('fills the empty graph from Format-E THROUGH the gate', async () => {
+    const erwartet = formatEToCommands(harness.getGraph(), KALTSTART).commands;
 
-    const { result, nodes, edges } = await bootstrap(harness, TEMPLATE_FORMAT_E);
+    const result = await mutate(KALTSTART);
 
-    // Gate verdict: applies cleanly (R-01 satisfied, no error-severity violation), at
-    // 'suggest' tier. The template's placeholder TEST is unbound (no testRefs yet) — in a
-    // draft that is the state, not a finding: R-19 is not evaluated before realization has
-    // begun (contracts CR-SM-392: no implplan stamp, no binding anywhere). It reports once
-    // the new member binds the first element. Nothing blocks; the fill persists.
+    // Gate verdict: applies cleanly (R-01 satisfied, no error-severity violation), at 'suggest' tier.
+    // The placeholder TEST is unbound — in a draft that is the state, not a finding: R-19 is not
+    // evaluated before realization has begun (contracts CR-SM-392).
     expect(result.success).toBe(true);
     expect(result.tier).toBe('suggest');
     expect(result.violations.filter((v) => v.severity === 'error')).toHaveLength(0);
     expect(result.violations.some((v) => v.ruleId === 'R-19')).toBe(false);
-    expect(nodes).toBe(erwarteteKnoten);
-    expect(edges).toBe(erwarteteKanten);
-    // appliedCommands == nodes + edges proves nodes-first then edges went in one batch.
-    expect(result.appliedCommands).toBe(nodes + edges);
+    // Nodes first, then edges, in ONE batch.
+    expect(result.appliedCommands).toBe(erwartet.length);
 
-    // Nodes/edges are now present in the in-memory working copy (post-mutate).
     const g = harness.getGraph();
     expect(g.nodes.map((n) => n.uid).sort()).toEqual(
       ['MOD-template', 'REQ-template-root', 'SYS-template', 'TEST-template-root'],
     );
     expect(
-      g.edges.some(
-        (e) =>
-          e.sourceId === 'TEST-template-root' &&
-          e.targetId === 'REQ-template-root' &&
-          e.edgeType === 'verify',
-      ),
+      g.edges.some((e) => e.sourceId === 'TEST-template-root' && e.targetId === 'REQ-template-root' && e.edgeType === 'verify'),
     ).toBe(true);
   });
 
-  it('persists the bootstrapped graph to disk (reload from a fresh handle)', async () => {
-    await bootstrap(harness, TEMPLATE_FORMAT_E);
+  it('persists the first fill to disk (reload from a fresh handle)', async () => {
+    await mutate(KALTSTART);
     await harness.close();
 
     // Fresh adapter on the SAME disk store — proves the gate persisted, not memory.
@@ -110,61 +117,30 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
     const g = harness2.getGraph();
     expect(g.nodes.find((n) => n.uid === 'SYS-template')).toBeDefined();
     expect(g.nodes.find((n) => n.uid === 'REQ-template-root')).toBeDefined();
-    expect(
-      g.edges.some((e) => e.sourceId === 'TEST-template-root' && e.targetId === 'REQ-template-root'),
-    ).toBe(true);
+    expect(g.edges.some((e) => e.sourceId === 'TEST-template-root' && e.targetId === 'REQ-template-root')).toBe(true);
     harness = harness2;
   });
 
-  it('is governed: the fill is recorded in the audit trail (went via mutate, not direct write)', async () => {
-    const registry = bindToolsToHarness(harness);
-    // Re-run the bootstrap commands through the gate-bound registry's audit lens by
-    // bootstrapping first, then asserting the mutation was auditable via the gate.
-    const { result } = await bootstrap(harness, TEMPLATE_FORMAT_E);
+  it('is governed: the first fill itself is in the audit trail', async () => {
+    const result = await mutate(KALTSTART);
     expect(result.success).toBe(true);
 
-    // The audit_trail tool reads the same store the gate writes; a direct
-    // saveNodes/saveEdges bypass would NOT show up as a 'mutate' op. Here we prove
-    // the gate path is the one in use by mutating one more governed change through
-    // the bound registry and seeing it audited.
-    await registry['graph_mutate'].handler({
-      formatE: alsFormatE([
-        { op: 'add-node', node: { uid: 'REQ-extra', type: 'REQ', name: 'Extra', description: 'x', attributes: {} } },
-        { op: 'add-node', node: { uid: 'TEST-extra', type: 'TEST', name: 'Extra test', description: '', attributes: {} } },
-        { op: 'add-edge', edge: { sourceId: 'TEST-extra', targetId: 'REQ-extra', edgeType: 'verify', attributes: {} } },
-      ], harness),
-      consumerId: 'bootstrap-bot',
-    });
-    const { entries } = await registry['audit_trail'].handler({ limit: 10 });
-    expect(entries.length).toBeGreaterThanOrEqual(1);
-    expect(entries.some((e: { operation: string }) => e.operation === 'mutate')).toBe(true);
+    const { entries } = await bindToolsToHarness(harness)['audit_trail'].handler({ limit: 10 });
+    expect(entries.some((e: { operation: string; consumerId: string }) => e.operation === 'mutate' && e.consumerId === 'kaltstart')).toBe(true);
   });
 
   it('Direct-Write schlägt fehl: rule-violating Format-E is BLOCKED by the gate; graph stays empty', async () => {
     // A lone orphan REQ with no verifying TEST → R-01 (error) is NEWLY introduced
     // against the empty baseline, so the gate must block and persist nothing.
-    const orphanFormatE = [
-      '## Nodes',
-      '### REQ',
-      '+ REQ-orphan|A requirement with no verifying test [__name:Orphan requirement]',
-    ].join('\n');
-
-    const { result, nodes } = await bootstrap(harness, orphanFormatE);
+    const result = await mutate(['## Nodes', '### REQ', '+ REQ-orphan|A requirement with no verifying test [__name:Orphan requirement]'].join('\n'));
 
     expect(result.success).toBe(false);
     expect(result.tier).toBe('block');
     expect(result.mutations).toBe(0);
-    expect(nodes).toBe(1); // one node parsed from Format-E, but...
     const r01 = result.violations.find((v) => v.ruleId === 'R-01');
-    expect(r01).toBeDefined();
     expect(r01?.severity).toBe('error');
 
-    // ...nothing was persisted: the empty graph stays empty (no bypass).
-    const g = harness.getGraph();
-    expect(g.nodes).toHaveLength(0);
-    expect(g.edges).toHaveLength(0);
-
-    // And it stays empty on disk too (fresh handle).
+    expect(harness.getGraph().nodes).toHaveLength(0);
     await harness.close();
     const storage2 = new KuzuAdapter({ ontology: SE_DESCRIPTOR, path: kuzuPath });
     const harness2 = new GraphCodeHarness(makeConfig(tmp), storage2);
@@ -173,45 +149,30 @@ describe('TEST-bootstrap: new-member fill THROUGH the gate', () => {
     harness = harness2;
   });
 
-  // --- CR-GC-630: der Kaltstart faehrt denselben Schreibweg wie graph_mutate ------------
-  //
-  // Bis CR-GC-630 ging `bootstrap` ueber `decode() → Graph → add-node/add-edge`. Ein Graph
-  // kann „diese Knoten existieren" ausdruecken, nicht „diesen aendern" — jedes Nicht-Add-Op
-  // endete im Wurf. Die Beschraenkung war graphcodes eigene, keine der Sprache.
+  it('nimmt nach dem Kaltstart ein `~` an — die Sprache ganz (CR-GC-630)', async () => {
+    await mutate(KALTSTART);
 
-  it('nimmt ein `~` an: der Kaltstart kennt die Sprache ganz (CR-GC-630)', async () => {
-    await bootstrap(harness, TEMPLATE_FORMAT_E);
-
-    const korrektur = [
-      '## Nodes',
-      '### REQ',
-      '~ REQ-template-root|Geschaerfte Fassung der ersten Anforderung',
-    ].join('\n');
-
-    const { result, nodes } = await bootstrap(harness, korrektur, 'merge');
+    const result = await mutate(['## Nodes', '### REQ', '~ REQ-template-root|Geschaerfte Fassung der ersten Anforderung'].join('\n'));
 
     expect(result.success).toBe(true);
-    expect(nodes).toBe(1);
     const req = harness.getGraph().nodes.find((n) => n.uid === 'REQ-template-root');
     expect(req?.description).toBe('Geschaerfte Fassung der ersten Anforderung');
     // Der Name stand NICHT in der Patch-Zeile — er darf nicht auf die uid zurueckfallen.
     expect(req?.name).toBe('Template root requirement');
   });
 
-  it('meldet Knoten ohne __name, statt still die uid zum Namen zu machen (CR-GC-630)', async () => {
-    const ohneNamen = [
-      '## Nodes',
-      '### MOD',
-      '+ MOD-namenlos|Ein Modul, dessen Zeile keinen __name traegt',
-    ].join('\n');
+  it('meldet Knoten ohne __name, statt still die uid zum Namen zu machen (CR-GC-321)', async () => {
+    const result = await mutate(['## Nodes', '### MOD', '+ MOD-namenlos|Ein Modul, dessen Zeile keinen __name traegt'].join('\n'));
 
-    const { unnamed } = await bootstrap(harness, ohneNamen);
-
-    expect(unnamed).toEqual(['MOD-namenlos']);
+    expect(result.nameWarning).toContain('MOD-namenlos');
   });
 
-  it('surfaces Format-E parse errors (throws, no silent pass)', async () => {
-    // Garbage that the authoritative parser rejects — bootstrap must throw.
-    await expect(bootstrap(harness, '+ this-is-not-valid-format-e-@@@')).rejects.toThrow();
+  it('meldet einen Format-E-Lesefehler als Block, kein stilles Durchwinken', async () => {
+    const result = await mutate('+ this-is-not-valid-format-e-@@@');
+
+    expect(result.success).toBe(false);
+    expect(result.tier).toBe('block');
+    expect(result.violations.some((v) => v.ruleId === 'STRUCT')).toBe(true);
+    expect(harness.getGraph().nodes).toHaveLength(0);
   });
 });
