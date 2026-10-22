@@ -1,6 +1,6 @@
 # CR-GC-832: Schreibweg im Modell über das graph_mutate-Werkzeug; zwei Eigenschafts-Ketten entfallen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1011 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1011.json (Lane: graph)
