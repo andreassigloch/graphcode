@@ -1,6 +1,6 @@
 # CR-GC-828: graph_mutate empfängt die Regelbefunde
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1006 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1006.json (Lane: graph)
