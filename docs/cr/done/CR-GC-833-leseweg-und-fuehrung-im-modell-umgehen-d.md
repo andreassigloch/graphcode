@@ -1,6 +1,6 @@
 # CR-GC-833: Leseweg und Führung im Modell über die MCP-Werkzeuge
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1012 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1012.json (Lane: graph)
