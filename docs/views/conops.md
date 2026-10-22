@@ -73,7 +73,7 @@ Als Entwickler will ich, dass der naechste Schritt aus deterministisch gemessene
 
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine` · `ACTOR-regelhalter`
 
-- `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-generation-step` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-take-steering-snapshot`
+- `FCHAIN-generation-states` — Generierung: von der Saat zur Freigabe: `FUNC-agent-loop` → `FUNC-generation-step` → `FUNC-graph-store` → `FUNC-take-steering-snapshot`
 - `FCHAIN-skill-help` — Skill erklaert: `FUNC-agent-loop` → `FUNC-se-help`
 - `FCHAIN-skill-report` — Skill berichtet gemessenen Stand: `FUNC-agent-loop` → `FUNC-check-code-conformance` → `FUNC-compute-readiness` → `FUNC-evaluate-rules` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-module-metrics` → `FUNC-rules-tool` → `FUNC-score-completeness` → `FUNC-se-modulebene` → `FUNC-se-retro` → `FUNC-se-review` → `FUNC-se-status` → `FUNC-test` → `FUNC-test-ui`
 - `FCHAIN-steering-loop` — Kenngroessen-Steuerungsschleife: `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-compute-readiness` → `FUNC-compute-steering-delta` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-generation-step` → `FUNC-graph-mutate-tool` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-graph-suggest` → `FUNC-held-back-traces` → `FUNC-load-config` → `FUNC-mutate` → `FUNC-take-steering-snapshot` → `FUNC-target-profile` → `FUNC-target-profile-load` → `FUNC-vorschlag` → `FUNC-zug-bericht`
@@ -455,6 +455,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-827` | n/a | Regelpruefung liest den Kandidaten von mutate, nicht den Store | `FUNC-evaluate-rules` · `FUNC-mutate` |
 | `CR-GC-828` | n/a | graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht | `FUNC-evaluate-rules` · `FUNC-graph-mutate-tool` |
 | `CR-GC-829` | n/a | FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec | `FUNC-decode` · `REQ-roundtrip-conformance` |
+| `CR-GC-830` | n/a | FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht | `FUNC-agent-loop` · `FUNC-generation-step` · `FUNC-graph-suggest` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

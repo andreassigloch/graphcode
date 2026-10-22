@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 439 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 440 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 439 CR · 343 done · 4 open.
+Total: 440 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -501,3 +501,4 @@ Total: 439 CR · 343 done · 4 open.
 | `CR-GC-827` | n/a | Regelpruefung liest den Kandidaten von mutate, nicht den Store |
 | `CR-GC-828` | n/a | graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht |
 | `CR-GC-829` | n/a | FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec |
+| `CR-GC-830` | n/a | FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht |

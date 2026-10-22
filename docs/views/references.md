@@ -910,6 +910,9 @@
 | `CR-GC-828` | relation | `FUNC-graph-mutate-tool` |
 | `CR-GC-829` | relation | `FUNC-decode` |
 | `CR-GC-829` | relation | `REQ-roundtrip-conformance` |
+| `CR-GC-830` | relation | `FUNC-agent-loop` |
+| `CR-GC-830` | relation | `FUNC-generation-step` |
+| `CR-GC-830` | relation | `FUNC-graph-suggest` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -968,9 +971,9 @@
 | `FCHAIN-doc-export` | compose | `FUNC-view-icd` |
 | `FCHAIN-doc-export` | compose | `FUNC-view-intplan` |
 | `FCHAIN-doc-export` | compose | `FUNC-view-rtm` |
+| `FCHAIN-generation-states` | compose | `FUNC-agent-loop` |
 | `FCHAIN-generation-states` | compose | `FUNC-generation-step` |
 | `FCHAIN-generation-states` | compose | `FUNC-graph-store` |
-| `FCHAIN-generation-states` | compose | `FUNC-graph-suggest` |
 | `FCHAIN-generation-states` | compose | `FUNC-take-steering-snapshot` |
 | `FCHAIN-grammar-query` | compose | `FUNC-agent-loop` |
 | `FCHAIN-grammar-query` | compose | `FUNC-authoring-guide` |
@@ -1317,8 +1320,6 @@
 | `FLOW-gate-verdict` | io | `FUNC-test-ingest` |
 | `FLOW-gate-verdict` | io | `FUNC-tool-context` |
 | `FLOW-gate-verdict` | relation | `SCHEMA-mutate-result` |
-| `FLOW-generation-step-suggest` | io | `FUNC-graph-suggest` |
-| `FLOW-generation-step-suggest` | relation | `SCHEMA-generation-step` |
 | `FLOW-generation-step-vorschlag` | io | `FUNC-vorschlag` |
 | `FLOW-generation-step-vorschlag` | relation | `SCHEMA-generation-step` |
 | `FLOW-graph-delta` | io | `FUNC-graph-store` |
@@ -1785,7 +1786,6 @@
 | `FUNC-generation-step` | io | `FLOW-channel-handoff` |
 | `FUNC-generation-step` | io | `FLOW-channel-next-step` |
 | `FUNC-generation-step` | io | `FLOW-channel-skill-reference` |
-| `FUNC-generation-step` | io | `FLOW-generation-step-suggest` |
 | `FUNC-generation-step` | io | `FLOW-generation-step-vorschlag` |
 | `FUNC-generation-step` | io | `FLOW-next-step-advice` |
 | `FUNC-generation-step` | satisfy | `REQ-analyse-artefakt-vor-stempel` |

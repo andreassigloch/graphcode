@@ -3538,6 +3538,12 @@
       "description": "docs/cr/open/CR-GC-829-fchain-codec-roundtrip-ist-keine-kette-m.md"
     },
     {
+      "id": "CR-GC-830",
+      "type": "CR",
+      "name": "FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht",
+      "description": "docs/cr/open/CR-GC-830-fchain-generation-states-mischt-graph-ge.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3586,7 +3592,7 @@
       "id": "FCHAIN-generation-states",
       "type": "FCHAIN",
       "name": "Generierung: von der Saat zur Freigabe",
-      "description": "Die Wirkkette der Zustandsmaschine: Steuerungs-Snapshot -> Schritt (seed | expand) -> Freigabe an graph_suggest. Jeder Uebergang haengt am Fokus: solange die Maschine etwas zu sagen hat, bleibt sie in expand; hat sie nichts mehr, ist sie done (CR-GC-593).",
+      "description": "Die Wirkkette der Zustandsmaschine: die Ablaufsteuerung ruft graph_generate, der Steuerungs-Snapshot liest den Stand, generationStep bestimmt den Schritt (seed | expand | handoff) und gibt die Anweisung an die Ablaufsteuerung zurueck. handoff heisst: als Naechstes graph_suggest rufen — ein eigenes Werkzeug mit eigenen Ketten, kein Datenfluss aus dieser. Jeder Uebergang haengt am Fokus: solange die Maschine etwas zu sagen hat, bleibt sie in expand; hat sie nichts mehr, ist sie done (CR-GC-593, CR-GC-830).",
       "concept": true
     },
     {
@@ -4200,13 +4206,6 @@
       "name": "Gate-Verdikt (Antwort im Aufruf)",
       "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation, als Antwort im Aufruf: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. Jeder Abnehmer wartet im Aufruf darauf: bootstrap, import-code-verb, graph_test_ingest und graph_suggest rufen das Gate und lesen das Ergebnis, der Werkzeug-Kontext bekommt es im selben Aufruf zur Aufzeichnung uebergeben. Den Auftraggeber erreicht es nur ueber graph_mutate (FLOW-mutate-answer, FLOW-mutate-answer-owner). Wer das Urteil spaeter aus dem Log liest, bezieht FLOW-audit-record. Der offene Regelstrom ist ein eigener Fluss (FLOW-rule-findings). (CR-GC-501, CR-GC-509, CR-GC-685, CR-GC-792, CR-GC-823)",
       "status": "reviewed",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-generation-step-suggest",
-      "type": "FLOW",
-      "name": "Generierungsschritt zum Vorschlag",
-      "description": "Der gerechnete naechste Schritt, wie ihn das Vorschlagswerkzeug als Grundlage nimmt. Beleg: src/loop/suggest.ts, graph_suggest ruft generationStep. (CR-GC-768)",
       "sync": "sync"
     },
     {
@@ -16341,6 +16340,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-830",
+      "target": "FUNC-agent-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-830",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-830",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -16665,17 +16679,17 @@
     },
     {
       "source": "FCHAIN-generation-states",
+      "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-generation-states",
       "target": "FUNC-generation-step",
       "type": "compose"
     },
     {
       "source": "FCHAIN-generation-states",
       "target": "FUNC-graph-store",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-generation-states",
-      "target": "FUNC-graph-suggest",
       "type": "compose"
     },
     {
@@ -18447,16 +18461,6 @@
     {
       "source": "FLOW-gate-verdict",
       "target": "SCHEMA-mutate-result",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-generation-step-suggest",
-      "target": "FUNC-graph-suggest",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-generation-step-suggest",
-      "target": "SCHEMA-generation-step",
       "type": "relation"
     },
     {
@@ -20848,11 +20852,6 @@
     {
       "source": "FUNC-generation-step",
       "target": "FLOW-channel-skill-reference",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-generation-step",
-      "target": "FLOW-generation-step-suggest",
       "type": "io"
     },
     {
@@ -25737,5 +25736,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 812
+  "graphVersion": 814
 }
