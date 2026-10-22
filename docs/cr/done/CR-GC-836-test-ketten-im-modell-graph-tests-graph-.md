@@ -1,6 +1,6 @@
 # CR-GC-836: Test-Ketten nach Auslöser getrennt — graph_tests, graph_test_ingest, npm-Spuren
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1015 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1015.json (Lane: graph)
