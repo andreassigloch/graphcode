@@ -1,6 +1,6 @@
 ---
 name: se:author-req
-version: 2
+version: 3
 description: Author a REQ together with its verifying TEST concept in one gated batch — the REQ-with-test invariant
 ---
 
@@ -48,6 +48,8 @@ A requirement that is both behaviour and budget is cut wrong — split it into t
 <!-- inject:end -->
 
 Once the runnable test exists, add an entry to the TEST's `testRefs [{ file, tool, level?, case? }, …]` so `graph_tests` can select it (CR-GC-134). **Eine Abnahme, n Dateien** (CR-SM-231): ein TEST, der als vitest *und* playwright läuft, trägt zwei Einträge — `tool` steht deshalb je Eintrag. Eine Datei gehört zu höchstens einem TEST; R-29 meldet eine doppelt beanspruchte Datei als `error`.
+
+**The text promises only what the TEST checks.** CR-GC-838 found ten requirements whose text promised more than their test checked, such as "never applies on its own" or "emits a live event". A promise no test checks is a finding for the code, not part of the requirement. Narrow the text to the check, and open an item for the rest.
 
 The form above is prevention; the task `anforderungsqualitaet` (`graph_generate {task:'anforderungsqualitaet'}`) cleans up what is left.
 

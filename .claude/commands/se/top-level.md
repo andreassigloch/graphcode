@@ -1,6 +1,6 @@
 ---
 name: se:top-level
-version: 2
+version: 3
 description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at 7±2 blocks per level, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
@@ -91,6 +91,21 @@ Coupling check after the cut: **CR-01** counts *distinct SCHEMA contracts per mo
 
 _Warum hier keine feste Zahl mehr steht (CR-GC-629): diese Seite nannte an zwei Stellen eine Obergrenze je Ebene, während RD-04 gegen `decompositionBreadth: 9` urteilt. Kein Widerspruch — die genannte Zahl lag darunter —, aber eine Schwelle im Fließtext folgt keiner Policy: wandert die Policy, wandert der Text nicht mit. `tests/policy-herkunft.test.ts` hält das fest._
 
+## Model the call path, not the data lineage
+
+**Measured on graphcode's own model (CR-GC-832..838):** written from intent, about 40 % of the flows in 25 chains named a hop that no code makes. Every rule passed them. Only reading the code behind each flow found them. Eight rules prevent the classes found there:
+
+1. **Every entry point is a FUNC.** That covers an MCP tool, a CLI verb, an npm script and a skill. An actor reaches only these. Wrong: the agent sends a flow to the kernel function that computes the impact. Right: agent → impact tool → kernel function.
+2. **One FLOW is one hop between caller and callee.** It has one producer (IO-02). The answer goes back to the caller, not to whoever reads it last. Wrong: the gate's report flows straight to the agent. Right: gate → tool → agent.
+3. **A store flow ends only at a function that reads the store.** A function that gets the graph as an argument receives it from its caller. Wrong: the store feeds the fit advisory, while in code the tool passes the graph in.
+4. **One trigger per chain.** Start-up, shutdown, a host and a health check are separate chains. A chain counts its members per FUNC: a start-up flow on a shared function appears in every chain that contains the function.
+5. **A property is a non-functional REQ, not a chain.** "Runs without a model call" has no sequence. A chain for it lists functions that never call each other.
+6. **The `realRef` names the symbol on the path, not a wrapper around it.**
+7. **`sync` answers one question: does the caller await the answer?** A callback, an event or a file that someone reads later is `async`.
+8. **One FLOW, one call site.** Note the file and symbol where the caller hands the content over. A flow whose call site you cannot name is a guess.
+
+**Over existing code, start bottom-up.** Run `se:import-code` first: it extracts one FLOW per resolved call. Group those calls into chains, then add the intent on top. A chain drawn from memory over existing code models what someone thinks the code does.
+
 ## The stack belongs in the model
 
 A MOD without a stack is half a decision. The only legal place is `MOD -satisfy-> REQ` where the REQ carries `@kinds ["non-functional"]` — `functional` REQs belong to the FUNCs (`se:author-req`). Source the wording from `bok/docs/governance/STACKS.md`; do not restate it per repo.
@@ -132,7 +147,7 @@ What wasted rounds on the first run, measured:
 - **Counting connections without the ACTOR edges.** They were 7 of 16 lines, and the human alone held 6 of them. Count the actor edges *first* — in a system one person operates, they are the majority and they are the architecture.
 - **Offering a simplification that contradicts a sentence in the pitch.** Check every proposal against the pitch text before you put it forward; if it removes something the pitch promises, it is the wrong simplification even when the metric likes it.
 
-## Check questions — run all seven before you call the level done
+## Check questions — run all eight before you call the level done
 
 1. **Does every UC tell its story with the top-level FUNCs alone?** If you have to name a sub-function, the level is too coarse.
 2. **Are the use cases disjoint?** Compare the FUNC member sets of the sibling chains. Identical sets mean you documented one behaviour twice; a child chain that adds no function of its own means the child is a contract field, not a use case.
@@ -141,6 +156,7 @@ What wasted rounds on the first run, measured:
 5. **Which stack implements this MOD**, and does it exist as a `satisfy`-bound REQ?
 6. **Does the code already exist?** Check the repo before modelling greenfield. A FUNC modelled as not-yet-built (no `realRef`) over existing code is a claim the code will break (ITEM-2026-170 D2).
 7. **More than five top-level FUNCs? Something is off.** Five is the working budget, not a hard cap — but every slot above it needs a stated reason, because **operations is still coming**: user management, configuration, credentials, deployment, logging. Those land as their own top-level block at the very end, and a decomposition that already spent seven slots on features has nowhere to put them. Count the compose-forest roots, not the chain members, and budget before you spend the last slot.
+8. **Does every flow have a call site?** For each FLOW between two FUNCs with a `realRef`, name the line where one calls the other. Without that line the flow is a claim, not a model.
 
 ## Boundaries
 

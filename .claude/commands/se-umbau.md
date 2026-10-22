@@ -1,6 +1,6 @@
 ---
 name: se-umbau
-version: 1
+version: 2
 description: Bestehendes ändern, ersetzen, entfernen — graph_impact und graph_tests VOR dem Löschzug, Modell-Zug im selben CR. Bei „entfernen", „ersetzen", „refactoren", „keine parallelen Pfade". Neues anlegen: se:author-req.
 ---
 
@@ -66,6 +66,10 @@ Nach dem Löschen im Code ist das Modell **falsch**, nicht veraltet. Der Zug geh
 - Knoten, dessen Code weg ist → löschen, **nachdem** seine `satisfy`-Kanten einen neuen Erfüller
   haben. Beides in EINEM Batch, sonst blockt das Gate zurecht.
 - Knoten, dessen Code umgezogen ist → `realRef` umhängen, `allocate` auf das neue MOD prüfen.
+- Knoten, dessen Aufrufe sich geändert haben → seine Flüsse mitziehen. Je ein- und ausgehendem
+  Fluss: ruft der Code den Abnehmer noch, und kommt die Antwort beim Aufrufer an? Die Prüfung je
+  Fluss steht in `se-vorbereitung`, Schritt 4. Ein CR, der nur den Knoten nachzieht, lässt die
+  Flüsse der Nachbarn stehen. So liefen in graphcode Modell und Code auseinander (CR-GC-832..838).
 - `dryRun: true` zuerst. Das Verdict nennt die Regelverstöße, bevor irgendetwas persistiert.
 
 **„Fertig" heißt kongruent oder benannt.** Eine Abweichung, die im CR steht, ist erlaubt; eine
@@ -105,4 +109,5 @@ ersten nie ähnlich; er ist kürzer, anders benannt und kann weniger. Gemeinsam 
 - [ ] alter Pfad gelöscht — kein „deprecated, funktioniert aber noch"
 - [ ] `grep` nach dem alten Namen in `src/` **und** `tests/`
 - [ ] Modell-Zug im selben CR, durchs Gate, RC-* sauber oder Abweichung benannt
+- [ ] die Flüsse jedes Knotens mit geänderten Aufrufen am Code geprüft
 - [ ] ausgeworfene Zeilen im CR beziffert

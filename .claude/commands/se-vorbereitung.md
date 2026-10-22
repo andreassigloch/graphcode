@@ -1,7 +1,7 @@
 ---
 name: se-vorbereitung
-version: 2
-description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen dem tiefsten Träger zuordnen, Flüsse als synchron oder asynchron kennzeichnen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
+version: 3
+description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen dem tiefsten Träger zuordnen, Flüsse als synchron oder asynchron kennzeichnen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
 # se-vorbereitung — erst das Modell, dann die Analyse
@@ -13,7 +13,7 @@ sind geschlossen, und jede Anforderung hängt am richtigen Träger auf der tiefs
 Das ist Hygiene, keine Analyse. Der Ort ist der Abschluss von Stufe 7 der Regelmatrix (Module), an
 der Marke PDR, vor `se-fmea` auf Stufe 8.
 
-Du führst durch vier Schritte. Je Lücke schlägst vor, was sie schließt, und der Autor wählt.
+Du führst durch fünf Schritte. Je Lücke schlägst vor, was sie schließt, und der Autor wählt.
 Die gewählten Züge sind ein gewöhnlicher CR im Repo des Modells und gehen durch `graph_mutate`.
 Du rechnest keine Kennzahl: was du brauchst, liest du aus `graph_metrics` und aus den Befunden
 (`rules_evaluate`, `rules_get_violations`). Du beurteilst kein Risiko und keine Laufzeit.
@@ -120,7 +120,7 @@ Die Frage je Fluss ohne lesbares Merkmal:
 
 > Wartet die Antwort des Abnehmers auf diese Lieferung?
 
-Ja heißt synchron, nein heißt asynchron (vorab geliefert). Der Zug je Fluss:
+Ja heißt synchron, nein heißt asynchron (vorab geliefert). Im Code heißt Ja: der Aufrufer wartet auf den Rückgabewert. Ein Rückruf, ein Ereignis oder eine Datei, die später jemand liest, heißt Nein. Der Zug je Fluss:
 
 ```
 ## Nodes
@@ -134,7 +134,36 @@ Ja heißt synchron, nein heißt asynchron (vorab geliefert). Der Zug je Fluss:
 - Wird derselbe Inhalt von einem Abnehmer abgerufen und einem anderen vorab geliefert, sind das zwei Flüsse. Schlag die Trennung vor.
 - Ohne Antwort des Autors bleibt der Fluss ohne Merkmal, steht im Bericht, und `answerPath` bleibt `null`.
 
-## 4. Bericht
+## 4. Flüsse am Code prüfen
+
+Die Regeln sehen, ob ein Fluss verdrahtet ist, nicht, ob der Code ihn macht. In graphcodes eigenem
+Modell nannten etwa 4 von 10 Flüssen einen Weg, den kein Code geht (CR-GC-832..838). Jede Regel
+ließ sie durch.
+
+Je Fluss der Kette zwischen zwei Funktionen:
+
+```
+graph_context("<FUNC-erzeuger>")   # realRef des Erzeugers und seine Flüsse
+```
+
+Lies den Code an der `realRef` des Erzeugers. Such die Stelle, an der der Inhalt zum Abnehmer geht.
+
+| Ergebnis | Erkennbar an | Zug |
+|---|---|---|
+| **belegt** | der Erzeuger ruft den Abnehmer, oder der Abnehmer ruft den Erzeuger und bekommt den Inhalt zurück | Datei und Symbol der Stelle in die Beschreibung des Flusses |
+| **falscher Abnehmer** | der Inhalt geht an eine andere Funktion, meist an das Werkzeug dazwischen | Fluss umhängen; fehlt das Werkzeug als Funktion, es anlegen |
+| **kein Aufruf** | keine Stelle im Code reicht den Inhalt weiter | Fluss löschen; ist er gewollt, wird er ein Item, nicht Modell |
+| **ohne Bindung** | eine Seite hat keine `realRef` | erst binden; bis dahin steht der Fluss ungeprüft im Bericht |
+
+Drei Muster fanden sich am häufigsten:
+
+- Der Fluss überspringt das Werkzeug: der Akteur liefert direkt an eine Kernfunktion.
+- Die Antwort geht an den letzten Leser, nicht zurück an den Aufrufer.
+- Der Abnehmer soll den Speicher lesen, bekommt den Graphen aber als Argument vom Aufrufer.
+
+Ein Fluss mit `sync`, auf den der Aufrufer nicht wartet, geht zurück an Schritt 3.
+
+## 5. Bericht
 
 Je Kette, alles zitiert und nichts gezählt, was `graph_metrics` nicht liefert:
 
@@ -144,6 +173,7 @@ Je Kette, alles zitiert und nichts gezählt, was `graph_metrics` nicht liefert:
 | Träger je Risiko | `carriers` je `riskId` |
 | Sockel | die `satisfiers`, deren `by` das System ist |
 | Antwortweg | `answerPath`, sonst die Flüsse aus `answerPathBlockedBy`, je mit ihrem Grund |
+| Flüsse am Code | je Fluss eines der vier Ergebnisse aus Schritt 4, mit Datei und Symbol |
 | Vorschläge | je Zug: Klasse, Elemente, Format-E, gewählt oder offen |
 | offen | was bleibt, mit Grund; je „Funktion fehlt" das Item |
 
@@ -157,4 +187,5 @@ Der Bericht ist der Eingang des CR, der die gewählten Züge anwendet.
 - [ ] je Gegenmaßnahme an Modul oder System eine der vier Klassen, als Vorschlag gekennzeichnet
 - [ ] vor jedem Tieferlegen die Bindung der Funktion gelesen
 - [ ] `answerPath` der Kette lesbar (`answerPathBlockedBy` leer), oder die hindernden Flüsse im Bericht als offen
+- [ ] jeder Fluss der Kette am Code geprüft, oder als ungeprüft im Bericht
 - [ ] kein Zug ohne Wahl des Autors; jeder gewählte durch `graph_mutate`
