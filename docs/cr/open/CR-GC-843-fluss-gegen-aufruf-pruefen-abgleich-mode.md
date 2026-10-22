@@ -42,17 +42,29 @@ Paare ohne gefundenen Aufruf:
 - `FLOW-seed-request`: serve-stdio → seed-from-json
 - `FLOW-seed-request-import-code`: import-code-verb → seed-from-json
 
+**Am Code geprüft (2026-10-22): alle 12 sind echte Wege, kein Modellfehler.** Der Extraktor sieht sie nicht:
+
+| Weg im Code | Paare |
+|---|---|
+| Aufruf über eine Methode (`harness.listElements`, `harness.seedFromJson`) | `FLOW-element-slice`, `FLOW-read-request`, `FLOW-seed-request`, `FLOW-seed-request-import-code` |
+| Fabrik als Parameter (`ownKuzu` bekommt `createHarness`) | `FLOW-harness-handle`, `FLOW-harness-request-own-kuzu` |
+| Aufruf aus einer Klasse in `src/surface/host.ts` | `FLOW-own-kuzu-request`, `FLOW-harness-handle-host` |
+| Socket zwischen zwei Prozessen | `FLOW-proxy-call`, `FLOW-proxy-answer` |
+| Datei, später gelesen (`async`) | `FLOW-audit-record` (2 Paare) |
+
+Folge für das Skript: nur Flüsse mit `sync` sind ein Aufruf. Ein `async`-Fluss geht über Speicher, Datei, Ereignis oder Socket. Das Skript prüft ihn nicht und zählt ihn getrennt.
+
 ## Reihenfolge
 
 1. **graphify (ITEM-2026-1027):** Methoden und Eigenschaften von Objektliteralen, die eine Funktion tragen, als FUNC extrahieren, mit ihren Aufrufen. Ziel: die 127 nicht extrahierten Symbole sinken unter 20.
-2. **graphcode, dieser CR:** ein Prüfskript in `MOD-dev-scripts`. Es schreibt nichts ins Modell und gibt je Fluss eines von vier Ergebnissen aus: Aufruf, Aufruf über Zwischenschritte, kein Aufruf, ungeprüft (mit Grund). Die Liste „kein Aufruf" ist der Eingang für `se-vorbereitung` Schritt 4.
-3. **Die 12 Paare oben** am Code prüfen; Modellfehler in diesem CR beheben.
+2. **graphcode, dieser CR:** ein Prüfskript in `MOD-dev-scripts`. Es schreibt nichts ins Modell und gibt je `sync`-Fluss eines von vier Ergebnissen aus: Aufruf, Aufruf über Zwischenschritte, kein Aufruf, ungeprüft (mit Grund). `async`-Flüsse zählt es getrennt. Die Liste „kein Aufruf" ist der Eingang für `se-vorbereitung` Schritt 4.
+3. Nach dem graphify-Schritt die neue Liste „kein Aufruf" am Code prüfen; Modellfehler in diesem CR beheben.
 4. **Erst nach der Messung aus Schritt 2:** mit Smeagol klären, ob daraus eine Regel in contracts wird. Eine Regel braucht den Aufrufgraphen als Eingabe, und die Regeln lesen heute nur das Modell. Vorher die Frage stellen, ob das Skript allein reicht.
 
 ## Akzeptanz
 
 - Das Skript läuft ohne Host und ohne LLM, gleicher Repo-Stand ergibt dieselbe Ausgabe.
-- Jeder handgeschriebene Fluss zwischen zwei FUNCs steht in genau einem Ergebnis.
+- Jeder handgeschriebene `sync`-Fluss zwischen zwei FUNCs steht in genau einem Ergebnis; die `async`-Flüsse stehen als Zahl daneben.
 - „ungeprüft" nennt den Grund je Paar (Symbol nicht extrahiert, ohne Bindung).
 - Ein Test mit einem Wegwerf-Repo: ein Fluss mit direktem Aufruf, einer über einen Zwischenschritt, einer ohne Aufruf, einer mit ungebundener Seite.
 

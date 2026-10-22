@@ -7,8 +7,8 @@
  * Knoten, die der Schluss-Commit des Jobs tatsächlich geändert hat. Kriterium: 100 % der geänderten Knoten liegen in W,
  * und |W|/|G| ≤ 0,05.
  *
- * Die Jobs kommen aus der Historie, nicht aus einer Liste: jeder Commit an der SSOT, auf den ein abgeschlossener CR
- * mit `commitRef` zeigt, ist ein Job — Seeds sind die relation-Ziele des CR im Graphen VOR dem Commit, Ground Truth die
+ * Die Jobs kommen aus der Historie, nicht aus einer Liste: jeder Commit an der SSOT, dessen Nachricht einen CR des
+ * Modells in Klammern nennt (`feat: … (CR-GC-123)`), ist ein Job — Seeds sind die relation-Ziele des CR im Graphen VOR dem Commit, Ground Truth die
  * dort vorhandenen Knoten, die der Commit geändert oder entfernt hat (neue Knoten kann keine Scheibe vorhersehen).
  * Gemessen wird am Graphen vor dem Commit in einem Wegwerf-Store (`openMeasured`), mit der Policy des Repos; der
  * Live-Store wird nie angefasst. Dazu die eingefrorene Kalibrier-Fixture (`beispielgraphen/dummy-slicer.graph.json`,
@@ -88,20 +88,22 @@ export function jobAusCommit(crId, vorher, nachher, commit) {
 }
 
 /**
- * Die Jobs aus der Historie: die jüngsten `n` Commits an der SSOT, auf die ein CR des heutigen Modells mit
- * `commitRef` zeigt und die mindestens einen Seed und einen geänderten vorhandenen Knoten haben.
+ * Die Jobs aus der Historie: die jüngsten `n` Commits an der SSOT, deren Nachricht einen CR des heutigen Modells in
+ * Klammern nennt und die mindestens einen Seed und einen geänderten vorhandenen Knoten haben. CR-GC-844: vorher las
+ * das Skript `commitRef` am CR-Knoten. Den schreibt seit BOK-CR-060 niemand mehr, die Jobs liefen aus dem Fenster.
  */
 export function jobsAusHistorie(repo = REPO, { n = 10, tiefe = 120 } = {}) {
   const git = (...a) => execFileSync('git', a, { cwd: repo, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
   const heute = JSON.parse(readFileSync(join(repo, SSOT), 'utf8'));
-  const refOf = (e) => e.commitRef ?? e.attributes?.commitRef;
-  const crs = heute.elements.filter((e) => e.type === 'CR' && typeof refOf(e) === 'string' && refOf(e).length >= 7).map((e) => ({ id: e.id, ref: refOf(e) }));
-  const commits = git('log', `-n${tiefe}`, '--format=%H', '--', SSOT).trim().split('\n').filter(Boolean);
+  const crs = new Set(heute.elements.filter((e) => e.type === 'CR').map((e) => e.id));
+  const zeilen = git('log', `-n${tiefe}`, '--format=%H %s', '--', SSOT).trim().split('\n').filter(Boolean);
   const jobs = [];
-  for (const c of commits) {
+  for (const zeile of zeilen) {
     if (jobs.length >= n) break;
-    const cr = crs.find((x) => c.startsWith(x.ref));
-    if (!cr) continue;
+    const c = zeile.slice(0, zeile.indexOf(' '));
+    const id = zeile.match(/\((CR-GC-\d+)\)/)?.[1];
+    if (!id || !crs.has(id)) continue;
+    const cr = { id };
     let vorher, nachher;
     try { vorher = JSON.parse(git('show', `${c}^:${SSOT}`)); nachher = JSON.parse(git('show', `${c}:${SSOT}`)); } catch { continue; }
     const job = jobAusCommit(cr.id, vorher, nachher, c);

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 453 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 454 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 453 CR · 343 done · 4 open.
+Total: 454 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -515,3 +515,4 @@ Total: 453 CR · 343 done · 4 open.
 | `CR-GC-841` | n/a | Modellierregeln aus dem Modell-Code-Abgleich in die Skills |
 | `CR-GC-842` | n/a | Arch-Spike gehoert in die Modell-Spur |
 | `CR-GC-843` | n/a | Fluss gegen Aufruf pruefen: Abgleich Modell und Code |
+| `CR-GC-844` | n/a | whitebox-messung: CR aus der Commit-Nachricht statt aus commitRef |
