@@ -1,6 +1,6 @@
 # CR-GC-829: Format-E-Rundlauf als funktionale Anforderung an den Codec; FCHAIN-codec-roundtrip entfällt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-22)
 **Typ:** aus Item ITEM-2026-1008 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1008.json (Lane: graph)
