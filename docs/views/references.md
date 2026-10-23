@@ -1300,6 +1300,14 @@
 | `CR-GC-846` | relation | `FUNC-check-code-conformance` |
 | `CR-GC-847` | relation | `FUNC-graph-help` |
 | `CR-GC-847` | relation | `FUNC-se-help` |
+| `CR-GC-848` | relation | `FUNC-check-code-conformance` |
+| `CR-GC-848` | relation | `FUNC-tool-context` |
+| `CR-GC-849` | relation | `FUNC-create-harness` |
+| `CR-GC-849` | relation | `FUNC-graph-store` |
+| `CR-GC-849` | relation | `FUNC-serve-sse` |
+| `CR-GC-849` | relation | `FUNC-serve-stdio` |
+| `CR-GC-849` | relation | `FUNC-target-profile-load` |
+| `CR-GC-849` | relation | `FUNC-tool-context` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

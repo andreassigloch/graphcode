@@ -540,6 +540,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-843` | n/a | Fluss gegen Aufruf pruefen: Abgleich Modell und Code | `FUNC-check-code-conformance` · `FUNC-export-marker` · `FUNC-export-marker-clear` · `FUNC-graph-store` |
 | `CR-GC-846` | n/a | RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts) | `FUNC-check-code-conformance` |
 | `CR-GC-847` | n/a | graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped | `FUNC-graph-help` · `FUNC-se-help` |
+| `CR-GC-848` | n/a | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag | `FUNC-check-code-conformance` · `FUNC-tool-context` |
+| `CR-GC-849` | n/a | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) | `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-target-profile-load` · `FUNC-tool-context` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

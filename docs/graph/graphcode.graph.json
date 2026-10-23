@@ -3646,6 +3646,18 @@
       "description": "docs/cr/open/CR-GC-847-graph-help-nur-erklaerung-betriebsart-oh.md"
     },
     {
+      "id": "CR-GC-848",
+      "type": "CR",
+      "name": "Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag",
+      "description": "docs/cr/open/CR-GC-848-commit-pruefung-fluss-gegen-aufruf-aufru.md"
+    },
+    {
+      "id": "CR-GC-849",
+      "type": "CR",
+      "name": "Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau)",
+      "description": "docs/cr/open/CR-GC-849-modell-36-aufrufe-zwischen-verankerten-f.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19104,6 +19116,46 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-848",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-848",
+      "target": "FUNC-tool-context",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
+      "target": "FUNC-create-harness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
+      "target": "FUNC-graph-store",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
+      "target": "FUNC-serve-sse",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
+      "target": "FUNC-serve-stdio",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
+      "target": "FUNC-target-profile-load",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
+      "target": "FUNC-tool-context",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -29947,5 +29999,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 865
+  "graphVersion": 868
 }

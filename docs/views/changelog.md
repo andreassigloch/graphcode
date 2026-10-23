@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 457 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 459 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 457 CR · 343 done · 4 open.
+Total: 459 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -519,3 +519,5 @@ Total: 457 CR · 343 done · 4 open.
 | `CR-GC-845` | n/a | conformanceViolations loeschen: nur ein Test ruft es, conformanceEvaluation ist der Pfad |
 | `CR-GC-846` | n/a | RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts) |
 | `CR-GC-847` | n/a | graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped |
+| `CR-GC-848` | n/a | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag |
+| `CR-GC-849` | n/a | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) |
