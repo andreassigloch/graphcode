@@ -3634,6 +3634,12 @@
       "description": "docs/cr/open/CR-GC-845-conformanceviolations-loeschen-nur-ein-t.md"
     },
     {
+      "id": "CR-GC-846",
+      "type": "CR",
+      "name": "RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts)",
+      "description": "docs/cr/open/CR-GC-846-rc-regel-synchroner-fluss-braucht-einen-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -29920,5 +29926,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 861
+  "graphVersion": 862
 }
