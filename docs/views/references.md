@@ -1297,6 +1297,7 @@
 | `CR-GC-843` | relation | `FUNC-export-marker` |
 | `CR-GC-843` | relation | `FUNC-export-marker-clear` |
 | `CR-GC-843` | relation | `FUNC-graph-store` |
+| `CR-GC-846` | relation | `FUNC-check-code-conformance` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

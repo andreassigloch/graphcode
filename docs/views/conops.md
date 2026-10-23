@@ -538,6 +538,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-841` | n/a | Modellierregeln aus dem Modell-Code-Abgleich in die Skills | `FUNC-author-req` · `FUNC-import-code` · `FUNC-se-top-level` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` |
 | `CR-GC-842` | n/a | Arch-Spike gehoert in die Modell-Spur | `FUNC-verify-lane-model` · `REQ-model-lane-fixed-set` |
 | `CR-GC-843` | n/a | Fluss gegen Aufruf pruefen: Abgleich Modell und Code | `FUNC-check-code-conformance` · `FUNC-export-marker` · `FUNC-export-marker-clear` · `FUNC-graph-store` |
+| `CR-GC-846` | n/a | RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts) | `FUNC-check-code-conformance` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

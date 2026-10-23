@@ -19083,6 +19083,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-846",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -29926,5 +29931,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 862
+  "graphVersion": 863
 }
