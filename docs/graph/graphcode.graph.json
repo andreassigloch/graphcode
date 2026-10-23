@@ -4126,7 +4126,7 @@
       "id": "FLOW-audit-record",
       "type": "FLOW",
       "name": "Aufgezeichnete Gate-Entscheidung",
-      "description": "Was recordAudit je Entscheidung ins Operations-Log schreibt; audit_trail, audit_stats und die Trajektorie lesen die Datei. Abwesenheit heisst nicht aufgezeichnet, nie leerer Befund.",
+      "description": "Was recordAudit je Entscheidung ins Operations-Log schreibt; audit_trail und audit_stats lesen die Datei. Abwesenheit heisst nicht aufgezeichnet, nie leerer Befund.",
       "status": "reviewed",
       "sync": "async"
     },
@@ -4160,6 +4160,20 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-bind-request-import-code",
+      "type": "FLOW",
+      "name": "Werkzeuge binden (import-code)",
+      "description": "Der Harness, an den executeImportCode die Werkzeuge bindet, um graph_mutate aufzurufen. Beleg: src/surface/import-code-verb.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-bind-request-proxy",
+      "type": "FLOW",
+      "name": "Werkzeuge binden (Stellvertreter)",
+      "description": "Ein ungebundener Harness, an den buildProxyRegistry die Werkzeuge bindet; die Werkzeugliste ist die Vorlage der Stellvertreter. Beleg: src/surface/host-shim.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-branch-entries",
       "type": "FLOW",
       "name": "Branch-Chargen",
@@ -4172,6 +4186,20 @@
       "name": "Branch-Log",
       "description": "Der Pfad zum Kommando-Log eines Branch-Worktrees und der Fork-Punkt, die die Ablaufsteuerung graph_merge uebergibt.",
       "sync": "sync"
+    },
+    {
+      "id": "FLOW-broadcast-hook",
+      "type": "FLOW",
+      "name": "Verteiler anmelden",
+      "description": "Der Rueckruf, mit dem der stdio-Host den Verteiler an den Update-Hook haengt (onUpdateEvent ruft broadcast). Er laeuft erst bei einem Ereignis. Beleg: src/surface/mcp-server.ts. (CR-GC-849)",
+      "sync": "async"
+    },
+    {
+      "id": "FLOW-broadcast-hook-sse",
+      "type": "FLOW",
+      "name": "Verteiler anmelden (HTTP-Host)",
+      "description": "Der Rueckruf, mit dem der HTTP-Host seinen Verteiler an den Update-Hook haengt (onUpdateEvent ruft broadcast). Er laeuft erst bei einem Ereignis. Beleg: src/surface/host.ts, start. (CR-GC-849)",
+      "sync": "async"
     },
     {
       "id": "FLOW-chain-metrics",
@@ -4743,6 +4771,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-http-route",
+      "type": "FLOW",
+      "name": "Weitergeleitete HTTP-Anfrage",
+      "description": "Die HTTP-Anfrage, die der Host-Router an den zustaendigen Endpunkt weitergibt; er wartet auf dessen Antwort. Beleg: src/surface/host.ts, route. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-impact-slice",
       "type": "FLOW",
       "name": "Impact-Scheibe",
@@ -4762,6 +4797,13 @@
       "type": "FLOW",
       "name": "Import-Zusammenfassung",
       "description": "Die Zusammenfassung des Code-Imports an die CLI. Beleg: src/surface/import-code-verb.ts, src/cli.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-import-target",
+      "type": "FLOW",
+      "name": "Import-Zugang",
+      "description": "Der Import-Zugang, den reseed beim Store holt, um ihn applyReseed zu geben. Beleg: src/kernel/harness.ts, reseed ruft store.importTarget. (CR-GC-849)",
       "sync": "sync"
     },
     {
@@ -4817,6 +4859,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-lifecycle-create",
+      "type": "FLOW",
+      "name": "Abraeumschritte anmelden",
+      "description": "Die Abraeumschritte, die serveStdio beim Start im SessionLifecycle anmeldet. Beleg: src/surface/mcp-server.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-live-event",
       "type": "FLOW",
       "name": "Live-Update-Event",
@@ -4855,6 +4904,13 @@
         "symbol": "serveStdio",
         "lang": "ts"
       }
+    },
+    {
+      "id": "FLOW-lock-release-close",
+      "type": "FLOW",
+      "name": "Lock-Freigabe beim Schliessen",
+      "description": "Die Freigabe des Store-Locks, die GraphStore.close nach dem Schliessen des Store-Griffs ruft. Beleg: src/kernel/graph-store.ts, close ruft lock.release. (CR-GC-849)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-lock-request",
@@ -5085,6 +5141,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-own-kuzu-request-stdio",
+      "type": "FLOW",
+      "name": "Bruecke starten (stdio-Host)",
+      "description": "Der Auftrag des stdio-Hosts, die Live-Bruecke zu starten, die den Store selbst besitzt (maybeStartBridge). Beleg: src/surface/mcp-server.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-plan-request",
       "type": "FLOW",
       "name": "Spur-Anfrage (verify:code)",
@@ -5115,6 +5178,13 @@
       "type": "FLOW",
       "name": "Werkzeugantwort (an die angedockte Ablaufsteuerung)",
       "description": "Die Werkzeugantwort, die der Stellvertreter an die Ablaufsteuerung seiner Sitzung gibt. Beleg: src/surface/host-shim.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-proxy-build",
+      "type": "FLOW",
+      "name": "Stellvertreter bauen",
+      "description": "Der Auftrag an buildProxyRegistry, die Stellvertreter-Werkzeuge fuer eine angedockte Sitzung zu bauen. Beleg: src/surface/mcp-server.ts. (CR-GC-849)",
       "sync": "sync"
     },
     {
@@ -5151,6 +5221,13 @@
       "description": "Der entprellte Aufruf des graph_export-Werkzeugs nach einer angenommenen Mutation (250 ms, single-flight).",
       "status": "reviewed",
       "sync": "async"
+    },
+    {
+      "id": "FLOW-read-bind",
+      "type": "FLOW",
+      "name": "Lese-Werkzeuge binden",
+      "description": "Der Werkzeug-Kontext, mit dem bindToolsToHarness die Lese-Werkzeuge bindet (bindReadTools). Beleg: src/surface/mcp-tools.ts. (CR-GC-849)",
+      "sync": "sync"
     },
     {
       "id": "FLOW-read-request",
@@ -5412,6 +5489,41 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-store-build",
+      "type": "FLOW",
+      "name": "Store und Lock anlegen",
+      "description": "Store und Lock, die die Harness-Fabrik beim Bau des Harness anlegt. Beleg: src/kernel/harness.ts, GraphCodeHarness legt GraphStore und StoreLock an. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-store-close",
+      "type": "FLOW",
+      "name": "Store schliessen",
+      "description": "Das Schliessen des Stores am Sitzungsende: serveStdio ruft harness.close, das GraphStore.close ruft. Beleg: src/surface/mcp-server.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-store-close-cli",
+      "type": "FLOW",
+      "name": "Store schliessen (CLI)",
+      "description": "Das Schliessen des Stores beim CLI-Abschluss: shutdown ruft harness.close, das GraphStore.close ruft. Beleg: src/cli.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-store-close-rewind",
+      "type": "FLOW",
+      "name": "Store schliessen (rewind)",
+      "description": "Das Schliessen des Stores am Ende von rewind: executeRewind ruft harness.close, das GraphStore.close ruft. Beleg: src/surface/rewind.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-store-load",
+      "type": "FLOW",
+      "name": "Geladener Graph",
+      "description": "Der aus Kuzu geladene Graph, den open() beim Oeffnen von load() bekommt. Beleg: src/kernel/graph-store.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-store-open",
       "type": "FLOW",
       "name": "Store oeffnen (serveStdio)",
@@ -5559,6 +5671,20 @@
       "sync": "async"
     },
     {
+      "id": "FLOW-trajectory-entry",
+      "type": "FLOW",
+      "name": "Trajektorie-Eintrag",
+      "description": "Der Audit-Eintrag, den recordAudit direkt an materializeTrajectory gibt; recordAudit wartet auf die Projektion. Beleg: src/surface/tool-context.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-update-hook",
+      "type": "FLOW",
+      "name": "Update-Hook anlegen",
+      "description": "Der Update-Hook, den die Harness-Fabrik beim Bau registriert (registerEmitters ruft makeUpdateEventHook). Beleg: src/surface/create-harness.ts. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-version-bump",
       "type": "FLOW",
       "name": "Version-Bump",
@@ -5579,6 +5705,20 @@
       "type": "FLOW",
       "name": "Vorschlag an den Nutzer",
       "description": "Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis; den Nutzer erreicht er mit FLOW-mutate-answer. (CR-GC-770, CR-GC-823)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-work-set",
+      "type": "FLOW",
+      "name": "Arbeitsmenge der Sitzung",
+      "description": "Die Arbeitsmenge der Sitzung, die graph_readiness beim Werkzeug-Kontext abfragt, um Befunde auf die Arbeit der Sitzung zu schneiden. Beleg: src/projections/report.ts, arbeitsmenge. (CR-GC-849)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-write-slot",
+      "type": "FLOW",
+      "name": "Schreibzug einreihen",
+      "description": "Der Schreibzug, den graph_suggest beim Anwenden in die Schreibreihenfolge des Werkzeug-Kontexts stellt (serializeToolWrite). Beleg: src/loop/suggest.ts. (CR-GC-849)",
       "sync": "sync"
     },
     {
@@ -9297,6 +9437,12 @@
       }
     },
     {
+      "id": "SCHEMA-import-access",
+      "type": "SCHEMA",
+      "name": "Import-Zugang",
+      "description": "Der Zugang des Importwegs zum Store: ersetzen und leeren, ohne Store-Griff und ohne Setter. Spec-only: ein Objekt mit Verhalten (ImportTarget in src/kernel/harness-import.ts), kein Zod-Datenvertrag."
+    },
+    {
       "id": "SCHEMA-lock-owner",
       "type": "SCHEMA",
       "name": "LockOwner",
@@ -9711,6 +9857,12 @@
         "symbol": "LiveUpdateEventSchema",
         "lang": "ts"
       }
+    },
+    {
+      "id": "SCHEMA-work-set",
+      "type": "SCHEMA",
+      "name": "Arbeitsmenge",
+      "description": "Die uids, die die laufende Sitzung geschrieben hat, abgeleitet aus dem Audit-Log; schneidet Befundlisten auf die Arbeit der Sitzung. Spec-only: das TS-Interface Arbeitsmenge in src/kernel/measure/working-set.ts, kein Zod-Datenvertrag."
     },
     {
       "id": "SCHEMA-zug-bericht",
@@ -19127,12 +19279,37 @@
     },
     {
       "source": "CR-GC-849",
+      "target": "FUNC-bind-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
+      "target": "FUNC-cli-dispatch",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
       "target": "FUNC-create-harness",
       "type": "relation"
     },
     {
       "source": "CR-GC-849",
+      "target": "FUNC-emit-trajectory",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
       "target": "FUNC-graph-store",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
+      "target": "FUNC-health-endpoint",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-849",
+      "target": "FUNC-rewind",
       "type": "relation"
     },
     {
@@ -19493,6 +19670,11 @@
     },
     {
       "source": "FCHAIN-docked-session",
+      "target": "FUNC-bind-tools",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-docked-session",
       "target": "FUNC-decode",
       "type": "compose"
     },
@@ -19524,6 +19706,11 @@
     {
       "source": "FCHAIN-docked-session",
       "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-docked-session",
+      "target": "FUNC-serve-stdio",
       "type": "compose"
     },
     {
@@ -19582,6 +19769,16 @@
       "type": "compose"
     },
     {
+      "source": "FCHAIN-health",
+      "target": "FUNC-list-elements",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-health",
+      "target": "FUNC-serve-sse",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-host-start",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -19599,6 +19796,11 @@
     {
       "source": "FCHAIN-host-start",
       "target": "FUNC-bind-tools",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-host-start",
+      "target": "FUNC-broadcast-diff",
       "type": "compose"
     },
     {
@@ -19653,6 +19855,11 @@
     },
     {
       "source": "FCHAIN-host-start",
+      "target": "FUNC-own-kuzu-host",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-host-start",
       "target": "FUNC-schema-guard",
       "type": "compose"
     },
@@ -19668,6 +19875,11 @@
     },
     {
       "source": "FCHAIN-host-start",
+      "target": "FUNC-session-shutdown",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-host-start",
       "target": "FUNC-tool-context",
       "type": "compose"
     },
@@ -19675,6 +19887,11 @@
       "source": "FCHAIN-host-start",
       "target": "REQ-risk-client-holds-stale-tool-list",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-http-host",
+      "target": "FUNC-broadcast-diff",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-http-host",
@@ -19864,6 +20081,11 @@
     {
       "source": "FCHAIN-model-import",
       "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-import",
+      "target": "FUNC-bind-tools",
       "type": "compose"
     },
     {
@@ -21137,11 +21359,6 @@
     },
     {
       "source": "FLOW-audit-record",
-      "target": "FUNC-emit-trajectory",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-audit-record",
       "target": "SCHEMA-audit-record",
       "type": "relation"
     },
@@ -21186,6 +21403,26 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-bind-request-import-code",
+      "target": "FUNC-bind-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-bind-request-import-code",
+      "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-bind-request-proxy",
+      "target": "FUNC-bind-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-bind-request-proxy",
+      "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-branch-entries",
       "target": "FUNC-merge-nodes",
       "type": "io"
@@ -21203,6 +21440,26 @@
     {
       "source": "FLOW-branch-log",
       "target": "SCHEMA-audit-record",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-broadcast-hook",
+      "target": "FUNC-broadcast-diff",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-broadcast-hook",
+      "target": "SCHEMA-update-event",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-broadcast-hook-sse",
+      "target": "FUNC-broadcast-diff",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-broadcast-hook-sse",
+      "target": "SCHEMA-update-event",
       "type": "relation"
     },
     {
@@ -21482,6 +21739,11 @@
     },
     {
       "source": "FLOW-conformance-findings",
+      "target": "FUNC-rules-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-conformance-findings",
       "target": "SCHEMA-rule-violation",
       "type": "relation"
     },
@@ -21544,6 +21806,11 @@
       "source": "FLOW-dimension-readiness",
       "target": "SCHEMA-readiness-report",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-element-slice",
+      "target": "FUNC-health-endpoint",
+      "type": "io"
     },
     {
       "source": "FLOW-element-slice",
@@ -21843,6 +22110,16 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-graph-help",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-graph-merge-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-graph-metrics",
       "type": "io"
     },
@@ -21853,7 +22130,22 @@
     },
     {
       "source": "FLOW-graph-state",
+      "target": "FUNC-graph-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
       "target": "FUNC-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-health-endpoint",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-import-code-verb",
       "type": "io"
     },
     {
@@ -21873,6 +22165,11 @@
     {
       "source": "FLOW-graph-state",
       "target": "FUNC-read-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state",
+      "target": "FUNC-rules-tool",
       "type": "io"
     },
     {
@@ -22078,6 +22375,21 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-http-route",
+      "target": "FUNC-graph-expand",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-http-route",
+      "target": "FUNC-health-endpoint",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-http-route",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-impact-slice",
       "target": "FUNC-read-tools",
       "type": "io"
@@ -22110,6 +22422,16 @@
     {
       "source": "FLOW-import-summary",
       "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-import-target",
+      "target": "FUNC-reseed",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-import-target",
+      "target": "SCHEMA-import-access",
       "type": "relation"
     },
     {
@@ -22183,6 +22505,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-lifecycle-create",
+      "target": "FUNC-session-shutdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lifecycle-create",
+      "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-live-event",
       "target": "FUNC-broadcast-diff",
       "type": "io"
@@ -22221,6 +22553,16 @@
     },
     {
       "source": "FLOW-lock-release",
+      "target": "SCHEMA-lock-owner",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-lock-release-close",
+      "target": "FUNC-claim-store-lock",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lock-release-close",
       "target": "SCHEMA-lock-owner",
       "type": "relation"
     },
@@ -22512,6 +22854,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-own-kuzu-request-stdio",
+      "target": "FUNC-own-kuzu-host",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-own-kuzu-request-stdio",
+      "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-plan-request",
       "target": "FUNC-plan-code-lane",
       "type": "io"
@@ -22549,6 +22901,16 @@
     {
       "source": "FLOW-proxy-answer-agent",
       "target": "SCHEMA-mutate-result",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-proxy-build",
+      "target": "FUNC-host-proxy",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-proxy-build",
+      "target": "SCHEMA-mcp-tool-registry",
       "type": "relation"
     },
     {
@@ -22649,6 +23011,16 @@
     {
       "source": "FLOW-query-request-auto-export",
       "target": "SCHEMA-query-params",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-read-bind",
+      "target": "FUNC-read-tools",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-read-bind",
+      "target": "SCHEMA-tool-context",
       "type": "relation"
     },
     {
@@ -23217,6 +23589,61 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-store-build",
+      "target": "FUNC-claim-store-lock",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-build",
+      "target": "FUNC-graph-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-build",
+      "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-store-close",
+      "target": "FUNC-graph-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-close",
+      "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-store-close-cli",
+      "target": "FUNC-graph-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-close-cli",
+      "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-store-close-rewind",
+      "target": "FUNC-graph-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-close-rewind",
+      "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-store-load",
+      "target": "FUNC-open-store",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-load",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-store-open",
       "target": "FUNC-open-store",
       "type": "io"
@@ -23314,6 +23741,26 @@
     {
       "source": "FLOW-target-profile",
       "target": "FUNC-graph-generate-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-target-profile",
+      "target": "FUNC-graph-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-target-profile",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-target-profile",
+      "target": "FUNC-graph-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-target-profile",
+      "target": "FUNC-vorschlag",
       "type": "io"
     },
     {
@@ -23446,6 +23893,26 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FLOW-trajectory-entry",
+      "target": "FUNC-emit-trajectory",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-trajectory-entry",
+      "target": "SCHEMA-audit-record",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-update-hook",
+      "target": "FUNC-emit-update-event",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-update-hook",
+      "target": "SCHEMA-update-event",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-version-bump",
       "target": "FUNC-schema-guard",
       "type": "io"
@@ -23475,6 +23942,26 @@
     {
       "source": "FLOW-vorschlag",
       "target": "SCHEMA-mutate-result",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-work-set",
+      "target": "FUNC-graph-readiness",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-work-set",
+      "target": "SCHEMA-work-set",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-write-slot",
+      "target": "FUNC-tool-context",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-write-slot",
+      "target": "SCHEMA-mutate-command",
       "type": "relation"
     },
     {
@@ -23730,6 +24217,11 @@
     {
       "source": "FUNC-bind-tools",
       "target": "FLOW-context-request",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-bind-tools",
+      "target": "FLOW-read-bind",
       "type": "io"
     },
     {
@@ -24441,6 +24933,11 @@
     },
     {
       "source": "FUNC-cli-dispatch",
+      "target": "FLOW-store-close-cli",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-cli-dispatch",
       "target": "REQ-npx-distribution",
       "type": "satisfy",
       "weight": "1"
@@ -24533,6 +25030,16 @@
     {
       "source": "FUNC-create-harness",
       "target": "FLOW-harness-handle",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-create-harness",
+      "target": "FLOW-store-build",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-create-harness",
+      "target": "FLOW-update-hook",
       "type": "io"
     },
     {
@@ -25148,6 +25655,21 @@
     },
     {
       "source": "FUNC-graph-store",
+      "target": "FLOW-import-target",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-store",
+      "target": "FLOW-lock-release-close",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-store",
+      "target": "FLOW-store-load",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-store",
       "target": "FLOW-store-query",
       "type": "io"
     },
@@ -25184,6 +25706,11 @@
     {
       "source": "FUNC-graph-suggest",
       "target": "FLOW-suggest-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-suggest",
+      "target": "FLOW-write-slot",
       "type": "io"
     },
     {
@@ -25332,6 +25859,11 @@
     },
     {
       "source": "FUNC-host-proxy",
+      "target": "FLOW-bind-request-proxy",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-host-proxy",
       "target": "FLOW-proxy-answer-agent",
       "type": "io"
     },
@@ -25418,6 +25950,11 @@
       "source": "FUNC-import-code-verb",
       "target": "MOD-surface",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-import-code-verb",
+      "target": "FLOW-bind-request-import-code",
+      "type": "io"
     },
     {
       "source": "FUNC-import-code-verb",
@@ -25807,6 +26344,11 @@
     },
     {
       "source": "FUNC-rewind",
+      "target": "FLOW-store-close-rewind",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-rewind",
       "target": "FLOW-store-open-rewind",
       "type": "io"
     },
@@ -26187,7 +26729,17 @@
     },
     {
       "source": "FUNC-serve-sse",
+      "target": "FLOW-broadcast-hook-sse",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-sse",
       "target": "FLOW-host-ready",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-sse",
+      "target": "FLOW-http-route",
       "type": "io"
     },
     {
@@ -26217,6 +26769,11 @@
     },
     {
       "source": "FUNC-serve-stdio",
+      "target": "FLOW-broadcast-hook",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-stdio",
       "target": "FLOW-gve-attach",
       "type": "io"
     },
@@ -26227,12 +26784,32 @@
     },
     {
       "source": "FUNC-serve-stdio",
+      "target": "FLOW-lifecycle-create",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-stdio",
+      "target": "FLOW-own-kuzu-request-stdio",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-stdio",
+      "target": "FLOW-proxy-build",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-stdio",
       "target": "FLOW-seed-request",
       "type": "io"
     },
     {
       "source": "FUNC-serve-stdio",
       "target": "FLOW-socket-start",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-serve-stdio",
+      "target": "FLOW-store-close",
       "type": "io"
     },
     {
@@ -26439,6 +27016,16 @@
     {
       "source": "FUNC-tool-context",
       "target": "FLOW-tool-context",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-tool-context",
+      "target": "FLOW-trajectory-entry",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-tool-context",
+      "target": "FLOW-work-set",
       "type": "io"
     },
     {
@@ -29999,5 +30586,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 868
+  "graphVersion": 871
 }

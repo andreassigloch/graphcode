@@ -1,6 +1,7 @@
 # CR-GC-849: Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done
+**Abgeschlossen:** 2026-10-23
 **Typ:** aus Item ITEM-2026-1043 (finding)
 **Erstellt:** 2026-10-23
 **Item:** bok/items/ITEM-2026-1043.json (Lane: code)
@@ -61,3 +62,25 @@ Nur Modell: `docs/graph/`, `docs/views/`. Kein Code.
 - Die umgekehrte Aufrufsuche meldet am Selbstmodell 0 Paare ohne FLOW.
 - `npm run abgleich:fluss` meldet weiter 0 `kein-aufruf` und 0 `beleg-kaputt`.
 - `rules_evaluate` meldet keinen neuen Error.
+
+## Ergebnis
+
+Umgesetzt am 2026-10-23, Modellversion 871.
+
+- **34 statt 36 Paare.** Die Suche zählte die Aufrufe in `GraphStore.open` doppelt, für graph-store und für open-store. Mit der Regel „innerster Anker" gehören sie nur open-store, und dort stehen ihre Flüsse schon. Damit entfallen graph-store → schema-guard und graph-store → apply-reseed.
+- **Gebündelt:** 6 neue Leser an `FLOW-graph-state`, 4 an `FLOW-target-profile`, 1 an `FLOW-conformance-findings`, 1 an `FLOW-element-slice`.
+- **Neu:** 21 FLOWs. Ein FLOW hat einen Erzeuger (IO-02). Deshalb trägt jeder Aufrufer beim Schließen, Binden und Anmelden seinen eigenen FLOW, zum Beispiel `FLOW-store-close`, `-cli` und `-rewind`.
+- **Geteilt:** `FLOW-audit-record` gibt nicht mehr an emit-trajectory. Der direkte Aufruf ist jetzt `FLOW-trajectory-entry`, sync.
+- **Neue SCHEMA:** `SCHEMA-work-set` und `SCHEMA-import-access`, ohne realRef. Beide Typen im Code sind TS-Interfaces, kein Zod-Schema. Eine realRef darauf meldet RC-08.
+- **Ketten:** 8 FUNCs sind jetzt Glied der Kette ihres Auslösers (health, model-import, docked-session, host-start, http-host).
+
+Akzeptanz:
+- Die umgekehrte Suche meldet 0 Paare ohne FLOW.
+- `abgleich:fluss` meldet 0 `kein-aufruf` und 0 `beleg-kaputt`, bei 317 synchronen Paaren.
+- Das Gate meldet keinen neuen Error.
+
+Offen als Warnung:
+- R-26 und R-32: Die zwei neuen SCHEMA haben keine realRef und keinen Vertragstest.
+- R-21: serve-sse → graph-expand liegen in keiner gemeinsamen Kette. Es fehlt eine Kette „Dashboard fragt einen Teilgraphen".
+
+Test: `tests/arch.optimization-dry-run.spike.test.ts` hält die Züge des Autopiloten am Engpass fest. Er wurde neu gemessen: jetzt 4 Züge statt 1, weiter derselbe Befund ITEM-2026-798.

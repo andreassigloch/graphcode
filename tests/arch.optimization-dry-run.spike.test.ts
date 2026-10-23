@@ -490,8 +490,14 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // Werkzeuge, je Ausloeser eine Kette, jedes MCP-Werkzeug eine FUNC): weiter ein Zug, jetzt nimmt der Block
       // Bedienung graph_test_ingest auf. Fachlich falsch — ein Werkzeug ist ein Blatt, kein Block; der Operator
       // senkt nur die Vertraege an der Grenze. Messwert, keine Empfehlung (ITEM-2026-798).
+      // CR-GC-849 (graphVersion 871) — NEU GEMESSEN, nachdem 34 Aufrufe zwischen verankerten FUNCs ihren Fluss
+      // bekamen (Lesen, Aufbau, Schliessen): vier Zuege statt einem. Der Block Abfrage nimmt zusaetzlich
+      // Ruestzeug, Optimierung und das Werkzeug graph_mutate auf. Weiter derselbe Befund (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-bedienung -compose-> FUNC-test-ingest (retire FUNC-test-ingest)',
+        'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
+        'FUNC-block-abfrage -compose-> FUNC-graph-mutate-tool (retire FUNC-graph-mutate-tool)',
+        'FUNC-block-abfrage -compose-> FUNC-block-optimierung',
       ]);
       expect(
         rest

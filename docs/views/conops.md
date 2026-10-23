@@ -106,8 +106,8 @@ Als Entwickler will ich den aktuellen Modellstand live mitlesen, ohne die Ansich
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-regelhalter`
 
 - `FCHAIN-dashboard-metrics` — Kennzahlen ans Dashboard: `FUNC-chain-metrics` → `FUNC-compute-readiness` → `FUNC-function-criticality` → `FUNC-generation-step` → `FUNC-graph-generate-tool` → `FUNC-graph-metrics` → `FUNC-graph-readiness` → `FUNC-graph-store` → `FUNC-host-socket` → `FUNC-module-metrics` → `FUNC-take-steering-snapshot`
-- `FCHAIN-health` — Health-Check: `FUNC-evaluate-rules` → `FUNC-graph-store` → `FUNC-health-endpoint`
-- `FCHAIN-http-host` — HTTP-Host starten: `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-load-config` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-schema-guard` → `FUNC-serve-sse`
+- `FCHAIN-health` — Health-Check: `FUNC-evaluate-rules` → `FUNC-graph-store` → `FUNC-health-endpoint` → `FUNC-list-elements` → `FUNC-serve-sse`
+- `FCHAIN-http-host` — HTTP-Host starten: `FUNC-broadcast-diff` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-load-config` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-schema-guard` → `FUNC-serve-sse`
 - `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-agent-loop` → `FUNC-broadcast-diff` → `FUNC-decode` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
 
 ### `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
@@ -125,7 +125,7 @@ Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehi
 Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-render-views` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
-- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-agent-loop` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
+- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-import-doc` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
@@ -144,8 +144,8 @@ Der Entwickler richtet ein Repo ein, faehrt Laeufe darin und beendet die Sitzung
 
 Ausgeloest von: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-regelhalter`
 
-- `FCHAIN-docked-session` — Angedockte Sitzung: `FUNC-agent-loop` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-host-proxy` → `FUNC-host-socket` → `FUNC-mutate`
-- `FCHAIN-host-start` — Host starten: `FUNC-agent-loop` → `FUNC-apply-reseed` → `FUNC-auto-export` → `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-host-socket` → `FUNC-import` → `FUNC-load-config` → `FUNC-open-store` → `FUNC-schema-guard` → `FUNC-seed-from-json` → `FUNC-serve-stdio` → `FUNC-tool-context`
+- `FCHAIN-docked-session` — Angedockte Sitzung: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-host-proxy` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-serve-stdio`
+- `FCHAIN-host-start` — Host starten: `FUNC-agent-loop` → `FUNC-apply-reseed` → `FUNC-auto-export` → `FUNC-bind-tools` → `FUNC-broadcast-diff` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-host-socket` → `FUNC-import` → `FUNC-load-config` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-schema-guard` → `FUNC-seed-from-json` → `FUNC-serve-stdio` → `FUNC-session-shutdown` → `FUNC-tool-context`
 - `FCHAIN-repo-lifecycle` — Repo einrichten und aktualisieren: `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-harness-cli` → `FUNC-upgrade`
 - `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-apply-reseed` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-graph-store` → `FUNC-import` → `FUNC-open-store` → `FUNC-schema-guard` → `FUNC-seed-from-json` → `FUNC-serve-stdio`
 - `FCHAIN-session-end` — Sitzung beenden: `FUNC-auto-export` → `FUNC-claim-store-lock` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-host-socket` → `FUNC-session-shutdown`
@@ -541,7 +541,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-846` | n/a | RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts) | `FUNC-check-code-conformance` |
 | `CR-GC-847` | n/a | graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped | `FUNC-graph-help` · `FUNC-se-help` |
 | `CR-GC-848` | n/a | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag | `FUNC-check-code-conformance` · `FUNC-tool-context` |
-| `CR-GC-849` | n/a | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) | `FUNC-create-harness` · `FUNC-graph-store` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-target-profile-load` · `FUNC-tool-context` |
+| `CR-GC-849` | n/a | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) | `FUNC-bind-tools` · `FUNC-cli-dispatch` · `FUNC-create-harness` · `FUNC-emit-trajectory` · `FUNC-graph-store` · `FUNC-health-endpoint` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-target-profile-load` · `FUNC-tool-context` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
