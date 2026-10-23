@@ -33,3 +33,4 @@ Gemessen am 2026-10-23: ein Durchlauf im Prozess etwa 1 s, auch beim zweiten Mal
 - `rules_evaluate` meldet RC-12 am graphcode-Selbstmodell mit 0 Warnungen und eine Abdeckung von 158 geprüften Paaren.
 - Ein absichtlich falscher Abnehmer im Testrepo erzeugt eine RC-12-Warnung.
 - Die Dauer einer vollen Auswertung vorher und nachher steht im CR.
+- Antwortlänge: `rules_evaluate`, `rules_get_violations` und `graph_readiness` wachsen am Selbstmodell um höchstens eine Zeile (die Abdeckung als Zahlen je Grund, kein Text je Paar). Gemessen vorher und nachher, Zeichen je Antwort im CR.
