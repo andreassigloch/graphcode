@@ -3640,6 +3640,12 @@
       "description": "docs/cr/open/CR-GC-846-rc-regel-synchroner-fluss-braucht-einen-.md"
     },
     {
+      "id": "CR-GC-847",
+      "type": "CR",
+      "name": "graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped",
+      "description": "docs/cr/open/CR-GC-847-graph-help-nur-erklaerung-betriebsart-oh.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19088,6 +19094,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-847",
+      "target": "FUNC-graph-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-847",
+      "target": "FUNC-se-help",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -29931,5 +29947,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 863
+  "graphVersion": 865
 }

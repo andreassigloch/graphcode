@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 456 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 457 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 456 CR · 343 done · 4 open.
+Total: 457 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -518,3 +518,4 @@ Total: 456 CR · 343 done · 4 open.
 | `CR-GC-844` | n/a | whitebox-messung: CR aus der Commit-Nachricht statt aus commitRef |
 | `CR-GC-845` | n/a | conformanceViolations loeschen: nur ein Test ruft es, conformanceEvaluation ist der Pfad |
 | `CR-GC-846` | n/a | RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts) |
+| `CR-GC-847` | n/a | graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped |
