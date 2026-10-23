@@ -1,6 +1,6 @@
 # CR-GC-844: whitebox-messung: CR aus der Commit-Nachricht statt aus commitRef
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-23)
 **Typ:** aus Item ITEM-2026-1029 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1029.json (Lane: code)
