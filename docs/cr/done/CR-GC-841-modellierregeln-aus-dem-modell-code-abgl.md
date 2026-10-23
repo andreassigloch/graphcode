@@ -1,6 +1,6 @@
 # CR-GC-841: Modellierregeln aus dem Modell-Code-Abgleich in die Skills
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-23)
 **Typ:** aus Item ITEM-2026-1024 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1024.json (Lane: code)
