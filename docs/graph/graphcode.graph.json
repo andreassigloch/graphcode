@@ -4494,7 +4494,7 @@
       "id": "FLOW-formatE-tool",
       "type": "FLOW",
       "name": "Format-E an den Decoder",
-      "description": "Der Format-E-Text, den die Werkzeugschicht an den Decoder gibt.",
+      "description": "Der Format-E-Text, den die Werkzeugschicht an den Decoder gibt, dazu der aktuelle Graph, gegen den der Decoder die Praefixe aufloest. Beleg: src/surface/write.ts, der graph_mutate-Handler holt harness.getGraph und ruft formatEToCommands. (CR-GC-843)",
       "sync": "sync"
     },
     {
@@ -4572,6 +4572,18 @@
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "sync": "sync"
+    },
+    {
+      "id": "FLOW-graph-state-eval",
+      "type": "FLOW",
+      "name": "Graph-State (Regelauswertung)",
+      "description": "Der aktuelle Graph, den harness.evaluateRules aus dem Store liest und an die Regelauswertung gibt, wenn ein Werkzeug die Befunde ohne Mutation verlangt. Uebergabe: harness.evaluateRules liest GraphStore.current und ruft gate.evaluate. (CR-GC-843)",
+      "sync": "sync",
+      "realRef": {
+        "file": "src/kernel/harness.ts",
+        "symbol": "evaluateRules",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-gve-attach",
@@ -5403,6 +5415,18 @@
       "name": "Store-Besitzanspruch",
       "description": "Der zugesprochene Store-Besitz an GraphStore.open; ohne ihn wirft open StoreOwnershipError (Wahl verloren).",
       "sync": "sync"
+    },
+    {
+      "id": "FLOW-store-query",
+      "type": "FLOW",
+      "name": "Store-Abfrage",
+      "description": "Die Antwort des Kuzu-Adapters auf eine Leseanfrage: Teilgraph, Elementliste oder ganzer Graph aus dem persistierten Store. Die Lesewege des Harness fragen den Adapter direkt, nicht ueber GraphStore. Uebergabe: createHarness gibt denselben Adapter an GraphStore und an den Harness. (CR-GC-843)",
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/create-harness.ts",
+        "symbol": "createHarness",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-store-rebuild-notice",
@@ -19042,6 +19066,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-843",
+      "target": "FUNC-graph-store",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -21719,23 +21748,6 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-decode",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-evaluate-rules",
-      "type": "io",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FLOW-graph-state",
-      "target": "FUNC-graph-expand",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
       "target": "FUNC-graph-export-snapshot",
       "type": "io"
     },
@@ -21746,22 +21758,17 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-graph-impact",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
       "target": "FUNC-graph-metrics",
       "type": "io"
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-graph-suggest",
+      "target": "FUNC-graph-mutate-tool",
       "type": "io"
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-list-elements",
+      "target": "FUNC-graph-suggest",
       "type": "io"
     },
     {
@@ -21785,11 +21792,6 @@
     },
     {
       "source": "FLOW-graph-state",
-      "target": "FUNC-resolve-tests-from-code",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-graph-state",
       "target": "FUNC-test-ingest",
       "type": "io"
     },
@@ -21799,6 +21801,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FLOW-graph-state-eval",
+      "target": "FUNC-evaluate-rules",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-state-eval",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
     },
     {
       "source": "FLOW-gve-attach",
@@ -23167,6 +23179,31 @@
     {
       "source": "FLOW-store-ownership",
       "target": "SCHEMA-lock-owner",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-store-query",
+      "target": "FUNC-graph-expand",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-query",
+      "target": "FUNC-graph-impact",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-query",
+      "target": "FUNC-list-elements",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-query",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-store-query",
+      "target": "SCHEMA-ontology-graph",
       "type": "relation"
     },
     {
@@ -25017,6 +25054,16 @@
     {
       "source": "FUNC-graph-store",
       "target": "FLOW-graph-state",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-store",
+      "target": "FLOW-graph-state-eval",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-store",
+      "target": "FLOW-store-query",
       "type": "io"
     },
     {
@@ -29867,5 +29914,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 857
+  "graphVersion": 858
 }

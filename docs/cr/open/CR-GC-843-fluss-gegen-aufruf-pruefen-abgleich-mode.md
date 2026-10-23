@@ -60,12 +60,19 @@ Der Sprachserver (cclsp, Probe am 2026-10-23) löst genau, was graphify fehlt: `
 
 Das Skript nutzt deshalb TypeScripts eigenen LanguageService (dieselbe Maschine hinter dem Sprachserver), ohne laufenden Server, in unter 1 s. graphify kann diesen Weg nicht gehen: sein Extraktor liest keine Funktionsrümpfe (FM-11). ITEM-2026-1027 ist damit für graphcode nicht mehr nötig; ob graphify es für andere Zwecke braucht, entscheidet sein Owner.
 
-Vier Lücken der Call Hierarchy schließt das Skript selbst, jede mit Test:
+Fünf Lücken der Call Hierarchy schließt das Skript selbst, jede mit Test (rot gesehen ohne die Auflösung):
 
 - eine FUNC steht für alles Aufrufbare in ihrer Deklaration (Klasse mit Methoden, `bindReadTools` mit seinen Handlern),
 - ein Aufruf über ein Interface geht an die Implementierung; erfüllt eine Klasse es nur strukturell, an die eine Deklaration gleichen Namens,
+- ein Methodenaufruf über einen abgeleiteten Typ (`Pick<ConformanceHarness, 'getGraph'>`) fehlt in der Call Hierarchy ganz; das Skript löst ihn über das Symbol auf,
 - der Aufruf eines destrukturierten Namens (`const { recordAudit } = ctx`) geht über den Typ des Objekts,
 - eine Eigenschaft eines Zod-Vertrags (`tool-context-contract.ts`) zählt wie eine Signatur.
+
+Eine Grenze zieht es bewusst: hat eine Signatur mehr als eine Implementierung, folgt es ihr nicht. `tool.handler()` über die Werkzeug-Registry erreichte sonst jedes Werkzeug, und jeder Fluss am Registry-Aufruf galt als belegt (gesehen an `FLOW-gate-verdict`).
+
+## Fluss-Bindung (Entscheidung 2026-10-23)
+
+Ein Fluss, hinter dem kein Aufruf steht, den eine Typanalyse sieht, trägt seine Übergabe als `realRef` (Datei und Symbol der Stelle). Das Skript sucht zuerst den Aufruf; findet es keinen, zählt die Bindung als `belegt`, solange das Symbol existiert, sonst `beleg-kaputt`. RC-01 prüft `realRef` nur an FUNC; am FLOW meldet keine Regel etwas.
 
 ## Stand (2026-10-23)
 
@@ -73,44 +80,42 @@ Vier Lücken der Call Hierarchy schließt das Skript selbst, jede mit Test:
 
 | Ergebnis | Paare |
 |---|---|
-| Aufruf | 76 |
-| Aufruf über Zwischenschritte (höchstens 3) | 51 |
-| kein Aufruf | 30 |
+| Aufruf | 79 |
+| Aufruf über Zwischenschritte (höchstens 3) | 52 |
+| belegt (Bindung am Fluss) | 27 |
+| kein Aufruf | 0 |
 | ungeprüft: ohne Bindung | 75 |
 | ungeprüft: keine TS-Datei (Skills, Skripte) | 42 |
 | ungeprüft: außerhalb des Repos (Nachbarpakete) | 10 |
 | asynchron, nicht geprüft | 14 |
 
-Prüfbar sind 157 von 284 synchronen Paaren (graphify: 52 von 298).
+Prüfbar sind 158 von 285 synchronen Paaren (graphify: 52 von 298), alle 158 haben einen Aufruf oder eine Bindung.
 
-**Behoben in diesem CR:** `FUNC-check-code-conformance` zeigte auf `conformanceViolations`, einen Wrapper, den nur `tests/conformance.test.ts` ruft. Der Weg geht über `conformanceEvaluation` (`evaluateAll` ruft sie). `realRef`, Name und Beschreibung angepasst; die Beschreibung nannte die mit CR-GC-489 gelöschte `scoreReadinessWithConformance`.
+## Modelländerungen
 
-**Die 30 Paare ohne Aufruf, am Code geprüft:**
-
-| Gruppe | Paare | Modell |
-|---|---|---|
-| registrierter Rückruf oder übergebene Funktion (Gate-Hooks, Shutdown-Liste, Fabrik an `ownKuzu`) | 9 | richtig |
-| Socket zwischen zwei Prozessen (host.sock, Proxy) | 10 | richtig |
-| Werkzeug über die Registry (`registry['graph_mutate'].handler`) | 3 | richtig |
-| `FLOW-marker-clear`: `graph_export` ruft `clearExportPending`, `FUNC-export-marker` zeigt auf `setExportPending` | 1 | offen: eine FUNC für zwei Funktionen |
-| `FLOW-graph-state`: `GraphStore` liefert an 7 Funktionen, die den Graphen vom Harness als Argument bekommen oder den Kuzu-Adapter selbst lesen | 7 | offen: Regel 3 aus `se:top-level` sagt, der Speicher liefert nur an den, der ihn liest |
+| Befund | Änderung |
+|---|---|
+| `FUNC-check-code-conformance` zeigte auf `conformanceViolations`, einen Wrapper, den nur ein Test ruft | `realRef` auf `conformanceEvaluation` (`evaluateAll` ruft sie); Name und Beschreibung nachgezogen, die gelöschte `scoreReadinessWithConformance` aus dem Text |
+| 22 Paare ohne sichtbaren Aufruf: registrierter Rückruf (Gate-Hooks, Shutdown-Liste), übergebene Fabrik (`ownKuzu`), Socket (host.sock, Proxy), Registry (`registry['graph_mutate'].handler`) | `realRef` am FLOW: `hooks.ts#runPostApplyHooks`, `host.ts#start`, `mcp-server.ts#serveStdio`, `own-kuzu.ts#ownKuzu`, `host-shim.ts#handleLine`, `host-shim.ts#dispatch`, `import-code-verb.ts#executeImportCode` |
+| `FLOW-mutate-answer` ging an drei Aufrufer mit drei Übergaben | je Aufrufer ein Fluss, wie auf der Anfrageseite: `FLOW-mutate-answer` (Agent, `bindRegistryToMcpServer`), `FLOW-mutate-answer-host-socket`, `FLOW-mutate-answer-import-code-verb` |
+| `FUNC-export-marker` stand für setzen und löschen, gebunden nur an `setExportPending` | geteilt: `FUNC-export-marker` (setzen), neu `FUNC-export-marker-clear` (`clearExportPending`) mit Kette, Block, Modul, Anforderung. Neu `FLOW-marker-clear-reseed` (`applyReseed` löscht den Marker ebenfalls, im Modell fehlte das) und `FLOW-export-cleared` (async, an den Auftraggeber) |
+| `FLOW-graph-state` ging an 7 Funktionen, die den Graphen nicht von `GraphStore` lesen | `decode` bekommt ihn vom `graph_mutate`-Handler (`FLOW-formatE-tool`, Beschreibung nachgezogen; `graph-state` jetzt an `graph-mutate-tool`). `evaluate-rules` bekommt ihn als Argument: neu `FLOW-graph-state-eval`, Übergabe `harness.ts#evaluateRules`. `graph-impact`, `graph-expand`, `list-elements`, `resolve-tests-from-code` lesen den Kuzu-Adapter direkt: neu `FLOW-store-query`, Übergabe `create-harness.ts#createHarness`. `check-code-conformance` bleibt (liest über `harness.getGraph`) |
 
 ## Offen
 
-1. **Wie hält das Modell einen geprüften Fluss ohne Aufruf fest?** Die 22 richtigen Paare kommen bei jedem Lauf wieder. Vorschlag: das Attribut `realRef` am FLOW, mit Datei und Symbol der Übergabe (Registrierung, Socket, Registry). Das Skript zählt einen FLOW mit `realRef` als belegt. `attributes` ist ein freier Record, das Speichern braucht keinen contracts-Bump; eine Regel darüber schon.
-2. `FLOW-marker-clear`: `FUNC-export-marker` teilen (setzen, löschen) oder die Bindung auf die Datei legen.
-3. `FLOW-graph-state`: wer ist der Speicher im Modell, `GraphStore`, der Harness oder der Kuzu-Adapter?
-4. Code-Befund: `conformanceViolations` hat im Produkt keinen Aufrufer mehr, nur einen Test.
+- Code-Befund: `conformanceViolations` hat im Produkt keinen Aufrufer mehr, nur `tests/conformance.test.ts`. Löschen und den Test auf `conformanceEvaluation` umstellen ist ein eigener CR.
+- 127 ungeprüfte Paare: 75 haben eine Seite ohne Bindung (Akteur-Funktionen, extern), 42 binden an Skills oder Skripte, 10 an Nachbarpakete. Das Skript kann sie nicht prüfen.
+- Ob aus der Prüfung eine Regel in contracts wird, ist mit Smeagol zu klären. Eine Regel braucht den Aufrufgraphen als Eingabe; die Regeln lesen heute nur das Modell.
 
 ## Akzeptanz
 
-- Das Skript läuft ohne Host und ohne LLM, gleicher Repo-Stand ergibt dieselbe Ausgabe. ✅ (Test „gleicher Stand, gleiche Ausgabe")
+- Das Skript läuft ohne Host und ohne LLM, gleicher Repo-Stand ergibt dieselbe Ausgabe. ✅
 - Jeder handgeschriebene `sync`-Fluss zwischen zwei FUNCs steht in genau einem Ergebnis; die `async`-Flüsse stehen als Zahl daneben. ✅
-- „ungeprüft" nennt den Grund je Paar. ✅
-- Ein Test mit einem Wegwerf-Repo je Ergebnis. ✅ `tests/fluss-aufruf.test.ts`, 9 Fälle, rot gesehen ohne die Auflösung über Interface und Destrukturierung.
-- Die 22 richtigen Paare ohne Aufruf sind belegt (Offen 1), die 8 offenen entschieden (Offen 2, 3).
+- „ungeprüft" und „beleg-kaputt" nennen den Grund je Paar. ✅
+- Ein Test mit einem Wegwerf-Repo je Ergebnis und je aufgelöster Lücke. ✅ `tests/fluss-aufruf.test.ts`, 13 Fälle.
+- Jedes prüfbare Paar hat einen Aufruf oder eine Bindung. ✅ 0 Paare ohne Aufruf.
 
 ## Umfang
 
 - Skript: `scripts/fluss-aufruf.mjs`, `npm run abgleich:fluss`. Kein Modellknoten: Entwicklungswerkzeug außerhalb des Produkts, wie die Mess-Skripte (CR-GC-760, CR-GC-844).
-- relation-Kante: `FUNC-check-code-conformance`.
+- relation-Kanten: `FUNC-check-code-conformance`, `FUNC-export-marker`, `FUNC-export-marker-clear`, `FUNC-graph-store`.

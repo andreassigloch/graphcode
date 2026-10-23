@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 222 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 224 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -166,7 +166,8 @@
 | `FLOW-generation-step-vorschlag` | `FUNC-generation-step` | `FUNC-vorschlag` |
 | `FLOW-graph-delta` | `FUNC-mutate` | `FUNC-graph-store` |
 | `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` |
-| `FLOW-graph-state` | `FUNC-graph-store` | `FUNC-check-code-conformance` · `FUNC-decode` · `FUNC-evaluate-rules` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-impact` · `FUNC-graph-metrics` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` · `FUNC-test-ingest` |
+| `FLOW-graph-state` | `FUNC-graph-store` | `FUNC-check-code-conformance` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-test-ingest` |
+| `FLOW-graph-state-eval` | `FUNC-graph-store` | `FUNC-evaluate-rules` |
 | `FLOW-gve-attach` | `FUNC-serve-stdio` | `FUNC-gve-supervise` |
 | `FLOW-gve-stop` | `FUNC-session-shutdown` | `FUNC-gve-supervise` |
 | `FLOW-harness-handle` | `FUNC-create-harness` | `FUNC-import-code-verb` · `FUNC-own-kuzu-host` · `FUNC-rewind` · `FUNC-serve-stdio` |
@@ -272,6 +273,7 @@
 | `FLOW-store-open-own-kuzu` | `FUNC-own-kuzu-host` | `FUNC-open-store` |
 | `FLOW-store-open-rewind` | `FUNC-rewind` | `FUNC-open-store` |
 | `FLOW-store-ownership` | `FUNC-claim-store-lock` | `FUNC-open-store` |
+| `FLOW-store-query` | `FUNC-graph-store` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` |
 | `FLOW-store-rebuild-notice` | `FUNC-open-store` | `ACTOR-auftraggeber` |
 | `FLOW-suggest-answer` | `FUNC-graph-suggest` | `FUNC-agent-loop` |
 | `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-graph-generate-tool` |

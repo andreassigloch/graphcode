@@ -156,7 +156,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -234,7 +234,7 @@ Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emi
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -324,7 +324,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -348,7 +348,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -480,7 +480,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -516,7 +516,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -606,7 +606,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -678,7 +678,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -714,7 +714,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -804,7 +804,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -846,7 +846,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -1302,7 +1302,7 @@ Die Ablaufsteuerung ruft graph_generate; das Werkzeug laedt das Zielprofil und g
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -1524,7 +1524,7 @@ Ein Mensch ruft einen anleitenden Skill (se:help, se-test, se-test-ui) und bekom
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -1672,7 +1672,7 @@ Verification ◀ `TEST-skill-red-first` (unit) · satisfy ◀ `FUNC-test` · `FU
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -1700,7 +1700,7 @@ Ein Mensch ruft einen lesenden Skill; der Skill zieht die Messung aus den Lesewe
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -2016,7 +2016,7 @@ Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -2152,7 +2152,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -2188,7 +2188,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -2278,7 +2278,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -2604,7 +2604,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -2690,7 +2690,7 @@ Der Agent ruft graph_tests mit der Aenderungsmenge; das Werkzeug fragt harness.t
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -2724,7 +2724,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 Liest den gespeicherten Graphen und gibt die von einer Aenderung betroffenen Tests als Teilgraph zurueck (impactedTests, Vertrag SCHEMA-impacted-tests). Beleg: src/kernel/harness.ts.
 
-io ◀ `FLOW-graph-state` · `FLOW-selected-tests` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · io ▶ `FLOW-impacted-tests` · `FLOW-select-request` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-selected-tests` · `FLOW-store-query` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · io ▶ `FLOW-impacted-tests` · `FLOW-select-request` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-graph-tests-operational` — graph_tests liefert den korrekten selektiven Testset für einen Code-Change
 
@@ -2980,7 +2980,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -3014,7 +3014,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 Liest den gespeicherten Graphen und gibt die von einer Aenderung betroffenen Tests als Teilgraph zurueck (impactedTests, Vertrag SCHEMA-impacted-tests). Beleg: src/kernel/harness.ts.
 
-io ◀ `FLOW-graph-state` · `FLOW-selected-tests` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · io ▶ `FLOW-impacted-tests` · `FLOW-select-request` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-selected-tests` · `FLOW-store-query` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · io ▶ `FLOW-impacted-tests` · `FLOW-select-request` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-graph-tests-operational` — graph_tests liefert den korrekten selektiven Testset für einen Code-Change
 
@@ -3070,7 +3070,7 @@ Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FCHAIN-verify-lane` 
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -3206,7 +3206,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Liest den gespeicherten Graphen und gibt die von einer Aenderung betroffenen Tests als Teilgraph zurueck (impactedTests, Vertrag SCHEMA-impacted-tests). Beleg: src/kernel/harness.ts.
 
-io ◀ `FLOW-graph-state` · `FLOW-selected-tests` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · io ▶ `FLOW-impacted-tests` · `FLOW-select-request` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-selected-tests` · `FLOW-store-query` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · io ▶ `FLOW-impacted-tests` · `FLOW-select-request` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-graph-tests-operational` — graph_tests liefert den korrekten selektiven Testset für einen Code-Change
 
@@ -3492,7 +3492,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -3516,7 +3516,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -3640,7 +3640,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -3824,7 +3824,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -3860,7 +3860,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -3950,7 +3950,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -4076,7 +4076,7 @@ Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-mar
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -4242,7 +4242,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -4338,7 +4338,7 @@ Das Dashboard fragt ueber host.sock graph_metrics, graph_readiness oder graph_ge
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -4650,7 +4650,7 @@ Das Dashboard fragt GET /health; die Bruecke laesst die Regeln einmal laufen und
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -4684,7 +4684,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -4904,7 +4904,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -4940,7 +4940,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -5030,7 +5030,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -5098,7 +5098,7 @@ Verification ◀ `TEST-live-view` (integration) · satisfy ◀ `FUNC-broadcast-d
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -5270,7 +5270,7 @@ Der Agent ruft graph_export (meist aus einem se-view-Skill); das Werkzeug liest 
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -5662,7 +5662,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -5690,45 +5690,13 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-##### 3.7.2.8  `FUNC-decode` — formatEToCommands(harness, text)
-
-> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gedaechtnis`
-
-Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
-
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
-
-###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
-
-CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → Validierungsfehler, kein silent pass.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
-
-###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
-
-CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1:N-Grouping; implicit-add VERWERFEN.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
-
-###### `REQ-roundtrip-conformance` — Format-E-Rundlauf
-
-Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
-
-##### 3.7.2.9  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
+##### 3.7.2.8  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-bedienung`
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -5757,6 +5725,38 @@ Kandidaten, die der Agent aus Text bildet, gehen als Format-E durch graph_mutate
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
+
+##### 3.7.2.9  `FUNC-decode` — formatEToCommands(harness, text)
+
+> auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-skill-authoring` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gedaechtnis`
+
+Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
+
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+
+###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
+
+CR-GC-103: serialize/parse validiert gegen SE_DESCRIPTOR; ungültige Typen → Validierungsfehler, kein silent pass.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-codec-validation` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
+
+###### `REQ-formatE-diff-dialect` — Format-E-Diff-Dialekt (R5)
+
+CR-GC-103 R5: Diff-Dialekt +/-/~/M mit <operations><base_snapshot>ID@version + 1:N-Grouping; implicit-add VERWERFEN.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-edge-only-batch` (integration) · `TEST-formate-name` (integration) · `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
+
+###### `REQ-roundtrip-conformance` — Format-E-Rundlauf
+
+Der Format-E-Codec schreibt deterministisch (zwei Aufrufe von serialize sind byte-gleich), und parse(serialize(g)) nennt dieselben Knoten und Kanten wie g, Attribute lesbar statt [object Object]. Geprueft am SSOT-Fixture. Zusammengefasst aus Vor- und Nachbedingung des frueheren FCHAIN-codec-roundtrip (CR-GC-829).
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
 ##### 3.7.2.10  `FUNC-mutate` — mutate(commands)
 
@@ -6016,7 +6016,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -6058,7 +6058,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -6086,33 +6086,7 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-##### 3.8.1.7  `FUNC-graph-impact` — graph_impact(id, depth?)
-
-> auch in: `FCHAIN-agent-query` · `FUNC-block-abfrage`
-
-Exakter Blast-Radius (Caller/Traces/Tests) als Impact-Scheibe mit Rollen; zu Format-E serialisiert sie das Lese-Werkzeug (FUNC-read-tools). (CR-GC-101, R6/R12; Ausgang korrigiert CR-GC-505)
-
-io ◀ `FLOW-graph-state` · `FLOW-read-request` · io ▶ `FLOW-impact-slice` · allocate ▶ `MOD-kernel`
-
-###### `REQ-query-precision` — Query-Precision statt Kompression
-
-> auch unter: `FUNC-authoring-guide` · `FUNC-list-elements` · `FUNC-read-tools`
-
-graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-projections` · `MOD-surface`
-
-###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
-
-Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-kernel`
-
-##### 3.8.1.8  `FUNC-read-tools` — bindReadTools(ctx)
+##### 3.8.1.7  `FUNC-read-tools` — bindReadTools(ctx)
 
 > auch in: `FCHAIN-agent-query` · `FCHAIN-skill-authoring` · `FUNC-block-abfrage`
 
@@ -6147,6 +6121,32 @@ graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-projections` · `MOD-surface`
+
+##### 3.8.1.8  `FUNC-graph-impact` — graph_impact(id, depth?)
+
+> auch in: `FCHAIN-agent-query` · `FUNC-block-abfrage`
+
+Exakter Blast-Radius (Caller/Traces/Tests) als Impact-Scheibe mit Rollen; zu Format-E serialisiert sie das Lese-Werkzeug (FUNC-read-tools). (CR-GC-101, R6/R12; Ausgang korrigiert CR-GC-505)
+
+io ◀ `FLOW-read-request` · `FLOW-store-query` · io ▶ `FLOW-impact-slice` · allocate ▶ `MOD-kernel`
+
+###### `REQ-query-precision` — Query-Precision statt Kompression
+
+> auch unter: `FUNC-authoring-guide` · `FUNC-list-elements` · `FUNC-read-tools`
+
+graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-projections` · `MOD-surface`
+
+###### `REQ-subgraph-slicing` — Sub-Graph-Slicing
+
+Sub-Graph-Slicing + pruneToFit(maxTokens) als Context-Primitive. (R7)
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-kernel`
 
 ##### 3.8.1.9  `FUNC-zug-bericht` — zugBericht(before
 
@@ -6190,7 +6190,7 @@ Verification ◀ `TEST-inject-graph-slice` (integration) · `TEST-mvp-e2e` (e2e)
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -6218,25 +6218,7 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-##### 3.8.2.2  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
-
-> auch in: `FUNC-block-abfrage`
-
-Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
-
-io ◀ `FLOW-graph-state` · `FLOW-read-request` · io ▶ `FLOW-expand-subgraph` · allocate ▶ `MOD-kernel`
-
-###### `REQ-progressive-expansion` — Progressive Query-Expansion
-
-> auch unter: `FUNC-read-tools`
-
-graph_expand vertieft on-demand (Kuzu-Re-Traversierung, kein Originals-Store). (R13)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-expand` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-surface`
-
-##### 3.8.2.3  `FUNC-read-tools` — bindReadTools(ctx)
+##### 3.8.2.2  `FUNC-read-tools` — bindReadTools(ctx)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-skill-authoring` · `FUNC-block-abfrage`
 
@@ -6272,7 +6254,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param` (integration) · satisfy ◀ `FUNC-authoring-guide` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-projections` · `MOD-surface`
 
-##### 3.8.2.4  `FUNC-agent-loop` — Agent-Ablaufsteuerung
+##### 3.8.2.3  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-doc-export` · `FCHAIN-docked-session` · `FCHAIN-generation-states` · `FCHAIN-grammar-query` · `FCHAIN-host-start` · `FCHAIN-impact-testing` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
 
@@ -6298,13 +6280,31 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
+##### 3.8.2.4  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
+
+> auch in: `FUNC-block-abfrage`
+
+Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
+
+io ◀ `FLOW-read-request` · `FLOW-store-query` · io ▶ `FLOW-expand-subgraph` · allocate ▶ `MOD-kernel`
+
+###### `REQ-progressive-expansion` — Progressive Query-Expansion
+
+> auch unter: `FUNC-read-tools`
+
+graph_expand vertieft on-demand (Kuzu-Re-Traversierung, kein Originals-Store). (R13)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-graph-expand` · `FUNC-read-tools` · allocate ▶ `MOD-kernel` · `MOD-surface`
+
 ##### 3.8.2.5  `FUNC-graph-impact` — graph_impact(id, depth?)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FUNC-block-abfrage`
 
 Exakter Blast-Radius (Caller/Traces/Tests) als Impact-Scheibe mit Rollen; zu Format-E serialisiert sie das Lese-Werkzeug (FUNC-read-tools). (CR-GC-101, R6/R12; Ausgang korrigiert CR-GC-505)
 
-io ◀ `FLOW-graph-state` · `FLOW-read-request` · io ▶ `FLOW-impact-slice` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-read-request` · `FLOW-store-query` · io ▶ `FLOW-impact-slice` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -6330,7 +6330,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 Liefert eine nach Typ und Suchbegriff gefilterte Element-Scheibe aus dem Store.
 
-io ◀ `FLOW-graph-state` · `FLOW-read-request` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-read-request` · `FLOW-store-query` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -6430,7 +6430,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -6508,7 +6508,7 @@ Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-learning-emi
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -6598,7 +6598,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -6622,7 +6622,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -6798,7 +6798,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -6834,7 +6834,7 @@ Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -6966,7 +6966,7 @@ Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -6990,7 +6990,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -7272,7 +7272,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -7618,7 +7618,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -7734,7 +7734,7 @@ Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FCHAIN-session-e
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -7970,7 +7970,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Die Werkzeugschicht des einen Schreibwegs: nimmt Format-E von der Ablaufsteuerung, von einer angedockten Sitzung ueber den Host-Socket und von import-code, schreibt Audit und Trajectory und gibt den Text an formatEToCommands.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-rule-findings` · `FLOW-steering-delta` · `FLOW-steering-snapshot` · `FLOW-vorschlag` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-audit-entry` · `FLOW-channel-fit-advisory` · `FLOW-channel-gate-verdict` · `FLOW-channel-steer-advisory` · `FLOW-formatE-tool` · `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-mutate-cmd-tool` · `FLOW-snapshot-request-mutate` · `FLOW-steering-pair` · `FLOW-zug-anfrage` · allocate ▶ `MOD-surface`
 
 ###### `REQ-bootstrap-through-gate` — Ungeprueften Bestand nur durchs Gate
 
@@ -8510,7 +8510,7 @@ Verification ◀ `TEST-formate-binding` (integration) · `TEST-graph-realize` (i
 
 Progressive On-Demand-Kuzu-Re-Traversierung; kein Originals-Store. (CR-GC-101, R13)
 
-io ◀ `FLOW-graph-state` · `FLOW-read-request` · io ▶ `FLOW-expand-subgraph` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-read-request` · `FLOW-store-query` · io ▶ `FLOW-expand-subgraph` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-progressive-expansion` — Progressive Query-Expansion
 
@@ -8546,7 +8546,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Exakter Blast-Radius (Caller/Traces/Tests) als Impact-Scheibe mit Rollen; zu Format-E serialisiert sie das Lese-Werkzeug (FUNC-read-tools). (CR-GC-101, R6/R12; Ausgang korrigiert CR-GC-505)
 
-io ◀ `FLOW-graph-state` · `FLOW-read-request` · io ▶ `FLOW-impact-slice` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-read-request` · `FLOW-store-query` · io ▶ `FLOW-impact-slice` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -8604,7 +8604,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Liefert eine nach Typ und Suchbegriff gefilterte Element-Scheibe aus dem Store.
 
-io ◀ `FLOW-graph-state` · `FLOW-read-request` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-read-request` · `FLOW-store-query` · io ▶ `FLOW-element-slice` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-query-precision` — Query-Precision statt Kompression
 
@@ -8658,7 +8658,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param
 
 Liest den gespeicherten Graphen und gibt die von einer Aenderung betroffenen Tests als Teilgraph zurueck (impactedTests, Vertrag SCHEMA-impacted-tests). Beleg: src/kernel/harness.ts.
 
-io ◀ `FLOW-graph-state` · `FLOW-selected-tests` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · io ▶ `FLOW-impacted-tests` · `FLOW-select-request` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-selected-tests` · `FLOW-store-query` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · io ▶ `FLOW-impacted-tests` · `FLOW-select-request` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-graph-tests-operational` — graph_tests liefert den korrekten selektiven Testset für einen Code-Change
 
@@ -8900,7 +8900,7 @@ Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-chec
 
 Regel-Engine gegen V3_RULES; Violations {ruleId,severity,elementId}; kein lokaler Parser (L2).
 
-io ◀ `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-gate-candidate` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-metric-policy` · io ▶ `FLOW-rule-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-near-duplicate-detection` — Near-Duplicates stehen in der vollen Katalog-Auswertung
 
@@ -9012,7 +9012,7 @@ io ◀ — · io ▶ — · allocate ▶ —
 
 Format-E-Text → MutateCommands: der EINE Eingangsweg (graph_mutate UND bootstrap, CR-GC-630). Das Parsen delegiert an FormatECodec.parse; graphcode-eigen bleibt die Abbildung Praefix → Operation (+ - ~ M, CR-GC-627), die Vierphasen-Ordnung, die Typpruefung gegen den Speicher, die Implicit-Add-Ablehnung (CR-GC-310) und die unnamed-Meldung (CR-GC-321). Die frueher hier gefuehrte Graph-Rekonstruktion ist mit CR-GC-631 entfallen — Operationen sind die Wahrheit, ein Graph war das Zweitmodell daneben.
 
-io ◀ `FLOW-formatE-tool` · `FLOW-graph-state` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-formatE-tool` · io ▶ `FLOW-mutate-cmd-decode` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-codec-validation` — Codec-Validierung gegen SE_DESCRIPTOR
 
@@ -9648,7 +9648,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
 
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-auto-persist-merge` — Auto-Persist + conflict-free Merge
 
@@ -10910,7 +10910,7 @@ io ◀ `FUNC-read-tools` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-forma
 
 ### 4.87  `FLOW-formatE-tool` — Format-E an den Decoder
 
-Der Format-E-Text, den die Werkzeugschicht an den Decoder gibt.
+Der Format-E-Text, den die Werkzeugschicht an den Decoder gibt, dazu der aktuelle Graph, gegen den der Decoder die Praefixe aufloest. Beleg: src/surface/write.ts, der graph_mutate-Handler holt harness.getGraph und ruft formatEToCommands. (CR-GC-843)
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-decode` · schema ▶ `SCHEMA-format-e`
 
@@ -10966,759 +10966,771 @@ io ◀ `FUNC-graph-export-snapshot` · io ▶ `ACTOR-auftraggeber` · `FUNC-held
 
 Der Graph als EIN Wert, in jedem seiner Zustaende: in-memory geladen, als Entwurf appliziert, persistiert samt Version-Counter, aus Format-E rekonstruiert, migriert, aus zwei Branch-Fassungen gemergt, aus dem Snapshot auf Platte wiederhergestellt. Der Zustand ist kein zweiter Datenvertrag.
 
-io ◀ `FUNC-graph-store` · io ▶ `FUNC-check-code-conformance` · `FUNC-decode` · `FUNC-evaluate-rules` · `FUNC-graph-expand` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-impact` · `FUNC-graph-metrics` · `FUNC-graph-suggest` · `FUNC-list-elements` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-resolve-tests-from-code` · `FUNC-test-ingest` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-graph-store` · io ▶ `FUNC-check-code-conformance` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-test-ingest` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.97  `FLOW-gve-attach` — Dashboard anhaengen
+### 4.97  `FLOW-graph-state-eval` — Graph-State (Regelauswertung)
+
+Der aktuelle Graph, den harness.evaluateRules aus dem Store liest und an die Regelauswertung gibt, wenn ein Werkzeug die Befunde ohne Mutation verlangt. Uebergabe: harness.evaluateRules liest GraphStore.current und ruft gate.evaluate. (CR-GC-843)
+
+io ◀ `FUNC-graph-store` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-ontology-graph`
+
+### 4.98  `FLOW-gve-attach` — Dashboard anhaengen
 
 Die Repo-Wurzel, mit der serveStdio das Dashboard anhaengt (attachGve), in beiden Zweigen der Wahl. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-cli-command`
 
-### 4.98  `FLOW-gve-stop` — Dashboard abmelden
+### 4.99  `FLOW-gve-stop` — Dashboard abmelden
 
 Der Auftrag beim Sitzungsende, das angehaengte Dashboard abzumelden. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-cli-command`
 
-### 4.99  `FLOW-harness-handle` — Harness-Griff
+### 4.100  `FLOW-harness-handle` — Harness-Griff
 
 Der fertig verdrahtete Harness, den die Fabrik liefert: Store geoeffnet, Lock beansprucht, Regelwerk geladen. Alles, was auf dem Graphen arbeitet, holt ihn hier ab.
 
 io ◀ `FUNC-create-harness` · io ▶ `FUNC-import-code-verb` · `FUNC-own-kuzu-host` · `FUNC-rewind` · `FUNC-serve-stdio` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.100  `FLOW-harness-handle-host` — Harness-Griff (Host)
+### 4.101  `FLOW-harness-handle-host` — Harness-Griff (Host)
 
 Der Harness des Store-Besitzers, wie ihn der Host-Prozess fuer seine Routen haelt. Beleg: src/surface/host.ts, serveHost ruft ownKuzu und liest owned.harness. (CR-GC-768)
 
 io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-serve-sse` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.101  `FLOW-harness-request` — Harness-Anfrage (serveStdio)
+### 4.102  `FLOW-harness-request` — Harness-Anfrage (serveStdio)
 
 Repo-Wurzel, Scope und die zwei Rueckrufe (Aenderungsereignis, Lock verloren), mit denen serveStdio createHarness ruft. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-create-harness` · schema ▶ `SCHEMA-query-params`
 
-### 4.102  `FLOW-harness-request-import-code` — Harness-Anfrage (import-code)
+### 4.103  `FLOW-harness-request-import-code` — Harness-Anfrage (import-code)
 
 Repo-Wurzel und Scope, mit denen import-code createHarness ruft. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-create-harness` · schema ▶ `SCHEMA-query-params`
 
-### 4.103  `FLOW-harness-request-own-kuzu` — Harness-Anfrage (ownKuzu)
+### 4.104  `FLOW-harness-request-own-kuzu` — Harness-Anfrage (ownKuzu)
 
 Repo-Wurzel und Ereignis-Senke, mit denen ownKuzu im Modus graphcode host createHarness ruft. Beleg: src/kernel/own-kuzu.ts.
 
 io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-create-harness` · schema ▶ `SCHEMA-query-params`
 
-### 4.104  `FLOW-harness-request-rewind` — Harness-Anfrage (rewind)
+### 4.105  `FLOW-harness-request-rewind` — Harness-Anfrage (rewind)
 
 Repo-Wurzel und Scope, mit denen rewind createHarness ruft. Beleg: src/surface/rewind.ts.
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-create-harness` · schema ▶ `SCHEMA-query-params`
 
-### 4.105  `FLOW-health-eval-request` — Regellauf (Health)
+### 4.106  `FLOW-health-eval-request` — Regellauf (Health)
 
 Der Regellauf, mit dem der Health-Check prueft, ob die Regeln laufen. Beleg: src/surface/host.ts, health.
 
 io ◀ `FUNC-health-endpoint` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.106  `FLOW-health-report` — Health-Report
+### 4.107  `FLOW-health-report` — Health-Report
 
 Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer. BENANNTE OFFENE DIFFERENZ: graph-view-edit liest /health heute nicht, es rechnet den Zustand aus der Snapshot-Datei; Ziel von CR-GC-809. (CR-GC-822)
 
 io ◀ `FUNC-health-endpoint` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-health-report`
 
-### 4.107  `FLOW-health-request` — Health-Anfrage
+### 4.108  `FLOW-health-request` — Health-Anfrage
 
 Die Anfrage GET /health an die read-only-Bruecke. Beleg: src/surface/host.ts, route.
 
 io ◀ `ACTOR-dashboard` · io ▶ `FUNC-health-endpoint` · schema ▶ `SCHEMA-query-params`
 
-### 4.108  `FLOW-held-back-request` — Anfrage zurueckgehaltene Kanten (graph_export)
+### 4.109  `FLOW-held-back-request` — Anfrage zurueckgehaltene Kanten (graph_export)
 
 Repo-Wurzel, Systemname und Live-Graph, mit denen graph_export die zurueckgehaltenen Kanten erfragt. Beleg: src/projections/export.ts.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-held-back-traces` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.109  `FLOW-held-back-request-readiness` — Anfrage zurueckgehaltene Kanten (graph_readiness)
+### 4.110  `FLOW-held-back-request-readiness` — Anfrage zurueckgehaltene Kanten (graph_readiness)
 
 Repo-Wurzel, Systemname und Live-Graph, mit denen graph_readiness die zurueckgehaltenen Kanten erfragt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-held-back-traces` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.110  `FLOW-held-back-traces` — Zurueckgehaltene Kanten
+### 4.111  `FLOW-held-back-traces` — Zurueckgehaltene Kanten
 
 Die Liste der committeten Kanten, die im Live-Graphen fehlen, weil kein Muster sie zulaesst. Geht in den Readiness-Report und in die Export-Verweigerung.
 
 io ◀ `FUNC-held-back-traces` · io ▶ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · schema ▶ `SCHEMA-rejected-trace`
 
-### 4.111  `FLOW-help-answer` — Antwort graph_help
+### 4.112  `FLOW-help-answer` — Antwort graph_help
 
 Die Antwort von graph_help: Erklaerung des Tokens oder die naechsten Schritte. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-help` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.112  `FLOW-host-ready` — Host bereit
+### 4.113  `FLOW-host-ready` — Host bereit
 
 Die laufende Bruecke mit Port, die serveHost an die CLI zurueckgibt. Beleg: src/cli.ts, src/surface/host.ts.
 
 io ◀ `FUNC-serve-sse` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-health-report`
 
-### 4.113  `FLOW-impact-slice` — Impact-Scheibe
+### 4.114  `FLOW-impact-slice` — Impact-Scheibe
 
 Rueckgabewert von harness.impact an das Lese-Werkzeug graph_impact (read.ts:349): die Scheibe mit Rollen, noch kein Text. (CR-GC-505)
 
 io ◀ `FUNC-graph-impact` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-impact-slice`
 
-### 4.114  `FLOW-impacted-tests` — Betroffene Tests
+### 4.115  `FLOW-impacted-tests` — Betroffene Tests
 
 Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug.
 
 io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-deduce-tests` · `FUNC-test-ingest` · schema ▶ `SCHEMA-impacted-tests`
 
-### 4.115  `FLOW-import-summary` — Import-Zusammenfassung
+### 4.116  `FLOW-import-summary` — Import-Zusammenfassung
 
 Die Zusammenfassung des Code-Imports an die CLI. Beleg: src/surface/import-code-verb.ts, src/cli.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-cli-command`
 
-### 4.116  `FLOW-imported-graph` — Importierter Graph
+### 4.117  `FLOW-imported-graph` — Importierter Graph
 
 Ein vollstaendiger Graph aus dem Bulk-Import, der die Arbeitskopie ersetzt — am Gate vorbei, deshalb mit ausgewiesenen unverifizierten REQs. (CR-GC-503)
 
 io ◀ `FUNC-import` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.117  `FLOW-install-result-collect-status` — Lifecycle-Result (collect-status)
+### 4.118  `FLOW-install-result-collect-status` — Lifecycle-Result (collect-status)
 
 Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-collect-status → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).
 
 io ◀ `FUNC-collect-status` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-cli-command`
 
-### 4.118  `FLOW-install-result-harness-cli` — Lifecycle-Result (harness-cli)
+### 4.119  `FLOW-install-result-harness-cli` — Lifecycle-Result (harness-cli)
 
 Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-harness-cli → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).
 
 io ◀ `FUNC-harness-cli` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-cli-command`
 
-### 4.119  `FLOW-install-result-upgrade` — Lifecycle-Result (upgrade)
+### 4.120  `FLOW-install-result-upgrade` — Lifecycle-Result (upgrade)
 
 Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).
 
 io ◀ `FUNC-upgrade` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-cli-command`
 
-### 4.120  `FLOW-lane-output` — Spur-Ausgabe (verify:code)
+### 4.121  `FLOW-lane-output` — Spur-Ausgabe (verify:code)
 
 Plan, Bindungsgrad und Ergebnis der Code-Spur auf stderr. Beleg: scripts/verify-code.mjs.
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-code-lane-plan`
 
-### 4.121  `FLOW-lane-output-full` — Spur-Ausgabe (verify:full)
+### 4.122  `FLOW-lane-output-full` — Spur-Ausgabe (verify:full)
 
 Plan, Bindungsgrad, Ergebnis und Schlupf der vollen Spur auf stderr. Beleg: scripts/verify-full.mjs.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-code-lane-plan`
 
-### 4.122  `FLOW-lane-output-model` — Spur-Ausgabe (verify:model)
+### 4.123  `FLOW-lane-output-model` — Spur-Ausgabe (verify:model)
 
 Zahl der Testdateien, die ausgelassenen mit Grund und das Ergebnis der Modell-Spur auf stderr. Beleg: scripts/verify-model.mjs.
 
 io ◀ `FUNC-verify-lane-model` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-code-lane-plan`
 
-### 4.123  `FLOW-live-event` — Live-Update-Event
+### 4.124  `FLOW-live-event` — Live-Update-Event
 
 Der versionierte Aenderungsereignis-Strom an den Verteiler des Hosts: welche Bereiche (graph, rules, readiness) neu zu lesen sind. Der Hook ruft den Verteiler direkt.
 
 io ◀ `FUNC-emit-update-event` · io ▶ `FUNC-broadcast-diff` · schema ▶ `SCHEMA-update-event`
 
-### 4.124  `FLOW-lock-file` — Besitzer-Datei
+### 4.125  `FLOW-lock-file` — Besitzer-Datei
 
 Die Datei owner.lock mit pid des laufenden Hosts, die upgrade liest, um ihn zu beenden. Beleg: src/surface/upgrade.ts.
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-upgrade` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.125  `FLOW-lock-lost` — Lock verloren
+### 4.126  `FLOW-lock-lost` — Lock verloren
 
 Die Meldung des Store-Locks, dass ein anderer Host den Store uebernommen hat (onLockLost). Beleg: src/kernel/store-lock.ts, src/surface/mcp-server.ts.
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.126  `FLOW-lock-release` — Lock-Freigabe
+### 4.127  `FLOW-lock-release` — Lock-Freigabe
 
 Die Freigabe des Store-Locks am Sitzungsende, als letzter Abraeumschritt. Beleg: src/surface/mcp-server.ts, lifecycle.add store lock ruft harness.close. (CR-GC-768)
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-claim-store-lock` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.127  `FLOW-lock-request` — Lock-Anspruch
+### 4.128  `FLOW-lock-request` — Lock-Anspruch
 
 Der Anspruch auf den Store, den GraphStore.open vor dem Oeffnen stellt (lock.acquire). Beleg: src/kernel/graph-store.ts.
 
 io ◀ `FUNC-open-store` · io ▶ `FUNC-claim-store-lock` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.128  `FLOW-markdown-docs` — Exportierte Sichten
+### 4.129  `FLOW-markdown-docs` — Exportierte Sichten
 
 Die Markdown-Sichten unter docs/views, die graph_export schreibt.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.129  `FLOW-markdown-text` — Markdown einer Sicht
+### 4.130  `FLOW-markdown-text` — Markdown einer Sicht
 
 Der gerenderte Markdown-Text einer Sicht, den exportMarkdown an graph_export zurueckgibt. Beleg: src/projections/export.ts.
 
 io ◀ `FUNC-export-markdown` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-markdown-view`
 
-### 4.130  `FLOW-marker-clear` — Marker loeschen
+### 4.131  `FLOW-marker-clear` — Marker loeschen
 
 Der Auftrag von graph_export, nach dem Schreiben den Drift-Marker zu loeschen (clearExportPending). Beleg: src/projections/export.ts.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-export-marker-clear` · schema ▶ `SCHEMA-export-pending`
 
-### 4.131  `FLOW-marker-clear-reseed` — Marker loeschen (Reseed)
+### 4.132  `FLOW-marker-clear-reseed` — Marker loeschen (Reseed)
 
 Der Auftrag von applyReseed, nach dem Wiedereinlesen den Drift-Marker zu loeschen: Store und Snapshot sind wieder gleich. Beleg: src/kernel/harness-import.ts, applyReseed ruft clearExportPending. (CR-GC-843)
 
 io ◀ `FUNC-apply-reseed` · io ▶ `FUNC-export-marker-clear` · schema ▶ `SCHEMA-export-pending`
 
-### 4.132  `FLOW-marker-set` — Marker setzen
+### 4.133  `FLOW-marker-set` — Marker setzen
 
 Der Auftrag des Gates, nach einer angenommenen Mutation den Drift-Marker zu setzen (setExportPending). Beleg: src/kernel/gate.ts.
 
 io ◀ `FUNC-mutate` · io ▶ `FUNC-export-marker` · schema ▶ `SCHEMA-export-pending`
 
-### 4.133  `FLOW-mcp-tool` — Werkzeug
+### 4.134  `FLOW-mcp-tool` — Werkzeug
 
 Traegt MCPTool ueber die Modulgrenze.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-mcp-tool`
 
-### 4.134  `FLOW-measurement-vector` — Messvektor
+### 4.135  `FLOW-measurement-vector` — Messvektor
 
 Der gemeinsame Eingang der vier Entscheidungen: der gemessene Zustand als Vektor, unabhaengig davon, welche Projektion ihn fuellt. Erst mit diesem Vertrag ist die Gleichheit der vier Signaturen geprueft statt behauptet.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-measurement-vector`
 
-### 4.135  `FLOW-merge-answer` — Merge-Antwort
+### 4.136  `FLOW-merge-answer` — Merge-Antwort
 
 Die Antwort von graph_merge an die Ablaufsteuerung: der Merge-Bericht mit graphVersion. Beleg: src/surface/write.ts, graph_merge.
 
 io ◀ `FUNC-graph-merge-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-branch-merge-report`
 
-### 4.136  `FLOW-merge-report` — Merge-Bericht
+### 4.137  `FLOW-merge-report` — Merge-Bericht
 
 Der Bericht von replayBranchLog an das graph_merge-Werkzeug: angewendete und uebersprungene Chargen. Beleg: src/kernel/merge.ts.
 
 io ◀ `FUNC-merge-nodes` · io ▶ `FUNC-graph-merge-tool` · schema ▶ `SCHEMA-branch-merge-report`
 
-### 4.137  `FLOW-metric-policy` — Urteils-Policy
+### 4.138  `FLOW-metric-policy` — Urteils-Policy
 
 Die geltenden Urteilsschwellen, wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten: vollstaendig, jede Schwelle gesetzt. Erzeugt von load-config aus der Rohform. Keine Schwelle steht als Literal im Regelcode.
 
 io ◀ `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-metric-policy`
 
-### 4.138  `FLOW-metrics-answer` — Antwort von graph_metrics
+### 4.139  `FLOW-metrics-answer` — Antwort von graph_metrics
 
 Die Antwort des Werkzeugs graph_metrics an jeden, der es aufruft: die Ablaufsteuerung und das Dashboard ueber host.sock. Ein Aufruf, eine Antwort mit Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, riskCarriers und scope. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: die Teilfluesse kommen aus den Rechnungen in contracts, dieser aus dem Werkzeug, das sie buendelt. BENANNTE OFFENE DIFFERENZ: das Dashboard rendert modules und functions, chains noch nicht. (CR-GC-817, CR-GC-821)
 
 io ◀ `FUNC-graph-metrics` · io ▶ `FUNC-agent-loop` · `FUNC-host-socket` · schema ▶ `SCHEMA-metrics-answer`
 
-### 4.139  `FLOW-metrics-request` — Kennzahl-Anfrage
+### 4.140  `FLOW-metrics-request` — Kennzahl-Anfrage
 
 Der Graph der Arbeitskopie, den graph_metrics an die Kennzahl-Rechnungen gibt. Beleg: src/projections/metrics.ts.
 
 io ◀ `FUNC-graph-metrics` · io ▶ `FUNC-chain-metrics` · `FUNC-function-criticality` · `FUNC-module-metrics` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.140  `FLOW-module-metrics` — Modulkennzahlen je MOD
+### 4.141  `FLOW-module-metrics` — Modulkennzahlen je MOD
 
 Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).
 
 io ◀ `FUNC-module-metrics` · io ▶ `FUNC-graph-metrics` · schema ▶ `SCHEMA-module-metrics`
 
-### 4.141  `FLOW-mutate-answer` — graph_mutate-Antwort (Agent)
+### 4.142  `FLOW-mutate-answer` — graph_mutate-Antwort (Agent)
 
 Die Antwort von graph_mutate an die Ablaufsteuerung: Gate-Urteil, im Probelauf mit Steuerungsdelta und Berichten zum Zug, dazu der Vorschlag an den Nutzer. Uebergabe: der MCP-Server ruft den Handler aus der Registry und gibt das Ergebnis zurueck.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.142  `FLOW-mutate-answer-host-socket` — graph_mutate-Antwort (host-socket)
+### 4.143  `FLOW-mutate-answer-host-socket` — graph_mutate-Antwort (host-socket)
 
 Die Antwort von graph_mutate an den Host-Socket, der sie ueber host.sock an die angedockte Sitzung zurueckgibt. Uebergabe: handleLine ruft den Handler aus der Registry. (CR-GC-843)
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.143  `FLOW-mutate-answer-import-code-verb` — graph_mutate-Antwort (import-code)
+### 4.144  `FLOW-mutate-answer-import-code-verb` — graph_mutate-Antwort (import-code)
 
 Die Antwort von graph_mutate an den Code-Import: das Gate-Urteil des Reseed-Batches. Uebergabe: executeImportCode ruft registry graph_mutate handler. (CR-GC-843)
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-import-code-verb` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.144  `FLOW-mutate-cmd-decode` — Mutate-Command (decode)
+### 4.145  `FLOW-mutate-cmd-decode` — Mutate-Command (decode)
 
 Die aus Format-E gelesenen Kommandos, zurueck an das graph_mutate-Werkzeug, das sie dem Gate gibt. Beleg: src/surface/write.ts, graph_mutate ruft formatEToCommands.
 
 io ◀ `FUNC-decode` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.145  `FLOW-mutate-cmd-graph-suggest` — Mutate-Command (graph-suggest)
+### 4.146  `FLOW-mutate-cmd-graph-suggest` — Mutate-Command (graph-suggest)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-graph-suggest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.146  `FLOW-mutate-cmd-host-socket` — Mutate-Command (host-socket)
+### 4.147  `FLOW-mutate-cmd-host-socket` — Mutate-Command (host-socket)
 
 Der Schreibaufruf eines zweiten Prozesses, vom Socket an das Werkzeug des Besitzers weitergereicht. Beleg: src/surface/host-shim.ts, startHostSocket ruft tool.handler mit der geparsten Eingabe. (CR-GC-768)
 
 io ◀ `FUNC-host-socket` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.147  `FLOW-mutate-cmd-import-code-verb` — Mutate-Command (import-code-verb)
+### 4.148  `FLOW-mutate-cmd-import-code-verb` — Mutate-Command (import-code-verb)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-code-verb → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.148  `FLOW-mutate-cmd-merge-nodes` — Mutate-Command (merge-nodes)
+### 4.149  `FLOW-mutate-cmd-merge-nodes` — Mutate-Command (merge-nodes)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-merge-nodes → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-merge-nodes` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.149  `FLOW-mutate-cmd-test-ingest` — Mutate-Command (test-ingest)
+### 4.150  `FLOW-mutate-cmd-test-ingest` — Mutate-Command (test-ingest)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-test-ingest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.150  `FLOW-mutate-cmd-tool` — Mutate-Commands (Werkzeug an Gate)
+### 4.151  `FLOW-mutate-cmd-tool` — Mutate-Commands (Werkzeug an Gate)
 
 Die Kommandos, die das graph_mutate-Werkzeug nach dem Lesen an das Gate gibt (harness.mutateWithStates). Beleg: src/surface/write.ts, graph_mutate.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.151  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
+### 4.152  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
 
 Der Schritt, den generationStep an graph_generate zurueckgibt.
 
 io ◀ `FUNC-generation-step` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-generation-step`
 
-### 4.152  `FLOW-ontology-json` — Graph-Datei (Snapshot)
+### 4.153  `FLOW-ontology-json` — Graph-Datei (Snapshot)
 
 Der Inhalt der committeten Graph-Datei, gelesen fuer Seed und Reseed und an den Import uebergeben. (CR-GC-503)
 
 io ◀ `FUNC-seed-from-json` · io ▶ `FUNC-import` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.153  `FLOW-own-kuzu-request` — Kuzu-Besitz anfordern
+### 4.154  `FLOW-own-kuzu-request` — Kuzu-Besitz anfordern
 
 Repo-Wurzel und Ereignis-Senke, mit denen serveHost ownKuzu ruft. Beleg: src/surface/host.ts.
 
 io ◀ `FUNC-serve-sse` · io ▶ `FUNC-own-kuzu-host` · schema ▶ `SCHEMA-query-params`
 
-### 4.154  `FLOW-plan-request` — Spur-Anfrage (verify:code)
+### 4.155  `FLOW-plan-request` — Spur-Anfrage (verify:code)
 
 Die geaenderten Dateien und der Kontext, mit denen verify:code planCodeLane ruft. Beleg: scripts/verify-code.mjs.
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-plan-code-lane` · schema ▶ `SCHEMA-code-lane-plan`
 
-### 4.155  `FLOW-plan-request-full` — Spur-Anfrage (verify:full)
+### 4.156  `FLOW-plan-request-full` — Spur-Anfrage (verify:full)
 
 Die geaenderten Dateien und der Kontext, mit denen verify:full planCodeLane ruft. Beleg: scripts/verify-full.mjs.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-plan-code-lane` · schema ▶ `SCHEMA-code-lane-plan`
 
-### 4.156  `FLOW-proxy-answer` — Werkzeugantwort (Host an Stellvertreter)
+### 4.157  `FLOW-proxy-answer` — Werkzeugantwort (Host an Stellvertreter)
 
 Die Antwort des Hosts an die angedockte Sitzung, ueber host.sock. Beleg: src/surface/host-shim.ts.
 
 io ◀ `FUNC-host-socket` · io ▶ `FUNC-host-proxy` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.157  `FLOW-proxy-answer-agent` — Werkzeugantwort (an die angedockte Ablaufsteuerung)
+### 4.158  `FLOW-proxy-answer-agent` — Werkzeugantwort (an die angedockte Ablaufsteuerung)
 
 Die Werkzeugantwort, die der Stellvertreter an die Ablaufsteuerung seiner Sitzung gibt. Beleg: src/surface/host-shim.ts.
 
 io ◀ `FUNC-host-proxy` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.158  `FLOW-proxy-call` — Werkzeugaufruf (Stellvertreter an Host)
+### 4.159  `FLOW-proxy-call` — Werkzeugaufruf (Stellvertreter an Host)
 
 Ein Werkzeugaufruf einer angedockten Sitzung an den Host, ueber host.sock (callHost). Traegt jeden Werkzeugaufruf, nicht nur graph_mutate. Beleg: src/surface/host-shim.ts.
 
 io ◀ `FUNC-host-proxy` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-command`
 
-### 4.159  `FLOW-query-export` — Sichtauftrag an den Renderer
+### 4.160  `FLOW-query-export` — Sichtauftrag an den Renderer
 
 Graph, Sicht und Systemname, mit denen graph_export je Sicht exportMarkdown ruft.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-### 4.160  `FLOW-query-request-agent` — Query-Request (Agent)
+### 4.161  `FLOW-query-request-agent` — Query-Request (Agent)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-agent-loop → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-graph-readiness, FUNC-graph-metrics, FUNC-rules-tool, FUNC-authoring-guide, FUNC-graph-export-snapshot; aufgetrennt aus FLOW-query-request (CR-GC-510, Quelle korrigiert CR-GC-815).
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-graph-export-snapshot` · `FUNC-graph-help` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` · schema ▶ `SCHEMA-query-params`
 
-### 4.161  `FLOW-query-request-auto-export` — Query-Request (auto-export)
+### 4.162  `FLOW-query-request-auto-export` — Query-Request (auto-export)
 
 Der entprellte Aufruf des graph_export-Werkzeugs nach einer angenommenen Mutation (250 ms, single-flight).
 
 io ◀ `FUNC-auto-export` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-query-params`
 
-### 4.162  `FLOW-read-request` — Leseanfrage (Werkzeug an Kern)
+### 4.163  `FLOW-read-request` — Leseanfrage (Werkzeug an Kern)
 
 Die Leseanfrage, die ein Lesewerkzeug (graph_impact, graph_expand, graph_elements) an den Kern gibt: Knoten, Tiefe, Filter. Beleg: src/surface/read.ts.
 
 io ◀ `FUNC-read-tools` · io ▶ `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · schema ▶ `SCHEMA-query-params`
 
-### 4.163  `FLOW-readiness-report` — Readiness-Report
+### 4.164  `FLOW-readiness-report` — Readiness-Report
 
 Der Bericht von graph_readiness an jeden, der ihn ueber das Werkzeug abfragt: die Ablaufsteuerung und das Dashboard ueber host.sock (detail:true, mit den rohen Verstoessen). Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten. (CR-GC-822)
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-agent-loop` · `FUNC-host-socket` · schema ▶ `SCHEMA-readiness-report`
 
-### 4.164  `FLOW-readiness-request` — Befunde (an die Marken)
+### 4.165  `FLOW-readiness-request` — Befunde (an die Marken)
 
 Die Befunde einer Erhebung (evaluateAll), die graph_readiness an readinessOf gibt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-compute-readiness` · schema ▶ `SCHEMA-rule-violation`
 
-### 4.165  `FLOW-reseed-answer` — Antwort graph_reseed
+### 4.166  `FLOW-reseed-answer` — Antwort graph_reseed
 
 Die Antwort von graph_reseed: Zahl der Knoten und Kanten nach dem Neuaufbau. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-reseed-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.166  `FLOW-reseed-order` — Reseed-Auftrag
+### 4.167  `FLOW-reseed-order` — Reseed-Auftrag
 
 Der serialisierte Auftrag, den Store aus dem Snapshot neu aufzusetzen. Beleg: src/kernel/harness.ts, reseed ruft applyReseed hinter dem Single-Writer. (CR-GC-768)
 
 io ◀ `FUNC-reseed` · io ▶ `FUNC-apply-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.167  `FLOW-reseed-order-open` — Neuaufbau-Auftrag (Store oeffnen)
+### 4.168  `FLOW-reseed-order-open` — Neuaufbau-Auftrag (Store oeffnen)
 
 Der Neuaufbau aus der committeten SSOT, den GraphStore.open bei Schema-Abweichung anstoesst (applyReseed). Beleg: src/kernel/graph-store.ts.
 
 io ◀ `FUNC-open-store` · io ▶ `FUNC-apply-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.168  `FLOW-reseed-request` — Reseed-Anfrage (Werkzeug)
+### 4.169  `FLOW-reseed-request` — Reseed-Anfrage (Werkzeug)
 
 Der Aufruf harness.reseed aus dem Werkzeug graph_reseed, mit optionalem Pfad. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-reseed-tool` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.169  `FLOW-reseed-snapshot` — Snapshot zum Reseed
+### 4.170  `FLOW-reseed-snapshot` — Snapshot zum Reseed
 
 Der bereitgestellte Snapshot eines Commits auf dem Weg zum Neuaufsetzen. Beleg: src/surface/rewind.ts, executeRewind ruft harness.reseed. (CR-GC-768)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.170  `FLOW-reseeded-graph` — Snapshot zum Neuaufsetzen
+### 4.171  `FLOW-reseeded-graph` — Snapshot zum Neuaufsetzen
 
 Der Pfad des bereitgestellten Snapshots, den applyReseed nach dem Leeren des Stores an seedFromJsonFile gibt. Beleg: src/kernel/harness-import.ts:240-241.
 
 io ◀ `FUNC-apply-reseed` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.171  `FLOW-rewind-summary` — Rewind-Zusammenfassung
+### 4.172  `FLOW-rewind-summary` — Rewind-Zusammenfassung
 
 Die Zusammenfassung von graphcode rewind auf der Schale: Ref, Snapshot, wiederhergestellter Stand. Beleg: src/cli.ts schreibt executeRewind nach stderr (CR-GC-311, CR-GC-823)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-rewind-summary`
 
-### 4.172  `FLOW-rule-findings` — Regelbefunde
+### 4.173  `FLOW-rule-findings` — Regelbefunde
 
 Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)
 
 io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` · schema ▶ `SCHEMA-rule-violation`
 
-### 4.173  `FLOW-rules-answer` — Regelbefunde (Antwort)
+### 4.174  `FLOW-rules-answer` — Regelbefunde (Antwort)
 
 Die Regelbefunde, wie rules_evaluate oder rules_get_violations sie der Ablaufsteuerung geben.
 
 io ◀ `FUNC-rules-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-rule-violation`
 
-### 4.174  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
+### 4.175  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
 
 Der aktuelle und der gespeicherte Fingerabdruck der DDL, an GraphStore.open.
 
 io ◀ `FUNC-schema-guard` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-schema-fingerprint`
 
-### 4.175  `FLOW-schlupf-request` — Schlupf-Anfrage
+### 4.176  `FLOW-schlupf-request` — Schlupf-Anfrage
 
 Rote Tests, Auswahl und reine Graph-Treffer, die verify:full an schlupfVon gibt. Beleg: scripts/verify-full.mjs.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-measure-test-schlupf` · schema ▶ `SCHEMA-schlupf-zeile`
 
-### 4.176  `FLOW-schlupf-result` — Schlupf
+### 4.177  `FLOW-schlupf-result` — Schlupf
 
 Der Schlupf, den schlupfVon an verify:full zurueckgibt. Beleg: src/projections/test-schlupf.ts.
 
 io ◀ `FUNC-measure-test-schlupf` · io ▶ `FUNC-verify-lane-full` · schema ▶ `SCHEMA-schlupf-zeile`
 
-### 4.177  `FLOW-schlupf-zeile` — Schlupf-Zeile
+### 4.178  `FLOW-schlupf-zeile` — Schlupf-Zeile
 
 Die Zeile in docs/messung/testauswahl.jsonl und auf stderr, die verify:full je Lauf schreibt.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-schlupf-zeile`
 
-### 4.178  `FLOW-seed-request` — Erstbefuellung (Hoststart)
+### 4.179  `FLOW-seed-request` — Erstbefuellung (Hoststart)
 
 Die Erstbefuellung eines leeren Stores beim Hoststart (harness.seedFromJson). Beleg: src/surface/mcp-server.ts, bootHost.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.179  `FLOW-seed-request-import-code` — Erstbefuellung (import-code)
+### 4.180  `FLOW-seed-request-import-code` — Erstbefuellung (import-code)
 
 Die Erstbefuellung eines leeren Stores vor dem Code-Import. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-### 4.180  `FLOW-select-request` — Auswahl-Anfrage (testImpact)
+### 4.181  `FLOW-select-request` — Auswahl-Anfrage (testImpact)
 
 Graph und Aenderungsmenge, die testImpact an impactedTests gibt. Beleg: src/kernel/harness.ts.
 
 io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.181  `FLOW-select-request-lane` — Auswahl-Anfrage (Code-Spur)
+### 4.182  `FLOW-select-request-lane` — Auswahl-Anfrage (Code-Spur)
 
 Committeter Graph und Knoten der Aenderung, die planCodeLane an impactedTests gibt. Beleg: src/projections/test-selection-audit.ts.
 
 io ◀ `FUNC-plan-code-lane` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.182  `FLOW-selected-tests` — Gewaehlte Tests
+### 4.183  `FLOW-selected-tests` — Gewaehlte Tests
 
 Die betroffenen TEST-Knoten, die impactedTests an den Aufrufer zurueckgibt. Beleg: src/kernel/measure/test-selection.ts.
 
 io ◀ `FUNC-select-tests` · io ▶ `FUNC-plan-code-lane` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-impacted-tests`
 
-### 4.183  `FLOW-session-end` — Sitzungsende
+### 4.184  `FLOW-session-end` — Sitzungsende
 
 Das Ende der Sitzung: der stdio-Client schliesst oder ein Signal kommt. Beleg: src/surface/session-lifecycle.ts, installTriggers.
 
 io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-session-shutdown` · schema ▶ `SCHEMA-cli-command`
 
-### 4.184  `FLOW-session-entry` — Sitzungseintrag
+### 4.185  `FLOW-session-entry` — Sitzungseintrag
 
 Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
 
-### 4.185  `FLOW-session-registry` — Sitzungsregister
+### 4.186  `FLOW-session-registry` — Sitzungsregister
 
 Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird.
 
 io ◀ `FUNC-gve-sessions` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-session-registry`
 
-### 4.186  `FLOW-skill-request` — Skill-Aufruf
+### 4.187  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
-### 4.187  `FLOW-snapshot-request` — Messanfrage (generationStep)
+### 4.188  `FLOW-snapshot-request` — Messanfrage (generationStep)
 
 Graph und Metrikpolitik, die generationStep an takeSteeringSnapshot gibt. Beleg: src/loop/generate.ts.
 
 io ◀ `FUNC-generation-step` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.188  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
+### 4.189  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
 
 Graph und Metrikpolitik, die graph_mutate im Probelauf vor und nach dem Zug an takeSteeringSnapshot gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.189  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
+### 4.190  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
 
 Graph und Metrikpolitik, die graph_readiness an takeSteeringSnapshot gibt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.190  `FLOW-socket-close` — Host-Socket schliessen
+### 4.191  `FLOW-socket-close` — Host-Socket schliessen
 
 Der Auftrag beim Sitzungsende, den Host-Socket zu schliessen und die Socket-Datei zu entfernen. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-### 4.191  `FLOW-socket-start` — Host-Socket starten
+### 4.192  `FLOW-socket-start` — Host-Socket starten
 
 Die Werkzeug-Registry, mit der bootHost den Host-Socket startet. Beleg: src/surface/mcp-server.ts, bootHost.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-### 4.192  `FLOW-sse-frame` — SSE-Frame (versioniert)
+### 4.193  `FLOW-sse-frame` — SSE-Frame (versioniert)
 
 Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501) BENANNTE OFFENE DIFFERENZ: graph-view-edit abonniert /events heute nicht, es beobachtet die Snapshot-Datei; das Abo ist Ziel von CR-GC-809. (CR-GC-822)
 
 io ◀ `FUNC-broadcast-diff` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-### 4.193  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+### 4.194  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-steering-delta`
 
-### 4.194  `FLOW-steering-pair` — Snapshot-Paar
+### 4.195  `FLOW-steering-pair` — Snapshot-Paar
 
 Die zwei Steuerungs-Snapshots vor und nach dem Probelauf, die graph_mutate an computeSteeringDelta gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-compute-steering-delta` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.195  `FLOW-steering-snapshot` — Steering-Snapshot
+### 4.196  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-generation-step` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · schema ▶ `SCHEMA-steering-snapshot`
 
-### 4.196  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
+### 4.197  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
 
 Der Aufruf von graph_generate durch die Ablaufsteuerung: Intention, defer, task, peek.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-query-params`
 
-### 4.197  `FLOW-store-open` — Store oeffnen (serveStdio)
+### 4.198  `FLOW-store-open` — Store oeffnen (serveStdio)
 
 Der Aufruf harness.initialize, der den Store oeffnet; serveStdio wartet darauf, er ist die Store-Wahl (CR-GC-218). Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.198  `FLOW-store-open-import-code` — Store oeffnen (import-code)
+### 4.199  `FLOW-store-open-import-code` — Store oeffnen (import-code)
 
 Der Aufruf harness.initialize aus import-code. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.199  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
+### 4.200  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
 
 Der Aufruf harness.initialize aus ownKuzu. Beleg: src/kernel/own-kuzu.ts.
 
 io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.200  `FLOW-store-open-rewind` — Store oeffnen (rewind)
+### 4.201  `FLOW-store-open-rewind` — Store oeffnen (rewind)
 
 Der Aufruf harness.initialize aus rewind. Beleg: src/surface/rewind.ts.
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-### 4.201  `FLOW-store-ownership` — Store-Besitzanspruch
+### 4.202  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der zugesprochene Store-Besitz an GraphStore.open; ohne ihn wirft open StoreOwnershipError (Wahl verloren).
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-lock-owner`
 
-### 4.202  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
+### 4.203  `FLOW-store-query` — Store-Abfrage
+
+Die Antwort des Kuzu-Adapters auf eine Leseanfrage: Teilgraph, Elementliste oder ganzer Graph aus dem persistierten Store. Die Lesewege des Harness fragen den Adapter direkt, nicht ueber GraphStore. Uebergabe: createHarness gibt denselben Adapter an GraphStore und an den Harness. (CR-GC-843)
+
+io ◀ `FUNC-graph-store` · io ▶ `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-ontology-graph`
+
+### 4.204  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
 
 Der GraphStore meldet beim Start, dass er den Store nach einem Schemawechsel aus der SSOT neu befuellt hat; was vorher nur im Store stand und nicht exportiert war, ist fort. Beleg: src/kernel/graph-store.ts, open schreibt formatStoreRebuildNotice auf stderr (CR-GC-831).
 
 io ◀ `FUNC-open-store` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-store-rebuild-notice`
 
-### 4.203  `FLOW-suggest-answer` — Antwort graph_suggest
+### 4.205  `FLOW-suggest-answer` — Antwort graph_suggest
 
 Die Antwort von graph_suggest an die Ablaufsteuerung: die gerankten Kandidaten mit Urteil und Bericht je Probelauf. Beleg: src/loop/suggest.ts.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-suggest-answer`
 
-### 4.204  `FLOW-target-profile` — Zielprofil
+### 4.206  `FLOW-target-profile` — Zielprofil
 
 Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform.
 
 io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-target-profile`
 
-### 4.205  `FLOW-target-profile-file` — Zielprofil (Rohform)
+### 4.207  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
 Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-### 4.206  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
+### 4.208  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
 
 Die Aenderungsmenge und Tiefe, mit denen graph_tests harness.testImpact ruft. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-### 4.207  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
+### 4.209  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
 
 Die Aenderungsmenge, mit der graph_test_ingest harness.testImpact ruft. Beleg: src/projections/testreport.ts.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-### 4.208  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
+### 4.210  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
 
 Die Antwort von graph_test_ingest: zugeordnete Ergebnisse, zurueckgenommene Ergebnisse, Knoten ohne Lauf.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-agent-loop` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · schema ▶ `SCHEMA-test-ingest-answer`
 
-### 4.209  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
+### 4.211  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
 
 Der vitest-Bericht der Code-Spur mit der Aenderungsmenge, den verify:code ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-test-ingest` · schema ▶ `SCHEMA-test-ingest-input`
 
-### 4.210  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
+### 4.212  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
 
 Der vitest-Bericht der vollen Suite mit der Aenderungsmenge, den verify:full ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-test-ingest` · schema ▶ `SCHEMA-test-ingest-input`
 
-### 4.211  `FLOW-test-selection` — Selektive Testauswahl
+### 4.213  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-test-selection`
 
-### 4.212  `FLOW-tool-context` — Werkzeug-Kontext
+### 4.214  `FLOW-tool-context` — Werkzeug-Kontext
 
 Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-### 4.213  `FLOW-tool-registry` — Werkzeug-Register
+### 4.215  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-### 4.214  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
+### 4.216  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
 
 Die gebundenen Werkzeuge, wie der Agent sie ueber stdio sieht und ruft. Beleg: src/surface/mcp-server.ts, serveStdio verbindet den Server mit dem stdio-Transport. (CR-GC-768)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-### 4.215  `FLOW-trajectory` — Trajectory/Outcome
+### 4.217  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-### 4.216  `FLOW-version-bump` — Version-Bump
+### 4.218  `FLOW-version-bump` — Version-Bump
 
 Neue ONTOLOGY/RULES_VERSION aus contracts/se.
 
 io ◀ `ACTOR-regelhalter` · io ▶ `FUNC-schema-guard` · schema ▶ `SCHEMA-query-params`
 
-### 4.217  `FLOW-viewer-start` — Viewer steuern (starten, beenden)
+### 4.219  `FLOW-viewer-start` — Viewer steuern (starten, beenden)
 
 Die Steuerung des Viewer-Prozesses durch attachGve: starten, wenn die erste Sitzung des Repos ihn anhaengt, beenden, wenn die letzte ihn abmeldet. Beleg: src/surface/gve.ts.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-cli-command`
 
-### 4.218  `FLOW-vorschlag` — Vorschlag an den Nutzer
+### 4.220  `FLOW-vorschlag` — Vorschlag an den Nutzer
 
 Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis; den Nutzer erreicht er mit FLOW-mutate-answer. (CR-GC-770, CR-GC-823)
 
 io ◀ `FUNC-vorschlag` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-result`
 
-### 4.219  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
+### 4.221  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_mutate an mitBericht gibt. Beleg: src/surface/write.ts, graph_mutate.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.220  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
+### 4.222  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_suggest je Kandidat an mitBericht gibt. Beleg: src/loop/suggest.ts, graph_suggest.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-### 4.221  `FLOW-zug-bericht` — Bericht zum Zug
+### 4.223  `FLOW-zug-bericht` — Bericht zum Zug
 
 Die Berichte zum Zug, zurueck an das Werkzeug, das mitBericht gerufen hat: graph_mutate fuer seine Antwort an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)
 
 io ◀ `FUNC-zug-bericht` · io ▶ `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-zug-bericht`
 
-### 4.222  `FLOW-zug-staende` — Stand davor und danach
+### 4.224  `FLOW-zug-staende` — Stand davor und danach
 
 Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil an das aufrufende Werkzeug zurueckgibt (mutateWithStates). Ein geblockter Zug hat kein Paar. (CR-GC-778)
 
@@ -11910,7 +11922,7 @@ schema ◀ `FLOW-gate-verdict` · `FLOW-mutate-answer` · `FLOW-mutate-answer-ho
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
 
-schema ◀ `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-fit-anfrage` · `FLOW-fitness-anfrage` · `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-health-eval-request` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · `FLOW-imported-graph` · `FLOW-metrics-request` · `FLOW-select-request` · `FLOW-select-request-lane` · `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-zug-anfrage` · `FLOW-zug-anfrage-suggest` · `FLOW-zug-staende`
+schema ◀ `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-fit-anfrage` · `FLOW-fitness-anfrage` · `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · `FLOW-imported-graph` · `FLOW-metrics-request` · `FLOW-select-request` · `FLOW-select-request-lane` · `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-store-query` · `FLOW-zug-anfrage` · `FLOW-zug-anfrage-suggest` · `FLOW-zug-staende`
 
 ### 5.32  `SCHEMA-ontology-json` — OntologyJson
 

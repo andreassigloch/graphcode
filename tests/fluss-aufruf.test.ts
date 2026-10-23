@@ -23,6 +23,12 @@ export function allein(): void {}
 export interface Werk { lauf(): void }
 export class Maschine { lauf(): void { ziel(); } }
 export function treiber(w: Werk): void { w.lauf(); }
+export function auswahl(w: Pick<Werk, 'lauf'>): void { w.lauf(); }
+
+export interface Werkzeug { handler(): void }
+export const eins: Werkzeug = { handler() { ziel(); } };
+export const zwei: Werkzeug = { handler() { allein(); } };
+export function versand(t: Werkzeug): void { t.handler(); }
 
 export interface Kontext { melde(): void }
 export function werkzeug(ctx: Kontext): void {
@@ -51,9 +57,9 @@ const GRAPH = {
   elements: [
     func('FUNC-anfrage', 'anfrage'), func('FUNC-mitte', 'mitte'), func('FUNC-ziel', 'ziel'),
     func('FUNC-allein', 'allein'), func('FUNC-treiber', 'treiber'), func('FUNC-werkzeug', 'werkzeug'),
-    func('FUNC-kontext', 'kontext'), func('FUNC-extern'),
+    func('FUNC-kontext', 'kontext'), func('FUNC-extern'), func('FUNC-auswahl', 'auswahl'), func('FUNC-versand', 'versand'),
     flow('FLOW-direkt', 'sync'), flow('FLOW-ueber', 'sync'), flow('FLOW-antwort', 'sync'),
-    flow('FLOW-interface', 'sync'), flow('FLOW-destrukturiert', 'sync'), flow('FLOW-keiner', 'sync'),
+    flow('FLOW-interface', 'sync'), flow('FLOW-pick', 'sync'), flow('FLOW-versand', 'sync'), flow('FLOW-destrukturiert', 'sync'), flow('FLOW-keiner', 'sync'),
     flow('FLOW-ungebunden', 'sync'), flow('FLOW-datei', 'async'),
     { ...flow('FLOW-belegt', 'sync'), realRef: { file: 'src/a.ts', symbol: 'kontext' } },
     { ...flow('FLOW-beleg-kaputt', 'sync'), realRef: { file: 'src/a.ts', symbol: 'gibtEsNicht' } },
@@ -65,6 +71,9 @@ const GRAPH = {
     // Die Antwort fließt vom Gerufenen zurück an den Aufrufer: gefunden in der Gegenrichtung.
     ...io('FUNC-ziel', 'FLOW-antwort', 'FUNC-mitte'),
     ...io('FUNC-treiber', 'FLOW-interface', 'FUNC-ziel'),
+    ...io('FUNC-auswahl', 'FLOW-pick', 'FUNC-ziel'),
+    // Zwei Implementierungen: ein Versand zur Laufzeit, dem das Skript nicht folgt.
+    ...io('FUNC-versand', 'FLOW-versand', 'FUNC-allein'),
     ...io('FUNC-werkzeug', 'FLOW-destrukturiert', 'FUNC-kontext'),
     ...io('FUNC-anfrage', 'FLOW-keiner', 'FUNC-allein'),
     ...io('FUNC-anfrage', 'FLOW-ungebunden', 'FUNC-extern'),
@@ -110,8 +119,16 @@ describe('fluss-aufruf: Fluss gegen Aufruf (CR-GC-843)', () => {
     expect(zeile('FLOW-interface')).toMatchObject({ ergebnis: 'ueber', weg: ['treiber', 'lauf', 'ziel'] });
   });
 
+  it('ein Aufruf über einen abgeleiteten Typ (Pick) geht an die Signatur und weiter an die Klasse', () => {
+    expect(zeile('FLOW-pick')).toMatchObject({ ergebnis: 'ueber', weg: ['auswahl', 'lauf', 'ziel'] });
+  });
+
   it('der Aufruf eines destrukturierten Namens erreicht die Funktion dahinter', () => {
     expect(zeile('FLOW-destrukturiert')).toMatchObject({ ergebnis: 'aufruf', weg: ['werkzeug', 'melde'] });
+  });
+
+  it('einem Versand über eine Signatur mit mehreren Implementierungen folgt es nicht', () => {
+    expect(zeile('FLOW-versand').ergebnis).toBe('kein-aufruf');
   });
 
   it('ohne Aufruf in beiden Richtungen meldet es kein-aufruf', () => {
@@ -133,7 +150,7 @@ describe('fluss-aufruf: Fluss gegen Aufruf (CR-GC-843)', () => {
 
   it('ein asynchroner Fluss wird nicht geprüft, nur gezählt', () => {
     expect(r.zeilen.some((z) => z.flow === 'FLOW-datei')).toBe(false);
-    expect(r.summe).toEqual({ paare: 10, aufruf: 4, ueber: 2, belegt: 1, belegKaputt: 1, keinAufruf: 1, ungeprueft: 1, asynchron: 1 });
+    expect(r.summe).toEqual({ paare: 12, aufruf: 4, ueber: 3, belegt: 1, belegKaputt: 1, keinAufruf: 2, ungeprueft: 1, asynchron: 1 });
   });
 
   it('gleicher Stand, gleiche Ausgabe', () => {

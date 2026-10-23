@@ -184,6 +184,9 @@ export function pruefeFluesse({ repoRoot = REPO, graph, tiefe = 3 } = {}) {
    * Ein Aufruf über einen Interface-Typ (`harness.evaluateRules()`) endet in der Call Hierarchy an der Signatur. Weiter
    * geht er an jeder Implementierung im Repo. Erfüllt eine Klasse das Interface nur strukturell (ohne `implements`),
    * findet TypeScript keine; dann geht er an die eine aufrufbare Deklaration dieses Namens, wenn es genau eine gibt.
+   * Hat die Signatur mehr als eine Implementierung, ist der Aufruf ein Versand zur Laufzeit (`tool.handler()` über die
+   * Werkzeug-Registry erreicht jedes Werkzeug): dann folgt das Skript ihm nicht. Sonst bestätigte jeder Registry-Aufruf
+   * jeden Fluss; die Übergabe gehört dann als `realRef` an den FLOW.
    */
   const implementierungen = (to) => {
     const sf = program.getSourceFile(to.file);
@@ -197,22 +200,33 @@ export function pruefeFluesse({ repoRoot = REPO, graph, tiefe = 3 } = {}) {
     let items = fassen(ziele);
     // Die Implementierung ist oft eine Kurzschreibweise im zurückgegebenen Objekt (`{ recordAudit }`), kein Aufrufziel.
     if (!items.length && jeName.get(to.name)?.length === 1) items = fassen(jeName.get(to.name));
+    if (items.length > 1) return [];
     return items.length ? items : to.ersatz ? [] : [to];
   };
 
   const checker = program.getTypeChecker();
   /**
-   * Aufrufe, die die Call Hierarchy still auslässt: der Aufruf eines Namens aus einer Destrukturierung
-   * (`const { recordAudit } = ctx; recordAudit(...)`). Das Ziel ist die Eigenschaft gleichen Namens am Typ des
-   * destrukturierten Objekts, von dort wie jede Signatur an die Implementierung.
+   * Aufrufe, die die Call Hierarchy still auslässt:
+   * - der Aufruf eines Namens aus einer Destrukturierung (`const { recordAudit } = ctx; recordAudit(...)`): Ziel ist
+   *   die Eigenschaft gleichen Namens am Typ des destrukturierten Objekts,
+   * - ein Methodenaufruf über einen abgeleiteten Typ (`harness: Pick<ConformanceHarness, 'getGraph'>`): Ziel ist die
+   *   Signatur, auf die das Symbol zeigt.
+   * Von dort geht es wie bei jeder Signatur an die Implementierung.
    */
-  const destrukturiert = (item) => {
+  const ergaenzt = (item) => {
     const sf = program.getSourceFile(item.file);
     const decl = sf && findeKnoten(sf, item.selectionSpan.start)?.parent;
     if (!decl) return [];
     const ziele = [];
     const besuche = (n) => {
       if (n !== decl && aufrufbar(n)) return;
+      if (ts.isCallExpression(n) && ts.isPropertyAccessExpression(n.expression)) {
+        for (const d of checker.getSymbolAtLocation(n.expression.name)?.declarations ?? []) {
+          const dsf = d.getSourceFile();
+          if ((ts.isMethodSignature(d) || ts.isPropertySignature(d)) && imRepo(dsf.fileName) && d.name)
+            ziele.push({ name: d.name.getText(dsf), file: dsf.fileName, selectionSpan: { start: d.name.getStart(dsf) } });
+        }
+      }
       if (ts.isCallExpression(n) && ts.isIdentifier(n.expression)) {
         const binding = checker.getSymbolAtLocation(n.expression)?.declarations?.find(ts.isBindingElement);
         const muster = binding?.parent;
@@ -243,7 +257,7 @@ export function pruefeFluesse({ repoRoot = REPO, graph, tiefe = 3 } = {}) {
         k,
         [
           ...ls.provideCallHierarchyOutgoingCalls(item.file, item.selectionSpan.start).map((c) => c.to).filter((to) => imRepo(to.file)),
-          ...destrukturiert(item),
+          ...ergaenzt(item),
         ].flatMap(implementierungen),
       );
     return ausgehend.get(k);
