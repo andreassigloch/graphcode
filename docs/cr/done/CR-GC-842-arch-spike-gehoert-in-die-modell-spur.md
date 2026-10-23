@@ -1,6 +1,6 @@
 # CR-GC-842: Arch-Spike gehoert in die Modell-Spur
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-23)
 **Typ:** aus Item ITEM-2026-1025 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1025.json (Lane: code)
