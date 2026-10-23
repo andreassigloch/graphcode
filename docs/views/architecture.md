@@ -40,7 +40,7 @@
 | `FUNC-block-urteilsarbeit` | FUNC | Urteilsarbeit |
 | `FUNC-broadcast-diff` | FUNC | broadcastDiff(version) |
 | `FUNC-chain-metrics` | FUNC | chainMetrics(graph) |
-| `FUNC-check-code-conformance` | FUNC | conformanceViolations(harness) |
+| `FUNC-check-code-conformance` | FUNC | conformanceEvaluation(harness) |
 | `FUNC-claim-store-lock` | FUNC | StoreLock |
 | `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |

@@ -1293,6 +1293,7 @@
 | `CR-GC-841` | relation | `FUNC-se-vorbereitung` |
 | `CR-GC-842` | relation | `FUNC-verify-lane-model` |
 | `CR-GC-842` | relation | `REQ-model-lane-fixed-set` |
+| `CR-GC-843` | relation | `FUNC-check-code-conformance` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

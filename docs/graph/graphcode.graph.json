@@ -5685,13 +5685,13 @@
     {
       "id": "FUNC-check-code-conformance",
       "type": "FUNC",
-      "name": "conformanceViolations(harness)",
-      "description": "Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)",
+      "name": "conformanceEvaluation(harness)",
+      "description": "Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef), dazu die Import-Abdeckung. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843)",
       "status": "done",
       "codeRef": null,
       "realRef": {
         "file": "src/kernel/conformance.ts",
-        "symbol": "conformanceViolations",
+        "symbol": "conformanceEvaluation",
         "lang": "ts"
       }
     },
@@ -18887,6 +18887,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-843",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -29642,5 +29647,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 854
+  "graphVersion": 855
 }

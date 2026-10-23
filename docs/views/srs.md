@@ -1552,11 +1552,11 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-##### 3.2.2.2  `FUNC-check-code-conformance` — conformanceViolations(harness)
+##### 3.2.2.2  `FUNC-check-code-conformance` — conformanceEvaluation(harness)
 
 > auch in: `FCHAIN-skill-report` · `FUNC-block-gate`
 
-Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)
+Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef), dazu die Import-Abdeckung. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843)
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 
@@ -1728,11 +1728,11 @@ priority: must · status: open · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
-##### 3.2.3.2  `FUNC-check-code-conformance` — conformanceViolations(harness)
+##### 3.2.3.2  `FUNC-check-code-conformance` — conformanceEvaluation(harness)
 
 > auch in: `FCHAIN-skill-help` · `FUNC-block-gate`
 
-Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)
+Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef), dazu die Import-Abdeckung. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843)
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 
@@ -8858,11 +8858,11 @@ Ebene-0-Block Sales-Sicht: jede Aenderung — von Mensch oder KI — geht durch 
 
 io ◀ — · io ▶ — · allocate ▶ —
 
-###### 3.10.2.3.1  `FUNC-check-code-conformance` — conformanceViolations(harness)
+###### 3.10.2.3.1  `FUNC-check-code-conformance` — conformanceEvaluation(harness)
 
 > auch in: `FCHAIN-skill-help` · `FCHAIN-skill-report`
 
-Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln (RC-01 codeRef, RC-02 testRef) aus; scoreReadinessWithConformance mischt sie in die Readiness. Cross-Module-Call-Coverage Follow-up CR-GC-256. (CR-GC-206 -> CR-GC-253)
+Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef), dazu die Import-Abdeckung. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843)
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 

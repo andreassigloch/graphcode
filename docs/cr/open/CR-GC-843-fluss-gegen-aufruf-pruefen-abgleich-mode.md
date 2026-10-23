@@ -54,20 +54,63 @@ Paare ohne gefundenen Aufruf:
 
 Folge für das Skript: nur Flüsse mit `sync` sind ein Aufruf. Ein `async`-Fluss geht über Speicher, Datei, Ereignis oder Socket. Das Skript prüft ihn nicht und zählt ihn getrennt.
 
-## Reihenfolge
+## Werkzeug: TypeScripts LanguageService statt graphify (Entscheidung 2026-10-23)
 
-1. **graphify (ITEM-2026-1027):** Methoden und Eigenschaften von Objektliteralen, die eine Funktion tragen, als FUNC extrahieren, mit ihren Aufrufen. Ziel: die 127 nicht extrahierten Symbole sinken unter 20.
-2. **graphcode, dieser CR:** ein Prüfskript in `MOD-dev-scripts`. Es schreibt nichts ins Modell und gibt je `sync`-Fluss eines von vier Ergebnissen aus: Aufruf, Aufruf über Zwischenschritte, kein Aufruf, ungeprüft (mit Grund). `async`-Flüsse zählt es getrennt. Die Liste „kein Aufruf" ist der Eingang für `se-vorbereitung` Schritt 4.
-3. Nach dem graphify-Schritt die neue Liste „kein Aufruf" am Code prüfen; Modellfehler in diesem CR beheben.
-4. **Erst nach der Messung aus Schritt 2:** mit Smeagol klären, ob daraus eine Regel in contracts wird. Eine Regel braucht den Aufrufgraphen als Eingabe, und die Regeln lesen heute nur das Modell. Vorher die Frage stellen, ob das Skript allein reicht.
+Der Sprachserver (cclsp, Probe am 2026-10-23) löst genau, was graphify fehlt: `harness.seedFromJson` (Methode) zeigt auf `bootHost` und `executeImportCode`, der `graph_mutate`-Handler im Objektliteral liefert 22 Aufrufe samt Rückruf. Von Hand über cclsp wären es etwa 3 Aufrufe je Paar, rund 900 für 298 Paare.
+
+Das Skript nutzt deshalb TypeScripts eigenen LanguageService (dieselbe Maschine hinter dem Sprachserver), ohne laufenden Server, in unter 1 s. graphify kann diesen Weg nicht gehen: sein Extraktor liest keine Funktionsrümpfe (FM-11). ITEM-2026-1027 ist damit für graphcode nicht mehr nötig; ob graphify es für andere Zwecke braucht, entscheidet sein Owner.
+
+Vier Lücken der Call Hierarchy schließt das Skript selbst, jede mit Test:
+
+- eine FUNC steht für alles Aufrufbare in ihrer Deklaration (Klasse mit Methoden, `bindReadTools` mit seinen Handlern),
+- ein Aufruf über ein Interface geht an die Implementierung; erfüllt eine Klasse es nur strukturell, an die eine Deklaration gleichen Namens,
+- der Aufruf eines destrukturierten Namens (`const { recordAudit } = ctx`) geht über den Typ des Objekts,
+- eine Eigenschaft eines Zod-Vertrags (`tool-context-contract.ts`) zählt wie eine Signatur.
+
+## Stand (2026-10-23)
+
+`npm run abgleich:fluss` über `docs/graph/graphcode.graph.json`:
+
+| Ergebnis | Paare |
+|---|---|
+| Aufruf | 76 |
+| Aufruf über Zwischenschritte (höchstens 3) | 51 |
+| kein Aufruf | 30 |
+| ungeprüft: ohne Bindung | 75 |
+| ungeprüft: keine TS-Datei (Skills, Skripte) | 42 |
+| ungeprüft: außerhalb des Repos (Nachbarpakete) | 10 |
+| asynchron, nicht geprüft | 14 |
+
+Prüfbar sind 157 von 284 synchronen Paaren (graphify: 52 von 298).
+
+**Behoben in diesem CR:** `FUNC-check-code-conformance` zeigte auf `conformanceViolations`, einen Wrapper, den nur `tests/conformance.test.ts` ruft. Der Weg geht über `conformanceEvaluation` (`evaluateAll` ruft sie). `realRef`, Name und Beschreibung angepasst; die Beschreibung nannte die mit CR-GC-489 gelöschte `scoreReadinessWithConformance`.
+
+**Die 30 Paare ohne Aufruf, am Code geprüft:**
+
+| Gruppe | Paare | Modell |
+|---|---|---|
+| registrierter Rückruf oder übergebene Funktion (Gate-Hooks, Shutdown-Liste, Fabrik an `ownKuzu`) | 9 | richtig |
+| Socket zwischen zwei Prozessen (host.sock, Proxy) | 10 | richtig |
+| Werkzeug über die Registry (`registry['graph_mutate'].handler`) | 3 | richtig |
+| `FLOW-marker-clear`: `graph_export` ruft `clearExportPending`, `FUNC-export-marker` zeigt auf `setExportPending` | 1 | offen: eine FUNC für zwei Funktionen |
+| `FLOW-graph-state`: `GraphStore` liefert an 7 Funktionen, die den Graphen vom Harness als Argument bekommen oder den Kuzu-Adapter selbst lesen | 7 | offen: Regel 3 aus `se:top-level` sagt, der Speicher liefert nur an den, der ihn liest |
+
+## Offen
+
+1. **Wie hält das Modell einen geprüften Fluss ohne Aufruf fest?** Die 22 richtigen Paare kommen bei jedem Lauf wieder. Vorschlag: das Attribut `realRef` am FLOW, mit Datei und Symbol der Übergabe (Registrierung, Socket, Registry). Das Skript zählt einen FLOW mit `realRef` als belegt. `attributes` ist ein freier Record, das Speichern braucht keinen contracts-Bump; eine Regel darüber schon.
+2. `FLOW-marker-clear`: `FUNC-export-marker` teilen (setzen, löschen) oder die Bindung auf die Datei legen.
+3. `FLOW-graph-state`: wer ist der Speicher im Modell, `GraphStore`, der Harness oder der Kuzu-Adapter?
+4. Code-Befund: `conformanceViolations` hat im Produkt keinen Aufrufer mehr, nur einen Test.
 
 ## Akzeptanz
 
-- Das Skript läuft ohne Host und ohne LLM, gleicher Repo-Stand ergibt dieselbe Ausgabe.
-- Jeder handgeschriebene `sync`-Fluss zwischen zwei FUNCs steht in genau einem Ergebnis; die `async`-Flüsse stehen als Zahl daneben.
-- „ungeprüft" nennt den Grund je Paar (Symbol nicht extrahiert, ohne Bindung).
-- Ein Test mit einem Wegwerf-Repo: ein Fluss mit direktem Aufruf, einer über einen Zwischenschritt, einer ohne Aufruf, einer mit ungebundener Seite.
+- Das Skript läuft ohne Host und ohne LLM, gleicher Repo-Stand ergibt dieselbe Ausgabe. ✅ (Test „gleicher Stand, gleiche Ausgabe")
+- Jeder handgeschriebene `sync`-Fluss zwischen zwei FUNCs steht in genau einem Ergebnis; die `async`-Flüsse stehen als Zahl daneben. ✅
+- „ungeprüft" nennt den Grund je Paar. ✅
+- Ein Test mit einem Wegwerf-Repo je Ergebnis. ✅ `tests/fluss-aufruf.test.ts`, 9 Fälle, rot gesehen ohne die Auflösung über Interface und Destrukturierung.
+- Die 22 richtigen Paare ohne Aufruf sind belegt (Offen 1), die 8 offenen entschieden (Offen 2, 3).
 
 ## Umfang
 
-Noch keine relation-Kanten: die FUNC des Skripts entsteht mit Schritt 2.
+- Skript: `scripts/fluss-aufruf.mjs`, `npm run abgleich:fluss`. Kein Modellknoten: Entwicklungswerkzeug außerhalb des Produkts, wie die Mess-Skripte (CR-GC-760, CR-GC-844).
+- relation-Kante: `FUNC-check-code-conformance`.
