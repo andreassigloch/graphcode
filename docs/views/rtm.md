@@ -91,7 +91,7 @@
 | `REQ-docked-session-reelects-once` | `TEST-host-shim` | `FUNC-host-socket` | `MOD-surface` |
 | `REQ-done-iff-no-focus` | `TEST-generation-statemachine` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-element-contract-finding` | `TEST-mutate-schema-guard` · `TEST-readiness-altbestand` | `FUNC-mutate` · `FUNC-take-steering-snapshot` | `MOD-kernel` · `MOD-kernel-measure` |
-| `REQ-export-marker-tracks-drift` | `TEST-graph-time-travel` | `FUNC-export-marker` | `MOD-kernel` |
+| `REQ-export-marker-tracks-drift` | `TEST-graph-time-travel` | `FUNC-export-marker` · `FUNC-export-marker-clear` | `MOD-kernel` |
 | `REQ-export-no-clobber` | `TEST-export-graph-guard` · `TEST-mcp-export-guard` | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `REQ-fmea-checks-entry` | `TEST-fmea-reads-places` | `FUNC-se-fmea` | `MOD-agent-surface` |
 | `REQ-fmea-reads-places` | `TEST-fmea-reads-places` | `FUNC-se-fmea` | `MOD-agent-surface` |
@@ -204,7 +204,7 @@
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` | — |
 | `REQ-docked-session-reelects-once` | `TEST-host-shim` | `FUNC-host-socket` | `MOD-surface` |
 | `REQ-docs-taxonomy` | `TEST-docs-taxonomy` | `MOD-projections` | — |
-| `REQ-export-marker-tracks-drift` | `TEST-graph-time-travel` | `FUNC-export-marker` | `MOD-kernel` |
+| `REQ-export-marker-tracks-drift` | `TEST-graph-time-travel` | `FUNC-export-marker` · `FUNC-export-marker-clear` | `MOD-kernel` |
 | `REQ-export-no-clobber` | `TEST-export-graph-guard` · `TEST-mcp-export-guard` | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `REQ-export-refuses-until-held-back-repaired` | `TEST-import-rejected-traces` | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `REQ-full-run-on-probation` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` | `MOD-dev-scripts` · `MOD-projections` |
@@ -284,7 +284,7 @@
 | `REQ-docs-taxonomy` | `TEST-docs-taxonomy` | `MOD-projections` | — |
 | `REQ-done-iff-no-focus` | `TEST-generation-statemachine` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-element-contract-finding` | `TEST-mutate-schema-guard` · `TEST-readiness-altbestand` | `FUNC-mutate` · `FUNC-take-steering-snapshot` | `MOD-kernel` · `MOD-kernel-measure` |
-| `REQ-export-marker-tracks-drift` | `TEST-graph-time-travel` | `FUNC-export-marker` | `MOD-kernel` |
+| `REQ-export-marker-tracks-drift` | `TEST-graph-time-travel` | `FUNC-export-marker` · `FUNC-export-marker-clear` | `MOD-kernel` |
 | `REQ-export-no-clobber` | `TEST-export-graph-guard` · `TEST-mcp-export-guard` | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `REQ-export-refuses-until-held-back-repaired` | `TEST-import-rejected-traces` | `FUNC-graph-export-snapshot` | `MOD-projections` |
 | `REQ-first-session-claims-store-lock` | `TEST-store-lock` | `FUNC-claim-store-lock` | `MOD-kernel` |

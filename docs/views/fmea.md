@@ -23,7 +23,7 @@
 | 11 | Risiko Delta fehlt in der Antwort | `FCHAIN-steering-loop` | 5 | 3 | 5 | 75 | Medium | `FUNC-compute-steering-delta` | ✗ |
 | 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-host-start` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
 | 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-verify-lane` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` | ✓ |
-| 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | `FUNC-export-marker` | ✓ |
+| 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | `FUNC-export-marker` · `FUNC-export-marker-clear` | ✓ |
 | 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | `FUNC-held-back-traces` | ✓ |
 | 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-session-end` | 7 | 2 | 3 | 42 | Medium | `FUNC-host-socket` | ✓ |
 | 17 | Risiko halb gefuellter Store nach Abbruch | `FCHAIN-recall` | 6 | 2 | 3 | 36 | Low | `FUNC-graph-export-snapshot` | ✓ |
@@ -286,13 +286,13 @@ Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten
 - **Bewertung:** S 4 · O 3 · D 4 · RPN 48 · AP Medium
 - **Kette:** `FCHAIN-snapshot-freshness`
 - **Anwendungsfall:** `UC-graph-time-travel`
-- **Träger:** `FUNC-export-marker`
+- **Träger:** `FUNC-export-marker` · `FUNC-export-marker-clear`
 - **Befund:** FMEA CR-GC-798 FM-16, Quelle F geteilte Funktion FUNC-export-markdown. Der Fehler geht nur auf die Fehlerausgabe. Entscheidung: gedeckt, die Marke EXPORT_PENDING bleibt stehen und blockt den Commit (REQ-graph-snapshot-per-commit).
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-export-marker-tracks-drift` | Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen. | `FUNC-export-marker` |
+| `REQ-export-marker-tracks-drift` | Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen. | `FUNC-export-marker` · `FUNC-export-marker-clear` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|

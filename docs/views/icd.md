@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 218 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 56 SCHEMA · 222 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -147,6 +147,7 @@
 | `FLOW-ergebnis` | `FUNC-agent-loop` | `ACTOR-auftraggeber` |
 | `FLOW-expand-subgraph` | `FUNC-graph-expand` | `FUNC-read-tools` |
 | `FLOW-export-answer` | `FUNC-graph-export-snapshot` | `FUNC-agent-loop` |
+| `FLOW-export-cleared` | `FUNC-export-marker-clear` | `ACTOR-auftraggeber` |
 | `FLOW-export-flush` | `FUNC-session-shutdown` | `FUNC-auto-export` |
 | `FLOW-export-pending` | `FUNC-export-marker` | `ACTOR-auftraggeber` |
 | `FLOW-export-request-import-code` | `FUNC-import-code-verb` | `FUNC-graph-export-snapshot` |
@@ -199,7 +200,8 @@
 | `FLOW-lock-request` | `FUNC-open-store` | `FUNC-claim-store-lock` |
 | `FLOW-markdown-docs` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` |
 | `FLOW-markdown-text` | `FUNC-export-markdown` | `FUNC-graph-export-snapshot` |
-| `FLOW-marker-clear` | `FUNC-graph-export-snapshot` | `FUNC-export-marker` |
+| `FLOW-marker-clear` | `FUNC-graph-export-snapshot` | `FUNC-export-marker-clear` |
+| `FLOW-marker-clear-reseed` | `FUNC-apply-reseed` | `FUNC-export-marker-clear` |
 | `FLOW-marker-set` | `FUNC-mutate` | `FUNC-export-marker` |
 | `FLOW-mcp-tool` | `FUNC-graph-suggest` | `FUNC-bind-tools` |
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-generation-step` |
@@ -209,7 +211,9 @@
 | `FLOW-metrics-answer` | `FUNC-graph-metrics` | `FUNC-agent-loop` · `FUNC-host-socket` |
 | `FLOW-metrics-request` | `FUNC-graph-metrics` | `FUNC-chain-metrics` · `FUNC-function-criticality` · `FUNC-module-metrics` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `FUNC-graph-metrics` |
-| `FLOW-mutate-answer` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` · `FUNC-host-socket` · `FUNC-import-code-verb` |
+| `FLOW-mutate-answer` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
+| `FLOW-mutate-answer-host-socket` | `FUNC-graph-mutate-tool` | `FUNC-host-socket` |
+| `FLOW-mutate-answer-import-code-verb` | `FUNC-graph-mutate-tool` | `FUNC-import-code-verb` |
 | `FLOW-mutate-cmd-decode` | `FUNC-decode` | `FUNC-graph-mutate-tool` |
 | `FLOW-mutate-cmd-graph-suggest` | `FUNC-graph-suggest` | `FUNC-mutate` |
 | `FLOW-mutate-cmd-host-socket` | `FUNC-host-socket` | `FUNC-graph-mutate-tool` |

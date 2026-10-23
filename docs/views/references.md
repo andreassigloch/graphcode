@@ -1294,6 +1294,8 @@
 | `CR-GC-842` | relation | `FUNC-verify-lane-model` |
 | `CR-GC-842` | relation | `REQ-model-lane-fixed-set` |
 | `CR-GC-843` | relation | `FUNC-check-code-conformance` |
+| `CR-GC-843` | relation | `FUNC-export-marker` |
+| `CR-GC-843` | relation | `FUNC-export-marker-clear` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1543,6 +1545,7 @@
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-export-markdown` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-export-marker` |
+| `FCHAIN-snapshot-freshness` | compose | `FUNC-export-marker-clear` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-graph-export-snapshot` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-graph-mutate-tool` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-graph-store` |
@@ -1772,6 +1775,8 @@
 | `FLOW-expand-subgraph` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-export-answer` | io | `FUNC-agent-loop` |
 | `FLOW-export-answer` | relation | `SCHEMA-export-answer` |
+| `FLOW-export-cleared` | io | `ACTOR-auftraggeber` |
+| `FLOW-export-cleared` | relation | `SCHEMA-export-pending` |
 | `FLOW-export-flush` | io | `FUNC-auto-export` |
 | `FLOW-export-flush` | relation | `SCHEMA-harness-handle` |
 | `FLOW-export-pending` | io | `ACTOR-auftraggeber` |
@@ -1905,8 +1910,10 @@
 | `FLOW-markdown-docs` | relation | `SCHEMA-markdown-view` |
 | `FLOW-markdown-text` | io | `FUNC-graph-export-snapshot` |
 | `FLOW-markdown-text` | relation | `SCHEMA-markdown-view` |
-| `FLOW-marker-clear` | io | `FUNC-export-marker` |
+| `FLOW-marker-clear` | io | `FUNC-export-marker-clear` |
 | `FLOW-marker-clear` | relation | `SCHEMA-export-pending` |
+| `FLOW-marker-clear-reseed` | io | `FUNC-export-marker-clear` |
+| `FLOW-marker-clear-reseed` | relation | `SCHEMA-export-pending` |
 | `FLOW-marker-set` | io | `FUNC-export-marker` |
 | `FLOW-marker-set` | relation | `SCHEMA-export-pending` |
 | `FLOW-mcp-tool` | io | `FUNC-bind-tools` |
@@ -1929,9 +1936,11 @@
 | `FLOW-module-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-module-metrics` | relation | `SCHEMA-module-metrics` |
 | `FLOW-mutate-answer` | io | `FUNC-agent-loop` |
-| `FLOW-mutate-answer` | io | `FUNC-host-socket` |
-| `FLOW-mutate-answer` | io | `FUNC-import-code-verb` |
 | `FLOW-mutate-answer` | relation | `SCHEMA-mutate-result` |
+| `FLOW-mutate-answer-host-socket` | io | `FUNC-host-socket` |
+| `FLOW-mutate-answer-host-socket` | relation | `SCHEMA-mutate-result` |
+| `FLOW-mutate-answer-import-code-verb` | io | `FUNC-import-code-verb` |
+| `FLOW-mutate-answer-import-code-verb` | relation | `SCHEMA-mutate-result` |
 | `FLOW-mutate-cmd-decode` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-mutate-cmd-decode` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-graph-suggest` | io | `FUNC-mutate` |
@@ -2161,6 +2170,7 @@
 | `FUNC-agent-loop` | satisfy | `REQ-agent-loop-executes-skill` |
 | `FUNC-agent-loop` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-apply-reseed` | allocate | `MOD-kernel` |
+| `FUNC-apply-reseed` | io | `FLOW-marker-clear-reseed` |
 | `FUNC-apply-reseed` | io | `FLOW-reseeded-graph` |
 | `FUNC-apply-reseed` | satisfy | `REQ-graph-state-recall` |
 | `FUNC-arch-fitness` | allocate | `MOD-kernel-measure` |
@@ -2300,6 +2310,7 @@
 | `FUNC-block-speicherwerk` | compose | `FUNC-claim-store-lock` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-create-harness` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-export-marker` |
+| `FUNC-block-speicherwerk` | compose | `FUNC-export-marker-clear` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-graph-export-snapshot` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-graph-store` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-held-back-traces` |
@@ -2378,6 +2389,9 @@
 | `FUNC-export-marker` | allocate | `MOD-kernel` |
 | `FUNC-export-marker` | io | `FLOW-export-pending` |
 | `FUNC-export-marker` | satisfy | `REQ-export-marker-tracks-drift` |
+| `FUNC-export-marker-clear` | allocate | `MOD-kernel` |
+| `FUNC-export-marker-clear` | io | `FLOW-export-cleared` |
+| `FUNC-export-marker-clear` | satisfy | `REQ-export-marker-tracks-drift` |
 | `FUNC-fit-advisory` | allocate | `MOD-kernel-measure` |
 | `FUNC-fit-advisory` | io | `FLOW-fit-advisory` |
 | `FUNC-fit-advisory` | io | `FLOW-fitness-anfrage` |
@@ -2440,6 +2454,8 @@
 | `FUNC-graph-mutate-tool` | io | `FLOW-channel-steer-advisory` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-formatE-tool` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-mutate-answer` |
+| `FUNC-graph-mutate-tool` | io | `FLOW-mutate-answer-host-socket` |
+| `FUNC-graph-mutate-tool` | io | `FLOW-mutate-answer-import-code-verb` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-mutate-cmd-tool` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-snapshot-request-mutate` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-steering-pair` |

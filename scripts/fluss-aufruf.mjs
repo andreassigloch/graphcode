@@ -17,8 +17,11 @@
  * Es liest die committete SSOT und den Quellbaum, schreibt nichts, braucht keinen Host und kein LLM.
  *
  * Ergebnisse je Paar: `aufruf` (direkt), `ueber` (über höchstens `tiefe` Schritte, mit Weg), `kein-aufruf`,
- * `ungeprueft` (mit Grund). „kein-aufruf" ist ein Prüfauftrag an den Autor, kein Urteil: eine Fabrik als Parameter
- * oder ein Socket zwischen zwei Prozessen hat keinen Aufruf (`se-vorbereitung`, Schritt 4).
+ * `ungeprueft` (mit Grund). „kein-aufruf" ist ein Prüfauftrag an den Autor, kein Urteil: ein registrierter Rückruf,
+ * eine übergebene Fabrik, ein Socket zwischen zwei Prozessen oder ein Aufruf über die Werkzeug-Registry hat keinen
+ * Aufruf, den eine Typanalyse sieht (`se-vorbereitung`, Schritt 4). Hat der Autor die Übergabe geprüft, trägt der
+ * FLOW sie als `realRef` (Datei und Symbol der Stelle): dann `belegt`, solange das Symbol existiert, sonst
+ * `beleg-kaputt`. Gesucht wird der Aufruf trotzdem zuerst — eine Bindung ersetzt keinen Weg, den der Code zeigt.
  *
  * Aufruf: node scripts/fluss-aufruf.mjs [--json] [--tiefe=3]
  * @author andreas@siglochconsulting
@@ -273,13 +276,23 @@ export function pruefeFluesse({ repoRoot = REPO, graph, tiefe = 3 } = {}) {
     if (offen) return { ...p, ergebnis: 'ungeprueft', grund: `${offen === a ? p.von : p.nach}: ${offen.grund}` };
     if ([...a.keys].some((k) => b.keys.has(k))) return { ...p, ergebnis: 'aufruf', weg: [a.items[0].name] };
     const w = weg(a, b) ?? weg(b, a);
-    if (!w) return { ...p, ergebnis: 'kein-aufruf' };
+    if (!w) {
+      const ref = el.get(p.flow)?.realRef ?? el.get(p.flow)?.attributes?.realRef;
+      if (!ref?.file) return { ...p, ergebnis: 'kein-aufruf' };
+      const stelle = `${ref.file}#${ref.symbol ?? ''}`;
+      const sf = program.getSourceFile(resolve(repoRoot, ref.file));
+      const fehler = !sf ? 'Datei nicht im Programm' : !ref.symbol ? 'ohne Symbol' : deklaration(sf, ref.symbol).grund;
+      return fehler ? { ...p, ergebnis: 'beleg-kaputt', beleg: stelle, grund: fehler } : { ...p, ergebnis: 'belegt', beleg: stelle };
+    }
     return { ...p, ergebnis: w.length === 2 ? 'aufruf' : 'ueber', weg: w };
   });
   const zahl = (e) => zeilen.filter((z) => z.ergebnis === e).length;
   return {
     zeilen,
-    summe: { paare: zeilen.length, aufruf: zahl('aufruf'), ueber: zahl('ueber'), keinAufruf: zahl('kein-aufruf'), ungeprueft: zahl('ungeprueft'), asynchron },
+    summe: {
+      paare: zeilen.length, aufruf: zahl('aufruf'), ueber: zahl('ueber'), belegt: zahl('belegt'),
+      belegKaputt: zahl('beleg-kaputt'), keinAufruf: zahl('kein-aufruf'), ungeprueft: zahl('ungeprueft'), asynchron,
+    },
   };
 }
 
@@ -289,7 +302,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   if (process.argv.includes('--json')) console.log(JSON.stringify(r, null, 2));
   else {
     const s = r.summe;
-    console.log(`Fluss gegen Aufruf: ${s.paare} synchrone Paare — Aufruf ${s.aufruf}, über Zwischenschritte ${s.ueber}, kein Aufruf ${s.keinAufruf}, ungeprüft ${s.ungeprueft}; asynchron (nicht geprüft) ${s.asynchron}.`);
+    console.log(`Fluss gegen Aufruf: ${s.paare} synchrone Paare — Aufruf ${s.aufruf}, über Zwischenschritte ${s.ueber}, belegt ${s.belegt}, Beleg kaputt ${s.belegKaputt}, kein Aufruf ${s.keinAufruf}, ungeprüft ${s.ungeprueft}; asynchron (nicht geprüft) ${s.asynchron}.`);
+    for (const z of r.zeilen.filter((z) => z.ergebnis === 'beleg-kaputt')) console.log(`  Beleg kaputt ${z.flow}: ${z.beleg} — ${z.grund}`);
     for (const z of r.zeilen.filter((z) => z.ergebnis === 'kein-aufruf')) console.log(`  kein Aufruf  ${z.flow}: ${z.von} → ${z.nach}`);
     const gruende = new Map();
     for (const z of r.zeilen.filter((z) => z.ergebnis === 'ungeprueft')) {

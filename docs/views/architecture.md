@@ -54,7 +54,8 @@
 | `FUNC-emit-update-event` | FUNC | emitUpdateEvent(domains) |
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
-| `FUNC-export-marker` | FUNC | setExportPending |
+| `FUNC-export-marker` | FUNC | Drift-Marker setzen |
+| `FUNC-export-marker-clear` | FUNC | Drift-Marker loeschen |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
 | `FUNC-function-criticality` | FUNC | functionCriticality(graph) |
 | `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
@@ -198,6 +199,7 @@
 | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `FUNC-export-markdown` | `MOD-projections` |
 | `FUNC-export-marker` | `MOD-kernel` |
+| `FUNC-export-marker-clear` | `MOD-kernel` |
 | `FUNC-fit-advisory` | `MOD-kernel-measure` |
 | `FUNC-function-criticality` | `MOD-projections` |
 | `FUNC-generation-step` | `MOD-loop` |

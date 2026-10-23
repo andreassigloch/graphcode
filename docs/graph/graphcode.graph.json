@@ -4363,7 +4363,12 @@
       "type": "FLOW",
       "name": "Werkzeugaufruf (Socket an Werkzeug)",
       "description": "Der Werkzeugaufruf des Dashboards, den der Host-Socket an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "handleLine",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-dimension-readiness",
@@ -4403,11 +4408,23 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-export-cleared",
+      "type": "FLOW",
+      "name": "Export aktuell",
+      "description": "Die fehlende Drift-Marke unter .graphcode: der committete Snapshot ist so weit wie der lebende Store. Der pre-commit-Hook liest die Abwesenheit der Datei, ohne den Kuzu-Store zu oeffnen. (CR-GC-843)",
+      "sync": "async"
+    },
+    {
       "id": "FLOW-export-flush",
       "type": "FLOW",
       "name": "Export nachziehen",
       "description": "Der Auftrag beim Sitzungsende, den entprellten Auto-Export sofort zu fahren. Beleg: src/surface/mcp-server.ts.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/mcp-server.ts",
+        "symbol": "serveStdio",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-export-pending",
@@ -4421,7 +4438,12 @@
       "type": "FLOW",
       "name": "Export-Anfrage (import-code)",
       "description": "Der Export nach dem Code-Import (graph_export-Werkzeug). Beleg: src/surface/import-code-verb.ts.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/import-code-verb.ts",
+        "symbol": "executeImportCode",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-fingerprint-request",
@@ -4495,14 +4517,24 @@
       "name": "Gate-Verdikt (Antwort im Aufruf)",
       "description": "Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation, als Antwort im Aufruf: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. Abnehmer sind die Werkzeuge, die das Gate rufen (graph_mutate, graph_suggest, graph_test_ingest, replayBranchLog) und die Post-Apply-Hooks (Live-Ereignis, Auto-Export). Den Auftraggeber erreicht es nur ueber die Antwort von graph_mutate. Wer das Urteil spaeter aus dem Log liest, bezieht FLOW-audit-record. (CR-GC-501, CR-GC-823, CR-GC-840)",
       "status": "reviewed",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/kernel/hooks.ts",
+        "symbol": "runPostApplyHooks",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-generate-answer",
       "type": "FLOW",
       "name": "Antwort graph_generate",
       "description": "Die Antwort von graph_generate: der naechste Schritt (seed, expand, handoff) mit Anweisung, an die Ablaufsteuerung oder ueber den Host-Socket an das Dashboard (peek). Beleg: src/loop/suggest.ts.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "handleLine",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-generation-request",
@@ -4553,14 +4585,24 @@
       "type": "FLOW",
       "name": "Dashboard abmelden",
       "description": "Der Auftrag beim Sitzungsende, das angehaengte Dashboard abzumelden. Beleg: src/surface/mcp-server.ts.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/mcp-server.ts",
+        "symbol": "serveStdio",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-harness-handle",
       "type": "FLOW",
       "name": "Harness-Griff",
       "description": "Der fertig verdrahtete Harness, den die Fabrik liefert: Store geoeffnet, Lock beansprucht, Regelwerk geladen. Alles, was auf dem Graphen arbeitet, holt ihn hier ab.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/kernel/own-kuzu.ts",
+        "symbol": "ownKuzu",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-harness-handle-host",
@@ -4588,7 +4630,12 @@
       "type": "FLOW",
       "name": "Harness-Anfrage (ownKuzu)",
       "description": "Repo-Wurzel und Ereignis-Senke, mit denen ownKuzu im Modus graphcode host createHarness ruft. Beleg: src/kernel/own-kuzu.ts.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/kernel/own-kuzu.ts",
+        "symbol": "ownKuzu",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-harness-request-rewind",
@@ -4734,7 +4781,12 @@
       "description": "Der versionierte Aenderungsereignis-Strom an den Verteiler des Hosts: welche Bereiche (graph, rules, readiness) neu zu lesen sind. Der Hook ruft den Verteiler direkt.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host.ts",
+        "symbol": "start",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-lock-file",
@@ -4755,7 +4807,12 @@
       "type": "FLOW",
       "name": "Lock-Freigabe",
       "description": "Die Freigabe des Store-Locks am Sitzungsende, als letzter Abraeumschritt. Beleg: src/surface/mcp-server.ts, lifecycle.add store lock ruft harness.close. (CR-GC-768)",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/mcp-server.ts",
+        "symbol": "serveStdio",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-lock-request",
@@ -4785,6 +4842,13 @@
       "type": "FLOW",
       "name": "Marker loeschen",
       "description": "Der Auftrag von graph_export, nach dem Schreiben den Drift-Marker zu loeschen (clearExportPending). Beleg: src/projections/export.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-marker-clear-reseed",
+      "type": "FLOW",
+      "name": "Marker loeschen (Reseed)",
+      "description": "Der Auftrag von applyReseed, nach dem Wiedereinlesen den Drift-Marker zu loeschen: Store und Snapshot sind wieder gleich. Beleg: src/kernel/harness-import.ts, applyReseed ruft clearExportPending. (CR-GC-843)",
       "sync": "sync"
     },
     {
@@ -4836,7 +4900,12 @@
       "type": "FLOW",
       "name": "Antwort von graph_metrics",
       "description": "Die Antwort des Werkzeugs graph_metrics an jeden, der es aufruft: die Ablaufsteuerung und das Dashboard ueber host.sock. Ein Aufruf, eine Antwort mit Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, riskCarriers und scope. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: die Teilfluesse kommen aus den Rechnungen in contracts, dieser aus dem Werkzeug, das sie buendelt. BENANNTE OFFENE DIFFERENZ: das Dashboard rendert modules und functions, chains noch nicht. (CR-GC-817, CR-GC-821)",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "handleLine",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-metrics-request",
@@ -4856,9 +4925,38 @@
     {
       "id": "FLOW-mutate-answer",
       "type": "FLOW",
-      "name": "graph_mutate-Antwort",
-      "description": "Die Antwort von graph_mutate: Gate-Urteil, im Probelauf mit Steuerungsdelta und Berichten zum Zug, dazu der Vorschlag an den Nutzer. Geht an die Ablaufsteuerung und an den Host-Socket, der sie an den Owner zurueckgibt. Beleg: src/surface/write.ts:388-410.",
-      "sync": "sync"
+      "name": "graph_mutate-Antwort (Agent)",
+      "description": "Die Antwort von graph_mutate an die Ablaufsteuerung: Gate-Urteil, im Probelauf mit Steuerungsdelta und Berichten zum Zug, dazu der Vorschlag an den Nutzer. Uebergabe: der MCP-Server ruft den Handler aus der Registry und gibt das Ergebnis zurueck.",
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/mcp-server.ts",
+        "symbol": "bindRegistryToMcpServer",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FLOW-mutate-answer-host-socket",
+      "type": "FLOW",
+      "name": "graph_mutate-Antwort (host-socket)",
+      "description": "Die Antwort von graph_mutate an den Host-Socket, der sie ueber host.sock an die angedockte Sitzung zurueckgibt. Uebergabe: handleLine ruft den Handler aus der Registry. (CR-GC-843)",
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "handleLine",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FLOW-mutate-answer-import-code-verb",
+      "type": "FLOW",
+      "name": "graph_mutate-Antwort (import-code)",
+      "description": "Die Antwort von graph_mutate an den Code-Import: das Gate-Urteil des Reseed-Batches. Uebergabe: executeImportCode ruft registry graph_mutate handler. (CR-GC-843)",
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/import-code-verb.ts",
+        "symbol": "executeImportCode",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-mutate-cmd-decode",
@@ -4880,7 +4978,12 @@
       "type": "FLOW",
       "name": "Mutate-Command (host-socket)",
       "description": "Der Schreibaufruf eines zweiten Prozesses, vom Socket an das Werkzeug des Besitzers weitergereicht. Beleg: src/surface/host-shim.ts, startHostSocket ruft tool.handler mit der geparsten Eingabe. (CR-GC-768)",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "handleLine",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-mutate-cmd-import-code-verb",
@@ -4888,7 +4991,12 @@
       "name": "Mutate-Command (import-code-verb)",
       "description": "Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-code-verb → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).",
       "status": "reviewed",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/import-code-verb.ts",
+        "symbol": "executeImportCode",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-mutate-cmd-merge-nodes",
@@ -4953,7 +5061,12 @@
       "type": "FLOW",
       "name": "Werkzeugantwort (Host an Stellvertreter)",
       "description": "Die Antwort des Hosts an die angedockte Sitzung, ueber host.sock. Beleg: src/surface/host-shim.ts.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "dispatch",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-proxy-answer-agent",
@@ -4967,7 +5080,12 @@
       "type": "FLOW",
       "name": "Werkzeugaufruf (Stellvertreter an Host)",
       "description": "Ein Werkzeugaufruf einer angedockten Sitzung an den Host, ueber host.sock (callHost). Traegt jeden Werkzeugaufruf, nicht nur graph_mutate. Beleg: src/surface/host-shim.ts.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "dispatch",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-query-export",
@@ -5004,7 +5122,12 @@
       "type": "FLOW",
       "name": "Readiness-Report",
       "description": "Der Bericht von graph_readiness an jeden, der ihn ueber das Werkzeug abfragt: die Ablaufsteuerung und das Dashboard ueber host.sock (detail:true, mit den rohen Verstoessen). Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten. (CR-GC-822)",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "handleLine",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-readiness-request",
@@ -5193,7 +5316,12 @@
       "type": "FLOW",
       "name": "Host-Socket schliessen",
       "description": "Der Auftrag beim Sitzungsende, den Host-Socket zu schliessen und die Socket-Datei zu entfernen. Beleg: src/surface/mcp-server.ts.",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/mcp-server.ts",
+        "symbol": "serveStdio",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-socket-start",
@@ -5869,12 +5997,24 @@
     {
       "id": "FUNC-export-marker",
       "type": "FUNC",
-      "name": "setExportPending",
-      "description": "Fuehrt den Drift-Marker EXPORT_PENDING: das Gate setzt ihn nach jeder angenommenen Mutation, graph_export loescht ihn nach dem Schreiben. Der pre-commit-Hook liest die Datei. Beleg: src/kernel/export-marker.ts.",
+      "name": "Drift-Marker setzen",
+      "description": "Setzt den Drift-Marker EXPORT_PENDING: das Gate ruft es nach jeder angenommenen Mutation. Der pre-commit-Hook liest die Datei. Geloescht wird der Marker von FUNC-export-marker-clear. Beleg: src/kernel/export-marker.ts.",
       "status": "done",
       "realRef": {
         "file": "src/kernel/export-marker.ts",
         "symbol": "setExportPending",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-export-marker-clear",
+      "type": "FUNC",
+      "name": "Drift-Marker loeschen",
+      "description": "Loescht den Drift-Marker EXPORT_PENDING: graph_export nach dem Schreiben des Snapshots, applyReseed nach dem Wiedereinlesen. Beleg: src/kernel/export-marker.ts, Aufrufer src/projections/export.ts und src/kernel/harness-import.ts. (CR-GC-843)",
+      "status": "done",
+      "realRef": {
+        "file": "src/kernel/export-marker.ts",
+        "symbol": "clearExportPending",
         "lang": "ts"
       }
     },
@@ -18892,6 +19032,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-843",
+      "target": "FUNC-export-marker",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-843",
+      "target": "FUNC-export-marker-clear",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -20166,6 +20316,11 @@
     },
     {
       "source": "FCHAIN-snapshot-freshness",
+      "target": "FUNC-export-marker-clear",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-snapshot-freshness",
       "target": "FUNC-graph-export-snapshot",
       "type": "compose"
     },
@@ -21317,6 +21472,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-export-cleared",
+      "target": "ACTOR-auftraggeber",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-cleared",
+      "target": "SCHEMA-export-pending",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-export-flush",
       "target": "FUNC-auto-export",
       "type": "io"
@@ -21996,11 +22161,21 @@
     },
     {
       "source": "FLOW-marker-clear",
-      "target": "FUNC-export-marker",
+      "target": "FUNC-export-marker-clear",
       "type": "io"
     },
     {
       "source": "FLOW-marker-clear",
+      "target": "SCHEMA-export-pending",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-marker-clear-reseed",
+      "target": "FUNC-export-marker-clear",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-marker-clear-reseed",
       "target": "SCHEMA-export-pending",
       "type": "relation"
     },
@@ -22116,16 +22291,26 @@
     },
     {
       "source": "FLOW-mutate-answer",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-answer-host-socket",
       "target": "FUNC-host-socket",
       "type": "io"
     },
     {
-      "source": "FLOW-mutate-answer",
+      "source": "FLOW-mutate-answer-host-socket",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-mutate-answer-import-code-verb",
       "target": "FUNC-import-code-verb",
       "type": "io"
     },
     {
-      "source": "FLOW-mutate-answer",
+      "source": "FLOW-mutate-answer-import-code-verb",
       "target": "SCHEMA-mutate-result",
       "type": "relation"
     },
@@ -23282,6 +23467,11 @@
     },
     {
       "source": "FUNC-apply-reseed",
+      "target": "FLOW-marker-clear-reseed",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-apply-reseed",
       "target": "FLOW-reseeded-graph",
       "type": "io"
     },
@@ -23977,6 +24167,11 @@
     },
     {
       "source": "FUNC-block-speicherwerk",
+      "target": "FUNC-export-marker-clear",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-speicherwerk",
       "target": "FUNC-graph-export-snapshot",
       "type": "compose"
     },
@@ -24389,6 +24584,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-export-marker-clear",
+      "target": "MOD-kernel",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-export-marker-clear",
+      "target": "FLOW-export-cleared",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-export-marker-clear",
+      "target": "REQ-export-marker-tracks-drift",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-fit-advisory",
       "target": "MOD-kernel-measure",
       "type": "allocate"
@@ -24702,6 +24912,16 @@
     {
       "source": "FUNC-graph-mutate-tool",
       "target": "FLOW-mutate-answer",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-mutate-tool",
+      "target": "FLOW-mutate-answer-host-socket",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-graph-mutate-tool",
+      "target": "FLOW-mutate-answer-import-code-verb",
       "type": "io"
     },
     {
@@ -29647,5 +29867,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 855
+  "graphVersion": 857
 }

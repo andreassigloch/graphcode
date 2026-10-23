@@ -55,6 +55,9 @@ const GRAPH = {
     flow('FLOW-direkt', 'sync'), flow('FLOW-ueber', 'sync'), flow('FLOW-antwort', 'sync'),
     flow('FLOW-interface', 'sync'), flow('FLOW-destrukturiert', 'sync'), flow('FLOW-keiner', 'sync'),
     flow('FLOW-ungebunden', 'sync'), flow('FLOW-datei', 'async'),
+    { ...flow('FLOW-belegt', 'sync'), realRef: { file: 'src/a.ts', symbol: 'kontext' } },
+    { ...flow('FLOW-beleg-kaputt', 'sync'), realRef: { file: 'src/a.ts', symbol: 'gibtEsNicht' } },
+    { ...flow('FLOW-gebunden-mit-aufruf', 'sync'), realRef: { file: 'src/a.ts', symbol: 'gibtEsNicht' } },
   ],
   traces: [
     ...io('FUNC-anfrage', 'FLOW-direkt', 'FUNC-mitte'),
@@ -66,6 +69,10 @@ const GRAPH = {
     ...io('FUNC-anfrage', 'FLOW-keiner', 'FUNC-allein'),
     ...io('FUNC-anfrage', 'FLOW-ungebunden', 'FUNC-extern'),
     ...io('FUNC-anfrage', 'FLOW-datei', 'FUNC-allein'),
+    ...io('FUNC-anfrage', 'FLOW-belegt', 'FUNC-allein'),
+    ...io('FUNC-anfrage', 'FLOW-beleg-kaputt', 'FUNC-allein'),
+    // Der Code zeigt einen Weg: die (hier kaputte) Bindung am Fluss wird gar nicht gelesen.
+    ...io('FUNC-anfrage', 'FLOW-gebunden-mit-aufruf', 'FUNC-mitte'),
   ],
 };
 
@@ -115,9 +122,18 @@ describe('fluss-aufruf: Fluss gegen Aufruf (CR-GC-843)', () => {
     expect(zeile('FLOW-ungebunden')).toMatchObject({ ergebnis: 'ungeprueft', grund: 'FUNC-extern: ohne Bindung' });
   });
 
+  it('ohne Aufruf belegt die Bindung am Fluss die Übergabe, solange ihr Symbol existiert', () => {
+    expect(zeile('FLOW-belegt')).toMatchObject({ ergebnis: 'belegt', beleg: 'src/a.ts#kontext' });
+    expect(zeile('FLOW-beleg-kaputt')).toMatchObject({ ergebnis: 'beleg-kaputt', grund: 'Symbol nicht gefunden' });
+  });
+
+  it('zeigt der Code einen Weg, zählt der Weg, nicht die Bindung', () => {
+    expect(zeile('FLOW-gebunden-mit-aufruf')).toMatchObject({ ergebnis: 'aufruf', weg: ['anfrage', 'mitte'] });
+  });
+
   it('ein asynchroner Fluss wird nicht geprüft, nur gezählt', () => {
     expect(r.zeilen.some((z) => z.flow === 'FLOW-datei')).toBe(false);
-    expect(r.summe).toEqual({ paare: 7, aufruf: 3, ueber: 2, keinAufruf: 1, ungeprueft: 1, asynchron: 1 });
+    expect(r.summe).toEqual({ paare: 10, aufruf: 4, ueber: 2, belegt: 1, belegKaputt: 1, keinAufruf: 1, ungeprueft: 1, asynchron: 1 });
   });
 
   it('gleicher Stand, gleiche Ausgabe', () => {
