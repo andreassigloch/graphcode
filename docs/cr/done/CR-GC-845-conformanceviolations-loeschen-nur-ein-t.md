@@ -1,6 +1,6 @@
 # CR-GC-845: conformanceViolations löschen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-23)
 **Typ:** aus Item ITEM-2026-1036 (finding)
 **Erstellt:** 2026-10-23
 **Item:** bok/items/ITEM-2026-1036.json (Lane: code)
