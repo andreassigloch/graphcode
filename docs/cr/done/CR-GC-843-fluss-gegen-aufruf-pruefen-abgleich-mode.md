@@ -1,6 +1,6 @@
 # CR-GC-843: Fluss gegen Aufruf pruefen: Abgleich Modell und Code
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-23)
 **Typ:** aus Item ITEM-2026-1026 (finding)
 **Erstellt:** 2026-10-22
 **Item:** bok/items/ITEM-2026-1026.json (Lane: code)
