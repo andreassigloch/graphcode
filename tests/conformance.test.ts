@@ -15,7 +15,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { GraphCodeHarness } from '../src/kernel/harness.js';
 import { openMeasured, type Measured } from '../src/surface/measured.js';
-import { extractCodeFacts, extractImportEdges, conformanceViolations, toOntologyGraph } from '../src/kernel/conformance.js';
+import { extractCodeFacts, extractImportEdges, conformanceEvaluation, toOntologyGraph } from '../src/kernel/conformance.js';
 import { evaluateAll, readinessOf } from '../src/kernel/evaluation.js';
 import { elementToNode } from '../src/kernel/element-node.js';
 import { ALL_RULE_DEFS, evaluateAllRules, DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
@@ -66,7 +66,7 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
     // REGEL, nicht nach Schwere (CR-GC-640): seit CR-SM-353 sind alle RC-Regeln `warning`, und
     // der fruehere Filter `severity === 'error'` war damit leer — er haette jede kaputte Bindung
     // durchgewinkt. RC-04/05 sind Indikatoren und werden separat geprueft (CR-211/212).
-    const v = conformanceViolations(harness);
+    const v = conformanceEvaluation(harness).violations;
     expect(v.filter((x) => ['RC-01', 'RC-02', 'RC-03'].includes(x.ruleId))).toEqual([]);
     // CR-GC-640 / CR-SM-358: RC-08 war 5 (AuditStats, GraphDelta, OntologyJson, RejectedTrace,
     // SteeringSnapshot an TS-Typen gebunden). CR-GC-644 hat sie zu Zod-Schemas gemacht — jeder
@@ -120,14 +120,14 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
       ),
       edges: g.edges,
     };
-    const violations = conformanceViolations({ getGraph: () => broken, getRepoRoot: () => REPO_ROOT });
+    const violations = conformanceEvaluation({ getGraph: () => broken, getRepoRoot: () => REPO_ROOT }).violations;
     expect(
       violations.some((v) => v.ruleId === 'RC-06' && v.elementId === target.uid && /@sigloch\/se-optimizer/.test(v.message)),
     ).toBe(true);
   });
 
   it('das committete Selbstmodell ist RC-06-sauber — jede externe Bindung nennt ein Paket, das es gibt', () => {
-    const rc06 = conformanceViolations(harness).filter((v) => v.ruleId === 'RC-06');
+    const rc06 = conformanceEvaluation(harness).violations.filter((v) => v.ruleId === 'RC-06');
     // Die Null ist der REPARIERTE Zustand: vor CR-SM-262 trug `SCHEMA-metric-vector` eine
     // Bindung an `packages/se-optimizer/`, ein Paket, das CR-SM-248 aufgeloest hat.
     expect(rc06.map((v) => `${v.elementId}: ${v.message}`)).toEqual([]);
@@ -152,7 +152,7 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
       ),
       edges: g.edges,
     };
-    const violations = conformanceViolations({ getGraph: () => broken, getRepoRoot: () => REPO_ROOT });
+    const violations = conformanceEvaluation({ getGraph: () => broken, getRepoRoot: () => REPO_ROOT }).violations;
     expect(
       violations.some((v) => v.ruleId === 'RC-01' && v.elementId === 'FUNC-mutate' && /not declared/.test(v.message)),
     ).toBe(true);
@@ -211,7 +211,7 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
       ],
       edges: [],
     };
-    expect(conformanceViolations({ getGraph: () => graph, getRepoRoot: () => dir })).toEqual([]);
+    expect(conformanceEvaluation({ getGraph: () => graph, getRepoRoot: () => dir }).violations).toEqual([]);
     // Renamed case → RC-02.
     const renamed = {
       ...graph,
@@ -219,7 +219,7 @@ describe('TEST-code-conformance: realRef/testRefs resolve as RC readiness rules 
         n.uid === 'TEST-u' ? { ...n, attributes: { testRefs: [{ file: 'src/util.test.mjs', case: 'renamed', tool: 'vitest' }] } } : n,
       ),
     };
-    const v = conformanceViolations({ getGraph: () => renamed, getRepoRoot: () => dir });
+    const v = conformanceEvaluation({ getGraph: () => renamed, getRepoRoot: () => dir }).violations;
     expect(v).toHaveLength(1);
     expect(v[0].ruleId).toBe('RC-02');
   });
@@ -262,11 +262,11 @@ describe('TEST-schema-conformance: realRef resolves + is parsed at its interface
   });
 
   it('bound schema, imported+parsed at the interface → RC-clean', () => {
-    expect(conformanceViolations({ getGraph: () => wiredGraph('EventSchema'), getRepoRoot: () => dir })).toEqual([]);
+    expect(conformanceEvaluation({ getGraph: () => wiredGraph('EventSchema'), getRepoRoot: () => dir }).violations).toEqual([]);
   });
 
   it('realRef symbol not a declared export → RC-03 error', () => {
-    const v = conformanceViolations({ getGraph: () => wiredGraph('GoneSchema'), getRepoRoot: () => dir });
+    const v = conformanceEvaluation({ getGraph: () => wiredGraph('GoneSchema'), getRepoRoot: () => dir }).violations;
     expect(v.some((x) => x.ruleId === 'RC-03' && x.elementId === 'SCHEMA-a')).toBe(true);
   });
 
@@ -276,7 +276,7 @@ describe('TEST-schema-conformance: realRef resolves + is parsed at its interface
       join(dir, 'src', 'handler.ts'),
       "import { EventSchema } from './schema.js';\nexport function handle(raw: unknown) { void EventSchema; return raw; }\n",
     );
-    const v = conformanceViolations({ getGraph: () => wiredGraph('EventSchema'), getRepoRoot: () => dir });
+    const v = conformanceEvaluation({ getGraph: () => wiredGraph('EventSchema'), getRepoRoot: () => dir }).violations;
     expect(v.some((x) => x.ruleId === 'RC-04' && x.elementId === 'SCHEMA-a' && x.severity === 'warning')).toBe(true);
     expect(v.some((x) => x.ruleId === 'RC-03')).toBe(false); // resolution still fine
   });
@@ -340,7 +340,7 @@ describe('TEST-contract-door: zodSymbols, fileScope, RC-08 und RC-09 end-to-end 
   });
 
   it('RC-09: bootstrap.ts parst den Vertrag, das Modell kennt es nicht als Uebersetzer', () => {
-    const v = conformanceViolations({ getGraph: () => graph('EventSchema'), getRepoRoot: () => dir });
+    const v = conformanceEvaluation({ getGraph: () => graph('EventSchema'), getRepoRoot: () => dir }).violations;
     const rc09 = v.filter((x) => x.ruleId === 'RC-09');
     expect(rc09).toHaveLength(1);
     expect(rc09[0].elementId).toBe('SCHEMA-a');
@@ -349,7 +349,7 @@ describe('TEST-contract-door: zodSymbols, fileScope, RC-08 und RC-09 end-to-end 
   });
 
   it('RC-08: ein an den Typ gebundenes SCHEMA meldet sich, und nur mit RC-08', () => {
-    const v = conformanceViolations({ getGraph: () => graph('Event'), getRepoRoot: () => dir });
+    const v = conformanceEvaluation({ getGraph: () => graph('Event'), getRepoRoot: () => dir }).violations;
     expect(v.filter((x) => x.ruleId === 'RC-08').map((x) => x.elementId)).toEqual(['SCHEMA-a']);
     expect(v.some((x) => x.ruleId === 'RC-04' || x.ruleId === 'RC-09')).toBe(false);
   });
@@ -408,7 +408,7 @@ describe('TEST-import-drift: extractImportEdges + RC-05 (CR-212)', () => {
   });
 
   it('undocumented cross-MOD import → RC-05 warning with evidence', () => {
-    const v = conformanceViolations({ getGraph: () => driftGraph(false), getRepoRoot: () => dir });
+    const v = conformanceEvaluation({ getGraph: () => driftGraph(false), getRepoRoot: () => dir }).violations;
     const rc05 = v.filter((x) => x.ruleId === 'RC-05');
     expect(rc05).toHaveLength(1);
     expect(rc05[0].elementId).toBe('MOD-A');
@@ -416,7 +416,7 @@ describe('TEST-import-drift: extractImportEdges + RC-05 (CR-212)', () => {
   });
 
   it('same import once the graph documents the MOD adjacency (io FLOW) → no RC-05', () => {
-    const v = conformanceViolations({ getGraph: () => driftGraph(true), getRepoRoot: () => dir });
+    const v = conformanceEvaluation({ getGraph: () => driftGraph(true), getRepoRoot: () => dir }).violations;
     expect(v.some((x) => x.ruleId === 'RC-05')).toBe(false);
   });
 });
@@ -476,7 +476,7 @@ describe('TEST-import-drift-monorepo: workspace packages are scanned and resolve
   });
 
   it('the undocumented cross-package import surfaces as RC-05 (was blind: 0 endpoints)', () => {
-    const v = conformanceViolations({ getGraph: monoGraph, getRepoRoot: () => dir });
+    const v = conformanceEvaluation({ getGraph: monoGraph, getRepoRoot: () => dir }).violations;
     const rc05 = v.filter((x) => x.ruleId === 'RC-05');
     expect(rc05).toHaveLength(1);
     expect(rc05[0].elementId).toBe('MOD-app');

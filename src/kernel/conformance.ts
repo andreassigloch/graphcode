@@ -11,8 +11,8 @@
  *     against `repoRoot` via the TypeScript compiler's own parser (declared
  *     symbols + it/test/describe case names). Deterministic, filesystem-reads
  *     only. Multi-language swap point for CR-GC-254 (ast-grep).
- *   - `conformanceViolations` : run the contracts RC rules over the facts and
- *     map them onto the harness RuleViolation shape.
+ *   - `conformanceEvaluation` : run the contracts RC rules over the facts, map
+ *     them onto the harness RuleViolation shape and measure the import coverage.
  *
  * Die ZUSAMMENFÜHRUNG beider Quellen (Graph-Regeln + RC) ist seit CR-GC-398 nicht
  * mehr hier, sondern in `evaluation.ts` — eine Auswertungsfläche, drei Projektionen.
@@ -426,7 +426,6 @@ export interface ConformanceEvaluation {
 
 /**
  * DIE Konformanz-Erhebung: Regeln + Abdeckung aus EINEM (graph, facts)-Paar.
- * `conformanceViolations` ist eine Projektion hiervon, nie ein zweiter Pfad.
  */
 export function conformanceEvaluation(
   harness: Pick<ConformanceHarness, 'getGraph' | 'getRepoRoot'>,
@@ -446,13 +445,8 @@ export function conformanceEvaluation(
   };
 }
 
-/** RC violations of the live graph, in the harness RuleViolation shape. */
-export function conformanceViolations(harness: Pick<ConformanceHarness, 'getGraph' | 'getRepoRoot'>): RuleViolation[] {
-  return conformanceEvaluation(harness).violations;
-}
-
 // Die Zusammenfuehrung beider Quellen lebt in `evaluation.ts` (CR-GC-398), seit CR-GC-489 als
 // `readinessOf(evaluateAll(h))` ohne benannten Wrapper:
 // die Zusammenführung beider Quellen ist ab jetzt EINE Fläche, und die lebt dort.
-// Dieses Modul liefert nur noch die Konformanz-QUELLE (`conformanceViolations`),
+// Dieses Modul liefert nur noch die Konformanz-QUELLE (`conformanceEvaluation`),
 // nie eine zweite Gesamtauswertung.
