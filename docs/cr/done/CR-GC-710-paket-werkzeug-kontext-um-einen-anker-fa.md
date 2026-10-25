@@ -1,6 +1,6 @@
 # CR-GC-710: Paket-Werkzeug: Kontext um einen Anker (Faltung + nummerierter Auftragsausschnitt), Vorschlagsrahmen aus TRACE_PATTERNS, Abnahmestand je Anker
 
-**Status:** ⏸ Geparkt (2026-10-04, Entscheid Autor) — Abnehmer war der Executor, der seit dem Leitlinien-Entscheid 2026-10-03 eingefroren ist. Wieder aufnehmen nur, wenn die Vorschlagsfolge im interaktiven Rig (CR-GC-715) dieselben Muster zeigt (Ebenensprünge, halbe UCs, Module unter Inhalts-Fokus); dann 711 für den Vorschlag neu schneiden.
+**Status:** ⛔ Verworfen (2026-10-25)
 **Typ:** aus Item ITEM-2026-640 (idea)
 **Erstellt:** 2026-09-28
 **Item:** bok/items/ITEM-2026-640.json (Lane: code)
@@ -35,3 +35,7 @@ dahin kein paralleler Pfad im Treiber (das Werkzeug wird erst in 711 verdrahtet)
 
 - Unit-Tests je Rezeptteil gegen echte Graphen (sigllm-Golden, graphcode selbst).
 - Kontextgröße je Paket gemessen (Token) — Leitlinie T-E12, Stufe „ein Anker, eine Ebene".
+
+## Verworfen (2026-10-25)
+
+Einziger Abnehmer war der Executor; CR-GC-775 hat ihn gelöscht, ebenso `faltung.ts` und `fund-kontext.ts`. Die Bedingung zum Wiederaufnehmen hing am Rig aus CR-GC-715, dort ist nichts nachgetragen. Entschieden vom Autor in der Durchsicht der offenen CRs.

@@ -1,6 +1,6 @@
 # CR-GC-712: T-UC als Paket: Block-Zug je UC (REQ/TEST/FCHAIN/FUNC/FLOW), SCHEMA als markierter Stub statt Schablonentext; top-level in T-SYS/T-UC schneiden
 
-**Status:** ⏸ Geparkt (2026-10-04, Entscheid Autor) — Abnehmer war der Executor, der seit dem Leitlinien-Entscheid 2026-10-03 eingefroren ist. Wieder aufnehmen nur, wenn die Vorschlagsfolge im interaktiven Rig (CR-GC-715) dieselben Muster zeigt (Ebenensprünge, halbe UCs, Module unter Inhalts-Fokus); dann 711 für den Vorschlag neu schneiden.
+**Status:** ⛔ Verworfen (2026-10-25)
 **Typ:** aus Item ITEM-2026-642 (idea)
 **Erstellt:** 2026-09-28
 **Item:** bok/items/ITEM-2026-642.json (Lane: code)
@@ -28,3 +28,7 @@ Hängt an CR-GC-710/711.
 
 - Abnahme je T-UC-Paket nach k ≤ 2 Reparaturen; Schablone in `verhalten.dubletten` = 0.
 - S2-Runde, Zeile in `verlauf.md`: Anteil Block-Vervollständigungsrunden, Dubletten, Ketten mit 1 FUNC (T-V5).
+
+## Verworfen (2026-10-25)
+
+Hängt an CR-GC-710 und CR-GC-711 und war auf den Executor geparkt, den CR-GC-775 gelöscht hat. Entschieden vom Autor in der Durchsicht der offenen CRs.

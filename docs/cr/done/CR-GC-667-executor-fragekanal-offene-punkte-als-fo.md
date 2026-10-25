@@ -1,6 +1,6 @@
 # CR-GC-667: Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen
 
-**Status:** 🟠 Open
+**Status:** ⛔ Verworfen (2026-10-25)
 **Typ:** aus Item ITEM-2026-577 (idea)
 **Erstellt:** 2026-09-25
 **Item:** bok/items/ITEM-2026-577.json (Lane: code)
@@ -108,3 +108,7 @@ Offen: Kriterium 4 an einem Build mit diesem Fix nachmessen (Fragen > 0, erfunde
 Kriterium 4 **nicht erfüllt**: Das Modell übernimmt die Annahme (offener Wert), lässt die Fragezeile
 aber weg. Laut Kriterium ein Befund für den Prompt: ITEM-2026-620. Der Kanal selbst ist verdrahtet
 und getestet. Offen bleiben Kriterium 3 (manueller Test des Auftraggebers in test_local) und 4.
+
+## Verworfen (2026-10-25)
+
+CR-GC-775 (Commit 7a3d2063) hat `src/loop/executor*.ts` und `run-verb.ts` gelöscht, also die Dateien des ganzen Umfangs. Entschieden vom Autor in der Durchsicht der offenen CRs.

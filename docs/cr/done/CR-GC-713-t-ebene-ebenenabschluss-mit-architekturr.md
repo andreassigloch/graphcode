@@ -1,6 +1,6 @@
 # CR-GC-713: T-EBENE: Ebenenabschluss mit Architekturreview (Breite, Geschwister-Dubletten, Rand, Modul je Kind) und ebenenbeschraenkter Fokus
 
-**Status:** ⏸ Geparkt (2026-10-04, Entscheid Autor) — Abnehmer war der Executor, der seit dem Leitlinien-Entscheid 2026-10-03 eingefroren ist. Wieder aufnehmen nur, wenn die Vorschlagsfolge im interaktiven Rig (CR-GC-715) dieselben Muster zeigt (Ebenensprünge, halbe UCs, Module unter Inhalts-Fokus); dann 711 für den Vorschlag neu schneiden.
+**Status:** ⛔ Verworfen (2026-10-25)
 **Typ:** aus Item ITEM-2026-643 (idea)
 **Erstellt:** 2026-09-28
 **Item:** bok/items/ITEM-2026-643.json (Lane: code)
@@ -27,3 +27,7 @@ Hängt an CR-GC-711/712. Randbedingungen als Attribute am MOD sind Contracts-Sac
 
 - S2-Runde, Zeile in `verlauf.md`: MOD nur unter T-EBENE entstanden; Dubletten unter Geschwistern 0;
   Gate-Durchgang der Modulzüge gegen 36 % (Pareto, `zuege.mjs`).
+
+## Verworfen (2026-10-25)
+
+Hängt an CR-GC-711 und CR-GC-712 und war auf den Executor geparkt, den CR-GC-775 gelöscht hat. Entschieden vom Autor in der Durchsicht der offenen CRs.

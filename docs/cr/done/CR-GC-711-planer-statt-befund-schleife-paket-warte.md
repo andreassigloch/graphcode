@@ -1,6 +1,6 @@
 # CR-GC-711: Planer statt Befund-Schleife: Paket-Warteschlange je Ebene, k=2 Reparaturrunden, Fremdbefunde an den Besitzer; T-SYS mit Auftragszuordnung
 
-**Status:** ⏸ Geparkt (2026-10-04, Entscheid Autor) — Abnehmer war der Executor, der seit dem Leitlinien-Entscheid 2026-10-03 eingefroren ist. Wieder aufnehmen nur, wenn die Vorschlagsfolge im interaktiven Rig (CR-GC-715) dieselben Muster zeigt (Ebenensprünge, halbe UCs, Module unter Inhalts-Fokus); dann 711 für den Vorschlag neu schneiden.
+**Status:** ⛔ Verworfen (2026-10-25)
 **Typ:** aus Item ITEM-2026-641 (idea)
 **Erstellt:** 2026-09-28
 **Item:** bok/items/ITEM-2026-641.json (Lane: code)
@@ -40,3 +40,7 @@ Fokuspfad wird entfernt, nicht daneben gelassen. Mehr als 10 Dateien → vor Beg
 
 - S2-Runde (3 × qwen3-coder), Zeile in `docs/messung/verlauf.md`; Blindurteil (T-E10) gegen
   `auftragspunkte.json`. Ein Planer, der das Blindurteil nicht hebt, ist widerlegt.
+
+## Verworfen (2026-10-25)
+
+Hängt an CR-GC-710 und wollte die Schleife in `executor.ts` umbauen, die CR-GC-775 gelöscht hat. Ohne neuen Befund aus dem Rig fehlt der Anlass; bei Bedarf neu schneiden. Entschieden vom Autor in der Durchsicht der offenen CRs.
