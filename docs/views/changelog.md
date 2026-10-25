@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 460 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 463 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 460 CR · 343 done · 4 open.
+Total: 463 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -522,3 +522,6 @@ Total: 460 CR · 343 done · 4 open.
 | `CR-GC-848` | n/a | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag |
 | `CR-GC-849` | n/a | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) |
 | `CR-GC-850` | n/a | contracts 12.7.0 nachziehen: Mindestversion, Testpins fuer RC-11..13 und R-35, FC-02 aus Tests und Skills |
+| `CR-GC-851` | n/a | Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle |
+| `CR-GC-852` | n/a | Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints |
+| `CR-GC-853` | n/a | Constraints Teil 3: Rueckbau Zielprofil |

@@ -3664,6 +3664,24 @@
       "description": "docs/cr/open/CR-GC-850-contracts-12-7-0-nachziehen-mindestversi.md"
     },
     {
+      "id": "CR-GC-851",
+      "type": "CR",
+      "name": "Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle",
+      "description": "docs/cr/open/CR-GC-851-constraints-teil-1-erster-constraint-am-.md"
+    },
+    {
+      "id": "CR-GC-852",
+      "type": "CR",
+      "name": "Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints",
+      "description": "docs/cr/open/CR-GC-852-constraints-teil-2-skill-se-constraints-.md"
+    },
+    {
+      "id": "CR-GC-853",
+      "type": "CR",
+      "name": "Constraints Teil 3: Rueckbau Zielprofil",
+      "description": "docs/cr/open/CR-GC-853-constraints-teil-3-rueckbau-zielprofil.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -18511,12 +18529,22 @@
     },
     {
       "source": "CR-GC-804",
+      "target": "FUNC-se-vorbereitung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-804",
       "target": "FUNC-target-profile",
       "type": "relation"
     },
     {
       "source": "CR-GC-804",
       "target": "FUNC-target-profile-load",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-804",
+      "target": "REQ-model-lane-fixed-set",
       "type": "relation"
     },
     {
@@ -19427,6 +19455,41 @@
     {
       "source": "CR-GC-850",
       "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-851",
+      "target": "FUNC-verify-lane-model",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-851",
+      "target": "REQ-model-lane-fixed-set",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-852",
+      "target": "FUNC-se-vorbereitung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-852",
+      "target": "REQ-vorbereitung-reads-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-853",
+      "target": "FUNC-target-profile",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-853",
+      "target": "FUNC-target-profile-load",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-853",
+      "target": "SCHEMA-target-profile",
       "type": "relation"
     },
     {
@@ -30763,5 +30826,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 889
+  "graphVersion": 893
 }

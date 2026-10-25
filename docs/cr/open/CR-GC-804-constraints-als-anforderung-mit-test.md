@@ -180,3 +180,19 @@ Skill `se-constraints` (ersetzt `.claude/commands/se/target-profile.md`), `se-vo
 Eingang, erster Walk am eigenen Modell mit Positivkontrolle (ein verletzender Zug wird rot), je nach Weg A ein
 Eintrag in `scripts/model-test-set.mjs` oder ein Umbau in `test-selection.ts` mit Test. Rückbau Zielprofil
 (`src/loop/target-profile*.ts`, `graph_suggest`, jedes Repo mit Profildatei): eigener CR.
+
+## Schnitt (2026-10-25)
+
+Der Umfang oben braucht mehr als 10 Dateien: Skill neu, Skill alt löschen samt sieben Verweisen in Code,
+Skills und Tests, `se-vorbereitung` §2, zwei Text-Tests, Constraint-Test, `model-test-set.mjs`. Dieser CR
+schließt als Konzept; gebaut wird in drei Teil-CRs, Reihenfolge nach Abhängigkeit:
+
+| Teil | CR | Inhalt | wartet auf |
+|---|---|---|---|
+| 1 | CR-GC-851 | erster Constraint am eigenen Modell: REQ + Snapshot-Test + Positivkontrolle, Eintrag in `model-test-set.mjs` (Weg A) | Wahl des Constraints durch den Autor |
+| 2 | CR-GC-852 | Skill `se-constraints`, `se-vorbereitung` §2 mit dem zweiten Eingang, Text-Tests | Entscheidung 6 in contracts (ITEM-2026-1057, sigloch-modules) |
+| 3 | CR-GC-853 | Rückbau Zielprofil samt Skill `se:target-profile` und seinen Verweisen (Entscheidung 4) | CR-GC-851 und CR-GC-852 |
+
+Abweichung vom Umfang oben: das Löschen von `.claude/commands/se/target-profile.md` wandert in Teil 3. Der
+Skill setzt Gewichte, die `graph_suggest` bis zum Rückbau liest; ohne ihn bliebe die Profildatei ohne Pflege.
+

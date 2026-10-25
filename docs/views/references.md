@@ -1136,8 +1136,10 @@
 | `CR-GC-803` | relation | `REQ-graph-snapshot-per-commit` |
 | `CR-GC-803` | relation | `REQ-single-measurement-path` |
 | `CR-GC-804` | relation | `FUNC-graph-suggest` |
+| `CR-GC-804` | relation | `FUNC-se-vorbereitung` |
 | `CR-GC-804` | relation | `FUNC-target-profile` |
 | `CR-GC-804` | relation | `FUNC-target-profile-load` |
+| `CR-GC-804` | relation | `REQ-model-lane-fixed-set` |
 | `CR-GC-805` | relation | `FUNC-claim-store-lock` |
 | `CR-GC-805` | relation | `FUNC-create-harness` |
 | `CR-GC-805` | relation | `FUNC-graph-export-snapshot` |
@@ -1320,6 +1322,13 @@
 | `CR-GC-850` | relation | `FUNC-generation-step` |
 | `CR-GC-850` | relation | `FUNC-mutate` |
 | `CR-GC-850` | relation | `FUNC-se-fmea` |
+| `CR-GC-851` | relation | `FUNC-verify-lane-model` |
+| `CR-GC-851` | relation | `REQ-model-lane-fixed-set` |
+| `CR-GC-852` | relation | `FUNC-se-vorbereitung` |
+| `CR-GC-852` | relation | `REQ-vorbereitung-reads-metrics` |
+| `CR-GC-853` | relation | `FUNC-target-profile` |
+| `CR-GC-853` | relation | `FUNC-target-profile-load` |
+| `CR-GC-853` | relation | `SCHEMA-target-profile` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
