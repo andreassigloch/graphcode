@@ -3,7 +3,7 @@
 // REPLACES the retired scripts/seed-graph.mjs.
 //
 // Renders the live graph back into commit-able docs:
-//   docs/views/spec.md · architecture.md · cr-list.md · references.md
+//   docs/views/<view>.md — one file per entry of MARKDOWN_VIEWS (@sigloch/graphcode-client)
 //
 // EXPORT SOURCE = the IN-MEMORY authoritative graph (the JSON that importGraph
 // loads and the gate mutates), NOT a fresh Kuzu reload. Kuzu storage is LOSSY

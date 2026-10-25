@@ -179,7 +179,6 @@ function skillNameList(): string {
  */
 export const VIEW_BLURBS: Record<MarkdownView, string> = {
   architecture: 'Which module realizes which function — the allocation, i.e. the design description.',
-  'cr-list': 'Every change request with its status and description.',
   references: 'Every trace in the model as `source -type-> target` — the raw link inventory.',
   srs: 'The requirements narrative (ISO 29148): what the system must do, and why.',
   nfr: 'The non-functional register — the quality requirements and how each is measured.',

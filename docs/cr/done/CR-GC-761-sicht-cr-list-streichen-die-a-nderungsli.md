@@ -1,6 +1,6 @@
 # CR-GC-761: Sicht cr-list streichen — die Änderungsliste (changelog) ersetzt sie
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-25)
 **Typ:** aus Item ITEM-2026-782 (idea)
 **Erstellt:** 2026-10-08
 **Item:** bok/items/ITEM-2026-782.json (Lane: code)
@@ -48,9 +48,16 @@ dieser CR.
 
 ## Umfang laut `graph_impact`
 
-Noch nicht gemessen — die Tabelle oben stammt aus einer Textsuche nach `cr-list` über `src/`, `scripts/`, `tests/`
-und `docs/` (ohne `docs/cr/done`). Vor dem Löschzug:
+`graph_impact(FUNC-export-markdown)` am 2026-10-25: keine Kante hängt an der Sicht selbst. Betroffen ist nur die Beschreibung von `FUNC-export-markdown`, die noch `spec` und `cr-list` nannte.
 
-- `graph_impact(FUNC-export-markdown)`: welche `satisfy`, `io`, `compose` hängen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- `/se-umbau` führt die Reihenfolge.
+## Ergebnis
+
+Umgesetzt am 2026-10-25 gegen die Arbeitskopie von graphcode-client mit CR-SM-403.
+
+- `renderCrList` und der Zweig `cr-list` in `exporter.ts` sind gelöscht, ebenso die Zeile in `VIEW_BLURBS`.
+- `.gitignore`: die Regel für `docs/views/cr-list.md` ist gelöscht. Keine Sicht erzeugt die Datei mehr; die lokale Kopie ist entfernt.
+- `scripts/export-graph.mjs` nennt die Sichten nicht mehr einzeln, sondern verweist auf `MARKDOWN_VIEWS`.
+- Tests: `MarkdownViewSchema` weist `cr-list` ab, und jeder CR-Knoten des Graphen steht in `changelog`. Der Export schreibt 13 Sichten.
+- Mindestversion `@sigloch/graphcode-client ^3.1.0`, die Version des Zugs mit CR-SM-403. Bis zum Publish sind `lockfile-sync` und `distribution` rot.
+- Modell: Die Beschreibung von `FUNC-export-markdown` nennt die Sichten aus `MARKDOWN_VIEWS`.
+- graph-view-edit braucht keine Änderung: sein Filter `REMOVED_DOC_VIEWS` filtert dann nichts mehr. Ihn zu löschen ist eine Aufräumarbeit in graph-view-edit, kein Teil dieses CR.

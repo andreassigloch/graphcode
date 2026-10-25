@@ -85,10 +85,11 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
     // Default = ALL views (CR-GC-220: 16), each written with a GENERATED header.
     // The four foundation views are still present (no parallel path — they were extended).
     const written = res.views.map((v) => v.view);
-    for (const v of ['architecture', 'cr-list', 'references']) expect(written).toContain(v);
+    for (const v of ['architecture', 'references']) expect(written).toContain(v);
+    expect(written).not.toContain('cr-list'); // CR-GC-761: changelog replaces it
     expect(written).toContain('srs'); // the requirements view (CR-GC-305: replaced `spec`)
     expect(written).not.toContain('spec');
-    expect(written.length).toBe(14);
+    expect(written.length).toBe(13);
     for (const v of res.views) {
       const md = readFileSync(join(repoRoot, v.path), 'utf8');
       expect(md).toContain('GENERATED');

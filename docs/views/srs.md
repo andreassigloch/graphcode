@@ -4048,7 +4048,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · satisfy ◀ `FUNC-exp
 
 > auch in: `FCHAIN-doc-export` · `FUNC-block-dokumentenwerk`
 
-Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.
+Rendert den Graphen je Sicht aus MARKDOWN_VIEWS (@sigloch/graphcode-client) deterministisch nach Markdown mit GENERATED-Header. Die CR-Knoten zeigt changelog; cr-list ist seit CR-GC-761 gestrichen.
 
 io ◀ `FLOW-query-export` · io ▶ `FLOW-markdown-text` · allocate ▶ `MOD-projections`
 
@@ -5532,7 +5532,7 @@ Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conforma
 
 > auch in: `FCHAIN-snapshot-freshness` · `FUNC-block-dokumentenwerk`
 
-Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.
+Rendert den Graphen je Sicht aus MARKDOWN_VIEWS (@sigloch/graphcode-client) deterministisch nach Markdown mit GENERATED-Header. Die CR-Knoten zeigt changelog; cr-list ist seit CR-GC-761 gestrichen.
 
 io ◀ `FLOW-query-export` · io ▶ `FLOW-markdown-text` · allocate ▶ `MOD-projections`
 
@@ -8882,7 +8882,7 @@ io ◀ — · io ▶ — · allocate ▶ —
 
 > auch in: `FCHAIN-doc-export` · `FCHAIN-snapshot-freshness`
 
-Rendert Graph (View: spec/architecture/cr-list/references) deterministisch nach Markdown mit GENERATED-Header.
+Rendert den Graphen je Sicht aus MARKDOWN_VIEWS (@sigloch/graphcode-client) deterministisch nach Markdown mit GENERATED-Header. Die CR-Knoten zeigt changelog; cr-list ist seit CR-GC-761 gestrichen.
 
 io ◀ `FLOW-query-export` · io ▶ `FLOW-markdown-text` · allocate ▶ `MOD-projections`
 

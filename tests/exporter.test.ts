@@ -152,22 +152,23 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     }
   });
 
-  it('the foundation views mirror FLOW-export-request (architecture/cr-list/references)', () => {
-    // CR-GC-305 dropped the fourth (`spec`); the rest are untouched — CR-GC-220 ADDS
+  it('the foundation views mirror FLOW-export-request (architecture/references)', () => {
+    // CR-GC-305 dropped `spec`, CR-GC-761 `cr-list`; the rest are untouched — CR-GC-220 ADDS
     // to them, no parallel path.
-    for (const v of ['architecture', 'cr-list', 'references']) {
+    for (const v of ['architecture', 'references']) {
       expect([...MARKDOWN_VIEWS]).toContain(v);
     }
-    // schema rejects unknown views.
+    // schema rejects unknown views — and the removed ones.
     expect(() => MarkdownViewSchema.parse('bogus')).toThrow();
+    expect(() => MarkdownViewSchema.parse('cr-list')).toThrow();
   });
 
-  it('exportMarkdown reflects the graph: cr-list lists CR nodes, references lists traces', () => {
-    const crList = exportMarkdown(graph, 'cr-list');
-    const crCount = graph.nodes.filter((n) => n.type === 'CR').length;
-    expect(crCount).toBeGreaterThan(0);
-    // CR-GC-113 itself must appear in the CR view.
-    expect(crList).toContain('CR-GC-113');
+  it('exportMarkdown reflects the graph: changelog lists every CR node, references lists traces', () => {
+    // CR-GC-761: `changelog` replaces `cr-list` — it must carry every CR node, not a sample.
+    const changelog = exportMarkdown(graph, 'changelog');
+    const crs = graph.nodes.filter((n) => n.type === 'CR');
+    expect(crs.length).toBeGreaterThan(0);
+    expect(crs.filter((n) => !changelog.includes(n.uid)).map((n) => n.uid)).toEqual([]);
 
     const refs = exportMarkdown(graph, 'references');
     // A known trace from the graph appears in the references view.
@@ -194,9 +195,9 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     'implplan',
   ] as const;
 
-  it('CR-GC-220: schema accepts the 11 views of that CR (14 total after CR-GC-756)', () => {
+  it('CR-GC-220: schema accepts the 11 views of that CR (13 total after CR-GC-761)', () => {
     for (const v of CR220_VIEWS) expect(() => MarkdownViewSchema.parse(v)).not.toThrow();
-    expect(MARKDOWN_VIEWS.length).toBe(14);
+    expect(MARKDOWN_VIEWS.length).toBe(13);
     // CR-GC-305: `spec` is gone and must be a HARD reject, not a silent fallback —
     // a consumer still passing it has to fail loudly, not receive some other view.
     expect([...MARKDOWN_VIEWS]).not.toContain('spec');
