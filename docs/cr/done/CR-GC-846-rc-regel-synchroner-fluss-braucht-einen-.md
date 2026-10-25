@@ -1,6 +1,6 @@
 # CR-GC-846: Aufrufkanten für RC-12 liefern
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-25)
 **Typ:** aus Item ITEM-2026-1037 (finding)
 **Erstellt:** 2026-10-23
 **Item:** bok/items/ITEM-2026-1037.json (Lane: code)
@@ -35,3 +35,38 @@ Gemessen am 2026-10-23: ein Durchlauf im Prozess etwa 1 s, auch beim zweiten Mal
 - Ein absichtlich falscher Abnehmer im Testrepo erzeugt eine RC-12-Warnung.
 - Die Dauer einer vollen Auswertung vorher und nachher steht im CR.
 - Antwortlänge: `rules_evaluate`, `rules_get_violations` und `graph_readiness` wachsen am Selbstmodell um höchstens eine Zeile (die Abdeckung als Zahlen je Grund, kein Text je Paar). Gemessen vorher und nachher, Zeichen je Antwort im CR.
+
+## Ergebnis
+
+Umgesetzt am 2026-10-25 gegen contracts 12.7.0 (Arbeitskopie, CR-SM-415). Die Mindestversion `>=12.7 <13` und die übrigen Folgen von 12.7.0 zieht CR-GC-850 vorab nach; `lockfile-sync` und `distribution` bleiben rot bis zum Publish von contracts 12.7.0.
+
+- `src/kernel/call-edges.ts` liefert `callEdges` und `callScope`. Das Symbol eines Knotens ist der Pfad der Deklaration (`GraphStore.open`, `eins.handler`), wie CR-SM-415 ihn liest.
+- Die Lücken-Ergänzungen aus CR-GC-843 sind übernommen. Ein Versand über eine Signatur mit mehr als einer Implementierung erzeugt keine Kante.
+- `callScope` sind die Dateien der `tsconfig.json`. Ohne `tsconfig.json` fehlen beide Felder, und RC-12/RC-13 schweigen.
+- `callCoverage` steht in `rules_evaluate` und `graph_readiness` neben `importCoverage`.
+- `scripts/fluss-aufruf.mjs` und `npm run abgleich:fluss` sind gelöscht. Der Test heißt jetzt `tests/call-edges.test.ts` und prüft die Kanten; dazu je ein Fall, dass RC-12 und RC-13 in graphcode ankommen.
+- se-vorbereitung Schritt 4 liest RC-12, RC-13 und `callCoverage` aus `rules_evaluate`.
+
+**Selbstmodell:** RC-12 meldet 0 Befunde bei 190 beurteilten Paaren, RC-13 meldet 0. `callCoverage`: `{"checked":190,"unbound":117,"outOfScope":10,"async":15,"syncUnknown":0,"anchored":71}`. Das Skript zählte am selben Stand 190 prüfbare Paare ohne „kein Aufruf". Die Zahl 158 in der Akzeptanz stammt vom 2026-10-23, vor den Flüssen aus CR-GC-849.
+
+**Testrepo:** Ein absichtlich falscher Abnehmer (`FLOW-falsch`) gibt RC-12, ein Aufruf ohne Fluss gibt RC-13 (`tests/call-edges.test.ts`).
+
+**Dauer einer vollen Auswertung** am Selbstmodell, je drei Aufrufe in einem Prozess:
+
+| Werkzeug | vorher | nachher |
+|---|---|---|
+| `rules_evaluate` | 435 · 341 · 317 ms | 1647 · 380 · 346 ms |
+| `rules_get_violations` | 316 · 321 · 306 ms | 344 · 340 · 350 ms |
+| `graph_readiness` | 372 · 386 · 363 ms | 407 · 396 · 409 ms |
+
+Die erste Auswertung eines Prozesses baut den LanguageService, etwa 1,2 s. Danach rechnet der Host die Kanten nur neu, wenn sich der Inhalt einer Datei der tsconfig ändert; der Abgleich des Stands kostet etwa 30 ms. Ohne dieses Merken kostete jede Auswertung etwa 1 s mehr (gemessen 1279–1339 ms).
+
+**Antwortlänge** am Selbstmodell, Zeichen je Antwort:
+
+| Werkzeug | vorher | nachher |
+|---|---|---|
+| `rules_evaluate` | 633 943 | 634 045 (+102, das Feld `callCoverage`) |
+| `rules_get_violations` | 633 938 | 633 938 |
+| `graph_readiness` | 6 626 | 6 728 (+102, das Feld `callCoverage`) |
+
+Die Vorher-Werte sind mit contracts 12.7.0 gemessen, ohne Aufrufkanten. Mit 12.6.0 waren es 650 703 / 650 698 / 6 604 Zeichen.

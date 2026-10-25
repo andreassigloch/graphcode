@@ -59,7 +59,7 @@ import {
   evaluateNDRules,
 } from '@sigloch/contracts/se';
 import { conformanceEvaluation, toOntologyGraph, type ConformanceHarness } from './conformance.js';
-import type { ImportCoverage } from '@sigloch/contracts/se';
+import type { CallCoverage, ImportCoverage } from '@sigloch/contracts/se';
 import { computeReadiness, type ReadinessReport } from './measure/readiness.js';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;
@@ -117,6 +117,12 @@ export interface Evaluation {
    * Quelle `conformance` in `skipped` steht — nie eine stille 0.
    */
   importCoverage: ImportCoverage | null;
+  /**
+   * Die Reichweite von RC-12 (CR-GC-846): die Fluss-Paare je Grund — beurteilt, ohne Bindung, außerhalb
+   * `callScope`, asynchron, ohne `sync`. „RC-12: 0 Befunde" heißt nur zusammen mit `checked` etwas.
+   * `null` genau dann, wenn auch `importCoverage` `null` ist.
+   */
+  callCoverage: CallCoverage | null;
 }
 
 /**
@@ -241,12 +247,14 @@ export function evaluateAll(harness: EvaluationHarness): Evaluation {
   // welche Regeln als ausgelassen gelten (CR-GC-489).
   const repoRoot = harness.getRepoRoot();
   let importCoverage: ImportCoverage | null = null;
+  let callCoverage: CallCoverage | null = null;
   let conformanceRan = false;
   if (repoRoot && existsSync(repoRoot)) {
     try {
       const conf = conformanceEvaluation(harness);
       for (const v of conf.violations) findings.push({ ...v, source: 'conformance' });
       importCoverage = conf.importCoverage;
+      callCoverage = conf.callCoverage;
       conformanceRan = true;
     } catch {
       // Extraktion gescheitert — `conformanceRan` bleibt false, die RC-Regeln stehen unten
@@ -294,7 +302,7 @@ export function evaluateAll(harness: EvaluationHarness): Evaluation {
   }
   const skipped: string[] = [...gap].sort().map((id) => `${SKIPPED_RULE_PREFIX}${id}`);
 
-  return { findings, skipped, notInGate, importCoverage };
+  return { findings, skipped, notInGate, importCoverage, callCoverage };
 }
 
 // CR-GC-489: `scoreReadinessWithConformance` ist hier GELOESCHT. Sie hatte genau einen

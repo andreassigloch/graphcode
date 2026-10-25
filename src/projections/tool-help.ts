@@ -49,6 +49,8 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       '`violationsByRule` nicht interpretierbar.\n' +
       '• `importCoverage` — die REICHWEITE neben dem Urteil: wie viel des Import-Graphen die ' +
       'RC-Auflösung ansehen konnte. Ohne sie sieht 0 % Bindung aus wie 0 Verstöße.\n' +
+      '• `callCoverage` — dasselbe für RC-12: wie viele Fluss-Paare gegen die Aufrufe im Code ' +
+      'beurteilt wurden (`checked`) und warum der Rest nicht.\n' +
       '• `umfang` (CR-GC-613) — was diese Sitzung angefasst hat; die SCORES bleiben global.',
   },
   graph_metrics: {
@@ -147,7 +149,8 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'blockieren aber nie eine Mutation.\n' +
       "Mit `detail:'grouped'` eine Gruppe je Regel, mit ihrer `stage` (1–12 oder `immer`) und in " +
       'Arbeitsreihenfolge: Fehler zuerst, dann die früheste Stufe, in einer Stufe die häufigste Regel.\n' +
-      '`importCoverage` nennt die Reichweite der RC-Auflösung. Ein Ergebnis ohne `skipped` zu lesen ' +
+      '`importCoverage` nennt die Reichweite der RC-Auflösung, `callCoverage` die von RC-12 ' +
+      '(Fluss-Paare je Grund). Ein Ergebnis ohne `skipped` zu lesen ' +
       'heißt, eine Zahl für vollständig zu halten, die es nicht ist.',
   },
   graph_suggest: {

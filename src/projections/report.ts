@@ -23,6 +23,7 @@ import {
   ALL_RULE_DEFS,
   type RuleStage,
   type ImportCoverage,
+  type CallCoverage,
   type SteerSpaceType,
 } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot, type SteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
@@ -174,6 +175,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
       skipped: string[];
       notInGate: string[];
       importCoverage: ImportCoverage | null;
+      callCoverage: CallCoverage | null;
     }
   > = {
     name: 'rules_evaluate',
@@ -191,6 +193,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
         skipped: ev.skipped,
         notInGate: ev.notInGate,
         importCoverage: ev.importCoverage,
+        callCoverage: ev.callCoverage,
       };
     },
   };
@@ -280,6 +283,8 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
        * RC-Auflösung überhaupt ansehen konnte. `null`, wenn die Konformanz gar nicht lief
        * (dann nennt `skipped` die RC-Regeln). Ohne sie sieht 0 % Bindung aus wie 0 Verstöße. */
       importCoverage: ImportCoverage | null;
+      /** CR-GC-846: die Reichweite von RC-12 — die Fluss-Paare je Grund, neben `importCoverage`. */
+      callCoverage: CallCoverage | null;
       /** CR-GC-398/428: was NICHT ausgewertet wurde — jede nicht ausgewertete Regel als
        * `rule:<id>`, seit CR-GC-489 einschließlich der RC-Regeln beim Namen statt hinter
        * einem Quellen-Token. Leer = vollständig. Ohne dieses Feld ist
@@ -352,6 +357,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
         // „wie fertig bin ich?". Ohne sie sieht 0 % Bindung aus wie 0 Verstoesse (gemessen:
         // FUNC-realRef 100/92/81 % in drei Repos, 0 % in moneyflow).
         importCoverage: ev.importCoverage,
+        callCoverage: ev.callCoverage,
         catalogs: ruleCatalogs(harness),
         heldBackTraces: heldBackTraces(harness.getRepoRoot(), harness.getScope().systemId, harness.getGraph()),
       };

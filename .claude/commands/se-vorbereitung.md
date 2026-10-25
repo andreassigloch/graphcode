@@ -1,6 +1,6 @@
 ---
 name: se-vorbereitung
-version: 3
+version: 4
 description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen dem tiefsten Träger zuordnen, Flüsse als synchron oder asynchron kennzeichnen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
@@ -136,24 +136,29 @@ Ja heißt synchron, nein heißt asynchron (vorab geliefert). Im Code heißt Ja: 
 
 ## 4. Flüsse am Code prüfen
 
-Die Regeln sehen, ob ein Fluss verdrahtet ist, nicht, ob der Code ihn macht. In graphcodes eigenem
-Modell nannten etwa 4 von 10 Flüssen einen Weg, den kein Code geht (CR-GC-832..838). Jede Regel
-ließ sie durch.
-
-Je Fluss der Kette zwischen zwei Funktionen:
+Die Regeln der Verdrahtung sehen, ob ein Fluss verdrahtet ist, nicht, ob der Code ihn macht. In
+graphcodes eigenem Modell nannten etwa 4 von 10 Flüssen einen Weg, den kein Code geht
+(CR-GC-832..838). RC-12 und RC-13 prüfen die Flüsse gegen die Aufrufe im Code.
 
 ```
-graph_context("<FUNC-erzeuger>")   # realRef des Erzeugers und seine Flüsse
+rules_evaluate({ detail: "grouped" })   # RC-12, RC-13 und callCoverage
 ```
 
-Lies den Code an der `realRef` des Erzeugers. Such die Stelle, an der der Inhalt zum Abnehmer geht.
+- `RC-12`: zwischen den Funktionen eines Flusses mit `sync: sync` liegt kein Weg von höchstens 3 Aufrufen, in keiner Richtung.
+- `RC-13`: zwei Funktionen mit `realRef` rufen einander, und kein Fluss steht zwischen ihnen.
+- `callCoverage` zählt die Paare je Grund. „RC-12 meldet nichts" gilt nur für die Paare in `checked`.
+
+Bei einem Befund von `RC-12` liest du den Code an der `realRef` des Erzeugers. Such die Stelle, an
+der der Inhalt zum Abnehmer geht.
 
 | Ergebnis | Erkennbar an | Zug |
 |---|---|---|
-| **belegt** | der Erzeuger ruft den Abnehmer, oder der Abnehmer ruft den Erzeuger und bekommt den Inhalt zurück | Datei und Symbol der Stelle in die Beschreibung des Flusses |
-| **falscher Abnehmer** | der Inhalt geht an eine andere Funktion, meist an das Werkzeug dazwischen | Fluss umhängen; fehlt das Werkzeug als Funktion, es anlegen |
-| **kein Aufruf** | keine Stelle im Code reicht den Inhalt weiter | Fluss löschen; ist er gewollt, wird er ein Item, nicht Modell |
-| **ohne Bindung** | eine Seite hat keine `realRef` | erst binden; bis dahin steht der Fluss ungeprüft im Bericht |
+| **belegt** | kein `RC-12` am Fluss, das Paar zählt in `checked` | keiner |
+| **falscher Abnehmer** | `RC-12`; der Inhalt geht an eine andere Funktion, meist an das Werkzeug dazwischen | Fluss umhängen; fehlt das Werkzeug als Funktion, es anlegen |
+| **Übergabe ohne Aufruf** | `RC-12`; ein Rückruf, eine Registry oder ein Socket reicht den Inhalt weiter | die Stelle als `realRef` an den Fluss: `~ FLOW-x @realRef {"file":…,"symbol":…}` |
+| **kein Aufruf** | `RC-12`; keine Stelle im Code reicht den Inhalt weiter | Fluss löschen; ist er gewollt, wird er ein Item, nicht Modell |
+| **Fluss fehlt** | `RC-13` am Aufrufer | Fluss anlegen, mit SCHEMA und `sync` |
+| **ungeprüft** | das Paar zählt in `unbound` oder `outOfScope` | erst binden; liegt die Datei außerhalb der tsconfig (Skill, Skript, Nachbarpaket), den Code an der `realRef` lesen |
 
 Drei Muster fanden sich am häufigsten:
 
@@ -173,7 +178,7 @@ Je Kette, alles zitiert und nichts gezählt, was `graph_metrics` nicht liefert:
 | Träger je Risiko | `carriers` je `riskId` |
 | Sockel | die `satisfiers`, deren `by` das System ist |
 | Antwortweg | `answerPath`, sonst die Flüsse aus `answerPathBlockedBy`, je mit ihrem Grund |
-| Flüsse am Code | je Fluss eines der vier Ergebnisse aus Schritt 4, mit Datei und Symbol |
+| Flüsse am Code | `callCoverage`, dazu je Befund von `RC-12` und `RC-13` das Ergebnis aus Schritt 4, mit Datei und Symbol |
 | Vorschläge | je Zug: Klasse, Elemente, Format-E, gewählt oder offen |
 | offen | was bleibt, mit Grund; je „Funktion fehlt" das Item |
 

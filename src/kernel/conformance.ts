@@ -12,7 +12,10 @@
  *     symbols + it/test/describe case names). Deterministic, filesystem-reads
  *     only. Multi-language swap point for CR-GC-254 (ast-grep).
  *   - `conformanceEvaluation` : run the contracts RC rules over the facts, map
- *     them onto the harness RuleViolation shape and measure the import coverage.
+ *     them onto the harness RuleViolation shape and measure the import and call
+ *     coverage.
+ *
+ * The call edges for RC-12/RC-13 come from `call-edges.ts` (CR-GC-846).
  *
  * Die ZUSAMMENFÜHRUNG beider Quellen (Graph-Regeln + RC) ist seit CR-GC-398 nicht
  * mehr hier, sondern in `evaluation.ts` — eine Auswertungsfläche, drei Projektionen.
@@ -30,12 +33,15 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import ts from 'typescript';
 import { SRC_EXTS, sourceLayout, resolveImport, type SourceLayout } from './source-roots.js';
+import { extractCallFacts } from './call-edges.js';
 import {
   readRealRef,
   readTestRefs,
   evaluateConformanceRules,
   importCoverage,
+  callCoverage,
   normalizeReqKinds,
+  type CallCoverage,
   type CodeFacts,
   type FileFacts,
   type ImportCoverage,
@@ -201,6 +207,7 @@ export function extractCodeFacts(graph: CGraph, repoRoot: string): CodeFacts {
     importEdges: extractImportEdges(repoRoot, layout),
     declaredDependencies: extractDeclaredDependencies(repoRoot),
     crFiles: extractCrFiles(repoRoot),
+    ...extractCallFacts(repoRoot),
   };
 }
 
@@ -422,6 +429,8 @@ export interface ConformanceEvaluation {
    * Extraktion.
    */
   importCoverage: ImportCoverage;
+  /** Wie viele Fluss-Paare RC-12 beurteilen konnte, je Grund (CR-GC-846). Aus denselben facts. */
+  callCoverage: CallCoverage;
 }
 
 /**
@@ -442,6 +451,7 @@ export function conformanceEvaluation(
       fixHint: v.fix_hint,
     })),
     importCoverage: importCoverage(onto, facts),
+    callCoverage: callCoverage(onto, facts),
   };
 }
 
