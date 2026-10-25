@@ -99,13 +99,21 @@ describe('schemaFingerprint / marker (CR-GC-249 unit)', () => {
 
 describe('SCHEMA-store-rebuild-notice (CR-GC-831 Vertrag)', () => {
   it('nennt alten und neuen Fingerabdruck und die Quelle', () => {
-    expect(formatStoreRebuildNotice({ from: '0123456789abcdef', to: 'fedcba9876543210', source: 'docs/graph/x.graph.json' }))
+    expect(formatStoreRebuildNotice({ cause: 'schema', from: '0123456789abcdef', to: 'fedcba9876543210', source: 'docs/graph/x.graph.json' }))
       .toBe('[graphcode] store: schema changed (0123456789abcdef -> fedcba9876543210) — store rebuilt from docs/graph/x.graph.json; changes not exported before are gone\n');
   });
 
+  // CR-GC-796: der zweite Grund — die Store-Datei ist nicht lesbar; die Meldung traegt den Fehler.
+  it('nennt bei einem unlesbaren Store den Fehler und die Quelle', () => {
+    expect(formatStoreRebuildNotice({ cause: 'unreadable', error: 'not a valid Kuzu database file', source: 'docs/graph/x.graph.json' }))
+      .toBe('[graphcode] store: unreadable (not a valid Kuzu database file) — store rebuilt from docs/graph/x.graph.json; changes not exported before are gone\n');
+  });
+
   it('lehnt einen formfremden Fingerabdruck und eine leere Quelle ab', () => {
-    expect(StoreRebuildNoticeSchema.safeParse({ from: 'kaputt', to: 'fedcba9876543210', source: 'a' }).success).toBe(false);
-    expect(StoreRebuildNoticeSchema.safeParse({ from: '0123456789abcdef', to: 'fedcba9876543210', source: '' }).success).toBe(false);
+    expect(StoreRebuildNoticeSchema.safeParse({ cause: 'schema', from: 'kaputt', to: 'fedcba9876543210', source: 'a' }).success).toBe(false);
+    expect(StoreRebuildNoticeSchema.safeParse({ cause: 'schema', from: '0123456789abcdef', to: 'fedcba9876543210', source: '' }).success).toBe(false);
+    expect(StoreRebuildNoticeSchema.safeParse({ cause: 'unreadable', error: '', source: 'a' }).success).toBe(false);
+    expect(StoreRebuildNoticeSchema.safeParse({ from: '0123456789abcdef', to: 'fedcba9876543210', source: 'a' }).success).toBe(false);
   });
 });
 

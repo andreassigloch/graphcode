@@ -1086,8 +1086,10 @@
 | `CR-GC-795` | relation | `REQ-risk-shared-steering-promise` |
 | `CR-GC-795` | relation | `REQ-risk-store-unreadable` |
 | `CR-GC-795` | relation | `REQ-steering-promise-one-owner` |
+| `CR-GC-796` | relation | `FUNC-open-store` |
 | `CR-GC-796` | relation | `REQ-risk-store-unreadable` |
 | `CR-GC-796` | relation | `REQ-store-recovery` |
+| `CR-GC-796` | relation | `SCHEMA-store-rebuild-notice` |
 | `CR-GC-797` | relation | `FUNC-audit-stats` |
 | `CR-GC-797` | relation | `FUNC-audit-trail` |
 | `CR-GC-797` | relation | `FUNC-cli-dispatch` |
@@ -2679,6 +2681,7 @@
 | `FUNC-open-store` | io | `FLOW-reseed-order-open` |
 | `FUNC-open-store` | io | `FLOW-store-rebuild-notice` |
 | `FUNC-open-store` | satisfy | `REQ-schema-version-migration` |
+| `FUNC-open-store` | satisfy | `REQ-store-recovery` |
 | `FUNC-own-kuzu-host` | allocate | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | io | `FLOW-harness-handle-host` |
 | `FUNC-own-kuzu-host` | io | `FLOW-harness-request-own-kuzu` |
@@ -3327,6 +3330,7 @@
 | `TEST-store-lock` | verify | `REQ-harness-factory-returns-one-owner` |
 | `TEST-store-lock` | verify | `REQ-one-gate-per-repo` |
 | `TEST-store-lock` | verify | `REQ-single-kuzu-owner` |
+| `TEST-store-lock` | verify | `REQ-store-recovery` |
 | `TEST-store-lock` | verify | `SCHEMA-lock-owner` |
 | `TEST-store-recovery` | verify | `REQ-risk-store-unreadable` |
 | `TEST-store-recovery` | verify | `REQ-store-recovery` |

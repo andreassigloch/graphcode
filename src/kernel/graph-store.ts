@@ -27,7 +27,7 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { StoreLock } from './store-lock.js';
 import { graphSnapshotRel, applyReseed, type ImportTarget } from './harness-import.js';
 import { schemaFingerprint, readStoredFingerprint, writeStoredFingerprint, resetKuzuStore } from './schema-guard.js';
-import { formatStoreRebuildNotice } from './store-rebuild-notice.js';
+import { formatStoreRebuildNotice, type StoreRebuildNotice } from './store-rebuild-notice.js';
 
 /**
  * Was ein angenommener Batch im Store aendert — ein Zod-Schema, kein Typ (CR-GC-644). Knoten und
@@ -64,7 +64,7 @@ export class GraphStore {
 
   constructor(private readonly opts: GraphStoreOptions) {}
 
-  /** Claim the store, guard its schema, load the persisted graph into memory. */
+  /** Claim the store, guard its schema, rebuild an unreadable store, load the persisted graph into memory. */
   async open(): Promise<void> {
     const { lock, storage, storePath, scope, repoRoot, descriptor } = this.opts;
     // O2: claim single ownership of this store BEFORE opening it — a second writer
@@ -95,15 +95,34 @@ export class GraphStore {
         stored !== current &&
         existsSync(storePath!) &&
         existsSync(graphJson);
-      if (staleSchema) resetKuzuStore(storePath!);
-
-      await storage.initialize();
-      await this.load();
-
+      let rebuild: StoreRebuildNotice | null = null;
       if (staleSchema) {
+        resetKuzuStore(storePath!);
+        rebuild = { cause: 'schema', from: stored!, to: current, source: snapshotRel };
+      }
+
+      // CR-GC-796: a store file that exists but does not open (damaged header, truncated
+      // write) is rebuilt from the committed SSOT the same way — REQ-store-recovery. The
+      // failed handle is closed first (no second DB handle). Without a SSOT, without a known
+      // store path, or on a store this open just recreated, the error stays an error.
+      const recoverable =
+        rebuild === null && markerDir !== null && existsSync(storePath!) && existsSync(graphJson);
+      try {
+        await storage.initialize();
+        await this.load();
+      } catch (err) {
+        if (!recoverable) throw err;
+        await storage.shutdown();
+        resetKuzuStore(storePath!);
+        await storage.initialize();
+        await this.load();
+        rebuild = { cause: 'unreadable', error: err instanceof Error ? err.message : String(err), source: snapshotRel };
+      }
+
+      if (rebuild) {
         await applyReseed(this.importTarget(), snapshotRel);
         // CR-GC-831: der Neuaufbau ist für den Nutzer sichtbar — vorher geschah er still.
-        process.stderr.write(formatStoreRebuildNotice({ from: stored!, to: current, source: snapshotRel }));
+        process.stderr.write(formatStoreRebuildNotice(rebuild));
       }
       if (markerDir && stored !== current) writeStoredFingerprint(markerDir, current);
     } catch (err) {

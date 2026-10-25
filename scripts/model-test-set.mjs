@@ -114,6 +114,9 @@ export const INCLUDED = [
   'tests/hooks.inject-graph-slice.test.ts',
   'tests/mcp.member-name.test.ts',
   'tests/schema-guard.test.ts',
+  // CR-GC-796: baut einen Store aus der committeten SSOT, beschaedigt die Datei und erwartet beim
+  // Oeffnen den Neuaufbau mit der Knotenzahl des Snapshots — liest die SSOT, also gehoert er in die Spur.
+  'tests/store-recovery.test.ts',
   // CR-GC-488: seit der Umstellung von der Momentaufnahme auf die INVARIANTE gehoert dieser
   // Spike in die Spur. Er haelt fest, dass jeder Produzent von `FLOW-graph-state` im Modell
   // auch im Code einen Schreibpfad hat — eine Modellaenderung, die einen Leser als Schreiber

@@ -495,7 +495,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-793` | n/a | Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten | `FUNC-bind-tools` · `FUNC-claim-store-lock` · `FUNC-graph-store` · `FUNC-schema-guard` |
 | `CR-GC-794` | n/a | Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger | `FUNC-graph-store` · `REQ-store-recovery` |
 | `CR-GC-795` | n/a | FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9) | `REQ-risk-shared-steering-promise` · `REQ-risk-store-unreadable` · `REQ-steering-promise-one-owner` |
-| `CR-GC-796` | n/a | Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9) | `REQ-risk-store-unreadable` · `REQ-store-recovery` |
+| `CR-GC-796` | n/a | Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9) | `FUNC-open-store` · `REQ-risk-store-unreadable` · `REQ-store-recovery` |
 | `CR-GC-797` | n/a | Vorbereitung ganzes Modell: Ketten schliessen vor der FMEA aller Ketten | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-cli-dispatch` · `FUNC-create-harness` · `FUNC-export-markdown` · `FUNC-merge-nodes` · `FUNC-serve-stdio` · `FUNC-tool-context` · `REQ-audit-trail` |
 | `CR-GC-798` | n/a | FMEA aller Wirkketten des Modells (se-fmea v9) | `REQ-interface-change-names-dependents` · `REQ-risk-interface-change-unescalated` · `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` |
 | `CR-GC-799` | n/a | Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change) | `FUNC-resolve-tests-from-code` · `FUNC-test-ingest` · `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` |

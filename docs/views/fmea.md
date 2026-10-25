@@ -4,7 +4,7 @@
 
 # graphcode — FMEA (functional risk)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk. 19 Risiken, 8 mit hoher Priorität, 8 verifiziert, 2 Gegenmaßnahmen ohne Funktion. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk. 19 Risiken, 8 mit hoher Priorität, 9 verifiziert, 2 Gegenmaßnahmen ohne Funktion. Deterministisch generiert.
 
 ## Übersicht (nach Priorität)
 
@@ -17,7 +17,7 @@
 | 5 | Risiko Glied rechnet auf altem Stand | `FCHAIN-steering-loop` | 7 | 3 | 6 | 126 | High | `FUNC-take-steering-snapshot` | ✓ |
 | 6 | Risiko Schleife pendelt | `FCHAIN-steering-loop` | 6 | 4 | 5 | 120 | High | `FUNC-generation-step` | ✗ |
 | 7 | Risiko geteilte Zusage ohne Traeger | `FCHAIN-steering-loop` | 6 | 3 | 6 | 108 | High | `FUNC-generation-step` | ✗ |
-| 8 | Risiko Store nicht lesbar | — | 9 | 3 | 3 | 81 | High | `FUNC-graph-store` | ✗ |
+| 8 | Risiko Store nicht lesbar | — | 9 | 3 | 3 | 81 | High | `FUNC-graph-store` · `FUNC-open-store` | ✓ |
 | 9 | Risiko Auswertung ohne Verantwortlichen | `FCHAIN-loop-closure` | 5 | 3 | 6 | 90 | Medium | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-tool-context` | ✓ |
 | 10 | Risiko Stufenname ohne Wertebereich | `FCHAIN-steering-loop` | 5 | 3 | 6 | 90 | Medium | `FUNC-take-steering-snapshot` | ✗ |
 | 11 | Risiko Delta fehlt in der Antwort | `FCHAIN-steering-loop` | 5 | 3 | 5 | 75 | Medium | `FUNC-compute-steering-delta` | ✗ |
@@ -172,17 +172,17 @@ Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette 
 - **Bewertung:** S 9 · O 3 · D 3 · RPN 81 · AP High
 - **Kette:** — · außerdem an `MOD-kernel`
 - **Anwendungsfall:** —
-- **Träger:** `FUNC-graph-store`
+- **Träger:** `FUNC-graph-store` · `FUNC-open-store`
 - **Befund:** FMEA CR-GC-779 Quelle F geteilte Funktion FUNC-graph-store in acht Wirkketten. Je Kette eine Fehlerwirkung und die Schwere ist die der schwersten.
 - **Analyse:** `CR-GC-779` (FMEA der Kenngroessen-Steuerungsschleife) · `CR-GC-795` (docs/cr/done/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md) · `CR-GC-796` (docs/cr/open/CR-GC-796-store-beschaedigte-datei-wird-beim-oeffn.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-store-recovery` | Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery) | `FUNC-graph-store` |
+| `REQ-store-recovery` | Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery) | `FUNC-graph-store` · `FUNC-open-store` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-store-recovery` | ungebunden | — | — |
+| `TEST-store-recovery` | tests/store-recovery.test.ts | passed | 2026-10-25 |
 
 ### 9. Risiko Auswertung ohne Verantwortlichen (`REQ-risk-audit-evaluation-unowned`)
 

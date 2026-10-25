@@ -380,11 +380,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.1.1.9  `FUNC-zug-bericht` — zugBericht(before
 
@@ -638,11 +640,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 #### 3.1.3  `FCHAIN-skill-authoring` — Skill legt Modellknoten an
 
@@ -878,11 +882,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.1.3.8  `FUNC-graph-metrics` — graph_metrics(scope?)
 
@@ -1334,11 +1340,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.2.1.2  `FUNC-graph-generate-tool` — graph_generate (Werkzeug)
 
@@ -1556,11 +1564,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.2.2.2  `FUNC-check-code-conformance` — conformanceEvaluation(harness)
 
@@ -1750,11 +1760,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.2.3.2  `FUNC-check-code-conformance` — conformanceEvaluation(harness)
 
@@ -2664,11 +2676,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.2.4.18  `FUNC-compute-steering-delta` — computeSteeringDelta(before, after)
 
@@ -2750,11 +2764,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.3.1.2  `FUNC-resolve-tests-from-code` — harness.testImpact(changeSet, depth)
 
@@ -3050,11 +3066,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.3.3.6  `FUNC-resolve-tests-from-code` — harness.testImpact(changeSet, depth)
 
@@ -3140,11 +3158,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.3.4.2  `FUNC-mutate` — mutate(commands)
 
@@ -3606,11 +3626,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 #### 3.4.2  `FCHAIN-recall` — Recall (Wiederherstellen)
 
@@ -3730,11 +3752,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.4.2.5  `FUNC-reseed` — reseed(relPath)
 
@@ -3774,7 +3798,7 @@ Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-stor
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-http-host` · `FCHAIN-model-import` · `FCHAIN-schema-migration` · `FUNC-block-speicherwerk`
 
-Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung), laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
+Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung). Scheitert das Oeffnen einer vorhandenen Store-Datei, schliesst es das Handle und baut ebenso neu auf, wenn der Snapshot existiert (CR-GC-796). Laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
 
 io ◀ `FLOW-schema-fingerprint` · `FLOW-store-load` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-rewind` · `FLOW-store-ownership` · io ▶ `FLOW-fingerprint-request` · `FLOW-lock-request` · `FLOW-reseed-order-open` · `FLOW-store-rebuild-notice` · allocate ▶ `MOD-kernel`
 
@@ -3787,6 +3811,16 @@ Weicht der Fingerabdruck der generierten DDL vom Marker am Store ab, wirft der G
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-open-store` · `FUNC-schema-guard` · allocate ▶ `MOD-kernel`
+
+###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
+
+> auch unter: `FUNC-graph-store`
+
+Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.4.2.8  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
 
@@ -4166,11 +4200,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.4.3.12  `FUNC-check-code-conformance` — conformanceEvaluation(harness)
 
@@ -4364,11 +4400,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.4.4.6  `FUNC-reseed` — reseed(relPath)
 
@@ -4460,11 +4498,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.5.1.2  `FUNC-graph-generate-tool` — graph_generate (Werkzeug)
 
@@ -4772,11 +4812,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.5.2.2  `FUNC-health-endpoint` — healthEndpoint()
 
@@ -4898,7 +4940,7 @@ Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-stor
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FUNC-block-speicherwerk`
 
-Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung), laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
+Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung). Scheitert das Oeffnen einer vorhandenen Store-Datei, schliesst es das Handle und baut ebenso neu auf, wenn der Snapshot existiert (CR-GC-796). Laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
 
 io ◀ `FLOW-schema-fingerprint` · `FLOW-store-load` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-rewind` · `FLOW-store-ownership` · io ▶ `FLOW-fingerprint-request` · `FLOW-lock-request` · `FLOW-reseed-order-open` · `FLOW-store-rebuild-notice` · allocate ▶ `MOD-kernel`
 
@@ -4911,6 +4953,16 @@ Weicht der Fingerabdruck der generierten DDL vom Marker am Store ab, wirft der G
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-open-store` · `FUNC-schema-guard` · allocate ▶ `MOD-kernel`
+
+###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
+
+> auch unter: `FUNC-graph-store`
+
+Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.5.3.4  `FUNC-schema-guard` — schemaFingerprint
 
@@ -5274,11 +5326,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ### 3.6  `UC-loop-closure` — Schwellen und Prompts am Trail kalibrieren
 
@@ -5456,11 +5510,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.7.1.2  `FUNC-graph-export-snapshot` — graph_export(views?)
 
@@ -5866,11 +5922,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.7.2.9  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
@@ -6018,7 +6076,7 @@ Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-stor
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-http-host` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FUNC-block-speicherwerk`
 
-Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung), laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
+Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung). Scheitert das Oeffnen einer vorhandenen Store-Datei, schliesst es das Handle und baut ebenso neu auf, wenn der Snapshot existiert (CR-GC-796). Laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
 
 io ◀ `FLOW-schema-fingerprint` · `FLOW-store-load` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-rewind` · `FLOW-store-ownership` · io ▶ `FLOW-fingerprint-request` · `FLOW-lock-request` · `FLOW-reseed-order-open` · `FLOW-store-rebuild-notice` · allocate ▶ `MOD-kernel`
 
@@ -6031,6 +6089,16 @@ Weicht der Fingerabdruck der generierten DDL vom Marker am Store ab, wirft der G
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-open-store` · `FUNC-schema-guard` · allocate ▶ `MOD-kernel`
+
+###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
+
+> auch unter: `FUNC-graph-store`
+
+Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.7.2.14  `FUNC-create-harness` — createHarness
 
@@ -6262,11 +6330,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.8.1.7  `FUNC-read-tools` — bindReadTools(ctx)
 
@@ -6394,11 +6464,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.8.2.2  `FUNC-read-tools` — bindReadTools(ctx)
 
@@ -6836,11 +6908,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.8.3.9  `FUNC-zug-bericht` — zugBericht(before
 
@@ -7158,11 +7232,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.9.1.9  `FUNC-mutate` — mutate(commands)
 
@@ -7490,7 +7566,7 @@ Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-own-kuzu-ho
 
 > auch in: `FCHAIN-http-host` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FUNC-block-speicherwerk`
 
-Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung), laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
+Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung). Scheitert das Oeffnen einer vorhandenen Store-Datei, schliesst es das Handle und baut ebenso neu auf, wenn der Snapshot existiert (CR-GC-796). Laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
 
 io ◀ `FLOW-schema-fingerprint` · `FLOW-store-load` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-rewind` · `FLOW-store-ownership` · io ▶ `FLOW-fingerprint-request` · `FLOW-lock-request` · `FLOW-reseed-order-open` · `FLOW-store-rebuild-notice` · allocate ▶ `MOD-kernel`
 
@@ -7503,6 +7579,16 @@ Weicht der Fingerabdruck der generierten DDL vom Marker am Store ab, wirft der G
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-open-store` · `FUNC-schema-guard` · allocate ▶ `MOD-kernel`
+
+###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
+
+> auch unter: `FUNC-graph-store`
+
+Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.9.2.14  `FUNC-schema-guard` — schemaFingerprint
 
@@ -7676,11 +7762,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 #### 3.9.3  `FCHAIN-repo-lifecycle` — Repo einrichten und aktualisieren
 
@@ -7928,11 +8016,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.9.4.6  `FUNC-claim-store-lock` — StoreLock
 
@@ -7954,7 +8044,7 @@ Verification ◀ `TEST-store-lock` (integration) · satisfy ◀ `FUNC-claim-stor
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-http-host` · `FCHAIN-model-import` · `FCHAIN-recall` · `FUNC-block-speicherwerk`
 
-Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung), laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
+Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung). Scheitert das Oeffnen einer vorhandenen Store-Datei, schliesst es das Handle und baut ebenso neu auf, wenn der Snapshot existiert (CR-GC-796). Laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
 
 io ◀ `FLOW-schema-fingerprint` · `FLOW-store-load` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-rewind` · `FLOW-store-ownership` · io ▶ `FLOW-fingerprint-request` · `FLOW-lock-request` · `FLOW-reseed-order-open` · `FLOW-store-rebuild-notice` · allocate ▶ `MOD-kernel`
 
@@ -7967,6 +8057,16 @@ Weicht der Fingerabdruck der generierten DDL vom Marker am Store ab, wirft der G
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-open-store` · `FUNC-schema-guard` · allocate ▶ `MOD-kernel`
+
+###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
+
+> auch unter: `FUNC-graph-store`
+
+Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.9.4.8  `FUNC-schema-guard` — schemaFingerprint
 
@@ -8044,11 +8144,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ##### 3.9.5.2  `FUNC-graph-export-snapshot` — graph_export(views?)
 
@@ -9984,11 +10086,13 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 ###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
 
+> auch unter: `FUNC-open-store`
+
 Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
 
 priority: must · status: open · kinds: functional · role: mitigation
 
-Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ###### 3.10.2.7.9  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
 
@@ -10010,7 +10114,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-http-host` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration`
 
-Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung), laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
+Oeffnet den Store: nimmt den Store-Lock, vergleicht den Schema-Fingerabdruck mit dem Marker, wirft bei Abweichung den Store weg und baut ihn aus der committeten SSOT neu auf (applyReseed, mit Meldung). Scheitert das Oeffnen einer vorhandenen Store-Datei, schliesst es das Handle und baut ebenso neu auf, wenn der Snapshot existiert (CR-GC-796). Laedt den Graphen in die Arbeitskopie. Laeuft in harness.initialize. Beleg: src/kernel/graph-store.ts, GraphStore.open.
 
 io ◀ `FLOW-schema-fingerprint` · `FLOW-store-load` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-rewind` · `FLOW-store-ownership` · io ▶ `FLOW-fingerprint-request` · `FLOW-lock-request` · `FLOW-reseed-order-open` · `FLOW-store-rebuild-notice` · allocate ▶ `MOD-kernel`
 
@@ -10023,6 +10127,16 @@ Weicht der Fingerabdruck der generierten DDL vom Marker am Store ab, wirft der G
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-open-store` · `FUNC-schema-guard` · allocate ▶ `MOD-kernel`
+
+###### `REQ-store-recovery` — Store-Recovery (Recovery-Modus)
+
+> auch unter: `FUNC-graph-store`
+
+Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integration) · `TEST-store-lock` (integration) · `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-graph-store` · `FUNC-open-store` · allocate ▶ `MOD-kernel`
 
 ###### 3.10.2.7.11  `FUNC-seed-from-json` — seedFromJsonFile(target, relPath)
 
@@ -12460,7 +12574,7 @@ schema ◀ `FLOW-steering-pair` · `FLOW-steering-snapshot`
 
 ### 5.47  `SCHEMA-store-rebuild-notice` — Store-Neuaufbau-Meldung
 
-Meldung an den Nutzer nach einem Store-Neuaufbau: alter und neuer Schema-Fingerabdruck, die SSOT-Datei, aus der neu befuellt wurde. Eine Zeile auf stderr beim Start (CR-GC-831).
+Meldung an den Nutzer nach einem Store-Neuaufbau, mit Grund: cause schema traegt alten und neuen Schema-Fingerabdruck, cause unreadable die Meldung, mit der das Oeffnen scheiterte (CR-GC-796); beide die SSOT-Datei, aus der neu befuellt wurde. Eine Zeile auf stderr beim Start (CR-GC-831).
 
 schema ◀ `FLOW-store-rebuild-notice`
 
@@ -13784,13 +13898,13 @@ verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.t
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
-verify ▶ `REQ-first-session-claims-store-lock` · `REQ-harness-factory-returns-one-owner` · `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
+verify ▶ `REQ-first-session-claims-store-lock` · `REQ-harness-factory-returns-one-owner` · `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `REQ-store-recovery` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
 
 ### 8.139  `TEST-store-recovery` — Store-Recovery-Test
 
-Kuzu Lock-Konflikt / abgestuerzter Owner / korrupter Store: Lock-Erkennung + sicherer Re-Open; kein zweites DB-Handle. (ConOps Recovery)
+Abnahme der Datei tests/store-recovery.test.ts: eine Store-Datei mit ueberschriebenem Kopf oder auf die Haelfte gekuerzt wird beim Oeffnen aus dem committeten Snapshot neu aufgebaut und gemeldet, und der neue Store liegt auf Platte; ohne Snapshot bleibt der Lesefehler ein Fehler und die Sperre frei. Lock-Konflikt und beendeter Besitzer: TEST-store-lock. (CR-GC-796)
 
-verify ▶ `REQ-risk-store-unreadable` · `REQ-store-recovery`
+verify ▶ `REQ-risk-store-unreadable` · `REQ-store-recovery` · testRefs: `tests/store-recovery.test.ts`
 
 ### 8.140  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 

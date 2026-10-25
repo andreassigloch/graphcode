@@ -145,7 +145,7 @@
 | `REQ-risk-stale-measurement` | ✓ | ✓ passed | `TEST-single-measurement-path` |
 | `REQ-risk-stale-test-result` | ✓ | ✓ passed | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` |
 | `REQ-risk-steering-delta-missing` | ✓ | ⚠ nie gelaufen | `TEST-steering-delta-in-answer` |
-| `REQ-risk-store-unreadable` | ✓ | ⚠ nie gelaufen | `TEST-store-recovery` |
+| `REQ-risk-store-unreadable` | ✓ | ✓ passed | `TEST-store-recovery` |
 | `REQ-roundtrip-conformance` | ✓ | ✓ passed | `TEST-roundtrip` |
 | `REQ-rule-calibration` | ✓ | ✓ passed | `TEST-audit-rules-passed` · `TEST-rule-calibration` |
 | `REQ-rule-enforcement` | ✓ | ✓ passed | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` |
@@ -168,7 +168,7 @@
 | `REQ-steering-post` | ✓ | ✓ passed | `TEST-single-measurement-path` |
 | `REQ-steering-pre` | ✓ | ✓ passed | `TEST-single-measurement-path` |
 | `REQ-steering-promise-one-owner` | ✓ | ⚠ nie gelaufen | `TEST-steering-promise-one-owner` |
-| `REQ-store-recovery` | ✓ | ⚠ 2/3 passed | `TEST-reseed` · `TEST-schema-migration` · `TEST-store-recovery` |
+| `REQ-store-recovery` | ✓ | ✓ passed | `TEST-reseed` · `TEST-schema-migration` · `TEST-store-lock` · `TEST-store-recovery` |
 | `REQ-structural-rule-shared` | ✓ | ✓ passed | `TEST-graph-authoring-guide` · `TEST-mutate-gate` |
 | `REQ-structure-driven` | ✓ | ⚠ 2/3 passed | `TEST-code-quality` · `TEST-mutate-schema-guard` · `TEST-se-plan-ordering` |
 | `REQ-subgraph-slicing` | ✓ | ✓ passed | `TEST-impact-subgraph` · `TEST-inject-graph-slice` |
@@ -188,7 +188,7 @@
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 
 Coverage: 178/178 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 139/178 REQ bestanden (78%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 141/178 REQ bestanden (79%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
