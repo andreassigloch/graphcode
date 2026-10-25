@@ -1,6 +1,6 @@
 # CR-GC-771: Kandidatenvergleich im Dialog: mehrere Entwuerfe per Trockenlauf vergleichen, auch fuer Frontier
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-25)
 **Typ:** aus Item ITEM-2026-801 (idea)
 **Erstellt:** 2026-10-09
 **Item:** bok/items/ITEM-2026-801.json (Lane: code)
@@ -127,3 +127,7 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Abschluss (2026-10-25)
+
+Im Kern erledigt durch Späteres. Frage 3 (wer wählt) beantworten CR-GC-785 und `se:optimize` v5: Wahl durch den Autor, keine Rangfolge. Frage 4 hat der Spike mit „taugt nicht" beantwortet. Den Gesamt-Impact im Trockenlauf liefert CR-GC-790 (`metricsAfter`). Rest: `src/loop/generate.ts:137` empfiehlt im Text von `graph_generate` weiter die Rangfolge `verdictRank`, die der Spike widerlegt hat — dafür ITEM-2026-1047.
