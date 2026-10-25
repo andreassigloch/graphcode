@@ -1003,6 +1003,8 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
   // CR-GC-749: ueber der Klausel steht jetzt die STUFE der Regel (contracts 11). UC-02 und FC-02 liegen an
   // derselben Stufe — dort entscheidet weiter die Klausel (und UC-02 ist die Existenz-Regel der Stufe);
   // UC-01 liegt eine Stufe spaeter und kommt deshalb nach FC-02.
+  // CR-GC-850: FC-02 ist mit CR-SM-412 in UC-03 aufgegangen. Der blosse Fund an der Stufe von UC-02 ist
+  // jetzt R-16 (ACTOR ohne io) — dieselbe Frage, Klausel vor Fund, an einer Regel, die es noch gibt.
   const lauf4 = g(
     [
       node('SYS-sig', 'SYS', 'SIG Local', 'Lokale LLM-Kapazitaet im internen Netz.'),
@@ -1021,17 +1023,17 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
   /** Die Regel des aktuellen Fund-Fensters. */
   const regelVon = (key: string | null): string => String(key).split(':')[1];
 
-  it('das erste Fenster traegt eine Klausel-Regel, obwohl FC-02 alphabetisch vorne stuende', () => {
+  it('das erste Fenster traegt eine Klausel-Regel, obwohl R-16 alphabetisch vorne stuende', () => {
     const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     expect(step.phase).toBe('expand');
-    // Klausel: UC-01, UC-02 · ohne: FC-02, R-16, UC-03.
-    // Alphabetisch gewaenne FC-02 — genau das ist in Rig-Lauf 4 passiert.
+    // Klausel: UC-01, UC-02 · ohne: R-16, UC-03.
+    // Alphabetisch gewaenne R-16 — in Rig-Lauf 4 war es FC-02.
     expect(['UC-01', 'UC-02'], `erstes Fenster war ${regelVon(step.focusKey)}`).toContain(
       regelVon(step.focusKey),
     );
   });
 
-  it('in einer Stufe kommt die Klausel-Regel vor dem blossen Fund — FC-02 nie vor UC-02', () => {
+  it('in einer Stufe kommt die Klausel-Regel vor dem blossen Fund — R-16 nie vor UC-02', () => {
     const gesehen: string[] = [];
     const keys: string[] = [];
     let step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
@@ -1042,9 +1044,9 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
     }
     const folge = gesehen.join(' → ');
     expect(gesehen, folge).toContain('UC-02');
-    expect(gesehen, folge).toContain('FC-02');
-    expect(stufeVon('UC-02')).toBe(stufeVon('FC-02')); // dieselbe Stufe — sonst prueft der Fall nichts
-    expect(gesehen.indexOf('UC-02'), folge).toBeLessThan(gesehen.indexOf('FC-02'));
+    expect(gesehen, folge).toContain('R-16');
+    expect(stufeVon('UC-02')).toBe(stufeVon('R-16')); // dieselbe Stufe — sonst prueft der Fall nichts
+    expect(gesehen.indexOf('UC-02'), folge).toBeLessThan(gesehen.indexOf('R-16'));
     // Ueber die Stufen hinweg entscheidet die Stufe: die Folge ist nach ihr geordnet.
     const stufen = gesehen.map(stufeVon);
     expect(stufen, folge).toEqual([...stufen].sort((a, b) => a - b));
@@ -1060,7 +1062,7 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
     const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     const regel = regelVon(step.focusKey);
     // Die Fund-Liste im Prompt nennt nur Funde dieser einen Regel.
-    const andere = ['FC-02', 'UC-01', 'UC-02', 'UC-03', 'R-15', 'R-16'].filter((r) => r !== regel);
+    const andere = ['UC-01', 'UC-02', 'UC-03', 'R-15', 'R-16'].filter((r) => r !== regel);
     const genannt = andere.filter((r) => step.prompt.includes(`(${r}:`));
     expect(genannt, `regelfremde Funde im Fenster: ${genannt.join(', ')}`).toEqual([]);
   });
@@ -1104,16 +1106,16 @@ describe('CR-GC-564: die Regel-Klausel IST die Anweisung', () => {
   });
 
   it('eine Regel OHNE Klausel bekommt die Vorlage ihrer Stufe', () => {
-    // UC-01 und UC-02 zurückstellen ⇒ FC-02, das keine eigene Klausel hat.
+    // UC-01 und UC-02 zurückstellen ⇒ R-16, das keine eigene Klausel hat (bis CR-GC-850: FC-02).
     const keys: string[] = [];
     let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
     for (let i = 0; i < 4 && ['UC-01', 'UC-02'].includes((step.focusKey as string).split(':')[1]); i++) {
       keys.push(step.focusKey as string);
       step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
     }
-    expect((step.focusKey as string).split(':')[1]).toBe('FC-02');
-    expect(step.focusStage).toBe(stufenName('FC-02'));
-    expect(step.prompt).toContain(GENERATION_TEMPLATE[stufenName('FC-02')]);
+    expect((step.focusKey as string).split(':')[1]).toBe('R-16');
+    expect(step.focusStage).toBe(stufenName('R-16'));
+    expect(step.prompt).toContain(GENERATION_TEMPLATE[stufenName('R-16')]);
     expect(step.prompt).toContain('FCHAIN-Szenarien (UC compose FCHAIN)');
   });
 
@@ -1155,8 +1157,8 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
       keys.push(step.focusKey as string);
       step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
     }
-    expect((step.focusKey as string).split(':')[1]).toBe('FC-02');
-    expect(stufenName('FC-02')).toBe('Anwendungsfall');
+    expect((step.focusKey as string).split(':')[1]).toBe('R-16');
+    expect(stufenName('R-16')).toBe('Anwendungsfall');
     expect(step.focusTypes).toEqual(STAGE_FOCUS_TYPES.Anwendungsfall);
   });
 

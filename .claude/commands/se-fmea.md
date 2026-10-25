@@ -60,7 +60,7 @@ Walk the graph's `compose` hierarchy for the scoped target: `SYS → UC → FCHA
 
 **Geteilte Funktionen gehören zur Analyse der Kette.** Ihre Zuflüsse stehen an ihnen selbst und erscheinen nicht als `imports` der Kette. Wer die Kette analysiert, analysiert ihre geteilten Funktionen mit; ist eine schon in einer früheren FMEA analysiert (CR in `docs/cr/done/`), zitiere sie und wiederhole sie nicht.
 
-**Was der Regelsatz schon urteilt.** `FC-02` (Leaf-UC hat FCHAIN), `FC-03` (ein Block ist weder Glied einer Kette noch Erfüller einer Anforderung; Fehler), `FC-04` und `FC-05` liegen in `@sigloch/contracts/se` und laufen im Gate — lies sie über `rules_get_violations` und **wiederhole sie nicht als eigenen Befund**.
+**Was der Regelsatz schon urteilt.** `UC-03` (Blatt-UC hat FCHAIN), `FC-03` (ein Block ist weder Glied einer Kette noch Erfüller einer Anforderung; Fehler), `FC-04` und `FC-05` liegen in `@sigloch/contracts/se` und laufen im Gate — lies sie über `rules_get_violations` und **wiederhole sie nicht als eigenen Befund**.
 
 Ergebnis von Step 2: der Strukturbaum (System → Subsystem → Funktionselement) **plus** eine Tabelle `FCHAIN | Glieder | Kreisläufe | geteilte Funktionen | Importe | Übergaben | Modulgrenzen (Verträge) | Akteursgrenze ✓/✗`, dazu der Umfang und die Träger je Risiko, alle Werte aus `graph_metrics` zitiert. Arbeitsreihenfolge für Step 4: erst die geteilten Funktionen, absteigend nach Reichweite, dann Kreisläufe, dann Importe und Übergaben.
 
@@ -197,7 +197,7 @@ The FMEA is not done until findings live in the graph, not just the document.
 - **Ort vor Kreativität.** Die Orte aus `graph_metrics` sagen, wo die Kette schwach ist; die frei abgeleiteten Fehlermodi kommen danach und füllen nur, was die sechs Quellen nicht abgedeckt haben.
 - **Eine Rechnung.** Du rechnest keine Kettenkennzahl selbst. Umfang, Träger und Fläche liest du aus `scope` und `riskCarriers`; eine Zahl ist die Länge der Liste. Fehlt dir ein Ort, ist das ein Befund an `chainMetrics`, kein Anlass für eine Nebenrechnung.
 - **Eingang prüfen, nicht herstellen.** Eine offene Kette, eine Gegenmaßnahme am Modul, ein Risiko ohne Erfüller: nennen und an `se-vorbereitung` verweisen.
-- **Kein Doppelurteil mit dem Regelsatz.** Was `FC-02`…`FC-04`, `R-01`, `FM-01`…`FM-03` schon melden, wird zitiert, nicht neu behauptet. Was der Regelsatz *nicht* prüft (doppelte Zustandsgrößen, Zustandsgrößen ohne Werte), wird als Analystenbefund gekennzeichnet.
+- **Kein Doppelurteil mit dem Regelsatz.** Was `UC-03`, `FC-03`, `FC-04`, `R-01`, `FM-01`…`FM-03` schon melden, wird zitiert, nicht neu behauptet. Was der Regelsatz *nicht* prüft (doppelte Zustandsgrößen, Zustandsgrößen ohne Werte), wird als Analystenbefund gekennzeichnet.
 - **Function-based, not part-based:** start from what each function must do, then how it fails — not from a parts list. (AIAG-VDA core principle.)
 - **Severity drives priority.** A safety-critical effect (S 9–10) is High/Medium AP even at low occurrence; do not let a good Detection score hide it.
 - **No symptom-fixes.** Mitigations address root causes (Step 4 FC), consistent with the project's Root-Cause-Debugging rule.

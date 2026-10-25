@@ -1556,7 +1556,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 > auch in: `FCHAIN-skill-report` · `FUNC-block-gate`
 
-Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef), dazu die Import-Abdeckung. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843)
+Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef, RC-12/RC-13 Fluss gegen Aufruf), dazu die Import- und die Aufruf-Abdeckung. Die Aufrufkanten liefert extractCallFacts in src/kernel/call-edges.ts ueber den TypeScript-LanguageService; gleicher Stand der Quelldateien, dieselben Kanten. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843, CR-GC-846)
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 
@@ -1732,7 +1732,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 > auch in: `FCHAIN-skill-help` · `FUNC-block-gate`
 
-Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef), dazu die Import-Abdeckung. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843)
+Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef, RC-12/RC-13 Fluss gegen Aufruf), dazu die Import- und die Aufruf-Abdeckung. Die Aufrufkanten liefert extractCallFacts in src/kernel/call-edges.ts ueber den TypeScript-LanguageService; gleicher Stand der Quelldateien, dieselben Kanten. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843, CR-GC-846)
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 
@@ -9040,7 +9040,7 @@ io ◀ — · io ▶ — · allocate ▶ —
 
 > auch in: `FCHAIN-skill-help` · `FCHAIN-skill-report`
 
-Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef), dazu die Import-Abdeckung. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843)
+Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef, RC-12/RC-13 Fluss gegen Aufruf), dazu die Import- und die Aufruf-Abdeckung. Die Aufrufkanten liefert extractCallFacts in src/kernel/call-edges.ts ueber den TypeScript-LanguageService; gleicher Stand der Quelldateien, dieselben Kanten. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843, CR-GC-846)
 
 io ◀ `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 

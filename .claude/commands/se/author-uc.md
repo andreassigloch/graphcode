@@ -25,7 +25,7 @@ Emit ONE `graph_mutate` batch as Format-E — the UC with its `compose` to the `
 + UC-<slug> -compose-> FCHAIN-<slug>
 ```
 
-A UC with no `compose` to a `FCHAIN` raises **`UC-03`** ("no FCHAIN scenario", warning), and **`FC-02`** on top of it while the UC is a leaf. Both are warnings, so the batch still applies; what BLOCKS is `UC-01` (no `compose` to a REQ) and `UC-02` (no ACTOR path).
+A UC with no `compose` to a `FCHAIN` raises **`UC-03`** ("no FCHAIN scenario", warning) while the UC is a leaf. It is a warning, so the batch still applies; what BLOCKS is `UC-01` (no `compose` to a REQ) and `UC-02` (no ACTOR path).
 <!-- inject:end -->
 
 To check the jargon budget, query `graph_elements {type:"SCHEMA"}` / `{type:"REQ"}` for the terms you intend to use.

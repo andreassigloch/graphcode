@@ -92,10 +92,11 @@ describe('Fit-Advisory (CR-GC-274): Δm-Messung zum Zug, nie ein Blocker', () =>
   });
 
   it('Regression wird benannt, aber nicht geblockt (Messung, kein Gate)', async () => {
-    // allocate a→MOD zieht eine Cross-Community-Kante ein: irgendeine Dimension
-    // verliert (mindestens modifiability/coherence auf dem Mini-Graphen).
+    // allocate b→MOD zieht eine Cross-Community-Kante ein: irgendeine Dimension
+    // verliert (mindestens modifiability/coherence auf dem Mini-Graphen). Das Blatt b, nicht der Block a:
+    // einen Block einem Modul zuzuordnen ist seit CR-SM-413 ein Fehler (R-35), und das Gate weist ihn ab.
     const res = await zug([
-      { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'MOD-core', edgeType: 'allocate', attributes: {} } },
+      { op: 'add-edge', edge: { sourceId: 'FUNC-b', targetId: 'MOD-core', edgeType: 'allocate', attributes: {} } },
     ]);
     expect(res.success).toBe(true);
     expect(['auto-apply', 'suggest']).toContain(res.tier);

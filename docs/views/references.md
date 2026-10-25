@@ -1313,6 +1313,9 @@
 | `CR-GC-849` | relation | `FUNC-serve-stdio` |
 | `CR-GC-849` | relation | `FUNC-target-profile-load` |
 | `CR-GC-849` | relation | `FUNC-tool-context` |
+| `CR-GC-850` | relation | `FUNC-generation-step` |
+| `CR-GC-850` | relation | `FUNC-mutate` |
+| `CR-GC-850` | relation | `FUNC-se-fmea` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

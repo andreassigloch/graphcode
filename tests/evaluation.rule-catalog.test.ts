@@ -53,10 +53,12 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
  * Jetzt steht die Nicht-Auswertung als Aussage da, statt zu fehlen.
  * CR-SM-358: RC-08/RC-09 (Vertrag ist Zod, nur modellierte Stellen parsen ihn) aus demselben Grund.
  * CR-SM-344: RC-10 (MOD ohne path und ohne gebundene FUNC ist unaufloesbar) ebenso — Signatur `(graph, CodeFacts)`.
+ * CR-SM-405/415: RC-11 (Code-Datei ohne Modul), RC-12/RC-13 (Fluss gegen Aufruf) ebenso (CR-GC-850).
  */
 const NOT_IN_GATE = [
   'BQ-01', 'BQ-02', 'BQ-04', 'BQ-06', 'BQ-07', 'ND-01', 'ND-02',
   'RC-01', 'RC-02', 'RC-03', 'RC-04', 'RC-05', 'RC-06', 'RC-07', 'RC-08', 'RC-09', 'RC-10',
+  'RC-11', 'RC-12', 'RC-13',
 ];
 
 /**

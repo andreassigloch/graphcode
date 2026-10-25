@@ -542,6 +542,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-847` | n/a | graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped | `FUNC-graph-help` · `FUNC-se-help` |
 | `CR-GC-848` | n/a | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag | `FUNC-check-code-conformance` · `FUNC-tool-context` |
 | `CR-GC-849` | n/a | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) | `FUNC-bind-tools` · `FUNC-cli-dispatch` · `FUNC-create-harness` · `FUNC-emit-trajectory` · `FUNC-graph-store` · `FUNC-health-endpoint` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-target-profile-load` · `FUNC-tool-context` |
+| `CR-GC-850` | n/a | contracts 12.7.0 nachziehen: Mindestversion, Testpins fuer RC-11..13 und R-35, FC-02 aus Tests und Skills | `FUNC-generation-step` · `FUNC-mutate` · `FUNC-se-fmea` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
