@@ -42,7 +42,7 @@ import {
 import { countByStage, groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../loop/target-profile.js';
 import { stufenRang } from '../loop/generate.js';
-import { helpEntry, contextualHelp, type HelpEntry, type ContextualMeasure } from './help.js';
+import { helpEntry, type HelpEntry } from './help.js';
 import { attributesFor, formatEExampleFor, type AttributeHint } from './authoring-example.js';
 import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
@@ -120,14 +120,21 @@ const GraphReadinessInputSchema = z.object({
     ),
 });
 
+/**
+ * CR-GC-847: `token` ist Pflicht. Die Betriebsart ohne token rechnete eine volle Erhebung und
+ * doppelte `rules_get_violations` — mit anderem Umfang und anderem Wortlaut. Der Fehler nennt
+ * das Werkzeug, das die Frage nach dem naechsten Schritt beantwortet.
+ */
+export const GRAPH_HELP_TOKEN_REQUIRED =
+  'graph_help needs a `token` — it explains one rule, mark, panel, artifact, metric, tool or vocabulary ' +
+  'token. For what to do next, take rules_get_violations({detail:"grouped"}).';
+
 const GraphHelpInputSchema = z.object({
   token: z
-    .string()
-    .optional()
+    .string({ error: GRAPH_HELP_TOKEN_REQUIRED })
     .describe(
-      'Optional dashboard token to explain: a ruleId (R-04), gate (CDR), panel id (recommendations), ' +
-        'artifact id (fmea), or vocabulary token (REQ). Omit for the contextual, ranked, explained ' +
-        'measures derived from the live readiness + violations (the explained Recommendations).',
+      'The token to explain: a ruleId (R-04), mark (CDR), panel id (recommendations), ' +
+        'artifact id (fmea), metric (coherence), tool (graph_mutate) or vocabulary token (REQ).',
     ),
 });
 
@@ -453,35 +460,25 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     },
   };
 
-  const graph_help: MCPTool<
-    z.infer<typeof GraphHelpInputSchema>,
-    HelpEntry | { measures: ContextualMeasure[] }
-  > = {
+  const graph_help: MCPTool<z.infer<typeof GraphHelpInputSchema>, HelpEntry> = {
     name: 'graph_help',
     description:
       'What does this rule / gate / panel / metric / tool mean, and what do I do about it? Plain ' +
       'language and the SE term for any on-screen token, plus the exact fix where one applies. Take it ' +
       'instead of guessing from a rule id — and instead of asking a tool description to carry the ' +
-      'semantics. The argument is `token`; without it you get the contextual next steps for the ' +
-      'current state, so a wrong argument name silently asks the WIDER question (CR-GC-623).',
+      'semantics. `token` is required; what to do next is rules_get_violations({detail:"grouped"}) (CR-GC-847).',
     inputSchema: GraphHelpInputSchema,
     async handler(input) {
-      if (input.token !== undefined) {
-        const entry = helpEntry(input.token);
-        if (!entry) {
-          throw new Error(
-            `graph_help: unknown token '${input.token}'. Try a ruleId (e.g. R-04), a mark (SRR/PDR/CDR/TRR/Bau), ` +
-              `a panel (readiness/recommendations/artifacts/impact/health), an artifact ` +
-              `(e.g. fmea), a metric dimension (coherence/modifiability/faultTolerance/flowEfficiency/` +
-              `viability/scalability), or a vocabulary token (e.g. REQ). Omit the token for contextual help.`,
-          );
-        }
-        return entry;
+      const entry = helpEntry(input.token);
+      if (!entry) {
+        throw new Error(
+          `graph_help: unknown token '${input.token}'. Try a ruleId (e.g. R-04), a mark (SRR/PDR/CDR/TRR/Bau), ` +
+            `a panel (readiness/recommendations/artifacts/impact/health), an artifact ` +
+            `(e.g. fmea), a metric dimension (coherence/modifiability/faultTolerance/flowEfficiency/` +
+            `viability/scalability), or a vocabulary token (e.g. REQ).`,
+        );
       }
-      // EINE Erhebung für Report UND Maßnahmenliste (CR-GC-398) — vorher liefen
-      // hier zwei Auswertungen nebeneinander, die auseinanderlaufen konnten.
-      const ev = evaluateAll(harness);
-      return { measures: contextualHelp(ev.findings) };
+      return entry;
     },
   };
 

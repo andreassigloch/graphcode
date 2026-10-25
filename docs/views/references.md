@@ -1547,6 +1547,7 @@
 | `FCHAIN-skill-help` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-skill-help` | compose | `FUNC-graph-help` |
 | `FCHAIN-skill-help` | compose | `FUNC-graph-store` |
+| `FCHAIN-skill-help` | compose | `FUNC-rules-tool` |
 | `FCHAIN-skill-help` | compose | `FUNC-se-help` |
 | `FCHAIN-skill-help` | compose | `FUNC-test` |
 | `FCHAIN-skill-help` | compose | `FUNC-test-ui` |
@@ -1788,7 +1789,6 @@
 | `FLOW-config-file` | relation | `SCHEMA-metric-policy` |
 | `FLOW-config-request` | io | `FUNC-load-config` |
 | `FLOW-config-request` | relation | `SCHEMA-metric-policy` |
-| `FLOW-conformance-findings` | io | `FUNC-graph-help` |
 | `FLOW-conformance-findings` | io | `FUNC-graph-readiness` |
 | `FLOW-conformance-findings` | io | `FUNC-rules-tool` |
 | `FLOW-conformance-findings` | relation | `SCHEMA-rule-violation` |
@@ -1864,7 +1864,6 @@
 | `FLOW-graph-state` | io | `FUNC-check-code-conformance` |
 | `FLOW-graph-state` | io | `FUNC-graph-export-snapshot` |
 | `FLOW-graph-state` | io | `FUNC-graph-generate-tool` |
-| `FLOW-graph-state` | io | `FUNC-graph-help` |
 | `FLOW-graph-state` | io | `FUNC-graph-merge-tool` |
 | `FLOW-graph-state` | io | `FUNC-graph-metrics` |
 | `FLOW-graph-state` | io | `FUNC-graph-mutate-tool` |
@@ -2068,7 +2067,6 @@
 | `FLOW-reseeded-graph` | relation | `SCHEMA-ontology-json` |
 | `FLOW-rewind-summary` | io | `FUNC-cli-dispatch` |
 | `FLOW-rewind-summary` | relation | `SCHEMA-rewind-summary` |
-| `FLOW-rule-findings` | io | `FUNC-graph-help` |
 | `FLOW-rule-findings` | io | `FUNC-graph-merge-tool` |
 | `FLOW-rule-findings` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-rule-findings` | io | `FUNC-graph-readiness` |
@@ -3135,7 +3133,6 @@
 | `TEST-gve-supervision` | verify | `REQ-viewer-owned-by-repo` |
 | `TEST-gve-supervision` | verify | `SCHEMA-session-registry` |
 | `TEST-help-content-coverage` | verify | `REQ-readiness-transparent` |
-| `TEST-help-contextual-dedup` | verify | `REQ-token-efficiency` |
 | `TEST-help-projection` | verify | `REQ-readiness-transparent` |
 | `TEST-help-tool` | verify | `REQ-mcp-tool-registry` |
 | `TEST-help-tool` | verify | `REQ-readiness-transparent` |

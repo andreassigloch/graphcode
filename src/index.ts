@@ -134,8 +134,8 @@ export type { AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
 
 // In-context help (CR-GC-227 content + CR-GC-228 data layer) — the read-only layer
 // every help surface (graph_help tool, se:help skill, renderer) projects from.
-export { helpEntry, helpForRules, contextualHelp } from './projections/help.js';
-export type { HelpEntry, ContextualMeasure } from './projections/help.js';
+export { helpEntry, helpForRules } from './projections/help.js';
+export type { HelpEntry } from './projections/help.js';
 export { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, HELP_ELEMENT_STATES } from './projections/help-content.js';
 export type { HelpContentEntry, HelpVocabEntry } from './projections/help-content.js';
 

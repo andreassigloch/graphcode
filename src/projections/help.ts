@@ -16,7 +16,6 @@
  * @author andreas@siglochconsulting
  */
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import type { RuleViolation } from '@sigloch/contracts/harness';
 import { ALL_RULE_DEFS, Mark } from '@sigloch/contracts/se';
 import { MARK_LABELS } from '../kernel/measure/readiness.js';
 import { ARTIFACT_CATALOG } from './panels.js';
@@ -55,30 +54,6 @@ export interface HelpEntry {
   scale?: { min: number; max: number };
   source: 'derived' | 'authored';
 }
-
-/** A ranked, explained measure from `contextualHelp` — the explained Recommendations. */
-export interface ContextualMeasure {
-  entry: HelpEntry;
-  /** Highest severity among the grouped violations (CR-GC-316) — order-independent. */
-  severity: 'error' | 'warning' | 'info';
-  /**
-   * How often this rule fires (CR-GC-316). The TRUE count — `elementIds` may be
-   * shorter, so a caller can always tell that the list was cut.
-   */
-  count: number;
-  /** Up to `MAX_EXAMPLE_ELEMENTS` offending uids (rule blockers). Evidence, not the full set. */
-  elementIds: string[];
-  /** The first grouped violation's message, as an example of the shape. */
-  message: string;
-}
-
-/**
- * How many offending uids a measure carries (CR-GC-316). Deliberately small: the
- * explanation belongs to the RULE, the elements are evidence for it. `count` sits next
- * to the list, so the cut is visible rather than silent — and whoever needs all of them
- * asks `rules_get_violations`, the diagnosis tool that stays at full depth.
- */
-export const MAX_EXAMPLE_ELEMENTS = 5;
 
 const RULE_BY_ID = new Map(
   (SE_DESCRIPTOR.rules as Array<{ id: string; name: string; severity: string }>).map((r) => [r.id, r]),
@@ -187,52 +162,4 @@ export function helpForRules(): Record<string, HelpEntry[]> {
     if (entry) groups[r.mark ?? RULES_WITHOUT_MARK]!.push(entry);
   }
   return groups;
-}
-
-const SEVERITY_RANK: Record<string, number> = { error: 0, warning: 1, info: 2 };
-
-/**
- * The explained sibling of Recommendations (§7): ranked, explained measures from the live
- * violations — one per failing rule. Errors rank before warnings before info; ties keep input order.
- *
- * CR-GC-748: only rule findings. The creation blockers (CR-GC-221) and the `not-reached` gates
- * (CR-GC-746) are gone with the gate computation: what holds a mark IS a rule finding (an error or
- * an open existence finding), so it already stands in `violations` — and an empty graph is no
- * longer silent (R-33).
- */
-export function contextualHelp(violations: RuleViolation[]): ContextualMeasure[] {
-  const measures: ContextualMeasure[] = [];
-
-  // Rule blockers — ONE measure per rule, not per violation (CR-GC-316). Each measure
-  // used to carry a full copy of the HelpEntry, so a rule firing 96 times put the same
-  // ~380 bytes of explanation into the answer 96 times. Grouping turns the repetition
-  // into a number and leaves the payload a function of how many DISTINCT rules fire —
-  // bounded by the catalog (66), not by the graph (403 elements and growing).
-  const byRule = new Map<string, ContextualMeasure>();
-  for (const v of violations) {
-    const entry = helpEntry(v.ruleId);
-    if (!entry) continue;
-    const existing = byRule.get(v.ruleId);
-    if (!existing) {
-      byRule.set(v.ruleId, {
-        entry,
-        severity: v.severity,
-        count: 1,
-        elementIds: v.elementId ? [v.elementId] : [],
-        message: v.message,
-      });
-      continue;
-    }
-    existing.count += 1;
-    // Highest severity wins, so the ranking below does not depend on input order.
-    if ((SEVERITY_RANK[v.severity] ?? 3) < (SEVERITY_RANK[existing.severity] ?? 3)) {
-      existing.severity = v.severity;
-    }
-    if (v.elementId && existing.elementIds.length < MAX_EXAMPLE_ELEMENTS) {
-      existing.elementIds.push(v.elementId);
-    }
-  }
-  measures.push(...byRule.values());
-
-  return measures.sort((a, b) => (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3));
 }

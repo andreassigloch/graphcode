@@ -2,9 +2,9 @@
  * TEST-help-tool (CR-GC-229) — graph_help reaches the help data layer over MCP.
  *
  * Real disk Kuzu on a temp repo, no mocks: seed a graph that fires a warning
- * (a lone SYS → R-17), bind the MCP tools, and prove graph_help with no arg
- * returns contextual measures, with a token returns the HelpEntry, and on an
- * unknown token fails cleanly (no crash).
+ * (a lone SYS → R-17), bind the MCP tools, and prove graph_help with a token
+ * returns the HelpEntry, on an unknown token fails cleanly (no crash), and
+ * without a token is rejected with the pointer to rules_get_violations (CR-GC-847).
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
@@ -14,6 +14,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { strengesSchema } from '../src/kernel/tool-contract.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -29,7 +30,7 @@ function makeHarness(repoRoot: string): GraphCodeHarness {
 }
 
 // A lone SYS with no compose fires R-17 (warning) — gate-accepted (delta blocks only errors),
-// so the live graph carries a violation for contextualHelp to rank.
+// so the live graph carries a violation: graph_help without a token must still not evaluate it.
 const SPEC: MutateCommand[] = [
   { op: 'add-node', node: { uid: 'SYS-x', type: 'SYS', name: 'Lonely system', description: 'no compose yet', attributes: {} } },
 ];
@@ -56,15 +57,14 @@ describe('TEST-help-tool (CR-GC-229): graph_help over MCP', () => {
     expect(tools.graph_help.name).toBe('graph_help');
   });
 
-  it('no argument → contextual, ranked measures from live readiness + violations', async () => {
+  // CR-GC-847: die Betriebsart ohne token doppelte rules_get_violations und widersprach ihm.
+  it('no argument → rejected, pointing at rules_get_violations (CR-GC-847)', async () => {
     const tools = bindToolsToHarness(harness);
-    const out = (await tools.graph_help.handler({})) as { measures: Array<{ entry: { id?: string; plain: string; se: string } }> };
-    expect(Array.isArray(out.measures)).toBe(true);
-    // The seeded R-17 warning surfaces as a rule measure carrying the help layers.
-    const r17 = out.measures.find((m) => m.entry.id === 'R-17');
-    expect(r17, 'R-17 measure present').toBeDefined();
-    expect(r17!.entry.plain.length).toBeGreaterThan(0);
-    expect(r17!.entry.se.length).toBeGreaterThan(0);
+    // Das strenge Schema ist genau das, was die MCP-Grenze vor dem Handler parst (tool-contract.ts).
+    const ohne = strengesSchema(tools.graph_help).safeParse({});
+    expect(ohne.success, 'token ist Pflicht im Eingabeschema').toBe(false);
+    expect(JSON.stringify(ohne.error!.issues)).toContain('rules_get_violations');
+    expect(tools.graph_help.description).toContain('rules_get_violations');
   });
 
   it('with a token → the HelpEntry, all three layers', async () => {

@@ -1,16 +1,12 @@
 /**
  * TEST-help-projection (CR-GC-228) — help.ts is a pure projection (no DB): every
- * HelpEntry carries all three layers; helpForRules covers the live catalog, grouped by mark;
- * contextualHelp explains the failing rules, errors first.
+ * HelpEntry carries all three layers; helpForRules covers the live catalog, grouped by mark.
  */
 import { describe, it, expect } from 'vitest';
-import type { Graph } from '@sigloch/graph-api-core';
-import type { RuleViolation } from '@sigloch/contracts/harness';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { ALL_RULE_DEFS, DEFAULT_METRIC_POLICY, Mark } from '@sigloch/contracts/se';
+import { ALL_RULE_DEFS, Mark } from '@sigloch/contracts/se';
 import { MARK_LABELS } from '../src/kernel/measure/readiness.js';
-import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
-import { helpEntry, helpForRules, contextualHelp, RULES_WITHOUT_MARK } from '../src/projections/help.js';
+import { helpEntry, helpForRules, RULES_WITHOUT_MARK } from '../src/projections/help.js';
 import { TOOL_HELP } from '../src/projections/tool-help.js';
 
 describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the live sources', () => {
@@ -62,32 +58,6 @@ describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the 
     // No rule twice.
     const ids = Object.values(groups).flat().map((e) => e.id);
     expect(new Set(ids).size).toBe(ids.length);
-  });
-
-  // CR-GC-748: nur noch Regelbefunde. Die „creation blocker" (CR-GC-221) und das nicht durchschrittene
-  // Gate (CR-GC-746) sind mit der Gate-Rechnung entfallen — was eine Marke haelt, IST ein Regelbefund.
-  it('contextualHelp explains the failing rules, one measure each, errors first', () => {
-    const violations: RuleViolation[] = [
-      { ruleId: 'R-02', severity: 'warning', elementId: 'FUNC-x', message: 'FUNC-x does not satisfy any requirement' },
-      { ruleId: 'R-01', severity: 'error', elementId: 'REQ-y', message: 'REQ-y has no verification trace' },
-    ];
-    const measures = contextualHelp(violations);
-    expect(measures.map((m) => m.entry.id)).toEqual(['R-01', 'R-02']);
-    for (const m of measures) {
-      expect(m.entry.kind).toBe('rule');
-      expect(m.entry.plain.length).toBeGreaterThan(0);
-      expect(m.entry.se.length).toBeGreaterThan(0);
-    }
-  });
-
-  it('CR-GC-748: ein leerer Graph ergibt keine leere Liste — die Existenz-Regel des Systems ist die Massnahme', () => {
-    const leer: Graph = { nodes: [], edges: [] };
-    const befunde = takeSteeringSnapshot(leer, DEFAULT_METRIC_POLICY).violations.map((v) => ({
-      ruleId: v.rule_id, severity: v.severity, elementId: v.element_id, message: v.message,
-    }));
-    const measures = contextualHelp(befunde);
-    expect(measures.length).toBeGreaterThan(0);
-    expect(measures.every((m) => ALL_RULE_DEFS.find((r) => r.id === m.entry.id)?.role === 'existence')).toBe(true);
   });
 
   it('die Marken erklaeren sich: jede hat einen Eintrag, und die Werkzeug-Hilfe nennt das Feld und alle Marken', () => {

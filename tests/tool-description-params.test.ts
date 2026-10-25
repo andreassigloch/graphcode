@@ -94,9 +94,10 @@ describe('CR-GC-623: Beschreibungen nennen nur Parameter, die es gibt', () => {
     expect(eintrag.id).toBe('graph_metrics');
   });
 
-  it('ohne Argument bleibt die WEITE Frage — genau die, die ein Tippfehler bisher still ausloeste', async () => {
-    const kontext = (await registry.graph_help.handler({})) as { measures?: unknown[] };
-    expect(Array.isArray(kontext.measures)).toBe(true);
+  it('ohne Argument gibt es keine WEITE Frage mehr — der Aufruf scheitert (CR-GC-847)', () => {
+    const ohne = strengesSchema(registry.graph_help).safeParse({});
+    expect(ohne.success).toBe(false);
+    expect(JSON.stringify(ohne.error!.issues), 'der Fehler nennt das Werkzeug fuer den naechsten Schritt').toContain('rules_get_violations');
   });
 
   it('das Schema an der Grenze ist streng — und nennt den falsch getippten Namen', () => {
@@ -104,9 +105,9 @@ describe('CR-GC-623: Beschreibungen nennen nur Parameter, die es gibt', () => {
     const falsch = streng.safeParse({ id: 'graph_metrics' });
     expect(falsch.success, 'ohne Strenge wird daraus {} und die WEITE Frage').toBe(false);
     expect(JSON.stringify(falsch.error!.issues)).toContain('id');
-    // Richtig und leer bleiben gueltig — die Strenge trifft nur den Fehlgriff.
+    // Richtig bleibt gueltig; leer ist seit CR-GC-847 ein Fehler, token ist Pflicht.
     expect(streng.safeParse({ token: 'R-04' }).success).toBe(true);
-    expect(streng.safeParse({}).success).toBe(true);
+    expect(streng.safeParse({}).success).toBe(false);
   });
 
   it('jedes Werkzeug der Registry bekommt ein strenges Schema, nicht nur graph_help', () => {
