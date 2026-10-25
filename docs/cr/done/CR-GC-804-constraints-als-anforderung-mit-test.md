@@ -1,6 +1,6 @@
 # CR-GC-804: Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-25)
 **Typ:** aus Item ITEM-2026-887 (idea; dort noch unter dem alten Titel „Zielprofil als Anforderungen im Modell")
 **Erstellt:** 2026-10-12, umgeschrieben 2026-10-13
 **Item:** bok/items/ITEM-2026-887.json (Lane: code)
