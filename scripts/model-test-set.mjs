@@ -138,6 +138,10 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/commit-pruefung.test.ts':
+    'CR-GC-848: schreibt einen eigenen Snapshot (docs/graph/wegwerf.graph.json) in ein Wegwerf-Repo und committet\n' +
+    'dort ueber den echten Hook. graphcodes eigene SSOT liest er nie — eine Modellaenderung kann ihn nicht rot\n' +
+    'machen; eine Aenderung an Hook oder Commit-Pruefung sehr wohl (Spur CODE).',
   'tests/mcp.mutate-next-step.test.ts':
     'Vorschlag an den Nutzer (CR-GC-729..734): liest die Regel-Saetze aus den contracts und ein eingefrorenes\n' +
     'Fremdmodell (tests/fixtures/todo-local-v9.graph.json), nie graphcodes eigene SSOT — eine Modellaenderung\n' +

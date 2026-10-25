@@ -73,6 +73,20 @@ after=$(git diff --cached --name-only | sort)
 added=$(comm -13 <(echo "$before") <(echo "$after") | tr '\n' ' ')
 [ -n "${added// /}" ] && echo "[pre-commit] selbst dazugestaged: $added" >&2
 
+# (2b) CR-GC-848 — Fluss gegen Aufruf, Aufruf ohne Fluss, realRef. Nach (2), damit der gestagte Snapshot
+#      der ist, den der Commit traegt. Nur mit gestagter .ts-Datei; ohne bleibt es bei der Spurwahl. Das Skript
+#      liegt neben dem Hook (nicht im Repo, das committet), damit es auch in einem Wegwerf-Repo laeuft, das
+#      core.hooksPath hierher zeigt. Ohne Build kann es nicht pruefen — dann bricht der Commit ab, statt
+#      ungeprueft durchzulassen.
+if git diff --cached --name-only --no-renames | grep -q '\.ts$'; then
+  gc_root=$(cd "$(dirname "$0")/../.." && pwd)
+  if [ ! -f "$gc_root/dist/kernel/call-edges.js" ]; then
+    echo "BLOCKED (CR-GC-848): $gc_root/dist fehlt — npm run build, dann erneut committen." >&2
+    exit 1
+  fi
+  node "$gc_root/scripts/commit-pruefung.mjs"
+fi
+
 # (3) Spurwahl (CR-GC-399) — nach dem FINALEN Inhalt des Commits, inkl. (2).
 #     Volle Spur, sobald irgendetwas Ausführbares oder die Abhängigkeiten im Spiel
 #     sind; Modell-Spur nur bei reinen Modell-/Doku-Änderungen. Alles Unbekannte

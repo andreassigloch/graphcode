@@ -4,7 +4,7 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 160 TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 162 TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.
 
 ```
               ╱╲
@@ -13,20 +13,20 @@
            ╱────────╲
           ╱ use cases ╲      9 UC · 9 / 9 with a verified requirement
          ╱────────────╲
-        ╱ integration  ╲     ✗ 223/319 FUNC↔FUNC connections tested  ← GAP
+        ╱ integration  ╲     ✗ 226/321 FUNC↔FUNC connections tested  ← GAP
        ╱────────────────╲
-      ╱ module · function ╲   8 MOD · 130 FUNC
+      ╱ module · function ╲   8 MOD · 131 FUNC
      ╱────────────────────╲
 ```
 
 | Level | Element | Verification | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
 | System | SYS (1) | system verification (SYS.5) | 55 | 39 / 39 system requirements | ✓ |
-| Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 116 | 9 / 9 use cases | ✓ |
-| Integration | FUNC↔FUNC (319 conn) | integration verification (SYS.4 · SWE.5) | 44 | 223 / 319 connections | ✗ 96 uncovered |
+| Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 117 | 9 / 9 use cases | ✓ |
+| Integration | FUNC↔FUNC (321 conn) | integration verification (SYS.4 · SWE.5) | 44 | 226 / 321 connections | ✗ 95 uncovered |
 | Interface | SCHEMA (58) | integration verification (SYS.4 · SWE.5) | 23 | 35 / 58 schemas | ⚠ 23 without a test |
 | Module | MOD (8) | component verification (SWE.5 · HWE.3) | 57 | 6 / 8 | ⚠ 2 without a verified requirement |
-| Function | FUNC (130) | unit verification (SWE.4 · HWE.3) | 103 | 110 / 130 | ⚠ 20 without a verified requirement |
+| Function | FUNC (131) | unit verification (SWE.4 · HWE.3) | 105 | 111 / 131 | ⚠ 20 without a verified requirement |
 | (validation) | UC (9) | validation (VAL.1) | — | no position in the model | — |
 | (support) | — | conformance | 9 | codec round-trip | ✓ |
 
@@ -34,4 +34,4 @@
 > it says WHAT is verified, not how the test is written. A test of a system requirement counts as system
 > verification even if it is a unit-style test — whether it plays the system through, this table cannot say.
 > Validation against the intended use has no position: a play-through of a use case is a test of its requirements.
-> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (223/319 covered).
+> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (226/321 covered).

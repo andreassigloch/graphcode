@@ -18,7 +18,7 @@
 | 6 | Risiko Schleife pendelt | `FCHAIN-steering-loop` | 6 | 4 | 5 | 120 | High | `FUNC-generation-step` | ✗ |
 | 7 | Risiko geteilte Zusage ohne Traeger | `FCHAIN-steering-loop` | 6 | 3 | 6 | 108 | High | `FUNC-generation-step` | ✗ |
 | 8 | Risiko Store nicht lesbar | — | 9 | 3 | 3 | 81 | High | `FUNC-graph-store` | ✗ |
-| 9 | Risiko Auswertung ohne Verantwortlichen | `FCHAIN-loop-closure` | 5 | 3 | 6 | 90 | Medium | `FUNC-audit-stats` · `FUNC-audit-trail` | ✓ |
+| 9 | Risiko Auswertung ohne Verantwortlichen | `FCHAIN-loop-closure` | 5 | 3 | 6 | 90 | Medium | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-tool-context` | ✓ |
 | 10 | Risiko Stufenname ohne Wertebereich | `FCHAIN-steering-loop` | 5 | 3 | 6 | 90 | Medium | `FUNC-take-steering-snapshot` | ✗ |
 | 11 | Risiko Delta fehlt in der Antwort | `FCHAIN-steering-loop` | 5 | 3 | 5 | 75 | Medium | `FUNC-compute-steering-delta` | ✗ |
 | 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-host-start` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
@@ -191,13 +191,13 @@ Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen we
 - **Bewertung:** S 5 · O 3 · D 6 · RPN 90 · AP Medium
 - **Kette:** `FCHAIN-loop-closure`
 - **Anwendungsfall:** `UC-loop-closure`
-- **Träger:** `FUNC-audit-stats` · `FUNC-audit-trail`
+- **Träger:** `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-tool-context`
 - **Befund:** FMEA CR-GC-798 FM-15, Step 3. REQ-audit-trail hing an FUNC-graph-impact, die beiden Auswertungsfunktionen erfuellten keine Anforderung. Entscheidung: Zuordnung in CR-GC-797 gerichtet; gedeckt durch REQ-audit-trail.
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-audit-trail` | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. | `FUNC-audit-stats` · `FUNC-audit-trail` |
+| `REQ-audit-trail` | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-tool-context` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|

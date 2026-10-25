@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 58 SCHEMA · 244 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 58 SCHEMA · 246 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -135,15 +135,17 @@
 | `FLOW-channel-skill-reference` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-steer-advisory` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
 | `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` |
-| `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model` |
+| `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-commit-check` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model` |
 | `FLOW-cli-invocation-import-code` | `FUNC-agent-loop` | `FUNC-cli-dispatch` |
 | `FLOW-cli-output` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-code-lane-plan` | `FUNC-plan-code-lane` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
+| `FLOW-commit-check-request` | `FUNC-commit-check` | `FUNC-check-code-conformance` |
+| `FLOW-commit-check-verdict` | `FUNC-commit-check` | `ACTOR-auftraggeber` |
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-readiness` |
 | `FLOW-completeness-request` | `FUNC-compute-readiness` | `FUNC-score-completeness` |
 | `FLOW-config-file` | `ACTOR-regelhalter` | `FUNC-load-config` |
 | `FLOW-config-request` | `FUNC-create-harness` | `FUNC-load-config` |
-| `FLOW-conformance-findings` | `FUNC-check-code-conformance` | `FUNC-graph-readiness` · `FUNC-rules-tool` |
+| `FLOW-conformance-findings` | `FUNC-check-code-conformance` | `FUNC-commit-check` · `FUNC-graph-readiness` · `FUNC-rules-tool` |
 | `FLOW-context-request` | `FUNC-bind-tools` | `FUNC-tool-context` |
 | `FLOW-dashboard-answer` | `FUNC-host-socket` | `ACTOR-dashboard` |
 | `FLOW-dashboard-call` | `ACTOR-dashboard` | `FUNC-host-socket` |

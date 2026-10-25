@@ -1301,6 +1301,8 @@
 | `CR-GC-847` | relation | `FUNC-graph-help` |
 | `CR-GC-847` | relation | `FUNC-se-help` |
 | `CR-GC-848` | relation | `FUNC-check-code-conformance` |
+| `CR-GC-848` | relation | `FUNC-commit-check` |
+| `CR-GC-848` | relation | `FUNC-emit-trajectory` |
 | `CR-GC-848` | relation | `FUNC-tool-context` |
 | `CR-GC-849` | relation | `FUNC-bind-tools` |
 | `CR-GC-849` | relation | `FUNC-cli-dispatch` |
@@ -1571,6 +1573,8 @@
 | `FCHAIN-skill-report` | compose | `FUNC-tool-context` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-agent-loop` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-auto-export` |
+| `FCHAIN-snapshot-freshness` | compose | `FUNC-check-code-conformance` |
+| `FCHAIN-snapshot-freshness` | compose | `FUNC-commit-check` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-decode` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-export-markdown` |
@@ -1770,6 +1774,7 @@
 | `FLOW-cli-command` | io | `FUNC-upgrade` |
 | `FLOW-cli-command` | relation | `SCHEMA-cli-command` |
 | `FLOW-cli-invocation` | io | `FUNC-cli-dispatch` |
+| `FLOW-cli-invocation` | io | `FUNC-commit-check` |
 | `FLOW-cli-invocation` | io | `FUNC-verify-lane-code` |
 | `FLOW-cli-invocation` | io | `FUNC-verify-lane-full` |
 | `FLOW-cli-invocation` | io | `FUNC-verify-lane-model` |
@@ -1781,6 +1786,10 @@
 | `FLOW-code-lane-plan` | io | `FUNC-verify-lane-code` |
 | `FLOW-code-lane-plan` | io | `FUNC-verify-lane-full` |
 | `FLOW-code-lane-plan` | relation | `SCHEMA-code-lane-plan` |
+| `FLOW-commit-check-request` | io | `FUNC-check-code-conformance` |
+| `FLOW-commit-check-request` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-commit-check-verdict` | io | `ACTOR-auftraggeber` |
+| `FLOW-commit-check-verdict` | relation | `SCHEMA-rule-violation` |
 | `FLOW-completeness` | io | `FUNC-compute-readiness` |
 | `FLOW-completeness` | relation | `SCHEMA-completeness` |
 | `FLOW-completeness-request` | io | `FUNC-score-completeness` |
@@ -1789,6 +1798,7 @@
 | `FLOW-config-file` | relation | `SCHEMA-metric-policy` |
 | `FLOW-config-request` | io | `FUNC-load-config` |
 | `FLOW-config-request` | relation | `SCHEMA-metric-policy` |
+| `FLOW-conformance-findings` | io | `FUNC-commit-check` |
 | `FLOW-conformance-findings` | io | `FUNC-graph-readiness` |
 | `FLOW-conformance-findings` | io | `FUNC-rules-tool` |
 | `FLOW-conformance-findings` | relation | `SCHEMA-rule-violation` |
@@ -2315,6 +2325,7 @@
 | `FUNC-block-autorieren` | compose | `FUNC-target-profile` |
 | `FUNC-block-bedienung` | compose | `FUNC-cli-dispatch` |
 | `FUNC-block-bedienung` | compose | `FUNC-collect-status` |
+| `FUNC-block-bedienung` | compose | `FUNC-commit-check` |
 | `FUNC-block-bedienung` | compose | `FUNC-graph-merge-tool` |
 | `FUNC-block-bedienung` | compose | `FUNC-graph-mutate-tool` |
 | `FUNC-block-bedienung` | compose | `FUNC-graph-reseed-tool` |
@@ -2431,6 +2442,10 @@
 | `FUNC-collect-status` | allocate | `MOD-surface` |
 | `FUNC-collect-status` | io | `FLOW-install-result-collect-status` |
 | `FUNC-collect-status` | satisfy | `REQ-real-health-check` |
+| `FUNC-commit-check` | allocate | `MOD-dev-scripts` |
+| `FUNC-commit-check` | io | `FLOW-commit-check-request` |
+| `FUNC-commit-check` | io | `FLOW-commit-check-verdict` |
+| `FUNC-commit-check` | satisfy | `REQ-commit-check-flow-call` |
 | `FUNC-compute-readiness` | allocate | `MOD-kernel-measure` |
 | `FUNC-compute-readiness` | io | `FLOW-completeness-request` |
 | `FUNC-compute-readiness` | io | `FLOW-dimension-readiness` |
@@ -2831,6 +2846,7 @@
 | `FUNC-tool-context` | io | `FLOW-tool-context` |
 | `FUNC-tool-context` | io | `FLOW-trajectory-entry` |
 | `FUNC-tool-context` | io | `FLOW-work-set` |
+| `FUNC-tool-context` | satisfy | `REQ-audit-trail` |
 | `FUNC-tool-context` | satisfy | `REQ-mcp-tool-registry` |
 | `FUNC-upgrade` | allocate | `MOD-surface` |
 | `FUNC-upgrade` | io | `FLOW-install-result-upgrade` |
@@ -2942,6 +2958,7 @@
 | `REQ-graph-is-ssot` | compose | `REQ-graph-integrity` |
 | `REQ-graph-is-ssot` | compose | `REQ-held-back-edge-does-not-abort-load` |
 | `REQ-graph-is-ssot` | compose | `REQ-held-back-edges-in-readiness` |
+| `REQ-graph-snapshot-per-commit` | compose | `REQ-commit-check-flow-call` |
 | `REQ-one-gate-per-repo` | compose | `REQ-gate-only-writes` |
 | `REQ-risk-audit-evaluation-unowned` | compose | `REQ-audit-trail` |
 | `REQ-risk-auto-export-fails-silently` | compose | `REQ-export-marker-tracks-drift` |
@@ -3033,6 +3050,7 @@
 | `TEST-artifact-coupling` | verify | `REQ-steering-from-metrics` |
 | `TEST-attributvertraege` | verify | `SCHEMA-real-ref` |
 | `TEST-attributvertraege` | verify | `SCHEMA-test-refs` |
+| `TEST-audit-code-state` | verify | `REQ-audit-trail` |
 | `TEST-audit-retention` | verify | `REQ-audit-trail` |
 | `TEST-audit-rules-passed` | verify | `REQ-audit-trail` |
 | `TEST-audit-rules-passed` | verify | `REQ-rule-calibration` |
@@ -3065,6 +3083,7 @@
 | `TEST-code-quality` | verify | `REQ-structure-driven` |
 | `TEST-codec-validation` | verify | `REQ-codec-validation` |
 | `TEST-codec-validation` | verify | `REQ-graph-integrity` |
+| `TEST-commit-check` | verify | `REQ-commit-check-flow-call` |
 | `TEST-contracts-kernel` | verify | `SCHEMA-graph-delta` |
 | `TEST-contracts-kernel` | verify | `SCHEMA-ontology-json` |
 | `TEST-contracts-surface` | verify | `SCHEMA-audit-stats` |

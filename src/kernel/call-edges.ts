@@ -132,6 +132,24 @@ function declarationPath(sf: ts.SourceFile, pos: number): string {
   return parts.join('.');
 }
 
+const inRepoOf = (repoRoot: string) => (f: string): boolean => !relative(repoRoot, f).startsWith('..') && !f.includes('/node_modules/');
+
+/** Die Dateien, deren Aufrufe die Suche vollständig liefert: TS-Dateien der tsconfig im Repo, ohne `.d.ts`. */
+function scopeFiles(repoRoot: string, config: ts.ParsedCommandLine): string[] {
+  const inRepo = inRepoOf(repoRoot);
+  return config.fileNames.filter((f) => inRepo(f) && !f.endsWith('.d.ts'));
+}
+
+/**
+ * `callScope` ohne die Suche (CR-GC-848): dieselbe Menge, die `extractCallFacts` liefert, aus der tsconfig allein.
+ * Für die Frage, OB eine Datei geprüft wird (Commit-Prüfung, `codeState.dirty`), ohne die 1,3 s der Suche.
+ * `undefined` ohne `tsconfig.json`.
+ */
+export function readCallScope(repoRoot: string): string[] | undefined {
+  if (!existsSync(join(repoRoot, 'tsconfig.json'))) return undefined;
+  return scopeFiles(repoRoot, readConfig(repoRoot)).map((f) => relative(repoRoot, f)).sort();
+}
+
 /**
  * Die Aufrufkanten aller Dateien der tsconfig von `repoRoot`. `undefined` ohne `tsconfig.json`: nicht gesucht.
  */
@@ -148,11 +166,10 @@ export function extractCallFacts(repoRoot: string): CallFacts | undefined {
 
 function searchCalls(repoRoot: string, config: ts.ParsedCommandLine): CallFacts {
   const ls = languageService(repoRoot, config);
-  const fileNames = config.fileNames;
   const program = ls.getProgram();
   if (!program) throw new Error(`${repoRoot}: kein TypeScript-Programm`);
   const checker = program.getTypeChecker();
-  const inRepo = (f: string): boolean => !relative(repoRoot, f).startsWith('..') && !f.includes('/node_modules/');
+  const inRepo = inRepoOf(repoRoot);
   const keyOf = (t: Target): string => `${t.file}:${t.selectionSpan.start}`;
   const prepare = (file: string, pos: number): ts.CallHierarchyItem[] =>
     [ls.prepareCallHierarchy(file, pos)].flat().filter((i): i is ts.CallHierarchyItem => i !== undefined);
@@ -252,7 +269,7 @@ function searchCalls(repoRoot: string, config: ts.ParsedCommandLine): CallFacts 
     return symbol ? { file: relative(repoRoot, t.file), symbol } : undefined;
   };
 
-  const callScope = fileNames.filter((f) => inRepo(f) && !f.endsWith('.d.ts') && program.getSourceFile(f));
+  const callScope = scopeFiles(repoRoot, config);
   // Jede aufrufbare Deklaration der tsconfig, und jedes Ziel im Repo, das von dort erreicht wird.
   const queue: Target[] = [];
   const queued = new Set<string>();

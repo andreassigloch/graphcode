@@ -45,6 +45,7 @@
 | `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
 | `FUNC-collect-status` | FUNC | collectStatus |
+| `FUNC-commit-check` | FUNC | Commit-Pruefung Fluss gegen Aufruf |
 | `FUNC-compute-readiness` | FUNC | readinessOf(evaluation) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
 | `FUNC-create-harness` | FUNC | createHarness |
@@ -189,6 +190,7 @@
 | `FUNC-cli-dispatch` | `MOD-surface` |
 | `FUNC-close-violations` | `MOD-agent-surface` |
 | `FUNC-collect-status` | `MOD-surface` |
+| `FUNC-commit-check` | `MOD-dev-scripts` |
 | `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
 | `FUNC-create-harness` | `MOD-surface` |

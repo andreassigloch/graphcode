@@ -96,7 +96,7 @@ Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-merge-branches` — Zweig-Graphen konfliktfrei zusammenfuehren: `FUNC-agent-loop` → `FUNC-evaluate-rules` → `FUNC-graph-merge-tool` → `FUNC-graph-store` → `FUNC-merge-nodes` → `FUNC-mutate` → `FUNC-tool-context`
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-import` → `FUNC-open-store` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
-- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-agent-loop` → `FUNC-auto-export` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-export-marker-clear` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
+- `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-agent-loop` → `FUNC-auto-export` → `FUNC-check-code-conformance` → `FUNC-commit-check` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-export-marker-clear` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
 - `FCHAIN-snapshot-roundtrip` — Snapshot-Rundreise: `FUNC-agent-loop` → `FUNC-apply-reseed` → `FUNC-graph-export-snapshot` → `FUNC-graph-reseed-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-reseed` → `FUNC-seed-from-json`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
@@ -540,7 +540,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-843` | n/a | Fluss gegen Aufruf pruefen: Abgleich Modell und Code | `FUNC-check-code-conformance` · `FUNC-export-marker` · `FUNC-export-marker-clear` · `FUNC-graph-store` |
 | `CR-GC-846` | n/a | RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts) | `FUNC-check-code-conformance` |
 | `CR-GC-847` | n/a | graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped | `FUNC-graph-help` · `FUNC-se-help` |
-| `CR-GC-848` | n/a | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag | `FUNC-check-code-conformance` · `FUNC-tool-context` |
+| `CR-GC-848` | n/a | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag | `FUNC-check-code-conformance` · `FUNC-commit-check` · `FUNC-emit-trajectory` · `FUNC-tool-context` |
 | `CR-GC-849` | n/a | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) | `FUNC-bind-tools` · `FUNC-cli-dispatch` · `FUNC-create-harness` · `FUNC-emit-trajectory` · `FUNC-graph-store` · `FUNC-health-endpoint` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-target-profile-load` · `FUNC-tool-context` |
 | `CR-GC-850` | n/a | contracts 12.7.0 nachziehen: Mindestversion, Testpins fuer RC-11..13 und R-35, FC-02 aus Tests und Skills | `FUNC-generation-step` · `FUNC-mutate` · `FUNC-se-fmea` |
 

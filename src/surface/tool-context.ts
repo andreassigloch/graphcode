@@ -29,6 +29,7 @@ import { RULES_VERSION } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult, StaleDelta, StaleDeltaEntry } from '@sigloch/contracts/harness';
 import {
   materializeTrajectory,
+  codeStateOf,
   type EditSource,
   type MutationTrigger,
   type TrajectoryStamps,
@@ -352,6 +353,12 @@ export function createToolContext(
     };
   }
 
+  /** CR-GC-848: gegen welchen Code-Stand dieser Eintrag lief — auch an einer Vorschau, sie ist ein graph_mutate. */
+  function codeStateField(): Pick<TrajectoryStamps, 'codeState'> {
+    const codeState = codeStateOf(harness.getRepoRoot());
+    return codeState ? { codeState } : {};
+  }
+
   async function recordAudit(
     consumerId: string,
     result: MutateResult,
@@ -387,6 +394,7 @@ export function createToolContext(
       ...triggerStamp(relayed),
       ...(stamps?.respondsTo !== undefined ? { respondsTo: stamps.respondsTo } : {}),
       ...(stamps?.editSource !== undefined ? { editSource: stamps.editSource } : {}),
+      ...codeStateField(),
     };
     await auditLog.record(entry);
     // Re-project the feed from the log as the single source (CR-252). The write
@@ -415,7 +423,7 @@ export function createToolContext(
     result: MutateResult,
     commands: MutateCommand[],
   ): Promise<void> {
-    const entry: AuditEntry = {
+    const entry: AuditEntry & Pick<TrajectoryStamps, 'codeState'> = {
       id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       timestamp: new Date().toISOString(),
       consumerId,
@@ -429,6 +437,7 @@ export function createToolContext(
       // CR-GC-434: NO stamps on a preview - a dryRun is consultation, not mutation.
       // It neither drains the consulted window nor consumes prompt freshness.
       ...provenance(currentRelay()),
+      ...codeStateField(),
     };
     await auditLog.record(entry);
     // Same anchor as the mutate path (CR-GC-449): the feed belongs to its log.

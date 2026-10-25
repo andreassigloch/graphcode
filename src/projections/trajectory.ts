@@ -17,14 +17,16 @@
  */
 
 import { writeFile, mkdir } from 'node:fs/promises';
-import { readFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, existsSync, realpathSync } from 'node:fs';
+import { join, relative } from 'node:path';
+import { execFileSync, spawnSync } from 'node:child_process';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import { projectTrajectory } from '@sigloch/learning-core';
 // Der Feed-Dateiname steht einmal (scaffold-templates) — dieselbe Konstante, die
 // `graphcode remove` beim Aufräumen der Alt-Kopie liest (CR-GC-331).
 import { TRAJECTORY_FILE, GRAPHCODE_DIR } from '../kernel/workspace.js';
 import { readExportPending } from '../kernel/export-marker.js';
+import { readCallScope } from '../kernel/call-edges.js';
 
 // ---------------------------------------------------------------------------
 // Trajectory stamps (CR-GC-434) — the trigger of a mutation, on the record.
@@ -74,10 +76,41 @@ export interface TrajectoryStamps {
   /** Read tools that ran since the last recorded mutation; [] = provably no consultation. */
   consultedTools?: string[];
   editSource?: EditSource;
+  /**
+   * Gegen welchen Code-Stand die Mutation lief (CR-GC-848): `head` ist der Git-Commit, `dirty` sagt, ob unter
+   * `callScope` ungespeicherte Änderungen offen waren. Fehlt, wenn das Repo keinen Commit hat (kein Git, leeres Repo).
+   */
+  codeState?: CodeState;
+}
+
+/** Der Code-Stand einer Mutation (CR-GC-848). */
+export interface CodeState {
+  head: string;
+  dirty: boolean;
 }
 
 /**
- * Project the CR-GC-434 stamps off a log entry — verbatim pass-through of the
+ * Der Code-Stand von `repoRoot` jetzt (CR-GC-848): der Commit, auf dem der Arbeitsbaum steht, und ob unter
+ * `callScope` etwas offen ist (geändert, gestaget oder neu und nicht ignoriert). Damit lässt sich eine
+ * Modelländerung einem Code-Stand zuordnen. `undefined` ohne Commit — dann ist der Stand nicht erfasst,
+ * nicht geraten (die CR-GC-354-Asymmetrie).
+ */
+export function codeStateOf(repoRoot: string): CodeState | undefined {
+  const rev = spawnSync('git', ['rev-parse', '--show-toplevel', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' });
+  if (rev.status !== 0) return undefined;
+  const [top, head] = rev.stdout.trim().split('\n');
+  const scope = new Set(readCallScope(repoRoot) ?? []);
+  // -z: Pfade unverändert, relativ zur Wurzel des Repos. Ein Umbenennen trägt zwei Pfade, beide zählen.
+  const status = execFileSync('git', ['status', '--porcelain', '-z', '--untracked-files=all'], { cwd: repoRoot, encoding: 'utf8' });
+  const paths = status.split('\0').filter(Boolean).map((e) => (/^[ MADRCU?!]{2} /.test(e) ? e.slice(3) : e));
+  // git nennt die Wurzel aufgelöst (/private/var statt /var auf macOS) — verglichen wird auf derselben Basis.
+  const root = realpathSync(repoRoot);
+  const dirty = paths.some((p) => scope.has(relative(root, join(top, p))));
+  return { head, dirty };
+}
+
+/**
+ * Project the CR-GC-434 stamps (and the CR-GC-848 code state) off a log entry — verbatim pass-through of the
  * fields `recordAudit` wrote, absent stays absent. Local extension of the
  * `@sigloch/learning-core` Trajectory contract: `projectTrajectory` (a closed Zod
  * object) stays the base line, the stamps ride on top until the family promotes
@@ -89,6 +122,7 @@ export function projectStamps(entry: Record<string, unknown>): TrajectoryStamps 
   if (entry.trigger === 'human-order' || entry.trigger === 'agent-round') out.trigger = entry.trigger;
   if (Array.isArray(entry.consultedTools)) out.consultedTools = entry.consultedTools as string[];
   if (entry.editSource === 'suggestion-template' || entry.editSource === 'authored') out.editSource = entry.editSource;
+  if (entry.codeState !== undefined) out.codeState = entry.codeState as CodeState;
   return out;
 }
 
