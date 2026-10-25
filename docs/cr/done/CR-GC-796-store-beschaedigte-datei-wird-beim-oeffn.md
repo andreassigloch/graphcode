@@ -1,6 +1,6 @@
 # CR-GC-796: Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-25)
 **Typ:** aus Item ITEM-2026-855 (bug)
 **Erstellt:** 2026-10-12
 **Item:** bok/items/ITEM-2026-855.json (Lane: code)
