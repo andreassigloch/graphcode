@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 466 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 467 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 466 CR · 343 done · 4 open.
+Total: 467 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -528,3 +528,4 @@ Total: 466 CR · 343 done · 4 open.
 | `CR-GC-854` | n/a | verify:full schreibt rot 0, obwohl vitest ohne Bericht endet |
 | `CR-GC-855` | n/a | se:import-doc fragt die verify-Zuordnung ab (graphify CR-GF-144 Schritt 4) |
 | `CR-GC-856` | n/a | import-code verliert Handkanten nach graphify-uid-Wechsel (CR-GF-132), Duplikate ohne origin |
+| `CR-GC-857` | n/a | se-vorbereitung Abschnitt 2: Constraints herunterdeklinieren mit constraintCarriers (contracts 12.8.0) |

@@ -2,41 +2,78 @@
 
 **Status:** 🟠 Open
 **Typ:** aus Item ITEM-2026-1058 (idea)
-**Erstellt:** 2026-10-25
+**Erstellt:** 2026-10-25, umgeschrieben 2026-10-26 (Konzept vom Auftraggeber freigegeben)
 **Item:** bok/items/ITEM-2026-1058.json (Lane: code)
 
 ---
 
-Teil 1 von CR-GC-804 (Schnitt 2026-10-25, Regel max. 10 Dateien je CR). Die Entscheidungen 1, 3 und 5 aus
-CR-GC-804 gelten unverändert; der Konzepttext steht dort (`docs/cr/done/CR-GC-804-…`).
+Teil 1 von CR-GC-804. Die Mechanik steht dort unverändert: ein Constraint ist eine nicht-funktionale REQ am
+Element mit verifizierendem TEST, und die Testdatei liest den committeten Snapshot
+`docs/graph/graphcode.graph.json`. Die Testauswahl folgt Weg A (Entscheidung 5).
 
-## Ziel
+## Konzept (2026-10-26)
 
-Der erste Constraint am eigenen Modell, mit der Mechanik aus CR-GC-804: eine nicht-funktionale REQ am
-Adressaten (FUNC, MOD, FCHAIN oder SYS, Kante `satisfy`), ein TEST mit `verify` und `testRef` auf eine
-Testdatei, die den committeten Snapshot `docs/graph/graphcode.graph.json` liest und die Eigenschaft prüft.
-Der Test ist das Messinstrument; kein `measured*`-Attribut.
+**Architektur-bestimmend** ist ein Constraint, wenn ihn ein Zug am Modell brechen kann, ohne dass sich
+Code-Verhalten ändert: Funktion verschieben, Fluss anlegen, Modul teilen.
 
-## Offen vor dem Bau (Entscheidung des Autors)
+**Prüffunktionen.** Jede Antwortform eines Constraints bekommt eine Prüffunktion in `src/kernel/measure/`.
+Der Subpath `@sigloch/graphcode/constraints` exportiert sie, damit Constraint-Tests anderer Repos dieselben
+Funktionen nutzen. Misst contracts schon (LCOM4, kreuzende Flüsse, Kettenkennzahlen), ruft die Prüffunktion
+diese Messung und rechnet nicht nach. Die Bibliothek wächst je Constraint; dieser CR bringt die erste.
 
-Welcher Constraint, an welchem Element. CR-GC-804 nennt nur Beispiele („Kette in einem Modul",
-„Modul gesichert", Budget an der Kette); die Wahl ist eine Projektentscheidung. Ohne sie baut dieser CR nicht.
-`se:author-req` legt REQ und TEST an; der Skill `se-constraints` (CR-GC-852) ist dafür nicht nötig.
+## Der Constraint: „Ein Schreibweg"
+
+Adressat ist `FUNC-graph-store`. Anker: CLAUDE.md „Gate-only writes" (gate-only-writes), die Regel „Keine
+parallelen Pfade" und der erste Punkt der „Locked constraints" (ein Store, ein Besitzer-Prozess).
+
+Inhalt kommt in den Store nur über diese sechs Flüsse. Stand graphVersion 904, geprüft per `graph_get_edges`
+auf `FUNC-graph-store` (Richtung ein, Typ `io`) und je Fluss auf seinen Absender:
+
+| Fluss | Absender | Zweck |
+|---|---|---|
+| `FLOW-graph-delta` | `FUNC-mutate` | jede Änderung durch das Apply-Gate |
+| `FLOW-imported-graph` | `FUNC-import` | Import-Operation: ein ganzer Graph ersetzt den Store |
+| `FLOW-store-build` | `FUNC-create-harness` | Store öffnen |
+| `FLOW-store-close` | `FUNC-serve-stdio` | Store schließen (MCP-Host) |
+| `FLOW-store-close-cli` | `FUNC-cli-dispatch` | Store schließen (CLI) |
+| `FLOW-store-close-rewind` | `FUNC-rewind` | Store schließen vor dem Zurückspulen |
+
+Ein Zug, der einen siebten Fluss in `FUNC-graph-store` legt, bricht den Constraint, auch wenn kein Code
+sich ändert. Genau dieser Zug ist die Positivkontrolle.
+
+## Prüffunktion
+
+„Eingänge eines Elements nur aus der erlaubten Liste": bekommt Graph, Element und die erlaubten Flüsse und
+meldet zwei Listen.
+
+- jeden eingehenden Fluss außerhalb der Liste, mit seinen Absendern;
+- jeden Fluss der Liste, der im Modell nicht mehr in das Element führt.
+
+Beide Listen leer heißt grün. Sie ist eine Ratsche wie `tests/import-boundaries.test.ts`: ein siebter Fluss
+ist rot, bis der Autor ihn in die Liste aufnimmt; ein entfallener Fluss ist rot, bis der Autor ihn streicht.
+Die Lookups kommen aus dem Index von contracts (`indexOf`), nicht aus eigenen Vollscans.
 
 ## Umfang (Dateien)
 
-1. `tests/constraint-<name>.test.ts` (neu) — liest den Snapshot, prüft den Constraint; Positivkontrolle im
-   selben Test: eine Kopie des Snapshots mit einem verletzenden Zug macht die Prüfung rot.
-2. `scripts/model-test-set.mjs` — Eintrag in `INCLUDED` (Weg A, Entscheidung 5); der
-   Vollständigkeits-Test erzwingt ihn über das Muster `graph.json`.
-3. dieser CR.
+1. `src/kernel/measure/constraints.ts` (neu) — die Prüffunktion
+2. `tests/constraint-ein-schreibweg.test.ts` (neu) — liest den Snapshot, ruft die Prüffunktion; Positivkontrolle
+   im selben Test: eine Kopie des Snapshots mit einem zusätzlichen Fluss von einer anderen FUNC in
+   `FUNC-graph-store` ist rot und nennt den Absender
+3. `package.json` — Subpath `./constraints` in `exports`
+4. `tests/distribution.test.ts` — der Import `@sigloch/graphcode/constraints` gelingt aus dem gepackten Paket
+5. `scripts/model-test-set.mjs` — Eintrag in `INCLUDED` (Weg A)
+6. dieser CR
 
-Modell: REQ + TEST + `satisfy`/`verify` per `graph_mutate`, danach `graph_export`.
+Modell per `graph_mutate`: `REQ-ein-schreibweg` (nicht-funktional) mit `FUNC-graph-store -satisfy->`, ein TEST
+mit `testRefs` auf die Testdatei und `verify` auf die REQ, eine FUNC für die Prüffunktion mit `realRef` in
+`MOD-kernel`. Danach `graph_export`.
 
 ## Akzeptanzkriterien
 
-- Der Constraint-Test ist am heutigen Modell grün.
-- Die Positivkontrolle ist rot für den verletzenden Zug und nennt das verletzende Element.
+- Der Constraint-Test ist am heutigen Modell grün; vor der Prüffunktion war er rot.
+- Die Positivkontrolle ist rot für den siebten Fluss und nennt dessen Absender.
+- Ein Fluss der Liste, den es im Modell nicht gibt, ist rot.
+- `import { … } from '@sigloch/graphcode/constraints'` gelingt in einem Fremdrepo aus dem gepackten Paket.
 - `npm run verify:model` fährt den Test mit; `tests/verify-model.completeness.test.ts` ist grün.
 - Der TEST-Knoten trägt `testRefs` mit Ergebnis aus der Test-Lane (CR-GC-800).
 

@@ -1336,6 +1336,7 @@
 | `CR-GC-855` | relation | `FUNC-import-doc` |
 | `CR-GC-856` | relation | `FUNC-import-code-verb` |
 | `CR-GC-856` | relation | `REQ-import-code-renames-by-candidate` |
+| `CR-GC-857` | relation | `FUNC-se-vorbereitung` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

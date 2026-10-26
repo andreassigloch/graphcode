@@ -549,6 +549,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-854` | n/a | verify:full schreibt rot 0, obwohl vitest ohne Bericht endet | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `REQ-lane-red-without-report` |
 | `CR-GC-855` | n/a | se:import-doc fragt die verify-Zuordnung ab (graphify CR-GF-144 Schritt 4) | `FUNC-import-doc` |
 | `CR-GC-856` | n/a | import-code verliert Handkanten nach graphify-uid-Wechsel (CR-GF-132), Duplikate ohne origin | `FUNC-import-code-verb` · `REQ-import-code-renames-by-candidate` |
+| `CR-GC-857` | n/a | se-vorbereitung Abschnitt 2: Constraints herunterdeklinieren mit constraintCarriers (contracts 12.8.0) | `FUNC-se-vorbereitung` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

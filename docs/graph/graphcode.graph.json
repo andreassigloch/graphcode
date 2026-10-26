@@ -3700,6 +3700,12 @@
       "description": "docs/cr/open/CR-GC-856-import-code-verliert-handkanten-nach-gra.md"
     },
     {
+      "id": "CR-GC-857",
+      "type": "CR",
+      "name": "se-vorbereitung Abschnitt 2: Constraints herunterdeklinieren mit constraintCarriers (contracts 12.8.0)",
+      "description": "docs/cr/open/CR-GC-857-se-vorbereitung-abschnitt-2-constraints-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -19579,6 +19585,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-857",
+      "target": "FUNC-se-vorbereitung",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -30937,5 +30948,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 904
+  "graphVersion": 906
 }
