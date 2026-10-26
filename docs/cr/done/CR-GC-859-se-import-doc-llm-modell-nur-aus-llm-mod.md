@@ -1,6 +1,6 @@
 # CR-GC-859: se:import-doc: LLM-Modell nur aus LLM_MODEL, kein Modellname im Skill
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1082 (finding)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1082.json (Lane: code)
