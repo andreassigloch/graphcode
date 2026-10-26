@@ -38,7 +38,7 @@ function writeFixture(repoRoot: string): void {
 type EdgeKey = { sourceId: string; targetId: string; edgeType: string };
 async function readGraph(
   repoRoot: string,
-): Promise<{ uids: string[]; types: string[]; edges: number; edgeList: EdgeKey[] }> {
+): Promise<{ uids: string[]; types: string[]; edges: number; edgeList: EdgeKey[]; candidateIds: Record<string, unknown> }> {
   const harness = await createHarness({ repoRoot, scope: { workspaceId: 'check', systemId: 'check' } });
   await harness.initialize();
   try {
@@ -48,6 +48,7 @@ async function readGraph(
       types: g.nodes.map((n) => n.type),
       edges: g.edges.length,
       edgeList: g.edges.map((e) => ({ sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType })),
+      candidateIds: Object.fromEntries(g.nodes.map((n) => [n.uid, n.attributes?.candidateId])),
     };
   } finally {
     await harness.close();
@@ -101,8 +102,22 @@ describe('executeImportCode (CR-GC-298)', () => {
       expect(g.edges).toBeGreaterThan(0);
       // CR-GF-149 ⇒ CR-GC-527: die Verzeichnis-Hierarchie kommt als `MOD -compose-> MOD` durchs
       // Gate (R-18-legal, kein Error oben) — `src` compose-t beide Datei-MODs.
-      const composeFromSrc = g.edgeList.filter((e) => e.edgeType === 'compose' && e.sourceId === 'mod_src');
-      expect(composeFromSrc.map((e) => e.targetId).sort()).toEqual(['mod_src_filea_ts', 'mod_src_fileb_ts']);
+      // graphify 0.6 (CR-GF-132): lesbare uids; die alte uid steht in `attributes.candidateId` (CR-GC-858).
+      const composeFromSrc = g.edgeList.filter((e) => e.edgeType === 'compose' && e.sourceId === 'MOD-src');
+      expect(composeFromSrc.map((e) => e.targetId).sort()).toEqual(['MOD-src-filea-ts', 'MOD-src-fileb-ts']);
+      expect({
+        'MOD-src': g.candidateIds['MOD-src'],
+        'MOD-src-filea-ts': g.candidateIds['MOD-src-filea-ts'],
+        'MOD-src-fileb-ts': g.candidateIds['MOD-src-fileb-ts'],
+        'FUNC-funca': g.candidateIds['FUNC-funca'],
+        'FUNC-funcb': g.candidateIds['FUNC-funcb'],
+      }).toEqual({
+        'MOD-src': 'mod_src',
+        'MOD-src-filea-ts': 'mod_src_filea_ts',
+        'MOD-src-fileb-ts': 'mod_src_fileb_ts',
+        'FUNC-funca': 'func_src_filea_ts_funca',
+        'FUNC-funcb': 'func_src_fileb_ts_funcb',
+      });
     } finally {
       rmSync(repoRoot, { recursive: true, force: true });
     }

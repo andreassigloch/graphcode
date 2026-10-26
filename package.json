@@ -56,7 +56,7 @@
     "@sigloch/graph-api-core": "^5.10.3",
     "@sigloch/graph-view-edit": ">=0.16 <1",
     "@sigloch/graphcode-client": "^3.1.0",
-    "@sigloch/graphify": ">=0.5.2 <1",
+    "@sigloch/graphify": ">=0.6 <1",
     "@sigloch/learning-core": "^0.2.0",
     "@sigloch/se-engine": "^3.0.0",
     "kuzu-wasm": "^0.11.3",
