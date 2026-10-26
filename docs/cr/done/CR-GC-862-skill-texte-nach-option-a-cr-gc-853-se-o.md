@@ -1,6 +1,6 @@
 # CR-GC-862: Skill-Texte nach Option A (CR-GC-853): se:optimize belegt verletzt mit steerAdvisory statt fitAdvisory/regressions, se:generate ohne fitAdvisory
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1089 (idea)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1089.json (Lane: code)
