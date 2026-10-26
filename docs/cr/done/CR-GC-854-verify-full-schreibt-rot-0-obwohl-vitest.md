@@ -1,6 +1,6 @@
 # CR-GC-854: verify:full schreibt rot 0, obwohl vitest ohne Bericht endet
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1075 (bug)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1075.json (Lane: code)
