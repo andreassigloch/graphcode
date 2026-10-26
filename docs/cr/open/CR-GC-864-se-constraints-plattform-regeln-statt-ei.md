@@ -33,6 +33,15 @@
 6. **Ausgeliefert ist der Skill nicht.** immo-infra steht auf 0.34.0 und hat `se:constraints` nicht.
    Der Agent las die Datei aus dem Repo graphcode.
 
+7. **`se:top-level` hält gleiche Ketten für doppelte Use Cases. Bei einer Plugin-Architektur ist das falsch.**
+   Der Skill sagt: Laufen Varianten durch dieselbe Kette, sind sie ein Feld im Vertrag und kein eigener Use Case.
+   Der Agent legte deshalb 9 der 11 Use Cases von immo-infra zu 2 zusammen (graphVersion 15). Der Autor hat das
+   zurückgenommen: Ein Use Case beschreibt, was eine Person vom System will, unabhängig davon, wie es gebaut ist.
+   Er kann mehrere Ketten haben. Laufen alle Plugins durch dieselbe Kette, zeigt das gute Kapselung und kein Doppel.
+   Die Prüffrage 2 („Are the use cases disjoint?“) und der Abschnitt „Sub use cases“ brauchen eine Ausnahme: Gleiche
+   Ketten sind erlaubt, wenn sich die Use Cases in Akteur, Ziel oder Freigabe-Regel unterscheiden und die Kette über
+   eine Plugin-Grenze läuft.
+
 ## Zielbild
 
 - Der Skill fragt **zuerst nach Plattform-Regeln**: „Was muss für jede künftige Anwendung, Datenquelle oder
@@ -51,7 +60,7 @@
 | Datei | Änderung |
 |---|---|
 | `.claude/commands/se/constraints.md` | Schritt 2 mit der Frage nach Plattform-Regeln und dem schärferen Kriterium; Zeile Erweiterbarkeit; Abschnitt „Vor dem ersten Schnitt“; Hinweis R-19 |
-| `.claude/commands/se/top-level.md` | Constraints aus `constraintCarriers` als Vorgabe für den Schnitt |
+| `.claude/commands/se/top-level.md` | Constraints aus `constraintCarriers` als Vorgabe für den Schnitt; Ausnahme bei Prüffrage 2 und „Sub use cases“ für gleiche Ketten über eine Plugin-Grenze (Befund 7) |
 | `src/kernel/measure/constraints.ts` | `grenzeNurMitSchema`, `einAdapterJeAkteur` mit Befund-Schema |
 | `tests/constraints.test.ts` (oder bestehende Datei) | beide Funktionen, je Bruch eine Positivkontrolle |
 | `tests/skill-constraints.test.ts` | Feld-Test: Erweiterbarkeit und „Vor dem ersten Schnitt“ stehen im Skill |
