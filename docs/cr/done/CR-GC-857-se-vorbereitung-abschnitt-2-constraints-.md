@@ -1,6 +1,6 @@
 # CR-GC-857: se-vorbereitung Abschnitt 2: Constraints herunterdeklinieren mit constraintCarriers (contracts 12.8.0)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1080 (idea)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1080.json (Lane: code)
