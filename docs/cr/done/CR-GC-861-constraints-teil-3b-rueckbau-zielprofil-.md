@@ -1,6 +1,6 @@
 # CR-GC-861: Constraints Teil 3b: Rueckbau Zielprofil-Vertrag — weights/values aus TargetProfileSchema, Loader ohne Zielkonflikte, graph_metrics ohne fit.target, Profildateien, Skill-Abschnitte 1/2/4 (Folge von CR-GC-853)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1088 (idea)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1088.json (Lane: code)
