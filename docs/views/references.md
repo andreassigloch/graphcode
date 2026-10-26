@@ -1334,6 +1334,8 @@
 | `CR-GC-854` | relation | `FUNC-verify-lane-full` |
 | `CR-GC-854` | relation | `REQ-lane-red-without-report` |
 | `CR-GC-855` | relation | `FUNC-import-doc` |
+| `CR-GC-856` | relation | `FUNC-import-code-verb` |
+| `CR-GC-856` | relation | `REQ-import-code-renames-by-candidate` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2656,6 +2658,7 @@
 | `FUNC-import-code-verb` | io | `FLOW-mutate-cmd-import-code-verb` |
 | `FUNC-import-code-verb` | io | `FLOW-seed-request-import-code` |
 | `FUNC-import-code-verb` | io | `FLOW-store-open-import-code` |
+| `FUNC-import-code-verb` | satisfy | `REQ-import-code-renames-by-candidate` |
 | `FUNC-import-code-verb` | satisfy | `REQ-model-exchange-pre` |
 | `FUNC-import-doc` | allocate | `MOD-agent-surface` |
 | `FUNC-import-doc` | io | `FLOW-anleitung-import-doc` |
@@ -3187,6 +3190,7 @@
 | `TEST-impact-subgraph` | verify | `REQ-progressive-expansion` |
 | `TEST-impact-subgraph` | verify | `REQ-query-precision` |
 | `TEST-impact-subgraph` | verify | `REQ-subgraph-slicing` |
+| `TEST-import-code-umbenennung` | verify | `REQ-import-code-renames-by-candidate` |
 | `TEST-import-code-verb` | verify | `REQ-model-exchange-post` |
 | `TEST-import-code-verb` | verify | `REQ-model-exchange-pre` |
 | `TEST-import-code-verb` | verify | `REQ-no-extraction` |

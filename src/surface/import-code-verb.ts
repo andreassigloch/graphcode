@@ -10,7 +10,9 @@
  * upsertet) — gleicher Repo-Stand ergibt denselben Code-Graphen, Leichen nach
  * Refactorings sind unmoeglich. Der handgeschriebene Warum-/Wie-Baum (SYS, UC,
  * REQ, ACTOR, Design-FUNC/FLOW/TEST, … samt Kanten) ist nicht Gegenstand des
- * Imports und ueberlebt ihn (CR-GC-527). Bewusst NICHT
+ * Imports und ueberlebt ihn (CR-GC-527). Wechselt der Slicer die uid eines Knotens und nennt
+ * die alte als `candidateId`, benennt der Batch per merge-nodes um, statt zu loeschen und neu
+ * anzulegen — Handkanten und Handattribute bleiben (CR-GC-856). Bewusst NICHT
  * `harness.reseed()` (dessen Kontrakt ist „Store ← committetes SSOT", am Gate
  * vorbei) — Gate-only-writes gilt auch hier.
  *
@@ -29,7 +31,7 @@ import {
   type MutateTransportResult,
 } from '@sigloch/graphify';
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
-import { commandsToFormatE } from '@sigloch/graph-api-core';
+import { commandsToFormatE, type Graph } from '@sigloch/graph-api-core';
 import { createHarness } from './create-harness.js';
 import { bindToolsToHarness } from './mcp-tools.js';
 import { deriveMemberName } from './mcp-server.js';
@@ -149,94 +151,7 @@ export async function executeImportCode(opts: {
     //    upsertet, die Topologie spiegelt trotzdem exakt die Extraktion;
     //    Gate-Bindings (codeRef) auf unveraenderten Funktionen ueberleben.
     const registry = bindToolsToHarness(harness);
-    const edgeKey = (e: { sourceId: string; targetId: string; edgeType: string }): string =>
-      `${e.sourceId} ${e.edgeType} ${e.targetId}`;
-    const transport = async (commands: unknown[]): Promise<MutateTransportResult> => {
-      // CR-GC-527: jeder importierte Knoten wird als solcher gestempelt — die Marke IST
-      // die Herkunft, die der Stale-Filter unten liest.
-      const cmds = (
-        commands as Array<
-          | { op: 'add-node'; node: { uid: string; attributes?: Record<string, unknown> } }
-          | { op: 'add-edge'; edge: { sourceId: string; targetId: string; edgeType: string } }
-        >
-      ).map((c) =>
-        c.op === 'add-node'
-          ? { ...c, node: { ...c.node, attributes: { ...(c.node.attributes ?? {}), origin: CODE_ORIGIN } } }
-          : c,
-      );
-      const incomingNodes = new Set(cmds.filter((c) => c.op === 'add-node').map((c) => c.node.uid));
-      const incomingEdges = new Set(cmds.filter((c) => c.op === 'add-edge').map((c) => edgeKey(c.edge)));
-      // CR-GC-527: stale ist nur, was der Import besitzt (origin-Stempel) und nicht wieder
-      // liefert. Damit ueberleben der SYS-Anker (CR-GC-302: Intention + analysisFreshness-
-      // Stamps, sonst fallen AF-01..05 in die Vacuous-Exemption) UND der handgeschriebene
-      // Warum-/Wie-Baum — die Extraktion liefert keinen davon je mit.
-      const owned = new Set(prev.nodes.filter((n) => n.attributes?.['origin'] === CODE_ORIGIN).map((n) => n.uid));
-      const codeOwned = (uid: string): boolean => owned.has(uid);
-      const staleNodes = prev.nodes.filter((n) => codeOwned(n.uid) && !incomingNodes.has(n.uid));
-      const staleNodeUids = new Set(staleNodes.map((n) => n.uid));
-      // Kanten an geloeschten Knoten raeumt delete-node selbst ab; nur ueberlebende
-      // Endpunkte mit weggefallener Kante brauchen ein explizites delete-edge — und nur
-      // zwischen ZWEI Code-Knoten (allocate/io/relation/compose gehoeren dem Import). Eine
-      // Kante mit handgeschriebenem Endpunkt (REQ<-satisfy-FUNC, SYS-compose->MOD) bleibt.
-      const staleEdges = prev.edges.filter(
-        (e) =>
-          !incomingEdges.has(edgeKey(e)) &&
-          !staleNodeUids.has(e.sourceId) &&
-          !staleNodeUids.has(e.targetId) &&
-          codeOwned(e.sourceId) &&
-          codeOwned(e.targetId),
-      );
-      // CR-GC-302: fehlt der Anker ganz (frisches Repo, reiner Code-Import), legt ihn
-      // der Batch an — durchs Gate, im selben atomaren Durchlauf, auditiert als
-      // consumerId `import-code`. Nur wenn WEDER der Bestand NOCH die Extraktion ein
-      // SYS traegt: kein Overwrite, und nie delete+add derselben uid in einem Batch
-      // (persist schreibt deletes zuletzt — der Store wuerde vom Speicher abweichen).
-      const hasSys =
-        prev.nodes.some((n) => n.type === 'SYS') ||
-        cmds.some((c) => c.op === 'add-node' && c.node.uid.startsWith('SYS-'));
-      const ensureSys = hasSys
-        ? []
-        : [
-            {
-              op: 'add-node',
-              node: {
-                uid: `SYS-${member}`,
-                type: 'SYS',
-                name: member,
-                description: '',
-                attributes: { status: 'draft' },
-              },
-            },
-          ];
-      const batch = [
-        ...staleNodes.map((n) => ({ op: 'delete-node', uid: n.uid })),
-        ...staleEdges.map((e) => ({
-          op: 'delete-edge',
-          edge: { sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType },
-        })),
-        ...ensureSys,
-        ...cmds,
-      ];
-      if (batch.length === 0) return { success: true, violations: [] };
-      // ITEM-2026-604: graph_mutate nimmt nur Format-E. Den Typ der geloeschten Knoten kennt der
-      // Bestand (`prev`), den der angelegten der Batch selbst.
-      const typ = new Map(prev.nodes.map((n) => [n.uid, n.type]));
-      const res = (await registry['graph_mutate'].handler({
-        formatE: commandsToFormatE(batch as MutateCommand[], (uid) => typ.get(uid)),
-        consumerId: 'import-code',
-      })) as MutateResult;
-      return {
-        success: res.success,
-        tier: res.tier,
-        violations: res.violations.map((v) => ({
-          ruleId: v.ruleId,
-          severity: v.severity,
-          elementId: v.elementId ?? '',
-          message: v.message,
-          ...(v.fixHint !== undefined ? { fixHint: v.fixHint } : {}),
-        })),
-      };
-    };
+    const transport = reseedTransport(prev, registry, member);
 
     const result = await extractCodeRepoPipeline(files, { gate: new McpConsumerGate(transport) });
 
@@ -276,4 +191,149 @@ export async function executeImportCode(opts: {
   } finally {
     await harness.close();
   }
+}
+
+/**
+ * Der Reseed-Transport (CR-GC-298/527): bekommt die Kommandos der Extraktion und schickt EINEN
+ * Batch durchs Gate — Stempel, Stale-Knoten/-Kanten, SYS-Anker. `prev` ist der Bestand vor dem
+ * Import. Exportiert, damit der Test den Batch auf einem echten Store fährt (CR-GC-856).
+ */
+export function reseedTransport(
+  prev: Graph,
+  registry: ReturnType<typeof bindToolsToHarness>,
+  member: string,
+): (commands: unknown[]) => Promise<MutateTransportResult> {
+  const edgeKey = (e: { sourceId: string; targetId: string; edgeType: string }): string =>
+    `${e.sourceId} ${e.edgeType} ${e.targetId}`;
+  return async (commands: unknown[]): Promise<MutateTransportResult> => {
+    const geliefert = commands as Array<
+      | { op: 'add-node'; node: { uid: string; attributes?: Record<string, unknown> } }
+      | { op: 'add-edge'; edge: { sourceId: string; targetId: string; edgeType: string } }
+    >;
+    // CR-GC-856: alte uid → neue uid über candidateId. Der neue Knoten übernimmt die Attribute
+    // des alten (Handattribute überleben), merge-nodes hängt dessen Kanten um.
+    const umbenannt = umbenennungen(
+      prev.nodes,
+      geliefert.flatMap((c) => (c.op === 'add-node' ? [c.node] : [])),
+    );
+    const altVon = new Map([...umbenannt].map(([alt, neu]) => [neu, alt]));
+    const byUid = new Map(prev.nodes.map((n) => [n.uid, n]));
+    const neueUid = (uid: string): string => umbenannt.get(uid) ?? uid;
+    // CR-GC-527: jeder importierte Knoten wird als solcher gestempelt — die Marke IST
+    // die Herkunft, die der Stale-Filter unten liest.
+    const cmds = geliefert.map((c) => {
+      if (c.op !== 'add-node') return c;
+      const alt = altVon.has(c.node.uid) ? byUid.get(altVon.get(c.node.uid)!)?.attributes : undefined;
+      return { ...c, node: { ...c.node, attributes: { ...(alt ?? {}), ...(c.node.attributes ?? {}), origin: CODE_ORIGIN } } };
+    });
+    const incomingNodes = new Set(cmds.filter((c) => c.op === 'add-node').map((c) => c.node.uid));
+    const incomingEdges = new Set(cmds.filter((c) => c.op === 'add-edge').map((c) => edgeKey(c.edge)));
+    // CR-GC-527: stale ist nur, was der Import besitzt (origin-Stempel) und nicht wieder
+    // liefert. Damit ueberleben der SYS-Anker (CR-GC-302: Intention + analysisFreshness-
+    // Stamps, sonst fallen AF-01..05 in die Vacuous-Exemption) UND der handgeschriebene
+    // Warum-/Wie-Baum — die Extraktion liefert keinen davon je mit.
+    // CR-GC-856: ohne Stempel belegt die Zuordnung über candidateId die Herkunft.
+    const owned = new Set([
+      ...prev.nodes.filter((n) => n.attributes?.['origin'] === CODE_ORIGIN).map((n) => n.uid),
+      ...umbenannt.keys(),
+    ]);
+    const codeOwned = (uid: string): boolean => owned.has(uid);
+    const staleNodes = prev.nodes.filter((n) => codeOwned(n.uid) && !incomingNodes.has(n.uid) && !umbenannt.has(n.uid));
+    const staleNodeUids = new Set(staleNodes.map((n) => n.uid));
+    // Kanten an geloeschten Knoten raeumt delete-node selbst ab; nur ueberlebende
+    // Endpunkte mit weggefallener Kante brauchen ein explizites delete-edge — und nur
+    // zwischen ZWEI Code-Knoten (allocate/io/relation/compose gehoeren dem Import). Eine
+    // Kante mit handgeschriebenem Endpunkt (REQ<-satisfy-FUNC, SYS-compose->MOD) bleibt.
+    // Verglichen wird unter den neuen uids: eine Kante, die der Import umbenannt wieder liefert,
+    // ist nicht stale — merge-nodes hängt sie um.
+    const staleEdges = prev.edges.filter(
+      (e) =>
+        !incomingEdges.has(edgeKey({ ...e, sourceId: neueUid(e.sourceId), targetId: neueUid(e.targetId) })) &&
+        !staleNodeUids.has(e.sourceId) &&
+        !staleNodeUids.has(e.targetId) &&
+        codeOwned(e.sourceId) &&
+        codeOwned(e.targetId),
+    );
+    // CR-GC-302: fehlt der Anker ganz (frisches Repo, reiner Code-Import), legt ihn
+    // der Batch an — durchs Gate, im selben atomaren Durchlauf, auditiert als
+    // consumerId `import-code`. Nur wenn WEDER der Bestand NOCH die Extraktion ein
+    // SYS traegt: kein Overwrite, und nie delete+add derselben uid in einem Batch
+    // (persist schreibt deletes zuletzt — der Store wuerde vom Speicher abweichen).
+    const hasSys =
+      prev.nodes.some((n) => n.type === 'SYS') ||
+      cmds.some((c) => c.op === 'add-node' && c.node.uid.startsWith('SYS-'));
+    const ensureSys = hasSys
+      ? []
+      : [
+          {
+            op: 'add-node',
+            node: {
+              uid: `SYS-${member}`,
+              type: 'SYS',
+              name: member,
+              description: '',
+              attributes: { status: 'draft' },
+            },
+          },
+        ];
+    const batch = [
+      ...staleNodes.map((n) => ({ op: 'delete-node', uid: n.uid })),
+      ...staleEdges.map((e) => ({
+        op: 'delete-edge',
+        edge: { sourceId: e.sourceId, targetId: e.targetId, edgeType: e.edgeType },
+      })),
+      ...ensureSys,
+      ...cmds,
+      ...[...umbenannt].map(([sourceUid, targetUid]) => ({ op: 'merge-nodes', sourceUid, targetUid })),
+    ];
+    if (batch.length === 0) return { success: true, violations: [] };
+    // ITEM-2026-604: graph_mutate nimmt nur Format-E. Den Typ der geloeschten Knoten kennt der
+    // Bestand (`prev`), den der angelegten der Batch selbst.
+    const typ = new Map(prev.nodes.map((n) => [n.uid, n.type]));
+    const res = (await registry['graph_mutate'].handler({
+      formatE: commandsToFormatE(batch as MutateCommand[], (uid) => typ.get(uid)),
+      consumerId: 'import-code',
+    })) as MutateResult;
+    return {
+      success: res.success,
+      tier: res.tier,
+      violations: res.violations.map((v) => ({
+        ruleId: v.ruleId,
+        severity: v.severity,
+        elementId: v.elementId ?? '',
+        message: v.message,
+        ...(v.fixHint !== undefined ? { fixHint: v.fixHint } : {}),
+      })),
+    };
+  };
+}
+
+/**
+ * Alte uid → neue uid eines Code-Knotens (CR-GC-856). graphify vergibt seit CR-GF-132 lesbare
+ * uids und liefert die alte als `attributes.candidateId` (CR-GF-154). Ein Knoten des Bestands
+ * gehört zu einem gelieferten, wenn seine uid ODER seine candidateId gleich dessen candidateId
+ * ist — nie über den Namen: Ordner-MOD und Datei-MOD heißen beide nach dem Pfad. Ohne
+ * origin-Stempel ist die Gleichheit von uid und candidateId der Beleg der Import-Herkunft.
+ * Trifft eine candidateId zwei Knoten oder ein Knoten zwei gelieferte, bricht der Import ab.
+ */
+export function umbenennungen(
+  bestand: ReadonlyArray<{ uid: string; attributes?: Record<string, unknown> }>,
+  geliefert: ReadonlyArray<{ uid: string; attributes?: Record<string, unknown> }>,
+): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const neu of geliefert) {
+    const c = neu.attributes?.['candidateId'];
+    if (typeof c !== 'string') continue;
+    const alt = bestand.filter((n) => n.uid !== neu.uid && (n.uid === c || n.attributes?.['candidateId'] === c));
+    if (alt.length === 0) continue;
+    if (alt.length > 1) {
+      throw new Error(`graphcode import-code: candidateId ${c} trifft ${alt.length} Knoten (${alt.map((n) => n.uid).join(', ')}).`);
+    }
+    const vorher = map.get(alt[0].uid);
+    if (vorher !== undefined) {
+      throw new Error(`graphcode import-code: ${alt[0].uid} passt zu ${vorher} und zu ${neu.uid}.`);
+    }
+    map.set(alt[0].uid, neu.uid);
+  }
+  return map;
 }
