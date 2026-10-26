@@ -11,6 +11,10 @@
  * CR-GC-791 (Version 2): Schritt 3 liest den Antwortweg (`answerPath`) und arbeitet die Liste der
  * hindernden Fluesse ab (`answerPathBlockedBy`), statt jeden Fluss der Kette abzufragen.
  *
+ * CR-GC-857 (Version 5): Schritt 2 hat den zweiten Eingang, die Constraints. Er liest ihre Traeger
+ * aus `constraintCarriers` (contracts 12.8.0, CR-SM-418), das `graph_metrics` nur auf Anfrage
+ * liefert. Jedes Feld, das Schritt 2 nennt, muss in der Antwort von `graph_metrics` stehen.
+ *
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
@@ -19,11 +23,16 @@ import { join } from 'node:path';
 import {
   ALL_RULE_DEFS,
   ChainMetrics,
+  ConstraintCarriers,
   FlowSync,
+  RequirementScope,
+  RiskCarriers,
   chainMetrics,
+  constraintCarriers,
   requirementScope,
   riskCarriers,
 } from '@sigloch/contracts/se';
+import { GraphMetricsAnswerSchema } from '../src/projections/metrics.js';
 
 const skill = readFileSync(join(__dirname, '..', '.claude', 'commands', 'se-vorbereitung.md'), 'utf8');
 
@@ -47,6 +56,10 @@ function modell(): { elements: Array<Record<string, unknown>>; traces: Array<Rec
       { id: 'REQ-risk', type: 'REQ', name: 'risk', attributes: { role: 'risk', kinds: ['non-functional'] } },
       { id: 'REQ-mit-mod', type: 'REQ', name: 'am Modul', attributes: { role: 'mitigation', kinds: ['non-functional'] } },
       { id: 'REQ-mit-sys', type: 'REQ', name: 'am System', attributes: { role: 'mitigation', kinds: ['non-functional'] } },
+      // CR-GC-857: zwei Constraints ohne Rolle, einer an der Kette, einer am System. `kinds` steht im
+      // OntologyGraph am Element, nicht unter den Attributen — so liest es constraintCarriers.
+      { id: 'REQ-c-kette', type: 'REQ', name: 'Kette', kinds: ['non-functional'] },
+      { id: 'REQ-c-sys', type: 'REQ', name: 'quer', kinds: ['non-functional'] },
     ],
     traces: [
       { source: 'SYS-x', target: 'UC-x', type: 'compose' },
@@ -62,6 +75,8 @@ function modell(): { elements: Array<Record<string, unknown>>; traces: Array<Rec
       { source: 'REQ-risk', target: 'REQ-mit-sys', type: 'compose' },
       { source: 'MOD-m', target: 'REQ-mit-mod', type: 'satisfy' },
       { source: 'SYS-x', target: 'REQ-mit-sys', type: 'satisfy' },
+      { source: 'FCHAIN-x', target: 'REQ-c-kette', type: 'satisfy' },
+      { source: 'SYS-x', target: 'REQ-c-sys', type: 'satisfy' },
     ],
   };
 }
@@ -73,9 +88,9 @@ const VERDRAHTUNG = ['R-30', 'R-31', 'R-21', 'IO-01', 'FC-04', 'FC-05'];
 const KLASSEN = ['Tieferlegen', 'Zerlegen', 'Funktion fehlt', 'Gilt quer'];
 
 describe('se-vorbereitung liest Kennzahlen und Befunde, er rechnet nichts (CR-GC-784)', () => {
-  it('der Kopf traegt Version 4 und den Namen des Skills', () => {
+  it('der Kopf traegt Version 5 und den Namen des Skills', () => {
     expect(skill).toMatch(/^name: se-vorbereitung$/m);
-    expect(skill).toMatch(/^version: 4$/m);
+    expect(skill).toMatch(/^version: 5$/m);
   });
 
   it('der Skill-Text traegt keine Rechnung und keine Kennzahl, die es nicht gibt', () => {
@@ -145,6 +160,55 @@ describe('se-vorbereitung liest Kennzahlen und Befunde, er rechnet nichts (CR-GC
       expect(skill, feld).toContain(`\`${feld}\``);
       expect(umfang, feld).toHaveProperty(feld);
     }
+  });
+
+  /** Der Text von Schritt 2, ohne die Vorbilder in Format-E. */
+  const schritt2 = (): string => {
+    const start = skill.indexOf('## 2. Anforderungen zuordnen');
+    const ende = skill.indexOf('## 3. ', start);
+    expect(start, 'Schritt 2 steht im Skill').toBeGreaterThan(-1);
+    return skill.slice(start, ende).replace(/```[\s\S]*?```/g, '');
+  };
+
+  it('Schritt 2, zweiter Eingang: der Skill holt constraintCarriers auf Anfrage und nennt die Felder des Vertrags (CR-GC-857)', () => {
+    const text = schritt2();
+    expect(text).toContain('`graph_metrics({ constraintCarriers: true })`');
+    expect(GraphMetricsAnswerSchema.shape, 'graph_metrics liefert den Block').toHaveProperty('constraintCarriers');
+    const zeile = constraintCarriers(alsGraph(modell()));
+    expect(zeile.length, 'Praemisse: das Probemodell hat zwei Constraints').toBe(2);
+    for (const feld of ['reqId', 'carriers', 'by']) {
+      expect(text, feld).toContain(`\`${feld}\``);
+      expect(ConstraintCarriers.element.shape, feld).toHaveProperty(feld);
+      expect(zeile[0], feld).toHaveProperty(feld);
+    }
+    // Was der Skill ueber die Traeger sagt, rechnet der Vertrag so: an der Kette ihre Glieder, am System keiner.
+    expect(text).toMatch(/Constraint[^\n]*am System[^\n]*leere `carriers`/);
+    expect(zeile).toEqual([
+      { reqId: 'REQ-c-kette', carriers: ['FUNC-a', 'FUNC-b'], by: ['FCHAIN-x'] },
+      { reqId: 'REQ-c-sys', carriers: [], by: ['SYS-x'] },
+    ]);
+    // Eine REQ mit Rolle ist kein Constraint: sie steht in riskCarriers.
+    expect(text).toMatch(/mit Rolle[^\n]*`riskCarriers`/);
+    expect(zeile.map((z) => z.reqId)).not.toContain('REQ-mit-mod');
+  });
+
+  it('Schritt 2 nennt kein Feld, das graph_metrics nicht liefert (CR-GC-857)', () => {
+    // Die Felder der Antwort von graph_metrics, soweit Schritt 2 sie liest: die Bloecke und ihre Zeilen.
+    const geliefert = new Set<string>([
+      ...Object.keys(GraphMetricsAnswerSchema.shape),
+      ...Object.keys(RiskCarriers.shape),
+      ...Object.keys(RiskCarriers.shape.risks.element.shape),
+      ...Object.keys(RiskCarriers.shape.risks.element.shape.satisfiers.element.shape),
+      ...Object.keys(RiskCarriers.shape.surface.element.shape),
+      ...Object.keys(RequirementScope.shape),
+      ...Object.keys(ConstraintCarriers.element.shape),
+    ]);
+    // Kein Feld von graph_metrics: die Bindung, die der Skill aus graph_context liest.
+    const ausAnderemWerkzeug = new Set(['realRef']);
+    const genannt = [...schritt2().matchAll(/`([a-z][A-Za-z]*)`/g)].map((m) => m[1]);
+    expect(genannt.length, 'Praemisse: Schritt 2 nennt Felder').toBeGreaterThan(5);
+    const fremd = genannt.filter((f) => !geliefert.has(f) && !ausAnderemWerkzeug.has(f));
+    expect(fremd, 'Felder, die graph_metrics nicht liefert').toEqual([]);
   });
 
   it('die vier Klassen stehen da, und was der Skill ueber Traeger sagt, rechnet der Vertrag so', () => {

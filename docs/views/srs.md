@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 183 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 185 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -902,9 +902,17 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 > auch in: `FCHAIN-dashboard-metrics` · `FCHAIN-skill-report` · `FUNC-block-abfrage`
 
-MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787)
+MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · `FLOW-target-profile` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+
+###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
+
+graph_metrics MUSS auf Anfrage (Eingabe constraintCarriers: true) je Constraint, also je nicht-funktionaler Anforderung ohne Rolle mit Erfueller, die Anforderung, ihre Erfueller wie modelliert und ihre Blattfunktionen als Traeger liefern, und ohne diese Anfrage den Block weglassen. Gerechnet wird an EINER Stelle in contracts (constraintCarriers); das Werkzeug reicht durch.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-graph-metrics` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-risk-scope` — Risikotraeger und Betrachtungsumfang in graph_metrics
 
@@ -1272,7 +1280,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FUNC-block-optimierung`
 
-Prompt-realisierter Skill se-vorbereitung, Version 2: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Vier Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Bericht. Liest Bewertbarkeit, Traeger, Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791)
+Prompt-realisierter Skill se-vorbereitung, Version 5: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Fuenf Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen und Constraints dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Fluesse am Code pruefen, Bericht. Liest Bewertbarkeit, Traeger je Risiko und je Constraint (constraintCarriers, auf Anfrage), Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791, CR-GC-857)
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
@@ -1285,6 +1293,14 @@ Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufru
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-vorbereitung-constraints` — se-vorbereitung ordnet Constraints ein
+
+Der Skill se-vorbereitung MUSS in Schritt 2 neben den Gegenmassnahmen jeden Constraint (nicht-funktionale Anforderung ohne Rolle an Modul, Kette oder System) in eine der vier Klassen Tieferlegen, Zerlegen, Funktion fehlt, Gilt quer einordnen und seine Traeger aus constraintCarriers von graph_metrics lesen, nicht selbst ueber Kette und Allokation sammeln. Er nennt nur Felder, die graph_metrics liefert.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-vorbereitung-reads-metrics` (conformance) · satisfy ◀ `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-vorbereitung-reads-metrics` — Vorbereitung liest Kennzahlen und schlaegt vor
 
@@ -1856,9 +1872,17 @@ Verification ◀ `TEST-audit-code-state` (integration) · `TEST-audit-retention`
 
 > auch in: `FCHAIN-dashboard-metrics` · `FCHAIN-skill-authoring` · `FUNC-block-abfrage`
 
-MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787)
+MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · `FLOW-target-profile` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+
+###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
+
+graph_metrics MUSS auf Anfrage (Eingabe constraintCarriers: true) je Constraint, also je nicht-funktionaler Anforderung ohne Rolle mit Erfueller, die Anforderung, ihre Erfueller wie modelliert und ihre Blattfunktionen als Traeger liefern, und ohne diese Anfrage den Block weglassen. Gerechnet wird an EINER Stelle in contracts (constraintCarriers); das Werkzeug reicht durch.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-graph-metrics` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-risk-scope` — Risikotraeger und Betrachtungsumfang in graph_metrics
 
@@ -4596,9 +4620,17 @@ Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket
 
 > auch in: `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FUNC-block-abfrage`
 
-MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787)
+MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · `FLOW-target-profile` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+
+###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
+
+graph_metrics MUSS auf Anfrage (Eingabe constraintCarriers: true) je Constraint, also je nicht-funktionaler Anforderung ohne Rolle mit Erfueller, die Anforderung, ihre Erfueller wie modelliert und ihre Blattfunktionen als Traeger liefern, und ohne diese Anfrage den Block weglassen. Gerechnet wird an EINER Stelle in contracts (constraintCarriers); das Werkzeug reicht durch.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-graph-metrics` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-risk-scope` — Risikotraeger und Betrachtungsumfang in graph_metrics
 
@@ -9082,9 +9114,17 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 > auch in: `FCHAIN-dashboard-metrics` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report`
 
-MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787)
+MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857)
 
 io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · `FLOW-target-profile` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+
+###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
+
+graph_metrics MUSS auf Anfrage (Eingabe constraintCarriers: true) je Constraint, also je nicht-funktionaler Anforderung ohne Rolle mit Erfueller, die Anforderung, ihre Erfueller wie modelliert und ihre Blattfunktionen als Traeger liefern, und ohne diese Anfrage den Block weglassen. Gerechnet wird an EINER Stelle in contracts (constraintCarriers); das Werkzeug reicht durch.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-graph-metrics` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-risk-scope` — Risikotraeger und Betrachtungsumfang in graph_metrics
 
@@ -10504,7 +10544,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se-vorbereitung, Version 2: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Vier Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Bericht. Liest Bewertbarkeit, Traeger, Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791)
+Prompt-realisierter Skill se-vorbereitung, Version 5: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Fuenf Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen und Constraints dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Fluesse am Code pruefen, Bericht. Liest Bewertbarkeit, Traeger je Risiko und je Constraint (constraintCarriers, auf Anfrage), Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791, CR-GC-857)
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
@@ -10517,6 +10557,14 @@ Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufru
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-vorbereitung-constraints` — se-vorbereitung ordnet Constraints ein
+
+Der Skill se-vorbereitung MUSS in Schritt 2 neben den Gegenmassnahmen jeden Constraint (nicht-funktionale Anforderung ohne Rolle an Modul, Kette oder System) in eine der vier Klassen Tieferlegen, Zerlegen, Funktion fehlt, Gilt quer einordnen und seine Traeger aus constraintCarriers von graph_metrics lesen, nicht selbst ueber Kette und Allokation sammeln. Er nennt nur Felder, die graph_metrics liefert.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-vorbereitung-reads-metrics` (conformance) · satisfy ◀ `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-vorbereitung-reads-metrics` — Vorbereitung liest Kennzahlen und schlaegt vor
 
@@ -12594,7 +12642,7 @@ schema ◀ `FLOW-arch-fitness`
 
 ### 5.29  `SCHEMA-metrics-answer` — graph_metrics-Antwort
 
-Die Antwort von graph_metrics als EIN Vertrag: modules nach ModuleMetrics, functions nach FunctionCriticality, chains und measurability nach ChainMetrics, riskCarriers nach RiskCarriers, scope nur auf Anfrage nach RequirementScope, policy nach MetricPolicySchema mit policySource, fit mit MetricVector und Zielprofil, graphVersion. Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut; die Grundgesamtheiten MOD, FUNC und FCHAIN bleiben getrennte Bloecke. Der Handler parst seine Antwort vor der Rueckgabe. (CR-GC-821)
+Die Antwort von graph_metrics als EIN Vertrag: modules nach ModuleMetrics, functions nach FunctionCriticality, chains und measurability nach ChainMetrics, riskCarriers nach RiskCarriers, scope nur auf Anfrage nach RequirementScope, constraintCarriers nur auf Anfrage nach ConstraintCarriers (reqId, carriers, by), policy nach MetricPolicySchema mit policySource, fit mit MetricVector und Zielprofil, graphVersion. Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut; die Grundgesamtheiten MOD, FUNC und FCHAIN bleiben getrennte Bloecke. Der Handler parst seine Antwort vor der Rueckgabe. (CR-GC-821, CR-GC-857)
 
 schema ◀ `FLOW-dashboard-answer` · `FLOW-metrics-answer`
 
@@ -13508,7 +13556,7 @@ verify ▶ `REQ-graph-is-ssot` · testRefs: `tests/harness.import.test.ts`
 
 Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen. Dazu die Kettenkennzahlen am echten Werkzeug (CR-GC-767): die Referenzkette Zahlung ausloesen ergibt Laenge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rueckkopplungen, 1 geteilten Knoten; die Gegenprobe mit Schleife und Ast laesst die Werte umschlagen; eine Kette ohne Eingang traegt den Grund und zaehlt im Nenner der Quote; auf dem eigenen Modell stimmt jede Kette mit dem direkten Aufruf der contracts-Funktion ueberein. Dazu Risikotraeger und Betrachtungsumfang (CR-GC-787): ein Risiko mit einer Gegenmassnahme an einer Funktion und einer am System nennt genau die Funktion als Traeger und beide Erfueller; ohne Risiko zwei leere Listen; der Umfang fehlt ohne Anfrage, nennt fuer eine Kette ihre Module, Ketten und Anforderungen und fuer eine Funktion ausserhalb einen anderen; eine unbekannte Kennung und eine Kennung anderen Typs werden benannt abgelehnt.
 
-verify ▶ `REQ-chain-metrics` · `REQ-metrics-risk-scope` · `REQ-quality-metric` · `REQ-single-measurement-path` · `SCHEMA-chain-metrics` · `SCHEMA-metrics-answer` · testRefs: `tests/metrics.test.ts`
+verify ▶ `REQ-chain-metrics` · `REQ-metrics-constraint-carriers` · `REQ-metrics-risk-scope` · `REQ-quality-metric` · `REQ-single-measurement-path` · `SCHEMA-chain-metrics` · `SCHEMA-metrics-answer` · testRefs: `tests/metrics.test.ts`
 
 ### 8.52  `TEST-graph-realize` — Flaches Binden ueber das Gate
 
@@ -14180,7 +14228,7 @@ verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/m
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
-verify ▶ `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
+verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
 ### 8.164  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
@@ -14196,4 +14244,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-183 REQ · 183 verified · 0 without a verifying TEST (R-01).
+185 REQ · 185 verified · 0 without a verifying TEST (R-01).

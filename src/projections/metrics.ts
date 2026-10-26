@@ -33,6 +33,9 @@
  * Funktion oder Kette des Modells ist. contracts lässt jeden anderen Seed still fallen, und ein
  * Umfang, der dann nur die Systemanforderungen nennt, sähe aus wie eine Antwort.
  *
+ * CR-GC-857: dazu `constraintCarriers` (nur auf Anfrage) — die Träger jeder nicht-funktionalen
+ * Anforderung ohne Rolle, aus contracts (CR-SM-418). `se-vorbereitung` §2 liest sie.
+ *
  * @author andreas@siglochconsulting
  */
 
@@ -43,7 +46,9 @@ import {
   chainMetrics,
   requirementScope,
   riskCarriers,
+  constraintCarriers,
   ChainMetrics,
+  ConstraintCarriers,
   RequirementScope,
   RiskCarriers,
   ModuleMetrics,
@@ -69,6 +74,10 @@ const GraphMetricsInputSchema = z.looseObject({
     .min(1)
     .optional()
     .describe('FUNC or FCHAIN ids; adds the block `scope` (what an analysis of them has to read).'),
+  constraintCarriers: z
+    .boolean()
+    .optional()
+    .describe('true adds `constraintCarriers`: carriers of every constraint.'),
 });
 
 /** Die Dimensionen, in denen Gewicht und Zielwert in verschiedene Richtungen zeigen. */
@@ -103,6 +112,12 @@ export const GraphMetricsAnswerSchema = z.object({
   riskCarriers: RiskCarriers,
   /** CR-GC-787: der Betrachtungsumfang der angefragten Funktionen und Ketten — nur mit Eingabe `scope`. */
   scope: RequirementScope.optional(),
+  /**
+   * CR-GC-857: je Constraint (nicht-funktionale REQ ohne Rolle an Modul, Kette oder System) seine
+   * Träger und Erfüller — nur mit Eingabe `constraintCarriers: true`. Am eigenen Modell rund 33 KB,
+   * deshalb nicht in jeder Antwort.
+   */
+  constraintCarriers: ConstraintCarriers.optional(),
   policy: MetricPolicySchema,
   policySource: PolicySourceSchema,
   fit: z.object({
@@ -201,6 +216,7 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
         measurability: chains.measurability,
         riskCarriers: riskCarriers(ontology),
         ...(input.scope ? { scope: requirementScope(ontology, input.scope) } : {}),
+        ...(input.constraintCarriers ? { constraintCarriers: constraintCarriers(ontology) } : {}),
         policy: config.metricPolicy,
         policySource: source,
         fit: {

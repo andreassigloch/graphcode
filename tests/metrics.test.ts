@@ -29,6 +29,7 @@ import { METRIC_DIMENSIONS, toArray } from '@sigloch/se-engine';
 import {
   DEFAULT_METRIC_POLICY,
   chainMetrics,
+  constraintCarriers,
   functionCriticality,
   moduleMetrics,
   requirementScope,
@@ -662,6 +663,21 @@ describe('graph_metrics — Risikotraeger und Betrachtungsumfang (CR-GC-787)', (
 
   it('eine Kennung, die weder Funktion noch Kette ist, wird mit ihrem Typ abgelehnt', async () => {
     await expect(tools.graph_metrics.handler({ scope: ['MOD-a'] })).rejects.toThrow(/graph_metrics: .*'MOD-a' \(MOD\)/);
+  });
+
+  // CR-GC-857: die Traeger jedes Constraints (nicht-funktionale REQ ohne Rolle) — nur auf Anfrage,
+  // denn am eigenen Modell sind es rund 33 KB je Aufruf. Gerechnet in contracts (CR-SM-418).
+  it('constraintCarriers kommt nur auf Anfrage (CR-GC-857)', async () => {
+    const res = await tools.graph_metrics.handler({});
+    expect('constraintCarriers' in res).toBe(false);
+  });
+
+  it('constraintCarriers: je Constraint seine Traeger und Erfueller, gleich dem direkten Aufruf (CR-GC-857)', async () => {
+    const res = await tools.graph_metrics.handler({ constraintCarriers: true });
+    // REQ-modul ist der einzige Constraint der Fixture: REQ-gegen-sys traegt eine Rolle und steht in riskCarriers.
+    expect(res.constraintCarriers).toEqual([{ reqId: 'REQ-modul', carriers: ['FUNC-eins'], by: ['MOD-a'] }]);
+    expect(res.constraintCarriers).toEqual(constraintCarriers(toOntologyGraph(harness.getGraph())));
+    expect(GraphMetricsAnswerSchema.safeParse(res).success).toBe(true);
   });
 });
 

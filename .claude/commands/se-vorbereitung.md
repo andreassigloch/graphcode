@@ -1,7 +1,7 @@
 ---
 name: se-vorbereitung
-version: 4
-description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen dem tiefsten Träger zuordnen, Flüsse als synchron oder asynchron kennzeichnen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
+version: 5
+description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, Flüsse als synchron oder asynchron kennzeichnen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
 # se-vorbereitung — erst das Modell, dann die Analyse
@@ -63,21 +63,33 @@ Lies `riskCarriers` aus derselben Antwort von `graph_metrics`:
 - `surface`: dieselben Paare je Funktion.
 
 Welche Anforderungen an der Kette hängen, sagt `scope`: `graph_metrics({ scope: ["<FCHAIN>"] })`
-liefert `modules`, `chains` und `requirements`. Bearbeite die Gegenmaßnahmen darin.
+liefert `modules`, `chains` und `requirements`. Bearbeite die Gegenmaßnahmen und die Constraints darin.
 
-Ziel ist ein Träger je Risiko. Ein Erfüller, der ein Modul ist, macht jede Blattfunktion des
-Moduls zum Träger. Dafür gibt es keine Regel; es ist der Hinweis dieses Schritts. Ordne jede
-Gegenmaßnahme, deren `by` ein Modul oder das System ist, einer von vier Klassen zu:
+**Der zweite Eingang: Constraints.** Ein Constraint ist eine nicht-funktionale Anforderung ohne
+Rolle an Modul, Kette oder System. Seine Träger liefert `graph_metrics({ constraintCarriers: true })`
+im Block `constraintCarriers`, nur auf diese Anfrage:
+
+- je Zeile `reqId` (der Constraint), `by` (seine Erfüller wie modelliert) und `carriers` (die
+  Blattfunktionen darunter, nach derselben Tabelle wie bei `riskCarriers`).
+- Ein Constraint nur am System hat leere `carriers`: dort gilt er quer.
+- Eine Anforderung mit Rolle steht nicht dort, sondern in `riskCarriers`.
+
+Du sammelst die Träger nicht selbst über Kette und Allokation; die Zeile ist die Liste.
+
+Ziel ist ein Träger je Risiko und je Constraint. Ein Erfüller, der ein Modul ist, macht jede
+Blattfunktion des Moduls zum Träger. Dafür gibt es keine Regel; es ist der Hinweis dieses Schritts.
+Ordne jede Gegenmaßnahme, deren `by` ein Modul oder das System ist, und jeden Constraint einer von
+vier Klassen zu:
 
 | Klasse | Erkennbar an | Zug |
 |---|---|---|
-| **Tieferlegen** | genau eine Funktion führt die Gegenmaßnahme aus | als funktionale Anforderung fassen und dieser Funktion zuordnen |
-| **Zerlegen** | zwei Aussagen in einer Anforderung | in zwei Anforderungen teilen, dann jede neu einordnen |
-| **Funktion fehlt** | keine Funktion im Modell führt sie aus | kein Zug. Befund am Funktionsbaum; **Funktion fehlt** wird ein Item, die Gegenmaßnahme bleibt, wo sie ist |
-| **Gilt quer** | sie bindet jede Funktion, keine einzelne | bleibt am System. Der Ort dort ist die Kennzeichnung; in `carriers` zählt sie nicht |
+| **Tieferlegen** | genau eine Funktion führt die Gegenmaßnahme oder den Constraint aus | als funktionale Anforderung fassen und dieser Funktion zuordnen; der Test bleibt an der Anforderung |
+| **Zerlegen** | zwei Aussagen in einer Anforderung, z. B. „Modul gesichert" = jeder Eingang passiert f + kein anderer Eingang existiert | in zwei Anforderungen teilen, dann jede neu einordnen. Der strukturelle Teil eines Constraints bleibt oben, sein Test liest den Snapshot |
+| **Funktion fehlt** | keine Funktion im Modell führt sie aus | kein Zug. Befund am Funktionsbaum; **Funktion fehlt** wird ein Item, die Anforderung bleibt, wo sie ist |
+| **Gilt quer** | sie bindet jede Funktion, keine einzelne | bleibt am System. Der Ort dort ist die Kennzeichnung; in `carriers` zählt sie nicht. Ein Constraint bekommt dort einen Test, der den Snapshot liest |
 
 **Vor dem Tieferlegen: die Bindung der Funktion lesen** (`realRef` aus `graph_context`), nicht
-nur den Text. Führt der gebundene Code die Gegenmaßnahme aus, steht der Vorschlag. Führt sie
+nur den Text. Führt der gebundene Code die Gegenmaßnahme oder den Constraint aus, steht der Vorschlag. Führt sie
 eine andere Funktion aus, gilt der Code. Führt sie keine aus, sag das am Vorschlag; der Autor
 entscheidet zwischen Modul und der Klasse „Funktion fehlt".
 
@@ -94,7 +106,10 @@ Das Vorbild für einen Zug der Klasse Tieferlegen, `dryRun: true` zuerst:
 + FUNC-<funktion> -satisfy-> REQ-<gegenmassnahme>
 ```
 
-Ob eine Gegenmaßnahme quer gilt, ist ein Urteil des Autors. Du legst deine Einordnung als
+Für einen Constraint gilt dasselbe Vorbild. Hängt er an der Kette, löschst du die Kante
+`FCHAIN-<kette> -satisfy-> REQ-<constraint>` statt der Kante vom Modul.
+
+Ob eine Gegenmaßnahme oder ein Constraint quer gilt, ist ein Urteil des Autors. Du legst deine Einordnung als
 Vorschlag vor und kennzeichnest sie so. Ein Risiko ohne Gegenmaßnahme oder ohne Erfüller melden
 `FM-02` und `RD-01` schon; zitiere sie.
 
@@ -176,6 +191,7 @@ Je Kette, alles zitiert und nichts gezählt, was `graph_metrics` nicht liefert:
 |---|---|
 | bewertbar | `measurable`, sonst `reasons` |
 | Träger je Risiko | `carriers` je `riskId` |
+| Träger je Constraint | `carriers` und `by` je `reqId` aus `constraintCarriers` |
 | Sockel | die `satisfiers`, deren `by` das System ist |
 | Antwortweg | `answerPath`, sonst die Flüsse aus `answerPathBlockedBy`, je mit ihrem Grund |
 | Flüsse am Code | `callCoverage`, dazu je Befund von `RC-12` und `RC-13` das Ergebnis aus Schritt 4, mit Datei und Symbol |
@@ -189,7 +205,7 @@ Der Bericht ist der Eingang des CR, der die gewählten Züge anwendet.
 ## Abschluss-Prüfliste
 
 - [ ] jede Kette des Umfangs bewertbar, oder der Lauf endete in Schritt 1
-- [ ] je Gegenmaßnahme an Modul oder System eine der vier Klassen, als Vorschlag gekennzeichnet
+- [ ] je Gegenmaßnahme an Modul oder System und je Constraint eine der vier Klassen, als Vorschlag gekennzeichnet
 - [ ] vor jedem Tieferlegen die Bindung der Funktion gelesen
 - [ ] `answerPath` der Kette lesbar (`answerPathBlockedBy` leer), oder die hindernden Flüsse im Bericht als offen
 - [ ] jeder Fluss der Kette am Code geprüft, oder als ungeprüft im Bericht

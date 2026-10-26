@@ -1339,7 +1339,11 @@
 | `CR-GC-855` | relation | `FUNC-import-doc` |
 | `CR-GC-856` | relation | `FUNC-import-code-verb` |
 | `CR-GC-856` | relation | `REQ-import-code-renames-by-candidate` |
+| `CR-GC-857` | relation | `FUNC-graph-metrics` |
 | `CR-GC-857` | relation | `FUNC-se-vorbereitung` |
+| `CR-GC-857` | relation | `REQ-metrics-constraint-carriers` |
+| `CR-GC-857` | relation | `REQ-vorbereitung-constraints` |
+| `CR-GC-857` | relation | `SCHEMA-metrics-answer` |
 | `CR-GC-858` | relation | `FUNC-import-code-verb` |
 | `CR-GC-859` | relation | `FUNC-import-doc` |
 | `CR-GC-859` | relation | `REQ-llm-modell-aus-konfiguration` |
@@ -2581,6 +2585,7 @@
 | `FUNC-graph-metrics` | allocate | `MOD-projections` |
 | `FUNC-graph-metrics` | io | `FLOW-metrics-answer` |
 | `FUNC-graph-metrics` | io | `FLOW-metrics-request` |
+| `FUNC-graph-metrics` | satisfy | `REQ-metrics-constraint-carriers` |
 | `FUNC-graph-metrics` | satisfy | `REQ-metrics-risk-scope` |
 | `FUNC-graph-mutate-tool` | allocate | `MOD-surface` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-audit-entry` |
@@ -2813,6 +2818,7 @@
 | `FUNC-se-vorbereitung` | allocate | `MOD-agent-surface` |
 | `FUNC-se-vorbereitung` | io | `FLOW-anleitung-se-vorbereitung` |
 | `FUNC-se-vorbereitung` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-se-vorbereitung` | satisfy | `REQ-vorbereitung-constraints` |
 | `FUNC-se-vorbereitung` | satisfy | `REQ-vorbereitung-reads-metrics` |
 | `FUNC-seed-from-json` | allocate | `MOD-kernel` |
 | `FUNC-seed-from-json` | io | `FLOW-ontology-json` |
@@ -3176,6 +3182,7 @@
 | `TEST-graph-integrity` | verify | `REQ-graph-integrity` |
 | `TEST-graph-is-ssot` | verify | `REQ-graph-is-ssot` |
 | `TEST-graph-metrics` | verify | `REQ-chain-metrics` |
+| `TEST-graph-metrics` | verify | `REQ-metrics-constraint-carriers` |
 | `TEST-graph-metrics` | verify | `REQ-metrics-risk-scope` |
 | `TEST-graph-metrics` | verify | `REQ-quality-metric` |
 | `TEST-graph-metrics` | verify | `REQ-single-measurement-path` |
@@ -3411,6 +3418,7 @@
 | `TEST-views-conformance` | verify | `REQ-shared-views-no-fork` |
 | `TEST-violation-context` | verify | `REQ-precise-context` |
 | `TEST-violation-context` | verify | `REQ-rule-enforcement` |
+| `TEST-vorbereitung-reads-metrics` | verify | `REQ-vorbereitung-constraints` |
 | `TEST-vorbereitung-reads-metrics` | verify | `REQ-vorbereitung-reads-metrics` |
 | `TEST-working-set-spezlauf` | verify | `REQ-token-efficiency` |
 | `TEST-zug-kennzahlen-danach` | verify | `REQ-zug-zeigt-kennzahlen-danach` |
@@ -3451,6 +3459,7 @@
 | `UC-code-quality` | compose | `REQ-skill-authors-through-gate` |
 | `UC-code-quality` | compose | `REQ-structure-driven` |
 | `UC-code-quality` | compose | `REQ-trajectory-emit` |
+| `UC-code-quality` | compose | `REQ-vorbereitung-constraints` |
 | `UC-code-quality` | compose | `REQ-vorbereitung-reads-metrics` |
 | `UC-code-quality` | compose | `REQ-zug-zeigt-kennzahlen-danach` |
 | `UC-deterministic-steering` | compose | `FCHAIN-generation-states` |
@@ -3514,6 +3523,7 @@
 | `UC-live-graph-view` | compose | `REQ-completeness-single-value` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-ontology-sync` |
 | `UC-live-graph-view` | compose | `REQ-dashboard-readonly` |
+| `UC-live-graph-view` | compose | `REQ-metrics-constraint-carriers` |
 | `UC-live-graph-view` | compose | `REQ-metrics-risk-scope` |
 | `UC-live-graph-view` | compose | `REQ-mutation-emits-event` |
 | `UC-live-graph-view` | compose | `REQ-post-emit-update-event` |

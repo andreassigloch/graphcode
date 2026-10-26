@@ -105,7 +105,12 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'Funktionen), `chains` (alle Ketten durch sie) und `requirements` (jede Anforderung, die eine ' +
       'der Funktionen, eines der Module, eine der Ketten oder das System erfüllt). Die Zahl ist die ' +
       'Länge der Liste. Eine Kennung, die keine Funktion oder Kette des Modells ist, lehnt das ' +
-      'Werkzeug mit ihrem Namen ab, statt einen Umfang zu liefern, der nur das System nennt.',
+      'Werkzeug mit ihrem Namen ab, statt einen Umfang zu liefern, der nur das System nennt.\n' +
+      '`constraintCarriers` gibt es nur auf Anfrage (`constraintCarriers: true`, CR-GC-857): eine ' +
+      'Zeile je Constraint, also je nicht-funktionaler Anforderung ohne Rolle mit Erfüller. `reqId` ' +
+      'ist die Anforderung, `by` ihre Erfüller wie modelliert (Modul, Kette oder System), `carriers` ' +
+      'die Blattfunktionen nach derselben Tabelle wie bei `riskCarriers`; ein Erfüller am System ' +
+      'zählt nicht in die Träger. Eine Anforderung mit Rolle steht in `riskCarriers`, nicht hier.',
   },
   graph_mutate: {
     plain:
