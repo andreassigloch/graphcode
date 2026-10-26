@@ -1,6 +1,6 @@
 # CR-GC-855: se:import-doc fragt die verify-Zuordnung ab (graphify CR-GF-144 Schritt 4)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1078 (idea)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1078.json (Lane: code)
