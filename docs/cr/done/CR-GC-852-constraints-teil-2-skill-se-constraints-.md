@@ -1,6 +1,6 @@
 # CR-GC-852: Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1059 (idea)
 **Erstellt:** 2026-10-25, umgeschrieben 2026-10-26 (Konzept vom Auftraggeber freigegeben)
 **Item:** bok/items/ITEM-2026-1059.json (Lane: code)
