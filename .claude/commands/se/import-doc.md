@@ -1,6 +1,6 @@
 ---
 name: se:import-doc
-version: 1
+version: 2
 description: Dokument (PDF/Markdown/Text) zweistufig in den Graph importieren (»Struktur vor KI«) — Skelett zeigen, Typ-Entscheidungen im Chat, LLM-Extract durchs Apply-Gate; Merge (adds-only), nie Reseed
 ---
 
@@ -20,13 +20,19 @@ UI); Stufe 2 extrahiert mit LLM und importiert durchs Apply-Gate.
 ## Voraussetzungen
 
 - Kein laufender MCP-Host auf demselben Store (sonst `StoreOwnershipError`).
-- LM Studio (o. kompatibel) erreichbar — Env `LLM_BASE` (Default `http://127.0.0.1:1234/v1`),
-  `LLM_MODEL` (Default `qwen/qwen3.6-27b`). **Laufzeit-Warnung:** Stufe 2 slict das ganze Dokument
+- Ein OpenAI-kompatibler LLM-Endpunkt ist erreichbar (Env `LLM_BASE`, sonst der Default von graphify) und
+  das Modell ist gesetzt: `LLM_MODEL=<modellname>`. Das Modell kommt nur aus der Umgebung (graphify ≥ 0.6,
+  CR-GF-153); dieser Skill nennt und wählt keins (CR-GC-859).
+- **Ist `LLM_MODEL` nicht gesetzt: vor Stufe 2 anhalten** und dem Nutzer sagen: „Setze `LLM_MODEL` auf das
+  Modell deines LLM-Endpunkts (und `LLM_BASE`, wenn es nicht der Default von graphify ist) und starte
+  Stufe 2 neu." Kein Modell raten, keins vorschlagen. Das Skript der Stufe 2 bricht in diesem Fall selbst
+  ab, bevor es den Store öffnet.
+- **Laufzeit-Warnung:** Stufe 2 slict das ganze Dokument
   durchs lokale LLM — bei großen Manuals Stunden (LLM-LOAD-PROFILE). Erst mit kleinen/mittleren
   Dokumenten arbeiten.
-- `@sigloch/graphify` mit `graphify_structure`-API (≥ CR-GF-139) und `verifies` an der
-  TEST-Entscheidung samt `rejectedVerifies` (≥ CR-GF-144; die Registry-Version 0.5.2 hat beides
-  noch nicht — dev: `npm run link:siblings`).
+- `@sigloch/graphify` ≥ 0.6: `graphify_structure`-API (CR-GF-139), `verifies` an der
+  TEST-Entscheidung samt `rejectedVerifies` (CR-GF-144) und das Modell nur aus der Konfiguration
+  (CR-GF-153).
 - PDF-Eingang braucht poppler `pdftotext` auf dem PATH.
 
 ## Stufe 1 — Skelett zeigen (deterministisch, 0 LLM)
@@ -92,6 +98,13 @@ import { basename, extname, join } from 'node:path';
 import { handleMcpExtract, pdfToText, LMStudioClient, McpConsumerGate } from '@sigloch/graphify';
 import { commandsToFormatE } from '@sigloch/graph-api-core';
 
+// CR-GC-859: das Modell kommt nur aus der Konfiguration (LLM_MODEL), nie aus diesem Skript.
+const model = process.env.LLM_MODEL;
+if (!model) {
+  console.error('Kein LLM-Modell konfiguriert: setze LLM_MODEL auf das Modell deines LLM-Endpunkts (LLM_BASE) und starte Stufe 2 neu.');
+  process.exit(2);
+}
+
 const repoRoot = process.cwd();
 // Member-Repo: Paket aus node_modules; graphcode-Dev-Repo selbst: dist-Fallback.
 const gc = await import('@sigloch/graphcode').catch(() => import(join(repoRoot, 'dist/index.js')));
@@ -132,7 +145,7 @@ try {
   };
   const r = await handleMcpExtract(
     { documents, decisions, bundleId: `import-doc-${new Date().toISOString().slice(0, 10)}` },
-    { client: new LMStudioClient(), gate: new McpConsumerGate(transport) },
+    { client: new LMStudioClient({ model }), gate: new McpConsumerGate(transport) },
   );
   let exportPath: string | undefined, exportError: string | undefined;
   try { exportPath = ((await registry['graph_export'].handler({})) as any)?.graphJson?.path; }

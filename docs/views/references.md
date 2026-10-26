@@ -1341,6 +1341,8 @@
 | `CR-GC-856` | relation | `REQ-import-code-renames-by-candidate` |
 | `CR-GC-857` | relation | `FUNC-se-vorbereitung` |
 | `CR-GC-858` | relation | `FUNC-import-code-verb` |
+| `CR-GC-859` | relation | `FUNC-import-doc` |
+| `CR-GC-859` | relation | `REQ-llm-modell-aus-konfiguration` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2676,6 +2678,7 @@
 | `FUNC-import-code-verb` | satisfy | `REQ-model-exchange-pre` |
 | `FUNC-import-doc` | allocate | `MOD-agent-surface` |
 | `FUNC-import-doc` | io | `FLOW-anleitung-import-doc` |
+| `FUNC-import-doc` | satisfy | `REQ-llm-modell-aus-konfiguration` |
 | `FUNC-list-elements` | allocate | `MOD-kernel` |
 | `FUNC-list-elements` | io | `FLOW-element-slice` |
 | `FUNC-list-elements` | satisfy | `REQ-query-precision` |
@@ -3212,6 +3215,7 @@
 | `TEST-import-code-verb` | verify | `REQ-model-exchange-pre` |
 | `TEST-import-code-verb` | verify | `REQ-no-extraction` |
 | `TEST-import-code-verb` | verify | `REQ-post-import` |
+| `TEST-import-doc-modell` | verify | `REQ-llm-modell-aus-konfiguration` |
 | `TEST-import-invariant` | verify | `REQ-bootstrap-through-gate` |
 | `TEST-import-rejected-traces` | verify | `REQ-export-refuses-until-held-back-repaired` |
 | `TEST-import-rejected-traces` | verify | `REQ-held-back-edge-does-not-abort-load` |

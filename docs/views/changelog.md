@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 468 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 469 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 468 CR · 343 done · 4 open.
+Total: 469 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -530,3 +530,4 @@ Total: 468 CR · 343 done · 4 open.
 | `CR-GC-856` | n/a | import-code verliert Handkanten nach graphify-uid-Wechsel (CR-GF-132), Duplikate ohne origin |
 | `CR-GC-857` | n/a | se-vorbereitung Abschnitt 2: Constraints herunterdeklinieren mit constraintCarriers (contracts 12.8.0) |
 | `CR-GC-858` | n/a | graphify 0.6 einziehen: Range, import-code-verb-Test auf lesbare uids |
+| `CR-GC-859` | n/a | se:import-doc: LLM-Modell nur aus LLM_MODEL, kein Modellname im Skill |
