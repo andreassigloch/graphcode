@@ -1,12 +1,4 @@
 {
-  "weights": {
-    "coherence": 1,
-    "modifiability": 0,
-    "faultTolerance": 0,
-    "flowEfficiency": 0.4,
-    "viability": 0.4,
-    "scalability": -0.2
-  },
   "intentAnchors": [
     "gate-only-writes",
     "graph-ist-ssot",

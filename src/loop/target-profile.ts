@@ -1,19 +1,12 @@
 /**
- * target-profile.ts — das ℝ⁶-Zielprofil + Intentions-Anker als Steuer-Config
- * (CR-GC-295). KEIN Graph-SSOT: das Profil steuert graph_suggest/graph_generate
- * wie ExecutorConfig/.mcp.json — deshalb Datei statt mutate(), aber committet
- * (`!.graphcode/target-profile.json`-Ausnahme in .gitignore: Projekt-Config,
- * nicht Maschinen-Config).
+ * target-profile.ts — die Themen der Intention als Steuer-Config (CR-GC-295, CR-GC-307).
+ * KEIN Graph-SSOT: die Datei steuert graph_generate wie ExecutorConfig/.mcp.json —
+ * deshalb Datei statt mutate(), aber committet (`!.graphcode/target-profile.json`-Ausnahme
+ * in .gitignore: Projekt-Config, nicht Maschinen-Config).
  *
- * EIN Check-Pfad: der Konflikt-Check läuft bei JEDEM Load — ein manueller
- * Datei-Edit durchläuft damit denselben Check wie die Skill-Route
- * (se:target-profile schreibt die Datei, der nächste Read prüft). Konflikte
- * sind WARNUNG, nie Block (Analogie R-19/R-20): ein Zielkonflikt kann eine
- * bewusste Operator-Entscheidung sein — nur unsichtbar darf er nicht bleiben.
- *
- * Die Konfliktpaare sind aus den Metrik-Formeln hergeleitet
- * (@sigloch/se-engine), kein Anspruch auf Vollständigkeit —
- * Erweiterung ist ein kleiner Nachtrag, kein eigener CR.
+ * CR-GC-861 (Teil 3 von CR-GC-853): Gewichte, Zielwerte und der Zielkonflikt-Check sind
+ * zurückgebaut. Die Datei trägt nur noch die Themen; eine Entscheidung des Autors über die
+ * Architektur steht als Constraint im Modell (CR-GC-804).
  *
  * @author andreas@siglochconsulting
  */
@@ -23,79 +16,29 @@ import { dirname, join } from 'node:path';
 // bis hierher eine zweite, zeichengleiche Kopie (die Naht aus CR-SM-286 fiel, die
 // Bausteine blieben liegen).
 import { tokens } from '@sigloch/contracts/se';
-import {
-  TargetWeightsSchema,
-  TargetProfileSchema,
-  type TargetWeights,
-  type TargetProfile,
-} from './target-profile-contract.js';
+import { TargetProfileSchema, type TargetProfile } from './target-profile-contract.js';
 
-// ---------------------------------------------------------------------------
-// Schema — die 6 MetricVector-Dimensionen, Gewicht je Dimension in [-1,1].
-// Seit CR-GC-419 in `./target-profile-contract.ts`: die Datei hat zwei Schreiber
-// (der Skill se:target-profile und ein Hand-Edit) und einen Leser hier — der
-// Vertrag gehoert keiner der Seiten. Hier nur re-exportiert, damit bestehende
-// Importe eine Definition sehen; es gibt weiterhin genau eine.
-// ---------------------------------------------------------------------------
-
-export { TargetWeightsSchema, TargetProfileSchema };
-export type { TargetWeights, TargetProfile };
+// Seit CR-GC-419 steht der Vertrag in `./target-profile-contract.ts`; hier nur re-exportiert,
+// damit bestehende Importe eine Definition sehen. Es gibt weiterhin genau eine.
+export { TargetProfileSchema };
+export type { TargetProfile };
 
 /** Pfad relativ zum Repo-Root — committet (Ausnahme vom .graphcode/-gitignore). */
 export const TARGET_PROFILE_REL = join('.graphcode', 'target-profile.json');
 
 // ---------------------------------------------------------------------------
-// Konflikt-Check — formelmäßig hergeleitete Gegenpaare (Warning, kein Block)
-// ---------------------------------------------------------------------------
-
-interface ConflictPair {
-  a: (keyof TargetWeights)[];
-  b: (keyof TargetWeights)[];
-  why: string;
-}
-
-const CONFLICT_PAIRS: ConflictPair[] = [
-  {
-    a: ['modifiability', 'coherence'],
-    b: ['flowEfficiency'],
-    why: 'hohe Modularität/Kohäsion lebt von wenigen community-übergreifenden Kanten, kurze mittlere I/O-Pfadlänge von mehr Querverbindungen',
-  },
-  {
-    a: ['coherence', 'modifiability'],
-    b: ['scalability'],
-    why: 'straffe Kohärenz braucht meist einen Gateway-Knoten, dessen Betweenness steigt genau dann, wenn scalability (1 − maxBetweenness) sinken soll',
-  },
-];
-
-/** Beide Seiten eines bekannten Gegenpaars positiv gewichtet ⇒ eine Warnzeile je Paar. */
-export function conflictWarnings(weights: TargetWeights): string[] {
-  const positive = (dims: (keyof TargetWeights)[]): (keyof TargetWeights)[] =>
-    dims.filter((d) => (weights[d] ?? 0) > 0);
-  return CONFLICT_PAIRS.flatMap((pair) => {
-    const a = positive(pair.a);
-    const b = positive(pair.b);
-    if (a.length === 0 || b.length === 0) return [];
-    return [
-      `Zielkonflikt (Warnung, kein Block): ${a.join('/')} und ${b.join('/')} gleichzeitig heben zieht in Gegenrichtungen — ${pair.why}.`,
-    ];
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Loader — der EINE Pfad; Check bei jedem Read
+// Loader — der EINE Lesepfad
 // ---------------------------------------------------------------------------
 
 export interface LoadedTargetProfile {
   profile: TargetProfile;
-  /** Konflikt-Warnungen des aktuellen Gewichtsstands — bei jedem Load frisch. */
-  conflicts: string[];
 }
 
 /**
- * `.graphcode/target-profile.json` lesen, Zod-validieren, Konflikte prüfen.
- * Fehlende Datei ⇒ null (kein Profil ist gültig — Verhalten wie vor CR-295).
+ * `.graphcode/target-profile.json` lesen und Zod-validieren.
+ * Fehlende Datei ⇒ null (kein Profil ist gültig).
  * Ungültige Datei ⇒ Fehler mit Pfad (Config-Typo laut scheitern lassen,
- * nie stumm als "kein Profil" durchwinken).
+ * nie stumm als "kein Profil" durchwinken) — seit CR-GC-861 auch eine Datei mit Gewichten.
  */
 export function loadTargetProfile(repoRoot: string): LoadedTargetProfile | null {
   const path = join(repoRoot, TARGET_PROFILE_REL);
@@ -110,7 +53,7 @@ export function loadTargetProfile(repoRoot: string): LoadedTargetProfile | null 
   if (!parsed.success) {
     throw new Error(`target-profile: ${path} verletzt das Schema — ${parsed.error.message}`);
   }
-  return { profile: parsed.data, conflicts: conflictWarnings(parsed.data.weights) };
+  return { profile: parsed.data };
 }
 
 // ---------------------------------------------------------------------------
@@ -241,7 +184,7 @@ export function isIntentTooThin(intent: string): boolean {
  *    laute Scheitern beim nächsten Read ist die richtige Reaktion, nicht ein
  *    stiller Überschreiber).
  *
- * MERGE, kein Überschreiben: ein hand-gepflegter `weights`-Block überlebt.
+ * MERGE, kein Überschreiben: was sonst in der Datei steht, bleibt.
  */
 export function persistIntentAnchors(repoRoot: string, anchors: string[]): boolean {
   if (anchors.length < MIN_ANCHORS || anchors.length > 7) return false;

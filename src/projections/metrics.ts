@@ -59,13 +59,6 @@ import { MetricVector } from '@sigloch/se-engine';
 import { PolicySourceSchema } from '../kernel/config.js';
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { archMetrics } from '../kernel/measure/fit-advisory.js';
-import { loadTargetProfile } from '../loop/target-profile.js';
-import {
-  TargetWeightsSchema,
-  TargetValuesSchema,
-  type TargetWeights,
-  type TargetValues,
-} from '../loop/target-profile-contract.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
 const GraphMetricsInputSchema = z.looseObject({
@@ -80,13 +73,10 @@ const GraphMetricsInputSchema = z.looseObject({
     .describe('true adds `constraintCarriers`: carriers of every constraint.'),
 });
 
-/** Die Dimensionen, in denen Gewicht und Zielwert in verschiedene Richtungen zeigen. */
-type Dimension = keyof TargetWeights;
-
 /**
  * CR-GC-821: die Antwort von graph_metrics als EIN pruefbarer Vertrag (SCHEMA-metrics-answer).
  * Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut: jede Grundgesamtheit
- * behaelt ihren eigenen Vertrag aus contracts, se-engine oder dem Zielprofil.
+ * behaelt ihren eigenen Vertrag aus contracts oder se-engine.
  */
 export const GraphMetricsAnswerSchema = z.object({
   modules: z.array(ModuleMetrics),
@@ -120,47 +110,14 @@ export const GraphMetricsAnswerSchema = z.object({
   constraintCarriers: ConstraintCarriers.optional(),
   policy: MetricPolicySchema,
   policySource: PolicySourceSchema,
+  /** CR-GC-451: der ℝ⁶-Ist-Vektor. CR-GC-861: ohne Zielmarke — Gewichte und Zielwerte sind zurueckgebaut. */
   fit: z.object({
     layer: z.literal('arch'),
     metrics: MetricVector,
-    target: z.object({
-      weights: TargetWeightsSchema,
-      values: TargetValuesSchema,
-      source: z.enum(['profile', 'none']),
-      inconsistent: z.array(TargetWeightsSchema.keyof()),
-    }),
   }),
   graphVersion: z.number().int(),
 });
 export type GraphMetricsAnswer = z.infer<typeof GraphMetricsAnswerSchema>;
-
-/**
- * CR-GC-457: Gewicht und Zielwert sind zwei Felder mit zwei Aufgaben — und können
- * sich widersprechen. `coherence` mit Gewicht `+1` („heben") und Sollwert `3.0` bei
- * Ist `3.71` ist ein Profil, das in zwei Richtungen zeigt.
- *
- * Die Prüfung sitzt HIER und nicht im Loader: `loadTargetProfile` liest eine Datei
- * und kennt den Graphen nicht — ohne Ist-Wert ist der Widerspruch nicht entscheidbar.
- * Ergebnis ist eine Liste, kein Fehler: ein bewusster Zielkonflikt ist legitim
- * (dieselbe Linie wie `conflictWarnings`), ein unsichtbarer ist es nicht.
- */
-function inconsistentDimensions(
-  weights: TargetWeights,
-  values: TargetValues,
-  actual: MetricVector,
-): Dimension[] {
-  const out: Dimension[] = [];
-  for (const dim of Object.keys(values) as Dimension[]) {
-    const target = values[dim];
-    const w = weights[dim] ?? 0;
-    // Kein Gewicht = keine Steuerabsicht, also nichts, dem der Wert widersprechen
-    // könnte. Gleichstand (Ziel === Ist) ist erreicht, nicht widersprüchlich.
-    if (target === undefined || w === 0) continue;
-    const gap = target - actual[dim];
-    if (gap !== 0 && Math.sign(gap) !== Math.sign(w)) out.push(dim);
-  }
-  return out;
-}
 
 export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
   const { harness, graphVersion } = ctx;
@@ -182,18 +139,7 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
       // benannte contracts-Startwert ist — verschwiegen wird nichts.
       const { config, source } = harness.getGraphcodeConfig();
       const graph = harness.getGraph();
-      // CR-GC-451: Wert UND Zielmarke aus EINER Antwort — dieselbe Regel wie
-      // policy/policySource oben. Kein Profil heißt `source: 'none'` mit leeren
-      // Gewichten; ein erfundener Nullvektor sähe aus wie „überall neutral
-      // entschieden" und ist etwas anderes als „nie entschieden".
-      const profile = loadTargetProfile(harness.getRepoRoot());
-      // CR-GC-457: der Zielwert steht auf DERSELBEN Skala wie `metrics` (0–5), das
-      // Gewicht daneben auf seiner eigenen (−1…1). Beide reisen mit, weil sie zwei
-      // Fragen beantworten — „wohin" und „wie dringend" —, und `inconsistent` sagt,
-      // wo die zwei Antworten einander widersprechen.
       const metrics = archMetrics(graph);
-      const weights = profile?.profile.weights ?? {};
-      const values = profile?.profile.values ?? {};
       const ontology = toOntologyGraph(graph);
       const chains = chainMetrics(ontology);
       // CR-GC-787: eine Kennung, die keine Funktion oder Kette dieses Modells ist, wird benannt
@@ -219,16 +165,7 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
         ...(input.constraintCarriers ? { constraintCarriers: constraintCarriers(ontology) } : {}),
         policy: config.metricPolicy,
         policySource: source,
-        fit: {
-          layer: 'arch',
-          metrics,
-          target: {
-            weights,
-            values,
-            source: profile ? 'profile' : 'none',
-            inconsistent: inconsistentDimensions(weights, values, metrics),
-          },
-        },
+        fit: { layer: 'arch', metrics },
         graphVersion: graphVersion(),
       });
     },

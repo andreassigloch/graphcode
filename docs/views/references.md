@@ -1353,6 +1353,11 @@
 | `CR-GC-859` | relation | `REQ-llm-modell-aus-konfiguration` |
 | `CR-GC-860` | relation | `FUNC-import-doc` |
 | `CR-GC-860` | relation | `REQ-mutate-befund-je-element` |
+| `CR-GC-861` | relation | `FUNC-graph-metrics` |
+| `CR-GC-861` | relation | `FUNC-target-profile` |
+| `CR-GC-861` | relation | `FUNC-target-profile-load` |
+| `CR-GC-861` | relation | `SCHEMA-metrics-answer` |
+| `CR-GC-861` | relation | `SCHEMA-target-profile` |
 | `CR-GC-862` | relation | `FUNC-se-generate` |
 | `CR-GC-862` | relation | `FUNC-se-optimize` |
 | `CR-GC-863` | relation | `FUNC-author-actor` |
@@ -2241,7 +2246,6 @@
 | `FLOW-suggest-answer` | io | `FUNC-agent-loop` |
 | `FLOW-suggest-answer` | relation | `SCHEMA-suggest-answer` |
 | `FLOW-target-profile` | io | `FUNC-graph-generate-tool` |
-| `FLOW-target-profile` | io | `FUNC-graph-metrics` |
 | `FLOW-target-profile` | io | `FUNC-graph-readiness` |
 | `FLOW-target-profile` | io | `FUNC-vorschlag` |
 | `FLOW-target-profile` | relation | `SCHEMA-target-profile` |

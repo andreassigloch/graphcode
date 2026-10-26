@@ -117,17 +117,15 @@ describe('CR-GC-307: persistIntentAnchors writes in the background without data 
     expect(loadTargetProfile(repo)?.profile.intentAnchors).toEqual(['bestellung', 'ersatzteile', 'kunden']);
   });
 
-  it('MERGES — a hand-tuned weights block survives the background write', () => {
-    // The regression that matters: silently overwriting the file would throw away a
-    // target profile the human deliberately set.
+  it('refuses to merge into a file that still carries weights — it belongs to the human (CR-GC-861)', () => {
+    // Weights are gone from the contract. A file that still has them is invalid; the background
+    // write must not "repair" it silently, and the next read fails loudly with the path.
     writeFileSync(
       join(repo, TARGET_PROFILE_REL),
       JSON.stringify({ weights: { coherence: 0.5, scalability: 1 } }, null, 2),
     );
-    persistIntentAnchors(repo, ['bestellung', 'ersatzteile', 'kunden']);
-    const loaded = loadTargetProfile(repo);
-    expect(loaded?.profile.weights).toEqual({ coherence: 0.5, scalability: 1 });
-    expect(loaded?.profile.intentAnchors).toEqual(['bestellung', 'ersatzteile', 'kunden']);
+    expect(persistIntentAnchors(repo, ['bestellung', 'ersatzteile', 'kunden'])).toBe(false);
+    expect(() => loadTargetProfile(repo)).toThrow(/target-profile.*Schema/);
   });
 
   it('never overwrites anchors the human already confirmed', () => {

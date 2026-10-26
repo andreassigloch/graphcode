@@ -902,9 +902,9 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 > auch in: `FCHAIN-dashboard-metrics` · `FCHAIN-skill-report` · `FUNC-block-abfrage`
 
-MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857)
+MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857, CR-GC-861)
 
-io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · `FLOW-target-profile` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
 
@@ -1314,7 +1314,7 @@ Verification ◀ `TEST-vorbereitung-reads-metrics` (conformance) · satisfy ◀ 
 
 > auch in: `FUNC-block-autorieren`
 
-Prompt-realisierter Skill se:target-profile: R6-Zielgewichte vom Menschen elizitieren, Zielkonflikte sichtbar machen.
+Prompt-realisierter Skill se:target-profile, Version 3: prueft oder korrigiert auf ausdrueckliche Anfrage die 3-7 Themen in der Profildatei. Gewichte, Zielwerte und Zielkonflikte sind zurueckgebaut (CR-GC-861).
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-target-profile` · allocate ▶ `MOD-agent-surface`
 
@@ -1420,7 +1420,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FCHAIN-steering-loop` · `FUNC-block-q-improvement`
 
-Laedt das Zielprofil und meldet Zielkonflikte. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells.
+Laedt die Profildatei mit den Themen und prueft sie gegen den Vertrag; eine ungueltige Datei scheitert laut mit Pfad. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells. (CR-GC-861: ohne Zielkonflikt-Check)
 
 io ◀ `FLOW-target-profile-file` · io ▶ `FLOW-target-profile` · allocate ▶ `MOD-loop`
 
@@ -1872,9 +1872,9 @@ Verification ◀ `TEST-audit-code-state` (integration) · `TEST-audit-retention`
 
 > auch in: `FCHAIN-dashboard-metrics` · `FCHAIN-skill-authoring` · `FUNC-block-abfrage`
 
-MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857)
+MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857, CR-GC-861)
 
-io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · `FLOW-target-profile` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
 
@@ -2746,7 +2746,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 > auch in: `FCHAIN-generation-states` · `FUNC-block-q-improvement`
 
-Laedt das Zielprofil und meldet Zielkonflikte. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells.
+Laedt die Profildatei mit den Themen und prueft sie gegen den Vertrag; eine ungueltige Datei scheitert laut mit Pfad. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells. (CR-GC-861: ohne Zielkonflikt-Check)
 
 io ◀ `FLOW-target-profile-file` · io ▶ `FLOW-target-profile` · allocate ▶ `MOD-loop`
 
@@ -4620,9 +4620,9 @@ Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket
 
 > auch in: `FCHAIN-skill-authoring` · `FCHAIN-skill-report` · `FUNC-block-abfrage`
 
-MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857)
+MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857, CR-GC-861)
 
-io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · `FLOW-target-profile` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
 
@@ -9122,9 +9122,9 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 > auch in: `FCHAIN-dashboard-metrics` · `FCHAIN-skill-authoring` · `FCHAIN-skill-report`
 
-MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor mit Zielprofil und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857)
+MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857, CR-GC-861)
 
-io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · `FLOW-target-profile` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
 
@@ -10860,7 +10860,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se:target-profile: R6-Zielgewichte vom Menschen elizitieren, Zielkonflikte sichtbar machen.
+Prompt-realisierter Skill se:target-profile, Version 3: prueft oder korrigiert auf ausdrueckliche Anfrage die 3-7 Themen in der Profildatei. Gewichte, Zielwerte und Zielkonflikte sind zurueckgebaut (CR-GC-861).
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-target-profile` · allocate ▶ `MOD-agent-surface`
 
@@ -10972,7 +10972,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 > auch in: `FCHAIN-generation-states` · `FCHAIN-steering-loop`
 
-Laedt das Zielprofil und meldet Zielkonflikte. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells.
+Laedt die Profildatei mit den Themen und prueft sie gegen den Vertrag; eine ungueltige Datei scheitert laut mit Pfad. Das Profil ist Konfiguration neben dem Graphen, nicht Teil des Modells. (CR-GC-861: ohne Zielkonflikt-Check)
 
 io ◀ `FLOW-target-profile-file` · io ▶ `FLOW-target-profile` · allocate ▶ `MOD-loop`
 
@@ -12344,13 +12344,13 @@ io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-su
 
 ### 4.224  `FLOW-target-profile` — Zielprofil
 
-Das geladene und gepruefte Zielprofil: R6-Zielgewichte und die 3-7 Intentions-Anker, Zielkonflikte gemeldet. Erzeugt von target-profile-load aus der Rohform.
+Das geladene und gepruefte Profil: die 3-7 Themen der Intention. Erzeugt von target-profile-load aus der Rohform. (CR-GC-861: ohne Gewichte und Zielkonflikte)
 
-io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-vorschlag` · schema ▶ `SCHEMA-target-profile`
+io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-graph-generate-tool` · `FUNC-graph-readiness` · `FUNC-vorschlag` · schema ▶ `SCHEMA-target-profile`
 
 ### 4.225  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
-Das Zielprofil, wie der Skill se:target-profile es nach .graphcode/target-profile.json schreibt: ungeprueft, Zielkonflikte noch nicht gemeldet.
+Die Profildatei, wie der Skill se:target-profile oder ein Hand-Edit sie nach .graphcode/target-profile.json schreibt: ungeprueft, die Themen der Intention.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
@@ -12652,7 +12652,7 @@ schema ◀ `FLOW-arch-fitness`
 
 ### 5.29  `SCHEMA-metrics-answer` — graph_metrics-Antwort
 
-Die Antwort von graph_metrics als EIN Vertrag: modules nach ModuleMetrics, functions nach FunctionCriticality, chains und measurability nach ChainMetrics, riskCarriers nach RiskCarriers, scope nur auf Anfrage nach RequirementScope, constraintCarriers nur auf Anfrage nach ConstraintCarriers (reqId, carriers, by), policy nach MetricPolicySchema mit policySource, fit mit MetricVector und Zielprofil, graphVersion. Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut; die Grundgesamtheiten MOD, FUNC und FCHAIN bleiben getrennte Bloecke. Der Handler parst seine Antwort vor der Rueckgabe. (CR-GC-821, CR-GC-857)
+Die Antwort von graph_metrics als EIN Vertrag: modules nach ModuleMetrics, functions nach FunctionCriticality, chains und measurability nach ChainMetrics, riskCarriers nach RiskCarriers, scope nur auf Anfrage nach RequirementScope, constraintCarriers nur auf Anfrage nach ConstraintCarriers (reqId, carriers, by), policy nach MetricPolicySchema mit policySource, fit mit MetricVector (ohne Zielmarke seit CR-GC-861), graphVersion. Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut; die Grundgesamtheiten MOD, FUNC und FCHAIN bleiben getrennte Bloecke. Der Handler parst seine Antwort vor der Rueckgabe. (CR-GC-821, CR-GC-857, CR-GC-861)
 
 schema ◀ `FLOW-dashboard-answer` · `FLOW-metrics-answer`
 
@@ -12776,7 +12776,7 @@ schema ◀ `FLOW-suggest-answer`
 
 ### 5.50  `SCHEMA-target-profile` — TargetProfile
 
-weights (6 Dimensionen in [-1,1]) und intentAnchors (3-7 Strings). Der Vertrag der Zielprofil-Datei, die zwei Schreiber und einen Leser hat.
+intentAnchors (3-7 Strings), sonst kein Feld (strikt). Der Vertrag der Profildatei, die zwei Schreiber und einen Leser hat. Gewichte und Zielwerte sind zurueckgebaut (CR-GC-861); eine Datei, die sie noch traegt, scheitert laut beim Laden.
 
 schema ◀ `FLOW-target-profile` · `FLOW-target-profile-file`
 
@@ -14122,7 +14122,7 @@ verify ▶ `REQ-risk-store-unreadable` · `REQ-store-recovery` · testRefs: `tes
 
 ### 8.144  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
-Abnahme der Datei tests/target-profile.test.ts: Schema, Laden und Konfliktpruefung des Zielprofils, dazu der Konfigurations-Default des Vorschlags-Werkzeugs gegen einen echten Disk-Kuzu. Die Konfliktpruefung ist ein Pfad, kein zweiter neben der Steuerung.
+Abnahme der Datei tests/target-profile.test.ts: Schema nur mit Themen, eine Datei mit Gewichten oder Zielwerten scheitert laut, Laden der Themen; graph_suggest nimmt kein target und graph_metrics traegt keine Zielmarke, gegen einen echten Disk-Kuzu. (CR-GC-861)
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · `SCHEMA-target-profile` · testRefs: `tests/target-profile.test.ts`
 

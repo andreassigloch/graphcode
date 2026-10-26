@@ -30,7 +30,8 @@ Gewichte und Zielwerte fallen aus dem Vertrag. `.graphcode/target-profile.json` 
 8. `scripts/known-answer-set.mjs` — liest die Gewichte nicht mehr aus der Profildatei; die Gewichte der
    Messung vom 2026-09-03 stehen fest im Skript, wie in `tests/arch.optimization-dry-run.spike.test.ts`
 9. `tests/repository-style.spike.test.ts` — dasselbe
-10. `tests/helpers/witness.ts` — eigener Typ statt `TargetWeights`
+10. `tests/intent-anchors-internal.test.ts` — der Hintergrund-Schreiber verweigert das Mergen in eine
+    Datei mit Gewichten; das Laden scheitert laut (vorher: „ein hand-gepflegter weights-Block überlebt")
 
 Modell: `SCHEMA-target-profile`, `FLOW-target-profile`, `FLOW-target-profile-file`, `FUNC-target-profile-load`
 auf die Themen einschränken; `FLOW-target-profile -io-> FUNC-graph-metrics` löschen.
@@ -61,3 +62,25 @@ Tests (`graph_tests`, 3):
 - tests/target-profile.test.ts
 
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Bewusst offen
+
+- `tests/helpers/witness.ts` importiert weiter `type TargetWeights` aus `src/loop/target-profile.js`. Der Typ
+  existiert nicht mehr; vitest löscht Typ-Importe beim Laden, und `tsc` prüft `tests/` nicht. Laufzeit
+  unberührt, die Spikes sind grün. Der Helfer bekommt seinen eigenen Typ in CR-GC-852 oder einem eigenen CR
+  (die 10-Dateien-Grenze dieses CR ist erreicht).
+- graph-view-edit: `Dashboard.jsx` liest `fit.target?.values`, `?.inconsistent`, `?.source` mit optionaler
+  Verkettung. Ohne `fit.target` zeigt es die Ist-Werte ohne Zielmarke und keinen Hinweis „kein Zielprofil".
+  Kein Absturz; die Ziel-Anzeige ist dort jetzt toter Code. Befund für graph-view-edit (eigenes Item).
+
+## Nachweis (2026-10-26)
+
+- Rot zuerst: `tests/target-profile.test.ts` (6 rot), `tests/metrics.test.ts` (1 rot: `fit.target` noch da).
+  `tests/intent-anchors-internal.test.ts` wurde mit dem Vertrag rot (Merge-Test mit Gewichten) und ist neu gefasst.
+- `npx tsc --noEmit`, eslint: sauber. `verify:code`: Spur CODE, 59 Dateien grün.
+- `verify:full CR-GC-861`: 198/198 Dateien, 1628 Tests, Schlupf 0.
+- Smoke: Host neu gestartet; `graph_generate({peek:true})` liest die Profildatei ohne Gewichte und nennt die
+  unadressierten Themen. `node scripts/known-answer-set.mjs` läuft mit den festen Gewichten.
+- Modell (graphVersion 940): `FLOW-target-profile -io-> FUNC-graph-metrics` gelöscht; `SCHEMA-target-profile`,
+  `FLOW-target-profile`, `FLOW-target-profile-file`, `FUNC-target-profile-load`, `FUNC-target-profile`,
+  `FUNC-graph-metrics`, `SCHEMA-metrics-answer`, `TEST-target-profile` auf die Themen beschrieben.

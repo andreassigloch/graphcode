@@ -51,7 +51,12 @@ import { alsFormatE } from './helpers/format-e.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
 
 const REPO_GRAPH = fileURLToPath(new URL('../docs/graph/graphcode.graph.json', import.meta.url));
-const PROFILE = fileURLToPath(new URL('../.graphcode/target-profile.json', import.meta.url));
+/**
+ * CR-GC-861: die Profildatei traegt keine Gewichte mehr. Das Kill-Kriterium dieser Messung (|Δ·w| < 0,05) lief
+ * gegen die Gewichte, die von 2026-08-26 bis zum Rueckbau in .graphcode/target-profile.json standen — hier fest
+ * (Muster tests/arch.optimization-dry-run.spike.test.ts).
+ */
+const WEIGHTS: Record<string, number> = { coherence: 1, modifiability: 0, faultTolerance: 0, flowEfficiency: 0.4, viability: 0.4, scalability: -0.2 };
 const sha256 = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex');
 
 /** Die Store-Schreiber laut Code — alles andere ist Leser oder Aufrufer. */
@@ -94,8 +99,7 @@ async function measure(rig: Rig): Promise<Snapshot> {
     .filter((e) => e.edgeType === 'io' && e.targetId === 'FLOW-graph-state')
     .map((e) => e.sourceId)
     .sort();
-  const weights = (JSON.parse(readFileSync(PROFILE, 'utf8')) as { weights: Record<string, number> }).weights;
-  const res = (await rig.tools.graph_suggest.handler({ target: weights, k: 5, layer: 'arch' })) as Record<string, unknown>;
+  const res = (await rig.tools.graph_suggest.handler({ k: 5, layer: 'arch' })) as Record<string, unknown>;
   // Die Rangliste ist das erste Array im Ergebnis; je Zeile die sprechenden Felder.
   const rows = (Object.values(res).find((v) => Array.isArray(v) && v.length > 0 && typeof v[0] === 'object') ?? []) as Record<string, unknown>[];
   const top5 = rows.slice(0, 5).map((r) =>
@@ -143,8 +147,7 @@ describe('CR-DRAFT-GC-466 M1 — Graph-State auf einen Produzentenblock (Trocken
 
       const fmt = (v: number[]) => v.map((x) => x.toFixed(3)).join('  ');
       const delta = after.r6.map((x, i) => x - before.r6[i]);
-      const weights = (JSON.parse(readFileSync(PROFILE, 'utf8')) as { weights: Record<string, number> }).weights;
-      const weighted = delta.reduce((a, d, i) => a + d * (weights[METRIC_DIMENSIONS[i]] ?? 0), 0);
+      const weighted = delta.reduce((a, d, i) => a + d * (WEIGHTS[METRIC_DIMENSIONS[i]] ?? 0), 0);
       console.log(`\n### M1 — Graph-State: ${before.producers.length} → ${after.producers.length} Produzenten (${wrong.length} Kanten durchs Gate gelöscht)\n`);
       console.log(`| | ${METRIC_DIMENSIONS.join(' | ')} | CR-01-Paare ≥3 | Verträge über Grenzen |`);
       console.log(`|---|${METRIC_DIMENSIONS.map(() => '---:').join('|')}|---:|---:|`);

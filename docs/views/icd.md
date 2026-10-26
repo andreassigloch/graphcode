@@ -297,7 +297,7 @@
 | `FLOW-store-query` | `FUNC-graph-store` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` |
 | `FLOW-store-rebuild-notice` | `FUNC-open-store` | `ACTOR-auftraggeber` |
 | `FLOW-suggest-answer` | `FUNC-graph-suggest` | `FUNC-agent-loop` |
-| `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-vorschlag` |
+| `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-graph-generate-tool` · `FUNC-graph-readiness` · `FUNC-vorschlag` |
 | `FLOW-target-profile-file` | `FUNC-agent-loop` | `FUNC-target-profile-load` |
 | `FLOW-test-impact-request` | `FUNC-deduce-tests` | `FUNC-resolve-tests-from-code` |
 | `FLOW-test-impact-request-ingest` | `FUNC-test-ingest` | `FUNC-resolve-tests-from-code` |

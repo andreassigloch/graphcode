@@ -13,7 +13,10 @@ import { metrics, METRIC_DIMENSIONS } from '@sigloch/se-engine';
 const at = (ref) => { const raw = JSON.parse(execFileSync('git', ['show', `${ref}:docs/graph/graphcode.graph.json`], { encoding: 'utf8', maxBuffer: 64 << 20 })); return { elements: raw.elements, traces: raw.traces }; };
 const file = (p) => { const raw = JSON.parse(readFileSync(p, 'utf8')); return { elements: raw.elements, traces: raw.traces }; };
 const vec = (g) => { const m = metrics(g, { layer: 'arch' }); return METRIC_DIMENSIONS.map((d) => m[d]); };
-const w = JSON.parse(readFileSync('.graphcode/target-profile.json', 'utf8')).weights;
+// CR-GC-861: die Profildatei traegt keine Gewichte mehr. Die Messung vom 2026-09-03 lief gegen die Gewichte,
+// die von 2026-08-26 (6b82a5c3) bis zum Rueckbau in .graphcode/target-profile.json standen — hier fest,
+// damit sie nachrechenbar bleibt (Muster tests/arch.optimization-dry-run.spike.test.ts).
+const w = { coherence: 1, modifiability: 0, faultTolerance: 0, flowEfficiency: 0.4, viability: 0.4, scalability: -0.2 };
 const dot = (d) => d.reduce((a, x, i) => a + x * (w[METRIC_DIMENSIONS[i]] ?? 0), 0);
 const f = (x) => (x >= 0 ? '+' : '') + x.toFixed(3);
 
