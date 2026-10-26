@@ -115,10 +115,10 @@ export function helpEntry(id: string): HelpEntry | undefined {
     return { id, kind: 'panel', title: id, plain: content.plain, se: content.se, prompt: content.prompt, source: 'authored' };
   }
 
-  // Metric dimension (CR-GC-458) — the six ℝ⁶ names that steer graph_suggest and
-  // stand in every target profile. `plain` collapses purpose+lever into one sentence
-  // for consumers that read only the two classic layers; `se` names the formula.
-  // The one action that follows from understanding a dimension is setting its goal.
+  // Metric dimension (CR-GC-458) — the six ℝ⁶ names `graph_metrics` reports. `plain` collapses
+  // purpose+lever into one sentence for consumers that read only the two classic layers; `se`
+  // names the formula. The one action that follows from understanding a dimension is writing a
+  // constraint at an element (CR-GC-852: se:constraints, no weights since CR-GC-853).
   const metric = METRIC_HELP[id];
   if (metric) {
     return {
@@ -128,7 +128,7 @@ export function helpEntry(id: string): HelpEntry | undefined {
       token: id,
       plain: `${metric.purpose} ${metric.lever}`,
       se: `${metric.measure} Skala 0–5 (metrics(), layer 'arch', @sigloch/se-engine).`,
-      prompt: 'se:target-profile',
+      prompt: 'se:constraints',
       measure: metric.measure,
       purpose: metric.purpose,
       lever: metric.lever,

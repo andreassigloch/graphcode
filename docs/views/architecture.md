@@ -103,6 +103,7 @@
 | `FUNC-schema-guard` | FUNC | schemaFingerprint |
 | `FUNC-score-completeness` | FUNC | computeMarks(violations) |
 | `FUNC-se-conops` | FUNC | Skill se-conops |
+| `FUNC-se-constraints` | FUNC | Skill se:constraints |
 | `FUNC-se-fmea` | FUNC | Skill se-fmea |
 | `FUNC-se-generate` | FUNC | Skill se:generate |
 | `FUNC-se-help` | FUNC | Skill se:help |
@@ -124,7 +125,6 @@
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-session-shutdown` | FUNC | SessionLifecycle |
 | `FUNC-take-steering-snapshot` | FUNC | takeSteeringSnapshot(graph, policy) |
-| `FUNC-target-profile` | FUNC | Skill se:target-profile |
 | `FUNC-target-profile-load` | FUNC | loadTargetProfile |
 | `FUNC-test` | FUNC | se-test (red-first test design) |
 | `FUNC-test-ingest` | FUNC | graph_test_ingest |
@@ -249,6 +249,7 @@
 | `FUNC-schema-guard` | `MOD-kernel` |
 | `FUNC-score-completeness` | `MOD-projections` |
 | `FUNC-se-conops` | `MOD-agent-surface` |
+| `FUNC-se-constraints` | `MOD-agent-surface` |
 | `FUNC-se-fmea` | `MOD-agent-surface` |
 | `FUNC-se-generate` | `MOD-agent-surface` |
 | `FUNC-se-help` | `MOD-agent-surface` |
@@ -270,7 +271,6 @@
 | `FUNC-serve-stdio` | `MOD-surface` |
 | `FUNC-session-shutdown` | `MOD-surface` |
 | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
-| `FUNC-target-profile` | `MOD-agent-surface` |
 | `FUNC-target-profile-load` | `MOD-loop` |
 | `FUNC-test` | `MOD-agent-surface` |
 | `FUNC-test-ingest` | `MOD-projections` |

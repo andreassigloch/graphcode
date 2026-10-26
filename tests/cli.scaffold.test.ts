@@ -861,11 +861,12 @@ describe('TEST-steering-doc: GRAPHCODE-STEERING.md (CR-GC-322)', () => {
   it('names all four levers the human actually holds (REQ-S02)', async () => {
     await scaffold('init', { repoRoot: repo });
     const md = read();
-    // 1 intent paragraph, 2 the domain questions, 3 the choices handed back, 4 target profile.
+    // 1 intent paragraph, 2 the domain questions, 3 the choices handed back, 4 constraints (CR-GC-852).
     expect(md).toMatch(/intent paragraph/i);
     expect(md).toMatch(/questions about your domain/i);
     expect(md).toMatch(/\*\*two\*\* options/);
-    expect(md).toContain('.graphcode/target-profile.json');
+    expect(md).toContain('se:constraints');
+    expect(md).not.toContain('target-profile');
     // …and says the two mandatory ones are mandatory.
     expect(md).toMatch(/not optional/i);
   });

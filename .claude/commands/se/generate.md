@@ -1,6 +1,6 @@
 ---
 name: se:generate
-version: 2
+version: 3
 description: Kaltstart-Generierung eines Systemmodells aus Prosa-Intention — readiness-getriebener Loop über graph_generate, Kandidaten durchs Gate (dryRun-Verdict + Steuerwert), Handoff auf graph_suggest
 ---
 
@@ -19,14 +19,29 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
 4. Zurück zu 2 (ab jetzt ohne `intent` — steckt in der SYS-description), bis `done:true`.
 5. **Festgefahren:** Steht derselbe Fokus nach zwei Zuegen noch, stellt die Maschine ihn zurueck und nennt den naechsten (Eintrittspunkte und Steuerregeln nie — Eintrittspunkte loest nur ihr Task oder eine Abnahme). Meldet sie phase stalled, sind nur noch zurueckgestellte Funde offen: nicht weiter mutieren, sondern der Ansage folgen — im Task zurueck in den Kern, bei offenem Eintrittspunkt den Task starten, sonst die Funde und deine Versuche in der Schlussmeldung nennen. stalled ist nicht fertig.
 6. **Steuerregeln fertig:** Steuerregeln (RD-04, BW-02, R-04, CR-01, MT-02) sind fertig, wenn sich ihr Ueberschuss ueber drei Steuerzuege im Kreis bewegt oder um weniger als 5 % sinkt: lokales Optimum. Die Maschine nimmt sie dann aus dem Fokus und meldet done mit den verbliebenen Termen — weiter ueber graph_suggest oder den Menschen.
-7. **Handoff:** bei `phase:'handoff'` Zielprofil mit dem Nutzer wählen (Gewichte je Metrik-Dimension) und auf `graph_suggest {target}` wechseln — ab hier wird optimiert, nicht mehr generiert.
+7. **Handoff:** bei `phase:'handoff'` auf `graph_suggest` wechseln — es rankt die Umbau-Züge nach dem Steuerwert, ab hier wird optimiert, nicht mehr generiert. Entscheidungen, die halten sollen, schreibt der Nutzer als Constraint mit `se:constraints`; Gewichte gibt es nicht (CR-GC-853).
 
 ## Regeln
 
 - **Ein Schritt, ein Fokus:** nur die Funde bearbeiten, die der aktuelle `prompt` nennt — nicht vorgreifen.
 - **Anleitung je Schritt:** der Schritt nennt in `skill` die Autorier-Anleitung (`se:author-uc`, `se:author-req`, `se:author-actor`, `se:top-level`) — lade sie über das Skill-Werkzeug, bevor du schreibst; nicht per `cat`, nicht erst am Ende.
-- Zerlegungsbreite 7±2 pro Ebene (RD-04); bei Architektur-Schritten 2 Alternativen anbieten, der Steuerwert entscheidet — eine Ebene, die RD-04 erfüllt, schlägt ein besseres Δm.
+- Zerlegungsbreite 7±2 pro Ebene (RD-04); bei Architektur-Schritten 2 Alternativen anbieten, der Steuerwert entscheidet.
 - `blockingErrors > 0` hat immer Vorrang vor Neu-Generierung.
 - **Analysen sind Blackboxen:** FMEA, Bauplan, ConOps, Trade, Annahmen-Review laufen als eigene Einheit mit ihrem Skill (`se-fmea`, `se-plan`, …). Nennt der Schritt einen Eintrittspunkt (AF-01..05), starte die Analyse mit `graph_generate {task:'fmea'}` (bzw. `plan`, `conops`, …); die Sitzung bleibt im Task. Er ist fertig, wenn sein Eintrittspunkt schweigt — die Analyse ist gestempelt, beim Bauplan: es gibt einen offenen Auftrag (CR mit `status: open`) — oder abgenommen ist; dann kehre mit `graph_generate` ohne `task` in den Kern zurueck. Meldet danach eine Regel der Analyse im Kern (z. B. FM-01: Risiko ohne Bewertung), nennt der Schritt wieder ihren Skill: behebe den Fund nach dessen Schritten.
 - **Benannte Abweichung:** Einen Fund, der im Modell nicht erfuellbar ist, legst du als benannte Abweichung ab: `acceptedFindings: [{ruleId, reason}]` am betroffenen Element (graphweite Regeln am SYS), der Grund ist Pflicht. Abnehmbar sind nur die Analysen AF-01, AF-02, AF-03, AF-04, AF-05 (das Artefakt ist im schlanken Umfang nicht noetig), dazu CL-01 und FM-03. Architekturregeln sind nicht abnehmbar — eine Abnahme daran zaehlt nicht, der Fund bleibt: bauen. Nenne jede Abnahme in der Schlussmeldung.
 - Am Ende `graph_export` + Commit — jeder Commit ein Graph-Stand, der zum Code passt.
+
+## Themen der Intention
+
+`graph_generate` leitet aus der Intention 3–7 Themen ab und schreibt sie **im Hintergrund** nach
+`.graphcode/target-profile.json`, Feld `intentAnchors` (CR-GC-307). Ein Wert, der dort schon steht, wird nie
+überschrieben; eine Korrektur von Hand bleibt also. Die Datei ist Konfiguration, kein Graph-SSOT: kein
+`graph_mutate`, der Loader prüft sie bei jedem Lesen (strikt: 3–7 Themen, kein anderes Feld).
+
+- Frag nie nach „Ankern" oder „Themen". Ist das Feld leer, war die Intention zu dünn (weniger als drei
+  trennscharfe Inhaltswörter). Dann stellt der Schritt fachliche Rückfragen in der Sprache des Nutzers
+  („Was passiert, wenn ein Kunde eine Bestellung storniert?"); die Themen folgen aus den Antworten.
+- Ein Schritt nennt ein Thema, das noch nirgends beschrieben ist („Noch nirgends beschrieben: …"). Frag
+  dann nach dem Use Case oder der Anforderung dazu, nicht nach dem Thema.
+- `graph_readiness` meldet in `intentCoverage`, welches Thema in UC, REQ oder FUNC adressiert ist. Das ist
+  eine Kennzahl, kein Gate.

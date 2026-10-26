@@ -205,7 +205,7 @@ export function viewTableRows(): string[] {
  * `GRAPHCODE-STEERING.md` — the doc scaffolded FOR THE HUMAN (CR-GC-322).
  *
  * The other 17 scaffolded documents are instructions to the agent, written in this
- * ontology's vocabulary; `se/target-profile.md` even says so out loud (CR-GC-307: the
+ * ontology's vocabulary; the intent themes are our device, not the customer's (CR-GC-307: the
  * steering vocabulary is our device, not a customer concept). That left the person who
  * OWNS the intent with nothing addressed to them. This file is that, and only that:
  * the four levers they actually hold, plus the generated documents they are expected
@@ -268,17 +268,16 @@ export function steeringContent(): string {
     'If your agent presents one option as settled, that is the moment to push back and ask',
     'for the alternative it did not show you.',
     '',
-    '## Lever 4 — the target profile (optional, and only when you want to steer)',
+    '## Lever 4 — constraints (optional, and only for decisions that must hold)',
     '',
-    'You can tell the optimizer what "better" means for this project — how strongly to favour',
-    'loosely coupled parts, redundancy, short data paths, cohesive modules, a balanced size,',
-    'or the absence of bottlenecks. It lives in `.graphcode/target-profile.json`; your agent',
-    'sets it up if you ask for it ("I want to steer the optimization").',
+    'You can tell graphcode which architecture decisions must hold — "this chain stays in one',
+    'module", "this module is reached only through one door", "nothing flows against the layer',
+    'order". Each becomes a requirement at a chain, a module or the system, with a test that',
+    'checks it against the model. Your agent sets it up if you ask for it, with `se:constraints`.',
     '',
-    'Leaving it unset is a legitimate choice — everything is then weighted equally. Note that',
-    'some goals genuinely pull against each other (loosely coupled parts vs. short data paths,',
-    'for instance); if you weight both up, you get a warning, not a block. A conscious',
-    'trade-off is fine, an invisible one is not.',
+    'Leaving it out is a legitimate choice. Note that some decisions pull against each other',
+    '(everything together in one module vs. short paths to the user, for instance); you get a',
+    'warning when you set both, not a block. A conscious trade-off is fine, an invisible one is not.',
     '',
     '## `docs/views/` — the generated documents',
     '',

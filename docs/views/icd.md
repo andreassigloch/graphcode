@@ -83,6 +83,7 @@
 | `FLOW-anleitung-import-doc` | `FUNC-import-doc` | `FUNC-agent-loop` |
 | `FLOW-anleitung-render-views` | `FUNC-render-views` | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-conops` | `FUNC-se-conops` | `FUNC-agent-loop` |
+| `FLOW-anleitung-se-constraints` | `FUNC-se-constraints` | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-fmea` | `FUNC-se-fmea` | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-generate` | `FUNC-se-generate` | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-help` | `FUNC-se-help` | `FUNC-agent-loop` |
@@ -98,7 +99,6 @@
 | `FLOW-anleitung-se-trade` | `FUNC-se-trade` | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-umbau` | `FUNC-se-umbau` | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-vorbereitung` | `FUNC-se-vorbereitung` | `FUNC-agent-loop` |
-| `FLOW-anleitung-target-profile` | `FUNC-target-profile` | `FUNC-agent-loop` |
 | `FLOW-anleitung-test` | `FUNC-test` | `FUNC-agent-loop` |
 | `FLOW-anleitung-test-ui` | `FUNC-test-ui` | `FUNC-agent-loop` |
 | `FLOW-anleitung-view-changelog` | `FUNC-view-changelog` | `FUNC-agent-loop` |
@@ -273,7 +273,7 @@
 | `FLOW-session-end` | `ACTOR-auftraggeber` | `FUNC-session-shutdown` |
 | `FLOW-session-entry` | `FUNC-gve-supervise` | `FUNC-gve-sessions` |
 | `FLOW-session-registry` | `FUNC-gve-sessions` | `FUNC-gve-supervise` |
-| `FLOW-skill-request` | `FUNC-agent-loop` | `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` |
+| `FLOW-skill-request` | `FUNC-agent-loop` | `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` |
 | `FLOW-snapshot-request` | `FUNC-generation-step` | `FUNC-take-steering-snapshot` |
 | `FLOW-snapshot-request-mutate` | `FUNC-graph-mutate-tool` | `FUNC-take-steering-snapshot` |
 | `FLOW-snapshot-request-readiness` | `FUNC-graph-readiness` | `FUNC-take-steering-snapshot` |

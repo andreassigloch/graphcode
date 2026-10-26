@@ -159,7 +159,7 @@ describe('TEST-metric-help-coverage (CR-GC-458): jede Zieldimension erklärt sic
       // Die Skala steht mit in der Antwort — sonst raet der Konsument sie.
       expect(entry!.scale).toEqual({ min: 0, max: 5 });
       // Die eine Aktion, die aus dem Verstaendnis einer Zieldimension folgt.
-      expect(entry!.prompt).toBe('se:target-profile');
+      expect(entry!.prompt).toBe('se:constraints');
     }
   });
 

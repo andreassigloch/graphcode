@@ -1136,8 +1136,8 @@
 | `CR-GC-803` | relation | `REQ-graph-snapshot-per-commit` |
 | `CR-GC-803` | relation | `REQ-single-measurement-path` |
 | `CR-GC-804` | relation | `FUNC-graph-suggest` |
+| `CR-GC-804` | relation | `FUNC-se-constraints` |
 | `CR-GC-804` | relation | `FUNC-se-vorbereitung` |
-| `CR-GC-804` | relation | `FUNC-target-profile` |
 | `CR-GC-804` | relation | `FUNC-target-profile-load` |
 | `CR-GC-804` | relation | `REQ-model-lane-fixed-set` |
 | `CR-GC-805` | relation | `FUNC-claim-store-lock` |
@@ -1327,13 +1327,17 @@
 | `CR-GC-851` | relation | `FUNC-verify-lane-model` |
 | `CR-GC-851` | relation | `REQ-ein-schreibweg` |
 | `CR-GC-851` | relation | `REQ-model-lane-fixed-set` |
+| `CR-GC-852` | relation | `FUNC-se-constraints` |
+| `CR-GC-852` | relation | `FUNC-se-generate` |
+| `CR-GC-852` | relation | `FUNC-se-top-level` |
 | `CR-GC-852` | relation | `FUNC-se-vorbereitung` |
+| `CR-GC-852` | relation | `REQ-constraints-skill-vertrag` |
 | `CR-GC-852` | relation | `REQ-vorbereitung-reads-metrics` |
 | `CR-GC-853` | relation | `FUNC-fit-advisory` |
 | `CR-GC-853` | relation | `FUNC-generation-step` |
 | `CR-GC-853` | relation | `FUNC-graph-mutate-tool` |
+| `CR-GC-853` | relation | `FUNC-se-constraints` |
 | `CR-GC-853` | relation | `FUNC-se-optimize` |
-| `CR-GC-853` | relation | `FUNC-target-profile` |
 | `CR-GC-853` | relation | `FUNC-target-profile-load` |
 | `CR-GC-853` | relation | `SCHEMA-target-profile` |
 | `CR-GC-854` | relation | `FUNC-measure-test-schlupf` |
@@ -1354,7 +1358,7 @@
 | `CR-GC-860` | relation | `FUNC-import-doc` |
 | `CR-GC-860` | relation | `REQ-mutate-befund-je-element` |
 | `CR-GC-861` | relation | `FUNC-graph-metrics` |
-| `CR-GC-861` | relation | `FUNC-target-profile` |
+| `CR-GC-861` | relation | `FUNC-se-constraints` |
 | `CR-GC-861` | relation | `FUNC-target-profile-load` |
 | `CR-GC-861` | relation | `SCHEMA-metrics-answer` |
 | `CR-GC-861` | relation | `SCHEMA-target-profile` |
@@ -1580,6 +1584,7 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-read-tools` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-rules-tool` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-conops` |
+| `FCHAIN-skill-authoring` | compose | `FUNC-se-constraints` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-fmea` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-generate` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-irr` |
@@ -1590,7 +1595,6 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-trade` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-umbau` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-vorbereitung` |
-| `FCHAIN-skill-authoring` | compose | `FUNC-target-profile` |
 | `FCHAIN-skill-authoring` | satisfy | `REQ-risk-skill-instructs-rejected-move` |
 | `FCHAIN-skill-help` | compose | `FUNC-agent-loop` |
 | `FCHAIN-skill-help` | compose | `FUNC-check-code-conformance` |
@@ -1708,6 +1712,8 @@
 | `FLOW-anleitung-render-views` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-se-conops` | io | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-conops` | relation | `SCHEMA-skill-text` |
+| `FLOW-anleitung-se-constraints` | io | `FUNC-agent-loop` |
+| `FLOW-anleitung-se-constraints` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-se-fmea` | io | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-fmea` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-se-generate` | io | `FUNC-agent-loop` |
@@ -1738,8 +1744,6 @@
 | `FLOW-anleitung-se-umbau` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-se-vorbereitung` | io | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-vorbereitung` | relation | `SCHEMA-skill-text` |
-| `FLOW-anleitung-target-profile` | io | `FUNC-agent-loop` |
-| `FLOW-anleitung-target-profile` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-test` | io | `FUNC-agent-loop` |
 | `FLOW-anleitung-test` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-test-ui` | io | `FUNC-agent-loop` |
@@ -2168,6 +2172,7 @@
 | `FLOW-skill-request` | io | `FUNC-import-doc` |
 | `FLOW-skill-request` | io | `FUNC-render-views` |
 | `FLOW-skill-request` | io | `FUNC-se-conops` |
+| `FLOW-skill-request` | io | `FUNC-se-constraints` |
 | `FLOW-skill-request` | io | `FUNC-se-fmea` |
 | `FLOW-skill-request` | io | `FUNC-se-generate` |
 | `FLOW-skill-request` | io | `FUNC-se-help` |
@@ -2183,7 +2188,6 @@
 | `FLOW-skill-request` | io | `FUNC-se-trade` |
 | `FLOW-skill-request` | io | `FUNC-se-umbau` |
 | `FLOW-skill-request` | io | `FUNC-se-vorbereitung` |
-| `FLOW-skill-request` | io | `FUNC-target-profile` |
 | `FLOW-skill-request` | io | `FUNC-test` |
 | `FLOW-skill-request` | io | `FUNC-test-ui` |
 | `FLOW-skill-request` | io | `FUNC-view-changelog` |
@@ -2366,10 +2370,10 @@
 | `FUNC-block-autorieren` | compose | `FUNC-author-uc` |
 | `FUNC-block-autorieren` | compose | `FUNC-import-code` |
 | `FUNC-block-autorieren` | compose | `FUNC-import-doc` |
+| `FUNC-block-autorieren` | compose | `FUNC-se-constraints` |
 | `FUNC-block-autorieren` | compose | `FUNC-se-generate` |
 | `FUNC-block-autorieren` | compose | `FUNC-se-top-level` |
 | `FUNC-block-autorieren` | compose | `FUNC-se-umbau` |
-| `FUNC-block-autorieren` | compose | `FUNC-target-profile` |
 | `FUNC-block-bedienung` | compose | `FUNC-cli-dispatch` |
 | `FUNC-block-bedienung` | compose | `FUNC-collect-status` |
 | `FUNC-block-bedienung` | compose | `FUNC-commit-check` |
@@ -2780,6 +2784,10 @@
 | `FUNC-se-conops` | allocate | `MOD-agent-surface` |
 | `FUNC-se-conops` | io | `FLOW-anleitung-se-conops` |
 | `FUNC-se-conops` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-se-constraints` | allocate | `MOD-agent-surface` |
+| `FUNC-se-constraints` | io | `FLOW-anleitung-se-constraints` |
+| `FUNC-se-constraints` | satisfy | `REQ-constraints-skill-vertrag` |
+| `FUNC-se-constraints` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-fmea` | allocate | `MOD-agent-surface` |
 | `FUNC-se-fmea` | io | `FLOW-anleitung-se-fmea` |
 | `FUNC-se-fmea` | satisfy | `REQ-fmea-checks-entry` |
@@ -2878,9 +2886,6 @@
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-stage-names-enumerated` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-from-metrics` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-steering-post` |
-| `FUNC-target-profile` | allocate | `MOD-agent-surface` |
-| `FUNC-target-profile` | io | `FLOW-anleitung-target-profile` |
-| `FUNC-target-profile` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-target-profile-load` | allocate | `MOD-loop` |
 | `FUNC-target-profile-load` | io | `FLOW-target-profile` |
 | `FUNC-target-profile-load` | satisfy | `REQ-target-shifts-ranking` |
@@ -3374,6 +3379,7 @@
 | `TEST-single-write-door` | verify | `REQ-gate-only-writes` |
 | `TEST-single-write-door` | verify | `REQ-single-write-door` |
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
+| `TEST-skill-constraints` | verify | `REQ-constraints-skill-vertrag` |
 | `TEST-skill-kinds-werte` | verify | `REQ-published-counts-match-code` |
 | `TEST-skill-moves-are-legal` | verify | `REQ-risk-skill-instructs-rejected-move` |
 | `TEST-skill-red-first` | verify | `REQ-test-skill-red-first` |
@@ -3445,6 +3451,7 @@
 | `UC-code-quality` | compose | `REQ-code-governed-quality` |
 | `UC-code-quality` | compose | `REQ-codec-validation` |
 | `UC-code-quality` | compose | `REQ-confidence-tier` |
+| `UC-code-quality` | compose | `REQ-constraints-skill-vertrag` |
 | `UC-code-quality` | compose | `REQ-dashboard-ontology-sync` |
 | `UC-code-quality` | compose | `REQ-deterministic-serialization` |
 | `UC-code-quality` | compose | `REQ-fmea-checks-entry` |

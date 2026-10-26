@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 186 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 187 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -31,6 +31,7 @@
 | `REQ-completeness-single-value` | ✓ | ✓ passed | `TEST-readiness-completeness` |
 | `REQ-confidence-tier` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-conflict-free-merge` | ✓ | ✓ passed | `TEST-merge` |
+| `REQ-constraints-skill-vertrag` | ✓ | ✓ passed | `TEST-skill-constraints` |
 | `REQ-dashboard-ontology-sync` | ✓ | ✓ passed | `TEST-dashboard-ontology-sync` |
 | `REQ-dashboard-readonly` | ✓ | ✓ passed | `TEST-dashboard-readonly` |
 | `REQ-deterministic-serialization` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-roundtrip` |
@@ -195,8 +196,8 @@
 | `REQ-vorbereitung-reads-metrics` | ✓ | ✓ passed | `TEST-vorbereitung-reads-metrics` |
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 
-Coverage: 186/186 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 149/186 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 187/187 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 150/187 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -227,6 +228,7 @@ Belegt: 149/186 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-agent-loop` → `FUNC-render-views` | `FLOW-skill-request` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-agent-loop` → `FUNC-rules-tool` | `FLOW-query-request-agent` | `FCHAIN-advisory-roundtrip` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` | `TEST-advisory-roundtrip-latency` · `TEST-skill-moves-are-legal` | performance | passed |
 | `FUNC-agent-loop` → `FUNC-se-conops` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
+| `FUNC-agent-loop` → `FUNC-se-constraints` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-agent-loop` → `FUNC-se-fmea` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-agent-loop` → `FUNC-se-generate` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-agent-loop` → `FUNC-se-help` | `FLOW-skill-request` | `FCHAIN-skill-help` | ⚠ keine Abdeckung |  |  |
@@ -242,7 +244,6 @@ Belegt: 149/186 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-agent-loop` → `FUNC-se-trade` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-agent-loop` → `FUNC-se-umbau` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-agent-loop` → `FUNC-se-vorbereitung` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
-| `FUNC-agent-loop` → `FUNC-target-profile` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-agent-loop` → `FUNC-target-profile-load` | `FLOW-target-profile-file` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | integration, unit | passed |
 | `FUNC-agent-loop` → `FUNC-test` | `FLOW-skill-request` | `FCHAIN-skill-help` | ⚠ keine Abdeckung |  |  |
 | `FUNC-agent-loop` → `FUNC-test-ingest` | `FLOW-query-request-agent` | `FCHAIN-test-ingest` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` | integration | passed |
@@ -445,6 +446,7 @@ Belegt: 149/186 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-schema-guard` → `FUNC-open-store` | `FLOW-schema-fingerprint` | `FCHAIN-host-start` · `FCHAIN-http-host` · `FCHAIN-schema-migration` | `TEST-tool-list-change-announced` |  |  |
 | `FUNC-score-completeness` → `FUNC-compute-readiness` | `FLOW-completeness` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-se-conops` → `FUNC-agent-loop` | `FLOW-anleitung-se-conops` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
+| `FUNC-se-constraints` → `FUNC-agent-loop` | `FLOW-anleitung-se-constraints` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-se-fmea` → `FUNC-agent-loop` | `FLOW-anleitung-se-fmea` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-se-generate` → `FUNC-agent-loop` | `FLOW-anleitung-se-generate` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-se-help` → `FUNC-agent-loop` | `FLOW-anleitung-se-help` | `FCHAIN-skill-help` | ⚠ keine Abdeckung |  |  |
@@ -488,7 +490,6 @@ Belegt: 149/186 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-take-steering-snapshot` → `FUNC-generation-step` | `FLOW-steering-snapshot` | `FCHAIN-dashboard-metrics` · `FCHAIN-generation-states` · `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | integration, unit | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-graph-mutate-tool` | `FLOW-steering-snapshot` | `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | integration, unit | passed |
 | `FUNC-take-steering-snapshot` → `FUNC-graph-readiness` | `FLOW-steering-snapshot` | `FCHAIN-dashboard-metrics` · `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | integration, unit | passed |
-| `FUNC-target-profile` → `FUNC-agent-loop` | `FLOW-anleitung-target-profile` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-target-profile-load` → `FUNC-graph-generate-tool` | `FLOW-target-profile` | `FCHAIN-generation-states` · `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | integration, unit | passed |
 | `FUNC-target-profile-load` → `FUNC-graph-readiness` | `FLOW-target-profile` | `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | integration, unit | passed |
 | `FUNC-target-profile-load` → `FUNC-vorschlag` | `FLOW-target-profile` | `FCHAIN-steering-loop` | `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | integration, unit | passed |

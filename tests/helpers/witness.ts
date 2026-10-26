@@ -5,7 +5,7 @@
  *   - skalarer Zeuge w·m(G): ℝ⁶-Metrikvektor (@sigloch/se-engine metrics/toArray,
  *     layer 'arch') über den EINEN Mapper `toOntologyGraph` (derselbe Pfad wie
  *     fitAdvisory/Snapshot, CR-GC-303/324 — kein zweiter Messpfad), skalarisiert
- *     mit target-profile-Gewichten (leer ⇒ Gleichgewichtung 1/6 je Dimension);
+ *     mit den Gewichten des Spikes (leer ⇒ Gleichgewichtung 1/6 je Dimension);
  *   - Zustands-Archiv: sha256 des kanonischen `exportGraphJson` je Zustand
  *     (deterministisch, source-order-unabhängig — der Graph wird gehasht, nicht
  *     der Vektor: 6 Dimensionen sind grob, verschiedene Graphen teilen sich
@@ -22,7 +22,11 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { metrics, toArray, METRIC_DIMENSIONS } from '@sigloch/se-engine';
 import { toOntologyGraph } from '../../src/kernel/conformance.js';
 import { exportGraphJson } from '../../src/projections/exporter.js';
-import type { TargetWeights } from '../../src/loop/target-profile.js';
+/**
+ * Gewichte je Dimension fuer den skalaren Zeugen dieses Spikes. CR-GC-861: eigener Typ — die Profildatei
+ * traegt keine Gewichte mehr, der Spike setzt seine selbst.
+ */
+export type WitnessWeights = Partial<Record<(typeof METRIC_DIMENSIONS)[number], number>>;
 
 export interface WitnessSample {
   /** ℝ⁶-Metrikvektor m(G), layer 'arch', kanonische Dimensionsreihenfolge. */
@@ -33,15 +37,15 @@ export interface WitnessSample {
   hash: string;
 }
 
-/** Gleichgewichtung, wenn KEIN Gewicht gesetzt ist (leeres Profil, CR-289-Verhalten). */
-function weightVector(weights: TargetWeights): number[] {
-  const anySet = METRIC_DIMENSIONS.some((d) => weights[d as keyof TargetWeights] !== undefined);
+/** Gleichgewichtung, wenn KEIN Gewicht gesetzt ist. */
+function weightVector(weights: WitnessWeights): number[] {
+  const anySet = METRIC_DIMENSIONS.some((d) => weights[d] !== undefined);
   if (!anySet) return METRIC_DIMENSIONS.map(() => 1 / METRIC_DIMENSIONS.length);
-  return METRIC_DIMENSIONS.map((d) => weights[d as keyof TargetWeights] ?? 0);
+  return METRIC_DIMENSIONS.map((d) => weights[d] ?? 0);
 }
 
 /** m(G), w·m(G) und Export-Hash EINES Zustands — der einzige Messpfad des Spikes. */
-export function witnessSample(graph: Graph, weights: TargetWeights = {}): WitnessSample {
+export function witnessSample(graph: Graph, weights: WitnessWeights = {}): WitnessSample {
   const vector = toArray(metrics(toOntologyGraph(graph), { layer: 'arch' }));
   const w = weightVector(weights);
   const scalar = vector.reduce((acc, x, i) => acc + w[i] * x, 0);

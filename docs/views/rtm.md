@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 186 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 187 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 52 REQ
@@ -64,7 +64,7 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 130 REQ
+### funktional (SWE.1 · HWE.1) — 131 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -86,6 +86,7 @@
 | `REQ-completeness-single-value` | `TEST-readiness-completeness` | `MOD-projections` | — |
 | `REQ-confidence-tier` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-conflict-free-merge` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-kernel` |
+| `REQ-constraints-skill-vertrag` | `TEST-skill-constraints` | `FUNC-se-constraints` | `MOD-agent-surface` |
 | `REQ-dashboard-ontology-sync` | `TEST-dashboard-ontology-sync` | `MOD-dashboard` | — |
 | `REQ-dashboard-readonly` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-deterministic-serialization` | `TEST-export-graph-guard` · `TEST-roundtrip` | `MOD-projections` | — |
@@ -176,7 +177,7 @@
 | `REQ-session-leaves-nothing-behind` | `TEST-repo-lifecycle` · `TEST-session-lifecycle` | `FUNC-session-shutdown` | `MOD-surface` |
 | `REQ-single-measurement-path` | `TEST-graph-metrics` · `TEST-single-measurement-path` · `TEST-steering-snapshot` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-single-write-door` | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` | `FUNC-mutate` | `MOD-kernel` |
-| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` | `MOD-agent-surface` |
+| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-agent-surface` |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-apply-gate` | — |
 | `REQ-stage-names-enumerated` | `TEST-stage-names-enumerated` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
@@ -259,7 +260,7 @@
 | `REQ-steering-promise-one-owner` | `TEST-steering-promise-one-owner` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 142 REQ
+### Entwurf (SWE.3 · HWE.2) — 143 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -282,6 +283,7 @@
 | `REQ-completeness-single-value` | `TEST-readiness-completeness` | `MOD-projections` | — |
 | `REQ-confidence-tier` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-conflict-free-merge` | `TEST-merge` | `FUNC-merge-nodes` | `MOD-kernel` |
+| `REQ-constraints-skill-vertrag` | `TEST-skill-constraints` | `FUNC-se-constraints` | `MOD-agent-surface` |
 | `REQ-dashboard-ontology-sync` | `TEST-dashboard-ontology-sync` | `MOD-dashboard` | — |
 | `REQ-dashboard-readonly` | `TEST-dashboard-readonly` | `MOD-dashboard` | — |
 | `REQ-deterministic-serialization` | `TEST-export-graph-guard` · `TEST-roundtrip` | `MOD-projections` | — |
@@ -381,7 +383,7 @@
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-kernel` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `MOD-surface` | — |
 | `REQ-single-write-door` | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` | `FUNC-mutate` | `MOD-kernel` |
-| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` | `MOD-agent-surface` |
+| `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` | `MOD-agent-surface` |
 | `REQ-stage-names-enumerated` | `TEST-stage-names-enumerated` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-steering-delta-in-answer-tested` | `TEST-steering-delta-in-answer` | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |

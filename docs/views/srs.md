@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 186 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 187 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -138,7 +138,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (integration) · sat
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -150,13 +150,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.1.1.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
@@ -474,7 +474,7 @@ Verification ◀ `TEST-capture` (integration) · `TEST-intent-anchors-internal` 
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -486,13 +486,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.1.2.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
@@ -674,7 +674,7 @@ Verification ◀ `TEST-skill-moves-are-legal` · satisfy ◀ `FCHAIN-skill-autho
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -686,13 +686,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.1.3.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
@@ -984,13 +984,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-author-actor` · allocate 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.1.3.12  `FUNC-author-req` — Skill se:author-req
 
@@ -1002,13 +1002,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-author-req` · allocate �
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.1.3.13  `FUNC-author-uc` — Skill se:author-uc
 
@@ -1020,13 +1020,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-author-uc` · allocate ▶
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.1.3.14  `FUNC-close-violations` — Skill se:close-violations
 
@@ -1038,13 +1038,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-close-violations` · alloc
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.1.3.15  `FUNC-se-conops` — Skill se-conops
 
@@ -1056,15 +1056,41 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-conops` · allocate ▶
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.16  `FUNC-se-fmea` — Skill se-fmea
+##### 3.1.3.16  `FUNC-se-constraints` — Skill se:constraints
+
+> auch in: `FUNC-block-autorieren`
+
+Prompt-realisierter Skill se:constraints, Version 4 (vormals se:target-profile, CR-GC-852): fragt je Dimension (Aenderbarkeit, Zusammenhalt, kurze Wege, Fehlertoleranz, Groesse, Engpass, Schutz) nach einem Element und einer Eigenschaft und schreibt die Antwort ueber se:author-req als nicht-funktionale REQ an Kette, Modul oder System mit einem TEST, der den Snapshot liest. Nimmt nur architektur-bestimmende Constraints auf, nennt je Antwortform ihre Pruefung aus @sigloch/graphcode/constraints, wo es eine gibt, und warnt bei den drei Konfliktpaaren. Nie ein Gewicht.
+
+io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-constraints` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-constraints-skill-vertrag` — se:constraints fragt nach Constraints statt Gewichten
+
+Der Skill se:constraints MUSS je Dimension eine Frage nach Element und Eigenschaft stellen und die Antwort als nicht-funktionale REQ an FCHAIN, MOD oder SYS mit verifizierendem TEST schreiben, nie als Gewicht. Er DARF nur Pruefungen aus @sigloch/graphcode/constraints, Regeln aus dem Katalog und Felder nennen, die graph_metrics liefert oder die Ontologie fuehrt; fehlt eine Pruefung, legt er REQ und TEST ueber se:author-req an und der Test schreibt sie.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-constraints` (conformance) · satisfy ◀ `FUNC-se-constraints` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
+
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
+
+Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
+
+##### 3.1.3.17  `FUNC-se-fmea` — Skill se-fmea
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1090,15 +1116,15 @@ Verification ◀ `TEST-fmea-reads-places` (conformance) · satisfy ◀ `FUNC-se-
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.17  `FUNC-se-generate` — Skill se:generate
+##### 3.1.3.18  `FUNC-se-generate` — Skill se:generate
 
 > auch in: `FUNC-block-autorieren`
 
@@ -1116,15 +1142,15 @@ Verification ◀ `TEST-deny-headless-question` (integration) · satisfy ◀ `FUN
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.18  `FUNC-se-irr` — Skill se-irr
+##### 3.1.3.19  `FUNC-se-irr` — Skill se-irr
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1134,15 +1160,15 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-irr` · allocate ▶ `M
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.19  `FUNC-se-laufzeit` — Skill se-laufzeit
+##### 3.1.3.20  `FUNC-se-laufzeit` — Skill se-laufzeit
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1160,15 +1186,15 @@ Verification ◀ `TEST-laufzeit-reads-answer-path` (conformance) · satisfy ◀ 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.20  `FUNC-se-optimize` — Skill se:optimize
+##### 3.1.3.21  `FUNC-se-optimize` — Skill se:optimize
 
 > auch in: `FUNC-block-optimierung`
 
@@ -1186,15 +1212,15 @@ Verification ◀ `TEST-optimize-presents-impact` (conformance) · satisfy ◀ `F
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.21  `FUNC-se-plan` — Skill se-plan
+##### 3.1.3.22  `FUNC-se-plan` — Skill se-plan
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1214,15 +1240,15 @@ Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generat
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.22  `FUNC-se-top-level` — Skill se:top-level
+##### 3.1.3.23  `FUNC-se-top-level` — Skill se:top-level
 
 > auch in: `FUNC-block-autorieren`
 
@@ -1232,15 +1258,15 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-top-level` · allocate 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.23  `FUNC-se-trade` — Skill se-trade
+##### 3.1.3.24  `FUNC-se-trade` — Skill se-trade
 
 > auch in: `FUNC-block-urteilsarbeit`
 
@@ -1250,15 +1276,15 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-trade` · allocate ▶ 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.24  `FUNC-se-umbau` — Skill se-umbau
+##### 3.1.3.25  `FUNC-se-umbau` — Skill se-umbau
 
 > auch in: `FUNC-block-autorieren`
 
@@ -1268,15 +1294,15 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-umbau` · allocate ▶ 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-##### 3.1.3.25  `FUNC-se-vorbereitung` — Skill se-vorbereitung
+##### 3.1.3.26  `FUNC-se-vorbereitung` — Skill se-vorbereitung
 
 > auch in: `FUNC-block-optimierung`
 
@@ -1286,13 +1312,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-vorbereitung` · alloca
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-vorbereitung-constraints` — se-vorbereitung ordnet Constraints ein
 
@@ -1309,24 +1335,6 @@ Der Skill se-vorbereitung MUSS Bewertbarkeit, Traeger je Risiko und Betrachtungs
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-vorbereitung-reads-metrics` (conformance) · satisfy ◀ `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
-
-##### 3.1.3.26  `FUNC-target-profile` — Skill se:target-profile
-
-> auch in: `FUNC-block-autorieren`
-
-Prompt-realisierter Skill se:target-profile, Version 3: prueft oder korrigiert auf ausdrueckliche Anfrage die 3-7 Themen in der Profildatei. Gewichte, Zielwerte und Zielkonflikte sind zurueckgebaut (CR-GC-861).
-
-io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-target-profile` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
-
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
-
-Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
 
 ### 3.2  `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 
@@ -1396,7 +1404,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1408,13 +1416,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.2.1.4  `FUNC-target-profile-load` — loadTargetProfile
 
@@ -1636,7 +1644,7 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1648,13 +1656,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.2.2.5  `FUNC-graph-help` — graph_help (Werkzeug)
 
@@ -1830,7 +1838,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1842,13 +1850,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.2.3.5  `FUNC-audit-stats` — aggregateAuditEntries(entries)
 
@@ -2208,7 +2216,7 @@ Verification ◀ `TEST-steering-delta-in-answer` · satisfy ◀ `FCHAIN-steering
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -2220,13 +2228,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.2.4.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
@@ -2854,7 +2862,7 @@ Verification ◀ `TEST-formate-binding` (integration) · `TEST-graph-realize` (i
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -2866,13 +2874,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.3.1.5  `FUNC-select-tests` — impactedTests(graph, changeSet)
 
@@ -2954,7 +2962,7 @@ Verification ◀ `TEST-lane-reports-change` (integration) · `TEST-test-result-w
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -2966,13 +2974,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.3.3.2  `FUNC-test-ingest` — graph_test_ingest
 
@@ -3484,7 +3492,7 @@ Agent gibt graph_merge den Pfad eines Branch-Logs und den Fork-Punkt; das Werkze
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -3496,13 +3504,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.4.1.2  `FUNC-graph-merge-tool` — graph_merge (Werkzeug)
 
@@ -3968,7 +3976,7 @@ Verification ◀ `TEST-auto-export` (integration) · satisfy ◀ `FCHAIN-snapsho
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -3980,13 +3988,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.4.3.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
@@ -4344,7 +4352,7 @@ Verification ◀ `TEST-deny-stale-read` (integration) · `TEST-graph-is-ssot` (i
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4356,13 +4364,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.4.4.2  `FUNC-graph-export-snapshot` — graph_export(views?)
 
@@ -5160,7 +5168,7 @@ Verification ◀ `TEST-create-harness-smoke` (integration) · `TEST-live-view` (
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -5172,13 +5180,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.5.4.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
@@ -5494,7 +5502,7 @@ Verification ◀ `TEST-audit-code-state` (integration) · `TEST-audit-retention`
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -5506,13 +5514,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.6.1.4  `FUNC-audit-trail` — projectAuditEntries(entries, opts)
 
@@ -5624,7 +5632,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -5636,13 +5644,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.7.1.4  `FUNC-render-views` — render graph→markdown views
 
@@ -5822,7 +5830,7 @@ Verification ◀ `TEST-capture` (integration) · `TEST-import-code-verb` (integr
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -5834,13 +5842,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.7.2.2  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
 
@@ -6254,7 +6262,7 @@ Verification ◀ `TEST-advisory-roundtrip-latency` (performance) · satisfy ◀ 
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -6266,13 +6274,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.8.1.2  `FUNC-graph-suggest` — graph_suggest (Werkzeug)
 
@@ -6614,7 +6622,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-read-format-param
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -6626,13 +6634,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.8.2.4  `FUNC-graph-expand` — graph_expand(handle, branch, depth+1)
 
@@ -6766,7 +6774,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-reduced-llm` (integration) · sat
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -6778,13 +6786,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.8.3.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
@@ -7094,7 +7102,7 @@ Der Agent fragt die Kanten-Grammatik eines Elementtyps ab und bekommt sie zuruec
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -7106,13 +7114,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.8.4.2  `FUNC-authoring-guide` — graph_authoring_guide(type)
 
@@ -7146,7 +7154,7 @@ Eine zweite Sitzung im selben Repo verliert die Store-Wahl und bedient ihre Abla
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -7158,13 +7166,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.9.1.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
@@ -7448,7 +7456,7 @@ Verification ◀ `TEST-tool-list-change-announced` · satisfy ◀ `FCHAIN-host-s
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -7460,13 +7468,13 @@ Verification ◀ `TEST-agent-loop-executes-skill` · satisfy ◀ `FUNC-agent-loo
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.9.2.2  `FUNC-cli-dispatch` — graphcode CLI-Dispatch
 
@@ -10346,13 +10354,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-conops` · allocate ▶
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### 3.10.3.1.2  `FUNC-se-fmea` — Skill se-fmea
 
@@ -10380,13 +10388,13 @@ Verification ◀ `TEST-fmea-reads-places` (conformance) · satisfy ◀ `FUNC-se-
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### 3.10.3.1.3  `FUNC-se-irr` — Skill se-irr
 
@@ -10398,13 +10406,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-irr` · allocate ▶ `M
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### 3.10.3.1.4  `FUNC-se-laufzeit` — Skill se-laufzeit
 
@@ -10424,13 +10432,13 @@ Verification ◀ `TEST-laufzeit-reads-answer-path` (conformance) · satisfy ◀ 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### 3.10.3.1.5  `FUNC-se-modulebene` — Skill se-modulebene
 
@@ -10468,13 +10476,13 @@ Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generat
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### 3.10.3.1.7  `FUNC-se-trade` — Skill se-trade
 
@@ -10486,13 +10494,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-trade` · allocate ▶ 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.10.3.2  `FUNC-graph-suggest` — graph_suggest (Werkzeug)
 
@@ -10540,13 +10548,13 @@ Verification ◀ `TEST-optimize-presents-impact` (conformance) · satisfy ◀ `F
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.10.3.4  `FUNC-se-vorbereitung` — Skill se-vorbereitung
 
@@ -10558,13 +10566,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-vorbereitung` · alloca
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-vorbereitung-constraints` — se-vorbereitung ordnet Constraints ein
 
@@ -10718,13 +10726,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-author-actor` · allocate 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### 3.10.4.2.2  `FUNC-author-req` — Skill se:author-req
 
@@ -10736,13 +10744,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-author-req` · allocate �
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### 3.10.4.2.3  `FUNC-author-uc` — Skill se:author-uc
 
@@ -10754,13 +10762,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-author-uc` · allocate ▶
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### 3.10.4.2.4  `FUNC-import-code` — Skill se:import-code
 
@@ -10794,7 +10802,33 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-mutate-violations-leser` (integration) · satisfy ◀ `FUNC-import-doc` · allocate ▶ `MOD-agent-surface`
 
-###### 3.10.4.2.6  `FUNC-se-generate` — Skill se:generate
+###### 3.10.4.2.6  `FUNC-se-constraints` — Skill se:constraints
+
+> auch in: `FCHAIN-skill-authoring`
+
+Prompt-realisierter Skill se:constraints, Version 4 (vormals se:target-profile, CR-GC-852): fragt je Dimension (Aenderbarkeit, Zusammenhalt, kurze Wege, Fehlertoleranz, Groesse, Engpass, Schutz) nach einem Element und einer Eigenschaft und schreibt die Antwort ueber se:author-req als nicht-funktionale REQ an Kette, Modul oder System mit einem TEST, der den Snapshot liest. Nimmt nur architektur-bestimmende Constraints auf, nennt je Antwortform ihre Pruefung aus @sigloch/graphcode/constraints, wo es eine gibt, und warnt bei den drei Konfliktpaaren. Nie ein Gewicht.
+
+io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-constraints` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-constraints-skill-vertrag` — se:constraints fragt nach Constraints statt Gewichten
+
+Der Skill se:constraints MUSS je Dimension eine Frage nach Element und Eigenschaft stellen und die Antwort als nicht-funktionale REQ an FCHAIN, MOD oder SYS mit verifizierendem TEST schreiben, nie als Gewicht. Er DARF nur Pruefungen aus @sigloch/graphcode/constraints, Regeln aus dem Katalog und Felder nennen, die graph_metrics liefert oder die Ontologie fuehrt; fehlt eine Pruefung, legt er REQ und TEST ueber se:author-req an und der Test schreibt sie.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-constraints` (conformance) · satisfy ◀ `FUNC-se-constraints` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
+
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
+
+Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
+
+###### 3.10.4.2.7  `FUNC-se-generate` — Skill se:generate
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -10812,15 +10846,15 @@ Verification ◀ `TEST-deny-headless-question` (integration) · satisfy ◀ `FUN
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-###### 3.10.4.2.7  `FUNC-se-top-level` — Skill se:top-level
+###### 3.10.4.2.8  `FUNC-se-top-level` — Skill se:top-level
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -10830,15 +10864,15 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-top-level` · allocate 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
-###### 3.10.4.2.8  `FUNC-se-umbau` — Skill se-umbau
+###### 3.10.4.2.9  `FUNC-se-umbau` — Skill se-umbau
 
 > auch in: `FCHAIN-skill-authoring`
 
@@ -10848,31 +10882,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-umbau` · allocate ▶ 
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
-
-###### 3.10.4.2.9  `FUNC-target-profile` — Skill se:target-profile
-
-> auch in: `FCHAIN-skill-authoring`
-
-Prompt-realisierter Skill se:target-profile, Version 3: prueft oder korrigiert auf ausdrueckliche Anfrage die 3-7 Themen in der Profildatei. Gewichte, Zielwerte und Zielkonflikte sind zurueckgebaut (CR-GC-861).
-
-io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-target-profile` · allocate ▶ `MOD-agent-surface`
-
-###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
-
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
-
-Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ##### 3.10.4.3  `FUNC-block-q-improvement` — Fokus & Ziel
 
@@ -10890,13 +10906,13 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-close-violations` · alloc
 
 ###### `REQ-skill-authors-through-gate` — Autoren-Skill schreibt nur durchs Gate
 
-> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile`
+> auch unter: `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung`
 
 Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · allocate ▶ `MOD-agent-surface`
+Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
 ###### 3.10.4.3.2  `FUNC-generation-step` — generationStep(graph, policy, intent)
 
@@ -11058,101 +11074,101 @@ Text des Skills se-conops, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-conops` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.10  `FLOW-anleitung-se-fmea` — Anleitung (se-fmea)
+### 4.10  `FLOW-anleitung-se-constraints` — Anleitung (se:constraints)
+
+Text des Skills se:constraints, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
+
+io ◀ `FUNC-se-constraints` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
+
+### 4.11  `FLOW-anleitung-se-fmea` — Anleitung (se-fmea)
 
 Text des Skills se-fmea, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-fmea` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.11  `FLOW-anleitung-se-generate` — Anleitung (se-generate)
+### 4.12  `FLOW-anleitung-se-generate` — Anleitung (se-generate)
 
 Text des Skills se-generate, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-generate` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.12  `FLOW-anleitung-se-help` — Anleitung (se-help)
+### 4.13  `FLOW-anleitung-se-help` — Anleitung (se-help)
 
 Text des Skills se-help, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-help` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.13  `FLOW-anleitung-se-irr` — Anleitung (se-irr)
+### 4.14  `FLOW-anleitung-se-irr` — Anleitung (se-irr)
 
 Text des Skills se-irr, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-irr` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.14  `FLOW-anleitung-se-laufzeit` — Anleitung (se-laufzeit)
+### 4.15  `FLOW-anleitung-se-laufzeit` — Anleitung (se-laufzeit)
 
 Text des Skills se-laufzeit, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-laufzeit` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.15  `FLOW-anleitung-se-modulebene` — Anleitung (se-modulebene)
+### 4.16  `FLOW-anleitung-se-modulebene` — Anleitung (se-modulebene)
 
 Text des Skills se-modulebene, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-modulebene` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.16  `FLOW-anleitung-se-optimize` — Anleitung (se-optimize)
+### 4.17  `FLOW-anleitung-se-optimize` — Anleitung (se-optimize)
 
 Text des Skills se-optimize, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-optimize` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.17  `FLOW-anleitung-se-plan` — Anleitung (se-plan)
+### 4.18  `FLOW-anleitung-se-plan` — Anleitung (se-plan)
 
 Text des Skills se-plan, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-plan` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.18  `FLOW-anleitung-se-retro` — Anleitung (se-retro)
+### 4.19  `FLOW-anleitung-se-retro` — Anleitung (se-retro)
 
 Text des Skills se-retro, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-retro` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.19  `FLOW-anleitung-se-review` — Anleitung (se-review)
+### 4.20  `FLOW-anleitung-se-review` — Anleitung (se-review)
 
 Text des Skills se-review, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-review` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.20  `FLOW-anleitung-se-status` — Anleitung (se-status)
+### 4.21  `FLOW-anleitung-se-status` — Anleitung (se-status)
 
 Text des Skills se-status, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-status` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.21  `FLOW-anleitung-se-top-level` — Anleitung (se-top-level)
+### 4.22  `FLOW-anleitung-se-top-level` — Anleitung (se-top-level)
 
 Text des Skills se-top-level, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-top-level` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.22  `FLOW-anleitung-se-trade` — Anleitung (se-trade)
+### 4.23  `FLOW-anleitung-se-trade` — Anleitung (se-trade)
 
 Text des Skills se-trade, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-trade` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.23  `FLOW-anleitung-se-umbau` — Anleitung se-umbau
+### 4.24  `FLOW-anleitung-se-umbau` — Anleitung se-umbau
 
 Der Text des Skills se-umbau an die Ablaufsteuerung.
 
 io ◀ `FUNC-se-umbau` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-### 4.24  `FLOW-anleitung-se-vorbereitung` — Anleitung (se-vorbereitung)
+### 4.25  `FLOW-anleitung-se-vorbereitung` — Anleitung (se-vorbereitung)
 
 Text des Skills se-vorbereitung, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
 
 io ◀ `FUNC-se-vorbereitung` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
-
-### 4.25  `FLOW-anleitung-target-profile` — Anleitung (target-profile)
-
-Text des Skills target-profile, beim Aufruf an die Ablaufsteuerung zurueckgegeben.
-
-io ◀ `FUNC-target-profile` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
 ### 4.26  `FLOW-anleitung-test` — Anleitung (test)
 
@@ -12202,7 +12218,7 @@ io ◀ `FUNC-gve-sessions` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
-io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
+io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · schema ▶ `SCHEMA-query-params`
 
 ### 4.201  `FLOW-snapshot-request` — Messanfrage (generationStep)
 
@@ -12742,7 +12758,7 @@ schema ◀ `FLOW-session-entry` · `FLOW-session-registry`
 
 Text einer Skill-Datei (Markdown mit Frontmatter), den der Agent-Host beim Skill-Aufruf an die Ablaufsteuerung gibt. Ohne Zod-Symbol: Prompt-Inhalt, kein Wire-Format; das Format legt der Agent-Host fest.
 
-schema ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-target-profile` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-help-answer`
+schema ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-render-views` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-anleitung-view-changelog` · `FLOW-anleitung-view-conops` · `FLOW-anleitung-view-fmea` · `FLOW-anleitung-view-icd` · `FLOW-anleitung-view-intplan` · `FLOW-anleitung-view-rtm` · `FLOW-help-answer`
 
 ### 5.45  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
 
@@ -12838,7 +12854,7 @@ schema ◀ `FLOW-zug-bericht`
 
 Die Bedienschicht des Menschen: die Skill-/Prompt-Definitionen unter .claude/commands, agent-ausgefuehrt statt code-realisiert. Null modulinterne Fluesse ist hier Kategorie, kein Defekt. (CR-GC-446)
 
-allocate ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-target-profile` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · satisfy ▶ `REQ-gate-only-writes`
+allocate ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-render-views` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · satisfy ▶ `REQ-gate-only-writes`
 
 ### 6.2  `MOD-dashboard` — dashboard — Live-Viewer-App
 
@@ -14042,217 +14058,223 @@ Fuer jede FUNC der Kette FCHAIN-skill-authoring: die per realRef gebundene Comma
 
 verify ▶ `REQ-skill-authors-through-gate` · testRefs: `tests/skill-authoring-gate.test.ts`
 
-### 8.131  `TEST-skill-kinds-werte` — Genannte kinds-Werte sind legal
+### 8.131  `TEST-skill-constraints` — se:constraints an die Vertraege gebunden
+
+Abnahme der Datei tests/skill-constraints.test.ts: der Skill heisst se:constraints, die Tabelle traegt je Dimension Frage, Beispiel, Adressat, Pruefung und Prueffunktion; jeder Adressat darf nach R-18 eine nicht-funktionale REQ erfuellen; jede genannte Prueffunktion, Regel und jedes Feld existiert, mit Positivkontrolle.
+
+verify ▶ `REQ-constraints-skill-vertrag` · testRefs: `tests/skill-constraints.test.ts`
+
+### 8.132  `TEST-skill-kinds-werte` — Genannte kinds-Werte sind legal
 
 Jeder in Skills, Help und Executor-Vorbild genannte kinds-Wert liegt im Wertebereich der Ontologie, und jedes dort gezeigte satisfy-Paar mit kinds ist nach den Trace-Mustern legal; ein kuenstlich illegales Beispiel wird gemeldet.
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/skill-kinds-werte.test.ts`
 
-### 8.132  `TEST-skill-moves-are-legal` — Skills weisen nur zulaessige Zuege an
+### 8.133  `TEST-skill-moves-are-legal` — Skills weisen nur zulaessige Zuege an
 
 Prueft, dass kein Skilltext einen Zug anweist, den die Grammatik nicht zulaesst.
 
 verify ▶ `REQ-risk-skill-instructs-rejected-move`
 
-### 8.133  `TEST-skill-red-first` — Test-Skills lehren Red-First
+### 8.134  `TEST-skill-red-first` — Test-Skills lehren Red-First
 
 Abnahme der Datei tests/skill-red-first.test.ts: se-test und se-test-ui enthalten die Red-First-Regel mit ihren drei Teilen (rot sehen, aus genau diesem Grund, gegen kaputten Code), mit Positivkontrolle. (CR-GC-697)
 
 verify ▶ `REQ-test-skill-red-first` · testRefs: `tests/skill-red-first.test.ts`
 
-### 8.134  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
+### 8.135  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
 
 Fuer jede FUNC der Kette FCHAIN-skill-report: die per realRef gebundene Command-Datei nennt mindestens ein Messwerkzeug aus der LIVE-Registry und kein schreibendes. Grundgesamtheit und Werkzeugnamen kommen aus Graph und Registry, nicht aus einer Liste im Test.
 
 verify ▶ `REQ-skill-reads-only` · testRefs: `tests/skill-report-measured.test.ts`
 
-### 8.135  `TEST-skill-rule-ids` — Abnahme: keine erfundenen Regel-IDs in Skills und Prompts
+### 8.136  `TEST-skill-rule-ids` — Abnahme: keine erfundenen Regel-IDs in Skills und Prompts
 
 Prueft, dass jede Regel-ID, die ein Skill oder der Rundenprompt nennt, im Katalog ALL_RULE_DEFS steht — Skill-Dateien, RULE_CLAUSE-Schluessel, gerenderte Klauseltexte, Dimensions-Vorlagen, System-Prompt und Nachfass-Text. Praefixe und IDs kommen aus dem Katalog, nicht aus einer gepflegten Liste. Gefunden hat der erste Lauf drei erfundene Nennungen gestrichener Regeln. Prueft die EXISTENZ, nicht die Wahrheit der Aussage ueber die Regel. (CR-GC-571)
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/skill-rule-ids.test.ts`
 
-### 8.136  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
+### 8.137  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
 
 Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert >=1 Tool aus der Live-Registry. "done = verifiziert" fuer die prompt-realisierten FUNCs von MOD-skills (se-view/* → REQ-doc-export). (CR-GC-132)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/skills.mcp-conformance.test.ts`
 
-### 8.137  `TEST-stage-names-enumerated` — Stufennamen sind aufgezaehlt
+### 8.138  `TEST-stage-names-enumerated` — Stufennamen sind aufgezaehlt
 
 Prueft, dass ein unbekannter Stufenname beim Bilden des Steuerungs-Snapshots abgewiesen wird.
 
 verify ▶ `REQ-risk-stage-name-free-text` · `REQ-stage-names-enumerated`
 
-### 8.138  `TEST-status-verb` — Abnahme des status-Verbs
+### 8.139  `TEST-status-verb` — Abnahme des status-Verbs
 
 Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.
 
 verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/status.test.ts`
 
-### 8.139  `TEST-steering-delta-in-answer` — Delta steht in der Antwort
+### 8.140  `TEST-steering-delta-in-answer` — Delta steht in der Antwort
 
 Prueft, dass die Antwort auf einen angenommenen Zug das Delta aus dem Stand vor und nach genau diesem Zug traegt.
 
 verify ▶ `REQ-risk-steering-delta-missing` · `REQ-steering-delta-in-answer-tested`
 
-### 8.140  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
+### 8.141  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
 
 Prueft am Modell, dass REQ-steering-from-metrics genau einen Erfueller vom Typ FUNC hat und dass jede zuliefernde Funktion der Steuerungsschleife eine eigene Anforderung erfuellt.
 
 verify ▶ `REQ-risk-shared-steering-promise` · `REQ-steering-promise-one-owner`
 
-### 8.141  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
+### 8.142  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
 
 Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.test.ts`
 
-### 8.142  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
+### 8.143  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
 verify ▶ `REQ-first-session-claims-store-lock` · `REQ-harness-factory-returns-one-owner` · `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `REQ-store-recovery` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
 
-### 8.143  `TEST-store-recovery` — Store-Recovery-Test
+### 8.144  `TEST-store-recovery` — Store-Recovery-Test
 
 Abnahme der Datei tests/store-recovery.test.ts: eine Store-Datei mit ueberschriebenem Kopf oder auf die Haelfte gekuerzt wird beim Oeffnen aus dem committeten Snapshot neu aufgebaut und gemeldet, und der neue Store liegt auf Platte; ohne Snapshot bleibt der Lesefehler ein Fehler und die Sperre frei. Lock-Konflikt und beendeter Besitzer: TEST-store-lock. (CR-GC-796)
 
 verify ▶ `REQ-risk-store-unreadable` · `REQ-store-recovery` · testRefs: `tests/store-recovery.test.ts`
 
-### 8.144  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+### 8.145  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
 Abnahme der Datei tests/target-profile.test.ts: Schema nur mit Themen, eine Datei mit Gewichten oder Zielwerten scheitert laut, Laden der Themen; graph_suggest nimmt kein target und graph_metrics traegt keine Zielmarke, gegen einen echten Disk-Kuzu. (CR-GC-861)
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · `SCHEMA-target-profile` · testRefs: `tests/target-profile.test.ts`
 
-### 8.145  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+### 8.146  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-### 8.146  `TEST-target-state` — Abnahme Zielbild
+### 8.147  `TEST-target-state` — Abnahme Zielbild
 
 Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.
 
 verify ▶ `REQ-target-state`
 
-### 8.147  `TEST-task-analysen` — Analyse-Tasks
+### 8.148  `TEST-task-analysen` — Analyse-Tasks
 
 Am Task-Eintritt verweist der Schritt auf den Skill des Tasks; ein Bauplan-Stempel von Hand schliesst den Eintritt nicht; ein Patch ersetzt die Stempel ganz, und jeder Analyse-Skill schliesst mit Lesen, Uebernehmen, ganz Schreiben.
 
 verify ▶ `REQ-analyse-artefakt-vor-stempel` · testRefs: `tests/task-analysen.test.ts`
 
-### 8.148  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
+### 8.149  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
 
 Abnahme der Datei tests/testreport.ruecknahme.test.ts: nach einer gemeldeten Aenderung traegt der Eintrag des betroffenen Tests kein Ergebnis mehr und FM-03 meldet das Risiko; ein nicht betroffener Test behaelt sein Ergebnis; ein frisches Ergebnis im selben Aufruf bleibt; eine unbekannte uid wird abgewiesen.
 
 verify ▶ `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` · testRefs: `tests/testreport.ruecknahme.test.ts`
 
-### 8.149  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+### 8.150  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-### 8.150  `TEST-test-schlupf` — Schlupf und Zusage
+### 8.151  `TEST-test-schlupf` — Schlupf und Zusage
 
 Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf bricht ab, je CR die juengste Zeile), Blackbox- und Schnittstellenbindung am synthetischen Graphen, gepruefte JSONL-Zeilen.
 
 verify ▶ `REQ-full-run-on-probation` · `REQ-lane-red-without-report` · `REQ-risk-selection-misses-red-test` · `SCHEMA-schlupf-zeile` · testRefs: `tests/test-schlupf.test.ts`
 
-### 8.151  `TEST-testref-materialize` — Export stub-materialization test
+### 8.152  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-### 8.152  `TEST-testreport` — Rueckweg des Testergebnisses
+### 8.153  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-### 8.153  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+### 8.154  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · `SCHEMA-metric-policy` · testRefs: `tests/config.test.ts`
 
-### 8.154  `TEST-token-efficiency` — Token-Budget-Test
+### 8.155  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-### 8.155  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+### 8.156  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-### 8.156  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
+### 8.157  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
 
 Prueft, dass eine laufende Sitzung eine geaenderte Werkzeugliste des Hosts erfaehrt.
 
 verify ▶ `REQ-risk-client-holds-stale-tool-list`
 
-### 8.157  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+### 8.158  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-### 8.158  `TEST-upgrade` — Abnahme des upgrade-Verbs
+### 8.159  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
 
-### 8.159  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
+### 8.160  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
 
 Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.
 
 verify ▶ `REQ-model-lane-fixed-set` · testRefs: `tests/verify-model.completeness.test.ts`
 
-### 8.160  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+### 8.161  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-### 8.161  `TEST-views-auditor` — Sichten fuer den Auditor
+### 8.162  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-### 8.162  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+### 8.163  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-### 8.163  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+### 8.164  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-### 8.164  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+### 8.165  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-### 8.165  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+### 8.166  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-### 8.166  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+### 8.167  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 
@@ -14260,4 +14282,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-186 REQ · 186 verified · 0 without a verifying TEST (R-01).
+187 REQ · 187 verified · 0 without a verifying TEST (R-01).

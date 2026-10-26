@@ -199,8 +199,8 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
   const graph_suggest: MCPTool<z.infer<typeof GraphSuggestInputSchema>, GraphSuggestResult> = {
     name: 'graph_suggest',
     description:
-      'Which restructuring actually pays off? Ranks candidate edits by how far each moves the model ' +
-      'toward the target profile, and hands back the ONE edit a rule template could DERIVE from the ' +
+      'Which restructuring actually pays off? Ranks candidate edits by how far each lowers the ' +
+      'distance to the rule thresholds, and hands back the ONE edit a rule template could DERIVE from the ' +
       'element text (with its rationale) — never a generically synthesized one. It proposes; ' +
       'graph_mutate applies. Take it when you want a move, not a diagnosis. ' +
       '`graph_help({token:"graph_suggest"})` explains the ranking and why a suggestion may carry no edit.',
@@ -210,9 +210,8 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       const og = toOntologyGraph(harness.getGraph());
       // CR-GC-483: hier stand, dass die Config-Gewichte einspringen, wenn `target` im Input
       // fehlt. Beides gibt es nicht mehr — weder das Eingabefeld noch eine Gewichtung, die
-      // etwas zu tun haette. `.graphcode/target-profile.json` hat weiterhin Leser
-      // (`graph_metrics` meldet Wert UND Zielmarke, `graph_generate` liest die Intent-Anker),
-      // nur ranken tut es nichts mehr.
+      // etwas zu tun haette. `.graphcode/target-profile.json` traegt seit CR-GC-861 nur noch die
+      // Themen; `graph_generate` liest sie.
       // CR-GC-431: ALLE Kandidaten holen, nicht die Top-k der Sonde. Das k-Fenster
       // wird erst NACH dem Umranken auf das Edit-Δm geschnitten — sonst fiele ein
       // gut bewerteter Edit heraus, weil die generische Sonde ihn niedrig rankte.
