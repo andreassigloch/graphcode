@@ -1,6 +1,6 @@
 # CR-GC-853: Constraints Teil 3: Rueckbau Zielprofil
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1060 (idea)
 **Erstellt:** 2026-10-25, umgeschrieben 2026-10-26 (Konzept vom Auftraggeber freigegeben)
 **Item:** bok/items/ITEM-2026-1060.json (Lane: code)
