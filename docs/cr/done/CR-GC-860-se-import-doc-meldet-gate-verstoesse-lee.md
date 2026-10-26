@@ -1,6 +1,6 @@
 # CR-GC-860: se:import-doc meldet Gate-Verstoesse leer: liest v.elementId, graph_mutate liefert im Format summary elements[] und {el}
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1084 (bug)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1084.json (Lane: code)
