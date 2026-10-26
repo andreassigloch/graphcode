@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 464 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 465 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 464 CR · 343 done · 4 open.
+Total: 465 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -526,3 +526,4 @@ Total: 464 CR · 343 done · 4 open.
 | `CR-GC-852` | n/a | Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints |
 | `CR-GC-853` | n/a | Constraints Teil 3: Rueckbau Zielprofil |
 | `CR-GC-854` | n/a | verify:full schreibt rot 0, obwohl vitest ohne Bericht endet |
+| `CR-GC-855` | n/a | se:import-doc fragt die verify-Zuordnung ab (graphify CR-GF-144 Schritt 4) |

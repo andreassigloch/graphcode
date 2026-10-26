@@ -6148,7 +6148,7 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-import-code` · allocate �
 
 > auch in: `FUNC-block-autorieren`
 
-Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Struktur vor KI, Merge nie Reseed.
+Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Struktur vor KI, Merge nie Reseed. Stufe 1 fragt zu jeder REQ-Entscheidung den deckenden TEST ab und reicht ihn als verifies an der TEST-Entscheidung an graphify; Stufe 2 zeigt rejectedVerifies dem Nutzer. (CR-GC-337, CR-GC-855)
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-import-doc` · allocate ▶ `MOD-agent-surface`
 
@@ -10646,7 +10646,7 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-import-code` · allocate �
 
 > auch in: `FCHAIN-model-import`
 
-Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Struktur vor KI, Merge nie Reseed.
+Prompt-realisierter Skill se:import-doc: Dokument zweistufig importieren — Struktur vor KI, Merge nie Reseed. Stufe 1 fragt zu jeder REQ-Entscheidung den deckenden TEST ab und reicht ihn als verifies an der TEST-Entscheidung an graphify; Stufe 2 zeigt rejectedVerifies dem Nutzer. (CR-GC-337, CR-GC-855)
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-import-doc` · allocate ▶ `MOD-agent-surface`
 

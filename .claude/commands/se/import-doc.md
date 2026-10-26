@@ -24,7 +24,9 @@ UI); Stufe 2 extrahiert mit LLM und importiert durchs Apply-Gate.
   `LLM_MODEL` (Default `qwen/qwen3.6-27b`). **Laufzeit-Warnung:** Stufe 2 slict das ganze Dokument
   durchs lokale LLM — bei großen Manuals Stunden (LLM-LOAD-PROFILE). Erst mit kleinen/mittleren
   Dokumenten arbeiten.
-- `@sigloch/graphify` mit `graphify_structure`-API (≥ CR-GF-139; dev: Sibling-Symlink).
+- `@sigloch/graphify` mit `graphify_structure`-API (≥ CR-GF-139) und `verifies` an der
+  TEST-Entscheidung samt `rejectedVerifies` (≥ CR-GF-144; die Registry-Version 0.5.2 hat beides
+  noch nicht — dev: `npm run link:siblings`).
 - PDF-Eingang braucht poppler `pdftotext` auf dem PATH.
 
 ## Stufe 1 — Skelett zeigen (deterministisch, 0 LLM)
@@ -59,9 +61,25 @@ Manual-Knoten = MOD-Anker, SYS nur komponentenübergreifend):
 | Lastenheft/Spec | REQ-Gruppen | REQ, TEST |
 
 Mit AskUserQuestion klären: (a) Dokumenttyp bestätigen, (b) abweichende Knoten-Typen, (c) Knoten
-ausschließen. Ergebnis nach `.graphcode/tmp/decisions.json` schreiben —
-`[{"node":"<name>","type":"MOD"}, {"node":"<name>","exclude":true}, …]`
-(`node` = Skelett-`name` **verbatim**; nur 13 SE-Typen aus `@sigloch/contracts/se`).
+ausschließen, (d) **verify-Zuordnung**, sobald eine Entscheidung `type: "REQ"` trägt: welcher
+Skelett-Knoten ist der TEST, der diese REQ deckt? Eine REQ ohne verify-TEST blockt das Gate
+(R-01, REQ-with-test-Invariante). Liefert das Skelett keinen passenden Knoten, fragen: wird ein
+Kapitel (z. B. „Abnahme") zum TEST, oder fällt die REQ heraus?
+
+Ergebnis nach `.graphcode/tmp/decisions.json` schreiben:
+
+```json
+[
+  {"node": "Ladesteuerung", "type": "REQ"},
+  {"node": "Sicherheit", "type": "REQ"},
+  {"node": "Abnahme", "type": "TEST", "verifies": ["Ladesteuerung", "Sicherheit"]},
+  {"node": "Anhang", "exclude": true}
+]
+```
+
+`node` und jeder Eintrag in `verifies` = Skelett-`name` **verbatim**; nur 13 SE-Typen aus
+`@sigloch/contracts/se`. `verifies` steht nur an einer Entscheidung mit `type: "TEST"`, sonst
+lehnt graphify die Datei ab. Jeder Eintrag wird zur Kante `TEST -verify-> <node>`.
 
 ## Stufe 2 — Extract + Import durchs Gate
 
@@ -123,7 +141,7 @@ try {
     status: r.importResult.status, candidates: r.candidateCount,
     autoApprove: r.autoApprove, review: r.review,
     applied: { nodes: r.importResult.appliedNodesCount, edges: r.importResult.appliedEdgesCount },
-    violations: r.importResult.violations, exportPath, exportError,
+    violations: r.importResult.violations, rejectedVerifies: r.rejectedVerifies, exportPath, exportError,
   }, null, 1));
 } finally { await harness.close(); }
 ```
@@ -132,8 +150,13 @@ try {
 
 - `tier`/`violations` sind das **governte Gate-Verdict** — Warnings (z. B. FUNC ohne satisfy) sind
   Arbeitsvorrat für die Absichtsebene, kein Importfehler. Blockt das Gate: nichts wurde geschrieben.
+- `rejectedVerifies` (`[{test, target, reason}]`) sind verify-Zuordnungen, die keine Kante wurden:
+  das Ziel ist kein Kandidat, oder das Paar ist illegal (das Ziel wurde nicht REQ). Jeden Eintrag
+  dem Nutzer zeigen und die Zuordnung in Stufe 1 korrigieren lassen. Eine REQ, deren einzige
+  Zuordnung hier steht, hat keinen verify-TEST.
 - `graph_export` committet den Stand (kanonischer Sync-Pfad); `exportError` berichten, nicht crashen.
-- Dem Nutzer melden: Status, Kandidaten (auto/review), applied nodes/edges, Top-Violations.
+- Dem Nutzer melden: Status, Kandidaten (auto/review), applied nodes/edges, Top-Violations,
+  `rejectedVerifies`.
 
 ## Grenzen (v1) + Recovery
 

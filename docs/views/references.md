@@ -1333,6 +1333,7 @@
 | `CR-GC-854` | relation | `FUNC-verify-lane-code` |
 | `CR-GC-854` | relation | `FUNC-verify-lane-full` |
 | `CR-GC-854` | relation | `REQ-lane-red-without-report` |
+| `CR-GC-855` | relation | `FUNC-import-doc` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
