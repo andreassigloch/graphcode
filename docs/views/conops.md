@@ -545,7 +545,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-850` | n/a | contracts 12.7.0 nachziehen: Mindestversion, Testpins fuer RC-11..13 und R-35, FC-02 aus Tests und Skills | `FUNC-generation-step` · `FUNC-mutate` · `FUNC-se-fmea` |
 | `CR-GC-851` | n/a | Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle | `FUNC-eingaenge-nur-aus` · `FUNC-graph-store` · `FUNC-verify-lane-model` · `REQ-ein-schreibweg` · `REQ-model-lane-fixed-set` |
 | `CR-GC-852` | n/a | Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints | `FUNC-se-vorbereitung` · `REQ-vorbereitung-reads-metrics` |
-| `CR-GC-853` | n/a | Constraints Teil 3: Rueckbau Zielprofil | `FUNC-target-profile` · `FUNC-target-profile-load` |
+| `CR-GC-853` | n/a | Constraints Teil 3: Rueckbau Zielprofil | `FUNC-fit-advisory` · `FUNC-generation-step` · `FUNC-graph-mutate-tool` · `FUNC-se-optimize` · `FUNC-target-profile` · `FUNC-target-profile-load` |
 | `CR-GC-854` | n/a | verify:full schreibt rot 0, obwohl vitest ohne Bericht endet | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `REQ-lane-red-without-report` |
 | `CR-GC-855` | n/a | se:import-doc fragt die verify-Zuordnung ab (graphify CR-GF-144 Schritt 4) | `FUNC-import-doc` |
 | `CR-GC-856` | n/a | import-code verliert Handkanten nach graphify-uid-Wechsel (CR-GF-132), Duplikate ohne origin | `FUNC-import-code-verb` · `REQ-import-code-renames-by-candidate` |
@@ -553,6 +553,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-858` | n/a | graphify 0.6 einziehen: Range, import-code-verb-Test auf lesbare uids | `FUNC-import-code-verb` |
 | `CR-GC-859` | n/a | se:import-doc: LLM-Modell nur aus LLM_MODEL, kein Modellname im Skill | `FUNC-import-doc` · `REQ-llm-modell-aus-konfiguration` |
 | `CR-GC-860` | n/a | se:import-doc meldet Gate-Verstoesse leer: liest v.elementId, graph_mutate liefert im Format summary elements[] und {el} | `FUNC-import-doc` · `REQ-mutate-befund-je-element` |
+| `CR-GC-863` | n/a | Skills fuehren Hardware-Systeme falsch: Teile des eigenen Produkts (Servo, Netzteil, Sensor) landen als ACTOR, und der MOD-Schnitt hat keine Regel fuer Domaenen (Mechanik/Elektronik/Software) — Befund sirail CR-028/029 | `FUNC-author-actor` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-top-level` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

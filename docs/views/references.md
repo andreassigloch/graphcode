@@ -1329,6 +1329,10 @@
 | `CR-GC-851` | relation | `REQ-model-lane-fixed-set` |
 | `CR-GC-852` | relation | `FUNC-se-vorbereitung` |
 | `CR-GC-852` | relation | `REQ-vorbereitung-reads-metrics` |
+| `CR-GC-853` | relation | `FUNC-fit-advisory` |
+| `CR-GC-853` | relation | `FUNC-generation-step` |
+| `CR-GC-853` | relation | `FUNC-graph-mutate-tool` |
+| `CR-GC-853` | relation | `FUNC-se-optimize` |
 | `CR-GC-853` | relation | `FUNC-target-profile` |
 | `CR-GC-853` | relation | `FUNC-target-profile-load` |
 | `CR-GC-853` | relation | `SCHEMA-target-profile` |
@@ -1349,6 +1353,10 @@
 | `CR-GC-859` | relation | `REQ-llm-modell-aus-konfiguration` |
 | `CR-GC-860` | relation | `FUNC-import-doc` |
 | `CR-GC-860` | relation | `REQ-mutate-befund-je-element` |
+| `CR-GC-863` | relation | `FUNC-author-actor` |
+| `CR-GC-863` | relation | `FUNC-se-modulebene` |
+| `CR-GC-863` | relation | `FUNC-se-optimize` |
+| `CR-GC-863` | relation | `FUNC-se-top-level` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1778,8 +1786,6 @@
 | `FLOW-chain-metrics` | relation | `SCHEMA-chain-metrics` |
 | `FLOW-channel-dimension-template` | io | `FUNC-generation-step` |
 | `FLOW-channel-dimension-template` | relation | `SCHEMA-steering-channel` |
-| `FLOW-channel-fit-advisory` | io | `FUNC-agent-loop` |
-| `FLOW-channel-fit-advisory` | relation | `SCHEMA-steering-channel` |
 | `FLOW-channel-gate-protocol` | io | `FUNC-generation-step` |
 | `FLOW-channel-gate-protocol` | relation | `SCHEMA-steering-channel` |
 | `FLOW-channel-gate-verdict` | io | `FUNC-agent-loop` |
@@ -2234,7 +2240,6 @@
 | `FLOW-suggest-answer` | relation | `SCHEMA-suggest-answer` |
 | `FLOW-target-profile` | io | `FUNC-graph-generate-tool` |
 | `FLOW-target-profile` | io | `FUNC-graph-metrics` |
-| `FLOW-target-profile` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-target-profile` | io | `FUNC-graph-readiness` |
 | `FLOW-target-profile` | io | `FUNC-vorschlag` |
 | `FLOW-target-profile` | relation | `SCHEMA-target-profile` |
@@ -2591,7 +2596,6 @@
 | `FUNC-graph-metrics` | satisfy | `REQ-metrics-risk-scope` |
 | `FUNC-graph-mutate-tool` | allocate | `MOD-surface` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-audit-entry` |
-| `FUNC-graph-mutate-tool` | io | `FLOW-channel-fit-advisory` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-channel-gate-verdict` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-channel-steer-advisory` |
 | `FUNC-graph-mutate-tool` | io | `FLOW-formatE-tool` |

@@ -18,7 +18,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
-import { generationStep, STAGE_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, RULE_CLAUSE, SKILL_FOR_STAGE } from '../src/loop/generate.js';
+import { generationStep, handoffPrompt, STAGE_FOCUS_TYPES, SEED_STAGES, GENERATION_TEMPLATE, RULE_CLAUSE, SKILL_FOR_STAGE } from '../src/loop/generate.js';
 import { ElementType } from '@sigloch/contracts/se';
 import { computeMarks } from '../src/kernel/measure/readiness.js';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
@@ -96,9 +96,10 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     expect(step.phase).toBe('seed');
     expect(step.focusStage).toBe('seed:sys');
     expect(step.prompt).toContain(INTENT);
-    for (const part of ['SYS', 'dryRun', 'fitAdvisory', 'graph_authoring_guide']) {
+    for (const part of ['SYS', 'dryRun', 'graph_authoring_guide']) {
       expect(step.prompt).toContain(part);
     }
+    expect(step.prompt).not.toContain('fitAdvisory'); // CR-GC-853: steht nie im Ergebnis von graph_mutate
     // Eine Entscheidung je Stufe: ACTORs und UCs sind eigene Schritte.
     expect(step.prompt).toContain('Noch keine ACTORs, keine UCs');
   });
@@ -651,24 +652,30 @@ describe('STAGE_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285, CR-GC-757)',
 // nach negativer Validierung (v13b: 22 vs. 82 Elemente) wieder ENTFERNT —
 // der Executor fährt das volle Rendering; siehe docs/cr/done/CR-GC-282.
 
-describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
-  const withProfile = (weights = {}, intentAnchors?: string[]) => ({
-    profile: { weights, ...(intentAnchors ? { intentAnchors } : {}) },
+describe('Intentions-Anker im Prompt (CR-GC-295); keine Gewichte (CR-GC-853)', () => {
+  // CR-GC-853: das Profil traegt fuer generationStep nur noch die Themen — Gewichte liest es nicht.
+  const withProfile = (intentAnchors?: string[]) => ({
+    profile: { ...(intentAnchors ? { intentAnchors } : {}) },
     conflicts: [],
   });
 
-  it('Runde-1-Prompt (kein SYS, keine Intention) fragt optional nach dem Zielprofil', () => {
+  it('Runde-1-Prompt (kein SYS, keine Intention) fragt nur nach der Intention, nicht nach Gewichten (CR-GC-853)', () => {
     const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS);
-    expect(step.prompt).toContain('Zielprofil');
-    expect(step.prompt).toContain('se:target-profile');
-    expect(step.prompt).toContain('[-1,1]');
-    // Nicht blockierend: die Intentions-Frage bleibt der Hauptauftrag.
     expect(step.prompt).toContain('Systemintention');
+    expect(step.prompt).not.toContain('Zielprofil');
+    expect(step.prompt).not.toContain('se:target-profile');
+    expect(step.prompt).not.toContain('[-1,1]');
   });
 
-  it('mit vorhandenem Profil entfällt die Runde-1-Zielprofil-Frage', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, 0.8, [], withProfile({ coherence: 1 }));
-    expect(step.prompt).not.toContain('Zielprofil');
+  it('der Handoff nennt graph_suggest ohne Feld target, ohne Zielprofil und ohne fitAdvisory (CR-GC-853)', () => {
+    const prompt = handoffPrompt(null, '');
+    expect(prompt).toContain('graph_suggest');
+    expect(prompt).not.toMatch(/graph_suggest \{target/);
+    expect(prompt).not.toContain('se:target-profile');
+    expect(prompt).not.toContain('Zielprofil');
+    expect(prompt).not.toContain('fitAdvisory');
+    // Der Ersatz: der Steuerwert des Probelaufs, der Abstand zu den Regelschwellen.
+    expect(prompt).toContain('steerAdvisory');
   });
 
   it('Seed MIT tragfähiger Intention: KEINE Anker-Rückfrage mehr (CR-GC-307)', () => {
@@ -702,7 +709,7 @@ describe('Zielprofil + Intentions-Anker im Prompt (CR-GC-295)', () => {
       ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const profile = withProfile({}, ['bestellen', 'zauberdrache', 'teil']);
+    const profile = withProfile(['bestellen', 'zauberdrache', 'teil']);
     const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], profile);
     expect(step.phase).toBe('expand');
     // CR-GC-307: Klartext statt Steuerungs-Vokabular — der Mensch sieht die WIRKUNG
@@ -751,10 +758,11 @@ describe('Gate-Protokoll des Schritts (CR-GC-288)', () => {
     [edge('SYS-shop', 'UC-bestellen', 'compose')],
   );
 
-  it('der dryRun-Vergleichs-Auftrag steht im Prompt', () => {
+  it('der dryRun-Vergleichs-Auftrag steht im Prompt, ohne fitAdvisory (CR-GC-853)', () => {
     const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
     expect(step.prompt).toContain('dryRun:true');
-    expect(step.prompt).toContain('fitAdvisory');
+    // CR-GC-853: fitAdvisory steht nie im Ergebnis von graph_mutate — der Prompt nennt es nicht.
+    expect(step.prompt).not.toContain('fitAdvisory');
   });
 
   it("die Probe gilt MEHREREN Alternativen, nicht einem einzelnen Batch (CR-GC-577)", () => {
@@ -781,7 +789,7 @@ describe('Gate-Protokoll des Schritts (CR-GC-288)', () => {
     expect(klausel.indexOf('block verwerfen')).toBeLessThan(steer);
     expect(steer).toBeLessThan(klausel.indexOf('Element-Ausbeute'));
     expect(klausel.indexOf('Element-Ausbeute')).toBeLessThan(tier);
-    expect(klausel).toContain('fitAdvisory ist nur Bericht');
+    expect(klausel).not.toContain('fitAdvisory');
   });
 
   it('jede uid eines Klausel-Vorbilds ist als Vorbild erkennbar — kein Inhalt, der lecken kann (ITEM-2026-607)', () => {

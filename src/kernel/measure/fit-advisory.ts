@@ -36,23 +36,6 @@ export const FitAdvisory = z.object({
 export type FitAdvisory = z.infer<typeof FitAdvisory>;
 
 /**
- * Sagt dieses Fit-Advisory ueberhaupt etwas? (CR-GC-576)
- *
- * „Nichts gesagt" heisst hier belegbar nichts: Null-Delta ueber ALLE Dimensionen und keine
- * Regression. `before`/`after` sind dann zwei identische Vektoren, und ihr Wert ist der
- * Ist-Zustand, der ohnehin in `graph_metrics` steht — die Antwort traegt ihn nur mit.
- *
- * Warum das zaehlt: mit Einrueckung kostete ein solcher Block 515 Zeichen dafuer, dass sich
- * nichts geruehrt hat, weil drei Arrays zu sechs Dimensionen je Zahl eine Zeile bekamen.
- * Gemessen an `runs/opus5-5`: 12 von 21 Bloecken waren so.
- *
- * Die Definition steht HIER, neben dem Erzeuger, und nirgends sonst — sonst driftet sie.
- */
-export function fitAdvisoryIsSilent(a: FitAdvisory): boolean {
-  return a.regressions.length === 0 && a.delta.every((d) => d === 0);
-}
-
-/**
  * Der ℝ⁶-Ist-Vektor auf der Architektur-Ebene — DIE eine Messung (CR-GC-451).
  *
  * Bis hierher war sie in `measure()` eingeschlossen und verließ den Prozess nur

@@ -8,7 +8,7 @@
  * Das hier ist der GENERATIVE Treiber und seither der einzige: aus Prosa-Intention + Graph-Zustand die
  * KONKRETE nächste Generierungs-Instruktion — welche Elemente, für welche
  * Eltern, wie viele Kandidaten, und das Gate-Protokoll (dryRun-Vergleich per
- * Verdict + fitAdvisory, bester Batch echt). Readiness-getrieben bis zur
+ * Verdict + steerAdvisory, bester Batch echt). Readiness-getrieben bis zur
  * Schwelle, dann Handoff auf die ℝ⁶-Optimierung (graph_suggest, Schritt 3).
  *
  * Deterministischer Kern nach dem se-plan-Muster: DIESE Funktion ist die
@@ -537,6 +537,27 @@ export function generationStep(
 }
 
 /** CR-GC-608: der Vermerk im done-Prompt, wenn die Steuerregeln am lokalen Optimum stehen. */
+/**
+ * Der Prompt des Handoffs: die Struktur traegt, weiter mit graph_suggest (CR-GC-853).
+ *
+ * Bis CR-GC-853 nannte er `graph_suggest {target: …}` mit den Gewichten des Zielprofils und das
+ * fitAdvisory als Richtungsanzeige. Das Feld `target` gibt es seit CR-GC-483 nicht mehr, die Gewichte
+ * nicht seit CR-GC-853. graph_suggest rankt nach dem Steuerwert, dem Abstand zu den Regelschwellen;
+ * im Probelauf zeigt `steerAdvisory`, ob ein Zug ihn verringert.
+ */
+export function handoffPrompt(steerOptimum: SteerOptimum | null, coverageLine: string): string {
+  return (
+    'Die Struktur trägt: kein offener Fund mehr in der Fokusmenge (Gate-Regeln ohne info, ' +
+    'abgenommene Funde ausgenommen). ' +
+    steuerVermerk(steerOptimum) +
+    'Handoff auf graph_suggest: es rankt die Umbau-Züge nach dem Steuerwert, dem Abstand zu den Regelschwellen. ' +
+    coverageLine +
+    'Arbeite die Vorschläge ab (Fix-Template-Edits über graph_mutate, Fund-only-Suggestions manuell); ' +
+    'steerAdvisory jedes Probelaufs (dryRun:true) zeigt mit improvement, ob ein Zug den Abstand verringert. ' +
+    'Die Metrik rankt, das Gate urteilt.'
+  );
+}
+
 export function steuerVermerk(optimum: SteerOptimum | null): string {
   if (!optimum) return '';
   return `Steuerregeln am lokalen Optimum (${optimum.grund === 'kreis' ? 'Kreis' : 'Plateau'} über ` +
@@ -589,21 +610,13 @@ function stepCore(
   // deshalb aus dem Kern-Fokus des Snapshots gelesen, nicht aus dem des Tasks.
   if (snap.focus.some((v) => v.rule_id === SEED_RULE.sys)) {
     if (!effectiveIntent) {
-      // Runde-1-Frage (CR-GC-295): das Zielprofil beim Menschen erfragen, nicht
-      // das Modell beim Handoff raten lassen. Optional, nie blockierend — ein
-      // fehlendes Profil ist gültig (Gleichgewichtung, CR-289-Verhalten).
-      const profileAsk = profile
-        ? ''
-        : ' Frage optional auch das ℝ⁶-Zielprofil ab (Gewicht je Metrik-Dimension in [-1,1], Default ' +
-          'unentschieden = alle 0) und persistiere es über den Skill se:target-profile nach ' +
-          '.graphcode/target-profile.json — ohne Profil bleibt die spätere Optimierung ungerichtet (gültig).';
+      // CR-GC-853: keine Frage nach Zielgewichten mehr — die Gewichte sind zurueckgebaut.
       return {
         phase: 'seed',
         done: false,
         prompt:
           'Es gibt noch kein SYS-Element und keine Intention. Erfrage die Systemintention als 1 Absatz ' +
-          'Prosa (was soll das System für wen leisten?) und rufe graph_generate erneut mit {intent} auf.' +
-          profileAsk,
+          'Prosa (was soll das System für wen leisten?) und rufe graph_generate erneut mit {intent} auf.',
         readiness,
         threshold,
         blockingErrors,
@@ -848,27 +861,10 @@ function stepCore(
     };
   }
   if (!focus) {
-    // CR-GC-295: das Zielprofil kommt aus der Config (Mensch entscheidet in
-    // Runde 1), nicht mehr als Erfindungs-Auftrag ans Modell.
-    const weights = profile?.profile.weights ?? {};
-    const hasWeights = Object.values(weights).some((w) => typeof w === 'number' && w !== 0);
-    const targetInstruction = hasWeights
-      ? `Zielprofil aus .graphcode/target-profile.json: rufe graph_suggest {target: ${JSON.stringify(weights)}} auf. ` +
-        (profile && profile.conflicts.length > 0 ? profile.conflicts.join(' ') + ' ' : '')
-      : 'Kein Zielprofil konfiguriert — erhebe es beim Menschen über den Skill se:target-profile ' +
-        '(.graphcode/target-profile.json) und rufe dann graph_suggest {target} auf. ';
     return {
       phase: 'handoff',
       done: true,
-      prompt:
-        'Die Struktur trägt: kein offener Fund mehr in der Fokusmenge (Gate-Regeln ohne info, ' +
-        'abgenommene Funde ausgenommen). ' +
-        steuerVermerk(steerOptimum) +
-        'Handoff auf die ℝ⁶-Optimierung: ' +
-        targetInstruction +
-        coverageLine +
-        'Arbeite die Funde ab (Fix-Template-Edits über graph_mutate, Fund-only-Suggestions manuell); ' +
-        'das fitAdvisory jedes Probelaufs (dryRun:true) zeigt, ob Δm in Zielrichtung läuft. Die Metrik rankt, das Gate urteilt.',
+      prompt: handoffPrompt(steerOptimum, coverageLine),
       readiness,
       threshold,
       blockingErrors,

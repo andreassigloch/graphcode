@@ -27,7 +27,8 @@ describe('CR-GC-591: jeder Kanal traegt Rang, Zeitpunkt und Treiber', () => {
   it('es gibt nur noch den Treiber Host (CR-GC-776: der Executor ist ausgelagert)', () => {
     const treiber = new Set(kanaele.map((k) => String(at(k, 'treiber'))));
     expect([...treiber]).toEqual(['host']);
-    expect(kanaele.length).toBeGreaterThanOrEqual(11);
+    // CR-GC-853: der Kanal Fit-Advisory ist entfallen (fitAdvisory steht nie im Ergebnis von graph_mutate).
+    expect(kanaele.length).toBeGreaterThanOrEqual(10);
   });
 
   for (const k of kanaele) {
@@ -40,12 +41,14 @@ describe('CR-GC-591: jeder Kanal traegt Rang, Zeitpunkt und Treiber', () => {
     });
   }
 
-  it('die Host-Kanaele der Bericht-Tabelle sind da: Verdict, Vorschlag, Advisories, Skill-Verweis, Guardrails, Freigabe', () => {
+  it('die Host-Kanaele der Bericht-Tabelle sind da: Verdict, Vorschlag, Advisory, Skill-Verweis, Guardrails, Freigabe', () => {
     const ids = new Set(kanaele.map((k) => k.id));
     for (const id of ['FLOW-channel-gate-verdict', 'FLOW-channel-next-step', 'FLOW-channel-steer-advisory',
-      'FLOW-channel-fit-advisory', 'FLOW-channel-skill-reference', 'FLOW-channel-guardrails', 'FLOW-channel-handoff']) {
+      'FLOW-channel-skill-reference', 'FLOW-channel-guardrails', 'FLOW-channel-handoff']) {
       expect(ids.has(id), id).toBe(true);
     }
+    // CR-GC-853, Option A: kein Kanal Fit-Advisory mehr.
+    expect(ids.has('FLOW-channel-fit-advisory')).toBe(false);
   });
 
   it('was NACH der Entscheidung kommt, hat nie den Rang eines Imperativs — sonst gaebe es zwei Stimmen je Runde', () => {

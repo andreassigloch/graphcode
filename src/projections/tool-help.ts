@@ -133,8 +133,8 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       '`measurability`.\n' +
       '• `steerAdvisory` — der Steuerwert `before`/`after`, `improvement`, die schlimmste Stelle ' +
       'danach in `worstAt`. `workOrder` — `moves` (Dateien, die mit einer umgehängten Funktion ' +
-      'wandern) und `blind` (Funktionen ohne Bindung). `fitAdvisory` — das Δm je Dimension, nur im ' +
-      'Probelauf und nur mit Zielprofil. Diese drei fehlen, wenn sie nichts melden.\n' +
+      'wandern) und `blind` (Funktionen ohne Bindung). Beide fehlen, wenn sie nichts melden. Das Δm je ' +
+      'Dimension (ℝ⁶) steht nie im Ergebnis (CR-GC-853); `graph_suggest` nennt es als `delta`.\n' +
       '• Nur im Probelauf: `steeringDelta` (`blockingErrors` und je Stufe in `stages` die Zahl der ' +
       'Befunde davor und danach). Nur beim Schreiben: `refs` (Bindungen, die der Zug schließt oder ' +
       'öffnet) und `vorschlag` (ein Satz für den Nutzer).\n' +
@@ -160,8 +160,8 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
   },
   graph_suggest: {
     plain:
-      'Welcher Umbau zahlt sich aus: Kandidaten-Edits, gerankt danach, wie weit jeder das Modell in ' +
-      'Richtung Zielprofil bewegt. Er schlägt vor; angewandt wird über `graph_mutate`, nie automatisch.',
+      'Welcher Umbau zahlt sich aus: Kandidaten-Edits, gerankt danach, wie weit jeder den Abstand zu ' +
+      'den Regelschwellen verringert. Er schlägt vor; angewandt wird über `graph_mutate`, nie automatisch.',
     se:
       'Je Vorschlag: `ruleId`/`elementId` (woher er kommt), `delta` (Δm in ℝ⁶), `score` (Verbesserung ' +
       'des Steuerwerts), `steer` und — wenn eine Fix-Vorlage einen Edit HERLEITEN konnte — `edit` mit ' +

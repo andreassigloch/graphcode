@@ -19,7 +19,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHarness, type GraphCodeHarness } from '../src/index.js';
 import { bindToolsToHarness } from '../src/index.js';
-import { fitAdvisoryIsSilent, steerAdvisoryIsSilent } from '../src/kernel/measure/fit-advisory.js';
+import { steerAdvisoryIsSilent } from '../src/kernel/measure/fit-advisory.js';
 import { workOrderIsSilent } from '../src/kernel/measure/work-order.js';
 import { alsFormatE } from './helpers/format-e.js';
 
@@ -100,36 +100,17 @@ describe('TEST-silent-advisories: was nichts sagt, steht nicht da (CR-GC-576)', 
       kante('FLOW-f', 'SCHEMA-s', 'relation'),
   ];
 
-  it('ein Advisory MIT Regression erscheint unveraendert — MIT Zielprofil (CR-GC-590)', async () => {
-    // Seit CR-GC-590 ist der ℝ⁶ ohne Ziel kein Verdict: erst das Profil macht ihn zur Richtung.
+  it('fitAdvisory steht nie im Ergebnis von graph_mutate — auch im Probelauf mit Regression (CR-GC-853)', async () => {
+    // CR-GC-590 zeigte es nur mit Zielgewichten; CR-GC-853 nimmt die Gewichte zurueck, Option A des
+    // Auftraggebers: Kennzahlen finden, Constraints steuern. Eine schlechtere ℝ⁶-Kennzahl verletzt
+    // nichts, was der Autor will. Der Beleg im Probelauf ist steerAdvisory (Abstand zu den Regelschwellen).
+    // Die Datei mit Gewichten steht hier, damit der Test belegt: graph_mutate liest das Profil nicht.
     writeFileSync(join(repoRoot, '.graphcode', 'target-profile.json'), JSON.stringify({ weights: { coherence: 1 } }));
     const antwort = await probe(architekturZug());
     expect(antwort.success).toBe(true);
-    expect(antwort).toHaveProperty('fitAdvisory');
-    const fit = antwort.fitAdvisory as { delta: number[] };
-    expect(fit.delta.some((d) => d !== 0)).toBe(true);
-    expect(fitAdvisoryIsSilent(fit as never)).toBe(false);
-    // CR-GC-778: beim echten Schreiben steht es nicht — dort blockt, waehlt und rankt es nichts.
-    const echt = await mutiere(architekturZug());
-    expect(echt.success).toBe(true);
-    expect(echt).not.toHaveProperty('fitAdvisory');
-  });
-
-  it('OHNE Zielprofil kommt kein fitAdvisory ueber die Leitung — auch nicht mit Regression (CR-GC-590)', async () => {
-    // Runde 7: 8–15 fitAdvisory-Bloecke je Lauf, fast alle mit `regressions`, und der Agent
-    // entschied Modulschnitte danach — obwohl der Satz "nur Bericht" hiess. Ohne Ziel ist eine
-    // Regression keine Aussage; der Audit-Trail behaelt sie (Evidenz), die Antwort nicht.
-    // CR-GC-778: im Probelauf geprueft — nur dort wird das Architekturmass ueberhaupt gerechnet.
-    const antwort = await probe(architekturZug());
-    expect(antwort.success).toBe(true);
     expect(antwort).not.toHaveProperty('fitAdvisory');
-  });
-
-  it('eine Profildatei nur mit Intent-Ankern ist KEIN Zielprofil — kein fitAdvisory (Phase-1-Lauf: 9 Bloecke)', async () => {
-    writeFileSync(join(repoRoot, '.graphcode', 'target-profile.json'), JSON.stringify({ intentAnchors: ['lokal', 'nachts', 'unterwegs'] }));
-    const antwort = await probe(architekturZug());
-    expect(antwort.success).toBe(true);
-    expect(antwort).not.toHaveProperty('fitAdvisory');
+    expect(antwort).toHaveProperty('metricsAfter'); // die Probe traegt ihren Bericht weiter
+    // Beim echten Schreiben rechnet mitBericht den ℝ⁶ gar nicht (CR-GC-778).
   });
 
   it('confidence ist auf keiner Antwort — eine Konstante ohne Leser (CR-GC-590)', async () => {
@@ -143,14 +124,6 @@ describe('TEST-silent-advisories: was nichts sagt, steht nicht da (CR-GC-576)', 
 });
 
 describe('TEST-silent-advisories: die Definition von "ohne Aussage" (CR-GC-576)', () => {
-  it('fitAdvisory schweigt nur bei Null-Delta UND ohne Regression', () => {
-    const basis = { layer: 'arch' as const, dimensions: ['a'], before: [1], after: [1] };
-    expect(fitAdvisoryIsSilent({ ...basis, delta: [0], regressions: [] })).toBe(true);
-    expect(fitAdvisoryIsSilent({ ...basis, delta: [0], regressions: ['a'] })).toBe(false);
-    expect(fitAdvisoryIsSilent({ ...basis, delta: [0.1], regressions: [] })).toBe(false);
-    expect(fitAdvisoryIsSilent({ ...basis, delta: [-0.1], regressions: [] })).toBe(false);
-  });
-
   it('steerAdvisory schweigt nur bei durchgehend null — ein Pegel ist eine Aussage', () => {
     const basis = { rules: ['R-04'], worstAt: null, removesElements: false };
     expect(steerAdvisoryIsSilent({ ...basis, before: 0, after: 0, improvement: 0 })).toBe(true);

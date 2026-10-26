@@ -53,13 +53,12 @@ export const DECISIONS = {
     forbidden: [/jeden Batch[^.]{0,60}dryRun/i, /every batch[^.]{0,60}dryRun/i, /dryRun:?\s*true\W+first/i, /immer (zuerst )?dryRun/i],
     source: 'CR-GC-577',
   },
-  /** CR-GC-483/583: der Steuerwert rankt, der ℝ⁶ (fitAdvisory) berichtet — abgeleitet aus VERDICT_ORDER. */
+  /**
+   * CR-GC-483/583: der Steuerwert rankt — abgeleitet aus VERDICT_ORDER. CR-GC-853: der Satz zum ℝ⁶
+   * (fitAdvisory) ist entfallen; es steht nie im Ergebnis von graph_mutate.
+   */
   verdictRank: {
-    text:
-      'Rangfolge: ' +
-      VERDICT_ORDER.map((v) => v.text).join('; dann ') +
-      '. fitAdvisory ist nur Bericht und entscheidet ohne Zielprofil nicht — es nennt echte Umstrukturierungen ' +
-      '(eine eingezogene Ebene) Regression.',
+    text: 'Rangfolge: ' + VERDICT_ORDER.map((v) => v.text).join('; dann ') + '.',
     forbidden: [
       /tier[^.]{0,60}\bund\b[^.]{0,20}fitAdvisory/, // "tier ... und fitAdvisory (Δm ...)" — die abgesetzte Ordnung
       /Δm-Vergleich entscheidet/,

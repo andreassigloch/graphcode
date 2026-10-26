@@ -17,10 +17,9 @@ import { readBranchLog, replayBranchLog, type MergeReport } from '../kernel/merg
 import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
 import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
 import { stripViolationContext, groupViolationsByRule, type GroupedViolation } from '../kernel/evaluation.js';
-import { fitAdvisoryIsSilent, steerAdvisoryIsSilent, type FitAdvisory, type SteerAdvisory } from '../kernel/measure/fit-advisory.js';
+import { steerAdvisoryIsSilent, type FitAdvisory, type SteerAdvisory } from '../kernel/measure/fit-advisory.js';
 import { workOrderIsSilent, type WorkOrder } from '../kernel/measure/work-order.js';
 import { mitBericht } from '../kernel/measure/zug-bericht.js';
-import { loadTargetProfile } from '../loop/target-profile.js';
 import { vorschlagNachAnwendung } from '../loop/next-step.js';
 import { focusMemoryOf } from '../loop/stagnation.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
@@ -161,20 +160,11 @@ function summarizeViolations<T extends { violations: MutateResult['violations'] 
  * Fassung, denn der Trail ist Evidenz und kein Antwort-Budget — dieselbe Trennung, die
  * CR-GC-309 fuer die Violations gezogen hat.
  *
- * Was „nichts melden" heisst, steht je Block bei seinem ERZEUGER (`fitAdvisoryIsSilent`,
- * `steerAdvisoryIsSilent`, `workOrderIsSilent`) und nicht hier — hier wird nur angewandt.
+ * Was „nichts melden" heisst, steht je Block bei seinem ERZEUGER (`steerAdvisoryIsSilent`,
+ * `workOrderIsSilent`) und nicht hier — hier wird nur angewandt. `fitAdvisory` faellt immer weg
+ * (CR-GC-853).
  */
-/**
- * Zielprofil heisst GEWICHTE, nicht Datei (CR-GC-590, Befund aus dem Phase-1-Lauf): graph_generate
- * legt die Intent-Anker in dieselbe Datei — danach "gab es ein Profil", und der R6 kam 9-mal
- * ohne eine einzige Richtung. Dieselbe Frage wie `hasWeights` im Handoff-Prompt.
- */
-function hatZielrichtung(repoRoot: string): boolean {
-  const weights = loadTargetProfile(repoRoot)?.profile.weights ?? {};
-  return Object.values(weights).some((w) => typeof w === 'number' && w !== 0);
-}
-
-function dropSilentAdvisories<T extends object>(result: T, hatZielprofil: boolean): T {
+function dropSilentAdvisories<T extends object>(result: T): T {
   const r = result as T & {
     fitAdvisory?: FitAdvisory;
     steerAdvisory?: SteerAdvisory;
@@ -184,11 +174,11 @@ function dropSilentAdvisories<T extends object>(result: T, hatZielprofil: boolea
   const out = { ...r };
   // CR-GC-590: `confidence` ist eine Konstante (0 oder 1) ohne einen einzigen Leser — weg.
   delete out.confidence;
-  // CR-GC-590: ohne Zielprofil ist der ℝ⁶ Richtung ohne Ziel. Er rankt seit CR-GC-483 nicht
-  // mehr, und seine `regressions`-Liste widersprach dem Satz "nur Bericht" (Runde 7: 8–15 Bloecke
-  // je Lauf, fast alle mit Regression, Modulschnitte danach entschieden). Mit Zielprofil bleibt
-  // er — dort ist Δm die Richtung (se:optimize, se:top-level).
-  if (out.fitAdvisory && (!hatZielprofil || fitAdvisoryIsSilent(out.fitAdvisory))) delete out.fitAdvisory;
+  // CR-GC-853: der ℝ⁶ steht nie im Ergebnis. Bis hier kam er nur mit Zielgewichten (CR-GC-590);
+  // die Gewichte sind zurueckgebaut, Option A des Auftraggebers: Kennzahlen finden, Constraints
+  // steuern. Eine schlechtere ℝ⁶-Kennzahl verletzt nichts, was der Autor will. Den Abstand zu den
+  // Regelschwellen traegt `steerAdvisory`; graph_suggest liest den ℝ⁶ direkt aus `mitBericht`.
+  delete out.fitAdvisory;
   if (out.steerAdvisory && steerAdvisoryIsSilent(out.steerAdvisory)) delete out.steerAdvisory;
   if (out.workOrder && workOrderIsSilent(out.workOrder)) delete out.workOrder;
   return out as T;
@@ -402,10 +392,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           // Auditiert wird die VOLLE Fassung: der Audit-Trail ist Evidenz, nicht
           // Antwort-Budget. Gekürzt wird erst, was über die Leitung geht.
           await recordPreview(input.consumerId, preview, commands);
-          const previewOut = dropSilentAdvisories(
-            input.violations === 'full' ? preview : summarizeViolations(preview),
-            hatZielrichtung(harness.getRepoRoot()),
-          );
+          const previewOut = dropSilentAdvisories(input.violations === 'full' ? preview : summarizeViolations(preview));
           // CR-GC-321/REQ-N07: auch im Preview — sonst meldet der dryRun sauber
           // und der Apply verliert die Namen.
           return { ...previewOut, graphVersion: graphVersion(), ...(nameWarning ? { nameWarning } : {}) };
@@ -419,10 +406,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
           respondsTo: afterAll ? resolvedViolations(respondsBaseline!, afterAll) : [],
           editSource: ctx.classifyEditSource(commands),
         });
-        const out = dropSilentAdvisories(
-          input.violations === 'full' ? result : summarizeViolations(result),
-          hatZielrichtung(harness.getRepoRoot()),
-        );
+        const out = dropSilentAdvisories(input.violations === 'full' ? result : summarizeViolations(result));
         // CR-GC-729: der Vorschlag an den NUTZER faehrt mit — ein Satz, den ein Client-Plugin ins
         // Eingabefeld legt. Nur nach Anwendung; bei Ablehnung ist das Urteil der Kanal.
         const vorschlag = result.success

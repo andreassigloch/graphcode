@@ -3,14 +3,14 @@
  *
  * (a) formatE-Block → dieselben Gate-Semantiken wie commands (ein Input-Codec,
  *     kein zweiter Schreibweg); Parse-Fehler = Block-Verdict, kein Crash.
- * (b) dryRun:true = volles Verdict inkl. fitAdvisory, NICHTS persistiert,
+ * (b) dryRun:true = volles Verdict inkl. metricsAfter, NICHTS persistiert,
  *     graphVersion unbewegt, Working Copy restauriert.
  * (c) F2-Evidenz: jeder Preview landet als operation:'validate' im Audit-Log
  *     (auch abgelehnte Kandidaten); der Merge-Replay überspringt validate.
  * Real disk Kuzu (temp dir), no mocks.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, readFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
@@ -184,12 +184,10 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(res.fitAdvisory).toBeUndefined();
   });
 
-  it('dryRun: das fitAdvisory kommt, sobald der Zug die Architektur bewegt (CR-GC-576)', async () => {
-    // Die Gegenprobe zum Fall darueber — sonst waere „kein Block" nur deshalb wahr, weil
-    // der Block nie kommt. FUNC und MOD liegen IM Architektur-Teilgraphen.
-    // CR-GC-590: ohne Zielprofil kommt der R6 nicht mehr ueber die Leitung — hier ist eins.
-    mkdirSync(join(tmp, '.graphcode'), { recursive: true });
-    writeFileSync(join(tmp, '.graphcode', 'target-profile.json'), JSON.stringify({ weights: { coherence: 1 } }));
+  it('dryRun: ein Zug, der die Architektur bewegt, traegt metricsAfter, aber nie fitAdvisory (CR-GC-853)', async () => {
+    // Die Gegenprobe zum Fall darueber — FUNC und MOD liegen IM Architektur-Teilgraphen. Bis CR-GC-853
+    // kam hier mit Zielgewichten das fitAdvisory; seit dem Rueckbau der Gewichte steht es nie im
+    // Ergebnis. Was der Zug an Kennzahlen aendert, sagt metricsAfter.
     const arch = [
       '## Nodes',
       '### MOD',
@@ -202,12 +200,13 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     ].join('\n');
     const res = (await tools.graph_mutate.handler({ formatE: arch, dryRun: true, consumerId: 'fe-preview-arch' })) as {
       success: boolean;
-      fitAdvisory?: { delta: number[] };
+      fitAdvisory?: unknown;
+      metricsAfter?: { modules: Array<{ moduleId: string }> };
       graphVersion: number;
     };
     expect(res.success).toBe(true);
-    expect(res.fitAdvisory).toBeDefined();
-    expect(res.fitAdvisory!.delta.some((d) => d !== 0)).toBe(true);
+    expect(res.fitAdvisory).toBeUndefined();
+    expect(res.metricsAfter?.modules.map((m) => m.moduleId)).toContain('MOD-fe-input');
     expect(res.graphVersion).toBe(0);
   });
 
