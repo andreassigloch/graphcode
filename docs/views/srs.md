@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 178 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 179 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -3356,6 +3356,16 @@ Die npm-Spur verify:code: plant die Code-Spur, faehrt vitest auf der Auswahl ode
 
 io ◀ `FLOW-cli-invocation` · `FLOW-code-lane-plan` · `FLOW-test-ingest-answer` · io ▶ `FLOW-lane-output` · `FLOW-plan-request` · `FLOW-test-run-report-code` · allocate ▶ `MOD-dev-scripts`
 
+###### `REQ-lane-red-without-report` — Spur ohne Bericht ist rot
+
+> auch unter: `FUNC-verify-lane-full`
+
+Eine Test-Spur meldet gruen nur, wenn vitest einen Bericht schrieb, der Bericht keine rote Datei nennt und vitest mit 0 endete. Endet vitest ohne Bericht oder rot ohne rote Datei, ist die Spur rot und verify:full schreibt keine Messzeile. (CR-GC-854)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · allocate ▶ `MOD-dev-scripts`
+
 ###### `REQ-lane-reports-change` — Die Spur meldet Aenderung und Lauf zurueck
 
 > auch unter: `FUNC-plan-code-lane`
@@ -3384,11 +3394,21 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` · allocate ▶ `MOD-dev-scripts` · `MOD-projections`
 
+###### `REQ-lane-red-without-report` — Spur ohne Bericht ist rot
+
+> auch unter: `FUNC-verify-lane-code`
+
+Eine Test-Spur meldet gruen nur, wenn vitest einen Bericht schrieb, der Bericht keine rote Datei nennt und vitest mit 0 endete. Endet vitest ohne Bericht oder rot ohne rote Datei, ist die Spur rot und verify:full schreibt keine Messzeile. (CR-GC-854)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · allocate ▶ `MOD-dev-scripts`
+
 ##### 3.3.4.10  `FUNC-measure-test-schlupf` — Testauswahl-Schlupf messen
 
 > auch in: `FUNC-block-bedienung`
 
-Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Getragen von scripts/verify-full.mjs. (CR-GC-718)
+Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Das Urteil ueber einen Lauf (laufUrteil) liest Bericht und Exit zusammen. Getragen von scripts/verify-full.mjs. (CR-GC-718, CR-GC-854)
 
 io ◀ `FLOW-schlupf-request` · io ▶ `FLOW-schlupf-result` · allocate ▶ `MOD-projections`
 
@@ -8496,7 +8516,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 > auch in: `FCHAIN-verify-lane`
 
-Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Getragen von scripts/verify-full.mjs. (CR-GC-718)
+Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Das Urteil ueber einen Lauf (laufUrteil) liest Bericht und Exit zusammen. Getragen von scripts/verify-full.mjs. (CR-GC-718, CR-GC-854)
 
 io ◀ `FLOW-schlupf-request` · io ▶ `FLOW-schlupf-result` · allocate ▶ `MOD-projections`
 
@@ -8562,6 +8582,16 @@ Die npm-Spur verify:code: plant die Code-Spur, faehrt vitest auf der Auswahl ode
 
 io ◀ `FLOW-cli-invocation` · `FLOW-code-lane-plan` · `FLOW-test-ingest-answer` · io ▶ `FLOW-lane-output` · `FLOW-plan-request` · `FLOW-test-run-report-code` · allocate ▶ `MOD-dev-scripts`
 
+###### `REQ-lane-red-without-report` — Spur ohne Bericht ist rot
+
+> auch unter: `FUNC-verify-lane-full`
+
+Eine Test-Spur meldet gruen nur, wenn vitest einen Bericht schrieb, der Bericht keine rote Datei nennt und vitest mit 0 endete. Endet vitest ohne Bericht oder rot ohne rote Datei, ist die Spur rot und verify:full schreibt keine Messzeile. (CR-GC-854)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · allocate ▶ `MOD-dev-scripts`
+
 ###### `REQ-lane-reports-change` — Die Spur meldet Aenderung und Lauf zurueck
 
 > auch unter: `FUNC-plan-code-lane`
@@ -8589,6 +8619,16 @@ Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abs
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` · allocate ▶ `MOD-dev-scripts` · `MOD-projections`
+
+###### `REQ-lane-red-without-report` — Spur ohne Bericht ist rot
+
+> auch unter: `FUNC-verify-lane-code`
+
+Eine Test-Spur meldet gruen nur, wenn vitest einen Bericht schrieb, der Bericht keine rote Datei nennt und vitest mit 0 endete. Endet vitest ohne Bericht oder rot ohne rote Datei, ist die Spur rot und verify:full schreibt keine Messzeile. (CR-GC-854)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · allocate ▶ `MOD-dev-scripts`
 
 ###### 3.10.1.1.14  `FUNC-verify-lane-model` — npm run verify:model
 
@@ -13946,7 +13986,7 @@ verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.t
 
 Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf bricht ab, je CR die juengste Zeile), Blackbox- und Schnittstellenbindung am synthetischen Graphen, gepruefte JSONL-Zeilen.
 
-verify ▶ `REQ-full-run-on-probation` · `REQ-risk-selection-misses-red-test` · `SCHEMA-schlupf-zeile` · testRefs: `tests/test-schlupf.test.ts`
+verify ▶ `REQ-full-run-on-probation` · `REQ-lane-red-without-report` · `REQ-risk-selection-misses-red-test` · `SCHEMA-schlupf-zeile` · testRefs: `tests/test-schlupf.test.ts`
 
 ### 8.147  `TEST-testref-materialize` — Export stub-materialization test
 
@@ -14046,4 +14086,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-178 REQ · 178 verified · 0 without a verifying TEST (R-01).
+179 REQ · 179 verified · 0 without a verifying TEST (R-01).

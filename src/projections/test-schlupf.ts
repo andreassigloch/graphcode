@@ -124,3 +124,37 @@ export function blackboxBindung(graph: Graph): BlackboxBindung {
     schnittstelle: { total: vertraege.length, gebunden: vertraege.length - vOffen.length, offen: vOffen },
   };
 }
+
+/** Was ein vitest-Lauf über sich sagt: Exit, Signal und der Text des JSON-Berichts (`undefined` = nicht geschrieben). */
+export interface VitestLauf {
+  status: number | null;
+  signal: string | null;
+  bericht: string | undefined;
+}
+
+/** Ein Beleg nennt die roten Dateien; kein Beleg nennt den Grund. Grün ist nur ein Beleg ohne rote Datei. */
+export type LaufUrteil = { beleg: true; rot: string[]; gesamt: number } | { beleg: false; grund: string };
+
+const VitestBerichtSchema = z.object({
+  testResults: z.array(z.object({ name: z.string(), status: z.string() })),
+});
+
+/**
+ * Das Urteil über einen vitest-Lauf (CR-GC-854). Die roten Dateien kommen aus dem Bericht; ein
+ * Lauf ist nur dann ein Beleg, wenn vitest einen Bericht schrieb UND Bericht und Exit dasselbe
+ * sagen. Zwei Lücken des Berichts schließt das: ein Lauf ohne Bericht (vitest endete vorzeitig,
+ * am 2026-10-25 im Ruhezustand mit exit 0) und ein Fehler außerhalb eines Tests (Unhandled Error:
+ * exit 1, im Bericht ist jede Datei `passed`).
+ */
+export function laufUrteil(lauf: VitestLauf, relativ: (abs: string) => string): LaufUrteil {
+  const exit = `exit ${lauf.status ?? '-'}${lauf.signal ? `, Signal ${lauf.signal}` : ''}`;
+  if (lauf.bericht === undefined) {
+    return { beleg: false, grund: `vitest endete ohne Bericht (${exit}) — der Lauf ist unvollstaendig.` };
+  }
+  const json = VitestBerichtSchema.parse(JSON.parse(lauf.bericht));
+  const rot = json.testResults.filter((t) => t.status === 'failed').map((t) => relativ(t.name)).sort();
+  if (lauf.status !== 0 && rot.length === 0) {
+    return { beleg: false, grund: `vitest meldet rot (${exit}), der Bericht nennt keine rote Datei — ein Fehler ausserhalb eines Tests.` };
+  }
+  return { beleg: true, rot, gesamt: json.testResults.length };
+}

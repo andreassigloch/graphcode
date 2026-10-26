@@ -15,6 +15,9 @@
  * `graph_test_ingest`. Betroffene Tests ohne frisches Ergebnis verlieren ihres. Scheitert die
  * Meldung, endet der Lauf rot — ein grüner Lauf, dessen Ergebnis nicht ankommt, ist keiner.
  *
+ * Rot oder grün entscheidet `laufUrteil` aus Bericht und Exit (CR-GC-854). Endet vitest ohne
+ * Bericht oder rot ohne rote Datei, ist der Lauf rot und kein Beleg: keine Messzeile.
+ *
  * Usage: node scripts/verify-full.mjs <CR-ID>
  *
  * @author andreas@siglochconsulting
@@ -26,7 +29,7 @@ import { join, relative } from 'node:path';
 import { buildContext, changeSetFor, planCodeLane, selectForChange } from '../dist/projections/test-selection-audit.js';
 import { meldeZurueck, meldungsZeile } from './aenderung-melden.mjs';
 import { INCLUDED as MODEL_TESTS } from './model-test-set.mjs';
-import { blackboxBindung, leseSchlupfZeilen, schlupfFreieFolge, schlupfVon, SchlupfZeileSchema, SCHLUPF_SCHWELLE } from '../dist/projections/test-schlupf.js';
+import { blackboxBindung, laufUrteil, leseSchlupfZeilen, schlupfFreieFolge, schlupfVon, SchlupfZeileSchema, SCHLUPF_SCHWELLE } from '../dist/projections/test-schlupf.js';
 
 const cr = process.argv[2];
 if (!cr || !/^CR-[A-Z]+-\d+[A-Z]?$/.test(cr)) {
@@ -51,13 +54,11 @@ const res = spawnSync('npx', ['vitest', 'run', '--reporter=default', '--reporter
   stdio: 'inherit',
   cwd: repoRoot,
 });
-let rot = [];
-let gesamt = ctx.allTests.length;
-if (existsSync(bericht)) {
-  const json = JSON.parse(readFileSync(bericht, 'utf8'));
-  gesamt = json.testResults.length;
-  rot = json.testResults.filter((t) => t.status === 'failed').map((t) => relative(repoRoot, t.name)).sort();
-}
+// CR-GC-854: das Urteil kommt aus Bericht UND Exit — ohne Bericht ist der Lauf kein Beleg, nie „rot 0".
+const urteil = laufUrteil(
+  { status: res.status, signal: res.signal, bericht: existsSync(bericht) ? readFileSync(bericht, 'utf8') : undefined },
+  (abs) => relative(repoRoot, abs),
+);
 let meldung = null;
 let meldungFehler = null;
 try {
@@ -67,6 +68,13 @@ try {
 }
 rmSync(tmp, { recursive: true, force: true });
 
+if (!urteil.beleg) {
+  console.error(`[verify:full] ${cr}: ROT — ${urteil.grund} Keine Messzeile geschrieben.`);
+  if (meldungFehler) console.error(`[verify:full] Rueckmeldung GESCHEITERT: ${meldungFehler.message}`);
+  else console.error(meldungsZeile('verify:full', meldung));
+  process.exit(1);
+}
+const { rot, gesamt } = urteil;
 const spur = plan.lane;
 const { schlupf, schlupfNurGraph } = schlupfVon(rot, spur === 'CODE' ? plan.files : ctx.allTests, auswahl.graphOnly);
 const zeile = SchlupfZeileSchema.parse({
@@ -106,4 +114,4 @@ if (meldungFehler) {
 }
 console.error(meldungsZeile('verify:full', meldung));
 if (meldung) console.error('[verify:full]   docs/graph und docs/views tragen jetzt die Ergebnisse — mit dem CR committen.');
-process.exit(res.status ?? 1);
+process.exit(rot.length === 0 ? 0 : 1);

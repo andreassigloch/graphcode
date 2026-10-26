@@ -31,10 +31,11 @@
  * @author andreas@siglochconsulting
  */
 import { spawnSync, execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { buildContext, changeSetFor, planCodeLane } from '../dist/projections/test-selection-audit.js';
+import { laufUrteil } from '../dist/projections/test-schlupf.js';
 import { meldeZurueck, meldungsZeile } from './aenderung-melden.mjs';
 import { INCLUDED as MODEL_TESTS } from './model-test-set.mjs';
 
@@ -79,6 +80,11 @@ const bericht = join(tmp, 'vitest.json');
 const reporter = ['--reporter=default', '--reporter=json', `--outputFile.json=${bericht}`];
 const args = result.lane === 'VOLL' ? ['vitest', 'run', ...reporter] : ['vitest', 'run', ...reporter, ...result.files];
 const res = spawnSync('npx', args, { stdio: 'inherit', cwd: repoRoot });
+// CR-GC-854: rot oder grün aus Bericht UND Exit — ein Lauf ohne Bericht ist rot, auch mit exit 0.
+const urteil = laufUrteil(
+  { status: res.status, signal: res.signal, bericht: existsSync(bericht) ? readFileSync(bericht, 'utf8') : undefined },
+  (abs) => relative(repoRoot, abs),
+);
 
 // CR-GC-800: die Spur meldet zurück — Änderung und Lauf gehen an `graph_test_ingest`. Ein
 // betroffener Test ohne frisches Ergebnis verliert seines. Scheitert die Meldung, ist der Lauf rot.
@@ -91,4 +97,8 @@ try {
   process.exit(1);
 }
 rmSync(tmp, { recursive: true, force: true });
-process.exit(res.status ?? 1);
+if (!urteil.beleg) {
+  console.error(`[verify:code] ROT — ${urteil.grund}`);
+  process.exit(1);
+}
+process.exit(urteil.rot.length === 0 ? 0 : 1);

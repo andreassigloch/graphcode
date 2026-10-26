@@ -546,6 +546,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-851` | n/a | Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle | `FUNC-verify-lane-model` · `REQ-model-lane-fixed-set` |
 | `CR-GC-852` | n/a | Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints | `FUNC-se-vorbereitung` · `REQ-vorbereitung-reads-metrics` |
 | `CR-GC-853` | n/a | Constraints Teil 3: Rueckbau Zielprofil | `FUNC-target-profile` · `FUNC-target-profile-load` |
+| `CR-GC-854` | n/a | verify:full schreibt rot 0, obwohl vitest ohne Bericht endet | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `REQ-lane-red-without-report` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

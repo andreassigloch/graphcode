@@ -3,10 +3,16 @@
  * Reine Funktionen; der Graph ist klein und synthetisch, die Kantenform die des Snapshots.
  */
 import { describe, it, expect } from 'vitest';
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, relative } from 'node:path';
 import type { Graph } from '@sigloch/graph-api-core';
 import {
   blackboxBindung,
+  laufUrteil,
   schlupfFreieFolge,
+  type VitestLauf,
   schlupfVon,
   SCHLUPF_SCHWELLE,
   type SchlupfZeile,
@@ -85,4 +91,82 @@ describe('testauswahl.jsonl (CR-GC-718)', () => {
     expect(leseSchlupfZeilen(`${gut}\n`)).toHaveLength(1);
     expect(() => leseSchlupfZeilen(`${gut}\n{"cr":"x"}\n`)).toThrow();
   });
+});
+
+/**
+ * CR-GC-854 — das Urteil über einen vitest-Lauf. Befund 2026-10-25: der Mac schlief während
+ * `verify:full CR-GC-796`; vitest zeigte `import-code-verb.test.ts` rot, endete nach 46 von 194
+ * Dateien mit exit 0, ohne Zusammenfassung und ohne JSON-Bericht — die Spur schrieb „rot 0".
+ * Die Fälle mit Bericht fahren ein echtes vitest auf einer Wegwerf-Suite.
+ */
+describe('Lauf-Urteil: grün nur mit Bericht ohne rote Datei (CR-GC-854)', () => {
+  const repoRoot = process.cwd();
+  function fahre(dateien: Record<string, string>): VitestLauf & { root: string } {
+    const root = mkdtempSync(join(tmpdir(), 'lauf-urteil-'));
+    writeFileSync(join(root, 'vitest.config.mjs'), "export default { test: { include: ['*.test.mjs'] } };\n");
+    for (const [name, text] of Object.entries(dateien)) writeFileSync(join(root, name), text);
+    const bericht = join(root, 'bericht.json');
+    const res = spawnSync(
+      process.execPath,
+      [join(repoRoot, 'node_modules/vitest/vitest.mjs'), 'run', '--root', root, '--reporter=json', `--outputFile.json=${bericht}`],
+      { cwd: repoRoot, encoding: 'utf8', env: { ...process.env, VITEST: undefined, VITEST_POOL_ID: undefined, VITEST_WORKER_ID: undefined, NODE_ENV: undefined } },
+    );
+    const lauf = { status: res.status, signal: res.signal, bericht: existsSync(bericht) ? readFileSync(bericht, 'utf8') : undefined, root };
+    return lauf;
+  }
+  const rel = (root: string) => (abs: string) => relative(root, abs);
+  const OK = "import { it } from 'vitest';\nit('ok', () => {});\n";
+
+  it('ein Test im Timeout ist rot und nennt seine Datei (Positivkontrolle)', () => {
+    const lauf = fahre({
+      'ok.test.mjs': OK,
+      'timeout.test.mjs': "import { it } from 'vitest';\nit('schlaeft', () => new Promise((r) => setTimeout(r, 2000)), 50);\n",
+    });
+    try {
+      expect(lauf.status).toBe(1);
+      expect(laufUrteil(lauf, rel(lauf.root))).toEqual({ beleg: true, rot: ['timeout.test.mjs'], gesamt: 2 });
+    } finally {
+      rmSync(lauf.root, { recursive: true, force: true });
+    }
+  }, 60_000);
+
+  it('ein Hook im Timeout ist rot, obwohl kein Test fehlschlug', () => {
+    const lauf = fahre({
+      'hook.test.mjs': "import { it, beforeAll } from 'vitest';\nbeforeAll(() => new Promise((r) => setTimeout(r, 2000)), 50);\nit('nie', () => {});\n",
+    });
+    try {
+      expect(laufUrteil(lauf, rel(lauf.root))).toEqual({ beleg: true, rot: ['hook.test.mjs'], gesamt: 1 });
+    } finally {
+      rmSync(lauf.root, { recursive: true, force: true });
+    }
+  }, 60_000);
+
+  it('ein Fehler ausserhalb eines Tests (Unhandled Error) ist rot, auch wenn der Bericht keine rote Datei nennt', () => {
+    const lauf = fahre({
+      'leck.test.mjs': "import { it } from 'vitest';\nit('leckt', () => { setTimeout(() => { throw new Error('leck'); }, 1); });\nit('wartet', () => new Promise((r) => setTimeout(r, 100)));\n",
+    });
+    try {
+      expect(lauf.status).toBe(1);
+      expect(JSON.parse(lauf.bericht!).testResults.every((t: { status: string }) => t.status === 'passed')).toBe(true);
+      const urteil = laufUrteil(lauf, rel(lauf.root));
+      expect(urteil.beleg).toBe(false);
+    } finally {
+      rmSync(lauf.root, { recursive: true, force: true });
+    }
+  }, 60_000);
+
+  it('ein Lauf ohne Bericht ist kein Beleg — auch mit exit 0 (der Lauf CR-GC-796 vom 2026-10-25)', () => {
+    const urteil = laufUrteil({ status: 0, signal: null, bericht: undefined }, (a) => a);
+    expect(urteil).toEqual({ beleg: false, grund: expect.stringContaining('ohne Bericht') });
+    expect(laufUrteil({ status: null, signal: 'SIGTERM', bericht: undefined }, (a) => a).beleg).toBe(false);
+  });
+
+  it('ein gruener Lauf mit Bericht ist ein Beleg ohne rote Datei', () => {
+    const lauf = fahre({ 'ok.test.mjs': OK });
+    try {
+      expect(laufUrteil(lauf, rel(lauf.root))).toEqual({ beleg: true, rot: [], gesamt: 1 });
+    } finally {
+      rmSync(lauf.root, { recursive: true, force: true });
+    }
+  }, 60_000);
 });

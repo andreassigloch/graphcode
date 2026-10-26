@@ -48,8 +48,8 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-10-25 |
-| `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-10-25 |
+| `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-10-26 |
+| `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-10-26 |
 
 ### 2. Risiko falscher Befund laeuft um (`REQ-risk-loop-degradation`)
 
@@ -125,7 +125,7 @@ Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die 
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-single-measurement-path` | tests/steering.measurement-path.test.ts | passed | 2026-10-25 |
+| `TEST-single-measurement-path` | tests/steering.measurement-path.test.ts | passed | 2026-10-26 |
 
 ### 6. Risiko Schleife pendelt (`REQ-risk-loop-oscillation`)
 
@@ -182,7 +182,7 @@ Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette 
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-store-recovery` | tests/store-recovery.test.ts | passed | 2026-10-25 |
+| `TEST-store-recovery` | tests/store-recovery.test.ts | passed | 2026-10-26 |
 
 ### 9. Risiko Auswertung ohne Verantwortlichen (`REQ-risk-audit-evaluation-unowned`)
 
@@ -201,7 +201,7 @@ Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen we
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-audit-trail-projection` | tests/audit.trail-projection.test.ts | passed | 2026-10-25 |
+| `TEST-audit-trail-projection` | tests/audit.trail-projection.test.ts | passed | 2026-10-26 |
 
 ### 10. Risiko Stufenname ohne Wertebereich (`REQ-risk-stage-name-free-text`)
 
@@ -277,7 +277,7 @@ Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-test-schlupf` | tests/test-schlupf.test.ts | passed | 2026-10-25 |
+| `TEST-test-schlupf` | tests/test-schlupf.test.ts | passed | 2026-10-26 |
 
 ### 14. Risiko Export scheitert still (`REQ-risk-auto-export-fails-silently`)
 
@@ -296,7 +296,7 @@ Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-10-25 |
+| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-10-26 |
 
 ### 15. Risiko Kante verschwindet still (`REQ-risk-edge-vanishes-silently`)
 
@@ -315,7 +315,7 @@ Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell.
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-10-25 |
+| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-10-26 |
 
 ### 16. Risiko Besitzer endet bei angedockten Sitzungen (`REQ-risk-owner-ends-with-docked-sessions`)
 
@@ -334,7 +334,7 @@ Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine an
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-host-shim` | tests/host-shim.test.ts | passed | 2026-10-25 |
+| `TEST-host-shim` | tests/host-shim.test.ts | passed | 2026-10-26 |
 
 ### 17. Risiko halb gefuellter Store nach Abbruch (`REQ-risk-partial-store-after-reseed`)
 
@@ -353,7 +353,7 @@ Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-10-25 |
+| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-10-26 |
 
 ### 18. Risiko Regelauswertung faellt im Gate aus (`REQ-risk-gate-rule-eval-fails`)
 

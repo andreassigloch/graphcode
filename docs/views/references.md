@@ -1329,6 +1329,10 @@
 | `CR-GC-853` | relation | `FUNC-target-profile` |
 | `CR-GC-853` | relation | `FUNC-target-profile-load` |
 | `CR-GC-853` | relation | `SCHEMA-target-profile` |
+| `CR-GC-854` | relation | `FUNC-measure-test-schlupf` |
+| `CR-GC-854` | relation | `FUNC-verify-lane-code` |
+| `CR-GC-854` | relation | `FUNC-verify-lane-full` |
+| `CR-GC-854` | relation | `REQ-lane-red-without-report` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2867,6 +2871,7 @@
 | `FUNC-verify-lane-code` | io | `FLOW-lane-output` |
 | `FUNC-verify-lane-code` | io | `FLOW-plan-request` |
 | `FUNC-verify-lane-code` | io | `FLOW-test-run-report-code` |
+| `FUNC-verify-lane-code` | satisfy | `REQ-lane-red-without-report` |
 | `FUNC-verify-lane-code` | satisfy | `REQ-lane-reports-change` |
 | `FUNC-verify-lane-full` | allocate | `MOD-dev-scripts` |
 | `FUNC-verify-lane-full` | io | `FLOW-lane-output-full` |
@@ -2875,6 +2880,7 @@
 | `FUNC-verify-lane-full` | io | `FLOW-schlupf-zeile` |
 | `FUNC-verify-lane-full` | io | `FLOW-test-run-report-full` |
 | `FUNC-verify-lane-full` | satisfy | `REQ-full-run-on-probation` |
+| `FUNC-verify-lane-full` | satisfy | `REQ-lane-red-without-report` |
 | `FUNC-verify-lane-model` | allocate | `MOD-dev-scripts` |
 | `FUNC-verify-lane-model` | io | `FLOW-lane-output-model` |
 | `FUNC-verify-lane-model` | satisfy | `REQ-model-lane-fixed-set` |
@@ -3353,6 +3359,7 @@
 | `TEST-test-result-withdrawn-on-change` | verify | `REQ-test-result-withdrawn-on-change` |
 | `TEST-test-runnable-binding` | verify | `REQ-test-runnable-binding` |
 | `TEST-test-schlupf` | verify | `REQ-full-run-on-probation` |
+| `TEST-test-schlupf` | verify | `REQ-lane-red-without-report` |
 | `TEST-test-schlupf` | verify | `REQ-risk-selection-misses-red-test` |
 | `TEST-test-schlupf` | verify | `SCHEMA-schlupf-zeile` |
 | `TEST-testref-materialize` | verify | `REQ-testref-materialized` |
