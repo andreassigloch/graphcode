@@ -24,7 +24,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { ALL_RULE_DEFS, requirementScope } from '@sigloch/contracts/se';
 import { openMeasured, type Measured } from '../src/surface/measured.js';
-import { FitAdvisory, SteerAdvisory } from '../src/kernel/measure/fit-advisory.js';
+import { SteerAdvisory } from '../src/kernel/measure/fit-advisory.js';
 import { SteeringDelta, SteeringStageDelta } from '../src/kernel/measure/steering-snapshot.js';
 import { WorkOrder } from '../src/kernel/measure/work-order.js';
 import { MetricsAfter } from '../src/kernel/measure/zug-bericht.js';
@@ -118,9 +118,9 @@ afterAll(async () => {
 });
 
 describe('se:optimize Version 3: zwei Quellen, getrennt, ohne Rangfolge (CR-GC-785)', () => {
-  it('der Kopf traegt Version 5 unter dem alten Namen', () => {
+  it('der Kopf traegt Version 6 unter dem alten Namen', () => {
     expect(skill).toMatch(/^name: se:optimize$/m);
-    expect(skill).toMatch(/^version: 5$/m);
+    expect(skill).toMatch(/^version: 6$/m);
   });
 
   it('Quelle (a) nennt beide Analysen, die Vorschlaege abgeben: se-fmea und se-laufzeit (CR-GC-791)', () => {
@@ -279,9 +279,11 @@ describe('se:optimize Version 3: die Probe verspricht nur, was der Trockenlauf t
       expect(skill, feld).toContain(`\`${feld}\``);
       expect(SteerAdvisory.shape, feld).toHaveProperty(feld);
     }
-    expect(skill).toContain('`fitAdvisory`');
-    expect(skill).toContain('`regressions`');
-    expect(FitAdvisory.shape).toHaveProperty('regressions');
+    // CR-GC-853, Option A: fitAdvisory steht nie im Ergebnis von graph_mutate. Der Skill nennt es nicht,
+    // und der Beleg fuer „verletzt" ist der Steuerwert (`worstAt`, `improvement`), nicht `regressions`.
+    expect(skill).not.toContain('fitAdvisory');
+    expect(skill).not.toContain('`regressions`');
+    expect(skill).toMatch(/\*\*verletzt:\*\*[^\n]*`steerAdvisory`/);
     expect(skill).toContain('`workOrder`');
     for (const feld of ['moves', 'blind']) {
       expect(skill, feld).toContain(`\`${feld}\``);

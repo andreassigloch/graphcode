@@ -70,6 +70,11 @@ describe('CR-GC-587: kein ausgelieferter Text widerspricht dem Register', () => 
     expect(step.prompt).toContain(decision('verdictRank'));
   });
 
+  it('se:generate nennt fitAdvisory nicht — es steht nie im Ergebnis von graph_mutate (CR-GC-862)', () => {
+    const md = texte.find((t) => t.pfad.endsWith('se/generate.md'))!.text;
+    expect(md).not.toContain('fitAdvisory');
+  });
+
   it('se:generate traegt dieselbe Rangfolge in derselben Reihenfolge', () => {
     const md = texte.find((t) => t.pfad.endsWith('se/generate.md'))!.text;
     const pos = ['`block` verwerfen', '`steeringDelta`', 'blockierender Fehler', '`tier`', '`steerAdvisory.improvement`'].map((s) => md.indexOf(s));

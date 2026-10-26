@@ -1,6 +1,6 @@
 ---
 name: se:optimize
-version: 5
+version: 6
 description: Einen Umbauvorschlag proben und seinen Gesamt-Impact als Vorlage zeigen — Vorschläge aus einer Analyse (feste Form) und Vorschläge von graph_suggest, getrennt. Trockenlauf durchs Gate, Vorlage davor und danach, Wahl durch den Autor. Nach CDR, vor den Kettentests. Kein Auto-Apply; Anwenden und Nachmessen gehören dem CR des Umbaus.
 ---
 
@@ -117,11 +117,11 @@ Der Trockenlauf schreibt nichts. Was sein Urteil trägt:
 | `violations` | die Befunde, die der Zug neu einführt, je mit Regel und Element. Für den Vergleich ohne die aus dem Bau. Was der Zug schließt, steht hier nicht |
 | `steeringDelta` | `blockingErrors` und je Stufe in `stages` die Zahl der Befunde: `before`, `after`, `delta`. Die `stages` zählen die Befunde aus dem Bau mit |
 | `steerAdvisory` | der Steuerwert `before` und `after`, `improvement`, die schlimmste Stelle danach in `worstAt`, und `removesElements` |
-| `fitAdvisory` | das Δm je Dimension und `regressions`. Nur mit einem Zielprofil mit Gewichten; erhoben wird es in `se:target-profile`, nicht hier |
 | `workOrder` | `moves`: Dateien, die mit einer umgehängten Funktion wandern; `blind`: Funktionen ohne Bindung |
 | `metricsAfter` | die Zeilen von `graph_metrics`, die der Zug ändert oder neu anlegt, im Stand danach: `chains`, `modules`, `functions` und `riskCarriers` mit `risks` und `surface`. `removed` nennt je Liste die Kennungen der Zeilen, die entfallen. Leere Listen heißen: der Zug ändert keine Kennzahl |
 
-`steerAdvisory`, `fitAdvisory` und `workOrder` fehlen in der Antwort, wenn sie nichts melden.
+`steerAdvisory` und `workOrder` fehlen in der Antwort, wenn sie nichts melden. Das Δm je Dimension
+steht nicht in der Probe; es kommt nur aus `graph_suggest` als `delta` und wird nur berichtet.
 `metricsAfter` steht bei jedem Trockenlauf da, den das Gate durchlässt, auch leer. Fehlt es dort, nennt
 `berichtFehlt` den Grund, und die Spalte „danach" bleibt für diesen Vorschlag offen.
 
@@ -140,7 +140,7 @@ Je Vorschlag eine Vorlage, in der Reihenfolge, in der die Quelle sie lieferte.
 
 **Zuerst die Prüfung gegen die Prognose.** Was gleich bleiben muss und es nicht bleibt, steht oben. Je Aussage „bleibt gleich" eine von drei Antworten:
 
-- **verletzt:** die Probe belegt es (neuer Befund, `blockingErrors`, `worstAt`, `regressions`, oder eine Zeile in `metricsAfter`, die gleich bleiben sollte). Eine Verbesserung, die das Gleichbleiben verletzt, zählt nicht.
+- **verletzt:** die Probe belegt es (neuer Befund, `blockingErrors`, im `steerAdvisory` eine neue schlimmste Stelle `worstAt` oder ein negatives `improvement`, oder eine Zeile in `metricsAfter`, die gleich bleiben sollte). Eine Verbesserung, die das Gleichbleiben verletzt, zählt nicht.
 - **hält laut Probe:** die Probe prüft die Aussage und meldet nichts. Für eine Zeile oder einen Träger heißt das: sie steht nicht in `metricsAfter`.
 - **offen bis zum Nachmessen:** die Aussage betrifft den Betrachtungsumfang oder einen Befund, den der Zug schließen soll. Das trägt die Probe nicht.
 
@@ -152,7 +152,7 @@ Dann die Tabelle, jede Zahl mit ihrem Feld:
 | Ketten des Umfangs | ihre Zeilen | welche Zeile sich ändert, und wie | – | `metricsAfter.chains`, sonst unverändert |
 | Antwortweg | `answerPath` je Kette | welche Glieder nicht mehr darin stehen | – | `answerPath` an der Zeile der Kette in `metricsAfter.chains`, sonst unverändert |
 | Träger je Risiko | `carriers` | aus dem Vorschlag | – | `metricsAfter.riskCarriers`, sonst unverändert |
-| Modulbaum und Funktionsbaum | Zeilen mit Schwelle | aus dem Preis | `steerAdvisory`, `fitAdvisory` | `metricsAfter.modules` und `metricsAfter.functions`, sonst unverändert |
+| Modulbaum und Funktionsbaum | Zeilen mit Schwelle | aus dem Preis | `steerAdvisory` | `metricsAfter.modules` und `metricsAfter.functions`, sonst unverändert |
 | Befunde ohne Bau | je Regel | – | neu aus `violations` | Nachmessen im CR |
 
 Jede Zahl der Spalte „danach" steht neben ihrer Zahl von davor, mit demselben Feldnamen. Eine Zeile

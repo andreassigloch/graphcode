@@ -23,6 +23,11 @@ oder negativem `improvement`. `fitAdvisory` und `regressions` nennt kein Skill m
 3. `tests/skills.mcp-conformance.test.ts` — `se:optimize` verweist nicht mehr auf `se:target-profile`;
    es erhebt weiter keine Gewichte selbst
 4. `.claude/commands/se/generate.md` — Rangfolge ohne den Satz zum `fitAdvisory`
+5. `tests/decision-texts.test.ts` — rot, wenn `se:generate` `fitAdvisory` nennt
+6. dieser CR
+
+Modell: Beschreibung von `FUNC-se-optimize` auf Version 6 (graphVersion 937), `relation` auf
+`FUNC-se-optimize` und `FUNC-se-generate`.
 
 ## Akzeptanzkriterien
 
@@ -45,3 +50,9 @@ Tests (`graph_tests`, 2):
 - tests/skill-optimize-vorlage.test.ts
 
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Nachweis (2026-10-26)
+
+- Rot zuerst: `skill-optimize-vorlage` (2 rot), `skills.mcp-conformance` (1 rot), `decision-texts` (1 rot).
+- `verify:code`: Spur CODE, 56 Dateien grün. `verify:full CR-GC-862`: 198/198 Dateien, 1644 Tests, Schlupf 0.
+- Offen: `se:top-level` nennt `fitAdvisory` und `se:target-profile` noch (Z. 62, 165); das zieht CR-GC-852 nach.

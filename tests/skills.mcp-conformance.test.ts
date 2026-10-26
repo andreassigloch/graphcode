@@ -233,7 +233,7 @@ describe('CR-GC-308: skills instruct only vocabulary the ontology declares', () 
    *   2. er wendet NUR über `graph_mutate` an (Apply-Gate, kein Auto-Apply),
    *   3. er wendet ein `retire`-Umhängen als EINEN Batch an (CR-GC-435 — genau
    *      diesen Verbund hat der dryRun beurteilt; zwei Aufrufe messen etwas anderes),
-   *   4. er dupliziert das Zielprofil nicht, sondern verweist auf `se:target-profile`.
+   *   4. er erhebt keine Gewichte und verweist auf kein Zielprofil (CR-GC-862).
    */
   describe('CR-GC-433: se:optimize is the pull channel onto the architecture machine', () => {
     const optimize = () => readFileSync(join(COMMANDS_DIR, 'se', 'optimize.md'), 'utf8');
@@ -269,11 +269,11 @@ describe('CR-GC-308: skills instruct only vocabulary the ontology declares', () 
       expect(text, 'the retire+add batch must be ONE mutate call').toMatch(/\bEIN\b[^.\n]{0,40}\b(Aufruf|Batch)\b/);
     });
 
-    it('delegates the Zielprofil to se:target-profile instead of duplicating it', () => {
+    it('elicits no ℝ⁶ weights and points to no target profile (CR-GC-862)', () => {
       const text = optimize();
-      expect(text).toContain('se:target-profile');
-      // Der Skill darf die 6 Gewichte NICHT selbst erheben (keine parallelen Pfade):
-      // eine eigene Dimensionstabelle wäre die Kopie, die driftet.
+      // CR-GC-853/862: die Gewichte sind zurueckgebaut; es gibt kein Zielprofil, auf das der Skill
+      // verweisen koennte. Er erhebt die 6 Gewichte weiter NICHT selbst (keine parallelen Pfade).
+      expect(text).not.toContain('se:target-profile');
       const dims = ['modifiability', 'faultTolerance', 'flowEfficiency', 'coherence', 'viability', 'scalability'];
       expect(dims.filter((d) => text.includes(d)).length, 'se:optimize must not re-elicit the ℝ⁶ weights').toBeLessThan(6);
     });
