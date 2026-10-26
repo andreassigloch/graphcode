@@ -134,6 +134,10 @@ export const INCLUDED = [
   'tests/arch.optimization-dry-run.spike.test.ts',
   'tests/skill-authoring-gate.test.ts',
   'tests/skill-report-measured.test.ts',
+  // CR-GC-851: der erste Constraint (Ein Schreibweg). Liest die committete SSOT und prueft die
+  // Eingaenge von FUNC-graph-store — ein Zug am Modell, der einen siebten Fluss anlegt, macht ihn
+  // rot, ohne dass sich Code aendert. Genau dafuer gehoert er in die Spur (Weg A, CR-GC-804).
+  'tests/constraint-ein-schreibweg.test.ts',
 ];
 
 /**

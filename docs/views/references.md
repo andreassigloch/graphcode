@@ -1322,7 +1322,10 @@
 | `CR-GC-850` | relation | `FUNC-generation-step` |
 | `CR-GC-850` | relation | `FUNC-mutate` |
 | `CR-GC-850` | relation | `FUNC-se-fmea` |
+| `CR-GC-851` | relation | `FUNC-eingaenge-nur-aus` |
+| `CR-GC-851` | relation | `FUNC-graph-store` |
 | `CR-GC-851` | relation | `FUNC-verify-lane-model` |
+| `CR-GC-851` | relation | `REQ-ein-schreibweg` |
 | `CR-GC-851` | relation | `REQ-model-lane-fixed-set` |
 | `CR-GC-852` | relation | `FUNC-se-vorbereitung` |
 | `CR-GC-852` | relation | `REQ-vorbereitung-reads-metrics` |
@@ -1366,6 +1369,7 @@
 | `FCHAIN-apply-gate` | compose | `FUNC-tool-context` |
 | `FCHAIN-apply-gate` | compose | `FUNC-zug-bericht` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-code-governed-quality` |
+| `FCHAIN-apply-gate` | satisfy | `REQ-ein-schreibweg` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-graceful-degradation` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-mcp-gate-symmetry` |
 | `FCHAIN-apply-gate` | satisfy | `REQ-post-modelfree-gate` |
@@ -1500,6 +1504,7 @@
 | `FCHAIN-model-import` | compose | `FUNC-seed-from-json` |
 | `FCHAIN-model-import` | satisfy | `REQ-model-exchange-post` |
 | `FCHAIN-model-import` | satisfy | `REQ-no-extraction` |
+| `FCHAIN-model-lane` | compose | `FUNC-eingaenge-nur-aus` |
 | `FCHAIN-model-lane` | compose | `FUNC-verify-lane-model` |
 | `FCHAIN-recall` | compose | `FUNC-apply-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-claim-store-lock` |
@@ -1833,6 +1838,8 @@
 | `FLOW-dashboard-tool-call` | relation | `SCHEMA-query-params` |
 | `FLOW-dimension-readiness` | io | `FUNC-graph-readiness` |
 | `FLOW-dimension-readiness` | relation | `SCHEMA-readiness-report` |
+| `FLOW-eingangs-befund` | io | `FUNC-verify-lane-model` |
+| `FLOW-eingangs-befund` | relation | `SCHEMA-eingangs-befund` |
 | `FLOW-element-slice` | io | `FUNC-health-endpoint` |
 | `FLOW-element-slice` | io | `FUNC-read-tools` |
 | `FLOW-element-slice` | relation | `SCHEMA-ontology-graph` |
@@ -1886,6 +1893,7 @@
 | `FLOW-graph-delta` | io | `FUNC-graph-store` |
 | `FLOW-graph-delta` | relation | `SCHEMA-graph-delta` |
 | `FLOW-graph-snapshot-file` | io | `ACTOR-auftraggeber` |
+| `FLOW-graph-snapshot-file` | io | `FUNC-eingaenge-nur-aus` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-held-back-traces` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-plan-code-lane` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-seed-from-json` |
@@ -2399,6 +2407,7 @@
 | `FUNC-block-messwerk` | compose | `FUNC-chain-metrics` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-steering-delta` |
+| `FUNC-block-messwerk` | compose | `FUNC-eingaenge-nur-aus` |
 | `FUNC-block-messwerk` | compose | `FUNC-fit-advisory` |
 | `FUNC-block-messwerk` | compose | `FUNC-function-criticality` |
 | `FUNC-block-messwerk` | compose | `FUNC-module-metrics` |
@@ -2490,6 +2499,9 @@
 | `FUNC-deduce-tests` | io | `FLOW-test-selection` |
 | `FUNC-deduce-tests` | satisfy | `REQ-impact-based-testing` |
 | `FUNC-deduce-tests` | satisfy | `REQ-test-runnable-binding` |
+| `FUNC-eingaenge-nur-aus` | allocate | `MOD-kernel-measure` |
+| `FUNC-eingaenge-nur-aus` | io | `FLOW-eingangs-befund` |
+| `FUNC-eingaenge-nur-aus` | satisfy | `REQ-eingaenge-nur-aus-liste` |
 | `FUNC-emit-trajectory` | allocate | `MOD-projections` |
 | `FUNC-emit-trajectory` | io | `FLOW-trajectory` |
 | `FUNC-emit-trajectory` | satisfy | `REQ-post-emit-trajectory` |
@@ -3107,6 +3119,9 @@
 | `TEST-codec-validation` | verify | `REQ-codec-validation` |
 | `TEST-codec-validation` | verify | `REQ-graph-integrity` |
 | `TEST-commit-check` | verify | `REQ-commit-check-flow-call` |
+| `TEST-constraint-ein-schreibweg` | verify | `REQ-ein-schreibweg` |
+| `TEST-constraint-ein-schreibweg` | verify | `REQ-eingaenge-nur-aus-liste` |
+| `TEST-constraint-ein-schreibweg` | verify | `SCHEMA-eingangs-befund` |
 | `TEST-contracts-kernel` | verify | `SCHEMA-graph-delta` |
 | `TEST-contracts-kernel` | verify | `SCHEMA-ontology-json` |
 | `TEST-contracts-surface` | verify | `SCHEMA-audit-stats` |

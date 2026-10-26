@@ -23,8 +23,13 @@ diese Messung und rechnet nicht nach. Die Bibliothek wächst je Constraint; dies
 
 ## Der Constraint: „Ein Schreibweg"
 
-Adressat ist `FUNC-graph-store`. Anker: CLAUDE.md „Gate-only writes" (gate-only-writes), die Regel „Keine
-parallelen Pfade" und der erste Punkt der „Locked constraints" (ein Store, ein Besitzer-Prozess).
+Adressat ist die Kette `FCHAIN-apply-gate` (`satisfy`); sie enthält `FUNC-mutate` und `FUNC-graph-store`. Der
+Test prüft die Eingänge von `FUNC-graph-store`. Anker: CLAUDE.md „Gate-only writes" (gate-only-writes), die
+Regel „Keine parallelen Pfade" und der erste Punkt der „Locked constraints" (ein Store, ein Besitzer-Prozess).
+
+Warum nicht die FUNC selbst: nach R-18 erfüllt eine FUNC nur funktionale Anforderungen. Ein
+architektur-bestimmender Constraint hängt an Kette, Modul oder System. Entschieden vom Auftraggeber am
+2026-10-26: die Kette; wäre sie unpassend gewesen, das System, nicht das Modul.
 
 Inhalt kommt in den Store nur über diese sechs Flüsse. Stand graphVersion 904, geprüft per `graph_get_edges`
 auf `FUNC-graph-store` (Richtung ein, Typ `io`) und je Fluss auf seinen Absender:
@@ -58,15 +63,27 @@ Die Lookups kommen aus dem Index von contracts (`indexOf`), nicht aus eigenen Vo
 1. `src/kernel/measure/constraints.ts` (neu) — die Prüffunktion
 2. `tests/constraint-ein-schreibweg.test.ts` (neu) — liest den Snapshot, ruft die Prüffunktion; Positivkontrolle
    im selben Test: eine Kopie des Snapshots mit einem zusätzlichen Fluss von einer anderen FUNC in
-   `FUNC-graph-store` ist rot und nennt den Absender
+   `FUNC-graph-store` ist rot und nennt den Absender; dazu der Vertrag des Befunds samt Ablehnung
 3. `package.json` — Subpath `./constraints` in `exports`
 4. `tests/distribution.test.ts` — der Import `@sigloch/graphcode/constraints` gelingt aus dem gepackten Paket
 5. `scripts/model-test-set.mjs` — Eintrag in `INCLUDED` (Weg A)
-6. dieser CR
+6. `tests/arch.optimization-dry-run.spike.test.ts` — neu gemessen: die zwei Flüsse der Prüffunktion ändern die
+   Züge des Autopiloten am Engpass (drei statt vier) und den Engpass danach (BW-02 @ `FUNC-block-abfrage`)
+7. `docs/cr/done/CR-GC-804-…` — Nachtrag 2026-10-26: die Zeile „Knoten" ist nach R-18 nicht baubar
+8. dieser CR
 
-Modell per `graph_mutate`: `REQ-ein-schreibweg` (nicht-funktional) mit `FUNC-graph-store -satisfy->`, ein TEST
-mit `testRefs` auf die Testdatei und `verify` auf die REQ, eine FUNC für die Prüffunktion mit `realRef` in
-`MOD-kernel`. Danach `graph_export`.
+Modell per `graph_mutate` (graphVersion 907/908):
+
+- `REQ-ein-schreibweg` (nicht-funktional) mit `FCHAIN-apply-gate -satisfy->`.
+- `FUNC-eingaenge-nur-aus` (`realRef` auf die Prüffunktion), `allocate` auf `MOD-kernel-measure`, Kind von
+  `FUNC-block-messwerk`, mit `REQ-eingaenge-nur-aus-liste` (funktional).
+- In der Kette `FCHAIN-model-lane`: `FLOW-graph-snapshot-file` hinein, `FLOW-eingangs-befund` (Vertrag
+  `SCHEMA-eingangs-befund`) hinaus an `FUNC-verify-lane-model`. Der Codepfad: `verify:model` fährt vitest,
+  der Test liest den Snapshot und ruft die Funktion. Nicht `FCHAIN-verify-lane`: die Lanes CODE und VOLL fahren
+  den Test auch, aber nur `verify:model` fährt ihn immer.
+- `TEST-constraint-ein-schreibweg` mit `testRefs` auf die Testdatei, `verify` auf beide REQs und den SCHEMA.
+
+Danach `graph_export`.
 
 ## Akzeptanzkriterien
 

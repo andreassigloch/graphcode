@@ -84,7 +84,7 @@ Als Entwickler will ich nur die richtigen Tests laufen lassen: der Impact-/Abhä
 Ausgeloest von: `ACTOR-auftraggeber`
 
 - `FCHAIN-impact-testing` — Tests zu einer Aenderung waehlen: `FUNC-agent-loop` → `FUNC-deduce-tests` → `FUNC-graph-store` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests`
-- `FCHAIN-model-lane` — Modell-Spur fahren (npm): `FUNC-verify-lane-model`
+- `FCHAIN-model-lane` — Modell-Spur fahren (npm): `FUNC-eingaenge-nur-aus` → `FUNC-verify-lane-model`
 - `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context`
 - `FCHAIN-verify-lane` — Test-Spur fahren (npm): `FUNC-graph-store` → `FUNC-measure-test-schlupf` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context` → `FUNC-verify-lane-code` → `FUNC-verify-lane-full`
 
@@ -543,7 +543,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-848` | n/a | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag | `FUNC-check-code-conformance` · `FUNC-commit-check` · `FUNC-emit-trajectory` · `FUNC-tool-context` |
 | `CR-GC-849` | n/a | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) | `FUNC-bind-tools` · `FUNC-cli-dispatch` · `FUNC-create-harness` · `FUNC-emit-trajectory` · `FUNC-graph-store` · `FUNC-health-endpoint` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-target-profile-load` · `FUNC-tool-context` |
 | `CR-GC-850` | n/a | contracts 12.7.0 nachziehen: Mindestversion, Testpins fuer RC-11..13 und R-35, FC-02 aus Tests und Skills | `FUNC-generation-step` · `FUNC-mutate` · `FUNC-se-fmea` |
-| `CR-GC-851` | n/a | Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle | `FUNC-verify-lane-model` · `REQ-model-lane-fixed-set` |
+| `CR-GC-851` | n/a | Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle | `FUNC-eingaenge-nur-aus` · `FUNC-graph-store` · `FUNC-verify-lane-model` · `REQ-ein-schreibweg` · `REQ-model-lane-fixed-set` |
 | `CR-GC-852` | n/a | Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints | `FUNC-se-vorbereitung` · `REQ-vorbereitung-reads-metrics` |
 | `CR-GC-853` | n/a | Constraints Teil 3: Rueckbau Zielprofil | `FUNC-target-profile` · `FUNC-target-profile-load` |
 | `CR-GC-854` | n/a | verify:full schreibt rot 0, obwohl vitest ohne Bericht endet | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `REQ-lane-red-without-report` |

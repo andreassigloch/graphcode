@@ -196,3 +196,13 @@ schließt als Konzept; gebaut wird in drei Teil-CRs, Reihenfolge nach Abhängigk
 Abweichung vom Umfang oben: das Löschen von `.claude/commands/se/target-profile.md` wandert in Teil 3. Der
 Skill setzt Gewichte, die `graph_suggest` bis zum Rückbau liest; ohne ihn bliebe die Profildatei ohne Pflege.
 
+## Nachtrag (2026-10-26): die Zeile „Knoten" ist nicht baubar
+
+Die Zeile „Knoten" der Ebenen-Tabelle (`FUNC -satisfy-> REQ (NFR)`) ist nach R-18 nicht baubar: eine FUNC
+erfüllt nur funktionale Anforderungen. Das Gate lehnt die Kante ab („kinds-mismatch"), gemessen am
+2026-10-26 beim Bau von CR-GC-851. Der Satz „Alle vier Kanten erlaubt die Grammatik" gilt damit nur für
+Block, Kette und Gesamtmodell.
+
+Architektur-bestimmende Constraints hängen an Kette, Modul oder System. Ein Constraint, der eine Funktion
+betrifft, hängt an der Kette, die sie enthält; der Test prüft weiter die Funktion. CR-GC-851 ist das erste
+Beispiel: `REQ-ein-schreibweg` an `FCHAIN-apply-gate`, geprüft werden die Eingänge von `FUNC-graph-store`.

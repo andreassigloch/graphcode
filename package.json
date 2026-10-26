@@ -20,6 +20,10 @@
     "./mcp": {
       "import": "./dist/surface/mcp-tools.js",
       "types": "./dist/surface/mcp-tools.d.ts"
+    },
+    "./constraints": {
+      "import": "./dist/kernel/measure/constraints.js",
+      "types": "./dist/kernel/measure/constraints.d.ts"
     }
   },
   "files": [

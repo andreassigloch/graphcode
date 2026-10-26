@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 58 SCHEMA · 246 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 59 SCHEMA · 247 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -18,6 +18,7 @@
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMark | reviewed |
+| `SCHEMA-eingangs-befund` | src/kernel/measure/constraints.ts#EingangsBefund | n/a |
 | `SCHEMA-export-answer` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
 | `SCHEMA-fit-advisory` | src/kernel/measure/fit-advisory.ts#FitAdvisory | reviewed |
@@ -151,6 +152,7 @@
 | `FLOW-dashboard-call` | `ACTOR-dashboard` | `FUNC-host-socket` |
 | `FLOW-dashboard-tool-call` | `FUNC-host-socket` | `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-readiness` |
 | `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-graph-readiness` |
+| `FLOW-eingangs-befund` | `FUNC-eingaenge-nur-aus` | `FUNC-verify-lane-model` |
 | `FLOW-element-slice` | `FUNC-list-elements` | `FUNC-health-endpoint` · `FUNC-read-tools` |
 | `FLOW-ergebnis` | `FUNC-agent-loop` | `ACTOR-auftraggeber` |
 | `FLOW-expand-subgraph` | `FUNC-graph-expand` | `FUNC-read-tools` |
@@ -173,7 +175,7 @@
 | `FLOW-generation-request` | `FUNC-graph-generate-tool` | `FUNC-generation-step` |
 | `FLOW-generation-step-vorschlag` | `FUNC-generation-step` | `FUNC-vorschlag` |
 | `FLOW-graph-delta` | `FUNC-mutate` | `FUNC-graph-store` |
-| `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` |
+| `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-eingaenge-nur-aus` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` |
 | `FLOW-graph-state` | `FUNC-graph-store` | `FUNC-check-code-conformance` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-metrics` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-import-code-verb` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` |
 | `FLOW-graph-state-eval` | `FUNC-graph-store` | `FUNC-evaluate-rules` |
 | `FLOW-gve-attach` | `FUNC-serve-stdio` | `FUNC-gve-supervise` |

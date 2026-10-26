@@ -229,6 +229,9 @@ describe('TEST-distribution: npx distribution', () => {
       expect(files).toContain('dist/cli.js');
       expect(files).toContain('dist/index.js');
       expect(files).toContain('dist/kernel/harness.js');
+      // CR-GC-851: die Prueffunktionen fuer Constraints, Subpath `./constraints`.
+      expect(files).toContain('dist/kernel/measure/constraints.js');
+      expect(files).toContain('dist/kernel/measure/constraints.d.ts');
       expect(files.some((f) => f.startsWith('.claude/commands/se'))).toBe(true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -318,7 +321,10 @@ describe('TEST-distribution: npx distribution', () => {
           "const p = await import('@sigloch/graphcode');",
           "const h = await import('@sigloch/graphcode/harness');",
           "const m = await import('@sigloch/graphcode/mcp');",
+          // CR-GC-851: Constraint-Tests anderer Repos importieren die Prueffunktionen von hier.
+          "const { eingaengeNurAus } = await import('@sigloch/graphcode/constraints');",
           "if (!p || !h || !m) throw new Error('export missing');",
+          "if (typeof eingaengeNurAus !== 'function') throw new Error('constraints export missing');",
           "process.stdout.write('ok');",
         ].join('\n');
         const resolved = execFileSync('node', ['--input-type=module', '-e', probe], {

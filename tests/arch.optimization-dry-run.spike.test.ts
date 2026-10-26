@@ -493,11 +493,14 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-849 (graphVersion 871) — NEU GEMESSEN, nachdem 34 Aufrufe zwischen verankerten FUNCs ihren Fluss
       // bekamen (Lesen, Aufbau, Schliessen): vier Zuege statt einem. Der Block Abfrage nimmt zusaetzlich
       // Ruestzeug, Optimierung und das Werkzeug graph_mutate auf. Weiter derselbe Befund (ITEM-2026-798).
+      // CR-GC-851 (graphVersion 908) — NEU GEMESSEN, nachdem die Prueffunktion eingaengeNurAus mit ihren zwei
+      // Fluessen (Snapshot hinein, Befund hinaus) unter Messwerk kam: zwei Vertraege mehr an der Grenze von
+      // Messwerk und Grounding (Steuerwert am Start 7,502 -> 7,752). Drei Zuege statt vier; Bedienung wird
+      // zweimal umgehaengt. Weiter derselbe Befund (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
-        'FUNC-block-bedienung -compose-> FUNC-test-ingest (retire FUNC-test-ingest)',
+        'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
+        'FUNC-block-grounding -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
         'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
-        'FUNC-block-abfrage -compose-> FUNC-graph-mutate-tool (retire FUNC-graph-mutate-tool)',
-        'FUNC-block-abfrage -compose-> FUNC-block-optimierung',
       ]);
       expect(
         rest
@@ -538,9 +541,11 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-840 (graphVersion 840) — NEU GEMESSEN nach dem Modell-Audit CR-GC-832..839: jedes MCP-Werkzeug ist
       // eine FUNC mit eigenem Anfrage- und Antwortfluss; die Grenze von Grounding traegt 30 Vertraege, und der eine
       // Zug an Bedienung senkt sie nicht. BW-02 @ Grounding ist wieder der Engpass, wie nach CR-GC-814.
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
+      // CR-GC-851 (graphVersion 908) — NEU GEMESSEN: nach dem dritten Zug steht BW-02 @ FUNC-block-abfrage vorn;
+      // Abfrage hat Bedienung und Ruestzeug aufgenommen und traegt deren Vertraege an ihrer Grenze.
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-abfrage — bitte neu messen').toEqual({
         ruleId: 'BW-02',
-        elementId: 'FUNC-block-grounding',
+        elementId: 'FUNC-block-abfrage',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

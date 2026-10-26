@@ -4,7 +4,7 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 77 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 78 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
@@ -22,6 +22,7 @@
 | `REQ-deterministic-serialization` | Stabile Sortierung → commit-/merge-arm; zwei Encodes byte-identisch. (R3) | ✓ |
 | `REQ-disk-persistence` | Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4) | ✓ |
 | `REQ-docs-taxonomy` | CONSTRAINT (non-functional): Aus dem Graphen reproduzierbar → VIEW (generiert, disposable, byte-deterministisch); friert datiertes Urteil/externen Input ein → RECORD (immutable Nachweis). Verfeinert REQ-graph-is-ssot. Ziel-Layout docs/{graph,views,records,adr,cr}. (CR-GC-119) | ✓ |
+| `REQ-ein-schreibweg` | Inhalt muss genau ueber sechs Fluesse in den Store kommen: FLOW-graph-delta vom Apply-Gate, FLOW-imported-graph von der Import-Operation und die Lebenszyklus-Fluesse FLOW-store-build, FLOW-store-close, FLOW-store-close-cli, FLOW-store-close-rewind. Jeder weitere Eingang in FUNC-graph-store ist ein zweiter Schreibweg. Ein Zug am Modell bricht diese Anforderung ohne Code-Aenderung; der Snapshot-Test prueft sie. (CR-GC-851) | ✓ |
 | `REQ-formatE-parity` | CR-GC-103 L1: Format-E-Parität = contracts-Baseline; genau EIN Codec. | ✓ |
 | `REQ-frame-binding` | Die in diesem Graph definierte Struktur und ihre Schnittstellen (FUNC/FCHAIN/FLOW/REQ auf SE-Ontologie und TRACE_PATTERNS) sind bindend fuer die Realisierung. Ergaenzungen passen in die bestehenden Boxen und laufen durchs Gate; ein neuer Element- oder Kantentyp, ein neues geteiltes Paket, ein neuer Top-Level-UC oder -MOD braucht Familien-Review. (Beschluss 2026-06-16, Zahlen entfernt 2026-09-15) | ✓ |
 | `REQ-gate-only-writes` | Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201) | ✓ |
