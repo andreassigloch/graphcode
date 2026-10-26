@@ -1,6 +1,6 @@
 # CR-GC-856: import-code verliert Handkanten nach graphify-uid-Wechsel (CR-GF-132), Duplikate ohne origin
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1079 (bug)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1079.json (Lane: code)
