@@ -1347,6 +1347,8 @@
 | `CR-GC-858` | relation | `FUNC-import-code-verb` |
 | `CR-GC-859` | relation | `FUNC-import-doc` |
 | `CR-GC-859` | relation | `REQ-llm-modell-aus-konfiguration` |
+| `CR-GC-860` | relation | `FUNC-import-doc` |
+| `CR-GC-860` | relation | `REQ-mutate-befund-je-element` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2684,6 +2686,7 @@
 | `FUNC-import-doc` | allocate | `MOD-agent-surface` |
 | `FUNC-import-doc` | io | `FLOW-anleitung-import-doc` |
 | `FUNC-import-doc` | satisfy | `REQ-llm-modell-aus-konfiguration` |
+| `FUNC-import-doc` | satisfy | `REQ-mutate-befund-je-element` |
 | `FUNC-list-elements` | allocate | `MOD-kernel` |
 | `FUNC-list-elements` | io | `FLOW-element-slice` |
 | `FUNC-list-elements` | satisfy | `REQ-query-precision` |
@@ -3287,6 +3290,7 @@
 | `TEST-mutate-schema-guard` | verify | `SCHEMA-mutate-command` |
 | `TEST-mutate-schema-guard` | verify | `SCHEMA-steering-snapshot` |
 | `TEST-mutate-violations` | verify | `REQ-token-efficiency` |
+| `TEST-mutate-violations-leser` | verify | `REQ-mutate-befund-je-element` |
 | `TEST-mvp-e2e` | verify | `REQ-code-governed-quality` |
 | `TEST-mvp-e2e` | verify | `REQ-disk-persistence` |
 | `TEST-mvp-e2e` | verify | `REQ-impact-based-testing` |
@@ -3540,6 +3544,7 @@
 | `UC-model-exchange` | compose | `FCHAIN-model-import` |
 | `UC-model-exchange` | compose | `REQ-model-exchange-post` |
 | `UC-model-exchange` | compose | `REQ-model-exchange-pre` |
+| `UC-model-exchange` | compose | `REQ-mutate-befund-je-element` |
 | `UC-model-exchange` | compose | `REQ-no-extraction` |
 | `UC-reduced-llm` | compose | `FCHAIN-advisory-roundtrip` |
 | `UC-reduced-llm` | compose | `FCHAIN-agent-query` |

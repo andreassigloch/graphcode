@@ -138,7 +138,9 @@ try {
     // graph_mutate nimmt nur Format-E (graphcode ≥ 0.27): die Kommandos als Text, Typen aus dem Bestand.
     const typ = new Map(harness.getGraph().nodes.map((n: any) => [n.uid, n.type]));
     const formatE = commandsToFormatE([...ensureSys, ...commands] as any, (u: string) => typ.get(u));
-    const res = await registry['graph_mutate'].handler({ formatE, consumerId: 'import-doc' });
+    // CR-GC-860: je Befund ein Element nur im Format `full` (MutateResultSchema in contracts); der
+    // Default `summary` faltet je Regel in `elements` und schreibt die uid als `{el}` in die Meldung.
+    const res = await registry['graph_mutate'].handler({ formatE, consumerId: 'import-doc', violations: 'full' });
     return { success: res.success, tier: res.tier, violations: (res.violations ?? []).map((v: any) => ({
       ruleId: v.ruleId, severity: v.severity, elementId: v.elementId ?? '', message: v.message,
       ...(v.fixHint !== undefined ? { fixHint: v.fixHint } : {}) })) };

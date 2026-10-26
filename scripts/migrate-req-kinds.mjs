@@ -304,7 +304,7 @@ export async function applyDecisions(registry, harness, decisions, { acceptHeuri
   const commands = buildCommands(decisions, harness.getGraph(), { acceptHeuristic });
   if (commands.length === 0) return { commands: 0, result: null, exported: null };
   const typ = new Map(harness.getGraph().nodes.map((n) => [n.uid, n.type]));
-  const result = await registry['graph_mutate'].handler({ formatE: commandsToFormatE(commands, (u) => typ.get(u)), consumerId: 'migrate-req-kinds', dryRun });
+  const result = await registry['graph_mutate'].handler({ formatE: commandsToFormatE(commands, (u) => typ.get(u)), consumerId: 'migrate-req-kinds', dryRun, violations: 'full' });
   if (!result.success || dryRun) return { commands: commands.length, result, exported: null };
   const exported = await registry['graph_export'].handler({});
   return { commands: commands.length, result, exported };

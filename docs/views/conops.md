@@ -552,6 +552,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-857` | n/a | se-vorbereitung Abschnitt 2: Constraints herunterdeklinieren mit constraintCarriers (contracts 12.8.0) | `FUNC-graph-metrics` · `FUNC-se-vorbereitung` · `REQ-metrics-constraint-carriers` · `REQ-vorbereitung-constraints` |
 | `CR-GC-858` | n/a | graphify 0.6 einziehen: Range, import-code-verb-Test auf lesbare uids | `FUNC-import-code-verb` |
 | `CR-GC-859` | n/a | se:import-doc: LLM-Modell nur aus LLM_MODEL, kein Modellname im Skill | `FUNC-import-doc` · `REQ-llm-modell-aus-konfiguration` |
+| `CR-GC-860` | n/a | se:import-doc meldet Gate-Verstoesse leer: liest v.elementId, graph_mutate liefert im Format summary elements[] und {el} | `FUNC-import-doc` · `REQ-mutate-befund-je-element` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
