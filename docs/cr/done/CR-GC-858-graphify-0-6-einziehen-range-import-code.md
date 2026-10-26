@@ -1,6 +1,6 @@
 # CR-GC-858: graphify 0.6 einziehen: Range, import-code-verb-Test auf lesbare uids
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1081 (idea)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1081.json (Lane: code)
