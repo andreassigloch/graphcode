@@ -3742,6 +3742,12 @@
       "description": "docs/cr/open/CR-GC-863-skills-fuehren-hardware-systeme-falsch-t.md"
     },
     {
+      "id": "CR-GC-864",
+      "type": "CR",
+      "name": "se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt",
+      "description": "docs/cr/open/CR-GC-864-se-constraints-plattform-regeln-statt-ei.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -31386,5 +31392,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 945
+  "graphVersion": 946
 }
