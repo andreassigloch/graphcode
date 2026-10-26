@@ -1,6 +1,6 @@
 # CR-GC-851: Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-26)
 **Typ:** aus Item ITEM-2026-1058 (idea)
 **Erstellt:** 2026-10-25, umgeschrieben 2026-10-26 (Konzept vom Auftraggeber freigegeben)
 **Item:** bok/items/ITEM-2026-1058.json (Lane: code)
