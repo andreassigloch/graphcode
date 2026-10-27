@@ -27,8 +27,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
+import { bindToolsToHarness, type ToolRegistry } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { alsFormatE } from './helpers/format-e.js';
 
@@ -57,8 +56,8 @@ const BULK = 30;
  * The verdict is `block` (R-01 is an error), which is realistic: the blocked
  * batches were among the biggest answers in the run.
  */
-function bulkyFixture(): { elements: unknown[]; traces: unknown[] } {
-  const elements: unknown[] = [{ id: 'SYS-x', type: 'SYS', name: 'x', description: 'Ein System.' }];
+function bulkyFixture(): Parameters<GraphCodeHarness['importGraph']>[0] {
+  const elements: Parameters<GraphCodeHarness['importGraph']>[0]['elements'] = [{ id: 'SYS-x', type: 'SYS', name: 'x', description: 'Ein System.' }];
   for (let i = 0; i < BULK; i++) {
     elements.push({ id: `TEST-kandidat-${i}`, type: 'TEST', name: `Kandidat ${i}`, description: '' });
   }
@@ -114,7 +113,7 @@ function expand(grouped: Grouped[]): Violation[] {
 describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
-  let tools: MCPToolRegistry;
+  let tools: ToolRegistry;
 
   beforeEach(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-mutate-violations-'));
@@ -192,7 +191,7 @@ describe('TEST-mutate-violations: summary is the default (CR-GC-309)', () => {
 describe('TEST-mutate-violations: the payload actually shrinks (CR-GC-309)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
-  let tools: MCPToolRegistry;
+  let tools: ToolRegistry;
 
   beforeEach(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-mutate-size-'));
@@ -248,7 +247,7 @@ describe('TEST-mutate-violations: the second dryRun pass is already redundant (C
   // instead — as the invariant that makes the second pass unnecessary.
   let tmp: string;
   let harness: GraphCodeHarness;
-  let tools: MCPToolRegistry;
+  let tools: ToolRegistry;
 
   beforeEach(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-mutate-onepass-'));

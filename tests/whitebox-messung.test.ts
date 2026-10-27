@@ -7,7 +7,6 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-// @ts-expect-error — Messskript in .mjs, bewusst ohne Typdeklaration
 import { aenderungen, jobAusCommit, jobErgebnis, urteil, jobsAusHistorie, messeJob, KALIBRIERUNG, W_ZU_G_MAX } from '../scripts/whitebox-messung.mjs';
 
 const el = (id: string, type: string, extra: object = {}) => ({ id, type, name: id, description: '', ...extra });

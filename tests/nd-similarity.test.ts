@@ -171,8 +171,8 @@ describe('generate-Fokus sieht ND (AK 3)', () => {
       }
       return gesehen;
     };
-    const dup = generationStep(buildGraph('Assemble the selected metrics into a downloadable report document.'), DEFAULT_METRIC_POLICY);
-    const distinct = generationStep(buildGraph('Stream raw audit events into the retention archive nightly.'), DEFAULT_METRIC_POLICY);
+    const dup = generationStep(buildGraph('Assemble the selected metrics into a downloadable report document.'), DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const distinct = generationStep(buildGraph('Stream raw audit events into the retention archive nightly.'), DEFAULT_METRIC_POLICY, undefined, 0.8);
     expect(dup.blockingErrors).toBe(distinct.blockingErrors);
     expect(fenster(buildGraph('Assemble the selected metrics into a downloadable report document.'))).toContain('ND-01');
     expect(fenster(buildGraph('Stream raw audit events into the retention archive nightly.'))).not.toContain('ND-01');

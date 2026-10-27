@@ -48,6 +48,10 @@ export const KALIBRIERUNG = {
  * `beruehrt`: vorhandene Knoten, deren Kanten sich geändert haben (eine neue REQ hängt sich an einen UC, eine neue
  * FUNC an ein MOD — der Agent musste diese Knoten kennen). Kanten zu Knoten aus `ohne` zählen nicht (die relation-Kanten
  * des CR selbst machten sonst jeden Umfangsknoten trivial zum Treffer).
+ *
+ * @param {{ elements: { id: string }[], traces: { source: string, target: string, type: string }[] }} vorher
+ * @param {{ elements: { id: string }[], traces: { source: string, target: string, type: string }[] }} nachher
+ * @param {{ ohne?: string[] }} [opts]
  */
 export function aenderungen(vorher, nachher, { ohne = [] } = {}) {
   const a = new Map(vorher.elements.map((e) => [e.id, JSON.stringify(e)]));

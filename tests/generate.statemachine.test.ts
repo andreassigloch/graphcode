@@ -19,9 +19,9 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { generationStep } from '../src/loop/generate.js';
 import { ABNEHMBAR, focusViolations } from '../src/kernel/measure/focus-set.js';
 import { nachspielenRein } from './helpers/nachspielen-rein.js';
-// @ts-expect-error — Migrationswerkzeug in .mjs (CR-GC-669), bewusst ohne Typdeklaration
 import { proposeDecisions, buildCommands } from '../scripts/migrate-req-kinds.mjs';
 import { applyCommands } from '../src/kernel/apply-commands.js';
+import { MutateCommandSchema } from '@sigloch/contracts/harness';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 type Flat = { elements: { id: string; type: string; name?: string; description?: string; attributes?: Record<string, unknown>; [k: string]: unknown }[]; traces: { source: string; target: string; type: string }[] };
@@ -50,7 +50,9 @@ function ladeLauf(rel: string): Flat {
   const g = lade(rel);
   const entscheidungen = proposeDecisions(g);
   if (entscheidungen.length === 0) return g;
-  const { graph } = applyCommands(alsGraph(g), buildCommands(entscheidungen, alsGraph(g), { acceptHeuristic: true }));
+  // Das Werkzeug ist .mjs ohne Typen: der Batch geht durch den Vertrag, bevor er angewendet wird.
+  const batch = MutateCommandSchema.array().parse(buildCommands(entscheidungen, alsGraph(g), { acceptHeuristic: true }));
+  const { graph } = applyCommands(alsGraph(g), batch);
   const { nodes, edges } = graph as unknown as {
     nodes: { uid: string; type: string; name: string; description: string; attributes: Record<string, unknown> }[];
     edges: { sourceId: string; targetId: string; edgeType: string }[];
@@ -63,7 +65,9 @@ function ladeLauf(rel: string): Flat {
 /** Zwei Referenzlaeufe der Aufgabe todo, einer je Arm — eingefrorene Kopie (CR-GC-764), die lebende Referenz pflegt graphanalyze. */
 const RUNS = ['lokal', 'frontier'].map((arm) => `beispielgraphen/todo-referenz/${arm}/graph.json`).filter((p) => existsSync(ROOT + p));
 const step = (g: Flat, defer: string[] = []) => generationStep(alsGraph(g), DEFAULT_METRIC_POLICY, undefined, 0.8, defer);
-const GATE = new Set(SE_DESCRIPTOR.rules.map((r: { id: string }) => r.id));
+const GATE_REGELN = SE_DESCRIPTOR.rules;
+if (!GATE_REGELN) throw new Error('SE_DESCRIPTOR ohne rules — die Gate-Menge waere leer und der Test stumm');
+const GATE = new Set(GATE_REGELN.map((r: { id: string }) => r.id));
 
 describe('CR-GC-593: done ⇔ kein Fokus — an jedem Graphen des Korpus', () => {
   const graphen: [string, Flat][] = [[GOLDEN, lade(GOLDEN)], ...RUNS.map((p): [string, Flat] => [p, ladeLauf(p)])];

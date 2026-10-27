@@ -10,7 +10,6 @@
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-// @ts-expect-error — Mess-Skript in .mjs, bewusst ohne Typdeklaration
 import { S1, WEITERE, regelMatrixAktuell, urteilT_H2, urteilT_O1, renderStand, medianAusLog } from '../scripts/messung.mjs';
 
 const zeile = (id: string) => ({ id, kriterium: 'k', wert: '1', urteil: 'bestanden', datum: '2026-09-27', stempel: 's' });

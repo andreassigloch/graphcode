@@ -109,7 +109,7 @@ describe('CR-GC-490: der Auftrag erreicht das Mutations-Ergebnis', () => {
       const res = mitBericht(
         await m.harness.mutateWithStates([
           { op: 'delete-edge', edge: { sourceId: 'FUNC-a', targetId: 'MOD-x', edgeType: 'allocate' } },
-          { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'MOD-y', edgeType: 'allocate' } },
+          { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'MOD-y', edgeType: 'allocate', attributes: {} } },
         ]),
         m.harness.getMetricPolicy(),
         { fit: false },

@@ -39,8 +39,6 @@ const KALTSTART = [
   '+ TEST-template-root -verify-> REQ-template-root',
 ].join('\n');
 
-type Verdict = { success: boolean; tier: string; mutations: number; appliedCommands: number; violations: Array<{ ruleId: string; severity: string }>; nameWarning?: string };
-
 function makeConfig(repoRoot: string): HarnessConfig {
   return {
     repoRoot,
@@ -54,7 +52,7 @@ describe('TEST-bootstrap: new-member fill THROUGH graph_mutate', () => {
   let tmp: string;
   let kuzuPath: string;
   let harness: GraphCodeHarness;
-  const mutate = (formatE: string): Promise<Verdict> =>
+  const mutate = (formatE: string) =>
     bindToolsToHarness(harness)['graph_mutate'].handler({ formatE, consumerId: 'kaltstart' });
 
   beforeEach(async () => {
@@ -126,7 +124,7 @@ describe('TEST-bootstrap: new-member fill THROUGH graph_mutate', () => {
     expect(result.success).toBe(true);
 
     const { entries } = await bindToolsToHarness(harness)['audit_trail'].handler({ limit: 10 });
-    expect(entries.some((e: { operation: string; consumerId: string }) => e.operation === 'mutate' && e.consumerId === 'kaltstart')).toBe(true);
+    expect(entries.some((e) => e.operation === 'mutate' && e.consumerId === 'kaltstart')).toBe(true);
   });
 
   it('Direct-Write schlägt fehl: rule-violating Format-E is BLOCKED by the gate; graph stays empty', async () => {

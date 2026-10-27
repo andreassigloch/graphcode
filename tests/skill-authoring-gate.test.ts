@@ -80,7 +80,7 @@ describe('TEST-skill-authors-through-gate: Autoren-Skills liegen auf dem Apply-G
   });
 
   afterAll(async () => {
-    await harness?.shutdown?.();
+    await harness?.close();
     rmSync(repoRoot, { recursive: true, force: true });
   });
 

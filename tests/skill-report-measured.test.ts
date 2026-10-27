@@ -91,7 +91,7 @@ describe('TEST-skill-reports-measured-values: lesende Skills lesen und schreiben
   });
 
   afterAll(async () => {
-    await harness?.shutdown?.();
+    await harness?.close();
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
