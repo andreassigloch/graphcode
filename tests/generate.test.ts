@@ -693,7 +693,7 @@ describe('Intentions-Anker im Prompt (CR-GC-295); keine Gewichte (CR-GC-853)', (
   it('Seed MIT zu dünner Intention: fachliche Rückfragen statt Steuerungs-Jargon (CR-GC-307)', () => {
     // "Ein System zum Verwalten von Daten" parst sauber und verankert nichts — jedes
     // dieser Wörter matcht fast jedes Element, die Coverage läse 100% und sagte nichts.
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, 'Ein System zum Verwalten von Daten');
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, 'Ein System zum Verwalten von Daten', FOCUS);
     expect(step.prompt).toMatch(/FACHFRAGEN/);
     expect(step.prompt).not.toMatch(/Intentions-Anker/i);
     // Der Prompt verbietet dem Modell ausdrücklich, nach der Steuerung zu fragen.

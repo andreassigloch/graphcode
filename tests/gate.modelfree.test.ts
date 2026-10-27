@@ -73,7 +73,7 @@ describe('TEST-reduced-llm: das Gate braucht kein Modell', () => {
       const geblockt = await harness.mutate(lonelyReq);
       const regeln = (await harness.evaluateRules()).map((v) => `${v.ruleId}:${v.severity}`).sort();
       // computedAt ist ein Uhrstempel, keine Messung.
-      const { computedAt: _uhr, ...readiness } = (await bindToolsToHarness(harness).graph_readiness.handler({})) as Record<string, unknown>;
+      const { computedAt: _uhr, ...readiness } = await bindToolsToHarness(harness).graph_readiness.handler({});
       return { angewandt: kern(angewandt), geblockt: kern(geblockt), regeln, readiness };
     } finally {
       await harness.close();

@@ -111,11 +111,13 @@ describe('CR-GC-778: das Gate urteilt und speichert', () => {
     expect(ohne).toHaveProperty('workOrder');
     expect(ohne).not.toHaveProperty('metricsAfter');
     expect(ohne).not.toHaveProperty('fitAdvisory');
-    const mit = mitBericht(outcome, DEFAULT_METRIC_POLICY, { fit: true }) as { fitAdvisory: { delta: number[]; dimensions: string[] } };
+    const mit = mitBericht(outcome, DEFAULT_METRIC_POLICY, { fit: true });
+    const fit = mit.fitAdvisory;
+    if (!fit) throw new Error('mitBericht mit fit:true ohne fitAdvisory');
     // CR-GC-790: mit dem Architekturmass kommen die Kennzahlen danach, beide nur im Probelauf.
     expect(mit).toHaveProperty('metricsAfter');
     // Die Brueckenkante verschmilzt zwei Komponenten → viability steigt.
-    expect(mit.fitAdvisory.delta[mit.fitAdvisory.dimensions.indexOf('viability')]).toBeGreaterThan(0);
+    expect(fit.delta[fit.dimensions.indexOf('viability')]).toBeGreaterThan(0);
   });
 
   it('der Bericht traegt seinen Vertrag — ohne Dateiliste ist es keiner', async () => {

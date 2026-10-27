@@ -62,7 +62,7 @@ async function mutateThrough(): Promise<void> {
   const res = await harness.mutate([
     {
       op: 'add-node',
-      node: { uid: UID, type: 'FUNC', name: 'Flush-Sonde', description: 'Prueft den Shutdown-Export.' },
+      node: { uid: UID, type: 'FUNC', name: 'Flush-Sonde', description: 'Prueft den Shutdown-Export.', attributes: {} },
     },
   ]);
   expect(res.success, 'die Mutation selbst muss durchs Gate gehen').toBe(true);

@@ -20,6 +20,7 @@ import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { alsFormatE } from './helpers/format-e.js';
+import { mitFeld } from './helpers/antwort.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -100,9 +101,9 @@ describe('TEST-mcp-symmetry: MCP graph_mutate == harness.mutate()', () => {
     expect(mcpResult.mutations).toBe(0);
     expect(directResult.mutations).toBe(0);
 
-    const mcpR01 = mcpResult.violations.find((v: { ruleId: string }) => v.ruleId === 'R-01');
+    const mcpR01 = mcpResult.violations.find((v) => v.ruleId === 'R-01');
     const directR01 = directResult.violations.find((v) => v.ruleId === 'R-01');
-    expect(mcpR01).toBeDefined();
+    if (!mcpR01) throw new Error('graph_mutate ohne R-01');
     expect(directR01).toBeDefined();
     expect(mcpR01.severity).toBe(directR01?.severity);
     // Symmetrie heisst gleiches URTEIL, nicht gleiche Serialisierung. Die MCP-Flaeche
@@ -110,7 +111,7 @@ describe('TEST-mcp-symmetry: MCP graph_mutate == harness.mutate()', () => {
     // und Meldungsmuster, uid in `elements`) — beides absichtlich und nur auf der
     // Leitung. Verglichen wird deshalb das betroffene Element, nicht das Feld, in dem
     // es steht.
-    expect(mcpR01.elements).toEqual([directR01?.elementId]);
+    expect(mitFeld(mcpR01, 'elements').elements).toEqual([directR01?.elementId]);
   });
 
   it('audit_trail records MCP mutations', async () => {

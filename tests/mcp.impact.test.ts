@@ -17,6 +17,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { mitFeld } from './helpers/antwort.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 const REPO_ROOT = join(__dirname, '..');
@@ -122,10 +123,13 @@ describe('TEST-impact-subgraph: graph_impact precision (R6/R12)', () => {
   it('graph_elements returns a filtered subset, not the full graph', async () => {
     const registry = bindToolsToHarness(harness);
 
-    const { nodes, total } = await registry['graph_elements'].handler({
-      type: 'REQ',
-      limit: 100,
-    });
+    const { nodes, total } = mitFeld(
+      await registry['graph_elements'].handler({
+        type: 'REQ',
+        limit: 100,
+      }),
+      'nodes',
+    );
 
     // Must return only REQ nodes
     expect(nodes.every((n: { type: string }) => n.type === 'REQ')).toBe(true);

@@ -100,7 +100,7 @@ export type MCPToolRegistry = Record<string, MCPTool<any, any>>;
  * Executor, dessen Modell dieselben Werkzeuge in-process aufruft. Dort lief der Aufruf bis
  * CR-GC-647 roh ueber `handler()` — ohne Defaults und ohne diese Pruefung.
  */
-export function strengesSchema(tool: MCPTool): ZodType {
+export function strengesSchema(tool: Pick<MCPTool, 'inputSchema'>): ZodType {
   const schema = tool.inputSchema as unknown as ZodObject<ZodRawShape>;
   return typeof schema.strict === 'function' ? schema.strict() : (schema as unknown as ZodType);
 }

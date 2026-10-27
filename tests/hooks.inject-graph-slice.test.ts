@@ -80,7 +80,7 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
       { op: 'add-edge', edge: { sourceId: 'CR-GC-367', targetId: 'FUNC-inject-slice', edgeType: 'relation', attributes: {} } },
       { op: 'add-edge', edge: { sourceId: 'CR-GC-367', targetId: 'MS-1-slice', edgeType: 'relation', attributes: {} } },
     ];
-    const result = await bridge.getHarness().mutate(commands, 'test');
+    const result = await bridge.getHarness().mutate(commands);
     expect(result.success, JSON.stringify(result.violations)).toBe(true);
   }, 60_000);
 

@@ -561,6 +561,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-867` | n/a | Werkzeug-Register typisieren: MCPTool traegt sein Schema | `FUNC-bind-tools` |
 | `CR-GC-868` | n/a | Register beim Binden typisieren | `FUNC-bind-tools` |
 | `CR-GC-870` | n/a | tsc-Fehler in tests/ beheben, Teil 2 | `FUNC-graph-generate-tool` |
+| `CR-GC-871` | n/a | tsc-Fehler in tests/ beheben, Teil 3 | `FUNC-graph-mutate-tool` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

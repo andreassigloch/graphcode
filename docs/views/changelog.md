@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 480 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 481 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 480 CR · 343 done · 4 open.
+Total: 481 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -542,3 +542,4 @@ Total: 480 CR · 343 done · 4 open.
 | `CR-GC-868` | n/a | Register beim Binden typisieren |
 | `CR-GC-869` | n/a | tsc-Fehler in tests/ beheben, Teil 1 |
 | `CR-GC-870` | n/a | tsc-Fehler in tests/ beheben, Teil 2 |
+| `CR-GC-871` | n/a | tsc-Fehler in tests/ beheben, Teil 3 |

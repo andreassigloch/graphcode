@@ -282,7 +282,17 @@ export function bindWriteTools(ctx: ToolContext) {
 
   const graph_mutate: MCPTool<
     typeof GraphMutateInputSchema,
-    MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta; vorschlag?: string; refs?: BindingReport }
+    // `violations` folgt der Eingabe: `summary` (Default) faltet je Regel und Meldungsmuster
+    // (`elements`), `full` liefert ein Eintrag je Element (`elementId`) — CR-GC-570, CR-GC-871.
+    Omit<MutateResult, 'violations'> & {
+      violations: MutateResult['violations'] | GroupedViolation[];
+      graphVersion: number;
+      occWarning?: string;
+      nameWarning?: string;
+      steeringDelta?: SteeringDelta;
+      vorschlag?: string;
+      refs?: BindingReport;
+    }
   > = {
     name: 'graph_mutate',
     description:

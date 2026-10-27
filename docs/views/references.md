@@ -1383,6 +1383,8 @@
 | `CR-GC-869` | relation | `SCHEMA-mcp-tool-registry` |
 | `CR-GC-870` | relation | `FUNC-graph-generate-tool` |
 | `CR-GC-870` | relation | `SCHEMA-mcp-tool-registry` |
+| `CR-GC-871` | relation | `FUNC-graph-mutate-tool` |
+| `CR-GC-871` | relation | `SCHEMA-mcp-tool` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
