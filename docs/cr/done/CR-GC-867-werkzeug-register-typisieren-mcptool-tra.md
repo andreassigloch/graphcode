@@ -1,6 +1,6 @@
 # CR-GC-867: MCPTool traegt sein Eingabe-Schema (Teil 2 von ITEM-2026-1094)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-27)
 **Typ:** aus Item ITEM-2026-1097 (idea)
 **Erstellt:** 2026-10-27
 **Item:** bok/items/ITEM-2026-1097.json (Lane: code)
