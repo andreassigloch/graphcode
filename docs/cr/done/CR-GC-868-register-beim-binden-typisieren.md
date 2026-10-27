@@ -1,6 +1,6 @@
 # CR-GC-868: Register beim Binden typisieren (Teil 2b von ITEM-2026-1094)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-27)
 **Typ:** aus Item ITEM-2026-1103 (idea)
 **Erstellt:** 2026-10-27
 **Item:** bok/items/ITEM-2026-1103.json (Lane: code)
