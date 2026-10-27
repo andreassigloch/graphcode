@@ -206,7 +206,7 @@ export async function serveStdio(opts?: {
         // zweiter Schreiber auf einem Kuzu-Store — also endet diese Session.
         onLockLost: () => {
           process.stderr.write('[graphcode] host: store lock taken over by another host — ending this session\n');
-          void lifecycle.shutdown('store lock lost').then(() => process.exit(0));
+          lifecycle.end('store lock lost');
         },
       },
     );

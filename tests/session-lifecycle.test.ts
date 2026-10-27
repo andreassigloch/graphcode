@@ -109,6 +109,18 @@ describe('TEST-session-lifecycle', () => {
     expect(h.exits).toEqual([0]);
   });
 
+  // CR-GC-865: der Lock-Verlust rief `shutdown` direkt — ohne Deckel. Hing ein Schritt, lebte
+  // der Host ohne Lock weiter und nahm Aufrufe an, die nie eine Antwort bekamen.
+  it('end() beendet auch bei hängendem Schritt — derselbe Deckel wie bei Signalen', async () => {
+    const h = makeLifecycle();
+    h.lc.add({ name: 'store lock', close: () => new Promise<void>(() => undefined) });
+    h.lc.end('store lock lost');
+    expect(h.exits).toEqual([]);
+    h.timers.forEach((fn) => fn());
+    expect(h.exits).toEqual([0]);
+    expect(h.log.join('')).toContain('shutting down (store lock lost)');
+  });
+
   it('meldet den Grund des Abbaus auf stderr', async () => {
     const h = makeLifecycle();
     await h.lc.shutdown('SIGTERM');

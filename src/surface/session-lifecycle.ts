@@ -79,6 +79,22 @@ export class SessionLifecycle {
   }
 
   /**
+   * DER Abbauweg für jeden Auslöser: Signal, stdin-EOF und Lock-Verlust (CR-GC-865).
+   *
+   * Der Deckel läuft PARALLEL zum Abbau: hängt eine Freigabe, wird trotzdem beendet, statt
+   * mit oder ohne Lock weiterzulaufen. unref, damit der Timer den Prozess nicht am Leben hält.
+   * Vorher rief der Lock-Verlust `shutdown` direkt — ohne Deckel; ein hängender Schritt ließ
+   * den Host ohne Lock laufen, und jeder Aufruf an ihn blieb ohne Antwort.
+   */
+  end(reason: string): void {
+    if (this.closing) return;
+    const exit = this.deps.exit ?? ((code: number) => process.exit(code));
+    const cap = (this.deps.setTimeoutImpl ?? setTimeout)(() => exit(0), GRACE_MS);
+    (cap as { unref?: () => void }).unref?.();
+    void this.shutdown(reason).then(() => exit(0));
+  }
+
+  /**
    * Bindet die Auslöser: jedes Abbruchsignal UND das Ende des stdio-Clients. stdin-EOF
    * ist der wichtigere der beiden — ein geschlossenes Editor-Fenster schickt nicht
    * zwingend ein Signal, aber es schließt immer die Pipe.
@@ -91,21 +107,9 @@ export class SessionLifecycle {
         process.stdin.on('end', h);
         process.stdin.on('close', h);
       });
-    const exit = this.deps.exit ?? ((code: number) => process.exit(code));
-    const setTimeoutFn = this.deps.setTimeoutImpl ?? setTimeout;
-
-    const teardown = (reason: string): void => {
-      if (this.closing) return;
-      // Der Deckel läuft PARALLEL zum Abbau: hängt eine Freigabe, wird trotzdem beendet,
-      // statt den Lock zu behalten. unref, damit der Timer den Prozess nicht am Leben hält.
-      const cap = setTimeoutFn(() => exit(0), GRACE_MS);
-      (cap as { unref?: () => void }).unref?.();
-      void this.shutdown(reason).then(() => exit(0));
-    };
-
     for (const sig of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const) {
-      onSignal(sig, () => teardown(sig));
+      onSignal(sig, () => this.end(sig));
     }
-    onStdinEnd(() => teardown('client disconnected'));
+    onStdinEnd(() => this.end('client disconnected'));
   }
 }

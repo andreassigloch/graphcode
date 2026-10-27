@@ -1368,6 +1368,9 @@
 | `CR-GC-863` | relation | `FUNC-se-modulebene` |
 | `CR-GC-863` | relation | `FUNC-se-optimize` |
 | `CR-GC-863` | relation | `FUNC-se-top-level` |
+| `CR-GC-865` | relation | `FUNC-gve-supervise` |
+| `CR-GC-865` | relation | `FUNC-session-shutdown` |
+| `CR-GC-865` | relation | `REQ-host-end-visible` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2653,6 +2656,7 @@
 | `FUNC-gve-supervise` | allocate | `MOD-surface` |
 | `FUNC-gve-supervise` | io | `FLOW-session-entry` |
 | `FUNC-gve-supervise` | io | `FLOW-viewer-start` |
+| `FUNC-gve-supervise` | satisfy | `REQ-host-end-visible` |
 | `FUNC-gve-supervise` | satisfy | `REQ-viewer-owned-by-repo` |
 | `FUNC-harness-cli` | allocate | `MOD-surface` |
 | `FUNC-harness-cli` | io | `FLOW-channel-guardrails` |
@@ -2875,6 +2879,7 @@
 | `FUNC-session-shutdown` | io | `FLOW-gve-stop` |
 | `FUNC-session-shutdown` | io | `FLOW-lock-release` |
 | `FUNC-session-shutdown` | io | `FLOW-socket-close` |
+| `FUNC-session-shutdown` | satisfy | `REQ-host-end-visible` |
 | `FUNC-session-shutdown` | satisfy | `REQ-session-leaves-nothing-behind` |
 | `FUNC-take-steering-snapshot` | allocate | `MOD-kernel-measure` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
@@ -3225,6 +3230,7 @@
 | `TEST-hooks` | verify | `REQ-hook-extension-points` |
 | `TEST-hooks` | verify | `REQ-hook-order-deterministic` |
 | `TEST-hooks` | verify | `REQ-precommit-timeout` |
+| `TEST-host-ende-sichtbar` | verify | `REQ-host-end-visible` |
 | `TEST-host-shim` | verify | `REQ-docked-session-reelects-once` |
 | `TEST-host-shim` | verify | `REQ-further-session-docks-via-socket` |
 | `TEST-host-shim` | verify | `REQ-host-holds-only-kuzu-handle` |
@@ -3369,6 +3375,7 @@
 | `TEST-selective-test-audit` | verify | `SCHEMA-code-lane-plan` |
 | `TEST-selective-test-audit` | verify | `SCHEMA-impacted-tests` |
 | `TEST-selective-test-audit` | verify | `SCHEMA-test-selection` |
+| `TEST-session-lifecycle` | verify | `REQ-host-end-visible` |
 | `TEST-session-lifecycle` | verify | `REQ-session-leaves-nothing-behind` |
 | `TEST-session-lifecycle` | verify | `REQ-single-kuzu-owner` |
 | `TEST-shared-views-no-fork` | verify | `REQ-shared-views-no-fork` |
@@ -3583,6 +3590,7 @@
 | `UC-repo-lifecycle` | compose | `FCHAIN-schema-migration` |
 | `UC-repo-lifecycle` | compose | `FCHAIN-session-end` |
 | `UC-repo-lifecycle` | compose | `REQ-bootstrap-through-gate` |
+| `UC-repo-lifecycle` | compose | `REQ-host-end-visible` |
 | `UC-repo-lifecycle` | compose | `REQ-install-idempotent` |
 | `UC-repo-lifecycle` | compose | `REQ-npx-distribution` |
 | `UC-repo-lifecycle` | compose | `REQ-post-harness-cli` |

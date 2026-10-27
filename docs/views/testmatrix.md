@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 187 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 188 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -72,6 +72,7 @@
 | `REQ-held-back-edges-in-readiness` | ✓ | ✓ passed | `TEST-import-rejected-traces` |
 | `REQ-hook-extension-points` | ✓ | ✓ passed | `TEST-hooks` |
 | `REQ-hook-order-deterministic` | ✓ | ✓ passed | `TEST-hooks` |
+| `REQ-host-end-visible` | ✓ | ✓ passed | `TEST-host-ende-sichtbar` · `TEST-session-lifecycle` |
 | `REQ-host-holds-only-kuzu-handle` | ✓ | ✓ passed | `TEST-host-shim` |
 | `REQ-impact-based-testing` | ✓ | ✓ passed | `TEST-mvp-e2e` · `TEST-selective-test-audit` |
 | `REQ-import-code-renames-by-candidate` | ✓ | ✓ passed | `TEST-import-code-umbenennung` |
@@ -196,8 +197,8 @@
 | `REQ-vorbereitung-reads-metrics` | ✓ | ✓ passed | `TEST-vorbereitung-reads-metrics` |
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 
-Coverage: 187/187 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 150/187 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 188/188 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 151/188 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

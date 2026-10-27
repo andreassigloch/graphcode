@@ -12,7 +12,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { existsSync, readFileSync, realpathSync } from 'node:fs';
+import { closeSync, existsSync, mkdirSync, openSync, readFileSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { spawn, type ChildProcess } from 'node:child_process';
@@ -38,6 +38,13 @@ function physicalPath(p: string): string {
   } catch {
     return p;
   }
+}
+
+/** Wohin der Viewer schreibt: `.graphcode/gve.log`, neben seinem pid-Vermerk. */
+function viewerLogFile(repoRoot: string): string {
+  const dir = join(repoRoot, '.graphcode');
+  mkdirSync(dir, { recursive: true });
+  return join(dir, 'gve.log');
 }
 
 /** Beendet eine Prozessgruppe (der Viewer ist `detached`, also ihr Führer). */
@@ -135,7 +142,7 @@ async function probeViewer(
  * scheiterte offline und band den Viewer an das, was die Registry gerade `latest`
  * nannte, statt an die getestete Version. `process.execPath` statt Shebang: derselbe
  * node wie dieser Host, unabhängig von Exec-Bits und vom `node` auf dem PATH.
- * stdout bleibt weg von fd 1 — das ist der MCP-JSON-RPC-Kanal.
+ * Ausgabe nach `.graphcode/gve.log`: fd 1 ist der MCP-JSON-RPC-Kanal, fd 2 hielte die Pipe des Hosts offen.
  */
 function spawnViewer(repoRoot: string, deps: StartGveDeps): ChildProcess | null {
   const env = deps.env ?? process.env;
@@ -160,10 +167,16 @@ function spawnViewer(repoRoot: string, deps: StartGveDeps): ChildProcess | null 
     bin = process.execPath;
     args = [entry];
   }
+  // Die Ausgabe des Viewers geht in eine eigene Datei, nie in die stderr des Hosts (CR-GC-865).
+  // Ein Viewer, der die stderr-Pipe erbt, haelt sie offen, solange er lebt — und er lebt ueber
+  // den Host hinaus, wenn eine zweite Sitzung ihn braucht. Der MCP-Client erkennt das Ende des
+  // Hosts erst, wenn alle Pipes zu sind; bis dahin blieb jeder Aufruf ohne Antwort.
+  const logFd = openSync(viewerLogFile(repoRoot), 'a');
   const child = (deps.spawnImpl ?? spawn)(bin, [...args, '--repo', repoRoot], {
-    stdio: ['ignore', 2, 2],
+    stdio: ['ignore', logFd, logFd],
     detached: true,
   });
+  closeSync(logFd);
   child.on('error', (err: Error) => {
     process.stderr.write(
       `[graphcode] WARN: gve failed to start (${err.message}) — set GRAPHCODE_GVE_BIN or silence with GRAPHCODE_NO_GVE=1\n`,
