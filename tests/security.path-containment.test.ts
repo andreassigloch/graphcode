@@ -24,6 +24,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { HostBridge } from '../src/surface/host.js';
 import { isExportPending, setExportPending } from '../src/kernel/export-marker.js';
+import { assertInRepo } from '../src/projections/export.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -112,11 +113,13 @@ describe('TEST-path-containment: no graph-driven write escapes repoRoot (CR-GC-2
     const parsed = tools.graph_export.inputSchema.safeParse({ name: '../../../ESCAPED-NAME' });
     expect(parsed.success).toBe(false); // schema explains it early to the agent
 
-    // …and the assertion is the actual lock, independent of the schema (a future
-    // third sink hits it too): call the handler with the unvalidated input.
+    // A direct handler call goes through the same schema since CR-GC-866 — the registry parses
+    // every input, so no tool input reaches the backstop any more. The backstop itself is the
+    // lock independent of any schema (a future third sink hits it): asserted directly.
     await expect(
       tools.graph_export.handler({ name: '../../../ESCAPED-NAME', views: undefined, force: false }),
-    ).rejects.toThrow(/path containment/i);
+    ).rejects.toThrow(/bare basename/i);
+    expect(() => assertInRepo(repoRoot, 'docs/graph/../../../ESCAPED-NAME.graph.json')).toThrow(/path containment/i);
 
     expect(existsSync(join(outer, 'ESCAPED-NAME.graph.json'))).toBe(false);
     expect(existsSync(join(outer, 'nested', 'ESCAPED-NAME.graph.json'))).toBe(false);

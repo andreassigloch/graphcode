@@ -51,8 +51,8 @@ export interface HostSocket {
 /**
  * Serve `registry` on a local Unix socket. Only the elected host (the lock
  * owner) calls this, so a leftover socket FILE from a crashed host is safely
- * removed before listen. Dispatch re-parses input against the tool's own Zod
- * schema — the proxy hop adds NO semantics (gate symmetry, CR-124 analog).
+ * removed before listen. The registry parses every input against the tool's own
+ * Zod schema (CR-GC-866) — the proxy hop adds NO semantics (gate symmetry, CR-124 analog).
  */
 export function startHostSocket(registry: MCPToolRegistry, socketPath: string): Promise<HostSocket> {
   rmSync(socketPath, { force: true }); // stale file from a killed host; we hold the lock
@@ -86,7 +86,8 @@ export function startHostSocket(registry: MCPToolRegistry, socketPath: string): 
       // process may stamp OUR relayed prompt onto it — see beginProxiedCall.
       beginProxiedCall();
       try {
-        const result = await tool.handler(tool.inputSchema.parse(req.input ?? {}));
+        // Die Eingangspruefung macht das Register selbst (CR-GC-866).
+        const result = await tool.handler(req.input ?? {});
         response = { id, ok: true, result };
       } finally {
         endProxiedCall();

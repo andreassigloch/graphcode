@@ -148,22 +148,12 @@ describe('graph_mutate: formatE + dryRun + Preview-Audit (CR-GC-276)', () => {
     expect(rejected[0].violations?.[0]?.ruleId).toBe('STRUCT');
   });
 
-  it('Schema-Fehler am Handler (In-Process-Caller ohne formatE) → auditiertes INPUT-SCHEMA-Verdict (CR-GC-286)', async () => {
-    const res = (await tools.graph_mutate.handler({ consumerId: 'exec-test' })) as {
-      success: boolean;
-      tier: string;
-      violations: { ruleId: string; message: string }[];
-    };
-    expect(res.success).toBe(false);
-    expect(res.tier).toBe('block');
-    expect(res.violations[0].ruleId).toBe('INPUT-SCHEMA');
-    // ITEM-2026-604: die Meldung nennt den Umstieg, nicht nur das fehlende Feld.
-    expect(res.violations[0].message).toContain('commandsToFormatE');
-
-    const rejected = readAudit(tmp).filter((e) => e.result === 'rejected');
-    expect(rejected.length).toBe(1);
-    expect(rejected[0].consumerId).toBe('exec-test');
-    expect(rejected[0].violations?.[0]?.ruleId).toBe('INPUT-SCHEMA');
+  it('Schema-Fehler beim direkten Aufruf (ohne formatE) endet im Register, vor dem Gate (CR-GC-866)', async () => {
+    // Bis CR-GC-866 gab der Handler hier ein auditiertes INPUT-SCHEMA-Verdict. Ueber MCP lehnte
+    // das SDK dieselbe Eingabe schon vorher ab; jetzt endet sie auf beiden Wegen an derselben Stelle.
+    await expect(tools.graph_mutate.handler({ consumerId: 'exec-test' })).rejects.toThrow(/commandsToFormatE/);
+    // ITEM-2026-604: die Meldung nennt den Umstieg, nicht nur das fehlende Feld (Text oben).
+    expect(readAudit(tmp).filter((e) => e.consumerId === 'exec-test')).toEqual([]);
   });
 
   it('dryRun: volles Verdict, nichts persistiert, Version unbewegt', async () => {

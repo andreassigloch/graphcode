@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 475 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 476 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 475 CR · 343 done · 4 open.
+Total: 476 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -537,3 +537,4 @@ Total: 475 CR · 343 done · 4 open.
 | `CR-GC-863` | n/a | Skills fuehren Hardware-Systeme falsch: Teile des eigenen Produkts (Servo, Netzteil, Sensor) landen als ACTOR, und der MOD-Schnitt hat keine Regel fuer Domaenen (Mechanik/Elektronik/Software) — Befund sirail CR-028/029 |
 | `CR-GC-864` | n/a | se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt |
 | `CR-GC-865` | n/a | Host-Ende fuer den Client sichtbar |
+| `CR-GC-866` | n/a | type-check prueft tests/ nicht, tote Typen und Aufrufe fallen nicht auf |

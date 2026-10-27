@@ -1371,6 +1371,11 @@
 | `CR-GC-865` | relation | `FUNC-gve-supervise` |
 | `CR-GC-865` | relation | `FUNC-session-shutdown` |
 | `CR-GC-865` | relation | `REQ-host-end-visible` |
+| `CR-GC-866` | relation | `FUNC-bind-tools` |
+| `CR-GC-866` | relation | `FUNC-graph-mutate-tool` |
+| `CR-GC-866` | relation | `FUNC-host-socket` |
+| `CR-GC-866` | relation | `FUNC-serve-stdio` |
+| `CR-GC-866` | relation | `REQ-tool-input-parsed-once` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2348,6 +2353,7 @@
 | `FUNC-bind-tools` | io | `FLOW-read-bind` |
 | `FUNC-bind-tools` | io | `FLOW-tool-registry` |
 | `FUNC-bind-tools` | satisfy | `REQ-mcp-tool-registry` |
+| `FUNC-bind-tools` | satisfy | `REQ-tool-input-parsed-once` |
 | `FUNC-block-abfrage` | compose | `FUNC-audit-stats` |
 | `FUNC-block-abfrage` | compose | `FUNC-audit-trail` |
 | `FUNC-block-abfrage` | compose | `FUNC-authoring-guide` |
@@ -3097,6 +3103,7 @@
 | `SYS-graphcode` | compose | `REQ-store-recovery` |
 | `SYS-graphcode` | compose | `REQ-target-state` |
 | `SYS-graphcode` | compose | `REQ-token-efficiency` |
+| `SYS-graphcode` | compose | `REQ-tool-input-parsed-once` |
 | `SYS-graphcode` | compose | `REQ-versioned-cache` |
 | `SYS-graphcode` | compose | `UC-code-quality` |
 | `SYS-graphcode` | compose | `UC-deterministic-steering` |
@@ -3447,6 +3454,7 @@
 | `TEST-violation-context` | verify | `REQ-rule-enforcement` |
 | `TEST-vorbereitung-reads-metrics` | verify | `REQ-vorbereitung-constraints` |
 | `TEST-vorbereitung-reads-metrics` | verify | `REQ-vorbereitung-reads-metrics` |
+| `TEST-werkzeug-eingang-geparst` | verify | `REQ-tool-input-parsed-once` |
 | `TEST-working-set-spezlauf` | verify | `REQ-token-efficiency` |
 | `TEST-zug-kennzahlen-danach` | verify | `REQ-zug-zeigt-kennzahlen-danach` |
 | `UC-code-quality` | compose | `FCHAIN-apply-gate` |

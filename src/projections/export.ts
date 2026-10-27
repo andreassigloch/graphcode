@@ -74,7 +74,7 @@ function isOwnMutateDeletion(
  * outside `docs/graph/` escapes BOTH the deny-graph-write hook glob and the pre-commit
  * freshness guard while `clearExportPending()` still fires — drift marker gone, SSOT stale.
  */
-function assertInRepo(repoRoot: string, rel: string): string {
+export function assertInRepo(repoRoot: string, rel: string): string {
   const abs = resolve(repoRoot, rel);
   const back = relative(repoRoot, abs);
   if (back === '' || back.startsWith('..') || isAbsolute(back)) {

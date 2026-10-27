@@ -292,38 +292,10 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
       'rejected with the delta since. The full command signatures come back in the SCHEMA-01 error ' +
       'text, so they need not be carried here. `vorschlag` in the result is for the user, not for you (CR-GC-732).',
     inputSchema: GraphMutateInputSchema,
-    async handler(raw) {
+    // Die Eingabe kommt geparst aus dem Register (CR-GC-866); ein Schema-Fehler endet dort,
+    // vor dem Gate — ueber MCP wie beim direkten Aufruf.
+    async handler(input) {
       return serializeToolWrite(async () => {
-        // Input-Parität (CR-GC-286): derselbe Zod-Parse wie am MCP-Transport, auch
-        // für In-Process-Caller (Tests). Ein Schema-Fehler ist ein
-        // AUDITIERTES Block-Verdict mit der Zod-Meldung — kein unauditierter
-        // Handler-Throw (die 63/81-Lücke der Opus-Nachanalyse).
-        const parsedInput = GraphMutateInputSchema.safeParse(raw);
-        if (!parsedInput.success) {
-          const consumerId =
-            typeof raw === 'object' && raw !== null && typeof (raw as { consumerId?: unknown }).consumerId === 'string'
-              ? (raw as { consumerId: string }).consumerId
-              : 'mcp-client';
-          const result: MutateResult = {
-            success: false,
-            appliedCommands: 0,
-            mutations: 0,
-            violations: [
-              {
-                ruleId: 'INPUT-SCHEMA',
-                severity: 'error',
-                message: parsedInput.error.issues
-                  .map((i) => (i.path.length > 0 ? i.path.join('.') + ': ' : '') + i.message)
-                  .join('; '),
-              },
-            ],
-            confidence: 0,
-            tier: 'block',
-          };
-          await recordAudit(consumerId, result, []);
-          return { ...result, graphVersion: graphVersion() };
-        }
-        const input = parsedInput.data;
         // Format-E-Decode VOR dem Gate: ein Parse-Fehler ist ein Block-Verdict,
         // kein Transport-Crash — der Autor bekommt die Codec-Meldung als Violation.
         let commands: MutateCommand[];

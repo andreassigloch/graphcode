@@ -82,9 +82,8 @@ export function bindRegistryToMcpServer(registry: MCPToolRegistry): McpServer {
       tool.name,
       { description: tool.description, inputSchema: strengesSchema(tool) },
       async (args: unknown) => {
-        // Re-validate against the tool's own schema (idempotent over the SDK's
-        // parse) so the handler always receives canonical, defaulted input.
-        const result = await tool.handler(tool.inputSchema.parse(args));
+        // Die Eingangspruefung macht das Register selbst (CR-GC-866) — hier wird nur durchgereicht.
+        const result = await tool.handler(args);
         return { content: [{ type: 'text' as const, text: serializeToolResult(result) }] };
       },
     );

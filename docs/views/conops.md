@@ -557,6 +557,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-862` | n/a | Skill-Texte nach Option A (CR-GC-853): se:optimize belegt verletzt mit steerAdvisory statt fitAdvisory/regressions, se:generate ohne fitAdvisory | `FUNC-se-generate` · `FUNC-se-optimize` |
 | `CR-GC-863` | n/a | Skills fuehren Hardware-Systeme falsch: Teile des eigenen Produkts (Servo, Netzteil, Sensor) landen als ACTOR, und der MOD-Schnitt hat keine Regel fuer Domaenen (Mechanik/Elektronik/Software) — Befund sirail CR-028/029 | `FUNC-author-actor` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-top-level` |
 | `CR-GC-865` | n/a | Host-Ende fuer den Client sichtbar | `FUNC-gve-supervise` · `FUNC-session-shutdown` · `REQ-host-end-visible` |
+| `CR-GC-866` | n/a | type-check prueft tests/ nicht, tote Typen und Aufrufe fallen nicht auf | `FUNC-bind-tools` · `FUNC-graph-mutate-tool` · `FUNC-host-socket` · `FUNC-serve-stdio` · `REQ-tool-input-parsed-once` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

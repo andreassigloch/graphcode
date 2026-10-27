@@ -98,6 +98,24 @@ function withConsultationTracking(registry: MCPToolRegistry, ctx: ToolContext): 
   return wrapped;
 }
 
+/**
+ * Die EINE Eingangspruefung jedes Werkzeugs (CR-GC-866): jeder Aufruf geht durch das Schema
+ * des Werkzeugs, bevor der Handler ihn sieht — Defaults gesetzt, Ungueltiges abgewiesen.
+ *
+ * Geparst wurde vorher an zwei Grenzen, im MCP-Server und am Host-Socket. Wer `handler()`
+ * direkt rief (import-code, der Auto-Export, jeder Test), bekam die Eingabe roh:
+ * `graph_elements({})` lieferte alle Knoten statt der Default-Grenze 100. Jetzt parst das
+ * Register selbst, und die Grenzen reichen nur noch durch.
+ */
+function withInputParsing(registry: MCPToolRegistry): MCPToolRegistry {
+  return Object.fromEntries(
+    Object.entries(registry).map(([name, tool]) => [
+      name,
+      { ...tool, handler: async (input: unknown) => tool.handler(tool.inputSchema.parse(input ?? {})) },
+    ]),
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Factory
 // ---------------------------------------------------------------------------
@@ -140,7 +158,7 @@ export function bindToolsWithContext(
   // erst beim Aufruf auf — im Agenten. `parse`, nicht `safeParse`: ein kaputtes Register
   // ist kein Zustand, in dem der Host weiterlaufen soll.
   const registry = MCPToolRegistrySchema.parse(withConsultationTracking(
-    {
+    withInputParsing({
       ...bindReadTools(ctx),
       ...bindWriteTools(ctx),
       ...bindReportTools(ctx),
@@ -149,7 +167,7 @@ export function bindToolsWithContext(
       ...bindSuggestTools(ctx),
       ...bindMetricsTools(ctx),
       ...bindTestReportTools(ctx),
-    },
+    }),
     ctx,
   )) as MCPToolRegistry;
   return { ctx, registry };

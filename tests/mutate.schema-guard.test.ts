@@ -91,7 +91,10 @@ describe('TEST-mutate-schema-guard (CR-GC-239)', () => {
     const ok = await tools.graph_mutate.handler({ formatE: alsFormatE(VALID, harness), consumerId: 'guard-test' });
     expect((ok as { graphVersion: number }).graphVersion).toBe(1);
 
-    const bad = await tools.graph_mutate.handler({ formatE: alsFormatE([MALFORMED], harness), consumerId: 'guard-test' });
+    // Ein Kommando in Rohform ist ueber das Werkzeug nicht formulierbar (Format-E ist Text, und
+    // das Register parst die Eingabe, CR-GC-866). Abgewiesen wird hier eine Kante ins Leere — das
+    // Gate blockt, und genau das soll der Audit als `rejected` tragen.
+    const bad = await tools.graph_mutate.handler({ formatE: '## Edges\n+ TEST-ok -verify-> REQ-fehlt\n', consumerId: 'guard-test' });
     expect((bad as { success: boolean }).success).toBe(false);
     expect((bad as { graphVersion: number }).graphVersion).toBe(1); // unchanged
 

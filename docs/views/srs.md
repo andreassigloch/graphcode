@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 188 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 189 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -5910,6 +5910,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-tool-input-parsed-once` — Werkzeug-Eingabe einmal im Register geparst
+
+Jede Werkzeug-Eingabe muss genau einmal gegen das Schema des Werkzeugs geparst werden, im Register: Defaults gesetzt, Ungueltiges abgewiesen, gleich ob der Aufruf ueber MCP, den Host-Socket oder direkt im Prozess kommt. (CR-GC-866)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-werkzeug-eingang-geparst` (integration) · satisfy ◀ `FUNC-bind-tools` · allocate ▶ `MOD-surface`
+
 ##### 3.7.2.5  `FUNC-graph-export-snapshot` — graph_export(views?)
 
 > auch in: `FCHAIN-doc-export` · `FCHAIN-session-end` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FUNC-block-speicherwerk`
@@ -7302,6 +7310,14 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
 
+###### `REQ-tool-input-parsed-once` — Werkzeug-Eingabe einmal im Register geparst
+
+Jede Werkzeug-Eingabe muss genau einmal gegen das Schema des Werkzeugs geparst werden, im Register: Defaults gesetzt, Ungueltiges abgewiesen, gleich ob der Aufruf ueber MCP, den Host-Socket oder direkt im Prozess kommt. (CR-GC-866)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-werkzeug-eingang-geparst` (integration) · satisfy ◀ `FUNC-bind-tools` · allocate ▶ `MOD-surface`
+
 ##### 3.9.1.7  `FUNC-serve-stdio` — serveStdio()
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-schema-migration` · `FUNC-block-host-sitzung`
@@ -7547,6 +7563,14 @@ CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (writ
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
+
+###### `REQ-tool-input-parsed-once` — Werkzeug-Eingabe einmal im Register geparst
+
+Jede Werkzeug-Eingabe muss genau einmal gegen das Schema des Werkzeugs geparst werden, im Register: Defaults gesetzt, Ungueltiges abgewiesen, gleich ob der Aufruf ueber MCP, den Host-Socket oder direkt im Prozess kommt. (CR-GC-866)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-werkzeug-eingang-geparst` (integration) · satisfy ◀ `FUNC-bind-tools` · allocate ▶ `MOD-surface`
 
 ##### 3.9.2.6  `FUNC-tool-context` — createToolContext
 
@@ -8969,6 +8993,14 @@ CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (writ
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · `FUNC-graph-generate-tool` · `FUNC-graph-help` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-host-proxy` · `FUNC-rules-tool` · `FUNC-serve-stdio` · `FUNC-tool-context` · allocate ▶ `MOD-loop` · `MOD-projections` · `MOD-surface`
+
+###### `REQ-tool-input-parsed-once` — Werkzeug-Eingabe einmal im Register geparst
+
+Jede Werkzeug-Eingabe muss genau einmal gegen das Schema des Werkzeugs geparst werden, im Register: Defaults gesetzt, Ungueltiges abgewiesen, gleich ob der Aufruf ueber MCP, den Host-Socket oder direkt im Prozess kommt. (CR-GC-866)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-werkzeug-eingang-geparst` (integration) · satisfy ◀ `FUNC-bind-tools` · allocate ▶ `MOD-surface`
 
 ###### 3.10.1.3.2  `FUNC-load-config` — loadGraphcodeConfig
 
@@ -14334,13 +14366,19 @@ Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarri
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-### 8.167  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+### 8.167  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+
+Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
+
+verify ▶ `REQ-tool-input-parsed-once` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
+
+### 8.168  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-### 8.168  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+### 8.169  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 
@@ -14348,4 +14386,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-188 REQ · 188 verified · 0 without a verifying TEST (R-01).
+189 REQ · 189 verified · 0 without a verifying TEST (R-01).
