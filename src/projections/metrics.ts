@@ -119,10 +119,10 @@ export const GraphMetricsAnswerSchema = z.object({
 });
 export type GraphMetricsAnswer = z.infer<typeof GraphMetricsAnswerSchema>;
 
-export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
+export function bindMetricsTools(ctx: ToolPort) {
   const { harness, graphVersion } = ctx;
 
-  const graph_metrics: MCPTool<z.infer<typeof GraphMetricsInputSchema>, GraphMetricsAnswer> = {
+  const graph_metrics: MCPTool<typeof GraphMetricsInputSchema, GraphMetricsAnswer> = {
     name: 'graph_metrics',
     description:
       'Which module is the coupling problem? One row per MOD — fan-in/out, instability, LCOM4, ' +
@@ -171,5 +171,5 @@ export function bindMetricsTools(ctx: ToolPort): MCPToolRegistry {
     },
   };
 
-  return { graph_metrics };
+  return { graph_metrics } satisfies MCPToolRegistry;
 }

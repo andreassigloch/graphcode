@@ -62,7 +62,7 @@ export const GraphTestIngestInputSchema = z
 
 const GraphTestReportInputSchema = z.looseObject({});
 
-export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
+export function bindTestReportTools(ctx: ToolPort) {
   const { harness, graphVersion, recordAudit, serializeToolWrite, arbeitsmenge } = ctx;
 
   /**
@@ -87,7 +87,7 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
   }
 
   const graph_test_ingest: MCPTool<
-    z.infer<typeof GraphTestIngestInputSchema>,
+    typeof GraphTestIngestInputSchema,
     {
       applied: number;
       assignments: Array<{ testUid: string; file: string; result: string }>;
@@ -184,7 +184,7 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
   };
 
   const graph_test_report: MCPTool<
-    z.infer<typeof GraphTestReportInputSchema>,
+    typeof GraphTestReportInputSchema,
     VerificationReport & { graphVersion: number; umfang: Umfang }
   > = {
     name: 'graph_test_report',
@@ -214,5 +214,5 @@ export function bindTestReportTools(ctx: ToolPort): MCPToolRegistry {
     },
   };
 
-  return { graph_test_ingest, graph_test_report };
+  return { graph_test_ingest, graph_test_report } satisfies MCPToolRegistry;
 }

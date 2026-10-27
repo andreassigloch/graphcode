@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 476 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 477 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 476 CR · 343 done · 4 open.
+Total: 477 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -538,3 +538,4 @@ Total: 476 CR · 343 done · 4 open.
 | `CR-GC-864` | n/a | se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt |
 | `CR-GC-865` | n/a | Host-Ende fuer den Client sichtbar |
 | `CR-GC-866` | n/a | type-check prueft tests/ nicht, tote Typen und Aufrufe fallen nicht auf |
+| `CR-GC-867` | n/a | Werkzeug-Register typisieren: MCPTool traegt sein Schema |

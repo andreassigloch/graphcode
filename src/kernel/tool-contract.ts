@@ -20,7 +20,7 @@
  * dass die Funktion da und eine Funktion ist. Das faengt genau den Fehler, der an dieser
  * Grenze vorkommt: eine Fabrik, die ein Member vergisst oder falsch benennt.
  *
- * KEIN paralleler Pfad: die generische TS-Sicht `MCPTool<TInput, TOutput>` bleibt, weil ein
+ * KEIN paralleler Pfad: die generische TS-Sicht `MCPTool<TSchema, TOutput>` bleibt, weil ein
  * Laufzeit-Schema keine Typparameter traegt. Der Test bindet beide Seiten aneinander — er
  * parst ein ECHTES Werkzeug aus der echten Registry, nicht eine Attrappe.
  *
@@ -51,11 +51,18 @@ export const MCPToolSchema = z.object({
   }),
 });
 
-export interface MCPTool<TInput = unknown, TOutput = unknown> {
+/**
+ * Ein Werkzeug, getypt nach seinem Eingabe-SCHEMA (CR-GC-867), nicht nach einem Eingabetyp.
+ *
+ * Aus dem Schema folgen zwei Typen: der Handler sieht die Eingabe NACH dem Parsen
+ * (`z.output`, Defaults gesetzt), ein Aufrufer liefert sie VOR dem Parsen (`z.input`, Felder
+ * mit Default optional). Geparst wird im Register (CR-GC-866).
+ */
+export interface MCPTool<TSchema extends ZodType = ZodType, TOutput = unknown> {
   name: string;
   description: string;
-  inputSchema: ZodType<TInput>;
-  handler: (input: TInput) => Promise<TOutput>;
+  inputSchema: TSchema;
+  handler: (input: z.output<TSchema>) => Promise<TOutput>;
 }
 
 /** Der Laufzeit-Vertrag des Registers: jeder Wert ist ein Werkzeug (CR-GC-547). */

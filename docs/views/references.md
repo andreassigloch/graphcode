@@ -1376,6 +1376,8 @@
 | `CR-GC-866` | relation | `FUNC-host-socket` |
 | `CR-GC-866` | relation | `FUNC-serve-stdio` |
 | `CR-GC-866` | relation | `REQ-tool-input-parsed-once` |
+| `CR-GC-867` | relation | `FUNC-bind-tools` |
+| `CR-GC-867` | relation | `SCHEMA-mcp-tool` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -3455,6 +3457,7 @@
 | `TEST-vorbereitung-reads-metrics` | verify | `REQ-vorbereitung-constraints` |
 | `TEST-vorbereitung-reads-metrics` | verify | `REQ-vorbereitung-reads-metrics` |
 | `TEST-werkzeug-eingang-geparst` | verify | `REQ-tool-input-parsed-once` |
+| `TEST-werkzeug-register-typ` | verify | `SCHEMA-mcp-tool` |
 | `TEST-working-set-spezlauf` | verify | `REQ-token-efficiency` |
 | `TEST-zug-kennzahlen-danach` | verify | `REQ-zug-zeigt-kennzahlen-danach` |
 | `UC-code-quality` | compose | `FCHAIN-apply-gate` |

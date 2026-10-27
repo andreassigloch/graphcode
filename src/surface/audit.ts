@@ -436,11 +436,11 @@ export function aggregateAuditEntries(
 // Binding
 // -------------------------------------------------------------------------
 
-export function bindAuditTools(ctx: ToolContext): MCPToolRegistry {
+export function bindAuditTools(ctx: ToolContext) {
   const { auditLog, graphVersion } = ctx;
 
   const audit_trail: MCPTool<
-    z.infer<typeof AuditTrailInputSchema>,
+    typeof AuditTrailInputSchema,
     { entries: Array<Record<string, unknown>> }
   > = {
     name: 'audit_trail',
@@ -470,7 +470,7 @@ export function bindAuditTools(ctx: ToolContext): MCPToolRegistry {
     },
   };
 
-  const audit_stats: MCPTool<z.infer<typeof AuditStatsInputSchema>, AuditStats> = {
+  const audit_stats: MCPTool<typeof AuditStatsInputSchema, AuditStats> = {
     name: 'audit_stats',
     description:
       'Aggregate the audit log PER RULE, PER CONSUMER and PER MODEL (CR-GC-347): which rule ' +
@@ -499,5 +499,5 @@ export function bindAuditTools(ctx: ToolContext): MCPToolRegistry {
     },
   };
 
-  return { audit_trail, audit_stats };
+  return { audit_trail, audit_stats } satisfies MCPToolRegistry;
 }

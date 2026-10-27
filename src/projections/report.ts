@@ -160,7 +160,7 @@ const GraphTestsInputSchema = z.object({
 // Binding
 // -------------------------------------------------------------------------
 
-export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
+export function bindReportTools(ctx: ToolPort) {
   const { harness, graphVersion, arbeitsmenge } = ctx;
 
   /**
@@ -176,7 +176,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   };
 
   const rules_evaluate: MCPTool<
-    z.infer<typeof RulesEvaluateInputSchema>,
+    typeof RulesEvaluateInputSchema,
     {
       violations: Finding[] | ViolationGroupWithStage[];
       skipped: string[];
@@ -206,7 +206,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   };
 
   const rules_get_violations: MCPTool<
-    z.infer<typeof RulesGetViolationsInputSchema>,
+    typeof RulesGetViolationsInputSchema,
     { violations: Finding[] | ViolationGroupWithStage[]; total: number; skipped: string[]; notInGate: string[]; umfang: Umfang }
   > = {
     name: 'rules_get_violations',
@@ -266,7 +266,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   });
 
   const graph_readiness: MCPTool<
-    z.infer<typeof GraphReadinessInputSchema>,
+    typeof GraphReadinessInputSchema,
     // CR-GC-748: `marks` (SRR/PDR/CDR/TRR/Bau, je `reached` und `holding`) reist im Bericht des
     // Clients mit — durchgereicht, hier weder gerechnet noch angereichert.
     ReadinessReport & {
@@ -387,7 +387,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   // the same deduction works for any consumer regardless of its file layout.
 
   const graph_tests: MCPTool<
-    z.infer<typeof GraphTestsInputSchema>,
+    typeof GraphTestsInputSchema,
     {
       command: string;
       tests: Array<{ id: string; name: string; testRefs: TestRef[] }>;
@@ -460,7 +460,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     },
   };
 
-  const graph_help: MCPTool<z.infer<typeof GraphHelpInputSchema>, HelpEntry> = {
+  const graph_help: MCPTool<typeof GraphHelpInputSchema, HelpEntry> = {
     name: 'graph_help',
     description:
       'What does this rule / gate / panel / metric / tool mean, and what do I do about it? Plain ' +
@@ -497,7 +497,7 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
   let leitfadenZaehler = 0;
 
   const graph_authoring_guide: MCPTool<
-    z.infer<typeof GraphAuthoringGuideInputSchema>,
+    typeof GraphAuthoringGuideInputSchema,
     {
       type: string;
       outgoing: Array<{ edgeType: string; targetType: string; cardinality?: string; description?: string }>;
@@ -580,5 +580,5 @@ export function bindReportTools(ctx: ToolPort): MCPToolRegistry {
     graph_tests,
     graph_help,
     graph_authoring_guide,
-  };
+  } satisfies MCPToolRegistry;
 }

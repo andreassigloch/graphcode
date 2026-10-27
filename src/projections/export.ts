@@ -135,7 +135,7 @@ const GraphExportInputSchema = z.object({
 // Binding
 // -------------------------------------------------------------------------
 
-export function bindExportTools(ctx: ToolPort): MCPToolRegistry {
+export function bindExportTools(ctx: ToolPort) {
   const { harness, auditLog } = ctx;
   // "Since process start" (CR-GC-296): the version this registry booted at, BEFORE
   // any of ITS OWN writes — bindExportTools runs once, immediately after
@@ -149,7 +149,7 @@ export function bindExportTools(ctx: ToolPort): MCPToolRegistry {
   // holds it across the session — to commit-able docs under the repo root.
 
   const graph_export: MCPTool<
-    z.infer<typeof GraphExportInputSchema>,
+    typeof GraphExportInputSchema,
     {
       graphJson: { path: string; bytes: number; nodes: number; edges: number };
       views: Array<{ view: string; path: string; bytes: number }>;
@@ -307,5 +307,5 @@ export function bindExportTools(ctx: ToolPort): MCPToolRegistry {
     },
   };
 
-  return { graph_export };
+  return { graph_export } satisfies MCPToolRegistry;
 }

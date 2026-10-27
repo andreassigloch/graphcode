@@ -376,11 +376,11 @@ export function buildContextSlice(
 // Binding
 // -------------------------------------------------------------------------
 
-export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
+export function bindReadTools(ctx: ToolContext) {
   const { harness, graphVersion } = ctx;
 
   const graph_elements: MCPTool<
-    z.infer<typeof GraphElementsInputSchema>,
+    typeof GraphElementsInputSchema,
     | { nodes: GraphNode[]; total: number; graphVersion: number; legende?: string }
     | { formatE: string; total: number; graphVersion: number }
   > = {
@@ -424,7 +424,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
   };
 
   const graph_get_node: MCPTool<
-    z.infer<typeof GraphGetNodeInputSchema>,
+    typeof GraphGetNodeInputSchema,
     { node: GraphNode | null; graphVersion: number }
   > = {
     name: 'graph_get_node',
@@ -437,7 +437,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
   };
 
   const graph_get_edges: MCPTool<
-    z.infer<typeof GraphGetEdgesInputSchema>,
+    typeof GraphGetEdgesInputSchema,
     { edges: GraphEdge[]; total: number; graphVersion: number } | { formatE: string; total: number; graphVersion: number }
   > = {
     name: 'graph_get_edges',
@@ -491,7 +491,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
   };
 
   const graph_impact: MCPTool<
-    z.infer<typeof GraphImpactInputSchema>,
+    typeof GraphImpactInputSchema,
     {
       formatE: string;
       nodeCount: number;
@@ -552,7 +552,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
   };
 
   const graph_expand: MCPTool<
-    z.infer<typeof GraphExpandInputSchema>,
+    typeof GraphExpandInputSchema,
     { formatE: string; nodeCount: number; edgeCount: number; handle: string }
   > = {
     name: 'graph_expand',
@@ -590,7 +590,7 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
   };
 
   const graph_context: MCPTool<
-    z.infer<typeof GraphContextInputSchema>,
+    typeof GraphContextInputSchema,
     { formatE: string; nodeCount: number; edgeCount: number; rootId: string; missingRefs: string[]; graphVersion: number }
   > = {
     name: 'graph_context',
@@ -632,5 +632,5 @@ export function bindReadTools(ctx: ToolContext): MCPToolRegistry {
     },
   };
 
-  return { graph_elements, graph_get_node, graph_get_edges, graph_impact, graph_expand, graph_context };
+  return { graph_elements, graph_get_node, graph_get_edges, graph_impact, graph_expand, graph_context } satisfies MCPToolRegistry;
 }

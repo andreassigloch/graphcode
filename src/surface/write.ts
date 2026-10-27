@@ -228,7 +228,7 @@ export interface BindingReport {
 // Binding
 // -------------------------------------------------------------------------
 
-export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
+export function bindWriteTools(ctx: ToolContext) {
   const { harness, graphVersion, recordAudit, recordPreview, serializeToolWrite, occReject } = ctx;
 
 
@@ -281,7 +281,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
   // -------------------------------------------------------------------------
 
   const graph_mutate: MCPTool<
-    z.infer<typeof GraphMutateInputSchema>,
+    typeof GraphMutateInputSchema,
     MutateResult & { graphVersion: number; occWarning?: string; nameWarning?: string; steeringDelta?: SteeringDelta; vorschlag?: string; refs?: BindingReport }
   > = {
     name: 'graph_mutate',
@@ -397,7 +397,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
   };
 
   const graph_merge: MCPTool<
-    z.infer<typeof GraphMergeInputSchema>,
+    typeof GraphMergeInputSchema,
     MergeReport & { graphVersion: number }
   > = {
     name: 'graph_merge',
@@ -446,7 +446,7 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
   // In-process clear+reimport behind the single writer; replaces the corrupting
   // stop-server → rm .graphcode/kuzu → restart dance.
 
-  const graph_reseed: MCPTool<z.infer<typeof GraphReseedInputSchema>, { reseeded: true; nodes: number; edges: number }> = {
+  const graph_reseed: MCPTool<typeof GraphReseedInputSchema, { reseeded: true; nodes: number; edges: number }> = {
     name: 'graph_reseed',
     description:
       'Re-sync the live store to the committed SSOT JSON (CR-GC-203 item 4). The single-writer owner ' +
@@ -461,5 +461,5 @@ export function bindWriteTools(ctx: ToolContext): MCPToolRegistry {
     },
   };
 
-  return { graph_mutate, graph_merge, graph_reseed };
+  return { graph_mutate, graph_merge, graph_reseed } satisfies MCPToolRegistry;
 }

@@ -193,10 +193,10 @@ export interface GraphSuggestResult {
 // Binding
 // -------------------------------------------------------------------------
 
-export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
+export function bindSuggestTools(ctx: ToolPort) {
   const { harness, serializeToolWrite } = ctx;
 
-  const graph_suggest: MCPTool<z.infer<typeof GraphSuggestInputSchema>, GraphSuggestResult> = {
+  const graph_suggest: MCPTool<typeof GraphSuggestInputSchema, GraphSuggestResult> = {
     name: 'graph_suggest',
     description:
       'Which restructuring actually pays off? Ranks candidate edits by how far each lowers the ' +
@@ -350,7 +350,7 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
       ),
   });
 
-  const graph_generate: MCPTool<z.infer<typeof GraphGenerateInputSchema>, GenerationStep> = {
+  const graph_generate: MCPTool<typeof GraphGenerateInputSchema, GenerationStep> = {
     name: 'graph_generate',
     description:
       'Der Generierungstreiber (LLM schlägt vor, Gate wählt). Liefert aus ' +
@@ -392,5 +392,5 @@ export function bindSuggestTools(ctx: ToolPort): MCPToolRegistry {
     },
   };
 
-  return { graph_suggest, graph_generate };
+  return { graph_suggest, graph_generate } satisfies MCPToolRegistry;
 }
