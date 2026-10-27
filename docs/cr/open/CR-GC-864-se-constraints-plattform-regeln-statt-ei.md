@@ -42,6 +42,13 @@
    Ketten sind erlaubt, wenn sich die Use Cases in Akteur, Ziel oder Freigabe-Regel unterscheiden und die Kette über
    eine Plugin-Grenze läuft.
 
+8. **RD-05 arbeitet gegen einen gesetzten Constraint.** In immo-infra (graphVersion 19) meldet RD-05 sieben Adapter
+   unter `MOD-immo-gate` mit 1 bis 2 Funktionen („Dissolve the level into its parent“). Legt man sie zusammen, bricht
+   der Constraint „ein Adapter je Ziel“ (`REQ-daten-ueber-gate`). Der Skill warnt vor Konflikten zwischen zwei
+   Constraints, nicht vor solchen zwischen einem Constraint und einer Regel. `se:optimize` und `se:close-violations`
+   würden RD-05 folgen. Nötig ist: Eine Warnung, deren Behebung einen Constraint-Test rot macht, wird als Zielkonflikt
+   gezeigt, nicht als Aufgabe (vgl. ITEM-2026-1077).
+
 ## Zielbild
 
 - Der Skill fragt **zuerst nach Plattform-Regeln**: „Was muss für jede künftige Anwendung, Datenquelle oder
