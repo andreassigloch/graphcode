@@ -46,7 +46,7 @@
     "messung": "node scripts/messung.mjs",
     "test:watch": "vitest",
     "lint": "eslint src",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc -p tsconfig.tests.json",
     "prepack": "npm run build",
     "link:siblings": "npm link @sigloch/contracts @sigloch/graphify @sigloch/graph-api-core @sigloch/graphcode-client @sigloch/learning-core @sigloch/se-engine"
   },

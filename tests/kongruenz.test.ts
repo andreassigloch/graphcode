@@ -5,7 +5,6 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
-// @ts-expect-error — Messskript in .mjs, bewusst ohne Typdeklaration
 import { binding, codeVerdict } from '../scripts/kongruenz.mjs';
 
 describe('kongruenz: Bindungsquote und Code-Urteil', () => {

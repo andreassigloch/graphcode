@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 481 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 482 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 481 CR · 343 done · 4 open.
+Total: 482 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -537,9 +537,10 @@ Total: 481 CR · 343 done · 4 open.
 | `CR-GC-863` | n/a | Skills fuehren Hardware-Systeme falsch: Teile des eigenen Produkts (Servo, Netzteil, Sensor) landen als ACTOR, und der MOD-Schnitt hat keine Regel fuer Domaenen (Mechanik/Elektronik/Software) — Befund sirail CR-028/029 |
 | `CR-GC-864` | n/a | se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt |
 | `CR-GC-865` | n/a | Host-Ende fuer den Client sichtbar |
-| `CR-GC-866` | n/a | type-check prueft tests/ nicht, tote Typen und Aufrufe fallen nicht auf |
+| `CR-GC-866` | n/a | Werkzeug-Eingabe einmal im Register parsen |
 | `CR-GC-867` | n/a | Werkzeug-Register typisieren: MCPTool traegt sein Schema |
 | `CR-GC-868` | n/a | Register beim Binden typisieren |
 | `CR-GC-869` | n/a | tsc-Fehler in tests/ beheben, Teil 1 |
 | `CR-GC-870` | n/a | tsc-Fehler in tests/ beheben, Teil 2 |
 | `CR-GC-871` | n/a | tsc-Fehler in tests/ beheben, Teil 3 |
+| `CR-GC-872` | n/a | type-check prueft tests/ mit |
