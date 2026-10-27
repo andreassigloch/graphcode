@@ -1,6 +1,6 @@
 # CR-GC-871: tsc-Fehler in tests/ beheben, Teil 3 (Teil 4b von ITEM-2026-1094)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-27)
 **Typ:** aus Item ITEM-2026-1104 (idea)
 **Erstellt:** 2026-10-27
 **Item:** bok/items/ITEM-2026-1104.json (Lane: code)
