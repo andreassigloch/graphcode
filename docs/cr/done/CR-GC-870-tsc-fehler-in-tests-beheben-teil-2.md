@@ -1,6 +1,6 @@
 # CR-GC-870: tsc-Fehler in tests/ beheben, Teil 2 (Teil 4 von ITEM-2026-1094)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-27)
 **Typ:** aus Item ITEM-2026-1099 (idea)
 **Erstellt:** 2026-10-27
 **Item:** bok/items/ITEM-2026-1099.json (Lane: code)
