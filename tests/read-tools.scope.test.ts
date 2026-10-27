@@ -23,6 +23,7 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { KUERZUNGS_LEGENDE } from '../src/surface/read.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 import { alsFormatE, kantenAus } from './helpers/format-e.js';
+import { mitFeld } from './helpers/antwort.js';
 
 const GOLDEN = join(__dirname, '..', 'beispielgraphen', 'sigllm-v98.graph.json');
 
@@ -197,8 +198,8 @@ describe('CR-GC-613: nach einem Schreibzug schneiden die Werkzeuge', () => {
  */
 describe('CR-GC-621: die Liste antwortet mit Identitaet, der Zweig kuerzt wie der Kontext', () => {
   it('graph_elements kuerzt die Beschreibungen und nennt die Kuerzung EINMAL', async () => {
-    const kurz = await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'json', prosa: false });
-    const voll = await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'json', prosa: true });
+    const kurz = mitFeld(await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'json', prosa: false }), 'nodes');
+    const voll = mitFeld(await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'json', prosa: true }), 'nodes');
     // Die Scheibe ist dieselbe — gekuerzt wird der Text, nicht die Menge.
     expect(kurz.nodes.map((n) => n.uid)).toEqual(voll.nodes.map((n) => n.uid));
     expect(kurz.total).toBe(voll.total);
@@ -211,14 +212,14 @@ describe('CR-GC-621: die Liste antwortet mit Identitaet, der Zweig kuerzt wie de
   }, 120_000);
 
   it('prosa:true liefert weiter den vollen Wortlaut — der benannte Ausweg', async () => {
-    const voll = await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'json', prosa: true });
+    const voll = mitFeld(await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'json', prosa: true }), 'nodes');
     expect(voll.legende).toBeUndefined();
     expect(voll.nodes.some((n) => (n.description ?? '').length > 40)).toBe(true);
   }, 120_000);
 
   it('auch der Format-E-Weg ist gekuerzt — sonst waere er der stille Umweg', async () => {
-    const fe = await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'formatE', prosa: false });
-    const feVoll = await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'formatE', prosa: true });
+    const fe = mitFeld(await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'formatE', prosa: false }), 'formatE');
+    const feVoll = mitFeld(await tools.graph_elements.handler({ type: 'REQ', limit: 100, format: 'formatE', prosa: true }), 'formatE');
     expect(fe.formatE.length).toBeLessThan(feVoll.formatE.length * 0.6);
     expect(fe.formatE.split('\n').filter((l) => l.includes('= Beschreibung gekuerzt'))).toHaveLength(1);
   }, 120_000);
@@ -258,8 +259,8 @@ describe('CR-GC-621: die Liste antwortet mit Identitaet, der Zweig kuerzt wie de
  */
 describe('CR-GC-628: die Kantenantwort traegt Kanten', () => {
   it('format:formatE ist KLEINER als der JSON-Default — vorher war es das 2,5-Fache', async () => {
-    const json = await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'json' });
-    const fe = await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'formatE' });
+    const json = mitFeld(await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'json' }), 'edges');
+    const fe = mitFeld(await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'formatE' }), 'formatE');
 
     // Sonst misst der Test seine Fixture: das Golden muss ueberhaupt compose-Kanten tragen.
     expect(json.total).toBeGreaterThan(100);
@@ -271,7 +272,7 @@ describe('CR-GC-628: die Kantenantwort traegt Kanten', () => {
   }, 120_000);
 
   it('die Gruppierung ist sichtbar: EINE Zeile, MEHRERE Kanten — nachgewiesen durch Decode', async () => {
-    const fe = await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'formatE' });
+    const fe = mitFeld(await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'formatE' }), 'formatE');
 
     const mehrziel = fe.formatE.split('\n').filter((l) => /^\+ \S+ -\w+-> .+,/.test(l));
     expect(mehrziel.length, 'keine Mehrziel-Zeile — dann wirkt die Gruppierung aus CR-GC-268 nicht').toBeGreaterThan(0);
@@ -290,7 +291,7 @@ describe('CR-GC-628: die Kantenantwort traegt Kanten', () => {
   it('eine Kante mit eigenen Attributen bleibt eine eigene Zeile', async () => {
     // Ein `cardinality` an EINER der Kanten einer Gruppe — ein Gruppenblock wuerde es
     // entweder fallenlassen oder faelschlich den Geschwistern mitgeben.
-    const eine = (await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'json' })).edges[0];
+    const eine = mitFeld(await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'json' }), 'edges').edges[0];
     const zug = await tools.graph_mutate.handler({
       formatE: alsFormatE([
         {
@@ -303,7 +304,7 @@ describe('CR-GC-628: die Kantenantwort traegt Kanten', () => {
     });
     expect(zug.success, JSON.stringify(zug.violations)).toBe(true);
 
-    const fe = await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'formatE' });
+    const fe = mitFeld(await tools.graph_get_edges.handler({ edgeType: 'compose', format: 'formatE' }), 'formatE');
     const zeile = fe.formatE
       .split('\n')
       .find((l) => l.startsWith(`+ ${eine.sourceId} -compose-> ${eine.targetId}`));
@@ -313,7 +314,7 @@ describe('CR-GC-628: die Kantenantwort traegt Kanten', () => {
   }, 120_000);
 
   it('die Legende steht genau einmal je Antwort — dieselbe Marke wie CR-GC-613', async () => {
-    const fe = await tools.graph_get_edges.handler({ edgeType: 'relation', format: 'formatE' });
+    const fe = mitFeld(await tools.graph_get_edges.handler({ edgeType: 'relation', format: 'formatE' }), 'formatE');
     expect(fe.formatE.split('\n').filter((l) => l.includes('= Beschreibung gekuerzt'))).toHaveLength(1);
     expect(fe.formatE.startsWith(KUERZUNGS_LEGENDE)).toBe(true);
     // Identitaet heisst: kein Wortlaut und keine Attribute am Endpunkt.
@@ -322,7 +323,7 @@ describe('CR-GC-628: die Kantenantwort traegt Kanten', () => {
   }, 120_000);
 
   it('der JSON-Default bleibt, was er ist — Objekte fuer programmatische Logik', async () => {
-    const json = await tools.graph_get_edges.handler({ edgeType: 'verify', format: 'json' });
+    const json = mitFeld(await tools.graph_get_edges.handler({ edgeType: 'verify', format: 'json' }), 'edges');
     expect(Array.isArray(json.edges)).toBe(true);
     expect(json.edges[0]).toHaveProperty('sourceId');
     expect(json.edges[0]).toHaveProperty('edgeType');

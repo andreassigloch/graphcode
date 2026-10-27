@@ -17,6 +17,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { nurBefunde } from './helpers/antwort.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 
 function makeConfig(repoRoot: string): HarnessConfig {
@@ -59,7 +60,7 @@ describe('TEST-violation-context: rules tools surface fix_hint + candidate_targe
 
   it('rules_get_violations returns an R-01 with a fixHint and the candidate TESTs to link', async () => {
     const tools = bindToolsToHarness(harness);
-    const { violations } = await tools.rules_get_violations.handler({ severity: 'error' });
+    const violations = nurBefunde((await tools.rules_get_violations.handler({ severity: 'error' })).violations);
 
     const r01 = violations.find((v) => v.ruleId === 'R-01' && v.elementId === 'REQ-uncovered');
     expect(r01).toBeDefined();
@@ -74,7 +75,7 @@ describe('TEST-violation-context: rules tools surface fix_hint + candidate_targe
 
   it('rules_evaluate carries the same fix-context (not just rules_get_violations)', async () => {
     const tools = bindToolsToHarness(harness);
-    const { violations } = await tools.rules_evaluate.handler({});
+    const violations = nurBefunde((await tools.rules_evaluate.handler({})).violations);
     const r01 = violations.find((v) => v.ruleId === 'R-01' && v.elementId === 'REQ-uncovered');
     expect(r01?.fixHint).toBeTruthy();
     expect((r01?.context as Ctx)?.candidate_targets?.length).toBeGreaterThan(0);
@@ -91,7 +92,7 @@ describe('TEST-violation-context: rules tools surface fix_hint + candidate_targe
       traces: [],
     });
     const tools = bindToolsToHarness(harness);
-    const { violations } = await tools.rules_get_violations.handler({ severity: 'error' });
+    const violations = nurBefunde((await tools.rules_get_violations.handler({ severity: 'error' })).violations);
     const r01 = violations.find((v) => v.ruleId === 'R-01' && v.elementId === 'REQ-bootstrap');
     const candidates = (r01!.context as Ctx).candidate_targets ?? [];
     // Highest id/name/description token overlap ('bootstrap') ranks first.

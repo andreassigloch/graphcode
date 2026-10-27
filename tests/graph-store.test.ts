@@ -66,8 +66,8 @@ describe('CR-GC-503: GraphStore ist der einzige Schreiber des Graph-Zustands', (
     // Ein gueltiger Knoten und eine Kante ins Leere im SELBEN Batch: der Batch blockt,
     // also darf auch der gueltige Knoten nirgends ankommen.
     const result = await harness.mutate([
-      { op: 'add-node', node: { uid: 'FUNC-c', type: 'FUNC', name: 'c', description: '' } },
-      { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'FUNC-gibt-es-nicht', edgeType: 'compose' } },
+      { op: 'add-node', node: { uid: 'FUNC-c', type: 'FUNC', name: 'c', description: '', attributes: {} } },
+      { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'FUNC-gibt-es-nicht', edgeType: 'compose', attributes: {} } },
     ]);
     expect(result.success).toBe(false);
     expect(nodeIds(harness.getGraph())).toEqual(nodesBefore);
@@ -80,8 +80,8 @@ describe('CR-GC-503: GraphStore ist der einzige Schreiber des Graph-Zustands', (
   it('ein Probelauf haelt den Kandidaten nur im Speicher, bis loadGraph ihn verwirft', async () => {
     const result = await harness.mutate(
       [
-        { op: 'add-node', node: { uid: 'FUNC-c', type: 'FUNC', name: 'c', description: '' } },
-        { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'FUNC-c', edgeType: 'compose' } },
+        { op: 'add-node', node: { uid: 'FUNC-c', type: 'FUNC', name: 'c', description: '', attributes: {} } },
+        { op: 'add-edge', edge: { sourceId: 'FUNC-a', targetId: 'FUNC-c', edgeType: 'compose', attributes: {} } },
       ],
       { dryRun: true },
     );

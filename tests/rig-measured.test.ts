@@ -91,9 +91,11 @@ describe('CR-GC-491: der Messaufbau traegt die Repo-Config, nicht den Default', 
   it('der Stempel benennt Graph, Versionen und Code — ohne Stempel keine Zahl', async () => {
     const { dir, graph } = fixtureRepo();
     const m = await openMeasured({ graph, systemId: 's' });
-    expect(m.provenance.graph.path).toBe(graph);
-    expect(m.provenance.graph.sha256).toMatch(/^[0-9a-f]{64}$/);
-    expect(m.provenance.graph.elements).toBe(2);
+    const stempel = m.provenance.graph;
+    if (stempel === null) throw new Error('openMeasured mit Graph, aber ohne Graph-Stempel');
+    expect(stempel.path).toBe(graph);
+    expect(stempel.sha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(stempel.elements).toBe(2);
     expect(m.provenance.versions.rules).toMatch(/^\d+\.\d+\.\d+$/);
     expect(m.provenance.code.sha).toMatch(/^[0-9a-f]{7,40}$/);
     await m.close();

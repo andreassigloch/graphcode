@@ -22,8 +22,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
+import { bindToolsToHarness, type ToolRegistry } from '../src/surface/mcp-tools.js';
 import { parseVitestJson, verificationReport } from '../src/projections/verification-report.js';
 import { renderTestMatrix } from '../src/projections/incose.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
@@ -88,7 +87,7 @@ const VITEST_JSON = JSON.stringify({
 describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () => {
   let repoRoot: string;
   let harness: GraphCodeHarness;
-  let tools: MCPToolRegistry;
+  let tools: ToolRegistry;
 
   beforeEach(async () => {
     repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-testreport-'));

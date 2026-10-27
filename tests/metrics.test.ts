@@ -22,8 +22,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
+import { bindToolsToHarness, type ToolRegistry } from '../src/surface/mcp-tools.js';
 import { computeFitAdvisory } from '../src/kernel/measure/fit-advisory.js';
 import { METRIC_DIMENSIONS, toArray } from '@sigloch/se-engine';
 import {
@@ -117,7 +116,7 @@ const SEED: MutateCommand[] = [
 describe('TEST-graph-metrics: Kennzahlen je MOD, auch ohne Verstoss (CR-GC-326)', () => {
   let repoRoot: string;
   let harness: GraphCodeHarness;
-  let tools: MCPToolRegistry;
+  let tools: ToolRegistry;
 
   beforeEach(async () => {
     repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-metrics-'));
@@ -270,7 +269,7 @@ describe('TEST-graph-metrics: Kennzahlen je MOD, auch ohne Verstoss (CR-GC-326)'
 describe('graph_metrics — Kettenkennzahlen und Bewertbarkeit (CR-GC-767)', () => {
   let repoRoot: string;
   let harness: GraphCodeHarness;
-  let tools: MCPToolRegistry;
+  let tools: ToolRegistry;
 
   const STEPS = ['validieren', 'deckung', 'betrug', 'buchung', 'audit', 'bestaetigung'];
   const MOD_OF: Record<string, string> = {
@@ -447,7 +446,7 @@ describe('graph_metrics auf dem eigenen Modell (CR-GC-767)', () => {
 describe('graph_metrics — Risikotraeger und Betrachtungsumfang (CR-GC-787)', () => {
   let repoRoot: string;
   let harness: GraphCodeHarness;
-  let tools: MCPToolRegistry;
+  let tools: ToolRegistry;
 
   /** Eine REQ mit ihrem Pruefer: ohne `verify` blockt R-01, ohne `kinds` R-18 an der satisfy-Kante. */
   const req = (

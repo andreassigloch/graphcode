@@ -25,6 +25,7 @@ import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { evaluateAll } from '../src/kernel/evaluation.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import { groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
+import { nurBefunde, nurGruppen } from './helpers/antwort.js';
 
 const REPO_ROOT = process.cwd();
 
@@ -98,7 +99,9 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
   });
 
   it('jedes Finding trägt seine Herkunft, und RC-Findings sind über ALLE Flächen sichtbar', async () => {
-    const { violations, skipped } = await tools.rules_evaluate.handler({});
+    const evaluiert = await tools.rules_evaluate.handler({});
+    const { skipped } = evaluiert;
+    const violations = nurBefunde(evaluiert.violations);
     expect(skipped.filter((s) => !s.startsWith('rule:'))).toEqual([]);
     expect(violations.every((v) => v.source === 'rules' || v.source === 'conformance')).toBe(true);
 
@@ -140,14 +143,14 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
     const summary = await tools.rules_get_violations.handler({ detail: 'summary' });
 
     expect(summary.total).toBe(full.total);
-    expect(summary.violations.every((v) => v.context === undefined)).toBe(true);
-    expect(full.violations.some((v) => v.context !== undefined)).toBe(true);
+    expect(nurBefunde(summary.violations).every((v) => v.context === undefined)).toBe(true);
+    expect(nurBefunde(full.violations).some((v) => v.context !== undefined)).toBe(true);
   });
 
   it('detail:"grouped" zählt über die UNGEKAPPTE Grundgesamtheit, `total` bleibt die Verstoßzahl', async () => {
     const full = await tools.rules_get_violations.handler({ detail: 'full' });
     const grouped = await tools.rules_get_violations.handler({ detail: 'grouped' });
-    const groups = grouped.violations as ViolationGroup[];
+    const groups = nurGruppen(grouped.violations);
 
     // `total` ist die Zahl der VERSTÖSSE, nicht der Gruppen (CR-GC-411).
     expect(grouped.total).toBe(full.total);
@@ -174,7 +177,7 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
 
     // Dieselbe Grundgesamtheit auch über rules_evaluate.
     const evaluated = await tools.rules_evaluate.handler({ detail: 'grouped' });
-    expect((evaluated.violations as ViolationGroup[]).map((g) => g.ruleId)).toEqual(
+    expect(nurGruppen(evaluated.violations).map((g) => g.ruleId)).toEqual(
       groups.map((g) => g.ruleId),
     );
   });
@@ -211,7 +214,7 @@ describe('TEST-evaluation-reconciliation: eine Auswertungsfläche (CR-GC-398)', 
   it('detail:"grouped" traegt je Gruppe die Stufe der Regel und kommt in Arbeitsreihenfolge: Fehler zuerst, dann nach Stufe, dann die haeufigste', async () => {
     const { ALL_RULE_DEFS } = await import('@sigloch/contracts/se');
     const def = new Map(ALL_RULE_DEFS.map((r) => [r.id, r]));
-    const groups = (await tools.rules_evaluate.handler({ detail: 'grouped' })).violations as Array<ViolationGroup & { stage?: number | 'immer' }>;
+    const groups = nurGruppen((await tools.rules_evaluate.handler({ detail: 'grouped' })).violations);
     expect(groups.length).toBeGreaterThan(3);
     for (const g of groups) expect(g.stage, g.ruleId).toBe(def.get(g.ruleId)?.stage);
     const schwere = (g: ViolationGroup): number => (g.severity === 'error' ? 0 : g.severity === 'warning' ? 1 : 2);

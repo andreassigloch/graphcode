@@ -23,11 +23,10 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { bindToolsToHarness, type ToolRegistry } from '../src/surface/mcp-tools.js';
 import { registerAutoExport } from '../src/projections/auto-export.js';
 import { writeFileAtomic } from '../src/projections/export.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
-import type { MCPTool } from '../src/kernel/tool-contract.js';
 import { alsFormatE, alsEingabe } from './helpers/format-e.js';
 
 const DEBOUNCE = 30;
@@ -75,7 +74,7 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
   let harness: GraphCodeHarness;
   let registry: ReturnType<typeof bindToolsToHarness>;
   let exports: number;
-  let counted: MCPTool<unknown, unknown>;
+  let counted: ToolRegistry['graph_export'];
 
   beforeEach(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-autoexport-'));
@@ -88,11 +87,11 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
     const real = registry['graph_export'];
     counted = {
       ...real,
-      handler: async (input: unknown) => {
+      handler: async (input) => {
         exports += 1;
         return real.handler(input);
       },
-    } as MCPTool<unknown, unknown>;
+    };
   });
 
   afterEach(async () => {
@@ -134,15 +133,15 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
     let release: (() => void) | null = null;
     const gate = new Promise<void>((r) => { release = r; });
     let started = 0;
-    const slow: MCPTool<unknown, unknown> = {
+    const slow: ToolRegistry['graph_export'] = {
       ...registry['graph_export'],
-      handler: async (input: unknown) => {
+      handler: async (input) => {
         started += 1;
         if (started === 1) await gate; // der erste Export hängt, bis wir loslassen
         exports += 1;
         return registry['graph_export'].handler(input);
       },
-    } as MCPTool<unknown, unknown>;
+    };
     registerAutoExport(harness, slow, { debounceMs: DEBOUNCE });
 
     await registry['graph_mutate'].handler(alsEingabe(addReq(1)));
@@ -186,10 +185,10 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
 
   it('ein fehlgeschlagener Export kippt die erfolgreiche Mutation nicht', async () => {
     const errors: unknown[] = [];
-    const failing: MCPTool<unknown, unknown> = {
+    const failing: ToolRegistry['graph_export'] = {
       ...registry['graph_export'],
       handler: async () => { throw new Error('boom'); },
-    } as MCPTool<unknown, unknown>;
+    };
     registerAutoExport(harness, failing, { debounceMs: DEBOUNCE, onError: (e) => errors.push(e) });
 
     const res = await registry['graph_mutate'].handler(alsEingabe(addReq(1)));

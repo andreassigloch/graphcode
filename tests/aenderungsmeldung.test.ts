@@ -19,7 +19,6 @@ import {
   snapshotToGraph,
   type AuditContext,
 } from '../src/projections/test-selection-audit.js';
-// @ts-expect-error — schlanker Runner-Helfer ohne Typdatei
 import { meldeZurueck } from '../scripts/aenderung-melden.mjs';
 
 const SNAPSHOT = {
@@ -107,6 +106,7 @@ describe('TEST-lane-reports-change: Meldung ueber MCP-stdio an einen echten Host
 
     const res = await meldeZurueck({ repoRoot, changeSet: ['FUNC-a'], berichtPfad: bericht, cli });
 
+    if (res === null) throw new Error('meldeZurueck: null trotz Aenderung und Bericht');
     expect(res.success).toBe(true);
     expect(res.withdrawn).toEqual([{ testUid: 'TEST-a', file: 'tests/a.test.ts' }]);
     expect(res.assignments.map((a: { testUid: string; result: string }) => [a.testUid, a.result])).toEqual([['TEST-b', 'failed']]);

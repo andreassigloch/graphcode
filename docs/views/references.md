@@ -1380,6 +1380,7 @@
 | `CR-GC-867` | relation | `SCHEMA-mcp-tool` |
 | `CR-GC-868` | relation | `FUNC-bind-tools` |
 | `CR-GC-868` | relation | `SCHEMA-mcp-tool-registry` |
+| `CR-GC-869` | relation | `SCHEMA-mcp-tool-registry` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
