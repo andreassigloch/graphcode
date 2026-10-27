@@ -559,6 +559,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-865` | n/a | Host-Ende fuer den Client sichtbar | `FUNC-gve-supervise` · `FUNC-session-shutdown` · `REQ-host-end-visible` |
 | `CR-GC-866` | n/a | type-check prueft tests/ nicht, tote Typen und Aufrufe fallen nicht auf | `FUNC-bind-tools` · `FUNC-graph-mutate-tool` · `FUNC-host-socket` · `FUNC-serve-stdio` · `REQ-tool-input-parsed-once` |
 | `CR-GC-867` | n/a | Werkzeug-Register typisieren: MCPTool traegt sein Schema | `FUNC-bind-tools` |
+| `CR-GC-868` | n/a | Register beim Binden typisieren | `FUNC-bind-tools` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

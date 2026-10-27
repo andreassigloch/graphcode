@@ -28,7 +28,7 @@
  */
 
 import type { AuditLog } from '@sigloch/graph-api-core';
-import { MCPToolRegistrySchema, type MCPToolRegistry } from '../kernel/tool-contract.js';
+import { MCPToolRegistrySchema, type CallableRegistry, type MCPToolRegistry } from '../kernel/tool-contract.js';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { createToolContext, type ToolContext } from './tool-context.js';
 import { bindReadTools } from './read.js';
@@ -71,7 +71,7 @@ export const NON_CONSULTING_TOOLS = new Set([
  * closing exactly the CR-GC-432 gap "ob das Template benutzt wurde, ist nirgends
  * gestempelt".
  */
-function withConsultationTracking(registry: MCPToolRegistry, ctx: ToolContext): MCPToolRegistry {
+function withConsultationTracking<R extends MCPToolRegistry>(registry: R, ctx: ToolContext): R {
   const wrapped: MCPToolRegistry = {};
   for (const [name, tool] of Object.entries(registry)) {
     if (NON_CONSULTING_TOOLS.has(name)) {
@@ -95,7 +95,8 @@ function withConsultationTracking(registry: MCPToolRegistry, ctx: ToolContext): 
       },
     };
   }
-  return wrapped;
+  // Gleiche Namen, gleiche Schemata, gleiche Ergebnistypen — nur der Handler ist umhuellt.
+  return wrapped as R;
 }
 
 /**
@@ -107,14 +108,33 @@ function withConsultationTracking(registry: MCPToolRegistry, ctx: ToolContext): 
  * `graph_elements({})` lieferte alle Knoten statt der Default-Grenze 100. Jetzt parst das
  * Register selbst, und die Grenzen reichen nur noch durch.
  */
-function withInputParsing(registry: MCPToolRegistry): MCPToolRegistry {
+function withInputParsing<R extends MCPToolRegistry>(registry: R): CallableRegistry<R> {
   return Object.fromEntries(
     Object.entries(registry).map(([name, tool]) => [
       name,
       { ...tool, handler: async (input: unknown) => tool.handler(tool.inputSchema.parse(input ?? {})) },
     ]),
-  );
+  ) as CallableRegistry<R>;
 }
+
+/**
+ * Das Register mit dem Typ jedes Werkzeugs: Name, Eingabe, Ergebnis (CR-GC-868).
+ *
+ * `MCPToolRegistry` (`Record<string, MCPTool<any, any>>`) bleibt die Sicht fuer den, der Werkzeuge
+ * nur aufzaehlt und weiterreicht — MCP-Server, Socket, Proxy. Wer ein Werkzeug beim Namen ruft und
+ * das Ergebnis liest, bekommt hier den echten Typ statt `any`: der Compiler sieht, ob es das
+ * Werkzeug gibt, welche Eingabe es nimmt und was das Ergebnis traegt.
+ */
+export type ToolRegistry = CallableRegistry<
+  ReturnType<typeof bindReadTools> &
+    ReturnType<typeof bindWriteTools> &
+    ReturnType<typeof bindReportTools> &
+    ReturnType<typeof bindAuditTools> &
+    ReturnType<typeof bindExportTools> &
+    ReturnType<typeof bindSuggestTools> &
+    ReturnType<typeof bindMetricsTools> &
+    ReturnType<typeof bindTestReportTools>
+>;
 
 // ---------------------------------------------------------------------------
 // Factory
@@ -125,8 +145,8 @@ function withInputParsing(registry: MCPToolRegistry): MCPToolRegistry {
  * Optionally pass an existing `AuditLog`; defaults to the durable `FileOperationsLog`
  * beside the store — that default lives in `createToolContext`, exactly once.
  *
- * Returns an `MCPToolRegistry` — a named map of tools that a MCP stdio host can
- * enumerate and dispatch. The stdio server itself is the host's concern (single-
+ * Returns a `ToolRegistry` — every tool with its own input and result type, and still an
+ * `MCPToolRegistry`, the named map a MCP stdio host can enumerate and dispatch. The stdio server itself is the host's concern (single-
  * transport constraint: no HTTP added here).
  */
 /**
@@ -144,7 +164,7 @@ export function bindToolsWithContext(
   opts?: {
     ownerPid?: string | null;
   },
-): { registry: MCPToolRegistry; ctx: ToolContext } {
+): { registry: ToolRegistry; ctx: ToolContext } {
   // Exactly one context per registry — the whole reason the groups take `ctx`
   // instead of `(harness, auditLog)` (CR-GC-256 Decision §1).
   const ctx = createToolContext(harness, auditLog, opts);
@@ -157,7 +177,7 @@ export function bindToolsWithContext(
   // Ein Werkzeug ohne `handler` oder mit einem `inputSchema`, das keins ist, fiele sonst
   // erst beim Aufruf auf — im Agenten. `parse`, nicht `safeParse`: ein kaputtes Register
   // ist kein Zustand, in dem der Host weiterlaufen soll.
-  const registry = MCPToolRegistrySchema.parse(withConsultationTracking(
+  const registry = withConsultationTracking(
     withInputParsing({
       ...bindReadTools(ctx),
       ...bindWriteTools(ctx),
@@ -169,11 +189,12 @@ export function bindToolsWithContext(
       ...bindTestReportTools(ctx),
     }),
     ctx,
-  )) as MCPToolRegistry;
+  );
+  MCPToolRegistrySchema.parse(registry);
   return { ctx, registry };
 }
 
-export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLog): MCPToolRegistry {
+export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLog): ToolRegistry {
   return bindToolsWithContext(harness, auditLog).registry;
 }
 

@@ -14376,7 +14376,7 @@ verify ▶ `REQ-tool-input-parsed-once` · testRefs: `tests/werkzeug-eingang-gep
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
-verify ▶ `SCHEMA-mcp-tool` · testRefs: `tests/werkzeug-register-typ.test.ts`
+verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
 ### 8.169  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 

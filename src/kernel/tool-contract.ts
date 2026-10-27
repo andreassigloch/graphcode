@@ -56,7 +56,8 @@ export const MCPToolSchema = z.object({
  *
  * Aus dem Schema folgen zwei Typen: der Handler sieht die Eingabe NACH dem Parsen
  * (`z.output`, Defaults gesetzt), ein Aufrufer liefert sie VOR dem Parsen (`z.input`, Felder
- * mit Default optional). Geparst wird im Register (CR-GC-866).
+ * mit Default optional). Geparst wird im Register (CR-GC-866); `CallableTool` ist die Sicht des
+ * Aufrufers darauf.
  */
 export interface MCPTool<TSchema extends ZodType = ZodType, TOutput = unknown> {
   name: string;
@@ -64,6 +65,15 @@ export interface MCPTool<TSchema extends ZodType = ZodType, TOutput = unknown> {
   inputSchema: TSchema;
   handler: (input: z.output<TSchema>) => Promise<TOutput>;
 }
+
+/** Das Werkzeug, wie ein Aufrufer es sieht: Eingabe vor dem Parsen, Ergebnis wie gebaut (CR-GC-868). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type CallableTool<T extends MCPTool<any, any>> = Omit<T, 'handler'> & {
+  handler: (input: z.input<T['inputSchema']>) => ReturnType<T['handler']>;
+};
+
+/** Ein Register in der Sicht des Aufrufers — jedes Werkzeug mit seinem eigenen Typ. */
+export type CallableRegistry<R extends MCPToolRegistry> = { [K in keyof R]: CallableTool<R[K]> };
 
 /** Der Laufzeit-Vertrag des Registers: jeder Wert ist ein Werkzeug (CR-GC-547). */
 export const MCPToolRegistrySchema = z.record(z.string(), MCPToolSchema);
