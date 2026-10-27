@@ -1,6 +1,6 @@
 # CR-GC-866: Werkzeug-Eingabe einmal im Register parsen (Teil 1 von ITEM-2026-1094)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-27)
 **Typ:** aus Item ITEM-2026-1094 (bug)
 **Erstellt:** 2026-10-27
 **Item:** bok/items/ITEM-2026-1094.json (Lane: code)
