@@ -1,6 +1,6 @@
 # CR-GC-872: type-check prueft tests/ mit (Teil 5 von ITEM-2026-1094)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-27)
 **Typ:** aus Item ITEM-2026-1100 (idea)
 **Erstellt:** 2026-10-27
 **Item:** bok/items/ITEM-2026-1100.json (Lane: code)
