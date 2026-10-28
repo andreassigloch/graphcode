@@ -1,6 +1,6 @@
 # CR-GC-874: FC-06 am eigenen Modell richten: ein Einsprung für MCP und CLI, Vorab-Lieferung als Datei
 
-**Status:** 🟠 Open (Umsetzung fertig, ein Befund offen)
+**Status:** ✅ Done (2026-10-28)
 **Typ:** aus Item ITEM-2026-1109 (finding)
 **Erstellt:** 2026-10-28
 **Item:** bok/items/ITEM-2026-1109.json (Lane: graph)
