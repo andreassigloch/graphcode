@@ -1,6 +1,6 @@
 ---
 name: se:author-actor
-version: 1
+version: 2
 description: Cut the actor set — the minimum number of distinct roles that makes the system boundary unambiguous, each named by what crosses the boundary, wired only via the one legal path ACTOR io FLOW io FUNC
 ---
 
@@ -28,8 +28,19 @@ Work it out from the use cases you already have, not from the prose — read the
 
 1. For each UC, name **who triggers it** and **who consumes its result**. Write both down, in the customer's words.
 2. Collapse the list: same things crossing → one actor.
-3. Keep every non-human counterpart that sits outside the boundary — an external service, a scheduler, a device. "The system itself" is **never** an actor; if you catch yourself writing `ACTOR-system`, the behaviour belongs inside as a FUNC.
+3. Keep a non-human counterpart only if it triggers a chain or receives its result — a scheduler, a device, an AI client that calls in. A service outside the boundary is an actor only if it triggers a chain or receives its result. A data source, a write target, a model or a backup that only answers is called by the function itself, with no flow in the model. "The system itself" is **never** an actor; if you catch yourself writing `ACTOR-system`, the behaviour belongs inside as a FUNC.
 4. What is left is the set. Typically 2–5 at the top level. If you have more than 7, you are modelling users, not the boundary.
+
+## The role comes from the chain, not from the actor
+
+An actor triggers a chain or receives its result. Contracts derive the role per chain (`chainRoles`); `FC-06` reports what does not fit.
+
+- **Only answering is not an actor.** Does it only answer? Then it is no actor: the function calls it itself.
+- **An actor that only delivers in advance is none.** The triggered function reads the data itself (file, store). `FC-06` reports it as `[predelivery]`.
+- **A chain runs from the first trigger to the last sink.** An actor in the middle is allowed: it gets a `sync` flow from the chain and feeds a later member (the approver who sees a proposal and approves it). There the chain splits into segments.
+- **Several triggers only at the same member with the same SCHEMA.** Otherwise each trigger gets its own chain.
+- **A receipt triggers nothing.** Whoever hands over with `async` gets a `sync` receipt back and is a sink there. A receipt (`async` hand-over, `sync` back) triggers nothing; the chain runs on (AI agent "reported to the cockpit", then the approver).
+- The role is not an attribute. It is a field in the result of `chainRoles`, per entry (actor, flow, member) and chain. Do not write it on the ACTOR.
 
 ## Every UC needs a source and a drain
 
@@ -41,5 +52,6 @@ Check it per use case, both directions. A UC whose result nobody outside receive
 
 - Can you name, for every UC, one actor in and one actor out?
 - Would merging any two actors lose a distinction the system actually acts on? If no — merge them.
+- Does any actor only answer, or only deliver in advance? Then it is no actor.
 - Is any actor a part of the system wearing a costume?
 - Does every actor appear in at least one use case? An actor with no UC is a leftover from the prose.

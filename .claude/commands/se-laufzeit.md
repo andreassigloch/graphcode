@@ -1,6 +1,6 @@
 ---
 name: se-laufzeit
-version: 1
+version: 2
 description: Laufzeitanalyse einer Wirkkette — liest den Antwortweg (die Glieder, auf die die Antwort an den Akteur wartet) aus graph_metrics, nennt Befunde je Ort, fehlende Anforderungen an das Datenalter und Vorschläge mit Preis. Auf Stufe 8, nach se-vorbereitung. Setzt kein Merkmal, schätzt keine Zeit, wendet keinen Umbau an.
 ---
 
@@ -24,7 +24,7 @@ Umbau an.
 ist die Länge der Liste. Fehlt dir ein Ort, ist das ein Befund an `chainMetrics`.
 
 Was das Merkmal am Fluss heißt: `sync` = der Abnehmer wartet beim Aufruf auf diese Lieferung;
-`async` = vorab geliefert. Der Abruf eines gehaltenen Zustands (Store, Ablage) ist `sync`.
+`async` = vorab geliefert. Der Abruf eines gehaltenen Zustands (Store, Ablage) ist `sync`. `async` am Fluss eines Akteurs, der aus der Kette nichts empfängt, ist eine Vorab-Lieferung (`FC-06`, `[predelivery]`): kein Merkmal zum Setzen, sondern ein Modellfehler, den `se-vorbereitung` klärt.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: se-view:conops
-version: 3
+version: 4
 description: Concept of Operations view (ISO 29148 §5.2.4 OpsCon — constraints, user classes, scenarios, change impacts) — deterministic render, thin trigger of the CR-GC-220 exporter
 ---
 
@@ -17,10 +17,12 @@ Every row walks a real edge — nothing is inferred:
 |---|---|---|
 | 1 | System overview | `SYS.description` |
 | 2 | Operational policies & constraints | `REQ` with `kinds` ∋ `non-functional` **and** `SYS compose\|satisfy REQ` or an ACTOR edge |
-| 3 | User classes & involved personnel | `ACTOR` + `ACTOR io UC` |
+| 3 | User classes & involved personnel | `ACTOR` + role per chain of the UC from `chainRoles`: "Ausgeloest von" (trigger), "Beteiligt" (in the middle), "Empfaenger" (sink), "Liefert zu" (every other entry) |
 | 4 | Operational scenarios | `UC compose FCHAIN compose FUNC` |
 | 5 | Modes of operation | **named gap** — no `MODE` element type exists |
 | 6 | Nature of changes & summary of impacts | `CR` + `CR relation → {UC, REQ, FUNC, MOD}` |
+
+The role is a field in the result of `chainRoles`, not an edge: an ACTOR reaches a UC only via `ACTOR io FLOW io FUNC` in one of its chains (R-18). §3 names no direct ACTOR–UC edge.
 
 ## Reading an empty section
 

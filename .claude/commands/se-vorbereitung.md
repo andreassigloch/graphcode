@@ -1,6 +1,6 @@
 ---
 name: se-vorbereitung
-version: 6
+version: 7
 description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, das Merkmal synchron/asynchron der Flüsse nachprüfen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
@@ -117,7 +117,7 @@ Vorschlag vor und kennzeichnest sie so. Ein Risiko ohne Gegenmaßnahme oder ohne
 
 Das Merkmal `sync` setzt der Autor beim Kettenschnitt (`se:top-level`, Phase 3, Schritt FLOW + SCHEMA).
 Dieser Schritt prüft es nach und kennzeichnet, was dort offen blieb. `FC-06` meldet eine Kette mit
-einem Fluss ohne Merkmal.
+einem Fluss ohne Merkmal. `async` am Fluss eines Akteurs, der aus der Kette nichts empfängt, ist eine Vorab-Lieferung (`FC-06`, `[predelivery]`): kein Merkmal zum Setzen. Der Akteur gehört nicht ins Modell; die Funktion liest die Daten selbst (Datei, Speicher).
 
 Die Laufzeitanalyse (`se-laufzeit`) liest den Antwortweg der Kette: die Glieder, auf die die
 Antwort an den Akteur wartet. `graph_metrics` liefert ihn je Kette als `answerPath` und liest dafür

@@ -1,6 +1,6 @@
 ---
 name: se-fmea
-version: 9
+version: 10
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
@@ -66,7 +66,7 @@ Ergebnis von Step 2: der Strukturbaum (System → Subsystem → Funktionselement
 
 ### Step 3 — Function Analysis
 - For each FUNC/MOD in scope, state its intended function (what it must do, with measurable acceptance where the spec defines it).
-- **State each FUNC's position in the chain**: Eingang (konsumiert den ACTOR-Trigger), Zwischenschritt, Ausgang (erzeugt das ACTOR-Ergebnis), oder Übergabepunkt (erzeugt einen FLOW, den eine fremde Kette konsumiert). Die Position bestimmt die Fehler**wirkung**: ein Ausfall am Eingang verhindert die Kette, ein Ausfall am Übergabepunkt verschiebt sie in eine andere Kette, wo sie niemand als Störung dieser Kette erkennt.
+- **State each FUNC's position in the chain**: Eingang (konsumiert den ACTOR-Trigger), Zwischenschritt, Ausgang (erzeugt das ACTOR-Ergebnis), oder Übergabepunkt (erzeugt einen FLOW, den eine fremde Kette konsumiert). Ein Akteur in der Mitte (Rolle `middle` in `chainRoles`) bekommt einen `sync`-Fluss aus der Kette und speist ein späteres Glied; dort beginnt ein Abschnitt aus `chainRoles.segments`. Nenne je Abschnitt Eingang und Ausgang; die Fehler**wirkung** am Eingang eines späteren Abschnitts trifft den Akteur in der Mitte, nicht den Auslöser. Die Position bestimmt die Fehler**wirkung**: ein Ausfall am Eingang verhindert die Kette, ein Ausfall am Übergabepunkt verschiebt sie in eine andere Kette, wo sie niemand als Störung dieser Kette erkennt.
 - Link functions to the requirements they `satisfy` (FUNC→REQ edges already in graph; query via `graph_get_edges` `{ "edgeType": "satisfy" }`).
 - **Flag jede REQ, die von mehr als einer FUNC erfüllt wird.** Dann trägt keine der beiden allein die Verantwortung, und der Fehlermodus „Zusage wird verletzt, ohne dass eine der beiden FUNCs ausgefallen ist" ist real. Query: `graph_get_edges` `{ "edgeType": "satisfy" }`, nach Ziel gruppieren.
 

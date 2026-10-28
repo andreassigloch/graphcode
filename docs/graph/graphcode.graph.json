@@ -3807,6 +3807,18 @@
       "description": "docs/cr/open/CR-GC-875-skills-zur-akteur-lehre-nachziehen.md"
     },
     {
+      "id": "CR-GC-876",
+      "type": "CR",
+      "name": "se-view-Skills entfernen: paralleler Pfad zu auto-export docs/views (fmea rendert von Hand)",
+      "description": "docs/cr/open/CR-GC-876-se-view-skills-entfernen-paralleler-pfad.md"
+    },
+    {
+      "id": "CR-GC-877",
+      "type": "CR",
+      "name": "Skill se:import-code in eigene Kette",
+      "description": "docs/cr/open/CR-GC-877-skill-se-import-code-in-eigene-kette.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -31622,5 +31634,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 981
+  "graphVersion": 983
 }
