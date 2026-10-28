@@ -1,6 +1,6 @@
 # CR-GC-873: ConOps Ausgelöst von/Beteiligt, se:top-level Regel 4 und sync beim Kettenschnitt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-10-28)
 **Typ:** aus Item ITEM-2026-1108 (idea)
 **Erstellt:** 2026-10-28
 **Item:** bok/items/ITEM-2026-1108.json (Lane: code)
