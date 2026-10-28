@@ -26,7 +26,6 @@
 | `FUNC-block-autorieren` | FUNC | Autorieren |
 | `FUNC-block-bedienung` | FUNC | Bedienung |
 | `FUNC-block-betrieb` | FUNC | Betrieb |
-| `FUNC-block-dokumentenwerk` | FUNC | Dokumentenwerk |
 | `FUNC-block-gate` | FUNC | Qualitäts-Gate |
 | `FUNC-block-gedaechtnis` | FUNC | Gedächtnis |
 | `FUNC-block-grounding` | FUNC | Grounding |
@@ -95,7 +94,6 @@
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-plan-code-lane` | FUNC | Code-Spur planen |
 | `FUNC-read-tools` | FUNC | bindReadTools(ctx) |
-| `FUNC-render-views` | FUNC | render graph→markdown views |
 | `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | harness.testImpact(changeSet, depth) |
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
@@ -134,12 +132,6 @@
 | `FUNC-verify-lane-code` | FUNC | npm run verify:code |
 | `FUNC-verify-lane-full` | FUNC | npm run verify:full |
 | `FUNC-verify-lane-model` | FUNC | npm run verify:model |
-| `FUNC-view-changelog` | FUNC | se-view-changelog (Change Log) |
-| `FUNC-view-conops` | FUNC | se-view-conops (ConOps) |
-| `FUNC-view-fmea` | FUNC | View se-view:fmea |
-| `FUNC-view-icd` | FUNC | se-view-icd (ICD) |
-| `FUNC-view-intplan` | FUNC | se-view-intplan (Integrations-/Testplan) |
-| `FUNC-view-rtm` | FUNC | se-view-rtm (RTM) |
 | `FUNC-vorschlag` | FUNC | Vorschlag nach dem Zug |
 | `FUNC-zug-bericht` | FUNC | zugBericht(before |
 | `MOD-agent-surface` | MOD | agent-surface — Skill-Treiber |
@@ -172,7 +164,6 @@
 | `FUNC-block-autorieren` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-bedienung` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-betrieb` | ⚠ nicht alloziert (R-22) |
-| `FUNC-block-dokumentenwerk` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-gate` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-gedaechtnis` | ⚠ nicht alloziert (R-22) |
 | `FUNC-block-grounding` | ⚠ nicht alloziert (R-22) |
@@ -241,7 +232,6 @@
 | `FUNC-own-kuzu-host` | `MOD-kernel` |
 | `FUNC-plan-code-lane` | `MOD-projections` |
 | `FUNC-read-tools` | `MOD-surface` |
-| `FUNC-render-views` | `MOD-agent-surface` |
 | `FUNC-reseed` | `MOD-kernel` |
 | `FUNC-resolve-tests-from-code` | `MOD-kernel` |
 | `FUNC-rewind` | `MOD-surface` |
@@ -280,11 +270,5 @@
 | `FUNC-verify-lane-code` | `MOD-dev-scripts` |
 | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `FUNC-verify-lane-model` | `MOD-dev-scripts` |
-| `FUNC-view-changelog` | `MOD-agent-surface` |
-| `FUNC-view-conops` | `MOD-agent-surface` |
-| `FUNC-view-fmea` | `MOD-agent-surface` |
-| `FUNC-view-icd` | `MOD-agent-surface` |
-| `FUNC-view-intplan` | `MOD-agent-surface` |
-| `FUNC-view-rtm` | `MOD-agent-surface` |
 | `FUNC-vorschlag` | `MOD-loop` |
 | `FUNC-zug-bericht` | `MOD-kernel-measure` |

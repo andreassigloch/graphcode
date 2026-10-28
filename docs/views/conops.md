@@ -139,8 +139,9 @@ Ausgeloest von: `ACTOR-auftraggeber`
 
 Empfaenger: `ACTOR-auftraggeber`
 
-- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-render-views` → `FUNC-view-changelog` → `FUNC-view-conops` → `FUNC-view-fmea` → `FUNC-view-icd` → `FUNC-view-intplan` → `FUNC-view-rtm`
+- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-graph-store`
 - `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code-verb` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
+- `FCHAIN-skill-import-code` — Code per Skill einlesen: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
 
 ### `UC-reduced-llm` — Mit kleinem oder lokalem Modell arbeiten
 
@@ -191,13 +192,13 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-107` | done | Dashboard auf SE-Ontologie | `MOD-kernel` · `REQ-dashboard-ontology-sync` |
 | `CR-GC-108` | done | Test-Konzept im Graph + Benchmark-REQ | `MOD-projections` · `REQ-benchmark-harness` · `REQ-quality-metric` |
 | `CR-GC-109` | done | Live-Event + View-Contract → contracts | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `REQ-live-event-in-contracts` · `REQ-versioned-broadcast` |
-| `CR-GC-110` | done | views.ts → graph-api-core; BQ-Fork retiren | `FUNC-render-views` · `MOD-projections` · `REQ-shared-views-no-fork` |
+| `CR-GC-110` | done | views.ts → graph-api-core; BQ-Fork retiren | `MOD-projections` · `REQ-shared-views-no-fork` |
 | `CR-GC-111` | done | MCP-stdio-Server + bin (graphcode mcp) | `FUNC-serve-stdio` · `MOD-surface` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` |
 | `CR-GC-112` | done | CLI graphcode init/update/remove | `FUNC-harness-cli` · `MOD-surface` · `REQ-post-harness-cli` |
 | `CR-GC-113` | done | Graph→Markdown Re-Exporter | `FUNC-export-markdown` · `MOD-projections` · `REQ-doc-export` · `REQ-post-export-markdown` |
 | `CR-GC-114` | done | Host + SSE/WS-Bridge | `FUNC-broadcast-diff` · `FUNC-health-endpoint` · `FUNC-own-kuzu-host` · `FUNC-serve-sse` · `MOD-surface` · `REQ-mutation-emits-event` · `REQ-readonly-bridge` · `REQ-versioned-broadcast` |
 | `CR-GC-115` | done | Dashboard-Viewer-App (Hybrid) | `MOD-dashboard` · `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-real-health-check` · `UC-live-graph-view` |
-| `CR-GC-116` | done | Views/Skills an Live-Graph verdrahten | `FUNC-render-views` · `FUNC-view-changelog` · `FUNC-view-conops` · `FUNC-view-fmea` · `FUNC-view-icd` · `FUNC-view-intplan` · `FUNC-view-rtm` · `MOD-agent-surface` |
+| `CR-GC-116` | done | Views/Skills an Live-Graph verdrahten | `MOD-agent-surface` |
 | `CR-GC-117` | done | Modell-Hygiene: V3_RULES-Violations schließen | `REQ-graph-is-ssot` · `REQ-rule-enforcement` |
 | `CR-GC-118` | done | Cleanup stale-at-all Knoten | `REQ-graph-is-ssot` |
 | `CR-GC-119` | done | Docs-Taxonomie — Views vs Records | `MOD-projections` · `REQ-docs-taxonomy` |
@@ -212,8 +213,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-128` | done | Repo-abgeleiteter Member-Name + README-Setup | `FUNC-serve-stdio` · `MOD-projections` |
 | `CR-GC-129` | done | graph_readiness als MCP-Tool | `FUNC-score-completeness` · `MOD-surface` |
 | `CR-GC-130` | done | Action-Skills (fmea/review/status) auf MCP umgestellt | `MOD-agent-surface` |
-| `CR-GC-131` | done | View-Skills A (arch/nfr/trade) auf MCP umgestellt | `FUNC-render-views` · `MOD-agent-surface` |
-| `CR-GC-132` | done | View-Skills B (testmatrix/testconcept/implplan) + Skill-Konformitaetstest | `FUNC-render-views` · `MOD-agent-surface` |
+| `CR-GC-131` | done | View-Skills A (arch/nfr/trade) auf MCP umgestellt | `MOD-agent-surface` |
+| `CR-GC-132` | done | View-Skills B (testmatrix/testconcept/implplan) + Skill-Konformitaetstest | `MOD-agent-surface` |
 | `CR-GC-133` | done | Scaffold installiert die SE-Skills ins Ziel-Repo | `FUNC-harness-cli` · `MOD-agent-surface` · `MOD-surface` |
 | `CR-GC-134` | done | Bottom-up Test-Deduktion (graph_tests) | `FUNC-deduce-tests` · `REQ-test-runnable-binding` · `UC-efficient-testing` |
 | `CR-GC-200` | done | Single graph-validator - uniqueness + de-dup | `MOD-kernel` · `MOD-projections` · `REQ-graph-integrity` |
@@ -236,7 +237,6 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-217` | done | Graph-State Time-Travel (commit-gebundener Snapshot) | `FUNC-graph-export-snapshot` · `FUNC-reseed` · `REQ-graph-snapshot-per-commit` · `UC-graph-time-travel` |
 | `CR-GC-218` | done | Concurrent-agent isolation and safe graph recall | `FUNC-claim-store-lock` |
 | `CR-GC-219` | done | Flatten redundant nested attributes field | `FUNC-export-markdown` |
-| `CR-GC-220` | done | Renderer: deterministic MarkdownView for every render-able artifact | `FUNC-render-views` |
 | `CR-GC-227` | done | Help content layer (authored Plain/SE annotation, HELP_CONTENT) | `FUNC-se-help` |
 | `CR-GC-228` | done | Help data layer (pure projection to HelpEntry, help.ts) | `FUNC-se-help` |
 | `CR-GC-229` | done | Help surfaces (graph_help MCP tool + se:help skill) | `FUNC-se-help` |
@@ -245,7 +245,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-235` | done | Ein Write-Channel: Host-owned Store, Sessions als Clients | `FUNC-serve-stdio` |
 | `CR-GC-236` | done | Export-Header: Member-Name statt hartkodiertem graphcode | `FUNC-export-markdown` |
 | `CR-GC-237` | done | HTTP-Bridge folgt dem Store-Lock | `REQ-readonly-bridge` · `REQ-single-kuzu-owner` |
-| `CR-GC-240` | done | Testkonzept: Pyramiden-Ebene aus der Graph-Position statt aus einem level-Attribut | `FUNC-render-views` · `MOD-projections` |
+| `CR-GC-240` | done | Testkonzept: Pyramiden-Ebene aus der Graph-Position statt aus einem level-Attribut | `MOD-projections` |
 | `CR-GC-241` | done | Host-Shim-Schreibbruecke exportieren (callHost/HOST_SOCK_BASENAME) | `FUNC-own-kuzu-host` · `MOD-surface` |
 | `CR-GC-242` | done | se-test-ui-Skill + die Red-First-Regel ausliefern | `FUNC-test-ui` · `MOD-agent-surface` |
 | `CR-GC-243` | done | Lokale OCC (BaseVersionSchema) auf @sigloch/contracts migriert | `FUNC-mutate` · `MOD-surface` |
@@ -301,11 +301,11 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-298` | done | se:import-code-Skill + graphcode-import-code-Verb (graphify-Extraktor angeschlossen) | `FUNC-harness-cli` · `FUNC-import` · `MOD-surface` |
 | `CR-GC-299` | done | exporter.ts flacht attributes ab — abgeloest von CR-GC-303 | `FUNC-export-markdown` · `MOD-projections` |
 | `CR-GC-300` | done | graphVersion-Stempel im graph_export-Output | `FUNC-export-markdown` · `FUNC-graph-export-snapshot` |
-| `CR-GC-301` | done | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 | `FUNC-view-rtm` · `MOD-projections` |
+| `CR-GC-301` | done | A-SPICE-Nachschaerfungen: R-21-Level-Check, Auditor-Sicht, SUP.9/SUP.10 | `MOD-projections` |
 | `CR-GC-302` | done | Auto-SYS-Node bei jedem Import | `FUNC-import` |
 | `CR-GC-303` | done | Attribut-Abflachung macht Steering-Pfad regelblind | `FUNC-evaluate-rules` · `FUNC-graph-suggest` |
-| `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden | `FUNC-render-views` · `MOD-agent-surface` · `MOD-projections` |
-| `CR-GC-305` | done | spec-View entfernen, srs bleibt | `FUNC-export-markdown` · `FUNC-render-views` · `MOD-projections` |
+| `CR-GC-304` | done | ConOps-View nach ISO 29148 neu schneiden | `MOD-agent-surface` · `MOD-projections` |
+| `CR-GC-305` | done | spec-View entfernen, srs bleibt | `FUNC-export-markdown` · `MOD-projections` |
 | `CR-GC-306` | done | Onboarding: ein Start, Beispiel-Prompt, GVE-Adresse | `FUNC-harness-cli` · `MOD-surface` |
 | `CR-GC-307` | done | Intent-Anker sind Steuerungsinternes, nicht Kundendialog | `FUNC-graph-suggest` · `MOD-agent-surface` |
 | `CR-GC-308` | done | View-Exporter lesen nur deklarierte Kanten und Attribute | `FUNC-export-markdown` · `MOD-projections` |
@@ -317,8 +317,6 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-314` | done | Positive Entscheidungen im Audit-Trail (rulesPassed) | `FUNC-mutate` |
 | `CR-GC-315` | done | R-12 und R-21 feuerten auf Kanten, fuer die sie nie gedacht waren | `FUNC-evaluate-rules` |
 | `CR-GC-316` | done | graph_help buendelt Massnahmen je Regel statt je Element | `MOD-surface` |
-| `CR-GC-317` | done | RTM nach A-SPICE-Ebenen gruppieren + Integrationsabdeckung | `FUNC-view-rtm` |
-| `CR-GC-318` | done | reqLevels lief nur ueber compose — satisfy-Bein fehlte | `FUNC-view-rtm` |
 | `CR-GC-319` | done | audit_trail lieferte Rohdatensaetze statt einer Projektion | `MOD-surface` |
 | `CR-GC-320` | done | executor.ts schneiden — Schritt 1 (Prompt · Ranking · Prosa-Recovery) | `FUNC-graph-export-snapshot` · `FUNC-reseed` |
 | `CR-GC-321` | done | __name in Format-E entdeckbar machen, stillen Namens-Fallback laut machen | `FUNC-decode` · `FUNC-mutate` |
@@ -351,7 +349,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-568` | done | Executor: SYSTEM-Prompt verbietet den dryRun-Vergleich, den das Gate-Protokoll verlangt | `FUNC-generation-step` · `REQ-phase-gate-not-skippable` |
 | `CR-GC-569` | done | Betriebsmodi sind nicht modelliert: ein ACTOR-agent fuer beide Treiber, UC-reduced-llm vermischt Modell und Treiber, kein SCHEMA fuer die Lauf-Konfiguration | `UC-reduced-llm` |
 | `CR-GC-570` | done | Gate-Antwort ist 70% des Werkzeug-Payloads: 487 Violations in 23 Antworten, 51% Wiederholung, 0 davon gating | `FUNC-compute-readiness` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `REQ-formatE-parity` · `REQ-harness-schema-in-contracts` · `REQ-mcp-gate-symmetry` · `REQ-one-gate-per-repo` · `REQ-single-write-door` · `REQ-token-efficiency` |
-| `CR-GC-571` | done | Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden) | `FUNC-author-uc` · `FUNC-generation-step` · `FUNC-se-fmea` · `FUNC-view-fmea` · `REQ-published-counts-match-code` |
+| `CR-GC-571` | done | Smeagol-Check: jede in einem Skill genannte Regel-ID muss im Regelkatalog existieren (18 genannt, 1 erfunden) | `FUNC-author-uc` · `FUNC-generation-step` · `FUNC-se-fmea` · `REQ-published-counts-match-code` |
 | `CR-GC-573` | done | Fuenf Prompt-Autoritaeten in EINEM FUNC-generation-step: SEED_STAGES, DIMENSION_FOCUS_TYPES, GENERATION_TEMPLATE, RULE_CLAUSE, GATE_PROTOCOL sind unmodelliert | `FUNC-authoring-guide` · `FUNC-generation-step` |
 | `CR-GC-574` | done | Das Rig ist der Systemtest und fehlt im Modell: kein TEST-/FCHAIN-Knoten fuer Lauf, Metrik, Pruefliste und Turn-Analyse | `UC-loop-closure` |
 | `CR-GC-575` | done | Eine erklaerte Rangfolge der Steuerungskanaele statt verstreuter if/else — heute muss jeder Konflikt gemessen werden | `FUNC-generation-step` |
@@ -413,13 +411,13 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten | `REQ-responsiveness` |
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich | `FUNC-take-steering-snapshot` |
 | `CR-GC-667` | open | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen | `REQ-open-point-asked` |
-| `CR-GC-668` | done | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche | `FUNC-se-fmea` · `FUNC-view-fmea` · `REQ-published-counts-match-code` |
+| `CR-GC-668` | done | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche | `FUNC-se-fmea` · `REQ-published-counts-match-code` |
 | `CR-GC-669` | done | Migrationswerkzeug REQ-kinds auf zwei Werte | `MOD-agent-surface` · `MOD-kernel` · `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` · `MOD-surface` |
 | `CR-GC-670` | done | graphcode-Eigenmodell auf zwei REQ-kinds migrieren | `FUNC-decode` · `FUNC-deduce-tests` · `FUNC-export-markdown` · `FUNC-export-marker` · `FUNC-import-code` · `FUNC-rewind` · `FUNC-test` · `REQ-code-governed-quality` · `REQ-conflict-free-merge` · `REQ-doc-export` · `REQ-graph-snapshot-per-commit` · `REQ-graph-state-recall` · `REQ-impact-based-testing` · `REQ-interactive-capture-suggest` · `REQ-interface-change-escalation` · `REQ-model-exchange-post` · `REQ-model-exchange-pre` · `REQ-no-extraction` · `REQ-session-leaves-nothing-behind` · `REQ-skill-authors-through-gate` · `REQ-skill-reads-only` · `REQ-steering-from-metrics` · `REQ-steering-pre` |
 | `CR-GC-671` | done | graphcode-Kern auf zwei REQ-kinds und neuen contracts-Floor | `FUNC-evaluate-rules` · `FUNC-mutate` |
 | `CR-GC-672` | done | Executor und Preflight auf zwei REQ-kinds | `FUNC-generation-step` |
 | `CR-GC-672B` | done | Executor zeigt Vorschlaege als Gate-Batch (Split aus CR-GC-672) | `FUNC-generation-step` · `REQ-phase-gate-not-skippable` · `REQ-published-counts-match-code` |
-| `CR-GC-673` | done | Projektionen auf zwei REQ-kinds und Rollen-Attribut | `FUNC-authoring-guide` · `FUNC-export-markdown` · `FUNC-render-views` |
+| `CR-GC-673` | done | Projektionen auf zwei REQ-kinds und Rollen-Attribut | `FUNC-authoring-guide` · `FUNC-export-markdown` |
 | `CR-GC-674` | done | SE-Skills und Help auf zwei REQ-kinds | `FUNC-author-req` · `FUNC-se-help` |
 | `CR-GC-675` | done | Executor: Material-Hinweis in der Intention loest das Nachlesen des Auftrags in jeder Runde aus | `FUNC-generation-step` |
 | `CR-GC-680` | open | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie | `FUNC-se-retro` |
@@ -475,7 +473,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-753` | done | Nachzug Regelkatalog 40 - die neun Entscheidungen zur Regelmatrix | `FUNC-generation-step` · `FUNC-score-completeness` |
 | `CR-GC-754` | done | Nachzug Regelkatalog 41 - Analysen hinterlassen keinen Bauauftrag | `FUNC-se-fmea` · `FUNC-se-irr` · `REQ-analyse-artefakt-vor-stempel` |
 | `CR-GC-755` | n/a | Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43 | `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-optimize` · `FUNC-se-trade` |
-| `CR-GC-756` | n/a | Sicht Variantenvergleich streichen | `FUNC-render-views` |
+| `CR-GC-756` | n/a | Sicht Variantenvergleich streichen | `FUNC-export-markdown` |
 | `CR-GC-757` | n/a | Stufe statt Dimension - Befunde zaehlen statt Prozent | `FUNC-compute-steering-delta` · `FUNC-generation-step` · `FUNC-graph-readiness` · `FUNC-take-steering-snapshot` |
 | `CR-GC-758` | n/a | Rang ohne Gesamt-Delta, Stufen im Bericht wie die Marken, lesender Schritt | `MOD-agent-surface` · `MOD-kernel` · `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
 | `CR-GC-759` | n/a | Werteklassen Laufzeit-Parameter, Start-Konfiguration, Invariante als Allgemeinvorgabe prüfen | `FUNC-author-req` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-top-level` · `FUNC-test` · `FUNC-test-ui` |
@@ -519,7 +517,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-798` | n/a | FMEA aller Wirkketten des Modells (se-fmea v9) | `REQ-interface-change-names-dependents` · `REQ-risk-interface-change-unescalated` · `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` |
 | `CR-GC-799` | n/a | Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change) | `FUNC-resolve-tests-from-code` · `FUNC-test-ingest` · `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` |
 | `CR-GC-800` | n/a | Spur CODE und Volllauf melden Aenderung und Lauf an graph_test_ingest zurueck (offen aus CR-GC-799) | `FUNC-measure-test-schlupf` · `FUNC-plan-code-lane` · `REQ-lane-reports-change` · `REQ-risk-stale-test-result` |
-| `CR-GC-801` | n/a | Sicht fmea.md ist ein Risikoregister: ohne Kette, Traeger, Prioritaet, Nachweis und Massnahmenstand | `FUNC-view-fmea` · `REQ-doc-export` |
+| `CR-GC-801` | n/a | Sicht fmea.md ist ein Risikoregister: ohne Kette, Traeger, Prioritaet, Nachweis und Massnahmenstand | `REQ-doc-export` |
 | `CR-GC-802` | n/a | FMEA-Nachtrag: die zwoelf bewerteten Fehlerarten als Risiken ins Modell | `REQ-measurement-vector-contract-tested` · `REQ-risk-audit-evaluation-unowned` · `REQ-risk-auto-export-fails-silently` · `REQ-risk-client-holds-stale-tool-list` · `REQ-risk-edge-vanishes-silently` · `REQ-risk-measurement-vector-contract-unbound` · `REQ-risk-owner-ends-with-docked-sessions` · `REQ-risk-partial-store-after-reseed` · `REQ-risk-selection-misses-red-test` · `REQ-risk-skill-instructs-rejected-move` · `REQ-risk-stage-name-free-text` · `REQ-risk-stale-measurement` · `REQ-risk-steering-delta-missing` · `REQ-stage-names-enumerated` · `REQ-steering-delta-in-answer-tested` |
 | `CR-GC-803` | n/a | Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen) | `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-take-steering-snapshot` · `REQ-export-marker-tracks-drift` · `REQ-export-no-clobber` · `REQ-graph-snapshot-per-commit` · `REQ-single-measurement-path` |
 | `CR-GC-804` | n/a | Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion) | `FUNC-graph-suggest` · `FUNC-se-constraints` · `FUNC-se-vorbereitung` · `FUNC-target-profile-load` · `REQ-model-lane-fixed-set` |
@@ -583,6 +581,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-871` | n/a | tsc-Fehler in tests/ beheben, Teil 3 | `FUNC-graph-mutate-tool` |
 | `CR-GC-873` | n/a | ConOps Ausgelöst von/Beteiligt, se:top-level Regel 4 und sync beim Kettenschnitt | `FUNC-export-markdown` · `FUNC-se-top-level` · `FUNC-se-vorbereitung` |
 | `CR-GC-874` | n/a | FC-06 am eigenen Modell richten: ein Einsprung für MCP und CLI, Vorab-Lieferung als Datei | `FUNC-agent-loop` · `FUNC-claim-store-lock` · `FUNC-generation-step` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-load-config` · `FUNC-measure-test-schlupf` · `FUNC-schema-guard` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-verify-lane-full` |
+| `CR-GC-876` | n/a | se-view-Skills entfernen: paralleler Pfad zu auto-export docs/views (fmea rendert von Hand) | `FUNC-block-grounding` · `FUNC-export-markdown` · `MOD-agent-surface` · `REQ-doc-export` |
+| `CR-GC-877` | n/a | Skill se:import-code in eigene Kette | `FUNC-import-code` · `REQ-skill-import-code-nennt-verb` · `UC-model-exchange` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
