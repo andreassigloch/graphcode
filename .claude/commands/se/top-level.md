@@ -1,6 +1,6 @@
 ---
 name: se:top-level
-version: 4
+version: 5
 description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at 7±2 blocks per level, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
@@ -65,7 +65,7 @@ The top triad is anchored at the SYS node, but only two legs are edges: `SYS -co
 
 1. **FUNC** — which blackboxes explain the use cases?
 2. **FCHAIN** — the causal path per UC (`UC -compose-> FCHAIN -compose-> FUNC`).
-3. **FLOW + SCHEMA** — the contracts, and **consolidate them**. `ACTOR -io-> FLOW -io-> FUNC`, `FUNC -io-> FLOW -io-> FUNC`; every FLOW carries exactly one SCHEMA (`FLOW -relation-> SCHEMA`, cardinality 1). One shared contract across many flows is a feature, not duplication.
+3. **FLOW + SCHEMA** — the contracts, and **consolidate them**. `ACTOR -io-> FLOW -io-> FUNC`, `FUNC -io-> FLOW -io-> FUNC`; every FLOW carries exactly one SCHEMA (`FLOW -relation-> SCHEMA`, cardinality 1). One shared contract across many flows is a feature, not duplication. **Mark every flow `@sync sync` or `@sync async` here, while you cut the chain** (rule 7 below) — not later in `se-vorbereitung`. Without the mark the trigger of a chain cannot be derived; FC-06 reports the chain.
 4. **MOD + stack** — only now, and at **7±2 per level** (RD-04, `decompositionBreadth`).
 
 Step 4 after step 3 is empirical, not stylistic: CR-GC-436 tried allocation over unconsolidated edges and was a No-Go — optimizing a cut over unconsolidated contracts optimizes the wrong thing (ITEM-2026-170 §1).
@@ -98,7 +98,7 @@ _Warum hier keine feste Zahl mehr steht (CR-GC-629): diese Seite nannte an zwei 
 1. **Every entry point is a FUNC.** That covers an MCP tool, a CLI verb, an npm script and a skill. An actor reaches only these. Wrong: the agent sends a flow to the kernel function that computes the impact. Right: agent → impact tool → kernel function.
 2. **One FLOW is one hop between caller and callee.** It has one producer (IO-02). The answer goes back to the caller, not to whoever reads it last. Wrong: the gate's report flows straight to the agent. Right: gate → tool → agent.
 3. **A store flow ends only at a function that reads the store.** A function that gets the graph as an argument receives it from its caller. Wrong: the store feeds the fit advisory, while in code the tool passes the graph in.
-4. **One trigger per chain.** Start-up, shutdown, a host and a health check are separate chains. A chain counts its members per FUNC: a start-up flow on a shared function appears in every chain that contains the function.
+4. **One entry node per chain.** The trigger is the entry from which every member of the chain is reached. Several actors may start the same chain only at that entry node and with the same contract (SCHEMA); who started it is then a field in the contract. A second entry node or a second contract is a second chain: start-up, shutdown, a host and a health check are separate chains, and so are an MCP tool and a CLI verb that start the same work. An actor in the middle is allowed: the approver who sees a proposal and approves it receives a `sync` flow from the chain and feeds the next member. That member splits the chain into segments; the chain stays one. FC-06 reports a chain with no trigger, with triggers at different members or contracts, or with a flow without `sync`. A chain counts its members per FUNC: a start-up flow on a shared function appears in every chain that contains the function.
 5. **A property is a non-functional REQ, not a chain.** "Runs without a model call" has no sequence. A chain for it lists functions that never call each other.
 6. **The `realRef` names the symbol on the path, not a wrapper around it.**
 7. **`sync` answers one question: does the caller await the answer?** A callback, an event or a file that someone reads later is `async`.

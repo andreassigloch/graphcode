@@ -88,9 +88,9 @@ const VERDRAHTUNG = ['R-30', 'R-31', 'R-21', 'IO-01', 'FC-04', 'FC-05'];
 const KLASSEN = ['Tieferlegen', 'Zerlegen', 'Funktion fehlt', 'Gilt quer'];
 
 describe('se-vorbereitung liest Kennzahlen und Befunde, er rechnet nichts (CR-GC-784)', () => {
-  it('der Kopf traegt Version 5 und den Namen des Skills', () => {
+  it('der Kopf traegt Version 6 und den Namen des Skills', () => {
     expect(skill).toMatch(/^name: se-vorbereitung$/m);
-    expect(skill).toMatch(/^version: 5$/m);
+    expect(skill).toMatch(/^version: 6$/m);
   });
 
   it('der Skill-Text traegt keine Rechnung und keine Kennzahl, die es nicht gibt', () => {

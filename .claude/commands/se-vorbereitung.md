@@ -1,7 +1,7 @@
 ---
 name: se-vorbereitung
-version: 5
-description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, Flüsse als synchron oder asynchron kennzeichnen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
+version: 6
+description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, das Merkmal synchron/asynchron der Flüsse nachprüfen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
 # se-vorbereitung — erst das Modell, dann die Analyse
@@ -114,6 +114,10 @@ Vorschlag vor und kennzeichnest sie so. Ein Risiko ohne Gegenmaßnahme oder ohne
 `FM-02` und `RD-01` schon; zitiere sie.
 
 ## 3. Flüsse kennzeichnen
+
+Das Merkmal `sync` setzt der Autor beim Kettenschnitt (`se:top-level`, Phase 3, Schritt FLOW + SCHEMA).
+Dieser Schritt prüft es nach und kennzeichnet, was dort offen blieb. `FC-06` meldet eine Kette mit
+einem Fluss ohne Merkmal.
 
 Die Laufzeitanalyse (`se-laufzeit`) liest den Antwortweg der Kette: die Glieder, auf die die
 Antwort an den Akteur wartet. `graph_metrics` liefert ihn je Kette als `answerPath` und liest dafür
