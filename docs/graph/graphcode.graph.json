@@ -24,13 +24,6 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
-      "id": "ACTOR-regelhalter",
-      "type": "ACTOR",
-      "name": "Regelhalter",
-      "description": "Setzt das Regelwerk, nach dem das Gate urteilt und die Runde fuehrt: Urteilsschwellen in der Config, Regelklauseln, Vorlagen je Readiness-Dimension, das Gate-Protokoll, die Ontologie-Version aus contracts. Eine Rolle, kein Personentyp; getrennt vom Auftraggeber, weil ein Auftrag das Regelwerk nicht aendern darf. (CR-GC-815)",
-      "status": "reviewed"
-    },
-    {
       "id": "CR-GC-100",
       "type": "CR",
       "name": "Harness Core",
@@ -3802,6 +3795,18 @@
       "description": "docs/cr/open/CR-GC-873-conops-ausgelo-st-von-beteiligt-se-top-l.md"
     },
     {
+      "id": "CR-GC-874",
+      "type": "CR",
+      "name": "FC-06 am eigenen Modell richten: ein Einsprung für MCP und CLI, Vorab-Lieferung als Datei",
+      "description": "docs/cr/open/CR-GC-874-fc-06-am-eigenen-modell-richten-ein-eins.md"
+    },
+    {
+      "id": "CR-GC-875",
+      "type": "CR",
+      "name": "Skills zur Akteur-Lehre nachziehen",
+      "description": "docs/cr/open/CR-GC-875-skills-zur-akteur-lehre-nachziehen.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -3915,7 +3920,7 @@
       "id": "FCHAIN-model-import",
       "type": "FCHAIN",
       "name": "Bestehenden Bestand einlesen",
-      "description": "Ein Mensch laesst eine bestehende Codebasis einlesen: der Skill se:import-code leitet den Agenten an, graphcode import-code zu fahren; das Verb legt einen eigenen Harness an, befuellt einen leeren Store, gibt den Format-E-Bestand an graph_mutate, exportiert und meldet die Zusammenfassung ueber die CLI."
+      "description": "Ein Mensch oder der Agent ruft graphcode import-code; beide kommen durch denselben Einsprung (src/cli.ts main), der Agent ist Aufrufer, kein Glied. Das Verb legt einen eigenen Harness an, befuellt einen leeren Store, gibt den Format-E-Bestand an graph_mutate, exportiert und meldet die Zusammenfassung ueber die CLI. (CR-GC-874)"
     },
     {
       "id": "FCHAIN-model-lane",
@@ -3994,8 +3999,14 @@
     {
       "id": "FCHAIN-verify-lane",
       "type": "FCHAIN",
-      "name": "Test-Spur fahren (npm)",
-      "description": "Der Entwickler oder der pre-commit-Hook faehrt npm run verify:code oder verify:full; die Spur plant ueber planCodeLane aus dem committeten Snapshot, faehrt vitest, meldet das Ergebnis ueber graph_test_ingest zurueck und gibt Plan, Ergebnis und bei verify:full die Schlupf-Zeile aus."
+      "name": "Code-Test-Spur fahren (npm)",
+      "description": "Der Entwickler oder der pre-commit-Hook faehrt npm run verify:code; die Spur plant ueber planCodeLane aus dem committeten Snapshot, faehrt vitest auf der Auswahl oder der vollen Suite und meldet das Ergebnis ueber graph_test_ingest zurueck. verify:full ist ein eigener Einsprung und eine eigene Kette (CR-GC-874)."
+    },
+    {
+      "id": "FCHAIN-verify-lane-full",
+      "type": "FCHAIN",
+      "name": "Volle Test-Spur fahren (npm)",
+      "description": "Der Entwickler faehrt npm run verify:full vor dem CR-Abschluss; die Spur plant ueber planCodeLane aus dem committeten Snapshot, faehrt die volle Suite, meldet das Ergebnis ueber graph_test_ingest zurueck und schreibt die Schlupf-Zeile. Eigener Einsprung neben verify:code: kein Aufruf zwischen den beiden Skripten (CR-GC-874)."
     },
     {
       "id": "FLOW-action",
@@ -4270,9 +4281,9 @@
       "id": "FLOW-audit-record",
       "type": "FLOW",
       "name": "Aufgezeichnete Gate-Entscheidung",
-      "description": "Was recordAudit je Entscheidung ins Operations-Log schreibt, samt Code-Stand codeState (head, dirty) seit CR-GC-848; audit_trail und audit_stats lesen die Datei. Abwesenheit heisst nicht aufgezeichnet, nie leerer Befund.",
+      "description": "Das Operations-Log der Gate-Entscheidungen samt Code-Stand codeState (head, dirty) seit CR-GC-848: audit_trail und audit_stats holen die Eintraege ueber auditLog.query aus der Datei und warten auf die Antwort (sync = Holen); recordAudit schreibt sie je Entscheidung in einem anderen Aufruf. Abwesenheit heisst nicht aufgezeichnet, nie leerer Befund. (CR-GC-874)",
       "status": "reviewed",
-      "sync": "async"
+      "sync": "sync"
     },
     {
       "id": "FLOW-audit-report",
@@ -4353,26 +4364,6 @@
       "sync": "sync"
     },
     {
-      "id": "FLOW-channel-dimension-template",
-      "type": "FLOW",
-      "name": "Kanal: Dimensions-Vorlage",
-      "description": "Rang 6 — der Vorschlagstext je Readiness-Dimension, wenn keine Regel-Klausel das Fenster stellt. Verliert seit CR-GC-564 jeden Konflikt gegen die Klausel; demoviert, nicht gestrichen (CR-GC-575).",
-      "channelRank": "proposal",
-      "zeitpunkt": "prompt",
-      "treiber": "host",
-      "sync": "async"
-    },
-    {
-      "id": "FLOW-channel-gate-protocol",
-      "type": "FLOW",
-      "name": "Kanal: Gate-Protokoll",
-      "description": "Die Verfahrensanweisung der Runde: Grammatik holen, Alternativen proben oder EINEN Batch emittieren, den naechsten Schritt anfordern. Zwei Fassungen, je nachdem ob der Host oder der Treiber die Auswahl faehrt. Rang: Anleitung — sie sagt, wie man vorgeht, nicht was in dieser Runde zu tun ist.",
-      "channelRank": "guidance",
-      "zeitpunkt": "prompt",
-      "treiber": "host",
-      "sync": "async"
-    },
-    {
       "id": "FLOW-channel-gate-verdict",
       "type": "FLOW",
       "name": "Kanal: Gate-Verdict",
@@ -4424,16 +4415,6 @@
       "treiber": "host",
       "concept": true,
       "sync": "sync"
-    },
-    {
-      "id": "FLOW-channel-rule-clause",
-      "type": "FLOW",
-      "name": "Kanal: Regel-Klausel",
-      "description": "Rang 2 — der EINE Imperativ der Runde. Der vom Menschen gepflegte Zusatztext zu genau der Regel, die das Fund-Fenster stellt, gerendert mit den konkreten uids.",
-      "channelRank": "rule-clause",
-      "zeitpunkt": "prompt",
-      "treiber": "host",
-      "sync": "async"
     },
     {
       "id": "FLOW-channel-skill-reference",
@@ -4521,13 +4502,6 @@
       "name": "Befunde (an die Vollstaendigkeit)",
       "description": "Die Befunde, die computeReadiness an die Vollstaendigkeitswertung gibt. Beleg: @sigloch/graphcode-client readiness.ts.",
       "sync": "sync"
-    },
-    {
-      "id": "FLOW-config-file",
-      "type": "FLOW",
-      "name": "Repo-Konfiguration (Rohform)",
-      "description": "Die Urteilsschwellen, wie der Regelhalter sie in graphcode.config.jsonc schreibt: vor dem Auffuellen mit DEFAULT_METRIC_POLICY, Felder duerfen fehlen. Gleicher Vertrag wie die geltende Policy, anderer Zustand.",
-      "sync": "async"
     },
     {
       "id": "FLOW-config-request",
@@ -5840,15 +5814,6 @@
       "sync": "sync"
     },
     {
-      "id": "FLOW-version-bump",
-      "type": "FLOW",
-      "name": "Version-Bump",
-      "description": "Neue ONTOLOGY/RULES_VERSION aus contracts/se.",
-      "status": "reviewed",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "sync": "async"
-    },
-    {
       "id": "FLOW-viewer-start",
       "type": "FLOW",
       "name": "Viewer steuern (starten, beenden)",
@@ -6416,7 +6381,7 @@
       "id": "FUNC-generation-step",
       "type": "FUNC",
       "name": "generationStep(graph, policy, intent)",
-      "description": "Die Zustandsmaschine der Generierung (CR-GC-593): seed:sys -> seed:uc -> seed:actor -> expand -> handoff. Waechter der Freigabe ist die Invariante done = kein Fokus; die Fokusmenge sind die Funde der Gate-Regeln ohne info, ohne Praesenzregeln bei Bindung 0 und ohne abgenommene Funde (acceptedFindings). Schwelle und Phasen-Gates sind Bericht. Vorher: drei Waechter aus drei Quellen, in 0 von 9 Laeufen erreicht.",
+      "description": "Die Zustandsmaschine der Generierung (CR-GC-593): seed:sys -> seed:uc -> seed:actor -> expand -> handoff. Waechter der Freigabe ist die Invariante done = kein Fokus; die Fokusmenge sind die Funde der Gate-Regeln ohne info, ohne Praesenzregeln bei Bindung 0 und ohne abgenommene Funde (acceptedFindings). Schwelle und Phasen-Gates sind Bericht. Vorher: drei Waechter aus drei Quellen, in 0 von 9 Laeufen erreicht. Liest Gate-Protokoll, Regel-Klauseln und Dimensions-Vorlagen als Konstanten seines Moduls (src/loop/generate.ts), nicht als Eingang; den Vorrang regelt channel-rank.ts. (CR-GC-874)",
       "status": "done",
       "realRef": {
         "file": "src/loop/generate.ts",
@@ -6723,7 +6688,7 @@
       "id": "FUNC-load-config",
       "type": "FUNC",
       "name": "loadGraphcodeConfig",
-      "description": "Liest die Repo-Konfiguration und liefert die Urteilsschwellen als Policy. Keine Schwelle steht als Literal im Regelcode; eine verschobene Policy kippt dasselbe Urteil auf unveraendertem Graphen.",
+      "description": "Liest die Repo-Konfiguration und liefert die Urteilsschwellen als Policy. Keine Schwelle steht als Literal im Regelcode; eine verschobene Policy kippt dasselbe Urteil auf unveraendertem Graphen. Liest graphcode.config.jsonc selbst aus der Repo-Wurzel; die Datei ist weder Akteur noch Fluss und loest nichts aus. (CR-GC-874)",
       "status": "done",
       "realRef": {
         "file": "src/kernel/config.ts",
@@ -6899,7 +6864,7 @@
       "id": "FUNC-schema-guard",
       "type": "FUNC",
       "name": "schemaFingerprint",
-      "description": "Bildet den Fingerabdruck des Meta-Modell-Schemas und erkennt daran eine Drift zwischen Ontologie und angelegtem Store.",
+      "description": "Bildet den Fingerabdruck des Meta-Modell-Schemas und erkennt daran eine Drift zwischen Ontologie und angelegtem Store. Bildet den Fingerabdruck aus dem Descriptor, den open-store reicht, und liest den Marker selbst aus der Datei im Store; kein Eingang von aussen, keine Versionspflege von Hand. (CR-GC-874)",
       "status": "done",
       "realRef": {
         "file": "src/kernel/schema-guard.ts",
@@ -12879,31 +12844,6 @@
     {
       "source": "ACTOR-dashboard",
       "target": "FLOW-health-request",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-regelhalter",
-      "target": "FLOW-channel-dimension-template",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-regelhalter",
-      "target": "FLOW-channel-gate-protocol",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-regelhalter",
-      "target": "FLOW-channel-rule-clause",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-regelhalter",
-      "target": "FLOW-config-file",
-      "type": "io"
-    },
-    {
-      "source": "ACTOR-regelhalter",
-      "target": "FLOW-version-bump",
       "type": "io"
     },
     {
@@ -20146,6 +20086,61 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-874",
+      "target": "FUNC-agent-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-claim-store-lock",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-import-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-import-doc",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-load-config",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-schema-guard",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-session-shutdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-tool-context",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-874",
+      "target": "FUNC-verify-lane-full",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -20598,11 +20593,6 @@
     },
     {
       "source": "FCHAIN-host-start",
-      "target": "FUNC-agent-loop",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-host-start",
       "target": "FUNC-apply-reseed",
       "type": "compose"
     },
@@ -20689,11 +20679,6 @@
     {
       "source": "FCHAIN-host-start",
       "target": "FUNC-serve-stdio",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-host-start",
-      "target": "FUNC-session-shutdown",
       "type": "compose"
     },
     {
@@ -20898,11 +20883,6 @@
     },
     {
       "source": "FCHAIN-model-import",
-      "target": "FUNC-agent-loop",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-model-import",
       "target": "FUNC-bind-tools",
       "type": "compose"
     },
@@ -20948,17 +20928,7 @@
     },
     {
       "source": "FCHAIN-model-import",
-      "target": "FUNC-import-code",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-model-import",
       "target": "FUNC-import-code-verb",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-model-import",
-      "target": "FUNC-import-doc",
       "type": "compose"
     },
     {
@@ -21056,11 +21026,6 @@
       "source": "FCHAIN-recall",
       "target": "REQ-risk-partial-store-after-reseed",
       "type": "satisfy"
-    },
-    {
-      "source": "FCHAIN-repo-lifecycle",
-      "target": "FUNC-claim-store-lock",
-      "type": "compose"
     },
     {
       "source": "FCHAIN-repo-lifecycle",
@@ -21226,6 +21191,11 @@
     {
       "source": "FCHAIN-skill-authoring",
       "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-skill-authoring",
+      "target": "FUNC-import-doc",
       "type": "compose"
     },
     {
@@ -21757,11 +21727,6 @@
     },
     {
       "source": "FCHAIN-verify-lane",
-      "target": "FUNC-measure-test-schlupf",
-      "type": "compose"
-    },
-    {
-      "source": "FCHAIN-verify-lane",
       "target": "FUNC-mutate",
       "type": "compose"
     },
@@ -21797,11 +21762,56 @@
     },
     {
       "source": "FCHAIN-verify-lane",
+      "target": "REQ-risk-selection-misses-red-test",
+      "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-plan-code-lane",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-resolve-tests-from-code",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-select-tests",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-test-ingest",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-tool-context",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
       "target": "FUNC-verify-lane-full",
       "type": "compose"
     },
     {
-      "source": "FCHAIN-verify-lane",
+      "source": "FCHAIN-verify-lane-full",
       "target": "REQ-risk-selection-misses-red-test",
       "type": "satisfy"
     },
@@ -22311,26 +22321,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-channel-dimension-template",
-      "target": "FUNC-generation-step",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-channel-dimension-template",
-      "target": "SCHEMA-steering-channel",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-channel-gate-protocol",
-      "target": "FUNC-generation-step",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-channel-gate-protocol",
-      "target": "SCHEMA-steering-channel",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-channel-gate-verdict",
       "target": "FUNC-agent-loop",
       "type": "io"
@@ -22377,16 +22367,6 @@
     },
     {
       "source": "FLOW-channel-next-step",
-      "target": "SCHEMA-steering-channel",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-channel-rule-clause",
-      "target": "FUNC-generation-step",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-channel-rule-clause",
       "target": "SCHEMA-steering-channel",
       "type": "relation"
     },
@@ -22558,16 +22538,6 @@
     {
       "source": "FLOW-completeness-request",
       "target": "SCHEMA-rule-violation",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-config-file",
-      "target": "FUNC-load-config",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-config-file",
-      "target": "SCHEMA-metric-policy",
       "type": "relation"
     },
     {
@@ -24759,18 +24729,6 @@
       "source": "FLOW-update-hook",
       "target": "SCHEMA-update-event",
       "type": "relation"
-    },
-    {
-      "source": "FLOW-version-bump",
-      "target": "FUNC-schema-guard",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-version-bump",
-      "target": "SCHEMA-query-params",
-      "type": "relation",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FLOW-viewer-start",
@@ -31239,6 +31197,11 @@
     },
     {
       "source": "UC-efficient-testing",
+      "target": "FCHAIN-verify-lane-full",
+      "type": "compose"
+    },
+    {
+      "source": "UC-efficient-testing",
       "target": "REQ-full-run-on-probation",
       "type": "compose"
     },
@@ -31659,5 +31622,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 974
+  "graphVersion": 981
 }

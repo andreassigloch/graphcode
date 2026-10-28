@@ -13,11 +13,6 @@
 | `ACTOR-auftraggeber` | io | `FLOW-session-end` |
 | `ACTOR-dashboard` | io | `FLOW-dashboard-call` |
 | `ACTOR-dashboard` | io | `FLOW-health-request` |
-| `ACTOR-regelhalter` | io | `FLOW-channel-dimension-template` |
-| `ACTOR-regelhalter` | io | `FLOW-channel-gate-protocol` |
-| `ACTOR-regelhalter` | io | `FLOW-channel-rule-clause` |
-| `ACTOR-regelhalter` | io | `FLOW-config-file` |
-| `ACTOR-regelhalter` | io | `FLOW-version-bump` |
 | `CR-GC-100` | relation | `FUNC-evaluate-rules` |
 | `CR-GC-100` | relation | `FUNC-graph-store` |
 | `CR-GC-100` | relation | `FUNC-import` |
@@ -1388,6 +1383,17 @@
 | `CR-GC-873` | relation | `FUNC-export-markdown` |
 | `CR-GC-873` | relation | `FUNC-se-top-level` |
 | `CR-GC-873` | relation | `FUNC-se-vorbereitung` |
+| `CR-GC-874` | relation | `FUNC-agent-loop` |
+| `CR-GC-874` | relation | `FUNC-claim-store-lock` |
+| `CR-GC-874` | relation | `FUNC-generation-step` |
+| `CR-GC-874` | relation | `FUNC-import-code` |
+| `CR-GC-874` | relation | `FUNC-import-doc` |
+| `CR-GC-874` | relation | `FUNC-load-config` |
+| `CR-GC-874` | relation | `FUNC-measure-test-schlupf` |
+| `CR-GC-874` | relation | `FUNC-schema-guard` |
+| `CR-GC-874` | relation | `FUNC-session-shutdown` |
+| `CR-GC-874` | relation | `FUNC-tool-context` |
+| `CR-GC-874` | relation | `FUNC-verify-lane-full` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1474,7 +1480,6 @@
 | `FCHAIN-health` | compose | `FUNC-health-endpoint` |
 | `FCHAIN-health` | compose | `FUNC-list-elements` |
 | `FCHAIN-health` | compose | `FUNC-serve-sse` |
-| `FCHAIN-host-start` | compose | `FUNC-agent-loop` |
 | `FCHAIN-host-start` | compose | `FUNC-apply-reseed` |
 | `FCHAIN-host-start` | compose | `FUNC-auto-export` |
 | `FCHAIN-host-start` | compose | `FUNC-bind-tools` |
@@ -1493,7 +1498,6 @@
 | `FCHAIN-host-start` | compose | `FUNC-schema-guard` |
 | `FCHAIN-host-start` | compose | `FUNC-seed-from-json` |
 | `FCHAIN-host-start` | compose | `FUNC-serve-stdio` |
-| `FCHAIN-host-start` | compose | `FUNC-session-shutdown` |
 | `FCHAIN-host-start` | compose | `FUNC-tool-context` |
 | `FCHAIN-host-start` | satisfy | `REQ-risk-client-holds-stale-tool-list` |
 | `FCHAIN-http-host` | compose | `FUNC-broadcast-diff` |
@@ -1534,7 +1538,6 @@
 | `FCHAIN-merge-branches` | compose | `FUNC-merge-nodes` |
 | `FCHAIN-merge-branches` | compose | `FUNC-mutate` |
 | `FCHAIN-merge-branches` | compose | `FUNC-tool-context` |
-| `FCHAIN-model-import` | compose | `FUNC-agent-loop` |
 | `FCHAIN-model-import` | compose | `FUNC-bind-tools` |
 | `FCHAIN-model-import` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-model-import` | compose | `FUNC-cli-dispatch` |
@@ -1544,9 +1547,7 @@
 | `FCHAIN-model-import` | compose | `FUNC-graph-mutate-tool` |
 | `FCHAIN-model-import` | compose | `FUNC-graph-store` |
 | `FCHAIN-model-import` | compose | `FUNC-import` |
-| `FCHAIN-model-import` | compose | `FUNC-import-code` |
 | `FCHAIN-model-import` | compose | `FUNC-import-code-verb` |
-| `FCHAIN-model-import` | compose | `FUNC-import-doc` |
 | `FCHAIN-model-import` | compose | `FUNC-mutate` |
 | `FCHAIN-model-import` | compose | `FUNC-open-store` |
 | `FCHAIN-model-import` | compose | `FUNC-seed-from-json` |
@@ -1566,7 +1567,6 @@
 | `FCHAIN-recall` | compose | `FUNC-seed-from-json` |
 | `FCHAIN-recall` | satisfy | `REQ-risk-edge-vanishes-silently` |
 | `FCHAIN-recall` | satisfy | `REQ-risk-partial-store-after-reseed` |
-| `FCHAIN-repo-lifecycle` | compose | `FUNC-claim-store-lock` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-cli-dispatch` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-collect-status` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
@@ -1600,6 +1600,7 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-graph-metrics` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-graph-mutate-tool` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-graph-store` |
+| `FCHAIN-skill-authoring` | compose | `FUNC-import-doc` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-mutate` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-read-tools` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-rules-tool` |
@@ -1704,7 +1705,6 @@
 | `FCHAIN-test-ingest` | compose | `FUNC-tool-context` |
 | `FCHAIN-test-ingest` | satisfy | `REQ-risk-stale-test-result` |
 | `FCHAIN-verify-lane` | compose | `FUNC-graph-store` |
-| `FCHAIN-verify-lane` | compose | `FUNC-measure-test-schlupf` |
 | `FCHAIN-verify-lane` | compose | `FUNC-mutate` |
 | `FCHAIN-verify-lane` | compose | `FUNC-plan-code-lane` |
 | `FCHAIN-verify-lane` | compose | `FUNC-resolve-tests-from-code` |
@@ -1712,8 +1712,17 @@
 | `FCHAIN-verify-lane` | compose | `FUNC-test-ingest` |
 | `FCHAIN-verify-lane` | compose | `FUNC-tool-context` |
 | `FCHAIN-verify-lane` | compose | `FUNC-verify-lane-code` |
-| `FCHAIN-verify-lane` | compose | `FUNC-verify-lane-full` |
 | `FCHAIN-verify-lane` | satisfy | `REQ-risk-selection-misses-red-test` |
+| `FCHAIN-verify-lane-full` | compose | `FUNC-graph-store` |
+| `FCHAIN-verify-lane-full` | compose | `FUNC-measure-test-schlupf` |
+| `FCHAIN-verify-lane-full` | compose | `FUNC-mutate` |
+| `FCHAIN-verify-lane-full` | compose | `FUNC-plan-code-lane` |
+| `FCHAIN-verify-lane-full` | compose | `FUNC-resolve-tests-from-code` |
+| `FCHAIN-verify-lane-full` | compose | `FUNC-select-tests` |
+| `FCHAIN-verify-lane-full` | compose | `FUNC-test-ingest` |
+| `FCHAIN-verify-lane-full` | compose | `FUNC-tool-context` |
+| `FCHAIN-verify-lane-full` | compose | `FUNC-verify-lane-full` |
+| `FCHAIN-verify-lane-full` | satisfy | `REQ-risk-selection-misses-red-test` |
 | `FLOW-action` | io | `FUNC-agent-loop` |
 | `FLOW-action` | relation | `SCHEMA-action` |
 | `FLOW-anleitung-author-actor` | io | `FUNC-agent-loop` |
@@ -1815,10 +1824,6 @@
 | `FLOW-broadcast-hook-sse` | relation | `SCHEMA-update-event` |
 | `FLOW-chain-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-chain-metrics` | relation | `SCHEMA-chain-metrics` |
-| `FLOW-channel-dimension-template` | io | `FUNC-generation-step` |
-| `FLOW-channel-dimension-template` | relation | `SCHEMA-steering-channel` |
-| `FLOW-channel-gate-protocol` | io | `FUNC-generation-step` |
-| `FLOW-channel-gate-protocol` | relation | `SCHEMA-steering-channel` |
 | `FLOW-channel-gate-verdict` | io | `FUNC-agent-loop` |
 | `FLOW-channel-gate-verdict` | relation | `SCHEMA-steering-channel` |
 | `FLOW-channel-grammar` | io | `FUNC-agent-loop` |
@@ -1829,8 +1834,6 @@
 | `FLOW-channel-handoff` | relation | `SCHEMA-steering-channel` |
 | `FLOW-channel-next-step` | io | `FUNC-agent-loop` |
 | `FLOW-channel-next-step` | relation | `SCHEMA-steering-channel` |
-| `FLOW-channel-rule-clause` | io | `FUNC-generation-step` |
-| `FLOW-channel-rule-clause` | relation | `SCHEMA-steering-channel` |
 | `FLOW-channel-skill-reference` | io | `FUNC-agent-loop` |
 | `FLOW-channel-skill-reference` | relation | `SCHEMA-steering-channel` |
 | `FLOW-channel-steer-advisory` | io | `FUNC-agent-loop` |
@@ -1864,8 +1867,6 @@
 | `FLOW-completeness` | relation | `SCHEMA-completeness` |
 | `FLOW-completeness-request` | io | `FUNC-score-completeness` |
 | `FLOW-completeness-request` | relation | `SCHEMA-rule-violation` |
-| `FLOW-config-file` | io | `FUNC-load-config` |
-| `FLOW-config-file` | relation | `SCHEMA-metric-policy` |
 | `FLOW-config-request` | io | `FUNC-load-config` |
 | `FLOW-config-request` | relation | `SCHEMA-metric-policy` |
 | `FLOW-conformance-findings` | io | `FUNC-commit-check` |
@@ -2301,8 +2302,6 @@
 | `FLOW-trajectory-entry` | relation | `SCHEMA-audit-record` |
 | `FLOW-update-hook` | io | `FUNC-emit-update-event` |
 | `FLOW-update-hook` | relation | `SCHEMA-update-event` |
-| `FLOW-version-bump` | io | `FUNC-schema-guard` |
-| `FLOW-version-bump` | relation | `SCHEMA-query-params` |
 | `FLOW-viewer-start` | io | `ACTOR-dashboard` |
 | `FLOW-viewer-start` | relation | `SCHEMA-cli-command` |
 | `FLOW-vorschlag` | io | `FUNC-graph-mutate-tool` |
@@ -3542,6 +3541,7 @@
 | `UC-efficient-testing` | compose | `FCHAIN-model-lane` |
 | `UC-efficient-testing` | compose | `FCHAIN-test-ingest` |
 | `UC-efficient-testing` | compose | `FCHAIN-verify-lane` |
+| `UC-efficient-testing` | compose | `FCHAIN-verify-lane-full` |
 | `UC-efficient-testing` | compose | `REQ-full-run-on-probation` |
 | `UC-efficient-testing` | compose | `REQ-graph-tests-operational` |
 | `UC-efficient-testing` | compose | `REQ-impact-based-testing` |

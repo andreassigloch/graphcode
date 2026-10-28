@@ -165,7 +165,7 @@
 | `REQ-risk-measurement-vector-contract-unbound` | `TEST-measurement-vector-contract` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-owner-ends-with-docked-sessions` | `TEST-host-shim` | `FCHAIN-session-end` | — |
 | `REQ-risk-partial-store-after-reseed` | `TEST-export-graph-guard` | `FCHAIN-recall` | — |
-| `REQ-risk-selection-misses-red-test` | `TEST-test-schlupf` | `FCHAIN-verify-lane` | — |
+| `REQ-risk-selection-misses-red-test` | `TEST-test-schlupf` | `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` | — |
 | `REQ-risk-shared-steering-promise` | `TEST-steering-promise-one-owner` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-skill-instructs-rejected-move` | `TEST-skill-moves-are-legal` | `FCHAIN-skill-authoring` | — |
 | `REQ-risk-stage-name-free-text` | `TEST-stage-names-enumerated` | `FCHAIN-steering-loop` | — |
@@ -247,7 +247,7 @@
 | `REQ-risk-measurement-vector-contract-unbound` | `TEST-measurement-vector-contract` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-owner-ends-with-docked-sessions` | `TEST-host-shim` | `FCHAIN-session-end` | — |
 | `REQ-risk-partial-store-after-reseed` | `TEST-export-graph-guard` | `FCHAIN-recall` | — |
-| `REQ-risk-selection-misses-red-test` | `TEST-test-schlupf` | `FCHAIN-verify-lane` | — |
+| `REQ-risk-selection-misses-red-test` | `TEST-test-schlupf` | `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` | — |
 | `REQ-risk-shared-steering-promise` | `TEST-steering-promise-one-owner` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-skill-instructs-rejected-move` | `TEST-skill-moves-are-legal` | `FCHAIN-skill-authoring` | — |
 | `REQ-risk-stage-name-free-text` | `TEST-stage-names-enumerated` | `FCHAIN-steering-loop` | — |

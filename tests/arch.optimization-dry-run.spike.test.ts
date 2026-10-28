@@ -446,7 +446,19 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // Kante und damit für die Kandidatenwahl unsichtbar (ITEM-2026-422). Bis das
       // entschieden ist, steht dieser EINE Kandidat hier namentlich — jeder ANDERE
       // OP-MERGE lässt den Test reißen.
-      const GEMESSEN_ABGELEHNT = new Set(['OP-MERGE @ FLOW-channel-gate-protocol']);
+      // CR-GC-874 (graphVersion 977) — NEU VERANKERT. Die Kanaele Gate-Protokoll, Dimensions-Vorlage und
+      // Regel-Klausel sind aus dem Modell, seit der Regelhalter nur noch vorab lieferte (die Funktion liest
+      // sie als Konstanten selbst). Das Paar, das der Optimierer zusammenlegen wollte, gibt es nicht mehr.
+      // Gleiches Muster, neues Paar: `FLOW-channel-next-step` und `FLOW-channel-handoff` laufen beide von
+      // `FUNC-graph-generate-tool` nach `FUNC-agent-loop` mit `SCHEMA-steering-channel` und unterscheiden sich
+      // nur im Rang (Vorschlag gegen Regel-Klausel) und im Zeitpunkt (Antwort gegen Prompt) — Attribute,
+      // die die Kandidatenwahl nicht liest (ITEM-2026-422). Gleiche Begruendung, nicht angewandt.
+      //
+      // Zweiter Eintrag, gleicher CR: `R-30 @ FUNC-import-code` schlaegt vor, den Skill se:import-code wieder
+      // unter FCHAIN-model-import zu haengen. Abgelehnt: Entscheidung des Autors 2026-10-28 — der Agent und
+      // die Skill-Funktionen sind Aufrufer, kein Glied der Kette; der Einsprung ist src/cli.ts main. Der Skill
+      // hat bis zu einer eigenen Entscheidung keine Kette (R-30 bleibt als Warnung offen, siehe CR-GC-874).
+      const GEMESSEN_ABGELEHNT = new Set(['OP-MERGE @ FLOW-channel-next-step', 'R-30 @ FUNC-import-code']);
       // CR-GC-696D (graphVersion 1 nach Reseed, contracts 10.12 Link-Modus, se-engine CR-SM-356) —
       // NEU GEMESSEN. Der Architektur-Aktionsraum ist NICHT mehr leer: zwei Zuege senken das
       // Chebyshev-Maximum, beide aus den neuen Umhaenge-Operatoren:

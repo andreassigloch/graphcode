@@ -28,7 +28,9 @@ describe('CR-GC-591: jeder Kanal traegt Rang, Zeitpunkt und Treiber', () => {
     const treiber = new Set(kanaele.map((k) => String(at(k, 'treiber'))));
     expect([...treiber]).toEqual(['host']);
     // CR-GC-853: der Kanal Fit-Advisory ist entfallen (fitAdvisory steht nie im Ergebnis von graph_mutate).
-    expect(kanaele.length).toBeGreaterThanOrEqual(10);
+    // CR-GC-874: Gate-Protokoll, Dimensions-Vorlage und Regel-Klausel sind keine Kanaele mehr — sie liefen vom
+    // Regelhalter vorab; generationStep liest sie als Konstanten. Es bleiben die sieben, die den Agenten erreichen.
+    expect(kanaele.length).toBeGreaterThanOrEqual(7);
   });
 
   for (const k of kanaele) {

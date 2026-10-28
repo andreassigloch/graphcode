@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 59 SCHEMA · 246 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 59 SCHEMA · 241 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -124,14 +124,11 @@
 | `FLOW-broadcast-hook` | `FUNC-serve-stdio` | `FUNC-broadcast-diff` |
 | `FLOW-broadcast-hook-sse` | `FUNC-serve-sse` | `FUNC-broadcast-diff` |
 | `FLOW-chain-metrics` | `FUNC-chain-metrics` | `FUNC-graph-metrics` |
-| `FLOW-channel-dimension-template` | `ACTOR-regelhalter` | `FUNC-generation-step` |
-| `FLOW-channel-gate-protocol` | `ACTOR-regelhalter` | `FUNC-generation-step` |
 | `FLOW-channel-gate-verdict` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-grammar` | `FUNC-authoring-guide` | `FUNC-agent-loop` |
 | `FLOW-channel-guardrails` | `FUNC-harness-cli` | `FUNC-agent-loop` |
 | `FLOW-channel-handoff` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-next-step` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
-| `FLOW-channel-rule-clause` | `ACTOR-regelhalter` | `FUNC-generation-step` |
 | `FLOW-channel-skill-reference` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-steer-advisory` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
 | `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` |
@@ -143,7 +140,6 @@
 | `FLOW-commit-check-verdict` | `FUNC-commit-check` | `ACTOR-auftraggeber` |
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-readiness` |
 | `FLOW-completeness-request` | `FUNC-compute-readiness` | `FUNC-score-completeness` |
-| `FLOW-config-file` | `ACTOR-regelhalter` | `FUNC-load-config` |
 | `FLOW-config-request` | `FUNC-create-harness` | `FUNC-load-config` |
 | `FLOW-conformance-findings` | `FUNC-check-code-conformance` | `FUNC-commit-check` · `FUNC-graph-readiness` · `FUNC-rules-tool` |
 | `FLOW-context-request` | `FUNC-bind-tools` | `FUNC-tool-context` |
@@ -311,7 +307,6 @@
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-trajectory-entry` | `FUNC-tool-context` | `FUNC-emit-trajectory` |
 | `FLOW-update-hook` | `FUNC-create-harness` | `FUNC-emit-update-event` |
-| `FLOW-version-bump` | `ACTOR-regelhalter` | `FUNC-schema-guard` |
 | `FLOW-viewer-start` | `FUNC-gve-supervise` | `ACTOR-dashboard` |
 | `FLOW-vorschlag` | `FUNC-vorschlag` | `FUNC-graph-mutate-tool` |
 | `FLOW-work-set` | `FUNC-tool-context` | `FUNC-graph-readiness` |

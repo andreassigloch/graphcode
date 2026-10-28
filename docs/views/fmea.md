@@ -22,7 +22,7 @@
 | 10 | Risiko Stufenname ohne Wertebereich | `FCHAIN-steering-loop` | 5 | 3 | 6 | 90 | Medium | `FUNC-take-steering-snapshot` | ✗ |
 | 11 | Risiko Delta fehlt in der Antwort | `FCHAIN-steering-loop` | 5 | 3 | 5 | 75 | Medium | `FUNC-compute-steering-delta` | ✗ |
 | 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-host-start` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
-| 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-verify-lane` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` | ✓ |
+| 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` | ✓ |
 | 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | `FUNC-export-marker` · `FUNC-export-marker-clear` | ✓ |
 | 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | `FUNC-held-back-traces` | ✓ |
 | 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-session-end` | 7 | 2 | 3 | 42 | Medium | `FUNC-host-socket` | ✓ |
@@ -265,7 +265,7 @@ Der Client arbeitet mit der Werkzeugliste vom Sitzungsstart. Eine neue Eingabe e
 Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
 
 - **Bewertung:** S 7 · O 3 · D 3 · RPN 63 · AP Medium
-- **Kette:** `FCHAIN-verify-lane`
+- **Kette:** `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full`
 - **Anwendungsfall:** `UC-efficient-testing`
 - **Träger:** `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full`
 - **Befund:** FMEA CR-GC-798 FM-20, frei abgeleitet. Ursache ist ein Test ohne Bindung oder eine Quelldatei ohne Knoten. Entscheidung: gedeckt durch die Schlupfmessung je CR (REQ-full-run-on-probation).
