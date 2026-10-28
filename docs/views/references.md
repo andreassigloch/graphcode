@@ -1385,6 +1385,9 @@
 | `CR-GC-870` | relation | `SCHEMA-mcp-tool-registry` |
 | `CR-GC-871` | relation | `FUNC-graph-mutate-tool` |
 | `CR-GC-871` | relation | `SCHEMA-mcp-tool` |
+| `CR-GC-873` | relation | `FUNC-export-markdown` |
+| `CR-GC-873` | relation | `FUNC-se-top-level` |
+| `CR-GC-873` | relation | `FUNC-se-vorbereitung` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

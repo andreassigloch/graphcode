@@ -14,7 +14,7 @@
  * @author andreas@siglochconsulting
  */
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
-import { actionPriority, apMethod, DEFAULT_METRIC_POLICY, riskCarriers } from '@sigloch/contracts/se';
+import { actionPriority, apMethod, chainRoles, DEFAULT_METRIC_POLICY, riskCarriers } from '@sigloch/contracts/se';
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { generatedHeader, cell } from './exporter.js';
 import { nodesOfType, nodeIndex, adjacency, reqKinds, reqRole, status, ref, refList, topoOrderMilestones, testResult } from './helpers.js';
@@ -295,37 +295,39 @@ export function renderConOps(graph: Graph, name: string): string {
   const ucs = nodesOfType(graph, 'UC');
   const sys = nodesOfType(graph, 'SYS')[0];
   const opReqs = operationalReqs(graph);
-  const io = adjacency(graph, 'io');
   const compose = adjacency(graph, 'compose');
   const relation = adjacency(graph, 'relation');
 
-  // contracts 9.x: die Direktkante `ACTOR io→UC` ist entfallen — die UC-Kopplung eines
-  // Actors ist die ERREICHBARKEIT über den tragenden Pfad `ACTOR io↔ FLOW io↔ FUNC`,
-  // FUNC in einer FCHAIN des UC, in BEIDE Richtungen (dieselbe Ableitung wie UC-02).
-  const funcToUcs = new Map<string, Set<string>>();
-  for (const uc of ucs) {
-    for (const chain of (compose.fwd.get(uc.uid) ?? []).filter((t) => idx.get(t)?.type === 'FCHAIN')) {
-      for (const fn of (compose.fwd.get(chain) ?? []).filter((t) => idx.get(t)?.type === 'FUNC')) {
-        if (!funcToUcs.has(fn)) funcToUcs.set(fn, new Set());
-        funcToUcs.get(fn)!.add(uc.uid);
-      }
+  // CR-GC-873: die Rolle eines Akteurs je Kette ist ABGELEITET — `chainRoles` (contracts CR-SM-420)
+  // liest io-Kanten und `FLOW.sync`. Bis hierher zaehlte jeder Akteur, der eine Funktion der Kette
+  // beruehrt, in beiden Richtungen als Ausloeser (Beleg immo-infra v58: die Freigeberin „loeste"
+  // alle drei Ketten aus). Je Kette:
+  //   trigger → „Ausgeloest von" · middle → „Beteiligt" · Senke, die nicht in der Mitte steht →
+  //   „Empfaenger" · answer/predelivery/unknown → „Liefert zu".
+  // `neighbor` steht nicht hier: der Akteur loest eine Nachbarkette aus, die das Glied mitnutzt,
+  // und steht dort als Ausloeser. `toOntologyGraph` traegt `attributes` genestet mit — die Form,
+  // die `readFlowSync` liest; eine flache SSOT kommt hier nicht an (exportMarkdown bekommt den
+  // Graph aus dem Store).
+  type Rolle = 'trigger' | 'middle' | 'sink' | 'supplier';
+  const rollen = new Map<string, Map<Rolle, Set<string>>>(); // FCHAIN → Rolle → ACTOR
+  for (const c of chainRoles(toOntologyGraph(graph))) {
+    const byRole = new Map<Rolle, Set<string>>([['trigger', new Set()], ['middle', new Set()], ['sink', new Set()], ['supplier', new Set()]]);
+    for (const e of c.entries) {
+      if (e.role === 'trigger') byRole.get('trigger')!.add(e.actor);
+      else if (e.role === 'middle') byRole.get('middle')!.add(e.actor);
+      else if (e.role !== 'neighbor') byRole.get('supplier')!.add(e.actor);
     }
+    for (const s of c.sinks) if (!byRole.get('middle')!.has(s.actor)) byRole.get('sink')!.add(s.actor);
+    rollen.set(c.chainId, byRole);
   }
-  const ucsOfActor = (actorUid: string): string[] => {
-    const reached = new Set<string>();
-    // Trigger-Richtung: ACTOR io→ FLOW io→ FUNC.
-    for (const flow of (io.fwd.get(actorUid) ?? []).filter((t) => idx.get(t)?.type === 'FLOW')) {
-      for (const fn of io.fwd.get(flow) ?? []) for (const uc of funcToUcs.get(fn) ?? []) reached.add(uc);
-    }
-    // Liefer-Richtung: FUNC io→ FLOW io→ ACTOR.
-    for (const flow of (io.rev.get(actorUid) ?? []).filter((t) => idx.get(t)?.type === 'FLOW')) {
-      for (const fn of io.rev.get(flow) ?? []) {
-        if (idx.get(fn)?.type !== 'FUNC') continue;
-        for (const uc of funcToUcs.get(fn) ?? []) reached.add(uc);
-      }
-    }
-    return [...reached].sort((x, y) => x.localeCompare(y));
-  };
+  const chainsOfUc = (ucUid: string): string[] =>
+    (compose.fwd.get(ucUid) ?? []).filter((t) => idx.get(t)?.type === 'FCHAIN').sort((x, y) => x.localeCompare(y));
+  /** Die Akteure mit `rolle` in irgendeiner Kette des UC, sortiert. */
+  const actorsOfUc = (ucUid: string, rolle: Rolle): string[] =>
+    [...new Set(chainsOfUc(ucUid).flatMap((c) => [...(rollen.get(c)?.get(rolle) ?? [])]))].sort((x, y) => x.localeCompare(y));
+  /** Die UC, in deren Ketten `actorUid` die Rolle `rolle` hat, sortiert. */
+  const ucsOfActorIn = (actorUid: string, rolle: Rolle): string[] =>
+    ucs.filter((uc) => actorsOfUc(uc.uid, rolle).includes(actorUid)).map((uc) => uc.uid);
 
   const lines: string[] = [
     generatedHeader(
@@ -364,8 +366,18 @@ export function renderConOps(graph: Graph, name: string): string {
     // charakterisiert sehen, nicht nur benannt — und seit die drei Menschen-Personas in
     // ACTOR-auftraggeber zusammenliegen, ist ihre Unterscheidung genau dort und nirgends sonst.
     for (const a of actors) {
-      const triggered = ucsOfActor(a.uid);
-      const suffix = triggered.length > 0 ? ` — triggert ${refList(triggered)}` : ' — keine UC-Kopplung im Graph';
+      const teile = (
+        [
+          ['trigger', 'triggert'],
+          ['middle', 'beteiligt an'],
+          ['sink', 'empfaengt aus'],
+          ['supplier', 'liefert zu'],
+        ] as const
+      )
+        .map(([rolle, verb]) => [verb, ucsOfActorIn(a.uid, rolle)] as const)
+        .filter(([, list]) => list.length > 0)
+        .map(([verb, list]) => `${verb} ${refList(list)}`);
+      const suffix = teile.length > 0 ? ` — ${teile.join('; ')}` : ' — keine UC-Kopplung im Graph';
       lines.push(`- **${cell(a.name)}** (${ref(a.uid)})${suffix}`);
       if (a.description) lines.push(`  - ${cell(a.description)}`);
     }
@@ -378,16 +390,21 @@ export function renderConOps(graph: Graph, name: string): string {
     lines.push('— keine UC im Graph —', '');
   } else {
     for (const uc of ucs) {
-      const actorsOf = actors
-        .filter((a) => ucsOfActor(a.uid).includes(uc.uid))
-        .map((a) => a.uid)
-        .sort((x, y) => x.localeCompare(y));
       lines.push(`### ${ref(uc.uid)} — ${cell(uc.name)}`, '');
       lines.push(cell(uc.description || uc.name), '');
-      if (actorsOf.length > 0) lines.push(`Ausgeloest von: ${refList(actorsOf)}`, '');
-      const chains = (compose.fwd.get(uc.uid) ?? [])
-        .filter((t) => idx.get(t)?.type === 'FCHAIN')
-        .sort((x, y) => x.localeCompare(y));
+      const rollenZeilen = (
+        [
+          ['trigger', 'Ausgeloest von'],
+          ['middle', 'Beteiligt'],
+          ['sink', 'Empfaenger'],
+          ['supplier', 'Liefert zu'],
+        ] as const
+      )
+        .map(([rolle, label]) => [label, actorsOfUc(uc.uid, rolle)] as const)
+        .filter(([, list]) => list.length > 0)
+        .map(([label, list]) => `${label}: ${refList(list)}`);
+      for (const z of rollenZeilen) lines.push(z, ''); // je Rolle ein Absatz — Markdown faltet Folgezeilen zusammen
+      const chains = chainsOfUc(uc.uid);
       if (chains.length === 0) {
         // Never silently dropped: "no operational flow described for this use case"
         // IS the ConOps statement, and the gap is the point of the section.

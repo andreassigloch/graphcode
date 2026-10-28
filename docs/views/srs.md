@@ -1252,7 +1252,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FUNC-block-autorieren`
 
-Prompt-realisierter Skill se:top-level: die oberste Ebene schneiden, also SYS-Blackbox, Anwendungsfaelle und Architekturziele, dann FUNC, FCHAIN mit Vertraegen und MOD mit hoechstens fuenf Bloecken je Ebene. Jeder Batch geht zuerst mit dryRun durch graph_mutate. (CR-GC-509)
+Prompt-realisierter Skill se:top-level: die oberste Ebene schneiden, also SYS-Blackbox, Anwendungsfaelle und Architekturziele, dann FUNC, FCHAIN mit Vertraegen und MOD mit hoechstens fuenf Bloecken je Ebene. Jeder Batch geht zuerst mit dryRun durch graph_mutate. Je Kette ein Eingangsknoten, parallele Ausloeser nur dort mit gleichem Vertrag, ein Akteur in der Mitte ist erlaubt; das Merkmal sync setzt der Autor beim Kettenschnitt (FC-06). (CR-GC-509, CR-GC-873)
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-top-level` · allocate ▶ `MOD-agent-surface`
 
@@ -1306,7 +1306,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FUNC-block-optimierung`
 
-Prompt-realisierter Skill se-vorbereitung, Version 5: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Fuenf Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen und Constraints dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Fluesse am Code pruefen, Bericht. Liest Bewertbarkeit, Traeger je Risiko und je Constraint (constraintCarriers, auf Anfrage), Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791, CR-GC-857)
+Prompt-realisierter Skill se-vorbereitung, Version 6: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Fuenf Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen und Constraints dem tiefsten Traeger zuordnen, das Merkmal synchron oder asynchron der Fluesse nachpruefen (gesetzt wird es beim Kettenschnitt in se:top-level), Fluesse am Code pruefen, Bericht. Liest Bewertbarkeit, Traeger je Risiko und je Constraint (constraintCarriers, auf Anfrage), Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791, CR-GC-857, CR-GC-873)
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
@@ -10652,7 +10652,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se-vorbereitung, Version 5: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Fuenf Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen und Constraints dem tiefsten Traeger zuordnen, Fluesse als synchron oder asynchron kennzeichnen, Fluesse am Code pruefen, Bericht. Liest Bewertbarkeit, Traeger je Risiko und je Constraint (constraintCarriers, auf Anfrage), Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791, CR-GC-857)
+Prompt-realisierter Skill se-vorbereitung, Version 6: fuehrt vor den Kettenanalysen durch die Vorbereitung des Modells. Fuenf Schritte je Wirkkette: Kette schliessen, Gegenmassnahmen und Constraints dem tiefsten Traeger zuordnen, das Merkmal synchron oder asynchron der Fluesse nachpruefen (gesetzt wird es beim Kettenschnitt in se:top-level), Fluesse am Code pruefen, Bericht. Liest Bewertbarkeit, Traeger je Risiko und je Constraint (constraintCarriers, auf Anfrage), Umfang und den Antwortweg aus graph_metrics und die Befunde der Verdrahtung aus dem Regelsatz; die Fluesse, die den Antwortweg verhindern (answerPathBlockedBy), sind die Arbeitsliste des dritten Schritts. Rechnet keine Kennzahl und beurteilt weder Risiko noch Laufzeit. Schlaegt je Luecke den Zug vor; der Autor waehlt, angewandt wird durchs Gate im CR des Zielrepos. (CR-GC-784, CR-GC-791, CR-GC-857, CR-GC-873)
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-vorbereitung` · allocate ▶ `MOD-agent-surface`
 
@@ -10950,7 +10950,7 @@ Verification ◀ `TEST-skill-authors-through-gate` (conformance) · satisfy ◀ 
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se:top-level: die oberste Ebene schneiden, also SYS-Blackbox, Anwendungsfaelle und Architekturziele, dann FUNC, FCHAIN mit Vertraegen und MOD mit hoechstens fuenf Bloecken je Ebene. Jeder Batch geht zuerst mit dryRun durch graph_mutate. (CR-GC-509)
+Prompt-realisierter Skill se:top-level: die oberste Ebene schneiden, also SYS-Blackbox, Anwendungsfaelle und Architekturziele, dann FUNC, FCHAIN mit Vertraegen und MOD mit hoechstens fuenf Bloecken je Ebene. Jeder Batch geht zuerst mit dryRun durch graph_mutate. Je Kette ein Eingangsknoten, parallele Ausloeser nur dort mit gleichem Vertrag, ein Akteur in der Mitte ist erlaubt; das Merkmal sync setzt der Autor beim Kettenschnitt (FC-06). (CR-GC-509, CR-GC-873)
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-top-level` · allocate ▶ `MOD-agent-surface`
 

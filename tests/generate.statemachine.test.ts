@@ -133,7 +133,10 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
     // R-19/R-20 (das Golden traegt Bindungen, der Bau ist eroeffnet). TR-01 ist mit Regelkatalog 43 entfallen.
     // Seit contracts 12.7 (CR-SM-413, CR-GC-850) dazu R-35: das Golden ordnet einen Block einem Modul zu. sigllm
     // hat der Autor bewusst nicht gerichtet, das Golden bleibt der gemessene Stand.
-    expect(offeneRegeln()).toEqual(['AF-05', 'BW-02', 'FM-03', 'MS-01', 'R-19', 'R-20', 'R-35', 'RD-05']);
+    // Seit contracts Regelkatalog 49.2 (CR-SM-420, CR-GC-873) dazu FC-06: 4 der Ketten im Golden tragen Fluesse
+    // ohne `sync` (Ursache `unsynced`), der Ausloeser ist nicht ableitbar. Das Golden ist ein Messstand von sigllm
+    // und wird nicht gerichtet — es bekam `sync` nie, weil das Merkmal bis hierher erst in se-vorbereitung kam.
+    expect(offeneRegeln()).toEqual(['AF-05', 'BW-02', 'FC-06', 'FM-03', 'MS-01', 'R-19', 'R-20', 'R-35', 'RD-05']);
   });
 
   /** Nimmt an jedem Fund der genannten Regeln ab — am betroffenen Element, graphweit am SYS. */

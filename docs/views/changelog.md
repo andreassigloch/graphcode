@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 482 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 483 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 482 CR · 343 done · 4 open.
+Total: 483 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -544,3 +544,4 @@ Total: 482 CR · 343 done · 4 open.
 | `CR-GC-870` | n/a | tsc-Fehler in tests/ beheben, Teil 2 |
 | `CR-GC-871` | n/a | tsc-Fehler in tests/ beheben, Teil 3 |
 | `CR-GC-872` | n/a | type-check prueft tests/ mit |
+| `CR-GC-873` | n/a | ConOps Ausgelöst von/Beteiligt, se:top-level Regel 4 und sync beim Kettenschnitt |

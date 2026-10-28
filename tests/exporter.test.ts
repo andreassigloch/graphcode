@@ -599,8 +599,6 @@ function conOpsGraph(): Graph {
       ce('MOD-core', 'satisfy', 'REQ-modul-budget'),
       ce('SYS-shop', 'compose', 'UC-bestellen'),
       ce('SYS-shop', 'compose', 'UC-verwalten'),
-      ce('ACTOR-kunde', 'io', 'UC-bestellen'),
-      ce('ACTOR-betreiber', 'io', 'UC-verwalten'),
       ce('UC-bestellen', 'compose', 'FCHAIN-bestellablauf'),
       ce('FCHAIN-bestellablauf', 'compose', 'FUNC-pruefen'),
       ce('FCHAIN-bestellablauf', 'compose', 'FUNC-buchen'),
@@ -632,13 +630,6 @@ describe('CR-GC-304: ConOps renders the 29148 OpsCon sections from existing node
   it('§2 excludes an FMEA REQ (role risk/mitigation) — it belongs to the FMEA view (CR-SM-365)', () => {
     expect(abschnitt2()).not.toContain('REQ-risiko');
     expect(abschnitt2(), 'die Pruefung sieht den Abschnitt wirklich').toContain('REQ-persistenz');
-  });
-
-  it('§3 maps each actor to the use cases it triggers over ACTOR io UC', () => {
-    const out = md();
-    // The former render listed actors flat, with no edge walked at all.
-    expect(out).toMatch(/ACTOR-kunde[\s\S]*?UC-bestellen/);
-    expect(out).toMatch(/ACTOR-betreiber[\s\S]*?UC-verwalten/);
   });
 
   it('§3 characterises each user class, it does not merely name it (CR-GC-455)', () => {
@@ -698,5 +689,84 @@ describe('CR-GC-304: ConOps renders the 29148 OpsCon sections from existing node
 
   it('stays deterministic — two renders are byte-identical', () => {
     expect(md()).toBe(md());
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CR-GC-873 — die Rolle eines Akteurs je Kette kommt aus `chainRoles` (@sigloch/contracts/se,
+// CR-SM-420), nicht aus der blossen Beruehrung. Bis hierher zaehlte jeder Akteur, der eine
+// Funktion der Kette beruehrt, in BEIDEN Richtungen als Ausloeser: die Freigeberin, die mitten in
+// der Kette einen Vorschlag sieht und freigibt, und der Leser, der nur das Ergebnis bekommt, standen
+// unter „Ausgeloest von" (Beleg immo-infra v58).
+//
+// Kette: Auftraggeber -auftrag-> entwerfen -vorschlag(sync)-> Freigeberin -freigabe-> veroeffentlichen
+//        -ergebnis-> Leser; entwerfen -entwurf-> veroeffentlichen.
+// ---------------------------------------------------------------------------
+
+function freigabeGraph(): Graph {
+  const flow = (uid: string, sync: 'sync' | 'async') => cn(uid, 'FLOW', uid.slice(5), '', { sync });
+  return {
+    nodes: [
+      cn('SYS-blog', 'SYS', 'Blog', 'Veroeffentlicht Beitraege nach Freigabe.'),
+      cn('ACTOR-auftraggeber', 'ACTOR', 'Auftraggeber', 'Bestellt einen Beitrag.'),
+      cn('ACTOR-freigeberin', 'ACTOR', 'Freigeberin', 'Gibt einen Vorschlag frei.'),
+      cn('ACTOR-leser', 'ACTOR', 'Leser', 'Liest den Beitrag.'),
+      cn('UC-beitrag', 'UC', 'Beitrag veroeffentlichen', 'Ein Beitrag geht nach Freigabe online.'),
+      cn('FCHAIN-beitrag', 'FCHAIN', 'Beitrag', 'Vom Auftrag bis zum Leser.'),
+      cn('FUNC-entwerfen', 'FUNC', 'entwerfen()', 'Entwirft den Beitrag.'),
+      cn('FUNC-veroeffentlichen', 'FUNC', 'veroeffentlichen()', 'Stellt den Beitrag online.'),
+      flow('FLOW-auftrag', 'async'),
+      flow('FLOW-vorschlag', 'sync'),
+      flow('FLOW-freigabe', 'async'),
+      flow('FLOW-entwurf', 'async'),
+      flow('FLOW-ergebnis', 'async'),
+    ],
+    edges: [
+      ce('SYS-blog', 'compose', 'UC-beitrag'),
+      ce('UC-beitrag', 'compose', 'FCHAIN-beitrag'),
+      ce('FCHAIN-beitrag', 'compose', 'FUNC-entwerfen'),
+      ce('FCHAIN-beitrag', 'compose', 'FUNC-veroeffentlichen'),
+      ce('ACTOR-auftraggeber', 'io', 'FLOW-auftrag'),
+      ce('FLOW-auftrag', 'io', 'FUNC-entwerfen'),
+      ce('FUNC-entwerfen', 'io', 'FLOW-vorschlag'),
+      ce('FLOW-vorschlag', 'io', 'ACTOR-freigeberin'),
+      ce('ACTOR-freigeberin', 'io', 'FLOW-freigabe'),
+      ce('FLOW-freigabe', 'io', 'FUNC-veroeffentlichen'),
+      ce('FUNC-entwerfen', 'io', 'FLOW-entwurf'),
+      ce('FLOW-entwurf', 'io', 'FUNC-veroeffentlichen'),
+      ce('FUNC-veroeffentlichen', 'io', 'FLOW-ergebnis'),
+      ce('FLOW-ergebnis', 'io', 'ACTOR-leser'),
+    ],
+  };
+}
+
+describe('CR-GC-873: ConOps nennt die Rolle des Akteurs je Kette (chainRoles)', () => {
+  const md = (): string => exportMarkdown(freigabeGraph(), 'conops', 'blog');
+  const abschnitt = (nr: number): string => md().split(`## ${nr} `)[1]!.split('\n## ')[0]!;
+  const zeile = (text: string, start: string): string => text.split('\n').find((l) => l.startsWith(start)) ?? '';
+  const akteur = (uid: string): string => abschnitt(3).split('\n').find((l) => l.includes(`(\`${uid}\`)`)) ?? '';
+
+  it('§4 „Ausgeloest von" nennt nur den Ausloeser, nicht die Freigeberin in der Mitte und nicht den Leser', () => {
+    expect(zeile(abschnitt(4), 'Ausgeloest von:')).toBe('Ausgeloest von: `ACTOR-auftraggeber`');
+  });
+
+  it('§4 „Beteiligt" nennt den Akteur in der Mitte', () => {
+    expect(zeile(abschnitt(4), 'Beteiligt:')).toBe('Beteiligt: `ACTOR-freigeberin`');
+  });
+
+  it('§4 „Empfaenger" nennt die Senke, ohne den Akteur in der Mitte ein zweites Mal', () => {
+    expect(zeile(abschnitt(4), 'Empfaenger:')).toBe('Empfaenger: `ACTOR-leser`');
+  });
+
+  it('§3 „triggert" steht nur beim Ausloeser; die anderen tragen ihre Rolle', () => {
+    expect(akteur('ACTOR-auftraggeber')).toContain('triggert `UC-beitrag`');
+    expect(akteur('ACTOR-freigeberin')).not.toContain('triggert');
+    expect(akteur('ACTOR-freigeberin')).toContain('beteiligt an `UC-beitrag`');
+    expect(akteur('ACTOR-leser')).not.toContain('triggert');
+    expect(akteur('ACTOR-leser')).toContain('empfaengt aus `UC-beitrag`');
+  });
+
+  it('ein Akteur ohne Fluss in eine Kette bleibt ohne UC-Kopplung', () => {
+    expect(exportMarkdown(conOpsGraph(), 'conops', 'shop')).toMatch(/ACTOR-kunde`\) — keine UC-Kopplung im Graph/);
   });
 });

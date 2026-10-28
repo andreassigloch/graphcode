@@ -198,7 +198,9 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // erledigter Auftrag, kein Feld im Vermerk — 68 -> 66.
       // CR-SM-401 (Regelkatalog 44, CR-GC-757): die Dimension entfaellt; gezaehlt wird, was nicht das Profil
       // `conformance` traegt — dieselbe Menge, weiter 66. „readiness dimensions=8" ist ersatzlos gestrichen.
-      'engine rules=66',
+      // CR-SM-420 (Regelkatalog 49.2.0, CR-GC-873): FC-06 kommt dazu, die Kette hat EINEN Ausloeser — 66 -> 67.
+      // Zwei Artikel nannten 66, beide nachgezogen.
+      'engine rules=67',
       // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
       // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.
       // CR-GC-685B: 24 -> 23. `graph_realize` ist weg — Binden ist ein Format-E-Patch
