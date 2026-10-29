@@ -65,9 +65,9 @@ const zeile = (m: Modell): Record<string, unknown> =>
 const fluss = (m: Modell, id: string): Element => m.elements.find((e) => e.id === id)!;
 
 describe('se-laufzeit liest den Antwortweg, er rechnet ihn nicht (CR-GC-783)', () => {
-  it('der Kopf traegt Version 2 und den Namen des Skills', () => {
+  it('der Kopf traegt Version 3 und den Namen des Skills', () => {
     expect(skill).toMatch(/^name: se-laufzeit$/m);
-    expect(skill).toMatch(/^version: 2$/m);
+    expect(skill).toMatch(/^version: 3$/m);
   });
 
   it('der Skill-Text traegt keine Rechnung und keine Kennzahl, die es nicht gibt', () => {
@@ -114,9 +114,22 @@ describe('se-laufzeit liest den Antwortweg, er rechnet ihn nicht (CR-GC-783)', (
     expect(skill).toMatch(/`sync`[^\n]*außerhalb der Kette[^\n]*nicht vollständig/);
     const m = modell();
     fluss(m, 'FLOW-mess').attributes = { sync: 'sync' };
+    // Die Ablage verlaesst die Kette y: Erfassung und Ablage teilen keine andere Kette.
+    m.traces = m.traces.filter((t) => !(t.source === 'FCHAIN-y' && t.target === 'FUNC-ablage'));
     const k = zeile(m);
     expect(k.answerPath).toBeNull();
     expect(k.answerPathBlockedBy).toEqual(['FLOW-mess']);
+  });
+
+  it('CR-SM-424: teilen Erzeuger und Glied eine andere Kette, ueberspringt der Weg den Fluss und nennt ihn', () => {
+    expect(skill).toMatch(/`answerPathSkipped`[^\n]*bei jedem Aufruf/);
+    expect(hilfe).toContain('`answerPathSkipped`');
+    const m = modell();
+    fluss(m, 'FLOW-mess').attributes = { sync: 'sync' };
+    const k = zeile(m);
+    expect(k.answerPath).toEqual(['FUNC-ablage', 'FUNC-anzeige']);
+    expect(k.answerPathBlockedBy).toEqual([]);
+    expect(k.answerPathSkipped).toEqual(['FLOW-mess']);
   });
 
   it('eine nicht bewertbare Kette beendet den Lauf, und kein Glied am Akteur ist der leere Weg', () => {

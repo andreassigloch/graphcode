@@ -89,7 +89,11 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       '`sync`; er verlässt die Kette nicht. `[]` heißt, kein Glied liefert einem Akteur synchron; ' +
       '`null` heißt, die Aussage ist verhindert. `answerPathBlockedBy` nennt dann die hindernden ' +
       'Flüsse und ist sonst leer: ein Fluss hindert, wenn er das Merkmal nicht lesbar trägt oder ' +
-      '`sync` trägt und von einer Funktion außerhalb der Kette kommt. Gelesen wird nur entlang des ' +
+      '`sync` trägt und von einer Funktion außerhalb der Kette kommt — außer Erzeuger und wartendes ' +
+      'Glied liegen beide in einer anderen Kette; dann gehört der Fluss dorthin, und der Weg ' +
+      'überspringt ihn (CR-SM-423). `answerPathSkipped` nennt diese Flüsse: angenommen ist ein ' +
+      'Verteiler, der je Aufruf nur auf seinen Zweig wartet; ob das stimmt, sagt nur der Code ' +
+      '(CR-SM-424). Gelesen wird nur entlang des ' +
       'Wegs: die Liste nennt die Hindernisse, auf die er trifft, nicht jeden Fluss ohne Merkmal.\n' +
       '`measurability` ist die Reichweite daneben: bewertbare / alle Ketten. Kennzahlen bei niedriger ' +
       'Quote beschreiben nur die Ketten, die schon Ketten sind; `ratio` ist `null`, wenn es keine gibt.\n' +

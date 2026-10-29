@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 489 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 490 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 489 CR · 343 done · 4 open.
+Total: 490 CR · 343 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -551,3 +551,4 @@ Total: 489 CR · 343 done · 4 open.
 | `CR-GC-877` | n/a | Skill se:import-code in eigene Kette |
 | `CR-GC-878` | n/a | se-view-Verweise in Skill-Texten und Quell-Kommentaren nachziehen (Folge von CR-GC-876) |
 | `CR-GC-879` | n/a | scaffold update/remove entfernen se-Dateien, die das Paket nicht mehr ausliefert (se-view, trade aus CR-GC-756) |
+| `CR-GC-880` | n/a | Antwortweg: Ausnahme Nachbarkette (CR-SM-423) in Hilfetext, se-vorbereitung und se-laufzeit nachziehen |

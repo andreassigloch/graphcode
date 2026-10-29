@@ -3831,6 +3831,12 @@
       "description": "docs/cr/open/CR-GC-879-scaffold-update-remove-entfernen-se-date.md"
     },
     {
+      "id": "CR-GC-880",
+      "type": "CR",
+      "name": "Antwortweg: Ausnahme Nachbarkette (CR-SM-423) in Hilfetext, se-vorbereitung und se-laufzeit nachziehen",
+      "description": "docs/cr/open/CR-GC-880-antwortweg-ausnahme-nachbarkette-cr-sm-4.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -31241,5 +31247,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 989
+  "graphVersion": 990
 }

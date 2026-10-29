@@ -1,6 +1,6 @@
 ---
 name: se-vorbereitung
-version: 7
+version: 8
 description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, das Merkmal synchron/asynchron der Flüsse nachprüfen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
@@ -130,7 +130,15 @@ graph_metrics()    # Zeile der Kette in chains: answerPath, answerPathBlockedBy
 - `answerPath` ist eine Liste, auch eine leere: der Weg ist lesbar, dieser Schritt meldet nichts.
 - `answerPath: null`: `answerPathBlockedBy` nennt die Flüsse, die ihn verhindern. Ein Fluss hindert aus einem von zwei Gründen; welcher es ist, zeigt `graph_get_node` am Fluss:
   - er trägt das Merkmal nicht lesbar: frag den Autor und kennzeichne ihn (unten),
-  - er trägt `sync` und kommt von einer Funktion außerhalb der Kette: die Kette ist offen. Zurück zu Schritt 1: die Funktion wird Glied, oder der Fluss ist asynchron.
+  - er trägt `sync` und kommt von einer Funktion außerhalb der Kette, die mit dem wartenden Glied keine andere Kette teilt: die Kette ist offen. Zurück zu Schritt 1: die Funktion wird Glied, oder der Fluss ist asynchron.
+
+  Liegen Erzeuger und wartendes Glied beide in einer anderen Kette, gehört der Fluss dorthin, und der Weg überspringt ihn (CR-SM-423). Das ist der Verteiler, der je Aufruf nur auf seinen eigenen Zweig wartet, etwa ein `switch` über den Werkzeugnamen. Ob das Glied nur je Aufruf wartet, sieht das Modell nicht. `answerPathSkipped` nennt jeden übersprungenen Fluss (CR-SM-424). Lies je Fluss den Code an der `realRef` des Glieds:
+
+  | Code | Zug |
+  |---|---|
+  | ein Zweig je Aufruf, etwa `switch` über den Werkzeugnamen | keiner; teile die Funktion nicht |
+  | das Glied wartet bei jedem Aufruf auf den Erzeuger | der Erzeuger wird Glied der Kette (Schritt 1) |
+  | das Glied ist nicht gebunden | in den Bericht als ungeprüft |
 
 Die Liste nennt die Hindernisse, auf die der Weg trifft, nicht jeden Fluss ohne Merkmal. Nach
 jedem angewandten Zug liest du neu, bis `answerPathBlockedBy` leer ist; es können weitere dahinter stehen.
@@ -197,7 +205,7 @@ Je Kette, alles zitiert und nichts gezählt, was `graph_metrics` nicht liefert:
 | Träger je Risiko | `carriers` je `riskId` |
 | Träger je Constraint | `carriers` und `by` je `reqId` aus `constraintCarriers` |
 | Sockel | die `satisfiers`, deren `by` das System ist |
-| Antwortweg | `answerPath`, sonst die Flüsse aus `answerPathBlockedBy`, je mit ihrem Grund |
+| Antwortweg | `answerPath`, sonst die Flüsse aus `answerPathBlockedBy`, je mit ihrem Grund; je Fluss aus `answerPathSkipped` das Ergebnis am Code |
 | Flüsse am Code | `callCoverage`, dazu je Befund von `RC-12` und `RC-13` das Ergebnis aus Schritt 4, mit Datei und Symbol |
 | Vorschläge | je Zug: Klasse, Elemente, Format-E, gewählt oder offen |
 | offen | was bleibt, mit Grund; je „Funktion fehlt" das Item |

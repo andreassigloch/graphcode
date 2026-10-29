@@ -1,6 +1,6 @@
 ---
 name: se-laufzeit
-version: 2
+version: 3
 description: Laufzeitanalyse einer Wirkkette — liest den Antwortweg (die Glieder, auf die die Antwort an den Akteur wartet) aus graph_metrics, nennt Befunde je Ort, fehlende Anforderungen an das Datenalter und Vorschläge mit Preis. Auf Stufe 8, nach se-vorbereitung. Setzt kein Merkmal, schätzt keine Zeit, wendet keinen Umbau an.
 ---
 
@@ -39,7 +39,8 @@ Lies die Zeile der Kette. Du liest den Stand und stellst ihn nicht her:
 - `measurable: false` → der Lauf endet. Nenne die `reasons` und verweise auf `se-vorbereitung` (Schritt 1, Kette schließen).
 - `answerPath: null` → der Lauf endet. Nenne jeden Fluss aus `answerPathBlockedBy` und verweise auf `se-vorbereitung`. Ein Fluss hindert aus einem von zwei Gründen; welcher es ist, zeigt `graph_get_node` am Fluss:
   - er trägt das Merkmal nicht lesbar → `se-vorbereitung`, Schritt 3 (Flüsse kennzeichnen),
-  - er trägt `sync` und kommt von einer Funktion außerhalb der Kette → die Kette ist nicht vollständig: `se-vorbereitung`, Schritt 1.
+  - er trägt `sync` und kommt von einer Funktion außerhalb der Kette, die mit dem wartenden Glied keine andere Kette teilt → die Kette ist nicht vollständig: `se-vorbereitung`, Schritt 1. Teilen beide eine andere Kette, überspringt der Weg den Fluss (CR-SM-423).
+- `answerPathSkipped` nennt die übersprungenen Flüsse. Angenommen ist ein Verteiler, der je Aufruf nur auf seinen Zweig wartet. Wartet das Glied am Code bei jedem Aufruf auf den Erzeuger, fehlt dieser auf dem Weg: `se-vorbereitung`, Schritt 3.
 
   Die Liste nennt die Hindernisse, auf die der Weg trifft, nicht jeden Fluss ohne Merkmal. Nach der Vorbereitung liest du neu; es können weitere dahinter stehen.
 - `answerPath: []` → kein Glied liefert einem Akteur synchron: auf diese Kette wartet keine Antwort. Sag das und frag den Autor, ob die Kette die gemeinte ist. Ohne Antwortweg gibt es keinen Vorschlag.
