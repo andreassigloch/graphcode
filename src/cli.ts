@@ -38,6 +38,7 @@ import { executeImportCode } from './surface/import-code-verb.js';
 import { executeRewind, RewindError } from './surface/rewind.js';
 import { collectStatus, formatStatus, statusIsHealthy } from './surface/status.js';
 import { executeUpgrade, formatUpgrade, UpgradeError } from './surface/upgrade.js';
+import { checkVerbArgs } from './surface/cli-args.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 
@@ -69,6 +70,16 @@ Usage:
 
 async function main(): Promise<void> {
   const command = process.argv[2];
+  // CR-GC-886: vor jedem Verb. Ein Verb darf nie mit Argumenten laufen, die es nicht kennt.
+  const verdict = checkVerbArgs(command ?? '', process.argv.slice(3));
+  if (verdict.kind === 'help') {
+    process.stderr.write(USAGE);
+    process.exit(0);
+  }
+  if (verdict.kind === 'error') {
+    process.stderr.write(`graphcode ${command}: ${verdict.message}\n\n${USAGE}`);
+    process.exit(1);
+  }
   switch (command) {
     case 'mcp':
       await serveStdio({ repoRoot: process.cwd() });

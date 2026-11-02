@@ -367,6 +367,30 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(JSON.stringify(settings.hooks.PreToolUse)).toContain('.claude/hooks/deny-');
   });
 
+  it('eine devDependency bleibt eine: update traegt graphcode nicht in dependencies ein (CR-GC-887)', async () => {
+    writeFileSync(join(repo, 'package.json'), JSON.stringify({ name: 'demo', devDependencies: { [PKG]: '^0.1.0' } }));
+    await scaffold('update', { repoRoot: repo });
+    const pkg = JSON.parse(readFileSync(join(repo, 'package.json'), 'utf8'));
+    expect(pkg.dependencies).toBeUndefined();
+    expect(pkg.devDependencies[PKG]).toBe(`^${OWN_VERSION}`);
+  });
+
+  it('remove nimmt auch die devDependency mit (CR-GC-887)', async () => {
+    writeFileSync(join(repo, 'package.json'), JSON.stringify({ name: 'demo', devDependencies: { [PKG]: '^0.1.0' } }));
+    await scaffold('remove', { repoRoot: repo });
+    const pkg = JSON.parse(readFileSync(join(repo, 'package.json'), 'utf8'));
+    expect(pkg.devDependencies).toBeUndefined();
+  });
+
+  it.each(['@sigloch/graphcode', '@sigloch/graphify'])('init und update verweigern im Paket-Repo %s (CR-GC-887)', async (name) => {
+    const manifest = JSON.stringify({ name });
+    writeFileSync(join(repo, 'package.json'), manifest);
+    await expect(scaffold('init', { repoRoot: repo })).rejects.toThrow(/Paket-Repo/);
+    await expect(scaffold('update', { repoRoot: repo })).rejects.toThrow(/Paket-Repo/);
+    expect(readFileSync(join(repo, 'package.json'), 'utf8')).toBe(manifest);
+    expect(existsSync(join(repo, '.mcp.json'))).toBe(false);
+  });
+
   it('init is idempotent — second run is stable, nothing duplicated/corrupted (REQ-install-idempotent)', async () => {
     await scaffold('init', { repoRoot: repo });
     const mcpAfterFirst = readFileSync(join(repo, MCP), 'utf8');

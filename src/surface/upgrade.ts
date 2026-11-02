@@ -26,13 +26,13 @@
  * @author andreas@siglochconsulting
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { hostname } from 'node:os';
 import { PACKAGE_NAME } from './scaffold-templates.js';
 // CR-GC-538: die Bestandsquelle. Dieselbe Funktion, die `graphcode skills sync` fährt —
 // im Trockenlauf, damit `--check` nichts schreibt.
-import { syncSkills, type SkillSyncResult } from './scaffold.js';
+import { packageRepoKind, syncSkills, type SkillSyncResult } from './scaffold.js';
 import { readPackageVersion } from '../kernel/package-version.js';
 import { readHostStatus, readRepoInstallVersion, compareVersions } from './status.js';
 // „Lebt diese PID" hat EINEN Besitzer (CR-GC-452) — die lokale Kopie ist geloescht.
@@ -235,7 +235,10 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
 
   // CR-GC-538: die zweite und dritte Quelle. BEIDE beschreiben den Zustand VOR dem Lauf,
   // werden also auch im Ernstfall erhoben — `drift` ist eine Aussage über das Vorher.
-  const missingSkills = (deps.syncSkillsImpl ?? syncSkills)(repoRoot, { dry: true }).added;
+  // CR-GC-887: das graphcode-Repo ist die Quelle der Skills, ihm fehlt nie einer.
+  const packageRepo = packageRepoKind(repoRoot);
+  const syncImpl = deps.syncSkillsImpl ?? syncSkills;
+  const missingSkills = packageRepo === 'self' ? [] : syncImpl(repoRoot, { dry: true }).added;
   const family = familyDrift(repoRoot, run);
 
   const report: UpgradeReport = {
@@ -256,6 +259,21 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
     return report;
   }
 
+  // CR-GC-887: ein Paket-Repo bekommt weder Installation noch Manifest-Eintrag noch Startzeile
+  // (Self-Dependency bzw. Publish-Zyklus). Es bekommt nur, was ohne das Manifest geht.
+  if (packageRepo) {
+    if (packageRepo === 'upstream') {
+      const synced = syncImpl(repoRoot, {});
+      report.steps.push(`Paket-Repo: keine Installation; Skills ${synced.added.length} neu, ${synced.updated.length} aktualisiert`);
+    } else {
+      report.steps.push('Paket-Repo: keine Installation, keine Artefakte — hier liegt die Quelle');
+    }
+    report.hostStopped = opts.keepHost
+      ? (report.steps.push('Host: --keep-host — läuft auf altem Code weiter'), false)
+      : await stopHost(repoRoot, { ...deps, pidAlive }, report.steps);
+    return report;
+  }
+
   // Registry-Ziel HINTER dem, was schon da liegt: auf einer Entwicklermaschine ist das
   // der Normalfall (lokaler Build noch nicht publiziert). Ein Downgrade waere hier ein
   // stiller Datenverlust an Ontologie-Ständen — deshalb Abbruch statt Automatik.
@@ -272,7 +290,10 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
   if (repoBefore === target) {
     report.steps.push(`Repo-Install: bereits ${target}`);
   } else {
-    const install = run('npm', ['install', `${PACKAGE_NAME}@${target}`], repoRoot);
+    // CR-GC-887: die Klasse des Eintrags bleibt; eine devDependency wird keine Laufzeit-Abhaengigkeit.
+    const manifest = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')) as { devDependencies?: Record<string, string> };
+    const saveDev = manifest.devDependencies?.[PACKAGE_NAME] ? ['--save-dev'] : [];
+    const install = run('npm', ['install', ...saveDev, `${PACKAGE_NAME}@${target}`], repoRoot);
     if (install.status !== 0) {
       throw new UpgradeError(
         `graphcode upgrade: \`npm install ${PACKAGE_NAME}@${target}\` fehlgeschlagen — nichts geändert.\n${install.stderr.trim()}`,

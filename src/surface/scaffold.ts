@@ -35,6 +35,7 @@
  * @author andreas@siglochconsulting
  */
 import { join, dirname } from 'node:path';
+import { packageRootDir } from '../kernel/package-version.js';
 import {
   existsSync,
   mkdirSync,
@@ -139,7 +140,35 @@ function writeArtifact(
 }
 
 /**
- * Register `@sigloch/graphcode` in the target package.json `dependencies`.
+ * Das Manifest-Feld, in dem graphcode in diesem Repo steht (CR-GC-887). Ein Repo, das graphcode
+ * als `devDependencies` fuehrt, behaelt diese Klasse: in graph-view-edit waere ein Eintrag in
+ * `dependencies` ein Laufzeit-Zyklus (graphcode → gve → graphcode).
+ */
+function dependencySection(pkg: Record<string, unknown>): 'dependencies' | 'devDependencies' {
+  const dev = pkg.devDependencies as Record<string, string> | undefined;
+  return dev && PACKAGE_NAME in dev ? 'devDependencies' : 'dependencies';
+}
+
+/**
+ * Ist dieses Repo ein Paket, das graphcode nicht als Abhaengigkeit tragen darf (CR-GC-887)?
+ * `self`: das graphcode-Repo; `upstream`: graphcode haengt an ihm und es deklariert graphcode nicht
+ * (graphify) — ein Eintrag waere ein Publish-Zyklus. graph-view-edit deklariert graphcode als
+ * devDependency und gilt deshalb als normaler Consumer.
+ */
+export function packageRepoKind(repoRoot: string): 'self' | 'upstream' | undefined {
+  const abs = join(repoRoot, 'package.json');
+  if (!existsSync(abs)) return undefined;
+  const pkg = JSON.parse(readFileSync(abs, 'utf8')) as Record<string, unknown>;
+  if (pkg.name === PACKAGE_NAME) return 'self';
+  const own = JSON.parse(readFileSync(join(packageRootDir(), 'package.json'), 'utf8')) as {
+    dependencies?: Record<string, string>;
+  };
+  const declared = PACKAGE_NAME in ((pkg[dependencySection(pkg)] as Record<string, string> | undefined) ?? {});
+  return typeof pkg.name === 'string' && pkg.name in (own.dependencies ?? {}) && !declared ? 'upstream' : undefined;
+}
+
+/**
+ * Register `@sigloch/graphcode` in the target package.json, in the section it already sits in.
  * Idempotent: only writes when the range is missing/different; leaves all other
  * keys untouched and preserves the file's existing formatting style (2-space).
  */
@@ -150,26 +179,28 @@ function registerDependency(repoRoot: string, res: InstallResult): void {
   if (existed) {
     pkg = JSON.parse(readFileSync(abs, 'utf8')) as Record<string, unknown>;
   }
-  const deps = (pkg.dependencies as Record<string, string> | undefined) ?? {};
+  const section = dependencySection(pkg);
+  const deps = (pkg[section] as Record<string, string> | undefined) ?? {};
   if (deps[PACKAGE_NAME] === PACKAGE_RANGE) {
     res.preserved.push('package.json');
     return;
   }
   deps[PACKAGE_NAME] = PACKAGE_RANGE;
-  pkg.dependencies = deps;
+  pkg[section] = deps;
   writeFileSync(abs, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
   (existed ? res.updated : res.created).push('package.json');
 }
 
-/** Remove `@sigloch/graphcode` from the target package.json dependencies (restlos). */
+/** Remove `@sigloch/graphcode` from the target package.json (restlos). */
 function unregisterDependency(repoRoot: string, res: InstallResult): void {
   const abs = join(repoRoot, 'package.json');
   if (!existsSync(abs)) return;
   const pkg = JSON.parse(readFileSync(abs, 'utf8')) as Record<string, unknown>;
-  const deps = pkg.dependencies as Record<string, string> | undefined;
+  const section = dependencySection(pkg);
+  const deps = pkg[section] as Record<string, string> | undefined;
   if (!deps || !(PACKAGE_NAME in deps)) return;
   delete deps[PACKAGE_NAME];
-  if (Object.keys(deps).length === 0) delete pkg.dependencies;
+  if (Object.keys(deps).length === 0) delete pkg[section];
   writeFileSync(abs, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
   res.updated.push('package.json');
 }
@@ -480,6 +511,12 @@ export async function scaffold(
   opts: { repoRoot: string },
 ): Promise<InstallResult> {
   const repoRoot = opts.repoRoot;
+  if (action !== 'remove' && packageRepoKind(repoRoot)) {
+    throw new Error(
+      `graphcode ${action}: ${repoRoot} ist ein Paket-Repo — graphcode darf hier keine Abhaengigkeit ` +
+        'und keine Startzeile eintragen (CR-GC-887). Skills: `graphcode skills sync`.',
+    );
+  }
   const res: InstallResult = {
     action,
     repoRoot,

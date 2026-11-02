@@ -27,7 +27,7 @@ describe('TEST-upgrade (CR-GC-377)', () => {
       if (args[0] === 'view') return { status: 0, stdout: `${opts.viewVersion ?? '0.17.0'}\n`, stderr: '' };
       if (args[0] === 'install' && !args.includes('-g')) {
         if (opts.failInstall) return { status: 1, stdout: '', stderr: 'E404' };
-        writeRepoInstall((args[1] ?? '').split('@').pop() ?? '0.0.0');
+        writeRepoInstall((args.find((a) => a.startsWith('@')) ?? '').split('@').pop() ?? '0.0.0');
         return { status: 0, stdout: '', stderr: '' };
       }
       if (opts.failRefresh && args.some((a) => a.endsWith('cli.js'))) {
@@ -77,6 +77,56 @@ describe('TEST-upgrade (CR-GC-377)', () => {
   });
 
   afterEach(() => rmSync(repo, { recursive: true, force: true }));
+
+  describe('Paket-Repos (CR-GC-887)', () => {
+    const paket = (name: string, extra: object = {}): void =>
+      writeFileSync(join(repo, 'package.json'), JSON.stringify({ name, ...extra }));
+    const skills = (added: string[] = []): { calls: Array<boolean | undefined> } & Pick<UpgradeDeps, 'syncSkillsImpl'> => {
+      const seen: Array<boolean | undefined> = [];
+      return {
+        calls: seen,
+        syncSkillsImpl: (repoRoot, o) => {
+          seen.push(o.dry);
+          return { repoRoot, added, updated: [], unchanged: [] };
+        },
+      };
+    };
+
+    it('im graphcode-Repo selbst: keine Installation, kein Refresh, kein Skill, nur der Host', async () => {
+      paket('@sigloch/graphcode');
+      const s = skills(['.opencode/skills/se-test/SKILL.md']);
+      writeLock({ pid: 4711, version: '0.1.0', hostname: 'this-box', startedAt: 'x' });
+      const report = await executeUpgrade({ repoRoot: repo }, { ...s, ...releasingHost(), run: runner(), cliVersion: '0.17.0' });
+      expect(calls.filter((c) => c.includes('install') || c.includes('cli.js'))).toEqual([]);
+      expect(report.missingSkills).toEqual([]);
+      expect(s.calls).toEqual([]);
+      expect(report.hostStopped).toBe(true);
+      expect(report.steps.join('\n')).toContain('Paket-Repo');
+    });
+
+    it('im graphcode-Repo meldet --check kein Artefakt als fehlend', async () => {
+      paket('@sigloch/graphcode');
+      const report = await executeUpgrade({ repoRoot: repo, check: true }, { ...skills(['x']), run: runner(), cliVersion: '0.17.0' });
+      expect(report.missingSkills).toEqual([]);
+      expect(report.drift).toBe(false);
+    });
+
+    it('graphify (graphcode haengt daran): keine Installation, Skills per Sync', async () => {
+      paket('@sigloch/graphify');
+      const s = skills(['.claude/commands/se-test.md']);
+      const report = await executeUpgrade({ repoRoot: repo }, { ...s, run: runner(), cliVersion: '0.17.0', sleep: async () => {} });
+      expect(calls.filter((c) => c.includes('install') || c.includes('cli.js'))).toEqual([]);
+      expect(s.calls).toEqual([true, undefined]);
+      expect(report.steps.join('\n')).toContain('Paket-Repo');
+    });
+
+    it('graph-view-edit traegt graphcode als devDependency: normales Upgrade, Klasse bleibt', async () => {
+      paket('@sigloch/graph-view-edit', { devDependencies: { '@sigloch/graphcode': '^0.16.0' } });
+      writeRepoInstall('0.16.0');
+      await executeUpgrade({ repoRoot: repo }, { ...vollstaendig, run: runner(), cliVersion: '0.17.0', sleep: async () => {} });
+      expect(calls).toContain('npm install --save-dev @sigloch/graphcode@0.17.0');
+    });
+  });
 
   it('installiert erst, lässt dann den NEUEN Build die Artefakte schreiben', async () => {
     writeRepoInstall('0.13.2');
