@@ -60,7 +60,7 @@ describe('`sync` wird beim Kettenschnitt gesetzt, nicht erst in se-vorbereitung 
   });
 
   it('se-vorbereitung nennt se:top-level als Ort des Merkmals und prueft nur nach', () => {
-    expect(vorbereitung).toMatch(/^version: 7$/m);
+    expect(vorbereitung).toMatch(/^version: 8$/m);
     expect(vorbereitung).toMatch(/Das Merkmal `sync` setzt der Autor beim Kettenschnitt \(`se:top-level`, Phase 3, Schritt FLOW \+ SCHEMA\)/);
     expect(vorbereitung).not.toMatch(/Flüsse als synchron oder asynchron kennzeichnen/);
   });
@@ -106,7 +106,7 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
   });
 
   it('se-vorbereitung und se-laufzeit: async am Fluss eines Akteurs ohne Rueckfluss ist eine Vorab-Lieferung', () => {
-    expect(laufzeit).toMatch(/^version: 2$/m);
+    expect(laufzeit).toMatch(/^version: 3$/m);
     for (const t of [vorbereitung, laufzeit]) {
       expect(t).toMatch(/`async` am Fluss eines Akteurs, der aus der Kette nichts empfängt, ist eine Vorab-Lieferung \(`FC-06`, `\[predelivery\]`\)/);
     }
