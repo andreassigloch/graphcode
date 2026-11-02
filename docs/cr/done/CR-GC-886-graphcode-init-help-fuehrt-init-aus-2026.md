@@ -1,6 +1,6 @@
 # CR-GC-886: graphcode init --help fuehrt init aus (2026-10-01, im graphcode-Repo selbst): unbekannte Flags werden verworfen; init schrieb .mcp.json auf node_modules/@sigloch/graphcode um, trug graphcode als eigene Abhaengigkeit in package.json ein und legte opencode.json, GRAPHCODE.md, GRAPHCODE-STEERING.md, .opencode/skills an. Ein unbekanntes Flag muss abbrechen, --help muss Hilfe zeigen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-02)
 **Typ:** aus Item ITEM-2026-702 (bug)
 **Erstellt:** 2026-11-02
 **Item:** bok/items/ITEM-2026-702.json (Lane: graph)
