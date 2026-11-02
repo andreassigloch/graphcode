@@ -4,6 +4,9 @@
  * mark, artifact, or ontology token fails this test only if its help entry is missing.
  */
 import { describe, it, expect } from 'vitest';
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { VIEW_FILENAMES } from '@sigloch/graphcode-client';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { MARK_LABELS } from '../src/kernel/measure/readiness.js';
 import { ARTIFACT_CATALOG } from '../src/projections/panels.js';
@@ -107,6 +110,30 @@ describe('TEST-help-content-coverage (CR-GC-227): authored Plain/SE covers the l
       expect(nonEmpty(e.se), `${id}.se`).toBe(true);
     }
     expect(nonEmpty(HELP_ELEMENT_STATES)).toBe(true);
+  });
+
+  /**
+   * CR-GC-876: die se-view-Skills sind gestrichen, die Sichten schreibt der Export nach docs/views.
+   * Ein Hilfetext, der einen Skill oder eine Sicht nennt, nennt einen ausgelieferten Skill bzw. eine
+   * Datei aus VIEW_FILENAMES. Die Regel-Eintraege kommen aus contracts und prueft skill-rule-ids.
+   */
+  it('jeder genannte Skill ist ausgeliefert, jede genannte Sicht steht in VIEW_FILENAMES', () => {
+    const commands = join(__dirname, '..', '.claude', 'commands');
+    const skills = new Set(
+      readdirSync(commands, { recursive: true, encoding: 'utf8' })
+        .filter((f) => f.endsWith('.md'))
+        .map((f) => f.replace(/\.md$/, '').replace('/', ':')),
+    );
+    const sichten = new Set(Object.values(VIEW_FILENAMES));
+    const regeln = new Set(ALL_RULE_DEFS.map((r) => r.id));
+    const fremd: string[] = [];
+    for (const [id, e] of Object.entries(HELP_CONTENT)) {
+      if (regeln.has(id)) continue;
+      const text = [e.plain, e.se, e.prompt ?? ''].join(' ');
+      for (const [s] of text.matchAll(/\bse[-:][a-z][\w-]*(?::[a-z][\w-]*)?/g)) if (!skills.has(s)) fremd.push(`${id}: ${s}`);
+      for (const [, f] of text.matchAll(/docs\/views\/([\w.-]+\.md)/g)) if (!sichten.has(f)) fremd.push(`${id}: ${f}`);
+    }
+    expect(fremd).toEqual([]);
   });
 });
 

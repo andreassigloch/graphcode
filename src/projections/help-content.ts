@@ -37,7 +37,7 @@ export interface HelpContentEntry {
   plain: string;
   /** Layer 1 — maps our encoding to the standard SE concept (uses the Vocabulary). */
   se: string;
-  /** Layer 2 — a copy-able prompt (a real `se:*` skill or MCP call), where one applies. */
+  /** Layer 2 — a copy-able prompt (a real `se:*` skill, an MCP call or a `docs/views` file), where one applies. */
   prompt?: string;
 }
 
@@ -96,19 +96,19 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
     plain:
       '**Reached:** there is a high-level design — the functions, the data moving between them, and the modules they live in. **Open:** it lists what is not yet there or not connected.',
     se: markSe('Preliminary Design Review', 'PDR'),
-    prompt: 'se-view:arch',
+    prompt: 'Read docs/views/architecture.md.',
   },
   CDR: {
     plain:
       '**Reached:** every piece of data that moves between functions has a defined form (a contract). **Open:** it lists the data flows without one.',
     se: markSe('Critical Design Review', 'CDR'),
-    prompt: 'se-view:icd',
+    prompt: 'Read docs/views/icd.md.',
   },
   TRR: {
     plain:
       '**Reached:** the specification is complete — everything it demands has a test that checks it. **Open:** it lists what has no test yet. Whether the tests run against code is the next mark (Bau).',
     se: markSe('Test Readiness Review', 'TRR'),
-    prompt: 'se-view:testmatrix, then se:close-violations',
+    prompt: 'Read docs/views/testmatrix.md, then se:close-violations',
   },
   Bau: {
     plain:
@@ -153,56 +153,56 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   srs: {
     plain: "The requirements document — the features you've promised, per use case.",
     se: 'Software Requirements Specification (a render — re-derivable from the model).',
-    prompt: 'se-view:rtm',
+    prompt: 'Read docs/views/srs.md.',
   },
   architecture: {
     plain: 'The map of modules and how functions sit in them.',
     se: 'Architecture / System Design Description (a render).',
-    prompt: 'se-view:arch',
+    prompt: 'Read docs/views/architecture.md.',
   },
   rtm: {
     plain: 'Which test covers which feature, and the gaps.',
     se: 'Requirements Traceability Matrix (a render).',
-    prompt: 'se-view:rtm',
+    prompt: 'Read docs/views/rtm.md.',
   },
   nfr: {
     plain: 'How the project is doing against its speed/quality targets.',
     se: 'Non-Functional Requirements register (a render).',
-    prompt: 'se-view:nfr',
+    prompt: 'Read docs/views/nfr.md.',
   },
   icd: {
     plain: 'The document of how the modules talk to each other.',
     se: 'Interface Control Document (a render).',
-    prompt: 'se-view:icd',
+    prompt: 'Read docs/views/icd.md.',
   },
   testconcept: {
     plain: 'The test plan and how much it covers.',
     se: 'Test Concept — the verification pyramid with the computed E2E gap (a render).',
-    prompt: 'se-view:testconcept',
+    prompt: 'Read docs/views/testconcept.md.',
   },
   testmatrix: {
     plain: 'The test plan and how much it covers, as a coverage matrix.',
     se: 'Verification Cross-Reference Matrix / Test Matrix (a render).',
-    prompt: 'se-view:testmatrix',
+    prompt: 'Read docs/views/testmatrix.md.',
   },
   changelog: {
     plain: 'What changed (from the audit trail).',
     se: 'Change Log — the CR history (a render).',
-    prompt: 'se-view:changelog',
+    prompt: 'Read docs/views/changelog.md.',
   },
   intplan: {
     plain: 'The milestones, work items, and their order.',
     se: 'Integration & Test Plan (a render of the MS/CR/gate structure).',
-    prompt: 'se-view:intplan',
+    prompt: 'Read docs/views/intplan.md.',
   },
   references: {
     plain: 'The cross-reference index — how every requirement links to everything else.',
     se: 'Requirements Traceability reference index (a render).',
-    prompt: 'se-view:rtm',
+    prompt: 'Read docs/views/references.md.',
   },
   conops: {
     plain: 'How the system is operated and who uses it.',
-    se: 'Concept of Operations (an analysis; render with `se-view:conops`).',
+    se: 'Concept of Operations (an analysis; rendered to `docs/views/conops.md`).',
     prompt: 'se-conops',
   },
   'assumption-review': {
@@ -212,17 +212,17 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
   },
   trade: {
     plain: 'The design options weighed and the choice made.',
-    se: 'Trade Study (an analysis; the decision is a closed CR and shows in the change log, `se-view:changelog`).',
+    se: 'Trade Study (an analysis; the decision is a closed CR and shows in the change log, `docs/views/changelog.md`).',
     prompt: 'se-trade',
   },
   fmea: {
     plain: 'The "what can break and how it is handled" analysis.',
-    se: 'Failure Mode and Effects Analysis (an analysis; render with `se-view:fmea`).',
+    se: 'Failure Mode and Effects Analysis (an analysis; rendered to `docs/views/fmea.md`).',
     prompt: 'se-fmea',
   },
   implplan: {
     plain: 'The work slices and milestones — the open work orders of the build.',
-    se: 'Implementation Plan — a render of the CR/MS structure (`se-view:implplan`); `se-plan` writes the CRs and milestones. No stamp: the plan is the set of open CRs.',
+    se: 'Implementation Plan — a render of the CR/MS structure (`docs/views/implplan.md`); `se-plan` writes the CRs and milestones. No stamp: the plan is the set of open CRs.',
     prompt: 'se-plan',
   },
 };

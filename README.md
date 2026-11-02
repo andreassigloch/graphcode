@@ -179,20 +179,21 @@ specification in on top of it.
 
 ### Generated documents
 
-The SE document family is rendered from the graph, deterministically — same graph, same bytes. Each
-has a skill that renders it into `docs/views/`:
+The SE document family is rendered from the graph, deterministically — same graph, same bytes. After
+every applied mutation graphcode writes each document to `docs/views/`; `graph_export` writes them on
+demand. No skill renders a document.
 
-| Skill | Document |
+| File in `docs/views/` | Document |
 |---|---|
-| `se-view:rtm` | Requirements Traceability Matrix |
-| `se-view:arch` | Architecture allocation (SDD) |
-| `se-view:icd` | Interface Control Document |
-| `se-view:nfr` | NFR register |
-| `se-view:testconcept` · `se-view:testmatrix` | test concept (pyramid + computed E2E gap) · VCRM |
-| `se-view:intplan` · `se-view:implplan` | integration & test plan · implementation plan (MS/CR) |
-| `se-view:conops` | Concept of Operations (ISO 29148 §5.2.4) |
-| `se-view:fmea` | FMEA — failure modes, S/O/D, action priority |
-| `se-view:changelog` | change log from the CR history |
+| `rtm.md` | Requirements Traceability Matrix |
+| `architecture.md` | Architecture allocation (SDD) |
+| `icd.md` | Interface Control Document |
+| `nfr.md` | NFR register |
+| `testconcept.md` · `testmatrix.md` | test concept (pyramid + computed E2E gap) · VCRM |
+| `intplan.md` · `implplan.md` | integration & test plan · implementation plan (MS/CR) |
+| `conops.md` | Concept of Operations (ISO 29148 §5.2.4) |
+| `fmea.md` | FMEA — failure modes, S/O/D, action priority |
+| `changelog.md` | change log from the CR history |
 
 Because they are generated, "the document is incomplete" and "the gate is still open" are the same
 fact with the same cause — there is no separate documentation debt to track.
