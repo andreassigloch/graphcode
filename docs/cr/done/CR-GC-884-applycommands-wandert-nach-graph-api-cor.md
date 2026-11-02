@@ -1,6 +1,6 @@
 # CR-GC-884: applyCommands wandert nach graph-api-core, dazu die Abbildung von nodes/edges auf elements/traces: Host und Viewer nutzen dieselbe Funktion
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-02)
 **Typ:** aus Item ITEM-2026-1150 (finding)
 **Erstellt:** 2026-11-01
 **Item:** bok/items/ITEM-2026-1150.json (Lane: code)
