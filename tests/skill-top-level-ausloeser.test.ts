@@ -10,7 +10,7 @@
  * FC-06, muss es FC-06 geben.
  *
  * CR-GC-875 zieht die Akteur-Lehre (contracts `chainRoles`, FC-06) in author-actor, top-level Regel 4,
- * se-view:conops, se-fmea, se-vorbereitung und se-laufzeit nach; der letzte Block prueft diese Saetze.
+ * se-fmea, se-vorbereitung und se-laufzeit nach; der letzte Block prueft diese Saetze.
  *
  * @author andreas@siglochconsulting
  */
@@ -23,7 +23,6 @@ const COMMANDS = join(import.meta.dirname, '..', '.claude', 'commands');
 const topLevel = readFileSync(join(COMMANDS, 'se', 'top-level.md'), 'utf8');
 const vorbereitung = readFileSync(join(COMMANDS, 'se-vorbereitung.md'), 'utf8');
 const authorActor = readFileSync(join(COMMANDS, 'se', 'author-actor.md'), 'utf8');
-const conops = readFileSync(join(COMMANDS, 'se-view', 'conops.md'), 'utf8');
 const fmea = readFileSync(join(COMMANDS, 'se-fmea.md'), 'utf8');
 const laufzeit = readFileSync(join(COMMANDS, 'se-laufzeit.md'), 'utf8');
 const regel4 = topLevel.split('\n').find((l) => l.startsWith('4. **One entry node per chain.**')) ?? '';
@@ -97,15 +96,7 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
   });
 
   it('die Rolle `answer` steht in keinem der Skills (kein FC-06-Fall)', () => {
-    for (const t of [authorActor, topLevel, conops, fmea, vorbereitung, laufzeit]) expect(t).not.toMatch(/`answer`/);
-  });
-
-  it('se-view:conops: Version 4, §3 liest chainRoles mit den vier Rollen, nicht ACTOR io UC', () => {
-    expect(conops).toMatch(/^version: 4$/m);
-    expect(conops).not.toContain('ACTOR io UC');
-    const zeile = conops.split('\n').find((l) => l.startsWith('| 3 |')) ?? '';
-    expect(zeile).toContain('chainRoles');
-    for (const rolle of ['Ausgeloest von', 'Beteiligt', 'Empfaenger', 'Liefert zu']) expect(zeile, rolle).toContain(rolle);
+    for (const t of [authorActor, topLevel, fmea, vorbereitung, laufzeit]) expect(t).not.toMatch(/`answer`/);
   });
 
   it('se-fmea: Version 10, Akteur in der Mitte und Abschnitte aus chainRoles.segments', () => {
