@@ -1,6 +1,6 @@
 # CR-GC-876: se-view-Skills entfernen: paralleler Pfad zu auto-export docs/views (fmea rendert von Hand)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-02)
 **Typ:** aus Item ITEM-2026-1111 (finding)
 **Erstellt:** 2026-10-28
 **Item:** bok/items/ITEM-2026-1111.json (Lane: graph)
