@@ -1,6 +1,6 @@
 # CR-GC-885: reseed und rewind laufen am post-apply-Hook vorbei: ohne Datei-Watcher erfaehrt der Viewer nichts davon
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-02)
 **Typ:** aus Item ITEM-2026-1151 (bug)
 **Erstellt:** 2026-11-01
 **Item:** bok/items/ITEM-2026-1151.json (Lane: code)
