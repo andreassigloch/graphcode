@@ -3408,7 +3408,9 @@
       "id": "CR-GC-809",
       "type": "CR",
       "name": "GVE haengt an der HostBridge statt am Export-Datei-Watcher",
-      "description": "docs/cr/open/CR-GC-809-gve-haengt-an-der-hostbridge-statt-am-ex.md"
+      "description": "docs/cr/open/CR-GC-809-gve-haengt-an-der-hostbridge-statt-am-ex.md",
+      "status": "done",
+      "commitRef": "8ec616dd"
     },
     {
       "id": "CR-GC-810",
@@ -31252,5 +31254,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 991
+  "graphVersion": 992
 }
