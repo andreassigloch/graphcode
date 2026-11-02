@@ -1,6 +1,6 @@
 # CR-GC-809: GVE haengt an der HostBridge statt am Export-Datei-Watcher
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-02)
 **Typ:** aus Item ITEM-2026-951 (finding)
 **Erstellt:** 2026-10-15
 **Item:** bok/items/ITEM-2026-951.json (Lane: code)
