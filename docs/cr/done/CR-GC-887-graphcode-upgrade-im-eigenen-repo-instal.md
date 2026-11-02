@@ -1,6 +1,6 @@
 # CR-GC-887: graphcode upgrade im eigenen Repo installiert sich selbst und biegt .mcp.json auf die Registry-Version
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-02)
 **Typ:** aus Item ITEM-2026-545 (bug)
 **Erstellt:** 2026-11-02
 **Item:** bok/items/ITEM-2026-545.json (Lane: graph)
