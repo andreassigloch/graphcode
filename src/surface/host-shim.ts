@@ -27,6 +27,7 @@ import { rmSync } from 'node:fs';
 import type { AuditLog } from '@sigloch/graph-api-core';
 import {
   HOST_SOCK_BASENAME,
+  SUBSCRIBE_TOOL,
   callHost,
   type ShimRequest,
   type ShimResponse,
@@ -34,6 +35,7 @@ import {
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { bindToolsToHarness } from './mcp-tools.js';
 import type { MCPToolRegistry } from '../kernel/tool-contract.js';
+import type { LiveFeed } from './live-feed.js';
 
 // The CLIENT half (socket name, wire types, `callHost`) lives in
 // @sigloch/graphcode-client (CR-GC-264) so a consumer that only forwards tool
@@ -54,7 +56,7 @@ export interface HostSocket {
  * removed before listen. The registry parses every input against the tool's own
  * Zod schema (CR-GC-866) — the proxy hop adds NO semantics (gate symmetry, CR-124 analog).
  */
-export function startHostSocket(registry: MCPToolRegistry, socketPath: string): Promise<HostSocket> {
+export function startHostSocket(registry: MCPToolRegistry, socketPath: string, feed?: LiveFeed): Promise<HostSocket> {
   rmSync(socketPath, { force: true }); // stale file from a killed host; we hold the lock
   const sockets = new Set<Socket>();
 
@@ -80,6 +82,12 @@ export function startHostSocket(registry: MCPToolRegistry, socketPath: string): 
     try {
       const req = JSON.parse(line) as ShimRequest;
       id = req.id;
+      if (req.tool === SUBSCRIBE_TOOL && feed) {
+        // Stand und Abo im selben synchronen Schritt: dazwischen geht kein Event verloren (CR-GC-809).
+        const unsubscribe = feed.subscribe((frame) => { if (!socket.destroyed) socket.write(JSON.stringify(frame) + '\n'); });
+        socket.on('close', unsubscribe);
+        return;
+      }
       const tool = registry[req.tool];
       if (!tool) throw new Error(`unknown tool '${req.tool}'`);
       // Serving another session (CR-GC-357): while this is in flight, no write in this
@@ -165,7 +173,7 @@ export function buildProxyRegistry(opts: {
       throw new Error('proxy registry: audit log accessed at bind time');
     },
   };
-  const template = bindToolsToHarness(unboundHarness, unboundLog);
+  const template = bindToolsToHarness(unboundHarness, unboundLog, { template: true });
 
   // After a successful promotion the proxy IS the host — dispatch goes local.
   let local: MCPToolRegistry | null = null;

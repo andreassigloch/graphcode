@@ -163,6 +163,7 @@ export function bindToolsWithContext(
   auditLog?: AuditLog,
   opts?: {
     ownerPid?: string | null;
+    template?: boolean;
   },
 ): { registry: ToolRegistry; ctx: ToolContext } {
   // Exactly one context per registry — the whole reason the groups take `ctx`
@@ -194,8 +195,8 @@ export function bindToolsWithContext(
   return { ctx, registry };
 }
 
-export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLog): ToolRegistry {
-  return bindToolsWithContext(harness, auditLog).registry;
+export function bindToolsToHarness(harness: GraphCodeHarness, auditLog?: AuditLog, opts?: { template?: boolean }): ToolRegistry {
+  return bindToolsWithContext(harness, auditLog, opts).registry;
 }
 
 

@@ -20,7 +20,8 @@
 
 import type { MutateResult, UpdateDomain, LiveUpdateEvent } from '@sigloch/contracts/harness';
 import type { HookSystem } from '../kernel/hooks.js';
-import type { HookData, HookResult } from '../kernel/hooks.js';
+import type { AppliedDelta, HookData, HookResult } from '../kernel/hooks.js';
+import { deltaToFormatE } from '@sigloch/graph-api-core';
 
 // ---------------------------------------------------------------------------
 // LiveUpdateEvent — the SSE invalidation contract is defined ONCE in
@@ -53,6 +54,26 @@ export function computeDomains(result: MutateResult): UpdateDomain[] {
   return domains;
 }
 
+/**
+ * Bis zu dieser Zahl geänderter Knoten und Kanten reist die Wirkung im Event, darüber liest der Empfänger den ganzen
+ * Graphen (CR-GC-809). Gemessen in CR-GVE-397 bei 7.986 Elementen: 5.000 Änderungen kosten 13 ms und 1 MB, der ganze
+ * Graph 51 ms und 3,9 MB. Darüber hinaus dominiert die Textmenge auf dem Kanal.
+ */
+export const MAX_DELTA_CHANGES = 5000;
+
+/** Die Wirkung als Format-E; ohne Änderung oder über der Grenze keine: dann liest der Empfänger neu. */
+function deltaText({ delta, typeOf }: AppliedDelta): string | undefined {
+  const changes = delta.upsertNodes.length + delta.deleteNodes.length + delta.upsertEdges.length + delta.deleteEdges.length;
+  if (changes === 0 || changes > MAX_DELTA_CHANGES) return undefined;
+  try {
+    return deltaToFormatE(delta, typeOf);
+  } catch (err) {
+    // Der Text ist Zugabe, das Event die Nachricht: es geht trotzdem hinaus, der Empfänger liest den ganzen Graphen.
+    process.stderr.write(`[graphcode] live event without delta: ${err instanceof Error ? err.message : String(err)}\n`);
+    return undefined;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Hook factories
 // ---------------------------------------------------------------------------
@@ -67,13 +88,31 @@ export function makeUpdateEventHook(
   return (data: HookData): HookResult | void => {
     if (data.phase !== 'post-apply') return;
     const result = data.result;
+    const formatE = result.success && data.applied ? deltaText(data.applied) : undefined;
     const event: LiveUpdateEvent = {
       type: 'invalidate',
       domains: computeDomains(result),
       ts: new Date().toISOString(),
+      ...(data.version !== undefined ? { version: data.version } : {}),
+      ...(formatE !== undefined ? { formatE } : {}),
     };
     onEvent(event);
     // No return → HookResult is { hookId: <registered id> } via the runner default.
+  };
+}
+
+/** After a reseed: one `reset`, whatever was running; a reader takes the whole graph again (CR-GC-885). */
+export function makeResetEventHook(
+  onEvent: (event: LiveUpdateEvent) => void,
+): (data: HookData) => HookResult | void {
+  return (data: HookData): HookResult | void => {
+    if (data.phase !== 'post-reset') return;
+    onEvent({
+      type: 'reset',
+      domains: ['graph', 'readiness'],
+      ts: new Date().toISOString(),
+      ...(data.version !== undefined ? { version: data.version } : {}),
+    });
   };
 }
 
@@ -108,6 +147,7 @@ export function registerEmitters(
     makeUpdateEventHook(sink),
     { id: 'emit-update-event' },
   );
+  hooks.registerHook('post-reset', makeResetEventHook(sink), { id: 'emit-reset-event' });
   return { updateEventHookId };
 }
 

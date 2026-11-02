@@ -4270,7 +4270,12 @@
       "name": "Aufgezeichnete Gate-Entscheidung",
       "description": "Das Operations-Log der Gate-Entscheidungen samt Code-Stand codeState (head, dirty) seit CR-GC-848: audit_trail und audit_stats holen die Eintraege ueber auditLog.query aus der Datei und warten auf die Antwort (sync = Holen); recordAudit schreibt sie je Entscheidung in einem anderen Aufruf. Abwesenheit heisst nicht aufgezeichnet, nie leerer Befund. (CR-GC-874)",
       "status": "reviewed",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/tool-context.ts",
+        "symbol": "recordAudit",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-audit-report",
@@ -31247,5 +31252,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 990
+  "graphVersion": 991
 }

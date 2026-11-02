@@ -24,6 +24,7 @@
  * @author andreas@siglochconsulting
  */
 import { z } from 'zod/v4';
+import { toExportedGraph } from '@sigloch/graph-api-core';
 import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
 import { readTestRefs, readRealRef, type TestRef, type RealRef } from '@sigloch/contracts/se';
 import { renderSrs } from './srs.js';
@@ -69,30 +70,6 @@ export type { MarkdownView };
 // exportGraphJson — inverse of importGraph, canonical serialization.
 // ---------------------------------------------------------------------------
 
-/** Element shape in the materialized OntologyGraph JSON (`id` first, attrs spread). */
-function nodeToElement(node: GraphNode): Record<string, unknown> {
-  return {
-    id: node.uid,
-    type: node.type,
-    name: node.name,
-    description: node.description ?? '',
-    // Spread attributes back to top-level, preserving their insertion order so
-    // status/created_at/updated_at/kinds/method/nested-attributes land exactly
-    // where importGraph put them. Inverse of `{ id, type, name, description, ...rest }`.
-    ...node.attributes,
-  };
-}
-
-/** Trace shape in the materialized OntologyGraph JSON. */
-function edgeToTrace(edge: GraphEdge): Record<string, unknown> {
-  return {
-    source: edge.sourceId,
-    target: edge.targetId,
-    type: edge.edgeType,
-    ...edge.attributes,
-  };
-}
-
 /**
  * Reconstruct the committed JSON shape `{ elements, traces }` from a Graph and
  * serialize CANONICALLY (`JSON.stringify(obj, null, 2) + "\n"`).
@@ -105,29 +82,7 @@ function edgeToTrace(edge: GraphEdge): Record<string, unknown> {
  * CR-GC-201's provenance check (committed JSON == export(store)).
  */
 export function exportGraphJson(graph: Graph): string {
-  const elements = [...graph.nodes]
-    .sort((a, b) => a.uid.localeCompare(b.uid))
-    .map(nodeToElement);
-  // Dedupe by the edge identity (source|type|target) — the SAME key Kuzu uses.
-  // A duplicate trace is not a second fact, and writing one makes the snapshot claim
-  // more edges than the store can ever hold: the reseed round-trip then reports a
-  // loss that never happened (CR-GC-384, observed after a merge-nodes batch).
-  const seen = new Set<string>();
-  const traces = [...graph.edges]
-    .sort(
-      (a, b) =>
-        a.sourceId.localeCompare(b.sourceId) ||
-        a.edgeType.localeCompare(b.edgeType) ||
-        a.targetId.localeCompare(b.targetId),
-    )
-    .filter((e) => {
-      const key = `${e.sourceId}|${e.edgeType}|${e.targetId}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .map(edgeToTrace);
-  return JSON.stringify({ elements, traces }, null, 2) + '\n';
+  return JSON.stringify(toExportedGraph(graph), null, 2) + '\n';
 }
 
 /**

@@ -391,7 +391,11 @@ export class GraphCodeHarness {
    * The clear+re-import itself is harness-import.ts `applyReseed`.
    */
   async reseed(relPath = graphSnapshotRel(this.config.scope.systemId)): Promise<{ nodes: number; edges: number }> {
-    return this.serializeWrite(() => applyReseed(this.store.importTarget(), relPath));
+    return this.serializeWrite(async () => {
+      const seeded = await applyReseed(this.store.importTarget(), relPath);
+      await this.hooks.runPostResetHooks();
+      return seeded;
+    });
   }
 
   /** Release the store handle + the ownership lock (single-writer cleanup). */

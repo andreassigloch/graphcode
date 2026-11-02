@@ -208,12 +208,15 @@ export type { ToolContext };
 export function createToolContext(
   harness: GraphCodeHarness,
   auditLog: AuditLog = new FileOperationsLog(harness.getStoreDir()),
-  opts: { ownerPid?: string | null } = {},
+  opts: { ownerPid?: string | null; template?: boolean } = {},
 ): ToolContext {
   // Version continuity (CR-GC-232): resume from the durable log's highest version —
   // never reset to 0 per session (CR-233 builds its OCC on this monotonicity).
   const versioned = auditLog as Partial<Pick<OperationsLog, 'latestVersion'>>;
   let _graphVersion = versioned.latestVersion?.() ?? 0;
+  // Das Live-Event nennt die Version, die dieser Batch ergibt (CR-GC-809); gezählt wird hier. Die Vorlage
+  // des Proxys bleibt ungebunden (CR-GC-235): sie hat keinen Harness und zählt nichts.
+  if (!opts.template) harness.getHooks().setVersionSource(() => _graphVersion);
 
   // Provenance (CR-GC-354). The session id is minted ONCE per context: it is the join key
   // that turns a flat record stream back into conversations, so it must be stable across

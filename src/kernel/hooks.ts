@@ -11,9 +11,10 @@
  * @author andreas@siglochconsulting
  */
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
+import type { GraphDelta } from '@sigloch/graph-api-core';
 
-/** Hook lifecycle phases. */
-export type HookType = 'pre-commit' | 'post-apply' | 'nightly';
+/** Hook lifecycle phases. `post-reset` = the whole graph was replaced beside the gate (CR-GC-885). */
+export type HookType = 'pre-commit' | 'post-apply' | 'post-reset' | 'nightly';
 
 /** A pre-commit hook may veto the mutation by returning `{ block: true }`. */
 export interface HookResult {
@@ -24,10 +25,22 @@ export interface HookResult {
   message?: string;
 }
 
-/** Pre-commit hooks see the proposed commands; post-apply hooks see the result. */
+/** What an applied batch did to the store (CR-GC-809). Absent where the batch never reached it. */
+export interface AppliedDelta {
+  delta: GraphDelta;
+  /** Node types of the state BEFORE the batch — a deleted node has none afterwards. */
+  typeOf: (uid: string) => string | undefined;
+}
+
+/**
+ * Pre-commit hooks see the proposed commands; post-apply hooks see the result. `version` is the graph
+ * version this result leads to: the counter moves in `recordAudit`, after these hooks, and writes are
+ * serialized, so the value is known here (CR-GC-809). Unset for a harness without a tool layer.
+ */
 export type HookData =
   | { phase: 'pre-commit'; commands: MutateCommand[] }
-  | { phase: 'post-apply'; result: MutateResult };
+  | { phase: 'post-apply'; result: MutateResult; applied?: AppliedDelta; version?: number }
+  | { phase: 'post-reset'; version?: number };
 
 export type HookHandler = (data: HookData) => HookResult | void | Promise<HookResult | void>;
 
@@ -76,6 +89,7 @@ async function withTimeout(
 export class HookSystem {
   private readonly hooks = new Map<HookType, RegisteredHook[]>();
   private readonly preCommitTimeout: number;
+  private versionSource?: () => number;
 
   constructor(config: HookSystemConfig) {
     this.preCommitTimeout = config.preCommitTimeout;
@@ -110,11 +124,34 @@ export class HookSystem {
    * Fire-and-collect: results are returned but never block. (CR-102 adds
    * trajectory/event emission behind this same call site.)
    */
-  async runPostApplyHooks(result: MutateResult): Promise<HookResult[]> {
-    const list = this.hooks.get('post-apply') ?? [];
-    const data: HookData = { phase: 'post-apply', result };
+  async runPostApplyHooks(result: MutateResult, applied?: AppliedDelta): Promise<HookResult[]> {
+    const bumps = result.success && result.mutations > 0 ? 1 : 0;
+    const current = this.versionSource?.();
+    return this.runFireAndCollect('post-apply', {
+      phase: 'post-apply', result,
+      ...(applied ? { applied } : {}),
+      ...(current !== undefined ? { version: current + bumps } : {}),
+    });
+  }
+
+  /** After a reseed: the graph was replaced beside the gate, and the live view must hear of it (CR-GC-885). */
+  async runPostResetHooks(): Promise<HookResult[]> {
+    const version = this.versionSource?.();
+    return this.runFireAndCollect('post-reset', { phase: 'post-reset', ...(version !== undefined ? { version } : {}) });
+  }
+
+  /** The tool layer owns the version counter; it tells the hooks where it stands (CR-GC-809). */
+  setVersionSource(source: () => number): void {
+    this.versionSource = source;
+  }
+
+  currentVersion(): number {
+    return this.versionSource?.() ?? 0;
+  }
+
+  private async runFireAndCollect(type: HookType, data: HookData): Promise<HookResult[]> {
     const out: HookResult[] = [];
-    for (const { id, handler } of list) {
+    for (const { id, handler } of this.hooks.get(type) ?? []) {
       try {
         const r = await Promise.resolve(handler(data));
         out.push(r ?? { hookId: id });

@@ -83,6 +83,7 @@ export type { HealthPayload } from './surface/health.js';
 // a real temp-disk harness + its own throwaway socket to test callHost
 // end-to-end, instead of pointing at (and risking mutating) a live repo.
 export { callHost, HOST_SOCK_BASENAME, startHostSocket } from './surface/host-shim.js';
+export { LiveFeed } from './surface/live-feed.js';
 export type { HostSocket } from './surface/host-shim.js';
 
 // Headless dashboard data-layer (CR-GC-115, MOD-dashboard) — pure read-only

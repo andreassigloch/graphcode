@@ -21,7 +21,7 @@
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { z } from 'zod/v4';
-import { GraphNodeSchema, GraphEdgeSchema } from '@sigloch/graph-api-core';
+import { GraphNodeSchema, GraphEdgeSchema, type GraphDelta } from '@sigloch/graph-api-core';
 import type { StorageAdapter, Graph, OntologyDescriptor } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { StoreLock } from './store-lock.js';
@@ -39,8 +39,8 @@ export const GraphDeltaSchema = z.object({
   deleteNodes: z.array(z.string()),
   upsertEdges: z.array(GraphEdgeSchema),
   deleteEdges: z.array(z.object({ sourceId: z.string(), targetId: z.string(), edgeType: z.string() })),
-});
-export type GraphDelta = z.infer<typeof GraphDeltaSchema>;
+}) satisfies z.ZodType<GraphDelta>;
+export type { GraphDelta };
 
 export interface GraphStoreOptions {
   readonly storage: StorageAdapter;

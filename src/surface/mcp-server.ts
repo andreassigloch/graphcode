@@ -31,6 +31,7 @@ import { SessionLifecycle } from './session-lifecycle.js';
 import { attachGve } from './gve.js';
 import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from './host-shim.js';
 import { HostBridge } from './host.js';
+import { LiveFeed } from './live-feed.js';
 import { loadGraphcodeConfig } from '../kernel/config.js';
 import type { LiveUpdateEvent } from './emit.js';
 import { readPackageVersion } from '../kernel/package-version.js';
@@ -104,6 +105,7 @@ export function buildMcpServer(harness: GraphCodeHarness, auditLog?: AuditLog): 
  */
 async function bootHost(
   harness: GraphCodeHarness,
+  feed: LiveFeed,
 ): Promise<{ registry: MCPToolRegistry; socket: HostSocket; autoExport: AutoExportHandle }> {
   if (harness.getGraph().nodes.length === 0) {
     try {
@@ -147,7 +149,7 @@ async function bootHost(
   const autoExport = registerAutoExport(harness, registry.graph_export);
   // ONE write channel (CR-GC-235): the elected host also serves later sessions
   // over the local socket shim — an internal hop, not a second API surface.
-  const socket = await startHostSocket(registry, join(harness.getStoreDir(), HOST_SOCK_BASENAME));
+  const socket = await startHostSocket(registry, join(harness.getStoreDir(), HOST_SOCK_BASENAME), feed);
   // Der Handle wird gebraucht, nicht weggeworfen: beim Sessionende muss die Socket-Datei
   // weg, sonst zeigt sie auf einen toten Host (CR-GC-370).
   return { registry, socket, autoExport };
@@ -197,10 +199,14 @@ export async function serveStdio(opts?: {
     // The sink is wired BEFORE the bridge exists — a mutable indirection lets
     // the bridge attach to this harness after the election is won.
     let bridge: HostBridge | null = null;
+    let feed: LiveFeed | null = null;
     const harness = await createHarness(
       { repoRoot, scope },
       {
-        onUpdateEvent: (event: LiveUpdateEvent) => bridge?.broadcast(event),
+        onUpdateEvent: (event: LiveUpdateEvent) => {
+          bridge?.broadcast(event);
+          feed?.publish(event);
+        },
         // Der Store gehoert jetzt einem anderen Host (CR-GC-372). Weiterlaufen hiesse
         // zweiter Schreiber auf einem Kuzu-Store — also endet diese Session.
         onLockLost: () => {
@@ -222,7 +228,8 @@ export async function serveStdio(opts?: {
     // Aufbaureihenfolge = Registrierungsreihenfolge; abgeraeumt wird rueckwaerts,
     // der Store-Lock also zuletzt (CR-GC-370).
     lifecycle.add({ name: 'store lock', close: () => harness.close() });
-    const { registry, socket, autoExport } = await bootHost(harness);
+    feed = new LiveFeed({ graph: () => harness.getGraph(), version: () => harness.getHooks().currentVersion() });
+    const { registry, socket, autoExport } = await bootHost(harness, feed);
     // Der Export folgt der Mutation entprellt (250 ms). Ohne diesen flush faellt das
     // Artefakt bei einem Shutdown innerhalb des Fensters einen Batch hinter den Store
     // zurueck — genau die Divergenz, die niemand mehr abgleicht (CR-GC-392). Registriert

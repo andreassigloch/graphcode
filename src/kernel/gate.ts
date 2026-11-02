@@ -203,7 +203,10 @@ export class Gate {
     }
 
     // Step 5 — post-apply hooks (skipped on a dry run: no phantom events).
-    if (!dryRun) await this.deps.hooks.runPostApplyHooks(result);
+    if (!dryRun) {
+      const types = new Map(snapshot.nodes.map((n) => [n.uid, n.type]));
+      await this.deps.hooks.runPostApplyHooks(result, { delta, typeOf: (uid) => types.get(uid) });
+    }
 
     // Step 6 — return. Die Berichte zum Zug (Architekturmass, Steuerwert, Dateiliste) rechnet der
     // Aufrufer aus dem Paar, nicht das Gate (CR-GC-778).
