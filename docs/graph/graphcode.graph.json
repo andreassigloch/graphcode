@@ -3839,6 +3839,24 @@
       "description": "docs/cr/open/CR-GC-880-antwortweg-ausnahme-nachbarkette-cr-sm-4.md"
     },
     {
+      "id": "CR-GC-888",
+      "type": "CR",
+      "name": "Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen",
+      "description": "docs/cr/open/CR-GC-888-oeffentliches-repo-traegt-interne-doku-l.md"
+    },
+    {
+      "id": "CR-GC-889",
+      "type": "CR",
+      "name": "README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg",
+      "description": "docs/cr/open/CR-GC-889-readme-fuehrt-entwickler-nicht-zum-erste.md"
+    },
+    {
+      "id": "CR-GC-890",
+      "type": "CR",
+      "name": "Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch",
+      "description": "docs/cr/open/CR-GC-890-artikel-03-05-07-08-beschreiben-den-entf.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -31254,5 +31272,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 992
+  "graphVersion": 995
 }

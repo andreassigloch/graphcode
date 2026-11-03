@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 490 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 493 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 490 CR · 344 done · 4 open.
+Total: 493 CR · 344 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -552,3 +552,6 @@ Total: 490 CR · 344 done · 4 open.
 | `CR-GC-878` | n/a | se-view-Verweise in Skill-Texten und Quell-Kommentaren nachziehen (Folge von CR-GC-876) |
 | `CR-GC-879` | n/a | scaffold update/remove entfernen se-Dateien, die das Paket nicht mehr ausliefert (se-view, trade aus CR-GC-756) |
 | `CR-GC-880` | n/a | Antwortweg: Ausnahme Nachbarkette (CR-SM-423) in Hilfetext, se-vorbereitung und se-laufzeit nachziehen |
+| `CR-GC-888` | n/a | Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen |
+| `CR-GC-889` | n/a | README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg |
+| `CR-GC-890` | n/a | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch |
