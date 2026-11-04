@@ -1,135 +1,115 @@
-# GraphCode — governed graph substrate for coding agents
+# GraphCode — a governed project graph for coding agents
 
-**GraphCode** gives a coding agent (Claude Code, OpenCode, …) a **governed graph** of a project's
-model — requirements, tests, modules, traces — behind an **MCP-stdio** surface. The agent **KNOWS**
-the elements to touch from a precise graph query instead of guessing them with grep. Code stays as
-text in the repo; the **model lives in the graph**.
+A coding agent that works from documents and grep reads far more than it needs and still guesses
+what belongs together. Measured on one task: **~34,000 tokens** of spec and notes against **~250
+tokens** for the same answer pulled from a project graph
+([article 01](https://github.com/andreassigloch/graphcode/blob/master/docs/articles/01-structure-and-llm-needs.md)).
+
+GraphCode gives your agent (Claude Code, OpenCode, any MCP host) that graph: requirements, tests,
+functions and modules of **your** repo, connected, and guarded by a rule gate. Code stays as text in
+the repo; the model of what the code is for lives in the graph.
+
+## What it looks like
+
+You ask your agent *"what breaks if I change `graph_help`?"*. Instead of grepping, it calls
+`graph_impact` and gets the exact answer from the graph — here from graphcode's own model:
+
+```
+graph_impact("FUNC-graph-help")  → 15 nodes
++ FCHAIN-skill-help -compose-> FUNC-graph-help
++ FLOW-query-request-agent -io-> FUNC-graph-help
++ FUNC-block-abfrage -compose-> FUNC-graph-help
++ CR-GC-847 -relation-> FUNC-graph-help        (and 7 more change requests)
+Blackbox frontier: UC-deterministic-steering · FUNC-agent-loop · FUNC-block-grounding
+```
+
+The answer is complete and bounded: every chain, data flow and change request that hangs off the
+function, plus the edge of the slice it did not open.
+
+## Install
+
+Node ≥ 22. Run inside **your** repository:
+
+```bash
+npx @sigloch/graphcode init && npm install
+```
+
+1. `init` writes the host configs (`.mcp.json`, `opencode.json`), `GRAPHCODE.md` (rules for the
+   agent), `GRAPHCODE-STEERING.md` (the four decisions only you make) and adds `@sigloch/graphcode`
+   to `package.json`. `npm install` installs it — the host configs start it from `node_modules`.
+2. Add `.graphcode/` to `.gitignore`. It holds the local graph store.
+3. Reload your agent host. Claude Code reads `.mcp.json`, OpenCode reads `opencode.json`; the agent
+   now sees a `graphcode` MCP server.
+4. Say this to your agent:
+
+   > Read GRAPHCODE.md, then call `graph_readiness` — where does the project stand, and what is the next step?
+
+   On a repo without a model yet, start from your intent instead:
+
+   > Read GRAPHCODE.md, then start `se:generate`: "<what the system should do, for whom, in one sentence>"
+
+**Cloned a repo that already uses graphcode?** Skip `init`: run `npm install` and open your agent
+host. The store builds itself on first start from the committed model (`docs/graph/*.graph.json`).
+
+## Five words you need
+
+| Word | Meaning |
+|---|---|
+| **REQ** | a requirement — what the system must do or must hold |
+| **TEST** | the test that proves a REQ; a REQ without one is rejected at the gate |
+| **FUNC** | a function — an implementable unit, bound to code by `realRef` |
+| **MOD** | a module — where functions live (a package, a directory) |
+| **gate** | the one write path: every change is checked against the rules before it lands |
+
+The rest — use cases, function chains, flows, the rule IDs like `R-19` — is in the
+[glossary](https://github.com/andreassigloch/graphcode/blob/master/docs/articles/08-glossary.md).
+Any token on screen is explained by `se:help <token>`.
+
+## Where to read on
+
+| You want | Read |
+|---|---|
+| the decisions only you make | `GRAPHCODE-STEERING.md` in your repo, written by `init` |
+| why a graph beats documents, with numbers | [01 — structure and LLM needs](https://github.com/andreassigloch/graphcode/blob/master/docs/articles/01-structure-and-llm-needs.md) |
+| why agents build the wrong thing | [02 — specification as a model](https://github.com/andreassigloch/graphcode/blob/master/docs/articles/02-vorgaben-als-modell.md) |
+| design decisions and stack | [03 — under the hood](https://github.com/andreassigloch/graphcode/blob/master/docs/articles/03-graphcode-harness-goal-and-concept.md) |
+| how one edit lands | [05 — the advisory roundtrip](https://github.com/andreassigloch/graphcode/blob/master/docs/articles/05-the-advisory-roundtrip.md) |
+| the method, for systems engineers | [09 — the systems engineer view](https://github.com/andreassigloch/graphcode/blob/master/docs/articles/09-the-systems-engineer-view.md) |
+| all articles | [docs/articles/](https://github.com/andreassigloch/graphcode/tree/master/docs/articles) |
+| graphcode's own model, as an example | [docs/views/](https://github.com/andreassigloch/graphcode/tree/master/docs/views) (generated documents) |
 
 ## Commands
 
-All commands run **inside the target repository**:
+All commands run inside the target repository. After `init` you rarely type any of them.
 
 ```bash
-npx @sigloch/graphcode init          # THE install. One command, one download: scaffolds .mcp.json,
-                                     # GRAPHCODE.md and the store dir; the GVE viewer comes along as a
-                                     # dependency, so the first start needs no network.
-                                     # ↓ everything below is run FOR you or only when you need it ↓
-npx @sigloch/graphcode mcp           # THE server — your agent host starts this from .mcp.json; you
-                                     # normally never type it. Brings up all three: MCP-stdio, the
-                                     # read-only HTTP/SSE bridge, and the GVE dashboard.
-npx @sigloch/graphcode status        # is my host up, and where is MY dashboard? Read-only: asks the
-                                     # viewer via api/config WHICH REPO it serves instead of
-                                     # guessing a port. Exit 1 if either is missing.
-npx @sigloch/graphcode host          # FALLBACK only — the bridge alone, for a repo with no agent
-                                     # session running. Alongside a live `mcp` it hits the store lock.
-npx @sigloch/graphcode rewind <ref>  # recall the graph state committed at <ref> — reads the snapshot
-                                     # from git object storage, so the working tree is NOT touched.
-                                     # Aborts while un-exported model edits are pending (--force drops them)
-npx @sigloch/graphcode upgrade       # install the latest version, refresh artifacts, stop the old host — PRESERVES the store
-npx @sigloch/graphcode skills sync   # re-copy the shipped se-* skills (overwrites on version mismatch)
-npx @sigloch/graphcode remove        # remove all scaffolded artifacts (restlos)
+npx @sigloch/graphcode init          # scaffold host configs, GRAPHCODE.md, skills, hooks; add the dependency
+npx @sigloch/graphcode status        # is my host up, and where is my dashboard?
+npx @sigloch/graphcode upgrade       # install the latest version, refresh scaffolded files, keep the store
+npx @sigloch/graphcode rewind <ref>  # recall the graph committed at <ref>; the working tree is not touched
+npx @sigloch/graphcode skills sync   # re-copy the shipped se-* skills
+npx @sigloch/graphcode remove        # remove everything init scaffolded
+npx @sigloch/graphcode mcp           # the server itself — your agent host starts it, not you
+npx @sigloch/graphcode host          # fallback: the read-only bridge alone, when no agent session runs
 ```
 
-## Get started
+`init`, `upgrade` and `remove` **merge** the host configs: another MCP server in `.mcp.json`, or your
+`provider`/`model` block in `opencode.json`, survives — only the `graphcode` entry is touched.
 
-**Prerequisite:** Node ≥ 22. Nothing is installed globally — graphcode lives per repo, as a
-dependency in its `package.json`.
+## Using it — the agent loop
 
-**Fresh clone of a repo that already uses graphcode?** Skip `init` — `.mcp.json` and
-`GRAPHCODE.md` are committed. Run `npm install` and open the agent host: the store `.graphcode/`
-is gitignored, and the host builds it on first start from the committed model
-(`docs/graph/*.graph.json`, seed-on-empty). Then continue at step 3.
+The agent drives the loop through MCP tools. Every write goes through the **one gate**: rule-checked,
+author-logged, blocked on new violations.
 
-**1. Scaffold** (idempotent, self-contained):
+1. **Specify** — `graph_mutate` adds requirements, tests, modules and their connections. A REQ with
+   no verifying TEST is **rejected** — drift cannot land.
+2. **Know, not grep** — `graph_impact(id)` returns the exact blast radius as a bounded slice, never a
+   full dump. `graph_expand` deepens one branch on demand.
+3. **Implement** — `graph_mutate` updates the node as code lands; the change persists to disk.
+4. **Export** — `graph_export` writes the commit-able model: `docs/graph/<name>.graph.json` (the
+   single source of truth) plus deterministic documents in `docs/views/`. Never hand-edit the graph JSON.
 
-```bash
-npx @sigloch/graphcode init
-```
-
-| Artifact | Purpose | Commit? |
-|---|---|---|
-| `.mcp.json` | Claude-schema host config — launches `npx @sigloch/graphcode mcp` | ✅ commit |
-| `opencode.json` | the same server in OpenCode's schema (`mcp.graphcode`) | ✅ commit |
-| `.graphcode/` | the per-repo Kuzu store (`.graphcode/kuzu`), created lazily on first run | ❌ gitignore |
-| `GRAPHCODE.md` | guardrails for agents working in the repo | ✅ commit |
-| `GRAPHCODE-STEERING.md` | the human's companion — the four decisions only you can make, and what `docs/views/` is | ✅ commit |
-| `package.json` | gains the `@sigloch/graphcode` dependency | ✅ commit |
-
-Both host configs are written every time and **merged**, never overwritten: a foreign MCP server
-in `.mcp.json`, or your `provider` / `model` block in `opencode.json`, survives `init`, `update`
-and `remove` — only the `graphcode` entry is ours.
-
-Both clients get the full tool list and write through the gate themselves. That holds for a local
-model too — a local model with a thinking level follows the `vorschlag` each write returns.
-
-The executor in the host (`graphcode run`, `graph_delegate`, the switches `GRAPHCODE_CLIENT_LLM` /
-`GRAPHCODE_WRITE_PATH`, the `executor` section in `graphcode.config.jsonc`) was moved out of the core
-on 2026-10-09; its last state is the tag `executor-geparkt-2026-10-09`. `update` drops the two
-switches from the host configs.
-
-**2. Add `.graphcode/` to `.gitignore` and reload your agent host.** Claude Code picks up
-`.mcp.json`, OpenCode picks up `opencode.json`. The agent then sees a `graphcode` MCP server
-exposing the tools below.
-
-The MCP surface is the agent-agnostic contract — any MCP-stdio host works. The `se-*` **skills**
-are Claude Code surface (`.claude/skills/`); an OpenCode user drives the same tools directly.
-
-**3. Say this to your agent.** That is the whole first step — the server prints the same line on
-startup:
-
-> Lies GRAPHCODE.md, dann: `graph_readiness` — wo steht das Projekt und was ist der nächste Schritt?
-
-On an empty repo (no model yet) start from the intent instead:
-
-> Lies GRAPHCODE.md, dann leg mit `se:generate` los: "&lt;was das System tun soll, in einem Satz&gt;"
-
-**4. Dashboard — already running.** `graphcode mcp` starts the GVE viewer itself, along with the
-read-only `/health` + `/events` (SSE) bridge. Do **not** start a second server — ask where yours is:
-
-```bash
-npx @sigloch/graphcode status
-graphcode status — auth-service  (/Users/you/dev/auth-service)
-  MCP-Host    OK             pid 40001, seit 2026-08-19T09:12:03.000Z
-  Dashboard   OK             http://localhost:4318/
-```
-
-`status` reads `docs/views/dashboard.url` (GVE writes its actual bound address there on startup,
-removes it on shutdown) and then asks that instance `api/config` **which repo it serves**. The
-address itself is stable per repo — GVE derives it from the repo path (43000–43999) — so your
-bookmark keeps working across restarts; the identity check stays as the safety net for the rare
-collision, where Vite bumps and a neighbour's viewer could end up on the address yours left behind.
-Only an instance serving THIS repo is reported as yours. Opt out with `GRAPHCODE_NO_GVE=1`; the bridge port comes from `GRAPHCODE_HOST_PORT` in
-`.mcp.json` `env`, which `init`/`update` scaffolds per repo.
-
-**Lifecycle — the host lives exactly as long as your session (CR-GC-370..372).** Closing the
-editor (or anything that ends the stdio client) shuts the host down in order: viewer → HTTP
-bridge → `host.sock` → store lock. Reopening therefore wins a REAL election instead of proxying a
-host whose editor is gone, and brings its dashboard back at the same address. Three guards behind
-that: a viewer that dies mid-session is restarted (1 s / 3 s / 10 s, then it says so and stops
-trying); the store lock carries a heartbeat, so a lock without a pulse for 90 s is free even if its
-PID is alive (PID reuse after a reboot, a hung host); and a host whose lock was taken over notices
-at its next beat and ends its session rather than becoming a second writer.
-
-**5. To upgrade:** run `graphcode upgrade` — one command: installs the latest version, lets THAT build refresh `.mcp.json`,
-`GRAPHCODE.md` and skills, never touches the store.
-
-## Using it — the agent loop (over MCP)
-
-The agent drives the whole loop through MCP tools — every write goes through the **one Apply-Gate**
-(`mutate()`): rule-checked, author-logged, blocked on new violations.
-
-1. **Spec** — `graph_mutate` adds requirements/tests/modules + traces through the gate. A REQ with no
-   verifying TEST (or unresolved by a MOD) is **rejected** — drift can't land.
-2. **KNOW, not grep** — `graph_impact(id)` returns the *exact* blast-radius (the incoming dependents:
-   the tests and modules that touch the changed node) as a bounded Format-E slice, never a full dump.
-   `graph_expand` deepens one branch on demand.
-3. **Implement** — `graph_mutate` updates node status as code lands; the change persists to disk Kuzu.
-4. **Re-export** — `graph_export` serializes the live graph to commit-able docs: canonical
-   `docs/graph/<member>.graph.json` (the SSOT) + deterministic `docs/views/*.md` (GENERATED headers).
-   This is the single sync path — never hand-edit the graph JSON.
-
-The member name (`<member>.graph.json`) is derived from the repo's `package.json` name (unscoped),
-falling back to the repo directory name.
+`<name>` is the unscoped `package.json` name, or the directory name.
 
 ### MCP tools
 
@@ -148,7 +128,7 @@ live registry so it cannot silently fall behind the code.
 | | `graph_merge` | replay a branch worktree's command log onto this store (semantic rebase); the node merge is Format-E `M source + target` via `graph_mutate` |
 | | `graph_reseed` | in-process reseed from the committed SSOT, with an automatic backup |
 | **measure** | `rules_evaluate`, `rules_get_violations` | run the SE rules read-only |
-| | `graph_readiness` | the readiness report: dimensions, the marks SRR/PDR/CDR/TRR/Bau, blocking errors |
+| | `graph_readiness` | where the project stands: the marks SRR/PDR/CDR/TRR/Bau, findings per stage, blocking errors |
 | | `graph_metrics` | per-module architecture metrics **plus the thresholds they were judged against** |
 | **generate** | `graph_generate` | the cold-start driver: seed → expand → handoff, as a state machine |
 | | `graph_suggest` | rank candidate fixes by how far they move the graph toward your target |
@@ -160,28 +140,28 @@ live registry so it cannot silently fall behind the code.
 | **audit** | `audit_trail`, `audit_stats` | mutation history — every gate write logged |
 | **help** | `graph_help` | explain any rule ID, gate, or dashboard token (read-only) |
 
-The `realRef`/`testRefs` binding and `graph_test_ingest`/`graph_test_report`/`graph_tests` are the answer to the obvious
-objection that a model can drift from its code: the binding is an attribute the rules check (R-19,
-R-20), and "done" means a test result landed in the graph, not that someone ticked a box.
+The `realRef`/`testRefs` binding and the three test-evidence tools answer the obvious objection that
+a model can drift from its code: the binding is an attribute the rules check (R-19, R-20), and
+"done" means a test result landed in the graph, not that someone ticked a box.
 
 ### Bringing an existing project in
 
 You do not have to start from an empty graph. Two import paths ship, with **deliberately different
-semantics** — the difference is safety-relevant, not cosmetic:
+semantics**:
 
 | Skill | Source | Semantics |
 |---|---|---|
-| `se:import-code` | an existing TypeScript codebase | deterministic extraction via graphify — **no LLM**. Produces FUNC/MOD/FLOW/SCHEMA, never use cases or requirements (nobody can read intent out of code). **RESEED, not merge**: the graph is replaced, and a backup is written automatically first. |
-| `se:import-doc` | a document (PDF / Markdown / text) | two-stage: the skeleton is shown to you, you decide the element types in chat, then an LLM extract goes through the Apply-Gate like any other write. **MERGE (adds only)** — nothing existing is removed. |
+| `se:import-code` | an existing TypeScript codebase | deterministic extraction — **no LLM**. Produces functions, modules, flows and schemas, never use cases or requirements (nobody can read intent out of code). **Reseed, not merge**: the imported part is replaced, a backup is written first. |
+| `se:import-doc` | a document (PDF / Markdown / text) | two-stage: you see the skeleton and decide the element types in chat, then an LLM extract goes through the gate like any other write. **Merge (adds only)** — nothing existing is removed. |
 
-Use `import-code` to bootstrap a brownfield repo's architecture layer, then `import-doc` to bring the
-specification in on top of it.
+Use `import-code` to bootstrap a brownfield repo's architecture, then `import-doc` to bring the
+specification in on top.
 
 ### Generated documents
 
-The SE document family is rendered from the graph, deterministically — same graph, same bytes. After
-every applied mutation graphcode writes each document to `docs/views/`; `graph_export` writes them on
-demand. No skill renders a document.
+The SE document family is rendered from the graph, deterministically — same graph, same bytes.
+After every applied change graphcode writes each document to `docs/views/`; `graph_export` writes
+them on demand.
 
 | File in `docs/views/` | Document |
 |---|---|
@@ -196,43 +176,40 @@ demand. No skill renders a document.
 | `changelog.md` | change log from the CR history |
 
 Because they are generated, "the document is incomplete" and "the gate is still open" are the same
-fact with the same cause — there is no separate documentation debt to track.
+fact with the same cause — there is no separate documentation debt.
 
-`se-retro` computes the six KPIs over a finished stretch of work (graph-vs-grep, tool usage,
-token/LOC, plan conformance, gate health, binding coverage).
+## Dashboard
 
-### Help — explain any item, for both audiences
+`graphcode mcp` starts the GVE viewer and a read-only HTTP/SSE bridge along with the MCP server. Do
+not start a second one — ask where yours is:
 
-Every on-screen token is explained in three layers (plain · in SE terms · the exact fix),
-for a systems engineer who doesn't know this encoding **and** a user with no SE background:
+```bash
+npx @sigloch/graphcode status
+graphcode status — auth-service  (/Users/you/dev/auth-service)
+  MCP-Host    OK             pid 40001, seit 2026-08-19T09:12:03.000Z
+  Dashboard   OK             http://localhost:4318/
+```
 
-- **`se:help <token>`** — explain a rule (`R-04`), mark (`CDR`), panel, or artifact (`fmea`).
-- **`se:help`** (no argument) — ranked, explained next steps from the live readiness + violations.
-- **`graph_help`** — the read-only MCP tool the skill is a thin surface over.
+The address is stable per repo (derived from the repo path, 43000–43999), so a bookmark keeps
+working. Opt out with `GRAPHCODE_NO_GVE=1`.
 
-The plain/SE wording is authored once (`src/surface/help-content.ts`); titles, severity, and the
-owning gate are derived from `V3_RULES` + readiness, so help never drifts from the live model.
+The host lives exactly as long as your agent session: closing the editor shuts down viewer, bridge
+and store lock in order, and reopening brings the dashboard back at the same address.
 
 ## What it is / is not
 
-- **IS:** Bridge + Store + MCP tools + Apply-Gate. Agent-agnostic, headless, one Kuzu store per repo.
-- **IS NOT:** a generator (→ aimprove), a learning engine (→ learning-core), a viewer/dashboard, or an extractor (→ graphify).
+- **Is:** a graph store, an MCP tool surface and one write gate. Agent-agnostic, headless, one
+  embedded store per repo.
+- **Is not:** a code generator, a learning engine, a code extractor, or the viewer itself — the
+  dashboard is a separate package (GVE) that graphcode starts for you.
 
-## Viewer integration
+## Constraints (locked)
 
-GraphCode is headless and is **not** itself a viewer — it ships the read-only **data layer**, and
-`graph-view-edit` (GVE) is the renderer that consumes it. The elected host **spawns GVE for you**
-(see *Get started* step 4); these are the pieces it wires up:
-
-- the read-only HTTP/SSE bridge — owns the single Kuzu store and serves `/health` + `/events`.
-  No mutating HTTP verb is reachable; the write path stays MCP-stdio.
-- panel shapers (`readinessPanel`, `impactPanel`, `artifactsPanel`, …) — pure read-only
-  view-models over the MCP tools; the renderer consumes these and fills the render mount-slot.
-- live-update events — every gate mutation emits one update event the host broadcasts over SSE.
-
-The bound address is announced in `docs/views/dashboard.url`, never a fixed port. The shared view
-catalog (which documents exist, under which filename) lives in `@sigloch/graphcode-client` so the
-viewer can list them without depending on the exporter.
+- **One store = Kuzu**, embedded, single-writer, on disk (`.graphcode/kuzu`) — never in-memory.
+- **One transport = MCP over stdio** — no REST in the core.
+- **One gate = `mutate()`** — every edit, human or AI, goes through it; the author is only logged.
+- **Ontology and rules come from `@sigloch/contracts`** — imported, never forked. A new element
+  type, connection type or rule needs a version bump there.
 
 ## Local development (this repo)
 
@@ -244,46 +221,16 @@ npm test           # vitest — real disk Kuzu, no mocks
 
 The five `@sigloch/*` dependencies (`contracts`, `graph-api-core`, `graph-cypher-wasm`,
 `learning-core`, `se-steering`) are published packages, so a clone builds and tests without any
-sibling checkout. To work against a local checkout of those packages instead, run
-`npm run link:siblings` (`npm link`, reversible with `npm install`).
+sibling checkout. `npm run link:siblings` switches them to local checkouts (`npm link`, reversed by
+`npm install`). Migrating an old graph across the contracts 10.x major:
+[docs/project/migrate-req-kinds.md](https://github.com/andreassigloch/graphcode/blob/master/docs/project/migrate-req-kinds.md).
 
-### Migrating a graph across the REQ-kinds major (contracts 10.x)
-
-contracts 10.x narrows `REQ.kinds` to exactly one of `functional | non-functional`, moves
-`risk`/`mitigation` to `attributes.role`, drops `precondition`/`postcondition`, and lets a FCHAIN
-satisfy only `non-functional`. An old graph still boots; R-18 flags the affected `satisfy` edges.
-`scripts/migrate-req-kinds.mjs` (CR-GC-669) moves it in two steps:
-
-```bash
-node scripts/migrate-req-kinds.mjs propose --repo <repo> [--graph <name>] --out decisions.json
-# review: every entry with decidedBy "heuristic" or "open" is a per-REQ decision — edit kinds/
-# role/dropSatisfy/addSatisfy, then set decidedBy to your name
-node scripts/migrate-req-kinds.mjs apply --repo <repo> [--graph <name>] --decisions decisions.json
-```
-
-`apply` writes one batch through `graph_mutate` and exports via `graph_export` — no hand edit. It
-refuses unconfirmed heuristic entries (`--accept-heuristic` only for trial runs on copies) and a
-decision file that no longer matches the graph. It opens the repo's store itself, so stop the
-repo's MCP host first.
-
-## Constraints (locked)
-
-- **One store = Kuzu**, embedded, single-writer, on disk (`.graphcode/kuzu`) — never `:memory:`.
-- **One transport = MCP-stdio** — no Express/REST in the core.
-- **One Apply-Gate = `mutate()`** — every edit (human or AI) goes through it; the author is only logged.
-- **SE ontology + `V3_RULES` from `@sigloch/contracts/se`** — imported, never forked. A new
-  ElementType/TraceType/rule requires a family review + version bump.
-
-## Model & docs
-
-GraphCode owns the **implementation** plus its own graph model. The graph SSOT for graphcode's
-own model is [`docs/graph/graphcode.graph.json`](docs/graph/graphcode.graph.json); the claims,
-definition of done and test status are in [`docs/graphcode_leitlinie.md`](docs/graphcode_leitlinie.md) (German).
-[`docs/articles/`](docs/articles/) is the plain-language introduction; the numbers it cites come
-from [`docs/archive/spikes/`](docs/archive/spikes/) (raw benchmark runs; the rigs and evaluators that produce current measurements live in a separate private repository).
-GraphCode is part of a larger internal toolchain; some design-history documents reference private
-governance docs that are not part of this repository.
+graphcode's own model is [`docs/graph/graphcode.graph.json`](https://github.com/andreassigloch/graphcode/blob/master/docs/graph/graphcode.graph.json);
+its claims and definition of done are in the
+[guideline](https://github.com/andreassigloch/graphcode/blob/master/docs/graphcode_leitlinie.md) (German). graphcode is
+part of a larger toolchain; some design-history documents reference governance documents that are
+not public.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](https://github.com/andreassigloch/graphcode/blob/master/LICENSE).
