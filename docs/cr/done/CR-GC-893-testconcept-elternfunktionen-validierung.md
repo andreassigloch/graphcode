@@ -1,6 +1,6 @@
 # CR-GC-893: testconcept: Elternfunktionen, Validierung am UC, Zeile ohne Lage
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-04)
 **Typ:** aus Item ITEM-2026-1252 (finding)
 **Erstellt:** 2026-11-04
 **Item:** bok/items/ITEM-2026-1252.json (Lane: code)
