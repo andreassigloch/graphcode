@@ -1,6 +1,6 @@
 # CR-GC-889: README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-04)
 **Typ:** aus Item ITEM-2026-1181 (finding)
 **Erstellt:** 2026-11-03
 **Item:** bok/items/ITEM-2026-1181.json (Lane: graph)
