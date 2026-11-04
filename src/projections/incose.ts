@@ -223,19 +223,45 @@ export function renderTestConcept(graph: Graph, name: string): string {
   const modCount = nodesOfType(graph, 'MOD').length;
   // Wie viele Funktionen bzw. Module eine gepruefte Anforderung erfuellen — vorher stand in der
   // Funktionszeile fest `n / n ✓`, ohne dass etwas gezaehlt wurde.
-  const mitGeprueft = (type: 'FUNC' | 'MOD'): number =>
-    nodesOfType(graph, type).filter((n) => (satisfy.fwd.get(n.uid) ?? []).some((rq) => (verify.rev.get(rq) ?? []).length > 0)).length;
+  const geprueft = (n: { uid: string }): boolean =>
+    (satisfy.fwd.get(n.uid) ?? []).some((rq) => (verify.rev.get(rq) ?? []).length > 0);
+  // CR-GC-893: Unit-Verifikation gilt fuer Einheiten — Blattfunktionen und FUNC mit eigener REQ.
+  // Eine Elternfunktion ohne eigene REQ integrieren ihre Kinder; sie zaehlt hier nicht.
+  const hatFuncKind = (uid: string): boolean => (compose.fwd.get(uid) ?? []).some((c) => idx.get(c)?.type === 'FUNC');
+  const units = nodesOfType(graph, 'FUNC').filter((f) => !hatFuncKind(f.uid) || (satisfy.fwd.get(f.uid) ?? []).length > 0);
+  const composite = funcCount - units.length;
   const schemas = nodesOfType(graph, 'SCHEMA');
   const schemaVerified = schemas.filter((sc) => (verify.rev.get(sc.uid) ?? []).length > 0).length;
   const schemaTests = testsWith('interface');
   // Abdeckung der Systemzeile: gepruefte Systemanforderungen, nicht „Tests je System".
-  const sysReqs = nodesOfType(graph, 'SYS').flatMap((sy) => (compose.fwd.get(sy.uid) ?? []).filter((c) => idx.get(c)?.type === 'REQ'));
+  // compose und satisfy: RD-01 laesst das SYS eine REQ auch tragen (CR-GC-893).
+  const sysReqs = [
+    ...new Set(
+      nodesOfType(graph, 'SYS').flatMap((sy) =>
+        [...(compose.fwd.get(sy.uid) ?? []), ...(satisfy.fwd.get(sy.uid) ?? [])].filter((c) => idx.get(c)?.type === 'REQ'),
+      ),
+    ),
+  ];
   const sysReqVerified = sysReqs.filter((rq) => (verify.rev.get(rq) ?? []).length > 0).length;
-  const funcVerified = mitGeprueft('FUNC');
-  const modVerified = mitGeprueft('MOD');
-  // (support): codec round-trip tests verify no REQ, so they have no graph
-  // position to derive a level from — testRef.level stays descriptive here.
-  const conformance = tests.filter((t) => testLevel(t) === 'conformance').length;
+  const funcVerified = units.filter(geprueft).length;
+  const modVerified = nodesOfType(graph, 'MOD').filter(geprueft).length;
+  // CR-GC-893: ohne Lage ist ein Test, der nichts verifiziert, das die Pyramide einordnen kann —
+  // gezaehlt nach der Lage im Graphen, nicht nach dem Attribut testRef.level.
+  const ohneLage = tests.filter((t) => levelsByTest.get(t.uid)!.size === 0).length;
+
+  // CR-GC-893: Validierung liegt am UC. Ein UC gilt als durchgespielt, wenn eine von ihm komponierte
+  // REQ vom SYS getragen (das ganze System) und verifiziert ist — der Test spielt ihn als Nutzer durch.
+  const istSys = (uid: string): boolean => idx.get(uid)?.type === 'SYS';
+  const durchspielReqs = new Set<string>();
+  const ucDurchgespielt = nodesOfType(graph, 'UC').filter((uc) => {
+    const reqs = (compose.fwd.get(uc.uid) ?? []).filter(
+      (rq) => idx.get(rq)?.type === 'REQ' && (satisfy.rev.get(rq) ?? []).some(istSys) && (verify.rev.get(rq) ?? []).length > 0,
+    );
+    reqs.forEach((rq) => durchspielReqs.add(rq));
+    return reqs.length > 0;
+  }).length;
+  const valTests = tests.filter((t) => (verify.fwd.get(t.uid) ?? []).some((rq) => durchspielReqs.has(rq))).length;
+  const valVerdict = ucCount === 0 ? '—' : ucDurchgespielt >= ucCount ? '✓' : `⚠ ${ucCount - ucDurchgespielt} UC not played through`;
 
   // UC scenario coverage: a UC is "exercised" if ANY test verifies a REQ it
   // composes — no test-level filter (CR-GC-240 drops the old e2e/acceptance/
@@ -318,6 +344,7 @@ export function renderTestConcept(graph: Graph, name: string): string {
   // Stufen von oben nach unten, benannt nach dem, WAS geprueft wird (CR-GC-762). Die Prozessnummern
   // nennen Software und Hardware: dieselbe Lage gilt fuer beide.
   lines.push('| Level | Element | Verification | Tests | Coverage | Verdict |', '|---|---|---|---|---|---|');
+  lines.push(`| Validation | UC (${ucCount}) | validation (VAL.1) | ${valTests} | ${ucDurchgespielt} / ${ucCount} use cases played through | ${valVerdict} |`);
   lines.push(`| System | SYS (${sysCount}) | system verification (SYS.5) | ${e2e} | ${sysReqVerified} / ${sysReqs.length} system requirements | ${sysVerdict} |`);
   lines.push(
     `| Use-case | UC (${ucCount}) | requirements verification (SWE.6 · HWE.4) | ${ucLevel} | ${ucScenario} / ${ucCount} use cases | ${ucVerdict} |`,
@@ -329,15 +356,16 @@ export function renderTestConcept(graph: Graph, name: string): string {
     `| Interface | SCHEMA (${schemas.length}) | integration verification (SYS.4 · SWE.5) | ${schemaTests} | ${schemaVerified} / ${schemas.length} schemas | ${schemas.length === 0 ? '—' : schemaVerified >= schemas.length ? '✓' : `⚠ ${schemas.length - schemaVerified} without a test`} |`,
   );
   lines.push(`| Module | MOD (${modCount}) | component verification (SWE.5 · HWE.3) | ${modLevel} | ${modVerified} / ${modCount} | ${anteil(modVerified, modCount)} |`);
-  lines.push(`| Function | FUNC (${funcCount}) | unit verification (SWE.4 · HWE.3) | ${unit} | ${funcVerified} / ${funcCount} | ${anteil(funcVerified, funcCount)} |`);
-  lines.push(`| (validation) | UC (${ucCount}) | validation (VAL.1) | — | no position in the model | — |`);
-  lines.push(`| (support) | — | conformance | ${conformance} | codec round-trip | ✓ |`);
+  lines.push(`| Function | FUNC (${units.length}) | unit verification (SWE.4 · HWE.3) | ${unit} | ${funcVerified} / ${units.length} | ${anteil(funcVerified, units.length)} |`);
+  lines.push(`| (no position) | TEST | — | ${ohneLage} | verifies no REQ or SCHEMA | ${ohneLage === 0 ? '✓' : `⚠ ${ohneLage} without a position`} |`);
   lines.push('');
   lines.push(
     `> GENERATED — the level of a TEST is the graph position of what it verifies (a REQ under SYS/UC/FCHAIN/MOD/FUNC, or a SCHEMA):`,
     `> it says WHAT is verified, not how the test is written. A test of a system requirement counts as system`,
     `> verification even if it is a unit-style test — whether it plays the system through, this table cannot say.`,
-    `> Validation against the intended use has no position: a play-through of a use case is a test of its requirements.`,
+    `> Validation = a UC composes a REQ that the SYS carries and a TEST verifies: the use case is played through on the whole system.`,
+    `> Whether the intended users accept the result is a sign-off outside the graph.`,
+    ...(composite > 0 ? [`> ${composite} composite FUNC without an own REQ are not counted: their children carry the REQ.`] : []),
     `> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (${coveredConn}/${totalConn} covered).`,
     '',
   );

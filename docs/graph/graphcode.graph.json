@@ -3869,6 +3869,12 @@
       "description": "docs/cr/open/CR-GC-892-se-plan-integrationsbaum-aus-dem-modell-.md"
     },
     {
+      "id": "CR-GC-893",
+      "type": "CR",
+      "name": "testconcept: Elternfunktionen, Validierung am UC, Zeile ohne Lage",
+      "description": "docs/cr/open/CR-GC-893-testconcept-elternfunktionen-validierung.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -31309,5 +31315,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1004
+  "graphVersion": 1005
 }

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 495 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 496 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 495 CR · 344 done · 4 open.
+Total: 496 CR · 344 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -557,3 +557,4 @@ Total: 495 CR · 344 done · 4 open.
 | `CR-GC-890` | n/a | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch |
 | `CR-GC-891` | n/a | Private Beispielgraphen und ihre Testfaelle nach graphanalyze (Folge von CR-GC-888) |
 | `CR-GC-892` | n/a | se-plan: Integrationsbaum aus dem Modell, Testkonzept vollständig vor dem Schnitt |
+| `CR-GC-893` | n/a | testconcept: Elternfunktionen, Validierung am UC, Zeile ohne Lage |

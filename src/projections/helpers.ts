@@ -93,7 +93,7 @@ export type TestLevel = 'system' | 'requirements' | 'integration' | 'interface' 
  * (CR-GC-240; named after the norm since CR-GC-762). The level says WHAT is verified, not how the
  * test is written — Automotive SPICE orders verification by the left side of the V:
  *
- *   REQ composed by the SYS      → system verification            (SYS.5)
+ *   REQ composed or satisfied by the SYS → system verification    (SYS.5)
  *   REQ composed by a UC         → requirements verification      (SWE.6 · HWE.4)
  *   REQ satisfied by an FCHAIN   → integration verification       (SYS.4 · SWE.5)
  *   SCHEMA (the contract of a flow) → integration verification    (SYS.4 · SWE.5): a test on a
@@ -101,7 +101,7 @@ export type TestLevel = 'system' | 'requirements' | 'integration' | 'interface' 
  *   REQ satisfied by a MOD       → component verification         (SWE.5 · HWE.3)
  *   REQ satisfied by a FUNC      → unit verification              (SWE.4 · HWE.3)
  *
- * Validation (VAL.1 — against the intended use) has no position: a test hangs on requirements only.
+ * Validation (VAL.1) is counted per UC in renderTestConcept: a REQ the UC composes and the SYS carries.
  * A test inherits every level of every REQ it verifies (multi-assignment allowed).
  */
 export function levelsOfTest(
@@ -122,7 +122,8 @@ export function levelsOfTest(
     }
     for (const satisfier of satisfy.rev.get(reqUid) ?? []) {
       const st = idx.get(satisfier)?.type;
-      if (st === 'FUNC') levels.add('unit');
+      if (st === 'SYS') levels.add('system'); // RD-01: SYS traegt eine REQ auch per satisfy (CR-GC-893)
+      else if (st === 'FUNC') levels.add('unit');
       else if (st === 'MOD') levels.add('component');
       else if (st === 'FCHAIN') levels.add('integration');
     }

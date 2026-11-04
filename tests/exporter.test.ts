@@ -426,8 +426,8 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     expect(md).toMatch(/System \| SYS \(1\) \| system verification \(SYS\.5\) \| 1 \| 1 \/ 1 system requirements \| ✓/);
     expect(md).toMatch(/Use-case \| UC \(2\) \| requirements verification \(SWE\.6 · HWE\.4\) \| 2 \| 2 \/ 2 use cases \| ✓/);
     expect(md).toMatch(/Function \| FUNC \(1\) \| unit verification \(SWE\.4 · HWE\.3\) \| 1 \| 1 \/ 1 \| ✓/);
-    // Validierung hat keine Lage im Modell — die Zeile sagt es, statt eine Zahl zu erfinden.
-    expect(md).toMatch(/\(validation\) \| UC \(2\) \| validation \(VAL\.1\) \| — \| no position in the model/);
+    // CR-GC-893: die UC-REQ sind verifiziert, aber nicht vom SYS getragen — kein UC ist durchgespielt.
+    expect(md).toMatch(/Validation \| UC \(2\) \| validation \(VAL\.1\) \| 0 \| 0 \/ 2 use cases played through \| ⚠ 2 UC not played through/);
   });
 
   it('R-21: TestConcept flags a FUNC↔FUNC connection with no integration test as ✗ GAP', () => {
@@ -489,6 +489,88 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     expect(md).toMatch(/Interface \| SCHEMA \(2\) \| integration verification \(SYS\.4 · SWE\.5\) \| 1 \| 1 \/ 2 schemas \| ⚠ 1 without a test/);
     // der Schema-Test zaehlt NICHT in die Zeile der Funktion-zu-Funktion-Verbindungen
     expect(md).toMatch(/Integration \| FUNC↔FUNC \(0 conn\) \| integration verification \(SYS\.4 · SWE\.5\) \| 0 \|/);
+  });
+
+  it('CR-GC-893: Elternfunktion ohne eigene REQ zaehlt nicht in die Unit-Zeile', () => {
+    const g: Graph = {
+      nodes: [
+        { uid: 'FUNC-eltern', type: 'FUNC', name: 'eltern', attributes: {} },
+        { uid: 'FUNC-blatt', type: 'FUNC', name: 'blatt', attributes: {} },
+        { uid: 'REQ-blatt', type: 'REQ', name: 'r', attributes: {} },
+        { uid: 'TEST-blatt', type: 'TEST', name: 't', attributes: {} },
+      ],
+      edges: [
+        { sourceId: 'FUNC-eltern', targetId: 'FUNC-blatt', edgeType: 'compose', attributes: {} },
+        { sourceId: 'FUNC-blatt', targetId: 'REQ-blatt', edgeType: 'satisfy', attributes: {} },
+        { sourceId: 'TEST-blatt', targetId: 'REQ-blatt', edgeType: 'verify', attributes: {} },
+      ],
+    };
+    const md = exportMarkdown(g, 'testconcept');
+    expect(md).toMatch(/Function \| FUNC \(1\) \| unit verification \(SWE\.4 · HWE\.3\) \| 1 \| 1 \/ 1 \| ✓/);
+    expect(md).toContain('1 composite FUNC without an own REQ are not counted');
+  });
+
+  it('CR-GC-893: Validierung liegt am UC — seine REQ, vom SYS getragen und verifiziert', () => {
+    const base: Graph = {
+      nodes: [
+        { uid: 'SYS-s', type: 'SYS', name: 's', attributes: {} },
+        { uid: 'UC-a', type: 'UC', name: 'a', attributes: {} },
+        { uid: 'UC-b', type: 'UC', name: 'b', attributes: {} },
+        { uid: 'REQ-a-durch', type: 'REQ', name: 'a durchspielen', attributes: {} },
+        { uid: 'REQ-b-teil', type: 'REQ', name: 'b nur verifiziert', attributes: {} },
+        { uid: 'TEST-a', type: 'TEST', name: 'ta', attributes: {} },
+        { uid: 'TEST-b', type: 'TEST', name: 'tb', attributes: {} },
+      ],
+      edges: [
+        { sourceId: 'UC-a', targetId: 'REQ-a-durch', edgeType: 'compose', attributes: {} },
+        { sourceId: 'SYS-s', targetId: 'REQ-a-durch', edgeType: 'satisfy', attributes: {} },
+        { sourceId: 'TEST-a', targetId: 'REQ-a-durch', edgeType: 'verify', attributes: {} },
+        // UC-b: verifizierte REQ, aber nicht vom ganzen System getragen → nicht validiert
+        { sourceId: 'UC-b', targetId: 'REQ-b-teil', edgeType: 'compose', attributes: {} },
+        { sourceId: 'TEST-b', targetId: 'REQ-b-teil', edgeType: 'verify', attributes: {} },
+      ],
+    };
+    const md = exportMarkdown(base, 'testconcept');
+    expect(md).not.toContain('no position in the model');
+    expect(md).toMatch(/Validation \| UC \(2\) \| validation \(VAL\.1\) \| 1 \| 1 \/ 2 use cases played through \| ⚠ 1 UC not played through/);
+    // die Validierung steht ueber der Systemzeile
+    expect(md.indexOf('| Validation |')).toBeLessThan(md.indexOf('| System |'));
+  });
+
+  it('CR-GC-893: eine vom SYS getragene REQ (satisfy, RD-01) liegt auf Systemebene', () => {
+    const g: Graph = {
+      nodes: [
+        { uid: 'SYS-s', type: 'SYS', name: 's', attributes: {} },
+        { uid: 'REQ-sat', type: 'REQ', name: 'getragen', attributes: {} },
+        { uid: 'TEST-sat', type: 'TEST', name: 't', attributes: {} },
+      ],
+      edges: [
+        { sourceId: 'SYS-s', targetId: 'REQ-sat', edgeType: 'satisfy', attributes: {} },
+        { sourceId: 'TEST-sat', targetId: 'REQ-sat', edgeType: 'verify', attributes: {} },
+      ],
+    };
+    const md = exportMarkdown(g, 'testconcept');
+    expect(md).toMatch(/System \| SYS \(1\) \| system verification \(SYS\.5\) \| 1 \| 1 \/ 1 system requirements \| ✓/);
+    expect(md).toMatch(/\(no position\) \| TEST \| — \| 0 \|/);
+  });
+
+  it('CR-GC-893: Zeile ohne Lage zaehlt Tests, die nichts verifizieren — nicht das Attribut level', () => {
+    const g: Graph = {
+      nodes: [
+        { uid: 'SYS-s', type: 'SYS', name: 's', attributes: {} },
+        { uid: 'REQ-c', type: 'REQ', name: 'constraint', attributes: {} },
+        { uid: 'TEST-mit-lage', type: 'TEST', name: 'm', attributes: { testRefs: [{ file: 'a.test.ts', level: 'conformance' }] } },
+        { uid: 'TEST-ohne-lage', type: 'TEST', name: 'o', attributes: {} },
+      ],
+      edges: [
+        { sourceId: 'SYS-s', targetId: 'REQ-c', edgeType: 'compose', attributes: {} },
+        { sourceId: 'TEST-mit-lage', targetId: 'REQ-c', edgeType: 'verify', attributes: {} },
+      ],
+    };
+    const md = exportMarkdown(g, 'testconcept');
+    expect(md).not.toContain('codec round-trip');
+    expect(md).not.toContain('(support)');
+    expect(md).toMatch(/\(no position\) \| TEST \| — \| 1 \| verifies no REQ or SCHEMA \|/);
   });
 
   it('CR-GC-220: FMEA renders an explicit empty-state (never silently blank)', () => {

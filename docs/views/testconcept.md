@@ -9,7 +9,7 @@
 ```
               ╱╲
              ╱SYS╲         System · SYS-graphcode
-            ╱      ╲        ✓ 55 test(s) of system requirements
+            ╱      ╲        ✓ 56 test(s) of system requirements
            ╱────────╲
           ╱ use cases ╲      9 UC · 9 / 9 with a verified requirement
          ╱────────────╲
@@ -21,17 +21,19 @@
 
 | Level | Element | Verification | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
-| System | SYS (1) | system verification (SYS.5) | 55 | 40 / 40 system requirements | ✓ |
+| Validation | UC (9) | validation (VAL.1) | 3 | 1 / 9 use cases played through | ⚠ 8 UC not played through |
+| System | SYS (1) | system verification (SYS.5) | 56 | 41 / 41 system requirements | ✓ |
 | Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 122 | 9 / 9 use cases | ✓ |
 | Integration | FUNC↔FUNC (307 conn) | integration verification (SYS.4 · SWE.5) | 45 | 220 / 307 connections | ✗ 87 uncovered |
 | Interface | SCHEMA (59) | integration verification (SYS.4 · SWE.5) | 25 | 36 / 59 schemas | ⚠ 23 without a test |
 | Module | MOD (8) | component verification (SWE.5 · HWE.3) | 57 | 6 / 8 | ⚠ 2 without a verified requirement |
-| Function | FUNC (124) | unit verification (SWE.4 · HWE.3) | 113 | 107 / 124 | ⚠ 17 without a verified requirement |
-| (validation) | UC (9) | validation (VAL.1) | — | no position in the model | — |
-| (support) | — | conformance | 11 | codec round-trip | ✓ |
+| Function | FUNC (107) | unit verification (SWE.4 · HWE.3) | 113 | 107 / 107 | ✓ |
+| (no position) | TEST | — | 1 | verifies no REQ or SCHEMA | ⚠ 1 without a position |
 
 > GENERATED — the level of a TEST is the graph position of what it verifies (a REQ under SYS/UC/FCHAIN/MOD/FUNC, or a SCHEMA):
 > it says WHAT is verified, not how the test is written. A test of a system requirement counts as system
 > verification even if it is a unit-style test — whether it plays the system through, this table cannot say.
-> Validation against the intended use has no position: a play-through of a use case is a test of its requirements.
+> Validation = a UC composes a REQ that the SYS carries and a TEST verifies: the use case is played through on the whole system.
+> Whether the intended users accept the result is a sign-off outside the graph.
+> 17 composite FUNC without an own REQ are not counted: their children carry the REQ.
 > An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (220/307 covered).
