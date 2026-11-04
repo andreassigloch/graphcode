@@ -56,3 +56,14 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Ergebnis (2026-11-04)
+
+- **README neu**, Reihenfolge wie im Ziel: Problem mit Zahl (~34.000 gegen ~250 Tokens, Artikel 01) → Beispiel (echte `graph_impact`-Antwort aus graphcodes Modell, `FUNC-graph-help`) → Install `npx @sigloch/graphcode init && npm install` in vier Schritten mit englischen Sätzen an den Agenten → fünf Begriffe (REQ, TEST, FUNC, MOD, gate) mit Verweis aufs Glossar → Wegweiser → Befehle, Agent-Loop, Werkzeugtabelle (unverändert, `claims.conformance` prüft sie), Import, Dokumente, Dashboard kurz, Ist/Ist-nicht ohne interne Paketnamen, Constraints, lokale Entwicklung.
+- **Korrigiert:** `.mcp.json` startet aus `node_modules`, nicht über `npx`; `graph_readiness` ohne „dimensions“ (entfallen mit CR-GC-757).
+- **Verschoben:** Migration contracts 10.x nach `docs/project/migrate-req-kinds.md`. Executor-Historie gestrichen (steht als ein Satz in Artikel 03, CR-GC-890).
+- **Links:** alle als absolute GitHub-URLs, alle Ziele getrackt (Skript-Prüfung).
+- **`GRAPHCODE-STEERING.md`** (Vorlage `src/surface/scaffold-docs.ts`) geprüft: englisch, keine Install-Behauptung, Sätze an den Agenten wie in der README. Keine Änderung nötig.
+- **Install-Durchlauf:** leeres Repo, `npx -y @sigloch/graphcode init && npm install` (0.36.1), Host gestartet, `tools/call graph_readiness` antwortet mit den Marken SRR … TRR.
+- **Tests:** `claims.conformance` grün; `verify:full CR-GC-889` 1701/1701, Schlupf 0.
+- **Nicht gepusht.**
