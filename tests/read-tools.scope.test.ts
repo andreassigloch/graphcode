@@ -28,16 +28,16 @@ import { mitFeld } from './helpers/antwort.js';
 const GOLDEN = join(__dirname, '..', 'beispielgraphen', 'sigllm-v98.graph.json');
 
 /** Die Scheibe, an der der Code-Test arbeitet: das Scheduler-Modul und was daran haengt. */
-const SCHEIBE = 'MOD-scheduler';
+const SCHEIBE = 'MOD-tefakasib';
 /**
  * Der Anker, an dem der gemessene Lauf `graph_context {depth:2}` rief.
  *
  * BEWUSST einer der GROSSEN: am Golden liest er ungekuerzt 9.036 Zeichen und trifft damit die
- * ~9.300 des Befunds. Ein erster Anlauf nahm `FUNC-scheduler-operation` (2.693 ungekuerzt) und
+ * ~9.300 des Befunds. Ein erster Anlauf nahm `FUNC-tefakasib-midugigow` (2.693 ungekuerzt) und
  * war damit sofort unter jeder Grenze — ein Messtest, der sich seinen Fall aussucht, misst seine
  * Fixture.
  */
-const ANKER = 'FUNC-execute-agent-run-persist-state';
+const ANKER = 'FUNC-hodadus-zenel-feg-woduvid-lodur';
 
 let tmp: string;
 let harness: GraphCodeHarness;
@@ -135,7 +135,7 @@ describe('CR-GC-613: nach einem Schreibzug schneiden die Werkzeuge', () => {
     // Gekuerzt wird mit EINEM Zeichen plus EINER Legende, nicht mit einem Satz je Knoten.
     expect(tief.formatE.split('\n').filter((l) => l.includes('= Beschreibung gekuerzt'))).toHaveLength(1);
     // Was gebraucht wird, steht voll da: der Anker selbst und der Wortlaut seiner REQ.
-    expect(tief.formatE).toContain('Agentenlauf ausführen');
+    expect(tief.formatE).toContain('Tanewobosig hewofenuj');
     expect(tief.formatE).toMatch(/\+ REQ-[a-z-]+\|[A-Za-zÄÖÜ]/);
     // Was Beiwerk ist, steht als Knoten da — ohne Prosa.
     expect(tief.formatE).toMatch(/\+ FCHAIN-[a-z-]+\|…/);
@@ -232,7 +232,7 @@ describe('CR-GC-621: die Liste antwortet mit Identitaet, der Zweig kuerzt wie de
     expect(e.formatE.split('\n').filter((l) => l.includes('= Beschreibung gekuerzt'))).toHaveLength(1);
     // Der Anker traegt seinen Wortlaut, alles andere steht als Knoten da — auch REQ und SCHEMA,
     // anders als bei `graph_context`: wer vertieft, sucht die Struktur und oeffnet danach gezielt.
-    expect(e.formatE).toContain('Agentenlauf ausführen');
+    expect(e.formatE).toContain('Tanewobosig hewofenuj');
     expect(e.formatE).toMatch(/\+ (MOD|FCHAIN|TEST|UC)-[a-z-]+\|…/);
     expect(e.formatE, 'sonst waere es die Kontext-Regel, und die spart hier 12 % statt 50 %').toMatch(
       /\+ REQ-[a-z-]+\|…/,

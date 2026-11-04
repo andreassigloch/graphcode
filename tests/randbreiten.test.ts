@@ -47,11 +47,8 @@ const nach = (name: string): Zeile | undefined => zeilen.find((z) => z.name === 
  */
 const STAND: Record<string, [number, number, number, number, number, number, number, number, number]> = {
   'sigllm-v98 (golden)': [24, 7, 4, 1, 0, 6, 0, 0, 4],
-  bok: [12, 4, 3, 0, 0, 3, 0, 0, 3],
-  'gc_test-graphview': [24, 7, 0, 0, 0, 0, 0, 0, 3],
-  'graph-view-edit': [13, 5, 1, 0, 0, 2, 0, 0, 2],
-  graphcode: [115, 7, 20, 12, 9, 19, 6, 6, 16],
   moneyflow: [306, 155, 0, 0, 0, 0, 8, 5, 17],
+  graphcode: [115, 7, 20, 12, 9, 19, 6, 6, 16],
 };
 
 const FELDER = ['FUNC', 'MOD', 'WB', 'BW>=5', 'BW>=7', 'BWmax', 'MOD>=5', 'MOD>=7', 'MODmax'] as const;
