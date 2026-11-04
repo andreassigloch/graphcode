@@ -1,6 +1,6 @@
 # CR-GC-890: Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-04)
 **Typ:** aus Item ITEM-2026-1182 (finding)
 **Erstellt:** 2026-11-03
 **Item:** bok/items/ITEM-2026-1182.json (Lane: graph)
