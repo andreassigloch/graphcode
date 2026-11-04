@@ -3863,6 +3863,12 @@
       "description": "docs/cr/open/CR-GC-891-private-beispielgraphen-und-ihre-testfae.md"
     },
     {
+      "id": "CR-GC-892",
+      "type": "CR",
+      "name": "se-plan: Integrationsbaum aus dem Modell, Testkonzept vollständig vor dem Schnitt",
+      "description": "docs/cr/open/CR-GC-892-se-plan-integrationsbaum-aus-dem-modell-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -31303,5 +31309,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1003
+  "graphVersion": 1004
 }
