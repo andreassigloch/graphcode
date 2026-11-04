@@ -1380,6 +1380,10 @@
 | `CR-GC-877` | relation | `FUNC-import-code` |
 | `CR-GC-877` | relation | `REQ-skill-import-code-nennt-verb` |
 | `CR-GC-877` | relation | `UC-model-exchange` |
+| `CR-GC-888` | relation | `FUNC-graph-help` |
+| `CR-GC-888` | relation | `REQ-docs-taxonomy` |
+| `CR-GC-889` | relation | `REQ-docs-taxonomy` |
+| `CR-GC-890` | relation | `REQ-docs-taxonomy` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

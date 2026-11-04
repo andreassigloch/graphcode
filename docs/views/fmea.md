@@ -125,7 +125,7 @@ Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die 
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-single-measurement-path` | tests/steering.measurement-path.test.ts | passed | 2026-10-28 |
+| `TEST-single-measurement-path` | tests/steering.measurement-path.test.ts | passed | 2026-11-04 |
 
 ### 6. Risiko Schleife pendelt (`REQ-risk-loop-oscillation`)
 
@@ -182,7 +182,7 @@ Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette 
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-store-recovery` | tests/store-recovery.test.ts | passed | 2026-10-28 |
+| `TEST-store-recovery` | tests/store-recovery.test.ts | passed | 2026-11-04 |
 
 ### 9. Risiko Auswertung ohne Verantwortlichen (`REQ-risk-audit-evaluation-unowned`)
 
@@ -201,7 +201,7 @@ Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen we
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-audit-trail-projection` | tests/audit.trail-projection.test.ts | passed | 2026-10-28 |
+| `TEST-audit-trail-projection` | tests/audit.trail-projection.test.ts | passed | 2026-11-04 |
 
 ### 10. Risiko Stufenname ohne Wertebereich (`REQ-risk-stage-name-free-text`)
 
@@ -334,7 +334,7 @@ Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine an
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-host-shim` | tests/host-shim.test.ts | passed | 2026-10-28 |
+| `TEST-host-shim` | tests/host-shim.test.ts | passed | 2026-11-04 |
 
 ### 17. Risiko halb gefuellter Store nach Abbruch (`REQ-risk-partial-store-after-reseed`)
 

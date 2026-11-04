@@ -39,7 +39,7 @@ Entschieden 2026-11-04: Die sigllm-Fälle ziehen mit nach graphanalyze. Der Grap
 
 Über 10 Dateien, überwiegend Löschungen. Vor dem Start teilen, Vorschlag:
 1. Dieser CR: `docs/archive/` (ohne Belege), `docs/spikes/`, `docs/project/`, `LANDSCAPE.md` nach graphanalyze; Verweise darauf in Leitlinie, Konzepten, Artikeln und `.gitignore`-Kommentar nachziehen.
-2. Folge-CR: `beispielgraphen/` ohne `todo-referenz/` nach graphanalyze, mit den sigllm-Fällen aus `generate.*`, `steer-optimum` und `randbreiten`, und `scripts/model-test-set.mjs`, `scripts/randbreiten.mjs` und `scripts/whitebox-messung.mjs` auf die verbleibenden Graphen umstellen.
+2. Folge-CR CR-GC-891: `beispielgraphen/` ohne `todo-referenz/` nach graphanalyze, mit den sigllm-Fällen aus `generate.*`, `steer-optimum` und `randbreiten`, und `scripts/model-test-set.mjs`, `scripts/randbreiten.mjs` und `scripts/whitebox-messung.mjs` auf die verbleibenden Graphen umstellen.
 
 ## Abnahme
 
@@ -61,3 +61,15 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Ergebnis (2026-11-04)
+
+Teil 1 umgesetzt, Teil 2 geht an CR-GC-891.
+
+- **Verschoben:** 21 Dateien nach graphanalyze (byte-gleich geprüft, dort Commit `f82ca06`-Nachfolger „interne graphcode-Doku übernommen“): `docs/archive/` ohne `ADR-001` und `spikes/`, `docs/spikes/SPIKE-GC-bedrohungsanalyse.md`, `docs/LANDSCAPE.md`. In graphcode gelöscht (Commit `2c46676e`).
+- **Abweichung vom Plan:** `docs/project/` bleibt. Es ist der Ort für Projektdoku, `steuerungsschleife.md` ist ein Konzept wie die Leitlinie, und drei ungetrackte Arbeitsdateien des Autors liegen dort.
+- **Verweise nachgezogen:** Leitlinie Kopf (nur diese Zeile; die offenen Änderungen des Autors bleiben ungestagt), Artikel 03 (Benchmark-Link auf `archive/spikes/`, Executor-Bericht-Link entfernt), `.gitignore`-Kommentar, Herkunftskommentare in `src/projections/help-content.ts` und `help.ts`.
+- **Bleiben bewusst:** Verweise in `docs/archive/ADR-001…` und `docs/archive/spikes/SPIKE-GC-minimal-whitebox.md` auf verschobene Dateien. Beides sind eingefrorene Belege.
+- **Modell:** `CR-GC-888 -relation-> REQ-docs-taxonomy, FUNC-graph-help`; dazu 889 und 890 auf `REQ-docs-taxonomy` (Graph-Version 997).
+- **Tests:** `npm run build` grün; `verify:code` 442/442; `verify:full CR-GC-888` 1700/1701, Schlupf 0. Der rote Test `arch.optimization-dry-run.spike` prüft, dass die SSOT während seines Laufs unverändert bleibt; ein paralleler `graph_export` hat sie geschrieben. Allein nachgefahren: grün.
+- **Nicht gepusht:** weder graphcode noch graphanalyze.

@@ -583,6 +583,9 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-874` | n/a | FC-06 am eigenen Modell richten: ein Einsprung für MCP und CLI, Vorab-Lieferung als Datei | `FUNC-agent-loop` · `FUNC-claim-store-lock` · `FUNC-generation-step` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-load-config` · `FUNC-measure-test-schlupf` · `FUNC-schema-guard` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-verify-lane-full` |
 | `CR-GC-876` | n/a | se-view-Skills entfernen: paralleler Pfad zu auto-export docs/views (fmea rendert von Hand) | `FUNC-block-grounding` · `FUNC-export-markdown` · `MOD-agent-surface` · `REQ-doc-export` |
 | `CR-GC-877` | n/a | Skill se:import-code in eigene Kette | `FUNC-import-code` · `REQ-skill-import-code-nennt-verb` · `UC-model-exchange` |
+| `CR-GC-888` | n/a | Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen | `FUNC-graph-help` · `REQ-docs-taxonomy` |
+| `CR-GC-889` | n/a | README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg | `REQ-docs-taxonomy` |
+| `CR-GC-890` | n/a | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch | `REQ-docs-taxonomy` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
