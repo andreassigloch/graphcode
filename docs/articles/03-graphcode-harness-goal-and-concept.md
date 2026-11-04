@@ -119,5 +119,4 @@ hand-edited.
 ---
 
 *Repo: <https://github.com/andreassigloch/graphcode>. Constraints:
-[`README.md`](../../README.md). Benchmark detail: [`docs/spikes/`](../spikes/). Cross-model comparison
-(local vs. frontier, same driver): [`docs/archive/executor-abschlussbericht.md`](../archive/executor-abschlussbericht.md).*
+[`README.md`](../../README.md). Benchmark detail: [`docs/archive/spikes/`](../archive/spikes/).*

@@ -6,7 +6,7 @@
 **Zweck:** Der Anker für jede Konzept-, Architektur- und Regel-Diskussion. Verläuft sich eine
 Diskussion, wird sie gegen den Kern-Claim (§1) und die Definition of Done des betroffenen
 Abschnitts geprüft. Stand 2026-10-15. Der Verlauf steht in `git log`, Herleitungen und ältere Messreihen in
-[`archive/leitlinie-staende-2026-10-08.md`](archive/leitlinie-staende-2026-10-08.md).
+der Fassung vom 2026-10-08 im privaten Repo graphanalyze (`docs/archive/leitlinie-staende-2026-10-08.md`).
 
 **Übergeordnetes Ziel:** Gute Architektur erzeugt guten Code durch MBSE.
 

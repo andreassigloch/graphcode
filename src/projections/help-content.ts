@@ -1,7 +1,7 @@
 /**
  * help-content.ts — the AUTHORED Plain/SE help layer (CR-GC-227).
  *
- * Two audiences (docs/archive/proposals/help-system.md §2): a systems engineer who doesn't know OUR
+ * Two audiences (help-system proposal, private repo graphanalyze: docs/archive/proposals/help-system.md §2): a systems engineer who doesn't know OUR
  * encoding, and a user with no SE background. The DERIVED fields (a rule's
  * title/severity/message, a gate's owned rules, a tool's purpose) already live in
  * `V3_RULES` / `readiness.ts` / the MCP registry — help reads those, never restates
@@ -228,7 +228,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
 };
 
 /**
- * The Vocabulary legend (docs/archive/proposals/help-system.md §3) — the one place every element/trace token is
+ * The Vocabulary legend (help-system proposal, private repo graphanalyze: docs/archive/proposals/help-system.md §3) — the one place every element/trace token is
  * mapped. The token LIST is the ontology (`ElementType`/`TraceType` + the `depends-on`
  * relation label); the two columns are authored. `se` cells in HELP_CONTENT use these tokens.
  */
@@ -257,7 +257,7 @@ export const HELP_VOCAB: Record<string, HelpVocabEntry> = {
 };
 
 /**
- * Element-states note (docs/archive/proposals/help-system.md §3): what decides whether the binding rules
+ * Element-states note (help-system proposal, private repo graphanalyze: docs/archive/proposals/help-system.md §3): what decides whether the binding rules
  * (R-19/R-20/R-26) apply. Since contracts CR-SM-392/393 the "not due yet" state is a property of the
  * GRAPH (realization begun or not), no longer a per-element flag.
  */

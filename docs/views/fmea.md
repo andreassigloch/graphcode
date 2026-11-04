@@ -48,8 +48,8 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-10-28 |
-| `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-10-28 |
+| `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-11-04 |
+| `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-11-04 |
 
 ### 2. Risiko falscher Befund laeuft um (`REQ-risk-loop-degradation`)
 
@@ -277,7 +277,7 @@ Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-test-schlupf` | tests/test-schlupf.test.ts | passed | 2026-10-28 |
+| `TEST-test-schlupf` | tests/test-schlupf.test.ts | passed | 2026-11-04 |
 
 ### 14. Risiko Export scheitert still (`REQ-risk-auto-export-fails-silently`)
 
@@ -296,7 +296,7 @@ Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-10-28 |
+| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-11-04 |
 
 ### 15. Risiko Kante verschwindet still (`REQ-risk-edge-vanishes-silently`)
 
@@ -315,7 +315,7 @@ Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell.
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-10-28 |
+| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-11-04 |
 
 ### 16. Risiko Besitzer endet bei angedockten Sitzungen (`REQ-risk-owner-ends-with-docked-sessions`)
 
@@ -353,7 +353,7 @@ Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-10-28 |
+| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-11-04 |
 
 ### 18. Risiko Regelauswertung faellt im Gate aus (`REQ-risk-gate-rule-eval-fails`)
 
