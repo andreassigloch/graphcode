@@ -66,7 +66,7 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 
 Teil 1 umgesetzt, Teil 2 geht an CR-GC-891.
 
-- **Verschoben:** 21 Dateien nach graphanalyze (byte-gleich geprüft, dort Commit `f82ca06`-Nachfolger „interne graphcode-Doku übernommen“): `docs/archive/` ohne `ADR-001` und `spikes/`, `docs/spikes/SPIKE-GC-bedrohungsanalyse.md`, `docs/LANDSCAPE.md`. In graphcode gelöscht (Commit `2c46676e`).
+- **Verschoben:** 21 Dateien nach graphanalyze (byte-gleich geprüft, dort Commit `9ec19e9`): `docs/archive/` ohne `ADR-001` und `spikes/`, `docs/spikes/SPIKE-GC-bedrohungsanalyse.md`, `docs/LANDSCAPE.md`. In graphcode gelöscht (Commit `2c46676e`).
 - **Abweichung vom Plan:** `docs/project/` bleibt. Es ist der Ort für Projektdoku, `steuerungsschleife.md` ist ein Konzept wie die Leitlinie, und drei ungetrackte Arbeitsdateien des Autors liegen dort.
 - **Verweise nachgezogen:** Leitlinie Kopf (nur diese Zeile; die offenen Änderungen des Autors bleiben ungestagt), Artikel 03 (Benchmark-Link auf `archive/spikes/`, Executor-Bericht-Link entfernt), `.gitignore`-Kommentar, Herkunftskommentare in `src/projections/help-content.ts` und `help.ts`.
 - **Bleiben bewusst:** Verweise in `docs/archive/ADR-001…` und `docs/archive/spikes/SPIKE-GC-minimal-whitebox.md` auf verschobene Dateien. Beides sind eingefrorene Belege.
