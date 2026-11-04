@@ -40,3 +40,15 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Ergebnis (2026-11-04)
+
+- **03:** Stack-Zeile „Local execution“ und Abschnitt „Two ways to run the loop“ ersetzt durch „Who runs the loop“: ein Weg (Coding-Assistent über MCP), ein lokales Modell folgt dem `vorschlag` je Schreibzug; der Executor als ein Satz Historie mit Tag `executor-geparkt-2026-10-09`.
+- **05:** war schon als Historie markiert; nur der Verweis auf die umbenannte Überschrift in 03 nachgezogen.
+- **07:** „der Driver“ ist heute das Modell im Assistenten; die gemessenen Läufe als Läufe des früheren Executors benannt; Verweis auf den Executor-Bericht (liegt seit CR-GC-888 privat) entfernt.
+- **08:** „driver mode“ als historisch markiert; „turn“ in Vergangenheit; „instruction“ neu definiert.
+- **02:** ins Englische übersetzt; den Platzhalter „Titelbild (folgt)“ gestrichen.
+- **docs/views/README.md:** `se-view:conops` (entfernt mit CR-GC-876) ersetzt durch `graph_export`.
+- **Abnahme:** `grep -nE 'graphcode run|built-in executor|driver mode|se-view'` trifft nur noch markierte Historie (03 Z. 45, 05 Tabelle und Abschnitt „Prompt anatomy“, 07 Z. 35, 08 Glossar). Alle relativen Links in `docs/articles/` lösen auf. 02 englisch.
+- **Tests:** `verify:full CR-GC-890` 1701/1701, Schlupf 0.
+- **Nicht gepusht.**
