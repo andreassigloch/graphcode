@@ -1,53 +1,45 @@
-# Warum KI-Agenten überzeugend das Falsche programmieren
+# Why AI Agents Convincingly Build the Wrong Thing
 
-> **Titelbild (folgt):** die Dashboard-Tabs **Readiness** (Reifegrad der Vorgabe),
-> **Recommendations** (was noch fehlt) und **Artifacts** (die Bausteine der
-> Spezifikation) — alles ohne KI errechnet. Screenshot nach dem Tab-Umbau.
+**Thesis:** An AI without a precise specification fills every gap with the most likely guess. The
+result compiles and looks right — and still isn't what you wanted. The fix comes **before the first
+line of code**: a clean specification model that enforces a fixed rule set — without the heavy
+tooling of classic modelling (*MBSE* in the jargon), and without an AI having a say in the verdict.
 
-**These:** Eine KI ohne präzise Vorgabe füllt jede Lücke mit dem Wahrscheinlichsten.
-Das Ergebnis kompiliert, sieht richtig aus — und ist trotzdem nicht das, was du wolltest.
-Der Fix liegt **vor der ersten Zeile Code**: ein sauberes Spezifikations-Modell, das
-einen festen Regelsatz erzwingt — ohne den schweren Werkzeug-Apparat klassischer
-Modellierung (im Fachjargon *MBSE*), und ohne dass eine KI mitredet.
+## Plausible is not wanted
 
-## Plausibel ist nicht gewünscht
+Correctness is decided in the specification, not in the code. The
+[structure benchmark](01-structure-and-llm-needs.md) puts it to the test: there the prose
+specification was deliberately wrong — and the AI still stayed correct, because it followed the
+specification model and never read the faulty document.
 
-Die Korrektheit entscheidet sich nicht im Code, sondern in der Vorgabe. Der
-[Struktur-Benchmark](01-structure-and-llm-needs.md) zeigt die Probe aufs Exempel: dort
-war die Prosa-Spezifikation absichtlich falsch — die KI blieb trotzdem korrekt, weil sie
-der Vorgabe folgte und das fehlerhafte Dokument nie las.
+## Phase 1 does exactly two things
 
-## Phase 1 macht genau zwei Dinge
+**1. Specification as a model — without the modelling ballast.**
+What remains is the substance: *what* the system must do, *how* tests prove it, *what* implements
+it, and *how* it all connects. What goes: heavy modelling tools, diagram ceremony, a separate
+specialist role. Instead, a lean, linked plan, kept in the same workflow as the code.
 
-**1. Spezifikation als Modell — ohne den Modellierungs-Ballast.**
-Was bleibt, ist die Substanz: *was* das System können muss, *wie* das durch Tests bewiesen
-ist, *was* es umsetzt, und *wie* alles zusammenhängt. Was wegfällt: schwere
-Modellierungswerkzeuge, Diagramm-Zeremonie, eine eigene Spezialisten-Rolle. Stattdessen
-ein schlanker, verknüpfter Plan, gepflegt im selben Arbeitsfluss wie der Code.
+**2. Governed by rules — not by AI.**
+Whether the specification is complete is judged by a fixed rule set, not by a language model: every
+requirement needs a test that checks it; every function needs a module that implements it. The
+dashboard shows live what is still missing — the same result on every run, no tokens, no
+hallucination. The AI may *propose* content; the rule decides "complete?".
 
-**2. Gesteuert durch Regeln — nicht durch KI.**
-Ob die Vorgabe vollständig ist, beurteilt kein Sprachmodell, sondern ein fester Regelsatz:
-jede Anforderung braucht einen Test, der sie prüft; jede Funktion ein Modul, das sie
-umsetzt. Das Dashboard zeigt live, was noch fehlt — bei jedem Lauf dasselbe Ergebnis,
-ohne Token, ohne Halluzination. Die KI darf Inhalte *vorschlagen*; das Urteil
-„vollständig?" fällt die Regel.
+## Specification first, then code
 
-## Erst Vorgabe, dann Code
+Phase 1 (specification) is the precondition for Phase 2 (implementation). Only a precise,
+rule-checked specification turns "plausible" into "wanted" — and makes the lean implementation
+loop from [article 01](01-structure-and-llm-needs.md) (a small model, correct from **667 tokens**)
+dependable at all. Without Phase 1 the agent guesses the intent; with it, the agent reads it.
 
-Phase 1 (Vorgabe) ist die Bedingung für Phase 2 (Umsetzung). Erst eine präzise,
-regelgeprüfte Vorgabe macht aus „plausibel" das „Gewünschte" — und macht den schlanken
-Umsetzungs-Loop aus [Artikel 01](01-structure-and-llm-needs.md) (ein kleines Modell,
-korrekt aus **667 Token**) überhaupt belastbar. Ohne Phase 1 rät der Agent die Absicht;
-mit ihr liest er sie.
+## Honest limit
 
-## Ehrliche Grenze
-
-Die Regel prüft die *Form* — ob jede Anforderung ihren Test hat, ob die Verbindungen
-erlaubt sind. Das *inhaltliche* Urteil — ist das die richtige Anforderung? — bleibt beim
-Menschen. Phase 1 automatisiert das saubere Festhalten, nicht die Entscheidung.
+The rule checks the *form* — whether every requirement has its test, whether the connections are
+legal. The judgement on *content* — is this the right requirement? — stays with the human. Phase 1
+automates recording it cleanly, not the decision.
 
 ---
 
-*Repo: <https://github.com/andreassigloch/graphcode>. Der Umsetzungs-Benchmark:
-[Artikel 01](01-structure-and-llm-needs.md). Konzept & Stack:
-[Artikel 03](03-graphcode-harness-goal-and-concept.md).*
+*Repo: <https://github.com/andreassigloch/graphcode>. The implementation benchmark:
+[article 01](01-structure-and-llm-needs.md). Concept & stack:
+[article 03](03-graphcode-harness-goal-and-concept.md).*

@@ -36,6 +36,6 @@ Two directories, two different kinds of document. The distinction is *derivabili
 So `docs/records/irr.md` (Internal Readiness Review) is not a view that ended up in the wrong
 folder — nothing in the graph could reproduce it.
 
-The recurring confusion is **ConOps**, because two skills share the name: `se-conops` (CREATE —
-authors operational requirements through the gate) and `se-view:conops` (RENDER — projects them).
-ConOps, unlike the IRR, *is* graph-derived and therefore lives here as `conops.md`.
+The recurring confusion is **ConOps**: the skill `se-conops` authors operational requirements
+through the gate, and `graph_export` projects them. ConOps, unlike the IRR, *is* graph-derived and
+therefore lives here as `conops.md`.

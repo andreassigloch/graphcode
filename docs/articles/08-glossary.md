@@ -17,9 +17,9 @@ request                 one real ask: a chat message, or the one CLI intent stri
 
 - **request** — the outer boundary from [the advisory roundtrip](05-the-advisory-roundtrip.md): one
   real input in, one real result out. Everything below happens inside it.
-- **turn** — one prompt sent to the model and its one response. In driver mode one round is normally
-  one turn (history resets between rounds); a rejected batch adds a single repair turn before the
-  round ends. An interactive assistant may fit several rounds into one turn or stretch one round over
+- **turn** — one prompt sent to the model and its one response. In the former driver mode one round was
+  one turn (history reset between rounds); a rejected batch added a single repair turn before the
+  round ended. An interactive assistant may fit several rounds into one turn or stretch one round over
   several.
 - **round** — one full pass of the loop. It ends when an edit lands (or is finally rejected) and the
   KPIs are recomputed; the next round starts from the new weakest spot.
@@ -38,14 +38,14 @@ request                 one real ask: a chat message, or the one CLI intent stri
   boundary around all of them. Both modes below share this shape.
 - **host mode** — an interactive assistant (Claude Code, OpenCode) paces the loop itself, deciding
   step size and order. The loop is *implicit* in its reasoning.
-- **driver mode** — graphcode's built-in executor paces the loop as an *explicit*, fixed state
-  machine: small rounds, fresh history each round, deterministic order. Why this exists at all is a
-  strategy, not a convenience — see "going local" in [the claims](../graphcode_leitlinie.md).
+- **driver mode** — historical. graphcode's former built-in executor paced the loop as an
+  *explicit*, fixed state machine: small rounds, fresh history each round, deterministic order.
+  Removed 2026-10-09; a local model now runs in host mode and follows the per-edit suggestion.
 - **prompt** — everything the model sees in one turn. Its pieces (system prompt, tool definitions,
   graph context, instruction, history) and their measured sizes: [prompt
   anatomy](05-the-advisory-roundtrip.md).
-- **instruction** — the per-turn ask. In driver mode it always opens with the project intent quoted
-  fresh from the graph, then the one concrete task for this round.
+- **instruction** — the per-turn ask: the user's message, or the next-step suggestion a write
+  returns.
 
 ## Judging an edit
 

@@ -28,29 +28,23 @@ that, every project grows its own dialect and nothing stays comparable.
 | Apply path | one `mutate()` gate | Every edit rule-checked, author-logged, blocked on new violations |
 | Schemas | Zod at every boundary | Schema-first; no hand-rolled validation |
 | Ontology + rules | shared contracts package — imported, never forked | New type/rule = family decision + version bump; no local dialect |
-| Local execution | OpenCode + bring-your-own-key, or the built-in executor below | Two ways to run a local model — see "Two ways to run the loop" |
+| Local execution | OpenCode with a local model, or any MCP host | The same tools and the same gate for a local and a frontier model — see "Who runs the loop" |
 
 The current vocabulary: 12 element types, 6 connection types, 32 legal connection patterns,
 67 engine rules across 12 stages, exposed as 23 MCP tools.
 
-## Two ways to run the loop
+## Who runs the loop
 
-The tools above get called by whatever is driving the conversation — and there are two different
-drivers, for two different situations.
+The tools above get called by the coding assistant you already use — Claude Code, OpenCode, or any
+other MCP host. The model paces itself: it decides what to read, in what order, and when to write.
 
-- **An interactive assistant you already use** (Claude Code, OpenCode, or similar): the model paces
-  itself. It decides what to read, in what order, when to write. This suits a model that plans well
-  on its own.
-- **A built-in executor** (`graphcode run` — no separate coding assistant needed): for each step, it
-  hands the model exactly ONE precise instruction — which few elements are missing and what they
-  should connect to, nothing else. The model doesn't plan the work; it's told the work, one
-  bite-sized slice at a time.
+A small or locally-run model gets help without a second driver: every write returns a short
+suggestion for the next step (`vorschlag`), derived from the rules, and a local model with a
+thinking level follows it. Same store, same gate, same rules for a local and a frontier model.
 
-Why both exist: a small or locally-run model does better with the second — being told exactly what
-to do next, rather than left to plan a large task itself. A large, capable model often does better
-with the first, left to explore on its own terms. Same store, same gate, same rules underneath
-either way; only how work is handed to the model differs. The second form is the strategy
-[the claims](../graphcode_leitlinie.md) call *going local*.
+Until 2026-10-09 graphcode also shipped a built-in executor that handed a small model one precise
+instruction per step. It was removed once local models could write through the gate themselves;
+its last state is the git tag `executor-geparkt-2026-10-09`.
 
 ## The bet: a precise query, not a compressed result
 

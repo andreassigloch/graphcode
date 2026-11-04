@@ -141,7 +141,7 @@ machine, not the code. And the round does not scale flat — 5× the graph is st
 ## Prompt anatomy, per turn
 
 What actually goes into a turn's context breaks into six pieces — and the two ways of running the
-loop from [Under the Hood](03-graphcode-harness-goal-and-concept.md) ("Two ways to run the loop")
+loop that [Under the Hood](03-graphcode-harness-goal-and-concept.md) ("Who runs the loop") records
 fill them very differently.
 
 **The driver column describes a path that is no longer in the core.** Since 2026-10-03 the built-in

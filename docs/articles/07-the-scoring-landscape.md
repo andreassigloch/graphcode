@@ -30,9 +30,10 @@ Two kinds of number appear everywhere in graphcode, and they behave completely d
   ranking or reporting.
 
 And everything happens on one of two sides of a single edit: **before** it (while candidates are
-still being weighed) or **after** it (once it's real). This is the same shape whether "the driver"
-is graphcode's own built-in executor for a small model, or a frontier model reasoning about its own
-draft edits inside a chat — the loop underneath is identical either way.
+still being weighed) or **after** it (once it's real). "The driver" is whoever weighs the
+candidates: today the model inside the coding assistant, reasoning about its own draft edits. The
+measured runs below came from graphcode's former built-in executor (removed 2026-10-09); the loop
+underneath is the same.
 
 ![Candidate flow: rules preview and block, KPIs rank, the driver picks and triggers the next round](img/candidate-flow.svg)
 
@@ -42,12 +43,9 @@ actual gate) — but it's the same yes/no question both times. The KPI boxes nev
 pattern: they're always continuous, always feeding a ranking or a report, never a veto.
 
 **When the real gate blocks the winning candidate**, the rejection doesn't go to some separate
-judge — it goes back into the same conversation, as the next thing the model sees. Running the
-built-in executor, the driver reformats the raw verdict into a compact "here's what's wrong, resubmit
-the full corrected batch" message and appends it to that candidate's own message history. Running
-inside an interactive assistant instead (no separate driver in the loop), the raw verdict comes back
-as an ordinary tool result, and the assistant's own reasoning decides what to do with it — same
-information, no translation step in between.
+judge — it goes back into the same conversation, as the next thing the model sees: the raw verdict
+comes back as an ordinary tool result, and the assistant's own reasoning decides what to do with
+it.
 
 **The candidate set itself can change mid-round, not just the picture between rounds.** If *every*
 candidate in a batch comes back blocked, one of them — the least-bad — gets sent back to the model
@@ -217,8 +215,7 @@ the wrong thing.
 ![Cumulative applied vs rejected gate outcomes over one run](img/efficiency-cumulative.svg)
 
 42 applied, 14 rejected — these are the `mutate` calls only; the same run also fired 28 `validate`
-dry runs, which is why the summary table in the executor report quotes a higher rejection count for
-the same session. The slope of each line, not just the endpoint, is the signal: a flat stretch
+dry runs, which a count over all gate calls of the same session would include. The slope of each line, not just the endpoint, is the signal: a flat stretch
 on the rejected line is a clean run of turns; a steep one (visible about two-thirds through) is where
 the model fought the gate for a while before recovering.
 
