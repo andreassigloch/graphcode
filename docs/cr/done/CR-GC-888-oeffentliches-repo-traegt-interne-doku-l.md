@@ -1,6 +1,6 @@
 # CR-GC-888: Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-04)
 **Typ:** aus Item ITEM-2026-1180 (finding)
 **Erstellt:** 2026-11-03
 **Item:** bok/items/ITEM-2026-1180.json (Lane: graph)
