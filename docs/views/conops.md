@@ -586,6 +586,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-888` | n/a | Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen | `FUNC-graph-help` · `REQ-docs-taxonomy` |
 | `CR-GC-889` | n/a | README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg | `REQ-docs-taxonomy` |
 | `CR-GC-890` | n/a | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch | `REQ-docs-taxonomy` |
+| `CR-GC-891` | n/a | Private Beispielgraphen und ihre Testfaelle nach graphanalyze (Folge von CR-GC-888) | `REQ-docs-taxonomy` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

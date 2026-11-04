@@ -1384,6 +1384,7 @@
 | `CR-GC-888` | relation | `REQ-docs-taxonomy` |
 | `CR-GC-889` | relation | `REQ-docs-taxonomy` |
 | `CR-GC-890` | relation | `REQ-docs-taxonomy` |
+| `CR-GC-891` | relation | `REQ-docs-taxonomy` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

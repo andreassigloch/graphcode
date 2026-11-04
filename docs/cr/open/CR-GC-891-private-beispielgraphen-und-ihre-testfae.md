@@ -49,3 +49,17 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Ergebnis (2026-11-04)
+
+**Abweichung von der Entscheidung vom Vormittag (Autor 2026-11-04, Nachfrage):** Die sigllm-Fälle ziehen nicht um. Der Golden ist graphcodes einziger realistischer Prüfstand für etwa 20 Regressionstests von `generate` und `steer`; umgezogen liefen sie nur noch in graphanalyze, und `graphcode.mjs` hätte 6 Funktionen mehr koppeln müssen. Stattdessen liegt er **anonymisiert** hier.
+
+- **Anonymisiert:** `sigllm-v98.graph.json`, `sigllm-v98.audit.jsonl` und `moneyflow.graph.json`. Jedes Wort in Namen, Beschreibungen, uids, Pfaden und Testfällen wird durch ein Kunstwort gleicher Länge ersetzt, dasselbe Wort überall durch dasselbe. moneyflow kam dazu, weil zwei Fälle in `randbreiten.test.ts` ihn als Beleg brauchen (grösster Graph, 0 Whiteboxen). Werkzeug und Originale liegen in graphanalyze (Commit `ef525ef`); das Werkzeug erzeugt die Dateien byte-gleich neu (geprüft).
+- **Prüfung, dass nur der Inhalt wechselte:** die 8 Testdateien, die den Golden lesen, vorher 84/84 grün, nachher 84/84 grün — keine Erwartung geändert ausser den vier wörtlichen Stellen in `read-tools.scope.test.ts` (drei uids, ein Text), die auf die Kunstwörter umgestellt sind. Ein erster Lauf mit Kunstwörtern anderer Länge brach eine Grössengrenze (4418 statt < 4400 Zeichen); daher gleiche Länge.
+- **Entfernt:** `bok`, `graph-view-edit`, `gc_test-graphview` — Leser war nur `randbreiten`; ihre Zeilen in `STAND` sind gestrichen. Die Originale liegen in graphanalyze.
+- **Bleiben unverändert:** `dummy-slicer` (fiktiv), `gc-run-*` (Läufe auf einer generischen Aufgabe), `graphcode` (eigenes Modell), `todo-referenz/`.
+- **`beispielgraphen/README.md`** neu: Abschnitt Anonymisierung, Prüfsummen alt und neu, Leser.
+- **Modell:** `CR-GC-891 -relation-> REQ-docs-taxonomy` (Graph-Version 1000). Eine Kante auf `TEST-generation-statemachine` lehnt R-18 ab (CR → TEST ist kein Muster).
+- **Tests:** Build grün; `verify:full CR-GC-891` 1701/1701, Schlupf 0.
+- **Befund zur Spur CODE:** `verify:code` wählte für diesen Diff 2 Testdateien. Die 8 Tests, die die geänderten Fixtures lesen, fehlten: eine Fixture-Datei hat keinen Knoten, die Spur sieht den Leser nicht. Hier fing es der Handlauf und der Volllauf; ein eigenes Item wert.
+- **Nicht gepusht.**
