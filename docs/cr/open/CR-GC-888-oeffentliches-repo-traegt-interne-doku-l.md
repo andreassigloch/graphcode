@@ -31,19 +31,23 @@ Ein frischer öffentlicher Clone muss grün bleiben. Diese Stellen lesen Dateien
 - `beispielgraphen/` (ganzer Ordner): `tests/randbreiten.test.ts`
 - `beispielgraphen/dummy-slicer.graph.json`: `scripts/whitebox-messung.mjs`
 
-Offen, vor Start zu entscheiden: `sigllm-v98` durch ein neutrales Fixture unter `tests/fixtures/` ersetzen, oder die Tests nach graphanalyze ziehen. `docs/messung/` bleibt hier: `verify:full` und `src/projections/test-schlupf.ts` schreiben und lesen es.
+Entschieden 2026-11-04: Die sigllm-Fälle ziehen mit nach graphanalyze. Der Graph ist ein eingefrorener Stand, und graphanalyze ist privat (GitHub `PRIVATE`, package.json `"private": true`). Es ziehen nur die Fälle um, die sigllm-v98 oder dummy-slicer lesen, nicht die ganzen Dateien: Die Dateien testen `generate` und `steer` aus `src/`, und `generate.statemachine` und `generate.stufen` laufen auch gegen `todo-referenz/`, das öffentlich bleibt. `tests/generate.statemachine.test.ts` ist im Modell als testRef gebunden und bleibt deshalb in graphcode. Die umgezogenen Fälle laden graphcode über `graphanalyze/graphcode.mjs`. `tests/randbreiten.test.ts` hält Kennzahlen je eingefrorenem Graphen und behält nur die Zeilen der Graphen, die hier bleiben.
+
+`docs/messung/` bleibt hier: `verify:full` und `src/projections/test-schlupf.ts` schreiben und lesen es.
 
 ## Schnitt
 
 Über 10 Dateien, überwiegend Löschungen. Vor dem Start teilen, Vorschlag:
 1. Dieser CR: `docs/archive/` (ohne Belege), `docs/spikes/`, `docs/project/`, `LANDSCAPE.md` nach graphanalyze; Verweise darauf in Leitlinie, Konzepten, Artikeln und `.gitignore`-Kommentar nachziehen.
-2. Folge-CR: `beispielgraphen/` samt Fixture-Umbau der Tests.
+2. Folge-CR: `beispielgraphen/` ohne `todo-referenz/` nach graphanalyze, mit den sigllm-Fällen aus `generate.*`, `steer-optimum` und `randbreiten`, und `scripts/model-test-set.mjs`, `scripts/randbreiten.mjs` und `scripts/whitebox-messung.mjs` auf die verbleibenden Graphen umstellen.
 
 ## Abnahme
 
 - `git ls-tree -r origin/master` enthält keine der oben als privat gelisteten Dateien.
 - Die Dateien liegen in graphanalyze, mit Commit.
 - Frischer Clone von origin: `npm ci && npm run build && npm test` grün.
+- In graphanalyze laufen die umgezogenen Fälle grün gegen die graphcode-Arbeitskopie.
+- `rules_evaluate` meldet keinen neuen R-19-Befund.
 - `git grep` nach den verschobenen Pfaden trifft außerhalb von `docs/cr/` nichts mehr.
 
 ---
