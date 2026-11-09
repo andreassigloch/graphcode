@@ -3880,7 +3880,7 @@
       "name": "se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen",
       "description": "docs/cr/done/CR-GC-894-se-irr-annahmen-u-ber-fremde-datenquelle.md",
       "status": "done",
-      "commitRef": "4a248887,0160f27a,3a86cbc3"
+      "commitRef": "40753dbd,46568f91,3a86cbc3"
     },
     {
       "id": "CR-GC-895",
@@ -3888,7 +3888,7 @@
       "name": "se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau",
       "description": "docs/cr/done/CR-GC-895-se-conops-se-plan-zugangsliste-aus-dem-m.md",
       "status": "done",
-      "commitRef": "5f0091c1,969f23c2"
+      "commitRef": "b8525a05,84587aad"
     },
     {
       "id": "CR-GC-896",
@@ -3896,7 +3896,7 @@
       "name": "se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten",
       "description": "docs/cr/done/CR-GC-896-se-plan-gruppen-unabha-ngiger-crs-berech.md",
       "status": "done",
-      "commitRef": "318c5943,3bbe02ac,1de24dc9"
+      "commitRef": "7e6da7a3,066a9669,712381d5"
     },
     {
       "id": "CR-GC-897",
@@ -3904,7 +3904,7 @@
       "name": "Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell",
       "description": "docs/cr/done/CR-GC-897-sitzungsbeginn-einstieg-u-ber-cr-und-gra.md",
       "status": "done",
-      "commitRef": "a61938b7,1eee6374,bc60d396"
+      "commitRef": "bad316ca,31ece6fa,d39733cb"
     },
     {
       "id": "CR-GC-898",
@@ -3912,7 +3912,7 @@
       "name": "Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe",
       "description": "docs/cr/done/CR-GC-898-zu-ge-sparen-aufrufe-bu-ndeln-skript-sta.md",
       "status": "done",
-      "commitRef": "05858dc9,1bac13ac"
+      "commitRef": "1fa29159,a16a97de"
     },
     {
       "id": "CR-GC-899",
@@ -3920,7 +3920,7 @@
       "name": "Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen",
       "description": "docs/cr/done/CR-GC-899-modell-befragen-statt-nur-schreiben-grap.md",
       "status": "done",
-      "commitRef": "859e7224,3bcbd07f,78ca379a"
+      "commitRef": "de175609,15454e3e,78ca379a"
     },
     {
       "id": "CR-GC-900",
@@ -31879,5 +31879,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1034
+  "graphVersion": 1036
 }
