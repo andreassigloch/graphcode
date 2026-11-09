@@ -44,3 +44,4 @@ Root Cause: se-conops lief am 2026-10-26..28, vor VPS, Domain und Paket-Register
   Konto → Ziel einer Auslieferung (Konto). Die Sammelliste offener Terminal-Befehle (11-09) ist kein
   eigener Zugang, sondern die Folge der sieben anderen. Die vierte Quelle (Ziel einer Auslieferung)
   kam durch diese Gegenprobe dazu; ohne sie fehlten SSH und Konto.
+- `verify:full CR-GC-895`: 1718/1718 gruen (209 Dateien), Schlupf 0.
