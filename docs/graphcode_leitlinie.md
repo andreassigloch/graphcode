@@ -30,20 +30,23 @@ von der System Wurzel bis zur implementierten Funktion sicherstellen.
 
 ---
 
-## 2. Verstehen — das Modell beantwortet vier Fragen · *zahlt ein auf V*
+## 2. Verstehen — das Modell beantwortet vier Fragen zum Projekt ( System ) · *zahlt ein auf V*
 
 Das Gütemaß ist **Verständlichkeit**: wenige Blöcke pro Ebene („was muss ich dem CEO zeigen, damit
 er das Konzept versteht") — nicht Knotenzahlen. Die Schwellen stehen in den Regeln, nicht hier.
 
 | Frage | Modellteil | Stufen der Readiness → Marke · Regeln |
 |---|---|---|
-| **Warum** | UC-Baum, REQ | Anwendungsfall, Anforderung · R-02 (FUNC ohne REQ) |
-| **Wie** | FUNC-in-FUNC + Wirkketten (FCHAIN) als Netz | Wirkkette → **SRR**; Funktion, Datenfluss · R-30 (FUNC ohne Kette) · FC-04 (Kette ohne Akteur an Anfang und Ende) |
-| **Womit** | MOD-in-MOD, der Stack | Modul → **PDR** · CR-01 (Verträge über Modulgrenzen), MT-02 (LCOM4) |
-| **Worüber** | SCHEMA/FLOW — der Vertrag, der die Grenze definiert | Schema → **CDR** · IO-01 (Kettenanschluss) · BW-02, R-04 (Randbreite) |
+| **Warum** | Use Cases und deren Anforderungen beschreiben das Warum | Anwendungsfall, Anforderung · |
+| **Wie** | Über hierarchische Funktionsblöcke |
+| **Womit** | Über hierarchische Module und zugordnete Funktionen|
+| **Worüber** | Über Wirkketten für jeden Anwendungsfall und strikte Verträge an jeder Übergabe |
 
-Dahinter liegen der Nachweis (Stufe Test → **TRR**) und die Kopplung an den Code (Stufen Plan, Bindung, Abgleich →
-**Bau**). Die Readiness meldet je Stufe die Befunde und je Marke, ob sie erreicht ist (`graph_readiness`: `stages`,
+Die Vorgehensweise, gegliedert in einzelne Schritte ( Stufen ) und Meilensteine ( Marken ) angelehnt and gängige Modellierungskonzepte genaus wie die Anforderungen an ein korrektes Modell sind in einer Regelmatrix hinterlegt.
+
+Die Überprüfung der Regelkonformität, Bereitstellung von Modellierungs- und Optimierungskonzepten ist dort hinterlegt und erlaubt dem User eine dynamische Erstellung des Modells. Den ( technischen ) Reifegrad seines Modells bekommt er jederzeit wiedergespiegelt und wird auch zur Steuerung der LLM verwendet ( "Gummiband" )
+
+Die Readiness meldet je Stufe die Befunde und je Meilenstein (Marke), ob sie erreicht ist (`graph_readiness`: `stages`,
 `marks`); welche Regel an welcher Stufe fällig wird, steht in der Regel-Matrix (`docs/views/regel-matrix.md`).
 
 Jede Ebene ist eine Blackbox mit 3–9 Kindern (7 ± 2, RD-04/RD-05) und einem schmalen
