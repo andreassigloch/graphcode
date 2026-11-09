@@ -3905,6 +3905,12 @@
       "description": "docs/cr/open/CR-GC-898-zu-ge-sparen-aufrufe-bu-ndeln-skript-sta.md"
     },
     {
+      "id": "CR-GC-899",
+      "type": "CR",
+      "name": "Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen",
+      "description": "docs/cr/open/CR-GC-899-modell-befragen-statt-nur-schreiben-grap.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20100,6 +20106,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-899",
+      "target": "FUNC-se-retro",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-899",
+      "target": "FUNC-select-tests",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -31375,5 +31391,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1006
+  "graphVersion": 1008
 }

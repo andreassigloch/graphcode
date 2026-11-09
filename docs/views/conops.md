@@ -592,6 +592,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-896` | n/a | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten | `FUNC-se-plan` |
 | `CR-GC-897` | n/a | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell | `FUNC-se-retro` |
 | `CR-GC-898` | n/a | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe | `FUNC-se-retro` |
+| `CR-GC-899` | n/a | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen | `FUNC-se-retro` · `FUNC-select-tests` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

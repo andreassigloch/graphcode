@@ -1391,6 +1391,8 @@
 | `CR-GC-896` | relation | `FUNC-se-plan` |
 | `CR-GC-897` | relation | `FUNC-se-retro` |
 | `CR-GC-898` | relation | `FUNC-se-retro` |
+| `CR-GC-899` | relation | `FUNC-se-retro` |
+| `CR-GC-899` | relation | `FUNC-select-tests` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

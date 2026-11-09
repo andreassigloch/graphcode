@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 501 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 502 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 501 CR · 344 done · 4 open.
+Total: 502 CR · 344 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -563,3 +563,4 @@ Total: 501 CR · 344 done · 4 open.
 | `CR-GC-896` | n/a | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten |
 | `CR-GC-897` | n/a | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell |
 | `CR-GC-898` | n/a | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe |
+| `CR-GC-899` | n/a | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen |
