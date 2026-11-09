@@ -3902,7 +3902,9 @@
       "id": "CR-GC-897",
       "type": "CR",
       "name": "Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell",
-      "description": "docs/cr/open/CR-GC-897-sitzungsbeginn-einstieg-u-ber-cr-und-gra.md"
+      "description": "docs/cr/done/CR-GC-897-sitzungsbeginn-einstieg-u-ber-cr-und-gra.md",
+      "status": "done",
+      "commitRef": "a61938b7,1eee6374,bc60d396"
     },
     {
       "id": "CR-GC-898",
@@ -31785,5 +31787,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1027
+  "graphVersion": 1028
 }

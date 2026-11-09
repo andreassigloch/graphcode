@@ -1,6 +1,6 @@
 # CR-GC-897: Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-09)
 **Typ:** aus Item ITEM-2026-1273 (finding)
 **Erstellt:** 2026-11-09
 **Item:** bok/items/ITEM-2026-1273.json (Lane: code)
