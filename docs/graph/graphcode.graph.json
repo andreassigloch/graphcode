@@ -9228,6 +9228,15 @@
       ]
     },
     {
+      "id": "REQ-sitzung-einstieg",
+      "type": "REQ",
+      "name": "Sitzungsbeginn ueber CR und graph_context",
+      "description": "GRAPHCODE.md nennt den Sitzungsbeginn: eine Sitzung je CR oder Gruppe, Einstieg ueber die CR-Datei und graph_context der Traeger statt graph_elements des ganzen Modells, alle Leser in einem Aufruf laden, neue Sitzung je Meilenstein oder ab rund 150 k Kontext. se-retro misst den Einstieg (Zuege, Kontext und Token bis zur ersten Aenderung, Kontext je Zug) aus dem Protokoll. (CR-GC-897)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-skill-authors-through-gate",
       "type": "REQ",
       "name": "Autoren-Skill schreibt nur durchs Gate",
@@ -12292,6 +12301,20 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-11-09T15:02:08.762Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-sitzung-kpi",
+      "type": "TEST",
+      "name": "Kennzahlen je Sitzung",
+      "description": "Kennzahlen je Sitzung an einem von Hand gebauten Protokoll (Zuege je message.id, Subagenten ausgenommen) und die Hausregeln dazu in der GRAPHCODE.md-Vorlage.",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/sitzung-kpi.test.ts",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -20281,7 +20304,17 @@
     },
     {
       "source": "CR-GC-897",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-897",
       "target": "FUNC-se-retro",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-897",
+      "target": "REQ-sitzung-einstieg",
       "type": "relation"
     },
     {
@@ -26811,6 +26844,11 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "FUNC-harness-cli",
+      "target": "REQ-sitzung-einstieg",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-health-endpoint",
       "target": "MOD-surface",
       "type": "allocate"
@@ -27639,6 +27677,11 @@
       "source": "FUNC-se-retro",
       "target": "FLOW-anleitung-se-retro",
       "type": "io"
+    },
+    {
+      "source": "FUNC-se-retro",
+      "target": "REQ-sitzung-einstieg",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-se-retro",
@@ -30552,6 +30595,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-sitzung-kpi",
+      "target": "REQ-sitzung-einstieg",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skill-authors-through-gate",
       "target": "REQ-skill-authors-through-gate",
       "type": "verify"
@@ -31539,6 +31587,11 @@
       "type": "compose"
     },
     {
+      "source": "UC-loop-closure",
+      "target": "REQ-sitzung-einstieg",
+      "type": "compose"
+    },
+    {
       "source": "UC-model-exchange",
       "target": "FCHAIN-doc-export",
       "type": "compose"
@@ -31730,5 +31783,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1024
+  "graphVersion": 1025
 }

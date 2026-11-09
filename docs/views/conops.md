@@ -590,7 +590,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-894` | done | se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen | `FUNC-se-irr` · `REQ-irr-fremde-quellen` |
 | `CR-GC-895` | done | se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau | `FUNC-se-conops` · `FUNC-se-plan` · `REQ-zugangsliste-vor-bau` |
 | `CR-GC-896` | done | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten | `FUNC-cr-groups` · `FUNC-export-markdown` · `FUNC-se-plan` · `REQ-plan-gruppen` |
-| `CR-GC-897` | n/a | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell | `FUNC-se-retro` |
+| `CR-GC-897` | n/a | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell | `FUNC-harness-cli` · `FUNC-se-retro` · `REQ-sitzung-einstieg` |
 | `CR-GC-898` | n/a | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe | `FUNC-se-retro` |
 | `CR-GC-899` | n/a | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen | `FUNC-se-retro` · `FUNC-select-tests` |
 | `CR-GC-900` | n/a | graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt | `FUNC-init-verb` · `REQ-repo-install` |

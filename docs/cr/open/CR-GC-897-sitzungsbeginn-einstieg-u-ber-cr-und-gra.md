@@ -27,12 +27,28 @@ Was die Sitzung in dieser Zeit tut (wiederholt sich in jeder Sitzung):
 
 ---
 
-## Umfang laut `graph_impact`
+## Umfang laut Modell
 
-**KEIN SCHNITT aus dem Modell:** kein Host in /Users/andreas/Developer/dev/graphcode (keine host.sock).
+- `FUNC-harness-cli` (schreibt GRAPHCODE.md, Vorlage `src/surface/scaffold-docs.ts` `guardrailsContent`),
+  `FUNC-se-retro` (`.claude/commands/se-retro.md`, rechnet mit `scripts/retro-kpi.mjs`).
+- `REQ-sitzung-einstieg` (neu, unter `UC-loop-closure`), verify durch `TEST-sitzung-kpi`
+  (`tests/sitzung-kpi.test.ts`).
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+## Ergebnis
 
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+- Punkt 1: GRAPHCODE.md-Vorlage, Abschnitt „Starting a session" — eine Sitzung je CR oder Gruppe,
+  Einstieg ueber CR-Datei und `graph_context` der Traeger, nie `graph_elements` ueber das ganze Modell,
+  alle Leser in einem Aufruf laden (wenn der Host Schemas nachlaedt), neue Sitzung je Meilenstein oder
+  ab rund 150 k Kontext, Spec-Arbeit und Nebenthemen in eigenen Sitzungen. Nebenbei korrigiert: der
+  Satz „run `npm install` first" — seit CR-GC-900 installiert `init` selbst.
+- Punkt 2 nicht in graphcode umgesetzt: graphcode ist oeffentlich und kennt die Familie nicht; ein
+  `family.json` gibt es nicht. Der Verweis `bok/docs/governance/…` steht in der Projekt-CLAUDE.md, die
+  die Familie schreibt. Abgegeben als ITEM-2026-1279 an bok.
+- Punkt 3: `scripts/retro-kpi.mjs` — `zuege()` fasst die Protokollzeilen je `message.id` zu einem Zug
+  zusammen (ohne Subagenten), `einstieg()` liefert Zuege, Kontext und Token bis zur ersten Aenderung
+  (Edit/Write/graph_mutate) und den Kontext je Zug; `--protokoll <jsonl> [...]` druckt die Tabelle.
+  se-retro Version 3 nennt die Kennzahl mit Ziel (< 10 Zuege, < 100 k Kontext) und ihre Deutung.
+- Test: 5 Faelle; gegen den alten Code alle 5 rot.
+- Messung an den 8 juengsten Sitzungen von immo-infra (`~/.claude/projects/-Users-andreas-Developer-prod-immo-infra`):
+  Zuege bis zur ersten Aenderung 3, 17, 23, 28, 31, 33, zweimal keine Aenderung; Kontext dabei
+  53..171 k; Kontext je Zug 68..220 k. Ausgangswert fuer das Ziel unter 10 Zuegen und 100 k.

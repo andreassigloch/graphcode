@@ -11,6 +11,7 @@
 // reads ./retro-session.json (or argv[2]), auto-fills git net-LOC, and prints the table.
 //
 // Usage: node scripts/retro-kpi.mjs [session.json]
+//        node scripts/retro-kpi.mjs --protokoll <sitzung.jsonl> [...]   (Kennzahlen je Sitzung, CR-GC-897)
 // @author andreas@siglochconsulting
 import { readFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
@@ -197,6 +198,70 @@ export function leseProtokoll(pfad) {
   return saetze;
 }
 
+// ---------------------------------------------------------------------------
+// Kennzahlen je Sitzung aus dem Protokoll (CR-GC-897..899)
+// ---------------------------------------------------------------------------
+//
+// Ein ZUG ist eine Antwort des Modells: alle Protokollzeilen mit derselben `message.id`. Claude Code
+// schreibt je Inhaltsblock eine Zeile; ohne das Zusammenfassen zaehlte ein Zug mit drei Aufrufen
+// dreimal. Der KONTEXT eines Zuges ist alles, was das Modell in diesem Zug liest:
+// input + cache_read + cache_creation.
+
+const AENDERT = new Set(['Edit', 'Write', 'NotebookEdit', 'MultiEdit', 'mcp__graphcode__graph_mutate']);
+
+/** Die Zuege eines Protokolls in Reihenfolge: Kontext, Ausgabe, Werkzeugaufrufe. */
+export function zuege(saetze) {
+  const byId = new Map();
+  for (const d of saetze) {
+    if (d?.type !== 'assistant' || d.isSidechain) continue;
+    const m = d.message;
+    if (!m?.id) continue;
+    let z = byId.get(m.id);
+    if (!z) {
+      z = { kontext: 0, ausgabe: 0, aufrufe: [] };
+      byId.set(m.id, z);
+    }
+    const u = m.usage ?? {};
+    z.kontext = (u.input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0);
+    z.ausgabe = u.output_tokens ?? 0;
+    for (const b of Array.isArray(m.content) ? m.content : []) {
+      if (b?.type === 'tool_use') z.aufrufe.push({ name: b.name ?? '', input: b.input ?? {} });
+    }
+  }
+  return [...byId.values()];
+}
+
+/**
+ * CR-GC-897 — der Einstieg einer Sitzung: Zuege, Kontext und Token bis zur ersten Aenderung
+ * (Edit/Write oder graph_mutate), dazu der Kontext je Zug ueber die ganze Sitzung.
+ * Gemessen in immo-infra: 22..78 Zuege bis zur ersten Aenderung, Kontext dann 140..296 k.
+ */
+export function einstieg(saetze) {
+  const zs = zuege(saetze);
+  const i = zs.findIndex((z) => z.aufrufe.some((a) => AENDERT.has(a.name)));
+  const bis = i < 0 ? zs : zs.slice(0, i + 1);
+  return {
+    zuege: zs.length,
+    zuegeBisAenderung: i < 0 ? null : i + 1,
+    kontextBeiAenderung: i < 0 ? null : zs[i].kontext,
+    tokenBisAenderung: i < 0 ? null : bis.reduce((n, z) => n + z.kontext + z.ausgabe, 0),
+    kontextJeZug: zs.length ? Math.round(zs.reduce((n, z) => n + z.kontext, 0) / zs.length) : 0,
+  };
+}
+
+/** Die Kennzahlen einer Sitzung als Tabelle — eine Zeile je Kennzahl. */
+export function renderSitzung(saetze) {
+  const e = einstieg(saetze);
+  const k = (n) => (n == null ? 'keine Aenderung' : `${Math.round(n / 1000)} k`);
+  const rows = [
+    ['Einstieg: Zuege bis zur ersten Aenderung', e.zuegeBisAenderung ?? 'keine Aenderung', '< 10'],
+    ['Einstieg: Kontext bei der ersten Aenderung', k(e.kontextBeiAenderung), '< 100 k'],
+    ['Einstieg: Token bis zur ersten Aenderung', k(e.tokenBisAenderung), '↓'],
+    ['Kontext je Zug (Schnitt, ' + e.zuege + ' Zuege)', k(e.kontextJeZug), '↓'],
+  ];
+  return ['| Kennzahl | Wert | Ziel |', '|---|---|---|', ...rows.map((r) => `| ${r[0]} | ${r[1]} | ${r[2]} |`)].join('\n');
+}
+
 /** Render the KPI set as a markdown table. */
 export function renderKpiTable(k) {
   const rows = [
@@ -224,7 +289,15 @@ function gitNetLoc() {
 }
 
 // --- main: read the session JSON, auto-fill git net-LOC, print the table ---
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1] && process.argv[2] === '--protokoll') {
+  // CR-GC-897: die Kennzahlen je Sitzung, direkt aus einem oder mehreren Protokollen (JSONL).
+  const pfade = process.argv.slice(3);
+  if (pfade.length === 0) {
+    console.error('retro-kpi --protokoll <sitzung.jsonl> [...]: mindestens ein Protokoll nennen.');
+    process.exit(1);
+  }
+  for (const p of pfade) console.log(`### ${p}\n\n${renderSitzung(leseProtokoll(p))}\n`);
+} else if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const path = process.argv[2] ?? 'retro-session.json';
   if (!existsSync(path)) {
     console.error(
