@@ -3918,7 +3918,9 @@
       "id": "CR-GC-899",
       "type": "CR",
       "name": "Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen",
-      "description": "docs/cr/open/CR-GC-899-modell-befragen-statt-nur-schreiben-grap.md"
+      "description": "docs/cr/done/CR-GC-899-modell-befragen-statt-nur-schreiben-grap.md",
+      "status": "done",
+      "commitRef": "859e7224,3bcbd07f,78ca379a"
     },
     {
       "id": "CR-GC-900",
@@ -31877,5 +31879,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1033
+  "graphVersion": 1034
 }

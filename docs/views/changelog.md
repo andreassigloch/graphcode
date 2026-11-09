@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 503 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 503 CR · 349 done · 4 open.
+Total: 503 CR · 350 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -563,5 +563,5 @@ Total: 503 CR · 349 done · 4 open.
 | `CR-GC-896` | done | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten |
 | `CR-GC-897` | done | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell |
 | `CR-GC-898` | done | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe |
-| `CR-GC-899` | n/a | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen |
+| `CR-GC-899` | done | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen |
 | `CR-GC-900` | n/a | graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt |

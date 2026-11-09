@@ -1,6 +1,6 @@
 # CR-GC-899: Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-09)
 **Typ:** aus Item ITEM-2026-1276 (finding)
 **Erstellt:** 2026-11-09
 **Item:** bok/items/ITEM-2026-1276.json (Lane: code)

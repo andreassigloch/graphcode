@@ -592,7 +592,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-896` | done | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten | `FUNC-cr-groups` · `FUNC-export-markdown` · `FUNC-se-plan` · `REQ-plan-gruppen` |
 | `CR-GC-897` | done | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell | `FUNC-harness-cli` · `FUNC-se-retro` · `REQ-sitzung-einstieg` |
 | `CR-GC-898` | done | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe | `FUNC-harness-cli` · `FUNC-se-retro` · `REQ-zuege-sparen` |
-| `CR-GC-899` | n/a | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen | `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-select-tests` · `REQ-modell-befragen` |
+| `CR-GC-899` | done | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen | `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-select-tests` · `REQ-modell-befragen` |
 | `CR-GC-900` | n/a | graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt | `FUNC-init-verb` · `REQ-repo-install` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
