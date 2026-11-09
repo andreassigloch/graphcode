@@ -1,6 +1,6 @@
 # CR-GC-898: Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-09)
 **Typ:** aus Item ITEM-2026-1274 (finding)
 **Erstellt:** 2026-11-09
 **Item:** bok/items/ITEM-2026-1274.json (Lane: code)

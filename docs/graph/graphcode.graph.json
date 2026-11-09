@@ -3910,7 +3910,9 @@
       "id": "CR-GC-898",
       "type": "CR",
       "name": "Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe",
-      "description": "docs/cr/open/CR-GC-898-zu-ge-sparen-aufrufe-bu-ndeln-skript-sta.md"
+      "description": "docs/cr/done/CR-GC-898-zu-ge-sparen-aufrufe-bu-ndeln-skript-sta.md",
+      "status": "done",
+      "commitRef": "05858dc9,1bac13ac"
     },
     {
       "id": "CR-GC-899",
@@ -31826,5 +31828,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1030
+  "graphVersion": 1031
 }
