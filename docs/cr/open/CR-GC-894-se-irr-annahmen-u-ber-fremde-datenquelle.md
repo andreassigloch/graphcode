@@ -40,3 +40,4 @@ Root Cause: se-irr §1 sucht Annahmen nur in Texten, die schon im Modell stehen 
 - Gegenprobe am Befund: jede der vier Abweichungen aus immo-infra ist eine der vier Zaehlgroessen —
   89 Objekte bei einem Nutzer (verschiedene Zustaendige = 1), 28 von 121 ohne Status (Anzahl je
   Status), 15 von 264 Feldern (Felder mit Wert), 401 auf `/contacts` (Antwortcode je Endpunkt).
+- `verify:full CR-GC-894`: 1715/1715 gruen, Schlupf 0.
