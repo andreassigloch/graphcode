@@ -45,6 +45,8 @@ Root Cause: Nichts im Ablauf führt vor einem Testlauf zu graph_tests. GRAPHCODE
   10 von 270 Testlaeufen mit Auswahl (4 %). Der Befund (31:124) zaehlte nur die Bauphase ab 2026-11-04.
   Grenze: Tests, die ueber ssh auf dem VPS laufen, erkennt die Zaehlung nicht als Testlauf.
 
+- `verify:full CR-GC-899`: 1735/1735 gruen (211 Dateien), Schlupf 0.
+
 ## Umfang laut `graph_impact`
 
 _Schnitt aus dem Modell bei `dispatch prepare` — graphVersion 1006, Tiefe 1, Wurzeln: `FUNC-select-tests`, `FUNC-se-retro`._
