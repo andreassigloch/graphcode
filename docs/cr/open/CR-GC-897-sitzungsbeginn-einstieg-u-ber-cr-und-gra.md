@@ -56,3 +56,4 @@ Was die Sitzung in dieser Zeit tut (wiederholt sich in jeder Sitzung):
   (CR-GC-612: Hausregeln nennen keine Werkzeuge), se-retro nannte als lesender Skill `graph_mutate`.
   Abschnitt ohne Werkzeugnamen neu gefasst („context slice of its carriers"), „What is here" und
   „Live view and lifecycle" gekuerzt ohne Regel zu streichen: 5.676 Zeichen.
+- `verify:full CR-GC-897` (zweiter Lauf): 1728/1728 gruen (211 Dateien), Schlupf 0.
