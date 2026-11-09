@@ -52,3 +52,4 @@ Root Cause: se-plan §7 erzeugt je CR schon den Auftrag (graph_context-Ausschnit
   als Zod-Vertrag, den `crGroups` an seiner Rueckgabe parst; `arch.optimization-dry-run.spike` (Messung
   am Repo-Graphen) → neu gemessen und mit Kommentar eingetragen: drei Zuege statt vier, Engpass nach der
   Kette BW-02 @ FUNC-block-abfrage. Weiter derselbe Befund ITEM-2026-798.
+- `verify:full CR-GC-896` (zweiter Lauf): 1723/1723 gruen (210 Dateien), Schlupf 0.

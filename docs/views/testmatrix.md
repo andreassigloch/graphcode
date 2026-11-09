@@ -58,7 +58,7 @@
 | `REQ-gate-only-writes` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-graph-realize` · `TEST-path-containment` · `TEST-single-write-door` |
 | `REQ-gate-survives-rule-failure` | ✓ | ⚠ nie gelaufen | `TEST-gate-survives-rule-failure` |
 | `REQ-graceful-degradation` | ✓ | ✓ passed | `TEST-gve-supervision` · `TEST-reduced-llm` |
-| `REQ-graph-code-conformance` | ✓ | ✗ failed | `TEST-code-conformance` |
+| `REQ-graph-code-conformance` | ✓ | ✓ passed | `TEST-code-conformance` |
 | `REQ-graph-context-replaces-reading` | ✓ | ✓ passed | `TEST-graph-context-replaces-reading` |
 | `REQ-graph-integrity` | ✓ | ✓ passed | `TEST-codec-validation` · `TEST-graph-integrity` · `TEST-import-sys-anchor` · `TEST-merge-no-duplicate-edge` |
 | `REQ-graph-is-ssot` | ✓ | ✓ passed | `TEST-deny-stale-read` · `TEST-graph-is-ssot` · `TEST-path-containment` |
@@ -203,7 +203,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 193/193 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 155/193 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 156/193 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
