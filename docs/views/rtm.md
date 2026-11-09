@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 194 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 195 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 53 REQ
@@ -65,7 +65,7 @@
 | `REQ-tool-input-parsed-once` | `TEST-werkzeug-eingang-geparst` | `FUNC-bind-tools` | `MOD-surface` |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 137 REQ
+### funktional (SWE.1 · HWE.1) — 138 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -204,6 +204,7 @@
 | `REQ-viewer-owned-by-repo` | `TEST-gve-autostart` · `TEST-gve-supervision` | `FUNC-gve-sessions` · `FUNC-gve-supervise` | `MOD-surface` |
 | `REQ-vorbereitung-constraints` | `TEST-vorbereitung-reads-metrics` | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `REQ-vorbereitung-reads-metrics` | `TEST-vorbereitung-reads-metrics` | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
+| `REQ-zuege-sparen` | `TEST-sitzung-kpi` | `FUNC-harness-cli` · `FUNC-se-retro` | `MOD-agent-surface` · `MOD-surface` |
 | `REQ-zug-zeigt-kennzahlen-danach` | `TEST-zug-kennzahlen-danach` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 | `REQ-zugangsliste-vor-bau` | `TEST-skill-zugangsliste` | `FUNC-se-conops` · `FUNC-se-plan` | `MOD-agent-surface` |
 
@@ -267,7 +268,7 @@
 | `REQ-steering-promise-one-owner` | `TEST-steering-promise-one-owner` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 150 REQ
+### Entwurf (SWE.3 · HWE.2) — 151 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -419,6 +420,7 @@
 | `REQ-viewer-owned-by-repo` | `TEST-gve-autostart` · `TEST-gve-supervision` | `FUNC-gve-sessions` · `FUNC-gve-supervise` | `MOD-surface` |
 | `REQ-vorbereitung-constraints` | `TEST-vorbereitung-reads-metrics` | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
 | `REQ-vorbereitung-reads-metrics` | `TEST-vorbereitung-reads-metrics` | `FUNC-se-vorbereitung` | `MOD-agent-surface` |
+| `REQ-zuege-sparen` | `TEST-sitzung-kpi` | `FUNC-harness-cli` · `FUNC-se-retro` | `MOD-agent-surface` · `MOD-surface` |
 | `REQ-zug-zeigt-kennzahlen-danach` | `TEST-zug-kennzahlen-danach` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 | `REQ-zugangsliste-vor-bau` | `TEST-skill-zugangsliste` | `FUNC-se-conops` · `FUNC-se-plan` | `MOD-agent-surface` |
 

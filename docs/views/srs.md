@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 194 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 195 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -2069,6 +2069,16 @@ Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lese
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-zuege-sparen` — Zuege sparen
+
+> auch unter: `FUNC-harness-cli`
+
+GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken. se-retro misst den Anteil der Zuege mit genau einem Aufruf und die Folgen aus 3+ gleichen Einzelaufrufen in Kontext-Token. (CR-GC-898)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
 
 ##### 3.2.3.13  `FUNC-se-review` — Skill se-review
 
@@ -5866,6 +5876,16 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-agent-surface`
 
+###### `REQ-zuege-sparen` — Zuege sparen
+
+> auch unter: `FUNC-harness-cli`
+
+GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken. se-retro misst den Anteil der Zuege mit genau einem Aufruf und die Folgen aus 3+ gleichen Einzelaufrufen in Kontext-Token. (CR-GC-898)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
+
 ### 3.7  `UC-model-exchange` — Modell ein- und ausgeben
 
 Als Entwickler will ich Modellstand aus Fremdquellen einlesen und als prueffaehiges Dokument herausgeben, damit Graph, Code und Dokumentation eine Quelle haben.
@@ -8532,6 +8552,16 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
 
+###### `REQ-zuege-sparen` — Zuege sparen
+
+> auch unter: `FUNC-se-retro`
+
+GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken. se-retro misst den Anteil der Zuege mit genau einem Aufruf und die Folgen aus 3+ gleichen Einzelaufrufen in Kontext-Token. (CR-GC-898)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
+
 ##### 3.9.3.4  `FUNC-init-verb` — executeInit(opts)
 
 Das Verb init fuer Menschen: Scaffold, dann die eingetragene Abhaengigkeit installieren (npm, pnpm oder yarn nach Lockdatei), dann die naechsten Schritte ausgeben. Schlaegt die Installation fehl, endet es mit Status 1 und nennt den Befehl. --json gibt das Ergebnis als JSON aus. (CR-GC-900)
@@ -9173,6 +9203,16 @@ Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integratio
 > auch unter: `FUNC-se-retro`
 
 GRAPHCODE.md nennt den Sitzungsbeginn: eine Sitzung je CR oder Gruppe, Einstieg ueber die CR-Datei und graph_context der Traeger statt graph_elements des ganzen Modells, alle Leser in einem Aufruf laden, neue Sitzung je Meilenstein oder ab rund 150 k Kontext. se-retro misst den Einstieg (Zuege, Kontext und Token bis zur ersten Aenderung, Kontext je Zug) aus dem Protokoll. (CR-GC-897)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
+
+###### `REQ-zuege-sparen` — Zuege sparen
+
+> auch unter: `FUNC-se-retro`
+
+GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken. se-retro misst den Anteil der Zuege mit genau einem Aufruf und die Folgen aus 3+ gleichen Einzelaufrufen in Kontext-Token. (CR-GC-898)
 
 priority: must · status: n/a · kinds: functional
 
@@ -11165,6 +11205,16 @@ Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lese
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy ◀ `FUNC-se-help` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-zuege-sparen` — Zuege sparen
+
+> auch unter: `FUNC-harness-cli`
+
+GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken. se-retro misst den Anteil der Zuege mit genau einem Aufruf und die Folgen aus 3+ gleichen Einzelaufrufen in Kontext-Token. (CR-GC-898)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
 
 ###### 3.10.4.1.3  `FUNC-se-review` — Skill se-review
 
@@ -14562,7 +14612,7 @@ verify ▶ `REQ-gate-only-writes` · `REQ-single-write-door` · testRefs: `tests
 
 Kennzahlen je Sitzung an einem von Hand gebauten Protokoll (Zuege je message.id, Subagenten ausgenommen) und die Hausregeln dazu in der GRAPHCODE.md-Vorlage.
 
-verify ▶ `REQ-sitzung-einstieg` · testRefs: `tests/sitzung-kpi.test.ts`
+verify ▶ `REQ-sitzung-einstieg` · `REQ-zuege-sparen` · testRefs: `tests/sitzung-kpi.test.ts`
 
 ### 8.134  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
 
@@ -14824,4 +14874,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-194 REQ · 194 verified · 0 without a verifying TEST (R-01).
+195 REQ · 195 verified · 0 without a verifying TEST (R-01).

@@ -1397,7 +1397,9 @@
 | `CR-GC-897` | relation | `FUNC-harness-cli` |
 | `CR-GC-897` | relation | `FUNC-se-retro` |
 | `CR-GC-897` | relation | `REQ-sitzung-einstieg` |
+| `CR-GC-898` | relation | `FUNC-harness-cli` |
 | `CR-GC-898` | relation | `FUNC-se-retro` |
+| `CR-GC-898` | relation | `REQ-zuege-sparen` |
 | `CR-GC-899` | relation | `FUNC-se-retro` |
 | `CR-GC-899` | relation | `FUNC-select-tests` |
 | `CR-GC-900` | relation | `FUNC-init-verb` |
@@ -2685,6 +2687,7 @@
 | `FUNC-harness-cli` | satisfy | `REQ-repo-uninstall` |
 | `FUNC-harness-cli` | satisfy | `REQ-repo-update` |
 | `FUNC-harness-cli` | satisfy | `REQ-sitzung-einstieg` |
+| `FUNC-harness-cli` | satisfy | `REQ-zuege-sparen` |
 | `FUNC-health-endpoint` | allocate | `MOD-surface` |
 | `FUNC-health-endpoint` | io | `FLOW-health-eval-request` |
 | `FUNC-health-endpoint` | io | `FLOW-health-report` |
@@ -2850,6 +2853,7 @@
 | `FUNC-se-retro` | io | `FLOW-anleitung-se-retro` |
 | `FUNC-se-retro` | satisfy | `REQ-sitzung-einstieg` |
 | `FUNC-se-retro` | satisfy | `REQ-skill-reads-only` |
+| `FUNC-se-retro` | satisfy | `REQ-zuege-sparen` |
 | `FUNC-se-review` | allocate | `MOD-agent-surface` |
 | `FUNC-se-review` | io | `FLOW-anleitung-se-review` |
 | `FUNC-se-review` | satisfy | `REQ-skill-reads-only` |
@@ -3397,6 +3401,7 @@
 | `TEST-single-write-door` | verify | `REQ-gate-only-writes` |
 | `TEST-single-write-door` | verify | `REQ-single-write-door` |
 | `TEST-sitzung-kpi` | verify | `REQ-sitzung-einstieg` |
+| `TEST-sitzung-kpi` | verify | `REQ-zuege-sparen` |
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
 | `TEST-skill-constraints` | verify | `REQ-constraints-skill-vertrag` |
 | `TEST-skill-import-code-nennt-verb` | verify | `REQ-skill-import-code-nennt-verb` |
@@ -3587,6 +3592,7 @@
 | `UC-loop-closure` | compose | `REQ-risk-audit-evaluation-unowned` |
 | `UC-loop-closure` | compose | `REQ-rule-calibration` |
 | `UC-loop-closure` | compose | `REQ-sitzung-einstieg` |
+| `UC-loop-closure` | compose | `REQ-zuege-sparen` |
 | `UC-model-exchange` | compose | `FCHAIN-doc-export` |
 | `UC-model-exchange` | compose | `FCHAIN-model-import` |
 | `UC-model-exchange` | compose | `FCHAIN-skill-import-code` |

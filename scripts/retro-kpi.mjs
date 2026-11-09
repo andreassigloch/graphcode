@@ -249,15 +249,61 @@ export function einstieg(saetze) {
   };
 }
 
+/** Was als „gleicher Aufruf" zaehlt: das Werkzeug, bei Bash das erste Wort des ersten Befehls. */
+function aufrufArt(a) {
+  if (a.name !== 'Bash') return a.name;
+  const kopf = befehlsKoepfe(String(a.input?.command ?? ''))[0] ?? '';
+  return `Bash:${kopf.split(/\s+/)[0]}`;
+}
+
+/**
+ * CR-GC-898 — Zuege mit genau einem Werkzeugaufruf, und die Folgen aus 3+ gleichen Einzelaufrufen.
+ * Gemessen in immo-infra: 1642 von 2174 Zuegen mit Werkzeugen (76 %) hatten genau einen Aufruf;
+ * Folgen gleicher Einzelaufrufe (python3, grep, graph_mutate, ssh) kosteten rund 150 Zuege.
+ * Jeder Zug liest den ganzen Kontext neu — darum zaehlt die Folge in Kontext-Token.
+ */
+export function einzelaufrufe(saetze) {
+  const mitWerkzeug = zuege(saetze).filter((z) => z.aufrufe.length > 0);
+  const einzeln = mitWerkzeug.filter((z) => z.aufrufe.length === 1);
+  let folgen = 0, folgenZuege = 0, folgenKontext = 0;
+  let lauf = [];
+  const schliessen = () => {
+    if (lauf.length >= 3) {
+      folgen += 1;
+      folgenZuege += lauf.length;
+      folgenKontext += lauf.reduce((n, z) => n + z.kontext, 0);
+    }
+    lauf = [];
+  };
+  for (const z of mitWerkzeug) {
+    const art = z.aufrufe.length === 1 ? aufrufArt(z.aufrufe[0]) : null;
+    if (art === null || (lauf.length > 0 && aufrufArt(lauf[0].aufrufe[0]) !== art)) schliessen();
+    if (art !== null) lauf.push(z);
+  }
+  schliessen();
+  return {
+    zuegeMitWerkzeug: mitWerkzeug.length,
+    einzeln: einzeln.length,
+    anteilEinzeln: mitWerkzeug.length ? Math.round((einzeln.length / mitWerkzeug.length) * 100) : 0,
+    kontextEinzeln: einzeln.reduce((n, z) => n + z.kontext, 0),
+    folgen,
+    folgenZuege,
+    folgenKontext,
+  };
+}
+
 /** Die Kennzahlen einer Sitzung als Tabelle — eine Zeile je Kennzahl. */
 export function renderSitzung(saetze) {
   const e = einstieg(saetze);
+  const a = einzelaufrufe(saetze);
   const k = (n) => (n == null ? 'keine Aenderung' : `${Math.round(n / 1000)} k`);
   const rows = [
     ['Einstieg: Zuege bis zur ersten Aenderung', e.zuegeBisAenderung ?? 'keine Aenderung', '< 10'],
     ['Einstieg: Kontext bei der ersten Aenderung', k(e.kontextBeiAenderung), '< 100 k'],
     ['Einstieg: Token bis zur ersten Aenderung', k(e.tokenBisAenderung), '↓'],
     ['Kontext je Zug (Schnitt, ' + e.zuege + ' Zuege)', k(e.kontextJeZug), '↓'],
+    [`Einzelaufrufe: Zuege mit genau einem Aufruf (von ${a.zuegeMitWerkzeug})`, `${a.einzeln} (${a.anteilEinzeln} %), ${k(a.kontextEinzeln)}`, '↓'],
+    ['Einzelaufrufe: Folgen aus 3+ gleichen', `${a.folgen} Folgen, ${a.folgenZuege} Zuege, ${k(a.folgenKontext)}`, '0'],
   ];
   return ['| Kennzahl | Wert | Ziel |', '|---|---|---|', ...rows.map((r) => `| ${r[0]} | ${r[1]} | ${r[2]} |`)].join('\n');
 }

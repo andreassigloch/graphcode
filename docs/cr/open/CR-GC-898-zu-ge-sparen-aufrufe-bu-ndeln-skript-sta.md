@@ -22,12 +22,23 @@ Einordnung: Der größere Hebel ist die Kontextgröße (siehe CR zum Sitzungsbeg
 
 ---
 
-## Umfang laut `graph_impact`
+## Umfang laut Modell
 
-**KEIN SCHNITT aus dem Modell:** kein Host in /Users/andreas/Developer/dev/graphcode (keine host.sock).
+- `FUNC-harness-cli` (GRAPHCODE.md-Vorlage `src/surface/scaffold-docs.ts`), `FUNC-se-retro`
+  (`.claude/commands/se-retro.md`, `scripts/retro-kpi.mjs`).
+- `REQ-zuege-sparen` (neu, unter `UC-loop-closure`), verify durch `TEST-sitzung-kpi`.
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+## Ergebnis
 
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+- Punkt 1 und 2: GRAPHCODE.md, Abschnitt „Sessions and turns" (umbenannt aus „Starting a session",
+  CR-GC-897): unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer
+  Ausgabe, Skript zum Ausrollen erst lokal trocken. Ohne Werkzeugnamen; Vorlage 5.846 Zeichen.
+- Punkt 3: `einzelaufrufe()` in `scripts/retro-kpi.mjs` — Zuege mit genau einem Aufruf (Anzahl, Anteil,
+  Kontext) und Folgen aus 3+ gleichen Einzelaufrufen (gleiches Werkzeug, bei Bash gleiches erstes Wort
+  des ersten Befehls) mit Zuegen und Kontext. Ein Zug mit mehreren Aufrufen bricht die Folge.
+  se-retro Version 4 nennt die Kennzahl und ihre Deutung.
+- Test: 4 neue Faelle in `tests/sitzung-kpi.test.ts`; gegen den alten Code alle 4 rot.
+- Ausgangswert immo-infra (groesste Sitzung `f4eb0c78…`): 1702 von 2245 Zuegen mit Werkzeug haben genau
+  einen Aufruf (76 %), Kontext 350 M; 91 Folgen aus 3+ gleichen Einzelaufrufen, 422 Zuege, 92 M Kontext.
+  Der Befund nannte rund 150 Zuege in solchen Folgen; die Zaehlung hier ist weiter, weil sie jede Folge
+  gleicher Werkzeuge zaehlt (auch Read, Edit), nicht nur Befehle wie python3, grep, ssh.

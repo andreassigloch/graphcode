@@ -9,7 +9,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
-import { zuege, einstieg, renderSitzung } from '../scripts/retro-kpi.mjs';
+import { zuege, einstieg, einzelaufrufe, renderSitzung } from '../scripts/retro-kpi.mjs';
 import { guardrailsContent } from '../src/surface/scaffold-docs.js';
 
 /** Eine Antwort des Modells: Kontext in k, und je Werkzeugaufruf eine eigene Protokollzeile. */
@@ -61,11 +61,55 @@ describe('TEST-sitzung-kpi: Einstieg (CR-GC-897)', () => {
 
   it('die Vorlage traegt den Abschnitt zum Sitzungsbeginn', () => {
     const g = guardrailsContent();
-    const abschnitt = g.slice(g.indexOf('## Starting a session'), g.indexOf("## Ask the graph"));
+    const abschnitt = g.slice(g.indexOf('## Sessions and turns'), g.indexOf("## Ask the graph"));
     expect(abschnitt).toMatch(/One session = one CR or one group of independent CRs/);
     expect(abschnitt).toMatch(/Enter through the CR file and the context slice of its carriers/);
     expect(abschnitt).toMatch(/never by listing the whole model/);
     expect(abschnitt).toMatch(/load all graph readers in one call/);
     expect(abschnitt).toMatch(/after each milestone or at about 150 k tokens of context/);
+  });
+});
+
+describe('TEST-sitzung-kpi: Einzelaufrufe (CR-GC-898)', () => {
+  const protokoll = [
+    ...antwort('m1', 10, [['Bash', { command: 'python3 a.py' }]]),
+    ...antwort('m2', 20, [['Bash', { command: 'python3 b.py | tail -5' }]]),
+    ...antwort('m3', 30, [['Bash', { command: 'python3 c.py' }]]),
+    ...antwort('m4', 40, [['Bash', { command: 'grep x y' }]]),
+    ...antwort('m5', 50, [['Read'], ['Read']]),
+    ...antwort('m6', 60, [['Read']]),
+    ...antwort('m7', 70),
+  ];
+
+  it('zaehlt Zuege mit genau einem Aufruf und Folgen aus 3+ gleichen', () => {
+    expect(einzelaufrufe(protokoll)).toEqual({
+      zuegeMitWerkzeug: 6,
+      einzeln: 5,
+      anteilEinzeln: 83,
+      kontextEinzeln: (10 + 20 + 30 + 40 + 60) * 1000,
+      folgen: 1,
+      folgenZuege: 3,
+      folgenKontext: (10 + 20 + 30) * 1000,
+    });
+  });
+
+  it('ein Zug mit mehreren Aufrufen bricht die Folge', () => {
+    const p = [
+      ...antwort('a', 1, [['Read']]), ...antwort('b', 1, [['Read']]),
+      ...antwort('c', 1, [['Read'], ['Grep']]), ...antwort('d', 1, [['Read']]),
+    ];
+    expect(einzelaufrufe(p).folgen).toBe(0);
+  });
+
+  it('die Tabelle nennt beide Zeilen', () => {
+    const t = renderSitzung(protokoll);
+    expect(t).toContain('| Einzelaufrufe: Zuege mit genau einem Aufruf (von 6) | 5 (83 %), 160 k | ↓ |');
+    expect(t).toContain('| Einzelaufrufe: Folgen aus 3+ gleichen | 1 Folgen, 3 Zuege, 60 k | 0 |');
+  });
+
+  it('die Vorlage traegt die Hausregel zu Zuegen', () => {
+    const g = guardrailsContent();
+    expect(g).toMatch(/Put independent reads in one turn; run a repeated check as one script with short output/);
+    expect(g).toMatch(/Dry-run a deploy script locally before you run it on the target environment/);
   });
 });

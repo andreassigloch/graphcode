@@ -9528,6 +9528,15 @@
       ]
     },
     {
+      "id": "REQ-zuege-sparen",
+      "type": "REQ",
+      "name": "Zuege sparen",
+      "description": "GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken. se-retro misst den Anteil der Zuege mit genau einem Aufruf und die Folgen aus 3+ gleichen Einzelaufrufen in Kontext-Token. (CR-GC-898)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-zug-zeigt-kennzahlen-danach",
       "type": "REQ",
       "name": "Urteil eines Probelaufs traegt die Kennzahlen danach",
@@ -20323,7 +20332,17 @@
     },
     {
       "source": "CR-GC-898",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-898",
       "target": "FUNC-se-retro",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-898",
+      "target": "REQ-zuege-sparen",
       "type": "relation"
     },
     {
@@ -26853,6 +26872,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-harness-cli",
+      "target": "REQ-zuege-sparen",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-health-endpoint",
       "target": "MOD-surface",
       "type": "allocate"
@@ -27690,6 +27714,11 @@
     {
       "source": "FUNC-se-retro",
       "target": "REQ-skill-reads-only",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-retro",
+      "target": "REQ-zuege-sparen",
       "type": "satisfy"
     },
     {
@@ -30604,6 +30633,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-sitzung-kpi",
+      "target": "REQ-zuege-sparen",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skill-authors-through-gate",
       "target": "REQ-skill-authors-through-gate",
       "type": "verify"
@@ -31596,6 +31630,11 @@
       "type": "compose"
     },
     {
+      "source": "UC-loop-closure",
+      "target": "REQ-zuege-sparen",
+      "type": "compose"
+    },
+    {
       "source": "UC-model-exchange",
       "target": "FCHAIN-doc-export",
       "type": "compose"
@@ -31787,5 +31826,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1028
+  "graphVersion": 1029
 }
