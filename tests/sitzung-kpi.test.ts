@@ -9,7 +9,9 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
-import { zuege, einstieg, einzelaufrufe, renderSitzung } from '../scripts/retro-kpi.mjs';
+import { zuege, einstieg, einzelaufrufe, modellBefragt, renderSitzung } from '../scripts/retro-kpi.mjs';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { guardrailsContent } from '../src/surface/scaffold-docs.js';
 
 /** Eine Antwort des Modells: Kontext in k, und je Werkzeugaufruf eine eigene Protokollzeile. */
@@ -111,5 +113,38 @@ describe('TEST-sitzung-kpi: Einzelaufrufe (CR-GC-898)', () => {
     const g = guardrailsContent();
     expect(g).toMatch(/Put independent reads in one turn; run a repeated check as one script with short output/);
     expect(g).toMatch(/Dry-run a deploy script locally before you run it on the target environment/);
+  });
+});
+
+describe('TEST-sitzung-kpi: Modell befragt (CR-GC-899)', () => {
+  const protokoll = [
+    ...antwort('m1', 1, [['mcp__graphcode__graph_context'], ['mcp__graphcode__graph_mutate']]),
+    ...antwort('m2', 1, [['mcp__graphcode__graph_tests']]),
+    ...antwort('m3', 1, [['Bash', { command: 'npx vitest run tests/a.test.ts | tail -5' }]]),
+    ...antwort('m4', 1, [['Bash', { command: 'npm test' }]]),
+    ...antwort('m5', 1, [['Bash', { command: 'npm run verify:code' }], ['mcp__graphcode__graph_mutate']]),
+    ...antwort('m6', 1, [['Bash', { command: "cat > x.sh <<'EOF'\nnpm test\nEOF" }]]),
+  ];
+
+  it('zaehlt Fragen, Schreibzuege und Testlaeufe mit Auswahl', () => {
+    expect(modellBefragt(protokoll)).toEqual({
+      fragen: 2,
+      schreibzuege: 2,
+      testlaeufe: 3,
+      testlaeufeMitAuswahl: 2,
+      anteilMitAuswahl: 67,
+    });
+  });
+
+  it('die Tabelle nennt beide Zeilen', () => {
+    const t = renderSitzung(protokoll);
+    expect(t).toContain('| Modell befragt: Fragen zu Schreibzuegen | 2:2 | ↑ |');
+    expect(t).toContain('| Modell befragt: Testlaeufe mit Auswahl aus dem Graphen | 2 von 3 (67 %) | 100 % |');
+  });
+
+  it('Vorlage und se-plan nennen die Regel vor jedem Testlauf', () => {
+    expect(guardrailsContent()).toMatch(/Before every test run, ask the graph for the selected set/);
+    const plan = readFileSync(join(__dirname, '..', '.claude', 'commands', 'se-plan.md'), 'utf8');
+    expect(plan).toMatch(/before every test run `graph_tests\(\{changeSet\}\)`, run the tests it names, the full suite only before the CR closes/);
   });
 });

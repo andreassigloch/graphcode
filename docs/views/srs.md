@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 195 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 196 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -1274,6 +1274,16 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · `FUNC-se-plan` · allocate ▶ `MOD-agent-surface` · `MOD-loop`
 
+###### `REQ-modell-befragen` — Modell befragen statt nur schreiben
+
+> auch unter: `FUNC-harness-cli` · `FUNC-se-retro`
+
+Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
+
 ###### `REQ-plan-gruppen` — Gruppen unabhaengiger CRs
 
 > auch unter: `FUNC-cr-groups`
@@ -2049,6 +2059,16 @@ Verification ◀ `TEST-modulebene-reads-and-separates` (conformance) · satisfy 
 Prompt-realisierter Skill se-retro: Post-Projekt-Retro ueber die sechs graphcode-KPIs.
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-retro` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-modell-befragen` — Modell befragen statt nur schreiben
+
+> auch unter: `FUNC-harness-cli` · `FUNC-se-plan`
+
+Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
 
 ###### `REQ-sitzung-einstieg` — Sitzungsbeginn ueber CR und graph_context
 
@@ -5856,6 +5876,16 @@ Prompt-realisierter Skill se-retro: Post-Projekt-Retro ueber die sechs graphcode
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-retro` · allocate ▶ `MOD-agent-surface`
 
+###### `REQ-modell-befragen` — Modell befragen statt nur schreiben
+
+> auch unter: `FUNC-harness-cli` · `FUNC-se-plan`
+
+Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
+
 ###### `REQ-sitzung-einstieg` — Sitzungsbeginn ueber CR und graph_context
 
 > auch unter: `FUNC-harness-cli`
@@ -8496,6 +8526,16 @@ npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-channel-guardrails` · `FLOW-install-result-harness-cli` · allocate ▶ `MOD-surface`
 
+###### `REQ-modell-befragen` — Modell befragen statt nur schreiben
+
+> auch unter: `FUNC-se-plan` · `FUNC-se-retro`
+
+Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
+
 ###### `REQ-npx-distribution` — npx-CLI als Distribution
 
 > auch unter: `FUNC-cli-dispatch`
@@ -9151,6 +9191,16 @@ Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integrati
 npx-CLI Lifecycle: scaffolds/aktualisiert/entfernt .graphcode/, .claude/hooks, .mcp.json, Controller — idempotent, self-contained.
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-channel-guardrails` · `FLOW-install-result-harness-cli` · allocate ▶ `MOD-surface`
+
+###### `REQ-modell-befragen` — Modell befragen statt nur schreiben
+
+> auch unter: `FUNC-se-plan` · `FUNC-se-retro`
+
+Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
 
 ###### `REQ-npx-distribution` — npx-CLI als Distribution
 
@@ -11012,6 +11062,16 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-task-analysen` (integration) · satisfy ◀ `FUNC-generation-step` · `FUNC-se-plan` · allocate ▶ `MOD-agent-surface` · `MOD-loop`
 
+###### `REQ-modell-befragen` — Modell befragen statt nur schreiben
+
+> auch unter: `FUNC-harness-cli` · `FUNC-se-retro`
+
+Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
+
 ###### `REQ-plan-gruppen` — Gruppen unabhaengiger CRs
 
 > auch unter: `FUNC-cr-groups`
@@ -11185,6 +11245,16 @@ Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy �
 Prompt-realisierter Skill se-retro: Post-Projekt-Retro ueber die sechs graphcode-KPIs.
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-retro` · allocate ▶ `MOD-agent-surface`
+
+###### `REQ-modell-befragen` — Modell befragen statt nur schreiben
+
+> auch unter: `FUNC-harness-cli` · `FUNC-se-plan`
+
+Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · allocate ▶ `MOD-agent-surface` · `MOD-surface`
 
 ###### `REQ-sitzung-einstieg` — Sitzungsbeginn ueber CR und graph_context
 
@@ -14612,7 +14682,7 @@ verify ▶ `REQ-gate-only-writes` · `REQ-single-write-door` · testRefs: `tests
 
 Kennzahlen je Sitzung an einem von Hand gebauten Protokoll (Zuege je message.id, Subagenten ausgenommen) und die Hausregeln dazu in der GRAPHCODE.md-Vorlage.
 
-verify ▶ `REQ-sitzung-einstieg` · `REQ-zuege-sparen` · testRefs: `tests/sitzung-kpi.test.ts`
+verify ▶ `REQ-modell-befragen` · `REQ-sitzung-einstieg` · `REQ-zuege-sparen` · testRefs: `tests/sitzung-kpi.test.ts`
 
 ### 8.134  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
 
@@ -14874,4 +14944,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-195 REQ · 195 verified · 0 without a verifying TEST (R-01).
+196 REQ · 196 verified · 0 without a verifying TEST (R-01).

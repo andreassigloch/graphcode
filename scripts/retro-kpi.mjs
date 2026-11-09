@@ -292,10 +292,46 @@ export function einzelaufrufe(saetze) {
   };
 }
 
+const FRAGEN = new Set(['graph_tests', 'graph_context', 'graph_impact', 'graph_expand']);
+const TESTLAUF = /^(npm (test|run test)\b|npx vitest run\b|npm run verify:(code|full)\b)/;
+
+/**
+ * CR-GC-899 — wurde das Modell befragt, oder nur beschrieben? Fragen (graph_tests, graph_context,
+ * graph_impact, graph_expand) gegen Schreibzuege (graph_mutate), und der Anteil der Testlaeufe, denen
+ * ein graph_tests vorausging (seit dem vorigen Testlauf). `npm run verify:code` zaehlt als befragt —
+ * es waehlt mit derselben Funktion wie graph_tests. Gemessen in immo-infra: 31 Fragen zu 124 Schreibzuegen.
+ */
+export function modellBefragt(saetze) {
+  let fragen = 0, schreibzuege = 0, testlaeufe = 0, mitAuswahl = 0, gefragt = false;
+  for (const z of zuege(saetze)) {
+    for (const a of z.aufrufe) {
+      const k = kurz(a.name);
+      if (IST_GRAPH(a.name) && FRAGEN.has(k)) fragen += 1;
+      if (k === 'graph_tests') gefragt = true;
+      if (k === 'graph_mutate') schreibzuege += 1;
+      if (a.name !== 'Bash') continue;
+      for (const kopf of befehlsKoepfe(String(a.input?.command ?? ''))) {
+        if (!TESTLAUF.test(kopf)) continue;
+        testlaeufe += 1;
+        if (gefragt || /^npm run verify:code\b/.test(kopf)) mitAuswahl += 1;
+        gefragt = false;
+      }
+    }
+  }
+  return {
+    fragen,
+    schreibzuege,
+    testlaeufe,
+    testlaeufeMitAuswahl: mitAuswahl,
+    anteilMitAuswahl: testlaeufe ? Math.round((mitAuswahl / testlaeufe) * 100) : 0,
+  };
+}
+
 /** Die Kennzahlen einer Sitzung als Tabelle — eine Zeile je Kennzahl. */
 export function renderSitzung(saetze) {
   const e = einstieg(saetze);
   const a = einzelaufrufe(saetze);
+  const b = modellBefragt(saetze);
   const k = (n) => (n == null ? 'keine Aenderung' : `${Math.round(n / 1000)} k`);
   const rows = [
     ['Einstieg: Zuege bis zur ersten Aenderung', e.zuegeBisAenderung ?? 'keine Aenderung', '< 10'],
@@ -304,6 +340,8 @@ export function renderSitzung(saetze) {
     ['Kontext je Zug (Schnitt, ' + e.zuege + ' Zuege)', k(e.kontextJeZug), '↓'],
     [`Einzelaufrufe: Zuege mit genau einem Aufruf (von ${a.zuegeMitWerkzeug})`, `${a.einzeln} (${a.anteilEinzeln} %), ${k(a.kontextEinzeln)}`, '↓'],
     ['Einzelaufrufe: Folgen aus 3+ gleichen', `${a.folgen} Folgen, ${a.folgenZuege} Zuege, ${k(a.folgenKontext)}`, '0'],
+    ['Modell befragt: Fragen zu Schreibzuegen', `${b.fragen}:${b.schreibzuege}`, '↑'],
+    ['Modell befragt: Testlaeufe mit Auswahl aus dem Graphen', `${b.testlaeufeMitAuswahl} von ${b.testlaeufe} (${b.anteilMitAuswahl} %)`, '100 %'],
   ];
   return ['| Kennzahl | Wert | Ziel |', '|---|---|---|', ...rows.map((r) => `| ${r[0]} | ${r[1]} | ${r[2]} |`)].join('\n');
 }

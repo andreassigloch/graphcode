@@ -1,6 +1,6 @@
 ---
 name: se-plan
-version: 9
+version: 10
 description: Generate the implementation/integration plan — order the build along the model's integration tree (leaves up), make the test concept complete BEFORE cutting, cut CRs (≤5 files) whose content is the graph_context slice, enforce an io-integration test per CR, and write MS/CR/relation through the gate
 ---
 
@@ -67,7 +67,7 @@ Each CR's deliverables **fall out of its subgraph** — do not write them by han
 - Inspect `violations`; the gate blocks a batch with a new error (R-18, R-01) — fix and re-apply. Never hand-edit the SSOT.
 
 ## 7. The CR is a derived context-pack, not written scope
-A CR carries **no hand-written scope**. Its content is the `graph_context` slice of the node it realizes plus ~5 lines of prompt-prosa, the same for every CR: stage and repo; carriers and REQ; *context IS the slice*; done = every `verify`-TEST green on disk, bound by `testRefs`, and — if §2 decided it — green on the target environment; one integration test per touched flow; contracts only from the pinned package; the legacy system stays working.
+A CR carries **no hand-written scope**. Its content is the `graph_context` slice of the node it realizes plus ~5 lines of prompt-prosa, the same for every CR: stage and repo; carriers and REQ; *context IS the slice*; done = every `verify`-TEST green on disk, bound by `testRefs`, and — if §2 decided it — green on the target environment; before every test run `graph_tests({changeSet})`, run the tests it names, the full suite only before the CR closes; one integration test per touched flow; contracts only from the pinned package; the legacy system stays working.
 
 If assembling the context-pack surfaces a **spec gap** — an unstated REQ the FUNC needs — write the missing REQ through the gate FIRST; never let the implementer guess it.
 

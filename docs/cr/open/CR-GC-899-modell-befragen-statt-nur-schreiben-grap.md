@@ -22,6 +22,29 @@ Root Cause: Nichts im Ablauf führt vor einem Testlauf zu graph_tests. GRAPHCODE
 
 ---
 
+## Umfang laut Modell
+
+- Schnitt bei `dispatch prepare` (unten): `FUNC-select-tests`, `FUNC-se-retro`. Dazu `FUNC-harness-cli`
+  (GRAPHCODE.md-Vorlage) und `FUNC-se-plan` (§7).
+- `REQ-modell-befragen` (neu, unter `UC-loop-closure`), verify durch `TEST-sitzung-kpi`.
+
+## Ergebnis
+
+- Punkt 1: GRAPHCODE.md „Which tests to run" — vor jedem Testlauf den Graphen nach der Auswahl der
+  Aenderung fragen und genau diese fahren (ohne Werkzeugnamen, CR-GC-612; Vorlage 5.874 Zeichen).
+  se-plan Version 10, §7: vor jedem Testlauf `graph_tests({changeSet})`, die genannten Tests, die volle
+  Suite nur vor dem Abschluss des CR.
+- Punkt 2 war schon erfuellt: `graph_tests` gibt den fertigen `vitest run`-Befehl aus (Werkzeugbeschreibung,
+  `tests/mcp.tests-operational.test.ts`). Keine Aenderung am Host.
+- Punkt 3: `modellBefragt()` in `scripts/retro-kpi.mjs` — Fragen (graph_tests, graph_context, graph_impact,
+  graph_expand) zu Schreibzuegen (graph_mutate), Testlaeufe (`npm test`, `npx vitest run`,
+  `npm run verify:code|full`) und der Anteil mit graph_tests seit dem vorigen Lauf; `verify:code` zaehlt
+  als befragt. Text in einem Heredoc zaehlt nicht als Lauf. se-retro Version 5 nennt die Kennzahl.
+- Test: 3 neue Faelle in `tests/sitzung-kpi.test.ts`; gegen den alten Code alle 3 rot.
+- Ausgangswert immo-infra, groesste Sitzung ueber ihre ganze Dauer: 57 Fragen zu 240 Schreibzuegen,
+  10 von 270 Testlaeufen mit Auswahl (4 %). Der Befund (31:124) zaehlte nur die Bauphase ab 2026-11-04.
+  Grenze: Tests, die ueber ssh auf dem VPS laufen, erkennt die Zaehlung nicht als Testlauf.
+
 ## Umfang laut `graph_impact`
 
 _Schnitt aus dem Modell bei `dispatch prepare` — graphVersion 1006, Tiefe 1, Wurzeln: `FUNC-select-tests`, `FUNC-se-retro`._

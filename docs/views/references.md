@@ -1400,8 +1400,11 @@
 | `CR-GC-898` | relation | `FUNC-harness-cli` |
 | `CR-GC-898` | relation | `FUNC-se-retro` |
 | `CR-GC-898` | relation | `REQ-zuege-sparen` |
+| `CR-GC-899` | relation | `FUNC-harness-cli` |
+| `CR-GC-899` | relation | `FUNC-se-plan` |
 | `CR-GC-899` | relation | `FUNC-se-retro` |
 | `CR-GC-899` | relation | `FUNC-select-tests` |
+| `CR-GC-899` | relation | `REQ-modell-befragen` |
 | `CR-GC-900` | relation | `FUNC-init-verb` |
 | `CR-GC-900` | relation | `REQ-repo-install` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
@@ -2681,6 +2684,7 @@
 | `FUNC-harness-cli` | allocate | `MOD-surface` |
 | `FUNC-harness-cli` | io | `FLOW-channel-guardrails` |
 | `FUNC-harness-cli` | io | `FLOW-install-result-harness-cli` |
+| `FUNC-harness-cli` | satisfy | `REQ-modell-befragen` |
 | `FUNC-harness-cli` | satisfy | `REQ-npx-distribution` |
 | `FUNC-harness-cli` | satisfy | `REQ-post-harness-cli` |
 | `FUNC-harness-cli` | satisfy | `REQ-repo-install` |
@@ -2846,11 +2850,13 @@
 | `FUNC-se-plan` | allocate | `MOD-agent-surface` |
 | `FUNC-se-plan` | io | `FLOW-anleitung-se-plan` |
 | `FUNC-se-plan` | satisfy | `REQ-analyse-artefakt-vor-stempel` |
+| `FUNC-se-plan` | satisfy | `REQ-modell-befragen` |
 | `FUNC-se-plan` | satisfy | `REQ-plan-gruppen` |
 | `FUNC-se-plan` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-plan` | satisfy | `REQ-zugangsliste-vor-bau` |
 | `FUNC-se-retro` | allocate | `MOD-agent-surface` |
 | `FUNC-se-retro` | io | `FLOW-anleitung-se-retro` |
+| `FUNC-se-retro` | satisfy | `REQ-modell-befragen` |
 | `FUNC-se-retro` | satisfy | `REQ-sitzung-einstieg` |
 | `FUNC-se-retro` | satisfy | `REQ-skill-reads-only` |
 | `FUNC-se-retro` | satisfy | `REQ-zuege-sparen` |
@@ -3400,6 +3406,7 @@
 | `TEST-single-measurement-path` | verify | `REQ-steering-pre` |
 | `TEST-single-write-door` | verify | `REQ-gate-only-writes` |
 | `TEST-single-write-door` | verify | `REQ-single-write-door` |
+| `TEST-sitzung-kpi` | verify | `REQ-modell-befragen` |
 | `TEST-sitzung-kpi` | verify | `REQ-sitzung-einstieg` |
 | `TEST-sitzung-kpi` | verify | `REQ-zuege-sparen` |
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
@@ -3588,6 +3595,7 @@
 | `UC-live-graph-view` | compose | `REQ-real-health-check` |
 | `UC-live-graph-view` | compose | `REQ-versioned-broadcast` |
 | `UC-loop-closure` | compose | `FCHAIN-loop-closure` |
+| `UC-loop-closure` | compose | `REQ-modell-befragen` |
 | `UC-loop-closure` | compose | `REQ-prompt-provenance` |
 | `UC-loop-closure` | compose | `REQ-risk-audit-evaluation-unowned` |
 | `UC-loop-closure` | compose | `REQ-rule-calibration` |

@@ -8401,6 +8401,15 @@
       ]
     },
     {
+      "id": "REQ-modell-befragen",
+      "type": "REQ",
+      "name": "Modell befragen statt nur schreiben",
+      "description": "Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-modulebene-reads-and-separates",
       "type": "REQ",
       "name": "Modulebene-Skill liest",
@@ -20349,12 +20358,27 @@
     },
     {
       "source": "CR-GC-899",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-899",
+      "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-899",
       "target": "FUNC-se-retro",
       "type": "relation"
     },
     {
       "source": "CR-GC-899",
       "target": "FUNC-select-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-899",
+      "target": "REQ-modell-befragen",
       "type": "relation"
     },
     {
@@ -26835,6 +26859,11 @@
     },
     {
       "source": "FUNC-harness-cli",
+      "target": "REQ-modell-befragen",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-harness-cli",
       "target": "REQ-npx-distribution",
       "type": "satisfy",
       "weight": 1,
@@ -27685,6 +27714,11 @@
     },
     {
       "source": "FUNC-se-plan",
+      "target": "REQ-modell-befragen",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-plan",
       "target": "REQ-plan-gruppen",
       "type": "satisfy"
     },
@@ -27707,6 +27741,11 @@
       "source": "FUNC-se-retro",
       "target": "FLOW-anleitung-se-retro",
       "type": "io"
+    },
+    {
+      "source": "FUNC-se-retro",
+      "target": "REQ-modell-befragen",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-se-retro",
@@ -30631,6 +30670,11 @@
     },
     {
       "source": "TEST-sitzung-kpi",
+      "target": "REQ-modell-befragen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sitzung-kpi",
       "target": "REQ-sitzung-einstieg",
       "type": "verify"
     },
@@ -31613,6 +31657,11 @@
     },
     {
       "source": "UC-loop-closure",
+      "target": "REQ-modell-befragen",
+      "type": "compose"
+    },
+    {
+      "source": "UC-loop-closure",
       "target": "REQ-prompt-provenance",
       "type": "compose"
     },
@@ -31828,5 +31877,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1031
+  "graphVersion": 1032
 }

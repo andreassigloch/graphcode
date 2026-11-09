@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 195 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 196 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 53 REQ
@@ -65,7 +65,7 @@
 | `REQ-tool-input-parsed-once` | `TEST-werkzeug-eingang-geparst` | `FUNC-bind-tools` | `MOD-surface` |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 138 REQ
+### funktional (SWE.1 · HWE.1) — 139 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -126,6 +126,7 @@
 | `REQ-model-exchange-post` | `TEST-doc-export` · `TEST-import-code-verb` | `FCHAIN-model-import` | — |
 | `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-surface` |
 | `REQ-model-lane-fixed-set` | `TEST-verify-model-set` | `FUNC-verify-lane-model` | `MOD-dev-scripts` |
+| `REQ-modell-befragen` | `TEST-sitzung-kpi` | `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` | `MOD-agent-surface` · `MOD-surface` |
 | `REQ-modulebene-reads-and-separates` | `TEST-modulebene-reads-and-separates` | `FUNC-se-modulebene` | `MOD-agent-surface` |
 | `REQ-monotone-convergence` | `TEST-monotone-convergence` | `FCHAIN-steering-loop` | — |
 | `REQ-mutate-befund-je-element` | `TEST-mutate-violations-leser` | `FUNC-import-doc` | `MOD-agent-surface` |
@@ -268,7 +269,7 @@
 | `REQ-steering-promise-one-owner` | `TEST-steering-promise-one-owner` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 151 REQ
+### Entwurf (SWE.3 · HWE.2) — 152 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -347,6 +348,7 @@
 | `REQ-metrics-risk-scope` | `TEST-graph-metrics` | `FUNC-graph-metrics` | `MOD-projections` |
 | `REQ-model-exchange-pre` | `TEST-import-code-verb` | `FUNC-import-code-verb` | `MOD-surface` |
 | `REQ-model-lane-fixed-set` | `TEST-verify-model-set` | `FUNC-verify-lane-model` | `MOD-dev-scripts` |
+| `REQ-modell-befragen` | `TEST-sitzung-kpi` | `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` | `MOD-agent-surface` · `MOD-surface` |
 | `REQ-modulebene-reads-and-separates` | `TEST-modulebene-reads-and-separates` | `FUNC-se-modulebene` | `MOD-agent-surface` |
 | `REQ-mutate-befund-je-element` | `TEST-mutate-violations-leser` | `FUNC-import-doc` | `MOD-agent-surface` |
 | `REQ-near-duplicate-detection` | `TEST-nd-similarity` | `FUNC-evaluate-rules` | `MOD-kernel` |
