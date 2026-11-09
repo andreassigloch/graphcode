@@ -52,3 +52,7 @@ Was die Sitzung in dieser Zeit tut (wiederholt sich in jeder Sitzung):
 - Messung an den 8 juengsten Sitzungen von immo-infra (`~/.claude/projects/-Users-andreas-Developer-prod-immo-infra`):
   Zuege bis zur ersten Aenderung 3, 17, 23, 28, 31, 33, zweimal keine Aenderung; Kontext dabei
   53..171 k; Kontext je Zug 68..220 k. Ausgangswert fuer das Ziel unter 10 Zuegen und 100 k.
+- Erster Volllauf rot 3, alle aus diesem CR: GRAPHCODE.md ueber 6.000 Zeichen und mit Werkzeugnamen
+  (CR-GC-612: Hausregeln nennen keine Werkzeuge), se-retro nannte als lesender Skill `graph_mutate`.
+  Abschnitt ohne Werkzeugnamen neu gefasst („context slice of its carriers"), „What is here" und
+  „Live view and lifecycle" gekuerzt ohne Regel zu streichen: 5.676 Zeichen.

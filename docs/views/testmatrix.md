@@ -170,10 +170,10 @@
 | `REQ-single-store` | ✓ | ✓ passed | `TEST-mvp-e2e` |
 | `REQ-single-transport` | ✓ | ✓ passed | `TEST-mcp-stdio-server` |
 | `REQ-single-write-door` | ✓ | ✓ passed | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` |
-| `REQ-sitzung-einstieg` | ✓ | ⚠ nie gelaufen | `TEST-sitzung-kpi` |
+| `REQ-sitzung-einstieg` | ✓ | ✓ passed | `TEST-sitzung-kpi` |
 | `REQ-skill-authors-through-gate` | ✓ | ✓ passed | `TEST-skill-authors-through-gate` |
 | `REQ-skill-import-code-nennt-verb` | ✓ | ✓ passed | `TEST-skill-import-code-nennt-verb` |
-| `REQ-skill-reads-only` | ✓ | ✓ passed | `TEST-skill-reports-measured-values` |
+| `REQ-skill-reads-only` | ✓ | ✗ failed | `TEST-skill-reports-measured-values` |
 | `REQ-small-model-viable` | ✓ | ✓ passed | `TEST-mvp-e2e` · `TEST-reduced-llm` |
 | `REQ-stage-names-enumerated` | ✓ | ⚠ nie gelaufen | `TEST-stage-names-enumerated` |
 | `REQ-steering-delta-in-answer-tested` | ✓ | ⚠ nie gelaufen | `TEST-steering-delta-in-answer` |

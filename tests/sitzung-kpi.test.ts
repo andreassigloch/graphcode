@@ -62,10 +62,10 @@ describe('TEST-sitzung-kpi: Einstieg (CR-GC-897)', () => {
   it('die Vorlage traegt den Abschnitt zum Sitzungsbeginn', () => {
     const g = guardrailsContent();
     const abschnitt = g.slice(g.indexOf('## Starting a session'), g.indexOf("## Ask the graph"));
-    expect(abschnitt).toMatch(/One session = one CR, or one group of independent CRs/);
-    expect(abschnitt).toMatch(/Enter through the CR file and `graph_context` of its carriers/);
-    expect(abschnitt).toMatch(/never by listing the whole\s+model with `graph_elements`/);
-    expect(abschnitt).toMatch(/load every graph reader in one call/);
-    expect(abschnitt).toMatch(/after each milestone, or at about 150 k tokens of context/);
+    expect(abschnitt).toMatch(/One session = one CR or one group of independent CRs/);
+    expect(abschnitt).toMatch(/Enter through the CR file and the context slice of its carriers/);
+    expect(abschnitt).toMatch(/never by listing the whole model/);
+    expect(abschnitt).toMatch(/load all graph readers in one call/);
+    expect(abschnitt).toMatch(/after each milestone or at about 150 k tokens of context/);
   });
 });
