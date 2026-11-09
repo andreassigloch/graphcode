@@ -48,8 +48,8 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-11-04 |
-| `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-11-04 |
+| `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-11-09 |
+| `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-11-09 |
 
 ### 2. Risiko falscher Befund laeuft um (`REQ-risk-loop-degradation`)
 
@@ -125,7 +125,7 @@ Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die 
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-single-measurement-path` | tests/steering.measurement-path.test.ts | passed | 2026-11-04 |
+| `TEST-single-measurement-path` | tests/steering.measurement-path.test.ts | passed | 2026-11-09 |
 
 ### 6. Risiko Schleife pendelt (`REQ-risk-loop-oscillation`)
 
@@ -277,7 +277,7 @@ Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-test-schlupf` | tests/test-schlupf.test.ts | passed | 2026-11-04 |
+| `TEST-test-schlupf` | tests/test-schlupf.test.ts | passed | 2026-11-09 |
 
 ### 14. Risiko Export scheitert still (`REQ-risk-auto-export-fails-silently`)
 

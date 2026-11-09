@@ -52,3 +52,19 @@ dem Menschen, obwohl `.mcp.json` die Abhaengigkeit voraussetzt.
   Ausgabe nennt die vier naechsten Schritte.
 - `graphcode init --json` gibt gueltiges JSON mit `action: "init"` aus.
 - Fehlgeschlagene Installation → Status 1, Meldung nennt den Befehl.
+
+## Ergebnis
+
+- `src/surface/init-verb.ts` (`executeInit`, `formatInit`, `packageManager`): Scaffold, dann
+  `npm|pnpm|yarn install` nach Lockdatei, dann der Bericht fuer Menschen mit vier naechsten Schritten.
+  Fehlgeschlagene Installation → Status 1 mit Befehl und Fehlertext.
+- `src/cli.ts`: `init` gibt den Bericht auf stdout aus, `--json` das Ergebnis als JSON. `remove` unveraendert.
+- `src/surface/cli-args.ts`: `init` kennt `--json`.
+- README: Installationsbefehl ist `npx @sigloch/graphcode init`.
+- Modell: `FUNC-init-verb`, `FLOW-install-result-init` (an `ACTOR-auftraggeber`), `TEST-init-verb`,
+  `REQ-repo-install` erweitert, CR-Kanten an REQ und FUNC.
+- Test: `tests/init-verb.test.ts`, 5 Faelle; ohne den Installationsaufruf werden 3 davon rot.
+- Smoke: leeres Repo, `node dist/cli.js init` → echte Installation aus der Registry,
+  `node_modules/@sigloch/graphcode` vorhanden, `graphcode mcp` antwortet auf `initialize`.
+- `verify:full CR-GC-900`: 1710/1710 gruen, Schlupf 0.
+- Offen: die npm-Seite und `npx` zeigen das neue Verhalten erst nach dem naechsten Release.
