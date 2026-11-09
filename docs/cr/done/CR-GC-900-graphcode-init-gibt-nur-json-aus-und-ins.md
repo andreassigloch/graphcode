@@ -1,6 +1,6 @@
 # CR-GC-900: graphcode init installiert die Abhaengigkeit und nennt die naechsten Schritte
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-09)
 **Typ:** aus Item ITEM-2026-1277 (finding)
 **Erstellt:** 2026-11-09
 **Item:** bok/items/ITEM-2026-1277.json (Lane: graph)
