@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 59 SCHEMA · 234 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 59 SCHEMA · 235 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -124,7 +124,7 @@
 | `FLOW-channel-next-step` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-skill-reference` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-steer-advisory` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
-| `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` |
+| `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` |
 | `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-commit-check` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model` |
 | `FLOW-cli-invocation-import-code` | `FUNC-agent-loop` | `FUNC-cli-dispatch` |
 | `FLOW-cli-output` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
@@ -189,7 +189,8 @@
 | `FLOW-import-target` | `FUNC-graph-store` | `FUNC-reseed` |
 | `FLOW-imported-graph` | `FUNC-import` | `FUNC-graph-store` |
 | `FLOW-install-result-collect-status` | `FUNC-collect-status` | `FUNC-cli-dispatch` |
-| `FLOW-install-result-harness-cli` | `FUNC-harness-cli` | `FUNC-cli-dispatch` |
+| `FLOW-install-result-harness-cli` | `FUNC-harness-cli` | `FUNC-cli-dispatch` · `FUNC-init-verb` |
+| `FLOW-install-result-init` | `FUNC-init-verb` | `ACTOR-auftraggeber` |
 | `FLOW-install-result-upgrade` | `FUNC-upgrade` | `FUNC-cli-dispatch` |
 | `FLOW-lane-output` | `FUNC-verify-lane-code` | `ACTOR-auftraggeber` |
 | `FLOW-lane-output-full` | `FUNC-verify-lane-full` | `ACTOR-auftraggeber` |

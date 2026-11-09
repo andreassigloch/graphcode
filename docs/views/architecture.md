@@ -84,6 +84,7 @@
 | `FUNC-import-code` | FUNC | Skill se:import-code |
 | `FUNC-import-code-verb` | FUNC | executeImportCode |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
+| `FUNC-init-verb` | FUNC | executeInit(opts) |
 | `FUNC-list-elements` | FUNC | listElements(filter) |
 | `FUNC-load-config` | FUNC | loadGraphcodeConfig |
 | `FUNC-measure-test-schlupf` | FUNC | Testauswahl-Schlupf messen |
@@ -222,6 +223,7 @@
 | `FUNC-import-code` | `MOD-agent-surface` |
 | `FUNC-import-code-verb` | `MOD-surface` |
 | `FUNC-import-doc` | `MOD-agent-surface` |
+| `FUNC-init-verb` | `MOD-surface` |
 | `FUNC-list-elements` | `MOD-kernel` |
 | `FUNC-load-config` | `MOD-kernel` |
 | `FUNC-measure-test-schlupf` | `MOD-projections` |

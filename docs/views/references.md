@@ -1393,6 +1393,8 @@
 | `CR-GC-898` | relation | `FUNC-se-retro` |
 | `CR-GC-899` | relation | `FUNC-se-retro` |
 | `CR-GC-899` | relation | `FUNC-select-tests` |
+| `CR-GC-900` | relation | `FUNC-init-verb` |
+| `CR-GC-900` | relation | `REQ-repo-install` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1562,6 +1564,7 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-cli-dispatch` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-collect-status` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-init-verb` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
 | `FCHAIN-schema-migration` | compose | `FUNC-apply-reseed` |
 | `FCHAIN-schema-migration` | compose | `FUNC-claim-store-lock` |
@@ -1834,6 +1837,7 @@
 | `FLOW-cli-command` | io | `FUNC-collect-status` |
 | `FLOW-cli-command` | io | `FUNC-harness-cli` |
 | `FLOW-cli-command` | io | `FUNC-import-code-verb` |
+| `FLOW-cli-command` | io | `FUNC-init-verb` |
 | `FLOW-cli-command` | io | `FUNC-rewind` |
 | `FLOW-cli-command` | io | `FUNC-serve-sse` |
 | `FLOW-cli-command` | io | `FUNC-serve-stdio` |
@@ -2009,7 +2013,10 @@
 | `FLOW-install-result-collect-status` | io | `FUNC-cli-dispatch` |
 | `FLOW-install-result-collect-status` | relation | `SCHEMA-cli-command` |
 | `FLOW-install-result-harness-cli` | io | `FUNC-cli-dispatch` |
+| `FLOW-install-result-harness-cli` | io | `FUNC-init-verb` |
 | `FLOW-install-result-harness-cli` | relation | `SCHEMA-cli-command` |
+| `FLOW-install-result-init` | io | `ACTOR-auftraggeber` |
+| `FLOW-install-result-init` | relation | `SCHEMA-cli-command` |
 | `FLOW-install-result-upgrade` | io | `FUNC-cli-dispatch` |
 | `FLOW-install-result-upgrade` | relation | `SCHEMA-cli-command` |
 | `FLOW-lane-output` | io | `ACTOR-auftraggeber` |
@@ -2701,6 +2708,9 @@
 | `FUNC-import-doc` | io | `FLOW-anleitung-import-doc` |
 | `FUNC-import-doc` | satisfy | `REQ-llm-modell-aus-konfiguration` |
 | `FUNC-import-doc` | satisfy | `REQ-mutate-befund-je-element` |
+| `FUNC-init-verb` | allocate | `MOD-surface` |
+| `FUNC-init-verb` | io | `FLOW-install-result-init` |
+| `FUNC-init-verb` | satisfy | `REQ-repo-install` |
 | `FUNC-list-elements` | allocate | `MOD-kernel` |
 | `FUNC-list-elements` | io | `FLOW-element-slice` |
 | `FUNC-list-elements` | satisfy | `REQ-query-precision` |
@@ -3231,6 +3241,7 @@
 | `TEST-import-rejected-traces` | verify | `REQ-risk-edge-vanishes-silently` |
 | `TEST-import-rejected-traces` | verify | `SCHEMA-rejected-trace` |
 | `TEST-import-sys-anchor` | verify | `REQ-graph-integrity` |
+| `TEST-init-verb` | verify | `REQ-repo-install` |
 | `TEST-inject-graph-slice` | verify | `REQ-precise-context` |
 | `TEST-inject-graph-slice` | verify | `REQ-subgraph-slicing` |
 | `TEST-intent-anchors-internal` | verify | `REQ-interactive-capture-suggest` |

@@ -31,12 +31,14 @@ function, plus the edge of the slice it did not open.
 Node ≥ 22. Run inside **your** repository:
 
 ```bash
-npx @sigloch/graphcode init && npm install
+npx @sigloch/graphcode init
 ```
 
 1. `init` writes the host configs (`.mcp.json`, `opencode.json`), `GRAPHCODE.md` (rules for the
    agent), `GRAPHCODE-STEERING.md` (the four decisions only you make) and adds `@sigloch/graphcode`
-   to `package.json`. `npm install` installs it — the host configs start it from `node_modules`.
+   to `package.json`, then installs it with your package manager (npm, pnpm or yarn, chosen by the
+   lockfile) — the host configs start it from `node_modules`. It ends by printing the next steps;
+   `--json` prints the result as JSON instead.
 2. Add `.graphcode/` to `.gitignore`. It holds the local graph store.
 3. Reload your agent host. Claude Code reads `.mcp.json`, OpenCode reads `opencode.json`; the agent
    now sees a `graphcode` MCP server.

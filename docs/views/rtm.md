@@ -48,7 +48,7 @@
 | `REQ-readiness-model` | `TEST-readiness-model` · `TEST-views-auditor` | `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `MOD-surface` | — |
 | `REQ-recommend-next-step` | `TEST-recommend-next-step` | `FUNC-vorschlag` | `MOD-loop` |
-| `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-opencode-plugin` | `FUNC-harness-cli` | `MOD-surface` |
+| `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-init-verb` · `TEST-opencode-plugin` | `FUNC-harness-cli` · `FUNC-init-verb` | `MOD-surface` |
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` · `TEST-opencode-plugin` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-surface` |
 | `REQ-responsiveness` | `TEST-responsiveness` | `FCHAIN-apply-gate` | — |
@@ -369,7 +369,7 @@
 | `REQ-readonly-bridge` | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` | `MOD-surface` | — |
 | `REQ-real-health-check` | `TEST-readonly-bridge` | `FUNC-collect-status` · `FUNC-health-endpoint` | `MOD-surface` |
 | `REQ-recommend-next-step` | `TEST-recommend-next-step` | `FUNC-vorschlag` | `MOD-loop` |
-| `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-opencode-plugin` | `FUNC-harness-cli` | `MOD-surface` |
+| `REQ-repo-install` | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-init-verb` · `TEST-opencode-plugin` | `FUNC-harness-cli` · `FUNC-init-verb` | `MOD-surface` |
 | `REQ-repo-uninstall` | `TEST-cli-scaffold` · `TEST-opencode-plugin` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-repo-update` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-harness-cli` · `FUNC-upgrade` | `MOD-surface` |
 | `REQ-risk-gate-rule-eval-fails` | `TEST-gate-survives-rule-failure` | `MOD-kernel` | — |

@@ -21,7 +21,8 @@
  *                                   the artifacts, stops the host running old code.
  *                                   Replaces `update`, which only refreshed artifacts
  *                                   and therefore lied about its name.
- *   - `graphcode init|remove`       self-contained scaffold lifecycle (CR-GC-112,
+ *   - `graphcode init|remove`       self-contained scaffold lifecycle (CR-GC-112, CR-GC-900:
+ *                                   init also installs the dependency),
  *                                   MOD-cli) — installs/removes the harness artifacts
  *                                   in the target repo.
  *
@@ -33,7 +34,8 @@
 import { serveStdio } from './surface/mcp-server.js';
 import { serveHost } from './surface/host.js';
 import { StoreOwnershipError } from './kernel/store-lock.js';
-import { scaffold, syncSkills, type CliCommand } from './surface/scaffold.js';
+import { scaffold, syncSkills } from './surface/scaffold.js';
+import { executeInit, formatInit } from './surface/init-verb.js';
 import { executeImportCode } from './surface/import-code-verb.js';
 import { executeRewind, RewindError } from './surface/rewind.js';
 import { collectStatus, formatStatus, statusIsHealthy } from './surface/status.js';
@@ -58,7 +60,8 @@ Usage:
                     tree is NOT touched. Aborts while un-exported model changes
                     are pending; --force drops them. --snapshot overrides the
                     derived default docs/graph/<member>.graph.json (CR-GC-374).
-  graphcode init        Scaffold the harness into the current repo
+  graphcode init        Scaffold the harness into the current repo, install the
+                    dependency, print the next steps. --json  the result as JSON
   graphcode upgrade     Alles aktuell machen: neueste Version installieren,
                     Artefakte vom NEUEN Build schreiben lassen, alten Host beenden.
                     --check  nur berichten · --to <version>  ohne Registry
@@ -209,9 +212,17 @@ async function main(): Promise<void> {
         process.exit(1);
       }
     }
-    case 'init':
+    case 'init': {
+      // CR-GC-900: init installiert mit und berichtet fuer Menschen; JSON nur mit --json.
+      // Wie `status`/`upgrade`: hier laeuft kein JSON-RPC-Transport, der Bericht darf auf stdout.
+      const report = await executeInit({ repoRoot: process.cwd() });
+      process.stdout.write(
+        process.argv.includes('--json') ? `${JSON.stringify(report, null, 2)}\n` : formatInit(report),
+      );
+      process.exit(report.installOk ? 0 : 1);
+    }
     case 'remove': {
-      const result = await scaffold(command as CliCommand, { repoRoot: process.cwd() });
+      const result = await scaffold('remove', { repoRoot: process.cwd() });
       // stdout stays reserved for the MCP transport — report on stderr.
       process.stderr.write(`graphcode ${command}: ${JSON.stringify(result, null, 2)}\n`);
       process.exit(0);

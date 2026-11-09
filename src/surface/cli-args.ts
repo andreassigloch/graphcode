@@ -22,7 +22,7 @@ const VERBS: Readonly<Record<string, VerbArgs>> = {
   mcp: {},
   host: {},
   status: {},
-  init: {},
+  init: { flags: ['--json'] },
   remove: {},
   'import-code': { positionals: 1 },
   rewind: { flags: ['--force'], valueFlags: ['--snapshot'], positionals: 1 },

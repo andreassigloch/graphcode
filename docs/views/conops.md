@@ -166,7 +166,7 @@ Empfaenger: `ACTOR-auftraggeber` · `ACTOR-dashboard`
 
 - `FCHAIN-docked-session` — Angedockte Sitzung: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-host-proxy` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-serve-stdio`
 - `FCHAIN-host-start` — Host starten: `FUNC-apply-reseed` → `FUNC-auto-export` → `FUNC-bind-tools` → `FUNC-broadcast-diff` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-host-socket` → `FUNC-import` → `FUNC-load-config` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-schema-guard` → `FUNC-seed-from-json` → `FUNC-serve-stdio` → `FUNC-tool-context`
-- `FCHAIN-repo-lifecycle` — Repo einrichten und aktualisieren: `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-harness-cli` → `FUNC-upgrade`
+- `FCHAIN-repo-lifecycle` — Repo einrichten und aktualisieren: `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-harness-cli` → `FUNC-init-verb` → `FUNC-upgrade`
 - `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-apply-reseed` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-graph-store` → `FUNC-import` → `FUNC-open-store` → `FUNC-schema-guard` → `FUNC-seed-from-json` → `FUNC-serve-stdio`
 - `FCHAIN-session-end` — Sitzung beenden: `FUNC-auto-export` → `FUNC-claim-store-lock` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-host-socket` → `FUNC-session-shutdown`
 
@@ -593,6 +593,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-897` | n/a | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell | `FUNC-se-retro` |
 | `CR-GC-898` | n/a | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe | `FUNC-se-retro` |
 | `CR-GC-899` | n/a | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen | `FUNC-se-retro` · `FUNC-select-tests` |
+| `CR-GC-900` | n/a | graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt | `FUNC-init-verb` · `REQ-repo-install` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
