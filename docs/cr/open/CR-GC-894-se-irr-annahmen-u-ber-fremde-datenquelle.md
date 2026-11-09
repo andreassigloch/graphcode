@@ -24,12 +24,19 @@ Root Cause: se-irr §1 sucht Annahmen nur in Texten, die schon im Modell stehen 
 
 ---
 
-## Umfang laut `graph_impact`
+## Umfang laut Modell
 
-**KEIN SCHNITT aus dem Modell:** kein Host in /Users/andreas/Developer/dev/graphcode (keine host.sock).
+- `FUNC-se-irr` (`.claude/commands/se-irr.md`) — satisfy `REQ-irr-fremde-quellen` (neu, unter `UC-code-quality`).
+- `TEST-skill-irr-fremde-quellen` (neu, `tests/skill-irr-fremde-quellen.test.ts`) — verify `REQ-irr-fremde-quellen`.
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+## Ergebnis
 
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+- se-irr Version 4: §1 Schritt 4 „Foreign sources" — jede Schnittstelle zu einer fremden Quelle
+  (ACTOR oder externes System mit io-FLOW, dazu das SCHEMA), Beleg nur als Zahlen: Anzahl je
+  Status/Typ, Anzahl verschiedener Zustaendiger, Felder mit Wert gegen die Felder des SCHEMA,
+  Antwortcode je Endpunkt mit dem vorgesehenen Schluessel. Verbot von Namen, Adressen, Freitext.
+  Abweichung → Zeile in §2. Ohne Zugang: Beleg `none`, Zugang an se-conops.
+- Test: 5 Faelle; gegen den alten Skill-Text alle 5 rot.
+- Gegenprobe am Befund: jede der vier Abweichungen aus immo-infra ist eine der vier Zaehlgroessen —
+  89 Objekte bei einem Nutzer (verschiedene Zustaendige = 1), 28 von 121 ohne Status (Anzahl je
+  Status), 15 von 264 Feldern (Felder mit Wert), 401 auf `/contacts` (Antwortcode je Endpunkt).

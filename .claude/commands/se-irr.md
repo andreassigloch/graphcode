@@ -1,6 +1,6 @@
 ---
 name: se-irr
-version: 3
+version: 4
 description: Assumption Review — detect unproven assumptions, ask which become requirements, write each chosen one as a REQ with its verifying TEST, record the review as a closed CR (CREATE, gate-only)
 ---
 
@@ -11,6 +11,15 @@ Query the live graph — do not guess from prose:
 1. `graph_elements` `{ "type": "REQ" }` and `{ "type": "FUNC" }` — scan `description`/`attributes.rationale` for claims asserted without evidence ("assume", "should", "presumably", an unbenchmarked number, an unverified external dependency).
 2. `rules_get_violations` `{ "severity": "warning" }` — R-19/R-20 (unbound TEST/FUNC) and unverified REQs are assumptions about realizability that nothing yet proves.
 3. `graph_readiness` — a mark that reads reached while an analysis rule (AF-01 … AF-04) is accepted or still open is itself a standing assumption ("analysis-done") — name it.
+4. **Foreign sources.** The shape of a source you do not own is never written in the model as a claim, so steps 1–3 cannot find it. Walk every interface to one: each `ACTOR` or external system with an `io` FLOW, and the SCHEMA of that FLOW. Per source ask: *was the real source queried?* Evidence is a query that returns **numbers only**:
+   - count per status / type of the records the model works on,
+   - count of distinct owners (users, accounts) of those records,
+   - count of fields that carry a value, against the fields the SCHEMA needs,
+   - the response code per needed endpoint, called with the key the system will use.
+
+   Never names, addresses or free text — customer data reaches no model. Every deviation from what the model assumes becomes a line of the list in §2. No access to the source: keep the assumption open with evidence `none`, and hand the missing access to `se-conops` (access list).
+
+   Measured failure this step exists for (immo-infra, 2026-11-07): two reviews missed that all 89 active records belonged to one user, 28 of 121 had no status, the gateway delivered 15 of 264 fields, and the read key got 401 on `/contacts`. Each of the four is one count from the list above.
 
 ## 2. Ask which ones become requirements, then write them (through the gate)
 Show the user the whole list — every assumption, not only the load-bearing ones — one line each: the assumption, what breaks if it is wrong, the evidence today (none/weak/strong), and your recommendation (`load-bearing` or `low`). Ask which of them to write as requirements. The user decides; a low one the user picks is written like any other, and a load-bearing one the user declines is recorded with that decision. If nobody answers (headless run), write the load-bearing ones and say so in the closing report.

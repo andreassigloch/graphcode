@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 190 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 191 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 53 REQ
@@ -65,7 +65,7 @@
 | `REQ-tool-input-parsed-once` | `TEST-werkzeug-eingang-geparst` | `FUNC-bind-tools` | `MOD-surface` |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 133 REQ
+### funktional (SWE.1 · HWE.1) — 134 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -114,6 +114,7 @@
 | `REQ-interactive-capture-suggest` | `TEST-capture` · `TEST-intent-anchors-internal` · `TEST-intent-anchors-wortart` · `TEST-uc-authoring-style` | `FCHAIN-capture` | — |
 | `REQ-interface-change-escalation` | `TEST-interface-escalation` | — | — |
 | `REQ-interface-change-names-dependents` | `TEST-interface-change-names-dependents` | — | — |
+| `REQ-irr-fremde-quellen` | `TEST-skill-irr-fremde-quellen` | `FUNC-se-irr` | `MOD-agent-surface` |
 | `REQ-lane-reports-change` | `TEST-lane-reports-change` | `FUNC-plan-code-lane` · `FUNC-verify-lane-code` | `MOD-dev-scripts` · `MOD-projections` |
 | `REQ-laufzeit-reads-answer-path` | `TEST-laufzeit-reads-answer-path` | `FUNC-se-laufzeit` | `MOD-agent-surface` |
 | `REQ-loop-convergence-monitor` | `TEST-loop-convergence-monitor` | — | — |
@@ -263,7 +264,7 @@
 | `REQ-steering-promise-one-owner` | `TEST-steering-promise-one-owner` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 146 REQ
+### Entwurf (SWE.3 · HWE.2) — 147 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -329,6 +330,7 @@
 | `REQ-import-se-ontology` | `TEST-dashboard-ontology-sync` · `TEST-graph-authoring-guide` | `MOD-kernel` | — |
 | `REQ-install-idempotent` | `TEST-cli-scaffold` · `TEST-upgrade` | `MOD-surface` | — |
 | `REQ-interface-schema` | `TEST-readiness-completeness` | `MOD-projections` | — |
+| `REQ-irr-fremde-quellen` | `TEST-skill-irr-fremde-quellen` | `FUNC-se-irr` | `MOD-agent-surface` |
 | `REQ-lane-red-without-report` | `TEST-test-schlupf` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-lane-reports-change` | `TEST-lane-reports-change` | `FUNC-plan-code-lane` · `FUNC-verify-lane-code` | `MOD-dev-scripts` · `MOD-projections` |
 | `REQ-laufzeit-reads-answer-path` | `TEST-laufzeit-reads-answer-path` | `FUNC-se-laufzeit` | `MOD-agent-surface` |

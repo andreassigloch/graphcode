@@ -1386,6 +1386,7 @@
 | `CR-GC-890` | relation | `REQ-docs-taxonomy` |
 | `CR-GC-891` | relation | `REQ-docs-taxonomy` |
 | `CR-GC-894` | relation | `FUNC-se-irr` |
+| `CR-GC-894` | relation | `REQ-irr-fremde-quellen` |
 | `CR-GC-895` | relation | `FUNC-se-conops` |
 | `CR-GC-895` | relation | `FUNC-se-plan` |
 | `CR-GC-896` | relation | `FUNC-se-plan` |
@@ -2809,6 +2810,7 @@
 | `FUNC-se-help` | satisfy | `REQ-skill-reads-only` |
 | `FUNC-se-irr` | allocate | `MOD-agent-surface` |
 | `FUNC-se-irr` | io | `FLOW-anleitung-se-irr` |
+| `FUNC-se-irr` | satisfy | `REQ-irr-fremde-quellen` |
 | `FUNC-se-irr` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-laufzeit` | allocate | `MOD-agent-surface` |
 | `FUNC-se-laufzeit` | io | `FLOW-anleitung-se-laufzeit` |
@@ -3375,6 +3377,7 @@
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
 | `TEST-skill-constraints` | verify | `REQ-constraints-skill-vertrag` |
 | `TEST-skill-import-code-nennt-verb` | verify | `REQ-skill-import-code-nennt-verb` |
+| `TEST-skill-irr-fremde-quellen` | verify | `REQ-irr-fremde-quellen` |
 | `TEST-skill-kinds-werte` | verify | `REQ-published-counts-match-code` |
 | `TEST-skill-moves-are-legal` | verify | `REQ-risk-skill-instructs-rejected-move` |
 | `TEST-skill-red-first` | verify | `REQ-test-skill-red-first` |
@@ -3459,6 +3462,7 @@
 | `UC-code-quality` | compose | `REQ-gate-judges-and-stores` |
 | `UC-code-quality` | compose | `REQ-interactive-capture-suggest` |
 | `UC-code-quality` | compose | `REQ-interface-change-escalation` |
+| `UC-code-quality` | compose | `REQ-irr-fremde-quellen` |
 | `UC-code-quality` | compose | `REQ-laufzeit-reads-answer-path` |
 | `UC-code-quality` | compose | `REQ-mcp-gate-symmetry` |
 | `UC-code-quality` | compose | `REQ-modulebene-reads-and-separates` |

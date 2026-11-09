@@ -8209,6 +8209,15 @@
       ]
     },
     {
+      "id": "REQ-irr-fremde-quellen",
+      "type": "REQ",
+      "name": "Fremde Quellen mit Zaehlabfrage belegen",
+      "description": "se-irr belegt jede Annahme ueber eine fremde Quelle mit einer Abfrage, die nur Zahlen liefert (Anzahl je Status, verschiedene Zustaendige, Felder mit Wert, Antwortcode je Endpunkt); ohne Zugang bleibt die Annahme offen und der Zugang geht an se-conops. (CR-GC-894)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-lane-red-without-report",
       "type": "REQ",
       "name": "Spur ohne Bericht ist rot",
@@ -12251,6 +12260,20 @@
           "level": "conformance",
           "result": "passed",
           "ranAt": "2026-11-09T13:38:16.753Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-irr-fremde-quellen",
+      "type": "TEST",
+      "name": "se-irr fremde Quellen",
+      "description": "Liest se-irr.md und prueft im Schritt Foreign sources die vier Zaehlgroessen, das Verbot von Inhalten, den Weg ohne Zugang und die Uebergabe an die Liste in §2.",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/skill-irr-fremde-quellen.test.ts",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -20122,6 +20145,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-894",
+      "target": "REQ-irr-fremde-quellen",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-895",
       "target": "FUNC-se-conops",
       "type": "relation"
@@ -27344,6 +27372,11 @@
     },
     {
       "source": "FUNC-se-irr",
+      "target": "REQ-irr-fremde-quellen",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-irr",
       "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
     },
@@ -30349,6 +30382,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-skill-irr-fremde-quellen",
+      "target": "REQ-irr-fremde-quellen",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skill-kinds-werte",
       "target": "REQ-published-counts-match-code",
       "type": "verify"
@@ -30783,6 +30821,11 @@
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-irr-fremde-quellen",
+      "type": "compose"
     },
     {
       "source": "UC-code-quality",
@@ -31487,5 +31530,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1012
+  "graphVersion": 1013
 }
