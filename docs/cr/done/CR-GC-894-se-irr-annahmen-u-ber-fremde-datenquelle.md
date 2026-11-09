@@ -1,6 +1,6 @@
 # CR-GC-894: se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-09)
 **Typ:** aus Item ITEM-2026-1270 (finding)
 **Erstellt:** 2026-11-09
 **Item:** bok/items/ITEM-2026-1270.json (Lane: code)

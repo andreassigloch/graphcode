@@ -3878,7 +3878,9 @@
       "id": "CR-GC-894",
       "type": "CR",
       "name": "se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen",
-      "description": "docs/cr/open/CR-GC-894-se-irr-annahmen-u-ber-fremde-datenquelle.md"
+      "description": "docs/cr/done/CR-GC-894-se-irr-annahmen-u-ber-fremde-datenquelle.md",
+      "status": "done",
+      "commitRef": "4a248887,0160f27a,3a86cbc3"
     },
     {
       "id": "CR-GC-895",
@@ -31532,5 +31534,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1014
+  "graphVersion": 1015
 }
