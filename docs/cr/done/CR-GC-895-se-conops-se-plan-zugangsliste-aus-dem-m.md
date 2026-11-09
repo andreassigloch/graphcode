@@ -1,6 +1,6 @@
 # CR-GC-895: se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-09)
 **Typ:** aus Item ITEM-2026-1271 (finding)
 **Erstellt:** 2026-11-09
 **Item:** bok/items/ITEM-2026-1271.json (Lane: code)

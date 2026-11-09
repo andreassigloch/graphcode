@@ -3886,7 +3886,9 @@
       "id": "CR-GC-895",
       "type": "CR",
       "name": "se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau",
-      "description": "docs/cr/open/CR-GC-895-se-conops-se-plan-zugangsliste-aus-dem-m.md"
+      "description": "docs/cr/done/CR-GC-895-se-conops-se-plan-zugangsliste-aus-dem-m.md",
+      "status": "done",
+      "commitRef": "5f0091c1,969f23c2"
     },
     {
       "id": "CR-GC-896",
@@ -31584,5 +31586,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1017
+  "graphVersion": 1018
 }
