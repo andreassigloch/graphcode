@@ -3894,7 +3894,9 @@
       "id": "CR-GC-896",
       "type": "CR",
       "name": "se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten",
-      "description": "docs/cr/open/CR-GC-896-se-plan-gruppen-unabha-ngiger-crs-berech.md"
+      "description": "docs/cr/done/CR-GC-896-se-plan-gruppen-unabha-ngiger-crs-berech.md",
+      "status": "done",
+      "commitRef": "318c5943,3bbe02ac,1de24dc9"
     },
     {
       "id": "CR-GC-897",
@@ -31728,5 +31730,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1023
+  "graphVersion": 1024
 }

@@ -1,6 +1,6 @@
 # CR-GC-896: se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-09)
 **Typ:** aus Item ITEM-2026-1272 (finding)
 **Erstellt:** 2026-11-09
 **Item:** bok/items/ITEM-2026-1272.json (Lane: code)

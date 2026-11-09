@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 503 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 503 CR · 346 done · 4 open.
+Total: 503 CR · 347 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -560,7 +560,7 @@ Total: 503 CR · 346 done · 4 open.
 | `CR-GC-893` | n/a | testconcept: Elternfunktionen, Validierung am UC, Zeile ohne Lage |
 | `CR-GC-894` | done | se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen |
 | `CR-GC-895` | done | se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau |
-| `CR-GC-896` | n/a | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten |
+| `CR-GC-896` | done | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten |
 | `CR-GC-897` | n/a | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell |
 | `CR-GC-898` | n/a | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe |
 | `CR-GC-899` | n/a | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen |
