@@ -42,3 +42,4 @@ Einordnung: Der größere Hebel ist die Kontextgröße (siehe CR zum Sitzungsbeg
   einen Aufruf (76 %), Kontext 350 M; 91 Folgen aus 3+ gleichen Einzelaufrufen, 422 Zuege, 92 M Kontext.
   Der Befund nannte rund 150 Zuege in solchen Folgen; die Zaehlung hier ist weiter, weil sie jede Folge
   gleicher Werkzeuge zaehlt (auch Read, Edit), nicht nur Befehle wie python3, grep, ssh.
+- `verify:full CR-GC-898`: 1732/1732 gruen (211 Dateien), Schlupf 0.
