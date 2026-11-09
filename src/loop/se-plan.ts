@@ -17,6 +17,7 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod/v4';
 import type { Graph, GraphEdge } from '@sigloch/graph-api-core';
 
 /**
@@ -190,10 +191,11 @@ export function deriveImplPlan(graph: Pick<Graph, 'nodes' | 'edges'>): ImplPlanR
 }
 
 /** Ergebnis von `crGroups` (CR-GC-896): Gruppen in Reihenfolge, und die CRs, die ein Zyklus sperrt. */
-export interface CrGroups {
-  groups: string[][];
-  cyclic: string[];
-}
+export const CrGroupsSchema = z.object({
+  groups: z.array(z.array(z.string()).min(1)),
+  cyclic: z.array(z.string()),
+});
+export type CrGroups = z.infer<typeof CrGroupsSchema>;
 
 /**
  * CR-GC-896 — welche offenen CRs eines Meilensteins gleichzeitig laufen duerfen.
@@ -276,5 +278,6 @@ export function crGroups(
     for (const f of files.get(id)!) groupFiles[g]!.add(f);
     groupOf.set(id, g);
   }
-  return { groups: groups.filter((g) => g.length > 0), cyclic };
+  // Der Erzeuger prueft seinen Vertrag selbst (keine leere Gruppe).
+  return CrGroupsSchema.parse({ groups: groups.filter((g) => g.length > 0), cyclic });
 }

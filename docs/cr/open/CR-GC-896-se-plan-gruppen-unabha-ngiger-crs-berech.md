@@ -28,7 +28,7 @@ Root Cause: se-plan §7 erzeugt je CR schon den Auftrag (graph_context-Ausschnit
 
 - `FUNC-cr-groups` (neu, `src/loop/se-plan.ts` `crGroups`) — allocate `MOD-loop`, compose in
   `FCHAIN-doc-export`, io mit `FUNC-export-markdown` ueber `FLOW-cr-groups-request` / `FLOW-cr-groups`
-  (SCHEMA `SCHEMA-cr-groups` = `CrGroups`).
+  (SCHEMA `SCHEMA-cr-groups` = Zod `CrGroupsSchema`).
 - `FUNC-se-plan` (`.claude/commands/se-plan.md`), `FUNC-export-markdown` (implplan-Ansicht).
 - `REQ-plan-gruppen` (neu, unter `UC-code-quality`), verify durch `TEST-se-plan-groups`
   (`tests/se-plan.groups.test.ts`), der auch `SCHEMA-cr-groups` prueft.
@@ -48,3 +48,7 @@ Root Cause: se-plan §7 erzeugt je CR schon den Auftrag (graph_context-Ausschnit
   MS-INF-2 mit 19 offenen CRs → 6 Gruppen (die erste mit 12 CRs); MS-INF-3 (12), -4 (8), -5 (7),
   -6 (3), -7 (5) je eine Gruppe; kein Zyklus. Grenze: Dateien kennt die Rechnung nur ueber `realRef`;
   ein CR, dessen Traeger noch keine `realRef` haben, teilt mit niemandem eine Datei.
+- Erster Volllauf rot 2, beide aus diesem CR: RC-08 (SCHEMA an einen TS-Typ gebunden) → `CrGroupsSchema`
+  als Zod-Vertrag, den `crGroups` an seiner Rueckgabe parst; `arch.optimization-dry-run.spike` (Messung
+  am Repo-Graphen) → neu gemessen und mit Kommentar eingetragen: drei Zuege statt vier, Engpass nach der
+  Kette BW-02 @ FUNC-block-abfrage. Weiter derselbe Befund ITEM-2026-798.

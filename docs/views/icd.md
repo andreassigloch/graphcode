@@ -18,7 +18,7 @@
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMark | reviewed |
-| `SCHEMA-cr-groups` | src/loop/se-plan.ts#CrGroups | n/a |
+| `SCHEMA-cr-groups` | src/loop/se-plan.ts#CrGroupsSchema | n/a |
 | `SCHEMA-eingangs-befund` | src/kernel/measure/constraints.ts#EingangsBefund | n/a |
 | `SCHEMA-export-answer` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |

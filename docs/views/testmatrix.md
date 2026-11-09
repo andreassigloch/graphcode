@@ -58,7 +58,7 @@
 | `REQ-gate-only-writes` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-graph-realize` · `TEST-path-containment` · `TEST-single-write-door` |
 | `REQ-gate-survives-rule-failure` | ✓ | ⚠ nie gelaufen | `TEST-gate-survives-rule-failure` |
 | `REQ-graceful-degradation` | ✓ | ✓ passed | `TEST-gve-supervision` · `TEST-reduced-llm` |
-| `REQ-graph-code-conformance` | ✓ | ✓ passed | `TEST-code-conformance` |
+| `REQ-graph-code-conformance` | ✓ | ✗ failed | `TEST-code-conformance` |
 | `REQ-graph-context-replaces-reading` | ✓ | ✓ passed | `TEST-graph-context-replaces-reading` |
 | `REQ-graph-integrity` | ✓ | ✓ passed | `TEST-codec-validation` · `TEST-graph-integrity` · `TEST-import-sys-anchor` · `TEST-merge-no-duplicate-edge` |
 | `REQ-graph-is-ssot` | ✓ | ✓ passed | `TEST-deny-stale-read` · `TEST-graph-is-ssot` · `TEST-path-containment` |
@@ -109,7 +109,7 @@
 | `REQ-open-point-asked` | ✓ | ✓ passed | `TEST-deny-headless-question` |
 | `REQ-optimize-probes-and-presents` | ✓ | ✓ passed | `TEST-optimize-presents-impact` |
 | `REQ-phase-gate-not-skippable` | ✓ | ✓ passed | `TEST-phase-gate-not-skippable` |
-| `REQ-plan-gruppen` | ✓ | ⚠ nie gelaufen | `TEST-se-plan-groups` |
+| `REQ-plan-gruppen` | ✓ | ✓ passed | `TEST-se-plan-groups` |
 | `REQ-post-agent-query` | ✓ | ✓ passed | `TEST-impact-subgraph` |
 | `REQ-post-apply-gate` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-post-capture` | ✓ | ⚠ nie gelaufen | `TEST-capture` |
