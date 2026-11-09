@@ -3875,6 +3875,36 @@
       "description": "docs/cr/open/CR-GC-893-testconcept-elternfunktionen-validierung.md"
     },
     {
+      "id": "CR-GC-894",
+      "type": "CR",
+      "name": "se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen",
+      "description": "docs/cr/open/CR-GC-894-se-irr-annahmen-u-ber-fremde-datenquelle.md"
+    },
+    {
+      "id": "CR-GC-895",
+      "type": "CR",
+      "name": "se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau",
+      "description": "docs/cr/open/CR-GC-895-se-conops-se-plan-zugangsliste-aus-dem-m.md"
+    },
+    {
+      "id": "CR-GC-896",
+      "type": "CR",
+      "name": "se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten",
+      "description": "docs/cr/open/CR-GC-896-se-plan-gruppen-unabha-ngiger-crs-berech.md"
+    },
+    {
+      "id": "CR-GC-897",
+      "type": "CR",
+      "name": "Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell",
+      "description": "docs/cr/open/CR-GC-897-sitzungsbeginn-einstieg-u-ber-cr-und-gra.md"
+    },
+    {
+      "id": "CR-GC-898",
+      "type": "CR",
+      "name": "Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe",
+      "description": "docs/cr/open/CR-GC-898-zu-ge-sparen-aufrufe-bu-ndeln-skript-sta.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20040,6 +20070,36 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-894",
+      "target": "FUNC-se-irr",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-895",
+      "target": "FUNC-se-conops",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-895",
+      "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-896",
+      "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-897",
+      "target": "FUNC-se-retro",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-898",
+      "target": "FUNC-se-retro",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -31315,5 +31375,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1005
+  "graphVersion": 1006
 }

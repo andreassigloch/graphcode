@@ -587,6 +587,11 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-889` | n/a | README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg | `REQ-docs-taxonomy` |
 | `CR-GC-890` | n/a | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch | `REQ-docs-taxonomy` |
 | `CR-GC-891` | n/a | Private Beispielgraphen und ihre Testfaelle nach graphanalyze (Folge von CR-GC-888) | `REQ-docs-taxonomy` |
+| `CR-GC-894` | n/a | se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen | `FUNC-se-irr` |
+| `CR-GC-895` | n/a | se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau | `FUNC-se-conops` · `FUNC-se-plan` |
+| `CR-GC-896` | n/a | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten | `FUNC-se-plan` |
+| `CR-GC-897` | n/a | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell | `FUNC-se-retro` |
+| `CR-GC-898` | n/a | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe | `FUNC-se-retro` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

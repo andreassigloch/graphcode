@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 496 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 501 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 496 CR · 344 done · 4 open.
+Total: 501 CR · 344 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -558,3 +558,8 @@ Total: 496 CR · 344 done · 4 open.
 | `CR-GC-891` | n/a | Private Beispielgraphen und ihre Testfaelle nach graphanalyze (Folge von CR-GC-888) |
 | `CR-GC-892` | n/a | se-plan: Integrationsbaum aus dem Modell, Testkonzept vollständig vor dem Schnitt |
 | `CR-GC-893` | n/a | testconcept: Elternfunktionen, Validierung am UC, Zeile ohne Lage |
+| `CR-GC-894` | n/a | se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen |
+| `CR-GC-895` | n/a | se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau |
+| `CR-GC-896` | n/a | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten |
+| `CR-GC-897` | n/a | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell |
+| `CR-GC-898` | n/a | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe |

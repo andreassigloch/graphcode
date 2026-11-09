@@ -1385,6 +1385,12 @@
 | `CR-GC-889` | relation | `REQ-docs-taxonomy` |
 | `CR-GC-890` | relation | `REQ-docs-taxonomy` |
 | `CR-GC-891` | relation | `REQ-docs-taxonomy` |
+| `CR-GC-894` | relation | `FUNC-se-irr` |
+| `CR-GC-895` | relation | `FUNC-se-conops` |
+| `CR-GC-895` | relation | `FUNC-se-plan` |
+| `CR-GC-896` | relation | `FUNC-se-plan` |
+| `CR-GC-897` | relation | `FUNC-se-retro` |
+| `CR-GC-898` | relation | `FUNC-se-retro` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
