@@ -23,12 +23,24 @@ Root Cause: se-conops lief am 2026-10-26..28, vor VPS, Domain und Paket-Register
 
 ---
 
-## Umfang laut `graph_impact`
+## Umfang laut Modell
 
-**KEIN SCHNITT aus dem Modell:** kein Host in /Users/andreas/Developer/dev/graphcode (keine host.sock).
+- `FUNC-se-conops` (`.claude/commands/se-conops.md`), `FUNC-se-plan` (`.claude/commands/se-plan.md`) —
+  satisfy `REQ-zugangsliste-vor-bau` (neu, unter `UC-code-quality`).
+- `TEST-skill-zugangsliste` (neu, `tests/skill-zugangsliste.test.ts`) — verify `REQ-zugangsliste-vor-bau`.
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+## Ergebnis
 
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+- se-conops Version 6: §1 „Access list" — eine Zeile je Zugang aus vier Quellen im Modell: io-FLOW zu
+  ACTOR oder fremdem System, Dienst mit Domain, privates Paket-Register, Ziel einer Auslieferung (Host,
+  Konto). Spalten: Zugang, wer ihn anlegt, Ablageort, Pruefaufruf. Eine Zeile, die das Modell nicht
+  fuellt, ist eine Luecke in §5.
+- se-plan Version 8: §4 Stufe 0 ist Pflicht bei einer Zeile mit *human*, mit CR „Provide access" und
+  Pruefskript; Stufe 1 erst bei ganz gruenem Skript; ein spaeter Zugang erst in die Liste.
+- Test: 3 Faelle; gegen die alten Skill-Texte alle 3 rot.
+- Gegenprobe an den 8 Unterbrechungen: SSH-Schluessel und Passwort → Ziel einer Auslieferung; DNS →
+  Dienst mit Domain; gh auth write:packages → privates Paket-Register; Leseschluessel /contacts,
+  Schreibschluessel PropStack, Schluessel fuer claude -p → io-FLOW zu fremdem System; Token fuer das
+  Konto → Ziel einer Auslieferung (Konto). Die Sammelliste offener Terminal-Befehle (11-09) ist kein
+  eigener Zugang, sondern die Folge der sieben anderen. Die vierte Quelle (Ziel einer Auslieferung)
+  kam durch diese Gegenprobe dazu; ohne sie fehlten SSH und Konto.

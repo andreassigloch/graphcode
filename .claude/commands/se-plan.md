@@ -1,6 +1,6 @@
 ---
 name: se-plan
-version: 7
+version: 8
 description: Generate the implementation/integration plan — order the build along the model's integration tree (leaves up), make the test concept complete BEFORE cutting, cut CRs (≤5 files) whose content is the graph_context slice, enforce an io-integration test per CR, and write MS/CR/relation through the gate
 ---
 
@@ -38,7 +38,7 @@ Gate facts: `TEST -verify-> UC` is illegal (R-18) — verify the per-UC REQ. The
 ## 4. Derive the order — the integration tree, leaves up
 One milestone per integration level, a linear `depends-on` chain (`MS-n -relation-> MS-n-1 [label:depends-on]`):
 
-0. **Environment** — only if §2 decided it: SYS REQ every test needs (network, hardening, deploy/rollback). Nothing that has children in the tree.
+0. **Environment** — mandatory as soon as the access list of `se-conops` has a line created by a *human*; otherwise only if §2 decided it. SYS REQ every test needs (network, hardening, deploy/rollback). Nothing that has children in the tree. It carries one CR **Provide access**: the user works the access list in one block, and a script calls the check call of every line (e.g. HTTP 200, a successful login) and reports green or red per line. **Stage 1 starts only when that script is all green.** An access found later is first written into the list, then obtained — never asked for ad hoc in the middle of a build.
 1. **Contracts** — the SCHEMA (shared by several FUNC, so below all of them), grouped ≤5 files.
 2. **Leaf functions** — one CR per leaf FUNC (split by REQ if >5 files). Strip MOD and SYS REQ from these CRs.
 3. **Chains** — one CR per FCHAIN (single-member chains may share one).

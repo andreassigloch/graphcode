@@ -9487,6 +9487,15 @@
       ]
     },
     {
+      "id": "REQ-zugangsliste-vor-bau",
+      "type": "REQ",
+      "name": "Zugangsliste vor dem Bau",
+      "description": "se-conops leitet aus dem Modell die Zugangsliste ab (Zugang, wer ihn anlegt, Ablageort, Pruefaufruf); se-plan macht jede Zeile mit Mensch zur Pflicht-Stufe 0 mit Pruefskript, und Stufe 1 beginnt erst, wenn das Skript ganz gruen ist. (CR-GC-895)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "SCHEMA-action",
       "type": "SCHEMA",
       "name": "Handlung (Vertrag der vier Entscheidungen)",
@@ -12347,6 +12356,20 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-11-09T14:32:42.235Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-zugangsliste",
+      "type": "TEST",
+      "name": "Zugangsliste und Stufe 0",
+      "description": "Liest se-conops.md und se-plan.md: Spalten und Quellen der Zugangsliste, Pflicht-Stufe 0 mit CR Provide access und Pruefskript, Sperre fuer Stufe 1.",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/skill-zugangsliste.test.ts",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -20164,6 +20187,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-895",
+      "target": "REQ-zugangsliste-vor-bau",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-896",
       "target": "FUNC-se-plan",
       "type": "relation"
@@ -27285,6 +27313,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-se-conops",
+      "target": "REQ-zugangsliste-vor-bau",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-constraints",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -27457,6 +27490,11 @@
     {
       "source": "FUNC-se-plan",
       "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-plan",
+      "target": "REQ-zugangsliste-vor-bau",
       "type": "satisfy"
     },
     {
@@ -30416,6 +30454,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-skill-zugangsliste",
+      "target": "REQ-zugangsliste-vor-bau",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skills-mcp",
       "target": "REQ-agent-loop-executes-skill",
       "type": "verify"
@@ -30943,6 +30986,11 @@
     {
       "source": "UC-code-quality",
       "target": "REQ-zug-zeigt-kennzahlen-danach",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-zugangsliste-vor-bau",
       "type": "compose"
     },
     {
@@ -31534,5 +31582,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1015
+  "graphVersion": 1016
 }

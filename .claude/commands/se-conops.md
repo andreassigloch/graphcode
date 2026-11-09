@@ -1,6 +1,6 @@
 ---
 name: se-conops
-version: 5
+version: 6
 description: Concept of Operations (CREATE) — surface operational concerns (config/creds/user-mgmt/deploy) BEFORE use cases and write them as system-scoped non-functional REQ through the gate
 ---
 
@@ -8,6 +8,14 @@ description: Concept of Operations (CREATE) — surface operational concerns (co
 
 ## 1. Enumerate the operational concerns
 Walk the standing checklist against the system: **config** (what is environment-specific), **value classes** (which values are runtime parameters, which start configuration, which invariants — and where each kind is kept and managed: the settings store with its history, the configuration file, the code), **creds/secrets** (what must never be in source), **user-mgmt** (who authenticates, what roles), **deploy** (how it ships + rolls back), **observability** (health, logs, metrics), **data lifecycle** (backup, retention, migration). For each, state whether the model already answers it.
+
+**Access list (from the model, for creds/secrets).** Derive one line per access the build and the run need — every `io` FLOW to an `ACTOR` or a foreign system, every service with a domain, every private package registry, every deploy target (host, account):
+
+| Access | Created by (human / agent) | Stored where | Check call |
+|---|---|---|---|
+| e.g. read key of the source API | human | secret store of the host | `GET /contacts` → 200 |
+
+A line the model cannot fill is a gap of §5. `se-plan` turns every line with *human* into stage 0 (§4 there). Measured failure this list exists for (immo-infra, 2026-11-02..09): the build stopped 8 times for an access only the user could create — SSH key, DNS entry, registry token, two API keys, an agent key, an account token, a closing list of terminal commands.
 
 ## 2. Check what the graph already says
 - `graph_elements` `{ "type": "ACTOR" }` and `{ "type": "SYS" }` — the operators and the system boundary the concerns attach to.

@@ -1389,6 +1389,7 @@
 | `CR-GC-894` | relation | `REQ-irr-fremde-quellen` |
 | `CR-GC-895` | relation | `FUNC-se-conops` |
 | `CR-GC-895` | relation | `FUNC-se-plan` |
+| `CR-GC-895` | relation | `REQ-zugangsliste-vor-bau` |
 | `CR-GC-896` | relation | `FUNC-se-plan` |
 | `CR-GC-897` | relation | `FUNC-se-retro` |
 | `CR-GC-898` | relation | `FUNC-se-retro` |
@@ -2792,6 +2793,7 @@
 | `FUNC-se-conops` | allocate | `MOD-agent-surface` |
 | `FUNC-se-conops` | io | `FLOW-anleitung-se-conops` |
 | `FUNC-se-conops` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-se-conops` | satisfy | `REQ-zugangsliste-vor-bau` |
 | `FUNC-se-constraints` | allocate | `MOD-agent-surface` |
 | `FUNC-se-constraints` | io | `FLOW-anleitung-se-constraints` |
 | `FUNC-se-constraints` | satisfy | `REQ-constraints-skill-vertrag` |
@@ -2827,6 +2829,7 @@
 | `FUNC-se-plan` | io | `FLOW-anleitung-se-plan` |
 | `FUNC-se-plan` | satisfy | `REQ-analyse-artefakt-vor-stempel` |
 | `FUNC-se-plan` | satisfy | `REQ-skill-authors-through-gate` |
+| `FUNC-se-plan` | satisfy | `REQ-zugangsliste-vor-bau` |
 | `FUNC-se-retro` | allocate | `MOD-agent-surface` |
 | `FUNC-se-retro` | io | `FLOW-anleitung-se-retro` |
 | `FUNC-se-retro` | satisfy | `REQ-skill-reads-only` |
@@ -3383,6 +3386,7 @@
 | `TEST-skill-red-first` | verify | `REQ-test-skill-red-first` |
 | `TEST-skill-reports-measured-values` | verify | `REQ-skill-reads-only` |
 | `TEST-skill-rule-ids` | verify | `REQ-published-counts-match-code` |
+| `TEST-skill-zugangsliste` | verify | `REQ-zugangsliste-vor-bau` |
 | `TEST-skills-mcp` | verify | `REQ-agent-loop-executes-skill` |
 | `TEST-stage-names-enumerated` | verify | `REQ-risk-stage-name-free-text` |
 | `TEST-stage-names-enumerated` | verify | `REQ-stage-names-enumerated` |
@@ -3485,6 +3489,7 @@
 | `UC-code-quality` | compose | `REQ-vorbereitung-constraints` |
 | `UC-code-quality` | compose | `REQ-vorbereitung-reads-metrics` |
 | `UC-code-quality` | compose | `REQ-zug-zeigt-kennzahlen-danach` |
+| `UC-code-quality` | compose | `REQ-zugangsliste-vor-bau` |
 | `UC-deterministic-steering` | compose | `FCHAIN-generation-states` |
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-help` |
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-report` |
