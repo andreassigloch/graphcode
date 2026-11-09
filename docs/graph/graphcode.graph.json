@@ -4601,6 +4601,20 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-cr-groups",
+      "type": "FLOW",
+      "name": "CR-Gruppen",
+      "description": "Die Gruppen in Reihenfolge und die CRs im Zyklus, zurueck an renderImplPlan.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-cr-groups-request",
+      "type": "FLOW",
+      "name": "CR-Gruppen anfragen",
+      "description": "Graph und die offenen CRs eines Meilensteins, die renderImplPlan an crGroups gibt.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-dashboard-answer",
       "type": "FLOW",
       "name": "Werkzeugantwort (an das Dashboard)",
@@ -6289,6 +6303,18 @@
       "realRef": {
         "file": "src/kernel/measure/steering-snapshot.ts",
         "symbol": "computeSteeringDelta",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-cr-groups",
+      "type": "FUNC",
+      "name": "crGroups(graph, crIds)",
+      "description": "Rechnet die Gruppen offener CRs eines Meilensteins: Abhaengigkeit legt die fruehste Gruppe fest, gemeinsame realRef-Datei trennt; CRs in einem Zyklus werden gemeldet, nicht eingeordnet. (CR-GC-896)",
+      "status": "done",
+      "realRef": {
+        "file": "src/loop/se-plan.ts",
+        "symbol": "crGroups",
         "lang": "ts"
       }
     },
@@ -8478,6 +8504,15 @@
       ]
     },
     {
+      "id": "REQ-plan-gruppen",
+      "type": "REQ",
+      "name": "Gruppen unabhaengiger CRs",
+      "description": "se-plan nennt je Meilenstein die Gruppen offener CRs, die gleichzeitig laufen duerfen (kein depends-on-Pfad, keine gemeinsame realRef-Datei), die implplan-Ansicht zeigt sie, und die Hauptsitzung startet je CR einer Gruppe einen Agenten im eigenen Worktree; nur sie schreibt in den Graph und rollt aus. (CR-GC-896)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-post-agent-query",
       "type": "REQ",
       "name": "Blast-Radius und Vertiefung",
@@ -9587,6 +9622,17 @@
       "realRef": {
         "file": "packages/graphcode-client/src/readiness.ts",
         "symbol": "ReadinessMark",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-cr-groups",
+      "type": "SCHEMA",
+      "name": "CrGroups",
+      "description": "Aufrufvertrag von crGroups: hinein Graph und die offenen CRs eines Meilensteins, heraus die Gruppen in Reihenfolge und die CRs im Zyklus. Bindung statt Kopie.",
+      "realRef": {
+        "file": "src/loop/se-plan.ts",
+        "symbol": "CrGroups",
         "lang": "ts"
       }
     },
@@ -12135,6 +12181,20 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-11-09T14:41:10.491Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-se-plan-groups",
+      "type": "TEST",
+      "name": "se-plan Gruppen",
+      "description": "Gruppenbildung am Beispielplan (Datei, Abhaengigkeit, Zyklus), Spalte Gruppe in implplan, Ausfuehrungsanweisung in se-plan.md.",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/se-plan.groups.test.ts",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -20197,7 +20257,22 @@
     },
     {
       "source": "CR-GC-896",
+      "target": "FUNC-cr-groups",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-896",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-896",
       "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-896",
+      "target": "REQ-plan-gruppen",
       "type": "relation"
     },
     {
@@ -20514,6 +20589,11 @@
     {
       "source": "FCHAIN-doc-export",
       "target": "FUNC-agent-loop",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-doc-export",
+      "target": "FUNC-cr-groups",
       "type": "compose"
     },
     {
@@ -22648,6 +22728,26 @@
     {
       "source": "FLOW-context-request",
       "target": "SCHEMA-harness-handle",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-cr-groups",
+      "target": "FUNC-export-markdown",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cr-groups",
+      "target": "SCHEMA-cr-groups",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-cr-groups-request",
+      "target": "FUNC-cr-groups",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cr-groups-request",
+      "target": "SCHEMA-cr-groups",
       "type": "relation"
     },
     {
@@ -25869,6 +25969,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-cr-groups",
+      "target": "MOD-loop",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-cr-groups",
+      "target": "FLOW-cr-groups",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-cr-groups",
+      "target": "REQ-plan-gruppen",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-create-harness",
       "target": "MOD-surface",
       "type": "allocate"
@@ -26043,6 +26158,11 @@
       "source": "FUNC-export-markdown",
       "target": "MOD-projections",
       "type": "allocate"
+    },
+    {
+      "source": "FUNC-export-markdown",
+      "target": "FLOW-cr-groups-request",
+      "type": "io"
     },
     {
       "source": "FUNC-export-markdown",
@@ -27489,6 +27609,11 @@
     {
       "source": "FUNC-se-plan",
       "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-se-plan",
+      "target": "REQ-plan-gruppen",
       "type": "satisfy"
     },
     {
@@ -30326,6 +30451,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-se-plan-groups",
+      "target": "REQ-plan-gruppen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-se-plan-groups",
+      "target": "SCHEMA-cr-groups",
+      "type": "verify"
+    },
+    {
       "source": "TEST-se-plan-ordering",
       "target": "REQ-structure-driven",
       "type": "verify"
@@ -30901,6 +31036,11 @@
     {
       "source": "UC-code-quality",
       "target": "REQ-optimize-probes-and-presents",
+      "type": "compose"
+    },
+    {
+      "source": "UC-code-quality",
+      "target": "REQ-plan-gruppen",
       "type": "compose"
     },
     {
@@ -31586,5 +31726,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1018
+  "graphVersion": 1020
 }

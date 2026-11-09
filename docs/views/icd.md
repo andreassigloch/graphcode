@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 59 SCHEMA · 235 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 60 SCHEMA · 237 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -18,6 +18,7 @@
 | `SCHEMA-cli-command` | src/surface/scaffold.ts#CliCommandSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMark | reviewed |
+| `SCHEMA-cr-groups` | src/loop/se-plan.ts#CrGroups | n/a |
 | `SCHEMA-eingangs-befund` | src/kernel/measure/constraints.ts#EingangsBefund | n/a |
 | `SCHEMA-export-answer` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
@@ -136,6 +137,8 @@
 | `FLOW-config-request` | `FUNC-create-harness` | `FUNC-load-config` |
 | `FLOW-conformance-findings` | `FUNC-check-code-conformance` | `FUNC-commit-check` · `FUNC-graph-readiness` · `FUNC-rules-tool` |
 | `FLOW-context-request` | `FUNC-bind-tools` | `FUNC-tool-context` |
+| `FLOW-cr-groups` | `FUNC-cr-groups` | `FUNC-export-markdown` |
+| `FLOW-cr-groups-request` | `FUNC-export-markdown` | `FUNC-cr-groups` |
 | `FLOW-dashboard-answer` | `FUNC-host-socket` | `ACTOR-dashboard` |
 | `FLOW-dashboard-call` | `ACTOR-dashboard` | `FUNC-host-socket` |
 | `FLOW-dashboard-tool-call` | `FUNC-host-socket` | `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-readiness` |

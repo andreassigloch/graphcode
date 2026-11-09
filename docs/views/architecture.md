@@ -47,6 +47,7 @@
 | `FUNC-commit-check` | FUNC | Commit-Pruefung Fluss gegen Aufruf |
 | `FUNC-compute-readiness` | FUNC | readinessOf(evaluation) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
+| `FUNC-cr-groups` | FUNC | crGroups(graph, crIds) |
 | `FUNC-create-harness` | FUNC | createHarness |
 | `FUNC-decode` | FUNC | formatEToCommands(harness, text) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
@@ -186,6 +187,7 @@
 | `FUNC-commit-check` | `MOD-dev-scripts` |
 | `FUNC-compute-readiness` | `MOD-kernel-measure` |
 | `FUNC-compute-steering-delta` | `MOD-kernel-measure` |
+| `FUNC-cr-groups` | `MOD-loop` |
 | `FUNC-create-harness` | `MOD-surface` |
 | `FUNC-decode` | `MOD-kernel` |
 | `FUNC-deduce-tests` | `MOD-projections` |

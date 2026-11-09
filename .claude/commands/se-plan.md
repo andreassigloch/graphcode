@@ -1,6 +1,6 @@
 ---
 name: se-plan
-version: 8
+version: 9
 description: Generate the implementation/integration plan — order the build along the model's integration tree (leaves up), make the test concept complete BEFORE cutting, cut CRs (≤5 files) whose content is the graph_context slice, enforce an io-integration test per CR, and write MS/CR/relation through the gate
 ---
 
@@ -72,7 +72,7 @@ A CR carries **no hand-written scope**. Its content is the `graph_context` slice
 If assembling the context-pack surfaces a **spec gap** — an unstated REQ the FUNC needs — write the missing REQ through the gate FIRST; never let the implementer guess it.
 
 ## 8. Output — close with the computed assurance, not a sentence
-Emit the ordered sequence (milestones → their CRs), the forward dependencies and cycles, the test-concept table from §3, and the accepted gaps by name. Offer the integration tree as a picture (stages, model levels, CR per level). The deliverable is MS/CR/relation nodes IN THE GRAPH — not a prose list.
+Emit the ordered sequence (milestones → their CRs), **the groups per milestone** (`crGroups` in `src/loop/se-plan.ts`: open CRs without a `depends-on` path between them and without a shared `realRef` file — the same groups `se-view:implplan` shows in its column *Gruppe*), the forward dependencies and cycles, the test-concept table from §3, and the accepted gaps by name. Offer the integration tree as a picture (stages, model levels, CR per level). The deliverable is MS/CR/relation nodes IN THE GRAPH — not a prose list.
 
 **Mandatory closing line:** *n of m leaf REQ have a build order; the uncovered are: …* — the figure `deriveImplPlan` returns as `reqCoverage`. Count it over **open** CRs: the core also counts the `relation`s of done spec CRs, and a closed spec CR is no build order. A **non-empty `uncovered` means the plan is NOT finished**, and that stands in the output.
 
@@ -80,3 +80,9 @@ Never report completeness over the set you chose yourself. The measured failure 
 
 ## 9. No stamp — the plan is the open orders
 The plan sets **no** stamp on the SYS root. Its result is what step 6 wrote: the CRs — each with `status: "open"` — and the milestones. **AF-05** (the entry rule of this analysis: there is unbuilt work but no open order) is closed by the first open CR, and it comes back whenever something unbuilt has no open order left — after the last CR is done and a new function was added, the plan is due again. A plan with no CR in the graph has not happened: leave AF-05 open instead of writing a prose list. With an open CR the binding rules (R-19, R-20, R-26) become due; their findings are the work list of the build.
+
+## 10. Run the plan — one agent per CR of a group
+The groups are the instruction for the build. Measured failure (immo-infra, 2026-11-08): sub-agents ran once, only after the user asked; a turn cost 96 k tokens of context in a sub-agent and 203 k in the main session.
+- **The main session only coordinates.** Per group it starts one agent per CR, each in its own worktree, with the CR text as its brief. It merges the results, writes the graph alone (status, `commitRef`, `testRefs`) and rolls out to the target environment one CR after the other.
+- **Agents never write the graph and never roll out.** They implement, test and commit in their worktree.
+- Group n+1 starts when every CR of group n is merged.

@@ -24,12 +24,27 @@ Root Cause: se-plan §7 erzeugt je CR schon den Auftrag (graph_context-Ausschnit
 
 ---
 
-## Umfang laut `graph_impact`
+## Umfang laut Modell
 
-**KEIN SCHNITT aus dem Modell:** kein Host in /Users/andreas/Developer/dev/graphcode (keine host.sock).
+- `FUNC-cr-groups` (neu, `src/loop/se-plan.ts` `crGroups`) — allocate `MOD-loop`, compose in
+  `FCHAIN-doc-export`, io mit `FUNC-export-markdown` ueber `FLOW-cr-groups-request` / `FLOW-cr-groups`
+  (SCHEMA `SCHEMA-cr-groups` = `CrGroups`).
+- `FUNC-se-plan` (`.claude/commands/se-plan.md`), `FUNC-export-markdown` (implplan-Ansicht).
+- `REQ-plan-gruppen` (neu, unter `UC-code-quality`), verify durch `TEST-se-plan-groups`
+  (`tests/se-plan.groups.test.ts`), der auch `SCHEMA-cr-groups` prueft.
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+## Ergebnis
 
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+- `crGroups(graph, crIds)` → `{ groups, cyclic }`. Zwei CRs trennen sich bei einem depends-on-Pfad
+  (Voraussetzung in einer frueheren Gruppe) oder einer gemeinsamen `realRef`-Datei (eigene Relationen,
+  bei einer REQ die ihrer Traeger). CRs in oder hinter einem Zyklus stehen unter `cyclic`.
+- implplan: Spalte *Gruppe* je CR, offene CRs nummeriert, erledigte `—`, Zyklus `Zyklus`.
+- Gruppen werden gerechnet, nicht als Attribut am MS gespeichert — eine gespeicherte Kopie liefe
+  bei jeder neuen Kante auseinander.
+- se-plan Version 9: §8 gibt die Gruppen aus, §10 „Run the plan" — Hauptsitzung koordiniert, je CR
+  einer Gruppe ein Agent im eigenen Worktree, nur die Hauptsitzung schreibt den Graph und rollt aus.
+- Test: 5 Faelle; ohne den neuen Code alle 5 rot.
+- Gegenprobe am Plan von immo-infra (`/Users/andreas/Developer/prod/immo-infra`, Stand heute):
+  MS-INF-2 mit 19 offenen CRs → 6 Gruppen (die erste mit 12 CRs); MS-INF-3 (12), -4 (8), -5 (7),
+  -6 (3), -7 (5) je eine Gruppe; kein Zyklus. Grenze: Dateien kennt die Rechnung nur ueber `realRef`;
+  ein CR, dessen Traeger noch keine `realRef` haben, teilt mit niemandem eine Datei.

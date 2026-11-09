@@ -1390,7 +1390,10 @@
 | `CR-GC-895` | relation | `FUNC-se-conops` |
 | `CR-GC-895` | relation | `FUNC-se-plan` |
 | `CR-GC-895` | relation | `REQ-zugangsliste-vor-bau` |
+| `CR-GC-896` | relation | `FUNC-cr-groups` |
+| `CR-GC-896` | relation | `FUNC-export-markdown` |
 | `CR-GC-896` | relation | `FUNC-se-plan` |
+| `CR-GC-896` | relation | `REQ-plan-gruppen` |
 | `CR-GC-897` | relation | `FUNC-se-retro` |
 | `CR-GC-898` | relation | `FUNC-se-retro` |
 | `CR-GC-899` | relation | `FUNC-se-retro` |
@@ -1450,6 +1453,7 @@
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-module-metrics` |
 | `FCHAIN-dashboard-metrics` | compose | `FUNC-take-steering-snapshot` |
 | `FCHAIN-doc-export` | compose | `FUNC-agent-loop` |
+| `FCHAIN-doc-export` | compose | `FUNC-cr-groups` |
 | `FCHAIN-doc-export` | compose | `FUNC-export-markdown` |
 | `FCHAIN-doc-export` | compose | `FUNC-graph-export-snapshot` |
 | `FCHAIN-doc-export` | compose | `FUNC-graph-store` |
@@ -1874,6 +1878,10 @@
 | `FLOW-conformance-findings` | relation | `SCHEMA-rule-violation` |
 | `FLOW-context-request` | io | `FUNC-tool-context` |
 | `FLOW-context-request` | relation | `SCHEMA-harness-handle` |
+| `FLOW-cr-groups` | io | `FUNC-export-markdown` |
+| `FLOW-cr-groups` | relation | `SCHEMA-cr-groups` |
+| `FLOW-cr-groups-request` | io | `FUNC-cr-groups` |
+| `FLOW-cr-groups-request` | relation | `SCHEMA-cr-groups` |
 | `FLOW-dashboard-answer` | io | `ACTOR-dashboard` |
 | `FLOW-dashboard-answer` | relation | `SCHEMA-metrics-answer` |
 | `FLOW-dashboard-call` | io | `FUNC-host-socket` |
@@ -2514,6 +2522,9 @@
 | `FUNC-compute-steering-delta` | io | `FLOW-steering-delta` |
 | `FUNC-compute-steering-delta` | satisfy | `REQ-steering-delta-in-answer-tested` |
 | `FUNC-compute-steering-delta` | satisfy | `REQ-steering-from-metrics` |
+| `FUNC-cr-groups` | allocate | `MOD-loop` |
+| `FUNC-cr-groups` | io | `FLOW-cr-groups` |
+| `FUNC-cr-groups` | satisfy | `REQ-plan-gruppen` |
 | `FUNC-create-harness` | allocate | `MOD-surface` |
 | `FUNC-create-harness` | io | `FLOW-config-request` |
 | `FUNC-create-harness` | io | `FLOW-harness-handle` |
@@ -2546,6 +2557,7 @@
 | `FUNC-evaluate-rules` | satisfy | `REQ-near-duplicate-detection` |
 | `FUNC-evaluate-rules` | satisfy | `REQ-rule-enforcement` |
 | `FUNC-export-markdown` | allocate | `MOD-projections` |
+| `FUNC-export-markdown` | io | `FLOW-cr-groups-request` |
 | `FUNC-export-markdown` | io | `FLOW-markdown-text` |
 | `FUNC-export-markdown` | satisfy | `REQ-doc-export` |
 | `FUNC-export-markdown` | satisfy | `REQ-post-export-markdown` |
@@ -2828,6 +2840,7 @@
 | `FUNC-se-plan` | allocate | `MOD-agent-surface` |
 | `FUNC-se-plan` | io | `FLOW-anleitung-se-plan` |
 | `FUNC-se-plan` | satisfy | `REQ-analyse-artefakt-vor-stempel` |
+| `FUNC-se-plan` | satisfy | `REQ-plan-gruppen` |
 | `FUNC-se-plan` | satisfy | `REQ-skill-authors-through-gate` |
 | `FUNC-se-plan` | satisfy | `REQ-zugangsliste-vor-bau` |
 | `FUNC-se-retro` | allocate | `MOD-agent-surface` |
@@ -3360,6 +3373,8 @@
 | `TEST-schema-parse-at-interface` | verify | `SCHEMA-fit-advisory` |
 | `TEST-schema-parse-at-interface` | verify | `SCHEMA-generation-step` |
 | `TEST-schema-parse-at-interface` | verify | `SCHEMA-steering-delta` |
+| `TEST-se-plan-groups` | verify | `REQ-plan-gruppen` |
+| `TEST-se-plan-groups` | verify | `SCHEMA-cr-groups` |
 | `TEST-se-plan-ordering` | verify | `REQ-structure-driven` |
 | `TEST-selective-test-audit` | verify | `REQ-graph-tests-operational` |
 | `TEST-selective-test-audit` | verify | `REQ-impact-based-testing` |
@@ -3472,6 +3487,7 @@
 | `UC-code-quality` | compose | `REQ-modulebene-reads-and-separates` |
 | `UC-code-quality` | compose | `REQ-one-gate-per-repo` |
 | `UC-code-quality` | compose | `REQ-optimize-probes-and-presents` |
+| `UC-code-quality` | compose | `REQ-plan-gruppen` |
 | `UC-code-quality` | compose | `REQ-post-apply-gate` |
 | `UC-code-quality` | compose | `REQ-post-capture` |
 | `UC-code-quality` | compose | `REQ-post-emit-trajectory` |

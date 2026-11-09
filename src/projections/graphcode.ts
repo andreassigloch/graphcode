@@ -18,6 +18,7 @@ import { actionPriority, apMethod, chainRoles, DEFAULT_METRIC_POLICY, riskCarrie
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { generatedHeader, cell } from './exporter.js';
 import { nodesOfType, nodeIndex, adjacency, reqKinds, reqRole, status, ref, refList, topoOrderMilestones, testResult } from './helpers.js';
+import { crGroups } from '../loop/se-plan.js';
 
 // ---------------------------------------------------------------------------
 // 13. Change Log (RENDER · CR rollup by milestone + status). Specimen #13.
@@ -492,15 +493,23 @@ export function renderImplPlan(graph: Graph, name: string): string {
       lines.push('— no CR —', '');
       continue;
     }
-    lines.push('| CR | status | name |', '|---|---|---|');
+    // CR-GC-896: offene CRs derselben Gruppe duerfen gleichzeitig laufen (kein depends-on, keine
+    // gemeinsame Datei); Gruppe n+1 beginnt nach Gruppe n.
+    const open = crs.filter((c) => status(idx.get(c)!) !== 'done');
+    const gruppe = new Map<string, number | string>();
+    const { groups, cyclic } = crGroups(graph, open);
+    groups.forEach((g, i) => g.forEach((c) => gruppe.set(c, i + 1)));
+    cyclic.forEach((c) => gruppe.set(c, 'Zyklus'));
+    lines.push('| CR | status | Gruppe | name |', '|---|---|---|---|');
     for (const c of crs) {
       const cr = idx.get(c);
-      lines.push(`| ${ref(c)} | ${cr ? status(cr) || 'n/a' : '—'} | ${cr ? cell(cr.name) : '—'} |`);
+      lines.push(`| ${ref(c)} | ${cr ? status(cr) || 'n/a' : '—'} | ${gruppe.get(c) ?? '—'} | ${cr ? cell(cr.name) : '—'} |`);
     }
     lines.push('');
   }
   lines.push(
     '> RENDER — the leaf→root MS/CR cut se-plan CREATEd; the test-level mapping mirrors the pyramid (#7).',
+    '> Gruppe: offene CRs derselben Gruppe laufen gleichzeitig (kein depends-on, keine gemeinsame Datei).',
     '',
   );
   return lines.join('\n');

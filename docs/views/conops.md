@@ -139,7 +139,7 @@ Ausgeloest von: `ACTOR-auftraggeber`
 
 Empfaenger: `ACTOR-auftraggeber`
 
-- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-graph-store`
+- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-cr-groups` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-graph-store`
 - `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code-verb` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
 - `FCHAIN-skill-import-code` — Code per Skill einlesen: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
 
@@ -589,7 +589,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-891` | n/a | Private Beispielgraphen und ihre Testfaelle nach graphanalyze (Folge von CR-GC-888) | `REQ-docs-taxonomy` |
 | `CR-GC-894` | done | se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen | `FUNC-se-irr` · `REQ-irr-fremde-quellen` |
 | `CR-GC-895` | done | se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau | `FUNC-se-conops` · `FUNC-se-plan` · `REQ-zugangsliste-vor-bau` |
-| `CR-GC-896` | n/a | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten | `FUNC-se-plan` |
+| `CR-GC-896` | n/a | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten | `FUNC-cr-groups` · `FUNC-export-markdown` · `FUNC-se-plan` · `REQ-plan-gruppen` |
 | `CR-GC-897` | n/a | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell | `FUNC-se-retro` |
 | `CR-GC-898` | n/a | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe | `FUNC-se-retro` |
 | `CR-GC-899` | n/a | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen | `FUNC-se-retro` · `FUNC-select-tests` |

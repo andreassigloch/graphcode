@@ -4,7 +4,7 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 174 TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 175 TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.
 
 ```
               ╱╲
@@ -13,9 +13,9 @@
            ╱────────╲
           ╱ use cases ╲      9 UC · 9 / 9 with a verified requirement
          ╱────────────╲
-        ╱ integration  ╲     ✗ 220/309 FUNC↔FUNC connections tested  ← GAP
+        ╱ integration  ╲     ✗ 220/311 FUNC↔FUNC connections tested  ← GAP
        ╱────────────────╲
-      ╱ module · function ╲   8 MOD · 125 FUNC
+      ╱ module · function ╲   8 MOD · 126 FUNC
      ╱────────────────────╲
 ```
 
@@ -23,11 +23,11 @@
 |---|---|---|---|---|---|
 | Validation | UC (9) | validation (VAL.1) | 3 | 1 / 9 use cases played through | ⚠ 8 UC not played through |
 | System | SYS (1) | system verification (SYS.5) | 57 | 41 / 41 system requirements | ✓ |
-| Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 124 | 9 / 9 use cases | ✓ |
-| Integration | FUNC↔FUNC (309 conn) | integration verification (SYS.4 · SWE.5) | 45 | 220 / 309 connections | ✗ 89 uncovered |
-| Interface | SCHEMA (59) | integration verification (SYS.4 · SWE.5) | 25 | 36 / 59 schemas | ⚠ 23 without a test |
+| Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 125 | 9 / 9 use cases | ✓ |
+| Integration | FUNC↔FUNC (311 conn) | integration verification (SYS.4 · SWE.5) | 45 | 220 / 311 connections | ✗ 91 uncovered |
+| Interface | SCHEMA (60) | integration verification (SYS.4 · SWE.5) | 26 | 37 / 60 schemas | ⚠ 23 without a test |
 | Module | MOD (8) | component verification (SWE.5 · HWE.3) | 57 | 6 / 8 | ⚠ 2 without a verified requirement |
-| Function | FUNC (108) | unit verification (SWE.4 · HWE.3) | 116 | 108 / 108 | ✓ |
+| Function | FUNC (109) | unit verification (SWE.4 · HWE.3) | 117 | 109 / 109 | ✓ |
 | (no position) | TEST | — | 1 | verifies no REQ or SCHEMA | ⚠ 1 without a position |
 
 > GENERATED — the level of a TEST is the graph position of what it verifies (a REQ under SYS/UC/FCHAIN/MOD/FUNC, or a SCHEMA):
@@ -36,4 +36,4 @@
 > Validation = a UC composes a REQ that the SYS carries and a TEST verifies: the use case is played through on the whole system.
 > Whether the intended users accept the result is a sign-off outside the graph.
 > 17 composite FUNC without an own REQ are not counted: their children carry the REQ.
-> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (220/309 covered).
+> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (220/311 covered).

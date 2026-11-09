@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 192 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 193 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 53 REQ
@@ -65,7 +65,7 @@
 | `REQ-tool-input-parsed-once` | `TEST-werkzeug-eingang-geparst` | `FUNC-bind-tools` | `MOD-surface` |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 
-### funktional (SWE.1 · HWE.1) — 135 REQ
+### funktional (SWE.1 · HWE.1) — 136 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -136,6 +136,7 @@
 | `REQ-one-gate-per-repo` | `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-store-lock` | — | — |
 | `REQ-optimize-probes-and-presents` | `TEST-optimize-presents-impact` | `FUNC-se-optimize` | `MOD-agent-surface` |
 | `REQ-phase-gate-not-skippable` | `TEST-phase-gate-not-skippable` | `MOD-loop` | — |
+| `REQ-plan-gruppen` | `TEST-se-plan-groups` | `FUNC-cr-groups` · `FUNC-se-plan` | `MOD-agent-surface` · `MOD-loop` |
 | `REQ-post-agent-query` | `TEST-impact-subgraph` | `FUNC-read-tools` | `MOD-surface` |
 | `REQ-post-apply-gate` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-post-capture` | `TEST-capture` | `FUNC-graph-mutate-tool` | `MOD-surface` |
@@ -265,7 +266,7 @@
 | `REQ-steering-promise-one-owner` | `TEST-steering-promise-one-owner` | `FUNC-generation-step` | `MOD-loop` |
 | `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 148 REQ
+### Entwurf (SWE.3 · HWE.2) — 149 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -351,6 +352,7 @@
 | `REQ-open-point-asked` | `TEST-deny-headless-question` | `FUNC-se-generate` | `MOD-agent-surface` |
 | `REQ-optimize-probes-and-presents` | `TEST-optimize-presents-impact` | `FUNC-se-optimize` | `MOD-agent-surface` |
 | `REQ-phase-gate-not-skippable` | `TEST-phase-gate-not-skippable` | `MOD-loop` | — |
+| `REQ-plan-gruppen` | `TEST-se-plan-groups` | `FUNC-cr-groups` · `FUNC-se-plan` | `MOD-agent-surface` · `MOD-loop` |
 | `REQ-post-agent-query` | `TEST-impact-subgraph` | `FUNC-read-tools` | `MOD-surface` |
 | `REQ-post-apply-gate` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-post-capture` | `TEST-capture` | `FUNC-graph-mutate-tool` | `MOD-surface` |

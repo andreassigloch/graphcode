@@ -188,3 +188,93 @@ export function deriveImplPlan(graph: Pick<Graph, 'nodes' | 'edges'>): ImplPlanR
 
   return { order, cycles, forwardViolations, reqCoverage: computeReqCoverage(graph) };
 }
+
+/** Ergebnis von `crGroups` (CR-GC-896): Gruppen in Reihenfolge, und die CRs, die ein Zyklus sperrt. */
+export interface CrGroups {
+  groups: string[][];
+  cyclic: string[];
+}
+
+/**
+ * CR-GC-896 — welche offenen CRs eines Meilensteins gleichzeitig laufen duerfen.
+ *
+ * Gemessen in immo-infra: Subagenten liefen einmal, erst auf Nachfrage; ein Zug kostete dort 96 k
+ * Token Kontext, in der Hauptsitzung 203 k. se-plan schnitt die CRs, sagte aber nicht, welche
+ * unabhaengig sind — also arbeitete die Sitzung sie nacheinander ab.
+ *
+ * Zwei CRs duerfen nicht in dieselbe Gruppe, wenn einer vom anderen abhaengt (`depends-on`,
+ * auch ueber Zwischenglieder im selben Meilenstein) oder wenn sie eine Datei teilen. Die Dateien
+ * eines CR sind die `realRef`-Dateien dessen, worauf er eine `relation` traegt, und bei einer REQ die
+ * ihrer Traeger (`satisfy`). Ein CR ohne bekannte Datei teilt keine.
+ *
+ * Ergebnis: Gruppen in Reihenfolge. Gruppe n+1 beginnt, wenn Gruppe n fertig ist; innerhalb einer
+ * Gruppe laufen die CRs gleichzeitig. Deterministisch: Abhaengigkeit legt die fruehste Gruppe fest,
+ * dann nimmt jeder CR in uid-Reihenfolge die erste Gruppe ab dort ohne gemeinsame Datei.
+ */
+export function crGroups(
+  graph: Pick<Graph, 'nodes' | 'edges'>,
+  crIds: readonly string[],
+): CrGroups {
+  const byId = new Map(graph.nodes.map((n) => [n.uid, n]));
+  const ids = [...crIds].sort();
+  const inSet = new Set(ids);
+
+  const fileOf = (uid: string): string | undefined => {
+    const n = byId.get(uid) as { attributes?: { realRef?: { file?: string } } } | undefined;
+    return n?.attributes?.realRef?.file;
+  };
+  const carriers = new Map<string, string[]>();
+  for (const e of graph.edges) {
+    if (e.edgeType !== 'satisfy') continue;
+    carriers.set(e.targetId, [...(carriers.get(e.targetId) ?? []), e.sourceId]);
+  }
+  const files = new Map<string, Set<string>>(ids.map((id) => [id, new Set<string>()]));
+  const prereq = new Map<string, string[]>(ids.map((id) => [id, []]));
+  for (const e of graph.edges) {
+    if (!inSet.has(e.sourceId)) continue;
+    if (isDependsOn(e)) {
+      if (inSet.has(e.targetId)) prereq.get(e.sourceId)!.push(e.targetId);
+      continue;
+    }
+    if (e.edgeType !== 'relation') continue;
+    const own = files.get(e.sourceId)!;
+    for (const t of [e.targetId, ...(byId.get(e.targetId)?.type === 'REQ' ? carriers.get(e.targetId) ?? [] : [])]) {
+      const f = fileOf(t);
+      if (f) own.add(f);
+    }
+  }
+
+  // Fruehste Gruppe je CR: eins nach der spaetesten Voraussetzung. Ein CR in einem Zyklus oder hinter
+  // einem bekommt keine Gruppe und steht unter `cyclic` — er wird nicht still eingeordnet.
+  const earliest = new Map<string, number>();
+  const visiting = new Set<string>();
+  const level = (id: string): number => {
+    const known = earliest.get(id);
+    if (known !== undefined) return known;
+    if (visiting.has(id)) return Number.POSITIVE_INFINITY;
+    visiting.add(id);
+    const l = Math.max(-1, ...prereq.get(id)!.map(level)) + 1;
+    visiting.delete(id);
+    earliest.set(id, l);
+    return l;
+  };
+  for (const id of ids) level(id);
+  const cyclic = ids.filter((id) => earliest.get(id) === Number.POSITIVE_INFINITY);
+
+  const groups: string[][] = [];
+  const groupFiles: Set<string>[] = [];
+  const groupOf = new Map<string, number>();
+  const orderable = ids.filter((id) => !cyclic.includes(id));
+  for (const id of orderable.sort((a, b) => level(a) - level(b) || a.localeCompare(b))) {
+    let g = Math.max(level(id), ...prereq.get(id)!.map((p) => groupOf.get(p)! + 1));
+    while (g < groups.length && [...files.get(id)!].some((f) => groupFiles[g]!.has(f))) g += 1;
+    while (groups.length <= g) {
+      groups.push([]);
+      groupFiles.push(new Set());
+    }
+    groups[g]!.push(id);
+    for (const f of files.get(id)!) groupFiles[g]!.add(f);
+    groupOf.set(id, g);
+  }
+  return { groups: groups.filter((g) => g.length > 0), cyclic };
+}
