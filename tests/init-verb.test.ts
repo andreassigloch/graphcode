@@ -1,5 +1,5 @@
 /**
- * TEST-init-verb (CR-GC-900) — `graphcode init` installiert die Abhaengigkeit und nennt dem
+ * TEST-init-verb (CR-GC-900, CR-GC-902) — `graphcode init` installiert die Abhaengigkeit und nennt dem
  * Menschen die naechsten Schritte. Der Scaffold laeuft echt in ein Temp-Repo; nur der
  * Paketmanager ist injiziert, damit der Test weder Netz noch Registry braucht. Die echte
  * Installation prueft der Smoke-Lauf im CR.
@@ -10,7 +10,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { executeInit, formatInit, packageManager, type Run } from '../src/surface/init-verb.js';
+import { executeInit, formatInit, packageManager, type Run, type OnPath } from '../src/surface/init-verb.js';
 import { checkVerbArgs } from '../src/surface/cli-args.js';
 
 describe('TEST-init-verb (CR-GC-900)', () => {
@@ -24,6 +24,9 @@ describe('TEST-init-verb (CR-GC-900)', () => {
     };
   }
 
+  const nurClaude: OnPath = (p) => p === 'claude';
+  const keins: OnPath = () => false;
+
   beforeEach(() => {
     repo = mkdtempSync(join(tmpdir(), 'gc-init-verb-'));
     calls = [];
@@ -31,7 +34,7 @@ describe('TEST-init-verb (CR-GC-900)', () => {
   afterEach(() => rmSync(repo, { recursive: true, force: true }));
 
   it('scaffoldet, traegt die Abhaengigkeit ein und installiert sie im Repo', async () => {
-    const report = await executeInit({ repoRoot: repo }, { run: runner() });
+    const report = await executeInit({ repoRoot: repo }, { run: runner(), onPath: nurClaude });
     expect(existsSync(join(repo, '.mcp.json'))).toBe(true);
     expect(existsSync(join(repo, 'package.json'))).toBe(true);
     expect(calls).toEqual(['npm install @repo']);
@@ -40,7 +43,7 @@ describe('TEST-init-verb (CR-GC-900)', () => {
   });
 
   it('nennt nach erfolgreicher Installation die vier naechsten Schritte', async () => {
-    const text = formatInit(await executeInit({ repoRoot: repo }, { run: runner() }));
+    const text = formatInit(await executeInit({ repoRoot: repo }, { run: runner(), onPath: nurClaude }));
     expect(text).toContain('Installed @sigloch/graphcode (`npm install`)');
     expect(text).toContain('.graphcode/` to .gitignore');
     expect(text).toContain('Reload your agent host');
@@ -50,7 +53,7 @@ describe('TEST-init-verb (CR-GC-900)', () => {
   });
 
   it('fehlgeschlagene Installation: Meldung nennt den Befehl, Dateien bleiben stehen', async () => {
-    const report = await executeInit({ repoRoot: repo }, { run: runner(true) });
+    const report = await executeInit({ repoRoot: repo }, { run: runner(true), onPath: nurClaude });
     const text = formatInit(report);
     expect(report.installOk).toBe(false);
     expect(text).toContain('Install failed: `npm install`');
@@ -64,8 +67,28 @@ describe('TEST-init-verb (CR-GC-900)', () => {
     writeFileSync(join(repo, 'yarn.lock'), '');
     expect(packageManager(repo)).toBe('yarn');
     writeFileSync(join(repo, 'pnpm-lock.yaml'), '');
-    await executeInit({ repoRoot: repo }, { run: runner() });
+    await executeInit({ repoRoot: repo }, { run: runner(), onPath: nurClaude });
     expect(calls).toEqual(['pnpm install @repo']);
+  });
+
+  it('nennt das gefundene Agent-Programm und traegt es im Bericht (CR-GC-902)', async () => {
+    const report = await executeInit({ repoRoot: repo }, { run: runner(), onPath: nurClaude });
+    expect(report.agentHosts).toEqual(['claude']);
+    expect(formatInit(report)).toContain('Reload your agent host (found: Claude Code)');
+  });
+
+  it('ohne Agent-Programm: Hinweis mit beiden Installationsbefehlen, Dateien trotzdem (CR-GC-902)', async () => {
+    const report = await executeInit({ repoRoot: repo }, { run: runner(), onPath: keins });
+    const text = formatInit(report);
+    expect(report.agentHosts).toEqual([]);
+    expect(report.installOk).toBe(true);
+    expect(text).toContain('No agent host found on PATH');
+    expect(text).toContain('Claude Code: npm install -g @anthropic-ai/claude-code');
+    expect(text).toContain('OpenCode: npm install -g opencode-ai');
+    expect(text).toContain('VS Code or the desktop app');
+    expect(text).not.toContain('Reload your agent host');
+    expect(text).toContain('Read GRAPHCODE.md, then call graph_readiness');
+    expect(existsSync(join(repo, '.mcp.json'))).toBe(true);
   });
 
   it('init kennt --json und kein anderes Flag', () => {

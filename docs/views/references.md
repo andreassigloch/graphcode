@@ -1409,6 +1409,8 @@
 | `CR-GC-900` | relation | `REQ-repo-install` |
 | `CR-GC-901` | relation | `FUNC-test-ingest` |
 | `CR-GC-901` | relation | `REQ-testref-kopf-bindung` |
+| `CR-GC-902` | relation | `FUNC-init-verb` |
+| `CR-GC-902` | relation | `REQ-init-agent-host` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2736,6 +2738,7 @@
 | `FUNC-import-doc` | satisfy | `REQ-mutate-befund-je-element` |
 | `FUNC-init-verb` | allocate | `MOD-surface` |
 | `FUNC-init-verb` | io | `FLOW-install-result-init` |
+| `FUNC-init-verb` | satisfy | `REQ-init-agent-host` |
 | `FUNC-init-verb` | satisfy | `REQ-repo-install` |
 | `FUNC-list-elements` | allocate | `MOD-kernel` |
 | `FUNC-list-elements` | io | `FLOW-element-slice` |
@@ -3276,6 +3279,7 @@
 | `TEST-import-rejected-traces` | verify | `REQ-risk-edge-vanishes-silently` |
 | `TEST-import-rejected-traces` | verify | `SCHEMA-rejected-trace` |
 | `TEST-import-sys-anchor` | verify | `REQ-graph-integrity` |
+| `TEST-init-verb` | verify | `REQ-init-agent-host` |
 | `TEST-init-verb` | verify | `REQ-repo-install` |
 | `TEST-inject-graph-slice` | verify | `REQ-precise-context` |
 | `TEST-inject-graph-slice` | verify | `REQ-subgraph-slicing` |

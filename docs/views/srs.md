@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 197 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Textuelle Spezifikation (29148-Anlehnung): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 198 REQ. Deterministisch generiert.
 
 ## 1  Scope
 
@@ -8632,6 +8632,14 @@ Das Verb init fuer Menschen: Scaffold, dann die eingetragene Abhaengigkeit insta
 
 io ◀ `FLOW-cli-command` · `FLOW-install-result-harness-cli` · io ▶ `FLOW-install-result-init` · allocate ▶ `MOD-surface`
 
+###### `REQ-init-agent-host` — init nennt ein fehlendes Agent-Programm
+
+init sucht claude und opencode im PATH. Findet es keins, ersetzt die Ausgabe die Schritte zum Agenten durch einen Hinweis mit je einem Installationsbefehl und nennt VS-Code-Erweiterung und Desktop-App; die Dateien schreibt init trotzdem, Exit-Code 0. --json traegt agentHosts. (CR-GC-902)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-init-verb` (integration) · satisfy ◀ `FUNC-init-verb` · allocate ▶ `MOD-surface`
+
 ###### `REQ-repo-install` — Ein-Kommando-Installation
 
 > auch unter: `FUNC-harness-cli`
@@ -14336,7 +14344,7 @@ verify ▶ `REQ-graph-integrity` · testRefs: `tests/harness.import-sys-anchor.t
 
 init installiert die Abhaengigkeit im Repo, nennt nach Erfolg die vier naechsten Schritte, meldet eine fehlgeschlagene Installation mit dem Befehl und folgt der Lockdatei.
 
-verify ▶ `REQ-repo-install` · testRefs: `tests/init-verb.test.ts`
+verify ▶ `REQ-init-agent-host` · `REQ-repo-install` · testRefs: `tests/init-verb.test.ts`
 
 ### 8.71  `TEST-inject-graph-slice` — Task-Start-Scheibe im Agentenkontext
 
@@ -14982,4 +14990,4 @@ verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-
 
 ## 9  Traceability summary
 
-197 REQ · 197 verified · 0 without a verifying TEST (R-01).
+198 REQ · 198 verified · 0 without a verifying TEST (R-01).
