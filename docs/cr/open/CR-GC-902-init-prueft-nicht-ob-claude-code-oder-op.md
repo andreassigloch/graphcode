@@ -39,3 +39,16 @@ graphcode hat keine eigene Oberflaeche; ohne Agent-Programm ist es nicht nutzbar
 - `TEST-init-verb` (tests/init-verb.test.ts) — verify auf die neue REQ.
 - README.md — Voraussetzung.
 - `graph_tests({changeSet:[FUNC-init-verb]})` gibt die Testspur.
+
+## Ergebnis
+
+- `executeInit` sucht `claude` und `opencode` im PATH und traegt die gefundenen als `agentHosts` im
+  Bericht. `formatInit` nennt das gefundene Programm oder ersetzt Schritt 2 durch den Hinweis mit
+  beiden Installationsbefehlen. Exit-Code 0 in beiden Faellen.
+- README: Voraussetzung „an agent host" vor dem Installationsbefehl.
+- Modell: `REQ-init-agent-host`, satisfy von `FUNC-init-verb`, verify von `TEST-init-verb`.
+- TEST-init-verb: 7 Faelle, davon 2 neu.
+- Smoke: `node dist/cli.js init` in einem Temp-Repo, einmal mit PATH ohne beide Programme (Hinweis,
+  exit 0), einmal mit vollem PATH (found: Claude Code, OpenCode).
+- verify:full: Spur CODE, Auswahl 57/212, rot 0, Schlupf 0 (volle Suite, 212 Testdateien).
+- Commit: 1b4bb7f3.
