@@ -1,6 +1,6 @@
 # CR-GC-902: init prueft nicht, ob Claude Code oder OpenCode installiert ist; ohne Agent-Programm laufen die naechsten Schritte ins Leere
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-10)
 **Typ:** aus Item ITEM-2026-1281 (finding)
 **Erstellt:** 2026-11-10
 **Item:** bok/items/ITEM-2026-1281.json (Lane: graph)

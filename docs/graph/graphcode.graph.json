@@ -3938,7 +3938,9 @@
       "id": "CR-GC-902",
       "type": "CR",
       "name": "init prueft nicht, ob Claude Code oder OpenCode installiert ist; ohne Agent-Programm laufen die naechsten Schritte ins Leere",
-      "description": "docs/cr/open/CR-GC-902-init-prueft-nicht-ob-claude-code-oder-op.md"
+      "description": "docs/cr/done/CR-GC-902-init-prueft-nicht-ob-claude-code-oder-op.md",
+      "status": "done",
+      "commitRef": "a223eeb7,1b4bb7f3,f0865b68"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -31955,5 +31957,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1041
+  "graphVersion": 1042
 }
