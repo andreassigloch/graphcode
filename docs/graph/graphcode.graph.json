@@ -3935,6 +3935,12 @@
       "description": "docs/cr/open/CR-GC-901-testrefs-per-commit-hook-binden-testdate.md"
     },
     {
+      "id": "CR-GC-902",
+      "type": "CR",
+      "name": "init prueft nicht, ob Claude Code oder OpenCode installiert ist; ohne Agent-Programm laufen die naechsten Schritte ins Leere",
+      "description": "docs/cr/open/CR-GC-902-init-prueft-nicht-ob-claude-code-oder-op.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -31920,5 +31926,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1038
+  "graphVersion": 1039
 }
