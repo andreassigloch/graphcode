@@ -594,6 +594,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-898` | done | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe | `FUNC-harness-cli` · `FUNC-se-retro` · `REQ-zuege-sparen` |
 | `CR-GC-899` | done | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen | `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-select-tests` · `REQ-modell-befragen` |
 | `CR-GC-900` | n/a | graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt | `FUNC-init-verb` · `REQ-repo-install` |
+| `CR-GC-901` | n/a | testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3) | `FUNC-test-ingest` · `REQ-testref-kopf-bindung` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

@@ -3929,6 +3929,12 @@
       "description": "docs/cr/open/CR-GC-900-graphcode-init-gibt-nur-json-aus-und-ins.md"
     },
     {
+      "id": "CR-GC-901",
+      "type": "CR",
+      "name": "testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3)",
+      "description": "docs/cr/open/CR-GC-901-testrefs-per-commit-hook-binden-testdate.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -9442,6 +9448,15 @@
       ]
     },
     {
+      "id": "REQ-testref-kopf-bindung",
+      "type": "REQ",
+      "name": "Testlauf bindet die Testdatei ueber den Kopf",
+      "description": "graph_test_ingest bindet eine Testdatei ohne testRefs-Eintrag an den TEST, dessen uid ihr Kopfkommentar als einzige nennt, samt Ergebnis des Laufs; nennt der Kopf keine, mehrere oder eine fremde uid, oder fehlt das Werkzeug, bleibt die Datei unresolved mit diesem Grund.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-testref-materialized",
       "type": "REQ",
       "name": "A bound testRef always resolves to a real file",
@@ -12691,6 +12706,12 @@
           "ranAt": "2026-11-09T15:36:54.324Z"
         }
       ]
+    },
+    {
+      "id": "TEST-testref-kopf-bindung",
+      "type": "TEST",
+      "name": "Kopf-Bindungs-Check",
+      "description": "Abnahme der Datei tests/testreport.kopf-bindung.test.ts: echtes Disk-Kuzu und echte Dateien; Bindung mit Ergebnis, kein Doppel beim zweiten Lauf, Anhaengen an eine bestehende Bindung, und je ein benannter Grund fuer keine, zwei, fremde uid, fehlendes Werkzeug, fehlende und repo-fremde Datei."
     },
     {
       "id": "TEST-testref-materialize",
@@ -20391,6 +20412,16 @@
     {
       "source": "CR-GC-900",
       "target": "REQ-repo-install",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-901",
+      "target": "FUNC-test-ingest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-901",
+      "target": "REQ-testref-kopf-bindung",
       "type": "relation"
     },
     {
@@ -28161,6 +28192,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-test-ingest",
+      "target": "REQ-testref-kopf-bindung",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-test-ui",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -30888,6 +30924,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-testref-kopf-bindung",
+      "target": "REQ-testref-kopf-bindung",
+      "type": "verify"
+    },
+    {
       "source": "TEST-testref-materialize",
       "target": "REQ-testref-materialized",
       "type": "verify"
@@ -31879,5 +31920,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1036
+  "graphVersion": 1038
 }

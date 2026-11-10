@@ -1407,6 +1407,8 @@
 | `CR-GC-899` | relation | `REQ-modell-befragen` |
 | `CR-GC-900` | relation | `FUNC-init-verb` |
 | `CR-GC-900` | relation | `REQ-repo-install` |
+| `CR-GC-901` | relation | `FUNC-test-ingest` |
+| `CR-GC-901` | relation | `REQ-testref-kopf-bindung` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2939,6 +2941,7 @@
 | `FUNC-test-ingest` | io | `FLOW-test-ingest-answer` |
 | `FUNC-test-ingest` | satisfy | `REQ-test-result-withdrawn-on-change` |
 | `FUNC-test-ingest` | satisfy | `REQ-test-runnable-binding` |
+| `FUNC-test-ingest` | satisfy | `REQ-testref-kopf-bindung` |
 | `FUNC-test-ui` | allocate | `MOD-agent-surface` |
 | `FUNC-test-ui` | io | `FLOW-anleitung-test-ui` |
 | `FUNC-test-ui` | satisfy | `REQ-test-skill-red-first` |
@@ -3449,6 +3452,7 @@
 | `TEST-test-schlupf` | verify | `REQ-lane-red-without-report` |
 | `TEST-test-schlupf` | verify | `REQ-risk-selection-misses-red-test` |
 | `TEST-test-schlupf` | verify | `SCHEMA-schlupf-zeile` |
+| `TEST-testref-kopf-bindung` | verify | `REQ-testref-kopf-bindung` |
 | `TEST-testref-materialize` | verify | `REQ-testref-materialized` |
 | `TEST-testreport` | verify | `REQ-audit-trail` |
 | `TEST-testreport` | verify | `REQ-test-runnable-binding` |

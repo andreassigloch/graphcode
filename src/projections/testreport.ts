@@ -17,6 +17,8 @@
  * @author andreas@siglochconsulting
  */
 
+import { existsSync, readFileSync } from 'node:fs';
+import { isAbsolute, join, relative } from 'node:path';
 import { z } from 'zod/v4';
 import { TestResult } from '@sigloch/contracts/se';
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
@@ -28,6 +30,7 @@ import {
   samePath,
   verificationReport,
   type RunnerFileResult,
+  type KopfZugang,
   type TestResultWithdrawal,
   fasseZusammen,
   type VerificationReport,
@@ -42,9 +45,9 @@ export const GraphTestIngestInputSchema = z
       .optional()
       .describe('Raw vitest `--reporter=json` output.'),
     results: z
-      .array(z.object({ file: z.string().min(1), result: TestResult }))
+      .array(z.object({ file: z.string().min(1), result: TestResult, tool: z.string().min(1).optional() }))
       .optional()
-      .describe('Pre-parsed [{file, result}]; at most one of report/results.'),
+      .describe('Pre-parsed [{file, result, tool?}]; at most one of report/results.'),
     changeSet: z
       .array(z.string().min(1))
       .min(1)
@@ -86,11 +89,32 @@ export function bindTestReportTools(ctx: ToolPort) {
     return planWithdrawal(graph, testUids, frisch);
   }
 
+  /**
+   * CR-GC-901: der Zugang zur Testdatei selbst — Pfad relativ zum Repo, Inhalt, Werkzeug. Der
+   * vitest-Report nennt kein Werkzeug, weil er selbst vitest ist; `results` muss es mitgeben.
+   */
+  function kopfZugang(ausVitestReport: boolean): KopfZugang {
+    const root = harness.getRepoRoot();
+    return {
+      relativ(file) {
+        if (!isAbsolute(file)) return file.replace(/\\/g, '/').replace(/^\.\//, '');
+        const rel = relative(root, file);
+        return rel.startsWith('..') || isAbsolute(rel) ? undefined : rel.replace(/\\/g, '/');
+      },
+      lies(relFile) {
+        const abs = join(root, relFile);
+        return existsSync(abs) ? readFileSync(abs, 'utf8') : undefined;
+      },
+      tool: (entry) => entry.tool ?? (ausVitestReport ? 'vitest' : undefined),
+    };
+  }
+
   const graph_test_ingest: MCPTool<
     typeof GraphTestIngestInputSchema,
     {
       applied: number;
       assignments: Array<{ testUid: string; file: string; result: string }>;
+      bindings: Array<{ testUid: string; file: string; result: string; tool: string }>;
       unresolved: Array<{ file: string; reason: string }>;
       withdrawn: TestResultWithdrawal[];
       success: boolean;
@@ -102,20 +126,21 @@ export function bindTestReportTools(ctx: ToolPort) {
     name: 'graph_test_ingest',
     description:
       'Feed a test run back into the model: vitest `--reporter=json` (or pre-parsed [{file,result}]) is ' +
-      'matched to TEST nodes via testRef.file and written through the gate, so `passed` stops being an ' +
-      'assumption. A file without a matching testRef comes back as `unresolved`. `changeSet` withdraws ' +
+      'matched to TEST nodes via testRef.file and written through the gate. An unbound file whose head ' +
+      'names one TEST uid is bound (`bindings`), else `unresolved` with the reason. `changeSet` withdraws ' +
       'the result of every TEST the change impacts (`withdrawn`), unless this call brings a fresh one.',
     inputSchema: GraphTestIngestInputSchema,
     async handler(input) {
       const files: RunnerFileResult[] =
         input.report !== undefined ? parseVitestJson(input.report) : ((input.results ?? []) as RunnerFileResult[]);
-      const plan = planIngest(harness.getGraph(), files);
+      const plan = planIngest(harness.getGraph(), files, kopfZugang(input.report !== undefined));
       const withdrawn = await planeRuecknahme(input.changeSet, files);
 
-      if (input.dryRun || (plan.assignments.length === 0 && withdrawn.length === 0)) {
+      if (input.dryRun || (plan.assignments.length === 0 && plan.bindings.length === 0 && withdrawn.length === 0)) {
         return {
           applied: 0,
           assignments: plan.assignments,
+          bindings: plan.bindings,
           unresolved: plan.unresolved,
           withdrawn,
           success: true,
@@ -144,11 +169,16 @@ export function bindTestReportTools(ctx: ToolPort) {
           else byNode.set(a.testUid, [a]);
         }
         for (const w of withdrawn) if (!byNode.has(w.testUid)) byNode.set(w.testUid, []);
+        // CR-GC-901: neue Bindungen gehen in DASSELBE Kommando des Knotens — `testRefs` wird als Ganzes ersetzt.
+        for (const b of plan.bindings) if (!byNode.has(b.testUid)) byNode.set(b.testUid, []);
         const ranAt = new Date().toISOString();
         const commands: MutateCommand[] = [...byNode].map(([uid, assignments]) => {
           const node = nodes.find((n) => n.uid === uid)!;
           const read = readTestRefs(node.attributes);
           const refs = read.state === 'bound' ? read.value : [];
+          const neu = plan.bindings
+            .filter((b) => b.testUid === uid)
+            .map((b) => ({ file: b.file, tool: b.tool, result: b.result, ranAt }));
           return {
             op: 'update-node' as const,
             node: {
@@ -161,7 +191,7 @@ export function bindTestReportTools(ctx: ToolPort) {
                   if (!withdrawn.some((w) => w.testUid === uid && samePath(r.file, w.file))) return r;
                   const { result: _result, ranAt: _ranAt, evidence: _evidence, ...ohneErgebnis } = r;
                   return ohneErgebnis;
-                }),
+                }).concat(neu),
               },
             },
           };
@@ -170,8 +200,9 @@ export function bindTestReportTools(ctx: ToolPort) {
         // Kein Audit-Bypass (CR-GC-232): der Ingest wird geloggt wie jeder gated Write.
         await recordAudit(input.consumerId, result, commands);
         return {
-          applied: result.success ? plan.assignments.length : 0,
+          applied: result.success ? plan.assignments.length + plan.bindings.length : 0,
           assignments: plan.assignments,
+          bindings: result.success ? plan.bindings : [],
           unresolved: plan.unresolved,
           withdrawn: result.success ? withdrawn : [],
           success: result.success,

@@ -41,6 +41,8 @@ export interface RunnerFileResult {
   /** Repo-relativer Pfad der Testdatei, wie der Runner ihn meldet. */
   file: string;
   result: TestResultValue;
+  /** Werkzeug des Laufs; der vitest-Report setzt es nicht, dort gilt vitest (CR-GC-901). */
+  tool?: string;
 }
 
 /** Was der Ingest je TEST-Knoten zu schreiben hat. */
@@ -50,8 +52,28 @@ export interface TestResultAssignment {
   result: TestResultValue;
 }
 
+/** Eine neue Bindung: die Datei nennt die TEST-uid im Kopf und traegt noch keine (CR-GC-901). */
+export interface TestRefBinding extends TestResultAssignment {
+  tool: string;
+}
+
+/**
+ * Der Zugang des Ingest zur Datei selbst (CR-GC-901). Rein bleibt `planIngest` trotzdem: es
+ * bekommt Funktionen, keinen Dateisystem-Zugriff.
+ *   - `relativ`: der repo-relative Pfad, oder undefined, wenn die Datei ausserhalb des Repos liegt.
+ *   - `lies`: der Inhalt, oder undefined, wenn die Datei nicht lesbar ist.
+ *   - `tool`: das Werkzeug des Laufs (vitest beim Report), noetig fuer den testRefs-Eintrag.
+ */
+export interface KopfZugang {
+  relativ(file: string): string | undefined;
+  lies(relFile: string): string | undefined;
+  tool(entry: RunnerFileResult): string | undefined;
+}
+
 export interface IngestPlan {
   assignments: TestResultAssignment[];
+  /** Ungebundene Dateien, deren Kopf eine TEST-uid nennt — der Ingest bindet sie (CR-GC-901). */
+  bindings: TestRefBinding[];
   /** Runner-Dateien ohne passenden `testRefs`-Eintrag — gemeldet, nie still verworfen. */
   unresolved: Array<{ file: string; reason: string }>;
 }
@@ -90,9 +112,55 @@ function testRefFiles(node: GraphNode): string[] {
  * eine Datei zeigt, bekommt deren Ergebnis. Zeigen mehrere Knoten auf dieselbe Datei,
  * bekommen alle dasselbe Ergebnis (1:n ist zulässig — ein File verifiziert mehrere REQ).
  */
-export function planIngest(graph: Graph, files: RunnerFileResult[]): IngestPlan {
+/**
+ * Die TEST-uids im Kopf einer Testdatei (CR-GC-901) — rein, Text rein, uids raus (eindeutig,
+ * in Reihenfolge). Kopf = die Zeilen vor der ersten Codezeile: Leerzeilen und Kommentare
+ * (`//`, `/*`, `*`, `#`). Eine uid im Rumpf zaehlt nicht: dort nennt ein Test fremde Knoten als Daten.
+ */
+export function testUidsImKopf(text: string): string[] {
+  const uids: string[] = [];
+  for (const zeile of text.split('\n')) {
+    const z = zeile.trim();
+    if (z !== '' && !/^(\/\/|\/\*|\*|#)/.test(z)) break;
+    for (const m of z.matchAll(/(?<![\w-])TEST-[A-Za-z0-9][\w-]*/g)) if (!uids.includes(m[0])) uids.push(m[0]);
+  }
+  return uids;
+}
+
+const OHNE_BINDUNG = 'no TEST node carries a testRefs entry pointing at this file';
+
+/**
+ * CR-GC-901: eine Datei ohne Bindung wird gebunden, wenn ihr Kopf GENAU EINE TEST-uid dieses
+ * Modells nennt. Sonst bleibt sie `unresolved`, und der Grund sagt, was fehlt — so bindet der
+ * Lauf selbst, statt dass der Agent nachtraeglich einen Schreibzug macht.
+ */
+function bindeUeberKopf(
+  tests: GraphNode[],
+  entry: RunnerFileResult,
+  kopf: KopfZugang,
+): { binding: TestRefBinding } | { reason: string } {
+  const rel = kopf.relativ(entry.file);
+  if (rel === undefined) return { reason: `${OHNE_BINDUNG}; the file lies outside the repo` };
+  const text = kopf.lies(rel);
+  if (text === undefined) return { reason: `${OHNE_BINDUNG}; the file is not readable at ${rel}` };
+  const uids = testUidsImKopf(text);
+  if (uids.length === 0) {
+    return { reason: `${OHNE_BINDUNG}, and its head names no TEST uid — name the TEST in the file's head comment, then ingest again` };
+  }
+  if (uids.length > 1) {
+    return { reason: `${OHNE_BINDUNG}; its head names ${uids.join(', ')} — a test file belongs to one TEST (R-29)` };
+  }
+  const test = tests.find((t) => t.uid === uids[0]);
+  if (!test) return { reason: `${OHNE_BINDUNG}; its head names ${uids[0]}, which is no TEST in this model` };
+  const tool = kopf.tool(entry);
+  if (!tool) return { reason: `${OHNE_BINDUNG}; its head names ${uids[0]}, but the run gives no tool — pass results[].tool` };
+  return { binding: { testUid: test.uid, file: rel, result: entry.result, tool } };
+}
+
+export function planIngest(graph: Graph, files: RunnerFileResult[], kopf: KopfZugang): IngestPlan {
   const tests = graph.nodes.filter((n) => n.type === 'TEST');
   const assignments: TestResultAssignment[] = [];
+  const bindings: TestRefBinding[] = [];
   const unresolved: IngestPlan['unresolved'] = [];
 
   for (const entry of files) {
@@ -101,10 +169,9 @@ export function planIngest(graph: Graph, files: RunnerFileResult[]): IngestPlan 
     // als "no TEST node carries a binding" auflaufen, obwohl er gebunden ist.
     const matches = tests.filter((t) => testRefFiles(t).some((f) => samePath(f, entry.file)));
     if (matches.length === 0) {
-      unresolved.push({
-        file: entry.file,
-        reason: 'no TEST node carries a testRefs entry pointing at this file',
-      });
+      const b = bindeUeberKopf(tests, entry, kopf);
+      if ('binding' in b) bindings.push(b.binding);
+      else unresolved.push({ file: entry.file, reason: b.reason });
       continue;
     }
     for (const t of matches) {
@@ -112,7 +179,7 @@ export function planIngest(graph: Graph, files: RunnerFileResult[]): IngestPlan 
     }
   }
 
-  return { assignments, unresolved };
+  return { assignments, bindings, unresolved };
 }
 
 /** Ein `testRefs`-Eintrag, dessen Ergebnis zurückgenommen wird. */
