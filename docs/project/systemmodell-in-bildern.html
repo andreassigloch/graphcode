@@ -1,0 +1,1033 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Das Systemmodell in Bildern</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: ein ruhiger Lesestrang (max 68ch) für Prosa, breitere Bänder für Diagramme und Kartenraster. */
+:root {
+  --bg: #f5f4ef;
+  --surface: #ffffff;
+  --surface-2: #ecebe4;
+  --fg: #1d2129;
+  --muted: #5d6470;
+  --line: #d6d3ca;
+  --accent: #2f5d8a;
+  --bad: #c43a2f;
+  --good: #2f8a3f;
+  --c-sys: #2a3140; --c-uc: #b8701a; --c-actor: #7a4fb0; --c-req: #c84a3b;
+  --c-fchain: #0f8577; --c-func: #2862b8; --c-flow: #1a8fb3; --c-schema: #6b7f17;
+  --c-mod: #8c5a2b; --c-test: #2f8f3a; --c-cr: #6a7280; --c-ms: #3f4753;
+  --e-compose: #3a404b; --e-io: #1a8fb3; --e-satisfy: #c84a3b; --e-verify: #2f8f3a; --e-allocate: #8c5a2b; --e-relation: #7a7f88;
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "Atkinson Hyperlegible", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171c; --surface: #1e2127; --surface-2: #272b33; --fg: #e8e6df; --muted: #a2a7b1; --line: #353a43;
+    --accent: #8ab4e8; --bad: #f0786b; --good: #63cf72;
+    --c-sys: #c9d0dc; --c-uc: #e7a04a; --c-actor: #b48ae6; --c-req: #ef7a6c;
+    --c-fchain: #3fc0b0; --c-func: #6fa0ee; --c-flow: #4fc0e2; --c-schema: #a9c23c;
+    --c-mod: #d0915a; --c-test: #5fcf6c; --c-cr: #9aa2ae; --c-ms: #c2c8d2;
+    --e-compose: #b7bcc6; --e-io: #4fc0e2; --e-satisfy: #ef7a6c; --e-verify: #5fcf6c; --e-allocate: #d0915a; --e-relation: #8d939d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15171c; --surface: #1e2127; --surface-2: #272b33; --fg: #e8e6df; --muted: #a2a7b1; --line: #353a43;
+  --accent: #8ab4e8; --bad: #f0786b; --good: #63cf72;
+  --c-sys: #c9d0dc; --c-uc: #e7a04a; --c-actor: #b48ae6; --c-req: #ef7a6c;
+  --c-fchain: #3fc0b0; --c-func: #6fa0ee; --c-flow: #4fc0e2; --c-schema: #a9c23c;
+  --c-mod: #d0915a; --c-test: #5fcf6c; --c-cr: #9aa2ae; --c-ms: #c2c8d2;
+  --e-compose: #b7bcc6; --e-io: #4fc0e2; --e-satisfy: #ef7a6c; --e-verify: #5fcf6c; --e-allocate: #d0915a; --e-relation: #8d939d;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+.wrap { max-width: 960px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3.1rem); letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); }
+h3 { font-size: 1.2rem; }
+p { max-width: 68ch; margin: 0; }
+.lead { font-size: 1.12rem; color: var(--fg); }
+.muted { color: var(--muted); }
+.eyebrow { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+header.hero { padding-block: 56px 8px; display: flex; flex-direction: column; gap: 18px; }
+nav.toc { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 0.95rem; }
+nav.toc a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+nav.toc a:hover, nav.toc a:focus-visible { border-bottom-color: var(--accent); outline: none; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.example { border-left: 3px solid var(--accent); padding: 10px 16px; background: var(--surface-2); max-width: 68ch; border-radius: 0 6px 6px 0; }
+.example strong { font-weight: 700; }
+
+/* Bausteine */
+.group { margin-top: 28px; }
+.group-title { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.group-title p { font-size: 0.95rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.card .head { display: flex; align-items: center; gap: 10px; }
+.chip { width: 26px; height: 18px; border-radius: 5px; flex: none; border: 2px solid var(--c); background: color-mix(in oklab, var(--c) 18%, var(--surface)); }
+.chip.actor { border-radius: 50% 50% 4px 4px; width: 18px; }
+.chip.flow { border-radius: 10px; }
+.chip.schema { border-style: dashed; }
+.chip.test { border-radius: 2px; }
+.card .name { font-weight: 700; font-size: 1.02rem; }
+.card .code { margin-left: auto; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; }
+.card .meaning { font-size: 0.93rem; }
+.card .ex { font-size: 0.88rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 2px; }
+.card .ex b { color: var(--fg); font-weight: 700; }
+
+/* Verbindungen */
+.edges { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 20px; }
+.edge-row { display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.edge-row .sample { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.edge-row .sample svg { width: 100%; height: 26px; display: block; }
+.edge-row .sample .lbl { font-weight: 700; font-size: 0.98rem; }
+.edge-row .sample .code { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; }
+.edge-row .text { min-width: 0; font-size: 0.95rem; }
+.edge-row .text p + p { margin-top: 4px; }
+.pairs { color: var(--muted); font-size: 0.9rem; }
+.pairs b { color: var(--fg); font-weight: 400; }
+@media (max-width: 560px) { .edge-row { grid-template-columns: 1fr; } }
+
+figure { margin: 22px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+figure.wide .scroll { overflow-x: auto; }
+figure.wide svg { min-width: 640px; width: 100%; height: auto; display: block; }
+figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 10px; max-width: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 0.85rem; margin-top: 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 26px; height: 0; border-top: 2.5px solid var(--k); }
+.legend i.dash { border-top-style: dashed; }
+
+/* Regeln */
+.stages { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; align-items: center; }
+.stage { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 11px; font-size: 0.86rem; white-space: nowrap; }
+.stage.always { border-style: dashed; }
+.mark { background: var(--fg); color: var(--bg); border-radius: 4px; padding: 4px 9px; font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+.mark small { font-weight: 400; opacity: 0.75; margin-left: 4px; }
+.rules { display: flex; flex-direction: column; gap: 22px; margin-top: 28px; }
+.rule { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.4fr); gap: 16px 24px; }
+.rule .top { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.rule .top .eyebrow { margin-right: auto; }
+.pill { font-size: 0.74rem; font-weight: 700; border-radius: 999px; padding: 3px 9px; border: 1px solid; letter-spacing: 0.03em; }
+.pill.block { color: var(--bad); border-color: var(--bad); }
+.pill.hint { color: var(--muted); border-color: var(--line); }
+.pill.mark { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.rule h3 { grid-column: 1 / -1; }
+.rule .txt { display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem; min-width: 0; }
+.rule .txt b { font-weight: 700; }
+.rule .more { font-size: 0.86rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+.panes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-width: 0; }
+.pane { border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: 8px 8px 4px; min-width: 0; }
+.pane .cap { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; margin-bottom: 4px; }
+.pane.bad .cap { color: var(--bad); }
+.pane.good .cap { color: var(--good); }
+.pane svg { width: 100%; height: auto; display: block; }
+@media (max-width: 760px) { .rule { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .panes { grid-template-columns: 1fr; } }
+
+/* SVG-Knoten und Kanten */
+svg text { font-family: var(--font-body); fill: var(--fg); }
+.n rect { fill: color-mix(in oklab, var(--c) 15%, var(--surface)); stroke: var(--c); stroke-width: 1.6; }
+.n.state-missing rect { fill: transparent; stroke: var(--bad); stroke-dasharray: 4 3; }
+.n.state-missing text { fill: var(--bad); }
+.n.state-bad rect { stroke: var(--bad); stroke-width: 2.2; }
+.n.state-new rect { stroke: var(--good); stroke-width: 2.2; }
+.n .cap { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.06em; fill: var(--muted); font-weight: 700; }
+.n.state-missing .cap { fill: var(--bad); }
+.n .lbl { font-size: 11.5px; }
+.big .n .cap { font-size: 9.5px; }
+.big .n .lbl { font-size: 13px; }
+.n .tag { font-size: 9px; fill: var(--muted); }
+.n .tag.bad { fill: var(--bad); font-weight: 700; }
+.n .tag.good { fill: var(--good); font-weight: 700; }
+.e path { fill: none; stroke: var(--k, var(--e-compose)); stroke-width: 1.6; }
+.e.state-bad path { stroke: var(--bad); stroke-width: 2.2; }
+.e.state-missing path { stroke: var(--bad); stroke-dasharray: 4 3; }
+.e.state-new path { stroke: var(--good); stroke-width: 2.2; }
+.e.dashed path { stroke-dasharray: 5 4; }
+.e text { font-size: 9.5px; fill: var(--muted); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+.big .e text { font-size: 10.5px; }
+.e.state-bad text { fill: var(--bad); font-weight: 700; }
+.e.state-new text { fill: var(--good); font-weight: 700; }
+.e.state-missing text { fill: var(--bad); font-weight: 700; }
+.loop { font-size: 11px; fill: var(--muted); }
+.note { font-size: 10px; fill: var(--muted); font-style: italic; }
+.note.bad { fill: var(--bad); font-style: normal; font-weight: 700; }
+
+/* Zusammenfassung und Details je Abschnitt */
+.summary { margin-top: 14px; border-left: 3px solid var(--accent); padding: 10px 16px 12px; background: var(--surface-2); border-radius: 0 6px 6px 0; display: flex; flex-direction: column; gap: 8px; }
+.summary p { max-width: none; }
+.strip { display: flex; flex-wrap: wrap; gap: 6px; }
+.strip span { font-size: 0.8rem; padding: 2px 9px; border-radius: 999px; border: 1.5px solid var(--c); background: color-mix(in oklab, var(--c) 14%, var(--surface)); }
+.details { margin-top: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 0 16px 16px; }
+.details[open] { padding-bottom: 20px; }
+.details > summary { cursor: pointer; padding: 12px 0; font-weight: 700; color: var(--accent); list-style: none; display: flex; align-items: center; gap: 10px; }
+.details > summary::-webkit-details-marker { display: none; }
+.details > summary::before { content: ""; width: 8px; height: 8px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(-45deg); transition: transform 0.15s; flex: none; }
+.details[open] > summary::before { transform: rotate(45deg); }
+.details > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.details > .group:first-of-type { margin-top: 8px; }
+.details > .edges { margin-top: 4px; }
+.details > .rules { margin-top: 8px; }
+.toggles { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 0.9rem; }
+.toggles button { font: inherit; font-size: 0.86rem; color: var(--accent); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.toggles button:hover { border-color: var(--accent); }
+.mcard.constraint { border-color: var(--accent); background: color-mix(in oklab, var(--accent) 6%, var(--surface)); }
+
+/* Methode */
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+@media (max-width: 640px) { .method-grid { grid-template-columns: 1fr; } }
+.mcard { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.mhead { display: flex; align-items: center; gap: 14px; }
+.mnum { font-family: var(--font-display); font-size: 1.9rem; font-weight: 600; line-height: 1; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; color: var(--muted); flex: none; }
+.mcard.constraint .mnum { border-color: var(--accent); color: var(--accent); }
+.mcard h3 { font-size: 1.2rem; }
+.mcard p { font-size: 0.93rem; max-width: none; }
+.mcard .mex { font-size: 0.88rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 2px; }
+.tablewrap { overflow-x: auto; margin-top: 14px; }
+table.design { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.92rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+table.design th, table.design td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.design th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+table.design td:nth-child(3), table.design td:nth-child(4) { white-space: nowrap; font-variant-numeric: tabular-nums; }
+table.design tr:last-child td { border-bottom: 0; }
+ol.criteria { margin: 0; padding-left: 22px; max-width: 68ch; display: flex; flex-direction: column; gap: 4px; }
+#loop svg { width: 100%; height: auto; display: block; }
+
+/* Begriffe */
+table.defs { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 0.9rem; background: var(--surface); border: 1px solid var(--line); }
+table.defs th, table.defs td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.defs th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+table.defs td:first-child { font-weight: 700; white-space: nowrap; }
+table.defs td.no { color: var(--muted); }
+table.defs td.src { color: var(--muted); font-size: 0.8rem; }
+table.defs tr:last-child td { border-bottom: 0; }
+.pattern { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px; }
+.pattern span { border: 1.5px solid var(--accent); border-radius: 6px; padding: 4px 10px; font-size: 0.9rem; background: color-mix(in oklab, var(--accent) 8%, var(--surface)); }
+.pattern span.opt { border-style: dashed; }
+.pattern i { font-style: normal; color: var(--muted); }
+.bw .pane .cap { color: var(--accent); }
+.bw .pane p { max-width: none; }
+.port { fill: var(--surface); stroke: var(--c-func); stroke-width: 2; }
+.boundary { fill: none; stroke: var(--c-func); stroke-width: 1.8; stroke-dasharray: 6 4; }
+.sources { font-size: 0.82rem; color: var(--muted); margin: 18px 0 0; padding-left: 18px; max-width: none; }
+.sources li { margin-top: 2px; }
+
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Technische Systeme als Netz beschreiben</div>
+  <h1>Das Systemmodell in Bildern</h1>
+  <p class="lead">Wir beschreiben ein technisches System nicht als Fließtext, sondern als Netz aus Bausteinen und Verbindungen. Ein Prüfprogramm legt bei jeder Änderung feste Regeln an dieses Netz an und nennt die Stelle, an der etwas fehlt oder sich widerspricht. Das gilt für Software genauso wie für Mechanik oder Elektrik.</p>
+  <p>Diese Seite zeigt die zwölf Bausteinarten, die sechs Verbindungsarten, je Regelstufe ein Beispiel und zuletzt die Begriffe dahinter. Alle Beispiele stammen aus einem einzigen Fall:</p>
+  <div class="example"><strong>Die Paketstation.</strong> Ein Empfänger tippt einen Abholcode ein. Die Station prüft den Code und öffnet das Fach. Zugesagt ist: Das Fach öffnet höchstens 2 Sekunden nach einem gültigen Code.</div>
+  <nav class="toc" aria-label="Inhalt">
+    <a href="#bausteine">1 · Bausteine</a>
+    <a href="#verbindungen">2 · Verbindungen</a>
+    <a href="#beispiel">3 · Das Beispiel als Netz</a>
+    <a href="#regeln">4 · Regeln und Stufen</a>
+    <a href="#methode">5 · Methode</a>
+    <a href="#begriffe">6 · Begriffe</a>
+  </nav>
+  <div class="toggles"><span class="muted">Jeder Abschnitt zeigt zuerst das Wesentliche. Die Listen dahinter lassen sich aufklappen.</span> <button type="button" id="openAll">Alle Details öffnen</button> <button type="button" id="closeAll">Alle schließen</button></div>
+</header>
+
+<!-- ───────────────────────── 1 Bausteine ───────────────────────── -->
+<h2 id="bausteine">1 · Die zwölf Bausteine</h2>
+<div class="summary">
+  <div class="eyebrow">Kurz gesagt</div>
+  <p>Jeder Baustein hat eine Art. Die Art bestimmt, welche Verbindungen er eingehen darf und welche Regeln ihn prüfen. Vier Gruppen: <b>Zweck</b> (System, Akteur, Anwendungsfall, Anforderung), <b>Verhalten</b> (Wirkkette, Funktion, Datenfluss, Datenformat), <b>Aufbau und Nachweis</b> (Modul, Test), <b>Planung</b> (Auftrag, Meilenstein).</p>
+  <div class="strip">
+    <span style="--c:var(--c-sys)">System</span><span style="--c:var(--c-actor)">Akteur</span><span style="--c:var(--c-uc)">Anwendungsfall</span><span style="--c:var(--c-req)">Anforderung</span>
+    <span style="--c:var(--c-fchain)">Wirkkette</span><span style="--c:var(--c-func)">Funktion</span><span style="--c:var(--c-flow)">Datenfluss</span><span style="--c:var(--c-schema)">Datenformat</span>
+    <span style="--c:var(--c-mod)">Modul</span><span style="--c:var(--c-test)">Test</span><span style="--c:var(--c-cr)">Auftrag</span><span style="--c:var(--c-ms)">Meilenstein</span>
+  </div>
+</div>
+
+<details class="details">
+<summary>Details: alle zwölf Bausteine mit Bedeutung und Beispiel</summary>
+<div class="group">
+  <div class="group-title"><h3>Zweck</h3><p class="muted">Was gebaut wird, für wen und mit welcher Zusage.</p></div>
+  <div class="cards">
+    <div class="card"><div class="head"><span class="chip" style="--c:var(--c-sys)"></span><span class="name">System</span><span class="code">SYS</span></div>
+      <div class="meaning">Das Ganze, das gebaut wird, mit seiner Grenze nach außen. Jedes Modell hat genau ein oberstes System; es kann Teilsysteme enthalten.</div>
+      <div class="ex"><b>Paketstation</b></div></div>
+    <div class="card"><div class="head"><span class="chip actor" style="--c:var(--c-actor)"></span><span class="name">Akteur</span><span class="code">ACTOR</span></div>
+      <div class="meaning">Wer von außen etwas über die Grenze gibt oder bekommt: eine Person in einer Rolle oder ein fremdes System. Ein Bedienfeld ist kein Akteur, sondern ein Teil.</div>
+      <div class="ex"><b>Empfänger</b>, Zusteller, Versand-Server</div></div>
+    <div class="card"><div class="head"><span class="chip" style="--c:var(--c-uc)"></span><span class="name">Anwendungsfall</span><span class="code">UC</span></div>
+      <div class="meaning">Ein Nutzen, den ein Akteur über die Grenze bekommt. Beantwortet die Frage „wozu“; wie es läuft, steht in der Wirkkette.</div>
+      <div class="ex"><b>Paket abholen</b>, Paket einlegen</div></div>
+    <div class="card"><div class="head"><span class="chip" style="--c:var(--c-req)"></span><span class="name">Anforderung</span><span class="code">REQ</span></div>
+      <div class="meaning">Was ein Element an seiner Grenze tut oder einhält, prüfbar, ohne zu sagen wie. Entweder ein Verhalten („das System tut X“) oder eine Güte („innerhalb von 2 s“, „unter 5 kg“).</div>
+      <div class="ex"><b>Fach öffnet höchstens 2 s nach gültigem Code</b></div></div>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-title"><h3>Verhalten</h3><p class="muted">Wie das System den Zweck erreicht und was dabei übergeben wird.</p></div>
+  <div class="cards">
+    <div class="card"><div class="head"><span class="chip" style="--c:var(--c-fchain)"></span><span class="name">Wirkkette</span><span class="code">FCHAIN</span></div>
+      <div class="meaning">Die Folge von Funktionen, die einen Anwendungsfall vom Auslöser bis zum Ergebnis trägt. Jeder Anwendungsfall hat mindestens eine.</div>
+      <div class="ex"><b>Abholung:</b> Code eingeben → prüfen → entriegeln → Fach offen</div></div>
+    <div class="card"><div class="head"><span class="chip" style="--c:var(--c-func)"></span><span class="name">Funktion</span><span class="code">FUNC</span></div>
+      <div class="meaning">Ein Schritt, der Eingaben in Ausgaben wandelt. Eine Funktion lässt sich in Teilschritte zerlegen; dass die unterste Ebene an eine Umsetzung gebunden ist, prüft eine Regel.</div>
+      <div class="ex"><b>Code prüfen</b>, Fach entriegeln</div></div>
+    <div class="card"><div class="head"><span class="chip flow" style="--c:var(--c-flow)"></span><span class="name">Datenfluss</span><span class="code">FLOW</span></div>
+      <div class="meaning">Etwas, das von einem Schritt zum nächsten übergeben wird: Daten, ein Signal, auch Material oder Kraft.</div>
+      <div class="ex"><b>Abholcode</b>, Öffnungsbefehl</div></div>
+    <div class="card"><div class="head"><span class="chip schema" style="--c:var(--c-schema)"></span><span class="name">Datenformat</span><span class="code">SCHEMA</span></div>
+      <div class="meaning">Der Vertrag darüber, wie ein Datenfluss aussehen muss. Mehrere Flüsse dürfen dasselbe Format teilen; jeder Fluss hat genau eines.</div>
+      <div class="ex"><b>Abholcode = 6 Ziffern</b></div></div>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-title"><h3>Aufbau und Nachweis</h3><p class="muted">Worin das Verhalten umgesetzt ist und womit es belegt wird.</p></div>
+  <div class="cards">
+    <div class="card"><div class="head"><span class="chip" style="--c:var(--c-mod)"></span><span class="name">Modul</span><span class="code">MOD</span></div>
+      <div class="meaning">Ein Bauteil oder eine Baugruppe, in der Funktionen umgesetzt sind: ein Programmteil, eine Platine, eine Mechanik. Module lassen sich in Teilmodule zerlegen.</div>
+      <div class="ex"><b>Steuerung</b>, Bedienfeld, Schließmechanik</div></div>
+    <div class="card"><div class="head"><span class="chip test" style="--c:var(--c-test)"></span><span class="name">Test</span><span class="code">TEST</span></div>
+      <div class="meaning">Eine Prüfung, die eine Anforderung oder ein Datenformat nachweist. Sobald gebaut wird, verweist sie auf ihre Prüfvorschrift und trägt ihr letztes Ergebnis.</div>
+      <div class="ex"><b>Öffnung mit gültigem Code unter 2 s</b></div></div>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-title"><h3>Planung</h3><p class="muted">Wer wann was am Modell ändert.</p></div>
+  <div class="cards">
+    <div class="card"><div class="head"><span class="chip" style="--c:var(--c-cr)"></span><span class="name">Auftrag</span><span class="code">CR</span></div>
+      <div class="meaning">Eine abgegrenzte Änderung am System. Der Auftrag nennt die Bausteine, die er betrifft, und ist offen oder abgeschlossen.</div>
+      <div class="ex"><b>Abholung per App ergänzen</b></div></div>
+    <div class="card"><div class="head"><span class="chip" style="--c:var(--c-ms)"></span><span class="name">Meilenstein</span><span class="code">MS</span></div>
+      <div class="meaning">Ein Liefertermin, dem Aufträge zugeordnet sind. Meilensteine haben eine Reihenfolge.</div>
+      <div class="ex"><b>Pilotstation</b>, Serienfreigabe</div></div>
+  </div>
+</div>
+</details>
+
+<!-- ───────────────────────── 2 Verbindungen ───────────────────────── -->
+<h2 id="verbindungen">2 · Die sechs Verbindungen</h2>
+<div class="summary">
+  <div class="eyebrow">Kurz gesagt</div>
+  <p>Eine Verbindung hat eine Richtung und eine Art. Welche Bausteinarten sie verbinden darf, ist festgelegt; eine Verbindung außerhalb dieser Liste nimmt das Modell nicht an. Die sechs Arten: <b>besteht aus</b>, <b>gibt ab · nimmt auf</b>, <b>erfüllt</b>, <b>prüft</b>, <b>ist umgesetzt in</b>, <b>gehört zu</b>. Was sich aus anderen Verbindungen berechnen lässt, wird nicht gespeichert.</p>
+</div>
+
+<details class="details">
+<summary>Details: die sechs Arten mit allen erlaubten Paaren</summary>
+<div class="edges">
+  <div class="edge-row">
+    <div class="sample"><svg viewBox="0 0 150 26"><line x1="4" y1="13" x2="138" y2="13" stroke="var(--e-compose)" stroke-width="2.5"/><path d="M138 7 L148 13 L138 19 z" fill="var(--e-compose)"/></svg><span class="lbl">besteht aus</span><span class="code">COMPOSE</span></div>
+    <div class="text"><p>Vom Ganzen zum Teil. Die Bausteine bilden damit Bäume: oben das System, unten die Teile. Jedes Teil hat genau ein Ganzes über sich.</p>
+      <p class="pairs">Erlaubt: <b>System</b> → System, Anwendungsfall, Anforderung, Modul · <b>Anwendungsfall</b> → Wirkkette, Anforderung · <b>Wirkkette</b> → Funktion · <b>Funktion</b> → Funktion · <b>Modul</b> → Modul · <b>Anforderung</b> → Anforderung · <b>Meilenstein</b> → Anwendungsfall, Anforderung, Funktion</p></div>
+  </div>
+  <div class="edge-row">
+    <div class="sample"><svg viewBox="0 0 150 26"><line x1="4" y1="13" x2="138" y2="13" stroke="var(--e-io)" stroke-width="2.5"/><path d="M138 7 L148 13 L138 19 z" fill="var(--e-io)"/></svg><span class="lbl">gibt ab · nimmt auf</span><span class="code">IO</span></div>
+    <div class="text"><p>Der Weg, den eine Übergabe nimmt. Er führt immer über einen Datenfluss, nie direkt von Funktion zu Funktion. Darum hat jede Übergabe ein Format.</p>
+      <p class="pairs">Erlaubt: <b>Akteur</b> → Datenfluss → <b>Funktion</b> · <b>Funktion</b> → Datenfluss → <b>Funktion</b> · <b>Funktion</b> → Datenfluss → <b>Akteur</b></p></div>
+  </div>
+  <div class="edge-row">
+    <div class="sample"><svg viewBox="0 0 150 26"><line x1="4" y1="13" x2="138" y2="13" stroke="var(--e-satisfy)" stroke-width="2.5"/><path d="M138 7 L148 13 L138 19 z" fill="var(--e-satisfy)"/></svg><span class="lbl">erfüllt</span><span class="code">SATISFY</span></div>
+    <div class="text"><p>Wer eine Anforderung einlöst. Ein Verhalten erfüllt eine Funktion. Eine Güte wie Zeit, Gewicht oder Durchsatz erfüllt die Wirkkette (Ende zu Ende), ein Modul (lokales Budget) oder das System.</p>
+      <p class="pairs">Erlaubt: <b>Funktion</b> → Anforderung (Verhalten) · <b>Wirkkette, Modul, System</b> → Anforderung (Güte)</p></div>
+  </div>
+  <div class="edge-row">
+    <div class="sample"><svg viewBox="0 0 150 26"><line x1="4" y1="13" x2="138" y2="13" stroke="var(--e-verify)" stroke-width="2.5"/><path d="M138 7 L148 13 L138 19 z" fill="var(--e-verify)"/></svg><span class="lbl">prüft</span><span class="code">VERIFY</span></div>
+    <div class="text"><p>Welcher Test welche Zusage belegt. Ein Datenformat bekommt einen eigenen Vertragstest, der auch die Fälle prüft, die es ablehnen muss.</p>
+      <p class="pairs">Erlaubt: <b>Test</b> → Anforderung · <b>Test</b> → Datenformat</p></div>
+  </div>
+  <div class="edge-row">
+    <div class="sample"><svg viewBox="0 0 150 26"><line x1="4" y1="13" x2="138" y2="13" stroke="var(--e-allocate)" stroke-width="2.5"/><path d="M138 7 L148 13 L138 19 z" fill="var(--e-allocate)"/></svg><span class="lbl">ist umgesetzt in</span><span class="code">ALLOCATE</span></div>
+    <div class="text"><p>Wo eine Funktion wohnt. Jede unterste Funktion liegt in genau einem Modul. Die Kopplung zwischen Modulen wird daraus berechnet, nicht behauptet: Modul A hängt an Modul B, wenn eine Funktion aus A einen Datenfluss an eine Funktion aus B gibt.</p>
+      <p class="pairs">Erlaubt: <b>Funktion</b> → genau ein Modul</p></div>
+  </div>
+  <div class="edge-row">
+    <div class="sample"><svg viewBox="0 0 150 26"><line x1="4" y1="13" x2="138" y2="13" stroke="var(--e-relation)" stroke-width="2.5" stroke-dasharray="6 4"/><path d="M138 7 L148 13 L138 19 z" fill="var(--e-relation)"/></svg><span class="lbl">gehört zu</span><span class="code">RELATION</span></div>
+    <div class="text"><p>Zuordnungen ohne Hierarchie: ein Fluss zu seinem Format, ein Auftrag zu seinem Meilenstein und zu den Bausteinen, die er ändert, ein Meilenstein zu seinem Nachfolger.</p>
+      <p class="pairs">Erlaubt: <b>Datenfluss</b> → genau ein Datenformat · <b>Auftrag</b> → Meilenstein · <b>Auftrag</b> → Anwendungsfall, Anforderung, Funktion, Modul, Datenformat · <b>Meilenstein</b> → Meilenstein (kommt nach)</p></div>
+  </div>
+</div>
+
+<div class="example" style="margin-top:18px"><strong>Was sich berechnen lässt, wird nicht gespeichert.</strong> Ob zwei Module voneinander abhängen, folgt aus den Funktionen, die in ihnen liegen, und den Datenflüssen zwischen diesen Funktionen. Welcher Akteur welchen Anwendungsfall auslöst, folgt aus dem Datenfluss in die erste Funktion seiner Wirkkette. Solche Verbindungen gibt es im Modell nicht als eigene Elemente. Eine behauptete Verbindung könnte von der tatsächlichen abweichen, eine berechnete nicht.</div>
+</details>
+
+<figure class="wide">
+  <div class="eyebrow">Die Landkarte aller erlaubten Verbindungen</div>
+  <div class="scroll"><div id="map" class="big"></div></div>
+  <div class="legend">
+    <span><i style="--k:var(--e-compose)"></i>besteht aus</span>
+    <span><i style="--k:var(--e-io)"></i>gibt ab · nimmt auf</span>
+    <span><i style="--k:var(--e-satisfy)"></i>erfüllt</span>
+    <span><i style="--k:var(--e-verify)"></i>prüft</span>
+    <span><i style="--k:var(--e-allocate)"></i>ist umgesetzt in</span>
+    <span><i class="dash" style="--k:var(--e-relation)"></i>gehört zu</span>
+    <span>↻ kann in gleichartige Teile zerlegt werden</span>
+  </div>
+  <figcaption>Zehn Bausteinarten und jede erlaubte Verbindung zwischen ihnen. Auftrag und Meilenstein liegen daneben: ein Auftrag zeigt auf die Bausteine, die er ändert, und auf seinen Meilenstein; Meilensteine folgen aufeinander.</figcaption>
+</figure>
+
+<!-- ───────────────────────── 3 Beispiel ───────────────────────── -->
+<h2 id="beispiel">3 · Die Paketstation als Netz</h2>
+<p style="margin-top:12px">Dieselbe Landkarte, gefüllt mit dem Beispiel. Jede Frage an das System hat hier eine Antwort: <b>wozu</b> (Anwendungsfall und Anforderung), <b>wie</b> (Wirkkette und Funktionen), <b>worüber</b> (Datenflüsse und ihr Format), <b>womit</b> (Module) und <b>womit belegt</b> (Test).</p>
+<figure class="wide">
+  <div class="scroll"><div id="instance" class="big"></div></div>
+  <figcaption>Lesart von links nach rechts: Der Empfänger gibt den Abholcode ab, „Code prüfen“ erzeugt den Öffnungsbefehl, „Fach entriegeln“ meldet „Fach offen“ an den Empfänger zurück. Die Zeitzusage erfüllt die ganze Wirkkette, nicht eine einzelne Funktion. Der Test belegt sie.</figcaption>
+</figure>
+
+<!-- ───────────────────────── 4 Regeln ───────────────────────── -->
+<h2 id="regeln">4 · Regeln und Stufen</h2>
+<div class="summary">
+  <div class="eyebrow">Kurz gesagt</div>
+  <p>80 Regeln prüfen das Modell bei jeder Änderung. Jede Regel gehört zu einer von zwölf <b>Stufen</b>, die der Entstehung eines Modells folgen, vom System bis zum Abgleich mit der Umsetzung. Hinter fünf Stufen liegt eine <b>Marke</b>, ein Abnahmepunkt. Jeder Befund nennt den Baustein und den nächsten Schritt; nur wenige Regeln blockieren, die meisten geben Hinweise.</p>
+</div>
+<div class="stack" style="margin-top:16px">
+  <p>Die Stufe nennt die Bausteinart, die es geben muss, damit die Regel greift. Eine Regel über Tests schweigt, solange es keine Tests gibt. Drei Regeln gelten in jedem Zustand. So bleibt die Menge je Arbeitsschritt beherrschbar: Auf einer Stufe greifen 1 bis 12 Regeln, dazu die drei, die immer gelten. Wer das System anlegt, hat 4 Regeln vor sich. Alle 80 gelten erst beim Abgleich mit dem Bau.</p>
+  <p>Hinter manchen Stufen liegt eine <b>Marke</b>, ein Abnahmepunkt. Eine Marke ist erreicht, wenn bis zu ihr kein Befund mehr offen ist. Die Marken sind die üblichen Prüfpunkte der Systementwicklung.</p>
+  <p>Jeder Befund hat eine Schwere. <b>Blockiert</b> heißt: Die Änderung, die den Befund neu einführt, wird nicht angenommen. <b>Hinweis</b> heißt: Sie wird angenommen, der Befund bleibt sichtbar, bis er behoben ist. Jede Regel nennt den betroffenen Baustein und den einen nächsten Schritt.</p>
+</div>
+
+<div class="stages" aria-label="Stufen und Marken">
+  <span class="stage always">immer</span>
+  <span class="stage">1 System</span><span class="stage">2 Anwendungsfall</span><span class="stage">3 Anforderung</span><span class="stage">4 Wirkkette</span>
+  <span class="mark">Anforderungen stehen<small>SRR</small></span>
+  <span class="stage">5 Funktion</span><span class="stage">6 Datenfluss</span><span class="stage">7 Modul</span>
+  <span class="mark">Entwurf steht<small>PDR</small></span>
+  <span class="stage">8 Datenformat</span>
+  <span class="mark">Schnittstellen stehen<small>CDR</small></span>
+  <span class="stage">9 Test</span>
+  <span class="mark">Testbereit<small>TRR</small></span>
+  <span class="stage">10 Plan</span><span class="stage">11 Bindung</span><span class="stage">12 Abgleich</span>
+  <span class="mark">Gebaut<small>Bau</small></span>
+</div>
+
+<details class="details">
+<summary>Details: je Stufe ein Beispiel mit Befund und Behebung</summary>
+<div class="rules" id="rules"></div>
+</details>
+
+<!-- ───────────────────────── 5 Methode ───────────────────────── -->
+<h2 id="methode">5 · Die Methode: geführt, nicht gegängelt</h2>
+<div class="summary">
+  <div class="eyebrow">Kurz gesagt</div>
+  <p>Das Modell entsteht Zug um Zug. Der Nutzer sagt, was er will, ein KI-Agent baut einen kleinen Schritt, das Modell urteilt und antwortet mit dem nächsten Vorschlag. Der Nutzer entscheidet, der Agent führt aus. Vier Stufen: Das Tor unterbindet, das Gummiband steuert, die Vorschläge empfehlen, und in der vierten Stufe <b>gestaltet</b> der Autor die Architektur über <b>Constraints</b>: Entscheidungen wie „20.000 gleichzeitige Abholungen pro Sekunde“, die als Anforderung mit Test im Modell stehen und den Schnitt der Ketten und Module bestimmen. Kennzahlen finden Stellen, Constraints steuern.</p>
+</div>
+
+<div class="method-grid">
+  <div class="mcard">
+    <div class="mhead"><span class="mnum">1</span><div><div class="eyebrow">Unterbinden</div><h3>Das Tor</h3></div></div>
+    <p>Jede Änderung geht durch dasselbe Tor, ob Mensch oder KI sie vorschlägt. Es blockiert nur, was die Änderung <b>neu</b> an Fehlern einführt. Altlasten bleiben sichtbar, halten aber niemanden auf.</p>
+  </div>
+  <div class="mcard">
+    <div class="mhead"><span class="mnum">2</span><div><div class="eyebrow">Steuern</div><h3>Das Gummiband</h3></div></div>
+    <p>Die Reihenfolge der Stufen ist ein Vorschlag, keine Pflicht. Der Nutzer darf vorgreifen, etwa Module entwerfen, bevor alle Anforderungen stehen. Übersprungene Stufen erzeugen Hinweise, keine Blockade. Sie ziehen wie ein Gummiband zurück zur vollständigen Spezifikation: nach jedem Zug ein Satz an den Nutzer mit dem nächsten Schritt.</p>
+  </div>
+  <div class="mcard">
+    <div class="mhead"><span class="mnum">3</span><div><div class="eyebrow">Empfehlen</div><h3>Die Vorschläge</h3></div></div>
+    <p>Auf Anfrage nennt das Modell Umbauzüge, die seine schwächste Stelle entschärfen: eine Funktion in ein anderes Modul legen, eine Zwischenebene einziehen. Jeder Vorschlag wird durch das Tor geprobt, ohne zu speichern. Angewendet wird nichts automatisch.</p>
+  </div>
+  <div class="mcard constraint">
+    <div class="mhead"><span class="mnum">4</span><div><div class="eyebrow">Gestalten</div><h3>Constraints</h3></div></div>
+    <p>Die Architektur bestimmt der Autor, im Modell: als nicht-funktionale Anforderung an eine <b>Wirkkette</b>, ein <b>Modul</b> oder das <b>System</b>, mit einem Test, der das Modell selbst prüft. Ein Umbauzug, der sie bricht, macht den Test rot.</p>
+    <p class="mex">„Das Netz aus Stationen verarbeitet 20.000 gleichzeitige Abholungen pro Sekunde.“ Eine zentrale Codeprüfung trägt das nicht: Die Prüfung wandert in die Station, die Zentrale verteilt die Codes vorab. Der Test prüft, dass kein Schritt der Kette „Abholung“ auf die Zentrale wartet.</p>
+  </div>
+</div>
+
+<details class="details">
+<summary>Details: der Zug, die Gestaltungsregeln, der Vergleich von Alternativen, die Constraint-Dimensionen</summary>
+<figure>
+  <div class="eyebrow">Ein Zug im interaktiven Betrieb</div>
+  <div id="loop" class="big"></div>
+  <figcaption>Der Nutzer kann an jeder Stelle eine eigene Richtung einschlagen. Das Modell folgt und meldet, was dadurch offen bleibt.</figcaption>
+</figure>
+
+<h3 style="margin-top:40px">Gestaltungsregeln guter Architektur, als Regeln umgesetzt</h3>
+<p style="margin-top:8px">Die klassischen Gestaltungsregeln für Architektur stehen nicht in einem Leitfaden, den jemand lesen müsste. Sie sind Regeln des Katalogs und werden bei jeder Änderung geprüft. Fünf davon liefern Messwerte mit Schwelle; aus ihnen bildet das Modell einen <b>Steuerwert</b>.</p>
+<div class="tablewrap">
+<table class="design">
+  <thead><tr><th>Gestaltungsregel</th><th>Was das Modell prüft</th><th>Schwelle</th><th>Im Steuerwert</th></tr></thead>
+  <tbody>
+    <tr><td>Bündelung</td><td>Wie viele Teile ein Baustein auf der nächsten Ebene hat</td><td>3 bis 9</td><td>ja</td></tr>
+    <tr><td>Kapselung</td><td>Wie viele verschiedene Datenformate über den Rand eines Moduls oder Funktionsblocks laufen</td><td>unter 5</td><td>ja</td></tr>
+    <tr><td>Lose Kopplung</td><td>Wie viele Übergaben zwischen zwei Modulen laufen; außerdem Abhängigkeiten im Kreis</td><td>unter 3</td><td>ja</td></tr>
+    <tr><td>Hohe Kohäsion</td><td>In wie viele unverbundene Gruppen die Teile eines Moduls zerfallen</td><td>1 Gruppe</td><td>ja</td></tr>
+    <tr><td>Modularität</td><td>Jede Funktion liegt in genau einem Modul, jedes Modul hat Funktionen, keine Beinahe-Dubletten</td><td>–</td><td>nein, Regel</td></tr>
+    <tr><td>Trennung der Belange</td><td>Jeder Datenfluss hat genau einen Erzeuger; Funktionsbaum und Modulbaum sind getrennt</td><td>–</td><td>nein, Regel</td></tr>
+    <tr><td>Abstraktion</td><td>Das Modell ist ein Baum vom Ganzen zu den Teilen; die Stufen geben die Reihenfolge vor</td><td>–</td><td>nein, Aufbau</td></tr>
+    <tr><td>Design for Change</td><td>Keine eigene Regel. Folgt aus den anderen: schmale Ränder und lose Kopplung halten Änderungen lokal</td><td>–</td><td>nein</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="muted" style="margin-top:10px;font-size:0.92rem">Die Schwellen sind je Projekt einstellbar; genannt sind die Vorgaben.</p>
+
+<div class="stack" style="margin-top:28px">
+  <h3>Wie der Steuerwert Entscheidungsalternativen vergleicht</h3>
+  <p>Der Steuerwert nimmt von jeder gemessenen Stelle den Abstand zur Schwelle und merkt sich den <b>schlechtesten</b>. Ein Modell ist so gut wie seine schlechteste Stelle: Ein gutes Modul kauft kein schlechtes frei, und keine einzelne Regel diktiert allein. Null heißt, jede Stelle liegt innerhalb ihrer Schwelle.</p>
+  <p>Hat der Agent mehrere Alternativen für einen Zug, reicht er alle als Probe durch das Tor und vergleicht die Urteile in dieser Reihenfolge:</p>
+  <ol class="criteria">
+    <li>Eine Alternative, die das Tor blockiert, scheidet aus.</li>
+    <li>Weniger offene Befunde auf der Stufe, an der gerade gearbeitet wird.</li>
+    <li>Kein Anstieg blockierender Befunde an anderer Stelle.</li>
+    <li>Ein Zug, der nichts löscht, geht vor einem, der löscht. Weniger Modell ist kein besseres Modell.</li>
+    <li>Entschärft der Zug die schlechteste Stelle, also sinkt der Steuerwert?</li>
+    <li>Erst danach zählt, wie viel der Zug anlegt.</li>
+  </ol>
+  <p>Für Umbauvorschläge am fertigen Entwurf gilt eine Grenze, die gemessen wurde: Kennzahlen zeigen, wo ein Vorschlag eingreift und was dazu zu lesen ist, sie ordnen die Vorschläge nicht. Die Wahl zwischen zwei vertretbaren Entwürfen trifft der Autor, und er hält sie als Constraint fest.</p>
+</div>
+
+<h3 style="margin-top:40px">Die sieben Fragen, aus denen Constraints entstehen</h3>
+<p style="margin-top:8px">Vor dem ersten Schnitt fragt der Agent je Dimension nach einem Element und einer Eigenschaft, nie nach einer Zahl für die Dimension selbst. Ein Constraint zählt nur, wenn ein Zug am Modell ihn brechen kann, ohne dass sich das Verhalten der Umsetzung ändert.</p>
+<div class="tablewrap">
+<table class="design">
+  <thead><tr><th>Dimension</th><th>Frage</th><th>Beispiel Paketstation</th><th>Hängt an</th></tr></thead>
+  <tbody>
+    <tr><td>Änderbarkeit</td><td>Was muss sich ändern lassen, ohne anderes anzufassen?</td><td>Das Bedienfeld ist austauschbar: Die Steuerung kennt nur den Abholcode, nicht die Tastatur</td><td>System, Modul</td></tr>
+    <tr><td>Zusammenhalt</td><td>Was gehört zusammen?</td><td>Die Abholung läuft vollständig in der Station, ohne Schritt in der Zentrale</td><td>Wirkkette</td></tr>
+    <tr><td>Kurze Wege</td><td>Was muss schnell beim Akteur sein?</td><td>Fach offen höchstens 2 s nach dem Code: höchstens 3 Schritte im Antwortweg</td><td>Wirkkette</td></tr>
+    <tr><td>Fehlertoleranz</td><td>Was muss weiterlaufen, wenn ein Teil ausfällt?</td><td>Abholen geht auch ohne Netz: Codes liegen vorab in der Station, das Protokoll wird nachgereicht</td><td>Wirkkette</td></tr>
+    <tr><td>Größe</td><td>Wie groß darf ein Teil werden?</td><td>20.000 gleichzeitige Abholungen pro Sekunde im Netz: keine zentrale Prüfung je Abholung</td><td>System, Modul</td></tr>
+    <tr><td>Engpass</td><td>Wo darf keiner sein, wo ist einer gewollt?</td><td>Alle Fächer öffnen über einen Öffnungsbefehl, ein Treiber je Station</td><td>Modul</td></tr>
+    <tr><td>Schutz</td><td>Was ist geschützt?</td><td>Schließmechanik nur über den Öffnungsbefehl erreichbar</td><td>Modul, Wirkkette</td></tr>
+  </tbody>
+</table>
+</div>
+<p style="margin-top:12px">Drei Paare ziehen gegeneinander: Zusammenhalt gegen kurze Wege, Zusammenhalt gegen Engpass, Schutz gegen kurze Wege. Setzt der Autor beide Seiten, warnt der Agent mit dem Grund. Er blockiert nicht: Ein bewusster Zielkonflikt ist erlaubt, ein unsichtbarer nicht. Ob zwei Constraints sich wirklich ausschließen, zeigt erst der Testlauf.</p>
+
+<!-- ───────────────────────── 6 Begriffe ───────────────────────── -->
+<h2 id="begriffe">6 · Begriffe: Was und Wie, Blackbox und Whitebox</h2>
+<div class="summary">
+  <div class="eyebrow">Kurz gesagt</div>
+  <p>Jeder Baustein hat eine Definition in einem Satz, mit Beispiel und Gegenbeispiel aus der Paketstation. Eine <b>Anforderung</b> sagt, <b>was</b> ein Element an seiner Grenze tut oder einhält, nie <b>wie</b>. <b>Blackbox</b> ist ein Element von außen gesehen, <b>Whitebox</b> dasselbe Element von innen. Drei Bausteine lassen sich so schachteln: System, Funktion, Modul. Die Schnittstelle einer Blackbox wird aus den Flüssen über ihre Grenze berechnet, nicht behauptet.</p>
+</div>
+
+<h3 style="margin-top:28px">Die zwölf Bausteine in je einem Satz</h3>
+<p style="margin-top:8px">Der Satz ist die verbindliche Definition. Die Quelle nennt die Standarddefinition, der er entspricht.</p>
+<div class="tablewrap">
+<table class="defs">
+  <thead><tr><th>Baustein</th><th>Ein Satz</th><th>Beispiel</th><th>Gegenbeispiel</th><th>Quelle</th></tr></thead>
+  <tbody>
+    <tr><td>System</td><td>Das Ganze mit seiner Grenze nach außen.</td><td>Paketstation</td><td class="no">–</td><td class="src">ISO/IEC/IEEE 15288: „combination of interacting elements organized to achieve one or more stated purposes“</td></tr>
+    <tr><td>Akteur</td><td>Wer von außen etwas über die Grenze gibt oder bekommt.</td><td>Empfänger, Versand-Server</td><td class="no">Bedienfeld: ein Teil, kein Akteur</td><td class="src">UML/SysML: „a role played by a user or any other system that interacts with the subject“</td></tr>
+    <tr><td>Anwendungsfall</td><td>Ein Nutzen, den ein Akteur über die Grenze bekommt.</td><td>Paket abholen</td><td class="no">„Code prüfen“: ein Schritt</td><td class="src">IREB: „A set of possible interactions between external actors and a system that provide a benefit for the actor(s) involved.“</td></tr>
+    <tr><td>Anforderung</td><td>Was ein Element an seiner Grenze tut oder einhält, prüfbar, ohne zu sagen wie.</td><td>Fach öffnet höchstens 2 s nach gültigem Code</td><td class="no">„Die Steuerung sendet den Öffnungsbefehl über CAN“: ein Wie</td><td class="src">ISO/IEC/IEEE 29148: „statement that translates or expresses a need and its associated constraints and conditions“</td></tr>
+    <tr><td>Wirkkette</td><td>Der Weg eines Anwendungsfalls durch die Schritte, vom Auslöser bis zum Ergebnis.</td><td>Code eingeben, prüfen, entriegeln, Fach offen</td><td class="no">–</td><td class="src">Arcadia, Functional Chain: „one possible path among all the paths forming the dataflow, in the context of implementing a capability“</td></tr>
+    <tr><td>Funktion</td><td>Ein Schritt, der Eingaben in Ausgaben wandelt.</td><td>Code prüfen: aus Abholcode wird Öffnungsbefehl</td><td class="no">„Steuerung“: ein Teil, kein Schritt</td><td class="src">SEBoK: „defined by the transformation of input flows to output flows, with defined performance“</td></tr>
+    <tr><td>Datenfluss</td><td>Eine Übergabe von einem Schritt zum nächsten.</td><td>Abholcode</td><td class="no">–</td><td class="src">Arcadia, Functional Exchange: „interaction between a source function and a destination function, likely to transmit exchange items“</td></tr>
+    <tr><td>Datenformat</td><td>Die Vereinbarung, wie die Übergabe aussieht.</td><td>6 Ziffern, 0 bis 9</td><td class="no">„über Bluetooth“: der Kanal, nicht der Inhalt</td><td class="src">Arcadia, Interface: „exchange items … according to a communication ‚contract‘ shared between them“</td></tr>
+    <tr><td>Modul</td><td>Ein Teil, in dem Schritte umgesetzt sind.</td><td>Steuerung, Schließmechanik</td><td class="no">–</td><td class="src">ISO/IEC 25010, component: „entity with discrete structure, such as an assembly or software module“</td></tr>
+    <tr><td>Test</td><td>Eingabe, Bedingung und erwartetes Ergebnis für eine Zusage.</td><td>Gültiger Code, Tür zu, Fach offen nach höchstens 2 s</td><td class="no">„Öffnung funktioniert“: kein erwartetes Ergebnis</td><td class="src">IEEE 1012: „set of test inputs, execution conditions, and expected results developed for a particular objective“</td></tr>
+    <tr><td>Auftrag</td><td>Eine abgegrenzte Änderung am Modell.</td><td>Abholung per App ergänzen</td><td class="no">–</td><td class="src">PMBOK: „a formal proposal to modify any document, deliverable, or baseline“</td></tr>
+    <tr><td>Meilenstein</td><td>Ein Termin, dem Aufträge zugeordnet sind.</td><td>Pilotstation</td><td class="no">–</td><td class="src">ISO/IEC/IEEE 24765: „scheduled event used to measure progress“</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="muted" style="margin-top:10px;font-size:0.9rem;max-width:none">Eine Abweichung von den Quellen ist gewollt: Die Funktion trägt bei uns zusätzlich die Regel „die unterste Ebene ist an eine Umsetzung gebunden“. Das ist eine Prüfregel, kein Teil der Definition.</p>
+
+<h3 style="margin-top:32px">Format, Träger und Verfeinerung einer Übergabe</h3>
+<div class="stack" style="margin-top:8px">
+  <p>Wer eine Übergabe vereinbart, muss drei Fragen beantworten. Welcher Art ist sie? Worüber läuft sie? Wie genau soll sie beschrieben sein? Im Modell haben die drei Antworten feste Plätze, und keine braucht ein neues Element.</p>
+  <p><b>Die Art folgt aus dem Format.</b> „Volumenstrom 0 bis 20 l/min bei 6 bar“ ist hydraulisch, „Pegel 0 bis 5 V“ elektrisch, „Drehmoment 2 Nm“ mechanisch, „Fachnummer 1 bis 48“ logisch. Die Einheit sagt es; ein Merkmal „physisch“ oder „logisch“ am Fluss gibt es nicht. Die Familie hat das gemessen: Die früheren Merkmale für Protokoll und Güte am Fluss waren in 0 von 186 Übergaben gesetzt und sind entfallen.</p>
+  <p><b>Der Träger ist ein Modul.</b> Kabel, Bus, Leitung, Welle, Tastatur sind Teile, die man baut oder kauft. Sie erscheinen als Modul, in dem die sendende oder empfangende Funktion liegt. Hat der Träger eigenes Verhalten, das zählt, etwa Laufzeit auf dem Bus, bekommt er eine eigene Funktion in der Kette. Sonst bleibt er weg: Zwei Funktionen im selben Programm übergeben direkt.</p>
+  <p><b>Verfeinert wird über Funktionen, nicht über Formate.</b> Ein Fluss hat genau ein Format und keine Teile. Wer die Übergabe genauer beschreiben will, setzt Funktionen ein: einpacken, übertragen, auspacken. Zwischen ihnen entstehen neue Flüsse, jeder mit eigenem Format. Das ist eine längere Kette, keine Schichtung. Drei Formate für dieselbe Übergabe gibt es nicht; es gibt drei Übergaben zwischen verschiedenen Funktionen.</p>
+</div>
+<figure class="wide">
+  <div class="eyebrow">Der Öffnungsbefehl, verfeinert</div>
+  <div class="scroll"><svg viewBox="0 0 800 190" role="img" aria-label="Die Übergabe Öffnungsbefehl verfeinert: Code prüfen, Frame senden, Frame empfangen, Magnet ansteuern, Riegel ziehen, mit je eigenem Format je Fluss"><defs><marker id="vt_io" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--e-io)"/></marker></defs><rect x="20" y="44" width="300" height="112" rx="8" style="fill:color-mix(in oklab, var(--c-mod) 7%, var(--surface));stroke:var(--c-mod);stroke-width:1.6;stroke-dasharray:6 4"/><text x="32" y="60" style="font-size:9px;text-transform:uppercase;letter-spacing:0.06em;font-weight:700;fill:var(--c-mod)">Modul · Steuerung</text><rect x="350" y="44" width="430" height="112" rx="8" style="fill:color-mix(in oklab, var(--c-mod) 7%, var(--surface));stroke:var(--c-mod);stroke-width:1.6;stroke-dasharray:6 4"/><text x="362" y="60" style="font-size:9px;text-transform:uppercase;letter-spacing:0.06em;font-weight:700;fill:var(--c-mod)">Modul · Schließmechanik</text><g class="n" style="--c:var(--c-func)"><rect x="36.0" y="90.0" width="96" height="36" rx="5"/><text class="cap" x="84" y="102.0" text-anchor="middle">Funktion</text><text class="lbl" x="84" y="115.0" text-anchor="middle">Code prüfen</text></g><g class="n" style="--c:var(--c-func)"><rect x="192.0" y="90.0" width="96" height="36" rx="5"/><text class="cap" x="240" y="102.0" text-anchor="middle">Funktion</text><text class="lbl" x="240" y="115.0" text-anchor="middle">Frame senden</text></g><g class="n" style="--c:var(--c-func)"><rect x="382.0" y="90.0" width="96" height="36" rx="5"/><text class="cap" x="430" y="102.0" text-anchor="middle">Funktion</text><text class="lbl" x="430" y="115.0" text-anchor="middle">Frame empfangen</text></g><g class="n" style="--c:var(--c-func)"><rect x="542.0" y="90.0" width="96" height="36" rx="5"/><text class="cap" x="590" y="102.0" text-anchor="middle">Funktion</text><text class="lbl" x="590" y="115.0" text-anchor="middle">Magnet ansteuern</text></g><g class="n" style="--c:var(--c-func)"><rect x="686.0" y="90.0" width="88" height="36" rx="5"/><text class="cap" x="730" y="102.0" text-anchor="middle">Funktion</text><text class="lbl" x="730" y="115.0" text-anchor="middle">Riegel ziehen</text></g><g class="e" style="--k:var(--e-io)"><path d="M134.0,108 L190.0,108" marker-end="url(#vt_io)"/><text x="162.0" y="77" text-anchor="middle" dominant-baseline="middle" style="font-weight:700;fill:var(--c-schema)">Fachnummer 1 bis 48</text><text x="162.0" y="138" text-anchor="middle" dominant-baseline="middle">logisch</text></g><g class="e" style="--k:var(--e-io)"><path d="M290.0,108 L380.0,108" marker-end="url(#vt_io)"/><text x="335.0" y="77" text-anchor="middle" dominant-baseline="middle" style="font-weight:700;fill:var(--c-schema)">CAN-Frame 0x2A0</text><text x="335.0" y="138" text-anchor="middle" dominant-baseline="middle">elektrisch, über den Rand</text></g><g class="e" style="--k:var(--e-io)"><path d="M480.0,108 L540.0,108" marker-end="url(#vt_io)"/><text x="510.0" y="77" text-anchor="middle" dominant-baseline="middle" style="font-weight:700;fill:var(--c-schema)">Fachnummer 1 bis 48</text><text x="510.0" y="138" text-anchor="middle" dominant-baseline="middle">logisch</text></g><g class="e" style="--k:var(--e-io)"><path d="M640.0,108 L684,108" marker-end="url(#vt_io)"/><text x="662.0" y="77" text-anchor="middle" dominant-baseline="middle" style="font-weight:700;fill:var(--c-schema)">12 V, 300 ms</text><text x="662.0" y="138" text-anchor="middle" dominant-baseline="middle">elektrisch</text></g><text class="note" x="400" y="178" text-anchor="middle">Vier Flüsse, drei Formate, keine Schichtung. Der Modulrand liegt auf dem CAN-Frame; eingeklappt zeigt das Bild diesen Fluss.</text></svg></div>
+  <figcaption>Oben im Modell hieß die Übergabe „Öffnungsbefehl: Fachnummer 1 bis 48“ zwischen „Code prüfen“ und „Fach entriegeln“. Zerlegt man beide Funktionen, wird daraus eine Kette aus vier Flüssen. Wo der Modulrand liegt, bestimmt, welches Format an der Grenze steht: hier der CAN-Frame. Verschiebt man den Rand hinter „Frame empfangen“, steht die Fachnummer an der Grenze, und der Bus ist Innenleben der Steuerung.</figcaption>
+</figure>
+<div class="example" style="margin-top:14px"><strong>Zwei Fehler, die das Modell meldet.</strong> Ein Format, das Inhalt und Träger mischt („6 Ziffern über Bluetooth“): Der Träger gehört in ein Modul, nicht ins Format. Ein Fluss mit zwei Formaten, etwa Fachnummer und CAN-Frame zugleich: Dazwischen fehlt die Funktion, die einpackt.</div>
+<p style="margin-top:14px">Plug-and-Play folgt daraus von selbst: Das Format am Inhalt bleibt, die Funktionen fürs Übertragen lassen sich tauschen, und mit ihnen der Träger.</p>
+
+<h3 style="margin-top:40px">Eine Anforderung sagt das Was, nie das Wie</h3>
+<div class="stack" style="margin-top:8px">
+  <p>Die Regel: <b>Eine Anforderung nennt nur, was an der Grenze ihres Trägers sichtbar ist.</b> Sichtbar an der Grenze sind drei Dinge: der Akteur oder Nachbarschritt, die Übergabe mit ihrem Format, und eine messbare Eigenschaft. Sobald der Satz ein inneres Teil, einen inneren Schritt oder eine Technik nennt, ist er ein Wie und gehört in die Whitebox.</p>
+  <p>Die Tiefe ist erlaubt, der Blick nach innen nicht. Eine Anforderung am Schritt „Code prüfen“ bleibt ein Was, solange sie nur dessen Grenze beschreibt. Ob ein Satz ein Was ist, hängt vom Träger ab: Für die Station ist „Fach öffnet in 2 s“ ein Was. Für den Schritt „Code prüfen“ wäre derselbe Satz keiner, weil das Fach nicht an seiner Grenze liegt.</p>
+</div>
+<div class="panes bw" style="margin-top:14px;max-width:68ch">
+  <div class="pane good"><div class="cap">Was</div><p style="font-size:0.92rem;padding:2px 4px 8px">„Code prüfen“ liefert zu jedem 6-stelligen Code innerhalb von 200 ms die Antwort gültig oder ungültig.</p></div>
+  <div class="pane bad"><div class="cap">Wie</div><p style="font-size:0.92rem;padding:2px 4px 8px">„Code prüfen“ vergleicht den Code gegen die SQLite-Tabelle der Steuerung und sendet das Ergebnis über CAN.</p></div>
+</div>
+<p style="margin-top:16px">Empfohlenes Satzmuster für funktionale Anforderungen. Auslöser und Ergebnis sind Übergaben, die Güte ist eine Zahl mit Einheit, die Bedingung ein Zustand. Die ersten beiden sind Pflicht, die anderen nach Bedarf. Ob das Muster eine Prüfregel wird, entscheidet ein Versuch am Bestand.</p>
+<div class="pattern"><span>Wenn <i>Auslöser</i></span><span>dann <i>Ergebnis</i></span><span class="opt">innerhalb <i>Güte</i></span><span class="opt">nur wenn <i>Bedingung</i></span></div>
+<div class="example" style="margin-top:12px"><strong>Beispiel.</strong> Wenn ein gültiger Code eingegeben wird, dann öffnet das Fach, innerhalb von 2 s, nur wenn die Tür geschlossen ist.</div>
+
+<h3 style="margin-top:40px">Blackbox und Whitebox</h3>
+<div class="stack" style="margin-top:8px">
+  <p><b>Blackbox</b> ist ein Element von außen gesehen: seine Grenze, was hinein- und hinausgeht (Datenflüsse mit Format), was es zusagt (Anforderungen) und womit das belegt ist (Tests). Kein Blick nach innen.</p>
+  <p><b>Whitebox</b> ist dasselbe Element von innen gesehen: seine Teile und die Übergaben zwischen ihnen. Jedes Teil ist wieder eine Blackbox. Was Blackbox und was Whitebox ist, hängt davon ab, welches Element man gerade betrachtet.</p>
+  <p><b>Schachteln</b> lassen sich genau drei Bausteine: System, Funktion, Modul. Auf der Landkarte tragen sie das Zeichen ↻. Eine Wirkkette ist keine Box: Sie ist die Whitebox des Systems für einen Anwendungsfall, und jedes ihrer Glieder ist eine Blackbox. Ihr Rollup fasst Glieder für die Anzeige zusammen, er schachtelt nicht.</p>
+  <p><b>Die Schnittstelle einer Blackbox wird berechnet, nicht behauptet.</b> Sie besteht aus allen Datenflüssen, deren Erzeuger innen und Abnehmer außen liegt, oder umgekehrt. Von außen und von innen ist es dieselbe Schnittstelle.</p>
+</div>
+<figure>
+  <div class="eyebrow">Derselbe Schritt „Code prüfen“, von außen und von innen</div>
+  <div class="panes bw" style="margin-top:10px">
+    <div class="pane"><div class="cap">Von außen · Blackbox</div>
+      <svg viewBox="0 0 360 190" role="img" aria-label="Blackbox Code prüfen: Eingang Abholcode, Ausgang Öffnungsbefehl, Zusage Antwort in 200 ms, Test Antwortzeit">
+        <defs>
+          <marker id="bwAio" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--e-io)"/></marker>
+          <marker id="bwAsat" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--e-satisfy)"/></marker>
+          <marker id="bwAver" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--e-verify)"/></marker>
+        </defs>
+        <g class="e" style="--k:var(--e-io)"><path d="M94,86 L123,86" marker-end="url(#bwAio)"/></g>
+        <g class="e" style="--k:var(--e-io)"><path d="M257,86 L266,86" marker-end="url(#bwAio)"/></g>
+        <g class="e" style="--k:var(--e-satisfy)"><path d="M172,114 L122,134" marker-end="url(#bwAsat)"/><text x="134" y="118" text-anchor="middle" dominant-baseline="middle">erfüllt</text></g>
+        <g class="e" style="--k:var(--e-verify)"><path d="M200,154 L174,154" marker-end="url(#bwAver)"/><text x="187" y="146" text-anchor="middle" dominant-baseline="middle">prüft</text></g>
+        <g class="n" style="--c:var(--c-flow)"><rect x="8" y="66" width="84" height="40" rx="5"/><text class="cap" x="50" y="79" text-anchor="middle">Datenfluss</text><text class="lbl" x="50" y="92" text-anchor="middle">Abholcode</text></g>
+        <g class="n" style="--c:var(--c-func)"><rect x="130" y="58" width="120" height="56" rx="5"/><text class="cap" x="190" y="71" text-anchor="middle">Funktion</text><text class="lbl" x="190" y="86" text-anchor="middle">Code prüfen</text><text class="tag" x="190" y="104" text-anchor="middle">Innen: nicht sichtbar</text></g>
+        <circle class="port" cx="130" cy="86" r="5"/><circle class="port" cx="250" cy="86" r="5"/>
+        <g class="n" style="--c:var(--c-flow)"><rect x="268" y="66" width="86" height="40" rx="5"/><text class="cap" x="311" y="79" text-anchor="middle">Datenfluss</text><text class="lbl" x="311" y="92" text-anchor="middle">Öffnungsbefehl</text></g>
+        <g class="n" style="--c:var(--c-req)"><rect x="40" y="134" width="132" height="40" rx="5"/><text class="cap" x="106" y="147" text-anchor="middle">Anforderung</text><text class="lbl" x="106" y="160" text-anchor="middle">Antwort ≤ 200 ms</text></g>
+        <g class="n" style="--c:var(--c-test)"><rect x="200" y="134" width="120" height="40" rx="5"/><text class="cap" x="260" y="147" text-anchor="middle">Test</text><text class="lbl" x="260" y="160" text-anchor="middle">Antwortzeit</text></g>
+      </svg>
+    </div>
+    <div class="pane"><div class="cap">Von innen · Whitebox</div>
+      <svg viewBox="0 0 360 190" role="img" aria-label="Whitebox Code prüfen: dieselben zwei Anschlüsse am Rand, dahinter die Teilschritte Format prüfen, nachschlagen, Fach wählen">
+        <defs>
+          <marker id="bwBio" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--e-io)"/></marker>
+        </defs>
+        <rect class="boundary" x="60" y="36" width="240" height="118" rx="8"/>
+        <text class="cap" x="180" y="52" text-anchor="middle" style="font-size:8.5px;text-transform:uppercase;letter-spacing:0.06em;fill:var(--muted);font-weight:700">Funktion · Code prüfen</text>
+        <g class="e" style="--k:var(--e-io)"><path d="M8,100 L53,100" marker-end="url(#bwBio)"/><text x="30" y="90" text-anchor="middle" dominant-baseline="middle">Abholcode</text></g>
+        <g class="e" style="--k:var(--e-io)"><path d="M66,100 L74,100" marker-end="url(#bwBio)"/></g>
+        <g class="e" style="--k:var(--e-io)"><path d="M141,100 L147,100" marker-end="url(#bwBio)"/><text x="144" y="78" text-anchor="middle" dominant-baseline="middle">Code</text></g>
+        <g class="e" style="--k:var(--e-io)"><path d="M213,100 L219,100" marker-end="url(#bwBio)"/><text x="216" y="78" text-anchor="middle" dominant-baseline="middle">Treffer</text></g>
+        <g class="e" style="--k:var(--e-io)"><path d="M285,100 L293,100" marker-end="url(#bwBio)"/></g>
+        <g class="e" style="--k:var(--e-io)"><path d="M307,100 L352,100" marker-end="url(#bwBio)"/><text x="330" y="90" text-anchor="middle" dominant-baseline="middle">Öffnungsbefehl</text></g>
+        <g class="n" style="--c:var(--c-func)"><rect x="76" y="82" width="64" height="36" rx="5"/><text class="cap" x="108" y="94" text-anchor="middle">Funktion</text><text class="lbl" x="108" y="107" text-anchor="middle" style="font-size:10.5px">Format prüfen</text></g>
+        <g class="n" style="--c:var(--c-func)"><rect x="148" y="82" width="64" height="36" rx="5"/><text class="cap" x="180" y="94" text-anchor="middle">Funktion</text><text class="lbl" x="180" y="107" text-anchor="middle" style="font-size:10.5px">nachschlagen</text></g>
+        <g class="n" style="--c:var(--c-func)"><rect x="220" y="82" width="64" height="36" rx="5"/><text class="cap" x="252" y="94" text-anchor="middle">Funktion</text><text class="lbl" x="252" y="107" text-anchor="middle" style="font-size:10.5px">Fach wählen</text></g>
+        <circle class="port" cx="60" cy="100" r="5"/><circle class="port" cx="300" cy="100" r="5"/>
+        <text class="note" x="180" y="172" text-anchor="middle">Zusage und Test hängen am Rand, nicht an den Teilen.</text>
+      </svg>
+    </div>
+  </div>
+  <figcaption>Links die Grenze, zwei Anschlüsse, die Zusage und der Nachweis. Rechts dieselben zwei Anschlüsse am Rand, dahinter drei Teilschritte mit ihren Übergaben. Was von außen anschließt, endet am Rand, nie an einem Teil.</figcaption>
+</figure>
+
+
+<h3 style="margin-top:40px">Die Treppe: Anforderung und Lösung auf jeder Stufe</h3>
+<div class="stack" style="margin-top:8px">
+  <p>Die Trennung von Anforderung und Lösung liegt nicht an einer festen Stelle im Modell. Sie wiederholt sich auf jeder Stufe: Links steht, was ein Element an seinem Rand zusagt. Rechts steht, wie es das eine Stufe tiefer erreicht. Was rechts als Teil auftaucht, hat auf der nächsten Stufe wieder einen eigenen Rand mit eigener Zusage.</p>
+  <p>Eine Funktion nur zur Gliederung gibt es nicht. Jede Funktion erfüllt eine Anforderung, sonst meldet Stufe 5 sie als Ballast. Eine Funktion mit Teilschritten und eine Blattfunktion unterscheiden sich nur darin, was hinter ihrem Rand liegt: Teilschritte oder ein Verweis auf die Umsetzung. Beide tragen Anforderungen, beide haben eine berechnete Schnittstelle. Der Modulbaum ist keine Stufe der Treppe. Er steht daneben und nimmt die Blattfunktionen auf.</p>
+  <p>Module schachteln sich genauso. Ein Modul von außen ist ein Rand mit den Übergaben, die ihn kreuzen, und mit seinen Gütezusagen, etwa Gewicht oder Antwortzeit. Von innen sind es Teilmodule und die Funktionen, die darin liegen. Die Treppe der Module läuft neben der Treppe der Funktionen, bis unten ein Teil liegt, das gebaut oder gekauft wird: eine Datei, eine Platine, ein Gehäuse. Die Übergaben zwischen zwei Modulen werden nicht eingetragen, sondern aus den Funktionen berechnet, die in ihnen liegen.</p>
+</div>
+<figure class="wide">
+  <div class="eyebrow">Drei Stufen, auf jeder das Was und das Wie</div>
+  <div class="scroll"><svg viewBox="0 0 800 640" role="img" aria-label="Die Treppe: drei Stufen Paketstation, Funktion Code prüfen, Teilschritt nachschlagen, je Stufe das Was am Rand und das Wie dahinter, daneben die Module"><defs><marker id="tr_io" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--e-io)"/></marker><marker id="tr_compose" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--e-compose)"/></marker><marker id="tr_allocate" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--e-allocate)"/></marker></defs><text x="20" y="22" style="font-size:11px;font-weight:700;fill:var(--fg)">Stufe 1 · die Paketstation</text>
+<rect x="20" y="30" width="330" height="130" rx="8" style="fill:color-mix(in oklab, var(--accent) 7%, var(--surface));stroke:var(--accent);stroke-width:1.4"/>
+<text x="32" y="47" style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;font-weight:700;fill:var(--accent)">Was · am Rand der Station</text>
+<g class="n" style="--c:var(--c-uc)"><rect x="66.0" y="68.0" width="108" height="34" rx="5"/><text class="cap" x="120" y="80.0" text-anchor="middle">Anwendungsfall</text><text class="lbl" x="120" y="93.0" text-anchor="middle">Paket abholen</text></g>
+<g class="n" style="--c:var(--c-req)"><rect x="191.0" y="68.0" width="128" height="34" rx="5"/><text class="cap" x="255" y="80.0" text-anchor="middle">Anforderung</text><text class="lbl" x="255" y="93.0" text-anchor="middle">Fach offen ≤ 2 s</text></g>
+<g class="n" style="--c:var(--c-actor)"><rect x="66.0" y="113.0" width="108" height="34" rx="5"/><text class="cap" x="120" y="125.0" text-anchor="middle">Akteur</text><text class="lbl" x="120" y="138.0" text-anchor="middle">Empfänger</text></g>
+<g class="n" style="--c:var(--c-test)"><rect x="191.0" y="113.0" width="128" height="34" rx="5"/><text class="cap" x="255" y="125.0" text-anchor="middle">Test</text><text class="lbl" x="255" y="138.0" text-anchor="middle">Öffnung ≤ 2 s</text></g>
+<rect x="370" y="30" width="410" height="130" rx="8" style="fill:var(--surface-2);stroke:var(--line);stroke-width:1.4"/>
+<text x="382" y="47" style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;font-weight:700;fill:var(--muted)">Wie · die Wirkkette „Abholung“</text>
+<g class="n" style="--c:var(--c-fchain)"><rect x="394.0" y="53.0" width="92" height="34" rx="5"/><text class="cap" x="440" y="65.0" text-anchor="middle">Wirkkette</text><text class="lbl" x="440" y="78.0" text-anchor="middle">Abholung</text></g>
+<g class="n" style="--c:var(--c-func)"><rect x="396.0" y="103.0" width="88" height="34" rx="5"/><text class="cap" x="440" y="115.0" text-anchor="middle">Funktion</text><text class="lbl" x="440" y="128.0" text-anchor="middle">Code lesen</text></g>
+<g class="n" style="--c:var(--c-func)"><rect x="531.0" y="103.0" width="88" height="34" rx="5"/><text class="cap" x="575" y="115.0" text-anchor="middle">Funktion</text><text class="lbl" x="575" y="128.0" text-anchor="middle">Code prüfen</text></g>
+<g class="n" style="--c:var(--c-func)"><rect x="662.0" y="103.0" width="100" height="34" rx="5"/><text class="cap" x="712" y="115.0" text-anchor="middle">Funktion</text><text class="lbl" x="712" y="128.0" text-anchor="middle">Fach entriegeln</text></g>
+<g class="e" style="--k:var(--e-io)"><path d="M484,120 L529,120" marker-end="url(#tr_io)"/><text x="506" y="108" text-anchor="middle" dominant-baseline="middle">Abholcode</text></g>
+<g class="e" style="--k:var(--e-io)"><path d="M619,120 L660,120" marker-end="url(#tr_io)"/><text x="640" y="108" text-anchor="middle" dominant-baseline="middle">Befehl</text></g>
+<g class="e" style="--k:var(--e-compose)"><path d="M486,70 L560,70 L575,101" marker-end="url(#tr_compose)"/></g>
+<g class="e" style="--k:var(--e-compose)"><path d="M575,137 L575,178 L360,178 L360,193" marker-end="url(#tr_compose)"/><text x="468" y="170" text-anchor="middle" dominant-baseline="middle">eine Stufe tiefer: das Wie wird zum Was</text></g>
+<text x="50" y="187" style="font-size:11px;font-weight:700;fill:var(--fg)">Stufe 2 · die Funktion „Code prüfen“</text>
+<rect x="50" y="195" width="330" height="130" rx="8" style="fill:color-mix(in oklab, var(--accent) 7%, var(--surface));stroke:var(--accent);stroke-width:1.4"/>
+<text x="62" y="212" style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;font-weight:700;fill:var(--accent)">Was · am Rand der Funktion</text>
+<g class="n" style="--c:var(--c-flow)"><rect x="65.0" y="233.0" width="86" height="34" rx="5"/><text class="cap" x="108" y="245.0" text-anchor="middle">Datenfluss</text><text class="lbl" x="108" y="258.0" text-anchor="middle">Abholcode</text></g>
+<g class="n" style="--c:var(--c-func)"><rect x="169.0" y="233.0" width="92" height="34" rx="5"/><text class="cap" x="215" y="245.0" text-anchor="middle">Funktion</text><text class="lbl" x="215" y="258.0" text-anchor="middle">Code prüfen</text></g>
+<g class="n" style="--c:var(--c-flow)"><rect x="277.0" y="233.0" width="96" height="34" rx="5"/><text class="cap" x="325" y="245.0" text-anchor="middle">Datenfluss</text><text class="lbl" x="325" y="258.0" text-anchor="middle">Öffnungsbefehl</text></g>
+<g class="e" style="--k:var(--e-io)"><path d="M151,250 L167,250" marker-end="url(#tr_io)"/></g>
+<g class="e" style="--k:var(--e-io)"><path d="M261,250 L275,250" marker-end="url(#tr_io)"/></g>
+<g class="n" style="--c:var(--c-req)"><rect x="95.0" y="280.0" width="130" height="34" rx="5"/><text class="cap" x="160" y="292.0" text-anchor="middle">Anforderung</text><text class="lbl" x="160" y="305.0" text-anchor="middle">Antwort ≤ 200 ms</text></g>
+<g class="n" style="--c:var(--c-test)"><rect x="245.0" y="280.0" width="110" height="34" rx="5"/><text class="cap" x="300" y="292.0" text-anchor="middle">Test</text><text class="lbl" x="300" y="305.0" text-anchor="middle">Antwortzeit</text></g>
+<rect x="400" y="195" width="380" height="130" rx="8" style="fill:var(--surface-2);stroke:var(--line);stroke-width:1.4"/>
+<text x="412" y="212" style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;font-weight:700;fill:var(--muted)">Wie · drei Teilschritte</text>
+<g class="n" style="--c:var(--c-func)"><rect x="417.0" y="253.0" width="86" height="34" rx="5"/><text class="cap" x="460" y="265.0" text-anchor="middle">Funktion</text><text class="lbl" x="460" y="278.0" text-anchor="middle">Format prüfen</text></g>
+<g class="n" style="--c:var(--c-func)"><rect x="532.0" y="253.0" width="86" height="34" rx="5"/><text class="cap" x="575" y="265.0" text-anchor="middle">Funktion</text><text class="lbl" x="575" y="278.0" text-anchor="middle">nachschlagen</text></g>
+<g class="n" style="--c:var(--c-func)"><rect x="647.0" y="253.0" width="86" height="34" rx="5"/><text class="cap" x="690" y="265.0" text-anchor="middle">Funktion</text><text class="lbl" x="690" y="278.0" text-anchor="middle">Fach wählen</text></g>
+<g class="e" style="--k:var(--e-io)"><path d="M503,270 L530,270" marker-end="url(#tr_io)"/><text x="516" y="258" text-anchor="middle" dominant-baseline="middle">Code</text></g>
+<g class="e" style="--k:var(--e-io)"><path d="M618,270 L645,270" marker-end="url(#tr_io)"/><text x="631" y="258" text-anchor="middle" dominant-baseline="middle">Treffer</text></g>
+<g class="e" style="--k:var(--e-compose)"><path d="M575,287 L575,343 L392,343 L392,358" marker-end="url(#tr_compose)"/><text x="484" y="335" text-anchor="middle" dominant-baseline="middle">eine Stufe tiefer</text></g>
+<text x="80" y="352" style="font-size:11px;font-weight:700;fill:var(--fg)">Stufe 3 · der Teilschritt „nachschlagen“</text>
+<rect x="80" y="360" width="330" height="130" rx="8" style="fill:color-mix(in oklab, var(--accent) 7%, var(--surface));stroke:var(--accent);stroke-width:1.4"/>
+<text x="92" y="377" style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;font-weight:700;fill:var(--accent)">Was · am Rand des Teilschritts</text>
+<g class="n" style="--c:var(--c-flow)"><rect x="100.0" y="398.0" width="76" height="34" rx="5"/><text class="cap" x="138" y="410.0" text-anchor="middle">Datenfluss</text><text class="lbl" x="138" y="423.0" text-anchor="middle">Code</text></g>
+<g class="n" style="--c:var(--c-func)"><rect x="199.0" y="398.0" width="92" height="34" rx="5"/><text class="cap" x="245" y="410.0" text-anchor="middle">Funktion</text><text class="lbl" x="245" y="423.0" text-anchor="middle">nachschlagen</text></g>
+<g class="n" style="--c:var(--c-flow)"><rect x="312.0" y="398.0" width="76" height="34" rx="5"/><text class="cap" x="350" y="410.0" text-anchor="middle">Datenfluss</text><text class="lbl" x="350" y="423.0" text-anchor="middle">Treffer</text></g>
+<g class="e" style="--k:var(--e-io)"><path d="M176,415 L197,415" marker-end="url(#tr_io)"/></g>
+<g class="e" style="--k:var(--e-io)"><path d="M291,415 L310,415" marker-end="url(#tr_io)"/></g>
+<g class="n" style="--c:var(--c-req)"><rect x="115.0" y="445.0" width="170" height="34" rx="5"/><text class="cap" x="200" y="457.0" text-anchor="middle">Anforderung</text><text class="lbl" x="200" y="470.0" text-anchor="middle">Treffer oder keiner, ≤ 50 ms</text></g>
+<g class="n" style="--c:var(--c-test)"><rect x="290.0" y="445.0" width="100" height="34" rx="5"/><text class="cap" x="340" y="457.0" text-anchor="middle">Test</text><text class="lbl" x="340" y="470.0" text-anchor="middle">Nachschlagen</text></g>
+<rect x="430" y="360" width="350" height="130" rx="8" style="fill:var(--surface-2);stroke:var(--line);stroke-width:1.4"/>
+<text x="442" y="377" style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;font-weight:700;fill:var(--muted)">Wie · kein Teilschritt mehr</text>
+<g><rect x="470" y="405" width="270" height="44" rx="5" style="fill:var(--surface);stroke:var(--c-func);stroke-width:1.6;stroke-dasharray:5 3"/><text x="605" y="420" text-anchor="middle" style="font-size:8.5px;text-transform:uppercase;letter-spacing:0.06em;fill:var(--muted);font-weight:700">Verweis auf die Umsetzung</text><text x="605" y="437" text-anchor="middle" style="font-size:11.5px;font-family:ui-monospace,Menlo,monospace">steuerung/lookup.ts · findCode()</text></g>
+<text class="note" x="605" y="472" text-anchor="middle">Hinter dem Rand liegt kein Modell mehr, sondern Code oder ein Bauteil.</text>
+<text x="20" y="522" style="font-size:11px;font-weight:700;fill:var(--fg)">Daneben, auf jeder Stufe · Womit</text>
+<rect x="20" y="530" width="760" height="100" rx="8" style="fill:var(--surface-2);stroke:var(--line);stroke-width:1.4"/>
+<text x="32" y="547" style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;font-weight:700;fill:var(--muted)">Womit · die Module, ein eigener Baum neben der Treppe</text>
+<g class="n" style="--c:var(--c-mod)"><rect x="245.0" y="568.0" width="110" height="34" rx="5"/><text class="cap" x="300" y="580.0" text-anchor="middle">Modul</text><text class="lbl" x="300" y="593.0" text-anchor="middle">Steuerung</text></g>
+<g class="n" style="--c:var(--c-mod)"><rect x="495.0" y="568.0" width="130" height="34" rx="5"/><text class="cap" x="560" y="580.0" text-anchor="middle">Modul</text><text class="lbl" x="560" y="593.0" text-anchor="middle">Schließmechanik</text></g>
+<text class="note" x="300" y="615" text-anchor="middle">nimmt auf: Code lesen · Format prüfen · nachschlagen · Fach wählen</text>
+<text class="note" x="560" y="615" text-anchor="middle">nimmt auf: Fach entriegeln</text>
+<g class="e" style="--k:var(--e-allocate)"><path d="M245,479 L245,505 L300,505 L300,568" marker-end="url(#tr_allocate)"/><text x="272" y="497" text-anchor="middle" dominant-baseline="middle">umgesetzt in</text></g></svg></div>
+  <figcaption>Anforderungen stehen auf jeder Stufe, aber immer nur am Rand der Box. Die Lösung ist das, was eine Stufe tiefer sichtbar wird. Unten endet die Treppe, wenn hinter dem Rand Code oder ein Bauteil liegt.</figcaption>
+</figure>
+
+<p class="muted" style="margin-top:28px;font-size:0.9rem;max-width:none">Heute zeichnet der Viewer einen Fluss von außen bis zu dem Teil, das ihn aufnimmt. Anschlüsse am Rand, ein Steckbrief je Blackbox und der Kapselungsbefund am Rand sind als Auftrag CR-GVE-400 im Viewer-Repo beschrieben.</p>
+
+<ol class="sources">
+  <li>ISO/IEC/IEEE 24765:2017 Systems and software engineering, Vocabulary. Trägt die Einträge aus 15288, 29148, IEEE 730, IEEE 1012, ISO/IEC 25010 und PMBOK.</li>
+  <li>IREB CPRE Glossary, Version 2.2, Oktober 2025.</li>
+  <li>OMG SysML v1 Glossary und UML, Einträge actor, use case, requirement, satisfy, verify.</li>
+  <li>Thales, Arcadia Language MetaModel, 2023: Function, Functional Exchange, Functional Chain, Exchange Item, Interface, Component, Actor.</li>
+  <li>SEBoK, Function (glossary).</li>
+</ol>
+</div>
+
+<script>
+(function () {
+  const TYPES = {
+    SYS: 'System', UC: 'Anwendungsfall', ACTOR: 'Akteur', REQ: 'Anforderung', FCHAIN: 'Wirkkette', FUNC: 'Funktion',
+    FLOW: 'Datenfluss', SCHEMA: 'Datenformat', MOD: 'Modul', TEST: 'Test', CR: 'Auftrag', MS: 'Meilenstein'
+  };
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // Endpunkt einer Kante am Rand eines Rechtecks, in Richtung (tx,ty).
+  function clip(n, tx, ty) {
+    const dx = tx - n.x, dy = ty - n.y;
+    if (dx === 0 && dy === 0) return [n.x, n.y];
+    const hw = n.w / 2 + 2, hh = n.h / 2 + 2;
+    const t = Math.min(hw / Math.abs(dx || 1e-9), hh / Math.abs(dy || 1e-9));
+    return [n.x + dx * t, n.y + dy * t];
+  }
+
+  function render(el, spec) {
+    const W = spec.w, H = spec.h, NW = spec.nw || 100, NH = spec.nh || 40;
+    const byId = {};
+    spec.nodes.forEach(n => {
+      const lines = Array.isArray(n.label) ? n.label : [n.label];
+      n.lines = lines; n.w = n.w || NW; n.h = n.h || (NH + (lines.length - 1) * 12); byId[n.id] = n;
+    });
+    const out = [];
+    let mk = 0;
+    spec.edges.forEach(e => {
+      const a = byId[e.from], b = byId[e.to];
+      const bend = e.bend || 0;
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+      const nx = -(b.y - a.y) / len, ny = (b.x - a.x) / len;
+      const cx = mx + nx * bend, cy = my + ny * bend;
+      const [ax, ay] = clip(a, bend ? cx : b.x, bend ? cy : b.y);
+      const [bx, by] = clip(b, bend ? cx : a.x, bend ? cy : a.y);
+      const d = bend ? `M${ax},${ay} Q${cx},${cy} ${bx},${by}` : `M${ax},${ay} L${bx},${by}`;
+      const lx = bend ? 0.25 * ax + 0.5 * cx + 0.25 * bx : (ax + bx) / 2;
+      const ly = bend ? 0.25 * ay + 0.5 * cy + 0.25 * by : (ay + by) / 2;
+      const id = 'm' + (spec.id || 'x') + (mk++);
+      const color = e.state === 'bad' || e.state === 'missing' ? 'var(--bad)' : e.state === 'new' ? 'var(--good)' : (e.k ? `var(--e-${e.k})` : 'var(--e-compose)');
+      const cls = ['e', e.state ? 'state-' + e.state : '', e.k === 'relation' ? 'dashed' : ''].join(' ');
+      out.push(`<g class="${cls}" style="--k:${e.k ? `var(--e-${e.k})` : 'var(--e-compose)'}">
+        <defs><marker id="${id}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:${color}"/></marker></defs>
+        <path d="${d}" marker-end="url(#${id})"/>
+        ${e.label ? `<text x="${lx + (e.lx || 0)}" y="${ly + (e.ly || 0)}" text-anchor="middle" dominant-baseline="middle">${esc(e.label)}</text>` : ''}
+      </g>`);
+    });
+    spec.nodes.forEach(n => {
+      const cls = ['n', n.state ? 'state-' + n.state : ''].join(' ');
+      const top = n.y - n.h / 2;
+      const cap = (n.state === 'missing' ? '? ' : '') + TYPES[n.type];
+      const first = top + 13;
+      const lines = n.lines.map((l, i) => `<text class="lbl" x="${n.x}" y="${first + 12.5 + i * 12}" text-anchor="middle">${esc(l)}</text>`).join('');
+      const loop = n.loop ? `<text class="loop" x="${n.x + n.w / 2 - 9}" y="${top + 11}" text-anchor="middle">↻</text>` : '';
+      const tag = n.tag ? `<text class="tag ${n.tagState || ''}" x="${n.x}" y="${top + n.h + 11}" text-anchor="middle">${esc(n.tag)}</text>` : '';
+      out.push(`<g class="${cls}" style="--c:var(--c-${n.type.toLowerCase()})">
+        <rect x="${n.x - n.w / 2}" y="${top}" width="${n.w}" height="${n.h}" rx="5"/>
+        <text class="cap" x="${n.x}" y="${first}" text-anchor="middle">${esc(cap)}</text>${lines}${loop}${tag}</g>`);
+    });
+    (spec.notes || []).forEach(t => out.push(`<text class="note ${t.cls || ''}" x="${t.x}" y="${t.y}" text-anchor="${t.anchor || 'middle'}">${esc(t.text)}</text>`));
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(spec.alt || '')}">${out.join('')}</svg>`;
+  }
+
+  // ── Landkarte des Metamodells ──
+  render(document.getElementById('map'), {
+    id: 'map', w: 800, h: 560, nw: 128, nh: 44,
+    alt: 'Landkarte aller Bausteinarten und erlaubten Verbindungen',
+    nodes: [
+      { id: 'SYS', type: 'SYS', label: 'das Ganze', x: 400, y: 40, loop: true },
+      { id: 'ACTOR', type: 'ACTOR', label: 'außen', x: 100, y: 160 },
+      { id: 'UC', type: 'UC', label: 'wozu', x: 400, y: 160 },
+      { id: 'REQ', type: 'REQ', label: 'Zusage', x: 690, y: 160, loop: true },
+      { id: 'FLOW', type: 'FLOW', label: 'Übergabe', x: 100, y: 310 },
+      { id: 'FCHAIN', type: 'FCHAIN', label: 'Ablauf', x: 400, y: 280 },
+      { id: 'TEST', type: 'TEST', label: 'Nachweis', x: 690, y: 320 },
+      { id: 'SCHEMA', type: 'SCHEMA', label: 'Vertrag', x: 100, y: 470 },
+      { id: 'FUNC', type: 'FUNC', label: 'Schritt', x: 400, y: 410, loop: true },
+      { id: 'MOD', type: 'MOD', label: 'Bauteil', x: 690, y: 470, loop: true },
+      { id: 'CR', type: 'CR', label: 'Änderung', x: 400, y: 520 },
+      { id: 'MS', type: 'MS', label: 'Termin', x: 690, y: 40 },
+    ],
+    edges: [
+      { from: 'SYS', to: 'UC', k: 'compose' },
+      { from: 'SYS', to: 'REQ', k: 'compose', bend: -28 },
+      { from: 'SYS', to: 'MOD', k: 'compose', bend: -150 },
+      { from: 'UC', to: 'FCHAIN', k: 'compose' },
+      { from: 'UC', to: 'REQ', k: 'compose' },
+      { from: 'FCHAIN', to: 'FUNC', k: 'compose' },
+      { from: 'ACTOR', to: 'FLOW', k: 'io', bend: -14 },
+      { from: 'FLOW', to: 'ACTOR', k: 'io', bend: -14 },
+      { from: 'FLOW', to: 'FUNC', k: 'io', bend: -14 },
+      { from: 'FUNC', to: 'FLOW', k: 'io', bend: -14 },
+      { from: 'FUNC', to: 'REQ', k: 'satisfy', bend: 40 },
+      { from: 'FCHAIN', to: 'REQ', k: 'satisfy' },
+      { from: 'MOD', to: 'REQ', k: 'satisfy', bend: 26 },
+      { from: 'SYS', to: 'REQ', k: 'satisfy', bend: 28 },
+      { from: 'TEST', to: 'REQ', k: 'verify' },
+      { from: 'TEST', to: 'SCHEMA', k: 'verify', bend: -120 },
+      { from: 'FUNC', to: 'MOD', k: 'allocate' },
+      { from: 'FLOW', to: 'SCHEMA', k: 'relation' },
+      { from: 'CR', to: 'FUNC', k: 'relation' },
+      { from: 'CR', to: 'MOD', k: 'relation' },
+      { from: 'CR', to: 'SCHEMA', k: 'relation' },
+      { from: 'CR', to: 'MS', k: 'relation', bend: 230 },
+      { from: 'MS', to: 'REQ', k: 'compose' },
+    ],
+    notes: [
+      { x: 40, y: 395, text: 'auch „Auftrag → Anwendungsfall, Anforderung“', anchor: 'start' },
+      { x: 40, y: 408, text: 'und „Meilenstein → Anwendungsfall, Funktion“', anchor: 'start' },
+      { x: 40, y: 421, text: 'sind erlaubt, hier nicht gezeichnet.', anchor: 'start' },
+    ],
+  });
+
+  // ── Das Beispiel als Instanz ──
+  render(document.getElementById('instance'), {
+    id: 'inst', w: 800, h: 540, nw: 118, nh: 44,
+    alt: 'Die Paketstation als Netz aus Bausteinen',
+    nodes: [
+      { id: 'sys', type: 'SYS', label: 'Paketstation', x: 400, y: 40 },
+      { id: 'uc', type: 'UC', label: 'Paket abholen', x: 400, y: 125 },
+      { id: 'req', type: 'REQ', label: ['Fach öffnet ≤ 2 s', 'nach gültigem Code'], x: 660, y: 125, w: 150 },
+      { id: 'fc', type: 'FCHAIN', label: 'Abholung', x: 400, y: 215 },
+      { id: 'test', type: 'TEST', label: ['Öffnung mit', 'gültigem Code'], x: 660, y: 230, w: 140 },
+      { id: 'act', type: 'ACTOR', label: 'Empfänger', x: 70, y: 330, w: 100 },
+      { id: 'f1', type: 'FLOW', label: 'Abholcode', x: 200, y: 330, w: 100 },
+      { id: 'fn1', type: 'FUNC', label: 'Code prüfen', x: 335, y: 330, w: 104 },
+      { id: 'f2', type: 'FLOW', label: 'Öffnungsbefehl', x: 480, y: 330, w: 112 },
+      { id: 'fn2', type: 'FUNC', label: 'Fach entriegeln', x: 630, y: 330, w: 112 },
+      { id: 'f3', type: 'FLOW', label: 'Fach offen', x: 400, y: 410, w: 100 },
+      { id: 'sch', type: 'SCHEMA', label: '6 Ziffern', x: 200, y: 490, w: 100 },
+      { id: 'm1', type: 'MOD', label: 'Steuerung', x: 480, y: 490, w: 104 },
+      { id: 'm2', type: 'MOD', label: 'Schließmechanik', x: 660, y: 490, w: 118 },
+    ],
+    edges: [
+      { from: 'sys', to: 'uc', k: 'compose', label: 'besteht aus', lx: 42 },
+      { from: 'uc', to: 'fc', k: 'compose', label: 'besteht aus', lx: 42 },
+      { from: 'uc', to: 'req', k: 'compose', label: 'besteht aus', ly: -9 },
+      { from: 'sys', to: 'm1', k: 'compose', bend: -150, label: 'besteht aus', lx: 14 },
+      { from: 'fc', to: 'fn1', k: 'compose', label: 'besteht aus', lx: -34 },
+      { from: 'fc', to: 'fn2', k: 'compose', label: 'besteht aus', lx: 34, ly: -6 },
+      { from: 'fc', to: 'req', k: 'satisfy', label: 'erfüllt', lx: 10, ly: 8 },
+      { from: 'test', to: 'req', k: 'verify', label: 'prüft', lx: 24 },
+      { from: 'act', to: 'f1', k: 'io', label: 'gibt ab', ly: -9 },
+      { from: 'f1', to: 'fn1', k: 'io', label: 'nimmt auf', ly: -9 },
+      { from: 'fn1', to: 'f2', k: 'io', label: 'gibt ab', ly: -9 },
+      { from: 'f2', to: 'fn2', k: 'io', label: 'nimmt auf', ly: -9 },
+      { from: 'fn2', to: 'f3', k: 'io', label: 'gibt ab', lx: 26, ly: 6 },
+      { from: 'f3', to: 'act', k: 'io', bend: 40, label: 'nimmt auf', ly: 10 },
+      { from: 'f1', to: 'sch', k: 'relation', label: 'hat Format', lx: 34 },
+      { from: 'fn1', to: 'm1', k: 'allocate', bend: 30, label: 'umgesetzt in', lx: -42 },
+      { from: 'fn2', to: 'm2', k: 'allocate', label: 'umgesetzt in', lx: 44 },
+    ],
+  });
+
+  // ── Ein Zug im interaktiven Betrieb ──
+  (function drawLoop() {
+    const el = document.getElementById('loop');
+    const steps = [
+      ['Nutzer', 'sagt, was er will', 'oder schlägt eine eigene Richtung ein'],
+      ['Agent', 'baut einen kleinen Schritt', 'Alternativen als Probe'],
+      ['Tor', 'urteilt', 'blockiert nur neue Fehler'],
+      ['Modell', 'misst', 'Befunde je Stufe, Steuerwert'],
+      ['Vorschlag', 'ein Satz an den Nutzer', 'der nächste Schritt, frei annehmbar'],
+    ];
+    const W = 800, H = 150, bw = 140, bh = 74, gap = 22, x0 = (W - (steps.length * bw + (steps.length - 1) * gap)) / 2;
+    let s = '';
+    steps.forEach((st, i) => {
+      const x = x0 + i * (bw + gap), y = 20;
+      s += `<g><rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="6" style="fill:color-mix(in oklab, var(--accent) 10%, var(--surface));stroke:var(--accent);stroke-width:1.5"/>
+        <text x="${x + bw / 2}" y="${y + 24}" text-anchor="middle" style="font-size:14px;font-weight:700">${esc(st[0])}</text>
+        <text x="${x + bw / 2}" y="${y + 43}" text-anchor="middle" style="font-size:11px">${esc(st[1])}</text>
+        <text x="${x + bw / 2}" y="${y + 59}" text-anchor="middle" style="font-size:9.5px;fill:var(--muted)">${esc(st[2])}</text></g>`;
+      if (i < steps.length - 1) s += `<path d="M${x + bw + 3},${y + bh / 2} L${x + bw + gap - 3},${y + bh / 2}" style="stroke:var(--accent);stroke-width:1.6" marker-end="url(#loopArrow)"/>`;
+    });
+    const xl = x0 + steps.length * bw + (steps.length - 1) * gap - bw / 2, xf = x0 + bw / 2;
+    s += `<path d="M${xl},${20 + bh + 3} L${xl},${H - 18} L${xf},${H - 18} L${xf},${20 + bh + 6}" style="fill:none;stroke:var(--accent);stroke-width:1.6;stroke-dasharray:5 4" marker-end="url(#loopArrow)"/>
+      <text x="${W / 2}" y="${H - 23}" text-anchor="middle" style="font-size:10.5px;fill:var(--muted);paint-order:stroke;stroke:var(--surface);stroke-width:4px">der Nutzer entscheidet: annehmen oder anders weitergehen</text>`;
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Ein Zug: Nutzer, Agent, Tor, Modell, Vorschlag, zurück zum Nutzer"><defs><marker id="loopArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--accent)"/></marker></defs>${s}</svg>`;
+  })();
+
+  // ── Je Stufe ein Beispiel ──
+  const M = { w: 360, h: 165, nw: 104, nh: 40 };
+  const rules = [
+    {
+      stage: 'immer · gilt in jedem Zustand', sev: 'block', title: 'Nur erlaubte Verbindungen',
+      finding: 'Der Empfänger ist direkt mit der Funktion „Code prüfen“ verbunden. Ein Akteur gibt aber nie direkt an eine Funktion, sondern immer in einen Datenfluss. Ohne den Fluss hat die Übergabe kein Format.',
+      fix: 'Datenfluss „Abholcode“ dazwischensetzen. Die Änderung wird erst dann angenommen.',
+      more: 'Außerdem immer: Eine Verbindung zeigt auf einen Baustein, den es nicht mehr gibt. Zwei offene Aufträge ändern denselben Baustein.',
+      bad: { nodes: [{ id: 'a', type: 'ACTOR', label: 'Empfänger', x: 80, y: 82 }, { id: 'f', type: 'FUNC', label: 'Code prüfen', x: 280, y: 82 }],
+             edges: [{ from: 'a', to: 'f', state: 'bad', label: 'nicht erlaubt', ly: -10 }] },
+      good: { nodes: [{ id: 'a', type: 'ACTOR', label: 'Empfänger', x: 60, y: 82, w: 92 }, { id: 'fl', type: 'FLOW', label: 'Abholcode', x: 180, y: 82, w: 92, state: 'new' }, { id: 'f', type: 'FUNC', label: 'Code prüfen', x: 300, y: 82, w: 96 }],
+              edges: [{ from: 'a', to: 'fl', state: 'new', label: 'gibt ab', ly: -10 }, { from: 'fl', to: 'f', state: 'new', label: 'nimmt auf', ly: -10 }] },
+    },
+    {
+      stage: 'Stufe 1 · System', sev: 'hint', title: 'Es gibt ein System',
+      finding: 'Das Modell enthält den Anwendungsfall „Paket abholen“, aber kein System. Niemand kann sagen, was gebaut wird und wo es endet.',
+      fix: 'Das System „Paketstation“ anlegen und den Anwendungsfall darunter hängen.',
+      more: 'Dies ist die einzige Regel der Stufe. Alles Weitere setzt das System voraus.',
+      bad: { nodes: [{ id: 's', type: 'SYS', label: 'fehlt', x: 180, y: 40, state: 'missing' }, { id: 'u', type: 'UC', label: 'Paket abholen', x: 180, y: 120 }],
+             edges: [{ from: 's', to: 'u', state: 'missing' }] },
+      good: { nodes: [{ id: 's', type: 'SYS', label: 'Paketstation', x: 180, y: 40, state: 'new' }, { id: 'u', type: 'UC', label: 'Paket abholen', x: 180, y: 120 }],
+              edges: [{ from: 's', to: 'u', state: 'new', label: 'besteht aus', lx: 44 }] },
+    },
+    {
+      stage: 'Stufe 2 · Anwendungsfall', sev: 'hint', title: 'Jeder Anwendungsfall hat einen Auslöser',
+      finding: '„Paket abholen“ hat einen Ablauf, aber keinen Akteur, der ihn anstößt. Ein Anwendungsfall ohne Auslöser kann nie eintreten.',
+      fix: 'Den Empfänger anlegen und über den Datenfluss „Abholcode“ an die erste Funktion des Ablaufs anschließen.',
+      more: 'Weitere Regeln der Stufe: Das System hat keinen Anwendungsfall. Ein Anwendungsfall nennt kein Ziel. Ein Akteur kommt nur in einer einzigen Betriebsart vor.',
+      bad: { nodes: [{ id: 'u', type: 'UC', label: 'Paket abholen', x: 240, y: 40 }, { id: 'a', type: 'ACTOR', label: 'fehlt', x: 60, y: 120, state: 'missing', w: 90 }, { id: 'fl', type: 'FLOW', label: 'fehlt', x: 170, y: 120, state: 'missing', w: 90 }, { id: 'f', type: 'FUNC', label: 'Code prüfen', x: 290, y: 120 }],
+             edges: [{ from: 'u', to: 'f', label: 'Ablauf', lx: 24 }, { from: 'a', to: 'fl', state: 'missing' }, { from: 'fl', to: 'f', state: 'missing' }] },
+      good: { nodes: [{ id: 'u', type: 'UC', label: 'Paket abholen', x: 240, y: 40 }, { id: 'a', type: 'ACTOR', label: 'Empfänger', x: 60, y: 120, state: 'new', w: 90 }, { id: 'fl', type: 'FLOW', label: 'Abholcode', x: 170, y: 120, state: 'new', w: 90 }, { id: 'f', type: 'FUNC', label: 'Code prüfen', x: 290, y: 120 }],
+              edges: [{ from: 'u', to: 'f', label: 'Ablauf', lx: 24 }, { from: 'a', to: 'fl', state: 'new' }, { from: 'fl', to: 'f', state: 'new' }] },
+    },
+    {
+      stage: 'Stufe 3 · Anforderung', sev: 'hint', title: 'Eine Anforderung ist messbar',
+      finding: '„Das Fach öffnet schnell“ nennt keine Zahl, keine Grenze und keine beobachtbare Bedingung. Niemand kann entscheiden, ob die Zusage eingehalten ist, und kein Test kann sie je prüfen.',
+      fix: 'Die Zusage mit Zahl und Einheit schreiben: „Fach öffnet höchstens 2 s nach gültigem Code“.',
+      more: 'Weitere Regeln der Stufe: Ein Anwendungsfall hat keine Anforderung. Ein bekanntes Risiko hat keine Gegenmaßnahme. Teilanforderungen widersprechen ihrem Ganzen.',
+      bad: { nodes: [{ id: 'u', type: 'UC', label: 'Paket abholen', x: 180, y: 40 }, { id: 'r', type: 'REQ', label: ['Fach öffnet', '„schnell“'], x: 180, y: 118, state: 'bad', w: 130 }],
+             edges: [{ from: 'u', to: 'r', label: 'besteht aus', lx: 44 }], notes: [{ x: 180, y: 158, text: 'kein Maß, keine Grenze', cls: 'bad' }] },
+      good: { nodes: [{ id: 'u', type: 'UC', label: 'Paket abholen', x: 180, y: 40 }, { id: 'r', type: 'REQ', label: ['Fach öffnet ≤ 2 s', 'nach gültigem Code'], x: 180, y: 118, state: 'new', w: 140 }],
+              edges: [{ from: 'u', to: 'r', label: 'besteht aus', lx: 44 }] },
+    },
+    {
+      stage: 'Stufe 4 · Wirkkette', mark: 'Anforderungen stehen · SRR', sev: 'hint', title: 'Jeder Anwendungsfall beschreibt seinen Ablauf',
+      finding: '„Paket abholen“ sagt, was möglich sein soll, aber nicht, wie es läuft. Ohne Wirkkette gibt es keine Funktionen, die man prüfen oder bauen könnte.',
+      fix: 'Die Wirkkette „Abholung“ anlegen und die Funktionen eintragen, die sie bilden.',
+      more: 'Weitere Regel der Stufe: Eine Wirkkette hat keine Funktionen oder gehört zu keinem Anwendungsfall. Nach dieser Stufe liegt die erste Marke: Die Anforderungen sind abgestimmt.',
+      bad: { nodes: [{ id: 'u', type: 'UC', label: 'Paket abholen', x: 180, y: 35 }, { id: 'c', type: 'FCHAIN', label: 'fehlt', x: 180, y: 95, state: 'missing' }],
+             edges: [{ from: 'u', to: 'c', state: 'missing' }] },
+      good: { nodes: [{ id: 'u', type: 'UC', label: 'Paket abholen', x: 180, y: 32 }, { id: 'c', type: 'FCHAIN', label: 'Abholung', x: 180, y: 86, state: 'new' }, { id: 'f1', type: 'FUNC', label: 'Code prüfen', x: 100, y: 140, state: 'new' }, { id: 'f2', type: 'FUNC', label: 'Fach entriegeln', x: 260, y: 140, state: 'new', w: 112 }],
+              edges: [{ from: 'u', to: 'c', state: 'new' }, { from: 'c', to: 'f1', state: 'new' }, { from: 'c', to: 'f2', state: 'new' }] },
+    },
+    {
+      stage: 'Stufe 5 · Funktion', sev: 'hint', title: 'Jede Funktion dient einer Zusage',
+      finding: '„Protokoll drucken“ erfüllt keine Anforderung. Entweder fehlt die Zusage, die sie einlöst, oder die Funktion ist Ballast, den niemand bestellt hat.',
+      fix: 'Die Anforderung ergänzen („Jede Abholung wird protokolliert“) oder die Funktion streichen.',
+      more: 'Weitere Regeln der Stufe: Eine Funktion steht in keiner Wirkkette. Zwei Funktionen sind beinahe gleich. Zwei Bausteine hängen im Kreis voneinander ab.',
+      bad: { nodes: [{ id: 'f', type: 'FUNC', label: 'Protokoll drucken', x: 100, y: 82, w: 118 }, { id: 'r', type: 'REQ', label: 'fehlt', x: 270, y: 82, state: 'missing' }],
+             edges: [{ from: 'f', to: 'r', state: 'missing', label: 'erfüllt ?', ly: -10 }] },
+      good: { nodes: [{ id: 'f', type: 'FUNC', label: 'Protokoll drucken', x: 95, y: 82, w: 118 }, { id: 'r', type: 'REQ', label: ['Jede Abholung', 'wird protokolliert'], x: 265, y: 82, state: 'new', w: 130 }],
+              edges: [{ from: 'f', to: 'r', state: 'new', label: 'erfüllt', ly: -10 }] },
+    },
+    {
+      stage: 'Stufe 6 · Datenfluss', sev: 'block', title: 'Ein Datenfluss hat genau einen Erzeuger',
+      finding: 'Die Tastatur und der App-Empfang schreiben beide in denselben Datenfluss „Abholcode“. Wer ihn liest, weiß nicht, welche Fassung ankommt. Mehrere Leser sind in Ordnung, mehrere Schreiber nicht.',
+      fix: 'Jedem Erzeuger seinen eigenen Fluss geben. Beide dürfen dasselbe Format „6 Ziffern“ teilen.',
+      more: 'Weitere Regeln der Stufe: Ein Fluss hat keinen Erzeuger oder keinen Abnehmer. Eine Funktion hat keinen Eingang oder keinen Ausgang. Eine Wirkkette zerfällt in unverbundene Stücke.',
+      bad: { nodes: [{ id: 'a', type: 'FUNC', label: 'Tastatur lesen', x: 70, y: 45, w: 104 }, { id: 'b', type: 'FUNC', label: 'App-Empfang', x: 70, y: 120, w: 104 }, { id: 'fl', type: 'FLOW', label: 'Abholcode', x: 200, y: 82, state: 'bad', w: 92 }, { id: 'f', type: 'FUNC', label: 'Code prüfen', x: 310, y: 82, w: 90 }],
+             edges: [{ from: 'a', to: 'fl', state: 'bad' }, { from: 'b', to: 'fl', state: 'bad' }, { from: 'fl', to: 'f' }], notes: [{ x: 200, y: 150, text: 'zwei Erzeuger', cls: 'bad' }] },
+      good: { nodes: [{ id: 'a', type: 'FUNC', label: 'Tastatur lesen', x: 65, y: 45, w: 100 }, { id: 'b', type: 'FUNC', label: 'App-Empfang', x: 65, y: 120, w: 100 }, { id: 'f1', type: 'FLOW', label: 'Code (Tastatur)', x: 195, y: 45, state: 'new', w: 104 }, { id: 'f2', type: 'FLOW', label: 'Code (App)', x: 195, y: 120, state: 'new', w: 104 }, { id: 'f', type: 'FUNC', label: 'Code prüfen', x: 310, y: 82, w: 86 }],
+              edges: [{ from: 'a', to: 'f1', state: 'new' }, { from: 'b', to: 'f2', state: 'new' }, { from: 'f1', to: 'f' }, { from: 'f2', to: 'f' }] },
+    },
+    {
+      stage: 'Stufe 7 · Modul', mark: 'Entwurf steht · PDR', sev: 'hint', title: 'Jede Funktion ist in einem Modul umgesetzt',
+      finding: '„Fach entriegeln“ liegt in keinem Modul. Die Funktion hat keinen Ort im Aufbau; niemand weiß, welches Bauteil sie leistet und wer dafür zuständig ist.',
+      fix: 'Die Funktion dem Modul „Schließmechanik“ zuordnen.',
+      more: 'Weitere Regeln der Stufe: Ein Baustein hat weniger als 3 oder mehr als 9 Teile. Zwischen zwei Modulen laufen zu viele verschiedene Übergaben. Die Teile eines Moduls haben nichts miteinander zu tun. Ein Modul hat keine Funktion. Danach die zweite Marke: Der Entwurf steht.',
+      bad: { nodes: [{ id: 'f', type: 'FUNC', label: 'Fach entriegeln', x: 95, y: 82, w: 112 }, { id: 'm', type: 'MOD', label: 'fehlt', x: 270, y: 82, state: 'missing' }],
+             edges: [{ from: 'f', to: 'm', state: 'missing', label: 'umgesetzt in ?', ly: -10 }] },
+      good: { nodes: [{ id: 'f', type: 'FUNC', label: 'Fach entriegeln', x: 95, y: 82, w: 112 }, { id: 'm', type: 'MOD', label: 'Schließmechanik', x: 270, y: 82, state: 'new', w: 118 }],
+              edges: [{ from: 'f', to: 'm', state: 'new', label: 'umgesetzt in', ly: -10 }] },
+    },
+    {
+      stage: 'Stufe 8 · Datenformat', mark: 'Schnittstellen stehen · CDR', sev: 'hint', title: 'Jedes Datenformat gehört zu einem Datenfluss',
+      finding: 'Das Format „Fachnummer 1 bis 48“ ist definiert, aber kein Datenfluss nutzt es. Es beschreibt eine Übergabe, die es nicht gibt, oder die Übergabe ist noch nicht angeschlossen.',
+      fix: 'Das Format an den Fluss „Öffnungsbefehl“ hängen oder es streichen.',
+      more: 'Weitere Regel der Stufe: Zwei Formate beschreiben beinahe dasselbe. Danach die dritte Marke: Jede Übergabe hat einen festen Vertrag.',
+      bad: { nodes: [{ id: 'fl', type: 'FLOW', label: 'fehlt', x: 90, y: 82, state: 'missing' }, { id: 's', type: 'SCHEMA', label: ['Fachnummer', '1 bis 48'], x: 265, y: 82, w: 110 }],
+             edges: [{ from: 'fl', to: 's', state: 'missing', label: 'hat Format ?', ly: -10 }] },
+      good: { nodes: [{ id: 'fl', type: 'FLOW', label: 'Öffnungsbefehl', x: 90, y: 82, state: 'new', w: 112 }, { id: 's', type: 'SCHEMA', label: ['Fachnummer', '1 bis 48'], x: 265, y: 82, w: 110 }],
+              edges: [{ from: 'fl', to: 's', state: 'new', label: 'hat Format', ly: -10 }] },
+    },
+    {
+      stage: 'Stufe 9 · Test', mark: 'Testbereit · TRR', sev: 'block', title: 'Jede Zusage hat einen Test',
+      finding: 'Die Anforderung „Fach öffnet ≤ 2 s“ hat keinen Test, der sie prüft. Die Zusage steht im Modell, aber niemand kann zeigen, dass sie eingehalten wird.',
+      fix: 'Den Test „Öffnung mit gültigem Code“ anlegen und mit der Anforderung verbinden.',
+      more: 'Weitere Regeln der Stufe: Ein Test prüft nichts. Ein Datenformat hat keinen Vertragstest. Eine Übergabe zwischen zwei Funktionen ist weder über Anforderungen noch Ende zu Ende belegt. Danach die vierte Marke: Das System ist testbereit.',
+      bad: { nodes: [{ id: 't', type: 'TEST', label: 'fehlt', x: 85, y: 82, state: 'missing' }, { id: 'r', type: 'REQ', label: ['Fach öffnet ≤ 2 s', 'nach gültigem Code'], x: 265, y: 82, w: 140 }],
+             edges: [{ from: 't', to: 'r', state: 'missing', label: 'prüft ?', ly: -10 }] },
+      good: { nodes: [{ id: 't', type: 'TEST', label: ['Öffnung mit', 'gültigem Code'], x: 85, y: 82, state: 'new', w: 110 }, { id: 'r', type: 'REQ', label: ['Fach öffnet ≤ 2 s', 'nach gültigem Code'], x: 265, y: 82, w: 140 }],
+              edges: [{ from: 't', to: 'r', state: 'new', label: 'prüft', ly: -10 }] },
+    },
+    {
+      stage: 'Stufe 10 · Plan', sev: 'hint', title: 'Ein Meilenstein hat Aufträge',
+      finding: 'Der Meilenstein „Pilotstation“ hat keinen Auftrag. Ein Termin ohne zugeordnete Arbeit verspricht etwas, das niemand liefert.',
+      fix: 'Den Auftrag „Abholung per App“ dem Meilenstein zuordnen und eintragen, welche Bausteine er ändert.',
+      more: 'Weitere Regeln der Stufe: Unfertige Bausteine haben keinen offenen Auftrag. Ein Auftrag nennt keine betroffenen Bausteine. Ein Auftrag gilt als abgeschlossen, ohne dass die Änderung nachgewiesen ist.',
+      bad: { nodes: [{ id: 'c', type: 'CR', label: 'fehlt', x: 85, y: 82, state: 'missing' }, { id: 'm', type: 'MS', label: 'Pilotstation', x: 265, y: 82 }],
+             edges: [{ from: 'c', to: 'm', state: 'missing', label: 'gehört zu ?', ly: -10 }] },
+      good: { nodes: [{ id: 'c', type: 'CR', label: ['Abholung', 'per App'], x: 85, y: 60, state: 'new' }, { id: 'm', type: 'MS', label: 'Pilotstation', x: 265, y: 60 }, { id: 'f', type: 'FUNC', label: 'Code prüfen', x: 265, y: 135 }],
+              edges: [{ from: 'c', to: 'm', state: 'new', label: 'gehört zu', ly: -10 }, { from: 'c', to: 'f', state: 'new', label: 'ändert', lx: -24, ly: 6 }] },
+    },
+    {
+      stage: 'Stufe 11 · Bindung', sev: 'hint', title: 'Jede Funktion verweist auf ihre Umsetzung',
+      finding: 'Der Bau hat begonnen, aber „Code prüfen“ zeigt noch nicht auf die Stelle, an der sie umgesetzt ist. Das gilt gleichermaßen für Module, Formate und Tests. Ohne Verweis bleibt das Modell eine Absichtserklärung.',
+      fix: 'Den Verweis auf die Umsetzung eintragen, oder die Funktion als zugekauft kennzeichnen, wenn sie von außen kommt.',
+      more: 'Weitere Regeln der Stufe: Ein Test verweist auf keine Prüfvorschrift. Ein Format verweist auf keine Definition. Zwei Tests beanspruchen dieselbe Prüfvorschrift. Diese Regeln schweigen, solange noch nichts gebaut wird.',
+      bad: { nodes: [{ id: 'f', type: 'FUNC', label: 'Code prüfen', x: 180, y: 70, state: 'bad', w: 120, tag: 'Verweis auf Umsetzung: fehlt', tagState: 'bad' }], edges: [] },
+      good: { nodes: [{ id: 'f', type: 'FUNC', label: 'Code prüfen', x: 180, y: 70, state: 'new', w: 120, tag: 'Verweis auf Umsetzung: vorhanden', tagState: 'good' }], edges: [] },
+    },
+    {
+      stage: 'Stufe 12 · Abgleich', mark: 'Gebaut · Bau', sev: 'hint', title: 'Umsetzung und Modell stimmen überein',
+      finding: 'In der Umsetzung greift das Bedienfeld auf die Steuerung zu. Im Modell gibt es zwischen den beiden Modulen keine Übergabe. Die gebaute Abhängigkeit ist dem Modell unbekannt.',
+      fix: 'Die Übergabe im Modell nachziehen: „Code lesen“ gibt den Abholcode an „Code prüfen“. Oder den Zugriff in der Umsetzung entfernen.',
+      more: 'Weitere Regeln der Stufe: Ein Verweis zeigt ins Leere. Das Modell sagt Übergabe, die Umsetzung übergibt nichts. Ein Auftrag ist im Modell abgeschlossen, in der Ablage aber offen. Danach die letzte Marke: gebaut und abgeglichen.',
+      bad: { nodes: [{ id: 'a', type: 'MOD', label: 'Bedienfeld', x: 90, y: 82 }, { id: 'b', type: 'MOD', label: 'Steuerung', x: 270, y: 82 }],
+             edges: [{ from: 'a', to: 'b', state: 'bad', label: 'nur in der Umsetzung', ly: -11 }], notes: [{ x: 180, y: 140, text: 'im Modell: keine Übergabe', cls: 'bad' }] },
+      good: { nodes: [{ id: 'a', type: 'MOD', label: 'Bedienfeld', x: 70, y: 40, w: 96 }, { id: 'b', type: 'MOD', label: 'Steuerung', x: 290, y: 40, w: 96 }, { id: 'f1', type: 'FUNC', label: 'Code lesen', x: 70, y: 125, w: 96 }, { id: 'fl', type: 'FLOW', label: 'Abholcode', x: 180, y: 125, state: 'new', w: 92 }, { id: 'f2', type: 'FUNC', label: 'Code prüfen', x: 290, y: 125, w: 96 }],
+              edges: [{ from: 'f1', to: 'a', k: 'allocate', label: 'umgesetzt in', lx: 40 }, { from: 'f2', to: 'b', k: 'allocate', label: 'umgesetzt in', lx: -40 }, { from: 'f1', to: 'fl', state: 'new' }, { from: 'fl', to: 'f2', state: 'new' }] },
+    },
+  ];
+
+  const host = document.getElementById('rules');
+  rules.forEach((r, i) => {
+    const art = document.createElement('article');
+    art.className = 'rule';
+    art.innerHTML = `
+      <div class="top"><span class="eyebrow">${esc(r.stage)}</span>
+        <span class="pill ${r.sev === 'block' ? 'block' : 'hint'}">${r.sev === 'block' ? 'blockiert' : 'Hinweis'}</span>
+        ${r.mark ? `<span class="pill mark">Marke danach: ${esc(r.mark)}</span>` : ''}</div>
+      <h3>${esc(r.title)}</h3>
+      <div class="txt"><p><b>Befund.</b> ${esc(r.finding)}</p><p><b>Behebung.</b> ${esc(r.fix)}</p><p class="more">${esc(r.more)}</p></div>
+      <div class="panes">
+        <div class="pane bad"><div class="cap">Befund</div><div id="rb${i}"></div></div>
+        <div class="pane good"><div class="cap">Behoben</div><div id="rg${i}"></div></div>
+      </div>`;
+    host.appendChild(art);
+    render(document.getElementById('rb' + i), Object.assign({ id: 'b' + i, alt: 'Befund: ' + r.title }, M, r.bad));
+    render(document.getElementById('rg' + i), Object.assign({ id: 'g' + i, alt: 'Behoben: ' + r.title }, M, r.good));
+  });
+
+  // ── Details auf- und zuklappen; ein Sprung aus dem Inhaltsverzeichnis öffnet nichts von selbst ──
+  const all = Array.from(document.querySelectorAll('details.details'));
+  document.getElementById('openAll').addEventListener('click', () => all.forEach(d => { d.open = true; }));
+  document.getElementById('closeAll').addEventListener('click', () => all.forEach(d => { d.open = false; }));
+})();
+</script>
+
+</body></html>
