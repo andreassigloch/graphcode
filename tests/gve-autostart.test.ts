@@ -17,7 +17,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import type { spawn, ChildProcess } from 'node:child_process';
 import { ensureViewer } from '../src/surface/gve.js';
-import { SPAWN_LOCK_TTL_MS } from '../src/surface/gve-sessions.js';
+import { SPAWN_LOCK_TTL_MS, rememberViewer, rememberedViewerPid } from '../src/surface/gve-sessions.js';
 
 type SpawnCall = { bin: string; args: string[] };
 
@@ -164,6 +164,41 @@ describe('TEST-gve-autostart', () => {
         throw new Error('ECONNREFUSED');
       }) as unknown as typeof fetch,
     });
+    expect(calls).toHaveLength(1);
+  });
+
+  // CR-GC-912: am 2026-11-10 blockierte eine 38,8-s-Messung den Viewer; die Probe lief ins
+  // Zeitlimit, der LEBENDE Viewer bekam SIGTERM und einen Ersatz auf dem naechsten Port.
+  it('a silent probe while the remembered viewer LIVES is busy, not gone — no spawn, no kill', async () => {
+    mkdirSync(join(repo, 'docs', 'views'), { recursive: true });
+    writeFileSync(join(repo, 'docs', 'views', 'dashboard.url'), 'http://localhost:43354/\n');
+    rememberViewer(repo, 4711);
+    const killed: number[] = [];
+    const result = await ensureViewer(repo, {
+      env: {},
+      spawnImpl: fakeSpawn(calls),
+      resolveGve,
+      fetchImpl: (async () => {
+        throw new DOMException('The operation was aborted due to timeout', 'TimeoutError');
+      }) as unknown as typeof fetch,
+      pidAlive: (pid) => pid === 4711,
+      killImpl: (pid) => void killed.push(pid),
+    });
+    expect(result).toEqual({ kind: 'unresponsive', pid: 4711 });
+    expect(calls).toHaveLength(0);
+    expect(killed).toEqual([]);
+    expect(rememberedViewerPid(repo)).toBe(4711);
+  });
+
+  it('a silent probe with a DEAD remembered viewer starts a fresh one', async () => {
+    rememberViewer(repo, 4711);
+    const result = await ensureViewer(repo, {
+      env: {},
+      spawnImpl: fakeSpawn(calls),
+      resolveGve,
+      pidAlive: () => false,
+    });
+    expect(result.kind).toBe('spawned');
     expect(calls).toHaveLength(1);
   });
 

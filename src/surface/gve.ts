@@ -75,6 +75,8 @@ export interface StartGveDeps {
   allowSpawn?: boolean;
   /** Wie ein Viewer beendet wird; injizierbar, damit Tests keine echte PID abschiessen. */
   killImpl?: (pid: number) => void;
+  /** Lebt dieser Prozess? Injizierbar, weil eine Test-PID auf dem Rechner zufaellig leben kann. */
+  pidAlive?: (pid: number) => boolean;
 }
 
 /**
@@ -112,9 +114,11 @@ function gveDisabled(env: NodeJS.ProcessEnv): boolean {
  * Probe-Budget von 750 ms. Die Probe timeoutete also IMMER, `ensureViewer` las
  * das als „kein Viewer da" und startete einen weiteren; Vite bumpte den Port,
  * der neue schrieb seine Adresse, und die vorige Instanz blieb als Waise
- * stehen — sieben Viewer für ein Repo. Ein Timeout ist hier nicht „langsam",
- * sondern wird als Abwesenheit gehandelt; die Probe darf deshalb nichts
+ * stehen — sieben Viewer für ein Repo. Die Probe darf deshalb nichts
  * anfragen, was mit dem Graphen wächst.
+ *
+ * Ein Timeout heisst seit CR-GC-912 nur noch „antwortet nicht", nicht „ist nicht
+ * da": ob ein Viewer da ist, entscheidet `ensureViewer` am Prozess, nicht an der Probe.
  */
 async function probeViewer(
   repoRoot: string,
@@ -146,7 +150,6 @@ async function probeViewer(
  */
 function spawnViewer(repoRoot: string, deps: StartGveDeps): ChildProcess | null {
   const env = deps.env ?? process.env;
-  retireOrphanViewer(repoRoot, deps);
   let bin: string;
   let args: string[];
   if (env.GRAPHCODE_GVE_BIN) {
@@ -186,34 +189,14 @@ function spawnViewer(repoRoot: string, deps: StartGveDeps): ChildProcess | null 
   return child;
 }
 
-/**
- * Beendet den zuvor vermerkten Viewer, bevor ein neuer vermerkt wird (CR-GC-452).
- *
- * `.graphcode/gve.pid` fasst EINEN Viewer — `rememberViewer` ueberschreibt. Wer hier
- * lebend ueberschrieben wird, ist ab diesem Moment unerreichbar: keine Session kennt
- * seine PID mehr, `stopViewerIfLastSession` beendet nur den vermerkten, also ueberlebt
- * er jedes Sitzungsende. So standen sieben Viewer auf sieben Ports fuer EIN Repo.
- *
- * Dass hier ueberhaupt gespawnt wird, heisst: unter der vermerkten Adresse antwortet
- * keiner. Ein trotzdem lebender Vermerk ist damit per Definition die Waise und nicht
- * der amtierende Viewer — der haette geantwortet und `ensureViewer` waere gar nicht bis
- * hierher gekommen. Beendet wird nur, was graphcode selbst gestartet hat; ein von Hand
- * gestarteter `gve --repo .` steht nie in dieser Datei.
- */
-function retireOrphanViewer(repoRoot: string, deps: StartGveDeps): void {
-  const pid = rememberedViewerPid(repoRoot);
-  if (pid === null || !isAlive(pid)) return;
-  process.stderr.write(`[graphcode] gve: retiring unreachable viewer pid ${pid} before starting a new one\n`);
-  (deps.killImpl ?? killProcessGroup)(pid);
-  forgetViewer(repoRoot);
-}
-
 /** Was ein Ensure-Durchlauf vorgefunden bzw. getan hat. */
 export type EnsureResult =
   /** Ein Viewer bedient dieses Repo — nichts zu tun. */
   | { kind: 'serving'; url: string }
   /** Wir haben einen gestartet. */
   | { kind: 'spawned'; child: ChildProcess }
+  /** Der vermerkte Viewer lebt, antwortet aber nicht — beschaeftigt oder haengend, nicht weg. */
+  | { kind: 'unresponsive'; pid: number }
   /** Eine andere Session startet gerade — ihr nicht ins Wort fallen. */
   | { kind: 'busy' }
   /** Kein Viewer startbar (nicht auflösbar) oder abgeschaltet. */
@@ -225,6 +208,16 @@ export type EnsureResult =
  * Die Reservierung (`reserveSpawn`) ist der Grund, warum N parallele Sessions
  * nicht N Viewer starten: zwischen „keiner antwortet" und „der neue bindet den
  * Port" liegen Sekunden, in denen die Identitäts-Probe noch nichts sieht.
+ *
+ * Gestartet wird nur, wenn kein vermerkter Viewer LEBT (CR-GC-912). Antwortet die
+ * Probe nicht, waehrend der Prozess aus `gve.pid` lebt, ist er beschaeftigt — am
+ * 2026-11-10 eine synchrone History-Messung von 38,8 s. Vorher galt er dann als
+ * Waise, bekam SIGTERM und wurde ersetzt; der Ersatz wich auf den naechsten Port
+ * aus, und der offene Browser-Tab blieb tot. Beenden ist nicht umkehrbar, also
+ * entscheidet der Prozess, nicht ein Zeitlimit. Ein Viewer, der dauerhaft haengt,
+ * bleibt stehen: ein Neustart wuerde seinen Fehler verdecken. Damit startet auch
+ * niemand mehr neben einem lebenden Viewer — die Waisen aus CR-GC-452 entstehen
+ * nicht mehr, und es gibt nichts mehr abzuraeumen.
  */
 export async function ensureViewer(repoRoot: string, deps: StartGveDeps = {}): Promise<EnsureResult> {
   const env = deps.env ?? process.env;
@@ -239,6 +232,10 @@ export async function ensureViewer(repoRoot: string, deps: StartGveDeps = {}): P
       `[graphcode] gve: ${found.url} serves ${found.servedBy ?? 'another repo'}, ` +
         `not ${mine} — starting this repo's own dashboard\n`,
     );
+  }
+  const remembered = rememberedViewerPid(repoRoot);
+  if (remembered !== null && (deps.pidAlive ?? isAlive)(remembered)) {
+    return { kind: 'unresponsive', pid: remembered };
   }
   if (deps.allowSpawn === false) return { kind: 'unavailable', reason: 'budget spent' };
   if (!reserveSpawn(repoRoot, (deps.now ?? Date.now)())) return { kind: 'busy' };
@@ -325,6 +322,12 @@ export async function attachGve(repoRoot: string, deps: AttachDeps = {}): Promis
         announce(`[graphcode] gve: dashboard at ${result.url}\n`);
         return;
       case 'busy':
+        return;
+      case 'unresponsive':
+        announce(
+          `[graphcode] gve: viewer pid ${result.pid} lebt, antwortet aber nicht — kein Neustart. ` +
+            'Haengt er dauerhaft, von Hand beenden; die naechste Umfrage startet dann neu.\n',
+        );
         return;
       case 'spawned':
         attempts++;

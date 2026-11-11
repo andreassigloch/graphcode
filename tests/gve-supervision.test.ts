@@ -12,7 +12,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -29,6 +29,8 @@ describe('TEST-gve-supervision', () => {
   /** Beantwortet die Identitaets-Probe: `true` = ein Viewer bedient dieses Repo. */
   let serving: boolean;
   let nextPid: number;
+  /** Welche Viewer-PIDs als lebender Prozess gelten — gestartet heisst nicht lebend. */
+  let alive: Set<number>;
 
   const resolveGve = () => '/opt/node_modules/@sigloch/graph-view-edit/bin/gve.mjs';
 
@@ -59,6 +61,7 @@ describe('TEST-gve-supervision', () => {
     fetchImpl,
     pid,
     killImpl: (p: number) => void killed.push(p),
+    pidAlive: (p: number) => alive.has(p),
     now: () => clock,
     setIntervalImpl: ((fn: () => void) => {
       ticks.push(fn);
@@ -81,6 +84,7 @@ describe('TEST-gve-supervision', () => {
     clock = 1_000_000;
     serving = false;
     nextPid = 4242;
+    alive = new Set();
   });
   afterEach(() => rmSync(repo, { recursive: true, force: true }));
 
@@ -99,6 +103,36 @@ describe('TEST-gve-supervision', () => {
     serving = false; // der Viewer stirbt, niemand bekommt ein 'exit'
     await poll();
     expect(spawned).toEqual([4242, 4243]);
+  });
+
+  // CR-GC-912 — der Absturz vom 2026-11-10: der Viewer lebte, war 38,8 s mit einer
+  // synchronen Messung beschaeftigt, die Probe lief ins Zeitlimit. Die Aufsicht hielt
+  // ihn fuer eine Waise, beendete ihn und startete einen Ersatz auf dem naechsten Port.
+  it('ein lebender, stummer Viewer wird weder beendet noch ersetzt', async () => {
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    try {
+      await attachGve(repo, deps());
+      viewerCameUp();
+      alive.add(4242);
+      await poll();
+      serving = false; // beschaeftigt: der Prozess lebt, die Probe bleibt stumm
+      await poll();
+      await poll();
+      expect(spawned).toEqual([4242]);
+      expect(killed).toEqual([]);
+      expect(rememberedViewerPid(repo)).toBe(4242);
+      const lines = stderr.mock.calls.map((c) => String(c[0])).filter((l) => l.includes('antwortet aber nicht'));
+      expect(lines).toHaveLength(1); // einmal gesagt, nicht je Umfrage
+      serving = true; // die Messung ist durch
+      await poll();
+      serving = false;
+      alive.delete(4242); // jetzt ist er wirklich weg
+      await poll();
+      expect(spawned).toEqual([4242, 4243]);
+      expect(killed).toEqual([]); // ersetzt wird nur ein toter Viewer — nichts abzuschiessen
+    } finally {
+      stderr.mockRestore();
+    }
   });
 
   it('gibt nach drei Startversuchen auf, statt endlos zu starten', async () => {

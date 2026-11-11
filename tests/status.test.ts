@@ -13,6 +13,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { collectStatus, formatStatus, statusIsHealthy, judgeBootDrift } from '../src/surface/status.js';
 import { HOST_ENTRY } from '../src/surface/scaffold-templates.js';
+import { rememberViewer } from '../src/surface/gve-sessions.js';
 
 describe('TEST-status', () => {
   let repo: string;
@@ -150,6 +151,23 @@ describe('TEST-status', () => {
     const s = await collectStatus(repo, { fetchImpl: unreachable });
     expect(s.dashboard).toEqual({ state: 'not-running' });
     expect(formatStatus(s)).not.toContain('4318');
+  });
+
+  // CR-GC-912: stumm heisst nicht weg. Lebt der vermerkte Viewer, rechnet er vermutlich —
+  // „läuft nicht" wuerde zum Neustart raten und den offenen Tab toeten.
+  it('meldet "antwortet nicht" mit pid, wenn die Probe schweigt, der Viewer-Prozess aber lebt', async () => {
+    writeUrl('http://localhost:4318/');
+    rememberViewer(repo, 4711);
+    const s = await collectStatus(repo, { fetchImpl: unreachable, pidAlive: (pid) => pid === 4711 });
+    expect(s.dashboard).toEqual({ state: 'unresponsive', url: 'http://localhost:4318/', pid: 4711 });
+    expect(formatStatus(s)).toMatch(/antwortet nicht.*pid 4711 lebt/);
+  });
+
+  it('meldet "läuft nicht", wenn die Probe schweigt und der vermerkte Viewer tot ist', async () => {
+    writeUrl('http://localhost:4318/');
+    rememberViewer(repo, 4711);
+    const s = await collectStatus(repo, { fetchImpl: unreachable, pidAlive: () => false });
+    expect(s.dashboard).toEqual({ state: 'not-running' });
   });
 
   it('meldet "läuft nicht" ohne dashboard.url und ohne Probe', async () => {

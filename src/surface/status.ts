@@ -43,7 +43,7 @@ import { neuesteAenderung, installierteContracts } from '../kernel/build-stamp.j
 // „laeuft ein Viewer" einig sein, sonst startet der eine, was der andere schon sieht.
 import { PROBE_TIMEOUT_MS } from './gve.js';
 // „Lebt diese PID" hat EINEN Besitzer (CR-GC-452) — die lokale Kopie ist geloescht.
-import { isAlive } from './gve-sessions.js';
+import { isAlive, rememberedViewerPid } from './gve-sessions.js';
 
 
 export interface HostStatus {
@@ -62,10 +62,14 @@ export interface DashboardStatus {
   /**
    * `running` = bedient DIESES Repo; `foreign` = antwortet, bedient ein anderes;
    * `unidentified` = antwortet, nennt sein Repo aber nicht (Viewer älter als das
-   * `repoRoot`-Feld) — nicht als meiner verwertbar; `not-running` = keine/tote Adresse.
+   * `repoRoot`-Feld) — nicht als meiner verwertbar; `unresponsive` = antwortet nicht, der
+   * vermerkte Viewer-Prozess lebt aber (beschaeftigt oder haengend, CR-GC-912);
+   * `not-running` = keine/tote Adresse und kein lebender Viewer.
    */
-  state: 'running' | 'foreign' | 'unidentified' | 'not-running';
+  state: 'running' | 'foreign' | 'unidentified' | 'unresponsive' | 'not-running';
   url?: string;
+  /** Bei `unresponsive`: der lebende, stumme Viewer-Prozess. */
+  pid?: number;
   /** Bei `foreign`: das Repo, das die antwortende Instanz tatsächlich bedient. */
   servedRepo?: string;
 }
@@ -165,7 +169,10 @@ async function readDashboardStatus(repoRoot: string, deps: StatusDeps): Promise<
     if (typeof served !== 'string') return { state: 'unidentified', url };
     return { state: 'foreign', url, servedRepo: served };
   } catch {
-    // Datei aus einer hart gekillten Instanz (kein Shutdown, keine Aufräumung).
+    // Stumm heisst nicht weg (CR-GC-912): lebt der vermerkte Viewer, ist er beschaeftigt.
+    // Sonst ist die Datei aus einer hart gekillten Instanz (kein Shutdown, keine Aufräumung).
+    const pid = rememberedViewerPid(repoRoot);
+    if (pid !== null && (deps.pidAlive ?? isAlive)(pid)) return { state: 'unresponsive', url, pid };
     return { state: 'not-running' };
   }
 }
@@ -379,7 +386,9 @@ export function formatStatus(s: RepoStatus): string {
         ? row('Dashboard', 'fremdes Repo', `${s.dashboard.url} bedient ${s.dashboard.servedRepo}`)
         : s.dashboard.state === 'unidentified'
           ? row('Dashboard', 'unbekannt', `${s.dashboard.url} nennt sein Repo nicht (Viewer veraltet) → Agent-Session neu starten`)
-          : row('Dashboard', 'läuft nicht', '→ startet mit dem MCP-Host; GRAPHCODE_NO_GVE gesetzt?');
+          : s.dashboard.state === 'unresponsive'
+            ? row('Dashboard', 'antwortet nicht', `pid ${s.dashboard.pid} lebt, ${s.dashboard.url} schweigt → rechnet er noch? Haengt er, von Hand beenden`)
+            : row('Dashboard', 'läuft nicht', '→ startet mit dem MCP-Host; GRAPHCODE_NO_GVE gesetzt?');
   const parts = [
     `CLI ${s.version.cli}`,
     s.version.host ? `Host ${s.version.host}` : null,
