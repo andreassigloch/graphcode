@@ -1,6 +1,6 @@
 # CR-GC-904: EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-11)
 **Typ:** aus Item ITEM-2026-1288 (idea)
 **Erstellt:** 2026-11-11
 **Item:** bok/items/ITEM-2026-1288.json (Lane: code)

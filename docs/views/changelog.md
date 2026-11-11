@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 511 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 511 CR · 351 done · 4 open.
+Total: 511 CR · 352 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -568,7 +568,7 @@ Total: 511 CR · 351 done · 4 open.
 | `CR-GC-901` | n/a | testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3) |
 | `CR-GC-902` | done | init prueft nicht, ob Claude Code oder OpenCode installiert ist; ohne Agent-Programm laufen die naechsten Schritte ins Leere |
 | `CR-GC-903` | n/a | Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen |
-| `CR-GC-904` | n/a | EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431) |
+| `CR-GC-904` | done | EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431) |
 | `CR-GC-905` | n/a | UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation) |
 | `CR-GC-906` | n/a | Vorfuehrung: Intro I1 und Anforderungsbaum E2 im Artefakt Systemmodell in Bildern |
 | `CR-GC-907` | n/a | Vorfuehrung: Schalter fuer die Zielgruppe im Artefakt Systemmodell in Bildern |
