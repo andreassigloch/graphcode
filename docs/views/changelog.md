@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 518 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 519 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 518 CR · 361 done · 4 open.
+Total: 519 CR · 361 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -580,3 +580,4 @@ Total: 518 CR · 361 done · 4 open.
 | `CR-GC-912` | done | Viewer-Aufsicht beendet einen lebenden Viewer, der 750 ms nicht antwortet |
 | `CR-GC-913` | n/a | Prüffunktionen grenzeNurMitSchema und einAdapterJeAkteur in @sigloch/graphcode/constraints (abgetrennt aus CR-GC-864) |
 | `CR-GC-914` | n/a | se-retro: Verlauf der Verstöße über alle committeten Graph-Stände |
+| `CR-GC-915` | n/a | contracts 12.12 nachziehen: Peer-Floor >=12.12, metricPolicy.needNameTerms (ohne Gate/Ziel), UC-07 in se:author-uc nennen (Folge CR-GC-881, CR-SM-434) |

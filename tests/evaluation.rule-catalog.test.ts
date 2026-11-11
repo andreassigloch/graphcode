@@ -54,9 +54,10 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
  * CR-SM-358: RC-08/RC-09 (Vertrag ist Zod, nur modellierte Stellen parsen ihn) aus demselben Grund.
  * CR-SM-344: RC-10 (MOD ohne path und ohne gebundene FUNC ist unaufloesbar) ebenso — Signatur `(graph, CodeFacts)`.
  * CR-SM-405/415: RC-11 (Code-Datei ohne Modul), RC-12/RC-13 (Fluss gegen Aufruf) ebenso (CR-GC-850).
+ * CR-SM-430/433: BQ-03 (Singular) kommt dazu, BQ-06 entfaellt (CR-GC-915).
  */
 const NOT_IN_GATE = [
-  'BQ-01', 'BQ-02', 'BQ-04', 'BQ-06', 'BQ-07', 'ND-01', 'ND-02',
+  'BQ-01', 'BQ-02', 'BQ-03', 'BQ-04', 'BQ-07', 'ND-01', 'ND-02',
   'RC-01', 'RC-02', 'RC-03', 'RC-04', 'RC-05', 'RC-06', 'RC-07', 'RC-08', 'RC-09', 'RC-10',
   'RC-11', 'RC-12', 'RC-13',
 ];

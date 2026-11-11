@@ -1445,6 +1445,10 @@
 | `CR-GC-912` | relation | `FUNC-gve-supervise` |
 | `CR-GC-912` | relation | `REQ-viewer-owned-by-repo` |
 | `CR-GC-914` | relation | `FUNC-se-retro` |
+| `CR-GC-915` | relation | `FUNC-author-uc` |
+| `CR-GC-915` | relation | `FUNC-load-config` |
+| `CR-GC-915` | relation | `FUNC-upgrade` |
+| `CR-GC-915` | relation | `REQ-repo-update` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

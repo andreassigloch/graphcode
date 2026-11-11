@@ -83,6 +83,12 @@
     // `boundaryWidth` oben. Die Breite der Modul-Ebene (Untermodule plus eigene Funktionen)
     // ist seit CR-SM-311 RD-04s Frage; `decompositionBreadth` traegt sie.
 
+    // UC-07 (CR-SM-434, CR-GC-915): Woerter, die ein UC- oder Kettenname nicht tragen soll,
+    // weil sie die Loesung statt des Beduerfnisses nennen. Die Liste ersetzt die Vorgabe.
+    // ABWEICHUNG needNameTerms: ohne Gate und Ziel — in graphcode sind beide Fachbegriffe des
+    // Produkts, nicht der Umsetzung (gemessen 2026-11-11: 2 UC/FCHAIN-Namen mit Gate, 1 mit Ziel).
+    "needNameTerms": ["KI", "MCP", "Lauf"],
+
     // CR-SM-229: die lizenzierte AIAG-VDA-Tabelle gehoert NICHT in diese Datei —
     // sie ist eingecheckt. null heisst hier nicht "aus", sondern "markierter
     // Uebergang": bestaetigte AP-Invarianten, sonst RPN-Baender. Wer eine Lizenz

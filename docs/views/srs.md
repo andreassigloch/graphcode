@@ -8600,7 +8600,7 @@ Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-opencode-plugin` (in
 
 > auch unter: `FUNC-upgrade`
 
-Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879).
+Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879). update traegt Pflichtfelder der Metrik-Policy, die in graphcode.config.jsonc fehlen, mit dem Startwert aus contracts ein und laesst gesetzte Werte unberuehrt; upgrade --check zaehlt ein fehlendes Feld als Drift (CR-GC-915).
 
 priority: must · status: open · kinds: functional
 
@@ -8662,7 +8662,7 @@ io ◀ `FLOW-cli-command` · `FLOW-lock-file` · io ▶ `FLOW-install-result-upg
 
 > auch unter: `FUNC-harness-cli`
 
-Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879).
+Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879). update traegt Pflichtfelder der Metrik-Policy, die in graphcode.config.jsonc fehlen, mit dem Startwert aus contracts ein und laesst gesetzte Werte unberuehrt; upgrade --check zaehlt ein fehlendes Feld als Drift (CR-GC-915).
 
 priority: must · status: open · kinds: functional
 
@@ -9274,7 +9274,7 @@ Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-opencode-plugin` (in
 
 > auch unter: `FUNC-upgrade`
 
-Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879).
+Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879). update traegt Pflichtfelder der Metrik-Policy, die in graphcode.config.jsonc fehlen, mit dem Startwert aus contracts ein und laesst gesetzte Werte unberuehrt; upgrade --check zaehlt ein fehlendes Feld als Drift (CR-GC-915).
 
 priority: must · status: open · kinds: functional
 
@@ -9380,7 +9380,7 @@ io ◀ `FLOW-cli-command` · `FLOW-lock-file` · io ▶ `FLOW-install-result-upg
 
 > auch unter: `FUNC-harness-cli`
 
-Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879).
+Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879). update traegt Pflichtfelder der Metrik-Policy, die in graphcode.config.jsonc fehlen, mit dem Startwert aus contracts ein und laesst gesetzte Werte unberuehrt; upgrade --check zaehlt ein fehlendes Feld als Drift (CR-GC-915).
 
 priority: must · status: open · kinds: functional
 
@@ -14932,7 +14932,7 @@ verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.te
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
-verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`
+verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`, `tests/config-nachziehen.test.ts`
 
 ### 8.168  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
 

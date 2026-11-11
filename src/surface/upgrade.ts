@@ -33,6 +33,7 @@ import { PACKAGE_NAME } from './scaffold-templates.js';
 // CR-GC-538: die Bestandsquelle. Dieselbe Funktion, die `graphcode skills sync` fährt —
 // im Trockenlauf, damit `--check` nichts schreibt.
 import { packageRepoKind, syncSkills, type SkillSyncResult } from './scaffold.js';
+import { policyNachziehen } from './config-nachziehen.js';
 import { readPackageVersion } from '../kernel/package-version.js';
 import { readHostStatus, readRepoInstallVersion, compareVersions } from './status.js';
 // „Lebt diese PID" hat EINEN Besitzer (CR-GC-452) — die lokale Kopie ist geloescht.
@@ -109,6 +110,11 @@ export interface UpgradeReport {
    * CR-GC-876). Ein Rest ist Drift wie ein fehlender Skill; `upgrade` räumt ihn weg.
    */
   staleSkills: string[];
+  /**
+   * CR-GC-915: Pflichtfelder der Metrik-Policy, die in `graphcode.config.jsonc` fehlen. Mit
+   * ihnen bricht der Host beim Start ab; `upgrade` traegt sie mit dem Startwert ein.
+   */
+  missingPolicy: string[];
   /**
    * CR-GC-538 (graphcode-Hälfte von ITEM-2026-107): Familienpakete, die hinter dem
    * zurückliegen, was ihr eigener Range schon zulässt. Ohne sie meldet jedes Repo
@@ -246,6 +252,7 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
   const bestand = packageRepo === 'self' ? undefined : syncImpl(repoRoot, { dry: true });
   const missingSkills = bestand?.added ?? [];
   const staleSkills = bestand?.removed ?? [];
+  const missingPolicy = packageRepo ? [] : policyNachziehen(repoRoot, { dry: true });
   const family = familyDrift(repoRoot, run);
 
   const report: UpgradeReport = {
@@ -254,9 +261,10 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
     repoBefore,
     repoAfter: repoBefore,
     hostBefore,
-    drift: versionDrift || missingSkills.length > 0 || staleSkills.length > 0 || family.stale.length > 0,
+    drift: versionDrift || missingSkills.length > 0 || staleSkills.length > 0 || missingPolicy.length > 0 || family.stale.length > 0,
     missingSkills,
     staleSkills,
+    missingPolicy,
     staleDeps: family.stale,
     depsChecked: family.checked,
     steps: [],
@@ -350,6 +358,7 @@ function artefakte(r: UpgradeReport): string {
   const teile = [
     ...(r.missingSkills.length > 0 ? [`${r.missingSkills.length} fehlen: ${r.missingSkills.join(', ')}`] : []),
     ...(r.staleSkills.length > 0 ? [`${r.staleSkills.length} veraltet: ${r.staleSkills.join(', ')}`] : []),
+    ...(r.missingPolicy.length > 0 ? [`Config ohne ${r.missingPolicy.map((f) => `metricPolicy.${f}`).join(', ')}`] : []),
   ];
   return teile.length === 0 ? 'vollständig' : teile.join('; ');
 }

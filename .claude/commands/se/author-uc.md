@@ -1,6 +1,6 @@
 ---
 name: se:author-uc
-version: 3
+version: 4
 description: Author a UC node terse and low-jargon — Actor–Verb–Object–Outcome, ≤25 words, ≤2 grounded technical terms — and gate-mutate it with its compose trace
 ---
 
@@ -17,6 +17,7 @@ The UC name (`__name`) is what the customer sees as a tab in the customer view. 
 - No name of a MOD, FUNC or SCHEMA of the model, and no technology word (AI, MCP, gate, run, target and the like).
 - Wrong: "AI content to target" (names the path), "Scheduled run" (names the mechanism). Right: "Publish post", "Receive weekly report", "Create location description", "Query data", "Read reports".
 - Name each FCHAIN of the UC the same way: the part of the need this chain serves. UC and chain names may differ, but both name the need — never "the UC is about access, the chain about skills".
+- Rule `UC-07` (warning) checks the word list: a UC or FCHAIN name with a word from `metricPolicy.needNameTerms` in `graphcode.config.jsonc` is reported. Default: KI, MCP, Gate, Lauf, Ziel. A repo whose product uses one of these words as its own term sets its own list. The rule only knows its list — MOD, FUNC and SCHEMA names you still check yourself.
 
 ## Write it through the gate
 Emit ONE `graph_mutate` batch as Format-E — the UC with its `compose` to the `FCHAIN` or `FUNC`(s) that realize it; `__name` is a short scenario label:

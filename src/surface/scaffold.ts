@@ -78,6 +78,8 @@ import {
   type HookEntry,
 } from './scaffold-templates.js';
 import { guardrailsContent, steeringContent } from './scaffold-docs.js';
+import { policyNachziehen } from './config-nachziehen.js';
+import { CONFIG_FILENAME } from '../kernel/config.js';
 
 
 /** `CliCommand` (SCHEMA-cli-command) — the npx-CLI verbs this installer dispatches. */
@@ -631,6 +633,8 @@ export async function scaffold(
       installOpencodePlugin(repoRoot, res);
       installHooks(repoRoot, res);
       registerDependency(repoRoot, res);
+      // CR-GC-915: ein neues Pflichtfeld der Metrik-Policy wuerde den Host am Start brechen.
+      for (const feld of policyNachziehen(repoRoot)) res.updated.push(`${CONFIG_FILENAME}#metricPolicy.${feld}`);
       return res;
     }
 

@@ -124,6 +124,7 @@ describe('CR-GC-329: Config laden — fehlend, gueltig, kaputt', () => {
         "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 },
         "riskRpn": 100,
         "apTable": null,
+        "needNameTerms": ["KI", "MCP"],
       },
       "focusThreshold": 0.75,
     }`);
@@ -136,13 +137,13 @@ describe('CR-GC-329: Config laden — fehlend, gueltig, kaputt', () => {
       // ein Schemafehler, kein stiller Startwert.
       crossingFlows: { warning: 3 },
       decompositionBreadth: { min: 3, warning: 9 }, boundaryWidth: { warning: 5 }, criticality: { infrastructure: 3 },
-      riskRpn: 100, apTable: null,
+      riskRpn: 100, apTable: null, needNameTerms: ["KI", "MCP"],
     });
     expect(loaded.config.focusThreshold).toBe(0.75);
   });
 
   it('schemawidrige Datei → Abbruch mit Pfad UND Feld, kein stiller Default', () => {
-    const root = repo('{ "metricPolicy": { "instability": 1.5, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null }, "focusThreshold": 0.8 }');
+    const root = repo('{ "metricPolicy": { "instability": 1.5, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null, "needNameTerms": ["KI", "MCP", "Gate", "Lauf", "Ziel"] }, "focusThreshold": 0.8 }');
 
     let err: unknown;
     try { loadGraphcodeConfig(root); } catch (e) { err = e; }
@@ -153,7 +154,7 @@ describe('CR-GC-329: Config laden — fehlend, gueltig, kaputt', () => {
   });
 
   it('fehlendes Pflichtfeld → Abbruch, nicht Ergaenzung aus dem Default', () => {
-    const root = repo('{ "metricPolicy": { "instability": 0.7, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null } }');
+    const root = repo('{ "metricPolicy": { "instability": 0.7, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null, "needNameTerms": ["KI", "MCP", "Gate", "Lauf", "Ziel"] } }');
 
     expect(() => loadGraphcodeConfig(root)).toThrow(ConfigError);
     expect(() => loadGraphcodeConfig(root)).toThrow(/focusThreshold/);
@@ -194,7 +195,7 @@ describe('CR-GC-329: die Config wirkt — Gate, Kennzahl und Herkunft in EINER A
   });
 
   it('"instability": null → MT-01 schweigt im GATE, die Zahl bleibt in der Modulzeile', async () => {
-    const root = repo('{ "metricPolicy": { "instability": null, "lcom4": { "info": 4, "warning": 6 }, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null }, "focusThreshold": 0.8 }');
+    const root = repo('{ "metricPolicy": { "instability": null, "lcom4": { "info": 4, "warning": 6 }, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null, "needNameTerms": ["KI", "MCP", "Gate", "Lauf", "Ziel"] }, "focusThreshold": 0.8 }');
     const harness = await harnessOn(root);
     expect((await harness.mutate(SEED)).success).toBe(true);
     const tools = bindToolsToHarness(harness);
@@ -212,7 +213,7 @@ describe('CR-GC-329: die Config wirkt — Gate, Kennzahl und Herkunft in EINER A
   });
 
   it('Wert und Schwelle kommen aus DERSELBEN Antwort — ein Konsument braucht keinen eigenen Zielwert', async () => {
-    const root = repo('{ "metricPolicy": { "instability": 0.5, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null }, "focusThreshold": 0.8 }');
+    const root = repo('{ "metricPolicy": { "instability": 0.5, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null, "needNameTerms": ["KI", "MCP", "Gate", "Lauf", "Ziel"] }, "focusThreshold": 0.8 }');
     const harness = await harnessOn(root);
     expect((await harness.mutate(SEED)).success).toBe(true);
     const tools = bindToolsToHarness(harness);
@@ -247,7 +248,7 @@ describe('CR-GC-329: die Config wirkt — Gate, Kennzahl und Herkunft in EINER A
   });
 
   it('kaputte Config bricht den Harness-Start ab, statt still auf Defaults zu fallen', async () => {
-    const root = repo('{ "metricPolicy": { "instability": 2, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null }, "focusThreshold": 0.8 }');
+    const root = repo('{ "metricPolicy": { "instability": 2, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null, "needNameTerms": ["KI", "MCP", "Gate", "Lauf", "Ziel"] }, "focusThreshold": 0.8 }');
     await expect(createHarness({ repoRoot: root, scope: { workspaceId: 'cfg-ws', systemId: 'cfg' } }))
       .rejects.toThrow(ConfigError);
   });

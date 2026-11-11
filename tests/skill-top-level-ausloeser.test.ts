@@ -161,11 +161,16 @@ describe('UC- und FCHAIN-Namen benennen das Beduerfnis (CR-GC-881)', () => {
   const authorUc = readFileSync(join(COMMANDS, 'se', 'author-uc.md'), 'utf8');
 
   it('se:author-uc: Abschnitt zum Namen mit falschem und richtigem Beispiel, auch fuer die Kette', () => {
-    expect(authorUc).toMatch(/^version: 3$/m);
+    expect(authorUc).toMatch(/^version: 4$/m);
     expect(authorUc).toMatch(/## The name states the need, not the solution/);
     expect(authorUc).toMatch(/Verb \+ Object from the actor's view/);
     expect(authorUc).toMatch(/Wrong: "AI content to target"/);
     expect(authorUc).toMatch(/Name each FCHAIN of the UC the same way/);
+  });
+
+  it('se:author-uc nennt die Regel UC-07 und wo ihre Wortliste steht (CR-GC-915)', () => {
+    expect(authorUc).toMatch(/Rule `UC-07` \(warning\)/);
+    expect(authorUc).toMatch(/`metricPolicy\.needNameTerms` in `graphcode\.config\.jsonc`/);
   });
 
   it('se:top-level: Pruefrage 4 verlangt dasselbe fuer UC- und Kettennamen', () => {

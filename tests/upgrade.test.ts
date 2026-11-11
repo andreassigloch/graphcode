@@ -11,7 +11,9 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, realpathSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync, realpathSync } from 'node:fs';
+import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
+import { CONFIG_FILENAME } from '../src/kernel/config.js';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { executeUpgrade, formatUpgrade, UpgradeError, type UpgradeDeps } from '../src/surface/upgrade.js';
@@ -301,6 +303,26 @@ describe('TEST-upgrade (CR-GC-377)', () => {
     expect(report.drift, 'ein veralteter Skill ist Drift, auch bei gleicher Version').toBe(true);
     expect(report.staleSkills).toEqual([rest]);
     expect(formatUpgrade(report, true)).toContain(`1 veraltet: ${rest}`);
+  });
+
+  it('eine Config ohne Pflichtfeld der Policy ist Drift und steht unter Artefakte (CR-GC-915)', async () => {
+    writeRepoInstall('0.17.0');
+    const { needNameTerms: _weg, ...alt } = DEFAULT_METRIC_POLICY;
+    const pfad = join(repo, CONFIG_FILENAME);
+    writeFileSync(pfad, JSON.stringify({ metricPolicy: alt, focusThreshold: 0.8 }));
+    const vorher = readFileSync(pfad, 'utf8');
+    const report = await executeUpgrade(
+      { repoRoot: repo, check: true },
+      {
+        run: runner(),
+        cliVersion: '0.17.0',
+        syncSkillsImpl: (repoRoot) => ({ repoRoot, added: [], updated: [], unchanged: [], removed: [] }),
+      },
+    );
+    expect(report.drift, 'ohne das Feld startet der Host nicht').toBe(true);
+    expect(report.missingPolicy).toEqual(['needNameTerms']);
+    expect(formatUpgrade(report, true)).toContain('Config ohne metricPolicy.needNameTerms');
+    expect(readFileSync(pfad, 'utf8'), '--check schreibt nichts').toBe(vorher);
   });
 
   it('der Trockenlauf schreibt nichts — nach --check liegt kein Skill im Repo', async () => {
