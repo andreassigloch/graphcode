@@ -4038,7 +4038,9 @@
       "id": "CR-GC-914",
       "type": "CR",
       "name": "se-retro: Verlauf der Verstöße über alle committeten Graph-Stände",
-      "description": "docs/cr/open/CR-GC-914-se-retro-verlauf-der-versto-e-u-ber-alle.md"
+      "description": "docs/cr/done/CR-GC-914-se-retro-verlauf-der-versto-e-u-ber-alle.md",
+      "status": "done",
+      "commitRef": "c10f5b5a,8b6e2d2b,0827fead,10a5b489"
     },
     {
       "id": "CR-GC-915",
@@ -32295,5 +32297,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1092
+  "graphVersion": 1093
 }

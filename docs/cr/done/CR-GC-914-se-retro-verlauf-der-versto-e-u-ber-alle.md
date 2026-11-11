@@ -1,6 +1,6 @@
 # CR-GC-914: se-retro: Verlauf der Verstöße über alle committeten Graph-Stände
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-11)
 **Typ:** aus Item ITEM-2026-1307 (idea)
 **Erstellt:** 2026-11-11
 **Item:** bok/items/ITEM-2026-1307.json (Lane: code)
