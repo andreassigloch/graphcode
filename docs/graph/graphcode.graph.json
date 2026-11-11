@@ -4017,6 +4017,12 @@
       "commitRef": "00b77c34,c892030d,02081709,d2889a09"
     },
     {
+      "id": "CR-GC-913",
+      "type": "CR",
+      "name": "Prüffunktionen grenzeNurMitSchema und einAdapterJeAkteur in @sigloch/graphcode/constraints (abgetrennt aus CR-GC-864)",
+      "description": "docs/cr/open/CR-GC-913-pru-ffunktionen-grenzenurmitschema-und-e.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -32226,5 +32232,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1075
+  "graphVersion": 1076
 }
