@@ -103,6 +103,15 @@ describe('TEST-testref-kopf-bindung: graph_test_ingest bindet ueber den Kopf (CR
     expect(r.map((x) => [x.file, x.tool, x.result])).toEqual([['tests/neu.test.ts', 'vitest', 'passed']]);
     expect(r[0].ranAt).toBeTruthy();
 
+    // Prosa im Kopf ("eine TEST-uid") ist kein Knoten des Modells und macht die Bindung nicht mehrdeutig.
+    datei('tests/prosa.test.ts', '/**\n * TEST-alt — nennt GENAU EINE TEST-uid des Modells\n */\n');
+    const prosa = await tools.graph_test_ingest.handler({
+      results: [{ file: 'tests/prosa.test.ts', result: 'passed', tool: 'vitest' }],
+      consumerId: 'runner',
+    });
+    expect(prosa.unresolved).toEqual([]);
+    expect(prosa.bindings.map((b) => b.testUid)).toEqual(['TEST-alt']);
+
     // Der naechste Lauf trifft die Bindung — keine zweite.
     const zweiter = await tools.graph_test_ingest.handler({ report, consumerId: 'runner' });
     expect(zweiter.bindings).toEqual([]);

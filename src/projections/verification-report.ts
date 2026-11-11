@@ -147,13 +147,17 @@ function bindeUeberKopf(
   if (uids.length === 0) {
     return { reason: `${OHNE_BINDUNG}, and its head names no TEST uid — name the TEST in the file's head comment, then ingest again` };
   }
-  if (uids.length > 1) {
-    return { reason: `${OHNE_BINDUNG}; its head names ${uids.join(', ')} — a test file belongs to one TEST (R-29)` };
+  // Nur TEST-Knoten dieses Modells zaehlen: Prosa wie "eine TEST-uid" im Kopf macht nichts mehrdeutig.
+  const treffer = tests.filter((t) => uids.includes(t.uid));
+  if (treffer.length === 0) {
+    return { reason: `${OHNE_BINDUNG}; its head names ${uids.join(', ')}, which is no TEST in this model` };
   }
-  const test = tests.find((t) => t.uid === uids[0]);
-  if (!test) return { reason: `${OHNE_BINDUNG}; its head names ${uids[0]}, which is no TEST in this model` };
+  if (treffer.length > 1) {
+    return { reason: `${OHNE_BINDUNG}; its head names ${treffer.map((t) => t.uid).join(', ')} — a test file belongs to one TEST (R-29)` };
+  }
+  const test = treffer[0];
   const tool = kopf.tool(entry);
-  if (!tool) return { reason: `${OHNE_BINDUNG}; its head names ${uids[0]}, but the run gives no tool — pass results[].tool` };
+  if (!tool) return { reason: `${OHNE_BINDUNG}; its head names ${test.uid}, but the run gives no tool — pass results[].tool` };
   return { binding: { testUid: test.uid, file: rel, result: entry.result, tool } };
 }
 
