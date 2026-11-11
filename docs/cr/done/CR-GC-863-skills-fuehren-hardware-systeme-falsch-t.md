@@ -1,6 +1,7 @@
 # CR-GC-863: Skills führen Hardware-Systeme falsch — Produktteile als ACTOR, MOD-Schnitt ohne Domänenregel
 
-**Status:** 🟠 Open
+**Status:** ✅ Done
+**Abgeschlossen:** 2026-11-11
 **Typ:** aus Item ITEM-2026-1090 (finding)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1090.json (Lane: graph)
@@ -48,11 +49,27 @@ ist Sache von contracts (ITEM-2026-1087 an sigloch-modules).
 
 ## Akzeptanzkriterien
 
-- [ ] Jeder der vier Skills nennt die Regel an der Stelle, an der die Entscheidung fällt, mit Beispiel
-- [ ] Die Feld-Tests der Skills (jede genannte Regel steht im Katalog) bleiben grün
-- [ ] Probe: ein Agent mit `se:author-actor` auf sirail Stand graphVersion 24 legt den Weichenantrieb nicht als Gegenüber an
-- [ ] Der CR-Knoten trägt `relation`-Kanten auf die vier Skill-FUNCs
+- [x] Jeder der vier Skills nennt die Regel an der Stelle, an der die Entscheidung fällt, mit Beispiel
+- [x] Die Feld-Tests der Skills (jede genannte Regel steht im Katalog) bleiben grün
+- [x] Probe: ein Agent mit `se:author-actor` auf sirail Stand graphVersion 24 legt den Weichenantrieb nicht als Gegenüber an
+- [x] Der CR-Knoten trägt `relation`-Kanten auf die vier Skill-FUNCs
 
 ## Umfang laut `graph_impact`
 
 FUNC-author-actor, FUNC-se-top-level, FUNC-se-modulebene, FUNC-se-optimize (Kanten am CR-Knoten).
+
+---
+
+## Ergebnis (2026-11-11, Commit 3b85c2c7)
+
+- `se:author-actor` (Version 3): Schritt 3 und Prüfliste, Beispiel Weichenantrieb.
+- `se:top-level` (Version 8): Abschnitt *Domains* mit Control Unit und Servoantrieb; keine Kennzahl entscheidet.
+- `se-modulebene` (Entwurf, Version 0): Domänenfrage als Punkt 5 in Schritt 3 und vor jedem Zusammenlegen oder Teilen.
+- `se:optimize` (Version 7): Domänenfrage vor der Probe eines Zugs von `graph_suggest`.
+- Test: Block „Hardware-Systeme" in `tests/skill-top-level-ausloeser.test.ts`, 3 von 4 Fällen rot gegen den alten Text,
+  der vierte prüft RD-05 und CR-01 im Katalog. Skill-Tests 121/121 grün.
+- Probe (Blindagent, nur Skill und `sirail/docs/project/specification.md`): Akteure User, Admin, Dev, Schienenfahrzeug.
+  Servo und Weichenantrieb, ESP32-Modul und MQTT-Gateway führt er ausdrücklich nicht als Akteur („gehört zum Produkt").
+- Offen für sirail, nicht für diesen CR: ob das Schienenfahrzeug Akteur ist oder nur Last am Gleis.
+- Messlücke: `verify:code` wählte für die Skill-Änderung 2 Testdateien, keine der 5 Skill-Testdateien. Die Skill-FUNCs
+  führen im Modell nicht zu ihren Feld-Tests; dasselbe zeigte der Schlupf in CR-GC-879.
