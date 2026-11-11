@@ -53,7 +53,7 @@ export function policyNachziehen(repoRoot: string, options: { dry?: boolean } = 
   const einzug = '    ';
   const zeilen = fehlend.map((k) => {
     const wert = JSON.stringify((DEFAULT_METRIC_POLICY as Record<string, unknown>)[k]);
-    return `\n${einzug}// ${k}: Startwert aus @sigloch/contracts, von graphcode update eingetragen (CR-GC-915).\n${einzug}"${k}": ${wert},\n`;
+    return `\n${einzug}// ${k}: Startwert aus @sigloch/contracts, von graphcode upgrade eingetragen (CR-GC-915).\n${einzug}"${k}": ${wert},\n`;
   });
   const ende = treffer.index + treffer[0].length;
   const neu = raw.slice(0, ende) + zeilen.join('') + raw.slice(ende);

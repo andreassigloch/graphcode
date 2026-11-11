@@ -17,7 +17,7 @@ contracts 12.12: eine Config ohne das Feld wird abgelehnt.
 
 ## Zielbild
 
-1. `graphcode update` (und damit `upgrade --refresh-only`, das der neu installierte Build faehrt)
+1. `graphcode upgrade` im Schritt `--refresh-only` (intern `scaffold(update)`, gefahren vom neu installierten Build)
    traegt jedes Feld aus `DEFAULT_METRIC_POLICY`, das in `metricPolicy` fehlt, mit dem Startwert
    ein. Gesetzte Werte und Kommentare bleiben zeichengleich. Geprueft wird vor dem Schreiben.
 2. `upgrade --check` zaehlt ein fehlendes Feld als Drift und nennt es unter „Artefakte".
@@ -41,6 +41,17 @@ nennt den Nachtrag; TEST-upgrade bindet `tests/config-nachziehen.test.ts` zusaet
 
 ## Akzeptanz
 
-- Eine Config ohne `needNameTerms` laedt nach `graphcode update`; ohne den Schritt wirft sie.
+- Eine Config ohne `needNameTerms` laedt nach `graphcode upgrade --refresh-only`; ohne den Schritt wirft sie.
 - `upgrade --check` meldet „Config ohne metricPolicy.needNameTerms" und schreibt nichts.
 - Volllauf gruen gegen contracts 12.12.
+
+## Ergebnis
+
+- Umgesetzt wie im Zielbild, Commits 0827fead, 859d4a6e und der Abschluss-Commit.
+- Volllauf gegen contracts 12.12.0 aus der Registry: 213 Dateien, 1769 Tests gruen, Schlupf 0.
+- Smoke: Die Config aus agentdiary-local-3 laedt ohne Nachtrag nicht. Nach
+  `graphcode upgrade --refresh-only` mit dem gebauten CLI laedt sie, mit dem Startwert der Familie.
+  Alle uebrigen Zeilen sind zeichengleich.
+- Zug Stufe 1 publiziert: contracts 12.12.0, se-engine 3.0.4 (Klassen fuer UC-07, BQ-03).
+- Mitgezogen auf das neue contracts: Regelzahl in zwei Artikeln (67 auf 68), Katalog-Luecke
+  (BQ-03 statt BQ-06), Versions-Pin von se:author-uc.

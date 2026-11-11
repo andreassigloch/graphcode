@@ -1,6 +1,6 @@
 /**
  * CR-GC-915 — eine Config, die vor einem neuen Pflichtfeld der Metrik-Policy entstand, wird von
- * `graphcode update` (und damit `upgrade --refresh-only`) nachgezogen, statt den Host am Start
+ * `graphcode upgrade` (Schritt `--refresh-only`, intern `scaffold(update)`) nachgezogen, statt den Host am Start
  * zu brechen.
  *
  * Der gemessene Mangel: contracts 12.12 macht `needNameTerms` zum Pflichtfeld (CR-SM-434). Alle
@@ -83,7 +83,7 @@ describe('CR-GC-915: fehlende Policy-Felder nachziehen', () => {
     expect(policyNachziehen(root)).toEqual([]);
   });
 
-  it('graphcode update zieht die Config nach und meldet es', async () => {
+  it('upgrade --refresh-only (scaffold update) zieht die Config nach und meldet es', async () => {
     const { root } = alteConfig();
     const res = await scaffold('update', { repoRoot: root });
     expect(res.updated).toContain(`${CONFIG_FILENAME}#metricPolicy.needNameTerms`);
