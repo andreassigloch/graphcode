@@ -42,6 +42,15 @@ jedem Repo, sobald ein Testlauf eingespielt wird.
 - Validierung am eigenen Modell: `TEST-testref-kopf-bindung` wird ohne testRefs angelegt und durch
   den Ingest des eigenen Laufs gebunden.
 
+## Validierung (2026-11-11)
+
+- Erster Ingest des eigenen Laufs: abgelehnt. Der Kopf der Testdatei sagt in Prosa „eine TEST-uid",
+  das las der Ingest als zweite uid und meldete R-29.
+- Korrektur (7d2fd511): Für die Eindeutigkeit zählen nur uids, die im Modell ein TEST sind. Der Test
+  deckt den Fall ab; er lief vor der Korrektur rot.
+- Zweiter Ingest über den neuen Host: `TEST-testref-kopf-bindung` gebunden, Ergebnis `passed`,
+  `unresolved` leer. Volle Suite grün (1747 Tests).
+
 ---
 
 ## Umfang laut `graph_impact`

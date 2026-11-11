@@ -14884,7 +14884,7 @@ verify ▶ `REQ-full-run-on-probation` · `REQ-lane-red-without-report` · `REQ-
 
 Abnahme der Datei tests/testreport.kopf-bindung.test.ts: echtes Disk-Kuzu und echte Dateien; Bindung mit Ergebnis, kein Doppel beim zweiten Lauf, Anhaengen an eine bestehende Bindung, und je ein benannter Grund fuer keine, zwei, fremde uid, fehlendes Werkzeug, fehlende und repo-fremde Datei.
 
-verify ▶ `REQ-testref-kopf-bindung`
+verify ▶ `REQ-testref-kopf-bindung` · testRefs: `tests/testreport.kopf-bindung.test.ts`
 
 ### 8.160  `TEST-testref-materialize` — Export stub-materialization test
 

@@ -12801,7 +12801,15 @@
       "id": "TEST-testref-kopf-bindung",
       "type": "TEST",
       "name": "Kopf-Bindungs-Check",
-      "description": "Abnahme der Datei tests/testreport.kopf-bindung.test.ts: echtes Disk-Kuzu und echte Dateien; Bindung mit Ergebnis, kein Doppel beim zweiten Lauf, Anhaengen an eine bestehende Bindung, und je ein benannter Grund fuer keine, zwei, fremde uid, fehlendes Werkzeug, fehlende und repo-fremde Datei."
+      "description": "Abnahme der Datei tests/testreport.kopf-bindung.test.ts: echtes Disk-Kuzu und echte Dateien; Bindung mit Ergebnis, kein Doppel beim zweiten Lauf, Anhaengen an eine bestehende Bindung, und je ein benannter Grund fuer keine, zwei, fremde uid, fehlendes Werkzeug, fehlende und repo-fremde Datei.",
+      "testRefs": [
+        {
+          "file": "tests/testreport.kopf-bindung.test.ts",
+          "tool": "vitest",
+          "result": "passed",
+          "ranAt": "2026-11-11T16:59:26.322Z"
+        }
+      ]
     },
     {
       "id": "TEST-testref-materialize",
@@ -32140,5 +32148,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1066
+  "graphVersion": 1067
 }

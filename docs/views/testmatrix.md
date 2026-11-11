@@ -192,7 +192,7 @@
 | `REQ-test-result-withdrawn-on-change` | ✓ | ✓ passed | `TEST-test-result-withdrawn-on-change` |
 | `REQ-test-runnable-binding` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-graph-realize` · `TEST-test-runnable-binding` · `TEST-testreport` |
 | `REQ-test-skill-red-first` | ✓ | ✓ passed | `TEST-skill-red-first` |
-| `REQ-testref-kopf-bindung` | ✓ | ⚠ nie gelaufen | `TEST-testref-kopf-bindung` |
+| `REQ-testref-kopf-bindung` | ✓ | ✓ passed | `TEST-testref-kopf-bindung` |
 | `REQ-testref-materialized` | ✓ | ✓ passed | `TEST-realref-materialize` · `TEST-testref-materialize` |
 | `REQ-thresholds-from-config` | ✓ | ✓ passed | `TEST-target-profile` · `TEST-thresholds-from-config` |
 | `REQ-token-efficiency` | ✓ | ⚠ 3/4 passed | `TEST-audit-trail-projection` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` |
@@ -208,7 +208,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 198/198 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 160/198 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 161/198 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
