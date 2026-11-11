@@ -1,6 +1,7 @@
 # CR-GC-877: Skill se:import-code in eigene Kette
 
-**Status:** 🟠 Open
+**Status:** ✅ Done
+**Abgeschlossen:** 2026-11-11
 **Typ:** aus Item ITEM-2026-1112 (finding)
 **Erstellt:** 2026-10-28
 **Item:** bok/items/ITEM-2026-1112.json (Lane: graph)
@@ -118,4 +119,11 @@ Entscheidung nötig (Autor): (a) `chainRoles` in sigloch-modules so ändern, das
   - `skill-rule-ids.test.ts`, `skill-top-level-ausloeser.test.ts`: lesen `.claude/commands/se-view/*`, die die Nachbarsitzung (CR-GC-876) im Arbeitsbaum löscht. `help-content.test.ts` ist dort ebenfalls geändert.
 - Keine Kettenzahlen neu verankert; kein Test zählte Ketten.
 
-**Status:** offen. Der CR bleibt offen, bis die Entscheidung zu FC-06 gefallen ist.
+## Entscheidung FC-06 (Auftraggeber 2026-11-11)
+
+Variante (c): FC-06 `triggers-disagree` an `FCHAIN-skill-import-code` bleibt als benannte Entscheidung stehen, wie
+`docked-session` (CR-GC-874). Root Cause: Die Antwortflüsse an `FUNC-agent-loop` machen jeden Eingang zum vollen
+Eintritt; das Modell kennt Flüsse nur global. Keine Modelländerung in diesem Schritt. Eine Korrektur über `chainRoles`
+(Variante a) wäre Sache von sigloch-modules und deckt dann beide Ketten.
+
+**Status:** geschlossen. Akzeptanz erfüllt bis auf FC-06 an der neuen Kette (1 Befund, benannte Entscheidung).
