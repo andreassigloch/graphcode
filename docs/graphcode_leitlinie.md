@@ -276,7 +276,7 @@ Tests aus §9 stehen auf „bestanden" oder tragen eine benannte Ausnahme.
   Der Kern-Anwendungsfall — Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum Code — fehlt im
   eigenen Modell (CR-GC-806, CR-GC-807).
 - **Rig-Betrieb:** Ohne Aufbau sind T-C1, T-C3, T-E5 und T-E9 (T-F1).
-- **Vorführbarkeit:** Für keinen Test ist eine Demo benannt (§9.1). Demo-Träger ist der Energy Manager.
+- **Vorführbarkeit:** Für keinen Test ist eine Demo benannt (§9.1). Demo-Träger ist die Paketstation (`docs/project/vorfuehrung-bausteinkonzept.md`).
 
 ---
 
