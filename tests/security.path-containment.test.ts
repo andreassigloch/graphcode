@@ -22,6 +22,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { alsEingabe } from './helpers/format-e.js';
 import { HostBridge } from '../src/surface/host.js';
 import { isExportPending, setExportPending } from '../src/kernel/export-marker.js';
 import { assertInRepo } from '../src/projections/export.js';
@@ -65,7 +66,7 @@ describe('TEST-path-containment: no graph-driven write escapes repoRoot (CR-GC-2
     harness = makeHarness(repoRoot);
     await harness.initialize();
     tools = bindToolsToHarness(harness);
-    await harness.mutate(SPEC);
+    await tools.graph_mutate.handler(alsEingabe({ commands: SPEC, consumerId: 'test' }));
   });
 
   afterEach(async () => {
@@ -78,7 +79,7 @@ describe('TEST-path-containment: no graph-driven write escapes repoRoot (CR-GC-2
     // block) — containment must therefore hold at the WRITE, not at the write's input.
     // CR-GC-743: the attribute is `testRefs` (list). The fixture carried the pre-CR-SM-231
     // name `testRef`, which no reader sees — R-19 fired on "absent", not on the traversal.
-    await harness.mutate([
+    await tools.graph_mutate.handler(alsEingabe({ commands: [
       {
         op: 'update-node',
         node: {
@@ -87,7 +88,7 @@ describe('TEST-path-containment: no graph-driven write escapes repoRoot (CR-GC-2
           attributes: { testRefs: [{ file: '../../ESCAPED-BY-EXPORT.test.ts', tool: 'vitest' }] },
         },
       },
-    ]);
+    ], consumerId: 'test' }));
 
     const result = await tools.graph_export.handler({ name: 'auth-service', views: undefined, force: false });
 
@@ -127,8 +128,11 @@ describe('TEST-path-containment: no graph-driven write escapes repoRoot (CR-GC-2
   });
 
   it('a plain export still writes inside repoRoot and clears the marker', async () => {
-    setExportPending(repoRoot);
+    // Die Marke stammt aus der Mutation in beforeEach, durchs Gate und mit Feed-Eintrag
+    // (CR-GC-911) — keine Handmarke, die einen Schreibzug ohne Feed vorspielt.
+    expect(isExportPending(repoRoot)).toBe(true);
     const result = await tools.graph_export.handler({ name: 'auth-service', views: undefined, force: false });
+    expect(result.unfedMutations).toBeUndefined();
     expect(result.graphJson.path).toBe(join('docs', 'graph', 'auth-service.graph.json'));
     expect(existsSync(join(repoRoot, result.graphJson.path))).toBe(true);
     expect(isExportPending(repoRoot)).toBe(false);

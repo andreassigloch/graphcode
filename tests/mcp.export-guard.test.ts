@@ -22,7 +22,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { alsFormatE } from './helpers/format-e.js';
+import { alsEingabe, alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -68,7 +68,7 @@ describe('TEST-mcp-export-guard: graph_export refuses to clobber the committed S
   it('refuses to overwrite a populated SSOT with an empty live graph', async () => {
     const tools = bindToolsToHarness(harness);
     // Seed a committed file via a first valid export, then point an empty graph at it.
-    await harness.mutate(SPEC);
+    await tools.graph_mutate.handler(alsEingabe({ commands: SPEC, consumerId: 'test' }));
     await tools.graph_export.handler({ force: false });
     // New empty harness on the SAME repo (fresh Kuzu wiped → 0 nodes).
     await harness.close();
@@ -81,7 +81,7 @@ describe('TEST-mcp-export-guard: graph_export refuses to clobber the committed S
 
   it('refuses when the write would drop an element present in the committed file', async () => {
     const tools = bindToolsToHarness(harness);
-    await harness.mutate(SPEC);
+    await tools.graph_mutate.handler(alsEingabe({ commands: SPEC, consumerId: 'test' }));
     await tools.graph_export.handler({ force: false });
 
     // Simulate a NEWER committed SSOT (parallel writer added one element + trace).
@@ -104,7 +104,7 @@ describe('TEST-mcp-export-guard: graph_export refuses to clobber the committed S
 
   it('force:true overrides the guard for an intentional deletion', async () => {
     const tools = bindToolsToHarness(harness);
-    await harness.mutate(SPEC);
+    await tools.graph_mutate.handler(alsEingabe({ commands: SPEC, consumerId: 'test' }));
     await tools.graph_export.handler({ force: false });
 
     const jsonAbs = join(repoRoot, JSON_REL);

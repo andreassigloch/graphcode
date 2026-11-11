@@ -18,7 +18,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { alsFormatE } from './helpers/format-e.js';
+import { alsEingabe, alsFormatE } from './helpers/format-e.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
@@ -62,7 +62,7 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
 
   it('exports canonical JSON + Markdown views under the repo root, round-trip clean', async () => {
     const tools = bindToolsToHarness(harness);
-    const applied = await harness.mutate(SPEC);
+    const applied = await tools.graph_mutate.handler(alsEingabe({ commands: SPEC, consumerId: 'test' }));
     expect(applied.success).toBe(true);
 
     const res = await tools.graph_export.handler({});
@@ -123,7 +123,7 @@ describe('TEST-mcp-export: graph_export writes commit-able docs from the live gr
 
   it('respects a custom name + view subset', async () => {
     const tools = bindToolsToHarness(harness);
-    await harness.mutate(SPEC);
+    await tools.graph_mutate.handler(alsEingabe({ commands: SPEC, consumerId: 'test' }));
     const res = await tools.graph_export.handler({ name: 'member', views: ['srs'] });
     expect(res.graphJson.path).toBe(join('docs', 'graph', 'member.graph.json'));
     expect(res.views).toHaveLength(1);

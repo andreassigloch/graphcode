@@ -22,6 +22,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
+import { alsEingabe } from './helpers/format-e.js';
 import { isExportPending, EXPORT_PENDING_REL } from '../src/kernel/export-marker.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 
@@ -88,7 +89,7 @@ describe('TEST-graph-time-travel: per-commit snapshot freshness + recall (CR-GC-
     expect(isExportPending(tmp)).toBe(false); // clean after seed
 
     // (1) A gate mutation makes the live model lead the snapshot → marker set.
-    expect((await harness.mutate(reqWithTest('b'))).success).toBe(true);
+    expect((await tools.graph_mutate.handler(alsEingabe({ commands: reqWithTest('b'), consumerId: 'test' }))).success).toBe(true);
     expect(harness.getGraph().nodes.find((n) => n.uid === 'REQ-b')).toBeDefined();
     expect(isExportPending(tmp)).toBe(true);
 
@@ -100,7 +101,7 @@ describe('TEST-graph-time-travel: per-commit snapshot freshness + recall (CR-GC-
     expect(s1Bytes).toContain('REQ-b'); // snapshot captured the mutation
 
     // (3) More work moves the live model to S2 (marker set again).
-    expect((await harness.mutate(reqWithTest('c'))).success).toBe(true);
+    expect((await tools.graph_mutate.handler(alsEingabe({ commands: reqWithTest('c'), consumerId: 'test' }))).success).toBe(true);
     expect(isExportPending(tmp)).toBe(true);
 
     // (4) RECALL: a `git checkout <older-sha>` brings back S0's snapshot bytes. We

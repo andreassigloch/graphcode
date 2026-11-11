@@ -167,143 +167,149 @@ export function bindExportTools(ctx: ToolPort) {
       'audited deletes pass without `force`). `unfedMutations` names gate writes that bypassed the ' +
       'tool layer.',
     inputSchema: GraphExportInputSchema,
+    // CR-GC-911: hinter jeden laufenden Schreibzug eingereiht. Sonst liest ein Export, der
+    // zwischen Gate und Feed-Eintrag läuft (der Auto-Export unter Last), die Marke schon
+    // gezählt und den Feed noch leer — und meldet eine Mutation ohne Feed-Eintrag, die es
+    // nicht gibt. Der Export ist selbst ein Schreibzug: er setzt die Marke zurück.
     async handler(input) {
-      const graph = harness.getGraph();
-      const repoRoot = harness.getRepoRoot();
-      const name = input.name ?? harness.getScope().systemId;
+      return ctx.serializeToolWrite(async () => {
+        const graph = harness.getGraph();
+        const repoRoot = harness.getRepoRoot();
+        const name = input.name ?? harness.getScope().systemId;
 
-      const json = exportGraphJson(graph);
-      // CR-GC-374: the ONE derivation, shared with every reader (reseed, rewind,
-      // schema-drift guard) — write and read can no longer drift apart.
-      const jsonRel = graphSnapshotRel(name);
-      // Containment BEFORE the clobber guards: an escaping target must not even be
-      // read/compared, let alone written (CR-GC-255).
-      const jsonAbs = assertInRepo(repoRoot, jsonRel);
+        const json = exportGraphJson(graph);
+        // CR-GC-374: the ONE derivation, shared with every reader (reseed, rewind,
+        // schema-drift guard) — write and read can no longer drift apart.
+        const jsonRel = graphSnapshotRel(name);
+        // Containment BEFORE the clobber guards: an escaping target must not even be
+        // read/compared, let alone written (CR-GC-255).
+        const jsonAbs = assertInRepo(repoRoot, jsonRel);
 
-      // Refuse-to-clobber (parallels scripts/export-graph.mjs guards): a stale
-      // long-running server or a parallel writer can hold a graph that is BEHIND
-      // the committed SSOT. Blindly overwriting then silently DROPS committed
-      // elements/traces (observed: a stale export deleted CR-GC-133). Guard 1:
-      // never write an empty graph over a populated SSOT. Guard 2: abort if the
-      // export would remove anything the committed file still has, unless `force`.
-      if (graph.nodes.length === 0) {
-        throw new Error(
-          `graph_export refused: live graph has 0 elements — refusing to overwrite ${jsonRel} with an empty graph.`,
-        );
-      }
-      if (!input.force && existsSync(jsonAbs)) {
-        const committed = JSON.parse(readFileSync(jsonAbs, 'utf8')) as {
-          elements?: Array<{ id: string }>;
-          traces?: Array<{ source: string; target: string; type: string }>;
-        };
-        const liveNodeIds = new Set(graph.nodes.map((n) => n.uid));
-        const liveEdgeKeys = new Set(graph.edges.map((e) => `${e.sourceId}>${e.edgeType}>${e.targetId}`));
-        const droppedNodes = (committed.elements ?? []).map((e) => e.id).filter((id) => !liveNodeIds.has(id));
-        const droppedEdges = (committed.traces ?? [])
-          .map((t) => `${t.source}>${t.type}>${t.target}`)
-          .filter((k) => !liveEdgeKeys.has(k));
-        if (droppedNodes.length || droppedEdges.length) {
-          // export-after-own-mutate (CR-GC-296, GVE-Audit F9): the deletions may be
-          // exactly what THIS process's own audited, applied batches (delete-node /
-          // delete-edge / merge-nodes) already put through the gate since it booted
-          // — not a stale-process/parallel-writer accident. Provenance-based, so the
-          // caller no longer has to pass a blind force:true for its own work.
-          const ownEntries = ((await auditLog.query({})) as AuditEntry[]).filter(
-            (e) => (e.graphVersion ?? 0) > processStartVersion,
+        // Refuse-to-clobber (parallels scripts/export-graph.mjs guards): a stale
+        // long-running server or a parallel writer can hold a graph that is BEHIND
+        // the committed SSOT. Blindly overwriting then silently DROPS committed
+        // elements/traces (observed: a stale export deleted CR-GC-133). Guard 1:
+        // never write an empty graph over a populated SSOT. Guard 2: abort if the
+        // export would remove anything the committed file still has, unless `force`.
+        if (graph.nodes.length === 0) {
+          throw new Error(
+            `graph_export refused: live graph has 0 elements — refusing to overwrite ${jsonRel} with an empty graph.`,
           );
-          const provenance = ownDeletionProvenance(ownEntries);
-          if (!isOwnMutateDeletion(droppedNodes, droppedEdges, provenance)) {
-            // CR-GC-532: name the traces too, and — when the seed held some back because no
-            // pattern admits them (CR-GC-530) — the repair, instead of only "stale process".
-            const traceList = droppedEdges.slice(0, 10).map((k) => {
-              const [s, t, g] = k.split('>');
-              return `${s} -${t}-> ${g}`;
-            });
-            const heldBack = heldBackTraces(repoRoot, name, graph);
-            throw new Error(
-              `graph_export refused: would delete ${droppedNodes.length} element(s) + ${droppedEdges.length} trace(s) ` +
-                `present in committed ${jsonRel} but missing from the live graph — likely a stale process or a ` +
-                `parallel sync. Re-seed the live graph from the committed SSOT first, or pass force:true for an ` +
-                `intentional deletion. Dropped elements: ${droppedNodes.slice(0, 10).join(', ')}` +
-                `${droppedNodes.length > 10 ? ` …(+${droppedNodes.length - 10})` : ''}. ` +
-                `Dropped traces: ${traceList.join(', ')}${droppedEdges.length > 10 ? ` …(+${droppedEdges.length - 10})` : ''}.` +
-                (heldBack.length > 0
-                  ? ` ${heldBack.length} of them match no trace pattern and were held back at seed — repair: ` +
-                    `delete-edge through graph_mutate (model a replacement if needed), then graph_export.`
-                  : ''),
+        }
+        if (!input.force && existsSync(jsonAbs)) {
+          const committed = JSON.parse(readFileSync(jsonAbs, 'utf8')) as {
+            elements?: Array<{ id: string }>;
+            traces?: Array<{ source: string; target: string; type: string }>;
+          };
+          const liveNodeIds = new Set(graph.nodes.map((n) => n.uid));
+          const liveEdgeKeys = new Set(graph.edges.map((e) => `${e.sourceId}>${e.edgeType}>${e.targetId}`));
+          const droppedNodes = (committed.elements ?? []).map((e) => e.id).filter((id) => !liveNodeIds.has(id));
+          const droppedEdges = (committed.traces ?? [])
+            .map((t) => `${t.source}>${t.type}>${t.target}`)
+            .filter((k) => !liveEdgeKeys.has(k));
+          if (droppedNodes.length || droppedEdges.length) {
+            // export-after-own-mutate (CR-GC-296, GVE-Audit F9): the deletions may be
+            // exactly what THIS process's own audited, applied batches (delete-node /
+            // delete-edge / merge-nodes) already put through the gate since it booted
+            // — not a stale-process/parallel-writer accident. Provenance-based, so the
+            // caller no longer has to pass a blind force:true for its own work.
+            const ownEntries = ((await auditLog.query({})) as AuditEntry[]).filter(
+              (e) => (e.graphVersion ?? 0) > processStartVersion,
             );
+            const provenance = ownDeletionProvenance(ownEntries);
+            if (!isOwnMutateDeletion(droppedNodes, droppedEdges, provenance)) {
+              // CR-GC-532: name the traces too, and — when the seed held some back because no
+              // pattern admits them (CR-GC-530) — the repair, instead of only "stale process".
+              const traceList = droppedEdges.slice(0, 10).map((k) => {
+                const [s, t, g] = k.split('>');
+                return `${s} -${t}-> ${g}`;
+              });
+              const heldBack = heldBackTraces(repoRoot, name, graph);
+              throw new Error(
+                `graph_export refused: would delete ${droppedNodes.length} element(s) + ${droppedEdges.length} trace(s) ` +
+                  `present in committed ${jsonRel} but missing from the live graph — likely a stale process or a ` +
+                  `parallel sync. Re-seed the live graph from the committed SSOT first, or pass force:true for an ` +
+                  `intentional deletion. Dropped elements: ${droppedNodes.slice(0, 10).join(', ')}` +
+                  `${droppedNodes.length > 10 ? ` …(+${droppedNodes.length - 10})` : ''}. ` +
+                  `Dropped traces: ${traceList.join(', ')}${droppedEdges.length > 10 ? ` …(+${droppedEdges.length - 10})` : ''}.` +
+                  (heldBack.length > 0
+                    ? ` ${heldBack.length} of them match no trace pattern and were held back at seed — repair: ` +
+                      `delete-edge through graph_mutate (model a replacement if needed), then graph_export.`
+                    : ''),
+              );
+            }
           }
         }
-      }
 
-      mkdirSync(dirname(jsonAbs), { recursive: true });
-      // CR-GC-300: stamp graphVersion at WRITE time (not processStartVersion, which
-      // is the boundary this registry booted at) — the state of the graph this file
-      // was written from. (Its first reader, the currency of the analysis stamps, is gone
-      // with CR-SM-395.) Postprocessing of the unchanged exportGraphJson() output —
-      // exportGraphJson() itself stays the byte-identical inverse of importGraph
-      // (9 call-sites, exporter.test.ts).
-      // Canonical form bleibt erhalten (`null, 2` + trailing newline) — ohne sie
-      // schreibt der Stamp die committete SSOT einzeilig um und bricht den
-      // Round-Trip-Kontrakt (exporter.test.ts) + den Startup-Drift-Vergleich.
-      const jsonWithVersion =
-        JSON.stringify({ ...JSON.parse(json), graphVersion: ctx.graphVersion() }, null, 2) + '\n';
-      writeFileAtomic(jsonAbs, jsonWithVersion);
+        mkdirSync(dirname(jsonAbs), { recursive: true });
+        // CR-GC-300: stamp graphVersion at WRITE time (not processStartVersion, which
+        // is the boundary this registry booted at) — the state of the graph this file
+        // was written from. (Its first reader, the currency of the analysis stamps, is gone
+        // with CR-SM-395.) Postprocessing of the unchanged exportGraphJson() output —
+        // exportGraphJson() itself stays the byte-identical inverse of importGraph
+        // (9 call-sites, exporter.test.ts).
+        // Canonical form bleibt erhalten (`null, 2` + trailing newline) — ohne sie
+        // schreibt der Stamp die committete SSOT einzeilig um und bricht den
+        // Round-Trip-Kontrakt (exporter.test.ts) + den Startup-Drift-Vergleich.
+        const jsonWithVersion =
+          JSON.stringify({ ...JSON.parse(json), graphVersion: ctx.graphVersion() }, null, 2) + '\n';
+        writeFileAtomic(jsonAbs, jsonWithVersion);
 
-      const views = input.views ?? MARKDOWN_VIEWS;
-      const written = views.map((v) => {
-        const md = exportMarkdown(graph, v, name);
-        const rel = join('docs', 'views', VIEW_FILENAMES[v]);
-        const abs = assertInRepo(repoRoot, rel);
-        mkdirSync(dirname(abs), { recursive: true });
-        writeFileAtomic(abs, md);
-        return { view: v, path: rel, bytes: Buffer.byteLength(md) };
+        const views = input.views ?? MARKDOWN_VIEWS;
+        const written = views.map((v) => {
+          const md = exportMarkdown(graph, v, name);
+          const rel = join('docs', 'views', VIEW_FILENAMES[v]);
+          const abs = assertInRepo(repoRoot, rel);
+          mkdirSync(dirname(abs), { recursive: true });
+          writeFileAtomic(abs, md);
+          return { view: v, path: rel, bytes: Buffer.byteLength(md) };
+        });
+
+        // Stub materialization: scaffold the artifact behind a binding whose file is
+        // ABSENT, so a binding never resolves to a phantom path. Both arms are
+        // existence-checked and NEVER overwrite a real file.
+        //   TEST   → `it.todo` for a bound testRef (CR-GC-205 Item 4)
+        //   SCHEMA → `z.unknown()` export for a bound realRef (BOK-CR-026 §6b)
+        const stubs: string[] = [];
+        for (const stub of [...renderTestStubs(graph), ...renderSchemaStubs(graph)]) {
+          // The renderers already drop a stub whose ref fails TestRefSchema/RealRefSchema
+          // (CR-GC-255: `..`/absolute no longer parse) — this is the backstop, not the check.
+          const abs = assertInRepo(repoRoot, stub.file);
+          if (existsSync(abs)) continue;
+          mkdirSync(dirname(abs), { recursive: true });
+          writeFileSync(abs, stub.content);
+          stubs.push(stub.file);
+        }
+
+        // CR-GC-449: die Marke ist der einzige repoRoot-seitige Zähler ANGEWENDETER
+        // Gate-Mutationen — vor dem Löschen also die Frage stellen, die sie als
+        // einzige beantworten kann: wie viele davon hat der Repo-Feed nie gesehen?
+        // (Rohes `harness.mutate()`, Bootstrap, oder eine Session auf einem eigenen
+        // Store.) Gemessen, nicht dokumentiert; der Export ist die Stelle, an der es
+        // auffällt, weil hier ohnehin Modell und Repo zur Deckung kommen.
+        const unfedMutations = countUnfedMutations(repoRoot);
+        if (unfedMutations > 0) {
+          // stdout ist der MCP-Transport (CR-GC-239-Muster) — die Warnung geht auf stderr.
+          console.error(
+            `[graphcode] export: ${unfedMutations} applied gate mutation(s) have no entry in the repo's ` +
+              `learning feed (.graphcode/${TRAJECTORY_FILE}) — a writer bypassed the tool layer or ran on ` +
+              `its own store. The graph is correct; the trajectory is incomplete by that many records.`,
+          );
+        }
+
+        // CR-GC-217: the committed snapshot now equals the live model — clear the
+        // drift marker the gate left on the last mutate() so the pre-commit freshness
+        // guard lets the commit through. Only reached after the writes above succeed
+        // (a refused export throws before here, leaving the marker set, by design).
+        clearExportPending(repoRoot);
+
+        return {
+          graphJson: { path: jsonRel, bytes: Buffer.byteLength(jsonWithVersion), nodes: graph.nodes.length, edges: graph.edges.length },
+          views: written,
+          stubs,
+          ...(unfedMutations > 0 ? { unfedMutations } : {}),
+        };
       });
-
-      // Stub materialization: scaffold the artifact behind a binding whose file is
-      // ABSENT, so a binding never resolves to a phantom path. Both arms are
-      // existence-checked and NEVER overwrite a real file.
-      //   TEST   → `it.todo` for a bound testRef (CR-GC-205 Item 4)
-      //   SCHEMA → `z.unknown()` export for a bound realRef (BOK-CR-026 §6b)
-      const stubs: string[] = [];
-      for (const stub of [...renderTestStubs(graph), ...renderSchemaStubs(graph)]) {
-        // The renderers already drop a stub whose ref fails TestRefSchema/RealRefSchema
-        // (CR-GC-255: `..`/absolute no longer parse) — this is the backstop, not the check.
-        const abs = assertInRepo(repoRoot, stub.file);
-        if (existsSync(abs)) continue;
-        mkdirSync(dirname(abs), { recursive: true });
-        writeFileSync(abs, stub.content);
-        stubs.push(stub.file);
-      }
-
-      // CR-GC-449: die Marke ist der einzige repoRoot-seitige Zähler ANGEWENDETER
-      // Gate-Mutationen — vor dem Löschen also die Frage stellen, die sie als
-      // einzige beantworten kann: wie viele davon hat der Repo-Feed nie gesehen?
-      // (Rohes `harness.mutate()`, Bootstrap, oder eine Session auf einem eigenen
-      // Store.) Gemessen, nicht dokumentiert; der Export ist die Stelle, an der es
-      // auffällt, weil hier ohnehin Modell und Repo zur Deckung kommen.
-      const unfedMutations = countUnfedMutations(repoRoot);
-      if (unfedMutations > 0) {
-        // stdout ist der MCP-Transport (CR-GC-239-Muster) — die Warnung geht auf stderr.
-        console.error(
-          `[graphcode] export: ${unfedMutations} applied gate mutation(s) have no entry in the repo's ` +
-            `learning feed (.graphcode/${TRAJECTORY_FILE}) — a writer bypassed the tool layer or ran on ` +
-            `its own store. The graph is correct; the trajectory is incomplete by that many records.`,
-        );
-      }
-
-      // CR-GC-217: the committed snapshot now equals the live model — clear the
-      // drift marker the gate left on the last mutate() so the pre-commit freshness
-      // guard lets the commit through. Only reached after the writes above succeed
-      // (a refused export throws before here, leaving the marker set, by design).
-      clearExportPending(repoRoot);
-
-      return {
-        graphJson: { path: jsonRel, bytes: Buffer.byteLength(jsonWithVersion), nodes: graph.nodes.length, edges: graph.edges.length },
-        views: written,
-        stubs,
-        ...(unfedMutations > 0 ? { unfedMutations } : {}),
-      };
     },
   };
 

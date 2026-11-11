@@ -201,6 +201,22 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
     expect(harness.getGraph().nodes.some((n) => n.uid === 'REQ-1')).toBe(true);
   });
 
+  it('CR-GC-911: ein Export WÄHREND einer Mutation wartet auf deren Feed-Eintrag (kein falscher Fehlalarm)', async () => {
+    // Der Export läuft hier mitten im Schreibzug: nach dem Gate (Marke steht), vor dem
+    // Feed-Eintrag des Tool-Layers. Genau dort griff der Auto-Export unter Last zu und
+    // meldete eine angewendete Mutation ohne Feed-Eintrag, die es nicht gab.
+    let mitten: Promise<{ unfedMutations?: number }> | undefined;
+    harness.getHooks().registerHook('post-apply', (data) => {
+      if (data.phase !== 'post-apply' || mitten) return;
+      mitten = registry['graph_export'].handler({}) as Promise<{ unfedMutations?: number }>;
+    });
+    const res = await registry['graph_mutate'].handler(alsEingabe(addReq(1)));
+    expect(res.success).toBe(true);
+    expect(mitten).toBeDefined();
+    const exported = await mitten!;
+    expect(exported.unfedMutations).toBeUndefined();
+  });
+
   it('writeFileAtomic ersetzt die Datei per rename (nie in-place truncate) und lässt keine Temp-Datei zurück', () => {
     const dir = join(tmp, 'atomic');
     mkdirSync(dir, { recursive: true });

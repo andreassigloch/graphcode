@@ -27,6 +27,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
 import { registerAutoExport, AUTO_EXPORT_DEBOUNCE_MS, type AutoExportHandle } from '../src/projections/auto-export.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { alsEingabe } from './helpers/format-e.js';
 
 const SNAPSHOT = 'docs/graph/graphcode.graph.json';
 const UID = 'FUNC-flush-probe';
@@ -34,6 +35,7 @@ const UID = 'FUNC-flush-probe';
 let repoRoot: string;
 let harness: GraphCodeHarness;
 let autoExport: AutoExportHandle;
+let registry: ReturnType<typeof bindToolsToHarness>;
 
 beforeEach(async () => {
   repoRoot = mkdtempSync(join(tmpdir(), 'graphcode-flush-'));
@@ -47,7 +49,7 @@ beforeEach(async () => {
   };
   harness = new GraphCodeHarness(config, storage);
   await harness.initialize();
-  const registry = bindToolsToHarness(harness);
+  registry = bindToolsToHarness(harness);
   autoExport = registerAutoExport(harness, registry.graph_export);
 });
 
@@ -59,12 +61,18 @@ afterEach(async () => {
 
 /** Eine echte Mutation durchs Gate — der post-apply-Hook plant daraufhin den Export. */
 async function mutateThrough(): Promise<void> {
-  const res = await harness.mutate([
-    {
-      op: 'add-node',
-      node: { uid: UID, type: 'FUNC', name: 'Flush-Sonde', description: 'Prueft den Shutdown-Export.', attributes: {} },
-    },
-  ]);
+  // Über den Tool-Layer (CR-GC-911): ein rohes harness.mutate() hätte keinen Feed-Eintrag.
+  const res = await registry.graph_mutate.handler(
+    alsEingabe({
+      commands: [
+        {
+          op: 'add-node',
+          node: { uid: UID, type: 'FUNC', name: 'Flush-Sonde', description: 'Prueft den Shutdown-Export.', attributes: {} },
+        },
+      ],
+      consumerId: 'shutdown-flush-test',
+    }),
+  );
   expect(res.success, 'die Mutation selbst muss durchs Gate gehen').toBe(true);
 }
 

@@ -1426,6 +1426,8 @@
 | `CR-GC-909` | relation | `FUNC-graph-export-snapshot` |
 | `CR-GC-910` | relation | `FUNC-import-doc` |
 | `CR-GC-910` | relation | `UC-model-exchange` |
+| `CR-GC-911` | relation | `FUNC-graph-export-snapshot` |
+| `CR-GC-911` | relation | `FUNC-tool-context` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -1937,6 +1939,8 @@
 | `FLOW-export-pending` | relation | `SCHEMA-export-pending` |
 | `FLOW-export-request-import-code` | io | `FUNC-graph-export-snapshot` |
 | `FLOW-export-request-import-code` | relation | `SCHEMA-query-params` |
+| `FLOW-export-write-slot` | io | `FUNC-tool-context` |
+| `FLOW-export-write-slot` | relation | `SCHEMA-export-answer` |
 | `FLOW-fingerprint-request` | io | `FUNC-schema-guard` |
 | `FLOW-fingerprint-request` | relation | `SCHEMA-schema-fingerprint` |
 | `FLOW-fit-advisory` | io | `FUNC-zug-bericht` |
@@ -2618,6 +2622,7 @@
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-graph-export-snapshot` | allocate | `MOD-projections` |
 | `FUNC-graph-export-snapshot` | io | `FLOW-export-answer` |
+| `FUNC-graph-export-snapshot` | io | `FLOW-export-write-slot` |
 | `FUNC-graph-export-snapshot` | io | `FLOW-graph-snapshot-file` |
 | `FUNC-graph-export-snapshot` | io | `FLOW-held-back-request` |
 | `FUNC-graph-export-snapshot` | io | `FLOW-markdown-docs` |
