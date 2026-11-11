@@ -12,9 +12,10 @@
 //
 // Usage: node scripts/retro-kpi.mjs [session.json]
 //        node scripts/retro-kpi.mjs --protokoll <sitzung.jsonl> [...]   (Kennzahlen je Sitzung, CR-GC-897)
+//        node scripts/retro-kpi.mjs --verlauf [<repo>]   (Verstoesse ueber alle committeten Graph-Staende, CR-GC-914)
 // @author andreas@siglochconsulting
 import { readFileSync, existsSync } from 'node:fs';
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 /** Round to 2 decimals for deterministic, comparable KPI values. */
@@ -373,7 +374,49 @@ function gitNetLoc() {
 }
 
 // --- main: read the session JSON, auto-fill git net-LOC, print the table ---
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1] && process.argv[2] === '--protokoll') {
+// ── CR-GC-914: Verlauf der Verstoesse ueber alle committeten Graph-Staende ──────────────────────
+// Gemessen wird mit `measureGraphHistory` aus dem installierten graph-view-edit — derselbe Messpfad
+// wie die Dashboard-Karte „Wirkt die Arbeit?", dort nur ueber die letzten 24 Staende. Jeder Stand
+// wird mit dem HEUTIGEN Regelwerk bewertet und ohne Code-Abgleich (RC-Regeln zaehlt nur die Readiness).
+
+/** Ab dieser relativen Aenderung der offenen Verstoesse gegen den Vorstand gilt ein Stand als Sprung. */
+const SPRUNG_SCHWELLE = 0.1;
+
+/** Jeder Stand, dessen offene Verstoesse um mehr als 10 % vom Vorstand abweichen. Rein. */
+export function sprungListe(states) {
+  return states.filter((s, i) => i > 0 && Math.abs(s.open - states[i - 1].open) > SPRUNG_SCHWELLE * Math.max(1, states[i - 1].open));
+}
+
+/** Alle committeten Staende von `repo` mit Commit-Betreff, dazu die Spruenge. */
+export async function verlauf(repo) {
+  const { measureGraphHistory } = await import('@sigloch/graph-view-edit/vite.config.js');
+  const h = measureGraphHistory(repo, { window: null });
+  if (!h) return { states: [], spruenge: [], skipped: 0, measureMs: 0 };
+  const betreff = (hash) => execFileSync('git', ['-C', repo, 'log', '-1', '--format=%s', hash], { encoding: 'utf8' }).trim();
+  const states = h.states.map((s) => ({ ...s, betreff: betreff(s.hash) }));
+  return { states, spruenge: sprungListe(states), skipped: h.skipped, measureMs: h.measureMs };
+}
+
+const zeile = (s) => `| ${s.ts.slice(0, 10)} | ${s.short} | ${s.elements} | ${s.errors} | ${s.warnings} | ${s.infos} | ${s.open} | ${s.betreff} |`;
+
+export function renderVerlauf(v) {
+  const kopf = '| Datum | Commit | Elemente | Fehler | Warnungen | Hinweise | offen | Betreff |\n|---|---|---|---|---|---|---|---|';
+  return [
+    `## Verlauf: ${v.states.length} Staende, gemessen in ${v.measureMs} ms` + (v.skipped ? `, ${v.skipped} nicht messbar` : ''),
+    '',
+    kopf,
+    ...v.states.map(zeile),
+    '',
+    `## Spruenge (offene Verstoesse > ${SPRUNG_SCHWELLE * 100} % gegen den Vorstand): ${v.spruenge.length}`,
+    '',
+    kopf,
+    ...v.spruenge.map(zeile),
+  ].join('\n');
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1] && process.argv[2] === '--verlauf') {
+  console.log(renderVerlauf(await verlauf(process.argv[3] ?? process.cwd())));
+} else if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1] && process.argv[2] === '--protokoll') {
   // CR-GC-897: die Kennzahlen je Sitzung, direkt aus einem oder mehreren Protokollen (JSONL).
   const pfade = process.argv.slice(3);
   if (pfade.length === 0) {

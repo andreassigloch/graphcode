@@ -14650,7 +14650,7 @@ verify ▶ `REQ-responsiveness`
 
 Abnahme der Datei tests/retro-kpi.test.ts: die Auswertung liefert deterministische Werte aus einer Fixture-Sitzung, und das entscheidende Signal stimmt: eine bewusst graph-lose Sitzung ergibt ein Graph-zu-Grep-Verhaeltnis unter eins.
 
-verify ▶ `REQ-quality-metric` · testRefs: `tests/retro-kpi.test.ts`
+verify ▶ `REQ-quality-metric` · testRefs: `tests/retro-kpi.test.ts`, `tests/retro-verlauf.test.ts`
 
 ### 8.121  `TEST-rewind` — Rueckspulen auf einen Commit
 

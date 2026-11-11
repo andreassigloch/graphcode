@@ -1,6 +1,6 @@
 ---
 name: se-retro
-version: 5
+version: 6
 description: Post-project retro — compute the 6 graphcode KPIs (graph-vs-grep, tool usage, token/LOC, plan conformance, gate health, binding coverage) and interpret them
 ---
 
@@ -23,6 +23,8 @@ Assemble a `retro-session.json`:
 - **Single calls** (CR-GC-898) — share of turns with exactly one tool call and their context, and the runs of 3+ equal single calls (same tool; for a shell call the same first command). Every turn re-reads the whole context, so a run costs its turns times the context.
 - **Model asked** (CR-GC-899) — questions to the model (test selection, context slice, blast radius, expansion) against model writes, and the share of test runs preceded by a test selection from the graph since the previous run. A selected run through the code lane counts as preceded.
 
+`node scripts/retro-kpi.mjs --verlauf [<repo>]` → the violations over EVERY committed graph state (CR-GC-914): one row per state (date, commit, elements, errors, warnings, infos, open, subject) and the jumps — every state whose open violations moved more than 10 % against the one before. It measures with `measureGraphHistory` from the installed graph-view-edit, the same path as the dashboard card „Wirkt die Arbeit?" (which keeps only the last 24). Takes about 80 ms per state.
+
 ## 3. Interpret (the standard read)
 - **Graph-vs-Grep ratio** has no threshold (Leitlinie T-E1). Every search the graph could have answered is potential: list them and ask why the graph wasn't queried (missing export? no onboarding contract?). The graph's gain is precision, not speed.
 - **Plan conformance > 0** → CR numbering disagreed with the real `depends-on` order — forward dependencies were built out of order.
@@ -31,5 +33,7 @@ Assemble a `retro-session.json`:
 - **Runs of equal single calls > 0** → independent reads were not put into one turn, or a repeated check ran by hand instead of as one script (GRAPHCODE.md, *Sessions and turns*).
 - **Test runs without a selection** → the session chose its tests itself; the graph names the minimal set for the change (GRAPHCODE.md, *Which tests to run*). Few questions against many writes says the model was written, not used.
 - **Findings Δ ≥ 0** → the session left no fewer open findings than it found. Read it with the marks: building adds elements and each new element first brings findings of its own, so a rising count during construction is expected — a mark that moved back is not.
+
+- **Jumps in the violation history** → read each against its commit subject first. Every state is judged by TODAY's rules and without the code check (the RC rules only the readiness counts), so a jump is a restructure or a rule change until shown otherwise; only a jump that is neither counts as the work's effect.
 
 Read the audit + readiness over MCP — never open a second store handle.

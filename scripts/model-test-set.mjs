@@ -170,6 +170,10 @@ export const EXCLUDED = {
     'CR-GC-639: die Fixture nennt `docs/graph/` und `docs/views/` als PFAD-Zeichenketten in einem\n' +
     'gestellten Sitzungsprotokoll — genau diese Lesezugriffe muss KPI 1 als Doc-Read erkennen. Die\n' +
     'SSOT selbst liest der Test nie; eine Modellaenderung kann ihn nicht rot machen.',
+  'tests/retro-verlauf.test.ts':
+    'CR-GC-914: nennt `docs/graph/` nur als PFAD, unter dem der Test drei eigene Staende in ein TEMP-Repo\n' +
+    'committet und mit measureGraphHistory misst. graphcodes eigene SSOT liest er nie — eine Modellaenderung\n' +
+    'kann ihn nicht rot machen; eine Aenderung an retro-kpi oder an graph-view-edit sehr wohl (Spur CODE).',
   'tests/cr-messung.test.ts':
     'CR-GC-639: legt ein TEMP-Repo mit docs/cr/open → done und ein Temp-Protokoll an und faehrt den\n' +
     'post-commit-Messpfad. Daher der Treffer auf `docs/cr`. graphcodes eigene SSOT liest er nie — eine\n' +
