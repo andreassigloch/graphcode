@@ -597,6 +597,9 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-901` | n/a | testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3) | `FUNC-test-ingest` · `REQ-testref-kopf-bindung` |
 | `CR-GC-902` | done | init prueft nicht, ob Claude Code oder OpenCode installiert ist; ohne Agent-Programm laufen die naechsten Schritte ins Leere | `FUNC-init-verb` · `REQ-init-agent-host` |
 | `CR-GC-903` | n/a | Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen | `MOD-dashboard` · `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork` |
+| `CR-GC-904` | n/a | EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431) | `FUNC-author-req` |
+| `CR-GC-905` | n/a | UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation) | `FUNC-import-doc` · `UC-model-exchange` |
+| `CR-GC-908` | n/a | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren | `FUNC-import-doc` · `UC-model-exchange` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

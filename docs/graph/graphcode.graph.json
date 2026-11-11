@@ -3949,6 +3949,36 @@
       "description": "docs/cr/open/CR-GC-903-viewer-ist-nachbarsystem-mod-dashboard-a.md"
     },
     {
+      "id": "CR-GC-904",
+      "type": "CR",
+      "name": "EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431)",
+      "description": "docs/cr/open/CR-GC-904-ears-als-vorbild-im-skill-se-author-req-.md"
+    },
+    {
+      "id": "CR-GC-905",
+      "type": "CR",
+      "name": "UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation)",
+      "description": "docs/cr/open/CR-GC-905-uc-bestand-erschliessen-und-verstreute-a.md"
+    },
+    {
+      "id": "CR-GC-906",
+      "type": "CR",
+      "name": "Vorfuehrung: Intro I1 und Anforderungsbaum E2 im Artefakt Systemmodell in Bildern",
+      "description": "docs/cr/open/CR-GC-906-vorfuehrung-intro-i1-und-anforderungsbau.md"
+    },
+    {
+      "id": "CR-GC-907",
+      "type": "CR",
+      "name": "Vorfuehrung: Schalter fuer die Zielgruppe im Artefakt Systemmodell in Bildern",
+      "description": "docs/cr/open/CR-GC-907-vorfuehrung-schalter-fuer-die-zielgruppe.md"
+    },
+    {
+      "id": "CR-GC-908",
+      "type": "CR",
+      "name": "Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren",
+      "description": "docs/cr/open/CR-GC-908-vorfuehrung-kapitel-d3-bestand-einlesen-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20488,6 +20518,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-904",
+      "target": "FUNC-author-req",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-905",
+      "target": "FUNC-import-doc",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-905",
+      "target": "UC-model-exchange",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-908",
+      "target": "FUNC-import-doc",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-908",
+      "target": "UC-model-exchange",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -31993,5 +32048,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1044
+  "graphVersion": 1052
 }

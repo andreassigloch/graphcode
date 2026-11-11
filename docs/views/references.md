@@ -1417,6 +1417,11 @@
 | `CR-GC-903` | relation | `REQ-dashboard-readonly` |
 | `CR-GC-903` | relation | `REQ-readiness-transparent` |
 | `CR-GC-903` | relation | `REQ-shared-views-no-fork` |
+| `CR-GC-904` | relation | `FUNC-author-req` |
+| `CR-GC-905` | relation | `FUNC-import-doc` |
+| `CR-GC-905` | relation | `UC-model-exchange` |
+| `CR-GC-908` | relation | `FUNC-import-doc` |
+| `CR-GC-908` | relation | `UC-model-exchange` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

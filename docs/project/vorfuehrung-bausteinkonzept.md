@@ -155,8 +155,12 @@ eine Modellentscheidung und gehört in einen eigenen CR, nicht in dieses Konzept
 
 Jeder Schritt ist ein eigener CR.
 
-1. E2 und I1 im Artefakt
-2. Schalter für die Zielgruppe
-3. Paketstation als Modell
-4. Kapitel zu D3 (Bestand einlesen und zusammenführen)
-5. sirail auf Stand bringen
+| Nr | Schritt | CR | hängt an |
+|---|---|---|---|
+| 1 | I1 und E2 im Artefakt; legt die Namen der Paketstation fest | CR-GC-906 | – |
+| 2 | Schalter für die Zielgruppe | CR-GC-907 | CR-GC-906 |
+| 3 | Use Case Spezifikation im Modell | CR-GC-905 | – |
+| 4 | Kapitel zu D3 (Bestand einlesen und zusammenführen) | CR-GC-908 | CR-GC-905, CR-GC-906 |
+| 5 | Paketstation als Modell | offen: Ort des Repos | CR-GC-906 |
+| 6 | sirail auf Stand bringen | offen: CR im Repo sirail | – |
+| – | Ansicht Anforderungsbaum im Viewer | nur falls „Requirement Review" nicht reicht | CR-GC-906 |
