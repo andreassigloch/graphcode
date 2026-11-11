@@ -118,9 +118,9 @@ afterAll(async () => {
 });
 
 describe('se:optimize Version 3: zwei Quellen, getrennt, ohne Rangfolge (CR-GC-785)', () => {
-  it('der Kopf traegt Version 6 unter dem alten Namen', () => {
+  it('der Kopf traegt Version 7 unter dem alten Namen (CR-GC-863)', () => {
     expect(skill).toMatch(/^name: se:optimize$/m);
-    expect(skill).toMatch(/^version: 6$/m);
+    expect(skill).toMatch(/^version: 7$/m);
   });
 
   it('Quelle (a) nennt beide Analysen, die Vorschlaege abgeben: se-fmea und se-laufzeit (CR-GC-791)', () => {

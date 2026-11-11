@@ -52,6 +52,9 @@ Je Funktion an einer dünnen Linie:
 2. Wo liegen ihre Geschwister im Funktionsbaum?
 3. Passt das Zielmodul zu seiner Beschreibung? `surface` ist „Adapter ohne eigene Logik".
 4. Was importiert ihre Datei? Ein Umzug nach `kernel` setzt voraus, dass sie keinen Client importiert.
+5. **Domänenfrage** (Hardware und gemischte Systeme): Legen wir die Schnittstelle zwischen Mechanik, Elektronik
+   und Software hier selbst fest und prüfen sie? Nur dann je Domäne ein Blatt-Modul. Eine Baugruppe (Servoantrieb
+   aus Motor, Getriebe, Regelelektronik, Endlagenschaltern) bleibt ein Blatt-Modul, auch wenn sie Domänen mischt.
 
 Beispiel: `decode` war die einzige Grounding-Funktion in `loop`; ihre Geschwister `import`, `reseed`,
 `merge-nodes` lagen in `kernel`, und die Datei importierte nur Fremdpakete (ITEM-2026-984).
@@ -108,6 +111,8 @@ Code, die Korrektur. Der CR misst die Kennzahlen aus Schritt 1 davor und danach.
 
 Handlungsklassen: **Verschieben** (Funktion in ein anderes Modul), **Teilen** (ein Fluss wird zwei),
 **Zusammenlegen** (zwei Module werden eins; nur mit gemessener Kohäsion davor und danach).
+Vor jedem Zusammenlegen oder Teilen steht die Domänenfrage aus Schritt 3. Eine Kennzahl (RD-05, CR-01,
+Kohäsion) rechtfertigt keinen dieser Züge allein.
 
 **Du wendest nichts an.** `se:optimize` probt jeden Vorschlag per Trockenlauf; Anwenden und
 Nachmessen gehören dem CR des Umbaus.

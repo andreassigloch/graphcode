@@ -1,6 +1,6 @@
 ---
 name: se:author-actor
-version: 2
+version: 3
 description: Cut the actor set — the minimum number of distinct roles that makes the system boundary unambiguous, each named by what crosses the boundary, wired only via the one legal path ACTOR io FLOW io FUNC
 ---
 
@@ -29,6 +29,7 @@ Work it out from the use cases you already have, not from the prose — read the
 1. For each UC, name **who triggers it** and **who consumes its result**. Write both down, in the customer's words.
 2. Collapse the list: same things crossing → one actor.
 3. Keep a non-human counterpart only if it triggers a chain or receives its result — a scheduler, a device, an AI client that calls in. A service outside the boundary is an actor only if it triggers a chain or receives its result. A data source, a write target, a model or a backup that only answers is called by the function itself, with no flow in the model. "The system itself" is **never** an actor; if you catch yourself writing `ACTOR-system`, the behaviour belongs inside as a FUNC.
+**A part of your own product is never an actor** — not a mechanical actuator, not a bought-in part. The boundary is where the product ends (scope table, bill of materials), not where the software ends. Example: a turnout drive (servo, linkage, end-position switches) that belongs to the product is a module. Its motion and its end-position feedback stay inside; they are no flows to an actor "plant". Modelled as an actor, the drive gives the chain a second actor input, and the feedback looks like a second trigger.
 4. What is left is the set. Typically 2–5 at the top level. If you have more than 7, you are modelling users, not the boundary.
 
 ## The role comes from the chain, not from the actor
@@ -54,4 +55,5 @@ Check it per use case, both directions. A UC whose result nobody outside receive
 - Would merging any two actors lose a distinction the system actually acts on? If no — merge them.
 - Does any actor only answer, or only deliver in advance? Then it is no actor.
 - Is any actor a part of the system wearing a costume?
+- Is any actor a part of your own product (scope table, bill of materials)? Then it is a MOD with its FUNCs, not an ACTOR — also when it is mechanical or bought in.
 - Does every actor appear in at least one use case? An actor with no UC is a leftover from the prose.

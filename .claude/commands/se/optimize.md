@@ -1,6 +1,6 @@
 ---
 name: se:optimize
-version: 6
+version: 7
 description: Einen Umbauvorschlag proben und seinen Gesamt-Impact als Vorlage zeigen — Vorschläge aus einer Analyse (feste Form) und Vorschläge von graph_suggest, getrennt. Trockenlauf durchs Gate, Vorlage davor und danach, Wahl durch den Autor. Nach CDR, vor den Kettentests. Kein Auto-Apply; Anwenden und Nachmessen gehören dem CR des Umbaus.
 ---
 
@@ -49,6 +49,7 @@ graph_suggest { "k": 5 }
 - `applicable: false`: es gibt nichts anzuwenden, also auch nichts zu proben. Ein Fund ohne `edit`, oder das Gate hat den Zug abgelehnt (Grund in `verdict.violations`). `score` misst dann eine Sonde am Fund. Sag das dazu.
 - `score` kleiner oder gleich 0: der Zug entschärft die schlimmste Stelle nicht. Sag das dazu.
 - `edit.codeImpact`: nenn Datei und Zielmodul. Das Umhängen einer gebundenen Funktion zieht Code-Arbeit nach sich.
+- Legt der Zug Module verschiedener Domänen zusammen (Mechanik, Elektronik, Software) oder trennt er eine nach Domänen, stell vor der Probe die Domänenfrage (Abschnitt *Domains* des Skills für den ersten Schnitt): Legen wir die Schnittstelle zwischen den Domänen selbst fest und prüfen sie? Nur dann trennen. Ein guter Steuerwert allein rechtfertigt den Zug nicht.
 - Die Reihenfolge der Liste stammt vom Steuerwert des Werkzeugs. Sie gilt nur in dieser Quelle und ist kein Urteil über einen Entwurf.
 
 Ein Vorschlag aus (b) hat keinen Zweck an einer Kette und keine Prognose. Frag den Autor vor der

@@ -12,6 +12,9 @@
  * CR-GC-875 zieht die Akteur-Lehre (contracts `chainRoles`, FC-06) in author-actor, top-level Regel 4,
  * se-fmea, se-vorbereitung und se-laufzeit nach; der letzte Block prueft diese Saetze.
  *
+ * CR-GC-863 (sirail): ein Teil des eigenen Produkts ist nie ein ACTOR, und die Domaenenregel fuer den
+ * MOD-Schnitt steht in author-actor, top-level, se-modulebene und se:optimize.
+ *
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
@@ -29,8 +32,8 @@ const regel4 = topLevel.split('\n').find((l) => l.startsWith('4. **One entry nod
 const stufe3Fluss = topLevel.split('\n').find((l) => l.startsWith('3. **FLOW + SCHEMA**')) ?? '';
 
 describe('se:top-level Regel 4: ein Eingangsknoten je Kette (CR-GC-873)', () => {
-  it('der Kopf traegt Version 7 (CR-GC-878)', () => {
-    expect(topLevel).toMatch(/^version: 7$/m);
+  it('der Kopf traegt Version 8 (CR-GC-863)', () => {
+    expect(topLevel).toMatch(/^version: 8$/m);
   });
 
   it('die alte Regel „One trigger per chain" ist weg', () => {
@@ -75,8 +78,8 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
     expect(regel4).toMatch(/A receipt \(`async` hand-over, `sync` back\) triggers nothing/);
   });
 
-  it('author-actor: Version 2, kein „external service" mehr, Schritt 3 prueft Ausloesen oder Empfangen', () => {
-    expect(authorActor).toMatch(/^version: 2$/m);
+  it('author-actor: Version 3, kein „external service" mehr, Schritt 3 prueft Ausloesen oder Empfangen', () => {
+    expect(authorActor).toMatch(/^version: 3$/m);
     expect(authorActor).not.toContain('external service');
     expect(authorActor).toMatch(/A service outside the boundary is an actor only if it triggers a chain or receives its result/);
     expect(authorActor).toMatch(/Does it only answer\?/);
@@ -110,5 +113,34 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
     for (const t of [vorbereitung, laufzeit]) {
       expect(t).toMatch(/`async` am Fluss eines Akteurs, der aus der Kette nichts empfängt, ist eine Vorab-Lieferung \(`FC-06`, `\[predelivery\]`\)/);
     }
+  });
+});
+
+describe('Hardware-Systeme: Produktteile und Domaenenregel (CR-GC-863)', () => {
+  const modulebene = readFileSync(join(COMMANDS, 'se-modulebene.md'), 'utf8');
+  const optimize = readFileSync(join(COMMANDS, 'se', 'optimize.md'), 'utf8');
+
+  it('author-actor: ein Teil des eigenen Produkts ist nie ein Akteur, in Schritt 3 und in der Pruefliste', () => {
+    expect(authorActor).toMatch(/A part of your own product is never an actor/);
+    expect(authorActor).toMatch(/turnout drive \(servo, linkage, end-position switches\)/);
+    expect(authorActor).toMatch(/Is any actor a part of your own product/);
+  });
+
+  it('top-level: Domaenenregel mit beiden Beispielen, Kennzahl entscheidet nicht', () => {
+    expect(topLevel).toMatch(/## Domains: a module may mix mechanics, electronics and software/);
+    expect(topLevel).toMatch(/controller hardware \(board\) and controller software \(firmware\)/);
+    expect(topLevel).toMatch(/servo drive made of motor, gearbox/);
+    expect(topLevel).toMatch(/A metric justifies neither merging nor splitting/);
+  });
+
+  it('se-modulebene und se:optimize stellen die Domaenenfrage vor Zusammenlegen oder Teilen', () => {
+    expect(modulebene).toMatch(/\*\*Domänenfrage\*\*/);
+    expect(modulebene).toMatch(/Vor jedem Zusammenlegen oder Teilen steht die Domänenfrage/);
+    expect(optimize).toMatch(/stell vor der Probe die Domänenfrage/);
+  });
+
+  it('jede genannte Regel steht im Katalog', () => {
+    const ids = new Set(ALL_RULE_DEFS.map((r) => r.id));
+    for (const id of ['RD-05', 'CR-01']) expect(ids.has(id), id).toBe(true);
   });
 });

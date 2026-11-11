@@ -1,6 +1,6 @@
 ---
 name: se:top-level
-version: 7
+version: 8
 description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at 7±2 blocks per level, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
@@ -109,6 +109,14 @@ _Warum hier keine feste Zahl mehr steht (CR-GC-629): diese Seite nannte an zwei 
 ## The stack belongs in the model
 
 A MOD without a stack is half a decision. The only legal place is `MOD -satisfy-> REQ` where the REQ carries `@kinds ["non-functional"]` — `functional` REQs belong to the FUNCs (`se:author-req`). Source the wording from `bok/docs/governance/STACKS.md`; do not restate it per repo.
+
+## Domains: a module may mix mechanics, electronics and software
+
+**A module may consist of any domains.** Split by domain only where you define and test the interface between the domains yourself: then one leaf MOD per domain, grouped in a MOD of MODs. Example: a control unit made of controller hardware (board) and controller software (firmware) — you specify the pins, the protocol and the timing between them.
+
+**Inside an assembly you do not split.** What happens there between the domains is like a module-internal call in software: not modelled. Example: a servo drive made of motor, gearbox, housing, control electronics, linkage and end-position switches is one leaf MOD. Its FUNCs carry the requirements and tests at its boundary.
+
+**A metric justifies neither merging nor splitting.** RD-05, CR-01 and cohesion reward merging; the domain question decides. A part of your own product is never an ACTOR (`se:author-actor`).
 
 ## Author the story first, mark the model second
 
