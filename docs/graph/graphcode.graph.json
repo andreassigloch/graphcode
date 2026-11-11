@@ -4001,6 +4001,12 @@
       "commitRef": "ac0c2001"
     },
     {
+      "id": "CR-GC-912",
+      "type": "CR",
+      "name": "Viewer-Aufsicht beendet einen lebenden Viewer, der 750 ms nicht antwortet",
+      "description": "docs/cr/open/CR-GC-912-viewer-aufsicht-beendet-einen-lebenden-v.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -9613,7 +9619,7 @@
       "id": "REQ-viewer-owned-by-repo",
       "type": "REQ",
       "name": "Viewer gehoert dem Repo",
-      "description": "Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. (CR-GC-404)",
+      "description": "Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. Tot heisst: der vermerkte Prozess lebt nicht mehr; ein lebender Viewer, der nicht antwortet, wird weder beendet noch ersetzt. (CR-GC-404, CR-GC-912)",
       "status": "done",
       "kinds": [
         "functional"
@@ -20599,6 +20605,16 @@
     {
       "source": "CR-GC-911",
       "target": "FUNC-tool-context",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-912",
+      "target": "FUNC-gve-supervise",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-912",
+      "target": "REQ-viewer-owned-by-repo",
       "type": "relation"
     },
     {
@@ -32122,5 +32138,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1063
+  "graphVersion": 1064
 }

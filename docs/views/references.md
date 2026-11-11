@@ -1428,6 +1428,8 @@
 | `CR-GC-910` | relation | `UC-model-exchange` |
 | `CR-GC-911` | relation | `FUNC-graph-export-snapshot` |
 | `CR-GC-911` | relation | `FUNC-tool-context` |
+| `CR-GC-912` | relation | `FUNC-gve-supervise` |
+| `CR-GC-912` | relation | `REQ-viewer-owned-by-repo` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
