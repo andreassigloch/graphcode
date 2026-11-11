@@ -1,6 +1,6 @@
 # CR-GC-911: Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-11)
 **Typ:** aus Item ITEM-2026-1299 (finding)
 **Erstellt:** 2026-11-11
 **Item:** bok/items/ITEM-2026-1299.json (Lane: code)

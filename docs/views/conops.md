@@ -602,7 +602,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-908` | n/a | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren | `FUNC-import-doc` · `UC-model-exchange` |
 | `CR-GC-909` | n/a | SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben | `FUNC-export-markdown` · `FUNC-graph-export-snapshot` |
 | `CR-GC-910` | n/a | import-doc als Werkzeug der Tool-Schicht statt Skript: Bestand einlesen in jedem MCP-Host | `FUNC-import-doc` · `UC-model-exchange` |
-| `CR-GC-911` | n/a | Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen | `FUNC-graph-export-snapshot` · `FUNC-tool-context` |
+| `CR-GC-911` | done | Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen | `FUNC-graph-export-snapshot` · `FUNC-tool-context` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

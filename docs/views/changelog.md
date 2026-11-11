@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 514 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 514 CR · 352 done · 4 open.
+Total: 514 CR · 353 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -575,4 +575,4 @@ Total: 514 CR · 352 done · 4 open.
 | `CR-GC-908` | n/a | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren |
 | `CR-GC-909` | n/a | SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben |
 | `CR-GC-910` | n/a | import-doc als Werkzeug der Tool-Schicht statt Skript: Bestand einlesen in jedem MCP-Host |
-| `CR-GC-911` | n/a | Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen |
+| `CR-GC-911` | done | Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen |

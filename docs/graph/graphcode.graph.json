@@ -3996,7 +3996,9 @@
       "id": "CR-GC-911",
       "type": "CR",
       "name": "Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen",
-      "description": "docs/cr/open/CR-GC-911-tests-reichen-die-warnung-zum-fehlenden-.md"
+      "description": "docs/cr/done/CR-GC-911-tests-reichen-die-warnung-zum-fehlenden-.md",
+      "status": "done",
+      "commitRef": "ac0c2001"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -32120,5 +32122,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1062
+  "graphVersion": 1063
 }
