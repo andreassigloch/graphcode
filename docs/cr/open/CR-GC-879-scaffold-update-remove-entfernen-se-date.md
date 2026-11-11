@@ -1,6 +1,7 @@
 # CR-GC-879: scaffold update/remove entfernen se-Dateien, die das Paket nicht mehr ausliefert (se-view, trade aus CR-GC-756)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done
+**Abgeschlossen:** 2026-11-11
 **Typ:** aus Item ITEM-2026-1116 (finding)
 **Erstellt:** 2026-10-28
 **Item:** bok/items/ITEM-2026-1116.json (Lane: code)
@@ -33,6 +34,19 @@ fehlende Dateien zählt.
 - Test: `skills sync` im Trockenlauf meldet sie unter `removed` und löscht nichts; `upgrade --check`
   meldet Drift.
 - Smoke: `skills sync` gegen eine Kopie von sirail entfernt die 13 Dateien.
+
+## Ergebnis (2026-11-11)
+
+- `removeStaleSkills` in `src/surface/scaffold.ts`; `ownedSkillFiles` (mit Entwürfen) neben `shippedSkillFiles`
+  in `scaffold-templates.ts`. `init`, `update`, `remove`, `skills sync` nutzen sie; `SkillSyncResult.removed` neu.
+- `upgrade`: `staleSkills` im Bericht, zählt als Drift, Zeile „Artefakte" nennt sie.
+- Tests: 4 neue in `cli.scaffold.test.ts` und `upgrade.test.ts`, rot gegen den alten Code, grün danach.
+- Smoke: gebauter CLI `skills sync` auf einer Kopie von sirail: 13 Befehle und 13 OpenCode-Ordner entfernt,
+  14 Skills aktualisiert, eigene Befehle unberührt.
+- Modell: `REQ-repo-update` nennt das Entfernen; `CR-GC-879 -relation->` REQ-repo-update, FUNC-harness-cli, FUNC-upgrade.
+- `verify:code` grün (128 Dateien, 1173 Tests). `verify:full`: 2 Dateien rot außerhalb der Auswahl (Schlupf):
+  `skill-fmea-orte` und `skill-top-level-ausloeser` prüfen die genaue `version:` der Skills, die CR-GC-878 erhöht
+  hat. Die Testauswahl führt von den Skill-FUNCs nicht zu diesen Dateien. Erwartete Version nachgezogen, 30/30 grün.
 
 ---
 

@@ -29,8 +29,8 @@ const regel4 = topLevel.split('\n').find((l) => l.startsWith('4. **One entry nod
 const stufe3Fluss = topLevel.split('\n').find((l) => l.startsWith('3. **FLOW + SCHEMA**')) ?? '';
 
 describe('se:top-level Regel 4: ein Eingangsknoten je Kette (CR-GC-873)', () => {
-  it('der Kopf traegt Version 6', () => {
-    expect(topLevel).toMatch(/^version: 6$/m);
+  it('der Kopf traegt Version 7 (CR-GC-878)', () => {
+    expect(topLevel).toMatch(/^version: 7$/m);
   });
 
   it('die alte Regel „One trigger per chain" ist weg', () => {
@@ -99,8 +99,8 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
     for (const t of [authorActor, topLevel, fmea, vorbereitung, laufzeit]) expect(t).not.toMatch(/`answer`/);
   });
 
-  it('se-fmea: Version 10, Akteur in der Mitte und Abschnitte aus chainRoles.segments', () => {
-    expect(fmea).toMatch(/^version: 10$/m);
+  it('se-fmea: Version 11, Akteur in der Mitte und Abschnitte aus chainRoles.segments', () => {
+    expect(fmea).toMatch(/^version: 11$/m);
     expect(fmea).toMatch(/Akteur in der Mitte/);
     expect(fmea).toContain('chainRoles.segments');
   });

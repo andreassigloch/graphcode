@@ -112,8 +112,8 @@ const regel = (id: string) => ALL_RULE_DEFS.find((r) => r.id === id);
 const hilfe = TOOL_HELP.graph_metrics.se;
 
 describe('se-fmea Version 9: Eingang pruefen, Umfang und Traeger lesen, Ergebnis ist ein CR (CR-GC-782)', () => {
-  it('der Kopf traegt Version 10 (CR-GC-875)', () => {
-    expect(skill).toMatch(/^version: 10$/m);
+  it('der Kopf traegt Version 11 (CR-GC-878)', () => {
+    expect(skill).toMatch(/^version: 11$/m);
   });
 
   it('eine Luecke am Eingang geht an se-vorbereitung, der Skill stellt die Verdrahtung nicht selbst her', () => {
