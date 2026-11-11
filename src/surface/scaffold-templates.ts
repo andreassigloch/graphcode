@@ -71,7 +71,7 @@ export const STEERING_FILE = 'GRAPHCODE-STEERING.md';
 /**
  * Where the shipped SE skills land in a member repo — als Claude-Code-COMMANDS
  * (CR-GC-277): `.claude/commands/<ns>/<rest>.md` ⇒ invocable als `/se:generate`,
- * `/se-view:arch` etc. Das flache `.claude/skills/se-*.md`-Layout registrierte
+ * `/se:top-level` etc. Das flache `.claude/skills/se-*.md`-Layout registrierte
  * NICHTS (Skills brauchen `<name>/SKILL.md`-Verzeichnisse, Commands den Pfad
  * als Namen) — die Doppelpunkt-Namen der Frontmatter waren immer schon das
  * Commands-Schema. Pfad im Paket = Pfad im Ziel, kein Mapping zur Laufzeit.
@@ -115,15 +115,19 @@ export function packagedSkillsDir(): string {
 }
 
 /**
- * The skill files this package ships, as paths RELATIVE to the commands dir
- * (`se/generate.md`, `se-view/arch.md`, `se-conops.md`). Only `se*`-owned
- * entries — a member's own commands are never ours to touch. A skill at
- * `version: 0` is a draft (CR-GC-824): it runs in this repo and ships once it
- * reaches version 1.
+ * Every `se*` skill file inside this package, as paths RELATIVE to the commands dir
+ * (`se/generate.md`, `se-conops.md`), drafts included. `se*` belongs to the package: what a
+ * target repo holds under that prefix and this list does not name is a leftover of an older
+ * package (CR-GC-879). A member's own commands carry no `se` prefix and are never ours to touch.
  */
-export function shippedSkillFiles(): string[] {
+export function ownedSkillFiles(): string[] {
   const dir = packagedSkillsDir();
   if (!existsSync(dir)) return [];
+  return listSkillFiles(dir);
+}
+
+/** The `se*` markdown files under a commands dir: top-level files and one namespace level. */
+export function listSkillFiles(dir: string): string[] {
   const out: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (!entry.name.startsWith('se')) continue;
@@ -134,7 +138,17 @@ export function shippedSkillFiles(): string[] {
       }
     }
   }
-  return out.filter((f) => parseSkillFrontmatter(readFileSync(join(dir, f), 'utf8')).version > 0).sort();
+  return out.sort();
+}
+
+/**
+ * The skill files this package ships: the owned ones without drafts. A skill at
+ * `version: 0` is a draft (CR-GC-824): it runs in this repo and ships once it
+ * reaches version 1.
+ */
+export function shippedSkillFiles(): string[] {
+  const dir = packagedSkillsDir();
+  return ownedSkillFiles().filter((f) => parseSkillFrontmatter(readFileSync(join(dir, f), 'utf8')).version > 0);
 }
 
 /** The frontmatter fields a skill carries (CR-GC-208): identity, purpose, sync-version. */
@@ -169,7 +183,7 @@ export function parseSkillFrontmatter(content: string): SkillMeta {
 /**
  * Ein ausgelieferter Skill in OpenCodes Form (CR-GC-721): Ordner = Name, Datei = `SKILL.md`.
  * OpenCode-Namen sind klein mit Bindestrich — der Doppelpunkt des Commands-Schemas
- * (`se:generate`, `se-view:arch`) wird zum Bindestrich, der Originalname steht in der
+ * (`se:generate`, `se:top-level`) wird zum Bindestrich, der Originalname steht in der
  * Beschreibung, weil Prompts und Regelhinweise ihn nennen. Abgeleitet beim Installieren aus
  * derselben Paketdatei, keine zweite Quelle; `version` reist mit, damit `skills sync` beide
  * Ziele nach derselben Regel vergleicht.

@@ -7,7 +7,7 @@
  * skill (`.claude/skills/se-plan.md`) reasons over the graph and writes the
  * MS/CR/relation nodes through the gate; THIS function is the deterministic
  * ordering spec the test pins (and the eventual core of an out-of-scope
- * server-side `graph_plan` tool). It is NOT a parallel renderer — `se-view:implplan`
+ * server-side `graph_plan` tool). It is NOT a parallel renderer — the view `docs/views/implplan.md`
  * RENDERS an existing plan; this DERIVES the order.
  *
  * A plan must (a) respect every `depends-on` (a prerequisite precedes its

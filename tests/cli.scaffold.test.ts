@@ -783,6 +783,20 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
     }
   });
 
+  it('kein Skill des Pakets verweist auf einen se-Befehl, den das Paket nicht ausliefert (CR-GC-878)', () => {
+    const skillsDir = join(__dirname, '..', '.claude', 'commands');
+    // Befehlsname je Datei: se/generate.md -> se:generate, se-plan.md -> se-plan.
+    const bekannt = new Set(listSkillTree(skillsDir).map((f) => f.replace(/\.md$/, '').replace(/[\\/]/g, ':')));
+    const tot: string[] = [];
+    for (const f of listSkillTree(skillsDir)) {
+      const text = readFileSync(join(skillsDir, f), 'utf8');
+      for (const m of text.matchAll(/`\/?(se(?:-[a-z]+)?:[a-z][a-z-]*)`/g)) {
+        if (!bekannt.has(m[1])) tot.push(`${f}: ${m[1]}`);
+      }
+    }
+    expect(tot).toEqual([]);
+  });
+
   it('an up-to-date repo yields all unchanged (REQ no-drift no-op)', async () => {
     await scaffold('init', { repoRoot: repo });
     const res = syncSkills(repo);
@@ -835,6 +849,51 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
     const res = syncSkills(repo);
     expect(res.updated).toEqual([rel]);
     expect(readFileSync(join(repo, rel), 'utf8')).toBe(frisch);
+  });
+
+  /** Was 0.35 auslieferte und CR-GC-876 entfernt hat: ein Command und seine OpenCode-Kopie. */
+  function legeRestAn(): string[] {
+    const reste = [join(COMMANDS_DIR, 'se-view', 'arch.md'), join(COMMANDS_DIR, 'se', 'target-profile.md'), join(OPENCODE_SKILLS_DIR, 'se-view-arch')];
+    for (const rel of reste.slice(0, 2)) {
+      mkdirSync(dirname(join(repo, rel)), { recursive: true });
+      writeFileSync(join(repo, rel), '---\nname: alt\nversion: 3\ndescription: alt\n---\nalt\n', 'utf8');
+    }
+    mkdirSync(join(repo, reste[2]), { recursive: true });
+    writeFileSync(join(repo, reste[2], 'SKILL.md'), 'alt\n', 'utf8');
+    // Ein eigener Befehl des Repos ohne se-Praefix gehoert nicht dem Paket.
+    mkdirSync(join(repo, COMMANDS_DIR), { recursive: true });
+    writeFileSync(join(repo, COMMANDS_DIR, 'deploy.md'), 'eigen\n', 'utf8');
+    return reste;
+  }
+
+  it('sync entfernt se-Kopien, die das Paket nicht mehr kennt; eigene Befehle bleiben (CR-GC-879)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const reste = legeRestAn();
+    const res = syncSkills(repo);
+    expect(res.removed.sort()).toEqual([...reste].sort());
+    for (const rel of reste) expect(existsSync(join(repo, rel)), rel).toBe(false);
+    expect(existsSync(join(repo, COMMANDS_DIR, 'se-view')), 'geleerter Namensraum bleibt nicht stehen').toBe(false);
+    expect(existsSync(join(repo, COMMANDS_DIR, 'se')), 'se/ traegt noch ausgelieferte Skills').toBe(true);
+    expect(readFileSync(join(repo, COMMANDS_DIR, 'deploy.md'), 'utf8')).toBe('eigen\n');
+    expect(syncSkills(repo).removed, 'zweiter Lauf findet nichts mehr').toEqual([]);
+  });
+
+  it('der Trockenlauf meldet die Reste und loescht keinen (CR-GC-879)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const reste = legeRestAn();
+    expect(syncSkills(repo, { dry: true }).removed.sort()).toEqual([...reste].sort());
+    for (const rel of reste) expect(existsSync(join(repo, rel)), rel).toBe(true);
+  });
+
+  it('update raeumt die Reste ebenfalls weg (CR-GC-879)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const reste = legeRestAn();
+    const res = await scaffold('update', { repoRoot: repo });
+    for (const rel of reste) {
+      expect(res.removed).toContain(rel);
+      expect(existsSync(join(repo, rel)), rel).toBe(false);
+    }
+    expect(existsSync(join(repo, COMMANDS_DIR, 'deploy.md'))).toBe(true);
   });
 
   it('sync is idempotent — a second run after the first is all unchanged', () => {

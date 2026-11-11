@@ -43,7 +43,7 @@ import { renderChangelog, renderFmea, renderConOps, renderImplPlan } from './gra
  * CR-GC-220 adds the SE-artifact projections (srs/nfr/rtm/icd/testconcept/
  * testmatrix/intplan/changelog + the render-form of fmea/conops/implplan) so
  * EVERY render-able artifact is a deterministic function of the graph, not an
- * agent-rendered `se-view:*` skill.
+ * agent-rendered skill (the `se-view` skills were removed in CR-GC-876).
  *
  * CR-GC-305 removed the `spec` view (raw dump of every element grouped by type).
  * It answered the same question as `srs` — the ISO-29148 narrative — with different

@@ -1,11 +1,11 @@
 ---
 name: se:author-uc
-version: 1
+version: 2
 description: Author a UC node terse and low-jargon — Actor–Verb–Object–Outcome, ≤25 words, ≤2 grounded technical terms — and gate-mutate it with its compose trace
 ---
 
 <!-- inject:start -->
-A use case is the ConOps entry point: the **plainest** statement of who does what and to what end. Author it terse and almost jargon-free — the opposite of a 60–90-word, term-dense paragraph. `se-view:conops` *renders* UCs; this skill *creates* one with the style enforced (no parallel path).
+A use case is the ConOps entry point: the **plainest** statement of who does what and to what end. Author it terse and almost jargon-free — the opposite of a 60–90-word, term-dense paragraph. the view `docs/views/conops.md` *renders* UCs; this skill *creates* one with the style enforced (no parallel path).
 
 ## The style rule (self-check before you write)
 - **Terse:** the `description` is **≤25 words**, active voice, **Actor–Verb–Object–Outcome**. No implementation detail (no module names, no data shapes, no "via X").
@@ -35,7 +35,7 @@ To check the jargon budget, query `graph_elements {type:"SCHEMA"}` / `{type:"REQ
 Inspect the returned `violations`; never hand-edit the SSOT. To author the requirements the UC composes, use `se:author-req`.
 
 ## Two conventions for a coherent UC set
-Modelling knowledge, not tool operation — both come from the retired `se:requirements` skill (CR-GC-345) and exist nowhere else.
+Modelling knowledge, not tool operation — both come from the requirements skill retired in CR-GC-345 and exist nowhere else.
 
 **UC sequencing goes through a shared FUNC — no new edge.** "UC-B needs what UC-A produced" is the entry of B's chain, and the metamodel already expresses it: put the shared step in a FUNC (it satisfies its own `functional` REQ), compose that FUNC into every chain that depends on it, and let its output FLOW be the entry FLOW of the dependent chain.
 ```

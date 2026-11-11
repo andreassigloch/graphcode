@@ -1,6 +1,6 @@
 ---
 name: se:top-level
-version: 6
+version: 7
 description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at 7±2 blocks per level, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
@@ -162,4 +162,4 @@ What wasted rounds on the first run, measured:
 
 **Only the product is modelled (CR-GC-760).** Test rigs, simulated sources, test-data generators, demos, examples and spikes live in their own directories outside the product code and get no `MOD`: they are not part of the delivered system, and a module for them would sit under `SYS` as if they were. Tests still bind to their files through `testRefs`.
 
-`graph_authoring_guide {type}` for the legal edges before you write. Several alternatives go through `graph_mutate` with `dryRun: true` and are compared; a single batch goes straight in — a rejection persists nothing. Read `steerAdvisory` (does the cut lower the distance to the rule thresholds?) and run the constraint tests from phase 2 against the cut. This skill **creates** the cut; `se-view:arch` renders it, `se-plan` sequences it, `se:close-violations` cleans up after it. No parallel path.
+`graph_authoring_guide {type}` for the legal edges before you write. Several alternatives go through `graph_mutate` with `dryRun: true` and are compared; a single batch goes straight in — a rejection persists nothing. Read `steerAdvisory` (does the cut lower the distance to the rule thresholds?) and run the constraint tests from phase 2 against the cut. This skill **creates** the cut; the view `docs/views/architecture.md` renders it, `se-plan` sequences it, `se:close-violations` cleans up after it. No parallel path.

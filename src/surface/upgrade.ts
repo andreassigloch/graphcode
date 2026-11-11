@@ -105,6 +105,11 @@ export interface UpgradeReport {
    */
   missingSkills: string[];
   /**
+   * CR-GC-879: `se*`-Kopien im Repo, die das Paket nicht mehr kennt (z. B. `se-view/*` nach
+   * CR-GC-876). Ein Rest ist Drift wie ein fehlender Skill; `upgrade` räumt ihn weg.
+   */
+  staleSkills: string[];
+  /**
    * CR-GC-538 (graphcode-Hälfte von ITEM-2026-107): Familienpakete, die hinter dem
    * zurückliegen, was ihr eigener Range schon zulässt. Ohne sie meldet jedes Repo
    * "aktuell", während ein Zug, der nur contracts oder den Viewer bewegt hat, nicht
@@ -238,7 +243,9 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
   // CR-GC-887: das graphcode-Repo ist die Quelle der Skills, ihm fehlt nie einer.
   const packageRepo = packageRepoKind(repoRoot);
   const syncImpl = deps.syncSkillsImpl ?? syncSkills;
-  const missingSkills = packageRepo === 'self' ? [] : syncImpl(repoRoot, { dry: true }).added;
+  const bestand = packageRepo === 'self' ? undefined : syncImpl(repoRoot, { dry: true });
+  const missingSkills = bestand?.added ?? [];
+  const staleSkills = bestand?.removed ?? [];
   const family = familyDrift(repoRoot, run);
 
   const report: UpgradeReport = {
@@ -247,8 +254,9 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
     repoBefore,
     repoAfter: repoBefore,
     hostBefore,
-    drift: versionDrift || missingSkills.length > 0 || family.stale.length > 0,
+    drift: versionDrift || missingSkills.length > 0 || staleSkills.length > 0 || family.stale.length > 0,
     missingSkills,
+    staleSkills,
     staleDeps: family.stale,
     depsChecked: family.checked,
     steps: [],
@@ -264,7 +272,7 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
   if (packageRepo) {
     if (packageRepo === 'upstream') {
       const synced = syncImpl(repoRoot, {});
-      report.steps.push(`Paket-Repo: keine Installation; Skills ${synced.added.length} neu, ${synced.updated.length} aktualisiert`);
+      report.steps.push(`Paket-Repo: keine Installation; Skills ${synced.added.length} neu, ${synced.updated.length} aktualisiert, ${synced.removed.length} entfernt`);
     } else {
       report.steps.push('Paket-Repo: keine Installation, keine Artefakte — hier liegt die Quelle');
     }
@@ -337,6 +345,15 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
 }
 
 /** Der Bericht für Menschen — eine Zeile je Schritt, keine JSON-Wolke. */
+/** Fehlende und veraltete Skills in einer Zeile; leer heisst geprüft und vollständig. */
+function artefakte(r: UpgradeReport): string {
+  const teile = [
+    ...(r.missingSkills.length > 0 ? [`${r.missingSkills.length} fehlen: ${r.missingSkills.join(', ')}`] : []),
+    ...(r.staleSkills.length > 0 ? [`${r.staleSkills.length} veraltet: ${r.staleSkills.join(', ')}`] : []),
+  ];
+  return teile.length === 0 ? 'vollständig' : teile.join('; ');
+}
+
 export function formatUpgrade(r: UpgradeReport, check: boolean): string {
   const head = check
     ? `graphcode upgrade --check — Ziel ${r.target}`
@@ -347,7 +364,7 @@ export function formatUpgrade(r: UpgradeReport, check: boolean): string {
     `  Host         ${r.hostBefore ?? (r.hostStopped ? 'beendet' : 'läuft nicht')}`,
     // CR-GC-538: der BESTAND neben den Versionsnummern. Er steht auch dann da, wenn er
     // leer ist — sonst sieht "nicht geprüft" aus wie "nichts gefunden".
-    `  Artefakte    ${r.missingSkills.length === 0 ? 'vollständig' : `${r.missingSkills.length} fehlen: ${r.missingSkills.join(', ')}`}`,
+    `  Artefakte    ${artefakte(r)}`,
     `  Familie      ${
       !r.depsChecked
         ? 'NICHT GEPRÜFT — npm outdated nicht auswertbar'

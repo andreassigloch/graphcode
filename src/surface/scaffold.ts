@@ -62,6 +62,8 @@ import {
   packagedSkillsDir,
   packagedHooksDir,
   shippedSkillFiles,
+  ownedSkillFiles,
+  listSkillFiles,
   shippedHookFiles,
   parseSkillFrontmatter,
   opencodeSkill,
@@ -102,6 +104,7 @@ export type InstallResult = z.infer<typeof InstallResultSchema>;
  * `added`   : the target had no copy → the shipped skill was written.
  * `updated` : the target copy's `version:` was lower/absent → it was overwritten.
  * `unchanged`: the target copy was already at the shipped `version:` → left untouched.
+ * `removed` : an `se*` copy the package no longer knows (CR-GC-879) → deleted.
  * Repo-relative paths so the report is stable/loggable across machines.
  */
 export const SkillSyncResultSchema = z.object({
@@ -109,6 +112,7 @@ export const SkillSyncResultSchema = z.object({
   added: z.array(z.string()),
   updated: z.array(z.string()),
   unchanged: z.array(z.string()),
+  removed: z.array(z.string()),
 });
 export type SkillSyncResult = z.infer<typeof SkillSyncResultSchema>;
 
@@ -260,7 +264,7 @@ function removeLegacyTrajectory(repoRoot: string, res: InstallResult): void {
 
 /**
  * Copy the package's shipped SE skills into the target repo's `.claude/commands/`
- * (CR-GC-277 — als registrierbare Commands: `/se:generate`, `/se-view:arch`, …).
+ * (CR-GC-277 — als registrierbare Commands: `/se:generate`, `/se-plan`, …).
  * Idempotent (byte-identical re-write = `preserved`). The se-* skills are MCP-driven
  * (CR-GC-130/131/132); without this a freshly-init'd member repo has none of them.
  */
@@ -279,6 +283,46 @@ function installSkills(repoRoot: string, res: InstallResult): void {
     writeArtifact(join(repoRoot, oc.rel), oc.rel, oc.content, res);
   }
   removeLegacySkills(repoRoot, res);
+  res.removed.push(...removeStaleSkills(repoRoot, false));
+}
+
+/**
+ * Die `se*`-Kopien im Ziel-Repo, die das Paket nicht (mehr) kennt (CR-GC-879): Commands unter
+ * `.claude/commands/` und OpenCode-Ordner unter `.opencode/skills/`. Bekannt ist jede `se*`-Datei
+ * des Pakets, Entwuerfe eingeschlossen — sonst verloere das Quell-Repo seine Entwuerfe. Ohne
+ * diesen Schritt blieben nach CR-GC-876 in 25 Repos die entfernten `se-view`-Befehle stehen.
+ * `dry` meldet nur. Leere `se*`-Unterordner fallen mit weg.
+ */
+function removeStaleSkills(repoRoot: string, dry: boolean): string[] {
+  const owned = ownedSkillFiles();
+  if (owned.length === 0) return []; // Skills nicht gepackt: dann ist nichts als veraltet erkennbar.
+  const stale: string[] = [];
+  const commandsDir = join(repoRoot, COMMANDS_DIR);
+  if (existsSync(commandsDir)) {
+    const known = new Set(owned);
+    for (const f of listSkillFiles(commandsDir)) {
+      if (!known.has(f)) stale.push(join(COMMANDS_DIR, f));
+    }
+  }
+  const opencodeDir = join(repoRoot, OPENCODE_SKILLS_DIR);
+  if (existsSync(opencodeDir)) {
+    const srcDir = packagedSkillsDir();
+    const known = new Set(owned.map((f) => opencodeSkill(f, readFileSync(join(srcDir, f), 'utf8')).name));
+    for (const entry of readdirSync(opencodeDir, { withFileTypes: true })) {
+      if (entry.isDirectory() && entry.name.startsWith('se') && !known.has(entry.name)) {
+        stale.push(join(OPENCODE_SKILLS_DIR, entry.name));
+      }
+    }
+  }
+  if (dry) return stale;
+  for (const rel of stale) {
+    rmSync(join(repoRoot, rel), { recursive: true, force: true });
+    const parent = dirname(join(repoRoot, rel));
+    if (parent !== commandsDir && parent !== opencodeDir && readdirSync(parent).length === 0) {
+      rmSync(parent, { recursive: true, force: true });
+    }
+  }
+  return stale;
 }
 
 /**
@@ -320,7 +364,7 @@ function removeLegacySkills(repoRoot: string, res: InstallResult): void {
  */
 export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): SkillSyncResult {
   const dry = options.dry === true;
-  const res: SkillSyncResult = { repoRoot, added: [], updated: [], unchanged: [] };
+  const res: SkillSyncResult = { repoRoot, added: [], updated: [], unchanged: [], removed: [] };
   const srcDir = packagedSkillsDir();
   const files = shippedSkillFiles();
   if (files.length === 0) return res; // skills not packaged — nothing to sync.
@@ -353,6 +397,7 @@ export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): S
       }
     }
   }
+  res.removed = removeStaleSkills(repoRoot, dry);
   return res;
 }
 
@@ -363,12 +408,13 @@ export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): S
  */
 function removeSkills(repoRoot: string, res: InstallResult): void {
   removeLegacySkills(repoRoot, res);
+  res.removed.push(...removeStaleSkills(repoRoot, false)); // auch Reste aelterer Pakete (CR-GC-879)
   removeOpencodeSkills(repoRoot, res);
   const destDir = join(repoRoot, COMMANDS_DIR);
   if (!existsSync(destDir)) return;
   for (const f of shippedSkillFiles()) {
     removeArtifact(join(destDir, f), join(COMMANDS_DIR, f), res);
-    // Namespace-Unterordner (se/, se-view/) mit entfernen, wenn WIR sie geleert haben.
+    // Namespace-Unterordner (z. B. se/) mit entfernen, wenn WIR sie geleert haben.
     const sub = dirname(join(destDir, f));
     if (sub !== destDir && existsSync(sub) && readdirSync(sub).length === 0) {
       rmSync(sub, { recursive: true, force: true });

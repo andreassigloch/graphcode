@@ -1,10 +1,10 @@
 ---
 name: se-plan
-version: 10
+version: 11
 description: Generate the implementation/integration plan — order the build along the model's integration tree (leaves up), make the test concept complete BEFORE cutting, cut CRs (≤5 files) whose content is the graph_context slice, enforce an io-integration test per CR, and write MS/CR/relation through the gate
 ---
 
-**Generative** plan skill (NOT a view). `se-view:implplan` *renders* an existing plan; `se-plan` *creates* one: it derives the build order from the model's integration tree and writes the milestone/CR structure into the graph through the gate. No prose-only plan, no parallel renderer.
+**Generative** plan skill (NOT a view). the view `docs/views/implplan.md` *renders* an existing plan; `se-plan` *creates* one: it derives the build order from the model's integration tree and writes the milestone/CR structure into the graph through the gate. No prose-only plan, no parallel renderer.
 
 **The model gives the plan.** Milestones are the integration levels of the model, never themes you choose ("Gate-Kern", "Cockpit"). Measured failure (immo-infra, CR-GC-892): a first cut by themes put modules before their own leaf functions and left the system test per use case out; the user had to demand both.
 
@@ -72,7 +72,7 @@ A CR carries **no hand-written scope**. Its content is the `graph_context` slice
 If assembling the context-pack surfaces a **spec gap** — an unstated REQ the FUNC needs — write the missing REQ through the gate FIRST; never let the implementer guess it.
 
 ## 8. Output — close with the computed assurance, not a sentence
-Emit the ordered sequence (milestones → their CRs), **the groups per milestone** (`crGroups` in `src/loop/se-plan.ts`: open CRs without a `depends-on` path between them and without a shared `realRef` file — the same groups `se-view:implplan` shows in its column *Gruppe*), the forward dependencies and cycles, the test-concept table from §3, and the accepted gaps by name. Offer the integration tree as a picture (stages, model levels, CR per level). The deliverable is MS/CR/relation nodes IN THE GRAPH — not a prose list.
+Emit the ordered sequence (milestones → their CRs), **the groups per milestone** (`crGroups` in `src/loop/se-plan.ts`: open CRs without a `depends-on` path between them and without a shared `realRef` file — the same groups `docs/views/implplan.md` shows in its column *Gruppe*), the forward dependencies and cycles, the test-concept table from §3, and the accepted gaps by name. Offer the integration tree as a picture (stages, model levels, CR per level). The deliverable is MS/CR/relation nodes IN THE GRAPH — not a prose list.
 
 **Mandatory closing line:** *n of m leaf REQ have a build order; the uncovered are: …* — the figure `deriveImplPlan` returns as `reqCoverage`. Count it over **open** CRs: the core also counts the `relation`s of done spec CRs, and a closed spec CR is no build order. A **non-empty `uncovered` means the plan is NOT finished**, and that stands in the output.
 

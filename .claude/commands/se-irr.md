@@ -1,10 +1,10 @@
 ---
 name: se-irr
-version: 4
+version: 5
 description: Assumption Review — detect unproven assumptions, ask which become requirements, write each chosen one as a REQ with its verifying TEST, record the review as a closed CR (CREATE, gate-only)
 ---
 
-**Assumption Review** is judgment work, not a render: surface the unproven assumptions the model rests on, ask the user which of them become requirements, write each chosen one into the graph as a REQ with its verifying TEST, and record the review as a closed change request. This is the renamed-from-"IRR" creation skill — it is **explicitly non-INCOSE** (graphcode-specific) and must not be confused with the FMEA render (`se-view:fmea`) or with `docs/records/irr.md` (Internal Readiness Review).
+**Assumption Review** is judgment work, not a render: surface the unproven assumptions the model rests on, ask the user which of them become requirements, write each chosen one into the graph as a REQ with its verifying TEST, and record the review as a closed change request. This is the renamed-from-"IRR" creation skill — it is **explicitly non-INCOSE** (graphcode-specific) and must not be confused with the FMEA view (`docs/views/fmea.md`) or with `docs/records/irr.md` (Internal Readiness Review).
 
 ## 1. Detect the unproven assumptions
 Query the live graph — do not guess from prose:

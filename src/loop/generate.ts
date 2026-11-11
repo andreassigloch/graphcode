@@ -86,7 +86,7 @@ export type GenerationStep = z.infer<typeof GenerationStep>;
  * der Host liest sie als Verweis im Schritt). Vorher stand sie nur im Executor — Claude Code las `se:generate` einmal bei 2–5 % des
  * Laufs und die Anlege-Skills erst am Ende, um Frischestempel zu erfuellen.
  *
- * `se-view:*` bleibt draussen: Darstellungen, keine Bauanleitungen. `ver`/`schema`/`cr`/`ms`
+ * Sichten (`docs/views/*.md`) bleiben draussen: Darstellungen, keine Bauanleitungen. `ver`/`schema`/`cr`/`ms`
  * fehlen, weil es fuer sie keinen Autorier-Skill GIBT — ein Eintrag waere eine Luege.
  */
 export const SKILL_FOR_STAGE: Record<string, { name: string; file: string } | undefined> = {

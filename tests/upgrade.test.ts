@@ -44,7 +44,7 @@ describe('TEST-upgrade (CR-GC-377)', () => {
    * Der Fehlbestand bekommt eigene Faelle weiter unten.
    */
   const vollstaendig: Pick<UpgradeDeps, 'syncSkillsImpl'> = {
-    syncSkillsImpl: (repoRoot) => ({ repoRoot, added: [], updated: [], unchanged: ['.claude/commands/se/status.md'] }),
+    syncSkillsImpl: (repoRoot) => ({ repoRoot, added: [], updated: [], unchanged: ['.claude/commands/se/status.md'], removed: [] }),
   };
 
   /** Der Repo-Install inkl. dist/cli.js — das Ziel des Re-Exec. */
@@ -87,7 +87,7 @@ describe('TEST-upgrade (CR-GC-377)', () => {
         calls: seen,
         syncSkillsImpl: (repoRoot, o) => {
           seen.push(o.dry);
-          return { repoRoot, added, updated: [], unchanged: [] };
+          return { repoRoot, added, updated: [], unchanged: [], removed: [] };
         },
       };
     };
@@ -274,7 +274,7 @@ describe('TEST-upgrade (CR-GC-377)', () => {
       {
         run: runner(),
         cliVersion: '0.17.0',
-        syncSkillsImpl: (repoRoot) => ({ repoRoot, added: [fehlt], updated: [], unchanged: ['.claude/commands/se/status.md'] }),
+        syncSkillsImpl: (repoRoot) => ({ repoRoot, added: [fehlt], updated: [], unchanged: ['.claude/commands/se/status.md'], removed: [] }),
       },
     );
 
@@ -285,6 +285,22 @@ describe('TEST-upgrade (CR-GC-377)', () => {
     const text = formatUpgrade(report, true);
     expect(text).toContain(fehlt);
     expect(text).toContain('→ veraltet');
+  });
+
+  it('ein Rest eines aelteren Pakets ist Drift und steht unter Artefakte (CR-GC-879)', async () => {
+    writeRepoInstall('0.17.0');
+    const rest = '.claude/commands/se-view/arch.md';
+    const report = await executeUpgrade(
+      { repoRoot: repo, check: true },
+      {
+        run: runner(),
+        cliVersion: '0.17.0',
+        syncSkillsImpl: (repoRoot) => ({ repoRoot, added: [], updated: [], unchanged: [], removed: [rest] }),
+      },
+    );
+    expect(report.drift, 'ein veralteter Skill ist Drift, auch bei gleicher Version').toBe(true);
+    expect(report.staleSkills).toEqual([rest]);
+    expect(formatUpgrade(report, true)).toContain(`1 veraltet: ${rest}`);
   });
 
   it('der Trockenlauf schreibt nichts — nach --check liegt kein Skill im Repo', async () => {
