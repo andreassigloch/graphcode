@@ -583,6 +583,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-874` | n/a | FC-06 am eigenen Modell richten: ein Einsprung für MCP und CLI, Vorab-Lieferung als Datei | `FUNC-agent-loop` · `FUNC-claim-store-lock` · `FUNC-generation-step` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-load-config` · `FUNC-measure-test-schlupf` · `FUNC-schema-guard` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-verify-lane-full` |
 | `CR-GC-876` | n/a | se-view-Skills entfernen: paralleler Pfad zu auto-export docs/views (fmea rendert von Hand) | `FUNC-block-grounding` · `FUNC-export-markdown` · `MOD-agent-surface` · `REQ-doc-export` |
 | `CR-GC-877` | n/a | Skill se:import-code in eigene Kette | `FUNC-import-code` · `REQ-skill-import-code-nennt-verb` · `UC-model-exchange` |
+| `CR-GC-878` | n/a | se-view-Verweise in Skill-Texten und Quell-Kommentaren nachziehen (Folge von CR-GC-876) | `FUNC-author-uc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-top-level` |
+| `CR-GC-879` | n/a | scaffold update/remove entfernen se-Dateien, die das Paket nicht mehr ausliefert (se-view, trade aus CR-GC-756) | `FUNC-harness-cli` · `FUNC-upgrade` · `REQ-repo-update` |
 | `CR-GC-888` | n/a | Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen | `FUNC-graph-help` · `REQ-docs-taxonomy` |
 | `CR-GC-889` | n/a | README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg | `REQ-docs-taxonomy` |
 | `CR-GC-890` | n/a | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch | `REQ-docs-taxonomy` |
@@ -594,7 +596,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-898` | done | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe | `FUNC-harness-cli` · `FUNC-se-retro` · `REQ-zuege-sparen` |
 | `CR-GC-899` | done | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen | `FUNC-harness-cli` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-select-tests` · `REQ-modell-befragen` |
 | `CR-GC-900` | n/a | graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt | `FUNC-init-verb` · `REQ-repo-install` |
-| `CR-GC-901` | n/a | testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3) | `FUNC-test-ingest` · `REQ-testref-kopf-bindung` |
+| `CR-GC-901` | done | testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3) | `FUNC-test-ingest` · `REQ-testref-kopf-bindung` |
 | `CR-GC-902` | done | init prueft nicht, ob Claude Code oder OpenCode installiert ist; ohne Agent-Programm laufen die naechsten Schritte ins Leere | `FUNC-init-verb` · `REQ-init-agent-host` |
 | `CR-GC-903` | n/a | Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen | `MOD-dashboard` · `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork` |
 | `CR-GC-904` | done | EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431) | `FUNC-author-req` |

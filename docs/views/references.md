@@ -1380,6 +1380,15 @@
 | `CR-GC-877` | relation | `FUNC-import-code` |
 | `CR-GC-877` | relation | `REQ-skill-import-code-nennt-verb` |
 | `CR-GC-877` | relation | `UC-model-exchange` |
+| `CR-GC-878` | relation | `FUNC-author-uc` |
+| `CR-GC-878` | relation | `FUNC-se-conops` |
+| `CR-GC-878` | relation | `FUNC-se-fmea` |
+| `CR-GC-878` | relation | `FUNC-se-irr` |
+| `CR-GC-878` | relation | `FUNC-se-plan` |
+| `CR-GC-878` | relation | `FUNC-se-top-level` |
+| `CR-GC-879` | relation | `FUNC-harness-cli` |
+| `CR-GC-879` | relation | `FUNC-upgrade` |
+| `CR-GC-879` | relation | `REQ-repo-update` |
 | `CR-GC-888` | relation | `FUNC-graph-help` |
 | `CR-GC-888` | relation | `REQ-docs-taxonomy` |
 | `CR-GC-889` | relation | `REQ-docs-taxonomy` |

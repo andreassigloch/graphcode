@@ -3932,7 +3932,9 @@
       "id": "CR-GC-901",
       "type": "CR",
       "name": "testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3)",
-      "description": "docs/cr/open/CR-GC-901-testrefs-per-commit-hook-binden-testdate.md"
+      "description": "docs/cr/done/CR-GC-901-testrefs-per-commit-hook-binden-testdate.md",
+      "status": "done",
+      "commitRef": "625f74fe,7d2fd511,0c9a04d6"
     },
     {
       "id": "CR-GC-902",
@@ -8916,7 +8918,7 @@
       "id": "REQ-repo-update",
       "type": "REQ",
       "name": "Update ohne Datenverlust",
-      "description": "Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren.",
+      "description": "Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879).",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -20375,6 +20377,51 @@
     {
       "source": "CR-GC-877",
       "target": "UC-model-exchange",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-878",
+      "target": "FUNC-author-uc",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-878",
+      "target": "FUNC-se-conops",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-878",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-878",
+      "target": "FUNC-se-irr",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-878",
+      "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-878",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-879",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-879",
+      "target": "FUNC-upgrade",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-879",
+      "target": "REQ-repo-update",
       "type": "relation"
     },
     {
@@ -32148,5 +32195,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1067
+  "graphVersion": 1069
 }

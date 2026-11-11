@@ -8600,7 +8600,7 @@ Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-opencode-plugin` (in
 
 > auch unter: `FUNC-upgrade`
 
-Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren.
+Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879).
 
 priority: must · status: open · kinds: functional
 
@@ -8662,7 +8662,7 @@ io ◀ `FLOW-cli-command` · `FLOW-lock-file` · io ▶ `FLOW-install-result-upg
 
 > auch unter: `FUNC-harness-cli`
 
-Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren.
+Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879).
 
 priority: must · status: open · kinds: functional
 
@@ -9274,7 +9274,7 @@ Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-opencode-plugin` (in
 
 > auch unter: `FUNC-upgrade`
 
-Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren.
+Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879).
 
 priority: must · status: open · kinds: functional
 
@@ -9380,7 +9380,7 @@ io ◀ `FLOW-cli-command` · `FLOW-lock-file` · io ▶ `FLOW-install-result-upg
 
 > auch unter: `FUNC-harness-cli`
 
-Update aktualisiert installierte Artefakte/Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren.
+Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879).
 
 priority: must · status: open · kinds: functional
 

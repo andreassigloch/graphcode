@@ -1,6 +1,6 @@
 # CR-GC-901: testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-11)
 **Typ:** aus Item ITEM-2026-1278 (finding)
 **Erstellt:** 2026-11-10
 **Item:** bok/items/ITEM-2026-1278.json (Lane: code)
