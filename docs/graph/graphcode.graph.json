@@ -3943,6 +3943,12 @@
       "commitRef": "a223eeb7,1b4bb7f3,f0865b68"
     },
     {
+      "id": "CR-GC-903",
+      "type": "CR",
+      "name": "Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen",
+      "description": "docs/cr/open/CR-GC-903-viewer-ist-nachbarsystem-mod-dashboard-a.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20452,6 +20458,36 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-903",
+      "target": "MOD-dashboard",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-903",
+      "target": "REQ-artifact-freshness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-903",
+      "target": "REQ-dashboard-ontology-sync",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-903",
+      "target": "REQ-dashboard-readonly",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-903",
+      "target": "REQ-readiness-transparent",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-903",
+      "target": "REQ-shared-views-no-fork",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -31957,5 +31993,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1042
+  "graphVersion": 1044
 }

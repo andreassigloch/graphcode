@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 505 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 506 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 505 CR · 351 done · 4 open.
+Total: 506 CR · 351 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -567,3 +567,4 @@ Total: 505 CR · 351 done · 4 open.
 | `CR-GC-900` | n/a | graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt |
 | `CR-GC-901` | n/a | testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3) |
 | `CR-GC-902` | done | init prueft nicht, ob Claude Code oder OpenCode installiert ist; ohne Agent-Programm laufen die naechsten Schritte ins Leere |
+| `CR-GC-903` | n/a | Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen |

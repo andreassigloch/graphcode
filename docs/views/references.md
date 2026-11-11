@@ -1411,6 +1411,12 @@
 | `CR-GC-901` | relation | `REQ-testref-kopf-bindung` |
 | `CR-GC-902` | relation | `FUNC-init-verb` |
 | `CR-GC-902` | relation | `REQ-init-agent-host` |
+| `CR-GC-903` | relation | `MOD-dashboard` |
+| `CR-GC-903` | relation | `REQ-artifact-freshness` |
+| `CR-GC-903` | relation | `REQ-dashboard-ontology-sync` |
+| `CR-GC-903` | relation | `REQ-dashboard-readonly` |
+| `CR-GC-903` | relation | `REQ-readiness-transparent` |
+| `CR-GC-903` | relation | `REQ-shared-views-no-fork` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
