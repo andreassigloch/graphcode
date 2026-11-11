@@ -1,6 +1,7 @@
 # CR-GC-864: se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (Skill-Teil; Prüffunktionen in ITEM-2026-1303)
+**Abgeschlossen:** 2026-11-11
 **Typ:** aus Item ITEM-2026-1093 (finding)
 **Erstellt:** 2026-10-26
 **Item:** bok/items/ITEM-2026-1093.json (Lane: graph)
@@ -85,3 +86,20 @@
 
 FUNC-se-constraints, FUNC-se-top-level, REQ-constraints-skill-vertrag, TEST-skill-constraints (Kanten am
 CR-Knoten setzen, bevor die Lane startet).
+
+---
+
+## Ergebnis (2026-11-11, Commit 91cac602)
+
+Auftraggeber 2026-11-11: vor dem Rollout nur der Skill-Teil; die zwei Prüffunktionen sind abgetrennt nach
+ITEM-2026-1303 (eigener CR).
+
+- `se:constraints` (Version 5): Plattform-Regeln zuerst, zwei Kriterien je Antwort, Zeile Erweiterbarkeit (Prüffunktion
+  „fehlt", geplant in ITEM-2026-1303), Abschnitt „Constraint gegen Regel" (Befund 8), Abschnitt 5 „Vor dem ersten
+  Schnitt" mit Hinweis auf R-19 (Befunde 1, 2, 3, 5).
+- `se:top-level` (Version 9, mit CR-GC-881 Version 10): Phase 2 liest `constraintCarriers`; Ausnahme für gleiche Ketten
+  hinter einer Plugin-Grenze in *Sub use cases* und Prüffrage 2 (Befund 7).
+- Tests: Fälle in `tests/skill-constraints.test.ts` und `tests/skill-top-level-ausloeser.test.ts`, 4 von 4 rot gegen den
+  alten Text. `verify:full CR-GC-864`: 212 Dateien, 1761 Tests grün, Schlupf 0.
+- Akzeptanz offen außerhalb dieses CR: Probe auf immo-infra (Plattform-Regeln zuerst) und „Release mit dem Skill,
+  `aise rollout immo-infra`" — beides nach dem nächsten Release. `grenzeNurMitSchema`/`einAdapterJeAkteur`: ITEM-2026-1303.

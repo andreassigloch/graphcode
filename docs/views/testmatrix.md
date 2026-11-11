@@ -47,8 +47,8 @@
 | `REQ-export-no-clobber` | ✓ | ✓ passed | `TEST-export-graph-guard` · `TEST-mcp-export-guard` |
 | `REQ-export-refuses-until-held-back-repaired` | ✓ | ✓ passed | `TEST-import-rejected-traces` |
 | `REQ-first-session-claims-store-lock` | ✓ | ✓ passed | `TEST-store-lock` |
-| `REQ-fmea-checks-entry` | ✓ | ✗ failed | `TEST-fmea-reads-places` |
-| `REQ-fmea-reads-places` | ✓ | ✗ failed | `TEST-fmea-reads-places` |
+| `REQ-fmea-checks-entry` | ✓ | ✓ passed | `TEST-fmea-reads-places` |
+| `REQ-fmea-reads-places` | ✓ | ✓ passed | `TEST-fmea-reads-places` |
 | `REQ-formatE-diff-dialect` | ✓ | ✓ passed | `TEST-edge-only-batch` · `TEST-formate-name` · `TEST-roundtrip` |
 | `REQ-formatE-parity` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-formate-ops` · `TEST-mutate-input-formate` · `TEST-read-format-param` · `TEST-roundtrip` |
 | `REQ-frame-binding` | ✓ | ⚠ 1/2 passed | `TEST-code-quality` · `TEST-graph-realize` |
@@ -208,7 +208,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 198/198 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 159/198 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 161/198 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

@@ -1,6 +1,7 @@
 # CR-GC-881: UC- und FCHAIN-Namen benennen das Bedürfnis, nicht die Umsetzung: Regel oder Skill
 
-**Status:** 🟠 Open
+**Status:** ✅ Done
+**Abgeschlossen:** 2026-11-11
 **Typ:** aus Item ITEM-2026-1128 (idea)
 **Erstellt:** 2026-10-31
 **Item:** bok/items/ITEM-2026-1128.json (Lane: code)
@@ -34,3 +35,22 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Entscheidung (Auftraggeber 2026-11-11): beides, Skill und Regel
+
+## Ergebnis
+
+- **Skill** (graphcode, Commit 91cac602): `se:author-uc` Version 3, Abschnitt „The name states the need, not the
+  solution" (Verb + Objekt aus Sicht des Akteurs, keine MOD-/FUNC-/SCHEMA-Namen, keine Technikwörter, falsche und
+  richtige Beispiele aus immo-infra, dieselbe Regel für die Ketten des UC). `se:top-level` Version 10, Prüffrage 4.
+  Test-Block in `tests/skill-top-level-ausloeser.test.ts`, 3 von 3 rot gegen den alten Text.
+- **Regel** (sigloch-modules CR-SM-434, contracts 12.12.0, RULES_VERSION 50.0.0, unveröffentlicht): `UC-07` „Name states
+  the need", Warnung an UC und FCHAIN, Wortliste in `MetricPolicy.needNameTerms` (Familienvorgabe KI, MCP, Gate, Lauf,
+  Ziel; das Repo ersetzt sie). Verworfen nach Messung an 9 Modellen: „kein MOD-/SCHEMA-Name im Namen" (7 von 10 Treffern
+  Fehlalarme) und „Kettenname gehört zum UC-Namen" (39 von 110 Paaren ohne gemeinsames Wort, meist gute Namen).
+- Der Skill nennt `UC-07` noch nicht: graphcode läuft auf contracts 12.9. Nachziehen (Peer-Floor, `needNameTerms` ohne
+  „Gate"/„Ziel", UC-07 im Skill) in ITEM-2026-1305, nach dem Publish von contracts.
+- CR-Knoten fehlte im Graphen; per `graph_mutate` angelegt (v1074) mit `relation` auf FUNC-author-uc, FUNC-se-top-level.
+- `verify:full CR-GC-864` (selber Stand): 1761 Tests grün.
