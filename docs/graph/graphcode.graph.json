@@ -3981,6 +3981,18 @@
       "description": "docs/cr/open/CR-GC-908-vorfuehrung-kapitel-d3-bestand-einlesen-.md"
     },
     {
+      "id": "CR-GC-909",
+      "type": "CR",
+      "name": "SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben",
+      "description": "docs/cr/open/CR-GC-909-srs-sicht-nach-iso-29148-annex-a-glieder.md"
+    },
+    {
+      "id": "CR-GC-910",
+      "type": "CR",
+      "name": "import-doc als Werkzeug der Tool-Schicht statt Skript: Bestand einlesen in jedem MCP-Host",
+      "description": "docs/cr/open/CR-GC-910-import-doc-als-werkzeug-der-tool-schicht.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20545,6 +20557,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-909",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-909",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-910",
+      "target": "FUNC-import-doc",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-910",
+      "target": "UC-model-exchange",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -32050,5 +32082,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1054
+  "graphVersion": 1057
 }

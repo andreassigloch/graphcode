@@ -1422,6 +1422,10 @@
 | `CR-GC-905` | relation | `UC-model-exchange` |
 | `CR-GC-908` | relation | `FUNC-import-doc` |
 | `CR-GC-908` | relation | `UC-model-exchange` |
+| `CR-GC-909` | relation | `FUNC-export-markdown` |
+| `CR-GC-909` | relation | `FUNC-graph-export-snapshot` |
+| `CR-GC-910` | relation | `FUNC-import-doc` |
+| `CR-GC-910` | relation | `UC-model-exchange` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

@@ -600,6 +600,8 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-904` | done | EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431) | `FUNC-author-req` |
 | `CR-GC-905` | n/a | UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation) | `FUNC-import-doc` · `UC-model-exchange` |
 | `CR-GC-908` | n/a | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren | `FUNC-import-doc` · `UC-model-exchange` |
+| `CR-GC-909` | n/a | SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben | `FUNC-export-markdown` · `FUNC-graph-export-snapshot` |
+| `CR-GC-910` | n/a | import-doc als Werkzeug der Tool-Schicht statt Skript: Bestand einlesen in jedem MCP-Host | `FUNC-import-doc` · `UC-model-exchange` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 511 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 513 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 511 CR · 352 done · 4 open.
+Total: 513 CR · 352 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -573,3 +573,5 @@ Total: 511 CR · 352 done · 4 open.
 | `CR-GC-906` | n/a | Vorfuehrung: Intro I1 und Anforderungsbaum E2 im Artefakt Systemmodell in Bildern |
 | `CR-GC-907` | n/a | Vorfuehrung: Schalter fuer die Zielgruppe im Artefakt Systemmodell in Bildern |
 | `CR-GC-908` | n/a | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren |
+| `CR-GC-909` | n/a | SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben |
+| `CR-GC-910` | n/a | import-doc als Werkzeug der Tool-Schicht statt Skript: Bestand einlesen in jedem MCP-Host |

@@ -161,6 +161,6 @@ Jeder Schritt ist ein eigener CR.
 | 2 | Schalter für die Zielgruppe | CR-GC-907 | CR-GC-906 |
 | 3 | Use Case Spezifikation im Modell | CR-GC-905 | – |
 | 4 | Kapitel zu D3 (Bestand einlesen und zusammenführen) | CR-GC-908 | CR-GC-905, CR-GC-906 |
-| 5 | Paketstation als Modell, neben dem City People Mover in `prod/graphcodedemo` | CR-PAKET-001 (graphcodedemo) | CR-GC-906 |
-| 6 | sirail auf Stand bringen | CR-034 (sirail) | – |
+| 5 | Paketstation als Modell, neben dem City People Mover in `prod/graphcodedemo` | CR-DEMO-003 (graphcodedemo) | CR-GC-906 |
+| 6 | sirail auf Stand bringen | CR-SR-034 (sirail) | – |
 | – | Ansicht Anforderungsbaum im Viewer | nur falls „Requirement Review" nicht reicht | CR-GC-906 |
