@@ -4004,7 +4004,9 @@
       "id": "CR-GC-912",
       "type": "CR",
       "name": "Viewer-Aufsicht beendet einen lebenden Viewer, der 750 ms nicht antwortet",
-      "description": "docs/cr/open/CR-GC-912-viewer-aufsicht-beendet-einen-lebenden-v.md"
+      "description": "docs/cr/done/CR-GC-912-viewer-aufsicht-beendet-einen-lebenden-v.md",
+      "status": "done",
+      "commitRef": "00b77c34,c892030d,02081709,d2889a09"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -32138,5 +32140,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1065
+  "graphVersion": 1066
 }

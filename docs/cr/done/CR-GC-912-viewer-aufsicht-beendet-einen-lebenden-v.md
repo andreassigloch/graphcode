@@ -1,6 +1,6 @@
 # CR-GC-912: Viewer-Aufsicht beendet einen lebenden Viewer, der 750 ms nicht antwortet
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-11)
 **Typ:** aus Item ITEM-2026-1301 (bug)
 **Erstellt:** 2026-11-11
 **Item:** bok/items/ITEM-2026-1301.json (Lane: code)
