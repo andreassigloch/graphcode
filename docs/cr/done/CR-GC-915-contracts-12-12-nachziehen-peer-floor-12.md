@@ -1,6 +1,6 @@
 # CR-GC-915: contracts 12.12 nachziehen: Peer-Floor >=12.12, metricPolicy.needNameTerms (ohne Gate/Ziel), UC-07 in se:author-uc nennen (Folge CR-GC-881, CR-SM-434)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-11)
 **Typ:** aus Item ITEM-2026-1305 (finding)
 **Erstellt:** 2026-11-11
 **Item:** bok/items/ITEM-2026-1305.json (Lane: code)

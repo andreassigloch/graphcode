@@ -4044,7 +4044,9 @@
       "id": "CR-GC-915",
       "type": "CR",
       "name": "contracts 12.12 nachziehen: Peer-Floor >=12.12, metricPolicy.needNameTerms (ohne Gate/Ziel), UC-07 in se:author-uc nennen (Folge CR-GC-881, CR-SM-434)",
-      "description": "docs/cr/open/CR-GC-915-contracts-12-12-nachziehen-peer-floor-12.md"
+      "description": "docs/cr/done/CR-GC-915-contracts-12-12-nachziehen-peer-floor-12.md",
+      "status": "done",
+      "commitRef": "f0fccf46,859d4a6e,0827fead"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -32288,5 +32290,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1088
+  "graphVersion": 1089
 }
