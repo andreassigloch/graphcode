@@ -3734,13 +3734,17 @@
       "id": "CR-GC-863",
       "type": "CR",
       "name": "Skills fuehren Hardware-Systeme falsch: Teile des eigenen Produkts (Servo, Netzteil, Sensor) landen als ACTOR, und der MOD-Schnitt hat keine Regel fuer Domaenen (Mechanik/Elektronik/Software) — Befund sirail CR-028/029",
-      "description": "docs/cr/open/CR-GC-863-skills-fuehren-hardware-systeme-falsch-t.md"
+      "description": "docs/cr/done/CR-GC-863-skills-fuehren-hardware-systeme-falsch-t.md",
+      "status": "done",
+      "commitRef": "4ba0ffd2,3b85c2c7,e74dd4c0"
     },
     {
       "id": "CR-GC-864",
       "type": "CR",
       "name": "se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt",
-      "description": "docs/cr/open/CR-GC-864-se-constraints-plattform-regeln-statt-ei.md"
+      "description": "docs/cr/done/CR-GC-864-se-constraints-plattform-regeln-statt-ei.md",
+      "status": "done",
+      "commitRef": "90232e8c,9e13c16e,29abb584,91cac602,0701cb9a,af904d81,2f9969f7"
     },
     {
       "id": "CR-GC-865",
@@ -3818,19 +3822,25 @@
       "id": "CR-GC-877",
       "type": "CR",
       "name": "Skill se:import-code in eigene Kette",
-      "description": "docs/cr/open/CR-GC-877-skill-se-import-code-in-eigene-kette.md"
+      "description": "docs/cr/done/CR-GC-877-skill-se-import-code-in-eigene-kette.md",
+      "status": "done",
+      "commitRef": "93724693,eccaa2ba"
     },
     {
       "id": "CR-GC-878",
       "type": "CR",
       "name": "se-view-Verweise in Skill-Texten und Quell-Kommentaren nachziehen (Folge von CR-GC-876)",
-      "description": "docs/cr/open/CR-GC-878-se-view-verweise-in-skill-texten-und-que.md"
+      "description": "docs/cr/done/CR-GC-878-se-view-verweise-in-skill-texten-und-que.md",
+      "status": "done",
+      "commitRef": "3bc30fb5,3a860118"
     },
     {
       "id": "CR-GC-879",
       "type": "CR",
       "name": "scaffold update/remove entfernen se-Dateien, die das Paket nicht mehr ausliefert (se-view, trade aus CR-GC-756)",
-      "description": "docs/cr/open/CR-GC-879-scaffold-update-remove-entfernen-se-date.md"
+      "description": "docs/cr/done/CR-GC-879-scaffold-update-remove-entfernen-se-date.md",
+      "status": "done",
+      "commitRef": "3bc30fb5,6186ae78,3a860118"
     },
     {
       "id": "CR-GC-880",
@@ -3842,7 +3852,9 @@
       "id": "CR-GC-881",
       "type": "CR",
       "name": "UC- und FCHAIN-Namen benennen das Beduerfnis",
-      "description": "UC- und FCHAIN-Namen benennen das Beduerfnis, nicht die Umsetzung: Skill (se:author-uc, se:top-level) und Regel UC-07 in contracts (CR-SM-434)"
+      "description": "docs/cr/done/CR-GC-881-uc-und-fchain-namen-benennen-das-bedu-rf.md",
+      "status": "done",
+      "commitRef": "9e13c16e,91cac602"
     },
     {
       "id": "CR-GC-888",
@@ -32243,5 +32255,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1078
+  "graphVersion": 1084
 }

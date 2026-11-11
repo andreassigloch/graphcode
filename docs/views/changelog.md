@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 518 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 518 CR · 355 done · 4 open.
+Total: 518 CR · 361 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -534,8 +534,8 @@ Total: 518 CR · 355 done · 4 open.
 | `CR-GC-860` | n/a | se:import-doc meldet Gate-Verstoesse leer: liest v.elementId, graph_mutate liefert im Format summary elements[] und {el} |
 | `CR-GC-861` | n/a | Constraints Teil 3b: Rueckbau Zielprofil-Vertrag — weights/values aus TargetProfileSchema, Loader ohne Zielkonflikte, graph_metrics ohne fit.target, Profildateien, Skill-Abschnitte 1/2/4 (Folge von CR-GC-853) |
 | `CR-GC-862` | n/a | Skill-Texte nach Option A (CR-GC-853): se:optimize belegt verletzt mit steerAdvisory statt fitAdvisory/regressions, se:generate ohne fitAdvisory |
-| `CR-GC-863` | n/a | Skills fuehren Hardware-Systeme falsch: Teile des eigenen Produkts (Servo, Netzteil, Sensor) landen als ACTOR, und der MOD-Schnitt hat keine Regel fuer Domaenen (Mechanik/Elektronik/Software) — Befund sirail CR-028/029 |
-| `CR-GC-864` | n/a | se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt |
+| `CR-GC-863` | done | Skills fuehren Hardware-Systeme falsch: Teile des eigenen Produkts (Servo, Netzteil, Sensor) landen als ACTOR, und der MOD-Schnitt hat keine Regel fuer Domaenen (Mechanik/Elektronik/Software) — Befund sirail CR-028/029 |
+| `CR-GC-864` | done | se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt |
 | `CR-GC-865` | n/a | Host-Ende fuer den Client sichtbar |
 | `CR-GC-866` | n/a | Werkzeug-Eingabe einmal im Register parsen |
 | `CR-GC-867` | n/a | Werkzeug-Register typisieren: MCPTool traegt sein Schema |
@@ -548,11 +548,11 @@ Total: 518 CR · 355 done · 4 open.
 | `CR-GC-874` | n/a | FC-06 am eigenen Modell richten: ein Einsprung für MCP und CLI, Vorab-Lieferung als Datei |
 | `CR-GC-875` | n/a | Skills zur Akteur-Lehre nachziehen |
 | `CR-GC-876` | n/a | se-view-Skills entfernen: paralleler Pfad zu auto-export docs/views (fmea rendert von Hand) |
-| `CR-GC-877` | n/a | Skill se:import-code in eigene Kette |
-| `CR-GC-878` | n/a | se-view-Verweise in Skill-Texten und Quell-Kommentaren nachziehen (Folge von CR-GC-876) |
-| `CR-GC-879` | n/a | scaffold update/remove entfernen se-Dateien, die das Paket nicht mehr ausliefert (se-view, trade aus CR-GC-756) |
+| `CR-GC-877` | done | Skill se:import-code in eigene Kette |
+| `CR-GC-878` | done | se-view-Verweise in Skill-Texten und Quell-Kommentaren nachziehen (Folge von CR-GC-876) |
+| `CR-GC-879` | done | scaffold update/remove entfernen se-Dateien, die das Paket nicht mehr ausliefert (se-view, trade aus CR-GC-756) |
 | `CR-GC-880` | n/a | Antwortweg: Ausnahme Nachbarkette (CR-SM-423) in Hilfetext, se-vorbereitung und se-laufzeit nachziehen |
-| `CR-GC-881` | n/a | UC- und FCHAIN-Namen benennen das Beduerfnis |
+| `CR-GC-881` | done | UC- und FCHAIN-Namen benennen das Beduerfnis |
 | `CR-GC-888` | n/a | Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen |
 | `CR-GC-889` | n/a | README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg |
 | `CR-GC-890` | n/a | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch |
