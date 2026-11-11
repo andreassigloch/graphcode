@@ -4023,6 +4023,12 @@
       "description": "docs/cr/open/CR-GC-913-pru-ffunktionen-grenzenurmitschema-und-e.md"
     },
     {
+      "id": "CR-GC-914",
+      "type": "CR",
+      "name": "se-retro: Verlauf der Verstöße über alle committeten Graph-Stände",
+      "description": "docs/cr/open/CR-GC-914-se-retro-verlauf-der-versto-e-u-ber-alle.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20712,6 +20718,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-914",
+      "target": "FUNC-se-retro",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -32232,5 +32243,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1076
+  "graphVersion": 1078
 }

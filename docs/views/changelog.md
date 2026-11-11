@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 517 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 518 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 517 CR · 355 done · 4 open.
+Total: 518 CR · 355 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -579,3 +579,4 @@ Total: 517 CR · 355 done · 4 open.
 | `CR-GC-911` | done | Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen |
 | `CR-GC-912` | done | Viewer-Aufsicht beendet einen lebenden Viewer, der 750 ms nicht antwortet |
 | `CR-GC-913` | n/a | Prüffunktionen grenzeNurMitSchema und einAdapterJeAkteur in @sigloch/graphcode/constraints (abgetrennt aus CR-GC-864) |
+| `CR-GC-914` | n/a | se-retro: Verlauf der Verstöße über alle committeten Graph-Stände |

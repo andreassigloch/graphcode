@@ -1444,6 +1444,7 @@
 | `CR-GC-911` | relation | `FUNC-tool-context` |
 | `CR-GC-912` | relation | `FUNC-gve-supervise` |
 | `CR-GC-912` | relation | `REQ-viewer-owned-by-repo` |
+| `CR-GC-914` | relation | `FUNC-se-retro` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
