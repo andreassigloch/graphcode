@@ -1342,6 +1342,9 @@
 | `CR-GC-863` | relation | `FUNC-se-modulebene` |
 | `CR-GC-863` | relation | `FUNC-se-optimize` |
 | `CR-GC-863` | relation | `FUNC-se-top-level` |
+| `CR-GC-864` | relation | `FUNC-se-constraints` |
+| `CR-GC-864` | relation | `FUNC-se-top-level` |
+| `CR-GC-864` | relation | `REQ-constraints-skill-vertrag` |
 | `CR-GC-865` | relation | `FUNC-gve-supervise` |
 | `CR-GC-865` | relation | `FUNC-session-shutdown` |
 | `CR-GC-865` | relation | `REQ-host-end-visible` |
@@ -1389,6 +1392,8 @@
 | `CR-GC-879` | relation | `FUNC-harness-cli` |
 | `CR-GC-879` | relation | `FUNC-upgrade` |
 | `CR-GC-879` | relation | `REQ-repo-update` |
+| `CR-GC-881` | relation | `FUNC-author-uc` |
+| `CR-GC-881` | relation | `FUNC-se-top-level` |
 | `CR-GC-888` | relation | `FUNC-graph-help` |
 | `CR-GC-888` | relation | `REQ-docs-taxonomy` |
 | `CR-GC-889` | relation | `REQ-docs-taxonomy` |

@@ -573,6 +573,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-861` | n/a | Constraints Teil 3b: Rueckbau Zielprofil-Vertrag — weights/values aus TargetProfileSchema, Loader ohne Zielkonflikte, graph_metrics ohne fit.target, Profildateien, Skill-Abschnitte 1/2/4 (Folge von CR-GC-853) | `FUNC-graph-metrics` · `FUNC-se-constraints` · `FUNC-target-profile-load` |
 | `CR-GC-862` | n/a | Skill-Texte nach Option A (CR-GC-853): se:optimize belegt verletzt mit steerAdvisory statt fitAdvisory/regressions, se:generate ohne fitAdvisory | `FUNC-se-generate` · `FUNC-se-optimize` |
 | `CR-GC-863` | n/a | Skills fuehren Hardware-Systeme falsch: Teile des eigenen Produkts (Servo, Netzteil, Sensor) landen als ACTOR, und der MOD-Schnitt hat keine Regel fuer Domaenen (Mechanik/Elektronik/Software) — Befund sirail CR-028/029 | `FUNC-author-actor` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-top-level` |
+| `CR-GC-864` | n/a | se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt | `FUNC-se-constraints` · `FUNC-se-top-level` · `REQ-constraints-skill-vertrag` |
 | `CR-GC-865` | n/a | Host-Ende fuer den Client sichtbar | `FUNC-gve-supervise` · `FUNC-session-shutdown` · `REQ-host-end-visible` |
 | `CR-GC-866` | n/a | Werkzeug-Eingabe einmal im Register parsen | `FUNC-bind-tools` · `FUNC-graph-mutate-tool` · `FUNC-host-socket` · `FUNC-serve-stdio` · `REQ-tool-input-parsed-once` |
 | `CR-GC-867` | n/a | Werkzeug-Register typisieren: MCPTool traegt sein Schema | `FUNC-bind-tools` |
@@ -585,6 +586,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-877` | n/a | Skill se:import-code in eigene Kette | `FUNC-import-code` · `REQ-skill-import-code-nennt-verb` · `UC-model-exchange` |
 | `CR-GC-878` | n/a | se-view-Verweise in Skill-Texten und Quell-Kommentaren nachziehen (Folge von CR-GC-876) | `FUNC-author-uc` · `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-plan` · `FUNC-se-top-level` |
 | `CR-GC-879` | n/a | scaffold update/remove entfernen se-Dateien, die das Paket nicht mehr ausliefert (se-view, trade aus CR-GC-756) | `FUNC-harness-cli` · `FUNC-upgrade` · `REQ-repo-update` |
+| `CR-GC-881` | n/a | UC- und FCHAIN-Namen benennen das Beduerfnis | `FUNC-author-uc` · `FUNC-se-top-level` |
 | `CR-GC-888` | n/a | Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen | `FUNC-graph-help` · `REQ-docs-taxonomy` |
 | `CR-GC-889` | n/a | README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg | `REQ-docs-taxonomy` |
 | `CR-GC-890` | n/a | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch | `REQ-docs-taxonomy` |

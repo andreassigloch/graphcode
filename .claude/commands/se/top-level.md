@@ -1,6 +1,6 @@
 ---
 name: se:top-level
-version: 8
+version: 10
 description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at 7±2 blocks per level, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
@@ -42,6 +42,8 @@ The trees give every node one place to roll up to; the lattice is what gets roll
 - **No → it is not a use case.** Variants that all travel the same pipeline are a **field in the contract**, not new UCs. An edit pipeline that pushes one edit order through checker, viewer and database is *one* use case whose SCHEMA carries 19 option values — never 19 use cases. Nineteen chains that are one chain is over-documentation: it buys nothing and makes the top level unreadable.
 - **Yes → it is a use case,** and `UC -compose-> UC` does not exist yet. It was never removed (no `ENTFAELLT` note in `TRACE_PATTERNS`), so it is a gap, not a reversal. Until it lands, do **not** fake the parent link through naming or a shared chain — leave the variants as sibling UCs and record the intended parent in the CR, so the flat top level stays visibly wrong instead of quietly wrong.
 
+**Exception: the same chain behind a plugin boundary.** A use case states what a person wants from the system, independent of how it is built. When several use cases run through the same chain because that chain crosses a plugin boundary (every application is a plugin behind one contract), they stay separate use cases if they differ in actor, goal or approval rule. The shared chain then shows good encapsulation, not a duplicate. Merging them into a contract field is wrong there (immo-infra: 9 of 11 use cases were merged into 2 and had to be restored).
+
 **The shape when it is justified:** the parent's chain is the shared trunk, and each child's chain extends it by at least one distinguishing function. A child that adds no function of its own is not a use case.
 
 **Disjointness holds at every level.** The chains are a lattice, so *overlap* is expected — a shared FUNC is the meet point. What is forbidden is *identity*: two sibling UCs whose chains have the same members describe the same behaviour twice. Compare the member sets yourself — **no rule does it for you.** AO-D03 (`DuplicatePathDetection`) is the nearest guard and it is dead: it looks for `FUNC -io-> FUNC`, a pair the grammar does not allow, so it has never fired on any family graph (ITEM-2026-170 §5.3).
@@ -59,7 +61,7 @@ The top triad is anchored at the SYS node, but only two legs are edges: `SYS -co
 
 **1 · UC + REQ.** What the system does for whom → `se:author-uc`, then `se:author-req` (REQ-with-test invariant). Requirements are what the FUNCs will have to satisfy — they precede the functions.
 
-**2 · Architecture targets.** → `se:constraints`, **before any cut.** A target is a constraint: a non-functional REQ at a chain, a module or the system, with a test that checks it against the model ("chain X stays in one module", "module M is reached only through f"). Without it, a dry run tells you what moved, never whether the move broke something you wanted. With it, a cut that breaks the target turns its test red.
+**2 · Architecture targets.** → `se:constraints`, **before any cut.** A target is a constraint: a non-functional REQ at a chain, a module or the system, with a test that checks it against the model ("chain X stays in one module", "module M is reached only through f"). Without it, a dry run tells you what moved, never whether the move broke something you wanted. With it, a cut that breaks the target turns its test red. **Read the set constraints before you cut:** `graph_metrics({ constraintCarriers: true })` names each one with its carrier. A constraint test that is red before the first cut names the elements the cut must create — cut so that it turns green.
 
 **3 · The triad, level 1.** Strictly in this inner order:
 
@@ -158,9 +160,9 @@ What wasted rounds on the first run, measured:
 ## Check questions — run all eight before you call the level done
 
 1. **Does every UC tell its story with the top-level FUNCs alone?** If you have to name a sub-function, the level is too coarse.
-2. **Are the use cases disjoint?** Compare the FUNC member sets of the sibling chains. Identical sets mean you documented one behaviour twice; a child chain that adds no function of its own means the child is a contract field, not a use case.
+2. **Are the use cases disjoint?** Compare the FUNC member sets of the sibling chains. Identical sets mean you documented one behaviour twice; a child chain that adds no function of its own means the child is a contract field, not a use case. Exception: use cases that differ in actor, goal or approval rule and share a chain across a plugin boundary stay separate (see *Sub use cases*).
 3. **Does any block have two lives?** Not "is it in several chains" — the chains are a lattice, and a shared FUNC is the meet point, not a smell. The signals are: it satisfies REQs from **two different UCs**, it is fed by **two different actors**, and it runs on **two different cadences**. All three together mean two functions. Split it.
-4. **Is every name active?** A block named for what it *holds* hides what it *decides*.
+4. **Is every name active?** A block named for what it *holds* hides what it *decides*. UC and FCHAIN names state the actor's need as Verb + Object, without module, schema or technology words (`se:author-uc`, *The name states the need*).
 5. **Which stack implements this MOD**, and does it exist as a `satisfy`-bound REQ?
 6. **Does the code already exist?** Check the repo before modelling greenfield. A FUNC modelled as not-yet-built (no `realRef`) over existing code is a claim the code will break (ITEM-2026-170 D2).
 7. **More than five top-level FUNCs? Something is off.** Five is the working budget, not a hard cap — but every slot above it needs a stated reason, because **operations is still coming**: user management, configuration, credentials, deployment, logging. Those land as their own top-level block at the very end, and a decomposition that already spent seven slots on features has nowhere to put them. Count the compose-forest roots, not the chain members, and budget before you spend the last slot.

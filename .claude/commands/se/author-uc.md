@@ -1,6 +1,6 @@
 ---
 name: se:author-uc
-version: 2
+version: 3
 description: Author a UC node terse and low-jargon — Actor–Verb–Object–Outcome, ≤25 words, ≤2 grounded technical terms — and gate-mutate it with its compose trace
 ---
 
@@ -11,6 +11,12 @@ A use case is the ConOps entry point: the **plainest** statement of who does wha
 - **Terse:** the `description` is **≤25 words**, active voice, **Actor–Verb–Object–Outcome**. No implementation detail (no module names, no data shapes, no "via X").
 - **Jargon budget: ≤2 technical terms.** Every term you spend MUST already exist as a `SCHEMA` or `REQ` node. A term with no node is undefined — rephrase in plain words instead. Define a term once; do not repeat it.
 - If you cannot say it in ≤25 words with ≤2 grounded terms, the use case is doing too much — split it.
+
+## The name states the need, not the solution
+The UC name (`__name`) is what the customer sees as a tab in the customer view. Name it **Verb + Object from the actor's view**: what the actor wants, not how the system does it.
+- No name of a MOD, FUNC or SCHEMA of the model, and no technology word (AI, MCP, gate, run, target and the like).
+- Wrong: "AI content to target" (names the path), "Scheduled run" (names the mechanism). Right: "Publish post", "Receive weekly report", "Create location description", "Query data", "Read reports".
+- Name each FCHAIN of the UC the same way: the part of the need this chain serves. UC and chain names may differ, but both name the need — never "the UC is about access, the chain about skills".
 
 ## Write it through the gate
 Emit ONE `graph_mutate` batch as Format-E — the UC with its `compose` to the `FCHAIN` or `FUNC`(s) that realize it; `__name` is a short scenario label:

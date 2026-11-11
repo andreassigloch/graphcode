@@ -32,8 +32,8 @@ const regel4 = topLevel.split('\n').find((l) => l.startsWith('4. **One entry nod
 const stufe3Fluss = topLevel.split('\n').find((l) => l.startsWith('3. **FLOW + SCHEMA**')) ?? '';
 
 describe('se:top-level Regel 4: ein Eingangsknoten je Kette (CR-GC-873)', () => {
-  it('der Kopf traegt Version 8 (CR-GC-863)', () => {
-    expect(topLevel).toMatch(/^version: 8$/m);
+  it('der Kopf traegt Version 10 (CR-GC-881)', () => {
+    expect(topLevel).toMatch(/^version: 10$/m);
   });
 
   it('die alte Regel „One trigger per chain" ist weg', () => {
@@ -142,5 +142,34 @@ describe('Hardware-Systeme: Produktteile und Domaenenregel (CR-GC-863)', () => {
   it('jede genannte Regel steht im Katalog', () => {
     const ids = new Set(ALL_RULE_DEFS.map((r) => r.id));
     for (const id of ['RD-05', 'CR-01']) expect(ids.has(id), id).toBe(true);
+  });
+});
+
+describe('se:top-level liest Constraints, Ausnahme fuer gleiche Ketten hinter einer Plugin-Grenze (CR-GC-864)', () => {
+  it('Phase 2 nennt constraintCarriers als Vorgabe des Schnitts', () => {
+    expect(topLevel).toMatch(/Read the set constraints before you cut:\*\* `graph_metrics\(\{ constraintCarriers: true \}\)`/);
+  });
+
+  it('Sub use cases und Pruefrage 2 nennen die Ausnahme', () => {
+    expect(topLevel).toMatch(/\*\*Exception: the same chain behind a plugin boundary\.\*\*/);
+    const frage2 = topLevel.split('\n').find((l) => l.startsWith('2. **Are the use cases disjoint?**')) ?? '';
+    expect(frage2).toMatch(/Exception: use cases that differ in actor, goal or approval rule/);
+  });
+});
+
+describe('UC- und FCHAIN-Namen benennen das Beduerfnis (CR-GC-881)', () => {
+  const authorUc = readFileSync(join(COMMANDS, 'se', 'author-uc.md'), 'utf8');
+
+  it('se:author-uc: Abschnitt zum Namen mit falschem und richtigem Beispiel, auch fuer die Kette', () => {
+    expect(authorUc).toMatch(/^version: 3$/m);
+    expect(authorUc).toMatch(/## The name states the need, not the solution/);
+    expect(authorUc).toMatch(/Verb \+ Object from the actor's view/);
+    expect(authorUc).toMatch(/Wrong: "AI content to target"/);
+    expect(authorUc).toMatch(/Name each FCHAIN of the UC the same way/);
+  });
+
+  it('se:top-level: Pruefrage 4 verlangt dasselbe fuer UC- und Kettennamen', () => {
+    const frage4 = topLevel.split('\n').find((l) => l.startsWith('4. **Is every name active?**')) ?? '';
+    expect(frage4).toMatch(/UC and FCHAIN names state the actor's need as Verb \+ Object/);
   });
 });

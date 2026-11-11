@@ -3839,6 +3839,12 @@
       "description": "docs/cr/open/CR-GC-880-antwortweg-ausnahme-nachbarkette-cr-sm-4.md"
     },
     {
+      "id": "CR-GC-881",
+      "type": "CR",
+      "name": "UC- und FCHAIN-Namen benennen das Beduerfnis",
+      "description": "UC- und FCHAIN-Namen benennen das Beduerfnis, nicht die Umsetzung: Skill (se:author-uc, se:top-level) und Regel UC-07 in contracts (CR-SM-434)"
+    },
+    {
       "id": "CR-GC-888",
       "type": "CR",
       "name": "Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen",
@@ -20190,6 +20196,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-864",
+      "target": "FUNC-se-constraints",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-864",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-864",
+      "target": "REQ-constraints-skill-vertrag",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-865",
       "target": "FUNC-gve-supervise",
       "type": "relation"
@@ -20422,6 +20443,16 @@
     {
       "source": "CR-GC-879",
       "target": "REQ-repo-update",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-881",
+      "target": "FUNC-author-uc",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-881",
+      "target": "FUNC-se-top-level",
       "type": "relation"
     },
     {
@@ -32195,5 +32226,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1072
+  "graphVersion": 1074
 }

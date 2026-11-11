@@ -36,7 +36,7 @@ const SKILL = join(REPO, '.claude', 'commands', 'se', 'constraints.md');
 const ALT = join(REPO, '.claude', 'commands', 'se', 'target-profile.md');
 const skill = (): string => readFileSync(SKILL, 'utf8');
 
-const DIMENSIONEN = ['Änderbarkeit', 'Zusammenhalt', 'kurze Wege', 'Fehlertoleranz', 'Größe', 'Engpass', 'Schutz'];
+const DIMENSIONEN = ['Änderbarkeit', 'Zusammenhalt', 'kurze Wege', 'Fehlertoleranz', 'Größe', 'Engpass', 'Erweiterbarkeit', 'Schutz'];
 const ADRESSATEN = new Set(['FCHAIN', 'MOD', 'SYS']);
 
 /** Die Zeilen der Tabelle, deren Kopf die Spalte „Prüffunktion" trägt: je Zeile die Zellen. */
@@ -162,6 +162,16 @@ describe('CR-GC-852: se:constraints an der Stelle von se:target-profile', () => 
     ]) {
       expect(text, `${a} ↔ ${b}`).toContain(`**${a} ↔ ${b}**`);
     }
+  });
+
+  it('Plattform-Regeln zuerst, Abschnitt vor dem ersten Schnitt, Hinweis R-19, Zielkonflikt mit einer Regel (CR-GC-864)', () => {
+    const text = skill();
+    expect(text).toMatch(/\*\*Frag zuerst nach Plattform-Regeln:\*\*/);
+    expect(text).toMatch(/Gilt sie für jedes künftige Teil einer Art\?/);
+    expect(text).toMatch(/## 5\. Vor dem ersten Schnitt/);
+    expect(text).toMatch(/Der Test ist rot und nennt in seiner Meldung die fehlenden Elemente/);
+    expect(text).toMatch(/Die ersten `testRefs` im Repo lösen `R-19` aus/);
+    expect(text).toMatch(/\*\*Constraint gegen Regel\.\*\*/);
   });
 
   it('das Paket exportiert die Prüffunktionen unter dem Subpath, aus dem der Skill sie nennt', () => {
