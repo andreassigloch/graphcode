@@ -4062,7 +4062,9 @@
       "id": "CR-GC-916",
       "type": "CR",
       "name": "Umbau aus CR-GC-807: code-quality und reduced-llm zu REQ am Kern-UC, deterministic-steering umbenennen",
-      "description": "docs/cr/open/CR-GC-916-umbau-aus-cr-gc-807-code-quality-und-red.md"
+      "description": "docs/cr/done/CR-GC-916-umbau-aus-cr-gc-807-code-quality-und-red.md",
+      "status": "done",
+      "commitRef": "45d31e6b,42c94783"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -32360,5 +32362,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1105
+  "graphVersion": 1106
 }

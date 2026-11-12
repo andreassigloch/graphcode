@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 520 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 520 CR · 367 done · 4 open.
+Total: 520 CR · 368 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -581,4 +581,4 @@ Total: 520 CR · 367 done · 4 open.
 | `CR-GC-913` | n/a | Prüffunktionen grenzeNurMitSchema und einAdapterJeAkteur in @sigloch/graphcode/constraints (abgetrennt aus CR-GC-864) |
 | `CR-GC-914` | done | se-retro: Verlauf der Verstöße über alle committeten Graph-Stände |
 | `CR-GC-915` | done | contracts 12.12 nachziehen: Peer-Floor >=12.12, metricPolicy.needNameTerms (ohne Gate/Ziel), UC-07 in se:author-uc nennen (Folge CR-GC-881, CR-SM-434) |
-| `CR-GC-916` | n/a | Umbau aus CR-GC-807: code-quality und reduced-llm zu REQ am Kern-UC, deterministic-steering umbenennen |
+| `CR-GC-916` | done | Umbau aus CR-GC-807: code-quality und reduced-llm zu REQ am Kern-UC, deterministic-steering umbenennen |

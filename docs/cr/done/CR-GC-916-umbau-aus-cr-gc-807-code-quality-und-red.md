@@ -1,6 +1,6 @@
 # CR-GC-916: Umbau aus CR-GC-807: code-quality und reduced-llm zu REQ am Kern-UC, deterministic-steering umbenennen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-12)
 **Typ:** aus Item ITEM-2026-1315 (finding)
 **Erstellt:** 2026-11-12
 **Item:** bok/items/ITEM-2026-1315.json (Lane: graph)

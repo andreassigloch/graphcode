@@ -617,7 +617,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-912` | done | Viewer-Aufsicht beendet einen lebenden Viewer, der 750 ms nicht antwortet | `FUNC-gve-supervise` · `REQ-viewer-owned-by-repo` |
 | `CR-GC-914` | done | se-retro: Verlauf der Verstöße über alle committeten Graph-Stände | `FUNC-se-retro` |
 | `CR-GC-915` | done | contracts 12.12 nachziehen: Peer-Floor >=12.12, metricPolicy.needNameTerms (ohne Gate/Ziel), UC-07 in se:author-uc nennen (Folge CR-GC-881, CR-SM-434) | `FUNC-author-uc` · `FUNC-load-config` · `FUNC-upgrade` · `REQ-repo-update` |
-| `CR-GC-916` | n/a | Umbau aus CR-GC-807: code-quality und reduced-llm zu REQ am Kern-UC, deterministic-steering umbenennen | `REQ-code-quality` · `REQ-reduced-llm` · `UC-deterministic-steering` · `UC-intent-to-code` |
+| `CR-GC-916` | done | Umbau aus CR-GC-807: code-quality und reduced-llm zu REQ am Kern-UC, deterministic-steering umbenennen | `REQ-code-quality` · `REQ-reduced-llm` · `UC-deterministic-steering` · `UC-intent-to-code` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
