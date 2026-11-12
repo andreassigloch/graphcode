@@ -1,6 +1,7 @@
 # CR-GC-903: Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done
+**Abgeschlossen:** 2026-11-12
 **Typ:** aus Item ITEM-2026-1283 (finding)
 **Erstellt:** 2026-11-11
 **Item:** bok/items/ITEM-2026-1283.json (Lane: graph)
@@ -42,13 +43,13 @@ selbst betrifft, gehört nach graph-view-edit und entfällt hier.
 
 ## Akzeptanz
 
-- [ ] `graph_elements({type:'MOD'})` nennt kein `MOD-dashboard`, R-23 meldet nichts mehr.
-- [ ] Die fünf Anforderungen haben je einen Erfüller, RD-01 meldet keine von ihnen.
-- [ ] `rules_evaluate` meldet keinen neuen Fehler gegenüber dem Stand vor dem CR.
-- [ ] `tests/hooks.inject-graph-slice.test.ts` erwartet für CR-GC-115 kein `MOD-dashboard` mehr und ist grün.
-- [ ] Kommentare in `src/README.md`, `src/index.ts`, `src/projections/panels.ts`,
+- [x] `graph_elements({type:'MOD'})` nennt kein `MOD-dashboard`, R-23 meldet nichts mehr.
+- [x] Die fünf Anforderungen haben je einen Erfüller, RD-01 meldet keine von ihnen.
+- [x] `rules_evaluate` meldet keinen neuen Fehler gegenüber dem Stand vor dem CR.
+- [x] `tests/hooks.inject-graph-slice.test.ts` erwartet für CR-GC-115 kein `MOD-dashboard` mehr und ist grün.
+- [x] Kommentare in `src/README.md`, `src/index.ts`, `src/projections/panels.ts`,
       `src/projections/help-content.ts` nennen den Viewer als Nachbarsystem, nicht als Modul.
-- [ ] Modell und Sichten re-exportiert und mit dem CR committet.
+- [x] Modell und Sichten re-exportiert und mit dem CR committet.
 
 ## Nicht Ziel
 
@@ -70,3 +71,18 @@ Modell: `MOD-dashboard`, `SYS-graphcode`, die fünf Anforderungen oben, `MOD-sur
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Ergebnis (2026-11-12)
+
+- Modell v1094: `MOD-dashboard` mit compose-, satisfy- und drei relation-Kanten gelöscht. Träger wie
+  vorgeschlagen: `MOD-surface` → readonly; `MOD-kernel-measure` → readiness-transparent,
+  ontology-sync; `MOD-projections` → artifact-freshness, shared-views-no-fork.
+- Abweichung Punkt 4: CR → ACTOR verbietet R-18. Ersatz entfällt, denn CR-GC-115 und CR-GC-125
+  behalten weitere relation-Kanten (REQ, MS-4-mvp2, MOD-surface).
+- R-23 meldet nichts, RD-01 nennt keine der fünf Anforderungen, `rules_evaluate` ohne Fehler.
+- Folge in der Testauswahl: `MOD-projections` zieht jetzt `tests/panels.test.ts`. Der Test
+  `mcp.tests-operational` (e) nahm Panels als fremdes Subsystem an; er prüft jetzt die Aufnahme und
+  nimmt `skill-red-first.test.ts` als fremde Datei.
+- `verify:full CR-GC-903`: 214/214 Dateien grün, Schlupf 0. Commit aa87cd61.
