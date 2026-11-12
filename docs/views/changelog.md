@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 520 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 520 CR · 364 done · 4 open.
+Total: 520 CR · 365 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -477,7 +477,7 @@ Total: 520 CR · 364 done · 4 open.
 | `CR-GC-803` | n/a | Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen) |
 | `CR-GC-804` | n/a | Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion) |
 | `CR-GC-805` | n/a | Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion |
-| `CR-GC-806` | n/a | Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft |
+| `CR-GC-806` | done | Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft |
 | `CR-GC-807` | n/a | Impact-Check: UCs code-quality, reduced-llm, deterministic-steering lesen sich als Anforderungen an den Kern-UC - Herabstufen zu REQ pruefen |
 | `CR-GC-808` | n/a | Ein-Schreiber-Modus: Gate lehnt Schreibzugriffe nicht erlaubter Clients ab |
 | `CR-GC-809` | done | GVE haengt an der HostBridge statt am Export-Datei-Watcher |

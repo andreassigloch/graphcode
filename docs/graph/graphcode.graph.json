@@ -3390,7 +3390,9 @@
       "id": "CR-GC-806",
       "type": "CR",
       "name": "Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft",
-      "description": "docs/cr/open/CR-GC-806-kern-uc-fehlt-entwickler-mensch-oder-ki-.md"
+      "description": "docs/cr/done/CR-GC-806-kern-uc-fehlt-entwickler-mensch-oder-ki-.md",
+      "status": "done",
+      "commitRef": "1346da76,b969a4c1,b151a857,4671fb49,01ebbf3a"
     },
     {
       "id": "CR-GC-807",
@@ -32354,5 +32356,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1101
+  "graphVersion": 1102
 }

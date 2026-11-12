@@ -1,6 +1,6 @@
 # CR-GC-806: Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft
 
-**Status:** ✅ Done
+**Status:** ✅ Done (2026-11-12)
 **Abgeschlossen:** 2026-11-12
 **Typ:** aus Item ITEM-2026-893 (idea)
 **Erstellt:** 2026-10-14
