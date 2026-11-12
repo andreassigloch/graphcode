@@ -37,6 +37,7 @@ import { StoreOwnershipError } from './kernel/store-lock.js';
 import { scaffold, syncSkills } from './surface/scaffold.js';
 import { executeInit, formatInit } from './surface/init-verb.js';
 import { executeImportCode } from './surface/import-code-verb.js';
+import { executeRender, RenderToolMissingError } from './surface/render-verb.js';
 import { executeRewind, RewindError } from './surface/rewind.js';
 import { collectStatus, formatStatus, statusIsHealthy } from './surface/status.js';
 import { executeUpgrade, formatUpgrade, UpgradeError } from './surface/upgrade.js';
@@ -54,6 +55,11 @@ Usage:
                     FUNC/MOD/FLOW+SCHEMA through the gate. RESEED semantics —
                     replaces the whole graph (automatic backup under
                     .graphcode/backup/), never merges.
+  graphcode render <view> --format md|docx|pdf [--out <datei>]
+                    Eine Sicht als Datei ausgeben (CR-GC-909), z. B. render srs
+                    --format docx. docx und pdf über pandoc, pdf mit weasyprint;
+                    Vorlage für pdf: docs/vorlagen/srs.css im Repo. Fehlt ein
+                    Programm: Installationsbefehl, Exit 2, keine Datei.
   graphcode rewind <ref> [--force] [--snapshot <pfad>]
                     Recall the graph state committed at <ref> (CR-GC-311).
                     Reads the snapshot from git object storage — the working
@@ -129,6 +135,37 @@ async function main(): Promise<void> {
           process.stderr.write(
             `graphcode import-code: store already owned by pid ${err.owner.pid} — ` +
               'stop the running MCP host (or the other run) first.\n',
+          );
+          process.exit(1);
+        }
+        throw err;
+      }
+    }
+    case 'render': {
+      // Sicht als Datei (CR-GC-909): md, docx, pdf. Report auf stderr wie import-code.
+      const args = process.argv.slice(3);
+      const flag = (name: string): string | undefined => {
+        const i = args.indexOf(name);
+        return i >= 0 ? args[i + 1] : undefined;
+      };
+      const view = args.find((a, i) => !a.startsWith('-') && !['--format', '--out'].includes(args[i - 1] ?? ''));
+      const format = flag('--format');
+      if (!view || !format) {
+        process.stderr.write(`graphcode render: Sicht und --format sind Pflicht\n\n${USAGE}`);
+        process.exit(1);
+      }
+      try {
+        const summary = await executeRender({ repoRoot: process.cwd(), view, format, out: flag('--out') });
+        process.stderr.write(`graphcode render: ${JSON.stringify(summary, null, 2)}\n`);
+        process.exit(0);
+      } catch (err) {
+        if (err instanceof RenderToolMissingError) {
+          process.stderr.write(`graphcode render: ${err.message}\n`);
+          process.exit(2);
+        }
+        if (err instanceof StoreOwnershipError) {
+          process.stderr.write(
+            `graphcode render: store already owned by pid ${err.owner.pid} — stop the running MCP host first.\n`,
           );
           process.exit(1);
         }

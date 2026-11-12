@@ -56,7 +56,7 @@ erschienen). Die A-SPICE-Evaluation vom 2026-08-05 (CR-GC-301) lief noch gegen 3
 
 | # | Anforderungsklasse | Norm | erzeugte Sicht | prüfende Regel | heute |
 |---|---|---|---|---|---|
-| 1 | Pflicht-Informationsobjekte + Gliederung | 29148 Kl. 7/9, Annex A | `srs` (SyRS/SRS-Anteil), `conops` (OpsCon-Anteil) | — (Gliederung nicht geprüft) | **teilweise:** SyRS/SRS und OpsCon in eigener Gliederung; BRS und StRS fehlen; Abschnitte wie Usability, Physical, Environmental, Sustainment der SyRS nicht als Gliederung |
+| 1 | Pflicht-Informationsobjekte + Gliederung | 29148 Kl. 7/9, Annex A | `srs` (BRS, StRS, SyRS), `conops` (OpsCon-Anteil) | `tests/exporter.test.ts` prüft Reihenfolge und Vollständigkeit der Überschriften gegen `SRS_OUTLINE` | **ja (2026-11-12, CR-GC-909):** die SRS-Sicht trägt BRS, StRS und alle Abschnitte der SyRS aus 29148 9.5 in Normreihenfolge, leere mit dem Satz „keine Anforderung dieser Art im Modell“; Ausgabe auch als Word und PDF (`graphcode render`). Gefüllt sind die Abschnitte, die das Modell trägt (Functional, Performance, Interfaces, Physical, Policies, Verification); Usability, Environmental, Security, Sustainment bleiben leer, bis eine REQ-Art sie unterscheidet |
 | 2 | Syntaktische Anforderungsqualität | 29148 5.2.5–5.2.7 | — | BQ-01 Unambiguous, BQ-02 Verifiable, BQ-06 Conforming, BQ-07 Complete | **teilweise:** Regeln vorhanden, nur steuernd (Warnung); die Wortliste aus 5.2.7 ist nicht als Lint nachgewiesen |
 | 3 | Semantische Anforderungsqualität | 29148 5.2.5/5.2.6 | — | BQ-04 Necessary (Heuristik) | **nein:** braucht Urteil; kein Dokument-Claim |
 | 4 | Anforderungsattribute | 29148 5.2.8; A-SPICE 17-54 | `rtm`, `srs` | — | **teilweise:** ID (stabile uid), Typ (`kinds`), Status, Zeitstempel; Version über graphVersion und Audit-Trail; **Owner, Priorität, Risiko, Rationale fehlen** |
@@ -67,7 +67,7 @@ erschienen). Die A-SPICE-Evaluation vom 2026-08-05 (CR-GC-301) lief noch gegen 3
 | 9 | Verifikationsergebnisse | A-SPICE 15-52; 15288 Verification | `testmatrix` | VR-01 (Ergebnis fehlt) | **ja:** aus echten Läufen über `graph_test_ingest` — 118 von 134 TEST gebunden, 119 passed, 1 failed |
 | 10 | Traceability Änderung ↔ Arbeitsergebnis | A-SPICE SUP.10 BP4 | `changelog`, `cr-list`, `implplan` | CR-Knoten mit `relation`-Kanten, Status aus dem Verzeichnis | **ja** für CR ↔ betroffene Elemente; CR ↔ Problem nur über Items |
 
-**Ergebnis: 3 von 10 ja, 6 teilweise, 1 nein.**
+**Ergebnis: 3 von 10 ja, 6 teilweise, 1 nein** (Stand 2026-09-26). **Nachtrag 2026-11-12:** Klasse 1 ist mit CR-GC-909 auf „ja“ nachgezogen, damit 4 ja, 5 teilweise, 1 nein.
 
 ## Was kein Dokument belegen kann (außerhalb des Claims)
 

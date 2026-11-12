@@ -10,6 +10,7 @@
 |---|---|---|
 | `ACTOR-auftraggeber` | io | `FLOW-auftrag` |
 | `ACTOR-auftraggeber` | io | `FLOW-cli-invocation` |
+| `ACTOR-auftraggeber` | io | `FLOW-cli-invocation-render` |
 | `ACTOR-auftraggeber` | io | `FLOW-session-end` |
 | `ACTOR-dashboard` | io | `FLOW-dashboard-call` |
 | `ACTOR-dashboard` | io | `FLOW-health-request` |
@@ -1437,6 +1438,9 @@
 | `CR-GC-908` | relation | `UC-model-exchange` |
 | `CR-GC-909` | relation | `FUNC-export-markdown` |
 | `CR-GC-909` | relation | `FUNC-graph-export-snapshot` |
+| `CR-GC-909` | relation | `FUNC-render-verb` |
+| `CR-GC-909` | relation | `REQ-render-document` |
+| `CR-GC-909` | relation | `REQ-srs-29148` |
 | `CR-GC-910` | relation | `FUNC-import-doc` |
 | `CR-GC-910` | relation | `UC-model-exchange` |
 | `CR-GC-911` | relation | `FUNC-graph-export-snapshot` |
@@ -1619,6 +1623,9 @@
 | `FCHAIN-recall` | compose | `FUNC-seed-from-json` |
 | `FCHAIN-recall` | satisfy | `REQ-risk-edge-vanishes-silently` |
 | `FCHAIN-recall` | satisfy | `REQ-risk-partial-store-after-reseed` |
+| `FCHAIN-render-document` | compose | `FUNC-cli-dispatch` |
+| `FCHAIN-render-document` | compose | `FUNC-export-markdown` |
+| `FCHAIN-render-document` | compose | `FUNC-render-verb` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-cli-dispatch` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-collect-status` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
@@ -1896,6 +1903,7 @@
 | `FLOW-cli-command` | io | `FUNC-harness-cli` |
 | `FLOW-cli-command` | io | `FUNC-import-code-verb` |
 | `FLOW-cli-command` | io | `FUNC-init-verb` |
+| `FLOW-cli-command` | io | `FUNC-render-verb` |
 | `FLOW-cli-command` | io | `FUNC-rewind` |
 | `FLOW-cli-command` | io | `FUNC-serve-sse` |
 | `FLOW-cli-command` | io | `FUNC-serve-stdio` |
@@ -1909,6 +1917,8 @@
 | `FLOW-cli-invocation` | relation | `SCHEMA-cli-command` |
 | `FLOW-cli-invocation-import-code` | io | `FUNC-cli-dispatch` |
 | `FLOW-cli-invocation-import-code` | relation | `SCHEMA-cli-command` |
+| `FLOW-cli-invocation-render` | io | `FUNC-cli-dispatch` |
+| `FLOW-cli-invocation-render` | relation | `SCHEMA-cli-command` |
 | `FLOW-cli-output` | io | `ACTOR-auftraggeber` |
 | `FLOW-cli-output` | relation | `SCHEMA-cli-command` |
 | `FLOW-code-lane-plan` | io | `FUNC-verify-lane-code` |
@@ -2041,6 +2051,8 @@
 | `FLOW-harness-request-import-code` | relation | `SCHEMA-query-params` |
 | `FLOW-harness-request-own-kuzu` | io | `FUNC-create-harness` |
 | `FLOW-harness-request-own-kuzu` | relation | `SCHEMA-query-params` |
+| `FLOW-harness-request-render` | io | `FUNC-create-harness` |
+| `FLOW-harness-request-render` | relation | `SCHEMA-query-params` |
 | `FLOW-harness-request-rewind` | io | `FUNC-create-harness` |
 | `FLOW-harness-request-rewind` | relation | `SCHEMA-query-params` |
 | `FLOW-health-eval-request` | io | `FUNC-evaluate-rules` |
@@ -2106,6 +2118,7 @@
 | `FLOW-markdown-docs` | io | `ACTOR-auftraggeber` |
 | `FLOW-markdown-docs` | relation | `SCHEMA-markdown-view` |
 | `FLOW-markdown-text` | io | `FUNC-graph-export-snapshot` |
+| `FLOW-markdown-text` | io | `FUNC-render-verb` |
 | `FLOW-markdown-text` | relation | `SCHEMA-markdown-view` |
 | `FLOW-marker-clear` | io | `FUNC-export-marker-clear` |
 | `FLOW-marker-clear` | relation | `SCHEMA-export-pending` |
@@ -2201,6 +2214,10 @@
 | `FLOW-readiness-report` | relation | `SCHEMA-readiness-report` |
 | `FLOW-readiness-request` | io | `FUNC-compute-readiness` |
 | `FLOW-readiness-request` | relation | `SCHEMA-rule-violation` |
+| `FLOW-render-file` | io | `ACTOR-auftraggeber` |
+| `FLOW-render-file` | relation | `SCHEMA-cli-command` |
+| `FLOW-render-view-request` | io | `FUNC-export-markdown` |
+| `FLOW-render-view-request` | relation | `SCHEMA-markdown-view` |
 | `FLOW-reseed-answer` | io | `FUNC-agent-loop` |
 | `FLOW-reseed-answer` | relation | `SCHEMA-ontology-json` |
 | `FLOW-reseed-order` | io | `FUNC-apply-reseed` |
@@ -2236,6 +2253,8 @@
 | `FLOW-seed-request` | relation | `SCHEMA-ontology-json` |
 | `FLOW-seed-request-import-code` | io | `FUNC-seed-from-json` |
 | `FLOW-seed-request-import-code` | relation | `SCHEMA-ontology-json` |
+| `FLOW-seed-request-render` | io | `FUNC-seed-from-json` |
+| `FLOW-seed-request-render` | relation | `SCHEMA-ontology-json` |
 | `FLOW-select-request` | io | `FUNC-select-tests` |
 | `FLOW-select-request` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-select-request-lane` | io | `FUNC-select-tests` |
@@ -2304,6 +2323,8 @@
 | `FLOW-store-close` | relation | `SCHEMA-harness-handle` |
 | `FLOW-store-close-cli` | io | `FUNC-graph-store` |
 | `FLOW-store-close-cli` | relation | `SCHEMA-harness-handle` |
+| `FLOW-store-close-render` | io | `FUNC-graph-store` |
+| `FLOW-store-close-render` | relation | `SCHEMA-harness-handle` |
 | `FLOW-store-close-rewind` | io | `FUNC-graph-store` |
 | `FLOW-store-close-rewind` | relation | `SCHEMA-harness-handle` |
 | `FLOW-store-load` | io | `FUNC-open-store` |
@@ -2314,6 +2335,8 @@
 | `FLOW-store-open-import-code` | relation | `SCHEMA-harness-handle` |
 | `FLOW-store-open-own-kuzu` | io | `FUNC-open-store` |
 | `FLOW-store-open-own-kuzu` | relation | `SCHEMA-harness-handle` |
+| `FLOW-store-open-render` | io | `FUNC-open-store` |
+| `FLOW-store-open-render` | relation | `SCHEMA-harness-handle` |
 | `FLOW-store-open-rewind` | io | `FUNC-open-store` |
 | `FLOW-store-open-rewind` | relation | `SCHEMA-harness-handle` |
 | `FLOW-store-ownership` | io | `FUNC-open-store` |
@@ -2461,6 +2484,7 @@
 | `FUNC-block-bedienung` | compose | `FUNC-import-code-verb` |
 | `FUNC-block-bedienung` | compose | `FUNC-measure-test-schlupf` |
 | `FUNC-block-bedienung` | compose | `FUNC-plan-code-lane` |
+| `FUNC-block-bedienung` | compose | `FUNC-render-verb` |
 | `FUNC-block-bedienung` | compose | `FUNC-upgrade` |
 | `FUNC-block-bedienung` | compose | `FUNC-verify-lane-code` |
 | `FUNC-block-bedienung` | compose | `FUNC-verify-lane-full` |
@@ -2615,6 +2639,7 @@
 | `FUNC-export-markdown` | io | `FLOW-markdown-text` |
 | `FUNC-export-markdown` | satisfy | `REQ-doc-export` |
 | `FUNC-export-markdown` | satisfy | `REQ-post-export-markdown` |
+| `FUNC-export-markdown` | satisfy | `REQ-srs-29148` |
 | `FUNC-export-marker` | allocate | `MOD-kernel` |
 | `FUNC-export-marker` | io | `FLOW-export-pending` |
 | `FUNC-export-marker` | satisfy | `REQ-export-marker-tracks-drift` |
@@ -2837,6 +2862,14 @@
 | `FUNC-read-tools` | satisfy | `REQ-post-agent-query` |
 | `FUNC-read-tools` | satisfy | `REQ-progressive-expansion` |
 | `FUNC-read-tools` | satisfy | `REQ-query-precision` |
+| `FUNC-render-verb` | allocate | `MOD-surface` |
+| `FUNC-render-verb` | io | `FLOW-harness-request-render` |
+| `FUNC-render-verb` | io | `FLOW-render-file` |
+| `FUNC-render-verb` | io | `FLOW-render-view-request` |
+| `FUNC-render-verb` | io | `FLOW-seed-request-render` |
+| `FUNC-render-verb` | io | `FLOW-store-close-render` |
+| `FUNC-render-verb` | io | `FLOW-store-open-render` |
+| `FUNC-render-verb` | satisfy | `REQ-render-document` |
 | `FUNC-reseed` | allocate | `MOD-kernel` |
 | `FUNC-reseed` | io | `FLOW-reseed-order` |
 | `FUNC-reseed` | satisfy | `REQ-graph-state-recall` |
@@ -3294,6 +3327,7 @@
 | `TEST-doc-export` | verify | `REQ-doc-export` |
 | `TEST-doc-export` | verify | `REQ-model-exchange-post` |
 | `TEST-doc-export` | verify | `REQ-post-export-markdown` |
+| `TEST-doc-export` | verify | `REQ-srs-29148` |
 | `TEST-doc-export` | verify | `SCHEMA-markdown-view` |
 | `TEST-docs-taxonomy` | verify | `REQ-docs-taxonomy` |
 | `TEST-edge-only-batch` | verify | `REQ-formatE-diff-dialect` |
@@ -3471,6 +3505,7 @@
 | `TEST-reduced-llm` | verify | `REQ-post-modelfree-gate` |
 | `TEST-reduced-llm` | verify | `REQ-reduced-llm` |
 | `TEST-reduced-llm` | verify | `REQ-small-model-viable` |
+| `TEST-render-verb` | verify | `REQ-render-document` |
 | `TEST-repo-lifecycle` | verify | `REQ-session-leaves-nothing-behind` |
 | `TEST-reseed` | verify | `REQ-graph-state-recall` |
 | `TEST-reseed` | verify | `REQ-store-recovery` |
@@ -3681,12 +3716,15 @@
 | `UC-loop-closure` | compose | `REQ-zuege-sparen` |
 | `UC-model-exchange` | compose | `FCHAIN-doc-export` |
 | `UC-model-exchange` | compose | `FCHAIN-model-import` |
+| `UC-model-exchange` | compose | `FCHAIN-render-document` |
 | `UC-model-exchange` | compose | `FCHAIN-skill-import-code` |
 | `UC-model-exchange` | compose | `REQ-model-exchange-post` |
 | `UC-model-exchange` | compose | `REQ-model-exchange-pre` |
 | `UC-model-exchange` | compose | `REQ-mutate-befund-je-element` |
 | `UC-model-exchange` | compose | `REQ-no-extraction` |
+| `UC-model-exchange` | compose | `REQ-render-document` |
 | `UC-model-exchange` | compose | `REQ-skill-import-code-nennt-verb` |
+| `UC-model-exchange` | compose | `REQ-srs-29148` |
 | `UC-repo-lifecycle` | compose | `FCHAIN-docked-session` |
 | `UC-repo-lifecycle` | compose | `FCHAIN-host-start` |
 | `UC-repo-lifecycle` | compose | `FCHAIN-repo-lifecycle` |

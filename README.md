@@ -92,6 +92,7 @@ npx @sigloch/graphcode init          # scaffold host configs, GRAPHCODE.md, skil
 npx @sigloch/graphcode status        # is my host up, and where is my dashboard?
 npx @sigloch/graphcode upgrade       # install the latest version, refresh scaffolded files, keep the store
 npx @sigloch/graphcode rewind <ref>  # recall the graph committed at <ref>; the working tree is not touched
+npx @sigloch/graphcode render srs --format docx   # a view as a file: md, docx or pdf (needs pandoc)
 npx @sigloch/graphcode skills sync   # re-copy the shipped se-* skills
 npx @sigloch/graphcode remove        # remove everything init scaffolded
 npx @sigloch/graphcode mcp           # the server itself — your agent host starts it, not you
@@ -170,6 +171,7 @@ them on demand.
 
 | File in `docs/views/` | Document |
 |---|---|
+| `srs.md` | Requirements specification, outlined after ISO/IEC/IEEE 29148 clause 9 (BRS, StRS, SyRS) |
 | `rtm.md` | Requirements Traceability Matrix |
 | `architecture.md` | Architecture allocation (SDD) |
 | `icd.md` | Interface Control Document |
@@ -179,6 +181,14 @@ them on demand.
 | `conops.md` | Concept of Operations (ISO 29148 §5.2.4) |
 | `fmea.md` | FMEA — failure modes, S/O/D, action priority |
 | `changelog.md` | change log from the CR history |
+
+To hand a document to people outside the repo, `graphcode render <view> --format docx|pdf [--out <file>]`
+writes it as Word (for review with comments) or PDF (for delivery). The Markdown view stays the
+source; [pandoc](https://pandoc.org) converts it, and PDF additionally needs
+[weasyprint](https://weasyprint.org): `brew install pandoc weasyprint`. Without them the command
+prints the install command and exits with code 2. The PDF layout comes from
+`docs/vorlagen/srs.css` in your repo when that file exists, so your own house style lives there.
+The command opens the store itself: stop a running MCP host first.
 
 Because they are generated, "the document is incomplete" and "the gate is still open" are the same
 fact with the same cause — there is no separate documentation debt.

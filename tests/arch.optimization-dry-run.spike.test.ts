@@ -517,10 +517,15 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // MOD-projections und dem Vertrag SCHEMA-cr-groups ins Modell kam (Steuerwert am Start 7,752 -> 8,002):
       // drei Zuege statt vier. Abfrage nimmt Bedienung auf, Betrieb nimmt graph_readiness und audit_stats auf.
       // Weiter derselbe Befund — Werkzeuge sind Blaetter, kein Block (ITEM-2026-798).
+      // CR-GC-909 (graphVersion 1112) — NEU GEMESSEN, nachdem das Verb graphcode render als FUNC unter Bedienung
+      // kam, mit eigener Kette und zwei Vertraegen ueber die Grenze surface/projections (Steuerwert am Start
+      // 8,002 -> 8,252): weiter drei Zuege. Abfrage nimmt Bedienung auf, Grounding nimmt Bedienung auf, Abfrage
+      // nimmt Ruestzeug auf. Weiter derselbe Befund — Bloecke werden umgehaengt, keiner ist fachlich begruendet
+      // (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
-        'FUNC-block-betrieb -compose-> FUNC-graph-readiness (retire FUNC-graph-readiness)',
-        'FUNC-block-betrieb -compose-> FUNC-audit-stats (retire FUNC-audit-stats)',
+        'FUNC-block-grounding -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
+        'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
       ]);
       expect(
         rest

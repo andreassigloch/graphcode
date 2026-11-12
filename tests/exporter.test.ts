@@ -29,6 +29,7 @@ import {
   VIEW_FILENAMES,
 } from '../src/projections/exporter.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { SRS_OUTLINE, SRS_EMPTY, srsSection } from '../src/projections/srs.js';
 
 const REPO_ROOT = join(__dirname, '..');
 const GRAPH_JSON = join(REPO_ROOT, 'docs/graph/graphcode.graph.json');
@@ -225,7 +226,7 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
   it('CR-GC-305: SRS is THE requirements view — the type-grouped dump is gone', () => {
     const srs = exportMarkdown(graph, 'srs');
     expect(srs).toContain('System Requirements Specification');
-    expect(srs).toContain('## 3  Use Cases & Verhalten');
+    expect(srs).toContain('#### 3.3.1  Functional requirements');
     // The former `spec` view grouped by element type (`## FUNC`, `## MOD`, …) under
     // the heading "Modell-Spezifikation". No remaining view may reintroduce that
     // shape — the second requirements document WAS the duplication this CR removed.
@@ -283,29 +284,86 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     // indexOf would hit `FUNC-second` in REQ-shared's trace line first).
     expect(srs.indexOf('`FUNC-first` —')).toBeLessThan(srs.indexOf('`FUNC-second` —'));
 
-    // Durchgezogene Dezimal-Nummerierung bis zur vorletzten Ebene; REQ-Einträge
-    // (unterste Ebene) bleiben unnummeriert.
-    expect(srs).toContain('### 2.1  `ACTOR-a`');
-    expect(srs).toContain('### 3.1  `UC-u`');
-    expect(srs).toContain('#### 3.1.1  `FCHAIN-c`');
-    expect(srs).toContain('##### 3.1.1.1  `FUNC-first`');
-    expect(srs).toContain('##### 3.1.1.2  `FUNC-second`');
-    expect(srs).toContain('### 5.1  `SCHEMA-s`'); // SCHEMA = eigenes Kapitel
-    expect(srs).toContain('### 6.1  `MOD-m`');
+    // Durchgezogene Dezimal-Nummerierung unter den Abschnitten der 29148-Gliederung
+    // (CR-GC-909); REQ-Einträge (unterste Ebene) bleiben unnummeriert, h6 ist die Grenze.
+    expect(srs).toContain('#### 2.1.1  `ACTOR-a`'); // StRS: Stakeholder
+    expect(srs).toContain('##### 3.3.1.1  `UC-u`');
+    expect(srs).toContain('###### 3.3.1.1.1  `FCHAIN-c`');
+    expect(srs).toContain('###### 3.3.1.1.1.1  `FUNC-first`');
+    expect(srs).toContain('###### 3.3.1.1.1.2  `FUNC-second`');
+    expect(srs).toContain('###### 3.3.4.2.1  `SCHEMA-s`'); // System interfaces: Datenformate
+    expect(srs).toContain('##### 3.3.7.1  `MOD-m`'); // Physical characteristics: der MOD-Baum
     expect(srs).toMatch(/#{3,6} `REQ-shared`/); // unnummeriert
 
-    // REQ-shared appears under BOTH rendered satisfiers (FCHAIN + FUNC) with the
-    // cross-note; the architecture chapter carries NO REQ entries (satisfy ▶ line
-    // on the MOD instead), and the orphan lands in cross-cutting.
+    // REQ-shared (keine kinds = functional) appears under BOTH functional carriers (FCHAIN +
+    // FUNC) with the cross-note; Physical characteristics carries it only as the MOD's
+    // satisfy ▶ line, and the functional orphan lands under „Anforderungen ohne Funktion“.
     const first = srs.indexOf('`REQ-shared`');
     const second = srs.indexOf('`REQ-shared`', first + 1);
     expect(first).toBeGreaterThan(-1);
     expect(second).toBeGreaterThan(first);
     expect(srs).toContain('auch unter');
-    const arch = srs.slice(srs.indexOf('## 6  Architektur'), srs.indexOf('## 7  Cross-cutting'));
-    expect(arch).not.toMatch(/#{3,6} `REQ-/); // kein REQ-Eintrag in der Architektur
+    const arch = srs.slice(srs.indexOf('#### 3.3.7  '), srs.indexOf('#### 3.3.8  '));
+    expect(arch).not.toMatch(/#{3,6} `REQ-/); // eine functional REQ ist hier kein Eintrag
     expect(arch).toContain('satisfy ▶ `REQ-shared`'); // aber als Trace-Zeile am MOD
-    expect(srs.indexOf('`REQ-orphan`')).toBeGreaterThan(srs.indexOf('## 7  Cross-cutting'));
+    const rest = srs.indexOf('##### 3.3.1.2  Anforderungen ohne Funktion');
+    expect(rest).toBeGreaterThan(-1);
+    expect(srs.indexOf('`REQ-orphan`')).toBeGreaterThan(rest);
+  });
+
+  // -------------------------------------------------------------------------
+  // CR-GC-909 — Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS).
+  // -------------------------------------------------------------------------
+
+  it('CR-GC-909: jeder Abschnitt von SRS_OUTLINE ist eine Überschrift, in Normreihenfolge, leere mit dem Leersatz', () => {
+    for (const g of [graph, { nodes: [], edges: [] } as Graph]) {
+      const srs = exportMarkdown(g, 'srs', 'test');
+      const nums = new Set(SRS_OUTLINE.map((s) => s.num));
+      const found = srs
+        .split('\n')
+        .map((l) => /^(#{2,6}) (\d+(?:\.\d+)*)  ([^`].*)$/.exec(l))
+        .filter((m): m is RegExpExecArray => m !== null && nums.has(m[2]!))
+        .map((m) => ({ level: m[1]!.length, num: m[2]!, title: m[3]! }));
+      expect(found.map((f) => `${f.num} ${f.title}`)).toEqual(SRS_OUTLINE.map((s) => `${s.num} ${s.title}`));
+      for (const f of found) expect(f.level).toBe(f.num.split('.').length + 1);
+      // Ein Abschnitt ohne Inhalt trägt den Leersatz, nie gar nichts.
+      for (const num of ['3.2', '3.3.2', '3.3.5', '3.3.6', '3.3.8', '3.3.9', '3.3.10', '3.3.12', '3.3.13', '3.5.1', '3.5.2']) {
+        const at = srs.indexOf(`${num}  ${SRS_OUTLINE.find((s) => s.num === num)!.title}`);
+        expect(srs.slice(at).split('\n')[2], num).toBe(SRS_EMPTY);
+      }
+    }
+  });
+
+  it('CR-GC-909: kinds und satisfy-Träger legen den Abschnitt fest (Entscheidung 2026-11-12)', () => {
+    expect(srsSection(['functional'], 'MOD')).toBe('3.3.1');
+    expect(srsSection([], undefined)).toBe('3.3.1');
+    expect(srsSection(['non-functional'], 'FCHAIN')).toBe('3.3.3');
+    expect(srsSection(['non-functional'], 'FUNC')).toBe('3.3.3');
+    expect(srsSection(['non-functional'], 'MOD')).toBe('3.3.7');
+    expect(srsSection(['non-functional'], 'SYS')).toBe('3.3.11');
+    expect(srsSection(['non-functional'], undefined)).toBe('3.3.11');
+
+    const g: Graph = {
+      nodes: [
+        { uid: 'SYS-x', type: 'SYS', name: 'X', attributes: {} },
+        { uid: 'FCHAIN-c', type: 'FCHAIN', name: 'C', attributes: {} },
+        { uid: 'MOD-m', type: 'MOD', name: 'M', attributes: {} },
+        { uid: 'REQ-zeit', type: 'REQ', name: 'Zeit', attributes: { kinds: ['non-functional'] } },
+        { uid: 'REQ-gewicht', type: 'REQ', name: 'Gewicht', attributes: { kinds: ['non-functional'] } },
+        { uid: 'REQ-regel', type: 'REQ', name: 'Regel', attributes: { kinds: ['non-functional'] } },
+      ],
+      edges: [
+        { sourceId: 'FCHAIN-c', targetId: 'REQ-zeit', edgeType: 'satisfy', attributes: {} },
+        { sourceId: 'MOD-m', targetId: 'REQ-gewicht', edgeType: 'satisfy', attributes: {} },
+        { sourceId: 'SYS-x', targetId: 'REQ-regel', edgeType: 'satisfy', attributes: {} },
+      ],
+    };
+    const srs = exportMarkdown(g, 'srs', 'test');
+    const part = (a: string, b: string): string => srs.slice(srs.indexOf(`#### ${a}  `), srs.indexOf(`#### ${b}  `));
+    expect(part('3.3.3', '3.3.4')).toMatch(/#{3,6} `REQ-zeit`/);
+    expect(part('3.3.7', '3.3.8')).toMatch(/#{3,6} `REQ-gewicht`/);
+    expect(part('3.3.11', '3.3.12')).toMatch(/#{3,6} `REQ-regel`/);
+    expect(part('3.3.1', '3.3.2')).not.toMatch(/`REQ-/);
   });
 
   it('CR-GVE-172: io order wins over uid order within a FCHAIN', () => {

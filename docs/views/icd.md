@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 60 SCHEMA · 238 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 60 SCHEMA · 245 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -125,9 +125,10 @@
 | `FLOW-channel-next-step` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-skill-reference` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-steer-advisory` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
-| `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` |
+| `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-render-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` |
 | `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-commit-check` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model` |
 | `FLOW-cli-invocation-import-code` | `FUNC-agent-loop` | `FUNC-cli-dispatch` |
+| `FLOW-cli-invocation-render` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` |
 | `FLOW-cli-output` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-code-lane-plan` | `FUNC-plan-code-lane` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
 | `FLOW-commit-check-request` | `FUNC-commit-check` | `FUNC-check-code-conformance` |
@@ -177,6 +178,7 @@
 | `FLOW-harness-request` | `FUNC-serve-stdio` | `FUNC-create-harness` |
 | `FLOW-harness-request-import-code` | `FUNC-import-code-verb` | `FUNC-create-harness` |
 | `FLOW-harness-request-own-kuzu` | `FUNC-own-kuzu-host` | `FUNC-create-harness` |
+| `FLOW-harness-request-render` | `FUNC-render-verb` | `FUNC-create-harness` |
 | `FLOW-harness-request-rewind` | `FUNC-rewind` | `FUNC-create-harness` |
 | `FLOW-health-eval-request` | `FUNC-health-endpoint` | `FUNC-evaluate-rules` |
 | `FLOW-health-report` | `FUNC-health-endpoint` | `ACTOR-dashboard` |
@@ -207,7 +209,7 @@
 | `FLOW-lock-release-close` | `FUNC-graph-store` | `FUNC-claim-store-lock` |
 | `FLOW-lock-request` | `FUNC-open-store` | `FUNC-claim-store-lock` |
 | `FLOW-markdown-docs` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` |
-| `FLOW-markdown-text` | `FUNC-export-markdown` | `FUNC-graph-export-snapshot` |
+| `FLOW-markdown-text` | `FUNC-export-markdown` | `FUNC-graph-export-snapshot` · `FUNC-render-verb` |
 | `FLOW-marker-clear` | `FUNC-graph-export-snapshot` | `FUNC-export-marker-clear` |
 | `FLOW-marker-clear-reseed` | `FUNC-apply-reseed` | `FUNC-export-marker-clear` |
 | `FLOW-marker-set` | `FUNC-mutate` | `FUNC-export-marker` |
@@ -246,6 +248,8 @@
 | `FLOW-read-request` | `FUNC-read-tools` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` |
 | `FLOW-readiness-report` | `FUNC-graph-readiness` | `FUNC-agent-loop` · `FUNC-host-socket` |
 | `FLOW-readiness-request` | `FUNC-graph-readiness` | `FUNC-compute-readiness` |
+| `FLOW-render-file` | `FUNC-render-verb` | `ACTOR-auftraggeber` |
+| `FLOW-render-view-request` | `FUNC-render-verb` | `FUNC-export-markdown` |
 | `FLOW-reseed-answer` | `FUNC-graph-reseed-tool` | `FUNC-agent-loop` |
 | `FLOW-reseed-order` | `FUNC-reseed` | `FUNC-apply-reseed` |
 | `FLOW-reseed-order-open` | `FUNC-open-store` | `FUNC-apply-reseed` |
@@ -261,6 +265,7 @@
 | `FLOW-schlupf-zeile` | `FUNC-verify-lane-full` | `ACTOR-auftraggeber` |
 | `FLOW-seed-request` | `FUNC-serve-stdio` | `FUNC-seed-from-json` |
 | `FLOW-seed-request-import-code` | `FUNC-import-code-verb` | `FUNC-seed-from-json` |
+| `FLOW-seed-request-render` | `FUNC-render-verb` | `FUNC-seed-from-json` |
 | `FLOW-select-request` | `FUNC-resolve-tests-from-code` | `FUNC-select-tests` |
 | `FLOW-select-request-lane` | `FUNC-plan-code-lane` | `FUNC-select-tests` |
 | `FLOW-selected-tests` | `FUNC-select-tests` | `FUNC-plan-code-lane` · `FUNC-resolve-tests-from-code` |
@@ -281,11 +286,13 @@
 | `FLOW-store-build` | `FUNC-create-harness` | `FUNC-claim-store-lock` · `FUNC-graph-store` |
 | `FLOW-store-close` | `FUNC-serve-stdio` | `FUNC-graph-store` |
 | `FLOW-store-close-cli` | `FUNC-cli-dispatch` | `FUNC-graph-store` |
+| `FLOW-store-close-render` | `FUNC-render-verb` | `FUNC-graph-store` |
 | `FLOW-store-close-rewind` | `FUNC-rewind` | `FUNC-graph-store` |
 | `FLOW-store-load` | `FUNC-graph-store` | `FUNC-open-store` |
 | `FLOW-store-open` | `FUNC-serve-stdio` | `FUNC-open-store` |
 | `FLOW-store-open-import-code` | `FUNC-import-code-verb` | `FUNC-open-store` |
 | `FLOW-store-open-own-kuzu` | `FUNC-own-kuzu-host` | `FUNC-open-store` |
+| `FLOW-store-open-render` | `FUNC-render-verb` | `FUNC-open-store` |
 | `FLOW-store-open-rewind` | `FUNC-rewind` | `FUNC-open-store` |
 | `FLOW-store-ownership` | `FUNC-claim-store-lock` | `FUNC-open-store` |
 | `FLOW-store-query` | `FUNC-graph-store` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` |

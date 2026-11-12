@@ -25,6 +25,7 @@ const VERBS: Readonly<Record<string, VerbArgs>> = {
   init: { flags: ['--json'] },
   remove: {},
   'import-code': { positionals: 1 },
+  render: { valueFlags: ['--format', '--out'], positionals: 1 },
   rewind: { flags: ['--force'], valueFlags: ['--snapshot'], positionals: 1 },
   upgrade: { flags: ['--check', '--keep-host', '--global', '--refresh-only'], valueFlags: ['--to'] },
   skills: { positionals: 1 },

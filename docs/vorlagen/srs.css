@@ -1,0 +1,32 @@
+/*
+ * srs.css — Vorlage für `graphcode render <view> --format pdf` (CR-GC-909).
+ * pandoc rendert die Sicht nach HTML, weasyprint setzt das PDF mit dieser Datei.
+ * Neutral gehalten: Eine Firmen-CI ersetzt diese Datei im eigenen Repo.
+ */
+@page {
+  size: A4;
+  margin: 22mm 18mm 20mm 18mm;
+  @bottom-right { content: counter(page) " / " counter(pages); font-size: 8pt; color: #666; }
+  @bottom-left { content: string(doctitle); font-size: 8pt; color: #666; }
+}
+
+html { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 9.5pt; line-height: 1.45; color: #1d2129; }
+body { margin: 0; }
+
+header#title-block-header { string-set: doctitle content(); margin-bottom: 8mm; }
+header#title-block-header .title { font-size: 20pt; margin: 0; }
+
+h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.2; page-break-after: avoid; break-after: avoid; }
+h2 { font-size: 15pt; margin: 0 0 4mm; page-break-before: always; break-before: page; border-bottom: 0.6pt solid #999; padding-bottom: 1.5mm; }
+h3 { font-size: 12pt; margin: 6mm 0 2mm; }
+h4 { font-size: 10.5pt; margin: 5mm 0 1.5mm; }
+h5, h6 { font-size: 9.5pt; margin: 4mm 0 1mm; }
+
+p { margin: 0 0 2mm; orphans: 3; widows: 3; }
+code { font-family: Menlo, "DejaVu Sans Mono", monospace; font-size: 8.5pt; background: #f1f0eb; padding: 0 1px; }
+blockquote { margin: 0 0 2mm; padding-left: 3mm; border-left: 1.5pt solid #bbb; color: #555; }
+ul, ol { margin: 0 0 2mm; padding-left: 6mm; }
+
+table { border-collapse: collapse; width: 100%; margin: 0 0 3mm; font-size: 8.5pt; }
+th, td { border: 0.4pt solid #bbb; padding: 1mm 1.5mm; text-align: left; vertical-align: top; }
+th { background: #ecebe4; }

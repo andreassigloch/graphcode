@@ -96,6 +96,7 @@
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-plan-code-lane` | FUNC | Code-Spur planen |
 | `FUNC-read-tools` | FUNC | bindReadTools(ctx) |
+| `FUNC-render-verb` | FUNC | executeRender |
 | `FUNC-reseed` | FUNC | reseed(relPath) |
 | `FUNC-resolve-tests-from-code` | FUNC | harness.testImpact(changeSet, depth) |
 | `FUNC-rewind` | FUNC | graphcode rewind <ref> |
@@ -235,6 +236,7 @@
 | `FUNC-own-kuzu-host` | `MOD-kernel` |
 | `FUNC-plan-code-lane` | `MOD-projections` |
 | `FUNC-read-tools` | `MOD-surface` |
+| `FUNC-render-verb` | `MOD-surface` |
 | `FUNC-reseed` | `MOD-kernel` |
 | `FUNC-resolve-tests-from-code` | `MOD-kernel` |
 | `FUNC-rewind` | `MOD-surface` |

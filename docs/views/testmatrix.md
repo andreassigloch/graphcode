@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 200 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 202 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -138,6 +138,7 @@
 | `REQ-real-health-check` | ✓ | ✓ passed | `TEST-readonly-bridge` |
 | `REQ-recommend-next-step` | ✓ | ⚠ nie gelaufen | `TEST-recommend-next-step` |
 | `REQ-reduced-llm` | ✓ | ✓ passed | `TEST-reduced-llm` |
+| `REQ-render-document` | ✓ | ✓ passed | `TEST-render-verb` |
 | `REQ-repo-install` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-init-verb` · `TEST-opencode-plugin` |
 | `REQ-repo-uninstall` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-opencode-plugin` |
 | `REQ-repo-update` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
@@ -179,6 +180,7 @@
 | `REQ-skill-import-code-nennt-verb` | ✓ | ✓ passed | `TEST-skill-import-code-nennt-verb` |
 | `REQ-skill-reads-only` | ✓ | ✓ passed | `TEST-skill-reports-measured-values` |
 | `REQ-small-model-viable` | ✓ | ✓ passed | `TEST-mvp-e2e` · `TEST-reduced-llm` |
+| `REQ-srs-29148` | ✓ | ✓ passed | `TEST-doc-export` |
 | `REQ-stage-names-enumerated` | ✓ | ⚠ nie gelaufen | `TEST-stage-names-enumerated` |
 | `REQ-steering-delta-in-answer-tested` | ✓ | ⚠ nie gelaufen | `TEST-steering-delta-in-answer` |
 | `REQ-steering-from-metrics` | ✓ | ✓ passed | `TEST-artifact-coupling` · `TEST-first-step` · `TEST-fit-advisory` |
@@ -209,8 +211,8 @@
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
-Coverage: 200/200 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 162/200 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 202/202 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 164/202 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
@@ -282,6 +284,7 @@ Belegt: 162/200 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-cli-dispatch` → `FUNC-harness-cli` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
 | `FUNC-cli-dispatch` → `FUNC-import-code-verb` | `FLOW-cli-command` | `FCHAIN-model-import` · `FCHAIN-skill-import-code` | `TEST-capture` · `TEST-doc-export` · `TEST-import-code-verb` | conformance, integration | passed |
 | `FUNC-cli-dispatch` → `FUNC-init-verb` | `FLOW-cli-command` | `FCHAIN-repo-lifecycle` | ⚠ keine Abdeckung |  |  |
+| `FUNC-cli-dispatch` → `FUNC-render-verb` | `FLOW-cli-command` | `FCHAIN-render-document` | ⚠ keine Abdeckung |  |  |
 | `FUNC-cli-dispatch` → `FUNC-rewind` | `FLOW-cli-command` | `FCHAIN-recall` | `TEST-export-graph-guard` · `TEST-import-rejected-traces` | integration, unit | passed |
 | `FUNC-cli-dispatch` → `FUNC-serve-sse` | `FLOW-cli-command` | `FCHAIN-http-host` | ⚠ keine Abdeckung |  |  |
 | `FUNC-cli-dispatch` → `FUNC-serve-stdio` | `FLOW-cli-command` | `FCHAIN-host-start` · `FCHAIN-schema-migration` | `TEST-tool-list-change-announced` |  |  |
@@ -313,6 +316,7 @@ Belegt: 162/200 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-evaluate-rules` → `FUNC-rules-tool` | `FLOW-rule-findings` | `FCHAIN-advisory-roundtrip` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` | `TEST-advisory-roundtrip-latency` · `TEST-skill-moves-are-legal` | performance | passed |
 | `FUNC-export-markdown` → `FUNC-cr-groups` | `FLOW-cr-groups-request` | `FCHAIN-doc-export` | ⚠ keine Abdeckung |  |  |
 | `FUNC-export-markdown` → `FUNC-graph-export-snapshot` | `FLOW-markdown-text` | `FCHAIN-doc-export` · `FCHAIN-snapshot-freshness` | `TEST-auto-export` · `TEST-graph-time-travel` | integration | passed |
+| `FUNC-export-markdown` → `FUNC-render-verb` | `FLOW-markdown-text` | `FCHAIN-render-document` | ⚠ keine Abdeckung |  |  |
 | `FUNC-fit-advisory` → `FUNC-arch-fitness` | `FLOW-fitness-anfrage` | `FCHAIN-apply-gate` · `FCHAIN-steering-loop` | `TEST-code-quality` · `TEST-constraint-ein-schreibweg` · `TEST-gve-supervision` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | acceptance, e2e, integration, performance, unit | passed |
 | `FUNC-fit-advisory` → `FUNC-zug-bericht` | `FLOW-fit-advisory` | `FCHAIN-apply-gate` · `FCHAIN-steering-loop` | `TEST-code-quality` · `TEST-constraint-ein-schreibweg` · `TEST-gve-supervision` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | acceptance, e2e, integration, performance, unit | passed |
 | `FUNC-function-criticality` → `FUNC-graph-metrics` | `FLOW-function-criticality` | `FCHAIN-dashboard-metrics` · `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
@@ -441,6 +445,7 @@ Belegt: 162/200 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-read-tools` → `FUNC-graph-expand` | `FLOW-read-request` | `FCHAIN-agent-query` | `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration | passed |
 | `FUNC-read-tools` → `FUNC-graph-impact` | `FLOW-read-request` | `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` | `TEST-advisory-roundtrip-latency` · `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration, performance | passed |
 | `FUNC-read-tools` → `FUNC-list-elements` | `FLOW-read-request` | `FCHAIN-agent-query` | `TEST-inject-graph-slice` · `TEST-mvp-e2e` · `TEST-token-efficiency` · `TEST-violation-context` | acceptance, e2e, integration | passed |
+| `FUNC-render-verb` → `FUNC-export-markdown` | `FLOW-render-view-request` | `FCHAIN-render-document` | ⚠ keine Abdeckung |  |  |
 | `FUNC-reseed` → `FUNC-apply-reseed` | `FLOW-reseed-order` | `FCHAIN-recall` · `FCHAIN-snapshot-roundtrip` | `TEST-deny-stale-read` · `TEST-export-graph-guard` · `TEST-graph-is-ssot` · `TEST-import-rejected-traces` · `TEST-path-containment` | integration, unit | passed |
 | `FUNC-resolve-tests-from-code` → `FUNC-deduce-tests` | `FLOW-impacted-tests` | `FCHAIN-impact-testing` | ⚠ keine Abdeckung |  |  |
 | `FUNC-resolve-tests-from-code` → `FUNC-select-tests` | `FLOW-select-request` | `FCHAIN-impact-testing` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` · `TEST-test-schlupf` | integration, unit | passed |
@@ -524,4 +529,4 @@ Belegt: 162/200 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-zug-bericht` → `FUNC-graph-mutate-tool` | `FLOW-zug-bericht` | `FCHAIN-apply-gate` · `FCHAIN-steering-loop` | `TEST-code-quality` · `TEST-constraint-ein-schreibweg` · `TEST-gve-supervision` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | acceptance, e2e, integration, performance, unit | passed |
 | `FUNC-zug-bericht` → `FUNC-graph-suggest` | `FLOW-zug-bericht` | `FCHAIN-advisory-roundtrip` · `FCHAIN-steering-loop` | `TEST-advisory-roundtrip-latency` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | integration, performance, unit | passed |
 
-> 229/307 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 78 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.
+> 229/310 deklarierte FUNC↔FUNC-Verbindungen sind über die Kette TEST→REQ←FCHAIN→FUNC abgedeckt · 81 offen. Nur Paare mit gemeinsamer FCHAIN — Ko-Adjazenz an einer geteilten FLOW ist keine deklarierte Schnittstelle (CR-GC-315). Leeres level/Ergebnis = am TEST nicht gepflegt.

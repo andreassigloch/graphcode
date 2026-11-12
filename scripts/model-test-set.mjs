@@ -145,6 +145,9 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/render-verb.test.ts':
+    'CR-GC-909: schreibt einen eigenen Snapshot (docs/graph/paketstation.graph.json) in ein Wegwerf-Repo und rendert\n' +
+    'ihn. Die committete SSOT liest er nicht; rot wird er nur durch Code am Renderer oder am Verb (Spur CODE).',
   'tests/live-feed.test.ts':
     'CR-GC-809: liest die SSOT nur als grosse Eingabe fuer die Format-E-Rundreise. Sie prueft den Codec, nicht das\n' +
     'Modell — eine Modellaenderung kann sie nur rot machen, wenn der Codec einen neuen Wert nicht traegt (Spur CODE).',
