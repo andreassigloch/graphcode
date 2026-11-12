@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 198 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 200 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -25,6 +25,7 @@
 | `REQ-cache-layering` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-chain-metrics` | ✓ | ✓ passed | `TEST-graph-metrics` |
 | `REQ-code-governed-quality` | ✓ | ⚠ 1/2 passed | `TEST-code-quality` · `TEST-mvp-e2e` |
+| `REQ-code-quality` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
 | `REQ-codec-validation` | ✓ | ✓ passed | `TEST-codec-validation` · `TEST-roundtrip` |
 | `REQ-commit-check-flow-call` | ✓ | ✓ passed | `TEST-commit-check` |
 | `REQ-completeness-actor-bounded` | ✓ | ✓ passed | `TEST-readiness-completeness` |
@@ -136,6 +137,7 @@
 | `REQ-readonly-bridge` | ✓ | ✓ passed | `TEST-bridge-follows-lock` · `TEST-readonly-bridge` |
 | `REQ-real-health-check` | ✓ | ✓ passed | `TEST-readonly-bridge` |
 | `REQ-recommend-next-step` | ✓ | ⚠ nie gelaufen | `TEST-recommend-next-step` |
+| `REQ-reduced-llm` | ✓ | ✓ passed | `TEST-reduced-llm` |
 | `REQ-repo-install` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-init-verb` · `TEST-opencode-plugin` |
 | `REQ-repo-uninstall` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-opencode-plugin` |
 | `REQ-repo-update` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
@@ -207,8 +209,8 @@
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
-Coverage: 198/198 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 161/198 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 200/200 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 162/200 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

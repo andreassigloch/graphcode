@@ -11,7 +11,7 @@
              ╱SYS╲         System · SYS-graphcode
             ╱      ╲        ✓ 57 test(s) of system requirements
            ╱────────╲
-          ╱ use cases ╲      11 UC · 10 / 11 with a verified requirement
+          ╱ use cases ╲      9 UC · 9 / 9 with a verified requirement
          ╱────────────╲
         ╱ integration  ╲     ✗ 220/312 FUNC↔FUNC connections tested  ← GAP
        ╱────────────────╲
@@ -21,14 +21,14 @@
 
 | Level | Element | Verification | Tests | Coverage | Verdict |
 |---|---|---|---|---|---|
-| Validation | UC (11) | validation (VAL.1) | 3 | 1 / 11 use cases played through | ⚠ 10 UC not played through |
+| Validation | UC (9) | validation (VAL.1) | 0 | 0 / 9 use cases played through | ⚠ 9 UC not played through |
 | System | SYS (1) | system verification (SYS.5) | 57 | 41 / 41 system requirements | ✓ |
-| Use-case | UC (11) | requirements verification (SWE.6 · HWE.4) | 126 | 10 / 11 use cases | ⚠ 1 UC without a verified requirement |
+| Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 79 | 9 / 9 use cases | ✓ |
 | Integration | FUNC↔FUNC (312 conn) | integration verification (SYS.4 · SWE.5) | 45 | 220 / 312 connections | ✗ 92 uncovered |
 | Interface | SCHEMA (60) | integration verification (SYS.4 · SWE.5) | 26 | 37 / 60 schemas | ⚠ 23 without a test |
 | Module | MOD (7) | component verification (SWE.5 · HWE.3) | 57 | 6 / 7 | ⚠ 1 without a verified requirement |
 | Function | FUNC (109) | unit verification (SWE.4 · HWE.3) | 119 | 109 / 109 | ✓ |
-| (no position) | TEST | — | 1 | verifies no REQ or SCHEMA | ⚠ 1 without a position |
+| (no position) | TEST | — | 6 | verifies no REQ or SCHEMA | ⚠ 6 without a position |
 
 > GENERATED — the level of a TEST is the graph position of what it verifies (a REQ under SYS/UC/FCHAIN/MOD/FUNC, or a SCHEMA):
 > it says WHAT is verified, not how the test is written. A test of a system requirement counts as system

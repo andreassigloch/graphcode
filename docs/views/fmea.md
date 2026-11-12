@@ -76,7 +76,7 @@ Ein FLOW oder SCHEMA wird geaendert, ohne dass die abhaengigen Funktionen und Te
 
 - **Bewertung:** S 7 · O 4 · D 5 · RPN 140 · AP High
 - **Kette:** —
-- **Anwendungsfall:** `UC-code-quality`
+- **Anwendungsfall:** —
 - **Träger:** —
 - **Befund:** FMEA CR-GC-798 FM-12. REQ-interface-change-escalation wird nur von der Kette erfuellt, keine Funktion fuehrt die Eskalation aus, TEST-interface-escalation ist ungebunden, im Quellcode gibt es keinen Eskalationsweg.
 - **Analyse:** `CR-GC-798` (docs/cr/done/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md)
@@ -380,7 +380,7 @@ Ein Skill weist einen Zug an, den das Gate ablehnt. Der Lauf stockt, der Nutzer 
 
 - **Bewertung:** S 4 · O 4 · D 2 · RPN 32 · AP Low
 - **Kette:** `FCHAIN-skill-authoring`
-- **Anwendungsfall:** `UC-code-quality`
+- **Anwendungsfall:** —
 - **Träger:** —
 - **Befund:** FMEA CR-GC-798 FM-17, Quelle E Kreislauf der Analyse-Skills. Zweimal belegt (se-fmea, se-trade). Das Gate entdeckt den Zug sofort. Entscheidung des Autors: gelassen, ohne Gegenmassnahme; ITEM-2026-856.
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)

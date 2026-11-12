@@ -6,18 +6,18 @@
  * names the Use-Case (graph node) it validates:
  *
  *   1. NEW MEMBER REPO        — scaffold('init')                  (headline: create a repo)
- *   2. FIRST FILL THROUGH GATE — graph_mutate(Format-E)            (UC-code-quality)
- *   3. SPEC + GOVERNANCE      — mutate(valid) ✓ / mutate(orphan) ✗ (UC-code-quality)
- *   4. KNOW-NOT-GREP          — graph_impact = exact blast-radius  (UC-reduced-llm)
+ *   2. FIRST FILL THROUGH GATE — graph_mutate(Format-E)            (REQ-code-quality)
+ *   3. SPEC + GOVERNANCE      — mutate(valid) ✓ / mutate(orphan) ✗ (REQ-code-quality)
+ *   4. KNOW-NOT-GREP          — graph_impact = exact blast-radius  (REQ-reduced-llm)
  *   5. IMPACT-BASED TESTING   — impact slice selects the test set  (UC-efficient-testing)
- *   6. IMPLEMENT A NODE       — mutate(update) persists to disk     (UC-code-quality)
- *   7. RE-EXPORT              — exportGraphJson/exportMarkdown      (UC-code-quality)
+ *   6. IMPLEMENT A NODE       — mutate(update) persists to disk     (REQ-code-quality)
+ *   7. RE-EXPORT              — exportGraphJson/exportMarkdown      (REQ-code-quality)
  *
- * The UC descriptions in docs/graph/graphcode.graph.json ARE the acceptance:
- *   UC-code-quality   : every change ontology-/rule-conform, no drift; docs/interfaces
+ * The UC and REQ descriptions in docs/graph/graphcode.graph.json ARE the acceptance:
+ *   REQ-code-quality   : every change ontology-/rule-conform, no drift; docs/interfaces
  *                       strictly derived from the governed graph.
  *   UC-efficient-testing: the impact/dependency graph selects the test set; done = proven.
- *   UC-reduced-llm    : deterministic, model-free gates + query-precision — precise query
+ *   REQ-reduced-llm    : deterministic, model-free gates + query-precision — precise query
  *                       context (the exact blast-radius slice) instead of a grep dump.
  *
  * Only use cases that EXIST in the graph may be named here (CR-GC-342): a header
@@ -112,8 +112,8 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     expect(existsSync(join(tmp, 'GRAPHCODE.md'))).toBe(true);
   });
 
-  // ── STEP 2 — BOOTSTRAP THROUGH THE GATE (UC-code-quality: governed first-fill) ─
-  it('2. UC-code-quality: bootstraps the empty member graph THROUGH the gate (governed first-fill)', async () => {
+  // ── STEP 2 — BOOTSTRAP THROUGH THE GATE (REQ-code-quality: governed first-fill) ─
+  it('2. REQ-code-quality: bootstraps the empty member graph THROUGH the gate (governed first-fill)', async () => {
     // createHarness wires disk Kuzu at <repoRoot>/.graphcode/kuzu — same store the
     // scaffolded .mcp.json server would open. NEVER :memory:.
     harness = await createHarness({
@@ -145,8 +145,8 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     ).toBe(true);
   });
 
-  // ── STEP 3 — SPEC NODES THROUGH THE GATE + GOVERNANCE (UC-code-quality) ──────
-  it('3a. UC-code-quality: spec a feature (REQ + verifying TEST + satisfying MOD) is ACCEPTED by the gate', async () => {
+  // ── STEP 3 — SPEC NODES THROUGH THE GATE + GOVERNANCE (REQ-code-quality) ──────
+  it('3a. REQ-code-quality: spec a feature (REQ + verifying TEST + satisfying MOD) is ACCEPTED by the gate', async () => {
     const spec: MutateCommand[] = [
       { op: 'add-node', node: { uid: 'REQ-login', type: 'REQ', name: 'Login requirement', description: 'A user can log in', attributes: { kinds: ['non-functional'] } } },
       { op: 'add-node', node: { uid: 'TEST-login', type: 'TEST', name: 'Login test', description: 'verifies REQ-login', attributes: {} } },
@@ -165,7 +165,7 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     expect(uids).toEqual(expect.arrayContaining(['REQ-login', 'TEST-login', 'MOD-auth']));
   });
 
-  it('3b. UC-code-quality: a rule-VIOLATING spec (orphan REQ, no verifying TEST) is BLOCKED — no drift, nothing persisted', async () => {
+  it('3b. REQ-code-quality: a rule-VIOLATING spec (orphan REQ, no verifying TEST) is BLOCKED — no drift, nothing persisted', async () => {
     const before = harness.getGraph().nodes.length;
 
     // A lone REQ with no verifying TEST → R-01 (error) is NEWLY introduced → the
@@ -186,8 +186,8 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     expect(harness.getGraph().nodes.find((n) => n.uid === 'REQ-orphan')).toBeUndefined();
   });
 
-  // ── STEP 4 — KNOW-NOT-GREP via graph_impact (UC-reduced-llm)
-  it('4. UC-reduced-llm: graph_impact returns EXACTLY the dependent set (precise slice, not a grep dump)', async () => {
+  // ── STEP 4 — KNOW-NOT-GREP via graph_impact (REQ-reduced-llm)
+  it('4. REQ-reduced-llm: graph_impact returns EXACTLY the dependent set (precise slice, not a grep dump)', async () => {
     const registry = bindToolsToHarness(harness);
     const fullNodeCount = harness.getGraph().nodes.length; // SYS/REQ/TEST/MOD acme + REQ-login/TEST-login/MOD-auth = 7
 
@@ -235,8 +235,8 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     expect(selected).toEqual(['TEST-login']);
   });
 
-  // ── STEP 6 — IMPLEMENT A NODE (UC-code-quality) ─────────────────────────────
-  it('6. UC-code-quality: implementing a node (status → done) goes through the gate and is DURABLE on disk', async () => {
+  // ── STEP 6 — IMPLEMENT A NODE (REQ-code-quality) ─────────────────────────────
+  it('6. REQ-code-quality: implementing a node (status → done) goes through the gate and is DURABLE on disk', async () => {
     const result = await harness.mutate([
       { op: 'update-node', node: { uid: 'MOD-auth', attributes: { status: 'done' } } },
       { op: 'update-node', node: { uid: 'REQ-login', attributes: { status: 'done' } } },
@@ -267,8 +267,8 @@ describe('TEST-mvp-e2e: MVP-1 loop (bootstrap → spec → impact → implement 
     harness = harness2; // afterAll closes the live handle
   });
 
-  // ── STEP 7 — RE-EXPORT (UC-code-quality: docs strictly derived from the graph) ─
-  it('7. UC-code-quality: re-export the governed graph → JSON round-trips + Markdown views carry the GENERATED header', async () => {
+  // ── STEP 7 — RE-EXPORT (REQ-code-quality: docs strictly derived from the graph) ─
+  it('7. REQ-code-quality: re-export the governed graph → JSON round-trips + Markdown views carry the GENERATED header', async () => {
     const graph = harness.getGraph();
 
     // Re-export JSON to tmp/docs/graph.
