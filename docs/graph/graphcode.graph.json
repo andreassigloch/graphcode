@@ -4018,7 +4018,9 @@
       "id": "CR-GC-909",
       "type": "CR",
       "name": "SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben",
-      "description": "docs/cr/open/CR-GC-909-srs-sicht-nach-iso-29148-annex-a-glieder.md"
+      "description": "docs/cr/done/CR-GC-909-srs-sicht-nach-iso-29148-annex-a-glieder.md",
+      "status": "done",
+      "commitRef": "ae6d221d,7eea83ea"
     },
     {
       "id": "CR-GC-910",
@@ -4077,6 +4079,12 @@
       "type": "CR",
       "name": "Stufe bauen – Verträge (SCHEMA) vor Funktionen binden, FUNC-Paket trägt die echten Typen",
       "description": "docs/cr/open/CR-GC-917-stufe-bauen-vertra-ge-schema-vor-funktio.md"
+    },
+    {
+      "id": "CR-GC-918",
+      "type": "CR",
+      "name": "Eine Anforderung hat genau einen Erfueller",
+      "description": "docs/cr/open/CR-GC-918-eine-anforderung-hat-genau-einen-erfuell.md"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -32671,5 +32679,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1115
+  "graphVersion": 1117
 }

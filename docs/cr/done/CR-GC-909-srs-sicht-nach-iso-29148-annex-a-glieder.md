@@ -1,6 +1,6 @@
 # CR-GC-909: SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-12)
 **Typ:** aus Item ITEM-2026-1296 (idea)
 **Erstellt:** 2026-11-11
 **Item:** bok/items/ITEM-2026-1296.json (Lane: code)
