@@ -26,11 +26,11 @@ Nutzerziel. Der Kern-UC selbst hat noch keine REQ (UC-01).
 
 ## Akzeptanz
 
-- [ ] `graph_elements({type:'UC'})` nennt weder `UC-code-quality` noch `UC-reduced-llm`.
-- [ ] UC-01 meldet `UC-intent-to-code` nicht mehr.
-- [ ] `rules_evaluate` meldet keinen Fehler.
-- [ ] Kommentare in `tests/mvp-e2e.test.ts` nennen die REQ statt der UC.
-- [ ] Modell und Sichten re-exportiert und mit dem CR committet.
+- [x] `graph_elements({type:'UC'})` nennt weder `UC-code-quality` noch `UC-reduced-llm`.
+- [x] UC-01 meldet `UC-intent-to-code` nicht mehr.
+- [x] `rules_evaluate` meldet keinen Fehler.
+- [x] Kommentare in `tests/mvp-e2e.test.ts` nennen die REQ statt der UC.
+- [x] Modell und Sichten re-exportiert und mit dem CR committet.
 
 ## Nicht Ziel
 
@@ -51,3 +51,17 @@ Tests (`graph_tests`, 0):
 - (keine)
 
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Ergebnis (2026-11-12)
+
+- Modell v1100, ein Batch mit 158 Befehlen, ohne Befund. Danach v1104 nach den CR-Abschlüssen.
+- `UC-intent-to-code` trägt `REQ-code-quality` (funktional, 41 REQ darunter) und `REQ-reduced-llm`
+  (nicht-funktional, 10 REQ darunter). Die Ketten advisory-roundtrip und grammar-query hängen jetzt am
+  Kern-UC. `TEST-code-quality` und `TEST-reduced-llm` prüfen die neuen REQ.
+- `UC-deterministic-steering` heißt „Modell gegen ein Zielprofil verbessern“.
+- `tests/mvp-e2e.test.ts`: Kommentare und Testtitel nennen die REQ, 8/8 grün.
+- Offen, wie im CR ausgenommen: `TEST-code-quality` und `TEST-reduced-llm` haben keine
+  `testRefs` (R-19).
+- `verify:full CR-GC-916`: 214/214 Dateien grün, Schlupf 0 (Folge 2/10).
