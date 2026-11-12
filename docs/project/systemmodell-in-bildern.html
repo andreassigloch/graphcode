@@ -57,6 +57,7 @@ p { max-width: 68ch; margin: 0; }
 .stack { display: flex; flex-direction: column; gap: 14px; }
 header.hero { padding-block: 56px 8px; display: flex; flex-direction: column; gap: 18px; }
 nav.toc { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 0.95rem; }
+.tocitem { display: inline-flex; flex-wrap: wrap; gap: 0 6px; align-items: baseline; }
 nav.toc a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
 nav.toc a:hover, nav.toc a:focus-visible { border-bottom-color: var(--accent); outline: none; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -218,6 +219,61 @@ table.defs tr:last-child td { border-bottom: 0; }
 .sources { font-size: 0.82rem; color: var(--muted); margin: 18px 0 0; padding-left: 18px; max-width: none; }
 .sources li { margin-top: 2px; }
 
+/* Bausteine der Vorführung: Nummer aus der sichtbaren Reihenfolge, Schalter für die Zielgruppe */
+.wrap { counter-reset: kap; }
+section.bs > h2::before { counter-increment: kap; content: counter(kap) " · "; }
+.audience { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.audience .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); padding: 3px; gap: 2px; }
+.audience .seg button { font: inherit; font-size: 0.9rem; border: 0; background: transparent; color: var(--fg); border-radius: 999px; padding: 5px 14px; cursor: pointer; }
+.audience .seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
+.audience .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.fold { display: none; margin-top: 12px; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 0.9rem; color: var(--muted); }
+.fold button { font: inherit; font-size: 0.86rem; color: var(--accent); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+section.bs.folded > .fold { display: flex; }
+section.bs.folded:not(.unfolded) > :not(h2):not(.fold) { display: none !important; }
+section.bs.folded > h2 { color: var(--muted); }
+.four { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 18px; }
+.four .mcard h3 { font-size: 1.1rem; }
+table.design tr.current td { background: color-mix(in oklab, var(--accent) 10%, var(--surface)); font-weight: 700; }
+.tag-open { font-size: 0.74rem; font-weight: 700; border-radius: 999px; padding: 2px 8px; border: 1px solid var(--bad); color: var(--bad); white-space: nowrap; }
+.tag-part { font-size: 0.74rem; font-weight: 700; border-radius: 999px; padding: 2px 8px; border: 1px solid var(--muted); color: var(--muted); white-space: nowrap; }
+
+/* Anforderungsbaum */
+.rtree { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+.rt { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 8px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+.rt.l1 { margin-left: 18px; }
+.rt.l2 { margin-left: 36px; }
+.rt .kind { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; color: var(--c); }
+.rt .kind b { color: var(--fg); margin-right: 6px; }
+.rt .say { margin-top: 2px; font-size: 0.97rem; }
+.rt .parts { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.rt .parts span { border: 1.5px solid var(--accent); border-radius: 6px; padding: 2px 8px; font-size: 0.88rem; background: color-mix(in oklab, var(--accent) 8%, var(--surface)); }
+.rt .parts span i { font-style: normal; color: var(--muted); }
+.rt .refs { font-size: 0.88rem; display: flex; flex-direction: column; gap: 3px; border-left: 1px dashed var(--line); padding-left: 12px; }
+.rt .refs span { display: flex; gap: 6px; align-items: baseline; }
+.rt .refs em { font-style: normal; color: var(--muted); min-width: 72px; }
+.rt .refs b { font-weight: 700; color: var(--fg); }
+@media (max-width: 640px) {
+  .rt { grid-template-columns: 1fr; }
+  .rt.l1 { margin-left: 8px; } .rt.l2 { margin-left: 16px; }
+  .rt .refs { border-left: 0; border-top: 1px dashed var(--line); padding: 6px 0 0; }
+}
+
+/* Ablauf in Schritten (Bestand einlesen) */
+ol.steps { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; counter-reset: st; }
+ol.steps > li { counter-increment: st; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px 14px 60px; position: relative; display: flex; flex-direction: column; gap: 6px; }
+ol.steps > li::before { content: counter(st); position: absolute; left: 14px; top: 12px; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font-family: var(--font-display); font-size: 1.1rem; color: var(--muted); }
+ol.steps h3 { font-size: 1.08rem; }
+ol.steps p { font-size: 0.94rem; }
+ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
+.src2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+@media (max-width: 560px) { .src2 { grid-template-columns: 1fr; } }
+.doc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.9rem; }
+.doc .eyebrow { margin-bottom: 6px; }
+.doc ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 3px; }
+.mark-dup { color: var(--c-uc); font-weight: 700; }
+.mark-con { color: var(--bad); font-weight: 700; }
+
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 </style>
 
@@ -226,21 +282,51 @@ table.defs tr:last-child td { border-bottom: 0; }
   <div class="eyebrow">Technische Systeme als Netz beschreiben</div>
   <h1>Das Systemmodell in Bildern</h1>
   <p class="lead">Wir beschreiben ein technisches System nicht als Fließtext, sondern als Netz aus Bausteinen und Verbindungen. Ein Prüfprogramm legt bei jeder Änderung feste Regeln an dieses Netz an und nennt die Stelle, an der etwas fehlt oder sich widerspricht. Das gilt für Software genauso wie für Mechanik oder Elektrik.</p>
-  <p>Diese Seite zeigt die zwölf Bausteinarten, die sechs Verbindungsarten, je Regelstufe ein Beispiel und zuletzt die Begriffe dahinter. Alle Beispiele stammen aus einem einzigen Fall:</p>
+  <p>Diese Seite zeigt das Ziel, den Anforderungsbaum eines Beispiels, die zwölf Bausteinarten, die sechs Verbindungsarten, je Regelstufe ein Beispiel, die Methode, die Begriffe dahinter und die Live-Demos. Alle Beispiele stammen aus einem einzigen Fall:</p>
   <div class="example"><strong>Die Paketstation.</strong> Ein Empfänger tippt einen Abholcode ein. Die Station prüft den Code und öffnet das Fach. Zugesagt ist: Das Fach öffnet höchstens 2 Sekunden nach einem gültigen Code.</div>
-  <nav class="toc" aria-label="Inhalt">
-    <a href="#bausteine">1 · Bausteine</a>
-    <a href="#verbindungen">2 · Verbindungen</a>
-    <a href="#beispiel">3 · Das Beispiel als Netz</a>
-    <a href="#regeln">4 · Regeln und Stufen</a>
-    <a href="#methode">5 · Methode</a>
-    <a href="#begriffe">6 · Begriffe</a>
-  </nav>
+  <div class="audience" role="group" aria-label="Zielgruppe">
+    <span class="muted">Für wen:</span>
+    <div class="seg">
+      <button type="button" data-aud="theorie" aria-pressed="false">Theorie</button>
+      <button type="button" data-aud="spez" aria-pressed="false">Spezifikation</button>
+      <button type="button" data-aud="code" aria-pressed="false">Code</button>
+      <button type="button" data-aud="alle" aria-pressed="true">Alle</button>
+    </div>
+    <span class="muted" id="audHint"></span>
+  </div>
+  <nav class="toc" aria-label="Inhalt" id="toc"></nav>
   <div class="toggles"><span class="muted">Jeder Abschnitt zeigt zuerst das Wesentliche. Die Listen dahinter lassen sich aufklappen.</span> <button type="button" id="openAll">Alle Details öffnen</button> <button type="button" id="closeAll">Alle schließen</button></div>
 </header>
 
-<!-- ───────────────────────── 1 Bausteine ───────────────────────── -->
-<h2 id="bausteine">1 · Die zwölf Bausteine</h2>
+<!-- ───────────────────────── I1 Ziel ───────────────────────── -->
+<section class="bs" data-bs="I1" id="ziel">
+<h2>Das Ziel: Abstraktion statt Abbild</h2>
+<div class="summary">
+  <div class="eyebrow">Kurz gesagt</div>
+  <p>Ein Modell bildet ein System nicht 1:1 ab. Es zeigt auf jeder Ebene wenige Blöcke mit einem schmalen Rand; was darunter liegt, bleibt in der Blackbox. Dafür beantwortet es vier Fragen zum System, und jede Antwort lässt sich prüfen.</p>
+</div>
+<div class="four">
+  <div class="mcard"><div class="eyebrow">Warum</div><h3>Anwendungsfälle und Anforderungen</h3><p class="mex">Paket abholen · Fach öffnet höchstens 2 s nach gültigem Code</p></div>
+  <div class="mcard"><div class="eyebrow">Wie</div><h3>Funktionen, in Ebenen geschachtelt</h3><p class="mex">Code prüfen · Fach entriegeln</p></div>
+  <div class="mcard"><div class="eyebrow">Womit</div><h3>Module mit den Funktionen darin</h3><p class="mex">Bedienfeld · Steuerung · Schließmechanik</p></div>
+  <div class="mcard"><div class="eyebrow">Worüber</div><h3>Wirkketten und der Vertrag jeder Übergabe</h3><p class="mex">Abholung · Abholcode = 6 Ziffern</p></div>
+</div>
+<p style="margin-top:16px">Das Gütemaß ist Verständlichkeit: Wer eine Ebene ansieht, soll sie ohne die Ebene darunter verstehen. Das Modell nennt darum nicht jede Codezeile; es bindet nur die unterste Funktion an ihre Umsetzung.</p>
+<div class="tablewrap">
+<table class="design" id="audTable">
+  <thead><tr><th>Zielgruppe</th><th>Was Sie hier mitnehmen</th></tr></thead>
+  <tbody>
+    <tr data-for="theorie"><td>Theorie</td><td>Wo das Was endet und das Wie beginnt: auf jeder Ebene am Rand einer Blackbox, mit einer Definition je Bausteinart.</td></tr>
+    <tr data-for="spez"><td>Spezifikation</td><td>Ihre Anforderungen stehen als Baum, und zu jeder nennt das Modell, wer sie erfüllt und welcher Test sie belegt.</td></tr>
+    <tr data-for="code"><td>Code</td><td>Das Modell führt den KI-Agenten Zug um Zug, ein Gate weist Verstöße ab, und der Graph wählt die Tests einer Änderung.</td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<!-- ───────────────────────── E3 Bausteine ───────────────────────── -->
+<section class="bs" data-bs="E3">
+<h2 id="bausteine">Die zwölf Bausteine</h2>
 <div class="summary">
   <div class="eyebrow">Kurz gesagt</div>
   <p>Jeder Baustein hat eine Art. Die Art bestimmt, welche Verbindungen er eingehen darf und welche Regeln ihn prüfen. Vier Gruppen: <b>Zweck</b> (System, Akteur, Anwendungsfall, Anforderung), <b>Verhalten</b> (Wirkkette, Funktion, Datenfluss, Datenformat), <b>Aufbau und Nachweis</b> (Modul, Test), <b>Planung</b> (Auftrag, Meilenstein).</p>
@@ -313,9 +399,93 @@ table.defs tr:last-child td { border-bottom: 0; }
   </div>
 </div>
 </details>
+</section>
 
-<!-- ───────────────────────── 2 Verbindungen ───────────────────────── -->
-<h2 id="verbindungen">2 · Die sechs Verbindungen</h2>
+<!-- ───────────────────────── E2 Anforderungsbaum ───────────────────────── -->
+<section class="bs" data-bs="E2" id="anforderungen">
+<h2>Der Anforderungsbaum der Paketstation</h2>
+<div class="summary">
+  <div class="eyebrow">Kurz gesagt</div>
+  <p>Links steht der Baum, wie ihn eine gute Spezifikation gliedert: Systemanforderung, Anwendungsfall, Anforderung. Rechts nennt das Modell zu jeder Zeile, wer sie erfüllt und welcher Test sie belegt. Das Modell beantwortet so die Frage „Wer erfüllt das?“. Der Einstieg bleibt der Baum.</p>
+</div>
+<p style="margin-top:14px">Jede Anforderung steht im Satzmuster aus dem Abschnitt „Begriffe“: <b>Wenn</b> Auslöser, <b>dann</b> Ergebnis, <b>innerhalb</b> Güte, <b>nur wenn</b> Bedingung. Ein Verhalten erfüllt eine Funktion. Eine Zusage von Ende zu Ende erfüllt die Wirkkette.</p>
+<div class="rtree" role="list" aria-label="Anforderungsbaum der Paketstation">
+  <div class="rt" role="listitem" style="--c:var(--c-sys)">
+    <div><div class="kind">Systemanforderung</div><p class="say">Empfänger holen ihre Pakete rund um die Uhr ohne Personal ab; Zusteller legen sie ohne Personal ein.</p></div>
+    <div class="refs"><span><em>System</em><b>Paketstation</b></span><span><em>Akteure</em>Empfänger, Zusteller, Versand-Server</span></div>
+  </div>
+
+  <div class="rt l1" role="listitem" style="--c:var(--c-uc)">
+    <div><div class="kind">Anwendungsfall</div><p class="say"><b>Paket abholen</b></p></div>
+    <div class="refs"><span><em>Akteur</em>Empfänger</span><span><em>Wirkkette</em><b>Abholung</b></span></div>
+  </div>
+  <div class="rt l2" role="listitem" style="--c:var(--c-req)">
+    <div><div class="kind"><b>A1</b>Anforderung</div><div class="parts"><span><i>Wenn</i> ein gültiger Abholcode eingegeben wird,</span><span><i>dann</i> öffnet das Fach,</span><span><i>innerhalb</i> von 2 s,</span><span><i>nur wenn</i> die Tür geschlossen ist.</span></div></div>
+    <div class="refs"><span><em>erfüllt von</em>Wirkkette <b>Abholung</b></span><span><em>Test</em>Öffnung mit gültigem Code</span></div>
+  </div>
+  <div class="rt l2" role="listitem" style="--c:var(--c-req)">
+    <div><div class="kind"><b>A2</b>Anforderung</div><div class="parts"><span><i>Wenn</i> der Empfänger sechs Ziffern eintippt,</span><span><i>dann</i> geht der Abholcode an die Prüfung,</span><span><i>innerhalb</i> von 100 ms,</span><span><i>nur wenn</i> die Eingabe nicht gesperrt ist (A4).</span></div></div>
+    <div class="refs"><span><em>erfüllt von</em>Funktion <b>Code lesen</b></span><span><em>Test</em>Eingabe am Bedienfeld</span></div>
+  </div>
+  <div class="rt l2" role="listitem" style="--c:var(--c-req)">
+    <div><div class="kind"><b>A3</b>Anforderung</div><div class="parts"><span><i>Wenn</i> ein Abholcode eingeht,</span><span><i>dann</i> antwortet die Prüfung mit gültig oder ungültig,</span><span><i>innerhalb</i> von 200 ms,</span><span><i>nur wenn</i> der Code 6 Ziffern hat.</span></div></div>
+    <div class="refs"><span><em>erfüllt von</em>Funktion <b>Code prüfen</b></span><span><em>Test</em>Antwortzeit</span></div>
+  </div>
+  <div class="rt l2" role="listitem" style="--c:var(--c-req)">
+    <div><div class="kind"><b>A4</b>Anforderung</div><div class="parts"><span><i>Wenn</i> dreimal in Folge ein ungültiger Code eingeht,</span><span><i>dann</i> nimmt die Station keinen Code mehr an,</span><span><i>für</i> 60 s,</span><span><i>nur</i> an derselben Station.</span></div></div>
+    <div class="refs"><span><em>erfüllt von</em>Funktion <b>Code prüfen</b></span><span><em>Test</em>Sperre nach Fehlversuchen</span></div>
+  </div>
+  <div class="rt l2" role="listitem" style="--c:var(--c-req)">
+    <div><div class="kind"><b>A5</b>Anforderung</div><div class="parts"><span><i>Wenn</i> ein Abholcode ohne Netzverbindung eingeht,</span><span><i>dann</i> prüft die Station ihn gegen die vorab geladenen Codes,</span><span><i>innerhalb</i> von 200 ms,</span><span><i>nur wenn</i> die Codes höchstens 24 h alt sind.</span></div></div>
+    <div class="refs"><span><em>erfüllt von</em>Funktion <b>Code prüfen</b></span><span><em>Test</em>Abholung ohne Netz</span></div>
+  </div>
+  <div class="rt l2" role="listitem" style="--c:var(--c-req)">
+    <div><div class="kind"><b>A6</b>Anforderung</div><div class="parts"><span><i>Wenn</i> der Öffnungsbefehl eingeht,</span><span><i>dann</i> zieht der Riegel,</span><span><i>innerhalb</i> von 300 ms,</span><span><i>nur wenn</i> die Netzspannung mindestens 11 V beträgt.</span></div></div>
+    <div class="refs"><span><em>erfüllt von</em>Funktion <b>Fach entriegeln</b></span><span><em>Test</em>Riegel bei Unterspannung</span></div>
+  </div>
+  <div class="rt l2" role="listitem" style="--c:var(--c-req)">
+    <div><div class="kind"><b>A7</b>Anforderung</div><div class="parts"><span><i>Wenn</i> ein Fach nach der Abholung geschlossen wird,</span><span><i>dann</i> meldet die Station die Abholung an den Versand-Server,</span><span><i>innerhalb</i> von 5 min,</span><span><i>nur wenn</i> eine Netzverbindung besteht.</span></div></div>
+    <div class="refs"><span><em>erfüllt von</em>Funktion <b>Abholung melden</b></span><span><em>Test</em>Meldung nach Abholung</span></div>
+  </div>
+
+  <div class="rt l1" role="listitem" style="--c:var(--c-uc)">
+    <div><div class="kind">Anwendungsfall</div><p class="say"><b>Paket einlegen</b></p></div>
+    <div class="refs"><span><em>Akteur</em>Zusteller</span><span><em>Wirkkette</em><b>Einlage</b></span></div>
+  </div>
+  <div class="rt l2" role="listitem" style="--c:var(--c-req)">
+    <div><div class="kind"><b>A8</b>Anforderung</div><div class="parts"><span><i>Wenn</i> der Zusteller eine Sendungsnummer eingibt,</span><span><i>dann</i> öffnet ein freies Fach passender Größe,</span><span><i>innerhalb</i> von 2 s,</span><span><i>nur wenn</i> ein solches Fach frei ist.</span></div></div>
+    <div class="refs"><span><em>erfüllt von</em>Funktion <b>Fach zuteilen</b></span><span><em>Test</em>Fach für Sendung</span></div>
+  </div>
+  <div class="rt l2" role="listitem" style="--c:var(--c-req)">
+    <div><div class="kind"><b>A9</b>Anforderung</div><div class="parts"><span><i>Wenn</i> ein Fach mit Paket geschlossen wird,</span><span><i>dann</i> erhält der Versand-Server einen neuen Abholcode für den Empfänger,</span><span><i>innerhalb</i> von 10 s,</span><span><i>nur wenn</i> eine Netzverbindung besteht.</span></div></div>
+    <div class="refs"><span><em>erfüllt von</em>Funktion <b>Abholcode erzeugen</b></span><span><em>Test</em>Code nach Einlage</span></div>
+  </div>
+</div>
+
+<details class="details">
+<summary>Details: die Namen, die das Modell der Paketstation übernimmt</summary>
+<div class="tablewrap">
+<table class="design">
+  <thead><tr><th>Bausteinart</th><th>Namen</th></tr></thead>
+  <tbody>
+    <tr><td>System</td><td>Paketstation</td></tr>
+    <tr><td>Akteur</td><td>Empfänger, Zusteller, Versand-Server</td></tr>
+    <tr><td>Anwendungsfall</td><td>Paket abholen, Paket einlegen</td></tr>
+    <tr><td>Wirkkette</td><td>Abholung, Einlage</td></tr>
+    <tr><td>Funktion</td><td>Code lesen, Code prüfen, Fach entriegeln, Abholung melden, Fach zuteilen, Abholcode erzeugen</td></tr>
+    <tr><td>Modul</td><td>Bedienfeld (Code lesen) · Steuerung (Code prüfen, Abholung melden, Fach zuteilen, Abholcode erzeugen) · Schließmechanik (Fach entriegeln)</td></tr>
+    <tr><td>Datenfluss</td><td>Abholcode, Öffnungsbefehl, Fach offen</td></tr>
+    <tr><td>Datenformat</td><td>Abholcode = 6 Ziffern</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="muted" style="margin-top:10px;font-size:0.9rem">Zwei Anwendungsfälle, sechs Funktionen, drei Module, neun Anforderungen: klein genug, dass jede Ebene auf eine Seite passt.</p>
+</details>
+</section>
+
+<!-- ───────────────────────── E4 Verbindungen ───────────────────────── -->
+<section class="bs" data-bs="E4">
+<h2 id="verbindungen">Die sechs Verbindungen</h2>
 <div class="summary">
   <div class="eyebrow">Kurz gesagt</div>
   <p>Eine Verbindung hat eine Richtung und eine Art. Welche Bausteinarten sie verbinden darf, ist festgelegt; eine Verbindung außerhalb dieser Liste nimmt das Modell nicht an. Die sechs Arten: <b>besteht aus</b>, <b>gibt ab · nimmt auf</b>, <b>erfüllt</b>, <b>prüft</b>, <b>ist umgesetzt in</b>, <b>gehört zu</b>. Was sich aus anderen Verbindungen berechnen lässt, wird nicht gespeichert.</p>
@@ -373,17 +543,21 @@ table.defs tr:last-child td { border-bottom: 0; }
   </div>
   <figcaption>Zehn Bausteinarten und jede erlaubte Verbindung zwischen ihnen. Auftrag und Meilenstein liegen daneben: ein Auftrag zeigt auf die Bausteine, die er ändert, und auf seinen Meilenstein; Meilensteine folgen aufeinander.</figcaption>
 </figure>
+</section>
 
-<!-- ───────────────────────── 3 Beispiel ───────────────────────── -->
-<h2 id="beispiel">3 · Die Paketstation als Netz</h2>
+<!-- ───────────────────────── E5 Beispiel ───────────────────────── -->
+<section class="bs" data-bs="E5">
+<h2 id="beispiel">Die Paketstation als Netz</h2>
 <p style="margin-top:12px">Dieselbe Landkarte, gefüllt mit dem Beispiel. Jede Frage an das System hat hier eine Antwort: <b>wozu</b> (Anwendungsfall und Anforderung), <b>wie</b> (Wirkkette und Funktionen), <b>worüber</b> (Datenflüsse und ihr Format), <b>womit</b> (Module) und <b>womit belegt</b> (Test).</p>
 <figure class="wide">
   <div class="scroll"><div id="instance" class="big"></div></div>
-  <figcaption>Lesart von links nach rechts: Der Empfänger gibt den Abholcode ab, „Code prüfen“ erzeugt den Öffnungsbefehl, „Fach entriegeln“ meldet „Fach offen“ an den Empfänger zurück. Die Zeitzusage erfüllt die ganze Wirkkette, nicht eine einzelne Funktion. Der Test belegt sie.</figcaption>
+  <figcaption>Lesart von links nach rechts: Der Empfänger gibt den Abholcode ab, „Code prüfen“ erzeugt den Öffnungsbefehl, „Fach entriegeln“ meldet „Fach offen“ an den Empfänger zurück. Die Zeitzusage erfüllt die ganze Wirkkette, nicht eine einzelne Funktion. Der Test belegt sie. Das Bild zeigt den Ausschnitt um die Anforderung A1 aus dem Anforderungsbaum.</figcaption>
 </figure>
+</section>
 
-<!-- ───────────────────────── 4 Regeln ───────────────────────── -->
-<h2 id="regeln">4 · Regeln und Stufen</h2>
+<!-- ───────────────────────── E6 Regeln ───────────────────────── -->
+<section class="bs" data-bs="E6">
+<h2 id="regeln">Regeln und Stufen</h2>
 <div class="summary">
   <div class="eyebrow">Kurz gesagt</div>
   <p>80 Regeln prüfen das Modell bei jeder Änderung. Jede Regel gehört zu einer von zwölf <b>Stufen</b>, die der Entstehung eines Modells folgen, vom System bis zum Abgleich mit der Umsetzung. Hinter fünf Stufen liegt eine <b>Marke</b>, ein Abnahmepunkt. Jeder Befund nennt den Baustein und den nächsten Schritt; nur wenige Regeln blockieren, die meisten geben Hinweise.</p>
@@ -412,9 +586,11 @@ table.defs tr:last-child td { border-bottom: 0; }
 <summary>Details: je Stufe ein Beispiel mit Befund und Behebung</summary>
 <div class="rules" id="rules"></div>
 </details>
+</section>
 
-<!-- ───────────────────────── 5 Methode ───────────────────────── -->
-<h2 id="methode">5 · Die Methode: geführt, nicht gegängelt</h2>
+<!-- ───────────────────────── E7 Methode ───────────────────────── -->
+<section class="bs" data-bs="E7">
+<h2 id="methode">Die Methode: geführt, nicht gegängelt</h2>
 <div class="summary">
   <div class="eyebrow">Kurz gesagt</div>
   <p>Das Modell entsteht Zug um Zug. Der Nutzer sagt, was er will, ein KI-Agent baut einen kleinen Schritt, das Modell urteilt und antwortet mit dem nächsten Vorschlag. Der Nutzer entscheidet, der Agent führt aus. Vier Stufen: Das Tor unterbindet, das Gummiband steuert, die Vorschläge empfehlen, und in der vierten Stufe <b>gestaltet</b> der Autor die Architektur über <b>Constraints</b>: Entscheidungen wie „20.000 gleichzeitige Abholungen pro Sekunde“, die als Anforderung mit Test im Modell stehen und den Schnitt der Ketten und Module bestimmen. Kennzahlen finden Stellen, Constraints steuern.</p>
@@ -499,9 +675,12 @@ table.defs tr:last-child td { border-bottom: 0; }
 </table>
 </div>
 <p style="margin-top:12px">Drei Paare ziehen gegeneinander: Zusammenhalt gegen kurze Wege, Zusammenhalt gegen Engpass, Schutz gegen kurze Wege. Setzt der Autor beide Seiten, warnt der Agent mit dem Grund. Er blockiert nicht: Ein bewusster Zielkonflikt ist erlaubt, ein unsichtbarer nicht. Ob zwei Constraints sich wirklich ausschließen, zeigt erst der Testlauf.</p>
+</details>
+</section>
 
-<!-- ───────────────────────── 6 Begriffe ───────────────────────── -->
-<h2 id="begriffe">6 · Begriffe: Was und Wie, Blackbox und Whitebox</h2>
+<!-- ───────────────────────── E1 Begriffe ───────────────────────── -->
+<section class="bs" data-bs="E1">
+<h2 id="begriffe">Begriffe: Was und Wie, Blackbox und Whitebox</h2>
 <div class="summary">
   <div class="eyebrow">Kurz gesagt</div>
   <p>Jeder Baustein hat eine Definition in einem Satz, mit Beispiel und Gegenbeispiel aus der Paketstation. Eine <b>Anforderung</b> sagt, <b>was</b> ein Element an seiner Grenze tut oder einhält, nie <b>wie</b>. <b>Blackbox</b> ist ein Element von außen gesehen, <b>Whitebox</b> dasselbe Element von innen. Drei Bausteine lassen sich so schachteln: System, Funktion, Modul. Die Schnittstelle einer Blackbox wird aus den Flüssen über ihre Grenze berechnet, nicht behauptet.</p>
@@ -672,9 +851,11 @@ table.defs tr:last-child td { border-bottom: 0; }
 <text x="20" y="522" style="font-size:11px;font-weight:700;fill:var(--fg)">Daneben, auf jeder Stufe · Womit</text>
 <rect x="20" y="530" width="760" height="100" rx="8" style="fill:var(--surface-2);stroke:var(--line);stroke-width:1.4"/>
 <text x="32" y="547" style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;font-weight:700;fill:var(--muted)">Womit · die Module, ein eigener Baum neben der Treppe</text>
+<g class="n" style="--c:var(--c-mod)"><rect x="40.0" y="568.0" width="100" height="34" rx="5"/><text class="cap" x="90" y="580.0" text-anchor="middle">Modul</text><text class="lbl" x="90" y="593.0" text-anchor="middle">Bedienfeld</text></g>
+<text class="note" x="90" y="615" text-anchor="middle">nimmt auf: Code lesen</text>
 <g class="n" style="--c:var(--c-mod)"><rect x="245.0" y="568.0" width="110" height="34" rx="5"/><text class="cap" x="300" y="580.0" text-anchor="middle">Modul</text><text class="lbl" x="300" y="593.0" text-anchor="middle">Steuerung</text></g>
 <g class="n" style="--c:var(--c-mod)"><rect x="495.0" y="568.0" width="130" height="34" rx="5"/><text class="cap" x="560" y="580.0" text-anchor="middle">Modul</text><text class="lbl" x="560" y="593.0" text-anchor="middle">Schließmechanik</text></g>
-<text class="note" x="300" y="615" text-anchor="middle">nimmt auf: Code lesen · Format prüfen · nachschlagen · Fach wählen</text>
+<text class="note" x="300" y="615" text-anchor="middle">nimmt auf: Format prüfen · nachschlagen · Fach wählen</text>
 <text class="note" x="560" y="615" text-anchor="middle">nimmt auf: Fach entriegeln</text>
 <g class="e" style="--k:var(--e-allocate)"><path d="M245,479 L245,505 L300,505 L300,568" marker-end="url(#tr_allocate)"/><text x="272" y="497" text-anchor="middle" dominant-baseline="middle">umgesetzt in</text></g></svg></div>
   <figcaption>Anforderungen stehen auf jeder Stufe, aber immer nur am Rand der Box. Die Lösung ist das, was eine Stufe tiefer sichtbar wird. Unten endet die Treppe, wenn hinter dem Rand Code oder ein Bauteil liegt.</figcaption>
@@ -689,6 +870,122 @@ table.defs tr:last-child td { border-bottom: 0; }
   <li>Thales, Arcadia Language MetaModel, 2023: Function, Functional Exchange, Functional Chain, Exchange Item, Interface, Component, Actor.</li>
   <li>SEBoK, Function (glossary).</li>
 </ol>
+</section>
+
+<!-- ───────────────────────── D1 Demo ───────────────────────── -->
+<section class="bs" data-bs="D1" id="demo-d1">
+<h2>Live-Demo: Von der Anforderung zum Test</h2>
+<div class="summary">
+  <div class="eyebrow">Was vorgeführt wird</div>
+  <p>Im Viewer, Einstieg über die Ansicht „Requirement Review“: Anforderung A1 auswählen, dann zeigt das Modell die Wirkkette, die sie erfüllt, die Funktionen darin und den Test mit seinem letzten Ergebnis. Die Spur ist aus dem Modell berechnet, nicht in einer Tabelle gepflegt.</p>
+</div>
+<div class="tablewrap">
+<table class="design">
+  <thead><tr><th>Test der Leitlinie</th><th>Frage</th><th>Stand</th></tr></thead>
+  <tbody><tr><td>T-N2 Nachweis deterministisch</td><td>Wird Traceability aus dem Modell geprüft statt behauptet?</td><td><span class="tag-part">teilweise</span> an graphcode selbst 137 von 158 Tests gebunden (2026-10-15)</td></tr></tbody>
+</table>
+</div>
+<p class="muted" style="margin-top:10px;font-size:0.9rem">Offen: Die Ansicht „Requirement Review“ zeigt heute eine Liste, keinen Baum wie im Anforderungsbaum oben. Das Live-Modell der Paketstation ist ein eigener Auftrag und noch nicht gebaut.</p>
+</section>
+
+<!-- ───────────────────────── D2 Demo ───────────────────────── -->
+<section class="bs" data-bs="D2" id="demo-d2">
+<h2>Live-Demo: Eine Blackbox ein- und ausklappen</h2>
+<div class="summary">
+  <div class="eyebrow">Was vorgeführt wird</div>
+  <p>Im Viewer die Funktion „Code prüfen“ ausklappen: Dahinter liegen „Format prüfen“, „nachschlagen“ und „Fach wählen“. Eingeklappt bleiben nur die Anschlüsse am Rand, „Abholcode“ hinein und „Öffnungsbefehl“ hinaus. Jede Ebene hat 3 bis 9 Teile.</p>
+</div>
+<div class="tablewrap">
+<table class="design">
+  <thead><tr><th>Test der Leitlinie</th><th>Frage</th><th>Stand</th></tr></thead>
+  <tbody>
+    <tr><td>T-V1 Blackbox-Breite</td><td>Hat jede Ebene 7 ± 2 Teile?</td><td><span class="tag-open">nicht bestanden</span> an graphcode 5 Befunde (2026-10-15)</td></tr>
+    <tr><td>T-V2 Vertragsrand</td><td>Ist der Rand jeder Blackbox schmal?</td><td><span class="tag-open">nicht bestanden</span> an graphcode über der Schwelle: 14 Funktionsränder, 6 Modulränder, 13 Modulpaare mit zu vielen Übergaben (2026-10-15)</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="muted" style="margin-top:10px;font-size:0.9rem">Die Paketstation soll beide Tests bestehen; nachgewiesen ist das erst am fertigen Live-Modell. Anschlüsse am Rand zeichnet der Viewer noch nicht (Auftrag CR-GVE-400).</p>
+</section>
+
+<!-- ───────────────────────── D3 Bestand einlesen ───────────────────────── -->
+<section class="bs" data-bs="D3" id="einlesen">
+<h2>Bestand einlesen und Anforderungen zusammenführen</h2>
+<div class="summary">
+  <div class="eyebrow">Kurz gesagt</div>
+  <p>Wer ein bestehendes System spezifiziert, fängt nicht leer an. Lastenhefte, Datenblätter und Code liegen schon vor, und dieselbe Anforderung steht darin mehrfach, mal in anderen Worten, mal mit anderer Zahl. Der Anwendungsfall „Bestand erschließen und Anforderungen zusammenführen“ beschreibt den Weg zum einen Baum: jede Anforderung einmal, mit Quelle, Widersprüche als Fragen.</p>
+</div>
+
+<h3 style="margin-top:28px">Ausgangslage: zwei Dokumente zur Paketstation</h3>
+<div class="src2">
+  <div class="doc"><div class="eyebrow">Lastenheft Paketstation</div>
+    <ol>
+      <li>Das Fach öffnet <span class="mark-con">sofort</span> nach Eingabe des Codes.</li>
+      <li>Nach <span class="mark-dup">drei Fehlversuchen</span> wird die Eingabe gesperrt.</li>
+      <li>Die Station meldet jede Abholung an den Versand-Server.</li>
+    </ol></div>
+  <div class="doc"><div class="eyebrow">Pflichtenheft Schließmechanik</div>
+    <ol>
+      <li>Öffnung <span class="mark-con">innerhalb von 3 s</span> nach Codeeingabe.</li>
+      <li>Sperre 60 s nach <span class="mark-dup">3 falschen Codes</span>.</li>
+      <li>Der Riegel zieht ab 11 V Versorgungsspannung.</li>
+    </ol></div>
+</div>
+<p class="muted" style="margin-top:8px;font-size:0.9rem"><span class="mark-dup">Orange</span>: dieselbe Anforderung zweimal. <span class="mark-con">Rot</span>: ein Widerspruch, „sofort“ gegen „3 s“.</p>
+
+<h3 style="margin-top:28px">Der Ablauf in fünf Schritten</h3>
+<ol class="steps">
+  <li><h3>Gliederung zeigen</h3>
+    <p>Das Werkzeug liest beide Dokumente und zeigt ihre Gliederung als Baum: Kapitel, Unterkapitel, Größe je Abschnitt. Kein Sprachmodell, gleiche Datei ergibt immer denselben Baum.</p>
+    <p class="meta">Skill se:import-doc, Stufe 1 · PDF braucht pdftotext</p></li>
+  <li><h3>Typen entscheiden</h3>
+    <p>Im Chat entscheidet der Auftraggeber, was jedes Kapitel wird: „Anforderungen“ wird zu Anforderungen, „Abnahme“ zum Test, der sie prüft, der Anhang fällt heraus. Eine Anforderung ohne prüfenden Test nimmt das Gate nicht an; darum fragt der Agent hier nach dem Test.</p>
+    <p class="meta">Skill se:import-doc, Stufe 1 · Ergebnis: eine Liste von Entscheidungen</p></li>
+  <li><h3>Auszug durch das Gate</h3>
+    <p>Ein Sprachmodell zieht aus jedem Abschnitt Anforderungen, Funktionen und Module. Jeder Fund geht durch dasselbe Gate wie jede Handänderung. Das Einlesen fügt nur hinzu; es löscht nichts, was schon im Modell steht.</p>
+    <p class="meta">Skill se:import-doc, Stufe 2 · braucht einen erreichbaren Endpunkt für das Sprachmodell</p></li>
+  <li><h3>Code einlesen</h3>
+    <p>Liegt Code vor, liest das Werkzeug daraus Funktionen, Module und Datenflüsse, ohne Sprachmodell. Anwendungsfälle und Anforderungen liest es nicht aus dem Code; die kommen aus den Dokumenten. Der Vorzustand des Modells wird vorher gesichert, und das Ergebnis trägt den Stempel der Modellversion.</p>
+    <p class="meta">Befehl graphcode import-code · Wirkketten „Modell einlesen“ und „Code einlesen über den Skill“ im Modell</p></li>
+  <li><h3>Zusammenführen</h3>
+    <p>Der Agent legt die doppelten Anforderungen nebeneinander und stellt jeden Widerspruch als Frage: „sofort oder 3 s?“ Der Auftraggeber antwortet „2 s, nur bei geschlossener Tür“. Aus den sechs Sätzen der beiden Dokumente werden die Anforderungen A1, A4, A6 und A7 des Baums, jede einmal.</p>
+    <p class="meta">Handarbeit im Chat, jede Änderung durch das Gate</p></li>
+</ol>
+<div class="example" style="margin-top:16px"><strong>Ergebnis:</strong> der Anforderungsbaum der Paketstation weiter oben. Die übrigen Anforderungen kommen aus weiteren Quellen oder aus dem Gespräch mit dem Auftraggeber.</div>
+
+<h3 style="margin-top:28px">Was heute geht und was offen ist</h3>
+<div class="tablewrap">
+<table class="design">
+  <thead><tr><th>Teil</th><th>Stand</th></tr></thead>
+  <tbody>
+    <tr><td>Gliederung zeigen, Typen entscheiden, Auszug durch das Gate</td><td>geht · als Skill mit Skript im Chat. Im Modell fehlt dafür noch die Wirkkette; sie und ein Werkzeug in jedem Host sind Auftrag CR-GC-910. Große Handbücher brauchen Stunden.</td></tr>
+    <tr><td>Code einlesen</td><td>geht · nur TypeScript. Mechanik, Elektrik und anderer Code kommen nur über Dokumente.</td></tr>
+    <tr><td>Doppelte Anforderungen finden und zusammenführen</td><td><span class="tag-open">offen</span> kein eigener Schritt im Modell; heute Handarbeit im Chat</td></tr>
+    <tr><td>Jede Anforderung mit ihrer Quelle</td><td><span class="tag-open">offen</span> steht im Anwendungsfall, ist aber keine Anforderung mit Test</td></tr>
+    <tr><td>Widersprüche als Fragen</td><td><span class="tag-open">offen</span> der Agent stellt sie im Gespräch; kein Werkzeug prüft, dass keiner übersehen wurde</td></tr>
+    <tr><td>Gegenprobe: Schafft ein frei laufendes Sprachmodell denselben Nachweis? (T-N3)</td><td><span class="tag-open">nicht gemessen</span></td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<!-- ───────────────────────── D4 Demo ───────────────────────── -->
+<section class="bs" data-bs="D4" id="demo-d4">
+<h2>Live-Demo: Der Agent baut eine Änderung durch das Gate</h2>
+<div class="summary">
+  <div class="eyebrow">Was vorgeführt wird</div>
+  <p>Im Chat mit dem Agenten: „Abholung per App ergänzen“. Der Agent schlägt einen kleinen Zug vor, das Gate urteilt, der Nutzer entscheidet. Danach nennt der Graph die Tests, die für diese Änderung laufen müssen, statt alle.</p>
+</div>
+<div class="tablewrap">
+<table class="design">
+  <thead><tr><th>Test der Leitlinie</th><th>Frage</th><th>Stand</th></tr></thead>
+  <tbody>
+    <tr><td>T-M1 Unterbinden</td><td>Hält das Gate jeden Verstoß aus dem Modell?</td><td><span class="tag-open">nicht bestanden</span> 5 von 76 Regeln blockieren (2026-10-08)</td></tr>
+    <tr><td>T-E7 Testauswahl</td><td>Sagt der Graph, welche Tests laufen müssen?</td><td><span class="tag-open">nicht bestanden</span> Trefferquote 13 % (2026-08-21)</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="muted" style="margin-top:10px;font-size:0.9rem">Die Demo zeigt den interaktiven Zug, nicht den Automodus. Was laut Leitlinie offen ist, nennen wir offen.</p>
+</section>
 </div>
 
 <script>
@@ -1027,6 +1324,58 @@ table.defs tr:last-child td { border-bottom: 0; }
   const all = Array.from(document.querySelectorAll('details.details'));
   document.getElementById('openAll').addEventListener('click', () => all.forEach(d => { d.open = true; }));
   document.getElementById('closeAll').addEventListener('click', () => all.forEach(d => { d.open = false; }));
+
+  // ── Schalter für die Zielgruppe (Bausteinkonzept docs/project/vorfuehrung-bausteinkonzept.md) ──
+  // weg: der Pfad der Zielgruppe · auch: weitere ●-Bausteine · nachfrage: ○, eingeklappt. Der Rest ist ausgeblendet.
+  const AUD = {
+    alle: { weg: ['I1', 'E3', 'E2', 'E4', 'E5', 'E6', 'E7', 'E1', 'D1', 'D2', 'D3', 'D4'], auch: [], nachfrage: [], hint: '' },
+    theorie: { weg: ['I1', 'E1', 'E2', 'E4', 'D1'], auch: ['E3', 'E6', 'D2'], nachfrage: ['E5'], hint: 'Einstieg: Begriffe' },
+    spez: { weg: ['I1', 'E2', 'E5', 'D1', 'D3'], auch: [], nachfrage: ['E1', 'E3', 'E7', 'D2'], hint: 'Einstieg: Anforderungsbaum' },
+    code: { weg: ['I1', 'E7', 'E5', 'D2', 'D4'], auch: [], nachfrage: ['E2', 'E3', 'E4', 'E6', 'D1'], hint: 'Einstieg: Methode' }
+  };
+  const wrap = document.querySelector('.wrap');
+  const sections = {};
+  document.querySelectorAll('section.bs').forEach(s => {
+    sections[s.dataset.bs] = s;
+    const fold = document.createElement('div');
+    fold.className = 'fold';
+    fold.innerHTML = '<span>Bei Nachfrage</span><button type="button">Aufklappen</button>';
+    const btn = fold.querySelector('button');
+    btn.addEventListener('click', () => {
+      const open = s.classList.toggle('unfolded');
+      btn.textContent = open ? 'Einklappen' : 'Aufklappen';
+    });
+    s.querySelector('h2').after(fold);
+  });
+  const anchor = s => s.id || s.querySelector('h2').id;
+  const label = s => s.querySelector('h2').textContent;
+
+  function apply(key) {
+    const a = AUD[key] || AUD.alle;
+    const order = [...a.weg, ...a.auch, ...a.nachfrage];
+    Object.values(sections).forEach(s => { s.hidden = true; s.classList.remove('folded', 'unfolded'); });
+    order.forEach(id => {
+      const s = sections[id];
+      s.hidden = false;
+      if (a.nachfrage.includes(id)) s.classList.add('folded');
+      s.querySelector('.fold button').textContent = 'Aufklappen';
+      wrap.appendChild(s);
+    });
+    const toc = document.getElementById('toc');
+    toc.innerHTML = order.map((id, i) => {
+      const s = sections[id];
+      const extra = a.nachfrage.includes(id) ? ' <span class="muted">(bei Nachfrage)</span>' : '';
+      return `<span class="tocitem"><a href="#${anchor(s)}">${i + 1} · ${esc(label(s))}</a>${extra}</span>`;
+    }).join('');
+    document.querySelectorAll('.audience button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.aud === key)));
+    document.getElementById('audHint').textContent = a.hint;
+    document.querySelectorAll('#audTable tr[data-for]').forEach(tr => tr.classList.toggle('current', tr.dataset.for === key));
+    try { localStorage.setItem('systemmodell-zielgruppe', key); } catch (e) { /* ohne Speicher gilt die Wahl nur bis zum Neuladen */ }
+  }
+  document.querySelectorAll('.audience button').forEach(b => b.addEventListener('click', () => apply(b.dataset.aud)));
+  let start = 'alle';
+  try { const k = localStorage.getItem('systemmodell-zielgruppe'); if (k && AUD[k]) start = k; } catch (e) { /* Start auf „Alle“ */ }
+  apply(start);
 })();
 </script>
 

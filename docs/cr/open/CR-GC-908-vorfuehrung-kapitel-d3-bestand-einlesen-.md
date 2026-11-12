@@ -42,3 +42,30 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Ergebnis (2026-11-12)
+
+Kapitel „Bestand einlesen und Anforderungen zusammenführen“ (Baustein D3, nur in den Ansichten
+Spezifikation und Alle). Inhalt:
+- Ausgangslage: zwei Dokumente zur Paketstation mit einer Dublette (Sperre nach drei Fehlversuchen)
+  und einem Widerspruch („sofort“ gegen „3 s“).
+- Fünf Schritte: Gliederung zeigen → Typen entscheiden → Auszug durch das Gate → Code einlesen →
+  Zusammenführen.
+- Tabelle „Was heute geht und was offen ist“.
+
+Abnahme:
+1. ✓ Der Ablauf folgt `UC-consolidate-requirements`: Dokumente und Code erschließen, zu einem Baum
+   zusammenführen, jede Anforderung einmal, mit Quelle, Widersprüche als Fragen. Schritt 4 folgt
+   `FCHAIN-model-import` und `FCHAIN-skill-import-code` (gesicherter Vorzustand, Stempel der
+   Modellversion, `REQ-model-exchange-post`). Die Schritte 1–3 folgen dem Skill se:import-doc.
+2. ✓ Das Beispiel endet im Anforderungsbaum aus E2. Die sechs Sätze der beiden Dokumente werden zu
+   A1, A4, A6 und A7.
+3. ✓ Als offen benannt, nicht als Fähigkeit:
+   - die fehlende Einlese-Kette für Dokumente (CR-GC-910)
+   - das Zusammenführen ohne eigenen Schritt im Modell
+   - „mit Quelle“ als Anforderung ohne Test
+   - Widersprüche ohne Prüfung auf Vollständigkeit
+   - T-N3 nicht gemessen
+   Die ersten drei Punkte sind die offenen Punkte 1–3 aus CR-GC-905.

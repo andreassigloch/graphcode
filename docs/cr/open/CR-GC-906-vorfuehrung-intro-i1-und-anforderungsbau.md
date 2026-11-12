@@ -54,3 +54,40 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Ergebnis (2026-11-12)
+
+Artefakt `docs/project/systemmodell-in-bildern.html`, veröffentlicht als Version 14
+(https://claude.ai/artifact/UBXkGN6Pb6nddA7rgzFWrT).
+
+- **I1 „Das Ziel: Abstraktion statt Abbild“:** die vier Fragen Warum · Wie · Womit · Worüber
+  mit je einem Beispiel aus der Paketstation, dazu ein Satz je Zielgruppe.
+- **E2 „Der Anforderungsbaum der Paketstation“:** Systemanforderung → 2 Anwendungsfälle →
+  9 Anforderungen (A1–A9). Jede Anforderung steht im Satzmuster Wenn · dann · innerhalb · nur wenn,
+  rechts „erfüllt von“ und „Test“.
+
+Abnahme:
+1. ✓ In der Ansicht „Alle“ steht I1 vor den Bausteinen. E2 steht vor der Landkarte (Kapitel
+   Verbindungen) und vor dem Netz der Paketstation.
+2. ✓ 9 Anforderungen plus die Systemanforderung, also 10; jede mit den vier Teilen.
+3. ✓ Namen, die E2 festlegt und Kapitel 3 und 6 verwenden:
+   - System Paketstation; Akteure Empfänger, Zusteller, Versand-Server
+   - Anwendungsfälle Paket abholen, Paket einlegen; Wirkketten Abholung, Einlage
+   - Funktionen Code lesen, Code prüfen, Fach entriegeln, Abholung melden, Fach zuteilen,
+     Abholcode erzeugen
+   - Module Bedienfeld (Code lesen), Steuerung (Code prüfen, Abholung melden, Fach zuteilen,
+     Abholcode erzeugen), Schließmechanik (Fach entriegeln)
+   - Datenflüsse Abholcode, Öffnungsbefehl, Fach offen; Datenformat Abholcode = 6 Ziffern
+   Angeglichen: Die Treppe in Kapitel 6 legte „Code lesen“ in die Steuerung. Jetzt liegt sie im
+   Bedienfeld, wie in Kapitel 5 (Änderbarkeit) und im Regelbeispiel der Stufe 12.
+4. ✓ Veröffentlicht. Hell und dunkel geprüft (Screenshots im Lauf, nicht eingecheckt): E2 bei
+   1000 px hell und dunkel, bei 390 px ohne waagrechten Bildlauf (scrollWidth 390).
+
+Nebenbefund behoben: Ein nicht geschlossenes `<details>` in Kapitel 5 hatte Kapitel 6 seit der
+ersten Fassung in die aufklappbaren Details der Methode gezogen.
+
+**Offen (aus dem CR):** Ob „Requirement Review“ im Viewer für D1 reicht: Die Ansicht ist eine
+Liste, E2 ist ein Baum. Entscheidung des Auftraggebers am fertigen E2; reicht sie nicht, folgt ein
+CR im Viewer-Repo. Der Abschnitt D1 nennt die Lücke.
