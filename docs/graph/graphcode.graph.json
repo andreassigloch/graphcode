@@ -4010,7 +4010,9 @@
       "id": "CR-GC-908",
       "type": "CR",
       "name": "Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren",
-      "description": "docs/cr/open/CR-GC-908-vorfuehrung-kapitel-d3-bestand-einlesen-.md"
+      "description": "docs/cr/done/CR-GC-908-vorfuehrung-kapitel-d3-bestand-einlesen-.md",
+      "status": "done",
+      "commitRef": "bd913697"
     },
     {
       "id": "CR-GC-909",
@@ -32366,5 +32368,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1108
+  "graphVersion": 1109
 }

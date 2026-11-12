@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 520 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 520 CR · 370 done · 4 open.
+Total: 520 CR · 371 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -573,7 +573,7 @@ Total: 520 CR · 370 done · 4 open.
 | `CR-GC-905` | done | UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation) |
 | `CR-GC-906` | done | Vorfuehrung: Intro I1 und Anforderungsbaum E2 im Artefakt Systemmodell in Bildern |
 | `CR-GC-907` | done | Vorfuehrung: Schalter fuer die Zielgruppe im Artefakt Systemmodell in Bildern |
-| `CR-GC-908` | n/a | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren |
+| `CR-GC-908` | done | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren |
 | `CR-GC-909` | n/a | SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben |
 | `CR-GC-910` | n/a | import-doc als Werkzeug der Tool-Schicht statt Skript: Bestand einlesen in jedem MCP-Host |
 | `CR-GC-911` | done | Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen |
