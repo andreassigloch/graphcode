@@ -1,6 +1,6 @@
 # CR-GC-905: UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation)
 
-**Status:** ✅ Done
+**Status:** ✅ Done (2026-11-12)
 **Abgeschlossen:** 2026-11-12
 **Typ:** aus Item ITEM-2026-1290 (idea)
 **Erstellt:** 2026-11-11

@@ -3984,7 +3984,9 @@
       "id": "CR-GC-905",
       "type": "CR",
       "name": "UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation)",
-      "description": "docs/cr/open/CR-GC-905-uc-bestand-erschliessen-und-verstreute-a.md"
+      "description": "docs/cr/done/CR-GC-905-uc-bestand-erschliessen-und-verstreute-a.md",
+      "status": "done",
+      "commitRef": "1346da76,b969a4c1,bd913697"
     },
     {
       "id": "CR-GC-906",
@@ -32356,5 +32358,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1102
+  "graphVersion": 1103
 }
