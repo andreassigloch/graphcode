@@ -1,6 +1,6 @@
 # CR-GC-906: Vorfuehrung: Intro I1 und Anforderungsbaum E2 im Artefakt Systemmodell in Bildern
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-12)
 **Typ:** aus Item ITEM-2026-1291 (idea)
 **Erstellt:** 2026-11-11
 **Item:** bok/items/ITEM-2026-1291.json (Lane: graph)

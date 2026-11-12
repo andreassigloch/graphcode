@@ -3994,7 +3994,9 @@
       "id": "CR-GC-906",
       "type": "CR",
       "name": "Vorfuehrung: Intro I1 und Anforderungsbaum E2 im Artefakt Systemmodell in Bildern",
-      "description": "docs/cr/open/CR-GC-906-vorfuehrung-intro-i1-und-anforderungsbau.md"
+      "description": "docs/cr/done/CR-GC-906-vorfuehrung-intro-i1-und-anforderungsbau.md",
+      "status": "done",
+      "commitRef": "5325f5c5,bd913697"
     },
     {
       "id": "CR-GC-907",
@@ -32362,5 +32364,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1106
+  "graphVersion": 1107
 }

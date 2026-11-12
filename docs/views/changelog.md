@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 520 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 520 CR · 368 done · 4 open.
+Total: 520 CR · 369 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -571,7 +571,7 @@ Total: 520 CR · 368 done · 4 open.
 | `CR-GC-903` | done | Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen |
 | `CR-GC-904` | done | EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431) |
 | `CR-GC-905` | done | UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation) |
-| `CR-GC-906` | n/a | Vorfuehrung: Intro I1 und Anforderungsbaum E2 im Artefakt Systemmodell in Bildern |
+| `CR-GC-906` | done | Vorfuehrung: Intro I1 und Anforderungsbaum E2 im Artefakt Systemmodell in Bildern |
 | `CR-GC-907` | n/a | Vorfuehrung: Schalter fuer die Zielgruppe im Artefakt Systemmodell in Bildern |
 | `CR-GC-908` | n/a | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren |
 | `CR-GC-909` | n/a | SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben |
