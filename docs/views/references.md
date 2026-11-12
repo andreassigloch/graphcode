@@ -1131,6 +1131,7 @@
 | `CR-GC-805` | relation | `REQ-held-back-edges-in-readiness` |
 | `CR-GC-805` | relation | `REQ-host-holds-only-kuzu-handle` |
 | `CR-GC-806` | relation | `UC-code-quality` |
+| `CR-GC-806` | relation | `UC-intent-to-code` |
 | `CR-GC-806` | relation | `UC-live-graph-view` |
 | `CR-GC-807` | relation | `UC-code-quality` |
 | `CR-GC-807` | relation | `UC-deterministic-steering` |
@@ -1430,6 +1431,7 @@
 | `CR-GC-903` | relation | `REQ-shared-views-no-fork` |
 | `CR-GC-904` | relation | `FUNC-author-req` |
 | `CR-GC-905` | relation | `FUNC-import-doc` |
+| `CR-GC-905` | relation | `UC-consolidate-requirements` |
 | `CR-GC-905` | relation | `UC-model-exchange` |
 | `CR-GC-908` | relation | `FUNC-import-doc` |
 | `CR-GC-908` | relation | `UC-model-exchange` |
@@ -3160,9 +3162,11 @@
 | `SYS-graphcode` | compose | `REQ-tool-input-parsed-once` |
 | `SYS-graphcode` | compose | `REQ-versioned-cache` |
 | `SYS-graphcode` | compose | `UC-code-quality` |
+| `SYS-graphcode` | compose | `UC-consolidate-requirements` |
 | `SYS-graphcode` | compose | `UC-deterministic-steering` |
 | `SYS-graphcode` | compose | `UC-efficient-testing` |
 | `SYS-graphcode` | compose | `UC-graph-time-travel` |
+| `SYS-graphcode` | compose | `UC-intent-to-code` |
 | `SYS-graphcode` | compose | `UC-live-graph-view` |
 | `SYS-graphcode` | compose | `UC-loop-closure` |
 | `SYS-graphcode` | compose | `UC-model-exchange` |
@@ -3568,6 +3572,10 @@
 | `UC-code-quality` | compose | `REQ-vorbereitung-reads-metrics` |
 | `UC-code-quality` | compose | `REQ-zug-zeigt-kennzahlen-danach` |
 | `UC-code-quality` | compose | `REQ-zugangsliste-vor-bau` |
+| `UC-consolidate-requirements` | compose | `FCHAIN-model-import` |
+| `UC-consolidate-requirements` | compose | `FCHAIN-skill-import-code` |
+| `UC-consolidate-requirements` | compose | `REQ-model-exchange-post` |
+| `UC-consolidate-requirements` | compose | `REQ-model-exchange-pre` |
 | `UC-deterministic-steering` | compose | `FCHAIN-generation-states` |
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-help` |
 | `UC-deterministic-steering` | compose | `FCHAIN-skill-report` |
@@ -3620,6 +3628,16 @@
 | `UC-graph-time-travel` | compose | `REQ-risk-auto-export-fails-silently` |
 | `UC-graph-time-travel` | compose | `REQ-risk-edge-vanishes-silently` |
 | `UC-graph-time-travel` | compose | `REQ-risk-partial-store-after-reseed` |
+| `UC-intent-to-code` | compose | `FCHAIN-agent-query` |
+| `UC-intent-to-code` | compose | `FCHAIN-apply-gate` |
+| `UC-intent-to-code` | compose | `FCHAIN-capture` |
+| `UC-intent-to-code` | compose | `FCHAIN-doc-export` |
+| `UC-intent-to-code` | compose | `FCHAIN-impact-testing` |
+| `UC-intent-to-code` | compose | `FCHAIN-live-update` |
+| `UC-intent-to-code` | compose | `FCHAIN-model-import` |
+| `UC-intent-to-code` | compose | `FCHAIN-skill-authoring` |
+| `UC-intent-to-code` | compose | `FCHAIN-test-ingest` |
+| `UC-intent-to-code` | compose | `FCHAIN-verify-lane` |
 | `UC-live-graph-view` | compose | `FCHAIN-dashboard-metrics` |
 | `UC-live-graph-view` | compose | `FCHAIN-health` |
 | `UC-live-graph-view` | compose | `FCHAIN-http-host` |

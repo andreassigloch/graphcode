@@ -13128,6 +13128,13 @@
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
     {
+      "id": "UC-consolidate-requirements",
+      "type": "UC",
+      "name": "Bestand erschliessen und Anforderungen zusammenfuehren",
+      "description": "Als Auftraggeber erschliesse ich vorhandene Dokumente und Code und fuehre verstreute Anforderungen zu einem Baum zusammen: jede einmal, mit Quelle, Widersprueche als Fragen.",
+      "status": "draft"
+    },
+    {
       "id": "UC-deterministic-steering",
       "type": "UC",
       "name": "Deterministisch auf ein mehrdimensionales Ziel steuern",
@@ -13149,6 +13156,13 @@
       "name": "Graph-Stand pro Commit wiederherstellbar",
       "description": "Als Entwickler will ich den Modellstand eines beliebigen Commits wiederherstellen, damit Modell und Code zu jedem Zeitpunkt zusammenpassen.",
       "status": "done"
+    },
+    {
+      "id": "UC-intent-to-code",
+      "type": "UC",
+      "name": "System von der Absicht bis zum getesteten Code bringen",
+      "description": "Als Auftraggeber, Mensch oder KI, bringe ich ein System von der Absicht ueber das gepruefte Modell bis zum getesteten Code.",
+      "status": "reviewed"
     },
     {
       "id": "UC-live-graph-view",
@@ -19176,6 +19190,11 @@
     },
     {
       "source": "CR-GC-806",
+      "target": "UC-intent-to-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-806",
       "target": "UC-live-graph-view",
       "type": "relation"
     },
@@ -20667,6 +20686,11 @@
     {
       "source": "CR-GC-905",
       "target": "FUNC-import-doc",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-905",
+      "target": "UC-consolidate-requirements",
       "type": "relation"
     },
     {
@@ -29499,6 +29523,11 @@
     },
     {
       "source": "SYS-graphcode",
+      "target": "UC-consolidate-requirements",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
       "target": "UC-deterministic-steering",
       "type": "compose"
     },
@@ -29512,6 +29541,11 @@
     {
       "source": "SYS-graphcode",
       "target": "UC-graph-time-travel",
+      "type": "compose"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "UC-intent-to-code",
       "type": "compose"
     },
     {
@@ -31662,6 +31696,26 @@
       "type": "compose"
     },
     {
+      "source": "UC-consolidate-requirements",
+      "target": "FCHAIN-model-import",
+      "type": "compose"
+    },
+    {
+      "source": "UC-consolidate-requirements",
+      "target": "FCHAIN-skill-import-code",
+      "type": "compose"
+    },
+    {
+      "source": "UC-consolidate-requirements",
+      "target": "REQ-model-exchange-post",
+      "type": "compose"
+    },
+    {
+      "source": "UC-consolidate-requirements",
+      "target": "REQ-model-exchange-pre",
+      "type": "compose"
+    },
+    {
       "source": "UC-deterministic-steering",
       "target": "FCHAIN-generation-states",
       "type": "compose"
@@ -31925,6 +31979,56 @@
     {
       "source": "UC-graph-time-travel",
       "target": "REQ-risk-partial-store-after-reseed",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-agent-query",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-apply-gate",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-capture",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-doc-export",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-impact-testing",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-live-update",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-model-import",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-skill-authoring",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-test-ingest",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
+      "target": "FCHAIN-verify-lane",
       "type": "compose"
     },
     {
@@ -32265,5 +32369,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1096
+  "graphVersion": 1098
 }

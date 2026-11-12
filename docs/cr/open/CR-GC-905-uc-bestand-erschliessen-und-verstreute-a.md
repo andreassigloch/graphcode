@@ -80,3 +80,32 @@ Tests (`graph_tests`, 0):
 - (keine)
 
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Ergebnis (2026-11-12)
+
+Entscheidungen des Auftraggebers am 2026-11-12:
+- **Akteur:** derselbe Anwender wie im Kern-UC, `ACTOR-auftraggeber`. Spezifizierer und Coder
+  werden nicht als Rollen getrennt.
+- **Fehlende Ketten:** nur als Lücke benennen, nicht bauen.
+
+Modell v1098: `UC-consolidate-requirements` „Bestand erschließen und Anforderungen zusammenführen“
+(23 Wörter): „Als Auftraggeber erschließe ich vorhandene Dokumente und Code und führe verstreute Anforderungen
+zu einem Baum zusammen: jede einmal, mit Quelle, Widersprüche als Fragen.“ Er komponiert
+`FCHAIN-model-import`, `FCHAIN-skill-import-code`, `REQ-model-exchange-pre` und
+`REQ-model-exchange-post`. Beide REQ prüft `TEST-import-code-verb`. Durchs Gate, kein Befund.
+
+Abnahme: 1 ✓ · 2 ✓ · 3 als Lücke benannt · 4 ✓ · 5 ✓.
+
+### Offene Punkte
+
+1. **Kette „Dokument einlesen“ fehlt.** `FUNC-import-doc` hängt nur an `FCHAIN-skill-authoring`, an
+   keiner Einlese-Kette. CR-GC-910 baut import-doc zum Werkzeug der Tool-Schicht um; die Kette
+   gehört dorthin.
+2. **Kette „Anforderungen zusammenführen“ fehlt.** Dubletten legt heute die Merge-Zeile in
+   `graph_mutate` zusammen; eine FUNC dafür gibt es nicht.
+3. **Anforderung an das Ergebnis fehlt:** „jede Anforderung einmal, mit Quelle, Widersprüche als
+   Fragen“ steht nur im UC-Text, nicht als REQ mit TEST. Folgt mit Punkt 2.
+4. **`UC-model-exchange` unverändert.** Er teilt sich die beiden Einlese-Ketten und die zwei REQ mit
+   dem neuen UC. Schärfen auf Ein-/Ausgabe oder Aufgehen bleibt offen (`/se-umbau`).

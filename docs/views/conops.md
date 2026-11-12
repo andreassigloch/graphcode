@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 3 ACTOR, 9 UC, 25 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 3 ACTOR, 11 UC, 25 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -45,14 +45,14 @@
 
 ## 3  User classes & involved personnel (3)
 
-- **Auftraggeber** (`ACTOR-auftraggeber`) — triggert `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`; beteiligt an `UC-graph-time-travel`; empfaengt aus `UC-code-quality` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
+- **Auftraggeber** (`ACTOR-auftraggeber`) — triggert `UC-code-quality` · `UC-consolidate-requirements` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-intent-to-code` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`; beteiligt an `UC-graph-time-travel`; empfaengt aus `UC-code-quality` · `UC-consolidate-requirements` · `UC-deterministic-steering` · `UC-efficient-testing` · `UC-graph-time-travel` · `UC-intent-to-code` · `UC-live-graph-view` · `UC-loop-closure` · `UC-model-exchange` · `UC-reduced-llm` · `UC-repo-lifecycle`
   - Gibt Auftraege und nimmt Ergebnisse ab, ueber jeden Kanal: Prompt an die Ablaufsteuerung, CLI-Verb, MCP-Aufruf. Mensch oder Orchestrator, gleichwertig; das Gate unterscheidet sie nicht, es loggt nur den Autor. Nutzerklassen (ISO 29148 5.2.4): Entwickler/Repo-Owner, Systems Engineer auf der WAS-Ebene, Vibe Coder ohne eigenen Code, Orchestrator. Ein Auftrag aendert nie das Regelwerk, nach dem das Gate urteilt, das setzt ACTOR-regelhalter. (CR-GC-455, CR-GC-813, CR-GC-815)
-- **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-live-graph-view` · `UC-repo-lifecycle`; empfaengt aus `UC-live-graph-view` · `UC-repo-lifecycle`
+- **Browser-Dashboard** (`ACTOR-dashboard`) — triggert `UC-live-graph-view` · `UC-repo-lifecycle`; empfaengt aus `UC-intent-to-code` · `UC-live-graph-view` · `UC-repo-lifecycle`
   - Browser-Viewer (graph-view-edit). Liest ueber host.sock die Antworten von graph_metrics, graph_readiness und graph_generate (peek); Live-Updates und Health sind Ziel von CR-GC-809. Im Edit-Modus schreibt er heute ueber graph_mutate und graph_export; ob er das darf, entscheidet CR-GC-808 (Ein-Schreiber-Modus). (SPEC §5 Kanal 2, CR-GC-822)
-- **Learning-Engine** (`ACTOR-learning-engine`) — empfaengt aus `UC-code-quality` · `UC-reduced-llm`
+- **Learning-Engine** (`ACTOR-learning-engine`) — empfaengt aus `UC-code-quality` · `UC-intent-to-code` · `UC-reduced-llm`
   - Bidirektionales Nachbarsystem, geplant: liest die post-apply/nightly Trajectory-/Outcome-Emissionen als Lerneingang, beantwortet eine Lern-Frage von graph_suggest und nextStep und liefert je Kandidat ein Urteil zurueck. Sie schreibt KEINE Konfiguration: die Urteilsschwellen bleiben der Vertrag des Menschen. Deshalb NICHT mit dem Viewer zusammenzulegen: der Viewer liest nur, die Learning-Engine schliesst eine Schleife. (SPEC 2.3, Abgrenzung CR-GC-455, Andockpunkt CR-GC-465)
 
-## 4  Operational scenarios (9 UC)
+## 4  Operational scenarios (11 UC)
 
 ### `UC-code-quality` — Jede Aenderung geht durchs Gate
 
@@ -65,6 +65,17 @@ Empfaenger: `ACTOR-auftraggeber` · `ACTOR-learning-engine`
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-tool-context` → `FUNC-zug-bericht`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-agent-loop` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
 - `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-agent-loop` → `FUNC-author-actor` → `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-graph-metrics` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import-doc` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-rules-tool` → `FUNC-se-conops` → `FUNC-se-constraints` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-laufzeit` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-se-umbau` → `FUNC-se-vorbereitung`
+
+### `UC-consolidate-requirements` — Bestand erschliessen und Anforderungen zusammenfuehren
+
+Als Auftraggeber erschliesse ich vorhandene Dokumente und Code und fuehre verstreute Anforderungen zu einem Baum zusammen: jede einmal, mit Quelle, Widersprueche als Fragen.
+
+Ausgeloest von: `ACTOR-auftraggeber`
+
+Empfaenger: `ACTOR-auftraggeber`
+
+- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code-verb` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
+- `FCHAIN-skill-import-code` — Code per Skill einlesen: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code` → `FUNC-import-code-verb` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
 
 ### `UC-deterministic-steering` — Deterministisch auf ein mehrdimensionales Ziel steuern
 
@@ -107,6 +118,25 @@ Empfaenger: `ACTOR-auftraggeber`
 - `FCHAIN-recall` — Recall (Wiederherstellen): `FUNC-apply-reseed` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-import` → `FUNC-open-store` → `FUNC-reseed` → `FUNC-rewind` → `FUNC-seed-from-json`
 - `FCHAIN-snapshot-freshness` — Snapshot-Freshness (Aufzeichnen): `FUNC-agent-loop` → `FUNC-auto-export` → `FUNC-check-code-conformance` → `FUNC-commit-check` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-export-markdown` → `FUNC-export-marker` → `FUNC-export-marker-clear` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-held-back-traces` → `FUNC-mutate`
 - `FCHAIN-snapshot-roundtrip` — Snapshot-Rundreise: `FUNC-agent-loop` → `FUNC-apply-reseed` → `FUNC-graph-export-snapshot` → `FUNC-graph-reseed-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-reseed` → `FUNC-seed-from-json`
+
+### `UC-intent-to-code` — System von der Absicht bis zum getesteten Code bringen
+
+Als Auftraggeber, Mensch oder KI, bringe ich ein System von der Absicht ueber das gepruefte Modell bis zum getesteten Code.
+
+Ausgeloest von: `ACTOR-auftraggeber`
+
+Empfaenger: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine`
+
+- `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-agent-loop` → `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-list-elements` → `FUNC-read-tools`
+- `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-tool-context` → `FUNC-zug-bericht`
+- `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-agent-loop` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
+- `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-cr-groups` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-graph-store`
+- `FCHAIN-impact-testing` — Tests zu einer Aenderung waehlen: `FUNC-agent-loop` → `FUNC-deduce-tests` → `FUNC-graph-store` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests`
+- `FCHAIN-live-update` — Live-Update-Kette (persist → emit → subscribe): `FUNC-agent-loop` → `FUNC-broadcast-diff` → `FUNC-decode` → `FUNC-emit-update-event` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
+- `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code-verb` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
+- `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-agent-loop` → `FUNC-author-actor` → `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-graph-metrics` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import-doc` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-rules-tool` → `FUNC-se-conops` → `FUNC-se-constraints` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-laufzeit` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-se-umbau` → `FUNC-se-vorbereitung`
+- `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context`
+- `FCHAIN-verify-lane` — Code-Test-Spur fahren (npm): `FUNC-graph-store` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context` → `FUNC-verify-lane-code`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
 
@@ -522,7 +552,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-803` | n/a | Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen) | `FUNC-export-marker` · `FUNC-graph-export-snapshot` · `FUNC-take-steering-snapshot` · `REQ-export-marker-tracks-drift` · `REQ-export-no-clobber` · `REQ-graph-snapshot-per-commit` · `REQ-single-measurement-path` |
 | `CR-GC-804` | n/a | Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion) | `FUNC-graph-suggest` · `FUNC-se-constraints` · `FUNC-se-vorbereitung` · `FUNC-target-profile-load` · `REQ-model-lane-fixed-set` |
 | `CR-GC-805` | n/a | Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion | `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-graph-store` · `FUNC-held-back-traces` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · `FUNC-seed-from-json` · `REQ-docked-session-reelects-once` · `REQ-export-refuses-until-held-back-repaired` · `REQ-first-session-claims-store-lock` · `REQ-further-session-docks-via-socket` · `REQ-harness-factory-returns-one-owner` · `REQ-held-back-edge-does-not-abort-load` · `REQ-held-back-edges-derived-every-call` · `REQ-held-back-edges-in-readiness` · `REQ-host-holds-only-kuzu-handle` |
-| `CR-GC-806` | n/a | Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft | `UC-code-quality` · `UC-live-graph-view` |
+| `CR-GC-806` | n/a | Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft | `UC-code-quality` · `UC-intent-to-code` · `UC-live-graph-view` |
 | `CR-GC-807` | n/a | Impact-Check: UCs code-quality, reduced-llm, deterministic-steering lesen sich als Anforderungen an den Kern-UC - Herabstufen zu REQ pruefen | `UC-code-quality` · `UC-deterministic-steering` · `UC-reduced-llm` |
 | `CR-GC-813` | n/a | Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code | `FUNC-agent-loop` · `FUNC-graph-mutate-tool` · `FUNC-host-socket` · `FUNC-rules-tool` · `REQ-agent-loop-executes-skill` |
 | `CR-GC-814` | n/a | Modell: Recall falsch verdrahtet (seedFromJson an GraphStore statt applyReseed), sieben Wirkketten ohne Ausloeser | `FUNC-apply-reseed` · `FUNC-compute-steering-delta` · `FUNC-gve-supervise` · `FUNC-held-back-traces` · `FUNC-merge-nodes` · `FUNC-seed-from-json` |
@@ -602,7 +632,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-902` | done | init prueft nicht, ob Claude Code oder OpenCode installiert ist; ohne Agent-Programm laufen die naechsten Schritte ins Leere | `FUNC-init-verb` · `REQ-init-agent-host` |
 | `CR-GC-903` | n/a | Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen | `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork` |
 | `CR-GC-904` | done | EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431) | `FUNC-author-req` |
-| `CR-GC-905` | n/a | UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation) | `FUNC-import-doc` · `UC-model-exchange` |
+| `CR-GC-905` | n/a | UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation) | `FUNC-import-doc` · `UC-consolidate-requirements` · `UC-model-exchange` |
 | `CR-GC-908` | n/a | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren | `FUNC-import-doc` · `UC-model-exchange` |
 | `CR-GC-909` | n/a | SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben | `FUNC-export-markdown` · `FUNC-graph-export-snapshot` |
 | `CR-GC-910` | n/a | import-doc als Werkzeug der Tool-Schicht statt Skript: Bestand einlesen in jedem MCP-Host | `FUNC-import-doc` · `UC-model-exchange` |

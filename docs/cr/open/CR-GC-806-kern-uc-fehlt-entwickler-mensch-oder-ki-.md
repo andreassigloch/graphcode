@@ -64,3 +64,19 @@ Modell, Lücken als Fragen. Ein Zug durchs Gate, danach `graph_export` + Views.
 
 Modell: `SYS-graphcode`, ein neuer UC, compose auf die Ketten nach (a) oder (b), Akteur. Keine
 Code-Änderung. Lane MODELL (`verify:model`).
+
+---
+
+## Ergebnis (2026-11-12)
+
+Entscheidungen des Auftraggebers am 2026-11-12:
+- **Akteur:** `ACTOR-auftraggeber`. Er deckt seit CR-GC-813/815 Mensch und Orchestrator ab und führt
+  Entwickler als Nutzerklasse. Kein neuer Akteur.
+- **Text:** `UC-intent-to-code` „System von der Absicht bis zum getesteten Code bringen“ — „Als
+  Auftraggeber, Mensch oder KI, bringe ich ein System von der Absicht über das geprüfte Modell bis zum
+  getesteten Code.“
+- **Ketten (Variante b plus zwei):** apply-gate, live-update, skill-authoring, capture · agent-query,
+  impact-testing, test-ingest, verify-lane · model-import · doc-export.
+
+Modell v1097, durchs Gate, kein Fehler. Offen: UC-01 warnt, der UC hat noch keine REQ. Welche REQ
+unter ihn wandern, misst CR-GC-807. Commit: siehe `git log --grep CR-GC-806`.
