@@ -87,3 +87,9 @@ Kein Skill und kein Quellcode in `src/` nennt eine der drei uids.
 | deterministic-steering | **offen**: herabstufen (der Kern-UC bekommt 4 Ketten der Steuerung dazu) oder als eigenes Nutzerziel „Modell gegen ein Zielprofil verbessern" behalten und umbenennen | herabstufen: 1 Batch (~60 Zeilen), TEST wählen · behalten: 1 Zeile Umbenennung |
 
 Entscheidung durch den Auftraggeber; der Umbau ist ein eigener CR (se-umbau).
+
+## Entscheidung (Auftraggeber 2026-11-12)
+
+Vorschläge angenommen. code-quality und reduced-llm werden REQ am Kern-UC; deterministic-steering
+bleibt UC und heißt „Modell gegen ein Zielprofil verbessern“ (die günstigere Variante, ein eigenes
+Nutzerziel). Umgesetzt in CR-GC-916.
