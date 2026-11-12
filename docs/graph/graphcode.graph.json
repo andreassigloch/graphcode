@@ -4002,7 +4002,9 @@
       "id": "CR-GC-907",
       "type": "CR",
       "name": "Vorfuehrung: Schalter fuer die Zielgruppe im Artefakt Systemmodell in Bildern",
-      "description": "docs/cr/open/CR-GC-907-vorfuehrung-schalter-fuer-die-zielgruppe.md"
+      "description": "docs/cr/done/CR-GC-907-vorfuehrung-schalter-fuer-die-zielgruppe.md",
+      "status": "done",
+      "commitRef": "bd913697"
     },
     {
       "id": "CR-GC-908",
@@ -32364,5 +32366,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1107
+  "graphVersion": 1108
 }

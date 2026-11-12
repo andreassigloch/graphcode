@@ -1,6 +1,6 @@
 # CR-GC-907: Vorfuehrung: Schalter fuer die Zielgruppe im Artefakt Systemmodell in Bildern
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-12)
 **Typ:** aus Item ITEM-2026-1292 (idea)
 **Erstellt:** 2026-11-11
 **Item:** bok/items/ITEM-2026-1292.json (Lane: graph)
