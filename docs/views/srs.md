@@ -13452,7 +13452,7 @@ Verification ◀ `TEST-code-quality` (acceptance) · `TEST-mvp-e2e` (e2e) · sat
 
 ###### `REQ-ein-schreibweg` — Ein Schreibweg
 
-Inhalt muss genau ueber sechs Fluesse in den Store kommen: FLOW-graph-delta vom Apply-Gate, FLOW-imported-graph von der Import-Operation und die Lebenszyklus-Fluesse FLOW-store-build, FLOW-store-close, FLOW-store-close-cli, FLOW-store-close-rewind. Jeder weitere Eingang in FUNC-graph-store ist ein zweiter Schreibweg. Ein Zug am Modell bricht diese Anforderung ohne Code-Aenderung; der Snapshot-Test prueft sie. (CR-GC-851)
+Inhalt muss genau ueber sieben Fluesse in den Store kommen: FLOW-graph-delta vom Apply-Gate, FLOW-imported-graph von der Import-Operation und die Lebenszyklus-Fluesse FLOW-store-build, FLOW-store-close, FLOW-store-close-cli, FLOW-store-close-rewind, FLOW-store-close-render. Jeder weitere Eingang in FUNC-graph-store ist ein zweiter Schreibweg. Ein Zug am Modell bricht diese Anforderung ohne Code-Aenderung; der Snapshot-Test prueft sie. (CR-GC-851, render ergaenzt CR-GC-909)
 
 priority: should · status: n/a · kinds: non-functional
 
@@ -16214,7 +16214,7 @@ verify ▶ `REQ-commit-check-flow-call` · testRefs: `tests/commit-pruefung.test
 
 #### 3.4.24  `TEST-constraint-ein-schreibweg` — Constraint Ein Schreibweg
 
-Liest den committeten Snapshot und prueft mit eingaengeNurAus, dass FUNC-graph-store nur die sechs erlaubten Eingaenge hat; Positivkontrolle mit einem siebten Fluss und mit einem entfallenen Fluss; Vertrag des Befunds samt Ablehnung. (CR-GC-851)
+Liest den committeten Snapshot und prueft mit eingaengeNurAus, dass FUNC-graph-store nur die sieben erlaubten Eingaenge hat; Positivkontrolle mit einem achten Fluss und mit einem entfallenen Fluss; Vertrag des Befunds samt Ablehnung. (CR-GC-851, CR-GC-909)
 
 verify ▶ `REQ-ein-schreibweg` · `REQ-eingaenge-nur-aus-liste` · `SCHEMA-eingangs-befund` · testRefs: `tests/constraint-ein-schreibweg.test.ts`
 

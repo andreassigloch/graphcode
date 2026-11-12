@@ -612,7 +612,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-904` | done | EARS als Vorbild im Skill se:author-req statt Modalverb-Form (CR-SM-431) | `FUNC-author-req` |
 | `CR-GC-905` | done | UC Bestand erschliessen und verstreute Anforderungen zusammenfuehren (Zielgruppe Spezifikation) | `FUNC-import-doc` · `UC-consolidate-requirements` · `UC-model-exchange` |
 | `CR-GC-908` | done | Vorfuehrung: Kapitel D3 Bestand einlesen und Anforderungen zusammenfuehren | `FUNC-import-doc` · `UC-model-exchange` |
-| `CR-GC-909` | n/a | SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben | `FUNC-export-markdown` · `FUNC-graph-export-snapshot` · `FUNC-render-verb` · `REQ-render-document` · `REQ-srs-29148` |
+| `CR-GC-909` | n/a | SRS-Sicht nach ISO 29148 Annex A gliedern, Sichten als PDF und Word ausgeben | `FUNC-export-markdown` · `FUNC-graph-export-snapshot` · `FUNC-render-verb` · `REQ-ein-schreibweg` · `REQ-render-document` · `REQ-srs-29148` |
 | `CR-GC-910` | n/a | import-doc als Werkzeug der Tool-Schicht statt Skript: Bestand einlesen in jedem MCP-Host | `FUNC-import-doc` · `UC-model-exchange` |
 | `CR-GC-911` | done | Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen | `FUNC-graph-export-snapshot` · `FUNC-tool-context` |
 | `CR-GC-912` | done | Viewer-Aufsicht beendet einen lebenden Viewer, der 750 ms nicht antwortet | `FUNC-gve-supervise` · `REQ-viewer-owned-by-repo` |

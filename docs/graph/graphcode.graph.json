@@ -8050,7 +8050,7 @@
       "id": "REQ-ein-schreibweg",
       "type": "REQ",
       "name": "Ein Schreibweg",
-      "description": "Inhalt muss genau ueber sechs Fluesse in den Store kommen: FLOW-graph-delta vom Apply-Gate, FLOW-imported-graph von der Import-Operation und die Lebenszyklus-Fluesse FLOW-store-build, FLOW-store-close, FLOW-store-close-cli, FLOW-store-close-rewind. Jeder weitere Eingang in FUNC-graph-store ist ein zweiter Schreibweg. Ein Zug am Modell bricht diese Anforderung ohne Code-Aenderung; der Snapshot-Test prueft sie. (CR-GC-851)",
+      "description": "Inhalt muss genau ueber sieben Fluesse in den Store kommen: FLOW-graph-delta vom Apply-Gate, FLOW-imported-graph von der Import-Operation und die Lebenszyklus-Fluesse FLOW-store-build, FLOW-store-close, FLOW-store-close-cli, FLOW-store-close-rewind, FLOW-store-close-render. Jeder weitere Eingang in FUNC-graph-store ist ein zweiter Schreibweg. Ein Zug am Modell bricht diese Anforderung ohne Code-Aenderung; der Snapshot-Test prueft sie. (CR-GC-851, render ergaenzt CR-GC-909)",
       "kinds": [
         "non-functional"
       ]
@@ -10883,7 +10883,7 @@
       "id": "TEST-constraint-ein-schreibweg",
       "type": "TEST",
       "name": "Constraint Ein Schreibweg",
-      "description": "Liest den committeten Snapshot und prueft mit eingaengeNurAus, dass FUNC-graph-store nur die sechs erlaubten Eingaenge hat; Positivkontrolle mit einem siebten Fluss und mit einem entfallenen Fluss; Vertrag des Befunds samt Ablehnung. (CR-GC-851)",
+      "description": "Liest den committeten Snapshot und prueft mit eingaengeNurAus, dass FUNC-graph-store nur die sieben erlaubten Eingaenge hat; Positivkontrolle mit einem achten Fluss und mit einem entfallenen Fluss; Vertrag des Befunds samt Ablehnung. (CR-GC-851, CR-GC-909)",
       "testRefs": [
         {
           "file": "tests/constraint-ein-schreibweg.test.ts",
@@ -20852,6 +20852,11 @@
     {
       "source": "CR-GC-909",
       "target": "FUNC-render-verb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-909",
+      "target": "REQ-ein-schreibweg",
       "type": "relation"
     },
     {
@@ -32666,5 +32671,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1114
+  "graphVersion": 1115
 }

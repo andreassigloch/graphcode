@@ -2,7 +2,7 @@
  * TEST-constraint-ein-schreibweg (CR-GC-851) — der Constraint „Ein Schreibweg" an FUNC-graph-store.
  *
  * Inhalt kommt in den Store nur über das Apply-Gate (FLOW-graph-delta), die Import-Operation
- * (FLOW-imported-graph) und die vier Lebenszyklus-Flüsse. Ein siebter Eingang wäre ein zweiter
+ * (FLOW-imported-graph) und die fünf Lebenszyklus-Flüsse. Ein achter Eingang wäre ein zweiter
  * Schreibweg — und den legt ein Zug am Modell an, ohne dass sich Code ändert.
  *
  * Liest den committeten Snapshot. Eine Modelländerung kann ihn rot machen — das ist der Zweck,
@@ -24,7 +24,7 @@ const lies = (): OntologyGraph => JSON.parse(readFileSync(SNAPSHOT, 'utf8')) as 
 
 const STORE = 'FUNC-graph-store';
 
-/** Die erlaubten Eingänge des Stores, geprüft am Modell (graphVersion 904). */
+/** Die erlaubten Eingänge des Stores, geprüft am Modell (graphVersion 904, um render ergänzt bei 1114). */
 const ERLAUBT = [
   'FLOW-graph-delta', // FUNC-mutate — jede Änderung durch das Apply-Gate
   'FLOW-imported-graph', // FUNC-import — ein ganzer Graph ersetzt den Store
@@ -32,14 +32,15 @@ const ERLAUBT = [
   'FLOW-store-close', // FUNC-serve-stdio — schließen (MCP-Host)
   'FLOW-store-close-cli', // FUNC-cli-dispatch — schließen (CLI)
   'FLOW-store-close-rewind', // FUNC-rewind — schließen vor dem Zurückspulen
+  'FLOW-store-close-render', // FUNC-render-verb — schließen nach dem Rendern (CR-GC-909, Entscheidung des Autors 2026-11-12)
 ];
 
 describe('CR-GC-851: Constraint „Ein Schreibweg" an FUNC-graph-store', () => {
-  it('am committeten Modell: nur die sechs erlaubten Eingänge, keiner fehlt', () => {
+  it('am committeten Modell: nur die sieben erlaubten Eingänge, keiner fehlt', () => {
     expect(eingaengeNurAus(lies(), STORE, ERLAUBT)).toEqual({ fremd: [], fehlend: [] });
   });
 
-  it('Positivkontrolle: ein siebter Fluss von einer anderen FUNC ist rot und nennt den Absender', () => {
+  it('Positivkontrolle: ein achter Fluss von einer anderen FUNC ist rot und nennt den Absender', () => {
     const g = lies();
     g.elements.push({ id: 'FLOW-zweiter-schreibweg', type: 'FLOW', name: 'Zweiter Schreibweg' } as OntologyGraph['elements'][number]);
     g.traces.push(

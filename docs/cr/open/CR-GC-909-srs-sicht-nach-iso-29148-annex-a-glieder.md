@@ -156,16 +156,22 @@ Neu im Modell:
 - Relationen vom CR-Knoten an die neuen Elemente.
 - Vier Flüsse für die Aufrufe, die die Commit-Prüfung (RC-13) verlangt: Harness anlegen, Store
   öffnen, Erstbefüllung und Store schließen (graphVersion 1114). Muster wie bei `import-code`.
+- Der Fluss „Store schließen (render)“ ist ein siebter Eingang in `FUNC-graph-store`. Der
+  Constraint „Ein Schreibweg“ (CR-GC-851) erlaubte nur sechs. Entscheidung des Autors 2026-11-12:
+  Der Fluss ist ein Lebenszyklus-Fluss wie „Store schließen (rewind)“ und wird aufgenommen.
+  Nachgezogen sind die Liste `ERLAUBT` im Test, `REQ-ein-schreibweg` und `TEST-constraint-ein-schreibweg`
+  (graphVersion 1115).
 
 Das Gate meldet keinen neuen Befund. Der Steuerwert steigt von 8,002 auf 8,252, weil MOD-surface und
 der Block Bedienung je ein Kind mehr tragen.
 
-**11 Dateien statt 10 (Ausnahme, Entscheidung des Auftraggebers 2026-11-12):**
+**12 Dateien statt 10 (Ausnahme, Entscheidung des Auftraggebers 2026-11-12):**
 - `srs.ts`, `render-verb.ts`, `cli.ts`, `cli-args.ts`, `README.md`, `docs/vorlagen/srs.css`
 - `tests/exporter.test.ts`, `tests/render-verb.test.ts`
 - die Normprüfung im Spike-Dokument
 - `scripts/model-test-set.mjs`: Ausschluss der neuen Testdatei aus der Modell-Spur, mit Grund
 - `tests/arch.optimization-dry-run.spike.test.ts`: Neumessung der Autopilot-Züge nach dem Modellzug
+- `tests/constraint-ein-schreibweg.test.ts`: der siebte erlaubte Eingang in den Store
 
 Generiert und nicht gezählt: `docs/graph`, `docs/views` und `docs/messung`.
 
@@ -173,6 +179,9 @@ Generiert und nicht gezählt: `docs/graph`, `docs/views` und `docs/messung`.
 Auswahl, es gab keinen Schlupf. Es war die Messstelle der Autopilot-Züge; nach der Neumessung ist
 sie grün. Die Folge ohne Schlupf steht auf 0/10, weil der erste Lauf 2 rote Tests außerhalb der
 Auswahl hatte (RC-09 und Modell-Spur, beide oben behoben).
+Nach den Flüssen für RC-13 und dem Constraint lief die Modell-Spur `npm run verify:model` grün
+(53 Dateien). `auto-export` (Test „coalesced“) war in einem Zwischenlauf unter Last rot und allein
+dreimal grün. Das ist der bekannte Zeitfehler aus ITEM-2026-968, keine Folge dieses CR.
 
 Abnahme:
 1. ✓ `docs/views/srs.md` trägt die 29 Abschnitte in Normreihenfolge, leere mit dem Leersatz.

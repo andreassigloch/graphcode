@@ -1439,6 +1439,7 @@
 | `CR-GC-909` | relation | `FUNC-export-markdown` |
 | `CR-GC-909` | relation | `FUNC-graph-export-snapshot` |
 | `CR-GC-909` | relation | `FUNC-render-verb` |
+| `CR-GC-909` | relation | `REQ-ein-schreibweg` |
 | `CR-GC-909` | relation | `REQ-render-document` |
 | `CR-GC-909` | relation | `REQ-srs-29148` |
 | `CR-GC-910` | relation | `FUNC-import-doc` |
