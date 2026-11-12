@@ -1,6 +1,7 @@
 # CR-GC-806: Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft
 
-**Status:** 🟠 Open
+**Status:** ✅ Done
+**Abgeschlossen:** 2026-11-12
 **Typ:** aus Item ITEM-2026-893 (idea)
 **Erstellt:** 2026-10-14
 **Item:** bok/items/ITEM-2026-893.json (Lane: graph)
@@ -79,4 +80,4 @@ Entscheidungen des Auftraggebers am 2026-11-12:
   impact-testing, test-ingest, verify-lane · model-import · doc-export.
 
 Modell v1097, durchs Gate, kein Fehler. Offen: UC-01 warnt, der UC hat noch keine REQ. Welche REQ
-unter ihn wandern, misst CR-GC-807. Commit: siehe `git log --grep CR-GC-806`.
+unter ihn wandern, misst CR-GC-807. Commit b969a4c1.
