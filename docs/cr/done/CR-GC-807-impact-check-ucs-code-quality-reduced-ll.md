@@ -1,6 +1,6 @@
 # CR-GC-807: Impact-Check: UCs code-quality, reduced-llm, deterministic-steering lesen sich als Anforderungen an den Kern-UC - Herabstufen zu REQ pruefen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-12)
 **Typ:** aus Item ITEM-2026-894 (finding)
 **Erstellt:** 2026-10-14
 **Item:** bok/items/ITEM-2026-894.json (Lane: graph)
