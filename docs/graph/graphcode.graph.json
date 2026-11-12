@@ -4073,6 +4073,12 @@
       "commitRef": "45d31e6b,42c94783"
     },
     {
+      "id": "CR-GC-917",
+      "type": "CR",
+      "name": "Stufe bauen – Verträge (SCHEMA) vor Funktionen binden, FUNC-Paket trägt die echten Typen",
+      "description": "docs/cr/open/CR-GC-917-stufe-bauen-vertra-ge-schema-vor-funktio.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -32368,5 +32374,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1109
+  "graphVersion": 1110
 }
