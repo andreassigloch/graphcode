@@ -1,6 +1,6 @@
 # CR-GC-903: Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen
 
-**Status:** ✅ Done
+**Status:** ✅ Done (2026-11-12)
 **Abgeschlossen:** 2026-11-12
 **Typ:** aus Item ITEM-2026-1283 (finding)
 **Erstellt:** 2026-11-11

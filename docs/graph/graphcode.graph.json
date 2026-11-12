@@ -3966,7 +3966,9 @@
       "id": "CR-GC-903",
       "type": "CR",
       "name": "Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen",
-      "description": "docs/cr/open/CR-GC-903-viewer-ist-nachbarsystem-mod-dashboard-a.md"
+      "description": "docs/cr/done/CR-GC-903-viewer-ist-nachbarsystem-mod-dashboard-a.md",
+      "status": "done",
+      "commitRef": "72958bdf,e54a745a,aa87cd61,90321baf"
     },
     {
       "id": "CR-GC-904",
@@ -32352,5 +32354,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1100
+  "graphVersion": 1101
 }
