@@ -190,7 +190,9 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
         // Modells kann keine Knoten enthalten, die es nicht mehr gibt. Die Ground Truth
         // ist die Menge der real geaenderten Knoten, die noch EXISTIEREN. Gleiche
         // Pflege wie bei den TEST-Zusammenlegungen aus CR-GC-383 zwei Zeilen tiefer.
-        'MOD-dashboard', 'REQ-artifact-freshness',
+        // CR-GC-903: MOD-dashboard ist GELOESCHT — der Viewer ist Nachbarsystem
+        // (ACTOR-dashboard), kein Modul. Gleiche Pflege wie bei CR-GC-401.
+        'REQ-artifact-freshness',
         'REQ-dashboard-readonly', 'REQ-readiness-transparent',
         // CR-GC-383: TEST-artifact-freshness + TEST-readiness-transparent sind in
         // TEST-dashboard-readonly aufgegangen (alle drei banden tests/panels.test.ts).

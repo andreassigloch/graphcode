@@ -86,7 +86,7 @@ export { callHost, HOST_SOCK_BASENAME, startHostSocket } from './surface/host-sh
 export { LiveFeed } from './surface/live-feed.js';
 export type { HostSocket } from './surface/host-shim.js';
 
-// Headless dashboard data-layer (CR-GC-115, MOD-dashboard) — pure read-only
+// Headless dashboard data-layer (CR-GC-115) for the neighbour system ACTOR-dashboard — pure read-only
 // shapers over the MCP tools; the external graph-view-edit renderer consumes
 // these view-models and fills the FUNC-render-graph mount-slot.
 export {

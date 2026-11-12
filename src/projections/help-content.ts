@@ -61,7 +61,7 @@ const markSe = (name: string, mark: MarkType): string =>
   `${name} — the mark after stage ${MARK_STAGE[mark]} (sets: ${mengenBis(mark)}). Reached when no finding holds it; ` +
   'what holds it comes with the mark (`holding`).';
 
-/** Canonical dashboard panel ids — the five MOD-dashboard panels (no live registry). */
+/** Canonical dashboard panel ids — the five panels of the neighbour viewer ACTOR-dashboard (no live registry). */
 export const HELP_PANEL_IDS = ['readiness', 'recommendations', 'artifacts', 'impact', 'health'] as const;
 
 /**
@@ -117,7 +117,7 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
     prompt: 'se-plan, then se:close-violations',
   },
 
-  // --- Panels (the five MOD-dashboard panels) ---------------------------------------
+  // --- Panels (the five panels of the neighbour viewer ACTOR-dashboard) --------------
   readiness: {
     plain:
       `How finished the project is: one percentage plus ${Mark.options.length} marks. An open mark tells you which part still has problems — open it to see them.`,

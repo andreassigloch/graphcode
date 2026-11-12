@@ -15,7 +15,7 @@
          ╱────────────╲
         ╱ integration  ╲     ✗ 220/312 FUNC↔FUNC connections tested  ← GAP
        ╱────────────────╲
-      ╱ module · function ╲   8 MOD · 126 FUNC
+      ╱ module · function ╲   7 MOD · 126 FUNC
      ╱────────────────────╲
 ```
 
@@ -26,7 +26,7 @@
 | Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 126 | 9 / 9 use cases | ✓ |
 | Integration | FUNC↔FUNC (312 conn) | integration verification (SYS.4 · SWE.5) | 45 | 220 / 312 connections | ✗ 92 uncovered |
 | Interface | SCHEMA (60) | integration verification (SYS.4 · SWE.5) | 26 | 37 / 60 schemas | ⚠ 23 without a test |
-| Module | MOD (8) | component verification (SWE.5 · HWE.3) | 57 | 6 / 8 | ⚠ 2 without a verified requirement |
+| Module | MOD (7) | component verification (SWE.5 · HWE.3) | 57 | 6 / 7 | ⚠ 1 without a verified requirement |
 | Function | FUNC (109) | unit verification (SWE.4 · HWE.3) | 119 | 109 / 109 | ✓ |
 | (no position) | TEST | — | 1 | verifies no REQ or SCHEMA | ⚠ 1 without a position |
 

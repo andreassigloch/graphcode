@@ -69,8 +69,11 @@ describe('TEST-graph-tests-operational: graph_tests operational on the committed
     // Selective run command over exactly the affected files.
     expect(res.command.startsWith('vitest run ')).toBe(true);
     for (const f of res.coverage.files) expect(res.command).toContain(f);
-    // Unrelated subsystem (dashboard panels) is NOT pulled in.
-    expect(res.coverage.files).not.toContain('tests/panels.test.ts');
+    // Unrelated subsystem (skill prose) is NOT pulled in. The dashboard panels were the
+    // example until CR-GC-903: since then MOD-projections satisfies the panel REQs, and
+    // tests/panels.test.ts belongs in this set.
+    expect(res.coverage.files).toContain('tests/panels.test.ts');
+    expect(res.coverage.files).not.toContain('tests/skill-red-first.test.ts');
   });
 
   // CR-GC-744 (contracts CR-SM-393): die Selbstauskunft `concept: true` ist entfallen. Was vorher

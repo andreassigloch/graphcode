@@ -1,5 +1,6 @@
 /**
- * MOD-dashboard — re-export shim (CR-GC-265).
+ * Dashboard panels — re-export shim (CR-GC-265). The viewer is the neighbour
+ * system ACTOR-dashboard, not a module of graphcode (CR-GC-903).
  *
  * The panel data-layer MOVED to `@sigloch/graphcode-client`. It is pure
  * projection — plain data in, view-models out — and a renderer needs it without

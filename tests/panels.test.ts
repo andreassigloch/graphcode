@@ -1,5 +1,5 @@
 /**
- * TEST-dashboard-panels (CR-GC-115) — the headless MOD-dashboard data-layer.
+ * TEST-dashboard-panels (CR-GC-115) — the headless dashboard data-layer.
  *
  * graphcode ships the read-only view-models behind each panel; the Cytoscape
  * renderer lives in graph-view-edit. Asserts the shapers project real MCP-tool
@@ -51,7 +51,7 @@ const FIXTURE = {
   traces: [] as Array<{ source: string; target: string; type: string }>,
 };
 
-describe('TEST-dashboard-panels: headless MOD-dashboard data-layer (CR-GC-115)', () => {
+describe('TEST-dashboard-panels: headless dashboard data-layer (CR-GC-115)', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
 

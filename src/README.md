@@ -17,7 +17,7 @@ at the root.
 | `surface/` | `MOD-surface` | MCP-stdio · CLI · Host-Socket · Viewer/SSE — adapters, no logic |
 
 `MOD-agent-surface` lives under `.claude/commands/` (the skill drivers, `path` set there);
-`MOD-dashboard` is the neighbour package `@sigloch/graph-view-edit` (`external: true`).
+The viewer `@sigloch/graph-view-edit` is a neighbour system, modelled only as `ACTOR-dashboard` (CR-GC-903).
 
 **Where the 17 old directories went** (CR-GC-446 cut the model, CR-GC-447 the code):
 

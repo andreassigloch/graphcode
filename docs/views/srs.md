@@ -13510,47 +13510,41 @@ Die Bedienschicht des Menschen: die Skill-/Prompt-Definitionen unter .claude/com
 
 allocate ◀ `FUNC-agent-loop` · `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` · satisfy ▶ `REQ-gate-only-writes`
 
-### 6.2  `MOD-dashboard` — dashboard — Live-Viewer-App
-
-Nachbarsystem: das Paket @sigloch/graph-view-edit. Live-Viewer und Editor auf dem Graphen, eigenes Repo, eigener Release. graphcode modelliert nur den RAND dazu — ACTOR-dashboard, gespeist von FLOW-live-event mit SCHEMA-update-event und von FLOW-module-metrics. Das Innenleben des Pakets steht bewusst NICHT im Modell: es waere die erfundene Struktur eines fremden Repos und beim naechsten Fremd-Release stillschweigend falsch. Der MOD bleibt als Paketgrenze bestehen, weil er fuenf REQ erfuellt, die kein ACTOR tragen kann. Frueher graphcode-owned mit path src/viewer — seit dem Carve-Out beides falsch (CR-GC-401).
-
-allocate ◀ — · satisfy ▶ `REQ-artifact-freshness` · `REQ-dashboard-ontology-sync` · `REQ-dashboard-readonly` · `REQ-readiness-transparent` · `REQ-shared-views-no-fork`
-
-### 6.3  `MOD-dev-scripts` — dev-scripts — Entwicklerskripte
+### 6.2  `MOD-dev-scripts` — dev-scripts — Entwicklerskripte
 
 Die Node-Skripte unter scripts/: die npm-Spuren verify:code und verify:full, der Export, die Messungen. Vom Entwickler oder vom pre-commit-Hook gefahren, nicht im Paket ausgeliefert; sie rufen graphcode ueber dist/ und den MCP-Host.
 
 allocate ◀ `FUNC-commit-check` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model`
 
-### 6.4  `MOD-kernel` — kernel — Store, Gate, Regeln, OpLog
+### 6.3  `MOD-kernel` — kernel — Store, Gate, Regeln, OpLog
 
 Der einzige Kuzu-Owner. Zwei Tueren nach aussen: apply(Command[]) liefert ein Verdict, query(TypedQuery) liefert eine Scheibe. Ausserhalb dieses Moduls sieht niemand den Graphen; Lifecycle, Sperre, Regel-Lauf, Konformitaets-Fakten, Migration und das Operations-Log liegen hier. (CR-GC-446)
 
 allocate ◀ `FUNC-apply-reseed` · `FUNC-check-code-conformance` · `FUNC-claim-store-lock` · `FUNC-decode` · `FUNC-evaluate-rules` · `FUNC-export-marker` · `FUNC-export-marker-clear` · `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-graph-store` · `FUNC-held-back-traces` · `FUNC-import` · `FUNC-list-elements` · `FUNC-load-config` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-open-store` · `FUNC-own-kuzu-host` · `FUNC-reseed` · `FUNC-resolve-tests-from-code` · `FUNC-schema-guard` · `FUNC-seed-from-json` · satisfy ▶ `REQ-batch-seed-performance` · `REQ-disk-persistence` · `REQ-gate-only-writes` · `REQ-harness-schema-in-contracts` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-import-se-ontology` · `REQ-precommit-timeout` · `REQ-prompt-provenance` · `REQ-quality-metric` · `REQ-risk-gate-rule-eval-fails` · `REQ-risk-store-unreadable` · `REQ-rule-calibration` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-structural-rule-shared`
 
-#### 6.4.1  `MOD-kernel-measure` — measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot
+#### 6.3.1  `MOD-kernel-measure` — measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot
 
 Die Ebene im Kern, mit der das Gate urteilt: reine Funktionen Graph → Zahl (Readiness je Dimension und Phase, ℝ⁶-Fit-Advisory vorher/nachher, betroffene Tests je Change, ND-Ähnlichkeit, Steuerungs-Snapshot und -Delta). Kein I/O, kein Store-Zugriff, kein Transport — projections zeigt diese Zahlen an, besitzt sie nicht. Liegt unter src/kernel/measure/ (CR-GC-467 Entscheidung 1, Moves CR-GC-468–472); Sub-MOD statt sechstem Modul, weil die Antwort auf 'zu gross' eine Ebene ist (se:top-level).
 
-allocate ◀ `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-eingaenge-nur-aus` · `FUNC-fit-advisory` · `FUNC-select-tests` · `FUNC-take-steering-snapshot` · `FUNC-zug-bericht`
+allocate ◀ `FUNC-arch-fitness` · `FUNC-compute-readiness` · `FUNC-compute-steering-delta` · `FUNC-eingaenge-nur-aus` · `FUNC-fit-advisory` · `FUNC-select-tests` · `FUNC-take-steering-snapshot` · `FUNC-zug-bericht` · satisfy ▶ `REQ-dashboard-ontology-sync` · `REQ-readiness-transparent`
 
-### 6.5  `MOD-loop` — loop — Fokus
+### 6.4  `MOD-loop` — loop — Fokus
 
 Die Schleife, die den Graphen bewegt: Fokuswahl, Zielprofil, Vorschlaege, Runden-Prompt, Modellaufruf, Kandidaten-Ranking. Ein Client des Gates wie jeder andere — sie schreibt ausschliesslich durch apply(). (CR-GC-446)
 
 allocate ◀ `FUNC-cr-groups` · `FUNC-generation-step` · `FUNC-graph-generate-tool` · `FUNC-graph-suggest` · `FUNC-target-profile-load` · `FUNC-vorschlag` · satisfy ▶ `REQ-gate-only-writes` · `REQ-phase-gate-not-skippable`
 
-### 6.6  `MOD-projections` — projections — Graph nach Artefakt
+### 6.5  `MOD-projections` — projections — Graph nach Artefakt
 
 Reine Projektionen des Graphen: Messung, Readiness, Codec, Export, Markdown-Views, Trajektorie. Liest den Graphen ueber die kernel-Abfrage und schreibt nie in ihn zurueck. (CR-GC-446)
 
-allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-help` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-rules-tool` · `FUNC-score-completeness` · `FUNC-test-ingest` · satisfy ▶ `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-testref-materialized`
+allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-help` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-rules-tool` · `FUNC-score-completeness` · `FUNC-test-ingest` · satisfy ▶ `REQ-artifact-freshness` · `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-shared-views-no-fork` · `REQ-testref-materialized`
 
-### 6.7  `MOD-surface` — surface — MCP, CLI, Host-Socket, Viewer
+### 6.6  `MOD-surface` — surface — MCP, CLI, Host-Socket, Viewer
 
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
-allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-proxy` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-proxy` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-read-tools` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-dashboard-readonly` · `REQ-gate-only-writes` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
 
 ## 7  Cross-cutting Requirements
 
@@ -13576,7 +13570,7 @@ Dokumente und Prozessschritte sind gruen wenn live aus dem aktuellen Graph abgel
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `MOD-projections` · allocate ▶ —
 
 ### `REQ-batch-seed-performance` — Batch-Seed/Import Performance (UNWIND)
 
@@ -13624,7 +13618,7 @@ Das Dashboard/Readiness-Scorer MUSS gegen @sigloch/contracts Ontologie + V3_RULE
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-dashboard-ontology-sync` (integration) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+Verification ◀ `TEST-dashboard-ontology-sync` (integration) · satisfy ◀ `MOD-kernel-measure` · allocate ▶ —
 
 ### `REQ-dashboard-readonly` — Dashboard strikt read-only
 
@@ -13632,7 +13626,7 @@ CONSTRAINT: Der Viewer ist strikt read-only. Kein Write-Pfad aus dem Browser (ke
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+Verification ◀ `TEST-dashboard-readonly` (integration) · satisfy ◀ `MOD-surface` · allocate ▶ —
 
 ### `REQ-deterministic-serialization` — Deterministische Serialisierung
 
@@ -13816,7 +13810,7 @@ Jedes Phase- und Impl-Gate exponiert seine Blocking-Elemente (welche CRs, Tests,
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-dashboard-readonly` (integration) · `TEST-help-content-coverage` (unit) · `TEST-help-projection` (unit) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+Verification ◀ `TEST-dashboard-readonly` (integration) · `TEST-help-content-coverage` (unit) · `TEST-help-projection` (unit) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · satisfy ◀ `MOD-kernel-measure` · allocate ▶ —
 
 ### `REQ-readonly-bridge` — Read-only Bridge
 
@@ -13864,7 +13858,7 @@ views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-a
 
 priority: should · status: done · kinds: non-functional
 
-Verification ◀ `TEST-shared-views-no-fork` (integration) · `TEST-views-conformance` (unit) · satisfy ◀ `MOD-dashboard` · allocate ▶ —
+Verification ◀ `TEST-shared-views-no-fork` (integration) · `TEST-views-conformance` (unit) · satisfy ◀ `MOD-projections` · allocate ▶ —
 
 ### `REQ-single-kuzu-owner` — Single Kuzu-Owner
 

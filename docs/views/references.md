@@ -107,7 +107,6 @@
 | `CR-GC-114` | relation | `REQ-mutation-emits-event` |
 | `CR-GC-114` | relation | `REQ-readonly-bridge` |
 | `CR-GC-114` | relation | `REQ-versioned-broadcast` |
-| `CR-GC-115` | relation | `MOD-dashboard` |
 | `CR-GC-115` | relation | `MS-4-mvp2` |
 | `CR-GC-115` | relation | `REQ-artifact-freshness` |
 | `CR-GC-115` | relation | `REQ-dashboard-ontology-sync` |
@@ -148,7 +147,6 @@
 | `CR-GC-124` | relation | `MS-4-mvp2` |
 | `CR-GC-124` | relation | `REQ-agent-agnostic` |
 | `CR-GC-124` | relation | `REQ-single-transport` |
-| `CR-GC-125` | relation | `MOD-dashboard` |
 | `CR-GC-125` | relation | `MOD-surface` |
 | `CR-GC-125` | relation | `MS-4-mvp2` |
 | `CR-GC-125` | relation | `REQ-readiness-model` |
@@ -1425,7 +1423,6 @@
 | `CR-GC-901` | relation | `REQ-testref-kopf-bindung` |
 | `CR-GC-902` | relation | `FUNC-init-verb` |
 | `CR-GC-902` | relation | `REQ-init-agent-host` |
-| `CR-GC-903` | relation | `MOD-dashboard` |
 | `CR-GC-903` | relation | `REQ-artifact-freshness` |
 | `CR-GC-903` | relation | `REQ-dashboard-ontology-sync` |
 | `CR-GC-903` | relation | `REQ-dashboard-readonly` |
@@ -3025,11 +3022,6 @@
 | `FUNC-zug-bericht` | satisfy | `REQ-bericht-ist-kein-urteil` |
 | `FUNC-zug-bericht` | satisfy | `REQ-zug-zeigt-kennzahlen-danach` |
 | `MOD-agent-surface` | satisfy | `REQ-gate-only-writes` |
-| `MOD-dashboard` | satisfy | `REQ-artifact-freshness` |
-| `MOD-dashboard` | satisfy | `REQ-dashboard-ontology-sync` |
-| `MOD-dashboard` | satisfy | `REQ-dashboard-readonly` |
-| `MOD-dashboard` | satisfy | `REQ-readiness-transparent` |
-| `MOD-dashboard` | satisfy | `REQ-shared-views-no-fork` |
 | `MOD-kernel` | compose | `MOD-kernel-measure` |
 | `MOD-kernel` | satisfy | `REQ-batch-seed-performance` |
 | `MOD-kernel` | satisfy | `REQ-disk-persistence` |
@@ -3047,18 +3039,23 @@
 | `MOD-kernel` | satisfy | `REQ-single-kuzu-owner` |
 | `MOD-kernel` | satisfy | `REQ-single-store` |
 | `MOD-kernel` | satisfy | `REQ-structural-rule-shared` |
+| `MOD-kernel-measure` | satisfy | `REQ-dashboard-ontology-sync` |
+| `MOD-kernel-measure` | satisfy | `REQ-readiness-transparent` |
 | `MOD-loop` | satisfy | `REQ-gate-only-writes` |
 | `MOD-loop` | satisfy | `REQ-phase-gate-not-skippable` |
+| `MOD-projections` | satisfy | `REQ-artifact-freshness` |
 | `MOD-projections` | satisfy | `REQ-completeness-single-value` |
 | `MOD-projections` | satisfy | `REQ-deterministic-serialization` |
 | `MOD-projections` | satisfy | `REQ-docs-taxonomy` |
 | `MOD-projections` | satisfy | `REQ-formatE-parity` |
 | `MOD-projections` | satisfy | `REQ-graph-integrity` |
 | `MOD-projections` | satisfy | `REQ-interface-schema` |
+| `MOD-projections` | satisfy | `REQ-shared-views-no-fork` |
 | `MOD-projections` | satisfy | `REQ-testref-materialized` |
 | `MOD-surface` | satisfy | `REQ-agent-agnostic` |
 | `MOD-surface` | satisfy | `REQ-buildable-standalone` |
 | `MOD-surface` | satisfy | `REQ-cache-layering` |
+| `MOD-surface` | satisfy | `REQ-dashboard-readonly` |
 | `MOD-surface` | satisfy | `REQ-gate-only-writes` |
 | `MOD-surface` | satisfy | `REQ-graph-context-replaces-reading` |
 | `MOD-surface` | satisfy | `REQ-install-idempotent` |
@@ -3117,7 +3114,6 @@
 | `REQ-token-efficiency` | compose | `REQ-benchmark-harness` |
 | `REQ-token-efficiency` | compose | `REQ-precise-context` |
 | `SYS-graphcode` | compose | `MOD-agent-surface` |
-| `SYS-graphcode` | compose | `MOD-dashboard` |
 | `SYS-graphcode` | compose | `MOD-dev-scripts` |
 | `SYS-graphcode` | compose | `MOD-kernel` |
 | `SYS-graphcode` | compose | `MOD-loop` |

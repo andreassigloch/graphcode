@@ -137,7 +137,6 @@
 | `FUNC-vorschlag` | FUNC | Vorschlag nach dem Zug |
 | `FUNC-zug-bericht` | FUNC | zugBericht(before |
 | `MOD-agent-surface` | MOD | agent-surface — Skill-Treiber |
-| `MOD-dashboard` | MOD | dashboard — Live-Viewer-App |
 | `MOD-dev-scripts` | MOD | dev-scripts — Entwicklerskripte |
 | `MOD-kernel` | MOD | kernel — Store, Gate, Regeln, OpLog |
 | `MOD-kernel-measure` | MOD | measure — Messung: Readiness, Fit-Advisory, Testauswahl, Ähnlichkeit, Steuerungs-Snapshot |
