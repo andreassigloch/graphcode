@@ -1,6 +1,6 @@
 # CR-GC-926: Systemmodell in Bildern: Zahlen aus dem Katalog ohne Version, 80 statt 81 Regeln
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-13)
 **Typ:** aus Item ITEM-2026-1338 (finding)
 **Erstellt:** 2026-11-13
 **Item:** bok/items/ITEM-2026-1338.json (Lane: graph)

@@ -4132,7 +4132,9 @@
       "id": "CR-GC-926",
       "type": "CR",
       "name": "Systemmodell in Bildern: Zahlen aus dem Katalog ohne Version, 80 statt 81 Regeln",
-      "description": "docs/cr/open/CR-GC-926-systemmodell-in-bildern-zahlen-aus-dem-k.md"
+      "description": "docs/cr/done/CR-GC-926-systemmodell-in-bildern-zahlen-aus-dem-k.md",
+      "status": "done",
+      "commitRef": "c58e69bf,ac1dfe67"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -32972,5 +32974,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1129
+  "graphVersion": 1130
 }
