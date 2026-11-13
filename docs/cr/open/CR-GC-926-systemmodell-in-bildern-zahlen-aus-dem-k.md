@@ -57,3 +57,5 @@ Abnahme:
 3. ✓ Veröffentlichte Fassung aus derselben Datei wie der Commit.
 
 Nicht geprüft: Zahlen der Paketstation (9 Anforderungen, 6 Funktionen) und „Zehn Bausteinarten" der Landkarte; sie stammen nicht aus dem Katalog.
+
+`verify:full CR-GC-926`: 1781 von 1782 grün. Rot war nur `tests/perf.advisory-roundtrip.spike.test.ts` (Wachstumsfaktor 3,42, Schranke < 3). Er liegt außerhalb der Auswahl und zählt als Schlupf. Allein zweimal gefahren: Faktor 3,12 (rot) und 2,56 (grün). Der CR ändert keinen Quellcode. Bekannt als ITEM-2026-1175: Die Messung aus 3 Runden schwankt um die Schranke.
