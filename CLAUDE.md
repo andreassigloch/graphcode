@@ -88,6 +88,11 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
 
 ## Working on the model
 
+- **Before a modelling decision, read the check questions:** `bok/docs/knowledge/modellierung/README.md`
+  lists the questions we have decided more than once (actor or not, one satisfier per REQ, SCHEMA for
+  a physical flow, …), each with its variants, dates, reasons and CRs. Where the state says "offen"
+  or "je nach Kontext", put the variants to the author instead of deciding. An open CR named there
+  is newer than the file — read it.
 - **Every model change goes through the tool layer** (`graph_mutate`), never raw `harness.mutate()`:
   the tool layer is where audit provenance and the trajectory feed are written. A raw mutation makes
   `graph_export` refuse its own change as a foreign clobber.
