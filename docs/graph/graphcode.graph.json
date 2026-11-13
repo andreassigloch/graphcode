@@ -21215,6 +21215,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-923",
+      "target": "FUNC-se-conops",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-923",
+      "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-925",
+      "target": "FUNC-author-actor",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-925",
+      "target": "FUNC-se-irr",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-925",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -32941,5 +32966,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1126
+  "graphVersion": 1127
 }

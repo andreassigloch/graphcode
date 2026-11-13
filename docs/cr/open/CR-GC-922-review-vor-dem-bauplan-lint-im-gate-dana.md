@@ -44,9 +44,9 @@ Normbezug: Anforderung, Test und Schema zusammen entsprechen der „build-to"-Ba
 - Rückwirkende Probe am Modell von immo-infra, Stand des Schnitts von CR-INF-069 (graphVersion 154, 2026-11-04): Das Review nennt mindestens die fünf Lücken aus dem Befund.
 - Der Test war rot, bevor der Skill stand.
 
-## Dateien (3)
+## Dateien (2)
 
-`.claude/commands/se-cdr.md`, `tests/skill-cdr.test.ts`, Skill-Liste in `GRAPHCODE.md` (erzeugt).
+`.claude/commands/se-cdr.md`, `tests/skill-cdr.test.ts`. Die Skill-Liste in `GRAPHCODE.md` entsteht beim Rollout aus dem Ordner der Skills.
 
 ## Abhängig von
 
@@ -57,10 +57,4 @@ CR-GC-917 (Zod-Schema je Blattfunktion), CR-SM-437.
 
 ## Umfang laut `graph_impact`
 
-**KEIN SCHNITT aus dem Modell:** keine Wurzel-uids am Item (`aise dispatch prepare <ITEM> --wurzel <uid>[,…]`).
-
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
-
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+Kein Schnitt aus dem Modell: Der CR legt den Knoten `FUNC-se-cdr` neu an und ändert keinen bestehenden. Nachbarn zur Einordnung: `FUNC-se-irr` (läuft davor), `FUNC-se-plan` (läuft danach). Die Kante vom CR-Knoten auf `FUNC-se-cdr` entsteht mit dem Knoten.

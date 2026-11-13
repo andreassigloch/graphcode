@@ -1501,6 +1501,11 @@
 | `CR-GC-920` | relation | `REQ-post-export-markdown` |
 | `CR-GC-921` | relation | `FUNC-export-markdown` |
 | `CR-GC-921` | relation | `REQ-post-export-markdown` |
+| `CR-GC-923` | relation | `FUNC-se-conops` |
+| `CR-GC-923` | relation | `FUNC-se-plan` |
+| `CR-GC-925` | relation | `FUNC-author-actor` |
+| `CR-GC-925` | relation | `FUNC-se-irr` |
+| `CR-GC-925` | relation | `FUNC-se-top-level` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

@@ -39,12 +39,12 @@ Review und Bau-Skill fehlten. se-plan hat beide Lücken über sieben CRs nebenbe
 
 - `se-plan.md` enthält kein AskUserQuestion und keine Anweisung „write it".
 - Für ein Modell mit ungebundenem SCHEMA an einer Blattfunktion stoppt se-plan vor dem Schnitt.
-- `deriveImplPlan` liefert keine Stufe für SCHEMA; die Abdeckung `reqCoverage` bleibt gleich.
+- Die Abdeckung `reqCoverage` aus `deriveImplPlan` bleibt gleich.
 - Tests zum Skill-Text vorher rot, nachher grün.
 
 ## Dateien (4)
 
-`.claude/commands/se-plan.md`, `.claude/commands/se-conops.md`, `src/loop/se-plan.ts` (nur falls die Stufe dort abgeleitet wird), `tests/skill-plan*.test.ts`.
+`.claude/commands/se-plan.md`, `.claude/commands/se-conops.md`, `tests/se-plan.groups.test.ts` (liest den Skill-Text), `tests/se-plan.ordering.test.ts`. `src/loop/se-plan.ts` leitet keine Stufe für SCHEMA ab (geprüft 2026-11-13) und bleibt unverändert.
 
 ## Abhängig von
 
@@ -54,10 +54,19 @@ CR-GC-922 (se-cdr), CR-GC-924, CR-GC-917.
 
 ## Umfang laut `graph_impact`
 
-**KEIN SCHNITT aus dem Modell:** keine Wurzel-uids am Item (`aise dispatch prepare <ITEM> --wurzel <uid>[,…]`).
+_Schnitt aus dem Modell bei `dispatch prepare` — graphVersion 1126, Tiefe 1, Wurzeln: `FUNC-se-plan`, `FUNC-se-conops`._
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+Reichweite: 4 Elemente (FLOW 1, FUNC 3); Blackbox-Rand 2, nicht geoeffnet.
 
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
+Dateien (realRef, 2):
+- .claude/commands/se-conops.md
+- .claude/commands/se-plan.md
+
+Tests (`graph_tests`, 5):
+- tests/se-plan.groups.test.ts
+- tests/sitzung-kpi.test.ts
+- tests/skill-authoring-gate.test.ts
+- tests/skill-zugangsliste.test.ts
+- tests/task-analysen.test.ts
+
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.

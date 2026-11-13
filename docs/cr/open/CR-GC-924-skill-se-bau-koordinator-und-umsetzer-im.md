@@ -49,11 +49,11 @@ Neuer Skill `se-bau` mit zwei Rollen. Er ist fester Teil jedes Auftrags an einen
 - Nachmessung an der nächsten Baustufe in immo-infra: 0 angenommene Werte in den Abschlussberichten, 0 Felder außerhalb des Vertragspakets (RC-04 und RC-09 ohne Befund).
 - Der Test war rot, bevor der Skill stand.
 
-## Dateien (3)
+## Dateien (2)
 
-`.claude/commands/se-bau.md`, `tests/skill-bau.test.ts`, Skill-Liste in `GRAPHCODE.md` (erzeugt).
+`.claude/commands/se-bau.md`, `tests/skill-bau.test.ts`. Die Skill-Liste in `GRAPHCODE.md` entsteht beim Rollout aus dem Ordner der Skills.
 
-Folge außerhalb dieses CR: Der feste Text im Bauauftrag von `aise dispatch prepare` nennt `se-bau` (Repo bok).
+Folge im Repo bok: ITEM-2026-1332 (der feste Text im Bauauftrag von `aise dispatch prepare` nennt `se-bau`).
 
 ## Abhängig von
 
@@ -63,10 +63,4 @@ CR-GC-922 (se-cdr) für den Rückweg der Rückfragen.
 
 ## Umfang laut `graph_impact`
 
-**KEIN SCHNITT aus dem Modell:** keine Wurzel-uids am Item (`aise dispatch prepare <ITEM> --wurzel <uid>[,…]`).
-
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
-
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+Kein Schnitt aus dem Modell: Der CR legt den Knoten `FUNC-se-bau` neu an und ändert keinen bestehenden. Nachbar zur Einordnung: `FUNC-se-plan` (gibt §10 ab, CR-GC-923). Die Kante vom CR-Knoten auf `FUNC-se-bau` entsteht mit dem Knoten.

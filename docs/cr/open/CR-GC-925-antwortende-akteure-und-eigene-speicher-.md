@@ -48,7 +48,8 @@ Rolle `answer` getrennt zeigen, sonst kehrt der Befund vom 2026-10-28 zurück.
 2. se:author-actor: Die Schwelle „mehr als 7" zählt nur Auslöser und Empfänger.
 3. se:top-level Schritt 3: Zugriff auf einen eigenen Speicher ist ein `sync`-Fluss zwischen zwei Funktionen mit SCHEMA.
 4. se-irr Schritt 4: liest das SCHEMA der Antwort-Flüsse und belegt es mit der Zählabfrage.
-5. Parameter und Konfiguration bleiben bei CR-SM-419 (Einstellungs-Vertrag mit FLOW und SCHEMA).
+5. ConOps-Ansicht (`src/projections/graphcode.ts`): Ein antwortender Akteur steht nur unter „Liefert zu", nicht zusätzlich unter „Empfaenger", obwohl er die Anfrage empfängt.
+6. Parameter und Konfiguration bleiben bei CR-SM-419 (Einstellungs-Vertrag mit FLOW und SCHEMA).
 
 Begriff in der Literatur: „supporting actor" (Cockburn), Terminator im Kontextdiagramm (Strukturierte Analyse).
 
@@ -56,11 +57,12 @@ Begriff in der Literatur: „supporting actor" (Cockburn), Terminator im Kontext
 
 - `tests/skill-top-level-ausloeser.test.ts` prüft die neuen Sätze; vorher rot.
 - Kein Skill sagt mehr „ohne Fluss im Modell" für eine fremde Quelle.
+- Die ConOps-Ansicht zeigt in einem Testmodell den antwortenden Akteur nur unter „Liefert zu"; vorher rot.
 - Validierung in immo-infra (CR-INF-147): PropStack als Akteur bekommt die Rolle `answer`, FC-06 meldet keinen zweiten Auslöser.
 
-## Dateien (4)
+## Dateien (7)
 
-`.claude/commands/se/author-actor.md`, `.claude/commands/se/top-level.md`, `.claude/commands/se-irr.md`, `tests/skill-top-level-ausloeser.test.ts`.
+`.claude/commands/se/author-actor.md`, `.claude/commands/se/top-level.md`, `.claude/commands/se-irr.md`, `tests/skill-top-level-ausloeser.test.ts`, `tests/skill-irr-fremde-quellen.test.ts`, `src/projections/graphcode.ts`, ein Test der ConOps-Ansicht mit einem antwortenden Akteur.
 
 ## Abhängig von
 
@@ -70,10 +72,17 @@ CR-SM-438.
 
 ## Umfang laut `graph_impact`
 
-**KEIN SCHNITT aus dem Modell:** keine Wurzel-uids am Item (`aise dispatch prepare <ITEM> --wurzel <uid>[,…]`).
+_Schnitt aus dem Modell bei `dispatch prepare` — graphVersion 1126, Tiefe 1, Wurzeln: `FUNC-author-actor`, `FUNC-se-top-level`, `FUNC-se-irr`._
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+Reichweite: 6 Elemente (FLOW 1, FUNC 5); Blackbox-Rand 3, nicht geoeffnet.
 
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
+Dateien (realRef, 3):
+- .claude/commands/se-irr.md
+- .claude/commands/se/author-actor.md
+- .claude/commands/se/top-level.md
+
+Tests (`graph_tests`, 2):
+- tests/skill-authoring-gate.test.ts
+- tests/skill-irr-fremde-quellen.test.ts
+
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
