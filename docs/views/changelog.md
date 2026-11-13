@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 529 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 530 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 529 CR · 372 done · 4 open.
+Total: 530 CR · 372 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -591,3 +591,4 @@ Total: 529 CR · 372 done · 4 open.
 | `CR-GC-923` | n/a | se-plan nur noch Reihenfolge und Schnitt: Fragen, Schreiben und Bau herauslösen |
 | `CR-GC-924` | n/a | Skill se-bau: Koordinator und Umsetzer im Bau |
 | `CR-GC-925` | n/a | Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (kehrt Regel 1 aus CR-GC-875 um) |
+| `CR-GC-926` | n/a | Systemmodell in Bildern: Zahlen aus dem Katalog ohne Version, 80 statt 81 Regeln |

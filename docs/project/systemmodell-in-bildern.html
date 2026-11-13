@@ -282,8 +282,9 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
   <div class="eyebrow">Technische Systeme als Netz beschreiben</div>
   <h1>Das Systemmodell in Bildern</h1>
   <p class="lead">Wir beschreiben ein technisches System nicht als Fließtext, sondern als Netz aus Bausteinen und Verbindungen. Ein Prüfprogramm legt bei jeder Änderung feste Regeln an dieses Netz an und nennt die Stelle, an der etwas fehlt oder sich widerspricht. Das gilt für Software genauso wie für Mechanik oder Elektrik.</p>
-  <p>Diese Seite zeigt das Ziel, den Anforderungsbaum eines Beispiels, die zwölf Bausteinarten, die sechs Verbindungsarten, je Regelstufe ein Beispiel, die Methode, die Begriffe dahinter und die Live-Demos. Alle Beispiele stammen aus einem einzigen Fall:</p>
+  <p>Diese Seite zeigt das Ziel, den Anforderungsbaum eines Beispiels, die <span data-katalog="bausteinarten" data-wert="12">zwölf</span> Bausteinarten, die <span data-katalog="verbindungsarten" data-wert="6">sechs</span> Verbindungsarten, je Regelstufe ein Beispiel, die Methode, die Begriffe dahinter und die Live-Demos. Alle Beispiele stammen aus einem einzigen Fall:</p>
   <div class="example"><strong>Die Paketstation.</strong> Ein Empfänger tippt einen Abholcode ein. Die Station prüft den Code und öffnet das Fach. Zugesagt ist: Das Fach öffnet höchstens 2 Sekunden nach einem gültigen Code.</div>
+  <p class="muted" style="font-size:0.85rem" id="stand">Stand: Ontologie <span data-katalog="ontology-version">11.1.0</span> · Metamodell <span data-katalog="meta-model-version">6.0.0</span> · Regelkatalog <span data-katalog="rules-version">50.0.0</span>, aus <code>@sigloch/contracts</code>. Ein Test prüft jede Zahl, die diese Seite aus dem Katalog nennt.</p>
   <div class="audience" role="group" aria-label="Zielgruppe">
     <span class="muted">Für wen:</span>
     <div class="seg">
@@ -326,7 +327,7 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
 
 <!-- ───────────────────────── E3 Bausteine ───────────────────────── -->
 <section class="bs" data-bs="E3">
-<h2 id="bausteine">Die zwölf Bausteine</h2>
+<h2 id="bausteine">Die <span data-katalog="bausteinarten" data-wert="12">zwölf</span> Bausteine</h2>
 <div class="summary">
   <div class="eyebrow">Kurz gesagt</div>
   <p>Jeder Baustein hat eine Art. Die Art bestimmt, welche Verbindungen er eingehen darf und welche Regeln ihn prüfen. Vier Gruppen: <b>Zweck</b> (System, Akteur, Anwendungsfall, Anforderung), <b>Verhalten</b> (Wirkkette, Funktion, Datenfluss, Datenformat), <b>Aufbau und Nachweis</b> (Modul, Test), <b>Planung</b> (Auftrag, Meilenstein).</p>
@@ -338,7 +339,7 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
 </div>
 
 <details class="details">
-<summary>Details: alle zwölf Bausteine mit Bedeutung und Beispiel</summary>
+<summary>Details: alle <span data-katalog="bausteinarten" data-wert="12">zwölf</span> Bausteine mit Bedeutung und Beispiel</summary>
 <div class="group">
   <div class="group-title"><h3>Zweck</h3><p class="muted">Was gebaut wird, für wen und mit welcher Zusage.</p></div>
   <div class="cards">
@@ -485,7 +486,7 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
 
 <!-- ───────────────────────── E4 Verbindungen ───────────────────────── -->
 <section class="bs" data-bs="E4">
-<h2 id="verbindungen">Die sechs Verbindungen</h2>
+<h2 id="verbindungen">Die <span data-katalog="verbindungsarten" data-wert="6">sechs</span> Verbindungen</h2>
 <div class="summary">
   <div class="eyebrow">Kurz gesagt</div>
   <p>Eine Verbindung hat eine Richtung und eine Art. Welche Bausteinarten sie verbinden darf, ist festgelegt; eine Verbindung außerhalb dieser Liste nimmt das Modell nicht an. Die sechs Arten: <b>besteht aus</b>, <b>gibt ab · nimmt auf</b>, <b>erfüllt</b>, <b>prüft</b>, <b>ist umgesetzt in</b>, <b>gehört zu</b>. Was sich aus anderen Verbindungen berechnen lässt, wird nicht gespeichert.</p>
@@ -560,10 +561,10 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
 <h2 id="regeln">Regeln und Stufen</h2>
 <div class="summary">
   <div class="eyebrow">Kurz gesagt</div>
-  <p>80 Regeln prüfen das Modell bei jeder Änderung. Jede Regel gehört zu einer von zwölf <b>Stufen</b>, die der Entstehung eines Modells folgen, vom System bis zum Abgleich mit der Umsetzung. Hinter fünf Stufen liegt eine <b>Marke</b>, ein Abnahmepunkt. Jeder Befund nennt den Baustein und den nächsten Schritt; nur wenige Regeln blockieren, die meisten geben Hinweise.</p>
+  <p><span data-katalog="regeln">81</span> Regeln prüfen das Modell bei jeder Änderung. Jede Regel gehört zu einer von <span data-katalog="stufen" data-wert="12">zwölf</span> <b>Stufen</b>, die der Entstehung eines Modells folgen, vom System bis zum Abgleich mit der Umsetzung. Hinter <span data-katalog="marken" data-wert="5">fünf</span> Stufen liegt eine <b>Marke</b>, ein Abnahmepunkt. Jeder Befund nennt den Baustein und den nächsten Schritt; nur wenige Regeln blockieren, die meisten geben Hinweise.</p>
 </div>
 <div class="stack" style="margin-top:16px">
-  <p>Die Stufe nennt die Bausteinart, die es geben muss, damit die Regel greift. Eine Regel über Tests schweigt, solange es keine Tests gibt. Drei Regeln gelten in jedem Zustand. So bleibt die Menge je Arbeitsschritt beherrschbar: Auf einer Stufe greifen 1 bis 12 Regeln, dazu die drei, die immer gelten. Wer das System anlegt, hat 4 Regeln vor sich. Alle 80 gelten erst beim Abgleich mit dem Bau.</p>
+  <p>Die Stufe nennt die Bausteinart, die es geben muss, damit die Regel greift. Eine Regel über Tests schweigt, solange es keine Tests gibt. <span data-katalog="regeln-immer" data-wert="3">Drei</span> Regeln gelten in jedem Zustand. So bleibt die Menge je Arbeitsschritt beherrschbar: Auf einer Stufe greifen <span data-katalog="regeln-je-stufe-min">1</span> bis <span data-katalog="regeln-je-stufe-max">12</span> Regeln, dazu die drei, die immer gelten. Wer das System anlegt, hat <span data-katalog="regeln-stufe-1">4</span> Regeln vor sich. Alle <span data-katalog="regeln">81</span> gelten erst beim Abgleich mit dem Bau.</p>
   <p>Hinter manchen Stufen liegt eine <b>Marke</b>, ein Abnahmepunkt. Eine Marke ist erreicht, wenn bis zu ihr kein Befund mehr offen ist. Die Marken sind die üblichen Prüfpunkte der Systementwicklung.</p>
   <p>Jeder Befund hat eine Schwere. <b>Blockiert</b> heißt: Die Änderung, die den Befund neu einführt, wird nicht angenommen. <b>Hinweis</b> heißt: Sie wird angenommen, der Befund bleibt sichtbar, bis er behoben ist. Jede Regel nennt den betroffenen Baustein und den einen nächsten Schritt.</p>
 </div>
@@ -686,7 +687,7 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
   <p>Jeder Baustein hat eine Definition in einem Satz, mit Beispiel und Gegenbeispiel aus der Paketstation. Eine <b>Anforderung</b> sagt, <b>was</b> ein Element an seiner Grenze tut oder einhält, nie <b>wie</b>. <b>Blackbox</b> ist ein Element von außen gesehen, <b>Whitebox</b> dasselbe Element von innen. Drei Bausteine lassen sich so schachteln: System, Funktion, Modul. Die Schnittstelle einer Blackbox wird aus den Flüssen über ihre Grenze berechnet, nicht behauptet.</p>
 </div>
 
-<h3 style="margin-top:28px">Die zwölf Bausteine in je einem Satz</h3>
+<h3 style="margin-top:28px">Die <span data-katalog="bausteinarten" data-wert="12">zwölf</span> Bausteine in je einem Satz</h3>
 <p style="margin-top:8px">Der Satz ist die verbindliche Definition. Die Quelle nennt die Standarddefinition, der er entspricht.</p>
 <div class="tablewrap">
 <table class="defs">

@@ -4129,6 +4129,12 @@
       "description": "docs/cr/open/CR-GC-925-antwortende-akteure-und-eigene-speicher-.md"
     },
     {
+      "id": "CR-GC-926",
+      "type": "CR",
+      "name": "Systemmodell in Bildern: Zahlen aus dem Katalog ohne Version, 80 statt 81 Regeln",
+      "description": "docs/cr/open/CR-GC-926-systemmodell-in-bildern-zahlen-aus-dem-k.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -32966,5 +32972,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1127
+  "graphVersion": 1128
 }
