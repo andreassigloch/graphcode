@@ -16,7 +16,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdtempSync, rmSync, existsSync, readFileSync, writeFileSync, statSync, readdirSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -115,17 +115,31 @@ describe('TEST-auto-export: der Export folgt der Mutation (CR-GC-323)', () => {
   });
 
   it('coalesced: drei Mutationen in Folge schreiben EINEN Export', async () => {
-    registerAutoExport(harness, counted, { debounceMs: DEBOUNCE });
+    // Die Uhr steuert der Test (ITEM-2026-968): Mit echter Uhr lief das 30-ms-Fenster unter Last
+    // schon zwischen zwei Mutationen ab, und der Test zaehlte 2 oder 3 Exporte. Gefaelscht ist nur
+    // der Timer; Store und Promises laufen echt. Gepruefter Vertrag: Mutationen innerhalb des
+    // Fensters ergeben genau einen Export, und der traegt den letzten Stand.
+    let written: Promise<unknown> | undefined;
+    const tracked: ToolRegistry['graph_export'] = { ...counted, handler: (input) => (written = counted.handler(input)) };
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    try {
+      registerAutoExport(harness, tracked, { debounceMs: DEBOUNCE });
 
-    await registry['graph_mutate'].handler(alsEingabe(addReq(1)));
-    await registry['graph_mutate'].handler(alsEingabe(addReq(2)));
-    await registry['graph_mutate'].handler(alsEingabe(addReq(3)));
+      await registry['graph_mutate'].handler(alsEingabe(addReq(1)));
+      await registry['graph_mutate'].handler(alsEingabe(addReq(2)));
+      await registry['graph_mutate'].handler(alsEingabe(addReq(3)));
+      expect(exports).toBe(0); // das Fenster ist noch offen
 
-    await sleep(DEBOUNCE * 4);
+      await vi.advanceTimersByTimeAsync(DEBOUNCE);
+    } finally {
+      vi.useRealTimers();
+    }
+    expect(exports).toBe(1);
+    await written; // der eine Export hat geschrieben
     expect(exports).toBe(1);
     // …und der eine Export trägt den LETZTEN Stand, nicht den ersten.
-    const written = JSON.parse(readFileSync(join(tmp, GRAPH_JSON), 'utf8')) as { elements: Array<{ id: string }> };
-    const ids = written.elements.map((e) => e.id);
+    const snapshot = JSON.parse(readFileSync(join(tmp, GRAPH_JSON), 'utf8')) as { elements: Array<{ id: string }> };
+    const ids = snapshot.elements.map((e) => e.id);
     expect(ids).toEqual(expect.arrayContaining(['REQ-1', 'REQ-2', 'REQ-3']));
   });
 
