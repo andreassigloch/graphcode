@@ -65,7 +65,8 @@ Abnahme:
    Zielgruppe, danach die übrigen ●-Bausteine, zuletzt die ○-Bausteine. Das Konzept widerspricht
    sich bei Theorie: Der Pfad nennt 5 Bausteine, die Tabelle markiert zusätzlich E3, E6 und D2 mit ●.
    Gezeigt wird nach der Tabelle, also 8 Bausteine. Damit verfehlt Theorie das Kriterium
-   „höchstens 5 Bausteine“ aus dem Konzept. Ob E3, E6 und D2 auf ○ gehen, entscheidet der Autor.
+   „höchstens 5 Bausteine“ aus dem Konzept. Entscheidung des Autors (2026-11-13): Die Tabelle gilt,
+   Theorie zeigt 8 Bausteine; das Kriterium im Konzept trägt die Ausnahme.
 2. ✓ „Alle“ zeigt jeden Baustein, in der Reihenfolge des Artefakts.
 3. ✓ Die Wahl steht in `localStorage` (try/catch). Spezifikation gewählt, neu geladen, Spezifikation
    aktiv. Ohne Speicher startet die Seite auf „Alle“.

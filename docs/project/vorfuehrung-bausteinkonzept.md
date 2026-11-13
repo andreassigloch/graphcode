@@ -54,7 +54,7 @@ die Zielgruppe (Theorie · Spezifikation · Code · Alle) und blendet die übrig
 | D4 | Der Agent baut interaktiv eine Änderung durch das Gate, der Graph wählt die Tests | Agent | – | – | ● |
 
 **Je Zielgruppe:**
-- **Theorie:** I1 → E1 → E2 → E4 → D1
+- **Theorie:** I1 → E1 → E2 → E4 → D1, danach E3, E6 und D2 (● laut Tabelle)
 - **Spezifikation:** I1 → E2 → E5 → D1 → D3
 - **Code:** I1 → E7 → E5 → D2 → D4
 
@@ -146,7 +146,8 @@ eine Modellentscheidung und gehört in einen eigenen CR, nicht in dieses Konzept
 ## Abnahmekriterien
 
 1. Der Schalter für die Zielgruppe blendet je Gruppe nur deren Bausteine ein; „Alle" zeigt den heutigen Stand.
-2. Jede Zielgruppe kommt mit höchstens 5 Bausteinen durch Intro, Elemente und Demo.
+2. Jede Zielgruppe kommt mit höchstens 5 Bausteinen durch Intro, Elemente und Demo. Ausnahme Theorie:
+   8 Bausteine, weil E3, E6 und D2 dazugehören (Entscheidung des Autors, 2026-11-13, CR-GC-907).
 3. Bild und Live-Modell der Paketstation verwenden dieselben Namen.
 4. E2 zeigt den Anforderungsbaum, bevor ein Netz zu sehen ist.
 5. Jeder Demo-Baustein nennt seinen Test aus §9 und dessen Stand.
