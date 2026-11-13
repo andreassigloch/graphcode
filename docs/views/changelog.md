@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 522 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 529 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 522 CR · 372 done · 4 open.
+Total: 529 CR · 372 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -584,3 +584,10 @@ Total: 522 CR · 372 done · 4 open.
 | `CR-GC-916` | done | Umbau aus CR-GC-807: code-quality und reduced-llm zu REQ am Kern-UC, deterministic-steering umbenennen |
 | `CR-GC-917` | n/a | Stufe bauen – Verträge (SCHEMA) vor Funktionen binden, FUNC-Paket trägt die echten Typen |
 | `CR-GC-918` | n/a | Eine Anforderung hat genau einen Erfueller |
+| `CR-GC-919` | n/a | Ebenensprung: Anforderung wird ohne Zerlegung tief erfuellt |
+| `CR-GC-920` | n/a | A-SPICE-Darstellung der Anforderungs- und Teststufen |
+| `CR-GC-921` | n/a | RTM: Ebene eindeutig aus der Herkunft, Erfueller als Spalte |
+| `CR-GC-922` | n/a | Review vor dem Bauplan: Lint im Gate, danach Agent ohne Vorwissen (Marke CDR) |
+| `CR-GC-923` | n/a | se-plan nur noch Reihenfolge und Schnitt: Fragen, Schreiben und Bau herauslösen |
+| `CR-GC-924` | n/a | Skill se-bau: Koordinator und Umsetzer im Bau |
+| `CR-GC-925` | n/a | Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (kehrt Regel 1 aus CR-GC-875 um) |

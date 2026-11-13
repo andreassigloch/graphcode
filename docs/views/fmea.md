@@ -269,7 +269,7 @@ Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
 - **Anwendungsfall:** `UC-efficient-testing`
 - **Träger:** `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full`
 - **Befund:** FMEA CR-GC-798 FM-20, frei abgeleitet. Ursache ist ein Test ohne Bindung oder eine Quelldatei ohne Knoten. Entscheidung: gedeckt durch die Schlupfmessung je CR (REQ-full-run-on-probation).
-- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
+- **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md) · `CR-GC-918` (docs/cr/open/CR-GC-918-eine-anforderung-hat-genau-einen-erfuell.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|

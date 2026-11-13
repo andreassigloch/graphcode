@@ -4087,6 +4087,48 @@
       "description": "docs/cr/open/CR-GC-918-eine-anforderung-hat-genau-einen-erfuell.md"
     },
     {
+      "id": "CR-GC-919",
+      "type": "CR",
+      "name": "Ebenensprung: Anforderung wird ohne Zerlegung tief erfuellt",
+      "description": "docs/cr/open/CR-GC-919-ebenensprung-anforderung-wird-ohne-zerle.md"
+    },
+    {
+      "id": "CR-GC-920",
+      "type": "CR",
+      "name": "A-SPICE-Darstellung der Anforderungs- und Teststufen",
+      "description": "docs/cr/open/CR-GC-920-a-spice-darstellung-der-anforderungs-und.md"
+    },
+    {
+      "id": "CR-GC-921",
+      "type": "CR",
+      "name": "RTM: Ebene eindeutig aus der Herkunft, Erfueller als Spalte",
+      "description": "docs/cr/open/CR-GC-921-rtm-ebene-eindeutig-aus-der-herkunft-erf.md"
+    },
+    {
+      "id": "CR-GC-922",
+      "type": "CR",
+      "name": "Review vor dem Bauplan: Lint im Gate, danach Agent ohne Vorwissen (Marke CDR)",
+      "description": "docs/cr/open/CR-GC-922-review-vor-dem-bauplan-lint-im-gate-dana.md"
+    },
+    {
+      "id": "CR-GC-923",
+      "type": "CR",
+      "name": "se-plan nur noch Reihenfolge und Schnitt: Fragen, Schreiben und Bau herauslösen",
+      "description": "docs/cr/open/CR-GC-923-se-plan-nur-noch-reihenfolge-und-schnitt.md"
+    },
+    {
+      "id": "CR-GC-924",
+      "type": "CR",
+      "name": "Skill se-bau: Koordinator und Umsetzer im Bau",
+      "description": "docs/cr/open/CR-GC-924-skill-se-bau-koordinator-und-umsetzer-im.md"
+    },
+    {
+      "id": "CR-GC-925",
+      "type": "CR",
+      "name": "Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (kehrt Regel 1 aus CR-GC-875 um)",
+      "description": "docs/cr/open/CR-GC-925-antwortende-akteure-und-eigene-speicher-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -20953,6 +20995,226 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-918",
+      "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-applied-suggestion-moves-target",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-audit-trail",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-auto-persist-merge",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-bootstrap-through-gate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-element-contract-finding",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-export-marker-tracks-drift",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-full-run-on-probation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-gate-only-writes",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-graceful-degradation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-graph-state-recall",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-graph-tests-operational",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-host-end-visible",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-lane-red-without-report",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-lane-reports-change",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-mcp-tool-registry",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-modell-befragen",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-npx-distribution",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-plan-gruppen",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-progressive-expansion",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-prompt-provenance",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-query-precision",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-real-health-check",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-repo-install",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-repo-update",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-risk-selection-misses-red-test",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-rule-calibration",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-schema-version-migration",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-sitzung-einstieg",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-skill-reads-only",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-steering-from-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-store-recovery",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-target-shifts-ranking",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-test-runnable-binding",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-test-skill-red-first",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-versioned-broadcast",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-viewer-owned-by-repo",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-zuege-sparen",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-918",
+      "target": "REQ-zugangsliste-vor-bau",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-920",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-920",
+      "target": "REQ-post-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-921",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-921",
+      "target": "REQ-post-export-markdown",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -32679,5 +32941,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1117
+  "graphVersion": 1126
 }
