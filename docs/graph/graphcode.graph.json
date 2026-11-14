@@ -4176,7 +4176,9 @@
       "id": "CR-GC-932",
       "type": "CR",
       "name": "graphcode liest die Definitionen der Elemente und Kanten aus contracts (ELEMENT_DEFINITIONS, TRACE_DEFINITIONS)",
-      "description": "docs/cr/open/CR-GC-932-graphcode-liest-die-definitionen-der-ele.md"
+      "description": "docs/cr/done/CR-GC-932-graphcode-liest-die-definitionen-der-ele.md",
+      "status": "done",
+      "commitRef": "4da50c56"
     },
     {
       "id": "CR-GC-933",
@@ -33027,5 +33029,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1149
+  "graphVersion": 1150
 }
