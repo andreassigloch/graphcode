@@ -23,8 +23,8 @@ Hängt an CR-SM-440 (sigloch-modules): Fällt dort `commitRef`, ändert sich an 
 
 ## Abnahme
 
-- [ ] `CLAUDE.md` nennt den Spiegel. Kein anderer Satz der Datei sagt, der Knoten trage keinen Status.
-- [ ] FAQ `cr-knoten-status` (aise-bok) zitiert diesen CR.
+- [x] `CLAUDE.md` Zeilen 7-8 nennen den Spiegel; die Klammer „(id, title, scope edges)" nennt jetzt auch `status`. `tests/claude-md-cr-knoten.test.ts` (vorher 2 von 2 rot) belegt es. Premise geprüft an `bok/docs/governance/ITEM-UND-CR.md` Zeilen 13 und 24.
+- [ ] FAQ `cr-knoten-status` (aise-bok) zitiert diesen CR. Offen: liegt in einem anderen Repo, nicht Teil dieses Auftrags.
 
 ---
 
@@ -35,7 +35,7 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 | Frage | Festlegung | Begründung |
 |---|---|---|
 
-keine, bis der Auftraggeber über den Vorschlag entschieden hat.
+keine.
 
 ---
 

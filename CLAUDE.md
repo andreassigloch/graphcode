@@ -4,8 +4,8 @@ Read `README.md` first for what graphcode is and how to run it. This file is the
 **constraints and invariants** for anyone (human or agent) working in this repo. General working
 rules live in the user's global instructions; only what is specific to this repo is here.
 
-**CR-Modus: graph** — CR text in `docs/cr/`, a lean CR node (id, title, scope edges) in the graph;
-status derives from `open/`/`done/`, the node stores none. `aise dispatch prepare` creates the node;
+**CR-Modus: graph** — CR text in `docs/cr/`, a lean CR node (id, title, status, scope edges) in the graph;
+status derives from `open/`/`done/`; `aise cr close` mirrors it onto the node. `aise dispatch prepare` creates the node;
 the scope edges go through `graph_mutate`. Family rule for items and CRs: `bok/docs/governance/ITEM-UND-CR.md`.
 
 ## What graphcode is / is not
