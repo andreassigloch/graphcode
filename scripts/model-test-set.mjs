@@ -120,6 +120,9 @@ export const INCLUDED = [
   // CR-GC-796: baut einen Store aus der committeten SSOT, beschaedigt die Datei und erwartet beim
   // Oeffnen den Neuaufbau mit der Knotenzahl des Snapshots — liest die SSOT, also gehoert er in die Spur.
   'tests/store-recovery.test.ts',
+  // CR-GC-931: kopiert die committete SSOT in ein Temp-Repo, baut daraus den Store und erwartet beim Start
+  // die Meldung, wenn der Snapshot nach dem Export geaendert wurde — liest die SSOT, also gehoert er in die Spur.
+  'tests/snapshot-drift.test.ts',
   // CR-GC-488: seit der Umstellung von der Momentaufnahme auf die INVARIANTE gehoert dieser
   // Spike in die Spur. Er haelt fest, dass jeder Produzent von `FLOW-graph-state` im Modell
   // auch im Code einen Schreibpfad hat — eine Modellaenderung, die einen Leser als Schreiber

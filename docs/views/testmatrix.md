@@ -180,7 +180,7 @@
 | `REQ-skill-import-code-nennt-verb` | ✓ | ✓ passed | `TEST-skill-import-code-nennt-verb` |
 | `REQ-skill-reads-only` | ✓ | ✓ passed | `TEST-skill-reports-measured-values` |
 | `REQ-small-model-viable` | ✓ | ✓ passed | `TEST-mvp-e2e` · `TEST-reduced-llm` |
-| `REQ-snapshot-drift-notice` | ✓ | ⚠ nie gelaufen | `TEST-snapshot-drift` |
+| `REQ-snapshot-drift-notice` | ✓ | ✓ passed | `TEST-snapshot-drift` |
 | `REQ-srs-29148` | ✓ | ✓ passed | `TEST-doc-export` |
 | `REQ-stage-names-enumerated` | ✓ | ⚠ nie gelaufen | `TEST-stage-names-enumerated` |
 | `REQ-steering-delta-in-answer-tested` | ✓ | ⚠ nie gelaufen | `TEST-steering-delta-in-answer` |
@@ -213,7 +213,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 203/203 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 164/203 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 165/203 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
