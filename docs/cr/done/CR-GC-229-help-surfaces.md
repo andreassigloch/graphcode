@@ -1,6 +1,6 @@
 # CR-GC-229 — Help-Surfaces: graph_help MCP-Tool + se:help Skill
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 4
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 4
 **Graph (SSOT):** seedet (gate-only) `REQ-help-reachable`, `FUNC-graph-help-tool` (→ `src/mcp-tools.ts`),
 `FUNC-se-help-skill` (→ `.claude/skills/se-help.md`), `TEST-help-tool` (→ `tests/mcp.help.test.ts`),
 `CR-GC-229`; unter `MS-6-adoption`. Pointer, nicht autoritativ.

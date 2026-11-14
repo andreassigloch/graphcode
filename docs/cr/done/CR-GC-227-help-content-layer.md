@@ -1,6 +1,6 @@
 # CR-GC-227 — Help-Content-Layer: autorierte Plain/SE-Annotation (HELP_CONTENT)
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 3
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 3
 **Graph (SSOT):** seedet (gate-only) `REQ-help-two-audience`, `FUNC-help-content-map` (→ `src/viewer/help-content.ts`),
 `TEST-help-content-coverage` (→ `tests/help-content.test.ts`), `CR-GC-227`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 **Proposal:** [help-system.md §3–§4, §6, §8](../../proposals/help-system.md) · [help-rules-content.md](../../proposals/help-rules-content.md)

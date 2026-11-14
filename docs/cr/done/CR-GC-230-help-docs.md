@@ -1,6 +1,6 @@
 # CR-GC-230 — Help-Docs: README + GRAPHCODE.md Pointer auf se:help
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 3
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 3
 **Graph (SSOT):** seedet (gate-only) `REQ-help-discoverable`, `FUNC-help-doc-pointer`
 (→ `README.md` / `GRAPHCODE.md`-Scaffold), `CR-GC-230`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 **Proposal:** [help-system.md §9, §10](../../proposals/help-system.md)

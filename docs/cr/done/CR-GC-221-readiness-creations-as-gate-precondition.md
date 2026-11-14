@@ -1,6 +1,6 @@
 # CR-GC-221 — Readiness: Creations als Gate-Vorbedingung (Phase + Impl)
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 3
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 3
 **Graph (SSOT):** seedet (gate-only) `REQ-creation-gate-precondition`, `FUNC-score-creations` (→ `src/readiness.ts`),
 `TEST-readiness-creations` (→ `tests/readiness.test.ts`), `CR-GC-221`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 **Proposal:** [readiness-artifact-model.md §4–§5](../../proposals/readiness-artifact-model.md)

@@ -1,6 +1,6 @@
 # CR-GC-207: Graph-first-Onboarding-Kontrakt (GRAPHCODE.md + Materialisierung)
 
-**Status:** Open (2026-06-25) · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 5
+**Angelegt:** 2026-06-25 · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 5
 **Graph (SSOT):** seedet (gate-only) `REQ-graph-first-onboarding`, `FUNC-scaffold-graphcode-md` (→ `src/scaffold.ts`), `TEST-scaffold-graphcode-md` (→ `tests/scaffold.test.ts`), `CR-GC-207`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 
 ## Problem (Why)

@@ -1,6 +1,6 @@
 # CR-GC-216: `graph_realize` — ergonomisches Write-back-Affordance (Write-Twin von `graph_context`)
 
-**Status:** Open (2026-06-27) · **Milestone:** `MS-5-efficiency` · **Max Files:** 3
+**Angelegt:** 2026-06-27 · **Milestone:** `MS-5-efficiency` · **Max Files:** 3
 **Graph (SSOT):** zu seeden (gate-only) `REQ-realize-affordance`, `FUNC-graph-realize` (→ `src/mcp-tools.ts`), `TEST-graph-realize` (→ `tests/mcp.context.test.ts`), `CR-GC-216`; unter `MS-5-efficiency`.
 
 ## Problem (Why)

@@ -1,6 +1,6 @@
 # CR-GC-211: UC-Authoring-Guardrail (Terseness + Jargon-Budget)
 
-**Status:** Open (2026-06-25) · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 3
+**Angelegt:** 2026-06-25 · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 3
 **Graph (SSOT):** seedet (gate-only) `REQ-uc-authoring-style`, `FUNC-author-uc` (→ `.claude/skills/se-author-uc.md`, `lang:'prompt'`), `TEST-uc-authoring-style` (→ `tests/se-author-uc.test.ts`), `CR-GC-211`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 
 ## Problem (Why)

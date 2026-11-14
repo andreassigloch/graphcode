@@ -1,6 +1,6 @@
 # CR-GC-226 — Doku/Graph: `lean=no-artifacts` ablösen + Artefakt-Modell seeden
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 4
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 4
 **Graph (SSOT):** seedet (gate-only) `REQ-artifact-scope-refined`, Milestone `MS-6-adoption`,
 die Artefakt-`FUNC`/`REQ`, `CR-GC-226`; Re-Export `docs/views/`. Pointer, nicht autoritativ.
 **Proposal:** [readiness-artifact-model.md §3](../../proposals/readiness-artifact-model.md)

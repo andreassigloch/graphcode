@@ -1,6 +1,6 @@
 # CR-GC-220 — Renderer: deterministic MarkdownView for every render-able artifact
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 4
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 4
 **Graph (SSOT):** seedet (gate-only) `REQ-deterministic-render`, `FUNC-render-views` (→ `src/exporter-views.ts`),
 `TEST-views-conformance` (→ `tests/exporter.test.ts`), `CR-GC-220`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 **Proposal:** [readiness-artifact-model.md](../../proposals/readiness-artifact-model.md) · [document-specimens.md](../../proposals/document-specimens.md)

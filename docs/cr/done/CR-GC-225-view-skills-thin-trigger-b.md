@@ -1,6 +1,6 @@
 # CR-GC-225 — Skills: View-Skills → Thin-Trigger (Gruppe B)
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 5
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 5
 **Graph (SSOT):** seedet (gate-only) `REQ-view-thin-trigger` (geteilt mit CR-224), `FUNC-skill-view-trigger`
 (→ `.claude/skills/se-view-*.md`), `TEST-skills-conformance` (existing), `CR-GC-225`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 

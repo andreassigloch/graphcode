@@ -1,6 +1,6 @@
 # CR-GC-224 — Skills: View-Skills → Thin-Trigger (Gruppe A)
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 6
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 6
 **Graph (SSOT):** seedet (gate-only) `REQ-view-thin-trigger`, `FUNC-skill-view-trigger` (→ `.claude/skills/se-view-*.md`),
 `TEST-skills-conformance` (existing), `CR-GC-224`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 **Proposal:** Q1-Entscheidung „Convert, but keep skill as thin trigger".

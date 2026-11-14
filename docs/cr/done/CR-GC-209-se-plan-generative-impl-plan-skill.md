@@ -1,6 +1,6 @@
 # CR-GC-209: `se-plan` — generatives Impl-/Integrations-Plan-Skill (graph-abgeleitete CR-Reihenfolge)
 
-**Status:** Open (2026-06-25) · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 4
+**Angelegt:** 2026-06-25 · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 4
 **Graph (SSOT):** seedet (gate-only) `REQ-generate-impl-plan`, `FUNC-plan-impl` (→ `.claude/skills/se-plan.md`, `lang:'prompt'`), `TEST-se-plan-ordering` (→ `tests/se-plan.ordering.test.ts`), `CR-GC-209`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 
 ## Problem (Why)

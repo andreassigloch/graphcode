@@ -1,6 +1,6 @@
 # CR-GC-231: `graph_authoring_guide` — Meta-Modell-Kanten-Guidance für graph-natives Autoren
 
-**Status:** Open (2026-06-27, renumbered from CR-GC-217 to clear a number collision with the shipped `CR-GC-217-graph-state-time-travel`) · **Milestone:** `MS-5-efficiency` · **Max Files:** 3
+**Vermerk beim Anlegen:** (2026-06-27, renumbered from CR-GC-217 to clear a number collision with the shipped `CR-GC-217-graph-state-time-travel`) · **Milestone:** `MS-5-efficiency` · **Max Files:** 3
 **Graph (SSOT):** zu seeden (gate-only) `REQ-authoring-guide`, `FUNC-graph-authoring-guide` (→ `src/mcp-tools.ts`), `TEST-graph-authoring-guide` (→ `tests/mcp.context.test.ts`), `CR-GC-231`; unter `MS-5-efficiency`.
 
 ## Problem (Why)

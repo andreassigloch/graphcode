@@ -1,6 +1,6 @@
 # CR-GC-234: `graph_merge` — Replay-basierte Branch-Reintegration (semantischer Rebase)
 
-**Status:** Open (2026-07-02) · **Milestone:** `MS-7-concurrency` · **Max Files:** 4
+**Angelegt:** 2026-07-02 · **Milestone:** `MS-7-concurrency` · **Max Files:** 4
 **Graph (SSOT):** geseedet (gate-only) `CR-GC-234`; REQ/FUNC/TEST bei Pick-up. Pointer, nicht autoritativ.
 **Kontext:** Enterprise-Merge-Ladder Stufe 3 — **beendet den manuellen Merge** (User: „manual merge is a no go").
 

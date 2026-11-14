@@ -1,6 +1,6 @@
 # CR-GC-228 — Help-Data-Layer: reine Projektion zu HelpEntry[] (help.ts)
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 3
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 3
 **Graph (SSOT):** seedet (gate-only) `REQ-help-rollup`, `FUNC-help-entry`, `FUNC-contextual-help`
 (→ `src/viewer/help.ts`), `TEST-help-projection` (→ `tests/help.test.ts`), `CR-GC-228`; unter `MS-6-adoption`.
 Pointer, nicht autoritativ.

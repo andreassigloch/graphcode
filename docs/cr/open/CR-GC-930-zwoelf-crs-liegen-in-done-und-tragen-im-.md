@@ -59,14 +59,20 @@ Die 28 CRs dieses Befunds tragen am Knoten `done`. Der Ordner ist die einzige vo
 rund 1600. Die Zeile trägt oft mehr als den Status: Meilenstein, Dateigrenze, „superseded by", „wartet auf
 Publish", „zurückgezogen". Ein Löschen aller Zeilen verliert das. 27 Zeilen in `done/` sagen „Open".
 
-## Offen für den Auftraggeber
+## Zweite Entscheidung des Auftraggebers, 2026-11-14
 
-Nur in den 27 Dateien den Teil „Status: Open" streichen, oder die Zeile in allen Dateien entfernen?
+„Nur die 27." In 27 Dateien in `done/` ist der Statusteil „Open" gestrichen. Datum, Meilenstein und
+Dateigrenze derselben Zeile bleiben; das Datum heißt jetzt „Angelegt". Bei CR-GC-215, 231 und 241 trug der
+Statusteil einen Zusatz, er steht als „Vermerk beim Anlegen". CR-GC-299 („superseded by") war kein „Open"
+und bleibt. Die übrigen Kopfzeilen der Familie bleiben stehen.
+
+Nicht geprüft: ob jeder der 27 CRs umgesetzt ist. Der Ordner sagt erledigt; CR-GC-209 gilt in der FAQ
+`cr-dateigrenze-zahl` als nicht umgesetzt.
 
 ## Abnahme
 
-- [ ] Kein CR in `done/` trägt „Open" im Kopf (Skript als Test in der Modell-Spur).
-- [ ] Jeder CR, der nicht umgesetzt ist, liegt wieder in `open/` oder ist als verworfen markiert.
+- [x] Kein CR in `done/` trägt „Open" im Kopf: `tests/cr-done-kein-open-kopf.test.ts`, in der Modell-Spur. Rot gesehen mit der alten Kopfzeile von CR-GC-207, danach grün.
+- Nicht Teil der Entscheidung, offen: Jeder CR, der nicht umgesetzt ist, liegt wieder in `open/` oder ist als verworfen markiert.
 
 ---
 
@@ -76,8 +82,8 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
-
-keine, bis der Auftraggeber über den Vorschlag entschieden hat.
+| Wo steht, ob ein CR offen oder erledigt ist? | Im Ordner `open/` oder `done/`. Die CR-Datei trägt keine Status-Zeile; `aise` schreibt keine mehr (BOK-CR-086). Der CR-Knoten spiegelt den Ordner. | Zwei Angaben widersprachen sich in 27 CRs. Entscheidung des Auftraggebers, 2026-11-14. |
+| Was geschieht mit bestehenden Status-Zeilen? | Sie bleiben, außer sie sagen „Open" in `done/`. | Die Zeile trägt oft mehr als den Status (Meilenstein, „superseded by"). |
 
 ---
 

@@ -1,6 +1,6 @@
 # CR-GC-208: Skill-Sync + Surfacing (Anti-Drift für scaffold'ete se-*-Skills)
 
-**Status:** Open (2026-06-25) · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 5
+**Angelegt:** 2026-06-25 · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 5
 **Graph (SSOT):** seedet (gate-only) `REQ-skill-sync`, `FUNC-skills-sync` (→ `src/scaffold.ts`), `TEST-skills-sync` (→ `tests/scaffold.test.ts`), `CR-GC-208`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 
 ## Problem (Why)

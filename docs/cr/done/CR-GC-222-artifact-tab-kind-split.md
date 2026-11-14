@@ -1,6 +1,6 @@
 # CR-GC-222 — Artefakt-Tab: render/analysis-Kind-Split + zwei Stale-Mechanismen
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 3
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 3
 **Graph (SSOT):** seedet (gate-only) `REQ-artifact-kind-split`, `FUNC-classify-artifact` (→ `src/viewer/panels.ts`),
 `TEST-artifact-kind` (→ `tests/panels.test.ts`), `CR-GC-222`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 **Proposal:** [readiness-artifact-model.md §6](../../proposals/readiness-artifact-model.md) · [document-specimens.md](../../proposals/document-specimens.md)

@@ -1,6 +1,6 @@
 # CR-GC-235: Ein Write-Channel — Host-owned Store, Sessions als Clients (Singleton-Election)
 
-**Status:** Open (2026-07-02) · **Milestone:** `MS-7-concurrency` · **Max Files:** 6
+**Angelegt:** 2026-07-02 · **Milestone:** `MS-7-concurrency` · **Max Files:** 6
 **Graph (SSOT):** geseedet (gate-only) `CR-GC-235`; REQ/FUNC/TEST bei Pick-up. Pointer, nicht autoritativ.
 **Kontext:** Enterprise-Merge-Ladder Stufe 4 — die eigentliche Enterprise-Topologie: **ONE database,
 one write channel, multiple read** (User-Zielbild 2026-07-02); Architektur-Vorlage für den aise-Nachfolger.

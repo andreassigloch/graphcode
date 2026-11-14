@@ -141,6 +141,9 @@ export const INCLUDED = [
   // Eingaenge von FUNC-graph-store — ein Zug am Modell, der einen siebten Fluss anlegt, macht ihn
   // rot, ohne dass sich Code aendert. Genau dafuer gehoert er in die Spur (Weg A, CR-GC-804).
   'tests/constraint-ein-schreibweg.test.ts',
+  // CR-GC-930: liest die Koepfe der CRs in docs/cr/done — ein reiner docs-Commit kann ihn rot machen,
+  // und nur diese Spur laeuft im pre-commit.
+  'tests/cr-done-kein-open-kopf.test.ts',
 ];
 
 /**

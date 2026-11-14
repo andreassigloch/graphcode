@@ -1,6 +1,6 @@
 # CR-GC-215: Enforcement-Hooks in Consumer-Repos shippen
 
-**Status:** Open — **deferred** (implementieren nach Analyse/Benchmark; User-Entscheidung 2026-06-27) · **Milestone:** `MS-6-adoption` · **Max Files:** 5
+**Vermerk beim Anlegen:** **deferred** (implementieren nach Analyse/Benchmark; User-Entscheidung 2026-06-27) · **Milestone:** `MS-6-adoption` · **Max Files:** 5
 **Graph (SSOT):** zu seeden (gate-only) `REQ-ship-enforcement-hooks`, `FUNC-scaffold-hooks` (→ `src/scaffold.ts`), `TEST-scaffold-hooks` (→ `tests/scaffold.test.ts`), `CR-GC-215`; unter `MS-6-adoption`.
 
 ## Problem (Why)

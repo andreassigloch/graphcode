@@ -1,6 +1,6 @@
 # CR-GC-241 — Export the host-shim write bridge (callHost/HOST_SOCK_BASENAME)
 
-**Status:** Open (implemented, pending review) · 2026-07-07
+**Vermerk beim Anlegen:** (implemented, pending review) · 2026-07-07
 **Paket:** `@sigloch/graphcode` (public surface, `src/index.ts`)
 **Quelle:** graph-view-edit CR-GVE-008 session — graph-view-edit needs a gated write transport
 and, per CR-GC-235's own "Familie-Entscheid" note, is the anticipated first external consumer.

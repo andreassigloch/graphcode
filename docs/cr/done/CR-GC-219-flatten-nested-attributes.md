@@ -1,6 +1,5 @@
 # CR-GC-219 — Flatten the redundant nested `attributes` field
 
-**Status:** open
 **Created:** 2026-06-27
 **Type:** refactor / model-hygiene
 **Depends on:** —

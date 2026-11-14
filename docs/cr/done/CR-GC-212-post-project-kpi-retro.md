@@ -1,6 +1,6 @@
 # CR-GC-212: Post-Project-KPI-Retro (`se-retro` + KPI-Standard)
 
-**Status:** Open (2026-06-25) · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 4
+**Angelegt:** 2026-06-25 · **Milestone:** `MS-6-adoption` (neu) · **Max Files:** 4
 **Graph (SSOT):** seedet (gate-only) `REQ-project-kpi`, `FUNC-retro-kpi` (→ `.claude/skills/se-retro.md` + `scripts/retro-kpi.mjs`), `TEST-retro-kpi` (→ `tests/retro-kpi.test.ts`), `CR-GC-212`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 
 ## Problem (Why)

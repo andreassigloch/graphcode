@@ -1,6 +1,6 @@
 # CR-GC-232: Durables Command-Log (append-only Audit-Persistenz)
 
-**Status:** Open (2026-07-02) · **Milestone:** `MS-7-concurrency` (neu, mit CR-233/234/235) · **Max Files:** 4
+**Angelegt:** 2026-07-02 · **Milestone:** `MS-7-concurrency` (neu, mit CR-233/234/235) · **Max Files:** 4
 **Graph (SSOT):** geseedet (gate-only) `CR-GC-232`; REQ/FUNC/TEST bei Pick-up. Pointer, nicht autoritativ.
 **Kontext:** Enterprise-Merge-Ladder Stufe 1 (232→233→234→235); Analyse siehe `docs/CONCURRENCY.md` + Chat 2026-07-02.
 

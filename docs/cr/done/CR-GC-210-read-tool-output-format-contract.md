@@ -1,6 +1,6 @@
 # CR-GC-210: Read-Tool-Output-Format-Kontrakt (JSON vs Format-E)
 
-**Status:** Open (2026-06-25) · **Milestone:** `MS-5-efficiency` · **Max Files:** 3
+**Angelegt:** 2026-06-25 · **Milestone:** `MS-5-efficiency` · **Max Files:** 3
 **Graph (SSOT):** seedet (gate-only) `REQ-read-format-contract`, `FUNC-read-format-param` (→ `src/mcp-tools.ts`), `TEST-read-format-param` (→ `tests/mcp-tools.test.ts`), `CR-GC-210`; unter `MS-5-efficiency`. Pointer, nicht autoritativ.
 
 ## Problem (Why)

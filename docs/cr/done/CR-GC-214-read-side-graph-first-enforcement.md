@@ -1,6 +1,6 @@
 # CR-GC-214: Read-seitige Graph-first-Erzwingung (`deny-stale-prose-read` Hook)
 
-**Status:** Open (2026-06-26) · **Milestone:** `MS-6-adoption` · **Max Files:** 4
+**Angelegt:** 2026-06-26 · **Milestone:** `MS-6-adoption` · **Max Files:** 4
 **Graph (SSOT):** zu seeden (gate-only, bei Pick-up) `REQ-graph-first-read`, `FUNC-deny-stale-read` (→ `.claude/hooks/deny-stale-prose-read.sh`), `TEST-deny-stale-read` (→ `tests/hooks.test.ts`), `CR-GC-214`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 
 ## Problem (Why)

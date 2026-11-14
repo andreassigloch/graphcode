@@ -1,6 +1,6 @@
 # CR-GC-233: OCC — graphVersion + baseVersion-Check am Gate (stale-write rejection)
 
-**Status:** Open (2026-07-02) · **Milestone:** `MS-7-concurrency` · **Max Files:** 4
+**Angelegt:** 2026-07-02 · **Milestone:** `MS-7-concurrency` · **Max Files:** 4
 **Graph (SSOT):** geseedet (gate-only) `CR-GC-233`; REQ/FUNC/TEST bei Pick-up. Pointer, nicht autoritativ.
 **Kontext:** Enterprise-Merge-Ladder Stufe 2; realisiert R5s `base_snapshot@version` (RECOMMENDATIONS).
 

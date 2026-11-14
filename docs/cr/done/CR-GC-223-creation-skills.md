@@ -1,6 +1,6 @@
 # CR-GC-223 — Skills: Creation-Skills (FMEA-Render-Rename + se-irr / se-conops / se-trade)
 
-**Status:** Open (2026-06-28) · **Milestone:** `MS-6-adoption` · **Max Files:** 5
+**Angelegt:** 2026-06-28 · **Milestone:** `MS-6-adoption` · **Max Files:** 5
 **Graph (SSOT):** seedet (gate-only) `REQ-creation-skills`, `FUNC-skill-creations` (→ `.claude/skills/se-*.md`),
 `TEST-skills-conformance` (→ `tests/skills.mcp-conformance.test.ts`), `CR-GC-223`; unter `MS-6-adoption`. Pointer, nicht autoritativ.
 **Proposal:** [document-specimens.md #1/#10/#11/#15](../../proposals/document-specimens.md)
