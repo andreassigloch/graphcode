@@ -30,9 +30,9 @@ Er baut nicht selbst neu auf: Ein ungewollter Reseed verwirft lokale, noch nicht
 
 ## Abnahme
 
-- [ ] Test zuerst rot: Store vorhanden, Snapshot danach geändert, Start meldet die Abweichung.
-- [ ] Steht ein Export aus (Marke `EXPORT_PENDING`), meldet der Host den Konflikt und ändert nichts.
-- [ ] Kein zweiter DB-Handle, kein Vergleich Knoten für Knoten.
+- [x] Test zuerst rot: Store vorhanden, Snapshot danach geändert, Start meldet die Abweichung. Beleg: `tests/snapshot-drift.test.ts` (a), vor der Umsetzung 5 von 5 rot, danach 5 von 5 grün.
+- [x] Steht ein Export aus (Marke `EXPORT_PENDING`), meldet der Host den Konflikt und ändert nichts. Beleg: Test (b), Snapshot, Marke und Knotenzahl unverändert.
+- [x] Kein zweiter DB-Handle, kein Vergleich Knoten für Knoten. Beleg: `src/kernel/snapshot-stamp.ts` liest nur Dateien (SHA-256 des Snapshots gegen den Stempel `.graphcode/snapshot.sha256`); Stempel schreiben `graph_export` und der Reseed (`seedFromJsonFile`). Fehlt der Stempel (erster Start nach diesem CR), meldet der Host nichts (Test d).
 - [ ] FAQ `wahrheit-snapshot-oder-store` (aise-bok) nennt die Meldung.
 
 ## Frage des Auftraggebers, 2026-11-14: Warum braucht es Snapshot und Store?
@@ -73,15 +73,15 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 | Frage | Festlegung | Begründung |
 |---|---|---|
 
-keine, bis der Auftraggeber über den Vorschlag entschieden hat.
+| Liegt ein Store vor und ist der committete Snapshot neuer, was tut der Host beim Start? | Er meldet es und baut nicht selbst neu auf. Weg 2 (bei jedem Start aus dem Snapshot aufbauen) ist verworfen. | Ein ungewollter Reseed verwirft lokale, noch nicht exportierte Züge. Entscheidung des Auftraggebers 2026-11-14. |
 
 ---
 
 ## Umfang laut `graph_impact`
 
-**KEIN SCHNITT aus dem Modell:** keine Wurzel-uids am Item (`aise dispatch prepare <ITEM> --wurzel <uid>[,…]`).
-
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+Modell-Zug (2026-11-14, über `graph_mutate`): neue `REQ-snapshot-drift-notice` (satisfy von `FUNC-graph-store`),
+`TEST-snapshot-drift` (verify, `testRefs` auf `tests/snapshot-drift.test.ts`), CR-Knoten mit `relation` auf
+`FUNC-graph-store` und `REQ-snapshot-drift-notice`. Testauswahl laut `graph_tests({changeSet: [FUNC-graph-store, REQ-snapshot-drift-notice]})`: 9 Dateien.
 
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.

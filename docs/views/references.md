@@ -1506,6 +1506,8 @@
 | `CR-GC-925` | relation | `FUNC-author-actor` |
 | `CR-GC-925` | relation | `FUNC-se-irr` |
 | `CR-GC-925` | relation | `FUNC-se-top-level` |
+| `CR-GC-931` | relation | `FUNC-graph-store` |
+| `CR-GC-931` | relation | `REQ-snapshot-drift-notice` |
 | `CR-GC-932` | relation | `FUNC-graph-help` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
@@ -2787,6 +2789,7 @@
 | `FUNC-graph-store` | io | `FLOW-store-load` |
 | `FUNC-graph-store` | io | `FLOW-store-query` |
 | `FUNC-graph-store` | satisfy | `REQ-auto-persist-merge` |
+| `FUNC-graph-store` | satisfy | `REQ-snapshot-drift-notice` |
 | `FUNC-graph-store` | satisfy | `REQ-steering-pre` |
 | `FUNC-graph-store` | satisfy | `REQ-store-recovery` |
 | `FUNC-graph-suggest` | allocate | `MOD-loop` |
@@ -3609,6 +3612,7 @@
 | `TEST-skill-rule-ids` | verify | `REQ-published-counts-match-code` |
 | `TEST-skill-zugangsliste` | verify | `REQ-zugangsliste-vor-bau` |
 | `TEST-skills-mcp` | verify | `REQ-agent-loop-executes-skill` |
+| `TEST-snapshot-drift` | verify | `REQ-snapshot-drift-notice` |
 | `TEST-stage-names-enumerated` | verify | `REQ-risk-stage-name-free-text` |
 | `TEST-stage-names-enumerated` | verify | `REQ-stage-names-enumerated` |
 | `TEST-status-verb` | verify | `REQ-single-kuzu-owner` |

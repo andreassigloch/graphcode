@@ -27,6 +27,7 @@ import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { StoreLock } from './store-lock.js';
 import { graphSnapshotRel, applyReseed, type ImportTarget } from './harness-import.js';
 import { schemaFingerprint, readStoredFingerprint, writeStoredFingerprint, resetKuzuStore } from './schema-guard.js';
+import { detectSnapshotDrift, formatSnapshotDriftNotice } from './snapshot-stamp.js';
 import { formatStoreRebuildNotice, type StoreRebuildNotice } from './store-rebuild-notice.js';
 
 /**
@@ -123,6 +124,12 @@ export class GraphStore {
         await applyReseed(this.importTarget(), snapshotRel);
         // CR-GC-831: der Neuaufbau ist für den Nutzer sichtbar — vorher geschah er still.
         process.stderr.write(formatStoreRebuildNotice(rebuild));
+      } else if (markerDir && this.graph.nodes.length > 0) {
+        // CR-GC-931: ein vorhandener Store gewinnt den Start — aber ein Snapshot, den ein pull oder
+        // checkout seit dem letzten Export geaendert hat, wird gemeldet, nicht still ueberholt.
+        // Nur Dateien werden verglichen (Hash gegen Stempel); der Store bleibt unberuehrt.
+        const notice = formatSnapshotDriftNotice(detectSnapshotDrift(repoRoot, snapshotRel), snapshotRel);
+        if (notice) process.stderr.write(notice);
       }
       if (markerDir && stored !== current) writeStoredFingerprint(markerDir, current);
     } catch (err) {

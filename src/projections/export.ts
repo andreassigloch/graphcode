@@ -15,6 +15,7 @@ import { mkdirSync, writeFileSync, existsSync, readFileSync, renameSync, unlinkS
 import { z } from 'zod/v4';
 import { exportGraphJson, exportMarkdown, renderTestStubs, renderSchemaStubs, MarkdownViewSchema, MARKDOWN_VIEWS, VIEW_FILENAMES } from './exporter.js';
 import { clearExportPending } from '../kernel/export-marker.js';
+import { writeSnapshotStamp } from '../kernel/snapshot-stamp.js';
 import { countUnfedMutations } from './trajectory.js';
 import { TRAJECTORY_FILE } from '../kernel/workspace.js';
 import { graphSnapshotRel, heldBackTraces } from '../kernel/harness-import.js';
@@ -254,6 +255,8 @@ export function bindExportTools(ctx: ToolPort) {
         const jsonWithVersion =
           JSON.stringify({ ...JSON.parse(json), graphVersion: ctx.graphVersion() }, null, 2) + '\n';
         writeFileAtomic(jsonAbs, jsonWithVersion);
+        // CR-GC-931: Datei und Store sind jetzt gleich — Stempel fuer den Vergleich beim naechsten Start.
+        if (name === harness.getScope().systemId) writeSnapshotStamp(repoRoot, jsonRel);
 
         const views = input.views ?? MARKDOWN_VIEWS;
         const written = views.map((v) => {

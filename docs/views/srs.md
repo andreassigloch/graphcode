@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 202 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 203 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -285,6 +285,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -640,6 +648,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -886,6 +902,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -1110,6 +1134,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -1305,6 +1337,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -2196,6 +2236,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -2285,6 +2333,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -2606,6 +2662,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -2691,6 +2755,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -2949,6 +3021,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -3418,6 +3498,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -3527,6 +3615,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -3966,6 +4062,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -4157,6 +4261,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -4410,6 +4522,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -4535,6 +4655,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -4928,6 +5056,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -5180,6 +5316,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -5221,6 +5365,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -5409,6 +5561,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -5768,6 +5928,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -5997,6 +6165,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -6373,6 +6549,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -7072,6 +7256,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -7157,6 +7349,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -7419,6 +7619,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -7741,6 +7949,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -8250,6 +8466,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -8441,6 +8665,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -8769,6 +9001,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -9193,6 +9433,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -9619,6 +9867,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -10094,6 +10350,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -10412,6 +10676,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
 
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
 Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
@@ -10531,6 +10803,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -12471,6 +12751,14 @@ Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Arte
 priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-merge` (integration) · `TEST-occ` (integration) · satisfy ◀ `FUNC-auto-export` · `FUNC-graph-store` · `FUNC-merge-nodes` · allocate ▶ `MOD-kernel` · `MOD-projections`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
 
@@ -16944,205 +17232,211 @@ Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer f
 
 verify ▶ `REQ-agent-loop-executes-skill` · testRefs: `tests/skills.mcp-conformance.test.ts`
 
-#### 3.4.146  `TEST-stage-names-enumerated` — Stufennamen sind aufgezaehlt
+#### 3.4.146  `TEST-snapshot-drift` — Snapshot-Abweichung-Test
+
+Start-Meldung bei neuerem Snapshot: abweichender Snapshot, stehender Export, unveränderter Snapshot, fehlender Stempel, Stempel durch graph_export.
+
+verify ▶ `REQ-snapshot-drift-notice` · testRefs: `tests/snapshot-drift.test.ts`
+
+#### 3.4.147  `TEST-stage-names-enumerated` — Stufennamen sind aufgezaehlt
 
 Prueft, dass ein unbekannter Stufenname beim Bilden des Steuerungs-Snapshots abgewiesen wird.
 
 verify ▶ `REQ-risk-stage-name-free-text` · `REQ-stage-names-enumerated`
 
-#### 3.4.147  `TEST-status-verb` — Abnahme des status-Verbs
+#### 3.4.148  `TEST-status-verb` — Abnahme des status-Verbs
 
 Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.
 
 verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/status.test.ts`
 
-#### 3.4.148  `TEST-steering-delta-in-answer` — Delta steht in der Antwort
+#### 3.4.149  `TEST-steering-delta-in-answer` — Delta steht in der Antwort
 
 Prueft, dass die Antwort auf einen angenommenen Zug das Delta aus dem Stand vor und nach genau diesem Zug traegt.
 
 verify ▶ `REQ-risk-steering-delta-missing` · `REQ-steering-delta-in-answer-tested`
 
-#### 3.4.149  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
+#### 3.4.150  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
 
 Prueft am Modell, dass REQ-steering-from-metrics genau einen Erfueller vom Typ FUNC hat und dass jede zuliefernde Funktion der Steuerungsschleife eine eigene Anforderung erfuellt.
 
 verify ▶ `REQ-risk-shared-steering-promise` · `REQ-steering-promise-one-owner`
 
-#### 3.4.150  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
+#### 3.4.151  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
 
 Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.test.ts`
 
-#### 3.4.151  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
+#### 3.4.152  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
 verify ▶ `REQ-first-session-claims-store-lock` · `REQ-harness-factory-returns-one-owner` · `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `REQ-store-recovery` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
 
-#### 3.4.152  `TEST-store-recovery` — Store-Recovery-Test
+#### 3.4.153  `TEST-store-recovery` — Store-Recovery-Test
 
 Abnahme der Datei tests/store-recovery.test.ts: eine Store-Datei mit ueberschriebenem Kopf oder auf die Haelfte gekuerzt wird beim Oeffnen aus dem committeten Snapshot neu aufgebaut und gemeldet, und der neue Store liegt auf Platte; ohne Snapshot bleibt der Lesefehler ein Fehler und die Sperre frei. Lock-Konflikt und beendeter Besitzer: TEST-store-lock. (CR-GC-796)
 
 verify ▶ `REQ-risk-store-unreadable` · `REQ-store-recovery` · testRefs: `tests/store-recovery.test.ts`
 
-#### 3.4.153  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+#### 3.4.154  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
 Abnahme der Datei tests/target-profile.test.ts: Schema nur mit Themen, eine Datei mit Gewichten oder Zielwerten scheitert laut, Laden der Themen; graph_suggest nimmt kein target und graph_metrics traegt keine Zielmarke, gegen einen echten Disk-Kuzu. (CR-GC-861)
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · `SCHEMA-target-profile` · testRefs: `tests/target-profile.test.ts`
 
-#### 3.4.154  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+#### 3.4.155  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-#### 3.4.155  `TEST-target-state` — Abnahme Zielbild
+#### 3.4.156  `TEST-target-state` — Abnahme Zielbild
 
 Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.
 
 verify ▶ `REQ-target-state`
 
-#### 3.4.156  `TEST-task-analysen` — Analyse-Tasks
+#### 3.4.157  `TEST-task-analysen` — Analyse-Tasks
 
 Am Task-Eintritt verweist der Schritt auf den Skill des Tasks; ein Bauplan-Stempel von Hand schliesst den Eintritt nicht; ein Patch ersetzt die Stempel ganz, und jeder Analyse-Skill schliesst mit Lesen, Uebernehmen, ganz Schreiben.
 
 verify ▶ `REQ-analyse-artefakt-vor-stempel` · testRefs: `tests/task-analysen.test.ts`
 
-#### 3.4.157  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
+#### 3.4.158  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
 
 Abnahme der Datei tests/testreport.ruecknahme.test.ts: nach einer gemeldeten Aenderung traegt der Eintrag des betroffenen Tests kein Ergebnis mehr und FM-03 meldet das Risiko; ein nicht betroffener Test behaelt sein Ergebnis; ein frisches Ergebnis im selben Aufruf bleibt; eine unbekannte uid wird abgewiesen.
 
 verify ▶ `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` · testRefs: `tests/testreport.ruecknahme.test.ts`
 
-#### 3.4.158  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+#### 3.4.159  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-#### 3.4.159  `TEST-test-schlupf` — Schlupf und Zusage
+#### 3.4.160  `TEST-test-schlupf` — Schlupf und Zusage
 
 Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf bricht ab, je CR die juengste Zeile), Blackbox- und Schnittstellenbindung am synthetischen Graphen, gepruefte JSONL-Zeilen.
 
 verify ▶ `REQ-full-run-on-probation` · `REQ-lane-red-without-report` · `REQ-risk-selection-misses-red-test` · `SCHEMA-schlupf-zeile` · testRefs: `tests/test-schlupf.test.ts`
 
-#### 3.4.160  `TEST-testref-kopf-bindung` — Kopf-Bindungs-Check
+#### 3.4.161  `TEST-testref-kopf-bindung` — Kopf-Bindungs-Check
 
 Abnahme der Datei tests/testreport.kopf-bindung.test.ts: echtes Disk-Kuzu und echte Dateien; Bindung mit Ergebnis, kein Doppel beim zweiten Lauf, Anhaengen an eine bestehende Bindung, und je ein benannter Grund fuer keine, zwei, fremde uid, fehlendes Werkzeug, fehlende und repo-fremde Datei.
 
 verify ▶ `REQ-testref-kopf-bindung` · testRefs: `tests/testreport.kopf-bindung.test.ts`
 
-#### 3.4.161  `TEST-testref-materialize` — Export stub-materialization test
+#### 3.4.162  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-#### 3.4.162  `TEST-testreport` — Rueckweg des Testergebnisses
+#### 3.4.163  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-#### 3.4.163  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+#### 3.4.164  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · `SCHEMA-metric-policy` · testRefs: `tests/config.test.ts`
 
-#### 3.4.164  `TEST-token-efficiency` — Token-Budget-Test
+#### 3.4.165  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-#### 3.4.165  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+#### 3.4.166  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-#### 3.4.166  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
+#### 3.4.167  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
 
 Prueft, dass eine laufende Sitzung eine geaenderte Werkzeugliste des Hosts erfaehrt.
 
 verify ▶ `REQ-risk-client-holds-stale-tool-list`
 
-#### 3.4.167  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+#### 3.4.168  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-#### 3.4.168  `TEST-upgrade` — Abnahme des upgrade-Verbs
+#### 3.4.169  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`, `tests/config-nachziehen.test.ts`
 
-#### 3.4.169  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
+#### 3.4.170  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
 
 Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.
 
 verify ▶ `REQ-model-lane-fixed-set` · testRefs: `tests/verify-model.completeness.test.ts`
 
-#### 3.4.170  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.171  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.171  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.172  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.172  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.173  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.173  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.174  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.174  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.175  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.175  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.176  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.176  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.177  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.177  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.178  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.178  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.179  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 202 REQ · 202 verified · 0 without a verifying TEST (R-01).
+Traceability: 203 REQ · 203 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 

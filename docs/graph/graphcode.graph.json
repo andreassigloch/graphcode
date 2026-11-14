@@ -9652,6 +9652,17 @@
       ]
     },
     {
+      "id": "REQ-snapshot-drift-notice",
+      "type": "REQ",
+      "name": "Snapshot-Abweichung beim Start melden",
+      "description": "Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)",
+      "role": "mitigation",
+      "status": "open",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-srs-29148",
       "type": "REQ",
       "name": "SRS nach 29148 gegliedert",
@@ -12911,6 +12922,23 @@
           "level": "integration",
           "result": "passed",
           "ranAt": "2026-11-14T22:02:55.432Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-snapshot-drift",
+      "type": "TEST",
+      "name": "Snapshot-Abweichung-Test",
+      "description": "Start-Meldung bei neuerem Snapshot: abweichender Snapshot, stehender Export, unveränderter Snapshot, fehlender Stempel, Stempel durch graph_export.",
+      "concept": "false",
+      "level": "integration",
+      "status": "open",
+      "tool": "vitest",
+      "testRefs": [
+        {
+          "file": "tests/snapshot-drift.test.ts",
+          "tool": "vitest",
+          "level": "integration"
         }
       ]
     },
@@ -21302,6 +21330,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-931",
+      "target": "FUNC-graph-store",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-931",
+      "target": "REQ-snapshot-drift-notice",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-932",
       "target": "FUNC-graph-help",
       "type": "relation"
@@ -27787,6 +27825,11 @@
     },
     {
       "source": "FUNC-graph-store",
+      "target": "REQ-snapshot-drift-notice",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-store",
       "target": "REQ-steering-pre",
       "type": "satisfy"
     },
@@ -32091,6 +32134,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-snapshot-drift",
+      "target": "REQ-snapshot-drift-notice",
+      "type": "verify"
+    },
+    {
       "source": "TEST-stage-names-enumerated",
       "target": "REQ-risk-stage-name-free-text",
       "type": "verify"
@@ -33033,5 +33081,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1153
+  "graphVersion": 1154
 }

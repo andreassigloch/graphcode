@@ -26,6 +26,7 @@ import { traceRejection } from '@sigloch/contracts/se';
 import type { ElementType, ReqKind, TraceType } from '@sigloch/contracts/se';
 import { elementToNode } from './element-node.js';
 import { clearExportPending } from './export-marker.js';
+import { writeSnapshotStamp } from './snapshot-stamp.js';
 
 /**
  * THE one derivation of the committed snapshot path (CR-GC-374):
@@ -231,7 +232,11 @@ export async function seedFromJsonFile(
 ): Promise<ImportResult> {
   const abs = join(target.repoRoot, relPath);
   const raw = await readFile(abs, 'utf8');
-  return importOntologyGraph(target, JSON.parse(raw), opts);
+  const result = await importOntologyGraph(target, JSON.parse(raw), opts);
+  // CR-GC-931: der Store stammt jetzt aus dieser Datei — Stempel, damit der naechste Start eine
+  // spaetere Aenderung der Datei (pull, checkout) erkennt. Nur fuer den Snapshot des Systems.
+  if (relPath === graphSnapshotRel(target.systemId)) writeSnapshotStamp(target.repoRoot, relPath);
+  return result;
 }
 
 /**
