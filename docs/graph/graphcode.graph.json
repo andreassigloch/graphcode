@@ -4172,7 +4172,8 @@
       "id": "CR-GC-931",
       "type": "CR",
       "name": "Host-Start meldet nicht, wenn der committete Snapshot neuer ist als der Store",
-      "description": "docs/cr/open/CR-GC-931-host-start-meldet-nicht-wenn-der-committ.md"
+      "description": "docs/cr/done/CR-GC-931-host-start-meldet-nicht-wenn-der-committ.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-932",
@@ -33083,5 +33084,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1156
+  "graphVersion": 1157
 }
