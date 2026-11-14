@@ -4184,7 +4184,9 @@
       "id": "CR-GC-933",
       "type": "CR",
       "name": "graphcode auf contracts 12.13.0 heben: Regelzahl 81→80 bzw. 68→67, Ontologie 13.0.0, architectureOnly ohne Leser (Folgen von CR-SM-440)",
-      "description": "docs/cr/open/CR-GC-933-graphcode-auf-contracts-12-13-0-heben-re.md"
+      "description": "docs/cr/done/CR-GC-933-graphcode-auf-contracts-12-13-0-heben-re.md",
+      "status": "done",
+      "commitRef": "80356ec8"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -33029,5 +33031,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1150
+  "graphVersion": 1151
 }
