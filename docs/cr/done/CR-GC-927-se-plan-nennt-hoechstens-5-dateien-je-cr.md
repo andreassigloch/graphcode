@@ -1,6 +1,6 @@
 # CR-GC-927: se-plan nennt hoechstens 5 Dateien je CR, die Familienregel sagt 10 (Rest aus BOK-CR-067)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-14)
 **Typ:** aus Item ITEM-2026-1049 (finding)
 **Erstellt:** 2026-11-14
 **Item:** bok/items/ITEM-2026-1049.json (Lane: code)

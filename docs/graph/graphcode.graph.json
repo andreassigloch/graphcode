@@ -4140,7 +4140,9 @@
       "id": "CR-GC-927",
       "type": "CR",
       "name": "se-plan nennt hoechstens 5 Dateien je CR, die Familienregel sagt 10 (Rest aus BOK-CR-067)",
-      "description": "docs/cr/open/CR-GC-927-se-plan-nennt-hoechstens-5-dateien-je-cr.md"
+      "description": "docs/cr/done/CR-GC-927-se-plan-nennt-hoechstens-5-dateien-je-cr.md",
+      "status": "done",
+      "commitRef": "9470d08b"
     },
     {
       "id": "CR-GC-928",
@@ -33004,5 +33006,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1136
+  "graphVersion": 1137
 }

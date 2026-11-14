@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 535 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 535 CR · 373 done · 4 open.
+Total: 535 CR · 374 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -592,7 +592,7 @@ Total: 535 CR · 373 done · 4 open.
 | `CR-GC-924` | n/a | Skill se-bau: Koordinator und Umsetzer im Bau |
 | `CR-GC-925` | n/a | Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (kehrt Regel 1 aus CR-GC-875 um) |
 | `CR-GC-926` | done | Systemmodell in Bildern: Zahlen aus dem Katalog ohne Version, 80 statt 81 Regeln |
-| `CR-GC-927` | n/a | se-plan nennt hoechstens 5 Dateien je CR, die Familienregel sagt 10 (Rest aus BOK-CR-067) |
+| `CR-GC-927` | done | se-plan nennt hoechstens 5 Dateien je CR, die Familienregel sagt 10 (Rest aus BOK-CR-067) |
 | `CR-GC-928` | n/a | graph_generate empfiehlt im Text die Rangfolge verdictRank, die der Spike zu CR-GC-771 widerlegt hat (src/loop/generate.ts:137) |
 | `CR-GC-929` | n/a | CLAUDE.md nennt den CR-Knoten statuslos, seit BOK-CR-080 spiegelt aise cr close den Status an den Knoten |
 | `CR-GC-930` | n/a | Zwoelf CRs liegen in done und tragen im Kopf Status Open |
