@@ -72,3 +72,10 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 6. `tests/claims.conformance.test.ts`
 7. `tests/systemmodell-in-bildern.katalog.test.ts`
 8. `docs/project/systemmodell-in-bildern.html`
+
+## Ergebnis
+
+`npm run verify:full CR-GC-933` am 2026-11-14 gegen contracts 12.13.0 aus der Registry: 219 von 219 Dateien,
+1788 von 1788 Tests grün, Schlupf 0. Ein erster Lauf (unter CR-GC-932) hatte einen roten Spike
+(`arch.optimization-dry-run`, Hash der Graph-Datei vorher = nachher); während dieses Laufs hat `aise dispatch
+prepare` den Knoten CR-GC-933 angelegt und der Host die Graph-Datei neu exportiert. Auf ruhigem Baum grün.

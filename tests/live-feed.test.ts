@@ -133,7 +133,8 @@ describe('Rundreise über die Modelle der Familie', () => {
       const back = formatEToExportedGraph(graphToFormatE(graph));
       const want = toExportedGraph(graph);
       // concept, deferred: wirkungslos, undeklariert (CR-SM-393). weight an Kanten: kommt als Text, kein Leser im Viewer.
-      const bewusst = new Set(['concept', 'deferred', '__name', 'weight']);
+      // architectureOnly: mit CR-R02 entfallen, undeklariert (CR-SM-440, contracts 12.13.0); drei alte CR-Knoten tragen es.
+      const bewusst = new Set(['concept', 'deferred', 'architectureOnly', '__name', 'weight']);
       const norm = (e: Record<string, unknown>) => Object.fromEntries(Object.entries(e).filter(([k, v]) => v !== null && !bewusst.has(k)));
       expect(back.elements.map(norm)).toEqual(want.elements.map(norm));
       expect(back.traces.map(norm)).toEqual(want.traces.map(norm));
