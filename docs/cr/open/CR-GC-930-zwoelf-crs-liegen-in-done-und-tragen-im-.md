@@ -32,6 +32,37 @@ Zwei Wege, der Auftraggeber wählt:
 Vor dem Zug je CR prüfen, ob er wirklich umgesetzt ist: CR-GC-209 gilt in der FAQ `cr-dateigrenze-zahl` als
 noch offen.
 
+## Entscheidung des Auftraggebers, 2026-11-14
+
+Weg 2: „Kopfzeile abschaffen." Dazu der Auftrag: prüfen, ob der CR-Knoten noch einen Status hat.
+
+**Umgesetzt in bok (BOK-CR-086, geschlossen):** Die CR-Vorlage von `aise dispatch prepare` schreibt keine
+Status-Zeile mehr, `aise cr close` setzt keine. In keinem Repo der Familie liest ein Skript die Zeile
+(Suche unter scripts, src, tests, tools).
+
+**Der CR-Knoten trägt einen Status, aber nicht vollständig** (Snapshot von graphcode, 2026-11-14):
+
+| Lage | Zahl |
+|---|---|
+| CR-Knoten im Modell | 536 |
+| davon `status: done` | 376 |
+| davon `status: open` | 4 |
+| davon ohne `status` | 156 |
+| CRs in `done/` mit Knoten, dessen Status nicht `done` ist | 141 |
+| CRs in `done/` ohne Knoten | 214 |
+| CRs in `open/`, deren Knoten `done` trägt | 0 |
+
+Die 28 CRs dieses Befunds tragen am Knoten `done`. Der Ordner ist die einzige vollständige Quelle.
+`aise cr close` spiegelt den Status seit BOK-CR-080 nur für CRs, die seitdem schließen.
+
+**Offen: die bestehenden Zeilen.** 747 CR-Dateien in graphcode tragen die Zeile, in der Familie sind es
+rund 1600. Die Zeile trägt oft mehr als den Status: Meilenstein, Dateigrenze, „superseded by", „wartet auf
+Publish", „zurückgezogen". Ein Löschen aller Zeilen verliert das. 27 Zeilen in `done/` sagen „Open".
+
+## Offen für den Auftraggeber
+
+Nur in den 27 Dateien den Teil „Status: Open" streichen, oder die Zeile in allen Dateien entfernen?
+
 ## Abnahme
 
 - [ ] Kein CR in `done/` trägt „Open" im Kopf (Skript als Test in der Modell-Spur).

@@ -35,9 +35,34 @@ Er baut nicht selbst neu auf: Ein ungewollter Reseed verwirft lokale, noch nicht
 - [ ] Kein zweiter DB-Handle, kein Vergleich Knoten für Knoten.
 - [ ] FAQ `wahrheit-snapshot-oder-store` (aise-bok) nennt die Meldung.
 
+## Frage des Auftraggebers, 2026-11-14: Warum braucht es Snapshot und Store?
+
+Jeder der beiden kann etwas, das der andere nicht kann:
+
+| | Store (Kuzu, `.graphcode/kuzu`) | Snapshot (`docs/graph/*.graph.json`) |
+|---|---|---|
+| Abfragen und Gate | ja, der Host liest und schreibt nur hier | nein, eine Datei |
+| git, Diff, anderer Rechner | nein, binär und nicht in git | ja |
+| Neuaufbau | wird aus dem Snapshot gebaut | ist die Vorlage |
+
+Die Lücke dieses CR entsteht, weil ein vorhandener Store den Start überlebt. Zwei Wege schließen sie:
+
+1. **Melden** (der Vorschlag oben). Der Store bleibt über den Start hinweg bestehen. Der Host meldet die
+   Abweichung, `graph_reseed` zieht nach.
+2. **Bei jedem Start aus dem Snapshot aufbauen.** Dann gibt es zwischen zwei Läufen nur einen Stand, die
+   Datei; der Store lebt nur, solange der Host läuft. CR-GC-392 hat das am 2026-08-22 gemessen: 1626 ms für
+   636 Knoten und 1510 Kanten, Round-Trip byte-identisch, Verlustfenster 250 ms (Entprellzeit des Exports).
+   CR-GC-392 hat es nicht umgesetzt: „möglich, nur nicht nötig", und es dreht `REQ-graph-is-ssot` um.
+   Nicht gemessen: die Startzeit beim heutigen Modell und bei einem großen Fremdmodell.
+
+Weg 2 macht diesen CR, den Eintrag „Store vorhanden, Snapshot neuer" der FAQ und das Rezept
+„`graph_reseed` nach `git pull`" überflüssig. Er kostet Startzeit je Host-Start und verlangt, dass kein
+Export aussteht, wenn der Host endet (`flush()` beim Shutdown gibt es seit CR-GC-392; ein harter Abbruch
+innerhalb der Entprellzeit verliert den letzten Zug).
+
 ## Offen für den Auftraggeber
 
-Melden oder selbst nachziehen? Der Vorschlag meldet nur.
+Weg 1 oder Weg 2? Bis zur Entscheidung wird nichts umgesetzt.
 
 ---
 
