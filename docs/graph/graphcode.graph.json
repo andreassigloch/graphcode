@@ -4137,6 +4137,36 @@
       "commitRef": "c58e69bf,ac1dfe67"
     },
     {
+      "id": "CR-GC-927",
+      "type": "CR",
+      "name": "se-plan nennt hoechstens 5 Dateien je CR, die Familienregel sagt 10 (Rest aus BOK-CR-067)",
+      "description": "docs/cr/open/CR-GC-927-se-plan-nennt-hoechstens-5-dateien-je-cr.md"
+    },
+    {
+      "id": "CR-GC-928",
+      "type": "CR",
+      "name": "graph_generate empfiehlt im Text die Rangfolge verdictRank, die der Spike zu CR-GC-771 widerlegt hat (src/loop/generate.ts:137)",
+      "description": "docs/cr/open/CR-GC-928-graph-generate-empfiehlt-im-text-die-ran.md"
+    },
+    {
+      "id": "CR-GC-929",
+      "type": "CR",
+      "name": "CLAUDE.md nennt den CR-Knoten statuslos, seit BOK-CR-080 spiegelt aise cr close den Status an den Knoten",
+      "description": "docs/cr/open/CR-GC-929-claude-md-nennt-den-cr-knoten-statuslos-.md"
+    },
+    {
+      "id": "CR-GC-930",
+      "type": "CR",
+      "name": "Zwoelf CRs liegen in done und tragen im Kopf Status Open",
+      "description": "docs/cr/open/CR-GC-930-zwoelf-crs-liegen-in-done-und-tragen-im-.md"
+    },
+    {
+      "id": "CR-GC-931",
+      "type": "CR",
+      "name": "Host-Start meldet nicht, wenn der committete Snapshot neuer ist als der Store",
+      "description": "docs/cr/open/CR-GC-931-host-start-meldet-nicht-wenn-der-committ.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -32974,5 +33004,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1130
+  "graphVersion": 1135
 }
