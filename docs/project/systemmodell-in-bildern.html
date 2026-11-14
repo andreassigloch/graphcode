@@ -284,7 +284,7 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
   <p class="lead">Wir beschreiben ein technisches System nicht als Fließtext, sondern als Netz aus Bausteinen und Verbindungen. Ein Prüfprogramm legt bei jeder Änderung feste Regeln an dieses Netz an und nennt die Stelle, an der etwas fehlt oder sich widerspricht. Das gilt für Software genauso wie für Mechanik oder Elektrik.</p>
   <p>Diese Seite zeigt das Ziel, den Anforderungsbaum eines Beispiels, die <span data-katalog="bausteinarten" data-wert="12">zwölf</span> Bausteinarten, die <span data-katalog="verbindungsarten" data-wert="6">sechs</span> Verbindungsarten, je Regelstufe ein Beispiel, die Methode, die Begriffe dahinter und die Live-Demos. Alle Beispiele stammen aus einem einzigen Fall:</p>
   <div class="example"><strong>Die Paketstation.</strong> Ein Empfänger tippt einen Abholcode ein. Die Station prüft den Code und öffnet das Fach. Zugesagt ist: Das Fach öffnet höchstens 2 Sekunden nach einem gültigen Code.</div>
-  <p class="muted" style="font-size:0.85rem" id="stand">Stand: Ontologie <span data-katalog="ontology-version">11.1.0</span> · Metamodell <span data-katalog="meta-model-version">6.0.0</span> · Regelkatalog <span data-katalog="rules-version">50.0.0</span>, aus <code>@sigloch/contracts</code>. Ein Test prüft jede Zahl, die diese Seite aus dem Katalog nennt.</p>
+  <p class="muted" style="font-size:0.85rem" id="stand">Stand: Ontologie <span data-katalog="ontology-version">12.0.0</span> · Metamodell <span data-katalog="meta-model-version">6.0.0</span> · Regelkatalog <span data-katalog="rules-version">50.0.0</span>, aus <code>@sigloch/contracts</code>. Ein Test prüft jede Zahl, die diese Seite aus dem Katalog nennt.</p>
   <div class="audience" role="group" aria-label="Zielgruppe">
     <span class="muted">Für wen:</span>
     <div class="seg">
@@ -348,10 +348,10 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
       <div class="ex"><b>Paketstation</b></div></div>
     <div class="card"><div class="head"><span class="chip actor" style="--c:var(--c-actor)"></span><span class="name">Akteur</span><span class="code">ACTOR</span></div>
       <div class="meaning">Wer von außen etwas über die Grenze gibt oder bekommt: eine Person in einer Rolle oder ein fremdes System. Ein Bedienfeld ist kein Akteur, sondern ein Teil.</div>
-      <div class="ex"><b>Empfänger</b>, Zusteller, Versand-Server</div></div>
+      <div class="ex"><b>Empfänger</b> · Zusteller · Versand-Server</div></div>
     <div class="card"><div class="head"><span class="chip" style="--c:var(--c-uc)"></span><span class="name">Anwendungsfall</span><span class="code">UC</span></div>
       <div class="meaning">Ein Nutzen, den ein Akteur über die Grenze bekommt. Beantwortet die Frage „wozu“; wie es läuft, steht in der Wirkkette.</div>
-      <div class="ex"><b>Paket abholen</b>, Paket einlegen</div></div>
+      <div class="ex"><b>Paket abholen</b> · Paket einlegen</div></div>
     <div class="card"><div class="head"><span class="chip" style="--c:var(--c-req)"></span><span class="name">Anforderung</span><span class="code">REQ</span></div>
       <div class="meaning">Was ein Element an seiner Grenze tut oder einhält, prüfbar, ohne zu sagen wie. Entweder ein Verhalten („das System tut X“) oder eine Güte („innerhalb von 2 s“, „unter 5 kg“).</div>
       <div class="ex"><b>Fach öffnet höchstens 2 s nach gültigem Code</b></div></div>
@@ -363,16 +363,16 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
   <div class="cards">
     <div class="card"><div class="head"><span class="chip" style="--c:var(--c-fchain)"></span><span class="name">Wirkkette</span><span class="code">FCHAIN</span></div>
       <div class="meaning">Die Folge von Funktionen, die einen Anwendungsfall vom Auslöser bis zum Ergebnis trägt. Jeder Anwendungsfall hat mindestens eine.</div>
-      <div class="ex"><b>Abholung:</b> Code eingeben → prüfen → entriegeln → Fach offen</div></div>
+      <div class="ex"><b>Abholung: Code eingeben, prüfen, entriegeln, Fach offen</b></div></div>
     <div class="card"><div class="head"><span class="chip" style="--c:var(--c-func)"></span><span class="name">Funktion</span><span class="code">FUNC</span></div>
       <div class="meaning">Ein Schritt, der Eingaben in Ausgaben wandelt. Eine Funktion lässt sich in Teilschritte zerlegen; dass die unterste Ebene an eine Umsetzung gebunden ist, prüft eine Regel.</div>
-      <div class="ex"><b>Code prüfen</b>, Fach entriegeln</div></div>
+      <div class="ex"><b>Code prüfen</b> · Fach entriegeln</div></div>
     <div class="card"><div class="head"><span class="chip flow" style="--c:var(--c-flow)"></span><span class="name">Datenfluss</span><span class="code">FLOW</span></div>
       <div class="meaning">Etwas, das von einem Schritt zum nächsten übergeben wird: Daten, ein Signal, auch Material oder Kraft.</div>
-      <div class="ex"><b>Abholcode</b>, Öffnungsbefehl</div></div>
+      <div class="ex"><b>Abholcode</b> · Öffnungsbefehl</div></div>
     <div class="card"><div class="head"><span class="chip schema" style="--c:var(--c-schema)"></span><span class="name">Datenformat</span><span class="code">SCHEMA</span></div>
       <div class="meaning">Der Vertrag darüber, wie ein Datenfluss aussehen muss. Mehrere Flüsse dürfen dasselbe Format teilen; jeder Fluss hat genau eines.</div>
-      <div class="ex"><b>Abholcode = 6 Ziffern</b></div></div>
+      <div class="ex"><b>6 Ziffern, 0 bis 9</b> · Fachnummer 1 bis 48 · 12 V, 300 ms</div></div>
   </div>
 </div>
 
@@ -381,10 +381,10 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
   <div class="cards">
     <div class="card"><div class="head"><span class="chip" style="--c:var(--c-mod)"></span><span class="name">Modul</span><span class="code">MOD</span></div>
       <div class="meaning">Ein Bauteil oder eine Baugruppe, in der Funktionen umgesetzt sind: ein Programmteil, eine Platine, eine Mechanik. Module lassen sich in Teilmodule zerlegen.</div>
-      <div class="ex"><b>Steuerung</b>, Bedienfeld, Schließmechanik</div></div>
+      <div class="ex"><b>Steuerung</b> · Bedienfeld · Schließmechanik</div></div>
     <div class="card"><div class="head"><span class="chip test" style="--c:var(--c-test)"></span><span class="name">Test</span><span class="code">TEST</span></div>
       <div class="meaning">Eine Prüfung, die eine Anforderung oder ein Datenformat nachweist. Sobald gebaut wird, verweist sie auf ihre Prüfvorschrift und trägt ihr letztes Ergebnis.</div>
-      <div class="ex"><b>Öffnung mit gültigem Code unter 2 s</b></div></div>
+      <div class="ex"><b>Gültiger Code, Tür zu, Fach offen nach höchstens 2 s</b></div></div>
   </div>
 </div>
 
@@ -396,7 +396,7 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
       <div class="ex"><b>Abholung per App ergänzen</b></div></div>
     <div class="card"><div class="head"><span class="chip" style="--c:var(--c-ms)"></span><span class="name">Meilenstein</span><span class="code">MS</span></div>
       <div class="meaning">Ein Liefertermin, dem Aufträge zugeordnet sind. Meilensteine haben eine Reihenfolge.</div>
-      <div class="ex"><b>Pilotstation</b>, Serienfreigabe</div></div>
+      <div class="ex"><b>Pilotstation</b> · Serienfreigabe</div></div>
   </div>
 </div>
 </details>
@@ -507,7 +507,7 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
   </div>
   <div class="edge-row">
     <div class="sample"><svg viewBox="0 0 150 26"><line x1="4" y1="13" x2="138" y2="13" stroke="var(--e-satisfy)" stroke-width="2.5"/><path d="M138 7 L148 13 L138 19 z" fill="var(--e-satisfy)"/></svg><span class="lbl">erfüllt</span><span class="code">SATISFY</span></div>
-    <div class="text"><p>Wer eine Anforderung einlöst. Ein Verhalten erfüllt eine Funktion. Eine Güte wie Zeit, Gewicht oder Durchsatz erfüllt die Wirkkette (Ende zu Ende), ein Modul (lokales Budget) oder das System.</p>
+    <div class="text"><p>Wer eine Anforderung einlöst. Ein Verhalten erfüllt eine Funktion: sie löst die Anforderung ein. Eine Güte wie Zeit, Gewicht oder Durchsatz erfüllt die Wirkkette (Ende zu Ende), ein Modul (lokales Budget) oder das System.</p>
       <p class="pairs">Erlaubt: <b>Funktion</b> → Anforderung (Verhalten) · <b>Wirkkette, Modul, System</b> → Anforderung (Güte)</p></div>
   </div>
   <div class="edge-row">
@@ -517,7 +517,7 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
   </div>
   <div class="edge-row">
     <div class="sample"><svg viewBox="0 0 150 26"><line x1="4" y1="13" x2="138" y2="13" stroke="var(--e-allocate)" stroke-width="2.5"/><path d="M138 7 L148 13 L138 19 z" fill="var(--e-allocate)"/></svg><span class="lbl">ist umgesetzt in</span><span class="code">ALLOCATE</span></div>
-    <div class="text"><p>Wo eine Funktion wohnt. Jede unterste Funktion liegt in genau einem Modul. Die Kopplung zwischen Modulen wird daraus berechnet, nicht behauptet: Modul A hängt an Modul B, wenn eine Funktion aus A einen Datenfluss an eine Funktion aus B gibt.</p>
+    <div class="text"><p>Wo eine Funktion wohnt. Jede unterste Funktion liegt in genau einem Modul. Die Kopplung zwischen Modulen wird daraus berechnet, nicht behauptet.</p>
       <p class="pairs">Erlaubt: <b>Funktion</b> → genau ein Modul</p></div>
   </div>
   <div class="edge-row">
@@ -693,18 +693,18 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
 <table class="defs">
   <thead><tr><th>Baustein</th><th>Ein Satz</th><th>Beispiel</th><th>Gegenbeispiel</th><th>Quelle</th></tr></thead>
   <tbody>
-    <tr><td>System</td><td>Das Ganze mit seiner Grenze nach außen.</td><td>Paketstation</td><td class="no">–</td><td class="src">ISO/IEC/IEEE 15288: „combination of interacting elements organized to achieve one or more stated purposes“</td></tr>
-    <tr><td>Akteur</td><td>Wer von außen etwas über die Grenze gibt oder bekommt.</td><td>Empfänger, Versand-Server</td><td class="no">Bedienfeld: ein Teil, kein Akteur</td><td class="src">UML/SysML: „a role played by a user or any other system that interacts with the subject“</td></tr>
-    <tr><td>Anwendungsfall</td><td>Ein Nutzen, den ein Akteur über die Grenze bekommt.</td><td>Paket abholen</td><td class="no">„Code prüfen“: ein Schritt</td><td class="src">IREB: „A set of possible interactions between external actors and a system that provide a benefit for the actor(s) involved.“</td></tr>
-    <tr><td>Anforderung</td><td>Was ein Element an seiner Grenze tut oder einhält, prüfbar, ohne zu sagen wie.</td><td>Fach öffnet höchstens 2 s nach gültigem Code</td><td class="no">„Die Steuerung sendet den Öffnungsbefehl über CAN“: ein Wie</td><td class="src">ISO/IEC/IEEE 29148: „statement that translates or expresses a need and its associated constraints and conditions“</td></tr>
-    <tr><td>Wirkkette</td><td>Der Weg eines Anwendungsfalls durch die Schritte, vom Auslöser bis zum Ergebnis.</td><td>Code eingeben, prüfen, entriegeln, Fach offen</td><td class="no">–</td><td class="src">Arcadia, Functional Chain: „one possible path among all the paths forming the dataflow, in the context of implementing a capability“</td></tr>
-    <tr><td>Funktion</td><td>Ein Schritt, der Eingaben in Ausgaben wandelt.</td><td>Code prüfen: aus Abholcode wird Öffnungsbefehl</td><td class="no">„Steuerung“: ein Teil, kein Schritt</td><td class="src">SEBoK: „defined by the transformation of input flows to output flows, with defined performance“</td></tr>
-    <tr><td>Datenfluss</td><td>Eine Übergabe von einem Schritt zum nächsten.</td><td>Abholcode</td><td class="no">–</td><td class="src">Arcadia, Functional Exchange: „interaction between a source function and a destination function, likely to transmit exchange items“</td></tr>
-    <tr><td>Datenformat</td><td>Die Vereinbarung, wie die Übergabe aussieht.</td><td>6 Ziffern, 0 bis 9</td><td class="no">„über Bluetooth“: der Kanal, nicht der Inhalt</td><td class="src">Arcadia, Interface: „exchange items … according to a communication ‚contract‘ shared between them“</td></tr>
-    <tr><td>Modul</td><td>Ein Teil, in dem Schritte umgesetzt sind.</td><td>Steuerung, Schließmechanik</td><td class="no">–</td><td class="src">ISO/IEC 25010, component: „entity with discrete structure, such as an assembly or software module“</td></tr>
-    <tr><td>Test</td><td>Eingabe, Bedingung und erwartetes Ergebnis für eine Zusage.</td><td>Gültiger Code, Tür zu, Fach offen nach höchstens 2 s</td><td class="no">„Öffnung funktioniert“: kein erwartetes Ergebnis</td><td class="src">IEEE 1012: „set of test inputs, execution conditions, and expected results developed for a particular objective“</td></tr>
-    <tr><td>Auftrag</td><td>Eine abgegrenzte Änderung am Modell.</td><td>Abholung per App ergänzen</td><td class="no">–</td><td class="src">PMBOK: „a formal proposal to modify any document, deliverable, or baseline“</td></tr>
-    <tr><td>Meilenstein</td><td>Ein Termin, dem Aufträge zugeordnet sind.</td><td>Pilotstation</td><td class="no">–</td><td class="src">ISO/IEC/IEEE 24765: „scheduled event used to measure progress“</td></tr>
+    <tr data-code="SYS"><td>System</td><td>Das Ganze mit seiner Grenze nach außen.</td><td>Paketstation</td><td class="no">–</td><td class="src">ISO/IEC/IEEE 15288: „combination of interacting elements organized to achieve one or more stated purposes“</td></tr>
+    <tr data-code="ACTOR"><td>Akteur</td><td>Wer von außen etwas über die Grenze gibt oder bekommt.</td><td>Empfänger · Zusteller · Versand-Server</td><td class="no">„Bedienfeld“: ein Teil, kein Akteur</td><td class="src">UML/SysML: „a role played by a user or any other system that interacts with the subject“</td></tr>
+    <tr data-code="UC"><td>Anwendungsfall</td><td>Ein Nutzen, den ein Akteur über die Grenze bekommt.</td><td>Paket abholen · Paket einlegen</td><td class="no">„Code prüfen“: ein Schritt</td><td class="src">IREB: „A set of possible interactions between external actors and a system that provide a benefit for the actor(s) involved.“</td></tr>
+    <tr data-code="REQ"><td>Anforderung</td><td>Was ein Element an seiner Grenze tut oder einhält, prüfbar, ohne zu sagen wie.</td><td>Fach öffnet höchstens 2 s nach gültigem Code</td><td class="no">„Die Steuerung sendet den Öffnungsbefehl über CAN“: ein Wie</td><td class="src">ISO/IEC/IEEE 29148: „statement that translates or expresses a need and its associated constraints and conditions“</td></tr>
+    <tr data-code="FCHAIN"><td>Wirkkette</td><td>Der Weg eines Anwendungsfalls durch die Schritte, vom Auslöser bis zum Ergebnis.</td><td>Abholung: Code eingeben, prüfen, entriegeln, Fach offen</td><td class="no">–</td><td class="src">Arcadia, Functional Chain: „one possible path among all the paths forming the dataflow, in the context of implementing a capability“</td></tr>
+    <tr data-code="FUNC"><td>Funktion</td><td>Ein Schritt, der Eingaben in Ausgaben wandelt.</td><td>Code prüfen · Fach entriegeln</td><td class="no">„Steuerung“: ein Teil, kein Schritt</td><td class="src">SEBoK: „defined by the transformation of input flows to output flows, with defined performance“</td></tr>
+    <tr data-code="FLOW"><td>Datenfluss</td><td>Eine Übergabe von einem Schritt zum nächsten: Daten, ein Signal, auch Material oder Kraft.</td><td>Abholcode · Öffnungsbefehl</td><td class="no">–</td><td class="src">Arcadia, Functional Exchange: „interaction between a source function and a destination function, likely to transmit exchange items“</td></tr>
+    <tr data-code="SCHEMA"><td>Datenformat</td><td>Die Vereinbarung, wie die Übergabe aussieht.</td><td>6 Ziffern, 0 bis 9 · Fachnummer 1 bis 48 · 12 V, 300 ms</td><td class="no">„über Bluetooth“: der Kanal, nicht der Inhalt</td><td class="src">Arcadia, Interface: „exchange items … according to a communication ‚contract‘ shared between them“</td></tr>
+    <tr data-code="MOD"><td>Modul</td><td>Ein Teil, in dem Schritte umgesetzt sind.</td><td>Steuerung · Bedienfeld · Schließmechanik</td><td class="no">–</td><td class="src">ISO/IEC 25010, component: „entity with discrete structure, such as an assembly or software module“</td></tr>
+    <tr data-code="TEST"><td>Test</td><td>Eingabe, Bedingung und erwartetes Ergebnis für eine Zusage.</td><td>Gültiger Code, Tür zu, Fach offen nach höchstens 2 s</td><td class="no">„Öffnung funktioniert“: kein erwartetes Ergebnis</td><td class="src">IEEE 1012: „set of test inputs, execution conditions, and expected results developed for a particular objective“</td></tr>
+    <tr data-code="CR"><td>Auftrag</td><td>Eine abgegrenzte Änderung am Modell.</td><td>Abholung per App ergänzen</td><td class="no">–</td><td class="src">PMBOK: „a formal proposal to modify any document, deliverable, or baseline“</td></tr>
+    <tr data-code="MS"><td>Meilenstein</td><td>Ein Termin, dem Aufträge zugeordnet sind.</td><td>Pilotstation · Serienfreigabe</td><td class="no">–</td><td class="src">ISO/IEC/IEEE 24765: „scheduled event used to measure progress“</td></tr>
   </tbody>
 </table>
 </div>

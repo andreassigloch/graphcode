@@ -13,7 +13,14 @@ import { ARTIFACT_CATALOG } from '../src/projections/panels.js';
 import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, HELP_ELEMENT_STATES, METRIC_HELP } from '../src/projections/help-content.js';
 import { helpEntry } from '../src/projections/help.js';
 import { METRIC_DIMENSIONS } from '@sigloch/se-engine';
-import { ALL_RULE_DEFS, CODE_CONFORMANCE_RULES, Mark } from '@sigloch/contracts/se';
+import {
+  ALL_RULE_DEFS,
+  CODE_CONFORMANCE_RULES,
+  ELEMENT_DEFINITIONS,
+  Mark,
+  TRACE_DEFINITIONS,
+  TRACE_PATTERNS,
+} from '@sigloch/contracts/se';
 
 const nonEmpty = (s: unknown) => typeof s === 'string' && s.trim().length > 0;
 
@@ -92,16 +99,28 @@ describe('TEST-help-content-coverage (CR-GC-227): authored Plain/SE covers the l
     }
   });
 
-  it('the Vocabulary covers every ontology element + trace token, plus depends-on', () => {
+  /**
+   * CR-GC-932 — Element- und Kantenarten antworten aus contracts (`ELEMENT_DEFINITIONS`,
+   * `TRACE_DEFINITIONS`), nicht aus einem eigenen Text hier. Gemessen wird gegen die Ontologie des
+   * Deskriptors: eine neue Art drüben ohne Definition lässt diesen Fall fallen.
+   */
+  it('jede Element- und Kantenart antwortet mit der Definition aus contracts', () => {
     const elementTokens = Object.keys(SE_DESCRIPTOR.nodeTypes);
     const traceTokens = Object.keys(SE_DESCRIPTOR.edgeTypes);
-    expect(elementTokens.length).toBeGreaterThan(0);
-    expect(traceTokens.length).toBeGreaterThan(0);
-    for (const t of [...elementTokens, ...traceTokens, 'depends-on']) {
-      const v = HELP_VOCAB[t];
-      expect(v, `HELP_VOCAB missing token ${t}`).toBeDefined();
-      expect(nonEmpty(v?.plain) && nonEmpty(v?.se), `${t} plain/se`).toBe(true);
+    expect(elementTokens.length).toBe(Object.keys(ELEMENT_DEFINITIONS).length);
+    expect(traceTokens.length).toBe(Object.keys(TRACE_DEFINITIONS).length);
+    for (const t of elementTokens) {
+      const d = ELEMENT_DEFINITIONS[t as keyof typeof ELEMENT_DEFINITIONS];
+      expect(helpEntry(t), t).toMatchObject({ kind: 'element', title: d.name, plain: d.satz, beispiele: d.beispiele, source: 'derived' });
+      expect(HELP_VOCAB[t], `${t} hat noch einen eigenen Text`).toBeUndefined();
     }
+    for (const t of traceTokens) {
+      const d = TRACE_DEFINITIONS[t as keyof typeof TRACE_DEFINITIONS];
+      const erlaubt = TRACE_PATTERNS.filter((p) => p.type === t).map((p) => `${p.source}→${p.target}`);
+      expect(helpEntry(t), t).toMatchObject({ kind: 'trace', title: d.name, plain: d.bedeutung, erlaubt, source: 'derived' });
+      expect(HELP_VOCAB[t], `${t} hat noch einen eigenen Text`).toBeUndefined();
+    }
+    expect(helpEntry('depends-on')?.kind).toBe('token');
   });
 
   it('no HELP_CONTENT entry is half-authored (both layers always present)', () => {
@@ -200,7 +219,8 @@ describe('TEST-metric-help-coverage (CR-GC-458): jede Zieldimension erklärt sic
 
   it('die bestehenden Token-Arten antworten unveraendert', () => {
     expect(helpEntry('R-04')?.kind).toBe('rule');
-    expect(helpEntry('REQ')?.kind).toBe('token');
+    expect(helpEntry('REQ')?.kind).toBe('element');
+    expect(helpEntry('satisfy')?.kind).toBe('trace');
     expect(helpEntry('readiness')?.kind).toBe('panel');
     expect(helpEntry('gibtesnicht')).toBeUndefined();
   });

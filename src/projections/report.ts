@@ -134,7 +134,7 @@ const GraphHelpInputSchema = z.object({
     .string({ error: GRAPH_HELP_TOKEN_REQUIRED })
     .describe(
       'The token to explain: a ruleId (R-04), mark (CDR), panel id (recommendations), ' +
-        'artifact id (fmea), metric (coherence), tool (graph_mutate) or vocabulary token (REQ).',
+        'artifact id (fmea), metric (coherence), tool (graph_mutate), element type (REQ) or trace type (satisfy).',
     ),
 });
 
@@ -475,7 +475,7 @@ export function bindReportTools(ctx: ToolPort) {
           `graph_help: unknown token '${input.token}'. Try a ruleId (e.g. R-04), a mark (SRR/PDR/CDR/TRR/Bau), ` +
             `a panel (readiness/recommendations/artifacts/impact/health), an artifact ` +
             `(e.g. fmea), a metric dimension (coherence/modifiability/faultTolerance/flowEfficiency/` +
-            `viability/scalability), or a vocabulary token (e.g. REQ).`,
+            `viability/scalability), an element type (e.g. REQ) or a trace type (e.g. satisfy).`,
         );
       }
       return entry;

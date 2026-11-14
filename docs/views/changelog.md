@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 535 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 536 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 535 CR · 376 done · 4 open.
+Total: 536 CR · 376 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -597,3 +597,4 @@ Total: 535 CR · 376 done · 4 open.
 | `CR-GC-929` | done | CLAUDE.md nennt den CR-Knoten statuslos, seit BOK-CR-080 spiegelt aise cr close den Status an den Knoten |
 | `CR-GC-930` | n/a | Zwoelf CRs liegen in done und tragen im Kopf Status Open |
 | `CR-GC-931` | n/a | Host-Start meldet nicht, wenn der committete Snapshot neuer ist als der Store |
+| `CR-GC-932` | n/a | graphcode liest die Definitionen der Elemente und Kanten aus contracts (ELEMENT_DEFINITIONS, TRACE_DEFINITIONS) |

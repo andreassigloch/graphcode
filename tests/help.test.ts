@@ -32,10 +32,10 @@ describe('TEST-help-projection (CR-GC-228): help.ts projects HELP_CONTENT + the 
     expect(helpEntry(immer.id)).toMatchObject({ stage: 'immer' });
     expect(helpEntry(immer.id)!.mark).toBeUndefined();
     expect(r01.source).toBe('derived');
-    // A mark uses its label; an artifact its catalog label; a token has no prompt.
+    // A mark uses its label; an artifact its catalog label; a vocabulary token has no prompt.
     expect(helpEntry('SRR')!.title).toMatch(/System Requirements Review/);
     expect(helpEntry('fmea')!.kind).toBe('artifact');
-    const tok = helpEntry('REQ')!;
+    const tok = helpEntry('depends-on')!;
     expect(tok.kind).toBe('token');
     expect(tok.prompt).toBeUndefined();
     // Unknown id → undefined.

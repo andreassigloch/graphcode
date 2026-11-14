@@ -6,6 +6,9 @@
  * eine Marke `data-katalog` (Wert im Text oder in `data-wert`). Zieht der Katalog an, ohne dass die
  * Seite mitzieht, wird dieser Test rot. Anlass: Die Seite sagte „80 Regeln“, der Katalog hatte 81.
  *
+ * CR-GC-932: Auch die Texte zu Bausteinen und Verbindungen kommen aus contracts (`ELEMENT_DEFINITIONS`,
+ * `TRACE_DEFINITIONS`): die Definitionstabelle, die Beispiele der Karten und die Bedeutung jeder Verbindung.
+ *
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
@@ -13,12 +16,14 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   ALL_RULE_DEFS,
+  ELEMENT_DEFINITIONS,
   ElementType,
   MARK_STAGE,
   META_MODEL_VERSION,
   ONTOLOGY_VERSION,
   RULES_VERSION,
   STAGE_SETS,
+  TRACE_DEFINITIONS,
   TRACE_PATTERNS,
   TraceType,
 } from '@sigloch/contracts/se';
@@ -107,6 +112,37 @@ describe('Systemmodell in Bildern gegen den Katalog (CR-GC-926)', () => {
       }
       const expected = TRACE_PATTERNS.filter((p) => p.type === type.toLowerCase()).map((p) => `${p.source}→${p.target}`);
       expect([...pairs].sort(), `erlaubte Paare von ${type}`).toEqual([...expected].sort());
+    }
+  });
+  it('die Definitionstabelle steht wortgleich in contracts (CR-GC-932)', () => {
+    const rows = [...HTML.matchAll(/<tr data-code="([A-Z]+)">([\s\S]*?)<\/tr>/g)];
+    expect(rows.map((r) => r[1]).sort()).toEqual([...ElementType.options].sort());
+    for (const [, code, row] of rows) {
+      const d = ELEMENT_DEFINITIONS[code as ElementType];
+      const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((m) => strip(m[1]));
+      const gegen = d.gegenbeispiel ? `„${d.gegenbeispiel.text}“: ${d.gegenbeispiel.grund}` : '–';
+      const quelle = d.quelle ? `${d.quelle.norm}: „${d.quelle.zitat}“` : '–';
+      expect(cells, code).toEqual([d.name, d.satz, d.beispiele.join(' · '), gegen, quelle]);
+    }
+  });
+
+  it('jede Karte trägt Namen und Beispiele aus contracts (CR-GC-932)', () => {
+    const karten = [...HTML.matchAll(/<span class="name">([^<]+)<\/span><span class="code">([A-Z]+)<\/span><\/div>\s*<div class="meaning">[\s\S]*?<\/div>\s*<div class="ex">([\s\S]*?)<\/div><\/div>/g)];
+    expect(karten.map((k) => k[2]).sort()).toEqual([...ElementType.options].sort());
+    for (const [, name, code, ex] of karten) {
+      const d = ELEMENT_DEFINITIONS[code as ElementType];
+      expect(name, code).toBe(d.name);
+      expect(strip(ex), code).toBe(d.beispiele.join(' · '));
+    }
+  });
+
+  it('jede Verbindung trägt Namen und Bedeutung aus contracts (CR-GC-932)', () => {
+    const rows = [...HTML.matchAll(/<span class="lbl">([^<]+)<\/span><span class="code">([A-Z]+)<\/span><\/div>\s*<div class="text"><p>([\s\S]*?)<\/p>/g)];
+    expect(rows.map((r) => r[2].toLowerCase()).sort()).toEqual([...TraceType.options].sort());
+    for (const [, name, code, bedeutung] of rows) {
+      const d = TRACE_DEFINITIONS[code.toLowerCase() as TraceType];
+      expect(name, code).toBe(d.name);
+      expect(strip(bedeutung), code).toBe(d.bedeutung);
     }
   });
 });

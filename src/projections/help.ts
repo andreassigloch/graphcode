@@ -16,7 +16,16 @@
  * @author andreas@siglochconsulting
  */
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
-import { ALL_RULE_DEFS, Mark } from '@sigloch/contracts/se';
+import {
+  ALL_RULE_DEFS,
+  ELEMENT_DEFINITIONS,
+  ElementType,
+  Mark,
+  TRACE_DEFINITIONS,
+  TRACE_PATTERNS,
+  TraceType,
+  type ElementDefinition,
+} from '@sigloch/contracts/se';
 import { MARK_LABELS } from '../kernel/measure/readiness.js';
 import { ARTIFACT_CATALOG } from './panels.js';
 import { HELP_CONTENT, HELP_VOCAB, HELP_PANEL_IDS, METRIC_HELP } from './help-content.js';
@@ -25,7 +34,7 @@ import { TOOL_HELP } from './tool-help.js';
 /** A fully-assembled help item — all three layers + the derived skeleton. */
 export interface HelpEntry {
   id: string;
-  kind: 'rule' | 'mark' | 'panel' | 'artifact' | 'token' | 'metric' | 'tool';
+  kind: 'rule' | 'mark' | 'panel' | 'artifact' | 'token' | 'metric' | 'tool' | 'element' | 'trace';
   /** Plain-language title — derived (rule/gate/artifact name) or the token. */
   title: string;
   /** The raw on-screen token, if different from the title (e.g. `R-04`, `CDR`). */
@@ -52,6 +61,12 @@ export interface HelpEntry {
   lever?: string;
   /** Metrics only — the scale the value lives on, so nobody guesses at it. */
   scale?: { min: number; max: number };
+  /** Element types only (CR-GC-932) — examples, counter-example and source from `ELEMENT_DEFINITIONS`. */
+  beispiele?: ElementDefinition['beispiele'];
+  gegenbeispiel?: ElementDefinition['gegenbeispiel'];
+  quelle?: ElementDefinition['quelle'];
+  /** Trace types only (CR-GC-932) — the legal pairs `SOURCE→TARGET` from `TRACE_PATTERNS`. */
+  erlaubt?: string[];
   source: 'derived' | 'authored';
 }
 
@@ -69,7 +84,7 @@ const PANEL_IDS = new Set<string>(HELP_PANEL_IDS);
 
 /**
  * Assemble the `HelpEntry` for any dashboard id — a ruleId, gate id, panel id,
- * artifact id, or vocabulary token — merging the authored layers with the derived
+ * artifact id, element or trace type, or vocabulary token — merging the authored layers with the derived
  * skeleton. Returns `undefined` for an unknown id.
  */
 export function helpEntry(id: string): HelpEntry | undefined {
@@ -134,6 +149,42 @@ export function helpEntry(id: string): HelpEntry | undefined {
       lever: metric.lever,
       scale: { min: 0, max: 5 },
       source: 'authored',
+    };
+  }
+
+  // Element type (CR-GC-932) — the definition from contracts, examples included. `plain` is the one
+  // binding sentence, `se` the standard definition it corresponds to.
+  const element = ElementType.safeParse(id);
+  if (element.success) {
+    const d = ELEMENT_DEFINITIONS[element.data];
+    return {
+      id,
+      kind: 'element',
+      title: d.name,
+      token: id,
+      plain: d.satz,
+      se: d.quelle ? `${d.quelle.norm}: „${d.quelle.zitat}“` : d.satz,
+      beispiele: d.beispiele,
+      gegenbeispiel: d.gegenbeispiel,
+      quelle: d.quelle,
+      source: 'derived',
+    };
+  }
+
+  // Trace type (CR-GC-932) — meaning from contracts, the legal pairs from TRACE_PATTERNS.
+  const trace = TraceType.safeParse(id);
+  if (trace.success) {
+    const d = TRACE_DEFINITIONS[trace.data];
+    const erlaubt = TRACE_PATTERNS.filter((p) => p.type === trace.data).map((p) => `${p.source}→${p.target}`);
+    return {
+      id,
+      kind: 'trace',
+      title: d.name,
+      token: id,
+      plain: d.bedeutung,
+      se: `Erlaubt: ${erlaubt.join(', ')}`,
+      erlaubt,
+      source: 'derived',
     };
   }
 

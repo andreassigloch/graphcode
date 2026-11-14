@@ -228,31 +228,11 @@ export const HELP_CONTENT: Record<string, HelpContentEntry> = {
 };
 
 /**
- * The Vocabulary legend (help-system proposal, private repo graphanalyze: docs/archive/proposals/help-system.md §3) — the one place every element/trace token is
- * mapped. The token LIST is the ontology (`ElementType`/`TraceType` + the `depends-on`
- * relation label); the two columns are authored. `se` cells in HELP_CONTENT use these tokens.
+ * The Vocabulary legend for tokens that are NOT an element or trace type. Element and trace types
+ * answer from `ELEMENT_DEFINITIONS` / `TRACE_DEFINITIONS` in `@sigloch/contracts/se` (CR-GC-932) —
+ * one source for agent, help and the artifact; this map holds only what contracts does not define.
  */
 export const HELP_VOCAB: Record<string, HelpVocabEntry> = {
-  // Element types (things in the model).
-  SYS: { plain: 'the whole system', se: 'system (top of the hierarchy)' },
-  UC: { plain: 'a thing a user wants to do', se: 'use case' },
-  ACTOR: { plain: 'a person or outside system that interacts with it', se: 'actor (external entity)' },
-  FCHAIN: { plain: 'the ordered steps that make a use case happen', se: 'function chain / functional thread' },
-  FUNC: { plain: 'one function the software performs', se: 'function (behavioural element)' },
-  FLOW: { plain: 'a piece of data moving between parts', se: 'data / control flow' },
-  REQ: { plain: "a feature you've promised to build", se: 'requirement' },
-  TEST: { plain: 'a check that proves a feature works', se: 'test case' },
-  MOD: { plain: 'a module / code package', se: 'module (structural unit)' },
-  SCHEMA: { plain: 'the shape of a piece of data', se: 'data schema' },
-  CR: { plain: 'one unit of planned work', se: 'change request' },
-  MS: { plain: 'a delivery milestone', se: 'milestone' },
-  // Trace types (links between things).
-  compose: { plain: '"is made up of"', se: 'decomposition / containment' },
-  satisfy: { plain: '"this builds that" (a function → the feature it delivers)', se: 'satisfies (design → requirement traceability)' },
-  verify: { plain: '"this checks that" (a test → the feature it proves)', se: 'verifies (V&V coverage)' },
-  io: { plain: '"data in / out" (function or actor ↔ a data flow)', se: 'input/output interface' },
-  allocate: { plain: '"runs inside" (a function → a module)', se: 'allocation (function → structural unit)' },
-  relation: { plain: 'a general link (e.g. a work item → a milestone)', se: 'generic association' },
   'depends-on': { plain: '"must come after" (milestone → milestone)', se: 'dependency (a `relation` label)' },
 };
 

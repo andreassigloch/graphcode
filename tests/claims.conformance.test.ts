@@ -31,7 +31,7 @@ import { join } from 'node:path';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import {
-  ELEMENT_DESCRIPTIONS,
+  ELEMENT_DEFINITIONS,
   TraceType,
   TRACE_PATTERNS,
   ALL_RULE_DEFS,
@@ -96,7 +96,7 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
   });
 
   const claims = (): Claim[] => [
-    { phrase: 'element types', actual: () => Object.keys(ELEMENT_DESCRIPTIONS).length },
+    { phrase: 'element types', actual: () => Object.keys(ELEMENT_DEFINITIONS).length },
     { phrase: 'connection types', actual: () => TraceType.options.length },
     { phrase: 'legal connection patterns', actual: () => TRACE_PATTERNS.length },
     /*

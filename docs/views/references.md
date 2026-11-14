@@ -1506,6 +1506,7 @@
 | `CR-GC-925` | relation | `FUNC-author-actor` |
 | `CR-GC-925` | relation | `FUNC-se-irr` |
 | `CR-GC-925` | relation | `FUNC-se-top-level` |
+| `CR-GC-932` | relation | `FUNC-graph-help` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
