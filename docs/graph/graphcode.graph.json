@@ -4164,7 +4164,9 @@
       "id": "CR-GC-930",
       "type": "CR",
       "name": "Zwoelf CRs liegen in done und tragen im Kopf Status Open",
-      "description": "docs/cr/open/CR-GC-930-zwoelf-crs-liegen-in-done-und-tragen-im-.md"
+      "description": "docs/cr/done/CR-GC-930-zwoelf-crs-liegen-in-done-und-tragen-im-.md",
+      "status": "done",
+      "commitRef": "3cc1fac5,495b5a34,1c708cbe"
     },
     {
       "id": "CR-GC-931",
@@ -33031,5 +33033,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1152
+  "graphVersion": 1153
 }
