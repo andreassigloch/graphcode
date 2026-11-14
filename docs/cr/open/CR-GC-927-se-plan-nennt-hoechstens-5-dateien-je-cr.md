@@ -23,9 +23,9 @@ Konformanztest der Skills läuft.
 
 ## Abnahme
 
-- [ ] `se-plan.md` nennt 10 an beiden Stellen, keine 5 mehr.
-- [ ] Skill-Version erhöht; Konformanztest grün.
-- [ ] Ausgelieferte Kopien (OpenCode, Vorlage für neue Repos) tragen denselben Stand.
+- [x] `se-plan.md` nennt 10 an allen vier Stellen (Zeilen 4, 42, 43, 53), keine 5 mehr.
+- [x] Skill-Version 11 auf 12; `tests/skill-se-plan-dateigrenze.test.ts` (vorher 3 von 3 rot) und `tests/skills.mcp-conformance.test.ts` grün.
+- [x] Ausgelieferte Kopien (OpenCode, Vorlage für neue Repos) tragen denselben Stand (`installSkills` kopiert `.claude/commands/` bei init/update, keine eigene Kopie im Repo).
 
 ## Offen für den Auftraggeber
 
@@ -40,7 +40,7 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 | Frage | Festlegung | Begründung |
 |---|---|---|
 
-keine, bis der Auftraggeber über den Vorschlag entschieden hat.
+keine.
 
 ---
 

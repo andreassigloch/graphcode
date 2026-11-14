@@ -1,7 +1,7 @@
 ---
 name: se-plan
-version: 11
-description: Generate the implementation/integration plan — order the build along the model's integration tree (leaves up), make the test concept complete BEFORE cutting, cut CRs (≤5 files) whose content is the graph_context slice, enforce an io-integration test per CR, and write MS/CR/relation through the gate
+version: 12
+description: Generate the implementation/integration plan — order the build along the model's integration tree (leaves up), make the test concept complete BEFORE cutting, cut CRs (≤10 files) whose content is the graph_context slice, enforce an io-integration test per CR, and write MS/CR/relation through the gate
 ---
 
 **Generative** plan skill (NOT a view). the view `docs/views/implplan.md` *renders* an existing plan; `se-plan` *creates* one: it derives the build order from the model's integration tree and writes the milestone/CR structure into the graph through the gate. No prose-only plan, no parallel renderer.
@@ -39,8 +39,8 @@ Gate facts: `TEST -verify-> UC` is illegal (R-18) — verify the per-UC REQ. The
 One milestone per integration level, a linear `depends-on` chain (`MS-n -relation-> MS-n-1 [label:depends-on]`):
 
 0. **Environment** — mandatory as soon as the access list of `se-conops` has a line created by a *human*; otherwise only if §2 decided it. SYS REQ every test needs (network, hardening, deploy/rollback). Nothing that has children in the tree. It carries one CR **Provide access**: the user works the access list in one block, and a script calls the check call of every line (e.g. HTTP 200, a successful login) and reports green or red per line. **Stage 1 starts only when that script is all green.** An access found later is first written into the list, then obtained — never asked for ad hoc in the middle of a build.
-1. **Contracts** — the SCHEMA (shared by several FUNC, so below all of them), grouped ≤5 files.
-2. **Leaf functions** — one CR per leaf FUNC (split by REQ if >5 files). Strip MOD and SYS REQ from these CRs.
+1. **Contracts** — the SCHEMA (shared by several FUNC, so below all of them), grouped ≤10 files.
+2. **Leaf functions** — one CR per leaf FUNC (split by REQ if >10 files). Strip MOD and SYS REQ from these CRs.
 3. **Chains** — one CR per FCHAIN (single-member chains may share one).
 4. **Modules** — one CR per MOD with its MOD REQ; a parent MOD depends on its child MODs.
 5. **System** — the SYS REQ, grouped by topic, plus the acceptance against the top requirements.
@@ -50,7 +50,7 @@ One milestone per integration level, a linear `depends-on` chain (`MS-n -relatio
 Composite FUNCs without an own REQ get no step — chains integrate their children. **Check before writing:** no CR may sit on a level below the children of its carrier (a module CR before its leaf-function CRs is the measured error). Topo-sort the `depends-on` DAG: report a **forward dependency** (lower id depends on higher), stop on a **cycle**.
 
 ## 5. Cut the CRs — **one per leaf REQ, cut at its carrier**
-The unit of COMPLETENESS is the **REQ**; the unit of the SLICE stays the **carrier** (the `graph_context` pack of the FUNC/FCHAIN/MOD/SYS that `satisfy`s it). Each CR is **≤5 files and implementable in one chat** (the hard family rule).
+The unit of COMPLETENESS is the **REQ**; the unit of the SLICE stays the **carrier** (the `graph_context` pack of the FUNC/FCHAIN/MOD/SYS that `satisfy`s it). Each CR is **≤10 files and implementable in one chat** (the hard family rule).
 
 **A CR for a REQ whose carrier is a MOD or a SYS carries its `relation` DIRECTLY on the REQ**, not only on the module (CR-SM-343). **`CR -relation-> FCHAIN` is illegal (R-18):** a chain CR relates the chain's run REQ, its risk REQs and the UCs that compose the chain.
 
