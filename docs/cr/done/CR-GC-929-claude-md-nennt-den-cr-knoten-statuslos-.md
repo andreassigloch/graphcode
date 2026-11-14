@@ -1,6 +1,6 @@
 # CR-GC-929: CLAUDE.md nennt den CR-Knoten statuslos, seit BOK-CR-080 spiegelt aise cr close den Status an den Knoten
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-14)
 **Typ:** aus Item ITEM-2026-1346 (finding)
 **Erstellt:** 2026-11-14
 **Item:** bok/items/ITEM-2026-1346.json (Lane: code)

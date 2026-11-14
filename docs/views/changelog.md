@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 535 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 535 CR · 375 done · 4 open.
+Total: 535 CR · 376 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -594,6 +594,6 @@ Total: 535 CR · 375 done · 4 open.
 | `CR-GC-926` | done | Systemmodell in Bildern: Zahlen aus dem Katalog ohne Version, 80 statt 81 Regeln |
 | `CR-GC-927` | done | se-plan nennt hoechstens 5 Dateien je CR, die Familienregel sagt 10 (Rest aus BOK-CR-067) |
 | `CR-GC-928` | done | graph_generate empfiehlt im Text die Rangfolge verdictRank, die der Spike zu CR-GC-771 widerlegt hat (src/loop/generate.ts:137) |
-| `CR-GC-929` | n/a | CLAUDE.md nennt den CR-Knoten statuslos, seit BOK-CR-080 spiegelt aise cr close den Status an den Knoten |
+| `CR-GC-929` | done | CLAUDE.md nennt den CR-Knoten statuslos, seit BOK-CR-080 spiegelt aise cr close den Status an den Knoten |
 | `CR-GC-930` | n/a | Zwoelf CRs liegen in done und tragen im Kopf Status Open |
 | `CR-GC-931` | n/a | Host-Start meldet nicht, wenn der committete Snapshot neuer ist als der Store |

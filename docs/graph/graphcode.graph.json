@@ -4156,7 +4156,9 @@
       "id": "CR-GC-929",
       "type": "CR",
       "name": "CLAUDE.md nennt den CR-Knoten statuslos, seit BOK-CR-080 spiegelt aise cr close den Status an den Knoten",
-      "description": "docs/cr/open/CR-GC-929-claude-md-nennt-den-cr-knoten-statuslos-.md"
+      "description": "docs/cr/done/CR-GC-929-claude-md-nennt-den-cr-knoten-statuslos-.md",
+      "status": "done",
+      "commitRef": "2c81c510"
     },
     {
       "id": "CR-GC-930",
@@ -33008,5 +33010,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1141
+  "graphVersion": 1142
 }
