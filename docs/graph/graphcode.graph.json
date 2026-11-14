@@ -4148,7 +4148,9 @@
       "id": "CR-GC-928",
       "type": "CR",
       "name": "graph_generate empfiehlt im Text die Rangfolge verdictRank, die der Spike zu CR-GC-771 widerlegt hat (src/loop/generate.ts:137)",
-      "description": "docs/cr/open/CR-GC-928-graph-generate-empfiehlt-im-text-die-ran.md"
+      "description": "docs/cr/done/CR-GC-928-graph-generate-empfiehlt-im-text-die-ran.md",
+      "status": "done",
+      "commitRef": "949d40e0"
     },
     {
       "id": "CR-GC-929",
@@ -33006,5 +33008,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1139
+  "graphVersion": 1140
 }

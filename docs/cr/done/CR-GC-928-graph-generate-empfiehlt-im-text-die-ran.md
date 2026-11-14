@@ -1,6 +1,6 @@
 # CR-GC-928: graph_generate empfiehlt im Text die Rangfolge verdictRank, die der Spike zu CR-GC-771 widerlegt hat (src/loop/generate.ts:137)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-14)
 **Typ:** aus Item ITEM-2026-1047 (finding)
 **Erstellt:** 2026-11-14
 **Item:** bok/items/ITEM-2026-1047.json (Lane: code)
