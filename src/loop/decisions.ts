@@ -2,32 +2,14 @@
  * decisions.ts — das Register der Entscheidungen, die dem Agenten als TEXT begegnen (CR-GC-587).
  *
  * Serie CR-GC-564..583: sieben Widersprueche, die erst ein Lauf fand — vier davon Text gegen
- * Code. Die Rangfolge der Verdicts stand an vier Stellen (`rankCandidates`, Host-Protokoll,
- * `se:generate` zweimal, alloc-Vorlage), drei waren falsch. Und das Host-Protokoll aus
- * CR-GC-583 nannte den Steuerwert VOR dem tier, als `rankCandidates` noch tier vor Steuerwert sortierte
- * (seit CR-GC-763 steht tier zuletzt). `rankCandidates` ist mit dem Executor ausgelagert (CR-GC-775).
+ * Code. Die Rangfolge der Verdicts stand an vier Stellen, drei waren falsch. Seit CR-GC-928 gibt es
+ * sie nicht mehr: der Spike zu CR-GC-771 hat sie widerlegt, bei mehreren zulaessigen Entwuerfen waehlt der Autor.
  * Tests pruefen den Code; die Texte prueft dieser Baustein: jede Entscheidung hat hier EINE
  * Fassung, Protokoll und Skills setzen sie ein, `tests/decision-texts.test.ts` verbietet die
  * widersprechenden Formulierungen in allem, was ausgeliefert wird.
  *
  * @author andreas@siglochconsulting
  */
-
-/**
- * Die Reihenfolge, in der Verdicts verglichen werden — als Daten, damit der Prosa-Satz daraus
- * abgeleitet wird und nicht daneben gepflegt. Bis CR-GC-775 war sie die Ordnung des Komparators
- * `rankCandidates` (executor-rank.ts); seither vergleicht der Host nach dem Satz, den
- * `DECISIONS.verdictRank` daraus bildet. `tests/decision-texts.test.ts` pinnt die Schluessel.
- */
-export const VERDICT_ORDER = [
-  { key: 'viable', text: 'block verwerfen' },
-  { key: 'focusDelta', text: 'steeringDelta der Fokus-Stufe (weniger Befunde)' },
-  { key: 'blockingRise', text: 'kein Anstieg blockierender Fehler' },
-  { key: 'removesElements', text: 'ein Zug, der nichts entfernt' },
-  { key: 'steerImprovement', text: 'steerAdvisory.improvement (entschaerft der Zug die schlimmste Stelle?)' },
-  { key: 'mutations', text: 'Element-Ausbeute' },
-  { key: 'tier', text: 'tier (auto-apply > suggest)' },
-] as const;
 
 export interface Decision {
   /** Der eine Satz, den jeder Text einsetzt. */
@@ -52,20 +34,6 @@ export const DECISIONS = {
       'die Probe wuerde dir dieselbe Antwort nur ein zweites Mal liefern.',
     forbidden: [/jeden Batch[^.]{0,60}dryRun/i, /every batch[^.]{0,60}dryRun/i, /dryRun:?\s*true\W+first/i, /immer (zuerst )?dryRun/i],
     source: 'CR-GC-577',
-  },
-  /**
-   * CR-GC-483/583: der Steuerwert rankt — abgeleitet aus VERDICT_ORDER. CR-GC-853: der Satz zum ℝ⁶
-   * (fitAdvisory) ist entfallen; es steht nie im Ergebnis von graph_mutate.
-   */
-  verdictRank: {
-    text: 'Rangfolge: ' + VERDICT_ORDER.map((v) => v.text).join('; dann ') + '.',
-    forbidden: [
-      /tier[^.]{0,60}\bund\b[^.]{0,20}fitAdvisory/, // "tier ... und fitAdvisory (Δm ...)" — die abgesetzte Ordnung
-      /Δm-Vergleich entscheidet/,
-      /fitAdvisory \(Δm/,
-      /tier[^.]{0,80}dann steerAdvisory/, // tier vor Steuerwert — die Ordnung vor CR-GC-763
-    ],
-    source: 'CR-GC-483, CR-GC-583, CR-GC-763, rankCandidates',
   },
   /** CR-GC-296/582: wann `done` — die Freigabe auf graph_suggest. */
   handoff: {

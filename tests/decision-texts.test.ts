@@ -12,7 +12,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DECISIONS, VERDICT_ORDER, decision } from '../src/loop/decisions.js';
+import { DECISIONS, decision } from '../src/loop/decisions.js';
 import { generationStep } from '../src/loop/generate.js';
 import { guardrailsContent } from '../src/surface/scaffold-docs.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
@@ -67,7 +67,6 @@ describe('CR-GC-587: kein ausgelieferter Text widerspricht dem Register', () => 
       0.8,
     );
     expect(step.prompt).toContain(decision('probe'));
-    expect(step.prompt).toContain(decision('verdictRank'));
   });
 
   it('se:generate nennt fitAdvisory nicht — es steht nie im Ergebnis von graph_mutate (CR-GC-862)', () => {
@@ -75,11 +74,10 @@ describe('CR-GC-587: kein ausgelieferter Text widerspricht dem Register', () => 
     expect(md).not.toContain('fitAdvisory');
   });
 
-  it('se:generate traegt dieselbe Rangfolge in derselben Reihenfolge', () => {
+  it('se:generate nennt keine Rangfolge: mehrere zulaessige Alternativen waehlt der Autor (CR-GC-928)', () => {
     const md = texte.find((t) => t.pfad.endsWith('se/generate.md'))!.text;
-    const pos = ['`block` verwerfen', '`steeringDelta`', 'blockierender Fehler', '`tier`', '`steerAdvisory.improvement`'].map((s) => md.indexOf(s));
-    expect(pos.every((p) => p >= 0), `fehlt: ${pos}`).toBe(true);
-    expect([...pos].sort((a, b) => a - b)).toEqual(pos);
+    expect(md).not.toMatch(/Rangfolge|besten Batch|Steuerwert entscheidet/);
+    expect(md).toMatch(/dem Autor mit ihren Verdicts vor/);
   });
 });
 
@@ -123,21 +121,5 @@ describe('CR-GC-594: die Abnahme-Politik steht einmal und ueberall gleich', () =
     for (const id of [...STEER_RULES, 'R-02', 'R-10', 'R-15', 'R-22', 'RD-01', 'RD-05', 'UC-01', 'UC-02', 'FC-02', 'FC-04', 'IO-01']) {
       expect(alle.has(id), id).toBe(false);
     }
-  });
-});
-
-describe('CR-GC-587: der Registersatz der Rangfolge wird aus VERDICT_ORDER abgeleitet', () => {
-  it('tier ist das letzte Kriterium, der Steuerwert steht davor (CR-GC-763)', () => {
-    const keys = VERDICT_ORDER.map((v) => v.key as string);
-    expect(keys.at(-1)).toBe('tier');
-    expect(keys.indexOf('steerImprovement')).toBeGreaterThanOrEqual(0);
-    expect(keys.indexOf('steerImprovement')).toBeLessThan(keys.indexOf('tier'));
-  });
-
-  it('der Registersatz nennt die Kriterien in der Ordnung von VERDICT_ORDER', () => {
-    const t = decision('verdictRank');
-    const pos = VERDICT_ORDER.map((v) => t.indexOf(v.text));
-    expect(pos.every((p) => p >= 0)).toBe(true);
-    expect([...pos].sort((a, b) => a - b)).toEqual(pos);
   });
 });

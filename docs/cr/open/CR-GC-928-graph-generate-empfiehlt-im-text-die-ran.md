@@ -24,9 +24,9 @@ wenn sie keinen anderen Leser hat.
 
 ## Abnahme
 
-- [ ] Test zuerst rot: Der Protokolltext von `graph_generate` enthält keine Rangfolge.
-- [ ] `graph_impact` auf die Funktion, die den Protokolltext baut; `graph_tests` für die Testspur.
-- [ ] Kein zweiter Ort nennt die Rangfolge (Skills, `graph_help`).
+- [x] Test zuerst rot: `tests/generate.test.ts` (Protokolltext enthält keine Rangfolge) war vor der Änderung rot, danach grün.
+- [x] `graph_impact(FUNC-generation-step)` und `graph_tests` gefahren (7 Testdateien, alle in der Auswahl von `verify:code` enthalten).
+- [x] Kein zweiter Ort nennt die Rangfolge: `.claude/commands/se/generate.md` (Rangfolge, „besten Batch", „Steuerwert entscheidet"; Version 3 auf 4), `src/loop/generate.ts` (Vorlagen Funktion und Modul), `src/loop/suggest.ts` (Werkzeugbeschreibung). `graph_help` nannte sie nicht. Register-Eintrag `verdictRank` und `VERDICT_ORDER` gelöscht (einzige Leser: `generate.ts` und zwei Tests).
 
 ---
 
@@ -37,7 +37,7 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 | Frage | Festlegung | Begründung |
 |---|---|---|
 
-keine, bis der Auftraggeber über den Vorschlag entschieden hat.
+keine.
 
 ---
 

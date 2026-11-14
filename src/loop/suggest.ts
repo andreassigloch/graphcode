@@ -355,7 +355,7 @@ export function bindSuggestTools(ctx: ToolPort) {
     description:
       'Der Generierungstreiber (LLM schlägt vor, Gate wählt). Liefert aus ' +
       'Prosa-Intention + Graph-Zustand die KONKRETE nächste Generierungs-Instruktion: seed (SYS/ACTOR/UC ' +
-      'aus der Intention) → expand (früheste Stufe, konkrete Funde, Kandidaten per dryRun, bester Batch echt) ' +
+      'aus der Intention) → expand (früheste Stufe, konkrete Funde, Kandidaten per dryRun, gewählter Batch echt) ' +
       '→ handoff (→ graph_suggest). ' +
       'Read-only und deterministisch; das Vorschlagen bleibt beim Host, das Urteil beim Gate. ' +
       'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation).',

@@ -8,7 +8,7 @@
  * Das hier ist der GENERATIVE Treiber und seither der einzige: aus Prosa-Intention + Graph-Zustand die
  * KONKRETE nächste Generierungs-Instruktion — welche Elemente, für welche
  * Eltern, wie viele Kandidaten, und das Gate-Protokoll (dryRun-Vergleich per
- * Verdict + steerAdvisory, bester Batch echt). Readiness-getrieben bis zur
+ * Verdict + steerAdvisory, gewählter Batch echt). Readiness-getrieben bis zur
  * Schwelle, dann Handoff auf die ℝ⁶-Optimierung (graph_suggest, Schritt 3).
  *
  * Deterministischer Kern nach dem se-plan-Muster: DIESE Funktion ist die
@@ -131,11 +131,10 @@ const PROTOCOL_NEXT_HOST =
   'Den nächsten Schritt holst du mit graph_generate; der `vorschlag` an der Mutationsantwort ist für den Nutzer, nicht für dich.';
 const GATE_PROTOCOL =
   PROTOCOL_GUIDE +
-  // CR-GC-587: Probe-Regel und Rangfolge kommen aus dem Register, nicht aus Prosa hier.
-  // (CR-GC-583 hatte hier den Steuerwert VOR dem tier genannt — `rankCandidates` sortierte
-  // tier vor Steuerwert. Genau die Klasse Fehler, gegen die das Register steht.)
-  '(2) ' + decision('probe') + ' ' + decision('verdictRank') + ' ' +
-  '(3) Nur den besten Batch OHNE dryRun anwenden; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
+  // CR-GC-587: die Probe-Regel kommt aus dem Register, nicht aus Prosa hier.
+  // CR-GC-928: keine Rangfolge — der Spike zu CR-GC-771 hat sie widerlegt, bei mehreren zulässigen Entwürfen wählt der Autor.
+  '(2) ' + decision('probe') + ' ' +
+  '(3) Mehrere zulässige Alternativen legst du dem Autor mit ihren Verdicts vor; er wählt. Den gewählten oder einzigen Batch wendest du OHNE dryRun an; block-Verdicts verwerfen oder revidieren, nie erzwingen. ' +
   '(4) ' +
   PROTOCOL_NEXT_HOST;
 
@@ -352,9 +351,9 @@ const VORLAGE_UC =
 const VORLAGE_REQ =
   'Schlage je UC ohne Requirements 3–5 REQ-Kandidaten vor (UC compose REQ), präzise und prüfbar formuliert; emittiere jede neue REQ zusammen mit einem TEST (TEST verify REQ) im selben Batch — eine REQ ohne verify-TEST blockt das Gate (R-01). Löse Platzhalter/Ambiguität in bestehenden REQs auf.';
 const VORLAGE_ARCH =
-  'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Schlage je Fund 2 alternative FUNC/FCHAIN-Zerlegungen vor — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Lass das Gate wählen.';
+  'Zerlege je Fund die FCHAIN/FUNC-Ebene: 7±2 FUNCs pro Zerlegungsebene (RD-04), FLOWs zwischen FUNCs (io). Schlage je Fund 2 alternative FUNC/FCHAIN-Zerlegungen vor — jede neue FUNC zusammen mit satisfy→REQ und allocate→MOD im selben Batch (fehlt die REQ oder das MOD im Graphen, zuerst anlegen). Mehrere zulässige Zerlegungen legst du dem Autor vor.';
 const VORLAGE_ALLOC =
-  'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen, der Steuerwert entscheidet.';
+  'Schlage MOD-Schnitte vor (intern stark, extern schwach gekoppelt) und allocate-Kanten FUNC→MOD; 2 Alternativen; mehrere zulässige legst du dem Autor vor.';
 const VORLAGE_VER =
   'Schlage je unverifiziertem REQ einen TEST-Kandidaten vor (TEST verify REQ), mit konkretem Prüfschritt in der description.';
 const VORLAGE_SCHEMA =

@@ -1,6 +1,6 @@
 ---
 name: se:generate
-version: 3
+version: 4
 description: Kaltstart-Generierung eines Systemmodells aus Prosa-Intention — readiness-getriebener Loop über graph_generate, Kandidaten durchs Gate (dryRun-Verdict + Steuerwert), Handoff auf graph_suggest
 ---
 
@@ -14,8 +14,8 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
 3. **Der `prompt` ist deine Arbeitsanweisung.** Führe genau sie aus:
    - Elementtypen VOR dem Schreiben mit `graph_authoring_guide` prüfen (legale Kanten, Pflichtattribute).
    - **Batches als `formatE`-Block schreiben, nicht als `commands`-JSON** — gleicher Gate-Durchlauf, ~2–3× weniger Tokens. Das Präfix ist die Operation: `+` anlegen, `-` löschen, `~` ändern (Patch), `M quelle + ziel` unter `## Merges` verschmelzen. JSON braucht nur noch `update-edge` (Kante umhängen).
-   - Hast du MEHRERE Alternativen, reiche sie zuerst mit `graph_mutate {formatE, dryRun:true}` ein und vergleiche die Verdicts. Hast du nur EINEN Batch, reiche ihn direkt ohne dryRun ein: eine Ablehnung persistiert nichts. Rangfolge der Verdicts: `block` verwerfen; dann `steeringDelta` der Fokus-Dimension; dann kein Anstieg blockierender Fehler; dann `tier` (auto-apply > suggest); dann `steerAdvisory.improvement` — entschärft der Zug die schlimmste Stelle? Jeder Preview wird auditiert (Vorschlag→Verdict) — auch verworfene Kandidaten sind Evidenz.
-   - Nur den besten Batch ohne dryRun anwenden. `block` heißt verwerfen oder revidieren — nie erzwingen, nie am Gate vorbei.
+   - Hast du MEHRERE Alternativen, reiche sie zuerst mit `graph_mutate {formatE, dryRun:true}` ein und vergleiche die Verdicts. Hast du nur EINEN Batch, reiche ihn direkt ohne dryRun ein: eine Ablehnung persistiert nichts. Jeder Preview wird auditiert (Vorschlag→Verdict) — auch verworfene Kandidaten sind Evidenz.
+   - Mehrere zulässige Alternativen legst du dem Autor mit ihren Verdicts vor; er wählt. Den gewählten oder einzigen Batch wendest du ohne dryRun an. `block` heißt verwerfen oder revidieren — nie erzwingen, nie am Gate vorbei.
 4. Zurück zu 2 (ab jetzt ohne `intent` — steckt in der SYS-description), bis `done:true`.
 5. **Festgefahren:** Steht derselbe Fokus nach zwei Zuegen noch, stellt die Maschine ihn zurueck und nennt den naechsten (Eintrittspunkte und Steuerregeln nie — Eintrittspunkte loest nur ihr Task oder eine Abnahme). Meldet sie phase stalled, sind nur noch zurueckgestellte Funde offen: nicht weiter mutieren, sondern der Ansage folgen — im Task zurueck in den Kern, bei offenem Eintrittspunkt den Task starten, sonst die Funde und deine Versuche in der Schlussmeldung nennen. stalled ist nicht fertig.
 6. **Steuerregeln fertig:** Steuerregeln (RD-04, BW-02, R-04, CR-01, MT-02) sind fertig, wenn sich ihr Ueberschuss ueber drei Steuerzuege im Kreis bewegt oder um weniger als 5 % sinkt: lokales Optimum. Die Maschine nimmt sie dann aus dem Fokus und meldet done mit den verbliebenen Termen — weiter ueber graph_suggest oder den Menschen.
@@ -25,7 +25,7 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
 
 - **Ein Schritt, ein Fokus:** nur die Funde bearbeiten, die der aktuelle `prompt` nennt — nicht vorgreifen.
 - **Anleitung je Schritt:** der Schritt nennt in `skill` die Autorier-Anleitung (`se:author-uc`, `se:author-req`, `se:author-actor`, `se:top-level`) — lade sie über das Skill-Werkzeug, bevor du schreibst; nicht per `cat`, nicht erst am Ende.
-- Zerlegungsbreite 7±2 pro Ebene (RD-04); bei Architektur-Schritten 2 Alternativen anbieten, der Steuerwert entscheidet.
+- Zerlegungsbreite 7±2 pro Ebene (RD-04); bei Architektur-Schritten 2 Alternativen anbieten; mehrere zulässige legst du dem Autor vor.
 - `blockingErrors > 0` hat immer Vorrang vor Neu-Generierung.
 - **Analysen sind Blackboxen:** FMEA, Bauplan, ConOps, Trade, Annahmen-Review laufen als eigene Einheit mit ihrem Skill (`se-fmea`, `se-plan`, …). Nennt der Schritt einen Eintrittspunkt (AF-01..05), starte die Analyse mit `graph_generate {task:'fmea'}` (bzw. `plan`, `conops`, …); die Sitzung bleibt im Task. Er ist fertig, wenn sein Eintrittspunkt schweigt — die Analyse ist gestempelt, beim Bauplan: es gibt einen offenen Auftrag (CR mit `status: open`) — oder abgenommen ist; dann kehre mit `graph_generate` ohne `task` in den Kern zurueck. Meldet danach eine Regel der Analyse im Kern (z. B. FM-01: Risiko ohne Bewertung), nennt der Schritt wieder ihren Skill: behebe den Fund nach dessen Schritten.
 - **Benannte Abweichung:** Einen Fund, der im Modell nicht erfuellbar ist, legst du als benannte Abweichung ab: `acceptedFindings: [{ruleId, reason}]` am betroffenen Element (graphweite Regeln am SYS), der Grund ist Pflicht. Abnehmbar sind nur die Analysen AF-01, AF-02, AF-03, AF-04, AF-05 (das Artefakt ist im schlanken Umfang nicht noetig), dazu CL-01 und FM-03. Architekturregeln sind nicht abnehmbar — eine Abnahme daran zaehlt nicht, der Fund bleibt: bauen. Nenne jede Abnahme in der Schlussmeldung.

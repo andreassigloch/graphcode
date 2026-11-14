@@ -779,17 +779,17 @@ describe('Gate-Protokoll des Schritts (CR-GC-288)', () => {
     expect(klausel).toContain('persistiert nichts');
   });
 
-  it('die Rangfolge kommt aus dem Register — tier zuletzt (CR-GC-587/763)', () => {
-    // CR-GC-583 hatte hier "Steuerwert vor tier" gepinnt — und damit den Widerspruch zu
-    // `rankCandidates` zementiert. Seit CR-GC-587 ist der Satz aus VERDICT_ORDER abgeleitet;
-    // die Ordnung selbst prueft tests/decision-texts.test.ts gegen den Komparator.
-    const klausel = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS).prompt.split('Gate-Protokoll')[1];
-    const tier = klausel.indexOf('tier (auto-apply > suggest)');
-    const steer = klausel.indexOf('steerAdvisory.improvement');
-    expect(klausel.indexOf('block verwerfen')).toBeLessThan(steer);
-    expect(steer).toBeLessThan(klausel.indexOf('Element-Ausbeute'));
-    expect(klausel.indexOf('Element-Ausbeute')).toBeLessThan(tier);
-    expect(klausel).not.toContain('fitAdvisory');
+  it('das Protokoll nennt keine Rangfolge: mehrere zulaessige Alternativen waehlt der Autor (CR-GC-928, CR-GC-771)', () => {
+    // Der Spike zu CR-GC-771 hat die Rangfolge der Verdicts widerlegt: sie ordnete nach dem Falschen.
+    // Das Protokoll sagt deshalb nur: proben, vorlegen, den Gewaehlten anwenden.
+    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
+    const klausel = step.prompt.split('Gate-Protokoll')[1];
+    expect(klausel).not.toMatch(/Rangfolge|steerAdvisory|tier \(|Element-Ausbeute|besten Batch/);
+    expect(klausel).toMatch(/dem Autor mit ihren Verdicts vor/);
+    expect(klausel).toContain('OHNE dryRun');
+    for (const stufe of Object.values(GENERATION_TEMPLATE)) {
+      expect(stufe).not.toMatch(/Steuerwert entscheidet|Lass das Gate w/);
+    }
   });
 
   it('jede uid eines Klausel-Vorbilds ist als Vorbild erkennbar — kein Inhalt, der lecken kann (ITEM-2026-607)', () => {
