@@ -22,7 +22,7 @@ describe('TEST-skill-import-code-recovery (CR-GC-941)', () => {
     expect(read('src/surface/write.ts')).toMatch(/GraphReseedInputSchema = z\.object\(\{\s*path:/);
   });
 
-  it('die Wiederherstellung kopiert nichts nach docs/graph und löscht den Store nicht', () => {
+  it('die Wiederherstellung kopiert nichts in die Graph-Datei und löscht den Store nicht', () => {
     expect(recovery).not.toMatch(/rm \.graphcode/);
     expect(recovery).not.toMatch(/nach `docs\/graph\/<member>\.graph\.json` kopieren/);
     expect(recovery).not.toMatch(/Host stoppen/);
