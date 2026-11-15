@@ -639,6 +639,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-948` | done | Messdokumente trennen: kennzahlen.md beschreibt zwoelf Groessen, stand.md traegt Wert und Verlauf je Release | `FUNC-block-messwerk` |
 | `CR-GC-949` | done | Skills nennen den Parameter skill an graph_mutate | `FUNC-graph-mutate-tool` |
 | `CR-GC-950` | done | Skill se:import-doc uebergibt skill im Aufruf von graph_mutate, nicht nur im Kommentar | `FUNC-import-doc` |
+| `CR-GC-951` | n/a | Reste des Messumbaus schliessen: messung ohne lokales Protokoll, Codebeleg an FLOW-graph-state, Verbraucher von FLOW-verlauf-report, Leitlinie Abschnitt 9 | `FUNC-graph-readiness` · `FUNC-stand-verlauf` · `MOD-dev-scripts` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

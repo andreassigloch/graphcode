@@ -4310,6 +4310,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-951",
+      "type": "CR",
+      "name": "Reste des Messumbaus schliessen: messung ohne lokales Protokoll, Codebeleg an FLOW-graph-state, Verbraucher von FLOW-verlauf-report, Leitlinie Abschnitt 9",
+      "description": "docs/cr/open/CR-GC-951-reste-des-messumbaus-schliessen-messung-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5260,7 +5266,7 @@
       "sync": "sync",
       "realRef": {
         "file": "src/kernel/harness.ts",
-        "symbol": "evaluateRules",
+        "symbol": "getGraph",
         "lang": "ts"
       }
     },
@@ -21783,6 +21789,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-951",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-951",
+      "target": "FUNC-stand-verlauf",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-951",
+      "target": "MOD-dev-scripts",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -26486,6 +26507,11 @@
       "source": "FLOW-verlauf-konformanz",
       "target": "SCHEMA-ontology-graph",
       "type": "relation"
+    },
+    {
+      "source": "FLOW-verlauf-report",
+      "target": "FUNC-graph-readiness",
+      "type": "io"
     },
     {
       "source": "FLOW-verlauf-report",
@@ -33624,5 +33650,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1229
+  "graphVersion": 1231
 }

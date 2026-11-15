@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 554 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 555 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 554 CR · 396 done · 4 open.
+Total: 555 CR · 396 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -616,3 +616,4 @@ Total: 554 CR · 396 done · 4 open.
 | `CR-GC-948` | done | Messdokumente trennen: kennzahlen.md beschreibt zwoelf Groessen, stand.md traegt Wert und Verlauf je Release |
 | `CR-GC-949` | done | Skills nennen den Parameter skill an graph_mutate |
 | `CR-GC-950` | done | Skill se:import-doc uebergibt skill im Aufruf von graph_mutate, nicht nur im Kommentar |
+| `CR-GC-951` | n/a | Reste des Messumbaus schliessen: messung ohne lokales Protokoll, Codebeleg an FLOW-graph-state, Verbraucher von FLOW-verlauf-report, Leitlinie Abschnitt 9 |

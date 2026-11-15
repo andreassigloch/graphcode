@@ -315,7 +315,7 @@
 | `FLOW-update-hook` | `FUNC-create-harness` | `FUNC-emit-update-event` |
 | `FLOW-verlauf-bereitschaft` | `FUNC-stand-verlauf` | `FUNC-compute-readiness` |
 | `FLOW-verlauf-konformanz` | `FUNC-stand-verlauf` | `FUNC-check-code-conformance` |
-| `FLOW-verlauf-report` | `FUNC-stand-verlauf` | — |
+| `FLOW-verlauf-report` | `FUNC-stand-verlauf` | `FUNC-graph-readiness` |
 | `FLOW-verlauf-request` | `FUNC-graph-readiness` | `FUNC-stand-verlauf` |
 | `FLOW-verlauf-snapshot` | `FUNC-stand-verlauf` | `FUNC-take-steering-snapshot` |
 | `FLOW-viewer-start` | `FUNC-gve-supervise` | `ACTOR-dashboard` |

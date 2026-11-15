@@ -1546,6 +1546,9 @@
 | `CR-GC-948` | relation | `FUNC-block-messwerk` |
 | `CR-GC-949` | relation | `FUNC-graph-mutate-tool` |
 | `CR-GC-950` | relation | `FUNC-import-doc` |
+| `CR-GC-951` | relation | `FUNC-graph-readiness` |
+| `CR-GC-951` | relation | `FUNC-stand-verlauf` |
+| `CR-GC-951` | relation | `MOD-dev-scripts` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2477,6 +2480,7 @@
 | `FLOW-verlauf-bereitschaft` | relation | `SCHEMA-rule-violation` |
 | `FLOW-verlauf-konformanz` | io | `FUNC-check-code-conformance` |
 | `FLOW-verlauf-konformanz` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-verlauf-report` | io | `FUNC-graph-readiness` |
 | `FLOW-verlauf-report` | relation | `SCHEMA-verlauf` |
 | `FLOW-verlauf-request` | io | `FUNC-stand-verlauf` |
 | `FLOW-verlauf-request` | relation | `SCHEMA-query-params` |

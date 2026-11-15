@@ -1386,7 +1386,7 @@ Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-chec
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -1936,7 +1936,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -7784,7 +7784,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -11828,7 +11828,7 @@ Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-graph-metrics`
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -15488,7 +15488,7 @@ io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-check-code-conformance` · schema �
 
 Die Reihe der Staende mit Marken, Befunden je Stufe, Steuerwert, Tests und Ketten, die graph_readiness bei verlauf antwortet.
 
-io ◀ `FUNC-stand-verlauf` · io ▶ — · schema ▶ `SCHEMA-verlauf`
+io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-verlauf`
 
 ###### 3.3.4.1.241  `FLOW-verlauf-request` — Verlauf-Anfrage
 

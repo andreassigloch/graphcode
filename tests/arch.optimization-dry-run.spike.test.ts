@@ -522,10 +522,15 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // 8,002 -> 8,252): weiter drei Zuege. Abfrage nimmt Bedienung auf, Grounding nimmt Bedienung auf, Abfrage
       // nimmt Ruestzeug auf. Weiter derselbe Befund — Bloecke werden umgehaengt, keiner ist fachlich begruendet
       // (ITEM-2026-798).
+      // CR-GC-951 (graphVersion 1231) — NEU GEMESSEN, nachdem der Verlauf-Bericht seinen Verbraucher
+      // graph_readiness bekam (ein Vertrag mehr an der Grenze von Abfrage und Grounding, Steuerwert am Start
+      // 8,252 -> 8,502): vier Zuege statt drei. Abfrage und Grounding nehmen Bedienung auf, Betrieb nimmt
+      // graph_readiness und audit_stats auf. Weiter derselbe Befund (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
+        'FUNC-block-betrieb -compose-> FUNC-graph-readiness (retire FUNC-graph-readiness)',
         'FUNC-block-grounding -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
-        'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
+        'FUNC-block-betrieb -compose-> FUNC-audit-stats (retire FUNC-audit-stats)',
       ]);
       expect(
         rest
@@ -572,9 +577,10 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // BW-02 @ FUNC-block-grounding wieder vorn, wie nach CR-GC-840.
       // CR-GC-896 (graphVersion 1022) — NEU GEMESSEN: Abfrage nimmt Bedienung auf und traegt deren Vertraege;
       // nach den drei Zuegen steht BW-02 @ FUNC-block-abfrage vorn, wie nach CR-GC-851.
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-abfrage — bitte neu messen').toEqual({
+      // CR-GC-951 (graphVersion 1231) — NEU GEMESSEN: nach den vier Zuegen steht BW-02 @ FUNC-block-grounding vorn.
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
         ruleId: 'BW-02',
-        elementId: 'FUNC-block-abfrage',
+        elementId: 'FUNC-block-grounding',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);
