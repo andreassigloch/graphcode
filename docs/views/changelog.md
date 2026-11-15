@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 548 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 549 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 548 CR · 389 done · 4 open.
+Total: 549 CR · 389 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -610,3 +610,4 @@ Total: 548 CR · 389 done · 4 open.
 | `CR-GC-942` | done | Skilltexte aus der FAQ ergänzen, Abgeschafftes streichen |
 | `CR-GC-943` | n/a | Verwendung von Regeln und Skills messen: Skill-Name am Zug, Ablehnungsquote und Feuerbild je Regel |
 | `CR-GC-944` | done | Skilltexte ergänzen: Rest aus CR-GC-942 |
+| `CR-GC-945` | n/a | Drei Skill-Wortlaute an FAQ und Regel angleichen |

@@ -75,7 +75,7 @@
 | `REQ-risk-stale-test-result` | Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Testergebnis, das vor der letzten Aenderung am Test oder am geprueften Code entstand. | ✓ |
 | `REQ-risk-steering-delta-missing` | Das Delta der Steuerung fehlt oder ist falsch in der Antwort auf einen Zug. Der Agent sieht einen falschen Fortschritt. | ✓ |
 | `REQ-risk-store-unreadable` | Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis. | ✓ |
-| `REQ-rule-calibration` | Die Aufzeichnung erlaubt es, je Regel, je Modell und je Konsument die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346) | ✓ |
+| `REQ-rule-calibration` | Die Aufzeichnung erlaubt es, je Regel, je Modell, je Konsument und je Skill die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten, und je Regel, in wie vielen Zuegen sie lief und in wie vielen sie einen Fund hatte. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346, CR-GC-943) | ✓ |
 | `REQ-self-contained-dist` | Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103. | ✓ |
 | `REQ-shared-views-no-fork` | views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2). | ✓ |
 | `REQ-single-kuzu-owner` | Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1) | ✓ |

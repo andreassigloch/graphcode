@@ -1539,6 +1539,7 @@
 | `CR-GC-944` | relation | `FUNC-se-optimize` |
 | `CR-GC-944` | relation | `FUNC-se-retro` |
 | `CR-GC-944` | relation | `FUNC-se-vorbereitung` |
+| `CR-GC-945` | relation | `SCHEMA-skill-text` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -3357,6 +3358,7 @@
 | `TEST-audit-retention` | verify | `REQ-audit-trail` |
 | `TEST-audit-rules-passed` | verify | `REQ-audit-trail` |
 | `TEST-audit-rules-passed` | verify | `REQ-rule-calibration` |
+| `TEST-audit-skill-und-feuerbild` | verify | `REQ-rule-calibration` |
 | `TEST-audit-trail-projection` | verify | `REQ-audit-trail` |
 | `TEST-audit-trail-projection` | verify | `REQ-risk-audit-evaluation-unowned` |
 | `TEST-audit-trail-projection` | verify | `REQ-token-efficiency` |
