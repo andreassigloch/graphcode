@@ -627,6 +627,11 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-931` | done | Host-Start meldet nicht, wenn der committete Snapshot neuer ist als der Store | `FUNC-graph-store` · `REQ-snapshot-drift-notice` |
 | `CR-GC-932` | done | graphcode liest die Definitionen der Elemente und Kanten aus contracts (ELEMENT_DEFINITIONS, TRACE_DEFINITIONS) | `FUNC-graph-help` |
 | `CR-GC-935` | done | init und upgrade binden einen Wissensindex in den Kontext des Agenten ein | `FUNC-harness-cli` |
+| `CR-GC-937` | done | Config: metricPolicy und focusThreshold dürfen fehlen | `FUNC-load-config` |
+| `CR-GC-938` | done | Skills: CR-Nummer, Status und Kanten über aise statt von Hand | `FUNC-se-conops` · `FUNC-se-fmea` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-trade` |
+| `CR-GC-939` | open | Skills an entschiedene Modellfragen angleichen | `FUNC-close-violations` · `FUNC-import-code` · `FUNC-se-generate` · `FUNC-se-top-level` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` |
+| `CR-GC-940` | open | Skills zählen und rechnen nicht selbst | `FUNC-close-violations` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-optimize` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-vorbereitung` |
+| `CR-GC-941` | open | Skill-Text zur Wiederherstellung geht am Gate vorbei | `FUNC-import-code` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

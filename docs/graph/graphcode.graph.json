@@ -4212,6 +4212,48 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-937",
+      "type": "CR",
+      "name": "Config: metricPolicy und focusThreshold dürfen fehlen",
+      "description": "docs/cr/done/CR-GC-937-config-metricpolicy-und-focusthreshold-d.md",
+      "status": "done"
+    },
+    {
+      "id": "CR-GC-938",
+      "type": "CR",
+      "name": "Skills: CR-Nummer, Status und Kanten über aise statt von Hand",
+      "description": "docs/cr/done/CR-GC-938-skills-cr-nummer-status-und-kanten-u-ber.md",
+      "status": "done"
+    },
+    {
+      "id": "CR-GC-939",
+      "type": "CR",
+      "name": "Skills an entschiedene Modellfragen angleichen",
+      "description": "docs/cr/open/CR-GC-939-skills-an-entschiedene-modellfragen-angl.md",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-940",
+      "type": "CR",
+      "name": "Skills zählen und rechnen nicht selbst",
+      "description": "docs/cr/open/CR-GC-940-skills-za-hlen-und-rechnen-nicht-selbst.md",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-941",
+      "type": "CR",
+      "name": "Skill-Text zur Wiederherstellung geht am Gate vorbei",
+      "description": "docs/cr/open/CR-GC-941-skill-text-zur-wiederherstellung-geht-am.md",
+      "status": "open"
+    },
+    {
+      "id": "CR-GC-942",
+      "type": "CR",
+      "name": "Skilltexte aus der FAQ ergänzen, Abgeschafftes streichen",
+      "description": "docs/cr/open/CR-GC-942-skilltexte-aus-der-faq-erga-nzen-abgesch.md",
+      "status": "open"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21380,6 +21422,121 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-937",
+      "target": "FUNC-load-config",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-938",
+      "target": "FUNC-se-conops",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-938",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-938",
+      "target": "FUNC-se-irr",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-938",
+      "target": "FUNC-se-laufzeit",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-938",
+      "target": "FUNC-se-optimize",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-938",
+      "target": "FUNC-se-plan",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-938",
+      "target": "FUNC-se-trade",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-939",
+      "target": "FUNC-close-violations",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-939",
+      "target": "FUNC-import-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-939",
+      "target": "FUNC-se-generate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-939",
+      "target": "FUNC-se-top-level",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-939",
+      "target": "FUNC-se-umbau",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-939",
+      "target": "FUNC-se-vorbereitung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-940",
+      "target": "FUNC-close-violations",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-940",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-940",
+      "target": "FUNC-se-generate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-940",
+      "target": "FUNC-se-optimize",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-940",
+      "target": "FUNC-se-review",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-940",
+      "target": "FUNC-se-status",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-940",
+      "target": "FUNC-se-vorbereitung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-941",
+      "target": "FUNC-import-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-942",
+      "target": "SCHEMA-skill-text",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -33116,5 +33273,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1172
+  "graphVersion": 1173
 }

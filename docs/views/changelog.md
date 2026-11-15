@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 540 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 546 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 540 CR · 382 done · 4 open.
+Total: 546 CR · 384 done · 8 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -602,3 +602,9 @@ Total: 540 CR · 382 done · 4 open.
 | `CR-GC-934` | n/a | Auslöser für graph_suggest vollständig festlegen |
 | `CR-GC-935` | done | init und upgrade binden einen Wissensindex in den Kontext des Agenten ein |
 | `CR-GC-936` | done | Wissensdatei: kein Pfad des Rechners in versionierter settings.json |
+| `CR-GC-937` | done | Config: metricPolicy und focusThreshold dürfen fehlen |
+| `CR-GC-938` | done | Skills: CR-Nummer, Status und Kanten über aise statt von Hand |
+| `CR-GC-939` | open | Skills an entschiedene Modellfragen angleichen |
+| `CR-GC-940` | open | Skills zählen und rechnen nicht selbst |
+| `CR-GC-941` | open | Skill-Text zur Wiederherstellung geht am Gate vorbei |
+| `CR-GC-942` | open | Skilltexte aus der FAQ ergänzen, Abgeschafftes streichen |
