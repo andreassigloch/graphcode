@@ -632,6 +632,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-939` | done | Skills an entschiedene Modellfragen angleichen | `FUNC-close-violations` · `FUNC-import-code` · `FUNC-se-generate` · `FUNC-se-top-level` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` |
 | `CR-GC-940` | done | Skills zählen und rechnen nicht selbst | `FUNC-close-violations` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-optimize` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-vorbereitung` |
 | `CR-GC-941` | open | Skill-Text zur Wiederherstellung geht am Gate vorbei | `FUNC-import-code` |
+| `CR-GC-943` | n/a | Verwendung von Regeln und Skills messen: Skill-Name am Zug, Ablehnungsquote und Feuerbild je Regel | `FUNC-audit-stats` · `FUNC-tool-context` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

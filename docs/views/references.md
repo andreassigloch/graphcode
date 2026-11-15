@@ -1533,6 +1533,8 @@
 | `CR-GC-940` | relation | `FUNC-se-vorbereitung` |
 | `CR-GC-941` | relation | `FUNC-import-code` |
 | `CR-GC-942` | relation | `SCHEMA-skill-text` |
+| `CR-GC-943` | relation | `FUNC-audit-stats` |
+| `CR-GC-943` | relation | `FUNC-tool-context` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** Vorschlag, vom Autor nicht freigegeben; umgesetzt ist nichts.
+**Status:** Freigegeben 2026-11-15 mit der Empfehlung; umgesetzt.
 
 ## Anlass
 
@@ -34,9 +34,9 @@ einem Skill, löst ein CR im Repo des Skills den Konflikt. Bis dahin folgt ein A
 
 ## Abnahme
 
-- [ ] Der Autor hat je Zeile entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen“.
-- [ ] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
-- [ ] `npm run verify:full <CR>` grün.
+- [x] Der Autor hat je Zeile entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen“.
+- [x] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
+- [x] `npm run verify:full <CR>` grün.
 
 ---
 
@@ -46,6 +46,7 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| Wie stellt `se:import-code` aus dem Backup wieder her? | `graph_reseed({ path: ".graphcode/backup/graph-<ts>.json" })`, danach `graph_export`; keine Handgriffe an Graph-Datei oder Store. | Keine; wendet die FAQ `aenderung-nur-durchs-gate` an (Skill Version 5). |
 
 ---
 
