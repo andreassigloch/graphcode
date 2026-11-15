@@ -1,18 +1,22 @@
 #!/usr/bin/env node
 /**
- * cr-messung.mjs — KPI 1 fuer jeden CR, der geschlossen wird, ohne dass jemand daran denkt (CR-GC-639).
+ * cr-messung.mjs — die Werkzeugnutzung je CR, der geschlossen wird, ohne dass jemand daran denkt (CR-GC-639).
  *
- * WARUM. Die Frage „fragt der Agent den Graphen, oder greppt er?" ist die Zusage dieses Repos, und
- * sie war nur gemessen, wenn jemand eine Retro machte oder ein bezahltes Rig fuhr. Hier wird sie nach
- * JEDEM CR-Abschluss gemessen — kostenlos, an echter Arbeit, mit echter Streuung. Der Preis ist die
- * fehlende Kontrollgruppe: die Reihe zeigt Verlaeufe (vorher/nachher `se-umbau`), keine Ursachen.
+ * WARUM. Die Frage „fuehrt der Graph den Agenten?" ist die Zusage dieses Repos, und sie war nur gemessen,
+ * wenn jemand eine Retro machte oder ein bezahltes Rig fuhr. Hier wird sie nach JEDEM CR-Abschluss
+ * gemessen — kostenlos, an echter Arbeit, mit echter Streuung. Der Preis ist die fehlende Kontrollgruppe:
+ * die Reihe zeigt Verlaeufe (vorher/nachher `se-umbau`), keine Ursachen.
+ *
+ * Die Groesse (CR-GC-948): `graph_impact` bei CRs mit Loeschung. Die Zeile traegt `loeschung` (hat ein
+ * Commit des CR Dateien geloescht?) und `impactBeiLoeschung` (rief die Sitzung `graph_impact`?). Das Verhaeltnis
+ * Graph gegen Grep (KPI 1) schreibt die Zeile nicht mehr; die Zaehler stehen weiter da.
  *
  * WIE.
  *   1. welche CRs schliesst der Commit? — Umbenennung open → done, oder Ankunft in done/
  *   2. welches Protokoll? — jede Claude-Code-Sitzung dieses Repos, die die CR-ID nennt
  *   3. welches Fenster? — ab der ersten Nennung der ID bis zum Ende (`fensterFuer`)
  *   4. gezaehlt wird in `retro-kpi.mjs` — EINE Zaehlung, keine zweite hier
- *   5. eine Zeile nach `.graphcode/cr-messung.jsonl` (lokal, Messdaten, nicht SSOT)
+ *   5. eine Zeile nach `.graphcode/cr-messung.jsonl` (lokal, Messdaten, nicht SSOT); `npm run messung` liest sie (T-E1)
  *
  * Laeuft als `post-commit` (scripts/githooks) und wirft NIE: eine Messung, die einen Commit
  * stoert, wird abgeschaltet, und dann misst sie nichts mehr.
@@ -28,7 +32,7 @@ import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statS
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { computeKpis, fensterFuer, leseProtokoll, werkzeugNutzung } from './retro-kpi.mjs';
+import { fensterFuer, leseProtokoll, werkzeugNutzung } from './retro-kpi.mjs';
 
 /** Wo Claude Code die Protokolle eines Repos ablegt: der Pfad mit `/` → `-`. */
 export function protokollVerzeichnis(repo) {
@@ -64,6 +68,16 @@ function geloeschteDateien(repo, crId) {
   } catch { return null; }
 }
 
+/**
+ * Die Groesse „graph_impact bei CRs mit Loeschung" fuer eine Zeile. `loeschung`: hat ein Commit des CR Dateien
+ * geloescht; `null`, wenn Git die Frage nicht beantwortete. `impactBeiLoeschung`: nur bei einer Loeschung eine
+ * Aussage (rief die Sitzung `graph_impact` im Fenster des CR), sonst `null`.
+ */
+export function loeschungsBefund(geloeschteDateien, impact) {
+  const loeschung = geloeschteDateien === null ? null : geloeschteDateien > 0;
+  return { loeschung, impactBeiLoeschung: loeschung ? impact > 0 : null };
+}
+
 /** Eine Zeile je (CR, Sitzung). Ohne Protokoll: eine Zeile, die das SAGT, statt zu schweigen. */
 export function miss(crId, { repo, protokolle, commit = null, jetzt = new Date() }) {
   const kandidaten = existsSync(protokolle)
@@ -73,13 +87,12 @@ export function miss(crId, { repo, protokolle, commit = null, jetzt = new Date()
         .filter((p) => readFileSync(p, 'utf8').includes(crId))
     : [];
   const basis = { cr: crId, commit, datum: jetzt.toISOString(), geloeschteDateien: geloeschteDateien(repo, crId) };
-  if (kandidaten.length === 0) return [{ ...basis, sitzung: null, grund: 'kein Protokoll nennt die CR-ID (kein Claude-Code-Lauf, oder aelter als 14 Tage)' }];
+  if (kandidaten.length === 0) return [{ ...basis, ...loeschungsBefund(basis.geloeschteDateien, 0), impactBeiLoeschung: null, sitzung: null, grund: 'kein Protokoll nennt die CR-ID (kein Claude-Code-Lauf, oder aelter als 14 Tage)' }];
 
   return kandidaten.map((p) => {
     const fenster = fensterFuer(leseProtokoll(p), crId);
     const n = werkzeugNutzung(fenster);
-    const kpi1 = computeKpis({ toolUsage: n, audit: {}, findings: {}, git: { netLoc: 0 }, plan: {}, binding: {} }).graphVsGrepRatio;
-    return { ...basis, sitzung: p.split('/').pop().replace('.jsonl', ''), fensterSaetze: fenster.length, ...n, kpi1 };
+    return { ...basis, ...loeschungsBefund(basis.geloeschteDateien, n.impact), sitzung: p.split('/').pop().replace('.jsonl', ''), fensterSaetze: fenster.length, ...n };
   });
 }
 
@@ -103,7 +116,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       for (const zeile of miss(id, { repo, protokolle, commit: sha })) {
         appendFileSync(join(repo, '.graphcode', 'cr-messung.jsonl'), JSON.stringify(zeile) + '\n');
         console.log(zeile.sitzung
-          ? `[cr-messung] ${id}: KPI 1 = ${zeile.kpi1} · ${zeile.graphReads} Graph-Lesen · ${zeile.grepGlobDocReads} Suchen · ${zeile.volllaeufe} Volllaeufe`
+          ? `[cr-messung] ${id}: ${zeile.graphReads} Graph-Lesen · ${zeile.grepGlobDocReads} Suchen · ${zeile.volllaeufe} Volllaeufe · Loeschung ${zeile.loeschung === null ? 'unbekannt' : zeile.loeschung ? `ja, graph_impact ${zeile.impactBeiLoeschung ? 'gerufen' : 'NICHT gerufen'}` : 'nein'}`
           : `[cr-messung] ${id}: ${zeile.grund}`);
       }
     }

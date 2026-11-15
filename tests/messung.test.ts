@@ -10,17 +10,20 @@
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { S1, WEITERE, regelMatrixAktuell, urteilT_H2, urteilT_O1, urteilT_M3, renderStand, medianAusLog } from '../scripts/messung.mjs';
+import { S1, ENTFALLEN, WEITERE, ZEILEN, regelMatrixAktuell, urteilT_H2, urteilT_O1, urteilT_M3, renderStand, medianAusLog } from '../scripts/messung.mjs';
+import { mitVorwert, parseStand, alsStand, kalenderwoche, wochenTabelle, crsMitLoeschung, wertLoeschung, wertDauer } from '../scripts/messung-stand.mjs';
 
-const zeile = (id: string) => ({ id, kriterium: 'k', wert: '1', urteil: 'bestanden', datum: '2026-09-27', stempel: 's' });
+const zeile = (id: string) => ({ id, nr: '—', kriterium: 'k', wert: '1', urteil: 'bestanden', datum: '2026-09-27', seit: '2026-09-27', vorwert: null as string | null, stempel: 's' });
 
 describe('messung: Runner-Kern', () => {
-  it('fuehrt genau die S1-Test-IDs der Leitlinie §9.4', () => {
+  it('fuehrt genau die S1-Test-IDs der Leitlinie §9.4, ohne die entfallenen (CR-GC-948)', () => {
     const leitlinie = readFileSync('docs/graphcode_leitlinie.md', 'utf8');
     const s1 = leitlinie.split('\n').find((z) => z.startsWith('| **S1 deterministisch**'));
     const ids = s1?.split('|').at(-2)?.match(/T-[A-Z]\d+/g) ?? [];
     expect(ids.length).toBeGreaterThan(5);
-    expect([...S1].sort()).toEqual([...ids].sort());
+    expect([...S1].sort()).toEqual(ids.filter((id) => !ENTFALLEN.includes(id)).sort());
+    expect(ENTFALLEN.every((id) => !S1.includes(id))).toBe(true);
+    expect([...ZEILEN].sort()).toEqual([...S1, ...WEITERE].sort());
   });
 
   it('wirft, wenn eine S1-Test-ID keine Zeile hat', () => {
@@ -99,5 +102,84 @@ describe('T-M3 (CR-GC-946): Fehler und Marken, die Befunde je Stufe als Wert', (
     const r = urteilT_M3([stand('a', 0, ['SRR', 'PDR'], 0, 1), stand('b', 0, ['SRR'], 0, 1)]);
     expect(r.urteil).toBe('nicht bestanden');
     expect(r.wert).toContain('PDR bei b');
+  });
+});
+
+describe('stand.md (CR-GC-948): Vorwert, seit wann, Wochentabelle', () => {
+  const lauf = (wert: string, datum: string) => ZEILEN.map((id) => ({ ...zeile(id), wert, datum, seit: datum }));
+
+  it('ein zweiter Lauf nennt je Groesse den Vorwert des ersten', () => {
+    const erster = mitVorwert(lauf('A', '2026-11-01'), null);
+    expect(erster.every((z: { vorwert: string | null }) => z.vorwert === null)).toBe(true);
+    // Der Weg ueber die Datei: stand.json des ersten Laufs ist die Eingabe des zweiten.
+    const vorher = parseStand(JSON.stringify(alsStand(erster, 'stempel')));
+    const zweiter = mitVorwert(lauf('B', '2026-11-08'), vorher);
+    for (const id of ZEILEN) expect(zweiter.find((z: { id: string }) => z.id === id)).toMatchObject({ vorwert: 'A', wert: 'B', seit: '2026-11-08' });
+  });
+
+  it('seit bleibt, solange Wert und Urteil gleich sind, und springt, wenn eines sich aendert', () => {
+    const vorher = parseStand(JSON.stringify(alsStand(mitVorwert(lauf('A', '2026-11-01'), null), 'stempel')));
+    const gleich = mitVorwert(lauf('A', '2026-11-08'), vorher);
+    expect(gleich[0]).toMatchObject({ vorwert: 'A', seit: '2026-11-01', datum: '2026-11-08' });
+    const anderesUrteil = mitVorwert(lauf('A', '2026-11-08').map((z) => ({ ...z, urteil: 'nicht bestanden' })), vorher);
+    expect(anderesUrteil[0].seit).toBe('2026-11-08');
+  });
+
+  it('eine neue Zeile hat keinen Vorwert, die alten behalten ihren', () => {
+    const vorher = parseStand(JSON.stringify(alsStand(mitVorwert(lauf('A', '2026-11-01').slice(1), null), 'stempel')));
+    const r = mitVorwert(lauf('B', '2026-11-08'), vorher);
+    expect(r[0].vorwert).toBeNull();
+    expect(r[1].vorwert).toBe('A');
+  });
+
+  it('stand.json mit unbekanntem Urteil wird nicht gelesen', () => {
+    const kaputt = JSON.stringify({ stempel: 's', zeilen: [{ ...zeile('T-H2'), urteil: 'nicht erhoben' }] });
+    expect(() => parseStand(kaputt)).toThrow();
+  });
+
+  it('die Datei traegt Vorwert und Wochentabelle, und kein „nicht erhoben"', () => {
+    const md = renderStand(mitVorwert(lauf('B', '2026-11-08'), parseStand(JSON.stringify(alsStand(mitVorwert(lauf('A', '2026-11-01'), null), 's')))), 'stempel',
+      [{ woche: '2026-W45', datum: '2026-11-08', stand: 'abc1234', marken: 'SRR PDR', ohnePlan: 7, plan: 40 }]);
+    expect(md).toContain('| Nr | Zeile | Kriterium | Wert | Vorwert | Seit |');
+    expect(md).toContain('| 2026-W45 | 2026-11-08 | abc1234 | SRR PDR | 7 | 40 |');
+    expect(md).not.toMatch(/nicht erhoben|679B/);
+  });
+
+  it('kalenderwoche: ISO-Zaehlung an den Jahresgrenzen', () => {
+    expect(kalenderwoche('2026-11-15')).toBe('2026-W46');
+    expect(kalenderwoche('2026-01-01')).toBe('2026-W01');
+    expect(kalenderwoche('2027-01-01')).toBe('2026-W53');
+    expect(kalenderwoche('2024-12-30')).toBe('2025-W01');
+  });
+
+  it('wochenTabelle: der letzte Stand je Woche, Plan getrennt, Marken benannt', () => {
+    const st = (ts: string, short: string, marks: string[], plan: number, rest: number) => ({
+      ts, short,
+      marks: ['SRR', 'PDR'].map((id) => ({ id, reached: marks.includes(id) })),
+      stages: [{ name: 'Modul', findings: rest }, { name: 'Test', findings: 1 }, { name: 'Plan', findings: plan }],
+    });
+    const t = wochenTabelle([
+      st('2026-11-10T09:00:00+01:00', 'b', ['SRR', 'PDR'], 30, 5),
+      st('2026-11-09T09:00:00+01:00', 'a', ['SRR'], 10, 9),
+      st('2026-11-16T09:00:00+01:00', 'c', ['SRR'], 0, 2),
+    ]);
+    expect(t).toEqual([
+      { woche: '2026-W46', datum: '2026-11-10', stand: 'b', marken: 'SRR PDR', ohnePlan: 6, plan: 30 },
+      { woche: '2026-W47', datum: '2026-11-16', stand: 'c', marken: 'SRR', ohnePlan: 3, plan: 0 },
+    ]);
+  });
+
+  it('Nr 12: je CR eine Aussage ueber alle Sitzungen; ohne Protokoll und ohne Loeschung zaehlt der CR nicht', () => {
+    const z = (cr: string, sitzung: string | null, geloescht: number, impact: number) => ({ cr, datum: '2026-11-0' + cr.slice(-1), sitzung, geloeschteDateien: geloescht, impact });
+    const rows = [z('CR-1', 'a', 2, 0), z('CR-1', 'b', 2, 3), z('CR-2', 'a', 1, 0), z('CR-3', 'a', 0, 5), z('CR-4', null, 4, 0)];
+    expect(crsMitLoeschung(rows).map((c: { cr: string; impact: boolean }) => [c.cr, c.impact])).toEqual([['CR-1', true], ['CR-2', false]]);
+    expect(wertLoeschung(rows)).toContain('1 von 2 CRs mit Löschung riefen graph_impact');
+    expect(wertLoeschung([])).toBe('kein CR mit Löschung im Protokoll');
+  });
+
+  it('Nr 9: eine Zeile der Spur VOLL gibt keine Dauer, denn Auswahl und Volllauf waeren dieselbe Zahl', () => {
+    const z = (cr: string, spur: string, a: number, v: number) => ({ cr, spur, dauer: { auswahlMs: a, vollMs: v } });
+    expect(wertDauer([z('CR-1', 'CODE', 100000, 300000), z('CR-2', 'VOLL', 300000, 300000)])).toBe('Auswahl 100 s gegen Volllauf 300 s, Rechenzeit (CR-1)');
+    expect(wertDauer([z('CR-2', 'VOLL', 300000, 300000)])).toBeNull();
   });
 });

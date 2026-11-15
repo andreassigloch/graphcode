@@ -44,6 +44,7 @@
     "verify:code": "node scripts/verify-code.mjs",
     "verify:full": "node scripts/verify-full.mjs",
     "messung": "node scripts/messung.mjs",
+    "version": "npm run messung && git add docs/messung/stand.md docs/messung/stand.json",
     "test:watch": "vitest",
     "lint": "eslint src",
     "type-check": "tsc -p tsconfig.tests.json",

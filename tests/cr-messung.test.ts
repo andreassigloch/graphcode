@@ -1,5 +1,5 @@
 /**
- * TEST-cr-messung (CR-GC-639) — KPI 1 wird nach jedem CR-Abschluss gemessen, ohne Zutun.
+ * TEST-cr-messung (CR-GC-639) — die Werkzeugnutzung (und graph_impact bei Loeschung) wird nach jedem CR-Abschluss gemessen, ohne Zutun.
  *
  * Echt, nicht gestellt: ein Temp-Repo, in dem ein CR per `git mv` nach done/ wandert, und ein
  * Temp-Verzeichnis mit einem Claude-Code-Protokoll, das die CR-ID nennt. Gefahren wird der
@@ -10,13 +10,13 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { geschlosseneCrs } from '../scripts/cr-messung.mjs';
+import { geschlosseneCrs, loeschungsBefund } from '../scripts/cr-messung.mjs';
 
 const SKRIPT = join(__dirname, '..', 'scripts', 'cr-messung.mjs');
 const git = (cwd: string, ...a: string[]) =>
   execFileSync('git', a, { cwd, encoding: 'utf8', env: { ...process.env, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t' } });
 
-describe('TEST-cr-messung: nach jedem CR-Abschluss eine Zeile KPI 1 (CR-GC-639)', () => {
+describe('TEST-cr-messung: nach jedem CR-Abschluss eine Zeile Werkzeugnutzung (CR-GC-639)', () => {
   let repo: string;
   let protokolle: string;
 
@@ -65,7 +65,7 @@ describe('TEST-cr-messung: nach jedem CR-Abschluss eine Zeile KPI 1 (CR-GC-639)'
     expect(geschlosseneCrs('M\tdocs/cr/done/CR-GC-900-etwas.md')).toEqual([]); // nachtragen auch nicht
   });
 
-  it('der Hook-Pfad schreibt EINE Zeile je Sitzung, die den CR nennt — mit KPI 1 und Umbau-Marke', () => {
+  it('der Hook-Pfad schreibt EINE Zeile je Sitzung, die den CR nennt — mit Loeschungsbefund', () => {
     execFileSync('node', [SKRIPT, '--commit', 'HEAD', '--repo', repo, '--protokolle', protokolle], { encoding: 'utf8' });
     const datei = join(repo, '.graphcode', 'cr-messung.jsonl');
     expect(existsSync(datei)).toBe(true);
@@ -77,7 +77,8 @@ describe('TEST-cr-messung: nach jedem CR-Abschluss eine Zeile KPI 1 (CR-GC-639)'
     expect(z.sitzung).toBe('sitzung-a');
     expect(z.graphReads).toBe(1);
     expect(z.grepGlobDocReads).toBe(1);
-    expect(z.kpi1).toBe(1);
+    expect(z).not.toHaveProperty('kpi1');             // das Verhaeltnis entfaellt (CR-GC-948)
+    expect(z).toMatchObject({ loeschung: true, impactBeiLoeschung: true, impact: 1 });
     expect(z.volllaeufe).toBe(1);
     expect(z.geloeschteDateien).toBe(1);               // alt.ts — ein Umbau, fuer die Auswertung
   });
@@ -90,8 +91,18 @@ describe('TEST-cr-messung: nach jedem CR-Abschluss eine Zeile KPI 1 (CR-GC-639)'
       const letzte = JSON.parse(zeilen.at(-1)!);
       expect(letzte.sitzung).toBeNull();
       expect(letzte.grund).toMatch(/kein Protokoll/);
+      expect(letzte).toMatchObject({ loeschung: true, impactBeiLoeschung: null }); // Loeschung ja, ueber den Aufruf sagt nichts etwas
     } finally {
       rmSync(leer, { recursive: true, force: true });
     }
+  });
+});
+
+describe('loeschungsBefund (CR-GC-948): graph_impact bei CRs mit Loeschung', () => {
+  it('nur bei einer Loeschung gibt es eine Aussage ueber den Aufruf', () => {
+    expect(loeschungsBefund(2, 0)).toEqual({ loeschung: true, impactBeiLoeschung: false });
+    expect(loeschungsBefund(2, 3)).toEqual({ loeschung: true, impactBeiLoeschung: true });
+    expect(loeschungsBefund(0, 5)).toEqual({ loeschung: false, impactBeiLoeschung: null });
+    expect(loeschungsBefund(null, 5)).toEqual({ loeschung: null, impactBeiLoeschung: null });
   });
 });

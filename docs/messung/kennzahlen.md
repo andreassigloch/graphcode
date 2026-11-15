@@ -1,9 +1,9 @@
 # Kennzahlen — was gerechnet wird, wo, und wer darauf handelt
 
 Die Leitlinie (`docs/graphcode_leitlinie.md`) trägt Claims, DoD und Testdefinitionen. Diese Datei
-trägt die **Mechanik**: die Definition jeder Kennzahl, ihre Rechenstelle und den, der darauf
-handelt. Den gemessenen Stand je Test-ID schreibt `npm run messung` nach [`stand.md`](stand.md).
-Erzählend: `docs/articles/07-the-scoring-landscape.md`.
+trägt die **Definition** jeder Größe: die Frage des Nutzers, die Rechenstelle, den, der handelt, und die Quelle
+des Verlaufs. Sie nennt keinen Messwert. Den gemessenen Wert, den Vorwert und den Stand je Woche
+schreibt `npm run messung` nach [`stand.md`](stand.md), je Release. Erzählend: `docs/articles/07-the-scoring-landscape.md`.
 
 **Grundsatz:** Für jede Zahl gilt **eine** Definition, **eine** Rechenstelle, **ein** Konsument, der
 darauf handelt. Wonach niemand handelt, ist keine Kennzahl und steht hier nicht.
@@ -14,43 +14,106 @@ Prompt), **Anzeige** — dazu die Stufe **Empfehlen** (Leitlinie §3), die als e
 
 ![Messgrößen-Landschaft: Quellen, Projektionen und wer darauf handelt](../articles/img/measurement-landscape.svg)
 
-## Steuergrößen
+## Die zwölf Größen
 
-| Größe | Rechenstelle | Skala / Nenner | Handelt darauf |
-|---|---|---|---|
-| Regelverstoß | `contracts/se`; `SE_DESCRIPTOR` = SE-Profil | Zählung, `error` blockend | **Gate** (blockt) · **Treiber** (Fundfenster je `rule_id` → Prompt) |
-| `completeness` | graphcode-client | covered/total über die **Element**-Population | **Gate** (offen solange < 1) |
-| Creation-Freshness | graphcode-client | vorhanden + aktuell | **Gate** |
-| `phase_readiness` | graphcode | Regel-IDs ohne offene Verstöße / alle des Gates | **Treiber** (`currentPhaseGate` → offenes Gate des Schritts) |
-| `dimension_readiness` (8) | se-steering | `1 − Verstöße / applicable`; `applicable` aus der **Domain-Deklaration je Regel** | **Treiber** (unter Fokus-Schwelle → Fokus; Δ = 1. Rangkriterium) |
-| `steeringDelta` | graphcode | Δ je Dimension, vor/nach Kandidat | **Treiber** (Rang 2 + 3) |
-| Steuerwert (`steer`, Chebyshev) | se-engine (`STEER_RULES`: RD-04, BW-02, R-04, CR-01, MT-02) | größte Überschreitung einer Steuerregel | **Treiber** (Rangkriterium nach der Zerstörungssperre, CR-GC-483) · Fertig-Kriterium |
-| Vorschläge (`graph_suggest`, `next`) | se-engine `suggestEdits` + `FIX_TEMPLATES`, Operatoren | je Befund ein Zug, am Gate geprobt | **Empfehlen** (Agent entscheidet; T-M5) |
-| Architecture Fitness ℝ⁶ | se-engine (`fitAdvisory`) | 6 Topologiewerte, ganzer Teilgraph | **Anzeige** — seit CR-GC-483 nur berichtet. Modellarchitektur ist **Nebenbedingung**, nicht Zielgröße (Leitlinie §5); das Vorzeichen ist nicht belegt (T-O4 No-Go) |
-| `moduleMetrics` je MOD | `contracts/se/metric-rules` | `[0,1]` / ℕ / `[0,1]`; `null` = nicht messbar | **Anzeige** (Ist gegen Zielwert) · speist MT-01/MT-02 |
-| Kettenkennzahlen je FCHAIN | `scripts/spike-kettenkennzahlen.mjs` (Spike) | acht Kennzahlen (Leitlinie §5), heute 5/8 rechenbar | **Anzeige** — noch kein Treiber; Realisierungsarchitektur wird nur an der FCHAIN bewertet (T-O1, T-O2) |
-| `functionCriticality` je FUNC | `contracts/se/function-criticality` | ℕ Ketten / ℕ Use Cases; `0` ist eine **Aussage**, kein fehlender Wert | **Anzeige** (Blast Radius, Kritikalität, Rollout); zweiter Abnehmer ist R-21s Infrastruktur-Ausnahme ab CR-SM-313 |
-| `compliance` | graphcode-client | Elemente ohne error / alle | **Anzeige** |
-| `intentCoverage` | graphcode | je Thema adressiert / nicht | **Treiber** (`isIntentTooThin`, Prompt-Kontext) |
-| Retro-KPIs | `scripts/retro-kpi.mjs`, `scripts/cr-messung.mjs` | s. unten | **Skill** `se-retro` · T-E1 in `stand.md` |
+Jede Größe beantwortet eine Frage des Nutzers. Der Verlauf kommt aus einer von vier Quellen:
 
-## Retro-KPIs — Standardauswertung nach einem Projekt (CR-GC-212)
+| Quelle | Wo sie liegt | Wie weit sie zurückreicht |
+|---|---|---|
+| Git-Historie | `docs/graph/*.graph.json`; `graph_readiness({verlauf: n})` rechnet jeden committeten Stand mit denselben Funktionen wie der Live-Stand (CR-GC-946) | jeder Commit, der den Graphen änderte |
+| Zeile je CR | `docs/messung/testauswahl.jsonl`, geschrieben von `npm run verify:full <CR>` (CR-GC-718, CR-GC-947) | jeder CR, der den Volllauf fuhr |
+| `audit_stats` | MCP-Werkzeug; Parameter `since` begrenzt das Fenster (CR-GC-943) | das Audit-Protokoll des Repos |
+| `.graphcode/cr-messung.jsonl` | lokal, nicht im Git; der Hook `post-commit` schreibt eine Zeile je CR und Sitzung | jeder CR, der auf dieser Maschine geschlossen wurde |
 
-Misst, ob der Graph tatsächlich benutzt wurde (nicht per grep umgangen) und ob das Gate die
-Qualität gehoben hat. KPI 1–6 rechnet `scripts/retro-kpi.mjs` (Logik in `tests/retro-kpi.test.ts`),
-aufgerufen über den Skill `se-retro`; KPI 7 `scripts/grenzmenge.mjs`, erhoben in `npm run messung` (T-V4); KPI 1 je CR zusätzlich automatisch nach jedem Commit
-(`scripts/cr-messung.mjs` → `.graphcode/cr-messung.jsonl`). Quellen: MCP (Audit- und Readiness-Werkzeuge),
-git und das Sitzungsprotokoll — nie ein zweiter DB-Handle.
+Jede Größe hat genau eine dieser Quellen.
 
-| KPI | Definition | Quelle | Kriterium |
-|---|---|---|---|
-| **1 Graph gegen Grep** | `graph_*`-Leseaufrufe ÷ (Grep + Glob + Doc-Read) im Fenster ab der CR-ID; Lesen von `docs/graph`, `docs/views`, `.graphcode` zählt als Suche | Sitzungsprotokoll | **keine Schwelle** (T-E1): jede Suche, die der Graph beantwortet hätte, ist als Potenzial ausgewiesen. Der Gewinn des Graphen ist Präzision, nicht Geschwindigkeit |
-| **2 Werkzeugnutzung** | Zahl der Aufrufe `graph_mutate` / `graph_impact` / `graph_expand` / `rules_evaluate` | `audit_trail`, Protokoll | — (Profil) |
-| **3 Tokens je Netto-LOC** | Tokens ÷ (eingefügt − gelöscht) | Protokoll + `git diff` | ↓ |
-| **4 Plantreue** | Zahl der CRs, die ihre `depends-on`-Reihenfolge verletzen | Graph + CR-Daten (`deriveImplPlan`, CR-GC-209) | **0** |
-| **5 Ablehnungsquote** | abgelehnte Züge ÷ alle Züge, getrennt **je Regel** und **je Skill**, im Verlauf | `audit_stats` (`byRule`, `bySkill`) | fällt je Skill; keine Regel lehnt dauerhaft ab |
-| **6 Bindung (Knoten)** | R-19 / R-20 (`testRefs` / `realRef`) zum Abschluss | `rules_evaluate` | **100 %** (T-V4: Bindungsquote) |
-| **7 Bindung (Grenzmenge)** | FUNC/SCHEMA, die eine MOD-Grenze kreuzen, im Modell ÷ Pflichtmenge | `scripts/grenzmenge.mjs` | **100 %** (T-V4). Alles unterhalb der Grenze bleibt Blackbox — „jede Datei im Modell" ist **kein** Ziel |
+### 1 · Marken SRR bis Bau
+
+- **Frage:** Wie reif ist mein Modell?
+- **Definition:** Eine Marke ist erreicht, wenn bis zu ihrer Stufe kein Fehler und kein offener Existenz-Befund bleibt. Hinweise halten keine Marke. Bau hält zusätzlich jede Warnung der Stufen 10 bis 12.
+- **Rechenstelle:** `computeMarks` in `@sigloch/graphcode-client`; Feld `marks` von `graph_readiness`.
+- **Wer handelt:** Anzeige. Den Übergang zur nächsten Stufe entscheidet der Autor.
+- **Verlauf:** Git-Historie.
+
+### 2 · Befunde je Stufe, Plan getrennt
+
+- **Frage:** Kommt die Arbeit voran?
+- **Definition:** Die Zahl offener Befunde je Stufe. Die Stufe Plan steht für sich: ihre Befunde wachsen mit der Arbeit am Modell und zählen nicht ins Urteil.
+- **Rechenstelle:** `countByStage` in `@sigloch/graphcode-client`; Feld `stages` von `graph_readiness`.
+- **Wer handelt:** Der Schreiber des Modells, Skill `se:close-violations`.
+- **Verlauf:** Git-Historie.
+
+### 3 · Steuerwert, Überschreitungen je Steuerregel
+
+- **Frage:** Wo ist der Schnitt am schlechtesten?
+- **Definition:** Der Steuerwert ist die größte Überschreitung einer Steuerregel (Chebyshev). Je Regel stehen die Zahl der Terme und die Zahl der Überschreitungen daneben. Steuerregeln: RD-04, BW-02, R-04, CR-01, MT-02.
+- **Rechenstelle:** `STEER_RULES` in se-engine; `takeSteeringSnapshot` und `steerSpaceOf` im Kernel; Feld `steer` von `graph_readiness`.
+- **Wer handelt:** Treiber (Rangkriterium nach der Zerstörungssperre, CR-GC-483) und Fertig-Kriterium.
+- **Verlauf:** Git-Historie, je Regel unter `steer.byRule`.
+
+### 4 · Testergebnis je Anforderung
+
+- **Frage:** Ist belegt, was gefordert ist?
+- **Definition:** Je Anforderung: alle Tests bestanden, ein Test rot, oder nie gelaufen. Ein Ergebnis gilt nur aus einem Lauf (`graph_test_ingest`).
+- **Rechenstelle:** `verificationReport`; dieselbe Rechnung wie `graph_test_report`.
+- **Wer handelt:** Der Schreiber des CR: rote und nie gelaufene Anforderungen.
+- **Verlauf:** Git-Historie.
+
+### 5 · Ketten bewertbar
+
+- **Frage:** Sind die Kettenanalysen möglich?
+- **Definition:** Bewertbare Ketten ÷ alle Ketten. Eine nicht bewertbare Kette zählt im Nenner mit und nennt statt einer Zahl den Grund (`answerPathBlockedBy`).
+- **Rechenstelle:** `chainMetrics` in `@sigloch/contracts/se`; Feld `measurability` von `graph_metrics`.
+- **Wer handelt:** Der Schreiber des Modells.
+- **Verlauf:** Git-Historie.
+
+### 6 · Schlupf, bereinigt
+
+- **Frage:** Spart der Graph Testzeit?
+- **Definition:** Schlupf ist ein roter Test im Volllauf, der außerhalb der Auswahl lag, die `verify:code` für dieselbe Änderung trifft. Bereinigt: Dateien, die im Link-Modus erwartet rot sind, zählen nicht (Feld `umgebung`). Gelesen wird die Folge der CRs der Spur CODE ohne Schlupf; bei `SCHLUPF_SCHWELLE` Folgegliedern entfällt der Volllauf je CR.
+- **Rechenstelle:** `schlupfVon` und `schlupfFreieFolge` in `src/projections/test-schlupf.ts`; geschrieben von `scripts/verify-full.mjs`.
+- **Wer handelt:** Der Autor: er entscheidet über den Wegfall des Volllaufs je CR.
+- **Verlauf:** Zeile je CR.
+
+### 7 · Bindung der Blackbox- und Schnittstellen-Tests
+
+- **Frage:** Trägt die Zusage hinter der Auswahl?
+- **Definition:** Tests der Blackboxen und ihrer Schnittstellen mit Laufadresse (`testRefs`) ÷ alle diese Tests. Was innerhalb einer Blackbox läuft, kennt die Blackbox selbst; in der Auswahl ist das der direkte Import. Kriterium: 100 % (`CLAUDE.md`, Abschnitt Test discipline).
+- **Rechenstelle:** `blackboxBindung` in `src/projections/test-schlupf.ts`; die Zeile nennt die offenen Tests unter `zusage.*.offen`.
+- **Wer handelt:** Der Schreiber des CR: er bindet die offenen Tests.
+- **Verlauf:** Zeile je CR.
+
+### 8 · Grenzmenge
+
+- **Frage:** Passt das Modell zum Code?
+- **Definition:** FUNC und SCHEMA, die eine MOD-Grenze kreuzen, im Modell ÷ Pflichtmenge. Untergrenze, keine Gleichheit: Was unterhalb der Grenze bleibt, ist Blackbox; „jede Datei im Modell" ist kein Ziel. Kriterium: 100 % (T-V4).
+- **Rechenstelle:** `messeGrenzmenge` in `scripts/grenzmenge.mjs`.
+- **Wer handelt:** Der Schreiber des CR: er modelliert die fehlenden Symbole.
+- **Verlauf:** Zeile je CR (Feld `grenzmenge`). Den Stand je Release nennt `stand.md` in der Zeile T-V4.
+
+### 9 · Dauer Auswahl gegen Volllauf
+
+- **Frage:** Spart der Graph Testzeit?
+- **Definition:** Laufzeit je Testdatei, summiert, für die Dateien der Auswahl und für alle. Parallele Dateien addieren sich: die Summe ist Rechenzeit, nicht Wanduhrzeit.
+- **Rechenstelle:** `dauerVon` in `src/projections/test-schlupf.ts`.
+- **Wer handelt:** Der Autor, zusammen mit Größe 6.
+- **Verlauf:** Zeile je CR (Feld `dauer`).
+
+### 10 · Werkzeuglatenz
+
+- **Frage:** Ist das Werkzeug schnell genug?
+- **Definition:** Median der Runde „lesen → Status → Vorschlag → Anwenden" an einer festen Eingabe. Das lebende Modell wächst; eine Schwelle darauf wäre eine Schwelle auf das Modellwachstum. Kriterium: unter 200 ms (T-E8).
+- **Rechenstelle:** `tests/perf.advisory-roundtrip.spike.test.ts`; `scripts/messung.mjs` liest den Messpunkt `fixed`.
+- **Wer handelt:** Der Autor des Hosts.
+- **Verlauf:** `stand.md`, je Release; die Git-Historie der Datei trägt die Reihe.
+
+### 11 · Ablehnungsquote je Regel und je Skill, Feuerbild je Regel
+
+- **Frage:** Helfen Regeln und Skills?
+- **Definition:** Abgelehnte Züge ÷ alle Züge, getrennt je Regel (`byRule`) und je Skill (`bySkill`). Das Feuerbild nennt je Regel `evaluatedIn` (Züge, in denen die Regel lief) und `firedIn` (Züge mit einem Fund). Die Lesart steht unten.
+- **Rechenstelle:** `audit_stats` (CR-GC-943).
+- **Wer handelt:** Der Autor der Regel (contracts) oder der Autor des Skills, je nach Bild.
+- **Verlauf:** `audit_stats` mit `since`.
 
 **Was die Ablehnungsquote sagt.** Sie misst die Güte von Regeln und Skills, nicht die des Modells. Für beide
 gilt dieselbe Lesart, und nur die getrennte Zahl trägt sie:
@@ -80,6 +143,45 @@ ergibt das den Verlauf. Die Messung urteilt nicht; die Lesart steht hier:
 
 „Nie" gilt für ein Repo. Ob eine Regel überall stumm ist, zeigt erst derselbe Blick über mehrere Repos.
 `evaluatedIn` ist `null`, sobald ein Zug des Fensters keine bestandenen Regeln führt (Züge vor CR-GC-314).
+
+### 12 · `graph_impact` bei CRs mit Löschung
+
+- **Frage:** Führt der Graph den Agenten?
+- **Definition:** Je CR: Hat ein Commit mit der CR-ID Dateien gelöscht (`loeschung`)? Wenn ja: Rief die Sitzung im Fenster des CR `graph_impact` (`impactBeiLoeschung`)? Das Kriterium aus T-C3 lautet „vor dem Löschzug"; gemessen wird der Aufruf im Fenster, nicht seine Reihenfolge. Das Fenster beginnt mit der ersten Nennung der CR-ID im Sitzungsprotokoll und endet mit dem Abschluss des CR. Ohne Protokoll steht `impactBeiLoeschung: null`.
+- **Rechenstelle:** `scripts/cr-messung.mjs` (Hook `post-commit`); die Zählung steht in `werkzeugNutzung` in `scripts/retro-kpi.mjs`.
+- **Wer handelt:** Der Autor des Skills `se-umbau`.
+- **Verlauf:** `.graphcode/cr-messung.jsonl`. Die Zeile T-E1 in `stand.md` fasst die jüngsten CRs mit Löschung zusammen.
+
+## Weitere Rechengrößen — Gate, Treiber, Anzeige
+
+Diese Größen beantworten keine Frage des Nutzers allein; sie speisen Gate, Treiber oder Anzeige.
+
+| Größe | Rechenstelle | Skala / Nenner | Handelt darauf |
+|---|---|---|---|
+| Regelverstoß | `contracts/se`; `SE_DESCRIPTOR` = SE-Profil | Zählung, `error` blockend | **Gate** (blockt) · **Treiber** (Fundfenster je `rule_id` → Prompt) |
+| Creation-Freshness | graphcode-client | vorhanden + aktuell | **Gate** |
+| `steeringDelta` | graphcode | Δ je Dimension, vor/nach Kandidat | **Treiber** (Rang 2 + 3) |
+| Vorschläge (`graph_suggest`, `next`) | se-engine `suggestEdits` + `FIX_TEMPLATES`, Operatoren | je Befund ein Zug, am Gate geprobt | **Empfehlen** (Agent entscheidet; T-M5) |
+| Architecture Fitness ℝ⁶ | se-engine (`fitAdvisory`) | 6 Topologiewerte, ganzer Teilgraph | **Anzeige** — seit CR-GC-483 nur berichtet. Modellarchitektur ist **Nebenbedingung**, nicht Zielgröße (Leitlinie §5); das Vorzeichen ist nicht belegt (T-O4 No-Go) |
+| `moduleMetrics` je MOD | `contracts/se/metric-rules` | `[0,1]` / ℕ / `[0,1]`; `null` = nicht messbar | **Anzeige** (Ist gegen Zielwert) · speist MT-01/MT-02 |
+| Kettenkennzahlen je FCHAIN | `scripts/spike-kettenkennzahlen.mjs` (Spike) | acht Kennzahlen (Leitlinie §5) | **Anzeige** — noch kein Treiber; Realisierungsarchitektur wird nur an der FCHAIN bewertet (T-O1, T-O2) |
+| `functionCriticality` je FUNC | `contracts/se/function-criticality` | ℕ Ketten / ℕ Use Cases; `0` ist eine **Aussage**, kein fehlender Wert | **Anzeige** (Blast Radius, Kritikalität, Rollout); zweiter Abnehmer ist R-21s Infrastruktur-Ausnahme ab CR-SM-313 |
+| `intentCoverage` | graphcode | je Thema adressiert / nicht | **Treiber** (`isIntentTooThin`, Prompt-Kontext) |
+
+## Retro-KPIs — Standardauswertung nach einem Projekt (CR-GC-212)
+
+Misst, ob der Graph tatsächlich benutzt wurde (nicht per grep umgangen) und ob das Gate die
+Qualität gehoben hat. Die KPIs rechnet `scripts/retro-kpi.mjs` (Logik in `tests/retro-kpi.test.ts`),
+aufgerufen über den Skill `se-retro`. Quellen: MCP (Audit- und Readiness-Werkzeuge),
+git und das Sitzungsprotokoll — nie ein zweiter DB-Handle. Die Nummern sind die des Skripts; die Ablehnungsquote
+ist Größe 11, die Grenzmenge Größe 8, `graph_impact` bei Löschung Größe 12.
+
+| KPI | Definition | Quelle | Kriterium |
+|---|---|---|---|
+| **2 Werkzeugnutzung** | Zahl der Aufrufe `graph_mutate` / `graph_impact` / `graph_expand` / `rules_evaluate` | `audit_trail`, Protokoll | — (Profil) |
+| **3 Tokens je Netto-LOC** | Tokens ÷ (eingefügt − gelöscht) | Protokoll + `git diff` | ↓ |
+| **4 Plantreue** | Zahl der CRs, die ihre `depends-on`-Reihenfolge verletzen | Graph + CR-Daten (`deriveImplPlan`, CR-GC-209) | **0** |
+| **6 Bindung (Knoten)** | R-19 / R-20 (`testRefs` / `realRef`) zum Abschluss | `rules_evaluate` | **100 %** (T-V4: Bindungsquote) |
 
 **Warum Bindung zweimal.** R-19/R-20 sind Regeln je Element: sie prüfen die Knoten, die es gibt, und
 sehen nicht, was nie modelliert wurde. Am eigenen Repo lasen sie 0 Befunde (KPI 6 = 100 %), während
@@ -121,12 +223,8 @@ Beide liegen in `graphcode.config.jsonc`, getrennt ausgewiesen. `null` heißt au
 „messen, nicht urteilen" — und ist auf Ebene 1 der Weg, einen unbelegten Startwert loszuwerden,
 ohne die Zahl zu verlieren. Jede Schwelle verlässt den Host **mit** der Größe, über die sie urteilt.
 
-## Drei Sätze, die das Diagramm nicht zeigt
+## Ein Satz, den das Diagramm nicht zeigt
 
-- **Regeln sehen keine Abwesenheit.** Eine Regel je Element feuert bei null Elementen null mal —
-  `completeness` ist die einzige Projektion, die „fehlt komplett" messen kann.
-- **`dimension_readiness` ist keine zweite Achse zu den Verstößen**, sondern deren thematische
-  Verdichtung. Unabhängig davon sind nur `moduleMetrics` und die Topologie (ℝ⁶).
 - **Zwei Wörter „Kohäsion":** `cohesion` (LCOM4) misst Kanten innerhalb der *erklärten* Modulgrenze
   (in flow-geführten Architekturen nahe 0 → bewusst schwellenlos), ℝ⁶-coherence misst
   *algorithmisch gefundene* Cluster. Zwei Fragen, ein Wort.
@@ -144,6 +242,6 @@ werden gerechnet und von nichts gelesen — kein Gate, kein Treiber, keine Anzei
 aimprove-Prompt-Scorers. Entweder bekommt eine davon einen handelnden Konsumenten, oder sie fällt
 (CR-SM-233 · CR-SM-235 · CR-GC-329).
 
-Zusammengeführt aus `docs/KPI.md` und `docs/MESSGROESSEN.md` (CR-GC-680).
+Zusammengeführt aus `docs/KPI.md` und `docs/MESSGROESSEN.md` (CR-GC-680); getrennt von `stand.md` mit CR-GC-948.
 
 @author andreas@siglochconsulting
