@@ -1509,6 +1509,7 @@
 | `CR-GC-931` | relation | `FUNC-graph-store` |
 | `CR-GC-931` | relation | `REQ-snapshot-drift-notice` |
 | `CR-GC-932` | relation | `FUNC-graph-help` |
+| `CR-GC-935` | relation | `FUNC-harness-cli` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

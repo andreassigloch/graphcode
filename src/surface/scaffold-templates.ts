@@ -17,6 +17,7 @@
 import { join } from 'node:path';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { readPackageVersion, packageRootDir } from '../kernel/package-version.js';
+import { KNOWLEDGE_HOOK, withKnowledgeHooks, withKnowledgeInstruction } from './wissensdatei.js';
 
 /** The distribution package a member repo depends on. */
 export const PACKAGE_NAME = '@sigloch/graphcode';
@@ -233,8 +234,9 @@ export function packagedSettingsPath(): string {
 export function shippedHookFiles(): string[] {
   const dir = packagedHooksDir();
   if (!existsSync(dir)) return [];
+  // Der Wissens-Hook gehoert nicht zu jedem Repo: nur mit `knowledgeFile` (CR-GC-935).
   return readdirSync(dir)
-    .filter((f) => f.endsWith('.sh'))
+    .filter((f) => f.endsWith('.sh') && f !== KNOWLEDGE_HOOK)
     .sort();
 }
 
@@ -269,7 +271,7 @@ export function isGraphcodeHookEntry(entry: HookEntry): boolean {
  * hooks — and every other settings key — are preserved; graphcode's entries are stripped then
  * re-appended at the end, so the result is deterministic and a re-run is byte-identical (idempotent).
  */
-export function mergedSettingsContent(existingRaw: string | null): string {
+export function mergedSettingsContent(existingRaw: string | null, knowledgePath: string | null = null): string {
   const existing: SettingsShape = existingRaw ? (JSON.parse(existingRaw) as SettingsShape) : {};
   const hooks = existing.hooks && typeof existing.hooks === 'object' ? existing.hooks : {};
   const nextHooks: Record<string, unknown> = { ...hooks };
@@ -278,7 +280,10 @@ export function mergedSettingsContent(existingRaw: string | null): string {
     const userOwned = current.filter((e) => !isGraphcodeHookEntry(e));
     nextHooks[event] = [...userOwned, ...shipped];
   }
-  const merged: SettingsShape = { ...existing, hooks: nextHooks as SettingsShape['hooks'] };
+  const merged: SettingsShape = {
+    ...existing,
+    hooks: withKnowledgeHooks(nextHooks, knowledgePath) as SettingsShape['hooks'],
+  };
   return JSON.stringify(merged, null, 2) + '\n';
 }
 
@@ -387,13 +392,20 @@ export function mcpConfigContent(repoRoot: string, existingRaw: string | null): 
  * MERGES like `mcpConfigContent`: a user's `provider` / `model` / `permission` keys and
  * any other MCP server survive; only `mcp.graphcode` is ours.
  */
-export function opencodeConfigContent(repoRoot: string, existingRaw: string | null): string {
+export function opencodeConfigContent(
+  repoRoot: string,
+  existingRaw: string | null,
+  knowledge: { path: string | null; previous: string | null } = { path: null, previous: null },
+): string {
   const existing = parseHostConfig(existingRaw);
+  const { instructions: _alt, ...rest } = existing;
+  const instructions = withKnowledgeInstruction(existing.instructions, knowledge.previous, knowledge.path);
   const mcp = objectAt(existing, 'mcp');
   const port = keptHostPort(mcp) ?? deriveHostPort(repoRoot);
   const merged = {
     $schema: 'https://opencode.ai/config.json',
-    ...existing,
+    ...rest,
+    ...(instructions ? { instructions } : {}),
     mcp: {
       ...mcp,
       graphcode: {
@@ -420,6 +432,7 @@ export function opencodeConfigContent(repoRoot: string, existingRaw: string | nu
 export function hostConfigWithoutGraphcode(
   existingRaw: string,
   serversKey: 'mcpServers' | 'mcp',
+  knowledgePath: string | null = null,
 ): string | null {
   const existing = parseHostConfig(existingRaw);
   const servers = { ...objectAt(existing, serversKey) };
@@ -427,6 +440,11 @@ export function hostConfigWithoutGraphcode(
   const next: Record<string, unknown> = { ...existing };
   if (Object.keys(servers).length > 0) next[serversKey] = servers;
   else delete next[serversKey];
+  if (serversKey === 'mcp' && knowledgePath) {
+    const instructions = withKnowledgeInstruction(next.instructions, knowledgePath, null);
+    if (instructions) next.instructions = instructions;
+    else delete next.instructions;
+  }
   // `$schema` alone is not user content — it is what WE wrote into opencode.json.
   const meaningful = Object.keys(next).filter((k) => k !== '$schema');
   if (meaningful.length === 0) return null;

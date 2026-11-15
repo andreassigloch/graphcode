@@ -79,6 +79,7 @@ import {
 } from './scaffold-templates.js';
 import { guardrailsContent, steeringContent } from './scaffold-docs.js';
 import { policyNachziehen } from './config-nachziehen.js';
+import { KNOWLEDGE_HOOK, knowledgePathOf, knowledgePathOfSettings } from './wissensdatei.js';
 import { CONFIG_FILENAME } from '../kernel/config.js';
 
 
@@ -221,10 +222,11 @@ function removeHostConfig(
   rel: string,
   serversKey: 'mcpServers' | 'mcp',
   res: InstallResult,
+  knowledgePath: string | null = null,
 ): void {
   if (!existsSync(abs)) return;
   const existingRaw = readFileSync(abs, 'utf8');
-  const next = hostConfigWithoutGraphcode(existingRaw, serversKey);
+  const next = hostConfigWithoutGraphcode(existingRaw, serversKey, knowledgePath);
   if (next === null) {
     removeArtifact(abs, rel, res);
     return;
@@ -474,12 +476,15 @@ function removeOpencodePlugin(repoRoot: string, res: InstallResult): void {
  * and register them in `.claude/settings.json` (CR-GC-214). Idempotent (byte-identical
  * re-write = `preserved`). Without this, consumer-repo agents have no read/write enforcement.
  */
-function installHooks(repoRoot: string, res: InstallResult): void {
+function installHooks(repoRoot: string, res: InstallResult, knowledgePath: string | null): void {
   const srcDir = packagedHooksDir();
   const files = shippedHookFiles();
   if (files.length === 0) return; // hooks not packaged — substrate still installs.
   const destDir = join(repoRoot, HOOKS_DIR);
   mkdirSync(destDir, { recursive: true });
+  // CR-GC-935: der Wissens-Hook liegt nur im Repo, wenn `knowledgeFile` gesetzt ist.
+  if (knowledgePath) files.push(KNOWLEDGE_HOOK);
+  else removeArtifact(join(destDir, KNOWLEDGE_HOOK), join(HOOKS_DIR, KNOWLEDGE_HOOK), res);
   for (const f of files) {
     const content = readFileSync(join(srcDir, f), 'utf8');
     writeArtifact(join(destDir, f), join(HOOKS_DIR, f), content, res);
@@ -487,7 +492,7 @@ function installHooks(repoRoot: string, res: InstallResult): void {
   // Register, merging so a member's own hooks + other settings keys survive.
   const abs = join(repoRoot, SETTINGS_FILE);
   const existingRaw = existsSync(abs) ? readFileSync(abs, 'utf8') : null;
-  writeArtifact(abs, SETTINGS_FILE, mergedSettingsContent(existingRaw), res);
+  writeArtifact(abs, SETTINGS_FILE, mergedSettingsContent(existingRaw, knowledgePath), res);
 }
 
 /**
@@ -528,7 +533,7 @@ function removeHooks(repoRoot: string, res: InstallResult): void {
   // Then the hook files.
   const destDir = join(repoRoot, HOOKS_DIR);
   if (existsSync(destDir)) {
-    for (const f of shippedHookFiles()) {
+    for (const f of [...shippedHookFiles(), KNOWLEDGE_HOOK]) {
       removeArtifact(join(destDir, f), join(HOOKS_DIR, f), res);
     }
     if (readdirSync(destDir).length === 0) {
@@ -579,6 +584,12 @@ export async function scaffold(
   const opencodeAbs = join(repoRoot, OPENCODE_CONFIG);
   const guardrailsAbs = join(repoRoot, GUARDRAILS_FILE);
   const steeringAbs = join(repoRoot, STEERING_FILE);
+  // CR-GC-935: Wissensdatei aus der Config; der bisher eingebundene Pfad steht in settings.json.
+  const settingsRaw = readIfExists(join(repoRoot, SETTINGS_FILE));
+  const knowledge = {
+    path: action === 'remove' ? null : knowledgePathOf(repoRoot),
+    previous: knowledgePathOfSettings(settingsRaw),
+  };
 
   switch (action) {
     case 'init': {
@@ -594,7 +605,7 @@ export async function scaffold(
       writeArtifact(
         opencodeAbs,
         OPENCODE_CONFIG,
-        opencodeConfigContent(repoRoot, readIfExists(opencodeAbs)),
+        opencodeConfigContent(repoRoot, readIfExists(opencodeAbs), knowledge),
         res,
       );
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
@@ -603,7 +614,7 @@ export async function scaffold(
       writeArtifact(steeringAbs, STEERING_FILE, steeringContent(), res);
       installSkills(repoRoot, res);
       installOpencodePlugin(repoRoot, res);
-      installHooks(repoRoot, res);
+      installHooks(repoRoot, res, knowledge.path);
       registerDependency(repoRoot, res);
       return res;
     }
@@ -622,7 +633,7 @@ export async function scaffold(
       writeArtifact(
         opencodeAbs,
         OPENCODE_CONFIG,
-        opencodeConfigContent(repoRoot, readIfExists(opencodeAbs)),
+        opencodeConfigContent(repoRoot, readIfExists(opencodeAbs), knowledge),
         res,
       );
       writeArtifact(guardrailsAbs, GUARDRAILS_FILE, guardrailsContent(), res);
@@ -631,7 +642,7 @@ export async function scaffold(
       writeArtifact(steeringAbs, STEERING_FILE, steeringContent(), res);
       installSkills(repoRoot, res);
       installOpencodePlugin(repoRoot, res);
-      installHooks(repoRoot, res);
+      installHooks(repoRoot, res, knowledge.path);
       registerDependency(repoRoot, res);
       // CR-GC-915: ein neues Pflichtfeld der Metrik-Policy wuerde den Host am Start brechen.
       for (const feld of policyNachziehen(repoRoot)) res.updated.push(`${CONFIG_FILENAME}#metricPolicy.${feld}`);
@@ -644,7 +655,7 @@ export async function scaffold(
       // MCP server in `.mcp.json` / a `provider` block in `opencode.json` is not ours.
       removeArtifact(graphcodeAbs, GRAPHCODE_DIR + '/', res);
       removeHostConfig(mcpAbs, MCP_CONFIG, 'mcpServers', res);
-      removeHostConfig(opencodeAbs, OPENCODE_CONFIG, 'mcp', res);
+      removeHostConfig(opencodeAbs, OPENCODE_CONFIG, 'mcp', res, knowledge.previous);
       removeArtifact(guardrailsAbs, GUARDRAILS_FILE, res);
       removeArtifact(steeringAbs, STEERING_FILE, res);
       removeOpencodePlugin(repoRoot, res);

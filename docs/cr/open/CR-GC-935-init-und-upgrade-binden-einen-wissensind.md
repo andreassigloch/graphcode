@@ -41,10 +41,10 @@ Die Datei gehört nicht zu graphcode; graphcode kennt nur ihren Pfad.
 
 ## Abnahme
 
-- [ ] Test zuerst rot: `init` mit Schlüssel schreibt Hook, Eintrag und `instructions`; ohne Schlüssel nichts.
-- [ ] `upgrade` nach Entfernen des Schlüssels entfernt die Einbindung; fremde Hooks und Einstellungen bleiben.
-- [ ] Hook mit zu großer und mit fehlender Datei: ein Satz, kein abgeschnittener Text.
-- [ ] Probe an einer echten Sitzung von Claude Code (Hauptsitzung und Unteragent) und von OpenCode: Der Agent
+- [x] Test zuerst rot: `init` mit Schlüssel schreibt Hook, Eintrag und `instructions`; ohne Schlüssel nichts.
+- [x] `upgrade` nach Entfernen des Schlüssels entfernt die Einbindung; fremde Hooks und Einstellungen bleiben.
+- [x] Hook mit zu großer und mit fehlender Datei: ein Satz, kein abgeschnittener Text.
+- [x] Probe an einer echten Sitzung von Claude Code (Hauptsitzung und Unteragent) und von OpenCode: Der Agent
       nennt ohne Werkzeugaufruf eine Zeile der Datei.
 - [ ] `npm run verify:full CR-GC-935` grün.
 
@@ -56,6 +56,11 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| Wo liegt der Schlüssel? | `knowledgeFile` in `graphcode.config.jsonc`, im Schema `GraphcodeConfigSchema` in `src/kernel/config.ts` (graphcode, nicht contracts). Optional. | Das Schema der Datei ist lokal; nur `metricPolicy` kommt aus contracts. |
+| Pfad in den Hosts | graphcode löst `~` auf und schreibt den absoluten Pfad in Hook-Befehl und `instructions`. | OpenCode löst `~` nicht auf (Probe: Antwort KEINE); ein absoluter Pfad außerhalb des Repos kommt an. |
+| Woher kennt graphcode den früheren Pfad? | Aus dem Argument des Hook-Eintrags in `.claude/settings.json`. | `instructions` hat keinen Marker; ohne früheren Pfad bliebe die Zeile nach Entfernen des Schlüssels stehen. Fehlt `settings.json`, bleibt sie. |
+| Hook-Ausgabe | JSON mit `hookSpecificOutput.additionalContext`; bis 10 000 Zeichen ganz, sonst ein Satz. | Claude Code kürzt darüber auf eine Vorschau von 2 000 Zeichen. |
+| Drift-Prüfung | `upgrade --check` meldet eine fehlende Einbindung nicht als Drift. | Offen, nicht Teil dieses CR. |
 
 ---
 

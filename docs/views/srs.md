@@ -16474,7 +16474,7 @@ verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/claude-md.tools
 
 graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112)
 
-verify ▶ `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`
+verify ▶ `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`, `tests/knowledge-binding.test.ts`
 
 #### 3.4.20  `TEST-code-conformance` — Graph-code conformance test
 

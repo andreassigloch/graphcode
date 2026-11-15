@@ -48,6 +48,8 @@ export const GraphcodeConfigSchema = z.object({
   metricPolicy: MetricPolicySchema,
   /** Schwelle, unter der eine Readiness-Dimension als zu schwach gilt. */
   focusThreshold: z.number().min(0).max(1),
+  /** Pfad einer Wissensdatei, die `init`/`upgrade` in den Kontext des Agenten einbinden (CR-GC-935). `~` erlaubt. */
+  knowledgeFile: z.string().min(1).optional(),
 });
 
 export type GraphcodeConfig = z.infer<typeof GraphcodeConfigSchema>;
