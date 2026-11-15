@@ -22,21 +22,15 @@ import { fileURLToPath } from 'node:url';
 import { leseSchlupfZeilen, schlupfFreieFolge, SCHLUPF_SCHWELLE } from '../dist/projections/test-schlupf.js';
 import {
   parseStand, mitVorwert, alsStand, wochenTabelle, renderStand as renderStandDatei,
-  wertSteuer, wertTests, wertKetten, wertSchlupf, wertZusage, wertDauer, wertLoeschung,
+  wertSteuer, wertTests, wertKetten, wertSchlupf, wertZusage, wertDauer, zeileLoeschung,
 } from './messung-stand.mjs';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const STAND = join(REPO, 'docs', 'messung', 'stand.md');
 export const STAND_JSON = join(REPO, 'docs', 'messung', 'stand.json');
 
-/** Die S1-Test-IDs aus Leitlinie §9.4 — `tests/messung.test.ts` haelt die Liste gleich (ohne `ENTFALLEN`). */
+/** Die S1-Test-IDs aus Leitlinie §9.4 — `tests/messung.test.ts` haelt die Liste gleich. */
 export const S1 = ['T-V2', 'T-V4', 'T-M3', 'T-M4', 'T-E1', 'T-E2', 'T-E8', 'T-H2'];
-
-/**
- * S1-Tests der Leitlinie, die dieser Lauf nicht fuehrt (CR-GC-948): T-V1 (die Quelle liegt in graphanalyze und
- * gibt nur Prosa aus), T-O4 und T-O6 (einmalige Versuche, ihr Ergebnis steht in ihren CRs).
- */
-export const ENTFALLEN = ['T-V1', 'T-O4', 'T-O6'];
 
 /**
  * Zeilen im Messstand, die die Leitlinie §9.4 (noch) nicht in der S1-Zeile fuehrt: T-O1 (CR-GC-767) und
@@ -215,10 +209,8 @@ async function erhebe() {
 
   // T-E1 (Nr 12): graph_impact bei CRs mit Loeschung, aus der Dauermessung (post-commit, lokal).
   const jsonl = join(REPO, '.graphcode', 'cr-messung.jsonl');
-  if (!existsSync(jsonl)) throw new Error('messung T-E1: keine `.graphcode/cr-messung.jsonl` — die Dauermessung (post-commit) schreibt sie lokal');
-  const crZeilen = readFileSync(jsonl, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
-  zeile('T-E1', '`graph_impact` bei CRs mit Löschung aufgerufen (keine Schwelle)', wertLoeschung(crZeilen), 'ohne Schwelle',
-    { datum: crZeilen.at(-1).datum.slice(0, 10), stempel: `commit ${crZeilen.at(-1).commit}` });
+  const e1 = zeileLoeschung(existsSync(jsonl) ? readFileSync(jsonl, 'utf8') : null);
+  zeile('T-E1', '`graph_impact` bei CRs mit Löschung aufgerufen (keine Schwelle)', e1.wert, 'ohne Schwelle', e1.extra);
 
   // T-E2: die Whitebox gegen die tatsächlich geänderten Knoten der jüngsten CR-Commits (scripts/whitebox-messung.mjs).
   const { whiteboxMessung } = await import(join(REPO, 'scripts', 'whitebox-messung.mjs'));

@@ -198,3 +198,17 @@ export function wertLoeschung(zeilen, fenster = 20) {
   const mit = crs.filter((c) => c.impact);
   return `${mit.length} von ${crs.length} CRs mit Löschung riefen graph_impact (jüngste ${crs.length}; zuletzt ${crs.at(-1).cr}: ${crs.at(-1).impact ? 'ja' : 'nein'})`;
 }
+
+/**
+ * Die Zeile T-E1 aus dem Inhalt von `.graphcode/cr-messung.jsonl` (CR-GC-951). Das Protokoll ist lokal und
+ * nicht versioniert: fehlt es oder ist es leer (frischer Klon, CI), ist der Wert „nicht gemessen" mit Grund,
+ * kein Abbruch und keine Zahl.
+ */
+export function zeileLoeschung(inhalt) {
+  const zeilen = (inhalt ?? '').split('\n').filter((l) => l.trim() !== '').map((l) => JSON.parse(l));
+  if (zeilen.length === 0) {
+    return { wert: 'nicht gemessen: das lokale Protokoll `.graphcode/cr-messung.jsonl` fehlt oder ist leer', extra: { stempel: 'keine Messung' } };
+  }
+  const letzte = zeilen.at(-1);
+  return { wert: wertLoeschung(zeilen), extra: { datum: letzte.datum.slice(0, 10), stempel: `commit ${letzte.commit}` } };
+}

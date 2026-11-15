@@ -11,8 +11,8 @@ der Fassung vom 2026-10-08 im privaten Repo graphanalyze (`docs/archive/leitlini
 **Übergeordnetes Ziel:** Gute Architektur erzeugt guten Code durch MBSE.
 
 **Lesart:** Jeder Abschnitt nennt, auf welchen Teil des Kern-Claims er einzahlt, und endet mit
-einer **Definition of Done (DoD)**. Die DoD verweist auf Tests `T-…`; deren Aufbau, Kriterium und
-heutiger Stand stehen gesammelt in §9.
+einer **Definition of Done (DoD)**. Die DoD verweist auf Tests `T-…`; deren Aufbau und Kriterium
+stehen gesammelt in §9, ihr Stand in `docs/messung/stand.md`.
 
 ---
 
@@ -285,7 +285,7 @@ Tests aus §9 stehen auf „bestanden" oder tragen eine benannte Ausnahme.
 ### 9.1 Gemeinsame Regeln
 
 Jeder Test nennt: **Frage** · **Aufbau** (Rig, Skript oder Unit-Test) · **Kriterium** (bestanden,
-wenn …) · **Stand** (letzte Messung mit Datum, eine ehrliche Zahl) · **Demo** (ein Befehl oder eine Szene am
+wenn …) · **Demo** (ein Befehl oder eine Szene am
 Demo-Projekt, an der ein Außenstehender den Claim sieht). Ein Test ohne Demo ist nachgewiesen, aber nicht
 vorführbar — für die DoD zählt er als offen (§1). Alle Schwellen sind vom Autor bestätigt.
 
@@ -326,34 +326,36 @@ Graph-Turns, kleinerer Dauerkontext, weniger Reparaturschleifen im Code.
 
 ### 9.3 Tests
 
+Den Stand der S1-Tests nennt `docs/messung/stand.md`, erzeugt von `npm run messung`.
+
 #### Verstehen (§2)
 
-| Test | Frage | Aufbau | Kriterium | Stand |
-|---|---|---|---|---|
-| **T-V1** Blackbox-Breite | Hat jede Ebene 7 ± 2 Kinder? | `rules_evaluate` RD-04/RD-05, Band 3–9 | 0 Befunde auf allen Ebenen | graphcode: 5 Befunde RD-04 (2026-10-15) |
-| **T-V2** Vertragsrand | Ist der Rand jeder Blackbox schmal? | BW-02, R-04, CR-01; `scripts/randbreiten.mjs` | 0 Befunde über Schwelle | nicht bestanden: BW-02 14, R-04 6, CR-01 13 (2026-10-15) |
-| **T-V3** Vier Fragen | Ist jede der vier Fragen beantwortet? | `graph_readiness`: Stufen und Marken; im Rig am Nachbau aus dem Audit | die Marken SRR, PDR, CDR und TRR sind erreicht | graphcode: SRR ja, PDR nein (2026-10-15) |
-| **T-V4** Kopplung Modell ↔ Code | Ist das Modell zu 100 % gekoppelt, ohne ein Abbild des ganzen Codes zu sein? | RC-01…RC-09, R-19/R-20/R-26/R-32; `scripts/grenzmenge.mjs` | Marke Bau erreicht, Bindungsquote 100 %, Grenzmenge 100 % modelliert | nicht bestanden: gedriftet, Bindung 114/115, Grenzmenge FUNC 15/63 (2026-10-05) |
-| **T-V5** Struktur gegen die Referenz | Trägt ein Greenfield-Lauf alle Ebenen, die die Referenz trägt? | graphanalyze `auswertung/verhalten.mjs` (`struktur`) | kein tragendes Muster des Golden fehlt in allen Läufen; Wirkketten mit genau einer FUNC ≤ 20 % | nicht bestanden: 23 von 43 Ketten mit einer FUNC (2026-09-27) |
+| Test | Frage | Aufbau | Kriterium |
+|---|---|---|---|
+| **T-V1** Blackbox-Breite | Hat jede Ebene 7 ± 2 Kinder? | `rules_evaluate` RD-04/RD-05, Band 3–9 | 0 Befunde auf allen Ebenen |
+| **T-V2** Vertragsrand | Ist der Rand jeder Blackbox schmal? | BW-02, R-04, CR-01; `scripts/randbreiten.mjs` | 0 Befunde über Schwelle |
+| **T-V3** Vier Fragen | Ist jede der vier Fragen beantwortet? | `graph_readiness`: Stufen und Marken; im Rig am Nachbau aus dem Audit | die Marken SRR, PDR, CDR und TRR sind erreicht |
+| **T-V4** Kopplung Modell ↔ Code | Ist das Modell zu 100 % gekoppelt, ohne ein Abbild des ganzen Codes zu sein? | RC-01…RC-09, R-19/R-20/R-26/R-32; `scripts/grenzmenge.mjs` | Marke Bau erreicht, Bindungsquote 100 %, Grenzmenge 100 % modelliert |
+| **T-V5** Struktur gegen die Referenz | Trägt ein Greenfield-Lauf alle Ebenen, die die Referenz trägt? | graphanalyze `auswertung/verhalten.mjs` (`struktur`) | kein tragendes Muster des Golden fehlt in allen Läufen; Wirkketten mit genau einer FUNC ≤ 20 % |
 
 #### Nachweis (§2)
 
-| Test | Frage | Aufbau | Kriterium | Stand |
-|---|---|---|---|---|
-| **T-N1** Dokumentanteil der Normen | Welche Norm-Anforderungen sind dokument-belegbar, und deckt graphcode sie? | [`SPIKE-GC-norm-dokumentanteil-RESULTS`](spikes/SPIKE-GC-norm-dokumentanteil-RESULTS.md) | jede der 10 Anforderungsklassen ist `ja` oder als Lücke benannt | 3 von 10 ja, 6 teilweise, 1 nein (2026-09-26) |
-| **T-N2** Nachweis deterministisch | Werden Traceability und Konsistenz aus dem Modell geprüft statt behauptet? | R-18, R-02/R-05/UC-01/R-21, R-19/R-20, RC-01…09, `graph_test_ingest` | RTM und VCRM ohne Lücke; Bindung 100 %; Ergebnisse aus echten Läufen | 137 von 158 TEST gebunden; die Spuren CODE und VOLL melden ihre Ergebnisse zurück, eine Änderung nimmt das alte Ergebnis zurück (CR-GC-799, CR-GC-800) (2026-10-15) |
-| **T-N3** Gegenprobe freies Frontier-Modell | Kann ein frei laufendes Modell dieselben Nachweise erbringen? | freier Arm mit Auftrag RTM und VCRM, per `se:import-doc` gegen dieselben Regeln | Traceability und Konsistenz sind aus seinen Artefakten deterministisch prüfbar | nicht gemessen |
+| Test | Frage | Aufbau | Kriterium |
+|---|---|---|---|
+| **T-N1** Dokumentanteil der Normen | Welche Norm-Anforderungen sind dokument-belegbar, und deckt graphcode sie? | [`SPIKE-GC-norm-dokumentanteil-RESULTS`](spikes/SPIKE-GC-norm-dokumentanteil-RESULTS.md) | jede der 10 Anforderungsklassen ist `ja` oder als Lücke benannt |
+| **T-N2** Nachweis deterministisch | Werden Traceability und Konsistenz aus dem Modell geprüft statt behauptet? | R-18, R-02/R-05/UC-01/R-21, R-19/R-20, RC-01…09, `graph_test_ingest` | RTM und VCRM ohne Lücke; Bindung 100 %; Ergebnisse aus echten Läufen |
+| **T-N3** Gegenprobe freies Frontier-Modell | Kann ein frei laufendes Modell dieselben Nachweise erbringen? | freier Arm mit Auftrag RTM und VCRM, per `se:import-doc` gegen dieselben Regeln | Traceability und Konsistenz sind aus seinen Artefakten deterministisch prüfbar |
 
 #### Managen (§3)
 
-| Test | Frage | Aufbau | Kriterium | Stand |
-|---|---|---|---|---|
-| **T-M1** Unterbinden | Hält das Gate jeden Verstoß aus der DB? | Gate-Unit-Tests; Replay eines Fremdlaufs gegen das Audit | kein blockierender Verstoß in der DB; kein Zug meldet `E=0`, während der Graph Errors trägt | nicht bestanden: 5 von 76 Regeln blocken (2026-10-08) |
-| **T-M2** Steuern im Lauf | Konvergiert ein Greenfield-Lauf zur implementierungsreifen Spezifikation? | Rig in graphanalyze, Stufe `modellieren` | Ablehnungen fallen; Marken SRR und PDR erreicht; Steuerwert ≤ 1 | todo: SRR und PDR in 7 von 7 Läufen je Arm; Steuerwert nicht im Datensatz (2026-10-06) |
-| **T-M3** Steuern über die Historie | Sinken die Verstöße je Element, während das Modell wächst? | `scripts/spike-nachweis-history.mjs` | Verstöße je Element fallen monoton im Trend | GO: 0,954 → 0,039 (2026-08-25) |
-| **T-M4** Kausalität | Wirkt ein verschobenes Budget der Policy auf das Gate-Urteil? | `tests/steering.steer-causality.test.ts` | 12/12 Prüfungen grün, 3 Rotkontrollen schlagen an | bestanden (2026-10-05) |
-| **T-M5** Empfehlen | Erreichen Empfehlungen den Nutzer und sind sie anwendbar? | Audit der Aufrufe `graph_suggest`; graphanalyze `auswertung/schatten-suggest.mjs`; `vorschlag` je Zug im Rig | ≥ 1 angewandte Empfehlung je Lauf; jede Steuerregel hat Vorschlagssatz und Fix-Vorlage | nicht bestanden: keine Fix-Vorlage für die 5 Steuerregeln (2026-10-03) |
-| **T-M6** Reihenfolge blockt nie | Darf der Nutzer Ebenen überspringen? | Gate-Test: MOD/FUNC ohne UC anlegen | Verdict ≠ `error`, Warnungen erlaubt | nicht erhoben |
+| Test | Frage | Aufbau | Kriterium |
+|---|---|---|---|
+| **T-M1** Unterbinden | Hält das Gate jeden Verstoß aus der DB? | Gate-Unit-Tests; Replay eines Fremdlaufs gegen das Audit | kein blockierender Verstoß in der DB; kein Zug meldet `E=0`, während der Graph Errors trägt |
+| **T-M2** Steuern im Lauf | Konvergiert ein Greenfield-Lauf zur implementierungsreifen Spezifikation? | Rig in graphanalyze, Stufe `modellieren` | Ablehnungen fallen; Marken SRR und PDR erreicht; Steuerwert ≤ 1 |
+| **T-M3** Steuern über die Historie | Kommt die Arbeit am Modell voran? | Verlauf aus `graph_readiness` | Fehler bleiben 0; eine erreichte Marke fällt nicht zurück; die Befunde je Stufe ohne Plan fallen oder sind abgenommen |
+| **T-M4** Kausalität | Wirkt ein verschobenes Budget der Policy auf das Gate-Urteil? | `tests/steering.steer-causality.test.ts` | 12/12 Prüfungen grün, 3 Rotkontrollen schlagen an |
+| **T-M5** Empfehlen | Erreichen Empfehlungen den Nutzer und sind sie anwendbar? | Audit der Aufrufe `graph_suggest`; graphanalyze `auswertung/schatten-suggest.mjs`; `vorschlag` je Zug im Rig | ≥ 1 angewandte Empfehlung je Lauf; jede Steuerregel hat Vorschlagssatz und Fix-Vorlage |
+| **T-M6** Reihenfolge blockt nie | Darf der Nutzer Ebenen überspringen? | Gate-Test: MOD/FUNC ohne UC anlegen | Verdict ≠ `error`, Warnungen erlaubt |
 
 #### Effizienz (§4)
 
@@ -361,61 +363,61 @@ Graph-Turns, kleinerer Dauerkontext, weniger Reparaturschleifen im Code.
 keine allein: Menge (Elemente), Qualität (Blindurteil, T-E10), Kosten (Turns und Wiederlesen, §9.2). Die
 Readiness trennt die Arme nicht.
 
-| Test | Frage | Aufbau | Kriterium | Stand |
-|---|---|---|---|---|
-| **T-E1** Graph statt Grep | Wo sucht der Agent im Dateisystem, obwohl der Graph die Antwort hätte? | `scripts/retro-kpi.mjs` je CR: Graph-Leseaufrufe gegen Suchoperationen | jede Suche, die der Graph beantwortet hätte, ist als Potenzial ausgewiesen | KPI 1 Median 0,29 über 20 CRs (2026-10-05) |
-| **T-E2** Whitebox-Kontext | Enthält die Whitebox, was sich tatsächlich ändert? | `scripts/whitebox-messung.mjs`, Ground Truth aus dem git-Diff | 100 % der geänderten Knoten in W bei \|W\|/\|G\| ≤ 0,05 | nicht bestanden: 4 von 7 Jobs (2026-10-05) |
-| **T-E3** Lokal ≈ Frontier (Modell) | Nivelliert der Graph den Modellunterschied beim interaktiven Modellieren? | Rig in graphanalyze: Nutzer-Simulator, Arme `lokal` (qwen3.8, OpenCode) und `frontier` (Opus, Claude Code), Stufe `modellieren` | in dieser Rangfolge: **1.** jeder lokale Lauf erreicht das Ziel der Stufe · **2.** das Blindurteil trennt die Arme nicht · **3.** Zeit bis zum Ziel als Faktor lokal zu Frontier; Faktor 2 gilt als sehr gut, keine Bestehensschwelle | todo, je 7 Läufe (2026-10-06): 1 erfüllt (7 von 7) · 2 erfüllt · 3 Faktor 2,6 |
-| **T-E4** Lokal ≈ Frontier (Code) | Dasselbe bis zum Code? | Rig in graphanalyze, Stufe `bauen`, beide Arme | Rangfolge wie T-E3; Ziel der Stufe ist die Marke Bau | kein ausgewerteter Lauf |
-| **T-E5** Normalisierte Effizienz | Ist die geführte Lieferung billiger als die freie? | Faustregel §9.2; kein Aufbau | `K_geführt ≤ K_frei` bei gleicher Abnahme | ≈ 3,5× teurer (2026-09-23, n = 1) |
-| **T-E6** Kipppunkt des Kontexts | Ab welcher Kürzung fällt die Ausbeute? | Rig, ≥ 3 Stufen der Promptgröße; Prompt-Bilanz der ersten Anfrage | Kurve mit dem Punkt, an dem Menge oder Qualität die Streuung verlässt | keine Kurve, nur Einzelpunkte |
-| **T-E7** Testauswahl | Sagt der Graph, welche Tests laufen müssen? | `graph_tests` / `impactedTests()`; `scripts/test-selection-audit.mjs` | direkt gekoppelte Tests vollständig getroffen | Trefferquote 13 % (2026-08-21) |
-| **T-E8** Werkzeuglatenz | Ist der Graph schnell genug für die Schleife? | `tests/perf.advisory-roundtrip.spike.test.ts` | Runde lesen → Status → Vorschlag → Anwenden < 200 ms | nicht bestanden: Median 4041 ms bei 2000 Knoten (2026-10-05) |
-| **T-E9** Bedarf je Aufruf | Was wollte das Modell — hatte es das schon, oder hätte der Graph es geliefert? | kein Aufbau: der Treiber speichert den rohen Strom je Zug nicht | jeder vermeidbare Aufruf ist mit Grund und Kosten ausgewiesen | zuletzt 0,40 $ von 8,15 $ vermeidbar (2026-09-23) |
-| **T-E10** Auftragstreue (Blindurteil) | Deckt die Spec den Auftrag, ohne offene Werte zu erfinden? | graphanalyze `auswertung/blindurteil.mjs`: anonyme Spec, ein Gutachter je Spec, Raster der Aufgabe | lokaler Arm in der Spanne des Frontier-Arms; 0 erfundene Werte bei den offenen Punkten | todo (2026-10-06): erfüllte Punkte lokal 9–11, Frontier 11 von 11 |
-| **T-E11** Arbeitsweise | Referenziert das Modell den Bestand, statt ihn neu zu schreiben? | graphanalyze `auswertung/verhalten.mjs` | Dubletten ≤ 5 % der Elemente; neu angelegter Bestand fällt über die Runden | nicht bestanden: 125 Dubletten in 9 Läufen (2026-09-27, qwen3-coder) |
-| **T-E12** Schnittgröße je Modell | Welche Paketgröße trägt ein Modell? | Paket-Werkzeug und Planer (Konzept Arbeitspakete) | je Modell die größte Stufe, deren Abnahmequote in der Streuung der kleinsten liegt | nicht gefahren: Paket-Werkzeug fehlt |
+| Test | Frage | Aufbau | Kriterium |
+|---|---|---|---|
+| **T-E1** Graph statt Grep | Wo sucht der Agent im Dateisystem, obwohl der Graph die Antwort hätte? | `scripts/retro-kpi.mjs` je CR: Graph-Leseaufrufe gegen Suchoperationen | jede Suche, die der Graph beantwortet hätte, ist als Potenzial ausgewiesen |
+| **T-E2** Whitebox-Kontext | Enthält die Whitebox, was sich tatsächlich ändert? | `scripts/whitebox-messung.mjs`, Ground Truth aus dem git-Diff | 100 % der geänderten Knoten in W bei \|W\|/\|G\| ≤ 0,05 |
+| **T-E3** Lokal ≈ Frontier (Modell) | Nivelliert der Graph den Modellunterschied beim interaktiven Modellieren? | Rig in graphanalyze: Nutzer-Simulator, Arme `lokal` (qwen3.8, OpenCode) und `frontier` (Opus, Claude Code), Stufe `modellieren` | in dieser Rangfolge: **1.** jeder lokale Lauf erreicht das Ziel der Stufe · **2.** das Blindurteil trennt die Arme nicht · **3.** Zeit bis zum Ziel als Faktor lokal zu Frontier; Faktor 2 gilt als sehr gut, keine Bestehensschwelle |
+| **T-E4** Lokal ≈ Frontier (Code) | Dasselbe bis zum Code? | Rig in graphanalyze, Stufe `bauen`, beide Arme | Rangfolge wie T-E3; Ziel der Stufe ist die Marke Bau |
+| **T-E5** Normalisierte Effizienz | Ist die geführte Lieferung billiger als die freie? | Faustregel §9.2; kein Aufbau | `K_geführt ≤ K_frei` bei gleicher Abnahme |
+| **T-E6** Kipppunkt des Kontexts | Ab welcher Kürzung fällt die Ausbeute? | Rig, ≥ 3 Stufen der Promptgröße; Prompt-Bilanz der ersten Anfrage | Kurve mit dem Punkt, an dem Menge oder Qualität die Streuung verlässt |
+| **T-E7** Testauswahl | Sagt der Graph, welche Tests laufen müssen? | `graph_tests` / `impactedTests()`; `scripts/test-selection-audit.mjs` | direkt gekoppelte Tests vollständig getroffen |
+| **T-E8** Werkzeuglatenz | Ist der Graph schnell genug für die Schleife? | `tests/perf.advisory-roundtrip.spike.test.ts` | Runde lesen → Status → Vorschlag → Anwenden < 200 ms |
+| **T-E9** Bedarf je Aufruf | Was wollte das Modell — hatte es das schon, oder hätte der Graph es geliefert? | kein Aufbau: der Treiber speichert den rohen Strom je Zug nicht | jeder vermeidbare Aufruf ist mit Grund und Kosten ausgewiesen |
+| **T-E10** Auftragstreue (Blindurteil) | Deckt die Spec den Auftrag, ohne offene Werte zu erfinden? | graphanalyze `auswertung/blindurteil.mjs`: anonyme Spec, ein Gutachter je Spec, Raster der Aufgabe | lokaler Arm in der Spanne des Frontier-Arms; 0 erfundene Werte bei den offenen Punkten |
+| **T-E11** Arbeitsweise | Referenziert das Modell den Bestand, statt ihn neu zu schreiben? | graphanalyze `auswertung/verhalten.mjs` | Dubletten ≤ 5 % der Elemente; neu angelegter Bestand fällt über die Runden |
+| **T-E12** Schnittgröße je Modell | Welche Paketgröße trägt ein Modell? | Paket-Werkzeug und Planer (Konzept Arbeitspakete) | je Modell die größte Stufe, deren Abnahmequote in der Streuung der kleinsten liegt |
 
 #### Optimieren (§5)
 
-| Test | Frage | Aufbau | Kriterium | Stand |
-|---|---|---|---|---|
-| **T-O1** Kettenkennzahlen | Lassen sich die acht Kennzahlen deterministisch richtig rechnen? | `graph_metrics` (`chains`, Rechnung in contracts); `scripts/spike-kettenkennzahlen.mjs`, Referenzkette „Zahlung auslösen" | Referenzkette reproduziert; ≥ 90 % der Ketten auswertbar | nicht bestanden: 6 von 8 Kennzahlen in `chainMetrics` (synchrone Tiefe und Fehlerpfad-Tiefe leer), Referenzkette reproduziert; graphcode 24 von 25 Ketten bewertbar (2026-10-15) |
-| **T-O2** Profil auf der Kette | Wird jede profilierte FCHAIN bewertet und diagnostiziert? | NFR-REQ an FCHAIN; Antwortweg aus `graph_metrics` (`answerPath`, CR-SM-408); Skill `se-laufzeit` (CR-GC-783) | 100 % der profilierten FCHAINs bewertet; jede Verletzung mit treibendem Knoten | nicht bestanden: Antwortweg und Skill gebaut, das Merkmal synchron oder asynchron ist an den Flüssen von graphcode gesetzt (CR-GC-789, CR-GC-793); Antwortweg lesbar an 7 von 24 Ketten. Die Bewertung gegen Profil-NFR mit Diagnose fehlt (2026-10-15) |
-| **T-O3** Degradationsschutz | Hält ein Optimierungszug die Invarianten? | Skill `se:optimize` Version 3: Trockenlauf durchs Gate, Kennzahlen davor und danach (`metricsAfter`, CR-GC-785, CR-GC-790); Prognose im CR | jede REQ behält `satisfy`; Schwellen halten; Prognose erfüllt | nicht bestanden: die Vorlage davor und danach ist gebaut; ob ein angewandter Zug seine Prognose hält, prüft nichts. Von Hand an drei Fällen mit neun Entwürfen: die Invarianten hielten, eine Rangfolge aus Kennzahlen ordnete gegen das Blindurteil (2026-10-12) |
-| **T-O4** Vorzeichen der Architekturkennzahl | Rankt die Kennzahl bekannt bessere Zustände höher? | `scripts/known-answer-set.mjs`; graphanalyze `rig/moneyflow-struktur` | Known-Answer-Set richtig gerankt | No-Go: moneyflow 5,33 > graphcode 5,24 |
-| **T-O5** Umbauzüge | Verbessert ein Umbauzug den Schnitt messbar? | `tests/arch.optimization-dry-run.spike.test.ts` | Modularität Q und Innenanteil steigen | Verschieben No-Go, Verträge konsolidieren GO (2026-08-26) |
-| **T-O6** Parallele Pfade finden | Findet das System Duplikate zum Zusammenlegen? | `scripts/spike-nd-known-answer.mjs`, `scripts/spike-engpass-known-answer.mjs` | ≥ 6 von 7 bekannten Paaren gefunden | Ähnlichkeit 0/7, Engpass auf Dateiebene 6/7 (2026-09-24) |
-| **T-O7** Inhaltliche Analysen | Sind IRR/FMEA gelaufen und in Modell und Code wirksam? | Skills `se-irr`, `se-fmea`; Prüfliste im Rig | jeder Befund als REQ/TEST oder benannte Ausnahme; Risiken als Prüffragen am Code | FMEA an allen Ketten von graphcode (CR-GC-795, CR-GC-798, CR-GC-802), Sicht `docs/views/fmea.md` (CR-GC-801): 19 Risiken, 8 mit hoher Priorität, 8 verifiziert, 2 Gegenmaßnahmen ohne Funktion (2026-10-12). IRR und Risiken als Prüffragen am Code: nicht gelaufen |
-| **T-O8** Güte des Modells | Ist das Modell vor der Analyse vorbereitet? | Bewertbarkeit und Träger je Risiko aus `graph_metrics` (CR-SM-407); Skill `se-vorbereitung` (CR-GC-784); offene Kette hält PDR (CR-SM-409) | 100 % der Ketten bewertbar; jedes Risiko hat einen Träger; Träger ist eine Funktion oder die Gegenmaßnahme ist als quer geltend benannt | nicht bestanden: graphcode 24 von 25 Ketten bewertbar, 15 von 19 Risiken mit Träger, jeder Träger eine Funktion, Fläche 14 Funktionen (nach CR-GC-797, CR-GC-803, CR-GC-805; 2026-10-15). Ohne Träger: 2 Risiken bewusst ohne Gegenmaßnahme, 2 mit fehlender Funktion |
+| Test | Frage | Aufbau | Kriterium |
+|---|---|---|---|
+| **T-O1** Kettenkennzahlen | Lassen sich die acht Kennzahlen deterministisch richtig rechnen? | `graph_metrics` (`chains`, Rechnung in contracts); `scripts/spike-kettenkennzahlen.mjs`, Referenzkette „Zahlung auslösen" | Referenzkette reproduziert; ≥ 90 % der Ketten auswertbar |
+| **T-O2** Profil auf der Kette | Wird jede profilierte FCHAIN bewertet und diagnostiziert? | NFR-REQ an FCHAIN; Antwortweg aus `graph_metrics` (`answerPath`, CR-SM-408); Skill `se-laufzeit` (CR-GC-783) | 100 % der profilierten FCHAINs bewertet; jede Verletzung mit treibendem Knoten |
+| **T-O3** Degradationsschutz | Hält ein Optimierungszug die Invarianten? | Skill `se:optimize` Version 3: Trockenlauf durchs Gate, Kennzahlen davor und danach (`metricsAfter`, CR-GC-785, CR-GC-790); Prognose im CR | jede REQ behält `satisfy`; Schwellen halten; Prognose erfüllt |
+| **T-O4** Vorzeichen der Architekturkennzahl | Rankt die Kennzahl bekannt bessere Zustände höher? | `scripts/known-answer-set.mjs`; graphanalyze `rig/moneyflow-struktur` | Known-Answer-Set richtig gerankt |
+| **T-O5** Umbauzüge | Verbessert ein Umbauzug den Schnitt messbar? | `tests/arch.optimization-dry-run.spike.test.ts` | Modularität Q und Innenanteil steigen |
+| **T-O6** Parallele Pfade finden | Findet das System Duplikate zum Zusammenlegen? | `scripts/spike-nd-known-answer.mjs`, `scripts/spike-engpass-known-answer.mjs` | ≥ 6 von 7 bekannten Paaren gefunden |
+| **T-O7** Inhaltliche Analysen | Sind IRR/FMEA gelaufen und in Modell und Code wirksam? | Skills `se-irr`, `se-fmea`; Prüfliste im Rig | jeder Befund als REQ/TEST oder benannte Ausnahme; Risiken als Prüffragen am Code |
+| **T-O8** Güte des Modells | Ist das Modell vor der Analyse vorbereitet? | Bewertbarkeit und Träger je Risiko aus `graph_metrics` (CR-SM-407); Skill `se-vorbereitung` (CR-GC-784); offene Kette hält PDR (CR-SM-409) | 100 % der Ketten bewertbar; jedes Risiko hat einen Träger; Träger ist eine Funktion oder die Gegenmaßnahme ist als quer geltend benannt |
 
 #### Code (§6)
 
-| Test | Frage | Aufbau | Kriterium | Stand |
-|---|---|---|---|---|
-| **T-C1** Geführt gegen frei | Baut geführtes Claude Code besseren Code als freies? | kein Aufbau | Abnahme geführt ≥ frei; Schnitt nach Kennzahl **und** Durchsicht besser; geführt `kongruent` | zuletzt 15/15 in beiden Armen, der freie Arm mit dem besseren Modulschnitt (2026-09-23) |
-| **T-C2** Greenfield bis Code | Endet ein Lauf in gebundenem Code? | Rig in graphanalyze, Stufe `bauen`: Agent mit Schreibrecht, Ende an der Marke Bau, gemessen am Lauf-Repo; je Lauf Marken, Bindung und `npm test` | Bindungsquote > 0, Code-Urteil ≠ `nicht prüfbar`; Ziel der Stufe: Marke Bau | kein ausgewerteter Lauf. Positivkontrolle echtes Projekt energymanager: TRR erreicht, Bau nicht, 12 von 16 FUNC gebunden (2026-10-08) |
-| **T-C3** Umbau am Bestand | Läuft ein Umbau über den Graphen? | kein Aufbau; die Reihenfolge hält der Skill `se-umbau` | `graph_impact` vor dem Löschzug; `graph_tests` statt Volllauf | Grundlinie: 0 Graph-Lesezugriffe, 3 Vollläufe (2026-09-23) |
+| Test | Frage | Aufbau | Kriterium |
+|---|---|---|---|
+| **T-C1** Geführt gegen frei | Baut geführtes Claude Code besseren Code als freies? | kein Aufbau | Abnahme geführt ≥ frei; Schnitt nach Kennzahl **und** Durchsicht besser; geführt `kongruent` |
+| **T-C2** Greenfield bis Code | Endet ein Lauf in gebundenem Code? | Rig in graphanalyze, Stufe `bauen`: Agent mit Schreibrecht, Ende an der Marke Bau, gemessen am Lauf-Repo; je Lauf Marken, Bindung und `npm test` | Bindungsquote > 0, Code-Urteil ≠ `nicht prüfbar`; Ziel der Stufe: Marke Bau |
+| **T-C3** Umbau am Bestand | Läuft ein Umbau über den Graphen? | kein Aufbau; die Reihenfolge hält der Skill `se-umbau` | `graph_impact` vor dem Löschzug; `graph_tests` statt Volllauf |
 
 #### Familie (§7)
 
-| Test | Frage | Aufbau | Kriterium | Stand |
-|---|---|---|---|---|
-| **T-F1** Rig-Betrieb | Ist jeder Test reproduzierbar gefahren und ausgewertet? | Bestand §9.5 gegen graphanalyze `rig/README.md` | jedes Rig läuft, stempelt, hat eine committete Auswertung und ist einem T-… zugeordnet | nicht bestanden: 4 Tests ohne Aufbau (2026-10-08) |
-| **T-F2** Selbstanwendung | Besteht graphcode seine eigenen Tests? | T-V1…T-V4 auf `docs/graph/graphcode.graph.json` | alle bestanden oder benannte Ausnahme | nicht bestanden: T-V1, T-V2, T-V3, T-V4 (2026-10-08) |
+| Test | Frage | Aufbau | Kriterium |
+|---|---|---|---|
+| **T-F1** Rig-Betrieb | Ist jeder Test reproduzierbar gefahren und ausgewertet? | Aufbau je Test (§9.3) gegen graphanalyze `rig/README.md` | jedes Rig läuft, stempelt, hat eine committete Auswertung und ist einem T-… zugeordnet |
+| **T-F2** Selbstanwendung | Besteht graphcode seine eigenen Tests? | T-V1…T-V4 auf `docs/graph/graphcode.graph.json` | alle bestanden oder benannte Ausnahme |
 
 #### Hygiene (Voraussetzung, kein Claim-Nachweis)
 
-| Test | Frage | Aufbau | Kriterium | Stand |
-|---|---|---|---|---|
-| **T-H1** Verdiente Null | Sind 0 Errors echt, oder wurde die Regel gar nicht gefragt? | `rules_evaluate` + Liste der nicht ausgewerteten Regeln | 0 Errors **und** alle vorgesehenen Regeln ausgewertet | graphcode: 5 Regeln nicht ausgewertet (BQ-*) (2026-10-08) |
-| **T-H2** Regel-Matrix | Stimmt die Grammatik-SSOT mit dem Katalog? | `scripts/regel-matrix.mjs`; `tests/skill-rule-ids.test.ts` | jede Regel steht in der Matrix, jede genannte ID existiert | bestanden (2026-10-05) |
-| **T-H3** Messinstrumente | Messen die Instrumente selbst richtig? | `tests/rig-measured.test.ts`, `claims.conformance.test.ts`, `import-boundaries.test.ts` | grün in der VOLL-Lane | grün |
+| Test | Frage | Aufbau | Kriterium |
+|---|---|---|---|
+| **T-H1** Verdiente Null | Sind 0 Errors echt, oder wurde die Regel gar nicht gefragt? | `rules_evaluate` + Liste der nicht ausgewerteten Regeln | 0 Errors **und** alle vorgesehenen Regeln ausgewertet |
+| **T-H2** Regel-Matrix | Stimmt die Grammatik-SSOT mit dem Katalog? | `scripts/regel-matrix.mjs`; `tests/skill-rule-ids.test.ts` | jede Regel steht in der Matrix, jede genannte ID existiert |
+| **T-H3** Messinstrumente | Messen die Instrumente selbst richtig? | `tests/rig-measured.test.ts`, `claims.conformance.test.ts`, `import-boundaries.test.ts` | grün in der VOLL-Lane |
 
 ### 9.4 Setting der Rigs
 
 Rig und Auswertung leben im privaten Repo **graphanalyze**; es misst eine gebaute Arbeitskopie von graphcode. Hier
-stehen Definition, Kriterium und Stand; was graphcode an sich selbst prüft (`npm run messung`, `verify:*`), bleibt
+stehen Definition und Kriterium; was graphcode an sich selbst prüft (`npm run messung`, `verify:*`), bleibt
 in diesem Repo.
 
 Das Rig hat je **Aufgabe** (was der Arm bekommt) eine **Referenz** (wogegen gewertet wird, nie Material des Arms)
@@ -437,37 +439,11 @@ dann eine Wirkung der Änderung.
 
 | Stufe | Wann | Umfang | Deckt |
 |---|---|---|---|
-| **S1 deterministisch** | jede Änderung an Regeln, Policy, Messung; vor jedem Release | `npm run messung` → `docs/messung/stand.md` | T-V1, T-V2, T-V4, T-M3, T-M4, T-E1, T-E2, T-E8, T-O4, T-O6, T-H2 |
+| **S1 deterministisch** | jede Änderung an Regeln, Policy, Messung; vor jedem Release | `npm run messung` → `docs/messung/stand.md` | T-V2, T-V4, T-M3, T-M4, T-E1, T-E2, T-E8, T-H2 |
 | **S2 lokal** | jede Änderung an Prompt, `vorschlag`, Werkzeugangebot oder Steuerung | `node rig/treiber.mjs serie` in graphanalyze, Aufgabe todo, Arm `lokal` | T-V3, T-V5, T-M1, T-M2, T-M5, T-E3, T-E4, T-E6, T-E10, T-E11, T-E12, T-C2 |
 | **S3 Frontier** | Release, Claim-Aussage nach außen, Richtungsentscheidung | dieselbe Serie, Arm `frontier` | T-E3, T-E4, T-M5, T-C2 |
 
 Den Executor gibt es im Kern nicht mehr (entfernt 2026-10-09, CR-GC-777).
-
-### 9.5 Bestand der Messaufbauten
-
-Jeder Aufbau zahlt auf genau die Tests ein, die in der Tabelle stehen. Aufbauten ohne Test-Zuordnung sind
-Kandidaten zum Entfernen.
-
-| Aufbau | Ort | Test | Status |
-|---|---|---|---|
-| Rig (Treiber, Simulator, Arme, Aufgaben) | graphanalyze `rig/` | T-E3, T-E4, T-M2, T-M5, T-C2 | läuft |
-| Auswertung eines Laufs | graphanalyze `auswertung/` | T-V5, T-E10, T-E11, T-M5 | läuft |
-| moneyflow-Struktur | graphanalyze `rig/moneyflow-struktur/` | T-V1, T-V2, T-O4 | ausgewertet |
-| Messstand S1 | `scripts/messung.mjs` → `docs/messung/stand.md` | T-V2, T-V4, T-M4, T-E1, T-E2, T-E8, T-H2 | läuft |
-| KPI 1 je CR | `scripts/retro-kpi.mjs` | T-E1 | läuft nach jedem Commit |
-| Grenzmenge, Randbreiten | `scripts/grenzmenge.mjs`, `scripts/randbreiten.mjs` | T-V4, T-V2 | läuft |
-| Whitebox-Messung | `scripts/whitebox-messung.mjs` | T-E2 | läuft |
-| Nachweis-History | `scripts/spike-nachweis-history.mjs` | T-M3 | GO |
-| Steuer-Kausalität | `tests/steering.steer-causality.test.ts` | T-M4 | grün |
-| Testauswahl-Audit | `scripts/test-selection-audit.mjs` | T-E7 | aktuelle Zahl fehlt |
-| Advisory-Latenz | `tests/perf.advisory-roundtrip.spike.test.ts` | T-E8 | läuft |
-| Kettenkennzahlen, Antwortweg, Träger je Risiko | `graph_metrics` (Rechnung in contracts); `scripts/spike-kettenkennzahlen.mjs` für die Referenzkette | T-O1, T-O2, T-O8 | Produktcode |
-| Analyse- und Optimierungs-Skills | `se-vorbereitung`, `se-fmea`, `se-laufzeit`, `se:optimize` | T-O2, T-O3, T-O7, T-O8 | gebaut |
-| Known-Answer-Sets | `scripts/known-answer-set.mjs`, `spike-nd-known-answer.mjs`, `spike-engpass-known-answer.mjs` | T-O4, T-O6 | No-Go / 6 von 7 |
-| Architektur-Trockenübung | `tests/arch.optimization-dry-run.spike.test.ts` | T-O5 | Spike-Test |
-| Norm-Dokumentanteil | `docs/spikes/SPIKE-GC-norm-dokumentanteil*.md` | T-N1, T-N2 | ausgewertet |
-| Regel-Matrix | `scripts/regel-matrix.mjs` | T-H2 | läuft |
-| Beispielgraphen | `beispielgraphen/` | T-O4, T-V2 | eingefrorener Korpus |
 
 ---
 

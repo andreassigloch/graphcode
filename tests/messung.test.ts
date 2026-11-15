@@ -10,19 +10,18 @@
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { S1, ENTFALLEN, WEITERE, ZEILEN, regelMatrixAktuell, urteilT_H2, urteilT_O1, urteilT_M3, renderStand, medianAusLog } from '../scripts/messung.mjs';
-import { mitVorwert, parseStand, alsStand, kalenderwoche, wochenTabelle, crsMitLoeschung, wertLoeschung, wertDauer } from '../scripts/messung-stand.mjs';
+import { S1, WEITERE, ZEILEN, regelMatrixAktuell, urteilT_H2, urteilT_O1, urteilT_M3, renderStand, medianAusLog } from '../scripts/messung.mjs';
+import { mitVorwert, parseStand, alsStand, kalenderwoche, wochenTabelle, crsMitLoeschung, wertLoeschung, zeileLoeschung, wertDauer } from '../scripts/messung-stand.mjs';
 
 const zeile = (id: string) => ({ id, nr: '—', kriterium: 'k', wert: '1', urteil: 'bestanden', datum: '2026-09-27', seit: '2026-09-27', vorwert: null as string | null, stempel: 's' });
 
 describe('messung: Runner-Kern', () => {
-  it('fuehrt genau die S1-Test-IDs der Leitlinie §9.4, ohne die entfallenen (CR-GC-948)', () => {
+  it('fuehrt genau die S1-Test-IDs der Leitlinie §9.4 (CR-GC-948, CR-GC-951)', () => {
     const leitlinie = readFileSync('docs/graphcode_leitlinie.md', 'utf8');
     const s1 = leitlinie.split('\n').find((z) => z.startsWith('| **S1 deterministisch**'));
     const ids = s1?.split('|').at(-2)?.match(/T-[A-Z]\d+/g) ?? [];
     expect(ids.length).toBeGreaterThan(5);
-    expect([...S1].sort()).toEqual(ids.filter((id) => !ENTFALLEN.includes(id)).sort());
-    expect(ENTFALLEN.every((id) => !S1.includes(id))).toBe(true);
+    expect([...S1].sort()).toEqual([...ids].sort());
     expect([...ZEILEN].sort()).toEqual([...S1, ...WEITERE].sort());
   });
 
@@ -175,6 +174,21 @@ describe('stand.md (CR-GC-948): Vorwert, seit wann, Wochentabelle', () => {
     expect(crsMitLoeschung(rows).map((c: { cr: string; impact: boolean }) => [c.cr, c.impact])).toEqual([['CR-1', true], ['CR-2', false]]);
     expect(wertLoeschung(rows)).toContain('1 von 2 CRs mit Löschung riefen graph_impact');
     expect(wertLoeschung([])).toBe('kein CR mit Löschung im Protokoll');
+  });
+
+  it('Nr 12: ohne das lokale Protokoll steht „nicht gemessen" mit Grund, kein Abbruch (CR-GC-951)', () => {
+    for (const inhalt of [null, '', '\n']) {
+      const z = zeileLoeschung(inhalt);
+      expect(z.wert).toMatch(/^nicht gemessen: .*cr-messung\.jsonl/);
+      expect(z.extra).toEqual({ stempel: 'keine Messung' });
+    }
+    const zeilen = [
+      { cr: 'CR-1', datum: '2026-11-01T10:00:00Z', commit: 'aaa', geloeschteDateien: 1, sitzung: 's', impact: 1 },
+      { cr: 'CR-2', datum: '2026-11-02T10:00:00Z', commit: 'bbb', geloeschteDateien: 0, sitzung: 's', impact: 0 },
+    ];
+    const z = zeileLoeschung(zeilen.map((x) => JSON.stringify(x)).join('\n') + '\n');
+    expect(z.wert).toContain('1 von 1 CRs mit Löschung riefen graph_impact');
+    expect(z.extra).toEqual({ datum: '2026-11-02', stempel: 'commit bbb' });
   });
 
   it('Nr 9: eine Zeile der Spur VOLL gibt keine Dauer, denn Auswahl und Volllauf waeren dieselbe Zahl', () => {
