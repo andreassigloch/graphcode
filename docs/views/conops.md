@@ -626,7 +626,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-925` | n/a | Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (kehrt Regel 1 aus CR-GC-875 um) | `FUNC-author-actor` · `FUNC-se-irr` · `FUNC-se-top-level` |
 | `CR-GC-931` | done | Host-Start meldet nicht, wenn der committete Snapshot neuer ist als der Store | `FUNC-graph-store` · `REQ-snapshot-drift-notice` |
 | `CR-GC-932` | done | graphcode liest die Definitionen der Elemente und Kanten aus contracts (ELEMENT_DEFINITIONS, TRACE_DEFINITIONS) | `FUNC-graph-help` |
-| `CR-GC-935` | n/a | init und upgrade binden einen Wissensindex in den Kontext des Agenten ein | `FUNC-harness-cli` |
+| `CR-GC-935` | done | init und upgrade binden einen Wissensindex in den Kontext des Agenten ein | `FUNC-harness-cli` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
