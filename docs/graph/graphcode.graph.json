@@ -4257,7 +4257,8 @@
       "id": "CR-GC-943",
       "type": "CR",
       "name": "Verwendung von Regeln und Skills messen: Skill-Name am Zug, Ablehnungsquote und Feuerbild je Regel",
-      "description": "docs/cr/open/CR-GC-943-verwendung-von-regeln-und-skills-messen-.md"
+      "description": "docs/cr/done/CR-GC-943-verwendung-von-regeln-und-skills-messen-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-944",
@@ -33351,5 +33352,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1198
+  "graphVersion": 1199
 }

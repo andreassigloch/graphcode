@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** Freigegeben 2026-11-15; nicht umgesetzt.
+**Status:** Umgesetzt 2026-11-15. Schritt 4 (Skills nennen den Parameter) folgt in einem eigenen CR.
 
 ## Anlass
 
@@ -54,11 +54,11 @@ mehrere Repos.
 
 ## Abnahme
 
-- [ ] Ein Zug mit `skill: "se-fmea"` steht mit diesem Feld im Audit-Satz und in `trajectory.jsonl` (Test, vorher rot).
-- [ ] Ein Zug mit unbekanntem Skill-Namen wird abgelehnt (Test).
-- [ ] `audit_stats` liefert `bySkill`; ein alter Satz ohne Feld zählt unter „nicht erfasst" (Test).
-- [ ] `audit_stats` liefert je Regel `firedIn`; eine Regel ohne Fund hat 0, eine nicht ausgewertete `null` (Test).
-- [ ] `npm run verify:full CR-GC-943` grün.
+- [x] Ein Zug mit `skill: "se-fmea"` steht mit diesem Feld im Audit-Satz und in `trajectory.jsonl` (Test, vorher rot).
+- [x] Ein Zug mit unbekanntem Skill-Namen wird abgelehnt (Test).
+- [x] `audit_stats` liefert `bySkill`; ein alter Satz ohne Feld zählt unter „nicht erfasst" (Test).
+- [x] `audit_stats` liefert je Regel `firedIn`; eine Regel ohne Fund hat 0, eine nicht ausgewertete `null` (Test).
+- [x] `npm run verify:full CR-GC-943` grün.
 
 ## Schnitt
 
