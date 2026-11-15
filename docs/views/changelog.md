@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 539 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 540 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 539 CR · 381 done · 4 open.
+Total: 540 CR · 381 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -601,3 +601,4 @@ Total: 539 CR · 381 done · 4 open.
 | `CR-GC-933` | done | graphcode auf contracts 12.13.0 heben: Regelzahl 81→80 bzw. 68→67, Ontologie 13.0.0, architectureOnly ohne Leser (Folgen von CR-SM-440) |
 | `CR-GC-934` | n/a | Auslöser für graph_suggest vollständig festlegen |
 | `CR-GC-935` | done | init und upgrade binden einen Wissensindex in den Kontext des Agenten ein |
+| `CR-GC-936` | n/a | Wissensdatei: kein Pfad des Rechners in versionierter settings.json |
