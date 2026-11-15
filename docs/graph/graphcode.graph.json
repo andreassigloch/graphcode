@@ -4274,6 +4274,30 @@
       "description": "docs/cr/open/CR-GC-945-drei-skill-wortlaute-an-faq-und-regel-an.md"
     },
     {
+      "id": "CR-GC-946",
+      "type": "CR",
+      "name": "Verlauf der Marken und Befunde je Stufe beim Host rechnen: graph_readiness liefert ihn, der Import aus dem Viewer entfaellt",
+      "description": "docs/cr/open/CR-GC-946-verlauf-der-marken-und-befunde-je-stufe-.md"
+    },
+    {
+      "id": "CR-GC-947",
+      "type": "CR",
+      "name": "Zeile je CR erweitern: Schlupf ohne Link-Modus-Tests, Grenzmenge, Abgleich Modell und Code, Dauer Auswahl gegen Volllauf, Werkzeuglatenz",
+      "description": "docs/cr/open/CR-GC-947-zeile-je-cr-erweitern-schlupf-ohne-link-.md"
+    },
+    {
+      "id": "CR-GC-948",
+      "type": "CR",
+      "name": "Messdokumente trennen: kennzahlen.md beschreibt zwoelf Groessen, stand.md traegt Wert und Verlauf je Release",
+      "description": "docs/cr/open/CR-GC-948-messdokumente-trennen-kennzahlen-md-besc.md"
+    },
+    {
+      "id": "CR-GC-949",
+      "type": "CR",
+      "name": "Skills nennen den Parameter skill an graph_mutate",
+      "description": "docs/cr/open/CR-GC-949-skills-nennen-den-parameter-skill-an-gra.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21611,6 +21635,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-946",
+      "target": "FUNC-graph-readiness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-947",
+      "target": "FUNC-measure-test-schlupf",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-947",
+      "target": "FUNC-verify-lane-full",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-948",
+      "target": "FUNC-block-messwerk",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-949",
+      "target": "FUNC-graph-mutate-tool",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -33352,5 +33401,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1199
+  "graphVersion": 1204
 }
