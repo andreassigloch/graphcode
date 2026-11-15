@@ -4229,8 +4229,8 @@
       "id": "CR-GC-939",
       "type": "CR",
       "name": "Skills an entschiedene Modellfragen angleichen",
-      "description": "docs/cr/open/CR-GC-939-skills-an-entschiedene-modellfragen-angl.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-939-skills-an-entschiedene-modellfragen-angl.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-940",
@@ -33273,5 +33273,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1175
+  "graphVersion": 1176
 }
