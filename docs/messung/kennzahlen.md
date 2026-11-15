@@ -48,7 +48,7 @@ git und das Sitzungsprotokoll — nie ein zweiter DB-Handle.
 | **2 Werkzeugnutzung** | Zahl der Aufrufe `graph_mutate` / `graph_impact` / `graph_expand` / `rules_evaluate` | `audit_trail`, Protokoll | — (Profil) |
 | **3 Tokens je Netto-LOC** | Tokens ÷ (eingefügt − gelöscht) | Protokoll + `git diff` | ↓ |
 | **4 Plantreue** | Zahl der CRs, die ihre `depends-on`-Reihenfolge verletzen | Graph + CR-Daten (`deriveImplPlan`, CR-GC-209) | **0** |
-| **5 Ablehnungsquote** | abgelehnte Züge ÷ alle Züge, getrennt **je Regel** und **je Skill**, im Verlauf | `audit_stats` (`byRule`); je Skill: Feld fehlt, s. unten | fällt je Skill; keine Regel lehnt dauerhaft ab |
+| **5 Ablehnungsquote** | abgelehnte Züge ÷ alle Züge, getrennt **je Regel** und **je Skill**, im Verlauf | `audit_stats` (`byRule`, `bySkill`) | fällt je Skill; keine Regel lehnt dauerhaft ab |
 | **6 Bindung (Knoten)** | R-19 / R-20 (`testRefs` / `realRef`) zum Abschluss | `rules_evaluate` | **100 %** (T-V4: Bindungsquote) |
 | **7 Bindung (Grenzmenge)** | FUNC/SCHEMA, die eine MOD-Grenze kreuzen, im Modell ÷ Pflichtmenge | `scripts/grenzmenge.mjs` | **100 %** (T-V4). Alles unterhalb der Grenze bleibt Blackbox — „jede Datei im Modell" ist **kein** Ziel |
 
@@ -62,9 +62,24 @@ gilt dieselbe Lesart, und nur die getrennte Zahl trägt sie:
 | Die Quote eines Skills fällt im Verlauf | der Skill wird besser | — |
 | Keine Ablehnung, die Warnungen steigen | die Regeln sind zu weich | Autor der Regel |
 
-Die Gesamtquote ohne Trennung (2026-11-15: 32 von 369 Zügen) trägt keine dieser Aussagen. Je Regel liefert
-`audit_stats` die Zahl heute. Je Skill fehlt die Grundlage: ein Zug trägt nur `consumerId`, ein frei gewähltes
-Etikett, und keinen Namen des auslösenden Skills.
+Die Gesamtquote ohne Trennung (2026-11-15: 32 von 369 Zügen) trägt keine dieser Aussagen. `audit_stats` liefert
+beide Zahlen: je Regel unter `byRule`, je Skill unter `bySkill` (CR-GC-943). Den Skill nennt der Schreiber als
+Parameter `skill` von `graph_mutate`; die Angabe ist keine Messung. Ein Zug ohne Parameter steht unter
+`skill: null` und heißt „nicht erfasst", nicht „kein Skill". Das gilt für jeden Zug vor dem 2026-11-15.
+
+**Was das Feuerbild einer Regel sagt.** `audit_stats` nennt je Regel zwei Zahlen: `evaluatedIn`, die Zahl der
+Züge, in denen die Regel lief, und `firedIn`, die Zahl der Züge, in denen sie einen Fund hatte. Mit `since`
+ergibt das den Verlauf. Die Messung urteilt nicht; die Lesart steht hier:
+
+| Bild | Zahlen | Befund | Wer handelt |
+|---|---|---|---|
+| Nie gelaufen | `firedIn: null` | das Gate führt die Regel nicht (am 2026-11-15: RC, ND, BQ); sie läuft nur in `rules_evaluate` | — |
+| Lief, nie ein Fund | `firedIn: 0` | die Regel prüft etwas, das in diesem Repo nicht vorkommt, oder ihre Schwelle ist abgeschaltet (MT-01: `null`) | Autor der Regel oder der Policy, erst nach dem Blick über mehrere Repos |
+| Fund in fast jedem Zug | `firedIn` nahe `evaluatedIn`, über Wochen | Warnung ohne Wirkung: Schwelle falsch, oder niemand handelt | Autor der Regel oder der Policy |
+| Blockt oft | `blocked` hoch | siehe Ablehnungsquote | Autor der Regel |
+
+„Nie" gilt für ein Repo. Ob eine Regel überall stumm ist, zeigt erst derselbe Blick über mehrere Repos.
+`evaluatedIn` ist `null`, sobald ein Zug des Fensters keine bestandenen Regeln führt (Züge vor CR-GC-314).
 
 **Warum Bindung zweimal.** R-19/R-20 sind Regeln je Element: sie prüfen die Knoten, die es gibt, und
 sehen nicht, was nie modelliert wurde. Am eigenen Repo lasen sie 0 Befunde (KPI 6 = 100 %), während

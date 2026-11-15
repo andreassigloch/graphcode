@@ -366,7 +366,7 @@ export function createToolContext(
     consumerId: string,
     result: MutateResult,
     commands?: MutateCommand[],
-    stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource'>,
+    stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource' | 'skill'>,
   ): Promise<void> {
     // CR-GC-524: an accepted batch with 0 mutations changed no state — the version
     // (= "what a reader must re-read") stays where it is.
@@ -397,6 +397,8 @@ export function createToolContext(
       ...triggerStamp(relayed),
       ...(stamps?.respondsTo !== undefined ? { respondsTo: stamps.respondsTo } : {}),
       ...(stamps?.editSource !== undefined ? { editSource: stamps.editSource } : {}),
+      // CR-GC-943: vom Schreiber genannt, an der Grenze gegen die Skill-Dateien geprueft. Fehlt = nicht erfasst.
+      ...(stamps?.skill !== undefined ? { skill: stamps.skill } : {}),
       ...codeStateField(),
     };
     await auditLog.record(entry);
@@ -425,8 +427,9 @@ export function createToolContext(
     consumerId: string,
     result: MutateResult,
     commands: MutateCommand[],
+    skill?: string,
   ): Promise<void> {
-    const entry: AuditEntry & Pick<TrajectoryStamps, 'codeState'> = {
+    const entry: AuditEntry & Pick<TrajectoryStamps, 'codeState' | 'skill'> = {
       id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       timestamp: new Date().toISOString(),
       consumerId,
@@ -440,6 +443,8 @@ export function createToolContext(
       // CR-GC-434: NO stamps on a preview - a dryRun is consultation, not mutation.
       // It neither drains the consulted window nor consumes prompt freshness.
       ...provenance(currentRelay()),
+      // CR-GC-943: der Skill ist Herkunft, kein Ausloeser-Stempel — er steht auch an der Probe.
+      ...(skill !== undefined ? { skill } : {}),
       ...codeStateField(),
     };
     await auditLog.record(entry);
@@ -501,6 +506,7 @@ export function createToolContext(
     consumerId: string,
     baseVersion: number | undefined,
     commands: MutateCommand[] | undefined,
+    skill?: string,
   ): Promise<(MutateResult & { graphVersion: number }) | null> {
     if (baseVersion === undefined || baseVersion >= _graphVersion) return null;
     const all = (await auditLog.query({})) as AuditEntry[];
@@ -536,7 +542,7 @@ export function createToolContext(
       stale: true,
       staleDelta,
     };
-    await recordAudit(consumerId, result, commands);
+    await recordAudit(consumerId, result, commands, skill !== undefined ? { skill } : undefined);
     return { ...result, graphVersion: _graphVersion };
   }
 

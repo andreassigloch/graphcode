@@ -81,6 +81,8 @@ export interface TrajectoryStamps {
    * `callScope` ungespeicherte Änderungen offen waren. Fehlt, wenn das Repo keinen Commit hat (kein Git, leeres Repo).
    */
   codeState?: CodeState;
+  /** CR-GC-943: der Skill, den der Schreiber an `graph_mutate` genannt hat. Fehlt = nicht erfasst. */
+  skill?: string;
 }
 
 /** Der Code-Stand einer Mutation (CR-GC-848). */
@@ -123,6 +125,7 @@ export function projectStamps(entry: Record<string, unknown>): TrajectoryStamps 
   if (Array.isArray(entry.consultedTools)) out.consultedTools = entry.consultedTools as string[];
   if (entry.editSource === 'suggestion-template' || entry.editSource === 'authored') out.editSource = entry.editSource;
   if (entry.codeState !== undefined) out.codeState = entry.codeState as CodeState;
+  if (typeof entry.skill === 'string') out.skill = entry.skill;
   return out;
 }
 

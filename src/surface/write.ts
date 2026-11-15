@@ -25,6 +25,7 @@ import { focusMemoryOf } from '../loop/stagnation.js';
 import type { RespondsToViolation } from '../projections/trajectory.js';
 import type { ToolContext } from './tool-context.js';
 import { formatEToCommands } from '../kernel/format-e-commands.js';
+import { COMMANDS_DIR, skillNames } from './scaffold-templates.js';
 
 // -------------------------------------------------------------------------
 // respondsTo (CR-GC-434) — which pre-existing violation a mutation ANSWERED.
@@ -105,6 +106,13 @@ const GraphMutateInputSchema = z
       .default(false)
       .describe('true = volles Gate-Urteil, nichts wird persistiert; die graphVersion bewegt sich nicht.'),
     consumerId: z.string().default('mcp-client'),
+    skill: z
+      .string()
+      .min(1)
+      .optional()
+      .describe(
+        'Name des Skills, der diesen Zug veranlasst (z. B. `se-fmea`). Ohne Skill weglassen; unbekannter Name = Ablehnung.',
+      ),
     baseVersion: baseVersionField,
     violations: z
       .enum(['summary', 'full'])
@@ -228,6 +236,11 @@ export interface BindingReport {
 // Binding
 // -------------------------------------------------------------------------
 
+/** Eine Ablehnung der Werkzeugschicht vor dem Gate: ein Fehler unter einer Kennung, nichts angewandt. */
+function blocked(ruleId: string, message: string): MutateResult {
+  return { success: false, appliedCommands: 0, mutations: 0, violations: [{ ruleId, severity: 'error', message }], confidence: 0, tier: 'block' };
+}
+
 export function bindWriteTools(ctx: ToolContext) {
   const { harness, graphVersion, recordAudit, recordPreview, serializeToolWrite, occReject } = ctx;
 
@@ -306,6 +319,15 @@ export function bindWriteTools(ctx: ToolContext) {
     // vor dem Gate — ueber MCP wie beim direkten Aufruf.
     async handler(input) {
       return serializeToolWrite(async () => {
+        // CR-GC-943: der genannte Skill muss eine Skill-Datei des Repos sein — sonst waere er wieder ein
+        // freies Etikett. Die Ablehnung steht im Log, ohne Skill: der Name ist ja keiner.
+        const skill = input.skill === undefined ? undefined : skillNames(harness.getRepoRoot()).get(input.skill);
+        if (input.skill !== undefined && skill === undefined) {
+          const result = blocked('SKILL', `unbekannter Skill "${input.skill}": kein Skill unter ${COMMANDS_DIR}. Den Namen der Skill-Datei nennen oder das Feld weglassen.`);
+          if (input.dryRun) await recordPreview(input.consumerId, result, []);
+          else await recordAudit(input.consumerId, result, []);
+          return { ...result, graphVersion: graphVersion() };
+        }
         // Format-E-Decode VOR dem Gate: ein Parse-Fehler ist ein Block-Verdict,
         // kein Transport-Crash — der Autor bekommt die Codec-Meldung als Violation.
         let commands: MutateCommand[];
@@ -316,25 +338,16 @@ export function bindWriteTools(ctx: ToolContext) {
           commands = decoded.commands;
           nameWarning = nameWarningFor(decoded.unnamed);
         } catch (err) {
-          const result: MutateResult = {
-            success: false,
-            appliedCommands: 0,
-            mutations: 0,
-            violations: [
-              { ruleId: 'STRUCT', severity: 'error', message: err instanceof Error ? err.message : String(err) },
-            ],
-            confidence: 0,
-            tier: 'block',
-          };
+          const result = blocked('STRUCT', err instanceof Error ? err.message : String(err));
           // CR-GC-286: der Decode-Fehler ist eine Rejection wie jede andere —
           // ohne Audit reißt die F2-Kette (early return war der unauditierte Pfad).
           // ITEM-2026-604: im Probelauf ist er eine PROBE (validate), wie jedes andere dryRun-Verdict —
           // sonst zaehlt eine geblockte Best-of-N-Probe als Schreibversuch.
-          if (input.dryRun) await recordPreview(input.consumerId, result, []);
-          else await recordAudit(input.consumerId, result, []);
+          if (input.dryRun) await recordPreview(input.consumerId, result, [], skill);
+          else await recordAudit(input.consumerId, result, [], { skill });
           return { ...result, graphVersion: graphVersion() };
         }
-        const stale = await occReject(input.consumerId, input.baseVersion, commands);
+        const stale = await occReject(input.consumerId, input.baseVersion, commands, skill);
         if (stale) return stale;
         // steeringDelta (CR-GC-289): Vorher-Snapshot des STEERING-Katalogs
         // (evaluateAllRules inkl. ND + computeReadiness — der Raum, in dem
@@ -373,7 +386,7 @@ export function bindWriteTools(ctx: ToolContext) {
           // Vorschlag→Verdict auditieren (F2) — der Preview trägt das steeringDelta.
           // Auditiert wird die VOLLE Fassung: der Audit-Trail ist Evidenz, nicht
           // Antwort-Budget. Gekürzt wird erst, was über die Leitung geht.
-          await recordPreview(input.consumerId, preview, commands);
+          await recordPreview(input.consumerId, preview, commands, skill);
           const previewOut = dropSilentAdvisories(input.violations === 'full' ? preview : summarizeViolations(preview));
           // CR-GC-321/REQ-N07: auch im Preview — sonst meldet der dryRun sauber
           // und der Apply verliert die Namen.
@@ -387,6 +400,7 @@ export function bindWriteTools(ctx: ToolContext) {
         await recordAudit(input.consumerId, result, commands, {
           respondsTo: afterAll ? resolvedViolations(respondsBaseline!, afterAll) : [],
           editSource: ctx.classifyEditSource(commands),
+          skill,
         });
         const out = dropSilentAdvisories(input.violations === 'full' ? result : summarizeViolations(result));
         // CR-GC-729: der Vorschlag an den NUTZER faehrt mit — ein Satz, den ein Client-Plugin ins

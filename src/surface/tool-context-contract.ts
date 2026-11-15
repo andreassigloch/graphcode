@@ -62,12 +62,14 @@ export const ToolContext = z
           consumerId: string,
           result: MutateResult,
           commands?: MutateCommand[],
-          stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource'>,
+          stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource' | 'skill'>,
         ) => Promise<void>
       >('recordAudit'),
     /** Audit a dryRun preview as `operation:'validate'` (CR-GC-276) — the version does NOT move. */
     recordPreview:
-      member<(consumerId: string, result: MutateResult, commands: MutateCommand[]) => Promise<void>>('recordPreview'),
+      member<(consumerId: string, result: MutateResult, commands: MutateCommand[], skill?: string) => Promise<void>>(
+        'recordPreview',
+      ),
     /** Note a READ tool that completed (CR-GC-434) — drained onto the next recorded mutation. */
     noteConsulted: member<(toolName: string) => void>('noteConsulted'),
     /** Note the template batches graph_suggest DELIVERED, as commands (CR-GC-434, CR-GC-696C). */
@@ -95,6 +97,7 @@ export const ToolContext = z
           consumerId: string,
           baseVersion: number | undefined,
           commands: MutateCommand[] | undefined,
+          skill?: string,
         ) => Promise<(MutateResult & { graphVersion: number }) | null>
       >('occReject'),
   })

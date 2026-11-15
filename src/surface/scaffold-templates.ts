@@ -14,7 +14,7 @@
  *
  * @author andreas@siglochconsulting
  */
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { readPackageVersion, packageRootDir } from '../kernel/package-version.js';
 import { KNOWLEDGE_HOOK, withKnowledgeHooks, withKnowledgeInstruction } from './wissensdatei.js';
@@ -113,6 +113,25 @@ export const SETTINGS_FILE = join('.claude', 'settings.json');
  */
 export function packagedSkillsDir(): string {
   return join(packageRootDir(), COMMANDS_DIR);
+}
+
+/**
+ * Die Skill-Namen eines Repos (CR-GC-943), gelesen aus `.claude/commands`: `se-fmea.md` heisst
+ * `se-fmea`, `se/author-req.md` heisst `se:author-req`. Schluessel ist jede Schreibweise, die ein
+ * Client kennt — OpenCode fuehrt denselben Skill als `se-author-req` (CR-GC-721) —, Wert der eine
+ * Name, unter dem gezaehlt wird. Leer, wenn das Repo keine Skill-Dateien hat.
+ */
+export function skillNames(repoRoot: string): Map<string, string> {
+  const dir = join(repoRoot, COMMANDS_DIR);
+  const names = new Map<string, string>();
+  if (!existsSync(dir)) return names;
+  for (const rel of readdirSync(dir, { recursive: true, encoding: 'utf8' })) {
+    if (!rel.endsWith('.md')) continue;
+    const name = rel.slice(0, -'.md'.length).split(sep).join(':');
+    names.set(name, name);
+    names.set(name.split(':').join('-'), name);
+  }
+  return names;
 }
 
 /**

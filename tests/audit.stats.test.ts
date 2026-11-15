@@ -22,7 +22,7 @@ import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsWithContext } from '../src/surface/mcp-tools.js';
 import type { MCPToolRegistry } from '../src/kernel/tool-contract.js';
 import type { ToolContext } from '../src/surface/tool-context.js';
-import { aggregateAuditEntries, type AuditStats } from '../src/surface/audit.js';
+import { aggregateAuditEntries, type AuditStats } from '../src/surface/audit-stats.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 import { alsFormatE } from './helpers/format-e.js';
 

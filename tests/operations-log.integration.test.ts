@@ -15,7 +15,7 @@ import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR, AUDIT_FILE } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import type { AuditStats } from '../src/surface/audit.js';
+import type { AuditStats } from '../src/surface/audit-stats.js';
 import type { HarnessConfig, MutateCommand } from '@sigloch/contracts/harness';
 import { alsFormatE } from './helpers/format-e.js';
 

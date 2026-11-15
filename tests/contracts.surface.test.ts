@@ -21,7 +21,7 @@ import { MutateResultSchema, type HarnessConfig, type MutateCommand } from '@sig
 import { KuzuAdapter } from './helpers/store.js';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
 import { bindToolsToHarness } from '../src/surface/mcp-tools.js';
-import { AuditStatsSchema, aggregateAuditEntries } from '../src/surface/audit.js';
+import { AuditStatsSchema, aggregateAuditEntries } from '../src/surface/audit-stats.js';
 import { alsFormatE } from './helpers/format-e.js';
 
 function makeHarness(repoRoot: string): GraphCodeHarness {
