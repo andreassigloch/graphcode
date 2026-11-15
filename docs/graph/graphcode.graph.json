@@ -4277,7 +4277,8 @@
       "id": "CR-GC-946",
       "type": "CR",
       "name": "Verlauf der Marken und Befunde je Stufe beim Host rechnen: graph_readiness liefert ihn, der Import aus dem Viewer entfaellt",
-      "description": "docs/cr/open/CR-GC-946-verlauf-der-marken-und-befunde-je-stufe-.md"
+      "description": "docs/cr/done/CR-GC-946-verlauf-der-marken-und-befunde-je-stufe-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-947",
@@ -33587,5 +33588,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1211
+  "graphVersion": 1212
 }
