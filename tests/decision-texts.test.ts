@@ -96,12 +96,12 @@ describe('CR-GC-594: die Abnahme-Politik steht einmal und ueberall gleich', () =
   it('CR-GC-596: se:generate traegt den stalled-Satz woertlich', () => {
     const md = readFileSync(join(ROOT, '.claude/commands/se/generate.md'), 'utf8');
     expect(md).toContain(decision('stalled'));
-    expect(md).toContain(decision('steerOptimum')); // CR-GC-608
   });
 
-  it('se:generate traegt den Registersatz woertlich', () => {
+  it('CR-GC-940: se:generate fuehrt weder Steuerregel-Liste noch Abnahme-Liste, beides liefert das Werkzeug', () => {
     const md = readFileSync(join(ROOT, '.claude/commands/se/generate.md'), 'utf8');
-    expect(md).toContain(decision('acceptance'));
+    expect(md).not.toContain(decision('steerOptimum'));
+    expect(md).not.toContain(decision('acceptance'));
   });
 
   it('der Guide nennt acceptedFindings an jedem Typ, mit genau der abnehmbaren Klasse', async () => {

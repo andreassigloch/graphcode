@@ -1,6 +1,6 @@
 ---
 name: se-fmea
-version: 12
+version: 13
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
@@ -31,7 +31,7 @@ Walk the graph's `compose` hierarchy for the scoped target: `SYS → UC → FCHA
 
 **For each in-scope FCHAIN, read the chain profile before writing a single failure mode — do not compute it.** Call `graph_metrics` once and take the chain's row from `chains` and the reach of its members from `functions`. Figures and places are computed in ONE place (`chainMetrics` in `@sigloch/contracts/se`); a number derived by hand from `graph_get_edges` is a second calculation, and it disagrees with the first at every chain that has a loop.
 
-**Eingangsprüfung, erster Teil: die Verdrahtung der Kette.** Die Regeln `R-30`, `R-31`, `R-21`, `IO-01`, `FC-04` und `FC-05` sind Warnungen, kein Fehler — das Gate hält eine unverbundene Kette nicht auf. Eine davon hält eine Marke: ein Befund von `FC-05` (Kette hängt nicht zusammen) hält PDR, die übrigen halten keine. Hol ihre Befunde für die Kette und ihre Glieder (`rules_get_violations`) und lies `measurable`. Du liest den Stand und stellst ihn nicht her:
+**Eingangsprüfung, erster Teil: die Verdrahtung der Kette.** Die Befunde der Verdrahtung sind Warnungen, kein Fehler — das Gate hält eine unverbundene Kette nicht auf. Welche Marke ein Befund hält, nennt `holding` in `graph_readiness({ detail: true })`. Hol ihre Befunde für die Kette und ihre Glieder (`rules_get_violations`) und lies `measurable`. Du liest den Stand und stellst ihn nicht her:
 
 - `measurable: false` → die Kette wird **nicht** analysiert. Nenne die `reasons`; der Lauf endet mit dem Verweis auf `se-vorbereitung`.
 - offene Verdrahtungsbefunde an einem Glied → Verweis auf `se-vorbereitung`, oder der Nutzer bestätigt sie als bewusst offen.
@@ -101,9 +101,9 @@ Danach, für jede Funktion:
   - **High AP** — action MUST be taken or a justification documented. (High severity of effect, esp. S 9–10, with any non-trivial occurrence; or high S+O combinations.)
   - **Medium AP** — action SHOULD be taken or a justification documented.
   - **Low AP** — action MAY be taken.
-  - Use the canonical AIAG-VDA AP lookup table for the exact S/O/D → AP mapping; Detection only shifts priority within a fixed S/O band. Safety/regulatory effects (S 9–10) are never demoted below the band their occurrence dictates by a good Detection score alone.
+  - The AP class comes from `actionPriority()` (`@sigloch/contracts/se`); the lookup table's cell values are never in the repo or in a package, so you do not write them from memory. Detection only shifts priority within a fixed S/O band. Safety/regulatory effects (S 9–10) are never demoted below the band their occurrence dictates by a good Detection score alone.
 - Render a **risk matrix** table sorted by AP (High → Low): `# | Fehlermodus | S | O | D | AP | Kategorie`.
-- **AP lives in the document, not (yet) in the graph.** The FMEA view renders `RPN = S×O×D` — the same number `FM-03` thresholds on — because the canonical AP classification belongs in `@sigloch/contracts/se` (`actionPriority()`, CR-SM-229) and is not published yet. Do **not** write an AP field into the graph and do not let a view invent a second classification for a safety-relevant judgement (CR-GC-308).
+- **AP lives in the document, not in the graph.** The FMEA view renders `RPN = S×O×D` — the same number `FM-03` thresholds on — and the AP column from `actionPriority()`; while no local table is loaded, the column reads `AP*` (interim from the RPN bands) with a footnote. Do **not** write an AP field into the graph and do not let a view invent a second classification for a safety-relevant judgement (CR-GC-308).
 - **Legacy compatibility:** the existing doc shows an RPN column. You MAY keep an `RPN = S×O×D` column as a secondary/legacy indicator, but **AP is the primary, governing classification** — never let RPN override AP.
 
 ### Step 6 — Optimization

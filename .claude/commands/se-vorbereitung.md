@@ -1,6 +1,6 @@
 ---
 name: se-vorbereitung
-version: 9
+version: 10
 description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, das Merkmal synchron/asynchron der Flüsse nachprüfen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
@@ -31,9 +31,8 @@ graph_metrics()                              # Zeile der Kette in chains: measur
 rules_get_violations({ detail: "grouped" })  # Befunde der Verdrahtung an der Kette und ihren Gliedern
 ```
 
-Die Regeln der Verdrahtung sind `R-30`, `R-31`, `R-21`, `IO-01`, `FC-04` und `FC-05`. Alle sind
-Warnungen; das Gate hält eine offene Kette nicht auf.
-Ein Befund von `FC-05` (die Kette hängt nicht zusammen) hält die Marke PDR.
+Die Befunde der Verdrahtung liest du aus `rules_get_violations`, je Gruppe mit `ruleId` und `severity`;
+das Gate hält eine offene Kette nicht auf. Welche Marke ein Befund hält, nennt `holding` in `graph_readiness({ detail: true })`.
 
 `measurable: false` an einer Kette des Umfangs: der Lauf endet nach diesem Schritt, mit den Zügen als Ergebnis.
 

@@ -118,9 +118,9 @@ afterAll(async () => {
 });
 
 describe('se:optimize Version 3: zwei Quellen, getrennt, ohne Rangfolge (CR-GC-785)', () => {
-  it('der Kopf traegt Version 8 unter dem alten Namen (CR-GC-863)', () => {
+  it('der Kopf traegt Version 9 unter dem alten Namen (CR-GC-863)', () => {
     expect(skill).toMatch(/^name: se:optimize$/m);
-    expect(skill).toMatch(/^version: 8$/m);
+    expect(skill).toMatch(/^version: 9$/m);
   });
 
   it('Quelle (a) nennt beide Analysen, die Vorschlaege abgeben: se-fmea und se-laufzeit (CR-GC-791)', () => {
@@ -344,12 +344,10 @@ describe('se:optimize Version 3: die Probe verspricht nur, was der Trockenlauf t
     expect(skill).not.toMatch(/\| (Ketten des Umfangs|Träger je Risiko|Modulbaum und Funktionsbaum)[^\n]*Nachmessen im CR/);
   });
 
-  it('der Vergleich zaehlt keine Befunde aus dem Bau, und die vier Regeln gibt es', () => {
-    for (const id of BAU) {
-      expect(skill, id).toContain(`\`${id}\``);
-      expect(regel(id), id).toBeDefined();
-    }
-    expect(skill).toMatch(/aus dem Bau[^\n]*`R-19`[^\n]*`R-20`[^\n]*`R-26`[^\n]*`R-32`/);
+  it('der Vergleich zaehlt keine Befunde aus dem Bau; welche, sagt die Stufe, nicht eine Liste im Skill', () => {
+    // CR-GC-940: keine Liste von Regel-IDs im Skill; die Stufen Bindung und Abgleich nehmen sie heraus.
+    for (const id of BAU) expect(regel(id), id).toBeDefined();
+    expect(skill).toMatch(/ohne die Stufen Bindung und Abgleich/);
     // Warum der Skill sie ausnimmt: ein Zug mit einem neuen Element bringt sie mit.
     const neu = (probeMitBau.violations as Zeile[]).map((v) => v.ruleId);
     expect(neu, 'Praemisse: der neue Vertrag ohne Test meldet R-32').toContain('R-32');

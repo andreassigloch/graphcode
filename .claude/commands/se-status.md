@@ -1,6 +1,6 @@
 ---
 name: se-status
-version: 2
+version: 3
 description: Show SE project status — readiness, violations, top fixes
 ---
 
@@ -18,9 +18,9 @@ Format as a compact overview:
 - Readiness by rule: one bar per `violationsByRule` entry (`ruleId` → count) — use block characters or plain counts.
 - Violations: error count, warning count (skip info severity).
 - **Kongruenz** in einer Zeile: `kongruent` · `gedriftet` · `nicht prüfbar`. Stehen `rule:RC-*`
-  in `skipped`, ist es `nicht prüfbar` — dann die Bindungsquote dazu, nie eine stille Null.
+  in `skipped`, ist es `nicht prüfbar` — dann die Bindungsquote dazu, nie eine stille Null. Bei jedem Urteil nenne die Deckung: `importCoverage.assigned` von `endpoints`, die Namen aus `unassigned`.
   Ein Score ohne diese Zeile sagt nur, wie der Graph zu sich selbst steht.
-- Top-3 elements to fix next: the `elementId`s carrying the most error-severity violations (derive from the `violations` list), each with its `ruleId` + `message`.
+- Top-3 to fix next: the first three groups of `rules_evaluate({ detail: "grouped" })`, in the order the tool returns (errors first, then earliest stage). Per group name `ruleId`, `stage`, `message` and the first of its `elementIds`. You count and sort nothing.
 - Recommend the #1 element for immediate action.
 
-Note: the retired dashboard's prompt-candidate ranking is an **aimprove** (generator / learning-engine) concern, out of scope for the graph substrate. graphcode surfaces the readiness + violation data those candidates were derived from — rank the fixes by violation severity/count here, don't call a scoring endpoint.
+Note: the retired dashboard's prompt-candidate ranking is an **aimprove** (generator / learning-engine) concern, out of scope for the graph substrate. graphcode surfaces the readiness + violation data those candidates were derived from — take the order of the fixes from `rules_evaluate` grouped, don't call a scoring endpoint.

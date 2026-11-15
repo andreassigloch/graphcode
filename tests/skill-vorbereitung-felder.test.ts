@@ -88,9 +88,9 @@ const VERDRAHTUNG = ['R-30', 'R-31', 'R-21', 'IO-01', 'FC-04', 'FC-05'];
 const KLASSEN = ['Tieferlegen', 'Zerlegen', 'Funktion fehlt', 'Gilt quer'];
 
 describe('se-vorbereitung liest Kennzahlen und Befunde, er rechnet nichts (CR-GC-784)', () => {
-  it('der Kopf traegt Version 9 und den Namen des Skills', () => {
+  it('der Kopf traegt Version 10 und den Namen des Skills', () => {
     expect(skill).toMatch(/^name: se-vorbereitung$/m);
-    expect(skill).toMatch(/^version: 9$/m);
+    expect(skill).toMatch(/^version: 10$/m);
   });
 
   it('der Skill-Text traegt keine Rechnung und keine Kennzahl, die es nicht gibt', () => {
@@ -123,12 +123,10 @@ describe('se-vorbereitung liest Kennzahlen und Befunde, er rechnet nichts (CR-GC
   });
 
   it('die Regeln der Verdrahtung sind Warnungen, FC-05 haelt PDR, FC-03 ist ein Fehler', () => {
-    for (const id of VERDRAHTUNG) {
-      expect(skill, id).toContain(`\`${id}\``);
-      expect(regel(id)?.severity, id).toBe('warning');
-    }
+    // CR-GC-940: der Skill nennt die Regeln nicht; der Katalog hält sie als Warnungen, FC-05 hält PDR.
+    for (const id of VERDRAHTUNG) expect(regel(id)?.severity, id).toBe('warning');
     expect(regel('FC-05')?.mark).toBe('PDR');
-    expect(skill).toMatch(/`FC-05`[^\n]*PDR/);
+    expect(skill).toMatch(/`holding` in `graph_readiness\(\{ detail: true \}\)`/);
     expect(regel('FC-03')?.severity).toBe('error');
     expect(skill).toMatch(/`FC-03`[^\n]*Fehler/);
     // Risiko ohne Gegenmassnahme oder ohne Erfueller meldet der Katalog schon.

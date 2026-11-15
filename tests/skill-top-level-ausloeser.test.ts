@@ -63,7 +63,7 @@ describe('`sync` wird beim Kettenschnitt gesetzt, nicht erst in se-vorbereitung 
   });
 
   it('se-vorbereitung nennt se:top-level als Ort des Merkmals und prueft nur nach', () => {
-    expect(vorbereitung).toMatch(/^version: 9$/m);
+    expect(vorbereitung).toMatch(/^version: 10$/m);
     expect(vorbereitung).toMatch(/Das Merkmal `sync` setzt der Autor beim Kettenschnitt \(`se:top-level`, Phase 3, Schritt FLOW \+ SCHEMA\)/);
     expect(vorbereitung).not.toMatch(/Flüsse als synchron oder asynchron kennzeichnen/);
   });
@@ -102,8 +102,8 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
     for (const t of [authorActor, topLevel, fmea, vorbereitung, laufzeit]) expect(t).not.toMatch(/`answer`/);
   });
 
-  it('se-fmea: Version 12, Akteur in der Mitte und Abschnitte aus chainRoles.segments', () => {
-    expect(fmea).toMatch(/^version: 12$/m);
+  it('se-fmea: Version 13, Akteur in der Mitte und Abschnitte aus chainRoles.segments', () => {
+    expect(fmea).toMatch(/^version: 13$/m);
     expect(fmea).toMatch(/Akteur in der Mitte/);
     expect(fmea).toContain('chainRoles.segments');
   });

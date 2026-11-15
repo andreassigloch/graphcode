@@ -1,6 +1,6 @@
 ---
 name: se-review
-version: 2
+version: 3
 description: Readiness gate check — blockers and next steps
 ---
 
@@ -22,12 +22,12 @@ Daraus genau EINE der drei Aussagen, nie eine vierte:
 
 | sagen | wenn |
 |---|---|
-| **kongruent** | `importCoverage` da, keine RC-Verstöße |
+| **kongruent** | `importCoverage` da, keine RC-Verstöße — dazu die Deckung: `assigned` von `endpoints`, die Namen aus `unassigned` |
 | **gedriftet** | RC-Verstöße im Report — sie einzeln auflisten wie die übrigen Blocker |
 | **nicht prüfbar** | `skipped` nennt `rule:RC-*` — dann die Bindungsquote dazu sagen (FUNC mit `realRef` / FUNC gesamt) |
 
 **Nie "grün" bei `nicht prüfbar`.** Ein Urteil ohne Bindung ist kein Urteil; ein Modell mit 0 %
-Bindung kann nie kongruent sein, nur schön.
+Bindung kann nie kongruent sein, nur schön. Nenne bei jeder Aussage zur Vollständigkeit Bindungsquote und Deckung, nie nur eine.
 
 Perform the gate check:
 

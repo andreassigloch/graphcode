@@ -1,6 +1,6 @@
 ---
 name: se-retro
-version: 6
+version: 7
 description: Post-project retro — compute the 6 graphcode KPIs (graph-vs-grep, tool usage, token/LOC, plan conformance, gate health, binding coverage) and interpret them
 ---
 
@@ -13,7 +13,7 @@ Assemble a `retro-session.json`:
 - **findings** — `graph_readiness` at session start and end: `{ start, end }`, each the sum of `stages[].findings` (the count of open findings; there is no percentage).
 - **git** — `{ netLoc }` (insertions − deletions; the script auto-fills it from `git diff` if omitted) and `{ tokens }` if the transcript gives a token count.
 - **plan** — `{ dependsOnViolations }`: # CRs whose order violates a `depends-on` edge (derive with `se-plan` / `deriveImplPlan`, CR-GC-209).
-- **binding** — `{ coveragePct }`: share of closed TESTs/FUNCs carrying `testRef`/`codeRef` (R-19/R-20) from `rules_evaluate`.
+- **binding** — `{ coveragePct }`: share of closed TESTs/FUNCs carrying `testRefs`/`realRef` (R-19/R-20) from `rules_evaluate`.
 
 ## 2. Run the evaluator
 `node scripts/retro-kpi.mjs retro-session.json` → prints the KPI table.

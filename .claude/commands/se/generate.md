@@ -1,6 +1,6 @@
 ---
 name: se:generate
-version: 5
+version: 6
 description: Kaltstart-Generierung eines Systemmodells aus Prosa-Intention — readiness-getriebener Loop über graph_generate, Kandidaten durchs Gate (dryRun-Verdict + Steuerwert), Handoff auf graph_suggest
 ---
 
@@ -18,7 +18,7 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
    - Mehrere zulässige Alternativen legst du dem Autor mit ihren Verdicts vor; er wählt. Den gewählten oder einzigen Batch wendest du ohne dryRun an. `block` heißt verwerfen oder revidieren — nie erzwingen, nie am Gate vorbei.
 4. Zurück zu 2 (ab jetzt ohne `intent` — steckt in der SYS-description), bis `done:true`.
 5. **Festgefahren:** Steht derselbe Fokus nach zwei Zuegen noch, stellt die Maschine ihn zurueck und nennt den naechsten (Eintrittspunkte und Steuerregeln nie — Eintrittspunkte loest nur ihr Task oder eine Abnahme). Meldet sie phase stalled, sind nur noch zurueckgestellte Funde offen: nicht weiter mutieren, sondern der Ansage folgen — im Task zurueck in den Kern, bei offenem Eintrittspunkt den Task starten, sonst die Funde und deine Versuche in der Schlussmeldung nennen. stalled ist nicht fertig.
-6. **Steuerregeln fertig:** Steuerregeln (RD-04, BW-02, R-04, CR-01, MT-02) sind fertig, wenn sich ihr Ueberschuss ueber drei Steuerzuege im Kreis bewegt oder um weniger als 5 % sinkt: lokales Optimum. Die Maschine nimmt sie dann aus dem Fokus und meldet done mit den verbliebenen Termen — weiter ueber graph_suggest oder den Menschen.
+6. **Steuerregeln fertig:** Wann eine Steuerregel fertig ist, nennt der `prompt` von `graph_generate` (lokales Optimum). Die Maschine nimmt sie dann aus dem Fokus und meldet done mit den verbliebenen Termen — weiter ueber graph_suggest oder den Menschen.
 7. **Handoff:** bei `phase:'handoff'` auf `graph_suggest` wechseln — es rankt die Umbau-Züge nach dem Steuerwert, ab hier wird optimiert, nicht mehr generiert. Entscheidungen, die halten sollen, schreibt der Nutzer als Constraint mit `se:constraints`; Gewichte gibt es nicht (CR-GC-853).
 
 ## Regeln
@@ -27,8 +27,8 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
 - **Anleitung je Schritt:** der Schritt nennt in `skill` die Autorier-Anleitung (`se:author-uc`, `se:author-req`, `se:author-actor`, `se:top-level`) — lade sie über das Skill-Werkzeug, bevor du schreibst; nicht per `cat`, nicht erst am Ende.
 - Zerlegungsbreite je Ebene: RD-04 meldet die Obergrenze, RD-05 die Untergrenze, das Band steht in `decompositionBreadth`; bei Architektur-Schritten 2 Alternativen anbieten; mehrere zulässige legst du dem Autor vor.
 - `blockingErrors > 0` hat immer Vorrang vor Neu-Generierung.
-- **Analysen sind Blackboxen:** FMEA, Bauplan, ConOps, Trade, Annahmen-Review laufen als eigene Einheit mit ihrem Skill (`se-fmea`, `se-plan`, …). Nennt der Schritt einen Eintrittspunkt (AF-01..05), starte die Analyse mit `graph_generate {task:'fmea'}` (bzw. `plan`, `conops`, …); die Sitzung bleibt im Task. Er ist fertig, wenn sein Eintrittspunkt schweigt — die Analyse ist gestempelt, beim Bauplan: es gibt einen offenen Auftrag (CR mit `status: open`) — oder abgenommen ist; dann kehre mit `graph_generate` ohne `task` in den Kern zurueck. Meldet danach eine Regel der Analyse im Kern (z. B. FM-01: Risiko ohne Bewertung), nennt der Schritt wieder ihren Skill: behebe den Fund nach dessen Schritten.
-- **Benannte Abweichung:** Einen Fund, der im Modell nicht erfuellbar ist, legst du als benannte Abweichung ab: `acceptedFindings: [{ruleId, reason}]` am betroffenen Element (graphweite Regeln am SYS), der Grund ist Pflicht. Abnehmbar sind nur die Analysen AF-01, AF-02, AF-03, AF-04, AF-05 (das Artefakt ist im schlanken Umfang nicht noetig), dazu CL-01 und FM-03. Architekturregeln sind nicht abnehmbar — eine Abnahme daran zaehlt nicht, der Fund bleibt: bauen. Nenne jede Abnahme in der Schlussmeldung.
+- **Analysen sind Blackboxen:** FMEA, Bauplan, ConOps, Trade, Annahmen-Review laufen als eigene Einheit mit ihrem Skill (`se-fmea`, `se-plan`, …). Nennt der Schritt einen Eintrittspunkt (eine AF-Regel), starte die Analyse mit `graph_generate {task:'fmea'}` (bzw. `plan`, `conops`, …); die Sitzung bleibt im Task. Er ist fertig, wenn sein Eintrittspunkt schweigt — die Analyse ist gestempelt, beim Bauplan: es gibt einen offenen Auftrag (CR mit `status: open`) — oder abgenommen ist; dann kehre mit `graph_generate` ohne `task` in den Kern zurueck. Meldet danach eine Regel der Analyse im Kern (z. B. FM-01: Risiko ohne Bewertung), nennt der Schritt wieder ihren Skill: behebe den Fund nach dessen Schritten.
+- **Benannte Abweichung:** Einen Fund, der im Modell nicht erfuellbar ist, legst du als benannte Abweichung ab: `acceptedFindings: [{ruleId, reason}]` am betroffenen Element (graphweite Regeln am SYS), der Grund ist Pflicht. Abnehmbar ist nur, was `graph_authoring_guide` unter `acceptedFindings` als `enumValues` nennt; der `prompt` sagt je Fund, ob seine Regel abnehmbar ist. Architekturregeln sind nicht abnehmbar — eine Abnahme daran zaehlt nicht, der Fund bleibt: bauen. Nenne jede Abnahme in der Schlussmeldung.
 - Am Ende `graph_export` + Commit — jeder Commit ein Graph-Stand, der zum Code passt.
 
 ## Themen der Intention

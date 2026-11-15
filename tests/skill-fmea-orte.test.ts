@@ -72,7 +72,8 @@ describe('se-fmea liest die Orte, er rechnet sie nicht (CR-GC-774)', () => {
 
   it('der erste Schritt ist die Verdrahtung, und eine nicht bewertbare Kette wird nicht analysiert', () => {
     expect(skill).toMatch(/measurable: false/);
-    for (const regel of ['R-30', 'R-31', 'R-21', 'IO-01', 'FC-04', 'FC-05']) expect(skill, regel).toContain(regel);
+    // CR-GC-940: der Skill führt keine Liste von Regel-IDs; er liest die Marke aus `holding`.
+    expect(skill).toMatch(/`holding` in `graph_readiness\(\{ detail: true \}\)`/);
   });
 
   it('die Reichweite geht nicht in die Schwere', () => {
@@ -112,8 +113,8 @@ const regel = (id: string) => ALL_RULE_DEFS.find((r) => r.id === id);
 const hilfe = TOOL_HELP.graph_metrics.se;
 
 describe('se-fmea Version 9: Eingang pruefen, Umfang und Traeger lesen, Ergebnis ist ein CR (CR-GC-782)', () => {
-  it('der Kopf traegt Version 11 (CR-GC-878)', () => {
-    expect(skill).toMatch(/^version: 12$/m);
+  it('der Kopf traegt Version 13 (CR-GC-940)', () => {
+    expect(skill).toMatch(/^version: 13$/m);
   });
 
   it('eine Luecke am Eingang geht an se-vorbereitung, der Skill stellt die Verdrahtung nicht selbst her', () => {

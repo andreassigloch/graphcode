@@ -1,6 +1,6 @@
 ---
 name: se:optimize
-version: 8
+version: 9
 description: Einen Umbauvorschlag proben und seinen Gesamt-Impact als Vorlage zeigen — Vorschläge aus einer Analyse (feste Form) und Vorschläge von graph_suggest, getrennt. Trockenlauf durchs Gate, Vorlage davor und danach, Wahl durch den Autor. Nach CDR, vor den Kettentests. Kein Auto-Apply; Anwenden und Nachmessen gehören dem CR des Umbaus.
 ---
 
@@ -83,7 +83,7 @@ Fluss, eine Anforderung oder die Zuordnung zum Modul ändert. Merk dir `graphVer
 | Antwortweg | je Kette des Umfangs `answerPath`: die Glieder, auf die die Antwort an den Akteur wartet. `[]` heißt, auf diese Kette wartet keine Antwort; `null` heißt verhindert, dann stehen die hindernden Flüsse in `answerPathBlockedBy` |
 | Funktionsbaum | `functions`: `chains` und `useCases` je berührter Funktion |
 | Modulbaum | je Modul des Umfangs `fanIn`, `fanOut`, `instability`, `lcom4`, `cohesion`, `uphillDependencies`, jede neben ihrer Schwelle aus `policy` (Herkunft: `policySource`) |
-| Befunde | je Regel die Zahl, ohne die aus dem Bau: `R-19`, `R-20`, `R-26`, `R-32` |
+| Befunde | je Regel die Zahl aus `rules_get_violations({ detail: "grouped" })`, ohne die Stufen Bindung und Abgleich: der Bau stellt sie |
 
 Ein Risiko gehört zum Umfang, wenn es selbst oder eine seiner Gegenmaßnahmen in `requirements`
 steht. Legt der Zug eine Funktion in ein Modul, das nicht in `modules` steht, lies dessen Zeile
