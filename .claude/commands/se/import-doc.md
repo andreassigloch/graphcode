@@ -1,6 +1,6 @@
 ---
 name: se:import-doc
-version: 3
+version: 4
 description: Dokument (PDF/Markdown/Text) zweistufig in den Graph importieren (»Struktur vor KI«) — Skelett zeigen, Typ-Entscheidungen im Chat, LLM-Extract durchs Apply-Gate; Merge (adds-only), nie Reseed
 ---
 
@@ -135,13 +135,12 @@ try {
     const hasSys = harness.getGraph().nodes.some((n: any) => n.type === 'SYS') ||
       (commands as any[]).some((c) => c.op === 'add-node' && (String(c.node?.uid ?? '').startsWith('SYS-') || c.node?.type === 'SYS'));
     const ensureSys = hasSys ? [] : [{ op: 'add-node', node: { uid: `SYS-${member}`, type: 'SYS', name: member, description: '', attributes: { status: 'draft' } } }];
-    // Nenne bei jedem `graph_mutate` dieses Skills `skill: "se:import-doc"`; so zählt das Audit den Zug unter diesem Skill.
     // graph_mutate nimmt nur Format-E (graphcode ≥ 0.27): die Kommandos als Text, Typen aus dem Bestand.
     const typ = new Map(harness.getGraph().nodes.map((n: any) => [n.uid, n.type]));
     const formatE = commandsToFormatE([...ensureSys, ...commands] as any, (u: string) => typ.get(u));
     // CR-GC-860: je Befund ein Element nur im Format `full` (MutateResultSchema in contracts); der
     // Default `summary` faltet je Regel in `elements` und schreibt die uid als `{el}` in die Meldung.
-    const res = await registry['graph_mutate'].handler({ formatE, consumerId: 'import-doc', violations: 'full' });
+    const res = await registry['graph_mutate'].handler({ formatE, consumerId: 'import-doc', skill: "se:import-doc", violations: 'full' });
     return { success: res.success, tier: res.tier, violations: (res.violations ?? []).map((v: any) => ({
       ruleId: v.ruleId, severity: v.severity, elementId: v.elementId ?? '', message: v.message,
       ...(v.fixHint !== undefined ? { fixHint: v.fixHint } : {}) })) };

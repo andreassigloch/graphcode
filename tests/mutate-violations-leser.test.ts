@@ -16,7 +16,7 @@
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { copyFileSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { MutateResultSchema } from '@sigloch/contracts/harness';
@@ -65,6 +65,10 @@ const ZUG = [
 beforeEach(async () => {
   repoRoot = mkdtempSync(join(tmpdir(), 'gc-mutate-leser-'));
   mkdirSync(join(repoRoot, '.graphcode'), { recursive: true });
+  // CR-GC-950: der Skill nennt sich im Aufruf (`skill`), und das Werkzeug prueft den Namen gegen die
+  // Skill-Dateien des Repos. Ein Repo, in dem der Skill laeuft, traegt seine Datei.
+  mkdirSync(join(repoRoot, '.claude', 'commands', 'se'), { recursive: true });
+  copyFileSync(SKILL, join(repoRoot, '.claude', 'commands', 'se', 'import-doc.md'));
   harness = await createHarness({ repoRoot, scope: { workspaceId: 'w', systemId: 's' } });
   await harness.initialize();
   tools = bindToolsToHarness(harness);

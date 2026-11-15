@@ -33,4 +33,18 @@ describe('Skills nennen den Parameter skill an graph_mutate (CR-GC-949)', () => 
     expect(geprueft).toBeGreaterThan(0);
     expect(fehlt).toEqual([]);
   });
+
+  // CR-GC-950: zeigt ein Skill den Aufruf als Code, zaehlt nur der Parameter im Aufruf — ein Kommentar
+  // daneben setzt ihn nicht.
+  it('jeder als Code gezeigte Aufruf von graph_mutate uebergibt skill', () => {
+    const fehlt: string[] = [];
+    for (const rel of readdirSync(COMMANDS, { recursive: true, encoding: 'utf8' })) {
+      if (!rel.endsWith('.md')) continue;
+      const zeilen = readFileSync(join(COMMANDS, rel), 'utf8').split('\n');
+      zeilen.forEach((zeile, i) => {
+        if (/\['graph_mutate'\]\.handler\(/.test(zeile) && !/\bskill:/.test(zeile)) fehlt.push(`${rel}:${i + 1}`);
+      });
+    }
+    expect(fehlt).toEqual([]);
+  });
 });

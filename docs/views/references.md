@@ -1545,6 +1545,7 @@
 | `CR-GC-947` | relation | `FUNC-verify-lane-full` |
 | `CR-GC-948` | relation | `FUNC-block-messwerk` |
 | `CR-GC-949` | relation | `FUNC-graph-mutate-tool` |
+| `CR-GC-950` | relation | `FUNC-import-doc` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
