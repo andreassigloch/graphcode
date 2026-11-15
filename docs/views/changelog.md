@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 547 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 547 CR · 387 done · 5 open.
+Total: 547 CR · 388 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -607,5 +607,5 @@ Total: 547 CR · 387 done · 5 open.
 | `CR-GC-939` | done | Skills an entschiedene Modellfragen angleichen |
 | `CR-GC-940` | done | Skills zählen und rechnen nicht selbst |
 | `CR-GC-941` | done | Skill-Text zur Wiederherstellung geht am Gate vorbei |
-| `CR-GC-942` | open | Skilltexte aus der FAQ ergänzen, Abgeschafftes streichen |
+| `CR-GC-942` | done | Skilltexte aus der FAQ ergänzen, Abgeschafftes streichen |
 | `CR-GC-943` | n/a | Verwendung von Regeln und Skills messen: Skill-Name am Zug, Ablehnungsquote und Feuerbild je Regel |

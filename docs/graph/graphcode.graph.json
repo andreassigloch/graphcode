@@ -4250,8 +4250,8 @@
       "id": "CR-GC-942",
       "type": "CR",
       "name": "Skilltexte aus der FAQ ergänzen, Abgeschafftes streichen",
-      "description": "docs/cr/open/CR-GC-942-skilltexte-aus-der-faq-erga-nzen-abgesch.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-942-skilltexte-aus-der-faq-erga-nzen-abgesch.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-943",
@@ -33289,5 +33289,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1185
+  "graphVersion": 1186
 }
