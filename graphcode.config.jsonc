@@ -22,6 +22,10 @@
 // schlaegt an, wenn eine Abweichung ohne diese Marke dasteht — oder eine Marke ohne
 // Abweichung (eine Karteileiche ist dieselbe Unwahrheit in der Gegenrichtung).
 {
+  // Wissensdatei im Kontext des Agenten (CR-GC-935): der Index der FAQ in aise-bok.
+  // Fehlt die Datei auf einem Rechner, meldet der Hook das in einem Satz.
+  "knowledgeFile": "~/Developer/dev/aise-bok/docs/knowledge/faq/INDEX.md",
+
   "metricPolicy": {
     // MT-01 (Instabilitaet, fanOut / (fanIn + fanOut)) ist unvalidiert: die 0.7 ist
     // gesetzt, nicht gemessen (CR-SM-223, "Validation ... is deferred"). null heisst

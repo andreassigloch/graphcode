@@ -46,6 +46,26 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/inject-knowledge.sh\" '~/Developer/dev/aise-bok/docs/knowledge/faq/INDEX.md'"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/inject-knowledge.sh\" '~/Developer/dev/aise-bok/docs/knowledge/faq/INDEX.md'"
+          }
+        ]
+      }
     ]
   }
 }
