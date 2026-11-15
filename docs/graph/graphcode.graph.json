@@ -4306,7 +4306,8 @@
       "id": "CR-GC-950",
       "type": "CR",
       "name": "Skill se:import-doc uebergibt skill im Aufruf von graph_mutate, nicht nur im Kommentar",
-      "description": "docs/cr/open/CR-GC-950-skill-se-import-doc-uebergibt-skill-im-a.md"
+      "description": "docs/cr/done/CR-GC-950-skill-se-import-doc-uebergibt-skill-im-a.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -33623,5 +33624,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1228
+  "graphVersion": 1229
 }
