@@ -79,7 +79,7 @@ import {
 } from './scaffold-templates.js';
 import { guardrailsContent, steeringContent } from './scaffold-docs.js';
 import { policyNachziehen } from './config-nachziehen.js';
-import { KNOWLEDGE_HOOK, knowledgePathOf, knowledgePathOfSettings } from './wissensdatei.js';
+import { KNOWLEDGE_HOOK, knowledgePathOf, knowledgePathOfSettings, resolveKnowledgePath } from './wissensdatei.js';
 import { CONFIG_FILENAME } from '../kernel/config.js';
 
 
@@ -586,9 +586,11 @@ export async function scaffold(
   const steeringAbs = join(repoRoot, STEERING_FILE);
   // CR-GC-935: Wissensdatei aus der Config; der bisher eingebundene Pfad steht in settings.json.
   const settingsRaw = readIfExists(join(repoRoot, SETTINGS_FILE));
+  const knowledgeRaw = action === 'remove' ? null : knowledgePathOf(repoRoot);
   const knowledge = {
-    path: action === 'remove' ? null : knowledgePathOf(repoRoot),
-    previous: knowledgePathOfSettings(settingsRaw),
+    raw: knowledgeRaw,
+    path: resolveKnowledgePath(knowledgeRaw, repoRoot),
+    previous: resolveKnowledgePath(knowledgePathOfSettings(settingsRaw), repoRoot),
   };
 
   switch (action) {
@@ -614,7 +616,7 @@ export async function scaffold(
       writeArtifact(steeringAbs, STEERING_FILE, steeringContent(), res);
       installSkills(repoRoot, res);
       installOpencodePlugin(repoRoot, res);
-      installHooks(repoRoot, res, knowledge.path);
+      installHooks(repoRoot, res, knowledge.raw);
       registerDependency(repoRoot, res);
       return res;
     }
@@ -642,7 +644,7 @@ export async function scaffold(
       writeArtifact(steeringAbs, STEERING_FILE, steeringContent(), res);
       installSkills(repoRoot, res);
       installOpencodePlugin(repoRoot, res);
-      installHooks(repoRoot, res, knowledge.path);
+      installHooks(repoRoot, res, knowledge.raw);
       registerDependency(repoRoot, res);
       // CR-GC-915: ein neues Pflichtfeld der Metrik-Policy wuerde den Host am Start brechen.
       for (const feld of policyNachziehen(repoRoot)) res.updated.push(`${CONFIG_FILENAME}#metricPolicy.${feld}`);

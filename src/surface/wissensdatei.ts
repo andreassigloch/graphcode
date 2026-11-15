@@ -6,8 +6,10 @@
  * nur ihren Pfad, den das Repo in `graphcode.config.jsonc` unter `knowledgeFile` nennt.
  *
  * WAS: Claude Code bekommt den Hook `inject-knowledge.sh` (SessionStart + SubagentStart), OpenCode
- * einen Eintrag in `instructions`. Beide tragen denselben ABSOLUTEN Pfad: OpenCode loest `~` nicht auf
- * (am echten Lauf geprueft), also loest graphcode es hier auf. Fehlt der Schluessel, entsteht nichts,
+ * einen Eintrag in `instructions`. `.claude/settings.json` ist versioniert und traegt den Pfad so, wie die
+ * Config ihn nennt (CR-GC-936: kein Pfad des Rechners im Repo); der Hook loest `~` und Relatives zur
+ * Laufzeit auf. `opencode.json` traegt den ABSOLUTEN Pfad: OpenCode loest `~` nicht auf
+ * (am echten Lauf geprueft), also loest graphcode es beim `init` auf. Fehlt der Schluessel, entsteht nichts,
  * und eine fruehere Einbindung faellt weg. Welcher Pfad frueher eingebunden war, steht im
  * Befehl des Hook-Eintrags in `.claude/settings.json`.
  *
@@ -24,7 +26,7 @@ export const KNOWLEDGE_EVENTS = ['SessionStart', 'SubagentStart'] as const;
 
 type Entry = { matcher?: string; hooks?: { type: string; command: string }[] };
 
-/** Der Pfad aus `knowledgeFile`, absolut und mit aufgeloestem `~`; `null` ohne Schluessel oder Datei. */
+/** Der Pfad aus `knowledgeFile` wie in der Config geschrieben; `null` ohne Schluessel oder Config. */
 export function knowledgePathOf(repoRoot: string): string | null {
   const path = join(repoRoot, CONFIG_FILENAME);
   if (!existsSync(path)) return null;
@@ -39,7 +41,13 @@ export function knowledgePathOf(repoRoot: string): string | null {
   if (typeof value !== 'string' || value.trim() === '') {
     throw new ConfigError(path, '`knowledgeFile` muss ein nichtleerer Pfad sein');
   }
-  const home = value === '~' || value.startsWith('~/') ? homedir() + value.slice(1) : value;
+  return value;
+}
+
+/** Der absolute Pfad zu `raw`: `~` gegen das Home-Verzeichnis, Relatives gegen die Repo-Wurzel. */
+export function resolveKnowledgePath(raw: string | null, repoRoot: string): string | null {
+  if (raw === null) return null;
+  const home = raw === '~' || raw.startsWith('~/') ? homedir() + raw.slice(1) : raw;
   return resolve(repoRoot, home);
 }
 

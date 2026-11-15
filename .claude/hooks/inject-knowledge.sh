@@ -3,13 +3,21 @@
 #
 # Not a deny hook and not registered by this package's own settings.json: `graphcode init|update`
 # copies it and registers it only when `graphcode.config.jsonc` names a file under `knowledgeFile`.
-# The registered command passes that absolute path as $1.
+# The registered command passes the path as written in the config as $1 (CR-GC-936: no machine path in
+# the versioned settings.json). This hook resolves it: `~` against $HOME, a relative path against the repo
+# root ($CLAUDE_PROJECT_DIR).
 # Claude Code caps a hook's context at 10 000 characters and would cut the rest to a preview.
 # So: a file within the cap goes out whole; a larger or missing file yields ONE sentence, no excerpt.
 # Protocol: event JSON on stdin; JSON with hookSpecificOutput.additionalContext on stdout; always exit 0.
 
 MAX=10000
 file="$1"
+case "$file" in
+  "~") file="$HOME" ;;
+  "~/"*) file="$HOME/${file#\~/}" ;;
+  /*|"") ;;
+  *) file="${CLAUDE_PROJECT_DIR:-$PWD}/$file" ;;
+esac
 event=$(jq -r '.hook_event_name // empty' 2>/dev/null)
 [ -z "$event" ] && event="SessionStart"
 

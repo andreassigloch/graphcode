@@ -9,7 +9,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync, existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { scaffold } from '../src/surface/scaffold.js';
@@ -131,6 +131,59 @@ describe('TEST-knowledge-binding: Wissensdatei im Kontext des Agenten (CR-GC-935
     expect(existsSync(join(repo, SETTINGS))).toBe(false);
     expect(readJson(join(repo, 'opencode.json'))).toMatchObject({ model: 'y', instructions: ['fremd.md'] });
     expect(readJson(join(repo, 'opencode.json')).mcp).toBeUndefined();
+  });
+
+  describe('kein Pfad des Rechners in settings.json (CR-GC-936)', () => {
+    it('~ im Schluessel bleibt ~ in settings.json, opencode.json traegt den absoluten Pfad', async () => {
+      mitSchluessel('~/x/y.md');
+      await scaffold('init', { repoRoot: repo });
+      const settings = readFileSync(join(repo, SETTINGS), 'utf8');
+      expect(settings).not.toContain(homedir());
+      expect(knowledgeEntries(repo, 'SessionStart')[0].hooks![0].command).toContain("'~/x/y.md'");
+      expect(readJson(join(repo, 'opencode.json')).instructions).toEqual([join(homedir(), 'x', 'y.md')]);
+    });
+
+    it('relativer Pfad bleibt relativ in settings.json, absolut in opencode.json', async () => {
+      mitSchluessel('wissen/index.md');
+      await scaffold('init', { repoRoot: repo });
+      expect(readFileSync(join(repo, SETTINGS), 'utf8')).not.toContain(repo);
+      expect(readJson(join(repo, 'opencode.json')).instructions).toEqual([join(repo, 'wissen', 'index.md')]);
+    });
+
+    it('Hook loest ~ gegen HOME und relativen Pfad gegen CLAUDE_PROJECT_DIR auf', async () => {
+      mkdirSync(join(repo, 'wissen'));
+      writeFileSync(join(repo, 'wissen', 'index.md'), 'Relativ-4417');
+      writeFileSync(join(dir, 'home.md'), 'Tilde-9902');
+      for (const [pfad, erwartet] of [
+        ['wissen/index.md', 'Relativ-4417'],
+        ['~/home.md', 'Tilde-9902'],
+      ]) {
+        mitSchluessel(pfad);
+        await scaffold('init', { repoRoot: repo });
+        const cmd = knowledgeEntries(repo, 'SessionStart')[0].hooks![0].command;
+        const r = spawnSync('bash', ['-c', cmd], {
+          input: JSON.stringify({ hook_event_name: 'SessionStart' }),
+          env: { ...process.env, CLAUDE_PROJECT_DIR: repo, HOME: dir },
+          encoding: 'utf8',
+        });
+        expect(JSON.parse(r.stdout).hookSpecificOutput.additionalContext).toBe(erwartet);
+      }
+    });
+
+    it('Wechsel und Entfernen finden die alte instructions-Zeile trotz ~ in settings.json', async () => {
+      mitSchluessel('~/x/y.md');
+      await scaffold('init', { repoRoot: repo });
+      mitSchluessel('~/x/z.md');
+      await scaffold('update', { repoRoot: repo });
+      expect(readJson(join(repo, 'opencode.json')).instructions).toEqual([join(homedir(), 'x', 'z.md')]);
+      config({});
+      await scaffold('update', { repoRoot: repo });
+      expect(readJson(join(repo, 'opencode.json')).instructions).toBeUndefined();
+      mitSchluessel('~/x/y.md');
+      await scaffold('update', { repoRoot: repo });
+      await scaffold('remove', { repoRoot: repo });
+      expect(existsSync(join(repo, 'opencode.json'))).toBe(false);
+    });
   });
 
   describe('der Hook als Prozess', () => {
