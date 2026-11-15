@@ -223,7 +223,7 @@ export async function serveStdio(opts?: {
     process.stderr.write(
       loaded.source === 'config'
         ? `[graphcode] metric policy: ${loaded.path}\n`
-        : `[graphcode] metric policy: contracts DEFAULT_METRIC_POLICY (no ${loaded.path})\n`,
+        : `[graphcode] metric policy: contracts DEFAULT_METRIC_POLICY (${loaded.path} missing or without metricPolicy)\n`,
     );
     // Aufbaureihenfolge = Registrierungsreihenfolge; abgeraeumt wird rueckwaerts,
     // der Store-Lock also zuletzt (CR-GC-370).

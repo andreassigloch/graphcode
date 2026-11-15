@@ -233,3 +233,21 @@ describe('CR-GC-629 (3): kein Skill behauptet eine Schwelle, die keine Policy tr
     expect(breite!.warning).toBe(9);
   });
 });
+
+describe('CR-GC-937: Datei ohne metricPolicy', () => {
+  it('openMeasured nennt den Startwert als Herkunft, wenn die Config die Policy nicht traegt', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'gc-937-'));
+    try {
+      writeFileSync(join(root, CONFIG_FILENAME), '{ "knowledgeFile": "~/w.md" }');
+      const m = await openMeasured({ repoRoot: root, systemId: 'gc937', workspaceId: 'gc-937' });
+      try {
+        expect(m.provenance.policy.source).toBe('default');
+        expect(m.policy).toEqual(DEFAULT_METRIC_POLICY);
+      } finally {
+        await m.close();
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});

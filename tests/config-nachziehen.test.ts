@@ -77,6 +77,16 @@ describe('CR-GC-915: fehlende Policy-Felder nachziehen', () => {
     expect(readFileSync(pfad, 'utf8')).toBe(vorher);
   });
 
+  it('CR-GC-937: Config ohne metricPolicy meldet keinen Mangel und bleibt unveraendert', () => {
+    const root = mkdtempSync(join(tmpdir(), 'graphcode-nachziehen-'));
+    roots.push(root);
+    const pfad = join(root, CONFIG_FILENAME);
+    writeFileSync(pfad, '{ "knowledgeFile": "~/w.md" }');
+    expect(policyNachziehen(root, { dry: true })).toEqual([]);
+    expect(policyNachziehen(root)).toEqual([]);
+    expect(readFileSync(pfad, 'utf8')).toBe('{ "knowledgeFile": "~/w.md" }');
+  });
+
   it('ohne Config gibt es nichts nachzuziehen', () => {
     const root = mkdtempSync(join(tmpdir(), 'graphcode-nachziehen-'));
     roots.push(root);

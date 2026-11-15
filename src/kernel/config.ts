@@ -44,15 +44,19 @@ export const CONFIG_FILENAME = 'graphcode.config.jsonc';
 export const DEFAULT_FOCUS_THRESHOLD = 0.8;
 
 export const GraphcodeConfigSchema = z.object({
-  /** Urteilsschwellen der Architektur-Metriken (contracts). `null` = messen, nicht urteilen. */
-  metricPolicy: MetricPolicySchema,
-  /** Schwelle, unter der eine Readiness-Dimension als zu schwach gilt. */
-  focusThreshold: z.number().min(0).max(1),
+  /** Urteilsschwellen der Architektur-Metriken (contracts). `null` = messen, nicht urteilen. Fehlt das Feld: Startwert (CR-GC-937). */
+  metricPolicy: MetricPolicySchema.optional(),
+  /** Schwelle, unter der eine Readiness-Dimension als zu schwach gilt. Fehlt das Feld: Startwert (CR-GC-937). */
+  focusThreshold: z.number().min(0).max(1).optional(),
   /** Pfad einer Wissensdatei, die `init`/`upgrade` in den Kontext des Agenten einbinden (CR-GC-935). `~` erlaubt. */
   knowledgeFile: z.string().min(1).optional(),
 });
 
-export type GraphcodeConfig = z.infer<typeof GraphcodeConfigSchema>;
+/** Die geltende Config: `metricPolicy` und `focusThreshold` sind aufgelöst, nie leer. */
+export type GraphcodeConfig = z.infer<typeof GraphcodeConfigSchema> & {
+  metricPolicy: MetricPolicy;
+  focusThreshold: number;
+};
 
 /** Woher die geltenden Werte stammen — geht mit den Kennzahlen an den Konsumenten. */
 export const PolicySourceSchema = z.enum(['config', 'default']);
@@ -60,6 +64,7 @@ export type PolicySource = z.infer<typeof PolicySourceSchema>;
 
 export interface LoadedConfig {
   config: GraphcodeConfig;
+  /** Herkunft der `metricPolicy`: `config` nur, wenn die Datei sie trägt (CR-GC-937). */
   source: PolicySource;
   /** Absoluter Pfad der Datei — auch wenn sie fehlt (dann: wo sie erwartet wurde). */
   path: string;
@@ -122,6 +127,8 @@ export class ConfigError extends Error {
 
 /**
  * Config des Repos laden. Fehlt die Datei → `DEFAULT_CONFIG` mit `source: 'default'`.
+ * Fehlt in der Datei `metricPolicy` oder `focusThreshold`, gilt dafür der Wert aus `DEFAULT_CONFIG`;
+ * `source` ist dann `'default'`, wenn `metricPolicy` fehlt (CR-GC-937).
  * Ist sie da und kaputt → `ConfigError` (kein Fallback).
  */
 export function loadGraphcodeConfig(repoRoot: string): LoadedConfig {
@@ -152,7 +159,17 @@ export function loadGraphcodeConfig(repoRoot: string): LoadedConfig {
     throw new ConfigError(path, `does not match GraphcodeConfigSchema — ${fields}`);
   }
 
-  return { config: result.data, source: 'config', path };
+  // CR-GC-937: ein fehlendes Feld nimmt den Wert aus DEFAULT_CONFIG; die Herkunft folgt der Policy.
+  const { metricPolicy, focusThreshold, ...rest } = result.data;
+  return {
+    config: {
+      ...rest,
+      metricPolicy: metricPolicy ?? DEFAULT_CONFIG.metricPolicy,
+      focusThreshold: focusThreshold ?? DEFAULT_CONFIG.focusThreshold,
+    },
+    source: metricPolicy === undefined ? 'default' : 'config',
+    path,
+  };
 }
 
 /** Die geltende Metrik-Policy — der Wert, der mit jeder Kennzahl herausgeht. */

@@ -153,10 +153,27 @@ describe('CR-GC-329: Config laden — fehlend, gueltig, kaputt', () => {
     expect((err as ConfigError).message).toContain('metricPolicy.instability');
   });
 
-  it('fehlendes Pflichtfeld → Abbruch, nicht Ergaenzung aus dem Default', () => {
-    const root = repo('{ "metricPolicy": { "instability": 0.7, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null, "needNameTerms": ["KI", "MCP", "Gate", "Lauf", "Ziel"] } }');
+  it('CR-GC-937: Config nur mit knowledgeFile → Startwerte, Herkunft default', () => {
+    const root = repo('{ "knowledgeFile": "~/wissen.md" }');
+    const loaded = loadGraphcodeConfig(root);
 
-    expect(() => loadGraphcodeConfig(root)).toThrow(ConfigError);
+    expect(loaded.source).toBe('default');
+    expect(loaded.config.metricPolicy).toEqual(DEFAULT_METRIC_POLICY);
+    expect(loaded.config.focusThreshold).toBe(DEFAULT_FOCUS_THRESHOLD);
+    expect(loaded.config.knowledgeFile).toBe('~/wissen.md');
+  });
+
+  it('CR-GC-937: metricPolicy ohne focusThreshold → Policy aus Datei (config), Schwelle aus Startwert', () => {
+    const root = repo('{ "metricPolicy": { "instability": 0.7, "lcom4": null, "crossingFlows": { "warning": 3 }, "decompositionBreadth": { "min": 3, "warning": 9 }, "boundaryWidth": { "warning": 5 }, "criticality": { "infrastructure": 3 }, "riskRpn": 100, "apTable": null, "needNameTerms": ["KI", "MCP", "Gate", "Lauf", "Ziel"] } }');
+    const loaded = loadGraphcodeConfig(root);
+
+    expect(loaded.source).toBe('config');
+    expect(loaded.config.metricPolicy.instability).toBe(0.7);
+    expect(loaded.config.focusThreshold).toBe(DEFAULT_FOCUS_THRESHOLD);
+  });
+
+  it('CR-GC-937: vorhandenes, falsches focusThreshold bricht weiter ab', () => {
+    const root = repo('{ "focusThreshold": 2 }');
     expect(() => loadGraphcodeConfig(root)).toThrow(/focusThreshold/);
   });
 

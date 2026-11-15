@@ -186,7 +186,13 @@ export async function openMeasured(opts: OpenMeasuredOptions): Promise<Measured>
 
   const provenance: Provenance = {
     graph: graphStamp,
-    policy: { ...policySource, value: harness.getMetricPolicy() },
+    // CR-GC-937: eine Datei ohne `metricPolicy` liefert den Startwert, und das steht hier so.
+    policy: {
+      ...(policySource.source === 'file' && harness.getGraphcodeConfig().source === 'default'
+        ? { source: 'default' as const, from: null }
+        : policySource),
+      value: harness.getMetricPolicy(),
+    },
     versions: { rules: RULES_VERSION, ontology: ONTOLOGY_VERSION, metaModel: META_MODEL_VERSION },
     code: codeStamp(),
     repoRoot,

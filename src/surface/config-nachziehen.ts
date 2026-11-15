@@ -41,8 +41,10 @@ export function policyNachziehen(repoRoot: string, options: { dry?: boolean } = 
     throw new ConfigError(path, `invalid JSONC — ${(err as Error).message}`);
   }
   const vorhanden = parsed.metricPolicy;
-  if (!vorhanden || typeof vorhanden !== 'object') {
-    throw new ConfigError(path, '`metricPolicy` fehlt — nichts nachzutragen, die Datei ist von Hand zu pruefen');
+  // CR-GC-937: fehlt `metricPolicy`, gilt der Startwert; es gibt nichts nachzutragen.
+  if (vorhanden === undefined) return [];
+  if (vorhanden === null || typeof vorhanden !== 'object') {
+    throw new ConfigError(path, '`metricPolicy` ist kein Objekt — die Datei ist von Hand zu pruefen');
   }
 
   const fehlend = Object.keys(DEFAULT_METRIC_POLICY).filter((k) => !(k in vorhanden));
