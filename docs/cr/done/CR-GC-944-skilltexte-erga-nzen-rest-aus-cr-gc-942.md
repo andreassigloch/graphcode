@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** freigegeben. Die Freigabe des Autors vom 2026-11-15 für CR-GC-942 gilt für diese vier Zeilen.
+**Status:** Geschlossen 2026-11-15, umgesetzt für alle vier Kandidaten (Nr. 6, 10, 12, 16, je ohne den Teilsatz, den der geschlossene CR nicht trägt). Die Freigabe des Autors vom 2026-11-15 für CR-GC-942 gilt für diese vier Zeilen.
 
 ## Anlass
 
