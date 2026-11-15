@@ -4298,7 +4298,8 @@
       "id": "CR-GC-949",
       "type": "CR",
       "name": "Skills nennen den Parameter skill an graph_mutate",
-      "description": "docs/cr/open/CR-GC-949-skills-nennen-den-parameter-skill-an-gra.md"
+      "description": "docs/cr/done/CR-GC-949-skills-nennen-den-parameter-skill-an-gra.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -33610,5 +33611,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1221
+  "graphVersion": 1222
 }

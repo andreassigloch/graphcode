@@ -637,7 +637,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-946` | done | Verlauf der Marken und Befunde je Stufe beim Host rechnen: graph_readiness liefert ihn, der Import aus dem Viewer entfaellt | `FUNC-graph-readiness` |
 | `CR-GC-947` | done | Zeile je CR erweitern: Schlupf ohne Link-Modus-Tests, Grenzmenge, Abgleich Modell und Code, Dauer Auswahl gegen Volllauf, Werkzeuglatenz | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` |
 | `CR-GC-948` | n/a | Messdokumente trennen: kennzahlen.md beschreibt zwoelf Groessen, stand.md traegt Wert und Verlauf je Release | `FUNC-block-messwerk` |
-| `CR-GC-949` | n/a | Skills nennen den Parameter skill an graph_mutate | `FUNC-graph-mutate-tool` |
+| `CR-GC-949` | done | Skills nennen den Parameter skill an graph_mutate | `FUNC-graph-mutate-tool` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
