@@ -30,8 +30,8 @@ const retro = lies('se-retro.md');
 
 describe('TEST-skill-keine-eigene-rechnung (CR-GC-940)', () => {
   it('Prämisse: der Guide liefert die abnehmbaren Regeln als enumValues von acceptedFindings', () => {
-    const a = attributesFor('UC').find((x: { key: string }) => x.key === 'acceptedFindings') as { enumValues: string[] };
-    expect([...a.enumValues].sort()).toEqual([...ABNEHMBAR].sort());
+    const a = attributesFor('UC').find((x: { key: string }) => x.key === 'acceptedFindings');
+    expect([...(a?.enumValues ?? [])].sort()).toEqual([...ABNEHMBAR].sort());
   });
 
   it('Prämisse: rules_evaluate liefert die Arbeitsreihenfolge, graph_readiness die Deckung', () => {
