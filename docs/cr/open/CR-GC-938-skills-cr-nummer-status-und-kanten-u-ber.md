@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** Vorschlag, vom Autor nicht freigegeben; umgesetzt ist nichts.
+**Freigabe:** Autor, 2026-11-15, mit der Empfehlung (Skills an die FAQ angleichen). Umgesetzt in `.claude/commands` (7 Dateien); Test `tests/skill-cr-ueber-aise.test.ts`.
 
 ## Anlass
 
@@ -42,9 +42,9 @@ einem Skill, löst ein CR im Repo des Skills den Konflikt. Bis dahin folgt ein A
 
 ## Abnahme
 
-- [ ] Der Autor hat je Zeile entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen“.
-- [ ] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
-- [ ] `npm run verify:full <CR>` grün.
+- [x] Der Autor hat je Zeile entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen“.
+- [x] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
+- [x] `npm run verify:full <CR>` grün.
 
 ---
 
@@ -54,6 +54,10 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| Wer wählt die Nummer eines CR, den ein Skill anlegt? | `aise dispatch prepare` vergibt sie mit Repo-Präfix und legt Datei und CR-Knoten an; die Skills `se-conops`, `se-irr`, `se-trade`, `se-fmea`, `se-laufzeit` zeigen `aise item new` plus `aise dispatch prepare`. Freigabe des Autors 2026-11-15. | FAQ `cr-nummer-vergeben`: Der Agent wählt keine Nummer; `CR-001` ohne Präfix kollidiert mit vorhandenen CRs. |
+| Wer setzt den Status des CR-Knotens? | `aise cr close` setzt ihn; kein Skill schreibt `status` per `graph_mutate` (`se-plan` ohne `@status open`, da der Knoten ab `prepare` offen ist). Freigabe des Autors 2026-11-15. | FAQ `cr-knoten-status`: Der Ordner open/ oder done/ entscheidet, der Knoten spiegelt ihn. |
+| Auf welche Typen geht eine CR-`relation`? | Nur auf FUNC, REQ, MS, MOD, SCHEMA, UC (geprüft an `TRACE_PATTERNS`, `meta-model.ts`); TEST und FLOW nennt der CR-Text, ein TEST hängt an seiner REQ. Freigabe des Autors 2026-11-15. | Das Gate lehnt `CR relation TEST` und `CR relation FLOW` ab (R-18); ein Test in `tests/skill-cr-ueber-aise.test.ts` prüft jede genannte Kante mit `isValidTrace`. |
+| Nennt ein Skill `commitRef`? | Nein; `se-plan` schreibt Kanten und `testRefs`. Freigabe des Autors 2026-11-15. | FAQ `cr-commitref`: Attribut entfallen (contracts 12.13.0); der Commit steht in git unter der CR-Nummer. |
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: se-plan
-version: 12
+version: 13
 description: Generate the implementation/integration plan — order the build along the model's integration tree (leaves up), make the test concept complete BEFORE cutting, cut CRs (≤10 files) whose content is the graph_context slice, enforce an io-integration test per CR, and write MS/CR/relation through the gate
 ---
 
@@ -62,7 +62,7 @@ Each CR's deliverables **fall out of its subgraph** — do not write them by han
 
 ## 6. Write the plan — CR through the family path, edges through the gate
 - **CR:** `aise item new --target <repo> --body "<text>" "Bau: <title>"`, then `aise dispatch prepare <ITEM> --lane code --wurzel <carrier uids>`. aise mints the number, writes the CR file and the CR node. Never `add-node` a CR by hand.
-- **MS, edges, status** via `graph_mutate`: `+ MS-…`, `CR → MS` `relation`, `MS → MS` `relation [label:depends-on]`, the scope `relation`s, and `~ CR-…` `@status open` (AF-05 reads it).
+- **MS and edges** via `graph_mutate`: `+ MS-…`, `CR → MS` `relation`, `MS → MS` `relation [label:depends-on]`, the scope `relation`s. The CR node is open from `aise dispatch prepare` on (AF-05 reads it); `aise cr close` sets it done. You never write `status`.
 - Every aise call moves the `graphVersion` by one — re-read it before your batch, or the gate rejects the stale base.
 - Inspect `violations`; the gate blocks a batch with a new error (R-18, R-01) — fix and re-apply. Never hand-edit the SSOT.
 
@@ -83,6 +83,6 @@ The plan sets **no** stamp on the SYS root. Its result is what step 6 wrote: the
 
 ## 10. Run the plan — one agent per CR of a group
 The groups are the instruction for the build. Measured failure (immo-infra, 2026-11-08): sub-agents ran once, only after the user asked; a turn cost 96 k tokens of context in a sub-agent and 203 k in the main session.
-- **The main session only coordinates.** Per group it starts one agent per CR, each in its own worktree, with the CR text as its brief. It merges the results, writes the graph alone (status, `commitRef`, `testRefs`) and rolls out to the target environment one CR after the other.
+- **The main session only coordinates.** Per group it starts one agent per CR, each in its own worktree, with the CR text as its brief. It merges the results, writes the graph alone (edges, `testRefs`) and rolls out to the target environment one CR after the other.
 - **Agents never write the graph and never roll out.** They implement, test and commit in their worktree.
 - Group n+1 starts when every CR of group n is merged.

@@ -1,6 +1,6 @@
 ---
 name: se-irr
-version: 5
+version: 6
 description: Assumption Review — detect unproven assumptions, ask which become requirements, write each chosen one as a REQ with its verifying TEST, record the review as a closed CR (CREATE, gate-only)
 ---
 
@@ -28,8 +28,9 @@ For each chosen assumption author one `REQ` with `se:author-req`, so it ships wi
 
 ## 3. Record the review as a closed change request
 A review is a change to the model, and it is documented like one — one text, one node, edges to what it touched:
-1. **Text.** Write `docs/cr/done/<next CR id>-<slug>.md` — the next free number after the files in `docs/cr/open/` and `docs/cr/done/`, same prefix; `CR-001` in a repo without CRs. It names the commit the review ran against (`git rev-parse --short HEAD`) and carries the whole list: `assumption | why it is load-bearing | evidence today | what would falsify it | decision (REQ id, or declined and why)`. It is the only prose record — a new review is a new CR, never an edit of an old one.
-2. **Model.** In the same `graph_mutate` batch as the requirements, add the CR node — id and title only, `status: "done"` — with one `relation` edge from it to every REQ this review wrote.
+1. **Text.** `aise item new --target <repo> --body "<text>" "<title>"`, then `aise dispatch prepare <ITEM> --lane graph`. aise mints the number with the repo prefix, writes `docs/cr/open/<CR id>-<slug>.md` and the CR node; you choose no number. Write into that file: it names the commit the review ran against (`git rev-parse --short HEAD`) and carries the whole list: `assumption | why it is load-bearing | evidence today | what would falsify it | decision (REQ id, or declined and why)`. It is the only prose record — a new review is a new CR, never an edit of an old one.
+2. **Model.** In the same `graph_mutate` batch as the requirements, add one `relation` edge from the CR node to every REQ this review wrote (`CR relation → REQ`).
+3. **Close.** `aise cr close <CR id>` moves the file to `docs/cr/done/` and sets the status on the node; you never write `status`.
 
 A closed CR documents; it orders no build. The function that satisfies a requirement comes with the next modelling move, and the build order is cut later by `se-plan`, as for everything else that is not built yet. A review in which nothing was chosen still gets its CR — the list and the declined decisions are the result.
 

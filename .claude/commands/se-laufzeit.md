@@ -1,6 +1,6 @@
 ---
 name: se-laufzeit
-version: 3
+version: 4
 description: Laufzeitanalyse einer Wirkkette — liest den Antwortweg (die Glieder, auf die die Antwort an den Akteur wartet) aus graph_metrics, nennt Befunde je Ort, fehlende Anforderungen an das Datenalter und Vorschläge mit Preis. Auf Stufe 8, nach se-vorbereitung. Setzt kein Merkmal, schätzt keine Zeit, wendet keinen Umbau an.
 ---
 
@@ -112,9 +112,10 @@ geteilten Funktion lädst du keinen weiteren Fluss auf, ohne das zu nennen.
 
 ## 5. Ergebnis: ein CR
 
-Schreib die Analyse als Text eines geschlossenen CR: `docs/cr/done/<nächste CR-Nummer>-<slug>.md`,
-die nächste freie Nummer nach den Dateien in `docs/cr/open/` und `docs/cr/done/`. Eine neue Analyse
-ist ein neuer CR. Abschnitte:
+Schreib die Analyse als Text eines geschlossenen CR. Leg ihn so an: `aise item new --target <repo>
+--body "<Zusammenfassung>" "Laufzeit: <Kette>"`, dann `aise dispatch prepare <ITEM> --lane graph`.
+aise vergibt die Nummer mit Repo-Präfix und legt `docs/cr/open/<CR-Kennung>-<slug>.md` samt CR-Knoten
+an; du wählst keine Nummer. Eine neue Analyse ist ein neuer CR. Abschnitte der Datei:
 
 1. Kette, Laufzeitanforderung, `graphVersion`
 2. Betrachtungsumfang: die gelesenen `requirements`
@@ -142,9 +143,10 @@ nicht-funktional und hängt an der Kette (`R-18`):
 + TEST-<datenalter> -verify-> REQ-<datenalter>
 ```
 
-Lies `violations` im Ergebnis; ein Fehler blockt den ganzen Batch. Dazu der CR-Knoten (Kennung und
-Titel, `status: "done"`) mit je einer `relation`-Kante auf jede REQ und jeden TEST, die dieser Lauf
-schrieb. Ohne Wahl des Autors schreibst du nichts; die Lücke steht dann im CR unter „offen".
+Lies `violations` im Ergebnis; ein Fehler blockt den ganzen Batch. Dazu je eine `relation`-Kante vom
+CR-Knoten auf jede REQ, die dieser Lauf schrieb (`CR relation → REQ`; auf einen TEST nimmt das Gate
+keine Kante, er hängt an seiner REQ). Danach `aise cr close <CR-Kennung>`: es verschiebt die Datei
+nach `docs/cr/done/` und setzt den Status; du schreibst `status` nie. Ohne Wahl des Autors schreibst du nichts; die Lücke steht dann im CR unter „offen".
 
 ---
 

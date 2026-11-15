@@ -1,6 +1,6 @@
 ---
 name: se-fmea
-version: 11
+version: 12
 description: Perform a state-of-the-art FMEA (AIAG-VDA 7-step) with the FCHAIN (Wirkkette) as the analysis unit, and integrate findings into the SE-graph + spec
 ---
 
@@ -117,7 +117,7 @@ Danach, für jede Funktion:
 - **Konflikt am Kreuzungspunkt.** Verlangt ein Vorschlag an einer geteilten Funktion etwas, das einer anderen Kette durch dieselbe Funktion schadet, notiere den Konflikt **an der geteilten Funktion** (uid, die beteiligten Ketten, was gegeneinander steht) — nicht in einer der Ketten.
 
 ### Step 7 — Documentation of Results
-- Write the analysis as the text of a closed change request: `docs/cr/done/<next CR id>-<slug>.md` — the next free number after the files in `docs/cr/open/` and `docs/cr/done/`, same prefix; `CR-001` in a repo without CRs. It is the only prose record; a new analysis is a new CR, never an edit of an old one. Sections:
+- Write the analysis as the text of a closed change request. `aise item new --target <repo> --body "<summary>" "FMEA: <chain>"`, then `aise dispatch prepare <ITEM> --lane graph`. aise mints the number with the repo prefix, writes `docs/cr/open/<CR id>-<slug>.md` and the CR node; you choose no number. Write into that file; it is the only prose record; a new analysis is a new CR, never an edit of an old one. Sections:
   1. Zusammenfassung (count of FMs + Top-3 AP-High risks)
   2. Kettenprofil (die Step-2-Tabelle aus `graph_metrics`) — sie begründet, warum die Fehlermodi dort sitzen, wo sie sitzen — und der Betrachtungsumfang: die gelesenen `requirements`
   3. Träger und Fläche: je Risiko des Umfangs seine `carriers`; die Funktionen der Kette, die mindestens ein Risiko tragen (aus `surface`); getrennt davon der Sockel, die Gegenmaßnahmen am System. Dazu, was die Eingangsprüfung an `se-vorbereitung` verwiesen hat
@@ -186,7 +186,7 @@ The FMEA is not done until findings live in the graph, not just the document.
 
 3. **Check the result.** `graph_mutate` returns `{ success, tier, appliedCommands, violations }`. The gate **BLOCKS the whole batch** if it would introduce a new **error-severity** violation (`tier: "block"`, `success: false`) — it does NOT silently drop nodes/edges. Read `violations`, fix the batch (e.g. add the missing `verify`), and re-apply.
 4. **Check violations:** `rules_get_violations` — resolve any new R-01/R-02 gaps.
-5. **Add the CR node.** In the same batch as the requirements (or directly after it), add the CR node of Step 7 — id and title only, `status: "done"` — with one `relation` edge from it to every REQ and TEST this analysis wrote. A closed CR documents; it orders no build: the build order for whatever the requirements still need is cut later by `se-plan`. If the SE-schema (ElementType/TraceType/rules) would have to change, stop and name it — that is a contracts change, not part of this analysis.
+5. **Hang the CR node.** In the same batch as the requirements (or directly after it), add one `relation` edge from the CR node of Step 7 to every REQ this analysis wrote (`CR relation → REQ`; the gate rejects TEST as target, the TEST hangs on its REQ). Then `aise cr close <CR id>` moves the file to `docs/cr/done/` and sets the status; you never write `status`. A closed CR documents; it orders no build: the build order for whatever the requirements still need is cut later by `se-plan`. If the SE-schema (ElementType/TraceType/rules) would have to change, stop and name it — that is a contracts change, not part of this analysis.
 6. **Stamp the task.** Close with **one** `graph_mutate` batch on the SYS root. `analysisFreshness` is one attribute for all analyses and a patch replaces it whole: read SYS first (`graph_get_node`), keep every entry already in `analysisFreshness`, set `"fmea": { graphVersion: <current graphVersion()> }`, and write the complete object with the `baseVersion` you read — after the risk and mitigation REQ of step 2 are in the graph. **AF-04** (the entry rule of the task `fmea`) stays open until then. An FMEA with no risk REQ in the graph has not happened: leave AF-04 open instead of stamping an empty analysis.
 
 ---

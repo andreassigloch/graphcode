@@ -1,6 +1,6 @@
 ---
 name: se:optimize
-version: 7
+version: 8
 description: Einen Umbauvorschlag proben und seinen Gesamt-Impact als Vorlage zeigen — Vorschläge aus einer Analyse (feste Form) und Vorschläge von graph_suggest, getrennt. Trockenlauf durchs Gate, Vorlage davor und danach, Wahl durch den Autor. Nach CDR, vor den Kettentests. Kein Auto-Apply; Anwenden und Nachmessen gehören dem CR des Umbaus.
 ---
 
@@ -176,8 +176,11 @@ Vorschlag mit dem Grund des Autors. Der CR des Umbaus
 2. misst nach: dieselben Aufrufe wie in Schritt 3 am geschriebenen Modell bestätigen die Spalte „danach" und füllen, was offen blieb,
 3. prüft das Gemessene gegen die Prognose und hält das Ergebnis fest.
 
-Erledigt liegt sein Text unter `docs/cr/done/`, sein Knoten trägt `status: "done"` und je eine
-`relation`-Kante auf jedes Element, das der Zug geändert hat. Zieht der Zug Code-Arbeit nach sich,
+Seine Nummer vergibt `aise dispatch prepare <ITEM> --lane graph`, nicht du. Der Knoten trägt je eine
+`relation`-Kante auf jedes Element, das der Zug geändert hat (`CR relation → FUNC`, `→ MOD`, `→ REQ`,
+`→ UC`, `→ SCHEMA`; ein FLOW oder TEST nimmt das Gate nicht als Ziel, der Text nennt ihn).
+`aise cr close <CR-Kennung>` legt den Text unter `docs/cr/done/` und setzt den Status; du schreibst
+`status` nie. Zieht der Zug Code-Arbeit nach sich,
 schneidet `se-plan` den Bauauftrag.
 
 Nach einem angewandten Umbau ist das Modell ein anderes: jeder weitere Vorschlag wird neu geprobt.

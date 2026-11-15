@@ -21,7 +21,7 @@ describe('TEST-skill-se-plan-dateigrenze (CR-GC-927)', () => {
     expect(plan).not.toMatch(/≤ ?5 files|> ?5 files/);
   });
 
-  it('Skill-Version ist 12', () => {
-    expect(plan).toMatch(/^version: 12$/m);
+  it('Skill-Version ist 13', () => {
+    expect(plan).toMatch(/^version: 13$/m);
   });
 });

@@ -1,6 +1,6 @@
 ---
 name: se-conops
-version: 7
+version: 8
 description: Concept of Operations (CREATE) — surface operational concerns (config/creds/user-mgmt/deploy) BEFORE use cases and write them as system-scoped non-functional REQ through the gate
 ---
 
@@ -32,8 +32,10 @@ Inspect the returned `violations`; re-apply if blocked. Never hand-edit the SSOT
 
 ## 4. Record the walk as a closed change request
 A ConOps walk is a change to the model, and it is documented like one — one text, one node, edges to what it touched:
-1. **Text.** Write `docs/cr/done/<next CR id>-<slug>.md` — the next free number after the files in `docs/cr/open/` and `docs/cr/done/`, same prefix; `CR-001` in a repo without CRs. It carries each concern of step 1 with its answer: the requirement written for it, or the gap and why it stays open.
-2. **Model.** In the same `graph_mutate` batch as the requirements, add the CR node — id and title only, `status: "done"` — with one `relation` edge from it to every element you created (`CR relation → REQ`, `→ FUNC`, `→ MOD`, `→ UC`). §6 of the ConOps view ("nature of changes / summary of impacts", 29148) is rendered from exactly those edges.
+1. **Text.** `aise item new --target <repo> --body "<text>" "<title>"`, then `aise dispatch prepare <ITEM> --lane graph`. aise mints the number with the repo prefix, writes `docs/cr/open/<CR id>-<slug>.md` and the CR node; you choose no number. Write into that file what it carries: each concern of step 1 with its answer: the requirement written for it, or the gap and why it stays open.
+2. **Model.** In the same `graph_mutate` batch as the requirements, add one `relation` edge from the CR node to every element you created (`CR relation → REQ`, `→ FUNC`, `→ MOD`, `→ UC`; the gate takes only FUNC, REQ, MS, MOD, SCHEMA, UC as target — hang a TEST's edge on its REQ). §6 of the ConOps view ("nature of changes / summary of impacts", 29148) is rendered from exactly those edges.
+
+3. **Close.** `aise cr close <CR id>` moves the file to `docs/cr/done/` and sets the status on the node; you never write `status`.
 
 A closed CR documents; it orders no build. What the requirements still need built is cut by `se-plan`.
 
