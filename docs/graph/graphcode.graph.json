@@ -4192,6 +4192,12 @@
       "commitRef": "80356ec8"
     },
     {
+      "id": "CR-GC-934",
+      "type": "CR",
+      "name": "Auslöser für graph_suggest vollständig festlegen",
+      "description": "docs/cr/open/CR-GC-934-auslo-ser-fu-r-graph-suggest-vollsta-ndi.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -33084,5 +33090,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1157
+  "graphVersion": 1158
 }
