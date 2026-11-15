@@ -4260,6 +4260,12 @@
       "description": "docs/cr/open/CR-GC-943-verwendung-von-regeln-und-skills-messen-.md"
     },
     {
+      "id": "CR-GC-944",
+      "type": "CR",
+      "name": "Skilltexte ergänzen: Rest aus CR-GC-942",
+      "description": "docs/cr/open/CR-GC-944-skilltexte-erga-nzen-rest-aus-cr-gc-942.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -21553,6 +21559,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-944",
+      "target": "FUNC-se-fmea",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-944",
+      "target": "FUNC-se-optimize",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-944",
+      "target": "FUNC-se-retro",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-944",
+      "target": "FUNC-se-vorbereitung",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -33289,5 +33315,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1186
+  "graphVersion": 1188
 }

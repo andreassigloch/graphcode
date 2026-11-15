@@ -1535,6 +1535,10 @@
 | `CR-GC-942` | relation | `SCHEMA-skill-text` |
 | `CR-GC-943` | relation | `FUNC-audit-stats` |
 | `CR-GC-943` | relation | `FUNC-tool-context` |
+| `CR-GC-944` | relation | `FUNC-se-fmea` |
+| `CR-GC-944` | relation | `FUNC-se-optimize` |
+| `CR-GC-944` | relation | `FUNC-se-retro` |
+| `CR-GC-944` | relation | `FUNC-se-vorbereitung` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
