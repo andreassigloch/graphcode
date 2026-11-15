@@ -12,7 +12,7 @@
 | `REQ-advisory-roundtrip-latency` | ✓ | ✓ passed | `TEST-advisory-roundtrip-latency` |
 | `REQ-agent-agnostic` | ✓ | ✓ passed | `TEST-agent-agnostic` |
 | `REQ-agent-loop-executes-skill` | ✓ | ⚠ 1/2 passed | `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` |
-| `REQ-analyse-artefakt-vor-stempel` | ✓ | ✗ failed | `TEST-task-analysen` |
+| `REQ-analyse-artefakt-vor-stempel` | ✓ | ✓ passed | `TEST-task-analysen` |
 | `REQ-applied-suggestion-moves-target` | ✓ | ✓ passed | `TEST-applied-suggestion-moves-target` |
 | `REQ-artifact-freshness` | ✓ | ✓ passed | `TEST-dashboard-readonly` |
 | `REQ-audit-trail` | ✓ | ✓ passed | `TEST-audit-code-state` · `TEST-audit-retention` · `TEST-audit-rules-passed` · `TEST-audit-trail-projection` · `TEST-mcp-stdio-server` · `TEST-operations-log` · `TEST-testreport` |
@@ -110,7 +110,7 @@
 | `REQ-npx-distribution` | ✓ | ✓ passed | `TEST-distribution` |
 | `REQ-one-gate-per-repo` | ✓ | ✓ passed | `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-store-lock` |
 | `REQ-open-point-asked` | ✓ | ✓ passed | `TEST-deny-headless-question` |
-| `REQ-optimize-probes-and-presents` | ✓ | ✗ failed | `TEST-optimize-presents-impact` |
+| `REQ-optimize-probes-and-presents` | ✓ | ✓ passed | `TEST-optimize-presents-impact` |
 | `REQ-phase-gate-not-skippable` | ✓ | ✓ passed | `TEST-phase-gate-not-skippable` |
 | `REQ-plan-gruppen` | ✓ | ✓ passed | `TEST-se-plan-groups` |
 | `REQ-post-agent-query` | ✓ | ✓ passed | `TEST-impact-subgraph` |
@@ -213,7 +213,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 203/203 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 163/203 REQ bestanden (80%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 165/203 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
