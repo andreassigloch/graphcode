@@ -4263,7 +4263,8 @@
       "id": "CR-GC-944",
       "type": "CR",
       "name": "Skilltexte ergänzen: Rest aus CR-GC-942",
-      "description": "docs/cr/open/CR-GC-944-skilltexte-erga-nzen-rest-aus-cr-gc-942.md"
+      "description": "docs/cr/done/CR-GC-944-skilltexte-erga-nzen-rest-aus-cr-gc-942.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -33315,5 +33316,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1190
+  "graphVersion": 1191
 }

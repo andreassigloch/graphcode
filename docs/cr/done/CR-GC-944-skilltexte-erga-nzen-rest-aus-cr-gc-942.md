@@ -33,8 +33,8 @@ Volle Zitate: `aise-bok/docs/pflege/konflikte-skills-2026-11-15.md`, Tabelle 2.
 
 ## Abnahme
 
-- [ ] Je aufgenommenem Satz prüft ein Test sein Schlüsselwort (vorher rot).
-- [ ] `npm run verify:full CR-GC-944` grün, ohne Schlupf.
+- [x] Je aufgenommenem Satz prüft ein Test sein Schlüsselwort (vorher rot).
+- [x] `npm run verify:full CR-GC-944` grün, ohne Schlupf.
 
 ---
 
@@ -44,6 +44,10 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| Nr. 6, `se/optimize` | Aufgenommen: Zug mit `edit.node` als ein Batch, Platzhaltername ersetzen (Version 10). Nicht aufgenommen: „Merge-Vorschlag nicht blind folgen". | CR-SM-367 trägt `add-node` mit Platzhalter; CR-GC-273 sagt nur „nie auto-apply", der Skill schreibt das schon. |
+| Nr. 10, `se-vorbereitung` | Aufgenommen: ohne Beleg mit Datei und Zeile bleibt der Fluss ohne Merkmal; eine Ablage hat keine Sonderbehandlung (Version 11). | CR-GC-789 lässt Flüsse ohne Lesebeleg ohne Merkmal; CR-SM-408 verbietet die Sonderbehandlung. |
+| Nr. 12, `se-fmea` | Aufgenommen: zu einem gelassenen Risiko ein ungebundener TEST (Version 14). | CR-GC-802 legt für zwei gelassene Risiken je einen ungebundenen TEST an. |
+| Nr. 16, `se-retro` | Aufgenommen: die Bindungsquote steht nie allein, daneben die Deckung (`importCoverage`, gegen `unassigned: []`). Nicht aufgenommen: „nur Befehle gegen das Repo" (Version 8). | CR-GC-542 misst beide getrennt; die Zählung macht `scripts/retro-kpi.mjs`. |
 
 ---
 
