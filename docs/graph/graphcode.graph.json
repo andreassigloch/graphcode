@@ -4198,6 +4198,12 @@
       "description": "docs/cr/open/CR-GC-934-auslo-ser-fu-r-graph-suggest-vollsta-ndi.md"
     },
     {
+      "id": "CR-GC-935",
+      "type": "CR",
+      "name": "init und upgrade binden einen Wissensindex in den Kontext des Agenten ein",
+      "description": "docs/cr/open/CR-GC-935-init-und-upgrade-binden-einen-wissensind.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -33090,5 +33096,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1158
+  "graphVersion": 1159
 }
