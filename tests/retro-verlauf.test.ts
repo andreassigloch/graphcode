@@ -1,14 +1,16 @@
 /**
- * TEST-retro-kpi (CR-GC-914) — der Verlauf der Verstöße über alle committeten Graph-Stände.
+ * TEST-retro-kpi (CR-GC-914, CR-GC-946) — der Verlauf der Befunde über alle committeten Graph-Stände.
  *
- * Echtes Git-Repo mit drei Ständen, gemessen über `measureGraphHistory` aus dem installierten
- * graph-view-edit (ein Messpfad). Die Sprungliste ist rein und wird mit festen Zahlen geprüft.
+ * Echtes Git-Repo mit drei Ständen, gemessen über `verlaufFuerRepo` aus `dist/` (die Rechnung von
+ * `graph_readiness({verlauf})`, ein Messpfad). Die Sprungliste ist rein und wird mit festen Zahlen geprüft.
+ * `scripts/` importiert nichts mehr aus dem Viewer-Paket.
  */
 import { describe, it, expect } from 'vitest';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readdirSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { sprungListe, verlauf, renderVerlauf } from '../scripts/retro-kpi.mjs';
 
 const req = (i: number) => ({ id: `REQ-r${i}`, type: 'REQ', name: `Anforderung ${i}`, description: `Das System muss ${i} tun.` });
@@ -59,6 +61,27 @@ describe('TEST-retro-kpi: Verlauf der Verstoesse (CR-GC-914)', () => {
       expect(datumsZeilen(teilVerlauf)).toHaveLength(3);
       expect(datumsZeilen(teilSpruenge)).toHaveLength(1);
       expect(md).toContain('fuenf Anforderungen dazu');
+    } finally {
+      rmSync(repo, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('TEST-retro-kpi: der Verlauf kommt aus dem Host-Paket (CR-GC-946)', () => {
+  it('scripts/ importiert nichts mehr aus @sigloch/graph-view-edit', () => {
+    const dir = join(dirname(fileURLToPath(import.meta.url)), '..', 'scripts');
+    const treffer = readdirSync(dir)
+      .filter((f) => f.endsWith('.mjs') || f.endsWith('.js') || f.endsWith('.ts'))
+      .filter((f) => /(?:from|import\()\s*['"]@sigloch\/graph-view-edit/.test(readFileSync(join(dir, f), 'utf8')));
+    expect(treffer).toEqual([]);
+  });
+
+  it('der Verlauf traegt Marken und Plan als eigene Stufe', async () => {
+    const repo = repoMitDreiStaenden();
+    try {
+      const v = await verlauf(repo);
+      expect(v.skippedRules).toContain('RC-01');
+      expect(renderVerlauf(v)).toContain('Befunde ohne Plan');
     } finally {
       rmSync(repo, { recursive: true, force: true });
     }

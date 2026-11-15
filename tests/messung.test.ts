@@ -10,7 +10,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { S1, WEITERE, regelMatrixAktuell, urteilT_H2, urteilT_O1, renderStand, medianAusLog } from '../scripts/messung.mjs';
+import { S1, WEITERE, regelMatrixAktuell, urteilT_H2, urteilT_O1, urteilT_M3, renderStand, medianAusLog } from '../scripts/messung.mjs';
 
 const zeile = (id: string) => ({ id, kriterium: 'k', wert: '1', urteil: 'bestanden', datum: '2026-09-27', stempel: 's' });
 
@@ -73,5 +73,31 @@ describe('messung: Runner-Kern', () => {
     expect(medianAusLog(log, 'calibration')).toEqual({ knoten: 500, ms: 256.5 });
     expect(medianAusLog(log, 'live-size')).toEqual({ knoten: 974, ms: 1030.8 });
     expect(medianAusLog(log, 'fixed')).toBeNull();
+  });
+});
+
+describe('T-M3 (CR-GC-946): Fehler und Marken, die Befunde je Stufe als Wert', () => {
+  const stand = (short: string, errors: number, reached: string[], plan: number, system: number) => ({
+    short,
+    errors,
+    marks: ['SRR', 'PDR'].map((id) => ({ id, reached: reached.includes(id) })),
+    stages: [{ name: 'System', findings: system }, { name: 'Plan', findings: plan }],
+  });
+
+  it('besteht bei 0 Fehlern und gehaltenen Marken; der Plan wachsend aendert das Urteil nicht', () => {
+    const r = urteilT_M3([stand('a', 0, ['SRR'], 10, 5), stand('b', 0, ['SRR', 'PDR'], 200, 3)]);
+    expect(r.urteil).toBe('bestanden');
+    expect(r.wert).toContain('Befunde ohne Plan 5 → 3');
+    expect(r.wert).toContain('Plan 10 → 200');
+  });
+
+  it('besteht nicht bei einem Fehler', () => {
+    expect(urteilT_M3([stand('a', 0, ['SRR'], 0, 1), stand('b', 1, ['SRR'], 0, 1)]).urteil).toBe('nicht bestanden');
+  });
+
+  it('besteht nicht, wenn eine erreichte Marke zurueckfaellt, und nennt den Stand', () => {
+    const r = urteilT_M3([stand('a', 0, ['SRR', 'PDR'], 0, 1), stand('b', 0, ['SRR'], 0, 1)]);
+    expect(r.urteil).toBe('nicht bestanden');
+    expect(r.wert).toContain('PDR bei b');
   });
 });

@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 203 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 204 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -1048,7 +1048,7 @@ Verification ◀ `TEST-steering-promise-one-owner` · satisfy ◀ `FUNC-generati
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph und wertet den vollen Regelkatalog aus; liefert Regelstrom, Fokusmenge, blockierende Fehler und die Befunde je Stufe in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung. Er prueft den Bestand nicht selbst gegen das Schema und wirft nicht: ein Wert ausserhalb des Element-Vertrags ist ein Befund der Regel R-08 im Regelstrom. Auch die Probe in graph_mutate misst hierueber. (CR-GC-786)
 
-io ◀ `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-snapshot` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -1166,7 +1166,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef, RC-12/RC-13 Fluss gegen Aufruf), dazu die Import- und die Aufruf-Abdeckung. Die Aufrufkanten liefert extractCallFacts in src/kernel/call-edges.ts ueber den TypeScript-LanguageService; gleicher Stand der Quelldateien, dieselben Kanten. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843, CR-GC-846)
 
-io ◀ `FLOW-commit-check-request` · `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-commit-check-request` · `FLOW-graph-state` · `FLOW-verlauf-konformanz` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-graph-code-conformance` — FUNC codeRef resolves to a real declared symbol
 
@@ -1370,7 +1370,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef, RC-12/RC-13 Fluss gegen Aufruf), dazu die Import- und die Aufruf-Abdeckung. Die Aufrufkanten liefert extractCallFacts in src/kernel/call-edges.ts ueber den TypeScript-LanguageService; gleicher Stand der Quelldateien, dieselben Kanten. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843, CR-GC-846)
 
-io ◀ `FLOW-commit-check-request` · `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-commit-check-request` · `FLOW-graph-state` · `FLOW-verlauf-konformanz` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-graph-code-conformance` — FUNC codeRef resolves to a real declared symbol
 
@@ -1386,7 +1386,7 @@ Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-chec
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -1640,7 +1640,7 @@ Verification ◀ `TEST-skill-reports-measured-values` (conformance) · satisfy �
 
 Leitet aus den Befunden einer Erhebung (evaluateAll) die Marken und die Befunde je Regel ab; ruft computeReadiness aus @sigloch/graphcode-client. Bekommt die Befunde, nie den Graphen.
 
-io ◀ `FLOW-completeness` · `FLOW-readiness-request` · io ▶ `FLOW-completeness-request` · `FLOW-dimension-readiness` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-completeness` · `FLOW-readiness-request` · `FLOW-verlauf-bereitschaft` · io ▶ `FLOW-completeness-request` · `FLOW-dimension-readiness` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-readiness-model` — Readiness-Modell definiert (Phase/Impl/INCOSE)
 
@@ -1684,7 +1684,21 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.2.3.17  `FUNC-evaluate-rules` — evaluateRules()
+###### 3.3.1.2.3.17  `FUNC-stand-verlauf` — Verlauf je Stand rechnen
+
+Rechnet den Verlauf ueber die committeten Staende: liest je Commit den Graph aus Git, misst ihn mit evaluateAll, countByStage, steerSpaceOf, verificationReport und chainMetrics und haelt das Ergebnis je Commit, Regelversion und Policy im Zwischenspeicher des Store-Verzeichnisses. (CR-GC-946)
+
+io ◀ `FLOW-verlauf-request` · io ▶ `FLOW-verlauf-bereitschaft` · `FLOW-verlauf-konformanz` · `FLOW-verlauf-report` · `FLOW-verlauf-snapshot` · allocate ▶ `MOD-projections`
+
+###### `REQ-stand-verlauf` — Verlauf der Marken und Befunde je Stufe
+
+graph_readiness liefert auf Anfrage je committetem Stand von docs/graph die erreichten Marken, die Befunde je Stufe, den Steuerwert, die Testergebnisse und die Zahl der bewertbaren Ketten, gerechnet mit denselben Funktionen wie der Live-Stand und ohne Code-Abgleich.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-stand-verlauf` (integration) · satisfy ◀ `FUNC-stand-verlauf` · allocate ▶ `MOD-projections`
+
+###### 3.3.1.2.3.18  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-docked-session` · `FCHAIN-health` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -1708,7 +1722,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
 
-###### 3.3.1.2.3.18  `FUNC-tool-context` — createToolContext
+###### 3.3.1.2.3.19  `FUNC-tool-context` — createToolContext
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-host-start` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-ruestzeug`
 
@@ -1922,7 +1936,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -1954,7 +1968,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Leitet aus den Befunden einer Erhebung (evaluateAll) die Marken und die Befunde je Regel ab; ruft computeReadiness aus @sigloch/graphcode-client. Bekommt die Befunde, nie den Graphen.
 
-io ◀ `FLOW-completeness` · `FLOW-readiness-request` · io ▶ `FLOW-completeness-request` · `FLOW-dimension-readiness` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-completeness` · `FLOW-readiness-request` · `FLOW-verlauf-bereitschaft` · io ▶ `FLOW-completeness-request` · `FLOW-dimension-readiness` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-readiness-model` — Readiness-Modell definiert (Phase/Impl/INCOSE)
 
@@ -1980,7 +1994,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph und wertet den vollen Regelkatalog aus; liefert Regelstrom, Fokusmenge, blockierende Fehler und die Befunde je Stufe in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung. Er prueft den Bestand nicht selbst gegen das Schema und wirft nicht: ein Wert ausserhalb des Element-Vertrags ist ein Befund der Regel R-08 im Regelstrom. Auch die Probe in graph_mutate misst hierueber. (CR-GC-786)
 
-io ◀ `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-snapshot` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -4094,7 +4108,7 @@ Verification ◀ `TEST-reseed` (integration) · `TEST-schema-migration` (integra
 
 Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef, RC-12/RC-13 Fluss gegen Aufruf), dazu die Import- und die Aufruf-Abdeckung. Die Aufrufkanten liefert extractCallFacts in src/kernel/call-edges.ts ueber den TypeScript-LanguageService; gleicher Stand der Quelldateien, dieselben Kanten. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843, CR-GC-846)
 
-io ◀ `FLOW-commit-check-request` · `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-commit-check-request` · `FLOW-graph-state` · `FLOW-verlauf-konformanz` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-graph-code-conformance` — FUNC codeRef resolves to a real declared symbol
 
@@ -7770,7 +7784,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -7786,7 +7800,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Leitet aus den Befunden einer Erhebung (evaluateAll) die Marken und die Befunde je Regel ab; ruft computeReadiness aus @sigloch/graphcode-client. Bekommt die Befunde, nie den Graphen.
 
-io ◀ `FLOW-completeness` · `FLOW-readiness-request` · io ▶ `FLOW-completeness-request` · `FLOW-dimension-readiness` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-completeness` · `FLOW-readiness-request` · `FLOW-verlauf-bereitschaft` · io ▶ `FLOW-completeness-request` · `FLOW-dimension-readiness` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-readiness-model` — Readiness-Modell definiert (Phase/Impl/INCOSE)
 
@@ -7812,7 +7826,7 @@ Verification ◀ `TEST-artifact-coupling` (integration) · `TEST-first-step` (in
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph und wertet den vollen Regelkatalog aus; liefert Regelstrom, Fokusmenge, blockierende Fehler und die Befunde je Stufe in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung. Er prueft den Bestand nicht selbst gegen das Schema und wirft nicht: ein Wert ausserhalb des Element-Vertrags ist ein Befund der Regel R-08 im Regelstrom. Auch die Probe in graph_mutate misst hierueber. (CR-GC-786)
 
-io ◀ `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-snapshot` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -11814,7 +11828,7 @@ Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-graph-metrics`
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -11960,7 +11974,7 @@ io ◀ — · io ▶ — · allocate ▶ —
 
 Extrahiert CodeFacts (extractCodeFacts, ts-Parser) und wertet die contracts RC-Regeln aus (RC-01 codeRef, RC-02 testRef, RC-12/RC-13 Fluss gegen Aufruf), dazu die Import- und die Aufruf-Abdeckung. Die Aufrufkanten liefert extractCallFacts in src/kernel/call-edges.ts ueber den TypeScript-LanguageService; gleicher Stand der Quelldateien, dieselben Kanten. evaluateAll ruft sie und mischt die Befunde in Verstoesse und Readiness. Beleg: src/kernel/evaluation.ts, evaluateAll ruft conformanceEvaluation. (CR-GC-206, CR-GC-253, CR-GC-843, CR-GC-846)
 
-io ◀ `FLOW-commit-check-request` · `FLOW-graph-state` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
+io ◀ `FLOW-commit-check-request` · `FLOW-graph-state` · `FLOW-verlauf-konformanz` · io ▶ `FLOW-conformance-findings` · allocate ▶ `MOD-kernel`
 
 ###### `REQ-graph-code-conformance` — FUNC codeRef resolves to a real declared symbol
 
@@ -12364,7 +12378,7 @@ Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-chain-metrics`
 
 Leitet aus den Befunden einer Erhebung (evaluateAll) die Marken und die Befunde je Regel ab; ruft computeReadiness aus @sigloch/graphcode-client. Bekommt die Befunde, nie den Graphen.
 
-io ◀ `FLOW-completeness` · `FLOW-readiness-request` · io ▶ `FLOW-completeness-request` · `FLOW-dimension-readiness` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-completeness` · `FLOW-readiness-request` · `FLOW-verlauf-bereitschaft` · io ▶ `FLOW-completeness-request` · `FLOW-dimension-readiness` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-readiness-model` — Readiness-Modell definiert (Phase/Impl/INCOSE)
 
@@ -12536,7 +12550,7 @@ Verification ◀ `TEST-mvp-e2e` (e2e) · satisfy ◀ `FUNC-select-tests` · allo
 
 Der EINE Messpfad: mappt den Graphen ueber toOntologyGraph und wertet den vollen Regelkatalog aus; liefert Regelstrom, Fokusmenge, blockierende Fehler und die Befunde je Stufe in EINEM Objekt. Jede weitere Kenngroesse ist eine Projektion davon, keine zweite Messung. Er prueft den Bestand nicht selbst gegen das Schema und wirft nicht: ein Wert ausserhalb des Element-Vertrags ist ein Befund der Regel R-08 im Regelstrom. Auch die Probe in graph_mutate misst hierueber. (CR-GC-786)
 
-io ◀ `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
+io ◀ `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-snapshot` · io ▶ `FLOW-measurement-vector` · `FLOW-steering-snapshot` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -15458,49 +15472,79 @@ Der Update-Hook, den die Harness-Fabrik beim Bau registriert (registerEmitters r
 
 io ◀ `FUNC-create-harness` · io ▶ `FUNC-emit-update-event` · schema ▶ `SCHEMA-update-event`
 
-###### 3.3.4.1.238  `FLOW-viewer-start` — Viewer steuern (starten, beenden)
+###### 3.3.4.1.238  `FLOW-verlauf-bereitschaft` — Verlauf-Befunde an Marken
+
+Die Befunde eines alten Stands, die die Verlaufsrechnung an die Marken-Rechnung gibt.
+
+io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-compute-readiness` · schema ▶ `SCHEMA-rule-violation`
+
+###### 3.3.4.1.239  `FLOW-verlauf-konformanz` — Verlauf-Stand an Konformanz
+
+Der Graph eines alten Stands, den die Verlaufsrechnung an die Konformanz-Erhebung gibt; ohne Repo-Wurzel laufen die RC-Regeln nicht.
+
+io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-check-code-conformance` · schema ▶ `SCHEMA-ontology-graph`
+
+###### 3.3.4.1.240  `FLOW-verlauf-report` — Verlauf-Bericht
+
+Die Reihe der Staende mit Marken, Befunden je Stufe, Steuerwert, Tests und Ketten, die graph_readiness bei verlauf antwortet.
+
+io ◀ `FUNC-stand-verlauf` · io ▶ — · schema ▶ `SCHEMA-verlauf`
+
+###### 3.3.4.1.241  `FLOW-verlauf-request` — Verlauf-Anfrage
+
+Die Zahl der juengsten Staende, die graph_readiness an die Verlaufsrechnung gibt.
+
+io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-stand-verlauf` · schema ▶ `SCHEMA-query-params`
+
+###### 3.3.4.1.242  `FLOW-verlauf-snapshot` — Verlauf-Stand an Snapshot
+
+Der Graph eines alten Stands, den die Verlaufsrechnung an den Steuerungs-Snapshot gibt.
+
+io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
+
+###### 3.3.4.1.243  `FLOW-viewer-start` — Viewer steuern (starten, beenden)
 
 Die Steuerung des Viewer-Prozesses durch attachGve: starten, wenn die erste Sitzung des Repos ihn anhaengt, beenden, wenn die letzte ihn abmeldet. Beleg: src/surface/gve.ts.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-cli-command`
 
-###### 3.3.4.1.239  `FLOW-vorschlag` — Vorschlag an den Nutzer
+###### 3.3.4.1.244  `FLOW-vorschlag` — Vorschlag an den Nutzer
 
 Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis; den Nutzer erreicht er mit FLOW-mutate-answer. (CR-GC-770, CR-GC-823)
 
 io ◀ `FUNC-vorschlag` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-result`
 
-###### 3.3.4.1.240  `FLOW-work-set` — Arbeitsmenge der Sitzung
+###### 3.3.4.1.245  `FLOW-work-set` — Arbeitsmenge der Sitzung
 
 Die Arbeitsmenge der Sitzung, die graph_readiness beim Werkzeug-Kontext abfragt, um Befunde auf die Arbeit der Sitzung zu schneiden. Beleg: src/projections/report.ts, arbeitsmenge. (CR-GC-849)
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-work-set`
 
-###### 3.3.4.1.241  `FLOW-write-slot` — Schreibzug einreihen
+###### 3.3.4.1.246  `FLOW-write-slot` — Schreibzug einreihen
 
 Der Schreibzug, den graph_suggest beim Anwenden in die Schreibreihenfolge des Werkzeug-Kontexts stellt (serializeToolWrite). Beleg: src/loop/suggest.ts. (CR-GC-849)
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-tool-context` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.242  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
+###### 3.3.4.1.247  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_mutate an mitBericht gibt. Beleg: src/surface/write.ts, graph_mutate.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.243  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
+###### 3.3.4.1.248  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_suggest je Kandidat an mitBericht gibt. Beleg: src/loop/suggest.ts, graph_suggest.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.244  `FLOW-zug-bericht` — Bericht zum Zug
+###### 3.3.4.1.249  `FLOW-zug-bericht` — Bericht zum Zug
 
 Die Berichte zum Zug, zurueck an das Werkzeug, das mitBericht gerufen hat: graph_mutate fuer seine Antwort an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)
 
 io ◀ `FUNC-zug-bericht` · io ▶ `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-zug-bericht`
 
-###### 3.3.4.1.245  `FLOW-zug-staende` — Stand davor und danach
+###### 3.3.4.1.250  `FLOW-zug-staende` — Stand davor und danach
 
 Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil an das aufrufende Werkzeug zurueckgibt (mutateWithStates). Ein geblockter Zug hat kein Paar. (CR-GC-778)
 
@@ -15710,7 +15754,7 @@ schema ◀ `FLOW-gate-verdict` · `FLOW-mutate-answer` · `FLOW-mutate-answer-ho
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
 
-schema ◀ `FLOW-commit-check-request` · `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-fit-anfrage` · `FLOW-fitness-anfrage` · `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · `FLOW-imported-graph` · `FLOW-metrics-request` · `FLOW-select-request` · `FLOW-select-request-lane` · `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-store-load` · `FLOW-store-query` · `FLOW-zug-anfrage` · `FLOW-zug-anfrage-suggest` · `FLOW-zug-staende`
+schema ◀ `FLOW-commit-check-request` · `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-fit-anfrage` · `FLOW-fitness-anfrage` · `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · `FLOW-imported-graph` · `FLOW-metrics-request` · `FLOW-select-request` · `FLOW-select-request-lane` · `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-store-load` · `FLOW-store-query` · `FLOW-verlauf-konformanz` · `FLOW-verlauf-snapshot` · `FLOW-zug-anfrage` · `FLOW-zug-anfrage-suggest` · `FLOW-zug-staende`
 
 ###### 3.3.4.2.35  `SCHEMA-ontology-json` — OntologyJson
 
@@ -15722,7 +15766,7 @@ schema ◀ `FLOW-graph-snapshot-file` · `FLOW-ontology-json` · `FLOW-reseed-an
 
 Der gemeinsame Nenner der Leseanfragen: elementId, depth, branch, cursor, view. Bewusst ohne Zod-Symbol — im Code traegt JEDES MCP-Tool sein eigenes Input-Schema, ein zusammengefasstes QueryParams gibt es nicht und soll es nicht geben (ein Sammel-Schema waere ein paralleler Pfad zu den Tool-Signaturen). Der Knoten steht fuer den Kanal, nicht fuer einen Code-Datenvertrag; concept-only. (Begruendung nachgetragen CR-GC-454)
 
-schema ◀ `FLOW-auftrag` · `FLOW-dashboard-call` · `FLOW-dashboard-tool-call` · `FLOW-export-request-import-code` · `FLOW-generation-request` · `FLOW-harness-request` · `FLOW-harness-request-import-code` · `FLOW-harness-request-own-kuzu` · `FLOW-harness-request-render` · `FLOW-harness-request-rewind` · `FLOW-health-request` · `FLOW-http-route` · `FLOW-own-kuzu-request` · `FLOW-own-kuzu-request-stdio` · `FLOW-query-export` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · `FLOW-read-request` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest`
+schema ◀ `FLOW-auftrag` · `FLOW-dashboard-call` · `FLOW-dashboard-tool-call` · `FLOW-export-request-import-code` · `FLOW-generation-request` · `FLOW-harness-request` · `FLOW-harness-request-import-code` · `FLOW-harness-request-own-kuzu` · `FLOW-harness-request-render` · `FLOW-harness-request-rewind` · `FLOW-health-request` · `FLOW-http-route` · `FLOW-own-kuzu-request` · `FLOW-own-kuzu-request-stdio` · `FLOW-query-export` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · `FLOW-read-request` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · `FLOW-verlauf-request`
 
 ###### 3.3.4.2.37  `SCHEMA-readiness-report` — ReadinessReportType
 
@@ -15750,7 +15794,7 @@ schema ◀ `FLOW-rewind-summary`
 
 Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. (CR-GC-501)
 
-schema ◀ `FLOW-commit-check-verdict` · `FLOW-completeness-request` · `FLOW-conformance-findings` · `FLOW-readiness-request` · `FLOW-rule-findings` · `FLOW-rules-answer`
+schema ◀ `FLOW-commit-check-verdict` · `FLOW-completeness-request` · `FLOW-conformance-findings` · `FLOW-readiness-request` · `FLOW-rule-findings` · `FLOW-rules-answer` · `FLOW-verlauf-bereitschaft`
 
 ###### 3.3.4.2.42  `SCHEMA-schema-fingerprint` — SchemaFingerprint
 
@@ -15852,13 +15896,19 @@ SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und 
 
 schema ◀ `FLOW-broadcast-hook` · `FLOW-broadcast-hook-sse` · `FLOW-live-event` · `FLOW-sse-frame` · `FLOW-update-hook`
 
-###### 3.3.4.2.59  `SCHEMA-work-set` — Arbeitsmenge
+###### 3.3.4.2.59  `SCHEMA-verlauf` — Verlauf
+
+Je committetem Stand Commit, Datum, Marken, Befunde je Stufe, Fehler, Steuerwert je Regel, Testergebnisse und bewertbare Ketten; dazu die nicht ausgewerteten Regeln und die Zahl der uebersprungenen Staende.
+
+schema ◀ `FLOW-verlauf-report`
+
+###### 3.3.4.2.60  `SCHEMA-work-set` — Arbeitsmenge
 
 Die uids, die die laufende Sitzung geschrieben hat, abgeleitet aus dem Audit-Log; schneidet Befundlisten auf die Arbeit der Sitzung. Spec-only: das TS-Interface Arbeitsmenge in src/kernel/measure/working-set.ts, kein Zod-Datenvertrag.
 
 schema ◀ `FLOW-work-set`
 
-###### 3.3.4.2.60  `SCHEMA-zug-bericht` — Bericht zum Zug
+###### 3.3.4.2.61  `SCHEMA-zug-bericht` — Bericht zum Zug
 
 Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass und metricsAfter nur im Probelauf. metricsAfter traegt die geaenderten Zeilen im Stand danach in chains, modules, functions und riskCarriers mit risks und surface, dazu removed mit den entfallenen Kennungen je Liste; leere Listen heissen keine Kennzahl geaendert. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778, CR-GC-790)
 
@@ -16086,7 +16136,7 @@ Verification ◀ `TEST-phase-gate-not-skippable` (unit) · satisfy ◀ `MOD-loop
 
 Reine Projektionen des Graphen: Messung, Readiness, Codec, Export, Markdown-Views, Trajektorie. Liest den Graphen ueber die kernel-Abfrage und schreibt nie in ihn zurueck. (CR-GC-446)
 
-allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-help` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-rules-tool` · `FUNC-score-completeness` · `FUNC-test-ingest` · satisfy ▶ `REQ-artifact-freshness` · `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-shared-views-no-fork` · `REQ-testref-materialized`
+allocate ◀ `FUNC-authoring-guide` · `FUNC-auto-export` · `FUNC-chain-metrics` · `FUNC-deduce-tests` · `FUNC-emit-trajectory` · `FUNC-export-markdown` · `FUNC-function-criticality` · `FUNC-graph-export-snapshot` · `FUNC-graph-help` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-measure-test-schlupf` · `FUNC-module-metrics` · `FUNC-plan-code-lane` · `FUNC-rules-tool` · `FUNC-score-completeness` · `FUNC-stand-verlauf` · `FUNC-test-ingest` · satisfy ▶ `REQ-artifact-freshness` · `REQ-completeness-single-value` · `REQ-deterministic-serialization` · `REQ-docs-taxonomy` · `REQ-formatE-parity` · `REQ-graph-integrity` · `REQ-interface-schema` · `REQ-shared-views-no-fork` · `REQ-testref-materialized`
 
 ###### `REQ-artifact-freshness` — Artifact-Ampel-Semantik gruen gelb rot
 
@@ -17250,199 +17300,205 @@ Prueft, dass ein unbekannter Stufenname beim Bilden des Steuerungs-Snapshots abg
 
 verify ▶ `REQ-risk-stage-name-free-text` · `REQ-stage-names-enumerated`
 
-#### 3.4.149  `TEST-status-verb` — Abnahme des status-Verbs
+#### 3.4.149  `TEST-stand-verlauf` — Verlauf je Stand
+
+Drei Staende in einem Wegwerf-Git-Repo: Marken, Befunde je Stufe und Tests je Stand, der juengste gleicht graph_readiness ohne Code-Abgleich; zweiter Aufruf aus dem Zwischenspeicher, andere Policy misst neu, unlesbarer Stand zaehlt unter skipped.
+
+verify ▶ `REQ-stand-verlauf` · `SCHEMA-verlauf` · testRefs: `tests/verlauf.test.ts`
+
+#### 3.4.150  `TEST-status-verb` — Abnahme des status-Verbs
 
 Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.
 
 verify ▶ `REQ-single-kuzu-owner` · testRefs: `tests/status.test.ts`
 
-#### 3.4.150  `TEST-steering-delta-in-answer` — Delta steht in der Antwort
+#### 3.4.151  `TEST-steering-delta-in-answer` — Delta steht in der Antwort
 
 Prueft, dass die Antwort auf einen angenommenen Zug das Delta aus dem Stand vor und nach genau diesem Zug traegt.
 
 verify ▶ `REQ-risk-steering-delta-missing` · `REQ-steering-delta-in-answer-tested`
 
-#### 3.4.151  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
+#### 3.4.152  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
 
 Prueft am Modell, dass REQ-steering-from-metrics genau einen Erfueller vom Typ FUNC hat und dass jede zuliefernde Funktion der Steuerungsschleife eine eigene Anforderung erfuellt.
 
 verify ▶ `REQ-risk-shared-steering-promise` · `REQ-steering-promise-one-owner`
 
-#### 3.4.152  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
+#### 3.4.153  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
 
 Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.test.ts`
 
-#### 3.4.153  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
+#### 3.4.154  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
 verify ▶ `REQ-first-session-claims-store-lock` · `REQ-harness-factory-returns-one-owner` · `REQ-one-gate-per-repo` · `REQ-single-kuzu-owner` · `REQ-store-recovery` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
 
-#### 3.4.154  `TEST-store-recovery` — Store-Recovery-Test
+#### 3.4.155  `TEST-store-recovery` — Store-Recovery-Test
 
 Abnahme der Datei tests/store-recovery.test.ts: eine Store-Datei mit ueberschriebenem Kopf oder auf die Haelfte gekuerzt wird beim Oeffnen aus dem committeten Snapshot neu aufgebaut und gemeldet, und der neue Store liegt auf Platte; ohne Snapshot bleibt der Lesefehler ein Fehler und die Sperre frei. Lock-Konflikt und beendeter Besitzer: TEST-store-lock. (CR-GC-796)
 
 verify ▶ `REQ-risk-store-unreadable` · `REQ-store-recovery` · testRefs: `tests/store-recovery.test.ts`
 
-#### 3.4.155  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+#### 3.4.156  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
 Abnahme der Datei tests/target-profile.test.ts: Schema nur mit Themen, eine Datei mit Gewichten oder Zielwerten scheitert laut, Laden der Themen; graph_suggest nimmt kein target und graph_metrics traegt keine Zielmarke, gegen einen echten Disk-Kuzu. (CR-GC-861)
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · `SCHEMA-target-profile` · testRefs: `tests/target-profile.test.ts`
 
-#### 3.4.156  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+#### 3.4.157  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
 
-#### 3.4.157  `TEST-target-state` — Abnahme Zielbild
+#### 3.4.158  `TEST-target-state` — Abnahme Zielbild
 
 Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.
 
 verify ▶ `REQ-target-state`
 
-#### 3.4.158  `TEST-task-analysen` — Analyse-Tasks
+#### 3.4.159  `TEST-task-analysen` — Analyse-Tasks
 
 Am Task-Eintritt verweist der Schritt auf den Skill des Tasks; ein Bauplan-Stempel von Hand schliesst den Eintritt nicht; ein Patch ersetzt die Stempel ganz, und jeder Analyse-Skill schliesst mit Lesen, Uebernehmen, ganz Schreiben.
 
 verify ▶ `REQ-analyse-artefakt-vor-stempel` · testRefs: `tests/task-analysen.test.ts`
 
-#### 3.4.159  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
+#### 3.4.160  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
 
 Abnahme der Datei tests/testreport.ruecknahme.test.ts: nach einer gemeldeten Aenderung traegt der Eintrag des betroffenen Tests kein Ergebnis mehr und FM-03 meldet das Risiko; ein nicht betroffener Test behaelt sein Ergebnis; ein frisches Ergebnis im selben Aufruf bleibt; eine unbekannte uid wird abgewiesen.
 
 verify ▶ `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` · testRefs: `tests/testreport.ruecknahme.test.ts`
 
-#### 3.4.160  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+#### 3.4.161  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-#### 3.4.161  `TEST-test-schlupf` — Schlupf und Zusage
+#### 3.4.162  `TEST-test-schlupf` — Schlupf und Zusage
 
 Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf bricht ab, je CR die juengste Zeile), Blackbox- und Schnittstellenbindung am synthetischen Graphen, gepruefte JSONL-Zeilen.
 
 verify ▶ `REQ-full-run-on-probation` · `REQ-lane-red-without-report` · `REQ-risk-selection-misses-red-test` · `SCHEMA-schlupf-zeile` · testRefs: `tests/test-schlupf.test.ts`
 
-#### 3.4.162  `TEST-testref-kopf-bindung` — Kopf-Bindungs-Check
+#### 3.4.163  `TEST-testref-kopf-bindung` — Kopf-Bindungs-Check
 
 Abnahme der Datei tests/testreport.kopf-bindung.test.ts: echtes Disk-Kuzu und echte Dateien; Bindung mit Ergebnis, kein Doppel beim zweiten Lauf, Anhaengen an eine bestehende Bindung, und je ein benannter Grund fuer keine, zwei, fremde uid, fehlendes Werkzeug, fehlende und repo-fremde Datei.
 
 verify ▶ `REQ-testref-kopf-bindung` · testRefs: `tests/testreport.kopf-bindung.test.ts`
 
-#### 3.4.163  `TEST-testref-materialize` — Export stub-materialization test
+#### 3.4.164  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-#### 3.4.164  `TEST-testreport` — Rueckweg des Testergebnisses
+#### 3.4.165  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-#### 3.4.165  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+#### 3.4.166  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · `SCHEMA-metric-policy` · testRefs: `tests/config.test.ts`
 
-#### 3.4.166  `TEST-token-efficiency` — Token-Budget-Test
+#### 3.4.167  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-#### 3.4.167  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+#### 3.4.168  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-#### 3.4.168  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
+#### 3.4.169  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
 
 Prueft, dass eine laufende Sitzung eine geaenderte Werkzeugliste des Hosts erfaehrt.
 
 verify ▶ `REQ-risk-client-holds-stale-tool-list`
 
-#### 3.4.169  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+#### 3.4.170  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-#### 3.4.170  `TEST-upgrade` — Abnahme des upgrade-Verbs
+#### 3.4.171  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · testRefs: `tests/upgrade.test.ts`, `tests/config-nachziehen.test.ts`
 
-#### 3.4.171  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
+#### 3.4.172  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
 
 Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.
 
 verify ▶ `REQ-model-lane-fixed-set` · testRefs: `tests/verify-model.completeness.test.ts`
 
-#### 3.4.172  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.173  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.173  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.174  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.174  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.175  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.175  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.176  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.176  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.177  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.177  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.178  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.178  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.179  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.179  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.180  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.180  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.181  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 203 REQ · 203 verified · 0 without a verifying TEST (R-01).
+Traceability: 204 REQ · 204 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 

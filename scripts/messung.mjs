@@ -35,7 +35,6 @@ const ZEILEN = [...S1, ...WEITERE];
 /** Noch ohne lesbaren Wert: die Quelle gibt nur Prosa aus (Folge-CR CR-GC-679B). */
 const NICHT_ERHOBEN = {
   'T-V1': ['0 Befunde auf allen Ebenen', '`rig/moneyflow-struktur/driver.mjs` (graphanalyze) gibt nur Prosa aus'],
-  'T-M3': ['Verstöße je Element fallen monoton im Trend', '`spike-nachweis-history.mjs` hat kein Urteilsfeld, nur Kill-Zeilen'],
   'T-O4': ['Known-Answer-Set richtig gerankt, keine Regression einer Dimension mit Gewicht ≥ 1', '`known-answer-set.mjs` gibt nur Markdown aus'],
   'T-O6': ['≥ 6/7 bekannte Paare gefunden', 'ND- und Engpass-Spike geben nur Prosa aus'],
 };
@@ -85,6 +84,44 @@ export function urteilT_O1({ posOk, negOk, chains, measurable, graphen, nullKenn
       nullKennzahlen.length ? `nicht gerechnet: ${nullKennzahlen.join(', ')}` : null,
     ].filter(Boolean).join('; '),
     urteil: referenz && quote !== null && quote >= 0.9 ? 'bestanden' : 'nicht bestanden',
+  };
+}
+
+/** Die Stufen, in denen die Befunde des Plans stehen — sie wachsen mit der Arbeit am Modell und zaehlen nicht ins Urteil. */
+const PLAN = 'Plan';
+
+/**
+ * T-M3 (CR-GC-946): Fehler bleiben 0; eine erreichte Marke faellt nicht zurueck. Die Befunde je Stufe
+ * ohne Plan stehen als Wert da — „abgenommen" laesst sich nicht messen, deshalb urteilt die Zeile nur
+ * ueber Fehler und Marken. `staende` ist der Verlauf von `graph_readiness({verlauf})`, alt nach neu.
+ */
+export function urteilT_M3(staende) {
+  if (staende.length === 0) return { wert: 'keine committeten Staende', urteil: 'nicht bestanden' };
+  const maxFehler = Math.max(...staende.map((s) => s.errors));
+  const zurueck = [];
+  staende.forEach((s, i) => {
+    const vor = i > 0 ? staende[i - 1] : null;
+    for (const m of s.marks) if (vor && vor.marks.find((x) => x.id === m.id)?.reached && !m.reached) zurueck.push(`${m.id} bei ${s.short}`);
+  });
+  const erste = staende[0];
+  const letzte = staende.at(-1);
+  const marken = (s) => s.marks.filter((m) => m.reached).map((m) => m.id).join(' ') || 'keine';
+  const jeStufe = (s) => s.stages.filter((x) => x.name !== PLAN);
+  const ohnePlan = (s) => jeStufe(s).reduce((n, x) => n + x.findings, 0);
+  const verlauf = letzte.stages
+    .filter((x) => x.name !== PLAN)
+    .map((x) => `${x.name} ${erste.stages.find((y) => y.name === x.name)?.findings ?? 0}→${x.findings}`)
+    .filter((t) => !/ 0→0$/.test(t))
+    .join(', ');
+  const plan = (s) => s.stages.find((x) => x.name === PLAN)?.findings ?? 0;
+  return {
+    wert: [
+      `${staende.length} Stände ${erste.short}..${letzte.short}`,
+      `Fehler höchstens ${maxFehler}`,
+      `Marken ${marken(erste)} → ${marken(letzte)}${zurueck.length ? `; zurückgefallen: ${zurueck.join(', ')}` : ''}`,
+      `Befunde ohne Plan ${ohnePlan(erste)} → ${ohnePlan(letzte)} (${verlauf}); Plan ${plan(erste)} → ${plan(letzte)}`,
+    ].join('; '),
+    urteil: maxFehler === 0 && zurueck.length === 0 ? 'bestanden' : 'nicht bestanden',
   };
 }
 
@@ -211,6 +248,10 @@ async function erhebe() {
     nullKennzahlen: Object.entries(k.pos).filter(([, v]) => v === null).map(([name]) => name),
   });
   zeile('T-O1', 'Referenzkette reproduziert; ≥ 90 % der Ketten auswertbar', o1.wert, o1.urteil);
+
+  // T-M3: der Verlauf der jüngsten 24 Stände, gerechnet vom Host-Paket (`verlaufFuerRepo`, wie graph_readiness).
+  const m3 = urteilT_M3(dist.verlaufFuerRepo(REPO, 24).states);
+  zeile('T-M3', 'Fehler bleiben 0; eine erreichte Marke fällt nicht zurück; die Befunde je Stufe ohne Plan fallen oder sind abgenommen (hier geurteilt: Fehler und Marken)', m3.wert, m3.urteil);
 
   for (const [id, [kriterium, grund]] of Object.entries(NICHT_ERHOBEN)) zeile(id, kriterium, `— ${grund} (CR-GC-679B)`, 'nicht erhoben');
   return { zeilen, stempel };

@@ -51,7 +51,15 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'RC-Auflösung ansehen konnte. Ohne sie sieht 0 % Bindung aus wie 0 Verstöße.\n' +
       '• `callCoverage` — dasselbe für RC-12: wie viele Fluss-Paare gegen die Aufrufe im Code ' +
       'beurteilt wurden (`checked`) und warum der Rest nicht.\n' +
-      '• `umfang` (CR-GC-613) — was diese Sitzung angefasst hat; die SCORES bleiben global.',
+      '• `umfang` (CR-GC-613) — was diese Sitzung angefasst hat; die SCORES bleiben global.\n' +
+      '• `verlauf` (CR-GC-946, nur mit Eingabe `verlauf: N`) — die N jüngsten committeten Stände von ' +
+      '`docs/graph/*.graph.json`, alt nach neu. Je Stand: `marks` (reached), `stages` (Plan eigene Stufe), ' +
+      '`errors`, `warnings`, `steer` (Kopf wie oben, Terme je Regel in `byRule`: `terms` gemessen, `over` über der ' +
+      'Schwelle), `tests` (je Anforderung wie `graph_test_report`: passed/failed/neverRun), `chains` ' +
+      '(bewertbar/alle wie `graph_metrics`). Gerechnet mit denselben Funktionen wie der Live-Stand, aber ' +
+      'OHNE Code-Abgleich: `skippedRules` nennt die ausgelassenen Regeln. `skipped` zählt unlesbare Stände. ' +
+      'Das Ergebnis je Stand liegt im Store-Verzeichnis (`verlauf-cache.json`), Schlüssel Commit + ' +
+      'Regelversion + Herkunft und Wert der Policy.',
   },
   graph_metrics: {
     plain:

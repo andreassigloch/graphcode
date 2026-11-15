@@ -26,10 +26,7 @@ import {
   type CallCoverage,
   type SteerSpaceType,
 } from '@sigloch/contracts/se';
-import { takeSteeringSnapshot, type SteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
-// CR-GC-537: die EINE Normierung des Steuerungsraums. Erst seit CR-SM-340 aus dem Paket
-// erreichbar — davor gab es sie nur paketintern, und ein Host haette sie nachbauen muessen.
-import { steerScore, steerTerms } from '@sigloch/se-engine';
+import { takeSteeringSnapshot, steerSpaceOf, type SteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 import { summarizeReadiness, type ReadinessReport } from '../kernel/measure/readiness.js';
 import {
   evaluateAll,
@@ -48,6 +45,8 @@ import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 import { heldBackTraces, type RejectedTrace } from '../kernel/harness-import.js';
 import { schneide, type Umfang } from '../kernel/measure/working-set.js';
+import { verlaufAmRepo } from './verlauf-repo.js';
+import type { Verlauf } from './verlauf.js';
 
 // -------------------------------------------------------------------------
 // Input schemas
@@ -118,6 +117,7 @@ const GraphReadinessInputSchema = z.object({
       'false (default) = summary: scores + counts + violationsByRule only (stays within the MCP ' +
         'result limit on a fully-red graph). true = full raw violations + each gate’s blocking/open lists.',
     ),
+  verlauf: z.number().int().min(1).max(1000).optional().describe('Last N committed states, each measured (no RC).'),
 });
 
 /**
@@ -254,17 +254,6 @@ export function bindReportTools(ctx: ToolPort) {
   // GET /api/graph/readiness. Delegates to scoreReadiness(harness) → evaluateRules()
   // (L2 gate) so the score is driven by contracts V3_RULES (R-/RD-), never foreign BQ-*.
 
-  /**
-   * CR-GC-537: der STEUERUNGSRAUM im Bericht. Die Terme kommen aus `steerTerms` in se-engine —
-   * derselben Funktion, aus der `steerScore` rechnet; der Regelstrom ist DERSELBE Snapshot, aus dem
-   * `stages` und `graph_generate` kommen. `measured` ist eine Zahl: wie viele Blackboxes in die
-   * Rechnung eingingen (`score: 0` bei `measured: 0` heisst „nichts gemessen").
-   */
-  const steerSpace = (snap: SteeringSnapshot): SteerSpaceType => ({
-    ...steerScore(snap.violations),
-    terms: steerTerms(snap.violations),
-  });
-
   const graph_readiness: MCPTool<
     typeof GraphReadinessInputSchema,
     // CR-GC-748: `marks` (SRR/PDR/CDR/TRR/Bau, je `reached` und `holding`) reist im Bericht des
@@ -306,16 +295,17 @@ export function bindReportTools(ctx: ToolPort) {
        * R-18 cannot report them — they are not in the graph. Derived, so it survives a restart;
        * empties with the export that finishes the repair (delete-edge, then graph_export). */
       heldBackTraces: RejectedTrace[];
+      /** CR-GC-946: nur mit Eingabe `verlauf` — dieselben Zahlen je committetem Stand, ohne Code-Abgleich (`skippedRules`). */
+      verlauf?: Verlauf;
     }
   > = {
     name: 'graph_readiness',
     description:
-      'Where does the project stand? Coverage (how many places are done) AND severity (how bad the ' +
-      'worst open one is), from ONE rule run: the marks SRR/PDR/CDR/TRR/Bau, ' +
-      'the findings per stage and the steering space. Take it to decide WHAT NEXT, not to diagnose a single ' +
-      'finding — that is rules_get_violations. Read `score` only together with `measured`, and the ' +
-      'numbers only together with `skipped` and `importCoverage`: a figure without its reach is not a ' +
-      'statement. `graph_help({token:"graph_readiness"})` explains every block. Read-only.',
+      'Where does the project stand? Coverage and severity from ONE rule run: the marks ' +
+      'SRR/PDR/CDR/TRR/Bau, the findings per stage and the steering space. Take it to decide WHAT NEXT, ' +
+      'not to diagnose a finding (rules_get_violations). Read `score` with `measured`, the numbers with ' +
+      '`skipped` and `importCoverage`. `verlauf: N` adds the last N committed states. ' +
+      '`graph_help({token:"graph_readiness"})` explains every block. Read-only.',
     inputSchema: GraphReadinessInputSchema,
     async handler(input) {
       // EINE Erhebung, zwei Ableitungen (Report mit Marken, skipped) — CR-GC-398.
@@ -355,7 +345,7 @@ export function bindReportTools(ctx: ToolPort) {
         // Bericht, dieselbe wie im Viewer und im Schritt (CR-GC-766); der Bericht zaehlt zusaetzlich den
         // Code-Abgleich (RC), den der Schritt je Batch nicht fahren kann.
         stages: countByStage(report.violations).map((s) => ({ name: s.name, findings: s.findings })),
-        steer: steerSpace(snapshot),
+        steer: steerSpaceOf(snapshot),
         graphVersion: graphVersion(),
         intentCoverage: coverage,
         skipped: ev.skipped,
@@ -367,6 +357,17 @@ export function bindReportTools(ctx: ToolPort) {
         callCoverage: ev.callCoverage,
         catalogs: ruleCatalogs(harness),
         heldBackTraces: heldBackTraces(harness.getRepoRoot(), harness.getScope().systemId, harness.getGraph()),
+        ...(input.verlauf
+          ? {
+              verlauf: verlaufAmRepo({
+                repoRoot: harness.getRepoRoot(),
+                storeDir: harness.getStoreDir(),
+                policy: harness.getMetricPolicy(),
+                policySource: harness.getGraphcodeConfig().source,
+                window: input.verlauf,
+              }),
+            }
+          : {}),
       };
     },
   };

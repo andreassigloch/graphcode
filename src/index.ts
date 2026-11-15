@@ -49,6 +49,10 @@ export type { ReadinessReport } from './kernel/measure/readiness.js';
 export { computeMarks, MARK_LABELS } from './kernel/measure/readiness.js';
 export type { ReadinessMark } from './kernel/measure/readiness.js';
 
+// CR-GC-946: der Verlauf der Marken und Befunde je Stufe ueber die committeten Staende — fuer Skripte (retro-kpi).
+export { verlaufFuerRepo } from './projections/verlauf-repo.js';
+export type { Verlauf, VerlaufStand } from './projections/verlauf.js';
+
 // CLI scaffold lifecycle (CR-GC-112) — self-contained `init|update|remove` installer (MOD-cli).
 export { scaffold, CliCommandSchema, InstallResultSchema } from './surface/scaffold.js';
 export type { CliCommand, InstallResult } from './surface/scaffold.js';

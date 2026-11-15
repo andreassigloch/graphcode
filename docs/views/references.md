@@ -1807,6 +1807,7 @@
 | `FCHAIN-skill-report` | compose | `FUNC-se-retro` |
 | `FCHAIN-skill-report` | compose | `FUNC-se-review` |
 | `FCHAIN-skill-report` | compose | `FUNC-se-status` |
+| `FCHAIN-skill-report` | compose | `FUNC-stand-verlauf` |
 | `FCHAIN-skill-report` | compose | `FUNC-tool-context` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-agent-loop` |
 | `FCHAIN-snapshot-freshness` | compose | `FUNC-auto-export` |
@@ -2471,6 +2472,15 @@
 | `FLOW-trajectory-entry` | relation | `SCHEMA-audit-record` |
 | `FLOW-update-hook` | io | `FUNC-emit-update-event` |
 | `FLOW-update-hook` | relation | `SCHEMA-update-event` |
+| `FLOW-verlauf-bereitschaft` | io | `FUNC-compute-readiness` |
+| `FLOW-verlauf-bereitschaft` | relation | `SCHEMA-rule-violation` |
+| `FLOW-verlauf-konformanz` | io | `FUNC-check-code-conformance` |
+| `FLOW-verlauf-konformanz` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-verlauf-report` | relation | `SCHEMA-verlauf` |
+| `FLOW-verlauf-request` | io | `FUNC-stand-verlauf` |
+| `FLOW-verlauf-request` | relation | `SCHEMA-query-params` |
+| `FLOW-verlauf-snapshot` | io | `FUNC-take-steering-snapshot` |
+| `FLOW-verlauf-snapshot` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-viewer-start` | io | `ACTOR-dashboard` |
 | `FLOW-viewer-start` | relation | `SCHEMA-cli-command` |
 | `FLOW-vorschlag` | io | `FUNC-graph-mutate-tool` |
@@ -2812,6 +2822,7 @@
 | `FUNC-graph-readiness` | io | `FLOW-readiness-report` |
 | `FUNC-graph-readiness` | io | `FLOW-readiness-request` |
 | `FUNC-graph-readiness` | io | `FLOW-snapshot-request-readiness` |
+| `FUNC-graph-readiness` | io | `FLOW-verlauf-request` |
 | `FUNC-graph-readiness` | satisfy | `REQ-held-back-edges-in-readiness` |
 | `FUNC-graph-reseed-tool` | allocate | `MOD-surface` |
 | `FUNC-graph-reseed-tool` | io | `FLOW-reseed-answer` |
@@ -3088,6 +3099,12 @@
 | `FUNC-session-shutdown` | io | `FLOW-socket-close` |
 | `FUNC-session-shutdown` | satisfy | `REQ-host-end-visible` |
 | `FUNC-session-shutdown` | satisfy | `REQ-session-leaves-nothing-behind` |
+| `FUNC-stand-verlauf` | allocate | `MOD-projections` |
+| `FUNC-stand-verlauf` | io | `FLOW-verlauf-bereitschaft` |
+| `FUNC-stand-verlauf` | io | `FLOW-verlauf-konformanz` |
+| `FUNC-stand-verlauf` | io | `FLOW-verlauf-report` |
+| `FUNC-stand-verlauf` | io | `FLOW-verlauf-snapshot` |
+| `FUNC-stand-verlauf` | satisfy | `REQ-stand-verlauf` |
 | `FUNC-take-steering-snapshot` | allocate | `MOD-kernel-measure` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-steering-snapshot` |
@@ -3652,6 +3669,8 @@
 | `TEST-snapshot-drift` | verify | `REQ-snapshot-drift-notice` |
 | `TEST-stage-names-enumerated` | verify | `REQ-risk-stage-name-free-text` |
 | `TEST-stage-names-enumerated` | verify | `REQ-stage-names-enumerated` |
+| `TEST-stand-verlauf` | verify | `REQ-stand-verlauf` |
+| `TEST-stand-verlauf` | verify | `SCHEMA-verlauf` |
 | `TEST-status-verb` | verify | `REQ-single-kuzu-owner` |
 | `TEST-steering-delta-in-answer` | verify | `REQ-risk-steering-delta-missing` |
 | `TEST-steering-delta-in-answer` | verify | `REQ-steering-delta-in-answer-tested` |

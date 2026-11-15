@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 60 SCHEMA · 245 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 61 SCHEMA · 250 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -68,6 +68,7 @@
 | `SCHEMA-tool-context` | src/surface/tool-context-contract.ts#ToolContext | n/a |
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
+| `SCHEMA-verlauf` | src/projections/verlauf.ts#VerlaufSchema | n/a |
 | `SCHEMA-work-set` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-zug-bericht` | src/kernel/measure/zug-bericht.ts#ZugBericht | reviewed |
 
@@ -312,6 +313,11 @@
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-trajectory-entry` | `FUNC-tool-context` | `FUNC-emit-trajectory` |
 | `FLOW-update-hook` | `FUNC-create-harness` | `FUNC-emit-update-event` |
+| `FLOW-verlauf-bereitschaft` | `FUNC-stand-verlauf` | `FUNC-compute-readiness` |
+| `FLOW-verlauf-konformanz` | `FUNC-stand-verlauf` | `FUNC-check-code-conformance` |
+| `FLOW-verlauf-report` | `FUNC-stand-verlauf` | — |
+| `FLOW-verlauf-request` | `FUNC-graph-readiness` | `FUNC-stand-verlauf` |
+| `FLOW-verlauf-snapshot` | `FUNC-stand-verlauf` | `FUNC-take-steering-snapshot` |
 | `FLOW-viewer-start` | `FUNC-gve-supervise` | `ACTOR-dashboard` |
 | `FLOW-vorschlag` | `FUNC-vorschlag` | `FUNC-graph-mutate-tool` |
 | `FLOW-work-set` | `FUNC-tool-context` | `FUNC-graph-readiness` |

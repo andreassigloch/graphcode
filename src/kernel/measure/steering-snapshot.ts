@@ -15,7 +15,9 @@
 import { focusViolations, blockingOf, zaehlt } from './focus-set.js';
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
-import type { MetricPolicy } from '@sigloch/contracts/se';
+import type { MetricPolicy, SteerSpaceType } from '@sigloch/contracts/se';
+// CR-GC-537: die EINE Normierung des Steuerungsraums (se-engine, seit CR-SM-340 erreichbar).
+import { steerScore, steerTerms } from '@sigloch/se-engine';
 import { OntologyGraph, RuleViolation } from '@sigloch/contracts/se';
 import { countByStage } from '@sigloch/graphcode-client';
 import { evaluateAllRules } from '@sigloch/contracts/se';
@@ -84,6 +86,14 @@ export function takeSteeringSnapshot(graph: Graph, policy: MetricPolicy): Steeri
     stages: befundeJeStufe(violations.filter((v) => zaehlt(v.rule_id))),
   };
   return snapshot;
+}
+
+/**
+ * CR-GC-537: der STEUERUNGSRAUM eines Snapshots — Terme aus `steerTerms`, derselben Funktion, aus der
+ * `steerScore` rechnet. Eine Stelle fuer `graph_readiness` und den Verlauf alter Staende (CR-GC-946).
+ */
+export function steerSpaceOf(snap: Pick<SteeringSnapshot, 'violations'>): SteerSpaceType {
+  return { ...steerScore(snap.violations), terms: steerTerms(snap.violations) };
 }
 
 /** Befunde je Stufe — `countByStage` des Clients (eine Rechnung fuer Schritt, Probe, Bericht und Viewer). */

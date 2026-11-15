@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** Freigegeben 2026-11-15; nicht umgesetzt.
+**Status:** Umgesetzt 2026-11-15
 
 ## Anlass
 
@@ -59,13 +59,25 @@ Seit 2026-10-29 steht das Modell (119 → 118), die Summe steigt trotzdem von 47
 
 ## Abnahme
 
-- [ ] Drei Stände in einem Wegwerf-Repo: je Stand Marken und Befunde je Stufe; der jüngste Stand gleicht der
+- [x] Drei Stände in einem Wegwerf-Repo: je Stand Marken und Befunde je Stufe; der jüngste Stand gleicht der
       Antwort von `graph_readiness` ohne RC (Test, vorher rot).
-- [ ] Der zweite Aufruf misst keinen Stand neu; eine andere Policy misst neu (Test).
-- [ ] Ein unlesbarer Stand zählt unter `skipped`, der Lauf bricht nicht ab (Test).
-- [ ] `scripts/` importiert nichts mehr aus `@sigloch/graph-view-edit` (Test).
-- [ ] Am eigenen Repo: `graph_readiness({verlauf: 24})` antwortet, der jüngste Stand trägt SRR, PDR, CDR.
-- [ ] `npm run verify:full CR-GC-946` grün.
+- [x] Der zweite Aufruf misst keinen Stand neu; eine andere Policy misst neu (Test).
+- [x] Ein unlesbarer Stand zählt unter `skipped`, der Lauf bricht nicht ab (Test).
+- [x] `scripts/` importiert nichts mehr aus `@sigloch/graph-view-edit` (Test).
+- [x] Am eigenen Repo: `graph_readiness({verlauf: 24})` antwortet, der jüngste Stand trägt SRR, PDR, CDR.
+- [x] `npm run verify:full CR-GC-946` grün.
+
+---
+
+## Abweichungen
+
+- Testergebnisse und bewertbare Ketten sind im Verlauf enthalten: `tests` zaehlt je Anforderung wie `graph_test_report` (`verificationReport`), `chains` wie `graph_metrics` (`chainMetrics().measurability`). Beide laufen auf dem aus Git geladenen Stand, nichts wurde weggelassen.
+- Der Steuerwert steht als Kopf (`worst`, `worstAt`, `mean`, `score`, `measured`) und je Steuerregel als `byRule` (`terms` gemessen, `over` ueber der Schwelle). Die Terme je Blackbox stehen nicht im Verlauf.
+- Der Zwischenspeicher liegt unter `harness.getStoreDir()` als `verlauf-cache.json`. Schluessel: Schema, Regelversion, Herkunft UND Wert der Policy (Hash), Commit. Ohne den Hash traefe ein geaenderter Schwellenwert derselben Herkunft den alten Eintrag.
+- Neuer Weg fuer Skripte: `verlaufFuerRepo` (aus `dist/`), nicht nur `graph_readiness`. `retro-kpi --verlauf` ruft ihn; Zwischenspeicher dort nur, wo `.graphcode/` schon liegt.
+- `scripts/messung.mjs`: T-M3 urteilt ueber Fehler und Marken der juengsten 24 Staende; die Befunde je Stufe ohne Plan stehen als Wert da ("abgenommen" ist nicht messbar). T-M3 stand vorher unter "nicht erhoben".
+- Modell: REQ-stand-verlauf, FUNC-stand-verlauf (realRef `rechneVerlauf`, allocate MOD-projections, Kette FCHAIN-skill-report), TEST-stand-verlauf, SCHEMA-verlauf und fuenf FLOW (Anfrage von graph_readiness, Bericht, drei Aufrufe in Konformanz, Marken-Rechnung und Steuerungs-Snapshot). Der Commit-Hook (CR-GC-848) meldete drei Befunde RC-12, die schon vor diesem CR bestanden (FLOW-rule-findings, FLOW-graph-state gegen `rules_evaluate` und `graph_readiness`: der Aufruf geht ueber den Interface-Typ der Harness). Beide FLOW tragen jetzt die Uebergabestelle als realRef (`harness.ts#evaluateRules`). R-10 fuer FLOW-verlauf-report (kein Verbraucher) bleibt als Warnung offen.
+- `docs/messung/stand.md` (generiert) und `docs/graphcode_leitlinie.md` (Verweis auf das geloeschte Skript) sind nicht angefasst.
 
 ---
 

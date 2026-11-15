@@ -36,6 +36,24 @@ export interface GateOutcome {
   states: { before: Graph; after: Graph } | null;
 }
 
+/**
+ * Der Gate-Katalog auf einem Graphen — maps graph-api-core RuleViolation to the contracts harness
+ * RuleViolation. Eine Funktion fuer das Gate und fuer den Verlauf ueber alte Staende (CR-GC-946):
+ * ein Stand wird mit derselben Abbildung beurteilt wie der Live-Stand.
+ */
+export function gateViolations(engine: DefaultRuleEngine, graph: Graph): RuleViolation[] {
+  return engine.evaluate(graph).map((v: CoreRuleViolation) => ({
+    ruleId: v.ruleId,
+    severity: v.severity,
+    message: v.message,
+    elementId: v.elementId,
+    // CR-GC-203 item 1: stop flattening — surface fix_hint + candidate_targets so
+    // rules_get_violations / rules_evaluate hand the agent an actionable violation.
+    fixHint: v.fixHint,
+    context: v.context,
+  }));
+}
+
 export class Gate {
   constructor(private readonly deps: GateDeps) {}
 
@@ -234,18 +252,9 @@ export class Gate {
     return errors;
   }
 
-  /** Run the gate catalog against `graph`. Maps graph-api-core RuleViolation → contracts harness RuleViolation. */
+  /** Run the gate catalog against `graph`. */
   evaluate(graph: Graph): RuleViolation[] {
-    return this.deps.engine.evaluate(graph).map((v: CoreRuleViolation) => ({
-      ruleId: v.ruleId,
-      severity: v.severity,
-      message: v.message,
-      elementId: v.elementId,
-      // CR-GC-203 item 1: stop flattening — surface fix_hint + candidate_targets so
-      // rules_get_violations / rules_evaluate hand the agent an actionable violation.
-      fixHint: v.fixHint,
-      context: v.context,
-    }));
+    return gateViolations(this.deps.engine, graph);
   }
 }
 

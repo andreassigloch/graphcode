@@ -16,7 +16,8 @@
 // @author andreas@siglochconsulting
 import { readFileSync, existsSync } from 'node:fs';
 import { execSync, execFileSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { dirname, join } from 'node:path';
 
 /** Round to 2 decimals for deterministic, comparable KPI values. */
 const r2 = (n) => Math.round(n * 100) / 100;
@@ -374,40 +375,45 @@ function gitNetLoc() {
 }
 
 // --- main: read the session JSON, auto-fill git net-LOC, print the table ---
-// ── CR-GC-914: Verlauf der Verstoesse ueber alle committeten Graph-Staende ──────────────────────
-// Gemessen wird mit `measureGraphHistory` aus dem installierten graph-view-edit — derselbe Messpfad
-// wie die Dashboard-Karte „Wirkt die Arbeit?", dort nur ueber die letzten 24 Staende. Jeder Stand
-// wird mit dem HEUTIGEN Regelwerk bewertet und ohne Code-Abgleich (RC-Regeln zaehlt nur die Readiness).
+// ── CR-GC-914 / CR-GC-946: Verlauf ueber alle committeten Graph-Staende ─────────────────────────
+// Gerechnet wird beim Host-Paket (`verlaufFuerRepo` aus `dist/`) — dieselbe Rechnung wie
+// `graph_readiness({verlauf})`: Marken, Befunde je Stufe (Plan eigene Stufe), Fehler, Steuerwert, Tests,
+// Ketten. Jeder Stand mit dem HEUTIGEN Regelwerk und ohne Code-Abgleich (RC-Regeln braucht den Quellbaum).
 
-/** Ab dieser relativen Aenderung der offenen Verstoesse gegen den Vorstand gilt ein Stand als Sprung. */
+/** Ab dieser relativen Aenderung der offenen Befunde gegen den Vorstand gilt ein Stand als Sprung. */
 const SPRUNG_SCHWELLE = 0.1;
 
-/** Jeder Stand, dessen offene Verstoesse um mehr als 10 % vom Vorstand abweichen. Rein. */
+/** Jeder Stand, dessen offene Befunde um mehr als 10 % vom Vorstand abweichen. Rein. */
 export function sprungListe(states) {
   return states.filter((s, i) => i > 0 && Math.abs(s.open - states[i - 1].open) > SPRUNG_SCHWELLE * Math.max(1, states[i - 1].open));
 }
 
 /** Alle committeten Staende von `repo` mit Commit-Betreff, dazu die Spruenge. */
 export async function verlauf(repo) {
-  const { measureGraphHistory } = await import('@sigloch/graph-view-edit/vite.config.js');
-  const h = measureGraphHistory(repo, { window: null });
-  if (!h) return { states: [], spruenge: [], skipped: 0, measureMs: 0 };
+  const { verlaufFuerRepo } = await import(pathToFileURL(join(dirname(fileURLToPath(import.meta.url)), '..', 'dist', 'index.js')).href);
+  const h = verlaufFuerRepo(repo, null);
   const betreff = (hash) => execFileSync('git', ['-C', repo, 'log', '-1', '--format=%s', hash], { encoding: 'utf8' }).trim();
   const states = h.states.map((s) => ({ ...s, betreff: betreff(s.hash) }));
-  return { states, spruenge: sprungListe(states), skipped: h.skipped, measureMs: h.measureMs };
+  return { states, spruenge: sprungListe(states), skipped: h.skipped, measureMs: h.measureMs, skippedRules: h.skippedRules };
 }
 
-const zeile = (s) => `| ${s.ts.slice(0, 10)} | ${s.short} | ${s.elements} | ${s.errors} | ${s.warnings} | ${s.infos} | ${s.open} | ${s.betreff} |`;
+const stufe = (s, name) => s.stages.find((x) => x.name === name)?.findings ?? 0;
+const zeile = (s) => {
+  const plan = stufe(s, 'Plan');
+  const marken = s.marks.filter((m) => m.reached).map((m) => m.id).join(' ') || '-';
+  return `| ${s.ts.slice(0, 10)} | ${s.short} | ${s.elements} | ${s.errors} | ${marken} | ${s.open - plan} | ${plan} | ${s.open} | ${s.betreff} |`;
+};
 
 export function renderVerlauf(v) {
-  const kopf = '| Datum | Commit | Elemente | Fehler | Warnungen | Hinweise | offen | Betreff |\n|---|---|---|---|---|---|---|---|';
+  const kopf = '| Datum | Commit | Elemente | Fehler | Marken | Befunde ohne Plan | Befunde Plan | alle | Betreff |\n|---|---|---|---|---|---|---|---|---|';
   return [
-    `## Verlauf: ${v.states.length} Staende, gemessen in ${v.measureMs} ms` + (v.skipped ? `, ${v.skipped} nicht messbar` : ''),
+    `## Verlauf: ${v.states.length} Staende, gemessen in ${v.measureMs} ms` + (v.skipped ? `, ${v.skipped} nicht messbar` : '') +
+      (v.skippedRules?.length ? ` (ohne ${v.skippedRules.join(', ')})` : ''),
     '',
     kopf,
     ...v.states.map(zeile),
     '',
-    `## Spruenge (offene Verstoesse > ${SPRUNG_SCHWELLE * 100} % gegen den Vorstand): ${v.spruenge.length}`,
+    `## Spruenge (offene Befunde > ${SPRUNG_SCHWELLE * 100} % gegen den Vorstand): ${v.spruenge.length}`,
     '',
     kopf,
     ...v.spruenge.map(zeile),
