@@ -4243,8 +4243,8 @@
       "id": "CR-GC-941",
       "type": "CR",
       "name": "Skill-Text zur Wiederherstellung geht am Gate vorbei",
-      "description": "docs/cr/open/CR-GC-941-skill-text-zur-wiederherstellung-geht-am.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-941-skill-text-zur-wiederherstellung-geht-am.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-942",
@@ -33289,5 +33289,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1183
+  "graphVersion": 1184
 }
