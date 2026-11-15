@@ -102,14 +102,14 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
     for (const t of [authorActor, topLevel, fmea, vorbereitung, laufzeit]) expect(t).not.toMatch(/`answer`/);
   });
 
-  it('se-fmea: Version 11, Akteur in der Mitte und Abschnitte aus chainRoles.segments', () => {
-    expect(fmea).toMatch(/^version: 11$/m);
+  it('se-fmea: Version 12, Akteur in der Mitte und Abschnitte aus chainRoles.segments', () => {
+    expect(fmea).toMatch(/^version: 12$/m);
     expect(fmea).toMatch(/Akteur in der Mitte/);
     expect(fmea).toContain('chainRoles.segments');
   });
 
   it('se-vorbereitung und se-laufzeit: async am Fluss eines Akteurs ohne Rueckfluss ist eine Vorab-Lieferung', () => {
-    expect(laufzeit).toMatch(/^version: 3$/m);
+    expect(laufzeit).toMatch(/^version: 4$/m);
     for (const t of [vorbereitung, laufzeit]) {
       expect(t).toMatch(/`async` am Fluss eines Akteurs, der aus der Kette nichts empfängt, ist eine Vorab-Lieferung \(`FC-06`, `\[predelivery\]`\)/);
     }

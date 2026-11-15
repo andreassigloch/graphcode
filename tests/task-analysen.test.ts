@@ -134,7 +134,8 @@ describe('CR-GC-724: Analyse-Tasks', () => {
     for (const skill of ['se-conops', 'se-trade', 'se-irr', 'se-fmea', 'se/optimize']) {
       const text = readFileSync(fileURLToPath(new URL(`../.claude/commands/${skill}.md`, import.meta.url)), 'utf8');
       expect(text, skill).toContain('docs/cr/done/');
-      expect(text, skill).toContain('status: "done"');
+      expect(text, skill).toContain('aise cr close');
+      expect(text, skill).not.toContain('status: "done"');
       expect(text, skill).toMatch(/`relation`/);
       expect(text, skill).not.toMatch(/Write `docs\/records\//);
       expect(text, skill).not.toMatch(/superseded-by|label: ?decides|architectureOnly|commitRef/);
