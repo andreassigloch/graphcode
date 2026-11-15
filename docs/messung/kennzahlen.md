@@ -48,9 +48,23 @@ git und das Sitzungsprotokoll — nie ein zweiter DB-Handle.
 | **2 Werkzeugnutzung** | Zahl der Aufrufe `graph_mutate` / `graph_impact` / `graph_expand` / `rules_evaluate` | `audit_trail`, Protokoll | — (Profil) |
 | **3 Tokens je Netto-LOC** | Tokens ÷ (eingefügt − gelöscht) | Protokoll + `git diff` | ↓ |
 | **4 Plantreue** | Zahl der CRs, die ihre `depends-on`-Reihenfolge verletzen | Graph + CR-Daten (`deriveImplPlan`, CR-GC-209) | **0** |
-| **5 Gate-Gesundheit** | angewandt ÷ abgelehnt, dazu Readiness-Δ Start → Ende | `audit_stats`, `graph_readiness` | — / ↑ |
+| **5 Ablehnungsquote** | abgelehnte Züge ÷ alle Züge, getrennt **je Regel** und **je Skill**, im Verlauf | `audit_stats` (`byRule`); je Skill: Feld fehlt, s. unten | fällt je Skill; keine Regel lehnt dauerhaft ab |
 | **6 Bindung (Knoten)** | R-19 / R-20 (`testRefs` / `realRef`) zum Abschluss | `rules_evaluate` | **100 %** (T-V4: Bindungsquote) |
 | **7 Bindung (Grenzmenge)** | FUNC/SCHEMA, die eine MOD-Grenze kreuzen, im Modell ÷ Pflichtmenge | `scripts/grenzmenge.mjs` | **100 %** (T-V4). Alles unterhalb der Grenze bleibt Blackbox — „jede Datei im Modell" ist **kein** Ziel |
+
+**Was die Ablehnungsquote sagt.** Sie misst die Güte von Regeln und Skills, nicht die des Modells. Für beide
+gilt dieselbe Lesart, und nur die getrennte Zahl trägt sie:
+
+| Bild | Befund | Wer handelt |
+|---|---|---|
+| Eine Regel lehnt oft ab, über alle Skills | Regel oder ihr Hilfetext ist unklar | Autor der Regel (contracts) |
+| Ein Skill wird oft abgelehnt, über mehrere Regeln | der Skill lehrt einen falschen Zug | Autor des Skills |
+| Die Quote eines Skills fällt im Verlauf | der Skill wird besser | — |
+| Keine Ablehnung, die Warnungen steigen | die Regeln sind zu weich | Autor der Regel |
+
+Die Gesamtquote ohne Trennung (2026-11-15: 32 von 369 Zügen) trägt keine dieser Aussagen. Je Regel liefert
+`audit_stats` die Zahl heute. Je Skill fehlt die Grundlage: ein Zug trägt nur `consumerId`, ein frei gewähltes
+Etikett, und keinen Namen des auslösenden Skills.
 
 **Warum Bindung zweimal.** R-19/R-20 sind Regeln je Element: sie prüfen die Knoten, die es gibt, und
 sehen nicht, was nie modelliert wurde. Am eigenen Repo lasen sie 0 Befunde (KPI 6 = 100 %), während

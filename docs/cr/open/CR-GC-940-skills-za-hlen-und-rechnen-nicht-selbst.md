@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** Vorschlag, vom Autor nicht freigegeben; umgesetzt ist nichts.
+**Status:** umgesetzt am 2026-11-15; vom Autor am 2026-11-15 freigegeben, Empfehlung: Skills an die FAQ angleichen.
 
 ## Anlass
 
@@ -45,9 +45,9 @@ einem Skill, löst ein CR im Repo des Skills den Konflikt. Bis dahin folgt ein A
 
 ## Abnahme
 
-- [ ] Der Autor hat je Zeile entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen“.
-- [ ] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
-- [ ] `npm run verify:full <CR>` grün.
+- [x] Der Autor hat je Zeile entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen“.
+- [x] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
+- [x] `npm run verify:full <CR>` grün.
 
 ---
 
@@ -57,6 +57,11 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| Wer nimmt Befunde ab, wenn ein Skill und die FAQ sich widersprechen? | Der Skill nennt keine Liste abnehmbarer Regeln; er verweist auf `enumValues` von `acceptedFindings` aus `graph_authoring_guide`. | Die Menge ABNEHMBAR liefert das Werkzeug (`focus-set.ts`); eine zweite Liste im Skill ist eine zweite Fassung. Freigabe des Autors 2026-11-15. |
+| Wo steht, wann eine Steuerregel fertig ist? | Im `prompt` von `graph_generate`, nicht im Skill; die Test-Bindung „Skill trägt Registersatz wörtlich" (`decision-texts`) entfällt für `steerOptimum` und `acceptance`. | Das Werkzeug meldet „Steuerregeln am lokalen Optimum"; die 5 %-Schwelle steht nur im Code. Freigabe des Autors 2026-11-15. |
+| Woher kommen Reihenfolge und Top-3 in `se-status`? | Aus den ersten drei Gruppen von `rules_evaluate({ detail: "grouped" })`. | Fehler zuerst, dann früheste Stufe liefert das Werkzeug; der Skill zählt nichts. Freigabe des Autors 2026-11-15. |
+| Was heißt „kongruent" ohne Deckung? | Jedes Urteil nennt die Deckung (`importCoverage.assigned` von `endpoints`, `unassigned`) und die Bindungsquote. | `importCoverage` liefert `graph_readiness`; die Bindungsquote liefert kein Werkzeug (nur `scripts/kongruenz.mjs`), der Skill-Satz dazu bleibt. Freigabe des Autors 2026-11-15. |
+| Was sagt `se-fmea` zu Action Priority? | AP kommt aus `actionPriority()`, ohne lokale Tabelle steht `AP*`; der Skill nennt keine Tabelle. | `actionPriority` ist in contracts 12.13.0 ausgeliefert, die Zellwerte nie (CR-SM-229). Freigabe des Autors 2026-11-15. |
 
 ---
 
