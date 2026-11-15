@@ -1,6 +1,6 @@
 ---
 name: se:import-code
-version: 4
+version: 5
 description: Bestehende TS-Codebasis deterministisch in den Graph importieren (graphify, kein LLM) — Reseed der importierten Knoten mit automatischem Backup, der handgeschriebene Teil bleibt; FUNC/MOD/FLOW+SCHEMA, keine UC/REQ; danach Ketten aus den Aufrufen bilden
 ---
 
@@ -63,5 +63,13 @@ Die Regeln für den Schnitt stehen in `se:top-level`, Abschnitt „Model the cal
 
 ## Recovery
 
-Backup zurückspielen: Backup-Datei nach `docs/graph/<member>.graph.json` kopieren, dann
-`graph_reseed` (MCP) — oder Host stoppen, `rm .graphcode/kuzu*`, neu starten (seed-on-empty).
+Backup zurückspielen über das Werkzeug, nicht über die Dateien. Das laufende MCP-Host-Werkzeug
+`graph_reseed` nimmt den Backup-Pfad relativ zum Repo und ersetzt den Store im Host:
+
+```
+graph_reseed({ path: ".graphcode/backup/graph-<ts>.json" })
+graph_export
+```
+
+`graph_export` committet den wiederhergestellten Stand. Schreibe weder `docs/graph/<member>.graph.json`
+noch `.graphcode/kuzu*` von Hand: `reseed` ist eine Operation des Hosts, kein Handgriff an Dateien.
