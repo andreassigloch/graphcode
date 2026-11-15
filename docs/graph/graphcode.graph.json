@@ -4285,7 +4285,8 @@
       "id": "CR-GC-947",
       "type": "CR",
       "name": "Zeile je CR erweitern: Schlupf ohne Link-Modus-Tests, Grenzmenge, Abgleich Modell und Code, Dauer Auswahl gegen Volllauf, Werkzeuglatenz",
-      "description": "docs/cr/open/CR-GC-947-zeile-je-cr-erweitern-schlupf-ohne-link-.md"
+      "description": "docs/cr/done/CR-GC-947-zeile-je-cr-erweitern-schlupf-ohne-link-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-948",
@@ -33589,5 +33590,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1218
+  "graphVersion": 1219
 }
