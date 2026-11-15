@@ -81,7 +81,7 @@ describe('TEST-skill-faq-angleich (CR-GC-939)', () => {
     expect(v(generate)).toBeGreaterThanOrEqual(6);
     expect(importCode).toMatch(/^version: 5$/m);
     expect(v(closeV)).toBeGreaterThanOrEqual(5);
-    expect(vorbereitung).toMatch(/^version: 10$/m);
+    expect(Number(vorbereitung.match(/^version: (\d+)$/m)![1])).toBeGreaterThanOrEqual(10);
     expect(v(umbau)).toBeGreaterThanOrEqual(3);
   });
 });

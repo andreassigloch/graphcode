@@ -1,6 +1,6 @@
 ---
 name: se:optimize
-version: 9
+version: 10
 description: Einen Umbauvorschlag proben und seinen Gesamt-Impact als Vorlage zeigen — Vorschläge aus einer Analyse (feste Form) und Vorschläge von graph_suggest, getrennt. Trockenlauf durchs Gate, Vorlage davor und danach, Wahl durch den Autor. Nach CDR, vor den Kettentests. Kein Auto-Apply; Anwenden und Nachmessen gehören dem CR des Umbaus.
 ---
 
@@ -48,6 +48,7 @@ graph_suggest { "k": 5 }
 - `applicable: true`: `score` und `delta` messen genau den beigelegten `edit`. `score` ist die Verbesserung des Steuerwerts, die der Trockenlauf dieses Zugs ergab (`verdict.steer.improvement`); `delta` ist das Δm je Dimension und wird nur berichtet.
 - `applicable: false`: es gibt nichts anzuwenden, also auch nichts zu proben. Ein Fund ohne `edit`, oder das Gate hat den Zug abgelehnt (Grund in `verdict.violations`). `score` misst dann eine Sonde am Fund. Sag das dazu.
 - `score` kleiner oder gleich 0: der Zug entschärft die schlimmste Stelle nicht. Sag das dazu.
+- `edit.node` ist gesetzt (der Zug legt einen neuen Knoten samt Kanten an): sprich den Zug als **ein** Batch durchs Gate, nie Knoten und Kanten getrennt. Der Name des Knotens ist ein Platzhalter aus dem Befund; ersetze den Platzhalternamen vor der Probe durch den Namen, den der Autor wählt.
 - `edit.codeImpact`: nenn Datei und Zielmodul. Das Umhängen einer gebundenen Funktion zieht Code-Arbeit nach sich.
 - Legt der Zug Module verschiedener Domänen zusammen (Mechanik, Elektronik, Software) oder trennt er eine nach Domänen, stell vor der Probe die Domänenfrage (Abschnitt *Domains* des Skills für den ersten Schnitt): Legen wir die Schnittstelle zwischen den Domänen selbst fest und prüfen sie? Nur dann trennen. Ein guter Steuerwert allein rechtfertigt den Zug nicht.
 - Die Reihenfolge der Liste stammt vom Steuerwert des Werkzeugs. Sie gilt nur in dieser Quelle und ist kein Urteil über einen Entwurf.

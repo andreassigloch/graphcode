@@ -114,7 +114,7 @@ const hilfe = TOOL_HELP.graph_metrics.se;
 
 describe('se-fmea Version 9: Eingang pruefen, Umfang und Traeger lesen, Ergebnis ist ein CR (CR-GC-782)', () => {
   it('der Kopf traegt Version 13 (CR-GC-940)', () => {
-    expect(skill).toMatch(/^version: 13$/m);
+    expect(Number(skill.match(/^version: (\d+)$/m)![1])).toBeGreaterThanOrEqual(13);
   });
 
   it('eine Luecke am Eingang geht an se-vorbereitung, der Skill stellt die Verdrahtung nicht selbst her', () => {

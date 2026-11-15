@@ -1,5 +1,5 @@
 /**
- * CR-GC-942 — Skills tragen die entschiedenen Sätze der FAQ, die ihrem Schritt fehlten, und nennen
+ * CR-GC-942 und CR-GC-944 — Skills tragen die entschiedenen Sätze der FAQ, die ihrem Schritt fehlten, und nennen
  * den abgeschafften Parameter `commands` nicht mehr.
  *
  * Entschieden (FAQ test-wirklich-pruefend, positivkontrolle, typpruefung-tests, entfernen-reihenfolge,
@@ -21,6 +21,10 @@ const closeV = lies('se', 'close-violations.md');
 const review = lies('se-review.md');
 const status = lies('se-status.md');
 const authorReq = lies('se', 'author-req.md');
+const optimize = lies('se', 'optimize.md');
+const vorbereitung = lies('se-vorbereitung.md');
+const fmea = lies('se-fmea.md');
+const retro = lies('se-retro.md');
 
 describe('TEST-skill-faq-ergaenzung (CR-GC-942)', () => {
   it('Prämisse: graph_mutate nimmt nur formatE, einen Parameter commands gibt es nicht', () => {
@@ -92,6 +96,23 @@ describe('TEST-skill-faq-ergaenzung (CR-GC-942)', () => {
     expect(authorReq).toMatch(/no second TEST/);
   });
 
+  it('Nr. 6 (CR-GC-944): ein Vorschlag mit add-node geht als ein Batch durchs Gate, der Platzhaltername wird ersetzt', () => {
+    expect(optimize).toMatch(/`edit\.node`.*als \*\*ein\*\* Batch.*Platzhalternamen/s);
+  });
+
+  it('Nr. 10 (CR-GC-944): ohne Beleg mit Datei und Zeile bleibt der Fluss ohne Merkmal', () => {
+    expect(vorbereitung).toMatch(/ohne Beleg lass das Merkmal weg/);
+    expect(vorbereitung).toMatch(/Eine Ablage hat keine Sonderbehandlung/);
+  });
+
+  it('Nr. 12 (CR-GC-944): zu einem gelassenen Risiko gehört ein ungebundener TEST', () => {
+    expect(fmea).toMatch(/unbound `TEST`/);
+  });
+
+  it('Nr. 16 (CR-GC-944): die Bindungsquote steht nie allein, die Deckung steht daneben', () => {
+    expect(retro).toMatch(/never alone.*coverage of the repo/s);
+  });
+
   it('die Versionen stehen höher', () => {
     const v = (t: string) => Number(t.match(/^version: (\d+)$/m)![1]);
     expect(v(test)).toBeGreaterThanOrEqual(3);
@@ -101,5 +122,9 @@ describe('TEST-skill-faq-ergaenzung (CR-GC-942)', () => {
     expect(v(review)).toBeGreaterThanOrEqual(4);
     expect(v(status)).toBeGreaterThanOrEqual(4);
     expect(v(authorReq)).toBeGreaterThanOrEqual(5);
+    expect(v(optimize)).toBeGreaterThanOrEqual(10);
+    expect(v(vorbereitung)).toBeGreaterThanOrEqual(11);
+    expect(v(fmea)).toBeGreaterThanOrEqual(14);
+    expect(v(retro)).toBeGreaterThanOrEqual(8);
   });
 });

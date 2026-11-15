@@ -1,6 +1,6 @@
 ---
 name: se-retro
-version: 7
+version: 8
 description: Post-project retro — compute the 6 graphcode KPIs (graph-vs-grep, tool usage, token/LOC, plan conformance, gate health, binding coverage) and interpret them
 ---
 
@@ -28,6 +28,7 @@ Assemble a `retro-session.json`:
 ## 3. Interpret (the standard read)
 - **Graph-vs-Grep ratio** has no threshold (Leitlinie T-E1). Every search the graph could have answered is potential: list them and ask why the graph wasn't queried (missing export? no onboarding contract?). The graph's gain is precision, not speed.
 - **Plan conformance > 0** → CR numbering disagreed with the real `depends-on` order — forward dependencies were built out of order.
+- **Binding coverage is never alone** — name next to it the coverage of the repo: how much code the model does not know (`importCoverage` in `graph_readiness`, read against `unassigned: []`). 100 % binding says nothing about code the model never modelled.
 - **Binding coverage < 100 %** → TESTs/FUNCs were closed without their runnable binding (vacuous-green risk).
 - **Entry above target** → the session read the model instead of entering through the CR and the context slice of its carriers (GRAPHCODE.md, *Sessions and turns*). A high context per turn says the session ran too long: split at the milestone.
 - **Runs of equal single calls > 0** → independent reads were not put into one turn, or a repeated check ran by hand instead of as one script (GRAPHCODE.md, *Sessions and turns*).

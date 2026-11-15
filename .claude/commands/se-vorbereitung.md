@@ -1,6 +1,6 @@
 ---
 name: se-vorbereitung
-version: 10
+version: 11
 description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, das Merkmal synchron/asynchron der Flüsse nachprüfen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
@@ -146,7 +146,7 @@ Die Frage je Fluss, um den Wert zu prüfen:
 
 > Wartet die Antwort des Abnehmers auf diese Lieferung?
 
-Ja heißt synchron, nein heißt asynchron (vorab geliefert). Im Code heißt Ja: der Aufrufer wartet auf den Rückgabewert. Ein Rückruf, ein Ereignis oder eine Datei, die später jemand liest, heißt Nein. Belege den Wert mit Datei und Zeile. Trägt der Fluss einen anderen Wert, ist das der Zug:
+Ja heißt synchron, nein heißt asynchron (vorab geliefert). Im Code heißt Ja: der Aufrufer wartet auf den Rückgabewert. Ein Rückruf, ein Ereignis oder eine Datei, die später jemand liest, heißt Nein. Belege den Wert mit Datei und Zeile; ohne Beleg lass das Merkmal weg. Eine Ablage hat keine Sonderbehandlung: es zählt, ob der Abnehmer beim Aufruf wartet. Trägt der Fluss einen anderen Wert, ist das der Zug:
 
 ```
 ## Nodes
