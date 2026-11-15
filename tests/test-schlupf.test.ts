@@ -4,13 +4,17 @@
  */
 import { describe, it, expect } from 'vitest';
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import type { Graph } from '@sigloch/graph-api-core';
 import {
   blackboxBindung,
+  dauerVon,
   laufUrteil,
+  leseSchlupfZeilen as leseSchlupfZeilenSync,
+  linkModusVon,
+  UMGEBUNG_LINK_MODUS,
   schlupfFreieFolge,
   type VitestLauf,
   schlupfVon,
@@ -48,6 +52,61 @@ describe('Schlupf (CR-GC-718)', () => {
     // ohne CR-4 zaehlt die Folge bis zum Schlupf von CR-1: CR-5, CR-2 (CR-3 VOLL neutral)
     expect(schlupfFreieFolge(zeilen.filter((z) => z.cr !== 'CR-4'))).toBe(2);
     expect(SCHLUPF_SCHWELLE).toBe(10);
+  });
+});
+
+describe('Umgebung: im Link-Modus erwartet rote Tests sind kein Schlupf (CR-GC-947)', () => {
+  const dist = 'tests/distribution.test.ts';
+
+  it('im Link-Modus steht ein roter distribution.test.ts unter umgebung, ohne Link-Modus ist er Schlupf', () => {
+    expect(UMGEBUNG_LINK_MODUS).toEqual(['tests/distribution.test.ts', 'tests/lockfile-sync.test.ts']);
+    const link = schlupfVon([dist, 'tests/b.test.ts'], ['tests/a.test.ts'], [], true);
+    expect(link.umgebung).toEqual([dist]);
+    expect(link.schlupf).toEqual(['tests/b.test.ts']);
+    expect(link.schlupfNurGraph).toEqual(['tests/b.test.ts']);
+    const ohne = schlupfVon([dist, 'tests/b.test.ts'], ['tests/a.test.ts'], [], false);
+    expect(ohne.umgebung).toEqual([]);
+    expect(ohne.schlupf).toEqual([dist, 'tests/b.test.ts']);
+    expect(schlupfVon([dist], [], []).schlupf).toEqual([dist]);
+  });
+
+  it('eine Zeile aus dem Bestand ohne die neuen Felder wird gelesen; die Felder bleiben undefined, nie 0', () => {
+    const alt = JSON.stringify(zeile('CR-GC-1', '2026-01-01', 'CODE'));
+    const [z] = leseSchlupfZeilenSync(`${alt}\n`);
+    expect(z.linkModus).toBeUndefined();
+    expect(z.umgebung).toBeUndefined();
+    expect(z.dauer).toBeUndefined();
+    expect(z.grenzmenge).toBeUndefined();
+  });
+
+  it('eine Zeile mit den neuen Feldern wird gelesen; eine Dauer als Text weist sie ab', () => {
+    const neu = {
+      ...zeile('CR-GC-2', '2026-01-02', 'CODE'), linkModus: true, umgebung: [dist],
+      dauer: { auswahlMs: 10, vollMs: 100 },
+      grenzmenge: { FUNC: { pflicht: 59, da: 17 }, SCHEMA: { pflicht: 53, da: 12 } },
+    };
+    expect(leseSchlupfZeilenSync(`${JSON.stringify(neu)}\n`)[0].dauer).toEqual({ auswahlMs: 10, vollMs: 100 });
+    expect(() => leseSchlupfZeilenSync(`${JSON.stringify({ ...neu, dauer: { auswahlMs: 'x', vollMs: 1 } })}\n`)).toThrow();
+  });
+
+  it('die Folge zaehlt einen CR mit leerem Schlupf und gefuellter umgebung als ohne Schlupf; ein alter Schlupf bleibt Schlupf', () => {
+    const mitUmgebung = { ...zeile('CR-2', '2026-01-02', 'CODE'), linkModus: true, umgebung: [dist] };
+    const alterSchlupf = zeile('CR-1', '2026-01-01', 'CODE', [dist]);
+    expect(schlupfFreieFolge([alterSchlupf, mitUmgebung])).toBe(1);
+  });
+
+  it('linkModusVon: Symlink unter node_modules/@sigloch ist Link-Modus, ein echtes Verzeichnis nicht', () => {
+    const root = mkdtempSync(join(tmpdir(), 'link-modus-'));
+    try {
+      expect(linkModusVon(root)).toBe(false); // kein node_modules: nicht erfasst ist hier false
+      mkdirSync(join(root, 'node_modules/@sigloch/echt'), { recursive: true });
+      expect(linkModusVon(root)).toBe(false);
+      mkdirSync(join(root, 'arbeitskopie'));
+      symlinkSync(join(root, 'arbeitskopie'), join(root, 'node_modules/@sigloch/verlinkt'));
+      expect(linkModusVon(root)).toBe(true);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
 
@@ -160,6 +219,23 @@ describe('Lauf-Urteil: grün nur mit Bericht ohne rote Datei (CR-GC-854)', () =>
     expect(urteil).toEqual({ beleg: false, grund: expect.stringContaining('ohne Bericht') });
     expect(laufUrteil({ status: null, signal: 'SIGTERM', bericht: undefined }, (a) => a).beleg).toBe(false);
   });
+
+  it('dauerVon summiert die Laufzeit je Testdatei, einmal fuer die Auswahl, einmal fuer alle (CR-GC-947)', () => {
+    const lauf = fahre({
+      'lang.test.mjs': "import { it } from 'vitest';\nit('lang', () => new Promise((r) => setTimeout(r, 400)));\n",
+      'kurz.test.mjs': OK,
+    });
+    try {
+      const d = dauerVon(lauf.bericht!, ['lang.test.mjs'], rel(lauf.root));
+      expect(d.auswahlMs).toBeGreaterThanOrEqual(400);
+      expect(d.vollMs).toBeGreaterThanOrEqual(d.auswahlMs);
+      const keine = dauerVon(lauf.bericht!, [], rel(lauf.root));
+      expect(keine.auswahlMs).toBe(0);
+      expect(keine.vollMs).toBe(d.vollMs);
+    } finally {
+      rmSync(lauf.root, { recursive: true, force: true });
+    }
+  }, 60_000);
 
   it('ein gruener Lauf mit Bericht ist ein Beleg ohne rote Datei', () => {
     const lauf = fahre({ 'ok.test.mjs': OK });

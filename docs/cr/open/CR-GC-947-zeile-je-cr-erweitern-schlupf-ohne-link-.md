@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** Freigegeben 2026-11-15; nicht umgesetzt.
+**Status:** Umgesetzt 2026-11-15.
 
 ## Anlass
 
@@ -46,11 +46,33 @@ Eine alte Zeile ohne ein Feld heißt „nicht erfasst" (`null`), nicht 0. Die We
 
 ## Abnahme
 
-- [ ] Im Link-Modus zählt ein roter `distribution.test.ts` unter `umgebung`, nicht als Schlupf; ohne
-      Link-Modus zählt er als Schlupf (Test, vorher rot).
-- [ ] Eine Zeile aus dem Bestand ohne die neuen Felder wird gelesen (Test).
-- [ ] Die Zeile dieses CRs in `testauswahl.jsonl` trägt `dauer`, `grenzmenge`, `abgleich`.
-- [ ] `npm run verify:full CR-GC-947` grün.
+- [x] Im Link-Modus zählt ein roter `distribution.test.ts` unter `umgebung`, nicht als Schlupf; ohne
+      Link-Modus zählt er als Schlupf (Test, vorher rot; `tests/test-schlupf.test.ts`).
+- [x] Eine Zeile aus dem Bestand ohne die neuen Felder wird gelesen (Test).
+- [x] Die Zeile dieses CRs in `testauswahl.jsonl` trägt `dauer`, `grenzmenge` (`abgleich` entfällt, siehe Abweichungen).
+- [x] `npm run verify:full CR-GC-947` grün.
+
+---
+
+## Abweichungen
+
+- **`abgleich` entfällt.** Die Regeln RC-12/RC-13 liegen in `@sigloch/contracts` (`call-rules`). Sie liefern
+  `callCoverage` (Fluss-Paare: geprüft, ohne Bindung, außerhalb `callScope`, async, ohne `sync`) und die Befunde von
+  RC-13 (Aufruf ohne Fluss). Eine Zählung „Aufrufe über Modulgrenzen, von einem FLOW getragen, von allen" gibt es nicht:
+  getragene Aufrufe zählt keine der beiden Funktionen, und die Modulgrenze filtert keine. Sie aus `checked`, den
+  RC-12-Befunden und den RC-13-Befunden zusammenzusetzen wäre eine zweite Rechnung mit eigenem Urteil. Sie gehört,
+  wenn gewünscht, als Zählung in contracts (Familie, Version-Bump). Die Zeile trägt das Feld nicht.
+- **`dauer` ist Rechenzeit.** Summe `endTime - startTime` je Testdatei; Dateien laufen parallel, die Summe liegt über der Wanduhr.
+- **`schlupfFreieFolge` blieb unverändert.** Die Zeile speichert den bereinigten Schlupf; die Dateien der Umgebung stehen
+  unter `umgebung`. Alte Zeilen tragen kein `linkModus` und gelten unverändert (nicht rückwirkend umgedeutet).
+- **Kosten:** `grenzmenge` ~20 ms, `dauer` ohne eigene Messung (liest den vorhandenen Bericht); beides unter 10 s, beides in der Zeile.
+
+## Schritt 4: Folge ohne Schlupf über `testauswahl.jsonl` (167 Zeilen)
+
+- Alte Rechnung: 3.
+- Neue Rechnung: 3 (alte Zeilen unverändert gewertet).
+- Zur Information, alte Zeilen rückwirkend um die zwei Umgebungsdateien bereinigt: ebenfalls 3 (gerechnet, nicht
+  weiter untersucht). 25 der 119 CODE-Zeilen hatten nur Umgebungsdateien als Schlupf.
 
 ---
 

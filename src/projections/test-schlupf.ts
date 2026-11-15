@@ -15,11 +15,29 @@
  *
  * @author andreas@siglochconsulting
  */
+import { lstatSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { z } from 'zod/v4';
 import type { Graph } from '@sigloch/graph-api-core';
 
 /** So viele CRs der CODE-Spur ohne Schlupf in Folge, dann entfällt der Volllauf je CR. */
 export const SCHLUPF_SCHWELLE = 10;
+
+/**
+ * Testdateien, die im Link-Modus (`npm run link:siblings`) erwartet rot sind (CR-GC-947). Sie messen den
+ * Zustand des Rechners, nicht die Testauswahl; CI fährt ohne Link-Modus und fängt beide.
+ */
+export const UMGEBUNG_LINK_MODUS: readonly string[] = ['tests/distribution.test.ts', 'tests/lockfile-sync.test.ts'];
+
+/** Link-Modus: mindestens ein `node_modules/@sigloch/*` ist ein Symlink. Ohne `node_modules` ist es keiner. */
+export function linkModusVon(repoRoot: string): boolean {
+  const dir = join(repoRoot, 'node_modules', '@sigloch');
+  try {
+    return readdirSync(dir).some((n) => lstatSync(join(dir, n)).isSymbolicLink());
+  } catch {
+    return false;
+  }
+}
 
 const BindungsTeilSchema = z.object({ total: z.number().int(), gebunden: z.number().int(), offen: z.array(z.string()) });
 const BlackboxBindungSchema = z.object({ blackbox: BindungsTeilSchema, schnittstelle: BindungsTeilSchema });
@@ -40,6 +58,16 @@ export const SchlupfZeileSchema = z.object({
   /** Rote Testdateien außerhalb des Graph-Anteils allein (ohne den direkten Import). */
   schlupfNurGraph: z.array(z.string()),
   zusage: BlackboxBindungSchema,
+  /** CR-GC-947 — fehlt in älteren Zeilen; fehlend heißt „nicht erfasst", nie 0 oder `false`. */
+  linkModus: z.boolean().optional(),
+  /** Rote Dateien, die im Link-Modus erwartet rot sind; sie stehen nicht in `schlupf`. */
+  umgebung: z.array(z.string()).optional(),
+  /** Laufzeit in ms, Summe je Testdatei (parallele Dateien addieren sich): der Auswahl und des Volllaufs. */
+  dauer: z.object({ auswahlMs: z.number().int().nonnegative(), vollMs: z.number().int().nonnegative() }).optional(),
+  /** FUNC und SCHEMA an Modulgrenzen: im Modell (`da`) von der Pflichtmenge (`scripts/grenzmenge.mjs`). */
+  grenzmenge: z
+    .object({ FUNC: z.object({ pflicht: z.number().int(), da: z.number().int() }), SCHEMA: z.object({ pflicht: z.number().int(), da: z.number().int() }) })
+    .optional(),
 });
 export type SchlupfZeile = z.infer<typeof SchlupfZeileSchema>;
 
@@ -48,15 +76,44 @@ export function leseSchlupfZeilen(text: string): SchlupfZeile[] {
   return text.split('\n').filter(Boolean).map((l) => SchlupfZeileSchema.parse(JSON.parse(l)));
 }
 
-/** Rote Dateien gegen die Auswahl derselben Änderung. */
+/**
+ * Rote Dateien gegen die Auswahl derselben Änderung. Im Link-Modus zählen die Dateien aus
+ * `UMGEBUNG_LINK_MODUS` nicht als Schlupf, sondern stehen unter `umgebung` (CR-GC-947).
+ */
 export function schlupfVon(
   rot: readonly string[],
   auswahl: readonly string[],
   ausGraph: readonly string[],
-): { schlupf: string[]; schlupfNurGraph: string[] } {
+  linkModus = false,
+): { schlupf: string[]; schlupfNurGraph: string[]; umgebung: string[] } {
   const a = new Set(auswahl);
   const g = new Set(ausGraph);
-  return { schlupf: rot.filter((f) => !a.has(f)), schlupfNurGraph: rot.filter((f) => !g.has(f)) };
+  const umgebung = linkModus ? rot.filter((f) => UMGEBUNG_LINK_MODUS.includes(f)) : [];
+  const echt = rot.filter((f) => !umgebung.includes(f));
+  return { schlupf: echt.filter((f) => !a.has(f)), schlupfNurGraph: echt.filter((f) => !g.has(f)), umgebung };
+}
+
+/**
+ * Laufzeit aus dem JSON-Bericht von vitest: je Testdatei `endTime - startTime`, summiert — einmal für die
+ * Dateien der Auswahl, einmal für alle. Dateien laufen parallel; die Summe ist Rechenzeit, nicht Wanduhr.
+ */
+export function dauerVon(
+  bericht: string,
+  auswahl: readonly string[],
+  relativ: (abs: string) => string,
+): { auswahlMs: number; vollMs: number } {
+  const json = z
+    .object({ testResults: z.array(z.object({ name: z.string(), startTime: z.number(), endTime: z.number() })) })
+    .parse(JSON.parse(bericht));
+  const a = new Set(auswahl);
+  let auswahlMs = 0;
+  let vollMs = 0;
+  for (const t of json.testResults) {
+    const ms = Math.max(0, t.endTime - t.startTime);
+    vollMs += ms;
+    if (a.has(relativ(t.name))) auswahlMs += ms;
+  }
+  return { auswahlMs: Math.round(auswahlMs), vollMs: Math.round(vollMs) };
 }
 
 /**

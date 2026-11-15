@@ -29,7 +29,8 @@ import { join, relative } from 'node:path';
 import { buildContext, changeSetFor, planCodeLane, selectForChange } from '../dist/projections/test-selection-audit.js';
 import { meldeZurueck, meldungsZeile } from './aenderung-melden.mjs';
 import { INCLUDED as MODEL_TESTS } from './model-test-set.mjs';
-import { blackboxBindung, laufUrteil, leseSchlupfZeilen, schlupfFreieFolge, schlupfVon, SchlupfZeileSchema, SCHLUPF_SCHWELLE } from '../dist/projections/test-schlupf.js';
+import { messeGrenzmenge } from './grenzmenge.mjs';
+import { blackboxBindung, dauerVon, laufUrteil, linkModusVon, leseSchlupfZeilen, schlupfFreieFolge, schlupfVon, SchlupfZeileSchema, SCHLUPF_SCHWELLE } from '../dist/projections/test-schlupf.js';
 
 const cr = process.argv[2];
 if (!cr || !/^CR-[A-Z]+-\d+[A-Z]?$/.test(cr)) {
@@ -54,9 +55,10 @@ const res = spawnSync('npx', ['vitest', 'run', '--reporter=default', '--reporter
   stdio: 'inherit',
   cwd: repoRoot,
 });
+const berichtText = existsSync(bericht) ? readFileSync(bericht, 'utf8') : undefined;
 // CR-GC-854: das Urteil kommt aus Bericht UND Exit — ohne Bericht ist der Lauf kein Beleg, nie „rot 0".
 const urteil = laufUrteil(
-  { status: res.status, signal: res.signal, bericht: existsSync(bericht) ? readFileSync(bericht, 'utf8') : undefined },
+  { status: res.status, signal: res.signal, bericht: berichtText },
   (abs) => relative(repoRoot, abs),
 );
 let meldung = null;
@@ -76,7 +78,13 @@ if (!urteil.beleg) {
 }
 const { rot, gesamt } = urteil;
 const spur = plan.lane;
-const { schlupf, schlupfNurGraph } = schlupfVon(rot, spur === 'CODE' ? plan.files : ctx.allTests, auswahl.graphOnly);
+const gewaehlt = spur === 'CODE' ? plan.files : ctx.allTests;
+const linkModus = linkModusVon(repoRoot);
+const { schlupf, schlupfNurGraph, umgebung } = schlupfVon(rot, gewaehlt, auswahl.graphOnly, linkModus);
+// CR-GC-947: Dauer aus dem Bericht, den dieser Lauf schon schrieb; Grenzmenge aus der einen Rechnung von `messung.mjs` (~20 ms).
+const dauer = dauerVon(berichtText, gewaehlt, (abs) => relative(repoRoot, abs));
+const gm = messeGrenzmenge(repoRoot);
+const grenzmenge = Object.fromEntries(gm.r.map((x) => [x.typ, { pflicht: x.pflicht, da: x.da }]));
 const zeile = SchlupfZeileSchema.parse({
   cr,
   at: new Date().toISOString(),
@@ -89,6 +97,10 @@ const zeile = SchlupfZeileSchema.parse({
   schlupf,
   schlupfNurGraph,
   zusage,
+  linkModus,
+  umgebung,
+  dauer,
+  grenzmenge,
 });
 const ziel = join(repoRoot, 'docs/messung/testauswahl.jsonl');
 mkdirSync(join(repoRoot, 'docs/messung'), { recursive: true });
@@ -99,6 +111,11 @@ const folge = schlupfFreieFolge(alle);
 const pct = (t) => (t.total === 0 ? '—' : `${Math.round((100 * t.gebunden) / t.total)} %`);
 console.error(`[verify:full] ${cr}: Spur ${spur}, Auswahl ${zeile.ausgewaehlt}/${gesamt} (Graph ${zeile.ausGraph}), rot ${rot.length}, Schlupf ${schlupf.length} (nur Graph ${schlupfNurGraph.length}).`);
 for (const f of schlupf) console.error(`[verify:full]   Schlupf: ${f}`);
+for (const f of umgebung) console.error(`[verify:full]   Umgebung (Link-Modus, kein Schlupf): ${f}`);
+console.error(
+  `[verify:full] Link-Modus ${linkModus ? 'ja' : 'nein'}, Dauer Auswahl ${dauer.auswahlMs} ms / Volllauf ${dauer.vollMs} ms (Summe je Datei), ` +
+    `Grenzmenge ${gm.r.map((x) => `${x.typ} ${x.da}/${x.pflicht}`).join(', ')}.`,
+);
 console.error(
   `[verify:full] Zusage: Blackbox-Tests ${zusage.blackbox.gebunden}/${zusage.blackbox.total} gebunden (${pct(zusage.blackbox)}), ` +
     `Schnittstellen ${zusage.schnittstelle.gebunden}/${zusage.schnittstelle.total} (${pct(zusage.schnittstelle)}).`,
