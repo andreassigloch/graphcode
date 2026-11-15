@@ -29,11 +29,11 @@ und die Herkunft sagt das, wie heute bei fehlender Datei. Ein vorhandenes, schem
 
 ## Abnahme
 
-- [ ] Test zuerst rot: Eine Config nur mit `knowledgeFile` lädt, liefert die Standardwerte und `policySource: "default"`.
-- [ ] Eine Config mit `metricPolicy` und ohne `focusThreshold` lädt; Herkunft der Policy ist `config`.
-- [ ] Ein vorhandenes, falsches Feld bricht weiter ab (bestehender Test bleibt grün).
-- [ ] `init` mit einer Config nur aus `knowledgeFile` schreibt die Einbindung, und der Host startet (Smoke).
-- [ ] `npm run verify:full CR-GC-937` grün.
+- [x] Test zuerst rot: Eine Config nur mit `knowledgeFile` lädt, liefert die Standardwerte und `policySource: "default"`.
+- [x] Eine Config mit `metricPolicy` und ohne `focusThreshold` lädt; Herkunft der Policy ist `config`.
+- [x] Ein vorhandenes, falsches Feld bricht weiter ab (bestehender Test bleibt grün).
+- [x] `init` mit einer Config nur aus `knowledgeFile` schreibt die Einbindung, und der Host startet (Smoke).
+- [x] `npm run verify:full CR-GC-937` grün.
 
 ---
 
@@ -43,6 +43,7 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| Herkunft: eine Angabe oder je Feld? | Eine Angabe: `LoadedConfig.source` gilt für `metricPolicy`. `'config'` nur, wenn die Datei `metricPolicy` trägt, sonst `'default'`. | Nur die Policy trägt eine Herkunft zum Konsumenten (`graph_metrics.policySource`, `measured`-Provenienz, Host-Log). `focusThreshold` meldet keine Herkunft. |
 
 ---
 
