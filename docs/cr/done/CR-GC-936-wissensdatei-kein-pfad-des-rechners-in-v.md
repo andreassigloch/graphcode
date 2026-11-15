@@ -23,11 +23,11 @@ Freigabe des Autors am 2026-11-15.
 
 ## Abnahme
 
-- [ ] Test zuerst rot: Nach `init` mit `knowledgeFile: "~/x/y.md"` enthält `.claude/settings.json` weder das
+- [x] Test zuerst rot: Nach `init` mit `knowledgeFile: "~/x/y.md"` enthält `.claude/settings.json` weder das
       Home-Verzeichnis noch einen anderen absoluten Pfad der Wissensdatei.
-- [ ] Der Hook gibt mit `~/…` und mit relativem Pfad die Datei aus; echter Prozess, echte Datei.
-- [ ] `upgrade` nach Wechsel und nach Entfernen des Schlüssels: alte Einbindung weg, auch die `instructions`-Zeile.
-- [ ] `npm run verify:full CR-GC-936` grün.
+- [x] Der Hook gibt mit `~/…` und mit relativem Pfad die Datei aus; echter Prozess, echte Datei.
+- [x] `upgrade` nach Wechsel und nach Entfernen des Schlüssels: alte Einbindung weg, auch die `instructions`-Zeile.
+- [x] `npm run verify:full CR-GC-936` grün.
 
 ---
 
@@ -37,6 +37,7 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| – | keine | Der CR wendet die FAQ an und baut einmalig um. |
 
 ---
 

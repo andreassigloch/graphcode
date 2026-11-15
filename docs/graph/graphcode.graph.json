@@ -4208,7 +4208,8 @@
       "id": "CR-GC-936",
       "type": "CR",
       "name": "Wissensdatei: kein Pfad des Rechners in versionierter settings.json",
-      "description": "docs/cr/open/CR-GC-936-wissensdatei-kein-pfad-des-rechners-in-v.md"
+      "description": "docs/cr/done/CR-GC-936-wissensdatei-kein-pfad-des-rechners-in-v.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -33115,5 +33116,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1166
+  "graphVersion": 1167
 }
