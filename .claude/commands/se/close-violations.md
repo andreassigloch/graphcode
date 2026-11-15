@@ -1,6 +1,6 @@
 ---
 name: se:close-violations
-version: 5
+version: 6
 description: Work the open findings of the governed graph down to zero — errors first, then warnings rule by rule; fix in the model, accept with a reason what the order leaves out, ask instead of inventing
 ---
 
@@ -38,7 +38,7 @@ A duplicate (ND-01, ND-02) is a candidate, not a verdict. Check each pair. Merge
 @acceptedFindings [{"ruleId":"AF-04","reason":"Fehlerbetrachtung ist in diesem Auftrag nicht beauftragt"}]
 ```
 
-An accepted finding keeps showing in `rules_evaluate`; compare against `acceptedFindings` yourself before you call something open. Architecture rules are never accepted — solve them in the model.
+An accepted finding keeps showing in `rules_evaluate`; compare against `acceptedFindings` yourself before you call something open. The mark still counts an accepted finding — report it as accepted, not as gone. Architecture rules are never accepted — solve them in the model. If such a finding stays standing, write the reason into the `description` of its element; the warning keeps firing, and the next report need not explain it anew.
 
 **3. Ask the user** — when the fix needs a value or a decision the order does not contain: a limit, a format, which of two structures is meant. One question, the options, what each one changes. Then continue with the next rule while you wait.
 

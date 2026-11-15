@@ -1,6 +1,6 @@
 ---
 name: se:generate
-version: 6
+version: 7
 description: Kaltstart-Generierung eines Systemmodells aus Prosa-Intention — readiness-getriebener Loop über graph_generate, Kandidaten durchs Gate (dryRun-Verdict + Steuerwert), Handoff auf graph_suggest
 ---
 
@@ -13,7 +13,7 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
 2. `graph_generate {intent}` aufrufen → liefert `phase`, `prompt`, `readiness`, `blockingErrors`.
 3. **Der `prompt` ist deine Arbeitsanweisung.** Führe genau sie aus:
    - Elementtypen VOR dem Schreiben mit `graph_authoring_guide` prüfen (legale Kanten, Pflichtattribute).
-   - **Batches als `formatE`-Block schreiben, nicht als `commands`-JSON** — gleicher Gate-Durchlauf, ~2–3× weniger Tokens. Das Präfix ist die Operation: `+` anlegen, `-` löschen, `~` ändern (Patch), `M quelle + ziel` unter `## Merges` verschmelzen. JSON braucht nur noch `update-edge` (Kante umhängen).
+   - **Batches als `formatE`-Block schreiben** — gleicher Gate-Durchlauf, ~2–3× weniger Tokens. Das Präfix ist die Operation: `+` anlegen, `-` löschen, `~` ändern (Patch), `M quelle + ziel` unter `## Merges` verschmelzen. `graph_mutate` nimmt nur `formatE`. Eine Kante umhängen heißt `- alt` und `+ neu` in einem Batch; `~ A -typ-> B` patcht Attribute, Typ oder Richtung einer bestehenden Kante.
    - Hast du MEHRERE Alternativen, reiche sie zuerst mit `graph_mutate {formatE, dryRun:true}` ein und vergleiche die Verdicts. Hast du nur EINEN Batch, reiche ihn direkt ohne dryRun ein: eine Ablehnung persistiert nichts. Jeder Preview wird auditiert (Vorschlag→Verdict) — auch verworfene Kandidaten sind Evidenz.
    - Mehrere zulässige Alternativen legst du dem Autor mit ihren Verdicts vor; er wählt. Den gewählten oder einzigen Batch wendest du ohne dryRun an. `block` heißt verwerfen oder revidieren — nie erzwingen, nie am Gate vorbei.
 4. Zurück zu 2 (ab jetzt ohne `intent` — steckt in der SYS-description), bis `done:true`.

@@ -1,6 +1,6 @@
 ---
 name: se-status
-version: 3
+version: 4
 description: Show SE project status — readiness, violations, top fixes
 ---
 
@@ -16,7 +16,7 @@ Format as a compact overview:
 
 - Where the model stands: the marks in order (`reached` or not) and the findings per stage from `stages`; milestones (`MS`) as planning context. No percentage.
 - Readiness by rule: one bar per `violationsByRule` entry (`ruleId` → count) — use block characters or plain counts.
-- Violations: error count, warning count (skip info severity).
+- Violations: error count, warning count (skip info severity). After write moves of this session `rules_get_violations` returns only the findings of the elements the session wrote; add `umfang.ausserhalb`, the number of the rest, to each count.
 - **Kongruenz** in einer Zeile: `kongruent` · `gedriftet` · `nicht prüfbar`. Stehen `rule:RC-*`
   in `skipped`, ist es `nicht prüfbar` — dann die Bindungsquote dazu, nie eine stille Null. Bei jedem Urteil nenne die Deckung: `importCoverage.assigned` von `endpoints`, die Namen aus `unassigned`.
   Ein Score ohne diese Zeile sagt nur, wie der Graph zu sich selbst steht.

@@ -1,13 +1,13 @@
 ---
 name: se-review
-version: 3
+version: 4
 description: Readiness gate check — blockers and next steps
 ---
 
 Pull readiness + violations from the governed graph over MCP. The graphcode harness speaks **MCP-stdio only** — there is no HTTP server, use the bound tools:
 
 1. `graph_readiness` → the `ReadinessReport`: `marks` (SRR, PDR, CDR, TRR, Bau — each `reached` or held by findings), `stages` (findings per stage), `violationsByRule` (counts keyed by contracts rule-ID — `R-*` / `RD-*`, never `BQ-*`), and the severity-sorted raw `violations` (`{ ruleId, severity, message, elementId }`).
-2. `rules_get_violations` with `{ "severity": "error" }` for the hard blockers, then `{ "severity": "warning" }` for the warnings.
+2. `rules_get_violations` with `{ "severity": "error" }` for the hard blockers, then `{ "severity": "warning" }` for the warnings. After write moves of this session it returns only the findings of the elements the session wrote; `umfang.ausserhalb` names the number of the rest. Give it with every count of blockers and warnings.
 
 **Kongruenz-Urteil (BOK-CR-033).** `graph_readiness` liefert zwei Felder, die den Score erst
 interpretierbar machen — lies BEIDE, bevor du PASS sagst:

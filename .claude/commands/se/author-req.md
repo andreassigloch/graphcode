@@ -1,6 +1,6 @@
 ---
 name: se:author-req
-version: 4
+version: 5
 description: Author a REQ together with its verifying TEST concept in one gated batch — the REQ-with-test invariant
 ---
 
@@ -57,7 +57,7 @@ Every REQ carries exactly ONE `@kinds` value, and that value decides who satisfi
 A requirement that is both behaviour and budget is cut wrong — split it into two REQs, one of each kind. Without `kinds`, every `-satisfy->` is rejected (R-18). What must hold before a scenario is the entry FLOW of its chain, what holds after is the UC goal — both are covered through the chain (R-21: every member FUNC satisfies its REQ), so they are not REQs of their own. An FMEA role (`@role risk` / `@role mitigation`, `se-fmea`) sits next to the kind and does not change who satisfies. The `satisfy` line belongs in the batch whenever the REQ is a leaf (no decomposition) — without it RD-01 flags the REQ. Never author a REQ alone "to add the test later" — that is precisely the debt this invariant prevents.
 <!-- inject:end -->
 
-Once the runnable test exists, add an entry to the TEST's `testRefs [{ file, tool, level?, case? }, …]` so `graph_tests` can select it (CR-GC-134). **Eine Abnahme, n Dateien** (CR-SM-231): ein TEST, der als vitest *und* playwright läuft, trägt zwei Einträge — `tool` steht deshalb je Eintrag. Eine Datei gehört zu höchstens einem TEST; R-29 meldet eine doppelt beanspruchte Datei als `error`.
+Once the runnable test exists, name exactly one uid of the TEST in the header comment of the test file (the lines before the first line of code): `graph_test_ingest` then binds the file when it ingests the run (CR-GC-901). A file that already belongs to a TEST gets no second TEST; hang the further REQ on that TEST with one more `verify`. Or add the entry by hand to the TEST's `testRefs [{ file, tool, level?, case? }, …]` so `graph_tests` can select it (CR-GC-134). **Eine Abnahme, n Dateien** (CR-SM-231): ein TEST, der als vitest *und* playwright läuft, trägt zwei Einträge — `tool` steht deshalb je Eintrag. Eine Datei gehört zu höchstens einem TEST; R-29 meldet eine doppelt beanspruchte Datei als `error`.
 
 **The text promises only what the TEST checks.** CR-GC-838 found ten requirements whose text promised more than their test checked, such as "never applies on its own" or "emits a live event". A promise no test checks is a finding for the code, not part of the requirement. Narrow the text to the check, and open an item for the rest.
 

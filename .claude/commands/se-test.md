@@ -1,6 +1,6 @@
 ---
 name: se-test
-version: 2
+version: 3
 description: The general red-first rule — design any test so you have seen it fail for the right reason before you trust it green. Use before writing or reviewing a test, or when a CR is about to close on "tests green". The UI-specific method is se-test-ui.
 ---
 
@@ -22,6 +22,8 @@ evidence once you have watched the same assertion go red for the exact failure i
 4. **Bind it in the model** — a `TEST` node carries a resolvable `testRefs` entry (R-19).
    An unbound test lets `graph_readiness` report a REQ "verified" over nothing.
    Run `graph_tests` to see which TESTs actually resolve to a file.
+5. **Prove a check that finds nothing.** Next to a test or script whose result is "nothing found", put a **positive control**: one case that must make the same checker fire, such as a file smuggled into the real tree. Show it firing, then remove it. Where red-first was missed, **break the function on purpose** (remove the guard, hard-set the value to 0), watch the test go red, and name the deviation in the CR.
+6. **Assert a difference over a control variable** you change in the test, never an absolute value. Wiring gets its own test, which goes red when the **call line** is missing. After every change run `tsc --noEmit` as well; a green test run proves no types.
 
 ## Acceptance: one play-through per use case (CR-GC-760)
 

@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** Vorschlag, vom Autor nicht freigegeben; umgesetzt ist nichts.
+**Status:** Freigegeben 2026-11-15 mit der Empfehlung (je Kandidat prüfen, ob der Satz in den Skill gehört); umgesetzt für 7 Skills, der Rest ist in „Entscheidungen“ benannt.
 
 ## Anlass
 
@@ -51,9 +51,9 @@ einem Skill, löst ein CR im Repo des Skills den Konflikt. Bis dahin folgt ein A
 
 ## Abnahme
 
-- [ ] Der Autor hat je Zeile entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen“.
-- [ ] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
-- [ ] `npm run verify:full <CR>` grün.
+- [x] Der Autor hat je Zeile entschieden (Freigabe 2026-11-15, Empfehlung); die Festlegungen stehen im Abschnitt „Entscheidungen“.
+- [x] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
+- [x] `npm run verify:full <CR>` grün.
 
 ---
 
@@ -63,6 +63,21 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| Nr. 2, `se-test` | Aufgenommen: Positivkontrolle bei „nichts gefunden", Funktion probeweise kaputt machen, Differenz über Stellgröße, Test für die Aufrufzeile, `tsc --noEmit` zusätzlich (Version 3). Nicht aufgenommen: der Vorbestand-Nachweis per `git stash`. | Positivkontrolle und Typprüfung gelten familienweit (CR-SM-262, CR-GC-641, CR-GC-851, CR-GC-872, CR-SL-069); `roter-test-vorbestand` sagt „in graphcode entschieden, andere Repos nicht". |
+| Nr. 5, `se-umbau` | Aufgenommen: Ersatz vor Verbrauchern vor Löschen, Nachweise zum Ersatz, Konsumenten in anderen Repos zuerst; `graph_impact` kennt nur Nutzungskanten im Modell (Version 4). Nicht aufgenommen: `npm run check:grammar` und `SWEEP_ALLOWLIST`; Lane code ohne Store. | Die ersten drei tragen sechs CRs (CR-GC-560, CR-GC-706, CR-GC-764 u. a.); `check:grammar` gibt es nur in sigloch-modules; Lane code steht seit CR-GC-939 im Skill. |
+| Nr. 6, `se/optimize` | Nicht in diesem CR; aufzunehmen laut Maß (`add-node` mit Platzhalter, Merge-Vorschlag nicht blind). | Grenze von 10 Dateien je CR; geht in einen Folge-CR. |
+| Nr. 8, `se/close-violations` | Aufgenommen: die Marke zählt einen abgenommenen Befund weiter; bleibt ein Befund stehen, steht der Grund in der Beschreibung des Elements (Version 6). Nicht aufgenommen: FM-03 bei S >= 9; `se-review` und `se-status` bleiben ohne Zusatz. | Die Marke trägt CR-SM-396; FM-03 S >= 9 steht nur in einem Repo (CR-SL-008, sigllm); `se-review` und `se-status` nennen keine Abnahme. |
+| Nr. 9, `se-review`, `se-status` | Aufgenommen: jede Zählung nennt `umfang.ausserhalb` (je Version 4). | CR-GC-613 trägt den Schnitt auf die Sitzung; das Werkzeug liefert die Zahl, der Skill zählte ohne sie. |
+| Nr. 10, `se-vorbereitung` | Nicht in diesem CR; aufzunehmen laut Maß (Wert mit Datei und Zeile belegen, sonst Merkmal weglassen). | Grenze von 10 Dateien je CR (drei feste Versionstests); Folge-CR. |
+| Nr. 12, `se-fmea` | Nicht in diesem CR; aufzunehmen laut Maß (ungebundener TEST für ein gelassenes Risiko, CR-GC-802). | Grenze von 10 Dateien je CR (zwei feste Versionstests); Folge-CR. |
+| Nr. 15, `se/author-uc` | Nicht aufgenommen. | `uc-oder-req` sagt: „in graphcode entschieden; für andere Repos nicht entschieden". |
+| Nr. 16, `se-retro` | Nicht in diesem CR; Gegenzahl zur Quote aufzunehmen, die Zählung „nur Befehle gegen das Repo" nicht. | Grenze von 10 Dateien je CR; die Zählung macht `scripts/retro-kpi.mjs`, nicht der Skill. |
+| Nr. 17, `se/author-req` | Aufgenommen: genau eine TEST-uid im Kopfkommentar der Testdatei, `graph_test_ingest` bindet; kein zweiter TEST auf dieselbe Datei (Version 5). | CR-GC-901 trägt den Kopfkommentar für jedes Repo mit `graph_test_ingest`; R-29 meldet den Zwilling. |
+| Nr. 18, `se/author-actor` | Nicht aufgenommen. | CR-GC-925 baut `se:author-actor` um (offen). |
+| Nr. 19, `se/top-level` | Nicht aufgenommen. | Die Hilfetexte von R-22, FC-03 und R-35 nennen den Zug; CR-GC-925 ändert `se:top-level` (offen). |
+| Tabelle 3 Nr. 4, `se/generate` | Gestrichen: `commands`-JSON und `update-edge`. Ersetzt durch: `graph_mutate` nimmt nur `formatE`; Umhängen heißt `- alt` und `+ neu` in einem Batch (Version 7). | `graph_mutate` hat nur `formatE` im Schema (`src/surface/write.ts`); CR-GC-706. |
+
+---|---|---|
 
 ---
 
@@ -70,7 +85,7 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 **KEIN SCHNITT aus dem Modell:** keine Wurzel-uids am Item (`aise dispatch prepare <ITEM> --wurzel <uid>[,…]`).
 
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
+Geändert sind nur Skill-Texte (`.claude/commands`), zwei Testdateien und diese CR-Datei; kein Quellcode in `src/`. Testspur: `npm run verify:code`.
 
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.

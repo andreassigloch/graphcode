@@ -1,6 +1,6 @@
 ---
 name: se-umbau
-version: 3
+version: 4
 description: Bestehendes ändern, ersetzen, entfernen — graph_impact und graph_tests VOR dem Löschzug, Modell-Zug im selben CR. Bei „entfernen", „ersetzen", „refactoren", „keine parallelen Pfade". Neues anlegen: se:author-req.
 ---
 
@@ -48,6 +48,8 @@ Lies die Kanten, nicht die Zahl. Drei davon sind Stoppschilder:
 
 Wer hier nicht liest, erfährt dasselbe später vom Testlauf — nur ohne die Liste, was zu tun ist.
 
+`graph_impact` kennt nur die Nutzungskanten, die im Modell stehen. Fehlt dort ein Aufrufer, fehlt er in der Antwort: fahre den Trockenlauf (`dryRun: true`) und greppe nach den Pfaden, denn Tests lesen Dateien als Testdaten.
+
 ## 3. `graph_tests` — die Spur fahren, nicht die Suite
 
 ```
@@ -59,6 +61,8 @@ Bindungsquote mit: fällt die Auswahl auf VOLL zurück, sagt sie warum, und das 
 Befund.
 
 ## 4. Der Modell-Zug gehört in denselben CR
+
+**Reihenfolge:** Erst steht der Ersatz, dann ziehen alle Verbraucher um (Erzeuger, Skills, Tests, Leser in anderen Repos), dann fällt das Alte. Die Nachweise der alten Sache wandern an den Ersatz, bevor du ihre Tests löschst. Nutzen mehrere Repos die Schnittstelle, stelle erst die Konsumenten um und entferne sie danach im besitzenden Repo.
 
 Der Modell-Zug läuft **vor** dem Löschen der Dateien: wer erst löscht, lässt das Modell falsch zurück, nicht veraltet (RC-01 auf jede `realRef`, Stubs für jede TEST-Bindung). Der Zug geht durchs Gate
 (`graph_mutate`, nie an der JSON-Datei). Hat der Arbeitsbaum keinen Store (Lane code) und scheitert der Zug daran, melde es dem Autor:
