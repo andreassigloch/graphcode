@@ -1,6 +1,6 @@
 ---
 name: se-vorbereitung
-version: 8
+version: 9
 description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, das Merkmal synchron/asynchron der Flüsse nachprüfen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
@@ -116,7 +116,7 @@ Vorschlag vor und kennzeichnest sie so. Ein Risiko ohne Gegenmaßnahme oder ohne
 ## 3. Flüsse kennzeichnen
 
 Das Merkmal `sync` setzt der Autor beim Kettenschnitt (`se:top-level`, Phase 3, Schritt FLOW + SCHEMA).
-Dieser Schritt prüft es nach und kennzeichnet, was dort offen blieb. `FC-06` meldet eine Kette mit
+Dieser Schritt prüft es nach und setzt es nicht erstmals. `FC-06` meldet eine Kette mit
 einem Fluss ohne Merkmal. `async` am Fluss eines Akteurs, der aus der Kette nichts empfängt, ist eine Vorab-Lieferung (`FC-06`, `[predelivery]`): kein Merkmal zum Setzen. Der Akteur gehört nicht ins Modell; die Funktion liest die Daten selbst (Datei, Speicher).
 
 Die Laufzeitanalyse (`se-laufzeit`) liest den Antwortweg der Kette: die Glieder, auf die die
@@ -129,7 +129,7 @@ graph_metrics()    # Zeile der Kette in chains: answerPath, answerPathBlockedBy
 
 - `answerPath` ist eine Liste, auch eine leere: der Weg ist lesbar, dieser Schritt meldet nichts.
 - `answerPath: null`: `answerPathBlockedBy` nennt die Flüsse, die ihn verhindern. Ein Fluss hindert aus einem von zwei Gründen; welcher es ist, zeigt `graph_get_node` am Fluss:
-  - er trägt das Merkmal nicht lesbar: frag den Autor und kennzeichne ihn (unten),
+  - er trägt das Merkmal nicht lesbar: er geht zurück an `se:top-level` (unten),
   - er trägt `sync` und kommt von einer Funktion außerhalb der Kette, die mit dem wartenden Glied keine andere Kette teilt: die Kette ist offen. Zurück zu Schritt 1: die Funktion wird Glied, oder der Fluss ist asynchron.
 
   Liegen Erzeuger und wartendes Glied beide in einer anderen Kette, gehört der Fluss dorthin, und der Weg überspringt ihn (CR-SM-423). Das ist der Verteiler, der je Aufruf nur auf seinen eigenen Zweig wartet, etwa ein `switch` über den Werkzeugnamen. Ob das Glied nur je Aufruf wartet, sieht das Modell nicht. `answerPathSkipped` nennt jeden übersprungenen Fluss (CR-SM-424). Lies je Fluss den Code an der `realRef` des Glieds:
@@ -143,11 +143,11 @@ graph_metrics()    # Zeile der Kette in chains: answerPath, answerPathBlockedBy
 Die Liste nennt die Hindernisse, auf die der Weg trifft, nicht jeden Fluss ohne Merkmal. Nach
 jedem angewandten Zug liest du neu, bis `answerPathBlockedBy` leer ist; es können weitere dahinter stehen.
 
-Die Frage je Fluss ohne lesbares Merkmal:
+Die Frage je Fluss, um den Wert zu prüfen:
 
 > Wartet die Antwort des Abnehmers auf diese Lieferung?
 
-Ja heißt synchron, nein heißt asynchron (vorab geliefert). Im Code heißt Ja: der Aufrufer wartet auf den Rückgabewert. Ein Rückruf, ein Ereignis oder eine Datei, die später jemand liest, heißt Nein. Der Zug je Fluss:
+Ja heißt synchron, nein heißt asynchron (vorab geliefert). Im Code heißt Ja: der Aufrufer wartet auf den Rückgabewert. Ein Rückruf, ein Ereignis oder eine Datei, die später jemand liest, heißt Nein. Belege den Wert mit Datei und Zeile. Trägt der Fluss einen anderen Wert, ist das der Zug:
 
 ```
 ## Nodes
@@ -159,7 +159,7 @@ Ja heißt synchron, nein heißt asynchron (vorab geliefert). Im Code heißt Ja: 
 ```
 
 - Wird derselbe Inhalt von einem Abnehmer abgerufen und einem anderen vorab geliefert, sind das zwei Flüsse. Schlag die Trennung vor.
-- Ohne Antwort des Autors bleibt der Fluss ohne Merkmal, steht im Bericht, und `answerPath` bleibt `null`.
+- Ein Fluss ohne Merkmal geht zurück an `se:top-level`, Schritt FLOW + SCHEMA; hier setzt du es nicht. Er steht im Bericht, und `answerPath` bleibt `null`.
 
 ## 4. Flüsse am Code prüfen
 
@@ -183,7 +183,7 @@ der der Inhalt zum Abnehmer geht.
 | **belegt** | kein `RC-12` am Fluss, das Paar zählt in `checked` | keiner |
 | **falscher Abnehmer** | `RC-12`; der Inhalt geht an eine andere Funktion, meist an das Werkzeug dazwischen | Fluss umhängen; fehlt das Werkzeug als Funktion, es anlegen |
 | **Übergabe ohne Aufruf** | `RC-12`; ein Rückruf, eine Registry oder ein Socket reicht den Inhalt weiter | die Stelle als `realRef` an den Fluss: `~ FLOW-x @realRef {"file":…,"symbol":…}` |
-| **kein Aufruf** | `RC-12`; keine Stelle im Code reicht den Inhalt weiter | Fluss löschen; ist er gewollt, wird er ein Item, nicht Modell |
+| **kein Aufruf** | `RC-12`; keine Stelle im Code reicht den Inhalt weiter | Prüfauftrag an den Autor, kein Modellfehler: bleibt der Fluss mit Vermerk (offene Differenz in der Beschreibung des Flusses, mit dem CR, der sie schließt) oder wird er gelöscht (Komponente nicht gebaut)? Du legst beides dem Autor vor und entscheidest nicht |
 | **Fluss fehlt** | `RC-13` am Aufrufer | Fluss anlegen, mit SCHEMA und `sync` |
 | **ungeprüft** | das Paar zählt in `unbound` oder `outOfScope` | erst binden; liegt die Datei außerhalb der tsconfig (Skill, Skript, Nachbarpaket), den Code an der `realRef` lesen |
 

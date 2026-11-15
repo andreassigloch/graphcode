@@ -1,6 +1,6 @@
 ---
 name: se:generate
-version: 4
+version: 5
 description: Kaltstart-Generierung eines Systemmodells aus Prosa-Intention — readiness-getriebener Loop über graph_generate, Kandidaten durchs Gate (dryRun-Verdict + Steuerwert), Handoff auf graph_suggest
 ---
 
@@ -25,7 +25,7 @@ Der generative Treiber für Regime 1: **du schlägst vor, das Gate scort und wä
 
 - **Ein Schritt, ein Fokus:** nur die Funde bearbeiten, die der aktuelle `prompt` nennt — nicht vorgreifen.
 - **Anleitung je Schritt:** der Schritt nennt in `skill` die Autorier-Anleitung (`se:author-uc`, `se:author-req`, `se:author-actor`, `se:top-level`) — lade sie über das Skill-Werkzeug, bevor du schreibst; nicht per `cat`, nicht erst am Ende.
-- Zerlegungsbreite 7±2 pro Ebene (RD-04); bei Architektur-Schritten 2 Alternativen anbieten; mehrere zulässige legst du dem Autor vor.
+- Zerlegungsbreite je Ebene: RD-04 meldet die Obergrenze, RD-05 die Untergrenze, das Band steht in `decompositionBreadth`; bei Architektur-Schritten 2 Alternativen anbieten; mehrere zulässige legst du dem Autor vor.
 - `blockingErrors > 0` hat immer Vorrang vor Neu-Generierung.
 - **Analysen sind Blackboxen:** FMEA, Bauplan, ConOps, Trade, Annahmen-Review laufen als eigene Einheit mit ihrem Skill (`se-fmea`, `se-plan`, …). Nennt der Schritt einen Eintrittspunkt (AF-01..05), starte die Analyse mit `graph_generate {task:'fmea'}` (bzw. `plan`, `conops`, …); die Sitzung bleibt im Task. Er ist fertig, wenn sein Eintrittspunkt schweigt — die Analyse ist gestempelt, beim Bauplan: es gibt einen offenen Auftrag (CR mit `status: open`) — oder abgenommen ist; dann kehre mit `graph_generate` ohne `task` in den Kern zurueck. Meldet danach eine Regel der Analyse im Kern (z. B. FM-01: Risiko ohne Bewertung), nennt der Schritt wieder ihren Skill: behebe den Fund nach dessen Schritten.
 - **Benannte Abweichung:** Einen Fund, der im Modell nicht erfuellbar ist, legst du als benannte Abweichung ab: `acceptedFindings: [{ruleId, reason}]` am betroffenen Element (graphweite Regeln am SYS), der Grund ist Pflicht. Abnehmbar sind nur die Analysen AF-01, AF-02, AF-03, AF-04, AF-05 (das Artefakt ist im schlanken Umfang nicht noetig), dazu CL-01 und FM-03. Architekturregeln sind nicht abnehmbar — eine Abnahme daran zaehlt nicht, der Fund bleibt: bauen. Nenne jede Abnahme in der Schlussmeldung.

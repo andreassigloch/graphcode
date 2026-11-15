@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** Vorschlag, vom Autor nicht freigegeben; umgesetzt ist nichts.
+**Status:** Freigegeben vom Autor am 2026-11-15 (Empfehlung: Skills an die FAQ angleichen); umgesetzt.
 
 ## Anlass
 
@@ -41,9 +41,9 @@ einem Skill, löst ein CR im Repo des Skills den Konflikt. Bis dahin folgt ein A
 
 ## Abnahme
 
-- [ ] Der Autor hat je Zeile entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen“.
-- [ ] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
-- [ ] `npm run verify:full <CR>` grün.
+- [x] Der Autor hat je Zeile entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen“.
+- [x] Je geänderter Skill-Stelle prüft ein Test den neuen Wortlaut oder die entfernte Nennung (vorher rot).
+- [x] `npm run verify:full <CR>` grün.
 
 ---
 
@@ -53,6 +53,16 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| Wie breit ist eine Ebene, und nennt der Skill eine Zahl? (Nr. 6) | `se:top-level` und `se:generate` nennen keine Zahl und kein 7±2, sie verweisen auf RD-04 (Obergrenze), RD-05 (Untergrenze) und `decompositionBreadth`; das Band 3 bis 9 steht in der Policy | RD-04 meldet ab 9, RD-05 unter 3 (CR-SM-311); 7±2 hieße 5 bis 9 und widerspricht; die Zahl im Skill folgt keiner Policy |
+| Eigenschaft: funktionale oder nicht-funktionale REQ? (Nr. 5) | funktionale REQ an der FUNC, die sie trägt | CR-GC-829, CR-GC-832; eine FUNC erfüllt nur funktionale REQ |
+| Erzeugt der Import ein SYS? (Nr. 9) | genau ein SYS; `SYS compose MOD` legt das Modell an | CR-GC-302 |
+| ND-Duplikat: immer Merge? (Nr. 12) | Kandidat, je Paar prüfen; Merge nur bei gleichem Vertrag und gleicher Verbindung | CR-GC-444, CR-SM-309 |
+| Fluss ohne Aufruf im Code: löschen? (Nr. 13) | Prüfauftrag an den Autor: Vermerk in der FLOW-Beschreibung mit CR oder löschen | CR-GC-822, CR-GC-833 |
+| Setzt se-vorbereitung `sync` erstmals? (Nr. 14) | nein; ein Fluss ohne Merkmal geht zurück an `se:top-level` | CR-GC-873, CR-SM-420 |
+| Sicht für `sync`: Aufrufer oder Abnehmer? (Nr. 15) | Abnehmer, ein Wert je Fluss | CR-SM-408 |
+| Modell-Zug vor oder nach dem Löschen? (Nr. 16) | vor dem Löschen der Dateien | Autor 2026-11-14; CR-SL-103 |
+
+Freigabe des Autors: 2026-11-15.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: se:top-level
-version: 10
-description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at 7±2 blocks per level, recursing by blackbox decomposition until a FUNC carries a realRef
+version: 11
+description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at the width per level that RD-04 and RD-05 judge, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
 The top level is the base everything else rests on, and it does not fall out of rules. `se:close-violations` makes R-22 green by proposing *some* allocation; this skill decides whether the cut is *right*. Judgment work — run it deliberately, not as a cleanup pass.
@@ -68,7 +68,7 @@ The top triad is anchored at the SYS node, but only two legs are edges: `SYS -co
 1. **FUNC** — which blackboxes explain the use cases?
 2. **FCHAIN** — the causal path per UC (`UC -compose-> FCHAIN -compose-> FUNC`).
 3. **FLOW + SCHEMA** — the contracts, and **consolidate them**. `ACTOR -io-> FLOW -io-> FUNC`, `FUNC -io-> FLOW -io-> FUNC`; every FLOW carries exactly one SCHEMA (`FLOW -relation-> SCHEMA`, cardinality 1). One shared contract across many flows is a feature, not duplication. **Mark every flow `@sync sync` or `@sync async` here, while you cut the chain** (rule 7 below) — not later in `se-vorbereitung`. Without the mark the trigger of a chain cannot be derived; FC-06 reports the chain.
-4. **MOD + stack** — only now, and at **7±2 per level** (RD-04, `decompositionBreadth`).
+4. **MOD + stack** — only now, and within the band per level that RD-04 (upper end) and RD-05 (lower end) judge, read from `decompositionBreadth`.
 
 Step 4 after step 3 is empirical, not stylistic: CR-GC-436 tried allocation over unconsolidated edges and was a No-Go — optimizing a cut over unconsolidated contracts optimizes the wrong thing (ITEM-2026-170 §1).
 
@@ -85,7 +85,7 @@ Decomposing a function is one move, and getting it wrong is detectable:
 
 ## Size: the answer to "too big" is a level, not a module
 
-**7±2 modules per level — the number lives in `decompositionBreadth`, not here,** and RD-04 judges against it. When modules each hold 14–26 FUNCs, every size threshold breaks (R-04, RD-04, MT-02) — the fix is a level *inside* the modules, never one more module (ITEM-2026-170 §3.4).
+**The band per level lives in `decompositionBreadth`, not here:** RD-04 judges the upper end, RD-05 the lower end, and `graph_metrics` returns the policy they judged against. When modules each hold 14–26 FUNCs, every size threshold breaks (R-04, RD-04, MT-02) — the fix is a level *inside* the modules, never one more module (ITEM-2026-170 §3.4).
 
 Coupling check after the cut: **CR-01** counts *distinct SCHEMA contracts per module pair* (threshold `crossingFlows.warning`, default 3) — not raw io edges. Two flows sharing one contract count once. Read the module rows from `graph_metrics`; it also returns the policy it judged against.
 
@@ -101,9 +101,9 @@ _Warum hier keine feste Zahl mehr steht (CR-GC-629): diese Seite nannte an zwei 
 2. **One FLOW is one hop between caller and callee.** It has one producer (IO-02). The answer goes back to the caller, not to whoever reads it last. Wrong: the gate's report flows straight to the agent. Right: gate → tool → agent.
 3. **A store flow ends only at a function that reads the store.** A function that gets the graph as an argument receives it from its caller. Wrong: the store feeds the fit advisory, while in code the tool passes the graph in.
 4. **One entry node per chain.** The trigger is the entry from which every member of the chain is reached. Several actors may start the same chain only at that entry node and with the same contract (SCHEMA); who started it is then a field in the contract. A second entry node or a second contract is a second chain: start-up, shutdown, a host and a health check are separate chains, and so are an MCP tool and a CLI verb that start the same work. An actor in the middle is allowed: the approver who sees a proposal and approves it receives a `sync` flow from the chain and feeds the next member. That member splits the chain into segments; the chain stays one. FC-06 reports four cases: a chain with no trigger, triggers at different members or contracts, an actor that only delivers in advance (`[predelivery]`: the function reads the data itself, so it is no actor flow), and a flow without `sync`. A receipt (`async` hand-over, `sync` back) triggers nothing; the chain runs on. A chain counts its members per FUNC: a start-up flow on a shared function appears in every chain that contains the function.
-5. **A property is a non-functional REQ, not a chain.** "Runs without a model call" has no sequence. A chain for it lists functions that never call each other.
+5. **A property is a functional REQ at the FUNC that carries it, not a chain.** "Runs without a model call" has no sequence. A chain for it lists functions that never call each other. Right: `REQ-gate-without-model-call` with `FUNC-apply-gate -satisfy->` it; a FUNC satisfies only functional REQs.
 6. **The `realRef` names the symbol on the path, not a wrapper around it.**
-7. **`sync` answers one question: does the caller await the answer?** A callback, an event or a file that someone reads later is `async`.
+7. **`sync` answers one question: does the consumer await the delivery?** Judge from the consumer's side, one value per flow. A callback, an event or a file that someone reads later is `async`.
 8. **One FLOW, one call site.** Note the file and symbol where the caller hands the content over. A flow whose call site you cannot name is a guess.
 
 **Over existing code, start bottom-up.** Run `se:import-code` first: it extracts one FLOW per resolved call. Group those calls into chains, then add the intent on top. A chain drawn from memory over existing code models what someone thinks the code does.
@@ -165,7 +165,7 @@ What wasted rounds on the first run, measured:
 4. **Is every name active?** A block named for what it *holds* hides what it *decides*. UC and FCHAIN names state the actor's need as Verb + Object, without module, schema or technology words (`se:author-uc`, *The name states the need*).
 5. **Which stack implements this MOD**, and does it exist as a `satisfy`-bound REQ?
 6. **Does the code already exist?** Check the repo before modelling greenfield. A FUNC modelled as not-yet-built (no `realRef`) over existing code is a claim the code will break (ITEM-2026-170 D2).
-7. **More than five top-level FUNCs? Something is off.** Five is the working budget, not a hard cap — but every slot above it needs a stated reason, because **operations is still coming**: user management, configuration, credentials, deployment, logging. Those land as their own top-level block at the very end, and a decomposition that already spent seven slots on features has nowhere to put them. Count the compose-forest roots, not the chain members, and budget before you spend the last slot.
+7. **Close to the RD-04 limit under SYS? Something is off.** Every slot beyond what the cut needs requires a stated reason, because **operations is still coming**: user management, configuration, credentials, deployment, logging. Those land as their own top-level block at the very end, and a decomposition that already spent the slots RD-04 allows on features has nowhere to put them. Count the compose-forest roots, not the chain members, and budget before you spend the last slot.
 8. **Does every flow have a call site?** For each FLOW between two FUNCs with a `realRef`, name the line where one calls the other. Without that line the flow is a claim, not a model.
 
 ## Boundaries

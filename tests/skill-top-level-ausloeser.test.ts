@@ -32,8 +32,8 @@ const regel4 = topLevel.split('\n').find((l) => l.startsWith('4. **One entry nod
 const stufe3Fluss = topLevel.split('\n').find((l) => l.startsWith('3. **FLOW + SCHEMA**')) ?? '';
 
 describe('se:top-level Regel 4: ein Eingangsknoten je Kette (CR-GC-873)', () => {
-  it('der Kopf traegt Version 10 (CR-GC-881)', () => {
-    expect(topLevel).toMatch(/^version: 10$/m);
+  it('der Kopf traegt Version 11 (CR-GC-939)', () => {
+    expect(topLevel).toMatch(/^version: 11$/m);
   });
 
   it('die alte Regel „One trigger per chain" ist weg', () => {
@@ -63,7 +63,7 @@ describe('`sync` wird beim Kettenschnitt gesetzt, nicht erst in se-vorbereitung 
   });
 
   it('se-vorbereitung nennt se:top-level als Ort des Merkmals und prueft nur nach', () => {
-    expect(vorbereitung).toMatch(/^version: 8$/m);
+    expect(vorbereitung).toMatch(/^version: 9$/m);
     expect(vorbereitung).toMatch(/Das Merkmal `sync` setzt der Autor beim Kettenschnitt \(`se:top-level`, Phase 3, Schritt FLOW \+ SCHEMA\)/);
     expect(vorbereitung).not.toMatch(/Flüsse als synchron oder asynchron kennzeichnen/);
   });

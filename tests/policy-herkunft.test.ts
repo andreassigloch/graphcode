@@ -191,7 +191,7 @@ describe('CR-GC-629 (3): kein Skill behauptet eine Schwelle, die keine Policy tr
    * Bewusst ENG auf die Zerlegungsbreite — `se:author-uc` sagt „max 4–5 UCs per batch", und das
    * ist Chat-Stueckelung, die keine Policy hat und keine braucht.
    *
-   * Die DOKTRIN ist ausgenommen, und zwar am Zeichen, nicht an einer Ausnahmeliste: `7±2` ist
+   * Die DOKTRIN ist ausgenommen, und zwar am Zeichen, nicht an einer Ausnahmeliste: `7±2` war
    * eine Spanne, keine Schwelle, und `(?<![±+\-\d])` haelt ihre `2` heraus. Ohne diese Klausel
    * meldete der Waechter genau die Korrektur, die er verlangt (aufgefallen am 2026-09-23).
    */
@@ -217,20 +217,22 @@ describe('CR-GC-629 (3): kein Skill behauptet eine Schwelle, die keine Policy tr
     expect(
       treffer,
       'Eine Zerlegungsbreite als Zahl im Skilltext folgt keiner Policy — wandert ' +
-        '`decompositionBreadth`, wandert der Text nicht mit. Die Doktrin nennen (7±2) und die ' +
+        '`decompositionBreadth`, wandert der Text nicht mit. Keine Zahl nennen; die ' +
         'Zahl der Regel ueberlassen (RD-04 gegen `decompositionBreadth`):',
     ).toEqual([]);
   });
 
-  it('die Doktrin selbst steht weiterhin da, und sie liegt IM Budget der Policy', () => {
+  it('der Skill nennt keine eigene Zahl, nur RD-04, RD-05 und die Policy; das Band ist 3 bis 9', () => {
     const text = readFileSync(join(SKILLS, 'se', 'top-level.md'), 'utf8');
-    expect(text, 'ohne die Doktrin waere die Zahl nur geloescht, nicht ersetzt').toContain('7±2');
+    expect(text, '7±2 ist nicht das Band der Regeln (3 bis 9, CR-SM-311)').not.toContain('7±2');
     expect(text).toContain('decompositionBreadth');
+    expect(text).toContain('RD-04');
+    expect(text).toContain('RD-05');
 
-    // Und die Doktrin widerspricht der Policy nicht: ihre Obergrenze (7+2) ist das Budget.
     const breite = loadGraphcodeConfig(REPO).config.metricPolicy.decompositionBreadth;
-    expect(breite, 'ohne Budget ist die Doktrin unbelegt').not.toBeNull();
+    expect(breite, 'ohne Budget ist der Verweis unbelegt').not.toBeNull();
     expect(breite!.warning).toBe(9);
+    expect(breite!.min).toBe(3);
   });
 });
 

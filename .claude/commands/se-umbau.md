@@ -1,6 +1,6 @@
 ---
 name: se-umbau
-version: 2
+version: 3
 description: Bestehendes ändern, ersetzen, entfernen — graph_impact und graph_tests VOR dem Löschzug, Modell-Zug im selben CR. Bei „entfernen", „ersetzen", „refactoren", „keine parallelen Pfade". Neues anlegen: se:author-req.
 ---
 
@@ -60,8 +60,8 @@ Befund.
 
 ## 4. Der Modell-Zug gehört in denselben CR
 
-Nach dem Löschen im Code ist das Modell **falsch**, nicht veraltet. Der Zug geht durchs Gate
-(`graph_mutate`, nie an der JSON-Datei):
+Der Modell-Zug läuft **vor** dem Löschen der Dateien: wer erst löscht, lässt das Modell falsch zurück, nicht veraltet (RC-01 auf jede `realRef`, Stubs für jede TEST-Bindung). Der Zug geht durchs Gate
+(`graph_mutate`, nie an der JSON-Datei). Hat der Arbeitsbaum keinen Store (Lane code) und scheitert der Zug daran, melde es dem Autor:
 
 - Knoten, dessen Code weg ist → löschen, **nachdem** seine `satisfy`-Kanten einen neuen Erfüller
   haben. Beides in EINEM Batch, sonst blockt das Gate zurecht.

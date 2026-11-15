@@ -1,6 +1,6 @@
 ---
 name: se:import-code
-version: 2
+version: 3
 description: Bestehende TS-Codebasis deterministisch in den Graph importieren (graphify, kein LLM) — Reseed der importierten Knoten mit automatischem Backup, der handgeschriebene Teil bleibt; FUNC/MOD/FLOW+SCHEMA, keine UC/REQ; danach Ketten aus den Aufrufen bilden
 ---
 
@@ -43,7 +43,7 @@ stoppen, Import laufen lassen, Host neu starten).
 - Nur **FUNC** (pro Funktion), **MOD** (pro Datei), **FLOW** (pro aufgelöstem internen Call) +
   **SCHEMA** (Callee-Signatur); TEST-Knoten isoliert ohne Kante. Alles confidence 1.0 —
   strukturell sicher, nicht inferiert.
-- **Keine UC/REQ/ACTOR/SYS** — die Absichtsebene bleibt der generative Pfad (`se:generate`),
+- **Keine UC/REQ/ACTOR.** Der Import stellt genau ein SYS sicher; lege keins zusätzlich an. `SYS compose MOD` legst du im Modell an, der Import liefert diese Kante nicht. Die Absichtsebene bleibt der generative Pfad (`se:generate`),
   der danach AUF dem importierten Code-Graphen aufsetzen kann.
 - Erwartbare Warnings in `rules_evaluate`/`readiness` (z.B. FUNC ohne satisfy, R-20 codeRef):
   das ist der Arbeitsvorrat für die Absichtsebene, kein Fehler des Imports.
