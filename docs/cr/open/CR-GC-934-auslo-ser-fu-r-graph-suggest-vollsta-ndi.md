@@ -24,8 +24,7 @@ bestimmter Regeln offen ist. Die zwei bisherigen Auslöser bleiben: `graph_gener
 - Für RD-04 und BW-02 nennt ihn nur der FAQ-Eintrag `architektur-vor-hygiene` in aise-bok.
 - Für MT-02 hat `graph_suggest` keinen Zug und meldet nichts Anwendbares. MT-02 ist seit 2026-11-15
   aus dem Auslöser genommen, bis dieser CR entschieden ist.
-- CR-SM-441 (sigloch-modules, offen) schlägt den Verweis auf `se:optimize` in den Hilfetexten von
-  RD-04 und BW-02 vor.
+- CR-SM-441 (sigloch-modules, offen) hat den Verweis auf `se:optimize` in den Hilfetexten an diesen CR abgegeben.
 
 ## Auftrag
 
@@ -39,9 +38,14 @@ Der CR legt den Auslöser vollständig fest, für alle vorgeschlagenen Regeln: R
 4. Ein Aufruf von `graph_suggest` blockiert den Host 4,3 bis 4,6 s (CR-GVE-401). Wie oft darf ein
    Agent bei unverändertem Befund neu rufen?
 
+5. CR-01 hat einen Zug in `graph_suggest` und steht nicht in der Liste. Absicht oder Lücke?
+6. Der Skill `se:optimize` liegt auf Stufe 9; BW-02 meldet auf Stufe 5, RD-04 und MT-02 auf Stufe 7. Ruft der Agent vor dem Platz des Skills?
+
+CR-SM-441 hat den Verweis `prompt: "se:optimize"` für RD-04, BW-02 und MT-02 am 2026-11-15 an diesen CR abgegeben; dort stehen die Einwände im Abschnitt „Zusatz".
+
 ## Abnahme
 
-- [ ] Der Autor hat die vier Fragen entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen".
+- [ ] Der Autor hat die sechs Fragen entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen".
 - [ ] Ein Test zeigt je auslösender Regel: Bei offenem Befund nennt das Werkzeug `graph_suggest`.
 - [ ] Der FAQ-Eintrag `architektur-vor-hygiene` nennt dieselbe Regelliste wie der Code.
 
