@@ -1,13 +1,13 @@
 ---
 name: se-conops
-version: 8
+version: 9
 description: Concept of Operations (CREATE) — surface operational concerns (config/creds/user-mgmt/deploy) BEFORE use cases and write them as system-scoped non-functional REQ through the gate
 ---
 
 **ConOps as a create skill** (the render counterpart is the view `docs/views/conops.md`): the operational concerns a system must answer *before* its use cases are decomposed — configuration, credentials/secrets, user management, deployment, observability, backup/restore, upgrade. A use case authored before these are settled rests on unstated operational assumptions.
 
 ## 1. Enumerate the operational concerns
-Walk the standing checklist against the system: **config** (what is environment-specific), **value classes** (which values are runtime parameters, which start configuration, which invariants — and where each kind is kept and managed: the settings store with its history, the configuration file, the code), **creds/secrets** (what must never be in source), **user-mgmt** (who authenticates, what roles), **deploy** (how it ships + rolls back), **observability** (health, logs, metrics), **data lifecycle** (backup, retention, migration). For each, state whether the model already answers it.
+Walk the standing checklist against the system: **config** (what is environment-specific), **value classes** (which values are runtime parameters, which start configuration, which invariants, which call values (they stand in the contract of one call) — and where each kind is kept and managed: the settings store with its history, the configuration file, the code), **creds/secrets** (what must never be in source), **user-mgmt** (who authenticates, what roles), **deploy** (how it ships + rolls back), **observability** (health, logs, metrics), **data lifecycle** (backup, retention, migration). For each, state whether the model already answers it.
 
 **Access list (from the model, for creds/secrets).** Derive one line per access the build and the run need — every `io` FLOW to an `ACTOR` or a foreign system, every service with a domain, every private package registry, every deploy target (host, account):
 

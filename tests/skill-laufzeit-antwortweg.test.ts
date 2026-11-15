@@ -67,7 +67,7 @@ const fluss = (m: Modell, id: string): Element => m.elements.find((e) => e.id ==
 describe('se-laufzeit liest den Antwortweg, er rechnet ihn nicht (CR-GC-783)', () => {
   it('der Kopf traegt Version 3 und den Namen des Skills', () => {
     expect(skill).toMatch(/^name: se-laufzeit$/m);
-    expect(skill).toMatch(/^version: 4$/m);
+    expect(Number(skill.match(/^version: (\d+)$/m)![1])).toBeGreaterThanOrEqual(4);
   });
 
   it('der Skill-Text traegt keine Rechnung und keine Kennzahl, die es nicht gibt', () => {

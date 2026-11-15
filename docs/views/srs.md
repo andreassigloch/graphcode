@@ -3284,7 +3284,7 @@ Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-verify-lane-cod
 
 > auch in: `FUNC-block-bedienung`
 
-Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Das Urteil ueber einen Lauf (laufUrteil) liest Bericht und Exit zusammen. Getragen von scripts/verify-full.mjs. (CR-GC-718, CR-GC-854)
+Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Im Link-Modus zaehlen die dort erwartet roten Dateien (distribution, lockfile-sync) nicht als Schlupf, sie stehen unter umgebung. Je Zeile haelt er ausserdem fest: Link-Modus, Dauer der Auswahl und des Volllaufs als Summe je Testdatei, Grenzmenge (FUNC und SCHEMA an Modulgrenzen im Modell von Pflichtmenge). Das Urteil ueber einen Lauf (laufUrteil) liest Bericht und Exit zusammen. Getragen von scripts/verify-full.mjs. (CR-GC-718, CR-GC-854, CR-GC-947)
 
 io ◀ `FLOW-schlupf-request` · io ▶ `FLOW-schlupf-result` · allocate ▶ `MOD-projections`
 
@@ -11248,7 +11248,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 > auch in: `FCHAIN-verify-lane-full`
 
-Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Das Urteil ueber einen Lauf (laufUrteil) liest Bericht und Exit zusammen. Getragen von scripts/verify-full.mjs. (CR-GC-718, CR-GC-854)
+Misst vor dem CR-Abschluss den Schlupf: die roten Testdateien eines Volllaufs gegen die Auswahl, die verify:code fuer dieselbe Aenderung trifft, und die Folge von CRs ohne Schlupf; dazu die Zusage, dass Blackbox- und Schnittstellentests gebunden sind. Im Link-Modus zaehlen die dort erwartet roten Dateien (distribution, lockfile-sync) nicht als Schlupf, sie stehen unter umgebung. Je Zeile haelt er ausserdem fest: Link-Modus, Dauer der Auswahl und des Volllaufs als Summe je Testdatei, Grenzmenge (FUNC und SCHEMA an Modulgrenzen im Modell von Pflichtmenge). Das Urteil ueber einen Lauf (laufUrteil) liest Bericht und Exit zusammen. Getragen von scripts/verify-full.mjs. (CR-GC-718, CR-GC-854, CR-GC-947)
 
 io ◀ `FLOW-schlupf-request` · io ▶ `FLOW-schlupf-result` · allocate ▶ `MOD-projections`
 
@@ -15804,7 +15804,7 @@ schema ◀ `FLOW-fingerprint-request` · `FLOW-schema-fingerprint`
 
 ###### 3.3.4.2.43  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
 
-Vertrag der Schlupf-Zeile: cr, at, code, spur, ausgewaehlt, ausGraph, gesamt, rot, schlupf, schlupfNurGraph, zusage (blackbox, schnittstelle).
+Vertrag der Schlupf-Zeile: cr, at, code, spur, ausgewaehlt, ausGraph, gesamt, rot, schlupf, schlupfNurGraph, zusage (blackbox, schnittstelle). Optional, in alten Zeilen nicht erfasst (nie 0): linkModus, umgebung (rote Dateien, im Link-Modus erwartet, nicht im Schlupf), dauer (auswahlMs, vollMs), grenzmenge (FUNC und SCHEMA je pflicht und da). (CR-GC-947)
 
 schema ◀ `FLOW-schlupf-request` · `FLOW-schlupf-result` · `FLOW-schlupf-zeile`
 

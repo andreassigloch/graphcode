@@ -1,6 +1,6 @@
 ---
 name: se:close-violations
-version: 6
+version: 7
 description: Work the open findings of the governed graph down to zero — errors first, then warnings rule by rule; fix in the model, accept with a reason what the order leaves out, ask instead of inventing
 ---
 
@@ -27,7 +27,7 @@ Order — the groups arrive in it, take them from the top:
 + FUNC-<slug> -satisfy-> REQ-<other>
 ```
 
-A duplicate (ND-01, ND-02) is a candidate, not a verdict. Check each pair. Merge only when the contract and the connection are the same (same SCHEMA or similarity from 0.85, same producers and readers): `M <source> + <target>` under `## Merges`, SCHEMA in the same batch. Similar names are not enough; where one is computed from the other, or one is the request and one the answer, or the description names the split, leave both and say why. For FLOWs with different producers, the help text of IO-02 names the move.
+A duplicate (ND-01, ND-02) is a candidate, not a verdict. Check each pair. Merge only when the contract and the connection are the same (same SCHEMA, same producers and readers): `M <source> + <target>` under `## Merges`, SCHEMA in the same batch. No rule measures the similarity of FLOWs: ND-01 measures FUNC, ND-02 measures SCHEMA. Similar names are not enough; where one is computed from the other, or one is the request and one the answer, or the description names the split, leave both and say why. For FLOWs with different producers, the help text of IO-02 names the move.
 
 **2. Accept it with a reason** — only what `graph_authoring_guide` lists as `enumValues` of `acceptedFindings`. Every other finding you fix in the model or put to the user. The reason says *why it is left out*, in the user's terms. The carrier is the element, or the system for a finding about the whole graph. The list is replaced on write — name every entry that should stay:
 

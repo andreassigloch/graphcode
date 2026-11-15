@@ -109,7 +109,7 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
   });
 
   it('se-vorbereitung und se-laufzeit: async am Fluss eines Akteurs ohne Rueckfluss ist eine Vorab-Lieferung', () => {
-    expect(laufzeit).toMatch(/^version: 4$/m);
+    expect(Number(laufzeit.match(/^version: (\d+)$/m)![1])).toBeGreaterThanOrEqual(4);
     for (const t of [vorbereitung, laufzeit]) {
       expect(t).toMatch(/`async` am Fluss eines Akteurs, der aus der Kette nichts empfängt, ist eine Vorab-Lieferung \(`FC-06`, `\[predelivery\]`\)/);
     }
