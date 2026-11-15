@@ -1,6 +1,6 @@
 ---
 name: se-umbau
-version: 4
+version: 5
 description: Bestehendes ändern, ersetzen, entfernen — graph_impact und graph_tests VOR dem Löschzug, Modell-Zug im selben CR. Bei „entfernen", „ersetzen", „refactoren", „keine parallelen Pfade". Neues anlegen: se:author-req.
 ---
 
@@ -74,6 +74,7 @@ Der Modell-Zug läuft **vor** dem Löschen der Dateien: wer erst löscht, lässt
   Fluss: ruft der Code den Abnehmer noch, und kommt die Antwort beim Aufrufer an? Die Prüfung je
   Fluss steht in `se-vorbereitung`, Schritt 4. Ein CR, der nur den Knoten nachzieht, lässt die
   Flüsse der Nachbarn stehen. So liefen in graphcode Modell und Code auseinander (CR-GC-832..838).
+  Nenne bei jedem `graph_mutate` dieses Skills `skill: "se-umbau"`; so zählt das Audit den Zug unter diesem Skill.
 - `dryRun: true` zuerst. Das Verdict nennt die Regelverstöße, bevor irgendetwas persistiert.
 
 **„Fertig" heißt kongruent oder benannt.** Eine Abweichung, die im CR steht, ist erlaubt; eine

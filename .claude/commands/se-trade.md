@@ -1,6 +1,6 @@
 ---
 name: se-trade
-version: 4
+version: 5
 description: Trade Study (CREATE) — evaluate ≥2 options for an open design decision, apply the chosen one to the model and record the decision as a closed CR with relation edges to what it decided
 ---
 
@@ -15,6 +15,7 @@ Score the options against explicit criteria (effort, risk, reversibility, fit to
 ## 3. Record the decision as a closed change request
 1. **Text.** `aise item new --target <repo> --body "<text>" "<title>"`, then `aise dispatch prepare <ITEM> --lane graph`. aise mints the number with the repo prefix, writes `docs/cr/open/<CR id>-<slug>.md` and the CR node; you choose no number. Write into that file: it carries the question, every option with its cost and risk, the criteria, the choice and the reason. The rejected options live **here**, in the text — not as nodes in the graph.
 2. **Model.** Apply the chosen option to the graph via `graph_mutate` (Apply-Gate, L2), and in the same batch add one `relation` edge from the CR node to every element the decision created, changed or settled (`CR relation → FUNC`, `→ MOD`, `→ REQ`, `→ UC`, `→ SCHEMA`; the gate rejects TEST and FLOW as target — name those in the text).
+   Pass `skill: "se-trade"` on every `graph_mutate` call of this skill, so the audit counts the move under this skill.
 3. **Close.** `aise cr close <CR id>` moves the file to `docs/cr/done/` and sets the status on the node; you never write `status`.
 
 Check the returned `violations` and re-apply if the gate blocks the batch. Never hand-edit the SSOT.

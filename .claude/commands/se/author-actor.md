@@ -1,6 +1,6 @@
 ---
 name: se:author-actor
-version: 3
+version: 4
 description: Cut the actor set — the minimum number of distinct roles that makes the system boundary unambiguous, each named by what crosses the boundary, wired only via the one legal path ACTOR io FLOW io FUNC
 ---
 
@@ -19,6 +19,7 @@ That is all. `ACTOR compose UC`, `ACTOR io UC`, `ACTOR io FCHAIN`, `ACTOR io FUN
 ## At seed time you name actors; you do not wire them
 
 There are no FUNCs yet, so there is nothing legal to wire *to*. Emit the actors as bare nodes via `graph_mutate` and stop. `R-16` (actor with no io) will fire as a **warning** and is the correct state at this point — it closes by itself when the chains exist. Do not silence it with an invented edge; an R-18 rejection costs a whole round.
+Pass `skill: "se:author-actor"` on every `graph_mutate` call of this skill, so the audit counts the move under this skill.
 
 ## The minimum distinct set
 

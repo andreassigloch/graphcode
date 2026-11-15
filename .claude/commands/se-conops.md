@@ -1,6 +1,6 @@
 ---
 name: se-conops
-version: 9
+version: 10
 description: Concept of Operations (CREATE) — surface operational concerns (config/creds/user-mgmt/deploy) BEFORE use cases and write them as system-scoped non-functional REQ through the gate
 ---
 
@@ -24,6 +24,7 @@ A line the model cannot fill is a gap of §5. `se-plan` turns every line with *h
 
 ## 3. Write the answered concerns through the gate
 For each concern the system MUST satisfy, author a `REQ` via `graph_mutate` (Apply-Gate, L2) — use `se:author-req` so each REQ ships with a verifying TEST in the same batch (a lone REQ is blocked by R-01). **Two things** make it operational, and the view (`docs/views/conops.md` §2) needs **both**:
+Pass `skill: "se-conops"` on every `graph_mutate` call of this skill, so the audit counts the move under this skill.
 
 1. **`attributes.kinds` = `["non-functional"]`** — `ReqKind` in `@sigloch/contracts` has exactly two values, `functional` and `non-functional`, and an operational concern is a `non-functional` one. The function that later realizes it (check 7 in `se:top-level`) gets its own `functional` REQ. (Until CR-GC-304 this skill offered it as an option and the view filtered on it — the table could never fill.)
 2. **A trace that puts it at system scope** — `SYS compose REQ` (or `SYS satisfy REQ`), or an edge to/from an `ACTOR` for a user-mgmt/creds concern. A REQ allocated only to one FUNC/MOD is design, not ConOps, and will not appear in the view.

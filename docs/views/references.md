@@ -3661,6 +3661,7 @@
 | `TEST-skill-irr-fremde-quellen` | verify | `REQ-irr-fremde-quellen` |
 | `TEST-skill-kinds-werte` | verify | `REQ-published-counts-match-code` |
 | `TEST-skill-moves-are-legal` | verify | `REQ-risk-skill-instructs-rejected-move` |
+| `TEST-skill-nennt-parameter` | verify | `REQ-rule-calibration` |
 | `TEST-skill-red-first` | verify | `REQ-test-skill-red-first` |
 | `TEST-skill-reports-measured-values` | verify | `REQ-skill-reads-only` |
 | `TEST-skill-rule-ids` | verify | `REQ-published-counts-match-code` |

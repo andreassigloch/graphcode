@@ -1,6 +1,6 @@
 ---
 name: se-plan
-version: 13
+version: 14
 description: Generate the implementation/integration plan — order the build along the model's integration tree (leaves up), make the test concept complete BEFORE cutting, cut CRs (≤10 files) whose content is the graph_context slice, enforce an io-integration test per CR, and write MS/CR/relation through the gate
 ---
 
@@ -63,6 +63,7 @@ Each CR's deliverables **fall out of its subgraph** — do not write them by han
 ## 6. Write the plan — CR through the family path, edges through the gate
 - **CR:** `aise item new --target <repo> --body "<text>" "Bau: <title>"`, then `aise dispatch prepare <ITEM> --lane code --wurzel <carrier uids>`. aise mints the number, writes the CR file and the CR node. Never `add-node` a CR by hand.
 - **MS and edges** via `graph_mutate`: `+ MS-…`, `CR → MS` `relation`, `MS → MS` `relation [label:depends-on]`, the scope `relation`s. The CR node is open from `aise dispatch prepare` on (AF-05 reads it); `aise cr close` sets it done. You never write `status`.
+  Pass `skill: "se-plan"` on every `graph_mutate` call of this skill, so the audit counts the move under this skill.
 - Every aise call moves the `graphVersion` by one — re-read it before your batch, or the gate rejects the stale base.
 - Inspect `violations`; the gate blocks a batch with a new error (R-18, R-01) — fix and re-apply. Never hand-edit the SSOT.
 

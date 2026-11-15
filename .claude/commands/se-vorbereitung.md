@@ -1,6 +1,6 @@
 ---
 name: se-vorbereitung
-version: 11
+version: 12
 description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, das Merkmal synchron/asynchron der Flüsse nachprüfen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
@@ -15,6 +15,7 @@ der Marke PDR, vor `se-fmea` auf Stufe 8.
 
 Du führst durch fünf Schritte. Je Lücke schlägst vor, was sie schließt, und der Autor wählt.
 Die gewählten Züge sind ein gewöhnlicher CR im Repo des Modells und gehen durch `graph_mutate`.
+Nenne bei jedem `graph_mutate` dieses Skills `skill: "se-vorbereitung"`; so zählt das Audit den Zug unter diesem Skill.
 Du rechnest keine Kennzahl: was du brauchst, liest du aus `graph_metrics` und aus den Befunden
 (`rules_evaluate`, `rules_get_violations`). Du beurteilst kein Risiko und keine Laufzeit.
 

@@ -1,6 +1,6 @@
 ---
 name: se-laufzeit
-version: 5
+version: 6
 description: Laufzeitanalyse einer Wirkkette — liest den Antwortweg (die Glieder, auf die die Antwort an den Akteur wartet) aus graph_metrics, nennt Befunde je Ort, fehlende Anforderungen an das Datenalter und Vorschläge mit Preis. Auf Stufe 8, nach se-vorbereitung. Setzt kein Merkmal, schätzt keine Zeit, wendet keinen Umbau an.
 ---
 
@@ -142,6 +142,7 @@ nicht-funktional und hängt an der Kette (`R-18`):
 + FCHAIN-<kette> -satisfy-> REQ-<datenalter>
 + TEST-<datenalter> -verify-> REQ-<datenalter>
 ```
+Nenne bei jedem `graph_mutate` dieses Skills `skill: "se-laufzeit"`; so zählt das Audit den Zug unter diesem Skill.
 
 Lies `violations` im Ergebnis; ein Fehler blockt den ganzen Batch. Dazu je eine `relation`-Kante vom
 CR-Knoten auf jede REQ, die dieser Lauf schrieb (`CR relation → REQ`; auf einen TEST nimmt das Gate

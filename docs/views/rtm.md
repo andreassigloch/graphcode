@@ -179,7 +179,7 @@
 | `REQ-risk-stale-test-result` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` | `FCHAIN-test-ingest` | — |
 | `REQ-risk-steering-delta-missing` | `TEST-steering-delta-in-answer` | `FCHAIN-steering-loop` | — |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
-| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
+| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `REQ-selective-code-lane` | `TEST-selective-test-audit` | `FUNC-plan-code-lane` | `MOD-projections` |
 | `REQ-session-leaves-nothing-behind` | `TEST-repo-lifecycle` · `TEST-session-lifecycle` | `FUNC-session-shutdown` | `MOD-surface` |
@@ -265,7 +265,7 @@
 | `REQ-risk-stale-measurement` | `TEST-single-measurement-path` | `FCHAIN-steering-loop` | — |
 | `REQ-risk-stale-test-result` | `TEST-lane-reports-change` · `TEST-test-result-withdrawn-on-change` | `FCHAIN-test-ingest` | — |
 | `REQ-risk-steering-delta-missing` | `TEST-steering-delta-in-answer` | `FCHAIN-steering-loop` | — |
-| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
+| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-single-measurement-path` | `TEST-graph-metrics` · `TEST-single-measurement-path` · `TEST-steering-snapshot` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-apply-gate` | — |
 | `REQ-stage-names-enumerated` | `TEST-stage-names-enumerated` | `FUNC-take-steering-snapshot` | `MOD-kernel-measure` |
@@ -390,7 +390,7 @@
 | `REQ-risk-gate-rule-eval-fails` | `TEST-gate-survives-rule-failure` | `MOD-kernel` | — |
 | `REQ-risk-store-unreadable` | `TEST-store-recovery` | `MOD-kernel` | — |
 | `REQ-roundtrip-conformance` | `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
-| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-rule-calibration` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
+| `REQ-rule-calibration` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | `FCHAIN-loop-closure` · `MOD-kernel` | — |
 | `REQ-rule-enforcement` | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `REQ-schema-version-migration` | `TEST-schema-migration` | `FUNC-open-store` · `FUNC-schema-guard` | `MOD-kernel` |
 | `REQ-selective-code-lane` | `TEST-selective-test-audit` | `FUNC-plan-code-lane` | `MOD-projections` |

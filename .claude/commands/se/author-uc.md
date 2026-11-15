@@ -1,6 +1,6 @@
 ---
 name: se:author-uc
-version: 4
+version: 5
 description: Author a UC node terse and low-jargon — Actor–Verb–Object–Outcome, ≤25 words, ≤2 grounded technical terms — and gate-mutate it with its compose trace
 ---
 
@@ -31,6 +31,7 @@ Emit ONE `graph_mutate` batch as Format-E — the UC with its `compose` to the `
 + <SYS> -compose-> UC-<slug>
 + UC-<slug> -compose-> FCHAIN-<slug>
 ```
+Pass `skill: "se:author-uc"` on every `graph_mutate` call of this skill, so the audit counts the move under this skill.
 
 A UC with no `compose` to a `FCHAIN` raises **`UC-03`** ("no FCHAIN scenario", warning) while the UC is a leaf. It is a warning, so the batch still applies; what BLOCKS is `UC-01` (no `compose` to a REQ) and `UC-02` (no ACTOR path).
 <!-- inject:end -->

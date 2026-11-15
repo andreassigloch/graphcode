@@ -32,8 +32,8 @@ const regel4 = topLevel.split('\n').find((l) => l.startsWith('4. **One entry nod
 const stufe3Fluss = topLevel.split('\n').find((l) => l.startsWith('3. **FLOW + SCHEMA**')) ?? '';
 
 describe('se:top-level Regel 4: ein Eingangsknoten je Kette (CR-GC-873)', () => {
-  it('der Kopf traegt Version 11 (CR-GC-939)', () => {
-    expect(topLevel).toMatch(/^version: 11$/m);
+  it('der Kopf traegt Version 12 (CR-GC-939, CR-GC-949)', () => {
+    expect(topLevel).toMatch(/^version: 12$/m);
   });
 
   it('die alte Regel „One trigger per chain" ist weg', () => {
@@ -78,8 +78,8 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
     expect(regel4).toMatch(/A receipt \(`async` hand-over, `sync` back\) triggers nothing/);
   });
 
-  it('author-actor: Version 3, kein „external service" mehr, Schritt 3 prueft Ausloesen oder Empfangen', () => {
-    expect(authorActor).toMatch(/^version: 3$/m);
+  it('author-actor: Version 4, kein „external service" mehr, Schritt 3 prueft Ausloesen oder Empfangen', () => {
+    expect(authorActor).toMatch(/^version: 4$/m);
     expect(authorActor).not.toContain('external service');
     expect(authorActor).toMatch(/A service outside the boundary is an actor only if it triggers a chain or receives its result/);
     expect(authorActor).toMatch(/Does it only answer\?/);
@@ -161,7 +161,7 @@ describe('UC- und FCHAIN-Namen benennen das Beduerfnis (CR-GC-881)', () => {
   const authorUc = readFileSync(join(COMMANDS, 'se', 'author-uc.md'), 'utf8');
 
   it('se:author-uc: Abschnitt zum Namen mit falschem und richtigem Beispiel, auch fuer die Kette', () => {
-    expect(authorUc).toMatch(/^version: 4$/m);
+    expect(authorUc).toMatch(/^version: 5$/m);
     expect(authorUc).toMatch(/## The name states the need, not the solution/);
     expect(authorUc).toMatch(/Verb \+ Object from the actor's view/);
     expect(authorUc).toMatch(/Wrong: "AI content to target"/);

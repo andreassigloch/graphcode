@@ -1,6 +1,6 @@
 ---
 name: se:close-violations
-version: 7
+version: 8
 description: Work the open findings of the governed graph down to zero — errors first, then warnings rule by rule; fix in the model, accept with a reason what the order leaves out, ask instead of inventing
 ---
 
@@ -53,6 +53,7 @@ Do not write `realRef` or `testRefs` in a job that is about the model. The first
 1. Work list.
 2. Take the first rule in the order above; choose the way out per finding.
 3. One `graph_mutate` block for that rule. If the gate rejects it, the result names the new error — repair the batch, do not route around it.
+   Pass `skill: "se:close-violations"` on every `graph_mutate` call of this skill, so the audit counts the move under this skill.
 4. Back to 1 until the list is empty, or only questions to the user remain.
 5. Report in three lines: fixed, accepted (with the reasons), waiting for the user. Then `graph_export`.
 

@@ -6,8 +6,7 @@
 
 ---
 
-**Status:** Freigegeben 2026-11-15; nicht umgesetzt. Folge aus CR-GC-943, Schritt 4. Beginnt, sobald
-CR-GC-945 geschlossen ist: beide ändern dieselben Skill-Dateien.
+**Status:** Umgesetzt 2026-11-15. Folge aus CR-GC-943, Schritt 4.
 
 ## Anlass
 
@@ -36,9 +35,19 @@ prüfte nur die Hälfte der Skills (FAQ `cr-dateigrenze-ausnahme`, Punkt 2).
 
 ## Abnahme
 
-- [ ] Der Test ist rot vor der Änderung und nennt die 17 Dateien; danach grün.
-- [ ] Ein Zug aus einem Skill-Lauf steht in `audit_stats` unter `bySkill` mit dem Namen des Skills.
-- [ ] `npm run verify:full CR-GC-949` grün.
+- [x] Der Test ist rot vor der Änderung und nennt die 17 Dateien; danach grün.
+- [x] Ein Zug aus einem Skill-Lauf steht in `audit_stats` unter `bySkill` mit dem Namen des Skills. Beleg: Probelauf über den Host-Socket (`graph_mutate`, `skill: "se-fmea"`, `dryRun: true`), danach `bySkill: [{"skill":"se-fmea","applied":1,"rejected":0,"topBlockingRule":null}]`; die graphVersion blieb 1221. Ein echter Skill-Lauf steht aus.
+- [x] `npm run verify:full CR-GC-949` grün: 230 Dateien, 1897 Tests, rot 0, Schlupf 0.
+
+---
+
+## Ergebnis
+
+`git diff --numstat` der 17 Skill-Dateien: je Datei `2 1` (Versionszeile und ein Satz). Fünf Test-Pins auf die
+alte Version nachgezogen: `tests/skill-faq-angleich.test.ts`, `tests/skill-se-plan-dateigrenze.test.ts`,
+`tests/skill-top-level-ausloeser.test.ts` (drei Stellen). In `se/import-doc.md` steht der Satz als
+Kommentar über dem Aufruf im Treiber-Skript, weil der Skill an dieser Stelle Code zeigt. Neuer Test:
+`tests/skill-nennt-parameter.test.ts`, Modell: `TEST-skill-nennt-parameter` verifiziert `REQ-rule-calibration`.
 
 ---
 

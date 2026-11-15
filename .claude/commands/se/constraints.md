@@ -1,6 +1,6 @@
 ---
 name: se:constraints
-version: 5
+version: 6
 description: Constraints (CREATE) — je Dimension nach Element und Eigenschaft fragen und die Antwort als nicht-funktionale REQ an Kette, Modul oder System schreiben, mit einem TEST, der den Snapshot liest. Nur architektur-bestimmende Constraints, nie ein Gewicht. Vor dem ersten Schnitt (se:top-level) oder wenn der Autor eine Entscheidung festhalten will.
 ---
 
@@ -106,6 +106,7 @@ Vorab berechnen lässt sich das nicht. Die Analyse dazu ist `se:optimize` auf An
 + FCHAIN-<kette> -satisfy-> REQ-<constraint>
 + TEST-constraint-<constraint> -verify-> REQ-<constraint>
 ```
+Nenne bei jedem `graph_mutate` dieses Skills `skill: "se:constraints"`; so zählt das Audit den Zug unter diesem Skill.
 
 Der Adressat ist `FCHAIN`, `MOD` oder `SYS`, wie die Tabelle ihn nennt. Die Testdatei:
 

@@ -1,6 +1,6 @@
 ---
 name: se:optimize
-version: 10
+version: 11
 description: Einen Umbauvorschlag proben und seinen Gesamt-Impact als Vorlage zeigen — Vorschläge aus einer Analyse (feste Form) und Vorschläge von graph_suggest, getrennt. Trockenlauf durchs Gate, Vorlage davor und danach, Wahl durch den Autor. Nach CDR, vor den Kettentests. Kein Auto-Apply; Anwenden und Nachmessen gehören dem CR des Umbaus.
 ---
 
@@ -101,6 +101,7 @@ nicht darin.
 ```
 graph_mutate({ formatE: "<der Zug>", dryRun: true, baseVersion: <graphVersion>, violations: "full" })
 ```
+Nenne bei jedem `graph_mutate` dieses Skills `skill: "se:optimize"`; so zählt das Audit den Zug unter diesem Skill.
 
 Ein Zug ist **EIN** Batch: das Gate beurteilt nur den Endzustand. Ein Umhängen aus (b)
 (`edit.retire` ist gesetzt) löscht und legt an im selben Block, nie in zwei Aufrufen:

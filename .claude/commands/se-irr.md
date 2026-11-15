@@ -1,6 +1,6 @@
 ---
 name: se-irr
-version: 6
+version: 7
 description: Assumption Review — detect unproven assumptions, ask which become requirements, write each chosen one as a REQ with its verifying TEST, record the review as a closed CR (CREATE, gate-only)
 ---
 
@@ -25,6 +25,7 @@ Query the live graph — do not guess from prose:
 Show the user the whole list — every assumption, not only the load-bearing ones — one line each: the assumption, what breaks if it is wrong, the evidence today (none/weak/strong), and your recommendation (`load-bearing` or `low`). Ask which of them to write as requirements. The user decides; a low one the user picks is written like any other, and a load-bearing one the user declines is recorded with that decision. If nobody answers (headless run), write the load-bearing ones and say so in the closing report.
 
 For each chosen assumption author one `REQ` with `se:author-req`, so it ships with its verifying `TEST` in the same batch (every write goes through the Apply-Gate, L2): the REQ states what must hold, the TEST is what would falsify the assumption. Hang the REQ where it belongs — under the use case it concerns, or at the system (`SYS compose REQ`) when it concerns the whole. Check `graph_mutate`'s returned `violations` and re-apply if the gate blocks the batch. Never hand-edit the graph SSOT.
+Pass `skill: "se-irr"` on every `graph_mutate` call of this skill, so the audit counts the move under this skill.
 
 ## 3. Record the review as a closed change request
 A review is a change to the model, and it is documented like one — one text, one node, edges to what it touched:

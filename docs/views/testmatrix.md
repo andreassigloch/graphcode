@@ -163,7 +163,7 @@
 | `REQ-risk-steering-delta-missing` | ✓ | ⚠ nie gelaufen | `TEST-steering-delta-in-answer` |
 | `REQ-risk-store-unreadable` | ✓ | ✓ passed | `TEST-store-recovery` |
 | `REQ-roundtrip-conformance` | ✓ | ✓ passed | `TEST-roundtrip` |
-| `REQ-rule-calibration` | ✓ | ✓ passed | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-rule-calibration` |
+| `REQ-rule-calibration` | ✓ | ✓ passed | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` |
 | `REQ-rule-enforcement` | ✓ | ✓ passed | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` |
 | `REQ-schema-version-migration` | ✓ | ✓ passed | `TEST-schema-migration` |
 | `REQ-selective-code-lane` | ✓ | ✓ passed | `TEST-selective-test-audit` |
@@ -220,8 +220,8 @@ Belegt: 166/204 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ z�
 
 | Verbindung | via FLOW | FCHAIN | deckende TEST(s) | level | Ergebnis |
 |---|---|---|---|---|---|
-| `FUNC-agent-loop` → `FUNC-audit-stats` | `FLOW-query-request-agent` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
-| `FUNC-agent-loop` → `FUNC-audit-trail` | `FLOW-query-request-agent` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
+| `FUNC-agent-loop` → `FUNC-audit-stats` | `FLOW-query-request-agent` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | integration, unit | passed |
+| `FUNC-agent-loop` → `FUNC-audit-trail` | `FLOW-query-request-agent` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | integration, unit | passed |
 | `FUNC-agent-loop` → `FUNC-author-actor` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-agent-loop` → `FUNC-author-req` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-agent-loop` → `FUNC-author-uc` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
@@ -253,7 +253,7 @@ Belegt: 166/204 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-agent-loop` → `FUNC-se-modulebene` | `FLOW-skill-request` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-agent-loop` → `FUNC-se-optimize` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-agent-loop` → `FUNC-se-plan` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
-| `FUNC-agent-loop` → `FUNC-se-retro` | `FLOW-skill-request` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
+| `FUNC-agent-loop` → `FUNC-se-retro` | `FLOW-skill-request` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | integration, unit | passed |
 | `FUNC-agent-loop` → `FUNC-se-review` | `FLOW-skill-request` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-agent-loop` → `FUNC-se-status` | `FLOW-skill-request` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-agent-loop` → `FUNC-se-top-level` | `FLOW-skill-request` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
@@ -266,8 +266,8 @@ Belegt: 166/204 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-agent-loop` → `FUNC-test-ui` | `FLOW-skill-request` | `FCHAIN-skill-help` | ⚠ keine Abdeckung |  |  |
 | `FUNC-apply-reseed` → `FUNC-seed-from-json` | `FLOW-reseeded-graph` | `FCHAIN-host-start` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FCHAIN-snapshot-roundtrip` | `TEST-deny-stale-read` · `TEST-export-graph-guard` · `TEST-graph-is-ssot` · `TEST-import-rejected-traces` · `TEST-path-containment` · `TEST-tool-list-change-announced` | integration, unit | passed |
 | `FUNC-arch-fitness` → `FUNC-fit-advisory` | `FLOW-arch-fitness` | `FCHAIN-apply-gate` · `FCHAIN-steering-loop` | `TEST-code-quality` · `TEST-constraint-ein-schreibweg` · `TEST-gve-supervision` · `TEST-loop-convergence-monitor` · `TEST-loop-round-log` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-measurement-vector-contract` · `TEST-monotone-convergence` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` · `TEST-single-measurement-path` · `TEST-stage-names-enumerated` · `TEST-steering-delta-in-answer` · `TEST-steering-promise-one-owner` | acceptance, e2e, integration, performance, unit | passed |
-| `FUNC-audit-stats` → `FUNC-agent-loop` | `FLOW-audit-report` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
-| `FUNC-audit-trail` → `FUNC-agent-loop` | `FLOW-audit-entries` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
+| `FUNC-audit-stats` → `FUNC-agent-loop` | `FLOW-audit-report` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | integration, unit | passed |
+| `FUNC-audit-trail` → `FUNC-agent-loop` | `FLOW-audit-entries` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | integration, unit | passed |
 | `FUNC-author-actor` → `FUNC-agent-loop` | `FLOW-anleitung-author-actor` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-author-req` → `FUNC-agent-loop` | `FLOW-anleitung-author-req` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-author-uc` → `FUNC-agent-loop` | `FLOW-anleitung-author-uc` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
@@ -471,7 +471,7 @@ Belegt: 166/204 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-se-modulebene` → `FUNC-agent-loop` | `FLOW-anleitung-se-modulebene` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-se-optimize` → `FUNC-agent-loop` | `FLOW-anleitung-se-optimize` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
 | `FUNC-se-plan` → `FUNC-agent-loop` | `FLOW-anleitung-se-plan` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
-| `FUNC-se-retro` → `FUNC-agent-loop` | `FLOW-anleitung-se-retro` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
+| `FUNC-se-retro` → `FUNC-agent-loop` | `FLOW-anleitung-se-retro` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | integration, unit | passed |
 | `FUNC-se-review` → `FUNC-agent-loop` | `FLOW-anleitung-se-review` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-se-status` → `FUNC-agent-loop` | `FLOW-anleitung-se-status` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |
 | `FUNC-se-top-level` → `FUNC-agent-loop` | `FLOW-anleitung-se-top-level` | `FCHAIN-skill-authoring` | `TEST-skill-moves-are-legal` |  |  |
@@ -518,8 +518,8 @@ Belegt: 166/204 REQ bestanden (81%) — eine Kante ist kein Nachweis; ein REQ z�
 | `FUNC-test-ingest` → `FUNC-verify-lane-code` | `FLOW-test-ingest-answer` | `FCHAIN-verify-lane` | `TEST-test-schlupf` | unit | passed |
 | `FUNC-test-ingest` → `FUNC-verify-lane-full` | `FLOW-test-ingest-answer` | `FCHAIN-verify-lane-full` | `TEST-test-schlupf` | unit | passed |
 | `FUNC-test-ui` → `FUNC-agent-loop` | `FLOW-anleitung-test-ui` | `FCHAIN-skill-help` | ⚠ keine Abdeckung |  |  |
-| `FUNC-tool-context` → `FUNC-audit-stats` | `FLOW-audit-record` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
-| `FUNC-tool-context` → `FUNC-audit-trail` | `FLOW-audit-record` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` | integration, unit | passed |
+| `FUNC-tool-context` → `FUNC-audit-stats` | `FLOW-audit-record` | `FCHAIN-loop-closure` · `FCHAIN-skill-report` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | integration, unit | passed |
+| `FUNC-tool-context` → `FUNC-audit-trail` | `FLOW-audit-record` | `FCHAIN-loop-closure` | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-audit-trail-projection` · `TEST-prompt-provenance` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` | integration, unit | passed |
 | `FUNC-tool-context` → `FUNC-bind-tools` | `FLOW-tool-context` | `FCHAIN-host-start` | `TEST-tool-list-change-announced` |  |  |
 | `FUNC-tool-context` → `FUNC-emit-trajectory` | `FLOW-trajectory-entry` | `FCHAIN-apply-gate` | `TEST-code-quality` · `TEST-constraint-ein-schreibweg` · `TEST-gve-supervision` · `TEST-mcp-stdio-server` · `TEST-mcp-symmetry` · `TEST-mvp-e2e` · `TEST-reduced-llm` · `TEST-responsiveness` | acceptance, e2e, integration, performance, unit | passed |
 | `FUNC-tool-context` → `FUNC-graph-readiness` | `FLOW-work-set` | `FCHAIN-skill-report` | ⚠ keine Abdeckung |  |  |

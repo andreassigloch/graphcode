@@ -1,6 +1,6 @@
 ---
 name: se:author-req
-version: 5
+version: 6
 description: Author a REQ together with its verifying TEST concept in one gated batch — the REQ-with-test invariant
 ---
 
@@ -36,6 +36,7 @@ For each new requirement, emit ONE `graph_mutate` batch as Format-E:
 + TEST-<slug> -verify-> REQ-<slug>
 + <FUNC or MOD> -satisfy-> REQ-<slug>
 ```
+Pass `skill: "se:author-req"` on every `graph_mutate` call of this skill, so the audit counts the move under this skill.
 
 Every REQ carries exactly ONE `@kinds` value, and that value decides who satisfies it:
 
