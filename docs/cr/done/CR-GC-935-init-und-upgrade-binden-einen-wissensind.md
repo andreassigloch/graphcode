@@ -46,7 +46,7 @@ Die Datei gehört nicht zu graphcode; graphcode kennt nur ihren Pfad.
 - [x] Hook mit zu großer und mit fehlender Datei: ein Satz, kein abgeschnittener Text.
 - [x] Probe an einer echten Sitzung von Claude Code (Hauptsitzung und Unteragent) und von OpenCode: Der Agent
       nennt ohne Werkzeugaufruf eine Zeile der Datei.
-- [ ] `npm run verify:full CR-GC-935` grün.
+- [x] `npm run verify:full CR-GC-935` grün.
 
 ---
 
