@@ -31,10 +31,10 @@ Nach dem Umbau der Messung (CR-GC-943 bis CR-GC-950) blieben vier Reste:
 
 ## Abnahme
 
-- [ ] Test „Nr 12: ohne das lokale Protokoll …" in `tests/messung.test.ts` rot gesehen, dann grün.
-- [ ] `tests/messung.test.ts` vergleicht S1 ohne Ausnahmeliste mit der Leitlinie §9.4.
-- [ ] `rules_get_violations` meldet R-10 nicht mehr.
-- [ ] `npm run verify:full CR-GC-951` grün.
+- [x] Test „Nr 12: ohne das lokale Protokoll …" in `tests/messung.test.ts` rot gesehen, dann grün.
+- [x] `tests/messung.test.ts` vergleicht S1 ohne Ausnahmeliste mit der Leitlinie §9.4.
+- [x] `rules_get_violations` meldet R-10 nicht mehr.
+- [x] `npm run verify:full CR-GC-951` grün.
 
 ---
 
