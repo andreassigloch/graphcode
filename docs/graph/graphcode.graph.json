@@ -4271,7 +4271,8 @@
       "id": "CR-GC-945",
       "type": "CR",
       "name": "Drei Skill-Wortlaute an FAQ und Regel angleichen",
-      "description": "docs/cr/open/CR-GC-945-drei-skill-wortlaute-an-faq-und-regel-an.md"
+      "description": "docs/cr/done/CR-GC-945-drei-skill-wortlaute-an-faq-und-regel-an.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-946",
@@ -33588,5 +33589,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1215
+  "graphVersion": 1216
 }
