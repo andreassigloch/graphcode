@@ -4236,8 +4236,8 @@
       "id": "CR-GC-940",
       "type": "CR",
       "name": "Skills zählen und rechnen nicht selbst",
-      "description": "docs/cr/open/CR-GC-940-skills-za-hlen-und-rechnen-nicht-selbst.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-940-skills-za-hlen-und-rechnen-nicht-selbst.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-941",
@@ -33273,5 +33273,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1178
+  "graphVersion": 1179
 }

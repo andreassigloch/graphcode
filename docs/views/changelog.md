@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 546 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 546 CR · 385 done · 7 open.
+Total: 546 CR · 386 done · 6 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -605,6 +605,6 @@ Total: 546 CR · 385 done · 7 open.
 | `CR-GC-937` | done | Config: metricPolicy und focusThreshold dürfen fehlen |
 | `CR-GC-938` | done | Skills: CR-Nummer, Status und Kanten über aise statt von Hand |
 | `CR-GC-939` | done | Skills an entschiedene Modellfragen angleichen |
-| `CR-GC-940` | open | Skills zählen und rechnen nicht selbst |
+| `CR-GC-940` | done | Skills zählen und rechnen nicht selbst |
 | `CR-GC-941` | open | Skill-Text zur Wiederherstellung geht am Gate vorbei |
 | `CR-GC-942` | open | Skilltexte aus der FAQ ergänzen, Abgeschafftes streichen |
