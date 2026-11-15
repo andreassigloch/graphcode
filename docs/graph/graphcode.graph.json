@@ -4292,7 +4292,8 @@
       "id": "CR-GC-948",
       "type": "CR",
       "name": "Messdokumente trennen: kennzahlen.md beschreibt zwoelf Groessen, stand.md traegt Wert und Verlauf je Release",
-      "description": "docs/cr/open/CR-GC-948-messdokumente-trennen-kennzahlen-md-besc.md"
+      "description": "docs/cr/done/CR-GC-948-messdokumente-trennen-kennzahlen-md-besc.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-949",
@@ -33611,5 +33612,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1223
+  "graphVersion": 1224
 }

@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 553 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 553 CR · 394 done · 4 open.
+Total: 553 CR · 395 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -613,5 +613,5 @@ Total: 553 CR · 394 done · 4 open.
 | `CR-GC-945` | done | Drei Skill-Wortlaute an FAQ und Regel angleichen |
 | `CR-GC-946` | done | Verlauf der Marken und Befunde je Stufe beim Host rechnen: graph_readiness liefert ihn, der Import aus dem Viewer entfaellt |
 | `CR-GC-947` | done | Zeile je CR erweitern: Schlupf ohne Link-Modus-Tests, Grenzmenge, Abgleich Modell und Code, Dauer Auswahl gegen Volllauf, Werkzeuglatenz |
-| `CR-GC-948` | n/a | Messdokumente trennen: kennzahlen.md beschreibt zwoelf Groessen, stand.md traegt Wert und Verlauf je Release |
+| `CR-GC-948` | done | Messdokumente trennen: kennzahlen.md beschreibt zwoelf Groessen, stand.md traegt Wert und Verlauf je Release |
 | `CR-GC-949` | done | Skills nennen den Parameter skill an graph_mutate |
