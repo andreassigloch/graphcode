@@ -365,7 +365,7 @@ Readiness trennt die Arme nicht.
 
 | Test | Frage | Aufbau | Kriterium |
 |---|---|---|---|
-| **T-E1** Graph statt Grep | Wo sucht der Agent im Dateisystem, obwohl der Graph die Antwort hätte? | `scripts/retro-kpi.mjs` je CR: Graph-Leseaufrufe gegen Suchoperationen | jede Suche, die der Graph beantwortet hätte, ist als Potenzial ausgewiesen |
+| **T-E1** Graph statt Grep | Nutzt der Agent den Graphen, wo der Graph die Antwort hat? | S1: `scripts/cr-messung.mjs` je Commit, Anteil der CRs mit Löschung, die `graph_impact` riefen. Je CR auf Abruf: `scripts/retro-kpi.mjs`, Graph-Leseaufrufe gegen Suchoperationen | ohne Schwelle: der Anteil ist ausgewiesen, und jede Suche, die der Graph beantwortet hätte, ist als Potenzial ausgewiesen |
 | **T-E2** Whitebox-Kontext | Enthält die Whitebox, was sich tatsächlich ändert? | `scripts/whitebox-messung.mjs`, Ground Truth aus dem git-Diff | 100 % der geänderten Knoten in W bei \|W\|/\|G\| ≤ 0,05 |
 | **T-E3** Lokal ≈ Frontier (Modell) | Nivelliert der Graph den Modellunterschied beim interaktiven Modellieren? | Rig in graphanalyze: Nutzer-Simulator, Arme `lokal` (qwen3.8, OpenCode) und `frontier` (Opus, Claude Code), Stufe `modellieren` | in dieser Rangfolge: **1.** jeder lokale Lauf erreicht das Ziel der Stufe · **2.** das Blindurteil trennt die Arme nicht · **3.** Zeit bis zum Ziel als Faktor lokal zu Frontier; Faktor 2 gilt als sehr gut, keine Bestehensschwelle |
 | **T-E4** Lokal ≈ Frontier (Code) | Dasselbe bis zum Code? | Rig in graphanalyze, Stufe `bauen`, beide Arme | Rangfolge wie T-E3; Ziel der Stufe ist die Marke Bau |
