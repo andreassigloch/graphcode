@@ -1549,6 +1549,7 @@
 | `CR-GC-951` | relation | `FUNC-graph-readiness` |
 | `CR-GC-951` | relation | `FUNC-stand-verlauf` |
 | `CR-GC-951` | relation | `MOD-dev-scripts` |
+| `CR-GC-952` | relation | `SCHEMA-skill-text` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

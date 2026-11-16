@@ -1,6 +1,6 @@
 ---
 name: se-plan
-version: 14
+version: 15
 description: Generate the implementation/integration plan — order the build along the model's integration tree (leaves up), make the test concept complete BEFORE cutting, cut CRs (≤10 files) whose content is the graph_context slice, enforce an io-integration test per CR, and write MS/CR/relation through the gate
 ---
 
@@ -28,12 +28,12 @@ Render `graph_export({ views: ["testconcept"] })` and read every row. Each level
 | SCHEMA | a contract TEST `verify`→SCHEMA | write it |
 | leaf FUNC | every satisfied REQ has a `verify`-TEST | write it (se:author-req) |
 | FCHAIN | its **own run REQ** (`FCHAIN -satisfy-> REQ-kette-<x>-durchlauf`) + TEST: every flow arrives, every answer returns, every contract holds. FMEA risk REQs do **not** replace it | write it |
-| FUNC↔FUNC | both ends share a tested FCHAIN (the view's *Integration* row) | add the missing member via `compose` when the chain text already names it; if FC-06 forbids it, keep the accepted R-21 finding and name the pair in the output |
+| FUNC↔FUNC | both ends share a tested FCHAIN (the view's *Integration* row) | add the missing member via `compose` when the chain text already names it; if FC-06 forbids it, the R-21 finding stays open (no `acceptedFindings`; architecture rules are not acceptable) and you name the pair in the output as open work. It closes only by a model move or by code — the code that carries the handover or its test may be missing |
 | MOD | a REQ + TEST at the module | write it |
 | SYS | every system REQ verified | write it |
 | UC | **system test per use case**: `REQ-systemtest-<uc>` composed by the UC, carried by SYS, under one parent `REQ-systemtest-je-anwendungsfall`; its TEST walks the UC step by step as a user with a real role account and test data without customer data | write it |
 
-Gate facts: `TEST -verify-> UC` is illegal (R-18) — verify the per-UC REQ. The parent REQ needs a `verify` too (R-01) — let every per-UC TEST verify both. Re-render the view; only an all-✓ table (or named accepted findings) lets you cut.
+Gate facts: `TEST -verify-> UC` is illegal (R-18) — verify the per-UC REQ. The parent REQ needs a `verify` too (R-01) — let every per-UC TEST verify both. Re-render the view; only an all-✓ table lets you cut; a pair FC-06 forbids stays ✗ and is named as open work.
 
 ## 4. Derive the order — the integration tree, leaves up
 One milestone per integration level, a linear `depends-on` chain (`MS-n -relation-> MS-n-1 [label:depends-on]`):
