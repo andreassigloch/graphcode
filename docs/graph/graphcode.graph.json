@@ -4327,8 +4327,8 @@
       "id": "CR-GC-953",
       "type": "CR",
       "name": "contracts 12.14.0 übernehmen: R-26 Stufe 8",
-      "description": "docs/cr/open/CR-GC-953-contracts-12-14-0-u-bernehmen-r-26-stufe.md",
-      "status": "open"
+      "description": "docs/cr/done/CR-GC-953-contracts-12-14-0-u-bernehmen-r-26-stufe.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -33675,5 +33675,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1241
+  "graphVersion": 1242
 }
