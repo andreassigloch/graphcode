@@ -1,6 +1,6 @@
 # CR-GC-919: Ebenensprung — Anforderung wird ohne Zerlegung tief erfuellt
 
-**Status:** 🟠 Open — startet nach CR-GC-918
+**Status:** 🟠 Open — Messung erledigt, Korrektur offen
 **Typ:** aus Item ITEM-2026-1321 (finding)
 **Erstellt:** 2026-11-12
 **Item:** bok/items/ITEM-2026-1321.json (Lane: code)
@@ -44,7 +44,7 @@ Erfueller auf der Systemebene: SYS, FCHAIN, MOD der obersten Ebene, Blatt-FUNC d
 
 ## Akzeptanz
 
-- [ ] Liste der Spruenge am Modell nach CR-GC-918, mit Zahl.
+- [x] Liste der Spruenge am Modell nach CR-GC-918, mit Zahl (39, Abschnitt Messung).
 - [ ] Jeder Sprung zerlegt oder verschoben; verbleibende mit Grund gelistet.
 - [ ] Keine neue Fehlermeldung, R-01 = 0, keine REQ mit mehr als einem Erfueller.
 - [ ] Messung an CR-SM-436 uebergeben.
@@ -53,3 +53,75 @@ Erfueller auf der Systemebene: SYS, FCHAIN, MOD der obersten Ebene, Blatt-FUNC d
 ## Umfang
 
 `docs/graph/graphcode.graph.json` und die erzeugten Sichten unter `docs/views/`. Kein Quellcode.
+
+---
+
+## Messung (Schritt 1, 2026-11-17)
+
+**Definition, wie gezaehlt:** Eine REQ ist ein Sprung, wenn (a) ein SYS oder UC sie per `compose` enthaelt,
+(b) sie keine Kind-REQ hat (`REQ -compose-> REQ`) und (c) mindestens ein Erfueller (`satisfy`) tief liegt: eine
+FUNC, die eine andere FUNC enthaelt (`FUNC -compose-> FUNC`), oder ein MOD, das ein anderes MOD enthaelt.
+Zulaessig sind SYS, FCHAIN, MOD der obersten Ebene und FUNC ohne Eltern-FUNC.
+
+**Eichung:** Am Spike-Stand 7e46c55b ergibt diese Zaehlung 57, gleich der Zahl im Spike.
+
+| Modellstand | Spruenge | davon eindeutig | davon nicht eindeutig |
+|---|---|---|---|
+| 7e46c55b (Spike, vor CR-GC-918) | 57 | 30 | 27 |
+| 11279a84 (master vor CR-GC-918) | 59 | 32 | 27 |
+| a9674276 (master nach CR-GC-918) | 39 | 36 | 3 |
+
+**Nicht eindeutig als Pruefregel (fuer CR-SM-436):**
+
+- **Mehrere Erfueller** (vor CR-GC-918: 27 Faelle): Welcher Erfueller zaehlt? Seit RD-06 = 0 gibt es diesen
+  Fall nicht mehr. Eine Regel RD-07 kann RD-06 voraussetzen.
+- **Unter SYS/UC und zugleich unter einer REQ** (3 Faelle): Ist die REQ Systemanforderung oder schon Kind einer
+  anderen? Die Regel muss festlegen, ob ein Eltern-REQ den Sprung aufhebt.
+- **Unter zwei Elementen der obersten Ebene** (2 der 36, `REQ-post-harness-cli` unter SYS und UC,
+  `REQ-model-exchange-pre` unter zwei UC): entscheidbar, aber die Regel muss mehrere Eltern zulassen.
+- **Tiefes MOD** (2 Faelle an `MOD-kernel-measure`, Kind von `MOD-kernel`): Zaehlt ein Unter-MOD als
+  unterhalb der obersten Ebene? Diese Zaehlung sagt ja.
+
+**Die 39 Faelle auf master (a9674276):**
+
+| REQ | unter | Erfueller | nicht eindeutig |
+|---|---|---|---|
+| `REQ-rule-calibration` | UC-loop-closure | `FUNC-audit-stats` | – |
+| `REQ-mcp-tool-registry` | SYS-graphcode | `FUNC-bind-tools` | – |
+| `REQ-tool-input-parsed-once` | SYS-graphcode | `FUNC-bind-tools` | – |
+| `REQ-chain-metrics` | UC-live-graph-view | `FUNC-chain-metrics` | – |
+| `REQ-readiness-model` | SYS-graphcode | `FUNC-compute-readiness` | – |
+| `REQ-impact-based-testing` | UC-efficient-testing | `FUNC-deduce-tests` | – |
+| `REQ-post-emit-update-event` | UC-live-graph-view | `FUNC-emit-update-event` | – |
+| `REQ-near-duplicate-detection` | UC-deterministic-steering | `FUNC-evaluate-rules` | – |
+| `REQ-doc-export` | SYS-graphcode | `FUNC-export-markdown` | – |
+| `REQ-post-export-markdown` | SYS-graphcode | `FUNC-export-markdown` | – |
+| `REQ-srs-29148` | UC-model-exchange | `FUNC-export-markdown` | – |
+| `REQ-done-iff-no-focus` | UC-deterministic-steering | `FUNC-generation-step` | – |
+| `REQ-metrics-constraint-carriers` | UC-live-graph-view | `FUNC-graph-metrics` | – |
+| `REQ-metrics-risk-scope` | UC-live-graph-view | `FUNC-graph-metrics` | – |
+| `REQ-steering-pre` | UC-deterministic-steering | `FUNC-graph-store` | – |
+| `REQ-applied-suggestion-moves-target` | UC-deterministic-steering | `FUNC-graph-suggest` | – |
+| `REQ-target-shifts-ranking` | UC-deterministic-steering | `FUNC-graph-suggest` | – |
+| `REQ-post-harness-cli` | SYS-graphcode+UC-repo-lifecycle | `FUNC-harness-cli` | – |
+| `REQ-repo-uninstall` | SYS-graphcode | `FUNC-harness-cli` | – |
+| `REQ-skill-import-code-nennt-verb` | UC-model-exchange | `FUNC-import-code` | – |
+| `REQ-model-exchange-pre` | UC-consolidate-requirements+UC-model-exchange | `FUNC-import-code-verb` | – |
+| `REQ-mutate-befund-je-element` | UC-model-exchange | `FUNC-import-doc` | – |
+| `REQ-thresholds-from-config` | UC-deterministic-steering | `FUNC-load-config` | – |
+| `REQ-conflict-free-merge` | UC-graph-time-travel | `FUNC-merge-nodes` | – |
+| `REQ-post-merge-nodes` | UC-graph-time-travel | `FUNC-merge-nodes` | – |
+| `REQ-selective-code-lane` | UC-efficient-testing | `FUNC-plan-code-lane` | – |
+| `REQ-render-document` | UC-model-exchange | `FUNC-render-verb` | – |
+| `REQ-completeness-actor-bounded` | UC-live-graph-view | `FUNC-score-completeness` | – |
+| `REQ-readiness-completeness` | UC-live-graph-view | `FUNC-score-completeness` | – |
+| `REQ-post-impact-testing` | UC-efficient-testing | `FUNC-select-tests` | – |
+| `REQ-session-leaves-nothing-behind` | UC-repo-lifecycle | `FUNC-session-shutdown` | – |
+| `REQ-steering-post` | UC-deterministic-steering | `FUNC-take-steering-snapshot` | – |
+| `REQ-model-lane-fixed-set` | UC-efficient-testing | `FUNC-verify-lane-model` | – |
+| `REQ-recommend-next-step` | SYS-graphcode | `FUNC-vorschlag` | – |
+| `REQ-bericht-ist-kein-urteil` | UC-deterministic-steering | `FUNC-zug-bericht` | – |
+| `REQ-readiness-transparent` | UC-live-graph-view | `MOD-kernel-measure` | – |
+| `REQ-store-recovery` | SYS-graphcode | `FUNC-open-store` | auch unter REQ |
+| `REQ-single-measurement-path` | UC-deterministic-steering | `FUNC-take-steering-snapshot` | auch unter REQ |
+| `REQ-dashboard-ontology-sync` | UC-live-graph-view | `MOD-kernel-measure` | auch unter REQ |
