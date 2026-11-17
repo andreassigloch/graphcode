@@ -1,6 +1,6 @@
 # CR-GC-953: contracts 12.14.0 übernehmen: R-26 Stufe 8 (CR-SM-437), RD-06 (CR-SM-435), FC-04 answer (CR-SM-438) — 15 rote Tests in 8 Dateien, Regelmatrix und Hilfetext
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-17)
 **Typ:** aus Item ITEM-2026-1421 (finding)
 **Erstellt:** 2026-11-17
 **Item:** bok/items/ITEM-2026-1421.json (Lane: code)
