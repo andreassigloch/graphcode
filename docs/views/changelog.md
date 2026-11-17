@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 557 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 558 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 557 CR · 399 done · 4 open.
+Total: 558 CR · 399 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -619,3 +619,4 @@ Total: 557 CR · 399 done · 4 open.
 | `CR-GC-951` | done | Reste des Messumbaus schliessen: messung ohne lokales Protokoll, Codebeleg an FLOW-graph-state, Verbraucher von FLOW-verlauf-report, Leitlinie Abschnitt 9 |
 | `CR-GC-952` | done | se-plan: R-21-Befund bleibt offen, nicht abgenommen |
 | `CR-GC-953` | done | contracts 12.14.0 übernehmen: R-26 Stufe 8 |
+| `CR-GC-954` | n/a | CR-GC-918 Rest: eigene REQ fuer 29 FUNCs (R-02), Kind-REQ am Testcode pruefen, Nebenbefunde |

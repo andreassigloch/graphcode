@@ -183,14 +183,19 @@ export function blackboxBindung(graph: Graph): BlackboxBindung {
 }
 
 /** Was ein vitest-Lauf über sich sagt: Exit, Signal und der Text des JSON-Berichts (`undefined` = nicht geschrieben). */
-export interface VitestLauf {
-  status: number | null;
-  signal: string | null;
-  bericht: string | undefined;
-}
+export const VitestLaufSchema = z.object({
+  status: z.number().nullable(),
+  signal: z.string().nullable(),
+  bericht: z.string().optional(),
+});
+export type VitestLauf = z.infer<typeof VitestLaufSchema>;
 
 /** Ein Beleg nennt die roten Dateien; kein Beleg nennt den Grund. Grün ist nur ein Beleg ohne rote Datei. */
-export type LaufUrteil = { beleg: true; rot: string[]; gesamt: number } | { beleg: false; grund: string };
+export const LaufUrteilSchema = z.discriminatedUnion('beleg', [
+  z.object({ beleg: z.literal(true), rot: z.array(z.string()), gesamt: z.number() }),
+  z.object({ beleg: z.literal(false), grund: z.string() }),
+]);
+export type LaufUrteil = z.infer<typeof LaufUrteilSchema>;
 
 const VitestBerichtSchema = z.object({
   testResults: z.array(z.object({ name: z.string(), status: z.string() })),
@@ -203,7 +208,8 @@ const VitestBerichtSchema = z.object({
  * am 2026-10-25 im Ruhezustand mit exit 0) und ein Fehler außerhalb eines Tests (Unhandled Error:
  * exit 1, im Bericht ist jede Datei `passed`).
  */
-export function laufUrteil(lauf: VitestLauf, relativ: (abs: string) => string): LaufUrteil {
+export function laufUrteil(eingang: VitestLauf, relativ: (abs: string) => string): LaufUrteil {
+  const lauf = VitestLaufSchema.parse(eingang);
   const exit = `exit ${lauf.status ?? '-'}${lauf.signal ? `, Signal ${lauf.signal}` : ''}`;
   if (lauf.bericht === undefined) {
     return { beleg: false, grund: `vitest endete ohne Bericht (${exit}) — der Lauf ist unvollstaendig.` };

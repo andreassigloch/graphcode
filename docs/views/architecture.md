@@ -10,6 +10,7 @@
 
 | uid | type | name |
 |---|---|---|
+| `FUNC-aenderung-melden` | FUNC | Aenderung melden |
 | `FUNC-agent-loop` | FUNC | Agent-Ablaufsteuerung |
 | `FUNC-apply-reseed` | FUNC | applyReseed |
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
@@ -86,6 +87,7 @@
 | `FUNC-import-code-verb` | FUNC | executeImportCode |
 | `FUNC-import-doc` | FUNC | Skill se:import-doc |
 | `FUNC-init-verb` | FUNC | executeInit(opts) |
+| `FUNC-lauf-urteil` | FUNC | Lauf beurteilen |
 | `FUNC-list-elements` | FUNC | listElements(filter) |
 | `FUNC-load-config` | FUNC | loadGraphcodeConfig |
 | `FUNC-measure-test-schlupf` | FUNC | Testauswahl-Schlupf messen |
@@ -151,6 +153,7 @@
 
 | function | module |
 |---|---|
+| `FUNC-aenderung-melden` | `MOD-dev-scripts` |
 | `FUNC-agent-loop` | `MOD-agent-surface` |
 | `FUNC-apply-reseed` | `MOD-kernel` |
 | `FUNC-arch-fitness` | `MOD-kernel-measure` |
@@ -227,6 +230,7 @@
 | `FUNC-import-code-verb` | `MOD-surface` |
 | `FUNC-import-doc` | `MOD-agent-surface` |
 | `FUNC-init-verb` | `MOD-surface` |
+| `FUNC-lauf-urteil` | `MOD-projections` |
 | `FUNC-list-elements` | `MOD-kernel` |
 | `FUNC-load-config` | `MOD-kernel` |
 | `FUNC-measure-test-schlupf` | `MOD-projections` |

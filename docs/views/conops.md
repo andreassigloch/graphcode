@@ -4,7 +4,7 @@
 
 # graphcode — Concept of Operations
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 3 ACTOR, 9 UC, 25 operationale REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). OpsCon nach ISO/IEC/IEEE 29148 §5.2.4, projiziert aus dem Graphen: 3 ACTOR, 9 UC, 27 operationale REQ. Deterministisch generiert.
 
 ## 1  System overview
 
@@ -20,7 +20,8 @@
 | `REQ-buildable-standalone` | CR-GC-100 Task 0 / SPEC §8 D5 (Blocker): workspace:*-Deps auflösen (versionierte/file-Deps), npm install + tsc --noEmit grün — vor jedem Code. | done |
 | `REQ-disk-persistence` | Persistenz auf Disk (.graphcode/kuzu/), kein :memory:. (SPEC §4) | open |
 | `REQ-frame-binding` | Die in diesem Graph definierte Struktur und ihre Schnittstellen (FUNC/FCHAIN/FLOW/REQ auf SE-Ontologie und TRACE_PATTERNS) sind bindend fuer die Realisierung. Ergaenzungen passen in die bestehenden Boxen und laufen durchs Gate; ein neuer Element- oder Kantentyp, ein neues geteiltes Paket, ein neuer Top-Level-UC oder -MOD braucht Familien-Review. (Beschluss 2026-06-16, Zahlen entfernt 2026-09-15) | open |
-| `REQ-graceful-degradation` | CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call. | open |
+| `REQ-gate-only-writes` | Das System nimmt eine Aenderung der Graph-SSOT nur ueber graph_mutate an; ein direkter Schreibzugriff auf docs/graph/*.graph.json oder auf den Store wird abgewiesen. | open |
+| `REQ-graceful-degradation` | Solange der LLM-Sidecar nicht erreichbar ist, beurteilt das Gate jeden Batch vollstaendig und ohne Modellaufruf. | open |
 | `REQ-graph-is-ssot` | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) | done |
 | `REQ-harness-schema-in-contracts` | CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen. | open |
 | `REQ-hook-extension-points` | CR-GC-102: registerHook(type, handler) + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; Storage .graphcode/hooks/. | open |
@@ -29,6 +30,7 @@
 | `REQ-install-idempotent` | Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert. | open |
 | `REQ-interface-schema` | Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell) | open |
 | `REQ-no-extraction` | Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS) | open |
+| `REQ-npx-distribution` | graphcode wird als npm-Paket ausgeliefert, dessen bin die Verben init, update und remove ueber npx ausfuehrt. | done |
 | `REQ-precommit-timeout` | CR-GC-102: pre-commit-Hook kann eine Mutation blocken; preCommitTimeout (default 5000ms). | open |
 | `REQ-readonly-bridge` | Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS) | done |
 | `REQ-responsiveness` | Bindende NFR (Familie §6b): erste Reaktion < 0,2s (UI+Transport+Store-Query+Onto-/Rule-Check, ohne LLM). Draft-Apply sofort + nur betroffener Subgraph geprüft; volle Konsistenz am Commit. End-to-end über FCHAIN-apply-gate. | open |
@@ -89,8 +91,8 @@ Empfaenger: `ACTOR-auftraggeber`
 - `FCHAIN-impact-testing` — Tests zu einer Aenderung waehlen: `FUNC-agent-loop` → `FUNC-deduce-tests` → `FUNC-graph-store` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests`
 - `FCHAIN-model-lane` — Modell-Spur fahren (npm): `FUNC-eingaenge-nur-aus` → `FUNC-verify-lane-model`
 - `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context`
-- `FCHAIN-verify-lane` — Code-Test-Spur fahren (npm): `FUNC-graph-store` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context` → `FUNC-verify-lane-code`
-- `FCHAIN-verify-lane-full` — Volle Test-Spur fahren (npm): `FUNC-graph-store` → `FUNC-measure-test-schlupf` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context` → `FUNC-verify-lane-full`
+- `FCHAIN-verify-lane` — Code-Test-Spur fahren (npm): `FUNC-aenderung-melden` → `FUNC-graph-store` → `FUNC-lauf-urteil` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context` → `FUNC-verify-lane-code`
+- `FCHAIN-verify-lane-full` — Volle Test-Spur fahren (npm): `FUNC-aenderung-melden` → `FUNC-graph-store` → `FUNC-lauf-urteil` → `FUNC-measure-test-schlupf` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context` → `FUNC-verify-lane-full`
 
 ### `UC-graph-time-travel` — Graph-Stand pro Commit wiederherstellbar
 
@@ -126,7 +128,7 @@ Empfaenger: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine`
 - `FCHAIN-model-import` — Bestehenden Bestand einlesen: `FUNC-bind-tools` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-decode` → `FUNC-graph-export-snapshot` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import` → `FUNC-import-code-verb` → `FUNC-mutate` → `FUNC-open-store` → `FUNC-seed-from-json`
 - `FCHAIN-skill-authoring` — Skill legt Modellknoten an: `FUNC-agent-loop` → `FUNC-author-actor` → `FUNC-author-req` → `FUNC-author-uc` → `FUNC-chain-metrics` → `FUNC-close-violations` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-graph-metrics` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-import-doc` → `FUNC-mutate` → `FUNC-read-tools` → `FUNC-rules-tool` → `FUNC-se-conops` → `FUNC-se-constraints` → `FUNC-se-fmea` → `FUNC-se-generate` → `FUNC-se-irr` → `FUNC-se-laufzeit` → `FUNC-se-optimize` → `FUNC-se-plan` → `FUNC-se-top-level` → `FUNC-se-trade` → `FUNC-se-umbau` → `FUNC-se-vorbereitung`
 - `FCHAIN-test-ingest` — Testergebnis zurueckschreiben: `FUNC-agent-loop` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context`
-- `FCHAIN-verify-lane` — Code-Test-Spur fahren (npm): `FUNC-graph-store` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context` → `FUNC-verify-lane-code`
+- `FCHAIN-verify-lane` — Code-Test-Spur fahren (npm): `FUNC-aenderung-melden` → `FUNC-graph-store` → `FUNC-lauf-urteil` → `FUNC-mutate` → `FUNC-plan-code-lane` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests` → `FUNC-test-ingest` → `FUNC-tool-context` → `FUNC-verify-lane-code`
 
 ### `UC-live-graph-view` — Modellstand live mitlesen
 

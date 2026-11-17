@@ -526,11 +526,14 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // graph_readiness bekam (ein Vertrag mehr an der Grenze von Abfrage und Grounding, Steuerwert am Start
       // 8,252 -> 8,502): vier Zuege statt drei. Abfrage und Grounding nehmen Bedienung auf, Betrieb nimmt
       // graph_readiness und audit_stats auf. Weiter derselbe Befund (ITEM-2026-798).
+      // CR-GC-918 (graphVersion 1247) — NEU GEMESSEN, nachdem jede Anforderung genau einen Erfueller bekam und die
+      // Spuren verify:code/verify:full ihre gemeinsamen Funktionen Lauf beurteilen und Aenderung melden mit vier
+      // Fluessen bekamen (Steuerwert am Start unveraendert 8,502): drei Zuege statt vier. Betrieb nimmt audit_stats
+      // nicht mehr auf. Weiter derselbe Befund (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
         'FUNC-block-betrieb -compose-> FUNC-graph-readiness (retire FUNC-graph-readiness)',
         'FUNC-block-grounding -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
-        'FUNC-block-betrieb -compose-> FUNC-audit-stats (retire FUNC-audit-stats)',
       ]);
       expect(
         rest
@@ -578,9 +581,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-896 (graphVersion 1022) — NEU GEMESSEN: Abfrage nimmt Bedienung auf und traegt deren Vertraege;
       // nach den drei Zuegen steht BW-02 @ FUNC-block-abfrage vorn, wie nach CR-GC-851.
       // CR-GC-951 (graphVersion 1231) — NEU GEMESSEN: nach den vier Zuegen steht BW-02 @ FUNC-block-grounding vorn.
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
-        ruleId: 'BW-02',
-        elementId: 'FUNC-block-grounding',
+      // CR-GC-918 (graphVersion 1247) — NEU GEMESSEN: nach den drei Zuegen steht R-04 @ MOD-projections vorn. Die
+      // Spuren in MOD-dev-scripts rufen laufUrteil aus MOD-projections; die Vertraege SCHEMA-vitest-lauf und
+      // SCHEMA-lauf-urteil kamen an die Grenze von projections (27 -> 29).
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-projections — bitte neu messen').toEqual({
+        ruleId: 'R-04',
+        elementId: 'MOD-projections',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

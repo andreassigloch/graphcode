@@ -4,26 +4,26 @@
 
 # graphcode — FMEA (functional risk)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk. 19 Risiken, 8 mit hoher Priorität, 9 verifiziert, 2 Gegenmaßnahmen ohne Funktion. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Render-Form von REQ role=risk. 19 Risiken, 8 mit hoher Priorität, 9 verifiziert, 6 Gegenmaßnahmen ohne Funktion. Deterministisch generiert.
 
 ## Übersicht (nach Priorität)
 
 | # | Risiko | Kette | S | O | D | RPN | AP | Träger | verifiziert |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | Risiko veraltetes Testergebnis | `FCHAIN-test-ingest` | 8 | 5 | 7 | 280 | High | `FUNC-plan-code-lane` · `FUNC-test-ingest` · `FUNC-verify-lane-code` | ✓ |
+| 1 | Risiko veraltetes Testergebnis | `FCHAIN-test-ingest` | 8 | 5 | 7 | 280 | High | `FUNC-test-ingest` | ✓ |
 | 2 | Risiko falscher Befund laeuft um | `FCHAIN-steering-loop` | 8 | 3 | 7 | 168 | High | — | ✗ |
 | 3 | Risiko Schnittstellenaenderung ohne Eskalation | — | 7 | 4 | 5 | 140 | High | — | ✗ |
 | 4 | Risiko Vertrag des Messvektors ungebunden | `FCHAIN-steering-loop` | 6 | 3 | 7 | 126 | High | `FUNC-take-steering-snapshot` | ✗ |
 | 5 | Risiko Glied rechnet auf altem Stand | `FCHAIN-steering-loop` | 7 | 3 | 6 | 126 | High | `FUNC-take-steering-snapshot` | ✓ |
 | 6 | Risiko Schleife pendelt | `FCHAIN-steering-loop` | 6 | 4 | 5 | 120 | High | `FUNC-generation-step` | ✗ |
 | 7 | Risiko geteilte Zusage ohne Traeger | `FCHAIN-steering-loop` | 6 | 3 | 6 | 108 | High | `FUNC-generation-step` | ✗ |
-| 8 | Risiko Store nicht lesbar | — | 9 | 3 | 3 | 81 | High | `FUNC-graph-store` · `FUNC-open-store` | ✓ |
-| 9 | Risiko Auswertung ohne Verantwortlichen | `FCHAIN-loop-closure` | 5 | 3 | 6 | 90 | Medium | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-tool-context` | ✓ |
+| 8 | Risiko Store nicht lesbar | — | 9 | 3 | 3 | 81 | High | `FUNC-open-store` | ✓ |
+| 9 | Risiko Auswertung ohne Verantwortlichen | `FCHAIN-loop-closure` | 5 | 3 | 6 | 90 | Medium | — | ✓ |
 | 10 | Risiko Stufenname ohne Wertebereich | `FCHAIN-steering-loop` | 5 | 3 | 6 | 90 | Medium | `FUNC-take-steering-snapshot` | ✗ |
 | 11 | Risiko Delta fehlt in der Antwort | `FCHAIN-steering-loop` | 5 | 3 | 5 | 75 | Medium | `FUNC-compute-steering-delta` | ✗ |
 | 12 | Risiko Werkzeugliste vom Sitzungsstart | `FCHAIN-host-start` | 4 | 3 | 6 | 72 | Medium | — | ✗ |
-| 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` | 7 | 3 | 3 | 63 | Medium | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` | ✓ |
-| 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | `FUNC-export-marker` · `FUNC-export-marker-clear` | ✓ |
+| 13 | Risiko Auswahl laesst roten Test aus | `FCHAIN-verify-lane` | 7 | 3 | 3 | 63 | Medium | — | ✓ |
+| 14 | Risiko Export scheitert still | `FCHAIN-snapshot-freshness` | 4 | 3 | 4 | 48 | Medium | — | ✓ |
 | 15 | Risiko Kante verschwindet still | `FCHAIN-recall` | 7 | 2 | 3 | 42 | Medium | `FUNC-held-back-traces` | ✓ |
 | 16 | Risiko Besitzer endet bei angedockten Sitzungen | `FCHAIN-session-end` | 7 | 2 | 3 | 42 | Medium | `FUNC-host-socket` | ✓ |
 | 17 | Risiko halb gefuellter Store nach Abbruch | `FCHAIN-recall` | 6 | 2 | 3 | 36 | Low | `FUNC-graph-export-snapshot` | ✓ |
@@ -37,13 +37,13 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 - **Bewertung:** S 8 · O 5 · D 7 · RPN 280 · AP High
 - **Kette:** `FCHAIN-test-ingest`
 - **Anwendungsfall:** `UC-efficient-testing`
-- **Träger:** `FUNC-plan-code-lane` · `FUNC-test-ingest` · `FUNC-verify-lane-code`
+- **Träger:** `FUNC-test-ingest`
 - **Befund:** FMEA CR-GC-798 FM-11, Kreislauf aus FUNC-graph-store, FUNC-mutate und FUNC-test-ingest. Das Ergebnis traegt ranAt, kein Leser wertet es aus (src/projections/testreport.ts:119; kein Leser in contracts/se). FM-03 und VR-01 lesen nur result.
 - **Analyse:** `CR-GC-798` (docs/cr/done/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md) · `CR-GC-799` (docs/cr/done/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md) · `CR-GC-800` (docs/cr/done/CR-GC-800-spur-code-und-volllauf-melden-aenderung-.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-lane-reports-change` | Die Spur CODE und der Volllauf melden nach jedem Lauf die Knoten der geaenderten Dateien und den Bericht des Laufs an graph_test_ingest. Die Knoten kommen aus derselben Abbildung von Datei auf Knoten wie die Testauswahl. Scheitert die Meldung, endet der Lauf rot. Der Planmodus meldet nichts. | `FUNC-plan-code-lane` · `FUNC-verify-lane-code` |
+| `REQ-lane-reports-change` | Die Spur CODE und der Volllauf melden nach jedem Lauf die Knoten der geaenderten Dateien und den Bericht des Laufs an graph_test_ingest. Die Knoten kommen aus derselben Abbildung von Datei auf Knoten wie die Testauswahl. Scheitert die Meldung, endet der Lauf rot. Der Planmodus meldet nichts. | **Funktion fehlt** |
 | `REQ-test-result-withdrawn-on-change` | Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das Ergebnis an seinen testRefs zurueck; der Eintrag gilt bis zur naechsten Rueckmeldung eines Laufs als nicht bestanden. Die betroffenen Tests sind die Menge, die die Testauswahl fuer dieselbe Aenderung liefert. | `FUNC-test-ingest` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
@@ -172,13 +172,13 @@ Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette 
 - **Bewertung:** S 9 · O 3 · D 3 · RPN 81 · AP High
 - **Kette:** — · außerdem an `MOD-kernel`
 - **Anwendungsfall:** —
-- **Träger:** `FUNC-graph-store` · `FUNC-open-store`
+- **Träger:** `FUNC-open-store`
 - **Befund:** FMEA CR-GC-779 Quelle F geteilte Funktion FUNC-graph-store in acht Wirkketten. Je Kette eine Fehlerwirkung und die Schwere ist die der schwersten.
 - **Analyse:** `CR-GC-779` (FMEA der Kenngroessen-Steuerungsschleife) · `CR-GC-795` (docs/cr/done/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md) · `CR-GC-796` (docs/cr/open/CR-GC-796-store-beschaedigte-datei-wird-beim-oeffn.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-store-recovery` | Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery) | `FUNC-graph-store` · `FUNC-open-store` |
+| `REQ-store-recovery` | Beim Oeffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurueck und setzt einen unlesbaren oder schemafremden Store aus dem committeten Snapshot neu auf; es entsteht kein zweites DB-Handle. | `FUNC-open-store` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -191,13 +191,13 @@ Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen we
 - **Bewertung:** S 5 · O 3 · D 6 · RPN 90 · AP Medium
 - **Kette:** `FCHAIN-loop-closure`
 - **Anwendungsfall:** `UC-loop-closure`
-- **Träger:** `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-tool-context`
+- **Träger:** —
 - **Befund:** FMEA CR-GC-798 FM-15, Step 3. REQ-audit-trail hing an FUNC-graph-impact, die beiden Auswertungsfunktionen erfuellten keine Anforderung. Entscheidung: Zuordnung in CR-GC-797 gerichtet; gedeckt durch REQ-audit-trail.
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-audit-trail` | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-tool-context` |
+| `REQ-audit-trail` | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. | **Funktion fehlt** |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -265,15 +265,15 @@ Der Client arbeitet mit der Werkzeugliste vom Sitzungsstart. Eine neue Eingabe e
 Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
 
 - **Bewertung:** S 7 · O 3 · D 3 · RPN 63 · AP Medium
-- **Kette:** `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full`
+- **Kette:** `FCHAIN-verify-lane`
 - **Anwendungsfall:** `UC-efficient-testing`
-- **Träger:** `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full`
+- **Träger:** —
 - **Befund:** FMEA CR-GC-798 FM-20, frei abgeleitet. Ursache ist ein Test ohne Bindung oder eine Quelldatei ohne Knoten. Entscheidung: gedeckt durch die Schlupfmessung je CR (REQ-full-run-on-probation).
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md) · `CR-GC-918` (docs/cr/open/CR-GC-918-eine-anforderung-hat-genau-einen-erfuell.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-full-run-on-probation` | Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter. | `FUNC-measure-test-schlupf` · `FUNC-verify-lane-full` |
+| `REQ-full-run-on-probation` | Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter. | **Funktion fehlt** |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -286,13 +286,13 @@ Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten
 - **Bewertung:** S 4 · O 3 · D 4 · RPN 48 · AP Medium
 - **Kette:** `FCHAIN-snapshot-freshness`
 - **Anwendungsfall:** `UC-graph-time-travel`
-- **Träger:** `FUNC-export-marker` · `FUNC-export-marker-clear`
+- **Träger:** —
 - **Befund:** FMEA CR-GC-798 FM-16, Quelle F geteilte Funktion FUNC-export-markdown. Der Fehler geht nur auf die Fehlerausgabe. Entscheidung: gedeckt, die Marke EXPORT_PENDING bleibt stehen und blockt den Commit (REQ-graph-snapshot-per-commit).
 - **Analyse:** `CR-GC-802` (docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md)
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-export-marker-tracks-drift` | Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen. | `FUNC-export-marker` · `FUNC-export-marker-clear` |
+| `REQ-export-marker-tracks-drift` | Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen. | **Funktion fehlt** |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|

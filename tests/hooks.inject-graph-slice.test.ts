@@ -178,7 +178,9 @@ describe('CR-GC-367: Job-Scheibe beim Task-Start', () => {
         // nur noch ueber MOD-harness am Modell und liegt ausserhalb der Scheibe.
         // CR-GC-805: REQ-store-owner-lifecycle ist in fuenf Anforderungen zerlegt; FUNC-own-kuzu-host
         // erfuellt davon REQ-host-holds-only-kuzu-handle.
-        'REQ-real-health-check', 'REQ-host-holds-only-kuzu-handle', 'REQ-versioned-broadcast',
+        // CR-GC-918: eine Anforderung hat genau einen Erfueller — REQ-real-health-check ist zerlegt;
+        // FUNC-health-endpoint erfuellt davon REQ-health-antwortet-stand.
+        'REQ-health-antwortet-stand', 'REQ-host-holds-only-kuzu-handle', 'REQ-versioned-broadcast',
         // CR-GC-383: eine Datei, eine Abnahme — TEST-real-health-check ist in
         // TEST-readonly-bridge aufgegangen (beide banden tests/host.bridge.test.ts).
         'TEST-readonly-bridge',

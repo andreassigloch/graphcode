@@ -4,7 +4,7 @@
 
 # graphcode — Non-Functional Requirements
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 79 NFR. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ mit kinds ∋ "non-functional". 84 NFR. Deterministisch generiert.
 
 | NFR | Budget / constraint | Verified |
 |---|---|---|
@@ -25,8 +25,8 @@
 | `REQ-ein-schreibweg` | Inhalt muss genau ueber sieben Fluesse in den Store kommen: FLOW-graph-delta vom Apply-Gate, FLOW-imported-graph von der Import-Operation und die Lebenszyklus-Fluesse FLOW-store-build, FLOW-store-close, FLOW-store-close-cli, FLOW-store-close-rewind, FLOW-store-close-render. Jeder weitere Eingang in FUNC-graph-store ist ein zweiter Schreibweg. Ein Zug am Modell bricht diese Anforderung ohne Code-Aenderung; der Snapshot-Test prueft sie. (CR-GC-851, render ergaenzt CR-GC-909) | ✓ |
 | `REQ-formatE-parity` | CR-GC-103 L1: Format-E-Parität = contracts-Baseline; genau EIN Codec. | ✓ |
 | `REQ-frame-binding` | Die in diesem Graph definierte Struktur und ihre Schnittstellen (FUNC/FCHAIN/FLOW/REQ auf SE-Ontologie und TRACE_PATTERNS) sind bindend fuer die Realisierung. Ergaenzungen passen in die bestehenden Boxen und laufen durchs Gate; ein neuer Element- oder Kantentyp, ein neues geteiltes Paket, ein neuer Top-Level-UC oder -MOD braucht Familien-Review. (Beschluss 2026-06-16, Zahlen entfernt 2026-09-15) | ✓ |
-| `REQ-gate-only-writes` | Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201) | ✓ |
-| `REQ-graceful-degradation` | CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call. | ✓ |
+| `REQ-gate-only-writes` | Das System nimmt eine Aenderung der Graph-SSOT nur ueber graph_mutate an; ein direkter Schreibzugriff auf docs/graph/*.graph.json oder auf den Store wird abgewiesen. | ✓ |
+| `REQ-graceful-degradation` | Solange der LLM-Sidecar nicht erreichbar ist, beurteilt das Gate jeden Batch vollstaendig und ohne Modellaufruf. | ✓ |
 | `REQ-graph-context-replaces-reading` | Ein Aufruf liefert die vollstaendige Definition-of-Done eines Realisierungsknotens als begrenzten Slice, sodass das Modell aus dem Graphen implementiert statt die Spezifikation zu lesen. | ✓ |
 | `REQ-graph-integrity` | Strukturelle Integritaet an einem Punkt: GraphCodeCodec.validate() erkennt unbekannte Typen, doppelte UIDs und haengende Endpunkte. Kantenlegalitaet hat genau eine Routine — contracts traceRejection (R-18) —, angewandt wo Daten in den Store gelangen: Gate und Seed; kein validPairs-Klon daneben (keine parallelen Pfade). Kuzu-DDL und Export-Check bleiben Backstops. (CR-GC-200, CR-GC-530, CR-GC-531) | ✓ |
 | `REQ-graph-is-ssot` | Der materialisierte Graph + die Live-Harness sind SSOT. docs/*.md sind historischer Input (Bootstrap). Modelländerungen am Graph (mutate/import), dann Re-Export. (2026-06-14) | ✓ |
@@ -34,6 +34,7 @@
 | `REQ-harness-schema-in-contracts` | CR-GC-100 Task 1 / D1: HarnessConfig/MutateCommand/MutateResult nach @sigloch/contracts (eigener harness-Export, NICHT /se), importieren, lokale Defs löschen. | ✓ |
 | `REQ-hook-extension-points` | CR-GC-102: registerHook(type, handler) + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; Storage .graphcode/hooks/. | ✓ |
 | `REQ-hook-order-deterministic` | CR-GC-102 L3: Hook-Execution-Order stabil/deterministisch. | ✓ |
+| `REQ-host-abbau-3s` | Der Abbau eines Hosts endet nach hoechstens 3 s (Invariante), auch nach Lock-Verlust. | ✓ |
 | `REQ-import-se-ontology` | SE-Ontologie aus @sigloch/contracts/se importieren, nicht lokal neu definieren. (SPEC §1, Drift D1) | ✓ |
 | `REQ-install-idempotent` | Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert. | ✓ |
 | `REQ-interactive-capture-suggest` | FCHAIN-capture: NL→Format-E agent-seitig (REQ-no-extraction); Resultat im suggest-Tier durchs Gate, Review vor Persist. | ✓ |
@@ -45,6 +46,7 @@
 | `REQ-monotone-convergence` | Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder. | ✓ |
 | `REQ-mutation-emits-event` | CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich. | ✓ |
 | `REQ-no-extraction` | Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS) | ✓ |
+| `REQ-npx-distribution` | graphcode wird als npm-Paket ausgeliefert, dessen bin die Verben init, update und remove ueber npx ausfuehrt. | ✓ |
 | `REQ-phase-gate-not-skippable` | Das aktuelle Phasen-Gate benennt, was bis zur Regel-Vollstaendigkeit fehlt. Die Reihenfolge blockt nie: Ebenen und Phasen darf der Nutzer ueberspringen, Architektur und Optimizer stehen ab dem ersten Zug offen (Leitlinie Satz 5). Blocken kann allein eine Regel an der Schreiboperation. Modell dem Code voraus: heute haelt der Handoff noch an (ITEM-2026-140). | ✓ |
 | `REQ-post-modelfree-gate` | Apply, Block, Regelpruefung und Readiness laufen ohne Netzwerk- oder Modellaufruf und geben bei gleichem Graphen und gleichem Batch in zwei Laeufen dasselbe Urteil. | ✓ |
 | `REQ-precise-context` | Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression. | ✓ |
@@ -75,15 +77,18 @@
 | `REQ-risk-stale-test-result` | Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Testergebnis, das vor der letzten Aenderung am Test oder am geprueften Code entstand. | ✓ |
 | `REQ-risk-steering-delta-missing` | Das Delta der Steuerung fehlt oder ist falsch in der Antwort auf einen Zug. Der Agent sieht einen falschen Fortschritt. | ✓ |
 | `REQ-risk-store-unreadable` | Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis. | ✓ |
-| `REQ-rule-calibration` | Die Aufzeichnung erlaubt es, je Regel, je Modell, je Konsument und je Skill die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten, und je Regel, in wie vielen Zuegen sie lief und in wie vielen sie einen Fund hatte. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346, CR-GC-943) | ✓ |
 | `REQ-self-contained-dist` | Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103. | ✓ |
 | `REQ-shared-views-no-fork` | views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2). | ✓ |
 | `REQ-single-kuzu-owner` | Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1) | ✓ |
 | `REQ-single-store` | Genau ein Store = Kuzu (embedded native+WASM, Cypher). Kein Neo4j. (SPEC §0) | ✓ |
 | `REQ-single-transport` | Genau ein Transport = MCP-stdio; kein Express-REST/HTTP im Harness-Core. (SPEC §0, §5) | ✓ |
+| `REQ-skill-authors-through-gate` | Kein Autoren-Skill im Modul agent-surface nennt einen direkten Schreibzugriff auf die Graph-SSOT; jede Modellaenderung steht in der Anleitung als graph_mutate-Aufruf. | ✓ |
+| `REQ-skill-reads-only` | Kein lesender Skill im Modul agent-surface ruft ein schreibendes Werkzeug auf; jede Aussage seiner Ausgabe stammt aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements). | ✓ |
 | `REQ-small-model-viable` | Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded). | ✓ |
+| `REQ-steuerung-deterministisch` | Die Steuerschleife empfiehlt bei gleichem Graphen den gleichen naechsten Schritt. | ✓ |
 | `REQ-structural-rule-shared` | Trace-pair legality is enforced by the one shared engine rule R-18 (@sigloch/contracts/se), not a consumer-local validator. graphcodes Gate lehnt strukturell-invalide Mutationen via Engine ab (kein separater codec.validate-Aufruf); jeder Konsument der die Engine laeuft erbt die Pruefung. (CR-GC-205 Item 1) | ✓ |
 | `REQ-structure-driven` | Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc. | ✓ |
+| `REQ-test-skill-red-first` | Die Test-Skills im Modul agent-surface (se-test, se-test-ui) lassen einen Test erst als Beleg gelten, wenn er gegen den kaputten Code aus genau dem benannten Grund rot gesehen wurde. | ✓ |
 | `REQ-testref-materialized` | Ein gebundener TEST-testRef loest immer auf eine reale Datei auf: graph_export materialisiert einen it.todo-Stub fuer jede fehlende testRef-Datei (kein Phantom-Pfad, kein false-green); R-19 macht einen ungebundenen lauffaehigen TEST als Warning sichtbar; concept-only TESTs (concept:true) sind ausgenommen. (CR-GC-205 Item 4) | ✓ |
 | `REQ-token-efficiency` | Das System soll den Kontext einer Runde aus dem Graphen binden statt aus Datei-Dumps: eine typisierte Abfrage liefert den exakten Blast-Radius, Vertiefung geschieht on demand. Messgroesse ist tokens_in je Aufgabe gegenueber einem grep-basierten Lauf. | ✓ |
 | `REQ-versioned-cache` | CR-GC-102 R11: version-keyed Response-Cache + Dirty-Flag → auf Kuzu-Version mappen. | ✓ |

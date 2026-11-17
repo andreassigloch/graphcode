@@ -44,12 +44,14 @@ nicht am Code geprueft.
 
 ## Akzeptanz
 
-- [ ] REQ mit mehr als einem Erfueller: 0 (gezaehlt am exportierten Modell).
-- [ ] R-02: 0, oder jeder verbleibende Befund mit Grund akzeptiert und hier gelistet.
-- [ ] Keine neue Fehlermeldung (`rules_get_violations {severity: error}`), R-01 = 0.
-- [ ] Jede Kind-REQ hat einen TEST, der genau ihre Zusage prueft; Abweichungen hier gelistet.
-- [ ] `npm run verify:model` gruen; `docs/graph` und `docs/views` im selben Commit.
-- [ ] Nach dem contracts-Nachzug mit CR-SM-435: RD-06 = 0 (eigener Nachzug-CR, nicht hier).
+- [x] REQ mit mehr als einem Erfueller: 0 (gezaehlt am exportierten Modell).
+- [ ] R-02: 0, oder jeder verbleibende Befund mit Grund akzeptiert und hier gelistet. **Verschoben in den
+  Folge-CR** (Entscheidung des Auftraggebers 2026-11-17): 29 Befunde, Grund unten.
+- [x] Keine neue Fehlermeldung (`rules_get_violations {severity: error}`), R-01 = 0.
+- [ ] Jede Kind-REQ hat einen TEST, der genau ihre Zusage prueft; Abweichungen hier gelistet. **Verschoben in
+  den Folge-CR.**
+- [x] `npm run verify:model` gruen; `docs/graph` und `docs/views` im selben Commit.
+- [x] RD-06 = 0. contracts 12.14.0 ist seit CR-GC-953 eingezogen, die Regel misst direkt.
 
 ## Nicht in diesem CR
 
@@ -63,3 +65,45 @@ nicht am Code geprueft.
 
 `docs/graph/graphcode.graph.json` und die erzeugten Sichten unter `docs/views/` (rtm, srs, testmatrix,
 testconcept, architecture, icd, references). Kein Quellcode.
+
+---
+
+## Ergebnis
+
+**Stand 2026-11-17**, Modell graphVersion 1247, contracts 12.14.0.
+
+| Messgroesse | vorher | nachher |
+|---|---|---|
+| RD-06 (REQ mit mehr als einem Erfueller) | 40 | 0 |
+| REQ | 204 | 259 |
+| R-02 (FUNC ohne eigene REQ) | 0 | 29 |
+| R-21 (Uebergabe ohne Ketten-REQ oder Integrationstest) | 1 | 85 |
+| Fehler (severity error) | 0 | 0 |
+
+- Die drei Batches aus dem Spike liefen unveraendert durchs Gate, jeweils erst als Trockenlauf. Seit dem Spike
+  hatte sich kein betroffenes Element geaendert.
+- Die zwei neuen FUNCs `FUNC-lauf-urteil` und `FUNC-aenderung-melden` haengen jetzt in beiden Spur-Ketten
+  (`FCHAIN-verify-lane`, `FCHAIN-verify-lane-full`). Die Fluesse folgen dem Code: Jede Spur gibt ihren vitest-Lauf an
+  `laufUrteil` und bekommt das Urteil zurueck. `meldeZurueck` nimmt Bericht und Changeset, ruft
+  `graph_test_ingest` und gibt die Antwort an die Spur. Die Fluesse `FLOW-test-run-report-*` und
+  `FLOW-test-ingest-answer` laufen jetzt ueber `FUNC-aenderung-melden`, nicht mehr direkt zu `FUNC-test-ingest`.
+- **Code:** `VitestLauf` und `LaufUrteil` in `src/projections/test-schlupf.ts` sind jetzt Zod-Schemata
+  (`VitestLaufSchema`, `LaufUrteilSchema`), die Typen werden daraus abgeleitet. `laufUrteil` parst seinen Eingang.
+  Grund: RC-08 bindet ein SCHEMA nur an ein Zod-Schema (FAQ `schema-bindung-realref`).
+  `TEST-test-schlupf` prueft beide Vertraege.
+- **Tests nachgezogen:** `hooks.inject-graph-slice` (Grundwahrheit: `REQ-real-health-check` ist zerlegt,
+  `FUNC-health-endpoint` erfuellt `REQ-health-antwortet-stand`). `arch.optimization-dry-run.spike` neu
+  gemessen: drei Zuege statt vier, Engpass danach R-04 @ MOD-projections.
+
+**Warum R-02 = 29 bleibt:** Diese Funktionen hingen nur an einer Sammel-REQ, die eine andere Funktion oder eine
+Menge beschreibt. Jede braucht eine eigene funktionale REQ mit TEST (`se:author-req`), oder sie wird mit Grund als
+innerer Schritt akzeptiert. Die 85 R-21-Befunde folgen daraus und gehen mit R-02 zurueck.
+
+**Folge-CR:** CR-GC-954. Die Zielbild-Schritte 2 bis 4 (Kind-REQ am Code pruefen, eigene REQ fuer die 29 Funktionen,
+Nebenbefunde) gehen in einen neuen CR.
+
+**Dateien:** `docs/graph/graphcode.graph.json`, `docs/views/*` (erzeugt), `src/projections/test-schlupf.ts`,
+`tests/hooks.inject-graph-slice.test.ts`, `tests/arch.optimization-dry-run.spike.test.ts`, diese CR-Datei.
+
+`npm run verify:full CR-GC-918` am 2026-11-17: 231 von 231 Dateien, 1914 von 1914 Tests gruen, Schlupf 0.
+

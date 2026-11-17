@@ -4331,6 +4331,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-954",
+      "type": "CR",
+      "name": "CR-GC-918 Rest: eigene REQ fuer 29 FUNCs (R-02), Kind-REQ am Testcode pruefen, Nebenbefunde",
+      "description": "docs/cr/open/CR-GC-954-cr-gc-918-rest-eigene-req-fuer-29-funcs-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -5527,6 +5533,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-lauf-urteil",
+      "type": "FLOW",
+      "name": "Lauf-Urteil",
+      "description": "Das Urteil ueber den Lauf: Beleg mit roten Dateien und Gesamtzahl, oder kein Beleg mit Grund.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-lifecycle-create",
       "type": "FLOW",
       "name": "Abraeumschritte anmelden",
@@ -5638,6 +5651,13 @@
       "description": "Der gemeinsame Eingang der vier Entscheidungen: der gemessene Zustand als Vektor, unabhaengig davon, welche Projektion ihn fuellt. Erst mit diesem Vertrag ist die Gleichheit der vier Signaturen geprueft statt behauptet.",
       "status": "reviewed",
       "concept": true,
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-meldung",
+      "type": "FLOW",
+      "name": "Meldung an die Spur",
+      "description": "Die Antwort von graph_test_ingest, an die aufrufende Spur zurueckgegeben.",
       "sync": "sync"
     },
     {
@@ -6328,6 +6348,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-test-ingest-call",
+      "type": "FLOW",
+      "name": "Aufruf graph_test_ingest",
+      "description": "Der Aufruf von graph_test_ingest ueber MCP-stdio mit Bericht und Changeset der Aenderung.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-test-run-report-code",
       "type": "FLOW",
       "name": "Testlauf-Bericht (Spur CODE)",
@@ -6435,6 +6462,20 @@
       "sync": "async"
     },
     {
+      "id": "FLOW-vitest-lauf-code",
+      "type": "FLOW",
+      "name": "vitest-Lauf Code-Spur",
+      "description": "Der beendete vitest-Lauf der Spur verify:code: Exit-Status, Signal und der JSON-Bericht, falls vitest ihn schrieb.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-vitest-lauf-full",
+      "type": "FLOW",
+      "name": "vitest-Lauf Vollspur",
+      "description": "Der beendete vitest-Lauf der Spur verify:full: Exit-Status, Signal und der JSON-Bericht, falls vitest ihn schrieb.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-vorschlag",
       "type": "FLOW",
       "name": "Vorschlag an den Nutzer",
@@ -6482,6 +6523,17 @@
       "name": "Stand davor und danach",
       "description": "Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil an das aufrufende Werkzeug zurueckgibt (mutateWithStates). Ein geblockter Zug hat kein Paar. (CR-GC-778)",
       "sync": "sync"
+    },
+    {
+      "id": "FUNC-aenderung-melden",
+      "type": "FUNC",
+      "name": "Aenderung melden",
+      "description": "Meldet nach einem Lauf die Knoten der geaenderten Dateien und den Laufbericht an graph_test_ingest; von verify:code und verify:full gemeinsam genutzt.",
+      "realRef": {
+        "file": "scripts/aenderung-melden.mjs",
+        "symbol": "meldeZurueck",
+        "lang": "js"
+      }
     },
     {
       "id": "FUNC-agent-loop",
@@ -7306,6 +7358,17 @@
       }
     },
     {
+      "id": "FUNC-lauf-urteil",
+      "type": "FUNC",
+      "name": "Lauf beurteilen",
+      "description": "Urteilt ueber einen vitest-Lauf: gruen nur mit Bericht, ohne rote Datei und mit Exit 0, sonst rot. Von verify:code und verify:full gemeinsam genutzt.",
+      "realRef": {
+        "file": "src/projections/test-schlupf.ts",
+        "symbol": "laufUrteil",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-list-elements",
       "type": "FUNC",
       "name": "listElements(filter)",
@@ -8059,10 +8122,19 @@
       ]
     },
     {
+      "id": "REQ-analyse-zaehlt-mit-auftrag",
+      "type": "REQ",
+      "name": "Analyse zaehlt nur mit Auftrag",
+      "description": "Wenn ein Analyse-Stempel ohne offenen Auftrag im Graphen steht, zaehlt graph_generate die Analyse nicht als durchgefuehrt.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-applied-suggestion-moves-target",
       "type": "REQ",
       "name": "Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung",
-      "description": "Wird die bestbewertete anwendbare Suggestion real durchs Gate angewandt, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den vorhergesagten Betrag; jede reale Regression war vorher angesagt.",
+      "description": "Wenn die bestbewertete anwendbare Suggestion durchs Gate angewandt wird, bewegt sich die adressierte Metrik-Komponente mit dem Vorzeichen des Ziels und um den Betrag, den graph_suggest vorhergesagt hat; jede reale Regression stand vorher in der Vorhersage.",
       "kinds": [
         "functional"
       ]
@@ -8079,6 +8151,15 @@
       ]
     },
     {
+      "id": "REQ-audit-stats-liefert-zaehlung",
+      "type": "REQ",
+      "name": "audit_stats zaehlt Zuege",
+      "description": "Wenn audit_stats aufgerufen wird, liefert es die Zahl der Zuege je Urteil und je Urheber.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-audit-trail",
       "type": "REQ",
       "name": "Audit-Trail / History",
@@ -8089,6 +8170,24 @@
         "functional"
       ],
       "role": "mitigation"
+    },
+    {
+      "id": "REQ-audit-trail-liefert-zuege",
+      "type": "REQ",
+      "name": "audit_trail liefert Zuege",
+      "description": "Wenn audit_trail aufgerufen wird, liefert es die Zuege mit Urteil, Urheber, Zeit und Version, neueste zuerst.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-auto-export-nach-zug",
+      "type": "REQ",
+      "name": "Export nach jedem Zug",
+      "description": "Nach jeder angenommenen Mutation schreibt der Host den Snapshot nach docs/graph, ohne Aufruf des Agenten.",
+      "kinds": [
+        "functional"
+      ]
     },
     {
       "id": "REQ-auto-persist-merge",
@@ -8260,10 +8359,28 @@
       ]
     },
     {
+      "id": "REQ-conops-zugangsliste",
+      "type": "REQ",
+      "name": "se-conops leitet Zugangsliste ab",
+      "description": "Wenn se-conops laeuft, leitet es aus dem Modell die Zugangsliste ab: Zugang, wer ihn anlegt, Ablageort, Pruefaufruf.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-constraints-skill-vertrag",
       "type": "REQ",
       "name": "se:constraints fragt nach Constraints statt Gewichten",
       "description": "Der Skill se:constraints MUSS je Dimension eine Frage nach Element und Eigenschaft stellen und die Antwort als nicht-funktionale REQ an FCHAIN, MOD oder SYS mit verifizierendem TEST schreiben, nie als Gewicht. Er DARF nur Pruefungen aus @sigloch/graphcode/constraints, Regeln aus dem Katalog und Felder nennen, die graph_metrics liefert oder die Ontologie fuehrt; fehlt eine Pruefung, legt er REQ und TEST ueber se:author-req an und der Test schreibt sie.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-cr-gruppen-rechnen",
+      "type": "REQ",
+      "name": "CR-Gruppen rechnen",
+      "description": "Wenn die offenen CRs eines Meilensteins uebergeben werden, liefert die Gruppierung Gruppen, in denen kein CR ueber depends-on von einem anderen abhaengt und keine zwei CRs eine realRef-Datei teilen.",
       "kinds": [
         "functional"
       ]
@@ -8291,6 +8408,15 @@
       ]
     },
     {
+      "id": "REQ-delta-rankt-kandidaten",
+      "type": "REQ",
+      "name": "Delta rankt Kandidaten",
+      "description": "Wenn Kandidaten vorliegen, liefert die Delta-Berechnung je Kandidat das Delta derselben Kenngroessen und rankt danach.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-deterministic-serialization",
       "type": "REQ",
       "name": "Deterministische Serialisierung",
@@ -8299,6 +8425,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-diff-an-viewer",
+      "type": "REQ",
+      "name": "Diff an Viewer",
+      "description": "Wenn ein Ereignis vorliegt, sendet die Bruecke es in Versionsreihenfolge an jeden verbundenen Viewer und haelt den letzten Stand fuer spaet verbundene Viewer bereit.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -8382,6 +8517,24 @@
       ]
     },
     {
+      "id": "REQ-export-marke-loeschen",
+      "type": "REQ",
+      "name": "Exportmarke loeschen",
+      "description": "Wenn ein Export oder ein Reseed gelingt, loescht der Host die Marke EXPORT_PENDING; ein gescheiterter Export laesst sie stehen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-export-marke-setzen",
+      "type": "REQ",
+      "name": "Exportmarke setzen",
+      "description": "Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-export-marker-tracks-drift",
       "type": "REQ",
       "name": "Marke haelt den Rueckstand des Exports fest",
@@ -8408,6 +8561,15 @@
       "type": "REQ",
       "name": "Export verweigert bis zur Reparatur",
       "description": "graph_export verweigert, solange eine Kante zurueckgehalten ist, und nennt die Kante und den Reparaturweg; nach einem delete-edge durchs Gate laeuft der Export wieder.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-fingerabdruck-bilden",
+      "type": "REQ",
+      "name": "Fingerabdruck bilden",
+      "description": "Aus dem Descriptor der Ontologie bildet der Schema-Guard einen Fingerabdruck; gleiche Ontologie ergibt den gleichen Fingerabdruck.",
       "kinds": [
         "functional"
       ]
@@ -8504,7 +8666,7 @@
       "id": "REQ-gate-only-writes",
       "type": "REQ",
       "name": "Gate-only Graph-Writes",
-      "description": "Agent kann den SSOT nicht hand-editieren; jeder Write durch graph_mutate (mutate-Gate, L1). Deny-Rule + PreToolUse-Hook auf Edit/Write von docs/graph/*.graph.json + .graphcode/kuzu; JSON ist generierter Export, Live-Truth ist Kuzu. (CR-GC-201)",
+      "description": "Das System nimmt eine Aenderung der Graph-SSOT nur ueber graph_mutate an; ein direkter Schreibzugriff auf docs/graph/*.graph.json oder auf den Store wird abgewiesen.",
       "status": "open",
       "created_at": "2026-06-18T00:00:00.000Z",
       "kinds": [
@@ -8522,10 +8684,19 @@
       ]
     },
     {
+      "id": "REQ-gate-weist-vertragsfremd-ab",
+      "type": "REQ",
+      "name": "Gate weist vertragsfremden Wert ab",
+      "description": "Wenn ein Zug einen Wert ausserhalb des Element-Vertrags neu einfuehrt, weist das Gate ihn ab; Altbestand an einem unberuehrten Element bleibt stehen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-graceful-degradation",
       "type": "REQ",
       "name": "Betrieb ohne LLM (Degraded-Modus)",
-      "description": "CONSTRAINT (ConOps): Harness voll funktionsfähig bei nicht erreichbarem LLM-Sidecar — Gate/Regeln deterministisch, kein Modell-Call.",
+      "description": "Solange der LLM-Sidecar nicht erreichbar ist, beurteilt das Gate jeden Batch vollstaendig und ohne Modellaufruf.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -8605,6 +8776,33 @@
       ]
     },
     {
+      "id": "REQ-graphcode-md-einstieg",
+      "type": "REQ",
+      "name": "GRAPHCODE.md nennt Einstieg",
+      "description": "Die gescaffoldete GRAPHCODE.md nennt den Sitzungsbeginn: eine Sitzung je CR oder Gruppe, Einstieg ueber die CR-Datei und graph_context der Traeger, alle Leser in einem Aufruf, neue Sitzung je Meilenstein oder ab rund 150 k Kontext.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-graphcode-md-testauswahl",
+      "type": "REQ",
+      "name": "GRAPHCODE.md nennt Testauswahl",
+      "description": "Die gescaffoldete GRAPHCODE.md nennt die Regel: vor jedem Testlauf die Testauswahl der Aenderung beim Graphen erfragen und genau diese fahren, die volle Suite nur vor dem Abschluss eines CR.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-graphcode-md-zuege",
+      "type": "REQ",
+      "name": "GRAPHCODE.md nennt Zuege",
+      "description": "Die gescaffoldete GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-harness-factory-returns-one-owner",
       "type": "REQ",
       "name": "Fabrik liefert genau einen Besitzer",
@@ -8622,6 +8820,15 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-health-antwortet-stand",
+      "type": "REQ",
+      "name": "Health antwortet mit Betriebsstand",
+      "description": "Wenn GET /health eintrifft, antwortet der Endpoint mit dem gesammelten Betriebsstand, nicht nur mit der Prozess-Lebendigkeit.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -8675,10 +8882,28 @@
       ]
     },
     {
+      "id": "REQ-host-abbau-3s",
+      "type": "REQ",
+      "name": "Host-Abbau in 3 s",
+      "description": "Der Abbau eines Hosts endet nach hoechstens 3 s (Invariante), auch nach Lock-Verlust.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
       "id": "REQ-host-end-visible",
       "type": "REQ",
       "name": "Host-Ende ist fuer den Client sichtbar",
       "description": "Endet ein Host, muss sein MCP-Client das Ende sehen, auch wenn der Viewer fuer eine zweite Sitzung weiterlaeuft; jeder Abbau endet nach hoechstens 3 s, auch nach Lock-Verlust. Ein Aufruf an einen beendeten Host haengt nie. (CR-GC-865)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-host-ende-sichtbar-client",
+      "type": "REQ",
+      "name": "Client sieht Host-Ende",
+      "description": "Wenn ein Host endet, sieht sein MCP-Client das Ende, und ein Aufruf an den beendeten Host kehrt mit Fehler zurueck, statt zu haengen.",
       "kinds": [
         "functional"
       ]
@@ -8713,6 +8938,15 @@
       ]
     },
     {
+      "id": "REQ-import-nur-ueber-mutate",
+      "type": "REQ",
+      "name": "Import nur ueber graph_mutate",
+      "description": "Wenn ein ungepruefter Bestand (graphify, Dokument, Kaltstart) importiert wird, uebergibt der Import ihn als Batch an graph_mutate.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-import-se-ontology",
       "type": "REQ",
       "name": "SE-Ontologie importieren",
@@ -8724,10 +8958,37 @@
       ]
     },
     {
+      "id": "REQ-ingest-je-testref",
+      "type": "REQ",
+      "name": "Ergebnis je testRef",
+      "description": "Wenn ein Laufbericht eingeht, schreibt graph_test_ingest das Ergebnis je testRefs-Eintrag.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-init-agent-host",
       "type": "REQ",
       "name": "init nennt ein fehlendes Agent-Programm",
       "description": "init sucht claude und opencode im PATH. Findet es keins, ersetzt die Ausgabe die Schritte zum Agenten durch einen Hinweis mit je einem Installationsbefehl und nennt VS-Code-Erweiterung und Desktop-App; die Dateien schreibt init trotzdem, Exit-Code 0. --json traegt agentHosts. (CR-GC-902)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-init-legt-an",
+      "type": "REQ",
+      "name": "init legt an",
+      "description": "Wenn graphcode init in einem Repo laeuft, legt es .graphcode/, .claude/hooks, .mcp.json und den Controller an und installiert die Abhaengigkeit mit dem Paketmanager der Lockdatei.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-init-nennt-schritte",
+      "type": "REQ",
+      "name": "init nennt naechste Schritte",
+      "description": "Nach init nennt die Ausgabe dem Menschen die naechsten Schritte; JSON gibt es nur auf Wunsch.",
       "kinds": [
         "functional"
       ]
@@ -8879,7 +9140,7 @@
       "id": "REQ-mcp-tool-registry",
       "type": "REQ",
       "name": "MCP-Tool-Registry an Harness gebunden",
-      "description": "CR-GC-101: Registry graph_elements/get_node/get_edges (read), graph_mutate (write durchs Gate), rules_evaluate/get_violations, audit_trail/stats — via bindToolsToHarness.",
+      "description": "Wenn ein Host startet, bindet die Registry jedes Werkzeug der MCP-Oberflaeche an die Harness dieses Repos; jeder Werkzeugaufruf wirkt auf den Store dieses Repos.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -8893,6 +9154,33 @@
       "name": "Messvektor nach gebundenem und geprueftem Vertrag",
       "description": "Die Funktion, die den Messvektor liefert, liefert ihn nach einem an Code gebundenen Vertrag, und ein Vertragstest prueft jedes Feld, das die Schleife liest.",
       "role": "mitigation",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-merge-ohne-konflikt",
+      "type": "REQ",
+      "name": "Merge ohne Konflikt",
+      "description": "Wenn zwei Staende desselben Snapshots zusammengefuehrt werden, entsteht ein Graph ohne doppelte Kante und ohne Konfliktmarke.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-messpfad-liefert-stand",
+      "type": "REQ",
+      "name": "Messpfad liefert Stand",
+      "description": "Wenn ein Steuerschritt beginnt, liefert der eine Messpfad Regelstrom und Befunde je Element aus dem Graphen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-messpfad-meldet-vertragsfremd",
+      "type": "REQ",
+      "name": "Messpfad meldet vertragsfremden Wert",
+      "description": "Wenn ein Element einen Wert ausserhalb seines Element-Vertrags traegt, liefert der Messpfad einen Befund R-08 und bricht nicht ab.",
       "kinds": [
         "functional"
       ]
@@ -9014,11 +9302,11 @@
       "id": "REQ-npx-distribution",
       "type": "REQ",
       "name": "npx-CLI als Distribution",
-      "description": "Distribution als npm-Paket mit bin `npx @sigloch/graphcode init|update|remove`. GATED auf REQ-buildable-standalone + CR-GC-100..103.",
+      "description": "graphcode wird als npm-Paket ausgeliefert, dessen bin die Verben init, update und remove ueber npx ausfuehrt.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
-        "functional"
+        "non-functional"
       ],
       "updated_at": "2026-06-18T00:00:00.000Z"
     },
@@ -9065,6 +9353,24 @@
       "type": "REQ",
       "name": "Gruppen unabhaengiger CRs",
       "description": "se-plan nennt je Meilenstein die Gruppen offener CRs, die gleichzeitig laufen duerfen (kein depends-on-Pfad, keine gemeinsame realRef-Datei), die implplan-Ansicht zeigt sie, und die Hauptsitzung startet je CR einer Gruppe einen Agenten im eigenen Worktree; nur sie schreibt in den Graph und rollt aus. (CR-GC-896)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-plan-stufe-null",
+      "type": "REQ",
+      "name": "se-plan macht Stufe 0",
+      "description": "se-plan macht jede Zeile der Zugangsliste mit Mensch zur Pflicht-Stufe 0 mit Pruefskript; Stufe 1 beginnt erst, wenn das Skript ganz gruen ist.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-planmodus-meldet-nichts",
+      "type": "REQ",
+      "name": "Planmodus meldet nichts",
+      "description": "Im Planmodus meldet die CODE-Spur nichts an graph_test_ingest.",
       "kinds": [
         "functional"
       ]
@@ -9219,7 +9525,7 @@
       "id": "REQ-progressive-expansion",
       "type": "REQ",
       "name": "Progressive Query-Expansion",
-      "description": "graph_expand vertieft on-demand (Kuzu-Re-Traversierung, kein Originals-Store). (R13)",
+      "description": "Wenn graph_expand mit einer uid aufgerufen wird, liefert es die Nachbarn dieser uid eine Ebene tiefer aus dem Store.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -9262,7 +9568,7 @@
       "id": "REQ-query-precision",
       "type": "REQ",
       "name": "Query-Precision statt Kompression",
-      "description": "graph_impact liefert exakten Blast-Radius als Format-E (Anti-grep, Ziel a). (R6/R12)",
+      "description": "Wenn graph_impact mit einer uid aufgerufen wird, liefert es als Format-E genau die Elemente, die ueber die Kanten des Modells von dieser uid betroffen sind, kein Element mehr und keines weniger.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -9287,6 +9593,15 @@
       "description": "Readiness-Modell fuer graphcode, definiert gegen @sigloch/contracts V3_RULES + die MS-Meilensteine + Element-Status (keine aimprove-BQ-Heuristik). INCOSE-Scope LEAN: der gegatete Graph ist das einzige SE-Artefakt. Phase-Readiness SRR/PDR/CDR/TRR ist eine disjunkte, vollstaendige Partition der 15 Element-Regeln; Implementation-Readiness SAR/FCA/SVR/FRR bindet die Meilenstein-Tiers MS-1..4 (ready wenn zugeordnete CRs done + Scope fehlerfrei) und deckt die 2 MS-Regeln ab. Realisiert im Scorer src/readiness.ts, exponiert ueber graph_readiness. (CR-GC-125)",
       "status": "done",
       "created_at": "2026-06-17T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-readiness-schwaechste-stufe",
+      "type": "REQ",
+      "name": "Readiness nennt Stufe",
+      "description": "Wenn der Messstand vorliegt, nennt graph_readiness die Stufe mit offenen Befunden, an der die Steuerung ansetzt.",
       "kinds": [
         "functional"
       ]
@@ -9386,6 +9701,24 @@
       ]
     },
     {
+      "id": "REQ-reseed-ersetzt-store",
+      "type": "REQ",
+      "name": "Reseed ersetzt Store",
+      "description": "Wenn ein Snapshot zum Reseed uebergeben wird, ersetzt der Store seinen Inhalt vollstaendig durch den Snapshot.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-reseed-sichert-vorher",
+      "type": "REQ",
+      "name": "Sicherung vor Reseed",
+      "description": "Bevor der Store neu aufgesetzt wird, legt der Host eine Sicherung des bisherigen Stores an.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-responsiveness",
       "type": "REQ",
       "name": "Erste Reaktion < 0,2 s",
@@ -9394,6 +9727,42 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-retro-misst-einstieg",
+      "type": "REQ",
+      "name": "se-retro misst Einstieg",
+      "description": "Wenn se-retro laeuft, misst es Zuege, Kontext und Token bis zur ersten Aenderung und den Kontext je Zug.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-retro-misst-modellfragen",
+      "type": "REQ",
+      "name": "se-retro misst Modellfragen",
+      "description": "Wenn se-retro laeuft, misst es die Fragen an das Modell gegen die Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-retro-misst-zuege",
+      "type": "REQ",
+      "name": "se-retro misst Zuege",
+      "description": "Wenn se-retro laeuft, misst es den Anteil der Zuege mit genau einem Aufruf und die Folgen aus 3 oder mehr gleichen Einzelaufrufen in Kontext-Token.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-rewind-liest-snapshot",
+      "type": "REQ",
+      "name": "rewind liest Snapshot",
+      "description": "Wenn graphcode rewind <ref> aufgerufen wird, liest es den committeten Snapshot von <ref> aus Git und uebergibt ihn dem Reseed; der Working-Tree bleibt unveraendert.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -9677,11 +10046,11 @@
       "id": "REQ-rule-calibration",
       "type": "REQ",
       "name": "Regel-Kalibrierung aus der Aufzeichnung",
-      "description": "Die Aufzeichnung erlaubt es, je Regel, je Modell, je Konsument und je Skill die Blockadehaeufigkeit und das Ergebnis ueber die Zeit auszuwerten, und je Regel, in wie vielen Zuegen sie lief und in wie vielen sie einen Fund hatte. Das ist die Eingangsgroesse jeder Schwellenentscheidung; ohne sie bleibt jede Schwelle eine Setzung. (CR-GC-346, CR-GC-943)",
+      "description": "Wenn audit_stats aufgerufen wird, liefert es je Regel, je Modell und je Konsument die Zahl der Blockaden und der angenommenen Zuege je Zeitraum.",
       "status": "open",
       "created_at": "2026-08-16T00:00:00.000Z",
       "kinds": [
-        "non-functional"
+        "functional"
       ]
     },
     {
@@ -9702,6 +10071,42 @@
       "description": "Weicht der Fingerabdruck der generierten DDL vom Marker am Store ab, wirft der GraphStore beim Start den Store weg, befuellt ihn aus der committeten SSOT neu, schreibt den Marker neu und meldet den Neuaufbau mit altem und neuem Fingerabdruck und der Quelle. Gleicher Fingerabdruck: der Store bleibt unberuehrt. Ein fehlender Marker wird beim aktuellen Fingerabdruck uebernommen. Zusammengefasst aus Vor- und Nachbedingung des nie gebauten migrateSchema (CR-GC-831).",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-schritt-an-gate",
+      "type": "REQ",
+      "name": "Schritt geht ans Gate",
+      "description": "Wenn ein Kandidat gewaehlt ist, uebergibt der Generierungsschritt ihn dem Apply-Gate.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-se-plan-nennt-gruppen",
+      "type": "REQ",
+      "name": "se-plan nennt Gruppen",
+      "description": "se-plan nennt je Meilenstein die Gruppen offener CRs und weist an, je CR einer Gruppe einen Agenten im eigenen Worktree zu starten; nur die Hauptsitzung schreibt in den Graphen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-se-plan-stempel-ganz-schreiben",
+      "type": "REQ",
+      "name": "se-plan schreibt Stempel ganz",
+      "description": "Wenn se-plan seinen Stempel schreibt, liest es die vorhandenen Stempel, uebernimmt sie und schreibt die Menge ganz zurueck; kein Stempel einer anderen Analyse geht verloren.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-seed-prueft-kanten",
+      "type": "REQ",
+      "name": "Laden prueft jede Kante",
+      "description": "Wenn ein committeter Snapshot geladen wird, prueft das Laden jede Kante gegen die Kantenmuster, haelt musterfremde Kanten zurueck und meldet jede REQ ohne TEST.",
       "kinds": [
         "functional"
       ]
@@ -9810,12 +10215,21 @@
       ]
     },
     {
+      "id": "REQ-sitzungen-tragen-ein",
+      "type": "REQ",
+      "name": "Sitzungen tragen sich ein",
+      "description": "Jede Sitzung traegt sich beim Viewer ein; genau ein Viewer laeuft, und erst die letzte Sitzung beendet ihn, nur wenn graphcode ihn gestartet hat.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-skill-authors-through-gate",
       "type": "REQ",
       "name": "Autoren-Skill schreibt nur durchs Gate",
-      "description": "Ein Autoren-Skill weist Modellaenderungen ausschliesslich als graph_mutate-Aufruf an; die Ablaufsteuerung fuehrt sie durchs Gate aus. Keine Anleitung nennt einen direkten Schreibzugriff auf die Graph-SSOT.",
+      "description": "Kein Autoren-Skill im Modul agent-surface nennt einen direkten Schreibzugriff auf die Graph-SSOT; jede Modellaenderung steht in der Anleitung als graph_mutate-Aufruf.",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -9831,9 +10245,9 @@
       "id": "REQ-skill-reads-only",
       "type": "REQ",
       "name": "Lesender Skill liest und schreibt nicht",
-      "description": "Ein lesender Skill bezieht jede Aussage seiner Ausgabe aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements) und ruft kein schreibendes Werkzeug auf.",
+      "description": "Kein lesender Skill im Modul agent-surface ruft ein schreibendes Werkzeug auf; jede Aussage seiner Ausgabe stammt aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements).",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -9859,10 +10273,28 @@
       ]
     },
     {
+      "id": "REQ-spur-meldet-zurueck",
+      "type": "REQ",
+      "name": "Spur meldet zurueck",
+      "description": "Nach jedem Lauf meldet die Spur die Knoten der geaenderten Dateien und den Laufbericht an graph_test_ingest; scheitert die Meldung, endet der Lauf rot.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-srs-29148",
       "type": "REQ",
       "name": "SRS nach 29148 gegliedert",
       "description": "Die SRS-Sicht traegt die Abschnitte von BRS, StRS und SyRS nach ISO/IEC/IEEE 29148:2018 Kl. 9 in Normreihenfolge; ein Abschnitt ohne Inhalt traegt den Satz keine Anforderung dieser Art im Modell. (CR-GC-909)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-sse-strom",
+      "type": "REQ",
+      "name": "SSE-Strom",
+      "description": "Wenn sich ein Viewer verbindet, liefert der Endpunkt den Ereignisstrom ueber SSE und nimmt keine Schreibanfrage an.",
       "kinds": [
         "functional"
       ]
@@ -9882,6 +10314,15 @@
       "type": "REQ",
       "name": "Verlauf der Marken und Befunde je Stufe",
       "description": "graph_readiness liefert auf Anfrage je committetem Stand von docs/graph die erreichten Marken, die Befunde je Stufe, den Steuerwert, die Testergebnisse und die Zahl der bewertbaren Ketten, gerechnet mit denselben Funktionen wie der Live-Stand und ohne Code-Abgleich.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-status-sammeln",
+      "type": "REQ",
+      "name": "Betriebsstand sammeln",
+      "description": "Wenn der Betriebsstand abgefragt wird, liefert die Sammlung Store-Erreichbarkeit, Gate-Funktion, die Versionen von Ontologie, Regeln und contracts und die LLM-Bereitschaft.",
       "kinds": [
         "functional"
       ]
@@ -9937,10 +10378,28 @@
       ]
     },
     {
+      "id": "REQ-steuerung-deterministisch",
+      "type": "REQ",
+      "name": "Steuerung deterministisch",
+      "description": "Die Steuerschleife empfiehlt bei gleichem Graphen den gleichen naechsten Schritt.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-store-folgt-fingerabdruck",
+      "type": "REQ",
+      "name": "Store folgt Fingerabdruck",
+      "description": "Weicht beim Oeffnen der Fingerabdruck vom Marker am Store ab, baut der Store sich aus der committeten SSOT neu auf, schreibt den Marker neu und meldet alten und neuen Fingerabdruck; bei Gleichheit bleibt er unberuehrt, ein fehlender Marker wird uebernommen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-store-recovery",
       "type": "REQ",
       "name": "Store-Recovery (Recovery-Modus)",
-      "description": "Beim Öffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurück und setzt einen Store, der nicht zum aktuellen Schema passt oder nicht lesbar ist, aus dem committeten Snapshot neu auf. Es entsteht kein zweites DB-Handle. (ConOps Recovery)",
+      "description": "Beim Oeffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurueck und setzt einen unlesbaren oder schemafremden Store aus dem committeten Snapshot neu auf; es entsteht kein zweites DB-Handle.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -10023,9 +10482,9 @@
       "id": "REQ-test-skill-red-first",
       "type": "REQ",
       "name": "Test-Skill lehrt Red-First",
-      "description": "Die Test-Skills lehren Red-First: ein Test zaehlt erst als Beleg, wenn er gegen den kaputten Code aus genau dem benannten Grund rot gesehen wurde. (CR-GC-697)",
+      "description": "Die Test-Skills im Modul agent-surface (se-test, se-test-ui) lassen einen Test erst als Beleg gelten, wenn er gegen den kaputten Code aus genau dem benannten Grund rot gesehen wurde.",
       "kinds": [
-        "functional"
+        "non-functional"
       ]
     },
     {
@@ -10045,6 +10504,24 @@
       "status": "done",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-tests-aufloesen",
+      "type": "REQ",
+      "name": "TEST-Knoten aufloesen",
+      "description": "Wenn ein TEST-Knoten testRefs traegt, loest graph_tests ihn zu Datei und Case auf; ohne testRefs nennt es ihn unter unresolved.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-tests-aus-changeset",
+      "type": "REQ",
+      "name": "TEST-Knoten aus Changeset",
+      "description": "Wenn ein Changeset uebergeben wird, liefert die Aufloesung jeden TEST-Knoten, dessen Testdatei die Aenderung beruehrt, und keinen unbeteiligten.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -10087,6 +10564,51 @@
       ]
     },
     {
+      "id": "REQ-umfrage-bemerkt-tod",
+      "type": "REQ",
+      "name": "Umfrage bemerkt Tod",
+      "description": "Eine Umfrage bemerkt, wenn der vermerkte Viewer-Prozess nicht mehr lebt; einen lebenden Viewer, der nicht antwortet, beendet und ersetzt sie nicht.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-update-behaelt-store",
+      "type": "REQ",
+      "name": "update behaelt Store",
+      "description": "Wenn update laeuft, aktualisiert es die installierten Artefakte und Pfade und laesst .graphcode/ unveraendert.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-update-ereignis",
+      "type": "REQ",
+      "name": "Ereignis je Zug",
+      "description": "Nach jeder angenommenen Mutation erzeugt der Host ein Ereignis mit neuer Version und Delta.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-update-traegt-policy-ein",
+      "type": "REQ",
+      "name": "update traegt Policy-Felder ein",
+      "description": "Wenn update laeuft, traegt es Pflichtfelder der Metrik-Policy, die in graphcode.config.jsonc fehlen, mit dem Startwert aus contracts ein und laesst gesetzte Werte unberuehrt; upgrade --check zaehlt ein fehlendes Feld als Drift.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-upgrade-entfernt-fremde-skills",
+      "type": "REQ",
+      "name": "upgrade entfernt fremde Skills",
+      "description": "Wenn update, skills sync oder upgrade laeuft, entfernt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-versioned-broadcast",
       "type": "REQ",
       "name": "Versioned Diff-Broadcast",
@@ -10114,6 +10636,42 @@
       "name": "Viewer gehoert dem Repo",
       "description": "Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. Tot heisst: der vermerkte Prozess lebt nicht mehr; ein lebender Viewer, der nicht antwortet, wird weder beendet noch ersetzt. (CR-GC-404, CR-GC-912)",
       "status": "done",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-viewer-ueberlebt-host",
+      "type": "REQ",
+      "name": "Viewer ueberlebt Host-Ende",
+      "description": "Wenn ein Host endet, waehrend eine zweite Sitzung den Viewer nutzt, laeuft der Viewer weiter.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-vitest-aufruf-aus-tests",
+      "type": "REQ",
+      "name": "vitest-Aufruf aus TEST-Knoten",
+      "description": "Wenn TEST-Knoten uebergeben werden, liefert graph_tests den vitest-Aufruf ueber genau deren testRefs-Dateien.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-volllauf-nennt-folge",
+      "type": "REQ",
+      "name": "Volllauf nennt schlupffreie Folge",
+      "description": "Wenn der Volllauf endet, nennt verify:full die Zahl der CRs der CODE-Spur ohne Schlupf in Folge und meldet ab 10 (Invariante), dass der Volllauf je CR entfallen darf.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-volllauf-schreibt-schlupf",
+      "type": "REQ",
+      "name": "Volllauf schreibt Schlupf",
+      "description": "Wenn der Volllauf vor einem CR-Abschluss endet, schreibt er eine Zeile, die festhaelt, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag.",
       "kinds": [
         "functional"
       ]
@@ -10405,6 +10963,17 @@
       "type": "SCHEMA",
       "name": "Import-Zugang",
       "description": "Der Zugang des Importwegs zum Store: ersetzen und leeren, ohne Store-Griff und ohne Setter. Spec-only: ein Objekt mit Verhalten (ImportTarget in src/kernel/harness-import.ts), kein Zod-Datenvertrag."
+    },
+    {
+      "id": "SCHEMA-lauf-urteil",
+      "type": "SCHEMA",
+      "name": "LaufUrteil",
+      "description": "Vertrag des Lauf-Urteils: beleg true mit rot und gesamt, oder beleg false mit grund.",
+      "realRef": {
+        "file": "src/projections/test-schlupf.ts",
+        "symbol": "LaufUrteilSchema",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-lock-owner",
@@ -10834,6 +11403,17 @@
       }
     },
     {
+      "id": "SCHEMA-vitest-lauf",
+      "type": "SCHEMA",
+      "name": "VitestLauf",
+      "description": "Vertrag des vitest-Laufs: status, signal, bericht (JSON-Text, optional).",
+      "realRef": {
+        "file": "src/projections/test-schlupf.ts",
+        "symbol": "VitestLaufSchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-work-set",
       "type": "SCHEMA",
       "name": "Arbeitsmenge",
@@ -10898,7 +11478,7 @@
           "tool": "vitest",
           "level": "performance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -10916,7 +11496,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -10937,7 +11517,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -10952,7 +11532,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -10968,7 +11548,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -10983,7 +11563,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -10998,7 +11578,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11013,7 +11593,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11032,7 +11612,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11047,7 +11627,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11062,7 +11642,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11078,7 +11658,7 @@
           "tool": "vitest",
           "level": "performance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11098,7 +11678,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11113,7 +11693,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11151,7 +11731,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11171,14 +11751,14 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         },
         {
           "file": "tests/knowledge-binding.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11195,7 +11775,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11225,7 +11805,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11240,7 +11820,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11255,7 +11835,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11270,7 +11850,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11285,7 +11865,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11300,7 +11880,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11322,7 +11902,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11341,7 +11921,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11356,7 +11936,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11371,7 +11951,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11389,7 +11969,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11409,7 +11989,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11435,7 +12015,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11450,7 +12030,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11465,7 +12045,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11480,7 +12060,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11495,7 +12075,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11510,7 +12090,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11525,7 +12105,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11540,7 +12120,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11555,7 +12135,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11576,7 +12156,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11591,7 +12171,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11606,7 +12186,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11621,7 +12201,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11638,7 +12218,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11656,7 +12236,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11671,7 +12251,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11686,7 +12266,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11702,7 +12282,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11719,7 +12299,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11734,7 +12314,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11749,7 +12329,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11764,7 +12344,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11779,7 +12359,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11794,7 +12374,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11813,7 +12393,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11828,7 +12408,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11843,7 +12423,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11863,7 +12443,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11878,7 +12458,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11893,7 +12473,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11908,7 +12488,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11923,7 +12503,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11938,7 +12518,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11953,7 +12533,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11969,7 +12549,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11984,7 +12564,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -11999,7 +12579,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12014,7 +12594,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12048,7 +12628,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12063,7 +12643,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12083,7 +12663,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12101,7 +12681,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12121,7 +12701,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12153,7 +12733,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12170,7 +12750,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12190,7 +12770,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12210,7 +12790,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12230,7 +12810,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12255,7 +12835,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12277,7 +12857,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12292,7 +12872,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12307,7 +12887,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12322,7 +12902,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12342,7 +12922,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12357,7 +12937,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12372,7 +12952,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12387,7 +12967,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12402,7 +12982,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12422,7 +13002,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12437,7 +13017,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12452,7 +13032,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12468,7 +13048,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12483,7 +13063,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12498,7 +13078,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12513,7 +13093,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12528,7 +13108,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12547,14 +13127,14 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         },
         {
           "file": "tests/hooks.prompt-relay.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12569,7 +13149,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12584,7 +13164,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12599,7 +13179,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12618,7 +13198,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12635,7 +13215,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12653,7 +13233,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12668,7 +13248,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12697,7 +13277,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12714,7 +13294,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12731,7 +13311,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12746,7 +13326,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12774,14 +13354,14 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         },
         {
           "file": "tests/retro-verlauf.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12796,7 +13376,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12816,7 +13396,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12835,7 +13415,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12857,7 +13437,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12872,7 +13452,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12888,7 +13468,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12903,7 +13483,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12918,7 +13498,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12933,7 +13513,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12951,7 +13531,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12966,7 +13546,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12981,7 +13561,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -12997,7 +13577,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13012,7 +13592,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13027,7 +13607,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13042,7 +13622,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13058,7 +13638,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13073,7 +13653,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13094,7 +13674,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13109,7 +13689,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13124,7 +13704,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13142,7 +13722,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13158,7 +13738,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13178,7 +13758,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13197,7 +13777,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13218,7 +13798,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13233,7 +13813,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13260,7 +13840,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13275,7 +13855,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13294,7 +13874,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13309,7 +13889,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13324,7 +13904,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13346,7 +13926,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13361,7 +13941,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13379,7 +13959,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13394,7 +13974,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13408,7 +13988,7 @@
           "file": "tests/testreport.kopf-bindung.test.ts",
           "tool": "vitest",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13425,7 +14005,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13440,7 +14020,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13455,7 +14035,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13483,7 +14063,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13504,7 +14084,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13519,14 +14099,14 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         },
         {
           "file": "tests/config-nachziehen.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13541,7 +14121,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13556,7 +14136,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13571,7 +14151,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13586,7 +14166,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13601,7 +14181,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13616,7 +14196,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13631,7 +14211,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13646,7 +14226,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13661,7 +14241,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -13676,7 +14256,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-17T13:08:29.652Z"
+          "ranAt": "2026-11-17T16:10:47.575Z"
         }
       ]
     },
@@ -22500,11 +23080,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FCHAIN-loop-closure",
-      "target": "REQ-rule-calibration",
-      "type": "satisfy"
-    },
-    {
       "source": "FCHAIN-merge-branches",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -22810,6 +23385,11 @@
       "source": "FCHAIN-session-end",
       "target": "FUNC-session-shutdown",
       "type": "compose"
+    },
+    {
+      "source": "FCHAIN-session-end",
+      "target": "REQ-host-abbau-3s",
+      "type": "satisfy"
     },
     {
       "source": "FCHAIN-session-end",
@@ -23439,6 +24019,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FCHAIN-steering-loop",
+      "target": "REQ-steuerung-deterministisch",
+      "type": "satisfy"
+    },
+    {
       "source": "FCHAIN-test-ingest",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -23480,7 +24065,17 @@
     },
     {
       "source": "FCHAIN-verify-lane",
+      "target": "FUNC-aenderung-melden",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
       "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane",
+      "target": "FUNC-lauf-urteil",
       "type": "compose"
     },
     {
@@ -23525,7 +24120,17 @@
     },
     {
       "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-aenderung-melden",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
       "target": "FUNC-graph-store",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-verify-lane-full",
+      "target": "FUNC-lauf-urteil",
       "type": "compose"
     },
     {
@@ -23567,11 +24172,6 @@
       "source": "FCHAIN-verify-lane-full",
       "target": "FUNC-verify-lane-full",
       "type": "compose"
-    },
-    {
-      "source": "FCHAIN-verify-lane-full",
-      "target": "REQ-risk-selection-misses-red-test",
-      "type": "satisfy"
     },
     {
       "source": "FLOW-action",
@@ -25101,6 +25701,21 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-lauf-urteil",
+      "target": "FUNC-verify-lane-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lauf-urteil",
+      "target": "FUNC-verify-lane-full",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-lauf-urteil",
+      "target": "SCHEMA-lauf-urteil",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-lifecycle-create",
       "target": "FUNC-session-shutdown",
       "type": "io"
@@ -25247,6 +25862,21 @@
     {
       "source": "FLOW-measurement-vector",
       "target": "SCHEMA-measurement-vector",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-meldung",
+      "target": "FUNC-verify-lane-code",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-meldung",
+      "target": "FUNC-verify-lane-full",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-meldung",
+      "target": "SCHEMA-test-ingest-answer",
       "type": "relation"
     },
     {
@@ -26401,17 +27031,12 @@
     },
     {
       "source": "FLOW-test-ingest-answer",
+      "target": "FUNC-aenderung-melden",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-test-ingest-answer",
       "target": "FUNC-agent-loop",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-test-ingest-answer",
-      "target": "FUNC-verify-lane-code",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-test-ingest-answer",
-      "target": "FUNC-verify-lane-full",
       "type": "io"
     },
     {
@@ -26420,8 +27045,18 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-test-run-report-code",
+      "source": "FLOW-test-ingest-call",
       "target": "FUNC-test-ingest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-test-ingest-call",
+      "target": "SCHEMA-test-ingest-input",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-test-run-report-code",
+      "target": "FUNC-aenderung-melden",
       "type": "io"
     },
     {
@@ -26431,7 +27066,7 @@
     },
     {
       "source": "FLOW-test-run-report-full",
-      "target": "FUNC-test-ingest",
+      "target": "FUNC-aenderung-melden",
       "type": "io"
     },
     {
@@ -26574,6 +27209,26 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-vitest-lauf-code",
+      "target": "FUNC-lauf-urteil",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-vitest-lauf-code",
+      "target": "SCHEMA-vitest-lauf",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-vitest-lauf-full",
+      "target": "FUNC-lauf-urteil",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-vitest-lauf-full",
+      "target": "SCHEMA-vitest-lauf",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-vorschlag",
       "target": "FUNC-graph-mutate-tool",
       "type": "io"
@@ -26654,6 +27309,26 @@
       "type": "relation"
     },
     {
+      "source": "FUNC-aenderung-melden",
+      "target": "MOD-dev-scripts",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-aenderung-melden",
+      "target": "FLOW-meldung",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-aenderung-melden",
+      "target": "FLOW-test-ingest-call",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-aenderung-melden",
+      "target": "REQ-spur-meldet-zurueck",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-agent-loop",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -26704,11 +27379,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-agent-loop",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-apply-reseed",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -26725,7 +27395,7 @@
     },
     {
       "source": "FUNC-apply-reseed",
-      "target": "REQ-graph-state-recall",
+      "target": "REQ-reseed-sichert-vorher",
       "type": "satisfy"
     },
     {
@@ -26739,11 +27409,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-arch-fitness",
-      "target": "REQ-steering-from-metrics",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-audit-stats",
       "target": "MOD-surface",
       "type": "allocate"
@@ -26755,7 +27420,12 @@
     },
     {
       "source": "FUNC-audit-stats",
-      "target": "REQ-audit-trail",
+      "target": "REQ-audit-stats-liefert-zaehlung",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-audit-stats",
+      "target": "REQ-rule-calibration",
       "type": "satisfy"
     },
     {
@@ -26770,7 +27440,7 @@
     },
     {
       "source": "FUNC-audit-trail",
-      "target": "REQ-audit-trail",
+      "target": "REQ-audit-trail-liefert-zuege",
       "type": "satisfy"
     },
     {
@@ -26784,11 +27454,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-author-actor",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-author-req",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -26797,11 +27462,6 @@
       "source": "FUNC-author-req",
       "target": "FLOW-anleitung-author-req",
       "type": "io"
-    },
-    {
-      "source": "FUNC-author-req",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-author-uc",
@@ -26814,11 +27474,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-author-uc",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-authoring-guide",
       "target": "MOD-projections",
       "type": "allocate"
@@ -26827,11 +27482,6 @@
       "source": "FUNC-authoring-guide",
       "target": "FLOW-channel-grammar",
       "type": "io"
-    },
-    {
-      "source": "FUNC-authoring-guide",
-      "target": "REQ-query-precision",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-auto-export",
@@ -26845,7 +27495,7 @@
     },
     {
       "source": "FUNC-auto-export",
-      "target": "REQ-auto-persist-merge",
+      "target": "REQ-auto-export-nach-zug",
       "type": "satisfy"
     },
     {
@@ -27025,6 +27675,11 @@
     },
     {
       "source": "FUNC-block-bedienung",
+      "target": "FUNC-aenderung-melden",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-bedienung",
       "target": "FUNC-cli-dispatch",
       "type": "compose"
     },
@@ -27061,6 +27716,11 @@
     {
       "source": "FUNC-block-bedienung",
       "target": "FUNC-import-code-verb",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-bedienung",
+      "target": "FUNC-lauf-urteil",
       "type": "compose"
     },
     {
@@ -27475,10 +28135,8 @@
     },
     {
       "source": "FUNC-broadcast-diff",
-      "target": "REQ-versioned-broadcast",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "target": "REQ-diff-an-viewer",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-chain-metrics",
@@ -27556,12 +28214,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-cli-dispatch",
-      "target": "REQ-npx-distribution",
-      "type": "satisfy",
-      "weight": "1"
-    },
-    {
       "source": "FUNC-close-violations",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -27570,11 +28222,6 @@
       "source": "FUNC-close-violations",
       "target": "FLOW-anleitung-close-violations",
       "type": "io"
-    },
-    {
-      "source": "FUNC-close-violations",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-collect-status",
@@ -27588,7 +28235,7 @@
     },
     {
       "source": "FUNC-collect-status",
-      "target": "REQ-real-health-check",
+      "target": "REQ-status-sammeln",
       "type": "satisfy"
     },
     {
@@ -27633,7 +28280,7 @@
     },
     {
       "source": "FUNC-compute-readiness",
-      "target": "REQ-steering-from-metrics",
+      "target": "REQ-readiness-schwaechste-stufe",
       "type": "satisfy"
     },
     {
@@ -27648,12 +28295,12 @@
     },
     {
       "source": "FUNC-compute-steering-delta",
-      "target": "REQ-steering-delta-in-answer-tested",
+      "target": "REQ-delta-rankt-kandidaten",
       "type": "satisfy"
     },
     {
       "source": "FUNC-compute-steering-delta",
-      "target": "REQ-steering-from-metrics",
+      "target": "REQ-steering-delta-in-answer-tested",
       "type": "satisfy"
     },
     {
@@ -27668,7 +28315,7 @@
     },
     {
       "source": "FUNC-cr-groups",
-      "target": "REQ-plan-gruppen",
+      "target": "REQ-cr-gruppen-rechnen",
       "type": "satisfy"
     },
     {
@@ -27750,7 +28397,7 @@
     },
     {
       "source": "FUNC-deduce-tests",
-      "target": "REQ-test-runnable-binding",
+      "target": "REQ-tests-aufloesen",
       "type": "satisfy"
     },
     {
@@ -27815,10 +28462,8 @@
     },
     {
       "source": "FUNC-emit-update-event",
-      "target": "REQ-versioned-broadcast",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "REQ-update-ereignis",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-evaluate-rules",
@@ -27888,7 +28533,7 @@
     },
     {
       "source": "FUNC-export-marker",
-      "target": "REQ-export-marker-tracks-drift",
+      "target": "REQ-export-marke-setzen",
       "type": "satisfy"
     },
     {
@@ -27903,7 +28548,7 @@
     },
     {
       "source": "FUNC-export-marker-clear",
-      "target": "REQ-export-marker-tracks-drift",
+      "target": "REQ-export-marke-loeschen",
       "type": "satisfy"
     },
     {
@@ -27922,11 +28567,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-fit-advisory",
-      "target": "REQ-steering-from-metrics",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-function-criticality",
       "target": "MOD-projections",
       "type": "allocate"
@@ -27935,11 +28575,6 @@
       "source": "FUNC-function-criticality",
       "target": "FLOW-function-criticality",
       "type": "io"
-    },
-    {
-      "source": "FUNC-function-criticality",
-      "target": "REQ-steering-from-metrics",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-generation-step",
@@ -27963,7 +28598,7 @@
     },
     {
       "source": "FUNC-generation-step",
-      "target": "REQ-analyse-artefakt-vor-stempel",
+      "target": "REQ-analyse-zaehlt-mit-auftrag",
       "type": "satisfy"
     },
     {
@@ -27978,7 +28613,7 @@
     },
     {
       "source": "FUNC-generation-step",
-      "target": "REQ-steering-from-metrics",
+      "target": "REQ-schritt-an-gate",
       "type": "satisfy"
     },
     {
@@ -28104,11 +28739,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-graph-generate-tool",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-graph-help",
       "target": "MOD-projections",
       "type": "allocate"
@@ -28117,11 +28747,6 @@
       "source": "FUNC-graph-help",
       "target": "FLOW-help-answer",
       "type": "io"
-    },
-    {
-      "source": "FUNC-graph-help",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-impact",
@@ -28166,11 +28791,6 @@
       "source": "FUNC-graph-merge-tool",
       "target": "FLOW-merge-answer",
       "type": "io"
-    },
-    {
-      "source": "FUNC-graph-merge-tool",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-metrics",
@@ -28259,16 +28879,6 @@
     },
     {
       "source": "FUNC-graph-mutate-tool",
-      "target": "REQ-bootstrap-through-gate",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-graph-mutate-tool",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-graph-mutate-tool",
       "target": "REQ-post-capture",
       "type": "satisfy"
     },
@@ -28323,11 +28933,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-graph-reseed-tool",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-graph-store",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -28364,22 +28969,12 @@
     },
     {
       "source": "FUNC-graph-store",
-      "target": "REQ-auto-persist-merge",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-graph-store",
       "target": "REQ-snapshot-drift-notice",
       "type": "satisfy"
     },
     {
       "source": "FUNC-graph-store",
       "target": "REQ-steering-pre",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-graph-store",
-      "target": "REQ-store-recovery",
       "type": "satisfy"
     },
     {
@@ -28436,7 +29031,7 @@
     },
     {
       "source": "FUNC-gve-sessions",
-      "target": "REQ-viewer-owned-by-repo",
+      "target": "REQ-sitzungen-tragen-ein",
       "type": "satisfy"
     },
     {
@@ -28456,12 +29051,12 @@
     },
     {
       "source": "FUNC-gve-supervise",
-      "target": "REQ-host-end-visible",
+      "target": "REQ-umfrage-bemerkt-tod",
       "type": "satisfy"
     },
     {
       "source": "FUNC-gve-supervise",
-      "target": "REQ-viewer-owned-by-repo",
+      "target": "REQ-viewer-ueberlebt-host",
       "type": "satisfy"
     },
     {
@@ -28481,26 +29076,27 @@
     },
     {
       "source": "FUNC-harness-cli",
-      "target": "REQ-modell-befragen",
+      "target": "REQ-graphcode-md-einstieg",
       "type": "satisfy"
     },
     {
       "source": "FUNC-harness-cli",
-      "target": "REQ-npx-distribution",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "REQ-graphcode-md-testauswahl",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-harness-cli",
+      "target": "REQ-graphcode-md-zuege",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-harness-cli",
+      "target": "REQ-init-nennt-schritte",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-harness-cli",
       "target": "REQ-post-harness-cli",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-harness-cli",
-      "target": "REQ-repo-install",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
@@ -28514,19 +29110,7 @@
     },
     {
       "source": "FUNC-harness-cli",
-      "target": "REQ-repo-update",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-harness-cli",
-      "target": "REQ-sitzung-einstieg",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-harness-cli",
-      "target": "REQ-zuege-sparen",
+      "target": "REQ-update-behaelt-store",
       "type": "satisfy"
     },
     {
@@ -28546,10 +29130,8 @@
     },
     {
       "source": "FUNC-health-endpoint",
-      "target": "REQ-real-health-check",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-19T00:00:00.000Z"
+      "target": "REQ-health-antwortet-stand",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-held-back-traces",
@@ -28585,11 +29167,6 @@
       "source": "FUNC-host-proxy",
       "target": "FLOW-proxy-call",
       "type": "io"
-    },
-    {
-      "source": "FUNC-host-proxy",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-host-socket",
@@ -28638,10 +29215,8 @@
     },
     {
       "source": "FUNC-import",
-      "target": "REQ-bootstrap-through-gate",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "REQ-import-nur-ueber-mutate",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-import",
@@ -28752,7 +29327,22 @@
     },
     {
       "source": "FUNC-init-verb",
-      "target": "REQ-repo-install",
+      "target": "REQ-init-legt-an",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-lauf-urteil",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-lauf-urteil",
+      "target": "FLOW-lauf-urteil",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-lauf-urteil",
+      "target": "REQ-lane-red-without-report",
       "type": "satisfy"
     },
     {
@@ -28764,11 +29354,6 @@
       "source": "FUNC-list-elements",
       "target": "FLOW-element-slice",
       "type": "io"
-    },
-    {
-      "source": "FUNC-list-elements",
-      "target": "REQ-query-precision",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-load-config",
@@ -28798,7 +29383,7 @@
     },
     {
       "source": "FUNC-measure-test-schlupf",
-      "target": "REQ-full-run-on-probation",
+      "target": "REQ-volllauf-schreibt-schlupf",
       "type": "satisfy"
     },
     {
@@ -28818,17 +29403,15 @@
     },
     {
       "source": "FUNC-merge-nodes",
-      "target": "REQ-auto-persist-merge",
+      "target": "REQ-conflict-free-merge",
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FUNC-merge-nodes",
-      "target": "REQ-conflict-free-merge",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "REQ-merge-ohne-konflikt",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-merge-nodes",
@@ -28846,11 +29429,6 @@
       "source": "FUNC-module-metrics",
       "target": "FLOW-module-metrics",
       "type": "io"
-    },
-    {
-      "source": "FUNC-module-metrics",
-      "target": "REQ-steering-from-metrics",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-mutate",
@@ -28891,17 +29469,17 @@
     },
     {
       "source": "FUNC-mutate",
-      "target": "REQ-element-contract-finding",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-mutate",
       "target": "REQ-gate-judges-and-stores",
       "type": "satisfy"
     },
     {
       "source": "FUNC-mutate",
       "target": "REQ-gate-survives-rule-failure",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-mutate",
+      "target": "REQ-gate-weist-vertragsfremd-ab",
       "type": "satisfy"
     },
     {
@@ -28941,7 +29519,7 @@
     },
     {
       "source": "FUNC-open-store",
-      "target": "REQ-schema-version-migration",
+      "target": "REQ-store-folgt-fingerabdruck",
       "type": "satisfy"
     },
     {
@@ -28991,7 +29569,7 @@
     },
     {
       "source": "FUNC-plan-code-lane",
-      "target": "REQ-lane-reports-change",
+      "target": "REQ-planmodus-meldet-nichts",
       "type": "satisfy"
     },
     {
@@ -29017,16 +29595,6 @@
     {
       "source": "FUNC-read-tools",
       "target": "REQ-post-agent-query",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-read-tools",
-      "target": "REQ-progressive-expansion",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-read-tools",
-      "target": "REQ-query-precision",
       "type": "satisfy"
     },
     {
@@ -29081,7 +29649,7 @@
     },
     {
       "source": "FUNC-reseed",
-      "target": "REQ-graph-state-recall",
+      "target": "REQ-reseed-ersetzt-store",
       "type": "satisfy"
     },
     {
@@ -29101,7 +29669,7 @@
     },
     {
       "source": "FUNC-resolve-tests-from-code",
-      "target": "REQ-graph-tests-operational",
+      "target": "REQ-tests-aus-changeset",
       "type": "satisfy"
     },
     {
@@ -29136,7 +29704,7 @@
     },
     {
       "source": "FUNC-rewind",
-      "target": "REQ-graph-state-recall",
+      "target": "REQ-rewind-liest-snapshot",
       "type": "satisfy"
     },
     {
@@ -29150,11 +29718,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-rules-tool",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-schema-guard",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -29166,7 +29729,7 @@
     },
     {
       "source": "FUNC-schema-guard",
-      "target": "REQ-schema-version-migration",
+      "target": "REQ-fingerabdruck-bilden",
       "type": "satisfy"
     },
     {
@@ -29201,12 +29764,7 @@
     },
     {
       "source": "FUNC-se-conops",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-se-conops",
-      "target": "REQ-zugangsliste-vor-bau",
+      "target": "REQ-conops-zugangsliste",
       "type": "satisfy"
     },
     {
@@ -29222,11 +29780,6 @@
     {
       "source": "FUNC-se-constraints",
       "target": "REQ-constraints-skill-vertrag",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-se-constraints",
-      "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
     },
     {
@@ -29250,11 +29803,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-se-fmea",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-se-generate",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -29270,11 +29818,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-se-generate",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-se-help",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -29283,11 +29826,6 @@
       "source": "FUNC-se-help",
       "target": "FLOW-anleitung-se-help",
       "type": "io"
-    },
-    {
-      "source": "FUNC-se-help",
-      "target": "REQ-skill-reads-only",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-se-irr",
@@ -29305,11 +29843,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-se-irr",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-se-laufzeit",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -29322,11 +29855,6 @@
     {
       "source": "FUNC-se-laufzeit",
       "target": "REQ-laufzeit-reads-answer-path",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-se-laufzeit",
-      "target": "REQ-skill-authors-through-gate",
       "type": "satisfy"
     },
     {
@@ -29360,11 +29888,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-se-optimize",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-se-plan",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -29376,27 +29899,17 @@
     },
     {
       "source": "FUNC-se-plan",
-      "target": "REQ-analyse-artefakt-vor-stempel",
+      "target": "REQ-plan-stufe-null",
       "type": "satisfy"
     },
     {
       "source": "FUNC-se-plan",
-      "target": "REQ-modell-befragen",
+      "target": "REQ-se-plan-nennt-gruppen",
       "type": "satisfy"
     },
     {
       "source": "FUNC-se-plan",
-      "target": "REQ-plan-gruppen",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-se-plan",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-se-plan",
-      "target": "REQ-zugangsliste-vor-bau",
+      "target": "REQ-se-plan-stempel-ganz-schreiben",
       "type": "satisfy"
     },
     {
@@ -29411,22 +29924,17 @@
     },
     {
       "source": "FUNC-se-retro",
-      "target": "REQ-modell-befragen",
+      "target": "REQ-retro-misst-einstieg",
       "type": "satisfy"
     },
     {
       "source": "FUNC-se-retro",
-      "target": "REQ-sitzung-einstieg",
+      "target": "REQ-retro-misst-modellfragen",
       "type": "satisfy"
     },
     {
       "source": "FUNC-se-retro",
-      "target": "REQ-skill-reads-only",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-se-retro",
-      "target": "REQ-zuege-sparen",
+      "target": "REQ-retro-misst-zuege",
       "type": "satisfy"
     },
     {
@@ -29440,11 +29948,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-se-review",
-      "target": "REQ-skill-reads-only",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-se-status",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -29453,11 +29956,6 @@
       "source": "FUNC-se-status",
       "target": "FLOW-anleitung-se-status",
       "type": "io"
-    },
-    {
-      "source": "FUNC-se-status",
-      "target": "REQ-skill-reads-only",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-se-top-level",
@@ -29470,11 +29968,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-se-top-level",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-se-trade",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -29483,11 +29976,6 @@
       "source": "FUNC-se-trade",
       "target": "FLOW-anleitung-se-trade",
       "type": "io"
-    },
-    {
-      "source": "FUNC-se-trade",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-se-umbau",
@@ -29500,11 +29988,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-se-umbau",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-se-vorbereitung",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -29513,11 +29996,6 @@
       "source": "FUNC-se-vorbereitung",
       "target": "FLOW-anleitung-se-vorbereitung",
       "type": "io"
-    },
-    {
-      "source": "FUNC-se-vorbereitung",
-      "target": "REQ-skill-authors-through-gate",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-se-vorbereitung",
@@ -29541,12 +30019,12 @@
     },
     {
       "source": "FUNC-seed-from-json",
-      "target": "REQ-bootstrap-through-gate",
+      "target": "REQ-held-back-edge-does-not-abort-load",
       "type": "satisfy"
     },
     {
       "source": "FUNC-seed-from-json",
-      "target": "REQ-held-back-edge-does-not-abort-load",
+      "target": "REQ-seed-prueft-kanten",
       "type": "satisfy"
     },
     {
@@ -29561,12 +30039,12 @@
     },
     {
       "source": "FUNC-select-tests",
-      "target": "REQ-graph-tests-operational",
+      "target": "REQ-post-impact-testing",
       "type": "satisfy"
     },
     {
       "source": "FUNC-select-tests",
-      "target": "REQ-post-impact-testing",
+      "target": "REQ-vitest-aufruf-aus-tests",
       "type": "satisfy"
     },
     {
@@ -29596,7 +30074,7 @@
     },
     {
       "source": "FUNC-serve-sse",
-      "target": "REQ-versioned-broadcast",
+      "target": "REQ-sse-strom",
       "type": "satisfy"
     },
     {
@@ -29670,11 +30148,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-serve-stdio",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-session-shutdown",
       "target": "MOD-surface",
       "type": "allocate"
@@ -29701,7 +30174,7 @@
     },
     {
       "source": "FUNC-session-shutdown",
-      "target": "REQ-host-end-visible",
+      "target": "REQ-host-ende-sichtbar-client",
       "type": "satisfy"
     },
     {
@@ -29756,18 +30229,17 @@
     },
     {
       "source": "FUNC-take-steering-snapshot",
-      "target": "REQ-applied-suggestion-moves-target",
-      "type": "satisfy",
-      "weight": "1"
-    },
-    {
-      "source": "FUNC-take-steering-snapshot",
-      "target": "REQ-element-contract-finding",
+      "target": "REQ-measurement-vector-contract-tested",
       "type": "satisfy"
     },
     {
       "source": "FUNC-take-steering-snapshot",
-      "target": "REQ-measurement-vector-contract-tested",
+      "target": "REQ-messpfad-liefert-stand",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-take-steering-snapshot",
+      "target": "REQ-messpfad-meldet-vertragsfremd",
       "type": "satisfy"
     },
     {
@@ -29778,11 +30250,6 @@
     {
       "source": "FUNC-take-steering-snapshot",
       "target": "REQ-stage-names-enumerated",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-take-steering-snapshot",
-      "target": "REQ-steering-from-metrics",
       "type": "satisfy"
     },
     {
@@ -29801,11 +30268,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-target-profile-load",
-      "target": "REQ-target-shifts-ranking",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-test",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -29814,11 +30276,6 @@
       "source": "FUNC-test",
       "target": "FLOW-anleitung-test",
       "type": "io"
-    },
-    {
-      "source": "FUNC-test",
-      "target": "REQ-test-skill-red-first",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-test-ingest",
@@ -29847,12 +30304,12 @@
     },
     {
       "source": "FUNC-test-ingest",
-      "target": "REQ-test-result-withdrawn-on-change",
+      "target": "REQ-ingest-je-testref",
       "type": "satisfy"
     },
     {
       "source": "FUNC-test-ingest",
-      "target": "REQ-test-runnable-binding",
+      "target": "REQ-test-result-withdrawn-on-change",
       "type": "satisfy"
     },
     {
@@ -29869,11 +30326,6 @@
       "source": "FUNC-test-ui",
       "target": "FLOW-anleitung-test-ui",
       "type": "io"
-    },
-    {
-      "source": "FUNC-test-ui",
-      "target": "REQ-test-skill-red-first",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-tool-context",
@@ -29901,16 +30353,6 @@
       "type": "io"
     },
     {
-      "source": "FUNC-tool-context",
-      "target": "REQ-audit-trail",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-tool-context",
-      "target": "REQ-mcp-tool-registry",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-upgrade",
       "target": "MOD-surface",
       "type": "allocate"
@@ -29922,7 +30364,12 @@
     },
     {
       "source": "FUNC-upgrade",
-      "target": "REQ-repo-update",
+      "target": "REQ-update-traegt-policy-ein",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-upgrade",
+      "target": "REQ-upgrade-entfernt-fremde-skills",
       "type": "satisfy"
     },
     {
@@ -29947,13 +30394,8 @@
     },
     {
       "source": "FUNC-verify-lane-code",
-      "target": "REQ-lane-red-without-report",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-verify-lane-code",
-      "target": "REQ-lane-reports-change",
-      "type": "satisfy"
+      "target": "FLOW-vitest-lauf-code",
+      "type": "io"
     },
     {
       "source": "FUNC-verify-lane-full",
@@ -29987,12 +30429,12 @@
     },
     {
       "source": "FUNC-verify-lane-full",
-      "target": "REQ-full-run-on-probation",
-      "type": "satisfy"
+      "target": "FLOW-vitest-lauf-full",
+      "type": "io"
     },
     {
       "source": "FUNC-verify-lane-full",
-      "target": "REQ-lane-red-without-report",
+      "target": "REQ-volllauf-nennt-folge",
       "type": "satisfy"
     },
     {
@@ -30052,7 +30494,17 @@
     },
     {
       "source": "MOD-agent-surface",
-      "target": "REQ-gate-only-writes",
+      "target": "REQ-skill-authors-through-gate",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-agent-surface",
+      "target": "REQ-skill-reads-only",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-agent-surface",
+      "target": "REQ-test-skill-red-first",
       "type": "satisfy"
     },
     {
@@ -30068,11 +30520,6 @@
     {
       "source": "MOD-kernel",
       "target": "REQ-disk-persistence",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-kernel",
-      "target": "REQ-gate-only-writes",
       "type": "satisfy"
     },
     {
@@ -30102,11 +30549,6 @@
     },
     {
       "source": "MOD-kernel",
-      "target": "REQ-prompt-provenance",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-kernel",
       "target": "REQ-quality-metric",
       "type": "satisfy"
     },
@@ -30118,11 +30560,6 @@
     {
       "source": "MOD-kernel",
       "target": "REQ-risk-store-unreadable",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-kernel",
-      "target": "REQ-rule-calibration",
       "type": "satisfy"
     },
     {
@@ -30148,11 +30585,6 @@
     {
       "source": "MOD-kernel-measure",
       "target": "REQ-readiness-transparent",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-loop",
-      "target": "REQ-gate-only-writes",
       "type": "satisfy"
     },
     {
@@ -30223,11 +30655,6 @@
     {
       "source": "MOD-surface",
       "target": "REQ-dashboard-readonly",
-      "type": "satisfy"
-    },
-    {
-      "source": "MOD-surface",
-      "target": "REQ-gate-only-writes",
       "type": "satisfy"
     },
     {
@@ -30374,6 +30801,46 @@
       "type": "relation",
       "label": "depends-on",
       "weight": "1"
+    },
+    {
+      "source": "REQ-analyse-artefakt-vor-stempel",
+      "target": "REQ-analyse-zaehlt-mit-auftrag",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-analyse-artefakt-vor-stempel",
+      "target": "REQ-se-plan-stempel-ganz-schreiben",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-audit-trail",
+      "target": "REQ-audit-stats-liefert-zaehlung",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-audit-trail",
+      "target": "REQ-audit-trail-liefert-zuege",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-auto-persist-merge",
+      "target": "REQ-auto-export-nach-zug",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-auto-persist-merge",
+      "target": "REQ-merge-ohne-konflikt",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-bootstrap-through-gate",
+      "target": "REQ-import-nur-ueber-mutate",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-bootstrap-through-gate",
+      "target": "REQ-seed-prueft-kanten",
+      "type": "compose"
     },
     {
       "source": "REQ-code-quality",
@@ -30581,6 +31048,36 @@
       "type": "compose"
     },
     {
+      "source": "REQ-element-contract-finding",
+      "target": "REQ-gate-weist-vertragsfremd-ab",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-element-contract-finding",
+      "target": "REQ-messpfad-meldet-vertragsfremd",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-export-marker-tracks-drift",
+      "target": "REQ-export-marke-loeschen",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-export-marker-tracks-drift",
+      "target": "REQ-export-marke-setzen",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-full-run-on-probation",
+      "target": "REQ-volllauf-nennt-folge",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-full-run-on-probation",
+      "target": "REQ-volllauf-schreibt-schlupf",
+      "type": "compose"
+    },
+    {
       "source": "REQ-graph-is-ssot",
       "target": "REQ-docs-taxonomy",
       "type": "compose",
@@ -30622,11 +31119,91 @@
       "type": "compose"
     },
     {
+      "source": "REQ-graph-state-recall",
+      "target": "REQ-reseed-ersetzt-store",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-graph-state-recall",
+      "target": "REQ-reseed-sichert-vorher",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-graph-state-recall",
+      "target": "REQ-rewind-liest-snapshot",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-graph-tests-operational",
+      "target": "REQ-tests-aus-changeset",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-graph-tests-operational",
+      "target": "REQ-vitest-aufruf-aus-tests",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-host-end-visible",
+      "target": "REQ-host-abbau-3s",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-host-end-visible",
+      "target": "REQ-host-ende-sichtbar-client",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-host-end-visible",
+      "target": "REQ-viewer-ueberlebt-host",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-lane-reports-change",
+      "target": "REQ-planmodus-meldet-nichts",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-lane-reports-change",
+      "target": "REQ-spur-meldet-zurueck",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-modell-befragen",
+      "target": "REQ-graphcode-md-testauswahl",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-modell-befragen",
+      "target": "REQ-retro-misst-modellfragen",
+      "type": "compose"
+    },
+    {
       "source": "REQ-one-gate-per-repo",
       "target": "REQ-gate-only-writes",
       "type": "compose",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "REQ-plan-gruppen",
+      "target": "REQ-cr-gruppen-rechnen",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-plan-gruppen",
+      "target": "REQ-se-plan-nennt-gruppen",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-real-health-check",
+      "target": "REQ-health-antwortet-stand",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-real-health-check",
+      "target": "REQ-status-sammeln",
+      "type": "compose"
     },
     {
       "source": "REQ-reduced-llm",
@@ -30676,6 +31253,31 @@
     {
       "source": "REQ-reduced-llm",
       "target": "REQ-subgraph-slicing",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-repo-install",
+      "target": "REQ-init-legt-an",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-repo-install",
+      "target": "REQ-init-nennt-schritte",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-repo-update",
+      "target": "REQ-update-behaelt-store",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-repo-update",
+      "target": "REQ-update-traegt-policy-ein",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-repo-update",
+      "target": "REQ-upgrade-entfernt-fremde-skills",
       "type": "compose"
     },
     {
@@ -30769,6 +31371,16 @@
       "type": "compose"
     },
     {
+      "source": "REQ-schema-version-migration",
+      "target": "REQ-fingerabdruck-bilden",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-schema-version-migration",
+      "target": "REQ-store-folgt-fingerabdruck",
+      "type": "compose"
+    },
+    {
       "source": "REQ-single-kuzu-owner",
       "target": "REQ-first-session-claims-store-lock",
       "type": "compose"
@@ -30789,6 +31401,51 @@
       "type": "compose"
     },
     {
+      "source": "REQ-sitzung-einstieg",
+      "target": "REQ-graphcode-md-einstieg",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-sitzung-einstieg",
+      "target": "REQ-retro-misst-einstieg",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-steering-from-metrics",
+      "target": "REQ-delta-rankt-kandidaten",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-steering-from-metrics",
+      "target": "REQ-messpfad-liefert-stand",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-steering-from-metrics",
+      "target": "REQ-readiness-schwaechste-stufe",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-steering-from-metrics",
+      "target": "REQ-schritt-an-gate",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-steering-from-metrics",
+      "target": "REQ-steuerung-deterministisch",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-test-runnable-binding",
+      "target": "REQ-ingest-je-testref",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-test-runnable-binding",
+      "target": "REQ-tests-aufloesen",
+      "type": "compose"
+    },
+    {
       "source": "REQ-token-efficiency",
       "target": "REQ-benchmark-harness",
       "type": "compose"
@@ -30796,6 +31453,51 @@
     {
       "source": "REQ-token-efficiency",
       "target": "REQ-precise-context",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-versioned-broadcast",
+      "target": "REQ-diff-an-viewer",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-versioned-broadcast",
+      "target": "REQ-sse-strom",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-versioned-broadcast",
+      "target": "REQ-update-ereignis",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-viewer-owned-by-repo",
+      "target": "REQ-sitzungen-tragen-ein",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-viewer-owned-by-repo",
+      "target": "REQ-umfrage-bemerkt-tod",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-zuege-sparen",
+      "target": "REQ-graphcode-md-zuege",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-zuege-sparen",
+      "target": "REQ-retro-misst-zuege",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-zugangsliste-vor-bau",
+      "target": "REQ-conops-zugangsliste",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-zugangsliste-vor-bau",
+      "target": "REQ-plan-stufe-null",
       "type": "compose"
     },
     {
@@ -31116,10 +31818,13 @@
     },
     {
       "source": "SYS-graphcode",
-      "target": "REQ-graceful-degradation",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
+      "target": "REQ-gate-only-writes",
+      "type": "satisfy"
+    },
+    {
+      "source": "SYS-graphcode",
+      "target": "REQ-npx-distribution",
+      "type": "satisfy"
     },
     {
       "source": "SYS-graphcode",
@@ -31180,6 +31885,11 @@
     },
     {
       "source": "TEST-audit-rules-passed",
+      "target": "REQ-audit-stats-liefert-zaehlung",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-audit-rules-passed",
       "target": "REQ-audit-trail",
       "type": "verify"
     },
@@ -31200,12 +31910,22 @@
     },
     {
       "source": "TEST-audit-trail-projection",
+      "target": "REQ-audit-trail-liefert-zuege",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-audit-trail-projection",
       "target": "REQ-risk-audit-evaluation-unowned",
       "type": "verify"
     },
     {
       "source": "TEST-audit-trail-projection",
       "target": "REQ-token-efficiency",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-auto-export",
+      "target": "REQ-auto-export-nach-zug",
       "type": "verify"
     },
     {
@@ -31234,6 +31954,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-bootstrap",
+      "target": "REQ-seed-prueft-kanten",
+      "type": "verify"
     },
     {
       "source": "TEST-bridge-follows-lock",
@@ -31279,6 +32004,11 @@
     },
     {
       "source": "TEST-cli-scaffold",
+      "target": "REQ-init-nennt-schritte",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-cli-scaffold",
       "target": "REQ-install-idempotent",
       "type": "verify",
       "weight": 1,
@@ -31311,6 +32041,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-cli-scaffold",
+      "target": "REQ-update-behaelt-store",
+      "type": "verify"
     },
     {
       "source": "TEST-cli-scaffold",
@@ -31543,7 +32278,32 @@
     },
     {
       "source": "TEST-first-step",
+      "target": "REQ-messpfad-liefert-stand",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-first-step",
+      "target": "REQ-readiness-schwaechste-stufe",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-first-step",
+      "target": "REQ-schritt-an-gate",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-first-step",
       "target": "REQ-steering-from-metrics",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-first-step",
+      "target": "REQ-steuerung-deterministisch",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-fit-advisory",
+      "target": "REQ-delta-rankt-kandidaten",
       "type": "verify"
     },
     {
@@ -31711,6 +32471,21 @@
       "type": "verify"
     },
     {
+      "source": "TEST-graph-tests-operational",
+      "target": "REQ-tests-aus-changeset",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-time-travel",
+      "target": "REQ-export-marke-loeschen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-time-travel",
+      "target": "REQ-export-marke-setzen",
+      "type": "verify"
+    },
+    {
       "source": "TEST-graph-time-travel",
       "target": "REQ-export-marker-tracks-drift",
       "type": "verify"
@@ -31732,12 +32507,22 @@
     },
     {
       "source": "TEST-gve-autostart",
+      "target": "REQ-sitzungen-tragen-ein",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gve-autostart",
       "target": "REQ-viewer-owned-by-repo",
       "type": "verify"
     },
     {
       "source": "TEST-gve-supervision",
       "target": "REQ-graceful-degradation",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gve-supervision",
+      "target": "REQ-umfrage-bemerkt-tod",
       "type": "verify"
     },
     {
@@ -31787,7 +32572,17 @@
     },
     {
       "source": "TEST-host-ende-sichtbar",
+      "target": "REQ-host-abbau-3s",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-ende-sichtbar",
       "target": "REQ-host-end-visible",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-ende-sichtbar",
+      "target": "REQ-host-ende-sichtbar-client",
       "type": "verify"
     },
     {
@@ -31878,6 +32673,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-import-invariant",
+      "target": "REQ-import-nur-ueber-mutate",
+      "type": "verify"
+    },
+    {
       "source": "TEST-import-rejected-traces",
       "target": "REQ-export-refuses-until-held-back-repaired",
       "type": "verify"
@@ -31915,6 +32715,11 @@
     {
       "source": "TEST-init-verb",
       "target": "REQ-init-agent-host",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-init-verb",
+      "target": "REQ-init-legt-an",
       "type": "verify"
     },
     {
@@ -31966,7 +32771,17 @@
     },
     {
       "source": "TEST-lane-reports-change",
+      "target": "REQ-planmodus-meldet-nichts",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-lane-reports-change",
       "target": "REQ-risk-stale-test-result",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-lane-reports-change",
+      "target": "REQ-spur-meldet-zurueck",
       "type": "verify"
     },
     {
@@ -32000,6 +32815,11 @@
     },
     {
       "source": "TEST-live-view",
+      "target": "REQ-diff-an-viewer",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-live-view",
       "target": "REQ-mutation-emits-event",
       "type": "verify",
       "weight": 1,
@@ -32008,6 +32828,16 @@
     {
       "source": "TEST-live-view",
       "target": "REQ-post-emit-update-event",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-live-view",
+      "target": "REQ-sse-strom",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-live-view",
+      "target": "REQ-update-ereignis",
       "type": "verify"
     },
     {
@@ -32137,6 +32967,11 @@
     },
     {
       "source": "TEST-merge",
+      "target": "REQ-merge-ohne-konflikt",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-merge",
       "target": "REQ-post-merge-nodes",
       "type": "verify"
     },
@@ -32207,6 +33042,11 @@
     {
       "source": "TEST-mutate-schema-guard",
       "target": "REQ-element-contract-finding",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mutate-schema-guard",
+      "target": "REQ-gate-weist-vertragsfremd-ab",
       "type": "verify"
     },
     {
@@ -32362,6 +33202,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-readiness-altbestand",
+      "target": "REQ-messpfad-meldet-vertragsfremd",
+      "type": "verify"
+    },
+    {
       "source": "TEST-readiness-completeness",
       "target": "REQ-completeness-actor-bounded",
       "type": "verify"
@@ -32390,6 +33235,11 @@
     },
     {
       "source": "TEST-readonly-bridge",
+      "target": "REQ-health-antwortet-stand",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-readonly-bridge",
       "target": "REQ-readonly-bridge",
       "type": "verify",
       "weight": 1,
@@ -32401,6 +33251,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-readonly-bridge",
+      "target": "REQ-status-sammeln",
+      "type": "verify"
     },
     {
       "source": "TEST-readonly-bridge",
@@ -32456,6 +33311,16 @@
     },
     {
       "source": "TEST-reseed",
+      "target": "REQ-reseed-ersetzt-store",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-reseed",
+      "target": "REQ-reseed-sichert-vorher",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-reseed",
       "target": "REQ-store-recovery",
       "type": "verify"
     },
@@ -32474,6 +33339,11 @@
     {
       "source": "TEST-rewind",
       "target": "REQ-graph-state-recall",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-rewind",
+      "target": "REQ-rewind-liest-snapshot",
       "type": "verify"
     },
     {
@@ -32512,7 +33382,17 @@
     },
     {
       "source": "TEST-schema-migration",
+      "target": "REQ-fingerabdruck-bilden",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-schema-migration",
       "target": "REQ-schema-version-migration",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-schema-migration",
+      "target": "REQ-store-folgt-fingerabdruck",
       "type": "verify"
     },
     {
@@ -32547,7 +33427,17 @@
     },
     {
       "source": "TEST-se-plan-groups",
+      "target": "REQ-cr-gruppen-rechnen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-se-plan-groups",
       "target": "REQ-plan-gruppen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-se-plan-groups",
+      "target": "REQ-se-plan-nennt-gruppen",
       "type": "verify"
     },
     {
@@ -32573,6 +33463,11 @@
     {
       "source": "TEST-selective-test-audit",
       "target": "REQ-selective-code-lane",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-selective-test-audit",
+      "target": "REQ-vitest-aufruf-aus-tests",
       "type": "verify"
     },
     {
@@ -32603,6 +33498,11 @@
     {
       "source": "TEST-session-lifecycle",
       "target": "REQ-single-kuzu-owner",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-session-lifecycle",
+      "target": "REQ-viewer-ueberlebt-host",
       "type": "verify"
     },
     {
@@ -32644,7 +33544,37 @@
     },
     {
       "source": "TEST-sitzung-kpi",
+      "target": "REQ-graphcode-md-einstieg",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sitzung-kpi",
+      "target": "REQ-graphcode-md-testauswahl",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sitzung-kpi",
+      "target": "REQ-graphcode-md-zuege",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sitzung-kpi",
       "target": "REQ-modell-befragen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sitzung-kpi",
+      "target": "REQ-retro-misst-einstieg",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sitzung-kpi",
+      "target": "REQ-retro-misst-modellfragen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-sitzung-kpi",
+      "target": "REQ-retro-misst-zuege",
       "type": "verify"
     },
     {
@@ -32705,6 +33635,16 @@
     {
       "source": "TEST-skill-rule-ids",
       "target": "REQ-published-counts-match-code",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-zugangsliste",
+      "target": "REQ-conops-zugangsliste",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-zugangsliste",
+      "target": "REQ-plan-stufe-null",
       "type": "verify"
     },
     {
@@ -32843,6 +33783,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-task-analysen",
+      "target": "REQ-analyse-zaehlt-mit-auftrag",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-task-analysen",
+      "target": "REQ-se-plan-stempel-ganz-schreiben",
+      "type": "verify"
+    },
+    {
       "source": "TEST-test-result-withdrawn-on-change",
       "target": "REQ-risk-stale-test-result",
       "type": "verify"
@@ -32858,6 +33808,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-test-runnable-binding",
+      "target": "REQ-tests-aufloesen",
+      "type": "verify"
     },
     {
       "source": "TEST-test-schlupf",
@@ -32876,7 +33831,27 @@
     },
     {
       "source": "TEST-test-schlupf",
+      "target": "REQ-volllauf-nennt-folge",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-schlupf",
+      "target": "REQ-volllauf-schreibt-schlupf",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-schlupf",
+      "target": "SCHEMA-lauf-urteil",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-schlupf",
       "target": "SCHEMA-schlupf-zeile",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-schlupf",
+      "target": "SCHEMA-vitest-lauf",
       "type": "verify"
     },
     {
@@ -32892,6 +33867,11 @@
     {
       "source": "TEST-testreport",
       "target": "REQ-audit-trail",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-testreport",
+      "target": "REQ-ingest-je-testref",
       "type": "verify"
     },
     {
@@ -32961,6 +33941,16 @@
     {
       "source": "TEST-upgrade",
       "target": "REQ-repo-update",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-upgrade",
+      "target": "REQ-update-traegt-policy-ein",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-upgrade",
+      "target": "REQ-upgrade-entfernt-fremde-skills",
       "type": "verify"
     },
     {
@@ -33675,5 +34665,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1242
+  "graphVersion": 1249
 }

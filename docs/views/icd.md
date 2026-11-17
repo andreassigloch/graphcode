@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 61 SCHEMA · 250 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 63 SCHEMA · 255 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -32,6 +32,7 @@
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
 | `SCHEMA-import-access` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-lauf-urteil` | src/projections/test-schlupf.ts#LaufUrteilSchema | n/a |
 | `SCHEMA-lock-owner` | src/kernel/lock-owner-contract.ts#LockOwner | n/a |
 | `SCHEMA-markdown-view` | src/projections/exporter.ts#MarkdownViewSchema | reviewed |
 | `SCHEMA-mcp-tool` | src/kernel/tool-contract.ts#MCPToolSchema | n/a |
@@ -69,6 +70,7 @@
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
 | `SCHEMA-verlauf` | src/projections/verlauf.ts#VerlaufSchema | n/a |
+| `SCHEMA-vitest-lauf` | src/projections/test-schlupf.ts#VitestLaufSchema | n/a |
 | `SCHEMA-work-set` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-zug-bericht` | src/kernel/measure/zug-bericht.ts#ZugBericht | reviewed |
 
@@ -202,6 +204,7 @@
 | `FLOW-lane-output` | `FUNC-verify-lane-code` | `ACTOR-auftraggeber` |
 | `FLOW-lane-output-full` | `FUNC-verify-lane-full` | `ACTOR-auftraggeber` |
 | `FLOW-lane-output-model` | `FUNC-verify-lane-model` | `ACTOR-auftraggeber` |
+| `FLOW-lauf-urteil` | `FUNC-lauf-urteil` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
 | `FLOW-lifecycle-create` | `FUNC-serve-stdio` | `FUNC-session-shutdown` |
 | `FLOW-live-event` | `FUNC-emit-update-event` | `FUNC-broadcast-diff` |
 | `FLOW-lock-file` | `FUNC-claim-store-lock` | `FUNC-upgrade` |
@@ -216,6 +219,7 @@
 | `FLOW-marker-set` | `FUNC-mutate` | `FUNC-export-marker` |
 | `FLOW-mcp-tool` | `FUNC-graph-suggest` | `FUNC-bind-tools` |
 | `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-generation-step` |
+| `FLOW-meldung` | `FUNC-aenderung-melden` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
 | `FLOW-merge-answer` | `FUNC-graph-merge-tool` | `FUNC-agent-loop` |
 | `FLOW-merge-report` | `FUNC-merge-nodes` | `FUNC-graph-merge-tool` |
 | `FLOW-metric-policy` | `FUNC-load-config` | `FUNC-evaluate-rules` |
@@ -303,9 +307,10 @@
 | `FLOW-target-profile-file` | `FUNC-agent-loop` | `FUNC-target-profile-load` |
 | `FLOW-test-impact-request` | `FUNC-deduce-tests` | `FUNC-resolve-tests-from-code` |
 | `FLOW-test-impact-request-ingest` | `FUNC-test-ingest` | `FUNC-resolve-tests-from-code` |
-| `FLOW-test-ingest-answer` | `FUNC-test-ingest` | `FUNC-agent-loop` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
-| `FLOW-test-run-report-code` | `FUNC-verify-lane-code` | `FUNC-test-ingest` |
-| `FLOW-test-run-report-full` | `FUNC-verify-lane-full` | `FUNC-test-ingest` |
+| `FLOW-test-ingest-answer` | `FUNC-test-ingest` | `FUNC-aenderung-melden` · `FUNC-agent-loop` |
+| `FLOW-test-ingest-call` | `FUNC-aenderung-melden` | `FUNC-test-ingest` |
+| `FLOW-test-run-report-code` | `FUNC-verify-lane-code` | `FUNC-aenderung-melden` |
+| `FLOW-test-run-report-full` | `FUNC-verify-lane-full` | `FUNC-aenderung-melden` |
 | `FLOW-test-selection` | `FUNC-deduce-tests` | `FUNC-agent-loop` |
 | `FLOW-tool-context` | `FUNC-tool-context` | `FUNC-bind-tools` |
 | `FLOW-tool-registry` | `FUNC-bind-tools` | `FUNC-serve-stdio` |
@@ -319,6 +324,8 @@
 | `FLOW-verlauf-request` | `FUNC-graph-readiness` | `FUNC-stand-verlauf` |
 | `FLOW-verlauf-snapshot` | `FUNC-stand-verlauf` | `FUNC-take-steering-snapshot` |
 | `FLOW-viewer-start` | `FUNC-gve-supervise` | `ACTOR-dashboard` |
+| `FLOW-vitest-lauf-code` | `FUNC-verify-lane-code` | `FUNC-lauf-urteil` |
+| `FLOW-vitest-lauf-full` | `FUNC-verify-lane-full` | `FUNC-lauf-urteil` |
 | `FLOW-vorschlag` | `FUNC-vorschlag` | `FUNC-graph-mutate-tool` |
 | `FLOW-work-set` | `FUNC-tool-context` | `FUNC-graph-readiness` |
 | `FLOW-write-slot` | `FUNC-graph-suggest` | `FUNC-tool-context` |
