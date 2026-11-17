@@ -1,6 +1,6 @@
 # CR-GC-955: contracts 12.15.0 übernehmen: RD-07 Level jump (CR-SM-436), Regelzahl 82, Regelmatrix, Systemmodell-Seite
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-17)
 **Typ:** aus Item ITEM-2026-1423 (finding)
 **Erstellt:** 2026-11-17
 **Item:** bok/items/ITEM-2026-1423.json (Lane: code)
