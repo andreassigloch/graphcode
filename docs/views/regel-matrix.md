@@ -1,7 +1,7 @@
 # Regel-Matrix
 
 > GENERIERT von `scripts/regel-matrix.mjs` aus contracts, graph-api-core, se-engine und graphcode — nicht von Hand bearbeiten.
-> 76 Regeln · 59 im Gate-Katalog · 6 blocken (Schwere error) · 12 Existenz-Regeln · 4 Analysen · 7 abnehmbar · 2 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
+> 81 Regeln · 61 im Gate-Katalog · 7 blocken (Schwere error) · 13 Existenz-Regeln · 4 Analysen · 7 abnehmbar · 2 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
 > Fix-Vorlagen: 18 Regeln tragen eine · 17 schliessen den Fund · 1 Teil-Fix · 0 tot (CR-SM-357).
 
 ## Stufen und Marken
@@ -12,17 +12,17 @@
 |---|---|---|---|---:|
 | immer | (alle Elemente) |  |  | 3 |
 | 1 | System | R-33 |  | 1 |
-| 2 | Anwendungsfall | R-17, UC-02 |  | 6 |
-| 3 | Anforderung | UC-01 |  | 11 |
-| 4 | Wirkkette | UC-03 | SRR | 1 |
+| 2 | Anwendungsfall | R-17, UC-02 |  | 5 |
+| 3 | Anforderung | UC-01 |  | 12 |
+| 4 | Wirkkette | UC-03 | SRR | 2 |
 | 5 | Funktion | R-15 |  | 9 |
 | 6 | Datenfluss | R-31, FC-05 |  | 5 |
-| 7 | Modul | R-22 | PDR | 11 |
-| 8 | Schema |  | CDR | 3 |
+| 7 | Modul | R-22 | PDR | 12 |
+| 8 | Schema | R-26 | CDR | 5 |
 | 9 | Test | R-01, R-32 | TRR | 5 |
-| 10 | Plan | AF-05 |  | 8 |
-| 11 | Bindung |  |  | 5 |
-| 12 | Abgleich |  | Bau | 8 |
+| 10 | Plan | AF-05 |  | 7 |
+| 11 | Bindung |  |  | 4 |
+| 12 | Abgleich |  | Bau | 11 |
 
 ## Tasks
 
@@ -30,7 +30,7 @@
 
 | Task | Regeln | Eintrittspunkt im Kern | Skill |
 |---|---:|---|---|
-| kern | 71 | — | — |
+| kern | 76 | — | — |
 | conops | 0 | AF-01 | se-conops |
 | trade | 0 | AF-02 | se-trade |
 | irr | 0 | AF-03 | se-irr |
@@ -54,70 +54,72 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | CR-R03 | No concurrent mutation | immer |  | – | warning | Gate | kern |  |  |  | Kläre, welcher der offenen Änderungsaufträge an {n} zuerst ändert. | se:top-level |  |  |  |  |
 | R-08 | Data integrity | immer |  | – | error | Gate | kern |  |  |  | Richte den Bestand an {n}: entferne Verbindungen, deren Ziel fehlt, und setze Felder mit unbekanntem Wert auf einen Wert, den der Vertrag kennt. | se:top-level |  |  |  |  |
-| R-18 | Valid trace pattern | immer |  | – | error | Gate | kern |  |  |  | Korrigiere die unzulässigen Verbindungen an {n}. | se:top-level |  | se:author-actor se:author-req se:import-doc se-fmea se-laufzeit se-plan se-view:fmea se-vorbereitung | schliesst |  |
+| R-18 | Valid trace pattern | immer |  | – | error | Gate | kern |  |  |  | Korrigiere die unzulässigen Verbindungen an {n}. | se:top-level |  | se:author-actor se:author-req se:constraints se:import-doc se-fmea se-laufzeit se-plan se-vorbereitung | schliesst |  |
 | R-33 | Graph must have a SYS | 1 System | existence | SRR | warning | Gate | kern |  |  |  | Lege zuerst das System an und benenne, was gebaut wird. | se:author-uc |  |  |  |  |
 | R-17 | SYS must have a use case | 2 Anwendungsfall | existence | SRR | warning | Gate | kern |  |  |  | Lege die Abläufe des Systems {n} an. | se:author-uc |  | se:top-level |  |  |
-| UC-02 | UC has actor | 2 Anwendungsfall | existence | SRR | warning | Gate | kern |  |  |  | Lege für die Abläufe {n} die Funktionen an, die der Nutzer über einen Datenfluss auslöst. | se:author-uc |  | se:author-actor se:author-uc | schliesst |  |
+| UC-02 | UC has actor | 2 Anwendungsfall | existence | SRR | warning | Gate | kern |  |  |  | Lege für die Abläufe {n} die Funktionen an, die der Nutzer über einen Datenfluss auslöst. | se:author-uc |  | se:author-actor se:author-uc | schliesst | FC-06 |
 | CL-01 | ConopsCompleteness | 2 Anwendungsfall |  | SRR | warning | Gate | kern |  | ja — Ein Akteur, der das System in nur einer Betriebsart nutzt, ist ein gueltiger Befund des Einsatzkonzepts — ob eine zweite fehlt, entscheidet der Auftraggeber. | se-conops | Ordne den Akteuren {n} Abläufe in mindestens zwei Betriebsarten zu. | se-conops |  |  |  |  |
-| FC-02 | Leaf UC has FCHAIN | 2 Anwendungsfall |  | SRR | warning | Gate | kern |  |  | se:author-uc | Beschreibe die Abläufe {n} als Kette von Funktionen. | se:author-uc |  | se:author-uc se-fmea |  |  |
 | R-16 | ACTOR must have io | 2 Anwendungsfall |  | SRR | warning | Gate | kern |  |  |  | Verbinde den Nutzer {n} über Datenflüsse mit den Funktionen. | se:author-uc |  | se:author-actor |  |  |
 | UC-04 | UC has goal | 2 Anwendungsfall |  | SRR | warning | Gate | kern |  |  | se:author-uc | Beschreibe das Ziel der Abläufe {n}. | se:author-uc |  |  |  |  |
 | UC-01 | UC has requirements | 3 Anforderung | existence | SRR | warning | Gate | kern |  |  | se:author-req | Lege für die Abläufe {n} Anforderungen mit Test an: fachliche je Funktion, Ende-zu-Ende-Vorgaben an der Kette. | se:author-req |  | se:author-uc |  |  |
 | AF-01 | ConOps freshness stamp present | 3 Anforderung | analysis | SRR | warning | Gate | kern, Eintritt fuer conops |  | ja (Analyse) | se-conops |  | se-conops |  | se-conops se-irr |  |  |
 | BQ-01 | Unambiguous | 3 Anforderung |  | SRR | warning | nur Steuerung | anforderungsqualitaet |  |  | se:author-req |  | se:author-req |  |  |  |  |
 | BQ-02 | Verifiable | 3 Anforderung |  | SRR | warning | nur Steuerung | anforderungsqualitaet |  |  | se:author-req |  | se:author-req |  |  |  |  |
+| BQ-03 | Singular | 3 Anforderung |  | SRR | warning | nur Steuerung | anforderungsqualitaet |  |  | se:author-req |  | se:author-req |  |  |  |  |
 | BQ-04 | Necessary | 3 Anforderung |  | SRR | warning | nur Steuerung | anforderungsqualitaet |  |  |  |  | se:author-req |  |  |  |  |
-| BQ-06 | Conforming | 3 Anforderung |  | SRR | warning | nur Steuerung | anforderungsqualitaet |  |  | se:author-req |  | se:author-req |  |  |  |  |
 | BQ-07 | Complete | 3 Anforderung |  | SRR | warning | nur Steuerung | anforderungsqualitaet |  |  | se:author-req |  | se:author-req |  |  |  |  |
 | FM-01 | RiskReqFmeaAttributes | 3 Anforderung |  | SRR | warning | Gate | kern |  |  | se-fmea | Bewerte die Risiken {n} nach Schwere, Auftreten und Entdeckung. | se-fmea |  | se-fmea |  |  |
-| FM-02 | RiskReqMitigation | 3 Anforderung |  | SRR | warning | Gate | kern |  |  | se-fmea | Gib den Risiken {n} eine Gegenmaßnahme. | se-fmea |  | se-fmea se-view:fmea se-vorbereitung |  |  |
-| RD-01 | Unresolved requirement | 3 Anforderung |  | SRR | warning | Gate | kern |  |  | se:close-violations | Lege an, was die Anforderungen {n} erfüllt. | se:author-req | ja | se:author-req se-fmea se-plan se-umbau se-vorbereitung | schliesst |  |
+| FM-02 | RiskReqMitigation | 3 Anforderung |  | SRR | warning | Gate | kern |  |  | se-fmea | Gib den Risiken {n} eine Gegenmaßnahme. | se-fmea |  | se-fmea se-vorbereitung |  |  |
+| RD-01 | Unresolved requirement | 3 Anforderung |  | SRR | warning | Gate | kern |  |  | se:close-violations | Lege an, was die Anforderungen {n} erfüllt. | se:author-req | ja | se:author-req se:constraints se-fmea se-plan se-umbau se-vorbereitung | schliesst |  |
 | RD-02 | Decomposition consistency | 3 Anforderung |  | SRR | warning | Gate | kern |  |  |  | Lass die Anforderungen {n} nur über ihre Teilanforderungen erfüllen. | se:author-req |  |  |  |  |
-| UC-03 | UC has scenario | 4 Wirkkette | existence | SRR | warning | Gate | kern |  |  | se:author-uc | Beschreibe die Abläufe {n} als Kette von Funktionen. | se:author-uc |  | se:author-uc |  |  |
+| RD-06 | Single satisfier | 3 Anforderung |  | SRR | warning | Gate | kern |  |  |  | Teile die Anforderungen {n} so, dass jede genau einen Erfüller hat. | se:author-req |  |  |  |  |
+| UC-03 | UC has scenario | 4 Wirkkette | existence | SRR | warning | Gate | kern |  |  | se:author-uc | Beschreibe die Abläufe {n} als Kette von Funktionen. | se:author-uc |  | se:author-uc se-fmea |  |  |
+| UC-07 | Name states the need | 4 Wirkkette |  | SRR | warning | Gate | kern |  |  | se:author-uc | Benenne {n} nach dem Beduerfnis des Akteurs (Verb + Objekt). | se:author-uc |  | se:author-uc |  |  |
 | R-15 | FCHAIN completeness | 5 Funktion | existence | PDR | warning | Gate | kern |  |  |  | Gib den Funktionsketten {n} ihre Funktionen und ordne sie ihrem Ablauf zu. | se:top-level |  |  |  |  |
-| BW-02 | Whitebox boundary width | 5 Funktion |  | PDR | warning | Gate | kern | ja |  |  | Bündle die Datenformate an der Grenze von {n} oder teile den Block. | se:top-level |  |  | schliesst |  |
+| BW-02 | Whitebox boundary width | 5 Funktion |  | PDR | warning | Gate | kern | ja |  |  | Bündle die Datenformate an der Grenze von {n} oder teile den Block. | se:top-level |  | se-modulebene | schliesst |  |
 | FC-03 | Block is neither chain member nor satisfier | 5 Funktion |  | PDR | error | Gate | kern |  |  |  | Nimm statt der Blöcke {n} ihre inneren Schritte in die Kette und hänge ihre Anforderung an den Schritt, der sie trägt. | se:top-level |  | se-fmea se-vorbereitung |  |  |
-| IO-01 | FuncPairIOCompleteness | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ergänze den Datenfluss zwischen den Schritten {n}. | se:top-level |  | se:top-level se-fmea se-vorbereitung | schliesst |  |
+| IO-01 | FuncPairIOCompleteness | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Prüfe am Code, ob die Schritte {n} Daten an ihre Kette übergeben: ergänze dann den Datenfluss, sonst nimm sie aus der Kette. | se:top-level |  | se:top-level | schliesst |  |
 | MT-04 | Whitebox cohesion (LCOM4) | 5 Funktion |  | PDR | info | Gate | kern |  |  |  |  | se:top-level |  |  |  |  |
 | ND-01 | FuncNearDuplicate | 5 Funktion |  | PDR | warning | Aehnlichkeit (ND) | kern |  |  |  | Führe die doppelten Funktionen {n} zusammen oder grenze sie ab. | se:top-level |  |  |  |  |
 | R-02 | FUNC must satisfy REQ | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ordne die Funktionen {n} den Anforderungen zu, die sie erfüllen. | se:top-level |  | se-fmea | schliesst |  |
 | R-12 | No circular dependencies | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Löse die zyklische Abhängigkeit um {n} auf. | se:top-level |  |  |  |  |
-| R-30 | FUNC leaf must belong to a function chain | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ordne die Funktionen {n} der Kette ihres Ablaufs zu. | se:top-level |  | se:top-level se-fmea se-vorbereitung | schliesst |  |
+| R-30 | FUNC leaf must belong to a function chain | 5 Funktion |  | PDR | warning | Gate | kern |  |  |  | Ordne die Funktionen {n} der Kette ihres Ablaufs zu. | se:top-level |  | se:top-level | schliesst |  |
 | FC-05 | FCHAIN is connected (producer -> consumer) | 6 Datenfluss | existence | PDR | warning | Gate | kern |  |  |  | Verbinde die Schritte der Funktionsketten {n} über Datenflüsse. | se:top-level |  | se-fmea se-vorbereitung |  |  |
-| R-31 | FUNC must be wired (io input + output) | 6 Datenfluss | existence | PDR | warning | Gate | kern |  |  |  | Verbinde die Funktionen {n} auf der fehlenden Seite mit einem Datenfluss. | se:top-level |  | se-fmea se-vorbereitung | Teil-Fix |  |
-| FC-04 | FCHAIN actor-bounded (trigger+consumer) | 6 Datenfluss |  | PDR | warning | Gate | kern |  |  |  | Verbinde Anfang und Ende der Funktionsketten {n} mit dem Nutzer. | se:top-level |  | se:author-actor se-fmea se-vorbereitung |  |  |
-| IO-02 | FLOW single producer | 6 Datenfluss |  | PDR | error | Gate | kern |  |  |  | Gib jeder Quelle der Datenflüsse {n} einen eigenen Datenfluss. | se:top-level |  |  |  |  |
+| R-31 | FUNC must be wired (io input + output) | 6 Datenfluss | existence | PDR | warning | Gate | kern |  |  |  | Verbinde die Funktionen {n} auf der fehlenden Seite mit einem Datenfluss. | se:top-level |  | se-modulebene se-vorbereitung | Teil-Fix |  |
+| FC-04 | FCHAIN actor-bounded (trigger+consumer) | 6 Datenfluss |  | PDR | warning | Gate | kern |  |  |  | Verbinde Anfang und Ende der Funktionsketten {n} mit dem Nutzer. | se:top-level |  | se:author-actor se-fmea |  |  |
+| IO-02 | FLOW single producer | 6 Datenfluss |  | PDR | error | Gate | kern |  |  |  | Gib jeder Quelle der Datenflüsse {n} einen eigenen Datenfluss. | se:top-level |  | se:top-level |  |  |
 | R-10 | FLOW completeness | 6 Datenfluss |  | PDR | warning | Gate | kern |  |  |  | Vervollständige die Datenflüsse {n}: woher sie kommen und wohin sie gehen. | se:top-level |  |  |  |  |
 | R-22 | FUNC must be allocated to MOD | 7 Modul | existence | PDR | warning | Gate | kern |  |  |  | Ordne die Funktionen {n} Modulen zu. | se:top-level |  | se:top-level | schliesst | RD-05 |
 | AF-02 | Trade Study freshness stamp present | 7 Modul | analysis | PDR | warning | Gate | kern, Eintritt fuer trade |  | ja (Analyse) | se-trade |  | se-trade |  | se-trade |  |  |
 | AF-03 | Assumption Review freshness stamp present | 7 Modul | analysis | PDR | warning | Gate | kern, Eintritt fuer irr |  | ja (Analyse) | se-irr |  | se-irr |  | se-irr |  |  |
-| CR-01 | CrossingFlowCount | 7 Modul |  | PDR | warning | Gate | kern | ja |  |  | Prüfe den Schnitt zwischen {n}, dort fließen ungewöhnlich viele Daten. | se:top-level |  | se:top-level | schliesst |  |
+| CR-01 | CrossingFlowCount | 7 Modul |  | PDR | warning | Gate | kern | ja |  |  | Prüfe den Schnitt zwischen {n}, dort fließen ungewöhnlich viele Daten. | se:top-level |  | se:top-level se-modulebene | schliesst |  |
 | MT-01 | Module instability | 7 Modul |  | PDR | warning | Gate | kern |  |  |  | Prüfe die Abhängigkeiten des Moduls {n}. | se:top-level |  |  |  |  |
-| MT-02 | Module cohesion (LCOM4) | 7 Modul |  | PDR | warning | Gate | kern | ja |  |  | Teile das Modul {n}, seine Teile arbeiten nicht zusammen. | se:top-level |  | se:top-level |  |  |
+| MT-02 | Module cohesion (LCOM4) | 7 Modul |  | PDR | warning | Gate | kern | ja |  |  | Prüfe Rolle und Passung der Teile von Modul {n}; teile es nur, wenn sie fachlich nicht zusammengehören. | se:top-level |  | se:top-level |  |  |
 | NFR-01 | BudgetOvershoot | 7 Modul |  | PDR | warning | Gate | kern |  |  |  | Bringe {n} unter sein Budget oder ändere das Budget bewusst. | se:top-level |  |  |  |  |
-| R-04 | Module boundary width | 7 Modul |  | PDR | warning | Gate | kern | ja |  | se-view:arch | Verringere die Datenformate an der Grenze des Moduls {n}. | se:top-level | ja | se:top-level | schliesst |  |
+| R-04 | Module boundary width | 7 Modul |  | PDR | warning | Gate | kern | ja |  | se:optimize | Verringere die Datenformate an der Grenze des Moduls {n}. | se:top-level | ja | se:top-level se-modulebene | schliesst |  |
 | R-23 | MOD must have allocated FUNC | 7 Modul |  | PDR | warning | Gate | kern |  |  |  | Gib den Modulen {n} Funktionen oder entferne sie. | se:top-level |  |  | schliesst | RD-05 |
+| R-35 | Block is not allocated to a module | 7 Modul |  | PDR | error | Gate | kern |  |  |  | Löse die Modulzuordnung der Blöcke {n}; ihre inneren Funktionen behalten ihre Module. | se:top-level |  |  |  |  |
 | RD-04 | Decomposition breadth | 7 Modul |  | PDR | warning | Gate | kern | ja |  |  | Gruppiere die Teile unter {n}, es sind zu viele auf einer Ebene. | se:top-level |  | se:top-level | schliesst |  |
-| RD-05 | Decomposition too narrow | 7 Modul |  | PDR | warning | Gate | kern |  |  |  | Löse die Ebene {n} in die Ebene darüber auf oder sammle unter ihr, was zusammengehört. | se:top-level |  |  |  |  |
+| RD-05 | Decomposition too narrow | 7 Modul |  | PDR | warning | Gate | kern |  |  |  | Prüfe Rolle und Passung der Teile von Ebene {n}: löse sie nur auf, wenn die Teile darüber gehören, sonst sammle Zusammengehöriges unter ihr. | se:top-level |  | se:constraints se:top-level se-modulebene |  |  |
+| R-26 | SCHEMA must have realRef | 8 Schema | existence | CDR | warning | Gate | kern |  |  |  | Verbinde die Datenformate {n} mit ihrem Schema im Code. |  |  | se-plan |  |  |
 | AF-04 | FMEA freshness stamp present | 8 Schema | analysis | CDR | warning | Gate | kern, Eintritt fuer fmea |  | ja (Analyse) | se-fmea |  | se-fmea |  | se-fmea se-irr |  |  |
+| FC-06 | FCHAIN has one trigger | 8 Schema |  | CDR | warning | Gate | kern |  |  |  | Kläre den Auslöser der Funktionsketten {n}: sync an jedem Fluss, ein Auslöser je Kette. |  |  | se:author-actor se:top-level se-laufzeit se-plan se-vorbereitung |  |  |
 | ND-02 | SchemaNearDuplicate | 8 Schema |  | CDR | warning | Aehnlichkeit (ND) | kern |  |  |  | Führe die doppelten Datenformate {n} zusammen oder grenze sie ab. |  |  |  |  |  |
 | SC-02 | Schema referenced by FLOW | 8 Schema |  | CDR | warning | Gate | kern |  |  |  | Verbinde das Datenformat {n} mit seinem Datenfluss oder entferne es. |  |  |  | schliesst |  |
-| R-01 | REQ must have verification | 9 Test | existence | TRR | error | Gate | kern |  |  | se:close-violations | Ergänze Tests für die Anforderungen {n}. |  |  | se:author-req se:author-uc se-conops se-fmea se-test-ui se-umbau se-view:fmea |  |  |
-| R-32 | SCHEMA must have contract TEST | 9 Test | existence | TRR | warning | Gate | kern |  |  |  | Gib den Datenformaten {n} einen Vertragstest. |  |  | se:optimize | schliesst | R-19 |
-| FM-03 | HighRiskVerification | 9 Test |  | TRR | warning | Gate | kern |  | ja — Verlangt einen BESTANDENEN Testlauf (`result: passed`); den gibt es erst mit Code, die Regel ist aber faellig, sobald es ein hohes Risiko gibt. | se-fmea | Gib den hohen Risiken {n} einen Test. | se-fmea |  | se-fmea se-plan se-view:fmea |  |  |
+| R-01 | REQ must have verification | 9 Test | existence | TRR | error | Gate | kern |  |  | se:close-violations | Ergänze Tests für die Anforderungen {n}. |  |  | se:author-req se:author-uc se:constraints se:import-doc se-conops se-fmea se-plan se-test-ui se-umbau |  |  |
+| R-32 | SCHEMA must have contract TEST | 9 Test | existence | TRR | warning | Gate | kern |  |  |  | Gib den Datenformaten {n} einen Vertragstest. |  |  |  | schliesst | R-19 |
+| FM-03 | HighRiskVerification | 9 Test |  | TRR | warning | Gate | kern |  | ja — Verlangt einen BESTANDENEN Testlauf (`result: passed`); den gibt es erst mit Code, die Regel ist aber faellig, sobald es ein hohes Risiko gibt. | se-fmea | Gib den hohen Risiken {n} einen Test. | se-fmea |  | se-fmea se-plan |  |  |
 | R-05 | TEST must verify REQ | 9 Test |  | TRR | warning | Gate | kern |  |  |  | Ordne die Tests {n} den Anforderungen zu, die sie prüfen. |  |  |  |  |  |
-| R-21 | FUNC↔FUNC handover needs a shared chain covered by member REQs or an integration test | 9 Test |  | TRR | warning | Gate | kern |  |  |  | Bringe die Übergaben an {n} in eine Funktionskette, deren Funktionen Anforderungen erfüllen oder die ein Integrationstest prüft. |  |  | se:author-req se:author-uc se-fmea se-vorbereitung | schliesst | R-19 |
+| R-21 | FUNC↔FUNC handover needs a shared chain covered by member REQs or an integration test | 9 Test |  | TRR | warning | Gate | kern |  |  |  | Prüfe am Code, ob die Übergaben an {n} existieren: entferne sonst die Kante, andernfalls gib ihnen eine Kette mit Test. |  |  | se:author-req se:author-uc se-plan | schliesst | R-19 |
 | AF-05 | Unbuilt elements have an open CR | 10 Plan | existence | Bau | warning | Gate | kern, Eintritt fuer plan |  | ja (Eintritt einer Analyse) | se-plan |  | se-plan |  | se-plan |  |  |
 | CR-R01 | CR must track | 10 Plan |  | Bau | warning | Gate | kern |  |  |  | Verbinde die Änderungsaufträge {n} mit dem, was sie ändern. |  |  |  | schliesst |  |
-| CR-R02 | Done requires commit | 10 Plan |  | Bau | warning | Gate | kern |  |  |  | Trage bei den erledigten Änderungsaufträgen {n} den Commit nach. |  |  |  |  |  |
 | MS-01 | Milestone empty scope | 10 Plan |  | Bau | warning | Gate | kern |  |  |  | Ordne den Meilensteinen {n} ihren Umfang zu. |  |  |  |  |  |
 | MS-02 | Milestone dangling dependency | 10 Plan |  | Bau | warning | Gate | kern |  |  |  | Korrigiere die Abhängigkeiten der Meilensteine {n}. |  |  |  |  |  |
 | MS-03 | CR without milestone | 10 Plan |  | Bau | info | Gate | kern |  |  | se-plan |  | se-plan |  |  | schliesst |  |
 | RC-05 | cross-module import drift | 10 Plan |  | Bau | warning | CodeFacts (RC) | kern |  |  |  | Trage die Abhängigkeit der Module {n} ins Modell ein oder entferne den Import. |  |  |  |  |  |
 | RC-07 | CR node agrees with docs/cr | 10 Plan |  | Bau | warning | CodeFacts (RC) | kern |  |  |  | Gleiche die Änderungsaufträge {n} mit ihren Dateien ab. |  |  |  |  |  |
-| R-19 | Runnable TEST binding | 11 Bindung |  | Bau | warning | Gate | kern |  |  |  | Verbinde die Tests {n} mit ihren Testdateien. |  |  | se:optimize se-irr se-plan se-retro se-test |  |  |
-| R-20 | FUNC realRef binding | 11 Bindung |  | Bau | warning | Gate | kern |  |  |  | Verbinde die Funktionen {n} mit ihrem Code. |  |  | se:import-code se:optimize se-irr se-plan se-retro |  |  |
-| R-26 | SCHEMA must have realRef | 11 Bindung |  | Bau | warning | Gate | kern |  |  |  | Verbinde die Datenformate {n} mit ihrem Schema im Code. |  |  | se:optimize se-plan |  |  |
+| R-19 | Runnable TEST binding | 11 Bindung |  | Bau | warning | Gate | kern |  |  |  | Verbinde die Tests {n} mit ihren Testdateien. |  |  | se:constraints se-irr se-plan se-retro se-test |  |  |
+| R-20 | FUNC realRef binding | 11 Bindung |  | Bau | warning | Gate | kern |  |  |  | Verbinde die Funktionen {n} mit ihrem Code. |  |  | se:import-code se-irr se-plan se-retro |  |  |
 | R-29 | Test file exclusivity | 11 Bindung |  | Bau | error | Gate | kern |  |  |  | Gib jede Testdatei von {n} nur einem Test. |  |  | se:author-req |  |  |
 | VR-01 | TestNoResult | 11 Bindung |  | Bau | info | Gate | kern |  |  |  |  |  |  |  |  |  |
 | RC-01 | FUNC realRef resolves to a declared symbol | 12 Abgleich |  | Bau | warning | CodeFacts (RC) | kern |  |  |  | Korrigiere die Code-Verweise der Funktionen {n}, sie zeigen ins Leere. |  |  | se-review se-umbau |  |  |
@@ -128,3 +130,6 @@
 | RC-08 | SCHEMA realRef is a Zod schema | 12 Abgleich |  | Bau | warning | CodeFacts (RC) | kern |  |  |  | Binde die Datenformate {n} an ein Schema statt an einen Typ. |  |  |  |  |  |
 | RC-09 | SCHEMA is parsed only at its modelled interface | 12 Abgleich |  | Bau | warning | CodeFacts (RC) | kern |  |  |  | Prüfe, wo die Datenformate {n} außerhalb ihrer Schnittstelle gelesen werden. |  |  |  |  |  |
 | RC-10 | MOD has resolvable files | 12 Abgleich |  | Bau | warning | CodeFacts (RC) | kern |  |  |  | Gib den Modulen {n} ihren Quellordner. |  |  |  |  |  |
+| RC-11 | Code file belongs to a module | 12 Abgleich |  | Bau | warning | CodeFacts (RC) | kern |  |  |  | Ordne die Dateien {n} einem Modul zu. |  |  |  |  |  |
+| RC-12 | Sync flow has a call | 12 Abgleich |  | Bau | warning | CodeFacts (RC) | kern |  |  |  | Prüfe die Flüsse {n} gegen die Aufrufe im Code. |  |  | se-vorbereitung |  |  |
+| RC-13 | Call between anchored functions has a flow | 12 Abgleich |  | Bau | warning | CodeFacts (RC) | kern |  |  |  | Trage die Aufrufe von {n} als Fluss ins Modell ein. |  |  | se-vorbereitung |  |  |
