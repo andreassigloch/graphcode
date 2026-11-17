@@ -4091,7 +4091,8 @@
       "id": "CR-GC-919",
       "type": "CR",
       "name": "Ebenensprung: Anforderung wird ohne Zerlegung tief erfuellt",
-      "description": "docs/cr/open/CR-GC-919-ebenensprung-anforderung-wird-ohne-zerle.md"
+      "description": "docs/cr/done/CR-GC-919-ebenensprung-anforderung-wird-ohne-zerle.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-920",
@@ -34830,5 +34831,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1257
+  "graphVersion": 1258
 }
