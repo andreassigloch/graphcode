@@ -643,7 +643,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-950` | done | Skill se:import-doc uebergibt skill im Aufruf von graph_mutate, nicht nur im Kommentar | `FUNC-import-doc` |
 | `CR-GC-951` | done | Reste des Messumbaus schliessen: messung ohne lokales Protokoll, Codebeleg an FLOW-graph-state, Verbraucher von FLOW-verlauf-report, Leitlinie Abschnitt 9 | `FUNC-graph-readiness` · `FUNC-stand-verlauf` · `MOD-dev-scripts` |
 | `CR-GC-953` | done | contracts 12.14.0 übernehmen: R-26 Stufe 8 | `FUNC-graph-help` |
-| `CR-GC-955` | n/a | contracts 12.15.0 übernehmen: RD-07 Level jump (CR-SM-436), Regelzahl 82, Regelmatrix, Systemmodell-Seite | `FUNC-evaluate-rules` |
+| `CR-GC-955` | done | contracts 12.15.0 übernehmen: RD-07 Level jump (CR-SM-436), Regelzahl 82, Regelmatrix, Systemmodell-Seite | `FUNC-evaluate-rules` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

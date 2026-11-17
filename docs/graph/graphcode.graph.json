@@ -4341,7 +4341,8 @@
       "id": "CR-GC-955",
       "type": "CR",
       "name": "contracts 12.15.0 übernehmen: RD-07 Level jump (CR-SM-436), Regelzahl 82, Regelmatrix, Systemmodell-Seite",
-      "description": "docs/cr/open/CR-GC-955-contracts-12-15-0-u-bernehmen-rd-07-leve.md"
+      "description": "docs/cr/done/CR-GC-955-contracts-12-15-0-u-bernehmen-rd-07-leve.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -34677,5 +34678,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1253
+  "graphVersion": 1254
 }
