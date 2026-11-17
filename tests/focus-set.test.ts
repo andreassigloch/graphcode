@@ -112,12 +112,14 @@ describe('CR-GC-748: die Fokusmenge zeigt Bindungsbefunde erst, wenn der Bau ero
     const snap = takeSteeringSnapshot(entwurf(), DEFAULT_METRIC_POLICY);
     expect(snap.focus.filter((f) => bindung.has(f.rule_id))).toEqual([]);
     expect(snap.focus.map((f) => f.rule_id)).toContain(TASK_ENTRY.plan);
+    // contracts CR-SM-437: das Zod-Schema ist Spezifikation — R-26 steht schon im Entwurf im Fokus, nicht erst im Bau.
+    expect(snap.focus.filter((f) => f.rule_id === 'R-26').map((f) => f.element_id)).toEqual(['SCHEMA-s']);
   });
 
   it('ein offener Auftrag: die ungebundenen Elemente stehen im Fokus, der Bauplan-Befund ist weg', () => {
     const g = entwurf([n('CR-1', 'CR', { status: 'open' })], [e('CR-1', 'FUNC-f', 'relation')]);
     const elemente = imFokus(g).map((f) => f.element_id);
-    expect(elemente).toEqual(expect.arrayContaining(['FUNC-f', 'TEST-t', 'SCHEMA-s']));
+    expect(elemente).toEqual(expect.arrayContaining(['FUNC-f', 'TEST-t']));
     expect(takeSteeringSnapshot(g, DEFAULT_METRIC_POLICY).focus.map((f) => f.rule_id)).not.toContain(TASK_ENTRY.plan);
   });
 
@@ -130,8 +132,7 @@ describe('CR-GC-748: die Fokusmenge zeigt Bindungsbefunde erst, wenn der Bau ero
     const g = entwurf();
     g.nodes.find((x) => x.uid === 'FUNC-f')!.attributes = { realRef: { file: 'src/f.ts', symbol: 'f' } };
     const elemente = imFokus(g).map((f) => f.element_id);
-    expect(elemente).toEqual(expect.arrayContaining(['TEST-t', 'SCHEMA-s']));
-    expect(elemente).not.toContain('FUNC-f');
+    expect(elemente).toEqual(['TEST-t']);
   });
 });
 

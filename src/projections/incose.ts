@@ -53,9 +53,9 @@ export function renderNfr(graph: Graph, name: string): string {
 
 /**
  * The SCHEMA's binding as one cell: `file#symbol`, `external`, or an R-26 warning. The warning
- * is printed only where R-26 is due (contracts `isDue`, CR-SM-395): before the build is opened an
- * unbound SCHEMA is the state of a draft, and the document must not flag what the gate does not
- * hold open (T-B4, CR-GC-353).
+ * is printed only where R-26 is due (contracts `isDue`, CR-SM-395): the document must not flag what
+ * the gate does not hold open (T-B4, CR-GC-353). Since contracts CR-SM-437 R-26 is stage 8 and due as
+ * soon as a SCHEMA exists, so the draft label does not show today; the catalog decides, not this view.
  */
 function schemaBinding(s: GraphNode, r26Applies: boolean): string {
   const ref = s.attributes['realRef'] as { file?: unknown; symbol?: unknown } | null | undefined;

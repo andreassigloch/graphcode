@@ -136,7 +136,8 @@ describe('CR-GC-593/594: das Golden und die benannten Abnahmen', () => {
     // Seit contracts Regelkatalog 49.2 (CR-SM-420, CR-GC-873) dazu FC-06: 4 der Ketten im Golden tragen Fluesse
     // ohne `sync` (Ursache `unsynced`), der Ausloeser ist nicht ableitbar. Das Golden ist ein Messstand von sigllm
     // und wird nicht gerichtet — es bekam `sync` nie, weil das Merkmal bis hierher erst in se-vorbereitung kam.
-    expect(offeneRegeln()).toEqual(['AF-05', 'BW-02', 'FC-06', 'FM-03', 'MS-01', 'R-19', 'R-20', 'R-35', 'RD-05']);
+    // Seit contracts 12.14 (CR-SM-435, CR-GC-953) dazu RD-06: 3 Anforderungen im Golden haben je zwei Erfueller.
+    expect(offeneRegeln()).toEqual(['AF-05', 'BW-02', 'FC-06', 'FM-03', 'MS-01', 'R-19', 'R-20', 'R-35', 'RD-05', 'RD-06']);
   });
 
   /** Nimmt an jedem Fund der genannten Regeln ab — am betroffenen Element, graphweit am SYS. */

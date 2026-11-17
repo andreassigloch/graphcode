@@ -149,7 +149,10 @@ describe('TEST-testref-materialize (e): ein Export im Entwurf beginnt die Realis
   };
   const gebunden = () =>
     harness.getGraph().nodes.filter((n) => n.attributes?.testRefs !== undefined || n.attributes?.realRef !== undefined).map((n) => n.uid);
-  const bindungsBefunde = () => harness.evaluateRules().filter((v) => ['R-19', 'R-20', 'R-26'].includes(v.ruleId));
+  // contracts CR-SM-437: R-26 ist Spezifikation (Stufe 8) und meldet schon im Entwurf — die Bindungsregeln des Baus
+  // sind die der Stufe 11.
+  const bindungsBefunde = () => harness.evaluateRules().filter((v) => ['R-19', 'R-20'].includes(v.ruleId));
+  const schemaBefunde = () => harness.evaluateRules().filter((v) => v.ruleId === 'R-26').map((v) => v.elementId);
 
   beforeEach(async () => {
     tmp = mkdtempSync(join(tmpdir(), 'graphcode-materialize-entwurf-'));
@@ -171,6 +174,7 @@ describe('TEST-testref-materialize (e): ein Export im Entwurf beginnt die Realis
   it('schreibt keinen Stub, setzt keine Bindung, und die Bindungsregeln bleiben still', async () => {
     expect(bauEroeffnet()).toBe(false);
     expect(bindungsBefunde()).toEqual([]);
+    expect(schemaBefunde()).toEqual(['SCHEMA-e']);
 
     const res = await bindToolsToHarness(harness)['graph_export'].handler({ force: false });
 
@@ -180,6 +184,7 @@ describe('TEST-testref-materialize (e): ein Export im Entwurf beginnt die Realis
     expect(gebunden()).toEqual([]);
     expect(bauEroeffnet()).toBe(false);
     expect(bindungsBefunde()).toEqual([]);
+    expect(schemaBefunde()).toEqual(['SCHEMA-e']);
   });
 
   it('Positivkontrolle: mit der ersten Bindung melden die uebrigen, und nur deren Datei wird materialisiert', async () => {
@@ -187,7 +192,7 @@ describe('TEST-testref-materialize (e): ein Export im Entwurf beginnt die Realis
       { op: 'update-node', node: { uid: 'TEST-e', type: 'TEST', attributes: { testRefs: [{ file: 'tests/e.test.ts', tool: 'vitest' }] } } },
     ]);
     expect(bauEroeffnet()).toBe(true);
-    expect(bindungsBefunde().map((v) => `${v.ruleId}:${v.elementId}`)).toEqual(['R-26:SCHEMA-e']);
+    expect(schemaBefunde()).toEqual(['SCHEMA-e']);
 
     const res = await bindToolsToHarness(harness)['graph_export'].handler({ force: false });
     expect(res.stubs).toEqual(['tests/e.test.ts']);

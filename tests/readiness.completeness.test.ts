@@ -36,12 +36,19 @@ const marken = (g: Graph): ReadinessMark[] => computeReadiness(befunde(g)).marks
 const marke = (g: Graph, id: string): ReadinessMark => marken(g).find((m) => m.id === id)!;
 const ROLLE = new Map(ALL_RULE_DEFS.map((r) => [r.id, r.role]));
 
-/** Eine Spezifikation ohne Luecke bis zur Testbereitschaft: nichts gebunden, kein Auftrag. */
+/** Das Zod-Schema im Code ist Teil der Spezifikation (contracts CR-SM-437): R-26 haelt CDR. */
+const ZOD = (symbol: string) => ({ realRef: { file: 'src/contracts.ts', symbol } });
+
+/**
+ * Eine Spezifikation ohne Luecke bis zur Testbereitschaft: die SCHEMA an ihr Zod-Schema gebunden (CR-SM-437), sonst
+ * nichts gebunden, kein Auftrag. Die gebundenen SCHEMA eroeffnen den Bau (contracts `buildOpen`, offen in
+ * ITEM-2026-1413); wer einen Entwurf OHNE jede Bindung braucht, nimmt `ungebunden(entwurf())`.
+ */
 function entwurf(extra: Graph['nodes'] = [], kanten: Graph['edges'] = []): Graph {
   return {
     nodes: [
       node('SYS-x', 'SYS'), node('UC-x', 'UC'), node('ACTOR-a', 'ACTOR'), node('FLOW-in', 'FLOW'), node('FLOW-out', 'FLOW'),
-      node('SCHEMA-in', 'SCHEMA'), node('SCHEMA-out', 'SCHEMA'), node('FUNC-f', 'FUNC'), node('FCHAIN-c', 'FCHAIN'),
+      node('SCHEMA-in', 'SCHEMA', ZOD('InSchema')), node('SCHEMA-out', 'SCHEMA', ZOD('OutSchema')), node('FUNC-f', 'FUNC'), node('FCHAIN-c', 'FCHAIN'),
       node('REQ-r', 'REQ', { kinds: ['functional'] }), node('TEST-t', 'TEST'), node('TEST-s', 'TEST'), node('MOD-m', 'MOD'), ...extra,
     ],
     edges: [
@@ -54,6 +61,10 @@ function entwurf(extra: Graph['nodes'] = [], kanten: Graph['edges'] = []): Graph
     ],
   };
 }
+const ungebunden = (g: Graph): Graph => ({
+  ...g,
+  nodes: g.nodes.map((n) => (n.type === 'SCHEMA' ? { ...n, attributes: {} } : n)),
+});
 const ohne = (g: Graph, ...uids: string[]): Graph => ({
   nodes: g.nodes.filter((n) => !uids.includes(n.uid)),
   edges: g.edges.filter((e) => !uids.includes(e.sourceId) && !uids.includes(e.targetId)),
@@ -111,6 +122,15 @@ describe('eine leere Pflichtmenge haelt die Marke — „0 von 0" liest nie als 
     const g = ohne(entwurf(), 'TEST-s');
     expect(marke(g, 'CDR').reached).toBe(true);
     expect(marke(g, 'TRR').holding.map((h) => `${h.ruleId}:${h.elementId}`).sort()).toEqual(['R-32:SCHEMA-in', 'R-32:SCHEMA-out']);
+    const lose = ungebunden(g);
+    expect(marke(lose, 'TRR').holding.filter((h) => h.ruleId === 'R-32').map((h) => h.elementId).sort()).toEqual(['SCHEMA-in', 'SCHEMA-out']);
+  });
+
+  it('ein Schema ohne Zod-Schema im Code haelt CDR — es ist Spezifikation (contracts CR-SM-437)', () => {
+    const cdr = marke(ungebunden(entwurf()), 'CDR');
+    expect(cdr.reached).toBe(false);
+    expect(cdr.holding.map((h) => `${h.ruleId}:${h.elementId}`).sort()).toEqual(['R-26:SCHEMA-in', 'R-26:SCHEMA-out']);
+    expect(marke(ungebunden(entwurf()), 'PDR').reached).toBe(true);
   });
 
   it('eine Marke bleibt offen, solange eine fruehere es ist', () => {
@@ -126,7 +146,7 @@ describe('die Marke Bau: Plan, Bindung, Abgleich', () => {
   const bindungsRegeln = ALL_RULE_DEFS.filter((r) => r.stage === 11).map((r) => r.id);
 
   it('Entwurf ohne Auftrag und ohne Bindung: keine Bindungsregel meldet, Bau ist trotzdem nicht erreicht', () => {
-    const g = entwurf();
+    const g = ungebunden(entwurf());
     expect(befunde(g).filter((v) => bindungsRegeln.includes(v.ruleId))).toEqual([]);
     const bau = marke(g, 'Bau');
     expect(bau.reached).toBe(false); // es gibt Ungebautes ohne Auftrag — der Bauplan ist faellig
@@ -146,7 +166,7 @@ describe('die Marke Bau: Plan, Bindung, Abgleich', () => {
   });
 
   it('eine Entscheidung ist ein ERLEDIGTER Auftrag und eroeffnet den Bau nicht; ein Etikett an der Kante aendert nichts (CR-SM-400)', () => {
-    const erledigt = entwurf([node('CR-1', 'CR', { status: 'done' })], [edge('CR-1', 'REQ-r', 'relation')]);
+    const erledigt = ungebunden(entwurf([node('CR-1', 'CR', { status: 'done' })], [edge('CR-1', 'REQ-r', 'relation')]));
     expect(befunde(erledigt).filter((v) => bindungsRegeln.includes(v.ruleId))).toEqual([]);
     expect(marke(erledigt, 'Bau').holding.map((h) => h.ruleId)).toContain('AF-05'); // der Bauplan bleibt faellig
     // offen ist offen: das Etikett `decides` nimmt einen offenen Auftrag nicht mehr aus
@@ -155,7 +175,7 @@ describe('die Marke Bau: Plan, Bindung, Abgleich', () => {
   });
 
   it('eine Bindung von Hand, ohne Auftrag, zaehlt genauso', () => {
-    const g = entwurf();
+    const g = ungebunden(entwurf());
     g.nodes.find((n) => n.uid === 'TEST-t')!.attributes = { testRefs: [{ file: 'tests/x.test.ts', tool: 'vitest' }] };
     const gemeldet = befunde(g).filter((v) => bindungsRegeln.includes(v.ruleId));
     expect(gemeldet.some((v) => v.elementId === 'FUNC-f')).toBe(true);

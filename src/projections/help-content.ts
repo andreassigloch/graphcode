@@ -244,8 +244,10 @@ export const HELP_VOCAB: Record<string, HelpVocabEntry> = {
 export const HELP_ELEMENT_STATES =
   'A `FUNC`, `MOD` or `SCHEMA` is either **realized here** (the default — it gets a `realRef`) or ' +
   '`external:true` (provided by an outside library, not built here). A `TEST` is bound to its file through `testRefs`. ' +
-  'The binding rules (R-19/R-20/R-26) are not evaluated while the model is a draft; they start once realization has ' +
-  'begun — the implementation plan is stamped, or the first `realRef`/`testRefs` is set anywhere in the graph.';
+  'The `SCHEMA` binding (R-26) is part of the specification: it is due as soon as a `SCHEMA` exists and holds CDR ' +
+  '(contracts CR-SM-437, code as spec). The other binding rules (R-19/R-20) are not evaluated while the model is a draft; ' +
+  'they start once realization has begun — the implementation plan is stamped, or the first `realRef`/`testRefs` is set ' +
+  'anywhere in the graph.';
 
 /**
  * One authored metric item (CR-GC-458). The six ℝ⁶ dimensions decide every

@@ -208,7 +208,7 @@ describe('T-B4 (CR-GC-353): a rule finding and a document gap are the same fact'
  * jedem SCHEMA eine Warnung, die keine Regel haelt. POSITIVKONTROLLE: dieselben SCHEMAs, sobald eine
  * Bindung im Graphen steht.
  */
-describe('T-B4 im Entwurf: das ICD markiert R-26 nur, wo die Regel gestellt ist', () => {
+describe('T-B4 im Entwurf: das ICD markiert R-26 genau, wo die Regel gestellt ist', () => {
   let tmp: string;
   let harness: GraphCodeHarness;
   const MARKER = GAP_IN_VIEW['R-26'][0].marker;
@@ -235,12 +235,13 @@ describe('T-B4 im Entwurf: das ICD markiert R-26 nur, wo die Regel gestellt ist'
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  it('Entwurf: keine R-26 am Gate, keine R-26-Marke im ICD — die Zeile sagt „noch nicht gebunden"', () => {
-    expect(r26()).toEqual([]);
+  // contracts CR-SM-437: das Zod-Schema ist Spezifikation, R-26 ist faellig, sobald es ein SCHEMA gibt — auch im
+  // Entwurf. Die Kopplung bleibt: das ICD markiert genau, was das Gate offen haelt.
+  it('Entwurf: R-26 am Gate offen UND im ICD markiert, an denselben SCHEMAs', () => {
+    expect(r26()).toEqual(['SCHEMA-a', 'SCHEMA-b']);
     const md = icd();
-    expect(mentions(md, 'SCHEMA-a')).toBe(true);
-    expect(markedUids(md, MARKER)).toEqual([]);
-    expect(markedUids(md, 'noch nicht gebunden (Entwurf)')).toEqual(['SCHEMA-a', 'SCHEMA-b']);
+    expect(markedUids(md, MARKER)).toEqual(['SCHEMA-a', 'SCHEMA-b']);
+    expect(markedUids(md, 'noch nicht gebunden (Entwurf)')).toEqual([]);
   });
 
   it('nach der ersten Bindung: das andere SCHEMA ist am Gate offen UND im ICD markiert', async () => {
