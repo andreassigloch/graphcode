@@ -143,7 +143,7 @@ An illegal connection is not a warning in a report you might read — it never e
 
 ### 3. Readiness — is it complete and well-formed?
 
-67 engine rules are ordered in 12 stages: system, use cases, requirements, function chains, functions,
+68 engine rules are ordered in 12 stages: system, use cases, requirements, function chains, functions,
 data flows, modules, schemas, tests, plan, binding, conformance. Each stage shows the count of its open
 findings.
 

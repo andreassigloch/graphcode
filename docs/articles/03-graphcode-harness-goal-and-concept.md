@@ -31,7 +31,7 @@ that, every project grows its own dialect and nothing stays comparable.
 | Local execution | OpenCode with a local model, or any MCP host | The same tools and the same gate for a local and a frontier model — see "Who runs the loop" |
 
 The current vocabulary: 12 element types, 6 connection types, 32 legal connection patterns,
-67 engine rules across 12 stages, exposed as 23 MCP tools.
+68 engine rules across 12 stages, exposed as 23 MCP tools.
 
 ## Who runs the loop
 

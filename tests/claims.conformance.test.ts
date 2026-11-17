@@ -202,7 +202,9 @@ describe('T-D1 (CR-GC-340): every published count matches the living source', ()
       // Zwei Artikel nannten 66, beide nachgezogen.
       // CR-SM-440 (contracts 12.13.0, CR-GC-932): CR-R02 entfaellt — 68 -> 67. Zwei Artikel nannten 68,
       // beide nachgezogen.
-      'engine rules=67',
+      // CR-SM-435 (contracts 12.14.0, CR-GC-953): RD-06 kommt dazu, eine Anforderung hat genau einen Erfueller —
+      // 67 -> 68. Zwei Artikel nannten 67, beide nachgezogen.
+      'engine rules=68',
       // CR-GC-561: 25 -> 24. `graph_next_step` ist weg — zweites Steuerungswerkzeug auf
       // derselben Messung, ohne Konsument. Der Kanarienvogel hat die drei Textstellen gefunden.
       // CR-GC-685B: 24 -> 23. `graph_realize` ist weg — Binden ist ein Format-E-Patch
