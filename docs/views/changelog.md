@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 558 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 558 CR · 399 done · 4 open.
+Total: 558 CR · 400 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -583,7 +583,7 @@ Total: 558 CR · 399 done · 4 open.
 | `CR-GC-915` | done | contracts 12.12 nachziehen: Peer-Floor >=12.12, metricPolicy.needNameTerms (ohne Gate/Ziel), UC-07 in se:author-uc nennen (Folge CR-GC-881, CR-SM-434) |
 | `CR-GC-916` | done | Umbau aus CR-GC-807: code-quality und reduced-llm zu REQ am Kern-UC, deterministic-steering umbenennen |
 | `CR-GC-917` | n/a | Stufe bauen – Verträge (SCHEMA) vor Funktionen binden, FUNC-Paket trägt die echten Typen |
-| `CR-GC-918` | n/a | Eine Anforderung hat genau einen Erfueller |
+| `CR-GC-918` | done | Eine Anforderung hat genau einen Erfueller |
 | `CR-GC-919` | n/a | Ebenensprung: Anforderung wird ohne Zerlegung tief erfuellt |
 | `CR-GC-920` | n/a | A-SPICE-Darstellung der Anforderungs- und Teststufen |
 | `CR-GC-921` | n/a | RTM: Ebene eindeutig aus der Herkunft, Erfueller als Spalte |

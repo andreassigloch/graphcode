@@ -4084,7 +4084,8 @@
       "id": "CR-GC-918",
       "type": "CR",
       "name": "Eine Anforderung hat genau einen Erfueller",
-      "description": "docs/cr/open/CR-GC-918-eine-anforderung-hat-genau-einen-erfuell.md"
+      "description": "docs/cr/done/CR-GC-918-eine-anforderung-hat-genau-einen-erfuell.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-919",
@@ -34665,5 +34666,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1249
+  "graphVersion": 1250
 }
