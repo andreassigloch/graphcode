@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 558 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 559 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 558 CR · 400 done · 4 open.
+Total: 559 CR · 400 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -620,3 +620,4 @@ Total: 558 CR · 400 done · 4 open.
 | `CR-GC-952` | done | se-plan: R-21-Befund bleibt offen, nicht abgenommen |
 | `CR-GC-953` | done | contracts 12.14.0 übernehmen: R-26 Stufe 8 |
 | `CR-GC-954` | n/a | CR-GC-918 Rest: eigene REQ fuer 29 FUNCs (R-02), Kind-REQ am Testcode pruefen, Nebenbefunde |
+| `CR-GC-955` | n/a | contracts 12.15.0 übernehmen: RD-07 Level jump (CR-SM-436), Regelzahl 82, Regelmatrix, Systemmodell-Seite |

@@ -1,7 +1,7 @@
 # Regel-Matrix
 
 > GENERIERT von `scripts/regel-matrix.mjs` aus contracts, graph-api-core, se-engine und graphcode — nicht von Hand bearbeiten.
-> 81 Regeln · 61 im Gate-Katalog · 7 blocken (Schwere error) · 13 Existenz-Regeln · 4 Analysen · 7 abnehmbar · 2 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
+> 82 Regeln · 62 im Gate-Katalog · 7 blocken (Schwere error) · 13 Existenz-Regeln · 4 Analysen · 7 abnehmbar · 2 Prompt/Skill-Konflikte (Ausnahmen in tests/skill-rule-ids.test.ts).
 > Fix-Vorlagen: 18 Regeln tragen eine · 17 schliessen den Fund · 1 Teil-Fix · 0 tot (CR-SM-357).
 
 ## Stufen und Marken
@@ -17,7 +17,7 @@
 | 4 | Wirkkette | UC-03 | SRR | 2 |
 | 5 | Funktion | R-15 |  | 9 |
 | 6 | Datenfluss | R-31, FC-05 |  | 5 |
-| 7 | Modul | R-22 | PDR | 12 |
+| 7 | Modul | R-22 | PDR | 13 |
 | 8 | Schema | R-26 | CDR | 5 |
 | 9 | Test | R-01, R-32 | TRR | 5 |
 | 10 | Plan | AF-05 |  | 7 |
@@ -30,7 +30,7 @@
 
 | Task | Regeln | Eintrittspunkt im Kern | Skill |
 |---|---:|---|---|
-| kern | 76 | — | — |
+| kern | 77 | — | — |
 | conops | 0 | AF-01 | se-conops |
 | trade | 0 | AF-02 | se-trade |
 | irr | 0 | AF-03 | se-irr |
@@ -101,6 +101,7 @@
 | R-35 | Block is not allocated to a module | 7 Modul |  | PDR | error | Gate | kern |  |  |  | Löse die Modulzuordnung der Blöcke {n}; ihre inneren Funktionen behalten ihre Module. | se:top-level |  |  |  |  |
 | RD-04 | Decomposition breadth | 7 Modul |  | PDR | warning | Gate | kern | ja |  |  | Gruppiere die Teile unter {n}, es sind zu viele auf einer Ebene. | se:top-level |  | se:top-level | schliesst |  |
 | RD-05 | Decomposition too narrow | 7 Modul |  | PDR | warning | Gate | kern |  |  |  | Prüfe Rolle und Passung der Teile von Ebene {n}: löse sie nur auf, wenn die Teile darüber gehören, sonst sammle Zusammengehöriges unter ihr. | se:top-level |  | se:constraints se:top-level se-modulebene |  |  |
+| RD-07 | Level jump | 7 Modul |  | PDR | warning | Gate | kern |  |  |  | Leite unter den Anforderungen {n} je eine Teilanforderung an der Grenze ihres Erfüllers ab. | se:top-level |  |  |  |  |
 | R-26 | SCHEMA must have realRef | 8 Schema | existence | CDR | warning | Gate | kern |  |  |  | Verbinde die Datenformate {n} mit ihrem Schema im Code. |  |  | se-plan |  |  |
 | AF-04 | FMEA freshness stamp present | 8 Schema | analysis | CDR | warning | Gate | kern, Eintritt fuer fmea |  | ja (Analyse) | se-fmea |  | se-fmea |  | se-fmea se-irr |  |  |
 | FC-06 | FCHAIN has one trigger | 8 Schema |  | CDR | warning | Gate | kern |  |  |  | Kläre den Auslöser der Funktionsketten {n}: sync an jedem Fluss, ein Auslöser je Kette. |  |  | se:author-actor se:top-level se-laufzeit se-plan se-vorbereitung |  |  |

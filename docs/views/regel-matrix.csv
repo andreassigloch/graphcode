@@ -48,6 +48,7 @@ R-23;MOD must have allocated FUNC;7 Modul;;PDR;warning;Gate;kern;;;;Gib den Modu
 R-35;Block is not allocated to a module;7 Modul;;PDR;error;Gate;kern;;;;Löse die Modulzuordnung der Blöcke {n}, ihre inneren Funktionen behalten ihre Module.;se:top-level;;;;
 RD-04;Decomposition breadth;7 Modul;;PDR;warning;Gate;kern;ja;;;Gruppiere die Teile unter {n}, es sind zu viele auf einer Ebene.;se:top-level;;se:top-level;schliesst;
 RD-05;Decomposition too narrow;7 Modul;;PDR;warning;Gate;kern;;;;Prüfe Rolle und Passung der Teile von Ebene {n}: löse sie nur auf, wenn die Teile darüber gehören, sonst sammle Zusammengehöriges unter ihr.;se:top-level;;se:constraints se:top-level se-modulebene;;
+RD-07;Level jump;7 Modul;;PDR;warning;Gate;kern;;;;Leite unter den Anforderungen {n} je eine Teilanforderung an der Grenze ihres Erfüllers ab.;se:top-level;;;;
 R-26;SCHEMA must have realRef;8 Schema;existence;CDR;warning;Gate;kern;;;;Verbinde die Datenformate {n} mit ihrem Schema im Code.;;;se-plan;;
 AF-04;FMEA freshness stamp present;8 Schema;analysis;CDR;warning;Gate;kern, Eintritt fuer fmea;;ja (Analyse);se-fmea;;se-fmea;;se-fmea se-irr;;
 FC-06;FCHAIN has one trigger;8 Schema;;CDR;warning;Gate;kern;;;;Kläre den Auslöser der Funktionsketten {n}: sync an jedem Fluss, ein Auslöser je Kette.;;;se:author-actor se:top-level se-laufzeit se-plan se-vorbereitung;;
