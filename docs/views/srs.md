@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 259 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 265 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -8206,13 +8206,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
 
-###### `REQ-repo-uninstall` — Restlose Deinstallation
+###### `REQ-remove-loescht-eigene-pfade` — remove loescht eigene Pfade
 
-Deinstallation entfernt alle installierten Artefakte ohne Residuen.
+Wenn graphcode remove laeuft, loescht es jede Datei, die init angelegt hat, und laesst fremde Dateien stehen.
 
-priority: must · status: open · kinds: functional
+priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-opencode-plugin` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-update-behaelt-store` — update behaelt Store
 
@@ -8754,13 +8754,13 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
 
-###### `REQ-repo-uninstall` — Restlose Deinstallation
+###### `REQ-remove-loescht-eigene-pfade` — remove loescht eigene Pfade
 
-Deinstallation entfernt alle installierten Artefakte ohne Residuen.
+Wenn graphcode remove laeuft, loescht es jede Datei, die init angelegt hat, und laesst fremde Dateien stehen.
 
-priority: must · status: open · kinds: functional
+priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-opencode-plugin` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-update-behaelt-store` — update behaelt Store
 
@@ -10822,6 +10822,14 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-loop-convergence-monitor` · satisfy ◀ — · allocate ▶ —
 
+###### `REQ-messstand-nachvollziehbar` — Messstand ist nachvollziehbar
+
+Wenn der Auftraggeber den Stand des Modells abfragt, nennt graphcode je Marke, Kette und Modul die Kennzahlen und die Elemente und Regeln, aus denen sie entstehen; gerechnet wird gegen den Regelkatalog aus contracts.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-graph-metrics` (unit) · `TEST-mcp-readiness` (integration) · satisfy ◀ — · allocate ▶ —
+
 ###### `REQ-modell-befragen` — Modell befragen statt nur schreiben
 
 Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)
@@ -10829,6 +10837,14 @@ Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aender
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-sitzung-kpi` (unit) · satisfy ◀ — · allocate ▶ —
+
+###### `REQ-modellaustausch` — Modellaustausch nur ueber Gate und Graph
+
+Wenn ein Fremdbestand eingelesen wird, gelangt er nur ueber graph_mutate in den Graphen; wenn eine Sicht ausgegeben wird, entsteht sie nur aus dem Graphen.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · `TEST-import-invariant` (integration) · satisfy ◀ — · allocate ▶ —
 
 ###### `REQ-one-gate-per-repo` — Ein Apply-Gate pro Repo
 
@@ -10861,6 +10877,14 @@ Installation der Harness in ein beliebiges Repo mit einem Kommando: scaffolds .g
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-distribution` (e2e) · `TEST-init-verb` (integration) · `TEST-opencode-plugin` (integration) · satisfy ◀ — · allocate ▶ —
+
+###### `REQ-repo-uninstall` — Restlose Deinstallation
+
+Deinstallation entfernt alle installierten Artefakte ohne Residuen.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-opencode-plugin` (integration) · satisfy ◀ — · allocate ▶ —
 
 ###### `REQ-repo-update` — Update ohne Datenverlust
 
@@ -10910,6 +10934,22 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-formate-binding` (integration) · `TEST-graph-realize` (integration) · `TEST-test-runnable-binding` (unit) · `TEST-testreport` (unit) · satisfy ◀ — · allocate ▶ —
 
+###### `REQ-testspur-passt-zum-diff` — Testspur passt zum Diff
+
+Wenn eine Aenderung geprueft wird, faehrt graphcode die Testspur, die zum Diff passt: die feste Modellmenge fuer reine Modell-Aenderungen, die abgeleitete Auswahl fuer Code-Aenderungen, sonst die volle Suite.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-selective-test-audit` (integration) · `TEST-verify-model-set` (unit) · satisfy ◀ — · allocate ▶ —
+
+###### `REQ-umbau-haelt-vorhersage` — Umbauvorschlag haelt seine Vorhersage
+
+Wenn graph_suggest Umbauvorschlaege rankt, folgt die Reihenfolge dem Zielprofil, und ein angewandter Vorschlag bewegt die Kennzahl so, wie vorhergesagt.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ — · allocate ▶ —
+
 ###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
 
 Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)
@@ -10925,6 +10965,14 @@ Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung trae
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-gve-autostart` (unit) · `TEST-gve-supervision` (integration) · satisfy ◀ — · allocate ▶ —
+
+###### `REQ-werkzeuge-wirken-im-repo` — MCP-Werkzeuge wirken im eigenen Repo
+
+Jedes Werkzeug der MCP-Oberflaeche nimmt nur eine gueltige Eingabe an und wirkt auf den Store des Repos, in dem der Host laeuft.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-mcp-stdio-server` (integration) · `TEST-werkzeug-eingang-geparst` (integration) · satisfy ◀ — · allocate ▶ —
 
 ###### `REQ-zuege-sparen` — Zuege sparen
 
@@ -13666,7 +13714,7 @@ verify ▶ `REQ-agent-loop-executes-skill`
 
 A/B ueber das Vorzeichen des Ziels mit echter Mutation und Messung vorher/nachher auf derselben Messebene.
 
-verify ▶ `REQ-applied-suggestion-moves-target` · testRefs: `tests/steering.steer-causality.test.ts`
+verify ▶ `REQ-applied-suggestion-moves-target` · `REQ-umbau-haelt-vorhersage` · testRefs: `tests/steering.steer-causality.test.ts`
 
 #### 3.4.6  `TEST-artifact-coupling` — Artefakt-Zweig des Steuerungsbeweises
 
@@ -13756,7 +13804,7 @@ verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/claude-md.tools
 
 graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112)
 
-verify ▶ `REQ-init-nennt-schritte` · `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `REQ-update-behaelt-store` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`, `tests/knowledge-binding.test.ts`
+verify ▶ `REQ-init-nennt-schritte` · `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-remove-loescht-eigene-pfade` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `REQ-update-behaelt-store` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`, `tests/knowledge-binding.test.ts`
 
 #### 3.4.21  `TEST-code-conformance` — Graph-code conformance test
 
@@ -13840,7 +13888,7 @@ verify ▶ `REQ-buildable-standalone` · `REQ-npx-distribution` · `REQ-repo-ins
 
 exportMarkdown deterministisch (byte-identisch) + spiegelt Graph; GENERATED-Header. (FUNC-export-markdown)
 
-verify ▶ `REQ-doc-export` · `REQ-model-exchange-post` · `REQ-post-export-markdown` · `REQ-srs-29148` · `SCHEMA-markdown-view` · testRefs: `tests/exporter.test.ts`
+verify ▶ `REQ-doc-export` · `REQ-model-exchange-post` · `REQ-modellaustausch` · `REQ-post-export-markdown` · `REQ-srs-29148` · `SCHEMA-markdown-view` · testRefs: `tests/exporter.test.ts`
 
 #### 3.4.35  `TEST-docs-taxonomy` — Docs-Taxonomie-Inspektion
 
@@ -13948,7 +13996,7 @@ verify ▶ `REQ-graph-is-ssot` · testRefs: `tests/harness.import.test.ts`
 
 Abnahme der Datei tests/metrics.test.ts: die Kennzahlen liegen je MOD vor, unabhaengig davon ob eine Regel feuert. Der Mangel war gemessen: die Regel meldete nur die Module ueber der Schwelle, fuer die uebrigen war ueber MCP gar kein Wert zu bekommen. Dazu die Kettenkennzahlen am echten Werkzeug (CR-GC-767): die Referenzkette Zahlung ausloesen ergibt Laenge 6, Verzweigung 1, 2 Modulgrenzen, 0 Rueckkopplungen, 1 geteilten Knoten; die Gegenprobe mit Schleife und Ast laesst die Werte umschlagen; eine Kette ohne Eingang traegt den Grund und zaehlt im Nenner der Quote; auf dem eigenen Modell stimmt jede Kette mit dem direkten Aufruf der contracts-Funktion ueberein. Dazu Risikotraeger und Betrachtungsumfang (CR-GC-787): ein Risiko mit einer Gegenmassnahme an einer Funktion und einer am System nennt genau die Funktion als Traeger und beide Erfueller; ohne Risiko zwei leere Listen; der Umfang fehlt ohne Anfrage, nennt fuer eine Kette ihre Module, Ketten und Anforderungen und fuer eine Funktion ausserhalb einen anderen; eine unbekannte Kennung und eine Kennung anderen Typs werden benannt abgelehnt.
 
-verify ▶ `REQ-chain-metrics` · `REQ-metrics-constraint-carriers` · `REQ-metrics-risk-scope` · `REQ-quality-metric` · `REQ-single-measurement-path` · `SCHEMA-chain-metrics` · `SCHEMA-metrics-answer` · testRefs: `tests/metrics.test.ts`
+verify ▶ `REQ-chain-metrics` · `REQ-messstand-nachvollziehbar` · `REQ-metrics-constraint-carriers` · `REQ-metrics-risk-scope` · `REQ-quality-metric` · `REQ-single-measurement-path` · `SCHEMA-chain-metrics` · `SCHEMA-metrics-answer` · testRefs: `tests/metrics.test.ts`
 
 #### 3.4.53  `TEST-graph-realize` — Flaches Binden ueber das Gate
 
@@ -14044,7 +14092,7 @@ verify ▶ `REQ-llm-modell-aus-konfiguration` · testRefs: `tests/skill-import-d
 
 Abnahme der Datei tests/harness.import-invariant.test.ts: der Massen-Import meldet jede REQ ohne verifizierenden TEST und verweigert bei entsprechender Option den Import ganz. Der Bypass am Gate vorbei ist damit nie stumm, so waren die historischen unverifizierten REQ hereingekommen.
 
-verify ▶ `REQ-bootstrap-through-gate` · `REQ-import-nur-ueber-mutate` · testRefs: `tests/harness.import-invariant.test.ts`
+verify ▶ `REQ-bootstrap-through-gate` · `REQ-import-nur-ueber-mutate` · `REQ-modellaustausch` · testRefs: `tests/harness.import-invariant.test.ts`
 
 #### 3.4.69  `TEST-import-rejected-traces` — Seed mit musterfremder Kante
 
@@ -14152,13 +14200,13 @@ verify ▶ `REQ-export-no-clobber` · testRefs: `tests/mcp.export-guard.test.ts`
 
 graph_readiness bindet scoreReadiness(harness) an die Registry und liefert den ReadinessReport ueber die MCP-Surface — Familie-Compliance (R-/RD-, nie BQ-) ist fuer einen Agenten erreichbar. (CR-GC-129)
 
-verify ▶ `REQ-mcp-tool-registry` · `REQ-readiness-transparent` · testRefs: `tests/mcp.readiness.test.ts`
+verify ▶ `REQ-mcp-tool-registry` · `REQ-messstand-nachvollziehbar` · `REQ-readiness-transparent` · testRefs: `tests/mcp.readiness.test.ts`
 
 #### 3.4.87  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
 
 Registry served over the real MCP protocol (linked transport + disk Kuzu): listTools enumerates all tools, graph_mutate==mutate() incl. R-01 BLOCK, graph_impact bounded slice. (CR-GC-111)
 
-verify ▶ `REQ-audit-trail` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` · testRefs: `tests/mcp.stdio-server.test.ts`
+verify ▶ `REQ-audit-trail` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/mcp.stdio-server.test.ts`
 
 #### 3.4.88  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
 
@@ -14416,7 +14464,7 @@ verify ▶ `REQ-structure-driven` · testRefs: `tests/se-plan.ordering.test.ts`
 
 Abnahme der Datei tests/test-selection.audit.test.ts: die Kantensemantik der Auswahl, die Paritaet zwischen Store-Pfad und Snapshot-Pfad, und die Fallback-Regel. Eine nicht aufloesbare Datei fuehrt zum Volllauf, nie zur leeren Auswahl.
 
-verify ▶ `REQ-graph-tests-operational` · `REQ-impact-based-testing` · `REQ-selective-code-lane` · `REQ-vitest-aufruf-aus-tests` · `SCHEMA-code-lane-plan` · `SCHEMA-impacted-tests` · `SCHEMA-test-selection` · testRefs: `tests/test-selection.audit.test.ts`
+verify ▶ `REQ-graph-tests-operational` · `REQ-impact-based-testing` · `REQ-selective-code-lane` · `REQ-testspur-passt-zum-diff` · `REQ-vitest-aufruf-aus-tests` · `SCHEMA-code-lane-plan` · `SCHEMA-impacted-tests` · `SCHEMA-test-selection` · testRefs: `tests/test-selection.audit.test.ts`
 
 #### 3.4.131  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
 
@@ -14584,7 +14632,7 @@ verify ▶ `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · `SCHEM
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
-verify ▶ `REQ-target-shifts-ranking` · testRefs: `tests/mcp.suggest.test.ts`
+verify ▶ `REQ-target-shifts-ranking` · `REQ-umbau-haelt-vorhersage` · testRefs: `tests/mcp.suggest.test.ts`
 
 #### 3.4.159  `TEST-target-state` — Abnahme Zielbild
 
@@ -14674,7 +14722,7 @@ verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · `REQ-update-traegt-p
 
 Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.
 
-verify ▶ `REQ-model-lane-fixed-set` · testRefs: `tests/verify-model.completeness.test.ts`
+verify ▶ `REQ-model-lane-fixed-set` · `REQ-testspur-passt-zum-diff` · testRefs: `tests/verify-model.completeness.test.ts`
 
 #### 3.4.174  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
@@ -14710,7 +14758,7 @@ verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` ·
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
-verify ▶ `REQ-tool-input-parsed-once` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
+verify ▶ `REQ-tool-input-parsed-once` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
 #### 3.4.180  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
@@ -14730,7 +14778,7 @@ Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zu
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 259 REQ · 259 verified · 0 without a verifying TEST (R-01).
+Traceability: 265 REQ · 265 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 

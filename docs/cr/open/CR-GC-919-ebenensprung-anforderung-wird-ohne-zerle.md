@@ -1,6 +1,6 @@
 # CR-GC-919: Ebenensprung — Anforderung wird ohne Zerlegung tief erfuellt
 
-**Status:** 🟠 Open — Messung erledigt, Korrektur offen
+**Status:** 🟠 Open
 **Typ:** aus Item ITEM-2026-1321 (finding)
 **Erstellt:** 2026-11-12
 **Item:** bok/items/ITEM-2026-1321.json (Lane: code)
@@ -45,10 +45,10 @@ Erfueller auf der Systemebene: SYS, FCHAIN, MOD der obersten Ebene, Blatt-FUNC d
 ## Akzeptanz
 
 - [x] Liste der Spruenge am Modell nach CR-GC-918, mit Zahl (39, Abschnitt Messung).
-- [ ] Jeder Sprung zerlegt oder verschoben; verbleibende mit Grund gelistet.
-- [ ] Keine neue Fehlermeldung, R-01 = 0, keine REQ mit mehr als einem Erfueller.
-- [ ] Messung an CR-SM-436 uebergeben.
-- [ ] `npm run verify:model` gruen; `docs/graph` und `docs/views` im selben Commit.
+- [x] Jeder Sprung zerlegt oder verschoben; verbleibende mit Grund gelistet (keine verbleibend).
+- [x] Keine neue Fehlermeldung, R-01 = 0, keine REQ mit mehr als einem Erfueller.
+- [x] Messung an CR-SM-436 uebergeben (RD-07 in contracts 12.15.0, eingezogen mit CR-GC-955).
+- [x] `npm run verify:model` gruen; `docs/graph` und `docs/views` im selben Commit.
 
 ## Umfang
 
@@ -125,3 +125,51 @@ Zulaessig sind SYS, FCHAIN, MOD der obersten Ebene und FUNC ohne Eltern-FUNC.
 | `REQ-store-recovery` | SYS-graphcode | `FUNC-open-store` | auch unter REQ |
 | `REQ-single-measurement-path` | UC-deterministic-steering | `FUNC-take-steering-snapshot` | auch unter REQ |
 | `REQ-dashboard-ontology-sync` | UC-live-graph-view | `MOD-kernel-measure` | auch unter REQ |
+
+---
+
+## Korrektur (Schritte 2 und 3, 2026-11-17)
+
+**Entscheidung des Auftraggebers:** anwenden, wenn das Gate sauber ist. Der Batch lief erst als Trockenlauf.
+Der erste Trockenlauf blockte mit R-01: Die neuen Eltern-REQ hatten keinen TEST. Der zweite lief ohne Meldung.
+
+**Ergebnis:** RD-07 39 → 0 (Engine, contracts 12.15.0, und Zaehlung am Snapshot), RD-06 bleibt 0, keine
+Fehlermeldung, R-01 = 0. REQ 259 → 265. Alle anderen Befundzahlen unveraendert.
+
+**A — unter eine vorhandene Systemanforderung gehaengt (19):**
+
+| Eltern-REQ | Kinder |
+|---|---|
+| `REQ-auto-persist-merge` | `REQ-conflict-free-merge`, `REQ-post-merge-nodes` |
+| `REQ-versioned-broadcast` | `REQ-post-emit-update-event` |
+| `REQ-graph-tests-operational` | `REQ-impact-based-testing`, `REQ-post-impact-testing` |
+| `REQ-steering-from-metrics` | `REQ-done-iff-no-focus`, `REQ-steering-pre`, `REQ-steering-post`, `REQ-single-measurement-path`, `REQ-thresholds-from-config`, `REQ-near-duplicate-detection`, `REQ-recommend-next-step` |
+| `REQ-code-quality` | `REQ-bericht-ist-kein-urteil` |
+| `REQ-graph-is-ssot` | `REQ-doc-export`, `REQ-post-export-markdown` |
+| `REQ-single-kuzu-owner` | `REQ-store-recovery`, `REQ-session-leaves-nothing-behind` |
+| `REQ-audit-trail` | `REQ-rule-calibration` |
+| `REQ-repo-install` | `REQ-post-harness-cli` |
+
+**B — neue Systemanforderung, die Kinder darunter (19):**
+
+| Neue REQ (unter) | Text | Kinder | TEST |
+|---|---|---|---|
+| `REQ-messstand-nachvollziehbar` (UC-live-graph-view) | Wenn der Auftraggeber den Stand des Modells abfragt, nennt graphcode je Marke, Kette und Modul die Kennzahlen und die Elemente und Regeln, aus denen sie entstehen; gerechnet wird gegen den Regelkatalog aus contracts. | readiness-completeness, completeness-actor-bounded, chain-metrics, metrics-constraint-carriers, metrics-risk-scope, readiness-transparent, dashboard-ontology-sync, readiness-model | mcp-readiness, graph-metrics |
+| `REQ-modellaustausch` (UC-model-exchange, UC-consolidate-requirements) | Wenn ein Fremdbestand eingelesen wird, gelangt er nur ueber graph_mutate in den Graphen; wenn eine Sicht ausgegeben wird, entsteht sie nur aus dem Graphen. | model-exchange-pre, mutate-befund-je-element, skill-import-code-nennt-verb, srs-29148, render-document | import-invariant, doc-export |
+| `REQ-werkzeuge-wirken-im-repo` (SYS) | Jedes Werkzeug der MCP-Oberflaeche nimmt nur eine gueltige Eingabe an und wirkt auf den Store des Repos, in dem der Host laeuft. | mcp-tool-registry, tool-input-parsed-once | mcp-stdio-server, werkzeug-eingang-geparst |
+| `REQ-testspur-passt-zum-diff` (UC-efficient-testing) | Wenn eine Aenderung geprueft wird, faehrt graphcode die Testspur, die zum Diff passt: die feste Modellmenge fuer reine Modell-Aenderungen, die abgeleitete Auswahl fuer Code-Aenderungen, sonst die volle Suite. | selective-code-lane, model-lane-fixed-set | selective-test-audit, verify-model-set |
+| `REQ-umbau-haelt-vorhersage` (UC-deterministic-steering) | Wenn graph_suggest Umbauvorschlaege rankt, folgt die Reihenfolge dem Zielprofil, und ein angewandter Vorschlag bewegt die Kennzahl so, wie vorhergesagt. | applied-suggestion-moves-target, target-shifts-ranking | applied-suggestion-moves-target, target-shifts-ranking |
+
+Die TESTs der neuen REQ pruefen je ein Kind ueber die Systemgrenze (MCP, Import, Export, Spuren, Suggest);
+kein TEST ist neu.
+
+**C — Kind abgeleitet (1):** `REQ-repo-uninstall` bleibt Systemanforderung. Ihr Kind
+`REQ-remove-loescht-eigene-pfade` („Wenn graphcode remove laeuft, loescht es jede Datei, die init angelegt hat, und
+laesst fremde Dateien stehen.“) erfuellt `FUNC-harness-cli`, geprueft von `TEST-cli-scaffold`.
+
+**Zur Pruefung durch den Autor:** Die fuenf Texte unter B und die Zuordnungen unter A sind neu formuliert bzw.
+gewaehlt; sie stehen hier, damit sie im Nachgang geprueft werden koennen. `REQ-conflict-free-merge` ueberschneidet
+sich mit `REQ-merge-ohne-konflikt` (beide unter `REQ-auto-persist-merge`) — Duplikat, offen fuer CR-GC-954.
+
+
+`npm run verify:full CR-GC-919` am 2026-11-17: 231 von 231 Dateien, 1914 von 1914 Tests gruen, Schlupf 0.

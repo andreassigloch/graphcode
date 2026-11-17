@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 259 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 265 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -120,12 +120,14 @@
 | `REQ-merge-ohne-konflikt` | ✓ | ✓ passed | `TEST-merge` |
 | `REQ-messpfad-liefert-stand` | ✓ | ✓ passed | `TEST-first-step` |
 | `REQ-messpfad-meldet-vertragsfremd` | ✓ | ✓ passed | `TEST-readiness-altbestand` |
+| `REQ-messstand-nachvollziehbar` | ✓ | ✓ passed | `TEST-graph-metrics` · `TEST-mcp-readiness` |
 | `REQ-metrics-constraint-carriers` | ✓ | ✓ passed | `TEST-graph-metrics` |
 | `REQ-metrics-risk-scope` | ✓ | ✓ passed | `TEST-graph-metrics` |
 | `REQ-model-exchange-post` | ✓ | ✓ passed | `TEST-doc-export` · `TEST-import-code-verb` |
 | `REQ-model-exchange-pre` | ✓ | ✓ passed | `TEST-import-code-verb` |
 | `REQ-model-lane-fixed-set` | ✓ | ✓ passed | `TEST-verify-model-set` |
 | `REQ-modell-befragen` | ✓ | ✓ passed | `TEST-sitzung-kpi` |
+| `REQ-modellaustausch` | ✓ | ✓ passed | `TEST-doc-export` · `TEST-import-invariant` |
 | `REQ-modulebene-reads-and-separates` | ✓ | ✓ passed | `TEST-modulebene-reads-and-separates` |
 | `REQ-monotone-convergence` | ✓ | ✓ passed | `TEST-monotone-convergence` |
 | `REQ-mutate-befund-je-element` | ✓ | ✓ passed | `TEST-mutate-violations-leser` |
@@ -166,6 +168,7 @@
 | `REQ-real-health-check` | ✓ | ✓ passed | `TEST-readonly-bridge` |
 | `REQ-recommend-next-step` | ✓ | ⚠ nie gelaufen | `TEST-recommend-next-step` |
 | `REQ-reduced-llm` | ✓ | ✓ passed | `TEST-reduced-llm` |
+| `REQ-remove-loescht-eigene-pfade` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-render-document` | ✓ | ✓ passed | `TEST-render-verb` |
 | `REQ-repo-install` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-init-verb` · `TEST-opencode-plugin` |
 | `REQ-repo-uninstall` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-opencode-plugin` |
@@ -246,10 +249,12 @@
 | `REQ-testref-materialized` | ✓ | ✓ passed | `TEST-realref-materialize` · `TEST-testref-materialize` |
 | `REQ-tests-aufloesen` | ✓ | ✓ passed | `TEST-test-runnable-binding` |
 | `REQ-tests-aus-changeset` | ✓ | ✓ passed | `TEST-graph-tests-operational` |
+| `REQ-testspur-passt-zum-diff` | ✓ | ✓ passed | `TEST-selective-test-audit` · `TEST-verify-model-set` |
 | `REQ-thresholds-from-config` | ✓ | ✓ passed | `TEST-target-profile` · `TEST-thresholds-from-config` |
 | `REQ-token-efficiency` | ✓ | ⚠ 3/4 passed | `TEST-audit-trail-projection` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` |
 | `REQ-tool-input-parsed-once` | ✓ | ✓ passed | `TEST-werkzeug-eingang-geparst` |
 | `REQ-trajectory-emit` | ✓ | ✓ passed | `TEST-create-harness-smoke` · `TEST-learning-emit` |
+| `REQ-umbau-haelt-vorhersage` | ✓ | ✓ passed | `TEST-applied-suggestion-moves-target` · `TEST-target-shifts-ranking` |
 | `REQ-umfrage-bemerkt-tod` | ✓ | ✓ passed | `TEST-gve-supervision` |
 | `REQ-update-behaelt-store` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-update-ereignis` | ✓ | ✓ passed | `TEST-live-view` |
@@ -264,12 +269,13 @@
 | `REQ-volllauf-schreibt-schlupf` | ✓ | ✓ passed | `TEST-test-schlupf` |
 | `REQ-vorbereitung-constraints` | ✓ | ✓ passed | `TEST-vorbereitung-reads-metrics` |
 | `REQ-vorbereitung-reads-metrics` | ✓ | ✓ passed | `TEST-vorbereitung-reads-metrics` |
+| `REQ-werkzeuge-wirken-im-repo` | ✓ | ✓ passed | `TEST-mcp-stdio-server` · `TEST-werkzeug-eingang-geparst` |
 | `REQ-zuege-sparen` | ✓ | ✓ passed | `TEST-sitzung-kpi` |
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
-Coverage: 259/259 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 221/259 REQ bestanden (85%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 265/265 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 227/265 REQ bestanden (86%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
