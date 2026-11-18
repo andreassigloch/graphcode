@@ -4129,7 +4129,8 @@
       "id": "CR-GC-925",
       "type": "CR",
       "name": "Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (kehrt Regel 1 aus CR-GC-875 um)",
-      "description": "docs/cr/open/CR-GC-925-antwortende-akteure-und-eigene-speicher-.md"
+      "description": "docs/cr/done/CR-GC-925-antwortende-akteure-und-eigene-speicher-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-926",
@@ -34832,5 +34833,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1260
+  "graphVersion": 1261
 }

@@ -1,6 +1,6 @@
 # CR-GC-925: Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (kehrt Regel 1 aus CR-GC-875 um)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-18)
 **Typ:** aus Item ITEM-2026-1328 (finding)
 **Erstellt:** 2026-11-13
 **Item:** bok/items/ITEM-2026-1328.json (Lane: code)
@@ -32,6 +32,30 @@ Deshalb kam sie nie vor. Es bleibt: Ein antwortender Dienst ist nie Auslöser un
 
 Preis: Die Zahl der Akteure und Flüsse steigt wieder (immo-infra: etwa 10 Akteure, 20 Flüsse). Die Sichten müssen die
 Rolle `answer` getrennt zeigen, sonst kehrt der Befund vom 2026-10-28 zurück.
+
+## Ergebnis (2026-11-18)
+
+**Entscheidung des Autors 2026-11-18: das Modell folgt dem Code.** Jede Funktion, die ein fremdes System im Code ruft,
+bekommt ihr Paar aus Anfrage (`async`) und Antwort (`sync`), je mit SCHEMA. Eine Adapter-Funktion gibt es nur, wenn
+der Code einen Adapter hat. Die Zeile „Adapter: genau eine FUNC je Akteur" im Zielbild gilt damit nicht. Begründung:
+eine Adapter-FUNC ohne Code beschreibt einen Aufruf, den es nicht gibt (Regel 8 in se:top-level). So hat auch
+CR-INF-147 modelliert.
+
+- se:author-actor Version 5: Schritt 3 umgekehrt, das antwortende System ist ein Akteur mit der Rolle `answer`;
+  Schritt 4 zählt nur Auslöser und Empfänger; Prüfliste fragt nach dem Paar.
+- se:top-level Version 13: Stufe 3 nennt das Paar für fremde Systeme und den `sync`-Fluss zum eigenen Speicher.
+- se-irr Version 8: Schritt 4 liest das SCHEMA des Antwort-Flusses und belegt jedes Feld mit der Zählabfrage.
+- ConOps-Ansicht (`src/projections/graphcode.ts`): ein Akteur, dessen Einträge in einer Kette alle `answer` sind,
+  steht nicht mehr unter „Empfaenger". Test in `tests/exporter.test.ts` (CR-GC-925), vorher 2 von 3 rot.
+- `tests/skill-top-level-ausloeser.test.ts`: 9 neue Prüfungen, vorher rot; die alten Sätze „no flow in the model"
+  sind als verboten geprüft. `tests/skill-irr-fremde-quellen.test.ts`: 1 neue Prüfung, vorher rot.
+- Kein Skill sagt mehr „ohne Fluss im Modell" für eine fremde Quelle (grep über `.claude/commands`).
+- `npm run verify:full CR-GC-925`: 231 von 231 Dateien grün, Schlupf 0.
+- Validierung in immo-infra: CR-INF-147 ist geschlossen; acht Akteure tragen dort nur die Rolle `answer`, FC-06
+  meldet keinen neuen Befund (Stand 442).
+
+Keine Funktion im Modell trägt `src/projections/graphcode.ts` als `realRef`; die Testauswahl fand die Datei trotzdem
+(Spur CODE, 45 von 231 Dateien).
 
 ## Zielbild
 
