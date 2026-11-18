@@ -1,6 +1,6 @@
 # CR-GC-917: Stufe bauen – Verträge (SCHEMA) vor Funktionen binden, FUNC-Paket trägt die echten Typen
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-18, nicht gebaut, siehe Ergebnis)
 **Typ:** aus Item ITEM-2026-1319 (idea)
 **Erstellt:** 2026-11-12
 **Item:** bok/items/ITEM-2026-1319.json (Lane: code)
@@ -25,6 +25,24 @@ sich der Ort: vor se-plan statt in der Stufe bauen. Die Prüfpunkte unten bleibe
 Zugehörig: CR-SM-437 (Regeln R-26, RC-03, RC-08 vor dem Plan fällig), CR-GC-922 (Review vor dem Bauplan), CR-GC-923
 (se-plan ohne Stufe „Contracts"), CR-GC-925 (Fluss und SCHEMA für antwortende Akteure und Speicher), CR-SM-419
 (Parameter).
+
+## Ergebnis der Prüfung (2026-11-18): geschlossen, Ort falsch, Inhalt geht nach CR-GC-922
+
+Entscheidung des Autors 2026-11-18: schließen, nicht bauen.
+
+1. **Prämisse am Bestand.** `graph_generate` (`src/loop/generate.ts`) kennt keine Stufe „bauen" und schreibt kein Zod.
+   Seine Stufen sind Modellier-Stufen (`STAGE_SETS` in contracts `readiness.ts`): Funktion auf Stufe 5, Schema auf
+   Stufe 8. Der Schema-Schritt schlägt nur `FLOW relation SCHEMA` vor. se-plan legt die Verträge schon vor die
+   Blattfunktionen (`.claude/commands/se-plan.md` Stufe 1). Das Zielbild „SCHEMA-Schritt vor FUNC-Schritt in
+   `graph_generate`" hat damit keinen Ort.
+2. **Umfang.** graphcode: 63 SCHEMA, 6 davon `concept: true` ohne `realRef`. Lauf todo-bauen/lokal-1: 2 SCHEMA, der
+   Agent band beide in Zug 2, vor dem Funktionscode in Zug 7.
+3. **Wirkung am lokalen Arm: nicht messbar.** Der Lauf hat 8 Züge, einer davon schreibt Code, und protokolliert keine
+   Typfehler je Zug. Der Anteil der Reparaturen an Schnittstellen ist weder belegt noch widerlegt.
+
+Was bleibt: Zod-Schema mit `realRef` an jedem Fluss einer Blattfunktion ist Bedingung für „baureif". Das prüft se-cdr
+(CR-GC-922, Schicht 1). Das Verbot von Feldern außerhalb des Vertragspakets steht in CR-GC-924 (Umsetzer, Punkt 3).
+Die Stufe „Contracts" in se-plan entfällt mit CR-GC-923.
 
 ## Vor der Umsetzung: lokal verifizieren (Pflicht, sonst ist der Befund geraten)
 

@@ -4078,7 +4078,8 @@
       "id": "CR-GC-917",
       "type": "CR",
       "name": "Stufe bauen – Verträge (SCHEMA) vor Funktionen binden, FUNC-Paket trägt die echten Typen",
-      "description": "docs/cr/open/CR-GC-917-stufe-bauen-vertra-ge-schema-vor-funktio.md"
+      "description": "docs/cr/done/CR-GC-917-stufe-bauen-vertra-ge-schema-vor-funktio.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-918",
@@ -34831,5 +34832,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1258
+  "graphVersion": 1259
 }
