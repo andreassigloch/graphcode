@@ -21,9 +21,9 @@ Zwischen Spezifikation und Bauplan fehlt ein Review, das die Spezifikation liest
 
 ## Zielbild
 
-Neuer Skill `se-cdr`, fällig nach dem Zod-Schema je Blattfunktion (CR-GC-917) und vor se-plan.
+Neuer Skill `se-cdr`, fällig nach dem Zod-Schema je Blattfunktion und vor se-plan.
 
-1. **Lint im Gate.** Der Skill liest `rules_get_violations` für die Regeln der Marke CDR (Bindung der SCHEMA, Regeln aus CR-SM-437). Ein Befund stoppt das Review.
+1. **Lint im Gate.** Der Skill liest `rules_get_violations` für die Regeln der Marke CDR (Bindung der SCHEMA, Regeln aus CR-SM-437). Ein Befund stoppt das Review. Baureif ist eine Blattfunktion erst, wenn jedes SCHEMA an ihren Flüssen einen `realRef` auf ein Zod-Schema trägt (R-26, RC-08; übernommen aus CR-GC-917, dort ohne Ort geschlossen).
 2. **Review durch einen Agenten ohne Vorwissen.** Je Blattfunktion liest ein eigener Agent nur `graph_context` der Funktion und die Zod-Schemas an ihren Flüssen. Er listet jede Frage, die er vor dem Bau stellen müsste:
    - Datum der Anforderung fehlt als Feld im SCHEMA
    - Wert, Rolle oder Quelle fehlt
@@ -50,7 +50,7 @@ Normbezug: Anforderung, Test und Schema zusammen entsprechen der „build-to"-Ba
 
 ## Abhängig von
 
-CR-GC-917 (Zod-Schema je Blattfunktion), CR-SM-437.
+CR-SM-437. CR-GC-917 ist geschlossen; seine Bedingung steht in Zielbild Punkt 1.
 
 
 ---

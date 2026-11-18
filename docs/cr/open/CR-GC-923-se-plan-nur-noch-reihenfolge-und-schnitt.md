@@ -15,7 +15,7 @@ se-plan (Version 11, 88 Zeilen) erledigt drei Aufgaben:
 |---|---|---|
 | §2 | offene Fragen stellen, Antwort als REQ schreiben | Spezifikation |
 | §3 | fehlende REQ und TEST schreiben | Spezifikation |
-| §4 Stufe 1 | SCHEMA als erste Baustufe | Spezifikation (CR-GC-917) |
+| §4 Stufe 1 | SCHEMA als erste Baustufe | Spezifikation (Bedingung „baureif" in CR-GC-922) |
 | §4 bis §6 | Reihenfolge ableiten, CRs schneiden | Plan |
 | §7 Absatz 2 | Lücke der Spezifikation schließen | Spezifikation |
 | §10 | Agenten starten, zusammenführen, ausrollen | Bau |
@@ -48,7 +48,7 @@ Review und Bau-Skill fehlten. se-plan hat beide Lücken über sieben CRs nebenbe
 
 ## Abhängig von
 
-CR-GC-922 (se-cdr), CR-GC-924, CR-GC-917.
+CR-GC-922 (se-cdr), CR-GC-924.
 
 ---
 
