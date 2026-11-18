@@ -1,11 +1,55 @@
 # CR-GC-922: Review vor dem Bauplan: Lint im Gate, danach Agent ohne Vorwissen (Marke CDR)
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-18, Akzeptanz 4 von 5, siehe Ergebnis)
 **Typ:** aus Item ITEM-2026-1325 (finding)
 **Erstellt:** 2026-11-13
 **Item:** bok/items/ITEM-2026-1325.json (Lane: code)
 
 ---
+
+## Ergebnis (2026-11-18)
+
+- Neuer Skill `.claude/commands/se-cdr.md`, Version 2. Schichten: Lint im Gate, je Blattfunktion ein Agent ohne
+  Vorwissen, Abgleich über alle Blattfunktionen, Versuch bei Messfragen, Liste je Funktion mit Rang.
+- Entscheidungen des Autors 2026-11-18:
+  - Der Stopp zählt nur Befunde bis Stufe 8 an den Blattfunktionen im Review, ihren Flüssen und SCHEMA.
+    Marke CDR = Stufe 8 (`MARK_STAGE` in contracts `readiness.js`). RC-08 liegt auf Stufe 12 und steht nur in der
+    Bedingung „baureif".
+  - FAQ `headless-keine-rueckfrage` geht vor: Im Lauf ohne Mensch schreibt se:author-req jede offene Frage als
+    Annahme.
+  - Probe am Commit 8699429 von immo-infra (Stand 196). Stand 154 liegt in keinem Commit; 8699429 ist der erste Commit
+    nach dem Schnitt von CR-INF-069 und liegt vor dem Bau.
+
+### Probe (rückwirkend, immo-infra Stand 196)
+
+Aufbau: je Funktion ein Agent ohne Vorwissen. Er las nur den Ausschnitt seiner Funktion und §2/§3 des Skills ohne die
+Beispielzeilen, weil die Beispiele die gesuchten Lücken nennen. Geprüft: `FUNC-anwendung-rechnen`,
+`FUNC-umfeld-pruefen`, `FUNC-daten-wiederherstellen`. Bei Stand 196 hatten die SCHEMA noch kein Zod; die Agenten
+lasen die SCHEMA-Beschreibung.
+
+| Lücke aus dem Befund | Version 1 (je Funktion) | Version 2 (+ Abgleich) |
+|---|---|---|
+| Umfang der Wiederherstellung | gefunden (ganze DB gegen ein Satz; Test widerspricht der REQ) | gefunden |
+| Benutzer des Umfeld-Laufs | gefunden | gefunden |
+| zweite Quelle für das Protokoll der Läufe | halb (nur „wohin schreibt der Lauf sein Protokoll") | gefunden (drei Listen „wer tat was") |
+| falscher Träger (Abgleich) | nicht gefunden | gefunden (beide Funktionen erkennen den Maklerwechsel) |
+| Widerspruch zur Invariante Ablage | nicht gefunden | nicht gefunden |
+
+- **Akzeptanz „mindestens die fünf Lücken": nicht erreicht, 4 von 5.** Die Invariante war im Ausschnitt nicht als
+  Widerspruch sichtbar: Bei Stand 196 sagt `REQ-kundendaten-ablage`, Verträge liegen nur in der Dateiablage, und
+  `REQ-partnervertrag-verknuepft` legt sie dorthin. Ob die Regel aus CR-INF-046 bei Stand 196 im Modell stand, ist
+  nicht geprüft.
+- Version 1 lieferte rund 170 Fragen für drei Funktionen; die Treffer gingen darin unter. Daraus kam der Rang
+  `behaviour`/`detail`. Der Abgleich lieferte 15 Befunde, 13 davon `behaviour`. Ob der Rang die Liste der Schicht 2
+  kürzt, ist nicht gemessen.
+- Positivkontrolle: Die vier Tests zu Abgleich und Rang waren gegen den Skill ohne §3 und Rang rot (4 von 17).
+
+### Modell
+
+`FUNC-se-cdr` unter `FUNC-block-urteilsarbeit`, auf `MOD-agent-surface`, in `FCHAIN-skill-report` (der Skill
+schreibt nichts; zuerst stand er in `FCHAIN-skill-authoring`, `tests/skill-authoring-gate.test.ts` wurde im Volllauf
+rot), erfüllt `REQ-cdr-fragen-vor-dem-bau` (unter `REQ-code-quality`), verifiziert von `TEST-skill-cdr`
+(graphVersion 1264).
 
 ## Befund
 
