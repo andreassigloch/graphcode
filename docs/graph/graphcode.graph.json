@@ -4123,7 +4123,8 @@
       "id": "CR-GC-924",
       "type": "CR",
       "name": "Skill se-bau: Koordinator und Umsetzer im Bau",
-      "description": "docs/cr/open/CR-GC-924-skill-se-bau-koordinator-und-umsetzer-im.md"
+      "description": "docs/cr/done/CR-GC-924-skill-se-bau-koordinator-und-umsetzer-im.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-925",
@@ -35035,5 +35036,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1264
+  "graphVersion": 1265
 }
