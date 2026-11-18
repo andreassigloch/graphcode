@@ -105,6 +105,8 @@
 | `FUNC-rules-tool` | FUNC | rules_evaluate / rules_get_violations |
 | `FUNC-schema-guard` | FUNC | schemaFingerprint |
 | `FUNC-score-completeness` | FUNC | computeMarks(violations) |
+| `FUNC-se-bau` | FUNC | Skill se-bau |
+| `FUNC-se-cdr` | FUNC | Skill se-cdr |
 | `FUNC-se-conops` | FUNC | Skill se-conops |
 | `FUNC-se-constraints` | FUNC | Skill se:constraints |
 | `FUNC-se-fmea` | FUNC | Skill se-fmea |
@@ -248,6 +250,8 @@
 | `FUNC-rules-tool` | `MOD-projections` |
 | `FUNC-schema-guard` | `MOD-kernel` |
 | `FUNC-score-completeness` | `MOD-projections` |
+| `FUNC-se-bau` | `MOD-agent-surface` |
+| `FUNC-se-cdr` | `MOD-agent-surface` |
 | `FUNC-se-conops` | `MOD-agent-surface` |
 | `FUNC-se-constraints` | `MOD-agent-surface` |
 | `FUNC-se-fmea` | `MOD-agent-surface` |

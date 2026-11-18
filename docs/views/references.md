@@ -1507,8 +1507,12 @@
 | `CR-GC-920` | relation | `REQ-post-export-markdown` |
 | `CR-GC-921` | relation | `FUNC-export-markdown` |
 | `CR-GC-921` | relation | `REQ-post-export-markdown` |
+| `CR-GC-922` | relation | `FUNC-se-cdr` |
+| `CR-GC-922` | relation | `REQ-cdr-fragen-vor-dem-bau` |
 | `CR-GC-923` | relation | `FUNC-se-conops` |
 | `CR-GC-923` | relation | `FUNC-se-plan` |
+| `CR-GC-924` | relation | `FUNC-se-bau` |
+| `CR-GC-924` | relation | `REQ-bau-nimmt-nichts-an` |
 | `CR-GC-925` | relation | `FUNC-author-actor` |
 | `CR-GC-925` | relation | `FUNC-se-irr` |
 | `CR-GC-925` | relation | `FUNC-se-top-level` |
@@ -1766,6 +1770,7 @@
 | `FCHAIN-skill-authoring` | compose | `FUNC-mutate` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-read-tools` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-rules-tool` |
+| `FCHAIN-skill-authoring` | compose | `FUNC-se-bau` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-conops` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-constraints` |
 | `FCHAIN-skill-authoring` | compose | `FUNC-se-fmea` |
@@ -1816,6 +1821,7 @@
 | `FCHAIN-skill-report` | compose | `FUNC-module-metrics` |
 | `FCHAIN-skill-report` | compose | `FUNC-rules-tool` |
 | `FCHAIN-skill-report` | compose | `FUNC-score-completeness` |
+| `FCHAIN-skill-report` | compose | `FUNC-se-cdr` |
 | `FCHAIN-skill-report` | compose | `FUNC-se-modulebene` |
 | `FCHAIN-skill-report` | compose | `FUNC-se-retro` |
 | `FCHAIN-skill-report` | compose | `FUNC-se-review` |
@@ -1919,6 +1925,10 @@
 | `FLOW-anleitung-import-code` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-import-doc` | io | `FUNC-agent-loop` |
 | `FLOW-anleitung-import-doc` | relation | `SCHEMA-skill-text` |
+| `FLOW-anleitung-se-bau` | io | `FUNC-agent-loop` |
+| `FLOW-anleitung-se-bau` | relation | `SCHEMA-skill-text` |
+| `FLOW-anleitung-se-cdr` | io | `FUNC-agent-loop` |
+| `FLOW-anleitung-se-cdr` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-se-conops` | io | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-conops` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-se-constraints` | io | `FUNC-agent-loop` |
@@ -2387,6 +2397,8 @@
 | `FLOW-skill-request` | io | `FUNC-close-violations` |
 | `FLOW-skill-request` | io | `FUNC-import-code` |
 | `FLOW-skill-request` | io | `FUNC-import-doc` |
+| `FLOW-skill-request` | io | `FUNC-se-bau` |
+| `FLOW-skill-request` | io | `FUNC-se-cdr` |
 | `FLOW-skill-request` | io | `FUNC-se-conops` |
 | `FLOW-skill-request` | io | `FUNC-se-constraints` |
 | `FLOW-skill-request` | io | `FUNC-se-fmea` |
@@ -2684,6 +2696,8 @@
 | `FUNC-block-speicherwerk` | compose | `FUNC-held-back-traces` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-open-store` |
 | `FUNC-block-speicherwerk` | compose | `FUNC-seed-from-json` |
+| `FUNC-block-urteilsarbeit` | compose | `FUNC-se-bau` |
+| `FUNC-block-urteilsarbeit` | compose | `FUNC-se-cdr` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-conops` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-fmea` |
 | `FUNC-block-urteilsarbeit` | compose | `FUNC-se-irr` |
@@ -3009,6 +3023,12 @@
 | `FUNC-score-completeness` | io | `FLOW-completeness` |
 | `FUNC-score-completeness` | satisfy | `REQ-completeness-actor-bounded` |
 | `FUNC-score-completeness` | satisfy | `REQ-readiness-completeness` |
+| `FUNC-se-bau` | allocate | `MOD-agent-surface` |
+| `FUNC-se-bau` | io | `FLOW-anleitung-se-bau` |
+| `FUNC-se-bau` | satisfy | `REQ-bau-nimmt-nichts-an` |
+| `FUNC-se-cdr` | allocate | `MOD-agent-surface` |
+| `FUNC-se-cdr` | io | `FLOW-anleitung-se-cdr` |
+| `FUNC-se-cdr` | satisfy | `REQ-cdr-fragen-vor-dem-bau` |
 | `FUNC-se-conops` | allocate | `MOD-agent-surface` |
 | `FUNC-se-conops` | io | `FLOW-anleitung-se-conops` |
 | `FUNC-se-conops` | satisfy | `REQ-conops-zugangsliste` |
@@ -3227,8 +3247,10 @@
 | `REQ-bootstrap-through-gate` | compose | `REQ-seed-prueft-kanten` |
 | `REQ-code-quality` | compose | `REQ-agent-loop-executes-skill` |
 | `REQ-code-quality` | compose | `REQ-audit-trail` |
+| `REQ-code-quality` | compose | `REQ-bau-nimmt-nichts-an` |
 | `REQ-code-quality` | compose | `REQ-bericht-ist-kein-urteil` |
 | `REQ-code-quality` | compose | `REQ-bootstrap-through-gate` |
+| `REQ-code-quality` | compose | `REQ-cdr-fragen-vor-dem-bau` |
 | `REQ-code-quality` | compose | `REQ-code-governed-quality` |
 | `REQ-code-quality` | compose | `REQ-codec-validation` |
 | `REQ-code-quality` | compose | `REQ-confidence-tier` |
@@ -3784,6 +3806,8 @@
 | `TEST-sitzung-kpi` | verify | `REQ-sitzung-einstieg` |
 | `TEST-sitzung-kpi` | verify | `REQ-zuege-sparen` |
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
+| `TEST-skill-bau` | verify | `REQ-bau-nimmt-nichts-an` |
+| `TEST-skill-cdr` | verify | `REQ-cdr-fragen-vor-dem-bau` |
 | `TEST-skill-constraints` | verify | `REQ-constraints-skill-vertrag` |
 | `TEST-skill-import-code-nennt-verb` | verify | `REQ-skill-import-code-nennt-verb` |
 | `TEST-skill-irr-fremde-quellen` | verify | `REQ-irr-fremde-quellen` |

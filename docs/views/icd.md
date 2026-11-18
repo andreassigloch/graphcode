@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 63 SCHEMA · 255 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 63 SCHEMA · 257 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -85,6 +85,8 @@
 | `FLOW-anleitung-close-violations` | `FUNC-close-violations` | `FUNC-agent-loop` |
 | `FLOW-anleitung-import-code` | `FUNC-import-code` | `FUNC-agent-loop` |
 | `FLOW-anleitung-import-doc` | `FUNC-import-doc` | `FUNC-agent-loop` |
+| `FLOW-anleitung-se-bau` | `FUNC-se-bau` | `FUNC-agent-loop` |
+| `FLOW-anleitung-se-cdr` | `FUNC-se-cdr` | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-conops` | `FUNC-se-conops` | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-constraints` | `FUNC-se-constraints` | `FUNC-agent-loop` |
 | `FLOW-anleitung-se-fmea` | `FUNC-se-fmea` | `FUNC-agent-loop` |
@@ -277,7 +279,7 @@
 | `FLOW-session-end` | `ACTOR-auftraggeber` | `FUNC-session-shutdown` |
 | `FLOW-session-entry` | `FUNC-gve-supervise` | `FUNC-gve-sessions` |
 | `FLOW-session-registry` | `FUNC-gve-sessions` | `FUNC-gve-supervise` |
-| `FLOW-skill-request` | `FUNC-agent-loop` | `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` |
+| `FLOW-skill-request` | `FUNC-agent-loop` | `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-bau` · `FUNC-se-cdr` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` |
 | `FLOW-snapshot-request` | `FUNC-generation-step` | `FUNC-take-steering-snapshot` |
 | `FLOW-snapshot-request-mutate` | `FUNC-graph-mutate-tool` | `FUNC-take-steering-snapshot` |
 | `FLOW-snapshot-request-readiness` | `FUNC-graph-readiness` | `FUNC-take-steering-snapshot` |

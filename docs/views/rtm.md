@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 265 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 267 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 61 REQ
@@ -73,7 +73,7 @@
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-werkzeuge-wirken-im-repo` | `TEST-mcp-stdio-server` · `TEST-werkzeug-eingang-geparst` | — | — |
 
-### funktional (SWE.1 · HWE.1) — 198 REQ
+### funktional (SWE.1 · HWE.1) — 200 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -88,9 +88,11 @@
 | `REQ-audit-trail-liefert-zuege` | `TEST-audit-trail-projection` | `FUNC-audit-trail` | `MOD-surface` |
 | `REQ-auto-export-nach-zug` | `TEST-auto-export` | `FUNC-auto-export` | `MOD-projections` |
 | `REQ-auto-persist-merge` | `TEST-merge` · `TEST-occ` | — | — |
+| `REQ-bau-nimmt-nichts-an` | `TEST-skill-bau` | `FUNC-se-bau` | `MOD-agent-surface` |
 | `REQ-bericht-ist-kein-urteil` | `TEST-gate-urteilt-und-speichert` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 | `REQ-bootstrap-through-gate` | `TEST-bootstrap` · `TEST-import-invariant` | — | — |
 | `REQ-cache-layering` | `TEST-cache` | `MOD-surface` | — |
+| `REQ-cdr-fragen-vor-dem-bau` | `TEST-skill-cdr` | `FUNC-se-cdr` | `MOD-agent-surface` |
 | `REQ-chain-metrics` | `TEST-graph-metrics` | `FUNC-chain-metrics` | `MOD-projections` |
 | `REQ-code-governed-quality` | `TEST-code-quality` · `TEST-mvp-e2e` | `FCHAIN-apply-gate` | — |
 | `REQ-code-quality` | `TEST-code-quality` | — | — |
@@ -348,7 +350,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 184 REQ
+### Entwurf (SWE.3 · HWE.2) — 186 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -361,9 +363,11 @@
 | `REQ-audit-trail-liefert-zuege` | `TEST-audit-trail-projection` | `FUNC-audit-trail` | `MOD-surface` |
 | `REQ-auto-export-nach-zug` | `TEST-auto-export` | `FUNC-auto-export` | `MOD-projections` |
 | `REQ-batch-seed-performance` | `TEST-batch-seed` | `MOD-kernel` | — |
+| `REQ-bau-nimmt-nichts-an` | `TEST-skill-bau` | `FUNC-se-bau` | `MOD-agent-surface` |
 | `REQ-bericht-ist-kein-urteil` | `TEST-gate-urteilt-und-speichert` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 | `REQ-buildable-standalone` | `TEST-distribution` | `MOD-surface` | — |
 | `REQ-cache-layering` | `TEST-cache` | `MOD-surface` | — |
+| `REQ-cdr-fragen-vor-dem-bau` | `TEST-skill-cdr` | `FUNC-se-cdr` | `MOD-agent-surface` |
 | `REQ-chain-metrics` | `TEST-graph-metrics` | `FUNC-chain-metrics` | `MOD-projections` |
 | `REQ-codec-validation` | `TEST-codec-validation` · `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
 | `REQ-commit-check-flow-call` | `TEST-commit-check` | `FUNC-commit-check` | `MOD-dev-scripts` |

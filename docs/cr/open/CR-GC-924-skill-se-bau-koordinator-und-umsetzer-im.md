@@ -1,11 +1,31 @@
 # CR-GC-924: Skill se-bau: Koordinator und Umsetzer im Bau
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-18)
 **Typ:** aus Item ITEM-2026-1327 (finding)
 **Erstellt:** 2026-11-13
 **Item:** bok/items/ITEM-2026-1327.json (Lane: code)
 
 ---
+
+## Ergebnis (2026-11-18)
+
+- Neuer Skill `.claude/commands/se-bau.md` (Version 1) mit den Rollen Koordinator und Umsetzer und den acht Punkten des
+  Umsetzers. Die Tabelle „Werteklasse zu Ort im Code" steht jetzt im Skill; CR-GC-759 ist nur noch Herkunft.
+- Aus se-plan übernommen (CR-GC-923 löscht es dort): §10 (ein Agent je CR einer Gruppe, eigener Arbeitsordner,
+  Gruppe n+1 nach dem Zusammenführen von Gruppe n, Modell schreibt nur die Hauptsitzung, Ausrollen CR für CR) und aus
+  §7 Absatz 1 `graph_tests({changeSet})` vor jedem Testlauf und grün auf der Zielumgebung vor dem Schließen. §7
+  Absatz 2 (Lücke → REQ) ist Spezifikation und geht als Rückweg an se-cdr.
+- Entscheidung des Autors 2026-11-18 (FAQ `headless-keine-rueckfrage` geht vor): Im Lauf ohne Mensch schreibt
+  se:author-req die offene Frage als Annahme; der Koordinator nennt sie im Bericht. Der Umsetzer meldet weiter nur an
+  den Koordinator.
+- `commitRef` steht nicht im Skill: `tests/skill-cr-ueber-aise.test.ts` verbietet das Wort in Skills (CR-GC-938,
+  Status und Ablauf über `aise`). Der Koordinator schließt über `aise cr close`.
+- Modell (graphVersion 1262): `FUNC-se-bau` unter `FUNC-block-urteilsarbeit`, auf `MOD-agent-surface`, in
+  `FCHAIN-skill-authoring`, erfüllt `REQ-bau-nimmt-nichts-an` (unter `REQ-code-quality`), verifiziert von
+  `TEST-skill-bau`.
+- `tests/skill-bau.test.ts`: vorher 19 von 20 rot (Datei fehlte), danach grün.
+- **Offen, nicht Teil dieses CR:** die Nachmessung an der nächsten Baustufe in immo-infra (0 angenommene Werte, RC-04
+  und RC-09 ohne Befund) und der Text von `aise dispatch prepare` (bok ITEM-2026-1332).
 
 ## Befund
 
