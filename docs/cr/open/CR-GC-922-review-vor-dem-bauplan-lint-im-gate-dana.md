@@ -51,6 +51,9 @@ schreibt nichts; zuerst stand er in `FCHAIN-skill-authoring`, `tests/skill-autho
 rot), erfüllt `REQ-cdr-fragen-vor-dem-bau` (unter `REQ-code-quality`), verifiziert von `TEST-skill-cdr`
 (graphVersion 1264).
 
+`npm run verify:full CR-GC-922`: 233 Testdateien, rot 0, Schlupf 0. Der Volllauf davor (für CR-GC-924) war rot an
+`tests/skill-authoring-gate.test.ts`, Ursache die falsche Kette oben.
+
 ## Befund
 
 Beleg: immo-infra, Bau 2026-11-10 bis 11-12 (Stufe MS-INF-2). 17 von 20 Rückfragen an den Auftraggeber waren Lücken der Spezifikation. Einordnung je Frage: Sitzungsprotokoll 5126f023, ausgewertet 2026-11-13.

@@ -220,7 +220,7 @@
 | `REQ-single-write-door` | ✓ | ✓ passed | `TEST-host-shim` · `TEST-mutate-input-formate` · `TEST-occ` · `TEST-single-write-door` |
 | `REQ-sitzung-einstieg` | ✓ | ✓ passed | `TEST-sitzung-kpi` |
 | `REQ-sitzungen-tragen-ein` | ✓ | ✓ passed | `TEST-gve-autostart` |
-| `REQ-skill-authors-through-gate` | ✓ | ✗ failed | `TEST-skill-authors-through-gate` |
+| `REQ-skill-authors-through-gate` | ✓ | ✓ passed | `TEST-skill-authors-through-gate` |
 | `REQ-skill-import-code-nennt-verb` | ✓ | ✓ passed | `TEST-skill-import-code-nennt-verb` |
 | `REQ-skill-reads-only` | ✓ | ✓ passed | `TEST-skill-reports-measured-values` |
 | `REQ-small-model-viable` | ✓ | ✓ passed | `TEST-mvp-e2e` · `TEST-reduced-llm` |
@@ -277,7 +277,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 267/267 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 228/267 REQ bestanden (85%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 229/267 REQ bestanden (86%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
