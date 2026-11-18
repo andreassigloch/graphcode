@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 559 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 559 CR · 405 done · 4 open.
+Total: 559 CR · 406 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -587,7 +587,7 @@ Total: 559 CR · 405 done · 4 open.
 | `CR-GC-919` | done | Ebenensprung: Anforderung wird ohne Zerlegung tief erfuellt |
 | `CR-GC-920` | n/a | A-SPICE-Darstellung der Anforderungs- und Teststufen |
 | `CR-GC-921` | n/a | RTM: Ebene eindeutig aus der Herkunft, Erfueller als Spalte |
-| `CR-GC-922` | n/a | Review vor dem Bauplan: Lint im Gate, danach Agent ohne Vorwissen (Marke CDR) |
+| `CR-GC-922` | done | Review vor dem Bauplan: Lint im Gate, danach Agent ohne Vorwissen (Marke CDR) |
 | `CR-GC-923` | n/a | se-plan nur noch Reihenfolge und Schnitt: Fragen, Schreiben und Bau herauslösen |
 | `CR-GC-924` | done | Skill se-bau: Koordinator und Umsetzer im Bau |
 | `CR-GC-925` | done | Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (kehrt Regel 1 aus CR-GC-875 um) |

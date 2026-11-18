@@ -4111,7 +4111,8 @@
       "id": "CR-GC-922",
       "type": "CR",
       "name": "Review vor dem Bauplan: Lint im Gate, danach Agent ohne Vorwissen (Marke CDR)",
-      "description": "docs/cr/open/CR-GC-922-review-vor-dem-bauplan-lint-im-gate-dana.md"
+      "description": "docs/cr/done/CR-GC-922-review-vor-dem-bauplan-lint-im-gate-dana.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-923",
@@ -35036,5 +35037,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1266
+  "graphVersion": 1267
 }
