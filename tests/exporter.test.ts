@@ -910,3 +910,41 @@ describe('CR-GC-873: ConOps nennt die Rolle des Akteurs je Kette (chainRoles)', 
     expect(exportMarkdown(conOpsGraph(), 'conops', 'shop')).toMatch(/ACTOR-kunde`\) — keine UC-Kopplung im Graph/);
   });
 });
+
+// CR-GC-925 — ein fremdes System, das nur antwortet, ist ein Akteur mit Anfrage (`async`) und Antwort
+// (`sync`). `chainRoles` gibt ihm die Rolle `answer`; die Anfrage fuehrt ihn aber auch unter
+// `sinks`. Die Ansicht fuehrte ihn deshalb zusaetzlich unter „Empfaenger" — der Befund vom
+// 2026-10-28 (immo-infra CR-INF-009), mit dem die antwortenden Akteure geloescht wurden.
+describe('CR-GC-925: ein antwortender Akteur steht nur unter „Liefert zu"', () => {
+  const graph = (): Graph => {
+    const g = freigabeGraph();
+    g.nodes.push(
+      cn('ACTOR-quelle', 'ACTOR', 'Quelle', 'Fremdes System, liefert Stammdaten auf Anfrage.'),
+      cn('FLOW-quelle-anfrage', 'FLOW', 'quelle-anfrage', '', { sync: 'async' }),
+      cn('FLOW-quelle-antwort', 'FLOW', 'quelle-antwort', '', { sync: 'sync' }),
+    );
+    g.edges.push(
+      ce('FUNC-entwerfen', 'io', 'FLOW-quelle-anfrage'),
+      ce('FLOW-quelle-anfrage', 'io', 'ACTOR-quelle'),
+      ce('ACTOR-quelle', 'io', 'FLOW-quelle-antwort'),
+      ce('FLOW-quelle-antwort', 'io', 'FUNC-entwerfen'),
+    );
+    return g;
+  };
+  const abschnitt = (nr: number): string => exportMarkdown(graph(), 'conops', 'blog').split(`## ${nr} `)[1]!.split('\n## ')[0]!;
+  const zeile = (text: string, start: string): string => text.split('\n').find((l) => l.startsWith(start)) ?? '';
+
+  it('§4 „Liefert zu" nennt die Quelle', () => {
+    expect(zeile(abschnitt(4), 'Liefert zu:')).toBe('Liefert zu: `ACTOR-quelle`');
+  });
+
+  it('§4 „Empfaenger" nennt nur den Leser, nicht die Quelle, obwohl sie die Anfrage empfaengt', () => {
+    expect(zeile(abschnitt(4), 'Empfaenger:')).toBe('Empfaenger: `ACTOR-leser`');
+  });
+
+  it('§3: die Quelle empfaengt nichts und triggert nichts', () => {
+    const z = abschnitt(3).split('\n').find((l) => l.includes('(`ACTOR-quelle`)')) ?? '';
+    expect(z).not.toContain('empfaengt');
+    expect(z).not.toContain('triggert');
+  });
+});

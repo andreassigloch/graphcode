@@ -305,6 +305,8 @@ export function renderConOps(graph: Graph, name: string): string {
   // alle drei Ketten aus). Je Kette:
   //   trigger → „Ausgeloest von" · middle → „Beteiligt" · Senke, die nicht in der Mitte steht →
   //   „Empfaenger" · answer/predelivery/unknown → „Liefert zu".
+  // CR-GC-925: ein Akteur, dessen Eingaenge in die Kette alle `answer` sind, empfaengt dort nur die
+  // Anfrage. `sinks` fuehrt ihn trotzdem; er ist kein Empfaenger (wie FC-04, contracts CR-SM-438).
   // `neighbor` steht nicht hier: der Akteur loest eine Nachbarkette aus, die das Glied mitnutzt,
   // und steht dort als Ausloeser. `toOntologyGraph` traegt `attributes` genestet mit — die Form,
   // die `readFlowSync` liest; eine flache SSOT kommt hier nicht an (exportMarkdown bekommt den
@@ -318,7 +320,11 @@ export function renderConOps(graph: Graph, name: string): string {
       else if (e.role === 'middle') byRole.get('middle')!.add(e.actor);
       else if (e.role !== 'neighbor') byRole.get('supplier')!.add(e.actor);
     }
-    for (const s of c.sinks) if (!byRole.get('middle')!.has(s.actor)) byRole.get('sink')!.add(s.actor);
+    const nurAntwort = (actor: string): boolean => {
+      const eigene = c.entries.filter((e) => e.actor === actor);
+      return eigene.length > 0 && eigene.every((e) => e.role === 'answer');
+    };
+    for (const s of c.sinks) if (!byRole.get('middle')!.has(s.actor) && !nurAntwort(s.actor)) byRole.get('sink')!.add(s.actor);
     rollen.set(c.chainId, byRole);
   }
   const chainsOfUc = (ucUid: string): string[] =>

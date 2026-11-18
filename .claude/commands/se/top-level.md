@@ -1,6 +1,6 @@
 ---
 name: se:top-level
-version: 12
+version: 13
 description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at the width per level that RD-04 and RD-05 judge, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
@@ -67,7 +67,7 @@ The top triad is anchored at the SYS node, but only two legs are edges: `SYS -co
 
 1. **FUNC** — which blackboxes explain the use cases?
 2. **FCHAIN** — the causal path per UC (`UC -compose-> FCHAIN -compose-> FUNC`).
-3. **FLOW + SCHEMA** — the contracts, and **consolidate them**. `ACTOR -io-> FLOW -io-> FUNC`, `FUNC -io-> FLOW -io-> FUNC`; every FLOW carries exactly one SCHEMA (`FLOW -relation-> SCHEMA`, cardinality 1). One shared contract across many flows is a feature, not duplication. **Mark every flow `@sync sync` or `@sync async` here, while you cut the chain** (rule 7 below) — not later in `se-vorbereitung`. Without the mark the trigger of a chain cannot be derived; FC-06 reports the chain.
+3. **FLOW + SCHEMA** — the contracts, and **consolidate them**. `ACTOR -io-> FLOW -io-> FUNC`, `FUNC -io-> FLOW -io-> FUNC`; every FLOW carries exactly one SCHEMA (`FLOW -relation-> SCHEMA`, cardinality 1). One shared contract across many flows is a feature, not duplication. **Mark every flow `@sync sync` or `@sync async` here, while you cut the chain** (rule 7 below) — not later in `se-vorbereitung`. Without the mark the trigger of a chain cannot be derived; FC-06 reports the chain. A system outside the boundary that answers gets a request flow `async` and an answer flow `sync` at each function that calls it, each with its SCHEMA (`se:author-actor`, step 3). Access to a store of your own is a `sync` flow between two FUNCs with a SCHEMA.
 4. **MOD + stack** — only now, and within the band per level that RD-04 (upper end) and RD-05 (lower end) judge, read from `decompositionBreadth`.
 
 Step 4 after step 3 is empirical, not stylistic: CR-GC-436 tried allocation over unconsolidated edges and was a No-Go — optimizing a cut over unconsolidated contracts optimizes the wrong thing (ITEM-2026-170 §1).

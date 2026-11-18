@@ -1,6 +1,6 @@
 ---
 name: se:author-actor
-version: 4
+version: 5
 description: Cut the actor set — the minimum number of distinct roles that makes the system boundary unambiguous, each named by what crosses the boundary, wired only via the one legal path ACTOR io FLOW io FUNC
 ---
 
@@ -29,15 +29,15 @@ Work it out from the use cases you already have, not from the prose — read the
 
 1. For each UC, name **who triggers it** and **who consumes its result**. Write both down, in the customer's words.
 2. Collapse the list: same things crossing → one actor.
-3. Keep a non-human counterpart only if it triggers a chain or receives its result — a scheduler, a device, an AI client that calls in. A service outside the boundary is an actor only if it triggers a chain or receives its result. A data source, a write target, a model or a backup that only answers is called by the function itself, with no flow in the model. "The system itself" is **never** an actor; if you catch yourself writing `ACTOR-system`, the behaviour belongs inside as a FUNC.
+3. Keep a non-human counterpart that triggers a chain or receives its result — a scheduler, a device, an AI client that calls in. A system outside the boundary that only answers is an actor too — a data source, a write target, a model provider, a backup target. Contracts derive the role `answer` for it: it never triggers a chain and is never its sink. Wire it with one pair per function that calls it in code: a request flow `async` from the function to the actor and an answer flow `sync` back, each with its SCHEMA. The answer SCHEMA names only the fields that function reads. Two functions that call the same system get one pair each. Model an adapter function only when the code has one; then the adapter is the calling function. A store of your own product is no actor: the function that holds it is a FUNC, and access is a `sync` flow with a SCHEMA. "The system itself" is **never** an actor; if you catch yourself writing `ACTOR-system`, the behaviour belongs inside as a FUNC.
 **A part of your own product is never an actor** — not a mechanical actuator, not a bought-in part. The boundary is where the product ends (scope table, bill of materials), not where the software ends. Example: a turnout drive (servo, linkage, end-position switches) that belongs to the product is a module. Its motion and its end-position feedback stay inside; they are no flows to an actor "plant". Modelled as an actor, the drive gives the chain a second actor input, and the feedback looks like a second trigger.
-4. What is left is the set. Typically 2–5 at the top level. If you have more than 7, you are modelling users, not the boundary.
+4. What is left is the set. Count only the actors that trigger a chain or receive its result: typically 2–5 at the top level. If more than 7 of those remain, you are modelling users, not the boundary. Answering actors do not count.
 
 ## The role comes from the chain, not from the actor
 
 An actor triggers a chain or receives its result. Contracts derive the role per chain (`chainRoles`); `FC-06` reports what does not fit.
 
-- **Only answering is not an actor.** Does it only answer? Then it is no actor: the function calls it itself.
+- **An answering actor keeps its interface.** It gets the role `answer`: it triggers nothing, and the request to it is no exit of the chain (`FC-04`). Without its flows there is no SCHEMA, and the interface is unspecified. Measured in immo-infra on 2026-11-07: the adapter delivered 15 of 264 fields, and two reviews missed it.
 - **An actor that only delivers in advance is none.** The triggered function reads the data itself (file, store). `FC-06` reports it as `[predelivery]`.
 - **A chain runs from the first trigger to the last sink.** An actor in the middle is allowed: it gets a `sync` flow from the chain and feeds a later member (the approver who sees a proposal and approves it). There the chain splits into segments.
 - **Several triggers only at the same member with the same SCHEMA.** Otherwise each trigger gets its own chain.
@@ -54,7 +54,7 @@ Check it per use case, both directions. A UC whose result nobody outside receive
 
 - Can you name, for every UC, one actor in and one actor out?
 - Would merging any two actors lose a distinction the system actually acts on? If no — merge them.
-- Does any actor only answer, or only deliver in advance? Then it is no actor.
+- Does any actor only deliver in advance? Then it is no actor. Does it only answer? Then it keeps its request and answer pair, each with a SCHEMA.
 - Is any actor a part of the system wearing a costume?
 - Is any actor a part of your own product (scope table, bill of materials)? Then it is a MOD with its FUNCs, not an ACTOR — also when it is mechanical or bought in.
 - Does every actor appear in at least one use case? An actor with no UC is a leftover from the prose.

@@ -76,7 +76,7 @@ describe('TEST-skill-faq-angleich (CR-GC-939)', () => {
   });
 
   it('die Versionen stehen höher', () => {
-    expect(topLevel).toMatch(/^version: 12$/m);
+    expect(topLevel).toMatch(/^version: 13$/m);
     const v = (t: string) => Number(t.match(/^version: (\d+)$/m)![1]);
     expect(v(generate)).toBeGreaterThanOrEqual(6);
     expect(importCode).toMatch(/^version: 5$/m);

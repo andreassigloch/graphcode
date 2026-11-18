@@ -32,8 +32,8 @@ const regel4 = topLevel.split('\n').find((l) => l.startsWith('4. **One entry nod
 const stufe3Fluss = topLevel.split('\n').find((l) => l.startsWith('3. **FLOW + SCHEMA**')) ?? '';
 
 describe('se:top-level Regel 4: ein Eingangsknoten je Kette (CR-GC-873)', () => {
-  it('der Kopf traegt Version 12 (CR-GC-939, CR-GC-949)', () => {
-    expect(topLevel).toMatch(/^version: 12$/m);
+  it('der Kopf traegt Version 13 (CR-GC-939, CR-GC-949, CR-GC-925)', () => {
+    expect(topLevel).toMatch(/^version: 13$/m);
   });
 
   it('die alte Regel „One trigger per chain" ist weg', () => {
@@ -78,15 +78,8 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
     expect(regel4).toMatch(/A receipt \(`async` hand-over, `sync` back\) triggers nothing/);
   });
 
-  it('author-actor: Version 4, kein „external service" mehr, Schritt 3 prueft Ausloesen oder Empfangen', () => {
-    expect(authorActor).toMatch(/^version: 4$/m);
+  it('author-actor: kein „external service" mehr', () => {
     expect(authorActor).not.toContain('external service');
-    expect(authorActor).toMatch(/A service outside the boundary is an actor only if it triggers a chain or receives its result/);
-    expect(authorActor).toMatch(/Does it only answer\?/);
-  });
-
-  it('author-actor: antwortende Dienste ruft die Funktion selbst, ohne Fluss im Modell', () => {
-    expect(authorActor).toMatch(/A data source, a write target, a model or a backup that only answers is called by the function itself, with no flow in the model/);
   });
 
   it('author-actor: Vorab-Lieferung, Akteur in der Mitte, parallele Ausloeser, Quittung, Rolle als Feld', () => {
@@ -98,8 +91,8 @@ describe('Akteur-Lehre in den Skills (CR-GC-875)', () => {
     expect(authorActor).toMatch(/The role is not an attribute\. It is a field in the result of `chainRoles`, per entry \(actor, flow, member\) and chain/);
   });
 
-  it('die Rolle `answer` steht in keinem der Skills (kein FC-06-Fall)', () => {
-    for (const t of [authorActor, topLevel, fmea, vorbereitung, laufzeit]) expect(t).not.toMatch(/`answer`/);
+  it('die Rolle `answer` steht nur in author-actor (CR-GC-925), nicht in den Analyse-Skills', () => {
+    for (const t of [fmea, vorbereitung, laufzeit]) expect(t).not.toMatch(/`answer`/);
   });
 
   it('se-fmea: Version 13, Akteur in der Mitte und Abschnitte aus chainRoles.segments', () => {
@@ -176,5 +169,60 @@ describe('UC- und FCHAIN-Namen benennen das Beduerfnis (CR-GC-881)', () => {
   it('se:top-level: Pruefrage 4 verlangt dasselbe fuer UC- und Kettennamen', () => {
     const frage4 = topLevel.split('\n').find((l) => l.startsWith('4. **Is every name active?**')) ?? '';
     expect(frage4).toMatch(/UC and FCHAIN names state the actor's need as Verb \+ Object/);
+  });
+});
+
+describe('Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (CR-GC-925)', () => {
+  const schritt3 = authorActor.split('\n').find((l) => l.startsWith('3. Keep a non-human counterpart')) ?? '';
+  const schritt4 = authorActor.split('\n').find((l) => l.startsWith('4. What is left is the set.')) ?? '';
+
+  it('author-actor: Version 5, die alte Regel „ohne Fluss im Modell" ist weg', () => {
+    expect(authorActor).toMatch(/^version: 5$/m);
+    expect(authorActor).not.toMatch(/no flow in the model/);
+    expect(authorActor).not.toMatch(/Only answering is not an actor/);
+    expect(authorActor).not.toMatch(/Does any actor only answer, or only deliver in advance\? Then it is no actor/);
+  });
+
+  it('author-actor Schritt 3: ein antwortendes fremdes System ist ein Akteur mit der Rolle `answer`', () => {
+    expect(schritt3).toMatch(/A system outside the boundary that only answers is an actor too/);
+    expect(schritt3).toMatch(/derive the role `answer`/);
+    expect(schritt3).toMatch(/never triggers a chain and is never its sink/);
+  });
+
+  it('author-actor Schritt 3: je rufender Funktion ein Paar, Anfrage `async`, Antwort `sync`, je mit SCHEMA', () => {
+    expect(schritt3).toMatch(/one pair per function that calls it in code/);
+    expect(schritt3).toMatch(/request flow `async`/);
+    expect(schritt3).toMatch(/answer flow `sync`/);
+    expect(schritt3).toMatch(/each with its SCHEMA/);
+    expect(schritt3).toMatch(/names only the fields that function reads/);
+  });
+
+  it('author-actor Schritt 3: Adapter-Funktion nur, wenn der Code einen hat (Entscheidung 2026-11-18)', () => {
+    expect(schritt3).toMatch(/Two functions that call the same system get one pair each/);
+    expect(schritt3).toMatch(/Model an adapter function only when the code has one/);
+  });
+
+  it('author-actor Schritt 3: ein eigener Speicher ist kein Akteur, der Zugriff ein `sync`-Fluss mit SCHEMA', () => {
+    expect(schritt3).toMatch(/A store of your own product is no actor/);
+    expect(schritt3).toMatch(/access is a `sync` flow with a SCHEMA/);
+  });
+
+  it('author-actor Schritt 4: die Schwelle zaehlt nur Ausloeser und Empfaenger', () => {
+    expect(schritt4).toMatch(/Count only the actors that trigger a chain or receive its result/);
+    expect(schritt4).toMatch(/more than 7/);
+  });
+
+  it('author-actor: die Pruefliste fragt nach dem Paar des antwortenden Akteurs', () => {
+    expect(authorActor).toMatch(/Does it only answer\? Then it keeps its request and answer pair, each with a SCHEMA/);
+  });
+
+  it('top-level Stufe 3: fremdes System und eigener Speicher mit Fluss und SCHEMA', () => {
+    expect(stufe3Fluss).toMatch(/A system outside the boundary that answers gets a request flow `async` and an answer flow `sync`/);
+    expect(stufe3Fluss).toMatch(/Access to a store of your own is a `sync` flow between two FUNCs with a SCHEMA/);
+  });
+
+  it('FC-04 steht im Katalog: der Satz zur Anfrage beruft sich auf eine echte Regel', () => {
+    expect(authorActor).toContain('FC-04');
+    expect(ALL_RULE_DEFS.some((r) => r.id === 'FC-04')).toBe(true);
   });
 });

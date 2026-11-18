@@ -1,6 +1,6 @@
 ---
 name: se-irr
-version: 7
+version: 8
 description: Assumption Review — detect unproven assumptions, ask which become requirements, write each chosen one as a REQ with its verifying TEST, record the review as a closed CR (CREATE, gate-only)
 ---
 
@@ -16,6 +16,8 @@ Query the live graph — do not guess from prose:
    - count of distinct owners (users, accounts) of those records,
    - count of fields that carry a value, against the fields the SCHEMA needs,
    - the response code per needed endpoint, called with the key the system will use.
+
+   For an answering actor, read the SCHEMA of its answer flow (`sync`) and back each field the SCHEMA names with the count of fields that carry a value.
 
    Never names, addresses or free text — customer data reaches no model. Every deviation from what the model assumes becomes a line of the list in §2. No access to the source: keep the assumption open with evidence `none`, and hand the missing access to `se-conops` (access list).
 

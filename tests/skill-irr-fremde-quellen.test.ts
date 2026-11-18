@@ -43,4 +43,10 @@ describe('TEST-skill-irr-fremde-quellen (CR-GC-894)', () => {
   it('jede Abweichung wird eine Zeile der Liste in §2', () => {
     expect(schritt).toMatch(/becomes a line of the list in §2/);
   });
+
+  it('liest das SCHEMA der Antwort-Fluesse und belegt es mit der Zaehlabfrage (CR-GC-925)', () => {
+    expect(skill).toMatch(/^version: 8$/m);
+    expect(schritt).toMatch(/read the SCHEMA of its answer flow \(`sync`\)/);
+    expect(schritt).toMatch(/back each field the SCHEMA names with the count of fields that carry a value/);
+  });
 });
