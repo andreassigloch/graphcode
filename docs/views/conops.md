@@ -618,7 +618,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-910` | n/a | import-doc als Werkzeug der Tool-Schicht statt Skript: Bestand einlesen in jedem MCP-Host | `FUNC-import-doc` · `UC-model-exchange` |
 | `CR-GC-911` | done | Tests reichen die Warnung zum fehlenden Lern-Protokoll nach stderr durch statt sie zu pruefen | `FUNC-graph-export-snapshot` · `FUNC-tool-context` |
 | `CR-GC-912` | done | Viewer-Aufsicht beendet einen lebenden Viewer, der 750 ms nicht antwortet | `FUNC-gve-supervise` · `REQ-viewer-owned-by-repo` |
-| `CR-GC-913` | n/a | Prüffunktionen grenzeNurMitSchema und einAdapterJeAkteur in @sigloch/graphcode/constraints (abgetrennt aus CR-GC-864) | `FUNC-ein-adapter-je-akteur` · `FUNC-grenze-nur-mit-schema` |
+| `CR-GC-913` | done | Prüffunktionen grenzeNurMitSchema und einAdapterJeAkteur in @sigloch/graphcode/constraints (abgetrennt aus CR-GC-864) | `FUNC-ein-adapter-je-akteur` · `FUNC-grenze-nur-mit-schema` |
 | `CR-GC-914` | done | se-retro: Verlauf der Verstöße über alle committeten Graph-Stände | `FUNC-se-retro` |
 | `CR-GC-915` | done | contracts 12.12 nachziehen: Peer-Floor >=12.12, metricPolicy.needNameTerms (ohne Gate/Ziel), UC-07 in se:author-uc nennen (Folge CR-GC-881, CR-SM-434) | `FUNC-author-uc` · `FUNC-load-config` · `FUNC-upgrade` · `REQ-repo-update` |
 | `CR-GC-916` | done | Umbau aus CR-GC-807: code-quality und reduced-llm zu REQ am Kern-UC, deterministic-steering umbenennen | `REQ-code-quality` · `REQ-reduced-llm` · `UC-deterministic-steering` · `UC-intent-to-code` |

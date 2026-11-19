@@ -4048,7 +4048,8 @@
       "id": "CR-GC-913",
       "type": "CR",
       "name": "Prüffunktionen grenzeNurMitSchema und einAdapterJeAkteur in @sigloch/graphcode/constraints (abgetrennt aus CR-GC-864)",
-      "description": "docs/cr/open/CR-GC-913-pru-ffunktionen-grenzenurmitschema-und-e.md"
+      "description": "docs/cr/done/CR-GC-913-pru-ffunktionen-grenzenurmitschema-und-e.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-914",
@@ -35239,5 +35240,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1274
+  "graphVersion": 1275
 }
