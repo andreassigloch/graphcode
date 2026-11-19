@@ -648,7 +648,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-951` | done | Reste des Messumbaus schliessen: messung ohne lokales Protokoll, Codebeleg an FLOW-graph-state, Verbraucher von FLOW-verlauf-report, Leitlinie Abschnitt 9 | `FUNC-graph-readiness` · `FUNC-stand-verlauf` · `MOD-dev-scripts` |
 | `CR-GC-953` | done | contracts 12.14.0 übernehmen: R-26 Stufe 8 | `FUNC-graph-help` |
 | `CR-GC-955` | done | contracts 12.15.0 übernehmen: RD-07 Level jump (CR-SM-436), Regelzahl 82, Regelmatrix, Systemmodell-Seite | `FUNC-evaluate-rules` |
-| `CR-GC-956` | n/a | grenzeNurMitSchema: eigene Liste zwischenKindern streichen; ein Fluss zwischen Kind-Modulen ist nur ohne erlaubten Vertrag ein Befund, wie jeder Grenzfluss (Autor 2026-11-19, ersetzt Lesart aus CR-GC-913) | `FUNC-grenze-nur-mit-schema` |
+| `CR-GC-956` | done | grenzeNurMitSchema: eigene Liste zwischenKindern streichen; ein Fluss zwischen Kind-Modulen ist nur ohne erlaubten Vertrag ein Befund, wie jeder Grenzfluss (Autor 2026-11-19, ersetzt Lesart aus CR-GC-913) | `FUNC-grenze-nur-mit-schema` |
 | `CR-GC-957` | n/a | Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe | `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,

@@ -4355,7 +4355,8 @@
       "id": "CR-GC-956",
       "type": "CR",
       "name": "grenzeNurMitSchema: eigene Liste zwischenKindern streichen; ein Fluss zwischen Kind-Modulen ist nur ohne erlaubten Vertrag ein Befund, wie jeder Grenzfluss (Autor 2026-11-19, ersetzt Lesart aus CR-GC-913)",
-      "description": "docs/cr/open/CR-GC-956-grenzenurmitschema-eigene-liste-zwischen.md"
+      "description": "docs/cr/done/CR-GC-956-grenzenurmitschema-eigene-liste-zwischen.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-957",
@@ -35272,5 +35273,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1280
+  "graphVersion": 1281
 }
