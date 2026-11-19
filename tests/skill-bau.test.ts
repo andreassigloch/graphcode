@@ -32,7 +32,7 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
   it('die Datei se-bau.md existiert, Name und Version stehen im Kopf', () => {
     expect(existsSync(DATEI)).toBe(true);
     expect(text).toMatch(/^name: se-bau$/m);
-    expect(text).toMatch(/^version: 2$/m);
+    expect(text).toMatch(/^version: 3$/m);
     expect(text).toMatch(/^description: .{40,}$/m);
   });
 
@@ -99,6 +99,12 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
       expect(k).toMatch(/verify/);
       expect(k).toMatch(/nicht von Hand/);
       expect(k).toMatch(/Exit 1/);
+    });
+    it('schreibt für ein SCHEMA mit Vertragsdatei den Test von Hand und bindet ihn mit tool manuell (CR-GC-965)', () => {
+      const k = koordinator();
+      expect(k).toMatch(/Vertragsdatei/);
+      expect(k).toMatch(/\.vertrag\.md/);
+      expect(k).toMatch(/tool: "manuell"/);
     });
     it('graph_mutate trägt skill: "se-bau"', () => {
       expect(text).toContain('skill: "se-bau"');

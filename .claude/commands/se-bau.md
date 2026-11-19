@@ -1,6 +1,6 @@
 ---
 name: se-bau
-version: 2
+version: 3
 description: Bau eines CR in zwei Rollen — Koordinator (Hauptsitzung) startet je CR einen Agenten, schreibt das Modell allein und schließt erst nach dem Testlauf auf der Zielumgebung; Umsetzer (Agent) baut aus dem Ausschnitt graph_context, setzt Werte nach Werteklasse, hält das Vertragspaket ein, stoppt bei jeder Lücke und nennt jede Annahme. Fester Teil jedes Bauauftrags an einen Agenten.
 ---
 
@@ -47,6 +47,10 @@ Die Hauptsitzung koordiniert und baut nichts selbst. Rufe `graph_mutate` mit `sk
      Der erzeugte Satz fand 44 von 48 eingebauten Schemafehlern, die Handtests 27.
    - Endet das Verb mit Exit 1, nennt der Bericht das SCHEMA und den Grund, z. B. `z.custom` oder eine
      Querbedingung. Für dieses SCHEMA beauftragst du einen Umsetzer mit dem Vertragstest von Hand.
+   - Zeigt `realRef` des SCHEMA auf eine Vertragsdatei (`.md` mit der Tabelle Größe, Einheit, Min, Nenn,
+     Max, Messpunkt, Quelle), schreibt das Verb den Test von Hand `tests/vertrag/<uid>.vertrag.md`: je Zeile
+     mit Grenzwert ein Prüfpunkt. Binde ihn mit `testRefs {file, tool: "manuell"}`. Er läuft dort, wo der
+     Vertrag gilt; das Protokoll meldest du über `graph_test_ingest` mit `evidence`.
 
 ## Umsetzer (Agent)
 

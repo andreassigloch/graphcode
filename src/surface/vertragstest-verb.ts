@@ -2,7 +2,8 @@
  * vertragstest-verb.ts — `graphcode vertragstest [SCHEMA-uid …] [--ziel <dir>]` (CR-GC-962).
  *
  * Erzeugt je SCHEMA mit Zod-`realRef` einen Vertragstest aus dem Schema selbst
- * (`erzeugeVertragstests`). Der Satz kommt aus dem committeten Snapshot `docs/graph/*.graph.json`;
+ * (`erzeugeVertragstests`), je SCHEMA mit Vertragsdatei (`realRef` auf `.md` ohne Symbol) den Test
+ * von Hand (CR-GC-965). Der Satz kommt aus dem committeten Snapshot `docs/graph/*.graph.json`;
  * das Verb oeffnet keinen Store und kollidiert deshalb nicht mit einem laufenden Host. Ohne uids
  * nimmt es jedes SCHEMA, dessen `realRef`-Datei im Repo liegt — ein Schema aus einem Paket gehoert
  * dem Paket, das es deklariert.
@@ -51,9 +52,12 @@ export function vertragstestSatz(repoRoot: string, ids: readonly string[]): Vert
   }
   const elements = (JSON.parse(readFileSync(pfad, 'utf8')) as { elements: SnapshotElement[] }).elements;
   const satz = elements
-    .filter((e) => e.type === 'SCHEMA' && e.realRef?.file && e.realRef.symbol)
+    .filter((e) => e.type === 'SCHEMA' && e.realRef?.file && (e.realRef.symbol || e.realRef.file.endsWith('.md')))
     .filter((e) => (ids.length > 0 ? ids.includes(e.id) : existsSync(join(repoRoot, e.realRef?.file as string))))
-    .map((e) => ({ id: e.id, file: e.realRef?.file as string, symbol: e.realRef?.symbol as string }));
+    .map((e) => {
+      const { file, symbol } = e.realRef as { file: string; symbol?: string };
+      return symbol ? { id: e.id, file, symbol } : { id: e.id, file };
+    });
   const fehlend = ids.filter((i) => !satz.some((s) => s.id === i));
   if (fehlend.length > 0) throw new VertragstestAufrufFehler(`kein SCHEMA mit realRef: ${fehlend.join(', ')}`);
   return VertragstestSatzSchema.parse(satz);
