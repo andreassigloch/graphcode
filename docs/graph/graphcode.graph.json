@@ -4380,6 +4380,12 @@
       "description": "docs/cr/open/CR-GC-959-fehlbindung-5-flow-tragen-ein-schema-das.md"
     },
     {
+      "id": "CR-GC-960",
+      "type": "CR",
+      "name": "Nachzug CR-SM-442: CL-01 und operatingMode entfernen – focus-set.ts, generate.ts, Tests, Regelmatrix-Entwurf, 4 operatingMode-Werte an FUNC im Modell",
+      "description": "docs/cr/open/CR-GC-960-nachzug-cr-sm-442-cl-01-und-operatingmod.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -35511,5 +35517,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1294
+  "graphVersion": 1295
 }
