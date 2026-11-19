@@ -47,7 +47,7 @@ export const GraphTestIngestInputSchema = z
     results: z
       .array(z.object({ file: z.string().min(1), result: TestResult, tool: z.string().min(1).optional(), evidence: z.string().min(1).optional() }))
       .optional()
-      .describe('Pre-parsed [{file, result, tool?, evidence?}]; at most one of report/results. A test run by hand: tool "manuell", evidence = repo-relative path of its protocol.'),
+      .describe('Pre-parsed [{file, result, tool?, evidence?}]; at most one of report/results.'),
     changeSet: z
       .array(z.string().min(1))
       .min(1)
@@ -125,7 +125,7 @@ export function bindTestReportTools(ctx: ToolPort) {
   > = {
     name: 'graph_test_ingest',
     description:
-      'Feed a test run back into the model: vitest `--reporter=json` (or pre-parsed [{file,result}]) is ' +
+      'Feed a test run into the model: each file is ' +
       'matched to TEST nodes via testRef.file and written through the gate. An unbound file whose head ' +
       'names one TEST uid is bound (`bindings`), else `unresolved` with the reason. `changeSet` withdraws ' +
       'the result of every TEST the change impacts (`withdrawn`), unless this call brings a fresh one.',

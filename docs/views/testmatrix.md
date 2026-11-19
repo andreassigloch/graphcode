@@ -11,7 +11,7 @@
 | `REQ-abstraction` | ✓ | ⚠ nie gelaufen | `TEST-abstraction` |
 | `REQ-advisory-roundtrip-latency` | ✓ | ✓ passed | `TEST-advisory-roundtrip-latency` |
 | `REQ-advisory-vor-nach` | ✓ | ✓ passed | `TEST-fit-advisory` |
-| `REQ-agent-agnostic` | ✓ | ✓ passed | `TEST-agent-agnostic` |
+| `REQ-agent-agnostic` | ✓ | ✗ failed | `TEST-agent-agnostic` |
 | `REQ-agent-loop-executes-skill` | ✓ | ⚠ 1/2 passed | `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` |
 | `REQ-analyse-artefakt-vor-stempel` | ✓ | ✓ passed | `TEST-task-analysen` |
 | `REQ-analyse-zaehlt-mit-auftrag` | ✓ | ✓ passed | `TEST-task-analysen` |
@@ -275,9 +275,9 @@
 | `REQ-test-result-withdrawn-on-change` | ✓ | ✓ passed | `TEST-test-result-withdrawn-on-change` |
 | `REQ-test-runnable-binding` | ✓ | ✓ passed | `TEST-formate-binding` · `TEST-graph-realize` · `TEST-test-runnable-binding` · `TEST-testreport` |
 | `REQ-test-skill-red-first` | ✓ | ✓ passed | `TEST-skill-red-first` |
-| `REQ-test-von-hand-auswahl` | ✓ | ⚠ nie gelaufen | `TEST-test-von-hand` |
-| `REQ-test-von-hand-ergebnis` | ✓ | ⚠ nie gelaufen | `TEST-test-von-hand` |
-| `REQ-test-von-hand-spur` | ✓ | ⚠ nie gelaufen | `TEST-test-von-hand` |
+| `REQ-test-von-hand-auswahl` | ✓ | ✓ passed | `TEST-test-von-hand` |
+| `REQ-test-von-hand-ergebnis` | ✓ | ✓ passed | `TEST-test-von-hand` |
+| `REQ-test-von-hand-spur` | ✓ | ✓ passed | `TEST-test-von-hand` |
 | `REQ-testref-kopf-bindung` | ✓ | ✓ passed | `TEST-testref-kopf-bindung` |
 | `REQ-testref-materialized` | ✓ | ✓ passed | `TEST-realref-materialize` · `TEST-testref-materialize` |
 | `REQ-tests-aufloesen` | ✓ | ✓ passed | `TEST-test-runnable-binding` |
@@ -311,7 +311,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 301/301 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 260/301 REQ bestanden (86%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 262/301 REQ bestanden (87%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
