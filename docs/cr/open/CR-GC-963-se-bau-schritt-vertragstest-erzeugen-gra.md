@@ -3,7 +3,7 @@
 **Typ:** aus Item ITEM-2026-1478 (idea)
 **Erstellt:** 2026-11-19
 **Item:** bok/items/ITEM-2026-1478.json (Lane: graph)
-**Status:** Open
+**Status:** Done — 2026-11-19
 **Herkunft:** CR-GC-961 F1 (Folge 2), CR-GC-962 (Verb `graphcode vertragstest`)
 
 ---
@@ -30,12 +30,19 @@ Der Koordinator ruft das Verb, nicht der Umsetzer: Das Verb liest den Snapshot, 
 
 ## Akzeptanzkriterien
 
-- [ ] `tests/skill-bau.test.ts` grün, die neue Prüfung vor der Textänderung rot gesehen.
-- [ ] Alle Skill-Tests grün (`tests/skill*`).
-- [ ] `verify:full CR-GC-963` grün.
+- [x] `tests/skill-bau.test.ts` grün, die neue Prüfung vor der Textänderung rot gesehen.
+- [x] Alle Skill-Tests grün (`tests/skill*`).
+- [x] `verify:full CR-GC-963` grün.
 
 
 ---
+
+## Ergebnis
+
+- `tests/skill-bau.test.ts`: die neue Prüfung und die Version waren vor der Textänderung rot, danach grün.
+- Skill-Tests `tests/skill*`: 28 Dateien, 298 Tests grün.
+- `verify:full CR-GC-963`: rot 0, Schlupf 0.
+- Smoke: Der Skill ist Text; das Verb, das er aufruft, lief in CR-GC-962 (Exit 0 und 2).
 
 ## Entscheidungen
 
