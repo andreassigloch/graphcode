@@ -3,7 +3,7 @@
 **Typ:** aus Item ITEM-2026-1479 (idea)
 **Erstellt:** 2026-11-19
 **Item:** bok/items/ITEM-2026-1479.json (Lane: graph)
-**Status:** Open
+**Status:** Done — 2026-11-19
 **Herkunft:** CR-GC-961 F3 Variante d und F3.2 (Folge 3); CR-SM-443 (Regeln nehmen Vertragsdatei und Testdatei von Hand schon an)
 
 ---
@@ -38,12 +38,19 @@ Modell: `REQ-test-von-hand-auswahl` (FUNC-deduce-tests), `REQ-test-von-hand-spur
 
 ## Akzeptanzkriterien
 
-- [ ] `tests/test-von-hand.test.ts` grün, vorher rot gesehen.
-- [ ] Die Tests der Auswahl und des Ingest grün (`verify:code`).
-- [ ] `verify:full CR-GC-964` grün.
+- [x] `tests/test-von-hand.test.ts` grün, vorher rot gesehen.
+- [x] Die Tests der Auswahl und des Ingest grün (`verify:code`).
+- [x] `verify:full CR-GC-964` grün.
 
 
 ---
+
+## Ergebnis
+
+- `tests/test-von-hand.test.ts`: 3 Fälle grün; ohne die Änderung 2 rot (Protokoll, Auswahl), die Rücknahme war schon grün.
+- Erster `verify:full`: rot 1, Schlupf 1 — `tests/mcp.agent-agnostic.test.ts` (d): die Werkzeugliste lag mit 28432 Byte über ihrem Budget von 28300. Ursache: der längere Text an `results` und das Feld `evidence`. Behoben ohne das Budget zu heben: die doppelte Formatangabe in der Beschreibung von `graph_test_ingest` gestrichen (steht schon an `report` und `results`). Der Schlupf entstand, weil der Budget-Test nicht an FUNC-test-ingest hängt; die Auswahl konnte ihn nicht sehen.
+- Zweiter `verify:full CR-GC-964`: rot 0, Schlupf 0. Die Folge ohne Schlupf beginnt wieder bei 0 von 10.
+- Smoke: Der laufende MCP-Host bootet den alten Code; der Integrationstest fährt `graph_tests` und `graph_test_ingest` gegen echtes Disk-Kuzu im tmp-Repo.
 
 ## Entscheidungen
 
