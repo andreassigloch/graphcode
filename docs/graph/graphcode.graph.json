@@ -4405,7 +4405,8 @@
       "id": "CR-GC-963",
       "type": "CR",
       "name": "se-bau: Schritt Vertragstest erzeugen (graphcode vertragstest) je neuem oder geändertem SCHEMA — Folge 2 aus CR-GC-961",
-      "description": "docs/cr/open/CR-GC-963-se-bau-schritt-vertragstest-erzeugen-gra.md"
+      "description": "docs/cr/done/CR-GC-963-se-bau-schritt-vertragstest-erzeugen-gra.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -36862,5 +36863,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1325
+  "graphVersion": 1326
 }
