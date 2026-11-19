@@ -52,3 +52,12 @@ Tests (`graph_tests`, 3):
 - tests/vertragstest.test.ts
 
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Ergebnis (2026-11-19)
+
+- `pruefpunkte` liest die optionale Spalte `Kriterium`; eine Zeile ist prüfbar mit Min, Max oder Kriterium.
+- `tests/vertragstest.test.ts`: neuer Fall, vor der Änderung rot; `se-bau` nennt die Spalte, der Skill-Test war vorher rot.
+- Modell: Beschreibung von `REQ-contract-test-manual` nachgezogen.
+- `verify:full CR-GC-966`: 246 Dateien, rot 0, Schlupf 0; Folge ohne Schlupf 2/10.
