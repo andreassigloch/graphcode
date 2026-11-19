@@ -4343,7 +4343,8 @@
       "id": "CR-GC-954",
       "type": "CR",
       "name": "CR-GC-918 Rest: eigene REQ fuer 29 FUNCs (R-02), Kind-REQ am Testcode pruefen, Nebenbefunde",
-      "description": "docs/cr/open/CR-GC-954-cr-gc-918-rest-eigene-req-fuer-29-funcs-.md"
+      "description": "docs/cr/done/CR-GC-954-cr-gc-918-rest-eigene-req-fuer-29-funcs-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-955",
@@ -23682,6 +23683,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-961",
+      "target": "FUNC-se-bau",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -36542,5 +36548,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1311
+  "graphVersion": 1313
 }

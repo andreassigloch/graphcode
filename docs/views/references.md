@@ -1645,6 +1645,7 @@
 | `CR-GC-959` | relation | `SCHEMA-markdown-view` |
 | `CR-GC-959` | relation | `SCHEMA-repo-status` |
 | `CR-GC-959` | relation | `SCHEMA-upgrade-report` |
+| `CR-GC-961` | relation | `FUNC-se-bau` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
