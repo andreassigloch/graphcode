@@ -1,6 +1,7 @@
 # CR-GC-957: Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe
 
 **Typ:** Spike, aus Item ITEM-2026-1453 (idea)
+**Status:** Done, 2026-11-19, No-Go
 **Erstellt:** 2026-11-19
 **Item:** bok/items/ITEM-2026-1453.json (Lane: graph)
 **Vorlage:** `docs/project/Spike Deterministisches Framework aus dem Modell.md`
