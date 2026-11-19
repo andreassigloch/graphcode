@@ -1565,6 +1565,9 @@
 | `CR-GC-953` | relation | `FUNC-graph-help` |
 | `CR-GC-955` | relation | `FUNC-evaluate-rules` |
 | `CR-GC-956` | relation | `FUNC-grenze-nur-mit-schema` |
+| `CR-GC-957` | relation | `MOD-kernel-measure` |
+| `CR-GC-957` | relation | `MOD-loop` |
+| `CR-GC-957` | relation | `MOD-projections` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

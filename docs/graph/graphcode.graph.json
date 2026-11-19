@@ -4358,6 +4358,12 @@
       "description": "docs/cr/open/CR-GC-956-grenzenurmitschema-eigene-liste-zwischen.md"
     },
     {
+      "id": "CR-GC-957",
+      "type": "CR",
+      "name": "Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe",
+      "description": "docs/cr/open/CR-GC-957-spike-deterministisches-framework-aus-de.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22727,6 +22733,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-957",
+      "target": "MOD-kernel-measure",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-957",
+      "target": "MOD-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-957",
+      "target": "MOD-projections",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -35251,5 +35272,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1277
+  "graphVersion": 1279
 }
