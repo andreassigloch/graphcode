@@ -60,7 +60,10 @@ export const SchlupfZeileSchema = z.object({
   zusage: BlackboxBindungSchema,
   /** CR-GC-947 — fehlt in älteren Zeilen; fehlend heißt „nicht erfasst", nie 0 oder `false`. */
   linkModus: z.boolean().optional(),
-  /** Rote Dateien, die im Link-Modus erwartet rot sind; sie stehen nicht in `schlupf`. */
+  /**
+   * Rote Dateien, die die Umgebung verursacht: im Link-Modus erwartet rot, oder vom Autor als Störung
+   * markiert (CR-GC-923: `npm pack` unter Last zweier paralleler Volläufe, einzeln grün). Sie stehen nicht in `schlupf`.
+   */
   umgebung: z.array(z.string()).optional(),
   /** Laufzeit in ms, Summe je Testdatei (parallele Dateien addieren sich): der Auswahl und des Volllaufs. */
   dauer: z.object({ auswahlMs: z.number().int().nonnegative(), vollMs: z.number().int().nonnegative() }).optional(),
