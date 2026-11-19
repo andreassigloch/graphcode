@@ -4366,6 +4366,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-958",
+      "type": "CR",
+      "name": "Spike: Tests deterministisch aus dem Modell (Vertragstest je SCHEMA, Integrationstest je FCHAIN, Testgerüst je TEST) — Testzeilen nach Methode CR-GC-957 einteilen",
+      "description": "docs/cr/open/CR-GC-958-spike-tests-deterministisch-aus-dem-mode.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -8817,6 +8823,15 @@
       ]
     },
     {
+      "id": "REQ-generate-nennt-suggest",
+      "type": "REQ",
+      "name": "graph_generate nennt graph_suggest bei offenem Befund mit Zug",
+      "description": "Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt graph_generate im Feld umbau das Werkzeug graph_suggest und die Befunde. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-graceful-degradation",
       "type": "REQ",
       "name": "Betrieb ohne LLM (Degraded-Modus)",
@@ -10823,6 +10838,15 @@
       "type": "REQ",
       "name": "Viewer ueberlebt Host-Ende",
       "description": "Wenn ein Host endet, waehrend eine zweite Sitzung den Viewer nutzt, laeuft der Viewer weiter.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-violations-nennt-suggest",
+      "type": "REQ",
+      "name": "rules_get_violations nennt graph_suggest bei offenem Befund mit Zug",
+      "description": "Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt rules_get_violations im Feld umbau das Werkzeug graph_suggest und die Befunde, über das ganze Modell. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.",
       "kinds": [
         "functional"
       ]
@@ -14341,6 +14365,19 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-11-19T09:04:26.041Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-umbau-ausloeser",
+      "type": "TEST",
+      "name": "Auslöser für graph_suggest",
+      "description": "Je auslösender Regel nennt der Hinweis graph_suggest; MT-02 ohne Zug nicht. An einer echten Kuzu-Arbeitskopie mit RD-04-Befund nennen beide Werkzeuge graph_suggest, schweigen nach dem Aufruf und melden neu, sobald Stand und Befundmenge sich geändert haben.",
+      "testRefs": [
+        {
+          "file": "tests/umbau-ausloeser.test.ts",
+          "tool": "vitest",
+          "level": "integration"
         }
       ]
     },
@@ -22515,6 +22552,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-934",
+      "target": "FUNC-graph-generate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-934",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-934",
+      "target": "FUNC-rules-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-934",
+      "target": "REQ-generate-nennt-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-934",
+      "target": "REQ-violations-nennt-suggest",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-935",
       "target": "FUNC-harness-cli",
       "type": "relation"
@@ -22747,6 +22809,106 @@
     {
       "source": "CR-GC-957",
       "target": "MOD-projections",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-adapter-befund",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-code-lane-plan",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-cr-groups",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-eingangs-befund",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-fit-advisory",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-generation-step",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-grenz-befund",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-impacted-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-lauf-urteil",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-metrics-answer",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-schlupf-zeile",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-steering-delta",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-target-profile",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-test-ingest-input",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-test-selection",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-verlauf",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-vitest-lauf",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-958",
+      "target": "SCHEMA-zug-bericht",
       "type": "relation"
     },
     {
@@ -29195,6 +29357,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-graph-generate-tool",
+      "target": "REQ-generate-nennt-suggest",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-graph-help",
       "target": "MOD-projections",
       "type": "allocate"
@@ -30185,6 +30352,11 @@
       "source": "FUNC-rules-tool",
       "target": "FLOW-rules-answer",
       "type": "io"
+    },
+    {
+      "source": "FUNC-rules-tool",
+      "target": "REQ-violations-nennt-suggest",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-schema-guard",
@@ -34674,6 +34846,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-umbau-ausloeser",
+      "target": "REQ-generate-nennt-suggest",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-umbau-ausloeser",
+      "target": "REQ-violations-nennt-suggest",
+      "type": "verify"
+    },
+    {
       "source": "TEST-upgrade",
       "target": "REQ-install-idempotent",
       "type": "verify"
@@ -35274,5 +35456,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1282
+  "graphVersion": 1285
 }

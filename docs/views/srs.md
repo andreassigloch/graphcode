@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 269 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 271 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -782,6 +782,14 @@ Die Werkzeugschicht des Generierungstreibers: laedt das Zielprofil, setzt beim e
 
 io ◀ `FLOW-dashboard-tool-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
 
+###### `REQ-generate-nennt-suggest` — graph_generate nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt graph_generate im Feld umbau das Werkzeug graph_suggest und die Befunde. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph-generate-tool` · allocate ▶ `MOD-loop`
+
 ###### 3.3.1.2.1.3  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-doc-export` · `FCHAIN-docked-session` · `FCHAIN-grammar-query` · `FCHAIN-impact-testing` · `FCHAIN-live-update` · `FCHAIN-loop-closure` · `FCHAIN-merge-branches` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-import-code` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest`
@@ -961,6 +969,14 @@ Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-chec
 Die Regelwerkzeuge rules_evaluate und rules_get_violations: reichen die Befunde des Gate-Katalogs an die Ablaufsteuerung, als ganzes Bild oder als Arbeitsliste. Rechnen nicht selbst.
 
 io ◀ `FLOW-conformance-findings` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · io ▶ `FLOW-rules-answer` · allocate ▶ `MOD-projections`
+
+###### `REQ-violations-nennt-suggest` — rules_get_violations nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt rules_get_violations im Feld umbau das Werkzeug graph_suggest und die Befunde, über das ganze Modell. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-rules-tool` · allocate ▶ `MOD-projections`
 
 ###### 3.3.1.2.2.4  `FUNC-agent-loop` — Agent-Ablaufsteuerung
 
@@ -1197,6 +1213,14 @@ io ◀ `FLOW-metrics-request` · io ▶ `FLOW-module-metrics` · allocate ▶ `M
 Die Regelwerkzeuge rules_evaluate und rules_get_violations: reichen die Befunde des Gate-Katalogs an die Ablaufsteuerung, als ganzes Bild oder als Arbeitsliste. Rechnen nicht selbst.
 
 io ◀ `FLOW-conformance-findings` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · io ▶ `FLOW-rules-answer` · allocate ▶ `MOD-projections`
+
+###### `REQ-violations-nennt-suggest` — rules_get_violations nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt rules_get_violations im Feld umbau das Werkzeug graph_suggest und die Befunde, über das ganze Modell. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-rules-tool` · allocate ▶ `MOD-projections`
 
 ###### 3.3.1.2.3.11  `FUNC-se-cdr` — Skill se-cdr
 
@@ -1703,6 +1727,14 @@ Verification ◀ `TEST-recommend-next-step` · satisfy ◀ `FUNC-vorschlag` · a
 Die Werkzeugschicht des Generierungstreibers: laedt das Zielprofil, setzt beim ersten Aufruf die Intent-Anker (Datei-Write in target-profile.json), fuehrt das Fokus-Gedaechtnis der Sitzung und ruft generationStep mit dem Graphen der Arbeitskopie. Beleg: src/loop/suggest.ts, graph_generate.
 
 io ◀ `FLOW-dashboard-tool-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
+
+###### `REQ-generate-nennt-suggest` — graph_generate nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt graph_generate im Feld umbau das Werkzeug graph_suggest und die Befunde. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph-generate-tool` · allocate ▶ `MOD-loop`
 
 ###### 3.3.1.2.4.13  `FUNC-graph-suggest` — graph_suggest (Werkzeug)
 
@@ -3650,6 +3682,14 @@ Die Regelwerkzeuge rules_evaluate und rules_get_violations: reichen die Befunde 
 
 io ◀ `FLOW-conformance-findings` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · io ▶ `FLOW-rules-answer` · allocate ▶ `MOD-projections`
 
+###### `REQ-violations-nennt-suggest` — rules_get_violations nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt rules_get_violations im Feld umbau das Werkzeug graph_suggest und die Befunde, über das ganze Modell. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-rules-tool` · allocate ▶ `MOD-projections`
+
 ###### 3.3.1.5.1.6  `FUNC-graph-store` — GraphStore
 
 > auch in: `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-docked-session` · `FCHAIN-generation-states` · `FCHAIN-health` · `FCHAIN-host-start` · `FCHAIN-impact-testing` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FCHAIN-session-end` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-import-code` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-speicherwerk`
@@ -5180,6 +5220,14 @@ Die Regelwerkzeuge rules_evaluate und rules_get_violations: reichen die Befunde 
 
 io ◀ `FLOW-conformance-findings` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · io ▶ `FLOW-rules-answer` · allocate ▶ `MOD-projections`
 
+###### `REQ-violations-nennt-suggest` — rules_get_violations nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt rules_get_violations im Feld umbau das Werkzeug graph_suggest und die Befunde, über das ganze Modell. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-rules-tool` · allocate ▶ `MOD-projections`
+
 ###### 3.3.1.5.10.7  `FUNC-graph-store` — GraphStore
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-docked-session` · `FCHAIN-generation-states` · `FCHAIN-health` · `FCHAIN-host-start` · `FCHAIN-impact-testing` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FCHAIN-session-end` · `FCHAIN-skill-help` · `FCHAIN-skill-import-code` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-speicherwerk`
@@ -5983,6 +6031,14 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 Die Werkzeugschicht des Generierungstreibers: laedt das Zielprofil, setzt beim ersten Aufruf die Intent-Anker (Datei-Write in target-profile.json), fuehrt das Fokus-Gedaechtnis der Sitzung und ruft generationStep mit dem Graphen der Arbeitskopie. Beleg: src/loop/suggest.ts, graph_generate.
 
 io ◀ `FLOW-dashboard-tool-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
+
+###### `REQ-generate-nennt-suggest` — graph_generate nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt graph_generate im Feld umbau das Werkzeug graph_suggest und die Befunde. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph-generate-tool` · allocate ▶ `MOD-loop`
 
 ###### 3.3.1.6.1.3  `FUNC-host-socket` — Host-Socket (angedockte Sitzung)
 
@@ -9410,6 +9466,14 @@ Die Regelwerkzeuge rules_evaluate und rules_get_violations: reichen die Befunde 
 
 io ◀ `FLOW-conformance-findings` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · io ▶ `FLOW-rules-answer` · allocate ▶ `MOD-projections`
 
+###### `REQ-violations-nennt-suggest` — rules_get_violations nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt rules_get_violations im Feld umbau das Werkzeug graph_suggest und die Befunde, über das ganze Modell. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-rules-tool` · allocate ▶ `MOD-projections`
+
 ###### 3.3.1.10.2.1.14  `FUNC-test-ingest` — graph_test_ingest
 
 > auch in: `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full`
@@ -10803,6 +10867,14 @@ Verification ◀ `TEST-steering-promise-one-owner` · satisfy ◀ `FUNC-generati
 Die Werkzeugschicht des Generierungstreibers: laedt das Zielprofil, setzt beim ersten Aufruf die Intent-Anker (Datei-Write in target-profile.json), fuehrt das Fokus-Gedaechtnis der Sitzung und ruft generationStep mit dem Graphen der Arbeitskopie. Beleg: src/loop/suggest.ts, graph_generate.
 
 io ◀ `FLOW-dashboard-tool-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
+
+###### `REQ-generate-nennt-suggest` — graph_generate nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt graph_generate im Feld umbau das Werkzeug graph_suggest und die Befunde. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph-generate-tool` · allocate ▶ `MOD-loop`
 
 ###### 3.3.1.10.4.3.4  `FUNC-target-profile-load` — loadTargetProfile
 
@@ -14894,73 +14966,79 @@ Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar stat
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-#### 3.4.175  `TEST-upgrade` — Abnahme des upgrade-Verbs
+#### 3.4.175  `TEST-umbau-ausloeser` — Auslöser für graph_suggest
+
+Je auslösender Regel nennt der Hinweis graph_suggest; MT-02 ohne Zug nicht. An einer echten Kuzu-Arbeitskopie mit RD-04-Befund nennen beide Werkzeuge graph_suggest, schweigen nach dem Aufruf und melden neu, sobald Stand und Befundmenge sich geändert haben.
+
+verify ▶ `REQ-generate-nennt-suggest` · `REQ-violations-nennt-suggest` · testRefs: `tests/umbau-ausloeser.test.ts`
+
+#### 3.4.176  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · `REQ-update-traegt-policy-ein` · `REQ-upgrade-entfernt-fremde-skills` · testRefs: `tests/upgrade.test.ts`, `tests/config-nachziehen.test.ts`
 
-#### 3.4.176  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
+#### 3.4.177  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
 
 Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.
 
 verify ▶ `REQ-model-lane-fixed-set` · `REQ-testspur-passt-zum-diff` · testRefs: `tests/verify-model.completeness.test.ts`
 
-#### 3.4.177  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.178  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.178  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.179  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.179  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.180  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.180  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.181  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.181  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.182  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.182  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.183  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.183  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.184  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.184  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.185  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.185  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.186  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 269 REQ · 269 verified · 0 without a verifying TEST (R-01).
+Traceability: 271 REQ · 271 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 

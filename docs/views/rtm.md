@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 269 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 271 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 61 REQ
@@ -350,7 +350,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 188 REQ
+### Entwurf (SWE.3 · HWE.2) — 190 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -404,6 +404,7 @@
 | `REQ-gate-judges-and-stores` | `TEST-gate-urteilt-und-speichert` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-gate-survives-rule-failure` | `TEST-gate-survives-rule-failure` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-gate-weist-vertragsfremd-ab` | `TEST-mutate-schema-guard` | `FUNC-mutate` | `MOD-kernel` |
+| `REQ-generate-nennt-suggest` | `TEST-umbau-ausloeser` | `FUNC-graph-generate-tool` | `MOD-loop` |
 | `REQ-graph-code-conformance` | `TEST-code-conformance` | `FUNC-check-code-conformance` | `MOD-kernel` |
 | `REQ-graph-context-replaces-reading` | `TEST-graph-context-replaces-reading` | `MOD-surface` | — |
 | `REQ-graph-integrity` | `TEST-codec-validation` · `TEST-graph-integrity` · `TEST-import-sys-anchor` · `TEST-merge-no-duplicate-edge` | `MOD-projections` | — |
@@ -536,6 +537,7 @@
 | `REQ-upgrade-entfernt-fremde-skills` | `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-viewer-ueberlebt-host` | `TEST-session-lifecycle` | `FUNC-gve-supervise` | `MOD-surface` |
+| `REQ-violations-nennt-suggest` | `TEST-umbau-ausloeser` | `FUNC-rules-tool` | `MOD-projections` |
 | `REQ-vitest-aufruf-aus-tests` | `TEST-selective-test-audit` | `FUNC-select-tests` | `MOD-kernel-measure` |
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
