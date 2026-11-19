@@ -25,7 +25,7 @@ Ein Fluss ohne Vertrag ist immer ein Problem, ein Fluss mit erlaubtem Vertrag ni
   nachher grün: Fluss zwischen Kind-Modulen mit erlaubtem Schema ist kein Befund, ohne Schema ist er einer mit
   beiden Modulen; der Vertrag lehnt `zwischenKindern` ab.
 - [x] REQ, SCHEMA und FUNC im Modell beschreiben die weitere Lesart.
-- [ ] `npm run verify:full CR-GC-956` grün.
+- [x] `npm run verify:full CR-GC-956` grün: 234 von 234 Dateien, rot 0, Schlupf 0.
 
 ---
 
