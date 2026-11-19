@@ -1594,6 +1594,13 @@
 | `CR-GC-958` | relation | `SCHEMA-verlauf` |
 | `CR-GC-958` | relation | `SCHEMA-vitest-lauf` |
 | `CR-GC-958` | relation | `SCHEMA-zug-bericht` |
+| `CR-GC-959` | relation | `FUNC-collect-status` |
+| `CR-GC-959` | relation | `FUNC-export-markdown` |
+| `CR-GC-959` | relation | `FUNC-harness-cli` |
+| `CR-GC-959` | relation | `FUNC-init-verb` |
+| `CR-GC-959` | relation | `FUNC-upgrade` |
+| `CR-GC-959` | relation | `SCHEMA-cli-command` |
+| `CR-GC-959` | relation | `SCHEMA-markdown-view` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

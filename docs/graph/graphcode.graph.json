@@ -4374,6 +4374,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-959",
+      "type": "CR",
+      "name": "Fehlbindung: 5 FLOW tragen ein SCHEMA, das den übergebenen Wert nicht beschreibt (install-result-* an CliCommandSchema, markdown-text an MarkdownViewSchema) — Zod-Schemas für RepoStatus, UpgradeReport, InitReport, Markdown-Text, Erzeuger parsen, FLOW neu binden (aus CR-GC-958)",
+      "description": "docs/cr/open/CR-GC-959-fehlbindung-5-flow-tragen-ein-schema-das.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -22921,6 +22927,41 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-959",
+      "target": "FUNC-collect-status",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "FUNC-export-markdown",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "FUNC-harness-cli",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "FUNC-init-verb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "FUNC-upgrade",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -35470,5 +35511,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1292
+  "graphVersion": 1294
 }
