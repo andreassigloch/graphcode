@@ -47,6 +47,7 @@ import {
 } from './target-profile.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 import { mitBericht } from '../kernel/measure/zug-bericht.js';
+import { gedaempft, merkeSuggestAufruf } from './umbau-ausloeser.js';
 
 // -------------------------------------------------------------------------
 // Input schema
@@ -290,6 +291,9 @@ export function bindSuggestTools(ctx: ToolPort) {
           a.elementId.localeCompare(b.elementId),
       );
 
+      // CR-GC-934: der Aufruf zaehlt fuer den Hinweis in graph_generate/rules_get_violations — bis
+      // zur naechsten Modellaenderung nennen sie graph_suggest nicht wieder.
+      merkeSuggestAufruf(harness, ctx.graphVersion(), harness.evaluateRules());
       return {
         layer: input.layer,
         advisoryLayer: ADVISORY_LAYER,
@@ -358,7 +362,9 @@ export function bindSuggestTools(ctx: ToolPort) {
       'aus der Intention) → expand (früheste Stufe, konkrete Funde, Kandidaten per dryRun, gewählter Batch echt) ' +
       '→ handoff (→ graph_suggest). ' +
       'Read-only und deterministisch; das Vorschlagen bleibt beim Host, das Urteil beim Gate. ' +
-      'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation).',
+      'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation). ' +
+      '`umbau` gesetzt = ein Befund einer Regel mit Zug ist offen: graph_suggest rufen und die Züge dem Autor ' +
+      'vorlegen; nach dem Aufruf bleibt es null, bis sich das Modell geändert hat.',
     inputSchema: GraphGenerateInputSchema,
     async handler(input) {
       // Profil bei jedem Schritt frisch laden (CR-GC-295) — der Loader ist der
@@ -369,7 +375,8 @@ export function bindSuggestTools(ctx: ToolPort) {
       // kommt aus dem Stand der Sitzung (Task, Zurueckgestelltes, Steuer-Optimum), wie der naechste echte.
       if (input.peek) {
         const m = focusMemoryOf(harness);
-        return generationStep(harness.getGraph(), harness.getMetricPolicy(), undefined, input.threshold ?? harness.getFocusThreshold(), [...m.deferred], profile, m.task, m.steerOptimum);
+        const step = generationStep(harness.getGraph(), harness.getMetricPolicy(), undefined, input.threshold ?? harness.getFocusThreshold(), [...m.deferred], profile, m.task, m.steerOptimum);
+        return { ...step, umbau: gedaempft(harness, ctx.graphVersion(), step.umbau) };
       }
       // CR-GC-307: die Kernthemen der Intention werden STILL gesetzt — kein
       // Bestätigungsschritt beim Menschen, der Begriff dahinter ist Steuerungs-
@@ -388,7 +395,9 @@ export function bindSuggestTools(ctx: ToolPort) {
       // zurueckstellen).
       const memory = focusMemoryOf(harness);
       memory.task = task;
-      return stepWithMemory(memory, ctx.graphVersion(), compute, input.defer ?? []);
+      const step = stepWithMemory(memory, ctx.graphVersion(), compute, input.defer ?? []);
+      // CR-GC-934: hat der Agent graph_suggest seit der letzten Modellaenderung gerufen, schweigt der Hinweis.
+      return { ...step, umbau: gedaempft(harness, ctx.graphVersion(), step.umbau) };
     },
   };
 

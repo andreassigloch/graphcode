@@ -1521,6 +1521,7 @@
 | `CR-GC-931` | relation | `FUNC-graph-store` |
 | `CR-GC-931` | relation | `REQ-snapshot-drift-notice` |
 | `CR-GC-932` | relation | `FUNC-graph-help` |
+| `CR-GC-934` | relation | `FUNC-evaluate-rules` |
 | `CR-GC-934` | relation | `FUNC-graph-generate-tool` |
 | `CR-GC-934` | relation | `FUNC-graph-suggest` |
 | `CR-GC-934` | relation | `FUNC-rules-tool` |
@@ -2397,6 +2398,7 @@
 | `FLOW-rule-findings` | io | `FUNC-graph-merge-tool` |
 | `FLOW-rule-findings` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-rule-findings` | io | `FUNC-graph-readiness` |
+| `FLOW-rule-findings` | io | `FUNC-graph-suggest` |
 | `FLOW-rule-findings` | io | `FUNC-health-endpoint` |
 | `FLOW-rule-findings` | io | `FUNC-mutate` |
 | `FLOW-rule-findings` | io | `FUNC-rules-tool` |

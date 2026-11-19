@@ -1742,7 +1742,7 @@ Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph
 
 Rangt die Umbau-Kandidaten aus suggestEdits: je Kandidat ein Probelauf durch das Gate (mutateWithStates), der Bericht zum Zug aus mitBericht, danach zurueck auf den gespeicherten Stand. Das Zielprofil rankt seit CR-GC-483 nichts mehr. Beleg: src/loop/suggest.ts, graph_suggest.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -3576,7 +3576,7 @@ Verification ◀ `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` (integrat
 
 Rangt die Umbau-Kandidaten aus suggestEdits: je Kandidat ein Probelauf durch das Gate (mutateWithStates), der Bericht zum Zug aus mitBericht, danach zurueck auf den gespeicherten Stand. Das Zielprofil rankt seit CR-GC-483 nichts mehr. Beleg: src/loop/suggest.ts, graph_suggest.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -10538,7 +10538,7 @@ io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-trade` · allocate ▶ 
 
 Rangt die Umbau-Kandidaten aus suggestEdits: je Kandidat ein Probelauf durch das Gate (mutateWithStates), der Bericht zum Zug aus mitBericht, danach zurueck auf den gespeicherten Stand. Das Zielprofil rankt seit CR-GC-483 nichts mehr. Beleg: src/loop/suggest.ts, graph_suggest.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -12644,7 +12644,7 @@ io ◀ `FUNC-rewind` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-rewind-
 
 Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)
 
-io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` · schema ▶ `SCHEMA-rule-violation`
+io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` · schema ▶ `SCHEMA-rule-violation`
 
 ###### 3.3.4.1.190  `FLOW-rules-answer` — Regelbefunde (Antwort)
 

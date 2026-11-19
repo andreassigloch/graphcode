@@ -22,6 +22,7 @@ import type { Graph } from '@sigloch/graph-api-core';
 import { ALL_RULE_DEFS, STAGE_SETS } from '@sigloch/contracts/se';
 import type { MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
+import { UmbauHinweis, alsBefund, hinweisAus } from './umbau-ausloeser.js';
 import { acceptedRuleIds } from '@sigloch/contracts/se';
 import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
@@ -78,6 +79,8 @@ export const GenerationStep = z.object({
   offeneTasks: z.array(z.string()).optional(),
   /** CR-GC-728: nur in phase 'stalled' — die zurückgestellten Fund-Fenster (focusKeys). */
   offeneFunde: z.array(z.string()).optional(),
+  /** CR-GC-934: ein Befund einer Regel mit Zug ist offen — weiter mit graph_suggest; null sonst. */
+  umbau: UmbauHinweis.nullable(),
 });
 export type GenerationStep = z.infer<typeof GenerationStep>;
 
@@ -532,7 +535,7 @@ export function generationStep(
           : core.focusStage
             ? (SKILL_FOR_STAGE[core.focusStage]?.name ?? null)
             : null;
-  return { ...core, skill, steer: steerState(snap.violations) };
+  return { ...core, skill, steer: steerState(snap.violations), umbau: hinweisAus(snap.violations.map(alsBefund)) };
 }
 
 /** CR-GC-608: der Vermerk im done-Prompt, wenn die Steuerregeln am lokalen Optimum stehen. */
@@ -584,7 +587,7 @@ function stepCore(
   profile: LoadedTargetProfile | null = null,
   task: RuleTask = 'kern',
   steerOptimum: SteerOptimum | null = null,
-): Omit<GenerationStep, 'skill' | 'steer'> & { imperativSkill?: string | null } {
+): Omit<GenerationStep, 'skill' | 'steer' | 'umbau'> & { imperativSkill?: string | null } {
   // Steering-Snapshot (CR-GC-289): og + ND-Injektion + Full-Katalog-Eval + Befunde je Stufe —
   // geteilt mit dem steeringDelta des dryRun-Verdicts.
   const { og, stages } = snap;
@@ -769,7 +772,7 @@ function stepCore(
   // Rueckwaerts-Spezifikation, kein Kaltstart, und der Regler misst.
   const strukturBegonnen = og.elements.some((e) => e.type === 'FUNC' || e.type === 'MOD');
   if (task === 'kern' && !strukturBegonnen && gewaehlt) {
-    const seedRumpf = (prompt: string, stufe: keyof typeof SEED_STAGES): Omit<GenerationStep, 'skill'> => ({
+    const seedRumpf = (prompt: string, stufe: keyof typeof SEED_STAGES): Omit<GenerationStep, 'skill' | 'umbau'> => ({
       phase: 'seed',
       done: false,
       prompt: prompt + GATE_PROTOCOL,

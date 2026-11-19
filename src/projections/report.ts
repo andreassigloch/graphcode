@@ -13,6 +13,7 @@
  * @author andreas@siglochconsulting
  */
 
+import { gedaempft, hinweisAus, type UmbauHinweis } from '../loop/umbau-ausloeser.js';
 import { z } from 'zod/v4';
 import type { GraphNode } from '@sigloch/graph-api-core';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
@@ -207,7 +208,15 @@ export function bindReportTools(ctx: ToolPort) {
 
   const rules_get_violations: MCPTool<
     typeof RulesGetViolationsInputSchema,
-    { violations: Finding[] | ViolationGroupWithStage[]; total: number; skipped: string[]; notInGate: string[]; umfang: Umfang }
+    {
+      violations: Finding[] | ViolationGroupWithStage[];
+      total: number;
+      skipped: string[];
+      notInGate: string[];
+      umfang: Umfang;
+      /** CR-GC-934: ein Befund einer Regel mit Zug ist offen — weiter mit graph_suggest; null sonst. */
+      umbau: UmbauHinweis | null;
+    }
   > = {
     name: 'rules_get_violations',
     description:
@@ -215,7 +224,9 @@ export function bindReportTools(ctx: ToolPort) {
       'candidate targets, so the repair needs no follow-up query. Take it to REPAIR; take ' +
       'rules_evaluate to see what the judgement could not evaluate. Scope (CR-GC-613): answers over ' +
       'the uids this session WROTE — `umfang` sizes the slice and counts what lies outside; no write ' +
-      'moves yet = whole model. `total` counts only the evaluated rules, so read it with `skipped`.',
+      'moves yet = whole model. `total` counts only the evaluated rules, so read it with `skipped`. ' +
+      '`umbau` set = a finding of a rule with a move is open: call graph_suggest and put its moves to the ' +
+      'author; it stays null after that call until the model changes.',
     inputSchema: RulesGetViolationsInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);
@@ -245,6 +256,8 @@ export function bindReportTools(ctx: ToolPort) {
         umfang,
         skipped: ev.skipped,
         notInGate: ev.notInGate,
+        // CR-GC-934: ueber das ganze Modell, nicht die Arbeitsmenge — ein Umbau-Zug ist nie lokal.
+        umbau: gedaempft(harness, graphVersion(), hinweisAus(ev.findings)),
       };
     },
   };

@@ -45,7 +45,7 @@ describe('CR-GC-608: das Sitzungsgedaechtnis zaehlt nur Steuerzuege', () => {
       return {
         phase: optimum ? 'handoff' : 'expand', done: !!optimum, prompt: '', readiness: [], threshold: 0.8,
         blockingErrors: 0, focusKey: optimum ? null : fokusOhneOptimum, focusTypes: [],
-        focusStage: null, skill: null, steer: z('R-04@MOD-a (0.50)', 0.5),
+        focusStage: null, skill: null, steer: z('R-04@MOD-a (0.50)', 0.5), umbau: null,
       };
     };
     return { compute, aufrufe };

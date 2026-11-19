@@ -6,7 +6,7 @@
 
 ---
 
-**Status:** Vorschlag, nicht umgesetzt. Die Lösung ist offen und entsteht in einer eigenen Sitzung mit dem Autor.
+**Status:** umgesetzt 2026-11-19.
 
 ## Anlass
 
@@ -45,9 +45,16 @@ CR-SM-441 hat den Verweis `prompt: "se:optimize"` für RD-04, BW-02 und MT-02 am
 
 ## Abnahme
 
-- [ ] Der Autor hat die sechs Fragen entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen".
-- [ ] Ein Test zeigt je auslösender Regel: Bei offenem Befund nennt das Werkzeug `graph_suggest`.
-- [ ] Der FAQ-Eintrag `architektur-vor-hygiene` nennt dieselbe Regelliste wie der Code.
+- [x] Der Autor hat die sechs Fragen entschieden; die Festlegungen stehen im Abschnitt „Entscheidungen".
+- [x] Ein Test zeigt je auslösender Regel: Bei offenem Befund nennt das Werkzeug `graph_suggest` (`tests/umbau-ausloeser.test.ts`, je Regel aus `AUSLOESER_REGELN`; an einer Kuzu-Arbeitskopie mit RD-04-Befund für beide Werkzeuge).
+- [x] Der FAQ-Eintrag `architektur-vor-hygiene` nennt dieselbe Regelliste wie der Code; der Test hält die Liste fest und zeigt jede Änderung der Zug-Tabelle an.
+
+## Umsetzung
+
+- `src/loop/umbau-ausloeser.ts`: `AUSLOESER_REGELN` = Schlüssel von `STEER_OPERATORS` (se-engine); `hinweisAus` setzt den Hinweis, `merkeSuggestAufruf` und `gedaempft` halten ihn nach einem Aufruf zurück, bis sich `graphVersion` und Befundmenge geändert haben.
+- `graph_generate` (`GenerationStep.umbau`) und `rules_get_violations` (`umbau`, über das ganze Modell, nicht die Arbeitsmenge) nennen `graph_suggest`; `graph_suggest` merkt sich den Aufruf. Beide Werkzeugbeschreibungen sagen, was das Feld heißt.
+- Modell: REQ-generate-nennt-suggest (FUNC-graph-generate-tool), REQ-violations-nennt-suggest (FUNC-rules-tool), TEST-umbau-ausloeser.
+- Kosten: `graph_suggest` fährt einen Regellauf mehr, um die Befundmenge zu merken.
 
 ---
 
@@ -68,10 +75,4 @@ Entschieden vom Autor am 2026-11-19.
 
 ## Umfang laut `graph_impact`
 
-**KEIN SCHNITT aus dem Modell:** keine Wurzel-uids am Item (`aise dispatch prepare <ITEM> --wurzel <uid>[,…]`).
-
-_(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
-
-- `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
-- `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
-- Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+FUNC-graph-generate-tool, FUNC-rules-tool, FUNC-graph-suggest (Kanten `CR-GC-934 relation`). Testspur: `npm run verify:code`, 87 Dateien.
