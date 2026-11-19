@@ -7127,7 +7127,7 @@
       "id": "FUNC-erzeuge-vertragstests",
       "type": "FUNC",
       "name": "erzeugeVertragstests",
-      "description": "Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, je Feld die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; nur Faelle, die das Original so urteilt. (CR-GC-962, Herkunft CR-GC-958)",
+      "description": "Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, je Feld die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; nur Faelle, die das Original so urteilt. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965)",
       "status": "done",
       "realRef": {
         "file": "src/projections/vertragstest.ts",
@@ -8483,7 +8483,7 @@
       "id": "REQ-bau-vertragstest-erzeugen",
       "type": "REQ",
       "name": "Bau erzeugt den Vertragstest",
-      "description": "Hat ein CR ein SCHEMA mit Zod-realRef neu angelegt oder geaendert, dann laesst der Koordinator von se-bau den Vertragstest mit graphcode vertragstest erzeugen und bindet ihn als TEST mit verify auf das SCHEMA; von Hand entsteht er nur fuer ein SCHEMA, das das Verb mit Grund ablehnt. (CR-GC-963)",
+      "description": "Hat ein CR ein SCHEMA mit Zod-realRef oder mit Vertragsdatei neu angelegt oder geaendert, dann laesst der Koordinator von se-bau den Vertragstest mit graphcode vertragstest erzeugen und bindet ihn als TEST mit verify auf das SCHEMA; fuer eine Vertragsdatei ist es der Test von Hand mit testRefs tool manuell. Von Hand geschrieben wird er nur fuer ein SCHEMA, das das Verb mit Grund ablehnt. (CR-GC-963, CR-GC-965)",
       "kinds": [
         "functional"
       ]
@@ -8684,6 +8684,15 @@
       "type": "REQ",
       "name": "Vertragstests aus dem Modell erzeugen",
       "description": "Wenn der Auftraggeber graphcode vertragstest aufruft, dann liegt je SCHEMA mit Zod-realRef im Repo eine Testdatei vor; ein SCHEMA ohne Test steht mit Grund im Bericht und das Verb endet mit Exit-Code 1. (CR-GC-962)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-contract-test-manual",
+      "type": "REQ",
+      "name": "Test von Hand aus der Vertragsdatei",
+      "description": "Zeigt der realRef eines SCHEMA auf eine Vertragsdatei (Markdown ohne Symbol) mit der Tabelle Größe, Einheit, Min, Nenn, Max, schreibt der Generator den Test von Hand als Markdown: je Zeile mit Grenzwert ein Prüfpunkt; eine Zeile ohne Min und Max steht unter verworfen, eine Datei ohne Tabelle unter fehler. (CR-GC-965)",
       "kinds": [
         "functional"
       ]
@@ -12085,7 +12094,7 @@
       "id": "SCHEMA-vertragstest-satz",
       "type": "SCHEMA",
       "name": "VertragstestSatzSchema",
-      "description": "Je SCHEMA uid, Datei und Zod-Symbol. erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962)",
+      "description": "Je SCHEMA uid, Datei und Zod-Symbol, oder uid und Vertragsdatei (.md ohne Symbol). erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962, CR-GC-965)",
       "realRef": {
         "file": "src/projections/vertragstest.ts",
         "symbol": "VertragstestSatzSchema",
@@ -23980,6 +23989,26 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-965",
+      "target": "FUNC-erzeuge-vertragstests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-965",
+      "target": "FUNC-se-bau",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-965",
+      "target": "REQ-contract-test-manual",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-965",
+      "target": "SCHEMA-vertragstest-satz",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -30262,6 +30291,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-erzeuge-vertragstests",
+      "target": "REQ-contract-test-manual",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-evaluate-rules",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -36405,6 +36439,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vertragstest-generator",
+      "target": "REQ-contract-test-manual",
+      "type": "verify"
+    },
+    {
       "source": "TEST-view-fmea",
       "target": "REQ-doc-export",
       "type": "verify"
@@ -36980,5 +37019,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1332
+  "graphVersion": 1334
 }

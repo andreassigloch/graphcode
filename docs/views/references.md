@@ -1660,6 +1660,10 @@
 | `CR-GC-964` | relation | `REQ-test-von-hand-auswahl` |
 | `CR-GC-964` | relation | `REQ-test-von-hand-ergebnis` |
 | `CR-GC-964` | relation | `REQ-test-von-hand-spur` |
+| `CR-GC-965` | relation | `FUNC-erzeuge-vertragstests` |
+| `CR-GC-965` | relation | `FUNC-se-bau` |
+| `CR-GC-965` | relation | `REQ-contract-test-manual` |
+| `CR-GC-965` | relation | `SCHEMA-vertragstest-satz` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2904,6 +2908,7 @@
 | `FUNC-erzeuge-vertragstests` | allocate | `MOD-projections` |
 | `FUNC-erzeuge-vertragstests` | io | `FLOW-vertragstest-bericht` |
 | `FUNC-erzeuge-vertragstests` | satisfy | `REQ-contract-test-cases` |
+| `FUNC-erzeuge-vertragstests` | satisfy | `REQ-contract-test-manual` |
 | `FUNC-evaluate-rules` | allocate | `MOD-kernel` |
 | `FUNC-evaluate-rules` | io | `FLOW-rule-findings` |
 | `FUNC-evaluate-rules` | satisfy | `REQ-near-duplicate-detection` |
@@ -4095,6 +4100,7 @@
 | `TEST-vertrag-vertragstest-satz` | verify | `SCHEMA-vertragstest-satz` |
 | `TEST-vertragstest-generator` | verify | `REQ-contract-test-cases` |
 | `TEST-vertragstest-generator` | verify | `REQ-contract-test-generation` |
+| `TEST-vertragstest-generator` | verify | `REQ-contract-test-manual` |
 | `TEST-view-fmea` | verify | `REQ-doc-export` |
 | `TEST-views-auditor` | verify | `REQ-doc-export` |
 | `TEST-views-auditor` | verify | `REQ-readiness-model` |

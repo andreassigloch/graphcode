@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 301 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 302 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -4606,13 +4606,21 @@ Verification ◀ `TEST-vertragstest-generator` (integration) · satisfy ◀ `FUN
 
 > auch in: `FUNC-block-grounding`
 
-Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, je Feld die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; nur Faelle, die das Original so urteilt. (CR-GC-962, Herkunft CR-GC-958)
+Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, je Feld die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; nur Faelle, die das Original so urteilt. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965)
 
 io ◀ `FLOW-vertragstest-satz` · io ▶ `FLOW-vertragstest-bericht` · allocate ▶ `MOD-projections`
 
 ###### `REQ-contract-test-cases` — Faelle nur nach Urteil des Originals
 
 Eine erzeugte Testdatei enthaelt nur Faelle, die das Original-Schema so urteilt, wie der Fall es erwartet, und je angenommenem Fall die eingefrorene Ausgabe. (CR-GC-962)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-vertragstest-generator` (integration) · satisfy ◀ `FUNC-erzeuge-vertragstests` · allocate ▶ `MOD-projections`
+
+###### `REQ-contract-test-manual` — Test von Hand aus der Vertragsdatei
+
+Zeigt der realRef eines SCHEMA auf eine Vertragsdatei (Markdown ohne Symbol) mit der Tabelle Größe, Einheit, Min, Nenn, Max, schreibt der Generator den Test von Hand als Markdown: je Zeile mit Grenzwert ein Prüfpunkt; eine Zeile ohne Min und Max steht unter verworfen, eine Datei ohne Tabelle unter fehler. (CR-GC-965)
 
 priority: must · status: n/a · kinds: functional
 
@@ -5810,7 +5818,7 @@ Verification ◀ `TEST-skill-bau` (unit) · satisfy ◀ `FUNC-se-bau` · allocat
 
 ###### `REQ-bau-vertragstest-erzeugen` — Bau erzeugt den Vertragstest
 
-Hat ein CR ein SCHEMA mit Zod-realRef neu angelegt oder geaendert, dann laesst der Koordinator von se-bau den Vertragstest mit graphcode vertragstest erzeugen und bindet ihn als TEST mit verify auf das SCHEMA; von Hand entsteht er nur fuer ein SCHEMA, das das Verb mit Grund ablehnt. (CR-GC-963)
+Hat ein CR ein SCHEMA mit Zod-realRef oder mit Vertragsdatei neu angelegt oder geaendert, dann laesst der Koordinator von se-bau den Vertragstest mit graphcode vertragstest erzeugen und bindet ihn als TEST mit verify auf das SCHEMA; fuer eine Vertragsdatei ist es der Test von Hand mit testRefs tool manuell. Von Hand geschrieben wird er nur fuer ein SCHEMA, das das Verb mit Grund ablehnt. (CR-GC-963, CR-GC-965)
 
 priority: must · status: n/a · kinds: functional
 
@@ -11168,13 +11176,21 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 > auch in: `FCHAIN-contract-test-generation`
 
-Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, je Feld die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; nur Faelle, die das Original so urteilt. (CR-GC-962, Herkunft CR-GC-958)
+Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, je Feld die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; nur Faelle, die das Original so urteilt. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965)
 
 io ◀ `FLOW-vertragstest-satz` · io ▶ `FLOW-vertragstest-bericht` · allocate ▶ `MOD-projections`
 
 ###### `REQ-contract-test-cases` — Faelle nur nach Urteil des Originals
 
 Eine erzeugte Testdatei enthaelt nur Faelle, die das Original-Schema so urteilt, wie der Fall es erwartet, und je angenommenem Fall die eingefrorene Ausgabe. (CR-GC-962)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-vertragstest-generator` (integration) · satisfy ◀ `FUNC-erzeuge-vertragstests` · allocate ▶ `MOD-projections`
+
+###### `REQ-contract-test-manual` — Test von Hand aus der Vertragsdatei
+
+Zeigt der realRef eines SCHEMA auf eine Vertragsdatei (Markdown ohne Symbol) mit der Tabelle Größe, Einheit, Min, Nenn, Max, schreibt der Generator den Test von Hand als Markdown: je Zeile mit Grenzwert ein Prüfpunkt; eine Zeile ohne Min und Max steht unter verworfen, eine Datei ohne Tabelle unter fehler. (CR-GC-965)
 
 priority: must · status: n/a · kinds: functional
 
@@ -11242,7 +11258,7 @@ Verification ◀ `TEST-skill-bau` (unit) · satisfy ◀ `FUNC-se-bau` · allocat
 
 ###### `REQ-bau-vertragstest-erzeugen` — Bau erzeugt den Vertragstest
 
-Hat ein CR ein SCHEMA mit Zod-realRef neu angelegt oder geaendert, dann laesst der Koordinator von se-bau den Vertragstest mit graphcode vertragstest erzeugen und bindet ihn als TEST mit verify auf das SCHEMA; von Hand entsteht er nur fuer ein SCHEMA, das das Verb mit Grund ablehnt. (CR-GC-963)
+Hat ein CR ein SCHEMA mit Zod-realRef oder mit Vertragsdatei neu angelegt oder geaendert, dann laesst der Koordinator von se-bau den Vertragstest mit graphcode vertragstest erzeugen und bindet ihn als TEST mit verify auf das SCHEMA; fuer eine Vertragsdatei ist es der Test von Hand mit testRefs tool manuell. Von Hand geschrieben wird er nur fuer ein SCHEMA, das das Verb mit Grund ablehnt. (CR-GC-963, CR-GC-965)
 
 priority: must · status: n/a · kinds: functional
 
@@ -14434,7 +14450,7 @@ schema ◀ `FLOW-vertragstest-bericht`
 
 ###### 3.3.4.2.69  `SCHEMA-vertragstest-satz` — VertragstestSatzSchema
 
-Je SCHEMA uid, Datei und Zod-Symbol. erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962)
+Je SCHEMA uid, Datei und Zod-Symbol, oder uid und Vertragsdatei (.md ohne Symbol). erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962, CR-GC-965)
 
 schema ◀ `FLOW-vertragstest-satz`
 
@@ -16100,7 +16116,7 @@ verify ▶ `SCHEMA-vertragstest-satz` · testRefs: `tests/vertrag/SCHEMA-vertrag
 
 Unit-Tests des Erzeugers und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
 
-verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · testRefs: `tests/vertragstest.test.ts`
+verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · `REQ-contract-test-manual` · testRefs: `tests/vertragstest.test.ts`
 
 #### 3.4.196  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
@@ -16156,7 +16172,7 @@ Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zu
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 301 REQ · 301 verified · 0 without a verifying TEST (R-01).
+Traceability: 302 REQ · 302 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 

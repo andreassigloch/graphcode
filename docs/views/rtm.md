@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 301 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 302 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 66 REQ
@@ -357,7 +357,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 221 REQ
+### Entwurf (SWE.3 · HWE.2) — 222 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -393,6 +393,7 @@
 | `REQ-constraints-skill-vertrag` | `TEST-skill-constraints` | `FUNC-se-constraints` | `MOD-agent-surface` |
 | `REQ-contract-test-cases` | `TEST-vertragstest-generator` | `FUNC-erzeuge-vertragstests` | `MOD-projections` |
 | `REQ-contract-test-generation` | `TEST-vertragstest-generator` | `FUNC-vertragstest-verb` | `MOD-surface` |
+| `REQ-contract-test-manual` | `TEST-vertragstest-generator` | `FUNC-erzeuge-vertragstests` | `MOD-projections` |
 | `REQ-cr-gruppen-rechnen` | `TEST-se-plan-groups` | `FUNC-cr-groups` | `MOD-loop` |
 | `REQ-dashboard-ontology-sync` | `TEST-dashboard-ontology-sync` | `MOD-kernel-measure` | — |
 | `REQ-dashboard-readonly` | `TEST-dashboard-readonly` | `MOD-surface` | — |
