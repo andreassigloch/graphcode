@@ -68,7 +68,7 @@ Mit F3a würde der Generator aus Größe und Grenzwerten ein Messgerüst erzeuge
 Das schließt R-19 ohne erfundenen Code. Die Endung (`.md` statt `.test.ts`) sagt, dass der Test von Hand läuft. Ein Attribut am TEST braucht es dafür nicht. Dieselbe Form trägt den physischen Vertrag: `realRef` des SCHEMA zeigt auf eine Vertragsdatei (Tabelle Größe, Einheit, Min, Nenn, Max, Quelle), das schließt R-26. Aus der Tabelle erzeugt der Generator (F1) das Gerüst der manuellen Testdatei: je Grenzwert ein Prüfpunkt. Die Prosa aus sirail zieht dafür vom Knoten in die Dateien um.
 
 Offen dabei:
-- **F3.1** Liest `graph_test_ingest` heute eine `.md`-Datei? Nein, es liest Läufe eines Testwerkzeugs (vitest). Ein Format für das Ergebnis von Hand fehlt.
+- **F3.1** Wohin mit dem Ergebnis von Hand? `graph_test_ingest` nimmt neben dem vitest-Report schon `results: [{file, result, tool}]` an und liest den Kopf der Datei (`src/projections/testreport.ts`). Ein Lauf von Hand ginge als `tool: "manuell"` hinein. Es fehlen: Prüfer, Messwerte und eine Ablage des Protokolls. Ungeprüft ist, ob die Kopferkennung die uid in Markdown findet.
 - **F3.2** Wie alt darf ein Ergebnis von Hand sein? Ein `.test.ts` läuft bei jeder Änderung neu, ein Hebeltest nicht. Vorschlag: Das Ergebnis gilt, bis sich das SCHEMA oder die REQ ändert, die der TEST prüft (wie CR-GC-800 heute für Code).
 
 ## Befund sirail (2026-11-19)
