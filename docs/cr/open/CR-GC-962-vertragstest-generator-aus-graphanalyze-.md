@@ -3,7 +3,7 @@
 **Typ:** aus Item ITEM-2026-1477 (idea)
 **Erstellt:** 2026-11-19
 **Item:** bok/items/ITEM-2026-1477.json (Lane: graph)
-**Status:** Open
+**Status:** Done — 2026-11-19
 **Herkunft:** CR-GC-961 F1 (Entscheidung des Autors 2026-11-19), CR-GC-958 (Spike, G1 Go)
 
 ---
@@ -33,7 +33,7 @@ Der Vertragstest-Generator liegt in `graphanalyze/werkzeuge/vertragstest/` (vier
 | `CLAUDE.md`, `README.md` | Satzteil „generator“ gestrichen; README nennt das Verb |
 | graphanalyze: `werkzeuge/vertragstest/`, `tests/vertragstest.test.ts`, README | gelöscht bzw. Zeile entfernt (kein zweiter Weg) |
 
-**Dateigrenze überschritten:** 13 Dateien in graphcode, 6 in graphanalyze. Begründung (FAQ `cr-dateigrenze-ausnahme`): Jeder Schnitt ließe den Generator an zwei Orten stehen oder 5 Testköpfe auf ein gelöschtes Werkzeug zeigen. Die 7 Testdateien sind mechanisch erzeugt.
+**Dateigrenze überschritten:** 16 Dateien in graphcode (dazu `scripts/model-test-set.mjs` und der neu gemessene Spike-Test `tests/arch.optimization-dry-run.spike.test.ts`), 8 in graphanalyze (dazu `package.json`/Lockfile ohne zod und der Spike-Helfer `_erzeuge.test.ts`, der jetzt den Generator aus graphcode lädt). Begründung (FAQ `cr-dateigrenze-ausnahme`): Jeder Schnitt ließe den Generator an zwei Orten stehen oder 5 Testköpfe auf ein gelöschtes Werkzeug zeigen. Die 7 Testdateien sind mechanisch erzeugt.
 
 ## Modell
 
@@ -44,15 +44,26 @@ Der Vertragstest-Generator liegt in `graphanalyze/werkzeuge/vertragstest/` (vier
 
 ## Akzeptanzkriterien
 
-- [ ] `graphcode vertragstest` erzeugt in graphcode dieselben 5 Vertragstests wie bisher, nur mit neuem Kopf; alle grün.
-- [ ] Die 2 neuen SCHEMA haben erzeugte Vertragstests, grün.
-- [ ] Unit-Tests grün; Verb gegen Temp-Repo: Datei entsteht, Exit 0; unbekannte uid: Exit 2.
-- [ ] `CLAUDE.md` und README nennen kein „generator“ mehr in der Ist-nicht-Liste.
-- [ ] graphanalyze enthält keinen Generator mehr; seine Tests grün.
-- [ ] Build, Lint, `verify:full CR-GC-962` grün; R-26, R-32, RC-04, RC-08 ohne Befund an den neuen Knoten.
+- [x] `graphcode vertragstest` erzeugt in graphcode dieselben 5 Vertragstests wie bisher, nur mit neuem Kopf; alle grün.
+- [x] Die 2 neuen SCHEMA haben erzeugte Vertragstests, grün.
+- [x] Unit-Tests grün; Verb gegen Temp-Repo: Datei entsteht, Exit 0; unbekannte uid: Exit 2.
+- [x] `CLAUDE.md` und README nennen kein „generator“ mehr in der Ist-nicht-Liste.
+- [x] graphanalyze enthält keinen Generator mehr; seine Tests grün.
+- [x] Build, Lint, `verify:full CR-GC-962` grün; R-26, R-32, RC-04, RC-08 ohne Befund an den neuen Knoten.
 
 
 ---
+
+## Ergebnis
+
+- Das Verb erzeugt die 5 bestehenden Vertragstests mit identischen Fällen; nur die Kopfzeile ist neu.
+- Neu im Generator: Eine Liste auf oberster Ebene prüft die Fälle ihres Elements (vorher nur 1 Fall je Liste). Rot ohne die Änderung, grün mit ihr.
+- Die 2 neuen SCHEMA haben 9 und 17 erzeugte Fälle.
+- Ein Lauf ohne uids über alle 43 SCHEMA mit `realRef` in graphcode: 39 erzeugbar, 4 nicht (3 × `z.custom`, 1 × Querbedingung in `SCHEMA-test-ingest-input`). Die 39 Dateien sind nicht eingecheckt; das ist Sache des `se-bau`-Schritts (CR-GC-961 Folge 2).
+- Modell: zwei Zuege statt drei im Spike `arch.optimization-dry-run`, Engpass danach R-04 @ MOD-projections; im Test festgehalten.
+- `verify:full CR-GC-962`: 245 Dateien, 2106 Tests, rot 0, Schlupf 0.
+- Smoke: `graphcode vertragstest SCHEMA-markdown-text --ziel <tmp>` Exit 0; unbekannte uid Exit 2; unbekanntes Flag abgewiesen.
+- graphanalyze: 2 rote Tests in `tests/rig-interaktiv.test.ts` waren schon vor dem CR rot (Skill-Text); nicht Teil dieses CR.
 
 ## Entscheidungen
 

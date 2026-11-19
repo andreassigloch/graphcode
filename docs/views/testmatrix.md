@@ -46,8 +46,8 @@
 | `REQ-confidence-tier` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-conops-zugangsliste` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 | `REQ-constraints-skill-vertrag` | ✓ | ✓ passed | `TEST-skill-constraints` |
-| `REQ-contract-test-cases` | ✓ | ⚠ nie gelaufen | `TEST-vertragstest-generator` |
-| `REQ-contract-test-generation` | ✓ | ⚠ nie gelaufen | `TEST-vertragstest-generator` |
+| `REQ-contract-test-cases` | ✓ | ✓ passed | `TEST-vertragstest-generator` |
+| `REQ-contract-test-generation` | ✓ | ✓ passed | `TEST-vertragstest-generator` |
 | `REQ-cr-gruppen-rechnen` | ✓ | ✓ passed | `TEST-se-plan-groups` |
 | `REQ-dashboard-ontology-sync` | ✓ | ✓ passed | `TEST-dashboard-ontology-sync` |
 | `REQ-dashboard-readonly` | ✓ | ✓ passed | `TEST-dashboard-readonly` |
@@ -307,7 +307,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 297/297 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 257/297 REQ bestanden (87%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 259/297 REQ bestanden (87%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
