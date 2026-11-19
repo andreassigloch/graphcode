@@ -5424,7 +5424,7 @@ Verification ◀ `TEST-optimize-presents-impact` (conformance) · satisfy ◀ `F
 
 > auch in: `FUNC-block-urteilsarbeit`
 
-Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, CR-Schnitt aus graph_context-Slices.
+Prompt-realisierter Skill se-plan: ordnet den Bau entlang des Integrationsbaums und schneidet CRs aus graph_context-Slices. Fragt nichts, schreibt keine REQ und keinen TEST und startet keinen Bau; bei einer Lücke stoppt er mit Verweis auf se-cdr, se-conops, se:author-req oder se-bau.
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-plan` · allocate ▶ `MOD-agent-surface`
 
@@ -10368,7 +10368,7 @@ Verification ◀ `TEST-modulebene-reads-and-separates` (conformance) · satisfy 
 
 > auch in: `FCHAIN-skill-authoring`
 
-Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, CR-Schnitt aus graph_context-Slices.
+Prompt-realisierter Skill se-plan: ordnet den Bau entlang des Integrationsbaums und schneidet CRs aus graph_context-Slices. Fragt nichts, schreibt keine REQ und keinen TEST und startet keinen Bau; bei einer Lücke stoppt er mit Verweis auf se-cdr, se-conops, se:author-req oder se-bau.
 
 io ◀ `FLOW-skill-request` · io ▶ `FLOW-anleitung-se-plan` · allocate ▶ `MOD-agent-surface`
 

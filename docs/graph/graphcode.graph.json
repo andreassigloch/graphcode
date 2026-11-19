@@ -7710,7 +7710,7 @@
       "id": "FUNC-se-plan",
       "type": "FUNC",
       "name": "Skill se-plan",
-      "description": "Prompt-realisierter Skill se-plan: Implementierungsplan aus dem depends-on-DAG, CR-Schnitt aus graph_context-Slices.",
+      "description": "Prompt-realisierter Skill se-plan: ordnet den Bau entlang des Integrationsbaums und schneidet CRs aus graph_context-Slices. Fragt nichts, schreibt keine REQ und keinen TEST und startet keinen Bau; bei einer Lücke stoppt er mit Verweis auf se-cdr, se-conops, se:author-req oder se-bau.",
       "realRef": {
         "file": ".claude/commands/se-plan.md"
       }
@@ -35037,5 +35037,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1269
+  "graphVersion": 1270
 }
