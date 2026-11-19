@@ -84,3 +84,9 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Nachtrag 2026-11-19 (nach dem Schließen)
+
+`aise cr close` meldete an `FLOW-vertragstest-satz` und `FLOW-vertragstest-bericht`: Verb und Erzeuger rufen sich nicht direkt. Das stimmt: Der Satz geht als Argument an einen Kindprozess, der Bericht kommt über dessen stdout zurück. Beide FLOW tragen jetzt die Übergabestelle als `realRef` (`src/surface/vertragstest-verb.ts#executeVertragstest`), graphVersion 1322.

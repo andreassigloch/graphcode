@@ -6558,14 +6558,24 @@
       "type": "FLOW",
       "name": "Vertragstest-Bericht",
       "description": "Der Bericht je SCHEMA (Faelle und verworfene Faelle oder Fehler) vom Erzeuger an das Verb",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/vertragstest-verb.ts",
+        "symbol": "executeVertragstest",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-vertragstest-satz",
       "type": "FLOW",
       "name": "Vertragstest-Satz",
       "description": "Die SCHEMA mit ihrem Zod-Symbol vom Verb an den Erzeuger",
-      "sync": "sync"
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/vertragstest-verb.ts",
+        "symbol": "executeVertragstest",
+        "lang": "ts"
+      }
     },
     {
       "id": "FLOW-viewer-start",
@@ -36817,5 +36827,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1321
+  "graphVersion": 1322
 }
