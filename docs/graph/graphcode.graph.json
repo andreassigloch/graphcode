@@ -4574,6 +4574,13 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-adapter-befund",
+      "type": "FLOW",
+      "name": "Adapter-Befund",
+      "description": "Befund von einAdapterJeAkteur an den Constraint-Test des Aufrufers.",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-anleitung-author-actor",
       "type": "FLOW",
       "name": "Anleitung se:author-actor",
@@ -5330,6 +5337,13 @@
         "symbol": "evaluateRules",
         "lang": "ts"
       }
+    },
+    {
+      "id": "FLOW-grenz-befund",
+      "type": "FLOW",
+      "name": "Grenz-Befund",
+      "description": "Befund von grenzeNurMitSchema an den Constraint-Test des Aufrufers.",
+      "sync": "sync"
     },
     {
       "id": "FLOW-gve-attach",
@@ -6957,6 +6971,17 @@
       }
     },
     {
+      "id": "FUNC-ein-adapter-je-akteur",
+      "type": "FUNC",
+      "name": "einAdapterJeAkteur",
+      "description": "Prueffunktion fuer Constraints: meldet jeden Fluss zu einem Akteur, der nicht in genau einem Kind-Modul endet, jedes Kind-Modul, das nicht genau einen Akteur bedient, und jeden Akteur ohne Adapter. Exportiert ueber den Subpath constraints. (CR-GC-913)",
+      "realRef": {
+        "file": "src/kernel/measure/constraints.ts",
+        "symbol": "einAdapterJeAkteur",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-eingaenge-nur-aus",
       "type": "FUNC",
       "name": "eingaengeNurAus",
@@ -7236,6 +7261,17 @@
       "realRef": {
         "file": "src/loop/suggest.ts",
         "symbol": "graph_suggest",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-grenze-nur-mit-schema",
+      "type": "FUNC",
+      "name": "grenzeNurMitSchema",
+      "description": "Prueffunktion fuer Constraints: meldet jeden Fluss ueber die Grenze eines Kind-Moduls, der kein Schema aus der erlaubten Liste traegt, und jeden Fluss zwischen zwei Kind-Modulen. Exportiert ueber den Subpath constraints. (CR-GC-913)",
+      "realRef": {
+        "file": "src/kernel/measure/constraints.ts",
+        "symbol": "grenzeNurMitSchema",
         "lang": "ts"
       }
     },
@@ -8554,6 +8590,15 @@
       ]
     },
     {
+      "id": "REQ-ein-adapter-je-akteur",
+      "type": "REQ",
+      "name": "Ein Adapter je Akteur",
+      "description": "Die Pruefung der Adapter muss jeden Fluss zu einem Akteur melden, der nicht in genau einem Kind-Modul endet, jedes Kind-Modul, das nicht genau einen Akteur bedient, und jeden Akteur ohne Adapter. Erfuellt ist sie genau dann, wenn alle drei Listen leer sind. (CR-GC-913)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-ein-schreibweg",
       "type": "REQ",
       "name": "Ein Schreibweg",
@@ -8862,6 +8907,15 @@
       "type": "REQ",
       "name": "GRAPHCODE.md nennt Zuege",
       "description": "Die gescaffoldete GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-grenze-nur-mit-schema",
+      "type": "REQ",
+      "name": "Grenzfluss nur mit erlaubtem Schema",
+      "description": "Die Pruefung der Modulgrenze muss jeden Fluss ueber die Grenze eines Kind-Moduls ohne Schema der erlaubten Liste melden und jeden Fluss zwischen zwei Kind-Modulen. Erfuellt ist sie genau dann, wenn beide Listen leer sind. (CR-GC-913)",
       "kinds": [
         "functional"
       ]
@@ -10848,6 +10902,17 @@
       "concept": true
     },
     {
+      "id": "SCHEMA-adapter-befund",
+      "type": "SCHEMA",
+      "name": "Adapter-Befund",
+      "description": "Vertrag des Befunds von einAdapterJeAkteur: flussOhneEinModul, moduleOhneEinenAkteur und akteurOhneAdapter. Alle drei leer heisst erfuellt. (CR-GC-913)",
+      "realRef": {
+        "file": "src/kernel/measure/constraints.ts",
+        "symbol": "AdapterBefund",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-audit-record",
       "type": "SCHEMA",
       "name": "Audit-Eintrag (aufgezeichnete Gate-Entscheidung)",
@@ -11031,6 +11096,17 @@
       "realRef": {
         "file": "src/kernel/graph-store.ts",
         "symbol": "GraphDeltaSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-grenz-befund",
+      "type": "SCHEMA",
+      "name": "Grenz-Befund",
+      "description": "Vertrag des Befunds von grenzeNurMitSchema: ohneSchema (je Fluss Module und Schemas) und zwischenKindern (je Fluss von und nach). Beide leer heisst erfuellt. (CR-GC-913)",
+      "realRef": {
+        "file": "src/kernel/measure/constraints.ts",
+        "symbol": "GrenzBefund",
         "lang": "ts"
       }
     },
@@ -11954,6 +12030,19 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-11-19T07:30:04.440Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-constraint-grenze-adapter",
+      "type": "TEST",
+      "name": "Constraint Grenze und Adapter",
+      "description": "Positivkontrolle je Bruchart fuer grenzeNurMitSchema und einAdapterJeAkteur: ein guter Snapshot ohne Befund, je Bruch ein Snapshot mit genau diesem Befund; die Befund-Schemas lehnen fremde Felder ab.",
+      "testRefs": [
+        {
+          "file": "tests/constraint-grenze-adapter.test.ts",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -22044,6 +22133,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-913",
+      "target": "FUNC-ein-adapter-je-akteur",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-913",
+      "target": "FUNC-grenze-nur-mit-schema",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-914",
       "target": "FUNC-se-retro",
       "type": "relation"
@@ -23396,7 +23495,17 @@
     },
     {
       "source": "FCHAIN-model-lane",
+      "target": "FUNC-ein-adapter-je-akteur",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-lane",
       "target": "FUNC-eingaenge-nur-aus",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-model-lane",
+      "target": "FUNC-grenze-nur-mit-schema",
       "type": "compose"
     },
     {
@@ -24396,6 +24505,16 @@
     {
       "source": "FLOW-action",
       "target": "SCHEMA-action",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-adapter-befund",
+      "target": "FUNC-verify-lane-model",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-adapter-befund",
+      "target": "SCHEMA-adapter-befund",
       "type": "relation"
     },
     {
@@ -25480,7 +25599,17 @@
     },
     {
       "source": "FLOW-graph-snapshot-file",
+      "target": "FUNC-ein-adapter-je-akteur",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot-file",
       "target": "FUNC-eingaenge-nur-aus",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-graph-snapshot-file",
+      "target": "FUNC-grenze-nur-mit-schema",
       "type": "io"
     },
     {
@@ -25598,6 +25727,16 @@
     {
       "source": "FLOW-graph-state-eval",
       "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-grenz-befund",
+      "target": "FUNC-verify-lane-model",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-grenz-befund",
+      "target": "SCHEMA-grenz-befund",
       "type": "relation"
     },
     {
@@ -28180,6 +28319,11 @@
     },
     {
       "source": "FUNC-block-messwerk",
+      "target": "FUNC-ein-adapter-je-akteur",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
       "target": "FUNC-eingaenge-nur-aus",
       "type": "compose"
     },
@@ -28191,6 +28335,11 @@
     {
       "source": "FUNC-block-messwerk",
       "target": "FUNC-function-criticality",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-messwerk",
+      "target": "FUNC-grenze-nur-mit-schema",
       "type": "compose"
     },
     {
@@ -28653,6 +28802,21 @@
     {
       "source": "FUNC-deduce-tests",
       "target": "REQ-tests-aufloesen",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-ein-adapter-je-akteur",
+      "target": "MOD-kernel-measure",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-ein-adapter-je-akteur",
+      "target": "FLOW-adapter-befund",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-ein-adapter-je-akteur",
+      "target": "REQ-ein-adapter-je-akteur",
       "type": "satisfy"
     },
     {
@@ -29273,6 +29437,21 @@
       "target": "REQ-target-shifts-ranking",
       "type": "satisfy",
       "weight": "1"
+    },
+    {
+      "source": "FUNC-grenze-nur-mit-schema",
+      "target": "MOD-kernel-measure",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-grenze-nur-mit-schema",
+      "target": "FLOW-grenz-befund",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-grenze-nur-mit-schema",
+      "target": "REQ-grenze-nur-mit-schema",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-gve-sessions",
@@ -32576,6 +32755,26 @@
       "type": "verify"
     },
     {
+      "source": "TEST-constraint-grenze-adapter",
+      "target": "REQ-ein-adapter-je-akteur",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-constraint-grenze-adapter",
+      "target": "REQ-grenze-nur-mit-schema",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-constraint-grenze-adapter",
+      "target": "SCHEMA-adapter-befund",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-constraint-grenze-adapter",
+      "target": "SCHEMA-grenz-befund",
+      "type": "verify"
+    },
+    {
       "source": "TEST-contracts-kernel",
       "target": "SCHEMA-graph-delta",
       "type": "verify"
@@ -35038,5 +35237,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1271
+  "graphVersion": 1273
 }

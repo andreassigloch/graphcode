@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 267 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 269 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 61 REQ
@@ -350,7 +350,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 186 REQ
+### Entwurf (SWE.3 · HWE.2) — 188 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -388,6 +388,7 @@
 | `REQ-docked-session-reelects-once` | `TEST-host-shim` | `FUNC-host-socket` | `MOD-surface` |
 | `REQ-docs-taxonomy` | `TEST-docs-taxonomy` | `MOD-projections` | — |
 | `REQ-done-iff-no-focus` | `TEST-generation-statemachine` | `FUNC-generation-step` | `MOD-loop` |
+| `REQ-ein-adapter-je-akteur` | `TEST-constraint-grenze-adapter` | `FUNC-ein-adapter-je-akteur` | `MOD-kernel-measure` |
 | `REQ-eingaenge-nur-aus-liste` | `TEST-constraint-ein-schreibweg` | `FUNC-eingaenge-nur-aus` | `MOD-kernel-measure` |
 | `REQ-export-marke-loeschen` | `TEST-graph-time-travel` | `FUNC-export-marker-clear` | `MOD-kernel` |
 | `REQ-export-marke-setzen` | `TEST-graph-time-travel` | `FUNC-export-marker` | `MOD-kernel` |
@@ -409,6 +410,7 @@
 | `REQ-graphcode-md-einstieg` | `TEST-sitzung-kpi` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-graphcode-md-testauswahl` | `TEST-sitzung-kpi` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-graphcode-md-zuege` | `TEST-sitzung-kpi` | `FUNC-harness-cli` | `MOD-surface` |
+| `REQ-grenze-nur-mit-schema` | `TEST-constraint-grenze-adapter` | `FUNC-grenze-nur-mit-schema` | `MOD-kernel-measure` |
 | `REQ-harness-factory-returns-one-owner` | `TEST-store-lock` | `FUNC-create-harness` | `MOD-surface` |
 | `REQ-harness-schema-in-contracts` | `TEST-mcp-symmetry` · `TEST-mutate-schema-guard` | `MOD-kernel` | — |
 | `REQ-health-antwortet-stand` | `TEST-readonly-bridge` | `FUNC-health-endpoint` | `MOD-surface` |

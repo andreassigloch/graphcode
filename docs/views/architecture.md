@@ -52,6 +52,7 @@
 | `FUNC-create-harness` | FUNC | createHarness |
 | `FUNC-decode` | FUNC | formatEToCommands(harness, text) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
+| `FUNC-ein-adapter-je-akteur` | FUNC | einAdapterJeAkteur |
 | `FUNC-eingaenge-nur-aus` | FUNC | eingaengeNurAus |
 | `FUNC-emit-trajectory` | FUNC | materializeTrajectory() |
 | `FUNC-emit-update-event` | FUNC | emitUpdateEvent(domains) |
@@ -75,6 +76,7 @@
 | `FUNC-graph-reseed-tool` | FUNC | graph_reseed (Werkzeug) |
 | `FUNC-graph-store` | FUNC | GraphStore |
 | `FUNC-graph-suggest` | FUNC | graph_suggest (Werkzeug) |
+| `FUNC-grenze-nur-mit-schema` | FUNC | grenzeNurMitSchema |
 | `FUNC-gve-sessions` | FUNC | liveSessions |
 | `FUNC-gve-supervise` | FUNC | attachGve |
 | `FUNC-harness-cli` | FUNC | graphcode init/update/remove |
@@ -197,6 +199,7 @@
 | `FUNC-create-harness` | `MOD-surface` |
 | `FUNC-decode` | `MOD-kernel` |
 | `FUNC-deduce-tests` | `MOD-projections` |
+| `FUNC-ein-adapter-je-akteur` | `MOD-kernel-measure` |
 | `FUNC-eingaenge-nur-aus` | `MOD-kernel-measure` |
 | `FUNC-emit-trajectory` | `MOD-projections` |
 | `FUNC-emit-update-event` | `MOD-surface` |
@@ -220,6 +223,7 @@
 | `FUNC-graph-reseed-tool` | `MOD-surface` |
 | `FUNC-graph-store` | `MOD-kernel` |
 | `FUNC-graph-suggest` | `MOD-loop` |
+| `FUNC-grenze-nur-mit-schema` | `MOD-kernel-measure` |
 | `FUNC-gve-sessions` | `MOD-surface` |
 | `FUNC-gve-supervise` | `MOD-surface` |
 | `FUNC-harness-cli` | `MOD-surface` |

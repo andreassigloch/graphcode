@@ -1448,6 +1448,8 @@
 | `CR-GC-911` | relation | `FUNC-tool-context` |
 | `CR-GC-912` | relation | `FUNC-gve-supervise` |
 | `CR-GC-912` | relation | `REQ-viewer-owned-by-repo` |
+| `CR-GC-913` | relation | `FUNC-ein-adapter-je-akteur` |
+| `CR-GC-913` | relation | `FUNC-grenze-nur-mit-schema` |
 | `CR-GC-914` | relation | `FUNC-se-retro` |
 | `CR-GC-915` | relation | `FUNC-author-uc` |
 | `CR-GC-915` | relation | `FUNC-load-config` |
@@ -1714,7 +1716,9 @@
 | `FCHAIN-model-import` | compose | `FUNC-seed-from-json` |
 | `FCHAIN-model-import` | satisfy | `REQ-model-exchange-post` |
 | `FCHAIN-model-import` | satisfy | `REQ-no-extraction` |
+| `FCHAIN-model-lane` | compose | `FUNC-ein-adapter-je-akteur` |
 | `FCHAIN-model-lane` | compose | `FUNC-eingaenge-nur-aus` |
+| `FCHAIN-model-lane` | compose | `FUNC-grenze-nur-mit-schema` |
 | `FCHAIN-model-lane` | compose | `FUNC-verify-lane-model` |
 | `FCHAIN-recall` | compose | `FUNC-apply-reseed` |
 | `FCHAIN-recall` | compose | `FUNC-claim-store-lock` |
@@ -1913,6 +1917,8 @@
 | `FCHAIN-verify-lane-full` | compose | `FUNC-verify-lane-full` |
 | `FLOW-action` | io | `FUNC-agent-loop` |
 | `FLOW-action` | relation | `SCHEMA-action` |
+| `FLOW-adapter-befund` | io | `FUNC-verify-lane-model` |
+| `FLOW-adapter-befund` | relation | `SCHEMA-adapter-befund` |
 | `FLOW-anleitung-author-actor` | io | `FUNC-agent-loop` |
 | `FLOW-anleitung-author-actor` | relation | `SCHEMA-skill-text` |
 | `FLOW-anleitung-author-req` | io | `FUNC-agent-loop` |
@@ -2128,7 +2134,9 @@
 | `FLOW-graph-delta` | io | `FUNC-graph-store` |
 | `FLOW-graph-delta` | relation | `SCHEMA-graph-delta` |
 | `FLOW-graph-snapshot-file` | io | `ACTOR-auftraggeber` |
+| `FLOW-graph-snapshot-file` | io | `FUNC-ein-adapter-je-akteur` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-eingaenge-nur-aus` |
+| `FLOW-graph-snapshot-file` | io | `FUNC-grenze-nur-mit-schema` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-held-back-traces` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-plan-code-lane` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-seed-from-json` |
@@ -2151,6 +2159,8 @@
 | `FLOW-graph-state` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-graph-state-eval` | io | `FUNC-evaluate-rules` |
 | `FLOW-graph-state-eval` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-grenz-befund` | io | `FUNC-verify-lane-model` |
+| `FLOW-grenz-befund` | relation | `SCHEMA-grenz-befund` |
 | `FLOW-gve-attach` | io | `FUNC-gve-supervise` |
 | `FLOW-gve-attach` | relation | `SCHEMA-cli-command` |
 | `FLOW-gve-stop` | io | `FUNC-gve-supervise` |
@@ -2665,9 +2675,11 @@
 | `FUNC-block-messwerk` | compose | `FUNC-chain-metrics` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-readiness` |
 | `FUNC-block-messwerk` | compose | `FUNC-compute-steering-delta` |
+| `FUNC-block-messwerk` | compose | `FUNC-ein-adapter-je-akteur` |
 | `FUNC-block-messwerk` | compose | `FUNC-eingaenge-nur-aus` |
 | `FUNC-block-messwerk` | compose | `FUNC-fit-advisory` |
 | `FUNC-block-messwerk` | compose | `FUNC-function-criticality` |
+| `FUNC-block-messwerk` | compose | `FUNC-grenze-nur-mit-schema` |
 | `FUNC-block-messwerk` | compose | `FUNC-module-metrics` |
 | `FUNC-block-messwerk` | compose | `FUNC-score-completeness` |
 | `FUNC-block-messwerk` | compose | `FUNC-select-tests` |
@@ -2760,6 +2772,9 @@
 | `FUNC-deduce-tests` | io | `FLOW-test-selection` |
 | `FUNC-deduce-tests` | satisfy | `REQ-impact-based-testing` |
 | `FUNC-deduce-tests` | satisfy | `REQ-tests-aufloesen` |
+| `FUNC-ein-adapter-je-akteur` | allocate | `MOD-kernel-measure` |
+| `FUNC-ein-adapter-je-akteur` | io | `FLOW-adapter-befund` |
+| `FUNC-ein-adapter-je-akteur` | satisfy | `REQ-ein-adapter-je-akteur` |
 | `FUNC-eingaenge-nur-aus` | allocate | `MOD-kernel-measure` |
 | `FUNC-eingaenge-nur-aus` | io | `FLOW-eingangs-befund` |
 | `FUNC-eingaenge-nur-aus` | satisfy | `REQ-eingaenge-nur-aus-liste` |
@@ -2879,6 +2894,9 @@
 | `FUNC-graph-suggest` | io | `FLOW-zug-anfrage-suggest` |
 | `FUNC-graph-suggest` | satisfy | `REQ-applied-suggestion-moves-target` |
 | `FUNC-graph-suggest` | satisfy | `REQ-target-shifts-ranking` |
+| `FUNC-grenze-nur-mit-schema` | allocate | `MOD-kernel-measure` |
+| `FUNC-grenze-nur-mit-schema` | io | `FLOW-grenz-befund` |
+| `FUNC-grenze-nur-mit-schema` | satisfy | `REQ-grenze-nur-mit-schema` |
 | `FUNC-gve-sessions` | allocate | `MOD-surface` |
 | `FUNC-gve-sessions` | io | `FLOW-session-registry` |
 | `FUNC-gve-sessions` | satisfy | `REQ-sitzungen-tragen-ein` |
@@ -3520,6 +3538,10 @@
 | `TEST-constraint-ein-schreibweg` | verify | `REQ-ein-schreibweg` |
 | `TEST-constraint-ein-schreibweg` | verify | `REQ-eingaenge-nur-aus-liste` |
 | `TEST-constraint-ein-schreibweg` | verify | `SCHEMA-eingangs-befund` |
+| `TEST-constraint-grenze-adapter` | verify | `REQ-ein-adapter-je-akteur` |
+| `TEST-constraint-grenze-adapter` | verify | `REQ-grenze-nur-mit-schema` |
+| `TEST-constraint-grenze-adapter` | verify | `SCHEMA-adapter-befund` |
+| `TEST-constraint-grenze-adapter` | verify | `SCHEMA-grenz-befund` |
 | `TEST-contracts-kernel` | verify | `SCHEMA-graph-delta` |
 | `TEST-contracts-kernel` | verify | `SCHEMA-ontology-json` |
 | `TEST-contracts-surface` | verify | `SCHEMA-audit-stats` |

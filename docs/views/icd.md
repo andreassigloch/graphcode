@@ -4,13 +4,14 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 63 SCHEMA · 257 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 65 SCHEMA · 259 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
 | `SCHEMA-action` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-adapter-befund` | src/kernel/measure/constraints.ts#AdapterBefund | n/a |
 | `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit-stats.ts#AuditStatsSchema | reviewed |
 | `SCHEMA-branch-merge-report` | src/kernel/merge.ts#MergeReportSchema | n/a |
@@ -27,6 +28,7 @@
 | `SCHEMA-function-criticality` | packages/contracts/src/se/function-criticality.ts#FunctionCriticality | reviewed |
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-graph-delta` | src/kernel/graph-store.ts#GraphDeltaSchema | n/a |
+| `SCHEMA-grenz-befund` | src/kernel/measure/constraints.ts#GrenzBefund | n/a |
 | `SCHEMA-harness-handle` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
@@ -79,6 +81,7 @@
 | Interface (FLOW) | Producer | Consumer |
 |---|---|---|
 | `FLOW-action` | `FUNC-goal-steerer` | `FUNC-agent-loop` |
+| `FLOW-adapter-befund` | `FUNC-ein-adapter-je-akteur` | `FUNC-verify-lane-model` |
 | `FLOW-anleitung-author-actor` | `FUNC-author-actor` | `FUNC-agent-loop` |
 | `FLOW-anleitung-author-req` | `FUNC-author-req` | `FUNC-agent-loop` |
 | `FLOW-anleitung-author-uc` | `FUNC-author-uc` | `FUNC-agent-loop` |
@@ -173,9 +176,10 @@
 | `FLOW-generation-request` | `FUNC-graph-generate-tool` | `FUNC-generation-step` |
 | `FLOW-generation-step-vorschlag` | `FUNC-generation-step` | `FUNC-vorschlag` |
 | `FLOW-graph-delta` | `FUNC-mutate` | `FUNC-graph-store` |
-| `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-eingaenge-nur-aus` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` |
+| `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-ein-adapter-je-akteur` · `FUNC-eingaenge-nur-aus` · `FUNC-grenze-nur-mit-schema` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` |
 | `FLOW-graph-state` | `FUNC-graph-store` | `FUNC-check-code-conformance` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-metrics` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-import-code-verb` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` |
 | `FLOW-graph-state-eval` | `FUNC-graph-store` | `FUNC-evaluate-rules` |
+| `FLOW-grenz-befund` | `FUNC-grenze-nur-mit-schema` | `FUNC-verify-lane-model` |
 | `FLOW-gve-attach` | `FUNC-serve-stdio` | `FUNC-gve-supervise` |
 | `FLOW-gve-stop` | `FUNC-session-shutdown` | `FUNC-gve-supervise` |
 | `FLOW-harness-handle` | `FUNC-create-harness` | `FUNC-import-code-verb` · `FUNC-own-kuzu-host` · `FUNC-rewind` · `FUNC-serve-stdio` |

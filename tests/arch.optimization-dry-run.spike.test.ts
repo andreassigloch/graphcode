@@ -530,10 +530,14 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // Spuren verify:code/verify:full ihre gemeinsamen Funktionen Lauf beurteilen und Aenderung melden mit vier
       // Fluessen bekamen (Steuerwert am Start unveraendert 8,502): drei Zuege statt vier. Betrieb nimmt audit_stats
       // nicht mehr auf. Weiter derselbe Befund (ITEM-2026-798).
+      // CR-GC-913 (graphVersion 1273) — NEU GEMESSEN, nachdem die Pruefungen grenzeNurMitSchema und
+      // einAdapterJeAkteur wie eingaengeNurAus in die Modell-Spur kamen (drei Vertraege an der Grenze
+      // dev-scripts/kernel-measure, CR-01, Steuerwert am Start 8,502 -> 9,002): dieselben drei Zuege, Grounding
+      // nimmt Bedienung jetzt vor Betrieb graph_readiness auf. Weiter derselbe Befund (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
-        'FUNC-block-betrieb -compose-> FUNC-graph-readiness (retire FUNC-graph-readiness)',
         'FUNC-block-grounding -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
+        'FUNC-block-betrieb -compose-> FUNC-graph-readiness (retire FUNC-graph-readiness)',
       ]);
       expect(
         rest
@@ -584,9 +588,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-918 (graphVersion 1247) — NEU GEMESSEN: nach den drei Zuegen steht R-04 @ MOD-projections vorn. Die
       // Spuren in MOD-dev-scripts rufen laufUrteil aus MOD-projections; die Vertraege SCHEMA-vitest-lauf und
       // SCHEMA-lauf-urteil kamen an die Grenze von projections (27 -> 29).
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-projections — bitte neu messen').toEqual({
-        ruleId: 'R-04',
-        elementId: 'MOD-projections',
+      // CR-GC-913 (graphVersion 1273) — NEU GEMESSEN: nach den drei Zuegen steht BW-02 @ FUNC-block-grounding
+      // vorn, wie nach CR-GC-951. Die zwei neuen Befund-Vertraege an der Grenze dev-scripts/kernel-measure heben
+      // den Steuerwert am Start (8,502 -> 9,002) und ordnen die Zuege neu.
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
+        ruleId: 'BW-02',
+        elementId: 'FUNC-block-grounding',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);
