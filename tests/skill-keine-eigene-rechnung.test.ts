@@ -1,4 +1,6 @@
 /**
+ * TEST-skill-keine-eigene-rechnung
+ *
  * CR-GC-940 — Skills führen keine eigene Liste von Regel-IDs, keine Schwelle, keine eigene
  * Reihenfolge und urteilen über Bindung nur mit der Deckung; sie nennen Abgeschafftes nicht.
  *

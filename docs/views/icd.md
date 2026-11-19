@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 65 SCHEMA · 259 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 70 SCHEMA · 259 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -34,8 +34,11 @@
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
 | `SCHEMA-import-access` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-init-report` | src/surface/init-verb.ts#InitReportSchema | n/a |
+| `SCHEMA-install-result` | src/surface/scaffold.ts#InstallResultSchema | n/a |
 | `SCHEMA-lauf-urteil` | src/projections/test-schlupf.ts#LaufUrteilSchema | n/a |
 | `SCHEMA-lock-owner` | src/kernel/lock-owner-contract.ts#LockOwner | n/a |
+| `SCHEMA-markdown-text` | src/projections/exporter.ts#MarkdownTextSchema | n/a |
 | `SCHEMA-markdown-view` | src/projections/exporter.ts#MarkdownViewSchema | reviewed |
 | `SCHEMA-mcp-tool` | src/kernel/tool-contract.ts#MCPToolSchema | n/a |
 | `SCHEMA-mcp-tool-registry` | src/kernel/tool-contract.ts#MCPToolRegistrySchema | n/a |
@@ -52,6 +55,7 @@
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
 | `SCHEMA-real-ref` | packages/contracts/src/se/ontology.ts#RealRefSchema | reviewed |
 | `SCHEMA-rejected-trace` | src/kernel/harness-import.ts#RejectedTraceSchema | n/a |
+| `SCHEMA-repo-status` | src/surface/status.ts#RepoStatusSchema | n/a |
 | `SCHEMA-rewind-summary` | src/surface/rewind.ts#RewindSummarySchema | n/a |
 | `SCHEMA-rule-violation` | packages/contracts/src/harness/index.ts#RuleViolationSchema | n/a |
 | `SCHEMA-schema-fingerprint` | src/kernel/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
@@ -71,6 +75,7 @@
 | `SCHEMA-tool-context` | src/surface/tool-context-contract.ts#ToolContext | n/a |
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
+| `SCHEMA-upgrade-report` | src/surface/upgrade.ts#UpgradeReportSchema | n/a |
 | `SCHEMA-verlauf` | src/projections/verlauf.ts#VerlaufSchema | n/a |
 | `SCHEMA-vitest-lauf` | src/projections/test-schlupf.ts#VitestLaufSchema | n/a |
 | `SCHEMA-work-set` | ⚠ kein realRef (R-26) | n/a |

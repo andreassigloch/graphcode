@@ -77,6 +77,7 @@
 | `REQ-risk-stale-test-result` | Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Testergebnis, das vor der letzten Aenderung am Test oder am geprueften Code entstand. | ✓ |
 | `REQ-risk-steering-delta-missing` | Das Delta der Steuerung fehlt oder ist falsch in der Antwort auf einen Zug. Der Agent sieht einen falschen Fortschritt. | ✓ |
 | `REQ-risk-store-unreadable` | Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette durch den Store erreicht ihr Ergebnis. | ✓ |
+| `REQ-se-plan-stempel-ganz-schreiben` | Jeder Analyse-Skill mit Stempel (se-conops, se-trade, se-irr, se-fmea) liest die vorhandenen Stempel, uebernimmt sie und schreibt die Menge ganz zurueck. | ✓ |
 | `REQ-self-contained-dist` | Zielprojekt darf NICHT von einer Kopie des aimprove-Quellbaums abhängen; Distribution self-contained (versionierte Deps). Blockiert auf D5 + CR-GC-100..103. | ✓ |
 | `REQ-shared-views-no-fork` | views.ts (testmatrix/FMEA/RTM/IRR/NFR/arch…) aus aimprove → @sigloch/graph-api-core; lokalen BQ-Regel-Fork (aimpro/src/contracts/se) retiren oder via Familie-Review nach contracts migrieren (Drift-Lock L1/L2). | ✓ |
 | `REQ-single-kuzu-owner` | Genau ein Host-Prozess besitzt .graphcode/kuzu (single-writer; kein 2. DB-Handle). (SPEC §4, L1) | ✓ |
@@ -85,7 +86,6 @@
 | `REQ-skill-authors-through-gate` | Kein Autoren-Skill im Modul agent-surface nennt einen direkten Schreibzugriff auf die Graph-SSOT; jede Modellaenderung steht in der Anleitung als graph_mutate-Aufruf. | ✓ |
 | `REQ-skill-reads-only` | Kein lesender Skill im Modul agent-surface ruft ein schreibendes Werkzeug auf; jede Aussage seiner Ausgabe stammt aus mindestens einem lesenden Werkzeug der MCP-Registry (graph_readiness, rules_evaluate, rules_get_violations, graph_tests, audit_stats, graph_help, graph_elements). | ✓ |
 | `REQ-small-model-viable` | Deterministische, modellfreie Gates/Regeln + Query-Precision halten kleine/lokale LLMs tragfähig; Kern läuft ohne LLM (degraded). | ✓ |
-| `REQ-steuerung-deterministisch` | Die Steuerschleife empfiehlt bei gleichem Graphen den gleichen naechsten Schritt. | ✓ |
 | `REQ-structural-rule-shared` | Trace-pair legality is enforced by the one shared engine rule R-18 (@sigloch/contracts/se), not a consumer-local validator. graphcodes Gate lehnt strukturell-invalide Mutationen via Engine ab (kein separater codec.validate-Aufruf); jeder Konsument der die Engine laeuft erbt die Pruefung. (CR-GC-205 Item 1) | ✓ |
 | `REQ-structure-driven` | Architektur/Interfaces/Integration/Tests werden strikt aus dem governten Graph abgeleitet (Schema-first), nicht ad-hoc. | ✓ |
 | `REQ-test-skill-red-first` | Die Test-Skills im Modul agent-surface (se-test, se-test-ui) lassen einen Test erst als Beleg gelten, wenn er gegen den kaputten Code aus genau dem benannten Grund rot gesehen wurde. | ✓ |

@@ -1,4 +1,6 @@
 /**
+ * TEST-skill-faq-angleich
+ *
  * CR-GC-939 — Skills folgen den entschiedenen Modellfragen der FAQ.
  *
  * Entschieden (FAQ keine-kette-fuer-eigenschaft, zerlegungsbreite, import-code-sys,

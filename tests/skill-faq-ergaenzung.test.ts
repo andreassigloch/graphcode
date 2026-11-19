@@ -1,4 +1,6 @@
 /**
+ * TEST-skill-faq-ergaenzung
+ *
  * CR-GC-942 und CR-GC-944 — Skills tragen die entschiedenen Sätze der FAQ, die ihrem Schritt fehlten, und nennen
  * den abgeschafften Parameter `commands` nicht mehr.
  *

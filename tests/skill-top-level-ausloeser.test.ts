@@ -1,4 +1,6 @@
 /**
+ * TEST-skill-top-level-ausloeser
+ *
  * CR-GC-873 — se:top-level Regel 4 und das Merkmal `sync` beim Kettenschnitt.
  *
  * Regel 4 hiess „One trigger per chain" und verbot damit auch den Akteur in der Mitte (die

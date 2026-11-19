@@ -6623,7 +6623,7 @@
       "id": "FUNC-apply-reseed",
       "type": "FUNC",
       "name": "applyReseed",
-      "description": "Setzt den Store aus einem Bestand neu auf, statt ihn zu ergaenzen. Legt vorher eine Sicherung an, weil ein Reseed kein Merge ist.",
+      "description": "Setzt den Store aus einem Bestand neu auf, statt ihn zu ergaenzen: leert den Store, laedt den Snapshot und loescht die Exportmarke. Legt keine Sicherung an; eine Sicherung kennt nur das Verb import-code.",
       "status": "done",
       "realRef": {
         "file": "src/kernel/harness-import.ts",
@@ -8018,7 +8018,15 @@
       "description": "Die npm-Spur verify:code: plant die Code-Spur, faehrt vitest auf der Auswahl oder der vollen Suite und meldet das Ergebnis ueber graph_test_ingest zurueck (meldeZurueck). Beleg: scripts/verify-code.mjs.",
       "realRef": {
         "file": "scripts/verify-code.mjs"
-      }
+      },
+      "acceptedFindings": [
+        {
+          "ruleId": "R-02",
+          "reason": "Innerer Schritt ohne eigene Zusage: scripts/verify-code.mjs verdrahtet nur FUNC-plan-code-lane, FUNC-lauf-urteil und FUNC-aenderung-melden, die je eigene REQ mit TEST tragen; kein Test startet das Skript (CR-GC-954).",
+          "by": "agent",
+          "at": "2026-11-19"
+        }
+      ]
     },
     {
       "id": "FUNC-verify-lane-full",
@@ -8210,6 +8218,15 @@
       ]
     },
     {
+      "id": "REQ-advisory-vor-nach",
+      "type": "REQ",
+      "name": "Fit-Advisory nennt Vektor vor",
+      "description": "Wenn ein Zug probiert wird, liefert computeFitAdvisory aus dem Graphen vor und nach dem Zug die sechs Dimensionen mit Vektor vorher, nachher, Delta und als regressions genau die Dimensionen mit Delta unter null; ein Zug ohne Wirkung auf die Topologie ergibt Delta null.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-agent-agnostic",
       "type": "REQ",
       "name": "Agent-agnostische MCP-Surface",
@@ -8233,7 +8250,7 @@
       "id": "REQ-analyse-artefakt-vor-stempel",
       "type": "REQ",
       "name": "Analyse zaehlt nur mit Ergebnis im Graphen",
-      "description": "Der Bauplan gilt erst mit offenen Auftraegen im Graphen als durchgefuehrt; ein von Hand gesetzter Stempel schliesst seinen Eintritt nicht. Jeder Analyse-Skill mit Stempel schreibt ihn durch Lesen, Uebernehmen und ganz Schreiben, sodass kein Stempel einer anderen Analyse verloren geht.",
+      "description": "Eine Analyse gilt nur mit ihrem Ergebnis im Graphen als durchgefuehrt, und kein Stempel einer Analyse geht durch den Stempel einer anderen verloren.",
       "kinds": [
         "functional"
       ]
@@ -8242,7 +8259,7 @@
       "id": "REQ-analyse-zaehlt-mit-auftrag",
       "type": "REQ",
       "name": "Analyse zaehlt nur mit Auftrag",
-      "description": "Wenn ein Analyse-Stempel ohne offenen Auftrag im Graphen steht, zaehlt graph_generate die Analyse nicht als durchgefuehrt.",
+      "description": "Ein von Hand gesetzter Bauplan-Stempel schliesst den Eintritt des Bauplans nicht; graph_generate nennt den Eintritt weiter als offen.",
       "kinds": [
         "functional"
       ]
@@ -8268,10 +8285,10 @@
       ]
     },
     {
-      "id": "REQ-audit-stats-liefert-zaehlung",
+      "id": "REQ-audit-eintrag-code-stand",
       "type": "REQ",
-      "name": "audit_stats zaehlt Zuege",
-      "description": "Wenn audit_stats aufgerufen wird, liefert es die Zahl der Zuege je Urteil und je Urheber.",
+      "name": "Audit-Eintrag trägt den Code-Stand",
+      "description": "Wenn graph_mutate einen Aufruf protokolliert, schreibt der Werkzeug-Kontext in den Audit-Eintrag, auch in die Vorschau, codeState mit head als Git-Commit und dirty für offene Änderungen unter callScope; ohne Commit fehlt codeState.",
       "kinds": [
         "functional"
       ]
@@ -8280,7 +8297,7 @@
       "id": "REQ-audit-trail",
       "type": "REQ",
       "name": "Audit-Trail / History",
-      "description": "CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik.",
+      "description": "Das System liefert die Historie der Mutationen und eine Statistik darueber.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -8292,7 +8309,43 @@
       "id": "REQ-audit-trail-liefert-zuege",
       "type": "REQ",
       "name": "audit_trail liefert Zuege",
-      "description": "Wenn audit_trail aufgerufen wird, liefert es die Zuege mit Urteil, Urheber, Zeit und Version, neueste zuerst.",
+      "description": "Wenn audit_trail aufgerufen wird, liefert es die Zuege mit Urteil, Urheber, Zeit und Version in zeitlicher Reihenfolge; mit limit die letzten N.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-author-actor-kein-eigenes-teil",
+      "type": "REQ",
+      "name": "Eigenes Produktteil ist kein Akteur",
+      "description": "Wenn der Skill se:author-actor aufgerufen wird, gibt er eine Anleitung zurück, die einen Teil des eigenen Produkts nie als Akteur gelten lässt und einen eigenen Speicher als sync-Fluss mit SCHEMA statt als Akteur schneidet.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-author-req-eine-uid-je-testdatei",
+      "type": "REQ",
+      "name": "Testdatei nennt genau eine TEST-uid",
+      "description": "Wenn der Skill se:author-req aufgerufen wird, gibt er eine Anleitung zurück, nach der der Kopfkommentar der Testdatei genau eine TEST-uid nennt und eine Datei, die schon zu einem TEST gehört, keinen zweiten bekommt.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-author-uc-name-nennt-beduerfnis",
+      "type": "REQ",
+      "name": "UC-Name nennt das Bedürfnis",
+      "description": "Wenn der Skill se:author-uc aufgerufen wird, gibt er eine Anleitung zurück, nach der ein UC- und ein Kettenname das Bedürfnis des Akteurs als Verb und Objekt nennt, nicht die Lösung.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-authoring-guide-nennt-kanten",
+      "type": "REQ",
+      "name": "Kanten-Grammatik je Elementtyp",
+      "description": "Wenn der Agent graph_authoring_guide mit einem Elementtyp aufruft, antwortet graph_authoring_guide mit den erlaubten ausgehenden und eingehenden Kanten dieses Typs samt Pflicht-Attributen und ändert dabei das Modell nicht.",
       "kinds": [
         "functional"
       ]
@@ -8301,7 +8354,7 @@
       "id": "REQ-auto-export-nach-zug",
       "type": "REQ",
       "name": "Export nach jedem Zug",
-      "description": "Nach jeder angenommenen Mutation schreibt der Host den Snapshot nach docs/graph, ohne Aufruf des Agenten.",
+      "description": "Nach einer angenommenen Mutation, die den Graphen aendert, schreibt der Host den Snapshot und die Sichten nach docs, ohne Aufruf des Agenten.",
       "kinds": [
         "functional"
       ]
@@ -8310,7 +8363,7 @@
       "id": "REQ-auto-persist-merge",
       "type": "REQ",
       "name": "Auto-Persist + conflict-free Merge",
-      "description": "Auto-Rebuild/Persist bei Commit + conflict-free Merge-Strategie fürs Graph-Artefakt. (R2)",
+      "description": "Der Snapshot des Graphen folgt jeder Aenderung automatisch, und das Zusammenfuehren zweier Staende meldet Konflikte, statt still zu ueberschreiben.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -8361,7 +8414,7 @@
       "id": "REQ-bootstrap-through-gate",
       "type": "REQ",
       "name": "Ungeprueften Bestand nur durchs Gate",
-      "description": "Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder ein Kaltstart), gelangt ausschliesslich ueber graph_mutate und damit durch das Gate in den Store. Das Laden eines schon governten, committeten Snapshots (seedFromJsonFile, importOntologyGraph, reseed, rewind) ist eine Operation, kein Edit: es ersetzt den Zustand ohne Gate, prueft aber jede Kante mit derselben Routine wie R-18, haelt musterfremde zurueck und meldet REQ ohne TEST, nie still. (CR-GC-122, CR-GC-467, CR-GC-530, CR-GC-840)",
+      "description": "Ein Bestand, der noch nie gegen die Grammatik geprueft wurde (Format-E aus graphify, Slicer, Dokument oder Kaltstart), gelangt nur durch das Gate in den Store. Das Laden eines schon geprueften, committeten Snapshots ersetzt den Zustand ohne Gate, haelt aber Kanten ohne Kantenmuster zurueck und meldet jede REQ ohne TEST.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -8407,6 +8460,24 @@
       "name": "Kettenkennzahlen mit Bewertbarkeitsquote",
       "description": "graph_metrics MUSS je Wirkkette die Kettenkennzahlen liefern oder, wenn die Kette nicht bewertbar ist, den Grund statt jeder Zahl; die Bewertbarkeitsquote, bewertbare durch alle Ketten, MUSS in derselben Antwort stehen. Gerechnet wird an EINER Stelle in contracts; das Werkzeug zeigt nur an.",
       "status": "done",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-cli-hilfe-fuehrt-nicht-aus",
+      "type": "REQ",
+      "name": "Hilfe und Tippfehler führen nichts aus",
+      "description": "Wenn der CLI-Einstieg ein Verb mit --help oder mit einem unbekannten Argument erhält, führt main das Verb nicht aus: bei --help gibt es die Usage auf stderr aus und endet mit Exit-Code 0, bei dem Argument endet es mit Exit-Code 1 und nennt es.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-close-violations-nimmt-nur-guide-regeln",
+      "type": "REQ",
+      "name": "Abnahme nur nach Guide",
+      "description": "Wenn der Skill se:close-violations aufgerufen wird, gibt er eine Anleitung zurück, die einen Befund nur abnimmt, wenn graph_authoring_guide die Regel als enumValues von acceptedFindings nennt, und jeden anderen im Modell behebt oder dem Nutzer vorlegt.",
       "kinds": [
         "functional"
       ]
@@ -8483,17 +8554,6 @@
       ]
     },
     {
-      "id": "REQ-conflict-free-merge",
-      "type": "REQ",
-      "name": "Conflict-free Graph-Merge",
-      "description": "FUNC-merge-nodes: Branch-/Multi-Dev-Merge conflict-free (deterministische Serialisierung + merge_nodes).",
-      "status": "open",
-      "created_at": "2026-06-16T00:00:00.000Z",
-      "kinds": [
-        "functional"
-      ]
-    },
-    {
       "id": "REQ-conops-zugangsliste",
       "type": "REQ",
       "name": "se-conops leitet Zugangsliste ab",
@@ -8543,15 +8603,6 @@
       ]
     },
     {
-      "id": "REQ-delta-rankt-kandidaten",
-      "type": "REQ",
-      "name": "Delta rankt Kandidaten",
-      "description": "Wenn Kandidaten vorliegen, liefert die Delta-Berechnung je Kandidat das Delta derselben Kenngroessen und rankt danach.",
-      "kinds": [
-        "functional"
-      ]
-    },
-    {
       "id": "REQ-deterministic-serialization",
       "type": "REQ",
       "name": "Deterministische Serialisierung",
@@ -8566,7 +8617,7 @@
       "id": "REQ-diff-an-viewer",
       "type": "REQ",
       "name": "Diff an Viewer",
-      "description": "Wenn ein Ereignis vorliegt, sendet die Bruecke es in Versionsreihenfolge an jeden verbundenen Viewer und haelt den letzten Stand fuer spaet verbundene Viewer bereit.",
+      "description": "Wenn ein Ereignis vorliegt, sendet die Bruecke es mit fortlaufender Nummer an jeden verbundenen Viewer.",
       "kinds": [
         "functional"
       ]
@@ -8655,7 +8706,34 @@
       "id": "REQ-element-contract-finding",
       "type": "REQ",
       "name": "Wert ausserhalb des Element-Vertrags ist ein Befund, kein Abbruch",
-      "description": "Ein Wert ausserhalb des Element-Vertrags MUSS als Befund der Regel R-08 erscheinen und darf keine Messung abbrechen: graph_readiness und graph_generate antworten an einem Modell mit solchem Altbestand und nennen den Befund; das Gate weist einen Zug ab, der einen solchen Wert neu einfuehrt, und laesst Altbestand an einem unberuehrten Element stehen. (CR-GC-786)",
+      "description": "Ein Wert ausserhalb des Element-Vertrags erscheint als Befund der Regel R-08 und bricht keine Messung ab: graph_readiness und graph_generate antworten an einem Modell mit solchem Altbestand und nennen den Befund; das Gate weist einen Zug ab, der einen solchen Wert neu einfuehrt, und laesst Altbestand an einem unberuehrten Element stehen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-elemente-nach-typ-und-suche",
+      "type": "REQ",
+      "name": "Elemente nach Typ und Suchbegriff",
+      "description": "Wenn der Agent Elemente mit type und search anfragt, liefert listElements nur Knoten dieses Typs, deren uid, name oder description den Suchbegriff ohne Beachtung der Groß- und Kleinschreibung enthält.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-export-fasst-zusammen",
+      "type": "REQ",
+      "name": "Export fasst Mutationen zusammen",
+      "description": "Mutationen innerhalb der Ruhezeit nach der ersten Mutation ergeben genau einen Export; eine Mutation waehrend eines laufenden Exports zieht genau einen Nachlauf.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-export-fehler-kippt-nicht",
+      "type": "REQ",
+      "name": "Exportfehler kippt keine Mutation",
+      "description": "Scheitert der Export nach einer Mutation, bleibt die Mutation im Store bestehen und der Fehler wird gemeldet.",
       "kinds": [
         "functional"
       ]
@@ -8673,7 +8751,7 @@
       "id": "REQ-export-marke-setzen",
       "type": "REQ",
       "name": "Exportmarke setzen",
-      "description": "Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege.",
+      "description": "Nach jeder angenommenen Mutation, die den Graphen aendert, steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege.",
       "kinds": [
         "functional"
       ]
@@ -8682,7 +8760,7 @@
       "id": "REQ-export-marker-tracks-drift",
       "type": "REQ",
       "name": "Marke haelt den Rueckstand des Exports fest",
-      "description": "Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen.",
+      "description": "Nach jeder angenommenen Mutation, die den Graphen aendert, steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen.",
       "role": "mitigation",
       "kinds": [
         "functional"
@@ -8723,6 +8801,15 @@
       "type": "REQ",
       "name": "Erste Sitzung erwirbt den Store-Lock",
       "description": "Die erste Sitzung eines Repos erwirbt den Store-Lock atomar; ein zweiter Erwerb wird laut und mit Nennung des Besitzers abgewiesen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-fitness-sechs-dimensionen",
+      "type": "REQ",
+      "name": "Architektur-Fitness liefert sechs Dimensionen",
+      "description": "Wenn eine Fitness-Anfrage mit dem Ontologie-Graphen eingeht, liefert die Architektur-Fitness (metrics von se-engine, Ebene arch) den Vektor mit den sechs Dimensionen modifiability, faultTolerance, flowEfficiency, coherence, viability und scalability, je als endliche Zahl.",
       "kinds": [
         "functional"
       ]
@@ -8782,7 +8869,7 @@
       "id": "REQ-full-run-on-probation",
       "type": "REQ",
       "name": "Volllauf auf Bewaehrung",
-      "description": "Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter.",
+      "description": "Jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag, und nennt die Zahl der CRs der CODE-Spur ohne Schlupf in Folge.",
       "kinds": [
         "functional"
       ],
@@ -8912,7 +8999,7 @@
       "id": "REQ-graph-state-recall",
       "type": "REQ",
       "name": "Frueheren Graph-Stand reproduzieren",
-      "description": "Ein frueherer Graph-Stand ist mit einem Kommando reproduzierbar: graphcode rewind <ref> liest den committeten Snapshot aus dem Git-Objektspeicher und reseedet den Store daraus. Der committete Snapshot ist SSOT-at-rest / history-of-record, der Kuzu-Store eine abgeleitete Working-Copy; reseed loescht+reimportiert in-process hinter dem Single-Writer (kein zweites Handle). Der Working-Tree wird nicht angefasst. (CR-GC-217, CR-GC-311)",
+      "description": "Ein frueherer Graph-Stand laesst sich mit einem Kommando herstellen: graphcode rewind <ref> setzt den Store auf den Snapshot, den der Commit <ref> enthaelt, und laesst den Arbeitsbaum unveraendert.",
       "status": "done",
       "kinds": [
         "functional"
@@ -8922,7 +9009,7 @@
       "id": "REQ-graph-tests-operational",
       "type": "REQ",
       "name": "graph_tests liefert den korrekten selektiven Testset für einen Code-Change",
-      "description": "Ein Code-Changeset (MOD/FUNC/git-diff→Knoten) → graph_tests → vitest run nur-betroffene-Dateien, das JEDE vom Change berührte Testdatei enthält (kein false-green) und unbeteiligte ausschliesst. Erfordert testRef auf allen lauffähigen TESTs + gerichtete Auflösung statt reinem incoming-impact.",
+      "description": "Zu einem Changeset liefert graph_tests den vitest-Aufruf ueber die Testdateien aller betroffenen TEST-Knoten und ueber keine unbeteiligte.",
       "status": "done",
       "kinds": [
         "functional"
@@ -8988,7 +9075,7 @@
       "id": "REQ-health-antwortet-stand",
       "type": "REQ",
       "name": "Health antwortet mit Betriebsstand",
-      "description": "Wenn GET /health eintrifft, antwortet der Endpoint mit dem gesammelten Betriebsstand, nicht nur mit der Prozess-Lebendigkeit.",
+      "description": "Wenn GET /health eintrifft, antwortet der Endpunkt mit Store-Erreichbarkeit und Gate-Funktion aus einer echten Abfrage und mit den Versionen von Ontologie, Regeln und Metamodell.",
       "kinds": [
         "functional"
       ]
@@ -9017,6 +9104,15 @@
       "type": "REQ",
       "name": "Zurueckgehaltene Kanten stehen im Stand-Bericht",
       "description": "graph_readiness nennt jede zurueckgehaltene Kante, nach jedem Neustart erneut.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-hilfe-erklaert-token",
+      "type": "REQ",
+      "name": "Hilfe erklärt ein Token",
+      "description": "Wenn der Agent graph_help mit einem token aufruft, antwortet graph_help mit dem Eintrag zu diesem token in den Schichten title, plain, se und prompt.",
       "kinds": [
         "functional"
       ]
@@ -9056,7 +9152,7 @@
       "id": "REQ-host-end-visible",
       "type": "REQ",
       "name": "Host-Ende ist fuer den Client sichtbar",
-      "description": "Endet ein Host, muss sein MCP-Client das Ende sehen, auch wenn der Viewer fuer eine zweite Sitzung weiterlaeuft; jeder Abbau endet nach hoechstens 3 s, auch nach Lock-Verlust. Ein Aufruf an einen beendeten Host haengt nie. (CR-GC-865)",
+      "description": "Endet ein Host, sieht sein MCP-Client das Ende, auch wenn der Viewer fuer eine zweite Sitzung weiterlaeuft; der Abbau endet nach hoechstens 3 s, auch nach Lock-Verlust.",
       "kinds": [
         "functional"
       ]
@@ -9065,7 +9161,7 @@
       "id": "REQ-host-ende-sichtbar-client",
       "type": "REQ",
       "name": "Client sieht Host-Ende",
-      "description": "Wenn ein Host endet, sieht sein MCP-Client das Ende, und ein Aufruf an den beendeten Host kehrt mit Fehler zurueck, statt zu haengen.",
+      "description": "Wenn ein Host endet, sieht sein MCP-Client das Ende.",
       "kinds": [
         "functional"
       ]
@@ -9100,10 +9196,19 @@
       ]
     },
     {
+      "id": "REQ-import-meldet-unbewiesene-req",
+      "type": "REQ",
+      "name": "Import meldet REQ ohne TEST",
+      "description": "Wenn ein Bestand direkt geladen wird, meldet der Import jede REQ ohne verifizierenden TEST und bricht auf Wunsch ab.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-import-nur-ueber-mutate",
       "type": "REQ",
       "name": "Import nur ueber graph_mutate",
-      "description": "Wenn ein ungepruefter Bestand (graphify, Dokument, Kaltstart) importiert wird, uebergibt der Import ihn als Batch an graph_mutate.",
+      "description": "Ein Kaltstart-Bestand in Format-E gelangt nur ueber graph_mutate in den Store; verletzt er eine Regel, weist das Gate ihn ab und der Store bleibt leer.",
       "kinds": [
         "functional"
       ]
@@ -9141,7 +9246,7 @@
       "id": "REQ-init-legt-an",
       "type": "REQ",
       "name": "init legt an",
-      "description": "Wenn graphcode init in einem Repo laeuft, legt es .graphcode/, .claude/hooks, .mcp.json und den Controller an und installiert die Abhaengigkeit mit dem Paketmanager der Lockdatei.",
+      "description": "graphcode init legt .graphcode/, die Hooks, die MCP-Konfiguration und GRAPHCODE.md an und installiert die Abhaengigkeit mit dem Paketmanager der Lockdatei.",
       "kinds": [
         "functional"
       ]
@@ -9219,6 +9324,15 @@
       ]
     },
     {
+      "id": "REQ-kritikalitaet-je-func",
+      "type": "REQ",
+      "name": "Kritikalität je FUNC",
+      "description": "Wenn eine Kennzahlen-Anfrage mit dem Ontologie-Graphen eingeht, liefert functionCriticality je FUNC genau eine Zeile mit funcId, funcName, chains und useCases, die kritischste zuerst; eine FUNC ohne Kette steht mit chains 0 und trägt kein Infrastruktur-Flag.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-lane-red-without-report",
       "type": "REQ",
       "name": "Spur ohne Bericht ist rot",
@@ -9231,7 +9345,7 @@
       "id": "REQ-lane-reports-change",
       "type": "REQ",
       "name": "Die Spur meldet Aenderung und Lauf zurueck",
-      "description": "Die Spur CODE und der Volllauf melden nach jedem Lauf die Knoten der geaenderten Dateien und den Bericht des Laufs an graph_test_ingest. Die Knoten kommen aus derselben Abbildung von Datei auf Knoten wie die Testauswahl. Scheitert die Meldung, endet der Lauf rot. Der Planmodus meldet nichts.",
+      "description": "Die CODE-Spur und der Volllauf melden nach jedem Lauf die betroffenen Knoten und den Laufbericht an graph_test_ingest; scheitert die Meldung, endet der Lauf rot; der Planmodus meldet nichts.",
       "role": "mitigation",
       "kinds": [
         "functional"
@@ -9324,16 +9438,7 @@
       "id": "REQ-merge-ohne-konflikt",
       "type": "REQ",
       "name": "Merge ohne Konflikt",
-      "description": "Wenn zwei Staende desselben Snapshots zusammengefuehrt werden, entsteht ein Graph ohne doppelte Kante und ohne Konfliktmarke.",
-      "kinds": [
-        "functional"
-      ]
-    },
-    {
-      "id": "REQ-messpfad-liefert-stand",
-      "type": "REQ",
-      "name": "Messpfad liefert Stand",
-      "description": "Wenn ein Steuerschritt beginnt, liefert der eine Messpfad Regelstrom und Befunde je Element aus dem Graphen.",
+      "description": "Das Nachspielen eines Zweigs bringt dessen Zuege durch das Gate in den Zielstand; ein widersprechender Zug wird uebersprungen und berichtet, ein bereits enthaltener Zug wird uebersprungen.",
       "kinds": [
         "functional"
       ]
@@ -9405,7 +9510,7 @@
       "id": "REQ-modell-befragen",
       "type": "REQ",
       "name": "Modell befragen statt nur schreiben",
-      "description": "Vor jedem Testlauf fragt die Sitzung den Graphen nach der Testauswahl der Aenderung und faehrt genau diese, die volle Suite nur vor dem Abschluss eines CR (GRAPHCODE.md, se-plan §7). se-retro misst Fragen an das Modell gegen Schreibzuege und den Anteil der Testlaeufe mit Auswahl aus dem Graphen. (CR-GC-899)",
+      "description": "GRAPHCODE.md nennt die Regel, vor jedem Testlauf die Testauswahl beim Graphen zu erfragen, und se-retro misst, wie oft das geschieht.",
       "kinds": [
         "functional"
       ]
@@ -9424,6 +9529,15 @@
       "type": "REQ",
       "name": "Modulebene-Skill liest",
       "description": "Der Skill se-modulebene MUSS seine Zahlen aus Regelbefunden, graph_metrics und Kanten lesen und DARF keine Kennzahl selbst rechnen. Er MUSS Modellfehler von Vorschlaegen trennen und die Modellfehler zuerst nennen. Jeder Befund im Modulbaum bekommt die Gegenprobe im Funktionsbaum und einen Beleg im Code. Vorschlaege gibt er in der festen Form fuer se:optimize ab: Zweck, Kette, Ort, Handlungsklasse, Prognose, Preis. Er wendet nichts an.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-modulkennzahlen-je-mod",
+      "type": "REQ",
+      "name": "Modulkennzahlen je MOD",
+      "description": "Wenn eine Kennzahlen-Anfrage mit dem Ontologie-Graphen eingeht, liefert moduleMetrics je MOD eine Zeile mit allocatedFuncs, fanIn, fanOut, instability, lcom4 und cohesion; wo nichts messbar ist, steht null statt 0.",
       "kinds": [
         "functional"
       ]
@@ -9532,7 +9646,7 @@
       "id": "REQ-plan-gruppen",
       "type": "REQ",
       "name": "Gruppen unabhaengiger CRs",
-      "description": "se-plan nennt je Meilenstein die Gruppen offener CRs, die gleichzeitig laufen duerfen (kein depends-on-Pfad, keine gemeinsame realRef-Datei), die implplan-Ansicht zeigt sie, und die Hauptsitzung startet je CR einer Gruppe einen Agenten im eigenen Worktree; nur sie schreibt in den Graph und rollt aus. (CR-GC-896)",
+      "description": "se-plan nennt je Meilenstein die Gruppen offener CRs, die gleichzeitig laufen duerfen (kein depends-on-Pfad, keine gemeinsame realRef-Datei), und die implplan-Ansicht zeigt sie.",
       "kinds": [
         "functional"
       ]
@@ -9702,6 +9816,15 @@
       ]
     },
     {
+      "id": "REQ-profil-laden",
+      "type": "REQ",
+      "name": "Zielprofil laden und prüfen",
+      "description": "Wenn die Profildatei vorliegt, liefert loadTargetProfile das Profil mit den Themen (intentAnchors); fehlt die Datei, liefert es null; eine Datei mit ungültigem JSON oder mit Gewichten scheitert mit einem Fehler, der Schema-Verstoß bzw. ungültiges JSON nennt.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-progressive-expansion",
       "type": "REQ",
       "name": "Progressive Query-Expansion",
@@ -9722,6 +9845,15 @@
       "created_at": "2026-08-16T00:00:00.000Z",
       "kinds": [
         "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-proxy-reicht-an-host",
+      "type": "REQ",
+      "name": "Proxy reicht den Aufruf an den Host",
+      "description": "Wenn eine Sitzung ohne Store-Besitz ein Werkzeug aufruft, reicht buildProxyRegistry den Aufruf über host.sock an den Host und gibt dessen Antwort zurück, auch das Urteil des Gates und einen Fehler des Werkzeugs.",
+      "kinds": [
+        "functional"
       ]
     },
     {
@@ -9781,7 +9913,7 @@
       "id": "REQ-readiness-schwaechste-stufe",
       "type": "REQ",
       "name": "Readiness nennt Stufe",
-      "description": "Wenn der Messstand vorliegt, nennt graph_readiness die Stufe mit offenen Befunden, an der die Steuerung ansetzt.",
+      "description": "Wenn graph_readiness aufgerufen wird, nennt es je Stufe die Zahl der offenen Befunde in fester Stufenfolge.",
       "kinds": [
         "functional"
       ]
@@ -9812,7 +9944,7 @@
       "id": "REQ-real-health-check",
       "type": "REQ",
       "name": "Health = echter Funktionscheck",
-      "description": "Der Health-Endpoint prueft Store-Erreichbarkeit, Gate-Funktion, Ontology/Rules/Contracts-Versionen und LLM/BYOK-Readiness, nicht nur Prozess-Liveness. aimprove-spezifische Felder (Sessions/Patterns) sind kein Health-Signal und werden entfernt.",
+      "description": "Der Health-Endpunkt prueft Store-Erreichbarkeit und Gate-Funktion und nennt die Versionen von Ontologie, Regeln und Metamodell, nicht nur die Lebendigkeit des Prozesses.",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
@@ -9859,7 +9991,7 @@
       "id": "REQ-repo-install",
       "type": "REQ",
       "name": "Ein-Kommando-Installation",
-      "description": "Installation der Harness in ein beliebiges Repo mit einem Kommando: scaffolds .graphcode/, .claude/hooks, .mcp.json, Controller und installiert die eingetragene Abhaengigkeit mit dem Paketmanager der Lockdatei. Die Ausgabe nennt dem Menschen die naechsten Schritte; JSON nur auf Wunsch (CR-GC-900).",
+      "description": "Ein Kommando installiert graphcode in ein beliebiges Repo: es legt .graphcode/, die Hooks und die MCP-Konfiguration an und installiert die Abhaengigkeit mit dem Paketmanager der Lockdatei. Die Ausgabe nennt dem Menschen die naechsten Schritte; JSON gibt es nur auf Wunsch.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -9882,7 +10014,7 @@
       "id": "REQ-repo-update",
       "type": "REQ",
       "name": "Update ohne Datenverlust",
-      "description": "Update aktualisiert installierte Artefakte und Pfade, ohne den lokalen Graph-Store (.graphcode/) zu verlieren. update, skills sync und upgrade entfernen se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift (CR-GC-879). update traegt Pflichtfelder der Metrik-Policy, die in graphcode.config.jsonc fehlen, mit dem Startwert aus contracts ein und laesst gesetzte Werte unberuehrt; upgrade --check zaehlt ein fehlendes Feld als Drift (CR-GC-915).",
+      "description": "update aktualisiert die ausgelieferten Dateien und laesst den Graph-Store unter .graphcode/ unveraendert; es entfernt Skills, die das Paket nicht mehr kennt, und traegt fehlende Pflichtfelder der Metrik-Policy mit dem Startwert ein; upgrade --check zaehlt beides als Drift.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -9899,10 +10031,28 @@
       ]
     },
     {
+      "id": "REQ-reseed-meldet-zahlen",
+      "type": "REQ",
+      "name": "Reseed meldet Knoten und Kanten",
+      "description": "Wenn der Agent graph_reseed aufruft, antwortet graph_reseed mit der Zahl der Knoten und Kanten des wiederhergestellten Stands.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-reseed-ohne-verschraenkung",
+      "type": "REQ",
+      "name": "Reseed verschraenkt sich nicht mit Mutation",
+      "description": "Ein Reseed und eine Mutation verschraenken sich nie: beide laufen nacheinander hinter dem einen Schreiber des Stores.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-reseed-sichert-vorher",
       "type": "REQ",
       "name": "Sicherung vor Reseed",
-      "description": "Bevor der Store neu aufgesetzt wird, legt der Host eine Sicherung des bisherigen Stores an.",
+      "description": "Wenn graphcode import-code den Graphen ersetzt, legt es vorher eine Sicherung des bisherigen Graphen unter .graphcode/backup an.",
       "kinds": [
         "functional"
       ]
@@ -10257,7 +10407,7 @@
       "id": "REQ-schema-version-migration",
       "type": "REQ",
       "name": "Store folgt dem Schema",
-      "description": "Weicht der Fingerabdruck der generierten DDL vom Marker am Store ab, wirft der GraphStore beim Start den Store weg, befuellt ihn aus der committeten SSOT neu, schreibt den Marker neu und meldet den Neuaufbau mit altem und neuem Fingerabdruck und der Quelle. Gleicher Fingerabdruck: der Store bleibt unberuehrt. Ein fehlender Marker wird beim aktuellen Fingerabdruck uebernommen. Zusammengefasst aus Vor- und Nachbedingung des nie gebauten migrateSchema (CR-GC-831).",
+      "description": "Weicht das Schema der Ontologie vom Schema ab, mit dem der Store angelegt wurde, baut sich der Store beim Oeffnen aus dem committeten Snapshot neu auf und meldet das mit altem und neuem Fingerabdruck; bei gleichem Schema bleibt er unberuehrt.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -10268,7 +10418,16 @@
       "id": "REQ-schritt-an-gate",
       "type": "REQ",
       "name": "Schritt geht ans Gate",
-      "description": "Wenn ein Kandidat gewaehlt ist, uebergibt der Generierungsschritt ihn dem Apply-Gate.",
+      "description": "Wenn graph_generate aufgerufen wird, setzt der Schritt an der fruehesten Stufe an, an der ein Fund im Fokus steht.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-se-help-erklaert-aus-graph-help",
+      "type": "REQ",
+      "name": "Hilfe aus graph_help",
+      "description": "Wenn der Skill se:help aufgerufen wird, gibt er eine Anleitung zurück, die ein Dashboard-Element mit graph_help und token erklärt und die Frage nach dem nächsten Schritt mit rules_get_violations und detail grouped beantwortet.",
       "kinds": [
         "functional"
       ]
@@ -10277,7 +10436,7 @@
       "id": "REQ-se-plan-nennt-gruppen",
       "type": "REQ",
       "name": "se-plan nennt Gruppen",
-      "description": "se-plan nennt je Meilenstein die Gruppen offener CRs und weist an, je CR einer Gruppe einen Agenten im eigenen Worktree zu starten; nur die Hauptsitzung schreibt in den Graphen.",
+      "description": "se-plan nennt je Meilenstein die Gruppen offener CRs.",
       "kinds": [
         "functional"
       ]
@@ -10286,7 +10445,43 @@
       "id": "REQ-se-plan-stempel-ganz-schreiben",
       "type": "REQ",
       "name": "se-plan schreibt Stempel ganz",
-      "description": "Wenn se-plan seinen Stempel schreibt, liest es die vorhandenen Stempel, uebernimmt sie und schreibt die Menge ganz zurueck; kein Stempel einer anderen Analyse geht verloren.",
+      "description": "Jeder Analyse-Skill mit Stempel (se-conops, se-trade, se-irr, se-fmea) liest die vorhandenen Stempel, uebernimmt sie und schreibt die Menge ganz zurueck.",
+      "kinds": [
+        "non-functional"
+      ]
+    },
+    {
+      "id": "REQ-se-review-bindung-mit-deckung",
+      "type": "REQ",
+      "name": "Urteil nennt Bindung und Deckung",
+      "description": "Wenn der Skill se-review aufgerufen wird, gibt er eine Anleitung zurück, die zu jeder Aussage über die Vollständigkeit Bindungsquote und Deckung nennt und beim Urteil kongruent die nicht zugeordneten Dateien aus unassigned nennt.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-se-status-reihenfolge-aus-werkzeug",
+      "type": "REQ",
+      "name": "Status liest die Reihenfolge",
+      "description": "Wenn der Skill se-status aufgerufen wird, gibt er eine Anleitung zurück, die die ersten Fixes aus den ersten drei Gruppen von rules_evaluate mit detail grouped liest und nicht selbst nach Schwere oder Zahl sortiert.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-se-test-red-first",
+      "type": "REQ",
+      "name": "se-test verlangt Red-First",
+      "description": "Wenn der Skill se-test aufgerufen wird, gibt er eine Anleitung zurück, die einen Test erst als Beleg gelten lässt, wenn er gegen den kaputten Code aus genau dem benannten Grund rot gesehen wurde.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-se-test-ui-red-first",
+      "type": "REQ",
+      "name": "se-test-ui verlangt Red-First",
+      "description": "Wenn der Skill se-test-ui aufgerufen wird, gibt er eine Anleitung zurück, die einen UI-Test erst als Beleg gelten lässt, wenn er gegen den kaputten Code aus genau dem benannten Grund rot gesehen wurde.",
       "kinds": [
         "functional"
       ]
@@ -10295,7 +10490,7 @@
       "id": "REQ-seed-prueft-kanten",
       "type": "REQ",
       "name": "Laden prueft jede Kante",
-      "description": "Wenn ein committeter Snapshot geladen wird, prueft das Laden jede Kante gegen die Kantenmuster, haelt musterfremde Kanten zurueck und meldet jede REQ ohne TEST.",
+      "description": "Wenn ein committeter Snapshot geladen wird, prueft das Laden jede Kante gegen die Kantenmuster und haelt musterfremde Kanten zurueck.",
       "kinds": [
         "functional"
       ]
@@ -10398,7 +10593,7 @@
       "id": "REQ-sitzung-einstieg",
       "type": "REQ",
       "name": "Sitzungsbeginn ueber CR und graph_context",
-      "description": "GRAPHCODE.md nennt den Sitzungsbeginn: eine Sitzung je CR oder Gruppe, Einstieg ueber die CR-Datei und graph_context der Traeger statt graph_elements des ganzen Modells, alle Leser in einem Aufruf laden, neue Sitzung je Meilenstein oder ab rund 150 k Kontext. se-retro misst den Einstieg (Zuege, Kontext und Token bis zur ersten Aenderung, Kontext je Zug) aus dem Protokoll. (CR-GC-897)",
+      "description": "GRAPHCODE.md nennt den Sitzungsbeginn: eine Sitzung je CR oder Gruppe, Einstieg ueber die CR-Datei und den Kontext der Traeger statt ueber das ganze Modell, neue Sitzung je Meilenstein oder ab rund 150 k Kontext; se-retro misst den Einstieg.",
       "kinds": [
         "functional"
       ]
@@ -10465,7 +10660,7 @@
       "id": "REQ-spur-meldet-zurueck",
       "type": "REQ",
       "name": "Spur meldet zurueck",
-      "description": "Nach jedem Lauf meldet die Spur die Knoten der geaenderten Dateien und den Laufbericht an graph_test_ingest; scheitert die Meldung, endet der Lauf rot.",
+      "description": "Nach einem Lauf meldet die Spur die Knoten der geaenderten Dateien und den Laufbericht an graph_test_ingest; ohne Aenderung und ohne Bericht meldet sie nichts.",
       "kinds": [
         "functional"
       ]
@@ -10511,7 +10706,16 @@
       "id": "REQ-status-sammeln",
       "type": "REQ",
       "name": "Betriebsstand sammeln",
-      "description": "Wenn der Betriebsstand abgefragt wird, liefert die Sammlung Store-Erreichbarkeit, Gate-Funktion, die Versionen von Ontologie, Regeln und contracts und die LLM-Bereitschaft.",
+      "description": "Wenn graphcode status aufgerufen wird, nennt es, ob der Host des Repos laeuft, ob das Dashboard dieses Repo bedient und ob CLI, Host und Repo-Install denselben Build nennen.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-stdio-fuehrt-im-repo-aus",
+      "type": "REQ",
+      "name": "Stdio führt den Aufruf im Repo aus",
+      "description": "Wenn ein MCP-Client über stdio ein Werkzeug aufruft, führt serveStdio das Werkzeug auf dem Store des Repos aus, in dem der Host läuft, und schickt das Ergebnis als Antwort zurück.",
       "kinds": [
         "functional"
       ]
@@ -10530,7 +10734,7 @@
       "id": "REQ-steering-from-metrics",
       "type": "REQ",
       "name": "Naechster Schritt folgt aus gemessenen Kenngroessen",
-      "description": "Der naechste Schritt MUSS aus dem gemessenen Zustand folgen: EIN Messpfad liefert Regelstrom und Projektionen, daraus waehlt die Steuerung die schwaechste Dimension, rankt Kandidaten nach dem Delta derselben Groessen und uebergibt das Ergebnis dem Apply-Gate. Deterministisch: gleicher Graph, gleiche Empfehlung.",
+      "description": "Der naechste Schritt folgt aus dem gemessenen Zustand: ein Messpfad liefert Regelstrom und Befunde je Stufe, die Steuerung setzt an der fruehesten Stufe mit einem Fund im Fokus an, und bei gleichem Graphen und ohne Zug dazwischen empfiehlt sie denselben Schritt.",
       "status": "done",
       "kinds": [
         "functional"
@@ -10567,15 +10771,6 @@
       ]
     },
     {
-      "id": "REQ-steuerung-deterministisch",
-      "type": "REQ",
-      "name": "Steuerung deterministisch",
-      "description": "Die Steuerschleife empfiehlt bei gleichem Graphen den gleichen naechsten Schritt.",
-      "kinds": [
-        "non-functional"
-      ]
-    },
-    {
       "id": "REQ-store-folgt-fingerabdruck",
       "type": "REQ",
       "name": "Store folgt Fingerabdruck",
@@ -10585,10 +10780,19 @@
       ]
     },
     {
+      "id": "REQ-store-lock-uebernahme",
+      "type": "REQ",
+      "name": "Store-Lock-Uebernahme",
+      "description": "Gehoert der Store-Lock einem beendeten Prozess oder einem Prozess ohne Lebenszeichen, uebernimmt ihn die naechste Sitzung; einen lebenden Besitzer laesst sie unangetastet.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-store-recovery",
       "type": "REQ",
       "name": "Store-Recovery (Recovery-Modus)",
-      "description": "Beim Oeffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurueck und setzt einen unlesbaren oder schemafremden Store aus dem committeten Snapshot neu auf; es entsteht kein zweites DB-Handle.",
+      "description": "Laesst sich ein vorhandener Store beim Oeffnen nicht lesen, setzt der Store ihn aus dem committeten Snapshot neu auf und meldet das; ohne Snapshot bleibt der Lesefehler ein Fehler und die Sperre frei.",
       "status": "open",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -10660,7 +10864,7 @@
       "id": "REQ-test-runnable-binding",
       "type": "REQ",
       "name": "TEST hat lauffaehige Bindung (testRef)",
-      "description": "Jeder TEST-Knoten traegt einen testRef (Datei plus Case, tool, level), sodass ein impacted TEST-Knoten deterministisch zu einem lauffaehigen Artefakt aufgeloest werden kann. Familie-weit: testRef wird Teil des TEST-Element-Schemas in @sigloch/contracts/se (Minor-Version-Bump).",
+      "description": "Jeder lauffaehige TEST-Knoten traegt eine Bindung testRef mit Datei, Tool und Teststufe, sodass ein betroffener TEST deterministisch zu einer ausfuehrbaren Datei aufgeloest wird.",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "kinds": [
@@ -10699,7 +10903,7 @@
       "id": "REQ-tests-aufloesen",
       "type": "REQ",
       "name": "TEST-Knoten aufloesen",
-      "description": "Wenn ein TEST-Knoten testRefs traegt, loest graph_tests ihn zu Datei und Case auf; ohne testRefs nennt es ihn unter unresolved.",
+      "description": "Wenn ein TEST-Knoten testRefs traegt, loest graph_tests ihn zu seinen Testdateien auf; ohne testRefs nennt es ihn unter unresolved.",
       "kinds": [
         "functional"
       ]
@@ -10708,7 +10912,7 @@
       "id": "REQ-tests-aus-changeset",
       "type": "REQ",
       "name": "TEST-Knoten aus Changeset",
-      "description": "Wenn ein Changeset uebergeben wird, liefert die Aufloesung jeden TEST-Knoten, dessen Testdatei die Aenderung beruehrt, und keinen unbeteiligten.",
+      "description": "Wenn ein Changeset uebergeben wird, liefert graph_tests jeden TEST-Knoten, den es ueber allocate, satisfy und verify erreicht, und keinen unbeteiligten.",
       "kinds": [
         "functional"
       ]
@@ -10751,6 +10955,24 @@
       ]
     },
     {
+      "id": "REQ-top-level-ein-eingangsknoten-je-kette",
+      "type": "REQ",
+      "name": "Ein Eingangsknoten je Kette",
+      "description": "Wenn der Skill se:top-level aufgerufen wird, gibt er eine Anleitung zurück, nach der jede Kette einen Eingangsknoten hat, parallele Auslöser nur dort mit gleichem Vertrag stehen und ein Akteur in der Mitte erlaubt ist.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-trade-cr-ueber-aise",
+      "type": "REQ",
+      "name": "Entscheidung läuft über aise",
+      "description": "Wenn der Skill se-trade aufgerufen wird, gibt er eine Anleitung zurück, nach der aise dispatch prepare Nummer und CR-Knoten anlegt und aise cr close den Status setzt, und die den Status nie per graph_mutate schreibt.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-trajectory-emit",
       "type": "REQ",
       "name": "Trajectory/Outcome-Emission",
@@ -10771,6 +10993,15 @@
       ]
     },
     {
+      "id": "REQ-umbau-modellzug-vor-loeschen",
+      "type": "REQ",
+      "name": "Modellzug vor dem Löschen",
+      "description": "Wenn der Skill se-umbau aufgerufen wird, gibt er eine Anleitung zurück, nach der erst der Ersatz steht, dann alle Verbraucher umziehen, dann das Alte fällt, und der Modellzug vor dem Löschen der Dateien läuft.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-umfrage-bemerkt-tod",
       "type": "REQ",
       "name": "Umfrage bemerkt Tod",
@@ -10783,16 +11014,7 @@
       "id": "REQ-update-behaelt-store",
       "type": "REQ",
       "name": "update behaelt Store",
-      "description": "Wenn update laeuft, aktualisiert es die installierten Artefakte und Pfade und laesst .graphcode/ unveraendert.",
-      "kinds": [
-        "functional"
-      ]
-    },
-    {
-      "id": "REQ-update-ereignis",
-      "type": "REQ",
-      "name": "Ereignis je Zug",
-      "description": "Nach jeder angenommenen Mutation erzeugt der Host ein Ereignis mit neuer Version und Delta.",
+      "description": "graphcode update aktualisiert die ausgelieferten Dateien und laesst .graphcode/ unveraendert.",
       "kinds": [
         "functional"
       ]
@@ -10819,7 +11041,7 @@
       "id": "REQ-versioned-broadcast",
       "type": "REQ",
       "name": "Versioned Diff-Broadcast",
-      "description": "Versioned Diff-Broadcast an Dashboard (read-only, Late-Joiner-Cache). (R9)",
+      "description": "Der Host sendet jedes Ereignis mit fortlaufender Nummer an die verbundenen Viewer, schreibgeschuetzt.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -10841,7 +11063,7 @@
       "id": "REQ-viewer-owned-by-repo",
       "type": "REQ",
       "name": "Viewer gehoert dem Repo",
-      "description": "Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft (Startreservierung mit Ablauffrist), eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn — nur wenn graphcode ihn selbst gestartet hat. Tot heisst: der vermerkte Prozess lebt nicht mehr; ein lebender Viewer, der nicht antwortet, wird weder beendet noch ersetzt. (CR-GC-404, CR-GC-912)",
+      "description": "Der Live-Viewer gehoert dem Repo, nicht der einzelnen Sitzung: jede Sitzung traegt sich ein, genau ein Viewer laeuft, eine Umfrage bemerkt seinen Tod, und erst die letzte Sitzung beendet ihn, nur wenn graphcode ihn selbst gestartet hat. Tot heisst: der vermerkte Prozess lebt nicht mehr; ein lebender Viewer, der nicht antwortet, wird weder beendet noch ersetzt.",
       "status": "done",
       "kinds": [
         "functional"
@@ -10869,7 +11091,7 @@
       "id": "REQ-vitest-aufruf-aus-tests",
       "type": "REQ",
       "name": "vitest-Aufruf aus TEST-Knoten",
-      "description": "Wenn TEST-Knoten uebergeben werden, liefert graph_tests den vitest-Aufruf ueber genau deren testRefs-Dateien.",
+      "description": "Wenn graph_tests ein Changeset aufgeloest hat, nennt es den vitest-Aufruf ueber genau die Testdateien der betroffenen TEST-Knoten.",
       "kinds": [
         "functional"
       ]
@@ -10923,7 +11145,7 @@
       "id": "REQ-zuege-sparen",
       "type": "REQ",
       "name": "Zuege sparen",
-      "description": "GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken. se-retro misst den Anteil der Zuege mit genau einem Aufruf und die Folgen aus 3+ gleichen Einzelaufrufen in Kontext-Token. (CR-GC-898)",
+      "description": "GRAPHCODE.md nennt die Hausregel zu Zuegen: unabhaengige Lesezugriffe in einem Zug, wiederkehrende Pruefung als ein Skript mit kurzer Ausgabe, Skripte zum Ausrollen erst lokal trocken. se-retro misst den Anteil der Zuege mit genau einem Aufruf und die Folgen aus 3+ gleichen Einzelaufrufen in Kontext-Token.",
       "kinds": [
         "functional"
       ]
@@ -10941,7 +11163,7 @@
       "id": "REQ-zugangsliste-vor-bau",
       "type": "REQ",
       "name": "Zugangsliste vor dem Bau",
-      "description": "se-conops leitet aus dem Modell die Zugangsliste ab (Zugang, wer ihn anlegt, Ablageort, Pruefaufruf); se-plan macht jede Zeile mit Mensch zur Pflicht-Stufe 0 mit Pruefskript, und Stufe 1 beginnt erst, wenn das Skript ganz gruen ist. (CR-GC-895)",
+      "description": "se-conops leitet aus dem Modell die Zugangsliste ab (Zugang, wer ihn anlegt, Ablageort, Pruefaufruf); se-plan macht jede Zeile mit Mensch zur Pflicht-Stufe 0 mit Pruefskript, und Stufe 1 beginnt erst, wenn das Skript ganz gruen ist.",
       "kinds": [
         "functional"
       ]
@@ -11212,6 +11434,28 @@
       "description": "Der Zugang des Importwegs zum Store: ersetzen und leeren, ohne Store-Griff und ohne Setter. Spec-only: ein Objekt mit Verhalten (ImportTarget in src/kernel/harness-import.ts), kein Zod-Datenvertrag."
     },
     {
+      "id": "SCHEMA-init-report",
+      "type": "SCHEMA",
+      "name": "Init-Bericht",
+      "description": "Bericht von graphcode init: Install-Ergebnis, Installationsbefehl, ob er lief, Fehlertext und die Agent-Programme im PATH. executeInit parst ihn an der Grenze. (CR-GC-959)",
+      "realRef": {
+        "file": "src/surface/init-verb.ts",
+        "symbol": "InitReportSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-install-result",
+      "type": "SCHEMA",
+      "name": "Install-Ergebnis",
+      "description": "Ergebnis von scaffold: action, repoRoot und die Listen created, updated, removed, preserved. scaffold parst es an der Grenze. (CR-GC-959)",
+      "realRef": {
+        "file": "src/surface/scaffold.ts",
+        "symbol": "InstallResultSchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-lauf-urteil",
       "type": "SCHEMA",
       "name": "LaufUrteil",
@@ -11230,6 +11474,17 @@
       "realRef": {
         "file": "src/kernel/lock-owner-contract.ts",
         "symbol": "LockOwner",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-markdown-text",
+      "type": "SCHEMA",
+      "name": "Markdown-Text",
+      "description": "Eine gerenderte Markdown-Sicht als Text. exportMarkdown parst ihn an der Grenze. (CR-GC-959)",
+      "realRef": {
+        "file": "src/projections/exporter.ts",
+        "symbol": "MarkdownTextSchema",
         "lang": "ts"
       }
     },
@@ -11429,6 +11684,17 @@
       "realRef": {
         "file": "src/kernel/harness-import.ts",
         "symbol": "RejectedTraceSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-repo-status",
+      "type": "SCHEMA",
+      "name": "Repo-Status",
+      "description": "Bericht von graphcode status: repoRoot, member, Zustand von Host, Dashboard und Versionen. collectStatus parst ihn an der Grenze. (CR-GC-959)",
+      "realRef": {
+        "file": "src/surface/status.ts",
+        "symbol": "RepoStatusSchema",
         "lang": "ts"
       }
     },
@@ -11639,6 +11905,17 @@
       }
     },
     {
+      "id": "SCHEMA-upgrade-report",
+      "type": "SCHEMA",
+      "name": "Upgrade-Bericht",
+      "description": "Bericht von graphcode upgrade: Zielversion, Drift, fehlende und veraltete Skills und Policy-Felder, veraltete Familienpakete, Schritte. executeUpgrade parst ihn an der Grenze. (CR-GC-959)",
+      "realRef": {
+        "file": "src/surface/upgrade.ts",
+        "symbol": "UpgradeReportSchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-verlauf",
       "type": "SCHEMA",
       "name": "Verlauf",
@@ -11840,7 +12117,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -11889,7 +12166,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -11983,6 +12260,19 @@
       ]
     },
     {
+      "id": "TEST-cli-args",
+      "type": "TEST",
+      "name": "Hilfe und unbekanntes Argument am CLI-Einstieg",
+      "description": "Startet dist/cli.js in einem Temp-Repo: init, upgrade und remove mit --help enden mit Exit 0 und Usage auf stderr, init --chek endet mit Exit 1 und nennt das Argument, in beiden Fällen entsteht keine Datei.",
+      "testRefs": [
+        {
+          "file": "tests/cli-args.test.ts",
+          "tool": "vitest",
+          "level": "integration"
+        }
+      ]
+    },
+    {
       "id": "TEST-cli-scaffold",
       "type": "TEST",
       "name": "CLI-Scaffold-Test",
@@ -12022,7 +12312,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12082,7 +12372,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12142,7 +12432,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12164,7 +12454,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12251,7 +12541,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12292,7 +12582,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12423,6 +12713,19 @@
       ]
     },
     {
+      "id": "TEST-generate-stufen",
+      "type": "TEST",
+      "name": "Schritt waehlt die fruehste Stufe",
+      "description": "Abnahme der Datei tests/generate.stufen.test.ts: der Schritt von graph_generate setzt an der fruehesten Stufe mit einem Fund im Fokus an, die Fenster folgen der Stufenfolge, und der Kaltstart kommt aus den Existenz-Regeln.",
+      "testRefs": [
+        {
+          "file": "tests/generate.stufen.test.ts",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
+    },
+    {
       "id": "TEST-generation-statemachine",
       "type": "TEST",
       "name": "Zustandsmaschine ueber den Korpus",
@@ -12480,7 +12783,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12498,7 +12801,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12513,7 +12816,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12544,7 +12847,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12561,7 +12864,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12606,7 +12909,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12621,7 +12924,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12705,7 +13008,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12780,7 +13083,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12795,7 +13098,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12826,7 +13129,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -12930,6 +13233,21 @@
       ]
     },
     {
+      "id": "TEST-list-elements-filter",
+      "type": "TEST",
+      "name": "Elemente-Scheibe nach Typ und Suche",
+      "description": "Echter Kuzu-Store: listElements liefert bei type nur diesen Typ, bei search nur Treffer in uid, name oder description ohne Beachtung der Groß- und Kleinschreibung, ohne Filter alle Knoten.",
+      "testRefs": [
+        {
+          "file": "tests/list-elements.search.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-11-19T15:20:53.394Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-live-event-contract",
       "type": "TEST",
       "name": "Live-Event-Contract-Test",
@@ -12995,7 +13313,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13012,7 +13330,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13097,7 +13415,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13264,7 +13582,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13279,7 +13597,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13355,7 +13673,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13477,7 +13795,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13495,7 +13813,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13638,7 +13956,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13658,7 +13976,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13699,7 +14017,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13760,7 +14078,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13793,7 +14111,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13823,7 +14141,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13854,7 +14172,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13906,6 +14224,51 @@
       ]
     },
     {
+      "id": "TEST-skill-cr-ueber-aise",
+      "type": "TEST",
+      "name": "Skills lassen den CR von aise führen",
+      "description": "Abnahme der Datei tests/skill-cr-ueber-aise.test.ts: die Skill-Texte lassen Nummer, Status und Kanten des CR von aise und vom Gate bestimmen.",
+      "testRefs": [
+        {
+          "file": "tests/skill-cr-ueber-aise.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-11-19T15:20:53.394Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-faq-angleich",
+      "type": "TEST",
+      "name": "Skills folgen den entschiedenen Modellfragen",
+      "description": "Abnahme der Datei tests/skill-faq-angleich.test.ts: die Skill-Texte folgen den entschiedenen Modellfragen, darunter der Modellzug vor dem Löschen der Dateien.",
+      "testRefs": [
+        {
+          "file": "tests/skill-faq-angleich.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-11-19T15:20:53.394Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-faq-ergaenzung",
+      "type": "TEST",
+      "name": "Skills tragen entschiedene FAQ-Sätze",
+      "description": "Abnahme der Datei tests/skill-faq-ergaenzung.test.ts: die Skill-Texte enthalten die entschiedenen FAQ-Sätze zu Testbindung, Umbau-Reihenfolge und Befunden.",
+      "testRefs": [
+        {
+          "file": "tests/skill-faq-ergaenzung.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-11-19T15:20:53.394Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-skill-import-code-nennt-verb",
       "type": "TEST",
       "name": "Skill nennt das registrierte Verb und graph_export",
@@ -13933,6 +14296,21 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-11-19T14:42:27.987Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-keine-eigene-rechnung",
+      "type": "TEST",
+      "name": "Skills führen keine eigene Rechnung",
+      "description": "Abnahme der Datei tests/skill-keine-eigene-rechnung.test.ts: die Skill-Texte nennen Regeln, Reihenfolge und Deckung aus dem Werkzeug statt aus einer eigenen Liste.",
+      "testRefs": [
+        {
+          "file": "tests/skill-keine-eigene-rechnung.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -13998,7 +14376,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -14017,6 +14395,36 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-11-19T14:42:27.987Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-se-help",
+      "type": "TEST",
+      "name": "se:help erklärt aus graph_help",
+      "description": "Abnahme der Datei tests/skill-se-help.test.ts: die Anleitung von se:help ruft graph_help mit token und rules_get_violations mit detail grouped, mit Positivkontrolle.",
+      "testRefs": [
+        {
+          "file": "tests/skill-se-help.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-11-19T15:20:53.394Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-skill-top-level-ausloeser",
+      "type": "TEST",
+      "name": "Ausloeser-, Akteur- und Namensregeln in den Schnitt-Skills",
+      "description": "Abnahme der Datei tests/skill-top-level-ausloeser.test.ts: die Anleitungen von se:top-level, se:author-actor und se:author-uc tragen die entschiedenen Regeln zu Eingangsknoten, Akteuren und Namen.",
+      "testRefs": [
+        {
+          "file": "tests/skill-top-level-ausloeser.test.ts",
+          "tool": "vitest",
+          "level": "conformance",
+          "result": "passed",
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -14071,7 +14479,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -14168,7 +14576,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -14378,7 +14786,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -14430,7 +14838,72 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-init-report",
+      "type": "TEST",
+      "name": "Vertragstest Init-Bericht",
+      "description": "Vertragstest SCHEMA-init-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-init-report.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-install-result",
+      "type": "TEST",
+      "name": "Vertragstest Install-Ergebnis",
+      "description": "Vertragstest SCHEMA-install-result, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-install-result.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-markdown-text",
+      "type": "TEST",
+      "name": "Vertragstest Markdown-Text",
+      "description": "Vertragstest SCHEMA-markdown-text, erzeugt aus dem Zod-Schema: Text angenommen, Nicht-Text abgelehnt. (CR-GC-959)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-markdown-text.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-repo-status",
+      "type": "TEST",
+      "name": "Vertragstest Repo-Status",
+      "description": "Vertragstest SCHEMA-repo-status, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-repo-status.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-upgrade-report",
+      "type": "TEST",
+      "name": "Vertragstest Upgrade-Bericht",
+      "description": "Vertragstest SCHEMA-upgrade-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-upgrade-report.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -14460,7 +14933,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-19T14:42:27.987Z"
+          "ranAt": "2026-11-19T15:20:53.394Z"
         }
       ]
     },
@@ -18979,11 +19452,6 @@
     },
     {
       "source": "CR-GC-670",
-      "target": "REQ-conflict-free-merge",
-      "type": "relation"
-    },
-    {
-      "source": "CR-GC-670",
       "target": "REQ-doc-export",
       "type": "relation"
     },
@@ -22808,6 +23276,206 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-954",
+      "target": "FUNC-verify-lane-code",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-advisory-vor-nach",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-audit-eintrag-code-stand",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-author-actor-kein-eigenes-teil",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-author-req-eine-uid-je-testdatei",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-author-uc-name-nennt-beduerfnis",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-authoring-guide-nennt-kanten",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-auto-export-nach-zug",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-cli-hilfe-fuehrt-nicht-aus",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-close-violations-nimmt-nur-guide-regeln",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-elemente-nach-typ-und-suche",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-export-fasst-zusammen",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-export-fehler-kippt-nicht",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-fitness-sechs-dimensionen",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-hilfe-erklaert-token",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-import-meldet-unbewiesene-req",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-import-nur-ueber-mutate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-kritikalitaet-je-func",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-merge-ohne-konflikt",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-modulkennzahlen-je-mod",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-post-merge-nodes",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-profil-laden",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-proxy-reicht-an-host",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-reseed-meldet-zahlen",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-reseed-ohne-verschraenkung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-reseed-sichert-vorher",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-schritt-an-gate",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-se-help-erklaert-aus-graph-help",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-se-review-bindung-mit-deckung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-se-status-reihenfolge-aus-werkzeug",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-se-test-red-first",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-se-test-ui-red-first",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-status-sammeln",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-stdio-fuehrt-im-repo-aus",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-steering-from-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-store-lock-uebernahme",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-store-recovery",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-top-level-ein-eingangsknoten-je-kette",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-trade-cr-ueber-aise",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-954",
+      "target": "REQ-umbau-modellzug-vor-loeschen",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-955",
       "target": "FUNC-evaluate-rules",
       "type": "relation"
@@ -22964,7 +23632,32 @@
     },
     {
       "source": "CR-GC-959",
+      "target": "SCHEMA-init-report",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "SCHEMA-install-result",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "SCHEMA-markdown-text",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
       "target": "SCHEMA-markdown-view",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "SCHEMA-repo-status",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-959",
+      "target": "SCHEMA-upgrade-report",
       "type": "relation"
     },
     {
@@ -24595,11 +25288,6 @@
     {
       "source": "FCHAIN-steering-loop",
       "target": "REQ-risk-steering-delta-missing",
-      "type": "satisfy"
-    },
-    {
-      "source": "FCHAIN-steering-loop",
-      "target": "REQ-steuerung-deterministisch",
       "type": "satisfy"
     },
     {
@@ -26261,7 +26949,7 @@
     },
     {
       "source": "FLOW-install-result-collect-status",
-      "target": "SCHEMA-cli-command",
+      "target": "SCHEMA-repo-status",
       "type": "relation"
     },
     {
@@ -26276,7 +26964,7 @@
     },
     {
       "source": "FLOW-install-result-harness-cli",
-      "target": "SCHEMA-cli-command",
+      "target": "SCHEMA-install-result",
       "type": "relation"
     },
     {
@@ -26286,7 +26974,7 @@
     },
     {
       "source": "FLOW-install-result-init",
-      "target": "SCHEMA-cli-command",
+      "target": "SCHEMA-init-report",
       "type": "relation"
     },
     {
@@ -26296,7 +26984,7 @@
     },
     {
       "source": "FLOW-install-result-upgrade",
-      "target": "SCHEMA-cli-command",
+      "target": "SCHEMA-upgrade-report",
       "type": "relation"
     },
     {
@@ -26440,7 +27128,7 @@
     },
     {
       "source": "FLOW-markdown-text",
-      "target": "SCHEMA-markdown-view",
+      "target": "SCHEMA-markdown-text",
       "type": "relation"
     },
     {
@@ -28039,7 +28727,7 @@
     },
     {
       "source": "FUNC-apply-reseed",
-      "target": "REQ-reseed-sichert-vorher",
+      "target": "REQ-reseed-ersetzt-store",
       "type": "satisfy"
     },
     {
@@ -28053,6 +28741,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-arch-fitness",
+      "target": "REQ-fitness-sechs-dimensionen",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-audit-stats",
       "target": "MOD-surface",
       "type": "allocate"
@@ -28061,11 +28754,6 @@
       "source": "FUNC-audit-stats",
       "target": "FLOW-audit-report",
       "type": "io"
-    },
-    {
-      "source": "FUNC-audit-stats",
-      "target": "REQ-audit-stats-liefert-zaehlung",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-audit-stats",
@@ -28098,6 +28786,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-author-actor",
+      "target": "REQ-author-actor-kein-eigenes-teil",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-author-req",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -28106,6 +28799,11 @@
       "source": "FUNC-author-req",
       "target": "FLOW-anleitung-author-req",
       "type": "io"
+    },
+    {
+      "source": "FUNC-author-req",
+      "target": "REQ-author-req-eine-uid-je-testdatei",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-author-uc",
@@ -28118,6 +28816,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-author-uc",
+      "target": "REQ-author-uc-name-nennt-beduerfnis",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-authoring-guide",
       "target": "MOD-projections",
       "type": "allocate"
@@ -28126,6 +28829,11 @@
       "source": "FUNC-authoring-guide",
       "target": "FLOW-channel-grammar",
       "type": "io"
+    },
+    {
+      "source": "FUNC-authoring-guide",
+      "target": "REQ-authoring-guide-nennt-kanten",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-auto-export",
@@ -28140,6 +28848,16 @@
     {
       "source": "FUNC-auto-export",
       "target": "REQ-auto-export-nach-zug",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-auto-export",
+      "target": "REQ-export-fasst-zusammen",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-auto-export",
+      "target": "REQ-export-fehler-kippt-nicht",
       "type": "satisfy"
     },
     {
@@ -28858,6 +29576,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-claim-store-lock",
+      "target": "REQ-store-lock-uebernahme",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-cli-dispatch",
       "target": "MOD-surface",
       "type": "allocate"
@@ -28878,6 +29601,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-cli-dispatch",
+      "target": "REQ-cli-hilfe-fuehrt-nicht-aus",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-close-violations",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -28886,6 +29614,11 @@
       "source": "FUNC-close-violations",
       "target": "FLOW-anleitung-close-violations",
       "type": "io"
+    },
+    {
+      "source": "FUNC-close-violations",
+      "target": "REQ-close-violations-nimmt-nur-guide-regeln",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-collect-status",
@@ -28956,11 +29689,6 @@
       "source": "FUNC-compute-steering-delta",
       "target": "FLOW-steering-delta",
       "type": "io"
-    },
-    {
-      "source": "FUNC-compute-steering-delta",
-      "target": "REQ-delta-rankt-kandidaten",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-compute-steering-delta",
@@ -29065,6 +29793,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-deduce-tests",
+      "target": "REQ-vitest-aufruf-aus-tests",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-ein-adapter-je-akteur",
       "target": "MOD-kernel-measure",
       "type": "allocate"
@@ -29138,11 +29871,6 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-emit-update-event",
-      "target": "REQ-update-ereignis",
-      "type": "satisfy"
     },
     {
       "source": "FUNC-evaluate-rules",
@@ -29246,6 +29974,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-fit-advisory",
+      "target": "REQ-advisory-vor-nach",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-function-criticality",
       "target": "MOD-projections",
       "type": "allocate"
@@ -29254,6 +29987,11 @@
       "source": "FUNC-function-criticality",
       "target": "FLOW-function-criticality",
       "type": "io"
+    },
+    {
+      "source": "FUNC-function-criticality",
+      "target": "REQ-kritikalitaet-je-func",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-generation-step",
@@ -29433,6 +30171,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-graph-help",
+      "target": "REQ-hilfe-erklaert-token",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-graph-impact",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -29475,6 +30218,11 @@
       "source": "FUNC-graph-merge-tool",
       "target": "FLOW-merge-answer",
       "type": "io"
+    },
+    {
+      "source": "FUNC-graph-merge-tool",
+      "target": "REQ-post-merge-nodes",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-metrics",
@@ -29563,6 +30311,11 @@
     },
     {
       "source": "FUNC-graph-mutate-tool",
+      "target": "REQ-import-nur-ueber-mutate",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-graph-mutate-tool",
       "target": "REQ-post-capture",
       "type": "satisfy"
     },
@@ -29615,6 +30368,11 @@
       "source": "FUNC-graph-reseed-tool",
       "target": "FLOW-reseed-request",
       "type": "io"
+    },
+    {
+      "source": "FUNC-graph-reseed-tool",
+      "target": "REQ-reseed-meldet-zahlen",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-graph-store",
@@ -29790,11 +30548,6 @@
     },
     {
       "source": "FUNC-harness-cli",
-      "target": "REQ-init-nennt-schritte",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-harness-cli",
       "target": "REQ-post-harness-cli",
       "type": "satisfy",
       "weight": 1,
@@ -29866,6 +30619,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-host-proxy",
+      "target": "REQ-proxy-reicht-an-host",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-host-socket",
       "target": "MOD-surface",
       "type": "allocate"
@@ -29912,7 +30670,7 @@
     },
     {
       "source": "FUNC-import",
-      "target": "REQ-import-nur-ueber-mutate",
+      "target": "REQ-import-meldet-unbewiesene-req",
       "type": "satisfy"
     },
     {
@@ -29988,6 +30746,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-import-code-verb",
+      "target": "REQ-reseed-sichert-vorher",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-import-doc",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -30028,6 +30791,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-init-verb",
+      "target": "REQ-init-nennt-schritte",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-lauf-urteil",
       "target": "MOD-projections",
       "type": "allocate"
@@ -30051,6 +30819,11 @@
       "source": "FUNC-list-elements",
       "target": "FLOW-element-slice",
       "type": "io"
+    },
+    {
+      "source": "FUNC-list-elements",
+      "target": "REQ-elemente-nach-typ-und-suche",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-load-config",
@@ -30100,22 +30873,8 @@
     },
     {
       "source": "FUNC-merge-nodes",
-      "target": "REQ-conflict-free-merge",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
-    },
-    {
-      "source": "FUNC-merge-nodes",
       "target": "REQ-merge-ohne-konflikt",
       "type": "satisfy"
-    },
-    {
-      "source": "FUNC-merge-nodes",
-      "target": "REQ-post-merge-nodes",
-      "type": "satisfy",
-      "weight": 1,
-      "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
       "source": "FUNC-module-metrics",
@@ -30126,6 +30885,11 @@
       "source": "FUNC-module-metrics",
       "target": "FLOW-module-metrics",
       "type": "io"
+    },
+    {
+      "source": "FUNC-module-metrics",
+      "target": "REQ-modulkennzahlen-je-mod",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-mutate",
@@ -30346,7 +31110,7 @@
     },
     {
       "source": "FUNC-reseed",
-      "target": "REQ-reseed-ersetzt-store",
+      "target": "REQ-reseed-ohne-verschraenkung",
       "type": "satisfy"
     },
     {
@@ -30560,6 +31324,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-se-help",
+      "target": "REQ-se-help-erklaert-aus-graph-help",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-irr",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -30640,11 +31409,6 @@
       "type": "satisfy"
     },
     {
-      "source": "FUNC-se-plan",
-      "target": "REQ-se-plan-stempel-ganz-schreiben",
-      "type": "satisfy"
-    },
-    {
       "source": "FUNC-se-retro",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -30680,6 +31444,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-se-review",
+      "target": "REQ-se-review-bindung-mit-deckung",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-status",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -30688,6 +31457,11 @@
       "source": "FUNC-se-status",
       "target": "FLOW-anleitung-se-status",
       "type": "io"
+    },
+    {
+      "source": "FUNC-se-status",
+      "target": "REQ-se-status-reihenfolge-aus-werkzeug",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-se-top-level",
@@ -30700,6 +31474,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-se-top-level",
+      "target": "REQ-top-level-ein-eingangsknoten-je-kette",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-trade",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -30710,6 +31489,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-se-trade",
+      "target": "REQ-trade-cr-ueber-aise",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-umbau",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -30718,6 +31502,11 @@
       "source": "FUNC-se-umbau",
       "target": "FLOW-anleitung-se-umbau",
       "type": "io"
+    },
+    {
+      "source": "FUNC-se-umbau",
+      "target": "REQ-umbau-modellzug-vor-loeschen",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-se-vorbereitung",
@@ -30772,11 +31561,6 @@
     {
       "source": "FUNC-select-tests",
       "target": "REQ-post-impact-testing",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-select-tests",
-      "target": "REQ-vitest-aufruf-aus-tests",
       "type": "satisfy"
     },
     {
@@ -30880,6 +31664,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-serve-stdio",
+      "target": "REQ-stdio-fuehrt-im-repo-aus",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-session-shutdown",
       "target": "MOD-surface",
       "type": "allocate"
@@ -30966,11 +31755,6 @@
     },
     {
       "source": "FUNC-take-steering-snapshot",
-      "target": "REQ-messpfad-liefert-stand",
-      "type": "satisfy"
-    },
-    {
-      "source": "FUNC-take-steering-snapshot",
       "target": "REQ-messpfad-meldet-vertragsfremd",
       "type": "satisfy"
     },
@@ -31000,6 +31784,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-target-profile-load",
+      "target": "REQ-profil-laden",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-test",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -31008,6 +31797,11 @@
       "source": "FUNC-test",
       "target": "FLOW-anleitung-test",
       "type": "io"
+    },
+    {
+      "source": "FUNC-test",
+      "target": "REQ-se-test-red-first",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-test-ingest",
@@ -31060,6 +31854,11 @@
       "type": "io"
     },
     {
+      "source": "FUNC-test-ui",
+      "target": "REQ-se-test-ui-red-first",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-tool-context",
       "target": "MOD-surface",
       "type": "allocate"
@@ -31083,6 +31882,11 @@
       "source": "FUNC-tool-context",
       "target": "FLOW-work-set",
       "type": "io"
+    },
+    {
+      "source": "FUNC-tool-context",
+      "target": "REQ-audit-eintrag-code-stand",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-upgrade",
@@ -31222,6 +32026,11 @@
     {
       "source": "FUNC-zug-bericht",
       "target": "REQ-zug-zeigt-kennzahlen-danach",
+      "type": "satisfy"
+    },
+    {
+      "source": "MOD-agent-surface",
+      "target": "REQ-se-plan-stempel-ganz-schreiben",
       "type": "satisfy"
     },
     {
@@ -31546,7 +32355,7 @@
     },
     {
       "source": "REQ-audit-trail",
-      "target": "REQ-audit-stats-liefert-zaehlung",
+      "target": "REQ-audit-eintrag-code-stand",
       "type": "compose"
     },
     {
@@ -31566,7 +32375,12 @@
     },
     {
       "source": "REQ-auto-persist-merge",
-      "target": "REQ-conflict-free-merge",
+      "target": "REQ-export-fasst-zusammen",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-auto-persist-merge",
+      "target": "REQ-export-fehler-kippt-nicht",
       "type": "compose"
     },
     {
@@ -31577,6 +32391,11 @@
     {
       "source": "REQ-auto-persist-merge",
       "target": "REQ-post-merge-nodes",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-bootstrap-through-gate",
+      "target": "REQ-import-meldet-unbewiesene-req",
       "type": "compose"
     },
     {
@@ -31897,6 +32716,16 @@
     },
     {
       "source": "REQ-graph-state-recall",
+      "target": "REQ-reseed-meldet-zahlen",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-graph-state-recall",
+      "target": "REQ-reseed-ohne-verschraenkung",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-graph-state-recall",
       "target": "REQ-reseed-sichert-vorher",
       "type": "compose"
     },
@@ -31992,7 +32821,17 @@
     },
     {
       "source": "REQ-modell-befragen",
+      "target": "REQ-authoring-guide-nennt-kanten",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-modell-befragen",
       "target": "REQ-graphcode-md-testauswahl",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-modell-befragen",
+      "target": "REQ-hilfe-erklaert-token",
       "type": "compose"
     },
     {
@@ -32069,6 +32908,11 @@
     },
     {
       "source": "REQ-reduced-llm",
+      "target": "REQ-elemente-nach-typ-und-suche",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-reduced-llm",
       "target": "REQ-graph-context-replaces-reading",
       "type": "compose"
     },
@@ -32100,6 +32944,11 @@
     {
       "source": "REQ-reduced-llm",
       "target": "REQ-subgraph-slicing",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-repo-install",
+      "target": "REQ-cli-hilfe-fuehrt-nicht-aus",
       "type": "compose"
     },
     {
@@ -32259,7 +33108,17 @@
     },
     {
       "source": "REQ-single-kuzu-owner",
+      "target": "REQ-proxy-reicht-an-host",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-single-kuzu-owner",
       "target": "REQ-session-leaves-nothing-behind",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-single-kuzu-owner",
+      "target": "REQ-store-lock-uebernahme",
       "type": "compose"
     },
     {
@@ -32279,17 +33138,7 @@
     },
     {
       "source": "REQ-steering-from-metrics",
-      "target": "REQ-delta-rankt-kandidaten",
-      "type": "compose"
-    },
-    {
-      "source": "REQ-steering-from-metrics",
       "target": "REQ-done-iff-no-focus",
-      "type": "compose"
-    },
-    {
-      "source": "REQ-steering-from-metrics",
-      "target": "REQ-messpfad-liefert-stand",
       "type": "compose"
     },
     {
@@ -32325,11 +33174,6 @@
     {
       "source": "REQ-steering-from-metrics",
       "target": "REQ-steering-pre",
-      "type": "compose"
-    },
-    {
-      "source": "REQ-steering-from-metrics",
-      "target": "REQ-steuerung-deterministisch",
       "type": "compose"
     },
     {
@@ -32393,11 +33237,6 @@
       "type": "compose"
     },
     {
-      "source": "REQ-versioned-broadcast",
-      "target": "REQ-update-ereignis",
-      "type": "compose"
-    },
-    {
       "source": "REQ-viewer-owned-by-repo",
       "target": "REQ-sitzungen-tragen-ein",
       "type": "compose"
@@ -32410,6 +33249,11 @@
     {
       "source": "REQ-werkzeuge-wirken-im-repo",
       "target": "REQ-mcp-tool-registry",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-werkzeuge-wirken-im-repo",
+      "target": "REQ-stdio-fuehrt-im-repo-aus",
       "type": "compose"
     },
     {
@@ -32778,17 +33622,17 @@
     },
     {
       "source": "TEST-audit-code-state",
+      "target": "REQ-audit-eintrag-code-stand",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-audit-code-state",
       "target": "REQ-audit-trail",
       "type": "verify"
     },
     {
       "source": "TEST-audit-retention",
       "target": "REQ-audit-trail",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-audit-rules-passed",
-      "target": "REQ-audit-stats-liefert-zaehlung",
       "type": "verify"
     },
     {
@@ -32838,6 +33682,16 @@
     },
     {
       "source": "TEST-auto-export",
+      "target": "REQ-export-fasst-zusammen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-auto-export",
+      "target": "REQ-export-fehler-kippt-nicht",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-auto-export",
       "target": "REQ-graph-snapshot-per-commit",
       "type": "verify"
     },
@@ -32860,7 +33714,7 @@
     },
     {
       "source": "TEST-bootstrap",
-      "target": "REQ-seed-prueft-kanten",
+      "target": "REQ-import-nur-ueber-mutate",
       "type": "verify"
     },
     {
@@ -32906,8 +33760,13 @@
       "type": "verify"
     },
     {
+      "source": "TEST-cli-args",
+      "target": "REQ-cli-hilfe-fuehrt-nicht-aus",
+      "type": "verify"
+    },
+    {
       "source": "TEST-cli-scaffold",
-      "target": "REQ-init-nennt-schritte",
+      "target": "REQ-init-legt-an",
       "type": "verify"
     },
     {
@@ -32953,6 +33812,11 @@
     {
       "source": "TEST-cli-scaffold",
       "target": "REQ-update-behaelt-store",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-cli-scaffold",
+      "target": "REQ-upgrade-entfernt-fremde-skills",
       "type": "verify"
     },
     {
@@ -33211,32 +34075,12 @@
     },
     {
       "source": "TEST-first-step",
-      "target": "REQ-messpfad-liefert-stand",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-first-step",
-      "target": "REQ-readiness-schwaechste-stufe",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-first-step",
-      "target": "REQ-schritt-an-gate",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-first-step",
       "target": "REQ-steering-from-metrics",
       "type": "verify"
     },
     {
-      "source": "TEST-first-step",
-      "target": "REQ-steuerung-deterministisch",
-      "type": "verify"
-    },
-    {
       "source": "TEST-fit-advisory",
-      "target": "REQ-delta-rankt-kandidaten",
+      "target": "REQ-advisory-vor-nach",
       "type": "verify"
     },
     {
@@ -33247,6 +34091,11 @@
     {
       "source": "TEST-fit-advisory",
       "target": "REQ-steering-from-metrics",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-flow-contracts",
+      "target": "REQ-export-marke-setzen",
       "type": "verify"
     },
     {
@@ -33315,8 +34164,18 @@
       "type": "verify"
     },
     {
+      "source": "TEST-generate-stufen",
+      "target": "REQ-schritt-an-gate",
+      "type": "verify"
+    },
+    {
       "source": "TEST-generation-statemachine",
       "target": "REQ-done-iff-no-focus",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-authoring-guide",
+      "target": "REQ-authoring-guide-nennt-kanten",
       "type": "verify"
     },
     {
@@ -33355,6 +34214,16 @@
     },
     {
       "source": "TEST-graph-metrics",
+      "target": "REQ-fitness-sechs-dimensionen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-metrics",
+      "target": "REQ-kritikalitaet-je-func",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-metrics",
       "target": "REQ-messstand-nachvollziehbar",
       "type": "verify"
     },
@@ -33366,6 +34235,11 @@
     {
       "source": "TEST-graph-metrics",
       "target": "REQ-metrics-risk-scope",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-graph-metrics",
+      "target": "REQ-modulkennzahlen-je-mod",
       "type": "verify"
     },
     {
@@ -33445,11 +34319,6 @@
     },
     {
       "source": "TEST-gve-autostart",
-      "target": "REQ-sitzungen-tragen-ein",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-gve-autostart",
       "target": "REQ-viewer-owned-by-repo",
       "type": "verify"
     },
@@ -33460,12 +34329,22 @@
     },
     {
       "source": "TEST-gve-supervision",
+      "target": "REQ-sitzungen-tragen-ein",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gve-supervision",
       "target": "REQ-umfrage-bemerkt-tod",
       "type": "verify"
     },
     {
       "source": "TEST-gve-supervision",
       "target": "REQ-viewer-owned-by-repo",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-gve-supervision",
+      "target": "REQ-viewer-ueberlebt-host",
       "type": "verify"
     },
     {
@@ -33481,6 +34360,11 @@
     {
       "source": "TEST-help-projection",
       "target": "REQ-readiness-transparent",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-help-tool",
+      "target": "REQ-hilfe-erklaert-token",
       "type": "verify"
     },
     {
@@ -33510,17 +34394,17 @@
     },
     {
       "source": "TEST-host-ende-sichtbar",
-      "target": "REQ-host-abbau-3s",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-host-ende-sichtbar",
       "target": "REQ-host-end-visible",
       "type": "verify"
     },
     {
       "source": "TEST-host-ende-sichtbar",
       "target": "REQ-host-ende-sichtbar-client",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-ende-sichtbar",
+      "target": "REQ-viewer-ueberlebt-host",
       "type": "verify"
     },
     {
@@ -33536,6 +34420,11 @@
     {
       "source": "TEST-host-shim",
       "target": "REQ-host-holds-only-kuzu-handle",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-host-shim",
+      "target": "REQ-proxy-reicht-an-host",
       "type": "verify"
     },
     {
@@ -33601,6 +34490,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-import-code-verb",
+      "target": "REQ-reseed-sichert-vorher",
+      "type": "verify"
+    },
+    {
       "source": "TEST-import-doc-modell",
       "target": "REQ-llm-modell-aus-konfiguration",
       "type": "verify"
@@ -33612,7 +34506,7 @@
     },
     {
       "source": "TEST-import-invariant",
-      "target": "REQ-import-nur-ueber-mutate",
+      "target": "REQ-import-meldet-unbewiesene-req",
       "type": "verify"
     },
     {
@@ -33647,6 +34541,11 @@
     },
     {
       "source": "TEST-import-rejected-traces",
+      "target": "REQ-seed-prueft-kanten",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-import-rejected-traces",
       "target": "SCHEMA-rejected-trace",
       "type": "verify"
     },
@@ -33663,6 +34562,11 @@
     {
       "source": "TEST-init-verb",
       "target": "REQ-init-legt-an",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-init-verb",
+      "target": "REQ-init-nennt-schritte",
       "type": "verify"
     },
     {
@@ -33745,6 +34649,11 @@
       "created_at": "2026-06-16T00:00:00.000Z"
     },
     {
+      "source": "TEST-list-elements-filter",
+      "target": "REQ-elemente-nach-typ-und-suche",
+      "type": "verify"
+    },
+    {
       "source": "TEST-live-event-contract",
       "target": "REQ-live-event-in-contracts",
       "type": "verify",
@@ -33758,11 +34667,6 @@
     },
     {
       "source": "TEST-live-view",
-      "target": "REQ-diff-an-viewer",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-live-view",
       "target": "REQ-mutation-emits-event",
       "type": "verify",
       "weight": 1,
@@ -33771,16 +34675,6 @@
     {
       "source": "TEST-live-view",
       "target": "REQ-post-emit-update-event",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-live-view",
-      "target": "REQ-sse-strom",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-live-view",
-      "target": "REQ-update-ereignis",
       "type": "verify"
     },
     {
@@ -33838,6 +34732,11 @@
     },
     {
       "source": "TEST-mcp-readiness",
+      "target": "REQ-readiness-schwaechste-stufe",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-mcp-readiness",
       "target": "REQ-readiness-transparent",
       "type": "verify"
     },
@@ -33866,6 +34765,11 @@
       "type": "verify",
       "weight": 1,
       "created_at": "2026-06-18T00:00:00.000Z"
+    },
+    {
+      "source": "TEST-mcp-stdio-server",
+      "target": "REQ-stdio-fuehrt-im-repo-aus",
+      "type": "verify"
     },
     {
       "source": "TEST-mcp-stdio-server",
@@ -33911,11 +34815,6 @@
     {
       "source": "TEST-merge",
       "target": "REQ-auto-persist-merge",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-merge",
-      "target": "REQ-conflict-free-merge",
       "type": "verify"
     },
     {
@@ -34116,6 +35015,11 @@
     },
     {
       "source": "TEST-path-containment",
+      "target": "REQ-export-marke-loeschen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-path-containment",
       "target": "REQ-gate-only-writes",
       "type": "verify"
     },
@@ -34188,6 +35092,11 @@
     },
     {
       "source": "TEST-readonly-bridge",
+      "target": "REQ-diff-an-viewer",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-readonly-bridge",
       "target": "REQ-health-antwortet-stand",
       "type": "verify"
     },
@@ -34207,7 +35116,7 @@
     },
     {
       "source": "TEST-readonly-bridge",
-      "target": "REQ-status-sammeln",
+      "target": "REQ-sse-strom",
       "type": "verify"
     },
     {
@@ -34269,12 +35178,7 @@
     },
     {
       "source": "TEST-reseed",
-      "target": "REQ-reseed-sichert-vorher",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-reseed",
-      "target": "REQ-store-recovery",
+      "target": "REQ-reseed-meldet-zahlen",
       "type": "verify"
     },
     {
@@ -34350,11 +35254,6 @@
     },
     {
       "source": "TEST-schema-migration",
-      "target": "REQ-store-recovery",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-schema-migration",
       "target": "SCHEMA-schema-fingerprint",
       "type": "verify"
     },
@@ -34425,11 +35324,6 @@
     },
     {
       "source": "TEST-selective-test-audit",
-      "target": "REQ-vitest-aufruf-aus-tests",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-selective-test-audit",
       "target": "SCHEMA-code-lane-plan",
       "type": "verify"
     },
@@ -34445,6 +35339,11 @@
     },
     {
       "source": "TEST-session-lifecycle",
+      "target": "REQ-host-abbau-3s",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-session-lifecycle",
       "target": "REQ-host-end-visible",
       "type": "verify"
     },
@@ -34456,11 +35355,6 @@
     {
       "source": "TEST-session-lifecycle",
       "target": "REQ-single-kuzu-owner",
-      "type": "verify"
-    },
-    {
-      "source": "TEST-session-lifecycle",
-      "target": "REQ-viewer-ueberlebt-host",
       "type": "verify"
     },
     {
@@ -34566,6 +35460,26 @@
       "type": "verify"
     },
     {
+      "source": "TEST-skill-cr-ueber-aise",
+      "target": "REQ-trade-cr-ueber-aise",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-faq-angleich",
+      "target": "REQ-umbau-modellzug-vor-loeschen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-faq-ergaenzung",
+      "target": "REQ-author-req-eine-uid-je-testdatei",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-faq-ergaenzung",
+      "target": "REQ-umbau-modellzug-vor-loeschen",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skill-import-code-nennt-verb",
       "target": "REQ-skill-import-code-nennt-verb",
       "type": "verify"
@@ -34573,6 +35487,21 @@
     {
       "source": "TEST-skill-irr-fremde-quellen",
       "target": "REQ-irr-fremde-quellen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-keine-eigene-rechnung",
+      "target": "REQ-close-violations-nimmt-nur-guide-regeln",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-keine-eigene-rechnung",
+      "target": "REQ-se-review-bindung-mit-deckung",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-keine-eigene-rechnung",
+      "target": "REQ-se-status-reihenfolge-aus-werkzeug",
       "type": "verify"
     },
     {
@@ -34592,6 +35521,16 @@
     },
     {
       "source": "TEST-skill-red-first",
+      "target": "REQ-se-test-red-first",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-red-first",
+      "target": "REQ-se-test-ui-red-first",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-red-first",
       "target": "REQ-test-skill-red-first",
       "type": "verify"
     },
@@ -34603,6 +35542,26 @@
     {
       "source": "TEST-skill-rule-ids",
       "target": "REQ-published-counts-match-code",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-se-help",
+      "target": "REQ-se-help-erklaert-aus-graph-help",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-top-level-ausloeser",
+      "target": "REQ-author-actor-kein-eigenes-teil",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-top-level-ausloeser",
+      "target": "REQ-author-uc-name-nennt-beduerfnis",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-skill-top-level-ausloeser",
+      "target": "REQ-top-level-ein-eingangsknoten-je-kette",
       "type": "verify"
     },
     {
@@ -34656,6 +35615,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-status-verb",
+      "target": "REQ-status-sammeln",
+      "type": "verify"
+    },
+    {
       "source": "TEST-steering-delta-in-answer",
       "target": "REQ-risk-steering-delta-missing",
       "type": "verify"
@@ -34697,12 +35661,17 @@
     },
     {
       "source": "TEST-store-lock",
+      "target": "REQ-reseed-ohne-verschraenkung",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-store-lock",
       "target": "REQ-single-kuzu-owner",
       "type": "verify"
     },
     {
       "source": "TEST-store-lock",
-      "target": "REQ-store-recovery",
+      "target": "REQ-store-lock-uebernahme",
       "type": "verify"
     },
     {
@@ -34718,6 +35687,11 @@
     {
       "source": "TEST-store-recovery",
       "target": "REQ-store-recovery",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-target-profile",
+      "target": "REQ-profil-laden",
       "type": "verify"
     },
     {
@@ -34785,6 +35759,11 @@
     {
       "source": "TEST-test-runnable-binding",
       "target": "REQ-tests-aufloesen",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-runnable-binding",
+      "target": "REQ-vitest-aufruf-aus-tests",
       "type": "verify"
     },
     {
@@ -34944,6 +35923,31 @@
     {
       "source": "TEST-verify-model-set",
       "target": "REQ-testspur-passt-zum-diff",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-init-report",
+      "target": "SCHEMA-init-report",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-install-result",
+      "target": "SCHEMA-install-result",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-markdown-text",
+      "target": "SCHEMA-markdown-text",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-repo-status",
+      "target": "SCHEMA-repo-status",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-upgrade-report",
+      "target": "SCHEMA-upgrade-report",
       "type": "verify"
     },
     {
@@ -35517,5 +36521,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1295
+  "graphVersion": 1307
 }

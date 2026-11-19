@@ -43,7 +43,7 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-lane-reports-change` | Die Spur CODE und der Volllauf melden nach jedem Lauf die Knoten der geaenderten Dateien und den Bericht des Laufs an graph_test_ingest. Die Knoten kommen aus derselben Abbildung von Datei auf Knoten wie die Testauswahl. Scheitert die Meldung, endet der Lauf rot. Der Planmodus meldet nichts. | **Funktion fehlt** |
+| `REQ-lane-reports-change` | Die CODE-Spur und der Volllauf melden nach jedem Lauf die betroffenen Knoten und den Laufbericht an graph_test_ingest; scheitert die Meldung, endet der Lauf rot; der Planmodus meldet nichts. | **Funktion fehlt** |
 | `REQ-test-result-withdrawn-on-change` | Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das Ergebnis an seinen testRefs zurueck; der Eintrag gilt bis zur naechsten Rueckmeldung eines Laufs als nicht bestanden. Die betroffenen Tests sind die Menge, die die Testauswahl fuer dieselbe Aenderung liefert. | `FUNC-test-ingest` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
@@ -178,7 +178,7 @@ Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette 
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-store-recovery` | Beim Oeffnen weist der Store einen zweiten Schreiber mit Nennung des Besitzers ab, holt die Sperre eines beendeten oder pulslosen Besitzers zurueck und setzt einen unlesbaren oder schemafremden Store aus dem committeten Snapshot neu auf; es entsteht kein zweites DB-Handle. | `FUNC-open-store` |
+| `REQ-store-recovery` | Laesst sich ein vorhandener Store beim Oeffnen nicht lesen, setzt der Store ihn aus dem committeten Snapshot neu auf und meldet das; ohne Snapshot bleibt der Lesefehler ein Fehler und die Sperre frei. | `FUNC-open-store` |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -197,7 +197,7 @@ Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen we
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-audit-trail` | CR-GC-101: audit_trail/audit_stats liefern Mutations-History/Statistik. | **Funktion fehlt** |
+| `REQ-audit-trail` | Das System liefert die Historie der Mutationen und eine Statistik darueber. | **Funktion fehlt** |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -273,7 +273,7 @@ Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-full-run-on-probation` | Der Volllauf je CR ist an eine Messung gebunden: jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag; nach 10 CRs der CODE-Spur ohne Schlupf entfaellt er, CI und Publish fahren ihn weiter. | **Funktion fehlt** |
+| `REQ-full-run-on-probation` | Jeder Volllauf vor einem CR-Abschluss haelt fest, ob ein roter Test ausserhalb der Auswahl derselben Aenderung lag, und nennt die Zahl der CRs der CODE-Spur ohne Schlupf in Folge. | **Funktion fehlt** |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
@@ -292,7 +292,7 @@ Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten
 
 | Gegenmaßnahme | Wortlaut | Erfüller |
 |---|---|---|
-| `REQ-export-marker-tracks-drift` | Nach jeder angenommenen Mutation steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen. | **Funktion fehlt** |
+| `REQ-export-marker-tracks-drift` | Nach jeder angenommenen Mutation, die den Graphen aendert, steht die Marke EXPORT_PENDING mit Beginn und Zahl der nicht exportierten Zuege. Nur ein gelungener Export oder ein Reseed loescht sie; ein gescheiterter Export laesst sie stehen. | **Funktion fehlt** |
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
