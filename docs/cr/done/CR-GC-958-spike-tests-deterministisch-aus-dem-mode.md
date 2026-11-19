@@ -154,6 +154,17 @@ Der erzeugte Kettentest ist auf dem Original rot, weil die Bindung im Modell fal
 - **`FLOW-markdown-text`:** gebunden an `SCHEMA-markdown-view`. Übergeben wird aber Markdown-Text.
 - **`FLOW-render-view-request`:** gebunden an `SCHEMA-markdown-view`. Übergeben wird der Sichtname als Teil von `opts`, das Ergebnis von `executeRender` ist eine `RenderSummary`.
 
+> **Korrektur 2026-11-19:** `FLOW-render-view-request` ist richtig gebunden. `executeRender` ruft `exportMarkdown(graph, view)` auf, der Sichtname kommt dort als Parameter an und passt zu `MarkdownViewSchema`. Der erzeugte Kettentest hat nur den Rückgabewert des Erzeugers geprüft, nicht den Parameter des Empfängers. Beleg: Prototyp der Regel `graphanalyze/werkzeuge/schema-typ/pruefe.mjs`, Urteil „passt“ über den Empfänger. Neu gefunden hat er dagegen `FLOW-install-result-init`: Gebunden ist `CliCommandSchema`, übergeben wird `InitReport`. Damit sind 5 FLOW falsch gebunden: vier `install-result`-Flüsse und `FLOW-markdown-text`.
+
+### Nachtrag 2026-11-19: Regel über alle Repos (Prototyp)
+
+Der Prototyp vergleicht je FLOW mit gebundenem SCHEMA den Typ `z.infer` des Schemas mit dem Rückgabetyp jedes Erzeugers und mit den Parametern jedes Empfängers. Werkzeug: `graphanalyze/werkzeuge/schema-typ/`, Rohdaten: `SPIKE-GC-958/schema-typ-repos.json`.
+
+- **Kontrolle in graphcode:** Die 5 Fehlbindungen bewertet er mit „passt nicht“, `FLOW-adapter-befund` und `FLOW-grenz-befund` mit „passt“.
+- **Lauf:** 38 Modelle. In 10 davon gibt es FLOW mit gebundenem SCHEMA, zusammen 336 FLOW: 86 passt, 99 passt nicht, 64 offen, 87 nicht prüfbar. Die Zahlen je Repo stehen in der Rohdatei.
+- **Treffergenauigkeit:** In einer festen Stichprobe (jeder 10. von 103 Fällen „passt nicht“, vor dem Fix für Schemas vom Typ `unknown`) waren 3 von 10 echte Fehlbindungen. 4 von 10 waren Flüsse, deren Wert nicht über eine Signatur läuft: Datei, Callback oder Feld in einer Liste. 1 war ein Werkzeugfehler, der behoben ist. 2 sind ohne Blick in den Code nicht entscheidbar.
+- **Folge:** Als Regel ist der Prototyp so zu ungenau. Ihm fehlt die Angabe, über welchen Kanal ein FLOW läuft (Aufruf, Datei, Ereignis). Ohne sie trennt er eine Fehlbindung nicht von einem Fluss über eine Datei.
+
 `rules_get_violations` (Ausschnitt mit 295 Elementen, darin `SCHEMA-markdown-view`) meldet für keinen dieser FLOW einen RC-Befund. RC-04 prüft nur, ob das Schema an der Schnittstelle irgendwo geparst wird. Keine Regel prüft, ob das gebundene SCHEMA den Typ beschreibt, den der Erzeuger liefert. Einen Lauf über das ganze Modell habe ich dafür nicht gemacht.
 
 ### Empfehlung
