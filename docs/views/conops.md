@@ -655,7 +655,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-957` | done | Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe | `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
 | `CR-GC-959` | done | Fehlbindung: 5 FLOW tragen ein SCHEMA, das den übergebenen Wert nicht beschreibt (install-result-* an CliCommandSchema, markdown-text an MarkdownViewSchema) — Zod-Schemas für RepoStatus, UpgradeReport, InitReport, Markdown-Text, Erzeuger parsen, FLOW neu binden (aus CR-GC-958) | `FUNC-collect-status` · `FUNC-export-markdown` · `FUNC-harness-cli` · `FUNC-init-verb` · `FUNC-upgrade` |
 | `CR-GC-961` | done | Klärung: Vertragstest-Generator als fester Bauschritt (ITEM-2026-1454), Kanal-Attribut am FLOW (Aufruf, Nachricht, Datei, physisch, Mensch) und Vertrag physischer/elektrischer Schnittstellen ohne Zod (FAQ schema-bei-physischem-fluss offen) — aus CR-GC-958/959 | `FUNC-se-bau` |
-| `CR-GC-962` | n/a | Vertragstest-Generator aus graphanalyze nach graphcode übernehmen (Verb graphcode vertragstest), Satz 'is not a generator' entfernen — Folge 1 aus CR-GC-961 | `FUNC-erzeuge-vertragstests` · `FUNC-vertragstest-verb` · `REQ-contract-test-cases` · `REQ-contract-test-generation` |
+| `CR-GC-962` | done | Vertragstest-Generator aus graphanalyze nach graphcode übernehmen (Verb graphcode vertragstest), Satz 'is not a generator' entfernen — Folge 1 aus CR-GC-961 | `FUNC-erzeuge-vertragstests` · `FUNC-vertragstest-verb` · `REQ-contract-test-cases` · `REQ-contract-test-generation` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

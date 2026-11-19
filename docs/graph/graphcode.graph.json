@@ -4398,7 +4398,8 @@
       "id": "CR-GC-962",
       "type": "CR",
       "name": "Vertragstest-Generator aus graphanalyze nach graphcode übernehmen (Verb graphcode vertragstest), Satz 'is not a generator' entfernen — Folge 1 aus CR-GC-961",
-      "description": "docs/cr/open/CR-GC-962-vertragstest-generator-aus-graphanalyze-.md"
+      "description": "docs/cr/done/CR-GC-962-vertragstest-generator-aus-graphanalyze-.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -36816,5 +36817,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1320
+  "graphVersion": 1321
 }
