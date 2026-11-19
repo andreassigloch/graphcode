@@ -1664,6 +1664,9 @@
 | `CR-GC-965` | relation | `FUNC-se-bau` |
 | `CR-GC-965` | relation | `REQ-contract-test-manual` |
 | `CR-GC-965` | relation | `SCHEMA-vertragstest-satz` |
+| `CR-GC-966` | relation | `FUNC-erzeuge-vertragstests` |
+| `CR-GC-966` | relation | `FUNC-se-bau` |
+| `CR-GC-966` | relation | `REQ-contract-test-manual` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

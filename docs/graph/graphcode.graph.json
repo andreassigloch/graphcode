@@ -8699,7 +8699,7 @@
       "id": "REQ-contract-test-manual",
       "type": "REQ",
       "name": "Test von Hand aus der Vertragsdatei",
-      "description": "Zeigt der realRef eines SCHEMA auf eine Vertragsdatei (Markdown ohne Symbol) mit der Tabelle Größe, Einheit, Min, Nenn, Max, schreibt der Generator den Test von Hand als Markdown: je Zeile mit Grenzwert ein Prüfpunkt; eine Zeile ohne Min und Max steht unter verworfen, eine Datei ohne Tabelle unter fehler. (CR-GC-965)",
+      "description": "Zeigt der realRef eines SCHEMA auf eine Vertragsdatei (Markdown ohne Symbol) mit der Tabelle Größe, Einheit, Min, Nenn, Max, optional Messpunkt, Quelle und Kriterium, schreibt der Generator den Test von Hand als Markdown: je Zeile mit Grenzwert oder Kriterium ein Prüfpunkt; eine Zeile ohne beides steht unter verworfen, eine Datei ohne Tabelle unter fehler. (CR-GC-965, CR-GC-966)",
       "kinds": [
         "functional"
       ]
@@ -24016,6 +24016,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-966",
+      "target": "FUNC-erzeuge-vertragstests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-966",
+      "target": "FUNC-se-bau",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-966",
+      "target": "REQ-contract-test-manual",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -37026,5 +37041,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1337
+  "graphVersion": 1338
 }

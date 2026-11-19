@@ -659,6 +659,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-963` | done | se-bau: Schritt Vertragstest erzeugen (graphcode vertragstest) je neuem oder geändertem SCHEMA — Folge 2 aus CR-GC-961 | `FUNC-se-bau` · `REQ-bau-vertragstest-erzeugen` |
 | `CR-GC-964` | done | Test von Hand: tool manuell nicht in den vitest-Lauf, Protokoll als evidence beim Ingest — Folge 3 aus CR-GC-961 | `FUNC-deduce-tests` · `FUNC-plan-code-lane` · `FUNC-test-ingest` · `REQ-test-von-hand-auswahl` · `REQ-test-von-hand-ergebnis` · `REQ-test-von-hand-spur` |
 | `CR-GC-965` | done | Vertragstest von Hand aus der Vertragsdatei erzeugen (Folge 2 aus CR-GC-961) | `FUNC-erzeuge-vertragstests` · `FUNC-se-bau` · `REQ-contract-test-manual` |
+| `CR-GC-966` | n/a | Vertragsdatei: Spalte Kriterium fuer Bedingungen ohne Grenzwert | `FUNC-erzeuge-vertragstests` · `FUNC-se-bau` · `REQ-contract-test-manual` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

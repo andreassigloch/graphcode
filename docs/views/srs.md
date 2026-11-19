@@ -4620,7 +4620,7 @@ Verification ◀ `TEST-vertragstest-generator` (integration) · satisfy ◀ `FUN
 
 ###### `REQ-contract-test-manual` — Test von Hand aus der Vertragsdatei
 
-Zeigt der realRef eines SCHEMA auf eine Vertragsdatei (Markdown ohne Symbol) mit der Tabelle Größe, Einheit, Min, Nenn, Max, schreibt der Generator den Test von Hand als Markdown: je Zeile mit Grenzwert ein Prüfpunkt; eine Zeile ohne Min und Max steht unter verworfen, eine Datei ohne Tabelle unter fehler. (CR-GC-965)
+Zeigt der realRef eines SCHEMA auf eine Vertragsdatei (Markdown ohne Symbol) mit der Tabelle Größe, Einheit, Min, Nenn, Max, optional Messpunkt, Quelle und Kriterium, schreibt der Generator den Test von Hand als Markdown: je Zeile mit Grenzwert oder Kriterium ein Prüfpunkt; eine Zeile ohne beides steht unter verworfen, eine Datei ohne Tabelle unter fehler. (CR-GC-965, CR-GC-966)
 
 priority: must · status: n/a · kinds: functional
 
@@ -11190,7 +11190,7 @@ Verification ◀ `TEST-vertragstest-generator` (integration) · satisfy ◀ `FUN
 
 ###### `REQ-contract-test-manual` — Test von Hand aus der Vertragsdatei
 
-Zeigt der realRef eines SCHEMA auf eine Vertragsdatei (Markdown ohne Symbol) mit der Tabelle Größe, Einheit, Min, Nenn, Max, schreibt der Generator den Test von Hand als Markdown: je Zeile mit Grenzwert ein Prüfpunkt; eine Zeile ohne Min und Max steht unter verworfen, eine Datei ohne Tabelle unter fehler. (CR-GC-965)
+Zeigt der realRef eines SCHEMA auf eine Vertragsdatei (Markdown ohne Symbol) mit der Tabelle Größe, Einheit, Min, Nenn, Max, optional Messpunkt, Quelle und Kriterium, schreibt der Generator den Test von Hand als Markdown: je Zeile mit Grenzwert oder Kriterium ein Prüfpunkt; eine Zeile ohne beides steht unter verworfen, eine Datei ohne Tabelle unter fehler. (CR-GC-965, CR-GC-966)
 
 priority: must · status: n/a · kinds: functional
 
