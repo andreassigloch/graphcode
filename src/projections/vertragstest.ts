@@ -10,8 +10,8 @@
  *
  * Ein SCHEMA mit Vertragsdatei (`realRef {file}` auf `.md` ohne Symbol, Entscheidung CR-GC-961 F3d)
  * bekommt den Test von Hand (CR-GC-965): Die Tabelle traegt Größe, Einheit, Min, Nenn, Max, optional
- * Messpunkt und Quelle; je Zeile mit Grenzwert entsteht ein Pruefpunkt, eine Zeile ohne Min und Max
- * wird verworfen. Das Protokoll eines Laufs liegt getrennt (`evidence`, CR-GC-964).
+ * Messpunkt, Quelle und Kriterium (CR-GC-966); je Zeile mit Grenzwert oder Kriterium entsteht ein
+ * Pruefpunkt, eine Zeile ohne beides wird verworfen. Das Protokoll eines Laufs liegt getrennt (`evidence`, CR-GC-964).
  *
  * @author andreas@siglochconsulting
  */
@@ -327,16 +327,18 @@ export function pruefpunkte(text: string): { punkte: string[]; verworfen: string
   for (const roh of zeilen.slice(start + 2)) {
     if (!roh.trim().startsWith('|')) break;
     const z = zellen(roh);
-    const [groesse, einheit, min, nenn, max, ort, quelle] = ['größe', 'einheit', 'min', 'nenn', 'max', 'messpunkt', 'quelle'].map(
-      (n) => spalte(z, n),
-    ) as [string, string, string, string, string, string, string];
-    if (!min && !max) {
-      verworfen.push(`${groesse}: kein Min und kein Max`);
+    const [groesse, einheit, min, nenn, max, ort, quelle, kriterium] = [
+      'größe', 'einheit', 'min', 'nenn', 'max', 'messpunkt', 'quelle', 'kriterium',
+    ].map((n) => spalte(z, n)) as [string, string, string, string, string, string, string, string];
+    if (!min && !max && !kriterium) {
+      verworfen.push(`${groesse}: kein Min, kein Max und kein Kriterium`);
       continue;
     }
-    const grenze = min && max ? `${min} ${einheit} ≤ Wert ≤ ${max} ${einheit}` : min ? `Wert ≥ ${min} ${einheit}` : `Wert ≤ ${max} ${einheit}`;
+    const grenze = min && max ? `${min} ${einheit} ≤ Wert ≤ ${max} ${einheit}` : min ? `Wert ≥ ${min} ${einheit}` : max ? `Wert ≤ ${max} ${einheit}` : '';
+    const bedingung = [grenze, kriterium].filter(Boolean).join(' und ');
     const zusatz = [nenn ? `Nenn ${nenn} ${einheit}` : '', quelle ? `Quelle: ${quelle}` : ''].filter(Boolean).join('; ');
-    punkte.push(`Miss ${groesse}${ort ? ` am ${ort}` : ''}; bestanden, wenn ${grenze}${zusatz ? ` (${zusatz})` : ''}.`);
+    const verb = grenze ? 'Miss' : 'Prüfe';
+    punkte.push(`${verb} ${groesse}${ort ? ` am ${ort}` : ''}; bestanden, wenn ${bedingung}${zusatz ? ` (${zusatz})` : ''}.`);
   }
   return { punkte, verworfen };
 }
