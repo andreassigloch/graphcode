@@ -4352,6 +4352,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-956",
+      "type": "CR",
+      "name": "grenzeNurMitSchema: eigene Liste zwischenKindern streichen; ein Fluss zwischen Kind-Modulen ist nur ohne erlaubten Vertrag ein Befund, wie jeder Grenzfluss (Autor 2026-11-19, ersetzt Lesart aus CR-GC-913)",
+      "description": "docs/cr/open/CR-GC-956-grenzenurmitschema-eigene-liste-zwischen.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -7269,7 +7275,7 @@
       "id": "FUNC-grenze-nur-mit-schema",
       "type": "FUNC",
       "name": "grenzeNurMitSchema",
-      "description": "Prueffunktion fuer Constraints: meldet jeden Fluss ueber die Grenze eines Kind-Moduls, der kein Schema aus der erlaubten Liste traegt, und jeden Fluss zwischen zwei Kind-Modulen. Exportiert ueber den Subpath constraints. (CR-GC-913)",
+      "description": "Prueffunktion fuer Constraints: meldet jeden Fluss ueber die Grenze eines Kind-Moduls, auch zu einem anderen Kind-Modul, der kein Schema aus der erlaubten Liste traegt. Exportiert ueber den Subpath constraints. (CR-GC-913, CR-GC-956)",
       "realRef": {
         "file": "src/kernel/measure/constraints.ts",
         "symbol": "grenzeNurMitSchema",
@@ -8916,7 +8922,7 @@
       "id": "REQ-grenze-nur-mit-schema",
       "type": "REQ",
       "name": "Grenzfluss nur mit erlaubtem Schema",
-      "description": "Die Pruefung der Modulgrenze muss jeden Fluss ueber die Grenze eines Kind-Moduls ohne Schema der erlaubten Liste melden und jeden Fluss zwischen zwei Kind-Modulen. Erfuellt ist sie genau dann, wenn beide Listen leer sind. (CR-GC-913)",
+      "description": "Die Pruefung der Modulgrenze muss jeden Fluss ueber die Grenze eines Kind-Moduls, auch zu einem anderen Kind-Modul, melden, der kein Schema oder ein Schema ausserhalb der erlaubten Liste traegt. Erfuellt ist sie genau dann, wenn die Liste leer ist. (CR-GC-913, CR-GC-956)",
       "kinds": [
         "functional"
       ]
@@ -11104,7 +11110,7 @@
       "id": "SCHEMA-grenz-befund",
       "type": "SCHEMA",
       "name": "Grenz-Befund",
-      "description": "Vertrag des Befunds von grenzeNurMitSchema: ohneSchema (je Fluss Module und Schemas) und zwischenKindern (je Fluss von und nach). Beide leer heisst erfuellt. (CR-GC-913)",
+      "description": "Vertrag des Befunds von grenzeNurMitSchema: ohneSchema (je Fluss Module und Schemas). Leer heisst erfuellt. (CR-GC-913, CR-GC-956)",
       "realRef": {
         "file": "src/kernel/measure/constraints.ts",
         "symbol": "GrenzBefund",
@@ -22713,6 +22719,11 @@
     {
       "source": "CR-GC-955",
       "target": "FUNC-evaluate-rules",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-956",
+      "target": "FUNC-grenze-nur-mit-schema",
       "type": "relation"
     },
     {
@@ -35240,5 +35251,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1275
+  "graphVersion": 1277
 }

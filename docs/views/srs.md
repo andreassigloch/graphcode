@@ -1994,13 +1994,13 @@ Verification ◀ `TEST-constraint-ein-schreibweg` (unit) · satisfy ◀ `FUNC-ei
 
 > auch in: `FUNC-block-messwerk`
 
-Prueffunktion fuer Constraints: meldet jeden Fluss ueber die Grenze eines Kind-Moduls, der kein Schema aus der erlaubten Liste traegt, und jeden Fluss zwischen zwei Kind-Modulen. Exportiert ueber den Subpath constraints. (CR-GC-913)
+Prueffunktion fuer Constraints: meldet jeden Fluss ueber die Grenze eines Kind-Moduls, auch zu einem anderen Kind-Modul, der kein Schema aus der erlaubten Liste traegt. Exportiert ueber den Subpath constraints. (CR-GC-913, CR-GC-956)
 
 io ◀ `FLOW-graph-snapshot-file` · io ▶ `FLOW-grenz-befund` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-grenze-nur-mit-schema` — Grenzfluss nur mit erlaubtem Schema
 
-Die Pruefung der Modulgrenze muss jeden Fluss ueber die Grenze eines Kind-Moduls ohne Schema der erlaubten Liste melden und jeden Fluss zwischen zwei Kind-Modulen. Erfuellt ist sie genau dann, wenn beide Listen leer sind. (CR-GC-913)
+Die Pruefung der Modulgrenze muss jeden Fluss ueber die Grenze eines Kind-Moduls, auch zu einem anderen Kind-Modul, melden, der kein Schema oder ein Schema ausserhalb der erlaubten Liste traegt. Erfuellt ist sie genau dann, wenn die Liste leer ist. (CR-GC-913, CR-GC-956)
 
 priority: must · status: n/a · kinds: functional
 
@@ -9926,13 +9926,13 @@ io ◀ `FLOW-metrics-request` · io ▶ `FLOW-function-criticality` · allocate 
 
 > auch in: `FCHAIN-model-lane`
 
-Prueffunktion fuer Constraints: meldet jeden Fluss ueber die Grenze eines Kind-Moduls, der kein Schema aus der erlaubten Liste traegt, und jeden Fluss zwischen zwei Kind-Modulen. Exportiert ueber den Subpath constraints. (CR-GC-913)
+Prueffunktion fuer Constraints: meldet jeden Fluss ueber die Grenze eines Kind-Moduls, auch zu einem anderen Kind-Modul, der kein Schema aus der erlaubten Liste traegt. Exportiert ueber den Subpath constraints. (CR-GC-913, CR-GC-956)
 
 io ◀ `FLOW-graph-snapshot-file` · io ▶ `FLOW-grenz-befund` · allocate ▶ `MOD-kernel-measure`
 
 ###### `REQ-grenze-nur-mit-schema` — Grenzfluss nur mit erlaubtem Schema
 
-Die Pruefung der Modulgrenze muss jeden Fluss ueber die Grenze eines Kind-Moduls ohne Schema der erlaubten Liste melden und jeden Fluss zwischen zwei Kind-Modulen. Erfuellt ist sie genau dann, wenn beide Listen leer sind. (CR-GC-913)
+Die Pruefung der Modulgrenze muss jeden Fluss ueber die Grenze eines Kind-Moduls, auch zu einem anderen Kind-Modul, melden, der kein Schema oder ein Schema ausserhalb der erlaubten Liste traegt. Erfuellt ist sie genau dann, wenn die Liste leer ist. (CR-GC-913, CR-GC-956)
 
 priority: must · status: n/a · kinds: functional
 
@@ -13106,7 +13106,7 @@ schema ◀ `FLOW-graph-delta`
 
 ###### 3.3.4.2.19  `SCHEMA-grenz-befund` — Grenz-Befund
 
-Vertrag des Befunds von grenzeNurMitSchema: ohneSchema (je Fluss Module und Schemas) und zwischenKindern (je Fluss von und nach). Beide leer heisst erfuellt. (CR-GC-913)
+Vertrag des Befunds von grenzeNurMitSchema: ohneSchema (je Fluss Module und Schemas). Leer heisst erfuellt. (CR-GC-913, CR-GC-956)
 
 schema ◀ `FLOW-grenz-befund`
 

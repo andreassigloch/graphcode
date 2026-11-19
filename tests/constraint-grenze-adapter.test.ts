@@ -45,11 +45,11 @@ function gut(): OntologyGraph {
   } as unknown as OntologyGraph;
 }
 
-const LEER_GRENZE = { ohneSchema: [], zwischenKindern: [] };
+const LEER_GRENZE = { ohneSchema: [] };
 const LEER_ADAPTER = { flussOhneEinModul: [], moduleOhneEinenAkteur: [], akteurOhneAdapter: [] };
 
 describe('CR-GC-913: grenzeNurMitSchema', () => {
-  it('guter Snapshot: jeder Grenzfluss trägt ein Schema der Liste, kein Fluss zwischen Kind-Modulen', () => {
+  it('guter Snapshot: jeder Grenzfluss trägt ein Schema der Liste', () => {
     expect(grenzeNurMitSchema(gut(), ELTERN, SCHEMAS)).toEqual(LEER_GRENZE);
   });
 
@@ -58,7 +58,6 @@ describe('CR-GC-913: grenzeNurMitSchema', () => {
     g.traces = g.traces.filter((t) => !(t.source === 'FLOW-x-a' && t.type === ('relation' as Tr['type'])));
     expect(grenzeNurMitSchema(g, ELTERN, SCHEMAS)).toEqual({
       ohneSchema: [{ fluss: 'FLOW-x-a', module: ['MOD-a'], schemas: [] }],
-      zwischenKindern: [],
     });
   });
 
@@ -67,29 +66,26 @@ describe('CR-GC-913: grenzeNurMitSchema', () => {
     g.traces.push(tr('FLOW-b-y', 'SCHEMA-anderes', 'relation'));
     expect(grenzeNurMitSchema(g, ELTERN, SCHEMAS)).toEqual({
       ohneSchema: [{ fluss: 'FLOW-b-y', module: ['MOD-b'], schemas: ['SCHEMA-anderes', 'SCHEMA-vertrag'] }],
-      zwischenKindern: [],
     });
   });
 
-  it('Bruch 3: ein Fluss zwischen zwei Kind-Modulen ist rot, auch mit Schema aus der Liste', () => {
+  // CR-GC-956: ein Fluss zwischen Kind-Modulen ist ein Grenzfluss wie jeder andere — Befund nur ohne Vertrag der Liste.
+  it('ein Fluss zwischen zwei Kind-Modulen mit Schema aus der Liste ist kein Befund', () => {
     const g = gut();
     g.elements.push(el('FLOW-a-b', 'FLOW'));
     g.traces.push(
       tr('FUNC-a1', 'FLOW-a-b', 'io'), tr('FLOW-a-b', 'FUNC-b1', 'io'), tr('FLOW-a-b', 'SCHEMA-vertrag', 'relation'),
     );
-    expect(grenzeNurMitSchema(g, ELTERN, SCHEMAS)).toEqual({
-      ohneSchema: [],
-      zwischenKindern: [{ fluss: 'FLOW-a-b', von: ['MOD-a'], nach: ['MOD-b'] }],
-    });
+    expect(grenzeNurMitSchema(g, ELTERN, SCHEMAS)).toEqual(LEER_GRENZE);
   });
 
-  it('Bruch 3 ohne Schema: beide Listen nennen den Fluss', () => {
+  it('Bruch 3: ein Fluss zwischen zwei Kind-Modulen ohne Schema ist rot und nennt beide Module', () => {
     const g = gut();
     g.elements.push(el('FLOW-a-b', 'FLOW'));
     g.traces.push(tr('FUNC-a1', 'FLOW-a-b', 'io'), tr('FLOW-a-b', 'FUNC-b1', 'io'));
-    const b = grenzeNurMitSchema(g, ELTERN, SCHEMAS);
-    expect(b.ohneSchema.map((x) => x.fluss)).toEqual(['FLOW-a-b']);
-    expect(b.zwischenKindern.map((x) => x.fluss)).toEqual(['FLOW-a-b']);
+    expect(grenzeNurMitSchema(g, ELTERN, SCHEMAS)).toEqual({
+      ohneSchema: [{ fluss: 'FLOW-a-b', module: ['MOD-a', 'MOD-b'], schemas: [] }],
+    });
   });
 
   it('ein Fluss von einer FUNC außerhalb der Kinder in ein Kind zählt als Grenzfluss', () => {
@@ -110,14 +106,12 @@ describe('CR-GC-913: grenzeNurMitSchema', () => {
   });
 
   it('Vertrag GrenzBefund: nimmt jede Form an, lehnt fremde Felder ab', () => {
-    const voll = {
-      ohneSchema: [{ fluss: 'FLOW-a', module: ['MOD-a'], schemas: ['SCHEMA-s'] }],
-      zwischenKindern: [{ fluss: 'FLOW-a', von: ['MOD-a'], nach: ['MOD-b'] }],
-    };
+    const voll = { ohneSchema: [{ fluss: 'FLOW-a', module: ['MOD-a'], schemas: ['SCHEMA-s'] }] };
     expect(GrenzBefund.parse(voll)).toEqual(voll);
     expect(GrenzBefund.parse(LEER_GRENZE)).toEqual(LEER_GRENZE);
     expect(() => GrenzBefund.parse({ ...LEER_GRENZE, extra: 1 })).toThrow();
-    expect(() => GrenzBefund.parse({ ohneSchema: [{ fluss: 'FLOW-a' }], zwischenKindern: [] })).toThrow();
+    expect(() => GrenzBefund.parse({ ohneSchema: [{ fluss: 'FLOW-a' }] })).toThrow();
+    expect(() => GrenzBefund.parse({ ohneSchema: [], zwischenKindern: [] })).toThrow();
   });
 });
 

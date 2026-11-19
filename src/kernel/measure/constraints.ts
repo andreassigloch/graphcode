@@ -48,14 +48,12 @@ export function eingaengeNurAus(
   return EingangsBefund.parse({ fremd, fehlend });
 }
 
-/** Befund von `grenzeNurMitSchema`. Beide Listen leer = Constraint erfüllt. */
+/** Befund von `grenzeNurMitSchema`. Liste leer = Constraint erfüllt. */
 export const GrenzBefund = z.strictObject({
-  /** Flüsse über die Grenze eines Kind-Moduls ohne Schema oder mit einem Schema außerhalb der Liste. */
+  /** Flüsse über die Grenze eines Kind-Moduls (auch zwischen zwei Kind-Modulen) ohne Schema oder mit einem Schema außerhalb der Liste. */
   ohneSchema: z.array(
     z.strictObject({ fluss: z.string(), module: z.array(z.string()), schemas: z.array(z.string()) }),
   ),
-  /** Flüsse, die zwei verschiedene Kind-Module verbinden (mit oder ohne Schema). */
-  zwischenKindern: z.array(z.strictObject({ fluss: z.string(), von: z.array(z.string()), nach: z.array(z.string()) })),
 });
 export type GrenzBefund = z.infer<typeof GrenzBefund>;
 
@@ -110,9 +108,9 @@ function kindModule(graph: OntologyGraph, elternMod: string) {
 /**
  * Grenze der Kind-Module von `elternMod` nur mit Schema.
  *
- * Engere Lesart des Zielbilds: (1) Ein Fluss über die Grenze eines Kind-Moduls (ein Endpunkt in ihm, einer
- * außerhalb, auch ein Akteur) trägt mindestens ein Schema und keines außerhalb von `schemas`. (2) Ein Fluss
- * zwischen zwei Kind-Modulen ist immer `zwischenKindern`, auch wenn er ein Schema der Liste trägt.
+ * Ein Fluss über die Grenze eines Kind-Moduls (ein Endpunkt in ihm, einer außerhalb, auch ein Akteur oder ein
+ * anderes Kind-Modul) trägt mindestens ein Schema und keines außerhalb von `schemas`. Ein Fluss zwischen zwei
+ * Kind-Modulen ist ein Grenzfluss wie jeder andere, kein eigener Befund (CR-GC-956, Autor 2026-11-19).
  * Ein Fluss gehört zu einem Kind-Modul über `FUNC allocate MOD`; sein Schema steht an `FLOW relation SCHEMA`.
  */
 export function grenzeNurMitSchema(
@@ -123,7 +121,6 @@ export function grenzeNurMitSchema(
   const { idx, kindVon, kinderVon, endpunkte } = kindModule(graph, elternMod);
   const erlaubt = new Set(schemas);
   const ohneSchema: GrenzBefund['ohneSchema'] = [];
-  const zwischenKindern: GrenzBefund['zwischenKindern'] = [];
   for (const fluss of [...idx.idsOfType('FLOW')].sort()) {
     const punkte = endpunkte(fluss);
     const drin = kinderVon(punkte);
@@ -134,15 +131,8 @@ export function grenzeNurMitSchema(
     if (eigene.length === 0 || eigene.some((s) => !erlaubt.has(s))) {
       ohneSchema.push({ fluss, module: drin, schemas: eigene });
     }
-    if (drin.length > 1) {
-      zwischenKindern.push({
-        fluss,
-        von: kinderVon(idx.in(fluss, 'io').map((t) => t.source)),
-        nach: kinderVon(idx.out(fluss, 'io').map((t) => t.target)),
-      });
-    }
   }
-  return GrenzBefund.parse({ ohneSchema, zwischenKindern });
+  return GrenzBefund.parse({ ohneSchema });
 }
 
 /**

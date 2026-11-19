@@ -1564,6 +1564,7 @@
 | `CR-GC-952` | relation | `SCHEMA-skill-text` |
 | `CR-GC-953` | relation | `FUNC-graph-help` |
 | `CR-GC-955` | relation | `FUNC-evaluate-rules` |
+| `CR-GC-956` | relation | `FUNC-grenze-nur-mit-schema` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

@@ -1,5 +1,7 @@
 # CR-GC-913: Prüffunktionen grenzeNurMitSchema und einAdapterJeAkteur in @sigloch/graphcode/constraints (abgetrennt aus CR-GC-864)
 
+> **Ersetzt (2026-11-19):** Die engere Lesart (2) unten gilt nicht mehr. Ein Fluss zwischen zwei Kind-Modulen ist ein Grenzfluss wie jeder andere; die Liste `zwischenKindern` ist gestrichen. Siehe CR-GC-956.
+
 **Status:** 🟠 Open
 **Typ:** aus Item ITEM-2026-1303 (finding)
 **Erstellt:** 2026-11-11
@@ -64,6 +66,8 @@ Schema = `FLOW relation SCHEMA`.
 
 **Engere Lesart:** (1) Ein Grenzfluss trägt mindestens ein Schema und keines außerhalb von `schemas`. (2) Ein Fluss
 zwischen zwei Kind-Modulen ist immer ein Befund (`zwischenKindern`), auch mit Schema aus der Liste.
+
+_Ersetzt 2026-11-19 durch CR-GC-956: Lesart (2) entfällt, der Autor wählte die weitere Lesart._
 
 **Tests** `tests/constraint-grenze-adapter.test.ts` (15): erst rot (Funktionen fehlten, 15/15 rot), dann grün. Je
 Funktion ein guter Graph (kein Befund) und je Bruchart ein brechender (kein Schema, fremdes Schema, Fluss
