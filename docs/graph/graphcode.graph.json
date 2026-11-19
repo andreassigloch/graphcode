@@ -4416,6 +4416,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-965",
+      "type": "CR",
+      "name": "Vertragstest von Hand aus der Vertragsdatei erzeugen (Folge 2 aus CR-GC-961)",
+      "description": "docs/cr/open/CR-GC-965-vertragstest-von-hand-aus-der-vertragsda.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -36974,5 +36980,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1331
+  "graphVersion": 1332
 }
