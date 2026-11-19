@@ -657,7 +657,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-961` | done | Klärung: Vertragstest-Generator als fester Bauschritt (ITEM-2026-1454), Kanal-Attribut am FLOW (Aufruf, Nachricht, Datei, physisch, Mensch) und Vertrag physischer/elektrischer Schnittstellen ohne Zod (FAQ schema-bei-physischem-fluss offen) — aus CR-GC-958/959 | `FUNC-se-bau` |
 | `CR-GC-962` | done | Vertragstest-Generator aus graphanalyze nach graphcode übernehmen (Verb graphcode vertragstest), Satz 'is not a generator' entfernen — Folge 1 aus CR-GC-961 | `FUNC-erzeuge-vertragstests` · `FUNC-vertragstest-verb` · `REQ-contract-test-cases` · `REQ-contract-test-generation` |
 | `CR-GC-963` | done | se-bau: Schritt Vertragstest erzeugen (graphcode vertragstest) je neuem oder geändertem SCHEMA — Folge 2 aus CR-GC-961 | `FUNC-se-bau` · `REQ-bau-vertragstest-erzeugen` |
-| `CR-GC-964` | n/a | Test von Hand: tool manuell nicht in den vitest-Lauf, Protokoll als evidence beim Ingest — Folge 3 aus CR-GC-961 | `FUNC-deduce-tests` · `FUNC-plan-code-lane` · `FUNC-test-ingest` · `REQ-test-von-hand-auswahl` · `REQ-test-von-hand-ergebnis` · `REQ-test-von-hand-spur` |
+| `CR-GC-964` | done | Test von Hand: tool manuell nicht in den vitest-Lauf, Protokoll als evidence beim Ingest — Folge 3 aus CR-GC-961 | `FUNC-deduce-tests` · `FUNC-plan-code-lane` · `FUNC-test-ingest` · `REQ-test-von-hand-auswahl` · `REQ-test-von-hand-ergebnis` · `REQ-test-von-hand-spur` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

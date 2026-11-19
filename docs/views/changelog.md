@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 568 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 568 CR · 417 done · 4 open.
+Total: 568 CR · 418 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -629,4 +629,4 @@ Total: 568 CR · 417 done · 4 open.
 | `CR-GC-961` | done | Klärung: Vertragstest-Generator als fester Bauschritt (ITEM-2026-1454), Kanal-Attribut am FLOW (Aufruf, Nachricht, Datei, physisch, Mensch) und Vertrag physischer/elektrischer Schnittstellen ohne Zod (FAQ schema-bei-physischem-fluss offen) — aus CR-GC-958/959 |
 | `CR-GC-962` | done | Vertragstest-Generator aus graphanalyze nach graphcode übernehmen (Verb graphcode vertragstest), Satz 'is not a generator' entfernen — Folge 1 aus CR-GC-961 |
 | `CR-GC-963` | done | se-bau: Schritt Vertragstest erzeugen (graphcode vertragstest) je neuem oder geändertem SCHEMA — Folge 2 aus CR-GC-961 |
-| `CR-GC-964` | n/a | Test von Hand: tool manuell nicht in den vitest-Lauf, Protokoll als evidence beim Ingest — Folge 3 aus CR-GC-961 |
+| `CR-GC-964` | done | Test von Hand: tool manuell nicht in den vitest-Lauf, Protokoll als evidence beim Ingest — Folge 3 aus CR-GC-961 |

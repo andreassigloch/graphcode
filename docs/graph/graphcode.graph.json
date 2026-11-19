@@ -4412,7 +4412,8 @@
       "id": "CR-GC-964",
       "type": "CR",
       "name": "Test von Hand: tool manuell nicht in den vitest-Lauf, Protokoll als evidence beim Ingest — Folge 3 aus CR-GC-961",
-      "description": "docs/cr/open/CR-GC-964-test-von-hand-tool-manuell-nicht-in-den-.md"
+      "description": "docs/cr/done/CR-GC-964-test-von-hand-tool-manuell-nicht-in-den-.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -36973,5 +36974,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1330
+  "graphVersion": 1331
 }
