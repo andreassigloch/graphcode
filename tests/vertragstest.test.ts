@@ -1,10 +1,10 @@
-// TEST-vertragstest-generator — Vertragstest-Generator und Verb `graphcode vertragstest` (CR-GC-962).
+// TEST-vertragstest-generator — Vertragstest-Generator und Verb `graphcode vertragstest` (CR-GC-962, CR-GC-965).
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { z } from 'zod';
-import { beispiel, erzeugeFaelle, testDatei } from '../src/projections/vertragstest.js';
+import { beispiel, erzeugeFaelle, pruefpunkte, testDatei, testVonHand } from '../src/projections/vertragstest.js';
 import { executeVertragstest, VertragstestAufrufFehler } from '../src/surface/vertragstest-verb.js';
 
 const S = z.strictObject({
@@ -63,6 +63,45 @@ describe('erzeugeFaelle', () => {
   });
 });
 
+const VERTRAG = [
+  '# 24-V-Bus',
+  '',
+  'Text vor der Tabelle.',
+  '',
+  '| Größe | Einheit | Min | Nenn | Max | Messpunkt | Quelle |',
+  '|---|---|---|---|---|---|---|',
+  '| Spannung | V | 23,76 | 24 | 24,24 | Netzteilausgang | Datenblatt LRS-150 |',
+  '| Welligkeit | mVpp | | | 150 | Netzteilausgang | |',
+  '| Polarität | – | | plus an Klemme 1 | | | |',
+  '',
+].join('\n');
+
+describe('pruefpunkte (Vertragsdatei)', () => {
+  it('macht je Zeile mit Grenzwert einen Prüfpunkt und verwirft die Zeile ohne', () => {
+    const { punkte, verworfen } = pruefpunkte(VERTRAG);
+    expect(punkte).toEqual([
+      'Miss Spannung am Netzteilausgang; bestanden, wenn 23,76 V ≤ Wert ≤ 24,24 V (Nenn 24 V; Quelle: Datenblatt LRS-150).',
+      'Miss Welligkeit am Netzteilausgang; bestanden, wenn Wert ≤ 150 mVpp.',
+    ]);
+    expect(verworfen).toEqual(['Polarität: kein Min und kein Max']);
+  });
+  it('lehnt eine Datei ohne Tabelle mit Größe, Einheit, Min, Nenn, Max ab', () => {
+    expect(() => pruefpunkte('# leer\n\n| a | b |\n|---|---|\n| 1 | 2 |\n')).toThrow('keine Vertragstabelle');
+  });
+});
+
+describe('testVonHand', () => {
+  it('schreibt Kopf, Überschrift mit der SCHEMA-uid, nummerierte Prüfpunkte und den Ablauf des Ergebnisses', () => {
+    const t = testVonHand({ id: 'SCHEMA-bus', file: 'docs/vertrag/bus.md' }, pruefpunkte(VERTRAG).punkte);
+    expect(t.split('\n')[0]).toBe('<!-- erzeugt aus dem Modell (graphcode vertragstest) — SCHEMA-bus → docs/vertrag/bus.md. Nicht von Hand ändern, neu erzeugen. -->');
+    expect(t).toContain('# Vertragstest SCHEMA-bus');
+    expect(t).toContain('1. Miss Spannung am Netzteilausgang');
+    expect(t).toContain('2. Miss Welligkeit');
+    expect(t).toContain('`graph_test_ingest`');
+    expect(t).toContain('tool: "manuell"');
+  });
+});
+
 describe('testDatei', () => {
   it('schreibt einen vitest-Rumpf je Fall mit dem Kopf des Verbs', () => {
     const { aufgenommen } = erzeugeFaelle(S);
@@ -113,6 +152,25 @@ describe('executeVertragstest (Verb gegen ein Temp-Repo)', () => {
     expect(executeVertragstest({ repoRoot: repo, ids: ['SCHEMA-weg'], ziel: 'tmp' })).toEqual([
       { schema: 'SCHEMA-weg', fehler: 'Symbol Weg nicht exportiert' },
     ]);
+  });
+
+  it('schreibt für ein SCHEMA mit Vertragsdatei den Test von Hand als Markdown', () => {
+    mkdirSync(join(repo, 'docs/vertrag'), { recursive: true });
+    writeFileSync(join(repo, 'docs/vertrag/bus.md'), VERTRAG);
+    writeFileSync(join(repo, 'docs/vertrag/leer.md'), '# ohne Tabelle\n');
+    const p = join(repo, 'docs/graph', `${repo.split('/').pop()}.graph.json`);
+    const g = JSON.parse(readFileSync(p, 'utf8'));
+    g.elements.push(
+      { id: 'SCHEMA-bus', type: 'SCHEMA', realRef: { file: 'docs/vertrag/bus.md' } },
+      { id: 'SCHEMA-leer', type: 'SCHEMA', realRef: { file: 'docs/vertrag/leer.md' } },
+    );
+    writeFileSync(p, JSON.stringify(g));
+    expect(executeVertragstest({ repoRoot: repo, ids: ['SCHEMA-bus', 'SCHEMA-leer'] })).toEqual([
+      { schema: 'SCHEMA-bus', datei: 'tests/vertrag/SCHEMA-bus.vertrag.md', faelle: 2, verworfen: ['Polarität: kein Min und kein Max'] },
+      { schema: 'SCHEMA-leer', fehler: 'keine Vertragstabelle (Spalten Größe, Einheit, Min, Nenn, Max)' },
+    ]);
+    expect(readFileSync(join(repo, 'tests/vertrag/SCHEMA-bus.vertrag.md'), 'utf8')).toContain('# Vertragstest SCHEMA-bus');
+    expect(executeVertragstest({ repoRoot: repo }).map((b) => b.schema)).toEqual(expect.arrayContaining(['SCHEMA-auftrag', 'SCHEMA-bus']));
   });
 
   it('weist eine uid ohne realRef als Aufruffehler ab', () => {

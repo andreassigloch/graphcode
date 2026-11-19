@@ -8,15 +8,23 @@
  * erwartet; angenommene Faelle frieren die Ausgabe ein. Das Laden der TS-Quellen des Ziel-Repos
  * gehoert dem Aufrufer (`laden`), weil es Node-Flags braucht (vertragstest-verb.ts).
  *
+ * Ein SCHEMA mit Vertragsdatei (`realRef {file}` auf `.md` ohne Symbol, Entscheidung CR-GC-961 F3d)
+ * bekommt den Test von Hand (CR-GC-965): Die Tabelle traegt Größe, Einheit, Min, Nenn, Max, optional
+ * Messpunkt und Quelle; je Zeile mit Grenzwert entsteht ein Pruefpunkt, eine Zeile ohne Min und Max
+ * wird verworfen. Das Protokoll eines Laufs liegt getrennt (`evidence`, CR-GC-964).
+ *
  * @author andreas@siglochconsulting
  */
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { z } from 'zod';
 
-/** Ein SCHEMA des Modells mit seinem Zod-Symbol im Code. */
+/** Ein SCHEMA des Modells mit seinem Zod-Symbol im Code oder mit seiner Vertragsdatei (`.md`, ohne Symbol). */
 export const VertragstestSatzSchema = z.array(
-  z.strictObject({ id: z.string().min(1), file: z.string().min(1), symbol: z.string().min(1) }),
+  z.union([
+    z.strictObject({ id: z.string().min(1), file: z.string().min(1), symbol: z.string().min(1) }),
+    z.strictObject({ id: z.string().min(1), file: z.string().regex(/\.md$/) }),
+  ]),
 );
 export type VertragstestSatz = z.infer<typeof VertragstestSatzSchema>;
 
@@ -286,8 +294,78 @@ function rohFaelle(S: Zod): Fall[] {
   return faelle;
 }
 
+// --- Test von Hand aus einer Vertragsdatei (CR-GC-965) ---
+
+const PFLICHT = ['größe', 'einheit', 'min', 'nenn', 'max'] as const;
+
+const zellen = (zeile: string): string[] =>
+  zeile
+    .trim()
+    .replace(/^\|/, '')
+    .replace(/\|$/, '')
+    .split('|')
+    .map((z) => z.trim());
+
+const normiert = (kopf: string): string => kopf.toLowerCase().replace('groesse', 'größe');
+
+/** Die Pruefpunkte der ersten Tabelle mit den Pflichtspalten. */
+export function pruefpunkte(text: string): { punkte: string[]; verworfen: string[] } {
+  const zeilen = text.split('\n');
+  const start = zeilen.findIndex((z) => {
+    if (!z.trim().startsWith('|')) return false;
+    const k = zellen(z).map(normiert);
+    return PFLICHT.every((p) => k.includes(p));
+  });
+  if (start < 0) throw new Error(`keine Vertragstabelle (Spalten Größe, Einheit, Min, Nenn, Max)`);
+  const kopf = zellen(zeilen[start] as string).map(normiert);
+  const spalte = (zeile: string[], name: string): string => {
+    const i = kopf.indexOf(name);
+    return i < 0 ? '' : (zeile[i] ?? '');
+  };
+  const punkte: string[] = [];
+  const verworfen: string[] = [];
+  for (const roh of zeilen.slice(start + 2)) {
+    if (!roh.trim().startsWith('|')) break;
+    const z = zellen(roh);
+    const [groesse, einheit, min, nenn, max, ort, quelle] = ['größe', 'einheit', 'min', 'nenn', 'max', 'messpunkt', 'quelle'].map(
+      (n) => spalte(z, n),
+    ) as [string, string, string, string, string, string, string];
+    if (!min && !max) {
+      verworfen.push(`${groesse}: kein Min und kein Max`);
+      continue;
+    }
+    const grenze = min && max ? `${min} ${einheit} ≤ Wert ≤ ${max} ${einheit}` : min ? `Wert ≥ ${min} ${einheit}` : `Wert ≤ ${max} ${einheit}`;
+    const zusatz = [nenn ? `Nenn ${nenn} ${einheit}` : '', quelle ? `Quelle: ${quelle}` : ''].filter(Boolean).join('; ');
+    punkte.push(`Miss ${groesse}${ort ? ` am ${ort}` : ''}; bestanden, wenn ${grenze}${zusatz ? ` (${zusatz})` : ''}.`);
+  }
+  return { punkte, verworfen };
+}
+
+/** Der Text der Testdatei von Hand fuer ein SCHEMA mit Vertragsdatei. */
+export function testVonHand(v: { id: string; file: string }, punkte: readonly string[]): string {
+  return [
+    `<!-- erzeugt aus dem Modell (graphcode vertragstest) — ${v.id} → ${v.file}. Nicht von Hand ändern, neu erzeugen. -->`,
+    `# Vertragstest ${v.id}`,
+    ``,
+    `Vertrag: \`${v.file}\`. Der Test läuft von Hand; jeder Prüfpunkt muss bestehen.`,
+    ``,
+    `## Prüfpunkte`,
+    ``,
+    ...punkte.map((p, i) => `${i + 1}. ${p}`),
+    ``,
+    `## Ergebnis`,
+    ``,
+    `Lege das Protokoll mit Datum, Prüfer und Messwert je Prüfpunkt als Datei ab. Melde es über`,
+    `\`graph_test_ingest\` mit \`results: [{ file, result, tool: "manuell", evidence: <Pfad des Protokolls> }]\`.`,
+    `Ändert sich der Vertrag, nimmt \`graph_test_ingest({ changeSet: ["${v.id}"] })\` das Ergebnis zurück.`,
+    ``,
+  ].join('\n');
+}
+
+type CodeVertrag = Extract<VertragstestSatz[number], { symbol: string }>;
+
 /** Der Text der vitest-Datei fuer ein SCHEMA. */
-export function testDatei(eintrag: VertragstestSatz[number], importPfad: string, faelle: Fall[]): string {
+export function testDatei(eintrag: CodeVertrag, importPfad: string, faelle: Fall[]): string {
   const zeilen = [
     `// erzeugt aus dem Modell (graphcode vertragstest) — ${eintrag.id} → ${eintrag.file}#${eintrag.symbol}. Nicht von Hand ändern, neu erzeugen.`,
     `import { describe, it, expect } from 'vitest';`,
@@ -306,7 +384,8 @@ export function testDatei(eintrag: VertragstestSatz[number], importPfad: string,
 }
 
 /**
- * Schreibt je SCHEMA `<id>.vertrag.test.ts` nach `zielDir`. `laden(absPfad)` liefert das Modul mit
+ * Schreibt je SCHEMA `<id>.vertrag.test.ts` nach `zielDir`, fuer eine Vertragsdatei den Test von Hand
+ * `<id>.vertrag.md` (CR-GC-965). `laden(absPfad)` liefert das Modul mit
  * dem Zod-Symbol. Ein Fehler je SCHEMA bricht den Lauf nicht ab; er steht im Bericht.
  */
 export async function erzeugeVertragstests(
@@ -320,6 +399,14 @@ export async function erzeugeVertragstests(
   const bericht: VertragstestBericht = [];
   for (const e of satz) {
     try {
+      if (!('symbol' in e)) {
+        const { punkte, verworfen } = pruefpunkte(readFileSync(join(root, e.file), 'utf8'));
+        if (punkte.length === 0) throw new Error('keine Zeile mit Grenzwert');
+        const datei = join(zielDir, `${e.id}.vertrag.md`);
+        writeFileSync(datei, testVonHand(e, punkte));
+        bericht.push({ schema: e.id, datei: relative(root, datei), faelle: punkte.length, verworfen });
+        continue;
+      }
       const mod = await laden(join(root, e.file));
       const S = mod[e.symbol] as Zod | undefined;
       if (!S?._zod) throw new Error(S ? 'kein Zod-4-Schema' : `Symbol ${e.symbol} nicht exportiert`);
