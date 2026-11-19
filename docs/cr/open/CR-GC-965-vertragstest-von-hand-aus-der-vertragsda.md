@@ -57,3 +57,15 @@ Tests (`graph_tests`, 3):
 - tests/vertragstest.test.ts
 
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+---
+
+## Ergebnis (2026-11-19)
+
+- `src/projections/vertragstest.ts`: `pruefpunkte` liest die Vertragstabelle, `testVonHand` schreibt `<uid>.vertrag.md`; `VertragstestSatzSchema` nimmt die Vertragsdatei als zweite Form an. Der Code liegt in derselben Datei wie der Generator, damit kein interner Aufruf eine eigene FUNC mit FLOW braucht.
+- `src/surface/vertragstest-verb.ts`: Der Satz nimmt ein SCHEMA mit `realRef` auf `.md` ohne Symbol.
+- `tests/vertragstest.test.ts`: 4 neue Fälle; der Fall am Verb war vor der Änderung rot („kein SCHEMA mit realRef: SCHEMA-bus“).
+- `tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts` neu erzeugt (geänderter Vertrag, 15 statt 9 Fälle).
+- `se-bau` Version 3, `tests/skill-bau.test.ts` prüft den Fall (rot gesehen).
+- Modell: `REQ-contract-test-manual` (satisfy `FUNC-erzeuge-vertragstests`, verify `TEST-vertragstest-generator`); Beschreibungen von FUNC, SCHEMA und `REQ-bau-vertragstest-erzeugen` nachgezogen.
+- `verify:full CR-GC-965`: 246 Dateien, rot 0, Schlupf 0; Folge ohne Schlupf 1/10.
