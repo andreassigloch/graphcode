@@ -130,6 +130,31 @@ RC-01, RC-03, RC-08, RC-12, RC-13 melden auf dem ganzen Modell keinen Befund; Pu
 
 Eine FUNC kann mehrere Lücken haben; die Zeilen summieren sich nicht zu 23.
 
+### Nachtrag 2026-11-19: Zählfehler JSDoc
+
+Der Zähler oben zählte JSDoc-Kommentare als A, entgegen der Regel („reiner Kommentar zählt nicht“). Die Fixture enthielt kein JSDoc und fand den Fehler nicht; sie trägt jetzt einen JSDoc-Block. Regel, Schwelle und Module sind unverändert; die Tabelle oben bleibt als Lauf 1 stehen.
+
+| MOD | Zeilen | F | V | A | Token F |
+|---|---|---|---|---|---|
+| `MOD-kernel-measure` | 593 | 21,9 % | 17,0 % | 61,0 % | 12,6 % |
+| `MOD-loop` | 1388 | 10,7 % | 5,0 % | 84,3 % | 8,6 % |
+| `MOD-projections` | 4139 | 13,4 % | 4,6 % | 82,1 % | 8,8 % |
+
+Median F-Anteil: **13,4 %**. Kill F1 greift weiter. Rohdaten: `f1-zeilen-korrigiert.json`.
+
+### Planspiel (kein Kriterium, nach dem Urteil)
+
+Gleicher Zähler, korrigiert (`werkzeug/planspiel.mjs`, `werkzeug/a-zerlegen.mjs`):
+
+| Annahme | measure | loop | projections | Median F |
+|---|---|---|---|---|
+| S0 gemessen | 21,9 % | 10,7 % | 13,4 % | 13,4 % |
+| S1 alle Modelllücken geschlossen | 21,9 % | 10,7 % | 13,4 % | 13,4 % |
+| S2 jede benannte Funktion oberster Ebene ist eine FUNC | 30,9 % | 16,8 % | 19,4 % | 19,4 % |
+| S2 + Hülle der MCP-Tools (name, description, inputSchema) | 30,9 % | 18,0 % | 21,5 % | 21,5 % |
+
+S1 ändert keine Zeile: Die Lücken entscheiden, ob eine FUNC ableitbar ist, nicht wie viele ihrer Zeilen Framework sind.
+
 ### F2
 
 Nicht gelaufen. Kill F1 ist die Abbruchbedingung und erzwingt No-Go für die Frage nach dem eingesparten Code. Die Kontextfrage (F2) ist davon unabhängig und offen.
