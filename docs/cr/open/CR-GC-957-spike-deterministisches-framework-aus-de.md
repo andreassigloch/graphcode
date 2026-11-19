@@ -157,7 +157,11 @@ S1 ändert keine Zeile: Die Lücken entscheiden, ob eine FUNC ableitbar ist, nic
 
 ### F2
 
-Nicht gelaufen. Kill F1 ist die Abbruchbedingung und erzwingt No-Go für die Frage nach dem eingesparten Code. Die Kontextfrage (F2) ist davon unabhängig und offen.
+Nicht gelaufen. Kill F1 ist die Abbruchbedingung und erzwingt No-Go für die Frage nach dem eingesparten Code.
+
+**Entscheidung des Autors (2026-11-19): F2 entfällt.** Das kleine LLM bekommt Signatur, FLOW, SCHEMA und REQ ohnehin aus `graph_context`; ein Generator liefert dieselbe Information als Code. Ein Generator unterscheidet sich nur in der Treue zum Modell. Die prüfen RC-01 bis RC-13 nach dem Schreiben. Beleg für Abweichungen: RC-04 meldet 23 gebundene SCHEMA ohne Parse an der modellierten Schnittstelle (nicht getrennt nach Code- und Modellfehler).
+
+Folgespike „Tests aus dem Modell“: eigenes Item.
 
 ### Empfehlung
 
