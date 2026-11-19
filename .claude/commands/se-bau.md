@@ -48,8 +48,8 @@ Die Hauptsitzung koordiniert und baut nichts selbst. Rufe `graph_mutate` mit `sk
    - Endet das Verb mit Exit 1, nennt der Bericht das SCHEMA und den Grund, z. B. `z.custom` oder eine
      Querbedingung. Für dieses SCHEMA beauftragst du einen Umsetzer mit dem Vertragstest von Hand.
    - Zeigt `realRef` des SCHEMA auf eine Vertragsdatei (`.md` mit der Tabelle Größe, Einheit, Min, Nenn,
-     Max, Messpunkt, Quelle), schreibt das Verb den Test von Hand `tests/vertrag/<uid>.vertrag.md`: je Zeile
-     mit Grenzwert ein Prüfpunkt. Binde ihn mit `testRefs {file, tool: "manuell"}`. Er läuft dort, wo der
+     Max, Messpunkt, Quelle, Kriterium), schreibt das Verb den Test von Hand `tests/vertrag/<uid>.vertrag.md`:
+     je Zeile mit Grenzwert oder Kriterium ein Prüfpunkt. Binde ihn mit `testRefs {file, tool: "manuell"}`. Er läuft dort, wo der
      Vertrag gilt; das Protokoll meldest du über `graph_test_ingest` mit `evidence`.
 
 ## Umsetzer (Agent)

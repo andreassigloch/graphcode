@@ -83,7 +83,23 @@ describe('pruefpunkte (Vertragsdatei)', () => {
       'Miss Spannung am Netzteilausgang; bestanden, wenn 23,76 V ≤ Wert ≤ 24,24 V (Nenn 24 V; Quelle: Datenblatt LRS-150).',
       'Miss Welligkeit am Netzteilausgang; bestanden, wenn Wert ≤ 150 mVpp.',
     ]);
-    expect(verworfen).toEqual(['Polarität: kein Min und kein Max']);
+    expect(verworfen).toEqual(['Polarität: kein Min, kein Max und kein Kriterium']);
+  });
+  it('nimmt eine Zeile nur mit Kriterium und hängt das Kriterium an eine Grenze an (CR-GC-966)', () => {
+    const v = [
+      '| Größe | Einheit | Min | Nenn | Max | Messpunkt | Kriterium |',
+      '|---|---|---|---|---|---|---|',
+      '| Polarität | – | | | | Gleisanschluss | kehrt mit der Richtung um |',
+      '| Frequenz | kHz | 19 | 20 | 21 | RPWM | je Richtung taktet genau ein Eingang |',
+      '| Farbe | – | | rot | | | |',
+    ].join('\n');
+    expect(pruefpunkte(v)).toEqual({
+      punkte: [
+        'Prüfe Polarität am Gleisanschluss; bestanden, wenn kehrt mit der Richtung um.',
+        'Miss Frequenz am RPWM; bestanden, wenn 19 kHz ≤ Wert ≤ 21 kHz und je Richtung taktet genau ein Eingang (Nenn 20 kHz).',
+      ],
+      verworfen: ['Farbe: kein Min, kein Max und kein Kriterium'],
+    });
   });
   it('lehnt eine Datei ohne Tabelle mit Größe, Einheit, Min, Nenn, Max ab', () => {
     expect(() => pruefpunkte('# leer\n\n| a | b |\n|---|---|\n| 1 | 2 |\n')).toThrow('keine Vertragstabelle');
@@ -166,7 +182,7 @@ describe('executeVertragstest (Verb gegen ein Temp-Repo)', () => {
     );
     writeFileSync(p, JSON.stringify(g));
     expect(executeVertragstest({ repoRoot: repo, ids: ['SCHEMA-bus', 'SCHEMA-leer'] })).toEqual([
-      { schema: 'SCHEMA-bus', datei: 'tests/vertrag/SCHEMA-bus.vertrag.md', faelle: 2, verworfen: ['Polarität: kein Min und kein Max'] },
+      { schema: 'SCHEMA-bus', datei: 'tests/vertrag/SCHEMA-bus.vertrag.md', faelle: 2, verworfen: ['Polarität: kein Min, kein Max und kein Kriterium'] },
       { schema: 'SCHEMA-leer', fehler: 'keine Vertragstabelle (Spalten Größe, Einheit, Min, Nenn, Max)' },
     ]);
     expect(readFileSync(join(repo, 'tests/vertrag/SCHEMA-bus.vertrag.md'), 'utf8')).toContain('# Vertragstest SCHEMA-bus');

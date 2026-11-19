@@ -105,6 +105,7 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
       expect(k).toMatch(/Vertragsdatei/);
       expect(k).toMatch(/\.vertrag\.md/);
       expect(k).toMatch(/tool: "manuell"/);
+      expect(k).toMatch(/Kriterium/);
     });
     it('graph_mutate trägt skill: "se-bau"', () => {
       expect(text).toContain('skill: "se-bau"');
