@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 298 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 301 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 66 REQ
@@ -357,7 +357,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 218 REQ
+### Entwurf (SWE.3 · HWE.2) — 221 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -556,6 +556,9 @@
 | `REQ-target-shifts-ranking` | `TEST-target-profile` · `TEST-target-shifts-ranking` | `FUNC-graph-suggest` | `MOD-loop` |
 | `REQ-test-result-withdrawn-on-change` | `TEST-test-result-withdrawn-on-change` | `FUNC-test-ingest` | `MOD-projections` |
 | `REQ-test-skill-red-first` | `TEST-skill-red-first` | `MOD-agent-surface` | — |
+| `REQ-test-von-hand-auswahl` | `TEST-test-von-hand` | `FUNC-deduce-tests` | `MOD-projections` |
+| `REQ-test-von-hand-ergebnis` | `TEST-test-von-hand` | `FUNC-test-ingest` | `MOD-projections` |
+| `REQ-test-von-hand-spur` | `TEST-test-von-hand` | `FUNC-plan-code-lane` | `MOD-projections` |
 | `REQ-testref-kopf-bindung` | `TEST-testref-kopf-bindung` | `FUNC-test-ingest` | `MOD-projections` |
 | `REQ-testref-materialized` | `TEST-realref-materialize` · `TEST-testref-materialize` | `MOD-projections` | — |
 | `REQ-tests-aufloesen` | `TEST-test-runnable-binding` | `FUNC-deduce-tests` | `MOD-projections` |

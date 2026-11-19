@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 298 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 301 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -2066,6 +2066,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-deduce-tests` · allocate ▶ `MOD-projections`
 
+###### `REQ-test-von-hand-auswahl` — Test von Hand nicht in der Auswahl
+
+graph_tests gibt eine Testbindung mit Werkzeug manuell nie in den vitest-Befehl, sondern nennt ihren TEST mit Datei unter manuell. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-deduce-tests` · allocate ▶ `MOD-projections`
+
 ###### `REQ-tests-aufloesen` — TEST-Knoten aufloesen
 
 Wenn ein TEST-Knoten testRefs traegt, loest graph_tests ihn zu seinen Testdateien auf; ohne testRefs nennt es ihn unter unresolved.
@@ -2227,6 +2235,14 @@ Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das E
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-test-result-withdrawn-on-change` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
+
+###### `REQ-test-von-hand-ergebnis` — Ergebnis von Hand mit Protokoll
+
+graph_test_ingest nimmt je Lauf ein Protokoll als evidence an und schreibt es mit Ergebnis und ranAt an die Bindung; ein neuer Lauf ohne Protokoll laesst kein altes stehen. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
 ###### `REQ-testref-kopf-bindung` — Testlauf bindet die Testdatei ueber den Kopf
 
@@ -2418,6 +2434,14 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
 
+###### `REQ-test-von-hand-spur` — Test von Hand nicht in der Code-Spur
+
+Die Code-Spur nimmt eine Testbindung mit Werkzeug manuell nicht in ihre Testdateien und nennt den TEST als von Hand faellig. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
+
 ###### 3.3.1.3.4.4  `FUNC-select-tests` — impactedTests(graph, changeSet)
 
 > auch in: `FCHAIN-impact-testing` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane-full` · `FUNC-block-messwerk`
@@ -2473,6 +2497,14 @@ Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das E
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-test-result-withdrawn-on-change` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
+
+###### `REQ-test-von-hand-ergebnis` — Ergebnis von Hand mit Protokoll
+
+graph_test_ingest nimmt je Lauf ein Protokoll als evidence an und schreibt es mit Ergebnis und ranAt an die Bindung; ein neuer Lauf ohne Protokoll laesst kein altes stehen. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
 ###### `REQ-testref-kopf-bindung` — Testlauf bindet die Testdatei ueber den Kopf
 
@@ -2654,6 +2686,14 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
 
+###### `REQ-test-von-hand-spur` — Test von Hand nicht in der Code-Spur
+
+Die Code-Spur nimmt eine Testbindung mit Werkzeug manuell nicht in ihre Testdateien und nennt den TEST als von Hand faellig. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
+
 ###### 3.3.1.3.5.4  `FUNC-select-tests` — impactedTests(graph, changeSet)
 
 > auch in: `FCHAIN-impact-testing` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FUNC-block-messwerk`
@@ -2709,6 +2749,14 @@ Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das E
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-test-result-withdrawn-on-change` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
+
+###### `REQ-test-von-hand-ergebnis` — Ergebnis von Hand mit Protokoll
+
+graph_test_ingest nimmt je Lauf ein Protokoll als evidence an und schreibt es mit Ergebnis und ranAt an die Bindung; ein neuer Lauf ohne Protokoll laesst kein altes stehen. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
 ###### `REQ-testref-kopf-bindung` — Testlauf bindet die Testdatei ueber den Kopf
 
@@ -4784,6 +4832,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-deduce-tests` · allocate ▶ `MOD-projections`
 
+###### `REQ-test-von-hand-auswahl` — Test von Hand nicht in der Auswahl
+
+graph_tests gibt eine Testbindung mit Werkzeug manuell nie in den vitest-Befehl, sondern nennt ihren TEST mit Datei unter manuell. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-deduce-tests` · allocate ▶ `MOD-projections`
+
 ###### `REQ-tests-aufloesen` — TEST-Knoten aufloesen
 
 Wenn ein TEST-Knoten testRefs traegt, loest graph_tests ihn zu seinen Testdateien auf; ohne testRefs nennt es ihn unter unresolved.
@@ -6022,6 +6078,14 @@ priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-test-result-withdrawn-on-change` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
+###### `REQ-test-von-hand-ergebnis` — Ergebnis von Hand mit Protokoll
+
+graph_test_ingest nimmt je Lauf ein Protokoll als evidence an und schreibt es mit Ergebnis und ranAt an die Bindung; ein neuer Lauf ohne Protokoll laesst kein altes stehen. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
+
 ###### `REQ-testref-kopf-bindung` — Testlauf bindet die Testdatei ueber den Kopf
 
 graph_test_ingest bindet eine Testdatei ohne testRefs-Eintrag an den TEST, dessen uid ihr Kopfkommentar als einzige nennt, samt Ergebnis des Laufs; nennt der Kopf keine, mehrere oder eine fremde uid, oder fehlt das Werkzeug, bleibt die Datei unresolved mit diesem Grund.
@@ -6212,6 +6276,14 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
 
+###### `REQ-test-von-hand-spur` — Test von Hand nicht in der Code-Spur
+
+Die Code-Spur nimmt eine Testbindung mit Werkzeug manuell nicht in ihre Testdateien und nennt den TEST als von Hand faellig. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
+
 ###### 3.3.1.5.13.4  `FUNC-select-tests` — impactedTests(graph, changeSet)
 
 > auch in: `FCHAIN-impact-testing` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane-full` · `FUNC-block-messwerk`
@@ -6267,6 +6339,14 @@ Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das E
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-test-result-withdrawn-on-change` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
+
+###### `REQ-test-von-hand-ergebnis` — Ergebnis von Hand mit Protokoll
+
+graph_test_ingest nimmt je Lauf ein Protokoll als evidence an und schreibt es mit Ergebnis und ranAt an die Bindung; ein neuer Lauf ohne Protokoll laesst kein altes stehen. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
 ###### `REQ-testref-kopf-bindung` — Testlauf bindet die Testdatei ueber den Kopf
 
@@ -9630,6 +9710,14 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
 
+###### `REQ-test-von-hand-spur` — Test von Hand nicht in der Code-Spur
+
+Die Code-Spur nimmt eine Testbindung mit Werkzeug manuell nicht in ihre Testdateien und nennt den TEST als von Hand faellig. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
+
 ###### 3.3.1.10.1.1.13  `FUNC-render-verb` — executeRender
 
 > auch in: `FCHAIN-render-document`
@@ -10022,6 +10110,14 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-mvp-e2e` (e2e) · `TEST-selective-test-audit` (integration) · satisfy ◀ `FUNC-deduce-tests` · allocate ▶ `MOD-projections`
 
+###### `REQ-test-von-hand-auswahl` — Test von Hand nicht in der Auswahl
+
+graph_tests gibt eine Testbindung mit Werkzeug manuell nie in den vitest-Befehl, sondern nennt ihren TEST mit Datei unter manuell. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-deduce-tests` · allocate ▶ `MOD-projections`
+
 ###### `REQ-tests-aufloesen` — TEST-Knoten aufloesen
 
 Wenn ein TEST-Knoten testRefs traegt, loest graph_tests ihn zu seinen Testdateien auf; ohne testRefs nennt es ihn unter unresolved.
@@ -10221,6 +10317,14 @@ Betrifft eine gemeldete Aenderung einen TEST-Knoten, so nimmt das Werkzeug das E
 priority: must · status: n/a · kinds: functional · role: mitigation
 
 Verification ◀ `TEST-test-result-withdrawn-on-change` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
+
+###### `REQ-test-von-hand-ergebnis` — Ergebnis von Hand mit Protokoll
+
+graph_test_ingest nimmt je Lauf ein Protokoll als evidence an und schreibt es mit Ergebnis und ranAt an die Bindung; ein neuer Lauf ohne Protokoll laesst kein altes stehen. (CR-GC-964)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-test-ingest` · allocate ▶ `MOD-projections`
 
 ###### `REQ-testref-kopf-bindung` — Testlauf bindet die Testdatei ueber den Kopf
 
@@ -15878,175 +15982,181 @@ Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf
 
 verify ▶ `REQ-full-run-on-probation` · `REQ-lane-red-without-report` · `REQ-risk-selection-misses-red-test` · `REQ-volllauf-nennt-folge` · `REQ-volllauf-schreibt-schlupf` · `SCHEMA-lauf-urteil` · `SCHEMA-schlupf-zeile` · `SCHEMA-vitest-lauf` · testRefs: `tests/test-schlupf.test.ts`
 
-#### 3.4.176  `TEST-testref-kopf-bindung` — Kopf-Bindungs-Check
+#### 3.4.176  `TEST-test-von-hand` — Test von Hand
+
+Testbeschreibung von Hand im tmp-Repo mit Disk-Kuzu: Bindung ueber die Ueberschrift, Ergebnis mit Protokoll, kein vitest-Befehl, Ruecknahme bei geaendertem SCHEMA
+
+verify ▶ `REQ-test-von-hand-auswahl` · `REQ-test-von-hand-ergebnis` · `REQ-test-von-hand-spur` · testRefs: `tests/test-von-hand.test.ts`
+
+#### 3.4.177  `TEST-testref-kopf-bindung` — Kopf-Bindungs-Check
 
 Abnahme der Datei tests/testreport.kopf-bindung.test.ts: echtes Disk-Kuzu und echte Dateien; Bindung mit Ergebnis, kein Doppel beim zweiten Lauf, Anhaengen an eine bestehende Bindung, und je ein benannter Grund fuer keine, zwei, fremde uid, fehlendes Werkzeug, fehlende und repo-fremde Datei.
 
 verify ▶ `REQ-testref-kopf-bindung` · testRefs: `tests/testreport.kopf-bindung.test.ts`
 
-#### 3.4.177  `TEST-testref-materialize` — Export stub-materialization test
+#### 3.4.178  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-#### 3.4.178  `TEST-testreport` — Rueckweg des Testergebnisses
+#### 3.4.179  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-ingest-je-testref` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-#### 3.4.179  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+#### 3.4.180  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · `SCHEMA-metric-policy` · testRefs: `tests/config.test.ts`
 
-#### 3.4.180  `TEST-token-efficiency` — Token-Budget-Test
+#### 3.4.181  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-#### 3.4.181  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+#### 3.4.182  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolPortSchema; dazu drei Gegenproben (fehlender handler, inputSchema ohne safeParse, Port ohne serializeToolWrite).
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-#### 3.4.182  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
+#### 3.4.183  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
 
 Prueft, dass eine laufende Sitzung eine geaenderte Werkzeugliste des Hosts erfaehrt.
 
 verify ▶ `REQ-risk-client-holds-stale-tool-list`
 
-#### 3.4.183  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+#### 3.4.184  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-#### 3.4.184  `TEST-umbau-ausloeser` — Auslöser für graph_suggest
+#### 3.4.185  `TEST-umbau-ausloeser` — Auslöser für graph_suggest
 
 Je auslösender Regel nennt der Hinweis graph_suggest; MT-02 ohne Zug nicht. An einer echten Kuzu-Arbeitskopie mit RD-04-Befund nennen beide Werkzeuge graph_suggest, schweigen nach dem Aufruf und melden neu, sobald Stand und Befundmenge sich geändert haben.
 
 verify ▶ `REQ-generate-nennt-suggest` · `REQ-violations-nennt-suggest` · testRefs: `tests/umbau-ausloeser.test.ts`
 
-#### 3.4.185  `TEST-upgrade` — Abnahme des upgrade-Verbs
+#### 3.4.186  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · `REQ-update-traegt-policy-ein` · `REQ-upgrade-entfernt-fremde-skills` · testRefs: `tests/upgrade.test.ts`, `tests/config-nachziehen.test.ts`
 
-#### 3.4.186  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
+#### 3.4.187  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
 
 Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.
 
 verify ▶ `REQ-model-lane-fixed-set` · `REQ-testspur-passt-zum-diff` · testRefs: `tests/verify-model.completeness.test.ts`
 
-#### 3.4.187  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
+#### 3.4.188  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
 
 Vertragstest SCHEMA-init-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-init-report` · testRefs: `tests/vertrag/SCHEMA-init-report.vertrag.test.ts`
 
-#### 3.4.188  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
+#### 3.4.189  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
 
 Vertragstest SCHEMA-install-result, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-install-result` · testRefs: `tests/vertrag/SCHEMA-install-result.vertrag.test.ts`
 
-#### 3.4.189  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
+#### 3.4.190  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
 
 Vertragstest SCHEMA-markdown-text, erzeugt aus dem Zod-Schema: Text angenommen, Nicht-Text abgelehnt. (CR-GC-959)
 
 verify ▶ `SCHEMA-markdown-text` · testRefs: `tests/vertrag/SCHEMA-markdown-text.vertrag.test.ts`
 
-#### 3.4.190  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
+#### 3.4.191  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
 
 Vertragstest SCHEMA-repo-status, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-repo-status` · testRefs: `tests/vertrag/SCHEMA-repo-status.vertrag.test.ts`
 
-#### 3.4.191  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
+#### 3.4.192  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
 
 Vertragstest SCHEMA-upgrade-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-upgrade-report` · testRefs: `tests/vertrag/SCHEMA-upgrade-report.vertrag.test.ts`
 
-#### 3.4.192  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
+#### 3.4.193  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
 
 Erzeugter Vertragstest SCHEMA-vertragstest-bericht
 
 verify ▶ `SCHEMA-vertragstest-bericht` · testRefs: `tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts`
 
-#### 3.4.193  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
+#### 3.4.194  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
 
 Erzeugter Vertragstest SCHEMA-vertragstest-satz
 
 verify ▶ `SCHEMA-vertragstest-satz` · testRefs: `tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts`
 
-#### 3.4.194  `TEST-vertragstest-generator` — Vertragstest-Generator
+#### 3.4.195  `TEST-vertragstest-generator` — Vertragstest-Generator
 
 Unit-Tests des Erzeugers und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
 
 verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · testRefs: `tests/vertragstest.test.ts`
 
-#### 3.4.195  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.196  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.196  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.197  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.197  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.198  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.198  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.199  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.199  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.200  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.200  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.201  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.201  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.202  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.202  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.203  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.203  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.204  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 298 REQ · 298 verified · 0 without a verifying TEST (R-01).
+Traceability: 301 REQ · 301 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 

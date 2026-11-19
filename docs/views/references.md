@@ -1654,6 +1654,12 @@
 | `CR-GC-962` | relation | `SCHEMA-vertragstest-satz` |
 | `CR-GC-963` | relation | `FUNC-se-bau` |
 | `CR-GC-963` | relation | `REQ-bau-vertragstest-erzeugen` |
+| `CR-GC-964` | relation | `FUNC-deduce-tests` |
+| `CR-GC-964` | relation | `FUNC-plan-code-lane` |
+| `CR-GC-964` | relation | `FUNC-test-ingest` |
+| `CR-GC-964` | relation | `REQ-test-von-hand-auswahl` |
+| `CR-GC-964` | relation | `REQ-test-von-hand-ergebnis` |
+| `CR-GC-964` | relation | `REQ-test-von-hand-spur` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2879,6 +2885,7 @@
 | `FUNC-deduce-tests` | io | `FLOW-test-impact-request` |
 | `FUNC-deduce-tests` | io | `FLOW-test-selection` |
 | `FUNC-deduce-tests` | satisfy | `REQ-impact-based-testing` |
+| `FUNC-deduce-tests` | satisfy | `REQ-test-von-hand-auswahl` |
 | `FUNC-deduce-tests` | satisfy | `REQ-tests-aufloesen` |
 | `FUNC-deduce-tests` | satisfy | `REQ-vitest-aufruf-aus-tests` |
 | `FUNC-ein-adapter-je-akteur` | allocate | `MOD-kernel-measure` |
@@ -3126,6 +3133,7 @@
 | `FUNC-plan-code-lane` | io | `FLOW-select-request-lane` |
 | `FUNC-plan-code-lane` | satisfy | `REQ-planmodus-meldet-nichts` |
 | `FUNC-plan-code-lane` | satisfy | `REQ-selective-code-lane` |
+| `FUNC-plan-code-lane` | satisfy | `REQ-test-von-hand-spur` |
 | `FUNC-read-tools` | allocate | `MOD-surface` |
 | `FUNC-read-tools` | io | `FLOW-formatE-artifact-read-tools` |
 | `FUNC-read-tools` | io | `FLOW-read-request` |
@@ -3287,6 +3295,7 @@
 | `FUNC-test-ingest` | io | `FLOW-test-ingest-answer` |
 | `FUNC-test-ingest` | satisfy | `REQ-ingest-je-testref` |
 | `FUNC-test-ingest` | satisfy | `REQ-test-result-withdrawn-on-change` |
+| `FUNC-test-ingest` | satisfy | `REQ-test-von-hand-ergebnis` |
 | `FUNC-test-ingest` | satisfy | `REQ-testref-kopf-bindung` |
 | `FUNC-test-ui` | allocate | `MOD-agent-surface` |
 | `FUNC-test-ui` | io | `FLOW-anleitung-test-ui` |
@@ -4051,6 +4060,9 @@
 | `TEST-test-schlupf` | verify | `SCHEMA-lauf-urteil` |
 | `TEST-test-schlupf` | verify | `SCHEMA-schlupf-zeile` |
 | `TEST-test-schlupf` | verify | `SCHEMA-vitest-lauf` |
+| `TEST-test-von-hand` | verify | `REQ-test-von-hand-auswahl` |
+| `TEST-test-von-hand` | verify | `REQ-test-von-hand-ergebnis` |
+| `TEST-test-von-hand` | verify | `REQ-test-von-hand-spur` |
 | `TEST-testref-kopf-bindung` | verify | `REQ-testref-kopf-bindung` |
 | `TEST-testref-materialize` | verify | `REQ-testref-materialized` |
 | `TEST-testreport` | verify | `REQ-audit-trail` |

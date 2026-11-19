@@ -4409,6 +4409,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-964",
+      "type": "CR",
+      "name": "Test von Hand: tool manuell nicht in den vitest-Lauf, Protokoll als evidence beim Ingest — Folge 3 aus CR-GC-961",
+      "description": "docs/cr/open/CR-GC-964-test-von-hand-tool-manuell-nicht-in-den-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -10985,6 +10991,33 @@
       ]
     },
     {
+      "id": "REQ-test-von-hand-auswahl",
+      "type": "REQ",
+      "name": "Test von Hand nicht in der Auswahl",
+      "description": "graph_tests gibt eine Testbindung mit Werkzeug manuell nie in den vitest-Befehl, sondern nennt ihren TEST mit Datei unter manuell. (CR-GC-964)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-test-von-hand-ergebnis",
+      "type": "REQ",
+      "name": "Ergebnis von Hand mit Protokoll",
+      "description": "graph_test_ingest nimmt je Lauf ein Protokoll als evidence an und schreibt es mit Ergebnis und ranAt an die Bindung; ein neuer Lauf ohne Protokoll laesst kein altes stehen. (CR-GC-964)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-test-von-hand-spur",
+      "type": "REQ",
+      "name": "Test von Hand nicht in der Code-Spur",
+      "description": "Die Code-Spur nimmt eine Testbindung mit Werkzeug manuell nicht in ihre Testdateien und nennt den TEST als von Hand faellig. (CR-GC-964)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-testref-kopf-bindung",
       "type": "REQ",
       "name": "Testlauf bindet die Testdatei ueber den Kopf",
@@ -14807,6 +14840,21 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-11-19T19:31:42.216Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-test-von-hand",
+      "type": "TEST",
+      "name": "Test von Hand",
+      "description": "Testbeschreibung von Hand im tmp-Repo mit Disk-Kuzu: Bindung ueber die Ueberschrift, Ergebnis mit Protokoll, kein vitest-Befehl, Ruecknahme bei geaendertem SCHEMA",
+      "level": "integration",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/test-von-hand.test.ts",
+          "tool": "vitest",
+          "level": "integration"
         }
       ]
     },
@@ -23893,6 +23941,36 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-964",
+      "target": "FUNC-deduce-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-964",
+      "target": "FUNC-plan-code-lane",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-964",
+      "target": "FUNC-test-ingest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-964",
+      "target": "REQ-test-von-hand-auswahl",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-964",
+      "target": "REQ-test-von-hand-ergebnis",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-964",
+      "target": "REQ-test-von-hand-spur",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -30071,6 +30149,11 @@
     },
     {
       "source": "FUNC-deduce-tests",
+      "target": "REQ-test-von-hand-auswahl",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-deduce-tests",
       "target": "REQ-tests-aufloesen",
       "type": "satisfy"
     },
@@ -31336,6 +31419,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-plan-code-lane",
+      "target": "REQ-test-von-hand-spur",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-read-tools",
       "target": "MOD-surface",
       "type": "allocate"
@@ -32138,6 +32226,11 @@
     {
       "source": "FUNC-test-ingest",
       "target": "REQ-test-result-withdrawn-on-change",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-test-ingest",
+      "target": "REQ-test-von-hand-ergebnis",
       "type": "satisfy"
     },
     {
@@ -36124,6 +36217,21 @@
       "type": "verify"
     },
     {
+      "source": "TEST-test-von-hand",
+      "target": "REQ-test-von-hand-auswahl",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-von-hand",
+      "target": "REQ-test-von-hand-ergebnis",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-test-von-hand",
+      "target": "REQ-test-von-hand-spur",
+      "type": "verify"
+    },
+    {
       "source": "TEST-testref-kopf-bindung",
       "target": "REQ-testref-kopf-bindung",
       "type": "verify"
@@ -36863,5 +36971,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1326
+  "graphVersion": 1328
 }
