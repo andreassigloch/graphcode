@@ -1,7 +1,7 @@
 # CR-GC-961: Klärung — Vertragstest als Bauschritt, Kanal am FLOW, Vertrag physischer Schnittstellen
 
 **Typ:** Klärung (Entscheidung des Autors), aus Item ITEM-2026-1475 (idea)
-**Status:** Open
+**Status:** Done — 2026-11-19 (Entscheidungen F1, F3 getroffen; F2 zurückgestellt in ITEM-2026-1476)
 **Erstellt:** 2026-11-19
 **Item:** bok/items/ITEM-2026-1475.json (Lane: graph); betrifft graphcode und sigloch-modules (contracts)
 **Herkunft:** CR-GC-958 (Spike Tests aus dem Modell), CR-GC-959 (Fehlbindungen), ITEM-2026-1454 (Zod-Schutz)
@@ -87,18 +87,20 @@ Folgerung: Der Inhalt ist in sirail gut. Ihm fehlt eine Datei, auf die `realRef`
 
 ## Was nach der Entscheidung folgt (je eigener CR)
 
-1. **graphcode, `se-bau`:** Schritt „Vertragstest erzeugen“ (F1). Dateien: `.claude/commands/se-bau.md`, `tests/skill-bau.test.ts`.
-2. **sigloch-modules, contracts:** Kanal-Attribut (F2), physische SCHEMA-Attribute (F3), Regeln je Kanal. Familien-Sache: Review, Version-Bump, Umsetzung durch den Hüter von sigloch-modules.
-3. **graphanalyze:** Regel-Prototyp liest den Kanal; Messung der Treffergenauigkeit neu auf denselben 10 Stichproben. Kriterium vor dem Lauf: ≥ 8 von 10 richtig. Erst danach kommt die Regel nach contracts.
-4. **FAQ:** `schema-bei-physischem-fluss` von „offen“ auf die Entscheidung.
+1. **graphcode, Generator:** `werkzeuge/vertragstest/` aus graphanalyze nach graphcode (mit Unit-Tests); `CLAUDE.md` und README präzisieren „kein Code-Generator; erzeugt Prüfungen aus dem Modell“ (F1).
+2. **graphcode, `se-bau`:** Schritt „Vertragstest erzeugen“ je neuem oder geändertem SCHEMA; für eine Vertragsdatei erzeugt er das Gerüst der Testdatei von Hand (F1, F3d). Dateien: `.claude/commands/se-bau.md`, `tests/skill-bau.test.ts`.
+3. **graphcode, Ergebnis von Hand:** `graph_test_ingest` nimmt einen Lauf mit `tool: "manuell"`, Prüfer und Messwerten an; die Kopferkennung findet die uid in Markdown; das Ergebnis verfällt, wenn sich das geprüfte SCHEMA oder die geprüfte REQ ändert (F3.1, F3.2).
+4. **sigloch-modules, contracts:** R-26 gilt mit `realRef` auf eine Vertragsdatei als erfüllt; RC-04 und RC-08 prüfen eine Vertragsdatei nicht auf ein Zod-Symbol; R-19 gilt mit einer Testdatei von Hand. Familien-Sache: Review, Version-Bump, Umsetzung durch den Hüter von sigloch-modules.
+5. **sirail:** Vertrag und Messvorschrift ziehen vom Knoten in Vertrags- und Testdateien um, sobald 1–4 ausgeliefert sind.
+6. **FAQ:** `schema-bei-physischem-fluss` folgt der Umsetzung von 4, nicht diesem CR.
 
 ## Entscheidungen
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
 | F1 | Generator und Skill-Schritt kommen ins graphcode-Repo (2026-11-19, Autor) | Er wird fester Teil von graphcode und `se-bau`. Folge: Die Zeile „IS NOT: a generator“ in `CLAUDE.md` und README wird präzisiert auf „kein Code-Generator; erzeugt Prüfungen aus dem Modell“. |
-| F2 | offen, nach Befund sirail | sirail kennt keinen Kanal. Mit F3d ist `physisch` an der Vertragsdatei erkennbar; der Kanal bleibt für `nachricht` und `datei` im Code nötig. |
-| F3 | offen; Variante d vorgeschlagen | Autor: Testbeschreibung als Datei, von Hand durchzuführen, wo gefordert. Offen F3.1 und F3.2. |
+| F2 | zurückgestellt (2026-11-19, Autor) | sirail kennt keinen Kanal; mit F3d ist ein physischer Vertrag an der Vertragsdatei erkennbar. Der Kanal für Flüsse im Code (`nachricht`, `datei`) bleibt als Frage in ITEM-2026-1476. |
+| F3 | Variante d (2026-11-19, Autor) | Vertrag als Vertragsdatei, Test von Hand als Testbeschreibung in einer Datei, durchgeführt, wo gefordert. F3.2: Ein Ergebnis von Hand gilt, bis sich das geprüfte SCHEMA oder die geprüfte REQ ändert. |
 
 ## Umfang laut `graph_impact`
 

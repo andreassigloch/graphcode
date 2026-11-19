@@ -4391,7 +4391,8 @@
       "id": "CR-GC-961",
       "type": "CR",
       "name": "Klärung: Vertragstest-Generator als fester Bauschritt (ITEM-2026-1454), Kanal-Attribut am FLOW (Aufruf, Nachricht, Datei, physisch, Mensch) und Vertrag physischer/elektrischer Schnittstellen ohne Zod (FAQ schema-bei-physischem-fluss offen) — aus CR-GC-958/959",
-      "description": "docs/cr/open/CR-GC-961-kla-rung-vertragstest-generator-als-fest.md"
+      "description": "docs/cr/done/CR-GC-961-kla-rung-vertragstest-generator-als-fest.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -36548,5 +36549,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1313
+  "graphVersion": 1314
 }
