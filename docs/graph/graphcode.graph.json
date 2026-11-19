@@ -4203,7 +4203,8 @@
       "id": "CR-GC-934",
       "type": "CR",
       "name": "Auslöser für graph_suggest vollständig festlegen",
-      "description": "docs/cr/open/CR-GC-934-auslo-ser-fu-r-graph-suggest-vollsta-ndi.md"
+      "description": "docs/cr/done/CR-GC-934-auslo-ser-fu-r-graph-suggest-vollsta-ndi.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-935",
@@ -35469,5 +35470,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1291
+  "graphVersion": 1292
 }

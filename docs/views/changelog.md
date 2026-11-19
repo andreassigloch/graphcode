@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 562 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 562 CR · 411 done · 4 open.
+Total: 562 CR · 412 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -599,7 +599,7 @@ Total: 562 CR · 411 done · 4 open.
 | `CR-GC-931` | done | Host-Start meldet nicht, wenn der committete Snapshot neuer ist als der Store |
 | `CR-GC-932` | done | graphcode liest die Definitionen der Elemente und Kanten aus contracts (ELEMENT_DEFINITIONS, TRACE_DEFINITIONS) |
 | `CR-GC-933` | done | graphcode auf contracts 12.13.0 heben: Regelzahl 81→80 bzw. 68→67, Ontologie 13.0.0, architectureOnly ohne Leser (Folgen von CR-SM-440) |
-| `CR-GC-934` | n/a | Auslöser für graph_suggest vollständig festlegen |
+| `CR-GC-934` | done | Auslöser für graph_suggest vollständig festlegen |
 | `CR-GC-935` | done | init und upgrade binden einen Wissensindex in den Kontext des Agenten ein |
 | `CR-GC-936` | done | Wissensdatei: kein Pfad des Rechners in versionierter settings.json |
 | `CR-GC-937` | done | Config: metricPolicy und focusThreshold dürfen fehlen |
