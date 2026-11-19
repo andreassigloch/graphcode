@@ -1,6 +1,6 @@
 # CR-GC-954: CR-GC-918 Rest: eigene REQ fuer 29 FUNCs (R-02), Kind-REQ am Testcode pruefen, Nebenbefunde
 
-**Status:** 🟠 Open
+**Status:** ✅ Done (2026-11-19)
 **Typ:** aus Item ITEM-2026-1422 (finding)
 **Vorgaenger:** CR-GC-918 (RD-06 = 0, geschlossen 2026-11-17)
 **Erstellt:** 2026-11-17
