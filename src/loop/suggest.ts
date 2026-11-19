@@ -362,9 +362,7 @@ export function bindSuggestTools(ctx: ToolPort) {
       'aus der Intention) → expand (früheste Stufe, konkrete Funde, Kandidaten per dryRun, gewählter Batch echt) ' +
       '→ handoff (→ graph_suggest). ' +
       'Read-only und deterministisch; das Vorschlagen bleibt beim Host, das Urteil beim Gate. ' +
-      'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation). ' +
-      '`umbau` gesetzt = ein Befund einer Regel mit Zug ist offen: graph_suggest rufen und die Züge dem Autor ' +
-      'vorlegen; nach dem Aufruf bleibt es null, bis sich das Modell geändert hat.',
+      'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation).',
     inputSchema: GraphGenerateInputSchema,
     async handler(input) {
       // Profil bei jedem Schritt frisch laden (CR-GC-295) — der Loader ist der

@@ -224,9 +224,7 @@ export function bindReportTools(ctx: ToolPort) {
       'candidate targets, so the repair needs no follow-up query. Take it to REPAIR; take ' +
       'rules_evaluate to see what the judgement could not evaluate. Scope (CR-GC-613): answers over ' +
       'the uids this session WROTE — `umfang` sizes the slice and counts what lies outside; no write ' +
-      'moves yet = whole model. `total` counts only the evaluated rules, so read it with `skipped`. ' +
-      '`umbau` set = a finding of a rule with a move is open: call graph_suggest and put its moves to the ' +
-      'author; it stays null after that call until the model changes.',
+      'moves yet = whole model. `total` counts only the evaluated rules, so read it with `skipped`.',
     inputSchema: RulesGetViolationsInputSchema,
     async handler(input) {
       const ev = evaluateAll(harness);

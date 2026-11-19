@@ -10,7 +10,7 @@
 |---|---|---|---|
 | `REQ-abstraction` | ✓ | ⚠ nie gelaufen | `TEST-abstraction` |
 | `REQ-advisory-roundtrip-latency` | ✓ | ✓ passed | `TEST-advisory-roundtrip-latency` |
-| `REQ-agent-agnostic` | ✓ | ✓ passed | `TEST-agent-agnostic` |
+| `REQ-agent-agnostic` | ✓ | ✗ failed | `TEST-agent-agnostic` |
 | `REQ-agent-loop-executes-skill` | ✓ | ⚠ 1/2 passed | `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` |
 | `REQ-analyse-artefakt-vor-stempel` | ✓ | ✓ passed | `TEST-task-analysen` |
 | `REQ-analyse-zaehlt-mit-auftrag` | ✓ | ✓ passed | `TEST-task-analysen` |
@@ -281,7 +281,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 271/271 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 233/271 REQ bestanden (86%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 232/271 REQ bestanden (86%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

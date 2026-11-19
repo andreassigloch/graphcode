@@ -182,6 +182,10 @@ export const TOOL_HELP: Record<string, ToolHelpEntry> = {
       'aus dem Elementtext ableiten konnte (Spike-2-Befund: kein einziger generisch synthetisierter ' +
       'Edit war unverändert anwendbar). `FIX_ROUNDTRIP` in se-engine sagt je Regel, ob ihre Vorlage den ' +
       'Fund auch schließt. Der Merge-Operator (OP-MERGE) hängt an keiner Regel — ein Merge repariert ' +
-      'keinen Fund, er bewegt die Vertragskonzentration.',
+      'keinen Fund, er bewegt die Vertragskonzentration.\n' +
+      'Wann rufen (CR-GC-934): sobald `graph_generate` oder `rules_get_violations` das Feld `umbau` ' +
+      'setzen. Es nennt die offenen Befunde der Regeln, für die das Werkzeug einen Zug hat. Die Züge ' +
+      'legst du dem Autor vor; geprobt wird mit `se:optimize`. Nach dem Aufruf bleibt `umbau` null, ' +
+      'bis sich Modellstand und Befundmenge geändert haben.',
   },
 };
