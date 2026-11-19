@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 570 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 570 CR · 419 done · 4 open.
+Total: 570 CR · 420 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -631,4 +631,4 @@ Total: 570 CR · 419 done · 4 open.
 | `CR-GC-963` | done | se-bau: Schritt Vertragstest erzeugen (graphcode vertragstest) je neuem oder geändertem SCHEMA — Folge 2 aus CR-GC-961 |
 | `CR-GC-964` | done | Test von Hand: tool manuell nicht in den vitest-Lauf, Protokoll als evidence beim Ingest — Folge 3 aus CR-GC-961 |
 | `CR-GC-965` | done | Vertragstest von Hand aus der Vertragsdatei erzeugen (Folge 2 aus CR-GC-961) |
-| `CR-GC-966` | n/a | Vertragsdatei: Spalte Kriterium fuer Bedingungen ohne Grenzwert |
+| `CR-GC-966` | done | Vertragsdatei: Spalte Kriterium fuer Bedingungen ohne Grenzwert |

@@ -4426,7 +4426,8 @@
       "id": "CR-GC-966",
       "type": "CR",
       "name": "Vertragsdatei: Spalte Kriterium fuer Bedingungen ohne Grenzwert",
-      "description": "docs/cr/open/CR-GC-966-vertragsdatei-spalte-kriterium-fuer-bedi.md"
+      "description": "docs/cr/done/CR-GC-966-vertragsdatei-spalte-kriterium-fuer-bedi.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37041,5 +37042,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1339
+  "graphVersion": 1340
 }
