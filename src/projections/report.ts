@@ -42,7 +42,7 @@ import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../loop/
 import { stufenRang } from '../loop/generate.js';
 import { helpEntry, type HelpEntry } from './help.js';
 import { attributesFor, formatEExampleFor, type AttributeHint } from './authoring-example.js';
-import { TestSelectionSchema } from '../kernel/measure/test-selection.js';
+import { MANUELL, TestSelectionSchema, type TestSelection } from '../kernel/measure/test-selection.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 import { heldBackTraces, type RejectedTrace } from '../kernel/harness-import.js';
 import { schneide, type Umfang } from '../kernel/measure/working-set.js';
@@ -398,15 +398,7 @@ export function bindReportTools(ctx: ToolPort) {
   // looks the uid up when the convention is ambiguous. graph_tests stays path-agnostic so
   // the same deduction works for any consumer regardless of its file layout.
 
-  const graph_tests: MCPTool<
-    typeof GraphTestsInputSchema,
-    {
-      command: string;
-      tests: Array<{ id: string; name: string; testRefs: TestRef[] }>;
-      coverage: { changeSet: string[]; impactedNodes: number; impactedTests: number; resolved: number; files: string[] };
-      unresolved: Array<{ id: string; name: string; reason: string }>;
-    }
-  > = {
+  const graph_tests: MCPTool<typeof GraphTestsInputSchema, TestSelection> = {
     name: 'graph_tests',
     description:
       'Deduce the minimal selective test set for a change (FUNC-deduce-tests / CR-GC-134 + ' +
@@ -430,6 +422,7 @@ export function bindReportTools(ctx: ToolPort) {
       const tests: Array<{ id: string; name: string; testRefs: TestRef[] }> = [];
       const unresolved: Array<{ id: string; name: string; reason: string }> = [];
       const files = new Set<string>();
+      const manuell: Array<{ id: string; name: string; file: string }> = [];
 
       for (const node of impactedTests) {
         // CR-SM-360: der Familienleser unterscheidet „fehlt" von „kaputt" — beides ist hier ein
@@ -446,7 +439,11 @@ export function bindReportTools(ctx: ToolPort) {
         // CR-GC-338: ALLE Dateien der Abnahme in den selektiven Lauf — genau dafuer ist
         // 1:n da (CR-SM-231). Nur die erste zu nehmen liesse den Visual-Lauf ungelaufen.
         tests.push({ id: node.uid, name: node.name, testRefs: read.value });
-        for (const ref of read.value) files.add(ref.file);
+        for (const ref of read.value) {
+          // CR-GC-964: eine Testbeschreibung von Hand ist kein Testcode — nie in den Befehl.
+          if (ref.tool === MANUELL) manuell.push({ id: node.uid, name: node.name, file: ref.file });
+          else files.add(ref.file);
+        }
       }
 
       // Minimal selective run: ONLY the affected test files, sorted+deduped.
@@ -468,6 +465,7 @@ export function bindReportTools(ctx: ToolPort) {
           files: fileList,
         },
         unresolved,
+        manuell,
       });
     },
   };

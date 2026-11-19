@@ -59,6 +59,13 @@ export interface TestImpactResult extends Graph {
 }
 
 /**
+ * Werkzeug eines Tests, den ein Mensch durchfuehrt (CR-GC-964, CR-GC-961 F3d): seine Datei ist
+ * eine Testbeschreibung, kein Testcode. Kein Runner faehrt sie; die Auswahl nennt sie als
+ * „von Hand faellig", und das Ergebnis kommt ueber `graph_test_ingest` mit diesem Werkzeug.
+ */
+export const MANUELL = 'manuell';
+
+/**
  * SCHEMA-test-selection — the contract of the `graph_tests` answer
  * (FLOW-test-selection): the minimal selective run command, the resolved TESTs
  * with their runnable bindings, the coverage counters, and what stayed unresolved.
@@ -79,6 +86,8 @@ export const TestSelectionSchema = z.object({
   }),
   /** TESTs without a resolvable `testRefs` — reported, never silently dropped. */
   unresolved: z.array(z.object({ id: z.string(), name: z.string(), reason: z.string() })),
+  /** Bindings with tool `manuell`: due by hand, never part of `command` (CR-GC-964). */
+  manuell: z.array(z.object({ id: z.string(), name: z.string(), file: z.string() })),
 });
 
 /** The `graph_tests` answer shape, derived from its schema — no second declaration. */
@@ -105,6 +114,8 @@ export const CodeLanePlanSchema = z.object({
   binding: z.object({ sources: z.number().int().nonnegative(), bound: z.number().int().nonnegative() }),
   /** Impacted TESTs without a run address — named, never silently dropped. */
   unresolvedTests: z.array(z.string()),
+  /** Impacted TESTs due by hand (tool `manuell`) — named, the lane does not run them (CR-GC-964). */
+  manuell: z.array(z.string()),
   /** The report, line by line — binding ratio and unresolved TESTs included. */
   lines: z.array(z.string()),
 });

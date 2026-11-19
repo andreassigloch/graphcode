@@ -45,9 +45,9 @@ export const GraphTestIngestInputSchema = z
       .optional()
       .describe('Raw vitest `--reporter=json` output.'),
     results: z
-      .array(z.object({ file: z.string().min(1), result: TestResult, tool: z.string().min(1).optional() }))
+      .array(z.object({ file: z.string().min(1), result: TestResult, tool: z.string().min(1).optional(), evidence: z.string().min(1).optional() }))
       .optional()
-      .describe('Pre-parsed [{file, result, tool?}]; at most one of report/results.'),
+      .describe('Pre-parsed [{file, result, tool?, evidence?}]; at most one of report/results. A test run by hand: tool "manuell", evidence = repo-relative path of its protocol.'),
     changeSet: z
       .array(z.string().min(1))
       .min(1)
@@ -178,7 +178,7 @@ export function bindTestReportTools(ctx: ToolPort) {
           const refs = read.state === 'bound' ? read.value : [];
           const neu = plan.bindings
             .filter((b) => b.testUid === uid)
-            .map((b) => ({ file: b.file, tool: b.tool, result: b.result, ranAt }));
+            .map((b) => ({ file: b.file, tool: b.tool, result: b.result, ranAt, ...(b.evidence ? { evidence: b.evidence } : {}) }));
           return {
             op: 'update-node' as const,
             node: {
@@ -187,7 +187,11 @@ export function bindTestReportTools(ctx: ToolPort) {
               attributes: {
                 testRefs: refs.map((r) => {
                   const hit = assignments.find((a) => samePath(r.file, a.file));
-                  if (hit) return { ...r, result: hit.result, ranAt };
+                  // Ein neuer Lauf ersetzt auch die Evidenz: ein altes Protokoll belegt das neue Ergebnis nicht.
+                  if (hit) {
+                    const { evidence: _alt, ...ohneEvidenz } = r;
+                    return { ...ohneEvidenz, result: hit.result, ranAt, ...(hit.evidence ? { evidence: hit.evidence } : {}) };
+                  }
                   if (!withdrawn.some((w) => w.testUid === uid && samePath(r.file, w.file))) return r;
                   const { result: _result, ranAt: _ranAt, evidence: _evidence, ...ohneErgebnis } = r;
                   return ohneErgebnis;

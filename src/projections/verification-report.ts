@@ -43,6 +43,8 @@ export interface RunnerFileResult {
   result: TestResultValue;
   /** Werkzeug des Laufs; der vitest-Report setzt es nicht, dort gilt vitest (CR-GC-901). */
   tool?: string;
+  /** Repo-relativer Pfad zum Lauf-Artefakt, z. B. das Protokoll eines Tests von Hand (CR-GC-964). */
+  evidence?: string;
 }
 
 /** Was der Ingest je TEST-Knoten zu schreiben hat. */
@@ -50,6 +52,7 @@ export interface TestResultAssignment {
   testUid: string;
   file: string;
   result: TestResultValue;
+  evidence?: string;
 }
 
 /** Eine neue Bindung: die Datei nennt die TEST-uid im Kopf und traegt noch keine (CR-GC-901). */
@@ -158,7 +161,7 @@ function bindeUeberKopf(
   const test = treffer[0];
   const tool = kopf.tool(entry);
   if (!tool) return { reason: `${OHNE_BINDUNG}; its head names ${test.uid}, but the run gives no tool — pass results[].tool` };
-  return { binding: { testUid: test.uid, file: rel, result: entry.result, tool } };
+  return { binding: { testUid: test.uid, file: rel, result: entry.result, tool, ...(entry.evidence ? { evidence: entry.evidence } : {}) } };
 }
 
 export function planIngest(graph: Graph, files: RunnerFileResult[], kopf: KopfZugang): IngestPlan {
@@ -179,7 +182,7 @@ export function planIngest(graph: Graph, files: RunnerFileResult[], kopf: KopfZu
       continue;
     }
     for (const t of matches) {
-      assignments.push({ testUid: t.uid, file: entry.file, result: entry.result });
+      assignments.push({ testUid: t.uid, file: entry.file, result: entry.result, ...(entry.evidence ? { evidence: entry.evidence } : {}) });
     }
   }
 

@@ -24,7 +24,7 @@ import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, dirname, normalize, relative } from 'node:path';
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
-import { impactedTests, CodeLanePlanSchema, type CodeLanePlan } from '../kernel/measure/test-selection.js';
+import { impactedTests, CodeLanePlanSchema, MANUELL, type CodeLanePlan } from '../kernel/measure/test-selection.js';
 
 /** Änderungen hieran wirken auf JEDEN Test — sie können nie selektiv laufen. */
 const FULL_RUN_TRIGGERS = [/^package(-lock)?\.json$/, /^tsconfig/, /^vitest\.config\./];
@@ -122,20 +122,28 @@ export function changeSetFor(changedFiles: string[], ctx: AuditContext): string[
   return [...uids].sort();
 }
 
-/** TEST-Knoten → die Dateien, die sie als Evidenz-Adresse tragen. */
-export function testFilesOf(graph: Graph, testIds: string[]): { files: string[]; unresolved: string[] } {
+/**
+ * TEST-Knoten → die Dateien, die sie als Evidenz-Adresse tragen. Eine Bindung mit Werkzeug
+ * `manuell` ist eine Testbeschreibung von Hand: sie geht nicht in die Dateien, ihr TEST steht
+ * unter `manuell` (CR-GC-964).
+ */
+export function testFilesOf(graph: Graph, testIds: string[]): { files: string[]; unresolved: string[]; manuell: string[] } {
   const byUid = new Map(graph.nodes.map((n) => [n.uid, n]));
   const files = new Set<string>();
   const unresolved: string[] = [];
+  const manuell = new Set<string>();
   for (const uid of testIds) {
-    const refs = byUid.get(uid)?.attributes?.testRefs as Array<{ file?: string }> | undefined;
+    const refs = byUid.get(uid)?.attributes?.testRefs as Array<{ file?: string; tool?: string }> | undefined;
     if (!Array.isArray(refs) || refs.length === 0) {
       unresolved.push(uid);
       continue;
     }
-    for (const ref of refs) if (ref?.file) files.add(ref.file);
+    for (const ref of refs) {
+      if (ref?.tool === MANUELL) manuell.add(uid);
+      else if (ref?.file) files.add(ref.file);
+    }
   }
-  return { files: [...files].sort(), unresolved };
+  return { files: [...files].sort(), unresolved, manuell: [...manuell].sort() };
 }
 
 /** Testdatei → die Quelldateien, die sie DIREKT importiert (das Vergleichsorakel). */
@@ -182,6 +190,8 @@ export interface Selection {
    * geprüfter aussehen.
    */
   unresolvedTests: string[];
+  /** TEST-Knoten in der Auswahl, die ein Mensch durchfuehrt (Werkzeug `manuell`, CR-GC-964). */
+  manuell: string[];
   /**
    * Die Bindungsquote dieses ChangeSets: Quelldateien mit Knoten im Modell ÷
    * betrachtete Quelldateien. Sie ist die REICHWEITE der Auswahl, keine Nebenzahl.
@@ -208,6 +218,7 @@ export function selectForChange(changedFiles: string[], ctx: AuditContext, opts:
   const graphOnly = new Set<string>();
   const unresolvedFiles: string[] = [];
   const unresolvedTests = new Set<string>();
+  const manuell = new Set<string>();
   const sources = changedFiles.filter((f) => isSourceFile(f) && !allTests.includes(f));
 
   for (const file of changedFiles) {
@@ -217,6 +228,7 @@ export function selectForChange(changedFiles: string[], ctx: AuditContext, opts:
     else {
       const resolved = testFilesOf(graph, impactedTests(graph, nodes).testIds);
       for (const uid of resolved.unresolved) unresolvedTests.add(uid);
+      for (const uid of resolved.manuell) manuell.add(uid);
       for (const testFile of resolved.files) {
         graphOnly.add(testFile);
         selected.add(testFile);
@@ -255,6 +267,7 @@ export function selectForChange(changedFiles: string[], ctx: AuditContext, opts:
     reason,
     unresolvedFiles: trigger ? [...new Set([trigger, ...unresolvedFiles])] : unresolvedFiles,
     unresolvedTests: [...unresolvedTests].sort(),
+    manuell: [...manuell].sort(),
     binding: { sources: sources.length, bound },
   };
 }
@@ -317,6 +330,12 @@ export function planCodeLane(changedFiles: string[], ctx: AuditContext, opts: { 
         `diese Abnahme faehrt die Spur NICHT.`,
     );
   }
+  for (const uid of selection.manuell) {
+    lines.push(
+      `[verify:code]   von Hand faellig: ${uid} "${byUid.get(uid)?.name ?? uid}" — Testbeschreibung, diese Spur ` +
+        `faehrt sie NICHT; das Ergebnis kommt ueber graph_test_ingest mit tool "${MANUELL}".`,
+    );
+  }
   lines.push('[verify:code] Die volle Suite bleibt der Riegel vor Publish und in CI.');
 
   // Der Befehl der VOLLEN Spur ist die volle Suite — nicht ihre 142 Dateinamen. Eine
@@ -330,6 +349,7 @@ export function planCodeLane(changedFiles: string[], ctx: AuditContext, opts: { 
     reason: selection.reason,
     binding: selection.binding,
     unresolvedTests: selection.unresolvedTests,
+    manuell: selection.manuell,
     lines,
   });
 }
