@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 562 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 562 CR · 410 done · 4 open.
+Total: 562 CR · 411 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -623,4 +623,4 @@ Total: 562 CR · 410 done · 4 open.
 | `CR-GC-955` | done | contracts 12.15.0 übernehmen: RD-07 Level jump (CR-SM-436), Regelzahl 82, Regelmatrix, Systemmodell-Seite |
 | `CR-GC-956` | done | grenzeNurMitSchema: eigene Liste zwischenKindern streichen; ein Fluss zwischen Kind-Modulen ist nur ohne erlaubten Vertrag ein Befund, wie jeder Grenzfluss (Autor 2026-11-19, ersetzt Lesart aus CR-GC-913) |
 | `CR-GC-957` | done | Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe |
-| `CR-GC-958` | n/a | Spike: Tests deterministisch aus dem Modell (Vertragstest je SCHEMA, Integrationstest je FCHAIN, Testgerüst je TEST) — Testzeilen nach Methode CR-GC-957 einteilen |
+| `CR-GC-958` | done | Spike: Tests deterministisch aus dem Modell (Vertragstest je SCHEMA, Integrationstest je FCHAIN, Testgerüst je TEST) — Testzeilen nach Methode CR-GC-957 einteilen |

@@ -4369,7 +4369,8 @@
       "id": "CR-GC-958",
       "type": "CR",
       "name": "Spike: Tests deterministisch aus dem Modell (Vertragstest je SCHEMA, Integrationstest je FCHAIN, Testgerüst je TEST) — Testzeilen nach Methode CR-GC-957 einteilen",
-      "description": "docs/cr/open/CR-GC-958-spike-tests-deterministisch-aus-dem-mode.md"
+      "description": "docs/cr/done/CR-GC-958-spike-tests-deterministisch-aus-dem-mode.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -35468,5 +35469,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1288
+  "graphVersion": 1289
 }

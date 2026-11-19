@@ -1,7 +1,7 @@
 # CR-GC-958: Spike: Tests deterministisch aus dem Modell — Vertragstest je SCHEMA, Kettentest je FCHAIN
 
 **Typ:** Spike, aus Item ITEM-2026-1455 (idea)
-**Status:** Open
+**Status:** Done, 2026-11-19, G1 Go, G2 No-Go
 **Erstellt:** 2026-11-19
 **Item:** bok/items/ITEM-2026-1455.json (Lane: graph)
 **Vorgänger:** CR-GC-957 (No-Go für Framework-Code; Planspiel Tests dort und unten)
@@ -89,7 +89,77 @@ Go je Teil (G1, G2) = kein Kill und beide Muss erfüllt. Ein Go führt zu einer 
 
 ## Ergebnis
 
-Noch nicht gelaufen.
+**Lauf 2026-11-19**, Code-Stand ac68bdda in einem eigenen Worktree. Werkzeug und Rohdaten liegen in `graphanalyze/docs/spikes/SPIKE-GC-958/`:
+- Stand vor dem ersten Mutantenlauf: Commit 0de757b (G1) und d75e054 (G2).
+- Ergebnisse: `ergebnis-g1.json`, `ergebnis-g2.json`.
+
+**Vor dem Lauf am Generator geändert:** Datumsformate, Grenzen aus mehreren Zahlenprüfungen, exakte Listenlänge und ein Beispiel ohne optionale Felder, wenn die volle Variante abgelehnt wird. Jede Änderung gilt allgemein, keine ist auf ein Schema zugeschnitten. Alle stehen vor dem ersten Mutantenlauf.
+
+**Kontrolle:**
+- Im Grundlauf sind alle Hand- und erzeugten Tests grün.
+- Jeder Arm hat mindestens eine Mutante, die ihn rot macht.
+- Eine Handtestdatei läuft je in einem eigenen vitest. Im gemeinsamen Aufruf fehlten die Handtests im Bericht.
+
+### G1: Vertragstest je SCHEMA
+
+**Erzeugt:** 19 von 20 SCHEMA, 224 Fälle, alle auf dem Original grün.
+
+**Nicht erzeugbar:** `SCHEMA-test-ingest-input`. Zwei `refine` verlangen genau eins der Felder `report` und `results`. Aus der Struktur des Schemas lässt sich das nicht ablesen.
+
+| Mutante | Anzahl | Arm E findet | Arm H findet |
+|---|---|---|---|
+| M1 Pflichtfeld optional | 16 | 16 | 2 |
+| M2 Pflichtfeld entfernt | 16 | 16 | 14 |
+| M3 Typ getauscht | 9 | 8 | 7 |
+| M4 Enum erweitert | 3 | 0 | 0 |
+| M5 strict → object | 4 | 4 | 4 |
+| **Summe** | **48** | **44** | **27** |
+
+- 17 Mutanten findet nur Arm E, 0 nur Arm H, 4 keiner von beiden.
+- `SCHEMA-test-ingest-input#M3` findet keiner, weil es weder einen erzeugten noch einen Handtest gibt.
+
+**Urteil:**
+- Muss G1-1 erfüllt (19 ≥ 18).
+- Muss G1-2 erfüllt (44 ≥ 27).
+- Kill G1 greift nicht.
+- **G1: Go.**
+
+**Einordnung, kein Kriterium:**
+- Arm E findet M1 und M2 per Konstruktion. Der Test friert die Struktur des Schemas ein, ein Strukturbruch macht ihn deshalb rot.
+- Damit ist der erzeugte Vertragstest der Zod-Schutz aus ITEM-2026-1454, geschrieben als Test statt als Hash.
+- Eine Enum-Erweiterung (M4) findet er nicht. Das könnte nur ein Abgleich mit der eingefrorenen Werteliste.
+
+### G2: Kettentest je FCHAIN
+
+| FCHAIN | Übergaben | auf dem Original grün | Grund |
+|---|---|---|---|
+| `FCHAIN-model-lane` | 3 | 3 | Hand-Stimulus 14 Zeilen |
+| `FCHAIN-render-document` | 3 | 0 | `main` (`src/cli.ts`) nicht exportiert; `exportMarkdown` liefert Markdown-Text, gebunden ist `MarkdownViewSchema` (Enum der Sichtnamen) → rot; `executeRender` nicht ausgeführt (pandoc, schreibt Dateien) |
+| `FCHAIN-repo-lifecycle` | 4 | 0 | `main` nicht exportiert; `collectStatus` liefert `RepoStatus`, gebunden ist `CliCommandSchema` (Enum `init`/`update`/`remove`) → rot; `scaffold` und `executeUpgrade` nicht ausgeführt (npm, Host-Ende). Ihre Rückgabetypen `InstallResult` und `UpgradeReport` sind ebenfalls kein `CliCommand` |
+
+K1 an model-lane, je Übergabe eine Mutante: Arm E findet 3 von 3, Arm H (Auswahl von `graph_tests`) findet 3 von 3. Die Erzeuger parsen ihr Ergebnis selbst, deshalb wird jeder Aufruf rot. Für render-document und repo-lifecycle gibt es keine K1-Mutante, weil alle Übergabe-SCHEMA Enums ohne Pflichtfeld sind.
+
+**Urteil:**
+- Muss G2-1 nicht erfüllt (1 von 3 FCHAIN, gefordert ≥ 2).
+- Muss G2-2 erfüllt (3 ≥ 3).
+- Kill G2 greift nicht.
+- **G2: No-Go.**
+
+**Soll** erfüllt: Arm E findet in G1 17 Mutanten, die Arm H nicht findet.
+
+### Befund am Modell (Nebenergebnis)
+
+Der erzeugte Kettentest ist auf dem Original rot, weil die Bindung im Modell falsch ist, nicht der Code. Betroffen sind:
+- **`FLOW-install-result-collect-status`, `-harness-cli`, `-upgrade`:** gebunden an `SCHEMA-cli-command`. Übergeben werden aber `RepoStatus`, `InstallResult` und `UpgradeReport`.
+- **`FLOW-markdown-text`:** gebunden an `SCHEMA-markdown-view`. Übergeben wird aber Markdown-Text.
+- **`FLOW-render-view-request`:** gebunden an `SCHEMA-markdown-view`. Übergeben wird der Sichtname als Teil von `opts`, das Ergebnis von `executeRender` ist eine `RenderSummary`.
+
+`rules_get_violations` (Ausschnitt mit 295 Elementen, darin `SCHEMA-markdown-view`) meldet für keinen dieser FLOW einen RC-Befund. RC-04 prüft nur, ob das Schema an der Schnittstelle irgendwo geparst wird. Keine Regel prüft, ob das gebundene SCHEMA den Typ beschreibt, den der Erzeuger liefert. Einen Lauf über das ganze Modell habe ich dafür nicht gemacht.
+
+### Empfehlung
+
+- **Go für G1:** Vertragstests aus dem Zod-Schema erzeugen. Weil graphcode kein Generator ist, entscheidet der Autor, wo der Generator lebt. Er überschneidet sich mit ITEM-2026-1454: Der Test ist dort eine Umsetzung.
+- **No-Go für G2:** in dieser Form kein Generator für Kettentests. Erst muss das Modell die Übergaben richtig binden. Der erzeugte Kettentest hat genau diese Fehlbindungen gefunden.
 
 ## Entscheidungen
 
