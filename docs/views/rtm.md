@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 297 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 298 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 66 REQ
@@ -357,7 +357,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 217 REQ
+### Entwurf (SWE.3 · HWE.2) — 218 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -376,6 +376,7 @@
 | `REQ-auto-export-nach-zug` | `TEST-auto-export` | `FUNC-auto-export` | `MOD-projections` |
 | `REQ-batch-seed-performance` | `TEST-batch-seed` | `MOD-kernel` | — |
 | `REQ-bau-nimmt-nichts-an` | `TEST-skill-bau` | `FUNC-se-bau` | `MOD-agent-surface` |
+| `REQ-bau-vertragstest-erzeugen` | `TEST-skill-bau` | `FUNC-se-bau` | `MOD-agent-surface` |
 | `REQ-bericht-ist-kein-urteil` | `TEST-gate-urteilt-und-speichert` | `FUNC-zug-bericht` | `MOD-kernel-measure` |
 | `REQ-buildable-standalone` | `TEST-distribution` | `MOD-surface` | — |
 | `REQ-cache-layering` | `TEST-cache` | `MOD-surface` | — |

@@ -1652,6 +1652,8 @@
 | `CR-GC-962` | relation | `REQ-contract-test-generation` |
 | `CR-GC-962` | relation | `SCHEMA-vertragstest-bericht` |
 | `CR-GC-962` | relation | `SCHEMA-vertragstest-satz` |
+| `CR-GC-963` | relation | `FUNC-se-bau` |
+| `CR-GC-963` | relation | `REQ-bau-vertragstest-erzeugen` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -3163,6 +3165,7 @@
 | `FUNC-se-bau` | allocate | `MOD-agent-surface` |
 | `FUNC-se-bau` | io | `FLOW-anleitung-se-bau` |
 | `FUNC-se-bau` | satisfy | `REQ-bau-nimmt-nichts-an` |
+| `FUNC-se-bau` | satisfy | `REQ-bau-vertragstest-erzeugen` |
 | `FUNC-se-cdr` | allocate | `MOD-agent-surface` |
 | `FUNC-se-cdr` | io | `FLOW-anleitung-se-cdr` |
 | `FUNC-se-cdr` | satisfy | `REQ-cdr-fragen-vor-dem-bau` |
@@ -3976,6 +3979,7 @@
 | `TEST-sitzung-kpi` | verify | `REQ-zuege-sparen` |
 | `TEST-skill-authors-through-gate` | verify | `REQ-skill-authors-through-gate` |
 | `TEST-skill-bau` | verify | `REQ-bau-nimmt-nichts-an` |
+| `TEST-skill-bau` | verify | `REQ-bau-vertragstest-erzeugen` |
 | `TEST-skill-cdr` | verify | `REQ-cdr-fragen-vor-dem-bau` |
 | `TEST-skill-constraints` | verify | `REQ-constraints-skill-vertrag` |
 | `TEST-skill-cr-ueber-aise` | verify | `REQ-trade-cr-ueber-aise` |

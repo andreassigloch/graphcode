@@ -4402,6 +4402,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-963",
+      "type": "CR",
+      "name": "se-bau: Schritt Vertragstest erzeugen (graphcode vertragstest) je neuem oder geändertem SCHEMA — Folge 2 aus CR-GC-961",
+      "description": "docs/cr/open/CR-GC-963-se-bau-schritt-vertragstest-erzeugen-gra.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -8455,6 +8461,15 @@
       "type": "REQ",
       "name": "Bau nimmt nichts an",
       "description": "se-bau trennt Koordinator und Umsetzer: Der Umsetzer stoppt bei fehlendem Wert, Feld, Rolle oder Quelle, nimmt Felder nur aus dem Vertragspaket und nennt jede Annahme im Abschlussbericht; nur der Koordinator schreibt das Modell und schliesst erst nach dem Testlauf auf der Zielumgebung. (CR-GC-924)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-bau-vertragstest-erzeugen",
+      "type": "REQ",
+      "name": "Bau erzeugt den Vertragstest",
+      "description": "Hat ein CR ein SCHEMA mit Zod-realRef neu angelegt oder geaendert, dann laesst der Koordinator von se-bau den Vertragstest mit graphcode vertragstest erzeugen und bindet ihn als TEST mit verify auf das SCHEMA; von Hand entsteht er nur fuer ein SCHEMA, das das Verb mit Grund ablehnt. (CR-GC-963)",
       "kinds": [
         "functional"
       ]
@@ -23867,6 +23882,16 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-963",
+      "target": "FUNC-se-bau",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-963",
+      "target": "REQ-bau-vertragstest-erzeugen",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -31505,6 +31530,11 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-se-bau",
+      "target": "REQ-bau-vertragstest-erzeugen",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-se-cdr",
       "target": "MOD-agent-surface",
       "type": "allocate"
@@ -35731,6 +35761,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-skill-bau",
+      "target": "REQ-bau-vertragstest-erzeugen",
+      "type": "verify"
+    },
+    {
       "source": "TEST-skill-cdr",
       "target": "REQ-cdr-fragen-vor-dem-bau",
       "type": "verify"
@@ -36827,5 +36862,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1322
+  "graphVersion": 1324
 }

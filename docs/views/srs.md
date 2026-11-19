@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 297 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 298 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -5752,6 +5752,14 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-bau` (unit) · satisfy ◀ `FUNC-se-bau` · allocate ▶ `MOD-agent-surface`
 
+###### `REQ-bau-vertragstest-erzeugen` — Bau erzeugt den Vertragstest
+
+Hat ein CR ein SCHEMA mit Zod-realRef neu angelegt oder geaendert, dann laesst der Koordinator von se-bau den Vertragstest mit graphcode vertragstest erzeugen und bindet ihn als TEST mit verify auf das SCHEMA; von Hand entsteht er nur fuer ein SCHEMA, das das Verb mit Grund ablehnt. (CR-GC-963)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-bau` (unit) · satisfy ◀ `FUNC-se-bau` · allocate ▶ `MOD-agent-surface`
+
 ###### 3.3.1.5.11.17  `FUNC-se-conops` — Skill se-conops
 
 > auch in: `FUNC-block-urteilsarbeit`
@@ -11128,6 +11136,14 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-skill-bau` (unit) · satisfy ◀ `FUNC-se-bau` · allocate ▶ `MOD-agent-surface`
 
+###### `REQ-bau-vertragstest-erzeugen` — Bau erzeugt den Vertragstest
+
+Hat ein CR ein SCHEMA mit Zod-realRef neu angelegt oder geaendert, dann laesst der Koordinator von se-bau den Vertragstest mit graphcode vertragstest erzeugen und bindet ihn als TEST mit verify auf das SCHEMA; von Hand entsteht er nur fuer ein SCHEMA, das das Verb mit Grund ablehnt. (CR-GC-963)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-skill-bau` (unit) · satisfy ◀ `FUNC-se-bau` · allocate ▶ `MOD-agent-surface`
+
 ###### 3.3.1.10.3.1.2  `FUNC-se-cdr` — Skill se-cdr
 
 > auch in: `FCHAIN-skill-report`
@@ -15656,7 +15672,7 @@ verify ▶ `REQ-skill-authors-through-gate` · testRefs: `tests/skill-authoring-
 
 Liest se-bau.md und prueft beide Rollen, die acht Punkte des Umsetzers, die Pflichten des Koordinators, die Werteklassen und den Weg ohne Mensch.
 
-verify ▶ `REQ-bau-nimmt-nichts-an` · testRefs: `tests/skill-bau.test.ts`
+verify ▶ `REQ-bau-nimmt-nichts-an` · `REQ-bau-vertragstest-erzeugen` · testRefs: `tests/skill-bau.test.ts`
 
 #### 3.4.142  `TEST-skill-cdr` — se-cdr Skilltext
 
@@ -16030,7 +16046,7 @@ Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zu
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 297 REQ · 297 verified · 0 without a verifying TEST (R-01).
+Traceability: 298 REQ · 298 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 

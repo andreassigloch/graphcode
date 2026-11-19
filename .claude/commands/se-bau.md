@@ -1,6 +1,6 @@
 ---
 name: se-bau
-version: 1
+version: 2
 description: Bau eines CR in zwei Rollen — Koordinator (Hauptsitzung) startet je CR einen Agenten, schreibt das Modell allein und schließt erst nach dem Testlauf auf der Zielumgebung; Umsetzer (Agent) baut aus dem Ausschnitt graph_context, setzt Werte nach Werteklasse, hält das Vertragspaket ein, stoppt bei jeder Lücke und nennt jede Annahme. Fester Teil jedes Bauauftrags an einen Agenten.
 ---
 
@@ -37,6 +37,16 @@ Die Hauptsitzung koordiniert und baut nichts selbst. Rufe `graph_mutate` mit `sk
    nennt jede Annahme.
 6. **Prüfe den Abschlussbericht** auf den Satz zu den Annahmen (Umsetzer Punkt 8). Eine genannte Annahme
    ist eine Lücke und geht wie in Punkt 5 zurück.
+7. **Erzeuge den Vertragstest je neuem oder geändertem SCHEMA**, nachdem der CR zusammengeführt ist und
+   das SCHEMA seinen `realRef` auf das Zod-Symbol trägt und exportiert ist:
+   - Rufe `npx graphcode vertragstest <SCHEMA-uid …>` auf. Das Verb schreibt je SCHEMA
+     `tests/vertrag/<uid>.vertrag.test.ts` aus dem Schema selbst.
+   - Binde die Datei: TEST mit `verify` auf das SCHEMA und `testRefs` auf die Datei. Fahre sie.
+   - Ein geändertes SCHEMA bekommt die Datei neu. Der Diff der Datei zeigt die Vertragsänderung.
+   - Ein Vertragstest für ein SCHEMA mit Zod-Symbol entsteht nicht von Hand. Gemessen im Spike CR-GC-958:
+     Der erzeugte Satz fand 44 von 48 eingebauten Schemafehlern, die Handtests 27.
+   - Endet das Verb mit Exit 1, nennt der Bericht das SCHEMA und den Grund, z. B. `z.custom` oder eine
+     Querbedingung. Für dieses SCHEMA beauftragst du einen Umsetzer mit dem Vertragstest von Hand.
 
 ## Umsetzer (Agent)
 
