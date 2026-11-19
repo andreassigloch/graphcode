@@ -4362,7 +4362,8 @@
       "id": "CR-GC-957",
       "type": "CR",
       "name": "Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe",
-      "description": "docs/cr/open/CR-GC-957-spike-deterministisches-framework-aus-de.md"
+      "description": "docs/cr/done/CR-GC-957-spike-deterministisches-framework-aus-de.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -35273,5 +35274,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1281
+  "graphVersion": 1282
 }
