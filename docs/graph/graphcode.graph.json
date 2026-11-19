@@ -4118,7 +4118,8 @@
       "id": "CR-GC-923",
       "type": "CR",
       "name": "se-plan nur noch Reihenfolge und Schnitt: Fragen, Schreiben und Bau herauslösen",
-      "description": "docs/cr/open/CR-GC-923-se-plan-nur-noch-reihenfolge-und-schnitt.md"
+      "description": "docs/cr/done/CR-GC-923-se-plan-nur-noch-reihenfolge-und-schnitt.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-924",
@@ -35037,5 +35038,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1270
+  "graphVersion": 1271
 }

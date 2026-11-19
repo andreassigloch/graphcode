@@ -626,7 +626,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-920` | n/a | A-SPICE-Darstellung der Anforderungs- und Teststufen | `FUNC-export-markdown` · `REQ-post-export-markdown` |
 | `CR-GC-921` | n/a | RTM: Ebene eindeutig aus der Herkunft, Erfueller als Spalte | `FUNC-export-markdown` · `REQ-post-export-markdown` |
 | `CR-GC-922` | done | Review vor dem Bauplan: Lint im Gate, danach Agent ohne Vorwissen (Marke CDR) | `FUNC-se-cdr` · `REQ-cdr-fragen-vor-dem-bau` |
-| `CR-GC-923` | n/a | se-plan nur noch Reihenfolge und Schnitt: Fragen, Schreiben und Bau herauslösen | `FUNC-se-conops` · `FUNC-se-plan` |
+| `CR-GC-923` | done | se-plan nur noch Reihenfolge und Schnitt: Fragen, Schreiben und Bau herauslösen | `FUNC-se-conops` · `FUNC-se-plan` |
 | `CR-GC-924` | done | Skill se-bau: Koordinator und Umsetzer im Bau | `FUNC-se-bau` · `REQ-bau-nimmt-nichts-an` |
 | `CR-GC-925` | done | Antwortende Akteure und eigene Speicher bekommen Fluss und SCHEMA (kehrt Regel 1 aus CR-GC-875 um) | `FUNC-author-actor` · `FUNC-se-irr` · `FUNC-se-top-level` |
 | `CR-GC-931` | done | Host-Start meldet nicht, wenn der committete Snapshot neuer ist als der Store | `FUNC-graph-store` · `REQ-snapshot-drift-notice` |
