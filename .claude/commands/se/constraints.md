@@ -1,6 +1,6 @@
 ---
 name: se:constraints
-version: 6
+version: 7
 description: Constraints (CREATE) — je Dimension nach Element und Eigenschaft fragen und die Antwort als nicht-funktionale REQ an Kette, Modul oder System schreiben, mit einem TEST, der den Snapshot liest. Nur architektur-bestimmende Constraints, nie ein Gewicht. Vor dem ersten Schnitt (se:top-level) oder wenn der Autor eine Entscheidung festhalten will.
 ---
 
@@ -61,7 +61,7 @@ wo es eine gibt.
 | Fehlertoleranz | Was muss weiterlaufen, wenn ein Teil ausfällt? | „Fluss f ist async" | FCHAIN | Merkmal `sync` am Fluss in der Kette, Weg ohne das Teil | fehlt — über `se:author-req`, der Test schreibt die Prüfung |
 | Größe | Wie groß darf ein Teil werden? | „Modul ≤ 9 Funktionen" | MOD | Zahl der allocate-Kanten (`allocatedFuncs`) | fehlt — über `se:author-req`, der Test schreibt die Prüfung |
 | Engpass | Wo darf kein Engpass sein, wo ist einer gewollt? | „Zugang zum kernel nur über fünf Verträge" | MOD | Eingänge, Abnehmer (`fanIn`) | fehlt — über `se:author-req`, der Test schreibt die Prüfung |
-| Erweiterbarkeit | Wie kommt ein neues Teil dazu, ohne dass sich der Rest ändert? | „Kind-Module von X sprechen nur über Schemas S" / „je Akteur ein Adapter unter X" | MOD | jeder Fluss über die Grenze eines Kind-Moduls trägt ein Schema aus S, kein Fluss zwischen Kind-Modulen / jeder Fluss zu einem Akteur endet in genau einem Kind-Modul | fehlt — über `se:author-req`, der Test schreibt die Prüfung (Prüffunktionen geplant in ITEM-2026-1303) |
+| Erweiterbarkeit | Wie kommt ein neues Teil dazu, ohne dass sich der Rest ändert? | „Kind-Module von X sprechen nur über Schemas S" / „je Akteur ein Adapter unter X" | MOD | jeder Fluss über die Grenze eines Kind-Moduls trägt ein Schema aus S, kein Fluss zwischen Kind-Modulen / jeder Fluss zu einem Akteur endet in genau einem Kind-Modul | `constraints.grenzeNurMitSchema`, `constraints.einAdapterJeAkteur` |
 | Schutz | Was ist geschützt? | „Modul gesichert: Zugang nur über f" / „Ein Schreibweg" | MOD, FCHAIN | Eingänge aus der erlaubten Liste | `constraints.eingaengeNurAus` |
 
 Je Antwort prüfst du zwei Kriterien:

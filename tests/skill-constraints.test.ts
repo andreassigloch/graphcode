@@ -126,8 +126,12 @@ describe('CR-GC-852: se:constraints an der Stelle von se:target-profile', () => 
       // Entweder eine exportierte Prüffunktion, oder der Weg über se:author-req, auf dem der Test die Prüfung schreibt.
       expect(/`constraints\.\w+`/.test(z[pf]!) || /fehlt/.test(z[pf]!), `${z[0]}: ${z[pf]}`).toBe(true);
     }
-    // Heute gibt es genau eine Prüffunktion; Schutz nennt sie.
+    // Schutz nennt eingaengeNurAus, Erweiterbarkeit die zwei Funktionen aus CR-GC-913.
     expect(zeilen.find((z) => z[0] === 'Schutz')![pf]).toContain('`constraints.eingaengeNurAus`');
+    const erweiterbarkeit = zeilen.find((z) => z[0] === 'Erweiterbarkeit')![pf]!;
+    expect(erweiterbarkeit).toContain('`constraints.grenzeNurMitSchema`');
+    expect(erweiterbarkeit).toContain('`constraints.einAdapterJeAkteur`');
+    expect(erweiterbarkeit).not.toMatch(/fehlt/);
   });
 
   it('jeder Adressat darf nach R-18 eine nicht-funktionale REQ erfüllen, eine FUNC nicht', () => {
