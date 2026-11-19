@@ -31,13 +31,14 @@
  * @author andreas@siglochconsulting
  */
 import { existsSync, readFileSync, realpathSync } from 'node:fs';
+import { z } from 'zod';
 import { join, dirname } from 'node:path';
 import { hostname } from 'node:os';
 import { deriveMemberName } from './mcp-server.js';
 import { readPackageVersion } from '../kernel/package-version.js';
 import { PACKAGE_NAME, HOST_ENTRY } from './scaffold-templates.js';
 import { readLockOwner } from '../kernel/store-lock.js';
-import type { LockOwner } from '../kernel/lock-owner-contract.js';
+import { LockOwner } from '../kernel/lock-owner-contract.js';
 import { neuesteAenderung, installierteContracts } from '../kernel/build-stamp.js';
 // Das Probe-Budget gehoert dem Viewer-Modul: Bericht und Starter muessen sich ueber
 // „laeuft ein Viewer" einig sein, sonst startet der eine, was der andere schon sieht.
@@ -46,19 +47,20 @@ import { PROBE_TIMEOUT_MS } from './gve.js';
 import { isAlive, rememberedViewerPid } from './gve-sessions.js';
 
 
-export interface HostStatus {
+export const HostStatusSchema = z.object({
   /** `running` = Lock gehört einem lebenden Prozess; `stale` = Owner tot; `none` = kein Lock. */
-  state: 'running' | 'stale' | 'none';
-  pid?: number;
-  hostname?: string;
-  startedAt?: string;
+  state: z.enum(['running', 'stale', 'none']),
+  pid: z.number().optional(),
+  hostname: z.string().optional(),
+  startedAt: z.string().optional(),
   /** Der Build des Owners (Lock-Stempel, CR-GC-376) — fehlt bei Locks älterer Owner. */
-  version?: string;
+  version: z.string().optional(),
   /** Womit der Owner gebootet hat (CR-GC-620) — fehlt bei Locks älterer Owner. */
-  boot?: LockOwner['boot'];
-}
+  boot: LockOwner.shape.boot.optional(),
+});
+export type HostStatus = z.infer<typeof HostStatusSchema>;
 
-export interface DashboardStatus {
+export const DashboardStatusSchema = z.object({
   /**
    * `running` = bedient DIESES Repo; `foreign` = antwortet, bedient ein anderes;
    * `unidentified` = antwortet, nennt sein Repo aber nicht (Viewer älter als das
@@ -66,40 +68,44 @@ export interface DashboardStatus {
    * vermerkte Viewer-Prozess lebt aber (beschaeftigt oder haengend, CR-GC-912);
    * `not-running` = keine/tote Adresse und kein lebender Viewer.
    */
-  state: 'running' | 'foreign' | 'unidentified' | 'unresponsive' | 'not-running';
-  url?: string;
+  state: z.enum(['running', 'foreign', 'unidentified', 'unresponsive', 'not-running']),
+  url: z.string().optional(),
   /** Bei `unresponsive`: der lebende, stumme Viewer-Prozess. */
-  pid?: number;
+  pid: z.number().optional(),
   /** Bei `foreign`: das Repo, das die antwortende Instanz tatsächlich bedient. */
-  servedRepo?: string;
-}
+  servedRepo: z.string().optional(),
+});
+export type DashboardStatus = z.infer<typeof DashboardStatusSchema>;
 
-export interface VersionStatus {
+export const VersionStatusSchema = z.object({
   /** Der Build, der DIESEN Bericht schreibt. */
-  cli: string;
+  cli: z.string(),
   /** Der Build, der den Store besitzt (Lock-Stempel) — fehlt, wenn kein Host läuft. */
-  host?: string;
+  host: z.string().optional(),
   /** Der Build, den eine Agent-Session in diesem Repo bootet (`node_modules`). */
-  repo?: string;
+  repo: z.string().optional(),
   /** Wie `.mcp.json` den Host startet: `repo` = node_modules (CR-GC-528), `npx` = Auflösung (Drift). Fehlt bei fremder oder keiner Startzeile. */
-  start?: 'repo' | 'npx';
+  start: z.enum(['repo', 'npx']).optional(),
   /**
    * `ok` = alle vorhandenen Zahlen gleich; `drift` = mindestens eine ist älter;
    * `host-unknown` = ein Host läuft, sein Lock nennt aber keine Version (Build vor
    * diesem Stempel) — nicht als gleich verwertbar.
    */
-  state: 'ok' | 'drift' | 'host-unknown';
+  state: z.enum(['ok', 'drift', 'host-unknown']),
   /** Bei `drift`/`host-unknown`: die EINE nächste Aktion. */
-  action?: string;
-}
+  action: z.string().optional(),
+});
+export type VersionStatus = z.infer<typeof VersionStatusSchema>;
 
-export interface RepoStatus {
-  repoRoot: string;
-  member: string;
-  host: HostStatus;
-  dashboard: DashboardStatus;
-  version: VersionStatus;
-}
+/** `RepoStatus` (SCHEMA-repo-status, FLOW-install-result-collect-status, CR-GC-959) — der Bericht von `graphcode status`. */
+export const RepoStatusSchema = z.object({
+  repoRoot: z.string(),
+  member: z.string(),
+  host: HostStatusSchema,
+  dashboard: DashboardStatusSchema,
+  version: VersionStatusSchema,
+});
+export type RepoStatus = z.infer<typeof RepoStatusSchema>;
 
 interface StatusDeps {
   fetchImpl?: typeof fetch;
@@ -354,13 +360,15 @@ function judgeVersions(repoRoot: string, host: HostStatus, deps: StatusDeps): Ve
 /** Erhebt den Zustand des Repos. Read-only, ohne Store-Zugriff (nimmt keinen Lock). */
 export async function collectStatus(repoRoot: string, deps: StatusDeps = {}): Promise<RepoStatus> {
   const host = readHostStatus(repoRoot, deps);
-  return {
+  const status: RepoStatus = {
     repoRoot,
     member: deriveMemberName(repoRoot),
     host,
     dashboard: await readDashboardStatus(repoRoot, deps),
     version: judgeVersions(repoRoot, host, deps),
   };
+  RepoStatusSchema.parse(status); // Erzeuger parst an der Grenze und gibt das Original zurück (CR-GC-959)
+  return status;
 }
 
 /** Feste Spaltenbreite, damit die zwei Zeilen als Tabelle lesbar sind. */

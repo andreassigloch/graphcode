@@ -63,6 +63,10 @@ import { MARKDOWN_VIEWS, VIEW_FILENAMES, type MarkdownView } from '@sigloch/grap
  */
 export const MarkdownViewSchema = z.enum(MARKDOWN_VIEWS);
 
+/** `MarkdownText` (SCHEMA-markdown-text, FLOW-markdown-text, CR-GC-959) — eine gerenderte Sicht. */
+export const MarkdownTextSchema = z.string();
+export type MarkdownText = z.infer<typeof MarkdownTextSchema>;
+
 export { MARKDOWN_VIEWS, VIEW_FILENAMES };
 export type { MarkdownView };
 
@@ -219,8 +223,13 @@ function renderReferences(graph: Graph, name: string): string {
  * key only (no insertion-order dependence). Renders no Mermaid, so the `()`/`|`
  * blank-diagram hazard does not apply; table cells are sanitized regardless.
  */
-export function exportMarkdown(graph: Graph, view: MarkdownView, name = 'graphcode'): string {
-  const v = MarkdownViewSchema.parse(view);
+export function exportMarkdown(graph: Graph, view: MarkdownView, name = 'graphcode'): MarkdownText {
+  const text = renderView(graph, MarkdownViewSchema.parse(view), name);
+  MarkdownTextSchema.parse(text); // Erzeuger parst an der Grenze (CR-GC-959)
+  return text;
+}
+
+function renderView(graph: Graph, v: MarkdownView, name: string): string {
   switch (v) {
     case 'architecture':
       return renderArchitecture(graph, name);

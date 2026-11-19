@@ -11,7 +11,8 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join, delimiter } from 'node:path';
-import { scaffold, type InstallResult } from './scaffold.js';
+import { z } from 'zod';
+import { scaffold, InstallResultSchema } from './scaffold.js';
 import { GUARDRAILS_FILE, STEERING_FILE } from './scaffold-templates.js';
 
 export type Run = (cmd: string, args: string[], cwd: string) => { status: number; stdout: string; stderr: string };
@@ -24,15 +25,17 @@ export const AGENT_HOSTS = [
   { program: 'opencode', name: 'OpenCode', install: 'npm install -g opencode-ai' },
 ] as const;
 
-export interface InitReport {
-  result: InstallResult;
+/** `InitReport` (SCHEMA-init-report, FLOW-install-result-init, CR-GC-959) — der Bericht von `graphcode init`. */
+export const InitReportSchema = z.object({
+  result: InstallResultSchema,
   /** Der Installationsbefehl, wie ihn der Mensch selbst eingeben wuerde. */
-  installCommand: string;
-  installOk: boolean;
-  installError: string;
+  installCommand: z.string(),
+  installOk: z.boolean(),
+  installError: z.string(),
   /** Die Agent-Programme, die im PATH liegen (CR-GC-902). */
-  agentHosts: string[];
-}
+  agentHosts: z.array(z.string()),
+});
+export type InitReport = z.infer<typeof InitReportSchema>;
 
 function defaultRun(cmd: string, args: string[], cwd: string): ReturnType<Run> {
   const r = spawnSync(cmd, args, { cwd, encoding: 'utf8', shell: false });
@@ -58,13 +61,15 @@ export async function executeInit(opts: { repoRoot: string }, deps: { run?: Run;
   const result = await scaffold('init', { repoRoot: opts.repoRoot });
   const pm = packageManager(opts.repoRoot);
   const r = run(pm, ['install'], opts.repoRoot);
-  return {
+  const report: InitReport = {
     result,
     installCommand: `${pm} install`,
     installOk: r.status === 0,
     installError: r.status === 0 ? '' : (r.stderr.trim() || r.stdout.trim()),
     agentHosts: AGENT_HOSTS.filter((h) => onPath(h.program)).map((h) => h.program),
   };
+  InitReportSchema.parse(report); // Erzeuger parst an der Grenze (CR-GC-959)
+  return report;
 }
 
 /** Der Bericht fuer Menschen: was geschah, und was der Mensch jetzt noch tut. */

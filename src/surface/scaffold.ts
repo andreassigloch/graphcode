@@ -618,6 +618,7 @@ export async function scaffold(
       installOpencodePlugin(repoRoot, res);
       installHooks(repoRoot, res, knowledge.raw);
       registerDependency(repoRoot, res);
+      InstallResultSchema.parse(res); // Erzeuger parst an der Grenze (CR-GC-959)
       return res;
     }
 
@@ -648,6 +649,7 @@ export async function scaffold(
       registerDependency(repoRoot, res);
       // CR-GC-915: ein neues Pflichtfeld der Metrik-Policy wuerde den Host am Start brechen.
       for (const feld of policyNachziehen(repoRoot)) res.updated.push(`${CONFIG_FILENAME}#metricPolicy.${feld}`);
+      InstallResultSchema.parse(res); // Erzeuger parst an der Grenze (CR-GC-959)
       return res;
     }
 
@@ -666,6 +668,7 @@ export async function scaffold(
       removeLegacyTrajectory(repoRoot, res);
       pruneClaudeIfEmpty(repoRoot);
       unregisterDependency(repoRoot, res);
+      InstallResultSchema.parse(res); // Erzeuger parst an der Grenze (CR-GC-959)
       return res;
     }
   }

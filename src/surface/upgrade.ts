@@ -26,6 +26,7 @@
  * @author andreas@siglochconsulting
  */
 import { spawnSync } from 'node:child_process';
+import { z } from 'zod';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { hostname } from 'node:os';
@@ -84,19 +85,20 @@ export interface UpgradeDeps {
   syncSkillsImpl?: (repoRoot: string, options: { dry?: boolean }) => SkillSyncResult;
 }
 
-export interface UpgradeReport {
-  target: string;
-  cli: string;
-  repoBefore?: string;
-  repoAfter?: string;
-  hostBefore?: string;
+/** `UpgradeReport` (SCHEMA-upgrade-report, FLOW-install-result-upgrade, CR-GC-959) — der Bericht von `graphcode upgrade`. */
+export const UpgradeReportSchema = z.object({
+  target: z.string(),
+  cli: z.string(),
+  repoBefore: z.string().optional(),
+  repoAfter: z.string().optional(),
+  hostBefore: z.string().optional(),
   /**
    * Hinkte vor dem Lauf irgendetwas her? Seit CR-GC-538 aus DREI unabhängig erhobenen
    * Quellen: die drei Versionsnummern, der Artefakt-Bestand (`missingSkills`) und der
    * Stand der Familienpakete (`staleDeps`). Vorher war es nur die erste — und eine
    * Kennzahl ohne Gegenzahl misst ihre eigene Existenz.
    */
-  drift: boolean;
+  drift: z.boolean(),
   /**
    * CR-GC-538: ausgelieferte Skills, die im Repo FEHLEN (Trockenlauf von `syncSkills`).
    * Der Fall, der den CR ausgelöst hat: bok meldete "aktuell" bei gleicher Version,
@@ -104,34 +106,35 @@ export interface UpgradeReport {
    * Versionsprüfung, weil bok `@sigloch/graphcode` als SYMLINK auf den Arbeitsbaum
    * fährt — ein dort ergänzter Skill bekommt nie einen Versions-Bump.
    */
-  missingSkills: string[];
+  missingSkills: z.array(z.string()),
   /**
    * CR-GC-879: `se*`-Kopien im Repo, die das Paket nicht mehr kennt (z. B. `se-view/*` nach
    * CR-GC-876). Ein Rest ist Drift wie ein fehlender Skill; `upgrade` räumt ihn weg.
    */
-  staleSkills: string[];
+  staleSkills: z.array(z.string()),
   /**
    * CR-GC-915: Pflichtfelder der Metrik-Policy, die in `graphcode.config.jsonc` fehlen. Mit
    * ihnen bricht der Host beim Start ab; `upgrade` traegt sie mit dem Startwert ein.
    */
-  missingPolicy: string[];
+  missingPolicy: z.array(z.string()),
   /**
    * CR-GC-538 (graphcode-Hälfte von ITEM-2026-107): Familienpakete, die hinter dem
    * zurückliegen, was ihr eigener Range schon zulässt. Ohne sie meldet jedes Repo
    * "aktuell", während ein Zug, der nur contracts oder den Viewer bewegt hat, nicht
    * angekommen ist. Aus `npm outdated` — npms eigene Antwort, keine zweite Rechnung.
    */
-  staleDeps: Array<{ name: string; current: string; wanted: string }>;
+  staleDeps: z.array(z.object({ name: z.string(), current: z.string(), wanted: z.string() })),
   /**
    * Konnte der Bestand überhaupt erhoben werden? `false` heisst NICHT "alles gut",
    * sondern "nicht geprüft" — ein Urteil ohne Reichweite ist schlimmer als keins,
    * also steht die Blindheit im Bericht statt unter einem grünen Haken.
    */
-  depsChecked: boolean;
+  depsChecked: z.boolean(),
   /** Was getan (oder bewusst nicht getan) wurde, in Reihenfolge. */
-  steps: string[];
-  hostStopped: boolean;
-}
+  steps: z.array(z.string()),
+  hostStopped: z.boolean(),
+});
+export type UpgradeReport = z.infer<typeof UpgradeReportSchema>;
 
 /**
  * CR-GC-538: der Stand der @sigloch-Familienpakete, aus `npm outdated --json`.
@@ -215,6 +218,12 @@ async function stopHost(repoRoot: string, deps: UpgradeDeps, steps: string[]): P
 }
 
 /** Führt das Upgrade aus (oder berichtet nur, mit `check`). */
+/** Erzeuger parst an der Grenze und gibt das Original zurück (CR-GC-959). */
+function geprueft(report: UpgradeReport): UpgradeReport {
+  UpgradeReportSchema.parse(report);
+  return report;
+}
+
 export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {}): Promise<UpgradeReport> {
   const { repoRoot } = opts;
   const run = deps.run ?? defaultRun;
@@ -272,7 +281,7 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
   };
   if (opts.check) {
     report.steps.push('--check: nichts geändert');
-    return report;
+    return geprueft(report);
   }
 
   // CR-GC-887: ein Paket-Repo bekommt weder Installation noch Manifest-Eintrag noch Startzeile
@@ -287,7 +296,7 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
     report.hostStopped = opts.keepHost
       ? (report.steps.push('Host: --keep-host — läuft auf altem Code weiter'), false)
       : await stopHost(repoRoot, { ...deps, pidAlive }, report.steps);
-    return report;
+    return geprueft(report);
   }
 
   // Registry-Ziel HINTER dem, was schon da liegt: auf einer Entwicklermaschine ist das
@@ -349,7 +358,7 @@ export async function executeUpgrade(opts: UpgradeOptions, deps: UpgradeDeps = {
     : await stopHost(repoRoot, { ...deps, pidAlive }, report.steps);
 
   report.repoAfter = readRepoInstallVersion(repoRoot);
-  return report;
+  return geprueft(report);
 }
 
 /** Der Bericht für Menschen — eine Zeile je Schritt, keine JSON-Wolke. */
