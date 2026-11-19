@@ -26,7 +26,7 @@
 | `REQ-benchmark-harness` | ✓ | ⚠ nie gelaufen | `TEST-token-efficiency` |
 | `REQ-bericht-ist-kein-urteil` | ✓ | ✓ passed | `TEST-gate-urteilt-und-speichert` |
 | `REQ-bootstrap-through-gate` | ✓ | ✓ passed | `TEST-bootstrap` · `TEST-import-invariant` |
-| `REQ-buildable-standalone` | ✓ | ✓ passed | `TEST-distribution` |
+| `REQ-buildable-standalone` | ✓ | ✗ failed | `TEST-distribution` |
 | `REQ-cache-layering` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-cdr-fragen-vor-dem-bau` | ✓ | ✓ passed | `TEST-skill-cdr` |
 | `REQ-chain-metrics` | ✓ | ✓ passed | `TEST-graph-metrics` |
@@ -136,7 +136,7 @@
 | `REQ-mutation-emits-event` | ✓ | ✓ passed | `TEST-create-harness-smoke` · `TEST-live-view` |
 | `REQ-near-duplicate-detection` | ✓ | ✓ passed | `TEST-nd-similarity` |
 | `REQ-no-extraction` | ✓ | ⚠ 1/2 passed | `TEST-capture` · `TEST-import-code-verb` |
-| `REQ-npx-distribution` | ✓ | ✓ passed | `TEST-distribution` |
+| `REQ-npx-distribution` | ✓ | ✗ failed | `TEST-distribution` |
 | `REQ-one-gate-per-repo` | ✓ | ✓ passed | `TEST-mcp-symmetry` · `TEST-mutate-gate` · `TEST-store-lock` |
 | `REQ-open-point-asked` | ✓ | ✓ passed | `TEST-deny-headless-question` |
 | `REQ-optimize-probes-and-presents` | ✓ | ✓ passed | `TEST-optimize-presents-impact` |
@@ -172,7 +172,7 @@
 | `REQ-reduced-llm` | ✓ | ✓ passed | `TEST-reduced-llm` |
 | `REQ-remove-loescht-eigene-pfade` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-render-document` | ✓ | ✓ passed | `TEST-render-verb` |
-| `REQ-repo-install` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-init-verb` · `TEST-opencode-plugin` |
+| `REQ-repo-install` | ✓ | ✗ failed | `TEST-cli-scaffold` · `TEST-distribution` · `TEST-init-verb` · `TEST-opencode-plugin` |
 | `REQ-repo-uninstall` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-opencode-plugin` |
 | `REQ-repo-update` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
 | `REQ-reseed-ersetzt-store` | ✓ | ✓ passed | `TEST-reseed` |
@@ -210,7 +210,7 @@
 | `REQ-se-plan-stempel-ganz-schreiben` | ✓ | ✓ passed | `TEST-task-analysen` |
 | `REQ-seed-prueft-kanten` | ✓ | ✓ passed | `TEST-bootstrap` |
 | `REQ-selective-code-lane` | ✓ | ✓ passed | `TEST-selective-test-audit` |
-| `REQ-self-contained-dist` | ✓ | ✓ passed | `TEST-distribution` |
+| `REQ-self-contained-dist` | ✓ | ✗ failed | `TEST-distribution` |
 | `REQ-session-leaves-nothing-behind` | ✓ | ✓ passed | `TEST-repo-lifecycle` · `TEST-session-lifecycle` |
 | `REQ-shared-views-no-fork` | ✓ | ✓ passed | `TEST-shared-views-no-fork` · `TEST-views-conformance` |
 | `REQ-single-kuzu-owner` | ✓ | ✓ passed | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` |
@@ -277,7 +277,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 267/267 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 229/267 REQ bestanden (86%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 225/267 REQ bestanden (84%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

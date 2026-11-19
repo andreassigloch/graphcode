@@ -1,6 +1,6 @@
 ---
 name: se-conops
-version: 10
+version: 11
 description: Concept of Operations (CREATE) — surface operational concerns (config/creds/user-mgmt/deploy) BEFORE use cases and write them as system-scoped non-functional REQ through the gate
 ---
 
@@ -16,6 +16,12 @@ Walk the standing checklist against the system: **config** (what is environment-
 | e.g. read key of the source API | human | secret store of the host | `GET /contacts` → 200 |
 
 A line the model cannot fill is a gap of §5. `se-plan` turns every line with *human* into stage 0 (§4 there). Measured failure this list exists for (immo-infra, 2026-11-02..09): the build stopped 8 times for an access only the user could create — SSH key, DNS entry, registry token, two API keys, an agent key, an account token, a closing list of terminal commands.
+
+**Questions to the author.** Ask (AskUserQuestion), unless a REQ already answers it, and write each answer through `se:author-req` (§3) as a REQ with its TEST. A decision in chat that is not a node is lost:
+- **Legacy system:** must an existing system keep working until a switch-over? Which repos? → REQ (carrier SYS); `se-plan` adds a last stage *Switch-over* and every CR text names the condition.
+- **Target environment:** do tests run on the target environment from the start? → REQ; `se-plan` adds stage 0 *Environment*.
+- **Shared contracts:** where do SCHEMA used by several repos live, at which pinned version? → REQ; `se-plan` names it as a prerequisite in every CR.
+- Any other gap the slices surface (hostnames, ports, accounts).
 
 ## 2. Check what the graph already says
 - `graph_elements` `{ "type": "ACTOR" }` and `{ "type": "SYS" }` — the operators and the system boundary the concerns attach to.

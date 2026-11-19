@@ -78,13 +78,64 @@ describe('TEST-se-plan-groups (CR-GC-896)', () => {
     expect(text).toContain('| `CR-5` | open | 1 |');
   });
 
-  it('se-plan.md traegt Gruppen in der Ausgabe und die Anweisung zur Ausfuehrung', () => {
+  it('se-plan.md traegt Gruppen in der Ausgabe', () => {
     const skill = readFileSync(join(__dirname, '..', '.claude', 'commands', 'se-plan.md'), 'utf8');
     expect(skill).toMatch(/\*\*the groups per milestone\*\* \(`crGroups`/);
-    const run = skill.slice(skill.indexOf('## 10.'));
-    expect(run).toMatch(/\*\*The main session only coordinates\.\*\*/);
-    expect(run).toMatch(/one agent per CR, each in its own worktree/);
-    expect(run).toMatch(/writes the graph alone/);
-    expect(run).toMatch(/\*\*Agents never write the graph and never roll out\.\*\*/);
+  });
+});
+
+describe('TEST-se-plan-groups (CR-GC-923): se-plan macht nur Reihenfolge und Schnitt', () => {
+  const dir = join(__dirname, '..', '.claude', 'commands');
+  const skill = readFileSync(join(dir, 'se-plan.md'), 'utf8');
+  const conops = readFileSync(join(dir, 'se-conops.md'), 'utf8');
+
+  it('stellt keine Frage und schreibt weder REQ noch TEST', () => {
+    expect(skill).not.toMatch(/AskUserQuestion/);
+    expect(skill).not.toMatch(/write it/i);
+    expect(skill).not.toMatch(/write the missing REQ/i);
+    expect(skill).not.toMatch(/write each answer as REQ/i);
+  });
+
+  it('Vorbedingung: ungebundenes SCHEMA (R-26, RC-08) an einer Blattfunktion stoppt vor dem Schnitt, Verweis se-cdr', () => {
+    const pre = skill.slice(skill.indexOf('## 0.'), skill.indexOf('## 1.'));
+    expect(pre).toMatch(/se-cdr/);
+    expect(pre).toMatch(/R-26/);
+    expect(pre).toMatch(/RC-08/);
+    expect(pre).toMatch(/stop/i);
+  });
+
+  it('fehlender Test in testconcept stoppt und verweist auf se:author-req', () => {
+    const tc = skill.slice(skill.indexOf('## 3.'), skill.indexOf('## 4.'));
+    expect(tc).toMatch(/testconcept/);
+    expect(tc).toMatch(/stop/i);
+    expect(tc).toMatch(/se:author-req/);
+    expect(tc).not.toMatch(/\|\s*write it\s*\|/);
+  });
+
+  it('keine Baustufe Contracts; der Plan beginnt bei den Blattfunktionen', () => {
+    expect(skill).not.toMatch(/\*\*Contracts\*\*/);
+    expect(skill).toMatch(/1\. \*\*Leaf functions\*\*/);
+  });
+
+  it('Luecke der Spezifikation: Stopp, zurueck zu se-cdr', () => {
+    const gap = skill.slice(skill.indexOf('## 7.'), skill.indexOf('## 8.'));
+    expect(gap).toMatch(/spec gap/);
+    expect(gap).toMatch(/stop/i);
+    expect(gap).toMatch(/se-cdr/);
+  });
+
+  it('Agenten starten, zusammenfuehren, ausrollen steht nur noch in se-bau', () => {
+    expect(skill).not.toMatch(/one agent per CR, each in its own worktree/);
+    expect(skill).not.toMatch(/The main session only coordinates/);
+    expect(skill).toMatch(/se-bau/);
+  });
+
+  it('se-conops fragt Altbestand, Zielumgebung und Ort der geteilten Vertraege und schreibt ueber se:author-req', () => {
+    const q = conops.slice(conops.indexOf('Legacy system'));
+    expect(conops).toMatch(/AskUserQuestion/);
+    expect(q).toMatch(/Legacy system/);
+    expect(q).toMatch(/Target environment/);
+    expect(q).toMatch(/Shared contracts/);
+    expect(q).toMatch(/se:author-req/);
   });
 });

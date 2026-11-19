@@ -7,6 +7,15 @@
 
 ---
 
+## Ergebnis (2026-11-18)
+
+- **se-plan** (Version 15 → 16, 89 → 86 Zeilen): neuer §0 Vorbedingung (se-cdr leer; SCHEMA ohne `realRef` auf Zod, R-26/RC-08, oder Befund bis Stufe 8 an einer geschnittenen Blattfunktion → Stopp vor dem Schnitt, Verweis se-cdr). §2 fragt nichts mehr: liest die REQ von se-conops (Altbestand → Stufe Switch-over, Zielumgebung → Stufe 0, Ort der geteilten Verträge → Voraussetzung im CR-Text); fehlt die Antwort, Stopp mit Verweis se-conops. §3 prüft nur: fehlender Test in `testconcept` → Stopp, Verweis se:author-req (Spalte „If missing: write it" entfällt). Stufe „Contracts" entfällt, Stufen neu nummeriert, der Plan beginnt bei den Blattfunktionen. §7: Lücke der Spezifikation → Stopp, zurück zu se-cdr. §10 (Agenten starten, zusammenführen, ausrollen) gelöscht, Verweis auf se-bau. Kein `AskUserQuestion`, kein Schreiben von REQ/TEST; MS/CR/relation über das Gate bleiben.
+- **se-conops** (Version 10 → 11, 51 → 57 Zeilen): §1 trägt die Fragen Altbestand, Zielumgebung, Ort der geteilten Verträge (AskUserQuestion, Antwort über se:author-req als REQ mit TEST).
+- `src/loop/se-plan.ts` unverändert; `reqCoverage` unverändert (`tests/se-plan.ordering.test.ts` grün).
+- Tests: `tests/se-plan.groups.test.ts` um 7 Assertions erweitert (Skill-Text se-plan und se-conops), die alte Prüfung von §10 ersetzt; `tests/skill-zugangsliste.test.ts` Anker „1. **Contracts**" → „1. **Leaf functions**". Vorher 7 rot (richtiger Grund: alter Text), nachher 12 von 12 grün; 13 betroffene Testdateien (123 Tests) grün; `npm run verify:code` grün.
+- `npm run verify:full CR-GC-923`: Auswahl 58/233, rot 1, Schlupf 1 (nur Graph): `tests/distribution.test.ts` (`npm pack` schlug fehl). Einzeln wiederholt: 13 von 13 grün. Der Lauf fand bei Last 112 statt, parallel lief `verify:full CR-GC-913`; Ursache der Pack-Störung nicht nachgewiesen. Der erste Volllauf hing und wurde abgebrochen.
+- Modellvorschlag (nicht angewandt): Beschreibung von `FUNC-se-plan` auf „nur Reihenfolge und Schnitt" kürzen; Kante `FUNC-se-plan` → se-cdr/se-bau nicht vorhanden geprüft.
+
 ## Befund
 
 se-plan (Version 11, 88 Zeilen) erledigt drei Aufgaben:

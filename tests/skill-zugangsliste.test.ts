@@ -28,7 +28,7 @@ describe('TEST-skill-zugangsliste (CR-GC-895)', () => {
   });
 
   it('se-plan: Stufe 0 ist Pflicht bei einer Zeile mit Mensch, mit Pruefskript', () => {
-    const stufe0 = plan.slice(plan.indexOf('0. **Environment**'), plan.indexOf('1. **Contracts**'));
+    const stufe0 = plan.slice(plan.indexOf('0. **Environment**'), plan.indexOf('1. **Leaf functions**'));
     expect(stufe0).toMatch(/mandatory as soon as the access list of `se-conops` has a line created by a \*human\*/);
     expect(stufe0).toMatch(/CR \*\*Provide access\*\*/);
     expect(stufe0).toMatch(/a script calls the check call of every line/);
