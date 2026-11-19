@@ -338,7 +338,7 @@ export function pruefpunkte(text: string): { punkte: string[]; verworfen: string
     const bedingung = [grenze, kriterium].filter(Boolean).join(' und ');
     const zusatz = [nenn ? `Nenn ${nenn} ${einheit}` : '', quelle ? `Quelle: ${quelle}` : ''].filter(Boolean).join('; ');
     const verb = grenze ? 'Miss' : 'Prüfe';
-    punkte.push(`${verb} ${groesse}${ort ? ` am ${ort}` : ''}; bestanden, wenn ${bedingung}${zusatz ? ` (${zusatz})` : ''}.`);
+    punkte.push(`${verb} ${groesse}${ort ? ` (Messpunkt: ${ort})` : ''}. Bestanden, wenn ${bedingung}.${zusatz ? ` ${zusatz}.` : ''}`);
   }
   return { punkte, verworfen };
 }

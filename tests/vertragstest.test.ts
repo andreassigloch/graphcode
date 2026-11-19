@@ -80,8 +80,8 @@ describe('pruefpunkte (Vertragsdatei)', () => {
   it('macht je Zeile mit Grenzwert einen Prüfpunkt und verwirft die Zeile ohne', () => {
     const { punkte, verworfen } = pruefpunkte(VERTRAG);
     expect(punkte).toEqual([
-      'Miss Spannung am Netzteilausgang; bestanden, wenn 23,76 V ≤ Wert ≤ 24,24 V (Nenn 24 V; Quelle: Datenblatt LRS-150).',
-      'Miss Welligkeit am Netzteilausgang; bestanden, wenn Wert ≤ 150 mVpp.',
+      'Miss Spannung (Messpunkt: Netzteilausgang). Bestanden, wenn 23,76 V ≤ Wert ≤ 24,24 V. Nenn 24 V; Quelle: Datenblatt LRS-150.',
+      'Miss Welligkeit (Messpunkt: Netzteilausgang). Bestanden, wenn Wert ≤ 150 mVpp.',
     ]);
     expect(verworfen).toEqual(['Polarität: kein Min, kein Max und kein Kriterium']);
   });
@@ -95,8 +95,8 @@ describe('pruefpunkte (Vertragsdatei)', () => {
     ].join('\n');
     expect(pruefpunkte(v)).toEqual({
       punkte: [
-        'Prüfe Polarität am Gleisanschluss; bestanden, wenn kehrt mit der Richtung um.',
-        'Miss Frequenz am RPWM; bestanden, wenn 19 kHz ≤ Wert ≤ 21 kHz und je Richtung taktet genau ein Eingang (Nenn 20 kHz).',
+        'Prüfe Polarität (Messpunkt: Gleisanschluss). Bestanden, wenn kehrt mit der Richtung um.',
+        'Miss Frequenz (Messpunkt: RPWM). Bestanden, wenn 19 kHz ≤ Wert ≤ 21 kHz und je Richtung taktet genau ein Eingang. Nenn 20 kHz.',
       ],
       verworfen: ['Farbe: kein Min, kein Max und kein Kriterium'],
     });
@@ -111,7 +111,7 @@ describe('testVonHand', () => {
     const t = testVonHand({ id: 'SCHEMA-bus', file: 'docs/vertrag/bus.md' }, pruefpunkte(VERTRAG).punkte);
     expect(t.split('\n')[0]).toBe('<!-- erzeugt aus dem Modell (graphcode vertragstest) — SCHEMA-bus → docs/vertrag/bus.md. Nicht von Hand ändern, neu erzeugen. -->');
     expect(t).toContain('# Vertragstest SCHEMA-bus');
-    expect(t).toContain('1. Miss Spannung am Netzteilausgang');
+    expect(t).toContain('1. Miss Spannung (Messpunkt: Netzteilausgang)');
     expect(t).toContain('2. Miss Welligkeit');
     expect(t).toContain('`graph_test_ingest`');
     expect(t).toContain('tool: "manuell"');

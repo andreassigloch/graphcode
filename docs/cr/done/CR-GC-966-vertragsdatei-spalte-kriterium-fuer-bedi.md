@@ -61,3 +61,5 @@ Tests (`graph_tests`, 3):
 - `tests/vertragstest.test.ts`: neuer Fall, vor der Änderung rot; `se-bau` nennt die Spalte, der Skill-Test war vorher rot.
 - Modell: Beschreibung von `REQ-contract-test-manual` nachgezogen.
 - `verify:full CR-GC-966`: 246 Dateien, rot 0, Schlupf 0; Folge ohne Schlupf 2/10.
+
+**Nachtrag (2026-11-19):** Beim ersten Lauf in sirail (CR-SR-041) las sich der Prüfpunkt falsch, z. B. „am Eingänge des BTS7960“: Der Satz setzte fest „am“ vor den Messpunkt. Der Prüfpunkt lautet jetzt „Miss <Größe> (Messpunkt: <Ort>). Bestanden, wenn <Bedingung>.“; das Kriterium steht als Nebensatz nach „wenn“ in der Vertragsdatei.
