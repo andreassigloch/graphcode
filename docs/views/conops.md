@@ -30,7 +30,7 @@
 | `REQ-install-idempotent` | Install/Update idempotent; alte Versionen überschrieben/gelöscht, nicht dupliziert. | open |
 | `REQ-interface-schema` | Jeder FLOW (Interface) hat ein SCHEMA (Layer 2, Datenformat) — referenziert @sigloch/contracts Zod. Code-Precondition: ohne Datenvertrag rät der Agent das Format. (3-Schichten-Interface-Modell) | open |
 | `REQ-no-extraction` | Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS) | open |
-| `REQ-npx-distribution` | graphcode wird als npm-Paket ausgeliefert, dessen bin die Verben init, update und remove ueber npx ausfuehrt. | done |
+| `REQ-npx-distribution` | graphcode wird als npm-Paket ausgeliefert, dessen bin die Verben init, update, remove und status ueber npx ausfuehrt. | done |
 | `REQ-precommit-timeout` | CR-GC-102: pre-commit-Hook kann eine Mutation blocken; preCommitTimeout (default 5000ms). | open |
 | `REQ-readonly-bridge` | Bridge read-only; keine Inbound-Mutations, Writes nur via MCP→mutate(). (RECOMMENDATIONS) | done |
 | `REQ-responsiveness` | Bindende NFR (Familie §6b): erste Reaktion < 0,2s (UI+Transport+Store-Query+Onto-/Rule-Check, ohne LLM). Draft-Apply sofort + nur betroffener Subgraph geprüft; volle Konsistenz am Commit. End-to-end über FCHAIN-apply-gate. | open |
@@ -121,6 +121,7 @@ Empfaenger: `ACTOR-auftraggeber` · `ACTOR-dashboard` · `ACTOR-learning-engine`
 - `FCHAIN-agent-query` — Agent-Graph-Query (Impact + progressive Expansion): `FUNC-agent-loop` → `FUNC-graph-expand` → `FUNC-graph-impact` → `FUNC-graph-store` → `FUNC-list-elements` → `FUNC-read-tools`
 - `FCHAIN-apply-gate` — Apply-Gate-Ablauf (Governed Mutation): `FUNC-agent-loop` → `FUNC-arch-fitness` → `FUNC-decode` → `FUNC-emit-trajectory` → `FUNC-evaluate-rules` → `FUNC-fit-advisory` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate` → `FUNC-tool-context` → `FUNC-zug-bericht`
 - `FCHAIN-capture` — Interaktive Erfassung (Text → suggest-Tier): `FUNC-agent-loop` → `FUNC-decode` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-mutate`
+- `FCHAIN-contract-test-generation` — Vertragstests aus dem Modell erzeugen: `FUNC-cli-dispatch` → `FUNC-erzeuge-vertragstests` → `FUNC-vertragstest-verb`
 - `FCHAIN-doc-export` — Doc-Export (stdio → exporter): `FUNC-agent-loop` → `FUNC-cr-groups` → `FUNC-export-markdown` → `FUNC-graph-export-snapshot` → `FUNC-graph-store`
 - `FCHAIN-grammar-query` — Grammatik abfragen: `FUNC-agent-loop` → `FUNC-authoring-guide`
 - `FCHAIN-impact-testing` — Tests zu einer Aenderung waehlen: `FUNC-agent-loop` → `FUNC-deduce-tests` → `FUNC-graph-store` → `FUNC-resolve-tests-from-code` → `FUNC-select-tests`
@@ -654,6 +655,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-957` | done | Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe | `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
 | `CR-GC-959` | done | Fehlbindung: 5 FLOW tragen ein SCHEMA, das den übergebenen Wert nicht beschreibt (install-result-* an CliCommandSchema, markdown-text an MarkdownViewSchema) — Zod-Schemas für RepoStatus, UpgradeReport, InitReport, Markdown-Text, Erzeuger parsen, FLOW neu binden (aus CR-GC-958) | `FUNC-collect-status` · `FUNC-export-markdown` · `FUNC-harness-cli` · `FUNC-init-verb` · `FUNC-upgrade` |
 | `CR-GC-961` | done | Klärung: Vertragstest-Generator als fester Bauschritt (ITEM-2026-1454), Kanal-Attribut am FLOW (Aufruf, Nachricht, Datei, physisch, Mensch) und Vertrag physischer/elektrischer Schnittstellen ohne Zod (FAQ schema-bei-physischem-fluss offen) — aus CR-GC-958/959 | `FUNC-se-bau` |
+| `CR-GC-962` | n/a | Vertragstest-Generator aus graphanalyze nach graphcode übernehmen (Verb graphcode vertragstest), Satz 'is not a generator' entfernen — Folge 1 aus CR-GC-961 | `FUNC-erzeuge-vertragstests` · `FUNC-vertragstest-verb` · `REQ-contract-test-cases` · `REQ-contract-test-generation` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

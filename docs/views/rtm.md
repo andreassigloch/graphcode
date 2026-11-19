@@ -4,10 +4,10 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 295 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 297 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
-### System (SYS.2) — 65 REQ
+### System (SYS.2) — 66 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -64,6 +64,7 @@
 | `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `MOD-kernel` | — |
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-kernel` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `MOD-surface` | — |
+| `REQ-status-sammeln` | `TEST-status-verb` | `FUNC-collect-status` | `MOD-surface` |
 | `REQ-stdio-fuehrt-im-repo-aus` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` | `MOD-surface` |
 | `REQ-store-folgt-fingerabdruck` | `TEST-schema-migration` | `FUNC-open-store` | `MOD-kernel` |
 | `REQ-store-lock-uebernahme` | `TEST-store-lock` | `FUNC-claim-store-lock` | `MOD-kernel` |
@@ -356,7 +357,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 215 REQ
+### Entwurf (SWE.3 · HWE.2) — 217 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -389,6 +390,8 @@
 | `REQ-confidence-tier` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-conops-zugangsliste` | `TEST-skill-zugangsliste` | `FUNC-se-conops` | `MOD-agent-surface` |
 | `REQ-constraints-skill-vertrag` | `TEST-skill-constraints` | `FUNC-se-constraints` | `MOD-agent-surface` |
+| `REQ-contract-test-cases` | `TEST-vertragstest-generator` | `FUNC-erzeuge-vertragstests` | `MOD-projections` |
+| `REQ-contract-test-generation` | `TEST-vertragstest-generator` | `FUNC-vertragstest-verb` | `MOD-surface` |
 | `REQ-cr-gruppen-rechnen` | `TEST-se-plan-groups` | `FUNC-cr-groups` | `MOD-loop` |
 | `REQ-dashboard-ontology-sync` | `TEST-dashboard-ontology-sync` | `MOD-kernel-measure` | — |
 | `REQ-dashboard-readonly` | `TEST-dashboard-readonly` | `MOD-surface` | — |

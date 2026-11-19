@@ -534,10 +534,13 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // einAdapterJeAkteur wie eingaengeNurAus in die Modell-Spur kamen (drei Vertraege an der Grenze
       // dev-scripts/kernel-measure, CR-01, Steuerwert am Start 8,502 -> 9,002): dieselben drei Zuege, Grounding
       // nimmt Bedienung jetzt vor Betrieb graph_readiness auf. Weiter derselbe Befund (ITEM-2026-798).
+      // CR-GC-962 (graphVersion 1318) — NEU GEMESSEN, nachdem das Verb graphcode vertragstest unter Bedienung und
+      // sein Erzeuger unter Grounding kamen, mit zwei Vertraegen ueber die Grenze surface/projections (Steuerwert
+      // am Start 9,252 -> 9,752): zwei Zuege statt drei. Betrieb nimmt graph_readiness nicht mehr auf. Weiter
+      // derselbe Befund (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
         'FUNC-block-grounding -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
-        'FUNC-block-betrieb -compose-> FUNC-graph-readiness (retire FUNC-graph-readiness)',
       ]);
       expect(
         rest
@@ -591,9 +594,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-913 (graphVersion 1273) — NEU GEMESSEN: nach den drei Zuegen steht BW-02 @ FUNC-block-grounding
       // vorn, wie nach CR-GC-951. Die zwei neuen Befund-Vertraege an der Grenze dev-scripts/kernel-measure heben
       // den Steuerwert am Start (8,502 -> 9,002) und ordnen die Zuege neu.
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
-        ruleId: 'BW-02',
-        elementId: 'FUNC-block-grounding',
+      // CR-GC-962 (graphVersion 1318) — NEU GEMESSEN: nach den zwei Zuegen steht R-04 @ MOD-projections vorn, wie
+      // nach CR-GC-918. Die Vertraege SCHEMA-vertragstest-satz und SCHEMA-vertragstest-bericht kamen an die Grenze
+      // von projections (30 -> 32).
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-projections — bitte neu messen').toEqual({
+        ruleId: 'R-04',
+        elementId: 'MOD-projections',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

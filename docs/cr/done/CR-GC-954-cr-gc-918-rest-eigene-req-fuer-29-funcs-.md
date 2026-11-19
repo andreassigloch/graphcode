@@ -96,4 +96,5 @@ Tests (`graph_tests`, 0):
 - „Version und Wirkung im Ereignis" steht nach Wegfall von REQ-update-ereignis in keiner REQ; geprueft nur in `tests/live-feed.test.ts`, die keinen TEST-Knoten hat.
 - TEST-first-step prueft `firstStepHint`; dafuer gibt es weder FUNC noch REQ.
 - Die Eltern-REQ fuer die neuen Werkzeug-REQ sind teils Ermessen (RD-07 verlangt eine): REQ-modell-befragen fuer graph_authoring_guide und graph_help, REQ-reduced-llm fuer listElements, REQ-repo-install fuer `--help`.
+  - Nachtrag 2026-11-19 (graphVersion 1319): graph_authoring_guide und graph_help haengen jetzt unter REQ-reduced-llm; REQ-status-sammeln unter REQ-npx-distribution (Text nennt status); die Kante REQ-single-kuzu-owner → REQ-store-recovery ist entfernt, die Sperre traegt REQ-store-lock-uebernahme.
 

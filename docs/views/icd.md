@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 70 SCHEMA · 259 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 72 SCHEMA · 261 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -77,6 +77,8 @@
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
 | `SCHEMA-upgrade-report` | src/surface/upgrade.ts#UpgradeReportSchema | n/a |
 | `SCHEMA-verlauf` | src/projections/verlauf.ts#VerlaufSchema | n/a |
+| `SCHEMA-vertragstest-bericht` | src/projections/vertragstest.ts#VertragstestBerichtSchema | n/a |
+| `SCHEMA-vertragstest-satz` | src/projections/vertragstest.ts#VertragstestSatzSchema | n/a |
 | `SCHEMA-vitest-lauf` | src/projections/test-schlupf.ts#VitestLaufSchema | n/a |
 | `SCHEMA-work-set` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-zug-bericht` | src/kernel/measure/zug-bericht.ts#ZugBericht | reviewed |
@@ -138,7 +140,7 @@
 | `FLOW-channel-next-step` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-skill-reference` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-steer-advisory` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
-| `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-render-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` |
+| `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-render-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` · `FUNC-vertragstest-verb` |
 | `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-commit-check` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model` |
 | `FLOW-cli-invocation-import-code` | `FUNC-agent-loop` | `FUNC-cli-dispatch` |
 | `FLOW-cli-invocation-render` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` |
@@ -334,6 +336,8 @@
 | `FLOW-verlauf-report` | `FUNC-stand-verlauf` | `FUNC-graph-readiness` |
 | `FLOW-verlauf-request` | `FUNC-graph-readiness` | `FUNC-stand-verlauf` |
 | `FLOW-verlauf-snapshot` | `FUNC-stand-verlauf` | `FUNC-take-steering-snapshot` |
+| `FLOW-vertragstest-bericht` | `FUNC-erzeuge-vertragstests` | `FUNC-vertragstest-verb` |
+| `FLOW-vertragstest-satz` | `FUNC-vertragstest-verb` | `FUNC-erzeuge-vertragstests` |
 | `FLOW-viewer-start` | `FUNC-gve-supervise` | `ACTOR-dashboard` |
 | `FLOW-vitest-lauf-code` | `FUNC-verify-lane-code` | `FUNC-lauf-urteil` |
 | `FLOW-vitest-lauf-full` | `FUNC-verify-lane-full` | `FUNC-lauf-urteil` |

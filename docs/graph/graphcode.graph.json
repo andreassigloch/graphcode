@@ -4395,6 +4395,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-962",
+      "type": "CR",
+      "name": "Vertragstest-Generator aus graphanalyze nach graphcode übernehmen (Verb graphcode vertragstest), Satz 'is not a generator' entfernen — Folge 1 aus CR-GC-961",
+      "description": "docs/cr/open/CR-GC-962-vertragstest-generator-aus-graphanalyze-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -4425,6 +4431,12 @@
       "description": "Agent erzeugt Format-E-Kandidaten aus Text (agent-seitig); graph_mutate laesst sie lesen und gibt sie an das Gate. Das Gate speichert sofort, wenn kein neuer Fehler entsteht. Keine Eigen-Extraktion.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "id": "FCHAIN-contract-test-generation",
+      "type": "FCHAIN",
+      "name": "Vertragstests aus dem Modell erzeugen",
+      "description": "Vertragstests aus dem Modell erzeugen: Aufruf, Satz aus dem Snapshot, Erzeugung je SCHEMA, Bericht"
     },
     {
       "id": "FCHAIN-dashboard-metrics",
@@ -6541,6 +6553,20 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-vertragstest-bericht",
+      "type": "FLOW",
+      "name": "Vertragstest-Bericht",
+      "description": "Der Bericht je SCHEMA (Faelle und verworfene Faelle oder Fehler) vom Erzeuger an das Verb",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-vertragstest-satz",
+      "type": "FLOW",
+      "name": "Vertragstest-Satz",
+      "description": "Die SCHEMA mit ihrem Zod-Symbol vom Verb an den Erzeuger",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-viewer-start",
       "type": "FLOW",
       "name": "Viewer steuern (starten, beenden)",
@@ -7063,6 +7089,18 @@
       "realRef": {
         "file": "src/surface/emit.ts",
         "symbol": "makeUpdateEventHook",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-erzeuge-vertragstests",
+      "type": "FUNC",
+      "name": "erzeugeVertragstests",
+      "description": "Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, je Feld die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; nur Faelle, die das Original so urteilt. (CR-GC-962, Herkunft CR-GC-958)",
+      "status": "done",
+      "realRef": {
+        "file": "src/projections/vertragstest.ts",
+        "symbol": "erzeugeVertragstests",
         "lang": "ts"
       }
     },
@@ -8056,6 +8094,18 @@
       }
     },
     {
+      "id": "FUNC-vertragstest-verb",
+      "type": "FUNC",
+      "name": "executeVertragstest",
+      "description": "Das Verb graphcode vertragstest: liest den Satz der SCHEMA mit Zod-realRef aus dem Snapshot, startet den Erzeuger in einem Kindprozess mit transform-types und gibt den Bericht je SCHEMA aus. Exit 1, wenn ein SCHEMA keinen Test bekam; Exit 2 bei falschem Aufruf. (CR-GC-962)",
+      "status": "done",
+      "realRef": {
+        "file": "src/surface/vertragstest-verb.ts",
+        "symbol": "executeVertragstest",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "FUNC-vorschlag",
       "type": "FUNC",
       "name": "Vorschlag nach dem Zug",
@@ -8576,6 +8626,24 @@
       "type": "REQ",
       "name": "se:constraints fragt nach Constraints statt Gewichten",
       "description": "Der Skill se:constraints MUSS je Dimension eine Frage nach Element und Eigenschaft stellen und die Antwort als nicht-funktionale REQ an FCHAIN, MOD oder SYS mit verifizierendem TEST schreiben, nie als Gewicht. Er DARF nur Pruefungen aus @sigloch/graphcode/constraints, Regeln aus dem Katalog und Felder nennen, die graph_metrics liefert oder die Ontologie fuehrt; fehlt eine Pruefung, legt er REQ und TEST ueber se:author-req an und der Test schreibt sie.",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-contract-test-cases",
+      "type": "REQ",
+      "name": "Faelle nur nach Urteil des Originals",
+      "description": "Eine erzeugte Testdatei enthaelt nur Faelle, die das Original-Schema so urteilt, wie der Fall es erwartet, und je angenommenem Fall die eingefrorene Ausgabe. (CR-GC-962)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-contract-test-generation",
+      "type": "REQ",
+      "name": "Vertragstests aus dem Modell erzeugen",
+      "description": "Wenn der Auftraggeber graphcode vertragstest aufruft, dann liegt je SCHEMA mit Zod-realRef im Repo eine Testdatei vor; ein SCHEMA ohne Test steht mit Grund im Bericht und das Verb endet mit Exit-Code 1. (CR-GC-962)",
       "kinds": [
         "functional"
       ]
@@ -9605,7 +9673,7 @@
       "id": "REQ-npx-distribution",
       "type": "REQ",
       "name": "npx-CLI als Distribution",
-      "description": "graphcode wird als npm-Paket ausgeliefert, dessen bin die Verben init, update und remove ueber npx ausfuehrt.",
+      "description": "graphcode wird als npm-Paket ausgeliefert, dessen bin die Verben init, update, remove und status ueber npx ausfuehrt.",
       "status": "done",
       "created_at": "2026-06-16T00:00:00.000Z",
       "kinds": [
@@ -11932,6 +12000,28 @@
       "realRef": {
         "file": "src/projections/verlauf.ts",
         "symbol": "VerlaufSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-vertragstest-bericht",
+      "type": "SCHEMA",
+      "name": "VertragstestBerichtSchema",
+      "description": "Je SCHEMA die erzeugte Datei mit Zahl der Faelle und verworfenen Faellen, oder der Fehler. erzeugeVertragstests parst ihn, bevor es ihn zurueckgibt. (CR-GC-962)",
+      "realRef": {
+        "file": "src/projections/vertragstest.ts",
+        "symbol": "VertragstestBerichtSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-vertragstest-satz",
+      "type": "SCHEMA",
+      "name": "VertragstestSatzSchema",
+      "description": "Je SCHEMA uid, Datei und Zod-Symbol. erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962)",
+      "realRef": {
+        "file": "src/projections/vertragstest.ts",
+        "symbol": "VertragstestSatzSchema",
         "lang": "ts"
       }
     },
@@ -14927,6 +15017,47 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-11-19T15:29:38.641Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-vertragstest-bericht",
+      "type": "TEST",
+      "name": "Vertrag vertragstest-bericht",
+      "description": "Erzeugter Vertragstest SCHEMA-vertragstest-bericht",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts",
+          "tool": "vitest"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-vertragstest-satz",
+      "type": "TEST",
+      "name": "Vertrag vertragstest-satz",
+      "description": "Erzeugter Vertragstest SCHEMA-vertragstest-satz",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts",
+          "tool": "vitest"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertragstest-generator",
+      "type": "TEST",
+      "name": "Vertragstest-Generator",
+      "description": "Unit-Tests des Erzeugers und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler",
+      "level": "integration",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/vertragstest.test.ts",
+          "tool": "vitest",
+          "level": "integration"
         }
       ]
     },
@@ -23689,6 +23820,36 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-962",
+      "target": "FUNC-erzeuge-vertragstests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-962",
+      "target": "FUNC-vertragstest-verb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-962",
+      "target": "REQ-contract-test-cases",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-962",
+      "target": "REQ-contract-test-generation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-962",
+      "target": "SCHEMA-vertragstest-bericht",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-962",
+      "target": "SCHEMA-vertragstest-satz",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -23913,6 +24074,21 @@
       "source": "FCHAIN-capture",
       "target": "REQ-interactive-capture-suggest",
       "type": "satisfy"
+    },
+    {
+      "source": "FCHAIN-contract-test-generation",
+      "target": "FUNC-cli-dispatch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-contract-test-generation",
+      "target": "FUNC-erzeuge-vertragstests",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-contract-test-generation",
+      "target": "FUNC-vertragstest-verb",
+      "type": "compose"
     },
     {
       "source": "FCHAIN-dashboard-metrics",
@@ -26049,6 +26225,11 @@
     {
       "source": "FLOW-cli-command",
       "target": "FUNC-upgrade",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-command",
+      "target": "FUNC-vertragstest-verb",
       "type": "io"
     },
     {
@@ -28559,6 +28740,26 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-vertragstest-bericht",
+      "target": "FUNC-vertragstest-verb",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-vertragstest-bericht",
+      "target": "SCHEMA-vertragstest-bericht",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-vertragstest-satz",
+      "target": "FUNC-erzeuge-vertragstests",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-vertragstest-satz",
+      "target": "SCHEMA-vertragstest-satz",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-viewer-start",
       "target": "ACTOR-dashboard",
       "type": "io"
@@ -29149,6 +29350,11 @@
       "type": "compose"
     },
     {
+      "source": "FUNC-block-bedienung",
+      "target": "FUNC-vertragstest-verb",
+      "type": "compose"
+    },
+    {
       "source": "FUNC-block-betrieb",
       "target": "FUNC-block-bedienung",
       "type": "compose"
@@ -29246,6 +29452,11 @@
     {
       "source": "FUNC-block-grounding",
       "target": "FUNC-block-speicherwerk",
+      "type": "compose"
+    },
+    {
+      "source": "FUNC-block-grounding",
+      "target": "FUNC-erzeuge-vertragstests",
       "type": "compose"
     },
     {
@@ -29899,6 +30110,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-erzeuge-vertragstests",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-erzeuge-vertragstests",
+      "target": "FLOW-vertragstest-bericht",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-erzeuge-vertragstests",
+      "target": "REQ-contract-test-cases",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-evaluate-rules",
@@ -32017,6 +32243,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FUNC-vertragstest-verb",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-vertragstest-verb",
+      "target": "FLOW-vertragstest-satz",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-vertragstest-verb",
+      "target": "REQ-contract-test-generation",
+      "type": "satisfy"
+    },
+    {
       "source": "FUNC-vorschlag",
       "target": "MOD-loop",
       "type": "allocate"
@@ -32849,17 +33090,7 @@
     },
     {
       "source": "REQ-modell-befragen",
-      "target": "REQ-authoring-guide-nennt-kanten",
-      "type": "compose"
-    },
-    {
-      "source": "REQ-modell-befragen",
       "target": "REQ-graphcode-md-testauswahl",
-      "type": "compose"
-    },
-    {
-      "source": "REQ-modell-befragen",
-      "target": "REQ-hilfe-erklaert-token",
       "type": "compose"
     },
     {
@@ -32893,6 +33124,11 @@
       "type": "compose"
     },
     {
+      "source": "REQ-npx-distribution",
+      "target": "REQ-status-sammeln",
+      "type": "compose"
+    },
+    {
       "source": "REQ-one-gate-per-repo",
       "target": "REQ-gate-only-writes",
       "type": "compose",
@@ -32915,11 +33151,6 @@
       "type": "compose"
     },
     {
-      "source": "REQ-real-health-check",
-      "target": "REQ-status-sammeln",
-      "type": "compose"
-    },
-    {
       "source": "REQ-reduced-llm",
       "target": "REQ-advisory-roundtrip-latency",
       "type": "compose"
@@ -32927,6 +33158,11 @@
     {
       "source": "REQ-reduced-llm",
       "target": "REQ-analyse-artefakt-vor-stempel",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-reduced-llm",
+      "target": "REQ-authoring-guide-nennt-kanten",
       "type": "compose"
     },
     {
@@ -32942,6 +33178,11 @@
     {
       "source": "REQ-reduced-llm",
       "target": "REQ-graph-context-replaces-reading",
+      "type": "compose"
+    },
+    {
+      "source": "REQ-reduced-llm",
+      "target": "REQ-hilfe-erklaert-token",
       "type": "compose"
     },
     {
@@ -33147,11 +33388,6 @@
     {
       "source": "REQ-single-kuzu-owner",
       "target": "REQ-store-lock-uebernahme",
-      "type": "compose"
-    },
-    {
-      "source": "REQ-single-kuzu-owner",
-      "target": "REQ-store-recovery",
       "type": "compose"
     },
     {
@@ -35979,6 +36215,26 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vertrag-vertragstest-bericht",
+      "target": "SCHEMA-vertragstest-bericht",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-vertragstest-satz",
+      "target": "SCHEMA-vertragstest-satz",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertragstest-generator",
+      "target": "REQ-contract-test-cases",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertragstest-generator",
+      "target": "REQ-contract-test-generation",
+      "type": "verify"
+    },
+    {
       "source": "TEST-view-fmea",
       "target": "REQ-doc-export",
       "type": "verify"
@@ -36294,6 +36550,11 @@
     },
     {
       "source": "UC-intent-to-code",
+      "target": "FCHAIN-contract-test-generation",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
       "target": "FCHAIN-doc-export",
       "type": "compose"
     },
@@ -36549,5 +36810,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1314
+  "graphVersion": 1319
 }

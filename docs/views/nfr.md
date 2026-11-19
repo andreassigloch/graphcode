@@ -46,7 +46,7 @@
 | `REQ-monotone-convergence` | Ueber aufeinanderfolgende Runden faellt die Phase-Gate-Abdeckung nie zurueck und die Zahl blockierender Verstoesse steigt nie; ein Fund-Set wird hoechstens einmal erneut aufgerufen und nach dem Zuruecksetzen nicht wieder. | ✓ |
 | `REQ-mutation-emits-event` | CONSTRAINT: Jede Graph-Mutation MUSS ein Live-Update-Event emittieren (SSE invalidate, domains graph/rules/readiness/suggestions). Beleg: aimprove import emittiert keins → Dashboard-Lag ~90s. Fix: alle Write-Pfade einheitlich. | ✓ |
 | `REQ-no-extraction` | Keine tree-sitter/AST/LLM-Extraktion; Extraktion ist Slicer-/graphify-Aufgabe. (RECOMMENDATIONS) | ✓ |
-| `REQ-npx-distribution` | graphcode wird als npm-Paket ausgeliefert, dessen bin die Verben init, update und remove ueber npx ausfuehrt. | ✓ |
+| `REQ-npx-distribution` | graphcode wird als npm-Paket ausgeliefert, dessen bin die Verben init, update, remove und status ueber npx ausfuehrt. | ✓ |
 | `REQ-phase-gate-not-skippable` | Das aktuelle Phasen-Gate benennt, was bis zur Regel-Vollstaendigkeit fehlt. Die Reihenfolge blockt nie: Ebenen und Phasen darf der Nutzer ueberspringen, Architektur und Optimizer stehen ab dem ersten Zug offen (Leitlinie Satz 5). Blocken kann allein eine Regel an der Schreiboperation. Modell dem Code voraus: heute haelt der Handoff noch an (ITEM-2026-140). | ✓ |
 | `REQ-post-modelfree-gate` | Apply, Block, Regelpruefung und Readiness laufen ohne Netzwerk- oder Modellaufruf und geben bei gleichem Graphen und gleichem Batch in zwei Laeufen dasselbe Urteil. | ✓ |
 | `REQ-precise-context` | Kontext = exakter Blast-Radius/Sub-Graph-Slice (Format-E) statt grep-Dump/Result-Kompression. | ✓ |

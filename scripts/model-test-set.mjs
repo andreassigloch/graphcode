@@ -154,6 +154,9 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/vertragstest.test.ts':
+    'CR-GC-962: schreibt einen eigenen Snapshot nach docs/graph/ eines TEMP-Repos und erzeugt daraus Vertragstests.\n' +
+    'graphcodes eigene SSOT liest er nie — eine Modellaenderung kann ihn nicht rot machen (Spur CODE).',
   'tests/verlauf.test.ts':
     'CR-GC-946: nennt `docs/graph/` nur als PFAD, unter dem der Test drei eigene Staende in ein TEMP-Repo\n' +
     'committet und den Verlauf darueber rechnet. graphcodes eigene SSOT liest er nie — eine Modellaenderung\n' +

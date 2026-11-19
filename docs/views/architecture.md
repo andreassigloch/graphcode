@@ -56,6 +56,7 @@
 | `FUNC-eingaenge-nur-aus` | FUNC | eingaengeNurAus |
 | `FUNC-emit-trajectory` | FUNC | materializeTrajectory() |
 | `FUNC-emit-update-event` | FUNC | emitUpdateEvent(domains) |
+| `FUNC-erzeuge-vertragstests` | FUNC | erzeugeVertragstests |
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
 | `FUNC-export-marker` | FUNC | Drift-Marker setzen |
@@ -142,6 +143,7 @@
 | `FUNC-verify-lane-code` | FUNC | npm run verify:code |
 | `FUNC-verify-lane-full` | FUNC | npm run verify:full |
 | `FUNC-verify-lane-model` | FUNC | npm run verify:model |
+| `FUNC-vertragstest-verb` | FUNC | executeVertragstest |
 | `FUNC-vorschlag` | FUNC | Vorschlag nach dem Zug |
 | `FUNC-zug-bericht` | FUNC | zugBericht(before |
 | `MOD-agent-surface` | MOD | agent-surface — Skill-Treiber |
@@ -203,6 +205,7 @@
 | `FUNC-eingaenge-nur-aus` | `MOD-kernel-measure` |
 | `FUNC-emit-trajectory` | `MOD-projections` |
 | `FUNC-emit-update-event` | `MOD-surface` |
+| `FUNC-erzeuge-vertragstests` | `MOD-projections` |
 | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `FUNC-export-markdown` | `MOD-projections` |
 | `FUNC-export-marker` | `MOD-kernel` |
@@ -289,5 +292,6 @@
 | `FUNC-verify-lane-code` | `MOD-dev-scripts` |
 | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `FUNC-verify-lane-model` | `MOD-dev-scripts` |
+| `FUNC-vertragstest-verb` | `MOD-surface` |
 | `FUNC-vorschlag` | `MOD-loop` |
 | `FUNC-zug-bericht` | `MOD-kernel-measure` |
