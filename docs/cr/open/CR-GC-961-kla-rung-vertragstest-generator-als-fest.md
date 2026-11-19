@@ -60,6 +60,31 @@ Offene Teilfragen:
 
 Mit F3a würde der Generator aus Größe und Grenzwerten ein Messgerüst erzeugen: je Grenzwert ein Prüfpunkt, Messwert von Hand oder vom Prüfstand.
 
+**Variante d (Vorschlag des Autors, 2026-11-19): Testbeschreibung als Datei.** Ein Test, der von Hand läuft, ist eine Datei im Repo, z. B. `tests/manuell/bus-24v.md`:
+- Kopf: die TEST-uid (bindet sich über `graph_test_ingest` wie eine `.test.ts`, FAQ `testref-binden` Punkt 4).
+- Inhalt: Aufbau, Schritte, Kriterium „bestanden, wenn …“. Beispiel: „Kunde betätigt den Hebel xy; bestanden, wenn die Weiche in 2 s die Endlage meldet.“
+- Ergebnis: ein Lauf von Hand trägt Datum, Prüfer, Messwerte und bestanden/nicht bestanden ein und meldet es über `graph_test_ingest`.
+
+Das schließt R-19 ohne erfundenen Code. Die Endung (`.md` statt `.test.ts`) sagt, dass der Test von Hand läuft. Ein Attribut am TEST braucht es dafür nicht. Dieselbe Form trägt den physischen Vertrag: `realRef` des SCHEMA zeigt auf eine Vertragsdatei (Tabelle Größe, Einheit, Min, Nenn, Max, Quelle), das schließt R-26. Aus der Tabelle erzeugt der Generator (F1) das Gerüst der manuellen Testdatei: je Grenzwert ein Prüfpunkt. Die Prosa aus sirail zieht dafür vom Knoten in die Dateien um.
+
+Offen dabei:
+- **F3.1** Liest `graph_test_ingest` heute eine `.md`-Datei? Nein, es liest Läufe eines Testwerkzeugs (vitest). Ein Format für das Ergebnis von Hand fehlt.
+- **F3.2** Wie alt darf ein Ergebnis von Hand sein? Ein `.test.ts` läuft bei jeder Änderung neu, ein Hebeltest nicht. Vorschlag: Das Ergebnis gilt, bis sich das SCHEMA oder die REQ ändert, die der TEST prüft (wie CR-GC-800 heute für Code).
+
+## Befund sirail (2026-11-19)
+
+sirail ist das Projekt mit den meisten physischen Flüssen (Stand graphVersion des Exports vom 2026-11-17).
+
+| Was | Wie in sirail gelöst |
+|---|---|
+| Physischer Vertrag | SCHEMA mit Größe, Einheit, Grenzwerten und Toleranz als Prosa in `description`. Beispiele: `Bus24VSchema` (24 V ± 1 %, Welligkeit ≤ 150 mVpp, ≥ 20 V am Moduleingang), `SCHEMA-block-voltage`, `SCHEMA-pwm-signal`. Die Datenblatt-Quelle steht im CR (CR-SR-035), nicht am Knoten. |
+| Test des Vertrags | TEST mit Messvorschrift und Kriterium „bestanden, wenn …“ in `description`, z. B. `Bus24VContractTest`: „Messung am Netzteilausgang … bei 9,3 A Last“. Präfixe nennen die Art: „Messung“, „HIL“, „HW-Validation“, „E2E“, „Firmware-Unit“. |
+| Bindung | Keine. Kein SCHEMA trägt `realRef`, kein TEST trägt `testRefs`. R-26 und R-19 bleiben stehen (CR-SR-035, Abschnitt „Offen“). |
+| Durchführung | Das Testkonzept nennt ein „manuelles HW-Testprotokoll“ als offene Lücke. Es existiert nicht. |
+| Kanal | Kein Attribut. Nur `sync`/`async` an allen 86 FLOW. |
+
+Folgerung: Der Inhalt ist in sirail gut. Ihm fehlt eine Datei, auf die `realRef` und `testRefs` zeigen können, und ein Ort für das Ergebnis eines Laufs von Hand.
+
 ## Was nach der Entscheidung folgt (je eigener CR)
 
 1. **graphcode, `se-bau`:** Schritt „Vertragstest erzeugen“ (F1). Dateien: `.claude/commands/se-bau.md`, `tests/skill-bau.test.ts`.
@@ -71,9 +96,9 @@ Mit F3a würde der Generator aus Größe und Grenzwerten ein Messgerüst erzeuge
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
-| F1 | offen | |
-| F2 | offen | |
-| F3 | offen | |
+| F1 | Generator und Skill-Schritt kommen ins graphcode-Repo (2026-11-19, Autor) | Er wird fester Teil von graphcode und `se-bau`. Folge: Die Zeile „IS NOT: a generator“ in `CLAUDE.md` und README wird präzisiert auf „kein Code-Generator; erzeugt Prüfungen aus dem Modell“. |
+| F2 | offen, nach Befund sirail | sirail kennt keinen Kanal. Mit F3d ist `physisch` an der Vertragsdatei erkennbar; der Kanal bleibt für `nachricht` und `datei` im Code nötig. |
+| F3 | offen; Variante d vorgeschlagen | Autor: Testbeschreibung als Datei, von Hand durchzuführen, wo gefordert. Offen F3.1 und F3.2. |
 
 ## Umfang laut `graph_impact`
 
