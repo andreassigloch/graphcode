@@ -652,7 +652,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-955` | done | contracts 12.15.0 übernehmen: RD-07 Level jump (CR-SM-436), Regelzahl 82, Regelmatrix, Systemmodell-Seite | `FUNC-evaluate-rules` |
 | `CR-GC-956` | done | grenzeNurMitSchema: eigene Liste zwischenKindern streichen; ein Fluss zwischen Kind-Modulen ist nur ohne erlaubten Vertrag ein Befund, wie jeder Grenzfluss (Autor 2026-11-19, ersetzt Lesart aus CR-GC-913) | `FUNC-grenze-nur-mit-schema` |
 | `CR-GC-957` | done | Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe | `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
-| `CR-GC-959` | n/a | Fehlbindung: 5 FLOW tragen ein SCHEMA, das den übergebenen Wert nicht beschreibt (install-result-* an CliCommandSchema, markdown-text an MarkdownViewSchema) — Zod-Schemas für RepoStatus, UpgradeReport, InitReport, Markdown-Text, Erzeuger parsen, FLOW neu binden (aus CR-GC-958) | `FUNC-collect-status` · `FUNC-export-markdown` · `FUNC-harness-cli` · `FUNC-init-verb` · `FUNC-upgrade` |
+| `CR-GC-959` | done | Fehlbindung: 5 FLOW tragen ein SCHEMA, das den übergebenen Wert nicht beschreibt (install-result-* an CliCommandSchema, markdown-text an MarkdownViewSchema) — Zod-Schemas für RepoStatus, UpgradeReport, InitReport, Markdown-Text, Erzeuger parsen, FLOW neu binden (aus CR-GC-958) | `FUNC-collect-status` · `FUNC-export-markdown` · `FUNC-harness-cli` · `FUNC-init-verb` · `FUNC-upgrade` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

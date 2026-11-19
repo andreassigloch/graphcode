@@ -1,7 +1,7 @@
 # CR-GC-959: Fehlbindung — 5 FLOW tragen ein SCHEMA, das den übergebenen Wert nicht beschreibt
 
 **Typ:** Bug, aus Item ITEM-2026-1470
-**Status:** Open
+**Status:** Done, 2026-11-19
 **Erstellt:** 2026-11-19
 **Item:** bok/items/ITEM-2026-1470.json (Lane: graph)
 **Herkunft:** CR-GC-958 (Kettentest und Nachtrag „Regel über alle Repos“)
@@ -50,6 +50,22 @@ R-26 verlangt für jedes SCHEMA ein Zod-Schema mit `realRef`. Ein Konzept-SCHEMA
 ## Dateien (≤ 10)
 
 `src/surface/status.ts`, `src/surface/init-verb.ts`, `src/surface/upgrade.ts`, `src/surface/scaffold.ts`, `src/projections/exporter.ts` und die 5 erzeugten Vertragstests unter `tests/`. Wächst die Liste, wird vorher geteilt.
+
+## Ergebnis (2026-11-19)
+
+Code: Commit edde3bbd. Modell: graphVersion 1306, 5 SCHEMA, 5 TEST, 5 FLOW neu gebunden.
+
+| Kriterium | Ergebnis |
+|---|---|
+| `pruefe.mjs`: 5 FLOW „passt“, keiner schlechter | erfüllt: alle 5 „passt“; kein FLOW, der vorher „passt“ war, fällt zurück (passt 28 → 33, passt nicht 43 → 38) |
+| R-26, R-32, RC-04, RC-08 an den 5 SCHEMA | erfüllt: kein Befund (`rules_get_violations`) |
+| Build, `verify:code`, `verify:full` | erfüllt: Build grün; `verify:code` im pre-commit grün; `verify:full CR-GC-959`: 242 Dateien, 2067 Tests, rot 0, Schlupf 0 |
+| bestehende Tests der fünf Erzeuger | erfüllt: grün; jede geänderte Funktion wird von einer dieser Dateien aufgerufen. Kein `parse` hat einen Bruch aufgedeckt |
+| Smoke | erfüllt: `graphcode status` antwortet. Exit 1 kommt von der Versionsdrift nach dem Neubau von `dist`, nicht vom Bericht. `graphcode render srs --format md` schreibt die Sicht (im Worktree, weil der Host den Store im Hauptbaum besitzt) |
+
+**Vertragstests:** erzeugt mit `graphanalyze/werkzeuge/vertragstest/cli.mjs`, zusammen 62 Fälle. Für `SCHEMA-markdown-text` hat der Generator zuerst nur einen Fall erzeugt. Er erzeugt jetzt auch für einfache Schemas einen Fall „falscher Typ“ (graphanalyze e277689).
+
+**Befund außerhalb des Umfangs:** RC-04 meldet `SCHEMA-cli-command`. `CliCommandSchema` wird schon vor diesem CR nirgends geparst. In der Abfrage vor diesem CR lag er nur außerhalb des Ausschnitts. Item: ITEM-2026-1474.
 
 ## Entscheidungen
 

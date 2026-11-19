@@ -35,7 +35,7 @@
 | `REQ-cache-layering` | ✓ | ⚠ nie gelaufen | `TEST-cache` |
 | `REQ-cdr-fragen-vor-dem-bau` | ✓ | ✓ passed | `TEST-skill-cdr` |
 | `REQ-chain-metrics` | ✓ | ✓ passed | `TEST-graph-metrics` |
-| `REQ-cli-hilfe-fuehrt-nicht-aus` | ✓ | ⚠ nie gelaufen | `TEST-cli-args` |
+| `REQ-cli-hilfe-fuehrt-nicht-aus` | ✓ | ✓ passed | `TEST-cli-args` |
 | `REQ-close-violations-nimmt-nur-guide-regeln` | ✓ | ✓ passed | `TEST-skill-keine-eigene-rechnung` |
 | `REQ-code-governed-quality` | ✓ | ⚠ 1/2 passed | `TEST-code-quality` · `TEST-mvp-e2e` |
 | `REQ-code-quality` | ✓ | ⚠ nie gelaufen | `TEST-code-quality` |
@@ -224,7 +224,7 @@
 | `REQ-rule-calibration` | ✓ | ✓ passed | `TEST-audit-rules-passed` · `TEST-audit-skill-und-feuerbild` · `TEST-rule-calibration` · `TEST-skill-nennt-parameter` |
 | `REQ-rule-enforcement` | ✓ | ✓ passed | `TEST-mutate-gate` · `TEST-nd-similarity` · `TEST-violation-context` |
 | `REQ-schema-version-migration` | ✓ | ✓ passed | `TEST-schema-migration` |
-| `REQ-schritt-an-gate` | ✓ | ⚠ nie gelaufen | `TEST-generate-stufen` |
+| `REQ-schritt-an-gate` | ✓ | ✓ passed | `TEST-generate-stufen` |
 | `REQ-se-help-erklaert-aus-graph-help` | ✓ | ✓ passed | `TEST-skill-se-help` |
 | `REQ-se-plan-nennt-gruppen` | ✓ | ✓ passed | `TEST-se-plan-groups` |
 | `REQ-se-plan-stempel-ganz-schreiben` | ✓ | ✓ passed | `TEST-task-analysen` |
@@ -305,7 +305,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 295/295 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 255/295 REQ bestanden (86%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 257/295 REQ bestanden (87%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 564 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 564 CR · 412 done · 4 open.
+Total: 564 CR · 413 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -624,5 +624,5 @@ Total: 564 CR · 412 done · 4 open.
 | `CR-GC-956` | done | grenzeNurMitSchema: eigene Liste zwischenKindern streichen; ein Fluss zwischen Kind-Modulen ist nur ohne erlaubten Vertrag ein Befund, wie jeder Grenzfluss (Autor 2026-11-19, ersetzt Lesart aus CR-GC-913) |
 | `CR-GC-957` | done | Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe |
 | `CR-GC-958` | done | Spike: Tests deterministisch aus dem Modell (Vertragstest je SCHEMA, Integrationstest je FCHAIN, Testgerüst je TEST) — Testzeilen nach Methode CR-GC-957 einteilen |
-| `CR-GC-959` | n/a | Fehlbindung: 5 FLOW tragen ein SCHEMA, das den übergebenen Wert nicht beschreibt (install-result-* an CliCommandSchema, markdown-text an MarkdownViewSchema) — Zod-Schemas für RepoStatus, UpgradeReport, InitReport, Markdown-Text, Erzeuger parsen, FLOW neu binden (aus CR-GC-958) |
+| `CR-GC-959` | done | Fehlbindung: 5 FLOW tragen ein SCHEMA, das den übergebenen Wert nicht beschreibt (install-result-* an CliCommandSchema, markdown-text an MarkdownViewSchema) — Zod-Schemas für RepoStatus, UpgradeReport, InitReport, Markdown-Text, Erzeuger parsen, FLOW neu binden (aus CR-GC-958) |
 | `CR-GC-960` | n/a | Nachzug CR-SM-442: CL-01 und operatingMode entfernen – focus-set.ts, generate.ts, Tests, Regelmatrix-Entwurf, 4 operatingMode-Werte an FUNC im Modell |
