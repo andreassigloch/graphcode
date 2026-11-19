@@ -91,7 +91,52 @@ Go = kein Kill und beide Muss erfüllt. Nach dem Lauf ändert sich weder Regel n
 
 ## Ergebnis
 
-_(nach dem Lauf, unverändert protokolliert)_
+**Lauf 2026-11-19**, Modellstand graphVersion 1279 (Commit 061104f0; 1279 = 1278 + die drei Relation-Kanten dieses CR). Werkzeug und Rohdaten: `graphanalyze/docs/spikes/SPIKE-GC-957/` (`klassifizieren.mjs`, `ableitbar.mjs`, `f1-zeilen.json`, `f1-ableitbar.json`).
+
+**Kontrolle F1:** Die Fixture (`werkzeug/fixture.ts`) ergibt nach Hand-Zählung F 9, V 3, A 8 Zeilen; der Zähler trifft jede Zeile. Alle FUNC-Anker unter den Modulpfaden wurden gefunden.
+
+### F1: Anteile
+
+| MOD | Dateien | Zeilen | F | V | A | Token F | Token V | Token A |
+|---|---|---|---|---|---|---|---|---|
+| `MOD-kernel-measure` | 9 | 919 | 15,7 % | 15,7 % | 68,7 % | 12,5 % | 19,4 % | 68,0 % |
+| `MOD-loop` | 10 | 1900 | 10,3 % | 5,1 % | 84,6 % | 8,7 % | 4,6 % | 86,8 % |
+| `MOD-projections` | 23 | 4979 | 13,4 % | 4,6 % | 82,0 % | 9,0 % | 4,9 % | 86,1 % |
+
+Median F-Anteil (Zeilen): **13,4 %**. **Kill F1 greift** (< 30 %).
+
+Beobachtung, kein Kriterium: Auch wenn man V ganz zum Framework zählt, liegt der Median bei 18,0 % (`MOD-projections`: 13,4 % + 4,6 %).
+
+### F1: Ableitbarkeit
+
+| MOD | FUNC | ableitbar |
+|---|---|---|
+| `MOD-kernel-measure` | 10 | 6 |
+| `MOD-loop` | 6 | 1 |
+| `MOD-projections` | 19 | 5 |
+| Summe | 35 | 12 |
+
+RC-01, RC-03, RC-08, RC-12, RC-13 melden auf dem ganzen Modell keinen Befund; Punkt 1 und 6 sperren keine FUNC.
+
+### Modelllücken, die eine Ableitung verhindern
+
+| Lücke | FUNC |
+|---|---|
+| FLOW, dessen SCHEMA nur Konzept ist (`concept:true`, ohne `realRef`), z. B. `SCHEMA-query-params` an `FLOW-query-request-agent` | 16 |
+| FUNC ohne REQ (Punkt 3, R-02) | 9 |
+| REQ, deren TEST keine `testRefs` hat (Punkt 4) | 4 |
+| FUNC-`realRef` außerhalb des MOD-Pfads (`packages/…`, `src/kernel/evaluation.ts`) | 6 |
+| Erfolgsausgang und Fehlerfälle: kein Attribut in der Ontologie | nicht zählbar |
+
+Eine FUNC kann mehrere Lücken haben; die Zeilen summieren sich nicht zu 23.
+
+### F2
+
+Nicht gelaufen. Kill F1 ist die Abbruchbedingung und erzwingt No-Go für die Frage nach dem eingesparten Code. Die Kontextfrage (F2) ist davon unabhängig und offen.
+
+### Empfehlung
+
+**No-Go** für einen CR „Framework aus dem Modell generieren“. Der Generator würde 10–16 % der Zeilen liefern; 69–85 % bleiben Algorithmus, den das LLM weiter schreibt.
 
 ## Entscheidungen
 
