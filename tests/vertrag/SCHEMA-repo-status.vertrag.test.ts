@@ -1,4 +1,4 @@
-// erzeugt aus dem Modell (graphanalyze/werkzeuge/vertragstest) — SCHEMA-repo-status → src/surface/status.ts#RepoStatusSchema. Nicht von Hand ändern, neu erzeugen.
+// erzeugt aus dem Modell (graphcode vertragstest) — SCHEMA-repo-status → src/surface/status.ts#RepoStatusSchema. Nicht von Hand ändern, neu erzeugen.
 import { describe, it, expect } from 'vitest';
 import { RepoStatusSchema as S } from '../../src/surface/status.js';
 

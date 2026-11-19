@@ -1,4 +1,4 @@
-// erzeugt aus dem Modell (graphanalyze/werkzeuge/vertragstest) — SCHEMA-upgrade-report → src/surface/upgrade.ts#UpgradeReportSchema. Nicht von Hand ändern, neu erzeugen.
+// erzeugt aus dem Modell (graphcode vertragstest) — SCHEMA-upgrade-report → src/surface/upgrade.ts#UpgradeReportSchema. Nicht von Hand ändern, neu erzeugen.
 import { describe, it, expect } from 'vitest';
 import { UpgradeReportSchema as S } from '../../src/surface/upgrade.js';
 

@@ -1,4 +1,4 @@
-// erzeugt aus dem Modell (graphanalyze/werkzeuge/vertragstest) — SCHEMA-install-result → src/surface/scaffold.ts#InstallResultSchema. Nicht von Hand ändern, neu erzeugen.
+// erzeugt aus dem Modell (graphcode vertragstest) — SCHEMA-install-result → src/surface/scaffold.ts#InstallResultSchema. Nicht von Hand ändern, neu erzeugen.
 import { describe, it, expect } from 'vitest';
 import { InstallResultSchema as S } from '../../src/surface/scaffold.js';
 

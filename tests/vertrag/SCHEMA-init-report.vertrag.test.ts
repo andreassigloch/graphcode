@@ -1,4 +1,4 @@
-// erzeugt aus dem Modell (graphanalyze/werkzeuge/vertragstest) — SCHEMA-init-report → src/surface/init-verb.ts#InitReportSchema. Nicht von Hand ändern, neu erzeugen.
+// erzeugt aus dem Modell (graphcode vertragstest) — SCHEMA-init-report → src/surface/init-verb.ts#InitReportSchema. Nicht von Hand ändern, neu erzeugen.
 import { describe, it, expect } from 'vitest';
 import { InitReportSchema as S } from '../../src/surface/init-verb.js';
 

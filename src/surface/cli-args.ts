@@ -29,6 +29,7 @@ const VERBS: Readonly<Record<string, VerbArgs>> = {
   rewind: { flags: ['--force'], valueFlags: ['--snapshot'], positionals: 1 },
   upgrade: { flags: ['--check', '--keep-host', '--global', '--refresh-only'], valueFlags: ['--to'] },
   skills: { positionals: 1 },
+  vertragstest: { valueFlags: ['--ziel'], positionals: Infinity },
 };
 
 export type ArgsVerdict = { kind: 'run' } | { kind: 'help' } | { kind: 'error'; message: string };

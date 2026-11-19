@@ -93,6 +93,7 @@ npx @sigloch/graphcode status        # is my host up, and where is my dashboard?
 npx @sigloch/graphcode upgrade       # install the latest version, refresh scaffolded files, keep the store
 npx @sigloch/graphcode rewind <ref>  # recall the graph committed at <ref>; the working tree is not touched
 npx @sigloch/graphcode render srs --format docx   # a view as a file: md, docx or pdf (needs pandoc)
+npx @sigloch/graphcode vertragstest  # one contract test per SCHEMA with a Zod realRef, into tests/vertrag
 npx @sigloch/graphcode skills sync   # re-copy the shipped se-* skills
 npx @sigloch/graphcode remove        # remove everything init scaffolded
 npx @sigloch/graphcode mcp           # the server itself — your agent host starts it, not you
@@ -215,7 +216,7 @@ and store lock in order, and reopening brings the dashboard back at the same add
 
 - **Is:** a graph store, an MCP tool surface and one write gate. Agent-agnostic, headless, one
   embedded store per repo.
-- **Is not:** a code generator, a learning engine, a code extractor, or the viewer itself — the
+- **Is not:** a learning engine, a code extractor, or the viewer itself — the
   dashboard is a separate package (GVE) that graphcode starts for you.
 
 ## Constraints (locked)

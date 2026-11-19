@@ -12,7 +12,7 @@ the scope edges go through `graph_mutate`. Family rule for items and CRs: `bok/d
 
 - **IS:** a governed **graph substrate** (Bridge + Store + MCP surface). Agent-agnostic, headless,
   one Kuzu store per repo. A coding agent (Claude Code, OpenCode, …) is a client.
-- **IS NOT:** a generator, a learning engine, a viewer/dashboard, or a code extractor/slicer. Harness-only.
+- **IS NOT:** a learning engine, a viewer/dashboard, or a code extractor/slicer. Harness-only.
 
 ## Ask the graph, don't grep for it
 

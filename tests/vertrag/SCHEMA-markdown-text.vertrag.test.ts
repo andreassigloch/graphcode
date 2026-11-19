@@ -1,4 +1,4 @@
-// erzeugt aus dem Modell (graphanalyze/werkzeuge/vertragstest) — SCHEMA-markdown-text → src/projections/exporter.ts#MarkdownTextSchema. Nicht von Hand ändern, neu erzeugen.
+// erzeugt aus dem Modell (graphcode vertragstest) — SCHEMA-markdown-text → src/projections/exporter.ts#MarkdownTextSchema. Nicht von Hand ändern, neu erzeugen.
 import { describe, it, expect } from 'vitest';
 import { MarkdownTextSchema as S } from '../../src/projections/exporter.js';
 
