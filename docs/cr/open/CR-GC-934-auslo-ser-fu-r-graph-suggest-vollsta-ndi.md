@@ -57,6 +57,12 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
+| 1, 2, 5: Welche Regeln lösen aus? | Die Regeln, für die `graph_suggest` einen Zug hat. Der Code liest sie aus der Zug-Tabelle von se-engine (`operators.ts`), keine zweite Liste. Stand 2026-11-19: R-04, CR-01, BW-02, RD-04. MT-02 löst aus, sobald es einen Zug bekommt. | Für MT-02 hat `graph_suggest` keinen Zug; CR-01 hat denselben Zug wie R-04. Eine abgeleitete Liste kann nicht von der Tabelle abweichen. |
+| 3: Wo steht der Auslöser? | Im graphcode-Schritt: `graph_generate` und `rules_get_violations` nennen bei offenem Befund einer auslösenden Regel `graph_suggest`. Der Hilfetext in contracts bleibt beim Regelwissen. | Nur graphcode ändert sich; kein Version-Bump in contracts, keine zweite Stelle, die gleich bleiben muss. |
+| 4: Wie oft neu rufen? | Erst nach einer Modelländerung: neuer Aufruf nur, wenn sich `graphVersion` und die Befundmenge der auslösenden Regeln seit dem letzten Aufruf geändert haben. | Ein Aufruf blockiert den Host 4,3 bis 4,6 s (CR-GVE-401). Das Beschleunigen von `graph_suggest` ist ITEM-2026-1451. |
+| 6: Ab welcher Stufe? | Ab dem Befund: Der Agent ruft `graph_suggest`, sobald der Befund offen ist, und legt dem Autor die Züge vor. Proben per `se:optimize` erst an seinem Platz (Stufe 9). | Architektur wartet nicht auf die Hygiene (CR-GC-433); ein Vorschlag ist nur Lesen, die Probe braucht die Analyse nach CDR. |
+
+Entschieden vom Autor am 2026-11-19.
 
 ---
 
