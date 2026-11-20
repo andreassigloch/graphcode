@@ -26,7 +26,7 @@ Abgespalten aus CR-GC-960, damit dieser unter 10 Dateien bleibt.
 ## Abnahme
 
 - [x] Beide Tests waren gegen contracts 12.16.0 rot (69 statt 68; 13.0.0 statt 14.0.0; 82 statt 81) und sind danach grün.
-- [ ] Der Volllauf im Zug gegen den contracts-Tarball 12.16.0 ist grün.
+- [x] Der Volllauf im Zug gegen den contracts-Tarball 12.16.0 ist grün (aise release prepare, 2026-11-20).
 
 ---
 
