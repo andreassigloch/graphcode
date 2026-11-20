@@ -520,7 +520,7 @@
       "id": "CR-GC-219",
       "type": "CR",
       "name": "Flatten redundant nested attributes field",
-      "description": "DONE 2026-06-28: harness.importGraph spread `...rest` nested a literal `attributes` key as node.attributes.attributes (52 of 305 elements). Root-cause fix: shared elementToNode() in src/exporter.ts (used by harness.importGraph + scripts/export-graph.mjs, killing the duplicated inline mapping) flattens the nested object up one level, drops level/tool that merely restate testRef (18 redundant), drops empty {} (9), preserves operatingMode/zodDefinition/constraint as top-level attributes. Idempotent. Committed SSOT migrated + round-trip guard in tests/graph-integrity.test.ts. (CR-GC-219)",
+      "description": "DONE 2026-06-28: harness.importGraph spread `...rest` nested a literal `attributes` key as node.attributes.attributes (52 of 305 elements). Root-cause fix: shared elementToNode() in src/exporter.ts (used by harness.importGraph + scripts/export-graph.mjs, killing the duplicated inline mapping) flattens the nested object up one level, drops level/tool that merely restate testRef (18 redundant), drops empty {} (9), preserves zodDefinition/constraint as top-level attributes. Idempotent. Committed SSOT migrated + round-trip guard in tests/graph-integrity.test.ts. (CR-GC-219)",
       "status": "done",
       "commitRef": "c92aa60"
     },
@@ -3701,7 +3701,6 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
       "codeRef": null,
-      "operatingMode": "export",
       "realRef": {
         "file": "src/projections/exporter.ts",
         "symbol": "exportMarkdown",
@@ -3910,7 +3909,6 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-18T00:00:00.000Z",
       "codeRef": null,
-      "operatingMode": "lifecycle",
       "realRef": {
         "file": "src/surface/scaffold.ts",
         "symbol": "scaffold",
@@ -3963,7 +3961,6 @@
       "created_at": "2026-06-16T00:00:00.000Z",
       "updated_at": "2026-06-17T00:00:00.000Z",
       "codeRef": null,
-      "operatingMode": "bootstrap",
       "realRef": {
         "file": "src/kernel/harness.ts",
         "symbol": "importGraph",
@@ -4031,7 +4028,6 @@
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "concept": null,
-      "operatingMode": "merge",
       "realRef": {
         "file": "src/kernel/merge.ts",
         "symbol": "replayBranchLog",
@@ -4045,8 +4041,7 @@
       "description": "Re-Validierung + Migration des Graphen bei ONTOLOGY/RULES_VERSION-Bump; Version am Artefakt mitgeführt.",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
-      "concept": true,
-      "operatingMode": "migration"
+      "concept": true
     },
     {
       "id": "FUNC-module-metrics",
@@ -4566,7 +4561,7 @@
       "id": "FUNC-view-conops",
       "type": "FUNC",
       "name": "se-view-conops (ConOps)",
-      "description": "Prompt-realisierte View: Concept of Operations aus UC plus ACTOR (operatingMode). (CR-GC-116)",
+      "description": "Prompt-realisierte View: Concept of Operations aus UC plus ACTOR. (CR-GC-116)",
       "status": "done",
       "created_at": "2026-06-19T00:00:00.000Z",
       "external": false,

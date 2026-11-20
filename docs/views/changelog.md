@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 570 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 571 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 570 CR · 420 done · 4 open.
+Total: 571 CR · 420 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -632,3 +632,4 @@ Total: 570 CR · 420 done · 4 open.
 | `CR-GC-964` | done | Test von Hand: tool manuell nicht in den vitest-Lauf, Protokoll als evidence beim Ingest — Folge 3 aus CR-GC-961 |
 | `CR-GC-965` | done | Vertragstest von Hand aus der Vertragsdatei erzeugen (Folge 2 aus CR-GC-961) |
 | `CR-GC-966` | done | Vertragsdatei: Spalte Kriterium fuer Bedingungen ohne Grenzwert |
+| `CR-GC-967` | n/a | Regelzahlen nach CR-SM-442: Artikel 03 und 04, Bildseite und Kanarienvogel auf 68 Regeln und Ontologie 14.0.0 |

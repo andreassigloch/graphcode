@@ -94,11 +94,8 @@ describe('exportGraphJson / exportMarkdown (TEST-doc-export)', () => {
     expect(byId.get('REQ-doc-export')?.kinds).toBeDefined();
     // method — TEST-only top-level attr.
     expect(byId.get('TEST-doc-export')?.method).toBeDefined();
-    // operatingMode — FLATTENED to a top-level attribute (CR-GC-219): the old nested
-    // `attributes.operatingMode` artifact is gone; the value is preserved one level up.
-    const func = byId.get('FUNC-export-markdown') as { attributes?: unknown; operatingMode?: unknown };
-    expect(func?.operatingMode).toBeTypeOf('string');
-    expect(func?.attributes).toBeUndefined();
+    // nested attributes — FLATTENED (CR-GC-219): no element keeps a literal `attributes` key.
+    expect(exported.elements.filter((e) => 'attributes' in e)).toEqual([]);
   });
 
   it('DETERMINISM: exportGraphJson is byte-identical across two calls', () => {

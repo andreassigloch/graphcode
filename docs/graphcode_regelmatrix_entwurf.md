@@ -84,7 +84,6 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | 2 Anwendungsfall | R-17 | SYS must have compose | SYS | Warnung | Existenz | SRR | SRR |
 | 2 Anwendungsfall | UC-02 | UC has actor | UC | Warnung | Existenz | SRR | SRR |
 | 2 Anwendungsfall | AF-01 | ConOps freshness stamp present | graph | Warnung | Analyse | SRR | SRR |
-| 2 Anwendungsfall | CL-01 | ConopsCompleteness | ACTOR | Warnung |  | SRR | SRR |
 | 2 Anwendungsfall | FC-02 | Leaf UC has FCHAIN | UC | Warnung |  | SRR | SRR |
 | 2 Anwendungsfall | R-16 | ACTOR must have io | ACTOR | Warnung |  | SRR | SRR |
 | 2 Anwendungsfall | UC-04 | UC has goal | UC | Warnung |  | SRR | SRR |
@@ -193,7 +192,7 @@ Spalten je Regel: **Stufe** (daraus Rang und Marke), **Menge**, **Schwere**, **R
 | Aktualität der Analyse-Artefakte (aktuell, veraltet, fehlt) samt Schalter „Durchsetzung an/aus" | Gate nur mit frischen Analysen bestanden | **auflösen** — im Produktpfad steht der Schalter seit CR-GC-259 auf „aus", die Rechnung läuft also ohne Wirkung |
 | Pflicht-Analysen je Gate (eigene Tabelle) | welche Analyse an welches Gate gehört | **auflösen** — die Analyse-Regel trägt ihre Stufe selbst |
 | Vier Bau-Gates (SAR, FCA, SVR, FRR), fest an vier Meilenstein-Kennungen gebunden | Abnahme des Baus je Meilenstein | **auflösen** zugunsten der einen Marke „Bau" (§2). Heute sind das vier zusätzliche Gates, die prüfen, ob alle Aufträge eines bestimmten Meilensteins erledigt sind; die vier Kennungen sind die des graphcode-Projekts selbst und passen auf kein anderes |
-| Zuordnung Regel → Arbeitsschritt (Kern, Einsatzkonzept, Fehlerbetrachtung, Plan, Realisierung …) | der Kern soll Detailregeln fremder Artefakte nicht sehen | **weitgehend auflösen** — Regeln über freiwillige Mengen schweigen von selbst, bis es die Elemente gibt. Es bleibt die Zuordnung Analyse → Skill. Ausnahme zu prüfen: CL-01 |
+| Zuordnung Regel → Arbeitsschritt (Kern, Einsatzkonzept, Fehlerbetrachtung, Plan, Realisierung …) | der Kern soll Detailregeln fremder Artefakte nicht sehen | **weitgehend auflösen** — Regeln über freiwillige Mengen schweigen von selbst, bis es die Elemente gibt. Es bleibt die Zuordnung Analyse → Skill. |
 | Liste „abnehmbar je Arbeitsschritt" | was mit Begründung abgelehnt werden darf | **kürzen** auf die Analysen. Die vier Bindungsregeln stehen dort nur, weil sie im Entwurf feuerten |
 | Umfangsschalter „schlank/voll" und Profilliste „se/coding" | zwei Lesarten der Readiness | **prüfen** — ob beide noch einen Leser haben, habe ich nicht nachverfolgt |
 | Bauplan-Stempel am System | „Bauplan durchgeführt", einmal für immer | **auflösen** — der Plan ist die Menge der offenen Aufträge, und er wird bei jeder Änderung wieder fällig. Ein einmaliger Stempel kann das nicht ausdrücken |

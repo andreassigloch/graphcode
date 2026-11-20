@@ -439,7 +439,7 @@ const TASK_OF_ENTRY = new Map(
  * (contracts `RULE_HELP[…].prompt`), wenn sie einen Analyse-Skill nennt; sonst undefined.
  *
  * Bis contracts 10 nahm ein Arbeitsschritt dem Kern die Regeln seiner Analyse ab (FM-01..03 der
- * Fehlerbetrachtung, CL-01 dem Einsatzkonzept).
+ * Fehlerbetrachtung).
  * Seit der gekuerzten Zuordnung (CR-SM-395) fuehrt sie der Kern. Wem sie gehoeren, sagt weiter der
  * Katalog — der Skill-Zeiger der Regel —, nicht eine Liste hier: der Schritt nennt dann diesen Skill
  * statt der Autorier-Anleitung der Dimension (fuer FM-01 waere das `se:author-req`).

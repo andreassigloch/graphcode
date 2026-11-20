@@ -202,7 +202,7 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
       'R-04': 'Modul-Grenzbreite — der Fix beginnt mit der Sicht (se-view:arch), nicht mit dem Schnitt',
     };
     const eintritte = new Set(Object.values(TASK_ENTRY).filter(Boolean));
-    // CR-GC-748: eine Regel, deren Hilfe einen Analyse-Skill nennt (FM-01..03, CL-01, TR-01, IR-01 — seit
+    // CR-GC-748: eine Regel, deren Hilfe einen Analyse-Skill nennt (FM-01..03, TR-01, IR-01 — seit
     // contracts 11 Kern-Regeln), nimmt die Stufe gar nicht: der Schritt nennt den Skill der Analyse
     // (`analyseSkill`, Fall darunter). Sie ist deshalb keine Abweichung und steht nicht in der Ratsche.
     const { analyseSkill } = await import('../src/loop/generate.js');

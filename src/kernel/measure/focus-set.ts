@@ -57,7 +57,6 @@ const ANALYSEN: ReadonlySet<string> = new Set(ALL_RULE_DEFS.filter((r) => r.role
  *     Modell — Auftrag zuordnen, Umfang verbinden, oder das Element loeschen.
  */
 export const ABNEHMBAR_BEGRUENDET: Readonly<Record<string, string>> = {
-  'CL-01': 'Ein Akteur, der das System in nur einer Betriebsart nutzt, ist ein gueltiger Befund des Einsatzkonzepts — ob eine zweite fehlt, entscheidet der Auftraggeber.',
   'FM-03': 'Verlangt einen BESTANDENEN Testlauf (`result: passed`); den gibt es erst mit Code, die Regel ist aber faellig, sobald es ein hohes Risiko gibt.',
 };
 

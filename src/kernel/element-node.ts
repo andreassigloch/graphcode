@@ -15,7 +15,7 @@ import type { GraphNode } from '@sigloch/graph-api-core';
  * Flatten the redundant double-nested `attributes` artifact (CR-GC-219). A committed
  * element that carries a literal `attributes` object lands it as `node.attributes.attributes`
  * (the `...rest` spread nests it). This merges that object UP one level — preserving real
- * metadata (operatingMode / constraint / …) as top-level attributes — while
+ * metadata (constraint / zodDefinition / …) as top-level attributes — while
  * DROPPING `level`/`tool` that merely restate one of the element's `testRefs` (redundant), an empty
  * `{}`, and the nesting key itself. Idempotent: an element with no nested `attributes` is
  * returned unchanged, so re-import/export never reintroduces the nesting.
