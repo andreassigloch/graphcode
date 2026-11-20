@@ -4385,7 +4385,8 @@
       "id": "CR-GC-960",
       "type": "CR",
       "name": "Nachzug CR-SM-442: CL-01 und operatingMode entfernen – focus-set.ts, generate.ts, Tests, Regelmatrix-Entwurf, 4 operatingMode-Werte an FUNC im Modell",
-      "description": "docs/cr/open/CR-GC-960-nachzug-cr-sm-442-cl-01-und-operatingmod.md"
+      "description": "docs/cr/done/CR-GC-960-nachzug-cr-sm-442-cl-01-und-operatingmod.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-961",
@@ -37049,5 +37050,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1345
+  "graphVersion": 1346
 }

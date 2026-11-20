@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 571 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 571 CR · 421 done · 4 open.
+Total: 571 CR · 422 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -625,7 +625,7 @@ Total: 571 CR · 421 done · 4 open.
 | `CR-GC-957` | done | Spike: deterministisches Framework aus dem Modell, LLM schreibt nur die FUNC-Rümpfe |
 | `CR-GC-958` | done | Spike: Tests deterministisch aus dem Modell (Vertragstest je SCHEMA, Integrationstest je FCHAIN, Testgerüst je TEST) — Testzeilen nach Methode CR-GC-957 einteilen |
 | `CR-GC-959` | done | Fehlbindung: 5 FLOW tragen ein SCHEMA, das den übergebenen Wert nicht beschreibt (install-result-* an CliCommandSchema, markdown-text an MarkdownViewSchema) — Zod-Schemas für RepoStatus, UpgradeReport, InitReport, Markdown-Text, Erzeuger parsen, FLOW neu binden (aus CR-GC-958) |
-| `CR-GC-960` | n/a | Nachzug CR-SM-442: CL-01 und operatingMode entfernen – focus-set.ts, generate.ts, Tests, Regelmatrix-Entwurf, 4 operatingMode-Werte an FUNC im Modell |
+| `CR-GC-960` | done | Nachzug CR-SM-442: CL-01 und operatingMode entfernen – focus-set.ts, generate.ts, Tests, Regelmatrix-Entwurf, 4 operatingMode-Werte an FUNC im Modell |
 | `CR-GC-961` | done | Klärung: Vertragstest-Generator als fester Bauschritt (ITEM-2026-1454), Kanal-Attribut am FLOW (Aufruf, Nachricht, Datei, physisch, Mensch) und Vertrag physischer/elektrischer Schnittstellen ohne Zod (FAQ schema-bei-physischem-fluss offen) — aus CR-GC-958/959 |
 | `CR-GC-962` | done | Vertragstest-Generator aus graphanalyze nach graphcode übernehmen (Verb graphcode vertragstest), Satz 'is not a generator' entfernen — Folge 1 aus CR-GC-961 |
 | `CR-GC-963` | done | se-bau: Schritt Vertragstest erzeugen (graphcode vertragstest) je neuem oder geändertem SCHEMA — Folge 2 aus CR-GC-961 |
