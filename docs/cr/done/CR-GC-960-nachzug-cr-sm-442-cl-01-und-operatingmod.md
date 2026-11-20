@@ -26,7 +26,8 @@ aufräumen, sonst gibt es wieder Risiken“).
 
 ## Abnahme
 
-- [ ] Nach dem Publish in sigloch-modules die Einträge `operatingMode` und `CL-01` aus `SWEEP_ALLOWLIST` streichen, sobald kein Konsument sie mehr nennt (graph-view-edit siehe eigener CR).
+- [x] Nach dem Publish in sigloch-modules die Einträge `operatingMode` und `CL-01` aus `SWEEP_ALLOWLIST` streichen, sobald kein Konsument sie mehr nennt (graph-view-edit siehe eigener CR).
+  Nachtrag 2026-11-20: gestrichen in sigloch-modules 15fe046; der Sweep findet ohne die Einträge keinen Treffer. Fixtures in graph-view-edit und Doku in bok nennen sie noch, das räumen CR-GVE-404 und BOK-CR-094 ab.
 
 - [x] `grep -rn "CL-01\|operatingMode" src tests docs/graphcode_regelmatrix_entwurf.md` findet nichts.
   Nachtrag 2026-11-20: In `docs/graph` bleiben drei Arten von Treffern, gewollt: die vier null-Grabsteine
@@ -35,7 +36,8 @@ aufräumen, sonst gibt es wieder Risiken“).
 - [x] `operatingMode` an den vier FUNC ist null. Format-E schrieb vorher den String `"null"`; der Parser-Fix steht in
   CR-SM-444 (contracts 12.16.0) und fährt im selben Zug.
 - [x] Die Zähltests (Artikel, Bildseite) sind nach CR-GC-967 abgespalten, damit dieser CR bei 10 Dateien bleibt.
-- [ ] `npm run verify:code` grün; vor dem Schließen `npm run verify:full CR-GC-960`.
+- [x] `npm run verify:code` grün; vor dem Schließen `npm run verify:full CR-GC-960`.
+  Nachtrag 2026-11-20: verify:code fiel wegen package.json auf die volle Suite (2121 grün, rot nur `distribution` vor dem Publish). Der Volllauf lief in `aise release prepare` gegen die Tarballs des Zugs grün; nach dem Publish sind `distribution` und `lockfile-sync` grün.
 
 ---
 
