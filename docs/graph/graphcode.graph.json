@@ -4433,7 +4433,8 @@
       "id": "CR-GC-967",
       "type": "CR",
       "name": "Regelzahlen nach CR-SM-442: Artikel 03 und 04, Bildseite und Kanarienvogel auf 68 Regeln und Ontologie 14.0.0",
-      "description": "docs/cr/open/CR-GC-967-regelzahlen-nach-cr-sm-442-artikel-03-un.md"
+      "description": "docs/cr/done/CR-GC-967-regelzahlen-nach-cr-sm-442-artikel-03-un.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37048,5 +37049,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1344
+  "graphVersion": 1345
 }
