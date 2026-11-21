@@ -32,7 +32,7 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
   it('die Datei se-bau.md existiert, Name und Version stehen im Kopf', () => {
     expect(existsSync(DATEI)).toBe(true);
     expect(text).toMatch(/^name: se-bau$/m);
-    expect(text).toMatch(/^version: 4$/m);
+    expect(text).toMatch(/^version: 5$/m);
     expect(text).toMatch(/^description: .{40,}$/m);
   });
 

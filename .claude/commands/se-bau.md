@@ -1,6 +1,6 @@
 ---
 name: se-bau
-version: 4
+version: 5
 description: Bau eines CR in zwei Rollen — Koordinator (Hauptsitzung) startet je CR einen Agenten, schreibt das Modell allein und schließt erst nach dem Testlauf auf der Zielumgebung; Umsetzer (Agent) baut aus dem Ausschnitt graph_context, setzt Werte nach Werteklasse, hält das Vertragspaket ein, stoppt bei jeder Lücke und nennt jede Annahme. Fester Teil jedes Bauauftrags an einen Agenten.
 ---
 
@@ -66,7 +66,7 @@ Du baust genau einen CR in deinem Arbeitsordner. Du fragst den Auftraggeber nich
    - Berechneter Wert: als Ausdruck aus den Werten, die die Anforderung nennt, oder als Messung; keine eigene Zahl.
    Nennt die Anforderung keine Klasse, wählst du eine der vier anderen, nie Invariante. Nennt sie nicht, wo die
    Einschränkung geprüft wird, wählst du Code, Vertrag oder Test. Der Abschlussbericht nennt jede Wahl unter
-   „Werteklassen:“. Eine Wahl ist keine Annahme. Fehlt der Wert oder die Einschränkung selbst, gilt Punkt 5.
+   „Werteklassen:“. Das ist Designfreiheit, keine Annahme. Fehlt der Wert oder die Einschränkung selbst, gilt Punkt 5.
 3. **Nimm Felder nur aus dem Vertragspaket mit fester Version.** Braucht der Code ein neues Feld, ändert
    zuerst das SCHEMA, dann der Code. Beispiel: immo-gate 0.22.0 und 0.23.0 trugen drei Felder außerhalb des
    Vertragspakets 0.6.0 (Merkmal „extern" am Konto, Adresse des Partnerordners, Auftrag „Offene Freigaben");
@@ -88,7 +88,8 @@ Du baust genau einen CR in deinem Arbeitsordner. Du fragst den Auftraggeber nich
 ## Werteklassen
 
 Ein Wert mit Einschränkung ist ein Parameter (PARAM): Name, Wert und Einschränkung, genannt in genau einer
-Anforderung. Die Klasse sagt, woher der Wert kommt. Einstellbar ist alles, was Verhalten oder Funktion des
+Anforderung. Die Anforderung definiert ihn in eckigen Klammern, `[limit ≤ 100]`; `[limit]` verweist auf ihn.
+Die Klasse sagt, woher der Wert kommt. Einstellbar ist alles, was Verhalten oder Funktion des
 Systems beeinflusst, außer die Anforderung sagt „Invariante". Nur die Anforderung legt eine Invariante fest
 oder hebt sie auf.
 

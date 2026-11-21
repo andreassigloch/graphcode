@@ -4656,6 +4656,12 @@
       "description": "docs/cr/open/CR-GC-979-skills-se-author-req-und-se-bau-feste-sc.md"
     },
     {
+      "id": "CR-GC-980",
+      "type": "CR",
+      "name": "Vertragstest-Generator prüft nur die erste Feldebene",
+      "description": "docs/cr/open/CR-GC-980-vertragstest-generator-pru-ft-nur-die-er.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -37576,5 +37582,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1391
+  "graphVersion": 1392
 }

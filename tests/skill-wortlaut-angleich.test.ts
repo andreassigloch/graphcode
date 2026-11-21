@@ -99,3 +99,38 @@ describe('TEST-skill-wortlaut-angleich (CR-GC-974): PARAM als Konvention', () =>
     expect(version(bau)).toBeGreaterThanOrEqual(4);
   });
 });
+
+/**
+ * CR-GC-979 — feste Schreibweise: Die Klammer mit Name und Wert definiert einen Parameter, die Klammer
+ * mit dem Namen allein verweist auf ihn. Eine fehlende Angabe ist Designfreiheit, keine Annahme.
+ */
+describe('TEST-skill-wortlaut-angleich (CR-GC-979): Schreibweise und Designfreiheit', () => {
+  it('se:author-req: die Klammer mit Name und Wert definiert, die Klammer mit dem Namen verweist', () => {
+    expect(authorReq).toContain('`[limit ≤ 100]`');
+    expect(authorReq).toContain('`[U_supply = 24 V (21.6 … 26.4 V)]`');
+    expect(authorReq).toMatch(/The bracket with name and value defines the parameter/);
+    expect(authorReq).toMatch(/the bracket with the name alone, `\[limit\]`, refers to it/);
+    expect(authorReq).toMatch(/One name has exactly one definition/);
+  });
+
+  it('se:author-req: kein Text endet mit einer Klammer', () => {
+    expect(authorReq).toMatch(/Never end a description with a bracket/);
+  });
+
+  it('se:author-req: eine fehlende Angabe ist Designfreiheit, keine Annahme', () => {
+    expect(authorReq).toMatch(/that is design freedom, not an assumption/);
+    expect(authorReq).toMatch(/written back into the requirement/);
+  });
+
+  it('se-bau: Designfreiheit, keine Annahme; die Schreibweise der Klammer', () => {
+    expect(bau).toMatch(/Das ist Designfreiheit, keine Annahme/);
+    expect(bau).toContain('`[limit ≤ 100]`');
+    expect(bau).toMatch(/`\[limit\]` verweist/);
+  });
+
+  it('beide Skills tragen eine höhere Version als nach CR-GC-974', () => {
+    expect(version(authorReq)).toBeGreaterThanOrEqual(8);
+    expect(version(bau)).toBeGreaterThanOrEqual(5);
+  });
+});
+
