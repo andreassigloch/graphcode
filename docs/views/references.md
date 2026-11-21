@@ -1715,6 +1715,10 @@
 | `CR-GC-982` | relation | `SCHEMA-steering-delta` |
 | `CR-GC-982` | relation | `SCHEMA-store-rebuild-notice` |
 | `CR-GC-982` | relation | `SCHEMA-zug-bericht` |
+| `CR-GC-983` | relation | `FUNC-generation-step` |
+| `CR-GC-983` | relation | `FUNC-lauf-urteil` |
+| `CR-GC-983` | relation | `SCHEMA-generation-step` |
+| `CR-GC-983` | relation | `SCHEMA-lauf-urteil` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

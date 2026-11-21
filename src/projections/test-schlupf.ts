@@ -212,6 +212,13 @@ const VitestBerichtSchema = z.object({
  * exit 1, im Bericht ist jede Datei `passed`).
  */
 export function laufUrteil(eingang: VitestLauf, relativ: (abs: string) => string): LaufUrteil {
+  const urteil = urteilAusLauf(eingang, relativ);
+  // CR-GC-983: das Urteil geht an die Lanes — der Erzeuger prueft es (RC-04).
+  LaufUrteilSchema.parse(urteil);
+  return urteil;
+}
+
+function urteilAusLauf(eingang: VitestLauf, relativ: (abs: string) => string): LaufUrteil {
   const lauf = VitestLaufSchema.parse(eingang);
   const exit = `exit ${lauf.status ?? '-'}${lauf.signal ? `, Signal ${lauf.signal}` : ''}`;
   if (lauf.bericht === undefined) {

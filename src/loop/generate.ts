@@ -535,7 +535,10 @@ export function generationStep(
           : core.focusStage
             ? (SKILL_FOR_STAGE[core.focusStage]?.name ?? null)
             : null;
-  return { ...core, skill, steer: steerState(snap.violations), umbau: hinweisAus(snap.violations.map(alsBefund)) };
+  const step: GenerationStep = { ...core, skill, steer: steerState(snap.violations), umbau: hinweisAus(snap.violations.map(alsBefund)) };
+  // CR-GC-983: der Schritt ist die Antwort von graph_generate — der Erzeuger prueft ihn (RC-04).
+  GenerationStep.parse(step);
+  return step;
 }
 
 /** CR-GC-608: der Vermerk im done-Prompt, wenn die Steuerregeln am lokalen Optimum stehen. */
