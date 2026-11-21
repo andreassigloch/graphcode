@@ -4685,6 +4685,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-984",
+      "type": "CR",
+      "name": "RC-04: CliCommandSchema wird an FLOW-cli-command nirgends geparst — FUNC-cli-dispatch (main) reicht das Verb ungeprüft weiter (gefunden in CR-GC-959)",
+      "description": "docs/cr/open/CR-GC-984-rc-04-clicommandschema-wird-an-flow-cli-.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -11654,17 +11660,17 @@
       "id": "SCHEMA-cli-command",
       "type": "SCHEMA",
       "name": "CliCommand",
-      "description": "Vertrag der Lebenszyklus-Verben (init/update/remove) samt Ergebnis. Bindung statt Kopie — der Zod-Koerper steht im Code, nicht im Graphen. (CR-GC-454)",
+      "description": "Das Verb der CLI: eines von mcp, host, status, init, remove, import-code, render, rewind, upgrade, skills, vertragstest. main parst das erste Argument dagegen, bevor es ein Verb schaltet; ein anderes Wort lehnt es mit Exit 1 ab. Bindung statt Kopie — der Zod-Koerper steht im Code, nicht im Graphen. (CR-GC-984)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "zodDefinition": null,
       "realRef": {
-        "file": "src/surface/scaffold.ts",
-        "symbol": "CliCommandSchema",
+        "file": "src/surface/cli-args.ts",
+        "symbol": "CliVerbSchema",
         "lang": "ts"
       },
-      "external": true,
-      "contract": "Boundary-validiert im CLI-Dispatch (src/cli.ts main, unbekanntes Verb -> Usage); Deklaration src/scaffold.ts CliCommandSchema (realRef)"
+      "external": false,
+      "contract": "Geprueft im CLI-Dispatch (src/cli.ts main: CliVerbSchema.safeParse des ersten Arguments, unbekanntes Verb -> Usage, Exit 1); Deklaration src/surface/cli-args.ts CliVerbSchema (realRef)"
     },
     {
       "id": "SCHEMA-code-lane-plan",
@@ -12572,7 +12578,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12621,7 +12627,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12725,7 +12731,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12745,14 +12751,14 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         },
         {
           "file": "tests/knowledge-binding.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12769,7 +12775,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12829,7 +12835,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12874,7 +12880,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12889,7 +12895,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12911,7 +12917,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12930,7 +12936,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -12998,7 +13004,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13039,7 +13045,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13242,7 +13248,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13260,7 +13266,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13275,7 +13281,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13306,7 +13312,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13323,7 +13329,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13368,7 +13374,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13383,7 +13389,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13467,7 +13473,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13542,7 +13548,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13557,7 +13563,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13573,7 +13579,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13588,7 +13594,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13720,7 +13726,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13740,7 +13746,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13772,7 +13778,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13789,7 +13795,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -13874,7 +13880,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14041,7 +14047,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14056,7 +14062,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14087,7 +14093,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14132,7 +14138,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14254,7 +14260,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14272,7 +14278,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14415,7 +14421,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14435,7 +14441,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14476,7 +14482,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14537,7 +14543,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14570,7 +14576,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14600,7 +14606,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14616,7 +14622,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14631,7 +14637,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14835,7 +14841,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -14938,7 +14944,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -15035,7 +15041,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -15262,7 +15268,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -15299,7 +15305,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -15329,7 +15335,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -15411,7 +15417,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -15486,7 +15492,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -15501,7 +15507,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -15583,7 +15589,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:07:35.298Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -15682,7 +15688,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T13:14:04.655Z"
+          "ranAt": "2026-11-21T13:21:04.233Z"
         }
       ]
     },
@@ -24777,6 +24783,26 @@
     {
       "source": "CR-GC-983",
       "target": "SCHEMA-lauf-urteil",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-984",
+      "target": "FUNC-cli-dispatch",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-984",
+      "target": "FUNC-emit-update-event",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-984",
+      "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-984",
+      "target": "SCHEMA-update-event",
       "type": "relation"
     },
     {
@@ -37865,5 +37891,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1413
+  "graphVersion": 1416
 }

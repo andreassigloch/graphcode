@@ -41,7 +41,7 @@ import { executeRender, RenderToolMissingError } from './surface/render-verb.js'
 import { executeRewind, RewindError } from './surface/rewind.js';
 import { collectStatus, formatStatus, statusIsHealthy } from './surface/status.js';
 import { executeUpgrade, formatUpgrade, UpgradeError } from './surface/upgrade.js';
-import { checkVerbArgs } from './surface/cli-args.js';
+import { checkVerbArgs, CliVerbSchema } from './surface/cli-args.js';
 import { executeVertragstest, VertragstestAufrufFehler } from './surface/vertragstest-verb.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
@@ -85,8 +85,19 @@ Usage:
 
 async function main(): Promise<void> {
   const command = process.argv[2];
+  // CR-GC-984: das Verb wird an der Grenze geparst, nicht als roher String geschaltet.
+  const parsed = CliVerbSchema.safeParse(command);
+  if (!parsed.success) {
+    if (command === undefined || command === '-h' || command === '--help') {
+      process.stderr.write(USAGE);
+      process.exit(0);
+    }
+    process.stderr.write(`graphcode: unknown command "${command}"\n\n${USAGE}`);
+    process.exit(1);
+  }
+  const verb = parsed.data;
   // CR-GC-886: vor jedem Verb. Ein Verb darf nie mit Argumenten laufen, die es nicht kennt.
-  const verdict = checkVerbArgs(command ?? '', process.argv.slice(3));
+  const verdict = checkVerbArgs(verb, process.argv.slice(3));
   if (verdict.kind === 'help') {
     process.stderr.write(USAGE);
     process.exit(0);
@@ -95,7 +106,7 @@ async function main(): Promise<void> {
     process.stderr.write(`graphcode ${command}: ${verdict.message}\n\n${USAGE}`);
     process.exit(1);
   }
-  switch (command) {
+  switch (verb) {
     case 'mcp':
       await serveStdio({ repoRoot: process.cwd() });
       return;
@@ -301,14 +312,6 @@ async function main(): Promise<void> {
       process.stderr.write(`graphcode skills sync: ${JSON.stringify(result, null, 2)}\n`);
       process.exit(0);
     }
-    case undefined:
-    case '-h':
-    case '--help':
-      process.stderr.write(USAGE);
-      process.exit(0);
-    default:
-      process.stderr.write(`graphcode: unknown command "${command}"\n\n${USAGE}`);
-      process.exit(1);
   }
 }
 

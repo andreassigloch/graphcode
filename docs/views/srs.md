@@ -14106,7 +14106,7 @@ schema ◀ `FLOW-chain-metrics`
 
 ###### 3.3.4.2.7  `SCHEMA-cli-command` — CliCommand
 
-Vertrag der Lebenszyklus-Verben (init/update/remove) samt Ergebnis. Bindung statt Kopie — der Zod-Koerper steht im Code, nicht im Graphen. (CR-GC-454)
+Das Verb der CLI: eines von mcp, host, status, init, remove, import-code, render, rewind, upgrade, skills, vertragstest. main parst das erste Argument dagegen, bevor es ein Verb schaltet; ein anderes Wort lehnt es mit Exit 1 ab. Bindung statt Kopie — der Zod-Koerper steht im Code, nicht im Graphen. (CR-GC-984)
 
 schema ◀ `FLOW-cli-command` · `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-cli-output` · `FLOW-gve-attach` · `FLOW-gve-stop` · `FLOW-import-summary` · `FLOW-render-file` · `FLOW-session-end` · `FLOW-viewer-start`
 

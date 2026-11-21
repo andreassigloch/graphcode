@@ -13,14 +13,14 @@ import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { checkVerbArgs } from '../src/surface/cli-args.js';
+import { checkVerbArgs, CliVerbSchema } from '../src/surface/cli-args.js';
 
 describe('checkVerbArgs: je Verb nur die Argumente, die es kennt (CR-GC-886)', () => {
   it.each(['mcp', 'host', 'status', 'init', 'remove', 'upgrade', 'import-code', 'rewind', 'skills'])(
     '%s --help und -h sind Hilfe, nie Ausfuehrung',
     (verb) => {
-      expect(checkVerbArgs(verb, ['--help'])).toEqual({ kind: 'help' });
-      expect(checkVerbArgs(verb, ['-h'])).toEqual({ kind: 'help' });
+      expect(checkVerbArgs(CliVerbSchema.parse(verb), ['--help'])).toEqual({ kind: 'help' });
+      expect(checkVerbArgs(CliVerbSchema.parse(verb), ['-h'])).toEqual({ kind: 'help' });
     },
   );
 

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 587 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 588 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 587 CR · 576 done · 1 open.
+Total: 588 CR · 576 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -649,3 +649,4 @@ Total: 587 CR · 576 done · 1 open.
 | `CR-GC-981` | done | Vertragstest-Generator löst Verträge aus Paketen nicht auf |
 | `CR-GC-982` | done | RC-04: 23 SCHEMA ohne Parse an der Grenze — Klassifikation am Code, Erzeuger parst (aus RC-04-Auftrag) |
 | `CR-GC-983` | done | RC-04: generation-step und lauf-urteil werden vom Erzeuger nicht geparst (Folge von CR-GC-982) |
+| `CR-GC-984` | n/a | RC-04: CliCommandSchema wird an FLOW-cli-command nirgends geparst — FUNC-cli-dispatch (main) reicht das Verb ungeprüft weiter (gefunden in CR-GC-959) |

@@ -83,7 +83,7 @@ import { KNOWLEDGE_HOOK, knowledgePathOf, knowledgePathOfSettings, resolveKnowle
 import { CONFIG_FILENAME } from '../kernel/config.js';
 
 
-/** `CliCommand` (SCHEMA-cli-command) — the npx-CLI verbs this installer dispatches. */
+/** `CliCommand` — the actions of this installer; the `action` field of `InstallResult` (SCHEMA-install-result). The verbs of the CLI are `CliVerbSchema` (SCHEMA-cli-command). */
 export const CliCommandSchema = z.enum(['init', 'update', 'remove']);
 export type CliCommand = z.infer<typeof CliCommandSchema>;
 

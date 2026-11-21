@@ -677,6 +677,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-981` | done | Vertragstest-Generator löst Verträge aus Paketen nicht auf | `FUNC-erzeuge-vertragstests` · `FUNC-vertragstest-verb` |
 | `CR-GC-982` | done | RC-04: 23 SCHEMA ohne Parse an der Grenze — Klassifikation am Code, Erzeuger parst (aus RC-04-Auftrag) | `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-open-store` · `FUNC-zug-bericht` |
 | `CR-GC-983` | done | RC-04: generation-step und lauf-urteil werden vom Erzeuger nicht geparst (Folge von CR-GC-982) | `FUNC-generation-step` · `FUNC-lauf-urteil` |
+| `CR-GC-984` | n/a | RC-04: CliCommandSchema wird an FLOW-cli-command nirgends geparst — FUNC-cli-dispatch (main) reicht das Verb ungeprüft weiter (gefunden in CR-GC-959) | `FUNC-cli-dispatch` · `FUNC-emit-update-event` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

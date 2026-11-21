@@ -1719,6 +1719,10 @@
 | `CR-GC-983` | relation | `FUNC-lauf-urteil` |
 | `CR-GC-983` | relation | `SCHEMA-generation-step` |
 | `CR-GC-983` | relation | `SCHEMA-lauf-urteil` |
+| `CR-GC-984` | relation | `FUNC-cli-dispatch` |
+| `CR-GC-984` | relation | `FUNC-emit-update-event` |
+| `CR-GC-984` | relation | `SCHEMA-cli-command` |
+| `CR-GC-984` | relation | `SCHEMA-update-event` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

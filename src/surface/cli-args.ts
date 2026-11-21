@@ -9,6 +9,24 @@
  * @author andreas@siglochconsulting
  */
 
+import { z } from 'zod/v4';
+
+/** Die Verben der CLI — `main` parst das erste Argument dagegen, bevor es schaltet (CR-GC-984). */
+export const CliVerbSchema = z.enum([
+  'mcp',
+  'host',
+  'status',
+  'init',
+  'remove',
+  'import-code',
+  'render',
+  'rewind',
+  'upgrade',
+  'skills',
+  'vertragstest',
+]);
+export type CliVerb = z.infer<typeof CliVerbSchema>;
+
 interface VerbArgs {
   /** Flags ohne Wert. */
   flags?: readonly string[];
@@ -18,7 +36,7 @@ interface VerbArgs {
   positionals?: number;
 }
 
-const VERBS: Readonly<Record<string, VerbArgs>> = {
+const VERBS: Readonly<Record<CliVerb, VerbArgs>> = {
   mcp: {},
   host: {},
   status: {},
@@ -34,10 +52,9 @@ const VERBS: Readonly<Record<string, VerbArgs>> = {
 
 export type ArgsVerdict = { kind: 'run' } | { kind: 'help' } | { kind: 'error'; message: string };
 
-/** Prueft die Argumente eines Verbs. Ein unbekanntes Verb entscheidet `cli.ts`. */
-export function checkVerbArgs(verb: string, args: readonly string[]): ArgsVerdict {
+/** Prueft die Argumente eines Verbs. Ein unbekanntes Verb weist `CliVerbSchema` in `cli.ts` ab. */
+export function checkVerbArgs(verb: CliVerb, args: readonly string[]): ArgsVerdict {
   const spec = VERBS[verb];
-  if (!spec) return { kind: 'run' };
   if (args.includes('--help') || args.includes('-h')) return { kind: 'help' };
   let positionals = 0;
   for (let i = 0; i < args.length; i += 1) {

@@ -18,7 +18,7 @@
  * @author andreas@siglochconsulting
  */
 
-import type { MutateResult, UpdateDomain, LiveUpdateEvent } from '@sigloch/contracts/harness';
+import { LiveUpdateEventSchema, type MutateResult, type UpdateDomain, type LiveUpdateEvent } from '@sigloch/contracts/harness';
 import type { HookSystem } from '../kernel/hooks.js';
 import type { AppliedDelta, HookData, HookResult } from '../kernel/hooks.js';
 import { deltaToFormatE } from '@sigloch/graph-api-core';
@@ -96,6 +96,9 @@ export function makeUpdateEventHook(
       ...(data.version !== undefined ? { version: data.version } : {}),
       ...(formatE !== undefined ? { formatE } : {}),
     };
+    // CR-GC-984: das Ereignis geht auf den SSE-Draht — der Erzeuger prueft es (RC-04). Ein Bruch
+    // verwirft das Ereignis; ein post-apply-Hook blockt nie, der Runner haelt den Fehler fest.
+    LiveUpdateEventSchema.parse(event);
     onEvent(event);
     // No return → HookResult is { hookId: <registered id> } via the runner default.
   };
@@ -107,12 +110,14 @@ export function makeResetEventHook(
 ): (data: HookData) => HookResult | void {
   return (data: HookData): HookResult | void => {
     if (data.phase !== 'post-reset') return;
-    onEvent({
+    const event: LiveUpdateEvent = {
       type: 'reset',
       domains: ['graph', 'readiness'],
       ts: new Date().toISOString(),
       ...(data.version !== undefined ? { version: data.version } : {}),
-    });
+    };
+    LiveUpdateEventSchema.parse(event);
+    onEvent(event);
   };
 }
 
