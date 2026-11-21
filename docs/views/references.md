@@ -1683,6 +1683,10 @@
 | `CR-GC-971` | relation | `SCHEMA-test-ingest-input` |
 | `CR-GC-972` | relation | `FUNC-verify-lane-code` |
 | `CR-GC-972` | relation | `REQ-verify-code-plan-nennt-spur` |
+| `CR-GC-973` | relation | `FUNC-graph-export-snapshot` |
+| `CR-GC-973` | relation | `FUNC-test-ingest` |
+| `CR-GC-973` | relation | `SCHEMA-export-answer` |
+| `CR-GC-973` | relation | `SCHEMA-test-ingest-answer` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -4113,11 +4117,13 @@
 | `TEST-verify-code-plan` | verify | `REQ-verify-code-plan-nennt-spur` |
 | `TEST-verify-model-set` | verify | `REQ-model-lane-fixed-set` |
 | `TEST-verify-model-set` | verify | `REQ-testspur-passt-zum-diff` |
+| `TEST-vertrag-export-answer` | verify | `SCHEMA-export-answer` |
 | `TEST-vertrag-init-report` | verify | `SCHEMA-init-report` |
 | `TEST-vertrag-install-result` | verify | `SCHEMA-install-result` |
 | `TEST-vertrag-markdown-text` | verify | `SCHEMA-markdown-text` |
 | `TEST-vertrag-repo-status` | verify | `SCHEMA-repo-status` |
 | `TEST-vertrag-rewind-summary` | verify | `SCHEMA-rewind-summary` |
+| `TEST-vertrag-test-ingest-answer` | verify | `SCHEMA-test-ingest-answer` |
 | `TEST-vertrag-test-ingest-input` | verify | `SCHEMA-test-ingest-input` |
 | `TEST-vertrag-upgrade-report` | verify | `SCHEMA-upgrade-report` |
 | `TEST-vertrag-vertragstest-bericht` | verify | `SCHEMA-vertragstest-bericht` |

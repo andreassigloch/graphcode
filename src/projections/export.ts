@@ -24,6 +24,23 @@ import type { AuditEntry } from '@sigloch/graph-api-core';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 
 /**
+ * Die Antwort von graph_export (SCHEMA-export-answer). Der Handler parst sie beim Erzeugen (RC-04).
+ * `unfedMutations` steht nur, wenn es groesser als 0 ist (CR-GC-449).
+ */
+export const GraphExportAnswerSchema = z.object({
+  graphJson: z.object({
+    path: z.string().min(1),
+    bytes: z.number().int().nonnegative(),
+    nodes: z.number().int().nonnegative(),
+    edges: z.number().int().nonnegative(),
+  }),
+  views: z.array(z.object({ view: MarkdownViewSchema, path: z.string().min(1), bytes: z.number().int().nonnegative() })),
+  stubs: z.array(z.string().min(1)),
+  unfedMutations: z.number().int().positive().optional(),
+});
+export type GraphExportAnswer = z.infer<typeof GraphExportAnswerSchema>;
+
+/**
  * Provenance for the refuse-to-clobber guard's escape hatch (CR-GC-296,
  * GVE-Audit F9, "export-after-own-mutate"): which node/edge identities the
  * AUDITED, APPLIED command batches actually removed. Deleting a node also
@@ -149,16 +166,7 @@ export function bindExportTools(ctx: ToolPort) {
   // Serializes the LIVE in-memory graph (full fidelity) — the only place that
   // holds it across the session — to commit-able docs under the repo root.
 
-  const graph_export: MCPTool<
-    typeof GraphExportInputSchema,
-    {
-      graphJson: { path: string; bytes: number; nodes: number; edges: number };
-      views: Array<{ view: string; path: string; bytes: number }>;
-      stubs: string[];
-      /** Nur wenn > 0 (CR-GC-449): angewendete Gate-Mutationen ohne Feed-Eintrag. */
-      unfedMutations?: number;
-    }
-  > = {
+  const graph_export: MCPTool<typeof GraphExportInputSchema, GraphExportAnswer> = {
     name: 'graph_export',
     description:
       'Re-export the live graph to commit-able docs — the ONE sync path. Writes the canonical ' +
@@ -306,12 +314,12 @@ export function bindExportTools(ctx: ToolPort) {
         // (a refused export throws before here, leaving the marker set, by design).
         clearExportPending(repoRoot);
 
-        return {
+        return GraphExportAnswerSchema.parse({
           graphJson: { path: jsonRel, bytes: Buffer.byteLength(jsonWithVersion), nodes: graph.nodes.length, edges: graph.edges.length },
           views: written,
           stubs,
           ...(unfedMutations > 0 ? { unfedMutations } : {}),
-        };
+        });
       });
     },
   };

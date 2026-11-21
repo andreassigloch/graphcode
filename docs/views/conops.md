@@ -668,6 +668,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-969` | done | CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat | `FUNC-block-live-dashboard` · `MOD-dev-scripts` |
 | `CR-GC-970` | done | RC-07: 141 CR-Knoten tragen nicht den Status des Ordners done (CRs vor BOK-CR-080); Status und Pfad einmalig spiegeln | `FUNC-check-code-conformance` |
 | `CR-GC-972` | done | Vier Einzelbefunde im Modell: R-02 verify-lane-code, CR-R01 vier offene CR ohne Umfang, RC-11 src/index.ts, Ketten-Klassifikation R-21 FC-06 | `FUNC-verify-lane-code` · `REQ-verify-code-plan-nennt-spur` |
+| `CR-GC-973` | n/a | R-26, R-32, RC-04: Zod-Schema für die Antworten von graph_export und graph_test_ingest | `FUNC-graph-export-snapshot` · `FUNC-test-ingest` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

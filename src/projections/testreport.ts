@@ -21,7 +21,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { isAbsolute, join, relative } from 'node:path';
 import { z } from 'zod/v4';
 import { TestResult } from '@sigloch/contracts/se';
-import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
+import { MutateTier, RuleViolationSchema, type MutateCommand } from '@sigloch/contracts/harness';
 import { readTestRefs } from '@sigloch/contracts/se';
 import {
   planIngest,
@@ -29,6 +29,9 @@ import {
   parseVitestJson,
   samePath,
   verificationReport,
+  TestRefBindingSchema,
+  TestResultAssignmentSchema,
+  TestResultWithdrawalSchema,
   type RunnerFileResult,
   type KopfZugang,
   type TestResultWithdrawal,
@@ -62,6 +65,24 @@ export const GraphTestIngestInputSchema = z
   .refine((i) => i.report !== undefined || i.results !== undefined || i.changeSet !== undefined, {
     message: 'graph_test_ingest: supply report, results or changeSet.',
   });
+
+/**
+ * Die Antwort von graph_test_ingest (SCHEMA-test-ingest-answer). Der Handler parst sie beim
+ * Erzeugen (RC-04); `tier` und `violations` sind die Felder des Gate-Urteils (contracts).
+ */
+export const GraphTestIngestAnswerSchema = z.object({
+  applied: z.number().int().nonnegative(),
+  assignments: z.array(TestResultAssignmentSchema),
+  /** Ungebundene Dateien, deren Kopf eine TEST-uid nennt — der Ingest hat sie gebunden. */
+  bindings: z.array(TestRefBindingSchema),
+  unresolved: z.array(z.object({ file: z.string(), reason: z.string().min(1) })),
+  withdrawn: z.array(TestResultWithdrawalSchema),
+  success: z.boolean(),
+  tier: MutateTier.optional(),
+  violations: z.array(RuleViolationSchema),
+  graphVersion: z.number().int().nonnegative(),
+});
+export type GraphTestIngestAnswer = z.infer<typeof GraphTestIngestAnswerSchema>;
 
 const GraphTestReportInputSchema = z.looseObject({});
 
@@ -109,20 +130,7 @@ export function bindTestReportTools(ctx: ToolPort) {
     };
   }
 
-  const graph_test_ingest: MCPTool<
-    typeof GraphTestIngestInputSchema,
-    {
-      applied: number;
-      assignments: Array<{ testUid: string; file: string; result: string }>;
-      bindings: Array<{ testUid: string; file: string; result: string; tool: string }>;
-      unresolved: Array<{ file: string; reason: string }>;
-      withdrawn: TestResultWithdrawal[];
-      success: boolean;
-      tier: MutateResult['tier'];
-      violations: MutateResult['violations'];
-      graphVersion: number;
-    }
-  > = {
+  const graph_test_ingest: MCPTool<typeof GraphTestIngestInputSchema, GraphTestIngestAnswer> = {
     name: 'graph_test_ingest',
     description:
       'Feed a test run into the model: each file is ' +
@@ -137,17 +145,17 @@ export function bindTestReportTools(ctx: ToolPort) {
       const withdrawn = await planeRuecknahme(input.changeSet, files);
 
       if (input.dryRun || (plan.assignments.length === 0 && plan.bindings.length === 0 && withdrawn.length === 0)) {
-        return {
+        return GraphTestIngestAnswerSchema.parse({
           applied: 0,
           assignments: plan.assignments,
           bindings: plan.bindings,
           unresolved: plan.unresolved,
           withdrawn,
           success: true,
-          tier: 'auto-apply' as const,
+          tier: 'auto-apply',
           violations: [],
           graphVersion: graphVersion(),
-        };
+        });
       }
 
       return serializeToolWrite(async () => {
@@ -203,7 +211,7 @@ export function bindTestReportTools(ctx: ToolPort) {
         const result = await harness.mutate(commands);
         // Kein Audit-Bypass (CR-GC-232): der Ingest wird geloggt wie jeder gated Write.
         await recordAudit(input.consumerId, result, commands);
-        return {
+        return GraphTestIngestAnswerSchema.parse({
           applied: result.success ? plan.assignments.length + plan.bindings.length : 0,
           assignments: plan.assignments,
           bindings: result.success ? plan.bindings : [],
@@ -213,7 +221,7 @@ export function bindTestReportTools(ctx: ToolPort) {
           tier: result.tier,
           violations: result.violations,
           graphVersion: graphVersion(),
-        };
+        });
       });
     },
   };

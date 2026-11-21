@@ -31,6 +31,7 @@
  */
 
 import type { Graph, GraphNode } from '@sigloch/graph-api-core';
+import { z } from 'zod/v4';
 import { TestResult, readTestRefs } from '@sigloch/contracts/se';
 
 /** Das Ergebnis eines Laufs, wie die Ontologie es kennt. */
@@ -48,17 +49,17 @@ export interface RunnerFileResult {
 }
 
 /** Was der Ingest je TEST-Knoten zu schreiben hat. */
-export interface TestResultAssignment {
-  testUid: string;
-  file: string;
-  result: TestResultValue;
-  evidence?: string;
-}
+export const TestResultAssignmentSchema = z.object({
+  testUid: z.string().min(1),
+  file: z.string().min(1),
+  result: TestResult,
+  evidence: z.string().min(1).optional(),
+});
+export type TestResultAssignment = z.infer<typeof TestResultAssignmentSchema>;
 
 /** Eine neue Bindung: die Datei nennt die TEST-uid im Kopf und traegt noch keine (CR-GC-901). */
-export interface TestRefBinding extends TestResultAssignment {
-  tool: string;
-}
+export const TestRefBindingSchema = TestResultAssignmentSchema.extend({ tool: z.string().min(1) });
+export type TestRefBinding = z.infer<typeof TestRefBindingSchema>;
 
 /**
  * Der Zugang des Ingest zur Datei selbst (CR-GC-901). Rein bleibt `planIngest` trotzdem: es
@@ -190,10 +191,8 @@ export function planIngest(graph: Graph, files: RunnerFileResult[], kopf: KopfZu
 }
 
 /** Ein `testRefs`-Eintrag, dessen Ergebnis zurückgenommen wird. */
-export interface TestResultWithdrawal {
-  testUid: string;
-  file: string;
-}
+export const TestResultWithdrawalSchema = z.object({ testUid: z.string().min(1), file: z.string().min(1) });
+export type TestResultWithdrawal = z.infer<typeof TestResultWithdrawalSchema>;
 
 /**
  * Betroffene Tests → Rücknahmeplan (CR-GC-799).

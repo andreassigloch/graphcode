@@ -21,7 +21,7 @@
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMark | reviewed |
 | `SCHEMA-cr-groups` | src/loop/se-plan.ts#CrGroupsSchema | n/a |
 | `SCHEMA-eingangs-befund` | src/kernel/measure/constraints.ts#EingangsBefund | n/a |
-| `SCHEMA-export-answer` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-export-answer` | src/projections/export.ts#GraphExportAnswerSchema | n/a |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
 | `SCHEMA-fit-advisory` | src/kernel/measure/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | packages/graph-api-core/src/format-e-door.ts#FormatEInputSchema | reviewed |
@@ -68,7 +68,7 @@
 | `SCHEMA-store-rebuild-notice` | src/kernel/store-rebuild-notice.ts#StoreRebuildNoticeSchema | n/a |
 | `SCHEMA-suggest-answer` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
-| `SCHEMA-test-ingest-answer` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-test-ingest-answer` | src/projections/testreport.ts#GraphTestIngestAnswerSchema | n/a |
 | `SCHEMA-test-ingest-input` | src/projections/testreport.ts#GraphTestIngestInputSchema | n/a |
 | `SCHEMA-test-refs` | packages/contracts/src/se/ontology.ts#TestRefsSchema | reviewed |
 | `SCHEMA-test-selection` | src/kernel/measure/test-selection.ts#TestSelectionSchema | n/a |

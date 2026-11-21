@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 576 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 577 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 576 CR · 568 done · 1 open.
+Total: 577 CR · 568 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -638,3 +638,4 @@ Total: 576 CR · 568 done · 1 open.
 | `CR-GC-970` | done | RC-07: 141 CR-Knoten tragen nicht den Status des Ordners done (CRs vor BOK-CR-080); Status und Pfad einmalig spiegeln |
 | `CR-GC-971` | done | R-32: Vertragstests für SCHEMA-rewind-summary und SCHEMA-test-ingest-input fehlen |
 | `CR-GC-972` | done | Vier Einzelbefunde im Modell: R-02 verify-lane-code, CR-R01 vier offene CR ohne Umfang, RC-11 src/index.ts, Ketten-Klassifikation R-21 FC-06 |
+| `CR-GC-973` | n/a | R-26, R-32, RC-04: Zod-Schema für die Antworten von graph_export und graph_test_ingest |
