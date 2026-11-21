@@ -4702,7 +4702,8 @@
       "id": "CR-GC-986",
       "type": "CR",
       "name": "SCHEMA-cli-command haengt an Fluessen, die kein CLI-Verb tragen",
-      "description": "docs/cr/open/CR-GC-986-schema-cli-command-haengt-an-fluessen-di.md"
+      "description": "docs/cr/done/CR-GC-986-schema-cli-command-haengt-an-fluessen-di.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -38078,5 +38079,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1428
+  "graphVersion": 1429
 }
