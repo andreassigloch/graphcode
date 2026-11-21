@@ -4722,7 +4722,8 @@
       "id": "CR-GC-989",
       "type": "CR",
       "name": "Fluesse tragen den Vertrag, den der Code uebertraegt",
-      "description": "docs/cr/open/CR-GC-989-fluesse-tragen-den-vertrag-den-der-code-.md"
+      "description": "docs/cr/done/CR-GC-989-fluesse-tragen-den-vertrag-den-der-code-.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -38344,5 +38345,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1442
+  "graphVersion": 1443
 }
