@@ -48,7 +48,13 @@ Der Lauf `graphcode vertragstest` ohne uids erzeugt auch für 23 weitere SCHEMA 
 
 ## Akzeptanz
 
-_(wird beim Schließen ausgefüllt)_
+- [x] Unit-Tests des Erzeugers: mit dem alten Erzeuger 12 von 28 rot, mit dem neuen 28 grün; `npm run type-check` grün.
+- [x] Mutanten: 17 von 17 Strukturmutanten rot mit dem neu erzeugten Test (alt 8 von 17), 12 von 12 Wertmutanten rot mit der gekürzten Handdatei (`docs/messung/vertragstest-mutanten-cr-gc-980.md`).
+- [x] Alle zehn `tests/vertrag/*.vertrag.test.ts` neu erzeugt und grün (350 Tests in 16 Dateien). Verworfen: die Fälle „unbekanntes Zusatzfeld“ bei nicht strikten Objekten und „ohne optionales Feld“; `begrenzt` blieb bei allen zehn leer.
+- [x] Handdateien auf 13 Wertfälle gekürzt (vorher 24), testRefs unverändert.
+- [x] Regeln: R-32 18, R-26 8, RC-04 23 (unverändert; der CR bindet kein SCHEMA).
+- [x] `verify:code` grün (70 Dateien, 802 Tests). `verify:full CR-GC-980` grün (255 Dateien, 2368 Tests, rot 0), Schlupf 0, Link-Modus nein.
+- [x] Smoke: `node dist/cli.js vertragstest --ziel <temp>` läuft durch und nennt je SCHEMA Ergebnis; `node dist/cli.js status` startet.
 
 ---
 
