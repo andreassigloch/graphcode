@@ -23,8 +23,10 @@
  */
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
+import { z } from 'zod/v4';
 import {
   extractCodeRepoPipeline,
+  ImportResultSchema,
   McpConsumerGate,
   type CodeRepoFile,
   type GateViolation,
@@ -79,22 +81,27 @@ export function discoverTsFiles(dir: string): CodeRepoFile[] {
   return files.sort((a, b) => a.path.localeCompare(b.path));
 }
 
-export interface ImportCodeSummary {
-  /** Anzahl gescannter Quelldateien. */
-  files: number;
+/**
+ * Die Zusammenfassung eines Code-Imports, die `executeImportCode` an die CLI gibt (SCHEMA-import-summary,
+ * CR-GC-986). Status und Befunde kommen aus dem Ergebnis des Import-Gates von graphify, nicht nachgebaut.
+ */
+export const ImportCodeSummarySchema = z.object({
+  /** Anzahl gescannter Quelldateien; ohne Datei bricht der Import vorher ab. */
+  files: z.number().int().positive(),
   /** Extrahierte Kandidaten je Element-Typ (vor dem Gate). */
-  extracted: Record<string, number>;
+  extracted: z.record(z.string(), z.number().int().positive()),
   /** Gate-Verdict der Pipeline (graphify ImportResult-Kern). */
-  status: 'success' | 'partial' | 'failed';
-  applied: { nodes: number; edges: number };
-  violations: GateViolation[];
+  status: ImportResultSchema.shape.status,
+  applied: z.object({ nodes: z.number().int().nonnegative(), edges: z.number().int().nonnegative() }),
+  violations: ImportResultSchema.shape.violations.unwrap(),
   /** Repo-relativer Pfad des Pre-Import-Backups (fehlt beim Erstlauf auf leerem Graph). */
-  backupPath?: string;
+  backupPath: z.string().min(1).optional(),
   /** Repo-relativer Pfad des committeten Graph-Exports. */
-  exportPath?: string;
+  exportPath: z.string().min(1).optional(),
   /** Export verweigert/fehlgeschlagen — Import-Ergebnis bleibt trotzdem erhalten. */
-  exportError?: string;
-}
+  exportError: z.string().min(1).optional(),
+});
+export type ImportCodeSummary = z.infer<typeof ImportCodeSummarySchema>;
 
 /**
  * Ein vollständiger `graphcode import-code`: Harness auf repoRoot (gleiche
@@ -179,7 +186,7 @@ export async function executeImportCode(opts: {
       exportError = err instanceof Error ? err.message : String(err);
     }
 
-    return {
+    const summary = {
       files: files.length,
       extracted,
       status: result.imported.status,
@@ -189,6 +196,9 @@ export async function executeImportCode(opts: {
       exportPath,
       exportError,
     };
+    // CR-GC-986: die Zusammenfassung quert die Grenze zur CLI — der Erzeuger prueft sie (RC-04), zurueck geht das Original.
+    ImportCodeSummarySchema.parse(summary);
+    return summary;
   } finally {
     await harness.close();
   }

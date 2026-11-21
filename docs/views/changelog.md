@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 589 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 590 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 589 CR · 578 done · 1 open.
+Total: 590 CR · 578 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -651,3 +651,4 @@ Total: 589 CR · 578 done · 1 open.
 | `CR-GC-983` | done | RC-04: generation-step und lauf-urteil werden vom Erzeuger nicht geparst (Folge von CR-GC-982) |
 | `CR-GC-984` | done | RC-04: CliCommandSchema wird an FLOW-cli-command nirgends geparst — FUNC-cli-dispatch (main) reicht das Verb ungeprüft weiter (gefunden in CR-GC-959) |
 | `CR-GC-985` | done | FLOW-mutate-answer ist an SCHEMA-mutate-result gebunden, traegt aber die Werkzeug-Antwort von graph_mutate |
+| `CR-GC-986` | n/a | SCHEMA-cli-command haengt an Fluessen, die kein CLI-Verb tragen |

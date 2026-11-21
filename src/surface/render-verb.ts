@@ -20,9 +20,10 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
+import { z } from 'zod/v4';
 import { createHarness } from './create-harness.js';
 import { deriveMemberName } from './mcp-server.js';
-import { exportMarkdown, MarkdownViewSchema, VIEW_FILENAMES, type MarkdownView } from '../projections/exporter.js';
+import { exportMarkdown, MarkdownViewSchema, VIEW_FILENAMES } from '../projections/exporter.js';
 
 export const RENDER_FORMATS = ['md', 'docx', 'pdf'] as const;
 export type RenderFormat = (typeof RENDER_FORMATS)[number];
@@ -41,13 +42,20 @@ export class RenderToolMissingError extends Error {
   }
 }
 
-export interface RenderSummary {
-  view: MarkdownView;
-  format: RenderFormat;
-  out: string;
-  bytes: number;
-  vorlage: string | null;
-}
+/**
+ * Die Zusammenfassung eines Renders, die `executeRender` an die CLI gibt (SCHEMA-render-summary, CR-GC-986). Die
+ * Datei selbst hat keine Datenform; ihren Ort und ihre Groesse nennt die Zusammenfassung.
+ */
+export const RenderSummarySchema = z.object({
+  view: MarkdownViewSchema,
+  format: z.enum(RENDER_FORMATS),
+  /** Absoluter Pfad der geschriebenen Datei. */
+  out: z.string().min(1),
+  bytes: z.number().int().nonnegative(),
+  /** Die Vorlage des Repos, mit der das PDF entstand; sonst null. */
+  vorlage: z.string().min(1).nullable(),
+});
+export type RenderSummary = z.infer<typeof RenderSummarySchema>;
 
 const INSTALL: Record<string, string> = {
   pandoc: 'brew install pandoc  (Linux: apt install pandoc)',
@@ -116,5 +124,8 @@ export async function executeRender(opts: {
       throw new Error(`graphcode render: pandoc endete mit ${run.status ?? run.signal}: ${(run.stderr ?? '').trim()}`);
     }
   }
-  return { view, format, out, bytes: statSync(out).size, vorlage };
+  const summary = { view, format, out, bytes: statSync(out).size, vorlage };
+  // CR-GC-986: die Zusammenfassung quert die Grenze zur CLI — der Erzeuger prueft sie (RC-04), zurueck geht das Original.
+  RenderSummarySchema.parse(summary);
+  return summary;
 }

@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 73 SCHEMA · 261 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 75 SCHEMA · 261 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -34,6 +34,7 @@
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
 | `SCHEMA-import-access` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-import-summary` | src/surface/import-code-verb.ts#ImportCodeSummarySchema | n/a |
 | `SCHEMA-init-report` | src/surface/init-verb.ts#InitReportSchema | n/a |
 | `SCHEMA-install-result` | src/surface/scaffold.ts#InstallResultSchema | n/a |
 | `SCHEMA-lauf-urteil` | src/projections/test-schlupf.ts#LaufUrteilSchema | n/a |
@@ -56,6 +57,7 @@
 | `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
 | `SCHEMA-real-ref` | packages/contracts/src/se/ontology.ts#RealRefSchema | reviewed |
 | `SCHEMA-rejected-trace` | src/kernel/harness-import.ts#RejectedTraceSchema | n/a |
+| `SCHEMA-render-summary` | src/surface/render-verb.ts#RenderSummarySchema | n/a |
 | `SCHEMA-repo-status` | src/surface/status.ts#RepoStatusSchema | n/a |
 | `SCHEMA-rewind-summary` | src/surface/rewind.ts#RewindSummarySchema | n/a |
 | `SCHEMA-rule-violation` | packages/contracts/src/harness/index.ts#RuleViolationSchema | n/a |

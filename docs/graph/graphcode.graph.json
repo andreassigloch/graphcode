@@ -4699,6 +4699,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-986",
+      "type": "CR",
+      "name": "SCHEMA-cli-command haengt an Fluessen, die kein CLI-Verb tragen",
+      "description": "docs/cr/open/CR-GC-986-schema-cli-command-haengt-an-fluessen-di.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -11871,6 +11877,17 @@
       "description": "Der Zugang des Importwegs zum Store: ersetzen und leeren, ohne Store-Griff und ohne Setter. Spec-only: ein Objekt mit Verhalten (ImportTarget in src/kernel/harness-import.ts), kein Zod-Datenvertrag."
     },
     {
+      "id": "SCHEMA-import-summary",
+      "type": "SCHEMA",
+      "name": "Zusammenfassung Code-Import",
+      "description": "Die Zusammenfassung eines Code-Imports, die executeImportCode an die CLI gibt und die diese auf stderr schreibt: files (Anzahl gescannter Dateien, mindestens 1), extracted (Kandidaten je Element-Typ), status (success, partial oder failed, aus dem Import-Gate von graphify), applied mit nodes und edges, violations (Befunde des Gates je Element), dazu backupPath, exportPath und exportError, wenn es sie gibt. Der Erzeuger parst die Zusammenfassung. (CR-GC-986)",
+      "realRef": {
+        "file": "src/surface/import-code-verb.ts",
+        "symbol": "ImportCodeSummarySchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-init-report",
       "type": "SCHEMA",
       "name": "Init-Bericht",
@@ -12132,6 +12149,17 @@
       "realRef": {
         "file": "src/kernel/harness-import.ts",
         "symbol": "RejectedTraceSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-render-summary",
+      "type": "SCHEMA",
+      "name": "Zusammenfassung Render",
+      "description": "Die Zusammenfassung eines Renders, die executeRender an die CLI gibt und die diese auf stderr schreibt: view (die Sicht), format (md, docx oder pdf), out (absoluter Pfad der geschriebenen Datei), bytes (Größe der Datei) und vorlage (die Vorlage des Repos für PDF, sonst null). Die Datei selbst hat keine Datenform. Der Erzeuger parst die Zusammenfassung. (CR-GC-986)",
+      "realRef": {
+        "file": "src/surface/render-verb.ts",
+        "symbol": "RenderSummarySchema",
         "lang": "ts"
       }
     },
@@ -12597,7 +12625,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -12646,7 +12674,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -12770,14 +12798,14 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         },
         {
           "file": "tests/knowledge-binding.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -12794,7 +12822,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -12854,7 +12882,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -12884,7 +12912,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -12914,7 +12942,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -12936,7 +12964,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13023,7 +13051,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13064,7 +13092,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13267,7 +13295,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13285,7 +13313,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13300,7 +13328,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13331,7 +13359,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13348,7 +13376,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13393,7 +13421,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13408,7 +13436,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13492,7 +13520,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13507,14 +13535,14 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         },
         {
           "file": "tests/import-code-befund-element.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13529,7 +13557,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13574,7 +13602,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13589,7 +13617,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13620,7 +13648,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13804,7 +13832,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13821,7 +13849,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -13906,7 +13934,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14023,7 +14051,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14073,7 +14101,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14088,7 +14116,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14164,7 +14192,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14286,7 +14314,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14304,7 +14332,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14365,7 +14393,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14447,7 +14475,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14467,7 +14495,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14508,7 +14536,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14569,7 +14597,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14602,7 +14630,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14632,7 +14660,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14663,7 +14691,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14867,7 +14895,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -14970,7 +14998,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -15067,7 +15095,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -15294,7 +15322,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -15361,7 +15389,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -15418,6 +15446,28 @@
       ]
     },
     {
+      "id": "TEST-vertrag-import-summary",
+      "type": "TEST",
+      "name": "Vertragstest Zusammenfassung Code-Import",
+      "description": "Vertragstest SCHEMA-import-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Zähler, Zählung je Typ, Status, Befund je Element, leere Pfade). (CR-GC-986)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-import-summary.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T16:43:12.955Z"
+        },
+        {
+          "file": "tests/vertrag/SCHEMA-import-summary.elemente.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T16:43:12.955Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-vertrag-init-report",
       "type": "TEST",
       "name": "Vertragstest Init-Bericht",
@@ -15458,7 +15508,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -15503,21 +15553,21 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         },
         {
           "file": "tests/vertrag/SCHEMA-mutate-answer.elemente.test.ts",
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         },
         {
           "file": "tests/mcp.mutate-answer.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -15532,7 +15582,29 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-render-summary",
+      "type": "TEST",
+      "name": "Vertragstest Zusammenfassung Render",
+      "description": "Vertragstest SCHEMA-render-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Format, Sicht, Größe, Pfad, Vorlage null). (CR-GC-986)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-render-summary.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T16:43:12.955Z"
+        },
+        {
+          "file": "tests/vertrag/SCHEMA-render-summary.elemente.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -15743,7 +15815,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T14:01:09.880Z"
+          "ranAt": "2026-11-21T16:43:12.955Z"
         }
       ]
     },
@@ -24881,6 +24953,31 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-986",
+      "target": "FUNC-import-code-verb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-986",
+      "target": "FUNC-render-verb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-986",
+      "target": "SCHEMA-cli-command",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-986",
+      "target": "SCHEMA-import-summary",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-986",
+      "target": "SCHEMA-render-summary",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -28159,7 +28256,7 @@
     },
     {
       "source": "FLOW-import-summary",
-      "target": "SCHEMA-cli-command",
+      "target": "SCHEMA-import-summary",
       "type": "relation"
     },
     {
@@ -28863,7 +28960,7 @@
     },
     {
       "source": "FLOW-render-file",
-      "target": "SCHEMA-cli-command",
+      "target": "SCHEMA-render-summary",
       "type": "relation"
     },
     {
@@ -37296,6 +37393,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vertrag-import-summary",
+      "target": "SCHEMA-import-summary",
+      "type": "verify"
+    },
+    {
       "source": "TEST-vertrag-init-report",
       "target": "SCHEMA-init-report",
       "type": "verify"
@@ -37328,6 +37430,11 @@
     {
       "source": "TEST-vertrag-ontology-graph",
       "target": "SCHEMA-ontology-graph",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-render-summary",
+      "target": "SCHEMA-render-summary",
       "type": "verify"
     },
     {
@@ -37971,5 +38078,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1424
+  "graphVersion": 1428
 }

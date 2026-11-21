@@ -1727,6 +1727,11 @@
 | `CR-GC-985` | relation | `FUNC-import-code-verb` |
 | `CR-GC-985` | relation | `SCHEMA-mutate-answer` |
 | `CR-GC-985` | relation | `SCHEMA-mutate-result` |
+| `CR-GC-986` | relation | `FUNC-import-code-verb` |
+| `CR-GC-986` | relation | `FUNC-render-verb` |
+| `CR-GC-986` | relation | `SCHEMA-cli-command` |
+| `CR-GC-986` | relation | `SCHEMA-import-summary` |
+| `CR-GC-986` | relation | `SCHEMA-render-summary` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2374,7 +2379,7 @@
 | `FLOW-impacted-tests` | io | `FUNC-test-ingest` |
 | `FLOW-impacted-tests` | relation | `SCHEMA-impacted-tests` |
 | `FLOW-import-summary` | io | `FUNC-cli-dispatch` |
-| `FLOW-import-summary` | relation | `SCHEMA-cli-command` |
+| `FLOW-import-summary` | relation | `SCHEMA-import-summary` |
 | `FLOW-import-target` | io | `FUNC-reseed` |
 | `FLOW-import-target` | relation | `SCHEMA-import-access` |
 | `FLOW-imported-graph` | io | `FUNC-graph-store` |
@@ -2514,7 +2519,7 @@
 | `FLOW-readiness-request` | io | `FUNC-compute-readiness` |
 | `FLOW-readiness-request` | relation | `SCHEMA-rule-violation` |
 | `FLOW-render-file` | io | `ACTOR-auftraggeber` |
-| `FLOW-render-file` | relation | `SCHEMA-cli-command` |
+| `FLOW-render-file` | relation | `SCHEMA-render-summary` |
 | `FLOW-render-view-request` | io | `FUNC-export-markdown` |
 | `FLOW-render-view-request` | relation | `SCHEMA-markdown-view` |
 | `FLOW-reseed-answer` | io | `FUNC-agent-loop` |
@@ -4160,6 +4165,7 @@
 | `TEST-vertrag-export-answer` | verify | `SCHEMA-export-answer` |
 | `TEST-vertrag-function-criticality` | verify | `SCHEMA-function-criticality` |
 | `TEST-vertrag-impact-slice` | verify | `SCHEMA-impact-slice` |
+| `TEST-vertrag-import-summary` | verify | `SCHEMA-import-summary` |
 | `TEST-vertrag-init-report` | verify | `SCHEMA-init-report` |
 | `TEST-vertrag-install-result` | verify | `SCHEMA-install-result` |
 | `TEST-vertrag-markdown-text` | verify | `SCHEMA-markdown-text` |
@@ -4167,6 +4173,7 @@
 | `TEST-vertrag-module-metrics` | verify | `SCHEMA-module-metrics` |
 | `TEST-vertrag-mutate-answer` | verify | `SCHEMA-mutate-answer` |
 | `TEST-vertrag-ontology-graph` | verify | `SCHEMA-ontology-graph` |
+| `TEST-vertrag-render-summary` | verify | `SCHEMA-render-summary` |
 | `TEST-vertrag-repo-status` | verify | `SCHEMA-repo-status` |
 | `TEST-vertrag-rewind-summary` | verify | `SCHEMA-rewind-summary` |
 | `TEST-vertrag-rule-violation` | verify | `SCHEMA-rule-violation` |
