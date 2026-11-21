@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 586 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 586 CR · 574 done · 1 open.
+Total: 586 CR · 575 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -647,4 +647,4 @@ Total: 586 CR · 574 done · 1 open.
 | `CR-GC-979` | done | Skills se:author-req und se-bau: feste Schreibweise fuer Definition und Verweis eines Parameters; eine fehlende Angabe ist Designfreiheit, keine Annahme (Autor 2026-11-21) |
 | `CR-GC-980` | done | Vertragstest-Generator prüft nur die erste Feldebene |
 | `CR-GC-981` | done | Vertragstest-Generator löst Verträge aus Paketen nicht auf |
-| `CR-GC-982` | n/a | RC-04: 23 SCHEMA ohne Parse an der Grenze — Klassifikation am Code, Erzeuger parst (aus RC-04-Auftrag) |
+| `CR-GC-982` | done | RC-04: 23 SCHEMA ohne Parse an der Grenze — Klassifikation am Code, Erzeuger parst (aus RC-04-Auftrag) |

@@ -675,7 +675,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-978` | n/a | se-plan: Meilenstein je Use Case, darin Blätter aufwärts (ändert CR-GC-892) | `FUNC-se-plan` |
 | `CR-GC-980` | done | Vertragstest-Generator prüft nur die erste Feldebene | `FUNC-erzeuge-vertragstests` |
 | `CR-GC-981` | done | Vertragstest-Generator löst Verträge aus Paketen nicht auf | `FUNC-erzeuge-vertragstests` · `FUNC-vertragstest-verb` |
-| `CR-GC-982` | n/a | RC-04: 23 SCHEMA ohne Parse an der Grenze — Klassifikation am Code, Erzeuger parst (aus RC-04-Auftrag) | `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-open-store` · `FUNC-zug-bericht` |
+| `CR-GC-982` | done | RC-04: 23 SCHEMA ohne Parse an der Grenze — Klassifikation am Code, Erzeuger parst (aus RC-04-Auftrag) | `FUNC-compute-steering-delta` · `FUNC-fit-advisory` · `FUNC-open-store` · `FUNC-zug-bericht` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

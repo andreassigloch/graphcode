@@ -4674,7 +4674,8 @@
       "id": "CR-GC-982",
       "type": "CR",
       "name": "RC-04: 23 SCHEMA ohne Parse an der Grenze — Klassifikation am Code, Erzeuger parst (aus RC-04-Auftrag)",
-      "description": "docs/cr/open/CR-GC-982-rc-04-23-schema-ohne-parse-an-der-grenze.md"
+      "description": "docs/cr/done/CR-GC-982-rc-04-23-schema-ohne-parse-an-der-grenze.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37837,5 +37838,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1408
+  "graphVersion": 1409
 }
