@@ -4600,7 +4600,8 @@
       "id": "CR-GC-971",
       "type": "CR",
       "name": "R-32: Vertragstests für SCHEMA-rewind-summary und SCHEMA-test-ingest-input fehlen",
-      "description": "docs/cr/open/CR-GC-971-r-32-vertragstests-fu-r-schema-rewind-su.md"
+      "description": "docs/cr/done/CR-GC-971-r-32-vertragstests-fu-r-schema-rewind-su.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37290,5 +37291,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1363
+  "graphVersion": 1364
 }
