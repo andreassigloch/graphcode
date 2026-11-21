@@ -16122,7 +16122,7 @@ verify ▶ `REQ-model-lane-fixed-set` · `REQ-testspur-passt-zum-diff` · testRe
 
 Vertragstest SCHEMA-export-answer, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-973)
 
-verify ▶ `SCHEMA-export-answer` · testRefs: `tests/vertrag/SCHEMA-export-answer.vertrag.test.ts`, `tests/vertrag/SCHEMA-export-answer.elemente.test.ts`
+verify ▶ `SCHEMA-export-answer` · testRefs: `tests/vertrag/SCHEMA-export-answer.vertrag.test.ts`
 
 #### 3.4.190  `TEST-vertrag-function-criticality` — Vertragstest Funktionskritikalität
 
@@ -16140,7 +16140,7 @@ verify ▶ `SCHEMA-impact-slice` · testRefs: `tests/vertrag/SCHEMA-impact-slice
 
 Vertragstest SCHEMA-import-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Zähler, Zählung je Typ, Status, Befund je Element, leere Pfade). (CR-GC-986)
 
-verify ▶ `SCHEMA-import-summary` · testRefs: `tests/vertrag/SCHEMA-import-summary.vertrag.test.ts`, `tests/vertrag/SCHEMA-import-summary.elemente.test.ts`
+verify ▶ `SCHEMA-import-summary` · testRefs: `tests/vertrag/SCHEMA-import-summary.vertrag.test.ts`
 
 #### 3.4.193  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
 
@@ -16176,7 +16176,7 @@ verify ▶ `SCHEMA-module-metrics` · testRefs: `tests/vertrag/SCHEMA-module-met
 
 Vertragstest SCHEMA-mutate-answer: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Union-Varianten), von Hand die Wertregeln (Zähler, graphVersion, confidence, Listen, Bindungsreport, Steuerdelta, OCC) und am echten Werkzeug jede Antwortvariante von graph_mutate (Probelauf und Anwendung, summary und full, Ablehnungen, OCC, unbekannter Skill, Format-Fehler, Warnungen, refs). (CR-GC-985)
 
-verify ▶ `SCHEMA-mutate-answer` · testRefs: `tests/vertrag/SCHEMA-mutate-answer.vertrag.test.ts`, `tests/vertrag/SCHEMA-mutate-answer.elemente.test.ts`, `tests/mcp.mutate-answer.test.ts`
+verify ▶ `SCHEMA-mutate-answer` · testRefs: `tests/vertrag/SCHEMA-mutate-answer.vertrag.test.ts`, `tests/mcp.mutate-answer.test.ts`
 
 #### 3.4.199  `TEST-vertrag-ontology-graph` — Vertragstest Ontologie-Graph
 
@@ -16188,7 +16188,7 @@ verify ▶ `SCHEMA-ontology-graph` · testRefs: `tests/vertrag/SCHEMA-ontology-g
 
 Vertragstest SCHEMA-render-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Format, Sicht, Größe, Pfad, Vorlage null). (CR-GC-986)
 
-verify ▶ `SCHEMA-render-summary` · testRefs: `tests/vertrag/SCHEMA-render-summary.vertrag.test.ts`, `tests/vertrag/SCHEMA-render-summary.elemente.test.ts`
+verify ▶ `SCHEMA-render-summary` · testRefs: `tests/vertrag/SCHEMA-render-summary.vertrag.test.ts`
 
 #### 3.4.201  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
 
@@ -16212,7 +16212,7 @@ verify ▶ `SCHEMA-rule-violation` · testRefs: `tests/vertrag/SCHEMA-rule-viola
 
 Vertragstest SCHEMA-test-ingest-answer, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-973)
 
-verify ▶ `SCHEMA-test-ingest-answer` · testRefs: `tests/vertrag/SCHEMA-test-ingest-answer.vertrag.test.ts`, `tests/vertrag/SCHEMA-test-ingest-answer.elemente.test.ts`
+verify ▶ `SCHEMA-test-ingest-answer` · testRefs: `tests/vertrag/SCHEMA-test-ingest-answer.vertrag.test.ts`
 
 #### 3.4.205  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
 
@@ -16248,7 +16248,7 @@ verify ▶ `SCHEMA-vertragstest-satz` · testRefs: `tests/vertrag/SCHEMA-vertrag
 
 Vertragstest SCHEMA-work-set: das erzeugte Beispiel und die Ablehnung je Pflichtfeld, dazu von Hand die leere Menge, negative und gebrochene Zugzahl, leere uid. (CR-GC-975)
 
-verify ▶ `SCHEMA-work-set` · testRefs: `tests/vertrag/SCHEMA-work-set.vertrag.test.ts`, `tests/vertrag/SCHEMA-work-set.elemente.test.ts`
+verify ▶ `SCHEMA-work-set` · testRefs: `tests/vertrag/SCHEMA-work-set.vertrag.test.ts`
 
 #### 3.4.211  `TEST-vertragstest-generator` — Vertragstest-Generator
 

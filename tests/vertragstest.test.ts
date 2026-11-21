@@ -32,9 +32,10 @@ describe('erzeugeFaelle', () => {
     expect(aufgenommen[0]).toMatchObject({ erwartet: true });
     expect(aufgenommen[0]?.ausgabe).toEqual(S.parse(aufgenommen[0]?.eingabe));
   });
-  it('lehnt je Pflichtfeld ohne Feld ab und verwirft das optionale', () => {
+  it('lehnt je Pflichtfeld ohne Feld ab; ein optionales Feld darf fehlen (CR-GC-987)', () => {
     expect(namen(aufgenommen)).toContain('lehnt ab ohne id');
-    expect(verworfen).toContain('lehnt ab ohne notiz');
+    expect(namen(aufgenommen)).toContain('nimmt an ohne notiz (optional)');
+    expect(verworfen).not.toContain('lehnt ab ohne notiz');
   });
   it('prüft Enum und Zusatzfeld beim strikten Objekt', () => {
     expect(namen(aufgenommen)).toContain('lehnt ab: art außerhalb des Enums');
@@ -59,7 +60,7 @@ describe('erzeugeFaelle', () => {
     );
   });
   it('lehnt bei Text einen Wert vom falschen Typ ab', () => {
-    expect(namen(erzeugeFaelle(z.string()).aufgenommen)).toEqual(['nimmt das Beispiel an', 'lehnt einen Wert vom falschen Typ ab']);
+    expect(namen(erzeugeFaelle(z.string()).aufgenommen)).toEqual(['nimmt das Beispiel an', 'lehnt einen Wert vom falschen Typ ab', 'nimmt Text mit 0 Zeichen an (Untergrenze)']);
   });
 });
 
@@ -142,6 +143,88 @@ const VERTRAG = [
   '| Polarität | – | | plus an Klemme 1 | | | |',
   '',
 ].join('\n');
+
+describe('erzeugeFaelle: Wertregeln (CR-GC-987)', () => {
+  type F = { eingabe: unknown; erwartet: boolean; name: string };
+  const hat = (faelle: F[], eingabe: unknown, erwartet: boolean): boolean => faelle.some((f) => f.erwartet === erwartet && JSON.stringify(f.eingabe) === JSON.stringify(eingabe));
+  const alle = (schema: unknown): F[] => erzeugeFaelle(schema).aufgenommen as F[];
+
+  it('Text: Mindest- und Höchstlänge, knapp außerhalb abgelehnt, auf der Grenze angenommen', () => {
+    const f = alle(z.string().min(2).max(4));
+    expect([hat(f, 'x', false), hat(f, 'xx', true), hat(f, 'xxxx', true), hat(f, 'xxxxx', false)]).toEqual([true, true, true, true]);
+  });
+  it('Text: exakte Länge', () => {
+    const f = alle(z.string().length(3));
+    expect([hat(f, 'xx', false), hat(f, 'xxx', true), hat(f, 'xxxx', false)]).toEqual([true, true, true]);
+  });
+  it('Text ohne Längenregel: der leere Text wird angenommen, es gibt keinen Ablehnungsfall zur Länge', () => {
+    const f = alle(z.string());
+    expect(hat(f, '', true)).toBe(true);
+    expect(f.filter((x) => !x.erwartet).map((x) => x.name)).toEqual(['lehnt einen Wert vom falschen Typ ab']);
+  });
+  it('Zahl: ganze Zahl über einer ausgeschlossenen Grenze; Grenze selbst und Nicht-Ganzzahl abgelehnt', () => {
+    const f = alle(z.number().int().positive());
+    expect([hat(f, 0, false), hat(f, 1, true), hat(f, 1.5, false)]).toEqual([true, true, true]);
+  });
+  it('Zahl: eingeschlossene Grenzen, Dezimalzahl knapp außerhalb', () => {
+    const f = alle(z.number().min(0).max(10));
+    expect([hat(f, -0.001, false), hat(f, 0, true), hat(f, 10, true), hat(f, 10.001, false)]).toEqual([true, true, true, true]);
+  });
+  it('Zahl: beide Grenzen ausgeschlossen', () => {
+    const f = alle(z.number().int().gt(0).lt(3));
+    expect([hat(f, 0, false), hat(f, 1, true), hat(f, 2, true), hat(f, 3, false)]).toEqual([true, true, true, true]);
+  });
+  it('Liste: ein Element zu wenig, ein Element zu viel, Grenzen angenommen', () => {
+    const f = alle(z.array(z.string()).min(1).max(2));
+    expect([hat(f, [], false), hat(f, ['beispiel'], true), hat(f, ['beispiel', 'beispiel'], true), hat(f, ['beispiel', 'beispiel', 'beispiel'], false)]).toEqual([true, true, true, true]);
+  });
+  it('Liste ohne Längenregel: die leere Liste wird angenommen', () => {
+    expect(hat(alle(z.array(z.string())), [], true)).toBe(true);
+  });
+  it('Format und Regex: ein verletzender Text wird abgelehnt', () => {
+    expect(hat(alle(z.string().email()), '__kein_format__', false)).toBe(true);
+    expect(hat(alle(z.string().regex(/^CR-\d+$/)), '!', false)).toBe(true);
+  });
+  it('Regex, die jeder Kandidat trifft: kein Fall, die Prüfung steht in `verworfen`', () => {
+    const { aufgenommen, verworfen } = erzeugeFaelle(z.string().regex(/^/));
+    expect(aufgenommen.filter((f) => !f.erwartet).map((f) => f.name)).toEqual(['lehnt einen Wert vom falschen Typ ab']);
+    expect(verworfen.some((v) => v.includes('Regex') && v.includes('kein verletzender Text'))).toBe(true);
+  });
+  it('Längenregel an einem Text mit Regex: kein Fall, in `verworfen` genannt', () => {
+    const { verworfen } = erzeugeFaelle(z.string().regex(/^a+$/).min(3));
+    expect(verworfen.some((v) => v.includes('Längenregel'))).toBe(true);
+  });
+  it('gilt auf jeder Ebene: Objektfeld, Listenelement, Tupel, Record, Union-Variante, optional', () => {
+    const E = z.strictObject({
+      o: z.strictObject({ n: z.number().int().min(1) }),
+      l: z.array(z.strictObject({ t: z.string().min(2) })),
+      u: z.tuple([z.number().max(5)]),
+      r: z.record(z.string(), z.number().int().nonnegative()),
+      v: z.union([z.strictObject({ a: z.string().max(3) }), z.strictObject({ b: z.number().min(7) })]),
+      p: z.string().min(3).optional(),
+    });
+    const f = alle(E);
+    const abgelehnt = f.filter((x) => !x.erwartet).map((x) => x.name);
+    for (const pfad of ['o.n: lehnt ab: 0 ', 'l[].t: lehnt ab: Text mit 1 ', 'u[0]: lehnt ab: 5.001 ', 'r{}: lehnt ab: -1 ', 'v (Variante 1).a: lehnt ab: Text mit 4 ', 'v (Variante 2).b: lehnt ab: 6.999 ', 'p: lehnt ab: Text mit 2 ']) {
+      expect(abgelehnt.some((n) => n.startsWith(pfad)), pfad).toBe(true);
+    }
+  });
+  it('nullable: null wird angenommen, auf jeder Ebene', () => {
+    const f = alle(z.strictObject({ a: z.strictObject({ v: z.string().min(1).nullable() }) }));
+    expect(hat(f, { a: { v: null } }, true)).toBe(true);
+  });
+  it('Enum: friert die Werteliste mit dem Weg zur Stelle ein', () => {
+    const f = erzeugeFaelle(z.strictObject({ art: z.enum(['a', 'b']).optional() })).aufgenommen;
+    const e = f.find((x) => x.enumWerte);
+    expect(e?.enumWerte).toEqual({ weg: [['shape', 'art'], ['innerType']], liste: ['a', 'b'] });
+  });
+  it('die erzeugte Datei bestätigt die Werteliste und lässt sich gegen ein um einen Wert erweitertes Enum rot sehen', async () => {
+    const E = z.strictObject({ art: z.enum(['a', 'b']) });
+    const text = testDatei({ id: 'SCHEMA-x', file: 'x.ts', symbol: 'S' }, './x.js', erzeugeFaelle(E).aufgenommen);
+    expect(text).toContain(`.toEqual(["a","b"])`);
+    expect(text).toContain(`"shape","art"`);
+  });
+});
 
 describe('pruefpunkte (Vertragsdatei)', () => {
   it('macht je Zeile mit Grenzwert einen Prüfpunkt und verwirft die Zeile ohne', () => {

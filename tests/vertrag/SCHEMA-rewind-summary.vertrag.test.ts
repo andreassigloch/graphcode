@@ -15,17 +15,26 @@ describe('Vertrag SCHEMA-rewind-summary', () => {
   it("lehnt ab: ref mit falschem Typ", () => {
     expect(S.safeParse({"ref":12345,"commit":"beispiel","snapshot":"beispiel","restored":{"nodes":1,"edges":1},"forced":true}).success).toBe(false);
   });
+  it("ref: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse({"ref":"","commit":"beispiel","snapshot":"beispiel","restored":{"nodes":1,"edges":1},"forced":true})).toEqual({"ref":"","commit":"beispiel","snapshot":"beispiel","restored":{"nodes":1,"edges":1},"forced":true});
+  });
   it("lehnt ab ohne commit", () => {
     expect(S.safeParse({"ref":"beispiel","snapshot":"beispiel","restored":{"nodes":1,"edges":1},"forced":true}).success).toBe(false);
   });
   it("lehnt ab: commit mit falschem Typ", () => {
     expect(S.safeParse({"ref":"beispiel","commit":12345,"snapshot":"beispiel","restored":{"nodes":1,"edges":1},"forced":true}).success).toBe(false);
   });
+  it("commit: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse({"ref":"beispiel","commit":"","snapshot":"beispiel","restored":{"nodes":1,"edges":1},"forced":true})).toEqual({"ref":"beispiel","commit":"","snapshot":"beispiel","restored":{"nodes":1,"edges":1},"forced":true});
+  });
   it("lehnt ab ohne snapshot", () => {
     expect(S.safeParse({"ref":"beispiel","commit":"beispiel","restored":{"nodes":1,"edges":1},"forced":true}).success).toBe(false);
   });
   it("lehnt ab: snapshot mit falschem Typ", () => {
     expect(S.safeParse({"ref":"beispiel","commit":"beispiel","snapshot":12345,"restored":{"nodes":1,"edges":1},"forced":true}).success).toBe(false);
+  });
+  it("snapshot: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse({"ref":"beispiel","commit":"beispiel","snapshot":"","restored":{"nodes":1,"edges":1},"forced":true})).toEqual({"ref":"beispiel","commit":"beispiel","snapshot":"","restored":{"nodes":1,"edges":1},"forced":true});
   });
   it("lehnt ab ohne restored", () => {
     expect(S.safeParse({"ref":"beispiel","commit":"beispiel","snapshot":"beispiel","forced":true}).success).toBe(false);
@@ -39,11 +48,17 @@ describe('Vertrag SCHEMA-rewind-summary', () => {
   it("restored: lehnt ab: nodes mit falschem Typ", () => {
     expect(S.safeParse({"ref":"beispiel","commit":"beispiel","snapshot":"beispiel","restored":{"nodes":"__falsch__","edges":1},"forced":true}).success).toBe(false);
   });
+  it("restored.nodes: lehnt ab: 1.5 ist keine ganze Zahl", () => {
+    expect(S.safeParse({"ref":"beispiel","commit":"beispiel","snapshot":"beispiel","restored":{"nodes":1.5,"edges":1},"forced":true}).success).toBe(false);
+  });
   it("restored: lehnt ab ohne edges", () => {
     expect(S.safeParse({"ref":"beispiel","commit":"beispiel","snapshot":"beispiel","restored":{"nodes":1},"forced":true}).success).toBe(false);
   });
   it("restored: lehnt ab: edges mit falschem Typ", () => {
     expect(S.safeParse({"ref":"beispiel","commit":"beispiel","snapshot":"beispiel","restored":{"nodes":1,"edges":"__falsch__"},"forced":true}).success).toBe(false);
+  });
+  it("restored.edges: lehnt ab: 1.5 ist keine ganze Zahl", () => {
+    expect(S.safeParse({"ref":"beispiel","commit":"beispiel","snapshot":"beispiel","restored":{"nodes":1,"edges":1.5},"forced":true}).success).toBe(false);
   });
   it("lehnt ab ohne forced", () => {
     expect(S.safeParse({"ref":"beispiel","commit":"beispiel","snapshot":"beispiel","restored":{"nodes":1,"edges":1}}).success).toBe(false);

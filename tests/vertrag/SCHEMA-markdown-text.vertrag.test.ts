@@ -9,4 +9,7 @@ describe('Vertrag SCHEMA-markdown-text', () => {
   it("lehnt einen Wert vom falschen Typ ab", () => {
     expect(S.safeParse(12345).success).toBe(false);
   });
+  it("nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse("")).toEqual("");
+  });
 });

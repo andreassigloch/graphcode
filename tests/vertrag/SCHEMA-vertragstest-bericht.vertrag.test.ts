@@ -18,17 +18,32 @@ describe('Vertrag SCHEMA-vertragstest-bericht', () => {
   it("[] (Variante 1): lehnt ab: schema mit falschem Typ", () => {
     expect(S.safeParse([{"schema":12345,"datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"]}]).success).toBe(false);
   });
+  it("[] (Variante 1).schema: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse([{"schema":"","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"]}])).toEqual([{"schema":"","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"]}]);
+  });
   it("[] (Variante 1): lehnt ab ohne datei", () => {
     expect(S.safeParse([{"schema":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"]}]).success).toBe(false);
   });
   it("[] (Variante 1): lehnt ab: datei mit falschem Typ", () => {
     expect(S.safeParse([{"schema":"beispiel","datei":12345,"faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"]}]).success).toBe(false);
   });
+  it("[] (Variante 1).datei: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse([{"schema":"beispiel","datei":"","faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"]}])).toEqual([{"schema":"beispiel","datei":"","faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"]}]);
+  });
   it("[] (Variante 1): lehnt ab ohne faelle", () => {
     expect(S.safeParse([{"schema":"beispiel","datei":"beispiel","verworfen":["beispiel"],"begrenzt":["beispiel"]}]).success).toBe(false);
   });
   it("[] (Variante 1): lehnt ab: faelle mit falschem Typ", () => {
     expect(S.safeParse([{"schema":"beispiel","datei":"beispiel","faelle":"__falsch__","verworfen":["beispiel"],"begrenzt":["beispiel"]}]).success).toBe(false);
+  });
+  it("[] (Variante 1).faelle: lehnt ab: 0 auf der ausgeschlossenen Untergrenze 0", () => {
+    expect(S.safeParse([{"schema":"beispiel","datei":"beispiel","faelle":0,"verworfen":["beispiel"],"begrenzt":["beispiel"]}]).success).toBe(false);
+  });
+  it("[] (Variante 1).faelle: nimmt 1 an (kleinster erlaubter Wert, Untergrenze 0)", () => {
+    expect(S.parse([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"]}])).toEqual([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"]}]);
+  });
+  it("[] (Variante 1).faelle: lehnt ab: 1.5 ist keine ganze Zahl", () => {
+    expect(S.safeParse([{"schema":"beispiel","datei":"beispiel","faelle":1.5,"verworfen":["beispiel"],"begrenzt":["beispiel"]}]).success).toBe(false);
   });
   it("[] (Variante 1): lehnt ab ohne verworfen", () => {
     expect(S.safeParse([{"schema":"beispiel","datei":"beispiel","faelle":1,"begrenzt":["beispiel"]}]).success).toBe(false);
@@ -39,6 +54,12 @@ describe('Vertrag SCHEMA-vertragstest-bericht', () => {
   it("[] (Variante 1).verworfen[]: lehnt einen Wert vom falschen Typ ab", () => {
     expect(S.safeParse([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":[12345],"begrenzt":["beispiel"]}]).success).toBe(false);
   });
+  it("[] (Variante 1).verworfen[]: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":[""],"begrenzt":["beispiel"]}])).toEqual([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":[""],"begrenzt":["beispiel"]}]);
+  });
+  it("[] (Variante 1).verworfen: nimmt Liste mit 0 Elementen an (Untergrenze)", () => {
+    expect(S.parse([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":[],"begrenzt":["beispiel"]}])).toEqual([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":[],"begrenzt":["beispiel"]}]);
+  });
   it("[] (Variante 1): lehnt ab ohne begrenzt", () => {
     expect(S.safeParse([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":["beispiel"]}]).success).toBe(false);
   });
@@ -47,6 +68,12 @@ describe('Vertrag SCHEMA-vertragstest-bericht', () => {
   });
   it("[] (Variante 1).begrenzt[]: lehnt einen Wert vom falschen Typ ab", () => {
     expect(S.safeParse([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":[12345]}]).success).toBe(false);
+  });
+  it("[] (Variante 1).begrenzt[]: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":[""]}])).toEqual([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":[""]}]);
+  });
+  it("[] (Variante 1).begrenzt: nimmt Liste mit 0 Elementen an (Untergrenze)", () => {
+    expect(S.parse([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":[]}])).toEqual([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":[]}]);
   });
   it("[] (Variante 1): lehnt ab: unbekanntes Zusatzfeld", () => {
     expect(S.safeParse([{"schema":"beispiel","datei":"beispiel","faelle":1,"verworfen":["beispiel"],"begrenzt":["beispiel"],"__zusatz__":1}]).success).toBe(false);
@@ -60,13 +87,22 @@ describe('Vertrag SCHEMA-vertragstest-bericht', () => {
   it("[] (Variante 2): lehnt ab: schema mit falschem Typ", () => {
     expect(S.safeParse([{"schema":12345,"fehler":"beispiel"}]).success).toBe(false);
   });
+  it("[] (Variante 2).schema: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse([{"schema":"","fehler":"beispiel"}])).toEqual([{"schema":"","fehler":"beispiel"}]);
+  });
   it("[] (Variante 2): lehnt ab ohne fehler", () => {
     expect(S.safeParse([{"schema":"beispiel"}]).success).toBe(false);
   });
   it("[] (Variante 2): lehnt ab: fehler mit falschem Typ", () => {
     expect(S.safeParse([{"schema":"beispiel","fehler":12345}]).success).toBe(false);
   });
+  it("[] (Variante 2).fehler: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse([{"schema":"beispiel","fehler":""}])).toEqual([{"schema":"beispiel","fehler":""}]);
+  });
   it("[] (Variante 2): lehnt ab: unbekanntes Zusatzfeld", () => {
     expect(S.safeParse([{"schema":"beispiel","fehler":"beispiel","__zusatz__":1}]).success).toBe(false);
+  });
+  it("nimmt Liste mit 0 Elementen an (Untergrenze)", () => {
+    expect(S.parse([])).toEqual([]);
   });
 });

@@ -2,9 +2,9 @@
  * vertragstest.ts — Vertragstest je SCHEMA, erzeugt allein aus dem Zod-Schema (zod 4) zur Laufzeit
  * (CR-GC-962; Herkunft graphanalyze, Spike CR-GC-958 G1 Go).
  *
- * Je Schema: ein gueltiges Beispiel, das angenommen wird, und je Objektfeld die Ablehnung ohne Feld,
- * mit falschem Typ und ausserhalb eines Enums, dazu ein unbekanntes Zusatzfeld; je Union-Variante
- * dasselbe. Die Faelle gelten auf jeder Ebene: in verschachtelten Objekten, in den Elementen einer Liste,
+ * Je Schema: ein gueltiges Beispiel, das angenommen wird, und je Objektfeld die Ablehnung ohne Feld
+ * (bei einem optionalen Feld die Annahme ohne Feld), mit falschem Typ und ausserhalb eines Enums, dazu
+ * ein unbekanntes Zusatzfeld; je Union-Variante dasselbe. Die Faelle gelten auf jeder Ebene: in verschachtelten Objekten, in den Elementen einer Liste,
  * eines Tupels und eines Records (CR-GC-980). Die Tiefe ist auf `MAX_EBENE` begrenzt, ein rekursives
  * Schema (z.lazy) liefert sein Beispiel ohne optionale Felder; beides steht im Bericht (`begrenzt`).
  * Ein Fall kommt nur in die Datei, wenn das Original-Schema ihn so urteilt, wie der Fall es
@@ -76,11 +76,15 @@ interface Zod {
   _zod: { def: Def };
   safeParse(v: unknown): { success: boolean; data?: unknown };
 }
+/** Ein Schritt im Schema von der Wurzel zu einer Stelle: Feld der Definition, bei Objekt, Tupel und Union mit Schluessel. */
+export type Schritt = [string, (string | number)?];
 interface Fall {
   name: string;
   eingabe: unknown;
   erwartet: boolean;
   ausgabe?: unknown;
+  /** Kein Parse-Fall: die Werteliste des Enums an dieser Stelle (CR-GC-987). */
+  enumWerte?: { weg: Schritt[]; liste: unknown[] };
 }
 
 const def = (s: Zod): Def => s._zod.def;
@@ -269,17 +273,23 @@ interface Stelle {
   /** Der Erzeuger bildet den Typfall dieser Stelle selbst; bei einem Objektfeld bildet ihn das Objekt. */
   eigenerTypfall: boolean;
   begrenzt: string[];
+  /** Wertregeln, zu denen der Erzeuger keinen sicheren Fall bilden konnte (CR-GC-987). */
+  ungebildet: string[];
+  /** Der Weg im Schema von der Wurzel zu dieser Stelle. */
+  weg: Schritt[];
 }
 
 const falschWie = (wert: unknown): unknown => (typeof wert === 'string' ? 12345 : '__falsch__');
 const benannt = (st: Stelle, text: string): string => (st.pfad ? `${st.pfad}: ${text}` : text);
-const tiefer = (st: Stelle, pfad: string, einsetzen: (teil: unknown) => unknown, eigenerTypfall: boolean): Stelle => ({
+const tiefer = (st: Stelle, pfad: string, einsetzen: (teil: unknown) => unknown, eigenerTypfall: boolean, schritt: Schritt): Stelle => ({
   ...st,
   pfad,
   ebene: st.ebene + 1,
   einsetzen,
   eigenerTypfall,
+  weg: [...st.weg, schritt],
 });
+const hinein = (st: Stelle, schritt: Schritt): Stelle => ({ ...st, weg: [...st.weg, schritt] });
 
 /** Das gueltige Beispiel einer Variante oder eines Teilschemas; ein Schema ohne endliches Beispiel meldet sich ueber `RekursionsFehler`. */
 function gueltigesBeispiel(v: Zod, st: Stelle): unknown {
@@ -294,12 +304,145 @@ function gueltigesBeispiel(v: Zod, st: Stelle): unknown {
   return v.safeParse(b).success ? b : beispiel(v, true);
 }
 
+/** Laengere Texte und Listen bildet der Erzeuger nicht; die Grenze steht im Bericht. */
+const MAX_LAENGE = 1000;
+
+const langText = (n: number): string => 'x'.repeat(n);
+
+/** Untere und obere Laenge aus `min_length`, `max_length` und `length_equals`. */
+function laengen(c: Check[]): { lo: number; hi: number; geregelt: boolean } {
+  const art = c.filter((x) => x.check === 'min_length' || x.check === 'max_length' || x.check === 'length_equals');
+  const lo = Math.max(0, ...art.filter((x) => x.check === 'min_length').map((x) => x.minimum ?? 0), ...art.filter((x) => x.check === 'length_equals').map((x) => x.length ?? 0));
+  const hi = Math.min(Infinity, ...art.filter((x) => x.check === 'max_length').map((x) => x.maximum ?? Infinity), ...art.filter((x) => x.check === 'length_equals').map((x) => x.length ?? Infinity));
+  return { lo, hi, geregelt: art.length > 0 };
+}
+
+/** Faelle an den Grenzen einer Laenge: knapp ausserhalb abgelehnt, auf der Grenze angenommen; `bilde(n)` baut einen Wert der Laenge n. */
+function laengenFaelle(c: Check[], st: Stelle, was: string, einheit: string, bilde: (n: number) => unknown): Fall[] {
+  const { lo, hi } = laengen(c);
+  const faelle: Fall[] = [];
+  const gesehen = new Set<string>();
+  const fall = (text: string, n: number, erwartet: boolean): void => {
+    const eingabe = st.einsetzen(bilde(n));
+    const schluessel = JSON.stringify(eingabe) + erwartet;
+    if (gesehen.has(schluessel)) return;
+    gesehen.add(schluessel);
+    faelle.push({ name: benannt(st, text), eingabe, erwartet });
+  };
+  if (lo > 0) fall(`lehnt ab: ${was} mit ${lo - 1} ${einheit} (unter der Mindestlänge ${lo})`, lo - 1, false);
+  fall(`nimmt ${was} mit ${lo} ${einheit} an (Untergrenze)`, lo, true);
+  if (hi < Infinity) {
+    if (hi > MAX_LAENGE) {
+      st.ungebildet.push(`${st.pfad || 'Wurzel'}: Obergrenze ${hi} über ${MAX_LAENGE}, kein Fall an der Obergrenze`);
+    } else {
+      fall(`nimmt ${was} mit ${hi} ${einheit} an (Obergrenze)`, hi, true);
+      fall(`lehnt ab: ${was} mit ${hi + 1} ${einheit} (über der Obergrenze ${hi})`, hi + 1, false);
+    }
+  }
+  return faelle;
+}
+
+/** Faelle zu den Laengenregeln einer Liste. */
+function listenFaelle(s: Zod, element: unknown, st: Stelle): Fall[] {
+  return laengenFaelle(checks(s), st, 'Liste', 'Elementen', (n) => Array.from({ length: n }, () => element));
+}
+
+/** Faelle zu Laenge, Format und Regex eines Textes. Ein Text mit Format oder Regex bekommt keine Laengenfaelle: der Wert muss beides erfuellen. */
+function textFaelle(s: Zod, st: Stelle): Fall[] {
+  const d = def(s);
+  const c = checks(s);
+  const regexe = c.filter((x) => x.format === 'regex' && x.pattern);
+  const fmt = d.format ?? c.find((x) => x.format && x.format !== 'regex')?.format;
+  const { lo, hi, geregelt } = laengen(c);
+  const faelle: Fall[] = [];
+  const fall = (text: string, eingabe: string, erwartet: boolean): void => {
+    faelle.push({ name: benannt(st, text), eingabe: st.einsetzen(eingabe), erwartet });
+  };
+  if (regexe.length === 0 && !fmt) {
+    faelle.push(...laengenFaelle(c, st, 'Text', 'Zeichen', langText));
+  } else if (geregelt) {
+    st.ungebildet.push(`${st.pfad || 'Wurzel'}: Längenregel an einem Text mit Format oder Regex, kein sicherer Fall`);
+  }
+  if (fmt && regexe.length === 0 && FORMATE[fmt] !== undefined) {
+    if (geregelt) st.ungebildet.push(`${st.pfad || 'Wurzel'}: Format ${fmt} mit Längenregel, kein verletzender Text`);
+    else fall(`lehnt ab: Text ohne das Format ${fmt}`, '__kein_format__', false);
+  }
+  const KANDIDATEN = ['!', '__verletzt__', '', ' ', '0', 'a', 'A', '\n'];
+  for (const r of regexe) {
+    const treffer = (t: string, re: RegExp): boolean => new RegExp(re.source, re.flags.replace(/[gy]/g, '')).test(t);
+    const text = KANDIDATEN.find((t) => !treffer(t, r.pattern as RegExp) && regexe.every((o) => o === r || treffer(t, o.pattern as RegExp)) && t.length >= lo && t.length <= hi);
+    if (text === undefined) st.ungebildet.push(`${st.pfad || 'Wurzel'}: Regex ${r.pattern}: kein verletzender Text bildbar`);
+    else fall(`lehnt ab: Text verletzt die Regel ${String(r.pattern)}`, text, false);
+  }
+  return faelle;
+}
+
+/** Faelle zu Grenzen und Ganzzahl-Regel einer Zahl: je Grenze knapp ausserhalb abgelehnt, auf der Grenze angenommen. */
+function zahlFaelle(s: Zod, wert: unknown, st: Stelle): Fall[] {
+  const d = def(s);
+  const c = checks(s);
+  // Je Richtung zaehlt die engste Grenze (bei Gleichstand die ausgeschlossene); eine weitere, weitere Grenze aendert das Urteil nie.
+  const engste = (art: string, vorzeichen: 1 | -1): Check[] => {
+    const alle = c.filter((x) => x.check === art && x.value !== undefined);
+    const best = alle.reduce<Check | undefined>((b, x) => {
+      if (!b) return x;
+      const d = ((x.value as number) - (b.value as number)) * vorzeichen;
+      return d > 0 || (d === 0 && b.inclusive && !x.inclusive) ? x : b;
+    }, undefined);
+    return best ? [best] : [];
+  };
+  const unten = engste('greater_than', 1);
+  const oben = engste('less_than', -1);
+  const ganz = Boolean(d.format?.includes('int')) || c.some((x) => x.check === 'number_format' && x.format?.includes('int'));
+  const schritt = ganz ? 1 : 0.001;
+  const faelle: Fall[] = [];
+  const hält = (x: number, auch: Check | undefined, ohneGanz = false): boolean =>
+    (ohneGanz || !ganz || Number.isInteger(x)) &&
+    c.filter((u) => u.check === 'greater_than' && u.value !== undefined).every((u) => u === auch || (u.inclusive ? x >= (u.value as number) : x > (u.value as number))) &&
+    c.filter((o) => o.check === 'less_than' && o.value !== undefined).every((o) => o === auch || (o.inclusive ? x <= (o.value as number) : x < (o.value as number)));
+  const fall = (text: string, x: number, erwartet: boolean): void => {
+    faelle.push({ name: benannt(st, text), eingabe: st.einsetzen(x), erwartet });
+  };
+  const ohne = (was: string): void => {
+    st.ungebildet.push(`${st.pfad || 'Wurzel'}: ${was}, kein sicherer Fall`);
+  };
+  for (const u of unten) {
+    const v = u.value as number;
+    const aussen = u.inclusive ? v - schritt : v;
+    if (hält(aussen, u)) fall(`lehnt ab: ${aussen} ${u.inclusive ? 'unter' : 'auf'} der ${u.inclusive ? 'Untergrenze' : 'ausgeschlossenen Untergrenze'} ${v}`, aussen, false);
+    else ohne(`Untergrenze ${v}`);
+    const innen = u.inclusive ? v : v + schritt;
+    if (hält(innen, undefined)) fall(`nimmt ${innen} an (kleinster erlaubter Wert, Untergrenze ${v})`, innen, true);
+    else ohne(`kleinster erlaubter Wert über ${v}`);
+  }
+  for (const o of oben) {
+    const v = o.value as number;
+    const aussen = o.inclusive ? v + schritt : v;
+    if (hält(aussen, o)) fall(`lehnt ab: ${aussen} ${o.inclusive ? 'über' : 'auf'} der ${o.inclusive ? 'Obergrenze' : 'ausgeschlossenen Obergrenze'} ${v}`, aussen, false);
+    else ohne(`Obergrenze ${v}`);
+    const innen = o.inclusive ? v : v - schritt;
+    if (hält(innen, undefined)) fall(`nimmt ${innen} an (größter erlaubter Wert, Obergrenze ${v})`, innen, true);
+    else ohne(`größter erlaubter Wert unter ${v}`);
+  }
+  if (ganz) {
+    const w = typeof wert === 'number' ? wert : 1;
+    const x = [w + 0.5, w - 0.5, 0.5].find((k) => hält(k, undefined, true));
+    if (x === undefined) ohne('Ganzzahl-Regel');
+    else fall(`lehnt ab: ${x} ist keine ganze Zahl`, x, false);
+  }
+  return faelle;
+}
+
 /** Die Faelle zu einem Knoten des Schemas und seinem Beispielwert; jeder Fall ist die ganze Eingabe. */
 function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
   const d = def(s);
-  if (HUELLE.includes(d.type)) return knoten(d.innerType, wert, st);
-  if (d.type === 'pipe') return knoten(d.in, wert, st);
-  if (d.type === 'lazy') return knoten(d.getter(), wert, st);
+  if (HUELLE.includes(d.type)) {
+    const innen = knoten(d.innerType, wert, hinein(st, ['innerType']));
+    if (d.type !== 'nullable') return innen;
+    return [{ name: benannt(st, 'nimmt null an'), eingabe: st.einsetzen(null), erwartet: true }, ...innen];
+  }
+  if (d.type === 'pipe') return knoten(d.in, wert, hinein(st, ['in']));
+  if (d.type === 'lazy') return knoten(d.getter(), wert, hinein(st, ['getter']));
   if (st.ebene > MAX_EBENE) {
     st.begrenzt.push(`${st.pfad}: Tiefe ${MAX_EBENE} erreicht, darunter keine Fälle`);
     return [];
@@ -309,7 +452,7 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
     d.options.forEach((opt, n) => {
       const b = gueltigesBeispiel(opt, st);
       const vp = d.options.length > 1 ? (st.pfad ? `${st.pfad} (Variante ${n + 1})` : `Variante ${n + 1}`) : st.pfad;
-      const vs: Stelle = { ...st, pfad: vp, eigenerTypfall: false };
+      const vs: Stelle = { ...st, pfad: vp, eigenerTypfall: false, weg: [...st.weg, ['options', n]] };
       faelle.push({ name: benannt(vs, 'nimmt das Beispiel an'), eingabe: st.einsetzen(b), erwartet: true });
       faelle.push(...knoten(opt, b, { ...vs, ebene: st.ebene + 1 }));
     });
@@ -323,14 +466,15 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
       if (k in b) {
         const ohne = { ...b };
         delete ohne[k];
-        faelle.push({ name: benannt(st, `lehnt ab ohne ${k}`), eingabe: st.einsetzen(ohne), erwartet: false });
+        const darfFehlen = feld.safeParse(undefined).success;
+        faelle.push({ name: benannt(st, darfFehlen ? `nimmt an ohne ${k} (optional)` : `lehnt ab ohne ${k}`), eingabe: st.einsetzen(ohne), erwartet: darfFehlen });
       }
       faelle.push({ name: benannt(st, `lehnt ab: ${k} mit falschem Typ`), eingabe: st.einsetzen({ ...b, [k]: falschWie(b[k]) }), erwartet: false });
       if (def(kern(feld)).type === 'enum') {
         faelle.push({ name: benannt(st, `lehnt ab: ${k} außerhalb des Enums`), eingabe: st.einsetzen({ ...b, [k]: '__ausserhalb__' }), erwartet: false });
       }
       if (k in b) {
-        faelle.push(...knoten(feld, b[k], tiefer(st, st.pfad ? `${st.pfad}.${k}` : k, (t) => st.einsetzen({ ...b, [k]: t }), false)));
+        faelle.push(...knoten(feld, b[k], tiefer(st, st.pfad ? `${st.pfad}.${k}` : k, (t) => st.einsetzen({ ...b, [k]: t }), false, ['shape', k])));
       }
     }
     faelle.push({ name: benannt(st, 'lehnt ab: unbekanntes Zusatzfeld'), eingabe: st.einsetzen({ ...b, __zusatz__: 1 }), erwartet: false });
@@ -340,9 +484,10 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
     const a = wert as unknown[];
     if (st.eigenerTypfall) faelle.push({ name: benannt(st, 'lehnt einen Wert ab, der keine Liste ist'), eingabe: st.einsetzen('__falsch__'), erwartet: false });
     if (a.length > 0) {
-      const el = tiefer(st, `${st.pfad}[]`, (t) => st.einsetzen(a.map((x, i) => (i === 0 ? t : x))), true);
+      const el = tiefer(st, `${st.pfad}[]`, (t) => st.einsetzen(a.map((x, i) => (i === 0 ? t : x))), true, ['element']);
       faelle.push(...knoten(d.element, a[0], el));
     }
+    faelle.push(...listenFaelle(s, a.length > 0 ? a[0] : gueltigesBeispiel(d.element, st), st));
     return faelle;
   }
   if (d.type === 'tuple') {
@@ -350,7 +495,7 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
     if (st.eigenerTypfall) faelle.push({ name: benannt(st, 'lehnt einen Wert ab, der kein Tupel ist'), eingabe: st.einsetzen('__falsch__'), erwartet: false });
     if (a.length > 0) faelle.push({ name: benannt(st, 'lehnt ab: Tupel zu kurz'), eingabe: st.einsetzen(a.slice(0, -1)), erwartet: false });
     d.items.forEach((item, i) => {
-      const el = tiefer(st, `${st.pfad}[${i}]`, (t) => st.einsetzen(a.map((x, j) => (j === i ? t : x))), true);
+      const el = tiefer(st, `${st.pfad}[${i}]`, (t) => st.einsetzen(a.map((x, j) => (j === i ? t : x))), true, ['items', i]);
       faelle.push(...knoten(item, a[i], el));
     });
     return faelle;
@@ -359,16 +504,23 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
     const r = wert as Record<string, unknown>;
     const schluessel = Object.keys(r)[0] as string;
     if (st.eigenerTypfall) faelle.push({ name: benannt(st, 'lehnt einen Wert ab, der kein Record ist'), eingabe: st.einsetzen('__falsch__'), erwartet: false });
-    faelle.push(...knoten(d.valueType, r[schluessel], tiefer(st, `${st.pfad}{}`, (t) => st.einsetzen({ [schluessel]: t }), true)));
+    faelle.push({ name: benannt(st, 'nimmt einen leeren Record an'), eingabe: st.einsetzen({}), erwartet: true });
+    faelle.push(...knoten(d.valueType, r[schluessel], tiefer(st, `${st.pfad}{}`, (t) => st.einsetzen({ [schluessel]: t }), true, ['valueType'])));
     return faelle;
   }
   if (['string', 'number', 'boolean'].includes(d.type) && st.eigenerTypfall) {
     faelle.push({ name: benannt(st, 'lehnt einen Wert vom falschen Typ ab'), eingabe: st.einsetzen(falschWie(wert)), erwartet: false });
   }
-  if (d.type === 'enum' && st.eigenerTypfall) {
-    for (const w of Object.values(d.entries)) faelle.push({ name: benannt(st, `nimmt ${String(w)} an`), eingabe: st.einsetzen(w), erwartet: true });
-    faelle.push({ name: benannt(st, 'lehnt einen Wert außerhalb ab'), eingabe: st.einsetzen('__ausserhalb__'), erwartet: false });
+  if (d.type === 'enum') {
+    // Ein Wert mehr im Enum laesst sich durch keinen Parse-Fall fassen: die Werteliste selbst wird eingefroren.
+    faelle.push({ name: benannt(st, 'Werteliste unverändert'), eingabe: null, erwartet: true, enumWerte: { weg: st.weg, liste: Object.values(d.entries) } });
+    if (st.eigenerTypfall) {
+      for (const w of Object.values(d.entries)) faelle.push({ name: benannt(st, `nimmt ${String(w)} an`), eingabe: st.einsetzen(w), erwartet: true });
+      faelle.push({ name: benannt(st, 'lehnt einen Wert außerhalb ab'), eingabe: st.einsetzen('__ausserhalb__'), erwartet: false });
+    }
   }
+  if (d.type === 'string') faelle.push(...textFaelle(s, st));
+  if (d.type === 'number') faelle.push(...zahlFaelle(s, wert, st));
   return faelle;
 }
 
@@ -378,7 +530,11 @@ export function erzeugeFaelle(schema: unknown): { aufgenommen: Fall[]; verworfen
   const aufgenommen: Fall[] = [];
   const verworfen: string[] = [];
   const begrenzt: string[] = [];
-  for (const f of rohFaelle(S, begrenzt)) {
+  for (const f of rohFaelle(S, begrenzt, verworfen)) {
+    if (f.enumWerte) {
+      aufgenommen.push(f);
+      continue;
+    }
     const r = S.safeParse(f.eingabe);
     if (r.success === f.erwartet) aufgenommen.push(f.erwartet ? { ...f, ausgabe: r.data } : f);
     else verworfen.push(f.name);
@@ -387,8 +543,8 @@ export function erzeugeFaelle(schema: unknown): { aufgenommen: Fall[]; verworfen
 }
 
 /** Die Faelle vor dem Urteil des Originals: das Beispiel der Wurzel, dazu die Faelle jeder Ebene darunter. */
-function rohFaelle(S: Zod, begrenzt: string[]): Fall[] {
-  const st: Stelle = { pfad: '', ebene: 0, einsetzen: (t) => t, eigenerTypfall: true, begrenzt };
+function rohFaelle(S: Zod, begrenzt: string[], ungebildet: string[]): Fall[] {
+  const st: Stelle = { pfad: '', ebene: 0, einsetzen: (t) => t, eigenerTypfall: true, begrenzt, ungebildet, weg: [] };
   let offen: Zod = S;
   while (HUELLE.includes(def(offen).type) || ['pipe', 'lazy'].includes(def(offen).type)) {
     const d = def(offen);
@@ -473,6 +629,17 @@ export function testVonHand(v: { id: string; file: string }, punkte: readonly st
 
 type CodeVertrag = Extract<VertragstestSatz[number], { symbol: string }>;
 
+/** Liest ein Teilschema ueber den Weg von der Wurzel; dient dem Enum-Fall (CR-GC-987). */
+const ENUM_HELFER = [
+  `interface Z { _zod: { def: Record<string, unknown> } }`,
+  `const bei = (weg: Array<[string, (string | number)?]>): Z =>`,
+  `  weg.reduce<Z>((s, [art, k]) => {`,
+  `    const d = s._zod.def;`,
+  `    if (art === 'getter') return (d.getter as () => Z)();`,
+  `    return k === undefined ? (d[art] as Z) : (d[art] as Record<string | number, Z>)[k]!;`,
+  `  }, S as unknown as Z);`,
+];
+
 /** Der Text der vitest-Datei fuer ein SCHEMA. */
 export function testDatei(eintrag: CodeVertrag, importPfad: string, faelle: Fall[]): string {
   const zeilen = [
@@ -482,9 +649,11 @@ export function testDatei(eintrag: CodeVertrag, importPfad: string, faelle: Fall
     ``,
     `describe('Vertrag ${eintrag.id}', () => {`,
   ];
+  if (faelle.some((f) => f.enumWerte)) zeilen.splice(4, 0, ...ENUM_HELFER, ``);
   for (const f of faelle) {
     zeilen.push(`  it(${JSON.stringify(f.name)}, () => {`);
-    if (f.erwartet) zeilen.push(`    expect(S.parse(${JSON.stringify(f.eingabe)})).toEqual(${JSON.stringify(f.ausgabe)});`);
+    if (f.enumWerte) zeilen.push(`    expect(Object.values(bei(${JSON.stringify(f.enumWerte.weg)})._zod.def.entries as Record<string, unknown>)).toEqual(${JSON.stringify(f.enumWerte.liste)});`);
+    else if (f.erwartet) zeilen.push(`    expect(S.parse(${JSON.stringify(f.eingabe)})).toEqual(${JSON.stringify(f.ausgabe)});`);
     else zeilen.push(`    expect(S.safeParse(${JSON.stringify(f.eingabe)}).success).toBe(false);`);
     zeilen.push(`  });`);
   }

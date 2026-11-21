@@ -15,11 +15,17 @@ describe('Vertrag SCHEMA-module-metrics', () => {
   it("lehnt ab: moduleId mit falschem Typ", () => {
     expect(S.safeParse({"moduleId":12345,"moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1}).success).toBe(false);
   });
+  it("moduleId: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse({"moduleId":"","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1})).toEqual({"moduleId":"","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1});
+  });
   it("lehnt ab ohne moduleName", () => {
     expect(S.safeParse({"moduleId":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1}).success).toBe(false);
   });
   it("lehnt ab: moduleName mit falschem Typ", () => {
     expect(S.safeParse({"moduleId":"beispiel","moduleName":12345,"allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1}).success).toBe(false);
+  });
+  it("moduleName: nimmt Text mit 0 Zeichen an (Untergrenze)", () => {
+    expect(S.parse({"moduleId":"beispiel","moduleName":"","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1})).toEqual({"moduleId":"beispiel","moduleName":"","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1});
   });
   it("lehnt ab ohne allocatedFuncs", () => {
     expect(S.safeParse({"moduleId":"beispiel","moduleName":"beispiel","fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1}).success).toBe(false);
@@ -45,11 +51,17 @@ describe('Vertrag SCHEMA-module-metrics', () => {
   it("lehnt ab: instability mit falschem Typ", () => {
     expect(S.safeParse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":"__falsch__","lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1}).success).toBe(false);
   });
+  it("instability: nimmt null an", () => {
+    expect(S.parse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":null,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1})).toEqual({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":null,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1});
+  });
   it("lehnt ab ohne lcom4", () => {
     expect(S.safeParse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1}).success).toBe(false);
   });
   it("lehnt ab: lcom4 mit falschem Typ", () => {
     expect(S.safeParse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":"__falsch__","lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1}).success).toBe(false);
+  });
+  it("lcom4: nimmt null an", () => {
+    expect(S.parse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":null,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1})).toEqual({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":null,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1});
   });
   it("lehnt ab ohne lcom4Boxes", () => {
     expect(S.safeParse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":1}).success).toBe(false);
@@ -68,6 +80,9 @@ describe('Vertrag SCHEMA-module-metrics', () => {
   });
   it("lehnt ab: cohesion mit falschem Typ", () => {
     expect(S.safeParse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":"__falsch__","uphillDependencies":1}).success).toBe(false);
+  });
+  it("cohesion: nimmt null an", () => {
+    expect(S.parse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":null,"uphillDependencies":1})).toEqual({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":null,"uphillDependencies":1});
   });
   it("cohesion: lehnt ab ohne internal", () => {
     expect(S.safeParse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"external":1,"ratio":1},"uphillDependencies":1}).success).toBe(false);
@@ -92,5 +107,8 @@ describe('Vertrag SCHEMA-module-metrics', () => {
   });
   it("lehnt ab: uphillDependencies mit falschem Typ", () => {
     expect(S.safeParse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":"__falsch__"}).success).toBe(false);
+  });
+  it("uphillDependencies: nimmt null an", () => {
+    expect(S.parse({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":null})).toEqual({"moduleId":"beispiel","moduleName":"beispiel","allocatedFuncs":1,"fanIn":1,"fanOut":1,"instability":1,"lcom4":1,"lcom4Boxes":1,"rollupContainer":true,"cohesion":{"internal":1,"external":1,"ratio":1},"uphillDependencies":null});
   });
 });
