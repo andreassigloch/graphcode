@@ -36,8 +36,7 @@ export const StoreRebuildNoticeSchema = z.discriminatedUnion('cause', [
 export type StoreRebuildNotice = z.infer<typeof StoreRebuildNoticeSchema>;
 
 /** Die Zeile für stderr. */
-export function formatStoreRebuildNotice(notice: StoreRebuildNotice): string {
-  const n = StoreRebuildNoticeSchema.parse(notice);
+export function formatStoreRebuildNotice(n: StoreRebuildNotice): string {
   const reason = n.cause === 'schema' ? `schema changed (${n.from} -> ${n.to})` : `unreadable (${n.error})`;
   return `[graphcode] store: ${reason} — store rebuilt from ${n.source}; changes not exported before are gone\n`;
 }

@@ -133,8 +133,11 @@ export function computeSteeringDelta(before: SteeringSnapshot, after: SteeringSn
     if (b === 0 && a.findings === 0) continue;
     stages[a.name] = { before: b, after: a.findings, delta: b - a.findings };
   }
-  return {
+  const delta: SteeringDelta = {
     blockingErrors: { before: before.blockingErrors, after: after.blockingErrors },
     stages,
   };
+  // CR-GC-982: das Delta haengt an der Antwort von graph_mutate — der Erzeuger prueft es (RC-04).
+  SteeringDelta.parse(delta);
+  return delta;
 }

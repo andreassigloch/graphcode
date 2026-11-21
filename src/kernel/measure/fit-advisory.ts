@@ -59,7 +59,7 @@ export function computeFitAdvisory(before: Graph, after: Graph): FitAdvisory {
   const b = measure(before);
   const a = measure(after);
   const delta = a.map((x, i) => x - b[i]);
-  return {
+  const advisory: FitAdvisory = {
     layer: 'arch',
     dimensions: METRIC_DIMENSIONS,
     before: b,
@@ -67,6 +67,9 @@ export function computeFitAdvisory(before: Graph, after: Graph): FitAdvisory {
     delta,
     regressions: METRIC_DIMENSIONS.filter((_, i) => delta[i] < 0),
   };
+  // CR-GC-982: das Advisory verlaesst den Prozess am MutateResult — der Erzeuger prueft es (RC-04).
+  FitAdvisory.parse(advisory);
+  return advisory;
 }
 
 // ---------------------------------------------------------------------------

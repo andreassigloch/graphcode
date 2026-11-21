@@ -115,12 +115,16 @@ export interface ZugStaende {
 
 export function zugBericht(before: Graph, after: Graph, policy: MetricPolicy, opts: { fit: boolean }): ZugBericht | BerichtFehlt {
   try {
-    return {
+    const bericht: ZugBericht = {
       // `fit` ist der Probelauf: beide Berichte haben nur dort einen Leser (CR-GC-778, CR-GC-790).
       ...(opts.fit ? { fitAdvisory: computeFitAdvisory(before, after), metricsAfter: computeMetricsAfter(before, after) } : {}),
       steerAdvisory: computeSteerAdvisory(before, after, policy),
       workOrder: congruenceWorkOrder(before, after),
     };
+    // CR-GC-982: der Bericht quert die Grenze zur Werkzeugschicht — der Erzeuger prueft ihn (RC-04).
+    // Ein Bruch wird `berichtFehlt`, sichtbar statt still; der Bericht selbst bleibt das Original.
+    ZugBericht.parse(bericht);
+    return bericht;
   } catch (err) {
     return { berichtFehlt: `Bericht zum Zug nicht berechenbar: ${err instanceof Error ? err.message : String(err)}` };
   }

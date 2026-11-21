@@ -28,7 +28,7 @@ import type { StoreLock } from './store-lock.js';
 import { graphSnapshotRel, applyReseed, type ImportTarget } from './harness-import.js';
 import { schemaFingerprint, readStoredFingerprint, writeStoredFingerprint, resetKuzuStore } from './schema-guard.js';
 import { detectSnapshotDrift, formatSnapshotDriftNotice } from './snapshot-stamp.js';
-import { formatStoreRebuildNotice, type StoreRebuildNotice } from './store-rebuild-notice.js';
+import { formatStoreRebuildNotice, StoreRebuildNoticeSchema, type StoreRebuildNotice } from './store-rebuild-notice.js';
 
 /**
  * Was ein angenommener Batch im Store aendert — ein Zod-Schema, kein Typ (CR-GC-644). Knoten und
@@ -98,8 +98,9 @@ export class GraphStore {
         existsSync(graphJson);
       let rebuild: StoreRebuildNotice | null = null;
       if (staleSchema) {
+        // CR-GC-982: der Hinweis wird dort geprueft, wo er entsteht (RC-04), vor dem Loeschen des Stores.
+        rebuild = StoreRebuildNoticeSchema.parse({ cause: 'schema', from: stored!, to: current, source: snapshotRel });
         resetKuzuStore(storePath!);
-        rebuild = { cause: 'schema', from: stored!, to: current, source: snapshotRel };
       }
 
       // CR-GC-796: a store file that exists but does not open (damaged header, truncated
@@ -113,11 +114,16 @@ export class GraphStore {
         await this.load();
       } catch (err) {
         if (!recoverable) throw err;
+        const notice = StoreRebuildNoticeSchema.parse({
+          cause: 'unreadable',
+          error: err instanceof Error ? err.message : String(err),
+          source: snapshotRel,
+        });
         await storage.shutdown();
         resetKuzuStore(storePath!);
         await storage.initialize();
         await this.load();
-        rebuild = { cause: 'unreadable', error: err instanceof Error ? err.message : String(err), source: snapshotRel };
+        rebuild = notice;
       }
 
       if (rebuild) {

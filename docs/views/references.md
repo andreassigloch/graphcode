@@ -1707,6 +1707,14 @@
 | `CR-GC-981` | relation | `SCHEMA-rule-violation` |
 | `CR-GC-981` | relation | `SCHEMA-trajectory` |
 | `CR-GC-981` | relation | `SCHEMA-vertragstest-satz` |
+| `CR-GC-982` | relation | `FUNC-compute-steering-delta` |
+| `CR-GC-982` | relation | `FUNC-fit-advisory` |
+| `CR-GC-982` | relation | `FUNC-open-store` |
+| `CR-GC-982` | relation | `FUNC-zug-bericht` |
+| `CR-GC-982` | relation | `SCHEMA-fit-advisory` |
+| `CR-GC-982` | relation | `SCHEMA-steering-delta` |
+| `CR-GC-982` | relation | `SCHEMA-store-rebuild-notice` |
+| `CR-GC-982` | relation | `SCHEMA-zug-bericht` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
