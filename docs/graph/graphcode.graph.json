@@ -4614,7 +4614,8 @@
       "id": "CR-GC-973",
       "type": "CR",
       "name": "R-26, R-32, RC-04: Zod-Schema für die Antworten von graph_export und graph_test_ingest",
-      "description": "docs/cr/open/CR-GC-973-r-26-r-32-rc-04-zod-schema-fu-r-die-antw.md"
+      "description": "docs/cr/done/CR-GC-973-r-26-r-32-rc-04-zod-schema-fu-r-die-antw.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-974",
@@ -37471,5 +37472,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1378
+  "graphVersion": 1379
 }
