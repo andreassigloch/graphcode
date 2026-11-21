@@ -4681,7 +4681,8 @@
       "id": "CR-GC-983",
       "type": "CR",
       "name": "RC-04: generation-step und lauf-urteil werden vom Erzeuger nicht geparst (Folge von CR-GC-982)",
-      "description": "docs/cr/open/CR-GC-983-rc-04-generation-step-und-lauf-urteil-we.md"
+      "description": "docs/cr/done/CR-GC-983-rc-04-generation-step-und-lauf-urteil-we.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37864,5 +37865,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1412
+  "graphVersion": 1413
 }
