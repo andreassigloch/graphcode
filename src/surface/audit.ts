@@ -36,28 +36,22 @@ const AuditTrailInputSchema = z.object({
     .boolean()
     .default(false)
     .describe(
-      'CR-GC-314: include the positive half (rulesPassed — every rule that ran on that ' +
-        'mutation without a finding). OFF by default and deliberately so: it is ~60 rule ' +
-        'ids PER ENTRY, written for a file-reading learning mechanism, not for an agent ' +
-        'that wants to know what went wrong. Turning it on multiplies the payload.',
+      'CR-GC-314: include rulesPassed, every rule that ran on that mutation without a ' +
+        'finding. OFF by default: ~60 rule ids per entry multiply the payload.',
     ),
   includeCommands: z
     .boolean()
     .default(false)
     .describe(
-      'CR-GC-319: include the full mutate batch per record. OFF by default — commands are ' +
-        "79 % of this repo's trail (129 KB of 163 KB in the last 50 records). The one " +
-        'consumer that needs them is the replay-merge, and it reads the JSONL file ' +
-        'directly, not this tool. Ask for them when you actually intend to replay.',
+      'CR-GC-319: include the full mutate batch per record. OFF by default: commands are ' +
+        "79 % of this repo's trail. Ask for them only to replay.",
     ),
   includeIntent: z
     .boolean()
     .default(false)
     .describe(
-      'CR-GC-354/346: include the verbatim triggering prompt per record. OFF by default — a ' +
-        'prompt is up to 4000 chars, the same volume-not-event trade commands lost. sessionId ' +
-        'and model are always included; ask for the prompt text when you are calibrating ' +
-        'prompts rather than reading what happened.',
+      'CR-GC-354/346: include the verbatim triggering prompt per record (up to 4000 chars). ' +
+        'OFF by default; sessionId and model are always included.',
     ),
 });
 

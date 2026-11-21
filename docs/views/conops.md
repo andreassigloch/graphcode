@@ -688,7 +688,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-992` | n/a | graph_test_ingest: Eingabe in drei Varianten, ohne refine | `FUNC-aenderung-melden` · `FUNC-test-ingest` |
 | `CR-GC-993` | n/a | se-bau Schritt 7: Vertrag ohne z.custom, refine, superRefine; bricht das Verb ab, ändert der Umsetzer den Vertrag | `FUNC-se-bau` |
 | `CR-GC-994` | done | Vertragstest-Generator: Werteliste eines z.literal einfrieren (Art-Feld einer Variante) | `FUNC-erzeuge-vertragstests` |
-| `CR-GC-995` | n/a | tools/list: Platz schaffen für die neue Eingabe von graph_test_ingest (Texte von audit_trail und graph_elements kürzen) | `FUNC-audit-trail` |
+| `CR-GC-995` | done | tools/list: Platz schaffen für die neue Eingabe von graph_test_ingest (Texte von audit_trail und graph_elements kürzen) | `FUNC-audit-trail` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

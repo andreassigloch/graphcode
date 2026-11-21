@@ -25,10 +25,7 @@ import type { ToolContext } from './tool-context.js';
 const ReadFormatSchema = z
   .enum(['json', 'formatE'])
   .default('json')
-  .describe(
-    "Output format. 'json' (default) for programmatic agent logic; 'formatE' for a human-readable, " +
-      'round-trip-stable Format-E v2 slice — type per `### <TYPE>` section, uids verbatim (re-importable via the codec).',
-  );
+  .describe("Output format: 'json' (default) or 'formatE' (the Format-E v2 slice, re-importable).");
 
 const GraphElementsInputSchema = z.object({
   type: z.string().optional().describe('Filter by node type (e.g. REQ, TEST, MOD)'),

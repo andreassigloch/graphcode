@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 599 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 599 CR · 585 done · 1 open.
+Total: 599 CR · 586 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -660,4 +660,4 @@ Total: 599 CR · 585 done · 1 open.
 | `CR-GC-992` | n/a | graph_test_ingest: Eingabe in drei Varianten, ohne refine |
 | `CR-GC-993` | n/a | se-bau Schritt 7: Vertrag ohne z.custom, refine, superRefine; bricht das Verb ab, ändert der Umsetzer den Vertrag |
 | `CR-GC-994` | done | Vertragstest-Generator: Werteliste eines z.literal einfrieren (Art-Feld einer Variante) |
-| `CR-GC-995` | n/a | tools/list: Platz schaffen für die neue Eingabe von graph_test_ingest (Texte von audit_trail und graph_elements kürzen) |
+| `CR-GC-995` | done | tools/list: Platz schaffen für die neue Eingabe von graph_test_ingest (Texte von audit_trail und graph_elements kürzen) |
