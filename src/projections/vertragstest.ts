@@ -214,6 +214,8 @@ export function beispiel(schema: unknown, minimal = false, offen: readonly Zod[]
       return true;
     case 'null':
       return null;
+    case 'void':
+      return undefined;
     case 'literal':
       return d.values[0];
     case 'enum':
@@ -508,7 +510,7 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
     faelle.push(...knoten(d.valueType, r[schluessel], tiefer(st, `${st.pfad}{}`, (t) => st.einsetzen({ [schluessel]: t }), true, ['valueType'])));
     return faelle;
   }
-  if (['string', 'number', 'boolean'].includes(d.type) && st.eigenerTypfall) {
+  if (['string', 'number', 'boolean', 'void'].includes(d.type) && st.eigenerTypfall) {
     faelle.push({ name: benannt(st, 'lehnt einen Wert vom falschen Typ ab'), eingabe: st.einsetzen(falschWie(wert)), erwartet: false });
   }
   if (d.type === 'enum') {

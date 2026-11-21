@@ -543,11 +543,15 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // lief dieselbe Messung auf dem Stand davor mit zwei Zuegen): vier Zuege statt zwei. Bedienung nimmt
       // Test-Ingest auf, Abfrage nimmt Ruestzeug, Stand-Verlauf und serve-stdio auf. Weiter derselbe Befund —
       // Bloecke werden umgehaengt, keiner ist fachlich begruendet (ITEM-2026-798). Der Steuerwert am Start ist nicht neu notiert.
+      // CR-GC-989 (graphVersion 1440, 2026-11-21) — NEU GEMESSEN, nachdem vier Fluesse von SCHEMA-cli-command auf ihren
+      // eigenen Vertrag umgebunden wurden (Repo-Pfad, Sitzungsende, Aufruf ohne Daten) und der Sammelfluss
+      // FLOW-cli-output in sechs Fluesse je Verb zerfiel: drei Zuege statt vier. serve-stdio wird nicht mehr
+      // umgehaengt. Weiter derselbe Befund — Bloecke werden umgehaengt, keiner ist fachlich begruendet
+      // (ITEM-2026-798). Der Steuerwert am Start ist nicht neu notiert.
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-bedienung -compose-> FUNC-test-ingest (retire FUNC-test-ingest)',
         'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
         'FUNC-block-abfrage -compose-> FUNC-stand-verlauf',
-        'FUNC-block-abfrage -compose-> FUNC-serve-stdio (retire FUNC-serve-stdio)',
       ]);
       expect(
         rest

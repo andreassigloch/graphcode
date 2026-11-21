@@ -428,3 +428,31 @@ describe('executeVertragstest löst external-SCHEMA über den Paket-Import auf (
     expect(lauf().map((b) => b.schema)).not.toContain('SCHEMA-lokal-ohne-paket');
   });
 });
+
+describe('erzeugeFaelle: Wurzel ohne Objekt (CR-GC-989)', () => {
+  type F = { eingabe: unknown; erwartet: boolean; name: string };
+  const alle = (schema: unknown): F[] => erzeugeFaelle(schema).aufgenommen as F[];
+  const hat = (faelle: F[], eingabe: unknown, erwartet: boolean): boolean => faelle.some((f) => f.erwartet === erwartet && Object.is(f.eingabe, eingabe));
+
+  it('z.void als Wurzel: nimmt undefined an, lehnt jeden Wert ab', () => {
+    const { aufgenommen, verworfen } = erzeugeFaelle(z.void());
+    expect(verworfen).toEqual([]);
+    expect(hat(aufgenommen as F[], undefined, true)).toBe(true);
+    expect(aufgenommen.some((f) => !f.erwartet)).toBe(true);
+  });
+  it('z.enum als Wurzel: Werteliste, jeder Wert angenommen, ein Fremdwert abgelehnt', () => {
+    const f = alle(z.enum(['a', 'b']));
+    expect([hat(f, 'a', true), hat(f, 'b', true), hat(f, '__ausserhalb__', false)]).toEqual([true, true, true]);
+    expect(f.some((x) => x.name === 'Werteliste unverändert')).toBe(true);
+  });
+  it('z.string().min(1) als Wurzel: der leere Text wird abgelehnt, ein Zeichen angenommen', () => {
+    const f = alle(z.string().min(1));
+    expect([hat(f, '', false), hat(f, 'x', true)]).toEqual([true, true]);
+  });
+  it('z.void als Wurzel erzeugt eine Testdatei, die undefined parst', () => {
+    const { aufgenommen } = erzeugeFaelle(z.void());
+    const text = testDatei({ id: 'SCHEMA-void', file: 'src/x.ts', symbol: 'VoidSchema' }, '../../src/x.js', aufgenommen);
+    expect(text).toContain('S.parse(undefined)');
+    expect(text).toContain('toBe(false)');
+  });
+});

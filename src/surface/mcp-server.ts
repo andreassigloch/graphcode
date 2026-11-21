@@ -29,6 +29,7 @@ import { registerAutoExport, type AutoExportHandle } from '../projections/auto-e
 import { StoreOwnershipError } from '../kernel/store-lock.js';
 import { SessionLifecycle } from './session-lifecycle.js';
 import { attachGve } from './gve.js';
+import { RepoPfadSchema } from './repo-pfad-contract.js';
 import { startHostSocket, buildProxyRegistry, HOST_SOCK_BASENAME, type HostSocket } from './host-shim.js';
 import { HostBridge } from './host.js';
 import { LiveFeed } from './live-feed.js';
@@ -172,7 +173,8 @@ export async function serveStdio(opts?: {
   repoRoot?: string;
   scope?: HarnessConfig['scope'];
 }): Promise<void> {
-  const repoRoot = opts?.repoRoot ?? process.cwd();
+  // Der Pfad geht an Store, Sitzungsregister und Dashboard: ein leerer Pfad endet hier (CR-GC-989).
+  const repoRoot = RepoPfadSchema.parse(opts?.repoRoot ?? process.cwd());
   // Derive the member identity from the repo so graph_export et al. default to a
   // repo-specific name (e.g. auth-service.graph.json), not the generic 'graphcode'.
   const member = deriveMemberName(repoRoot);

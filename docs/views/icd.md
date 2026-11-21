@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 75 SCHEMA · 261 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 78 SCHEMA · 267 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -14,6 +14,7 @@
 | `SCHEMA-adapter-befund` | src/kernel/measure/constraints.ts#AdapterBefund | n/a |
 | `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit-stats.ts#AuditStatsSchema | reviewed |
+| `SCHEMA-aufruf-ohne-daten` | src/surface/aufruf-ohne-daten-contract.ts#AufrufOhneDatenSchema | reviewed |
 | `SCHEMA-branch-merge-report` | src/kernel/merge.ts#MergeReportSchema | n/a |
 | `SCHEMA-chain-metrics` | packages/contracts/src/se/chain-metrics.ts#ChainMetrics | reviewed |
 | `SCHEMA-cli-command` | src/surface/cli-args.ts#CliVerbSchema | reviewed |
@@ -58,12 +59,14 @@
 | `SCHEMA-real-ref` | packages/contracts/src/se/ontology.ts#RealRefSchema | reviewed |
 | `SCHEMA-rejected-trace` | src/kernel/harness-import.ts#RejectedTraceSchema | n/a |
 | `SCHEMA-render-summary` | src/surface/render-verb.ts#RenderSummarySchema | n/a |
+| `SCHEMA-repo-pfad` | src/surface/repo-pfad-contract.ts#RepoPfadSchema | reviewed |
 | `SCHEMA-repo-status` | src/surface/status.ts#RepoStatusSchema | n/a |
 | `SCHEMA-rewind-summary` | src/surface/rewind.ts#RewindSummarySchema | n/a |
 | `SCHEMA-rule-violation` | packages/contracts/src/harness/index.ts#RuleViolationSchema | n/a |
 | `SCHEMA-schema-fingerprint` | src/kernel/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
 | `SCHEMA-schlupf-zeile` | src/projections/test-schlupf.ts#SchlupfZeileSchema | n/a |
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
+| `SCHEMA-sitzungsende` | src/surface/session-end-contract.ts#SitzungsendeSchema | reviewed |
 | `SCHEMA-skill-text` | extern definiert (kein realRef) | n/a |
 | `SCHEMA-steering-channel` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
@@ -147,7 +150,12 @@
 | `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-commit-check` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model` |
 | `FLOW-cli-invocation-import-code` | `FUNC-agent-loop` | `FUNC-cli-dispatch` |
 | `FLOW-cli-invocation-render` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` |
-| `FLOW-cli-output` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-import-code` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-remove` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-rewind` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-status` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-upgrade` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-vertragstest` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-code-lane-plan` | `FUNC-plan-code-lane` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
 | `FLOW-commit-check-request` | `FUNC-commit-check` | `FUNC-check-code-conformance` |
 | `FLOW-commit-check-verdict` | `FUNC-commit-check` | `ACTOR-auftraggeber` |
@@ -342,6 +350,7 @@
 | `FLOW-vertragstest-bericht` | `FUNC-erzeuge-vertragstests` | `FUNC-vertragstest-verb` |
 | `FLOW-vertragstest-satz` | `FUNC-vertragstest-verb` | `FUNC-erzeuge-vertragstests` |
 | `FLOW-viewer-start` | `FUNC-gve-supervise` | `ACTOR-dashboard` |
+| `FLOW-viewer-stop` | `FUNC-gve-supervise` | `ACTOR-dashboard` |
 | `FLOW-vitest-lauf-code` | `FUNC-verify-lane-code` | `FUNC-lauf-urteil` |
 | `FLOW-vitest-lauf-full` | `FUNC-verify-lane-full` | `FUNC-lauf-urteil` |
 | `FLOW-vorschlag` | `FUNC-vorschlag` | `FUNC-graph-mutate-tool` |

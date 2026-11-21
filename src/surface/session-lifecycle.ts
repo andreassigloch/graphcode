@@ -19,6 +19,8 @@
  * @author andreas@siglochconsulting
  */
 
+import { SITZUNGSENDE_SIGNALE, SitzungsendeSchema, type Sitzungsende } from './session-end-contract.js';
+
 /** Wie lange der geordnete Abbau bekommt, bevor hart beendet wird. */
 const GRACE_MS = 3000;
 
@@ -86,7 +88,9 @@ export class SessionLifecycle {
    * Vorher rief der Lock-Verlust `shutdown` direkt — ohne Deckel; ein hängender Schritt ließ
    * den Host ohne Lock laufen, und jeder Aufruf an ihn blieb ohne Antwort.
    */
-  end(reason: string): void {
+  end(reason: Sitzungsende): void {
+    // Grenze des Sitzungsendes: nur ein Ereignis aus dem Vertrag beendet die Sitzung (CR-GC-989).
+    SitzungsendeSchema.parse(reason);
     if (this.closing) return;
     const exit = this.deps.exit ?? ((code: number) => process.exit(code));
     const cap = (this.deps.setTimeoutImpl ?? setTimeout)(() => exit(0), GRACE_MS);
@@ -107,7 +111,7 @@ export class SessionLifecycle {
         process.stdin.on('end', h);
         process.stdin.on('close', h);
       });
-    for (const sig of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const) {
+    for (const sig of SITZUNGSENDE_SIGNALE) {
       onSignal(sig, () => this.end(sig));
     }
     onStdinEnd(() => this.end('client disconnected'));

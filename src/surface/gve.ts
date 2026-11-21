@@ -26,6 +26,8 @@ import {
   reserveSpawn,
   unregisterSession,
 } from './gve-sessions.js';
+import { RepoPfadSchema } from './repo-pfad-contract.js';
+import { AufrufOhneDatenSchema } from './aufruf-ohne-daten-contract.js';
 
 /**
  * A path in its physical form — the only form two processes can compare. A path
@@ -220,6 +222,8 @@ export type EnsureResult =
  * nicht mehr, und es gibt nichts mehr abzuraeumen.
  */
 export async function ensureViewer(repoRoot: string, deps: StartGveDeps = {}): Promise<EnsureResult> {
+  // Der Pfad geht als `--repo` an den Viewer: ein leerer Pfad zeigt kein Repo (CR-GC-989).
+  RepoPfadSchema.parse(repoRoot);
   const env = deps.env ?? process.env;
   if (gveDisabled(env)) return { kind: 'unavailable', reason: 'disabled' };
   const mine = physicalPath(repoRoot);
@@ -352,7 +356,9 @@ export async function attachGve(repoRoot: string, deps: AttachDeps = {}): Promis
   (timer as { unref?: () => void }).unref?.();
 
   return {
-    stop(): void {
+    stop(daten?: unknown): void {
+      // Der Aufruf überträgt nichts; ein Argument ist ein Fehler des Aufrufers (CR-GC-989).
+      AufrufOhneDatenSchema.parse(daten);
       if (stopped) return;
       stopped = true;
       clearInterval(timer as NodeJS.Timeout);

@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 592 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 593 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 592 CR · 580 done · 1 open.
+Total: 593 CR · 580 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -654,3 +654,4 @@ Total: 592 CR · 580 done · 1 open.
 | `CR-GC-986` | done | SCHEMA-cli-command haengt an Fluessen, die kein CLI-Verb tragen |
 | `CR-GC-987` | done | Vertragstest-Generator prüft Wertregeln und frozen die Enum-Werteliste |
 | `CR-GC-988` | n/a | CI-Suite auf zwei parallele Jobs teilen |
+| `CR-GC-989` | n/a | Fluesse tragen den Vertrag, den der Code uebertraegt |
