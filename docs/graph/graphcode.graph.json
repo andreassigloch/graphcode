@@ -4441,7 +4441,8 @@
       "id": "CR-GC-968",
       "type": "CR",
       "name": "Skills: sync allgemein, Beleg aus jeder Beschreibung der Realisierung, Rückfrage",
-      "description": "docs/cr/open/CR-GC-968-skills-sync-allgemein-beleg-aus-jeder-be.md"
+      "description": "docs/cr/done/CR-GC-968-skills-sync-allgemein-beleg-aus-jeder-be.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37066,5 +37067,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1350
+  "graphVersion": 1351
 }
