@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 585 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 585 CR · 573 done · 1 open.
+Total: 585 CR · 574 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -646,4 +646,4 @@ Total: 585 CR · 573 done · 1 open.
 | `CR-GC-978` | n/a | se-plan: Meilenstein je Use Case, darin Blätter aufwärts (ändert CR-GC-892) |
 | `CR-GC-979` | done | Skills se:author-req und se-bau: feste Schreibweise fuer Definition und Verweis eines Parameters; eine fehlende Angabe ist Designfreiheit, keine Annahme (Autor 2026-11-21) |
 | `CR-GC-980` | done | Vertragstest-Generator prüft nur die erste Feldebene |
-| `CR-GC-981` | n/a | Vertragstest-Generator löst Verträge aus Paketen nicht auf |
+| `CR-GC-981` | done | Vertragstest-Generator löst Verträge aus Paketen nicht auf |

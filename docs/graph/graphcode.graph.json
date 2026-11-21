@@ -4667,7 +4667,8 @@
       "id": "CR-GC-981",
       "type": "CR",
       "name": "Vertragstest-Generator löst Verträge aus Paketen nicht auf",
-      "description": "docs/cr/open/CR-GC-981-vertragstest-generator-lo-st-vertra-ge-a.md"
+      "description": "docs/cr/done/CR-GC-981-vertragstest-generator-lo-st-vertra-ge-a.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37790,5 +37791,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1401
+  "graphVersion": 1402
 }
