@@ -34,7 +34,7 @@ import {
   type MutationTrigger,
   type TrajectoryStamps,
 } from '../projections/trajectory.js';
-import { arbeitsmengeAusAudit, type Arbeitsmenge } from '../kernel/measure/working-set.js';
+import { ArbeitsmengeSchema, arbeitsmengeAusAudit, type Arbeitsmenge } from '../kernel/measure/working-set.js';
 // The per-repo workspace dir is named ONCE (scaffold-templates); the feed lands in
 // graphcode's own workspace, not the predecessor's `.aimprove/` (CR-GC-330).
 import { GRAPHCODE_DIR } from '../kernel/workspace.js';
@@ -556,7 +556,7 @@ export function createToolContext(
    * auseinanderlaeuft. Die Rechnung selbst ist rein und getestet (`arbeitsmengeAusAudit`).
    */
   async function arbeitsmenge(): Promise<Arbeitsmenge> {
-    return arbeitsmengeAusAudit(await auditLog.query({ since: _bootAt }));
+    return ArbeitsmengeSchema.parse(arbeitsmengeAusAudit(await auditLog.query({ since: _bootAt })));
   }
 
   // das geparste — Form und Datenanteile geprueft, die Traeger dieselben Instanzen.

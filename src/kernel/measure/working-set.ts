@@ -23,16 +23,22 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod/v4';
 import type { AuditEntry } from '@sigloch/graph-api-core';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 
-/** Was die Sitzung selbst angefasst hat — die abgeleitete Vorgabe-Scheibe der Lesewerkzeuge. */
-export interface Arbeitsmenge {
-  /** Die uids, sortiert. Leer heisst: noch kein Schreibzug — dann antwortet das Werkzeug ueber das ganze Modell. */
-  uids: string[];
-  /** Wie viele ANGEWANDTE Stapel dazu beigetragen haben (0 bei leerer Menge). */
-  zuege: number;
-}
+/**
+ * Was die Sitzung selbst angefasst hat — die abgeleitete Vorgabe-Scheibe der Lesewerkzeuge
+ * (SCHEMA-work-set). Der Werkzeug-Kontext parst sie beim Erzeugen (RC-04).
+ *
+ * `uids`: sortiert. Leer heisst: noch kein Schreibzug — dann antwortet das Werkzeug ueber das
+ * ganze Modell. `zuege`: wie viele ANGEWANDTE Stapel dazu beigetragen haben (0 bei leerer Menge).
+ */
+export const ArbeitsmengeSchema = z.object({
+  uids: z.array(z.string().min(1)),
+  zuege: z.number().int().nonnegative(),
+});
+export type Arbeitsmenge = z.infer<typeof ArbeitsmengeSchema>;
 
 /** Die uids, die ein einzelnes Kommando anfasst. */
 function beruehrt(cmd: MutateCommand): string[] {
