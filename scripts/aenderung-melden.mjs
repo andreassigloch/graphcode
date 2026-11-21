@@ -12,6 +12,12 @@ import { join } from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
+/** Die Variante der Eingabe: mit Bericht `report`, sonst nur die Rücknahme `withdraw`; die Änderung hängt am Bericht, wenn es einen gibt. */
+function ingest(report, changeSet) {
+  const geaendert = changeSet.length > 0 ? { changeSet } : {};
+  return report !== undefined ? { art: 'report', report, ...geaendert } : { art: 'withdraw', changeSet };
+}
+
 /**
  * @param {{ repoRoot: string, changeSet: string[], berichtPfad: string, cli?: string }} opts
  * @returns {Promise<null | { success: boolean, applied: number, assignments: Array<{testUid: string, file: string, result: string}>, withdrawn: Array<{testUid: string, file: string}>, unresolved: Array<{file: string, reason: string}> }>}
@@ -27,11 +33,7 @@ export async function meldeZurueck({ repoRoot, changeSet, berichtPfad, cli = joi
   try {
     const res = await client.callTool({
       name: 'graph_test_ingest',
-      arguments: {
-        ...(report !== undefined ? { report } : {}),
-        ...(changeSet.length > 0 ? { changeSet } : {}),
-        consumerId: 'verify-lane',
-      },
+      arguments: { ingest: ingest(report, changeSet), consumerId: 'verify-lane' },
     });
     const text = res.content?.[0]?.text ?? '';
     if (res.isError) throw new Error(`graph_test_ingest: ${text}`);

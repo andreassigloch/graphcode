@@ -647,8 +647,8 @@ export function testVonHand(v: { id: string; file: string }, punkte: readonly st
     `## Ergebnis`,
     ``,
     `Lege das Protokoll mit Datum, Prüfer und Messwert je Prüfpunkt als Datei ab. Melde es über`,
-    `\`graph_test_ingest\` mit \`results: [{ file, result, tool: "manuell", evidence: <Pfad des Protokolls> }]\`.`,
-    `Ändert sich der Vertrag, nimmt \`graph_test_ingest({ changeSet: ["${v.id}"] })\` das Ergebnis zurück.`,
+    `\`graph_test_ingest\` mit \`ingest: { art: "results", results: [{ file, result, tool: "manuell", evidence: <Pfad des Protokolls> }] }\`.`,
+    `Ändert sich der Vertrag, nimmt \`graph_test_ingest({ ingest: { art: "withdraw", changeSet: ["${v.id}"] } })\` das Ergebnis zurück.`,
     ``,
   ].join('\n');
 }

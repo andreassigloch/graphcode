@@ -94,7 +94,7 @@ describe('TEST-testref-kopf-bindung: graph_test_ingest bindet ueber den Kopf (CR
       testResults: [{ name: join(repoRoot, 'tests/neu.test.ts'), status: 'passed', assertionResults: [{ status: 'passed' }] }],
     });
 
-    const res = await tools.graph_test_ingest.handler({ report, consumerId: 'runner' });
+    const res = await tools.graph_test_ingest.handler({ ingest: { art: 'report', report }, consumerId: 'runner' });
 
     expect(res.success).toBe(true);
     expect(res.bindings.map((b) => [b.testUid, b.file, b.tool])).toEqual([['TEST-neu', 'tests/neu.test.ts', 'vitest']]);
@@ -106,14 +106,14 @@ describe('TEST-testref-kopf-bindung: graph_test_ingest bindet ueber den Kopf (CR
     // Prosa im Kopf ("eine TEST-uid") ist kein Knoten des Modells und macht die Bindung nicht mehrdeutig.
     datei('tests/prosa.test.ts', '/**\n * TEST-alt — nennt GENAU EINE TEST-uid des Modells\n */\n');
     const prosa = await tools.graph_test_ingest.handler({
-      results: [{ file: 'tests/prosa.test.ts', result: 'passed', tool: 'vitest' }],
+      ingest: { art: 'results', results: [{ file: 'tests/prosa.test.ts', result: 'passed', tool: 'vitest' }] },
       consumerId: 'runner',
     });
     expect(prosa.unresolved).toEqual([]);
     expect(prosa.bindings.map((b) => b.testUid)).toEqual(['TEST-alt']);
 
     // Der naechste Lauf trifft die Bindung — keine zweite.
-    const zweiter = await tools.graph_test_ingest.handler({ report, consumerId: 'runner' });
+    const zweiter = await tools.graph_test_ingest.handler({ ingest: { art: 'report', report }, consumerId: 'runner' });
     expect(zweiter.bindings).toEqual([]);
     expect(zweiter.assignments.map((a) => a.testUid)).toEqual(['TEST-neu']);
     expect(refs('TEST-neu')).toHaveLength(1);
@@ -122,10 +122,10 @@ describe('TEST-testref-kopf-bindung: graph_test_ingest bindet ueber den Kopf (CR
   it('haengt die neue Datei an einen schon gebundenen TEST an, ohne dessen Eintrag zu verlieren', async () => {
     datei('tests/alt-zwei.test.ts', '// TEST-alt\nimport { it } from "vitest";\n');
     const res = await tools.graph_test_ingest.handler({
-      results: [
+      ingest: { art: 'results', results: [
         { file: 'tests/alt.test.ts', result: 'passed' },
         { file: 'tests/alt-zwei.test.ts', result: 'failed', tool: 'vitest' },
-      ],
+      ] },
       consumerId: 'runner',
     });
 
@@ -143,14 +143,14 @@ describe('TEST-testref-kopf-bindung: graph_test_ingest bindet ueber den Kopf (CR
     datei('tests/ohne-tool.test.ts', '/** TEST-neu */\n');
 
     const res = await tools.graph_test_ingest.handler({
-      results: [
+      ingest: { art: 'results', results: [
         { file: 'tests/ohne.test.ts', result: 'passed', tool: 'vitest' },
         { file: 'tests/zwei.test.ts', result: 'passed', tool: 'vitest' },
         { file: 'tests/fremd.test.ts', result: 'passed', tool: 'vitest' },
         { file: 'tests/ohne-tool.test.ts', result: 'passed' },
         { file: 'tests/fehlt.test.ts', result: 'passed', tool: 'vitest' },
         { file: '/ganz/woanders/x.test.ts', result: 'passed', tool: 'vitest' },
-      ],
+      ] },
       consumerId: 'runner',
     });
 

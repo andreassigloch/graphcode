@@ -128,10 +128,10 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
     ).toBe(true);
 
     const res = await tools.graph_test_ingest.handler({
-      results: [
+      ingest: { art: 'results', results: [
         { file: 'tests/ran.test.ts', result: 'passed' },
         { file: 'tests/ran-visual.spec.ts', result: 'failed' },
-      ],
+      ] },
       consumerId: 'runner',
     });
     expect(res.success, JSON.stringify(res.violations)).toBe(true);
@@ -147,7 +147,7 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
   });
 
   it('schreibt das Ergebnis ueber testRefs[].file an den Eintrag — durch das Gate', async () => {
-    const res = await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
+    const res = await tools.graph_test_ingest.handler({ ingest: { art: 'report', report: VITEST_JSON }, consumerId: 'runner' });
 
     expect(res.success, JSON.stringify(res.violations)).toBe(true);
     expect(res.assignments).toContainEqual({ testUid: 'TEST-ran', file: '/abs/repo/tests/ran.test.ts', result: 'passed' });
@@ -163,7 +163,7 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
   });
 
   it('meldet eine Runner-Datei ohne passenden testRefs-Eintrag als unresolved statt sie zu verwerfen', async () => {
-    const res = await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
+    const res = await tools.graph_test_ingest.handler({ ingest: { art: 'report', report: VITEST_JSON }, consumerId: 'runner' });
 
     expect(res.unresolved.map((u) => u.file)).toEqual(['tests/orphan.test.ts']);
     expect(res.unresolved[0].reason).toMatch(/testRefs/);
@@ -184,7 +184,7 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
     expect(voll.summary.withVerifyTrace).toBe(2);
     expect(voll.summary.neverRun).toBe(2);
 
-    await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
+    await tools.graph_test_ingest.handler({ ingest: { art: 'report', report: VITEST_JSON }, consumerId: 'runner' });
     const nachZug = await tools.graph_test_report.handler({});
 
     // Nach dem Ingest schneidet der Bericht auf die angefassten TESTs und deren REQ.
@@ -199,7 +199,7 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
   });
 
   it('ueberschreibt bei einem zweiten Lauf statt zu stapeln', async () => {
-    await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
+    await tools.graph_test_ingest.handler({ ingest: { art: 'report', report: VITEST_JSON }, consumerId: 'runner' });
     // CR-SM-231b: das Ergebnis steht am EINTRAG, nicht am Knoten — bei n Laeufen koennte ein
     // Knoten-Attribut nicht sagen, welcher gemeint ist.
     const ran = harness.getGraph().nodes.find((n) => n.uid === 'TEST-ran')!;
@@ -208,7 +208,7 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
     expect(refs.find((r) => r.file === 'tests/ran.test.ts')?.ranAt).toBeDefined();
 
     const res = await tools.graph_test_ingest.handler({
-      results: [{ file: 'tests/ran.test.ts', result: 'failed' }],
+      ingest: { art: 'results', results: [{ file: 'tests/ran.test.ts', result: 'failed' }] },
       consumerId: 'runner',
     });
 
@@ -223,7 +223,7 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
   });
 
   it('dryRun liefert den Plan, ohne zu schreiben', async () => {
-    const res = await tools.graph_test_ingest.handler({ report: VITEST_JSON, dryRun: true, consumerId: 'runner' });
+    const res = await tools.graph_test_ingest.handler({ ingest: { art: 'report', report: VITEST_JSON }, dryRun: true, consumerId: 'runner' });
 
     expect(res.applied).toBe(0);
     expect(res.assignments).toHaveLength(1);
@@ -232,7 +232,7 @@ describe('TEST-testreport: Ergebnisse zurueck in den Graphen (CR-GC-327)', () =>
   });
 
   it('VCRM: ein REQ mit verify-Kante, aber ohne Lauf, traegt kein bestanden-Haekchen', async () => {
-    await tools.graph_test_ingest.handler({ report: VITEST_JSON, consumerId: 'runner' });
+    await tools.graph_test_ingest.handler({ ingest: { art: 'report', report: VITEST_JSON }, consumerId: 'runner' });
     const md = renderTestMatrix(harness.getGraph(), 'testreport');
 
     // Zwei Spalten, zwei Aussagen — vorher stand hier EIN Haekchen fuer beides.

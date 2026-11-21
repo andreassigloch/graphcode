@@ -101,7 +101,7 @@ describe('TEST-test-result-withdrawn-on-change: Ruecknahme bei Aenderung (CR-GC-
     await harness.initialize();
     expect((await harness.mutate(SEED)).success).toBe(true);
     tools = bindToolsToHarness(harness);
-    await tools.graph_test_ingest.handler({ results: BEIDE_GRUEN, consumerId: 'runner' });
+    await tools.graph_test_ingest.handler({ ingest: { art: 'results', results: BEIDE_GRUEN }, consumerId: 'runner' });
   });
 
   afterEach(async () => {
@@ -113,7 +113,7 @@ describe('TEST-test-result-withdrawn-on-change: Ruecknahme bei Aenderung (CR-GC-
     expect(refs('TEST-a')[0].result).toBe('passed');
     expect(await fm03()).not.toContain('REQ-risk');
 
-    const res = await tools.graph_test_ingest.handler({ changeSet: ['FUNC-a'], consumerId: 'runner' });
+    const res = await tools.graph_test_ingest.handler({ ingest: { art: 'withdraw', changeSet: ['FUNC-a'] }, consumerId: 'runner' });
 
     expect(res.success).toBe(true);
     expect(res.withdrawn).toEqual([{ testUid: 'TEST-a', file: 'tests/a.test.ts' }]);
@@ -122,7 +122,7 @@ describe('TEST-test-result-withdrawn-on-change: Ruecknahme bei Aenderung (CR-GC-
   });
 
   it('laesst den nicht betroffenen Test unberuehrt (Gegenprobe)', async () => {
-    await tools.graph_test_ingest.handler({ changeSet: ['FUNC-a'], consumerId: 'runner' });
+    await tools.graph_test_ingest.handler({ ingest: { art: 'withdraw', changeSet: ['FUNC-a'] }, consumerId: 'runner' });
 
     expect(refs('TEST-b')[0].result).toBe('passed');
     expect(typeof refs('TEST-b')[0].ranAt).toBe('string');
@@ -130,8 +130,7 @@ describe('TEST-test-result-withdrawn-on-change: Ruecknahme bei Aenderung (CR-GC-
 
   it('nimmt nicht zurueck, was derselbe Aufruf frisch liefert', async () => {
     const res = await tools.graph_test_ingest.handler({
-      changeSet: ['FUNC-a'],
-      results: [{ file: 'tests/a.test.ts', result: 'failed' }],
+      ingest: { art: 'results', results: [{ file: 'tests/a.test.ts', result: 'failed' }], changeSet: ['FUNC-a'] },
       consumerId: 'runner',
     });
 
@@ -141,7 +140,7 @@ describe('TEST-test-result-withdrawn-on-change: Ruecknahme bei Aenderung (CR-GC-
   });
 
   it('ein TEST-Knoten im changeSet ist selbst betroffen (geaenderte Testdatei)', async () => {
-    const res = await tools.graph_test_ingest.handler({ changeSet: ['TEST-b'], consumerId: 'runner' });
+    const res = await tools.graph_test_ingest.handler({ ingest: { art: 'withdraw', changeSet: ['TEST-b'] }, consumerId: 'runner' });
 
     expect(res.withdrawn).toEqual([{ testUid: 'TEST-b', file: 'tests/b.test.ts' }]);
     expect(refs('TEST-b')[0].result).toBeUndefined();
@@ -149,7 +148,7 @@ describe('TEST-test-result-withdrawn-on-change: Ruecknahme bei Aenderung (CR-GC-
   });
 
   it('dryRun zeigt den Plan und schreibt nichts', async () => {
-    const res = await tools.graph_test_ingest.handler({ changeSet: ['FUNC-a'], dryRun: true, consumerId: 'runner' });
+    const res = await tools.graph_test_ingest.handler({ ingest: { art: 'withdraw', changeSet: ['FUNC-a'] }, dryRun: true, consumerId: 'runner' });
 
     expect(res.applied).toBe(0);
     expect(res.withdrawn).toEqual([{ testUid: 'TEST-a', file: 'tests/a.test.ts' }]);
@@ -158,16 +157,19 @@ describe('TEST-test-result-withdrawn-on-change: Ruecknahme bei Aenderung (CR-GC-
 
   it('weist eine unbekannte uid im changeSet ab und nennt sie', async () => {
     await expect(
-      tools.graph_test_ingest.handler({ changeSet: ['FUNC-a', 'FUNC-gibt-es-nicht'], consumerId: 'runner' }),
+      tools.graph_test_ingest.handler({ ingest: { art: 'withdraw', changeSet: ['FUNC-a', 'FUNC-gibt-es-nicht'] }, consumerId: 'runner' }),
     ).rejects.toThrow(/FUNC-gibt-es-nicht/);
     expect(refs('TEST-a')[0].result).toBe('passed');
   });
 
-  it('verlangt mindestens eine Eingabe und hoechstens eine Ergebnisquelle', () => {
+  it('nimmt genau eine Variante an; die alte flache Form und zwei Quellen sind nicht ausdrückbar (CR-GC-992)', () => {
     const schema = tools.graph_test_ingest.inputSchema;
     expect(schema.safeParse({}).success).toBe(false);
-    expect(schema.safeParse({ report: '{}', results: [] }).success).toBe(false);
-    expect(schema.safeParse({ changeSet: ['FUNC-a'] }).success).toBe(true);
-    expect(schema.safeParse({ changeSet: ['FUNC-a'], results: [] }).success).toBe(true);
+    expect(schema.safeParse({ report: '{}' }).success).toBe(false);
+    expect(schema.safeParse({ changeSet: ['FUNC-a'] }).success).toBe(false);
+    expect(schema.safeParse({ ingest: { art: 'report', report: '{}', results: [] } }).success).toBe(false);
+    expect(schema.safeParse({ ingest: { art: 'withdraw' } }).success).toBe(false);
+    expect(schema.safeParse({ ingest: { art: 'withdraw', changeSet: ['FUNC-a'] } }).success).toBe(true);
+    expect(schema.safeParse({ ingest: { art: 'results', results: [], changeSet: ['FUNC-a'] } }).success).toBe(true);
   });
 });

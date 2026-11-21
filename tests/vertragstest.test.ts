@@ -276,6 +276,7 @@ describe('testVonHand', () => {
     expect(t).toContain('2. Miss Welligkeit');
     expect(t).toContain('`graph_test_ingest`');
     expect(t).toContain('tool: "manuell"');
+    expect(t).toContain('art: "withdraw", changeSet: ["SCHEMA-bus"]');
   });
 });
 

@@ -89,7 +89,7 @@ describe('TEST-test-von-hand: Testbeschreibung von Hand (CR-GC-964)', () => {
 
   it('bindet die Testbeschreibung ueber die Ueberschrift und schreibt Ergebnis und Protokoll', async () => {
     const res = await tools.graph_test_ingest.handler({
-      results: [{ file: HAND, result: 'passed', tool: 'manuell', evidence: PROTOKOLL }],
+      ingest: { art: 'results', results: [{ file: HAND, result: 'passed', tool: 'manuell', evidence: PROTOKOLL }] },
       consumerId: 'pruefer',
     });
     expect(res.success).toBe(true);
@@ -99,12 +99,12 @@ describe('TEST-test-von-hand: Testbeschreibung von Hand (CR-GC-964)', () => {
     expect(r[0]?.ranAt).toBeTruthy();
 
     // Ein neuer Lauf ohne Protokoll laesst das alte nicht stehen: es belegt das neue Ergebnis nicht.
-    await tools.graph_test_ingest.handler({ results: [{ file: HAND, result: 'failed', tool: 'manuell' }], consumerId: 'pruefer' });
+    await tools.graph_test_ingest.handler({ ingest: { art: 'results', results: [{ file: HAND, result: 'failed', tool: 'manuell' }] }, consumerId: 'pruefer' });
     expect(refs('TEST-hebel').map((x) => [x.result, x.evidence])).toEqual([['failed', undefined]]);
   });
 
   it('graph_tests gibt die Testbeschreibung nicht an vitest, sondern nennt sie von Hand faellig', async () => {
-    await tools.graph_test_ingest.handler({ results: [{ file: HAND, result: 'passed', tool: 'manuell' }], consumerId: 'pruefer' });
+    await tools.graph_test_ingest.handler({ ingest: { art: 'results', results: [{ file: HAND, result: 'passed', tool: 'manuell' }] }, consumerId: 'pruefer' });
     const sel = await tools.graph_tests.handler({ changeSet: ['FUNC-h'], depth: 1 });
     expect(sel.command).toBe('vitest run tests/code.test.ts');
     expect(sel.coverage.files).toEqual(['tests/code.test.ts']);
@@ -119,10 +119,10 @@ describe('TEST-test-von-hand: Testbeschreibung von Hand (CR-GC-964)', () => {
 
   it('nimmt das Ergebnis zurueck, wenn sich das gepruefte SCHEMA aendert (CR-GC-961 F3.2)', async () => {
     await tools.graph_test_ingest.handler({
-      results: [{ file: HAND, result: 'passed', tool: 'manuell', evidence: PROTOKOLL }],
+      ingest: { art: 'results', results: [{ file: HAND, result: 'passed', tool: 'manuell', evidence: PROTOKOLL }] },
       consumerId: 'pruefer',
     });
-    const res = await tools.graph_test_ingest.handler({ changeSet: ['SCHEMA-hebel'], consumerId: 'aenderung' });
+    const res = await tools.graph_test_ingest.handler({ ingest: { art: 'withdraw', changeSet: ['SCHEMA-hebel'] }, consumerId: 'aenderung' });
     expect(res.withdrawn).toEqual([{ testUid: 'TEST-hebel', file: HAND }]);
     expect(refs('TEST-hebel').map((x) => [x.result, x.evidence, x.ranAt])).toEqual([[undefined, undefined, undefined]]);
   });

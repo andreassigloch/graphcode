@@ -214,6 +214,21 @@ describe('TEST-agent-agnostic: identical surface + gate for any MCP client (CR-G
     expect(formatE.description!.slice(0, 200)).toContain('## Edges');
   });
 
+  // CR-GC-992: die Eingabe von graph_test_ingest ist eine Vereinigung in EINEM Pflichtfeld; der Agent liest
+  // die drei Varianten und ihre Texte aus tools/list.
+  it('(c2) graph_test_ingest: tools/list zeigt `ingest` als Pflichtfeld mit drei Varianten und ihren Texten', async () => {
+    for (const client of [claudeCode, openCode]) {
+      const tool = (await client.listTools()).tools.find((t) => t.name === 'graph_test_ingest')!;
+      const schema = tool.inputSchema as { required: string[]; properties: Record<string, { description?: string; oneOf?: Array<{ properties: Record<string, { const?: string }>; required: string[] }> }> };
+      expect(schema.required).toEqual(['ingest']);
+      const ingest = schema.properties.ingest!;
+      expect(ingest.oneOf!.map((v) => v.properties.art!.const)).toEqual(['report', 'results', 'withdraw']);
+      expect(ingest.oneOf!.map((v) => v.required)).toEqual([['art', 'report'], ['art', 'results'], ['art', 'changeSet']]);
+      expect(ingest.description).toContain('`withdraw`');
+      expect(schema.properties.dryRun!.description).toContain('plan only');
+    }
+  });
+
   // CR-GC-722: ein Client ohne Nachlade-Mechanik (OpenCode) traegt die ganze Liste in JEDER
   // Anfrage. Die Schranke ist eine Sperrklinke — sie darf nur sinken. Vor der Kuerzung mass
   // dieselbe Zaehlung 32.029 Zeichen, die Schranke haette also gefeuert.

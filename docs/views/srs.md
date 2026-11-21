@@ -14494,7 +14494,7 @@ schema ◀ `FLOW-meldung` · `FLOW-test-ingest-answer`
 
 ###### 3.3.4.2.66  `SCHEMA-test-ingest-input` — GraphTestIngestInput
 
-Eingang von graph_test_ingest: report (roher vitest-JSON) oder results [{file, result}], hoechstens eines davon; changeSet, consumerId, dryRun.
+Eingang von graph_test_ingest: ein Objekt mit consumerId, dryRun und dem Pflichtfeld ingest. ingest traegt genau eine von drei Varianten, gewaehlt ueber art: report (roher vitest-JSON, changeSet optional), results (Liste mit file, result, tool, evidence, changeSet optional) oder withdraw (nur changeSet, Pflicht). Zwei Quellen zugleich und keine Eingabe sind nicht ausdrueckbar. (CR-GC-992)
 
 schema ◀ `FLOW-test-ingest-call` · `FLOW-test-run-report-code` · `FLOW-test-run-report-full`
 
@@ -16318,7 +16318,7 @@ verify ▶ `SCHEMA-test-ingest-answer` · testRefs: `tests/vertrag/SCHEMA-test-i
 
 #### 3.4.213  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
 
-Vertragstest SCHEMA-test-ingest-input, von Hand geschrieben (zwei refine, der Generator nimmt es nicht): jede angenommene Variante, Ablehnung bei keinem Feld, bei report und results zugleich und bei falschem Typ. (CR-GC-971)
+Vertragstest SCHEMA-test-ingest-input, aus dem Schema erzeugt (graphcode vertragstest): je Variante die Annahme, je Pflichtfeld die Ablehnung, Typ, Enum, Mindestlaenge und Zusatzfeld, dazu die Werteliste des Art-Felds. (CR-GC-992)
 
 verify ▶ `SCHEMA-test-ingest-input` · testRefs: `tests/vertrag/SCHEMA-test-ingest-input.vertrag.test.ts`
 

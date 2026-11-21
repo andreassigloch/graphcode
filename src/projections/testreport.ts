@@ -41,30 +41,39 @@ import {
 import { mitGetragenenReq, schneide, type Umfang } from '../kernel/measure/working-set.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
-export const GraphTestIngestInputSchema = z
-  .object({
-    report: z
-      .string()
-      .optional()
-      .describe('Raw vitest `--reporter=json` output.'),
-    results: z
-      .array(z.object({ file: z.string().min(1), result: TestResult, tool: z.string().min(1).optional(), evidence: z.string().min(1).optional() }))
-      .optional()
-      .describe('Pre-parsed [{file, result, tool?, evidence?}]; at most one of report/results.'),
-    changeSet: z
-      .array(z.string().min(1))
-      .min(1)
-      .optional()
-      .describe('Changed node uids, as for graph_tests.'),
-    consumerId: z.string().default('test-ingest'),
-    dryRun: z.boolean().default(false).describe('true = the plan only, nothing written.'),
-  })
-  .refine((i) => i.report === undefined || i.results === undefined, {
-    message: 'graph_test_ingest: supply at most one of report or results.',
-  })
-  .refine((i) => i.report !== undefined || i.results !== undefined || i.changeSet !== undefined, {
-    message: 'graph_test_ingest: supply report, results or changeSet.',
-  });
+/** Geänderte Knoten, wie bei graph_tests. */
+const GeaenderteKnoten = z.array(z.string().min(1)).min(1);
+
+/**
+ * Die Eingabe von graph_test_ingest (SCHEMA-test-ingest-input, CR-GC-992): ein Objekt mit
+ * `consumerId`, `dryRun` und dem Pflichtfeld `ingest`. Das Feld trägt genau eine von drei Varianten,
+ * gewählt über `art`: ein roher Bericht, eine Liste von Ergebnissen, oder nur die Rücknahme. Die Fälle
+ * „beides zugleich“ und „nichts“ sind damit nicht ausdrückbar; früher prüften sie zwei `.refine`.
+ */
+export const GraphTestIngestInputSchema = z.strictObject({
+  ingest: z
+    .discriminatedUnion('art', [
+      z.strictObject({
+        art: z.literal('report'),
+        report: z.string().describe('Raw vitest `--reporter=json` output.'),
+        changeSet: GeaenderteKnoten.optional(),
+      }),
+      z.strictObject({
+        art: z.literal('results'),
+        results: z
+          .array(z.strictObject({ file: z.string().min(1), result: TestResult, tool: z.string().min(1).optional(), evidence: z.string().min(1).optional() }))
+          ,
+        changeSet: GeaenderteKnoten.optional(),
+      }),
+      z.strictObject({
+        art: z.literal('withdraw'),
+        changeSet: GeaenderteKnoten.describe('Changed node uids, as for graph_tests.'),
+      }),
+    ])
+    .describe('One of: art `report` (a vitest run), `results` (parsed results), `withdraw` (a change, no run).'),
+  consumerId: z.string().default('test-ingest'),
+  dryRun: z.boolean().default(false).describe('true = the plan only, nothing written.'),
+});
 
 /**
  * Die Antwort von graph_test_ingest (SCHEMA-test-ingest-answer). Der Handler parst sie beim
@@ -136,13 +145,13 @@ export function bindTestReportTools(ctx: ToolPort) {
       'Feed a test run into the model: each file is ' +
       'matched to TEST nodes via testRef.file and written through the gate. An unbound file whose head ' +
       'names one TEST uid is bound (`bindings`), else `unresolved` with the reason. `changeSet` withdraws ' +
-      'the result of every TEST the change impacts (`withdrawn`), unless this call brings a fresh one.',
+      'the result of every TEST the change impacts (`withdrawn`), unless this call brings a fresh one. `tool` and `evidence` of a result mark a manual run.',
     inputSchema: GraphTestIngestInputSchema,
     async handler(input) {
-      const files: RunnerFileResult[] =
-        input.report !== undefined ? parseVitestJson(input.report) : ((input.results ?? []) as RunnerFileResult[]);
-      const plan = planIngest(harness.getGraph(), files, kopfZugang(input.report !== undefined));
-      const withdrawn = await planeRuecknahme(input.changeSet, files);
+      const { ingest } = input;
+      const files: RunnerFileResult[] = ingest.art === 'report' ? parseVitestJson(ingest.report) : ingest.art === 'results' ? ingest.results : [];
+      const plan = planIngest(harness.getGraph(), files, kopfZugang(ingest.art === 'report'));
+      const withdrawn = await planeRuecknahme(ingest.changeSet, files);
 
       if (input.dryRun || (plan.assignments.length === 0 && plan.bindings.length === 0 && withdrawn.length === 0)) {
         return GraphTestIngestAnswerSchema.parse({
