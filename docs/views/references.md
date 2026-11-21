@@ -1754,6 +1754,7 @@
 | `CR-GC-992` | relation | `FUNC-aenderung-melden` |
 | `CR-GC-992` | relation | `FUNC-test-ingest` |
 | `CR-GC-992` | relation | `SCHEMA-test-ingest-input` |
+| `CR-GC-993` | relation | `FUNC-erzeuge-vertragstests` |
 | `CR-GC-993` | relation | `FUNC-se-bau` |
 | `CR-GC-994` | relation | `FUNC-erzeuge-vertragstests` |
 | `CR-GC-995` | relation | `FUNC-audit-trail` |

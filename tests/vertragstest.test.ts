@@ -1,5 +1,6 @@
 // TEST-vertragstest-generator — Vertragstest-Generator und Verb `graphcode vertragstest` (CR-GC-962, CR-GC-965).
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -45,12 +46,12 @@ describe('erzeugeFaelle', () => {
     const U = z.discriminatedUnion('k', [z.object({ k: z.literal(1), a: z.string() }), z.object({ k: z.literal(2), b: z.number() })]);
     expect(namen(erzeugeFaelle(U).aufgenommen)).toEqual(expect.arrayContaining(['Variante 1: lehnt ab ohne a', 'Variante 2: lehnt ab ohne b']));
   });
-  it('findet kein Beispiel bei einer Querbedingung, die das volle und das minimale Beispiel ablehnt', () => {
+  it('bricht bei einer Querbedingung ab, auch wenn sie das volle und das minimale Beispiel ablehnt (CR-GC-993)', () => {
     const R = z
       .object({ a: z.string().optional(), b: z.string().optional() })
       .refine((i) => i.a === undefined || i.b === undefined)
       .refine((i) => i.a !== undefined || i.b !== undefined);
-    expect(erzeugeFaelle(R).aufgenommen.some((f) => f.erwartet)).toBe(false);
+    expect(() => erzeugeFaelle(R)).toThrow(/refine\/superRefine.*Varianten/);
   });
   it('prüft bei einer Liste die Fälle ihres Elements und lehnt einen Nicht-Listenwert ab', () => {
     const L = z.array(z.strictObject({ id: z.string(), art: z.enum(['a', 'b']) })).length(2);
@@ -517,5 +518,53 @@ describe('erzeugeFaelle: Funktionen und offene Objekte (CR-GC-990)', () => {
     const M = z.looseObject({ aufruf: z.function() });
     expect(M.safeParse(new K()).success).toBe(true);
     expect(M.safeParse({}).success).toBe(false);
+  });
+});
+
+describe('Bedingung im Vertrag bricht den Erzeuger ab (CR-GC-993)', () => {
+  const Variante = z.discriminatedUnion('k', [z.strictObject({ k: z.literal(1), a: z.string() }).refine((i) => i.a !== 'x'), z.strictObject({ k: z.literal(2) })]);
+  const faelle: Array<[string, unknown, RegExp]> = [
+    ['refine am Objekt, das das Beispiel annimmt', z.strictObject({ a: z.string() }).refine((i) => i.a !== 'x'), /refine/],
+    ['refine an einem Feld', z.strictObject({ a: z.string().refine((v) => v !== 'x') }), /refine/],
+    ['refine in einer Variante', Variante, /refine/],
+    ['superRefine', z.strictObject({ a: z.string() }).superRefine((i, c) => { if (i.a === 'x') c.addIssue({ code: 'custom', message: 'm' }); }), /superRefine/],
+    ['z.custom', z.strictObject({ a: z.custom((v) => typeof v === 'string') }), /z\.custom/],
+  ];
+  it.each(faelle)('%s: der Erzeuger wirft und nennt Grund und Ausweg', (_n, schema, grund) => {
+    expect(() => erzeugeFaelle(schema)).toThrow(grund);
+    expect(() => erzeugeFaelle(schema)).toThrow(/Varianten/);
+  });
+  it('Gegenprobe: dieselbe Bedingung als Varianten wird angenommen', () => {
+    const V = z.discriminatedUnion('art', [z.strictObject({ art: z.literal('a'), a: z.string() }), z.strictObject({ art: z.literal('b'), b: z.string() })]);
+    expect(erzeugeFaelle(V).aufgenommen.some((f) => f.erwartet)).toBe(true);
+  });
+
+  describe('Verb und Aufruf', () => {
+    let repo: string;
+    beforeAll(() => {
+      repo = mkdtempSync(join(tmpdir(), 'gc-vertragstest-bedingung-'));
+      symlinkSync(resolve('node_modules'), join(repo, 'node_modules'));
+      mkdirSync(join(repo, 'src'));
+      mkdirSync(join(repo, 'docs/graph'), { recursive: true });
+      writeFileSync(
+        join(repo, 'src/vertrag.ts'),
+        "import { z } from 'zod';\nexport const BedingungSchema = z.strictObject({ a: z.string() }).refine((i) => i.a !== 'x');\n",
+      );
+      const elements = [{ id: 'SCHEMA-bedingung', type: 'SCHEMA', realRef: { file: 'src/vertrag.ts', symbol: 'BedingungSchema' } }];
+      writeFileSync(join(repo, 'docs/graph', `${repo.split('/').pop()}.graph.json`), JSON.stringify({ elements, traces: [] }));
+    });
+    afterAll(() => rmSync(repo, { recursive: true, force: true }));
+
+    it('der Bericht nennt das SCHEMA und den Grund, und es entsteht keine Datei', () => {
+      const bericht = executeVertragstest({ repoRoot: repo, ids: ['SCHEMA-bedingung'] });
+      expect(bericht).toEqual([{ schema: 'SCHEMA-bedingung', fehler: expect.stringMatching(/refine.*Varianten/) }]);
+      expect(() => readFileSync(join(repo, 'tests/vertrag/SCHEMA-bedingung.vertrag.test.ts'), 'utf8')).toThrow();
+    });
+    it('der Aufruf `graphcode vertragstest` endet mit Exit 1 und nennt SCHEMA und Grund (setzt einen Build voraus)', () => {
+      const lauf = spawnSync(process.execPath, [resolve('dist/cli.js'), 'vertragstest', 'SCHEMA-bedingung'], { cwd: repo, encoding: 'utf8' });
+      expect(lauf.status).toBe(1);
+      expect(lauf.stderr).toContain('SCHEMA-bedingung');
+      expect(lauf.stderr).toMatch(/refine/);
+    });
   });
 });

@@ -32,7 +32,7 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
   it('die Datei se-bau.md existiert, Name und Version stehen im Kopf', () => {
     expect(existsSync(DATEI)).toBe(true);
     expect(text).toMatch(/^name: se-bau$/m);
-    expect(text).toMatch(/^version: 5$/m);
+    expect(text).toMatch(/^version: 6$/m);
     expect(text).toMatch(/^description: .{40,}$/m);
   });
 
@@ -99,6 +99,17 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
       expect(k).toMatch(/verify/);
       expect(k).toMatch(/nicht von Hand/);
       expect(k).toMatch(/Exit 1/);
+    });
+    it('ein Vertrag hat kein z.custom, refine, superRefine; die Bedingung wird zu Varianten; bricht das Verb ab, ändert der Umsetzer den Vertrag (CR-GC-993)', () => {
+      const k = koordinator();
+      expect(k).toMatch(/kein `z\.custom`, kein `refine`, kein `superRefine`/);
+      expect(k).toMatch(/Bedingung über mehrere\s+Felder wird zu Varianten/);
+      expect(k).toMatch(/z\.discriminatedUnion/);
+      expect(k).toMatch(/z\.function\(\)/);
+      expect(k).toMatch(/Rückgabe einer\s+Funktion prüft ein gewöhnlicher Test/);
+      expect(k).toMatch(/ändert der Umsetzer den Vertrag/);
+      expect(k).toMatch(/Vertragstest von Hand für ein SCHEMA\s+mit Zod-Symbol gibt es nicht/);
+      expect(k).not.toMatch(/beauftragst du einen Umsetzer mit dem Vertragstest von Hand/);
     });
     it('schreibt für ein SCHEMA mit Vertragsdatei den Test von Hand und bindet ihn mit tool manuell (CR-GC-965)', () => {
       const k = koordinator();

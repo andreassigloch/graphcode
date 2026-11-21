@@ -1,6 +1,6 @@
 ---
 name: se-bau
-version: 5
+version: 6
 description: Bau eines CR in zwei Rollen — Koordinator (Hauptsitzung) startet je CR einen Agenten, schreibt das Modell allein und schließt erst nach dem Testlauf auf der Zielumgebung; Umsetzer (Agent) baut aus dem Ausschnitt graph_context, setzt Werte nach Werteklasse, hält das Vertragspaket ein, stoppt bei jeder Lücke und nennt jede Annahme. Fester Teil jedes Bauauftrags an einen Agenten.
 ---
 
@@ -45,8 +45,14 @@ Die Hauptsitzung koordiniert und baut nichts selbst. Rufe `graph_mutate` mit `sk
    - Ein geändertes SCHEMA bekommt die Datei neu. Der Diff der Datei zeigt die Vertragsänderung.
    - Ein Vertragstest für ein SCHEMA mit Zod-Symbol entsteht nicht von Hand. Gemessen im Spike CR-GC-958:
      Der erzeugte Satz fand 44 von 48 eingebauten Schemafehlern, die Handtests 27.
-   - Endet das Verb mit Exit 1, nennt der Bericht das SCHEMA und den Grund, z. B. `z.custom` oder eine
-     Querbedingung. Für dieses SCHEMA beauftragst du einen Umsetzer mit dem Vertragstest von Hand.
+   - Ein Vertrag enthält kein `z.custom`, kein `refine`, kein `superRefine`. Eine Bedingung über mehrere
+     Felder wird zu Varianten des Vertrags. Beispiel: Statt `.refine` „höchstens eines von report und results,
+     mindestens eines von beiden“ steht `z.discriminatedUnion('art', [{ art: 'report', report }, { art: 'results', results }])`,
+     je Variante ein Pflichtfeld. Ein Mitglied, das eine Funktion ist, ist `z.function()`. Die Rückgabe einer
+     Funktion prüft ein gewöhnlicher Test, nicht der Vertrag.
+   - Endet das Verb mit Exit 1, nennt der Bericht das SCHEMA und den Grund, z. B. `refine` oder `z.custom`.
+     Dann ändert der Umsetzer den Vertrag, bis das Verb durchläuft. Einen Vertragstest von Hand für ein SCHEMA
+     mit Zod-Symbol gibt es nicht.
    - Zeigt `realRef` des SCHEMA auf eine Vertragsdatei (`.md` mit der Tabelle Größe, Einheit, Min, Nenn,
      Max, Messpunkt, Quelle, Kriterium), schreibt das Verb den Test von Hand `tests/vertrag/<uid>.vertrag.md`:
      je Zeile mit Grenzwert oder Kriterium ein Prüfpunkt. Binde ihn mit `testRefs {file, tool: "manuell"}`. Er läuft dort, wo der

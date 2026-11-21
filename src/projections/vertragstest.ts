@@ -177,6 +177,10 @@ const FORMATE: Record<string, string> = {
   url: 'https://example.org',
 };
 
+/** Der Ausweg, den der Bericht bei `refine`, `superRefine` und `z.custom` nennt (CR-GC-993); die Entscheidung des Autors vom 2026-11-21 steht im Skill se-bau. */
+const AUSWEG =
+  'eine Bedingung ueber mehrere Felder wird zu Varianten des Vertrags (z.discriminatedUnion), ein Mitglied, das eine Funktion ist, zu z.function(); der Umsetzer aendert den Vertrag';
+
 /** Das Beispiel eines z.lazy-Schemas, das sich selbst enthaelt, hat kein Ende (CR-GC-980). */
 export class RekursionsFehler extends Error {
   constructor() {
@@ -190,6 +194,7 @@ export function beispiel(schema: unknown, minimal = false, offen: readonly Zod[]
   const s = schema as Zod;
   const d = def(s);
   const rek = (x: unknown, m = minimal): unknown => beispiel(x, m, offen);
+  if (checks(s).some((c) => c.check === 'custom')) throw new Error(`refine/superRefine im Vertrag nicht unterstuetzt: ${AUSWEG}`);
   if (minimal && d.type === 'object') {
     return Object.fromEntries(
       Object.entries(d.shape)
@@ -266,6 +271,8 @@ export function beispiel(schema: unknown, minimal = false, offen: readonly Zod[]
       return new Date('2026-01-01');
     case 'function':
       return BEISPIEL_FUNKTION;
+    case 'custom':
+      throw new Error(`z.custom im Vertrag nicht unterstuetzt: ${AUSWEG}`);
     default:
       throw new Error(`Typ ${d.type} nicht unterstuetzt`);
   }
