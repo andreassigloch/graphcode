@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 574 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 575 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 574 CR · 566 done · 1 open.
+Total: 575 CR · 566 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -636,3 +636,4 @@ Total: 574 CR · 566 done · 1 open.
 | `CR-GC-968` | done | Skills: sync allgemein, Beleg aus jeder Beschreibung der Realisierung, Rückfrage |
 | `CR-GC-969` | done | CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat |
 | `CR-GC-970` | done | RC-07: 141 CR-Knoten tragen nicht den Status des Ordners done (CRs vor BOK-CR-080); Status und Pfad einmalig spiegeln |
+| `CR-GC-971` | n/a | R-32: Vertragstests für SCHEMA-rewind-summary und SCHEMA-test-ingest-input fehlen |

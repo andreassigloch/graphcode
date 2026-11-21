@@ -1672,6 +1672,8 @@
 | `CR-GC-969` | relation | `FUNC-block-live-dashboard` |
 | `CR-GC-969` | relation | `MOD-dev-scripts` |
 | `CR-GC-970` | relation | `FUNC-check-code-conformance` |
+| `CR-GC-971` | relation | `SCHEMA-rewind-summary` |
+| `CR-GC-971` | relation | `SCHEMA-test-ingest-input` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -4103,6 +4105,8 @@
 | `TEST-vertrag-install-result` | verify | `SCHEMA-install-result` |
 | `TEST-vertrag-markdown-text` | verify | `SCHEMA-markdown-text` |
 | `TEST-vertrag-repo-status` | verify | `SCHEMA-repo-status` |
+| `TEST-vertrag-rewind-summary` | verify | `SCHEMA-rewind-summary` |
+| `TEST-vertrag-test-ingest-input` | verify | `SCHEMA-test-ingest-input` |
 | `TEST-vertrag-upgrade-report` | verify | `SCHEMA-upgrade-report` |
 | `TEST-vertrag-vertragstest-bericht` | verify | `SCHEMA-vertragstest-bericht` |
 | `TEST-vertrag-vertragstest-satz` | verify | `SCHEMA-vertragstest-satz` |

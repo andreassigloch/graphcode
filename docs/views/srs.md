@@ -16094,79 +16094,91 @@ Vertragstest SCHEMA-repo-status, erzeugt aus dem Zod-Schema: gültiges Beispiel,
 
 verify ▶ `SCHEMA-repo-status` · testRefs: `tests/vertrag/SCHEMA-repo-status.vertrag.test.ts`
 
-#### 3.4.192  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
+#### 3.4.192  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
+
+Vertragstest SCHEMA-rewind-summary, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-971)
+
+verify ▶ `SCHEMA-rewind-summary` · testRefs: `tests/vertrag/SCHEMA-rewind-summary.vertrag.test.ts`
+
+#### 3.4.193  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
+
+Vertragstest SCHEMA-test-ingest-input, von Hand geschrieben (zwei refine, der Generator nimmt es nicht): jede angenommene Variante, Ablehnung bei keinem Feld, bei report und results zugleich und bei falschem Typ. (CR-GC-971)
+
+verify ▶ `SCHEMA-test-ingest-input` · testRefs: `tests/vertrag/SCHEMA-test-ingest-input.vertrag.test.ts`
+
+#### 3.4.194  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
 
 Vertragstest SCHEMA-upgrade-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-upgrade-report` · testRefs: `tests/vertrag/SCHEMA-upgrade-report.vertrag.test.ts`
 
-#### 3.4.193  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
+#### 3.4.195  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
 
 Erzeugter Vertragstest SCHEMA-vertragstest-bericht
 
 verify ▶ `SCHEMA-vertragstest-bericht` · testRefs: `tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts`
 
-#### 3.4.194  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
+#### 3.4.196  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
 
 Erzeugter Vertragstest SCHEMA-vertragstest-satz
 
 verify ▶ `SCHEMA-vertragstest-satz` · testRefs: `tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts`
 
-#### 3.4.195  `TEST-vertragstest-generator` — Vertragstest-Generator
+#### 3.4.197  `TEST-vertragstest-generator` — Vertragstest-Generator
 
 Unit-Tests des Erzeugers und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
 
 verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · `REQ-contract-test-manual` · testRefs: `tests/vertragstest.test.ts`
 
-#### 3.4.196  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.198  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.197  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.199  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.198  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.200  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.199  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.201  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.200  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.202  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.201  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.203  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.202  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.204  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.203  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.205  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.204  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.206  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 
